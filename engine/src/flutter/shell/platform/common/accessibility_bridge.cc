@@ -291,6 +291,7 @@ void AccessibilityBridge::ConvertFlutterUpdate(const SemanticsNode& node,
   SetIntAttributesFromFlutterUpdate(node_data, node);
   SetIntListAttributesFromFlutterUpdate(node_data, node);
   SetStringListAttributesFromFlutterUpdate(node_data, node);
+  SetIdentifierFromFlutterUpdate(node_data, node);
   SetNameFromFlutterUpdate(node_data, node);
   SetValueFromFlutterUpdate(node_data, node);
   SetTooltipFromFlutterUpdate(node_data, node);
@@ -528,6 +529,13 @@ void AccessibilityBridge::SetStringListAttributesFromFlutterUpdate(
         ax::mojom::StringListAttribute::kCustomActionDescriptions,
         custom_action_description);
   }
+}
+
+void AccessibilityBridge::SetIdentifierFromFlutterUpdate(
+    ui::AXNodeData& node_data,
+    const SemanticsNode& node) {
+  node_data.AddStringAttribute(ax::mojom::StringAttribute::kAuthorUniqueId,
+                               node.identifier);
 }
 
 void AccessibilityBridge::SetNameFromFlutterUpdate(ui::AXNodeData& node_data,
