@@ -7,6 +7,7 @@
 #include "flutter/shell/platform/windows/flutter_platform_node_delegate_windows.h"
 
 #include "flutter/fml/logging.h"
+#include "flutter/fml/platform/win/wstring_conversion.h"
 #include "flutter/shell/platform/windows/accessibility_bridge_windows.h"
 #include "flutter/shell/platform/windows/flutter_windows_view.h"
 #include "flutter/third_party/accessibility/ax/ax_clipping_behavior.h"
@@ -76,6 +77,13 @@ gfx::NativeViewAccessible FlutterPlatformNodeDelegateWindows::HitTestSync(
 
   // If no children contain the point, but this node does, return this node.
   return ax_platform_node_->GetNativeViewAccessible();
+}
+
+// |ui::AXPlatformNodeDelegate|
+std::u16string FlutterPlatformNodeDelegateWindows::GetAuthorUniqueId() const {
+  return fml::WideStringToUtf16(
+      fml::Utf8ToWideString(GetData().GetStringAttribute(
+          ax::mojom::StringAttribute::kAuthorUniqueId)));
 }
 
 // |FlutterPlatformNodeDelegate|
