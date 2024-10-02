@@ -172,6 +172,7 @@ class AccessibilityBridge
     double scroll_extent_min;
     double elevation;
     double thickness;
+    std::string identifier;
     std::string label;
     std::string hint;
     std::string value;
