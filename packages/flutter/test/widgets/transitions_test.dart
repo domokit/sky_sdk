@@ -149,7 +149,9 @@ void main() {
 
     await tester.pumpWidget(widget);
 
-    final RenderPositionedBox actualPositionedBox = tester.renderObject(find.byType(Align));
+    final RenderPositionedBox actualPositionedBox = tester.renderObject(
+      find.byType(AlignTransition),
+    );
 
     Alignment actualAlignment = actualPositionedBox.alignment as Alignment;
     expect(actualAlignment, Alignment.centerLeft);
@@ -158,6 +160,25 @@ void main() {
     await tester.pump();
     actualAlignment = actualPositionedBox.alignment as Alignment;
     expect(actualAlignment, const Alignment(0.0, 0.5));
+  });
+
+  testWidgets('AlignTransition with ValueNotifier', (WidgetTester tester) async {
+    final ValueNotifier<Alignment> alignment = ValueNotifier<Alignment>(Alignment.centerLeft);
+    addTearDown(alignment.dispose);
+
+    await tester.pumpWidget(
+      AlignTransition(
+        alignment: alignment,
+        child: const Text('Ready', textDirection: TextDirection.ltr),
+      ),
+    );
+
+    final RenderPositionedBox renderBox = tester.renderObject(find.byType(AlignTransition));
+    expect(renderBox.alignment, Alignment.centerLeft);
+
+    alignment.value = const Alignment(0.0, 0.5);
+    await tester.pump();
+    expect(renderBox.alignment, const Alignment(0.0, 0.5));
   });
 
   testWidgets('RelativePositionedTransition animates', (WidgetTester tester) async {
@@ -223,7 +244,7 @@ void main() {
 
     await tester.pumpWidget(widget);
 
-    final Align actualAlign = tester.widget(find.byType(Align));
+    final RenderPositionedBox actualAlign = tester.renderObject(find.byType(AlignTransition));
 
     expect(actualAlign.widthFactor, 0.3);
     expect(actualAlign.heightFactor, 0.4);
