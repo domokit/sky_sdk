@@ -1426,6 +1426,30 @@ void main() {
           matchesGoldenFile('m2_time_picker.dialog.separator.alignment.png'),
         );
       });
+    testWidgets('TimePicker dialog displays centered separator between hour and minute selectors', (WidgetTester tester) async {
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1.0;
+
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: ThemeData(useMaterial3: true),
+              home: const MediaQuery(
+                data: MediaQueryData(),
+                child: Material(
+                  child: TimePickerDialog(
+                    initialTime: TimeOfDay(hour: 12, minute: 0),
+                  ),
+                ),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          await expectLater(
+            find.byType(Dialog),
+            matchesGoldenFile('m3_time_picker.dialog.separator.alignment.png'),
+          );
+        });
 
       testWidgets('provides semantics information for text fields', (WidgetTester tester) async {
         final SemanticsTester semantics = SemanticsTester(tester);
