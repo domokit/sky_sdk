@@ -1423,7 +1423,7 @@ void main() {
 
         await expectLater(
           find.byType(Dialog),
-          matchesGoldenFile('time_picker.dialog.separator.alignment.corrected.png'),
+          matchesGoldenFile('m2_time_picker.dialog.separator.alignment.png'),
         );
       });
 
