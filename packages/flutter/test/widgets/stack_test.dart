@@ -489,6 +489,61 @@ void main() {
     }
   });
 
+  testWidgets('IndexedStack excludes focus for hidden children', (WidgetTester tester) async {
+    const List<Widget> children = <Widget>[
+      Focus(child: Text('child 0')),
+      Focus(child: Text('child 1')),
+    ];
+
+    Future<void> pumpIndexedStack(int? activeIndex) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: IndexedStack(
+            index: activeIndex,
+            children: children,
+          ),
+        )
+      );
+    }
+    Future<void> requestFocusAndPump(FocusNode node) async {
+      node.requestFocus();
+      await tester.pump();
+    }
+
+    await pumpIndexedStack(0);
+
+    final Element child0 = tester.element(
+      find.text('child 0', skipOffstage: false),
+    );
+    final Element child1 = tester.element(
+      find.text('child 1', skipOffstage: false),
+    );
+    final FocusNode child0FocusNode = Focus.of(child0);
+    final FocusNode child1FocusNode = Focus.of(child1);
+
+    await requestFocusAndPump(child0FocusNode);
+
+    expect(child0FocusNode.hasFocus, true);
+    expect(child1FocusNode.hasFocus, false);
+
+    await requestFocusAndPump(child1FocusNode);
+
+    expect(child0FocusNode.hasFocus, true);
+    expect(child1FocusNode.hasFocus, false);
+
+    await pumpIndexedStack(1);
+    await requestFocusAndPump(child1FocusNode);
+
+    expect(child0FocusNode.hasFocus, false);
+    expect(child1FocusNode.hasFocus, true);
+
+    await requestFocusAndPump(child0FocusNode);
+
+    expect(child0FocusNode.hasFocus, false);
+    expect(child1FocusNode.hasFocus, true);
+  });
+
   testWidgets('Stack clip test', (WidgetTester tester) async {
     await tester.pumpWidget(
       const Directionality(
