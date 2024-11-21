@@ -1405,6 +1405,7 @@ void main() {
       testWidgets('TimePicker dialog displays centered separator between hour and minute selectors', (WidgetTester tester) async {
         tester.view.physicalSize = const Size(400, 800);
         tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.reset);
 
         await tester.pumpWidget(
           MaterialApp(
