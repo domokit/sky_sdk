@@ -544,6 +544,33 @@ void main() {
     expect(child1FocusNode.hasFocus, true);
   });
 
+  testWidgets('IndexedStack does not maintain interactivity for hidden children', (WidgetTester tester) async {
+    bool tapped = false;
+    final List<Widget> children = <Widget>[
+      const Text('child'),
+      GestureDetector(
+        onTap: () => tapped = true,
+        child: const Text('hiddenChild'),
+      ),
+    ];
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: IndexedStack(
+          children: children,
+        ),
+      ),
+    );
+
+    await tester.tap(
+      find.text('hiddenChild', skipOffstage: false),
+      warnIfMissed: false,
+    );
+
+    expect(tapped, false);
+  });
+
   testWidgets('Stack clip test', (WidgetTester tester) async {
     await tester.pumpWidget(
       const Directionality(
