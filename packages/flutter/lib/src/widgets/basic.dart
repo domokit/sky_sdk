@@ -19,7 +19,6 @@ import 'package:flutter/services.dart';
 
 import 'binding.dart';
 import 'debug.dart';
-import 'focus_scope.dart';
 import 'framework.dart';
 import 'localizations.dart';
 import 'visibility.dart';
@@ -4150,12 +4149,12 @@ class IndexedStack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> wrappedChildren = List<Widget>.generate(children.length, (int i) {
-      return ExcludeFocus(
-        excluding: i != index,
-        child: Visibility.maintain(
-          visible: i == index,
-          child: children[i],
-        ),
+      return Visibility(
+        visible: i == index,
+        maintainSize: true,
+        maintainState: true,
+        maintainAnimation: true,
+        child: children[i],
       );
     });
     return _RawIndexedStack(
