@@ -423,11 +423,15 @@ void main() {
     expect(childFocusNode.hasFocus, false);
   });
 
-  testWidgets('Visibility with maintain* true excludes focus of child when not visible', (WidgetTester tester) async {
+  testWidgets('Visibility with maintainInteractivity true does not exclude focus of child when not visible', (WidgetTester tester) async {
     Future<void> pumpVisibility(bool visible) async {
       await tester.pumpWidget(
-         Visibility.maintain(
+         Visibility(
           visible: visible,
+          maintainInteractivity: true,
+          maintainSize: true,
+          maintainAnimation: true,
+          maintainState: true,
           child: const Focus(child: Text('child', textDirection: TextDirection.ltr)),
         ),
       );
@@ -447,7 +451,7 @@ void main() {
 
     await pumpVisibility(false);
 
-    expect(childFocusNode.hasFocus, false);
+    expect(childFocusNode.hasFocus, true);
   });
 
   testWidgets('Visibility with maintainState true excludes focus of child when not visible', (WidgetTester tester) async {
