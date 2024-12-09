@@ -86,6 +86,10 @@ abstract class ButtonStyleButton extends StatefulWidget {
     required this.clipBehavior,
     this.statesController,
     this.isSemanticButton = true,
+    @Deprecated(
+      'Remove this parameter as it is now ignored. '
+      'This feature was deprecated after v3.27.0-0.2.pre.'
+    )
     this.iconAlignment,
     this.tooltip,
     required this.child,
@@ -158,6 +162,10 @@ abstract class ButtonStyleButton extends StatefulWidget {
   final bool? isSemanticButton;
 
   /// {@macro flutter.material.ButtonStyleButton.iconAlignment}
+  @Deprecated(
+    'Remove this parameter as it is now ignored. '
+    'This feature was deprecated after v3.27.0-0.2.pre.'
+  )
   final IconAlignment? iconAlignment;
 
   /// Text that describes the action that will occur when the button is pressed or
