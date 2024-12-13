@@ -88,7 +88,8 @@ abstract class ButtonStyleButton extends StatefulWidget {
     this.isSemanticButton = true,
     @Deprecated(
       'Remove this parameter as it is now ignored. '
-      'This feature was deprecated after v3.27.0-0.2.pre.'
+      'Use ButtonStyle.iconAlignment instead. '
+      'This feature was deprecated after v3.28.0-0.1.pre.'
     )
     this.iconAlignment,
     this.tooltip,
@@ -164,7 +165,8 @@ abstract class ButtonStyleButton extends StatefulWidget {
   /// {@macro flutter.material.ButtonStyleButton.iconAlignment}
   @Deprecated(
     'Remove this parameter as it is now ignored. '
-    'This feature was deprecated after v3.27.0-0.2.pre.'
+      'Use ButtonStyle.iconAlignment instead. '
+    'This feature was deprecated after v3.28.0-0.1.pre.'
   )
   final IconAlignment? iconAlignment;
 
