@@ -1486,14 +1486,16 @@ class _RenderListTile extends RenderBox
 
     assert(
       tileWidth != leadingSize?.width || tileWidth == 0.0,
-      'Leading widget consumes entire tile width. Please use a sized widget, '
-      'or consider replacing ListTile with a custom widget '
+      'Leading widget consumes entire tile width which also includes ListTile.contentPadding. '
+      'Either resize tile width so the trailing widget + content padding does not exceed the tile width '
+      'or use a sized widget, or consider replacing ListTile with a custom widget '
       '(see https://api.flutter.dev/flutter/material/ListTile-class.html#material.ListTile.4)',
     );
     assert(
       tileWidth != trailingSize?.width || tileWidth == 0.0,
-      'Trailing widget consumes entire tile width. Please use a sized widget, '
-      'or consider replacing ListTile with a custom widget '
+      'Trailing widget consumes entire tile width. which also includes ListTile.contentPadding. '
+      'Either resize tile width so the trailing widget + content padding does not exceed the tile width '
+      'or use a sized widget, or consider replacing ListTile with a custom widget '
       '(see https://api.flutter.dev/flutter/material/ListTile-class.html#material.ListTile.4)',
     );
 
