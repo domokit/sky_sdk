@@ -165,7 +165,7 @@ abstract class ButtonStyleButton extends StatefulWidget {
   /// {@macro flutter.material.ButtonStyleButton.iconAlignment}
   @Deprecated(
     'Remove this parameter as it is now ignored. '
-      'Use ButtonStyle.iconAlignment instead. '
+    'Use ButtonStyle.iconAlignment instead. '
     'This feature was deprecated after v3.28.0-0.1.pre.'
   )
   final IconAlignment? iconAlignment;
