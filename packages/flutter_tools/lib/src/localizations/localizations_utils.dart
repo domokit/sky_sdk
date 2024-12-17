@@ -2,12 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:intl/locale.dart';
 import 'package:meta/meta.dart';
 import 'package:yaml/yaml.dart';
 
 import '../base/common.dart';
 import '../base/file_system.dart';
 import '../base/logger.dart';
+import '../convert.dart';
 import '../runner/flutter_command.dart';
 import '../runner/flutter_command_runner.dart';
 import 'gen_l10n_types.dart';
@@ -323,6 +325,7 @@ class LocalizationOptions {
     required this.arbDir,
     this.outputDir,
     String? templateArbFile,
+    String? templateLocale,
     String? outputLocalizationFile,
     this.untranslatedMessagesFile,
     String? outputClass,
@@ -341,6 +344,7 @@ class LocalizationOptions {
     bool? relaxSyntax,
     bool? useNamedParameters,
   }) : templateArbFile = templateArbFile ?? 'app_en.arb',
+       templateLocale = templateLocale ?? 'en',
        outputLocalizationFile = outputLocalizationFile ?? 'app_localizations.dart',
        outputClass = outputClass ?? 'AppLocalizations',
        useDeferredLoading = useDeferredLoading ?? false,
@@ -363,11 +367,20 @@ class LocalizationOptions {
   /// The directory where all output localization files should be generated.
   final String? outputDir;
 
-
   /// The `--template-arb-file` argument.
   ///
   /// This path is relative to [arbDirectory].
+  @Deprecated(
+    'Use `templateLocale` instead. '
+    'Deprecated in favor of `templateLocale` since we can now have multiple localization files for the same locale. '
+    'This feature was deprecated after v3.27.0-1.0.pre.',
+  )
   final String templateArbFile;
+
+  /// The `--template-locale` argument.
+  ///
+  /// The locale that should be used as the basis for generating the files
+  final String templateLocale;
 
   /// The `--output-localization-file` argument.
   ///
@@ -492,6 +505,7 @@ LocalizationOptions parseLocalizationsOptionsFromYAML({
     arbDir: _tryReadUri(yamlNode, 'arb-dir', logger)?.path ?? defaultArbDir,
     outputDir: _tryReadUri(yamlNode, 'output-dir', logger)?.path,
     templateArbFile: _tryReadUri(yamlNode, 'template-arb-file', logger)?.path,
+    templateLocale: _tryReadUri(yamlNode, 'template-locale', logger)?.path,
     outputLocalizationFile: _tryReadUri(yamlNode, 'output-localization-file', logger)?.path,
     untranslatedMessagesFile: _tryReadUri(yamlNode, 'untranslated-messages-file', logger)?.path,
     outputClass: _tryReadString(yamlNode, 'output-class', logger),
@@ -529,6 +543,7 @@ LocalizationOptions parseLocalizationsOptionsFromCommand({
     outputDir: command.stringArg('output-dir'),
     outputLocalizationFile: command.stringArg('output-localization-file'),
     templateArbFile: command.stringArg('template-arb-file'),
+    templateLocale: command.stringArg('template-locale'),
     untranslatedMessagesFile: command.stringArg('untranslated-messages-file'),
     outputClass: command.stringArg('output-class'),
     header: command.stringArg('header'),
@@ -599,3 +614,266 @@ Uri? _tryReadUri(YamlMap yamlMap, String key, Logger logger) {
   }
   return uri;
 }
+
+Map<String, Object?> parseJsonFile(File file) {
+  try {
+    final String content = file.readAsStringSync().trim();
+    if (content.isEmpty) {
+      return <String, Object?>{};
+    }
+    return json.decode(content) as Map<String, Object?>;
+  } on FormatException catch (e) {
+    throw L10nException(
+      'The arb file ${file.path} has the following formatting issue: \n'
+      '$e',
+    );
+  }
+}
+
+LocaleInfo localeInfoFromFile(File file, {Map<String, Object?>? cachedResources}) {
+  final Map<String, Object?> resources = cachedResources ?? parseJsonFile(file);
+  final LocaleInfo? resourcesLocaleInfo = localeInfoFromResources(resources);
+  final LocaleInfo? fileNameLocaleInfo = localeInfoFromFileName(file);
+
+  switch ((fileNameLocaleInfo, resourcesLocaleInfo)) {
+    case (null, null):
+      throw L10nException(
+        "The following .arb file's locale could not be determined: \n"
+        '${file.path} \n'
+        "Make sure that the locale is specified in the file's '@@locale' "
+        'property or as part of the filename (e.g. file_en.arb)'
+      );
+    case (LocaleInfo(), LocaleInfo()) when fileNameLocaleInfo != resourcesLocaleInfo:
+      throw L10nException(
+        'The locale specified in @@locale and the arb filename do not match. \n'
+        'Please make sure that they match, since this prevents any confusion \n'
+        'with which locale to use. Otherwise, specify the locale in either the \n'
+        'filename of the @@locale key only.\n'
+        'Current @@locale value: $resourcesLocaleInfo\n'
+        'Current filename extension: $fileNameLocaleInfo'
+      );
+    default:
+      return fileNameLocaleInfo ?? resourcesLocaleInfo!;
+  }
+}
+
+LocaleInfo? localeInfoFromResources(Map<String, Object?> resources) {
+  final String? localeString = resources['@@locale'] as String?;
+
+  if (localeString == null) {
+    return null;
+  }
+
+  return LocaleInfo.fromString(localeString);
+}
+
+// Look for the first instance of an ISO 639-1 language code, matching exactly.
+LocaleInfo? localeInfoFromFileName(File file) {
+  final String fileName = file.fileSystem.path.basenameWithoutExtension(file.path);
+
+  for (int index = 0; index < fileName.length; index += 1) {
+    // If an underscore was found, check if locale string follows.
+    if (fileName[index] == '_') {
+      // If Locale.tryParse fails, it returns null.
+      final Locale? parserResult = Locale.tryParse(fileName.substring(index + 1));
+      // If the parserResult is not an actual locale identifier, end the loop.
+      if (parserResult != null && _iso639Languages.contains(parserResult.languageCode)) {
+        // The parsed result uses dashes ('-'), but we want underscores ('_').
+        final String parserLocaleString = parserResult.toString().replaceAll('-', '_');
+        return LocaleInfo.fromString(parserLocaleString);
+      }
+    }
+  }
+
+  return null;
+}
+
+// A set containing all the ISO630-1 languages. This list was pulled from https://datahub.io/core/language-codes.
+final Set<String> _iso639Languages = <String>{
+  'aa',
+  'ab',
+  'ae',
+  'af',
+  'ak',
+  'am',
+  'an',
+  'ar',
+  'as',
+  'av',
+  'ay',
+  'az',
+  'ba',
+  'be',
+  'bg',
+  'bh',
+  'bi',
+  'bm',
+  'bn',
+  'bo',
+  'br',
+  'bs',
+  'ca',
+  'ce',
+  'ch',
+  'co',
+  'cr',
+  'cs',
+  'cu',
+  'cv',
+  'cy',
+  'da',
+  'de',
+  'dv',
+  'dz',
+  'ee',
+  'el',
+  'en',
+  'eo',
+  'es',
+  'et',
+  'eu',
+  'fa',
+  'ff',
+  'fi',
+  'fil',
+  'fj',
+  'fo',
+  'fr',
+  'fy',
+  'ga',
+  'gd',
+  'gl',
+  'gn',
+  'gsw',
+  'gu',
+  'gv',
+  'ha',
+  'he',
+  'hi',
+  'ho',
+  'hr',
+  'ht',
+  'hu',
+  'hy',
+  'hz',
+  'ia',
+  'id',
+  'ie',
+  'ig',
+  'ii',
+  'ik',
+  'io',
+  'is',
+  'it',
+  'iu',
+  'ja',
+  'jv',
+  'ka',
+  'kg',
+  'ki',
+  'kj',
+  'kk',
+  'kl',
+  'km',
+  'kn',
+  'ko',
+  'kr',
+  'ks',
+  'ku',
+  'kv',
+  'kw',
+  'ky',
+  'la',
+  'lb',
+  'lg',
+  'li',
+  'ln',
+  'lo',
+  'lt',
+  'lu',
+  'lv',
+  'mg',
+  'mh',
+  'mi',
+  'mk',
+  'ml',
+  'mn',
+  'mr',
+  'ms',
+  'mt',
+  'my',
+  'na',
+  'nb',
+  'nd',
+  'ne',
+  'ng',
+  'nl',
+  'nn',
+  'no',
+  'nr',
+  'nv',
+  'ny',
+  'oc',
+  'oj',
+  'om',
+  'or',
+  'os',
+  'pa',
+  'pi',
+  'pl',
+  'ps',
+  'pt',
+  'qu',
+  'rm',
+  'rn',
+  'ro',
+  'ru',
+  'rw',
+  'sa',
+  'sc',
+  'sd',
+  'se',
+  'sg',
+  'si',
+  'sk',
+  'sl',
+  'sm',
+  'sn',
+  'so',
+  'sq',
+  'sr',
+  'ss',
+  'st',
+  'su',
+  'sv',
+  'sw',
+  'ta',
+  'te',
+  'tg',
+  'th',
+  'ti',
+  'tk',
+  'tl',
+  'tn',
+  'to',
+  'tr',
+  'ts',
+  'tt',
+  'tw',
+  'ty',
+  'ug',
+  'uk',
+  'ur',
+  'uz',
+  've',
+  'vi',
+  'vo',
+  'wa',
+  'wo',
+  'xh',
+  'yi',
+  'yo',
+  'za',
+  'zh',
+  'zu',
+};

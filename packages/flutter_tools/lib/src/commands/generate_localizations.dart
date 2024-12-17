@@ -52,6 +52,11 @@ class GenerateLocalizationsCommand extends FlutterCommand {
             'generating the Dart localization and messages files.',
     );
     argParser.addOption(
+      'template-locale',
+      help: 'The locale that will be used as the basis for generating the Dart '
+            'localization and messages files.',
+    );
+    argParser.addOption(
       'output-localization-file',
       help: 'The filename for the output localization and localizations '
             'delegate classes.',

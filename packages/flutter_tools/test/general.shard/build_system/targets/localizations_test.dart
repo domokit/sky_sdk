@@ -37,6 +37,7 @@ void main() {
       ..writeAsStringSync('''
 arb-dir: arb
 template-arb-file: example.arb
+template-locale: en
 output-localization-file: bar
 untranslated-messages-file: untranslated
 output-class: Foo
@@ -58,6 +59,7 @@ nullable-getter: false
 
     expect(options.arbDir, Uri.parse('arb').path);
     expect(options.templateArbFile, Uri.parse('example.arb').path);
+    expect(options.templateLocale, 'en');
     expect(options.outputLocalizationFile, Uri.parse('bar').path);
     expect(options.untranslatedMessagesFile, Uri.parse('untranslated').path);
     expect(options.outputClass, 'Foo');

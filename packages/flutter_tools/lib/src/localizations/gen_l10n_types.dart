@@ -2,12 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:intl/locale.dart';
-
 import '../base/common.dart';
 import '../base/file_system.dart';
 import '../base/logger.dart';
-import '../convert.dart';
 import 'localizations_utils.dart';
 import 'message_parser.dart';
 
@@ -350,6 +347,7 @@ class Message {
     }
   ) : assert(resourceId.isNotEmpty),
       value = _value(templateBundle.resources, resourceId),
+      formattedResourceId = _formattedResourceId(resourceId, templateBundle.namespace),
       description = _description(templateBundle.resources, resourceId, isResourceAttributeRequired),
       templatePlaceholders = _placeholders(templateBundle.resources, resourceId, isResourceAttributeRequired),
       localePlaceholders = <LocaleInfo, Map<String, Placeholder>>{},
@@ -392,6 +390,7 @@ class Message {
   }
 
   final String resourceId;
+  final String formattedResourceId;
   final String value;
   final String? description;
   late final Map<LocaleInfo, String?> messages;
@@ -411,6 +410,9 @@ class Message {
     return templatePlaceholders.values
       .map((Placeholder templatePlaceholder) => placeholders[templatePlaceholder.name] ?? templatePlaceholder);
   }
+
+  static String _formattedResourceId(String resourceId, String namespace) =>
+    namespace.isEmpty ? resourceId : '${namespace}_$resourceId';
 
   static String _value(Map<String, Object?> bundle, String resourceId) {
     final Object? value = bundle[resourceId];
@@ -594,79 +596,18 @@ class Message {
 /// Represents the contents of one ARB file.
 class AppResourceBundle {
   /// Assuming that the caller has verified that the file exists and is readable.
-  factory AppResourceBundle(File file) {
-    final Map<String, Object?> resources;
-    try {
-      final String content = file.readAsStringSync().trim();
-      if (content.isEmpty) {
-        resources = <String, Object?>{};
-      } else {
-        resources = json.decode(content) as Map<String, Object?>;
-      }
-    } on FormatException catch (e) {
-      throw L10nException(
-        'The arb file ${file.path} has the following formatting issue: \n'
-        '$e',
-      );
-    }
-
-    String? localeString = resources['@@locale'] as String?;
-
-    // Look for the first instance of an ISO 639-1 language code, matching exactly.
-    final String fileName = file.fileSystem.path.basenameWithoutExtension(file.path);
-
-    for (int index = 0; index < fileName.length; index += 1) {
-      // If an underscore was found, check if locale string follows.
-      if (fileName[index] == '_') {
-        // If Locale.tryParse fails, it returns null.
-        final Locale? parserResult = Locale.tryParse(fileName.substring(index + 1));
-        // If the parserResult is not an actual locale identifier, end the loop.
-        if (parserResult != null && _iso639Languages.contains(parserResult.languageCode)) {
-          // The parsed result uses dashes ('-'), but we want underscores ('_').
-          final String parserLocaleString = parserResult.toString().replaceAll('-', '_');
-
-
-          if (localeString == null) {
-            // If @@locale was not defined, use the filename locale suffix.
-            localeString = parserLocaleString;
-          } else {
-            // If the localeString was defined in @@locale and in the filename, verify to
-            // see if the parsed locale matches, throw an error if it does not. This
-            // prevents developers from confusing issues when both @@locale and
-            // "_{locale}" is specified in the filename.
-            if (localeString != parserLocaleString) {
-              throw L10nException(
-                'The locale specified in @@locale and the arb filename do not match. \n'
-                'Please make sure that they match, since this prevents any confusion \n'
-                'with which locale to use. Otherwise, specify the locale in either the \n'
-                'filename or the @@locale key only.\n'
-                'Current @@locale value: $localeString\n'
-                'Current filename extension: $parserLocaleString'
-              );
-            }
-          }
-          break;
-        }
-      }
-    }
-
-    if (localeString == null) {
-      throw L10nException(
-        "The following .arb file's locale could not be determined: \n"
-        '${file.path} \n'
-        "Make sure that the locale is specified in the file's '@@locale' "
-        'property or as part of the filename (e.g. file_en.arb)'
-      );
-    }
-
+  factory AppResourceBundle(File file, String namespace) {
+    final Map<String, Object?> resources = parseJsonFile(file);
+    final LocaleInfo localeInfo = localeInfoFromFile(file, cachedResources: resources);
     final Iterable<String> ids = resources.keys.where((String key) => !key.startsWith('@'));
-    return AppResourceBundle._(file, LocaleInfo.fromString(localeString), resources, ids);
+    return AppResourceBundle._(file, localeInfo, resources, ids, namespace);
   }
 
-  const AppResourceBundle._(this.file, this.locale, this.resources, this.resourceIds);
+  const AppResourceBundle._(this.file, this.locale, this.resources, this.resourceIds, this.namespace);
 
   final File file;
   final LocaleInfo locale;
+  final String namespace;
   /// JSON representation of the contents of the ARB file.
   final Map<String, Object?> resources;
   final Iterable<String> resourceIds;
@@ -686,9 +627,47 @@ class AppResourceBundle {
   }
 }
 
+// Represents all directories that contain ARB files.
+class AppResourceGroupCollection {
+  factory AppResourceGroupCollection(Directory inputDirectory) {
+    final List<FileSystemEntity> entities = inputDirectory.listSync();
+    final List<Directory> directories = <Directory>[inputDirectory];
+    directories.addAll(entities.whereType<Directory>());
+
+    final Map<String, AppResourceBundleCollection> namespaceToBundleCollection =
+        <String, AppResourceBundleCollection>{};
+
+    for (final Directory directory in directories) {
+      final bool isRootDirectory = directory == inputDirectory;
+      final String namespace = isRootDirectory ? '' : directory.basename;
+      final AppResourceBundleCollection bundleCollection =
+        AppResourceBundleCollection(
+          directory,
+          namespace
+        );
+
+      namespaceToBundleCollection[namespace] = bundleCollection;
+    }
+
+    return AppResourceGroupCollection._(namespaceToBundleCollection);
+  }
+
+  AppResourceGroupCollection._(this._namespaceToBundleCollection);
+
+  final Map<String, AppResourceBundleCollection> _namespaceToBundleCollection;
+
+  Iterable<AppResourceBundle> get allBundles => _namespaceToBundleCollection.values.expand((AppResourceBundleCollection element) => element.bundles);
+
+  AppResourceBundleCollection bundleForNamespace(String namespace) => _namespaceToBundleCollection[namespace]!;
+
+  Iterable<AppResourceBundle> bundlesForLanguage(LocaleInfo locale) => allBundles.where((AppResourceBundle bundle) => bundle.locale == locale);
+
+  Set<LocaleInfo> get supportedLocales => Set<LocaleInfo>.from(allBundles.map((AppResourceBundle bundle) => bundle.locale));
+}
+
 // Represents all of the ARB files in [directory] as [AppResourceBundle]s.
 class AppResourceBundleCollection {
-  factory AppResourceBundleCollection(Directory directory) {
+  factory AppResourceBundleCollection(Directory directory, String namespace) {
     // Assuming that the caller has verified that the directory is readable.
 
     final RegExp filenameRE = RegExp(r'(\w+)\.arb$');
@@ -699,12 +678,12 @@ class AppResourceBundleCollection {
     // by the time we handle locales with country codes.
     final List<File> files = directory
       .listSync()
-      .whereType<File>()
+.whereType<File>()
       .where((File e) => filenameRE.hasMatch(e.path))
       .toList()
       ..sort(sortFilesByPath);
     for (final File file in files) {
-      final AppResourceBundle bundle = AppResourceBundle(file);
+      final AppResourceBundle bundle = AppResourceBundle(file, namespace);
       if (localeToBundle[bundle.locale] != null) {
         throw L10nException(
           "Multiple arb files with the same '${bundle.locale}' locale detected. \n"
@@ -732,11 +711,12 @@ class AppResourceBundleCollection {
       }
     });
 
-    return AppResourceBundleCollection._(directory, localeToBundle, languageToLocales);
+    return AppResourceBundleCollection._(namespace, directory, localeToBundle, languageToLocales);
   }
 
-  const AppResourceBundleCollection._(this._directory, this._localeToBundle, this._languageToLocales);
+  const AppResourceBundleCollection._(this.namespace, this._directory, this._localeToBundle, this._languageToLocales);
 
+  final String namespace;
   final Directory _directory;
   final Map<LocaleInfo, AppResourceBundle> _localeToBundle;
   final Map<String, List<LocaleInfo>> _languageToLocales;
@@ -753,193 +733,3 @@ class AppResourceBundleCollection {
     return 'AppResourceBundleCollection(${_directory.path}, ${locales.length} locales)';
   }
 }
-
-// A set containing all the ISO630-1 languages. This list was pulled from https://datahub.io/core/language-codes.
-final Set<String> _iso639Languages = <String>{
-  'aa',
-  'ab',
-  'ae',
-  'af',
-  'ak',
-  'am',
-  'an',
-  'ar',
-  'as',
-  'av',
-  'ay',
-  'az',
-  'ba',
-  'be',
-  'bg',
-  'bh',
-  'bi',
-  'bm',
-  'bn',
-  'bo',
-  'br',
-  'bs',
-  'ca',
-  'ce',
-  'ch',
-  'co',
-  'cr',
-  'cs',
-  'cu',
-  'cv',
-  'cy',
-  'da',
-  'de',
-  'dv',
-  'dz',
-  'ee',
-  'el',
-  'en',
-  'eo',
-  'es',
-  'et',
-  'eu',
-  'fa',
-  'ff',
-  'fi',
-  'fil',
-  'fj',
-  'fo',
-  'fr',
-  'fy',
-  'ga',
-  'gd',
-  'gl',
-  'gn',
-  'gsw',
-  'gu',
-  'gv',
-  'ha',
-  'he',
-  'hi',
-  'ho',
-  'hr',
-  'ht',
-  'hu',
-  'hy',
-  'hz',
-  'ia',
-  'id',
-  'ie',
-  'ig',
-  'ii',
-  'ik',
-  'io',
-  'is',
-  'it',
-  'iu',
-  'ja',
-  'jv',
-  'ka',
-  'kg',
-  'ki',
-  'kj',
-  'kk',
-  'kl',
-  'km',
-  'kn',
-  'ko',
-  'kr',
-  'ks',
-  'ku',
-  'kv',
-  'kw',
-  'ky',
-  'la',
-  'lb',
-  'lg',
-  'li',
-  'ln',
-  'lo',
-  'lt',
-  'lu',
-  'lv',
-  'mg',
-  'mh',
-  'mi',
-  'mk',
-  'ml',
-  'mn',
-  'mr',
-  'ms',
-  'mt',
-  'my',
-  'na',
-  'nb',
-  'nd',
-  'ne',
-  'ng',
-  'nl',
-  'nn',
-  'no',
-  'nr',
-  'nv',
-  'ny',
-  'oc',
-  'oj',
-  'om',
-  'or',
-  'os',
-  'pa',
-  'pi',
-  'pl',
-  'ps',
-  'pt',
-  'qu',
-  'rm',
-  'rn',
-  'ro',
-  'ru',
-  'rw',
-  'sa',
-  'sc',
-  'sd',
-  'se',
-  'sg',
-  'si',
-  'sk',
-  'sl',
-  'sm',
-  'sn',
-  'so',
-  'sq',
-  'sr',
-  'ss',
-  'st',
-  'su',
-  'sv',
-  'sw',
-  'ta',
-  'te',
-  'tg',
-  'th',
-  'ti',
-  'tk',
-  'tl',
-  'tn',
-  'to',
-  'tr',
-  'ts',
-  'tt',
-  'tw',
-  'ty',
-  'ug',
-  'uk',
-  'ur',
-  'uz',
-  've',
-  'vi',
-  'vo',
-  'wa',
-  'wo',
-  'xh',
-  'yi',
-  'yo',
-  'za',
-  'zh',
-  'zu',
-};

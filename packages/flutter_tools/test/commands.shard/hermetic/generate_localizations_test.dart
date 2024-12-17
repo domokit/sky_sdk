@@ -559,7 +559,7 @@ format: true
     testWithoutContext("can be parsed without FormatException when it's content is empty", () {
       final File arbFile = fileSystem.file(fileSystem.path.join('lib', 'l10n', 'app_en.arb'))
         ..createSync(recursive: true);
-      expect(AppResourceBundle(arbFile), isA<AppResourceBundle>());
+      expect(AppResourceBundle(arbFile, ''), isA<AppResourceBundle>());
     });
 
     testUsingContext("would not fail the gen-l10n command when it's content is empty", () async {
