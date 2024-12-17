@@ -342,68 +342,91 @@ class ManifestAssetBundle implements AssetBundle {
       primary: true,
     );
 
-    // Add fonts, assets, and licenses from packages.
-    final Map<String, List<File>> additionalLicenseFiles = <String, List<File>>{};
-    for (final Package package in packageConfig.packages) {
-      final Uri packageUri = package.packageUriRoot;
-      if (packageUri.scheme == 'file') {
-        final String packageManifestPath = _fileSystem.path.fromUri(packageUri.resolve('../pubspec.yaml'));
-        inputFiles.add(_fileSystem.file(packageManifestPath));
-        final FlutterManifest? packageFlutterManifest = FlutterManifest.createFromPath(
-          packageManifestPath,
-          logger: _logger,
-          fileSystem: _fileSystem,
-        );
-        if (packageFlutterManifest == null) {
-          continue;
-        }
-        // Collect any additional licenses from each package.
-        final List<File> licenseFiles = <File>[];
-        for (final String relativeLicensePath in packageFlutterManifest.additionalLicenses) {
-          final String absoluteLicensePath = _fileSystem.path.fromUri(package.root.resolve(relativeLicensePath));
-          licenseFiles.add(_fileSystem.file(absoluteLicensePath).absolute);
-        }
-        additionalLicenseFiles[packageFlutterManifest.appName] = licenseFiles;
-
-        // Skip the app itself
-        if (packageFlutterManifest.appName == flutterManifest.appName) {
-          continue;
-        }
-        final String packageBasePath = _fileSystem.path.dirname(packageManifestPath);
-
-        final Map<_Asset, List<_Asset>>? packageAssets = _parseAssets(
-          packageConfig,
-          packageFlutterManifest,
-          // Do not track wildcard directories for dependencies.
-          <Uri>[],
-          packageBasePath,
-          targetPlatform,
-          packageName: package.name,
-          attributedPackage: package,
-          flavor: flavor,
-        );
-
-        if (packageAssets == null) {
-          return 1;
-        }
-        assetVariants.addAll(packageAssets);
-        if (!includesMaterialFonts && packageFlutterManifest.usesMaterialDesign) {
-          _logger.printError(
-            'package:${package.name} has `uses-material-design: true` set but '
-            'the primary pubspec contains `uses-material-design: false`. '
-            'If the application needs material icons, then `uses-material-design` '
-            ' must be set to true.'
-          );
-        }
-        fonts.addAll(_parseFonts(
-          packageFlutterManifest,
-          packageConfig,
-          packageName: package.name,
-          primary: false,
-        ));
+    // Add fonts, assets, and licenses from packages in the project's
+    // dependencies.
+    
+    // Do a search rooted in the current app, following dependencies, to find
+    // all the transitive dependencies of the app.
+    //
+    // This avoids bundling assets from dev_dependencies and other pub workspace
+    // packages.
+    final Map<String, (Package, FlutterManifest)> transitiveDependencies = <String, (Package, FlutterManifest)>{};
+    final List<String> packageNamesToVisit = <String>[flutterManifest.appName];
+    while (packageNamesToVisit.isNotEmpty) {
+      final String current = packageNamesToVisit.removeLast();
+      if (transitiveDependencies.containsKey(current)) {
+        continue;
       }
+      final Package? package = packageConfig[current];
+      if (package == null) {
+        continue;
+      }
+      final Uri packageUri = package.root;
+      if (packageUri.scheme != 'file')  {
+        continue;
+      }
+      final String packageManifestPath = _fileSystem.path.fromUri(packageUri.resolve('pubspec.yaml'));
+      inputFiles.add(_fileSystem.file(packageManifestPath));
+      final FlutterManifest? packageFlutterManifest = FlutterManifest.createFromPath(
+        packageManifestPath,
+        logger: _logger,
+        fileSystem: _fileSystem,
+      );
+      if (packageFlutterManifest == null) {
+        continue;
+      }
+      packageNamesToVisit.addAll(packageFlutterManifest.dependencies);
+      transitiveDependencies[current] = (package, packageFlutterManifest);
     }
+    print(transitiveDependencies);
+    final Map<String, List<File>> additionalLicenseFiles = <String, List<File>>{};
+    for (final (Package package, FlutterManifest packageFlutterManifest) in transitiveDependencies.values) {
+      // Collect any additional licenses from each package.
+      final List<File> licenseFiles = <File>[];
+      for (final String relativeLicensePath in packageFlutterManifest.additionalLicenses) {
+        final String absoluteLicensePath = _fileSystem.path.fromUri(package.root.resolve(relativeLicensePath));
+        licenseFiles.add(_fileSystem.file(absoluteLicensePath).absolute);
+      }
+      additionalLicenseFiles[packageFlutterManifest.appName] = licenseFiles;
 
+      // Skip the app itself
+      if (packageFlutterManifest.appName == flutterManifest.appName) {
+        continue;
+      }
+      
+      final String packageBasePath = _fileSystem.path.fromUri(package.root);
+
+      final Map<_Asset, List<_Asset>>? packageAssets = _parseAssets(
+        packageConfig,
+        packageFlutterManifest,
+        // Do not track wildcard directories for dependencies.
+        <Uri>[],
+        packageBasePath,
+        targetPlatform,
+        packageName: package.name,
+        attributedPackage: package,
+        flavor: flavor,
+      );
+
+      if (packageAssets == null) {
+        return 1;
+      }
+      assetVariants.addAll(packageAssets);
+      if (!includesMaterialFonts && packageFlutterManifest.usesMaterialDesign) {
+        _logger.printError(
+          'package:${package.name} has `uses-material-design: true` set but '
+          'the primary pubspec contains `uses-material-design: false`. '
+          'If the application needs material icons, then `uses-material-design` '
+          ' must be set to true.'
+        );
+      }
+      fonts.addAll(_parseFonts(
+        packageFlutterManifest,
+        packageConfig,
+        packageName: package.name,
+        primary: false,
+      ));
+    }
     // Save the contents of each image, image variant, and font
     // asset in entries.
     for (final _Asset asset in assetVariants.keys) {
