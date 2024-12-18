@@ -769,7 +769,26 @@ abstract class InkFeature {
     return det != 0 ? (inverseTransform..multiply(transform)) : null;
   }
 
+  RenderObject? _getFirstLayoutedParent(RenderObject renderObject) {
+    final parent = renderObject.parent;
+    if (parent == null) return null;
+    if (parent is RenderBox && parent.hasSize) return parent;
+    return _getFirstLayoutedParent(parent);
+  }
+
   void _paint(Canvas canvas) {
+    // Ignore render objects which have not been laid out.
+    if (!referenceBox.hasSize) {
+      return;
+    }
+    // If we don't want to allow unlayouted renderboxes to be ignored, we should narrow the error down:
+    if (!referenceBox.hasSize) {
+      // TODO(gustl22): Should we extract the causing widget from the [referenceBox.debugCreator.element.widget] ?
+      final RenderObject? firstLayoutedParent = _getFirstLayoutedParent(referenceBox);
+      assert(referenceBox.hasSize,
+          'paint() has been called before the child was laid out. The first parent in the tree which was layouted is: $firstLayoutedParent');
+    }
+
     assert(referenceBox.attached);
     assert(!_debugDisposed);
     // determine the transform that gets our coordinate system to be like theirs

@@ -276,10 +276,12 @@ class _InkState extends State<Ink> {
   Widget _build(BuildContext context) {
     // By creating the InkDecoration from within a Builder widget, we can
     // use the RenderBox of the Padding widget.
+    // We should also implicate that the decoration isn't visible, if the referenced box is not visible.
+    final bool isVisible = Visibility.of(context) && Visibility.of(_boxKey.currentContext!);
     if (_ink == null) {
       _ink = InkDecoration(
         decoration: widget.decoration,
-        isVisible: Visibility.of(context),
+        isVisible: isVisible,
         configuration: createLocalImageConfiguration(context),
         controller: Material.of(context),
         referenceBox: _boxKey.currentContext!.findRenderObject()! as RenderBox,
@@ -287,7 +289,7 @@ class _InkState extends State<Ink> {
       );
     } else {
       _ink!.decoration = widget.decoration;
-      _ink!.isVisible = Visibility.of(context);
+      _ink!.isVisible = isVisible;
       _ink!.configuration = createLocalImageConfiguration(context);
     }
     return widget.child ?? ConstrainedBox(constraints: const BoxConstraints.expand());
