@@ -605,9 +605,13 @@ class _CircularProgressIndicatorPainter extends CustomPainter {
     // as users are already familiar with.
     final double strokeOffset = strokeWidth / 2 * -strokeAlign;
     final Offset arcBaseOffset = Offset(strokeOffset, strokeOffset);
+
+    // Calculating the minumum side for circlular shape when parent have
+    // tight constraints like 'Expanded' widget.
+    final double side = math.min(size.width, size.height);
     final Size arcActualSize = Size(
-      size.width - strokeOffset * 2,
-      size.height - strokeOffset * 2,
+      side - strokeOffset * 2,
+      side - strokeOffset * 2,
     );
     final bool hasGap = trackGap != null && trackGap! > 0;
 
