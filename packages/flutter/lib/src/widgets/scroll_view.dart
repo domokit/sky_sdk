@@ -45,6 +45,9 @@ enum ScrollViewKeyboardDismissBehavior {
   /// `onDrag` means that the [ScrollView] will dismiss an on-screen keyboard
   /// when a drag begins.
   onDrag,
+  /// `noDrag` means that the [ScrollView] will dismiss an on-screen keyboard
+  /// when a scroll begins irrespective of a drag.
+  noDrag,
 }
 
 /// A widget that combines a [Scrollable] and a [Viewport] to create an

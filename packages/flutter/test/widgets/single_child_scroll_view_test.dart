@@ -1078,6 +1078,46 @@ void main() {
     await tester.pumpAndSettle();
     expect(textField.focusNode!.hasFocus, isFalse);
 
+    // ScrollViewKeyboardDismissBehavior.onDrag don't dismiss keyboard on scroll with no drag
+    await boilerplate(ScrollViewKeyboardDismissBehavior.onDrag);
+
+    finder = find.byType(TextField).first;
+    textField = tester.widget(finder);
+    await tester.showKeyboard(finder);
+    expect(textField.focusNode!.hasFocus, isTrue);
+
+    final TestPointer testPointer = TestPointer(1, PointerDeviceKind.mouse);
+    final Offset scrollStart = tester.getCenter(find.byType(SingleChildScrollView));
+    testPointer.hover(scrollStart);
+    await tester.sendEventToBinding(testPointer.scroll(Offset(scrollStart.dx, scrollStart.dy - 100)));
+    await tester.pumpAndSettle();
+    expect(textField.focusNode!.hasFocus, isTrue);
+
+    // ScrollViewKeyboardDismissBehavior.noDrag dismiss keyboard on scroll with no drag
+    await boilerplate(ScrollViewKeyboardDismissBehavior.noDrag);
+
+    finder = find.byType(TextField).first;
+    textField = tester.widget(finder);
+    await tester.showKeyboard(finder);
+    expect(textField.focusNode!.hasFocus, isTrue);
+
+    testPointer.hover(scrollStart);
+    await tester.sendEventToBinding(testPointer.scroll(Offset(scrollStart.dx, scrollStart.dy - 100)));
+    await tester.pumpAndSettle();
+    expect(textField.focusNode!.hasFocus, isFalse);
+
+    // ScrollViewKeyboardDismissBehavior.noDrag dismiss keyboard on scroll with drag
+    await boilerplate(ScrollViewKeyboardDismissBehavior.noDrag);
+
+    finder = find.byType(TextField).first;
+    textField = tester.widget(finder);
+    await tester.showKeyboard(finder);
+    expect(textField.focusNode!.hasFocus, isTrue);
+
+    await tester.dragUntilVisible(finder, find.byType(SingleChildScrollView), const Offset(0.0, -40.0));
+    await tester.pumpAndSettle();
+    expect(textField.focusNode!.hasFocus, isFalse);
+
     // ScrollViewKeyboardDismissBehavior.manual does no dismiss the keyboard
     await boilerplate(ScrollViewKeyboardDismissBehavior.manual);
 
