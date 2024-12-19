@@ -89,7 +89,7 @@ abstract class StreamBuilderBase<T, S> extends StatefulWidget {
   S afterDisconnected(S current) => current;
 
   /// Returns a Widget based on the [currentSummary].
-  Widget build(BuildContext context, S currentSummary);
+  Widget buildFromSummary(BuildContext context, S currentSummary);
 
   @override
   State<StreamBuilderBase<T, S>> createState() => _StreamBuilderBaseState<T, S>();
@@ -120,7 +120,7 @@ class _StreamBuilderBaseState<T, S> extends State<StreamBuilderBase<T, S>> {
   }
 
   @override
-  Widget build(BuildContext context) => widget.build(context, _summary);
+  Widget build(BuildContext context) => widget.buildFromSummary(context, _summary);
 
   @override
   void dispose() {
@@ -451,7 +451,7 @@ class StreamBuilder<T> extends StreamBuilderBase<T, AsyncSnapshot<T>> {
   AsyncSnapshot<T> afterDisconnected(AsyncSnapshot<T> current) => current.inState(ConnectionState.none);
 
   @override
-  Widget build(BuildContext context, AsyncSnapshot<T> currentSummary) => builder(context, currentSummary);
+  Widget buildFromSummary(BuildContext context, AsyncSnapshot<T> currentSummary) => builder(context, currentSummary);
 }
 
 /// A widget that builds itself based on the latest snapshot of interaction with

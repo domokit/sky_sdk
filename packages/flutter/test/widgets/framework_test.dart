@@ -1374,7 +1374,7 @@ void main() {
       didChangeDependencies: (bool value) {
         isDidChangeDependenciesDecorated = value;
       },
-      build: (bool value) {
+      buildFunction: (bool value) {
         isBuildDecorated = value;
       },
     );
@@ -1953,6 +1953,14 @@ The findRenderObject() method was called for the following element:
       )),
     );
   });
+
+  testWidgets('StatefulWidget with build() method', (WidgetTester tester) async {
+    await tester.pumpWidget(_StatefulWidgetWithBuildMethod());
+    expect(
+      find.text('StatefulWidget.build() worked!'),
+      findsOneWidget,
+    );
+  });
 }
 
 class _TestInheritedElement extends InheritedElement {
@@ -2009,11 +2017,11 @@ class Decorate extends StatefulWidget {
   const Decorate({
     super.key,
     required this.didChangeDependencies,
-    required this.build,
+    required this.buildFunction,
   });
 
   final void Function(bool isInBuild) didChangeDependencies;
-  final void Function(bool isInBuild) build;
+  final void Function(bool isInBuild) buildFunction;
 
   @override
   State<Decorate> createState() => _DecorateState();
@@ -2047,7 +2055,7 @@ class _DecorateState extends State<Decorate> {
   @override
   Widget build(covariant DecorateElement context) {
     context.dependOnInheritedWidgetOfExactType<Inherited>();
-    widget.build.call(context.isDecorated);
+    widget.buildFunction.call(context.isDecorated);
     return Container();
   }
 }
@@ -2494,4 +2502,22 @@ class _NullElement extends Element {
 
   @override
   bool get debugDoingBuild => throw UnimplementedError();
+}
+
+class _StatefulWidgetWithBuildMethod extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _StatefulWidgetWithBuildMethodState();
+
+  @override
+  Widget build(BuildContext context) {
+    final _StatefulWidgetWithBuildMethodState state = context.stateOf<_StatefulWidgetWithBuildMethodState>();
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Text(state.message),
+    );
+  }
+}
+
+class _StatefulWidgetWithBuildMethodState extends State<_StatefulWidgetWithBuildMethod> {
+  String message = 'StatefulWidget.build() worked!';
 }

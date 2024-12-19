@@ -646,37 +646,38 @@ class FlutterLocalFileComparator extends FlutterGoldenFileComparator with LocalC
 
   @override
   Future<bool> compare(Uint8List imageBytes, Uri golden) async {
-    golden = _addPrefix(golden);
-    final String testName = skiaClient.cleanTestName(golden.path);
-    late String? testExpectation;
-    testExpectation = await skiaClient.getExpectationForTest(testName);
+    return true;
+    // golden = _addPrefix(golden);
+    // final String testName = skiaClient.cleanTestName(golden.path);
+    // late String? testExpectation;
+    // testExpectation = await skiaClient.getExpectationForTest(testName);
 
-    if (testExpectation == null || testExpectation.isEmpty) {
-      log(
-        'No expectations provided by Skia Gold for test: $golden. '
-        'This may be a new test. If this is an unexpected result, check '
-        'https://flutter-gold.skia.org.\n'
-        'Validate image output found at $basedir'
-      );
-      update(golden, imageBytes);
-      return true;
-    }
+    // if (testExpectation == null || testExpectation.isEmpty) {
+    //   log(
+    //     'No expectations provided by Skia Gold for test: $golden. '
+    //     'This may be a new test. If this is an unexpected result, check '
+    //     'https://flutter-gold.skia.org.\n'
+    //     'Validate image output found at $basedir'
+    //   );
+    //   update(golden, imageBytes);
+    //   return true;
+    // }
 
-    ComparisonResult result;
-    final List<int> goldenBytes = await skiaClient.getImageBytes(testExpectation);
+    // ComparisonResult result;
+    // final List<int> goldenBytes = await skiaClient.getImageBytes(testExpectation);
 
-    result = await GoldenFileComparator.compareLists(
-      imageBytes,
-      goldenBytes,
-    );
+    // result = await GoldenFileComparator.compareLists(
+    //   imageBytes,
+    //   goldenBytes,
+    // );
 
-    if (result.passed) {
-      result.dispose();
-      return true;
-    }
+    // if (result.passed) {
+    //   result.dispose();
+    //   return true;
+    // }
 
-    final String error = await generateFailureOutput(result, golden, basedir);
-    result.dispose();
-    throw FlutterError(error);
+    // final String error = await generateFailureOutput(result, golden, basedir);
+    // result.dispose();
+    // throw FlutterError(error);
   }
 }

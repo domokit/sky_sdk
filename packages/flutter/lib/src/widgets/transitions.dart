@@ -94,6 +94,7 @@ abstract class AnimatedWidget extends StatefulWidget {
   /// Override this method to build widgets that depend on the state of the
   /// listenable (e.g., the current value of the animation).
   @protected
+  @override
   Widget build(BuildContext context);
 
   /// Subclasses typically do not override this method.

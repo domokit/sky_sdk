@@ -796,6 +796,13 @@ abstract class StatefulWidget extends Widget {
   @protected
   @factory
   State createState();
+
+  /// Builds a widget based on the current context and state.
+  @protected
+  Widget build(BuildContext context) {
+    final StatefulElement element = context as StatefulElement;
+    return element.state.build(context);
+  }
 }
 
 /// Tracks the lifecycle of [State] objects when asserts are enabled.
@@ -1465,7 +1472,17 @@ abstract class State<T extends StatefulWidget> with Diagnosticable {
   ///
   ///  * [StatefulWidget], which contains the discussion on performance considerations.
   @protected
-  Widget build(BuildContext context);
+  Widget build(BuildContext context) {
+    assert(() {
+      // Put the expanded error message in assert so it's tree-shaken off in release builds.
+      throw UnimplementedError(
+        'A `build` method is not found for widget ${widget.runtimeType}.\n'
+        'Either class ${widget.runtimeType} or class $runtimeType must '
+        'implement the `build` method.'
+      );
+    }());
+    throw UnimplementedError();
+  }
 
   /// Called when a dependency of this [State] object changes.
   ///
@@ -2258,6 +2275,23 @@ typedef ConditionalElementVisitor = bool Function(Element element);
 abstract class BuildContext {
   /// The current configuration of the [Element] that is this [BuildContext].
   Widget get widget;
+
+  /// Returns the state object corresponding to this widget instance.
+  ///
+  /// Throws an error if the widget is not a [StatefulWidget].
+  S stateOf<S extends State>();
+
+  /// Returns the state object corresponding to this widget instance.
+  ///
+  /// Throws an error if the widget is not a [StatefulWidget].
+  static S stateForContext<S extends State>(BuildContext context) {
+    assert(
+      context is StatefulElement,
+      'Widget ${context.widget.runtimeType} is not a StatefulWidget.\n'
+      'Only build contexts of stateful widgets can provide their state object.',
+    );
+    return (context as StatefulElement).state as S;
+  }
 
   /// The [BuildOwner] for this context. The [BuildOwner] is in charge of
   /// managing the rendering pipeline for this context.
@@ -3480,6 +3514,9 @@ abstract class Element extends DiagnosticableTree implements BuildContext {
       );
     }
   }
+
+  @override
+  S stateOf<S extends State>() => BuildContext.stateForContext<S>(this);
 
   Element? _parent;
   _NotificationNode? _notificationTree;
@@ -5743,7 +5780,9 @@ class StatefulElement extends ComponentElement {
   }
 
   @override
-  Widget build() => state.build(this);
+  Widget build() {
+    return (widget as StatefulWidget).build(this);
+  }
 
   /// The [State] instance associated with this location in the tree.
   ///

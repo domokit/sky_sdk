@@ -18,6 +18,7 @@ abstract class StatusTransitionWidget extends StatefulWidget {
 
   /// Override this method to build widgets that depend on the current status
   /// of the animation.
+  @override
   Widget build(BuildContext context);
 
   @override
