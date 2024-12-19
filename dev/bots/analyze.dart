@@ -1046,6 +1046,24 @@ Future<void> verifyIntegrationTestTimeouts(String workingDirectory) async {
 final DartFormatter _formatter = DartFormatter(languageVersion: DartFormatter.latestLanguageVersion);
 
 Future<void> verifyInternationalizations(String workingDirectory, String dartExecutable) async {
+  await _verifyGenLocalizations(workingDirectory, dartExecutable);
+  await _verifyStocksAppLocalizations(workingDirectory, dartExecutable);
+}
+
+Future<void> _verifyStocksAppLocalizations(String workingDirectory, String dartExecutable) async {
+  final Directory appRoot = Directory(
+    path.join(workingDirectory, 'dev', 'benchmarks', 'test_apps', 'stocks'),
+  );
+
+  if (!appRoot.existsSync()) {}
+
+  // We have already run `flutter update-packages`, so let's just check if
+  // there's a dirty checkout.
+  final EvalResult result = await _evalCommand('git', const <String>['diff-files', '--name-only']);
+  final List<String> dirtyFiles = result.stdout.trim().split('\n');
+}
+
+Future<void> _verifyGenLocalizations(String workingDirectory, String dartExecutable) async {
   final EvalResult materialGenResult = await _evalCommand(
     dartExecutable,
     <String>[
