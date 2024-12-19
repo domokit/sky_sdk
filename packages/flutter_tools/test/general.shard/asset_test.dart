@@ -289,7 +289,6 @@ flutter:
           flutterProject: FlutterProject.fromDirectoryTest(fileSystem.directory('main')),
         );
 
-        printOnFailure(logger.errorText);
         expect(assetBundle.entries, contains('FontManifest.json'));
         expect(
           await _getValueAsString('FontManifest.json', assetBundle),

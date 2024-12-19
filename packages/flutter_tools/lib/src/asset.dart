@@ -378,7 +378,6 @@ class ManifestAssetBundle implements AssetBundle {
       packageNamesToVisit.addAll(packageFlutterManifest.dependencies);
       transitiveDependencies[current] = (package, packageFlutterManifest);
     }
-    print(transitiveDependencies);
     final Map<String, List<File>> additionalLicenseFiles = <String, List<File>>{};
     for (final (Package package, FlutterManifest packageFlutterManifest) in transitiveDependencies.values) {
       // Collect any additional licenses from each package.
