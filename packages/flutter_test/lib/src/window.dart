@@ -327,6 +327,9 @@ class TestPlatformDispatcher implements PlatformDispatcher {
   }
 
   @override
+  double scaleFontSize(double unscaledFontSize) => textScaleFactor * unscaledFontSize;
+
+  @override
   Brightness get platformBrightness => _platformBrightnessTestValue ?? _platformDispatcher.platformBrightness;
   Brightness? _platformBrightnessTestValue;
   @override

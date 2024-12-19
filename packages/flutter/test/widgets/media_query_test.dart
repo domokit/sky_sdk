@@ -211,7 +211,8 @@ void main() {
     expect(data.hashCode, data.copyWith().hashCode);
     expect(data.size, tester.view.physicalSize / tester.view.devicePixelRatio);
     expect(data.devicePixelRatio, tester.view.devicePixelRatio);
-    expect(data.textScaler, TextScaler.linear(tester.platformDispatcher.textScaleFactor));
+    expect(data.textScaler.scale(100), 123 * 100);
+    expect(data.textScaler.toString(), contains('SystemTextScaler'));
     expect(data.platformBrightness, tester.platformDispatcher.platformBrightness);
     expect(data.padding, EdgeInsets.fromViewPadding(tester.view.padding, tester.view.devicePixelRatio));
     expect(data.viewPadding, EdgeInsets.fromViewPadding(tester.view.viewPadding, tester.view.devicePixelRatio));
@@ -311,7 +312,7 @@ void main() {
     expect(outerData, isNull);
     expect(data.size, tester.view.physicalSize / tester.view.devicePixelRatio);
     expect(data.devicePixelRatio, tester.view.devicePixelRatio);
-    expect(data.textScaler, TextScaler.linear(tester.platformDispatcher.textScaleFactor));
+    expect(data.textScaler.scale(10), 10 * tester.platformDispatcher.textScaleFactor);
     expect(data.platformBrightness, tester.platformDispatcher.platformBrightness);
     expect(data.padding, EdgeInsets.fromViewPadding(tester.view.padding, tester.view.devicePixelRatio));
     expect(data.viewPadding, EdgeInsets.fromViewPadding(tester.view.viewPadding, tester.view.devicePixelRatio));
@@ -367,10 +368,10 @@ void main() {
     expect(outerData, isNull);
     expect(rebuildCount, 1);
 
-    expect(data.textScaler, const TextScaler.linear(123));
+    expect(data.textScaler.scale(10), 10 * 123);
     tester.platformDispatcher.textScaleFactorTestValue = 456;
     await tester.pump();
-    expect(data.textScaler, const TextScaler.linear(456));
+    expect(data.textScaler.scale(10), 10 * 456);
     expect(rebuildCount, 2);
 
     expect(data.platformBrightness, Brightness.dark);
@@ -426,10 +427,10 @@ void main() {
 
     expect(rebuildCount, 1);
 
-    expect(data.textScaler, const TextScaler.linear(44));
+    expect(data.textScaler.scale(10), 10 * 44);
     tester.platformDispatcher.textScaleFactorTestValue = 456;
     await tester.pump();
-    expect(data.textScaler, const TextScaler.linear(44));
+    expect(data.textScaler.scale(10), 10 * 44);
     expect(rebuildCount, 1);
 
     expect(data.platformBrightness, Brightness.dark);
@@ -1151,6 +1152,12 @@ void main() {
 
     expect(mediaQueryInside, isNotNull);
     expect(mediaQueryOutside, isNot(mediaQueryInside));
+  });
+
+  testWidgets('MediaQuery.fromView creates a SystemTextScaler', (WidgetTester tester) async {
+    addTearDown(() => tester.platformDispatcher.clearAllTestValues());
+    tester.platformDispatcher.textScaleFactorTestValue = 123;
+    expect(MediaQueryData.fromView(tester.view).textScaler.toString(), contains('SystemTextScaler'));
   });
 
   testWidgets('MediaQueryData.fromWindow is created using window values', (WidgetTester tester) async {

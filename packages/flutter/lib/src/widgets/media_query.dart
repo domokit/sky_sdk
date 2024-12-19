@@ -269,8 +269,7 @@ class MediaQueryData {
       supportsShowingSystemContextMenu = platformData?.supportsShowingSystemContextMenu ?? view.platformDispatcher.supportsShowingSystemContextMenu;
 
   static TextScaler _textScalerFromView(ui.FlutterView view, MediaQueryData? platformData) {
-    final double scaleFactor = platformData?.textScaleFactor ?? view.platformDispatcher.textScaleFactor;
-    return scaleFactor == 1.0 ? TextScaler.noScaling : TextScaler.linear(scaleFactor);
+    return platformData?.textScaler ?? (view.platformDispatcher.textScaleFactor == 1 ? TextScaler.noScaling : _SystemTextScaler(view.platformDispatcher));
   }
 
   /// The size of the media in logical pixels (e.g, the size of the screen).
@@ -1883,4 +1882,32 @@ class _UnspecifiedTextScaler implements TextScaler {
 
   @override
   double get textScaleFactor => throw UnimplementedError();
+}
+
+class _SystemTextScaler extends TextScaler {
+  _SystemTextScaler(this.platformDispatcher) : textScaleFactor = platformDispatcher.textScaleFactor;
+
+  final ui.PlatformDispatcher platformDispatcher;
+  @override
+  double scale(double fontSize) => platformDispatcher.scaleFontSize(fontSize);
+
+  @override
+  final double textScaleFactor;
+
+  @override
+  bool operator==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    // The system's (potentially deprecated) text scale factor is used for
+    // the equality check because the `scale` function's output monotonically
+    // increases with the text scale factor.
+    return other is _SystemTextScaler && textScaleFactor == other.textScaleFactor;
+  }
+
+  @override
+  int get hashCode => textScaleFactor.hashCode;
+
+  @override
+  String toString() => 'SystemTextScaler @ ${textScaleFactor}x';
 }
