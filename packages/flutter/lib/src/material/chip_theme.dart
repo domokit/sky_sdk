@@ -197,6 +197,7 @@ class ChipThemeData with Diagnosticable {
     this.selectedShadowColor,
     this.showCheckmark,
     this.checkmarkColor,
+    this.splashColor,
     this.labelPadding,
     this.padding,
     this.side,
@@ -355,6 +356,13 @@ class ChipThemeData with Diagnosticable {
   /// This property applies to [FilterChip], [InputChip], [RawChip].
   final Color? checkmarkColor;
 
+  /// Overrides the default for [TappableChipAttributes.splashColor],
+  /// the color of the splash shown when the chip is pressed.
+  ///
+  /// This property applies to [ActionChip], [Chip], [ChoiceChip],
+  /// [FilterChip], [InputChip], [RawChip].
+  final Color? splashColor;
+
   /// Overrides the default for [ChipAttributes.labelPadding],
   /// the padding around the chip's label widget.
   ///
@@ -475,6 +483,7 @@ class ChipThemeData with Diagnosticable {
     Color? selectedShadowColor,
     bool? showCheckmark,
     Color? checkmarkColor,
+    Color? splashColor,
     EdgeInsetsGeometry? labelPadding,
     EdgeInsetsGeometry? padding,
     BorderSide? side,
@@ -500,6 +509,7 @@ class ChipThemeData with Diagnosticable {
       selectedShadowColor: selectedShadowColor ?? this.selectedShadowColor,
       showCheckmark: showCheckmark ?? this.showCheckmark,
       checkmarkColor: checkmarkColor ?? this.checkmarkColor,
+      splashColor: splashColor ?? this.splashColor,
       labelPadding: labelPadding ?? this.labelPadding,
       padding: padding ?? this.padding,
       side: side ?? this.side,
@@ -534,6 +544,7 @@ class ChipThemeData with Diagnosticable {
       selectedShadowColor: Color.lerp(a?.selectedShadowColor, b?.selectedShadowColor, t),
       showCheckmark: t < 0.5 ? a?.showCheckmark ?? true : b?.showCheckmark ?? true,
       checkmarkColor: Color.lerp(a?.checkmarkColor, b?.checkmarkColor, t),
+      splashColor: Color.lerp(a?.splashColor, b?.splashColor, t),
       labelPadding: EdgeInsetsGeometry.lerp(a?.labelPadding, b?.labelPadding, t),
       padding: EdgeInsetsGeometry.lerp(a?.padding, b?.padding, t),
       side: _lerpSides(a?.side, b?.side, t),
@@ -592,6 +603,7 @@ class ChipThemeData with Diagnosticable {
     selectedShadowColor,
     showCheckmark,
     checkmarkColor,
+    splashColor,
     labelPadding,
     padding,
     side,
@@ -626,6 +638,7 @@ class ChipThemeData with Diagnosticable {
         && other.selectedShadowColor == selectedShadowColor
         && other.showCheckmark == showCheckmark
         && other.checkmarkColor == checkmarkColor
+        && other.splashColor == splashColor
         && other.labelPadding == labelPadding
         && other.padding == padding
         && other.side == side
@@ -654,6 +667,7 @@ class ChipThemeData with Diagnosticable {
     properties.add(ColorProperty('selectedShadowColor', selectedShadowColor, defaultValue: null));
     properties.add(DiagnosticsProperty<bool>('showCheckmark', showCheckmark, defaultValue: null));
     properties.add(ColorProperty('checkMarkColor', checkmarkColor, defaultValue: null));
+    properties.add(ColorProperty('splashColor', splashColor, defaultValue: null));
     properties.add(DiagnosticsProperty<EdgeInsetsGeometry>('labelPadding', labelPadding, defaultValue: null));
     properties.add(DiagnosticsProperty<EdgeInsetsGeometry>('padding', padding, defaultValue: null));
     properties.add(DiagnosticsProperty<BorderSide>('side', side, defaultValue: null));

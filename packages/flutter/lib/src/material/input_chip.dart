@@ -133,6 +133,7 @@ class InputChip extends StatelessWidget
     this.deleteIconBoxConstraints,
     this.chipAnimationStyle,
     this.mouseCursor,
+    this.splashColor,
   }) : assert(pressElevation == null || pressElevation >= 0.0),
        assert(elevation == null || elevation >= 0.0);
 
@@ -212,6 +213,8 @@ class InputChip extends StatelessWidget
   final ChipAnimationStyle? chipAnimationStyle;
   @override
   final MouseCursor? mouseCursor;
+  @override
+  final Color? splashColor;
 
   @override
   Widget build(BuildContext context) {
@@ -261,6 +264,7 @@ class InputChip extends StatelessWidget
       deleteIconBoxConstraints: deleteIconBoxConstraints,
       chipAnimationStyle: chipAnimationStyle,
       mouseCursor: mouseCursor,
+      splashColor: splashColor,
     );
   }
 }

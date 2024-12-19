@@ -121,6 +121,7 @@ class ActionChip extends StatelessWidget implements ChipAttributes, TappableChip
     this.avatarBoxConstraints,
     this.chipAnimationStyle,
     this.mouseCursor,
+    this.splashColor,
   }) : assert(pressElevation == null || pressElevation >= 0.0),
        assert(elevation == null || elevation >= 0.0),
        _chipVariant = _ChipVariant.flat;
@@ -158,6 +159,7 @@ class ActionChip extends StatelessWidget implements ChipAttributes, TappableChip
     this.avatarBoxConstraints,
     this.chipAnimationStyle,
     this.mouseCursor,
+    this.splashColor,
   }) : assert(pressElevation == null || pressElevation >= 0.0),
        assert(elevation == null || elevation >= 0.0),
        _chipVariant = _ChipVariant.elevated;
@@ -212,6 +214,8 @@ class ActionChip extends StatelessWidget implements ChipAttributes, TappableChip
   final ChipAnimationStyle? chipAnimationStyle;
   @override
   final MouseCursor? mouseCursor;
+  @override
+  final Color? splashColor;
 
   @override
   bool get isEnabled => onPressed != null;
@@ -252,6 +256,7 @@ class ActionChip extends StatelessWidget implements ChipAttributes, TappableChip
       avatarBoxConstraints: avatarBoxConstraints,
       chipAnimationStyle: chipAnimationStyle,
       mouseCursor: mouseCursor,
+      splashColor: splashColor,
     );
   }
 }

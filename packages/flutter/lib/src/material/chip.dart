@@ -291,6 +291,9 @@ abstract interface class ChipAttributes {
   ///
   /// If this property is null, [WidgetStateMouseCursor.clickable] will be used.
   MouseCursor? get mouseCursor;
+
+  /// the color of the splash shown when the chip is pressed.
+  Color? get splashColor;
 }
 
 /// An interface for Material Design chips that can be deleted.
@@ -718,6 +721,7 @@ class Chip extends StatelessWidget implements ChipAttributes, DeletableChipAttri
     this.deleteIconBoxConstraints,
     this.chipAnimationStyle,
     this.mouseCursor,
+    this.splashColor,
   }) : assert(elevation == null || elevation >= 0.0);
 
   @override
@@ -772,6 +776,8 @@ class Chip extends StatelessWidget implements ChipAttributes, DeletableChipAttri
   final ChipAnimationStyle? chipAnimationStyle;
   @override
   final MouseCursor? mouseCursor;
+  @override
+  final Color? splashColor;
 
   @override
   Widget build(BuildContext context) {
@@ -804,6 +810,7 @@ class Chip extends StatelessWidget implements ChipAttributes, DeletableChipAttri
       deleteIconBoxConstraints: deleteIconBoxConstraints,
       chipAnimationStyle: chipAnimationStyle,
       mouseCursor: mouseCursor,
+      splashColor: splashColor,
     );
   }
 }
@@ -895,6 +902,7 @@ class RawChip extends StatefulWidget
     this.deleteIconBoxConstraints,
     this.chipAnimationStyle,
     this.mouseCursor,
+    this.splashColor
   }) : assert(pressElevation == null || pressElevation >= 0.0),
        assert(elevation == null || elevation >= 0.0),
        deleteIcon = deleteIcon ?? _kDefaultDeleteIcon;
@@ -938,6 +946,8 @@ class RawChip extends StatefulWidget
   final Color? selectedColor;
   @override
   final String? tooltip;
+  @override
+  final Color? splashColor;
   @override
   final BorderSide? side;
   @override
@@ -1424,6 +1434,7 @@ class _RawChipState extends State<RawChip> with MaterialStateMixin, TickerProvid
         autofocus: widget.autofocus,
         canRequestFocus: widget.isEnabled,
         onTap: canTap ? _handleTap : null,
+        splashColor: widget.splashColor ?? chipTheme.splashColor,
         onTapDown: canTap ? _handleTapDown : null,
         onTapCancel: canTap ? _handleTapCancel : null,
         onHover: canTap ? updateMaterialState(MaterialState.hovered) : null,

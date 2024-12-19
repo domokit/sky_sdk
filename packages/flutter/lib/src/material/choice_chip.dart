@@ -102,6 +102,7 @@ class ChoiceChip extends StatelessWidget
     this.avatarBoxConstraints,
     this.chipAnimationStyle,
     this.mouseCursor,
+    this.splashColor,
   }) : assert(pressElevation == null || pressElevation >= 0.0),
        assert(elevation == null || elevation >= 0.0),
        _chipVariant = _ChipVariant.flat;
@@ -145,6 +146,7 @@ class ChoiceChip extends StatelessWidget
     this.avatarBoxConstraints,
     this.chipAnimationStyle,
     this.mouseCursor,
+    this.splashColor,
   }) : assert(pressElevation == null || pressElevation >= 0.0),
        assert(elevation == null || elevation >= 0.0),
        _chipVariant = _ChipVariant.elevated;
@@ -211,6 +213,8 @@ class ChoiceChip extends StatelessWidget
   final ChipAnimationStyle? chipAnimationStyle;
   @override
   final MouseCursor? mouseCursor;
+  @override
+  final Color? splashColor;
 
   @override
   bool get isEnabled => onSelected != null;
