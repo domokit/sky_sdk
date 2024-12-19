@@ -9,10 +9,11 @@
 /// @docImport 'placeholder_span.dart';
 library;
 
-import 'dart:ui' as ui show ParagraphBuilder, StringAttribute;
+import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 
 import 'basic_types.dart';
 import 'text_painter.dart';
@@ -22,6 +23,12 @@ import 'text_style.dart';
 
 // Examples can assume:
 // late InlineSpan myInlineSpan;
+
+/// The signature of [InlineSpanAttributes.remove].
+///
+/// The type information is intentionally kept obscure because it is used as a
+/// sentinel value.
+typedef RemoveInlineSpanAttribute = _PoorMansBottomType;
 
 /// Mutable wrapper of an integer that can be passed by reference to track a
 /// value across a recursive stack.
@@ -364,6 +371,31 @@ abstract class InlineSpan extends DiagnosticableTree {
   @protected
   int? codeUnitAtVisitor(int index, Accumulator offset);
 
+  /// Returns an [InlineSpan] by applying `newAttributes` to a [TextRange] within
+  /// this span.
+  ///
+  /// The `textRange` argument is the range, in relation to the start of the root
+  /// span, to which the `newAttributes` should be applied.
+  ///
+  /// The `offset` argument is a mutable offset. When this implementation is
+  /// invoked, its value is set to the offset from the start of the root span to
+  /// the span of this [InlineSpan]. The implementation is responsible for
+  /// advancing the offset by this [InlineSpan]'s length in UTF16 code units,
+  /// such that the `offset` points to the end (enclusive) of this [InlineSpan]
+  /// when this method returns.
+  ///
+  /// This method is typically for overriding only and should not be called
+  /// directly. Use [updateAttributes] instead.
+  @protected
+  InlineSpan updateAttributesAtOffset(covariant InlineSpanAttributes newAttributes, TextRange textRange, Accumulator offset);
+
+  /// Creates a new [InlineSpan] from this [InlineSpan] by applying
+  /// `newAttributes` to the given [TextRange] within this span.
+  ///
+  /// This method calls [updateAttributesAtOffset] and overriding is rarely needed.
+  @useResult
+  InlineSpan updateAttributes(covariant InlineSpanAttributes newAttributes, TextRange textRange) => updateAttributesAtOffset(newAttributes, textRange, Accumulator());
+
   /// In debug mode, throws an exception if the object is not in a
   /// valid configuration. Otherwise, returns true.
   ///
@@ -406,4 +438,288 @@ abstract class InlineSpan extends DiagnosticableTree {
     properties.defaultDiagnosticsTreeStyle = DiagnosticsTreeStyle.whitespace;
     style?.debugFillProperties(properties);
   }
+}
+
+/// A text attribute set that can be used to update the attributes of an
+/// [InlineSpan] subclass.
+///
+/// All attributes are nullable, and default to `null`. Attributes set to `null`
+/// in an [InlineSpanAttributes] will not be updated.
+///
+/// See also:
+///
+///  * [InlineSpan.updateAttributes], which takes an [InlineSpanAttributes], and
+///    updates a given [TextRange] within the receiver [InlineSpan] using the
+///    [InlineSpanAttributes].
+class InlineSpanAttributes {
+  /// Creates an [InlineSpanAttributes].
+  const InlineSpanAttributes({
+    this.fontFamilies,
+    this.locale,
+    this.fontSize,
+    this.fontWeight,
+    this.fontStyle,
+    this.fontFeatures,
+    this.fontVariations,
+    this.height,
+    this.leadingDistribution,
+    this.textBaseline,
+    this.wordSpacing,
+    this.letterSpacing,
+
+    this.color,
+    this.foreground,
+    this.backgroundColor,
+    this.background,
+    this.shadows,
+    this.underline,
+    this.overline,
+    this.lineThrough,
+    this.decorationColor,
+    this.decorationStyle,
+    this.decorationThickness,
+
+    this.recognizer,
+    this.mouseCursor,
+    this.onEnter,
+    this.onExit,
+    this.spellOut,
+  }) : assert(color == null || foreground == null),
+       assert(backgroundColor == null || background == null);
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.fontFamily] if
+  /// set to non-null.
+  final List<String>? fontFamilies;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.locale] and
+  /// [TextSpan.locale] if set to non-null.
+  final ui.Locale? locale;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.fontSize] if set
+  /// to non-null.
+  final double? fontSize;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.fontSize] if set
+  /// to non-null.
+  final ui.FontWeight? fontWeight;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.fontSize] if set
+  /// to non-null.
+  final ui.FontStyle? fontStyle;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.fontFeatures]
+  /// if set to non-null.
+  final List<ui.FontFeature>? fontFeatures;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.fontVariations]
+  /// if set to non-null.
+  final List<ui.FontVariation>? fontVariations;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.height] if set
+  /// to non-null.
+  ///
+  /// Setting this attribute to [kTextHeightNone] unsets the [TextStyle.height]
+  /// multiplier, and restores the font's natural ascent and descent.
+  final double? height;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.leadingDistribution]
+  /// if set to non-null.
+  final ui.TextLeadingDistribution? leadingDistribution;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.textBaseline]
+  /// if set to non-null.
+  final ui.TextBaseline? textBaseline;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.wordSpacing]
+  /// if set to non-null.
+  final double? wordSpacing;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.letterSpacing]
+  /// if set to non-null.
+  final double? letterSpacing;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.color] if set to
+  /// non-null.
+  ///
+  /// Must be null if [foreground] is set to a non-null value.
+  final ui.Color? color;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.foreground] if
+  /// set to non-null.
+  ///
+  /// Must be null if [color] is set to a non-null value.
+  final ui.Paint? foreground;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.backgroundColor]
+  /// if set to non-null.
+  ///
+  /// Must be null if [background] is set to a non-null value.
+  final ui.Color? backgroundColor;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.background] if
+  /// set to non-null.
+  ///
+  /// Must be null if [backgroundColor] is set to a non-null value.
+  final ui.Paint? background;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.shadows] if set
+  /// to non-null.
+  final List<ui.Shadow>? shadows;
+
+  /// An attribute which overwrites the [TextDecoration.underline] aspect of
+  /// [TextStyle.decoration] on an [InlineSpan], if set to non-null.
+  ///
+  /// Setting this value to true applies underline and setting it to false
+  /// disables underline.
+  final bool? underline;
+
+  /// An attribute which overwrites the [TextDecoration.overline] aspect of
+  /// [TextStyle.decoration] on an [InlineSpan], if set to non-null.
+  ///
+  /// Setting this value to true applies overline and setting it to false
+  /// disables overline.
+  final bool? overline;
+
+  /// An attribute which overwrites the [TextDecoration.lineThrough] aspect of
+  /// [TextStyle.decoration] on an [InlineSpan], if set to non-null.
+  ///
+  /// Setting this value to true applies lineThrough and setting it to false
+  /// disables lineThrough.
+  final bool? lineThrough;
+
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.decorationColor]
+  /// if set to non-null.
+  final ui.Color? decorationColor;
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.decorationStyle]
+  /// if set to non-null.
+  final ui.TextDecorationStyle? decorationStyle;
+  /// An attribute which overwrites an [InlineSpan]'s [TextStyle.decorationThickness]
+  /// if set to non-null.
+  final double? decorationThickness;
+
+  /// An attribute which overwrites [TextSpan.recognizer] if set to non-null.
+  ///
+  /// When a recognizer is specified, the [InlineSpan.updateAttributes] method
+  /// replaces existing recognizers (if any) within the given range with the
+  /// specified recognizer.
+  ///
+  /// When this value is set to [remove], the [InlineSpan.updateAttributes]
+  /// method sets [TextSpan.recognizer] to null in the given range of the returned
+  /// [TextSpan].
+  final GestureRecognizer? recognizer;
+
+  /// An attribute which overwrites [TextSpan.mouseCursor] if set to non-null.
+  final MouseCursor? mouseCursor;
+
+  /// An attribute which overwrites [TextSpan.onEnter] if set to non-null.
+  ///
+  /// [TextSpan.onEnter] can not be set from a non-null value to null using this
+  /// attribute. Considering setting [TextSpan.onEnter] to a function that does
+  /// nothing if you want to unset the callback from a [TextSpan].
+  final PointerEnterEventListener? onEnter;
+
+  /// An attribute which overwrites [TextSpan.onExit] if set to non-null.
+  ///
+  /// [TextSpan.onExit] can not be set from a non-null value to null using this
+  /// attribute. Considering setting [TextSpan.onExit] to a function that does
+  /// nothing if you want to unset the callback from a [TextSpan].
+  final PointerExitEventListener? onExit;
+
+  /// An attribute which overwrites [TextSpan.spellOut] if set to non-null.
+  final bool? spellOut;
+
+  /// A sentinel values that can be used to unset the [TextSpan.recognizer] from
+  /// an [TextSpan].
+  ///
+  /// This is useful when the value `null` already has a different meaning (other
+  /// than "unset") in the context. In [InlineSpanAttributes], a null value means
+  /// an attribute should not be updated. However, [TextSpan.recognizer] uses
+  /// `null` to indicate there's no recognizer. The sentinel value introduces an
+  /// additional state that indicates any existing [TextSpan.recognizer] should
+  /// be unset in the new span.
+  ///
+  /// The only supported operation on this singleton object is the identity
+  /// comparison function `identical`, performing any other operation on this
+  /// object may crash the program.
+  ///
+  /// [InlineSpan.updateAttributes] does not mutate the target
+  /// [InlineSpan]. Rather, when [recognizer] is set to [remove], that method
+  /// returns a new [InlineSpan] with [recognizer] set to null.
+  static const RemoveInlineSpanAttribute remove = _PoorMansBottomType._();
+
+  /// A convenience method, similar to [TextStyle.merge], that merges the
+  /// `textStyle` argument with the [TextStyle] related attributes in this
+  /// [InlineSpanAttributes] object.
+  @useResult
+  TextStyle? updateTextStyle(TextStyle? textStyle) {
+    final bool hasNoUpdate = fontFamilies == null
+      && locale == null
+      && fontSize == null
+      && fontWeight == null
+      && fontStyle == null
+      && fontFeatures == null
+      && fontVariations == null
+      && height == null
+      && leadingDistribution == null
+      && textBaseline == null
+      && wordSpacing == null
+      && letterSpacing == null
+      && color == null
+      && foreground == null
+      && background == null
+      && backgroundColor == null
+      && shadows == null
+      && underline == null
+      && overline == null
+      && lineThrough == null
+      && decorationColor == null
+      && decorationStyle == null
+      && decorationThickness == null;
+
+    if (hasNoUpdate) {
+      return textStyle;
+    }
+    final (String? fontFamily, List<String>? fallback) = switch (fontFamilies) {
+      null => (null, null),
+      [] => ('', const <String>[]),
+      [final String fontFamily, ...final List<String> fallback] => (fontFamily, fallback)
+    };
+    final ui.TextDecoration? decoration = underline == null && overline == null && lineThrough == null
+      ? null
+      : ui.TextDecoration.combine(<ui.TextDecoration>[
+          if (underline ?? textStyle?.decoration?.contains(ui.TextDecoration.underline) ?? false) ui.TextDecoration.underline,
+          if (overline ?? textStyle?.decoration?.contains(ui.TextDecoration.overline) ?? false) ui.TextDecoration.overline,
+          if (lineThrough ?? textStyle?.decoration?.contains(ui.TextDecoration.lineThrough) ?? false) ui.TextDecoration.lineThrough,
+        ]);
+    return (textStyle ?? const TextStyle()).copyWith(
+      fontFamily: fontFamily,
+      fontFamilyFallback: fallback,
+      locale: locale,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      fontFeatures: fontFeatures,
+      fontVariations: fontVariations,
+      height: height,
+      leadingDistribution: leadingDistribution,
+      textBaseline: textBaseline,
+      wordSpacing: wordSpacing,
+      letterSpacing: letterSpacing,
+      color: color,
+      foreground: foreground,
+      backgroundColor: backgroundColor,
+      background: background,
+      shadows: shadows,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+    );
+  }
+}
+
+final class _PoorMansBottomType with DiagnosticableTreeMixin implements GestureRecognizer {
+  const _PoorMansBottomType._();
+  @override
+  Never noSuchMethod(Invocation invocation) => throw NoSuchMethodError.withInvocation(this, invocation);
 }

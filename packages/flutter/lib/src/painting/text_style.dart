@@ -469,8 +469,9 @@ class TextStyle with Diagnosticable {
   /// Creates a text style.
   ///
   /// The `package` argument must be non-null if the font family is defined in a
-  /// package. It is combined with the `fontFamily` argument to set the
-  /// [fontFamily] property.
+  /// package. It is combined with both the `fontFamily` and the
+  /// `fontFamilyFallback` arguments to set the [fontFamily], and the
+  /// [fontFamilyFallback] properties, respectively.
   ///
   /// On Apple devices the strings 'CupertinoSystemText' and
   /// 'CupertinoSystemDisplay' are used in [fontFamily] as proxies for the

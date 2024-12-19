@@ -476,4 +476,156 @@ void main() {
     expect(combined[0].stringAttributes[3], isA<SpellOutStringAttribute>());
     expect(combined[0].stringAttributes[3].range, const TextRange(start: 20, end: 25));
   });
+
+  group('UpdateAttributes', () {
+    const TextSpan simpleSpan = TextSpan(text: 'Hello', style: TextStyle(fontSize: 100),
+      children: <TextSpan>[TextSpan(text: 'World', style: TextStyle(fontSize: 10))],
+    );
+
+    test('basic style test', () {
+      expect(
+        toStyleRuns(simpleSpan.updateAttributes(const InlineSpanAttributes(fontSize: 1000), const TextRange(start: 0, end: 9999))),
+        const <(int, TextStyle)>[(0, TextStyle(fontSize: 1000))],
+      );
+      expect(
+        toStyleRuns(simpleSpan.updateAttributes(const InlineSpanAttributes(fontSize: 1000), const TextRange(start: 0, end: 0))),
+        const <(int, TextStyle)>[(0, TextStyle(fontSize: 100)), (5, TextStyle(fontSize: 10))],
+      );
+      expect(
+        toStyleRuns(simpleSpan.updateAttributes(const InlineSpanAttributes(fontSize: 1000), const TextRange(start: 0, end: 1))),
+        const <(int, TextStyle)>[(0, TextStyle(fontSize: 1000)), (1, TextStyle(fontSize: 100)), (5, TextStyle(fontSize: 10))],
+      );
+      expect(
+        toStyleRuns(simpleSpan.updateAttributes(const InlineSpanAttributes(fontSize: 1000), const TextRange(start: 1, end: 2))),
+        const <(int, TextStyle)>[(0, TextStyle(fontSize: 100)), (1, TextStyle(fontSize: 1000)), (2, TextStyle(fontSize: 100)), (5, TextStyle(fontSize: 10))],
+      );
+      expect(
+        toStyleRuns(simpleSpan.updateAttributes(const InlineSpanAttributes(fontSize: 1000), const TextRange(start: 2, end: 5))),
+        const <(int, TextStyle)>[(0, TextStyle(fontSize: 100)), (2, TextStyle(fontSize: 1000)), (5, TextStyle(fontSize: 10))],
+      );
+      expect(
+        toStyleRuns(simpleSpan.updateAttributes(const InlineSpanAttributes(fontSize: 1000), const TextRange(start: 0, end: 5))),
+        const <(int, TextStyle)>[(0, TextStyle(fontSize: 1000)), (5, TextStyle(fontSize: 10))],
+      );
+      expect(
+        toStyleRuns(simpleSpan.updateAttributes(const InlineSpanAttributes(fontSize: 1000), const TextRange(start: 5, end: 6))),
+        const <(int, TextStyle)>[(0, TextStyle(fontSize: 100)), (5, TextStyle(fontSize: 1000)), (6, TextStyle(fontSize: 10))],
+      );
+      expect(
+        toStyleRuns(simpleSpan.updateAttributes(const InlineSpanAttributes(fontSize: 1000), const TextRange(start: 6, end: 6))),
+        const <(int, TextStyle)>[(0, TextStyle(fontSize: 100)), (5, TextStyle(fontSize: 10))],
+      );
+      expect(
+        toStyleRuns(simpleSpan.updateAttributes(const InlineSpanAttributes(fontSize: 1000), const TextRange(start: 6, end: 7))),
+        const <(int, TextStyle)>[(0, TextStyle(fontSize: 100)), (5, TextStyle(fontSize: 10)), (6, TextStyle(fontSize: 1000)), (7, TextStyle(fontSize: 10))],
+      );
+      expect(
+        toStyleRuns(simpleSpan.updateAttributes(const InlineSpanAttributes(fontSize: 1000), const TextRange(start: 6, end: 10))),
+        const <(int, TextStyle)>[(0, TextStyle(fontSize: 100)), (5, TextStyle(fontSize: 10)), (6, TextStyle(fontSize: 1000))],
+      );
+    });
+
+    test('can add and delete recognizers', () {
+      final GestureRecognizer recognizer = TapGestureRecognizer();
+      addTearDown(recognizer.dispose);
+      final int length = simpleSpan.toPlainText().length;
+      final InlineSpan withRecognizer = simpleSpan.updateAttributes(
+        InlineSpanAttributes(recognizer: recognizer),
+        const TextRange(start: 1, end: 9),
+      );
+      for (int i = 0; i < length; i++) {
+        final TextSpan span = withRecognizer.getSpanForPosition(TextPosition(offset: i))! as TextSpan;
+        expect(span.recognizer, 1 <= i && i < 9 ? recognizer : null, reason: 'index = $i');
+      }
+
+      final InlineSpan partiallyDeleted = withRecognizer.updateAttributes(
+        const InlineSpanAttributes(recognizer: InlineSpanAttributes.remove),
+        const TextRange(start: 5, end: 6),
+      );
+      for (int i = 0; i < length; i++) {
+        final TextSpan span = partiallyDeleted.getSpanForPosition(TextPosition(offset: i))! as TextSpan;
+        expect(span.recognizer, 1 <= i && i < 9 && !(5 <= i && i < 6) ? recognizer : null, reason: 'index = $i');
+      }
+
+      final InlineSpan fullyDeleted = partiallyDeleted.updateAttributes(
+        const InlineSpanAttributes(recognizer: InlineSpanAttributes.remove),
+        const TextRange(start: 0, end: 999),
+      );
+
+      for (int i = 0; i < length; i++) {
+        final TextSpan span = fullyDeleted.getSpanForPosition(TextPosition(offset: i))! as TextSpan;
+        expect(span.recognizer, null);
+      }
+    });
+
+    test('InlineSpanAttributes textStyle', () {
+      final TextStyle style = TextStyle(
+        fontSize: 100,
+        decoration: TextDecoration.combine(<TextDecoration>[TextDecoration.overline, TextDecoration.lineThrough]),
+        fontFamily: 'fontFamily',
+        foreground: Paint()
+          ..blendMode = BlendMode.xor
+      );
+      expect(const InlineSpanAttributes().updateTextStyle(style), style);
+
+      expect(const InlineSpanAttributes(fontSize: 10).updateTextStyle(style), style.copyWith(fontSize: 10));
+
+      expect(
+        const InlineSpanAttributes(color: Color(0x12345678)).updateTextStyle(style),
+        style.copyWith(color: const Color(0x12345678)),
+      );
+
+      expect(
+        const InlineSpanAttributes(color: Color(0x12345678)).updateTextStyle(style),
+        style.copyWith(color: const Color(0x12345678)),
+      );
+      expect(
+        const InlineSpanAttributes(color: Color(0x12345678)).updateTextStyle(style)?.foreground?.blendMode,
+        BlendMode.xor,
+      );
+
+      expect(
+        const InlineSpanAttributes(underline: true).updateTextStyle(style),
+        style.copyWith(decoration: TextDecoration.combine(<TextDecoration>[TextDecoration.overline, TextDecoration.lineThrough, TextDecoration.underline])),
+      );
+      expect(
+        const InlineSpanAttributes(overline: false).updateTextStyle(style),
+        style.copyWith(decoration: TextDecoration.combine(<TextDecoration>[TextDecoration.lineThrough])),
+      );
+    });
+  });
+}
+
+(int, TextStyle) removeEmptyRuns(List<(int, TextStyle)> runs) {
+  assert(runs.isNotEmpty);
+  final (int, TextStyle) lastRun = runs.removeLast();
+  while (runs.isNotEmpty && runs.last.$1 == lastRun.$1) {
+    runs.removeLast();
+  }
+  runs.add(lastRun);
+  return lastRun;
+}
+
+
+ List<(int, TextStyle)> toStyleRuns(InlineSpan span) {
+   final List<(int, TextStyle)> runs = <(int, TextStyle)>[(0, const TextStyle())];
+   _toStyleRuns(span as TextSpan, runs, Accumulator());
+   return runs;
+}
+
+void _toStyleRuns(TextSpan span, List<(int, TextStyle)> runs, Accumulator offset, { TextStyle? base }) {
+  final (int, TextStyle) lastRunPre = removeEmptyRuns(runs);
+  final TextStyle newStyle = lastRunPre.$2.merge(span.style);
+  if (offset.value == lastRunPre.$1) {
+    runs.removeLast();
+  }
+  if (runs.isEmpty || runs.last.$2 != newStyle) {
+    runs.add((offset.value, newStyle));
+  }
+  offset.increment(span.text?.length ?? 0);
+  if (span.children case final List<InlineSpan> children?) {
+    for (int i = 0; i < children.length; i++) {
+      _toStyleRuns(children[i] as TextSpan, runs, offset, base: newStyle);
+    }
+  }
 }

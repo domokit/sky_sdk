@@ -17,6 +17,7 @@ export 'package:meta/meta.dart' show
   optionalTypeArgs,
   protected,
   required,
+  useResult,
   visibleForOverriding,
   visibleForTesting;
 

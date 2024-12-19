@@ -8,6 +8,7 @@
 /// @docImport 'package:flutter/widgets.dart';
 library;
 
+import 'dart:math' as math;
 import 'dart:ui' as ui show Locale, LocaleStringAttribute, ParagraphBuilder, SpellOutStringAttribute, StringAttribute;
 
 import 'package:flutter/foundation.dart';
@@ -18,6 +19,7 @@ import 'basic_types.dart';
 import 'inline_span.dart';
 import 'text_painter.dart';
 import 'text_scaler.dart';
+import 'text_style.dart';
 
 // Examples can assume:
 // late TextSpan myTextSpan;
@@ -76,7 +78,6 @@ class TextSpan extends InlineSpan implements HitTestTarget, MouseTrackerAnnotati
   /// [children] should be set.
   const TextSpan({
     this.text,
-    this.children,
     super.style,
     this.recognizer,
     MouseCursor? mouseCursor,
@@ -85,6 +86,7 @@ class TextSpan extends InlineSpan implements HitTestTarget, MouseTrackerAnnotati
     this.semanticsLabel,
     this.locale,
     this.spellOut,
+    this.children,
   }) : mouseCursor = mouseCursor ??
          (recognizer == null ? MouseCursor.defer : SystemMouseCursors.click),
        assert(!(text == null && semanticsLabel != null));
@@ -438,6 +440,129 @@ class TextSpan extends InlineSpan implements HitTestTarget, MouseTrackerAnnotati
     assert(localOffset >= 0);
     offset.increment(text.length);
     return localOffset < text.length ? text.codeUnitAt(localOffset) : null;
+  }
+
+  static T? _updateRemovableAttribute<T extends Object>(T? oldValue, T? newValue) {
+    return identical(newValue, InlineSpanAttributes.remove)
+      ? null
+      : newValue ?? oldValue;
+  }
+
+  static (bool hasSameAttributes, TextSpan span) _copyWith(TextSpan span, InlineSpanAttributes? newAttributes, List<InlineSpan>? newChildren) {
+    final TextStyle? newStyle = newAttributes?.updateTextStyle(span.style);
+    final bool needsUpdate = newAttributes != null
+      && (newStyle != span.style
+      || _updateRemovableAttribute(span.recognizer, newAttributes.recognizer) != span.recognizer
+      || (newAttributes.onEnter != null && (newAttributes.onEnter != span.onEnter))
+      || (newAttributes.onExit != null && (newAttributes.onExit != span.onExit))
+      || (newAttributes.mouseCursor != null && newAttributes.mouseCursor != span.mouseCursor)
+      || (newAttributes.locale != null && newAttributes.locale != span.locale)
+      || (newAttributes.spellOut != null && newAttributes.spellOut != span.spellOut));
+
+    if (!needsUpdate && identical(newChildren, span.children)) {
+      return (true, span);
+    }
+
+    return (!needsUpdate, TextSpan(
+      text: span.text,
+      style: newStyle ?? span.style,
+      recognizer: _updateRemovableAttribute(span.recognizer, newAttributes?.recognizer),
+      mouseCursor: newAttributes?.mouseCursor ?? span.mouseCursor,
+      onEnter: _updateRemovableAttribute(span.onEnter, newAttributes?.onEnter),
+      onExit: _updateRemovableAttribute(span.onExit, newAttributes?.onExit),
+      semanticsLabel: span.semanticsLabel,
+      locale: newAttributes?.locale ?? span.locale,
+      spellOut: newAttributes?.spellOut ?? span.spellOut,
+      children: newChildren ?? span.children,
+    ));
+  }
+
+  static TextSpan _slice(TextSpan span, TextRange range, List<InlineSpan>? newChildren) {
+    final int textLength = span.text?.length ?? 0;
+    assert(range.isValid);
+    assert(range.isNormalized);
+    assert(range.end <= textLength);
+
+    if (identical(newChildren, span.children) && range.start == 0 && range.end == textLength) {
+      return span;
+    }
+    final String? newSemanticsLabel = span.semanticsLabel?.substring(range.start, range.end);
+    assert(
+      newSemanticsLabel == null || newSemanticsLabel.isEmpty || newSemanticsLabel.length == span.semanticsLabel?.length,
+      'Cannot create a subspan from $range of $span. The original span has a semanticsLabel.'
+    );
+    return TextSpan(
+      text: span.text?.substring(range.start, range.end),
+      style: span.style,
+      recognizer: span.recognizer,
+      mouseCursor: span.mouseCursor,
+      onEnter: span.onEnter,
+      onExit: span.onExit,
+      semanticsLabel: newSemanticsLabel,
+      locale: span.locale,
+      spellOut: span.spellOut,
+      children: newChildren,
+    );
+  }
+
+  // Update the children in a copy-on-write fashion (the original List is
+  // returned if nothing changes).
+  static List<InlineSpan>? _updateChildren(InlineSpanAttributes newAttributes, List<InlineSpan>? children, TextRange range, Accumulator offset) {
+    // The offset from the start of the root span to the start of the first child in `children`.
+    final int startOffset = offset.value;
+    assert(!range.isCollapsed);
+    if (range.end <= startOffset || children == null || children.isEmpty) {
+      return children;
+    }
+    List<InlineSpan> newChildren = children;
+    for (int i = 0; i < children.length && offset.value < range.end; i++) {
+      final InlineSpan oldSpan = children[i];
+      final InlineSpan newSpan = oldSpan.updateAttributesAtOffset(newAttributes, range, offset);
+      if (identical(newSpan, oldSpan)) {
+        continue;
+      }
+      if (identical(newChildren, children)) {
+        newChildren = List<InlineSpan>.of(children, growable: false);
+      }
+      newChildren[i] = newSpan;
+    }
+    return newChildren;
+  }
+
+  @override
+  TextSpan updateAttributesAtOffset(covariant InlineSpanAttributes newAttributes, TextRange textRange, Accumulator offset) {
+    if (textRange.isCollapsed || !textRange.isNormalized || textRange.end <= offset.value) {
+      return this;
+    }
+
+    final int textLength = text?.length ?? 0;
+    final int startOffset = offset.value;
+    final List<InlineSpan>? newChildren = _updateChildren(newAttributes, children, textRange, offset..increment(textLength));
+
+    final int clipStart = math.max(textRange.start - startOffset, 0);
+    final int clipEnd = math.min(textRange.end - startOffset, textLength);
+
+    if (clipEnd <= clipStart) {
+      return _copyWith(this, null, newChildren).$2;
+    }
+
+    // 0 <= clipStart < clipEnd <= textLength.
+    final (bool hasSameAttributes, TextSpan updated) = _copyWith(this, newAttributes, newChildren);
+    if (hasSameAttributes || (clipStart == 0 && clipEnd == textLength && (newChildren?.isEmpty ?? true))) {
+      return updated;
+    }
+    // Breaks this span into 2 or 3 parts, forming a new span tree:
+    // parent: [0, clipStart) -- when clipStart == 0 it's an empty node
+    //   - child1: [clipStart, clipEnd), with newAttributes applied
+    //   - child2: [clipEnd, textLength) if clipEnd < textLength, plus the rest of updated `children`
+    final TextSpan child1 = _slice(updated, TextRange(start: clipStart, end: clipEnd), null);
+    final TextSpan? child2 = clipEnd < textLength || (newChildren != null && newChildren.isNotEmpty)
+      ? _slice(this, TextRange(start: clipEnd, end: textLength), newChildren)
+      : null;
+    final List<TextSpan> subtree = child2 == null
+      ? List<TextSpan>.filled(1, child1)
+      : (List<TextSpan>.filled(2, child1)..[1] = child2);
+    return _slice(this, TextRange(start: 0, end: clipStart), subtree);
   }
 
   /// In debug mode, throws an exception if the object is not in a valid

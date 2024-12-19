@@ -76,6 +76,12 @@ abstract class PlaceholderSpan extends InlineSpan {
   }
 
   @override
+  PlaceholderSpan updateAttributesAtOffset(covariant InlineSpanAttributes newAttributes, TextRange textRange, Accumulator? offset) {
+    offset?.increment(1);
+    return this;
+  }
+
+  @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
 
