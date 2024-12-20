@@ -114,6 +114,7 @@ void main() {
     void setUpProject(FileSystem fileSystem) {
       flutterProject = FakeFlutterProject();
       flutterManifest = FakeFlutterManifest();
+      flutterManifest.appName = 'my_app';
 
       flutterProject
         ..manifest = flutterManifest
@@ -198,7 +199,13 @@ void main() {
         ..createSync(recursive: true)
         ..writeAsStringSync('''
 {
-  "packages": [],
+  "packages": [
+    {
+      "name": "my_app",
+      "rootUri": "../",
+      "packageUri": "lib/"
+    }
+  ],
   "configVersion": 2
 }
 ''');
@@ -219,6 +226,7 @@ void main() {
       });
 
       packageConfigFile.writeAsStringSync(jsonEncode(packageConfig));
+      flutterManifest.dependencies.add(name);
     }
 
     // Makes fake plugin packages for each plugin, adds them to flutterProject,
@@ -255,7 +263,13 @@ void main() {
         ..createSync(recursive: true)
         ..writeAsStringSync('''
 {
-  "packages": [],
+  "packages": [
+      {
+      "name": "my_app",
+      "rootUri": "../",
+      "packageUri": "lib/"
+    }
+  ],
   "configVersion": 2
 }
 ''');
@@ -2592,7 +2606,11 @@ The Flutter Preview device does not support the following plugins from your pubs
 
 class FakeFlutterManifest extends Fake implements FlutterManifest {
   @override
-  Set<String> get dependencies => <String>{};
+  late Set<String> dependencies = <String>{};
+  @override
+  late Set<String> devDependencies = <String>{};
+  @override
+  late String appName;
 }
 
 class FakeXcodeProjectInterpreter extends Fake implements XcodeProjectInterpreter {

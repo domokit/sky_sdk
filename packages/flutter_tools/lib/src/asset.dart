@@ -17,6 +17,7 @@ import 'base/platform.dart';
 import 'base/utils.dart';
 import 'build_info.dart';
 import 'cache.dart';
+import 'compute_dev_dependencies.dart';
 import 'convert.dart';
 import 'dart/package_map.dart';
 import 'devfs.dart';
@@ -334,60 +335,49 @@ class ManifestAssetBundle implements AssetBundle {
 
     // Add fonts, assets, and licenses from packages in the project's
     // dependencies.
-    
-    // Do a search rooted in the current app, following dependencies, to find
-    // all the transitive dependencies of the app.
-    //
-    // This avoids bundling assets from dev_dependencies and other pub workspace
-    // packages.
-    final Map<String, (Package, FlutterManifest)> transitiveDependencies = <String, (Package, FlutterManifest)>{};
-    final List<String> packageNamesToVisit = <String>[flutterManifest.appName];
-    while (packageNamesToVisit.isNotEmpty) {
-      final String current = packageNamesToVisit.removeLast();
-      if (transitiveDependencies.containsKey(current)) {
-        continue;
-      }
-      final Package? package = packageConfig[current];
-      if (package == null) {
+
+    // To Avoid bundling assets from dev_dependencies and other pub workspace
+    // packages, we compute the set of transitive dependencies.
+    final Map<String, Dependency> transitiveDependencies = computeTransitiveDependencies(
+      flutterProject,
+      packageConfig,
+      _fileSystem,
+      _logger,
+    );
+    final Map<String, List<File>> additionalLicenseFiles = <String, List<File>>{};
+    for (final String packageName in transitiveDependencies.keys) {
+      final Package package = packageConfig[packageName]!;
+      final Dependency dependency = transitiveDependencies[packageName]!;
+      if (dependency.isExclusiveDevDependency) {
         continue;
       }
       final Uri packageUri = package.root;
-      if (packageUri.scheme != 'file')  {
+      if (packageUri.scheme != 'file') {
         continue;
       }
-      final String packageManifestPath = _fileSystem.path.fromUri(packageUri.resolve('pubspec.yaml'));
-      inputFiles.add(_fileSystem.file(packageManifestPath));
-      final FlutterManifest? packageFlutterManifest = FlutterManifest.createFromPath(
-        packageManifestPath,
-        logger: _logger,
-        fileSystem: _fileSystem,
-      );
-      if (packageFlutterManifest == null) {
-        continue;
-      }
-      packageNamesToVisit.addAll(packageFlutterManifest.dependencies);
-      transitiveDependencies[current] = (package, packageFlutterManifest);
-    }
-    final Map<String, List<File>> additionalLicenseFiles = <String, List<File>>{};
-    for (final (Package package, FlutterManifest packageFlutterManifest) in transitiveDependencies.values) {
+
+      inputFiles.add(_fileSystem.file(package.root.resolve('pubspec.yaml')));
+      final FlutterManifest packageManifest = dependency.manifest;
       // Collect any additional licenses from each package.
       final List<File> licenseFiles = <File>[];
-      for (final String relativeLicensePath in packageFlutterManifest.additionalLicenses) {
-        final String absoluteLicensePath = _fileSystem.path.fromUri(package.root.resolve(relativeLicensePath));
+      for (final String relativeLicensePath in packageManifest.additionalLicenses) {
+        final String absoluteLicensePath = _fileSystem.path.fromUri(
+          package.root.resolve(relativeLicensePath),
+        );
         licenseFiles.add(_fileSystem.file(absoluteLicensePath).absolute);
       }
-      additionalLicenseFiles[packageFlutterManifest.appName] = licenseFiles;
+      additionalLicenseFiles[packageName] = licenseFiles;
 
       // Skip the app itself
-      if (packageFlutterManifest.appName == flutterManifest.appName) {
+      if (packageName == flutterManifest.appName) {
         continue;
       }
-      
+
       final String packageBasePath = _fileSystem.path.fromUri(package.root);
 
       final Map<_Asset, List<_Asset>>? packageAssets = _parseAssets(
         packageConfig,
-        packageFlutterManifest,
+        packageManifest,
         // Do not track wildcard directories for dependencies.
         <Uri>[],
         packageBasePath,
@@ -401,20 +391,17 @@ class ManifestAssetBundle implements AssetBundle {
         return 1;
       }
       assetVariants.addAll(packageAssets);
-      if (!includesMaterialFonts && packageFlutterManifest.usesMaterialDesign) {
+      if (!includesMaterialFonts && packageManifest.usesMaterialDesign) {
         _logger.printError(
           'package:${package.name} has `uses-material-design: true` set but '
           'the primary pubspec contains `uses-material-design: false`. '
           'If the application needs material icons, then `uses-material-design` '
-          ' must be set to true.'
+          ' must be set to true.',
         );
       }
-      fonts.addAll(_parseFonts(
-        packageFlutterManifest,
-        packageConfig,
-        packageName: package.name,
-        primary: false,
-      ));
+      fonts.addAll(
+        _parseFonts(packageManifest, packageConfig, packageName: package.name, primary: false),
+      );
     }
     // Save the contents of each image, image variant, and font
     // asset in entries.

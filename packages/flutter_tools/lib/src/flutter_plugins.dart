@@ -21,7 +21,6 @@ import 'compute_dev_dependencies.dart';
 import 'convert.dart';
 import 'dart/language_version.dart';
 import 'dart/package_map.dart';
-import 'dart/pub.dart';
 import 'features.dart';
 import 'globals.dart' as globals;
 import 'macos/darwin_dependency_management.dart';
@@ -45,7 +44,7 @@ Future<Plugin?> _pluginFromPackage(
   String name,
   Uri packageRoot,
   Set<String> appDependencies, {
-  required Set<String> devDependencies,
+  required bool isDevDependency,
   FileSystem? fileSystem,
 }) async {
   final FileSystem fs = fileSystem ?? globals.fs;
@@ -82,7 +81,7 @@ Future<Plugin?> _pluginFromPackage(
     dependencies == null ? <String>[] : <String>[...dependencies.keys.cast<String>()],
     fileSystem: fs,
     appDependencies: appDependencies,
-    isDevDependency: devDependencies.contains(name),
+    isDevDependency: isDevDependency,
   );
 }
 
@@ -103,23 +102,22 @@ Future<List<Plugin>> findPlugins(
     logger: globals.logger,
     throwOnError: throwOnError,
   );
-  final Set<String> devDependencies;
-  if (!determineDevDependencies) {
-    devDependencies = <String>{};
-  } else {
-    devDependencies = await computeExclusiveDevDependencies(
-      pub,
-      logger: globals.logger,
-      project: project,
-    );
-  }
-  for (final Package package in packageConfig.packages) {
+  final Map<String, Dependency> transitiveDependencies = computeTransitiveDependencies(
+    project,
+    packageConfig,
+    fs,
+    globals.logger,
+  );
+
+  for (final String packageName in transitiveDependencies.keys) {
+    final Dependency dependency = transitiveDependencies[packageName]!;
+    final Package package = packageConfig[packageName]!;
     final Uri packageRoot = package.packageUriRoot.resolve('..');
     final Plugin? plugin = await _pluginFromPackage(
       package.name,
       packageRoot,
-      project.manifest.dependencies,
-      devDependencies: devDependencies,
+      dependency.manifest.dependencies,
+      isDevDependency: determineDevDependencies && dependency.isExclusiveDevDependency,
       fileSystem: fs,
     );
     if (plugin != null) {

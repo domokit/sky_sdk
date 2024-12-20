@@ -143,11 +143,18 @@ class FlutterManifest {
   /// The string value of the top-level `name` property in the `pubspec.yaml` file.
   String get appName => _descriptor['name'] as String? ?? '';
 
-  /// Contains the name of the dependencies.
+  /// Contains the names of the dependencies.
   /// These are the keys specified in the `dependencies` map.
   Set<String> get dependencies {
     final YamlMap? dependencies = _descriptor['dependencies'] as YamlMap?;
     return dependencies != null ? <String>{...dependencies.keys.cast<String>()} : <String>{};
+  }
+
+  /// Contains the names of the dev_dependencies.
+  /// These are the keys specified in the `dev_dependencies` map.
+  Set<String> get devDependencies {
+    final YamlMap? devDependencies = _descriptor['dev_dependencies'] as YamlMap?;
+    return devDependencies != null ? <String>{...devDependencies.keys.cast<String>()} : <String>{};
   }
 
   // Flag to avoid printing multiple invalid version messages.
