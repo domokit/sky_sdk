@@ -33,7 +33,10 @@ import '../widgets_localizations.dart';
 //
 // These classes are constructed by the [getWidgetsTranslation] method at the
 // bottom of this file, and used by the [_WidgetsLocalizationsDelegate.load]
-// method defined in `flutter_localizations/lib/src/widgets_localizations.dart`.''';
+// method defined in `flutter_localizations/lib/src/widgets_localizations.dart`.
+
+// TODO(goderbauer): Extend the generator to properly format the output.
+// dart format off''';
 }
 
 /// Returns the source of the constructor for a GlobalWidgetsLocalizations
@@ -41,7 +44,8 @@ import '../widgets_localizations.dart';
 String generateWidgetsConstructor(LocaleInfo locale) {
   final String localeName = locale.originalString;
   final String language = locale.languageCode.toLowerCase();
-  final String textDirection = _rtlLanguages.contains(language) ? 'TextDirection.rtl' : 'TextDirection.ltr';
+  final String textDirection =
+      _rtlLanguages.contains(language) ? 'TextDirection.rtl' : 'TextDirection.ltr';
   return '''
   /// Create an instance of the translation bundle for ${describeLocale(localeName)}.
   ///

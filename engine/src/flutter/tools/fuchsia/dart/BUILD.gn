@@ -1,0 +1,22 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/tools/fuchsia/dart/toolchain.gni")
+import("//flutter/tools/fuchsia/sdk/sdk_targets.gni")
+import("//flutter/tools/fuchsia/toolchain/basic_toolchain.gni")
+
+if (current_toolchain == default_toolchain) {
+  # A toolchain dedicated to processing and analyzing Dart packages.
+  # The only targets in this toolchain are action() targets, so it
+  # has no real tools.  But every toolchain needs stamp and copy.
+  basic_toolchain("dartlang") {
+    expected_label = dart_toolchain
+  }
+}
+
+if (current_toolchain != default_toolchain) {
+  sdk_targets("dart_library") {
+    meta = "$fuchsia_sdk/meta/manifest.json"
+  }
+}

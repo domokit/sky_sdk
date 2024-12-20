@@ -1,0 +1,25 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/compiled_action.gni")
+
+template("shader_archive") {
+  assert(defined(invoker.shaders),
+         "The shaders to build the library from must be specified.")
+  assert(defined(invoker.deps), "Target dependencies must be specified.")
+
+  output_file = "$target_gen_dir/$target_name.shar"
+  compiled_action(target_name) {
+    tool = "//flutter/impeller/shader_archive:shader_archiver"
+    inputs = invoker.shaders
+    outputs = [ output_file ]
+    output_path_rebased = rebase_path(output_file, root_build_dir)
+    args = [ "--output=$output_path_rebased" ]
+    foreach(shader, invoker.shaders) {
+      shader_path = rebase_path(shader, root_build_dir)
+      args += [ "--input=$shader_path" ]
+    }
+    deps = invoker.deps
+  }
+}

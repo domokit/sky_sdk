@@ -3,21 +3,19 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/app/app.0.dart'
-    as example;
+import 'package:flutter_api_samples/material/app/app.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Theme animation can be customized using AnimationStyle', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.MaterialAppExample(),
-    );
+  testWidgets('Theme animation can be customized using AnimationStyle', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.MaterialAppExample());
 
     Material getScaffoldMaterial() {
-      return tester.widget<Material>(find.descendant(
-        of: find.byType(Scaffold),
-        matching: find.byType(Material).first,
-      ));
+      return tester.widget<Material>(
+        find.descendant(of: find.byType(Scaffold), matching: find.byType(Material).first),
+      );
     }
 
     final ThemeData lightTheme = ThemeData(colorSchemeSeed: Colors.green);
@@ -29,7 +27,7 @@ void main() {
     // Test the default animation.
     expect(getScaffoldMaterial().color, lightTheme.colorScheme.surface);
 
-    await tester.tap(find.text( 'Switch Theme Mode'));
+    await tester.tap(find.text('Switch Theme Mode'));
     await tester.pump();
     // Advance the animation by half of the default duration.
     await tester.pump(const Duration(milliseconds: 100));

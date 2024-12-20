@@ -1,0 +1,60 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/toolchain/toolchain.gni")
+import("//flutter/build/dart/dart.gni")
+import("//flutter/tools/fuchsia/clang.gni")
+
+import("$dart_src/build/dart/dart_action.gni")
+
+template("generate_dart_profiler_symbols") {
+  assert(defined(invoker.library_label), "Must define 'library_label'")
+  assert(defined(invoker.library_path), "Must define 'library_path'")
+  assert(defined(invoker.output), "Must define 'output'")
+
+  prebuilt_dart_action(target_name) {
+    deps = [ invoker.library_label ]
+    inputs = [ invoker.library_path ]
+    outputs = [ invoker.output ]
+
+    script = "dart_profiler_symbols.dart"
+
+    packages = rebase_path("$dart_src/.dart_tool/package_config.json")
+
+    args = [
+      "--nm",
+      rebase_path("$buildtools_path/${host_os}-${host_cpu}/clang/bin/llvm-nm"),
+      "--binary",
+      rebase_path(invoker.library_path),
+      "--output",
+      rebase_path(invoker.output),
+    ]
+  }
+}
+
+generate_dart_profiler_symbols("dart_jit_runner") {
+  library_label =
+      "//flutter/shell/platform/fuchsia/dart_runner:dart_jit_runner_bin"
+  library_path = "${root_out_dir}/exe.unstripped/dart_jit_runner"
+  output = "${target_gen_dir}/dart_jit_runner.dartprofilersymbols"
+}
+
+generate_dart_profiler_symbols("dart_aot_runner") {
+  library_label =
+      "//flutter/shell/platform/fuchsia/dart_runner:dart_aot_runner_bin"
+  library_path = "${root_out_dir}/exe.unstripped/dart_aot_runner"
+  output = "${target_gen_dir}/dart_aot_runner.dartprofilersymbols"
+}
+
+generate_dart_profiler_symbols("flutter_jit_runner") {
+  library_label = "//flutter/shell/platform/fuchsia/flutter:jit"
+  library_path = "${root_out_dir}/exe.unstripped/flutter_jit_runner"
+  output = "${target_gen_dir}/flutter_jit_runner.dartprofilersymbols"
+}
+
+generate_dart_profiler_symbols("flutter_aot_runner") {
+  library_label = "//flutter/shell/platform/fuchsia/flutter:aot"
+  library_path = "${root_out_dir}/exe.unstripped/flutter_aot_runner"
+  output = "${target_gen_dir}/flutter_aot_runner.dartprofilersymbols"
+}

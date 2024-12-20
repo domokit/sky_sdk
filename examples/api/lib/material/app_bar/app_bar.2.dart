@@ -13,9 +13,7 @@ class AppBarApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: AppBarExample(),
-    );
+    return const MaterialApp(home: AppBarExample());
   }
 }
 
@@ -30,16 +28,8 @@ class AppBarExample extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
-          TextButton(
-            style: style,
-            onPressed: () {},
-            child: const Text('Action 1'),
-          ),
-          TextButton(
-            style: style,
-            onPressed: () {},
-            child: const Text('Action 2'),
-          ),
+          TextButton(style: style, onPressed: () {}, child: const Text('Action 1')),
+          TextButton(style: style, onPressed: () {}, child: const Text('Action 2')),
         ],
       ),
     );

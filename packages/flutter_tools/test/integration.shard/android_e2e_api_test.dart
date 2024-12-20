@@ -29,12 +29,12 @@ void main() {
     expect(result, const ProcessResultMatcher());
 
     final File api33File = tempDir
-       .childDirectory('android')
-       .childDirectory('app')
-       .childDirectory('src')
-       .childDirectory('main')
-       .childDirectory('java')
-       .childFile('Android33Api.java');
+        .childDirectory('android')
+        .childDirectory('app')
+        .childDirectory('src')
+        .childDirectory('main')
+        .childDirectory('java')
+        .childFile('Android33Api.java');
 
     api33File.createSync(recursive: true);
     // AccessibilityManager.isAudioDescriptionRequested() is an API 33 feature

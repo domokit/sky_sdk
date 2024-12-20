@@ -16,9 +16,7 @@ void main() {
     const double containerTwoHeight = columnHeight - 200;
     const double containerThreeHeight = 100;
 
-    await tester.pumpWidget(
-      const example.ExpandedApp(),
-    );
+    await tester.pumpWidget(const example.ExpandedApp());
 
     final Size column = tester.getSize(find.byType(Column));
     expect(column, const Size(columnWidth, columnHeight));

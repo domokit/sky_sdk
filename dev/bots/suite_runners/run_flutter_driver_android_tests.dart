@@ -22,63 +22,39 @@ import '../utils.dart';
 Future<void> runFlutterDriverAndroidTests() async {
   print('Running Flutter Driver Android tests...');
 
-  await runCommand(
-    'flutter',
-    <String>[
-      'drive',
-      'lib/flutter_rendered_blue_rectangle_main.dart',
-      // There are no reason to enable development flags for this test.
-      // Disable them to work around flakiness issues, and in general just
-      // make less things start up unnecessarily.
-      '--no-dds',
-      '--no-enable-dart-profiling',
-      '--test-arguments=test',
-      '--test-arguments=--reporter=expanded',
-    ],
-    workingDirectory: path.join(
-      'dev',
-      'integration_tests',
-      'native_driver_test',
-    ),
-  );
+  await runCommand('flutter', <String>[
+    'drive',
+    'lib/flutter_rendered_blue_rectangle_main.dart',
+    // There are no reason to enable development flags for this test.
+    // Disable them to work around flakiness issues, and in general just
+    // make less things start up unnecessarily.
+    '--no-dds',
+    '--no-enable-dart-profiling',
+    '--test-arguments=test',
+    '--test-arguments=--reporter=expanded',
+  ], workingDirectory: path.join('dev', 'integration_tests', 'native_driver_test'));
 
-  await runCommand(
-    'flutter',
-    <String>[
-      'drive',
-      'lib/platform_view_blue_orange_gradient_main.dart',
-      // There are no reason to enable development flags for this test.
-      // Disable them to work around flakiness issues, and in general just
-      // make less things start up unnecessarily.
-      '--no-dds',
-      '--no-enable-dart-profiling',
-      '--test-arguments=test',
-      '--test-arguments=--reporter=expanded',
-    ],
-    workingDirectory: path.join(
-      'dev',
-      'integration_tests',
-      'native_driver_test',
-    ),
-  );
+  await runCommand('flutter', <String>[
+    'drive',
+    'lib/platform_view_blue_orange_gradient_main.dart',
+    // There are no reason to enable development flags for this test.
+    // Disable them to work around flakiness issues, and in general just
+    // make less things start up unnecessarily.
+    '--no-dds',
+    '--no-enable-dart-profiling',
+    '--test-arguments=test',
+    '--test-arguments=--reporter=expanded',
+  ], workingDirectory: path.join('dev', 'integration_tests', 'native_driver_test'));
 
-  await runCommand(
-    'flutter',
-    <String>[
-      'drive',
-      'lib/external_texture_smiley_face_main.dart',
-      // There are no reason to enable development flags for this test.
-      // Disable them to work around flakiness issues, and in general just
-      // make less things start up unnecessarily.
-      '--no-dds',
-      '--no-enable-dart-profiling',
-      '--test-arguments=test',
-      '--test-arguments=--reporter=expanded',
-    ],
-    workingDirectory: path.join(
-      'dev',
-      'integration_tests',
-      'native_driver_test',
-    ),
-  );
+  await runCommand('flutter', <String>[
+    'drive',
+    'lib/external_texture_smiley_face_main.dart',
+    // There are no reason to enable development flags for this test.
+    // Disable them to work around flakiness issues, and in general just
+    // make less things start up unnecessarily.
+    '--no-dds',
+    '--no-enable-dart-profiling',
+    '--test-arguments=test',
+    '--test-arguments=--reporter=expanded',
+  ], workingDirectory: path.join('dev', 'integration_tests', 'native_driver_test'));
 }

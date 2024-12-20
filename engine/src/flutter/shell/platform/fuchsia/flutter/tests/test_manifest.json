@@ -1,0 +1,27 @@
+{
+    "families": [
+        {
+            "family": "Roboto",
+            "fallback": true,
+            "fallback_group": "sans-serif",
+            "fonts": [
+                {
+                    "asset": "Roboto-Regular.ttf"
+                }
+            ]
+        },
+        {
+            "family": "Roboto Slab",
+            "aliases": [
+                "RobotoSlab"
+            ],
+            "fallback": true,
+            "fallback_group": "serif",
+            "fonts": [
+                {
+                    "asset": "RobotoSlab-Regular.ttf"
+                }
+            ]
+        }
+    ]
+}

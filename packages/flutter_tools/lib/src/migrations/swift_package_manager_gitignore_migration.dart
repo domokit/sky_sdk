@@ -29,7 +29,7 @@ migrate_working_dir/
 /// Adds `.build/` and `.swiftpm/` to the .gitignore file.
 class SwiftPackageManagerGitignoreMigration extends ProjectMigrator {
   SwiftPackageManagerGitignoreMigration(FlutterProject project, super.logger)
-      : _gitignoreFile = project.gitignoreFile;
+    : _gitignoreFile = project.gitignoreFile;
 
   final File _gitignoreFile;
 
@@ -49,10 +49,7 @@ class SwiftPackageManagerGitignoreMigration extends ProjectMigrator {
       return;
     }
 
-    final String newContent = originalContent.replaceFirst(
-      _gitignoreBefore,
-      _gitignoreAfter,
-    );
+    final String newContent = originalContent.replaceFirst(_gitignoreBefore, _gitignoreAfter);
     if (newContent != originalContent) {
       logger.printWarning(
         '.gitignore does not ignore Swift Package Manager build directories, updating.',

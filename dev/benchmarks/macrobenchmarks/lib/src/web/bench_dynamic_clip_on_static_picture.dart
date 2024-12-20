@@ -43,7 +43,7 @@ class BenchDynamicClipOnStaticPicture extends SceneBuilderRecorder {
         'Bad combination of constant values kRowHeight, kRows, and '
         'kScrollData. With these numbers there is risk that the picture '
         'will scroll out of the clip entirely. To fix the issue reduce '
-        'kScrollDelta, or increase either kRows or kRowHeight.'
+        'kScrollDelta, or increase either kRows or kRowHeight.',
       );
     }
 
@@ -52,10 +52,7 @@ class BenchDynamicClipOnStaticPicture extends SceneBuilderRecorder {
     final PictureRecorder pictureRecorder = PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     viewSize = view.physicalSize / view.devicePixelRatio;
-    clipSize = Size(
-      viewSize.width / 2,
-      viewSize.height / 5,
-    );
+    clipSize = Size(viewSize.width / 2, viewSize.height / 5);
     final double cellWidth = viewSize.width / kColumns;
 
     final List<Paragraph> paragraphs = generateLaidOutParagraphs(
@@ -72,12 +69,7 @@ class BenchDynamicClipOnStaticPicture extends SceneBuilderRecorder {
       for (int column = 0; column < kColumns; column += 1) {
         final double left = cellWidth * column;
         canvas.save();
-        canvas.clipRect(Rect.fromLTWH(
-          left,
-          yOffset,
-          cellWidth,
-          20.0,
-        ));
+        canvas.clipRect(Rect.fromLTWH(left, yOffset, cellWidth, 20.0));
         canvas.drawParagraph(
           paragraphs[paragraphCounter % paragraphs.length],
           Offset(left, yOffset),

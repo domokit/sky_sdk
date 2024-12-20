@@ -3,14 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/navigator/navigator.restorable_push_replacement.0.dart' as example;
+import 'package:flutter_api_samples/widgets/navigator/navigator.restorable_push_replacement.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('It pushes a restorable route and restores it', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.RestorablePushReplacementExampleApp(),
-    );
+    await tester.pumpWidget(const example.RestorablePushReplacementExampleApp());
 
     expect(find.widgetWithText(AppBar, 'Sample Code'), findsOne);
     expect(find.text('This is the initial route.'), findsOne);

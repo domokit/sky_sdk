@@ -11,9 +11,7 @@ void main() {
     await tester.pumpWidget(
       const Center(
         child: DefaultTextStyle(
-          style: TextStyle(
-            fontSize: 100.0,
-          ),
+          style: TextStyle(fontSize: 100.0),
           child: Text('X', textDirection: TextDirection.ltr),
         ),
       ),
@@ -28,20 +26,14 @@ void main() {
           baseline: 175.0,
           baselineType: TextBaseline.alphabetic,
           child: DefaultTextStyle(
-            style: TextStyle(
-              fontFamily: 'FlutterTest',
-              fontSize: 100.0,
-            ),
+            style: TextStyle(fontFamily: 'FlutterTest', fontSize: 100.0),
             child: Text('X', textDirection: TextDirection.ltr),
           ),
         ),
       ),
     );
     expect(tester.renderObject<RenderBox>(find.text('X')).size, const Size(100.0, 100.0));
-    expect(
-      tester.renderObject<RenderBox>(find.byType(Baseline)).size,
-      const Size(100.0, 200),
-    );
+    expect(tester.renderObject<RenderBox>(find.byType(Baseline)).size, const Size(100.0, 200));
   });
 
   testWidgets('Chip caches baseline', (WidgetTester tester) async {
@@ -124,12 +116,13 @@ void main() {
 }
 
 class BaselineDetector extends LeafRenderObjectWidget {
-  const BaselineDetector(this.callback, { super.key });
+  const BaselineDetector(this.callback, {super.key});
 
   final VoidCallback callback;
 
   @override
-  RenderBaselineDetector createRenderObject(BuildContext context) => RenderBaselineDetector(callback);
+  RenderBaselineDetector createRenderObject(BuildContext context) =>
+      RenderBaselineDetector(callback);
 
   @override
   void updateRenderObject(BuildContext context, RenderBaselineDetector renderObject) {
@@ -173,5 +166,5 @@ class RenderBaselineDetector extends RenderBox {
   }
 
   @override
-  void paint(PaintingContext context, Offset offset) { }
+  void paint(PaintingContext context, Offset offset) {}
 }

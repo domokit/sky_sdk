@@ -1,0 +1,61 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+config("cpu_features_config") {
+  cflags = [ "-Wno-unused-function" ]
+  defines = [
+    "STACK_LINE_READER_BUFFER_SIZE=1024",
+    "HAVE_STRONG_GETAUXVAL",
+  ]
+  include_dirs = [ "src/include" ]
+}
+
+config("ndk_compat_headers") {
+  include_dirs = [ "src/ndk_compat" ]
+}
+
+source_set("cpuinfo") {
+  sources = [
+    "src/src/copy.inl",
+    "src/src/define_introspection.inl",
+    "src/src/define_introspection_and_hwcaps.inl",
+    "src/src/equals.inl",
+    "src/src/filesystem.c",
+    "src/src/hwcaps.c",
+    "src/src/stack_line_reader.c",
+    "src/src/string_view.c",
+  ]
+  if (current_cpu == "x86" || current_cpu == "x64") {
+    sources += [
+      "src/src/impl_x86__base_implementation.inl",
+      "src/src/impl_x86_freebsd.c",
+      "src/src/impl_x86_linux_or_android.c",
+      "src/src/impl_x86_macos.c",
+      "src/src/impl_x86_windows.c",
+    ]
+  } else if (current_cpu == "arm") {
+    sources += [ "src/src/impl_arm_linux_or_android.c" ]
+  } else if (current_cpu == "arm64") {
+    sources += [ "src/src/impl_aarch64_linux_or_android.c" ]
+  } else if (current_cpu == "mips") {
+    sources += [ "src/src/impl_mips_linux_or_android.c" ]
+  } else if (current_cpu == "ppc") {
+    sources += [ "src/src/impl_ppc_linux.c" ]
+  } else if (current_cpu == "riscv64") {
+    sources += [ "src/src/impl_riscv_linux.c" ]
+  } else {
+    error("Missing definition for architecture: $current_cpu")
+  }
+  configs += [ ":cpu_features_config" ]
+}
+
+source_set("ndk_compat") {
+  sources = [
+    "src/ndk_compat/cpu-features.c",
+    "src/ndk_compat/cpu-features.h",
+  ]
+  configs += [ ":cpu_features_config" ]
+  public_configs = [ ":ndk_compat_headers" ]
+  deps = [ ":cpuinfo" ]
+}

@@ -25,19 +25,25 @@ class _TestHitTester extends RenderBox {
 // A binding used to test MouseTracker, allowing the test to override hit test
 // searching.
 class TestMouseTrackerFlutterBinding extends BindingBase
-    with SchedulerBinding, ServicesBinding, GestureBinding, SemanticsBinding, RendererBinding, TestDefaultBinaryMessengerBinding {
+    with
+        SchedulerBinding,
+        ServicesBinding,
+        GestureBinding,
+        SemanticsBinding,
+        RendererBinding,
+        TestDefaultBinaryMessengerBinding {
   @override
   void initInstances() {
     super.initInstances();
     postFrameCallbacks = <void Function(Duration)>[];
   }
 
-  late final RenderView _renderView = RenderView(
-    view: platformDispatcher.implicitView!,
-  );
+  late final RenderView _renderView = RenderView(view: platformDispatcher.implicitView!);
 
   late final PipelineOwner _pipelineOwner = PipelineOwner(
-    onSemanticsUpdate: (ui.SemanticsUpdate _) { assert(false); },
+    onSemanticsUpdate: (ui.SemanticsUpdate _) {
+      assert(false);
+    },
   );
 
   void setHitTest(BoxHitTest hitTest) {
@@ -84,7 +90,13 @@ class TestMouseTrackerFlutterBinding extends BindingBase
 
 // An object that mocks the behavior of a render object with [MouseTrackerAnnotation].
 class TestAnnotationTarget with Diagnosticable implements MouseTrackerAnnotation, HitTestTarget {
-  const TestAnnotationTarget({this.onEnter, this.onHover, this.onExit, this.cursor = MouseCursor.defer, this.validForMouseTracker = true});
+  const TestAnnotationTarget({
+    this.onEnter,
+    this.onHover,
+    this.onExit,
+    this.cursor = MouseCursor.defer,
+    this.validForMouseTracker = true,
+  });
 
   @override
   final PointerEnterEventListener? onEnter;

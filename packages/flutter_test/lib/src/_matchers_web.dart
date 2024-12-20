@@ -63,7 +63,9 @@ class MatchesGoldenFile extends AsyncMatcher {
     final Size size = renderObject.paintBounds.size;
     final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.instance;
     final ui.FlutterView view = binding.platformDispatcher.implicitView!;
-    final RenderView renderView = binding.renderViews.firstWhere((RenderView r) => r.flutterView == view);
+    final RenderView renderView = binding.renderViews.firstWhere(
+      (RenderView r) => r.flutterView == view,
+    );
 
     if (isSkiaWeb) {
       // In CanvasKit and Skwasm, use Layer.toImage to generate the screenshot.
@@ -87,7 +89,10 @@ class MatchesGoldenFile extends AsyncMatcher {
             return null;
           }
           try {
-            final bool success = await webGoldenComparator.compareBytes(bytes.buffer.asUint8List(), key);
+            final bool success = await webGoldenComparator.compareBytes(
+              bytes.buffer.asUint8List(),
+              key,
+            );
             return success ? null : 'does not match';
           } on TestFailure catch (ex) {
             return ex.message;

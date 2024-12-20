@@ -6,7 +6,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('onTap detection with canceled pointer and a drag listener', (WidgetTester tester) async {
+  testWidgets('onTap detection with canceled pointer and a drag listener', (
+    WidgetTester tester,
+  ) async {
     int detector1TapCount = 0;
     int detector2TapCount = 0;
 
@@ -14,12 +16,16 @@ void main() {
       child: Column(
         children: <Widget>[
           GestureDetector(
-            onTap: () { detector1TapCount += 1; },
+            onTap: () {
+              detector1TapCount += 1;
+            },
             behavior: HitTestBehavior.opaque,
             child: const SizedBox(width: 200.0, height: 200.0),
           ),
           GestureDetector(
-            onTap: () { detector2TapCount += 1; },
+            onTap: () {
+              detector2TapCount += 1;
+            },
             behavior: HitTestBehavior.opaque,
             child: const SizedBox(width: 200.0, height: 200.0),
           ),

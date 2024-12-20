@@ -1,0 +1,301 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+assert(is_win)
+
+import("//flutter/shell/platform/glfw/config.gni")
+import("//flutter/testing/testing.gni")
+
+_public_headers = [ "public/flutter_windows.h" ]
+_internal_headers = [ "flutter_windows_internal.h" ]
+
+config("relative_angle_headers") {
+  include_dirs = [ "//flutter/third_party/angle/include" ]
+}
+
+# Any files that are built by clients (client_wrapper code, library headers for
+# implementations using this shared code, etc.) include the public headers
+# assuming they are in the include path. This configuration should be added to
+# any such code that is also built by GN to make the includes work.
+config("relative_flutter_windows_headers") {
+  include_dirs = [ "public" ]
+}
+
+# The headers are a separate source set since the client wrapper is allowed
+# to depend on the public headers, but none of the rest of the code.
+source_set("flutter_windows_headers") {
+  public = _public_headers + _internal_headers
+
+  public_deps = [ "//flutter/shell/platform/common:common_cpp_library_headers" ]
+
+  configs +=
+      [ "//flutter/shell/platform/common:desktop_library_implementation" ]
+
+  public_configs =
+      [ "//flutter/shell/platform/common:relative_flutter_library_headers" ]
+}
+
+source_set("flutter_windows_source") {
+  # Common Windows sources.
+  sources = [
+    "accessibility_bridge_windows.cc",
+    "accessibility_bridge_windows.h",
+    "accessibility_plugin.cc",
+    "accessibility_plugin.h",
+    "compositor.h",
+    "compositor_opengl.cc",
+    "compositor_opengl.h",
+    "compositor_software.cc",
+    "compositor_software.h",
+    "cursor_handler.cc",
+    "cursor_handler.h",
+    "direct_manipulation.cc",
+    "direct_manipulation.h",
+    "dpi_utils.cc",
+    "dpi_utils.h",
+    "egl/context.cc",
+    "egl/context.h",
+    "egl/egl.cc",
+    "egl/egl.h",
+    "egl/manager.cc",
+    "egl/manager.h",
+    "egl/proc_table.cc",
+    "egl/proc_table.h",
+    "egl/surface.cc",
+    "egl/surface.h",
+    "egl/window_surface.cc",
+    "egl/window_surface.h",
+    "event_watcher.cc",
+    "event_watcher.h",
+    "external_texture.h",
+    "external_texture_d3d.cc",
+    "external_texture_d3d.h",
+    "external_texture_pixelbuffer.cc",
+    "external_texture_pixelbuffer.h",
+    "flutter_key_map.g.cc",
+    "flutter_platform_node_delegate_windows.cc",
+    "flutter_platform_node_delegate_windows.h",
+    "flutter_project_bundle.cc",
+    "flutter_project_bundle.h",
+    "flutter_window.cc",
+    "flutter_window.h",
+    "flutter_windows.cc",
+    "flutter_windows_engine.cc",
+    "flutter_windows_engine.h",
+    "flutter_windows_texture_registrar.cc",
+    "flutter_windows_texture_registrar.h",
+    "flutter_windows_view.cc",
+    "flutter_windows_view.h",
+    "flutter_windows_view_controller.cc",
+    "flutter_windows_view_controller.h",
+    "keyboard_handler_base.h",
+    "keyboard_key_channel_handler.cc",
+    "keyboard_key_channel_handler.h",
+    "keyboard_key_embedder_handler.cc",
+    "keyboard_key_embedder_handler.h",
+    "keyboard_key_handler.cc",
+    "keyboard_key_handler.h",
+    "keyboard_manager.cc",
+    "keyboard_manager.h",
+    "keyboard_utils.cc",
+    "keyboard_utils.h",
+    "platform_handler.cc",
+    "platform_handler.h",
+    "platform_view_manager.cc",
+    "platform_view_manager.h",
+    "platform_view_plugin.cc",
+    "platform_view_plugin.h",
+    "sequential_id_generator.cc",
+    "sequential_id_generator.h",
+    "settings_plugin.cc",
+    "settings_plugin.h",
+    "system_utils.cc",
+    "system_utils.h",
+    "task_runner.cc",
+    "task_runner.h",
+    "task_runner_window.cc",
+    "task_runner_window.h",
+    "text_input_manager.cc",
+    "text_input_manager.h",
+    "text_input_plugin.cc",
+    "text_input_plugin.h",
+    "window_binding_handler.h",
+    "window_binding_handler_delegate.h",
+    "window_proc_delegate_manager.cc",
+    "window_proc_delegate_manager.h",
+    "window_state.h",
+    "windows_lifecycle_manager.cc",
+    "windows_lifecycle_manager.h",
+    "windows_proc_table.cc",
+    "windows_proc_table.h",
+    "windowsx_shim.h",
+  ]
+
+  libs = [
+    "dwmapi.lib",
+    "imm32.lib",
+  ]
+
+  configs += [
+    "//flutter/shell/platform/common:desktop_library_implementation",
+    "//flutter/third_party/angle:gl_prototypes",
+  ]
+
+  public_configs = [ ":relative_angle_headers" ]
+
+  defines = [ "FLUTTER_ENGINE_NO_PROTOTYPES" ]
+
+  public_deps = [
+    "//flutter/fml:string_conversion",
+    "//flutter/shell/platform/common:common_cpp_accessibility",
+    "//flutter/shell/platform/common:common_cpp_enums",
+  ]
+
+  deps = [
+    ":flutter_windows_headers",
+    "//flutter/fml:fml",
+    "//flutter/impeller/renderer/backend/gles",
+    "//flutter/shell/platform/common:common_cpp",
+    "//flutter/shell/platform/common:common_cpp_input",
+    "//flutter/shell/platform/common:common_cpp_switches",
+    "//flutter/shell/platform/common/client_wrapper:client_wrapper",
+    "//flutter/shell/platform/embedder:embedder_as_internal_library",
+    "//flutter/shell/platform/windows/client_wrapper:client_wrapper_windows",
+
+    # libEGL_static MUST be ordered before libGLESv2_static in this list. If
+    # reversed, a linker error will occur, reporting DllMain already defined in
+    # LIBCMTD.lib
+    "//flutter/third_party/angle:libEGL_static",
+    "//flutter/third_party/angle:libGLESv2_static",
+    "//flutter/third_party/rapidjson",
+  ]
+}
+
+copy("publish_headers_windows") {
+  sources = _public_headers
+  outputs = [ "$root_out_dir/{{source_file_part}}" ]
+
+  # The Windows header assumes the presence of the common headers.
+  deps = [ "//flutter/shell/platform/common:publish_headers" ]
+}
+
+shared_library("flutter_windows") {
+  deps = [ ":flutter_windows_source" ]
+
+  public_configs = [ "//flutter:config" ]
+}
+
+test_fixtures("flutter_windows_fixtures") {
+  dart_main = "fixtures/main.dart"
+  fixtures = []
+}
+
+executable("flutter_windows_unittests") {
+  testonly = true
+
+  # Common Windows test sources.
+  sources = [
+    "accessibility_bridge_windows_unittests.cc",
+    "compositor_opengl_unittests.cc",
+    "compositor_software_unittests.cc",
+    "cursor_handler_unittests.cc",
+    "direct_manipulation_unittests.cc",
+    "dpi_utils_unittests.cc",
+    "flutter_project_bundle_unittests.cc",
+    "flutter_window_unittests.cc",
+    "flutter_windows_engine_unittests.cc",
+    "flutter_windows_texture_registrar_unittests.cc",
+    "flutter_windows_unittests.cc",
+    "flutter_windows_view_unittests.cc",
+    "keyboard_key_channel_handler_unittests.cc",
+    "keyboard_key_embedder_handler_unittests.cc",
+    "keyboard_key_handler_unittests.cc",
+    "keyboard_unittests.cc",
+    "keyboard_utils_unittests.cc",
+    "platform_handler_unittests.cc",
+    "sequential_id_generator_unittests.cc",
+    "settings_plugin_unittests.cc",
+    "system_utils_unittests.cc",
+    "task_runner_unittests.cc",
+    "testing/egl/mock_context.h",
+    "testing/egl/mock_manager.h",
+    "testing/egl/mock_proc_table.h",
+    "testing/egl/mock_window_surface.h",
+    "testing/engine_modifier.h",
+    "testing/flutter_windows_engine_builder.cc",
+    "testing/flutter_windows_engine_builder.h",
+    "testing/mock_direct_manipulation.h",
+    "testing/mock_platform_view_manager.h",
+    "testing/mock_text_input_manager.cc",
+    "testing/mock_text_input_manager.h",
+    "testing/mock_window.cc",
+    "testing/mock_window.h",
+    "testing/mock_window_binding_handler.cc",
+    "testing/mock_window_binding_handler.h",
+    "testing/mock_windows_proc_table.h",
+    "testing/test_keyboard.cc",
+    "testing/test_keyboard.h",
+    "testing/test_keyboard_unittests.cc",
+    "testing/view_modifier.h",
+    "testing/windows_test.cc",
+    "testing/windows_test.h",
+    "testing/windows_test_config_builder.cc",
+    "testing/windows_test_config_builder.h",
+    "testing/windows_test_context.cc",
+    "testing/windows_test_context.h",
+    "testing/wm_builders.cc",
+    "testing/wm_builders.h",
+    "text_input_plugin_unittest.cc",
+    "window_proc_delegate_manager_unittests.cc",
+    "window_unittests.cc",
+    "windows_lifecycle_manager_unittests.cc",
+  ]
+
+  configs +=
+      [ "//flutter/shell/platform/common:desktop_library_implementation" ]
+
+  public_configs = [ "//flutter:config" ]
+
+  deps = [
+    ":flutter_windows_fixtures",
+    ":flutter_windows_headers",
+    ":flutter_windows_source",
+    "//flutter/impeller/renderer/backend/gles",
+    "//flutter/shell/platform/common:common_cpp",
+    "//flutter/shell/platform/common/client_wrapper:client_wrapper",
+    "//flutter/shell/platform/embedder:embedder_as_internal_library",
+    "//flutter/shell/platform/embedder:embedder_test_utils",
+    "//flutter/testing",
+    "//flutter/testing:dart",
+    "//flutter/third_party/rapidjson",
+    "//flutter/third_party/tonic",
+  ]
+}
+
+shared_library("flutter_windows_glfw") {
+  deps = [ "//flutter/shell/platform/glfw:flutter_glfw" ]
+
+  public_configs = [ "//flutter:config" ]
+}
+
+group("windows_glfw") {
+  deps = [
+    ":flutter_windows",
+    ":flutter_windows_glfw",
+    "//flutter/shell/platform/glfw:publish_headers_glfw",
+    "//flutter/shell/platform/glfw/client_wrapper:publish_wrapper_glfw",
+  ]
+}
+
+group("windows") {
+  deps = [
+    ":flutter_windows",
+    ":publish_headers_windows",
+    "//flutter/shell/platform/windows/client_wrapper:publish_wrapper_windows",
+  ]
+
+  if (build_glfw_shell) {
+    deps += [ ":windows_glfw" ]
+  }
+}

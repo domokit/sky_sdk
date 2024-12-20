@@ -6,7 +6,8 @@ import 'package:flutter/foundation.dart';
 
 import 'text_input.dart';
 
-export 'text_input.dart' show TextEditingValue, TextInputClient, TextInputConfiguration, TextInputConnection;
+export 'text_input.dart'
+    show TextEditingValue, TextInputClient, TextInputConfiguration, TextInputConnection;
 
 /// A collection of commonly used autofill hint strings on different platforms.
 ///
@@ -634,12 +635,12 @@ class AutofillConfiguration {
     required TextEditingValue currentEditingValue,
     String? hintText,
   }) : this._(
-    enabled: true,
-    uniqueIdentifier: uniqueIdentifier,
-    autofillHints: autofillHints,
-    currentEditingValue: currentEditingValue,
-    hintText: hintText,
-  );
+         enabled: true,
+         uniqueIdentifier: uniqueIdentifier,
+         autofillHints: autofillHints,
+         currentEditingValue: currentEditingValue,
+         hintText: hintText,
+       );
 
   const AutofillConfiguration._({
     required this.enabled,
@@ -728,13 +729,13 @@ class AutofillConfiguration {
   /// Returns a representation of this object as a JSON object.
   Map<String, dynamic>? toJson() {
     return enabled
-      ? <String, dynamic>{
+        ? <String, dynamic>{
           'uniqueIdentifier': uniqueIdentifier,
           'hints': autofillHints,
           'editingValue': currentEditingValue.toJSON(),
           if (hintText != null) 'hintText': hintText,
         }
-      : null;
+        : null;
   }
 }
 
@@ -802,20 +803,19 @@ class _AutofillScopeTextInputConfiguration extends TextInputConfiguration {
     required this.allConfigurations,
     required TextInputConfiguration currentClientConfiguration,
   }) : super(
-          viewId: currentClientConfiguration.viewId,
-          inputType: currentClientConfiguration.inputType,
-          obscureText: currentClientConfiguration.obscureText,
-          autocorrect: currentClientConfiguration.autocorrect,
-          smartDashesType: currentClientConfiguration.smartDashesType,
-          smartQuotesType: currentClientConfiguration.smartQuotesType,
-          enableSuggestions: currentClientConfiguration.enableSuggestions,
-          inputAction: currentClientConfiguration.inputAction,
-          textCapitalization: currentClientConfiguration.textCapitalization,
-          keyboardAppearance: currentClientConfiguration.keyboardAppearance,
-          actionLabel: currentClientConfiguration.actionLabel,
-          autofillConfiguration:
-              currentClientConfiguration.autofillConfiguration,
-        );
+         viewId: currentClientConfiguration.viewId,
+         inputType: currentClientConfiguration.inputType,
+         obscureText: currentClientConfiguration.obscureText,
+         autocorrect: currentClientConfiguration.autocorrect,
+         smartDashesType: currentClientConfiguration.smartDashesType,
+         smartQuotesType: currentClientConfiguration.smartQuotesType,
+         enableSuggestions: currentClientConfiguration.enableSuggestions,
+         inputAction: currentClientConfiguration.inputAction,
+         textCapitalization: currentClientConfiguration.textCapitalization,
+         keyboardAppearance: currentClientConfiguration.keyboardAppearance,
+         actionLabel: currentClientConfiguration.actionLabel,
+         autofillConfiguration: currentClientConfiguration.autofillConfiguration,
+       );
 
   final Iterable<TextInputConfiguration> allConfigurations;
 
@@ -823,8 +823,8 @@ class _AutofillScopeTextInputConfiguration extends TextInputConfiguration {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> result = super.toJson();
     result['fields'] = allConfigurations
-      .map((TextInputConfiguration configuration) => configuration.toJson())
-      .toList(growable: false);
+        .map((TextInputConfiguration configuration) => configuration.toJson())
+        .toList(growable: false);
     return result;
   }
 }
@@ -836,12 +836,16 @@ mixin AutofillScopeMixin implements AutofillScope {
   @override
   TextInputConnection attach(TextInputClient trigger, TextInputConfiguration configuration) {
     assert(
-      !autofillClients.any((AutofillClient client) => !client.textInputConfiguration.autofillConfiguration.enabled),
+      !autofillClients.any(
+        (AutofillClient client) => !client.textInputConfiguration.autofillConfiguration.enabled,
+      ),
       'Every client in AutofillScope.autofillClients must enable autofill',
     );
 
     final TextInputConfiguration inputConfiguration = _AutofillScopeTextInputConfiguration(
-      allConfigurations: autofillClients.map((AutofillClient client) => client.textInputConfiguration),
+      allConfigurations: autofillClients.map(
+        (AutofillClient client) => client.textInputConfiguration,
+      ),
       currentClientConfiguration: configuration,
     );
     return TextInput.attach(trigger, inputConfiguration);

@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Can hide default scrollbar on desktop', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ScrollbarApp(),
-    );
+    await tester.pumpWidget(const example.ScrollbarApp());
 
     // Two from left list view where scroll configuration is not set.
     // One from right list view where scroll configuration is set.

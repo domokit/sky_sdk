@@ -1,0 +1,115 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+assert(is_fuchsia)
+
+import("//flutter/common/config.gni")
+import("//flutter/shell/version/version.gni")
+import("//flutter/testing/testing.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+
+config("utils_config") {
+  include_dirs = [ "../../.." ]
+}
+
+template("make_utils") {
+  source_set(target_name) {
+    sources = [
+      "$target_gen_dir/build_info.cc",
+      "build_info.h",
+      "files.cc",
+      "files.h",
+      "handle_exception.cc",
+      "handle_exception.h",
+      "inlines.h",
+      "logging.h",
+      "mapped_resource.cc",
+      "mapped_resource.h",
+      "root_inspect_node.cc",
+      "root_inspect_node.h",
+      "tempfs.cc",
+      "tempfs.h",
+      "vmo.cc",
+      "vmo.h",
+      "vmservice_object.cc",
+      "vmservice_object.h",
+    ]
+
+    deps = invoker.deps + [
+             ":generate_build_info_cc_file",
+             "${fuchsia_sdk}/fidl/fuchsia.feedback",
+             "${fuchsia_sdk}/fidl/fuchsia.mem",
+             "${fuchsia_sdk}/pkg/async-loop",
+             "${fuchsia_sdk}/pkg/async-loop-cpp",
+             "${fuchsia_sdk}/pkg/async-loop-default",
+             "${fuchsia_sdk}/pkg/fdio",
+             "${fuchsia_sdk}/pkg/sys_cpp",
+             "${fuchsia_sdk}/pkg/inspect_component_cpp",
+             "${fuchsia_sdk}/pkg/trace",
+             "${fuchsia_sdk}/pkg/vfs_cpp",
+             "${fuchsia_sdk}/pkg/zx",
+             "//flutter/fml",
+             "//flutter/third_party/tonic",
+           ]
+
+    public_configs = [ ":utils_config" ]
+  }
+}
+
+action("generate_build_info_cc_file") {
+  inputs = [
+    "build_info_in.cc",
+    "//fuchsia/sdk/$host_os/meta/manifest.json",
+    "$dart_src/.git/logs/HEAD",
+  ]
+  outputs = [ "$target_gen_dir/build_info.cc" ]
+
+  script = "//flutter/tools/fuchsia/make_build_info.py"
+  args = [
+    "--input",
+    rebase_path("build_info_in.cc", root_build_dir),
+    "--output",
+    rebase_path(outputs[0], root_build_dir),
+    "--buildroot",
+    rebase_path("//", root_build_dir),
+    "--engine-version",
+    engine_version,
+  ]
+}
+
+make_utils("utils") {
+  deps = [ "$dart_src/runtime/bin:elf_loader" ]
+}
+
+test_fixtures("utils_fixtures") {
+  fixtures = []
+}
+
+executable("dart_utils_unittests") {
+  testonly = true
+
+  output_name = "dart_utils_unittests"
+
+  sources = [ "build_info_unittests.cc" ]
+
+  libs = [
+    # This is needed for //flutter/third_party/googletest for linking zircon
+    # symbols.
+    "${fuchsia_arch_root}/sysroot/lib/libzircon.so",
+  ]
+
+  deps = [
+    ":utils",
+    ":utils_fixtures",
+    "$dart_src/runtime:libdart_jit",
+    "$dart_src/runtime/bin:dart_io_api",
+    "${fuchsia_sdk}/pkg/inspect_component_cpp",
+    "${fuchsia_sdk}/pkg/sys_cpp",
+    "//flutter/testing",
+  ]
+}
+
+make_utils("utils_product") {
+  deps = [ "$dart_src/runtime/bin:elf_loader_product" ]
+}

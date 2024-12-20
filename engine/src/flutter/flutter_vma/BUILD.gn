@@ -1,0 +1,38 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/flutter_vma/config.gni")
+
+source_set("flutter_vma") {
+  sources = [
+    "flutter_vma.cc",
+    "flutter_vma.h",
+  ]
+
+  if (disable_vma_stl_shared_mutex) {
+    defines = [ "VMA_USE_STL_SHARED_MUTEX=0" ]
+  }
+
+  public_deps = [
+    "//flutter/fml",
+    "//flutter/third_party/vulkan-deps/vulkan-headers/src:vulkan_headers",
+    "//flutter/third_party/vulkan_memory_allocator",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+}
+
+source_set("flutter_skia_vma") {
+  sources = [
+    "flutter_skia_vma.cc",
+    "flutter_skia_vma.h",
+  ]
+
+  public_deps = [
+    ":flutter_vma",
+    "//flutter/fml",
+    "//flutter/skia",
+    "//flutter/vulkan/procs",
+  ]
+}

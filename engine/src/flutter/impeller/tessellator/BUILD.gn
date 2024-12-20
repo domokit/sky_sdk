@@ -1,0 +1,70 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/impeller/tools/impeller.gni")
+
+impeller_component("tessellator") {
+  sources = [
+    "tessellator.cc",
+    "tessellator.h",
+  ]
+
+  public_deps = [ "../geometry" ]
+
+  deps = [
+    "../core",
+    "//flutter/fml",
+  ]
+}
+
+impeller_component("tessellator_libtess") {
+  sources = [
+    "tessellator_libtess.cc",
+    "tessellator_libtess.h",
+  ]
+
+  public_deps = [ "../geometry" ]
+
+  deps = [
+    "../core",
+    "//flutter/fml",
+    "//third_party/libtess2",
+  ]
+}
+
+impeller_component("tessellator_shared") {
+  target_type = "shared_library"
+  if (is_win) {
+    output_name = "libtessellator"
+  } else {
+    output_name = "tessellator"
+  }
+
+  sources = [
+    "c/tessellator.cc",
+    "c/tessellator.h",
+  ]
+
+  deps = [
+    ":tessellator_libtess",
+    "../core",
+    "../geometry",
+    "//flutter/fml",
+    "//third_party/libtess2",
+  ]
+
+  metadata = {
+    entitlement_file_path = [ "libtessellator.dylib" ]
+  }
+}
+
+impeller_component("tessellator_unittests") {
+  testonly = true
+  sources = [ "tessellator_unittests.cc" ]
+  deps = [
+    ":tessellator_libtess",
+    "../geometry:geometry_asserts",
+    "//flutter/testing",
+  ]
+}

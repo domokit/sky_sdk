@@ -20,6 +20,9 @@ import '../cupertino_localizations.dart';
 // bottom of this file, and used by the [_GlobalCupertinoLocalizationsDelegate.load]
 // method defined in `flutter_localizations/lib/src/cupertino_localizations.dart`.
 
+// TODO(goderbauer): Extend the generator to properly format the output.
+// dart format off
+
 /// The translations for Afrikaans (`af`).
 class CupertinoLocalizationAf extends GlobalCupertinoLocalizations {
   /// Create an instance of the translation bundle for Afrikaans.

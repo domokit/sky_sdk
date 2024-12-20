@@ -3,14 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/expansion_panel/expansion_panel_list.0.dart' as example;
+import 'package:flutter_api_samples/material/expansion_panel/expansion_panel_list.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('ExpansionPanel can be expanded', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ExpansionPanelListExampleApp(),
-    );
+    await tester.pumpWidget(const example.ExpansionPanelListExampleApp());
 
     // Verify the first tile is collapsed.
     expect(tester.widget<ExpandIcon>(find.byType(ExpandIcon).first).isExpanded, false);
@@ -26,9 +25,7 @@ void main() {
   testWidgets('Tap to delete a ExpansionPanel', (WidgetTester tester) async {
     const int index = 3;
 
-    await tester.pumpWidget(
-      const example.ExpansionPanelListExampleApp(),
-    );
+    await tester.pumpWidget(const example.ExpansionPanelListExampleApp());
 
     expect(find.widgetWithText(ListTile, 'Panel $index'), findsOneWidget);
     expect(tester.widget<ExpandIcon>(find.byType(ExpandIcon).at(index)).isExpanded, false);
@@ -48,9 +45,7 @@ void main() {
   });
 
   testWidgets('ExpansionPanelList is scrollable', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ExpansionPanelListExampleApp(),
-    );
+    await tester.pumpWidget(const example.ExpansionPanelListExampleApp());
 
     expect(find.byType(SingleChildScrollView), findsOneWidget);
 

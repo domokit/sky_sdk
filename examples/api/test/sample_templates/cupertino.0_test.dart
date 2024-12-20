@@ -14,9 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Example app has a placeholder', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SampleApp(),
-    );
+    await tester.pumpWidget(const example.SampleApp());
 
     expect(find.byType(Placeholder), findsOneWidget);
   });

@@ -17,66 +17,76 @@ void main() {
     expect(log, expectations);
   }
 
-  group('not on web', () {
-    test('disableContextMenu asserts', () async {
-      try {
-        BrowserContextMenu.disableContextMenu();
-      } catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
+  group(
+    'not on web',
+    () {
+      test('disableContextMenu asserts', () async {
+        try {
+          BrowserContextMenu.disableContextMenu();
+        } catch (error) {
+          expect(error, isAssertionError);
+        }
+      });
 
-    test('enableContextMenu asserts', () async {
-      try {
-        BrowserContextMenu.enableContextMenu();
-      } catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-  },
+      test('enableContextMenu asserts', () async {
+        try {
+          BrowserContextMenu.enableContextMenu();
+        } catch (error) {
+          expect(error, isAssertionError);
+        }
+      });
+    },
     skip: kIsWeb, // [intended]
   );
 
-  group('on web', () {
-    group('disableContextMenu', () {
-      // Make sure the context menu is enabled (default) after the test.
-      tearDown(() async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.contextMenu, (MethodCall methodCall) {
-          return null;
-        });
-        await BrowserContextMenu.enableContextMenu();
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.contextMenu, null);
-      });
-
-      test('disableContextMenu calls its platform channel method', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.contextMenu, (MethodCall methodCall) async {
-          log.add(methodCall);
-          return null;
+  group(
+    'on web',
+    () {
+      group('disableContextMenu', () {
+        // Make sure the context menu is enabled (default) after the test.
+        tearDown(() async {
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+              .setMockMethodCallHandler(SystemChannels.contextMenu, (MethodCall methodCall) {
+                return null;
+              });
+          await BrowserContextMenu.enableContextMenu();
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+              .setMockMethodCallHandler(SystemChannels.contextMenu, null);
         });
 
-        await verify(BrowserContextMenu.disableContextMenu, <Object>[
-          isMethodCall('disableContextMenu', arguments: null),
-        ]);
+        test('disableContextMenu calls its platform channel method', () async {
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+              .setMockMethodCallHandler(SystemChannels.contextMenu, (MethodCall methodCall) async {
+                log.add(methodCall);
+                return null;
+              });
 
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.contextMenu, null);
-      });
-    });
+          await verify(BrowserContextMenu.disableContextMenu, <Object>[
+            isMethodCall('disableContextMenu', arguments: null),
+          ]);
 
-    group('enableContextMenu', () {
-      test('enableContextMenu calls its platform channel method', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.contextMenu, (MethodCall methodCall) async {
-          log.add(methodCall);
-          return null;
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+              .setMockMethodCallHandler(SystemChannels.contextMenu, null);
         });
-
-        await verify(BrowserContextMenu.enableContextMenu, <Object>[
-          isMethodCall('enableContextMenu', arguments: null),
-        ]);
-
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.contextMenu, null);
       });
-    });
-  },
+
+      group('enableContextMenu', () {
+        test('enableContextMenu calls its platform channel method', () async {
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+              .setMockMethodCallHandler(SystemChannels.contextMenu, (MethodCall methodCall) async {
+                log.add(methodCall);
+                return null;
+              });
+
+          await verify(BrowserContextMenu.enableContextMenu, <Object>[
+            isMethodCall('enableContextMenu', arguments: null),
+          ]);
+
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+              .setMockMethodCallHandler(SystemChannels.contextMenu, null);
+        });
+      });
+    },
     skip: !kIsWeb, // [intended]
   );
 }

@@ -20,17 +20,17 @@ ByteData testByteData(double scale) => ByteData(8)..setFloat64(0, scale);
 double scaleOf(ByteData data) => data.getFloat64(0);
 
 final Map<Object?, Object?> testManifest = <Object?, Object?>{
-  'assets/image.png' : <Map<String, Object>>[
+  'assets/image.png': <Map<String, Object>>[
     <String, String>{'asset': 'assets/image.png'},
     <String, Object>{'asset': 'assets/1.5x/image.png', 'dpr': 1.5},
     <String, Object>{'asset': 'assets/2.0x/image.png', 'dpr': 2.0},
     <String, Object>{'asset': 'assets/3.0x/image.png', 'dpr': 3.0},
-    <String, Object>{'asset': 'assets/4.0x/image.png', 'dpr': 4.0}
+    <String, Object>{'asset': 'assets/4.0x/image.png', 'dpr': 4.0},
   ],
 };
 
 class TestAssetBundle extends CachingAssetBundle {
-  TestAssetBundle({ required Map<Object?, Object?> manifest }) {
+  TestAssetBundle({required Map<Object?, Object?> manifest}) {
     this.manifest = const StandardMessageCodec().encodeMessage(manifest)!;
   }
 
@@ -39,8 +39,8 @@ class TestAssetBundle extends CachingAssetBundle {
   @override
   Future<ByteData> load(String key) {
     final ByteData data = switch (key) {
-      'AssetManifest.bin'     => manifest,
-      'assets/image.png'      => testByteData(1.0),
+      'AssetManifest.bin' => manifest,
+      'assets/image.png' => testByteData(1.0),
       'assets/1.0x/image.png' => testByteData(10.0), // see "...with a main asset and a 1.0x asset"
       'assets/1.5x/image.png' => testByteData(1.5),
       'assets/2.0x/image.png' => testByteData(2.0),
@@ -73,44 +73,54 @@ class TestAssetImage extends AssetImage {
       final ui.Image image = images[scaleOf(data)]!;
       imageInfo = ImageInfo(image: image, scale: key.scale);
     });
-    return FakeImageStreamCompleter(
-      SynchronousFuture<ImageInfo>(imageInfo),
-    );
+    return FakeImageStreamCompleter(SynchronousFuture<ImageInfo>(imageInfo));
   }
 }
 
-Widget buildImageAtRatio(String imageName, Key key, double ratio, bool inferSize, Map<double, ui.Image> images, [ AssetBundle? bundle ]) {
+Widget buildImageAtRatio(
+  String imageName,
+  Key key,
+  double ratio,
+  bool inferSize,
+  Map<double, ui.Image> images, [
+  AssetBundle? bundle,
+]) {
   const double windowSize = 500.0; // 500 logical pixels
   const double imageSize = 200.0; // 200 logical pixels
 
   return MediaQuery(
-    data: MediaQueryData(
-      size: const Size(windowSize, windowSize),
-      devicePixelRatio: ratio,
-    ),
+    data: MediaQueryData(size: const Size(windowSize, windowSize), devicePixelRatio: ratio),
     child: DefaultAssetBundle(
       bundle: bundle ?? TestAssetBundle(manifest: testManifest),
       child: Center(
-        child: inferSize ?
-          Image(
-            key: key,
-            excludeFromSemantics: true,
-            image: TestAssetImage(imageName, images),
-          ) :
-          Image(
-            key: key,
-            excludeFromSemantics: true,
-            image: TestAssetImage(imageName, images),
-            height: imageSize,
-            width: imageSize,
-            fit: BoxFit.fill,
-          ),
+        child:
+            inferSize
+                ? Image(
+                  key: key,
+                  excludeFromSemantics: true,
+                  image: TestAssetImage(imageName, images),
+                )
+                : Image(
+                  key: key,
+                  excludeFromSemantics: true,
+                  image: TestAssetImage(imageName, images),
+                  height: imageSize,
+                  width: imageSize,
+                  fit: BoxFit.fill,
+                ),
       ),
     ),
   );
 }
 
-Widget buildImageCacheResized(String name, Key key, int width, int height, int cacheWidth, int cacheHeight) {
+Widget buildImageCacheResized(
+  String name,
+  Key key,
+  int width,
+  int height,
+  int cacheWidth,
+  int cacheHeight,
+) {
   return Center(
     child: RepaintBoundary(
       child: SizedBox(
@@ -247,11 +257,14 @@ void main() {
     expect(getRenderImage(tester, key).scale, 4.0);
   });
 
-  testWidgets('Image for device pixel ratio 1.0, with a main asset and a 1.0x asset', (WidgetTester tester) async {
+  testWidgets('Image for device pixel ratio 1.0, with a main asset and a 1.0x asset', (
+    WidgetTester tester,
+  ) async {
     // If both a main asset and a 1.0x asset are specified, then prefer
     // the 1.0x asset.
 
-    final Map<Object?, Object?> manifest = json.decode('''
+    final Map<Object?, Object?> manifest =
+        json.decode('''
     {
       "assets/image.png" : [
         {"asset": "assets/1.0x/image.png", "dpr": 1.0},
@@ -261,7 +274,8 @@ void main() {
         {"asset": "assets/4.0x/image.png", "dpr": 4.0}
       ]
     }
-    ''') as Map<Object?, Object?>;
+    ''')
+            as Map<Object?, Object?>;
     final AssetBundle bundle = TestAssetBundle(manifest: manifest);
 
     const double ratio = 1.0;

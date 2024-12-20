@@ -1,0 +1,29 @@
+# -*- python -*-
+# Crocodile config file for Chromium linux
+
+# TODO(jhawkins): We'll need to add a chromeos.croc once we get a coverage bot
+# for that platform.
+
+{
+  # List of rules, applied in order
+  'rules' : [
+    # Specify inclusions before exclusions, since rules are in order.
+
+    # Don't include non-Linux platform dirs
+    {
+      'regexp' : '.*/(chromeos|views)/',
+      'include' : 0,
+    },
+    # Don't include chromeos, windows, or mac specific files
+    {
+      'regexp' : '.*(_|/)(chromeos|mac|win|views)(\\.|_)',
+      'include' : 0,
+    },
+
+    # Groups
+    {
+      'regexp' : '.*_test_linux\\.',
+      'group' : 'test',
+    },
+  ],
+}

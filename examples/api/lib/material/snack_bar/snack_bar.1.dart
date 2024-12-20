@@ -16,9 +16,7 @@ class SnackBarExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('SnackBar Sample')),
-        body: const Center(
-          child: SnackBarExample(),
-        ),
+        body: const Center(child: SnackBarExample()),
       ),
     );
   }
@@ -47,9 +45,7 @@ class SnackBarExample extends StatelessWidget {
               horizontal: 8.0, // Inner padding for SnackBar content.
             ),
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           ),
         );
       },

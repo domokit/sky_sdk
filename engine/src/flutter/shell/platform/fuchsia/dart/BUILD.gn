@@ -1,0 +1,429 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/rules.gni")
+import("//flutter/tools/fuchsia/dart/dart_library.gni")
+
+application_snapshot("kernel_compiler") {
+  main_dart = "compiler.dart"
+
+  deps = [ "../flutter/kernel:kernel_platform_files($host_toolchain)" ]
+
+  package_config = rebase_path("$dart_src/.dart_tool/package_config.json")
+
+  training_args = [
+    "--train",
+    rebase_path(main_dart),
+  ]
+
+  kernel_compiler_files = exec_script("$dart_src/tools/list_dart_files.py",
+                                      [
+                                        "absolute",
+                                        rebase_path("."),
+                                      ],
+                                      "list lines")
+
+  kernel_compiler_files += exec_script("$dart_src/tools/list_dart_files.py",
+                                       [
+                                         "absolute",
+                                         rebase_path("$dart_src/pkg"),
+                                       ],
+                                       "list lines")
+
+  inputs = kernel_compiler_files
+}
+
+application_snapshot("_list_libraries_kernel") {
+  visibility = [ ":*" ]
+  snapshot_kind = "kernel"
+  main_dart = "$dart_src/pkg/vm/bin/list_libraries.dart"
+  package_config = rebase_path("$dart_src/.dart_tool/package_config.json")
+  training_args = []
+  output = "$target_gen_dir/list_libraries.dart.dill"
+}
+
+application_snapshot("list_libraries") {
+  deps = [ ":_list_libraries_kernel" ]
+  main_dart = "$dart_src/pkg/vm/bin/list_libraries.dart"
+  package_config = rebase_path("$dart_src/.dart_tool/package_config.json")
+  training_args = [
+    # train against the dill file which is generated for this snapshot.
+    rebase_path("$target_gen_dir/list_libraries.dart.dill"),
+  ]
+}
+
+dart_library("async_helper") {
+  package_root = "$dart_src/pkg/async_helper"
+  package_name = "async_helper"
+
+  pubspec = "$package_root/pubspec.yaml"
+
+  deps = [ ":expect" ]
+
+  sources = [
+    "async_helper.dart",
+    "async_minitest.dart",
+  ]
+}
+
+dart_library("expect") {
+  package_root = "$dart_src/pkg/expect"
+  package_name = "expect"
+
+  pubspec = "$package_root/pubspec.yaml"
+
+  deps = []
+
+  sources = [
+    "async_helper.dart",
+    "config.dart",
+    "expect.dart",
+    "legacy/async_minitest.dart",
+    "legacy/minitest.dart",
+    "minitest.dart",
+    "static_type_helper.dart",
+    "variations.dart",
+  ]
+}
+
+dart_library("meta") {
+  package_root = "$dart_src/pkg/meta"
+  package_name = "meta"
+
+  pubspec = "$package_root/pubspec.yaml"
+
+  deps = []
+
+  sources = [
+    "dart2js.dart",
+    "meta.dart",
+    "meta_meta.dart",
+  ]
+}
+
+dart_library("args") {
+  package_root = "$dart_src/third_party/pkg/core/pkgs/args"
+  package_name = "args"
+
+  language_version = "2.17"
+
+  deps = []
+
+  sources = [
+    "args.dart",
+    "command_runner.dart",
+    "src/allow_anything_parser.dart",
+    "src/arg_parser.dart",
+    "src/arg_parser_exception.dart",
+    "src/arg_results.dart",
+    "src/help_command.dart",
+    "src/option.dart",
+    "src/parser.dart",
+    "src/usage.dart",
+    "src/usage_exception.dart",
+    "src/utils.dart",
+  ]
+}
+
+dart_library("collection") {
+  package_root = "$dart_src/third_party/pkg/core/pkgs/collection"
+  package_name = "collection"
+
+  pubspec = "$package_root/pubspec.yaml"
+
+  deps = []
+
+  sources = [
+    "algorithms.dart",
+    "collection.dart",
+    "equality.dart",
+    "iterable_zip.dart",
+    "priority_queue.dart",
+    "src/algorithms.dart",
+    "src/canonicalized_map.dart",
+    "src/combined_wrappers/combined_iterable.dart",
+    "src/combined_wrappers/combined_iterator.dart",
+    "src/combined_wrappers/combined_list.dart",
+    "src/combined_wrappers/combined_map.dart",
+    "src/comparators.dart",
+    "src/empty_unmodifiable_set.dart",
+    "src/equality.dart",
+    "src/equality_map.dart",
+    "src/equality_set.dart",
+    "src/functions.dart",
+    "src/iterable_extensions.dart",
+    "src/iterable_zip.dart",
+    "src/list_extensions.dart",
+    "src/priority_queue.dart",
+    "src/queue_list.dart",
+    "src/union_set.dart",
+    "src/union_set_controller.dart",
+    "src/unmodifiable_wrappers.dart",
+    "src/utils.dart",
+    "src/wrappers.dart",
+    "wrappers.dart",
+  ]
+}
+
+dart_library("logging") {
+  package_root = "$dart_src/third_party/pkg/core/pkgs/logging"
+  package_name = "logging"
+
+  pubspec = "$package_root/pubspec.yaml"
+
+  deps = []
+
+  sources = [
+    "logging.dart",
+    "src/level.dart",
+    "src/log_record.dart",
+    "src/logger.dart",
+  ]
+}
+
+dart_library("path") {
+  package_root = "$dart_src/third_party/pkg/core/pkgs/path"
+  package_name = "path"
+
+  pubspec = "$package_root/pubspec.yaml"
+
+  deps = []
+
+  sources = [
+    "path.dart",
+    "src/characters.dart",
+    "src/context.dart",
+    "src/internal_style.dart",
+    "src/parsed_path.dart",
+    "src/path_exception.dart",
+    "src/path_map.dart",
+    "src/path_set.dart",
+    "src/style.dart",
+    "src/style/posix.dart",
+    "src/style/url.dart",
+    "src/style/windows.dart",
+    "src/utils.dart",
+  ]
+}
+
+dart_library("stack_trace") {
+  package_root = "$dart_src/third_party/pkg/stack_trace"
+  package_name = "stack_trace"
+
+  pubspec = "$package_root/pubspec.yaml"
+
+  deps = [ ":path" ]
+
+  sources = [
+    "src/chain.dart",
+    "src/frame.dart",
+    "src/lazy_chain.dart",
+    "src/lazy_trace.dart",
+    "src/stack_zone_specification.dart",
+    "src/trace.dart",
+    "src/unparsed_frame.dart",
+    "src/utils.dart",
+    "src/vm_trace.dart",
+    "stack_trace.dart",
+  ]
+}
+
+dart_library("matcher") {
+  package_root = "$dart_src/third_party/pkg/test/pkgs/matcher"
+  package_name = "matcher"
+
+  pubspec = "$package_root/pubspec.yaml"
+
+  deps = [ ":stack_trace" ]
+
+  sources = [
+    "expect.dart",
+    "matcher.dart",
+    "mirror_matchers.dart",
+    "src/core_matchers.dart",
+    "src/custom_matcher.dart",
+    "src/description.dart",
+    "src/equals_matcher.dart",
+    "src/error_matchers.dart",
+    "src/expect/async_matcher.dart",
+    "src/expect/expect.dart",
+    "src/expect/expect_async.dart",
+    "src/expect/future_matchers.dart",
+    "src/expect/never_called.dart",
+    "src/expect/prints_matcher.dart",
+    "src/expect/stream_matcher.dart",
+    "src/expect/stream_matchers.dart",
+    "src/expect/throws_matcher.dart",
+    "src/expect/throws_matchers.dart",
+    "src/expect/util/placeholder.dart",
+    "src/expect/util/pretty_print.dart",
+    "src/feature_matcher.dart",
+    "src/having_matcher.dart",
+    "src/interfaces.dart",
+    "src/iterable_matchers.dart",
+    "src/map_matchers.dart",
+    "src/numeric_matchers.dart",
+    "src/operator_matchers.dart",
+    "src/order_matchers.dart",
+    "src/pretty_print.dart",
+    "src/string_matchers.dart",
+    "src/type_matcher.dart",
+    "src/util.dart",
+  ]
+}
+
+dart_library("quiver") {
+  package_root = "//third_party/pkg/quiver"
+  package_name = "quiver"
+
+  pubspec = "$package_root/pubspec.yaml"
+
+  deps = [
+    ":matcher",
+    ":meta",
+  ]
+
+  sources = [
+    "async.dart",
+    "cache.dart",
+    "check.dart",
+    "collection.dart",
+    "core.dart",
+    "iterables.dart",
+    "pattern.dart",
+    "src/async/collect.dart",
+    "src/async/concat.dart",
+    "src/async/countdown_timer.dart",
+    "src/async/enumerate.dart",
+    "src/async/future_stream.dart",
+    "src/async/metronome.dart",
+    "src/async/stream_buffer.dart",
+    "src/async/stream_router.dart",
+    "src/async/string.dart",
+    "src/cache/cache.dart",
+    "src/cache/map_cache.dart",
+    "src/collection/bimap.dart",
+    "src/collection/delegates/iterable.dart",
+    "src/collection/delegates/list.dart",
+    "src/collection/delegates/map.dart",
+    "src/collection/delegates/queue.dart",
+    "src/collection/delegates/set.dart",
+    "src/collection/lru_map.dart",
+    "src/collection/multimap.dart",
+    "src/collection/treeset.dart",
+    "src/collection/utils.dart",
+    "src/core/hash.dart",
+    "src/core/optional.dart",
+    "src/core/utils.dart",
+    "src/iterables/concat.dart",
+    "src/iterables/count.dart",
+    "src/iterables/cycle.dart",
+    "src/iterables/enumerate.dart",
+    "src/iterables/generating_iterable.dart",
+    "src/iterables/infinite_iterable.dart",
+    "src/iterables/merge.dart",
+    "src/iterables/min_max.dart",
+    "src/iterables/partition.dart",
+    "src/iterables/range.dart",
+    "src/iterables/zip.dart",
+    "src/time/clock.dart",
+    "src/time/duration_unit_constants.dart",
+    "src/time/util.dart",
+    "strings.dart",
+    "testing/async.dart",
+    "testing/equality.dart",
+    "testing/src/async/fake_async.dart",
+    "testing/src/equality/equality.dart",
+    "testing/src/time/time.dart",
+    "testing/time.dart",
+    "time.dart",
+  ]
+}
+
+dart_library("vector_math") {
+  package_root = "//flutter/third_party/pkg/vector_math"
+  package_name = "vector_math"
+
+  pubspec = "$package_root/pubspec.yaml"
+
+  deps = []
+
+  sources = [
+    "hash.dart",
+    "src/vector_math/aabb2.dart",
+    "src/vector_math/aabb3.dart",
+    "src/vector_math/colors.dart",
+    "src/vector_math/constants.dart",
+    "src/vector_math/error_helpers.dart",
+    "src/vector_math/frustum.dart",
+    "src/vector_math/intersection_result.dart",
+    "src/vector_math/matrix2.dart",
+    "src/vector_math/matrix3.dart",
+    "src/vector_math/matrix4.dart",
+    "src/vector_math/obb3.dart",
+    "src/vector_math/opengl.dart",
+    "src/vector_math/plane.dart",
+    "src/vector_math/quad.dart",
+    "src/vector_math/quaternion.dart",
+    "src/vector_math/ray.dart",
+    "src/vector_math/sphere.dart",
+    "src/vector_math/third_party/noise.dart",
+    "src/vector_math/triangle.dart",
+    "src/vector_math/utilities.dart",
+    "src/vector_math/vector.dart",
+    "src/vector_math/vector2.dart",
+    "src/vector_math/vector3.dart",
+    "src/vector_math/vector4.dart",
+    "src/vector_math_64/aabb2.dart",
+    "src/vector_math_64/aabb3.dart",
+    "src/vector_math_64/colors.dart",
+    "src/vector_math_64/constants.dart",
+    "src/vector_math_64/error_helpers.dart",
+    "src/vector_math_64/frustum.dart",
+    "src/vector_math_64/intersection_result.dart",
+    "src/vector_math_64/matrix2.dart",
+    "src/vector_math_64/matrix3.dart",
+    "src/vector_math_64/matrix4.dart",
+    "src/vector_math_64/obb3.dart",
+    "src/vector_math_64/opengl.dart",
+    "src/vector_math_64/plane.dart",
+    "src/vector_math_64/quad.dart",
+    "src/vector_math_64/quaternion.dart",
+    "src/vector_math_64/ray.dart",
+    "src/vector_math_64/sphere.dart",
+    "src/vector_math_64/third_party/noise.dart",
+    "src/vector_math_64/triangle.dart",
+    "src/vector_math_64/utilities.dart",
+    "src/vector_math_64/vector.dart",
+    "src/vector_math_64/vector2.dart",
+    "src/vector_math_64/vector3.dart",
+    "src/vector_math_64/vector4.dart",
+    "src/vector_math_geometry/filters/barycentric_filter.dart",
+    "src/vector_math_geometry/filters/color_filter.dart",
+    "src/vector_math_geometry/filters/flat_shade_filter.dart",
+    "src/vector_math_geometry/filters/geometry_filter.dart",
+    "src/vector_math_geometry/filters/invert_filter.dart",
+    "src/vector_math_geometry/filters/transform_filter.dart",
+    "src/vector_math_geometry/generators/attribute_generators.dart",
+    "src/vector_math_geometry/generators/circle_generator.dart",
+    "src/vector_math_geometry/generators/cube_generator.dart",
+    "src/vector_math_geometry/generators/cylinder_generator.dart",
+    "src/vector_math_geometry/generators/geometry_generator.dart",
+    "src/vector_math_geometry/generators/ring_generator.dart",
+    "src/vector_math_geometry/generators/sphere_generator.dart",
+    "src/vector_math_geometry/mesh_geometry.dart",
+    "src/vector_math_lists/scalar_list_view.dart",
+    "src/vector_math_lists/vector2_list.dart",
+    "src/vector_math_lists/vector3_list.dart",
+    "src/vector_math_lists/vector4_list.dart",
+    "src/vector_math_lists/vector_list.dart",
+    "src/vector_math_operations/matrix.dart",
+    "src/vector_math_operations/vector.dart",
+    "vector_math.dart",
+    "vector_math_64.dart",
+    "vector_math_geometry.dart",
+    "vector_math_lists.dart",
+    "vector_math_operations.dart",
+  ]
+}

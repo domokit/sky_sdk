@@ -1,0 +1,12 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("config.gni")
+
+if (is_fuchsia) {
+  dart_tools_root = "//flutter/tools/fuchsia/dart"
+  fuchsia_base = "//flutter/shell/platform/fuchsia"
+  flutter_runner_base = "$fuchsia_base/flutter/"
+  dart_runner_base = "$fuchsia_base/dart_runner/"
+}

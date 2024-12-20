@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Tap on button displays cupertino modal dialog', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ModalPopupApp(),
-    );
+    await tester.pumpWidget(const example.ModalPopupApp());
 
     final Finder actionOne = find.text('Action One');
     expect(actionOne, findsNothing);

@@ -24,23 +24,25 @@ void main() {
       expect(stockList, isNotNull);
     }, timeout: Timeout.none);
 
-    test('open AAPL stock', () async {
-      final SerializableFinder stockList = find.byValueKey('stock-list');
-      expect(stockList, isNotNull);
+    test(
+      'open AAPL stock',
+      () async {
+        final SerializableFinder stockList = find.byValueKey('stock-list');
+        expect(stockList, isNotNull);
 
-      final SerializableFinder aaplStockRow = find.byValueKey('AAPL');
-      await driver.scrollUntilVisible(stockList, aaplStockRow);
+        final SerializableFinder aaplStockRow = find.byValueKey('AAPL');
+        await driver.scrollUntilVisible(stockList, aaplStockRow);
 
-      await driver.tap(aaplStockRow);
-      await Future<void>.delayed(const Duration(milliseconds: 500));
+        await driver.tap(aaplStockRow);
+        await Future<void>.delayed(const Duration(milliseconds: 500));
 
-      final SerializableFinder stockOption =
-          find.byValueKey('AAPL_symbol_name');
-      final String symbol = await driver.getText(stockOption);
+        final SerializableFinder stockOption = find.byValueKey('AAPL_symbol_name');
+        final String symbol = await driver.getText(stockOption);
 
-      expect(symbol, 'AAPL');
-    },
-    skip: 'Needs to be fixed on Fuchsia.', // https://github.com/flutter/flutter/issues/87069
-    timeout: Timeout.none);
+        expect(symbol, 'AAPL');
+      },
+      skip: 'Needs to be fixed on Fuchsia.', // https://github.com/flutter/flutter/issues/87069
+      timeout: Timeout.none,
+    );
   });
 }

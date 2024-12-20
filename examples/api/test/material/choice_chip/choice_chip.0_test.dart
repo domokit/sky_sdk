@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Can choose an item using ChoiceChip', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ChipApp(),
-    );
+    await tester.pumpWidget(const example.ChipApp());
 
     ChoiceChip chosenChip = tester.widget(find.byType(ChoiceChip).at(1));
     expect(chosenChip.selected, true);

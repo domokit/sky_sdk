@@ -11,10 +11,7 @@ import 'stub_finder.dart';
 
 class StubFinderExtension extends FinderExtension {
   @override
-  Finder createFinder(
-    SerializableFinder finder,
-    CreateFinderFactory finderFactory,
-  ) {
+  Finder createFinder(SerializableFinder finder, CreateFinderFactory finderFactory) {
     return find.byWidgetPredicate((Widget widget) {
       final Key? key = widget.key;
       if (key is! ValueKey<String>) {

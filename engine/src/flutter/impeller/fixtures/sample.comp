@@ -1,0 +1,49 @@
+layout(local_size_x = 128) in;
+layout(std430) buffer;
+
+struct SomeStruct {
+  vec2 vf;
+  uint i;
+};
+
+layout(binding = 0) writeonly buffer Output {
+  vec4 elements[];
+}
+output_data;
+
+layout(binding = 1) readonly buffer Input0 {
+  int some_int;
+  ivec2 fixed_array[3];
+  vec4 elements[];
+}
+input_data0;
+
+layout(binding = 2) readonly buffer Input1 {
+  SomeStruct some_struct;
+  uvec2 fixed_array[4];
+  vec4 elements[];
+}
+input_data1;
+
+uniform Info {
+  uint count;
+}
+info;
+
+void main() {
+  uint ident = gl_GlobalInvocationID.x;
+  // TODO(dnfield): https://github.com/flutter/flutter/issues/112683
+  // We should be able to use length here instead of an extra arrgument.
+  if (ident >= info.count) {
+    return;
+  }
+
+  output_data.elements[ident] =
+      input_data0.elements[ident] * input_data1.elements[ident];
+  output_data.elements[ident].x +=
+      input_data0.fixed_array[1].x + input_data1.some_struct.i;
+  output_data.elements[ident].y +=
+      input_data1.fixed_array[0].y + input_data1.some_struct.vf.x;
+  output_data.elements[ident].z +=
+      input_data0.some_int + input_data1.some_struct.vf.y;
+}

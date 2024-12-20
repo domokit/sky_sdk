@@ -25,10 +25,11 @@ void main() {
     final DiagnosticPropertiesBuilder builder = DiagnosticPropertiesBuilder();
     const DividerThemeData().debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-      .map((DiagnosticsNode node) => node.toString())
-      .toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>[]);
   });
@@ -43,10 +44,11 @@ void main() {
       endIndent: 2.0,
     ).debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-      .map((DiagnosticsNode node) => node.toString())
-      .toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>[
       'color: ${const Color(0xffffffff)}',
@@ -60,12 +62,7 @@ void main() {
   group('Material3 - Horizontal Divider', () {
     testWidgets('Passing no DividerThemeData returns defaults', (WidgetTester tester) async {
       final ThemeData theme = ThemeData(useMaterial3: true);
-      await tester.pumpWidget(MaterialApp(
-        theme: theme,
-        home: const Scaffold(
-          body: Divider(),
-        ),
-      ));
+      await tester.pumpWidget(MaterialApp(theme: theme, home: const Scaffold(body: Divider())));
 
       final RenderBox box = tester.firstRenderObject(find.byType(Divider));
       expect(box.size.height, 16.0);
@@ -84,12 +81,12 @@ void main() {
 
     testWidgets('Uses values from DividerThemeData', (WidgetTester tester) async {
       final DividerThemeData dividerTheme = _dividerTheme();
-      await tester.pumpWidget(MaterialApp(
-        theme: ThemeData(useMaterial3: true, dividerTheme: dividerTheme),
-        home: const Scaffold(
-          body: Divider(),
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: true, dividerTheme: dividerTheme),
+          home: const Scaffold(body: Divider()),
         ),
-      ));
+      );
 
       final RenderBox box = tester.firstRenderObject(find.byType(Divider));
       expect(box.size.height, dividerTheme.space);
@@ -107,15 +104,12 @@ void main() {
 
     testWidgets('DividerTheme overrides defaults', (WidgetTester tester) async {
       final DividerThemeData dividerTheme = _dividerTheme();
-      await tester.pumpWidget(MaterialApp(
-        theme: ThemeData(useMaterial3: true),
-        home: Scaffold(
-          body: DividerTheme(
-            data: dividerTheme,
-            child: const Divider(),
-          ),
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: true),
+          home: Scaffold(body: DividerTheme(data: dividerTheme, child: const Divider())),
         ),
-      ));
+      );
 
       final Container container = tester.widget(find.byType(Container));
       final BoxDecoration decoration = container.decoration! as BoxDecoration;
@@ -131,18 +125,20 @@ void main() {
       const double endIndent = 9.0;
 
       final DividerThemeData dividerTheme = _dividerTheme();
-      await tester.pumpWidget(MaterialApp(
-        theme: ThemeData(dividerTheme: dividerTheme),
-        home: const Scaffold(
-          body: Divider(
-            color: color,
-            height: height,
-            thickness: thickness,
-            indent: indent,
-            endIndent: endIndent,
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(dividerTheme: dividerTheme),
+          home: const Scaffold(
+            body: Divider(
+              color: color,
+              height: height,
+              thickness: thickness,
+              indent: indent,
+              endIndent: endIndent,
+            ),
           ),
         ),
-      ));
+      );
 
       final RenderBox box = tester.firstRenderObject(find.byType(Divider));
       expect(box.size.height, height);
@@ -162,12 +158,9 @@ void main() {
   group('Material3 - Vertical Divider', () {
     testWidgets('Passing no DividerThemeData returns defaults', (WidgetTester tester) async {
       final ThemeData theme = ThemeData(useMaterial3: true);
-      await tester.pumpWidget(MaterialApp(
-        theme: theme,
-        home: const Scaffold(
-          body: VerticalDivider(),
-        ),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(theme: theme, home: const Scaffold(body: VerticalDivider())),
+      );
 
       final RenderBox box = tester.firstRenderObject(find.byType(VerticalDivider));
       expect(box.size.width, 16.0);
@@ -187,12 +180,12 @@ void main() {
 
     testWidgets('Uses values from DividerThemeData', (WidgetTester tester) async {
       final DividerThemeData dividerTheme = _dividerTheme();
-      await tester.pumpWidget(MaterialApp(
-        theme: ThemeData(dividerTheme: dividerTheme),
-        home: const Scaffold(
-          body: VerticalDivider(),
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(dividerTheme: dividerTheme),
+          home: const Scaffold(body: VerticalDivider()),
         ),
-      ));
+      );
 
       final RenderBox box = tester.firstRenderObject(find.byType(VerticalDivider));
       expect(box.size.width, dividerTheme.space);
@@ -211,15 +204,12 @@ void main() {
 
     testWidgets('DividerTheme overrides defaults', (WidgetTester tester) async {
       final DividerThemeData dividerTheme = _dividerTheme();
-      await tester.pumpWidget(MaterialApp(
-        theme: ThemeData(useMaterial3: true),
-        home: Scaffold(
-          body: DividerTheme(
-            data: dividerTheme,
-            child: const VerticalDivider(),
-          ),
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: true),
+          home: Scaffold(body: DividerTheme(data: dividerTheme, child: const VerticalDivider())),
         ),
-      ));
+      );
 
       final Container container = tester.widget(find.byType(Container));
       final BoxDecoration decoration = container.decoration! as BoxDecoration;
@@ -236,18 +226,20 @@ void main() {
       const double endIndent = 9.0;
 
       final DividerThemeData dividerTheme = _dividerTheme();
-      await tester.pumpWidget(MaterialApp(
-        theme: ThemeData(dividerTheme: dividerTheme),
-        home: const Scaffold(
-          body: VerticalDivider(
-            color: color,
-            width: width,
-            thickness: thickness,
-            indent: indent,
-            endIndent: endIndent,
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(dividerTheme: dividerTheme),
+          home: const Scaffold(
+            body: VerticalDivider(
+              color: color,
+              width: width,
+              thickness: thickness,
+              indent: indent,
+              endIndent: endIndent,
+            ),
           ),
         ),
-      ));
+      );
 
       final RenderBox box = tester.firstRenderObject(find.byType(VerticalDivider));
       expect(box.size.width, width);
@@ -272,12 +264,9 @@ void main() {
 
     group('Material2 - Horizontal Divider', () {
       testWidgets('Passing no DividerThemeData returns defaults', (WidgetTester tester) async {
-        await tester.pumpWidget(MaterialApp(
-          theme: ThemeData(useMaterial3: false),
-          home: const Scaffold(
-            body: Divider(),
-          ),
-        ));
+        await tester.pumpWidget(
+          MaterialApp(theme: ThemeData(useMaterial3: false), home: const Scaffold(body: Divider())),
+        );
 
         final RenderBox box = tester.firstRenderObject(find.byType(Divider));
         expect(box.size.height, 16.0);
@@ -297,14 +286,9 @@ void main() {
 
       testWidgets('DividerTheme overrides defaults', (WidgetTester tester) async {
         final DividerThemeData theme = _dividerTheme();
-        await tester.pumpWidget(MaterialApp(
-          home: Scaffold(
-            body: DividerTheme(
-              data: theme,
-              child: const Divider(),
-            ),
-          ),
-        ));
+        await tester.pumpWidget(
+          MaterialApp(home: Scaffold(body: DividerTheme(data: theme, child: const Divider()))),
+        );
 
         final Container container = tester.widget(find.byType(Container));
         final BoxDecoration decoration = container.decoration! as BoxDecoration;
@@ -315,12 +299,12 @@ void main() {
 
     group('Material2 - Vertical Divider', () {
       testWidgets('Passing no DividerThemeData returns defaults', (WidgetTester tester) async {
-        await tester.pumpWidget(MaterialApp(
-          theme: ThemeData(useMaterial3: false),
-          home: const Scaffold(
-            body: VerticalDivider(),
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(useMaterial3: false),
+            home: const Scaffold(body: VerticalDivider()),
           ),
-        ));
+        );
 
         final RenderBox box = tester.firstRenderObject(find.byType(VerticalDivider));
         expect(box.size.width, 16.0);

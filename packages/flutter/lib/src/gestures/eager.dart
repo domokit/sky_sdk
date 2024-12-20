@@ -20,10 +20,7 @@ class EagerGestureRecognizer extends OneSequenceGestureRecognizer {
   /// Create an eager gesture recognizer.
   ///
   /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
-  EagerGestureRecognizer({
-    super.supportedDevices,
-    super.allowedButtonsFilter,
-  });
+  EagerGestureRecognizer({super.supportedDevices, super.allowedButtonsFilter});
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
@@ -36,8 +33,8 @@ class EagerGestureRecognizer extends OneSequenceGestureRecognizer {
   String get debugDescription => 'eager';
 
   @override
-  void didStopTrackingLastPointer(int pointer) { }
+  void didStopTrackingLastPointer(int pointer) {}
 
   @override
-  void handleEvent(PointerEvent event) { }
+  void handleEvent(PointerEvent event) {}
 }

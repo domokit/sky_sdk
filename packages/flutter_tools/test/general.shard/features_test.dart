@@ -82,23 +82,28 @@ void main() {
     });
 
     testWithoutContext('Flutter web help string', () {
-      expect(flutterWebFeature.generateHelpMessage(),
-      'Enable or disable Flutter for web.');
+      expect(flutterWebFeature.generateHelpMessage(), 'Enable or disable Flutter for web.');
     });
 
     testWithoutContext('Flutter macOS desktop help string', () {
-      expect(flutterMacOSDesktopFeature.generateHelpMessage(),
-      'Enable or disable support for desktop on macOS.');
+      expect(
+        flutterMacOSDesktopFeature.generateHelpMessage(),
+        'Enable or disable support for desktop on macOS.',
+      );
     });
 
     testWithoutContext('Flutter Linux desktop help string', () {
-      expect(flutterLinuxDesktopFeature.generateHelpMessage(),
-      'Enable or disable support for desktop on Linux.');
+      expect(
+        flutterLinuxDesktopFeature.generateHelpMessage(),
+        'Enable or disable support for desktop on Linux.',
+      );
     });
 
     testWithoutContext('Flutter Windows desktop help string', () {
-      expect(flutterWindowsDesktopFeature.generateHelpMessage(),
-      'Enable or disable support for desktop on Windows.');
+      expect(
+        flutterWindowsDesktopFeature.generateHelpMessage(),
+        'Enable or disable support for desktop on Windows.',
+      );
     });
 
     testWithoutContext('help string on multiple channels', () {
@@ -149,7 +154,7 @@ void main() {
     });
 
     testWithoutContext('Flutter web not enabled with environment variable on beta', () {
-     final FeatureFlags featureFlags = createFlags('beta');
+      final FeatureFlags featureFlags = createFlags('beta');
       platform.environment = <String, String>{'FLUTTER_WEB': 'true'};
 
       expect(featureFlags.isWebEnabled, true);
@@ -414,9 +419,7 @@ void main() {
       });
 
       test('can be enabled', () {
-        platform.environment = <String, String>{
-          'FLUTTER_SWIFT_PACKAGE_MANAGER': 'true',
-        };
+        platform.environment = <String, String>{'FLUTTER_SWIFT_PACKAGE_MANAGER': 'true'};
 
         expect(featureFlags.isSwiftPackageManagerEnabled, isTrue);
       });

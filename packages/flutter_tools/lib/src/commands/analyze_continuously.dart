@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 import '../base/common.dart';
 import '../base/file_system.dart';
 import '../base/io.dart';
@@ -21,9 +20,7 @@ class AnalyzeContinuously extends AnalyzeBase {
     required super.processManager,
     required super.artifacts,
     required super.suppressAnalytics,
-  }) : super(
-        repoPackages: repoPackages,
-      );
+  }) : super(repoPackages: repoPackages);
 
   String? analysisTarget;
   bool firstAnalysis = true;
@@ -130,7 +127,9 @@ class AnalyzeContinuously extends AnalyzeBase {
 
       if (firstAnalysis && isBenchmarking) {
         writeBenchmark(analysisTimer, issueCount);
-        server.dispose().whenComplete(() { exit(issueCount > 0 ? 1 : 0); });
+        server.dispose().whenComplete(() {
+          exit(issueCount > 0 ? 1 : 0);
+        });
       }
 
       firstAnalysis = false;

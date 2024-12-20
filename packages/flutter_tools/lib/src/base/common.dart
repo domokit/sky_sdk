@@ -30,7 +30,7 @@
 /// - throwToolExit(null);
 /// + throwToolExit('Expected --foo to be provided in conjunction with --bar');
 /// ```
-Never throwToolExit(String? message, { int? exitCode }) {
+Never throwToolExit(String? message, {int? exitCode}) {
   throw ToolExit._(message, exitCode: exitCode);
 }
 
@@ -38,7 +38,7 @@ Never throwToolExit(String? message, { int? exitCode }) {
 ///
 /// See [throwToolExit].
 final class ToolExit implements Exception {
-  ToolExit._(this.message, { this.exitCode });
+  ToolExit._(this.message, {this.exitCode});
 
   final String? message;
   final int? exitCode;

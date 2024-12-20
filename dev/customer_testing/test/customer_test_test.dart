@@ -27,14 +27,18 @@ test.posix=./test_utilities/bin/flutter_test_runner.sh app_flutter
 test.posix=./test_utilities/bin/flutter_test_runner.sh repo_dashboard
 test.windows=.\test_utilities\bin\flutter_test_runner.bat repo_dashboard
     ''';
-    final File registryFile = MemoryFileSystem().file('flutter_cocoon.test')..writeAsStringSync(registryContent);
+    final File registryFile = MemoryFileSystem().file('flutter_cocoon.test')
+      ..writeAsStringSync(registryContent);
 
     final CustomerTest test = CustomerTest(registryFile);
     expect(test.contacts, containsAll(<String>['abc@gmail.com']));
     expect(
-        test.fetch,
-        containsAllInOrder(
-            <String>['git clone https://github.com/flutter/cocoon.git tests', 'git -C tests checkout abc123']));
+      test.fetch,
+      containsAllInOrder(<String>[
+        'git clone https://github.com/flutter/cocoon.git tests',
+        'git -C tests checkout abc123',
+      ]),
+    );
     expect(test.setup.first, 'flutter --version');
     if (Platform.isLinux || Platform.isMacOS) {
       expect(test.setup.length, 3);
@@ -50,7 +54,10 @@ test.windows=.\test_utilities\bin\flutter_test_runner.bat repo_dashboard
     } else if (Platform.isWindows) {
       expect(test.setup.length, 2);
       expect(test.setup[1], 'flutter doctor');
-      expect(test.tests, containsAllInOrder(<String>['.\test_utilities\bin\flutter_test_runner.bat repo_dashboard']));
+      expect(
+        test.tests,
+        containsAllInOrder(<String>['.\test_utilities\bin\flutter_test_runner.bat repo_dashboard']),
+      );
     }
   });
 
@@ -64,7 +71,8 @@ test.posix=./test_utilities/bin/flutter_test_runner.sh app_flutter
 test.windows=.\test_utilities\bin\flutter_test_runner.bat repo_dashboard
 unknownfield=super not cool
     ''';
-    final File registryFile = MemoryFileSystem().file('abc.test')..writeAsStringSync(registryContent);
+    final File registryFile = MemoryFileSystem().file('abc.test')
+      ..writeAsStringSync(registryContent);
 
     expect(() => CustomerTest(registryFile), throwsFormatException);
   });
@@ -75,7 +83,8 @@ contact=abc@gmail.com
 update=.
 fetch=git clone https://github.com/flutter/cocoon.git tests
 ''';
-    final File registryFile = MemoryFileSystem().file('abc.test')..writeAsStringSync(registryContent);
+    final File registryFile = MemoryFileSystem().file('abc.test')
+      ..writeAsStringSync(registryContent);
 
     expect(() => CustomerTest(registryFile), throwsFormatException);
   });
@@ -88,7 +97,8 @@ fetch=git clone https://github.com/flutter/cocoon.git tests
 test.posix=./test_utilities/bin/flutter_test_runner.sh app_flutter
 test.windows=.\test_utilities\bin\flutter_test_runner.bat repo_dashboard
     ''';
-    final File registryFile = MemoryFileSystem().file('abc.test')..writeAsStringSync(registryContent);
+    final File registryFile = MemoryFileSystem().file('abc.test')
+      ..writeAsStringSync(registryContent);
 
     expect(() => CustomerTest(registryFile), throwsFormatException);
   });
@@ -100,7 +110,8 @@ fetch=git clone https://github.com/flutter/cocoon.git tests
 test.posix=./test_utilities/bin/flutter_test_runner.sh app_flutter
 test.windows=.\test_utilities\bin\flutter_test_runner.bat repo_dashboard
     ''';
-    final File registryFile = MemoryFileSystem().file('abc.test')..writeAsStringSync(registryContent);
+    final File registryFile = MemoryFileSystem().file('abc.test')
+      ..writeAsStringSync(registryContent);
 
     expect(() => CustomerTest(registryFile), throwsFormatException);
   });

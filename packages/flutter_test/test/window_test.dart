@@ -78,7 +78,7 @@ void main() {
       propertyFaker: (TestWidgetsFlutterBinding binding, ViewPadding fakeValue) {
         binding.window.paddingTestValue = fakeValue;
       },
-      matcher: matchesViewPadding
+      matcher: matchesViewPadding,
     );
   });
 
@@ -129,13 +129,22 @@ void main() {
 
   testWidgets('Updates to window also update tester.view', (WidgetTester tester) async {
     tester.binding.window.devicePixelRatioTestValue = 7;
-    tester.binding.window.displayFeaturesTestValue = <DisplayFeature>[const DisplayFeature(bounds: Rect.fromLTWH(0, 0, 20, 300), type: DisplayFeatureType.unknown, state: DisplayFeatureState.unknown)];
+    tester.binding.window.displayFeaturesTestValue = <DisplayFeature>[
+      const DisplayFeature(
+        bounds: Rect.fromLTWH(0, 0, 20, 300),
+        type: DisplayFeatureType.unknown,
+        state: DisplayFeatureState.unknown,
+      ),
+    ];
     tester.binding.window.paddingTestValue = FakeViewPadding.zero;
     tester.binding.window.physicalSizeTestValue = const Size(505, 805);
     tester.binding.window.systemGestureInsetsTestValue = FakeViewPadding.zero;
     tester.binding.window.viewInsetsTestValue = FakeViewPadding.zero;
     tester.binding.window.viewPaddingTestValue = FakeViewPadding.zero;
-    tester.binding.window.gestureSettingsTestValue = const GestureSettings(physicalTouchSlop: 4, physicalDoubleTapSlop: 5);
+    tester.binding.window.gestureSettingsTestValue = const GestureSettings(
+      physicalTouchSlop: 4,
+      physicalDoubleTapSlop: 5,
+    );
 
     expect(tester.binding.window.devicePixelRatio, tester.view.devicePixelRatio);
     expect(tester.binding.window.displayFeatures, tester.view.displayFeatures);

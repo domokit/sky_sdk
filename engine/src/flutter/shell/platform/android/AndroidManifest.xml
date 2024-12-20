@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2013 The Flutter Authors. All rights reserved.
+     Use of this source code is governed by a BSD-style license that can be
+     found in the LICENSE file.
+ -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="io.flutter.embedding" android:versionCode="1" android:versionName="0.0.1">
+
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
+
+    <!-- Required for io.flutter.plugin.text.ProcessTextPlugin to query activities that can process text. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT" />
+            <data android:mimeType="text/plain" />
+        </intent>
+    </queries>
+ </manifest>

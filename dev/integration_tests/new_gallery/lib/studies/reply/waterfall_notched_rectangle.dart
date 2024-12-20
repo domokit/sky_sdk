@@ -83,11 +83,7 @@ class WaterfallNotchedRectangle extends NotchedShape {
       ..moveTo(host.left, host.top)
       ..lineTo(p[0]!.dx, p[0]!.dy)
       ..quadraticBezierTo(p[1]!.dx, p[1]!.dy, p[2]!.dx, p[2]!.dy)
-      ..arcToPoint(
-        p[3]!,
-        radius: Radius.circular(notchRadius),
-        clockwise: false,
-      )
+      ..arcToPoint(p[3]!, radius: Radius.circular(notchRadius), clockwise: false)
       ..quadraticBezierTo(p[4]!.dx, p[4]!.dy, p[5]!.dx, p[5]!.dy)
       ..lineTo(host.right, host.top)
       ..lineTo(host.right, host.bottom)

@@ -9,10 +9,7 @@ import 'icons.dart';
 
 @immutable
 class GalleryDemoCategory {
-  const GalleryDemoCategory._({
-    required this.name,
-    required this.icon,
-  });
+  const GalleryDemoCategory._({required this.name, required this.icon});
 
   final String name;
   final IconData icon;
@@ -25,9 +22,7 @@ class GalleryDemoCategory {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is GalleryDemoCategory
-        && other.name == name
-        && other.icon == icon;
+    return other is GalleryDemoCategory && other.name == name && other.icon == icon;
   }
 
   @override
@@ -210,7 +205,8 @@ List<GalleryDemo> _buildGalleryDemos() {
       icon: GalleryIcons.bottom_sheet_persistent,
       category: _kMaterialComponents,
       routeName: PersistentBottomSheetDemo.routeName,
-      documentationUrl: 'https://api.flutter.dev/flutter/material/ScaffoldState/showBottomSheet.html',
+      documentationUrl:
+          'https://api.flutter.dev/flutter/material/ScaffoldState/showBottomSheet.html',
       buildRoute: (BuildContext context) => const PersistentBottomSheetDemo(),
     ),
     GalleryDemo(
@@ -381,7 +377,8 @@ List<GalleryDemo> _buildGalleryDemos() {
       icon: GalleryIcons.progress_activity,
       category: _kMaterialComponents,
       routeName: ProgressIndicatorDemo.routeName,
-      documentationUrl: 'https://api.flutter.dev/flutter/material/LinearProgressIndicator-class.html',
+      documentationUrl:
+          'https://api.flutter.dev/flutter/material/LinearProgressIndicator-class.html',
       buildRoute: (BuildContext context) => const ProgressIndicatorDemo(),
     ),
     GalleryDemo(
@@ -471,7 +468,8 @@ List<GalleryDemo> _buildGalleryDemos() {
       icon: GalleryIcons.cupertino_progress,
       category: _kCupertinoComponents,
       routeName: CupertinoProgressIndicatorDemo.routeName,
-      documentationUrl: 'https://api.flutter.dev/flutter/cupertino/CupertinoActivityIndicator-class.html',
+      documentationUrl:
+          'https://api.flutter.dev/flutter/cupertino/CupertinoActivityIndicator-class.html',
       buildRoute: (BuildContext context) => const CupertinoProgressIndicatorDemo(),
     ),
     GalleryDemo(
@@ -511,7 +509,8 @@ List<GalleryDemo> _buildGalleryDemos() {
       icon: GalleryIcons.cupertino_pull_to_refresh,
       category: _kCupertinoComponents,
       routeName: CupertinoRefreshControlDemo.routeName,
-      documentationUrl: 'https://api.flutter.dev/flutter/cupertino/CupertinoSliverRefreshControl-class.html',
+      documentationUrl:
+          'https://api.flutter.dev/flutter/cupertino/CupertinoSliverRefreshControl-class.html',
       buildRoute: (BuildContext context) => const CupertinoRefreshControlDemo(),
     ),
     GalleryDemo(
@@ -519,7 +518,8 @@ List<GalleryDemo> _buildGalleryDemos() {
       icon: GalleryIcons.tabs,
       category: _kCupertinoComponents,
       routeName: CupertinoSegmentedControlDemo.routeName,
-      documentationUrl: 'https://api.flutter.dev/flutter/cupertino/CupertinoSegmentedControl-class.html',
+      documentationUrl:
+          'https://api.flutter.dev/flutter/cupertino/CupertinoSegmentedControl-class.html',
       buildRoute: (BuildContext context) => const CupertinoSegmentedControlDemo(),
     ),
     GalleryDemo(
@@ -570,15 +570,15 @@ List<GalleryDemo> _buildGalleryDemos() {
 final List<GalleryDemo> kAllGalleryDemos = _buildGalleryDemos();
 
 final Set<GalleryDemoCategory> kAllGalleryDemoCategories =
-  kAllGalleryDemos.map<GalleryDemoCategory>((GalleryDemo demo) => demo.category).toSet();
+    kAllGalleryDemos.map<GalleryDemoCategory>((GalleryDemo demo) => demo.category).toSet();
 
 final Map<GalleryDemoCategory, List<GalleryDemo>> kGalleryCategoryToDemos =
-  Map<GalleryDemoCategory, List<GalleryDemo>>.fromIterable(
-    kAllGalleryDemoCategories,
-    value: (dynamic category) {
-      return kAllGalleryDemos.where((GalleryDemo demo) => demo.category == category).toList();
-    },
-  );
+    Map<GalleryDemoCategory, List<GalleryDemo>>.fromIterable(
+      kAllGalleryDemoCategories,
+      value: (dynamic category) {
+        return kAllGalleryDemos.where((GalleryDemo demo) => demo.category == category).toList();
+      },
+    );
 
 final Map<String, String?> kDemoDocumentationUrl = <String, String?>{
   for (final GalleryDemo demo in kAllGalleryDemos)

@@ -1,0 +1,26 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/tools/fuchsia/dart/dart_library.gni")
+import("//flutter/tools/fuchsia/flutter/flutter_component.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/package.gni")
+
+dart_library("lib") {
+  package_name = "child-view"
+  sources = [ "child_view.dart" ]
+}
+
+flutter_component("component") {
+  main_package = "child-view"
+  component_name = "child-view"
+  main_dart = "child_view.dart"
+  manifest = rebase_path("meta/child-view.cml")
+  deps = [ ":lib" ]
+}
+
+fuchsia_package("package") {
+  package_name = "child-view"
+  deps = [ ":component" ]
+}

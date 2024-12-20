@@ -1,0 +1,65 @@
+// This file only exists to provide IDE support to Android Studio.
+//
+// See ./README.md for details.
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:8.7.2"
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+apply plugin: "com.android.library"
+
+android {
+    namespace "io.flutter.embedding"
+    compileSdk 35
+
+    defaultConfig {
+        minSdkVersion 21
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs './'
+            java.include './io.flutter/**'
+            test {
+                java.srcDir './test'
+                java.include './test/io.flutter/**'
+            }
+        }
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+
+    }
+
+    dependencies {
+        implementation fileTree(include: ["*.jar"], dir: "../../../../flutter/third_party/android_embedding_dependencies/lib/")
+
+        // These dependencies should be kept in line with those in the ./test_runner/build.gradle
+        implementation "androidx.test:core:1.4.0"
+        implementation "com.google.android.play:core:1.8.0"
+        implementation "com.ibm.icu:icu4j:69.1"
+        implementation "org.robolectric:robolectric:4.14.1"
+        implementation "junit:junit:4.13.2"
+        implementation "androidx.test.ext:junit:1.1.4-alpha07"
+
+        def mockitoVersion = "4.7.0"
+        implementation "org.mockito:mockito-core:$mockitoVersion"
+        implementation "org.mockito:mockito-inline:$mockitoVersion"
+        implementation "org.mockito:mockito-android:$mockitoVersion"
+    }
+}

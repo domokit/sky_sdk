@@ -97,8 +97,7 @@ class ValueKey<T> extends LocalKey {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ValueKey<T>
-        && other.value == value;
+    return other is ValueKey<T> && other.value == value;
   }
 
   @override

@@ -23,12 +23,8 @@ void main() {
     });
 
     test('minFrameNumber is numeric', () async {
-      final SerializableFinder minFrameNumberFinder =
-          find.byValueKey('minFrameNumber');
-      await driver.waitFor(
-        minFrameNumberFinder,
-        timeout: const Duration(seconds: 5),
-      );
+      final SerializableFinder minFrameNumberFinder = find.byValueKey('minFrameNumber');
+      await driver.waitFor(minFrameNumberFinder, timeout: const Duration(seconds: 5));
       final String minFrameNumber = await driver.getText(minFrameNumberFinder);
       // TODO(iskakaushik): enable the stronger check of _minFrameNumber == '1',
       // once this is fixed. https://github.com/flutter/flutter/issues/86487

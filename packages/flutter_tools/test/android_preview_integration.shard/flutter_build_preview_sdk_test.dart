@@ -14,16 +14,17 @@ void main() {
   late Directory exampleAppDir;
   late Directory pluginDir;
   final RegExp compileSdkVersionMatch = RegExp(r'compileSdk\s*=?\s*[\w.]+');
-  final String builtApkPath = <String>['build', 'app', 'outputs', 'flutter-apk', 'app-debug.apk']
-      .join(platform.pathSeparator);
+  final String builtApkPath = <String>[
+    'build',
+    'app',
+    'outputs',
+    'flutter-apk',
+    'app-debug.apk',
+  ].join(platform.pathSeparator);
 
   setUp(() async {
     tempDir = createResolvedTempDirectorySync('flutter_plugin_test.');
-    flutterBin = fileSystem.path.join(
-      getFlutterRoot(),
-      'bin',
-      'flutter',
-    );
+    flutterBin = fileSystem.path.join(getFlutterRoot(), 'bin', 'flutter');
     pluginDir = tempDir.childDirectory('aaa');
     exampleAppDir = pluginDir.childDirectory('example');
 
@@ -41,95 +42,130 @@ void main() {
     tryToDelete(tempDir);
   });
 
-  test(
-    'build succeeds targeting string compileSdkVersion',
-    () async {
-      final File buildGradleFile = exampleAppDir.childDirectory('android').childDirectory('app').childFile('build.gradle.kts');
-      // write a build.gradle.kts with compileSdkVersion as `android-UpsideDownCake` which is a string preview version
-      buildGradleFile.writeAsStringSync(
-        buildGradleFile.readAsStringSync().replaceFirst(compileSdkVersionMatch, 'compileSdkVersion = "android-UpsideDownCake"'),
-        flush: true
-      );
-      expect(buildGradleFile.readAsStringSync(), contains('compileSdkVersion = "android-UpsideDownCake"'));
+  test('build succeeds targeting string compileSdkVersion', () async {
+    final File buildGradleFile = exampleAppDir
+        .childDirectory('android')
+        .childDirectory('app')
+        .childFile('build.gradle.kts');
+    // write a build.gradle.kts with compileSdkVersion as `android-UpsideDownCake` which is a string preview version
+    buildGradleFile.writeAsStringSync(
+      buildGradleFile.readAsStringSync().replaceFirst(
+        compileSdkVersionMatch,
+        'compileSdkVersion = "android-UpsideDownCake"',
+      ),
+      flush: true,
+    );
+    expect(
+      buildGradleFile.readAsStringSync(),
+      contains('compileSdkVersion = "android-UpsideDownCake"'),
+    );
 
-      final ProcessResult result = await processManager.run(<String>[
-        flutterBin,
-        ...getLocalEngineArguments(),
-        'build',
-        'apk',
-        '--debug',
-      ], workingDirectory: exampleAppDir.path);
-      expect(exampleAppDir.childDirectory('build')
+    final ProcessResult result = await processManager.run(<String>[
+      flutterBin,
+      ...getLocalEngineArguments(),
+      'build',
+      'apk',
+      '--debug',
+    ], workingDirectory: exampleAppDir.path);
+    expect(
+      exampleAppDir
+          .childDirectory('build')
           .childDirectory('app')
           .childDirectory('outputs')
           .childDirectory('apk')
           .childDirectory('debug')
-          .childFile('app-debug.apk').existsSync(), true);
-      expect(result.stdout, contains('Built $builtApkPath'));
-    },
-  );
+          .childFile('app-debug.apk')
+          .existsSync(),
+      true,
+    );
+    expect(result.stdout, contains('Built $builtApkPath'));
+  });
 
-  test(
-    'build succeeds targeting string compileSdkPreview',
-    () async {
-      final File buildGradleFile = exampleAppDir.childDirectory('android').childDirectory('app').childFile('build.gradle.kts');
-      // write a build.gradle.kts with compileSdkPreview as `UpsideDownCake` which is a string preview version
-      buildGradleFile.writeAsStringSync(
-        buildGradleFile.readAsStringSync().replaceFirst(compileSdkVersionMatch, 'compileSdkPreview = "UpsideDownCake"'),
-        flush: true
-      );
-      expect(buildGradleFile.readAsStringSync(), contains('compileSdkPreview = "UpsideDownCake"'));
+  test('build succeeds targeting string compileSdkPreview', () async {
+    final File buildGradleFile = exampleAppDir
+        .childDirectory('android')
+        .childDirectory('app')
+        .childFile('build.gradle.kts');
+    // write a build.gradle.kts with compileSdkPreview as `UpsideDownCake` which is a string preview version
+    buildGradleFile.writeAsStringSync(
+      buildGradleFile.readAsStringSync().replaceFirst(
+        compileSdkVersionMatch,
+        'compileSdkPreview = "UpsideDownCake"',
+      ),
+      flush: true,
+    );
+    expect(buildGradleFile.readAsStringSync(), contains('compileSdkPreview = "UpsideDownCake"'));
 
-      final ProcessResult result = await processManager.run(<String>[
-        flutterBin,
-        ...getLocalEngineArguments(),
-        'build',
-        'apk',
-        '--debug',
-      ], workingDirectory: exampleAppDir.path);
-      expect(exampleAppDir.childDirectory('build')
+    final ProcessResult result = await processManager.run(<String>[
+      flutterBin,
+      ...getLocalEngineArguments(),
+      'build',
+      'apk',
+      '--debug',
+    ], workingDirectory: exampleAppDir.path);
+    expect(
+      exampleAppDir
+          .childDirectory('build')
           .childDirectory('app')
           .childDirectory('outputs')
           .childDirectory('apk')
           .childDirectory('debug')
-          .childFile('app-debug.apk').existsSync(), true);
-      expect(result.stdout, contains('Built $builtApkPath'));
-    },
-  );
+          .childFile('app-debug.apk')
+          .existsSync(),
+      true,
+    );
+    expect(result.stdout, contains('Built $builtApkPath'));
+  });
 
-  test(
-    'build succeeds when both example app and plugin target compileSdkPreview',
-        () async {
-      final File appBuildGradleFile = exampleAppDir.childDirectory('android').childDirectory('app').childFile('build.gradle.kts');
-      // write a build.gradle.kts with compileSdkPreview as `UpsideDownCake` which is a string preview version
-      appBuildGradleFile.writeAsStringSync(
-          appBuildGradleFile.readAsStringSync().replaceFirst(compileSdkVersionMatch, 'compileSdkPreview = "UpsideDownCake"'),
-          flush: true
-      );
-      expect(appBuildGradleFile.readAsStringSync(), contains('compileSdkPreview = "UpsideDownCake"'));
+  test('build succeeds when both example app and plugin target compileSdkPreview', () async {
+    final File appBuildGradleFile = exampleAppDir
+        .childDirectory('android')
+        .childDirectory('app')
+        .childFile('build.gradle.kts');
+    // write a build.gradle.kts with compileSdkPreview as `UpsideDownCake` which is a string preview version
+    appBuildGradleFile.writeAsStringSync(
+      appBuildGradleFile.readAsStringSync().replaceFirst(
+        compileSdkVersionMatch,
+        'compileSdkPreview = "UpsideDownCake"',
+      ),
+      flush: true,
+    );
+    expect(appBuildGradleFile.readAsStringSync(), contains('compileSdkPreview = "UpsideDownCake"'));
 
-      final File pluginBuildGradleFile = pluginDir.childDirectory('android').childFile('build.gradle');
-      // change the plugin build.gradle to use a preview compile sdk version
-      pluginBuildGradleFile.writeAsStringSync(
-        pluginBuildGradleFile.readAsStringSync().replaceFirst(compileSdkVersionMatch, 'compileSdkPreview "UpsideDownCake"'),
-        flush: true
-      );
-      expect(pluginBuildGradleFile.readAsStringSync(), contains('compileSdkPreview "UpsideDownCake"'));
+    final File pluginBuildGradleFile = pluginDir
+        .childDirectory('android')
+        .childFile('build.gradle');
+    // change the plugin build.gradle to use a preview compile sdk version
+    pluginBuildGradleFile.writeAsStringSync(
+      pluginBuildGradleFile.readAsStringSync().replaceFirst(
+        compileSdkVersionMatch,
+        'compileSdkPreview "UpsideDownCake"',
+      ),
+      flush: true,
+    );
+    expect(
+      pluginBuildGradleFile.readAsStringSync(),
+      contains('compileSdkPreview "UpsideDownCake"'),
+    );
 
-      final ProcessResult result = await processManager.run(<String>[
-        flutterBin,
-        ...getLocalEngineArguments(),
-        'build',
-        'apk',
-        '--debug',
-      ], workingDirectory: exampleAppDir.path);
-      expect(exampleAppDir.childDirectory('build')
+    final ProcessResult result = await processManager.run(<String>[
+      flutterBin,
+      ...getLocalEngineArguments(),
+      'build',
+      'apk',
+      '--debug',
+    ], workingDirectory: exampleAppDir.path);
+    expect(
+      exampleAppDir
+          .childDirectory('build')
           .childDirectory('app')
           .childDirectory('outputs')
           .childDirectory('apk')
           .childDirectory('debug')
-          .childFile('app-debug.apk').existsSync(), true);
-      expect(result.stdout, contains('Built $builtApkPath'));
-    },
-  );
+          .childFile('app-debug.apk')
+          .existsSync(),
+      true,
+    );
+    expect(result.stdout, contains('Built $builtApkPath'));
+  });
 }

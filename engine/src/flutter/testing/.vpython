@@ -1,0 +1,55 @@
+python_version: "2.7"
+
+# Used by:
+#   auth.py
+#   gerrit_util.py
+#   git_cl.py
+#   my_activity.py
+#   TODO(crbug.com/1002153): Add ninjalog_uploader.py
+wheel: <
+  name: "infra/python/wheels/httplib2-py2_py3"
+  version: "version:0.10.3"
+>
+
+# Used by:
+#   my_activity.py
+wheel: <
+  name: "infra/python/wheels/python-dateutil-py2_py3"
+  version: "version:2.7.3"
+>
+wheel: <
+  name: "infra/python/wheels/six-py2_py3"
+  version: "version:1.10.0"
+>
+
+# Used by:
+#   tests/auth_test.py
+#   tests/detect_host_arch_test.py
+#   tests/gclient_scm_test.py
+#   tests/gclient_test.py
+#   tests/gclient_utils_test.py
+#   tests/gerrit_util_test.py
+#   tests/git_cl_test.py
+#   tests/git_drover_test.py
+#   tests/git_footers_test.py
+#   tests/metrics_test.py
+#   tests/presubmit_unittest.py
+#   tests/scm_unittest.py
+#   tests/subprocess2_test.py
+#   tests/watchlists_unittest.py
+wheel: <
+  name: "infra/python/wheels/mock-py2_py3"
+  version: "version:2.0.0"
+>
+wheel <
+  name: "infra/python/wheels/funcsigs-py2_py3"
+  version: "version:1.0.2"
+>
+wheel: <
+  name: "infra/python/wheels/pbr-py2_py3"
+  version: "version:3.0.0"
+>
+wheel: <
+  name: "infra/python/wheels/six-py2_py3"
+  version: "version:1.10.0"
+>

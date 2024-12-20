@@ -1,0 +1,48 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/rules.gni")
+import("//flutter/testing/rules/runtime_mode.gni")
+
+flutter_snapshot("scenario_app_snapshot") {
+  main_dart = "lib/main.dart"
+}
+
+if (!is_aot) {
+  if (is_android) {
+    _flutter_assets_dir = "$root_out_dir/scenario_app/app/assets/flutter_assets"
+  } else if (is_ios) {
+    _flutter_assets_dir =
+        "$root_out_dir/scenario_app/Scenarios/App.framework/flutter_assets"
+  } else {
+    assert(false)
+  }
+
+  copy("copy_jit_assets") {
+    visibility = [ ":*" ]
+    sources = [
+      "$target_gen_dir/isolate_snapshot_data",
+      "$target_gen_dir/isolate_snapshot_instr",
+      "$target_gen_dir/kernel_blob.bin",
+    ]
+    outputs = [ "$_flutter_assets_dir/{{source_file_part}}" ]
+    deps = [ ":scenario_app_snapshot" ]
+  }
+}
+
+group("scenario_app") {
+  deps = [ ":scenario_app_snapshot" ]
+
+  if (!is_aot) {
+    deps += [ ":copy_jit_assets" ]
+  }
+
+  if (is_android) {
+    deps += [ "android" ]
+  }
+
+  if (is_ios) {
+    deps += [ "ios" ]
+  }
+}

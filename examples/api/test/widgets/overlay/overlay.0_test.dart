@@ -7,14 +7,14 @@ import 'package:flutter_api_samples/widgets/overlay/overlay.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Can use Overlay to highlight NavigationBar destination', (WidgetTester tester) async {
+  testWidgets('Can use Overlay to highlight NavigationBar destination', (
+    WidgetTester tester,
+  ) async {
     const String explorePage = 'Explore page';
     const String commutePage = 'Commute page';
     const String savedPage = 'Saved page';
 
-    await tester.pumpWidget(
-      const example.OverlayApp(),
-    );
+    await tester.pumpWidget(const example.OverlayApp());
 
     expect(find.text(explorePage), findsNothing);
     expect(find.text(commutePage), findsNothing);
@@ -46,9 +46,7 @@ void main() {
       ..devicePixelRatio = 1;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(
-      const example.OverlayApp(),
-    );
+    await tester.pumpWidget(const example.OverlayApp());
 
     // Verify that no overflow errors occur.
     expect(tester.takeException(), isNull);

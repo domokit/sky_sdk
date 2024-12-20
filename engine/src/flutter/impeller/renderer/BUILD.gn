@@ -1,0 +1,166 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/impeller/tools/impeller.gni")
+
+if (impeller_enable_compute) {
+  impeller_shaders("compute_shaders") {
+    name = "compute"
+    enable_opengles = false
+
+    if (impeller_enable_vulkan) {
+      vulkan_language_version = 130
+    }
+
+    if (is_ios) {
+      metal_version = "2.4"
+    } else if (is_mac) {
+      metal_version = "2.1"
+    }
+
+    shaders = [
+      "prefix_sum_test.comp",
+      "threadgroup_sizing_test.comp",
+    ]
+  }
+}
+
+impeller_component("renderer") {
+  sources = [
+    "blit_command.cc",
+    "blit_command.h",
+    "blit_pass.cc",
+    "blit_pass.h",
+    "capabilities.cc",
+    "capabilities.h",
+    "command.cc",
+    "command.h",
+    "command_buffer.cc",
+    "command_buffer.h",
+    "command_queue.cc",
+    "command_queue.h",
+    "compute_pass.cc",
+    "compute_pass.h",
+    "compute_pipeline_builder.cc",
+    "compute_pipeline_builder.h",
+    "compute_pipeline_descriptor.cc",
+    "compute_pipeline_descriptor.h",
+    "context.cc",
+    "context.h",
+    "pipeline.cc",
+    "pipeline.h",
+    "pipeline_builder.cc",
+    "pipeline_builder.h",
+    "pipeline_descriptor.cc",
+    "pipeline_descriptor.h",
+    "pipeline_library.cc",
+    "pipeline_library.h",
+    "pool.h",
+    "render_pass.cc",
+    "render_pass.h",
+    "render_target.cc",
+    "render_target.h",
+    "sampler_library.cc",
+    "sampler_library.h",
+    "shader_function.cc",
+    "shader_function.h",
+    "shader_key.cc",
+    "shader_key.h",
+    "shader_library.cc",
+    "shader_library.h",
+    "snapshot.cc",
+    "snapshot.h",
+    "surface.cc",
+    "surface.h",
+    "texture_mipmap.cc",
+    "texture_mipmap.h",
+    "vertex_buffer_builder.cc",
+    "vertex_buffer_builder.h",
+    "vertex_descriptor.cc",
+    "vertex_descriptor.h",
+  ]
+
+  public_deps = [
+    "../base",
+    "../core",
+    "../geometry",
+    "../runtime_stage",
+    "../tessellator",
+  ]
+
+  if (impeller_enable_compute) {
+    public_deps += [ ":compute_shaders" ]
+  }
+
+  deps = [ "//flutter/fml" ]
+}
+
+template("renderer_unittests_component") {
+  target_name = invoker.target_name
+  predefined_sources = [
+    "blit_pass_unittests.cc",
+    "capabilities_unittests.cc",
+    "device_buffer_unittests.cc",
+    "pipeline_descriptor_unittests.cc",
+    "pool_unittests.cc",
+    "renderer_unittests.cc",
+  ]
+  impeller_component(target_name) {
+    testonly = true
+    if (defined(invoker.defines)) {
+      defines = invoker.defines
+    } else {
+      defines = []
+    }
+    sources = predefined_sources
+    if (defined(invoker.deps)) {
+      deps = invoker.deps
+    } else {
+      deps = []
+    }
+    deps += [
+      ":renderer",
+      "../fixtures",
+      "../playground:playground_test",
+      "../tessellator:tessellator_libtess",
+      "//flutter/impeller/display_list:display_list",
+      "//flutter/testing:testing_lib",
+    ]
+    if (defined(invoker.public_configs)) {
+      public_configs = invoker.public_configs
+    }
+  }
+}
+
+renderer_unittests_component("renderer_unittests") {
+  deps = [ "//flutter/impeller/display_list:aiks_unittests" ]
+}
+
+renderer_unittests_component("renderer_unittests_golden") {
+  deps = [ "//flutter/impeller/display_list:aiks_unittests_golden" ]
+  defines = [
+    "IMPELLER_GOLDEN_TESTS",
+    "IMPELLER_ENABLE_VALIDATION=1",
+  ]
+}
+
+impeller_component("renderer_dart_unittests") {
+  testonly = true
+
+  sources = [ "renderer_dart_unittests.cc" ]
+
+  public_configs = [ "//flutter:export_dynamic_symbols" ]
+
+  deps = [
+    ":renderer",
+    "../fixtures:flutter_gpu_fixtures",
+    "../fixtures:flutter_gpu_shaders",
+    "../playground:playground_test",
+    "//flutter/lib/gpu",
+    "//flutter/lib/snapshot",
+    "//flutter/runtime:runtime",
+    "//flutter/testing:fixture_test",
+    "//flutter/testing:testing",
+  ]
+}

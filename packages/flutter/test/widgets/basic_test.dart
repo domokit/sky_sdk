@@ -25,10 +25,7 @@ void main() {
       addTearDown(image1.dispose);
 
       await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: RawImage(image: image1),
-        ),
+        Directionality(textDirection: TextDirection.ltr, child: RawImage(image: image1)),
       );
       final RenderImage renderObject = tester.firstRenderObject<RenderImage>(find.byType(RawImage));
 
@@ -50,7 +47,8 @@ void main() {
       expect(renderObject.filterQuality, FilterQuality.medium);
       expect(renderObject.isAntiAlias, false);
 
-      final ui.Image image2 = (await tester.runAsync<ui.Image>(() => createTestImage(width: 2, height: 2)))!;
+      final ui.Image image2 =
+          (await tester.runAsync<ui.Image>(() => createTestImage(width: 2, height: 2)))!;
       addTearDown(image2.dispose);
       const String debugImageLabel = 'debugImageLabel';
       const double width = 1;
@@ -139,8 +137,9 @@ void main() {
         ),
       );
 
-      final RenderPhysicalShape renderPhysicalShape =
-        tester.renderObject(find.byType(PhysicalShape));
+      final RenderPhysicalShape renderPhysicalShape = tester.renderObject(
+        find.byType(PhysicalShape),
+      );
 
       // The viewport is 800x600, the CircleBorder is centered and fits
       // the shortest edge, so we get a circle of radius 300, centered at
@@ -154,7 +153,6 @@ void main() {
       expect(tester.hitTestOnBinding(const Offset(100.0, 299.0)), doesNotHit(renderPhysicalShape));
       expect(tester.hitTestOnBinding(const Offset(100.0, 301.0)), doesNotHit(renderPhysicalShape));
     });
-
   });
 
   group('FractionalTranslation', () {
@@ -174,9 +172,7 @@ void main() {
                 key: key1,
                 width: 100.0,
                 height: 100.0,
-                child: Container(
-                  color: const Color(0xFF0000FF),
-                ),
+                child: Container(color: const Color(0xFF0000FF)),
               ),
             ),
           ),
@@ -203,9 +199,7 @@ void main() {
                 key: key1,
                 width: 100.0,
                 height: 100.0,
-                child: Container(
-                  color: const Color(0xFF0000FF),
-                ),
+                child: Container(color: const Color(0xFF0000FF)),
               ),
             ),
           ),
@@ -232,9 +226,7 @@ void main() {
                 key: key1,
                 width: 100.0,
                 height: 100.0,
-                child: Container(
-                  color: const Color(0xFF0000FF),
-                ),
+                child: Container(color: const Color(0xFF0000FF)),
               ),
             ),
           ),
@@ -270,10 +262,7 @@ void main() {
                       child: SizedBox(
                         width: 100.0,
                         height: 100.0,
-                        child: Text(
-                          'foo',
-                          key: textKey,
-                        ),
+                        child: Text('foo', key: textKey),
                       ),
                     ),
                   ),
@@ -287,22 +276,49 @@ void main() {
       expect(
         tester.getSemantics(find.byKey(textKey)).transform,
         Matrix4(
-          3.0, 0.0, 0.0, 0.0,
-          0.0, 3.0, 0.0, 0.0,
-          0.0, 0.0, 1.0, 0.0,
-          1170.0, 870.0, 0.0, 1.0,
+          3.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          3.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          1170.0,
+          870.0,
+          0.0,
+          1.0,
         ),
       );
 
-      await tester.tap(find.byKey(fractionalTranslationKey), warnIfMissed: false); // RenderFractionalTranslation can't be hit
+      await tester.tap(
+        find.byKey(fractionalTranslationKey),
+        warnIfMissed: false,
+      ); // RenderFractionalTranslation can't be hit
       await tester.pump();
       expect(
         tester.getSemantics(find.byKey(textKey)).transform,
         Matrix4(
-          3.0, 0.0, 0.0, 0.0,
-          0.0, 3.0, 0.0, 0.0,
-          0.0, 0.0, 1.0, 0.0,
-          1290.0, 990.0, 0.0, 1.0,
+          3.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          3.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          1290.0,
+          990.0,
+          0.0,
+          1.0,
         ),
       );
     });
@@ -325,7 +341,10 @@ void main() {
               attributedValue: AttributedString(
                 'value',
                 attributes: <StringAttribute>[
-                  LocaleStringAttribute(range: const TextRange(start: 0, end: 5), locale: const Locale('en', 'MX')),
+                  LocaleStringAttribute(
+                    range: const TextRange(start: 0, end: 5),
+                    locale: const Locale('en', 'MX'),
+                  ),
                 ],
               ),
               attributedHint: AttributedString(
@@ -335,122 +354,125 @@ void main() {
                 ],
               ),
               child: const Placeholder(),
-            )
+            ),
           ),
-        )
+        ),
       );
       final AttributedString attributedLabel = tester.getSemantics(find.byKey(key)).attributedLabel;
       expect(attributedLabel.string, 'label');
       expect(attributedLabel.attributes.length, 1);
       expect(attributedLabel.attributes[0] is SpellOutStringAttribute, isTrue);
-      expect(attributedLabel.attributes[0].range, const TextRange(start:0, end: 5));
+      expect(attributedLabel.attributes[0].range, const TextRange(start: 0, end: 5));
 
       final AttributedString attributedValue = tester.getSemantics(find.byKey(key)).attributedValue;
       expect(attributedValue.string, 'value');
       expect(attributedValue.attributes.length, 1);
       expect(attributedValue.attributes[0] is LocaleStringAttribute, isTrue);
-      final LocaleStringAttribute valueLocale =  attributedValue.attributes[0] as LocaleStringAttribute;
-      expect(valueLocale.range, const TextRange(start:0, end: 5));
+      final LocaleStringAttribute valueLocale =
+          attributedValue.attributes[0] as LocaleStringAttribute;
+      expect(valueLocale.range, const TextRange(start: 0, end: 5));
       expect(valueLocale.locale, const Locale('en', 'MX'));
 
       final AttributedString attributedHint = tester.getSemantics(find.byKey(key)).attributedHint;
       expect(attributedHint.string, 'hint');
       expect(attributedHint.attributes.length, 1);
       expect(attributedHint.attributes[0] is SpellOutStringAttribute, isTrue);
-      expect(attributedHint.attributes[0].range, const TextRange(start:1, end: 2));
+      expect(attributedHint.attributes[0].range, const TextRange(start: 1, end: 2));
     });
 
     testWidgets('Semantics can merge attributed strings', (WidgetTester tester) async {
       final UniqueKey key = UniqueKey();
       await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-                body: Semantics(
-                  key: key,
-                  attributedLabel: AttributedString(
-                    'label',
-                    attributes: <StringAttribute>[
-                      SpellOutStringAttribute(range: const TextRange(start: 0, end: 5)),
-                    ],
-                  ),
-                  attributedHint: AttributedString(
-                    'hint',
-                    attributes: <StringAttribute>[
-                      SpellOutStringAttribute(range: const TextRange(start: 1, end: 2)),
-                    ],
-                  ),
-                  child: Semantics(
-                    attributedLabel: AttributedString(
-                      'label',
-                      attributes: <StringAttribute>[
-                        SpellOutStringAttribute(range: const TextRange(start: 0, end: 5)),
-                      ],
-                    ),
-                    attributedHint: AttributedString(
-                      'hint',
-                      attributes: <StringAttribute>[
-                        SpellOutStringAttribute(range: const TextRange(start: 1, end: 2)),
-                      ],
-                    ),
-                    child: const Placeholder(),
-                  )
-                )
+        MaterialApp(
+          home: Scaffold(
+            body: Semantics(
+              key: key,
+              attributedLabel: AttributedString(
+                'label',
+                attributes: <StringAttribute>[
+                  SpellOutStringAttribute(range: const TextRange(start: 0, end: 5)),
+                ],
+              ),
+              attributedHint: AttributedString(
+                'hint',
+                attributes: <StringAttribute>[
+                  SpellOutStringAttribute(range: const TextRange(start: 1, end: 2)),
+                ],
+              ),
+              child: Semantics(
+                attributedLabel: AttributedString(
+                  'label',
+                  attributes: <StringAttribute>[
+                    SpellOutStringAttribute(range: const TextRange(start: 0, end: 5)),
+                  ],
+                ),
+                attributedHint: AttributedString(
+                  'hint',
+                  attributes: <StringAttribute>[
+                    SpellOutStringAttribute(range: const TextRange(start: 1, end: 2)),
+                  ],
+                ),
+                child: const Placeholder(),
+              ),
             ),
-          )
+          ),
+        ),
       );
       final AttributedString attributedLabel = tester.getSemantics(find.byKey(key)).attributedLabel;
       expect(attributedLabel.string, 'label\nlabel');
       expect(attributedLabel.attributes.length, 2);
       expect(attributedLabel.attributes[0] is SpellOutStringAttribute, isTrue);
-      expect(attributedLabel.attributes[0].range, const TextRange(start:0, end: 5));
+      expect(attributedLabel.attributes[0].range, const TextRange(start: 0, end: 5));
       expect(attributedLabel.attributes[1] is SpellOutStringAttribute, isTrue);
-      expect(attributedLabel.attributes[1].range, const TextRange(start:6, end: 11));
+      expect(attributedLabel.attributes[1].range, const TextRange(start: 6, end: 11));
 
       final AttributedString attributedHint = tester.getSemantics(find.byKey(key)).attributedHint;
       expect(attributedHint.string, 'hint\nhint');
       expect(attributedHint.attributes.length, 2);
       expect(attributedHint.attributes[0] is SpellOutStringAttribute, isTrue);
-      expect(attributedHint.attributes[0].range, const TextRange(start:1, end: 2));
+      expect(attributedHint.attributes[0].range, const TextRange(start: 1, end: 2));
       expect(attributedHint.attributes[1] is SpellOutStringAttribute, isTrue);
-      expect(attributedHint.attributes[1].range, const TextRange(start:6, end: 7));
+      expect(attributedHint.attributes[1].range, const TextRange(start: 6, end: 7));
     });
 
-    testWidgets('Semantics can merge attributed strings with non attributed string', (WidgetTester tester) async {
+    testWidgets('Semantics can merge attributed strings with non attributed string', (
+      WidgetTester tester,
+    ) async {
       final UniqueKey key = UniqueKey();
       await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-                body: Semantics(
-                    key: key,
-                    attributedLabel: AttributedString(
-                      'label1',
-                      attributes: <StringAttribute>[
-                        SpellOutStringAttribute(range: const TextRange(start: 0, end: 5)),
-                      ],
-                    ),
-                    child: Semantics(
-                      label: 'label2',
-                      child: Semantics(
-                        attributedLabel: AttributedString(
-                          'label3',
-                          attributes: <StringAttribute>[
-                            SpellOutStringAttribute(range: const TextRange(start: 1, end: 3)),
-                          ],
-                        ),
-                        child: const Placeholder(),
-                      ),
-                    )
-                )
+        MaterialApp(
+          home: Scaffold(
+            body: Semantics(
+              key: key,
+              attributedLabel: AttributedString(
+                'label1',
+                attributes: <StringAttribute>[
+                  SpellOutStringAttribute(range: const TextRange(start: 0, end: 5)),
+                ],
+              ),
+              child: Semantics(
+                label: 'label2',
+                child: Semantics(
+                  attributedLabel: AttributedString(
+                    'label3',
+                    attributes: <StringAttribute>[
+                      SpellOutStringAttribute(range: const TextRange(start: 1, end: 3)),
+                    ],
+                  ),
+                  child: const Placeholder(),
+                ),
+              ),
             ),
-          )
+          ),
+        ),
       );
       final AttributedString attributedLabel = tester.getSemantics(find.byKey(key)).attributedLabel;
       expect(attributedLabel.string, 'label1\nlabel2\nlabel3');
       expect(attributedLabel.attributes.length, 2);
       expect(attributedLabel.attributes[0] is SpellOutStringAttribute, isTrue);
-      expect(attributedLabel.attributes[0].range, const TextRange(start:0, end: 5));
+      expect(attributedLabel.attributes[0].range, const TextRange(start: 0, end: 5));
       expect(attributedLabel.attributes[1] is SpellOutStringAttribute, isTrue);
-      expect(attributedLabel.attributes[1].range, const TextRange(start:15, end: 17));
+      expect(attributedLabel.attributes[1].range, const TextRange(start: 15, end: 17));
     });
   });
 
@@ -471,13 +493,23 @@ void main() {
               crossAxisAlignment: CrossAxisAlignment.baseline,
               textBaseline: TextBaseline.alphabetic,
               children: <Widget>[
-                Text('big text',
+                Text(
+                  'big text',
                   key: key1,
-                  style: const TextStyle(fontFamily: 'FlutterTest', fontSize: fontSize1, height: 1.0),
+                  style: const TextStyle(
+                    fontFamily: 'FlutterTest',
+                    fontSize: fontSize1,
+                    height: 1.0,
+                  ),
                 ),
-                Text('one\ntwo\nthree\nfour\nfive\nsix\nseven',
+                Text(
+                  'one\ntwo\nthree\nfour\nfive\nsix\nseven',
                   key: key2,
-                  style: const TextStyle(fontFamily: 'FlutterTest', fontSize: fontSize2, height: 1.0),
+                  style: const TextStyle(
+                    fontFamily: 'FlutterTest',
+                    fontSize: fontSize2,
+                    height: 1.0,
+                  ),
                 ),
               ],
             ),
@@ -504,12 +536,14 @@ void main() {
       final double belowBaseline = math.max(belowBaseline1, belowBaseline2);
       expect(rowBox.size.height, greaterThan(textBox1.size.height));
       expect(rowBox.size.height, greaterThan(textBox2.size.height));
-      expect(rowBox.size.height, aboveBaseline + belowBaseline, );
+      expect(rowBox.size.height, aboveBaseline + belowBaseline);
       expect(tester.getTopLeft(find.byKey(key1)).dy, 0);
       expect(tester.getTopLeft(find.byKey(key2)).dy, aboveBaseline1 - aboveBaseline2);
     });
 
-    testWidgets('baseline aligned children account for a larger, no-baseline child size', (WidgetTester tester) async {
+    testWidgets('baseline aligned children account for a larger, no-baseline child size', (
+      WidgetTester tester,
+    ) async {
       // Regression test for https://github.com/flutter/flutter/issues/58898
       final UniqueKey key1 = UniqueKey();
       final UniqueKey key2 = UniqueKey();
@@ -526,13 +560,23 @@ void main() {
               crossAxisAlignment: CrossAxisAlignment.baseline,
               textBaseline: TextBaseline.alphabetic,
               children: <Widget>[
-                Text('big text',
+                Text(
+                  'big text',
                   key: key1,
-                  style: const TextStyle(fontFamily: 'FlutterTest', fontSize: fontSize1, height: 1.0),
+                  style: const TextStyle(
+                    fontFamily: 'FlutterTest',
+                    fontSize: fontSize1,
+                    height: 1.0,
+                  ),
                 ),
-                Text('one\ntwo\nthree\nfour\nfive\nsix\nseven',
+                Text(
+                  'one\ntwo\nthree\nfour\nfive\nsix\nseven',
                   key: key2,
-                  style: const TextStyle(fontFamily: 'FlutterTest', fontSize: fontSize2, height: 1.0),
+                  style: const TextStyle(
+                    fontFamily: 'FlutterTest',
+                    fontSize: fontSize2,
+                    height: 1.0,
+                  ),
                 ),
                 const FlutterLogo(size: 250),
               ],
@@ -558,10 +602,7 @@ void main() {
       expect(rowBox.size.height, greaterThan(textBox2.size.height));
       expect(rowBox.size.height, 250);
       expect(tester.getTopLeft(find.byKey(key1)).dy, 0);
-      expect(
-        tester.getTopLeft(find.byKey(key2)).dy,
-        aboveBaseline1 - aboveBaseline2,
-      );
+      expect(tester.getTopLeft(find.byKey(key2)).dy, aboveBaseline1 - aboveBaseline2);
     });
   });
 
@@ -572,21 +613,30 @@ void main() {
     );
 
     expect(
-      const UnconstrainedBox(constrainedAxis: Axis.horizontal, textDirection: TextDirection.rtl, alignment: Alignment.topRight).toString(),
-      equals('UnconstrainedBox(alignment: Alignment.topRight, constrainedAxis: horizontal, textDirection: rtl)'),
+      const UnconstrainedBox(
+        constrainedAxis: Axis.horizontal,
+        textDirection: TextDirection.rtl,
+        alignment: Alignment.topRight,
+      ).toString(),
+      equals(
+        'UnconstrainedBox(alignment: Alignment.topRight, constrainedAxis: horizontal, textDirection: rtl)',
+      ),
     );
   });
 
   testWidgets('UnconstrainedBox can set and update clipBehavior', (WidgetTester tester) async {
     await tester.pumpWidget(const UnconstrainedBox());
-    final RenderConstraintsTransformBox renderObject = tester.allRenderObjects.whereType<RenderConstraintsTransformBox>().first;
+    final RenderConstraintsTransformBox renderObject =
+        tester.allRenderObjects.whereType<RenderConstraintsTransformBox>().first;
     expect(renderObject.clipBehavior, equals(Clip.none));
 
     await tester.pumpWidget(const UnconstrainedBox(clipBehavior: Clip.antiAlias));
     expect(renderObject.clipBehavior, equals(Clip.antiAlias));
   });
 
-  testWidgets('UnconstrainedBox warns only when clipBehavior is Clip.none', (WidgetTester tester) async {
+  testWidgets('UnconstrainedBox warns only when clipBehavior is Clip.none', (
+    WidgetTester tester,
+  ) async {
     for (final Clip? clip in <Clip?>[null, ...Clip.values]) {
       // Clear any render objects that were there before so that we can see more
       // than one error. Otherwise, it just throws the first one and skips the
@@ -596,17 +646,19 @@ void main() {
         Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 200, maxWidth: 200),
-            child: clip == null
-              ? const UnconstrainedBox(child: SizedBox(width: 400, height: 400))
-              : UnconstrainedBox(
-                clipBehavior: clip,
-                child: const SizedBox(width: 400, height: 400),
-              ),
+            child:
+                clip == null
+                    ? const UnconstrainedBox(child: SizedBox(width: 400, height: 400))
+                    : UnconstrainedBox(
+                      clipBehavior: clip,
+                      child: const SizedBox(width: 400, height: 400),
+                    ),
           ),
         ),
       );
 
-      final RenderConstraintsTransformBox renderObject = tester.allRenderObjects.whereType<RenderConstraintsTransformBox>().first;
+      final RenderConstraintsTransformBox renderObject =
+          tester.allRenderObjects.whereType<RenderConstraintsTransformBox>().first;
 
       // Defaults to Clip.none
       expect(renderObject.clipBehavior, equals(clip ?? Clip.none), reason: 'for clip = $clip');
@@ -641,7 +693,9 @@ void main() {
         const ConstraintsTransformBox(
           constraintsTransform: ConstraintsTransformBox.unconstrained,
         ).toString(),
-        equals('ConstraintsTransformBox(alignment: Alignment.center, constraints transform: unconstrained)'),
+        equals(
+          'ConstraintsTransformBox(alignment: Alignment.center, constraints transform: unconstrained)',
+        ),
       );
       expect(
         const ConstraintsTransformBox(
@@ -649,7 +703,9 @@ void main() {
           alignment: Alignment.topRight,
           constraintsTransform: ConstraintsTransformBox.widthUnconstrained,
         ).toString(),
-        equals('ConstraintsTransformBox(alignment: Alignment.topRight, textDirection: rtl, constraints transform: width constraints removed)'),
+        equals(
+          'ConstraintsTransformBox(alignment: Alignment.topRight, textDirection: rtl, constraints transform: width constraints removed)',
+        ),
       );
     });
   });
@@ -665,15 +721,13 @@ void main() {
     });
 
     testWidgets('ColoredBox - no size, no child', (WidgetTester tester) async {
-      await tester.pumpWidget(const Flex(
-        direction: Axis.horizontal,
-        textDirection: TextDirection.ltr,
-        children: <Widget>[
-          SizedBox.shrink(
-            child: ColoredBox(color: colorToPaint),
-          ),
-        ],
-      ));
+      await tester.pumpWidget(
+        const Flex(
+          direction: Axis.horizontal,
+          textDirection: TextDirection.ltr,
+          children: <Widget>[SizedBox.shrink(child: ColoredBox(color: colorToPaint))],
+        ),
+      );
       expect(find.byType(ColoredBox), findsOneWidget);
       final RenderObject renderColoredBox = tester.renderObject(find.byType(ColoredBox));
 
@@ -688,15 +742,13 @@ void main() {
     testWidgets('ColoredBox - no size, child', (WidgetTester tester) async {
       const ValueKey<int> key = ValueKey<int>(0);
       const Widget child = SizedBox.expand(key: key);
-      await tester.pumpWidget(const Flex(
-        direction: Axis.horizontal,
-        textDirection: TextDirection.ltr,
-        children: <Widget>[
-          SizedBox.shrink(
-            child: ColoredBox(color: colorToPaint, child: child),
-          ),
-        ],
-      ));
+      await tester.pumpWidget(
+        const Flex(
+          direction: Axis.horizontal,
+          textDirection: TextDirection.ltr,
+          children: <Widget>[SizedBox.shrink(child: ColoredBox(color: colorToPaint, child: child))],
+        ),
+      );
       expect(find.byType(ColoredBox), findsOneWidget);
       final RenderObject renderColoredBox = tester.renderObject(find.byType(ColoredBox));
       final RenderObject renderSizedBox = tester.renderObject(find.byKey(key));
@@ -750,11 +802,7 @@ void main() {
   testWidgets('Inconsequential golden test', (WidgetTester tester) async {
     // The test validates the Flutter Gold integration. Any changes to the
     // golden file can be approved at any time.
-    await tester.pumpWidget(RepaintBoundary(
-      child: Container(
-        color: const Color(0xFF161145),
-      ),
-    ));
+    await tester.pumpWidget(RepaintBoundary(child: Container(color: const Color(0xFF161145))));
 
     await tester.pumpAndSettle();
     await expectLater(
@@ -773,29 +821,47 @@ void main() {
           width: 100,
           height: 100,
           child: Listener(
-            onPointerDown: (_) { logs.add('down1'); },
+            onPointerDown: (_) {
+              logs.add('down1');
+            },
             child: MouseRegion(
-              onEnter: (_) { logs.add('enter1'); },
-              onExit: (_) { logs.add('exit1'); },
+              onEnter: (_) {
+                logs.add('enter1');
+              },
+              onExit: (_) {
+                logs.add('exit1');
+              },
               cursor: SystemMouseCursors.forbidden,
               child: Stack(
                 children: <Widget>[
                   Listener(
-                    onPointerDown: (_) { logs.add('down2'); },
+                    onPointerDown: (_) {
+                      logs.add('down2');
+                    },
                     child: MouseRegion(
                       cursor: SystemMouseCursors.click,
-                      onEnter: (_) { logs.add('enter2'); },
-                      onExit: (_) { logs.add('exit2'); },
+                      onEnter: (_) {
+                        logs.add('enter2');
+                      },
+                      onExit: (_) {
+                        logs.add('exit2');
+                      },
                     ),
                   ),
                   IgnorePointer(
                     ignoring: ignoring,
                     child: Listener(
-                      onPointerDown: (_) { logs.add('down3'); },
+                      onPointerDown: (_) {
+                        logs.add('down3');
+                      },
                       child: MouseRegion(
                         cursor: SystemMouseCursors.text,
-                        onEnter: (_) { logs.add('enter3'); },
-                        onExit: (_) { logs.add('exit3'); },
+                        onEnter: (_) {
+                          logs.add('enter3');
+                        },
+                        onExit: (_) {
+                          logs.add('exit3');
+                        },
                       ),
                     ),
                   ),
@@ -807,7 +873,10 @@ void main() {
       ),
     );
 
-    final TestGesture gesture = await tester.createGesture(pointer: 1, kind: PointerDeviceKind.mouse);
+    final TestGesture gesture = await tester.createGesture(
+      pointer: 1,
+      kind: PointerDeviceKind.mouse,
+    );
     await gesture.addPointer(location: const Offset(200, 200));
 
     await tester.pumpWidget(target(ignoring: true));
@@ -847,11 +916,7 @@ void main() {
         MaterialApp(
           home: IgnorePointer(
             ignoring: false,
-            child: ElevatedButton(
-              key: key,
-              onPressed: () { },
-              child: const Text('button'),
-            ),
+            child: ElevatedButton(key: key, onPressed: () {}, child: const Text('button')),
           ),
         ),
       );
@@ -879,17 +944,17 @@ void main() {
             child: Semantics(
               key: key1,
               label: '1',
-              onTap: (){ },
+              onTap: () {},
               container: true,
               child: Semantics(
                 key: key2,
                 label: '2',
-                onTap: (){ },
+                onTap: () {},
                 container: true,
                 child: Semantics(
                   key: key3,
                   label: '3',
-                  onTap: (){ },
+                  onTap: () {},
                   container: true,
                   child: const SizedBox(width: 10, height: 10),
                 ),
@@ -898,93 +963,47 @@ void main() {
           ),
         ),
       );
-      expect(
-        tester.getSemantics(find.byKey(key1)),
-        matchesSemantics(
-          label: '1',
-        ),
-      );
-      expect(
-        tester.getSemantics(find.byKey(key2)),
-        matchesSemantics(
-          label: '2',
-        ),
-      );
-      expect(
-        tester.getSemantics(find.byKey(key3)),
-        matchesSemantics(
-          label: '3',
-        ),
-      );
+      expect(tester.getSemantics(find.byKey(key1)), matchesSemantics(label: '1'));
+      expect(tester.getSemantics(find.byKey(key2)), matchesSemantics(label: '2'));
+      expect(tester.getSemantics(find.byKey(key3)), matchesSemantics(label: '3'));
 
-      final TestIgnorePointerState state = tester.state<TestIgnorePointerState>(find.byType(TestIgnorePointer));
+      final TestIgnorePointerState state = tester.state<TestIgnorePointerState>(
+        find.byType(TestIgnorePointer),
+      );
       state.setIgnore(false);
       await tester.pump();
       expect(
         tester.getSemantics(find.byKey(key1)),
-        matchesSemantics(
-          label: '1',
-          hasTapAction: true,
-        ),
+        matchesSemantics(label: '1', hasTapAction: true),
       );
       expect(
         tester.getSemantics(find.byKey(key2)),
-        matchesSemantics(
-          label: '2',
-          hasTapAction: true,
-        ),
+        matchesSemantics(label: '2', hasTapAction: true),
       );
       expect(
         tester.getSemantics(find.byKey(key3)),
-        matchesSemantics(
-          label: '3',
-          hasTapAction: true,
-        ),
+        matchesSemantics(label: '3', hasTapAction: true),
       );
 
       state.setIgnore(true);
       await tester.pump();
-      expect(
-        tester.getSemantics(find.byKey(key1)),
-        matchesSemantics(
-          label: '1',
-        ),
-      );
-      expect(
-        tester.getSemantics(find.byKey(key2)),
-        matchesSemantics(
-          label: '2',
-        ),
-      );
-      expect(
-        tester.getSemantics(find.byKey(key3)),
-        matchesSemantics(
-          label: '3',
-        ),
-      );
+      expect(tester.getSemantics(find.byKey(key1)), matchesSemantics(label: '1'));
+      expect(tester.getSemantics(find.byKey(key2)), matchesSemantics(label: '2'));
+      expect(tester.getSemantics(find.byKey(key3)), matchesSemantics(label: '3'));
 
       state.setIgnore(false);
       await tester.pump();
       expect(
         tester.getSemantics(find.byKey(key1)),
-        matchesSemantics(
-          label: '1',
-          hasTapAction: true,
-        ),
+        matchesSemantics(label: '1', hasTapAction: true),
       );
       expect(
         tester.getSemantics(find.byKey(key2)),
-        matchesSemantics(
-          label: '2',
-          hasTapAction: true,
-        ),
+        matchesSemantics(label: '2', hasTapAction: true),
       );
       expect(
         tester.getSemantics(find.byKey(key3)),
-        matchesSemantics(
-          label: '3',
-          hasTapAction: true,
-        ),
+        matchesSemantics(label: '3', hasTapAction: true),
       );
     });
 
@@ -995,11 +1014,7 @@ void main() {
         MaterialApp(
           home: IgnorePointer(
             ignoringSemantics: true,
-            child: ElevatedButton(
-              key: key,
-              onPressed: () { },
-              child: const Text('button'),
-            ),
+            child: ElevatedButton(key: key, onPressed: () {}, child: const Text('button')),
           ),
         ),
       );
@@ -1012,11 +1027,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: IgnorePointer(
-            child: ElevatedButton(
-              key: key,
-              onPressed: () { },
-              child: const Text('button'),
-            ),
+            child: ElevatedButton(key: key, onPressed: () {}, child: const Text('button')),
           ),
         ),
       );
@@ -1044,29 +1055,47 @@ void main() {
           width: 100,
           height: 100,
           child: Listener(
-            onPointerDown: (_) { logs.add('down1'); },
+            onPointerDown: (_) {
+              logs.add('down1');
+            },
             child: MouseRegion(
-              onEnter: (_) { logs.add('enter1'); },
-              onExit: (_) { logs.add('exit1'); },
+              onEnter: (_) {
+                logs.add('enter1');
+              },
+              onExit: (_) {
+                logs.add('exit1');
+              },
               cursor: SystemMouseCursors.forbidden,
               child: Stack(
                 children: <Widget>[
                   Listener(
-                    onPointerDown: (_) { logs.add('down2'); },
+                    onPointerDown: (_) {
+                      logs.add('down2');
+                    },
                     child: MouseRegion(
                       cursor: SystemMouseCursors.click,
-                      onEnter: (_) { logs.add('enter2'); },
-                      onExit: (_) { logs.add('exit2'); },
+                      onEnter: (_) {
+                        logs.add('enter2');
+                      },
+                      onExit: (_) {
+                        logs.add('exit2');
+                      },
                     ),
                   ),
                   AbsorbPointer(
                     absorbing: absorbing,
                     child: Listener(
-                      onPointerDown: (_) { logs.add('down3'); },
+                      onPointerDown: (_) {
+                        logs.add('down3');
+                      },
                       child: MouseRegion(
                         cursor: SystemMouseCursors.text,
-                        onEnter: (_) { logs.add('enter3'); },
-                        onExit: (_) { logs.add('exit3'); },
+                        onEnter: (_) {
+                          logs.add('enter3');
+                        },
+                        onExit: (_) {
+                          logs.add('exit3');
+                        },
                       ),
                     ),
                   ),
@@ -1078,7 +1107,10 @@ void main() {
       ),
     );
 
-    final TestGesture gesture = await tester.createGesture(pointer: 1, kind: PointerDeviceKind.mouse);
+    final TestGesture gesture = await tester.createGesture(
+      pointer: 1,
+      kind: PointerDeviceKind.mouse,
+    );
     await gesture.addPointer(location: const Offset(200, 200));
 
     await tester.pumpWidget(target(absorbing: true));
@@ -1118,28 +1150,28 @@ void main() {
       runSpacing: 4.0, // gap between lines
       textDirection: TextDirection.ltr,
       verticalDirection: VerticalDirection.up,
-      children: <Widget>[
-        Text('Hamilton'),
-        Text('Lafayette'),
-        Text('Mulligan'),
-      ],
+      children: <Widget>[Text('Hamilton'), Text('Lafayette'), Text('Mulligan')],
     ).debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-      .map((DiagnosticsNode node) => node.toString())
-      .toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
-    expect(description, unorderedMatches(<dynamic>[
-      contains('direction: horizontal'),
-      contains('alignment: start'),
-      contains('spacing: 8.0'),
-      contains('runAlignment: start'),
-      contains('runSpacing: 4.0'),
-      contains('crossAxisAlignment: start'),
-      contains('textDirection: ltr'),
-      contains('verticalDirection: up'),
-    ]));
+    expect(
+      description,
+      unorderedMatches(<dynamic>[
+        contains('direction: horizontal'),
+        contains('alignment: start'),
+        contains('spacing: 8.0'),
+        contains('runAlignment: start'),
+        contains('runSpacing: 4.0'),
+        contains('crossAxisAlignment: start'),
+        contains('textDirection: ltr'),
+        contains('verticalDirection: up'),
+      ]),
+    );
   });
 
   testWidgets('Row and IgnoreBaseline (control -- with baseline)', (WidgetTester tester) async {
@@ -1157,7 +1189,10 @@ void main() {
           Text(
             'b',
             textDirection: TextDirection.ltr,
-            style: TextStyle(fontSize: 32.0, fontFamily: 'FlutterTest'), // 24 above baseline, 8 below baseline
+            style: TextStyle(
+              fontSize: 32.0,
+              fontFamily: 'FlutterTest',
+            ), // 24 above baseline, 8 below baseline
           ),
         ],
       ),
@@ -1180,13 +1215,19 @@ void main() {
             child: Text(
               'a',
               textDirection: TextDirection.ltr,
-              style: TextStyle(fontSize: 128.0, fontFamily: 'FlutterTest'), // places baseline at y=96
+              style: TextStyle(
+                fontSize: 128.0,
+                fontFamily: 'FlutterTest',
+              ), // places baseline at y=96
             ),
           ),
           Text(
             'b',
             textDirection: TextDirection.ltr,
-            style: TextStyle(fontSize: 32.0, fontFamily: 'FlutterTest'), // 24 above baseline, 8 below baseline
+            style: TextStyle(
+              fontSize: 32.0,
+              fontFamily: 'FlutterTest',
+            ), // 24 above baseline, 8 below baseline
           ),
         ],
       ),
@@ -1208,14 +1249,12 @@ class HitsRenderBox extends Matcher {
 
   @override
   Description describe(Description description) =>
-    description.add('hit test result contains ').addDescriptionOf(renderBox);
+      description.add('hit test result contains ').addDescriptionOf(renderBox);
 
   @override
   bool matches(dynamic item, Map<dynamic, dynamic> matchState) {
     final HitTestResult hitTestResult = item as HitTestResult;
-    return hitTestResult.path.where(
-      (HitTestEntry entry) => entry.target == renderBox,
-    ).isNotEmpty;
+    return hitTestResult.path.where((HitTestEntry entry) => entry.target == renderBox).isNotEmpty;
   }
 }
 
@@ -1228,14 +1267,12 @@ class DoesNotHitRenderBox extends Matcher {
 
   @override
   Description describe(Description description) =>
-    description.add("hit test result doesn't contain ").addDescriptionOf(renderBox);
+      description.add("hit test result doesn't contain ").addDescriptionOf(renderBox);
 
   @override
   bool matches(dynamic item, Map<dynamic, dynamic> matchState) {
     final HitTestResult hitTestResult = item as HitTestResult;
-    return hitTestResult.path.where(
-      (HitTestEntry entry) => entry.target == renderBox,
-    ).isEmpty;
+    return hitTestResult.path.where((HitTestEntry entry) => entry.target == renderBox).isEmpty;
   }
 }
 
@@ -1265,7 +1302,6 @@ class _MockCanvas extends Fake implements Canvas {
   }
 }
 
-
 class TestIgnorePointer extends StatefulWidget {
   const TestIgnorePointer({super.key, required this.child});
 
@@ -1285,9 +1321,6 @@ class TestIgnorePointerState extends State<TestIgnorePointer> {
 
   @override
   Widget build(BuildContext context) {
-    return IgnorePointer(
-      ignoring: ignore,
-      child: widget.child,
-    );
+    return IgnorePointer(ignoring: ignore, child: widget.child);
   }
 }

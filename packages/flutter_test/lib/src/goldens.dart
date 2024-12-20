@@ -427,12 +427,7 @@ class _TrivialWebGoldenComparator implements WebGoldenComparator {
 /// the result of a failing test.
 class ComparisonResult {
   /// Creates a new [ComparisonResult] for the current test.
-  ComparisonResult({
-    required this.passed,
-    required this.diffPercent,
-    this.error,
-    this.diffs,
-  });
+  ComparisonResult({required this.passed, required this.diffPercent, this.error, this.diffs});
 
   /// Indicates whether or not a pixel comparison test has failed.
   final bool passed;

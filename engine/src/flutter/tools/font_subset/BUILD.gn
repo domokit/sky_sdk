@@ -1,0 +1,76 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/zip_bundle.gni")
+
+executable("_font-subset") {
+  output_name = "font-subset"
+
+  sources = [
+    "hb_wrappers.h",
+    "main.cc",
+  ]
+
+  deps = [ "//flutter/third_party/harfbuzz:harfbuzz_subset" ]
+
+  if (is_mac) {
+    frameworks = [
+      "Foundation.framework",
+      "CoreGraphics.framework",
+      "CoreText.framework",
+    ]
+  }
+
+  metadata = {
+    font_subset_without_entitlement = [ "font-subset" ]
+  }
+}
+
+generated_file("font_entitlement_config") {
+  outputs = [ "$target_gen_dir/font_subset_without_entitlements.txt" ]
+
+  data_keys = [ "font_subset_without_entitlement" ]
+
+  deps = [ ":_font-subset" ]
+}
+
+zip_bundle("font_subset") {
+  if (is_mac) {
+    # Mac artifacts sometimes use mac and sometimes darwin. Standardizing the
+    # names will require changes in the list of artifacts the tool is downloading.
+    output = "darwin-${target_cpu}/font-subset.zip"
+  } else {
+    output = "${full_target_platform_name}/font-subset.zip"
+  }
+
+  font_subset_bin = "font-subset"
+  if (is_win) {
+    font_subset_bin = "${font_subset_bin}.exe"
+  }
+
+  files = [
+    {
+      source = "$root_build_dir/$font_subset_bin"
+      destination = font_subset_bin
+    },
+    {
+      source = "$root_gen_dir/const_finder.dart.snapshot"
+      destination = "const_finder.dart.snapshot"
+    },
+  ]
+
+  deps = [
+    ":_font-subset",
+    "//flutter/tools/const_finder",
+  ]
+  if (is_mac) {
+    deps += [ ":font_entitlement_config" ]
+    files += [
+      {
+        source = "$target_gen_dir/font_subset_without_entitlements.txt"
+        destination = "without_entitlements.txt"
+      },
+    ]
+  }
+}

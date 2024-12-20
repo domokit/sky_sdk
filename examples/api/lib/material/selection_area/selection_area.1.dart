@@ -65,15 +65,27 @@ class _MyHomePageState extends State<MyHomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 for (final (int? offset, String label) in <(int? offset, String label)>[
-                  (_selectionNotifier.registered ? _selectionNotifier.selection.range?.startOffset : null, 'StartOffset'),
-                  (_selectionNotifier.registered ? _selectionNotifier.selection.range?.endOffset : null, 'EndOffset'),
+                  (
+                    _selectionNotifier.registered
+                        ? _selectionNotifier.selection.range?.startOffset
+                        : null,
+                    'StartOffset',
+                  ),
+                  (
+                    _selectionNotifier.registered
+                        ? _selectionNotifier.selection.range?.endOffset
+                        : null,
+                    'EndOffset',
+                  ),
                 ])
                   Text('Selection $label: $offset'),
-                Text('Selection Status: ${_selectionNotifier.registered ? _selectionNotifier.selection.status : 'SelectionListenerNotifier not registered.'}'),
+                Text(
+                  'Selection Status: ${_selectionNotifier.registered ? _selectionNotifier.selection.status : 'SelectionListenerNotifier not registered.'}',
+                ),
                 Text('Selectable Region Status: $_selectableRegionStatus'),
               ],
             ),
-            const SizedBox(height: 15.0,),
+            const SizedBox(height: 15.0),
             SelectionArea(
               child: MySelectableText(
                 selectionNotifier: _selectionNotifier,
@@ -88,11 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class MySelectableText extends StatefulWidget {
-  const MySelectableText({
-    super.key,
-    required this.selectionNotifier,
-    required this.onChanged,
-  });
+  const MySelectableText({super.key, required this.selectionNotifier, required this.onChanged});
 
   final SelectionListenerNotifier selectionNotifier;
   final ValueChanged<SelectableRegionSelectionStatus> onChanged;

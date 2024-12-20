@@ -44,8 +44,7 @@ Future<void> processPodsIfNeeded(
 
   // If there are no plugins and if the project is a not module with an existing
   // podfile, skip processing pods
-  if (!hasPlugins(project) &&
-      !(project.isModule && xcodeProject.podfile.existsSync())) {
+  if (!hasPlugins(project) && !(project.isModule && xcodeProject.podfile.existsSync())) {
     return;
   }
 
@@ -53,8 +52,9 @@ Future<void> processPodsIfNeeded(
   // Package Manager, print a warning that CocoaPods will be used.
   if (forceCocoaPodsOnly && xcodeProject.usesSwiftPackageManager) {
     globals.logger.printWarning(
-        'Swift Package Manager does not yet support this command. '
-        'CocoaPods will be used instead.');
+      'Swift Package Manager does not yet support this command. '
+      'CocoaPods will be used instead.',
+    );
 
     // If CocoaPods has been deintegrated, add it back.
     if (!xcodeProject.podfile.existsSync()) {
@@ -62,34 +62,26 @@ Future<void> processPodsIfNeeded(
     }
 
     // Delete Swift Package Manager manifest to invalidate fingerprinter
-    ErrorHandlingFileSystem.deleteIfExists(
-      xcodeProject.flutterPluginSwiftPackageManifest,
-    );
+    ErrorHandlingFileSystem.deleteIfExists(xcodeProject.flutterPluginSwiftPackageManifest);
   }
 
   // If the Xcode project, Podfile, generated plugin Swift Package, or podhelper
   // have changed since last run, pods should be updated.
   final Fingerprinter fingerprinter = Fingerprinter(
-    fingerprintPath:
-        globals.fs.path.join(buildDirectory, 'pod_inputs.fingerprint'),
+    fingerprintPath: globals.fs.path.join(buildDirectory, 'pod_inputs.fingerprint'),
     paths: <String>[
       xcodeProject.xcodeProjectInfoFile.path,
       xcodeProject.podfile.path,
       if (xcodeProject.flutterPluginSwiftPackageManifest.existsSync())
         xcodeProject.flutterPluginSwiftPackageManifest.path,
-      globals.fs.path.join(
-        Cache.flutterRoot!,
-        'packages',
-        'flutter_tools',
-        'bin',
-        'podhelper.rb',
-      ),
+      globals.fs.path.join(Cache.flutterRoot!, 'packages', 'flutter_tools', 'bin', 'podhelper.rb'),
     ],
     fileSystem: globals.fs,
     logger: globals.logger,
   );
 
-  final bool didPodInstall = await globals.cocoaPods?.processPods(
+  final bool didPodInstall =
+      await globals.cocoaPods?.processPods(
         xcodeProject: xcodeProject,
         buildMode: buildMode,
         dependenciesChanged: !fingerprinter.doesFingerprintMatch(),

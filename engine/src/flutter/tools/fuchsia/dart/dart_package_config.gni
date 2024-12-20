@@ -1,0 +1,112 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Generates a package_config.json file containing all of the packages used
+# to generate a kernel file.
+#
+# Package configs are files which describe metadata about a dart package.
+# This includes information like the name, dart language version, where to
+# find the files, etc. The file is required by the dart kernel compiler.
+#
+# Parameters
+#
+#   deps, public_deps (optional)
+#     [list of labels] The targets to generate a manifest for.
+#     See `gn help` for more details.
+#
+#   testonly, visibility, metadata (optional)
+#     See `gn help`.
+#
+#   outputs (optional)
+#     Singleton list containing the path to the package_config file.
+#     Defaults to `[ "$target_gen_dir/${target_name}_package_config.json" ]`.
+template("dart_package_config") {
+  main_target = target_name
+  generate_target = "${target_name}_generate"
+
+  # Build the name of the output file.
+  if (defined(invoker.outputs)) {
+    _outputs = invoker.outputs
+    assert(_outputs != [] && _outputs == [ _outputs[0] ],
+           "Outputs list must have exactly one element.")
+    package_config_file = _outputs[0]
+  } else {
+    package_config_file = "$target_gen_dir/${target_name}_package_config.json"
+  }
+  intermediate_file = "$package_config_file.partial"
+
+  # Gather metadata about runtime objects.
+  generated_file(generate_target) {
+    forward_variables_from(invoker,
+                           [
+                             "deps",
+                             "public_deps",
+                             "testonly",
+                           ])
+
+    visibility = [ ":$main_target" ]
+
+    data_keys = [
+      # A list of package configuration entries
+      #
+      # Each entry must contain these values:
+      #   - `name`: The name of the package;
+      #   - `root_uri`: Path to the package root relative to root_build_dir;
+      #   - `package_uri`: The path in which the source lives
+      #
+      # The following entries may optionally be specified
+      #   - `language_version`: The dart language version.
+      #   - `pubspec_path`: The path to the pubspec file to find the language version
+      "package_config_entries",
+    ]
+    walk_keys = [ "package_config_entry_barrier" ]
+
+    outputs = [ intermediate_file ]
+
+    output_conversion = "json"
+  }
+
+  # Converts the intermediate to a real package_config.json file.
+  action(main_target) {
+    forward_variables_from(invoker,
+                           [
+                             "deps",
+                             "public_deps",
+                             "testonly",
+                             "visibility",
+                           ])
+
+    script = "//flutter/tools/fuchsia/dart/gen_dart_package_config.py"
+
+    inputs = [ intermediate_file ]
+    outputs = [ package_config_file ]
+    depfile = "${target_gen_dir}/${target_name}.d"
+
+    args = [
+      "--input",
+      rebase_path(intermediate_file, root_build_dir),
+      "--output",
+      rebase_path(package_config_file, root_build_dir),
+      "--root",
+      rebase_path("//", root_build_dir),
+      "--depfile",
+      rebase_path(depfile, root_build_dir),
+    ]
+
+    if (!defined(deps)) {
+      deps = []
+    }
+    deps += [ ":$generate_target" ]
+
+    metadata = {
+      # Add a barrier here to avoid double of inclusion of elements listed in
+      # the generated package config.
+      package_config_entry_barrier = []
+
+      if (defined(invoker.metadata)) {
+        forward_variables_from(invoker.metadata, "*")
+      }
+    }
+  }
+}

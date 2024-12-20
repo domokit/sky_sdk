@@ -13,12 +13,7 @@ class SliverDecorationExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        textTheme: const TextTheme(
-          titleLarge: TextStyle(
-            fontSize: 24,
-            color: Colors.white30,
-          ),
-        ),
+        textTheme: const TextTheme(titleLarge: TextStyle(fontSize: 24, color: Colors.white30)),
       ),
       home: Scaffold(
         appBar: AppBar(title: const Text('SliverDecoration Sample')),
@@ -41,27 +36,22 @@ class SliverDecorationExample extends StatelessWidget {
             gradient: RadialGradient(
               center: Alignment(-0.5, -0.6),
               radius: 0.15,
-              colors: <Color>[
-                Color(0xFFEEEEEE),
-                Color(0xFF111133),
-              ],
+              colors: <Color>[Color(0xFFEEEEEE), Color(0xFF111133)],
               stops: <double>[0.4, 0.8],
             ),
           ),
           sliver: SliverList(
-            delegate: SliverChildListDelegate(
-              <Widget>[
-                SizedBox(
-                  height: 200.0,
-                  child: Center(
-                    child: Text(
-                      'A moon on a night sky',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
+            delegate: SliverChildListDelegate(<Widget>[
+              SizedBox(
+                height: 200.0,
+                child: Center(
+                  child: Text(
+                    'A moon on a night sky',
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ]),
           ),
         ),
         DecoratedSliver(
@@ -83,21 +73,16 @@ class SliverDecorationExample extends StatelessWidget {
             ),
           ),
           sliver: SliverList(
-            delegate: SliverChildListDelegate(
-              <Widget>[
-                SizedBox(
-                  height: 500.0,
-                  child: Container(
-                    alignment: Alignment.topCenter,
-                    padding: const EdgeInsets.only(top: 56.0),
-                    child: Text(
-                      'A blue sky',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ),
+            delegate: SliverChildListDelegate(<Widget>[
+              SizedBox(
+                height: 500.0,
+                child: Container(
+                  alignment: Alignment.topCenter,
+                  padding: const EdgeInsets.only(top: 56.0),
+                  child: Text('A blue sky', style: Theme.of(context).textTheme.titleLarge),
                 ),
-              ],
-            ),
+              ),
+            ]),
           ),
         ),
       ],

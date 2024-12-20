@@ -1,0 +1,4 @@
+# Disable all checks in this folder.
+#
+# We cannot ask third_party code to conform to our lints.
+Checks: "-*"

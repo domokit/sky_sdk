@@ -33,7 +33,10 @@ void main() {
   test('CircleBorder copyWith, ==, hashCode', () {
     expect(const CircleBorder(), const CircleBorder().copyWith());
     expect(const CircleBorder().hashCode, const CircleBorder().copyWith().hashCode);
-    expect(const CircleBorder(eccentricity: 0.5).hashCode, const CircleBorder().copyWith(eccentricity: 0.5).hashCode);
+    expect(
+      const CircleBorder(eccentricity: 0.5).hashCode,
+      const CircleBorder().copyWith(eccentricity: 0.5).hashCode,
+    );
     const BorderSide side = BorderSide(width: 10.0, color: Color(0xff123456));
     expect(const CircleBorder().copyWith(side: side), const CircleBorder(side: side));
   });
@@ -48,12 +51,14 @@ void main() {
     expect(ShapeBorder.lerp(c10, c20, 0.0), c10);
     expect(ShapeBorder.lerp(c10, c20, 0.5), c15);
     expect(ShapeBorder.lerp(c10, c20, 1.0), c20);
-    expect(c10.getInnerPath(Rect.fromCircle(center: Offset.zero, radius: 1.0).inflate(10.0)), isUnitCircle);
+    expect(
+      c10.getInnerPath(Rect.fromCircle(center: Offset.zero, radius: 1.0).inflate(10.0)),
+      isUnitCircle,
+    );
     expect(c10.getOuterPath(Rect.fromCircle(center: Offset.zero, radius: 1.0)), isUnitCircle);
     expect(
       (Canvas canvas) => c10.paint(canvas, const Rect.fromLTWH(10.0, 20.0, 30.0, 40.0)),
-      paints
-        ..circle(x: 25.0, y: 40.0, radius: 10.0, strokeWidth: 10.0),
+      paints..circle(x: 25.0, y: 40.0, radius: 10.0, strokeWidth: 10.0),
     );
   });
 }

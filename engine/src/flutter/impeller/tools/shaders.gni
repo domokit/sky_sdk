@@ -1,0 +1,169 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/impeller/tools/args.gni")
+import("//flutter/impeller/tools/shader_archive.gni")
+import("//flutter/impeller/tools/shaders_gles.gni")
+import("//flutter/impeller/tools/shaders_mtl.gni")
+import("//flutter/impeller/tools/shaders_vk.gni")
+
+# ------------------------------------------------------------------------------
+# @brief           A target for precompiled shaders and the associated
+#                  generated reflection library.
+#
+# @param[required] name
+#
+#    The base name for the reflected C++ library.
+#
+# @param[required] shaders
+#
+#    A list of GLSL shader files.
+#
+# @param[optional] analyze
+#
+#    Whether to analyze shaders with malioc. Defaults to false. Shaders will
+#    only be analyzed if the GN argument "impeller_malioc_path" is defined.
+#
+# @param[optional] enable_opengles
+#
+#    Whether to compile the shaders for the OpenGL ES backend. Defaults to the
+#    value of the GN argument "impeller_enable_opengles".
+#
+# @param[optional] gles_language_version
+#
+#    The GLES version required by the shaders.
+#
+# @param[optional] metal_version
+#
+#    The version of the Metal API required by the shaders.
+#
+# @param[optional] vulkan_language_version
+#
+#    The SPIR-V version required by the shaders.
+#
+# @param[optional] use_half_textures
+#
+#    Whether the metal shader is using half-precision textures and requires
+#    openGL semantics when compilig SPIR-V.
+#
+# @param[optional] require_framebuffer_fetch
+#
+#    Whether to require the framebuffer fetch extension for GLES fragment shaders.
+template("impeller_shaders") {
+  if (defined(invoker.metal_version)) {
+    metal_version = invoker.metal_version
+  }
+
+  use_half_textures = false
+  if (defined(invoker.use_half_textures) && invoker.use_half_textures) {
+    use_half_textures = true
+  }
+
+  require_framebuffer_fetch = false
+  if (defined(invoker.require_framebuffer_fetch) &&
+      invoker.require_framebuffer_fetch) {
+    require_framebuffer_fetch = true
+  }
+
+  not_needed([
+               "metal_version",
+               "use_half_textures",
+               "require_framebuffer_fetch",
+             ])
+
+  enable_opengles = impeller_enable_opengles
+  if (defined(invoker.enable_opengles)) {
+    enable_opengles = invoker.enable_opengles
+  }
+
+  if (impeller_enable_metal) {
+    if (!defined(metal_version)) {
+      metal_version = "1.2"
+    }
+    not_needed(invoker, [ "analyze" ])
+    mtl_shaders = "mtl_$target_name"
+    impeller_shaders_metal(mtl_shaders) {
+      name = invoker.name
+      shaders = invoker.shaders
+      metal_version = metal_version
+      use_half_textures = use_half_textures
+    }
+  }
+
+  if (enable_opengles) {
+    analyze = true
+    if (defined(invoker.analyze) && !invoker.analyze) {
+      analyze = false
+    }
+    gles_shaders = "gles_$target_name"
+
+    impeller_shaders_gles(gles_shaders) {
+      name = invoker.name
+      require_framebuffer_fetch = require_framebuffer_fetch
+      if (defined(invoker.gles_language_version)) {
+        gles_language_version = invoker.gles_language_version
+      }
+      if (defined(invoker.gles_exclusions)) {
+        shaders = invoker.shaders - invoker.gles_exclusions
+      } else {
+        shaders = invoker.shaders
+      }
+      analyze = analyze
+    }
+
+    gles3_shaders = "gles3_$target_name"
+
+    impeller_shaders_gles(gles3_shaders) {
+      name = invoker.name
+      require_framebuffer_fetch = require_framebuffer_fetch
+      gles_language_version = 300
+      is_300 = true
+      analyze = false
+      if (defined(invoker.gles_exclusions)) {
+        shaders = invoker.shaders - invoker.gles_exclusions
+      } else {
+        shaders = invoker.shaders
+      }
+      analyze = analyze
+    }
+  }
+
+  if (impeller_enable_vulkan) {
+    analyze = true
+    if (defined(invoker.analyze) && !invoker.analyze) {
+      analyze = false
+    }
+    vk_shaders = "vk_$target_name"
+    impeller_shaders_vk(vk_shaders) {
+      name = invoker.name
+      if (defined(invoker.vulkan_language_version)) {
+        vulkan_language_version = invoker.vulkan_language_version
+      }
+      shaders = invoker.shaders
+      analyze = analyze
+    }
+  }
+
+  if (!impeller_supports_rendering) {
+    not_needed(invoker, "*")
+  }
+
+  group(target_name) {
+    public_deps = []
+    if (impeller_enable_metal) {
+      public_deps += [ ":$mtl_shaders" ]
+    }
+
+    if (enable_opengles) {
+      public_deps += [
+        ":$gles3_shaders",
+        ":$gles_shaders",
+      ]
+    }
+
+    if (impeller_enable_vulkan) {
+      public_deps += [ ":$vk_shaders" ]
+    }
+  }
+}

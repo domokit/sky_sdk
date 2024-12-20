@@ -19,23 +19,14 @@ class AnimatedSizeExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('AnimatedSize Sample')),
-        body: const Center(
-          child: AnimatedSizeExample(
-            duration: duration,
-            curve: curve,
-          ),
-        ),
+        body: const Center(child: AnimatedSizeExample(duration: duration, curve: curve)),
       ),
     );
   }
 }
 
 class AnimatedSizeExample extends StatefulWidget {
-  const AnimatedSizeExample({
-    required this.duration,
-    required this.curve,
-    super.key,
-  });
+  const AnimatedSizeExample({required this.duration, required this.curve, super.key});
 
   final Duration duration;
 
@@ -63,9 +54,7 @@ class _AnimatedSizeExampleState extends State<AnimatedSizeExample> {
           curve: widget.curve,
           child: SizedBox.square(
             dimension: _isSelected ? 250.0 : 100.0,
-            child: const Center(
-              child: FlutterLogo(size: 75.0),
-            ),
+            child: const Center(child: FlutterLogo(size: 75.0)),
           ),
         ),
       ),

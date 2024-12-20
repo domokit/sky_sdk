@@ -9,9 +9,7 @@ import '../navigator_utils.dart';
 
 void main() {
   testWidgets('Can choose to stay on page', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.PageApiExampleApp(),
-    );
+    await tester.pumpWidget(const example.PageApiExampleApp());
 
     expect(find.text('Home'), findsOneWidget);
 
@@ -31,9 +29,7 @@ void main() {
   });
 
   testWidgets('Can choose to go back', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.PageApiExampleApp(),
-    );
+    await tester.pumpWidget(const example.PageApiExampleApp());
 
     expect(find.text('Home'), findsOneWidget);
 

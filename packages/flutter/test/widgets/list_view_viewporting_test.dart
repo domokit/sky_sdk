@@ -22,11 +22,7 @@ void main() {
           left: ListView.builder(
             itemBuilder: (BuildContext context, int index) {
               callbackTracker.add(index);
-              return SizedBox(
-                key: ValueKey<int>(index),
-                height: 100.0,
-                child: Text('$index'),
-              );
+              return SizedBox(key: ValueKey<int>(index), height: 100.0, child: Text('$index'));
             },
           ),
           right: const Text('Not Today'),
@@ -38,10 +34,13 @@ void main() {
 
     final FlipWidgetState testWidget = tester.state(find.byType(FlipWidget));
 
-    expect(callbackTracker, equals(<int>[
-      0, 1, 2, 3, 4, 5, // visible
-      6, 7, 8, // in cached area
-    ]));
+    expect(
+      callbackTracker,
+      equals(<int>[
+        0, 1, 2, 3, 4, 5, // visible
+        6, 7, 8, // in cached area
+      ]),
+    );
 
     callbackTracker.clear();
     testWidget.flip();
@@ -53,10 +52,13 @@ void main() {
     testWidget.flip();
     await tester.pump();
 
-    expect(callbackTracker, equals(<int>[
-      0, 1, 2, 3, 4, 5, // visible
-      6, 7, 8, // in cached area
-    ]));
+    expect(
+      callbackTracker,
+      equals(<int>[
+        0, 1, 2, 3, 4, 5, // visible
+        6, 7, 8, // in cached area
+      ]),
+    );
   });
 
   testWidgets('ListView vertical', (WidgetTester tester) async {
@@ -83,10 +85,7 @@ void main() {
       return Directionality(
         textDirection: TextDirection.ltr,
         child: FlipWidget(
-          left: ListView.builder(
-            controller: controller,
-            itemBuilder: itemBuilder,
-          ),
+          left: ListView.builder(controller: controller, itemBuilder: itemBuilder),
           right: const Text('Not Today'),
         ),
       );
@@ -95,10 +94,13 @@ void main() {
     await tester.pumpWidget(builder());
 
     // 0 is built to find its height
-    expect(callbackTracker, equals(<int>[
-      0, 1, 2, 3, 4,
-      5, // in cached area
-    ]));
+    expect(
+      callbackTracker,
+      equals(<int>[
+        0, 1, 2, 3, 4,
+        5, // in cached area
+      ]),
+    );
     callbackTracker.clear();
 
     final ScrollableState scrollable = tester.state(find.byType(Scrollable));
@@ -107,21 +109,27 @@ void main() {
     await tester.pumpWidget(builder());
 
     // We build the visible children to find their new size.
-    expect(callbackTracker, equals(<int>[
-      0, 1, 2,
-      3, 4, 5, //visible
-      6, 7,
-    ]));
+    expect(
+      callbackTracker,
+      equals(<int>[
+        0, 1, 2,
+        3, 4, 5, //visible
+        6, 7,
+      ]),
+    );
     callbackTracker.clear();
 
     await tester.pumpWidget(builder());
 
     // 0 isn't built because they're not visible.
-    expect(callbackTracker, equals(<int>[
-      1, 2,
-      3, 4, 5, // visible
-      6, 7,
-    ]));
+    expect(
+      callbackTracker,
+      equals(<int>[
+        1, 2,
+        3, 4, 5, // visible
+        6, 7,
+      ]),
+    );
     callbackTracker.clear();
   });
 
@@ -205,18 +213,19 @@ void main() {
     Widget builder() {
       return Directionality(
         textDirection: TextDirection.ltr,
-        child: ListView.builder(
-          itemBuilder: itemBuilder,
-        ),
+        child: ListView.builder(itemBuilder: itemBuilder),
       );
     }
 
     await tester.pumpWidget(builder());
 
-    expect(callbackTracker, equals(<int>[
-      0, 1, 2,
-      3, // in cached area
-    ]));
+    expect(
+      callbackTracker,
+      equals(<int>[
+        0, 1, 2,
+        3, // in cached area
+      ]),
+    );
     callbackTracker.clear();
     tester.allWidgets.forEach(collectText);
     expect(text, equals(<String>['0', '1', '2', '3']));
@@ -224,10 +233,13 @@ void main() {
 
     await tester.pumpWidget(builder());
 
-    expect(callbackTracker, equals(<int>[
-      0, 1, 2,
-      3, // in cached area
-    ]));
+    expect(
+      callbackTracker,
+      equals(<int>[
+        0, 1, 2,
+        3, // in cached area
+      ]),
+    );
     callbackTracker.clear();
     tester.allWidgets.forEach(collectText);
     expect(text, equals(<String>['0', '1', '2', '3']));
@@ -248,9 +260,7 @@ void main() {
       );
     }
 
-    final Widget viewport = ListView.builder(
-      itemBuilder: itemBuilder,
-    );
+    final Widget viewport = ListView.builder(itemBuilder: itemBuilder);
 
     await tester.pumpWidget(
       Directionality(
@@ -445,26 +455,26 @@ void main() {
     addTearDown(controller.dispose);
 
     await tester.pumpWidget(
-        Directionality(
-            textDirection: TextDirection.ltr,
-            child: Center(
-              child: SizedBox(
-                  height: 200.0,
-                  child: ListView(
-                    cacheExtent: 500.0,
-                    controller: controller,
-                    children: const <Widget>[
-                      SizedBox(height: 140.0, child: text),
-                      SizedBox(height: 160.0, child: text),
-                      SizedBox(height: 90.0, child: text),
-                      SizedBox(height: 110.0, child: text),
-                      SizedBox(height: 80.0, child: text),
-                      SizedBox(height: 70.0, child: text),
-                    ],
-                  ),
-              ),
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(
+          child: SizedBox(
+            height: 200.0,
+            child: ListView(
+              cacheExtent: 500.0,
+              controller: controller,
+              children: const <Widget>[
+                SizedBox(height: 140.0, child: text),
+                SizedBox(height: 160.0, child: text),
+                SizedBox(height: 90.0, child: text),
+                SizedBox(height: 110.0, child: text),
+                SizedBox(height: 80.0, child: text),
+                SizedBox(height: 70.0, child: text),
+              ],
             ),
+          ),
         ),
+      ),
     );
 
     final RenderSliverList list = tester.renderObject(find.byType(SliverList));
@@ -483,18 +493,14 @@ void main() {
             child: CustomScrollView(
               controller: controller,
               slivers: <Widget>[
-                const SliverAppBar(
-                  expandedHeight: 250.0,
-                ),
+                const SliverAppBar(expandedHeight: 250.0),
                 SliverList(
-                  delegate: ListView.builder(
-                    itemExtent: 100.0,
-                    itemCount: 100,
-                    itemBuilder: (_, __) => const SizedBox(
-                      height: 40.0,
-                      child: Text('hey'),
-                    ),
-                  ).childrenDelegate,
+                  delegate:
+                      ListView.builder(
+                        itemExtent: 100.0,
+                        itemCount: 100,
+                        itemBuilder: (_, __) => const SizedBox(height: 40.0, child: Text('hey')),
+                      ).childrenDelegate,
                 ),
               ],
             ),
@@ -518,11 +524,12 @@ void main() {
             scrollDirection: Axis.horizontal,
             itemExtent: 200.0,
             itemCount: 10,
-            itemBuilder: (_, int i) => Container(
-              height: 200.0,
-              width: 200.0,
-              color: i.isEven ? Colors.black : Colors.red,
-            ),
+            itemBuilder:
+                (_, int i) => Container(
+                  height: 200.0,
+                  width: 200.0,
+                  color: i.isEven ? Colors.black : Colors.red,
+                ),
           ),
         ),
       ),

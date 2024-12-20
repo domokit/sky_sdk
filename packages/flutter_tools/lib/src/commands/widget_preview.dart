@@ -40,8 +40,7 @@ class WidgetPreviewCommand extends FlutterCommand {
   bool get hidden => true;
 
   @override
-  Future<FlutterCommandResult> runCommand() async =>
-      FlutterCommandResult.fail();
+  Future<FlutterCommandResult> runCommand() async => FlutterCommandResult.fail();
 }
 
 /// Common utilities for the 'start' and 'clean' commands.
@@ -63,14 +62,10 @@ mixin WidgetPreviewSubCommandMixin on FlutterCommand {
   }
 
   FlutterProject validateFlutterProjectForPreview(Directory directory) {
-    globals.logger
-        .printTrace('Verifying that ${directory.path} is a Flutter project.');
-    final FlutterProject flutterProject =
-        globals.projectFactory.fromDirectory(directory);
+    globals.logger.printTrace('Verifying that ${directory.path} is a Flutter project.');
+    final FlutterProject flutterProject = globals.projectFactory.fromDirectory(directory);
     if (!flutterProject.dartTool.existsSync()) {
-      throwToolExit(
-        '${flutterProject.directory.path} is not a valid Flutter project.',
-      );
+      throwToolExit('${flutterProject.directory.path} is not a valid Flutter project.');
     }
     return flutterProject;
   }
@@ -121,8 +116,7 @@ class WidgetPreviewStartCommand extends FlutterCommand
   }
 
   @visibleForTesting
-  static const Map<String, String> flutterGenPackageConfigEntry =
-      <String, String>{
+  static const Map<String, String> flutterGenPackageConfigEntry = <String, String>{
     'name': 'flutter_gen',
     'rootUri': '../../flutter_gen',
     'languageVersion': '2.12',
@@ -153,16 +147,11 @@ class WidgetPreviewStartCommand extends FlutterCommand
 
   @visibleForTesting
   static FontAsset transformFontAsset(FontAsset asset) {
-    return FontAsset(
-      transformAssetUri(asset.assetUri),
-      weight: asset.weight,
-      style: asset.style,
-    );
+    return FontAsset(transformAssetUri(asset.assetUri), weight: asset.weight, style: asset.style);
   }
 
   @visibleForTesting
-  static DeferredComponent transformDeferredComponent(
-      DeferredComponent component) {
+  static DeferredComponent transformDeferredComponent(DeferredComponent component) {
     return DeferredComponent(
       name: component.name,
       // TODO(bkonyi): verify these library paths are always package: paths from the parent project.
@@ -176,28 +165,19 @@ class WidgetPreviewStartCommand extends FlutterCommand
     required FlutterManifest rootManifest,
     required FlutterManifest widgetPreviewManifest,
   }) {
-    final List<AssetsEntry> assets =
-        rootManifest.assets.map(transformAssetsEntry).toList();
+    final List<AssetsEntry> assets = rootManifest.assets.map(transformAssetsEntry).toList();
 
-    final List<Font> fonts = rootManifest.fonts.map(
-      (Font font) {
-        return Font(
-          font.familyName,
-          font.fontAssets.map(transformFontAsset).toList(),
-        );
-      },
-    ).toList();
+    final List<Font> fonts =
+        rootManifest.fonts.map((Font font) {
+          return Font(font.familyName, font.fontAssets.map(transformFontAsset).toList());
+        }).toList();
 
-    final List<Uri> shaders =
-        rootManifest.shaders.map(transformAssetUri).toList();
+    final List<Uri> shaders = rootManifest.shaders.map(transformAssetUri).toList();
 
-    final List<Uri> models =
-        rootManifest.models.map(transformAssetUri).toList();
+    final List<Uri> models = rootManifest.models.map(transformAssetUri).toList();
 
-    final List<DeferredComponent>? deferredComponents = rootManifest
-        .deferredComponents
-        ?.map(transformDeferredComponent)
-        .toList();
+    final List<DeferredComponent>? deferredComponents =
+        rootManifest.deferredComponents?.map(transformDeferredComponent).toList();
 
     return widgetPreviewManifest.copyWith(
       logger: globals.logger,
@@ -209,11 +189,8 @@ class WidgetPreviewStartCommand extends FlutterCommand
     );
   }
 
-  Future<void> _populatePreviewPubspec({
-    required FlutterProject rootProject,
-  }) async {
-    final FlutterProject widgetPreviewScaffoldProject =
-        rootProject.widgetPreviewScaffoldProject;
+  Future<void> _populatePreviewPubspec({required FlutterProject rootProject}) async {
+    final FlutterProject widgetPreviewScaffoldProject = rootProject.widgetPreviewScaffoldProject;
 
     // Overwrite the pubspec for the preview scaffold project to include assets
     // from the root project.
@@ -247,9 +224,7 @@ class WidgetPreviewStartCommand extends FlutterCommand
       outputMode: PubOutputMode.summaryOnly,
     );
 
-    maybeAddFlutterGenToPackageConfig(
-      rootProject: rootProject,
-    );
+    maybeAddFlutterGenToPackageConfig(rootProject: rootProject);
   }
 
   /// Manually adds an entry for package:flutter_gen to the preview scaffold's
@@ -263,9 +238,7 @@ class WidgetPreviewStartCommand extends FlutterCommand
   /// actual package name will break applications which import
   /// package:flutter_gen.
   @visibleForTesting
-  void maybeAddFlutterGenToPackageConfig({
-    required FlutterProject rootProject,
-  }) {
+  void maybeAddFlutterGenToPackageConfig({required FlutterProject rootProject}) {
     // TODO(matanlurey): Remove this once flutter_gen is removed.
     //
     // This is actually incorrect logic; the presence of a `generate: true`
@@ -277,8 +250,7 @@ class WidgetPreviewStartCommand extends FlutterCommand
     if (!rootProject.manifest.generateLocalizations) {
       return;
     }
-    final FlutterProject widgetPreviewScaffoldProject =
-        rootProject.widgetPreviewScaffoldProject;
+    final FlutterProject widgetPreviewScaffoldProject = rootProject.widgetPreviewScaffoldProject;
     final File packageConfig = widgetPreviewScaffoldProject.packageConfig;
     final String previewPackageConfigPath = packageConfig.path;
     if (!packageConfig.existsSync()) {
@@ -287,23 +259,17 @@ class WidgetPreviewStartCommand extends FlutterCommand
         '$previewPackageConfigPath',
       );
     }
-    final Map<String, Object?> packageConfigJson = json.decode(
-      packageConfig.readAsStringSync(),
-    ) as Map<String, Object?>;
-    (packageConfigJson['packages'] as List<dynamic>?)!
-        .cast<Map<String, String>>()
-        .add(flutterGenPackageConfigEntry);
-    packageConfig.writeAsStringSync(
-      json.encode(packageConfigJson),
+    final Map<String, Object?> packageConfigJson =
+        json.decode(packageConfig.readAsStringSync()) as Map<String, Object?>;
+    (packageConfigJson['packages'] as List<dynamic>?)!.cast<Map<String, String>>().add(
+      flutterGenPackageConfigEntry,
     );
-    globals.logger.printStatus(
-      'Added flutter_gen dependency to $previewPackageConfigPath',
-    );
+    packageConfig.writeAsStringSync(json.encode(packageConfigJson));
+    globals.logger.printStatus('Added flutter_gen dependency to $previewPackageConfigPath');
   }
 }
 
-class WidgetPreviewCleanCommand extends FlutterCommand
-    with WidgetPreviewSubCommandMixin {
+class WidgetPreviewCleanCommand extends FlutterCommand with WidgetPreviewSubCommandMixin {
   @override
   String get description => 'Cleans up widget preview state.';
 
@@ -312,13 +278,10 @@ class WidgetPreviewCleanCommand extends FlutterCommand
 
   @override
   Future<FlutterCommandResult> runCommand() async {
-    final Directory widgetPreviewScaffold =
-        getRootProject().widgetPreviewScaffold;
+    final Directory widgetPreviewScaffold = getRootProject().widgetPreviewScaffold;
     if (widgetPreviewScaffold.existsSync()) {
       final String scaffoldPath = widgetPreviewScaffold.path;
-      globals.logger.printStatus(
-        'Deleting widget preview scaffold at $scaffoldPath.',
-      );
+      globals.logger.printStatus('Deleting widget preview scaffold at $scaffoldPath.');
       widgetPreviewScaffold.deleteSync(recursive: true);
     } else {
       globals.logger.printStatus('Nothing to clean up.');

@@ -1,0 +1,33 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+if (is_ios || is_mac) {
+  import("//flutter/common/config.gni")
+  import("//flutter/testing/testing.gni")
+
+  source_set("spring_animation") {
+    sources = [
+      "spring_animation.h",
+      "spring_animation.mm",
+    ]
+    public_configs = [ "//flutter:config" ]
+  }
+
+  if (enable_unittests) {
+    test_fixtures("spring_animation_fixtures") {
+      fixtures = []
+    }
+
+    executable("spring_animation_unittests") {
+      testonly = true
+      sources = [ "SpringAnimationTest.mm" ]
+      deps = [
+        ":spring_animation",
+        ":spring_animation_fixtures",
+        "//flutter/testing",
+      ]
+      public_configs = [ "//flutter:config" ]
+    }
+  }
+}

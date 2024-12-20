@@ -24,18 +24,23 @@ void main() {
     binding.showImplicitView();
   });
 
-  testWidgets('null implicitView - runApp throws assertion, suggests to use `runWidget`.', (WidgetTester tester) async {
+  testWidgets('null implicitView - runApp throws assertion, suggests to use `runWidget`.', (
+    WidgetTester tester,
+  ) async {
     // Hide the implicitView from the test harness.
     binding.hideImplicitView();
 
-    expect(() {
-      runApp(Container());
-    }, throwsA(
+    expect(
+      () {
+        runApp(Container());
+      },
+      throwsA(
         isA<StateError>().having(
           (StateError error) => error.message,
           'description',
-          contains('Try using `runWidget` instead of `runApp`'),        ),
+          contains('Try using `runWidget` instead of `runApp`'),
         ),
+      ),
     );
 
     // Ensure the test harness finds the implicitView.

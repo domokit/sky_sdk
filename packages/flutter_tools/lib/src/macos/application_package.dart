@@ -71,16 +71,21 @@ abstract class MacOSApp extends ApplicationPackage {
         return null;
       }
       try {
-        uncompressedBundle = tempDir
-            .listSync()
-            .whereType<Directory>()
-            .singleWhere(_isBundleDirectory);
+        uncompressedBundle = tempDir.listSync().whereType<Directory>().singleWhere(
+          _isBundleDirectory,
+        );
       } on StateError {
-        globals.printError('Archive "${applicationBundle.path}" does not contain a single app bundle.');
+        globals.printError(
+          'Archive "${applicationBundle.path}" does not contain a single app bundle.',
+        );
         return null;
       }
     }
-    final String plistPath = globals.fs.path.join(uncompressedBundle.path, 'Contents', 'Info.plist');
+    final String plistPath = globals.fs.path.join(
+      uncompressedBundle.path,
+      'Contents',
+      'Info.plist',
+    );
     if (!globals.fs.file(plistPath).existsSync()) {
       globals.printError('Invalid prebuilt macOS app. Does not contain Info.plist.');
       return null;
@@ -89,14 +94,23 @@ abstract class MacOSApp extends ApplicationPackage {
     final String? id = propertyValues[PlistParser.kCFBundleIdentifierKey] as String?;
     final String? executableName = propertyValues[PlistParser.kCFBundleExecutableKey] as String?;
     if (id == null) {
-      globals.printError('Invalid prebuilt macOS app. Info.plist does not contain bundle identifier');
+      globals.printError(
+        'Invalid prebuilt macOS app. Info.plist does not contain bundle identifier',
+      );
       return null;
     }
     if (executableName == null) {
-      globals.printError('Invalid prebuilt macOS app. Info.plist does not contain bundle executable');
+      globals.printError(
+        'Invalid prebuilt macOS app. Info.plist does not contain bundle executable',
+      );
       return null;
     }
-    final String executable = globals.fs.path.join(uncompressedBundle.path, 'Contents', 'MacOS', executableName);
+    final String executable = globals.fs.path.join(
+      uncompressedBundle.path,
+      'Contents',
+      'MacOS',
+      executableName,
+    );
     if (!globals.fs.file(executable).existsSync()) {
       globals.printError('Could not find macOS binary at $executable');
     }
@@ -148,7 +162,7 @@ class PrebuiltMacOSApp extends MacOSApp implements PrebuiltApplicationPackage {
 }
 
 class BuildableMacOSApp extends MacOSApp {
-  BuildableMacOSApp(this.project, String projectBundleId): super(projectBundleId: projectBundleId);
+  BuildableMacOSApp(this.project, String projectBundleId) : super(projectBundleId: projectBundleId);
 
   final MacOSProject project;
 
@@ -164,17 +178,17 @@ class BuildableMacOSApp extends MacOSApp {
     }
 
     return globals.fs.path.join(
-        getMacOSBuildDirectory(),
-        'Build',
-        'Products',
-        bundleDirectory(buildInfo),
-        appBundleNameFile.readAsStringSync().trim());
+      getMacOSBuildDirectory(),
+      'Build',
+      'Products',
+      bundleDirectory(buildInfo),
+      appBundleNameFile.readAsStringSync().trim(),
+    );
   }
 
   String bundleDirectory(BuildInfo buildInfo) {
-    return sentenceCase(buildInfo.mode.cliName) + (buildInfo.flavor != null
-      ? '-${buildInfo.flavor!}'
-      : '');
+    return sentenceCase(buildInfo.mode.cliName) +
+        (buildInfo.flavor != null ? '-${buildInfo.flavor!}' : '');
   }
 
   @override

@@ -35,11 +35,7 @@ import 'theme.dart';
 @immutable
 class TextSelectionThemeData with Diagnosticable {
   /// Creates the set of properties used to configure [TextField]s.
-  const TextSelectionThemeData({
-    this.cursorColor,
-    this.selectionColor,
-    this.selectionHandleColor,
-  });
+  const TextSelectionThemeData({this.cursorColor, this.selectionColor, this.selectionHandleColor});
 
   /// The color of the cursor in the text field.
   ///
@@ -79,7 +75,11 @@ class TextSelectionThemeData with Diagnosticable {
   /// If both arguments are null, then null is returned.
   ///
   /// {@macro dart.ui.shadow.lerp}
-  static TextSelectionThemeData? lerp(TextSelectionThemeData? a, TextSelectionThemeData? b, double t) {
+  static TextSelectionThemeData? lerp(
+    TextSelectionThemeData? a,
+    TextSelectionThemeData? b,
+    double t,
+  ) {
     if (identical(a, b)) {
       return a;
     }
@@ -91,24 +91,20 @@ class TextSelectionThemeData with Diagnosticable {
   }
 
   @override
-  int get hashCode => Object.hash(
-    cursorColor,
-    selectionColor,
-    selectionHandleColor,
-  );
+  int get hashCode => Object.hash(cursorColor, selectionColor, selectionHandleColor);
 
   @override
-  bool operator==(Object other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is TextSelectionThemeData
-      && other.cursorColor == cursorColor
-      && other.selectionColor == selectionColor
-      && other.selectionHandleColor == selectionHandleColor;
+    return other is TextSelectionThemeData &&
+        other.cursorColor == cursorColor &&
+        other.selectionColor == selectionColor &&
+        other.selectionHandleColor == selectionHandleColor;
   }
 
   @override
@@ -147,13 +143,10 @@ class TextSelectionThemeData with Diagnosticable {
 class TextSelectionTheme extends InheritedTheme {
   /// Creates a text selection theme widget that specifies the text
   /// selection properties for all widgets below it in the widget tree.
-  const TextSelectionTheme({
-    super.key,
-    required this.data,
-    required Widget child,
-  }) : _child = child,
-       // See `get child` override below.
-       super(child: const _NullWidget());
+  const TextSelectionTheme({super.key, required this.data, required Widget child})
+    : _child = child,
+      // See `get child` override below.
+      super(child: const _NullWidget());
 
   /// The properties for descendant [TextField] and [SelectableText] widgets.
   final TextSelectionThemeData data;
@@ -170,6 +163,7 @@ class TextSelectionTheme extends InheritedTheme {
       child: _child,
     );
   }
+
   final Widget _child;
 
   /// Returns the [data] from the closest [TextSelectionTheme] ancestor. If
@@ -182,7 +176,8 @@ class TextSelectionTheme extends InheritedTheme {
   /// TextSelectionThemeData theme = TextSelectionTheme.of(context);
   /// ```
   static TextSelectionThemeData of(BuildContext context) {
-    final TextSelectionTheme? selectionTheme = context.dependOnInheritedWidgetOfExactType<TextSelectionTheme>();
+    final TextSelectionTheme? selectionTheme =
+        context.dependOnInheritedWidgetOfExactType<TextSelectionTheme>();
     return selectionTheme?.data ?? Theme.of(context).textSelectionTheme;
   }
 

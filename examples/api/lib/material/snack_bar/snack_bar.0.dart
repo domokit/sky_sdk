@@ -16,9 +16,7 @@ class SnackBarExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('SnackBar Sample')),
-        body: const Center(
-          child: SnackBarExample(),
-        ),
+        body: const Center(child: SnackBarExample()),
       ),
     );
   }

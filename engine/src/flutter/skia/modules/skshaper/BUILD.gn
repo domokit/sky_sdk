@@ -1,0 +1,62 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+_skia_root = "//flutter/third_party/skia"
+
+import("$_skia_root/gn/skia.gni")
+import("$_skia_root/modules/skshaper/skshaper.gni")
+
+if (skia_enable_skshaper) {
+  config("public_config") {
+    include_dirs = [ "$_skia_root/modules/skshaper/include" ]
+    defines = []
+    if (skia_use_fonthost_mac) {
+      defines += [ "SK_SHAPER_CORETEXT_AVAILABLE" ]
+    }
+    if (skia_use_harfbuzz) {
+      defines += [ "SK_SHAPER_HARFBUZZ_AVAILABLE" ]
+    }
+    if (skia_enable_skunicode) {
+      defines += [ "SK_SHAPER_UNICODE_AVAILABLE" ]
+    }
+  }
+
+  component("skshaper") {
+    # Opted out of check_includes, due to (logically) being part of skia.
+    check_includes = false
+    public_configs = [ ":public_config" ]
+    public = skia_shaper_public
+    deps = [ "../..:skia" ]
+    defines = [ "SKSHAPER_IMPLEMENTATION=1" ]
+    sources = skia_shaper_primitive_sources
+    if (skia_use_fonthost_mac) {
+      sources += skia_shaper_coretext_sources
+      if (is_mac) {
+        frameworks = [ "ApplicationServices.framework" ]
+      }
+
+      if (is_ios) {
+        frameworks = [
+          "CoreFoundation.framework",
+          "CoreText.framework",
+        ]
+      }
+    }
+    if (skia_enable_skunicode) {
+      sources += skia_shaper_skunicode_sources
+      deps += [ "../skunicode" ]
+    }
+    if (skia_use_harfbuzz && skia_enable_skunicode) {
+      sources += skia_shaper_harfbuzz_sources
+      deps += [
+        "../skunicode",
+        "//flutter/third_party/harfbuzz",
+      ]
+    }
+    configs += [ "../../:skia_private" ]
+  }
+} else {
+  group("skshaper") {
+  }
+}

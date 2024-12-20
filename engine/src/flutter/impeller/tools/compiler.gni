@@ -1,0 +1,272 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/compiled_action.gni")
+import("//flutter/impeller/tools/args.gni")
+
+# Dispatches to the build or prebuilt impellerc depending on the value of
+# the `impeller_use_prebuilt_impellerc` argument.
+# * When the `single_invocation` argument is false, all variables are
+#   forwarded to `compiled_action_foreach` or `action_foreach`, which will
+#   invoke `impellerc` separately for each source.
+# * When the `single_invocation` argument is true, `impellerc` is only
+#   invoked once via `compiled_action` or `action`.
+template("_impellerc") {
+  if (invoker.single_invocation) {
+    compiled_action(target_name) {
+      forward_variables_from(invoker, "*")
+      tool = "//flutter/impeller/compiler:impellerc"
+    }
+  } else {
+    compiled_action_foreach(target_name) {
+      forward_variables_from(invoker, "*")
+      tool = "//flutter/impeller/compiler:impellerc"
+    }
+  }
+}
+
+# Required: shaders                 The list of shaders inputs to compile.
+# Required: shader_target_flags     The target flag(s) to append. Valid options:
+#                                       --sksl
+#                                       --metal-ios
+#                                       --metal-desktop
+#                                       --opengl-es
+#                                       --opengl-desktop
+#                                       --vulkan
+#                                       --runtime-stage-metal
+#                                       --runtime-stage-gles
+#                                       --runtime-stage-gles3
+#                                       --runtime-stage-vulkan
+#                                   Not required for --shader_bundle mode.
+# Required: sl_file_extension       The file extension to use for output files.
+#                                   Not required for --shader_bundle mode.
+# Optional: iplr                    Causes --sl output to be in iplr/runtime
+#                                   stage flatbuffer format.
+# Optional: shader_bundle           Specifies a Flutter GPU shader bundle
+#                                   configuration.
+#   Required: shader_bundle_output  Specifies the output filename of the shader
+#                                   bundle. This is only required if
+#                                   shader_bundle is supplied.
+# Optional: defines                 Specifies a list of valueless macro
+#                                   definitions.
+# Optional: intermediates_subdir    Specifies the subdirectory in which to put
+#                                   intermediates.
+# Optional: json                    Causes output format to be JSON instead of
+#                                   flatbuffer.
+template("impellerc") {
+  assert(defined(invoker.shaders), "Impeller shaders must be specified.")
+  assert(defined(invoker.shader_target_flags) || defined(invoker.shader_bundle),
+         "The flag to impellerc for target selection must be specified.")
+  assert(defined(invoker.sl_file_extension) || defined(invoker.shader_bundle),
+         "The extension of the SL file must be specified (metal, glsl, etc..).")
+  if (defined(invoker.shader_bundle)) {
+    assert(
+        defined(invoker.shader_bundle_output),
+        "When shader_bundle is specified, shader_bundle_output must also be specified.")
+  }
+
+  if (defined(invoker.shader_target_flags)) {
+    shader_target_flags = invoker.shader_target_flags
+  } else {
+    shader_target_flags = []
+  }
+
+  sksl = false
+  foreach(shader_target_flag, shader_target_flags) {
+    sksl = shader_target_flag == "--sksl"
+  }
+  iplr = false
+  if (defined(invoker.iplr) && invoker.iplr) {
+    iplr = invoker.iplr
+  }
+  json = false
+  if (defined(invoker.json) && invoker.json) {
+    json = invoker.json
+  }
+
+  # Not needed on every path.
+  not_needed([
+               "iplr",
+               "sksl",
+               "shader_bundle",
+               "shader_bundle_output",
+             ])
+
+  _impellerc(target_name) {
+    pool = "//build/toolchain:toolchain_pool"
+    shader_bundle = defined(invoker.shader_bundle)
+
+    # When single_invocation is true, impellerc will be invoked exactly once. When it's
+    # false, impellerc be invoked for each of the source file entries (invoker.shaders).
+    single_invocation = shader_bundle
+
+    if (defined(invoker.intermediates_subdir)) {
+      subdir = invoker.intermediates_subdir
+      generated_dir = "$target_gen_dir/$subdir"
+    } else {
+      generated_dir = "$target_gen_dir"
+    }
+
+    shader_lib_dir = rebase_path("//flutter/impeller/compiler/shader_lib")
+    args = [ "--include=$shader_lib_dir" ] + shader_target_flags
+
+    # When we're in single invocation mode, we can't use source enumeration.
+    if (!single_invocation) {
+      depfile_path = "$generated_dir/{{source_file_part}}.d"
+      depfile_intermediate_path = rebase_path(depfile_path, root_build_dir)
+      depfile = depfile_path
+      args += [
+        "--input={{source}}",
+        "--include={{source_dir}}",
+        "--depfile=$depfile_intermediate_path",
+      ]
+
+      if (defined(invoker.shader_target_flag)) {
+        args += [ "${invoker.shader_target_flag}" ]
+      }
+    }
+
+    if (defined(invoker.gles_language_version)) {
+      gles_language_version = invoker.gles_language_version
+      args += [ "--gles-language-version=$gles_language_version" ]
+    }
+
+    if (defined(invoker.metal_version)) {
+      assert(is_mac || is_ios)
+      metal_version = invoker.metal_version
+      args += [ "--metal-version=$metal_version" ]
+    }
+
+    if (defined(invoker.use_half_textures) && invoker.use_half_textures) {
+      args += [ "--use-half-textures" ]
+    }
+    if (defined(invoker.require_framebuffer_fetch) &&
+        invoker.require_framebuffer_fetch) {
+      args += [ "--require-framebuffer-fetch" ]
+    }
+
+    if (json) {
+      args += [ "--json" ]
+    }
+
+    if (iplr) {
+      # When building in IPLR mode, the compiler may be executed twice
+      args += [ "--iplr" ]
+    }
+
+    # The `sl_output` is the raw shader file output by the compiler. For --iplr
+    # and --shader-bundle, this is used as the filename for the flatbuffer to
+    # output.
+
+    if (shader_bundle) {
+      # When a shader bundle is specified, don't bother supplying flags for
+      # the reflection state as these are ignored. In this mode, the compiler
+      # is invoked multiple times and the reflection state for each shader is
+      # written to the output flatbuffer.
+      sl_output = "$generated_dir/${invoker.shader_bundle_output}"
+      sl_output_path = rebase_path(sl_output, root_build_dir)
+
+      args += [
+        "--sl=$sl_output_path",
+        "--shader-bundle=${invoker.shader_bundle}",
+      ]
+
+      outputs = [ sl_output ]
+    } else if (sksl) {
+      # When SkSL is selected as a `shader_target_flags`, don't generate
+      # C++ reflection state. Nothing needs to use it and it's likely invalid
+      # given the special cases when generating SkSL.
+      # Note that this configuration is orthogonal to the "--iplr" flag
+      sl_output =
+          "$generated_dir/{{source_file_part}}.${invoker.sl_file_extension}"
+      sl_output_path = rebase_path(sl_output, root_build_dir)
+
+      spirv_intermediate = "$generated_dir/{{source_file_part}}.spirv"
+      spirv_intermediate_path = rebase_path(spirv_intermediate, root_build_dir)
+      args += [
+        "--sl=$sl_output_path",
+        "--spirv=$spirv_intermediate_path",
+      ]
+
+      outputs = [ sl_output ]
+    } else {
+      # The default branch. Here we just generate one shader along with all of
+      # its C++ reflection state.
+
+      sl_output =
+          "$generated_dir/{{source_file_part}}.${invoker.sl_file_extension}"
+      sl_output_path = rebase_path(sl_output, root_build_dir)
+
+      reflection_json_intermediate = "$generated_dir/{{source_file_part}}.json"
+      reflection_header_intermediate = "$generated_dir/{{source_file_part}}.h"
+      reflection_cc_intermediate = "$generated_dir/{{source_file_part}}.cc"
+
+      spirv_intermediate = "$generated_dir/{{source_file_part}}.spirv"
+      spirv_intermediate_path = rebase_path(spirv_intermediate, root_build_dir)
+      reflection_json_path =
+          rebase_path(reflection_json_intermediate, root_build_dir)
+      reflection_header_path =
+          rebase_path(reflection_header_intermediate, root_build_dir)
+      reflection_cc_path =
+          rebase_path(reflection_cc_intermediate, root_build_dir)
+
+      args += [
+        "--sl=$sl_output_path",
+        "--spirv=$spirv_intermediate_path",
+        "--reflection-json=$reflection_json_path",
+        "--reflection-header=$reflection_header_path",
+        "--reflection-cc=$reflection_cc_path",
+      ]
+
+      outputs = [
+        sl_output,
+        reflection_header_intermediate,
+        reflection_cc_intermediate,
+      ]
+    }
+
+    if (defined(invoker.defines)) {
+      foreach(def, invoker.defines) {
+        args += [ "--define=$def" ]
+      }
+    }
+
+    if (single_invocation) {
+      inputs = invoker.shaders
+    } else {
+      sources = invoker.shaders
+    }
+  }
+}
+
+template("impellerc_reflect") {
+  assert(
+      defined(invoker.impellerc_invocation),
+      "The target that specifies the ImpellerC invocation to reflect must be defined.")
+
+  reflect_config = "reflect_$target_name"
+  config(reflect_config) {
+    include_dirs = [ get_path_info(
+            get_label_info("//flutter/impeller:impeller", "target_gen_dir"),
+            "dir") ]
+  }
+
+  impellerc_invocation = invoker.impellerc_invocation
+
+  source_set(target_name) {
+    public_configs = [ ":$reflect_config" ]
+    public = filter_include(get_target_outputs(impellerc_invocation), [ "*.h" ])
+    sources = filter_include(get_target_outputs(impellerc_invocation),
+                             [
+                               "*.h",
+                               "*.cc",
+                               "*.mm",
+                             ])
+
+    deps = [
+      "//flutter/impeller/core",
+      impellerc_invocation,
+    ]
+  }
+}

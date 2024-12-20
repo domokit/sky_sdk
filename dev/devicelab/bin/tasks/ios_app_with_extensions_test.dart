@@ -13,15 +13,16 @@ Future<void> main() async {
   await task(() async {
     section('Copy test Flutter App with watchOS Companion');
 
-    final Directory tempDir = Directory.systemTemp
-        .createTempSync('flutter_ios_app_with_extensions_test.');
-    final Directory projectDir =
-        Directory(path.join(tempDir.path, 'app_with_extensions'));
+    final Directory tempDir = Directory.systemTemp.createTempSync(
+      'flutter_ios_app_with_extensions_test.',
+    );
+    final Directory projectDir = Directory(path.join(tempDir.path, 'app_with_extensions'));
     try {
       mkdir(projectDir);
       recursiveCopy(
-        Directory(path.join(flutterDirectory.path, 'dev', 'integration_tests',
-            'ios_app_with_extensions')),
+        Directory(
+          path.join(flutterDirectory.path, 'dev', 'integration_tests', 'ios_app_with_extensions'),
+        ),
         projectDir,
       );
 

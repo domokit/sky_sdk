@@ -39,7 +39,10 @@ class _ListenableBuilderExampleState extends State<ListenableBuilderExample> {
         appBar: AppBar(title: const Text('ListenableBuilder Example')),
         body: ListBody(listNotifier: _listNotifier),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => _listNotifier.add(_random.nextInt(1 << 31)), // 1 << 31 is the maximum supported value
+          onPressed:
+              () => _listNotifier.add(
+                _random.nextInt(1 << 31),
+              ), // 1 << 31 is the maximum supported value
           child: const Icon(Icons.add),
         ),
       ),
@@ -67,9 +70,9 @@ class ListBody extends StatelessWidget {
                 // so that the framework knows to update the rendering.
                 final List<int> values = listNotifier.values; // copy the list
                 return ListView.builder(
-                  itemBuilder: (BuildContext context, int index) => ListTile(
-                    title: Text('${values[index]}'),
-                  ),
+                  itemBuilder:
+                      (BuildContext context, int index) =>
+                          ListTile(title: Text('${values[index]}')),
                   itemCount: values.length,
                 );
               },

@@ -11,8 +11,10 @@ import 'editable_text_utils.dart';
 
 void main() {
   final MockClipboard mockClipboard = MockClipboard();
-  TestWidgetsFlutterBinding.ensureInitialized()
-    .defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, mockClipboard.handleMethodCall);
+  TestWidgetsFlutterBinding.ensureInitialized().defaultBinaryMessenger.setMockMethodCallHandler(
+    SystemChannels.platform,
+    mockClipboard.handleMethodCall,
+  );
 
   setUp(() async {
     // Fill the clipboard so that the Paste option is available in the text
@@ -179,92 +181,92 @@ void main() {
     controller.remove();
   });
 
-  testWidgets('Calling show when a built-in widget is already showing its context menu hides the built-in menu', (WidgetTester tester) async {
-    final GlobalKey builtInKey = GlobalKey();
-    final GlobalKey directKey = GlobalKey();
-    late final BuildContext context;
+  testWidgets(
+    'Calling show when a built-in widget is already showing its context menu hides the built-in menu',
+    (WidgetTester tester) async {
+      final GlobalKey builtInKey = GlobalKey();
+      final GlobalKey directKey = GlobalKey();
+      late final BuildContext context;
 
-    final TextEditingController textEditingController = TextEditingController();
-    addTearDown(textEditingController.dispose);
+      final TextEditingController textEditingController = TextEditingController();
+      addTearDown(textEditingController.dispose);
 
-    final FocusNode focusNode = FocusNode();
-    addTearDown(focusNode.dispose);
+      final FocusNode focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Builder(
-            builder: (BuildContext localContext) {
-              context = localContext;
-              return EditableText(
-                controller: textEditingController,
-                backgroundCursorColor: Colors.grey,
-                focusNode: focusNode,
-                style: const TextStyle(),
-                cursorColor: Colors.red,
-                selectionControls: materialTextSelectionHandleControls,
-                contextMenuBuilder: (
-                  BuildContext context,
-                  EditableTextState editableTextState,
-                ) {
-                  return Placeholder(key: builtInKey);
-                },
-              );
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext localContext) {
+                context = localContext;
+                return EditableText(
+                  controller: textEditingController,
+                  backgroundCursorColor: Colors.grey,
+                  focusNode: focusNode,
+                  style: const TextStyle(),
+                  cursorColor: Colors.red,
+                  selectionControls: materialTextSelectionHandleControls,
+                  contextMenuBuilder: (BuildContext context, EditableTextState editableTextState) {
+                    return Placeholder(key: builtInKey);
+                  },
+                );
+              },
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.byKey(builtInKey), findsNothing);
-    expect(find.byKey(directKey), findsNothing);
+      expect(find.byKey(builtInKey), findsNothing);
+      expect(find.byKey(directKey), findsNothing);
 
-    final EditableTextState state = tester.state<EditableTextState>(find.byType(EditableText));
+      final EditableTextState state = tester.state<EditableTextState>(find.byType(EditableText));
 
-    await tester.tapAt(textOffsetToPosition(tester, 0));
-    await tester.pump();
-    expect(state.showToolbar(), true);
-    await tester.pump();
+      await tester.tapAt(textOffsetToPosition(tester, 0));
+      await tester.pump();
+      expect(state.showToolbar(), true);
+      await tester.pump();
 
-    expect(find.byKey(builtInKey), findsOneWidget);
-    expect(find.byKey(directKey), findsNothing);
+      expect(find.byKey(builtInKey), findsOneWidget);
+      expect(find.byKey(directKey), findsNothing);
 
-    final ContextMenuController controller = ContextMenuController();
-    controller.show(
-      context: context,
-      contextMenuBuilder: (BuildContext context) {
-        return Placeholder(key: directKey);
-      },
-    );
-    await tester.pump();
+      final ContextMenuController controller = ContextMenuController();
+      controller.show(
+        context: context,
+        contextMenuBuilder: (BuildContext context) {
+          return Placeholder(key: directKey);
+        },
+      );
+      await tester.pump();
 
-    expect(find.byKey(builtInKey), findsNothing);
-    expect(find.byKey(directKey), findsOneWidget);
-    expect(controller.isShown, isTrue);
+      expect(find.byKey(builtInKey), findsNothing);
+      expect(find.byKey(directKey), findsOneWidget);
+      expect(controller.isShown, isTrue);
 
-    // And showing the built-in menu hides the directly shown menu.
-    expect(state.showToolbar(), isTrue);
-    await tester.pump();
+      // And showing the built-in menu hides the directly shown menu.
+      expect(state.showToolbar(), isTrue);
+      await tester.pump();
 
-    expect(find.byKey(builtInKey), findsOneWidget);
-    expect(find.byKey(directKey), findsNothing);
-    expect(controller.isShown, isFalse);
+      expect(find.byKey(builtInKey), findsOneWidget);
+      expect(find.byKey(directKey), findsNothing);
+      expect(controller.isShown, isFalse);
 
-    // Calling remove on the hidden ContextMenuController does not hide the
-    // built-in menu.
-    controller.remove();
-    await tester.pump();
+      // Calling remove on the hidden ContextMenuController does not hide the
+      // built-in menu.
+      controller.remove();
+      await tester.pump();
 
-    expect(find.byKey(builtInKey), findsOneWidget);
-    expect(find.byKey(directKey), findsNothing);
-    expect(controller.isShown, isFalse);
+      expect(find.byKey(builtInKey), findsOneWidget);
+      expect(find.byKey(directKey), findsNothing);
+      expect(controller.isShown, isFalse);
 
-    state.hideToolbar();
-    await tester.pump();
-    expect(find.byKey(builtInKey), findsNothing);
-    expect(find.byKey(directKey), findsNothing);
-    expect(controller.isShown, isFalse);
-  },
-    skip: isContextMenuProvidedByPlatform, // [intended] no Flutter-drawn text selection toolbar on web.
+      state.hideToolbar();
+      await tester.pump();
+      expect(find.byKey(builtInKey), findsNothing);
+      expect(find.byKey(directKey), findsNothing);
+      expect(controller.isShown, isFalse);
+    },
+    // [intended] no Flutter-drawn text selection toolbar on web.
+    skip: isContextMenuProvidedByPlatform,
   );
 }

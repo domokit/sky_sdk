@@ -221,9 +221,10 @@ class ChoiceChip extends StatelessWidget
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterial(context));
     final ChipThemeData chipTheme = ChipTheme.of(context);
-    final ChipThemeData? defaults = Theme.of(context).useMaterial3
-      ? _ChoiceChipDefaultsM3(context, isEnabled, selected, _chipVariant)
-      : null;
+    final ChipThemeData? defaults =
+        Theme.of(context).useMaterial3
+            ? _ChoiceChipDefaultsM3(context, isEnabled, selected, _chipVariant)
+            : null;
     return RawChip(
       defaultProperties: defaults,
       avatar: avatar,
@@ -269,6 +270,7 @@ class ChoiceChip extends StatelessWidget
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 class _ChoiceChipDefaultsM3 extends ChipThemeData {
   _ChoiceChipDefaultsM3(
     this.context,
@@ -388,5 +390,6 @@ class _ChoiceChipDefaultsM3 extends ChipThemeData {
     )!;
   }
 }
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - ChoiceChip

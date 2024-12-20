@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('ListTile item can be selected', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ListTileApp(),
-    );
+    await tester.pumpWidget(const example.ListTileApp());
 
     expect(find.byType(ListTile), findsNWidgets(10));
 

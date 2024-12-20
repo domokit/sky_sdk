@@ -13,14 +13,8 @@ void main() {
     await tester.pumpWidget(
       Column(
         children: <Widget>[
-          Expanded(
-            child: GestureDetector(
-              onTap: () => tapped = true,
-            ),
-          ),
-          const Expanded(
-            child: AbsorbPointer(),
-          ),
+          Expanded(child: GestureDetector(onTap: () => tapped = true)),
+          const Expanded(child: AbsorbPointer()),
         ],
       ),
     );
@@ -35,11 +29,7 @@ void main() {
         MaterialApp(
           home: AbsorbPointer(
             absorbing: false,
-            child: ElevatedButton(
-              key: key,
-              onPressed: () { },
-              child: const Text('button'),
-            ),
+            child: ElevatedButton(key: key, onPressed: () {}, child: const Text('button')),
           ),
         ),
       );
@@ -64,11 +54,7 @@ void main() {
         MaterialApp(
           home: AbsorbPointer(
             ignoringSemantics: true,
-            child: ElevatedButton(
-              key: key,
-              onPressed: () { },
-              child: const Text('button'),
-            ),
+            child: ElevatedButton(key: key, onPressed: () {}, child: const Text('button')),
           ),
         ),
       );
@@ -81,11 +67,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: AbsorbPointer(
-            child: ElevatedButton(
-              key: key,
-              onPressed: () { },
-              child: const Text('button'),
-            ),
+            child: ElevatedButton(key: key, onPressed: () {}, child: const Text('button')),
           ),
         ),
       );

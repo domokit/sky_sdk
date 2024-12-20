@@ -20,11 +20,7 @@ void main() {
     return <ContextMenuButtonItem>[
       for (final String suggestion in suggestions)
         ContextMenuButtonItem(onPressed: () {}, label: suggestion),
-      ContextMenuButtonItem(
-        onPressed: () {},
-        type: ContextMenuButtonType.delete,
-        label: 'DELETE',
-      ),
+      ContextMenuButtonItem(onPressed: () {}, type: ContextMenuButtonType.delete, label: 'DELETE'),
     ];
   }
 
@@ -34,11 +30,14 @@ void main() {
     return find.descendant(
       of: find.byType(MaterialApp),
       matching: find.byWidgetPredicate(
-        (Widget w) => '${w.runtimeType}' == '_SpellCheckSuggestionsToolbarContainer'),
+        (Widget w) => '${w.runtimeType}' == '_SpellCheckSuggestionsToolbarContainer',
+      ),
     );
   }
 
-  testWidgets('positions toolbar below anchor when it fits above bottom view padding', (WidgetTester tester) async {
+  testWidgets('positions toolbar below anchor when it fits above bottom view padding', (
+    WidgetTester tester,
+  ) async {
     // We expect the toolbar to be positioned right below the anchor with padding accounted for.
     await tester.pumpWidget(
       MaterialApp(
@@ -55,57 +54,59 @@ void main() {
     expect(toolbarY, equals(_kAnchor));
   });
 
-  testWidgets('re-positions toolbar higher below anchor when it does not fit above bottom view padding', (WidgetTester tester) async {
-    // We expect the toolbar to be positioned _kTestToolbarOverlap pixels above the anchor.
-    const double expectedToolbarY = _kAnchor - _kTestToolbarOverlap;
+  testWidgets(
+    're-positions toolbar higher below anchor when it does not fit above bottom view padding',
+    (WidgetTester tester) async {
+      // We expect the toolbar to be positioned _kTestToolbarOverlap pixels above the anchor.
+      const double expectedToolbarY = _kAnchor - _kTestToolbarOverlap;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: SpellCheckSuggestionsToolbar(
-            anchor: const Offset(0.0, _kAnchor - _kTestToolbarOverlap),
-            buttonItems: buildSuggestionButtons(<String>['hello', 'yellow', 'yell']),
-          ),
-        ),
-      ),
-    );
-
-    final double toolbarY = tester.getTopLeft(findSpellCheckSuggestionsToolbar()).dy;
-    expect(toolbarY, equals(expectedToolbarY));
-  });
-
-  testWidgets('more than three suggestions throws an error', (WidgetTester tester) async {
-    Future<void> pumpToolbar(List<String> suggestions) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: SpellCheckSuggestionsToolbar(
               anchor: const Offset(0.0, _kAnchor - _kTestToolbarOverlap),
-              buttonItems: buildSuggestionButtons(suggestions),
+              buttonItems: buildSuggestionButtons(<String>['hello', 'yellow', 'yell']),
             ),
           ),
         ),
       );
-    }
-    await pumpToolbar(<String>['hello', 'yellow', 'yell']);
-    expect(() async {
-      await pumpToolbar(<String>['hello', 'yellow', 'yell', 'yeller']);
-    }, throwsAssertionError);
-  },
+
+      final double toolbarY = tester.getTopLeft(findSpellCheckSuggestionsToolbar()).dy;
+      expect(toolbarY, equals(expectedToolbarY));
+    },
+  );
+
+  testWidgets(
+    'more than three suggestions throws an error',
+    (WidgetTester tester) async {
+      Future<void> pumpToolbar(List<String> suggestions) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SpellCheckSuggestionsToolbar(
+                anchor: const Offset(0.0, _kAnchor - _kTestToolbarOverlap),
+                buttonItems: buildSuggestionButtons(suggestions),
+              ),
+            ),
+          ),
+        );
+      }
+
+      await pumpToolbar(<String>['hello', 'yellow', 'yell']);
+      expect(() async {
+        await pumpToolbar(<String>['hello', 'yellow', 'yell', 'yeller']);
+      }, throwsAssertionError);
+    },
     skip: kIsWeb, // [intended]
   );
 
   test('buildSuggestionButtons only considers the first three suggestions', () {
     final _FakeEditableTextState editableTextState = _FakeEditableTextState(
-      suggestions: <String>[
-        'hello',
-        'yellow',
-        'yell',
-        'yeller',
-      ],
+      suggestions: <String>['hello', 'yellow', 'yell', 'yeller'],
     );
-    final List<ContextMenuButtonItem>? buttonItems =
-        SpellCheckSuggestionsToolbar.buildButtonItems(editableTextState);
+    final List<ContextMenuButtonItem>? buttonItems = SpellCheckSuggestionsToolbar.buildButtonItems(
+      editableTextState,
+    );
     expect(buttonItems, isNotNull);
     final Iterable<String?> labels = buttonItems!.map((ContextMenuButtonItem buttonItem) {
       return buttonItem.label;
@@ -120,8 +121,9 @@ void main() {
 
   test('buildButtonItems builds only a delete button when no suggestions', () {
     final _FakeEditableTextState editableTextState = _FakeEditableTextState();
-    final List<ContextMenuButtonItem>? buttonItems =
-        SpellCheckSuggestionsToolbar.buildButtonItems(editableTextState);
+    final List<ContextMenuButtonItem>? buttonItems = SpellCheckSuggestionsToolbar.buildButtonItems(
+      editableTextState,
+    );
 
     expect(buttonItems, hasLength(1));
     expect(buttonItems!.first.type, ContextMenuButtonType.delete);
@@ -129,9 +131,7 @@ void main() {
 }
 
 class _FakeEditableTextState extends EditableTextState {
-  _FakeEditableTextState({
-    this.suggestions,
-  });
+  _FakeEditableTextState({this.suggestions});
 
   final List<String>? suggestions;
 
@@ -140,12 +140,6 @@ class _FakeEditableTextState extends EditableTextState {
 
   @override
   SuggestionSpan? findSuggestionSpanAtCursorIndex(int cursorIndex) {
-    return SuggestionSpan(
-      const TextRange(
-        start: 0,
-        end: 0,
-      ),
-      suggestions ?? <String>[],
-    );
+    return SuggestionSpan(const TextRange(start: 0, end: 0), suggestions ?? <String>[]);
   }
 }

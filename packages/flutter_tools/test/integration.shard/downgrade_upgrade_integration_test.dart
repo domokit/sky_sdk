@@ -16,10 +16,7 @@ const String _kBranch = 'beta';
 
 final Stdio stdio = Stdio();
 final BufferLogger logger = BufferLogger.test(
-  terminal: AnsiTerminal(
-    platform: platform,
-    stdio: stdio,
-  ),
+  terminal: AnsiTerminal(platform: platform, stdio: stdio),
   outputPreferences: OutputPreferences.test(wrapText: true),
 );
 final ProcessUtils processUtils = ProcessUtils(processManager: processManager, logger: logger);
@@ -29,8 +26,7 @@ void main() {
   late Directory parentDirectory;
 
   setUp(() {
-    parentDirectory = fileSystem.systemTempDirectory
-      .createTempSync('flutter_tools.');
+    parentDirectory = fileSystem.systemTempDirectory.createTempSync('flutter_tools.');
     parentDirectory.createSync(recursive: true);
   });
 
@@ -43,9 +39,7 @@ void main() {
     testDirectory.createSync(recursive: true);
 
     // Enable longpaths for windows integration test.
-    await processManager.run(<String>[
-      'git', 'config', '--system', 'core.longpaths', 'true',
-    ]);
+    await processManager.run(<String>['git', 'config', '--system', 'core.longpaths', 'true']);
 
     void checkExitCode(int code) {
       expect(
@@ -64,44 +58,44 @@ ${logger.errorText}''',
     }
 
     printOnFailure('Step 1 - clone the $_kBranch of flutter into the test directory');
-    exitCode = await processUtils.stream(<String>[
-      'git',
-      'clone',
-      'https://github.com/flutter/flutter.git',
-    ], workingDirectory: parentDirectory.path, trace: true);
+    exitCode = await processUtils.stream(
+      <String>['git', 'clone', 'https://github.com/flutter/flutter.git'],
+      workingDirectory: parentDirectory.path,
+      trace: true,
+    );
     checkExitCode(exitCode);
 
     printOnFailure('Step 2 - switch to the $_kBranch');
-    exitCode = await processUtils.stream(<String>[
-      'git',
-      'checkout',
-      '--track',
-      '-b',
-      _kBranch,
-      'origin/$_kBranch',
-    ], workingDirectory: testDirectory.path, trace: true);
+    exitCode = await processUtils.stream(
+      <String>['git', 'checkout', '--track', '-b', _kBranch, 'origin/$_kBranch'],
+      workingDirectory: testDirectory.path,
+      trace: true,
+    );
     checkExitCode(exitCode);
 
     printOnFailure('Step 3 - revert back to $_kInitialVersion');
-    exitCode = await processUtils.stream(<String>[
-      'git',
-      'reset',
-      '--hard',
-      _kInitialVersion,
-    ], workingDirectory: testDirectory.path, trace: true);
+    exitCode = await processUtils.stream(
+      <String>['git', 'reset', '--hard', _kInitialVersion],
+      workingDirectory: testDirectory.path,
+      trace: true,
+    );
     checkExitCode(exitCode);
 
     printOnFailure('Step 4 - upgrade to the newest $_kBranch');
     // This should update the persistent tool state with the sha for HEAD
     // This is probably a source of flakes as it mutates system-global state.
-    exitCode = await processUtils.stream(<String>[
-      flutterBin,
-      'upgrade',
-      '--verbose',
-      '--working-directory=${testDirectory.path}',
-      // we intentionally run this in a directory outside the test repo to
-      // verify the tool overrides the working directory when invoking git
-    ], workingDirectory: parentDirectory.path, trace: true);
+    exitCode = await processUtils.stream(
+      <String>[
+        flutterBin,
+        'upgrade',
+        '--verbose',
+        '--working-directory=${testDirectory.path}',
+        // we intentionally run this in a directory outside the test repo to
+        // verify the tool overrides the working directory when invoking git
+      ],
+      workingDirectory: parentDirectory.path,
+      trace: true,
+    );
     checkExitCode(exitCode);
 
     printOnFailure('Step 5 - verify that the version is different');
@@ -114,15 +108,16 @@ ${logger.errorText}''',
       '--tags',
     ], workingDirectory: testDirectory.path);
     expect(versionResult.stdout, isNot(contains(_kInitialVersion)));
-    printOnFailure('current version is ${versionResult.stdout.trim()}\ninitial was $_kInitialVersion');
+    printOnFailure(
+      'current version is ${versionResult.stdout.trim()}\ninitial was $_kInitialVersion',
+    );
 
     printOnFailure('Step 6 - downgrade back to the initial version');
-    exitCode = await processUtils.stream(<String>[
-       flutterBin,
-      'downgrade',
-      '--no-prompt',
-      '--working-directory=${testDirectory.path}',
-    ], workingDirectory: parentDirectory.path, trace: true);
+    exitCode = await processUtils.stream(
+      <String>[flutterBin, 'downgrade', '--no-prompt', '--working-directory=${testDirectory.path}'],
+      workingDirectory: parentDirectory.path,
+      trace: true,
+    );
     checkExitCode(exitCode);
 
     printOnFailure('Step 7 - verify downgraded version matches original version');
@@ -135,6 +130,8 @@ ${logger.errorText}''',
       '--tags',
     ], workingDirectory: testDirectory.path);
     expect(oldVersionResult.stdout, contains(_kInitialVersion));
-    printOnFailure('current version is ${oldVersionResult.stdout.trim()}\ninitial was $_kInitialVersion');
+    printOnFailure(
+      'current version is ${oldVersionResult.stdout.trim()}\ninitial was $_kInitialVersion',
+    );
   });
 }

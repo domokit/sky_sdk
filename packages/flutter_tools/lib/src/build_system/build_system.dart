@@ -111,6 +111,7 @@ class BuildSystemConfig {
 /// and meets any additional contracts present in the target.
 abstract class Target {
   const Target();
+
   /// The user-readable name of the target.
   ///
   /// This information is surfaced in the assemble commands and used as an
@@ -163,9 +164,7 @@ abstract class Target {
       this,
       inputsFiles.sources,
       outputFiles.sources,
-      <Node>[
-        for (final Target target in dependencies) target._toNode(environment),
-      ],
+      <Node>[for (final Target target in dependencies) target._toNode(environment)],
       buildKey,
       environment,
       inputsFiles.containsNewDepfile,
@@ -178,11 +177,7 @@ abstract class Target {
     ErrorHandlingFileSystem.deleteIfExists(stamp);
   }
 
-  void _writeStamp(
-    List<File> inputs,
-    List<File> outputs,
-    Environment environment,
-  ) {
+  void _writeStamp(List<File> inputs, List<File> outputs, Environment environment) {
     String getPath(File file) => file.path;
     final Map<String, Object> result = <String, Object>{
       'inputs': inputs.map(getPath).toList(),
@@ -213,7 +208,9 @@ abstract class Target {
   /// Performs a fold across this target and its dependencies.
   T fold<T>(T initialValue, T Function(T previousValue, Target target) combine) {
     final T dependencyResult = dependencies.fold(
-        initialValue, (T prev, Target t) => t.fold(prev, combine));
+      initialValue,
+      (T prev, Target t) => t.fold(prev, combine),
+    );
     return combine(dependencyResult, this);
   }
 
@@ -226,15 +223,9 @@ abstract class Target {
     final String? key = buildKey;
     return <String, Object>{
       'name': name,
-      'dependencies': <String>[
-        for (final Target target in dependencies) target.name,
-      ],
-      'inputs': <String>[
-        for (final File file in resolveInputs(environment).sources) file.path,
-      ],
-      'outputs': <String>[
-        for (final File file in resolveOutputs(environment).sources) file.path,
-      ],
+      'dependencies': <String>[for (final Target target in dependencies) target.name],
+      'inputs': <String>[for (final File file in resolveInputs(environment).sources) file.path],
+      'outputs': <String>[for (final File file in resolveOutputs(environment).sources) file.path],
       if (key != null) 'buildKey': key,
       'stamp': _findStampFile(environment).absolute.path,
     };
@@ -275,7 +266,7 @@ class CompositeTarget extends Target {
   String get name => '_composite';
 
   @override
-  Future<void> build(Environment environment) async { }
+  Future<void> build(Environment environment) async {}
 
   @override
   List<Source> get inputs => <Source>[];
@@ -398,7 +389,8 @@ class Environment {
   ///
   /// Any directories not provided will fallback to a [testDirectory]
   @visibleForTesting
-  factory Environment.test(Directory testDirectory, {
+  factory Environment.test(
+    Directory testDirectory, {
     Directory? projectDir,
     String? packageConfigPath,
     Directory? outputDir,
@@ -557,10 +549,7 @@ class Environment {
   /// the new entrypoint.
   final bool generateDartPluginRegistry;
 
-  late final DepfileService depFileService = DepfileService(
-    logger: logger,
-    fileSystem: fileSystem,
-  );
+  late final DepfileService depFileService = DepfileService(logger: logger, fileSystem: fileSystem);
 }
 
 /// The result information from the build system.
@@ -629,10 +618,7 @@ class FlutterBuildSystem extends BuildSystem {
 
     // Load file store from previous builds.
     final File cacheFile = environment.buildDir.childFile(FileStore.kFileCache);
-    final FileStore fileCache = FileStore(
-      cacheFile: cacheFile,
-      logger: _logger,
-    )..initialize();
+    final FileStore fileCache = FileStore(cacheFile: cacheFile, logger: _logger)..initialize();
 
     // Perform sanity checks on build.
     checkCycles(target);
@@ -663,29 +649,30 @@ class FlutterBuildSystem extends BuildSystem {
     {
       buildInstance.inputFiles.removeWhere((String path, File file) {
         return path.contains('.flutter-plugins') ||
-                       path.contains('xcconfig') ||
-                     path.contains('.dart_tool');
+            path.contains('xcconfig') ||
+            path.contains('.dart_tool');
       });
       buildInstance.outputFiles.removeWhere((String path, File file) {
         return path.contains('.flutter-plugins') ||
-                       path.contains('xcconfig') ||
-                     path.contains('.dart_tool');
+            path.contains('xcconfig') ||
+            path.contains('.dart_tool');
       });
     }
-    trackSharedBuildDirectory(
-      environment, _fileSystem, buildInstance.outputFiles,
-    );
-    environment.buildDir.childFile('outputs.json')
-      .writeAsStringSync(json.encode(buildInstance.outputFiles.keys.toList()));
+    trackSharedBuildDirectory(environment, _fileSystem, buildInstance.outputFiles);
+    environment.buildDir
+        .childFile('outputs.json')
+        .writeAsStringSync(json.encode(buildInstance.outputFiles.keys.toList()));
 
     return BuildResult(
       success: passed,
       exceptions: buildInstance.exceptionMeasurements,
       performance: buildInstance.stepTimings,
-      inputFiles: buildInstance.inputFiles.values.toList()
-          ..sort((File a, File b) => a.path.compareTo(b.path)),
-      outputFiles: buildInstance.outputFiles.values.toList()
-          ..sort((File a, File b) => a.path.compareTo(b.path)),
+      inputFiles:
+          buildInstance.inputFiles.values.toList()
+            ..sort((File a, File b) => a.path.compareTo(b.path)),
+      outputFiles:
+          buildInstance.outputFiles.values.toList()
+            ..sort((File a, File b) => a.path.compareTo(b.path)),
     );
   }
 
@@ -776,18 +763,17 @@ class FlutterBuildSystem extends BuildSystem {
     lastBuildIdFile
       ..createSync()
       ..writeAsStringSync(currentBuildId);
-    final File outputsFile = environment.buildDir
-      .parent
-      .childDirectory(lastBuildId)
-      .childFile('outputs.json');
+    final File outputsFile = environment.buildDir.parent
+        .childDirectory(lastBuildId)
+        .childFile('outputs.json');
 
     if (!outputsFile.existsSync()) {
       // There is no output list. This could happen if the user manually
       // edited .last_config or deleted .dart_tool.
       return;
     }
-    final List<String> lastOutputs = (json.decode(outputsFile.readAsStringSync()) as List<Object?>)
-      .cast<String>();
+    final List<String> lastOutputs =
+        (json.decode(outputsFile.readAsStringSync()) as List<Object?>).cast<String>();
     for (final String lastOutput in lastOutputs) {
       if (!currentOutputs.containsKey(lastOutput)) {
         final File lastOutputFile = fileSystem.file(lastOutput);
@@ -806,8 +792,7 @@ class _BuildInstance {
     required this.logger,
     required this.fileSystem,
     Platform? platform,
-  })
-    : resourcePool = Pool(buildSystemConfig.resourcePoolSize ?? platform?.numberOfProcessors ?? 1);
+  }) : resourcePool = Pool(buildSystemConfig.resourcePoolSize ?? platform?.numberOfProcessors ?? 1);
 
   final Logger logger;
   final FileSystem fileSystem;
@@ -866,8 +851,8 @@ class _BuildInstance {
     try {
       // If we're missing a depfile, wait until after evaluating the target to
       // compute changes.
-      final bool canSkip = !node.missingDepfile &&
-        node.computeChanges(environment, fileCache, fileSystem, logger);
+      final bool canSkip =
+          !node.missingDepfile && node.computeChanges(environment, fileCache, fileSystem, logger);
 
       if (canSkip) {
         skipped = true;
@@ -919,7 +904,11 @@ class _BuildInstance {
       succeeded = false;
       skipped = false;
       exceptionMeasurements[node.target.name] = ExceptionMeasurement(
-          node.target.name, exception, stackTrace, fatal: true);
+        node.target.name,
+        exception,
+        stackTrace,
+        fatal: true,
+      );
     } finally {
       resource.release();
       stopwatch.stop();
@@ -985,6 +974,7 @@ void checkCycles(Target initial) {
     }
     stack.remove(target);
   }
+
   checkInternal(initial, <Target>{}, <Target>{});
 }
 
@@ -1056,14 +1046,7 @@ class Node {
         );
       }
     }
-    return Node.withNoStamp(
-      target,
-      inputs,
-      outputs,
-      dependencies,
-      buildKey,
-      missingDepfile,
-    );
+    return Node.withNoStamp(target, inputs, outputs, dependencies, buildKey, missingDepfile);
   }
 
   Node.withNoStamp(
@@ -1131,7 +1114,8 @@ class Node {
   /// One or more reasons why a task was invalidated.
   ///
   /// May be empty if the task was skipped.
-  final Map<InvalidatedReasonKind, InvalidatedReason> invalidatedReasons = <InvalidatedReasonKind, InvalidatedReason>{};
+  final Map<InvalidatedReasonKind, InvalidatedReason> invalidatedReasons =
+      <InvalidatedReasonKind, InvalidatedReason>{};
 
   /// Whether this node needs an action performed.
   bool get dirty => _dirty;
@@ -1154,9 +1138,7 @@ class Node {
       _invalidate(InvalidatedReasonKind.buildKeyChanged);
       _dirty = true;
     }
-    final Set<String> currentOutputPaths = <String>{
-      for (final File file in outputs) file.path,
-    };
+    final Set<String> currentOutputPaths = <String>{for (final File file in outputs) file.path};
     // For each input, first determine if we've already computed the key
     // for it. Then collect it to be sent off for diffing as a group.
     final List<File> sourcesToDiff = <File>[];
@@ -1243,6 +1225,7 @@ class InvalidatedReason {
   InvalidatedReason(this.kind);
 
   final InvalidatedReasonKind kind;
+
   /// Absolute file paths of inputs or outputs, depending on [kind].
   final List<String> data = <String>[];
 
@@ -1250,10 +1233,14 @@ class InvalidatedReason {
   String toString() {
     return switch (kind) {
       InvalidatedReasonKind.inputMissing => 'The following inputs were missing: ${data.join(',')}',
-      InvalidatedReasonKind.inputChanged => 'The following inputs have updated contents: ${data.join(',')}',
-      InvalidatedReasonKind.outputChanged => 'The following outputs have updated contents: ${data.join(',')}',
-      InvalidatedReasonKind.outputMissing => 'The following outputs were missing: ${data.join(',')}',
-      InvalidatedReasonKind.outputSetChanged => 'The following outputs were removed from the output set: ${data.join(',')}',
+      InvalidatedReasonKind.inputChanged =>
+        'The following inputs have updated contents: ${data.join(',')}',
+      InvalidatedReasonKind.outputChanged =>
+        'The following outputs have updated contents: ${data.join(',')}',
+      InvalidatedReasonKind.outputMissing =>
+        'The following outputs were missing: ${data.join(',')}',
+      InvalidatedReasonKind.outputSetChanged =>
+        'The following outputs were removed from the output set: ${data.join(',')}',
       InvalidatedReasonKind.buildKeyChanged => 'The target build key changed.',
     };
   }

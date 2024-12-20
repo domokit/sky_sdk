@@ -13,19 +13,19 @@ class ScaffoldFloatingActionButtonAnimatorApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: ScaffoldFloatingActionButtonAnimatorExample(),
-    );
+    return const MaterialApp(home: ScaffoldFloatingActionButtonAnimatorExample());
   }
 }
 
 enum FabAnimator { defaultStyle, none }
+
 const List<(FabAnimator, String)> fabAnimatoregments = <(FabAnimator, String)>[
   (FabAnimator.defaultStyle, 'Default'),
   (FabAnimator.none, 'None'),
 ];
 
 enum FabLocation { centerFloat, endFloat, endTop }
+
 const List<(FabLocation, String)> fabLocationegments = <(FabLocation, String)>[
   (FabLocation.centerFloat, 'centerFloat'),
   (FabLocation.endFloat, 'endFloat'),
@@ -36,10 +36,12 @@ class ScaffoldFloatingActionButtonAnimatorExample extends StatefulWidget {
   const ScaffoldFloatingActionButtonAnimatorExample({super.key});
 
   @override
-  State<ScaffoldFloatingActionButtonAnimatorExample> createState() => _ScaffoldFloatingActionButtonAnimatorExampleState();
+  State<ScaffoldFloatingActionButtonAnimatorExample> createState() =>
+      _ScaffoldFloatingActionButtonAnimatorExampleState();
 }
 
-class _ScaffoldFloatingActionButtonAnimatorExampleState extends State<ScaffoldFloatingActionButtonAnimatorExample> {
+class _ScaffoldFloatingActionButtonAnimatorExampleState
+    extends State<ScaffoldFloatingActionButtonAnimatorExample> {
   Set<FabAnimator> _selectedFabAnimator = <FabAnimator>{FabAnimator.defaultStyle};
   Set<FabLocation> _selectedFabLocation = <FabLocation>{FabLocation.endFloat};
   FloatingActionButtonAnimator? _floatingActionButtonAnimator;
@@ -67,13 +69,14 @@ class _ScaffoldFloatingActionButtonAnimatorExampleState extends State<ScaffoldFl
                   _selectedFabAnimator = styles;
                 });
               },
-              segments: fabAnimatoregments
-                .map<ButtonSegment<FabAnimator>>(((FabAnimator, String) fabAnimator) {
-                  final FabAnimator animator = fabAnimator.$1;
-                  final String label = fabAnimator.$2;
-                  return ButtonSegment<FabAnimator>(value: animator, label: Text(label));
-                })
-                .toList(),
+              segments:
+                  fabAnimatoregments.map<ButtonSegment<FabAnimator>>((
+                    (FabAnimator, String) fabAnimator,
+                  ) {
+                    final FabAnimator animator = fabAnimator.$1;
+                    final String label = fabAnimator.$2;
+                    return ButtonSegment<FabAnimator>(value: animator, label: Text(label));
+                  }).toList(),
             ),
             const SizedBox(height: 10),
             SegmentedButton<FabLocation>(
@@ -88,13 +91,14 @@ class _ScaffoldFloatingActionButtonAnimatorExampleState extends State<ScaffoldFl
                   _selectedFabLocation = styles;
                 });
               },
-              segments: fabLocationegments
-                .map<ButtonSegment<FabLocation>>(((FabLocation, String) fabLocation) {
-                  final FabLocation location = fabLocation.$1;
-                  final String label = fabLocation.$2;
-                  return ButtonSegment<FabLocation>(value: location, label: Text(label));
-                })
-                .toList(),
+              segments:
+                  fabLocationegments.map<ButtonSegment<FabLocation>>((
+                    (FabLocation, String) fabLocation,
+                  ) {
+                    final FabLocation location = fabLocation.$1;
+                    final String label = fabLocation.$2;
+                    return ButtonSegment<FabLocation>(value: location, label: Text(label));
+                  }).toList(),
             ),
             const SizedBox(height: 10),
             FilledButton.icon(
@@ -109,12 +113,8 @@ class _ScaffoldFloatingActionButtonAnimatorExampleState extends State<ScaffoldFl
           ],
         ),
       ),
-      floatingActionButton: !_showFab
-        ? null
-        : FloatingActionButton(
-            onPressed: () {},
-            child: const Icon(Icons.add),
-          ),
+      floatingActionButton:
+          !_showFab ? null : FloatingActionButton(onPressed: () {}, child: const Icon(Icons.add)),
     );
   }
 }

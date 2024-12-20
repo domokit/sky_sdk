@@ -3,14 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_api_samples/cupertino/segmented_control/cupertino_segmented_control.0.dart' as example;
+import 'package:flutter_api_samples/cupertino/segmented_control/cupertino_segmented_control.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Verify initial state', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SegmentedControlApp(),
-    );
+    await tester.pumpWidget(const example.SegmentedControlApp());
 
     // Midnight is the default selected segment.
     expect(find.text('Selected Segment: midnight'), findsOneWidget);
@@ -40,9 +39,7 @@ void main() {
   });
 
   testWidgets('Can change a selected segmented control', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SegmentedControlApp(),
-    );
+    await tester.pumpWidget(const example.SegmentedControlApp());
 
     expect(find.text('Selected Segment: midnight'), findsOneWidget);
 
@@ -53,9 +50,7 @@ void main() {
   });
 
   testWidgets('Can not select on a disabled segment', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SegmentedControlApp(),
-    );
+    await tester.pumpWidget(const example.SegmentedControlApp());
 
     // Toggle on the first CupertinoSwitch to disable the first segment.
     final Finder firstSwitchFinder = find.byType(CupertinoSwitch).first;
@@ -76,9 +71,7 @@ void main() {
   });
 
   testWidgets('Can not select on all disabled segments', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SegmentedControlApp(),
-    );
+    await tester.pumpWidget(const example.SegmentedControlApp());
 
     // Toggle off the second CupertinoSwitch to disable all segments.
     final Finder secondSwitchFinder = find.byType(CupertinoSwitch).last;

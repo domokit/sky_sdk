@@ -196,34 +196,56 @@ class ButtonBarThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ButtonBarThemeData
-        && other.alignment == alignment
-        && other.mainAxisSize == mainAxisSize
-        && other.buttonTextTheme == buttonTextTheme
-        && other.buttonMinWidth == buttonMinWidth
-        && other.buttonHeight == buttonHeight
-        && other.buttonPadding == buttonPadding
-        && other.buttonAlignedDropdown == buttonAlignedDropdown
-        && other.layoutBehavior == layoutBehavior
-        && other.overflowDirection == overflowDirection;
+    return other is ButtonBarThemeData &&
+        other.alignment == alignment &&
+        other.mainAxisSize == mainAxisSize &&
+        other.buttonTextTheme == buttonTextTheme &&
+        other.buttonMinWidth == buttonMinWidth &&
+        other.buttonHeight == buttonHeight &&
+        other.buttonPadding == buttonPadding &&
+        other.buttonAlignedDropdown == buttonAlignedDropdown &&
+        other.layoutBehavior == layoutBehavior &&
+        other.overflowDirection == overflowDirection;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<MainAxisAlignment>('alignment', alignment, defaultValue: null));
-    properties.add(DiagnosticsProperty<MainAxisSize>('mainAxisSize', mainAxisSize, defaultValue: null));
-    properties.add(DiagnosticsProperty<ButtonTextTheme>('textTheme', buttonTextTheme, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<MainAxisAlignment>('alignment', alignment, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<MainAxisSize>('mainAxisSize', mainAxisSize, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<ButtonTextTheme>('textTheme', buttonTextTheme, defaultValue: null),
+    );
     properties.add(DoubleProperty('minWidth', buttonMinWidth, defaultValue: null));
     properties.add(DoubleProperty('height', buttonHeight, defaultValue: null));
-    properties.add(DiagnosticsProperty<EdgeInsetsGeometry>('padding', buttonPadding, defaultValue: null));
-    properties.add(FlagProperty(
-      'buttonAlignedDropdown',
-      value: buttonAlignedDropdown,
-      ifTrue: 'dropdown width matches button',
-    ));
-    properties.add(DiagnosticsProperty<ButtonBarLayoutBehavior>('layoutBehavior', layoutBehavior, defaultValue: null));
-    properties.add(DiagnosticsProperty<VerticalDirection>('overflowDirection', overflowDirection, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<EdgeInsetsGeometry>('padding', buttonPadding, defaultValue: null),
+    );
+    properties.add(
+      FlagProperty(
+        'buttonAlignedDropdown',
+        value: buttonAlignedDropdown,
+        ifTrue: 'dropdown width matches button',
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<ButtonBarLayoutBehavior>(
+        'layoutBehavior',
+        layoutBehavior,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<VerticalDirection>(
+        'overflowDirection',
+        overflowDirection,
+        defaultValue: null,
+      ),
+    );
   }
 }
 
@@ -246,11 +268,7 @@ class ButtonBarThemeData with Diagnosticable {
 class ButtonBarTheme extends InheritedWidget {
   /// Constructs a button bar theme that configures all descendant [ButtonBar]
   /// widgets.
-  const ButtonBarTheme({
-    super.key,
-    required this.data,
-    required super.child,
-  });
+  const ButtonBarTheme({super.key, required this.data, required super.child});
 
   /// The properties used for all descendant [ButtonBar] widgets.
   final ButtonBarThemeData data;
@@ -265,7 +283,8 @@ class ButtonBarTheme extends InheritedWidget {
   /// ButtonBarThemeData theme = ButtonBarTheme.of(context);
   /// ```
   static ButtonBarThemeData of(BuildContext context) {
-    final ButtonBarTheme? buttonBarTheme = context.dependOnInheritedWidgetOfExactType<ButtonBarTheme>();
+    final ButtonBarTheme? buttonBarTheme =
+        context.dependOnInheritedWidgetOfExactType<ButtonBarTheme>();
     return buttonBarTheme?.data ?? Theme.of(context).buttonBarTheme;
   }
 

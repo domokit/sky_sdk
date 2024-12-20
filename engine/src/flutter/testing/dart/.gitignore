@@ -1,0 +1,4 @@
+.packages
+pubspec.lock
+ios/**
+android/**

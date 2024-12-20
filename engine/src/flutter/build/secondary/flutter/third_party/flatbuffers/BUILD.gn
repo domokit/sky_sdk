@@ -1,0 +1,100 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+_src_root = "//flutter/third_party/flatbuffers"
+
+config("flatbuffers_public_configs") {
+  include_dirs = [ "$_src_root/include" ]
+
+  cflags = [ "-Wno-newline-eof" ]
+}
+
+source_set("flatbuffers") {
+  sources = [
+    "$_src_root/include/flatbuffers/allocator.h",
+    "$_src_root/include/flatbuffers/array.h",
+    "$_src_root/include/flatbuffers/base.h",
+    "$_src_root/include/flatbuffers/bfbs_generator.h",
+    "$_src_root/include/flatbuffers/buffer.h",
+    "$_src_root/include/flatbuffers/buffer_ref.h",
+    "$_src_root/include/flatbuffers/default_allocator.h",
+    "$_src_root/include/flatbuffers/detached_buffer.h",
+    "$_src_root/include/flatbuffers/flatbuffer_builder.h",
+    "$_src_root/include/flatbuffers/flatbuffers.h",
+    "$_src_root/include/flatbuffers/flex_flat_util.h",
+    "$_src_root/include/flatbuffers/flexbuffers.h",
+    "$_src_root/include/flatbuffers/hash.h",
+    "$_src_root/include/flatbuffers/idl.h",
+    "$_src_root/include/flatbuffers/minireflect.h",
+    "$_src_root/include/flatbuffers/reflection.h",
+    "$_src_root/include/flatbuffers/reflection_generated.h",
+    "$_src_root/include/flatbuffers/registry.h",
+    "$_src_root/include/flatbuffers/stl_emulation.h",
+    "$_src_root/include/flatbuffers/string.h",
+    "$_src_root/include/flatbuffers/struct.h",
+    "$_src_root/include/flatbuffers/table.h",
+    "$_src_root/include/flatbuffers/util.h",
+    "$_src_root/include/flatbuffers/vector.h",
+    "$_src_root/include/flatbuffers/vector_downward.h",
+    "$_src_root/include/flatbuffers/verifier.h",
+    "$_src_root/src/idl_gen_text.cpp",
+    "$_src_root/src/idl_parser.cpp",
+    "$_src_root/src/reflection.cpp",
+    "$_src_root/src/util.cpp",
+  ]
+
+  public_configs = [ ":flatbuffers_public_configs" ]
+}
+
+executable("flatc") {
+  sources = [
+    "$_src_root/grpc/src/compiler/cpp_generator.cc",
+    "$_src_root/grpc/src/compiler/cpp_generator.h",
+    "$_src_root/grpc/src/compiler/go_generator.cc",
+    "$_src_root/grpc/src/compiler/go_generator.h",
+    "$_src_root/grpc/src/compiler/java_generator.cc",
+    "$_src_root/grpc/src/compiler/java_generator.h",
+    "$_src_root/grpc/src/compiler/python_generator.cc",
+    "$_src_root/grpc/src/compiler/python_generator.h",
+    "$_src_root/grpc/src/compiler/schema_interface.h",
+    "$_src_root/grpc/src/compiler/swift_generator.cc",
+    "$_src_root/grpc/src/compiler/swift_generator.h",
+    "$_src_root/grpc/src/compiler/ts_generator.cc",
+    "$_src_root/grpc/src/compiler/ts_generator.h",
+    "$_src_root/include/flatbuffers/code_generators.h",
+    "$_src_root/src/annotated_binary_text_gen.cpp",
+    "$_src_root/src/annotated_binary_text_gen.h",
+    "$_src_root/src/bfbs_gen.h",
+    "$_src_root/src/bfbs_gen_lua.cpp",
+    "$_src_root/src/bfbs_gen_lua.h",
+    "$_src_root/src/bfbs_namer.h",
+    "$_src_root/src/binary_annotator.cpp",
+    "$_src_root/src/binary_annotator.h",
+    "$_src_root/src/code_generators.cpp",
+    "$_src_root/src/flatc.cpp",
+    "$_src_root/src/flatc_main.cpp",
+    "$_src_root/src/idl_gen_cpp.cpp",
+    "$_src_root/src/idl_gen_csharp.cpp",
+    "$_src_root/src/idl_gen_dart.cpp",
+    "$_src_root/src/idl_gen_fbs.cpp",
+    "$_src_root/src/idl_gen_go.cpp",
+    "$_src_root/src/idl_gen_grpc.cpp",
+    "$_src_root/src/idl_gen_java.cpp",
+    "$_src_root/src/idl_gen_json_schema.cpp",
+    "$_src_root/src/idl_gen_kotlin.cpp",
+    "$_src_root/src/idl_gen_lobster.cpp",
+    "$_src_root/src/idl_gen_lua.cpp",
+    "$_src_root/src/idl_gen_php.cpp",
+    "$_src_root/src/idl_gen_python.cpp",
+    "$_src_root/src/idl_gen_rust.cpp",
+    "$_src_root/src/idl_gen_swift.cpp",
+    "$_src_root/src/idl_gen_ts.cpp",
+    "$_src_root/src/idl_namer.h",
+    "$_src_root/src/namer.h",
+  ]
+
+  include_dirs = [ "$_src_root/grpc" ]
+
+  deps = [ ":flatbuffers" ]
+}

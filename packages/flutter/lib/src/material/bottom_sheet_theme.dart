@@ -193,20 +193,20 @@ class BottomSheetThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is BottomSheetThemeData
-        && other.backgroundColor == backgroundColor
-        && other.surfaceTintColor == surfaceTintColor
-        && other.elevation == elevation
-        && other.modalBackgroundColor == modalBackgroundColor
-        && other.shadowColor == shadowColor
-        && other.modalBarrierColor == modalBarrierColor
-        && other.modalElevation == modalElevation
-        && other.shape == shape
-        && other.showDragHandle == showDragHandle
-        && other.dragHandleColor == dragHandleColor
-        && other.dragHandleSize == dragHandleSize
-        && other.clipBehavior == clipBehavior
-        && other.constraints == constraints;
+    return other is BottomSheetThemeData &&
+        other.backgroundColor == backgroundColor &&
+        other.surfaceTintColor == surfaceTintColor &&
+        other.elevation == elevation &&
+        other.modalBackgroundColor == modalBackgroundColor &&
+        other.shadowColor == shadowColor &&
+        other.modalBarrierColor == modalBarrierColor &&
+        other.modalElevation == modalElevation &&
+        other.shape == shape &&
+        other.showDragHandle == showDragHandle &&
+        other.dragHandleColor == dragHandleColor &&
+        other.dragHandleSize == dragHandleSize &&
+        other.clipBehavior == clipBehavior &&
+        other.constraints == constraints;
   }
 
   @override
@@ -224,6 +224,8 @@ class BottomSheetThemeData with Diagnosticable {
     properties.add(ColorProperty('dragHandleColor', dragHandleColor, defaultValue: null));
     properties.add(DiagnosticsProperty<Size>('dragHandleSize', dragHandleSize, defaultValue: null));
     properties.add(DiagnosticsProperty<Clip>('clipBehavior', clipBehavior, defaultValue: null));
-    properties.add(DiagnosticsProperty<BoxConstraints>('constraints', constraints, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<BoxConstraints>('constraints', constraints, defaultValue: null),
+    );
   }
 }

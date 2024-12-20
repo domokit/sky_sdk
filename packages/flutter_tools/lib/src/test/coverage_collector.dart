@@ -18,8 +18,13 @@ import 'watcher.dart';
 /// A class that collects code coverage data during test runs.
 class CoverageCollector extends TestWatcher {
   CoverageCollector({
-      this.libraryNames, this.verbose = true, required this.packagesPath,
-      this.resolver, this.testTimeRecorder, this.branchCoverage = false});
+    this.libraryNames,
+    this.verbose = true,
+    required this.packagesPath,
+    this.resolver,
+    this.testTimeRecorder,
+    this.branchCoverage = false,
+  });
 
   /// True when log messages should be emitted.
   final bool verbose;
@@ -60,7 +65,7 @@ class CoverageCollector extends TestWatcher {
     await collectCoverage(testDevice);
   }
 
-  void _logMessage(String line, { bool error = false }) {
+  void _logMessage(String line, {bool error = false}) {
     if (!verbose) {
       return;
     }
@@ -111,11 +116,13 @@ class CoverageCollector extends TestWatcher {
     );
 
     _logMessage('($vmServiceUri): collected coverage data; merging...');
-    _addHitmap(await coverage.HitMap.parseJson(
-      data['coverage'] as List<Map<String, dynamic>>,
-      packagePath: packageDirectory,
-      checkIgnoredLines: true,
-    ));
+    _addHitmap(
+      await coverage.HitMap.parseJson(
+        data['coverage'] as List<Map<String, dynamic>>,
+        packagePath: packageDirectory,
+        checkIgnoredLines: true,
+      ),
+    );
     _logMessage('($vmServiceUri): done merging coverage data into global coverage map.');
   }
 
@@ -125,14 +132,19 @@ class CoverageCollector extends TestWatcher {
   /// has been run to completion so that all coverage data has been recorded.
   ///
   /// The returned [Future] completes when the coverage is collected.
-  Future<void> collectCoverage(TestDevice testDevice, {
+  Future<void> collectCoverage(
+    TestDevice testDevice, {
     @visibleForTesting FlutterVmService? serviceOverride,
   }) async {
-    final Stopwatch? totalTestTimeRecorderStopwatch = testTimeRecorder?.start(TestTimePhases.CoverageTotal);
+    final Stopwatch? totalTestTimeRecorderStopwatch = testTimeRecorder?.start(
+      TestTimePhases.CoverageTotal,
+    );
 
     late Map<String, dynamic> data;
 
-    final Stopwatch? collectTestTimeRecorderStopwatch = testTimeRecorder?.start(TestTimePhases.CoverageCollect);
+    final Stopwatch? collectTestTimeRecorderStopwatch = testTimeRecorder?.start(
+      TestTimePhases.CoverageCollect,
+    );
 
     final Future<void> processComplete = testDevice.finished.then(
       (Object? obj) => obj,
@@ -140,39 +152,42 @@ class CoverageCollector extends TestWatcher {
         if (error is TestDeviceException) {
           throw Exception(
             'Failed to collect coverage, test device terminated prematurely with '
-            'error: ${error.message}.\n$stackTrace');
+            'error: ${error.message}.\n$stackTrace',
+          );
         }
         return Future<Object?>.error(error, stackTrace);
-      }
+      },
     );
 
-    final Future<void> collectionComplete = testDevice.vmServiceUri
-      .then((Uri? vmServiceUri) {
-        _logMessage('collecting coverage data from $testDevice at $vmServiceUri...');
-        return collect(
-          vmServiceUri!,
-          libraryNames,
-          serviceOverride: serviceOverride,
-          branchCoverage: branchCoverage,
-          coverableLineCache: _coverableLineCache,
-        ).then<void>((Map<String, dynamic> result) {
-            _logMessage('Collected coverage data.');
-            data = result;
-          });
+    final Future<void> collectionComplete = testDevice.vmServiceUri.then((Uri? vmServiceUri) {
+      _logMessage('collecting coverage data from $testDevice at $vmServiceUri...');
+      return collect(
+        vmServiceUri!,
+        libraryNames,
+        serviceOverride: serviceOverride,
+        branchCoverage: branchCoverage,
+        coverableLineCache: _coverableLineCache,
+      ).then<void>((Map<String, dynamic> result) {
+        _logMessage('Collected coverage data.');
+        data = result;
       });
+    });
 
-    await Future.any<void>(<Future<void>>[ processComplete, collectionComplete ]);
+    await Future.any<void>(<Future<void>>[processComplete, collectionComplete]);
 
     testTimeRecorder?.stop(TestTimePhases.CoverageCollect, collectTestTimeRecorderStopwatch!);
 
     _logMessage('Merging coverage data...');
-    final Stopwatch? parseTestTimeRecorderStopwatch = testTimeRecorder?.start(TestTimePhases.CoverageParseJson);
+    final Stopwatch? parseTestTimeRecorderStopwatch = testTimeRecorder?.start(
+      TestTimePhases.CoverageParseJson,
+    );
 
-   final Map<String, coverage.HitMap> hitmap = coverage.HitMap.parseJsonSync(
-        data['coverage'] as List<Map<String, dynamic>>,
-        checkIgnoredLines: true,
-        resolver: resolver ?? await CoverageCollector.getResolver(packageDirectory),
-        ignoredLinesInFilesCache: _ignoredLinesInFilesCache);
+    final Map<String, coverage.HitMap> hitmap = coverage.HitMap.parseJsonSync(
+      data['coverage'] as List<Map<String, dynamic>>,
+      checkIgnoredLines: true,
+      resolver: resolver ?? await CoverageCollector.getResolver(packageDirectory),
+      ignoredLinesInFilesCache: _ignoredLinesInFilesCache,
+    );
     testTimeRecorder?.stop(TestTimePhases.CoverageParseJson, parseTestTimeRecorderStopwatch!);
 
     _addHitmap(hitmap);
@@ -193,36 +208,41 @@ class CoverageCollector extends TestWatcher {
       return null;
     }
     if (formatter == null) {
-      final coverage.Resolver usedResolver = resolver ?? this.resolver ?? await CoverageCollector.getResolver(packagesPath);
+      final coverage.Resolver usedResolver =
+          resolver ?? this.resolver ?? await CoverageCollector.getResolver(packagesPath);
       final String packagePath = globals.fs.currentDirectory.path;
       // find paths for libraryNames so we can include them to report
-      final List<String>? libraryPaths = libraryNames
-          ?.map((String e) => usedResolver.resolve('package:$e'))
-          .whereType<String>()
-          .toList();
-      final List<String>? reportOn = coverageDirectory == null
-          ? libraryPaths
-          : <String>[coverageDirectory.path];
-      formatter = (Map<String, coverage.HitMap> hitmap) => hitmap
-          .formatLcov(usedResolver, reportOn: reportOn, basePath: packagePath);
+      final List<String>? libraryPaths =
+          libraryNames
+              ?.map((String e) => usedResolver.resolve('package:$e'))
+              .whereType<String>()
+              .toList();
+      final List<String>? reportOn =
+          coverageDirectory == null ? libraryPaths : <String>[coverageDirectory.path];
+      formatter =
+          (Map<String, coverage.HitMap> hitmap) =>
+              hitmap.formatLcov(usedResolver, reportOn: reportOn, basePath: packagePath);
     }
     final String result = formatter(_globalHitmap!);
     _globalHitmap = null;
     return result;
   }
 
-  Future<bool> collectCoverageData(String? coveragePath, { bool mergeCoverageData = false, Directory? coverageDirectory }) async {
-    final String? coverageData = await finalizeCoverage(
-      coverageDirectory: coverageDirectory,
-    );
+  Future<bool> collectCoverageData(
+    String? coveragePath, {
+    bool mergeCoverageData = false,
+    Directory? coverageDirectory,
+  }) async {
+    final String? coverageData = await finalizeCoverage(coverageDirectory: coverageDirectory);
     _logMessage('coverage information collection complete');
     if (coverageData == null) {
       return false;
     }
 
-    final File coverageFile = globals.fs.file(coveragePath)
-      ..createSync(recursive: true)
-      ..writeAsStringSync(coverageData, flush: true);
+    final File coverageFile =
+        globals.fs.file(coveragePath)
+          ..createSync(recursive: true)
+          ..writeAsStringSync(coverageData, flush: true);
     _logMessage('wrote coverage data to $coveragePath (size=${coverageData.length})');
 
     const String baseCoverageData = 'coverage/lcov.base.info';
@@ -239,18 +259,28 @@ class CoverageCollector extends TestWatcher {
         } else if (globals.platform.isMacOS) {
           installMessage = 'Consider running "brew install lcov".';
         }
-        _logMessage('Missing "lcov" tool. Unable to merge coverage data.\n$installMessage', error: true);
+        _logMessage(
+          'Missing "lcov" tool. Unable to merge coverage data.\n$installMessage',
+          error: true,
+        );
         return false;
       }
 
-      final Directory tempDir = globals.fs.systemTempDirectory.createTempSync('flutter_tools_test_coverage.');
+      final Directory tempDir = globals.fs.systemTempDirectory.createTempSync(
+        'flutter_tools_test_coverage.',
+      );
       try {
-        final File sourceFile = coverageFile.copySync(globals.fs.path.join(tempDir.path, 'lcov.source.info'));
+        final File sourceFile = coverageFile.copySync(
+          globals.fs.path.join(tempDir.path, 'lcov.source.info'),
+        );
         final RunResult result = globals.processUtils.runSync(<String>[
           'lcov',
-          '--add-tracefile', baseCoverageData,
-          '--add-tracefile', sourceFile.path,
-          '--output-file', coverageFile.path,
+          '--add-tracefile',
+          baseCoverageData,
+          '--add-tracefile',
+          sourceFile.path,
+          '--output-file',
+          coverageFile.path,
         ]);
         if (result.exitCode != 0) {
           return false;
@@ -263,13 +293,15 @@ class CoverageCollector extends TestWatcher {
   }
 
   @override
-  Future<void> handleTestCrashed(TestDevice testDevice) async { }
+  Future<void> handleTestCrashed(TestDevice testDevice) async {}
 
   @override
-  Future<void> handleTestTimedOut(TestDevice testDevice) async { }
+  Future<void> handleTestTimedOut(TestDevice testDevice) async {}
 }
 
-Future<Map<String, dynamic>> collect(Uri serviceUri, Set<String>? libraryNames, {
+Future<Map<String, dynamic>> collect(
+  Uri serviceUri,
+  Set<String>? libraryNames, {
   bool waitPaused = false,
   String? debugName,
   @visibleForTesting bool forceSequential = false,
@@ -278,7 +310,11 @@ Future<Map<String, dynamic>> collect(Uri serviceUri, Set<String>? libraryNames, 
   Map<String, Set<int>>? coverableLineCache,
 }) {
   return coverage.collect(
-    serviceUri, false, false, false, libraryNames,
+    serviceUri,
+    false,
+    false,
+    false,
+    libraryNames,
     serviceOverrideForTesting: serviceOverride?.service,
     branchCoverage: branchCoverage,
     coverableLineCache: coverableLineCache,

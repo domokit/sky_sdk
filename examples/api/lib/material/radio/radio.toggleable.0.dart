@@ -48,16 +48,17 @@ class _ToggleableExampleState extends State<ToggleableExample> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Radio<int>(
-                  value: index,
-                  groupValue: groupValue,
-                  // TRY THIS: Try setting the toggleable value to false and
-                  // see how that changes the behavior of the widget.
-                  toggleable: true,
-                  onChanged: (int? value) {
-                    setState(() {
-                      groupValue = value;
-                    });
-                  }),
+                value: index,
+                groupValue: groupValue,
+                // TRY THIS: Try setting the toggleable value to false and
+                // see how that changes the behavior of the widget.
+                toggleable: true,
+                onChanged: (int? value) {
+                  setState(() {
+                    groupValue = value;
+                  });
+                },
+              ),
               Text(selections[index]),
             ],
           );

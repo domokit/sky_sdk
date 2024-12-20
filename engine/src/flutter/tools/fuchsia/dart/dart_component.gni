@@ -1,0 +1,129 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/tools/fuchsia/dart/config.gni")
+import("//flutter/tools/fuchsia/dart/dart.gni")
+import("//flutter/tools/fuchsia/flutter/internal/flutter_dart_component.gni")
+
+# Defines a Dart component which can be used in a fuchsia package
+#
+# Dart components require at least one library which contains a main
+# entry point. The library should be defined using the dart_library.gni.
+#
+# ```
+# dart_library("lib") {
+#   package_name = "my_library"
+#   sources = [ "main.dart" ]
+# }
+# ```
+#
+# Once a library is defined a dart component can be created which
+# depends on this package. If the component needs any other resources they may
+# be defined using the resource target and added to the components deps.
+#
+# ```
+# resource("text-file") {
+#   sources = [ "text_file.txt" ]
+#   outputs = [ "data/text_file.txt" ]
+# }
+#
+# dart_component("my-component") {
+#   manifest = "meta/my-component.cmx"
+#   main_package = "my_library"
+#   deps = [
+#     ":lib",
+#     ":text-file",
+#   ]
+# }
+# ```
+#
+# Once a component is defined it can be added as a dep of a fuchsia_package
+# ```
+# fuchsia_package("my-package") {
+#   deps = [
+#     ":my-component",
+#   ]
+# }
+# ```
+#
+# Parameters
+#
+#   manifest (required)
+#     The component manifest
+#     Type: path
+#
+#   main_package (optional)
+#     The name of the package containing main_dart
+#     Type: string
+#     Default: component_name with dashes replaced by underscores, if defined.
+#       Otherwise, the target_name with dashes replaced by underscores will be
+#       used.
+#
+#   component_name (optional)
+#     The name of the component.
+#     Type: string
+#     Default: target_name
+#
+#   main_dart (optional)
+#     File containing the main function of the component.
+#     Type: string
+#     Default: main.dart
+#
+#   package_root (optional)
+#     The root of the package generated for this component. Each component must
+#     have a unique package_root. For each component, there must be a
+#     pubspec.yaml and an analysis_options.yaml at the package root.
+#     Type: path
+#     Default: "."
+#
+#   build_cfg (optional)
+#     Specifies the parameters for building the component.
+#     See //build/dart/dart_build_config.gni for predefined configs.
+#
+#  deps
+#  testonly
+#  visibility
+template("dart_component") {
+  assert(defined(invoker.manifest), "Must define manifest")
+
+  if (defined(invoker.build_cfg)) {
+    _build_cfg = invoker.build_cfg
+  } else {
+    _build_cfg = dart_default_build_cfg
+  }
+
+  _component_deps = []
+  if (defined(invoker.deps)) {
+    _component_deps += invoker.deps
+  }
+
+  if (defined(invoker.main_dart)) {
+    _main_dart = invoker.main_dart
+  } else {
+    _main_dart = "main.dart"
+  }
+
+  if (defined(invoker.main_package)) {
+    _main_package = invoker.main_package
+  } else if (defined(invoker.component_name)) {
+    _main_package = string_replace(invoker.component_name, "-", "_")
+  } else {
+    _main_package = string_replace(target_name, "-", "_")
+  }
+
+  flutter_dart_component(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "main_package",
+                             "build_cfg",
+                             "deps",
+                             "main_dart",
+                           ])
+    main_package = _main_package
+    deps = _component_deps
+    main_dart = _main_dart
+    build_cfg = _build_cfg
+  }
+}

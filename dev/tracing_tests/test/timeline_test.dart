@@ -22,7 +22,7 @@ final Set<String> interestingLabels = <String>{
 };
 
 class TestRoot extends StatefulWidget {
-  const TestRoot({ super.key });
+  const TestRoot({super.key});
 
   static late final TestRootState state;
 
@@ -63,36 +63,55 @@ void main() {
   test('Timeline', () async {
     // We don't have expectations around the first frame because there's a race around
     // the warm-up frame that we don't want to get involved in here.
-    await runFrame(() { runApp(const TestRoot()); });
+    await runFrame(() {
+      runApp(const TestRoot());
+    });
     await SchedulerBinding.instance.endOfFrame;
     await fetchInterestingEvents(interestingLabels);
 
     // The next few cases build the exact same tree so should have no effect.
 
     debugProfileBuildsEnabled = true;
-    await runFrame(() { TestRoot.state.rebuild(); });
-    expect(
-      await fetchInterestingEventNames(interestingLabels),
-      <String>['BUILD', 'LAYOUT', 'UPDATING COMPOSITING BITS', 'PAINT', 'COMPOSITING', 'FINALIZE TREE'],
-    );
+    await runFrame(() {
+      TestRoot.state.rebuild();
+    });
+    expect(await fetchInterestingEventNames(interestingLabels), <String>[
+      'BUILD',
+      'LAYOUT',
+      'UPDATING COMPOSITING BITS',
+      'PAINT',
+      'COMPOSITING',
+      'FINALIZE TREE',
+    ]);
     debugProfileBuildsEnabled = false;
 
     debugProfileLayoutsEnabled = true;
-    await runFrame(() { TestRoot.state.rebuild(); });
-    expect(
-      await fetchInterestingEventNames(interestingLabels),
-      <String>['BUILD', 'LAYOUT', 'UPDATING COMPOSITING BITS', 'PAINT', 'COMPOSITING', 'FINALIZE TREE'],
-    );
+    await runFrame(() {
+      TestRoot.state.rebuild();
+    });
+    expect(await fetchInterestingEventNames(interestingLabels), <String>[
+      'BUILD',
+      'LAYOUT',
+      'UPDATING COMPOSITING BITS',
+      'PAINT',
+      'COMPOSITING',
+      'FINALIZE TREE',
+    ]);
     debugProfileLayoutsEnabled = false;
 
     debugProfilePaintsEnabled = true;
-    await runFrame(() { TestRoot.state.rebuild(); });
-    expect(
-      await fetchInterestingEventNames(interestingLabels),
-      <String>['BUILD', 'LAYOUT', 'UPDATING COMPOSITING BITS', 'PAINT', 'COMPOSITING', 'FINALIZE TREE'],
-    );
+    await runFrame(() {
+      TestRoot.state.rebuild();
+    });
+    expect(await fetchInterestingEventNames(interestingLabels), <String>[
+      'BUILD',
+      'LAYOUT',
+      'UPDATING COMPOSITING BITS',
+      'PAINT',
+      'COMPOSITING',
+      'FINALIZE TREE',
+    ]);
     debugProfilePaintsEnabled = false;
-
 
     // Now we replace the widgets each time to cause a rebuild.
 
@@ -101,39 +120,79 @@ void main() {
 
     debugProfileBuildsEnabled = true;
     debugEnhanceBuildTimelineArguments = true;
-    await runFrame(() { TestRoot.state.updateWidget(Placeholder(key: UniqueKey(), color: const Color(0xFFFFFFFF))); });
+    await runFrame(() {
+      TestRoot.state.updateWidget(Placeholder(key: UniqueKey(), color: const Color(0xFFFFFFFF)));
+    });
     events = await fetchInterestingEvents(interestingLabels);
-    expect(
-      events.map<String>(eventToName),
-      <String>['BUILD', 'Placeholder', 'CustomPaint', 'LAYOUT', 'UPDATING COMPOSITING BITS', 'PAINT', 'COMPOSITING', 'FINALIZE TREE'],
-    );
-    args = (events.where((TimelineEvent event) => event.json!['name'] == '$Placeholder').single.json!['args'] as Map<String, Object?>).cast<String, String>();
+    expect(events.map<String>(eventToName), <String>[
+      'BUILD',
+      'Placeholder',
+      'CustomPaint',
+      'LAYOUT',
+      'UPDATING COMPOSITING BITS',
+      'PAINT',
+      'COMPOSITING',
+      'FINALIZE TREE',
+    ]);
+    args =
+        (events
+                    .where((TimelineEvent event) => event.json!['name'] == '$Placeholder')
+                    .single
+                    .json!['args']
+                as Map<String, Object?>)
+            .cast<String, String>();
     expect(args['color'], '${const Color(0xffffffff)}');
     debugProfileBuildsEnabled = false;
     debugEnhanceBuildTimelineArguments = false;
 
     debugProfileBuildsEnabledUserWidgets = true;
     debugEnhanceBuildTimelineArguments = true;
-    await runFrame(() { TestRoot.state.updateWidget(Placeholder(key: UniqueKey(), color: const Color(0xFFFFFFFF))); });
+    await runFrame(() {
+      TestRoot.state.updateWidget(Placeholder(key: UniqueKey(), color: const Color(0xFFFFFFFF)));
+    });
     events = await fetchInterestingEvents(interestingLabels);
-    expect(
-      events.map<String>(eventToName),
-      <String>['BUILD', 'Placeholder', 'LAYOUT', 'UPDATING COMPOSITING BITS', 'PAINT', 'COMPOSITING', 'FINALIZE TREE'],
-    );
-    args = (events.where((TimelineEvent event) => event.json!['name'] == '$Placeholder').single.json!['args'] as Map<String, Object?>).cast<String, String>();
+    expect(events.map<String>(eventToName), <String>[
+      'BUILD',
+      'Placeholder',
+      'LAYOUT',
+      'UPDATING COMPOSITING BITS',
+      'PAINT',
+      'COMPOSITING',
+      'FINALIZE TREE',
+    ]);
+    args =
+        (events
+                    .where((TimelineEvent event) => event.json!['name'] == '$Placeholder')
+                    .single
+                    .json!['args']
+                as Map<String, Object?>)
+            .cast<String, String>();
     expect(args['color'], '${const Color(0xffffffff)}');
     debugProfileBuildsEnabledUserWidgets = false;
     debugEnhanceBuildTimelineArguments = false;
 
     debugProfileLayoutsEnabled = true;
     debugEnhanceLayoutTimelineArguments = true;
-    await runFrame(() { TestRoot.state.updateWidget(Placeholder(key: UniqueKey())); });
+    await runFrame(() {
+      TestRoot.state.updateWidget(Placeholder(key: UniqueKey()));
+    });
     events = await fetchInterestingEvents(interestingLabels);
-    expect(
-      events.map<String>(eventToName),
-      <String>['BUILD', 'LAYOUT', 'RenderCustomPaint', 'UPDATING COMPOSITING BITS', 'PAINT', 'COMPOSITING', 'FINALIZE TREE'],
-    );
-    args = (events.where((TimelineEvent event) => event.json!['name'] == '$RenderCustomPaint').single.json!['args'] as Map<String, Object?>).cast<String, String>();
+    expect(events.map<String>(eventToName), <String>[
+      'BUILD',
+      'LAYOUT',
+      'RenderCustomPaint',
+      'UPDATING COMPOSITING BITS',
+      'PAINT',
+      'COMPOSITING',
+      'FINALIZE TREE',
+    ]);
+    args =
+        (events
+                    .where((TimelineEvent event) => event.json!['name'] == '$RenderCustomPaint')
+                    .single
+                    .json!['args']
+                as Map<String, Object?>)
+            .cast<String, String>();
     expect(args['creator'], startsWith('CustomPaint'));
     expect(args['creator'], contains('Placeholder'));
     expect(args['painter'], startsWith('_PlaceholderPainter#'));
@@ -142,18 +201,30 @@ void main() {
 
     debugProfilePaintsEnabled = true;
     debugEnhancePaintTimelineArguments = true;
-    await runFrame(() { TestRoot.state.updateWidget(Placeholder(key: UniqueKey())); });
+    await runFrame(() {
+      TestRoot.state.updateWidget(Placeholder(key: UniqueKey()));
+    });
     events = await fetchInterestingEvents(interestingLabels);
-    expect(
-      events.map<String>(eventToName),
-      <String>['BUILD', 'LAYOUT', 'UPDATING COMPOSITING BITS', 'PAINT', 'RenderCustomPaint', 'COMPOSITING', 'FINALIZE TREE'],
-    );
-    args = (events.where((TimelineEvent event) => event.json!['name'] == '$RenderCustomPaint').single.json!['args'] as Map<String, Object?>).cast<String, String>();
+    expect(events.map<String>(eventToName), <String>[
+      'BUILD',
+      'LAYOUT',
+      'UPDATING COMPOSITING BITS',
+      'PAINT',
+      'RenderCustomPaint',
+      'COMPOSITING',
+      'FINALIZE TREE',
+    ]);
+    args =
+        (events
+                    .where((TimelineEvent event) => event.json!['name'] == '$RenderCustomPaint')
+                    .single
+                    .json!['args']
+                as Map<String, Object?>)
+            .cast<String, String>();
     expect(args['creator'], startsWith('CustomPaint'));
     expect(args['creator'], contains('Placeholder'));
     expect(args['painter'], startsWith('_PlaceholderPainter#'));
     debugProfilePaintsEnabled = false;
     debugEnhancePaintTimelineArguments = false;
-
   }, skip: isBrowser); // [intended] uses dart:isolate and io.
 }

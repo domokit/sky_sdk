@@ -1,0 +1,57 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+if (is_fuchsia) {
+  import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+}
+
+source_set("vulkan") {
+  sources = [
+    "vulkan_application.cc",
+    "vulkan_application.h",
+    "vulkan_backbuffer.cc",
+    "vulkan_backbuffer.h",
+    "vulkan_command_buffer.cc",
+    "vulkan_command_buffer.h",
+    "vulkan_debug_report.cc",
+    "vulkan_debug_report.h",
+    "vulkan_device.cc",
+    "vulkan_device.h",
+    "vulkan_image.cc",
+    "vulkan_image.h",
+    "vulkan_native_surface.cc",
+    "vulkan_native_surface.h",
+    "vulkan_skia_proc_table.cc",
+    "vulkan_skia_proc_table.h",
+    "vulkan_surface.cc",
+    "vulkan_surface.h",
+    "vulkan_swapchain.h",
+    "vulkan_utilities.cc",
+    "vulkan_utilities.h",
+    "vulkan_window.cc",
+    "vulkan_window.h",
+  ]
+
+  if (is_android) {
+    sources += [
+      "vulkan_native_surface_android.cc",
+      "vulkan_native_surface_android.h",
+      "vulkan_swapchain.cc",
+    ]
+  } else {
+    sources += [ "vulkan_swapchain_stub.cc" ]
+  }
+
+  deps = [
+    "procs",
+    "//flutter/flutter_vma:flutter_skia_vma",
+    "//flutter/fml",
+    "//flutter/skia",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+
+  public_deps =
+      [ "//flutter/third_party/vulkan-deps/vulkan-headers/src:vulkan_headers" ]
+}

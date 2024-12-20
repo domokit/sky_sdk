@@ -21,8 +21,10 @@ import 'theme.dart';
 enum CupertinoButtonSize {
   /// Displays a smaller button with round sides and smaller text (uses [CupertinoTextThemeData.actionSmallTextStyle]).
   small,
+
   /// Displays a medium sized button with round sides and regular-sized text.
   medium,
+
   /// Displays a (classic) large button with rounded edges and regular-sized text.
   large,
 }
@@ -33,8 +35,10 @@ enum CupertinoButtonSize {
 enum _CupertinoButtonStyle {
   /// No background or border, primary foreground color.
   plain,
+
   /// Translucent background, primary foreground color.
   tinted,
+
   /// Solid background, contrasting foreground color.
   filled,
 }
@@ -263,8 +267,8 @@ class _CupertinoButtonState extends State<CupertinoButton> with SingleTickerProv
       vsync: this,
     );
     _opacityAnimation = _animationController
-      .drive(CurveTween(curve: Curves.decelerate))
-      .drive(_opacityTween);
+        .drive(CurveTween(curve: Curves.decelerate))
+        .drive(_opacityTween);
     _setTween();
   }
 
@@ -319,9 +323,18 @@ class _CupertinoButtonState extends State<CupertinoButton> with SingleTickerProv
       return;
     }
     final bool wasHeldDown = _buttonHeldDown;
-    final TickerFuture ticker = _buttonHeldDown
-        ? _animationController.animateTo(1.0, duration: kFadeOutDuration, curve: Curves.easeInOutCubicEmphasized)
-        : _animationController.animateTo(0.0, duration: kFadeInDuration, curve: Curves.easeOutCubic);
+    final TickerFuture ticker =
+        _buttonHeldDown
+            ? _animationController.animateTo(
+              1.0,
+              duration: kFadeOutDuration,
+              curve: Curves.easeInOutCubicEmphasized,
+            )
+            : _animationController.animateTo(
+              0.0,
+              duration: kFadeInDuration,
+              curve: Curves.easeOutCubic,
+            );
     ticker.then<void>((void value) {
       if (mounted && wasHeldDown != _buttonHeldDown) {
         _animate();
@@ -344,43 +357,44 @@ class _CupertinoButtonState extends State<CupertinoButton> with SingleTickerProv
     final bool enabled = widget.enabled;
     final CupertinoThemeData themeData = CupertinoTheme.of(context);
     final Color primaryColor = themeData.primaryColor;
-    final Color? backgroundColor = (
-      widget.color == null
-        ? widget._style != _CupertinoButtonStyle.plain
-          ? primaryColor
-          : null
-        : CupertinoDynamicColor.maybeResolve(widget.color, context)
-    )?.withOpacity(
-      widget._style == _CupertinoButtonStyle.tinted
-        ? CupertinoTheme.brightnessOf(context) == Brightness.light
-          ? kCupertinoButtonTintedOpacityLight
-          : kCupertinoButtonTintedOpacityDark
-        : widget.color?.opacity ?? 1.0,
-    );
-    final Color foregroundColor = widget._style == _CupertinoButtonStyle.filled
-      ? themeData.primaryContrastingColor
-      : enabled
-        ? primaryColor
-        : CupertinoDynamicColor.resolve(CupertinoColors.tertiaryLabel, context);
+    final Color? backgroundColor = (widget.color == null
+            ? widget._style != _CupertinoButtonStyle.plain
+                ? primaryColor
+                : null
+            : CupertinoDynamicColor.maybeResolve(widget.color, context))
+        ?.withOpacity(
+          widget._style == _CupertinoButtonStyle.tinted
+              ? CupertinoTheme.brightnessOf(context) == Brightness.light
+                  ? kCupertinoButtonTintedOpacityLight
+                  : kCupertinoButtonTintedOpacityDark
+              : widget.color?.opacity ?? 1.0,
+        );
+    final Color foregroundColor =
+        widget._style == _CupertinoButtonStyle.filled
+            ? themeData.primaryContrastingColor
+            : enabled
+            ? primaryColor
+            : CupertinoDynamicColor.resolve(CupertinoColors.tertiaryLabel, context);
 
-    final Color effectiveFocusOutlineColor = widget.focusColor ??
-      HSLColor
-        .fromColor((backgroundColor ?? CupertinoColors.activeBlue)
-          .withOpacity(kCupertinoFocusColorOpacity)
-        ).withLightness(kCupertinoFocusColorBrightness)
-        .withSaturation(kCupertinoFocusColorSaturation)
-        .toColor();
+    final Color effectiveFocusOutlineColor =
+        widget.focusColor ??
+        HSLColor.fromColor(
+              (backgroundColor ?? CupertinoColors.activeBlue).withOpacity(
+                kCupertinoFocusColorOpacity,
+              ),
+            )
+            .withLightness(kCupertinoFocusColorBrightness)
+            .withSaturation(kCupertinoFocusColorSaturation)
+            .toColor();
 
-    final TextStyle textStyle = (
-      widget.sizeStyle == CupertinoButtonSize.small
-        ? themeData.textTheme.actionSmallTextStyle
-        : themeData.textTheme.actionTextStyle
-    ).copyWith(color: foregroundColor);
+    final TextStyle textStyle = (widget.sizeStyle == CupertinoButtonSize.small
+            ? themeData.textTheme.actionSmallTextStyle
+            : themeData.textTheme.actionTextStyle)
+        .copyWith(color: foregroundColor);
     final IconThemeData iconTheme = IconTheme.of(context).copyWith(
       color: foregroundColor,
-      size: textStyle.fontSize != null
-        ? textStyle.fontSize! * 1.2
-        : kCupertinoButtonDefaultIconSize,
+      size:
+          textStyle.fontSize != null ? textStyle.fontSize! * 1.2 : kCupertinoButtonDefaultIconSize,
     );
 
     return MouseRegion(
@@ -403,26 +417,35 @@ class _CupertinoButtonState extends State<CupertinoButton> with SingleTickerProv
             button: true,
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                minWidth: widget.minSize ?? kCupertinoButtonMinSize[widget.sizeStyle] ?? kMinInteractiveDimensionCupertino,
-                minHeight: widget.minSize ?? kCupertinoButtonMinSize[widget.sizeStyle] ?? kMinInteractiveDimensionCupertino,
+                minWidth:
+                    widget.minSize ??
+                    kCupertinoButtonMinSize[widget.sizeStyle] ??
+                    kMinInteractiveDimensionCupertino,
+                minHeight:
+                    widget.minSize ??
+                    kCupertinoButtonMinSize[widget.sizeStyle] ??
+                    kMinInteractiveDimensionCupertino,
               ),
               child: FadeTransition(
                 opacity: _opacityAnimation,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    border: enabled && isFocused
-                      ? Border.fromBorderSide(
-                          BorderSide(
-                            color: effectiveFocusOutlineColor,
-                            width: 3.5,
-                            strokeAlign: BorderSide.strokeAlignOutside,
-                          ),
-                        )
-                      : null,
-                    borderRadius: widget.borderRadius ?? kCupertinoButtonSizeBorderRadius[widget.sizeStyle],
-                    color: backgroundColor != null && !enabled
-                      ? CupertinoDynamicColor.resolve(widget.disabledColor, context)
-                      : backgroundColor,
+                    border:
+                        enabled && isFocused
+                            ? Border.fromBorderSide(
+                              BorderSide(
+                                color: effectiveFocusOutlineColor,
+                                width: 3.5,
+                                strokeAlign: BorderSide.strokeAlignOutside,
+                              ),
+                            )
+                            : null,
+                    borderRadius:
+                        widget.borderRadius ?? kCupertinoButtonSizeBorderRadius[widget.sizeStyle],
+                    color:
+                        backgroundColor != null && !enabled
+                            ? CupertinoDynamicColor.resolve(widget.disabledColor, context)
+                            : backgroundColor,
                   ),
                   child: Padding(
                     padding: widget.padding ?? kCupertinoButtonPadding[widget.sizeStyle]!,
@@ -432,10 +455,7 @@ class _CupertinoButtonState extends State<CupertinoButton> with SingleTickerProv
                       heightFactor: 1.0,
                       child: DefaultTextStyle(
                         style: textStyle,
-                        child: IconTheme(
-                          data: iconTheme,
-                          child: widget.child,
-                        ),
+                        child: IconTheme(data: iconTheme, child: widget.child),
                       ),
                     ),
                   ),

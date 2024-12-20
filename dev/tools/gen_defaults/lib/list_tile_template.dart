@@ -5,7 +5,10 @@
 import 'template.dart';
 
 class ListTileTemplate extends TokenTemplate {
-  const ListTileTemplate(super.blockName, super.fileName, super.tokens, {
+  const ListTileTemplate(
+    super.blockName,
+    super.fileName,
+    super.tokens, {
     super.colorSchemePrefix = '_colors.',
     super.textThemePrefix = '_textTheme.',
   });

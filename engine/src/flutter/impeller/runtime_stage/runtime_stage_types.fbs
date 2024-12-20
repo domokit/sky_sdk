@@ -1,0 +1,88 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+namespace impeller.fb;
+
+enum Stage:byte {
+  kVertex,
+  kFragment,
+  kCompute,
+}
+
+// The subset of impeller::ShaderType that may be used for uniform bindings.
+// kStruct is only supported for Impeller Vulkan.
+// kFloat encompases multiple float-based types e.g. vec2.
+enum UniformDataType:uint32 {
+  kFloat,
+  kSampledImage,
+  kStruct,
+}
+
+// A struct is made up solely of 4 byte floats and 4-byte paddings between
+// them.
+// This enum describes whether a particular byte is a float or padding.
+enum StructByteType:uint8 {
+  kPadding = 0,
+  kFloat = 1,
+}
+
+table UniformDescription {
+  name: string;
+  location: uint64;
+  binding: uint64;
+  type: UniformDataType;
+  bit_width: uint64;
+  rows: uint64;
+  columns: uint64;
+  array_elements: uint64;
+  struct_layout: [StructByteType];
+  struct_float_count: uint64;
+}
+
+// The subset of impeller::ShaderType that may be used for vertex attributes.
+enum InputDataType:uint32 {
+  kBoolean,
+  kSignedByte,
+  kUnsignedByte,
+  kSignedShort,
+  kUnsignedShort,
+  kSignedInt,
+  kUnsignedInt,
+  kSignedInt64,
+  kUnsignedInt64,
+  kFloat,
+  kDouble,
+}
+
+// This contains the same attribute reflection data as
+// impeller::ShaderStageIOSlot.
+table StageInput {
+  name: string;
+  location: uint64;
+  set: uint64;
+  binding: uint64;
+  type: InputDataType;
+  bit_width: uint64;
+  vec_size: uint64;
+  columns: uint64;
+  offset: uint64;
+}
+
+table RuntimeStage {
+  stage: Stage;
+  entrypoint: string;
+  inputs: [StageInput];
+  uniforms: [UniformDescription];
+  shader: [ubyte];
+  struct_byte_length: uint64;
+  float_count: uint64;
+}
+
+table RuntimeStages {
+  sksl: RuntimeStage;
+  metal: RuntimeStage;
+  opengles: RuntimeStage;
+  opengles3: RuntimeStage;
+  vulkan: RuntimeStage;
+}

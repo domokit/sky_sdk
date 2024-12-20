@@ -4,7 +4,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_api_samples/widgets/focus_traversal/focus_traversal_group.0.dart' as example;
+import 'package:flutter_api_samples/widgets/focus_traversal/focus_traversal_group.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -12,10 +13,10 @@ void main() {
     return Focus.of(tester.element(find.text(text))).hasPrimaryFocus;
   }
 
-  testWidgets('The focus updates should follow the focus traversal groups policy', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.FocusTraversalGroupExampleApp(),
-    );
+  testWidgets('The focus updates should follow the focus traversal groups policy', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.FocusTraversalGroupExampleApp());
 
     // Set the focus to the first button.
     Focus.of(tester.element(find.text('num: 0'))).requestFocus();

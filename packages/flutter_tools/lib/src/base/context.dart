@@ -99,7 +99,8 @@ class AppContext {
       if (index >= 0) {
         // We're already in the process of trying to generate this type.
         throw ContextDependencyCycleException._(
-            UnmodifiableListView<Type>(_reentrantChecks!.sublist(index)));
+          UnmodifiableListView<Type>(_reentrantChecks!.sublist(index)),
+        );
       }
 
       _reentrantChecks!.add(type);

@@ -17,9 +17,7 @@ class CallbackShortcutsApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('CallbackShortcuts Sample')),
-        body: const Center(
-          child: CallbackShortcutsExample(),
-        ),
+        body: const Center(child: CallbackShortcutsExample()),
       ),
     );
   }

@@ -16,10 +16,12 @@ final CommandRunner<void> runner =
       ..addCommand(UploadResultsCommand());
 
 Future<void> main(List<String> rawArgs) async {
-  unawaited(runner.run(rawArgs).catchError((dynamic error) {
-    stderr.writeln('$error\n');
-    stderr.writeln('Usage:\n');
-    stderr.writeln(runner.usage);
-    exit(64); // Exit code 64 indicates a usage error.
-  }));
+  unawaited(
+    runner.run(rawArgs).catchError((dynamic error) {
+      stderr.writeln('$error\n');
+      stderr.writeln('Usage:\n');
+      stderr.writeln(runner.usage);
+      exit(64); // Exit code 64 indicates a usage error.
+    }),
+  );
 }

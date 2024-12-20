@@ -25,18 +25,17 @@ void main(List<String> args) async {
     final CBuilder cbuilder = CBuilder.library(
       name: packageName,
       assetName: assetName,
-      sources: <String>[
-        'src/$packageName.c',
-      ],
+      sources: <String>['src/$packageName.c'],
       dartBuildFiles: <String>['hook/build.dart'],
     );
     final BuildOutputBuilder outputCatcher = BuildOutputBuilder();
     await cbuilder.run(
       config: config,
       output: outputCatcher,
-      logger: Logger('')
-        ..level = Level.ALL
-        ..onRecord.listen((LogRecord record) => print(record.message)),
+      logger:
+          Logger('')
+            ..level = Level.ALL
+            ..onRecord.listen((LogRecord record) => print(record.message)),
     );
     final BuildOutput catchedOutput = BuildOutput(outputCatcher.json);
     output.addDependencies(catchedOutput.dependencies);

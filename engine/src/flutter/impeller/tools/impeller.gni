@@ -1,0 +1,12 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Global configuration options for Impeller.
+import("//flutter/impeller/tools/args.gni")
+
+# The common template used by all Impeller components.
+import("//flutter/impeller/tools/component.gni")
+
+# Templates for compiling, reflecting, and packaging shaders used by Impeller.
+import("//flutter/impeller/tools/shaders.gni")

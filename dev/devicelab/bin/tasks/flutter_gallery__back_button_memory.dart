@@ -13,7 +13,12 @@ const String activityName = 'io.flutter.demo.gallery.MainActivity';
 /// Measure application memory usage after pausing and resuming the app
 /// with the Android back button.
 class BackButtonMemoryTest extends MemoryTest {
-  BackButtonMemoryTest() : super('${flutterDirectory.path}/dev/integration_tests/flutter_gallery', 'test_memory/back_button.dart', packageName);
+  BackButtonMemoryTest()
+    : super(
+        '${flutterDirectory.path}/dev/integration_tests/flutter_gallery',
+        'test_memory/back_button.dart',
+        packageName,
+      );
 
   @override
   AndroidDevice? get device => super.device as AndroidDevice?;
@@ -39,7 +44,11 @@ class BackButtonMemoryTest extends MemoryTest {
 
       // Relaunch the app, wait for it to launch.
       prepareForNextMessage('READY');
-      final String output = await device!.shellEval('am', <String>['start', '-n', '$packageName/$activityName']);
+      final String output = await device!.shellEval('am', <String>[
+        'start',
+        '-n',
+        '$packageName/$activityName',
+      ]);
       print('adb shell am start: $output');
       if (output.contains('Error')) {
         fail('unable to launch activity');

@@ -22,7 +22,9 @@ void main() {
 
       expect(GlobalCupertinoLocalizations.delegate.isSupported(locale), isTrue);
 
-      final CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(locale);
+      final CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(
+        locale,
+      );
 
       expect(localizations.datePickerYear(0), isNotNull);
       expect(localizations.datePickerYear(1), isNotNull);
@@ -107,8 +109,14 @@ void main() {
       expect(localizations.selectAllButtonLabel, isNotNull);
 
       expect(localizations.tabSemanticsLabel(tabIndex: 2, tabCount: 5), isNotNull);
-      expect(localizations.tabSemanticsLabel(tabIndex: 2, tabCount: 5), isNot(contains(r'$tabIndex')));
-      expect(localizations.tabSemanticsLabel(tabIndex: 2, tabCount: 5), isNot(contains(r'$tabCount')));
+      expect(
+        localizations.tabSemanticsLabel(tabIndex: 2, tabCount: 5),
+        isNot(contains(r'$tabIndex')),
+      );
+      expect(
+        localizations.tabSemanticsLabel(tabIndex: 2, tabCount: 5),
+        isNot(contains(r'$tabCount')),
+      );
       expect(() => localizations.tabSemanticsLabel(tabIndex: 0, tabCount: 5), throwsAssertionError);
       expect(() => localizations.tabSemanticsLabel(tabIndex: 2, tabCount: 0), throwsAssertionError);
     });
@@ -117,7 +125,9 @@ void main() {
   testWidgets('Spot check French', (WidgetTester tester) async {
     const Locale locale = Locale('fr');
     expect(GlobalCupertinoLocalizations.delegate.isSupported(locale), isTrue);
-    final CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(locale);
+    final CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(
+      locale,
+    );
     expect(localizations, isA<CupertinoLocalizationFr>());
     expect(localizations.alertDialogLabel, 'Alerte');
     expect(localizations.datePickerHourSemanticsLabel(1), '1 heure');
@@ -132,7 +142,9 @@ void main() {
   testWidgets('Spot check Chinese', (WidgetTester tester) async {
     const Locale locale = Locale('zh');
     expect(GlobalCupertinoLocalizations.delegate.isSupported(locale), isTrue);
-    final CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(locale);
+    final CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(
+      locale,
+    );
     expect(localizations, isA<CupertinoLocalizationZh>());
     expect(localizations.alertDialogLabel, '提醒');
     expect(localizations.datePickerHourSemanticsLabel(1), '1 点');
@@ -145,7 +157,9 @@ void main() {
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/53036.
-  testWidgets('`nb` uses `no` as its synonym when `nb` arb file is not present', (WidgetTester tester) async {
+  testWidgets('`nb` uses `no` as its synonym when `nb` arb file is not present', (
+    WidgetTester tester,
+  ) async {
     final File nbCupertinoArbFile = File(
       path.join(rootDirectoryPath, 'lib', 'src', 'l10n', 'cupertino_nb.arb'),
     );
@@ -153,11 +167,12 @@ void main() {
       path.join(rootDirectoryPath, 'lib', 'src', 'l10n', 'cupertino_no.arb'),
     );
 
-
     if (noCupertinoArbFile.existsSync() && !nbCupertinoArbFile.existsSync()) {
       Locale locale = const Locale.fromSubtags(languageCode: 'no');
       expect(GlobalCupertinoLocalizations.delegate.isSupported(locale), isTrue);
-      CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(locale);
+      CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(
+        locale,
+      );
       expect(localizations, isA<CupertinoLocalizationNo>());
 
       final String pasteButtonLabelNo = localizations.pasteButtonLabel;
@@ -176,11 +191,10 @@ void main() {
 
   // Regression test for https://github.com/flutter/flutter/issues/36704.
   testWidgets('kn arb file should be properly Unicode escaped', (WidgetTester tester) async {
-    final File file = File(
-      path.join(rootDirectoryPath, 'lib', 'src', 'l10n', 'cupertino_kn.arb'),
-    );
+    final File file = File(path.join(rootDirectoryPath, 'lib', 'src', 'l10n', 'cupertino_kn.arb'));
 
-    final Map<String, dynamic> bundle = json.decode(file.readAsStringSync()) as Map<String, dynamic>;
+    final Map<String, dynamic> bundle =
+        json.decode(file.readAsStringSync()) as Map<String, dynamic>;
 
     // Encodes the arb resource values if they have not already been
     // encoded.
@@ -205,56 +219,70 @@ void main() {
   testWidgets('Finnish translation for tab label', (WidgetTester tester) async {
     const Locale locale = Locale('fi');
     expect(GlobalCupertinoLocalizations.delegate.isSupported(locale), isTrue);
-    final CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(locale);
+    final CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(
+      locale,
+    );
     expect(localizations, isA<CupertinoLocalizationFi>());
     expect(localizations.tabSemanticsLabel(tabIndex: 1, tabCount: 2), 'Välilehti 1 kautta 2');
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/130874.
-  testWidgets('buildButtonItems builds a localized "No Replacements found" button when no suggestions', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      CupertinoApp(
-        locale: const Locale('ru'),
-        localizationsDelegates: GlobalCupertinoLocalizations.delegates,
-        supportedLocales: const <Locale>[Locale('en'), Locale('ru')],
-        home: _FakeEditableText()
-      ),
-    );
-    final _FakeEditableTextState editableTextState =
-        tester.state(find.byType(_FakeEditableText));
-    final List<ContextMenuButtonItem>? buttonItems =
-        CupertinoSpellCheckSuggestionsToolbar.buildButtonItems(editableTextState);
+  testWidgets(
+    'buildButtonItems builds a localized "No Replacements found" button when no suggestions',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        CupertinoApp(
+          locale: const Locale('ru'),
+          localizationsDelegates: GlobalCupertinoLocalizations.delegates,
+          supportedLocales: const <Locale>[Locale('en'), Locale('ru')],
+          home: _FakeEditableText(),
+        ),
+      );
+      final _FakeEditableTextState editableTextState = tester.state(find.byType(_FakeEditableText));
+      final List<ContextMenuButtonItem>? buttonItems =
+          CupertinoSpellCheckSuggestionsToolbar.buildButtonItems(editableTextState);
 
-    expect(buttonItems, isNotNull);
-    expect(buttonItems, hasLength(1));
-    expect(buttonItems!.first.label, 'Варианты замены не найдены');
-    expect(buttonItems.first.onPressed, isNull);
-  });
+      expect(buttonItems, isNotNull);
+      expect(buttonItems, hasLength(1));
+      expect(buttonItems!.first.label, 'Варианты замены не найдены');
+      expect(buttonItems.first.onPressed, isNull);
+    },
+  );
 
   // Regression test for https://github.com/flutter/flutter/issues/141764
   testWidgets('zh-CN translation for look up label', (WidgetTester tester) async {
     const Locale locale = Locale('zh');
     expect(GlobalCupertinoLocalizations.delegate.isSupported(locale), isTrue);
-    final CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(locale);
+    final CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(
+      locale,
+    );
     expect(localizations, isA<CupertinoLocalizationZh>());
     expect(localizations.lookUpButtonLabel, '查询');
   });
 
   // Regression test for https://github.com/flutter/flutter/pull/151364
-  testWidgets('ko-KR translation for cut, copy, paste label in ButtonLabel', (WidgetTester tester) async {
+  testWidgets('ko-KR translation for cut, copy, paste label in ButtonLabel', (
+    WidgetTester tester,
+  ) async {
     const Locale locale = Locale('ko');
     expect(GlobalCupertinoLocalizations.delegate.isSupported(locale), isTrue);
-    final CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(locale);
+    final CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(
+      locale,
+    );
     expect(localizations, isA<CupertinoLocalizationKo>());
     expect(localizations.cutButtonLabel, '잘라내기');
     expect(localizations.copyButtonLabel, '복사');
     expect(localizations.pasteButtonLabel, '붙여넣기');
   });
 
-  testWidgets('localizations.datePickerDayOfMonth uses the current locale for weekdays', (WidgetTester tester) async {
+  testWidgets('localizations.datePickerDayOfMonth uses the current locale for weekdays', (
+    WidgetTester tester,
+  ) async {
     const Locale locale = Locale('zh');
     expect(GlobalCupertinoLocalizations.delegate.isSupported(locale), isTrue);
-    final CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(locale);
+    final CupertinoLocalizations localizations = await GlobalCupertinoLocalizations.delegate.load(
+      locale,
+    );
     expect(localizations, isA<CupertinoLocalizationZh>());
     expect(localizations.datePickerDayOfMonth(1), '1日');
     expect(localizations.datePickerDayOfMonth(1, 2), '周二 1日');
@@ -262,13 +290,14 @@ void main() {
 }
 
 class _FakeEditableText extends EditableText {
-  _FakeEditableText() : super(
-    controller: TextEditingController(),
-    focusNode: FocusNode(),
-    backgroundCursorColor: CupertinoColors.white,
-    cursorColor: CupertinoColors.white,
-    style: const TextStyle(),
-  );
+  _FakeEditableText()
+    : super(
+        controller: TextEditingController(),
+        focusNode: FocusNode(),
+        backgroundCursorColor: CupertinoColors.white,
+        cursorColor: CupertinoColors.white,
+        style: const TextStyle(),
+      );
 
   @override
   _FakeEditableTextState createState() => _FakeEditableTextState();
@@ -282,12 +311,6 @@ class _FakeEditableTextState extends EditableTextState {
 
   @override
   SuggestionSpan? findSuggestionSpanAtCursorIndex(int cursorIndex) {
-    return const SuggestionSpan(
-      TextRange(
-        start: 0,
-        end: 0,
-      ),
-      <String>[],
-    );
+    return const SuggestionSpan(TextRange(start: 0, end: 0), <String>[]);
   }
 }

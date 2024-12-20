@@ -387,11 +387,7 @@ define("$bootstrapModule", ["$entrypoint", "dart_sdk"], function(app, dart_sdk) 
 ''';
 }
 
-typedef WebTestInfo = ({
-  String entryPoint,
-  Uri goldensUri,
-  String? configFile,
-});
+typedef WebTestInfo = ({String entryPoint, Uri goldensUri, String? configFile});
 
 /// Generates the bootstrap logic required for running a group of unit test
 /// files in the browser.
@@ -413,13 +409,15 @@ String generateTestEntrypoint({
   for (int index = 0; index < testInfos.length; index++) {
     final WebTestInfo testInfo = testInfos[index];
     final String entryPointPath = testInfo.entryPoint;
-    importMainStatements.add("import 'org-dartlang-app:///${Uri.file(entryPointPath)}' as test_$index show main;");
+    importMainStatements.add(
+      "import 'org-dartlang-app:///${Uri.file(entryPointPath)}' as test_$index show main;",
+    );
 
     final String? testConfigPath = testInfo.configFile;
     String? testConfigFunction = 'null';
     if (testConfigPath != null) {
       importTestConfigStatements.add(
-        "import 'org-dartlang-app:///${Uri.file(testConfigPath)}' as test_config_$index show testExecutable;"
+        "import 'org-dartlang-app:///${Uri.file(testConfigPath)}' as test_config_$index show testExecutable;",
       );
       testConfigFunction = 'test_config_$index.testExecutable';
     }
@@ -455,8 +453,7 @@ Future<void> main() {
 }
 
 /// Generate the unit test bootstrap file.
-String generateTestBootstrapFileContents(
-    String mainUri, String requireUrl, String mapperUrl) {
+String generateTestBootstrapFileContents(String mainUri, String requireUrl, String mapperUrl) {
   return '''
 (function() {
   if (typeof document != 'undefined') {

@@ -34,9 +34,7 @@ class _CupertinoMagnifierExampleState extends State<CupertinoMagnifierExample> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('CupertinoMagnifier Sample'),
-      ),
+      navigationBar: const CupertinoNavigationBar(middle: Text('CupertinoMagnifier Sample')),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -66,7 +64,7 @@ class _CupertinoMagnifierExampleState extends State<CupertinoMagnifierExample> {
                       borderRadius: BorderRadius.all(Radius.circular(magnifierRadius)),
                       additionalFocalPointOffset: Offset(0, -magnifierRadius),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

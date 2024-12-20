@@ -1,0 +1,105 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+android {
+    namespace = "dev.flutter.scenarios"
+    lintOptions {
+        abortOnError true
+        checkAllWarnings true
+        showAll true
+        warningsAsErrors true
+        checkTestSources true
+        textOutput 'stdout'
+        htmlReport false
+        xmlReport true
+        xmlOutput file("${rootProject.buildDir}/reports/lint-results.xml")
+        // UnpackedNativeCode can break stack unwinding - see b/193408481
+        // NewerVersionAvailable and GradleDependency need to be taken care of
+        // by a roller rather than as part of CI.
+        // The others are irrelevant for a test application.
+        disable 'UnpackedNativeCode','MissingApplicationIcon','GoogleAppIndexingApiWarning','GoogleAppIndexingWarning','GradleDependency','NewerVersionAvailable','Registered'
+    }
+    buildToolsVersion = '35.0.0-rc4'
+    compileSdk 35
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    defaultConfig {
+        applicationId 'dev.flutter.scenarios'
+        minSdkVersion 21
+        targetSdkVersion 35
+        versionCode 1
+        versionName '1.0'
+        testInstrumentationRunner 'dev.flutter.TestRunner'
+        testInstrumentationRunnerArgument 'listener', 'leakcanary.FailTestOnLeakRunListener'
+        testInstrumentationRunnerArguments clearPackageData: 'true'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets.main {
+        assets.srcDirs += "${project.buildDir}/assets"
+        if (project.hasProperty('libapp')) {
+            jni.srcDirs = []
+            jniLibs.srcDirs = [project.property('libapp')]
+        }
+    }
+}
+
+dependencies {
+    // Please *don't* add embedding dependencies to this file.
+    // The embedding dependencies are configured in tools/androidx/files.json.
+    // Only add test dependencies.
+
+    if (project.hasProperty('flutter_jar')) {
+        implementation files(project.property('flutter_jar'))
+    }
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'com.google.guava:guava:30.1-android'
+
+    def leakcanary_version = '2.7'
+    androidTestImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
+    androidTestImplementation "com.squareup.leakcanary:leakcanary-android-instrumentation:$leakcanary_version"
+}
+
+// Configure the embedding dependencies.
+apply from: new File(rootDir, '../../../tools/androidx/configure.gradle').absolutePath;
+configureDependencies(new File(rootDir, '../../..')) { dependency ->
+    dependencies {
+        implementation "$dependency"
+    }
+}
+
+tasks.register('generateLockfiles') {
+    rootProject.subprojects.each { subproject ->
+        def gradle = "${rootProject.projectDir}/../../../third_party/gradle/bin/gradle"
+        rootProject.exec {
+            workingDir rootProject.projectDir
+            executable gradle
+            args ":${subproject.name}:dependencies", "--write-locks"
+        }
+    }
+}
+
+// Override the kotlin language/api version to avoid warnings from
+// usages in leakcanaary.
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+        apiVersion = '1.4'
+        languageVersion = '1.4'
+    }
+}

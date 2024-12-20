@@ -8,10 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Scrollbar.0 works well on all platforms', (WidgetTester tester) async {
-
-    await tester.pumpWidget(
-      const example.ScrollbarExampleApp(),
-    );
+    await tester.pumpWidget(const example.ScrollbarExampleApp());
 
     final Finder buttonFinder = find.byType(Scrollbar);
     await tester.drag(buttonFinder.last, const Offset(0, 100.0));
@@ -20,9 +17,7 @@ void main() {
   }, variant: TargetPlatformVariant.all());
 
   testWidgets('The scrollbar should be painted when the user scrolls', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ScrollbarExampleApp(),
-    );
+    await tester.pumpWidget(const example.ScrollbarExampleApp());
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 10)); // Wait for the thumb to start appearing.
 

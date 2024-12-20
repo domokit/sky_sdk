@@ -1,0 +1,11 @@
+{
+    "configVersion": 2,
+    "packages": [
+        {
+            "name": "flutter_frontend_fixtures",
+            "rootUri": "../",
+            "packageUri": "lib",
+            "languageVersion": "2.12"
+          }
+    ]
+}

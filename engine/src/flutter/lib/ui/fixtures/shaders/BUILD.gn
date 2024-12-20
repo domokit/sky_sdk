@@ -1,0 +1,75 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/impeller/tools/impeller.gni")
+import("//flutter/testing/testing.gni")
+
+if (enable_unittests) {
+  group("shaders") {
+    testonly = true
+    deps = [
+      ":fixtures",
+      "//flutter/lib/ui/fixtures/shaders/general_shaders",
+      "//flutter/lib/ui/fixtures/shaders/supported_glsl_op_shaders",
+      "//flutter/lib/ui/fixtures/shaders/supported_op_shaders",
+    ]
+  }
+
+  impellerc("ink_sparkle") {
+    shaders = [ "//flutter/impeller/fixtures/ink_sparkle.frag" ]
+    shader_target_flags = [ "--sksl" ]
+    intermediates_subdir = "iplr"
+    sl_file_extension = "iplr"
+    iplr = true
+  }
+
+  impellerc("ink_sparkle_web") {
+    shaders = [ "//flutter/impeller/fixtures/ink_sparkle.frag" ]
+    shader_target_flags = [ "--sksl" ]
+    intermediates_subdir = "iplr-json"
+    sl_file_extension = "iplr"
+    iplr = true
+    json = true
+  }
+
+  impellerc("sampler_order_fixture") {
+    shaders = [
+      "//flutter/impeller/fixtures/ordering/shader_with_samplers.frag",
+      "//flutter/third_party/test_shaders/selman/glow_shader.frag",
+    ]
+    shader_target_flags = [
+      "--runtime-stage-metal",
+      "--runtime-stage-gles",
+      "--runtime-stage-vulkan",
+    ]
+    intermediates_subdir = "iplr-remap"
+    sl_file_extension = "iplr"
+    iplr = true
+  }
+
+  impellerc("flutter_gpu_shaders") {
+    shaders = [
+      "//flutter/impeller/fixtures/flutter_gpu_unlit.frag",
+      "//flutter/impeller/fixtures/flutter_gpu_unlit.vert",
+      "//flutter/impeller/fixtures/flutter_gpu_texture.frag",
+      "//flutter/impeller/fixtures/flutter_gpu_texture.vert",
+    ]
+
+    fixtures = rebase_path("//flutter/impeller/fixtures")
+    shader_bundle = "{\"UnlitFragment\": {\"type\": \"fragment\", \"file\": \"${fixtures}/flutter_gpu_unlit.frag\"}, \"UnlitVertex\": {\"type\": \"vertex\", \"file\": \"${fixtures}/flutter_gpu_unlit.vert\"}, \"TextureFragment\": {\"type\": \"fragment\", \"file\": \"${fixtures}/flutter_gpu_texture.frag\"}, \"TextureVertex\": {\"type\": \"vertex\", \"file\": \"${fixtures}/flutter_gpu_texture.vert\"}}"
+    shader_bundle_output = "test.shaderbundle"
+  }
+
+  test_fixtures("fixtures") {
+    deps = [
+      ":flutter_gpu_shaders",
+      ":ink_sparkle",
+      ":ink_sparkle_web",
+      ":sampler_order_fixture",
+    ]
+    fixtures = get_target_outputs(":ink_sparkle") +
+               get_target_outputs(":flutter_gpu_shaders")
+    dest = "$root_gen_dir/flutter/lib/ui"
+  }
+}

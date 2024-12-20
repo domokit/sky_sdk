@@ -1,0 +1,98 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+assert(is_fuchsia)
+
+import("//flutter/common/config.gni")
+import("//flutter/testing/testing.gni")
+import("//flutter/tools/fuchsia/dart.gni")
+import("//flutter/tools/fuchsia/fuchsia_host_bundle.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+
+product_suffix = ""
+
+if (flutter_runtime_mode == "release") {
+  product_suffix = "product_"
+}
+
+fuchsia_host_bundle("flutter_binaries") {
+  name = "flutter_binaries"
+
+  _flutter_tester_label = "//flutter/shell/testing:testing($host_toolchain)"
+
+  deps = [ _flutter_tester_label ]
+
+  _flutter_tester_bin_path =
+      rebase_path(get_label_info(_flutter_tester_label, "root_out_dir") +
+                  "/flutter_tester")
+
+  sources = [ _flutter_tester_bin_path ]
+}
+
+fuchsia_host_bundle("dart_binaries") {
+  name = "dart_binaries"
+
+  _gen_snapshot_to_use = gen_snapshot + "($host_toolchain)"
+  if (flutter_runtime_mode == "release") {
+    _gen_snapshot_to_use = gen_snapshot_product + "($host_toolchain)"
+  }
+
+  _kernel_compiler_label = "dart:kernel_compiler($host_toolchain)"
+  _frontend_server_label =
+      "//flutter/flutter_frontend_server:frontend_server($host_toolchain)"
+  _list_libraries_label = "dart:list_libraries($host_toolchain)"
+
+  deps = [
+    _frontend_server_label,
+    _gen_snapshot_to_use,
+    _kernel_compiler_label,
+    _list_libraries_label,
+  ]
+
+  _gen_snapshot_bin_path =
+      rebase_path(get_label_info(_gen_snapshot_to_use, "root_out_dir") + "/" +
+                  get_label_info(_gen_snapshot_to_use, "name"))
+
+  _kernel_compiler_path =
+      rebase_path(get_label_info(_kernel_compiler_label, "root_gen_dir") +
+                  "/kernel_compiler.dart.snapshot")
+
+  _frontend_server_path =
+      rebase_path(get_label_info(_frontend_server_label, "root_gen_dir") +
+                  "/frontend_server_aot.dart.snapshot")
+
+  _list_libraries_path =
+      rebase_path(get_label_info(_list_libraries_label, "root_gen_dir") +
+                  "/list_libraries.dart.snapshot")
+
+  sources = [
+    _frontend_server_path,
+    _gen_snapshot_bin_path,
+    _kernel_compiler_path,
+    _list_libraries_path,
+  ]
+}
+
+group("fuchsia") {
+  deps = [
+    ":dart_binaries",
+    ":flutter_binaries",
+    "dart_runner:dart_aot_${product_suffix}runner",
+    "dart_runner:dart_jit_${product_suffix}runner",
+    "flutter:flutter_aot_${product_suffix}runner",
+    "flutter:flutter_jit_${product_suffix}runner",
+  ]
+}
+
+if (enable_unittests) {
+  group("tests") {
+    testonly = true
+
+    deps = [
+      "dart-pkg/zircon:tests",
+      "dart_runner:tests",
+      "flutter:tests",
+    ]
+  }
+}

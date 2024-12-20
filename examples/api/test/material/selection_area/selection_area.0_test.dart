@@ -8,15 +8,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Texts are descendant of the SelectionArea', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SelectionAreaExampleApp(),
-    );
+    await tester.pumpWidget(const example.SelectionAreaExampleApp());
 
     expect(
-      find.descendant(
-        of: find.byType(SelectionArea),
-        matching: find.byType(Text),
-      ),
+      find.descendant(of: find.byType(SelectionArea), matching: find.byType(Text)),
       findsExactly(4),
     );
 
@@ -29,10 +24,7 @@ void main() {
 
     for (final String text in selectableTexts) {
       expect(
-        find.descendant(
-          of: find.byType(SelectionArea),
-          matching: find.text(text),
-        ),
+        find.descendant(of: find.byType(SelectionArea), matching: find.text(text)),
         findsExactly(1),
       );
     }

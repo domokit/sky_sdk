@@ -1,0 +1,16 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/dart.gni")
+
+gen_snapshot = "$dart_src/runtime/bin:gen_snapshot"
+gen_snapshot_product = "$dart_src/runtime/bin:gen_snapshot_product"
+
+prebuilt_dart = "$dart_src/tools/sdks/dart-sdk/bin/dart"
+
+observatory_target = "$dart_src/runtime/observatory:observatory_archive"
+observatory_archive_dir = get_label_info(observatory_target, "target_gen_dir")
+observatory_archive_name = get_label_info(observatory_target, "name")
+observatory_archive_file =
+    "${observatory_archive_dir}/${observatory_archive_name}.tar"

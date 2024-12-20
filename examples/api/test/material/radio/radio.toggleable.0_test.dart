@@ -3,15 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/radio/radio.toggleable.0.dart'
-    as example;
+import 'package:flutter_api_samples/material/radio/radio.toggleable.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('StreamBuilder listens to internal stream', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ToggleableExampleApp(),
-    );
+    await tester.pumpWidget(const example.ToggleableExampleApp());
 
     expect(find.byType(Radio<int>), findsExactly(5));
     expect(find.text('Hercules Mulligan'), findsOne);

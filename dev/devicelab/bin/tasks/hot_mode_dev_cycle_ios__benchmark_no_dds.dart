@@ -9,7 +9,5 @@ import 'package:flutter_devicelab/tasks/hot_mode_tests.dart';
 Future<void> main() async {
   // TODO(vashworth): Remove once https://github.com/flutter/flutter/issues/142305 is fixed.
   deviceOperatingSystem = DeviceOperatingSystem.ios;
-  await task(createHotModeTest(
-    additionalOptions: <String>['--no-dds'],
-  ));
+  await task(createHotModeTest(additionalOptions: <String>['--no-dds']));
 }

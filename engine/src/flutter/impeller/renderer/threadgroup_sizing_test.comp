@@ -1,0 +1,18 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Size is passed in via specialization constant.
+layout(local_size_x_id = 0) in;
+
+layout(std430) buffer;
+
+layout(binding = 1) writeonly buffer OutputData {
+  uint data[];
+}
+output_data;
+
+void main() {
+  uint ident = gl_GlobalInvocationID.x;
+  output_data.data[ident] = ident;
+}

@@ -1,0 +1,86 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+name: Cherry-pick Labeled Engine PR to Release Branch
+
+on:
+  pull_request_target:
+    branches: main
+    types: [labeled]
+
+permissions: write-all
+
+jobs:
+  cherrypick_to_release:
+    name: cherrypick_to_release
+    runs-on: ubuntu-latest
+    if: |
+      (github.event.label.name == format('cp{0} beta', ':') || github.event.label.name == format('cp{0} stable', ':')) &&
+      (github.event.pull_request.merged == true)
+    steps:
+      - name: Get Release Channel
+        run: |
+          echo "CHANNEL=$(echo ${{ github.event.label.name }} | cut -d ':' -f 2 | xargs)" >> $GITHUB_ENV
+      - name: Get Release Candidate Branch
+        run: |
+          RELEASE_BRANCH=$(curl https://raw.githubusercontent.com/flutter/flutter/$CHANNEL/bin/internal/release-candidate-branch.version)
+          echo "RELEASE_BRANCH=$(echo $RELEASE_BRANCH | tr -d '\n')" >> $GITHUB_ENV
+      - name: Get Cherry Pick PR
+        run: |
+          echo "COMMIT_SHA=$(echo ${{ github.event.pull_request.merge_commit_sha }})" >> $GITHUB_ENV
+      - name: Checkout Flutter Engine Repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: flutteractionsbot/engine
+          path: engine
+          ref: main
+          persist-credentials: false
+          # Checkout all history commits on main branch, so that the cp commit is a known object
+          fetch-depth: 0
+      - name: Attempt CP
+        id: attempt-cp
+        working-directory: ./engine
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git remote add upstream https://github.com/flutter/engine.git
+          git fetch upstream $RELEASE_BRANCH
+          git fetch upstream main
+          git checkout -b cp-engine-${CHANNEL}-${COMMIT_SHA} --track upstream/$RELEASE_BRANCH
+          git cherry-pick $COMMIT_SHA
+      # TODO(xilaizhang): remove this step once the template is available on release branches.
+      - name: Get CP Template
+        run: |
+          curl -o PULL_REQUEST_CP_TEMPLATE.md https://raw.githubusercontent.com/flutter/flutter/master/.github/PR_TEMPLATE/PULL_REQUEST_CP_TEMPLATE.md
+      - name: Create PR on CP success
+        if: ${{ steps.attempt-cp.conclusion == 'success' }}
+        working-directory: ./engine
+        id: create-pr
+        run: |
+          git push https://${{ env.GITHUB_TOKEN }}@github.com/flutteractionsbot/engine cp-engine-${CHANNEL}-${COMMIT_SHA}
+          {
+            echo 'PR_URL<<EOF'
+            gh pr create --title "[CP-${CHANNEL}]${PR_TITLE}" --body-file ../PULL_REQUEST_CP_TEMPLATE.md --base ${RELEASE_BRANCH} --label "cp: review" --repo flutter/engine --head flutteractionsbot:cp-engine-${CHANNEL}-${COMMIT_SHA}
+            echo EOF
+          } >> "$GITHUB_ENV"
+        env:
+          GITHUB_TOKEN: ${{ secrets.FLUTTERACTIONSBOT_CP_TOKEN }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+      - name: Leave Comment on CP success
+        if: ${{ steps.create-pr.conclusion == 'success' }}
+        run: |
+          echo $PR_URL
+          NEW_PR_NUMBER="${PR_URL##*/}"
+          SUCCESS_MSG=" @${{ github.actor }} please fill out the PR description above, afterwards the release team will review this request."
+          gh pr comment $NEW_PR_NUMBER -R flutter/engine -b "${SUCCESS_MSG}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.FLUTTERACTIONSBOT_CP_TOKEN }}
+      - name: Leave Comment on CP failure
+        if: ${{ failure() && steps.attempt-cp.conclusion == 'failure' }}
+        run: |
+          FAILURE_MSG="Failed to create CP due to merge conflicts.<br>"
+          FAILURE_MSG+="You will need to create the PR manually. See [the cherrypick wiki](https://github.com/flutter/flutter/wiki/Flutter-Cherrypick-Process) for more info."
+          gh pr comment ${{ github.event.pull_request.number }} -R flutter/engine -b "${FAILURE_MSG}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.FLUTTERACTIONSBOT_CP_TOKEN }}

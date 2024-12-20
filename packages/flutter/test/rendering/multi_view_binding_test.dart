@@ -18,7 +18,10 @@ void main() {
     binding.addRenderView(view);
     expect(binding.renderViews, contains(view));
     expect(view.configuration.devicePixelRatio, flutterView.devicePixelRatio);
-    expect(view.configuration.logicalConstraints, BoxConstraints.tight(flutterView.physicalSize) / flutterView.devicePixelRatio);
+    expect(
+      view.configuration.logicalConstraints,
+      BoxConstraints.tight(flutterView.physicalSize) / flutterView.devicePixelRatio,
+    );
 
     binding.removeRenderView(view);
     expect(binding.renderViews, isEmpty);
@@ -71,10 +74,8 @@ void main() {
     final FakeFlutterView flutterView2 = FakeFlutterView(viewId: 2);
     final RenderView renderView1 = RenderView(view: flutterView1);
     final RenderView renderView2 = RenderView(view: flutterView2);
-    final PipelineOwnerSpy owner1 = PipelineOwnerSpy()
-      ..rootNode = renderView1;
-    final PipelineOwnerSpy owner2 = PipelineOwnerSpy()
-      ..rootNode = renderView2;
+    final PipelineOwnerSpy owner1 = PipelineOwnerSpy()..rootNode = renderView1;
+    final PipelineOwnerSpy owner2 = PipelineOwnerSpy()..rootNode = renderView2;
 
     binding.addRenderView(renderView1);
     binding.addRenderView(renderView2);
@@ -172,11 +173,11 @@ void main() {
   });
 }
 
-class FakeFlutterView extends Fake implements FlutterView  {
+class FakeFlutterView extends Fake implements FlutterView {
   FakeFlutterView({
     this.viewId = 100,
     this.devicePixelRatio = 2.5,
-    this.physicalSize = const Size(400,600),
+    this.physicalSize = const Size(400, 600),
     this.padding = FakeViewPadding.zero,
   });
 
@@ -205,10 +206,11 @@ class PipelineOwnerSpy extends PipelineOwner {
 }
 
 class SemanticsOwnerSpy extends Fake implements SemanticsOwner {
-  final List<(int, SemanticsAction, Object?)> performedActions = <(int, SemanticsAction, Object?)>[];
+  final List<(int, SemanticsAction, Object?)> performedActions =
+      <(int, SemanticsAction, Object?)>[];
 
   @override
-  void performAction(int id, SemanticsAction action, [ Object? args ]) {
+  void performAction(int id, SemanticsAction action, [Object? args]) {
     performedActions.add((id, action, args));
   }
 }

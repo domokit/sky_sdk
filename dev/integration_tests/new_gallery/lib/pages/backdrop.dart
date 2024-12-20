@@ -19,12 +19,7 @@ const double _settingsButtonHeightDesktop = 56;
 const double _settingsButtonHeightMobile = 40;
 
 class Backdrop extends StatefulWidget {
-  const Backdrop({
-    super.key,
-    required this.isDesktop,
-    this.settingsPage,
-    this.homePage,
-  });
+  const Backdrop({super.key, required this.isDesktop, this.settingsPage, this.homePage});
 
   final bool isDesktop;
   final Widget? settingsPage;
@@ -46,20 +41,17 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _settingsPanelController = AnimationController(
-        vsync: this,
-        duration: widget.isDesktop
-            ? settingsPanelMobileAnimationDuration
-            : settingsPanelDesktopAnimationDuration);
-    _iconController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration:
+          widget.isDesktop
+              ? settingsPanelMobileAnimationDuration
+              : settingsPanelDesktopAnimationDuration,
     );
+    _iconController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
     _settingsPageFocusNode = FocusNode();
     _isSettingsOpenNotifier = ValueNotifier<bool>(false);
-    _settingsPage = widget.settingsPage ??
-        SettingsPage(
-          animationController: _settingsPanelController,
-        );
+    _settingsPage =
+        widget.settingsPage ?? SettingsPage(animationController: _settingsPanelController);
     _homePage = widget.homePage ?? const HomePage();
   }
 
@@ -84,25 +76,19 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
     _isSettingsOpenNotifier.value = !_isSettingsOpenNotifier.value;
   }
 
-  Animation<RelativeRect> _slideDownSettingsPageAnimation(
-      BoxConstraints constraints) {
+  Animation<RelativeRect> _slideDownSettingsPageAnimation(BoxConstraints constraints) {
     return RelativeRectTween(
       begin: RelativeRect.fromLTRB(0, -constraints.maxHeight, 0, 0),
       end: RelativeRect.fill,
     ).animate(
       CurvedAnimation(
         parent: _settingsPanelController,
-        curve: const Interval(
-          0.0,
-          0.4,
-          curve: Curves.ease,
-        ),
+        curve: const Interval(0.0, 0.4, curve: Curves.ease),
       ),
     );
   }
 
-  Animation<RelativeRect> _slideDownHomePageAnimation(
-      BoxConstraints constraints) {
+  Animation<RelativeRect> _slideDownHomePageAnimation(BoxConstraints constraints) {
     return RelativeRectTween(
       begin: RelativeRect.fill,
       end: RelativeRect.fromLTRB(
@@ -114,11 +100,7 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
     ).animate(
       CurvedAnimation(
         parent: _settingsPanelController,
-        curve: const Interval(
-          0.0,
-          0.4,
-          curve: Curves.ease,
-        ),
+        curve: const Interval(0.0, 0.4, curve: Curves.ease),
       ),
     );
   }
@@ -131,18 +113,19 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
       builder: (BuildContext context, bool isSettingsOpen, Widget? child) {
         return ExcludeSemantics(
           excluding: !isSettingsOpen,
-          child: isSettingsOpen
-              ? KeyboardListener(
-                  includeSemantics: false,
-                  focusNode: _settingsPageFocusNode,
-                  onKeyEvent: (KeyEvent event) {
-                    if (event.logicalKey == LogicalKeyboardKey.escape) {
-                      _toggleSettings();
-                    }
-                  },
-                  child: FocusScope(child: _settingsPage),
-                )
-              : ExcludeFocus(child: _settingsPage),
+          child:
+              isSettingsOpen
+                  ? KeyboardListener(
+                    includeSemantics: false,
+                    focusNode: _settingsPageFocusNode,
+                    onKeyEvent: (KeyEvent event) {
+                      if (event.logicalKey == LogicalKeyboardKey.escape) {
+                        _toggleSettings();
+                      }
+                    },
+                    child: FocusScope(child: _settingsPage),
+                  )
+                  : ExcludeFocus(child: _settingsPage),
         );
       },
     );
@@ -170,10 +153,7 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
             ),
             // Slides the home page up and down below the bottom of the
             // screen.
-            PositionedTransition(
-              rect: _slideDownHomePageAnimation(constraints),
-              child: homePage,
-            ),
+            PositionedTransition(rect: _slideDownHomePageAnimation(constraints), child: homePage),
           ],
           if (isDesktop) ...<Widget>[
             Semantics(sortKey: const OrdinalSortKey(2), child: homePage),
@@ -195,9 +175,10 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
             Semantics(
               sortKey: const OrdinalSortKey(3),
               child: ScaleTransition(
-                alignment: Directionality.of(context) == TextDirection.ltr
-                    ? Alignment.topRight
-                    : Alignment.topLeft,
+                alignment:
+                    Directionality.of(context) == TextDirection.ltr
+                        ? Alignment.topRight
+                        : Alignment.topLeft,
                 scale: CurvedAnimation(
                   parent: _settingsPanelController,
                   curve: Curves.fastOutSlowIn,
@@ -234,9 +215,7 @@ class _BackdropState extends State<Backdrop> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: _buildStack,
-    );
+    return LayoutBuilder(builder: _buildStack);
   }
 }
 
@@ -271,13 +250,12 @@ class _SettingsIcon extends AnimatedWidget {
         label: _settingsSemanticLabel(isSettingsOpenNotifier.value, context),
         child: SizedBox(
           width: _settingsButtonWidth,
-          height: isDesktop
-              ? _settingsButtonHeightDesktop
-              : _settingsButtonHeightMobile + safeAreaTopPadding,
+          height:
+              isDesktop
+                  ? _settingsButtonHeightDesktop
+                  : _settingsButtonHeightMobile + safeAreaTopPadding,
           child: Material(
-            borderRadius: const BorderRadiusDirectional.only(
-              bottomStart: Radius.circular(10),
-            ),
+            borderRadius: const BorderRadiusDirectional.only(bottomStart: Radius.circular(10)),
             color:
                 isSettingsOpenNotifier.value & !animationController.isAnimating
                     ? Colors.transparent

@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('It should select and unselect the icon buttons', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.IconButtonToggleApp(),
-    );
+    await tester.pumpWidget(const example.IconButtonToggleApp());
 
     expect(find.widgetWithIcon(IconButton, Icons.settings_outlined), findsExactly(8));
     final Finder unselectedIconButtons = find.widgetWithIcon(IconButton, Icons.settings_outlined);

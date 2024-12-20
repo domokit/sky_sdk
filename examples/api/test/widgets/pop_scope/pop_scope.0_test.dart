@@ -9,9 +9,7 @@ import '../navigator_utils.dart';
 
 void main() {
   testWidgets('Can choose to stay on page', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NavigatorPopHandlerApp(),
-    );
+    await tester.pumpWidget(const example.NavigatorPopHandlerApp());
 
     expect(find.text('Page One'), findsOneWidget);
     expect(find.text('Page Two'), findsNothing);
@@ -37,9 +35,7 @@ void main() {
   });
 
   testWidgets('Can choose to go back', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NavigatorPopHandlerApp(),
-    );
+    await tester.pumpWidget(const example.NavigatorPopHandlerApp());
 
     expect(find.text('Page One'), findsOneWidget);
     expect(find.text('Page Two'), findsNothing);

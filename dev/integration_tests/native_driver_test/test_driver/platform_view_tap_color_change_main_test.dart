@@ -34,17 +34,13 @@ void main() async {
     await flutterDriver.waitFor(find.byType('AndroidView'));
     await expectLater(
       nativeDriver.screenshot(),
-      matchesGoldenFile(
-        'platform_view_tap_color_change_initial.android.png',
-      ),
+      matchesGoldenFile('platform_view_tap_color_change_initial.android.png'),
     );
 
     await nativeDriver.tap(const ByNativeAccessibilityLabel('Change color'));
     await expectLater(
       nativeDriver.screenshot(),
-      matchesGoldenFile(
-        'platform_view_tap_color_change_tapped.android.png',
-      ),
+      matchesGoldenFile('platform_view_tap_color_change_tapped.android.png'),
     );
   }, timeout: Timeout.none);
 }

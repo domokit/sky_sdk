@@ -21,7 +21,7 @@ web.NodeList findElements(String selector) {
     fail(
       'Failed to locate <flutter-view>. Possible reasons:\n'
       ' - The application failed to start'
-      ' - `findElements` was called before the application started'
+      ' - `findElements` was called before the application started',
     );
   }
 

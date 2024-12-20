@@ -1,0 +1,352 @@
+{
+    "builds": [
+        {
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux",
+                "cores=32"
+            ],
+            "gclient_variables": {
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/host_debug_unopt",
+                "--runtime-mode",
+                "debug",
+                "--unoptimized",
+                "--prebuilt-dart-sdk",
+                "--asan",
+                "--lsan",
+                "--dart-debug",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/host_debug_unopt",
+            "description": "Builds a debug mode unopt Linux engine. Builds and runs many tests and lints.",
+            "ninja": {
+                "config": "ci/host_debug_unopt",
+                "targets": [
+                    "flutter/tools/font_subset",
+                    "flutter:unittests",
+                    "flutter/build/dart:copy_dart_sdk",
+                    "flutter/shell/platform/common/client_wrapper:client_wrapper_unittests",
+                    "flutter/shell/platform/common:common_cpp_core_unittests",
+                    "flutter/shell/platform/common:common_cpp_unittests",
+                    "flutter/shell/platform/glfw/client_wrapper:client_wrapper_glfw_unittests",
+                    "flutter/shell/testing",
+                    "sky_engine"
+                ]
+            },
+            "tests": [
+                {
+                    "name": "test: Check formatting",
+                    "script": "flutter/bin/et",
+                    "parameters": [
+                        "format",
+                        "--dry-run",
+                        "--all"
+                    ]
+                },
+                {
+                    "name": "ban GeneratedPluginRegistrant.java",
+                    "script": "flutter/ci/ban_generated_plugin_registrant_java.sh"
+                },
+                {
+                    "name": "ban_test GeneratedPluginRegistrant.java",
+                    "script": "flutter/ci/test/ban_generated_plugin_registrant_java_test.sh"
+                },
+                {
+                    "language": "python3",
+                    "name": "test: Host_Tests_for_host_debug_unopt",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--quiet",
+                        "--logs-dir",
+                        "${FLUTTER_LOGS_DIR}",
+                        "--variant",
+                        "ci/host_debug_unopt",
+                        "--type",
+                        "dart,dart-host,engine",
+                        "--engine-capture-core-dump",
+                        "--use-sanitizer-suppressions"
+                    ]
+                },
+                {
+                    "name": "analyze_dart_ui",
+                    "script": "flutter/ci/analyze.sh"
+                },
+                {
+                    "name": "pylint",
+                    "script": "flutter/ci/pylint.sh"
+                },
+                {
+                    "language": "dart",
+                    "name": "test: observatory and service protocol",
+                    "script": "flutter/shell/testing/observatory/test.dart",
+                    "parameters": [
+                        "out/ci/host_debug_unopt/flutter_tester",
+                        "flutter/shell/testing/observatory/empty_main.dart"
+                    ]
+                },
+                {
+                    "language": "dart",
+                    "name": "test: Lint android host",
+                    "script": "flutter/tools/android_lint/bin/main.dart"
+                },
+                {
+                    "name": "Check build configs",
+                    "script": "flutter/ci/check_build_configs.sh"
+                },
+                {
+                    "name": "Tests of tools/gn",
+                    "language": "python3",
+                    "script": "flutter/tools/gn_test.py"
+                }
+            ]
+        },
+        {
+            "archives": [],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux",
+                "cores=32"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--runtime-mode",
+                "debug",
+                "--unoptimized",
+                "--prebuilt-dart-sdk",
+                "--target-dir",
+                "ci/host_debug_unopt_impeller_tests",
+                "--rbe",
+                "--no-goma",
+                "--use-glfw-swiftshader"
+            ],
+            "name": "ci/host_debug_unopt_impeller_tests",
+            "description": "Builds a debug mode unopt Linux engine with swiftshader. Runs Impeller unit tests.",
+            "ninja": {
+                "config": "ci/host_debug_unopt_impeller_tests",
+                "targets": [
+                    "flutter",
+                    "flutter/sky/packages"
+                ]
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "Host Tests for host_debug_unopt_impeller_tests",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/host_debug_unopt_impeller_tests",
+                        "--type",
+                        "impeller",
+                        "--engine-capture-core-dump"
+                    ]
+                }
+            ]
+        },
+        {
+            "cas_archive": false,
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "dependencies": [],
+            "gclient_variables": {
+                "use_rbe": true
+            },
+            "gn": [
+                "--android",
+                "--embedder-for-target",
+                "--target-dir",
+                "ci/android_embedder_debug_unopt",
+                "--unoptimized",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/android_embedder_debug_unopt",
+            "description": "Builds embedder artifacts targeting 32-bit arm Android.",
+            "ninja": {
+                "config": "ci/android_embedder_debug_unopt",
+                "targets": [
+                    "flutter/shell/platform/embedder:flutter_engine"
+                ]
+            }
+        },
+        {
+            "cas_archive": false,
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_debug_arm64_validation_layers",
+                "--android",
+                "--android-cpu=arm64",
+                "--no-lto",
+                "--enable-vulkan-validation-layers",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/android_debug_arm64_validation_layers",
+            "description": "Builds a debug mode engine targeting 64-bit arm Android with Vulkan validation layers.",
+            "ninja": {
+                "config": "ci/android_debug_arm64_validation_layers",
+                "targets": [
+                    "flutter",
+                    "flutter/shell/platform/android:abi_jars"
+                ]
+            }
+        },
+        {
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "dependencies": [
+                {
+                    "dependency": "arm_tools",
+                    "version": "last_updated:2023-02-03T15:32:01-0800"
+                }
+            ],
+            "gclient_variables": {
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_debug_unopt",
+                "--android",
+                "--unoptimized",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/android_debug_unopt",
+            "description": "Builds a debug mode unopt engine targeting 32-bit arm Android. Runs host-side Java unit tests and malioc.",
+            "ninja": {
+                "config": "ci/android_debug_unopt",
+                "targets": [
+                    "flutter/impeller",
+                    "flutter/shell/platform/android:android_jar",
+                    "flutter/shell/platform/android:robolectric_tests"
+                ]
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "test: Host Tests for android_debug_unopt",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/android_debug_unopt",
+                        "--type",
+                        "java",
+                        "--engine-capture-core-dump",
+                        "--android-variant",
+                        "ci/android_debug_unopt"
+                    ]
+                },
+                {
+                    "language": "python3",
+                    "name": "malioc diff",
+                    "script": "flutter/impeller/tools/malioc_diff.py",
+                    "parameters": [
+                        "--before-relative-to-src",
+                        "flutter/impeller/tools/malioc.json",
+                        "--after-relative-to-src",
+                        "out/ci/android_debug_unopt/gen/malioc",
+                        "--print-diff"
+                    ]
+                }
+            ]
+        },
+        {
+            "cas_archive": false,
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_debug_test",
+                "--android",
+                "--android-cpu=arm",
+                "--no-lto",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/android_debug_test",
+            "description": "Produces debug mode artifacts to target 32-bit arm Android from a Linux host.",
+            "ninja": {
+                "config": "ci/android_debug_test",
+                "targets": [
+                    "flutter",
+                    "flutter/sky/dist:zip_old_location",
+                    "flutter/lib/gpu/dist:zip_old_location",
+                    "flutter/shell/platform/android:embedding_jars",
+                    "flutter/shell/platform/android:abi_jars",
+                    "flutter/shell/platform/android:robolectric_tests"
+                ]
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "Host Tests for android_debug_test",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/android_debug_test",
+                        "--type",
+                        "java",
+                        "--engine-capture-core-dump",
+                        "--android-variant",
+                        "ci/android_debug_test"
+                    ]
+                }
+            ]
+        },
+        {
+            "cas_archive": false,
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/host_debug",
+                "--runtime-mode",
+                "debug",
+                "--no-prebuilt-dart-sdk",
+                "--build-embedder-examples",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/host_debug_no_prebuilt_dart_sdk",
+            "description": "Produces debug mode Linux host-side tooling for Linux without use of prebuilt dart sdk artifacts.",
+            "ninja": {
+                "config": "ci/host_debug",
+                "targets": [
+                    "default"
+                ]
+            }
+        }
+    ]
+}

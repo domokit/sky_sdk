@@ -29,8 +29,7 @@ class VsyncFrameLagSummarizer {
 
   /// Computes the average `VsyncFrameLag` over the period of the timeline.
   double computeAverageVsyncFrameLag() {
-    final List<double> vsyncFrameLags =
-        _computePlatformToFlutterVsyncBeginLags();
+    final List<double> vsyncFrameLags = _computePlatformToFlutterVsyncBeginLags();
     if (vsyncFrameLags.isEmpty) {
       return 0;
     }
@@ -42,8 +41,7 @@ class VsyncFrameLagSummarizer {
   /// Computes the [percentile]-th percentile `VsyncFrameLag` over the
   /// period of the timeline.
   double computePercentileVsyncFrameLag(double percentile) {
-    final List<double> vsyncFrameLags =
-        _computePlatformToFlutterVsyncBeginLags();
+    final List<double> vsyncFrameLags = _computePlatformToFlutterVsyncBeginLags();
     if (vsyncFrameLags.isEmpty) {
       return 0;
     }

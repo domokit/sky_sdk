@@ -13,9 +13,7 @@ class LoadingBuilderExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: LoadingBuilderExample(),
-    );
+    return const MaterialApp(home: LoadingBuilderExample());
   }
 }
 
@@ -38,9 +36,10 @@ class LoadingBuilderExample extends StatelessWidget {
           }
           return Center(
             child: CircularProgressIndicator(
-              value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                  : null,
+              value:
+                  loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                      : null,
             ),
           );
         },

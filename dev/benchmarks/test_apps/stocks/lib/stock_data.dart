@@ -24,7 +24,7 @@ class Stock {
     lastSale = 0.0;
     try {
       lastSale = double.parse(fields[2]);
-    } catch (_) { }
+    } catch (_) {}
     symbol = fields[0];
     name = fields[1];
     marketCap = fields[4];
@@ -68,8 +68,8 @@ class StockData extends ChangeNotifier {
   static const int _chunkCount = 30;
   int _nextChunk = 0;
 
-  Uri _urlToFetch(int chunk) => Uri.https(
-      'domokit.github.io', 'examples/stocks/data/stock_data_$chunk.json');
+  Uri _urlToFetch(int chunk) =>
+      Uri.https('domokit.github.io', 'examples/stocks/data/stock_data_$chunk.json');
 
   http.Client? _httpClient;
 

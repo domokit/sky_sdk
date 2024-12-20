@@ -6,11 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../../gallery/demo.dart';
 
-enum GridDemoTileStyle {
-  imageOnly,
-  oneLine,
-  twoLine
-}
+enum GridDemoTileStyle { imageOnly, oneLine, twoLine }
 
 typedef BannerTapCallback = void Function(Photo photo);
 
@@ -18,13 +14,7 @@ const double _kMinFlingVelocity = 800.0;
 const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
 
 class Photo {
-  Photo({
-    this.assetName,
-    this.assetPackage,
-    this.title,
-    this.caption,
-    this.isFavorite = false,
-  });
+  Photo({this.assetName, this.assetPackage, this.title, this.caption, this.isFavorite = false});
 
   final String? assetName;
   final String? assetPackage;
@@ -38,7 +28,7 @@ class Photo {
 }
 
 class GridPhotoViewer extends StatefulWidget {
-  const GridPhotoViewer({ super.key, this.photo });
+  const GridPhotoViewer({super.key, this.photo});
 
   final Photo? photo;
 
@@ -53,11 +43,7 @@ class _GridTitleText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      alignment: Alignment.centerLeft,
-      child: Text(text!),
-    );
+    return FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Text(text!));
   }
 }
 
@@ -72,8 +58,7 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this)
-      ..addListener(_handleFlingAnimation);
+    _controller = AnimationController(vsync: this)..addListener(_handleFlingAnimation);
   }
 
   @override
@@ -87,10 +72,7 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
   Offset _clampOffset(Offset offset) {
     final Size size = context.size!;
     final Offset minOffset = Offset(size.width, size.height) * (1.0 - _scale);
-    return Offset(
-      offset.dx.clamp(minOffset.dx, 0.0),
-      offset.dy.clamp(minOffset.dy, 0.0),
-    );
+    return Offset(offset.dx.clamp(minOffset.dx, 0.0), offset.dy.clamp(minOffset.dy, 0.0));
   }
 
   void _handleFlingAnimation() {
@@ -123,10 +105,9 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
     }
     final Offset direction = details.velocity.pixelsPerSecond / magnitude;
     final double distance = (Offset.zero & context.size!).shortestSide;
-    _flingAnimation = _controller.drive(Tween<Offset>(
-      begin: _offset,
-      end: _clampOffset(_offset + direction * distance),
-    ));
+    _flingAnimation = _controller.drive(
+      Tween<Offset>(begin: _offset, end: _clampOffset(_offset + direction * distance)),
+    );
     _controller
       ..value = 0.0
       ..fling(velocity: magnitude / 1000.0);
@@ -140,9 +121,10 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
       onScaleEnd: _handleOnScaleEnd,
       child: ClipRect(
         child: Transform(
-          transform: Matrix4.identity()
-            ..translate(_offset.dx, _offset.dy)
-            ..scale(_scale),
+          transform:
+              Matrix4.identity()
+                ..translate(_offset.dx, _offset.dy)
+                ..scale(_scale),
           child: Image.asset(
             widget.photo!.assetName!,
             package: widget.photo!.assetPackage,
@@ -167,21 +149,19 @@ class GridDemoPhotoItem extends StatelessWidget {
   final BannerTapCallback onBannerTap; // User taps on the photo's header or footer.
 
   void showPhoto(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute<void>(
-      builder: (BuildContext context) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(photo.title!),
-          ),
-          body: SizedBox.expand(
-            child: Hero(
-              tag: photo.tag!,
-              child: GridPhotoViewer(photo: photo),
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return Scaffold(
+            appBar: AppBar(title: Text(photo.title!)),
+            body: SizedBox.expand(
+              child: Hero(tag: photo.tag!, child: GridPhotoViewer(photo: photo)),
             ),
-          ),
-        );
-      }
-    ));
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -189,15 +169,13 @@ class GridDemoPhotoItem extends StatelessWidget {
     final Widget image = Semantics(
       label: '${photo.title} - ${photo.caption}',
       child: GestureDetector(
-        onTap: () { showPhoto(context); },
+        onTap: () {
+          showPhoto(context);
+        },
         child: Hero(
           key: Key(photo.assetName!),
           tag: photo.tag!,
-          child: Image.asset(
-            photo.assetName!,
-            package: photo.assetPackage,
-            fit: BoxFit.cover,
-          ),
+          child: Image.asset(photo.assetName!, package: photo.assetPackage, fit: BoxFit.cover),
         ),
       ),
     );
@@ -211,14 +189,13 @@ class GridDemoPhotoItem extends StatelessWidget {
       case GridDemoTileStyle.oneLine:
         return GridTile(
           header: GestureDetector(
-            onTap: () { onBannerTap(photo); },
+            onTap: () {
+              onBannerTap(photo);
+            },
             child: GridTileBar(
               title: _GridTitleText(photo.title),
               backgroundColor: Colors.black45,
-              leading: Icon(
-                icon,
-                color: Colors.white,
-              ),
+              leading: Icon(icon, color: Colors.white),
             ),
           ),
           child: image,
@@ -227,15 +204,14 @@ class GridDemoPhotoItem extends StatelessWidget {
       case GridDemoTileStyle.twoLine:
         return GridTile(
           footer: GestureDetector(
-            onTap: () { onBannerTap(photo); },
+            onTap: () {
+              onBannerTap(photo);
+            },
             child: GridTileBar(
               backgroundColor: Colors.black45,
               title: _GridTitleText(photo.title),
               subtitle: _GridTitleText(photo.caption),
-              trailing: Icon(
-                icon,
-                color: Colors.white,
-              ),
+              trailing: Icon(icon, color: Colors.white),
             ),
           ),
           child: image,
@@ -245,7 +221,7 @@ class GridDemoPhotoItem extends StatelessWidget {
 }
 
 class GridListDemo extends StatefulWidget {
-  const GridListDemo({ super.key });
+  const GridListDemo({super.key});
 
   static const String routeName = '/material/grid-list';
 
@@ -347,20 +323,21 @@ class GridListDemoState extends State<GridListDemo> {
           MaterialDemoDocumentationButton(GridListDemo.routeName),
           PopupMenuButton<GridDemoTileStyle>(
             onSelected: changeTileStyle,
-            itemBuilder: (BuildContext context) => <PopupMenuItem<GridDemoTileStyle>>[
-              const PopupMenuItem<GridDemoTileStyle>(
-                value: GridDemoTileStyle.imageOnly,
-                child: Text('Image only'),
-              ),
-              const PopupMenuItem<GridDemoTileStyle>(
-                value: GridDemoTileStyle.oneLine,
-                child: Text('One line'),
-              ),
-              const PopupMenuItem<GridDemoTileStyle>(
-                value: GridDemoTileStyle.twoLine,
-                child: Text('Two line'),
-              ),
-            ],
+            itemBuilder:
+                (BuildContext context) => <PopupMenuItem<GridDemoTileStyle>>[
+                  const PopupMenuItem<GridDemoTileStyle>(
+                    value: GridDemoTileStyle.imageOnly,
+                    child: Text('Image only'),
+                  ),
+                  const PopupMenuItem<GridDemoTileStyle>(
+                    value: GridDemoTileStyle.oneLine,
+                    child: Text('One line'),
+                  ),
+                  const PopupMenuItem<GridDemoTileStyle>(
+                    value: GridDemoTileStyle.twoLine,
+                    child: Text('Two line'),
+                  ),
+                ],
           ),
         ],
       ),
@@ -376,17 +353,18 @@ class GridListDemoState extends State<GridListDemo> {
                 crossAxisSpacing: 4.0,
                 padding: const EdgeInsets.all(4.0),
                 childAspectRatio: (orientation == Orientation.portrait) ? 1.0 : 1.3,
-                children: photos.map<Widget>((Photo photo) {
-                  return GridDemoPhotoItem(
-                    photo: photo,
-                    tileStyle: _tileStyle,
-                    onBannerTap: (Photo photo) {
-                      setState(() {
-                        photo.isFavorite = !photo.isFavorite;
-                      });
-                    },
-                  );
-                }).toList(),
+                children:
+                    photos.map<Widget>((Photo photo) {
+                      return GridDemoPhotoItem(
+                        photo: photo,
+                        tileStyle: _tileStyle,
+                        onBannerTap: (Photo photo) {
+                          setState(() {
+                            photo.isFavorite = !photo.isFavorite;
+                          });
+                        },
+                      );
+                    }).toList(),
               ),
             ),
           ),

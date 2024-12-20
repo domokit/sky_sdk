@@ -1,0 +1,290 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/compiled_action.gni")
+import("//flutter/build/bin_to_obj.gni")
+import("//flutter/common/config.gni")
+import("//flutter/impeller/tools/impeller.gni")
+import("//flutter/lib/ui/dart_ui.gni")
+import("$dart_src/utils/compile_platform.gni")
+
+if (is_fuchsia) {
+  import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+}
+
+# Generates the Dart/Flutter core platform files and tools.
+#
+# This target generates the platform-specific snapshots and snapshot-related
+# tooling for a given target CPU.
+#
+# Outputs:
+#   * Core platform compiled to kernel bytecode
+#   * Core platform compiled to target_cpu-specific binary snapshot
+#   * target_cpu-specific gen_snapshot
+#   * target_cpu-specific analyze_snapshot
+group("generate_snapshot_bins") {
+  deps = [
+    ":generate_snapshot_bin",
+    ":kernel_platform_files",
+  ]
+
+  # Build gen_snapshot for the currently specified target_cpu.
+  #
+  # For macOS target builds: needed for both target CPUs (arm64, x64).
+  # For iOS, Android target builds: all AOT target CPUs are arm/arm64.
+  if (host_os == "mac" && (target_os == "mac" || target_os == "ios")) {
+    deps += [ ":create_macos_gen_snapshots" ]
+  } else if (host_os == "mac" &&
+             (target_cpu == "arm" || target_cpu == "arm64")) {
+    deps += [ ":create_arm_gen_snapshot" ]
+  }
+
+  # Build analyze_snapshot for 64-bit target CPUs.
+  if (host_os == "linux" && (target_cpu == "x64" || target_cpu == "arm64")) {
+    deps += [ "$dart_src/runtime/bin:analyze_snapshot($host_toolchain)" ]
+  }
+}
+
+# Compiles a binary snapshot of the core Dart/Flutter platform.
+#
+# Inputs:
+#   * platform_strong.dill
+#
+# Tools:
+#   * gen_snapshot
+#
+# Outputs:
+#   * vm_snapshot_data.bin
+#   * vm_snapshot_instructions.bin
+#   * isolate_snapshot_data.bin
+#   * isolate_snapshot_instructions.bin
+#
+# See: `bin_to_linkable` rules below that build these outputs into linkable form
+# See: https://github.com/flutter/flutter/wiki/Flutter-engine-operation-in-AOT-Mode
+compiled_action("generate_snapshot_bin") {
+  if (target_cpu == "x86" && host_os == "linux") {
+    # By default Dart will create a 32-bit gen_snapshot host binary if the target
+    # platform is 32-bit.  Override this to create a 64-bit gen_snapshot for x86
+    # targets because some host platforms may not support 32-bit binaries.
+    tool = "$dart_src/runtime/bin:gen_snapshot_host_targeting_host"
+    toolchain = "//build/toolchain/$host_os:clang_x64"
+  } else {
+    tool = "$dart_src/runtime/bin:gen_snapshot"
+  }
+
+  platform_kernel = "$root_out_dir/flutter_patched_sdk/platform_strong.dill"
+
+  inputs = [ platform_kernel ]
+  deps = [ ":kernel_platform_files" ]
+
+  vm_snapshot_data = "$target_gen_dir/vm_isolate_snapshot.bin"
+  vm_snapshot_instructions = "$target_gen_dir/vm_snapshot_instructions.bin"
+  isolate_snapshot_data = "$target_gen_dir/isolate_snapshot.bin"
+  isolate_snapshot_instructions =
+      "$target_gen_dir/isolate_snapshot_instructions.bin"
+  outputs = [
+    vm_snapshot_data,
+    vm_snapshot_instructions,
+    isolate_snapshot_data,
+    isolate_snapshot_instructions,
+  ]
+
+  args = [
+    "--snapshot_kind=core",
+    "--enable_mirrors=false",
+    "--vm_snapshot_data=" + rebase_path(vm_snapshot_data),
+    "--vm_snapshot_instructions=" + rebase_path(vm_snapshot_instructions),
+    "--isolate_snapshot_data=" + rebase_path(isolate_snapshot_data),
+    "--isolate_snapshot_instructions=" +
+        rebase_path(isolate_snapshot_instructions),
+  ]
+
+  if (is_debug && flutter_runtime_mode != "profile" &&
+      flutter_runtime_mode != "release" &&
+      flutter_runtime_mode != "jit_release") {
+    args += [ "--enable_asserts" ]
+  }
+
+  args += [ rebase_path(platform_kernel) ]
+
+  metadata = {
+    entitlement_file_path = [ "gen_snapshot" ]
+  }
+}
+
+bin_to_linkable("vm_snapshot_data_linkable") {
+  deps = [ ":generate_snapshot_bin" ]
+  input = "$target_gen_dir/vm_isolate_snapshot.bin"
+  symbol = "kDartVmSnapshotData"
+  executable = false
+}
+
+bin_to_linkable("vm_snapshot_instructions_linkable") {
+  deps = [ ":generate_snapshot_bin" ]
+  input = "$target_gen_dir/vm_snapshot_instructions.bin"
+  symbol = "kDartVmSnapshotInstructions"
+  executable = true
+}
+
+bin_to_linkable("isolate_snapshot_data_linkable") {
+  deps = [ ":generate_snapshot_bin" ]
+  input = "$target_gen_dir/isolate_snapshot.bin"
+  symbol = "kDartIsolateSnapshotData"
+  executable = false
+}
+
+bin_to_linkable("isolate_snapshot_instructions_linkable") {
+  deps = [ ":generate_snapshot_bin" ]
+  input = "$target_gen_dir/isolate_snapshot_instructions.bin"
+  symbol = "kDartIsolateSnapshotInstructions"
+  executable = true
+}
+
+bin_to_linkable("platform_strong_dill_linkable") {
+  deps = [ ":kernel_platform_files" ]
+  input = "$root_out_dir/flutter_patched_sdk/platform_strong.dill"
+  symbol = "kPlatformStrongDill"
+  size_symbol = "kPlatformStrongDillSize"
+  executable = false
+}
+
+# Creates a `gen_snapshot` binary suffixed with the target CPU architecture.
+#
+# Builds gen_snapshot using the host toolchain then copies the resulting binary
+# to `gen_snapshot_armv7` or `gen_snapshot_arm64` depending on the target
+# platform.
+#
+# This target is used for builds targeting iOS/Android OS.
+if (host_os == "mac" && target_os != "mac" &&
+    (target_cpu == "arm" || target_cpu == "arm64")) {
+  copy("create_arm_gen_snapshot") {
+    # The toolchain-specific output directory. For cross-compiles, this is a
+    # clang-x64 or clang-arm64 subdirectory of the top-level build directory.
+    host_output_dir =
+        get_label_info("$dart_src/runtime/bin:gen_snapshot($host_toolchain)",
+                       "root_out_dir")
+
+    # Determine suffixed output gen_snapshot name.
+    target_cpu_suffix = target_cpu
+    if (target_cpu == "arm") {
+      target_cpu_suffix = "armv7"
+    }
+
+    sources = [ "${host_output_dir}/gen_snapshot" ]
+    outputs = [ "${host_output_dir}/gen_snapshot_${target_cpu_suffix}" ]
+    deps = [ "$dart_src/runtime/bin:gen_snapshot($host_toolchain)" ]
+    visibility = [ ":*" ]
+  }
+}
+
+# Creates a `gen_snapshot` binary suffixed with the target CPU architecture.
+#
+# Builds gen_snapshot using the host toolchain then copies the resulting binary
+# to `gen_snapshot_arm64` or `gen_snapshot_x64` depending on the target
+# platform.
+#
+# This target is used for builds targeting iOS and macOS.
+if (host_os == "mac" && (target_os == "mac" || target_os == "ios")) {
+  template("build_mac_gen_snapshot") {
+    assert(defined(invoker.host_arch))
+    host_cpu = invoker.host_arch
+
+    build_toolchain = "//build/toolchain/mac:clang_$host_cpu"
+    gen_snapshot_target_name = "gen_snapshot"
+    if (target_os == "mac" && host_cpu == target_cpu) {
+      gen_snapshot_target_name = "gen_snapshot_host_targeting_host"
+    }
+    gen_snapshot_target =
+        "$dart_src/runtime/bin:$gen_snapshot_target_name($build_toolchain)"
+
+    action(target_name) {
+      script = "//flutter/sky/tools/cp.py"
+
+      # The toolchain-specific output directory. For cross-compiles, this is a
+      # clang-x64 or clang-arm64 subdirectory of the top-level build directory.
+      output_dir = get_label_info(gen_snapshot_target, "root_out_dir")
+
+      args = [
+        rebase_path("${output_dir}/${gen_snapshot_target_name}"),
+        rebase_path(
+            "${root_out_dir}/artifacts_$host_cpu/gen_snapshot_${target_cpu}"),
+      ]
+      outputs =
+          [ "${root_out_dir}/artifacts_$host_cpu/gen_snapshot_${target_cpu}" ]
+      deps = [ gen_snapshot_target ]
+    }
+  }
+
+  build_mac_gen_snapshot("create_macos_gen_snapshot_arm64_${target_cpu}") {
+    host_arch = "arm64"
+  }
+
+  build_mac_gen_snapshot("create_macos_gen_snapshot_x64_${target_cpu}") {
+    host_arch = "x64"
+  }
+
+  action("create_macos_gen_snapshots") {
+    script = "//flutter/sky/tools/create_macos_binary.py"
+    outputs = [ "${root_out_dir}/gen_snapshot_${target_cpu}" ]
+    args = [
+      "--in-arm64",
+      rebase_path("${root_out_dir}/artifacts_arm64/gen_snapshot_${target_cpu}"),
+      "--in-x64",
+      rebase_path("${root_out_dir}/artifacts_x64/gen_snapshot_${target_cpu}"),
+      "--out",
+      rebase_path("${root_out_dir}/gen_snapshot_${target_cpu}"),
+    ]
+    deps = [
+      ":create_macos_gen_snapshot_arm64_${target_cpu}",
+      ":create_macos_gen_snapshot_x64_${target_cpu}",
+    ]
+  }
+}
+
+source_set("snapshot") {
+  deps = [
+    ":isolate_snapshot_data_linkable",
+    ":isolate_snapshot_instructions_linkable",
+    ":platform_strong_dill_linkable",
+    ":vm_snapshot_data_linkable",
+    ":vm_snapshot_instructions_linkable",
+  ]
+
+  sources = get_target_outputs(":isolate_snapshot_data_linkable") +
+            get_target_outputs(":isolate_snapshot_instructions_linkable") +
+            get_target_outputs(":vm_snapshot_data_linkable") +
+            get_target_outputs(":vm_snapshot_instructions_linkable") +
+            get_target_outputs(":platform_strong_dill_linkable")
+}
+
+# Compiles the Dart/Flutter core libraries to kernel bytecode.
+compile_platform("strong_platform") {
+  single_root_scheme = "org-dartlang-sdk"
+  single_root_base = rebase_path("../../../")
+  libraries_specification_uri =
+      "org-dartlang-sdk:///flutter/lib/snapshot/libraries.json"
+
+  outputs = [
+    "$root_out_dir/flutter_patched_sdk/platform_strong.dill",
+    "$root_out_dir/flutter_patched_sdk/vm_outline_strong.dill",
+  ]
+
+  pool = "//build/toolchain:toolchain_pool"
+
+  is_runtime_mode_release =
+      flutter_runtime_mode == "release" || flutter_runtime_mode == "jit_release"
+  args = [
+    "--enable-experiment=generic-metadata",
+    "--nnbd-strong",
+    "--target=flutter",
+    "-Ddart.vm.product=$is_runtime_mode_release",
+    "-Ddart.isVM=true",
+    "dart:core",
+  ]
+}
+
+# Fuchsia's snapshot requires a different platform with extra dart: libraries.
+group("kernel_platform_files") {
+  public_deps = [ ":strong_platform" ]
+}

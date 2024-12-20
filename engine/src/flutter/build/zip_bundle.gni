@@ -1,0 +1,133 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/shell/version/version.gni")
+
+if (flutter_runtime_mode == "jit_release") {
+  android_zip_archive_dir = "android-$target_cpu-jit-release"
+} else {
+  android_zip_archive_dir = "android-$target_cpu"
+  if (flutter_runtime_mode != "debug") {
+    android_zip_archive_dir += "-$flutter_runtime_mode"
+  }
+}
+
+# Creates a zip file in the $root_build_dir/zip_archives folder.
+#
+# The output variable specifies the name of the zip file to create.
+# The files variable is an array of scopes that specify a source file or
+# directory and a destination path in the archive to create.
+#
+# For example, to create a zip file named archive.zip with all files in the
+# root directory of the archive:
+#
+# zip_bundle("sample") {
+#   output = "archive.zip"
+#   files = [
+#     {
+#       source = "$root_build_dir/some/path/to/lib.so"
+#       destination = "lib.so"
+#     },
+#     {
+#       source = "$root_build_dir/some/other/path/with/files"
+#       destination = "other_files"
+#     },
+#   ]
+# }
+template("zip_bundle") {
+  assert(defined(invoker.output), "output must be defined")
+  assert(defined(invoker.files), "files must be defined as a list of scopes")
+
+  license_readme = "$target_gen_dir/LICENSE.$target_name.md"
+  license_target = "_${target_name}_license_md"
+
+  generated_file(license_target) {
+    source_path = rebase_path(".", "//flutter")
+    license_path =
+        rebase_path("//flutter/sky/packages/sky_engine/LICENSE", "//flutter")
+    git_url = "https://github.com/flutter/engine/tree/$engine_version"
+    sky_engine_url = "https://storage.googleapis.com/flutter_infra_release/flutter/$engine_version/sky_engine.zip"
+    outputs = [ license_readme ]
+    contents = [
+      "# $target_name",
+      "",
+      "This bundle is part of the the Flutter SDK.",
+      "",
+      "The source code is hosted at [flutter/engine/$source_path]($git_url/$source_path).",
+      "The license for this bundle is hosted at [flutter/engine/sky/packages/sky_engine/LICENSE]($git_url/$license_path) ",
+      "and [sky_engine.zip]($sky_engine_url).",
+    ]
+  }
+
+  action(target_name) {
+    script = "//flutter/build/zip.py"
+    outputs = [ "$root_build_dir/zip_archives/${invoker.output}" ]
+    sources = [ license_readme ]
+    forward_variables_from(invoker, [ "visibility" ])
+    deps = [ ":$license_target" ] + invoker.deps
+
+    args = [
+      "-o",
+      rebase_path(outputs[0]),
+      "-i",
+      rebase_path(license_readme),
+      "LICENSE.$target_name.md",
+    ]
+    foreach(input, invoker.files) {
+      args += [
+        "-i",
+        rebase_path(input.source),
+        input.destination,
+      ]
+      sources += [ input.source ]
+    }
+  }
+}
+
+# Creates a zip file in the $root_build_dir/zip_archives folder.
+#
+# The output variable specifies the name of the zip file to create.
+# The files variable is an array of scopes that specify a source file or
+# directory and a destination path in the archive to create.
+#
+# For example, to create a zip file named archive.zip with all files in the
+# root directory of the archive:
+#
+# zip_bundle("sample") {
+#   output = "archive.zip"
+#   files = [
+#     {
+#       source = rebase_path("$root_build_dir/some/path/to/lib.so")
+#       destination = "lib.so"
+#     },
+#     {
+#       source = rebase_path("$root_build_dir/some/other/path/with/files")
+#       destination = "other_files"
+#     },
+#   ]
+# }
+template("zip_bundle_from_file") {
+  assert(defined(invoker.output), "output must be defined")
+  assert(defined(invoker.files), "files must be defined as a list of scopes")
+
+  action(target_name) {
+    forward_variables_from(invoker,
+                           [
+                             "visibility",
+                             "deps",
+                           ])
+    script = "//flutter/build/zip.py"
+    outputs = [ "$root_build_dir/zip_archives/${invoker.output}" ]
+    sources = []
+    location_source_path = "$target_gen_dir/zip_bundle.txt"
+    write_file(location_source_path, invoker.files, "json")
+    args = [
+      "-o",
+      rebase_path(outputs[0]),
+      "-f",
+      rebase_path(location_source_path),
+    ]
+  }
+}

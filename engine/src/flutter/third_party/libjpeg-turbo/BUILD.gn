@@ -1,0 +1,185 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+_source_location = "//flutter/third_party/libjpeg-turbo/src"
+
+if (current_cpu == "arm") {
+  import("//build/config/arm.gni")
+}
+
+if (is_fuchsia) {
+  import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+}
+
+if ((current_cpu == "x86" || current_cpu == "x64") && is_fuchsia &&
+    !using_fuchsia_sdk) {
+  import("//third_party/yasm/yasm_assemble.gni")
+
+  yasm_assemble("simd_asm") {
+    defines = []
+
+    if (current_cpu == "x86") {
+      sources = [
+        "$_source_location/simd/jccolor-mmx.asm",
+        "$_source_location/simd/jccolor-sse2.asm",
+        "$_source_location/simd/jcgray-mmx.asm",
+        "$_source_location/simd/jcgray-sse2.asm",
+        "$_source_location/simd/jchuff-sse2.asm",
+        "$_source_location/simd/jcsample-mmx.asm",
+        "$_source_location/simd/jcsample-sse2.asm",
+        "$_source_location/simd/jdcolor-mmx.asm",
+        "$_source_location/simd/jdcolor-sse2.asm",
+        "$_source_location/simd/jdmerge-mmx.asm",
+        "$_source_location/simd/jdmerge-sse2.asm",
+        "$_source_location/simd/jdsample-mmx.asm",
+        "$_source_location/simd/jdsample-sse2.asm",
+        "$_source_location/simd/jfdctflt-3dn.asm",
+        "$_source_location/simd/jfdctflt-sse.asm",
+        "$_source_location/simd/jfdctfst-mmx.asm",
+        "$_source_location/simd/jfdctfst-sse2.asm",
+        "$_source_location/simd/jfdctint-mmx.asm",
+        "$_source_location/simd/jfdctint-sse2.asm",
+        "$_source_location/simd/jidctflt-3dn.asm",
+        "$_source_location/simd/jidctflt-sse.asm",
+        "$_source_location/simd/jidctflt-sse2.asm",
+        "$_source_location/simd/jidctfst-mmx.asm",
+        "$_source_location/simd/jidctfst-sse2.asm",
+        "$_source_location/simd/jidctint-mmx.asm",
+        "$_source_location/simd/jidctint-sse2.asm",
+        "$_source_location/simd/jidctred-mmx.asm",
+        "$_source_location/simd/jidctred-sse2.asm",
+        "$_source_location/simd/jquant-3dn.asm",
+        "$_source_location/simd/jquant-mmx.asm",
+        "$_source_location/simd/jquant-sse.asm",
+        "$_source_location/simd/jquantf-sse2.asm",
+        "$_source_location/simd/jquanti-sse2.asm",
+        "$_source_location/simd/jsimdcpu.asm",
+      ]
+
+      defines += [
+        "__x86__",
+        "PIC",
+      ]
+    } else if (current_cpu == "x64") {
+      sources = [
+        "$_source_location/simd/jccolor-sse2-64.asm",
+        "$_source_location/simd/jcgray-sse2-64.asm",
+        "$_source_location/simd/jchuff-sse2-64.asm",
+        "$_source_location/simd/jcsample-sse2-64.asm",
+        "$_source_location/simd/jdcolor-sse2-64.asm",
+        "$_source_location/simd/jdmerge-sse2-64.asm",
+        "$_source_location/simd/jdsample-sse2-64.asm",
+        "$_source_location/simd/jfdctflt-sse-64.asm",
+        "$_source_location/simd/jfdctfst-sse2-64.asm",
+        "$_source_location/simd/jfdctint-sse2-64.asm",
+        "$_source_location/simd/jidctflt-sse2-64.asm",
+        "$_source_location/simd/jidctfst-sse2-64.asm",
+        "$_source_location/simd/jidctint-sse2-64.asm",
+        "$_source_location/simd/jidctred-sse2-64.asm",
+        "$_source_location/simd/jquantf-sse2-64.asm",
+        "$_source_location/simd/jquanti-sse2-64.asm",
+      ]
+
+      defines += [
+        "__x86_64__",
+        "PIC",
+      ]
+    }
+
+    defines += [ "ELF" ]
+  }
+}
+
+config("libjpeg_config") {
+  include_dirs = [ _source_location ]
+}
+
+static_library("simd") {
+  configs += [ ":libjpeg_config" ]
+
+  if (!is_fuchsia || using_fuchsia_sdk) {
+    sources = [ "$_source_location/jsimd_none.c" ]
+  } else if (current_cpu == "x86") {
+    deps = [ ":simd_asm" ]
+
+    sources = [ "$_source_location/simd/jsimd_i386.c" ]
+  } else if (current_cpu == "x64") {
+    deps = [ ":simd_asm" ]
+
+    sources = [ "$_source_location/simd/jsimd_x86_64.c" ]
+  } else if (current_cpu == "arm" && arm_version >= 7 &&
+             (arm_use_neon || arm_optionally_use_neon)) {
+    sources = [
+      "$_source_location/simd/jsimd_arm.c",
+      "$_source_location/simd/jsimd_arm_neon.S",
+    ]
+  } else if (current_cpu == "arm64") {
+    sources = [
+      "$_source_location/simd/jsimd_arm64.c",
+      "$_source_location/simd/jsimd_arm64_neon.S",
+    ]
+  } else {
+    sources = [ "$_source_location/jsimd_none.c" ]
+  }
+}
+
+static_library("libjpeg") {
+  sources = [
+    "$_source_location/jcapimin.c",
+    "$_source_location/jcapistd.c",
+    "$_source_location/jccoefct.c",
+    "$_source_location/jccolor.c",
+    "$_source_location/jcdctmgr.c",
+    "$_source_location/jchuff.c",
+    "$_source_location/jcinit.c",
+    "$_source_location/jcmainct.c",
+    "$_source_location/jcmarker.c",
+    "$_source_location/jcmaster.c",
+    "$_source_location/jcomapi.c",
+    "$_source_location/jcparam.c",
+    "$_source_location/jcphuff.c",
+    "$_source_location/jcprepct.c",
+    "$_source_location/jcsample.c",
+    "$_source_location/jdapimin.c",
+    "$_source_location/jdapistd.c",
+    "$_source_location/jdatadst.c",
+    "$_source_location/jdatasrc.c",
+    "$_source_location/jdcoefct.c",
+    "$_source_location/jdcolor.c",
+    "$_source_location/jddctmgr.c",
+    "$_source_location/jdhuff.c",
+    "$_source_location/jdinput.c",
+    "$_source_location/jdmainct.c",
+    "$_source_location/jdmarker.c",
+    "$_source_location/jdmaster.c",
+    "$_source_location/jdmerge.c",
+    "$_source_location/jdphuff.c",
+    "$_source_location/jdpostct.c",
+    "$_source_location/jdsample.c",
+    "$_source_location/jerror.c",
+    "$_source_location/jfdctflt.c",
+    "$_source_location/jfdctfst.c",
+    "$_source_location/jfdctint.c",
+    "$_source_location/jidctflt.c",
+    "$_source_location/jidctfst.c",
+    "$_source_location/jidctint.c",
+    "$_source_location/jidctred.c",
+    "$_source_location/jmemmgr.c",
+    "$_source_location/jmemnobs.c",
+    "$_source_location/jquant1.c",
+    "$_source_location/jquant2.c",
+    "$_source_location/jutils.c",
+  ]
+
+  defines = [
+    "WITH_SIMD",
+    "NO_GETENV",
+  ]
+
+  configs += [ ":libjpeg_config" ]
+
+  public_configs = [ ":libjpeg_config" ]
+
+  deps = [ ":simd" ]
+}

@@ -22,19 +22,16 @@ Future<void> copyNativeCodeAssetsAndroid(
 ) async {
   assert(assetTargetLocations.isNotEmpty);
   final List<String> jniArchDirs = <String>[
-    for (final AndroidArch androidArch in AndroidArch.values)
-      androidArch.archName,
+    for (final AndroidArch androidArch in AndroidArch.values) androidArch.archName,
   ];
   for (final String jniArchDir in jniArchDirs) {
     final Uri archUri = buildUri.resolve('jniLibs/lib/$jniArchDir/');
     await fileSystem.directory(archUri).create(recursive: true);
   }
-  for (final MapEntry<CodeAsset, KernelAsset> assetMapping
-      in assetTargetLocations.entries) {
+  for (final MapEntry<CodeAsset, KernelAsset> assetMapping in assetTargetLocations.entries) {
     final Uri source = assetMapping.key.file!;
     final Uri target = (assetMapping.value.path as KernelAssetAbsolutePath).uri;
-    final AndroidArch androidArch =
-        _getAndroidArch(assetMapping.value.target.architecture);
+    final AndroidArch androidArch = _getAndroidArch(assetMapping.value.target.architecture);
     final String jniArchDir = androidArch.archName;
     final Uri archUri = buildUri.resolve('jniLibs/lib/$jniArchDir/');
     final Uri targetUri = archUri.resolveUri(target);
@@ -47,29 +44,27 @@ Future<void> copyNativeCodeAssetsAndroid(
 Architecture getNativeAndroidArchitecture(AndroidArch androidArch) {
   return switch (androidArch) {
     AndroidArch.armeabi_v7a => Architecture.arm,
-    AndroidArch.arm64_v8a   => Architecture.arm64,
-    AndroidArch.x86         => Architecture.ia32,
-    AndroidArch.x86_64      => Architecture.x64,
+    AndroidArch.arm64_v8a => Architecture.arm64,
+    AndroidArch.x86 => Architecture.ia32,
+    AndroidArch.x86_64 => Architecture.x64,
   };
 }
 
 /// Get the [AndroidArch] for [architecture].
 AndroidArch _getAndroidArch(Architecture architecture) {
   return switch (architecture) {
-    Architecture.arm     => AndroidArch.armeabi_v7a,
-    Architecture.arm64   => AndroidArch.arm64_v8a,
-    Architecture.ia32    => AndroidArch.x86,
-    Architecture.x64     => AndroidArch.x86_64,
+    Architecture.arm => AndroidArch.armeabi_v7a,
+    Architecture.arm64 => AndroidArch.arm64_v8a,
+    Architecture.ia32 => AndroidArch.x86,
+    Architecture.x64 => AndroidArch.x86_64,
     Architecture.riscv64 => throwToolExit('Android RISC-V not yet supported.'),
     _ => throwToolExit('Invalid architecture: $architecture.'),
   };
 }
 
-Map<CodeAsset, KernelAsset> assetTargetLocationsAndroid(
-    List<CodeAsset> nativeAssets) {
+Map<CodeAsset, KernelAsset> assetTargetLocationsAndroid(List<CodeAsset> nativeAssets) {
   return <CodeAsset, KernelAsset>{
-    for (final CodeAsset asset in nativeAssets)
-      asset: _targetLocationAndroid(asset),
+    for (final CodeAsset asset in nativeAssets) asset: _targetLocationAndroid(asset),
   };
 }
 
@@ -89,9 +84,7 @@ KernelAsset _targetLocationAndroid(CodeAsset asset) {
       final String fileName = asset.file!.pathSegments.last;
       kernelAssetPath = KernelAssetAbsolutePath(Uri(path: fileName));
     default:
-      throw Exception(
-        'Unsupported asset link mode $linkMode in asset $asset',
-      );
+      throw Exception('Unsupported asset link mode $linkMode in asset $asset');
   }
   return KernelAsset(
     id: asset.id,
@@ -117,9 +110,7 @@ Future<CCompilerConfig> cCompilerConfigAndroid() async {
     archiver: _toOptionalFileUri(androidSdk.getNdkArPath()),
     linker: _toOptionalFileUri(androidSdk.getNdkLdPath()),
   );
-  if (result.compiler == null ||
-      result.archiver == null ||
-      result.linker == null) {
+  if (result.compiler == null || result.archiver == null || result.linker == null) {
     throwToolExit('Android NDK Clang could not be found.');
   }
   return result;

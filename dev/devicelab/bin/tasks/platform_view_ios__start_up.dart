@@ -13,9 +13,7 @@ Future<void> main() async {
   deviceOperatingSystem = DeviceOperatingSystem.ios;
   await task(() async {
     final String platformViewDirectoryPath = '${flutterDirectory.path}/examples/platform_view';
-    final Directory platformViewDirectory = dir(
-      platformViewDirectoryPath
-    );
+    final Directory platformViewDirectory = dir(platformViewDirectoryPath);
     await inDirectory(platformViewDirectory, () async {
       await flutter('pub', options: <String>['get']);
       // Pre-cache the iOS artifacts; this may be the first test run on this machine.

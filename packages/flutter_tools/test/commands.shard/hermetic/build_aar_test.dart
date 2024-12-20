@@ -41,19 +41,17 @@ void main() {
     logger = BufferLogger.test();
     platform = FakePlatform(environment: const <String, String>{'PATH': ''});
     processManager = FakeProcessManager.empty();
-    cache = Cache.test(
-      rootOverride: flutterRoot,
-      logger: logger,
-      processManager: processManager,
-    );
+    cache = Cache.test(rootOverride: flutterRoot, logger: logger, processManager: processManager);
     fakeAnalytics = getInitializedFakeAnalyticsInstance(
       fs: fs,
       fakeFlutterVersion: FakeFlutterVersion(),
     );
   });
 
-  testUsingContext('will not build an AAR for a plugin', () async {
-    fs.file('pubspec.yaml').writeAsStringSync('''
+  testUsingContext(
+    'will not build an AAR for a plugin',
+    () async {
+      fs.file('pubspec.yaml').writeAsStringSync('''
 name: foo_bar
 
 flutter:
@@ -63,88 +61,92 @@ flutter:
         null
 ''');
 
-    final BuildCommand command = BuildCommand(
-      androidSdk: FakeAndroidSdk(),
-      artifacts: artifacts,
-      buildSystem: TestBuildSystem.all(BuildResult(success: true)),
-      fileSystem: fs,
-      logger: logger,
-      osUtils: FakeOperatingSystemUtils(),
-      processUtils: ProcessUtils(
+      final BuildCommand command = BuildCommand(
+        androidSdk: FakeAndroidSdk(),
+        artifacts: artifacts,
+        buildSystem: TestBuildSystem.all(BuildResult(success: true)),
+        fileSystem: fs,
         logger: logger,
-        processManager: processManager,
-      ),
-    );
+        osUtils: FakeOperatingSystemUtils(),
+        processUtils: ProcessUtils(logger: logger, processManager: processManager),
+      );
 
-    expect(
-      createTestCommandRunner(command).run(const <String>['build', 'aar', '--no-pub']),
-      throwsToolExit(message: 'AARs can only be built from modules'),
-    );
-    expect(processManager, hasNoRemainingExpectations);
-  }, overrides: <Type, Generator>{
-    Cache: () => cache,
-    FileSystem: () => fs,
-    Platform: () => platform,
-    ProcessManager: () => processManager,
-  });
+      expect(
+        createTestCommandRunner(command).run(const <String>['build', 'aar', '--no-pub']),
+        throwsToolExit(message: 'AARs can only be built from modules'),
+      );
+      expect(processManager, hasNoRemainingExpectations);
+    },
+    overrides: <Type, Generator>{
+      Cache: () => cache,
+      FileSystem: () => fs,
+      Platform: () => platform,
+      ProcessManager: () => processManager,
+    },
+  );
 
-  testUsingContext('will build an AAR for a module', () async {
-    fs.file('pubspec.yaml').writeAsStringSync('''
+  testUsingContext(
+    'will build an AAR for a module',
+    () async {
+      fs.file('pubspec.yaml').writeAsStringSync('''
 name: foo_bar
 
 flutter:
   module:
     foo: bar
 ''');
-    final Directory dotAndroidDir = fs.directory('.android')..createSync(recursive: true);
-    dotAndroidDir.childFile('gradlew').createSync();
+      final Directory dotAndroidDir = fs.directory('.android')..createSync(recursive: true);
+      dotAndroidDir.childFile('gradlew').createSync();
 
-    processManager.addCommands(<FakeCommand>[
-      const FakeCommand(command: <String>['chmod', '755', 'flutter/bin/cache/artifacts']),
-      const FakeCommand(command: <String>['which', 'java']),
-      ...<String>['Debug', 'Profile', 'Release'].map((String buildMode) => FakeCommand(
-        command: <Pattern>[
-          '/.android/gradlew',
-          '-I=/flutter/packages/flutter_tools/gradle/aar_init_script.gradle',
-          ...List<RegExp>.filled(4, RegExp(r'-P[a-zA-Z-]+=.*')),
-          '-q',
-          ...List<RegExp>.filled(5, RegExp(r'-P[a-zA-Z-]+=.*')),
-          'assembleAar$buildMode',
-        ],
-        onRun: (_) => fs.directory('/build/host/outputs/repo').createSync(recursive: true),
-      )),
-    ]);
+      processManager.addCommands(<FakeCommand>[
+        const FakeCommand(command: <String>['chmod', '755', 'flutter/bin/cache/artifacts']),
+        const FakeCommand(command: <String>['which', 'java']),
+        ...<String>['Debug', 'Profile', 'Release'].map(
+          (String buildMode) => FakeCommand(
+            command: <Pattern>[
+              '/.android/gradlew',
+              '-I=/flutter/packages/flutter_tools/gradle/aar_init_script.gradle',
+              ...List<RegExp>.filled(4, RegExp(r'-P[a-zA-Z-]+=.*')),
+              '-q',
+              ...List<RegExp>.filled(5, RegExp(r'-P[a-zA-Z-]+=.*')),
+              'assembleAar$buildMode',
+            ],
+            onRun: (_) => fs.directory('/build/host/outputs/repo').createSync(recursive: true),
+          ),
+        ),
+      ]);
 
-    cache.getArtifactDirectory('gradle_wrapper').createSync(recursive: true);
+      cache.getArtifactDirectory('gradle_wrapper').createSync(recursive: true);
 
-    final BuildCommand command = BuildCommand(
-      androidSdk: FakeAndroidSdk(),
-      artifacts: artifacts,
-      buildSystem: TestBuildSystem.all(BuildResult(success: true)),
-      fileSystem: fs,
-      logger: logger,
-      osUtils: FakeOperatingSystemUtils(),
-      processUtils: ProcessUtils(
+      final BuildCommand command = BuildCommand(
+        androidSdk: FakeAndroidSdk(),
+        artifacts: artifacts,
+        buildSystem: TestBuildSystem.all(BuildResult(success: true)),
+        fileSystem: fs,
         logger: logger,
-        processManager: processManager,
-      ),
-    );
+        osUtils: FakeOperatingSystemUtils(),
+        processUtils: ProcessUtils(logger: logger, processManager: processManager),
+      );
 
-    await createTestCommandRunner(command).run(const <String>['build', 'aar', '--no-pub']);
-    expect(processManager, hasNoRemainingExpectations);
-    expect(
-      fakeAnalytics.sentEvents,
-      contains(Event.commandUsageValues(
-        workflow: 'build/aar',
-        commandHasTerminal: false,
-        buildAarProjectType: 'module',
-        buildAarTargetPlatform: 'android-arm,android-arm64,android-x64',
-      )),
-    );
-  }, overrides: <Type, Generator>{
-    FileSystem: () => fs,
-    Platform: () => platform,
-    ProcessManager: () => processManager,
-    Analytics: () => fakeAnalytics,
-  });
+      await createTestCommandRunner(command).run(const <String>['build', 'aar', '--no-pub']);
+      expect(processManager, hasNoRemainingExpectations);
+      expect(
+        fakeAnalytics.sentEvents,
+        contains(
+          Event.commandUsageValues(
+            workflow: 'build/aar',
+            commandHasTerminal: false,
+            buildAarProjectType: 'module',
+            buildAarTargetPlatform: 'android-arm,android-arm64,android-x64',
+          ),
+        ),
+      );
+    },
+    overrides: <Type, Generator>{
+      FileSystem: () => fs,
+      Platform: () => platform,
+      ProcessManager: () => processManager,
+      Analytics: () => fakeAnalytics,
+    },
+  );
 }

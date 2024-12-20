@@ -10,9 +10,7 @@ void main() {
     await tester.pumpWidget(
       const RootRestorationScope(
         restorationId: 'root-child',
-        child: _RestorableWidget(
-          restorationId: 'restorable-widget',
-        ),
+        child: _RestorableWidget(restorationId: 'restorable-widget'),
       ),
     );
 
@@ -39,9 +37,7 @@ void main() {
     await tester.pumpWidget(
       const RootRestorationScope(
         restorationId: 'root-child',
-        child: _RestorableWidget(
-          restorationId: 'restorable-widget',
-        ),
+        child: _RestorableWidget(restorationId: 'restorable-widget'),
       ),
     );
 

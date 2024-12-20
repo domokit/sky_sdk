@@ -2,17 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 
 // TODO(abarth): Consider using vector_math.
 class _Vector {
-  _Vector(int size)
-    : _offset = 0,
-      _length = size,
-      _elements = Float64List(size);
+  _Vector(int size) : _offset = 0, _length = size, _elements = Float64List(size);
 
   _Vector.fromVOL(List<double> values, int offset, int length)
     : _offset = offset,
@@ -43,9 +39,7 @@ class _Vector {
 
 // TODO(abarth): Consider using vector_math.
 class _Matrix {
-  _Matrix(int rows, int cols)
-    : _columns = cols,
-      _elements = Float64List(rows * cols);
+  _Matrix(int rows, int cols) : _columns = cols, _elements = Float64List(rows * cols);
 
   final int _columns;
   final List<double> _elements;
@@ -55,11 +49,7 @@ class _Matrix {
     _elements[row * _columns + col] = value;
   }
 
-  _Vector getRow(int row) => _Vector.fromVOL(
-    _elements,
-    row * _columns,
-    _columns,
-  );
+  _Vector getRow(int row) => _Vector.fromVOL(_elements, row * _columns, _columns);
 }
 
 /// An nth degree polynomial fit to a dataset.
@@ -203,10 +193,11 @@ class LeastSquaresSolver {
       sumSquaredTotal += w[h] * w[h] * v * v;
     }
 
-    result.confidence = sumSquaredTotal <= precisionErrorTolerance ? 1.0 :
-                          1.0 - (sumSquaredError / sumSquaredTotal);
+    result.confidence =
+        sumSquaredTotal <= precisionErrorTolerance
+            ? 1.0
+            : 1.0 - (sumSquaredError / sumSquaredTotal);
 
     return result;
   }
-
 }

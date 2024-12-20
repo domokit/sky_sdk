@@ -1,0 +1,44 @@
+# Copyright 2023 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/win/visual_studio_version.gni")
+
+declare_args() {
+  win_toolchain_data_x86 =
+      exec_script("//build/toolchain/win/setup_toolchain.py",
+                  [
+                    visual_studio_path,
+                    windows_sdk_path,
+                    visual_studio_runtime_dirs,
+                    "win",
+                    "x86",
+                    "environment.x86",
+                  ],
+                  "scope")
+
+  win_toolchain_data_x64 =
+      exec_script("//build/toolchain/win/setup_toolchain.py",
+                  [
+                    visual_studio_path,
+                    windows_sdk_path,
+                    visual_studio_runtime_dirs,
+                    "win",
+                    "x64",
+                    "environment.x64",
+                  ],
+                  "scope")
+  if (target_cpu == "arm64" || host_cpu == "arm64") {
+    win_toolchain_data_arm64 =
+        exec_script("//build/toolchain/win/setup_toolchain.py",
+                    [
+                      visual_studio_path,
+                      windows_sdk_path,
+                      visual_studio_runtime_dirs,
+                      "win",
+                      "arm64",
+                      "environment.arm64",
+                    ],
+                    "scope")
+  }
+}

@@ -8,10 +8,7 @@ import 'stock_arrow.dart';
 import 'stock_data.dart';
 
 class _StockSymbolView extends StatelessWidget {
-  const _StockSymbolView({
-    required this.stock,
-    required this.arrow,
-  });
+  const _StockSymbolView({required this.stock, required this.arrow});
 
   final Stock stock;
   final Widget arrow;
@@ -43,14 +40,10 @@ class _StockSymbolView extends StatelessWidget {
           ),
           Text('Last Sale', style: headings),
           Text('$lastSale ($changeInPrice)'),
-          Container(
-            height: 8.0
-          ),
+          Container(height: 8.0),
           Text('Market Cap', style: headings),
           Text(stock.marketCap),
-          Container(
-            height: 8.0
-          ),
+          Container(height: 8.0),
           RichText(
             text: TextSpan(
               style: DefaultTextStyle.of(context).style.merge(const TextStyle(fontSize: 8.0)),
@@ -68,11 +61,7 @@ class _StockSymbolView extends StatelessWidget {
 }
 
 class StockSymbolPage extends StatelessWidget {
-  const StockSymbolPage({
-    super.key,
-    required this.symbol,
-    required this.stocks,
-  });
+  const StockSymbolPage({super.key, required this.symbol, required this.stocks});
 
   final String symbol;
   final StockData stocks;
@@ -84,9 +73,7 @@ class StockSymbolPage extends StatelessWidget {
       builder: (BuildContext context, Widget? child) {
         final Stock? stock = stocks[symbol];
         return Scaffold(
-          appBar: AppBar(
-            title: Text(stock?.name ?? symbol),
-          ),
+          appBar: AppBar(title: Text(stock?.name ?? symbol)),
           body: SingleChildScrollView(
             child: Container(
               margin: const EdgeInsets.all(20.0),
@@ -97,18 +84,23 @@ class StockSymbolPage extends StatelessWidget {
                     padding: EdgeInsets.all(20.0),
                     child: Center(child: CircularProgressIndicator()),
                   ),
-                  secondChild: stock != null
-                    ? _StockSymbolView(
-                      stock: stock,
-                      arrow: Hero(
-                        tag: stock,
-                        child: StockArrow(percentChange: stock.percentChange),
-                      ),
-                    ) : Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Center(child: Text('$symbol not found')),
-                    ),
-                  crossFadeState: stock == null && stocks.loading ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                  secondChild:
+                      stock != null
+                          ? _StockSymbolView(
+                            stock: stock,
+                            arrow: Hero(
+                              tag: stock,
+                              child: StockArrow(percentChange: stock.percentChange),
+                            ),
+                          )
+                          : Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Center(child: Text('$symbol not found')),
+                          ),
+                  crossFadeState:
+                      stock == null && stocks.loading
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
                 ),
               ),
             ),
@@ -120,10 +112,7 @@ class StockSymbolPage extends StatelessWidget {
 }
 
 class StockSymbolBottomSheet extends StatelessWidget {
-  const StockSymbolBottomSheet({
-    super.key,
-    required this.stock,
-  });
+  const StockSymbolBottomSheet({super.key, required this.stock});
 
   final Stock stock;
 
@@ -131,13 +120,8 @@ class StockSymbolBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10.0),
-      decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.black26))
-      ),
-      child: _StockSymbolView(
-        stock: stock,
-        arrow: StockArrow(percentChange: stock.percentChange),
-      ),
-   );
+      decoration: const BoxDecoration(border: Border(top: BorderSide(color: Colors.black26))),
+      child: _StockSymbolView(stock: stock, arrow: StockArrow(percentChange: stock.percentChange)),
+    );
   }
 }

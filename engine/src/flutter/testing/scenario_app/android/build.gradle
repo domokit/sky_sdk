@@ -1,0 +1,50 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.facebook.testing.screenshot:plugin:0.12.0'
+        // leakcanary uses Kotlin. This app does not, but the plugin is
+        // needed to specify language version options.
+        // Gradle 8.0 requires minimum kotlin 1.6.10
+        // https://docs.gradle.org/current/userguide/upgrading_version_7.html#legacy_incrementaltaskinputs_api
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10'
+        // Requries Minimum AGP 7.3.
+        // https://docs.gradle.org/current/userguide/upgrading_version_7.html#legacy_incrementaltaskinputs_api
+        classpath 'com.android.tools.build:gradle:8.2.0'
+
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+    configurations.classpath {
+        resolutionStrategy.activateDependencyLocking()
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = project.hasProperty('out_dir')
+    ? project.property('out_dir')
+    : '../build'
+
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    project.evaluationDependsOn(':app')
+
+    dependencyLocking {
+        lockAllConfigurations()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

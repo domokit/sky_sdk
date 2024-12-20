@@ -1,0 +1,89 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/compiled_action.gni")
+import("//flutter/common/config.gni")
+import("//flutter/tools/fuchsia/dart.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+import("$dart_src/utils/compile_platform.gni")
+
+compile_platform("kernel_platform_files") {
+  single_root_scheme = "org-dartlang-sdk"
+  single_root_base = rebase_path("../../../../../../")
+
+  libraries_specification_uri = "org-dartlang-sdk:///flutter/shell/platform/fuchsia/flutter/kernel/libraries.json"
+
+  outputs = [
+    "$root_out_dir/flutter_runner_patched_sdk/platform_strong.dill",
+    "$root_out_dir/flutter_runner_patched_sdk/vm_outline_strong.dill",
+  ]
+
+  args = [
+    "--nnbd-strong",
+    "--target=flutter_runner",
+    "dart:core",
+  ]
+}
+
+template("core_snapshot") {
+  assert(defined(invoker.product),
+         "core_snapshot requires 'product' to be defined")
+
+  suffix = ""
+
+  if (invoker.product) {
+    suffix = "${suffix}_product"
+  }
+
+  compiled_action(target_name) {
+    deps = [ ":kernel_platform_files" ]
+
+    platform_dill =
+        "$root_out_dir/flutter_runner_patched_sdk/platform_strong.dill"
+    inputs = [ platform_dill ]
+
+    vm_snapshot_data = "$target_gen_dir/vm_isolate_snapshot${suffix}.bin"
+    isolate_snapshot_data = "$target_gen_dir/isolate_snapshot${suffix}.bin"
+    snapshot_profile = "$target_gen_dir/snapshot_profile${suffix}.json"
+    outputs = [
+      vm_snapshot_data,
+      isolate_snapshot_data,
+      snapshot_profile,
+    ]
+
+    gen_snapshot_to_use = gen_snapshot
+    if (invoker.product) {
+      gen_snapshot_to_use = gen_snapshot_product
+    }
+
+    tool = gen_snapshot_to_use
+
+    args = [
+      "--enable_mirrors=false",
+      "--deterministic",
+      "--snapshot_kind=core",
+      "--vm_snapshot_data=" + rebase_path(vm_snapshot_data, root_build_dir),
+      "--isolate_snapshot_data=" +
+          rebase_path(isolate_snapshot_data, root_build_dir),
+      "--write_v8_snapshot_profile_to=" +
+          rebase_path(snapshot_profile, root_build_dir),
+    ]
+
+    # No asserts in debug or release product.
+    # No asserts in release with flutter_profile=true (non-product)
+    # Yes asserts in non-product debug.
+    if (!invoker.product && (is_debug || flutter_runtime_mode == "debug")) {
+      args += [ "--enable_asserts" ]
+    }
+    args += [ rebase_path(platform_dill) ]
+  }
+}
+
+core_snapshot("kernel_core_snapshot") {
+  product = false
+}
+
+core_snapshot("kernel_core_snapshot_product") {
+  product = true
+}

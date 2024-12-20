@@ -1,0 +1,285 @@
+{
+    "_comment": [
+        "The builds defined in this file should not contain tests, ",
+        "and the file should not contain builds that are essentially tests. ",
+        "The only builds in this file should be the builds necessary to produce ",
+        "release artifacts. ",
+        "Tests to run on linux hosts should go in one of the other linux_ build ",
+        "definition files."
+    ],
+    "builds": [
+        {
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/fuchsia_profile_arm64",
+                "--fuchsia",
+                "--fuchsia-cpu",
+                "arm64",
+                "--runtime-mode",
+                "profile",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/fuchsia_profile_arm64",
+            "description": "Produces profile mode artifacts to target arm64 Fuchsia from a Linux host.",
+            "ninja": {
+                "config": "ci/fuchsia_profile_arm64",
+                "targets": [
+                    "flutter/shell/platform/fuchsia:fuchsia"
+                ]
+            }
+        },
+        {
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/fuchsia_release_arm64",
+                "--fuchsia",
+                "--fuchsia-cpu",
+                "arm64",
+                "--runtime-mode",
+                "release",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/fuchsia_release_arm64",
+            "description": "Produces release mode artifacts to target arm64 Fuchsia from a Linux host.",
+            "ninja": {
+                "config": "ci/fuchsia_release_arm64",
+                "targets": [
+                    "flutter/shell/platform/fuchsia:fuchsia"
+                ]
+            }
+        },
+        {
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/fuchsia_debug_arm64",
+                "--fuchsia",
+                "--fuchsia-cpu",
+                "arm64",
+                "--runtime-mode",
+                "debug",
+                "--no-lto",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/fuchsia_debug_arm64",
+            "description": "Produces debug mode artifacts to target arm64 Fuchsia from a Linux host.",
+            "ninja": {
+                "config": "ci/fuchsia_debug_arm64",
+                "targets": [
+                    "flutter/shell/platform/fuchsia:fuchsia"
+                ]
+            },
+            "tests": [
+                {
+                    "name": "Upload to Symbol Server for arch: arm64",
+                    "language": "python3",
+                    "contexts": ["depot_tools_on_path"],
+                    "script": "flutter/tools/fuchsia/upload_to_symbol_server.py",
+                    "parameters": [
+                        "--symbol-dir",
+                        "out/ci/fuchsia_debug_arm64/.build-id",
+                        "--engine-version",
+                        "${REVISION}",
+                        "--upload"
+                    ]
+                }
+            ]
+        },
+        {
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/fuchsia_profile_x64",
+                "--fuchsia",
+                "--fuchsia-cpu",
+                "x64",
+                "--runtime-mode",
+                "profile",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/fuchsia_profile_x64",
+            "description": "Produces profile mode artifacts to target x64 Fuchsia from a Linux host.",
+            "ninja": {
+                "config": "ci/fuchsia_profile_x64",
+                "targets": [
+                    "flutter/shell/platform/fuchsia:fuchsia"
+                ]
+            }
+        },
+        {
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "run_fuchsia_emu": true,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/fuchsia_release_x64",
+                "--fuchsia",
+                "--fuchsia-cpu",
+                "x64",
+                "--runtime-mode",
+                "release",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/fuchsia_release_x64",
+            "description": "Produces release mode artifacts to target x64 Fuchsia from a Linux host.",
+            "ninja": {
+                "config": "ci/fuchsia_release_x64",
+                "targets": [
+                    "flutter/shell/platform/fuchsia:fuchsia"
+                ]
+            }
+        },
+        {
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "run_fuchsia_emu": true,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/fuchsia_debug_x64",
+                "--fuchsia",
+                "--fuchsia-cpu",
+                "x64",
+                "--runtime-mode",
+                "debug",
+                "--no-lto",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/fuchsia_debug_x64",
+            "description": "Produces debug mode artifacts to target x64 Fuchsia from a Linux host.",
+            "ninja": {
+                "config": "ci/fuchsia_debug_x64",
+                "targets": [
+                    "flutter/shell/platform/fuchsia:fuchsia"
+                ]
+            },
+            "tests": [
+                {
+                    "name": "Upload to Symbol Server for arch: x64",
+                    "language": "python3",
+                    "contexts": ["depot_tools_on_path"],
+                    "script": "flutter/tools/fuchsia/upload_to_symbol_server.py",
+                    "parameters": [
+                        "--symbol-dir",
+                        "out/ci/fuchsia_debug_x64/.build-id",
+                        "--engine-version",
+                        "${REVISION}",
+                        "--upload"
+                    ]
+                }
+            ]
+        }
+    ],
+    "generators": {
+        "tasks": [
+            {
+                "name": "Upload fuchsia artifacts",
+                "parameters": [
+                    "--engine-version",
+                    "${REVISION}",
+                    "--upload"
+                ],
+                "script": "flutter/tools/fuchsia/build_fuchsia_artifacts.py",
+                "language": "python3"
+            },
+            {
+                "name": "Upload debug symbols to CIPD for arch: arm64",
+                "parameters": [
+                    "--engine-version",
+                    "${REVISION}",
+                    "--upload",
+                    "--target-arch",
+                    "arm64",
+                    "--out-dir",
+                    "${LUCI_CLEANUP}",
+                    "--symbol-dirs",
+                    "out/ci/fuchsia_debug_arm64/.build-id",
+                    "out/ci/fuchsia_profile_arm64/.build-id",
+                    "out/ci/fuchsia_release_arm64/.build-id"
+                ],
+                "script": "flutter/tools/fuchsia/merge_and_upload_debug_symbols.py",
+                "language": "python3"
+            },
+            {
+                "name": "Upload debug symbols to CIPD for arch: x64",
+                "parameters": [
+                    "--engine-version",
+                    "${REVISION}",
+                    "--upload",
+                    "--target-arch",
+                    "x64",
+                    "--out-dir",
+                    "${LUCI_CLEANUP}",
+                    "--symbol-dirs",
+                    "out/ci/fuchsia_debug_x64/.build-id",
+                    "out/ci/fuchsia_profile_x64/.build-id",
+                    "out/ci/fuchsia_release_x64/.build-id"
+                ],
+                "script": "flutter/tools/fuchsia/merge_and_upload_debug_symbols.py",
+                "language": "python3"
+            },
+            {
+                "name": "Verify-export-symbols-release-binaries",
+                "parameters": [
+                    "src/out/ci",
+                    "src/flutter/buildtools"
+                ],
+                "script": "flutter/testing/symbols/verify_exported.dart",
+                "language": "dart"
+            }
+        ]
+    }
+}

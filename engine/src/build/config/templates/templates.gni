@@ -1,0 +1,55 @@
+# Copyright 2015 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Declare a target for processing a template.
+#
+# Variables
+#   input: The template file to be processed.
+#   output: Where to save the result.
+#   variables: A list of variables to make available to the template
+#     processing environment, e.g. ["name=foo", "color=red"].
+#
+# Example
+#   file_template("chrome_shell_manifest") {
+#     input = "shell/java/AndroidManifest.xml"
+#     output = "$target_gen_dir/AndroidManifest.xml"
+#     variables = "app_name=chrome_shell app_version=1"
+#   }
+template("file_template") {
+  if (defined(invoker.testonly)) {
+    testonly = invoker.testonly
+  }
+
+  assert(defined(invoker.input), "The input file must be specified")
+  assert(defined(invoker.output), "The output file must be specified")
+  assert(defined(invoker.variables),
+         "The variable used for substitution in templates must be specified")
+
+  variables = invoker.variables
+
+  action(target_name) {
+    if (defined(invoker.visibility)) {
+      visibility = invoker.visibility
+    }
+
+    script = "//build/android/gyp/jinja_template.py"
+    depfile = "$target_gen_dir/$target_name.d"
+
+    sources = [ invoker.input ]
+    outputs = [
+      invoker.output,
+      depfile,
+    ]
+
+    args = [
+      "--inputs",
+      rebase_path(invoker.input, root_build_dir),
+      "--output",
+      rebase_path(invoker.output, root_build_dir),
+      "--depfile",
+      rebase_path(depfile, root_build_dir),
+      "--variables=${variables}",
+    ]
+  }
+}

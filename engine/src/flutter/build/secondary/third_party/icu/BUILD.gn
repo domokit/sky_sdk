@@ -1,0 +1,19 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+group("icui18n_hidden_visibility") {
+  public_deps = [ "//flutter/third_party/icu:icui18n_hidden_visibility" ]
+}
+
+group("icuuc_hidden_visibility") {
+  public_deps = [ "//flutter/third_party/icu:icuuc_hidden_visibility" ]
+}
+
+group("icui18n") {
+  public_deps = [ "//flutter/third_party/icu:icui18n" ]
+}
+
+group("icuuc") {
+  public_deps = [ "//flutter/third_party/icu:icuuc" ]
+}

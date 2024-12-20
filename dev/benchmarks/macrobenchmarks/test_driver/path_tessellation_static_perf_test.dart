@@ -15,8 +15,7 @@ void main() {
     driverOps: (FlutterDriver driver) async {
       final SerializableFinder listView = find.byValueKey('list_view');
       Future<void> scrollOnce(double offset) async {
-        await driver.scroll(
-            listView, 0.0, offset, const Duration(milliseconds: 450));
+        await driver.scroll(listView, 0.0, offset, const Duration(milliseconds: 450));
         await Future<void>.delayed(const Duration(milliseconds: 500));
       }
 

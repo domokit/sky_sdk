@@ -1,0 +1,40 @@
+#ifndef _LIBCPP_CONFIG_SITE
+#define _LIBCPP_CONFIG_SITE
+
+#define _LIBCPP_ABI_VERSION 1
+#define _LIBCPP_ABI_NAMESPACE _fl
+
+/* #undef _LIBCPP_ABI_FORCE_ITANIUM */
+/* #undef _LIBCPP_ABI_FORCE_MICROSOFT */
+/* #undef _LIBCPP_HIDE_FROM_ABI_PER_TU_BY_DEFAULT */
+/* #undef _LIBCPP_HAS_NO_GLOBAL_FILESYSTEM_NAMESPACE */
+/* #undef _LIBCPP_HAS_NO_STDIN */
+/* #undef _LIBCPP_HAS_NO_STDOUT */
+/* #undef _LIBCPP_HAS_NO_THREADS */
+/* #undef _LIBCPP_HAS_NO_MONOTONIC_CLOCK */
+/* #undef _LIBCPP_HAS_NO_THREAD_UNSAFE_C_FUNCTIONS */
+/* #undef _LIBCPP_HAS_MUSL_LIBC */
+/* #undef _LIBCPP_HAS_THREAD_API_PTHREAD */
+/* #undef _LIBCPP_HAS_THREAD_API_EXTERNAL */
+/* #undef _LIBCPP_HAS_THREAD_API_WIN32 */
+/* #undef _LIBCPP_HAS_THREAD_LIBRARY_EXTERNAL */
+/* #undef _LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS */
+#define _LIBCPP_HAS_NO_VENDOR_AVAILABILITY_ANNOTATIONS
+/* #undef _LIBCPP_NO_VCRUNTIME */
+/* #undef _LIBCPP_TYPEINFO_COMPARISON_IMPLEMENTATION */
+/* #undef _LIBCPP_ABI_NAMESPACE */
+/* #undef _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY */
+/* #undef _LIBCPP_HAS_PARALLEL_ALGORITHMS */
+/* #undef _LIBCPP_HAS_NO_RANDOM_DEVICE */
+/* #undef _LIBCPP_HAS_NO_LOCALIZATION */
+
+#define _LIBCPP_REMOVE_TRANSITIVE_INCLUDES
+
+// This is a workaround for BoringSSL, which is compiled in C11 mode
+// and includes stdatomic.h.  Defining this macro will cause stdatomic.h
+// to redirect to the next version of that header in the include path.
+#if !defined(__cplusplus) && defined(__clang__)
+#define _LIBCPP_COMPILER_CLANG_BASED
+#endif
+
+#endif // _LIBCPP_CONFIG_SITE

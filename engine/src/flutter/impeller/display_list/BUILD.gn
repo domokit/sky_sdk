@@ -1,0 +1,198 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/impeller/tools/impeller.gni")
+
+impeller_component("skia_conversions") {
+  sources = [
+    "skia_conversions.cc",
+    "skia_conversions.h",
+  ]
+
+  public_deps = [
+    "../core",
+    "../geometry",
+    "//flutter/display_list",
+    "//flutter/fml",
+    "//flutter/skia",
+    "//flutter/skia/modules/skparagraph",
+  ]
+}
+
+impeller_component("display_list") {
+  sources = [
+    "aiks_context.cc",
+    "aiks_context.h",
+    "canvas.cc",
+    "canvas.h",
+    "color_filter.cc",
+    "color_filter.h",
+    "dl_atlas_geometry.cc",
+    "dl_atlas_geometry.h",
+    "dl_dispatcher.cc",
+    "dl_dispatcher.h",
+    "dl_image_impeller.cc",
+    "dl_image_impeller.h",
+    "dl_vertices_geometry.cc",
+    "dl_vertices_geometry.h",
+    "image_filter.cc",
+    "image_filter.h",
+    "nine_patch_converter.cc",
+    "nine_patch_converter.h",
+    "paint.cc",
+    "paint.h",
+  ]
+
+  public_deps = [
+    ":skia_conversions",
+    "//flutter/display_list",
+    "//flutter/fml",
+    "//flutter/impeller/entity",
+    "//flutter/impeller/typographer/backends/skia:typographer_skia_backend",
+    "//flutter/skia",
+  ]
+
+  if (!defined(defines)) {
+    defines = []
+  }
+}
+
+template("display_list_unittests_component") {
+  target_name = invoker.target_name
+  predefined_sources = [
+    "aiks_dl_atlas_unittests.cc",
+    "aiks_dl_basic_unittests.cc",
+    "aiks_dl_blend_unittests.cc",
+    "aiks_dl_blur_unittests.cc",
+    "aiks_dl_clip_unittests.cc",
+    "aiks_dl_gradient_unittests.cc",
+    "aiks_dl_opacity_unittests.cc",
+    "aiks_dl_path_unittests.cc",
+    "aiks_dl_runtime_effect_unittests.cc",
+    "aiks_dl_text_unittests.cc",
+    "aiks_dl_unittests.cc",
+    "aiks_dl_vertices_unittests.cc",
+    "dl_golden_blur_unittests.cc",
+    "dl_golden_unittests.cc",
+    "dl_playground.cc",
+    "dl_playground.h",
+    "dl_unittests.cc",
+  ]
+  additional_sources = []
+  if (defined(invoker.sources)) {
+    additional_sources = invoker.sources
+  }
+  impeller_component(target_name) {
+    testonly = true
+    if (defined(invoker.defines)) {
+      defines = invoker.defines
+    } else {
+      defines = []
+    }
+    defines += [ "_USE_MATH_DEFINES" ]
+
+    sources = predefined_sources + additional_sources
+    if (defined(invoker.deps)) {
+      deps = invoker.deps
+    } else {
+      deps = []
+    }
+    deps += [
+      ":display_list",
+      "../playground:playground_test",
+      "//flutter/impeller/golden_tests:screenshot",
+      "//flutter/third_party/txt",
+    ]
+    if (defined(invoker.public_configs)) {
+      public_configs = invoker.public_configs
+    }
+  }
+}
+
+display_list_unittests_component("display_list_unittests") {
+  deps = [ "//flutter/impeller/display_list:aiks_unittests" ]
+}
+
+display_list_unittests_component("display_list_unittests_golden") {
+  deps = [ "//flutter/impeller/display_list:aiks_unittests_golden" ]
+  defines = [
+    "IMPELLER_GOLDEN_TESTS",
+    "IMPELLER_ENABLE_VALIDATION=1",
+  ]
+}
+
+impeller_component("skia_conversions_unittests") {
+  testonly = true
+
+  sources = [ "skia_conversions_unittests.cc" ]
+
+  deps = [
+    ":skia_conversions",
+    "//flutter/testing:testing_lib",
+  ]
+}
+
+impeller_component("aiks_playground") {
+  testonly = true
+
+  sources = [
+    "aiks_playground.cc",
+    "aiks_playground.h",
+  ]
+  deps = [
+    ":display_list",
+    "../playground:playground_test",
+    "//flutter/display_list",
+    "//flutter/impeller/display_list:display_list",
+  ]
+  public_deps = [
+    "//flutter/impeller/typographer/backends/skia:typographer_skia_backend",
+  ]
+}
+
+template("aiks_unittests_component") {
+  target_name = invoker.target_name
+  predefined_sources = [
+    "aiks_unittests.cc",
+    "aiks_unittests.h",
+  ]
+  additional_sources = []
+  if (defined(invoker.sources)) {
+    additional_sources = invoker.sources
+  }
+  impeller_component(target_name) {
+    testonly = true
+    if (defined(invoker.defines)) {
+      defines = invoker.defines
+    } else {
+      defines = []
+    }
+    defines += [ "_USE_MATH_DEFINES" ]
+
+    sources = predefined_sources + additional_sources
+    deps = [
+      ":aiks_playground",
+      ":display_list",
+      "//flutter/impeller/geometry:geometry_asserts",
+      "//flutter/impeller/golden_tests:golden_playground_test",
+      "//flutter/impeller/playground:playground_test",
+      "//flutter/testing:testing_lib",
+      "//flutter/third_party/txt",
+    ]
+    if (defined(invoker.public_configs)) {
+      public_configs = invoker.public_configs
+    }
+  }
+}
+
+aiks_unittests_component("aiks_unittests") {
+  sources = [ "canvas_unittests.cc" ]
+}
+
+aiks_unittests_component("aiks_unittests_golden") {
+  defines = [
+    "IMPELLER_GOLDEN_TESTS",
+    "IMPELLER_ENABLE_VALIDATION=1",
+  ]
+}

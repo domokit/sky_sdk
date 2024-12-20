@@ -1,0 +1,67 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+
+import("//flutter/tools/fuchsia/dart/dart_component.gni")
+import("//flutter/tools/fuchsia/dart/dart_library.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/package.gni")
+
+dart_library("lib") {
+  testonly = true
+  package_name = "dart_echo_server"
+
+  source_dir = "."
+  sources = [ "main.dart" ]
+}
+
+# Dart component that serves the test Echo FIDL protocol, built using the Dart AOT runner
+dart_component("aot_component") {
+  testonly = true
+
+  main_package = "dart_echo_server"
+  manifest = "meta/dart-aot-echo-server.cml"
+  component_name = "dart_aot_echo_server"
+
+  deps = [ ":lib" ]
+}
+
+# Dart component that serves the test Echo FIDL protocol, built using the Dart AOT runner
+dart_component("jit_component") {
+  testonly = true
+
+  main_package = "dart_echo_server"
+  manifest = "meta/dart-jit-echo-server.cml"
+  component_name = "dart_jit_echo_server"
+
+  deps = [ ":lib" ]
+}
+
+fuchsia_package("aot_echo_package") {
+  testonly = true
+
+  package_name = "dart_aot_echo_server"
+  deps = [
+    ":aot_component",
+
+    # "OOT" copy of the runner used by tests, to avoid conflicting with the
+    # runners in the base fuchsia image.
+    # TODO(fxbug.dev/106575): Fix this with subpackages.
+    "//flutter/shell/platform/fuchsia/dart_runner:oot_dart_aot_runner",
+  ]
+}
+
+fuchsia_package("jit_echo_package") {
+  testonly = true
+
+  package_name = "dart_jit_echo_server"
+  deps = [
+    ":jit_component",
+
+    # "OOT" copy of the runner used by tests, to avoid conflicting with the
+    # runners in the base fuchsia image.
+    # TODO(fxbug.dev/106575): Fix this with subpackages.
+    "//flutter/shell/platform/fuchsia/dart_runner:oot_dart_jit_runner",
+  ]
+}

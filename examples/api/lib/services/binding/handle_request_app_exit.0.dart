@@ -18,9 +18,7 @@ class ApplicationExitExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: Body()),
-    );
+    return const MaterialApp(home: Scaffold(body: Body()));
   }
 }
 
@@ -95,10 +93,7 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
               onChanged: _radioChanged,
             ),
             const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: _quit,
-              child: const Text('Quit'),
-            ),
+            ElevatedButton(onPressed: _quit, child: const Text('Quit')),
             const SizedBox(height: 30),
             Text(lastResponse),
           ],

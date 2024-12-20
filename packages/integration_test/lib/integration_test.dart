@@ -40,7 +40,8 @@ const bool _shouldReportResultsToNative = bool.fromEnvironment(
 
 /// A subclass of [LiveTestWidgetsFlutterBinding] that reports tests results
 /// on a channel to adapt them to native instrumentation test format.
-class IntegrationTestWidgetsFlutterBinding extends LiveTestWidgetsFlutterBinding implements IntegrationTestResults {
+class IntegrationTestWidgetsFlutterBinding extends LiveTestWidgetsFlutterBinding
+    implements IntegrationTestResults {
   /// Sets up a listener to report that the tests are finished when everything is
   /// torn down.
   IntegrationTestWidgetsFlutterBinding() {
@@ -57,17 +58,14 @@ class IntegrationTestWidgetsFlutterBinding extends LiveTestWidgetsFlutterBinding
       }
 
       try {
-        await integrationTestChannel.invokeMethod<void>(
-          'allTestsFinished',
-          <String, dynamic>{
-            'results': results.map<String, dynamic>((String name, Object result) {
-              if (result is Failure) {
-                return MapEntry<String, dynamic>(name, result.details);
-              }
-              return MapEntry<String, Object>(name, result);
-            }),
-          },
-        );
+        await integrationTestChannel.invokeMethod<void>('allTestsFinished', <String, dynamic>{
+          'results': results.map<String, dynamic>((String name, Object result) {
+            if (result is Failure) {
+              return MapEntry<String, dynamic>(name, result.details);
+            }
+            return MapEntry<String, Object>(name, result);
+          }),
+        });
       } on MissingPluginException {
         debugPrint(r'''
 Warning: integration_test plugin was not detected.
@@ -86,8 +84,7 @@ https://docs.flutter.dev/testing/integration-tests
     });
 
     final TestExceptionReporter oldTestExceptionReporter = reportTestException;
-    reportTestException =
-        (FlutterErrorDetails details, String testDescription) {
+    reportTestException = (FlutterErrorDetails details, String testDescription) {
       results[testDescription] = Failure(testDescription, details.toString());
       oldTestExceptionReporter(details, testDescription);
     };
@@ -209,8 +206,7 @@ https://docs.flutter.dev/testing/integration-tests
   /// The callback function to response the driver side input.
   @visibleForTesting
   Future<Map<String, dynamic>> callback(Map<String, String> params) async {
-    return callbackManager.callback(
-        params, this /* as IntegrationTestResults */);
+    return callbackManager.callback(params, this /* as IntegrationTestResults */);
   }
 
   // Emulates the Flutter driver extension, returning 'pass' or 'fail'.
@@ -232,15 +228,11 @@ https://docs.flutter.dev/testing/integration-tests
     String description = '',
     @Deprecated(
       'This parameter has no effect. Use the `timeout` parameter on `testWidgets` instead. '
-      'This feature was deprecated after v2.6.0-1.0.pre.'
+      'This feature was deprecated after v2.6.0-1.0.pre.',
     )
     Duration? timeout,
   }) async {
-    await super.runTest(
-      testBody,
-      invariantTester,
-      description: description,
-    );
+    await super.runTest(testBody, invariantTester, description: description);
     results[description] ??= _success;
   }
 
@@ -374,21 +366,17 @@ https://docs.flutter.dev/testing/integration-tests
       return const _GarbageCollectionInfo();
     }
 
-    final vm.Timeline timeline = await traceTimeline(
-      action,
-      streams: <String>['GC'],
-    );
+    final vm.Timeline timeline = await traceTimeline(action, streams: <String>['GC']);
 
-    final int oldGenGCCount = timeline.traceEvents!.where((vm.TimelineEvent event) {
-      return event.json!['cat'] == 'GC' && event.json!['name'] == 'CollectOldGeneration';
-    }).length;
-    final int newGenGCCount = timeline.traceEvents!.where((vm.TimelineEvent event) {
-      return event.json!['cat'] == 'GC' && event.json!['name'] == 'CollectNewGeneration';
-    }).length;
-    return _GarbageCollectionInfo(
-      oldCount: oldGenGCCount,
-      newCount: newGenGCCount,
-    );
+    final int oldGenGCCount =
+        timeline.traceEvents!.where((vm.TimelineEvent event) {
+          return event.json!['cat'] == 'GC' && event.json!['name'] == 'CollectOldGeneration';
+        }).length;
+    final int newGenGCCount =
+        timeline.traceEvents!.where((vm.TimelineEvent event) {
+          return event.json!['cat'] == 'GC' && event.json!['name'] == 'CollectNewGeneration';
+        }).length;
+    return _GarbageCollectionInfo(oldCount: oldGenGCCount, newCount: newGenGCCount);
   }
 
   /// Watches the [FrameTiming] during `action` and report it to the binding
@@ -475,10 +463,7 @@ class _GarbageCollectionInfo {
 // Copied from vm_service_io so that we can pass a custom [HttpClient] for
 // testing. Currently, the WebSocket API reuses an HttpClient that
 // is created before the test can change the HttpOverrides.
-Future<vm.VmService> _vmServiceConnectUri(
-  String wsUri, {
-  HttpClient? httpClient,
-}) async {
+Future<vm.VmService> _vmServiceConnectUri(String wsUri, {HttpClient? httpClient}) async {
   final WebSocket socket = await WebSocket.connect(wsUri, customClient: httpClient);
   final StreamController<dynamic> controller = StreamController<dynamic>();
   final Completer<void> streamClosedCompleter = Completer<void>();

@@ -1,0 +1,44 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+
+template("esbuild") {
+  assert(defined(invoker.entry_point))
+  assert(defined(invoker.output_bundle))
+  action(target_name) {
+    forward_variables_from(invoker, [ "public_deps" ])
+    if (host_os == "win") {
+      executable_subpath = "esbuild.exe"
+    } else {
+      executable_subpath = "bin/esbuild"
+    }
+    esbuild = "$host_prebuilts_path/esbuild/$executable_subpath"
+
+    script = "//build/gn_run_binary.py"
+    inputs = [
+      esbuild,
+      invoker.entry_point,
+    ]
+    output_filename = get_path_info(invoker.entry_point, "file")
+    output_path = "${invoker.output_bundle}/$output_filename"
+    outputs = [ output_path ]
+    absolute_output = rebase_path(invoker.output_bundle)
+    args = [ rebase_path(esbuild, root_build_dir) ]
+    if (defined(invoker.bundle) && invoker.bundle) {
+      args += [ "--bundle" ]
+    }
+    if (defined(invoker.minify) && invoker.minify) {
+      args += [ "--minify" ]
+    }
+    if (defined(invoker.sourcemap) && invoker.sourcemap) {
+      args += [ "--sourcemap" ]
+      outputs += [ output_path + ".map" ]
+    }
+    args += [
+      "--outdir=$absolute_output",
+      rebase_path(invoker.entry_point),
+    ]
+  }
+}

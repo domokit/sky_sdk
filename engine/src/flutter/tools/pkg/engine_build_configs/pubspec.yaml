@@ -1,0 +1,28 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+name: engine_build_configs
+publish_to: none
+
+# Required for workspace support.
+environment:
+  sdk: ^3.7.0-0
+
+# This package is managed as part of the engine workspace.
+resolution: workspace
+
+dependencies:
+  args: any
+  engine_repo_tools: any
+  file: any
+  meta: any
+  path: any
+  platform: any
+  process_runner: any
+  yaml: any
+
+dev_dependencies:
+  process_fakes: any
+  source_span: any
+  test: any

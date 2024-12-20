@@ -38,15 +38,16 @@ Directory createResolvedTempDirectorySync(String prefix) {
 }
 
 void writeFile(String path, String content, {bool writeFutureModifiedDate = false}) {
-  final File file = fileSystem.file(path)
-    ..createSync(recursive: true)
-    ..writeAsStringSync(content, flush: true);
-    // Some integration tests on Windows to not see this file as being modified
-    // recently enough for the hot reload to pick this change up unless the
-    // modified time is written in the future.
-    if (writeFutureModifiedDate) {
-      file.setLastModifiedSync(DateTime.now().add(const Duration(seconds: 5)));
-    }
+  final File file =
+      fileSystem.file(path)
+        ..createSync(recursive: true)
+        ..writeAsStringSync(content, flush: true);
+  // Some integration tests on Windows to not see this file as being modified
+  // recently enough for the hot reload to pick this change up unless the
+  // modified time is written in the future.
+  if (writeFutureModifiedDate) {
+    file.setLastModifiedSync(DateTime.now().add(const Duration(seconds: 5)));
+  }
 }
 
 void writeBytesFile(String path, List<int> content) {
@@ -124,21 +125,19 @@ abstract final class AppleTestUtils {
     '_kDartIsolateSnapshotData',
     '_kDartIsolateSnapshotInstructions',
     '_kDartVmSnapshotData',
-    '_kDartVmSnapshotInstructions'
+    '_kDartVmSnapshotInstructions',
   ];
 
   static List<String> getExportedSymbols(String dwarfPath) {
-    final ProcessResult nm = processManager.runSync(
-      <String>[
-        'nm',
-        '--debug-syms',  // nm docs: 'Show all symbols, even debugger only'
-        '--defined-only',
-        '--just-symbol-name',
-        dwarfPath,
-        '-arch',
-        'arm64',
-      ],
-    );
+    final ProcessResult nm = processManager.runSync(<String>[
+      'nm',
+      '--debug-syms', // nm docs: 'Show all symbols, even debugger only'
+      '--defined-only',
+      '--just-symbol-name',
+      dwarfPath,
+      '-arch',
+      'arm64',
+    ]);
     final String nmOutput = (nm.stdout as String).trim();
     return nmOutput.isEmpty ? const <String>[] : nmOutput.split('\n');
   }
@@ -150,11 +149,7 @@ abstract final class AppleTestUtils {
 /// The default for [exitCode] will be 0 while
 /// [stdoutPattern] and [stderrPattern] are both optional
 class ProcessResultMatcher extends Matcher {
-  const ProcessResultMatcher({
-    this.exitCode = 0,
-    this.stdoutPattern,
-    this.stderrPattern,
-  });
+  const ProcessResultMatcher({this.exitCode = 0, this.stdoutPattern, this.stderrPattern});
 
   /// The expected exit code to get returned from a process run
   final int exitCode;

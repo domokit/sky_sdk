@@ -1,0 +1,28 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Each toolchain must define "stamp" and "copy" tools,
+# but they are always the same in every toolchain.
+stamp_command = "touch {{output}}"
+stamp_description = "STAMP {{output}}"
+
+# mtime on directories may not reflect the latest of a directory. For example in
+# popular file systems, modifying a file in a directory does not affect mtime of
+# the directory. Because of this, disable directory copy for incremental
+# correctness. See https://fxbug.dev/73250.
+copy_command = "if [ -d {{source}} ]; then echo 'Tool \"copy\" does not support directory copies'; exit 1; fi; "
+
+# We use link instead of copy; the way "copy" tool is being used is
+# compatible with links since Ninja is tracking changes to the source.
+if (host_os == "mac") {
+  # `cp -af` does not correctly preserve mtime (the nanoseconds are truncated to
+  # microseconds) which causes spurious ninja rebuilds. As a result, shell to a
+  # helper to copy rather than calling cp -r. See https://fxbug.dev/56376#c5.
+  copy_command += "ln -f {{source}} {{output}} 2>/dev/null || (" +
+                  rebase_path("//flutter/tools/fuchsia/toolchain/copy.py") +
+                  " {{source}} {{output}})"
+} else {
+  copy_command += "ln -f {{source}} {{output}} 2>/dev/null || (rm -f {{output}} && cp -af {{source}} {{output}})"
+}
+copy_description = "COPY {{source}} {{output}}"

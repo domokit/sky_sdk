@@ -10,7 +10,13 @@ void main() {
   testWidgets('Changing focus changes border', (WidgetTester tester) async {
     await tester.pumpWidget(const example.ListenableBuilderExample());
 
-    Finder findContainer() => find.descendant(of: find.byType(example.FocusListenerContainer), matching: find.byType(Container)).first;
+    Finder findContainer() =>
+        find
+            .descendant(
+              of: find.byType(example.FocusListenerContainer),
+              matching: find.byType(Container),
+            )
+            .first;
     Finder findChild() => find.descendant(of: findContainer(), matching: find.byType(Column)).first;
     bool childHasFocus() => Focus.of(tester.element(findChild())).hasFocus;
     Container getContainer() => tester.widget(findContainer()) as Container;

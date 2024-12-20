@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('PinnedHeaderSliver example', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.PinnedHeaderSliverApp(),
-    );
+    await tester.pumpWidget(const example.PinnedHeaderSliverApp());
 
     expect(find.text('PinnedHeaderSliver'), findsOneWidget);
 

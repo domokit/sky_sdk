@@ -1,0 +1,60 @@
+#!/bin/sh
+
+submodule_diff() {
+  if test -n "$2"; then
+    git diff-tree -r --ignore-submodules=dirty "$1" "$2" | grep -e '^:160000' -e '^:...... 160000' | xargs
+  else
+    git diff-index --cached --ignore-submodules=dirty "$1" | grep -e '^:160000' -e '^:...... 160000' | xargs
+  fi
+}
+
+if git rev-parse --verify --quiet --no-revs MERGE_HEAD; then
+  merge_base=$(git merge-base HEAD MERGE_HEAD)
+  if test -z "$(submodule_diff $merge_base HEAD)"; then
+    # Most up-to-date submodules are in MERGE_HEAD.
+    head_ref=MERGE_HEAD
+  else
+    # Most up-to-date submodules are in HEAD.
+    head_ref=HEAD
+  fi
+else
+  # No merge in progress. Submodules must match HEAD.
+  head_ref=HEAD
+fi
+
+submods=$(submodule_diff $head_ref)
+if test "$submods"; then
+  echo "You are trying to commit changes to the following submodules:" 1>&2
+  echo 1>&2
+  echo $submods | cut -d ' ' -f 6 | sed 's/^/  /g' 1>&2
+  cat <<EOF 1>&2
+
+Submodule commits are not allowed.  Please run:
+
+  git status --ignore-submodules=dirty
+
+and/or:
+
+  git diff-index --cached --ignore-submodules=dirty HEAD
+
+... to see what's in your index.
+
+If you're really and truly trying to roll the version of a submodule, you should
+commit the new version to DEPS, instead.
+EOF
+  exit 1
+fi
+
+gitmodules_diff() {
+  git diff-index --cached "$1" .gitmodules
+}
+
+if [ "$(git ls-files .gitmodules)" ] && [ "$(gitmodules_diff $head_ref)" ]; then
+  cat <<EOF 1>&2
+You are trying to commit a change to .gitmodules.  That is not allowed.
+To make changes to submodule names/paths, edit DEPS.
+EOF
+  exit 1
+fi
+
+exit 0

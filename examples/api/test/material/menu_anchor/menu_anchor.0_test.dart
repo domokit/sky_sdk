@@ -9,9 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Can open menu', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.MenuApp(),
-    );
+    await tester.pumpWidget(const example.MenuApp());
 
     await tester.tap(find.byType(TextButton));
     await tester.pump();
@@ -51,9 +49,7 @@ void main() {
   });
 
   testWidgets('Shortcuts work', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.MenuApp(),
-    );
+    await tester.pumpWidget(const example.MenuApp());
 
     // Open the menu so we can watch state changes resulting from the shortcuts
     // firing.
@@ -112,9 +108,7 @@ void main() {
     const double safeAreaPadding = 100.0;
     await tester.pumpWidget(
       const MediaQuery(
-        data: MediaQueryData(
-          padding: EdgeInsets.symmetric(vertical: safeAreaPadding),
-        ),
+        data: MediaQueryData(padding: EdgeInsets.symmetric(vertical: safeAreaPadding)),
         child: example.MenuApp(),
       ),
     );

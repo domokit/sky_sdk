@@ -276,7 +276,8 @@ const String lookupBodyTemplate = '''
 
 const String switchClauseTemplate = '''case '@(case)': return @(localeClass)();''';
 
-const String switchClauseDeferredLoadingTemplate = '''case '@(case)': return @(library).loadLibrary().then((dynamic _) => @(library).@(localeClass)());''';
+const String switchClauseDeferredLoadingTemplate =
+    '''case '@(case)': return @(library).loadLibrary().then((dynamic _) => @(library).@(localeClass)());''';
 
 const String nestedSwitchTemplate = '''
 case '@(languageCode)': {

@@ -7,7 +7,9 @@ import 'package:flutter_api_samples/widgets/autocomplete/raw_autocomplete.2.dart
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Form is entirely visible and rejects invalid responses', (WidgetTester tester) async {
+  testWidgets('Form is entirely visible and rejects invalid responses', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const example.AutocompleteExampleApp());
     expect(find.text('RawAutocomplete Form'), findsOneWidget);
     expect(find.byType(TextFormField), findsNWidgets(2));
@@ -58,10 +60,12 @@ void main() {
       'regular user input',
     );
 
-    await tester.tap(find.ancestor(
-      of: find.text('This is a RawAutocomplete!'),
-      matching: find.byType(TextFormField),
-    ));
+    await tester.tap(
+      find.ancestor(
+        of: find.text('This is a RawAutocomplete!'),
+        matching: find.byType(TextFormField),
+      ),
+    );
     await tester.pump();
     expect(find.text('aardvark'), findsOneWidget);
     expect(find.text('bobcat'), findsOneWidget);

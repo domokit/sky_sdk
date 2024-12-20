@@ -1,0 +1,51 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/compiled_action.gni")
+
+template("flatbuffers") {
+  assert(defined(invoker.flatbuffers),
+         "Flatbuffer schema files must be specified.")
+
+  flatc_target_name = "flatc_$target_name"
+  compiled_action_foreach(flatc_target_name) {
+    tool = "//flutter/third_party/flatbuffers:flatc"
+    sources = invoker.flatbuffers
+    outputs = [ "$target_gen_dir/{{source_name_part}}_flatbuffers.h" ]
+    args = [
+      "--warnings-as-errors",
+      "--cpp",
+      "--cpp-std",
+      "c++17",
+      "--cpp-static-reflection",
+      "--gen-object-api",
+      "--filename-suffix",
+      "_flatbuffers",
+      "-o",
+      rebase_path(target_gen_dir, root_build_dir),
+      "{{source}}",
+    ]
+  }
+
+  source_set(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "flatbuffers",
+                             "sources",
+                             "deps",
+                           ])
+    sources = get_target_outputs(":$flatc_target_name")
+    if (defined(invoker.sources)) {
+      sources += invoker.sources
+    }
+    deps = [
+      ":$flatc_target_name",
+      "//flutter/third_party/flatbuffers",
+    ]
+    if (defined(invoker.deps)) {
+      deps += invoker.deps
+    }
+  }
+}

@@ -1,0 +1,271 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/shell/config.gni")
+import("testing.gni")
+
+config("dynamic_symbols") {
+  if (is_clang && is_linux) {
+    ldflags = [ "-rdynamic" ]
+  }
+}
+
+source_set("testing_lib") {
+  testonly = true
+
+  sources = [
+    "assertions.h",
+    "debugger_detection.cc",
+    "debugger_detection.h",
+    "display_list_testing.cc",
+    "display_list_testing.h",
+    "logger_listener.cc",
+    "logger_listener.h",
+    "post_task_sync.cc",
+    "post_task_sync.h",
+    "stream_capture.cc",
+    "stream_capture.h",
+    "test_args.cc",
+    "test_args.h",
+    "test_timeout_listener.cc",
+    "test_timeout_listener.h",
+    "testing.cc",
+    "testing.h",
+    "thread_test.cc",
+    "thread_test.h",
+  ]
+
+  public_deps = [
+    "//flutter/display_list",
+    "//flutter/fml",
+    "//flutter/third_party/googletest:gmock",
+    "//flutter/third_party/googletest:gtest",
+  ]
+  public_configs = [ "//flutter:config" ]
+}
+
+source_set("testing") {
+  testonly = true
+
+  sources = [ "run_all_unittests.cc" ]
+
+  if (enable_unittests && is_linux) {
+    # So that we can call gtk_init in main().
+    configs += [ "//flutter/shell/platform/linux/config:gtk" ]
+  }
+
+  public_deps = [ ":testing_lib" ]
+  public_configs = [ ":dynamic_symbols" ]
+}
+
+source_set("dart") {
+  testonly = true
+
+  sources = [
+    "dart_isolate_runner.cc",
+    "dart_isolate_runner.h",
+    "elf_loader.cc",
+    "elf_loader.h",
+    "test_dart_native_resolver.cc",
+    "test_dart_native_resolver.h",
+  ]
+
+  public_deps = [
+    ":testing_lib",
+    "$dart_src/runtime/bin:elf_loader",
+    "//flutter/common",
+    "//flutter/runtime",
+    "//flutter/runtime:libdart",
+    "//flutter/skia",
+    "//flutter/third_party/tonic",
+  ]
+}
+
+source_set("skia") {
+  testonly = true
+
+  sources = [
+    "assertions_skia.cc",
+    "assertions_skia.h",
+    "canvas_test.h",
+  ]
+
+  public_deps = [
+    ":testing_lib",
+    "//flutter/skia",
+  ]
+}
+
+dart_snapshot_kernel("vmservice_kernel") {
+  dart_main = "//flutter/shell/vmservice/empty.dart"
+  dart_kernel = "$target_gen_dir/assets/vmservice_kernel.bin"
+}
+
+dart_snapshot_aot("vmservice_snapshot") {
+  dart_kernel = "$target_gen_dir/assets/vmservice_kernel.bin"
+  dart_elf_filename = "libvmservice_snapshot.so"
+  deps = [ ":vmservice_kernel" ]
+}
+
+source_set("fixture_test") {
+  testonly = true
+
+  sources = [
+    "dart_fixture.cc",
+    "dart_fixture.h",
+    "fixture_test.cc",
+    "fixture_test.h",
+  ]
+
+  public_deps = [
+    ":dart",
+    "//flutter/common",
+    "//flutter/runtime",
+  ]
+
+  if (flutter_runtime_mode == "profile") {
+    public_deps += [ ":vmservice_snapshot" ]
+  }
+}
+
+if (is_mac || is_ios) {
+  source_set("autoreleasepool_test") {
+    testonly = true
+
+    sources = [ "autoreleasepool_test.h" ]
+
+    deps = [
+      "//flutter/fml",
+      "//flutter/third_party/googletest:gtest",
+    ]
+  }
+}
+
+if (enable_unittests && shell_enable_vulkan) {
+  source_set("vulkan") {
+    testonly = true
+
+    sources = [
+      "test_vulkan_context.cc",
+      "test_vulkan_context.h",
+      "test_vulkan_image.cc",
+      "test_vulkan_image.h",
+      "test_vulkan_surface.cc",
+      "test_vulkan_surface.h",
+    ]
+
+    defines = [ "TEST_VULKAN_PROCS" ]
+
+    deps = [
+      ":skia",
+      "//flutter/flutter_vma:flutter_skia_vma",
+      "//flutter/fml",
+      "//flutter/shell/common",
+      "//flutter/vulkan",
+      "//flutter/vulkan/procs",
+    ]
+
+    if (!is_fuchsia) {
+      deps += [ "//flutter/third_party/swiftshader" ]
+      configs += [ "//flutter/third_party/swiftshader:swiftshader_config" ]
+    }
+  }
+}
+
+if (enable_unittests) {
+  test_fixtures("testing_fixtures") {
+    fixtures = []
+  }
+}
+
+# All targets on all platforms should be able to use the Metal utilities. On
+# platforms where Metal is not available, the tests must be skipped or
+# implemented to use another available client rendering API. This is usually
+# either OpenGL which is portably implemented via SwiftShader or the software
+# backend. This way, all tests compile on all platforms but the Metal backend
+# is exercised on platforms where Metal itself is available.
+#
+# On iOS, this is enabled to allow for Metal tests to run within a test app
+if (is_mac || is_ios) {
+  source_set("metal") {
+    testonly = true
+
+    if (shell_enable_metal) {
+      cflags_objc = flutter_cflags_objc
+      cflags_objcc = flutter_cflags_objcc
+
+      sources = [
+        "test_metal_context.h",
+        "test_metal_context.mm",
+        "test_metal_surface.h",
+        "test_metal_surface.mm",
+        "test_metal_surface_impl.h",
+        "test_metal_surface_impl.mm",
+      ]
+      deps = [ "//flutter/fml" ]
+      public_deps = [ ":skia" ]
+
+      # Skia's Vulkan support is enabled for all platforms (except iOS), and so parts of
+      # Skia's graphics context reference Vulkan symbols.
+      if (shell_enable_vulkan) {
+        deps += [ "//flutter/vulkan" ]
+      }
+    }
+  }
+}
+
+# We only use SwiftShader on unittests
+use_swiftshader = enable_unittests && shell_enable_gl
+if (use_swiftshader) {
+  source_set("opengl") {
+    testonly = true
+
+    sources = [
+      "test_gl_context.cc",
+      "test_gl_context.h",
+      "test_gl_surface.cc",
+      "test_gl_surface.h",
+      "test_gl_utils.cc",
+      "test_gl_utils.h",
+    ]
+
+    deps = [
+      ":skia",
+      "//flutter/fml",
+    ]
+
+    configs -= [ "//build/config/clang:extra_warnings" ]
+    configs += [
+      "//flutter/third_party/angle:gl_prototypes",
+      "//flutter/third_party/swiftshader:swiftshader_config",
+    ]
+    deps += [
+      "//flutter/third_party/angle:libEGL_static",
+      "//flutter/third_party/angle:libGLESv2_static",
+      "//flutter/third_party/swiftshader",
+    ]
+  }
+}
+
+if (enable_unittests) {
+  executable("testing_unittests") {
+    testonly = true
+
+    sources = []
+    deps = [
+      ":testing_fixtures",
+      "//flutter/third_party/googletest:gtest",
+      "//flutter/third_party/googletest:gtest_main",
+    ]
+
+    if (test_enable_metal) {
+      cflags_objc = flutter_cflags_objc
+      cflags_objcc = flutter_cflags_objcc
+
+      sources += [ "test_metal_surface_unittests.mm" ]
+      deps += [ ":metal" ]
+    }
+  }
+}

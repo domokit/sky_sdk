@@ -15,10 +15,7 @@ void main() {
 }
 
 class TestDiagnosticsNode extends DiagnosticsNode {
-  TestDiagnosticsNode() : super(
-    name: 'test',
-    style: DiagnosticsTreeStyle.singleLine,
-  );
+  TestDiagnosticsNode() : super(name: 'test', style: DiagnosticsTreeStyle.singleLine);
 
   @override
   List<DiagnosticsNode> getChildren() {

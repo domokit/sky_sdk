@@ -12,7 +12,7 @@ TestWidgetsFlutterBinding ensureInitialized([@visibleForTesting Map<String, Stri
 }
 
 /// This method is a noop on the web.
-void setupHttpOverrides() { }
+void setupHttpOverrides() {}
 
 /// This method is a noop on the web.
-void mockFlutterAssets() { }
+void mockFlutterAssets() {}

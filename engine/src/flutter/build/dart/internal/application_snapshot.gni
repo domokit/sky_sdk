@@ -1,0 +1,147 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/compiled_action.gni")
+import("//flutter/build/dart/dart.gni")
+import("//flutter/common/config.gni")
+
+import("$dart_src/build/dart/dart_action.gni")
+import("$dart_src/sdk_args.gni")
+
+# Creates an app-jit snapshot for a command-line Dart program based on a
+# training run.
+#
+# Parameters:
+#  main_dart (required):
+#    The entrypoint to the Dart application.
+#
+#  training_args (required):
+#    Arguments to pass to the Dart application for the training run.
+#
+#  vm_args (optional):
+#    Additional arguments to the Dart VM.
+#
+#  deps (optional):
+#    Any build dependencies.
+#
+#  package_config (required):
+#    The .packages file for the app. Defaults to the $_dart_root/.packages.
+#
+#  output (optional):
+#    Overrides the full output path.
+#
+#  snapshot_kind (optional)
+#    Either an "app-jit" snapshot (default) or a "kernel" snapshot
+template("application_snapshot") {
+  assert(defined(invoker.main_dart), "Must specify 'main_dart'")
+  assert(defined(invoker.training_args), "Must specify 'training_args'")
+
+  main_dart = invoker.main_dart
+  training_args = invoker.training_args
+  name = target_name
+
+  package_config = ""
+  if (defined(invoker.package_config)) {
+    package_config = rebase_path(invoker.package_config, root_build_dir)
+  } else {
+    # Use the root engine package config by default.
+    # As we move towards a single pub workspace for the engine, this will be
+    # the correct package config to use, as we will no longer have a per-package
+    # .dart_tool/package_config.json.
+    package_config = rebase_path("//flutter/.dart_tool/package_config.json")
+  }
+
+  extra_deps = []
+  if (defined(invoker.deps)) {
+    extra_deps += invoker.deps
+  }
+  extra_inputs = [ main_dart ]
+  if (defined(invoker.inputs)) {
+    extra_inputs += invoker.inputs
+  }
+  output = "$root_gen_dir/$name.dart.snapshot"
+  if (defined(invoker.output)) {
+    output = invoker.output
+  }
+
+  depfile = output + ".d"
+  abs_depfile = rebase_path(depfile)
+  abs_output = rebase_path(output)
+  rel_output = rebase_path(output, root_build_dir)
+  snapshot_vm_args = [
+    "--deterministic",
+    "--packages=$package_config",
+    "--snapshot=$abs_output",
+    "--snapshot-depfile=$abs_depfile",
+    "--depfile-output-filename=$rel_output",
+  ]
+  if (defined(invoker.vm_args)) {
+    snapshot_vm_args += invoker.vm_args
+  }
+
+  snapshot_kind = "app-jit"
+  if (target_cpu != host_cpu) {
+    snapshot_kind = "kernel"
+  }
+  if (defined(invoker.snapshot_kind)) {
+    snapshot_kind = invoker.snapshot_kind
+  }
+  if (snapshot_kind == "kernel") {
+    snapshot_vm_args += [ "--snapshot-kind=kernel" ]
+  } else if (snapshot_kind == "app-jit") {
+    snapshot_vm_args += [ "--snapshot-kind=app-jit" ]
+  } else {
+    assert(false, "Bad snapshot_kind: '$snapshot_kind'")
+  }
+
+  # Ensure the compiled appliation (e.g. frontend-server, ...) will use this
+  # Dart SDK hash when consuming/producing kernel.
+  #
+  # (Instead of ensuring every user of the "application_snapshot" passes its
+  # own)
+  snapshot_vm_args += [ "-Dsdk_hash=$sdk_hash" ]
+
+  if (flutter_prebuilt_dart_sdk) {
+    action(target_name) {
+      forward_variables_from(invoker,
+                             [
+                               "testonly",
+                               "visibility",
+                             ])
+      deps = extra_deps
+      script = "//build/gn_run_binary.py"
+      inputs = extra_inputs
+      outputs = [ output ]
+      depfile = depfile
+      pool = "//build/toolchain:toolchain_pool"
+
+      ext = ""
+      if (is_win) {
+        ext = ".exe"
+      }
+      dart = rebase_path("$host_prebuilt_dart_sdk/bin/dart$ext", root_build_dir)
+
+      args = [ dart ]
+      args += snapshot_vm_args
+      args += [ rebase_path(main_dart) ]
+      args += training_args
+    }
+  } else {
+    dart_action(target_name) {
+      forward_variables_from(invoker,
+                             [
+                               "testonly",
+                               "visibility",
+                             ])
+      script = main_dart
+      pool = "//build/toolchain:toolchain_pool"
+      deps = extra_deps
+      inputs = extra_inputs
+      outputs = [ output ]
+      depfile = depfile
+      vm_args = snapshot_vm_args
+      args = training_args
+    }
+  }
+}

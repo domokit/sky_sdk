@@ -1,0 +1,56 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/c++/c++.gni")
+import("//build/config/sanitizers/sanitizers.gni")
+import("//build/toolchain/toolchain.gni")
+
+# Contains the dependencies needed for sanitizers to link into executables and
+# shared_libraries. Unconditionally depend upon this target as it is empty if
+# |is_asan|, |is_lsan|, |is_tsan|, |is_msan| and |use_custom_libcxx| are false.
+group("deps") {
+  if (is_asan || is_lsan || is_tsan || is_msan) {
+    public_configs = [ ":sanitizer_options_link_helper" ]
+    deps += [ ":options_sources" ]
+  }
+  if (use_custom_libcxx) {
+    deps += [ "$buildtools_path/third_party/libc++:libcxx_proxy" ]
+  }
+}
+
+config("sanitizer_options_link_helper") {
+  ldflags = [ "-Wl,-u_sanitizer_options_link_helper" ]
+  if (is_asan) {
+    ldflags += [ "-fsanitize=address" ]
+  }
+  if (is_lsan) {
+    ldflags += [ "-fsanitize=leak" ]
+  }
+  if (is_tsan) {
+    ldflags += [ "-fsanitize=thread" ]
+  }
+  if (is_msan) {
+    ldflags += [ "-fsanitize=memory" ]
+  }
+}
+
+source_set("options_sources") {
+  visibility = [
+    ":deps",
+    "//:gn_visibility",
+  ]
+  sources = [ "//build/sanitizers/sanitizer_options.cc" ]
+
+  if (is_asan) {
+    sources += [ "//build/sanitizers/asan_suppressions.cc" ]
+  }
+
+  if (is_lsan) {
+    sources += [ "//build/sanitizers/lsan_suppressions.cc" ]
+  }
+
+  if (is_tsan) {
+    sources += [ "//build/sanitizers/tsan_suppressions.cc" ]
+  }
+}

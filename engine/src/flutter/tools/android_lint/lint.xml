@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="NewApi">
+        <!-- The NewApi lint also catches the usage of Java 8 APIs. The engine
+        relies on being built with backwards support for Java 8 APIs enabled. BE
+        CAREFUL ADDING TO THIS LIST. Not all Java 8 APIs are backwards
+        compatible all the way back to API 16. See
+        https://developer.android.com/studio/write/java8-support.html#supported_features -->
+        <ignore regexp="^Try-with-resources requires API level 19"/>
+    </issue>
+    <issue id="UnknownNullness" severity="ignore" />
+    <issue id="SyntheticAccessor" severity="ignore" />
+    <!-- Flutter provides custom splash screens as a feature -->
+    <issue id="CustomSplashScreen" severity="ignore" />
+    <!-- See https://github.com/flutter/flutter/issues/105061 -->
+    <issue id="ScopedStorage" severity="ignore" />
+    <!-- See https://github.com/flutter/flutter/issues/105067 -->
+    <issue id="LambdaLast" severity="ignore" />
+</lint>

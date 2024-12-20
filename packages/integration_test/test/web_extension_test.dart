@@ -17,11 +17,14 @@ external JSObject get _window;
 void main() {
   IntegrationTestWidgetsFlutterBinding();
 
-  test('IntegrationTestWidgetsFlutterBinding on the web should register certain global properties', () {
-    expect(_window.hasProperty(r'$flutterDriver'.toJS).toDart, true);
-    expect(_window.getProperty(r'$flutterDriver'.toJS), isNotNull);
+  test(
+    'IntegrationTestWidgetsFlutterBinding on the web should register certain global properties',
+    () {
+      expect(_window.hasProperty(r'$flutterDriver'.toJS).toDart, true);
+      expect(_window.getProperty(r'$flutterDriver'.toJS), isNotNull);
 
-    expect(_window.hasProperty(r'$flutterDriverResult'.toJS).toDart, true);
-    expect(_window.getProperty(r'$flutterDriverResult'.toJS), isNull);
-  });
+      expect(_window.hasProperty(r'$flutterDriverResult'.toJS).toDart, true);
+      expect(_window.getProperty(r'$flutterDriverResult'.toJS), isNull);
+    },
+  );
 }

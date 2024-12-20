@@ -1,0 +1,22 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/rules.gni")
+
+tests = [ "fail_test.dart" ]
+
+foreach(test, tests) {
+  flutter_frontend_server("compile_$test") {
+    main_dart = test
+    kernel_output = "$root_gen_dir/$test.dill"
+  }
+}
+
+group("smoke_test_failure") {
+  testonly = true
+  deps = []
+  foreach(test, tests) {
+    deps += [ ":compile_$test" ]
+  }
+}

@@ -1,0 +1,31 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/impeller/tools/impeller.gni")
+
+impeller_shaders("imgui_shaders") {
+  name = "imgui"
+
+  # Not analyzing because they are not performance critical, and mipmap uses
+  # textureLod, which uses an extension that malioc does not support.
+  analyze = false
+  shaders = [
+    "imgui_raster.vert",
+    "imgui_raster.frag",
+  ]
+}
+
+impeller_component("imgui_impeller_backend") {
+  public_deps = [
+    ":imgui_shaders",
+    "//flutter/third_party/imgui",
+  ]
+
+  deps = [ "//flutter/impeller/renderer" ]
+
+  sources = [
+    "imgui_impl_impeller.cc",
+    "imgui_impl_impeller.h",
+  ]
+}

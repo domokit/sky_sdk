@@ -1,0 +1,21 @@
+# Copyright (c) 2017 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+  # Compile in such a way as to enable profiling of the generated code. For
+  # example, don't omit the frame pointer and leave in symbols.
+  enable_profiling = false
+
+  # Use default visibility for all symbols.
+  # Without this, any symbol that is not specifically exported will have
+  # hidden visibility.
+  disable_hidden_visibility = false
+
+  # Compile in such a way as to make it possible for the profiler to unwind full
+  # stack frames. Setting this flag has a large effect on the performance of the
+  # generated code than just setting profiling, but gives the profiler more
+  # information to analyze.
+  # Requires profiling to be set to true.
+  enable_full_stack_frames_for_profiling = false
+}

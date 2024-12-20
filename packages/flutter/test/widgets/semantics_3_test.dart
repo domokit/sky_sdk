@@ -19,71 +19,65 @@ void main() {
         child: Semantics(
           label: 'test',
           textDirection: TextDirection.ltr,
-          child: Semantics(
-            checked: true,
-          ),
+          child: Semantics(checked: true),
         ),
       ),
     );
 
-    expect(semantics, hasSemantics(
-      TestSemantics.root(
-        children: <TestSemantics>[
-          TestSemantics.rootChild(
-            id: 1,
-            flags: SemanticsFlag.hasCheckedState.index | SemanticsFlag.isChecked.index,
-            label: 'test',
-            rect: TestSemantics.fullScreen,
-          ),
-        ],
+    expect(
+      semantics,
+      hasSemantics(
+        TestSemantics.root(
+          children: <TestSemantics>[
+            TestSemantics.rootChild(
+              id: 1,
+              flags: SemanticsFlag.hasCheckedState.index | SemanticsFlag.isChecked.index,
+              label: 'test',
+              rect: TestSemantics.fullScreen,
+            ),
+          ],
+        ),
       ),
-    ));
+    );
 
     // remove one
-    await tester.pumpWidget(
-      Semantics(
-        container: true,
-        child: Semantics(
-           checked: true,
+    await tester.pumpWidget(Semantics(container: true, child: Semantics(checked: true)));
+
+    expect(
+      semantics,
+      hasSemantics(
+        TestSemantics.root(
+          children: <TestSemantics>[
+            TestSemantics.rootChild(
+              id: 1,
+              flags: SemanticsFlag.hasCheckedState.index | SemanticsFlag.isChecked.index,
+              rect: TestSemantics.fullScreen,
+            ),
+          ],
         ),
       ),
     );
-
-    expect(semantics, hasSemantics(
-      TestSemantics.root(
-        children: <TestSemantics>[
-          TestSemantics.rootChild(
-            id: 1,
-            flags: SemanticsFlag.hasCheckedState.index | SemanticsFlag.isChecked.index,
-            rect: TestSemantics.fullScreen,
-          ),
-        ],
-      ),
-    ));
 
     // change what it says
     await tester.pumpWidget(
-      Semantics(
-        container: true,
-        child: Semantics(
-          label: 'test',
-          textDirection: TextDirection.ltr,
+      Semantics(container: true, child: Semantics(label: 'test', textDirection: TextDirection.ltr)),
+    );
+
+    expect(
+      semantics,
+      hasSemantics(
+        TestSemantics.root(
+          children: <TestSemantics>[
+            TestSemantics.rootChild(
+              id: 1,
+              label: 'test',
+              textDirection: TextDirection.ltr,
+              rect: TestSemantics.fullScreen,
+            ),
+          ],
         ),
       ),
     );
-
-    expect(semantics, hasSemantics(
-      TestSemantics.root(
-        children: <TestSemantics>[
-          TestSemantics.rootChild(
-            id: 1,
-            label: 'test',
-            textDirection: TextDirection.ltr,
-            rect: TestSemantics.fullScreen,
-          ),
-        ],
-      ),
-    ));
 
     // add a node
     await tester.pumpWidget(
@@ -91,26 +85,26 @@ void main() {
         container: true,
         child: Semantics(
           checked: true,
-          child: Semantics(
-            label: 'test',
-            textDirection: TextDirection.ltr,
-          ),
+          child: Semantics(label: 'test', textDirection: TextDirection.ltr),
         ),
       ),
     );
 
-    expect(semantics, hasSemantics(
-      TestSemantics.root(
-        children: <TestSemantics>[
-          TestSemantics.rootChild(
-            id: 1,
-            flags: SemanticsFlag.hasCheckedState.index | SemanticsFlag.isChecked.index,
-            label: 'test',
-            rect: TestSemantics.fullScreen,
-          ),
-        ],
+    expect(
+      semantics,
+      hasSemantics(
+        TestSemantics.root(
+          children: <TestSemantics>[
+            TestSemantics.rootChild(
+              id: 1,
+              flags: SemanticsFlag.hasCheckedState.index | SemanticsFlag.isChecked.index,
+              label: 'test',
+              rect: TestSemantics.fullScreen,
+            ),
+          ],
+        ),
       ),
-    ));
+    );
 
     int changeCount = 0;
     tester.binding.pipelineOwner.semanticsOwner!.addListener(() {
@@ -123,10 +117,7 @@ void main() {
         container: true,
         child: Semantics(
           checked: true,
-          child: Semantics(
-            label: 'test',
-            textDirection: TextDirection.ltr,
-          ),
+          child: Semantics(label: 'test', textDirection: TextDirection.ltr),
         ),
       ),
     );

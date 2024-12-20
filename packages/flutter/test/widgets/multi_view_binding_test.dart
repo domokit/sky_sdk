@@ -38,24 +38,22 @@ void main() {
     expect(tester.element(find.byType(ColoredBox)).owner, equals(tester.binding.buildOwner));
   });
 
-  testWidgets('runApp throws if given a View',
-  experimentalLeakTesting: LeakTesting.settings.withIgnoredAll(), // The test leaks by design because of exception.
-  (WidgetTester tester) async {
-    runApp(
-      View(
-        view: FakeFlutterView(tester.view),
-        child: const SizedBox.shrink(),
-      ),
-    );
-    expect(
-      tester.takeException(),
-      isFlutterError.having(
-        (FlutterError e) => e.message,
-        'message',
-        contains('passing it to "runWidget" instead of "runApp"'),
-      ),
-    );
-  });
+  testWidgets(
+    'runApp throws if given a View',
+    experimentalLeakTesting:
+        LeakTesting.settings.withIgnoredAll(), // The test leaks by design because of exception.
+    (WidgetTester tester) async {
+      runApp(View(view: FakeFlutterView(tester.view), child: const SizedBox.shrink()));
+      expect(
+        tester.takeException(),
+        isFlutterError.having(
+          (FlutterError e) => e.message,
+          'message',
+          contains('passing it to "runWidget" instead of "runApp"'),
+        ),
+      );
+    },
+  );
 
   testWidgets('runWidget throws if not given a View', (WidgetTester tester) async {
     runWidget(const SizedBox.shrink());
@@ -70,12 +68,7 @@ void main() {
   });
 
   testWidgets('runWidget does not throw if given a View', (WidgetTester tester) async {
-    runWidget(
-      View(
-        view: FakeFlutterView(tester.view),
-        child: const SizedBox.shrink(),
-      ),
-    );
+    runWidget(View(view: FakeFlutterView(tester.view), child: const SizedBox.shrink()));
     expect(find.byType(View), findsOne);
   });
 
@@ -86,5 +79,6 @@ void main() {
 }
 
 class FakeFlutterView extends TestFlutterView {
-  FakeFlutterView(TestFlutterView view) : super(view: view, display: view.display, platformDispatcher: view.platformDispatcher);
+  FakeFlutterView(TestFlutterView view)
+    : super(view: view, display: view.display, platformDispatcher: view.platformDispatcher);
 }

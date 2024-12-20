@@ -25,12 +25,10 @@ class NewGalleryWebCompileTest {
       () async {
         await flutter('doctor');
 
-        await flutter('create', options: <String>[
-          '--platforms',
-          'web,android,ios',
-          '--no-overwrite',
-          '.'
-        ]);
+        await flutter(
+          'create',
+          options: <String>['--platforms', 'web,android,ios', '--no-overwrite', '.'],
+        );
 
         return WebCompileTest.runSingleBuildTest(
           directory: '${flutterDirectory.path}/dev/integration_tests/new_gallery/',

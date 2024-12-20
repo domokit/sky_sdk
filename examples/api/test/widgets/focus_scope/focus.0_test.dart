@@ -4,8 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_api_samples/widgets/focus_scope/focus.0.dart'
-  as example;
+import 'package:flutter_api_samples/widgets/focus_scope/focus.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -18,8 +17,7 @@ void main() {
     expect(find.text('Focus Sample'), findsOneWidget);
     expect(find.byType(Container), findsOneWidget);
 
-    final Container container =
-        tester.widget<Container>(find.byType(Container));
+    final Container container = tester.widget<Container>(find.byType(Container));
     expect(container.color, Colors.white);
   });
 
@@ -33,8 +31,7 @@ void main() {
     expect(find.text("I'm in color! Press R,G,B!"), findsOneWidget);
 
     expect(find.byType(Container), findsOneWidget);
-    final Container container =
-    tester.widget<Container>(find.byType(Container));
+    final Container container = tester.widget<Container>(find.byType(Container));
     expect(container.color, Colors.white);
 
     await tester.tap(find.text("I'm in color! Press R,G,B!"));

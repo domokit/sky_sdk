@@ -1,0 +1,115 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+# We only do software benchmarks on non-mobile platforms
+
+import("//flutter/impeller/tools/impeller.gni")
+
+source_set("display_list_testing") {
+  testonly = true
+
+  sources = [
+    "dl_test_equality.h",
+    "dl_test_snippets.cc",
+    "dl_test_snippets.h",
+  ]
+
+  deps = [
+    "//flutter/skia",
+    "//flutter/testing:testing_lib",
+    "//flutter/third_party/txt",
+  ]
+
+  public_deps = [ "//flutter/display_list:display_list" ]
+}
+
+surface_provider_include_software = !is_android && !is_ios
+
+# iOS and Fuchsia and Windows don't support OpenGL
+# Note: Windows would need some work to support OpenGL
+# But, since benchmarks do not run on Windows and rendertests only
+# runs on SW by default, this restriction currently only limits the
+# ability to manually cross-check OpenGL on Windows for rendertests
+surface_provider_include_gl = !is_fuchsia && !is_ios && !is_win && !is_mac
+
+# TODO (https://github.com/flutter/flutter/issues/107357):
+# impeller_enable_vulkan currently requires skia to not use VMA, which in turn
+# causes linkage problems with swiftshader.
+if (impeller_enable_vulkan) {
+  surface_provider_include_gl = false
+}
+
+surface_provider_include_metal = is_mac || is_ios
+
+config("surface_provider_config") {
+  defines = []
+
+  if (surface_provider_include_software) {
+    defines += [ "ENABLE_SOFTWARE_BENCHMARKS" ]
+  }
+  if (surface_provider_include_gl) {
+    defines += [ "ENABLE_OPENGL_BENCHMARKS" ]
+  }
+  if (surface_provider_include_metal) {
+    defines += [ "ENABLE_METAL_BENCHMARKS" ]
+  }
+
+  # Don't snapshot test results on mobile platforms
+  if (is_android || is_ios) {
+    defines += [ "BENCHMARKS_NO_SNAPSHOT" ]
+  }
+}
+
+source_set("display_list_surface_provider") {
+  testonly = true
+
+  sources = [ "dl_test_surface_provider.cc" ]
+
+  deps = [
+    "//flutter/common/graphics",
+    "//flutter/testing:testing_lib",
+  ]
+
+  if (is_mac) {
+    deps += [ "//flutter/impeller/golden_tests:metal_screenshot" ]
+  }
+
+  public_configs = [ ":surface_provider_config" ]
+
+  if (is_android) {
+    libs = [
+      "android",
+      "EGL",
+      "GLESv2",
+    ]
+  }
+
+  if (surface_provider_include_software) {
+    sources += [
+      "dl_test_surface_provider_software.cc",
+      "dl_test_surface_software.cc",
+      "dl_test_surface_software.h",
+    ]
+  }
+
+  if (surface_provider_include_gl) {
+    sources += [
+      "dl_test_surface_gl.cc",
+      "dl_test_surface_gl.h",
+      "dl_test_surface_provider_gl.cc",
+    ]
+    deps += [ "//flutter/testing:opengl" ]
+  }
+
+  if (surface_provider_include_metal) {
+    sources += [
+      "dl_test_surface_metal.h",
+      "dl_test_surface_metal.mm",
+      "dl_test_surface_provider_metal.mm",
+    ]
+    deps += [
+      "//flutter/impeller/display_list",
+      "//flutter/testing:metal",
+    ]
+  }
+}

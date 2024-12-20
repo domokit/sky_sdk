@@ -1,0 +1,51 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/testing/testing.gni")
+
+source_set("jni") {
+  sources = [
+    "platform_view_android_jni.cc",
+    "platform_view_android_jni.h",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+
+  deps = [
+    "//flutter/flow",
+    "//flutter/fml",
+    "//flutter/lib/ui",
+    "//flutter/shell/platform/android/surface:native_window",
+    "//flutter/skia",
+  ]
+}
+
+source_set("jni_mock") {
+  testonly = true
+
+  sources = [ "jni_mock.h" ]
+
+  public_configs = [ "//flutter:config" ]
+
+  deps = [ ":jni" ]
+}
+
+test_fixtures("jni_fixtures") {
+  fixtures = []
+}
+
+executable("jni_unittests") {
+  testonly = true
+
+  sources = [ "jni_mock_unittest.cc" ]
+
+  deps = [
+    ":jni_fixtures",
+    ":jni_mock",
+    "//flutter/testing",
+    "//flutter/testing:dart",
+    "//flutter/testing:skia",
+  ]
+}

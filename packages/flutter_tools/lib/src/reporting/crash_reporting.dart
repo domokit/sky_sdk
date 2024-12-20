@@ -70,14 +70,25 @@ class CrashReporter {
   /// Prints instructions for filing a bug about the crash.
   Future<void> informUser(CrashDetails details, File crashFile) async {
     _logger.printError('A crash report has been written to ${crashFile.path}');
-    _logger.printStatus('This crash may already be reported. Check GitHub for similar crashes.', emphasis: true);
+    _logger.printStatus(
+      'This crash may already be reported. Check GitHub for similar crashes.',
+      emphasis: true,
+    );
 
-    final String similarIssuesURL = GitHubTemplateCreator.toolCrashSimilarIssuesURL(details.error.toString());
+    final String similarIssuesURL = GitHubTemplateCreator.toolCrashSimilarIssuesURL(
+      details.error.toString(),
+    );
     _logger.printStatus('$similarIssuesURL\n', wrap: false);
-    _logger.printStatus('To report your crash to the Flutter team, first read the guide to filing a bug.', emphasis: true);
+    _logger.printStatus(
+      'To report your crash to the Flutter team, first read the guide to filing a bug.',
+      emphasis: true,
+    );
     _logger.printStatus('https://flutter.dev/to/report-bugs\n', wrap: false);
 
-    _logger.printStatus('Create a new GitHub issue by pasting this link into your browser and completing the issue template. Thank you!', emphasis: true);
+    _logger.printStatus(
+      'Create a new GitHub issue by pasting this link into your browser and completing the issue template. Thank you!',
+      emphasis: true,
+    );
 
     final GitHubTemplateCreator gitHubTemplateCreator = GitHubTemplateCreator(
       fileSystem: _fileSystem,
@@ -110,10 +121,10 @@ class CrashReportSender {
     required OperatingSystemUtils operatingSystemUtils,
     required Analytics analytics,
   }) : _client = client ?? http.Client(),
-      _platform = platform,
-      _logger = logger,
-      _operatingSystemUtils = operatingSystemUtils,
-      _analytics = analytics;
+       _platform = platform,
+       _logger = logger,
+       _operatingSystemUtils = operatingSystemUtils,
+       _analytics = analytics;
 
   final http.Client _client;
   final Platform _platform;
@@ -129,12 +140,7 @@ class CrashReportSender {
     if (overrideUrl != null) {
       return Uri.parse(overrideUrl);
     }
-    return Uri(
-      scheme: 'https',
-      host: _kCrashServerHost,
-      port: 443,
-      path: _kCrashEndpointPath,
-    );
+    return Uri(scheme: 'https', host: _kCrashServerHost, port: 443, path: _kCrashEndpointPath);
   }
 
   /// Sends one crash report.
@@ -161,10 +167,7 @@ class CrashReportSender {
       _logger.printTrace('Sending crash report to Google.');
 
       final Uri uri = _baseUrl.replace(
-        queryParameters: <String, String>{
-          'product': _kProductId,
-          'version': flutterVersion,
-        },
+        queryParameters: <String, String>{'product': _kProductId, 'version': flutterVersion},
       );
 
       final http.MultipartRequest req = http.MultipartRequest('POST', uri);
@@ -178,28 +181,33 @@ class CrashReportSender {
       req.fields['error_message'] = '$error';
       req.fields['comments'] = command;
 
-      req.files.add(http.MultipartFile.fromString(
-        _kStackTraceFileField,
-        stackTrace.toString(),
-        filename: _kStackTraceFilename,
-      ));
+      req.files.add(
+        http.MultipartFile.fromString(
+          _kStackTraceFileField,
+          stackTrace.toString(),
+          filename: _kStackTraceFilename,
+        ),
+      );
 
       final http.StreamedResponse resp = await _client.send(req);
 
       if (resp.statusCode == HttpStatus.ok) {
-        final String reportId = await http.ByteStream(resp.stream)
-          .bytesToString();
+        final String reportId = await http.ByteStream(resp.stream).bytesToString();
         _logger.printTrace('Crash report sent (report ID: $reportId)');
         _crashReportSent = true;
       } else {
-        _logger.printError('Failed to send crash report. Server responded with HTTP status code ${resp.statusCode}');
+        _logger.printError(
+          'Failed to send crash report. Server responded with HTTP status code ${resp.statusCode}',
+        );
       }
 
-    // Catch all exceptions to print the message that makes clear that the
-    // crash logger crashed.
-    // ignore: avoid_catches_without_on_clauses
+      // Catch all exceptions to print the message that makes clear that the
+      // crash logger crashed.
+      // ignore: avoid_catches_without_on_clauses
     } catch (sendError, sendStackTrace) {
-      if (sendError is SocketException || sendError is HttpException || sendError is http.ClientException) {
+      if (sendError is SocketException ||
+          sendError is HttpException ||
+          sendError is http.ClientException) {
         _logger.printError('Failed to send crash report due to a network error: $sendError');
       } else {
         // If the sender itself crashes, just print. We did our best.

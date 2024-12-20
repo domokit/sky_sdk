@@ -60,16 +60,15 @@ class BundleBuilder {
       buildDir: project.dartTool.childDirectory('flutter_build'),
       cacheDir: globals.cache.getRoot(),
       flutterRootDir: globals.fs.directory(Cache.flutterRoot),
-      engineVersion: globals.artifacts!.usesLocalArtifacts
-          ? null
-          : globals.flutterVersion.engineRevision,
+      engineVersion:
+          globals.artifacts!.usesLocalArtifacts ? null : globals.flutterVersion.engineRevision,
       defines: <String, String>{
         // used by the KernelSnapshot target
         kTargetPlatform: getNameForTargetPlatform(platform),
         kTargetFile: mainPath,
         kDeferredComponents: 'false',
         ...buildInfo.toBuildSystemEnvironment(),
-        if (!buildNativeAssets) kNativeAssets: 'false'
+        if (!buildNativeAssets) kNativeAssets: 'false',
       },
       artifacts: globals.artifacts!,
       fileSystem: globals.fs,
@@ -80,17 +79,17 @@ class BundleBuilder {
       platform: globals.platform,
       generateDartPluginRegistry: true,
     );
-    final Target target = buildInfo.mode == BuildMode.debug
-        ? globals.buildTargets.copyFlutterBundle
-        : globals.buildTargets.releaseCopyFlutterBundle;
+    final Target target =
+        buildInfo.mode == BuildMode.debug
+            ? globals.buildTargets.copyFlutterBundle
+            : globals.buildTargets.releaseCopyFlutterBundle;
     final BuildResult result = await buildSystem.build(target, environment);
 
     if (!result.success) {
       for (final ExceptionMeasurement measurement in result.exceptions.values) {
-        globals.printError('Target ${measurement.target} failed: ${measurement.exception}',
-          stackTrace: measurement.fatal
-              ? measurement.stackTrace
-              : null,
+        globals.printError(
+          'Target ${measurement.target} failed: ${measurement.exception}',
+          stackTrace: measurement.fatal ? measurement.stackTrace : null,
         );
       }
       throwToolExit('Failed to build bundle.');
@@ -155,7 +154,7 @@ Future<void> writeBundle(
     } on FileSystemException catch (err) {
       logger.printWarning(
         'Failed to clean up asset directory ${bundleDir.path}: $err\n'
-        'To clean build artifacts, use the command "flutter clean".'
+        'To clean build artifacts, use the command "flutter clean".',
       );
     }
   }
@@ -200,35 +199,35 @@ Future<void> writeBundle(
           final File input = devFSContent.file as File;
           bool doCopy = true;
           switch (entry.value.kind) {
-          case AssetKind.regular:
-            if (entry.value.transformers.isEmpty) {
-              break;
-            }
-            final AssetTransformationFailure? failure = await assetTransformer.transformAsset(
-              asset: input,
-              outputPath: file.path,
-              workingDirectory: projectDir.path,
-              transformerEntries: entry.value.transformers,
-              logger: logger,
-            );
-            doCopy = false;
-            if (failure != null) {
-              throwToolExit('User-defined transformation of asset "${entry.key}" failed.\n'
-                  '${failure.message}');
-            }
+            case AssetKind.regular:
+              if (entry.value.transformers.isEmpty) {
+                break;
+              }
+              final AssetTransformationFailure? failure = await assetTransformer.transformAsset(
+                asset: input,
+                outputPath: file.path,
+                workingDirectory: projectDir.path,
+                transformerEntries: entry.value.transformers,
+                logger: logger,
+              );
+              doCopy = false;
+              if (failure != null) {
+                throwToolExit(
+                  'User-defined transformation of asset "${entry.key}" failed.\n'
+                  '${failure.message}',
+                );
+              }
             case AssetKind.font:
               break;
             case AssetKind.shader:
-              doCopy = !await shaderCompiler.compileShader(
-                input: input,
-                outputPath: file.path,
-                targetPlatform: targetPlatform,
-              );
+              doCopy =
+                  !await shaderCompiler.compileShader(
+                    input: input,
+                    outputPath: file.path,
+                    targetPlatform: targetPlatform,
+                  );
             case AssetKind.model:
-              doCopy = !await sceneImporter.importScene(
-                input: input,
-                outputPath: file.path,
-              );
+              doCopy = !await sceneImporter.importScene(input: input, outputPath: file.path);
           }
           if (doCopy) {
             input.copySync(file.path);
@@ -239,5 +238,6 @@ Future<void> writeBundle(
       } finally {
         resource.release();
       }
-    }));
+    }),
+  );
 }

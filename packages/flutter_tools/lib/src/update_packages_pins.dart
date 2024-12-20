@@ -24,9 +24,12 @@ const Map<String, String> kManuallyPinnedDependencies = <String, String>{
   'flutter_gallery_assets': '1.0.2', // Tests depend on the exact version.
   'flutter_template_images': '4.2.0', // Must always exactly match flutter_tools template.
   'google_mobile_ads': '5.1.0', // https://github.com/flutter/flutter/issues/156912
-  'intl': '0.19.0', // 0.20.0 introduces new transitive dependencies that are not (yet) cleared in Flutter's allow list.
-  'native_assets_builder': '0.9.0', // Under active development with breaking changes until 1.0.0. Manually rolled by @dcharkes.
-  'native_assets_cli': '0.9.0', // Under active development with breaking changes until 1.0.0. Manually rolled by @dcharkes.
+  'intl':
+      '0.19.0', // 0.20.0 introduces new transitive dependencies that are not (yet) cleared in Flutter's allow list.
+  'native_assets_builder':
+      '0.9.0', // Under active development with breaking changes until 1.0.0. Manually rolled by @dcharkes.
+  'native_assets_cli':
+      '0.9.0', // Under active development with breaking changes until 1.0.0. Manually rolled by @dcharkes.
   'material_color_utilities': '0.11.1', // Keep pinned to latest until 1.0.0.
   'leak_tracker': '10.0.8', // https://github.com/flutter/devtools/issues/3951
   'leak_tracker_testing': '3.0.1', // https://github.com/flutter/devtools/issues/3951

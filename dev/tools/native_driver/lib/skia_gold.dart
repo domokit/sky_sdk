@@ -46,12 +46,8 @@ Future<void> enableSkiaGoldComparator({String? namePrefix}) async {
       'Set it to use Skia Gold.',
     );
   }
-  final io.Directory tmpDir = io.Directory.systemTemp.createTempSync(
-    'android_driver_test',
-  );
-  final bool isPresubmit = io.Platform.environment.containsKey(
-    _kGoldctlPresubmitKey,
-  );
+  final io.Directory tmpDir = io.Directory.systemTemp.createTempSync('android_driver_test');
+  final bool isPresubmit = io.Platform.environment.containsKey(_kGoldctlPresubmitKey);
   io.stderr.writeln(
     '=== Using Skia Gold ===\n'
     'Environment variable $_kGoldctlKey is set, using Skia Gold: \n'
@@ -76,12 +72,8 @@ Future<void> enableSkiaGoldComparator({String? namePrefix}) async {
 }
 
 final class _GoldenFileComparator extends GoldenFileComparator {
-  _GoldenFileComparator(
-    this.skiaClient, {
-    required this.isPresubmit,
-    this.namePrefix,
-    Uri? baseDir,
-  }) : baseDir = baseDir ?? Uri.parse(path.dirname(io.Platform.script.path));
+  _GoldenFileComparator(this.skiaClient, {required this.isPresubmit, this.namePrefix, Uri? baseDir})
+    : baseDir = baseDir ?? Uri.parse(path.dirname(io.Platform.script.path));
 
   final Uri baseDir;
   final SkiaGoldClient skiaClient;
@@ -104,14 +96,10 @@ final class _GoldenFileComparator extends GoldenFileComparator {
         _localFs.file(goldenFile.path),
       );
       if (result != null) {
-        io.stderr.writeln(
-          'Skia Gold detected an error when comparing "$golden":\n\n$result',
-        );
+        io.stderr.writeln('Skia Gold detected an error when comparing "$golden":\n\n$result');
         io.stderr.writeln('Still succeeding, will be triaged in Flutter Gold');
       } else {
-        io.stderr.writeln(
-          'Skia Gold comparison succeeded comparing "$golden".',
-        );
+        io.stderr.writeln('Skia Gold comparison succeeded comparing "$golden".');
       }
       return true;
     } else {
@@ -121,9 +109,7 @@ final class _GoldenFileComparator extends GoldenFileComparator {
 
   @override
   Future<io.File> update(Uri golden, Uint8List imageBytes) async {
-    io.stderr.writeln(
-      'Updating golden file: $golden (${imageBytes.length} bytes)...',
-    );
+    io.stderr.writeln('Updating golden file: $golden (${imageBytes.length} bytes)...');
     final io.File goldenFile = _getGoldenFile(golden);
     await goldenFile.parent.create(recursive: true);
     await goldenFile.writeAsBytes(imageBytes, flush: true);
@@ -140,10 +126,12 @@ final class _GoldenFileComparator extends GoldenFileComparator {
       'Golden files in the Flutter framework must end with the file extension '
       '.png.',
     );
-    return Uri.parse(<String>[
-      if (namePrefix != null) namePrefix!,
-      baseDir.pathSegments[baseDir.pathSegments.length - 2],
-      golden.toString(),
-    ].join('.'));
+    return Uri.parse(
+      <String>[
+        if (namePrefix != null) namePrefix!,
+        baseDir.pathSegments[baseDir.pathSegments.length - 2],
+        golden.toString(),
+      ].join('.'),
+    );
   }
 }

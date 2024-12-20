@@ -1,0 +1,126 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/impeller/tools/impeller.gni")
+import("//flutter/shell/config.gni")
+
+gpu_common_deps = [
+  "//flutter/common",
+  "//flutter/common/graphics",
+  "//flutter/flow",
+  "//flutter/fml",
+  "//flutter/shell/common",
+  "//flutter/skia",
+]
+
+source_set("gpu_surface_software") {
+  sources = [
+    "gpu_surface_software.cc",
+    "gpu_surface_software.h",
+    "gpu_surface_software_delegate.cc",
+    "gpu_surface_software_delegate.h",
+  ]
+
+  public_deps = gpu_common_deps
+}
+
+source_set("gpu_surface_gl") {
+  sources = [
+    "gpu_surface_gl_delegate.cc",
+    "gpu_surface_gl_delegate.h",
+    "gpu_surface_gl_skia.cc",
+    "gpu_surface_gl_skia.h",
+  ]
+
+  public_deps = gpu_common_deps
+
+  if (impeller_enable_opengles) {
+    sources += [
+      "gpu_surface_gl_impeller.cc",
+      "gpu_surface_gl_impeller.h",
+    ]
+
+    public_deps += [ "//flutter/impeller" ]
+  }
+}
+
+source_set("gpu_surface_vulkan") {
+  sources = [
+    "gpu_surface_vulkan.cc",
+    "gpu_surface_vulkan.h",
+    "gpu_surface_vulkan_delegate.cc",
+    "gpu_surface_vulkan_delegate.h",
+  ]
+  public_deps = gpu_common_deps + [
+                  "//flutter/shell/platform/embedder:embedder_headers",
+                  "//flutter/vulkan",
+                  "//flutter/vulkan/procs",
+                ]
+
+  if (impeller_enable_vulkan) {
+    sources += [
+      "gpu_surface_vulkan_impeller.cc",
+      "gpu_surface_vulkan_impeller.h",
+    ]
+
+    public_deps += [ "//flutter/impeller" ]
+  }
+}
+
+if (shell_enable_metal) {
+  source_set("gpu_surface_metal") {
+    cflags_objc = flutter_cflags_objc
+    cflags_objcc = flutter_cflags_objcc
+
+    sources = [
+      "gpu_surface_metal_delegate.cc",
+      "gpu_surface_metal_delegate.h",
+      "gpu_surface_metal_skia.h",
+      "gpu_surface_metal_skia.mm",
+      "gpu_surface_noop.h",
+      "gpu_surface_noop.mm",
+    ]
+
+    public_deps = gpu_common_deps
+
+    if (impeller_enable_metal) {
+      sources += [
+        "gpu_surface_metal_impeller.h",
+        "gpu_surface_metal_impeller.mm",
+      ]
+
+      public_deps += [ "//flutter/impeller" ]
+    }
+  }
+}
+
+if (is_mac) {
+  impeller_component("gpu_surface_metal_unittests") {
+    testonly = true
+    cflags_objc = flutter_cflags_objc
+    cflags_objcc = flutter_cflags_objcc
+
+    target_type = "executable"
+    sources = [
+      "gpu_surface_metal_impeller_unittests.mm",
+      "gpu_surface_noop_unittests.mm",
+    ]
+
+    frameworks = [
+      "AppKit.framework",
+      "QuartzCore.framework",
+    ]
+
+    deps = [
+             "//flutter/testing",
+             ":gpu_surface_metal",
+             "//flutter/impeller/fixtures",
+             "//flutter/fml",
+             "//flutter/runtime",
+             "//flutter/runtime:libdart",
+             "//flutter/testing",
+           ] + gpu_common_deps
+  }
+}

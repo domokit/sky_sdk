@@ -1,0 +1,58 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/testing/testing.gni")
+
+if (is_fuchsia) {
+  import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+}
+
+source_set("assets") {
+  sources = [
+    "asset_manager.cc",
+    "asset_manager.h",
+    "asset_resolver.h",
+    "directory_asset_bundle.cc",
+    "directory_asset_bundle.h",
+    "native_assets.cc",
+    "native_assets.h",
+  ]
+
+  deps = [
+    "//flutter/common",
+    "//flutter/fml",
+    "//flutter/third_party/rapidjson",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+}
+
+test_fixtures("assets_fixtures") {
+  fixtures = []
+}
+
+if (enable_unittests) {
+  executable("assets_unittests") {
+    testonly = true
+
+    sources = [ "native_assets_unittests.cc" ]
+
+    deps = [
+      ":assets",
+      ":assets_fixtures",
+      "//flutter/testing",
+    ]
+
+    if (!defined(defines)) {
+      defines = []
+    }
+
+    # This is needed for //flutter/third_party/googletest for linking zircon
+    # symbols.
+    if (is_fuchsia) {
+      libs = [ "${fuchsia_arch_root}/sysroot/lib/libzircon.so" ]
+    }
+  }
+}

@@ -1,0 +1,36 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/toolchain/clang.gni")
+import("//build/toolchain/toolchain.gni")
+import("clang.gni")
+
+# Empty entry to satisfy ANGLE build, which tries to remove this config.
+config("find_bad_constructs") {
+}
+
+# Enables some extra Clang-specific warnings. Some third-party code won't
+# compile with these so may want to remove this config.
+config("extra_warnings") {
+  cflags = [
+    # Warns when a const char[] is converted to bool.
+    "-Wstring-conversion",
+
+    # Warns when a source file doesn't have a newline at end-of-file.
+    # This is to match Fuchsia, which enables this warning.
+    "-Wnewline-eof",
+  ]
+
+  defines = [ "_LIBCPP_ENABLE_THREAD_SAFETY_ANNOTATIONS" ]
+}
+
+group("llvm-symbolizer_data") {
+  if (is_win) {
+    data = [ "$buildtools_path/windows-x64/bin/llvm-symbolizer.exe" ]
+  } else if (is_mac) {
+    data = [ "$buildtools_path/mac-${host_cpu}/clang/bin/llvm-symbolizer" ]
+  } else if (is_linux) {
+    data = [ "$buildtools_path/linux-${host_cpu}/clang/bin/llvm-symbolizer" ]
+  }
+}

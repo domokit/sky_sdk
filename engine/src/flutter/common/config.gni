@@ -1,0 +1,168 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+if (is_android) {
+  import("//build/config/android/config.gni")
+}
+
+if (target_cpu == "arm" || target_cpu == "arm64") {
+  import("//build/config/arm.gni")
+}
+
+declare_args() {
+  # The runtime mode ("debug", "profile", "release", or "jit_release")
+  flutter_runtime_mode = "debug"
+
+  # Whether to use a prebuilt Dart SDK instead of building one.
+  flutter_prebuilt_dart_sdk = false
+
+  # Whether to build host-side development artifacts.
+  flutter_build_engine_artifacts = true
+
+  # Whether to include backtrace support.
+  enable_backtrace = true
+
+  # Whether to include --fapplication-extension when build iOS framework.
+  # This is currently a test flag and does not work properly.
+  #TODO(cyanglaz): Remove above comment about test flag when the entire iOS embedder supports app extension
+  #https://github.com/flutter/flutter/issues/124289
+  darwin_extension_safe = false
+
+  # Whether binary size optimizations with the assumption that Impeller is the
+  # only supported rendering engine are enabled.
+  #
+  # See [go/slimpeller-dashboard](https://github.com/orgs/flutter/projects/21)
+  # for details.
+  slimpeller = false
+}
+
+# feature_defines_list ---------------------------------------------------------
+
+feature_defines_list = [
+  "FLUTTER_RUNTIME_MODE_DEBUG=1",
+  "FLUTTER_RUNTIME_MODE_PROFILE=2",
+  "FLUTTER_RUNTIME_MODE_RELEASE=3",
+  "FLUTTER_RUNTIME_MODE_JIT_RELEASE=4",
+  "DART_LEGACY_API=[[deprecated]]",
+]
+
+if (flutter_runtime_mode == "debug") {
+  feature_defines_list += [
+    "FLUTTER_RUNTIME_MODE=1",
+    "FLUTTER_JIT_RUNTIME=1",
+  ]
+} else if (flutter_runtime_mode == "profile") {
+  feature_defines_list += [ "FLUTTER_RUNTIME_MODE=2" ]
+} else if (flutter_runtime_mode == "release") {
+  feature_defines_list += [
+    "FLUTTER_RUNTIME_MODE=3",
+    "FLUTTER_RELEASE=1",
+  ]
+} else if (flutter_runtime_mode == "jit_release") {
+  feature_defines_list += [
+    "FLUTTER_RUNTIME_MODE=4",
+    "FLUTTER_RELEASE=1",
+    "FLUTTER_JIT_RUNTIME=1",
+  ]
+} else {
+  feature_defines_list += [ "FLUTTER_RUNTIME_MODE=0" ]
+}
+
+if (slimpeller) {
+  feature_defines_list += [ "SLIMPELLER=1" ]
+}
+
+if (is_ios || is_mac) {
+  flutter_cflags_objc = [
+    "-Werror=overriding-method-mismatch",
+    "-Werror=undeclared-selector",
+    "-fobjc-arc",
+  ]
+  if (is_mac) {
+    flutter_cflags_objc += [ "-fapplication-extension" ]
+  }
+
+  flutter_cflags_objcc = flutter_cflags_objc
+}
+
+# A combo of host os name and cpu is used in several locations to
+# generate the names of the archived artifacts.
+platform_name = host_os
+if (platform_name == "mac") {
+  platform_name = "darwin"
+} else if (platform_name == "win") {
+  platform_name = "windows"
+}
+
+full_platform_name = "$platform_name-$host_cpu"
+
+target_platform_name = target_os
+if (target_platform_name == "mac") {
+  platform_target_name = "darwin"
+} else if (target_platform_name == "win") {
+  target_platform_name = "windows"
+}
+
+full_target_platform_name = "$target_platform_name-$target_cpu"
+
+# Prebuilt Dart SDK location
+_target_os_name = target_os
+if (_target_os_name == "mac") {
+  _target_os_name = "macos"
+} else if (_target_os_name == "win") {
+  _target_os_name = "windows"
+}
+
+_host_os_name = host_os
+if (_host_os_name == "mac") {
+  _host_os_name = "macos"
+} else if (_host_os_name == "win") {
+  _host_os_name = "windows"
+}
+
+# When building 32-bit Android development artifacts for Windows host (like
+# gen_snapshot), the host_cpu is set to x86. However, the correct prebuilt
+# Dart SDK to use during this build is still the 64-bit one.
+_host_cpu = host_cpu
+if (host_os == "win" && host_cpu == "x86") {
+  _host_cpu = "x64"
+}
+
+_target_prebuilt_config = "$_target_os_name-$target_cpu"
+_host_prebuilt_config = "$_host_os_name-$_host_cpu"
+
+target_prebuilts_path = "//flutter/prebuilts/$_target_prebuilt_config"
+host_prebuilts_path = "//flutter/prebuilts/$_host_prebuilt_config"
+
+if (flutter_prebuilt_dart_sdk) {
+  target_prebuilt_dart_sdk = "$target_prebuilts_path/dart-sdk"
+  host_prebuilt_dart_sdk = "$host_prebuilts_path/dart-sdk"
+
+  # There is no prebuilt Dart SDK targeting Fuchsia, iOS, and Android, but we
+  # also don't need one, so even when the build is targeting one of these
+  # platforms, we use the prebuilt Dart SDK for the host.
+  if (current_toolchain == host_toolchain || target_os == "android" ||
+      target_os == "fuchsia" || target_os == "ios" || target_os == "wasm") {
+    prebuilt_dart_sdk = host_prebuilt_dart_sdk
+    prebuilt_dart_sdk_config = _host_prebuilt_config
+  } else {
+    prebuilt_dart_sdk = target_prebuilt_dart_sdk
+    prebuilt_dart_sdk_config = _target_prebuilt_config
+  }
+}
+
+# Flutter SDK artifacts should only be built when either doing host builds, or
+# for cross-compiled desktop targets.
+#
+# !is_android is necessary because of the way that Android 32-bit arm
+# gen_snapshot is built on Windows using the host toolchain, since we have no
+# 32-bit arm toolchain for Windows. See comments in //flutter/tools/gn for
+# details.
+#
+# TODO: We can't build the engine artifacts for arm (32-bit) right now;
+# see https://github.com/flutter/flutter/issues/74322.
+build_engine_artifacts =
+    flutter_build_engine_artifacts && !is_android &&
+    (current_toolchain == host_toolchain ||
+     (is_linux && !is_chromeos && current_cpu != "arm") || is_mac || is_win)

@@ -3,12 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_api_samples/widgets/magnifier/cupertino_magnifier.0.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/magnifier/cupertino_magnifier.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-
   testWidgets('CupertinoMagnifier must be visible', (WidgetTester tester) async {
     await tester.pumpWidget(const example.CupertinoMagnifierApp());
 
@@ -54,9 +52,6 @@ void main() {
 
     await tester.dragFrom(centerOfPositioned, dragDistance);
     await tester.pump();
-    expect(
-      positionedWidgetInTree,
-      isPositionedAt(updatedPositioned),
-    );
+    expect(positionedWidgetInTree, isPositionedAt(updatedPositioned));
   });
 }

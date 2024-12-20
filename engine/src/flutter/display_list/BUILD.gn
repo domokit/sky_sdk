@@ -1,0 +1,315 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/impeller/tools/impeller.gni")
+import("//flutter/testing/testing.gni")
+
+if (is_fuchsia) {
+  import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+}
+
+config("display_list_config") {
+  defines = []
+}
+
+source_set("display_list") {
+  sources = [
+    "benchmarking/dl_complexity.cc",
+    "benchmarking/dl_complexity.h",
+    "benchmarking/dl_complexity_gl.cc",
+    "benchmarking/dl_complexity_gl.h",
+    "benchmarking/dl_complexity_metal.cc",
+    "benchmarking/dl_complexity_metal.h",
+    "display_list.cc",
+    "display_list.h",
+    "dl_attributes.h",
+    "dl_blend_mode.cc",
+    "dl_blend_mode.h",
+    "dl_builder.cc",
+    "dl_builder.h",
+    "dl_canvas.cc",
+    "dl_canvas.h",
+    "dl_color.cc",
+    "dl_color.h",
+    "dl_op_flags.cc",
+    "dl_op_flags.h",
+    "dl_op_receiver.cc",
+    "dl_op_receiver.h",
+    "dl_op_records.cc",
+    "dl_op_records.h",
+    "dl_paint.cc",
+    "dl_paint.h",
+    "dl_sampling_options.h",
+    "dl_storage.cc",
+    "dl_storage.h",
+    "dl_tile_mode.h",
+    "dl_vertices.cc",
+    "dl_vertices.h",
+    "effects/color_filters/dl_blend_color_filter.cc",
+    "effects/color_filters/dl_blend_color_filter.h",
+    "effects/color_filters/dl_linear_to_srgb_gamma_color_filter.cc",
+    "effects/color_filters/dl_linear_to_srgb_gamma_color_filter.h",
+    "effects/color_filters/dl_matrix_color_filter.cc",
+    "effects/color_filters/dl_matrix_color_filter.h",
+    "effects/color_filters/dl_srgb_to_linear_gamma_color_filter.cc",
+    "effects/color_filters/dl_srgb_to_linear_gamma_color_filter.h",
+    "effects/color_sources/dl_conical_gradient_color_source.cc",
+    "effects/color_sources/dl_conical_gradient_color_source.h",
+    "effects/color_sources/dl_image_color_source.cc",
+    "effects/color_sources/dl_image_color_source.h",
+    "effects/color_sources/dl_linear_gradient_color_source.cc",
+    "effects/color_sources/dl_linear_gradient_color_source.h",
+    "effects/color_sources/dl_radial_gradient_color_source.cc",
+    "effects/color_sources/dl_radial_gradient_color_source.h",
+    "effects/color_sources/dl_runtime_effect_color_source.cc",
+    "effects/color_sources/dl_runtime_effect_color_source.h",
+    "effects/color_sources/dl_sweep_gradient_color_source.cc",
+    "effects/color_sources/dl_sweep_gradient_color_source.h",
+    "effects/dl_color_filter.cc",
+    "effects/dl_color_filter.h",
+    "effects/dl_color_filters.h",
+    "effects/dl_color_source.cc",
+    "effects/dl_color_source.h",
+    "effects/dl_color_sources.h",
+    "effects/dl_image_filter.cc",
+    "effects/dl_image_filter.h",
+    "effects/dl_image_filters.h",
+    "effects/dl_mask_filter.cc",
+    "effects/dl_mask_filter.h",
+    "effects/dl_runtime_effect.cc",
+    "effects/dl_runtime_effect.h",
+    "effects/image_filters/dl_blur_image_filter.cc",
+    "effects/image_filters/dl_blur_image_filter.h",
+    "effects/image_filters/dl_color_filter_image_filter.cc",
+    "effects/image_filters/dl_color_filter_image_filter.h",
+    "effects/image_filters/dl_compose_image_filter.cc",
+    "effects/image_filters/dl_compose_image_filter.h",
+    "effects/image_filters/dl_dilate_image_filter.cc",
+    "effects/image_filters/dl_dilate_image_filter.h",
+    "effects/image_filters/dl_erode_image_filter.cc",
+    "effects/image_filters/dl_erode_image_filter.h",
+    "effects/image_filters/dl_local_matrix_image_filter.cc",
+    "effects/image_filters/dl_local_matrix_image_filter.h",
+    "effects/image_filters/dl_matrix_image_filter.cc",
+    "effects/image_filters/dl_matrix_image_filter.h",
+    "effects/image_filters/dl_runtime_effect_image_filter.cc",
+    "effects/image_filters/dl_runtime_effect_image_filter.h",
+    "geometry/dl_geometry_types.h",
+    "geometry/dl_path.cc",
+    "geometry/dl_path.h",
+    "geometry/dl_region.cc",
+    "geometry/dl_region.h",
+    "geometry/dl_rtree.cc",
+    "geometry/dl_rtree.h",
+    "image/dl_image.cc",
+    "image/dl_image.h",
+    "image/dl_image_skia.cc",
+    "image/dl_image_skia.h",
+    "skia/dl_sk_canvas.cc",
+    "skia/dl_sk_canvas.h",
+    "skia/dl_sk_conversions.cc",
+    "skia/dl_sk_conversions.h",
+    "skia/dl_sk_dispatcher.cc",
+    "skia/dl_sk_dispatcher.h",
+    "skia/dl_sk_paint_dispatcher.cc",
+    "skia/dl_sk_paint_dispatcher.h",
+    "skia/dl_sk_types.h",
+    "utils/dl_accumulation_rect.cc",
+    "utils/dl_accumulation_rect.h",
+    "utils/dl_matrix_clip_tracker.cc",
+    "utils/dl_matrix_clip_tracker.h",
+    "utils/dl_receiver_utils.cc",
+    "utils/dl_receiver_utils.h",
+  ]
+
+  public_configs = [ ":display_list_config" ]
+
+  public_deps = [
+    "//flutter/fml",
+    "//flutter/impeller/runtime_stage",
+    "//flutter/impeller/typographer",
+    "//flutter/skia",
+  ]
+
+  if (!defined(defines)) {
+    defines = []
+  }
+}
+
+test_fixtures("display_list_fixtures") {
+  fixtures =
+      [ "//flutter/third_party/txt/third_party/fonts/Roboto-Regular.ttf" ]
+}
+
+if (enable_unittests) {
+  executable("display_list_unittests") {
+    testonly = true
+
+    sources = [
+      "benchmarking/dl_complexity_unittests.cc",
+      "display_list_unittests.cc",
+      "dl_color_unittests.cc",
+      "dl_paint_unittests.cc",
+      "dl_storage_unittests.cc",
+      "dl_vertices_unittests.cc",
+      "effects/dl_color_filter_unittests.cc",
+      "effects/dl_color_source_unittests.cc",
+      "effects/dl_image_filter_unittests.cc",
+      "effects/dl_mask_filter_unittests.cc",
+      "geometry/dl_geometry_types_unittests.cc",
+      "geometry/dl_path_unittests.cc",
+      "geometry/dl_region_unittests.cc",
+      "geometry/dl_rtree_unittests.cc",
+      "skia/dl_sk_conversions_unittests.cc",
+      "skia/dl_sk_paint_dispatcher_unittests.cc",
+      "utils/dl_accumulation_rect_unittests.cc",
+      "utils/dl_matrix_clip_tracker_unittests.cc",
+    ]
+
+    deps = [
+      ":display_list",
+      ":display_list_fixtures",
+      "//flutter/display_list/testing:display_list_testing",
+      "//flutter/impeller/typographer/backends/skia:typographer_skia_backend",
+      "//flutter/testing",
+      "//flutter/testing:skia",
+    ]
+
+    if (!defined(defines)) {
+      defines = []
+    }
+    if (is_win) {
+      # Required for M_PI and others.
+      defines += [ "_USE_MATH_DEFINES" ]
+    }
+
+    # This is needed for //flutter/third_party/googletest for linking zircon
+    # symbols.
+    if (is_fuchsia) {
+      libs = [ "${fuchsia_arch_root}/sysroot/lib/libzircon.so" ]
+    }
+  }
+
+  executable("display_list_rendertests") {
+    testonly = true
+
+    sources = [ "testing/dl_rendering_unittests.cc" ]
+
+    deps = [
+      ":display_list",
+      ":display_list_fixtures",
+      "//flutter/common/graphics",
+      "//flutter/display_list/testing:display_list_surface_provider",
+      "//flutter/display_list/testing:display_list_testing",
+      "//flutter/impeller/typographer/backends/skia:typographer_skia_backend",
+      "//flutter/testing",
+      "//flutter/third_party/txt",
+    ]
+
+    if (!defined(defines)) {
+      defines = []
+    }
+    if (is_win) {
+      # Required for M_PI and others.
+      defines += [ "_USE_MATH_DEFINES" ]
+    }
+
+    # This is needed for //flutter/third_party/googletest for linking zircon
+    # symbols.
+    if (is_fuchsia) {
+      libs = [ "${fuchsia_arch_root}/sysroot/lib/libzircon.so" ]
+    }
+  }
+
+  executable("display_list_builder_benchmarks") {
+    testonly = true
+
+    sources = [ "benchmarking/dl_builder_benchmarks.cc" ]
+
+    deps = [
+      ":display_list",
+      ":display_list_fixtures",
+      "//flutter/benchmarking",
+      "//flutter/display_list/testing:display_list_testing",
+      "//flutter/testing:testing_lib",
+    ]
+  }
+
+  executable("display_list_region_benchmarks") {
+    testonly = true
+
+    sources = [ "benchmarking/dl_region_benchmarks.cc" ]
+
+    deps = [
+      ":display_list_fixtures",
+      "//flutter/benchmarking",
+      "//flutter/testing:testing_lib",
+    ]
+  }
+
+  executable("display_list_transform_benchmarks") {
+    testonly = true
+
+    sources = [ "benchmarking/dl_transform_benchmarks.cc" ]
+
+    deps = [
+      ":display_list_fixtures",
+      "//flutter/benchmarking",
+      "//flutter/testing:testing_lib",
+    ]
+  }
+}
+
+source_set("display_list_benchmarks_source") {
+  testonly = true
+
+  sources = [
+    "benchmarking/dl_benchmarks.cc",
+    "benchmarking/dl_benchmarks.h",
+  ]
+
+  deps = [
+    ":display_list",
+    ":display_list_fixtures",
+    "$dart_src/runtime:libdart_jit",  # for tracing
+    "//flutter/benchmarking",
+    "//flutter/common/graphics",
+    "//flutter/display_list/testing:display_list_surface_provider",
+    "//flutter/display_list/testing:display_list_testing",
+    "//flutter/fml",
+    "//flutter/skia",
+    "//flutter/testing:skia",
+    "//flutter/testing:testing_lib",
+  ]
+}
+
+executable("display_list_benchmarks") {
+  testonly = true
+
+  deps = [ ":display_list_benchmarks_source" ]
+}
+
+if (is_ios) {
+  shared_library("ios_display_list_benchmarks") {
+    testonly = true
+    visibility = [ ":*" ]
+
+    configs -= [
+      "//build/config/gcc:symbol_visibility_hidden",
+      "//build/config:symbol_visibility_hidden",
+    ]
+    configs += [ "//flutter/benchmarking:benchmark_library_config" ]
+    cflags = [
+      "-fobjc-arc",
+      "-mios-simulator-version-min=$ios_testing_deployment_target",
+    ]
+    ldflags =
+        [ "-Wl,-install_name,@rpath/libios_display_list_benchmarks.dylib" ]
+    deps = [
+      ":display_list_benchmarks_source",
+      "//flutter/benchmarking:benchmarking_library",
+    ]
+  }
+}

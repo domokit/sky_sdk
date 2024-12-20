@@ -1,0 +1,63 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+source_root = "//flutter/third_party/json"
+
+config("json_public_config") {
+  include_dirs = [ "$source_root/include" ]
+}
+
+source_set("json") {
+  public_configs = [ ":json_public_config" ]
+
+  public = [ "$source_root/include/nlohmann/json.hpp" ]
+
+  sources = [
+    "$source_root/include/nlohmann/adl_serializer.hpp",
+    "$source_root/include/nlohmann/byte_container_with_subtype.hpp",
+    "$source_root/include/nlohmann/detail/abi_macros.hpp",
+    "$source_root/include/nlohmann/detail/conversions/from_json.hpp",
+    "$source_root/include/nlohmann/detail/conversions/to_chars.hpp",
+    "$source_root/include/nlohmann/detail/conversions/to_json.hpp",
+    "$source_root/include/nlohmann/detail/exceptions.hpp",
+    "$source_root/include/nlohmann/detail/hash.hpp",
+    "$source_root/include/nlohmann/detail/input/binary_reader.hpp",
+    "$source_root/include/nlohmann/detail/input/input_adapters.hpp",
+    "$source_root/include/nlohmann/detail/input/json_sax.hpp",
+    "$source_root/include/nlohmann/detail/input/lexer.hpp",
+    "$source_root/include/nlohmann/detail/input/parser.hpp",
+    "$source_root/include/nlohmann/detail/input/position_t.hpp",
+    "$source_root/include/nlohmann/detail/iterators/internal_iterator.hpp",
+    "$source_root/include/nlohmann/detail/iterators/iter_impl.hpp",
+    "$source_root/include/nlohmann/detail/iterators/iteration_proxy.hpp",
+    "$source_root/include/nlohmann/detail/iterators/iterator_traits.hpp",
+    "$source_root/include/nlohmann/detail/iterators/json_reverse_iterator.hpp",
+    "$source_root/include/nlohmann/detail/iterators/primitive_iterator.hpp",
+    "$source_root/include/nlohmann/detail/json_custom_base_class.hpp",
+    "$source_root/include/nlohmann/detail/json_pointer.hpp",
+    "$source_root/include/nlohmann/detail/json_ref.hpp",
+    "$source_root/include/nlohmann/detail/macro_scope.hpp",
+    "$source_root/include/nlohmann/detail/macro_unscope.hpp",
+    "$source_root/include/nlohmann/detail/meta/call_std/begin.hpp",
+    "$source_root/include/nlohmann/detail/meta/call_std/end.hpp",
+    "$source_root/include/nlohmann/detail/meta/cpp_future.hpp",
+    "$source_root/include/nlohmann/detail/meta/detected.hpp",
+    "$source_root/include/nlohmann/detail/meta/identity_tag.hpp",
+    "$source_root/include/nlohmann/detail/meta/is_sax.hpp",
+    "$source_root/include/nlohmann/detail/meta/std_fs.hpp",
+    "$source_root/include/nlohmann/detail/meta/type_traits.hpp",
+    "$source_root/include/nlohmann/detail/meta/void_t.hpp",
+    "$source_root/include/nlohmann/detail/output/binary_writer.hpp",
+    "$source_root/include/nlohmann/detail/output/output_adapters.hpp",
+    "$source_root/include/nlohmann/detail/output/serializer.hpp",
+    "$source_root/include/nlohmann/detail/string_concat.hpp",
+    "$source_root/include/nlohmann/detail/string_escape.hpp",
+    "$source_root/include/nlohmann/detail/value_t.hpp",
+    "$source_root/include/nlohmann/json.hpp",
+    "$source_root/include/nlohmann/json_fwd.hpp",
+    "$source_root/include/nlohmann/ordered_map.hpp",
+    "$source_root/include/nlohmann/thirdparty/hedley/hedley.hpp",
+    "$source_root/include/nlohmann/thirdparty/hedley/hedley_undef.hpp",
+  ]
+}

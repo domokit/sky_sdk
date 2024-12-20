@@ -10,17 +10,17 @@ void main() {
   testWidgets('What should be visible in the initial state.', (WidgetTester tester) async {
     await tester.pumpWidget(const example.CustomScrollViewExampleApp());
 
-    expect(find.descendant(
-      of: find.byType(IconButton),
-      matching: find.byIcon(Icons.add),
-    ), findsOne);
+    expect(
+      find.descendant(of: find.byType(IconButton), matching: find.byIcon(Icons.add)),
+      findsOne,
+    );
     expect(find.byType(SliverList), findsOne);
 
     // Initial state should present only "Item: 0" on the SliverList.
     expect(find.widgetWithText(SliverList, 'Item: 0'), findsOne);
     expect(find.widgetWithText(SliverList, 'Item: -1'), findsNothing);
     expect(find.widgetWithText(SliverList, 'Item: 1'), findsNothing);
-});
+  });
 
   testWidgets('Items are added correctly', (WidgetTester tester) async {
     await tester.pumpWidget(const example.CustomScrollViewExampleApp());

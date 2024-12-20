@@ -238,7 +238,7 @@ class MaterialBanner extends StatefulWidget {
   // API for ScaffoldMessengerState.showMaterialBanner():
 
   /// Creates an animation controller useful for driving a [MaterialBanner]'s entrance and exit animation.
-  static AnimationController createAnimationController({ required TickerProvider vsync }) {
+  static AnimationController createAnimationController({required TickerProvider vsync}) {
     return AnimationController(
       duration: _materialBannerTransitionDuration,
       debugLabel: 'MaterialBanner',
@@ -250,7 +250,7 @@ class MaterialBanner extends StatefulWidget {
   ///
   /// If the original material banner lacks a key, the newly created material banner will
   /// use the given fallback key.
-  MaterialBanner withAnimation(Animation<double> newAnimation, { Key? fallbackKey }) {
+  MaterialBanner withAnimation(Animation<double> newAnimation, {Key? fallbackKey}) {
     return MaterialBanner(
       key: key ?? fallbackKey,
       content: content,
@@ -287,7 +287,6 @@ class _MaterialBannerState extends State<MaterialBanner> {
     super.initState();
     widget.animation?.addStatusListener(_onAnimationStatusChanged);
     _setCurvedAnimations();
-
   }
 
   @override
@@ -304,7 +303,10 @@ class _MaterialBannerState extends State<MaterialBanner> {
     _heightAnimation?.dispose();
     _slideOutCurvedAnimation?.dispose();
     if (widget.animation != null) {
-      _heightAnimation = CurvedAnimation(parent: widget.animation!, curve: _materialBannerHeightCurve);
+      _heightAnimation = CurvedAnimation(
+        parent: widget.animation!,
+        curve: _materialBannerHeightCurve,
+      );
       _slideOutCurvedAnimation = CurvedAnimation(
         parent: widget.animation!,
         curve: const Threshold(0.0),
@@ -313,7 +315,6 @@ class _MaterialBannerState extends State<MaterialBanner> {
       _heightAnimation = null;
       _slideOutCurvedAnimation = null;
     }
-
   }
 
   @override
@@ -342,15 +343,20 @@ class _MaterialBannerState extends State<MaterialBanner> {
 
     final ThemeData theme = Theme.of(context);
     final MaterialBannerThemeData bannerTheme = MaterialBannerTheme.of(context);
-    final MaterialBannerThemeData defaults = theme.useMaterial3 ? _BannerDefaultsM3(context) : _BannerDefaultsM2(context);
+    final MaterialBannerThemeData defaults =
+        theme.useMaterial3 ? _BannerDefaultsM3(context) : _BannerDefaultsM2(context);
 
     final bool isSingleRow = widget.actions.length == 1 && !widget.forceActionsBelow;
-    final EdgeInsetsGeometry padding = widget.padding ?? bannerTheme.padding ?? (isSingleRow
-        ? const EdgeInsetsDirectional.only(start: 16.0, top: 2.0)
-        : const EdgeInsetsDirectional.only(start: 16.0, top: 24.0, end: 16.0, bottom: 4.0));
-    final EdgeInsetsGeometry leadingPadding = widget.leadingPadding
-        ?? bannerTheme.leadingPadding
-        ?? const EdgeInsetsDirectional.only(end: 16.0);
+    final EdgeInsetsGeometry padding =
+        widget.padding ??
+        bannerTheme.padding ??
+        (isSingleRow
+            ? const EdgeInsetsDirectional.only(start: 16.0, top: 2.0)
+            : const EdgeInsetsDirectional.only(start: 16.0, top: 24.0, end: 16.0, bottom: 4.0));
+    final EdgeInsetsGeometry leadingPadding =
+        widget.leadingPadding ??
+        bannerTheme.leadingPadding ??
+        const EdgeInsetsDirectional.only(end: 16.0);
 
     final Widget actionsBar = ConstrainedBox(
       constraints: BoxConstraints(minHeight: widget.minActionBarHeight),
@@ -368,21 +374,17 @@ class _MaterialBannerState extends State<MaterialBanner> {
     );
 
     final double elevation = widget.elevation ?? bannerTheme.elevation ?? 0.0;
-    final EdgeInsetsGeometry margin = widget.margin ?? EdgeInsets.only(bottom: elevation > 0 ? 10.0 : 0.0);
-    final Color backgroundColor = widget.backgroundColor
-        ?? bannerTheme.backgroundColor
-        ?? defaults.backgroundColor!;
-    final Color? surfaceTintColor = widget.surfaceTintColor
-        ?? bannerTheme.surfaceTintColor
-        ?? defaults.surfaceTintColor;
-    final Color? shadowColor = widget.shadowColor
-        ?? bannerTheme.shadowColor;
-    final Color? dividerColor = widget.dividerColor
-        ?? bannerTheme.dividerColor
-        ?? defaults.dividerColor;
-    final TextStyle? textStyle = widget.contentTextStyle
-        ?? bannerTheme.contentTextStyle
-        ?? defaults.contentTextStyle;
+    final EdgeInsetsGeometry margin =
+        widget.margin ?? EdgeInsets.only(bottom: elevation > 0 ? 10.0 : 0.0);
+    final Color backgroundColor =
+        widget.backgroundColor ?? bannerTheme.backgroundColor ?? defaults.backgroundColor!;
+    final Color? surfaceTintColor =
+        widget.surfaceTintColor ?? bannerTheme.surfaceTintColor ?? defaults.surfaceTintColor;
+    final Color? shadowColor = widget.shadowColor ?? bannerTheme.shadowColor;
+    final Color? dividerColor =
+        widget.dividerColor ?? bannerTheme.dividerColor ?? defaults.dividerColor;
+    final TextStyle? textStyle =
+        widget.contentTextStyle ?? bannerTheme.contentTextStyle ?? defaults.contentTextStyle;
 
     Widget materialBanner = Padding(
       padding: margin,
@@ -399,20 +401,14 @@ class _MaterialBannerState extends State<MaterialBanner> {
               child: Row(
                 children: <Widget>[
                   if (widget.leading != null)
-                    Padding(
-                      padding: leadingPadding,
-                      child: widget.leading,
-                    ),
+                    Padding(padding: leadingPadding, child: widget.leading),
                   MediaQuery.withClampedTextScaling(
                     // Set maximum text scale factor to _kMaxContentTextScaleFactor for the
                     // content to keep the visual hierarchy the same even with larger font
                     // sizes.
                     maxScaleFactor: _kMaxContentTextScaleFactor,
                     child: Expanded(
-                      child: DefaultTextStyle(
-                        style: textStyle!,
-                        child: widget.content,
-                      ),
+                      child: DefaultTextStyle(style: textStyle!, child: widget.content),
                     ),
                   ),
                   if (isSingleRow)
@@ -438,9 +434,7 @@ class _MaterialBannerState extends State<MaterialBanner> {
       return materialBanner;
     }
 
-    materialBanner = SafeArea(
-      child: materialBanner,
-    );
+    materialBanner = SafeArea(child: materialBanner);
 
     final Animation<Offset> slideOutAnimation = Tween<Offset>(
       begin: const Offset(0.0, -1.0),
@@ -451,14 +445,14 @@ class _MaterialBannerState extends State<MaterialBanner> {
       container: true,
       liveRegion: true,
       onDismiss: () {
-        ScaffoldMessenger.of(context).removeCurrentMaterialBanner(reason: MaterialBannerClosedReason.dismiss);
+        ScaffoldMessenger.of(
+          context,
+        ).removeCurrentMaterialBanner(reason: MaterialBannerClosedReason.dismiss);
       },
-      child: accessibleNavigation
-          ? materialBanner
-          : SlideTransition(
-        position: slideOutAnimation,
-        child: materialBanner,
-      ),
+      child:
+          accessibleNavigation
+              ? materialBanner
+              : SlideTransition(position: slideOutAnimation, child: materialBanner),
     );
 
     final Widget materialBannerTransition;
@@ -486,9 +480,7 @@ class _MaterialBannerState extends State<MaterialBanner> {
 }
 
 class _BannerDefaultsM2 extends MaterialBannerThemeData {
-  _BannerDefaultsM2(this.context)
-    : _theme = Theme.of(context),
-      super(elevation: 0.0);
+  _BannerDefaultsM2(this.context) : _theme = Theme.of(context), super(elevation: 0.0);
 
   final BuildContext context;
   final ThemeData _theme;
@@ -507,6 +499,7 @@ class _BannerDefaultsM2 extends MaterialBannerThemeData {
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 class _BannerDefaultsM3 extends MaterialBannerThemeData {
   _BannerDefaultsM3(this.context)
     : super(elevation: 1.0);
@@ -527,5 +520,6 @@ class _BannerDefaultsM3 extends MaterialBannerThemeData {
   @override
   TextStyle? get contentTextStyle => _textTheme.bodyMedium;
 }
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - Banner

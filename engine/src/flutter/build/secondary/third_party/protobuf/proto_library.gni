@@ -1,0 +1,483 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Compile a protocol buffer.
+#
+# Protobuf parameters:
+#
+#   proto_in_dir (optional)
+#       Specifies the path relative to the current BUILD.gn file where
+#       proto files are located and the directory structure of
+#       this proto library starts.
+#
+#       This option can be calculated automatically but it will raise an
+#       assertion error if any nested directories are found.
+#
+#   proto_out_dir (optional)
+#       Specifies the path suffix that output files are generated under.
+#       This path will be appended to |root_gen_dir|, but for python stubs
+#       it will be appended to |root_build_dir|/pyproto.
+#
+#   generate_python (optional, default true)
+#       Generate Python protobuf stubs.
+#
+#   generate_cc (optional, default true)
+#       Generate C++ protobuf stubs.
+#
+#   generate_descriptor_set (optional, default false)
+#       Generate a descriptor set file at a default location
+#       "${target_out_dir}/${target_name}.desc.pb".
+#
+#   generate_descriptor (optional, default "")
+#       Generate a descriptor set file at a specific location rooted underneath
+#       the generated files directory.
+#       Cannot be used in combination with |generate_descriptor|.
+#
+#   generate_go (optional, default false)
+#       Generate Go protobuf stubs.
+#       Mutually exclusive with generate_go_grpc.
+#
+#   generate_go_grpc (optional, default false)
+#       Generate a Go gRPC protobuf stub, instead of a regular one.
+#       Mutually exclusive with generate_go.
+#
+#   cc_generator_options (optional)
+#       List of extra flags passed to the protocol compiler.  If you need to
+#       add an EXPORT macro to a protobuf's C++ header, set the
+#       'cc_generator_options' variable with the value:
+#       'dllexport_decl=FOO_EXPORT:' (note trailing colon).
+#
+#       It is likely you also need to #include a file for the above EXPORT
+#       macro to work (see cc_include) and set
+#       component_build_force_source_set = true.
+#
+#   cc_include (optional)
+#       String listing an extra include that should be passed.
+#       Example: cc_include = "foo/bar.h"
+#
+#   generator_plugin_label (optional)
+#       GN label for plugin executable which generates custom cc stubs.
+#       Don't specify a toolchain, host toolchain is assumed.
+#
+#   generator_plugin_script (optional)
+#       Path to plugin script. Mutually exclusive with |generator_plugin_label|.
+#
+#   generator_plugin_script_deps (optional)
+#       List of additional files required for generator plugin script.
+#
+#   generator_plugin_suffix[es] (required if using a plugin)
+#       Suffix (before extension) for generated .cc and .h files
+#       or list of suffixes for all files (with extensions).
+#
+#   generator_plugin_options (optional)
+#       Extra flags passed to the plugin. See cc_generator_options.
+#
+#   deps (optional)
+#       Additional dependencies.
+#
+#   use_protobuf_full (optional)
+#       If adding protobuf library would be required, adds protobuf_full to deps
+#       instead of protobuf_lite.
+#
+#   import_protobuf_full (optional)
+#       Allows .proto files to import .proto files from protobuf_full, without
+#       adding a dependency on all the C++ code in that library.
+#
+#   import_dirs (optional)
+#       A list of extra import directories to be passed to protoc compiler. The
+#       default case is just proto_in_dir.
+#       WARNING: This options should not be used in Chrome code until
+#       http://crbug.com/691451 is resolved.
+#
+# Parameters for compiling the generated code:
+#
+#   defines (optional)
+#       Defines to supply to the source set that compiles the generated source
+#       code.
+#
+#   extra_configs (optional)
+#       A list of config labels that will be appended to the configs applying
+#       to the source set.
+#
+# Example:
+#  proto_library("mylib") {
+#    sources = [
+#      "foo.proto",
+#    ]
+#  }
+
+if (host_os == "win") {
+  _host_executable_suffix = ".exe"
+} else {
+  _host_executable_suffix = ""
+}
+
+template("proto_library") {
+  assert(defined(invoker.sources), "Need sources for proto_library")
+  proto_sources = invoker.sources
+
+  forward_variables_from(invoker, [ "visibility" ])
+
+  if (defined(invoker.generate_cc)) {
+    generate_cc = invoker.generate_cc
+  } else {
+    generate_cc = true
+  }
+
+  if (defined(invoker.generate_python)) {
+    generate_python = invoker.generate_python
+  } else {
+    generate_python = true
+  }
+
+  generate_go = defined(invoker.generate_go) && invoker.generate_go
+  generate_go_grpc =
+      defined(invoker.generate_go_grpc) && invoker.generate_go_grpc
+
+  assert(!generate_go || !generate_go_grpc,
+         "Only one of generate_go or generate_go_grpc can be enabled!")
+
+  not_needed(invoker, ["propagate_imports_configs"])
+
+  if (defined(invoker.generator_plugin_label)) {
+    # Straightforward way to get the name of executable doesn't work because
+    # |root_out_dir| and |root_build_dir| may differ in cross-compilation and
+    # also Windows executables have .exe at the end.
+
+    plugin_host_label = invoker.generator_plugin_label + "($host_toolchain)"
+    plugin_path =
+        get_label_info(plugin_host_label, "root_out_dir") + "/" +
+        get_label_info(plugin_host_label, "name") + _host_executable_suffix
+    generate_with_plugin = true
+  } else if (defined(invoker.generator_plugin_script)) {
+    plugin_path = invoker.generator_plugin_script
+    generate_with_plugin = true
+  } else {
+    generate_with_plugin = false
+  }
+
+  if (generate_with_plugin) {
+    if (defined(invoker.generator_plugin_suffix)) {
+      generator_plugin_suffixes = [
+        "${invoker.generator_plugin_suffix}.h",
+        "${invoker.generator_plugin_suffix}.cc",
+      ]
+    } else {
+      generator_plugin_suffixes = invoker.generator_plugin_suffixes
+    }
+  }
+
+  if (defined(invoker.proto_in_dir)) {
+    proto_in_dir = invoker.proto_in_dir
+  } else {
+    proto_in_dir = get_path_info(proto_sources[0], "dir")
+
+    # Sanity check, |proto_in_dir| should be defined to allow sub-directories.
+    foreach(proto_source, proto_sources) {
+      assert(get_path_info(proto_source, "dir") == proto_in_dir,
+             "Please define |proto_in_dir| to allow nested directories.")
+    }
+  }
+
+  # Avoid absolute path because of the assumption that |proto_in_dir| is
+  # relative to the directory of current BUILD.gn file.
+  proto_in_dir = rebase_path(proto_in_dir, ".")
+
+  if (defined(invoker.proto_out_dir)) {
+    proto_out_dir = invoker.proto_out_dir
+  } else {
+    # Absolute path to the directory of current BUILD.gn file excluding "//".
+    proto_out_dir = rebase_path(".", "//")
+    if (proto_in_dir != ".") {
+      proto_out_dir += "/$proto_in_dir"
+    }
+  }
+
+  # We need both absolute path to use in GN statements and a relative one
+  # to pass to external script.
+  if (generate_cc || generate_with_plugin) {
+    cc_out_dir = "$root_gen_dir/" + proto_out_dir
+    rel_cc_out_dir = rebase_path(cc_out_dir, root_build_dir)
+  }
+  if (generate_python) {
+    py_out_dir = "$root_out_dir/pyproto/" + proto_out_dir
+    rel_py_out_dir = rebase_path(py_out_dir, root_build_dir)
+  }
+  if (generate_go || generate_go_grpc) {
+    go_out_dir = "$root_gen_dir/go-proto-gen/src/" + proto_out_dir
+    rel_go_out_dir = rebase_path(go_out_dir, root_build_dir)
+  }
+
+  protos = rebase_path(invoker.sources, proto_in_dir)
+  protogens = []
+
+  descriptor_set_path_ = ""
+  if (defined(invoker.generate_descriptor_set) &&
+      invoker.generate_descriptor_set) {
+    assert(!defined(invoker.generate_descriptor))
+    descriptor_set_path_ = "${target_out_dir}/${target_name}.desc.pb"
+  } else if (defined(invoker.generate_descriptor)) {
+    descriptor_set_path_ =
+        "$root_gen_dir/" + 
+        rebase_path(proto_out_dir, "//") +
+        invoker.generate_descriptor
+  }
+  if (descriptor_set_path_ != "") {
+    protogens += [ descriptor_set_path_ ]
+  }
+
+  # List output files.
+  foreach(proto, protos) {
+    proto_dir = get_path_info(proto, "dir")
+    proto_name = get_path_info(proto, "name")
+    proto_path = proto_dir + "/" + proto_name
+
+    if (generate_cc) {
+      protogens += [
+        "$cc_out_dir/$proto_path.pb.h",
+        "$cc_out_dir/$proto_path.pb.cc",
+      ]
+    }
+    if (generate_python) {
+      protogens += [ "$py_out_dir/${proto_path}_pb2.py" ]
+    }
+    if (generate_go) {
+      protogens += [ "$go_out_dir/${proto_path}.pb.go" ]
+    }
+    if (generate_go_grpc) {
+      protogens += [ "$go_out_dir/${proto_path}_grpc.pb.go" ]
+    }
+    if (generate_with_plugin) {
+      foreach(suffix, generator_plugin_suffixes) {
+        protogens += [ "$cc_out_dir/${proto_path}${suffix}" ]
+      }
+    }
+    if (descriptor_set_path_ != "") {
+      # Descriptor-only protobuf targets do not use |proto_path|
+      not_needed(["proto_path"])
+    }
+  }
+
+  generated_file("${target_name}_protoc_outputs") {
+    contents = rebase_path(protogens, root_build_dir)
+    outputs = [ "${target_gen_dir}/${target_name}.protoc_output_info" ]
+  }
+  protoc_output_info_target = ":${target_name}_protoc_outputs"
+
+  action_name = "${target_name}_gen"
+
+  # Generate protobuf stubs.
+  action(action_name) {
+    visibility = []
+    visibility = [ ":*" ]
+    script = "//build/secondary/third_party/protobuf/protoc_wrapper.py"
+    sources = proto_sources
+    outputs = protogens
+    args = protos
+
+    protoc_label = "//third_party/protobuf:protoc($host_toolchain)"
+    protoc_path = get_label_info(protoc_label, "root_out_dir") + "/protoc" +
+                  _host_executable_suffix
+
+    if (generate_go || generate_go_grpc) {
+      if (generate_go_grpc) {
+        protoc_gen_go_label = "//third_party/golibs/google.golang.org/grpc/cmd/protoc-gen-go-grpc($host_toolchain)"
+      } else {
+        protoc_gen_go_label = "//third_party/golibs/google.golang.org/protobuf/cmd/protoc-gen-go($host_toolchain)"
+      }
+      protoc_gen_go_path = get_label_info(protoc_gen_go_label, "root_out_dir") +
+                           "/" + get_label_info(protoc_gen_go_label, "name")
+    }
+
+    # Depfile information.
+    depfile = "${target_gen_dir}/${target_name}.d"
+    protoc_output_info_files = get_target_outputs(protoc_output_info_target)
+    protoc_output_info_file = protoc_output_info_files[0]
+    args += [
+      "--depfile",
+      rebase_path(depfile, root_build_dir),
+      "--depfile-outputs",
+      rebase_path(protoc_output_info_file, root_build_dir),
+    ]
+
+    args += [
+      # Wrapper should never pick a system protoc.
+      # Path should be rebased because |root_build_dir| for current toolchain
+      # may be different from |root_out_dir| of protoc built on host toolchain.
+      "--protoc",
+      "./" + rebase_path(protoc_path, root_build_dir),
+      "--proto-in-dir",
+      rebase_path(proto_in_dir, root_build_dir),
+    ]
+
+    if (generate_cc) {
+      args += [
+        "--cc-out-dir",
+        rel_cc_out_dir,
+      ]
+      if (defined(invoker.cc_generator_options)) {
+        args += [
+          "--cc-options",
+          invoker.cc_generator_options,
+        ]
+      }
+      if (defined(invoker.cc_include)) {
+        args += [
+          "--include",
+          invoker.cc_include,
+        ]
+      }
+    }
+
+    if (generate_python) {
+      args += [
+        "--py-out-dir",
+        rel_py_out_dir,
+      ]
+    }
+
+    if (descriptor_set_path_ != "") {
+      args += [
+        "--descriptor-set-out",
+        rebase_path(descriptor_set_path_, root_build_dir),
+      ]
+    }
+
+    if (generate_go || generate_go_grpc) {
+      args += [
+        "--plugin",
+        rebase_path(protoc_gen_go_path, root_build_dir),
+        "--plugin-out-dir",
+        rel_go_out_dir,
+        "--plugin-options",
+        "paths=source_relative",
+      ]
+    }
+
+    if (generate_with_plugin) {
+      args += [
+        "--plugin",
+        rebase_path(plugin_path, root_build_dir),
+        "--plugin-out-dir",
+        rel_cc_out_dir,
+      ]
+      if (defined(invoker.generator_plugin_options)) {
+        args += [
+          "--plugin-options",
+          invoker.generator_plugin_options,
+        ]
+      }
+    }
+
+    if (defined(invoker.import_dirs)) {
+      foreach(path, invoker.import_dirs) {
+        args += [ "--import-dir=" + rebase_path(path, root_build_dir) ]
+      }
+    }
+
+    if ((defined(invoker.use_protobuf_full) && invoker.use_protobuf_full) ||
+        (defined(invoker.import_protobuf_full) &&
+         invoker.import_protobuf_full)) {
+      args += [ "--import-dir=" +
+                rebase_path("//third_party/protobuf/src", root_build_dir) ]
+    }
+
+    # System protoc is not used so it's necessary to build one.
+    inputs = [
+      protoc_path,
+      protoc_output_info_file,
+    ]
+    deps = [
+      protoc_label,
+      protoc_output_info_target,
+    ]
+
+    if (generate_go || generate_go_grpc) {
+      deps += [ protoc_gen_go_label ]
+      inputs += [ protoc_gen_go_path ]
+    }
+
+    if (generate_with_plugin) {
+      inputs += [ plugin_path ]
+      if (defined(invoker.generator_plugin_script_deps)) {
+        # Additional scripts for plugin.
+        inputs += invoker.generator_plugin_script_deps
+      }
+      if (defined(plugin_host_label)) {
+        # Action depends on native generator plugin but for host toolchain only.
+        deps += [ plugin_host_label ]
+      }
+    }
+
+    if (defined(invoker.deps)) {
+      # The deps may have steps that have to run before running protoc.
+      deps += invoker.deps
+    }
+  }
+
+  # Option to disable building a library in component build.
+  if (defined(invoker.component_build_force_source_set) &&
+      invoker.component_build_force_source_set && is_component_build) {
+    link_target_type = "source_set"
+  }
+
+  # Build generated protobuf stubs as static libary.
+  _static_lib_deps = []
+  if (generate_cc || generate_python || generate_with_plugin) {
+    _static_lib_name = "${target_name}_static_lib"
+    _static_lib_deps = [ ":${_static_lib_name}" ]
+    static_library(_static_lib_name) {
+      forward_variables_from(invoker,
+                             [
+                               "defines",
+                               "deps",
+                               "testonly",
+                             ])
+      visibility = []
+      visibility = [ ":*" ]
+      output_name = target_name
+      sources = []
+      foreach(source, get_target_outputs(":${action_name}")) {
+        extension = get_path_info(source, "extension")
+        if (extension == "h" || extension == "cc") {
+          sources += [ source ]
+        }
+      }
+
+      if (defined(invoker.extra_configs)) {
+        configs += invoker.extra_configs
+      }
+
+      configs += [ "//third_party/protobuf:protobuf_warnings" ]
+      public_configs = [ "//third_party/protobuf:using_proto" ]
+
+      if (!defined(deps)) {
+        deps = []
+      }
+      deps += [ ":${action_name}" ]
+
+      if (generate_cc) {
+        # If using built-in cc generator, the resulting headers reference
+        # headers within protobuf_lite. Hence, dependencies require those
+        # headers too. If using generator plugin, extra deps should be
+        # resolved by the invoker.
+        if (defined(invoker.use_protobuf_full) &&
+            invoker.use_protobuf_full == true) {
+          public_deps = [ "//third_party/protobuf:protobuf_full" ]
+        } else {
+          public_deps = [ "//third_party/protobuf:protobuf_lite" ]
+        }
+
+        # Allows generated protobufs to use #include subpaths rooted from
+        # |proto_out_dir|.
+        include_dirs = [ "${root_gen_dir}/" +
+                         rebase_path(proto_out_dir, "//") ]
+      }
+    }
+  }
+
+  group(target_name) {
+    public_deps = [ ":${action_name}" ] + _static_lib_deps
+  }
+}

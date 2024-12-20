@@ -1,0 +1,144 @@
+{
+    "_comment": [
+        "The builds defined in this file should not contain tests, ",
+        "and the file should not contain builds that are essentially tests. ",
+        "The only builds in this file should be the builds necessary to produce ",
+        "release artifacts. ",
+        "Tests to run on linux hosts should go in one of the other linux_ build ",
+        "definition files."
+    ],
+    "builds": [
+        {
+            "archives": [
+                {
+                    "name": "ci/linux_profile_arm64",
+                    "type": "gcs",
+                    "base_path": "out/ci/linux_profile_arm64/zip_archives/",
+                    "include_paths": [
+                        "out/ci/linux_profile_arm64/zip_archives/linux-arm64-profile/linux-arm64-flutter-gtk.zip"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/linux_profile_arm64",
+                "--runtime-mode",
+                "profile",
+                "--no-lto",
+                "--target-os=linux",
+                "--linux-cpu=arm64",
+                "--prebuilt-dart-sdk",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/linux_profile_arm64",
+            "description": "Produces profile mode artifacts to target arm64 Linux from a Linux host.",
+            "ninja": {
+                "config": "ci/linux_profile_arm64",
+                "targets": [
+                    "flutter/shell/platform/linux:flutter_gtk"
+                ]
+            }
+        },
+        {
+            "archives": [
+                {
+                    "name": "ci/linux_debug_arm64",
+                    "type": "gcs",
+                    "base_path": "out/ci/linux_debug_arm64/zip_archives/",
+                    "include_paths": [
+                        "out/ci/linux_debug_arm64/zip_archives/linux-arm64/artifacts.zip",
+                        "out/ci/linux_debug_arm64/zip_archives/linux-arm64/impeller_sdk.zip",
+                        "out/ci/linux_debug_arm64/zip_archives/linux-arm64/font-subset.zip",
+                        "out/ci/linux_debug_arm64/zip_archives/linux-arm64-debug/linux-arm64-flutter-gtk.zip",
+                        "out/ci/linux_debug_arm64/zip_archives/dart-sdk-linux-arm64.zip"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/linux_debug_arm64",
+                "--runtime-mode",
+                "debug",
+                "--target-os=linux",
+                "--linux-cpu=arm64",
+                "--prebuilt-dart-sdk",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/linux_debug_arm64",
+            "description": "Produces debug mode artifacts to target arm64 Linux from a Linux host.",
+            "ninja": {
+                "config": "ci/linux_debug_arm64",
+                "targets": [
+                    "flutter/build/archives:artifacts",
+                    "flutter/build/archives:dart_sdk_archive",
+                    "flutter/tools/font_subset",
+                    "flutter/shell/platform/linux:flutter_gtk",
+                    "flutter/impeller/toolkit/interop:sdk"
+                ]
+            }
+        },
+        {
+            "archives": [
+                {
+                    "name": "ci/linux_release_arm64",
+                    "type": "gcs",
+                    "base_path": "out/ci/linux_release_arm64/zip_archives/",
+                    "include_paths": [
+                        "out/ci/linux_release_arm64/zip_archives/linux-arm64-release/linux-arm64-flutter-gtk.zip"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/linux_release_arm64",
+                "--runtime-mode",
+                "release",
+                "--target-os=linux",
+                "--linux-cpu=arm64",
+                "--prebuilt-dart-sdk",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/linux_release_arm64",
+            "description": "Produces release mode artifacts to target arm64 Linux from a Linux host.",
+            "ninja": {
+                "config": "ci/linux_release_arm64",
+                "targets": [
+                    "flutter/shell/platform/linux:flutter_gtk"
+                ]
+            }
+        }
+    ]
+}

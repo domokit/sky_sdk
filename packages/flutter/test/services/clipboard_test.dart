@@ -9,13 +9,13 @@ import '../widgets/clipboard_utils.dart';
 
 void main() {
   final MockClipboard mockClipboard = MockClipboard();
-  TestWidgetsFlutterBinding.ensureInitialized()
-    .defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, mockClipboard.handleMethodCall);
+  TestWidgetsFlutterBinding.ensureInitialized().defaultBinaryMessenger.setMockMethodCallHandler(
+    SystemChannels.platform,
+    mockClipboard.handleMethodCall,
+  );
 
   test('Clipboard.getData returns text', () async {
-    mockClipboard.clipboardData = <String, dynamic>{
-      'text': 'Hello world',
-    };
+    mockClipboard.clipboardData = <String, dynamic>{'text': 'Hello world'};
 
     final ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
 
@@ -38,9 +38,7 @@ void main() {
   });
 
   test('Clipboard.getData throws if text is null', () async {
-    mockClipboard.clipboardData = <String, dynamic>{
-      'text': null,
-    };
+    mockClipboard.clipboardData = <String, dynamic>{'text': null};
 
     expect(() => Clipboard.getData(Clipboard.kTextPlain), throwsA(isA<TypeError>()));
   });
@@ -48,8 +46,6 @@ void main() {
   test('Clipboard.setData sets text', () async {
     await Clipboard.setData(const ClipboardData(text: 'Hello world'));
 
-    expect(mockClipboard.clipboardData, <String, dynamic>{
-      'text': 'Hello world',
-    });
+    expect(mockClipboard.clipboardData, <String, dynamic>{'text': 'Hello world'});
   });
 }

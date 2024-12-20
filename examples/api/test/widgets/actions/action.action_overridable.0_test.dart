@@ -12,12 +12,12 @@ void main() {
   final _MockClipboard mockClipboard = _MockClipboard();
 
   testWidgets('Copies text on Ctrl-C', (WidgetTester tester) async {
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, mockClipboard.handleMethodCall);
-    await tester.pumpWidget(const MaterialApp(
-        home: Scaffold(
-          body: Center(child: example.VerificationCodeGenerator()),
-        ),
-      ),
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      mockClipboard.handleMethodCall,
+    );
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: Center(child: example.VerificationCodeGenerator()))),
     );
 
     expect(primaryFocus, isNotNull);

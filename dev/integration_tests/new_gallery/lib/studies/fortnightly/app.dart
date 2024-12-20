@@ -21,16 +21,15 @@ class FortnightlyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final StatelessWidget home = isDisplayDesktop(context)
-        ? const _FortnightlyHomeDesktop()
-        : const _FortnightlyHomeMobile();
+    final StatelessWidget home =
+        isDisplayDesktop(context)
+            ? const _FortnightlyHomeDesktop()
+            : const _FortnightlyHomeMobile();
     return MaterialApp(
       restorationScopeId: 'fortnightly_app',
       title: _fortnightlyTitle,
       debugShowCheckedModeBanner: false,
-      theme: buildTheme(context).copyWith(
-        platform: GalleryOptions.of(context).platform,
-      ),
+      theme: buildTheme(context).copyWith(platform: GalleryOptions.of(context).platform),
       home: ApplyTextOptions(child: home),
       routes: <String, WidgetBuilder>{
         FortnightlyApp.defaultRoute: (BuildContext context) => ApplyTextOptions(child: home),
@@ -50,11 +49,7 @@ class _FortnightlyHomeMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const Drawer(
-        child: SafeArea(
-          child: NavigationMenu(isCloseable: true),
-        ),
-      ),
+      drawer: const Drawer(child: SafeArea(child: NavigationMenu(isCloseable: true))),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Semantics(
@@ -82,10 +77,7 @@ class _FortnightlyHomeMobile extends StatelessWidget {
           children: <Widget>[
             const HashtagBar(),
             for (final Widget item in buildArticlePreviewItems(context))
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: item,
-              ),
+              Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: item),
           ],
         ),
       ),
@@ -125,10 +117,7 @@ class _FortnightlyHomeDesktop extends StatelessWidget {
                     ),
                   ),
                   spacer,
-                  const Flexible(
-                    flex: 2,
-                    child: HashtagBar(),
-                  ),
+                  const Flexible(flex: 2, child: HashtagBar()),
                   spacer,
                   Flexible(
                     fit: FlexFit.tight,
@@ -136,8 +125,7 @@ class _FortnightlyHomeDesktop extends StatelessWidget {
                       alignment: AlignmentDirectional.centerEnd,
                       child: IconButton(
                         icon: const Icon(Icons.search),
-                        tooltip: GalleryLocalizations.of(context)!
-                            .shrineTooltipSearch,
+                        tooltip: GalleryLocalizations.of(context)!.shrineTooltipSearch,
                         onPressed: () {},
                       ),
                     ),
@@ -148,17 +136,9 @@ class _FortnightlyHomeDesktop extends StatelessWidget {
             Flexible(
               child: Row(
                 children: <Widget>[
-                  const SizedBox(
-                    width: menuWidth,
-                    child: NavigationMenu(),
-                  ),
+                  const SizedBox(width: menuWidth, child: NavigationMenu()),
                   spacer,
-                  Flexible(
-                    flex: 2,
-                    child: ListView(
-                      children: buildArticlePreviewItems(context),
-                    ),
-                  ),
+                  Flexible(flex: 2, child: ListView(children: buildArticlePreviewItems(context))),
                   spacer,
                   Flexible(
                     fit: FlexFit.tight,

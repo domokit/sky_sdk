@@ -5,7 +5,6 @@
 import 'project.dart';
 
 class TestProject extends Project {
-
   @override
   final String pubspec = '''
   name: test

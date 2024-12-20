@@ -39,16 +39,15 @@ void main() {
       // The non-test project has a loop around its breakpoints.
       // No need to start paused as all breakpoint would be eventually reached.
       await flutter.run(
-        withDebugger: true, chrome: true,
+        withDebugger: true,
+        chrome: true,
         expressionEvaluation: expressionEvaluation,
-        additionalCommandArgs: <String>['--verbose']);
+        additionalCommandArgs: <String>['--verbose'],
+      );
     }
 
     Future<void> breakInBuildMethod(FlutterTestDriver flutter) async {
-      await flutter.breakAt(
-        project.buildMethodBreakpointUri,
-        project.buildMethodBreakpointLine,
-      );
+      await flutter.breakAt(project.buildMethodBreakpointUri, project.buildMethodBreakpointLine);
     }
 
     Future<void> breakInTopLevelFunction(FlutterTestDriver flutter) async {
@@ -133,10 +132,7 @@ void main() {
     });
 
     Future<Isolate?> breakInMethod(FlutterTestDriver flutter) async {
-      await flutter.addBreakpoint(
-        project.breakpointAppUri,
-        project.breakpointLine,
-      );
+      await flutter.addBreakpoint(project.breakpointAppUri, project.breakpointLine);
       return flutter.resume(waitForNextPause: true);
     }
 
@@ -145,10 +141,13 @@ void main() {
       // Start paused so we can set a breakpoint before passing it
       // in the execution.
       return flutter.run(
-        withDebugger: true, chrome: true,
+        withDebugger: true,
+        chrome: true,
         expressionEvaluation: expressionEvaluation,
-        startPaused: true, script: project.testFilePath,
-        additionalCommandArgs: <String>['--verbose']);
+        startPaused: true,
+        script: project.testFilePath,
+        additionalCommandArgs: <String>['--verbose'],
+      );
     }
 
     testWithoutContext('cannot evaluate expressions if feature is disabled', () async {
@@ -188,11 +187,13 @@ void main() {
 Future<void> failToEvaluateExpression(FlutterTestDriver flutter) async {
   await expectLater(
     flutter.evaluateInFrame('"test"'),
-    throwsA(isA<RPCError>().having(
-      (RPCError error) => error.message,
-      'message',
-      contains('Expression evaluation is not supported for this configuration'),
-    )),
+    throwsA(
+      isA<RPCError>().having(
+        (RPCError error) => error.message,
+        'message',
+        contains('Expression evaluation is not supported for this configuration'),
+      ),
+    ),
   );
 }
 
@@ -238,7 +239,10 @@ Future<void> evaluateComplexExpressionsInLibrary(FlutterTestDriver flutter) asyn
 
 Future<void> evaluateWebLibraryBooleanFromEnvironmentInLibrary(FlutterTestDriver flutter) async {
   final LibraryRef library = await getRootLibrary(flutter);
-  final ObjRef res = await flutter.evaluate(library.id!, 'const bool.fromEnvironment("dart.library.html")');
+  final ObjRef res = await flutter.evaluate(
+    library.id!,
+    'const bool.fromEnvironment("dart.library.html")',
+  );
   expectInstance(res, InstanceKind.kBool, true.toString());
 }
 
@@ -248,19 +252,25 @@ Future<LibraryRef> getRootLibrary(FlutterTestDriver flutter) async {
   //
   // Issue: https://github.com/dart-lang/sdk/issues/44760
   final Isolate isolate = await flutter.getFlutterIsolate();
-  return isolate.libraries!
-    .firstWhere((LibraryRef l) => l.uri!.contains('org-dartlang-app'));
+  return isolate.libraries!.firstWhere((LibraryRef l) => l.uri!.contains('org-dartlang-app'));
 }
 
 void expectInstance(ObjRef result, String kind, String message) {
-  expect(result,
+  expect(
+    result,
     const TypeMatcher<InstanceRef>()
-      .having((InstanceRef instance) => instance.kind, 'kind', kind)
-      .having((InstanceRef instance) => instance.valueAsString, 'valueAsString', message));
+        .having((InstanceRef instance) => instance.kind, 'kind', kind)
+        .having((InstanceRef instance) => instance.valueAsString, 'valueAsString', message),
+  );
 }
 
 void expectError(ObjRef result, String message) {
-  expect(result,
-    const TypeMatcher<ErrorRef>()
-      .having((ErrorRef instance) => instance.message, 'message', contains(message)));
+  expect(
+    result,
+    const TypeMatcher<ErrorRef>().having(
+      (ErrorRef instance) => instance.message,
+      'message',
+      contains(message),
+    ),
+  );
 }

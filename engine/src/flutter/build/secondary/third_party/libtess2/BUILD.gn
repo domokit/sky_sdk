@@ -1,0 +1,31 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+source_root = "//flutter/third_party/libtess2"
+
+source_set("libtess2") {
+  public = [ "$source_root/Include/tesselator.h" ]
+
+  include_dirs = [ "$source_root/Include/" ]
+
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [ "//build/config/compiler:no_chromium_code" ]
+
+  sources = [
+    "$source_root/Source/bucketalloc.c",
+    "$source_root/Source/bucketalloc.h",
+    "$source_root/Source/dict.c",
+    "$source_root/Source/dict.h",
+    "$source_root/Source/geom.c",
+    "$source_root/Source/geom.h",
+    "$source_root/Source/mesh.c",
+    "$source_root/Source/mesh.h",
+    "$source_root/Source/priorityq.c",
+    "$source_root/Source/priorityq.h",
+    "$source_root/Source/sweep.c",
+    "$source_root/Source/sweep.h",
+    "$source_root/Source/tess.c",
+    "$source_root/Source/tess.h",
+  ]
+}

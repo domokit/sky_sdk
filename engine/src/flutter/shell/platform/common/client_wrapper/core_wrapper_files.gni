@@ -1,0 +1,54 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+core_cpp_client_wrapper_includes =
+    get_path_info([
+                    "include/flutter/basic_message_channel.h",
+                    "include/flutter/binary_messenger.h",
+                    "include/flutter/byte_streams.h",
+                    "include/flutter/encodable_value.h",
+                    "include/flutter/engine_method_result.h",
+                    "include/flutter/event_channel.h",
+                    "include/flutter/event_sink.h",
+                    "include/flutter/event_stream_handler_functions.h",
+                    "include/flutter/event_stream_handler.h",
+                    "include/flutter/message_codec.h",
+                    "include/flutter/method_call.h",
+                    "include/flutter/method_channel.h",
+                    "include/flutter/method_codec.h",
+                    "include/flutter/method_result_functions.h",
+                    "include/flutter/method_result.h",
+                    "include/flutter/plugin_registrar.h",
+                    "include/flutter/plugin_registry.h",
+                    "include/flutter/standard_codec_serializer.h",
+                    "include/flutter/standard_message_codec.h",
+                    "include/flutter/standard_method_codec.h",
+                    "include/flutter/texture_registrar.h",
+                  ],
+                  "abspath")
+
+# Headers that aren't public for clients of the wrapper, but are considered
+# public for the purpose of BUILD dependencies (e.g., to allow
+# windows/client_wrapper implementation files to include them).
+core_cpp_client_wrapper_internal_headers =
+    get_path_info([
+                    "binary_messenger_impl.h",
+                    "byte_buffer_streams.h",
+                    "texture_registrar_impl.h",
+                  ],
+                  "abspath")
+
+# TODO: Once the wrapper API is more stable, consolidate to as few files as is
+# reasonable (without forcing different kinds of clients to take unnecessary
+# code) to simplify use.
+core_cpp_client_wrapper_sources = get_path_info([
+                                                  "core_implementations.cc",
+                                                  "plugin_registrar.cc",
+                                                  "standard_codec.cc",
+                                                ],
+                                                "abspath")
+
+# Temporary shim, published for backwards compatibility.
+# See comment in the file for more detail.
+temporary_shim_files = get_path_info([ "engine_method_result.cc" ], "abspath")

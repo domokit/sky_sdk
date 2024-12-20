@@ -12,7 +12,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'semantics_tester.dart';
 
 void main() {
-
   testWidgets('Drawer control test', (WidgetTester tester) async {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     late BuildContext savedContext;
@@ -21,11 +20,7 @@ void main() {
         home: Builder(
           builder: (BuildContext context) {
             savedContext = context;
-            return Scaffold(
-              key: scaffoldKey,
-              drawer: const Text('drawer'),
-              body: Container(),
-            );
+            return Scaffold(key: scaffoldKey, drawer: const Text('drawer'), body: Container());
           },
         ),
       ),
@@ -48,11 +43,7 @@ void main() {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          key: scaffoldKey,
-          drawer: const Text('drawer'),
-          body: Container(),
-        ),
+        home: Scaffold(key: scaffoldKey, drawer: const Text('drawer'), body: Container()),
       ),
     );
     await tester.pump(); // no effect
@@ -91,9 +82,15 @@ void main() {
           body: Align(
             alignment: Alignment.topLeft,
             child: MouseRegion(
-              onEnter: (_) { logs.add('enter'); },
-              onHover: (_) { logs.add('hover'); },
-              onExit: (_) { logs.add('exit'); },
+              onEnter: (_) {
+                logs.add('enter');
+              },
+              onHover: (_) {
+                logs.add('hover');
+              },
+              onExit: (_) {
+                logs.add('exit');
+              },
               child: const SizedBox(width: 10, height: 10),
             ),
           ),
@@ -157,10 +154,7 @@ void main() {
             child: ListView(
               children: <Widget>[
                 const Text('drawer'),
-                Container(
-                  height: 1000.0,
-                  color: Colors.blue[500],
-                ),
+                Container(height: 1000.0, color: Colors.blue[500]),
               ],
             ),
           ),
@@ -210,10 +204,7 @@ void main() {
               child: ListView(
                 children: <Widget>[
                   const Text('drawer'),
-                  Container(
-                    height: 1000.0,
-                    color: Colors.blue[500],
-                  ),
+                  Container(height: 1000.0, color: Colors.blue[500]),
                 ],
               ),
             ),
@@ -265,16 +256,15 @@ void main() {
                 child: ListView(
                   children: <Widget>[
                     const Text('drawer'),
-                    TextButton(
-                      child: const Text('close'),
-                      onPressed: () => Navigator.pop(context),
-                    ),
+                    TextButton(child: const Text('close'), onPressed: () => Navigator.pop(context)),
                   ],
                 ),
               ),
               body: TextButton(
                 child: const Text('button'),
-                onPressed: () { buttonPressed = true; },
+                onPressed: () {
+                  buttonPressed = true;
+                },
               ),
             );
           },
@@ -299,60 +289,69 @@ void main() {
     expect(buttonPressed, equals(true));
   });
 
-  testWidgets('Dismissible ModalBarrier includes button in semantic tree', (WidgetTester tester) async {
-    final SemanticsTester semantics = SemanticsTester(tester);
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  testWidgets(
+    'Dismissible ModalBarrier includes button in semantic tree',
+    (WidgetTester tester) async {
+      final SemanticsTester semantics = SemanticsTester(tester);
+      final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Builder(
-          builder: (BuildContext context) {
-            return Scaffold(
-              key: scaffoldKey,
-              drawer: const Drawer(),
-            );
-          },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (BuildContext context) {
+              return Scaffold(key: scaffoldKey, drawer: const Drawer());
+            },
+          ),
         ),
-      ),
-    );
+      );
 
-    // Open the drawer.
-    scaffoldKey.currentState!.openDrawer();
-    await tester.pump(const Duration(milliseconds: 100));
+      // Open the drawer.
+      scaffoldKey.currentState!.openDrawer();
+      await tester.pump(const Duration(milliseconds: 100));
 
-    expect(semantics, includesNodeWith(actions: <SemanticsAction>[SemanticsAction.tap]));
-    expect(semantics, includesNodeWith(label: 'Dismiss'));
+      expect(semantics, includesNodeWith(actions: <SemanticsAction>[SemanticsAction.tap]));
+      expect(semantics, includesNodeWith(label: 'Dismiss'));
 
-    semantics.dispose();
-  }, variant: const TargetPlatformVariant(<TargetPlatform>{ TargetPlatform.iOS,  TargetPlatform.macOS }));
+      semantics.dispose();
+    },
+    variant: const TargetPlatformVariant(<TargetPlatform>{
+      TargetPlatform.iOS,
+      TargetPlatform.macOS,
+    }),
+  );
 
-  testWidgets('Dismissible ModalBarrier is hidden on Android (back button is used to dismiss)', (WidgetTester tester) async {
-    final SemanticsTester semantics = SemanticsTester(tester);
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  testWidgets(
+    'Dismissible ModalBarrier is hidden on Android (back button is used to dismiss)',
+    (WidgetTester tester) async {
+      final SemanticsTester semantics = SemanticsTester(tester);
+      final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Builder(
-          builder: (BuildContext context) {
-            return Scaffold(
-              key: scaffoldKey,
-              drawer: const Drawer(),
-              body: Container(),
-            );
-          },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (BuildContext context) {
+              return Scaffold(key: scaffoldKey, drawer: const Drawer(), body: Container());
+            },
+          ),
         ),
-      ),
-    );
+      );
 
-    // Open the drawer.
-    scaffoldKey.currentState!.openDrawer();
-    await tester.pump(const Duration(milliseconds: 100));
+      // Open the drawer.
+      scaffoldKey.currentState!.openDrawer();
+      await tester.pump(const Duration(milliseconds: 100));
 
-    expect(semantics, isNot(includesNodeWith(actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus])));
-    expect(semantics, isNot(includesNodeWith(label: 'Dismiss')));
+      expect(
+        semantics,
+        isNot(
+          includesNodeWith(actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus]),
+        ),
+      );
+      expect(semantics, isNot(includesNodeWith(label: 'Dismiss')));
 
-    semantics.dispose();
-  }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+      semantics.dispose();
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
 
   testWidgets('Drawer contains route semantics flags', (WidgetTester tester) async {
     final SemanticsTester semantics = SemanticsTester(tester);
@@ -362,11 +361,7 @@ void main() {
       MaterialApp(
         home: Builder(
           builder: (BuildContext context) {
-            return Scaffold(
-              key: scaffoldKey,
-              drawer: const Drawer(),
-              body: Container(),
-            );
+            return Scaffold(key: scaffoldKey, drawer: const Drawer(), body: Container());
           },
         ),
       ),
@@ -377,13 +372,13 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
-    expect(semantics, includesNodeWith(
-      label: 'Navigation menu',
-      flags: <SemanticsFlag>[
-        SemanticsFlag.scopesRoute,
-        SemanticsFlag.namesRoute,
-      ],
-    ));
+    expect(
+      semantics,
+      includesNodeWith(
+        label: 'Navigation menu',
+        flags: <SemanticsFlag>[SemanticsFlag.scopesRoute, SemanticsFlag.namesRoute],
+      ),
+    );
 
     semantics.dispose();
   });

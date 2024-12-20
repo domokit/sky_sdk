@@ -142,7 +142,7 @@ abstract final class Feedback {
       case TargetPlatform.iOS:
         return Future.wait(<Future<void>>[
           SystemSound.play(SystemSoundType.click),
-          HapticFeedback.heavyImpact()
+          HapticFeedback.heavyImpact(),
         ]);
       case TargetPlatform.linux:
       case TargetPlatform.macOS:
@@ -163,7 +163,10 @@ abstract final class Feedback {
   ///
   ///  * [forLongPress] to just trigger the platform-specific feedback without
   ///    wrapping a [GestureLongPressCallback].
-  static GestureLongPressCallback? wrapForLongPress(GestureLongPressCallback? callback, BuildContext context) {
+  static GestureLongPressCallback? wrapForLongPress(
+    GestureLongPressCallback? callback,
+    BuildContext context,
+  ) {
     if (callback == null) {
       return null;
     }

@@ -72,7 +72,7 @@ class AbstractNode {
   ///
   /// Override this method in subclasses with child nodes to call [redepthChild]
   /// for each child. Do not call this method directly.
-  void redepthChildren() { }
+  void redepthChildren() {}
 
   /// The owner for this node (null if unattached).
   ///

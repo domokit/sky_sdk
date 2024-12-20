@@ -21,9 +21,7 @@ void main() {
         child: RepaintBoundary(
           child: Container(
             margin: const EdgeInsets.all(50.0),
-            decoration: BoxDecoration(
-              boxShadow: kElevationToShadow[9],
-            ),
+            decoration: BoxDecoration(boxShadow: kElevationToShadow[9]),
             height: 100.0,
             width: 100.0,
           ),
@@ -51,7 +49,9 @@ void main() {
           child: Container(
             margin: const EdgeInsets.all(150.0),
             decoration: ShapeDecoration(
-              shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              shape: const BeveledRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              ),
               shadows: kElevationToShadow[elevation],
             ),
             height: 100.0,
@@ -60,6 +60,7 @@ void main() {
         ),
       );
     }
+
     for (final int elevation in kElevationToShadow.keys) {
       testWidgets('elevation $elevation', (WidgetTester tester) async {
         debugDisableShadows = false;
@@ -83,10 +84,7 @@ void main() {
             child: PhysicalModel(
               elevation: 9.0,
               color: Colors.blue[900]!,
-              child: const SizedBox(
-                height: 100.0,
-                width: 100.0,
-              ),
+              child: const SizedBox(height: 100.0, width: 100.0),
             ),
           ),
         ),
@@ -121,10 +119,7 @@ void main() {
                 ),
               ),
               elevation: elevation,
-              child: const SizedBox(
-                height: 100.0,
-                width: 100.0,
-              ),
+              child: const SizedBox(height: 100.0, width: 100.0),
             ),
           ),
         ),

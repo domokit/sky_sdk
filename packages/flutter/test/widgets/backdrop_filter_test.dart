@@ -18,7 +18,7 @@ void main() {
     final BackdropKey backdropKey = BackdropKey();
 
     Widget build({required bool enableKeys}) {
-      return  MaterialApp(
+      return MaterialApp(
         home: Scaffold(
           body: ListView(
             children: <Widget>[
@@ -45,7 +45,7 @@ void main() {
                 ),
               ),
             ],
-          )
+          ),
         ),
       );
     }
@@ -67,7 +67,9 @@ void main() {
     expect(layers[1].backdropKey, null);
   });
 
-  testWidgets('Backdrop key is passed to backdrop Layer via backdrop group', (WidgetTester tester) async {
+  testWidgets('Backdrop key is passed to backdrop Layer via backdrop group', (
+    WidgetTester tester,
+  ) async {
     Widget build() {
       return MaterialApp(
         home: Scaffold(
@@ -95,7 +97,7 @@ void main() {
                   ),
                 ),
               ],
-            )
+            ),
           ),
         ),
       );
@@ -103,13 +105,16 @@ void main() {
 
     await tester.pumpWidget(build());
 
-    final List<BackdropFilterLayer> layers = tester.layers.whereType<BackdropFilterLayer>().toList();
+    final List<BackdropFilterLayer> layers =
+        tester.layers.whereType<BackdropFilterLayer>().toList();
 
     expect(layers.length, 2);
     expect(layers[0].backdropKey, layers[1].backdropKey);
   });
 
-  testWidgets("Material2 - BackdropFilter's cull rect does not shrink", (WidgetTester tester) async {
+  testWidgets("Material2 - BackdropFilter's cull rect does not shrink", (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(useMaterial3: false),
@@ -123,10 +128,7 @@ void main() {
                 // whole screen.
                 child: ClipRect(
                   child: BackdropFilter(
-                    filter: ImageFilter.blur(
-                      sigmaX: 5.0,
-                      sigmaY: 5.0,
-                    ),
+                    filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                     child: Container(
                       alignment: Alignment.center,
                       width: 200.0,
@@ -147,7 +149,9 @@ void main() {
     );
   });
 
-  testWidgets("Material3 - BackdropFilter's cull rect does not shrink", (WidgetTester tester) async {
+  testWidgets("Material3 - BackdropFilter's cull rect does not shrink", (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(useMaterial3: true),
@@ -161,10 +165,7 @@ void main() {
                 // whole screen.
                 child: ClipRect(
                   child: BackdropFilter(
-                    filter: ImageFilter.blur(
-                      sigmaX: 5.0,
-                      sigmaY: 5.0,
-                    ),
+                    filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                     child: Container(
                       alignment: Alignment.center,
                       width: 200.0,
@@ -203,10 +204,7 @@ void main() {
                   children: <Widget>[
                     ClipRect(
                       child: BackdropFilter(
-                        filter: ImageFilter.blur(
-                          sigmaX: 5.0,
-                          sigmaY: 5.0,
-                        ),
+                        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                         child: Container(
                           alignment: Alignment.center,
                           width: 200.0,
@@ -217,10 +215,7 @@ void main() {
                     ),
                     ClipRect(
                       child: BackdropFilter(
-                        filter: ImageFilter.blur(
-                          sigmaX: 5.0,
-                          sigmaY: 5.0,
-                        ),
+                        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                         blendMode: BlendMode.src,
                         child: Container(
                           alignment: Alignment.center,
@@ -262,10 +257,7 @@ void main() {
                   children: <Widget>[
                     ClipRect(
                       child: BackdropFilter(
-                        filter: ImageFilter.blur(
-                          sigmaX: 5.0,
-                          sigmaY: 5.0,
-                        ),
+                        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                         child: Container(
                           alignment: Alignment.center,
                           width: 200.0,
@@ -276,10 +268,7 @@ void main() {
                     ),
                     ClipRect(
                       child: BackdropFilter(
-                        filter: ImageFilter.blur(
-                          sigmaX: 5.0,
-                          sigmaY: 5.0,
-                        ),
+                        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                         blendMode: BlendMode.src,
                         child: Container(
                           alignment: Alignment.center,

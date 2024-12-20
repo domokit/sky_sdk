@@ -1,0 +1,25 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This file is copied from
+# https://crsrc.org/c/build/config/fuchsia/gn_configs.gni?q=gn_configs.gni
+# with some local modifications to match the flutter setup.
+
+# Path to the fuchsia SDK. This is intended for use in other templates &
+# rules to reference the contents of the fuchsia SDK.
+fuchsia_sdk = "//fuchsia/sdk/$host_os"
+
+declare_args() {
+  # Specify a readelf_exec path to use. If not specified, the host's system
+  # executable will be used. Passed to populate_build_id_dir.py and
+  # prepare_package_inputs.py via the --readelf-exec flag.
+  # Must be a GN path (not an absolute path) since it is adjusted with
+  # rebase_path().
+  if (!defined(fuchsia_sdk_readelf_exec)) {
+    fuchsia_sdk_readelf_exec = ""
+  }
+}
+
+# third_party/googletest is still using this condition.
+using_fuchsia_sdk = true

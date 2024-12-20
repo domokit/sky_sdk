@@ -90,7 +90,8 @@ abstract class ShaderWarmUp {
     await warmUpOnCanvas(canvas);
     final ui.Picture picture = recorder.endRecording();
     assert(debugCaptureShaderWarmUpPicture(picture));
-    if (!kIsWeb || isSkiaWeb) { // Picture.toImage is not implemented on the html renderer.
+    if (!kIsWeb || isSkiaWeb) {
+      // Picture.toImage is not implemented on the html renderer.
       TimelineTask? debugShaderWarmUpTask;
       if (!kReleaseMode) {
         debugShaderWarmUpTask = TimelineTask()..start('Warm-up shader');

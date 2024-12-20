@@ -42,8 +42,10 @@ class GCSummarizer {
         lastGCBeginEvent = event;
       } else if (lastGCBeginEvent != null) {
         // These events must not overlap.
-        assert(event.name == lastGCBeginEvent.name,
-            'Expected "${lastGCBeginEvent.name}" got "${event.name}"');
+        assert(
+          event.name == lastGCBeginEvent.name,
+          'Expected "${lastGCBeginEvent.name}" got "${event.name}"',
+        );
         final double st = lastGCBeginEvent.timestampMicros!.toDouble();
         final double end = event.timestampMicros!.toDouble();
         lastGCBeginEvent = null;

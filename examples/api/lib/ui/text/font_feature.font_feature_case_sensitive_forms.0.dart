@@ -31,9 +31,7 @@ class ExampleWidget extends StatelessWidget {
       '(A) [A] {A} «A» A/B A•B',
       style: TextStyle(
         fontFamily: 'Piazzolla',
-        fontFeatures: <FontFeature>[
-          FontFeature.caseSensitiveForms(),
-        ],
+        fontFeatures: <FontFeature>[FontFeature.caseSensitiveForms()],
       ),
     );
   }

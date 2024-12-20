@@ -31,40 +31,42 @@ class _MainWidget extends StatelessWidget {
       ),
       body: Center(
         child: TextButton(
-          onPressed: () => showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => Dialog(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Text('This is a typical dialog.'),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: <Widget>[
-                        TextButton(
-                          key: const Key('OK Button'),
-                          autofocus: true,
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('OK'),
+          onPressed:
+              () => showDialog<String>(
+                context: context,
+                builder:
+                    (BuildContext context) => Dialog(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            const Text('This is a typical dialog.'),
+                            const SizedBox(height: 15),
+                            Row(
+                              children: <Widget>[
+                                TextButton(
+                                  key: const Key('OK Button'),
+                                  autofocus: true,
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Cancel'),
-                        ),
-                      ],
+                      ),
                     ),
-                  ],
-                ),
               ),
-            ),
-          ),
           child: const Text('Show Dialog'),
         ),
       ),

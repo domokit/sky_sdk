@@ -1,0 +1,26 @@
+{
+  "comment:0": "NOTE: THIS FILE IS GENERATED. DO NOT EDIT.",
+  "comment:1": "Instead modify 'flutter/shell/platform/fuchsia/dart_runner/kernel/libraries.yaml' and follow the instructions therein.",
+  "dart_runner": {
+    "include": [
+      {
+        "path": "../../../../../third_party/dart/sdk/lib/libraries.json",
+        "target": "vm_common"
+      }
+    ],
+    "libraries": {
+      "fuchsia.builtin": {
+        "uri": "../embedder/builtin.dart"
+      },
+      "zircon": {
+        "uri": "../../dart-pkg/zircon/lib/zircon.dart"
+      },
+      "zircon_ffi": {
+        "uri": "../../dart-pkg/zircon_ffi/lib/zircon_ffi.dart"
+      },
+      "fuchsia": {
+        "uri": "../../dart-pkg/fuchsia/lib/fuchsia.dart"
+      }
+    }
+  }
+}

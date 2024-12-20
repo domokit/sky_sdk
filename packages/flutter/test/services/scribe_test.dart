@@ -28,11 +28,12 @@ void main() {
   for (final bool? returnValue in <bool?>[false, true, null]) {
     test('Scribe.isStylusHandwritingAvailable calls through to platform channel', () async {
       final List<MethodCall> calls = <MethodCall>[];
-      binding.defaultBinaryMessenger
-        .setMockMethodCallHandler(SystemChannels.scribe, (MethodCall methodCall) {
-          calls.add(methodCall);
-          return Future<bool?>.value(returnValue);
-        });
+      binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.scribe, (
+        MethodCall methodCall,
+      ) {
+        calls.add(methodCall);
+        return Future<bool?>.value(returnValue);
+      });
 
       if (returnValue == null) {
         expect(() async {
@@ -50,11 +51,12 @@ void main() {
   for (final bool? returnValue in <bool?>[false, true, null]) {
     test('Scribe.isFeatureAvailable calls through to platform channel', () async {
       final List<MethodCall> calls = <MethodCall>[];
-      binding.defaultBinaryMessenger
-        .setMockMethodCallHandler(SystemChannels.scribe, (MethodCall methodCall) {
-          calls.add(methodCall);
-          return Future<bool?>.value(returnValue);
-        });
+      binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.scribe, (
+        MethodCall methodCall,
+      ) {
+        calls.add(methodCall);
+        return Future<bool?>.value(returnValue);
+      });
 
       if (returnValue == null) {
         expect(() async {
@@ -71,11 +73,12 @@ void main() {
 
   test('Scribe.startStylusHandwriting calls through to platform channel', () async {
     final List<MethodCall> calls = <MethodCall>[];
-    binding.defaultBinaryMessenger
-      .setMockMethodCallHandler(SystemChannels.scribe, (MethodCall methodCall) {
-        calls.add(methodCall);
-        return Future<void>.value();
-      });
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.scribe, (
+      MethodCall methodCall,
+    ) {
+      calls.add(methodCall);
+      return Future<void>.value();
+    });
 
     Scribe.startStylusHandwriting();
     expect(calls, hasLength(1));

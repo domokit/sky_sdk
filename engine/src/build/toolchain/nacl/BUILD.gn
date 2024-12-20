@@ -1,0 +1,63 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+toolchain("x86_newlib") {
+  toolprefix = "gen/sdk/toolchain/linux_x86_newlib/bin/x86_64-nacl-"
+  cc = toolprefix + "gcc"
+  cxx = toolprefix + "g++"
+  ld = toolprefix + "g++"
+
+  tool("cc") {
+    command = "$cc -MD -MF \$out.d \$defines \$includes \$cflags \$cflags_c -c \$in -o \$out"
+    description = "CC(NaCl x86 Newlib) \$out"
+    depfile = "\$out.d"
+    depsformat = "gcc"
+  }
+  tool("cxx") {
+    # cflags_pch_cc
+    command = "$cxx -MD -MF \$out.d \$defines \$includes \$cflags \$cflags_cc -c \$in -o \$out"
+    description = "CXX(NaCl x86 Newlib) \$out"
+    depfile = "\$out.d"
+    depsformat = "gcc"
+  }
+  tool("alink") {
+    command = "rm -f \$out && ${toolprefix}ar rcs \$out \$in"
+    description = "AR(NaCl x86 Newlib) \$out"
+  }
+  tool("solink") {
+    command = "if [ ! -e \$lib -o ! -e \${lib}.TOC ]; then $ld -shared \$ldflags -o \$lib -Wl,-soname=\$soname -Wl,--whole-archive \$in \$solibs -Wl,--no-whole-archive \$libs && { readelf -d \${lib} | grep SONAME ; nm -gD -f p \${lib} | cut -f1-2 -d' '; } > \${lib}.TOC; else $ld -shared \$ldflags -o \$lib -Wl,-soname=\$soname -Wl,--whole-archive \$in \$solibs -Wl,--no-whole-archive \$libs && { readelf -d \${lib} | grep SONAME ; nm -gD -f p \${lib} | cut -f1-2 -d' '; } > \${lib}.tmp && if ! cmp -s \${lib}.tmp \${lib}.TOC; then mv \${lib}.tmp \${lib}.TOC ; fi; fi"
+    description = "SOLINK(NaCl x86 Newlib) \$lib"
+
+    #pool = "link_pool"
+    restat = "1"
+  }
+  tool("link") {
+    command = "$ld \$ldflags -o \$out -Wl,--start-group \$in \$solibs -Wl,--end-group \$libs"
+    description = "LINK(NaCl x86 Newlib) \$out"
+
+    #pool = "link_pool"
+  }
+
+  if (is_win) {
+    tool("stamp") {
+      command = "\"$python_path\" gyp-win-tool stamp \$out"
+      description = "STAMP \$out"
+    }
+  } else {
+    tool("stamp") {
+      command = "touch \$out"
+      description = "STAMP \$out"
+    }
+  }
+
+  toolchain_args() {
+    # Override the default OS detection. The build config will set the is_*
+    # flags accordingly.
+    current_os = "nacl"
+
+    # Component build not supported in NaCl, since it does not support shared
+    # libraries.
+    is_component_build = false
+  }
+}

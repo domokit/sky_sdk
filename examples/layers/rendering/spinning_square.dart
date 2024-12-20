@@ -40,9 +40,7 @@ void main() {
     child: square,
   );
   // Finally, we center the spinning green square...
-  final RenderBox root = RenderPositionedBox(
-    child: spin,
-  );
+  final RenderBox root = RenderPositionedBox(child: spin);
   // and attach it to the window.
   ViewRenderingFlutterBinding(root: root);
 

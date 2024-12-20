@@ -1,0 +1,321 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/toolchain/clang.gni")
+import("//flutter/common/config.gni")
+import("//flutter/examples/examples.gni")
+import("//flutter/shell/platform/config.gni")
+import("//flutter/shell/platform/glfw/config.gni")
+import("//flutter/testing/testing.gni")
+import("$dart_src/build/dart/copy_tree.gni")
+
+# Whether to build the dartdevc sdk, libraries, and source files
+# required for the flutter web sdk.
+# TODO(jacksongardner): remove this poorly named argument once the recipes stop
+# using it. https://github.com/flutter/flutter/issues/113303
+declare_args() {
+  full_dart_sdk = false
+}
+
+config("config") {
+  include_dirs = [
+    "..",
+    ".",
+  ]
+  cflags = []
+  if (is_win) {
+    if (current_cpu != "x86") {
+      cflags += [ "/WX" ]  # Treat warnings as errors.
+    }
+  }
+  if (is_clang) {
+    cflags += [ "-Wunreachable-code" ]
+  }
+}
+
+config("export_dynamic_symbols") {
+  # --dynamic-list is the GNU linker syntax supported by ELF linkers.
+  # -exported_symbols_list is the macOS linker syntax. The different flags
+  # accept files formatted differently, so we have exported_symbols.sym for GNU
+  # linker syntax, and exported_symbols_mac.sym for the macOS linker syntax.
+  if (is_linux || is_fuchsia) {
+    inputs = [ "//flutter/common/exported_symbols.sym" ]
+    ldflags = [ "-Wl,--dynamic-list=" + rebase_path(inputs[0], root_build_dir) ]
+  } else if (is_mac) {
+    inputs = [ "//flutter/common/exported_symbols_mac.sym" ]
+    ldflags = [
+      "-Xlinker",
+      "-exported_symbols_list",
+      "-Xlinker",
+      rebase_path(inputs[0], root_build_dir),
+    ]
+  }
+}
+
+config("export_dynamic_test_symbols") {
+  # See comment in :export_dynamic_symbols.
+  # This config exposes an additional symbol meant for flutter_tester.
+  if (is_linux || is_fuchsia) {
+    inputs = [ "//flutter/common/exported_test_symbols.sym" ]
+    ldflags = [ "-Wl,--dynamic-list=" + rebase_path(inputs[0], root_build_dir) ]
+  } else if (is_mac) {
+    inputs = [ "//flutter/common/exported_test_symbols_mac.sym" ]
+    ldflags = [
+      "-Xlinker",
+      "-exported_symbols_list",
+      "-Xlinker",
+      rebase_path(inputs[0], root_build_dir),
+    ]
+  }
+}
+
+group("flutter") {
+  testonly = true
+
+  # Compile the engine.
+  public_deps = [
+    ":unittests",
+    "//flutter/shell/platform/embedder:flutter_engine",
+    "//flutter/sky",
+  ]
+
+  # Ensure the example for a sample embedder compiles.
+  if (build_embedder_examples) {
+    public_deps += [
+      "//flutter/examples/glfw",
+      "//flutter/examples/vulkan_glfw",
+    ]
+
+    if (!is_mac) {
+      public_deps += [ "//flutter/examples/glfw_drm" ]
+    }
+  }
+
+  # If enabled, compile the SDK / snapshot.
+  if (!is_fuchsia) {
+    public_deps += [ "//flutter/lib/snapshot:generate_snapshot_bins" ]
+
+    if (build_engine_artifacts) {
+      public_deps += [
+        "//flutter/build/dart:dart_sdk",
+        "//flutter/flutter_frontend_server:frontend_server",
+
+        # This must be listed explicitly for desktop cross-builds since
+        # //flutter/lib/snapshot:generate_snapshot_bin will only build
+        # gen_snapshot for the host and not the target.
+        "$dart_src/runtime/bin:gen_snapshot",
+
+        # Impeller artifacts - compiler and libtessellator
+        "//flutter/impeller/compiler:impellerc",
+        "//flutter/impeller/tessellator:tessellator_shared",
+
+        # path_ops
+        "//flutter/tools/path_ops",
+      ]
+
+      if (host_os == "linux") {
+        public_deps += [
+          # Built alongside gen_snapshot for 64 bit targets
+          "$dart_src/runtime/bin:analyze_snapshot",
+        ]
+      }
+
+      if (full_dart_sdk) {
+        public_deps += [ "//flutter/web_sdk" ]
+      }
+    }
+  }
+
+  if (build_engine_artifacts) {
+    public_deps += [
+      "//flutter/build/dart/test:gen_dartcli_call",
+      "//flutter/build/dart/test:gen_executable_call",
+      "//flutter/shell/testing",
+      "//flutter/tools/const_finder",
+      "//flutter/tools/engine_tool:tests",
+      "//flutter/tools/font_subset",
+    ]
+  }
+
+  # Compile all benchmark targets if enabled.
+  if (enable_unittests && !is_win && !is_fuchsia) {
+    public_deps += [
+      "//flutter/display_list:display_list_benchmarks",
+      "//flutter/display_list:display_list_builder_benchmarks",
+      "//flutter/display_list:display_list_region_benchmarks",
+      "//flutter/display_list:display_list_transform_benchmarks",
+      "//flutter/fml:fml_benchmarks",
+      "//flutter/impeller/geometry:geometry_benchmarks",
+      "//flutter/lib/ui:ui_benchmarks",
+      "//flutter/shell/common:shell_benchmarks",
+      "//flutter/third_party/txt:txt_benchmarks",
+    ]
+  }
+
+  # Build the standalone Impeller library.
+  if (is_mac || is_linux || is_win || is_android) {
+    public_deps += [ "//flutter/impeller/toolkit/interop:sdk" ]
+  }
+
+  if ((flutter_runtime_mode == "debug" || flutter_runtime_mode == "profile") &&
+      (is_ios || is_android)) {
+    public_deps += [ "//flutter/testing/scenario_app" ]
+  }
+}
+
+group("unittests") {
+  testonly = true
+
+  public_deps = []
+  if (is_android) {
+    public_deps += [
+      "//flutter/impeller/toolkit/android:apk_unittests",
+      "//flutter/impeller/toolkit/android:unittests",
+      "//flutter/shell/platform/android:flutter_shell_native_unittests",
+    ]
+  }
+
+  if (is_ios) {
+    public_deps += [ "//flutter/shell/platform/darwin/ios:ios_test_flutter" ]
+  }
+
+  # Compile all unittests targets if enabled.
+  if (enable_unittests) {
+    public_deps += [
+      "//flutter/assets:assets_unittests",
+      "//flutter/display_list:display_list_rendertests",
+      "//flutter/display_list:display_list_unittests",
+      "//flutter/flow:flow_unittests",
+      "//flutter/fml:fml_unittests",
+      "//flutter/lib/ui:ui_unittests",
+      "//flutter/runtime:dart_plugin_registrant_unittests",
+      "//flutter/runtime:no_dart_plugin_registrant_unittests",
+      "//flutter/runtime:runtime_unittests",
+      "//flutter/shell/common:shell_unittests",
+      "//flutter/shell/platform/embedder:embedder_a11y_unittests",
+      "//flutter/shell/platform/embedder:embedder_proctable_unittests",
+      "//flutter/shell/platform/embedder:embedder_unittests",
+      "//flutter/testing:testing_unittests",
+      "//flutter/testing/dart",
+      "//flutter/testing/smoke_test_failure",
+      "//flutter/third_party/tonic/tests:tonic_unittests",
+      "//flutter/third_party/txt:txt_unittests",
+    ]
+
+    # The accessibility library only supports Mac and Windows at the moment.
+    if (is_mac || is_win) {
+      public_deps +=
+          [ "//flutter/third_party/accessibility:accessibility_unittests" ]
+    }
+
+    if (is_fuchsia) {
+      public_deps += [ "//flutter/shell/platform/fuchsia:tests" ]
+    }
+
+    if (is_mac || is_linux || is_win) {
+      public_deps += [
+        "//flutter/impeller:impeller_dart_unittests",
+        "//flutter/impeller:impeller_unittests",
+        "//flutter/impeller/toolkit/interop:example",
+      ]
+    }
+
+    if (is_mac) {
+      public_deps += [
+        "//flutter/impeller/golden_tests:impeller_golden_tests",
+        "//flutter/shell/gpu:gpu_surface_metal_unittests",
+        "//flutter/shell/platform/darwin/common:availability_version_check_unittests",
+        "//flutter/shell/platform/darwin/common:framework_common_unittests",
+        "//flutter/third_party/spring_animation:spring_animation_unittests",
+      ]
+    }
+
+    if (!is_win && !is_fuchsia) {
+      public_deps += [
+        "//flutter/shell/platform/android/external_view_embedder:android_external_view_embedder_unittests",
+        "//flutter/shell/platform/android/jni:jni_unittests",
+        "//flutter/shell/platform/android/platform_view_android_delegate:platform_view_android_delegate_unittests",
+      ]
+    }
+
+    # Unit tests for desktop embeddings should only be built if the desktop
+    # embeddings are being built.
+    if (enable_desktop_embeddings) {
+      public_deps += [
+        "//flutter/shell/platform/common:common_cpp_core_unittests",
+        "//flutter/shell/platform/common/client_wrapper:client_wrapper_unittests",
+      ]
+
+      if (!is_fuchsia) {
+        # These tests require the embedder and thus cannot run on fuchsia.
+        # TODO(): Enable when embedder works on fuchsia.
+        public_deps +=
+            [ "//flutter/shell/platform/common:common_cpp_unittests" ]
+
+        # These tests require GLFW and thus cannot run on fuchsia.
+        public_deps += [ "//flutter/shell/platform/glfw/client_wrapper:client_wrapper_glfw_unittests" ]
+      }
+
+      if (is_linux) {
+        public_deps +=
+            [ "//flutter/shell/platform/linux:flutter_linux_unittests" ]
+        if (build_glfw_shell) {
+          public_deps +=
+              [ "//flutter/shell/platform/glfw:flutter_glfw_unittests" ]
+        }
+      }
+
+      if (is_mac) {
+        public_deps += [ "//flutter/shell/platform/darwin/macos:flutter_desktop_darwin_unittests" ]
+      }
+
+      if (is_win) {
+        public_deps += [
+          "//flutter/shell/platform/windows:flutter_windows_unittests",
+          "//flutter/shell/platform/windows/client_wrapper:client_wrapper_windows_unittests",
+        ]
+      }
+    }
+  }
+}
+
+if (build_engine_artifacts) {
+  group("archives") {
+    testonly = true
+
+    deps = [ "//flutter/build/archives:artifacts" ]
+  }
+}
+
+group("dist") {
+  testonly = true
+
+  deps = [
+    "//flutter/lib/gpu/dist",
+    "//flutter/sky/dist",
+  ]
+}
+
+if (is_fuchsia && enable_unittests) {
+  group("fuchsia_tests") {
+    testonly = true
+
+    deps = [ "//flutter/shell/platform/fuchsia:tests" ]
+  }
+}
+
+# On Windows, when targeting Android, we only build gen_snapshot. This
+# top-level target provides a convenient shorthand for the full path into the
+# Dart tree, and is less ambiguous than specifying the binary to build since
+# we can specify the toolchain to use, too.
+if (host_os == "win") {
+  _gen_snapshot_target = "$dart_src/runtime/bin:gen_snapshot($host_toolchain)"
+  copy("gen_snapshot") {
+    deps = [ _gen_snapshot_target ]
+
+    gen_snapshot_out_dir = get_label_info(_gen_snapshot_target, "root_out_dir")
+    sources = [ "$gen_snapshot_out_dir/gen_snapshot.exe" ]
+    outputs = [ "$root_build_dir/gen_snapshot/gen_snapshot.exe" ]
+  }
+}

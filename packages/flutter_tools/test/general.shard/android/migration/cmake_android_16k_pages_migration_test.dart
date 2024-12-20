@@ -78,11 +78,7 @@ void main() {
         cmakeFile.writeAsString(_sampleCmakeListsTxtMigrated);
 
         bufferLogger = BufferLogger.test();
-        project = FakeAndroidProject(
-          parent: FakeFlutterProject(
-            directory: exampleDir,
-          ),
-        );
+        project = FakeAndroidProject(parent: FakeFlutterProject(directory: exampleDir));
         migration = CmakeAndroid16kPagesMigration(project, bufferLogger);
       });
 
@@ -91,31 +87,20 @@ void main() {
         await migration.migrate();
         expect(
           bufferLogger.traceText,
-          contains(
-            'CMake project not found, skipping support Android 15 16k page size migration.',
-          ),
+          contains('CMake project not found, skipping support Android 15 16k page size migration.'),
         );
       });
 
       testWithoutContext('migrate', () async {
         cmakeFile.writeAsStringSync(_sampleCmakeListsTxtUnmigrated);
         await migration.migrate();
-        expect(
-          cmakeFile.readAsStringSync(),
-          _sampleCmakeListsTxtMigrated,
-        );
+        expect(cmakeFile.readAsStringSync(), _sampleCmakeListsTxtMigrated);
       });
 
       testWithoutContext('do nothing when already migrated', () async {
-        expect(
-          cmakeFile.readAsStringSync(),
-          _sampleCmakeListsTxtMigrated,
-        );
+        expect(cmakeFile.readAsStringSync(), _sampleCmakeListsTxtMigrated);
         await migration.migrate();
-        expect(
-          cmakeFile.readAsStringSync(),
-          _sampleCmakeListsTxtMigrated,
-        );
+        expect(cmakeFile.readAsStringSync(), _sampleCmakeListsTxtMigrated);
       });
     });
   });

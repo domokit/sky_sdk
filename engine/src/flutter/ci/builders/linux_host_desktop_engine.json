@@ -1,0 +1,133 @@
+{
+    "_comment": [
+        "The builds defined in this file should not contain tests, ",
+        "and the file should not contain builds that are essentially tests. ",
+        "The only builds in this file should be the builds necessary to produce ",
+        "release artifacts. ",
+        "Tests to run on linux hosts should go in one of the other linux_ build ",
+        "definition files."
+    ],
+    "builds": [
+        {
+            "archives": [
+                {
+                    "name": "ci/host_debug_desktop",
+                    "base_path": "out/ci/host_debug_desktop/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/host_debug_desktop/zip_archives/linux-x64-debug/linux-x64-flutter-gtk.zip"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--runtime-mode",
+                "debug",
+                "--enable-fontconfig",
+                "--prebuilt-dart-sdk",
+                "--rbe",
+                "--no-goma",
+                "--target-dir",
+                "ci/host_debug_desktop"
+            ],
+            "name": "ci/host_debug_desktop",
+            "description": "Produces debug mode artifacts for x64 Linux desktop.",
+            "ninja": {
+                "config": "ci/host_debug_desktop",
+                "targets": [
+                    "flutter/shell/platform/linux:flutter_gtk"
+                ]
+            }
+        },
+        {
+            "archives": [
+                {
+                    "name": "ci/host_profile_desktop",
+                    "base_path": "out/ci/host_profile_desktop/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/host_profile_desktop/zip_archives/linux-x64-profile/linux-x64-flutter-gtk.zip"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--runtime-mode",
+                "profile",
+                "--no-lto",
+                "--enable-fontconfig",
+                "--prebuilt-dart-sdk",
+                "--rbe",
+                "--no-goma",
+                "--target-dir",
+                "ci/host_profile_desktop"
+            ],
+            "name": "ci/host_profile_desktop",
+            "description": "Produces profile mode artifacts for x64 Linux desktop.",
+            "ninja": {
+                "config": "ci/host_profile_desktop",
+                "targets": [
+                    "flutter/shell/platform/linux:flutter_gtk"
+                ]
+            }
+        },
+        {
+            "archives": [
+                {
+                    "name": "ci/host_release_desktop",
+                    "base_path": "out/ci/host_release_desktop/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/host_release_desktop/zip_archives/linux-x64-release/linux-x64-flutter-gtk.zip"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--runtime-mode",
+                "release",
+                "--enable-fontconfig",
+                "--prebuilt-dart-sdk",
+                "--rbe",
+                "--no-goma",
+                "--target-dir",
+                "ci/host_release_desktop"
+            ],
+            "name": "ci/host_release_desktop",
+            "description": "Produces release mode artifacts for x64 Linux desktop.",
+            "ninja": {
+                "config": "ci/host_release_desktop",
+                "targets": [
+                    "flutter/shell/platform/linux:flutter_gtk"
+                ]
+            }
+        }
+    ]
+}

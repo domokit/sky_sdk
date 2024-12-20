@@ -7,12 +7,12 @@ import 'package:flutter_api_samples/material/expansion_tile/expansion_tile.0.dar
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('When expansion tiles are expanded tile numbers are revealed', (WidgetTester tester) async {
+  testWidgets('When expansion tiles are expanded tile numbers are revealed', (
+    WidgetTester tester,
+  ) async {
     const int totalTiles = 3;
 
-    await tester.pumpWidget(
-      const example.ExpansionTileApp(),
-    );
+    await tester.pumpWidget(const example.ExpansionTileApp());
 
     expect(find.byType(ExpansionTile), findsNWidgets(totalTiles));
 

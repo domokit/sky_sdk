@@ -1,0 +1,14 @@
+[style]
+based_on_style = yapf
+# Defined in https://github.com/google/yapf/blob/20d0c8f1774cf3843f4032f3e9ab02338bf98c75/yapf/yapflib/style.py#L326
+# Docs and full list of knobs:
+# https://github.com/google/yapf#knobs
+split_before_first_argument = true
+blank_line_before_module_docstring = true
+# dedent_closing_brackets is required by coalesce_brackets
+dedent_closing_brackets = true
+coalesce_brackets = true
+each_dict_entry_on_separate_line = false
+# Match the number in .pylintrc at
+# https://github.com/flutter/engine/blob/main/.pylintrc#L135
+column_limit = 100

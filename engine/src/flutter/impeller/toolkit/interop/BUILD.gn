@@ -1,0 +1,164 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/zip_bundle.gni")
+import("//flutter/impeller/tools/impeller.gni")
+
+embed_blob("embedded_icu_data") {
+  symbol_name = "embedded_icu_data"
+  blob = "//flutter/third_party/icu/flutter/icudtl.dat"
+  hdr = "$target_gen_dir/embedded_icu_data.h"
+  cc = "$target_gen_dir/embedded_icu_data.cc"
+  deps = []
+}
+
+impeller_component("interop") {
+  sources = [
+    "color_filter.cc",
+    "color_filter.h",
+    "color_source.cc",
+    "color_source.h",
+    "context.cc",
+    "context.h",
+    "dl.cc",
+    "dl.h",
+    "dl_builder.cc",
+    "dl_builder.h",
+    "formats.cc",
+    "formats.h",
+    "image_filter.cc",
+    "image_filter.h",
+    "impeller.cc",
+    "impeller.h",
+    "impeller.hpp",
+    "impeller_c.c",
+    "impeller_cc.cc",
+    "mask_filter.cc",
+    "mask_filter.h",
+    "object.cc",
+    "object.h",
+    "paint.cc",
+    "paint.h",
+    "paragraph.cc",
+    "paragraph.h",
+    "paragraph_builder.cc",
+    "paragraph_builder.h",
+    "paragraph_style.cc",
+    "paragraph_style.h",
+    "path.cc",
+    "path.h",
+    "path_builder.cc",
+    "path_builder.h",
+    "surface.cc",
+    "surface.h",
+    "texture.cc",
+    "texture.h",
+    "typography_context.cc",
+    "typography_context.h",
+  ]
+
+  public_deps = [
+    "../../base",
+    "../../display_list",
+    "../../entity",
+    "../../renderer/backend",
+    "//flutter/display_list",
+    "//flutter/fml",
+    "//flutter/third_party/txt",
+  ]
+
+  deps = [ ":embedded_icu_data" ]
+}
+
+impeller_component("library") {
+  target_type = "shared_library"
+
+  output_name = "impeller"
+
+  deps = [ ":interop" ]
+}
+
+impeller_component("example") {
+  target_type = "executable"
+
+  output_name = "impeller_interop_example"
+
+  sources = [ "example.c" ]
+
+  deps = [
+    ":interop",
+    "//flutter/third_party/glfw",
+  ]
+}
+
+impeller_component("interop_unittests") {
+  testonly = true
+
+  sources = [
+    "impeller_unittests.cc",
+    "object_unittests.cc",
+    "playground_test.cc",
+    "playground_test.h",
+  ]
+
+  deps = [
+    ":interop",
+    "../../fixtures",
+    "../../playground:playground_test",
+    "//flutter/testing:testing_lib",
+  ]
+}
+
+zip_bundle("sdk") {
+  if (is_mac) {
+    zip_out_dir = "darwin-${target_cpu}"
+  } else {
+    zip_out_dir = "${full_target_platform_name}"
+  }
+
+  output = "${zip_out_dir}/impeller_sdk.zip"
+  deps = [ ":library" ]
+
+  files = [
+    {
+      source = "README.md"
+      destination = "README.md"
+    },
+    {
+      source = "impeller.h"
+      destination = "include/impeller.h"
+    },
+    {
+      source = "impeller.hpp"
+      destination = "include/impeller.hpp"
+    },
+  ]
+
+  if (is_mac) {
+    files += [
+      {
+        source = "$root_build_dir/libimpeller.dylib"
+        destination = "lib/libimpeller.dylib"
+      },
+    ]
+  } else if (is_linux || is_android) {
+    files += [
+      {
+        source = "$root_build_dir/libimpeller.so"
+        destination = "lib/libimpeller.so"
+      },
+    ]
+  } else if (is_win) {
+    files += [
+      {
+        source = "$root_build_dir/impeller.dll"
+        destination = "lib/impeller.dll"
+      },
+      {
+        source = "$root_build_dir/impeller.dll.lib"
+        destination = "lib/impeller.dll.lib"
+      },
+    ]
+  }
+}

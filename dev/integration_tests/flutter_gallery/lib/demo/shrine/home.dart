@@ -21,16 +21,13 @@ class ProductPage extends StatelessWidget {
     return ScopedModelDescendant<AppStateModel>(
       builder: (BuildContext context, Widget? child, AppStateModel model) {
         return AsymmetricView(products: model.getProducts());
-      });
+      },
+    );
   }
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({
-    this.expandingBottomSheet,
-    this.backdrop,
-    super.key,
-  });
+  const HomePage({this.expandingBottomSheet, this.backdrop, super.key});
 
   final ExpandingBottomSheet? expandingBottomSheet;
   final Backdrop? backdrop;
@@ -39,8 +36,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        if (backdrop != null)
-          backdrop!,
+        if (backdrop != null) backdrop!,
         Align(alignment: Alignment.bottomRight, child: expandingBottomSheet),
       ],
     );

@@ -29,7 +29,8 @@ import 'dart:convert';
 ///
 /// Since the function is executed on the host driving the test, you can access any environment
 /// variable from it.
-typedef ScreenshotCallback = Future<bool> Function(String name, List<int> image, [Map<String, Object?>? args]);
+typedef ScreenshotCallback =
+    Future<bool> Function(String name, List<int> image, [Map<String, Object?>? args]);
 
 /// Classes shared between `integration_test.dart` and `flutter drive` based
 /// adaptor (ex: `integration_test_driver.dart`).
@@ -38,23 +39,18 @@ typedef ScreenshotCallback = Future<bool> Function(String name, List<int> image,
 /// `request_data` command.
 class Response {
   /// Constructor to use for positive response.
-  Response.allTestsPassed({this.data})
-      : _allTestsPassed = true,
-        _failureDetails = null;
+  Response.allTestsPassed({this.data}) : _allTestsPassed = true, _failureDetails = null;
 
   /// Constructor for failure response.
-  Response.someTestsFailed(this._failureDetails, {this.data})
-      : _allTestsPassed = false;
+  Response.someTestsFailed(this._failureDetails, {this.data}) : _allTestsPassed = false;
 
   /// Constructor for failure response.
   Response.toolException({String? ex})
-      : _allTestsPassed = false,
-        _failureDetails = <Failure>[Failure('ToolException', ex)];
+    : _allTestsPassed = false,
+      _failureDetails = <Failure>[Failure('ToolException', ex)];
 
   /// Constructor for web driver commands response.
-  Response.webDriverCommand({this.data})
-      : _allTestsPassed = false,
-        _failureDetails = null;
+  Response.webDriverCommand({this.data}) : _allTestsPassed = false, _failureDetails = null;
 
   final List<Failure>? _failureDetails;
 
@@ -67,18 +63,17 @@ class Response {
   bool get allTestsPassed => _allTestsPassed;
 
   /// If the result are failures get the formatted details.
-  String get formattedFailureDetails =>
-      _allTestsPassed ? '' : formatFailures(_failureDetails!);
+  String get formattedFailureDetails => _allTestsPassed ? '' : formatFailures(_failureDetails!);
 
   /// Failure details as a list.
   List<Failure>? get failureDetails => _failureDetails;
 
   /// Serializes this message to a JSON map.
   String toJson() => json.encode(<String, dynamic>{
-        'result': allTestsPassed.toString(),
-        'failureDetails': _failureDetailsAsString(),
-        if (data != null) 'data': data,
-      });
+    'result': allTestsPassed.toString(),
+    'failureDetails': _failureDetailsAsString(),
+    if (data != null) 'data': data,
+  });
 
   /// Deserializes the result from JSON.
   static Response fromJson(String source) {
@@ -139,10 +134,7 @@ class Failure {
 
   /// Serializes the object to JSON.
   String toJson() {
-    return json.encode(<String, String?>{
-      'methodName': methodName,
-      'details': details,
-    });
+    return json.encode(<String, String?>{'methodName': methodName, 'details': details});
   }
 
   @override
@@ -164,20 +156,14 @@ class Failure {
 /// the driver side test such as: status pending or tests failed.
 class DriverTestMessage {
   /// When tests are failed on the driver side.
-  DriverTestMessage.error()
-      : _isSuccess = false,
-        _isPending = false;
+  DriverTestMessage.error() : _isSuccess = false, _isPending = false;
 
   /// When driver side is waiting on [WebDriverCommand]s to be sent from the
   /// app side.
-  DriverTestMessage.pending()
-      : _isSuccess = false,
-        _isPending = true;
+  DriverTestMessage.pending() : _isSuccess = false, _isPending = true;
 
   /// When driver side successfully completed executing the [WebDriverCommand].
-  DriverTestMessage.complete()
-      : _isSuccess = true,
-        _isPending = false;
+  DriverTestMessage.complete() : _isSuccess = true, _isPending = false;
 
   final bool _isSuccess;
   final bool _isPending;
@@ -213,8 +199,8 @@ class DriverTestMessage {
   /// Return a DriverTestMessage depending on `status`.
   static DriverTestMessage fromString(String status) {
     return switch (status) {
-      'error'    => DriverTestMessage.error(),
-      'pending'  => DriverTestMessage.pending(),
+      'error' => DriverTestMessage.error(),
+      'pending' => DriverTestMessage.pending(),
       'complete' => DriverTestMessage.complete(),
       _ => throw StateError('This type of status does not exist: $status'),
     };
@@ -244,17 +230,12 @@ enum WebDriverCommandType {
 /// See: https://www.w3.org/TR/webdriver/
 class WebDriverCommand {
   /// Constructor for [WebDriverCommandType.noop] command.
-  WebDriverCommand.noop()
-      : type = WebDriverCommandType.noop,
-        values = <String, dynamic>{};
+  WebDriverCommand.noop() : type = WebDriverCommandType.noop, values = <String, dynamic>{};
 
   /// Constructor for [WebDriverCommandType.noop] screenshot.
   WebDriverCommand.screenshot(String screenshotName, [Map<String, Object?>? args])
-      : type = WebDriverCommandType.screenshot,
-        values = <String, dynamic>{
-          'screenshot_name': screenshotName,
-          if (args != null) 'args': args,
-        };
+    : type = WebDriverCommandType.screenshot,
+      values = <String, dynamic>{'screenshot_name': screenshotName, if (args != null) 'args': args};
 
   /// Type of the [WebDriverCommand].
   ///
@@ -284,11 +265,13 @@ class WebDriverCommand {
 abstract class CallbackManager {
   /// The callback function to response the driver side input.
   Future<Map<String, dynamic>> callback(
-      Map<String, String> params, IntegrationTestResults testRunner);
+    Map<String, String> params,
+    IntegrationTestResults testRunner,
+  );
 
   /// Takes a screenshot of the application.
   /// Returns the data that is sent back to the host.
-   Future<Map<String, dynamic>> takeScreenshot(String screenshot, [Map<String, Object?>? args]);
+  Future<Map<String, dynamic>> takeScreenshot(String screenshot, [Map<String, Object?>? args]);
 
   /// Android only. Converts the Flutter surface to an image view.
   Future<void> convertFlutterSurfaceToImage();

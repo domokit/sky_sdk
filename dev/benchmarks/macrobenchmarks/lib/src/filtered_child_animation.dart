@@ -7,12 +7,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-enum FilterType {
-  opacity, rotateTransform, rotateFilter,
-}
+enum FilterType { opacity, rotateTransform, rotateFilter }
 
 class FilteredChildAnimationPage extends StatefulWidget {
-  const FilteredChildAnimationPage(this.initialFilterType, {
+  const FilteredChildAnimationPage(
+    this.initialFilterType, {
     super.key,
     this.initialComplexChild = true,
     this.initialUseRepaintBoundary = true,
@@ -26,7 +25,8 @@ class FilteredChildAnimationPage extends StatefulWidget {
   State<FilteredChildAnimationPage> createState() => _FilteredChildAnimationPageState();
 }
 
-class _FilteredChildAnimationPageState extends State<FilteredChildAnimationPage> with SingleTickerProviderStateMixin {
+class _FilteredChildAnimationPageState extends State<FilteredChildAnimationPage>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   final GlobalKey _childKey = GlobalKey(debugLabel: 'child to animate');
   Offset _childCenter = Offset.zero;
@@ -60,20 +60,16 @@ class _FilteredChildAnimationPageState extends State<FilteredChildAnimationPage>
   }
 
   String get _title => switch (_filterType) {
-    FilterType.opacity         => 'Fading Child Animation',
+    FilterType.opacity => 'Fading Child Animation',
     FilterType.rotateTransform => 'Transformed Child Animation',
-    FilterType.rotateFilter    => 'Matrix Filtered Child Animation',
-    null                       => 'Static Child',
+    FilterType.rotateFilter => 'Matrix Filtered Child Animation',
+    null => 'Static Child',
   };
 
   static Widget _makeChild(int rows, int cols, double fontSize, bool complex) {
     final BoxDecoration decoration = BoxDecoration(
       color: Colors.green,
-      boxShadow: complex ? <BoxShadow>[
-        const BoxShadow(
-          blurRadius: 10.0,
-        ),
-      ] : null,
+      boxShadow: complex ? <BoxShadow>[const BoxShadow(blurRadius: 10.0)] : null,
       borderRadius: BorderRadius.circular(10.0),
     );
     return Stack(
@@ -81,20 +77,21 @@ class _FilteredChildAnimationPageState extends State<FilteredChildAnimationPage>
       children: <Widget>[
         Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: List<Widget>.generate(rows, (int r) => Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: List<Widget>.generate(cols, (int c) => Container(
-              decoration: decoration,
-              child: Text('text', style: TextStyle(fontSize: fontSize)),
-            )),
-          )),
-        ),
-        const Text('child',
-          style: TextStyle(
-            color: Colors.blue,
-            fontSize: 36,
+          children: List<Widget>.generate(
+            rows,
+            (int r) => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List<Widget>.generate(
+                cols,
+                (int c) => Container(
+                  decoration: decoration,
+                  child: Text('text', style: TextStyle(fontSize: fontSize)),
+                ),
+              ),
+            ),
           ),
         ),
+        const Text('child', style: TextStyle(color: Colors.blue, fontSize: 36)),
       ],
     );
   }
@@ -109,27 +106,29 @@ class _FilteredChildAnimationPageState extends State<FilteredChildAnimationPage>
     Widget Function(BuildContext, Widget?) builder;
     switch (filterType) {
       case FilterType.opacity:
-        builder = (BuildContext context, Widget? child) => Opacity(
-          opacity: (_controller.value * 2.0 - 1.0).abs(),
-          child: child,
-        );
+        builder =
+            (BuildContext context, Widget? child) =>
+                Opacity(opacity: (_controller.value * 2.0 - 1.0).abs(), child: child);
       case FilterType.rotateTransform:
-        builder = (BuildContext context, Widget? child) => Transform(
-          transform: Matrix4.rotationZ(_controller.value * 2.0 * pi),
-          alignment: Alignment.center,
-          filterQuality: FilterQuality.low,
-          child: child,
-        );
+        builder =
+            (BuildContext context, Widget? child) => Transform(
+              transform: Matrix4.rotationZ(_controller.value * 2.0 * pi),
+              alignment: Alignment.center,
+              filterQuality: FilterQuality.low,
+              child: child,
+            );
       case FilterType.rotateFilter:
-        builder = (BuildContext context, Widget? child) => ImageFiltered(
-          imageFilter: ImageFilter.matrix((
-              Matrix4.identity()
-                ..translate(_childCenter.dx, _childCenter.dy)
-                ..rotateZ(_controller.value * 2.0 * pi)
-                ..translate(- _childCenter.dx, - _childCenter.dy)
-          ).storage),
-          child: child,
-        );
+        builder =
+            (BuildContext context, Widget? child) => ImageFiltered(
+              imageFilter: ImageFilter.matrix(
+                (Matrix4.identity()
+                      ..translate(_childCenter.dx, _childCenter.dy)
+                      ..rotateZ(_controller.value * 2.0 * pi)
+                      ..translate(-_childCenter.dx, -_childCenter.dy))
+                    .storage,
+              ),
+              child: child,
+            );
     }
     return RepaintBoundary(
       child: AnimatedBuilder(
@@ -143,9 +142,7 @@ class _FilteredChildAnimationPageState extends State<FilteredChildAnimationPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_title),
-      ),
+      appBar: AppBar(title: Text(_title)),
       body: Center(
         child: _animate(
           child: Container(
@@ -153,9 +150,7 @@ class _FilteredChildAnimationPageState extends State<FilteredChildAnimationPage>
             color: Colors.yellow,
             width: 300,
             height: 300,
-            child: Center(
-              child: _makeChild(4, 3, 24.0, _complexChild),
-            ),
+            child: Center(child: _makeChild(4, 3, 24.0, _complexChild)),
           ),
           protectChild: _useRepaintBoundary,
         ),

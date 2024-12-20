@@ -22,14 +22,17 @@ enum DatePickerDateTimeOrder {
   ///
   /// Example: Fri Aug 31 | 02 | 08 | PM.
   date_time_dayPeriod,
+
   /// Order of the columns, from left to right: date, am/pm, hour, minute.
   ///
   /// Example: Fri Aug 31 | PM | 02 | 08.
   date_dayPeriod_time,
+
   /// Order of the columns, from left to right: hour, minute, am/pm, date.
   ///
   /// Example: 02 | 08 | PM | Fri Aug 31.
   time_dayPeriod_date,
+
   /// Order of the columns, from left to right: am/pm, hour, minute, date.
   ///
   /// Example: PM | 02 | 08 | Fri Aug 31.
@@ -42,14 +45,17 @@ enum DatePickerDateOrder {
   ///
   /// Example: 12 | March | 1996.
   dmy,
+
   /// Order of the columns, from left to right: month, day, year.
   ///
   /// Example: March | 12 | 1996.
   mdy,
+
   /// Order of the columns, from left to right: year, month, day.
   ///
   /// Example: 1996 | March | 12.
   ymd,
+
   /// Order of the columns, from left to right: year, day, month.
   ///
   /// Example: 1996 | 12 | March.
@@ -383,8 +389,6 @@ class DefaultCupertinoLocalizations implements CupertinoLocalizations {
     'December',
   ];
 
-
-
   @override
   String datePickerYear(int yearIndex) => yearIndex.toString();
 
@@ -423,15 +427,16 @@ class DefaultCupertinoLocalizations implements CupertinoLocalizations {
   @override
   String datePickerMediumDate(DateTime date) {
     return '${_shortWeekdays[date.weekday - DateTime.monday]} '
-      '${_shortMonths[date.month - DateTime.january]} '
-      '${date.day.toString().padRight(2)}';
+        '${_shortMonths[date.month - DateTime.january]} '
+        '${date.day.toString().padRight(2)}';
   }
 
   @override
   DatePickerDateOrder get datePickerDateOrder => DatePickerDateOrder.mdy;
 
   @override
-  DatePickerDateTimeOrder get datePickerDateTimeOrder => DatePickerDateTimeOrder.date_time_dayPeriod;
+  DatePickerDateTimeOrder get datePickerDateTimeOrder =>
+      DatePickerDateTimeOrder.date_time_dayPeriod;
 
   @override
   String get anteMeridiemAbbreviation => 'AM';
@@ -527,5 +532,6 @@ class DefaultCupertinoLocalizations implements CupertinoLocalizations {
 
   /// A [LocalizationsDelegate] that uses [DefaultCupertinoLocalizations.load]
   /// to create an instance of this class.
-  static const LocalizationsDelegate<CupertinoLocalizations> delegate = _CupertinoLocalizationsDelegate();
+  static const LocalizationsDelegate<CupertinoLocalizations> delegate =
+      _CupertinoLocalizationsDelegate();
 }

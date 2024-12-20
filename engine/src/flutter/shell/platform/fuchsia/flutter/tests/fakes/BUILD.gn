@@ -1,0 +1,48 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+assert(is_fuchsia)
+
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+
+group("fakes") {
+  testonly = true
+
+  public_deps = [
+    ":focus",
+    ":pointer",
+    "scenic",
+  ]
+}
+
+source_set("focus") {
+  testonly = true
+
+  sources = [
+    "focuser.h",
+    "platform_message.h",
+    "touch_source.h",
+    "view_ref_focused.h",
+  ]
+
+  deps = [
+    "${fuchsia_sdk}/pkg/sys_cpp_testing",
+    "//flutter/lib/ui",
+    "//flutter/testing",
+    "//flutter/third_party/rapidjson",
+  ]
+}
+
+source_set("pointer") {
+  testonly = true
+
+  sources = [ "mock_injector_registry.h" ]
+
+  deps = [
+    "${fuchsia_sdk}/pkg/sys_cpp_testing",
+    "//flutter/lib/ui",
+    "//flutter/testing",
+    "//flutter/third_party/rapidjson",
+  ]
+}

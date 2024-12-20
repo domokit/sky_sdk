@@ -13,15 +13,11 @@ void main() {
   ThemeData(textSelectionColor: Colors.red, useTextSelectionTheme: false);
   ThemeData(cursorColor: Colors.blue, useTextSelectionTheme: false);
   ThemeData(
-      textSelectionHandleColor: Colors.yellow, useTextSelectionTheme: false);
-  ThemeData(
-    textSelectionColor: Colors.red,
-    cursorColor: Colors.blue,
-  );
-  ThemeData(
     textSelectionHandleColor: Colors.yellow,
-    cursorColor: Colors.blue,
+    useTextSelectionTheme: false,
   );
+  ThemeData(textSelectionColor: Colors.red, cursorColor: Colors.blue);
+  ThemeData(textSelectionHandleColor: Colors.yellow, cursorColor: Colors.blue);
   ThemeData(
     textSelectionColor: Colors.red,
     textSelectionHandleColor: Colors.yellow,
@@ -61,11 +57,10 @@ void main() {
   ThemeData.raw(textSelectionColor: Colors.red, useTextSelectionTheme: false);
   ThemeData.raw(cursorColor: Colors.blue, useTextSelectionTheme: false);
   ThemeData.raw(
-      textSelectionHandleColor: Colors.yellow, useTextSelectionTheme: false);
-  ThemeData.raw(
-    textSelectionColor: Colors.red,
-    cursorColor: Colors.blue,
+    textSelectionHandleColor: Colors.yellow,
+    useTextSelectionTheme: false,
   );
+  ThemeData.raw(textSelectionColor: Colors.red, cursorColor: Colors.blue);
   ThemeData.raw(
     textSelectionHandleColor: Colors.yellow,
     cursorColor: Colors.blue,
@@ -105,19 +100,46 @@ void main() {
   ThemeData themeData = ThemeData();
   themeData = ThemeData(accentColor: Colors.red);
   themeData = ThemeData(accentColor: Colors.red, primarySwatch: Colors.blue);
-  themeData = ThemeData(accentColor: Colors.red, colorScheme: ColorScheme.light());
-  themeData = ThemeData(accentColor: Colors.red, colorScheme: ColorScheme.light(), primarySwatch: Colors.blue);
+  themeData = ThemeData(
+    accentColor: Colors.red,
+    colorScheme: ColorScheme.light(),
+  );
+  themeData = ThemeData(
+    accentColor: Colors.red,
+    colorScheme: ColorScheme.light(),
+    primarySwatch: Colors.blue,
+  );
   themeData = ThemeData(error: '');
   themeData = ThemeData.raw(accentColor: Colors.red);
-  themeData = ThemeData.raw(accentColor: Colors.red, primarySwatch: Colors.blue);
-  themeData = ThemeData.raw(accentColor: Colors.red, colorScheme: ColorScheme.light());
-  themeData = ThemeData.raw(accentColor: Colors.red, colorScheme: ColorScheme.light(), primarySwatch: Colors.blue);
+  themeData = ThemeData.raw(
+    accentColor: Colors.red,
+    primarySwatch: Colors.blue,
+  );
+  themeData = ThemeData.raw(
+    accentColor: Colors.red,
+    colorScheme: ColorScheme.light(),
+  );
+  themeData = ThemeData.raw(
+    accentColor: Colors.red,
+    colorScheme: ColorScheme.light(),
+    primarySwatch: Colors.blue,
+  );
   themeData = ThemeData.raw(error: '');
   themeData = themeData.copyWith(accentColor: Colors.red);
   themeData = themeData.copyWith(error: '');
-  themeData = themeData.copyWith(accentColor: Colors.red, primarySwatch: Colors.blue);
-  themeData = themeData.copyWith(accentColor: Colors.red, colorScheme: ColorScheme.light());
-  themeData = themeData.copyWith(accentColor: Colors.red, colorScheme: ColorScheme.light(), primarySwatch: Colors.blue);
+  themeData = themeData.copyWith(
+    accentColor: Colors.red,
+    primarySwatch: Colors.blue,
+  );
+  themeData = themeData.copyWith(
+    accentColor: Colors.red,
+    colorScheme: ColorScheme.light(),
+  );
+  themeData = themeData.copyWith(
+    accentColor: Colors.red,
+    colorScheme: ColorScheme.light(),
+    primarySwatch: Colors.blue,
+  );
   themeData.accentColor;
 
   // Changes made in https://github.com/flutter/flutter/pull/81336
@@ -165,17 +187,11 @@ void main() {
   // Changes made in https://github.com/flutter/flutter/pull/97972
   ThemeData themeData = ThemeData();
   themeData = ThemeData(toggleableActiveColor: Colors.black);
-  themeData = ThemeData(
-    toggleableActiveColor: Colors.black,
-  );
+  themeData = ThemeData(toggleableActiveColor: Colors.black);
   themeData = ThemeData.raw(toggleableActiveColor: Colors.black);
-  themeData = ThemeData.raw(
-    toggleableActiveColor: Colors.black,
-  );
+  themeData = ThemeData.raw(toggleableActiveColor: Colors.black);
   themeData = themeData.copyWith(toggleableActiveColor: Colors.black);
-  themeData = themeData.copyWith(
-    toggleableActiveColor: Colors.black,
-  );
+  themeData = themeData.copyWith(toggleableActiveColor: Colors.black);
   themeData.toggleableActiveColor; // Removing field reference not supported.
 
   // Changes made in https://github.com/flutter/flutter/pull/109070
@@ -189,45 +205,105 @@ void main() {
   ThemeData themeData = ThemeData();
   themeData = ThemeData(errorColor: Colors.red);
   themeData = ThemeData(errorColor: Colors.red, primarySwatch: Colors.blue);
-  themeData = ThemeData(errorColor: Colors.red, colorScheme: ColorScheme.light());
-  themeData = ThemeData(errorColor: Colors.red, colorScheme: ColorScheme.light(), primarySwatch: Colors.blue);
+  themeData = ThemeData(
+    errorColor: Colors.red,
+    colorScheme: ColorScheme.light(),
+  );
+  themeData = ThemeData(
+    errorColor: Colors.red,
+    colorScheme: ColorScheme.light(),
+    primarySwatch: Colors.blue,
+  );
   themeData = ThemeData(otherParam: '');
   themeData = ThemeData.raw(errorColor: Colors.red);
   themeData = ThemeData.raw(errorColor: Colors.red, primarySwatch: Colors.blue);
-  themeData = ThemeData.raw(errorColor: Colors.red, colorScheme: ColorScheme.light());
-  themeData = ThemeData.raw(errorColor: Colors.red, colorScheme: ColorScheme.light(), primarySwatch: Colors.blue);
+  themeData = ThemeData.raw(
+    errorColor: Colors.red,
+    colorScheme: ColorScheme.light(),
+  );
+  themeData = ThemeData.raw(
+    errorColor: Colors.red,
+    colorScheme: ColorScheme.light(),
+    primarySwatch: Colors.blue,
+  );
   themeData = ThemeData.raw(otherParam: '');
   themeData = themeData.copyWith(errorColor: Colors.red);
   themeData = themeData.copyWith(otherParam: '');
-  themeData = themeData.copyWith(errorColor: Colors.red, primarySwatch: Colors.blue);
-  themeData = themeData.copyWith(errorColor: Colors.red, colorScheme: ColorScheme.light());
-  themeData = themeData.copyWith(errorColor: Colors.red, colorScheme: ColorScheme.light(), primarySwatch: Colors.blue);
+  themeData = themeData.copyWith(
+    errorColor: Colors.red,
+    primarySwatch: Colors.blue,
+  );
+  themeData = themeData.copyWith(
+    errorColor: Colors.red,
+    colorScheme: ColorScheme.light(),
+  );
+  themeData = themeData.copyWith(
+    errorColor: Colors.red,
+    colorScheme: ColorScheme.light(),
+    primarySwatch: Colors.blue,
+  );
   themeData.errorColor;
 
   // Changes made in https://github.com/flutter/flutter/pull/110162
   ThemeData themeData = ThemeData();
   themeData = ThemeData(backgroundColor: Colors.grey);
-  themeData = ThemeData(backgroundColor: Colors.grey, primarySwatch: Colors.blue);
-  themeData = ThemeData(backgroundColor: Colors.grey, colorScheme: ColorScheme.light());
-  themeData = ThemeData(backgroundColor: Colors.grey, colorScheme: ColorScheme.light(), primarySwatch: Colors.blue);
+  themeData = ThemeData(
+    backgroundColor: Colors.grey,
+    primarySwatch: Colors.blue,
+  );
+  themeData = ThemeData(
+    backgroundColor: Colors.grey,
+    colorScheme: ColorScheme.light(),
+  );
+  themeData = ThemeData(
+    backgroundColor: Colors.grey,
+    colorScheme: ColorScheme.light(),
+    primarySwatch: Colors.blue,
+  );
   themeData = ThemeData(otherParam: '');
   themeData = ThemeData.raw(backgroundColor: Colors.grey);
-  themeData = ThemeData.raw(backgroundColor: Colors.grey, primarySwatch: Colors.blue);
-  themeData = ThemeData.raw(backgroundColor: Colors.grey, colorScheme: ColorScheme.light());
-  themeData = ThemeData.raw(backgroundColor: Colors.grey, colorScheme: ColorScheme.light(), primarySwatch: Colors.blue);
+  themeData = ThemeData.raw(
+    backgroundColor: Colors.grey,
+    primarySwatch: Colors.blue,
+  );
+  themeData = ThemeData.raw(
+    backgroundColor: Colors.grey,
+    colorScheme: ColorScheme.light(),
+  );
+  themeData = ThemeData.raw(
+    backgroundColor: Colors.grey,
+    colorScheme: ColorScheme.light(),
+    primarySwatch: Colors.blue,
+  );
   themeData = ThemeData.raw(otherParam: '');
   themeData = themeData.copyWith(backgroundColor: Colors.grey);
   themeData = themeData.copyWith(otherParam: '');
-  themeData = themeData.copyWith(backgroundColor: Colors.grey, primarySwatch: Colors.blue);
-  themeData = themeData.copyWith(backgroundColor: Colors.grey, colorScheme: ColorScheme.light());
-  themeData = themeData.copyWith(backgroundColor: Colors.grey, colorScheme: ColorScheme.light(), primarySwatch: Colors.blue);
+  themeData = themeData.copyWith(
+    backgroundColor: Colors.grey,
+    primarySwatch: Colors.blue,
+  );
+  themeData = themeData.copyWith(
+    backgroundColor: Colors.grey,
+    colorScheme: ColorScheme.light(),
+  );
+  themeData = themeData.copyWith(
+    backgroundColor: Colors.grey,
+    colorScheme: ColorScheme.light(),
+    primarySwatch: Colors.blue,
+  );
   themeData.backgroundColor;
 
   // Changes made in https://github.com/flutter/flutter/pull/110162
   ThemeData themeData = ThemeData();
   themeData = ThemeData(backgroundColor: Colors.grey, errorColor: Colors.red);
-  themeData = ThemeData.raw(backgroundColor: Colors.grey, errorColor: Colors.red);
-  themeData = themeData.copyWith(backgroundColor: Colors.grey, errorColor: Colors.red);
+  themeData = ThemeData.raw(
+    backgroundColor: Colors.grey,
+    errorColor: Colors.red,
+  );
+  themeData = themeData.copyWith(
+    backgroundColor: Colors.grey,
+    errorColor: Colors.red,
+  );
 
   // Changes made in https://github.com/flutter/flutter/pull/111080
   ThemeData themeData = ThemeData();
@@ -241,8 +317,14 @@ void main() {
   // Changes made in https://github.com/flutter/flutter/pull/155072
   ThemeData themeData = ThemeData();
   themeData = ThemeData(dialogBackgroundColor: Colors.orange);
-  themeData = ThemeData(dialogBackgroundColor: Colors.orange, dialogTheme: DialogThemeData(backgroundColor: Colors.red));
+  themeData = ThemeData(
+    dialogBackgroundColor: Colors.orange,
+    dialogTheme: DialogThemeData(backgroundColor: Colors.red),
+  );
   themeData = themeData.copyWith(dialogBackgroundColor: Colors.orange);
-  themeData = themeData.copyWith(dialogBackgroundColor: Colors.orange, dialogTheme: DialogThemeData(backgroundColor: Colors.red));
+  themeData = themeData.copyWith(
+    dialogBackgroundColor: Colors.orange,
+    dialogTheme: DialogThemeData(backgroundColor: Colors.red),
+  );
   themeData.dialogBackgroundColor; // Removing field reference not supported.
 }

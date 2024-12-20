@@ -30,10 +30,12 @@ int reportExpectCall(StackTrace stack, List<DiagnosticsNode> information) {
       line3.firstMatch(stackLines[3]) != null) {
     final Match expectMatch = line4.firstMatch(stackLines[4])!;
     assert(expectMatch.groupCount == 2);
-    information.add(DiagnosticsStackTrace.singleFrame(
-      'This was caught by the test expectation on the following line',
-      frame: '${expectMatch.group(1)} line ${expectMatch.group(2)}',
-    ));
+    information.add(
+      DiagnosticsStackTrace.singleFrame(
+        'This was caught by the test expectation on the following line',
+        frame: '${expectMatch.group(1)} line ${expectMatch.group(2)}',
+      ),
+    );
 
     return 4;
   }

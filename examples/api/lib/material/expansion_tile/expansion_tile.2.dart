@@ -11,6 +11,7 @@ void main() {
 }
 
 enum AnimationStyles { defaultStyle, custom, none }
+
 const List<(AnimationStyles, String)> animationStyleSegments = <(AnimationStyles, String)>[
   (AnimationStyles.defaultStyle, 'Default'),
   (AnimationStyles.custom, 'Custom'),
@@ -54,11 +55,12 @@ class _ExpansionTileAnimationStyleAppState extends State<ExpansionTileAnimationS
                     }
                   });
                 },
-                segments: animationStyleSegments
-                  .map<ButtonSegment<AnimationStyles>>(((AnimationStyles, String) shirt) {
-                    return ButtonSegment<AnimationStyles>(value: shirt.$1, label: Text(shirt.$2));
-                  })
-                  .toList(),
+                segments:
+                    animationStyleSegments.map<ButtonSegment<AnimationStyles>>((
+                      (AnimationStyles, String) shirt,
+                    ) {
+                      return ButtonSegment<AnimationStyles>(value: shirt.$1, label: Text(shirt.$2));
+                    }).toList(),
               ),
               const SizedBox(height: 20),
               ExpansionTile(
@@ -68,7 +70,7 @@ class _ExpansionTileAnimationStyleAppState extends State<ExpansionTileAnimationS
                   ListTile(title: Text('Expanded Item 1')),
                   ListTile(title: Text('Expanded Item 2')),
                 ],
-              )
+              ),
             ],
           ),
         ),

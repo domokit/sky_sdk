@@ -8,49 +8,63 @@ typedef ExternalStopwatchConstructor = externallib.MyStopwatch Function();
 
 class StopwatchAtHome extends Stopwatch {
   StopwatchAtHome();
-  StopwatchAtHome.create(): this();
+  StopwatchAtHome.create() : this();
 
   Stopwatch get stopwatch => this;
 }
 
 void testNoStopwatches(Stopwatch stopwatch) {
-  stopwatch.runtimeType;                       // OK for now, but we probably want to catch public APIs that take a Stopwatch?
-  final Stopwatch localVariable = Stopwatch(); // Bad: introducing Stopwatch from dart:core.
-  Stopwatch().runtimeType;                     // Bad: introducing Stopwatch from dart:core.
+  // OK for now, but we probably want to catch public APIs that take a Stopwatch?
+  stopwatch.runtimeType;
+  // Bad: introducing Stopwatch from dart:core.
+  final Stopwatch localVariable = Stopwatch();
+  // Bad: introducing Stopwatch from dart:core.
+  Stopwatch().runtimeType;
 
-  (localVariable..runtimeType)                 // OK: not directly introducing Stopwatch.
-   .runtimeType;
+  (localVariable..runtimeType) // OK: not directly introducing Stopwatch.
+      .runtimeType;
 
-  StopwatchAtHome().runtimeType;               // Bad: introducing a Stopwatch subclass.
+  // Bad: introducing a Stopwatch subclass.
+  StopwatchAtHome().runtimeType;
 
-  Stopwatch anotherStopwatch = stopwatch;      // OK: not directly introducing Stopwatch.
-  StopwatchAtHome Function() constructor = StopwatchAtHome.new; // Bad: introducing a Stopwatch constructor.
+  // OK: not directly introducing Stopwatch.
+  Stopwatch anotherStopwatch = stopwatch;
+  // Bad: introducing a Stopwatch constructor.
+  StopwatchAtHome Function() constructor = StopwatchAtHome.new;
   assert(() {
     anotherStopwatch = constructor()..runtimeType;
-    constructor = StopwatchAtHome.create;               // Bad: introducing a Stopwatch constructor.
+    // Bad: introducing a Stopwatch constructor.
+    constructor = StopwatchAtHome.create;
     anotherStopwatch = constructor()..runtimeType;
     return true;
   }());
   anotherStopwatch.runtimeType;
 
-  externallib.MyStopwatch.create();                     // Bad: introducing an external Stopwatch constructor.
+  // Bad: introducing an external Stopwatch constructor.
+  externallib.MyStopwatch.create();
   ExternalStopwatchConstructor? externalConstructor;
 
   assert(() {
-    externalConstructor = externallib.MyStopwatch.new;  // Bad: introducing an external Stopwatch constructor.
+    // Bad: introducing an external Stopwatch constructor.
+    externalConstructor = externallib.MyStopwatch.new;
     return true;
   }());
   externalConstructor?.call();
 
-  externallib.stopwatch.runtimeType;                    // Bad: introducing an external Stopwatch.
-  externallib.createMyStopwatch().runtimeType;          // Bad: calling an external function that returns a Stopwatch.
-  externallib.createStopwatch().runtimeType;            // Bad: calling an external function that returns a Stopwatch.
-  externalConstructor = externallib.createMyStopwatch;  // Bad: introducing the tear-off form of an external function that returns a Stopwatch.
+  // Bad: introducing an external Stopwatch.
+  externallib.stopwatch.runtimeType;
+  // Bad: calling an external function that returns a Stopwatch.
+  externallib.createMyStopwatch().runtimeType;
+  // Bad: calling an external function that returns a Stopwatch.
+  externallib.createStopwatch().runtimeType;
+  // Bad: introducing the tear-off form of an external function that returns a Stopwatch.
+  externalConstructor = externallib.createMyStopwatch;
 
-  constructor.call().stopwatch;                         // OK: existing instance.
+  // OK: existing instance.
+  constructor.call().stopwatch;
 }
 
 void testStopwatchIgnore(Stopwatch stopwatch) {
-  Stopwatch().runtimeType;  // flutter_ignore: stopwatch (see analyze.dart)
-  Stopwatch().runtimeType;  // flutter_ignore: some_other_ignores, stopwatch (see analyze.dart)
+  Stopwatch().runtimeType; // flutter_ignore: stopwatch (see analyze.dart)
+  Stopwatch().runtimeType; // flutter_ignore: some_other_ignores, stopwatch (see analyze.dart)
 }

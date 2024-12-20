@@ -31,18 +31,26 @@ void main() {
       // FakeProcess. When a specific encoding is desired, it can be specified
       // on FakeCommand or in the encoding parameter of FakeProcessManager.run
       // or FakeProcessManager.runAsync.
-      expect((await process.stderr.toList()).expand((List<int> x) => x), 'stderr\u{FFFD}'.codeUnits);
-      expect((await process.stdout.toList()).expand((List<int> x) => x), 'stdout\u{FFFD}'.codeUnits);
+      expect(
+        (await process.stderr.toList()).expand((List<int> x) => x),
+        'stderr\u{FFFD}'.codeUnits,
+      );
+      expect(
+        (await process.stdout.toList()).expand((List<int> x) => x),
+        'stdout\u{FFFD}'.codeUnits,
+      );
     });
 
     testWithoutContext('exits after specified delay (if no completer specified)', () {
       final bool done = FakeAsync().run<bool>((FakeAsync time) {
-        final FakeProcess process = FakeProcess(
-          duration: const Duration(seconds: 30),
-        );
+        final FakeProcess process = FakeProcess(duration: const Duration(seconds: 30));
 
         bool hasExited = false;
-        unawaited(process.exitCode.then((int _) { hasExited = true; }));
+        unawaited(
+          process.exitCode.then((int _) {
+            hasExited = true;
+          }),
+        );
 
         // Verify process hasn't exited before specified delay.
         time.elapse(const Duration(seconds: 15));
@@ -60,12 +68,14 @@ void main() {
     testWithoutContext('exits when completer completes (if no duration specified)', () {
       final bool done = FakeAsync().run<bool>((FakeAsync time) {
         final Completer<void> completer = Completer<void>();
-        final FakeProcess process = FakeProcess(
-          completer: completer,
-        );
+        final FakeProcess process = FakeProcess(completer: completer);
 
         bool hasExited = false;
-        unawaited(process.exitCode.then((int _) { hasExited = true; }));
+        unawaited(
+          process.exitCode.then((int _) {
+            hasExited = true;
+          }),
+        );
 
         // Verify process hasn't exited when all async tasks flushed.
         time.elapse(Duration.zero);
@@ -81,68 +91,86 @@ void main() {
       expect(done, isTrue);
     });
 
-    testWithoutContext('when completer and duration are specified, does not exit until completer is completed', () {
-      final bool done = FakeAsync().run<bool>((FakeAsync time) {
-        final Completer<void> completer = Completer<void>();
-        final FakeProcess process = FakeProcess(
-          duration: const Duration(seconds: 30),
-          completer: completer,
-        );
+    testWithoutContext(
+      'when completer and duration are specified, does not exit until completer is completed',
+      () {
+        final bool done = FakeAsync().run<bool>((FakeAsync time) {
+          final Completer<void> completer = Completer<void>();
+          final FakeProcess process = FakeProcess(
+            duration: const Duration(seconds: 30),
+            completer: completer,
+          );
 
-        bool hasExited = false;
-        unawaited(process.exitCode.then((int _) { hasExited = true; }));
+          bool hasExited = false;
+          unawaited(
+            process.exitCode.then((int _) {
+              hasExited = true;
+            }),
+          );
 
-        // Verify process hasn't exited before specified delay.
-        time.elapse(const Duration(seconds: 15));
-        expect(hasExited, isFalse);
+          // Verify process hasn't exited before specified delay.
+          time.elapse(const Duration(seconds: 15));
+          expect(hasExited, isFalse);
 
-        // Verify process hasn't exited until the completer completes.
-        time.elapse(const Duration(seconds: 20));
-        expect(hasExited, isFalse);
+          // Verify process hasn't exited until the completer completes.
+          time.elapse(const Duration(seconds: 20));
+          expect(hasExited, isFalse);
 
-        // Verify process exits after the completer completes.
-        completer.complete();
-        time.flushMicrotasks();
-        expect(hasExited, isTrue);
+          // Verify process exits after the completer completes.
+          completer.complete();
+          time.flushMicrotasks();
+          expect(hasExited, isTrue);
 
-        return true;
-      });
-      expect(done, isTrue);
-    });
+          return true;
+        });
+        expect(done, isTrue);
+      },
+    );
 
-    testWithoutContext('when completer and duration are specified, does not exit until duration has elapsed', () {
-      final bool done = FakeAsync().run<bool>((FakeAsync time) {
-        final Completer<void> completer = Completer<void>();
-        final FakeProcess process = FakeProcess(
-          duration: const Duration(seconds: 30),
-          completer: completer,
-        );
+    testWithoutContext(
+      'when completer and duration are specified, does not exit until duration has elapsed',
+      () {
+        final bool done = FakeAsync().run<bool>((FakeAsync time) {
+          final Completer<void> completer = Completer<void>();
+          final FakeProcess process = FakeProcess(
+            duration: const Duration(seconds: 30),
+            completer: completer,
+          );
 
-        bool hasExited = false;
-        unawaited(process.exitCode.then((int _) { hasExited = true; }));
+          bool hasExited = false;
+          unawaited(
+            process.exitCode.then((int _) {
+              hasExited = true;
+            }),
+          );
 
-        // Verify process hasn't exited before specified delay.
-        time.elapse(const Duration(seconds: 15));
-        expect(hasExited, isFalse);
+          // Verify process hasn't exited before specified delay.
+          time.elapse(const Duration(seconds: 15));
+          expect(hasExited, isFalse);
 
-        // Verify process does not exit until duration has elapsed.
-        completer.complete();
-        expect(hasExited, isFalse);
+          // Verify process does not exit until duration has elapsed.
+          completer.complete();
+          expect(hasExited, isFalse);
 
-        // Verify process exits after the duration elapses.
-        time.elapse(const Duration(seconds: 20));
-        expect(hasExited, isTrue);
+          // Verify process exits after the duration elapses.
+          time.elapse(const Duration(seconds: 20));
+          expect(hasExited, isTrue);
 
-        return true;
-      });
-      expect(done, isTrue);
-    });
+          return true;
+        });
+        expect(done, isTrue);
+      },
+    );
 
     testWithoutContext('process exit is asynchronous', () async {
       final FakeProcess process = FakeProcess();
 
       bool hasExited = false;
-      unawaited(process.exitCode.then((int _) { hasExited = true; }));
+      unawaited(
+        process.exitCode.then((int _) {
+          hasExited = true;
+        }),
+      );
 
       // Verify process hasn't completed.
       expect(hasExited, isFalse);
@@ -152,28 +180,31 @@ void main() {
       expect(hasExited, isTrue);
     });
 
-    testWithoutContext('stderr, stdout stream data after exit when outputFollowsExit is true', () async {
-      final FakeProcess process = FakeProcess(
-        stderr: 'stderr'.codeUnits,
-        stdout: 'stdout'.codeUnits,
-        outputFollowsExit: true,
-      );
+    testWithoutContext(
+      'stderr, stdout stream data after exit when outputFollowsExit is true',
+      () async {
+        final FakeProcess process = FakeProcess(
+          stderr: 'stderr'.codeUnits,
+          stdout: 'stdout'.codeUnits,
+          outputFollowsExit: true,
+        );
 
-      final List<int> stderr = <int>[];
-      final List<int> stdout = <int>[];
-      process.stderr.listen(stderr.addAll);
-      process.stdout.listen(stdout.addAll);
+        final List<int> stderr = <int>[];
+        final List<int> stdout = <int>[];
+        process.stderr.listen(stderr.addAll);
+        process.stdout.listen(stdout.addAll);
 
-      // Ensure that no bytes have been received at process exit.
-      await process.exitCode;
-      expect(stderr, isEmpty);
-      expect(stdout, isEmpty);
+        // Ensure that no bytes have been received at process exit.
+        await process.exitCode;
+        expect(stderr, isEmpty);
+        expect(stdout, isEmpty);
 
-      // Flush all remaining async work. Ensure stderr, stdout is received.
-      await Future<void>.delayed(Duration.zero);
-      expect(stderr, 'stderr'.codeUnits);
-      expect(stdout, 'stdout'.codeUnits);
-    });
+        // Flush all remaining async work. Ensure stderr, stdout is received.
+        await Future<void>.delayed(Duration.zero);
+        expect(stderr, 'stderr'.codeUnits);
+        expect(stdout, 'stdout'.codeUnits);
+      },
+    );
 
     testWithoutContext('stdin should be flushable (all data written is consumed)', () async {
       final FakeProcess process = FakeProcess();
@@ -200,39 +231,52 @@ void main() {
         expect(await utf8.decodeStream(process.stderr), isEmpty);
       });
 
-      testWithoutContext('outputFollowsExit delays stderr, stdout until after process exit', () async {
-        manager.addCommand(const FakeCommand(
-          command: <String>['faketool'],
-          stderr: 'hello',
-          stdout: 'world',
-          outputFollowsExit: true,
-        ));
+      testWithoutContext(
+        'outputFollowsExit delays stderr, stdout until after process exit',
+        () async {
+          manager.addCommand(
+            const FakeCommand(
+              command: <String>['faketool'],
+              stderr: 'hello',
+              stdout: 'world',
+              outputFollowsExit: true,
+            ),
+          );
 
-        final List<int> stderrBytes = <int>[];
-        final List<int> stdoutBytes = <int>[];
+          final List<int> stderrBytes = <int>[];
+          final List<int> stdoutBytes = <int>[];
 
-        // Start the process.
-        final Process process = await manager.start(<String>['faketool']);
-        final StreamSubscription<List<int>> stderrSubscription = process.stderr.listen((List<int> chunk) { stderrBytes.addAll(chunk); });
-        final StreamSubscription<List<int>> stdoutSubscription = process.stdout.listen((List<int> chunk) { stdoutBytes.addAll(chunk); });
+          // Start the process.
+          final Process process = await manager.start(<String>['faketool']);
+          final StreamSubscription<List<int>> stderrSubscription = process.stderr.listen((
+            List<int> chunk,
+          ) {
+            stderrBytes.addAll(chunk);
+          });
+          final StreamSubscription<List<int>> stdoutSubscription = process.stdout.listen((
+            List<int> chunk,
+          ) {
+            stdoutBytes.addAll(chunk);
+          });
 
-        // Immediately after exit, no output is emitted.
-        await process.exitCode;
-        expect(utf8.decode(stderrBytes), isEmpty);
-        expect(utf8.decode(stdoutBytes), isEmpty);
+          // Immediately after exit, no output is emitted.
+          await process.exitCode;
+          expect(utf8.decode(stderrBytes), isEmpty);
+          expect(utf8.decode(stdoutBytes), isEmpty);
 
-        // Output is emitted asynchronously after process exit.
-        await Future.wait(<Future<void>>[
-          stderrSubscription.asFuture(),
-          stdoutSubscription.asFuture(),
-        ]);
-        expect(utf8.decode(stderrBytes), 'hello');
-        expect(utf8.decode(stdoutBytes), 'world');
+          // Output is emitted asynchronously after process exit.
+          await Future.wait(<Future<void>>[
+            stderrSubscription.asFuture(),
+            stdoutSubscription.asFuture(),
+          ]);
+          expect(utf8.decode(stderrBytes), 'hello');
+          expect(utf8.decode(stdoutBytes), 'world');
 
-        // Clean up stream subscriptions.
-        await stderrSubscription.cancel();
-        await stdoutSubscription.cancel();
-      });
+          // Clean up stream subscriptions.
+          await stderrSubscription.cancel();
+          await stdoutSubscription.cancel();
+        },
+      );
     });
 
     group('run', () {

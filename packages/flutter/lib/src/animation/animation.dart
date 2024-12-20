@@ -40,7 +40,7 @@ enum AnimationStatus {
 
   /// Whether the animation is running in either direction.
   bool get isAnimating => switch (this) {
-    forward   || reverse   => true,
+    forward || reverse => true,
     completed || dismissed => false,
   };
 
@@ -195,7 +195,8 @@ abstract class Animation<T> extends Listenable implements ValueListenable<T> {
   /// }
   /// ```
   /// {@end-tool}
-  factory Animation.fromValueListenable(ValueListenable<T> listenable, {
+  factory Animation.fromValueListenable(
+    ValueListenable<T> listenable, {
     ValueListenableTransformer<T>? transformer,
   }) = _ValueListenableDelegateAnimation<T>;
 
@@ -367,8 +368,8 @@ abstract class Animation<T> extends Listenable implements ValueListenable<T> {
   /// * "&#x23EE;": [AnimationStatus.dismissed] ([value] == 0.0)
   String toStringDetails() {
     return switch (status) {
-      AnimationStatus.forward   => '\u25B6', // >
-      AnimationStatus.reverse   => '\u25C0', // <
+      AnimationStatus.forward => '\u25B6', // >
+      AnimationStatus.reverse => '\u25C0', // <
       AnimationStatus.completed => '\u23ED', // >>|
       AnimationStatus.dismissed => '\u23EE', // |<<
     };
@@ -377,9 +378,8 @@ abstract class Animation<T> extends Listenable implements ValueListenable<T> {
 
 // An implementation of an animation that delegates to a value listenable with a fixed direction.
 class _ValueListenableDelegateAnimation<T> extends Animation<T> {
-  _ValueListenableDelegateAnimation(this._listenable, {
-    ValueListenableTransformer<T>? transformer,
-  }) : _transformer = transformer;
+  _ValueListenableDelegateAnimation(this._listenable, {ValueListenableTransformer<T>? transformer})
+    : _transformer = transformer;
 
   final ValueListenable<T> _listenable;
   final ValueListenableTransformer<T>? _transformer;

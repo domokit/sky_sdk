@@ -1,0 +1,8 @@
+# Used to branch and track golden-file rendering of release branches.
+#
+# See ./testing/skia_gold_client/README.md#release-testing for more information.
+
+# On the main branch, this should always read 'none'.
+# On release branches, this should be the release version such as '3.21'
+# (without the quotes).
+none

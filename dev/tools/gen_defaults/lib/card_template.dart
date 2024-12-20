@@ -5,7 +5,11 @@
 import 'template.dart';
 
 class CardTemplate extends TokenTemplate {
-  const CardTemplate(this.tokenGroup, super.blockName, super.fileName, super.tokens, {
+  const CardTemplate(
+    this.tokenGroup,
+    super.blockName,
+    super.fileName,
+    super.tokens, {
     super.colorSchemePrefix = '_colors.',
   });
 

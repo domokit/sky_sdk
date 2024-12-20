@@ -11,19 +11,14 @@ import 'package:flutter/services.dart';
 
 void main() => runApp(const ExampleApp());
 
-enum MenuSelection {
-  about,
-  showMessage,
-}
+enum MenuSelection { about, showMessage }
 
 class ExampleApp extends StatelessWidget {
   const ExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: PlatformMenuBarExample()),
-    );
+    return const MaterialApp(home: Scaffold(body: PlatformMenuBarExample()));
   }
 }
 
@@ -123,10 +118,12 @@ class _PlatformMenuBarExampleState extends State<PlatformMenuBarExample> {
         ),
       ],
       child: Center(
-        child: Text(_showMessage
-            ? _message
-            : 'This space intentionally left blank.\n'
-                'Show a message here using the menu.'),
+        child: Text(
+          _showMessage
+              ? _message
+              : 'This space intentionally left blank.\n'
+                  'Show a message here using the menu.',
+        ),
       ),
     );
   }

@@ -1,0 +1,132 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+config("gtest_config") {
+  visibility = [
+    ":*",
+    "//testing/gmock:*",  # gmock also shares this config.
+  ]
+
+  defines = [
+    # In order to allow regex matches in gtest to be shared between Windows
+    # and other systems, we tell gtest to always use it's internal engine.
+    "GTEST_HAS_POSIX_RE=0",
+
+    # Chrome doesn't support / require C++11, yet.
+    "GTEST_LANG_CXX11=0",
+  ]
+
+  # Gtest headers need to be able to find themselves.
+  include_dirs = [ "include" ]
+
+  if (is_win) {
+    cflags = [ "/wd4800" ]  # Unused variable warning.
+  }
+
+  if (is_posix) {
+    defines += [
+      # gtest isn't able to figure out when RTTI is disabled for gcc
+      # versions older than 4.3.2, and assumes it's enabled.  Our Mac
+      # and Linux builds disable RTTI, and cannot guarantee that the
+      # compiler will be 4.3.2. or newer.  The Mac, for example, uses
+      # 4.2.1 as that is the latest available on that platform.  gtest
+      # must be instructed that RTTI is disabled here, and for any
+      # direct dependents that might include gtest headers.
+      "GTEST_HAS_RTTI=0",
+    ]
+  }
+
+  if (is_android) {
+    defines += [
+      # We want gtest features that use tr1::tuple, but we currently
+      # don't support the variadic templates used by libstdc++'s
+      # implementation. gtest supports this scenario by providing its
+      # own implementation but we must opt in to it.
+      "GTEST_USE_OWN_TR1_TUPLE=1",
+
+      # GTEST_USE_OWN_TR1_TUPLE only works if GTEST_HAS_TR1_TUPLE is set.
+      # gtest r625 made it so that GTEST_HAS_TR1_TUPLE is set to 0
+      # automatically on android, so it has to be set explicitly here.
+      "GTEST_HAS_TR1_TUPLE=1",
+    ]
+  }
+}
+
+config("gtest_direct_config") {
+  visibility = [ ":*" ]
+  defines = [ "UNIT_TEST" ]
+}
+
+config("gtest_warnings") {
+  visibility = [ ":*" ]
+  if (is_win && is_clang) {
+    # The Mutex constructor initializer list in gtest-port.cc is incorrectly
+    # ordered. See
+    # https://groups.google.com/d/msg/googletestframework/S5uSV8L2TX8/U1FaTDa6J6sJ.
+    cflags = [ "-Wno-reorder" ]
+  }
+}
+
+static_library("gtest") {
+  # TODO http://crbug.com/412064 enable this flag all the time.
+  testonly = !is_component_build
+  sources = [
+    "include/gtest/gtest-death-test.h",
+    "include/gtest/gtest-message.h",
+    "include/gtest/gtest-param-test.h",
+    "include/gtest/gtest-printers.h",
+    "include/gtest/gtest-spi.h",
+    "include/gtest/gtest-test-part.h",
+    "include/gtest/gtest-typed-test.h",
+    "include/gtest/gtest.h",
+    "include/gtest/gtest_pred_impl.h",
+    "include/gtest/internal/gtest-death-test-internal.h",
+    "include/gtest/internal/gtest-filepath.h",
+    "include/gtest/internal/gtest-internal.h",
+    "include/gtest/internal/gtest-linked_ptr.h",
+    "include/gtest/internal/gtest-param-util-generated.h",
+    "include/gtest/internal/gtest-param-util.h",
+    "include/gtest/internal/gtest-port.h",
+    "include/gtest/internal/gtest-string.h",
+    "include/gtest/internal/gtest-tuple.h",
+    "include/gtest/internal/gtest-type-util.h",
+
+    #"gtest/src/gtest-all.cc",  # Not needed by our build.
+    "../multiprocess_func_list.cc",
+    "../multiprocess_func_list.h",
+    "../platform_test.h",
+    "src/gtest-death-test.cc",
+    "src/gtest-filepath.cc",
+    "src/gtest-internal-inl.h",
+    "src/gtest-port.cc",
+    "src/gtest-printers.cc",
+    "src/gtest-test-part.cc",
+    "src/gtest-typed-test.cc",
+    "src/gtest.cc",
+  ]
+
+  if (is_mac) {
+    sources += [
+      "../gtest_mac.h",
+      "../gtest_mac.mm",
+      "../platform_test_mac.mm",
+    ]
+  }
+
+  include_dirs = [ "." ]
+
+  all_dependent_configs = [ ":gtest_config" ]
+  public_configs = [ ":gtest_direct_config" ]
+
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [ "//build/config/compiler:no_chromium_code" ]
+  configs += [ ":gtest_warnings" ]
+}
+
+source_set("gtest_main") {
+  # TODO http://crbug.com/412064 enable this flag all the time.
+  testonly = !is_component_build
+  sources = [ "src/gtest_main.cc" ]
+  deps = [ ":gtest" ]
+}

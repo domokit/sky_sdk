@@ -1,0 +1,11 @@
+InheritParentConfig: true
+
+# EnumCastOutOfRange warns about some common usages of GTK macros
+Checks: >-
+  -clang-analyzer-optin.core.EnumCastOutOfRange
+
+CheckOptions:
+  - key: readability-identifier-naming.EnumConstantCase
+    value: "UPPER_CASE"
+  - key: readability-identifier-naming.EnumConstantPrefix
+    value: ""

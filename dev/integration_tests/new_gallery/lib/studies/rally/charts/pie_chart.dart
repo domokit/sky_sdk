@@ -15,10 +15,7 @@ import '../formatters.dart';
 
 /// A colored piece of the [RallyPieChart].
 class RallyPieChartSegment {
-  const RallyPieChartSegment({
-    required this.color,
-    required this.value,
-  });
+  const RallyPieChartSegment({required this.color, required this.value});
 
   final Color color;
   final double value;
@@ -27,42 +24,25 @@ class RallyPieChartSegment {
 /// The max height and width of the [RallyPieChart].
 const double pieChartMaxSize = 500.0;
 
-List<RallyPieChartSegment> buildSegmentsFromAccountItems(
-    List<AccountData> items) {
-  return List<RallyPieChartSegment>.generate(
-    items.length,
-    (int i) {
-      return RallyPieChartSegment(
-        color: RallyColors.accountColor(i),
-        value: items[i].primaryAmount,
-      );
-    },
-  );
+List<RallyPieChartSegment> buildSegmentsFromAccountItems(List<AccountData> items) {
+  return List<RallyPieChartSegment>.generate(items.length, (int i) {
+    return RallyPieChartSegment(color: RallyColors.accountColor(i), value: items[i].primaryAmount);
+  });
 }
 
 List<RallyPieChartSegment> buildSegmentsFromBillItems(List<BillData> items) {
-  return List<RallyPieChartSegment>.generate(
-    items.length,
-    (int i) {
-      return RallyPieChartSegment(
-        color: RallyColors.billColor(i),
-        value: items[i].primaryAmount,
-      );
-    },
-  );
+  return List<RallyPieChartSegment>.generate(items.length, (int i) {
+    return RallyPieChartSegment(color: RallyColors.billColor(i), value: items[i].primaryAmount);
+  });
 }
 
-List<RallyPieChartSegment> buildSegmentsFromBudgetItems(
-    List<BudgetData> items) {
-  return List<RallyPieChartSegment>.generate(
-    items.length,
-    (int i) {
-      return RallyPieChartSegment(
-        color: RallyColors.budgetColor(i),
-        value: items[i].primaryAmount - items[i].amountUsed,
-      );
-    },
-  );
+List<RallyPieChartSegment> buildSegmentsFromBudgetItems(List<BudgetData> items) {
+  return List<RallyPieChartSegment>.generate(items.length, (int i) {
+    return RallyPieChartSegment(
+      color: RallyColors.budgetColor(i),
+      value: items[i].primaryAmount - items[i].amountUsed,
+    );
+  });
 }
 
 /// An animated circular pie chart to represent pieces of a whole, which can
@@ -85,30 +65,21 @@ class RallyPieChart extends StatefulWidget {
   State<RallyPieChart> createState() => _RallyPieChartState();
 }
 
-class _RallyPieChartState extends State<RallyPieChart>
-    with SingleTickerProviderStateMixin {
+class _RallyPieChartState extends State<RallyPieChart> with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation<double> animation;
 
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
+    controller = AnimationController(duration: const Duration(milliseconds: 600), vsync: this);
     animation = CurvedAnimation(
-        parent: TweenSequence<double>(<TweenSequenceItem<double>>[
-          TweenSequenceItem<double>(
-            tween: Tween<double>(begin: 0, end: 0),
-            weight: 1,
-          ),
-          TweenSequenceItem<double>(
-            tween: Tween<double>(begin: 0, end: 1),
-            weight: 1.5,
-          ),
-        ]).animate(controller),
-        curve: Curves.decelerate);
+      parent: TweenSequence<double>(<TweenSequenceItem<double>>[
+        TweenSequenceItem<double>(tween: Tween<double>(begin: 0, end: 0), weight: 1),
+        TweenSequenceItem<double>(tween: Tween<double>(begin: 0, end: 1), weight: 1.5),
+      ]).animate(controller),
+      curve: Curves.decelerate,
+    );
     controller.forward();
   }
 
@@ -155,44 +126,44 @@ class _AnimatedRallyPieChart extends AnimatedWidget {
       letterSpacing: letterSpacingOrNone(0.5),
     );
 
-    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-      // When the widget is larger, we increase the font size.
-      TextStyle? headlineStyle = constraints.maxHeight >= pieChartMaxSize
-          ? textTheme.headlineSmall!.copyWith(fontSize: 70)
-          : textTheme.headlineSmall;
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        // When the widget is larger, we increase the font size.
+        TextStyle? headlineStyle =
+            constraints.maxHeight >= pieChartMaxSize
+                ? textTheme.headlineSmall!.copyWith(fontSize: 70)
+                : textTheme.headlineSmall;
 
-      // With a large text scale factor, we set a max font size.
-      if (GalleryOptions.of(context).textScaleFactor(context) > 1.0) {
-        headlineStyle = headlineStyle!.copyWith(
-          fontSize: headlineStyle.fontSize! / reducedTextScale(context),
-        );
-      }
+        // With a large text scale factor, we set a max font size.
+        if (GalleryOptions.of(context).textScaleFactor(context) > 1.0) {
+          headlineStyle = headlineStyle!.copyWith(
+            fontSize: headlineStyle.fontSize! / reducedTextScale(context),
+          );
+        }
 
-      return DecoratedBox(
-        decoration: _RallyPieChartOutlineDecoration(
-          maxFraction: animation.value,
-          total: total,
-          segments: segments,
-        ),
-        child: Container(
-          height: constraints.maxHeight,
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                centerLabel,
-                style: labelTextStyle,
-              ),
-              SelectableText(
-                usdWithSignFormat(context).format(centerAmount),
-                style: headlineStyle,
-              ),
-            ],
+        return DecoratedBox(
+          decoration: _RallyPieChartOutlineDecoration(
+            maxFraction: animation.value,
+            total: total,
+            segments: segments,
           ),
-        ),
-      );
-    });
+          child: Container(
+            height: constraints.maxHeight,
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(centerLabel, style: labelTextStyle),
+                SelectableText(
+                  usdWithSignFormat(context).format(centerAmount),
+                  style: headlineStyle,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -235,11 +206,7 @@ class _RallyPieChartOutlineBoxPainter extends BoxPainter {
     // Create two padded reacts to draw arcs in: one for colored arcs and one for
     // inner bg arc.
     const double strokeWidth = 4.0;
-    final double outerRadius = math.min(
-          configuration.size!.width,
-          configuration.size!.height,
-        ) /
-        2;
+    final double outerRadius = math.min(configuration.size!.width, configuration.size!.height) / 2;
     final Rect outerRect = Rect.fromCircle(
       center: configuration.size!.center(offset),
       radius: outerRadius - strokeWidth * 3,
@@ -265,8 +232,10 @@ class _RallyPieChartOutlineBoxPainter extends BoxPainter {
     final double remaining = wholeAmount - cumulativeTotal;
     if (remaining > 0) {
       final Paint paint = Paint()..color = Colors.black;
-      final double startAngle =
-          _calculateStartAngle(cumulativeTotal, spaceRadians * segments.length);
+      final double startAngle = _calculateStartAngle(
+        cumulativeTotal,
+        spaceRadians * segments.length,
+      );
       final double sweepAngle = _calculateSweepAngle(remaining, -spaceRadians);
       canvas.drawArc(outerRect, startAngle, sweepAngle, true, paint);
     }
@@ -278,15 +247,12 @@ class _RallyPieChartOutlineBoxPainter extends BoxPainter {
   }
 
   double _calculateAngle(double amount, double offset) {
-    final double wholeMinusSpacesRadians =
-        wholeRadians - (segments.length * spaceRadians);
-    return maxFraction *
-        (amount / wholeAmount * wholeMinusSpacesRadians + offset);
+    final double wholeMinusSpacesRadians = wholeRadians - (segments.length * spaceRadians);
+    return maxFraction * (amount / wholeAmount * wholeMinusSpacesRadians + offset);
   }
 
   double _calculateStartAngle(double total, double offset) =>
       _calculateAngle(total, offset) - math.pi / 2;
 
-  double _calculateSweepAngle(double total, double offset) =>
-      _calculateAngle(total, offset);
+  double _calculateSweepAngle(double total, double offset) => _calculateAngle(total, offset);
 }

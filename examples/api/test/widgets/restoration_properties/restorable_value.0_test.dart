@@ -9,9 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Increments answer on OutlinedButton tap', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.RestorableValueExampleApp(),
-    );
+    await tester.pumpWidget(const example.RestorableValueExampleApp());
 
     // Verify that the initial answer value in the example equals 42.
     expect(find.text('42'), findsOneWidget);

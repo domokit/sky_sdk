@@ -7,23 +7,21 @@ import 'package:flutter_api_samples/widgets/sliver/decorated_sliver.1.dart' as e
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('CustomScrollView clipBehavior is Clip.none when is Clipped is false', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: example.DecoratedSliverClipExample(),
-      ),
-    );
+  testWidgets('CustomScrollView clipBehavior is Clip.none when is Clipped is false', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: example.DecoratedSliverClipExample()));
 
     final CustomScrollView customScrollView = tester.widget(find.byType(CustomScrollView));
 
     expect(customScrollView.clipBehavior, equals(Clip.none));
   });
 
-  testWidgets('Verify the DecoratedSliver has shadow property in decoration', (WidgetTester tester) async {
+  testWidgets('Verify the DecoratedSliver has shadow property in decoration', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: example.ResizableCustomScrollView(isClipped: false),
-      ),
+      const MaterialApp(home: example.ResizableCustomScrollView(isClipped: false)),
     );
 
     final DecoratedSliver decoratedSliver = tester.widget(find.byType(DecoratedSliver));

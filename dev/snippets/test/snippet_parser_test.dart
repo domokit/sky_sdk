@@ -62,28 +62,30 @@ void main() {
     setUp(() {
       // Create a new filesystem.
       memoryFileSystem = MemoryFileSystem();
-      tmpDir = memoryFileSystem.systemTempDirectory
-          .createTempSync('flutter_snippets_test.');
-      flutterRoot = memoryFileSystem
-          .directory(path.join(tmpDir.absolute.path, 'flutter'));
+      tmpDir = memoryFileSystem.systemTempDirectory.createTempSync('flutter_snippets_test.');
+      flutterRoot = memoryFileSystem.directory(path.join(tmpDir.absolute.path, 'flutter'));
       configuration = FlutterRepoSnippetConfiguration(
-          flutterRoot: flutterRoot, filesystem: memoryFileSystem);
+        flutterRoot: flutterRoot,
+        filesystem: memoryFileSystem,
+      );
       configuration.skeletonsDirectory.createSync(recursive: true);
       <String>['dartpad', 'sample', 'snippet'].forEach(writeSkeleton);
       FlutterInformation.instance = FakeFlutterInformation(flutterRoot);
       generator = SnippetGenerator(
-          configuration: configuration,
-          filesystem: memoryFileSystem,
-          flutterRoot: configuration.skeletonsDirectory.parent);
+        configuration: configuration,
+        filesystem: memoryFileSystem,
+        flutterRoot: configuration.skeletonsDirectory.parent,
+      );
     });
 
     test('parses from comments', () async {
       final File inputFile = _createSnippetSourceFile(tmpDir, memoryFileSystem);
-      final Iterable<SourceElement> elements = getFileElements(inputFile,
-          resourceProvider: FileSystemResourceProvider(memoryFileSystem));
+      final Iterable<SourceElement> elements = getFileElements(
+        inputFile,
+        resourceProvider: FileSystemResourceProvider(memoryFileSystem),
+      );
       expect(elements, isNotEmpty);
-      final SnippetDartdocParser sampleParser =
-          SnippetDartdocParser(memoryFileSystem);
+      final SnippetDartdocParser sampleParser = SnippetDartdocParser(memoryFileSystem);
       sampleParser.parseFromComments(elements);
       sampleParser.parseAndAddAssumptions(elements, inputFile);
       expect(elements.length, equals(7));
@@ -94,60 +96,72 @@ void main() {
         final String code = generator.generateCode(element.samples.first);
         expect(code, contains('// Description'));
         expect(
-            code,
-            contains(RegExp(
-                '''^String elementName = '${element.elementName}';\$''',
-                multiLine: true)));
+          code,
+          contains(
+            RegExp('''^String elementName = '${element.elementName}';\$''', multiLine: true),
+          ),
+        );
         final String html = generator.generateHtml(element.samples.first);
         expect(
-            html,
-            contains(RegExp(
-                '''^<pre>String elementName = &#39;${element.elementName}&#39;;.*\$''',
-                multiLine: true)));
+          html,
+          contains(
+            RegExp(
+              '''^<pre>String elementName = &#39;${element.elementName}&#39;;.*\$''',
+              multiLine: true,
+            ),
+          ),
+        );
         expect(
-            html,
-            contains(
-                '<div class="snippet-description">{@end-inject-html}Description{@inject-html}</div>\n'));
+          html,
+          contains(
+            '<div class="snippet-description">{@end-inject-html}Description{@inject-html}</div>\n',
+          ),
+        );
       }
       expect(sampleCount, equals(8));
     });
     test('parses dartpad samples from linked file', () async {
       final File inputFile = _createDartpadSourceFile(
-          tmpDir, memoryFileSystem, flutterRoot,
-          linked: true);
-      final Iterable<SourceElement> elements = getFileElements(inputFile,
-          resourceProvider: FileSystemResourceProvider(memoryFileSystem));
+        tmpDir,
+        memoryFileSystem,
+        flutterRoot,
+        linked: true,
+      );
+      final Iterable<SourceElement> elements = getFileElements(
+        inputFile,
+        resourceProvider: FileSystemResourceProvider(memoryFileSystem),
+      );
       expect(elements, isNotEmpty);
-      final SnippetDartdocParser sampleParser =
-          SnippetDartdocParser(memoryFileSystem);
+      final SnippetDartdocParser sampleParser = SnippetDartdocParser(memoryFileSystem);
       sampleParser.parseFromComments(elements);
       expect(elements.length, equals(1));
       int sampleCount = 0;
       for (final SourceElement element in elements) {
         expect(element.samples.length, greaterThanOrEqualTo(1));
         sampleCount += element.samples.length;
-        final String code =
-            generator.generateCode(element.samples.first, formatOutput: false);
+        final String code = generator.generateCode(element.samples.first, formatOutput: false);
         expect(code, contains('// Description'));
         expect(
-            code,
-            contains(RegExp('^void ${element.name}Sample\\(\\) \\{.*\$',
-                multiLine: true)));
+          code,
+          contains(RegExp('^void ${element.name}Sample\\(\\) \\{.*\$', multiLine: true)),
+        );
         final String html = generator.generateHtml(element.samples.first);
         expect(
-            html,
-            contains(RegExp(
-                '''^<iframe class="snippet-dartpad" src="https://dartpad.dev/.*sample_id=${element.name}.0.*></iframe>.*\$''',
-                multiLine: true)));
+          html,
+          contains(
+            RegExp(
+              '''^<iframe class="snippet-dartpad" src="https://dartpad.dev/.*sample_id=${element.name}.0.*></iframe>.*\$''',
+              multiLine: true,
+            ),
+          ),
+        );
       }
       expect(sampleCount, equals(1));
     });
     test('parses assumptions', () async {
       final File inputFile = _createSnippetSourceFile(tmpDir, memoryFileSystem);
-      final SnippetDartdocParser sampleParser =
-          SnippetDartdocParser(memoryFileSystem);
-      final List<SourceLine> assumptions =
-          sampleParser.parseAssumptions(inputFile);
+      final SnippetDartdocParser sampleParser = SnippetDartdocParser(memoryFileSystem);
+      final List<SourceLine> assumptions = sampleParser.parseAssumptions(inputFile);
       expect(assumptions.length, equals(1));
       expect(assumptions.first.text, equals('int integer = 3;'));
     });
@@ -245,8 +259,11 @@ class DocumentedClass {
 }
 
 File _createDartpadSourceFile(
-    Directory tmpDir, FileSystem filesystem, Directory flutterRoot,
-    {bool linked = false}) {
+  Directory tmpDir,
+  FileSystem filesystem,
+  Directory flutterRoot, {
+  bool linked = false,
+}) {
   final File linkedFile =
       filesystem.file(path.join(flutterRoot.absolute.path, 'linked_file.dart'))
         ..createSync(recursive: true)
@@ -262,10 +279,11 @@ void DocumentedClassSample() {
 }
 ''');
 
-  final String source = linked
-      ? '''
+  final String source =
+      linked
+          ? '''
 /// ** See code in ${path.relative(linkedFile.path, from: flutterRoot.absolute.path)} **'''
-      : '''
+          : '''
 /// ```dart
 /// void DocumentedClassSample() {
 ///   String elementName = 'DocumentedClass';

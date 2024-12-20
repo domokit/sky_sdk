@@ -19,34 +19,22 @@ final RegExp _lifecycleSentinelRegExp = RegExp(r'==== lifecycle\: (.+) ====');
 
 /// Tests the following Android lifecycles: Activity#onStop(), Activity#onResume(), Activity#onPause(),
 /// and Activity#onDestroy() from Dart perspective in debug, profile, and release modes.
-TaskFunction androidLifecyclesTest({
-  Map<String, String>? environment,
-}) {
-  final Directory tempDir = Directory.systemTemp
-      .createTempSync('flutter_devicelab_activity_destroy.');
+TaskFunction androidLifecyclesTest({Map<String, String>? environment}) {
+  final Directory tempDir = Directory.systemTemp.createTempSync(
+    'flutter_devicelab_activity_destroy.',
+  );
   return () async {
     try {
       section('Create app');
       await inDirectory(tempDir, () async {
         await flutter(
           'create',
-          options: <String>[
-            '--platforms',
-            'android',
-            '--org',
-            _kOrgName,
-            'app',
-          ],
+          options: <String>['--platforms', 'android', '--org', _kOrgName, 'app'],
           environment: environment,
         );
       });
 
-      final File mainDart = File(path.join(
-        tempDir.absolute.path,
-        'app',
-        'lib',
-        'main.dart',
-      ));
+      final File mainDart = File(path.join(tempDir.absolute.path, 'app', 'lib', 'main.dart'));
       if (!mainDart.existsSync()) {
         return TaskResult.failure('${mainDart.path} does not exist');
       }
@@ -77,20 +65,17 @@ void main() {
 
         late Process run;
         await inDirectory(path.join(tempDir.path, 'app'), () async {
-          run = await startFlutter(
-            'run',
-            options: <String>['--$mode'],
-          );
+          run = await startFlutter('run', options: <String>['--$mode']);
         });
 
         final StreamController<String> lifecycles = StreamController<String>();
         final StreamIterator<String> lifecycleItr = StreamIterator<String>(lifecycles.stream);
 
         final StreamSubscription<void> stdout = run.stdout
-          .transform<String>(utf8.decoder)
-          .transform<String>(const LineSplitter())
-          .listen((String log) {
-            final RegExpMatch? match = _lifecycleSentinelRegExp.firstMatch(log);
+            .transform<String>(utf8.decoder)
+            .transform<String>(const LineSplitter())
+            .listen((String log) {
+              final RegExpMatch? match = _lifecycleSentinelRegExp.firstMatch(log);
               print('stdout: $log');
               if (match == null) {
                 return;
@@ -98,14 +83,14 @@ void main() {
               final String lifecycle = match[1]!;
               print('stdout: Found app lifecycle: $lifecycle');
               lifecycles.add(lifecycle);
-          });
+            });
 
         final StreamSubscription<void> stderr = run.stderr
-          .transform<String>(utf8.decoder)
-          .transform<String>(const LineSplitter())
-          .listen((String log) {
-            print('stderr: $log');
-          });
+            .transform<String>(utf8.decoder)
+            .transform<String>(const LineSplitter())
+            .listen((String log) {
+              print('stderr: $log');
+            });
 
         Future<void> expectedLifecycle(String expected) async {
           section('Wait for lifecycle: $expected (mode: $mode)');
@@ -122,7 +107,8 @@ void main() {
         await device.shellExec('input', <String>['keyevent', 'KEYCODE_APP_SWITCH']);
 
         await expectedLifecycle('AppLifecycleState.inactive');
-        if (device.apiLevel == 28) { // Device lab currently runs 28.
+        if (device.apiLevel == 28) {
+          // Device lab currently runs 28.
           await expectedLifecycle('AppLifecycleState.paused');
           await expectedLifecycle('AppLifecycleState.detached');
         }
@@ -136,7 +122,8 @@ void main() {
         await device.shellExec('am', <String>['start', '-a', 'android.settings.SETTINGS']);
 
         await expectedLifecycle('AppLifecycleState.inactive');
-        if (device.apiLevel == 28) { // Device lab currently runs 28.
+        if (device.apiLevel == 28) {
+          // Device lab currently runs 28.
           await expectedLifecycle('AppLifecycleState.paused');
           await expectedLifecycle('AppLifecycleState.detached');
         }
@@ -168,7 +155,7 @@ void main() {
       }
 
       final TaskResult releaseResult = await runTestFor('release');
-       if (releaseResult.failed) {
+      if (releaseResult.failed) {
         return releaseResult;
       }
 

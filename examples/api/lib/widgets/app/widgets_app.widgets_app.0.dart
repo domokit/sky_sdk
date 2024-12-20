@@ -17,11 +17,16 @@ class WidgetsAppExampleApp extends StatelessWidget {
       title: 'Example',
       color: const Color(0xFF000000),
       home: const Center(child: Text('Hello World')),
-      pageRouteBuilder: <T>(RouteSettings settings, WidgetBuilder builder) => PageRouteBuilder<T>(
-        settings: settings,
-        pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) =>
-            builder(context),
-      ),
+      pageRouteBuilder:
+          <T>(RouteSettings settings, WidgetBuilder builder) => PageRouteBuilder<T>(
+            settings: settings,
+            pageBuilder:
+                (
+                  BuildContext context,
+                  Animation<double> animation,
+                  Animation<double> secondaryAnimation,
+                ) => builder(context),
+          ),
     );
   }
 }

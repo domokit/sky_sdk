@@ -24,7 +24,9 @@ void initTimelineTests() {
     if (info.serverUri == null) {
       fail('This test _must_ be run with --enable-vmservice.');
     }
-    _vmService = await vmServiceConnectUri('ws://localhost:${info.serverUri!.port}${info.serverUri!.path}ws');
+    _vmService = await vmServiceConnectUri(
+      'ws://localhost:${info.serverUri!.port}${info.serverUri!.path}ws',
+    );
     await _vmService.setVMTimelineFlags(<String>['Dart']);
     isolateId = developer.Service.getIsolateId(isolate.Isolate.current)!;
   });
@@ -38,8 +40,9 @@ Future<List<TimelineEvent>> fetchTimelineEvents() async {
 
 Future<List<TimelineEvent>> fetchInterestingEvents(Set<String> interestingLabels) async {
   return (await fetchTimelineEvents()).where((TimelineEvent event) {
-    return interestingLabels.contains(event.json!['name'])
-        && event.json!['ph'] == 'B'; // "Begin" mark of events, vs E which is for the "End" mark of events.
+    return interestingLabels.contains(event.json!['name']) &&
+        event.json!['ph'] ==
+            'B'; // "Begin" mark of events, vs E which is for the "End" mark of events.
   }).toList();
 }
 
@@ -68,7 +71,9 @@ class ZoneIgnoringTestBinding extends WidgetsFlutterBinding {
   }
 
   @override
-  bool debugCheckZone(String entryPoint) { return true; }
+  bool debugCheckZone(String entryPoint) {
+    return true;
+  }
 
   static ZoneIgnoringTestBinding get instance => BindingBase.checkInstance(_instance);
   static ZoneIgnoringTestBinding? _instance;

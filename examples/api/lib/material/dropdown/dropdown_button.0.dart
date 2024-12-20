@@ -18,9 +18,7 @@ class DropdownButtonApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('DropdownButton Sample')),
-        body: const Center(
-          child: DropdownButtonExample(),
-        ),
+        body: const Center(child: DropdownButtonExample()),
       ),
     );
   }
@@ -43,22 +41,17 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
       icon: const Icon(Icons.arrow_downward),
       elevation: 16,
       style: const TextStyle(color: Colors.deepPurple),
-      underline: Container(
-        height: 2,
-        color: Colors.deepPurpleAccent,
-      ),
+      underline: Container(height: 2, color: Colors.deepPurpleAccent),
       onChanged: (String? value) {
         // This is called when the user selects an item.
         setState(() {
           dropdownValue = value!;
         });
       },
-      items: list.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
+      items:
+          list.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(value: value, child: Text(value));
+          }).toList(),
     );
   }
 }

@@ -1,0 +1,56 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/impeller/tools/impeller.gni")
+
+impeller_component("typographer") {
+  sources = [
+    "font.cc",
+    "font.h",
+    "font_glyph_pair.cc",
+    "font_glyph_pair.h",
+    "glyph.cc",
+    "glyph.h",
+    "glyph_atlas.cc",
+    "glyph_atlas.h",
+    "lazy_glyph_atlas.cc",
+    "lazy_glyph_atlas.h",
+    "rectangle_packer.cc",
+    "rectangle_packer.h",
+    "text_frame.cc",
+    "text_frame.h",
+    "text_run.cc",
+    "text_run.h",
+    "typeface.cc",
+    "typeface.h",
+    "typographer_context.cc",
+    "typographer_context.h",
+  ]
+
+  public_deps = [
+    "../base",
+    "../geometry",
+    "../renderer",
+  ]
+
+  if (!is_fuchsia) {
+    public_deps +=
+        [ "//flutter/third_party/abseil-cpp/absl/container:flat_hash_map" ]
+  }
+
+  deps = [ "//flutter/fml" ]
+}
+
+impeller_component("typographer_unittests") {
+  testonly = true
+
+  sources = [ "typographer_unittests.cc" ]
+
+  deps = [
+    "../playground:playground_test",
+    "backends/skia:typographer_skia_backend",
+    "//flutter/display_list/testing:display_list_testing",
+    "//flutter/third_party/txt",
+  ]
+}

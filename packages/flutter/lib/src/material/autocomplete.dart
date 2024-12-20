@@ -105,7 +105,12 @@ class Autocomplete<T extends Object> extends StatelessWidget {
   /// {@macro flutter.widgets.RawAutocomplete.initialValue}
   final TextEditingValue? initialValue;
 
-  static Widget _defaultFieldViewBuilder(BuildContext context, TextEditingController textEditingController, FocusNode focusNode, VoidCallback onFieldSubmitted) {
+  static Widget _defaultFieldViewBuilder(
+    BuildContext context,
+    TextEditingController textEditingController,
+    FocusNode focusNode,
+    VoidCallback onFieldSubmitted,
+  ) {
     return _AutocompleteField(
       focusNode: focusNode,
       textEditingController: textEditingController,
@@ -121,15 +126,17 @@ class Autocomplete<T extends Object> extends StatelessWidget {
       initialValue: initialValue,
       optionsBuilder: optionsBuilder,
       optionsViewOpenDirection: optionsViewOpenDirection,
-      optionsViewBuilder: optionsViewBuilder ?? (BuildContext context, AutocompleteOnSelected<T> onSelected, Iterable<T> options) {
-        return _AutocompleteOptions<T>(
-          displayStringForOption: displayStringForOption,
-          onSelected: onSelected,
-          options: options,
-          openDirection: optionsViewOpenDirection,
-          maxOptionsHeight: optionsMaxHeight,
-        );
-      },
+      optionsViewBuilder:
+          optionsViewBuilder ??
+          (BuildContext context, AutocompleteOnSelected<T> onSelected, Iterable<T> options) {
+            return _AutocompleteOptions<T>(
+              displayStringForOption: displayStringForOption,
+              onSelected: onSelected,
+              options: options,
+              openDirection: optionsViewOpenDirection,
+              maxOptionsHeight: optionsMaxHeight,
+            );
+          },
       onSelected: onSelected,
     );
   }
@@ -215,7 +222,7 @@ class _AutocompleteOptions<T extends Object> extends StatelessWidget {
                       padding: const EdgeInsets.all(16.0),
                       child: Text(displayStringForOption(option)),
                     );
-                  }
+                  },
                 ),
               );
             },

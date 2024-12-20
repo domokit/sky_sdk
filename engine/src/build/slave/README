@@ -1,0 +1,8 @@
+This is a directory which contains configuration information for the
+buildsystem.
+
+* Under recipes, the buildsystem should use only this directory as an
+  entry point into src/.
+
+* Scripts in this directory must not import from outside this directory or shell
+  to scripts outside this directory.

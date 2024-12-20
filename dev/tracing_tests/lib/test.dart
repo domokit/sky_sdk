@@ -9,9 +9,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 class TestWidget extends LeafRenderObjectWidget {
-  const TestWidget({
-    super.key,
-  });
+  const TestWidget({super.key});
 
   @override
   RenderObject createRenderObject(BuildContext context) => RenderTest();
@@ -41,7 +39,6 @@ class RenderTest extends RenderBox {
     properties.add(MessageProperty('test', 'RenderTest.debugFillProperties called'));
   }
 }
-
 
 Future<void> main() async {
   // This section introduces strings that we can search for in dev/bots/test.dart

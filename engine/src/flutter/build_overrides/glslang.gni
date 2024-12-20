@@ -1,0 +1,6 @@
+# Copyright 2019 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+glslang_spirv_tools_dir = "//flutter/third_party/vulkan-deps/spirv-tools/src"
+spirv_tools_dir = "//flutter/third_party/vulkan-deps/spirv-tools/src"

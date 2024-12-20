@@ -3,14 +3,15 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/bottom_sheet/show_modal_bottom_sheet.2.dart' as example;
+import 'package:flutter_api_samples/material/bottom_sheet/show_modal_bottom_sheet.2.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Modal bottom sheet animation can be customized using AnimationStyle', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ModalBottomSheetApp(),
-    );
+  testWidgets('Modal bottom sheet animation can be customized using AnimationStyle', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.ModalBottomSheetApp());
 
     // Show the bottom sheet with default animation style.
     await tester.tap(find.widgetWithText(ElevatedButton, 'showModalBottomSheet'));

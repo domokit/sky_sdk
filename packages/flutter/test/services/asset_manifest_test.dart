@@ -10,18 +10,11 @@ import 'package:flutter_test/flutter_test.dart';
 class TestAssetBundle extends AssetBundle {
   static const Map<String, List<Object>> _binManifestData = <String, List<Object>>{
     'assets/foo.png': <Object>[
-      <String, Object>{
-        'asset': 'assets/foo.png',
-      },
-      <String, Object>{
-        'asset': 'assets/2x/foo.png',
-        'dpr': 2.0
-      },
+      <String, Object>{'asset': 'assets/foo.png'},
+      <String, Object>{'asset': 'assets/2x/foo.png', 'dpr': 2.0},
     ],
     'assets/bar.png': <Object>[
-      <String, Object>{
-        'asset': 'assets/bar.png',
-      },
+      <String, Object>{'asset': 'assets/bar.png'},
     ],
   };
 
@@ -41,10 +34,10 @@ class TestAssetBundle extends AssetBundle {
           json.encode(
             base64.encode(
               // Encode only the actual bytes of the buffer, and no more...
-              data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes)
-            )
-          )
-        )
+              data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
+            ),
+          ),
+        ),
       );
     }
 

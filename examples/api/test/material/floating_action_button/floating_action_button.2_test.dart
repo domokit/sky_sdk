@@ -9,9 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('FloatingActionButton variants', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.FloatingActionButtonExampleApp(),
-    );
+    await tester.pumpWidget(const example.FloatingActionButtonExampleApp());
 
     FloatingActionButton getFAB(Finder finder) {
       return tester.widget<FloatingActionButton>(finder);

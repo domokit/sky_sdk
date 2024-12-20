@@ -16,9 +16,7 @@ class ReorderableApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('ReorderableListView Sample')),
-        body: const Center(
-          child: ReorderableExample(),
-        ),
+        body: const Center(child: ReorderableExample()),
       ),
     );
   }

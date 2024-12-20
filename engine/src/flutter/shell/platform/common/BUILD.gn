@@ -1,0 +1,215 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/testing/testing.gni")
+
+config("desktop_library_implementation") {
+  defines = [ "FLUTTER_DESKTOP_LIBRARY" ]
+}
+
+_public_headers = [
+  "public/flutter_export.h",
+  "public/flutter_macros.h",
+  "public/flutter_messenger.h",
+  "public/flutter_plugin_registrar.h",
+  "public/flutter_texture_registrar.h",
+]
+
+# Any files that are built by clients (client_wrapper code, library headers for
+# implementations using this shared code, etc.) include the public headers
+# assuming they are in the include path. This configuration should be added to
+# any such code that is also built by GN to make the includes work.
+config("relative_flutter_library_headers") {
+  include_dirs = [ "public" ]
+}
+
+# The headers are a separate source set since the client wrapper is allowed
+# to depend on the public headers, but none of the rest of the code.
+source_set("common_cpp_library_headers") {
+  public = _public_headers
+
+  configs += [ ":desktop_library_implementation" ]
+}
+
+copy("publish_headers") {
+  sources = _public_headers
+  outputs = [ "$root_out_dir/{{source_file_part}}" ]
+}
+
+source_set("common_cpp_input") {
+  public = [
+    "text_editing_delta.h",
+    "text_input_model.h",
+    "text_range.h",
+  ]
+
+  sources = [
+    "text_editing_delta.cc",
+    "text_input_model.cc",
+  ]
+
+  configs += [ ":desktop_library_implementation" ]
+
+  public_configs = [ "//flutter:config" ]
+
+  deps = [ "//flutter/fml:fml" ]
+}
+
+source_set("common_cpp_enums") {
+  public = [
+    "app_lifecycle_state.h",
+    "platform_provided_menu.h",
+  ]
+
+  public_configs = [
+    "//flutter:config",
+    "//flutter/common:flutter_config",
+  ]
+}
+
+source_set("common_cpp_switches") {
+  public = [ "engine_switches.h" ]
+
+  sources = [ "engine_switches.cc" ]
+
+  public_configs = [
+    "//flutter:config",
+    "//flutter/common:flutter_config",
+  ]
+}
+
+source_set("common_cpp_accessibility") {
+  public = [
+    "accessibility_bridge.h",
+    "alert_platform_node_delegate.h",
+    "flutter_platform_node_delegate.h",
+  ]
+
+  sources = [
+    "accessibility_bridge.cc",
+    "alert_platform_node_delegate.cc",
+    "flutter_platform_node_delegate.cc",
+  ]
+
+  public_configs =
+      [ "//flutter/third_party/accessibility:accessibility_config" ]
+
+  public_deps = [
+    "//flutter/fml:fml",
+    "//flutter/shell/platform/embedder:embedder_as_internal_library",
+    "//flutter/third_party/accessibility",
+  ]
+}
+
+source_set("common_cpp") {
+  public = [
+    "incoming_message_dispatcher.h",
+    "json_message_codec.h",
+    "json_method_codec.h",
+  ]
+
+  # TODO: Refactor flutter_glfw.cc to move the implementations corresponding
+  # to the _public_headers above into this target.
+  sources = [
+    "incoming_message_dispatcher.cc",
+    "json_message_codec.cc",
+    "json_method_codec.cc",
+  ]
+
+  configs += [ ":desktop_library_implementation" ]
+
+  public_configs = [ "//flutter:config" ]
+
+  deps = [
+    ":common_cpp_library_headers",
+    "//flutter/shell/platform/common/client_wrapper:client_wrapper",
+    "//flutter/shell/platform/embedder:embedder_as_internal_library",
+  ]
+
+  public_deps = [
+    ":common_cpp_core",
+    "//flutter/third_party/rapidjson",
+  ]
+}
+
+# The portion of common_cpp that has no dependencies on the public/
+# headers. This division should be revisited once the Linux GTK
+# embedding is further along and it's clearer how much, if any, shared
+# API surface there will be.
+source_set("common_cpp_core") {
+  public = [
+    "geometry.h",
+    "path_utils.h",
+  ]
+
+  sources = [ "path_utils.cc" ]
+
+  public_configs = [ "//flutter:config" ]
+}
+
+if (enable_unittests) {
+  test_fixtures("common_cpp_core_fixtures") {
+    fixtures = []
+  }
+
+  executable("common_cpp_core_unittests") {
+    testonly = true
+
+    sources = [ "path_utils_unittests.cc" ]
+
+    deps = [
+      ":common_cpp_core",
+      ":common_cpp_core_fixtures",
+      "$dart_src/runtime:libdart_jit",
+      "//flutter/testing",
+    ]
+
+    public_configs = [ "//flutter:config" ]
+  }
+
+  test_fixtures("common_cpp_fixtures") {
+    fixtures = []
+  }
+
+  executable("common_cpp_unittests") {
+    testonly = true
+
+    sources = [
+      "engine_switches_unittests.cc",
+      "geometry_unittests.cc",
+      "incoming_message_dispatcher_unittests.cc",
+      "json_message_codec_unittests.cc",
+      "json_method_codec_unittests.cc",
+      "text_editing_delta_unittests.cc",
+      "text_input_model_unittests.cc",
+      "text_range_unittests.cc",
+    ]
+
+    deps = [
+      ":common_cpp",
+      ":common_cpp_fixtures",
+      ":common_cpp_input",
+      ":common_cpp_switches",
+      "//flutter/fml:string_conversion",
+      "//flutter/shell/platform/common/client_wrapper:client_wrapper",
+      "//flutter/shell/platform/common/client_wrapper:client_wrapper_library_stubs",
+      "//flutter/testing",
+    ]
+
+    # The accessibility bridge only supports MacOS for now.
+    if (is_mac || is_win) {
+      sources += [
+        "accessibility_bridge_unittests.cc",
+        "flutter_platform_node_delegate_unittests.cc",
+        "test_accessibility_bridge.cc",
+        "test_accessibility_bridge.h",
+      ]
+
+      deps += [ ":common_cpp_accessibility" ]
+    }
+
+    public_configs = [ "//flutter:config" ]
+  }
+}

@@ -150,12 +150,7 @@ class ScrollPositionWithSingleContext extends ScrollPosition implements ScrollAc
     assert(hasPixels);
     final Simulation? simulation = physics.createBallisticSimulation(this, velocity);
     if (simulation != null) {
-      beginActivity(BallisticScrollActivity(
-        this,
-        simulation,
-        context.vsync,
-        shouldIgnorePointer,
-      ));
+      beginActivity(BallisticScrollActivity(this, simulation, context.vsync, shouldIgnorePointer));
     } else {
       goIdle();
     }
@@ -179,11 +174,7 @@ class ScrollPositionWithSingleContext extends ScrollPosition implements ScrollAc
   }
 
   @override
-  Future<void> animateTo(
-    double to, {
-    required Duration duration,
-    required Curve curve,
-  }) {
+  Future<void> animateTo(double to, {required Duration duration, required Curve curve}) {
     if (nearEqual(to, pixels, physics.toleranceFor(this).distance)) {
       // Skip the animation, go straight to the position as we are already close.
       jumpTo(to);
@@ -225,13 +216,13 @@ class ScrollPositionWithSingleContext extends ScrollPosition implements ScrollAc
       return;
     }
 
-    final double targetPixels =
-        math.min(math.max(pixels + delta, minScrollExtent), maxScrollExtent);
+    final double targetPixels = math.min(
+      math.max(pixels + delta, minScrollExtent),
+      maxScrollExtent,
+    );
     if (targetPixels != pixels) {
       goIdle();
-      updateUserScrollDirection(
-          -delta > 0.0 ? ScrollDirection.forward : ScrollDirection.reverse,
-      );
+      updateUserScrollDirection(-delta > 0.0 ? ScrollDirection.forward : ScrollDirection.reverse);
       final double oldPixels = pixels;
       // Set the notifier before calling force pixels.
       // This is set to false again after going ballistic below.
@@ -244,8 +235,8 @@ class ScrollPositionWithSingleContext extends ScrollPosition implements ScrollAc
     }
   }
 
-
-  @Deprecated('This will lead to bugs.') // flutter_ignore: deprecation_syntax, https://github.com/flutter/flutter/issues/44609
+  // flutter_ignore: deprecation_syntax, https://github.com/flutter/flutter/issues/44609
+  @Deprecated('This will lead to bugs.')
   @override
   void jumpToWithoutSettling(double value) {
     goIdle();

@@ -1,0 +1,559 @@
+{
+    "builds": [
+        {
+            "cas_archive": false,
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=arm64"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/host_debug_arm64_tests",
+                "--runtime-mode",
+                "debug",
+                "--mac-cpu",
+                "arm64",
+                "--no-lto",
+                "--prebuilt-dart-sdk",
+                "--build-embedder-examples",
+                "--use-glfw-swiftshader",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks"
+            ],
+            "name": "ci/host_debug_arm64_tests",
+            "description": "Produces debug mode arm64 macOS host-side tooling and builds host-side unit tests for arm64 macOS.",
+            "ninja": {
+                "config": "ci/host_debug_arm64_tests",
+                "targets": []
+            },
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "Host Tests for host_debug",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/host_debug_arm64_tests",
+                        "--type",
+                        "dart,dart-host,engine",
+                        "--engine-capture-core-dump"
+                    ]
+                }
+            ]
+        },
+        {
+            "cas_archive": false,
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=arm64"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/host_profile_arm64_tests",
+                "--runtime-mode",
+                "profile",
+                "--mac-cpu",
+                "arm64",
+                "--no-lto",
+                "--prebuilt-dart-sdk",
+                "--build-embedder-examples",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks"
+            ],
+            "name": "ci/host_profile_arm64_tests",
+            "description": "Produces profile mode arm64 macOS host-side tooling and builds host-side unit tests for arm64 macOS.",
+            "ninja": {
+                "config": "ci/host_profile_arm64_tests",
+                "targets": []
+            },
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "Host Tests for host_profile",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/host_profile_arm64_tests",
+                        "--type",
+                        "dart,dart-host,engine",
+                        "--engine-capture-core-dump"
+                    ]
+                }
+            ]
+        },
+        {
+            "cas_archive": false,
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=arm64"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/host_release_arm64_tests",
+                "--runtime-mode",
+                "release",
+                "--mac-cpu",
+                "arm64",
+                "--no-lto",
+                "--prebuilt-dart-sdk",
+                "--build-embedder-examples",
+                "--use-glfw-swiftshader",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks"
+            ],
+            "name": "ci/host_release_arm64_tests",
+            "description": "Produces release mode arm64 macOS host-side tooling and builds host-side unit tests for arm64 macOS.",
+            "ninja": {
+                "config": "ci/host_release_arm64_tests",
+                "targets": []
+            },
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "Dart and engine tests for host_release",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/host_release_arm64_tests",
+                        "--type",
+                        "dart,dart-host,engine"
+                    ]
+                }
+            ]
+        },
+        {
+            "cas_archive": false,
+            "dependencies": [
+                {
+                    "dependency": "goldctl",
+                    "version": "git_revision:720a542f6fe4f92922c3b8f0fdcc4d2ac6bb83cd"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=arm64"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/mac_release_arm64_tests",
+                "--mac",
+                "--mac-cpu",
+                "arm64",
+                "--runtime-mode",
+                "release",
+                "--no-lto",
+                "--prebuilt-dart-sdk",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks",
+                "--use-glfw-swiftshader"
+            ],
+            "name": "ci/mac_release_arm64_tests",
+            "description": "Produces release mode arm64 macOS host-side tooling.",
+            "ninja": {
+                "config": "ci/mac_release_arm64_tests",
+                "targets": []
+            },
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "Impeller-golden for host_release",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/mac_release_arm64_tests",
+                        "--type",
+                        "impeller-golden"
+                    ]
+                }
+            ]
+        },
+        {
+            "cas_archive": false,
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "runtime_versions": [
+                        "ios-17-0_15a240d"
+                    ],
+                    "sdk_version": "15a240d"
+                }
+            },
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=x86"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--ios",
+                "--runtime-mode",
+                "debug",
+                "--simulator",
+                "--no-lto",
+                "--unoptimized",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks",
+                "--target-dir",
+                "ci/ios_debug_unopt_sim"
+            ],
+            "name": "ci/ios_debug_unopt_sim",
+            "description": "Builds a debug mode engine for x64 iOS simulator. Runs unit tests and the scenario app tests.",
+            "ninja": {
+                "config": "ci/ios_debug_unopt_sim",
+                "targets": [
+                    "flutter/testing/scenario_app",
+                    "flutter/shell/platform/darwin/ios:ios_test_flutter"
+                ]
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "Tests for ios_debug_unopt_sim",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/ios_debug_unopt_sim",
+                        "--type",
+                        "objc",
+                        "--engine-capture-core-dump",
+                        "--ios-variant",
+                        "ci/ios_debug_unopt_sim"
+                    ]
+                },
+                {
+                    "name": "Scenario App Integration Tests",
+                    "parameters": [
+                        "ci/ios_debug_unopt_sim"
+                    ],
+                    "script": "flutter/testing/scenario_app/run_ios_tests.sh"
+                }
+            ]
+        },
+        {
+            "cas_archive": false,
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=arm64"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/host_debug_unopt_arm64",
+                "--runtime-mode",
+                "debug",
+                "--unoptimized",
+                "--no-lto",
+                "--prebuilt-dart-sdk",
+                "--mac-cpu",
+                "arm64",
+                "--enable-impeller-3d",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks",
+                "--use-glfw-swiftshader"
+            ],
+            "name": "ci/host_debug_unopt_arm64",
+            "description": "Builds a debug mode unopt arm64 macOS engine and runs host-side tests.",
+            "ninja": {
+                "config": "ci/host_debug_unopt_arm64",
+                "targets": [
+                ]
+            },
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "Host Tests for host_debug_unopt_arm64",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/host_debug_unopt_arm64",
+                        "--type",
+                        "dart,dart-host,engine,impeller-golden",
+                        "--engine-capture-core-dump",
+                        "--no-skia-gold"
+                    ]
+                },
+                {
+                    "name": "Tests of tools/gn",
+                    "language": "python3",
+                    "script": "flutter/tools/gn_test.py"
+                }
+            ]
+        },
+        {
+            "cas_archive": false,
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "runtime_versions": [
+                        "ios-17-0_15a240d"
+                    ],
+                    "sdk_version": "15a240d"
+                }
+            },
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=arm64"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--ios",
+                "--runtime-mode",
+                "debug",
+                "--simulator",
+                "--unoptimized",
+                "--no-lto",
+                "--simulator-cpu",
+                "arm64",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks",
+                "--target-dir",
+                "ci/ios_debug_unopt_sim_arm64"
+            ],
+            "name": "ci/ios_debug_unopt_sim_arm64",
+            "description": "Builds a debug mode engine for arm64 iOS simulator. Runs unit tests and the scenario app tests.",
+            "ninja": {
+                "config": "ci/ios_debug_unopt_sim_arm64",
+                "targets": [
+                    "flutter/testing/scenario_app",
+                    "flutter/shell/platform/darwin/ios:ios_test_flutter"
+                ]
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "Tests for ios_debug_unopt_sim_arm64",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/ios_debug_unopt_sim_arm64",
+                        "--type",
+                        "objc",
+                        "--engine-capture-core-dump",
+                        "--ios-variant",
+                        "ci/ios_debug_unopt_sim_arm64"
+                    ]
+                },
+                {
+                    "name": "Scenario App Integration Tests",
+                    "parameters": [
+                        "ci/ios_debug_unopt_sim_arm64"
+                    ],
+                    "script": "flutter/testing/scenario_app/run_ios_tests.sh"
+                }
+
+            ]
+        },
+        {
+            "cas_archive": false,
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "runtime_versions": [
+                        "ios-17-0_15a240d"
+                    ],
+                    "sdk_version": "15a240d"
+                }
+            },
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=arm64"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--ios",
+                "--runtime-mode",
+                "debug",
+                "--simulator",
+                "--unoptimized",
+                "--no-lto",
+                "--simulator-cpu",
+                "arm64",
+                "--darwin-extension-safe",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks",
+                "--target-dir",
+                "ci/ios_debug_unopt_sim_arm64_extension_safe"
+            ],
+            "name": "ci/ios_debug_unopt_sim_arm64_extension_safe",
+            "description": "Builds an extension safe debug mode engine for arm64 iOS simulator. Runs unit tests and the scenario app tests.",
+            "ninja": {
+                "config": "ci/ios_debug_unopt_sim_arm64_extension_safe",
+                "targets": [
+                    "flutter/testing/scenario_app",
+                    "flutter/shell/platform/darwin/ios:ios_test_flutter"
+                ]
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "Tests for ios_debug_unopt_sim_arm64_extension_safe",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/ios_debug_unopt_sim_arm64_extension_safe",
+                        "--type",
+                        "objc",
+                        "--engine-capture-core-dump",
+                        "--ios-variant",
+                        "ci/ios_debug_unopt_sim_arm64_extension_safe"
+                    ]
+                },
+                {
+                    "name": "Scenario App Integration Tests",
+                    "parameters": [
+                        "ci/ios_debug_unopt_sim_arm64_extension_safe"
+                    ],
+                    "script": "flutter/testing/scenario_app/run_ios_tests.sh"
+                }
+            ]
+        },
+        {
+            "cas_archive": false,
+            "drone_dimensions":
+            [
+                "os=Mac-13|Mac-14",
+                "device_type=none"
+            ],
+            "gclient_variables":
+            {
+                "download_android_deps": false,
+                "use_rbe": true
+            },
+            "gn":
+            [
+                "--ios",
+                "--runtime-mode",
+                "release",
+                "--no-stripped",
+                "--no-lto",
+                "--xcode-symlinks",
+                "--rbe",
+                "--no-goma",
+                "--slimpeller"
+            ],
+            "name": "ci/macos/ios_release_slimpeller",
+            "description": "Builds a Slimpeller release mode engine that targets iOS from a macOS host.",
+            "ninja":
+            {
+                "config": "ios_release_slimpeller",
+                "targets":
+                []
+            },
+            "properties":
+            {
+                "$flutter/osx_sdk":
+                {
+                    "sdk_version": "15a240d"
+                }
+            }
+        },
+        {
+            "cas_archive": false,
+            "drone_dimensions":
+            [
+                "os=Mac-13|Mac-14",
+                "device_type=none"
+            ],
+            "gclient_variables":
+            {
+                "download_android_deps": false,
+                "use_rbe": true
+            },
+            "gn":
+            [
+                "--ios",
+                "--runtime-mode",
+                "debug",
+                "--unoptimized",
+                "--no-stripped",
+                "--no-lto",
+                "--xcode-symlinks",
+                "--rbe",
+                "--no-goma",
+                "--slimpeller"
+            ],
+            "name": "ci/macos/ios_debug_unopt_slimpeller",
+            "description": "Builds an unoptimized debug mode engine with Slimpeller that targets iOS from a macOS host.",
+            "ninja":
+            {
+                "config": "ios_debug_unopt_slimpeller",
+                "targets":
+                []
+            },
+            "properties":
+            {
+                "$flutter/osx_sdk":
+                {
+                    "sdk_version": "15a240d"
+                }
+            }
+        }
+    ]
+}

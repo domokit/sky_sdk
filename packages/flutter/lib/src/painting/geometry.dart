@@ -58,10 +58,11 @@ Offset positionDependentBox({
   }
   // HORIZONTAL DIRECTION
   final double flexibleSpace = size.width - childSize.width;
-  final double x = flexibleSpace <= 2 * margin
-    // If there's not enough horizontal space for margin + child, center the
-    // child.
-    ? flexibleSpace / 2.0
-    : clampDouble(target.dx - childSize.width / 2, margin, flexibleSpace - margin);
+  final double x =
+      flexibleSpace <= 2 * margin
+          // If there's not enough horizontal space for margin + child, center the
+          // child.
+          ? flexibleSpace / 2.0
+          : clampDouble(target.dx - childSize.width / 2, margin, flexibleSpace - margin);
   return Offset(x, y);
 }

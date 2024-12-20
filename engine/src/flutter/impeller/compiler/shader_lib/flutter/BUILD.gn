@@ -1,0 +1,8 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+copy("flutter") {
+  sources = [ "runtime_effect.glsl" ]
+  outputs = [ "$root_out_dir/shader_lib/flutter/{{source_file_part}}" ]
+}

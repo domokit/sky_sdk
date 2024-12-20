@@ -1,0 +1,15 @@
+{
+    "configVersion": 2,
+    "packages": [
+        {
+            "name": "const_finder_fixtures",
+            "rootUri": "../lib/",
+            "languageVersion": "2.17"
+        },
+        {
+            "name": "const_finder_fixtures_package",
+            "rootUri": "../pkg/",
+            "languageVersion": "2.17"
+        }
+    ]
+}

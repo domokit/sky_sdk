@@ -14,7 +14,8 @@ import 'package:flutter_test/flutter_test.dart';
 final List<String> log = <String>[];
 
 void main() {
-  final PaintingMocksTestRenderingFlutterBinding binding = PaintingMocksTestRenderingFlutterBinding.ensureInitialized();
+  final PaintingMocksTestRenderingFlutterBinding binding =
+      PaintingMocksTestRenderingFlutterBinding.ensureInitialized();
 
   test('createSceneBuilder et al', () async {
     final RenderView root = RenderView(
@@ -40,15 +41,22 @@ void main() {
   });
 }
 
-
-class PaintingMocksTestRenderingFlutterBinding extends BindingBase with SchedulerBinding, ServicesBinding, GestureBinding, PaintingBinding, SemanticsBinding, RendererBinding {
+class PaintingMocksTestRenderingFlutterBinding extends BindingBase
+    with
+        SchedulerBinding,
+        ServicesBinding,
+        GestureBinding,
+        PaintingBinding,
+        SemanticsBinding,
+        RendererBinding {
   @override
   void initInstances() {
     super.initInstances();
     _instance = this;
   }
 
-  static PaintingMocksTestRenderingFlutterBinding get instance => BindingBase.checkInstance(_instance);
+  static PaintingMocksTestRenderingFlutterBinding get instance =>
+      BindingBase.checkInstance(_instance);
   static PaintingMocksTestRenderingFlutterBinding? _instance;
 
   static PaintingMocksTestRenderingFlutterBinding ensureInitialized() {

@@ -19,8 +19,7 @@ class Data {
 }
 
 List<Data> test(int length) {
-  return List<Data>.generate(length,
-      (int index) => Data(index * index));
+  return List<Data>.generate(length, (int index) => Data(index * index));
 }
 
 Future<void> execute() async {

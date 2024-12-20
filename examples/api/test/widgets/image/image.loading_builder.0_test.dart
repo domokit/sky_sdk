@@ -5,8 +5,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/image/image.loading_builder.0.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/image/image.loading_builder.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -16,10 +15,10 @@ void main() {
     HttpOverrides.global = null;
   });
 
-  testWidgets('The loading builder returns the child when there is no loading progress', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.LoadingBuilderExampleApp(),
-    );
+  testWidgets('The loading builder returns the child when there is no loading progress', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.LoadingBuilderExampleApp());
     await tester.pumpAndSettle();
 
     final Image image = tester.widget<Image>(find.byType(Image));
@@ -34,10 +33,10 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
-  testWidgets('The loading builder returns a circular progress indicator when loading', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.LoadingBuilderExampleApp(),
-    );
+  testWidgets('The loading builder returns a circular progress indicator when loading', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.LoadingBuilderExampleApp());
     await tester.pumpAndSettle();
 
     final Image image = tester.widget<Image>(find.byType(Image));
@@ -51,10 +50,7 @@ void main() {
         home: loadingBuilder(
           context,
           child,
-          const ImageChunkEvent(
-            cumulativeBytesLoaded: 1,
-            expectedTotalBytes: 10,
-          ),
+          const ImageChunkEvent(cumulativeBytesLoaded: 1, expectedTotalBytes: 10),
         ),
       ),
     );

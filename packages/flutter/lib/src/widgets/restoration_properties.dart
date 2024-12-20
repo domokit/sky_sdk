@@ -85,6 +85,7 @@ abstract class RestorableValue<T> extends RestorableProperty<T> {
     assert(isRegistered);
     return _value as T;
   }
+
   T? _value;
   set value(T newValue) {
     assert(isRegistered);
@@ -372,7 +373,8 @@ class RestorableDateTimeN extends RestorableValue<DateTime?> {
   }
 
   @override
-  DateTime? fromPrimitives(Object? data) => data != null ? DateTime.fromMillisecondsSinceEpoch(data as int) : null;
+  DateTime? fromPrimitives(Object? data) =>
+      data != null ? DateTime.fromMillisecondsSinceEpoch(data as int) : null;
 
   @override
   Object? toPrimitives() => value?.millisecondsSinceEpoch;
@@ -404,6 +406,7 @@ abstract class RestorableListenable<T extends Listenable> extends RestorableProp
     assert(isRegistered);
     return _value!;
   }
+
   T? _value;
 
   @override
@@ -469,9 +472,10 @@ class RestorableTextEditingController extends RestorableChangeNotifier<TextEditi
   ///
   /// This constructor treats a null `text` argument as if it were the empty
   /// string.
-  factory RestorableTextEditingController({String? text}) => RestorableTextEditingController.fromValue(
-    text == null ? TextEditingValue.empty : TextEditingValue(text: text),
-  );
+  factory RestorableTextEditingController({String? text}) =>
+      RestorableTextEditingController.fromValue(
+        text == null ? TextEditingValue.empty : TextEditingValue(text: text),
+      );
 
   /// Creates a [RestorableTextEditingController] from an initial
   /// [TextEditingValue].
@@ -518,9 +522,11 @@ class RestorableEnumN<T extends Enum> extends RestorableValue<T?> {
   /// Creates a [RestorableEnumN].
   ///
   /// {@macro flutter.widgets.RestorableNum.constructor}
-  RestorableEnumN(T? defaultValue, { required Iterable<T> values })
-    : assert(defaultValue == null || values.contains(defaultValue),
-        'Default value $defaultValue not found in $T values: $values'),
+  RestorableEnumN(T? defaultValue, {required Iterable<T> values})
+    : assert(
+        defaultValue == null || values.contains(defaultValue),
+        'Default value $defaultValue not found in $T values: $values',
+      ),
       _defaultValue = defaultValue,
       values = values.toSet();
 
@@ -530,10 +536,12 @@ class RestorableEnumN<T extends Enum> extends RestorableValue<T?> {
 
   @override
   set value(T? newValue) {
-    assert(newValue == null || values.contains(newValue),
+    assert(
+      newValue == null || values.contains(newValue),
       'Attempted to set an unknown enum value "$newValue" that is not null, or '
       'in the valid set of enum values for the $T type: '
-      '${values.map<String>((T value) => value.name).toSet()}');
+      '${values.map<String>((T value) => value.name).toSet()}',
+    );
     super.value = newValue;
   }
 
@@ -576,10 +584,12 @@ class RestorableEnumN<T extends Enum> extends RestorableValue<T?> {
           return allowed;
         }
       }
-      assert(false,
+      assert(
+        false,
         'Attempted to set an unknown enum value "$data" that is not null, or '
         'in the valid set of enum values for the $T type: '
-        '${values.map<String>((T value) => value.name).toSet()}');
+        '${values.map<String>((T value) => value.name).toSet()}',
+      );
     }
     return _defaultValue;
   }
@@ -587,7 +597,6 @@ class RestorableEnumN<T extends Enum> extends RestorableValue<T?> {
   @override
   Object? toPrimitives() => value?.name;
 }
-
 
 /// A [RestorableProperty] that knows how to store and restore an [Enum]
 /// type.
@@ -607,9 +616,11 @@ class RestorableEnum<T extends Enum> extends RestorableValue<T> {
   /// Creates a [RestorableEnum].
   ///
   /// {@macro flutter.widgets.RestorableNum.constructor}
-  RestorableEnum(T defaultValue, { required Iterable<T> values })
-    : assert(values.contains(defaultValue),
-        'Default value $defaultValue not found in $T values: $values'),
+  RestorableEnum(T defaultValue, {required Iterable<T> values})
+    : assert(
+        values.contains(defaultValue),
+        'Default value $defaultValue not found in $T values: $values',
+      ),
       _defaultValue = defaultValue,
       values = values.toSet();
 
@@ -619,10 +630,12 @@ class RestorableEnum<T extends Enum> extends RestorableValue<T> {
 
   @override
   set value(T newValue) {
-    assert(values.contains(newValue),
+    assert(
+      values.contains(newValue),
       'Attempted to set an unknown enum value "$newValue" that is not in the '
       'valid set of enum values for the $T type: '
-      '${values.map<String>((T value) => value.name).toSet()}');
+      '${values.map<String>((T value) => value.name).toSet()}',
+    );
 
     super.value = newValue;
   }
@@ -660,10 +673,12 @@ class RestorableEnum<T extends Enum> extends RestorableValue<T> {
           return allowed;
         }
       }
-      assert(false,
+      assert(
+        false,
         'Attempted to restore an unknown enum value "$data" that is not in the '
         'valid set of enum values for the $T type: '
-        '${values.map<String>((T value) => value.name).toSet()}');
+        '${values.map<String>((T value) => value.name).toSet()}',
+      );
     }
     return _defaultValue;
   }

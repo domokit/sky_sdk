@@ -24,16 +24,12 @@ class DrawerDemo extends StatefulWidget {
 class _DrawerDemoState extends State<DrawerDemo> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  static const List<String> _drawerContents = <String>[
-    'A', 'B', 'C', 'D', 'E',
-  ];
+  static const List<String> _drawerContents = <String>['A', 'B', 'C', 'D', 'E'];
 
   static final Animatable<Offset> _drawerDetailsTween = Tween<Offset>(
     begin: const Offset(0.0, -1.0),
     end: Offset.zero,
-  ).chain(CurveTween(
-    curve: Curves.fastOutSlowIn,
-  ));
+  ).chain(CurveTween(curve: Curves.fastOutSlowIn));
 
   late AnimationController _controller;
   late Animation<double> _drawerContentsOpacity;
@@ -43,10 +39,7 @@ class _DrawerDemoState extends State<DrawerDemo> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 200),
-    );
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
     _drawerContentsOpacity = CurvedAnimation(
       parent: ReverseAnimation(_controller),
       curve: Curves.fastOutSlowIn,
@@ -75,9 +68,9 @@ class _DrawerDemoState extends State<DrawerDemo> with TickerProviderStateMixin {
 
   void _showNotImplementedMessage() {
     Navigator.pop(context); // Dismiss the drawer.
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text("The drawer's items don't do anything"),
-    ));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("The drawer's items don't do anything")));
   }
 
   @override
@@ -104,10 +97,7 @@ class _DrawerDemoState extends State<DrawerDemo> with TickerProviderStateMixin {
               accountName: const Text('Trevor Widget'),
               accountEmail: const Text('trevor.widget@example.com'),
               currentAccountPicture: const CircleAvatar(
-                backgroundImage: AssetImage(
-                  _kAsset0,
-                  package: _kGalleryAssetsPackage,
-                ),
+                backgroundImage: AssetImage(_kAsset0, package: _kGalleryAssetsPackage),
               ),
               otherAccountsPictures: <Widget>[
                 GestureDetector(
@@ -118,10 +108,7 @@ class _DrawerDemoState extends State<DrawerDemo> with TickerProviderStateMixin {
                   child: Semantics(
                     label: 'Switch to Account B',
                     child: const CircleAvatar(
-                      backgroundImage: AssetImage(
-                        _kAsset1,
-                        package: _kGalleryAssetsPackage,
-                      ),
+                      backgroundImage: AssetImage(_kAsset1, package: _kGalleryAssetsPackage),
                     ),
                   ),
                 ),
@@ -133,10 +120,7 @@ class _DrawerDemoState extends State<DrawerDemo> with TickerProviderStateMixin {
                   child: Semantics(
                     label: 'Switch to Account C',
                     child: const CircleAvatar(
-                      backgroundImage: AssetImage(
-                        _kAsset2,
-                        package: _kGalleryAssetsPackage,
-                      ),
+                      backgroundImage: AssetImage(_kAsset2, package: _kGalleryAssetsPackage),
                     ),
                   ),
                 ),
@@ -168,13 +152,14 @@ class _DrawerDemoState extends State<DrawerDemo> with TickerProviderStateMixin {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: _drawerContents.map<Widget>((String id) {
-                              return ListTile(
-                                leading: CircleAvatar(child: Text(id)),
-                                title: Text('Drawer item $id'),
-                                onTap: _showNotImplementedMessage,
-                              );
-                            }).toList(),
+                            children:
+                                _drawerContents.map<Widget>((String id) {
+                                  return ListTile(
+                                    leading: CircleAvatar(child: Text(id)),
+                                    title: Text('Drawer item $id'),
+                                    onTap: _showNotImplementedMessage,
+                                  );
+                                }).toList(),
                           ),
                         ),
                         // The drawer's "details" view.
@@ -227,16 +212,14 @@ class _DrawerDemoState extends State<DrawerDemo> with TickerProviderStateMixin {
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                      image: AssetImage(
-                        _kAsset0,
-                        package: _kGalleryAssetsPackage,
-                      ),
+                      image: AssetImage(_kAsset0, package: _kGalleryAssetsPackage),
                     ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: Text('Tap here to open the drawer',
+                  child: Text(
+                    'Tap here to open the drawer',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),

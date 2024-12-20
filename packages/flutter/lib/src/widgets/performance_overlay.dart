@@ -30,26 +30,23 @@ class PerformanceOverlay extends LeafRenderObjectWidget {
   /// Create a performance overlay that only displays specific statistics. The
   /// mask is created by shifting 1 by the index of the specific
   /// [PerformanceOverlayOption] to enable.
-  const PerformanceOverlay({
-    super.key,
-    this.optionsMask = 0,
-  });
+  const PerformanceOverlay({super.key, this.optionsMask = 0});
 
   /// Create a performance overlay that displays all available statistics.
-  PerformanceOverlay.allEnabled({ super.key }) : optionsMask =
-        1 << PerformanceOverlayOption.displayRasterizerStatistics.index |
-        1 << PerformanceOverlayOption.visualizeRasterizerStatistics.index |
-        1 << PerformanceOverlayOption.displayEngineStatistics.index |
-        1 << PerformanceOverlayOption.visualizeEngineStatistics.index;
+  PerformanceOverlay.allEnabled({super.key})
+    : optionsMask =
+          1 << PerformanceOverlayOption.displayRasterizerStatistics.index |
+          1 << PerformanceOverlayOption.visualizeRasterizerStatistics.index |
+          1 << PerformanceOverlayOption.displayEngineStatistics.index |
+          1 << PerformanceOverlayOption.visualizeEngineStatistics.index;
 
   /// The mask is created by shifting 1 by the index of the specific
   /// [PerformanceOverlayOption] to enable.
   final int optionsMask;
 
   @override
-  RenderPerformanceOverlay createRenderObject(BuildContext context) => RenderPerformanceOverlay(
-    optionsMask: optionsMask,
-  );
+  RenderPerformanceOverlay createRenderObject(BuildContext context) =>
+      RenderPerformanceOverlay(optionsMask: optionsMask);
 
   @override
   void updateRenderObject(BuildContext context, RenderPerformanceOverlay renderObject) {

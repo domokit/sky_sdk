@@ -18,9 +18,7 @@ class IconButtonApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(colorSchemeSeed: const Color(0xff6750a4), useMaterial3: true),
       title: 'Icon Button Types',
-      home: const Scaffold(
-        body: ButtonTypesExample(),
-      ),
+      home: const Scaffold(body: ButtonTypesExample()),
     );
   }
 }

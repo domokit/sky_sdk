@@ -1,0 +1,75 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+_skia_root = "//flutter/third_party/skia"
+
+import("$_skia_root/gn/skia.gni")
+import("$_skia_root/modules/skunicode/skunicode.gni")
+
+declare_args() {
+  skia_use_runtime_icu = false
+  skunicode_tests_enabled = true
+}
+
+if (skia_use_icu || skia_use_client_icu || skia_use_libgrapheme) {
+  config("public_config") {
+    include_dirs = [ "$_skia_root/modules/skunicode/include" ]
+    defines = [ "SK_UNICODE_AVAILABLE" ]
+    if (skia_use_icu) {
+      defines += [ "SK_UNICODE_ICU_IMPLEMENTATION" ]
+    }
+    if (skia_use_client_icu) {
+      defines += [ "SK_UNICODE_CLIENT_IMPLEMENTATION" ]
+    }
+    if (skia_use_libgrapheme) {
+      defines += [ "SK_UNICODE_LIBGRAPHEME_IMPLEMENTATION" ]
+    }
+  }
+
+  component("skunicode") {
+    # Opted out of check_includes, due to (logically) being part of skia.
+    check_includes = false
+    public_configs = [ ":public_config" ]
+    public = skia_unicode_public
+    deps = [ "../..:skia" ]
+    defines = [ "SKUNICODE_IMPLEMENTATION=1" ]
+    sources = skia_unicode_sources + skia_unicode_icu_bidi_sources
+    defines += [ "SK_UNICODE_AVAILABLE" ]
+    configs += [ "../../:skia_private" ]
+
+    if (skia_use_icu) {
+      sources += skia_unicode_icu_sources
+      sources += skia_unicode_bidi_full_sources
+      defines += [ "SK_UNICODE_ICU_IMPLEMENTATION" ]
+
+      # only available for Android at the moment
+      if (skia_use_runtime_icu && (is_android || is_linux)) {
+        sources += skia_unicode_runtime_icu_sources
+        deps += [ "//flutter/third_party/icu:headers" ]
+      } else {
+        sources += skia_unicode_builtin_icu_sources
+        deps += [ "//flutter/third_party/icu" ]
+      }
+      configs += [ "$_skia_root/third_party/icu/config:no_cxx" ]
+    }
+    if (skia_use_client_icu || skia_use_libgrapheme) {
+      sources += skia_unicode_bidi_subset_sources
+      deps += [ skia_icu_bidi_third_party_dir ]
+    }
+    if (skia_use_client_icu) {
+      sources += skia_unicode_client_icu_sources
+      defines += [ "SK_UNICODE_CLIENT_IMPLEMENTATION" ]
+    }
+    if (skia_use_libgrapheme) {
+      sources += skia_unicode_libgrapheme_sources
+      defines += [ "SK_UNICODE_LIBGRAPHEME_IMPLEMENTATION" ]
+      deps += [ skia_libgrapheme_third_party_dir ]
+    }
+  }
+} else {
+  group("skunicode") {
+  }
+  group("tests") {
+  }
+}

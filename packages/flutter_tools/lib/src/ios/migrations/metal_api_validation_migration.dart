@@ -8,25 +8,22 @@ import '../../xcode_project.dart';
 
 /// Remove Metal API validation setting that slows down applications.
 class MetalAPIValidationMigrator extends ProjectMigrator {
-  MetalAPIValidationMigrator.ios(
-    IosProject project,
-    super.logger,
-  )   : _xcodeProjectScheme = project.xcodeProjectSchemeFile();
+  MetalAPIValidationMigrator.ios(IosProject project, super.logger)
+    : _xcodeProjectScheme = project.xcodeProjectSchemeFile();
 
-  MetalAPIValidationMigrator.macos(
-    MacOSProject project,
-    super.logger,
-  )   : _xcodeProjectScheme = project.xcodeProjectSchemeFile();
+  MetalAPIValidationMigrator.macos(MacOSProject project, super.logger)
+    : _xcodeProjectScheme = project.xcodeProjectSchemeFile();
 
   final File _xcodeProjectScheme;
-
 
   @override
   Future<void> migrate() async {
     if (_xcodeProjectScheme.existsSync()) {
       processFileLines(_xcodeProjectScheme);
     } else {
-      logger.printTrace('default xcscheme file not found. Skipping Metal API validation migration.');
+      logger.printTrace(
+        'default xcscheme file not found. Skipping Metal API validation migration.',
+      );
     }
   }
 
@@ -43,7 +40,12 @@ class MetalAPIValidationMigrator extends ProjectMigrator {
     const String kValidationString = 'enableGPUValidationMode = "1"';
     return fileContents.replaceFirstMapped(kDebugServiceExtension, (Match match) {
       final String group = match.group(0)!;
-      final int leadingCount = group.split('debugServiceExtension')[0].codeUnits.where((int codeUnit) => codeUnit == 32).length;
+      final int leadingCount =
+          group
+              .split('debugServiceExtension')[0]
+              .codeUnits
+              .where((int codeUnit) => codeUnit == 32)
+              .length;
       return '$group${' ' * leadingCount}$kValidationString\n';
     });
   }

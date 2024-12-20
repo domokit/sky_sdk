@@ -12,22 +12,23 @@ import '../utils.dart';
 import 'analyze.dart';
 
 /// Verify that no RenderBox subclasses call compute* instead of get* for
-/// computing the intrinsic dimensions. The full list of RenderBox intrinsic
-/// methods checked by this rule is listed in [candidates].
+/// computing the intrinsic dimensions. The [candidates] variable contains the
+/// full list of RenderBox intrinsic method invocations checked by this rule.
 final AnalyzeRule renderBoxIntrinsicCalculation = _RenderBoxIntrinsicCalculationRule();
 
-const Map<String, String> candidates = <String, String> {
+const Map<String, String> candidates = <String, String>{
   'computeDryBaseline': 'getDryBaseline',
   'computeDryLayout': 'getDryLayout',
   'computeDistanceToActualBaseline': 'getDistanceToBaseline, or getDistanceToActualBaseline',
   'computeMaxIntrinsicHeight': 'getMaxIntrinsicHeight',
   'computeMinIntrinsicHeight': 'getMinIntrinsicHeight',
   'computeMaxIntrinsicWidth': 'getMaxIntrinsicWidth',
-  'computeMinIntrinsicWidth': 'getMinIntrinsicWidth'
+  'computeMinIntrinsicWidth': 'getMinIntrinsicWidth',
 };
 
 class _RenderBoxIntrinsicCalculationRule implements AnalyzeRule {
-  final Map<ResolvedUnitResult, List<(AstNode, String)>> _errors = <ResolvedUnitResult, List<(AstNode, String)>>{};
+  final Map<ResolvedUnitResult, List<(AstNode, String)>> _errors =
+      <ResolvedUnitResult, List<(AstNode, String)>>{};
 
   @override
   void applyTo(ResolvedUnitResult unit) {
@@ -60,30 +61,36 @@ class _RenderBoxIntrinsicCalculationRule implements AnalyzeRule {
 class _RenderBoxSubclassVisitor extends RecursiveAstVisitor<void> {
   final List<(AstNode, String)> violationNodes = <(AstNode, String)>[];
 
-  static final Map<InterfaceElement, bool> _isRenderBoxClassElementCache = <InterfaceElement, bool>{};
+  static final Map<InterfaceElement, bool> _isRenderBoxClassElementCache =
+      <InterfaceElement, bool>{};
   // The cached version, call this method instead of _checkIfImplementsRenderBox.
   static bool _implementsRenderBox(InterfaceElement interfaceElement) {
     // Framework naming convention: a RenderObject subclass names have "Render" in its name.
     if (!interfaceElement.name.contains('Render')) {
       return false;
     }
-    return interfaceElement.name == 'RenderBox'
-        || _isRenderBoxClassElementCache.putIfAbsent(interfaceElement, () => _checkIfImplementsRenderBox(interfaceElement));
+    return interfaceElement.name == 'RenderBox' ||
+        _isRenderBoxClassElementCache.putIfAbsent(
+          interfaceElement,
+          () => _checkIfImplementsRenderBox(interfaceElement),
+        );
   }
 
   static bool _checkIfImplementsRenderBox(InterfaceElement element) {
-    return element.allSupertypes.any((InterfaceType interface) => _implementsRenderBox(interface.element));
+    return element.allSupertypes.any(
+      (InterfaceType interface) => _implementsRenderBox(interface.element),
+    );
   }
 
   // We don't care about directives, comments, or asserts.
   @override
-  void visitImportDirective(ImportDirective node) { }
+  void visitImportDirective(ImportDirective node) {}
   @override
-  void visitExportDirective(ExportDirective node) { }
+  void visitExportDirective(ExportDirective node) {}
   @override
-  void visitComment(Comment node) { }
+  void visitComment(Comment node) {}
   @override
-  void visitAssertStatement(AssertStatement node) { }
+  void visitAssertStatement(AssertStatement node) {}
 
   @override
   void visitClassDeclaration(ClassDeclaration node) {
@@ -101,15 +108,16 @@ class _RenderBoxSubclassVisitor extends RecursiveAstVisitor<void> {
       return;
     }
     final bool isCallingSuperImplementation = switch (node.parent) {
-      PropertyAccess(target: SuperExpression())  ||
-      MethodInvocation(target: SuperExpression()) => true,
+      PropertyAccess(target: SuperExpression()) || MethodInvocation(target: SuperExpression()) =>
+        true,
       _ => false,
     };
     if (isCallingSuperImplementation) {
       return;
     }
     final Element? declaredInClassElement = node.staticElement?.declaration?.enclosingElement;
-    if (declaredInClassElement is InterfaceElement && _implementsRenderBox(declaredInClassElement)) {
+    if (declaredInClassElement is InterfaceElement &&
+        _implementsRenderBox(declaredInClassElement)) {
       violationNodes.add((node, correctMethodName));
     }
   }

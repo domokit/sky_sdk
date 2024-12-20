@@ -1,0 +1,5 @@
+# The following files define an Application Binary Interface (ABI) that must maintain
+# both forward and backward compatibility. Changes should be heavily
+# scrutinized as mistakes are irreversible.
+/shell/platform/embedder/embedder.h @cbracken @chinmaygarde
+/shell/platform/embedder/tests/embedder_frozen.h @cbracken @chinmaygarde @loic-sharma

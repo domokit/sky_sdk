@@ -1,0 +1,94 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/dart.gni")
+
+config("config") {
+  include_dirs = [
+    "//flutter/third_party",
+    "//flutter",
+  ]
+}
+
+source_set("tonic") {
+  sources = [
+    "common/build_config.h",
+    "common/log.cc",
+    "common/log.h",
+    "common/macros.h",
+    "converter/dart_converter.cc",
+    "converter/dart_converter.h",
+    "dart_args.h",
+    "dart_binding_macros.h",
+    "dart_class_library.cc",
+    "dart_class_library.h",
+    "dart_class_provider.cc",
+    "dart_class_provider.h",
+    "dart_library_natives.cc",
+    "dart_library_natives.h",
+    "dart_list.cc",
+    "dart_list.h",
+    "dart_message_handler.cc",
+    "dart_message_handler.h",
+    "dart_microtask_queue.cc",
+    "dart_microtask_queue.h",
+    "dart_persistent_value.cc",
+    "dart_persistent_value.h",
+    "dart_state.cc",
+    "dart_state.h",
+    "dart_weak_persistent_value.cc",
+    "dart_weak_persistent_value.h",
+    "dart_wrappable.cc",
+    "dart_wrappable.h",
+    "dart_wrapper_info.h",
+    "file_loader/file_loader.cc",
+    "file_loader/file_loader.h",
+    "logging/dart_error.cc",
+    "logging/dart_error.h",
+    "logging/dart_invoke.cc",
+    "logging/dart_invoke.h",
+    "scopes/dart_api_scope.h",
+    "scopes/dart_isolate_scope.cc",
+    "scopes/dart_isolate_scope.h",
+    "typed_data/dart_byte_data.cc",
+    "typed_data/dart_byte_data.h",
+
+    # Deprecated.
+    "filesystem/filesystem/eintr_wrapper.h",
+    "filesystem/filesystem/file.cc",
+    "filesystem/filesystem/file.h",
+    "filesystem/filesystem/path.h",
+    "filesystem/filesystem/portable_unistd.h",
+    "parsers/packages_map.cc",
+    "parsers/packages_map.h",
+    "typed_data/float32_list.h",
+    "typed_data/float64_list.h",
+    "typed_data/int32_list.h",
+    "typed_data/typed_list.cc",
+    "typed_data/typed_list.h",
+    "typed_data/uint16_list.h",
+    "typed_data/uint8_list.h",
+  ]
+
+  if (is_win) {
+    sources += [
+      "file_loader/file_loader_win.cc",
+      "filesystem/filesystem/path_win.cc",
+    ]
+  } else if (is_fuchsia) {
+    sources += [
+      "file_loader/file_loader_fuchsia.cc",
+      "filesystem/filesystem/path_posix.cc",
+    ]
+  } else {
+    sources += [
+      "file_loader/file_loader_posix.cc",
+      "filesystem/filesystem/path_posix.cc",
+    ]
+  }
+
+  public_deps = [ "$dart_src/runtime:dart_api" ]
+
+  public_configs = [ ":config" ]
+}

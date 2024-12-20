@@ -84,8 +84,12 @@ class FakeServerSocket extends Fake implements ServerSocket {
     scheduleMicrotask(() {
       controller.close();
     });
-    return controller.stream.listen(onData,
-        onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+    return controller.stream.listen(
+      onData,
+      onError: onError,
+      onDone: onDone,
+      cancelOnError: cancelOnError,
+    );
   }
 
   @override

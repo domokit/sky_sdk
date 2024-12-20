@@ -10,9 +10,7 @@ const Offset _kOffset = Offset(0.0, -100.0);
 
 void main() {
   testWidgets('Appbar Material 3 test', (WidgetTester tester) async {
-    await tester.pumpWidget(
-     const example.AppBarApp()
-    );
+    await tester.pumpWidget(const example.AppBarApp());
 
     expect(find.widgetWithText(AppBar, 'AppBar Demo'), findsOneWidget);
     Material appbarMaterial = _getAppBarMaterial(tester);
@@ -47,9 +45,6 @@ void main() {
 
 Material _getAppBarMaterial(WidgetTester tester) {
   return tester.widget<Material>(
-    find.descendant(
-      of: find.byType(AppBar),
-      matching: find.byType(Material),
-    ),
+    find.descendant(of: find.byType(AppBar), matching: find.byType(Material)),
   );
 }

@@ -76,22 +76,27 @@ Future<Uint8List> consolidateHttpClientResponseBytes(
 
   int bytesReceived = 0;
   late final StreamSubscription<List<int>> subscription;
-  subscription = response.listen((List<int> chunk) {
-    sink.add(chunk);
-    if (onBytesReceived != null) {
-      bytesReceived += chunk.length;
-      try {
-        onBytesReceived(bytesReceived, expectedContentLength);
-      } catch (error, stackTrace) {
-        completer.completeError(error, stackTrace);
-        subscription.cancel();
-        return;
+  subscription = response.listen(
+    (List<int> chunk) {
+      sink.add(chunk);
+      if (onBytesReceived != null) {
+        bytesReceived += chunk.length;
+        try {
+          onBytesReceived(bytesReceived, expectedContentLength);
+        } catch (error, stackTrace) {
+          completer.completeError(error, stackTrace);
+          subscription.cancel();
+          return;
+        }
       }
-    }
-  }, onDone: () {
-    sink.close();
-    completer.complete(output.bytes);
-  }, onError: completer.completeError, cancelOnError: true);
+    },
+    onDone: () {
+      sink.close();
+      completer.complete(output.bytes);
+    },
+    onError: completer.completeError,
+    cancelOnError: true,
+  );
 
   return completer.future;
 }

@@ -7,9 +7,7 @@ import 'package:flutter/material.dart';
 import '../../../gallery_localizations.dart';
 
 class Category {
-  const Category({
-    required this.name,
-  });
+  const Category({required this.name});
 
   // A function taking a BuildContext as input and
   // returns the internationalized name of the category.
@@ -21,13 +19,11 @@ Category categoryAll = Category(
 );
 
 Category categoryAccessories = Category(
-  name: (BuildContext context) =>
-      GalleryLocalizations.of(context)!.shrineCategoryNameAccessories,
+  name: (BuildContext context) => GalleryLocalizations.of(context)!.shrineCategoryNameAccessories,
 );
 
 Category categoryClothing = Category(
-  name: (BuildContext context) =>
-      GalleryLocalizations.of(context)!.shrineCategoryNameClothing,
+  name: (BuildContext context) => GalleryLocalizations.of(context)!.shrineCategoryNameClothing,
 );
 
 Category categoryHome = Category(

@@ -10,9 +10,7 @@ void main() {
   testWidgets('Can open popup menu', (WidgetTester tester) async {
     const String menuItem = 'Item 1';
 
-    await tester.pumpWidget(
-      const example.PopupMenuApp(),
-    );
+    await tester.pumpWidget(const example.PopupMenuApp());
 
     expect(find.text(menuItem), findsNothing);
 

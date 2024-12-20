@@ -39,7 +39,7 @@ class IconButtonThemeData with Diagnosticable {
   /// Creates a [IconButtonThemeData].
   ///
   /// The [style] may be null.
-  const IconButtonThemeData({ this.style });
+  const IconButtonThemeData({this.style});
 
   /// Overrides for [IconButton]'s default style if [ThemeData.useMaterial3]
   /// is set to true.
@@ -55,9 +55,7 @@ class IconButtonThemeData with Diagnosticable {
     if (identical(a, b)) {
       return a;
     }
-    return IconButtonThemeData(
-      style: ButtonStyle.lerp(a?.style, b?.style, t),
-    );
+    return IconButtonThemeData(style: ButtonStyle.lerp(a?.style, b?.style, t));
   }
 
   @override
@@ -92,11 +90,7 @@ class IconButtonThemeData with Diagnosticable {
 ///    [ButtonStyle] for [IconButton]s below the overall [Theme].
 class IconButtonTheme extends InheritedTheme {
   /// Create a [IconButtonTheme].
-  const IconButtonTheme({
-    super.key,
-    required this.data,
-    required super.child,
-  });
+  const IconButtonTheme({super.key, required this.data, required super.child});
 
   /// The configuration of this theme.
   final IconButtonThemeData data;
@@ -112,7 +106,8 @@ class IconButtonTheme extends InheritedTheme {
   /// IconButtonThemeData theme = IconButtonTheme.of(context);
   /// ```
   static IconButtonThemeData of(BuildContext context) {
-    final IconButtonTheme? buttonTheme = context.dependOnInheritedWidgetOfExactType<IconButtonTheme>();
+    final IconButtonTheme? buttonTheme =
+        context.dependOnInheritedWidgetOfExactType<IconButtonTheme>();
     return buttonTheme?.data ?? Theme.of(context).iconButtonTheme;
   }
 

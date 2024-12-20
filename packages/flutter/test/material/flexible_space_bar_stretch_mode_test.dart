@@ -27,11 +27,7 @@ void main() {
                 expandedHeight: expandedAppbarHeight,
                 pinned: true,
                 stretch: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Container(
-                    key: finderKey,
-                  ),
-                ),
+                flexibleSpace: FlexibleSpaceBar(background: Container(key: finderKey)),
               ),
               SliverToBoxAdapter(child: Container(height: 10000.0)),
             ],
@@ -69,7 +65,7 @@ void main() {
                     background: Row(
                       children: <Widget>[
                         Expanded(child: Container(color: Colors.red)),
-                        Expanded(child:Container(color: Colors.blue)),
+                        Expanded(child: Container(color: Colors.blue)),
                       ],
                     ),
                   ),
@@ -104,10 +100,7 @@ void main() {
                 stretch: true,
                 flexibleSpace: FlexibleSpaceBar(
                   stretchModes: const <StretchMode>[StretchMode.fadeTitle],
-                  title: Text(
-                    'Title',
-                    key: finderKey,
-                  ),
+                  title: Text('Title', key: finderKey),
                 ),
               ),
               SliverToBoxAdapter(child: Container(height: 10000.0)),
@@ -118,23 +111,19 @@ void main() {
     );
     await slowDrag(tester, blockKey, const Offset(0.0, 10.0));
     Opacity opacityWidget = tester.widget<Opacity>(
-      find.ancestor(
-        of: find.text('Title'),
-        matching: find.byType(Opacity),
-      ).first,
+      find.ancestor(of: find.text('Title'), matching: find.byType(Opacity)).first,
     );
     expect(opacityWidget.opacity.round(), equals(1));
     await slowDrag(tester, blockKey, const Offset(0.0, 100.0));
     opacityWidget = tester.widget<Opacity>(
-      find.ancestor(
-        of: find.text('Title'),
-        matching: find.byType(Opacity),
-      ).first,
+      find.ancestor(of: find.text('Title'), matching: find.byType(Opacity)).first,
     );
     expect(opacityWidget.opacity, equals(0.0));
   });
 
-  testWidgets('FlexibleSpaceBar stretch mode ignored for non-overscroll physics', (WidgetTester tester) async {
+  testWidgets('FlexibleSpaceBar stretch mode ignored for non-overscroll physics', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -148,9 +137,7 @@ void main() {
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
                   stretchModes: const <StretchMode>[StretchMode.blurBackground],
-                  background: Container(
-                    key: finderKey,
-                  ),
+                  background: Container(key: finderKey),
                 ),
               ),
               SliverToBoxAdapter(child: Container(height: 10000.0)),

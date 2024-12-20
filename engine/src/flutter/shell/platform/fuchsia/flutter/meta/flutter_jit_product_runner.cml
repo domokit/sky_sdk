@@ -1,0 +1,26 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file
+{
+    include: [ "common.shard.cml" ],
+    program: {
+        runner: "elf",
+        binary: "bin/app",
+        forward_stdout_to: "log",
+        forward_stderr_to: "log",
+        // Needed for JIT builds.
+        job_policy_ambient_mark_vmo_exec: "true"
+    },
+    capabilities: [
+        {
+            runner: "flutter_jit_product_runner",
+            path: "/svc/fuchsia.component.runner.ComponentRunner",
+        },
+    ],
+    expose: [
+        {
+            runner: "flutter_jit_product_runner",
+            from: "self",
+        },
+    ],
+}

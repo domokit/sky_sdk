@@ -10,10 +10,12 @@ import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
 
 void main() {
   Future<void> setAppLifeCycleState(AppLifecycleState state) async {
-    final ByteData? message =
-        const StringCodec().encodeMessage(state.toString());
-    await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .handlePlatformMessage('flutter/lifecycle', message, (_) {});
+    final ByteData? message = const StringCodec().encodeMessage(state.toString());
+    await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+      'flutter/lifecycle',
+      message,
+      (_) {},
+    );
   }
 
   testWidgets('Ticker mute control test', (WidgetTester tester) async {
@@ -104,7 +106,7 @@ void main() {
     addTearDown(() => ticker.dispose());
 
     void testFunction() {
-      ticker = Ticker((Duration _) { });
+      ticker = Ticker((Duration _) {});
     }
 
     testFunction();
@@ -205,7 +207,7 @@ void main() {
 
   test('Ticker dispatches memory events', () async {
     await expectLater(
-      await memoryEvents(() => Ticker((_) {}).dispose(), Ticker,),
+      await memoryEvents(() => Ticker((_) {}).dispose(), Ticker),
       areCreateAndDispose,
     );
   });

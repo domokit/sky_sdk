@@ -5,15 +5,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-ScrollController _controller = ScrollController(
-  initialScrollOffset: 110.0,
-);
+ScrollController _controller = ScrollController(initialScrollOffset: 110.0);
 
 class ThePositiveNumbers extends StatelessWidget {
-  const ThePositiveNumbers({
-    super.key,
-    required this.from,
-  });
+  const ThePositiveNumbers({super.key, required this.from});
   final int from;
   @override
   Widget build(BuildContext context) {
@@ -140,15 +135,19 @@ Future<void> performTest(WidgetTester tester, bool maintainState) async {
 }
 
 void main() {
-  testWidgets("ScrollPosition jumpTo() doesn't call notifyListeners twice", (WidgetTester tester) async {
+  testWidgets("ScrollPosition jumpTo() doesn't call notifyListeners twice", (
+    WidgetTester tester,
+  ) async {
     int count = 0;
-    await tester.pumpWidget(MaterialApp(
-      home: ListView.builder(
-        itemBuilder: (BuildContext context, int index) {
-          return Text('$index', textDirection: TextDirection.ltr);
-        },
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return Text('$index', textDirection: TextDirection.ltr);
+          },
+        ),
       ),
-    ));
+    );
 
     final ScrollPosition position = tester.state<ScrollableState>(find.byType(Scrollable)).position;
     position.addListener(() {
@@ -166,7 +165,11 @@ void main() {
 
   testWidgets('scroll alignment is honored by ensureVisible', (WidgetTester tester) async {
     final List<int> items = List<int>.generate(11, (int index) => index).toList();
-    final List<FocusNode> nodes = List<FocusNode>.generate(11, (int index) => FocusNode(debugLabel: 'Item ${index + 1}')).toList();
+    final List<FocusNode> nodes =
+        List<FocusNode>.generate(
+          11,
+          (int index) => FocusNode(debugLabel: 'Item ${index + 1}'),
+        ).toList();
     addTearDown(() {
       for (final FocusNode node in nodes) {
         node.dispose();
@@ -179,13 +182,14 @@ void main() {
       MaterialApp(
         home: ListView(
           controller: controller,
-          children: items.map<Widget>((int item) {
-            return Focus(
-              key: ValueKey<int>(item),
-              focusNode: nodes[item],
-              child: Container(height: 110),
-            );
-          }).toList(),
+          children:
+              items.map<Widget>((int item) {
+                return Focus(
+                  key: ValueKey<int>(item),
+                  focusNode: nodes[item],
+                  child: Container(height: 110),
+                );
+              }).toList(),
         ),
       ),
     );
@@ -237,17 +241,19 @@ void main() {
     int loadedWithDeferral = 0;
     int buildCount = 0;
     const double height = 500;
-    await tester.pumpWidget(MaterialApp(
-      home: ListView.builder(
-        itemBuilder: (BuildContext context, int index) {
-          buildCount += 1;
-          if (Scrollable.recommendDeferredLoadingForContext(context)) {
-            loadedWithDeferral += 1;
-          }
-          return const SizedBox(height: height);
-        },
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            buildCount += 1;
+            if (Scrollable.recommendDeferredLoadingForContext(context)) {
+              loadedWithDeferral += 1;
+            }
+            return const SizedBox(height: height);
+          },
+        ),
       ),
-    ));
+    );
 
     // The two visible on screen should have loaded without deferral.
     expect(buildCount, 2);

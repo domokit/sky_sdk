@@ -10,9 +10,7 @@ const Offset _kOffset = Offset(0.0, -200.0);
 
 void main() {
   testWidgets('SliverAppbar can be pinned', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.AppBarApp(),
-    );
+    await tester.pumpWidget(const example.AppBarApp());
 
     expect(find.widgetWithText(SliverAppBar, 'SliverAppBar'), findsOneWidget);
     expect(tester.getBottomLeft(find.text('SliverAppBar')).dy, 144.0);

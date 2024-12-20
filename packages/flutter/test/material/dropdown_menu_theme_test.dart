@@ -16,10 +16,9 @@ void main() {
   }
 
   Material getButtonMaterial(WidgetTester tester, String itemLabel) {
-    return tester.widget<Material>(find.descendant(
-      of: findMenuItemButton(itemLabel),
-      matching: find.byType(Material),
-    ));
+    return tester.widget<Material>(
+      find.descendant(of: findMenuItemButton(itemLabel), matching: find.byType(Material)),
+    );
   }
 
   Finder findMenuPanel() {
@@ -27,15 +26,17 @@ void main() {
   }
 
   Material getMenuMaterial(WidgetTester tester) {
-    return tester.widget<Material>(find.descendant(
-      of: findMenuPanel(),
-      matching: find.byType(Material),
-    ).first);
+    return tester.widget<Material>(
+      find.descendant(of: findMenuPanel(), matching: find.byType(Material)).first,
+    );
   }
 
   test('DropdownMenuThemeData copyWith, ==, hashCode basics', () {
     expect(const DropdownMenuThemeData(), const DropdownMenuThemeData().copyWith());
-    expect(const DropdownMenuThemeData().hashCode, const DropdownMenuThemeData().copyWith().hashCode);
+    expect(
+      const DropdownMenuThemeData().hashCode,
+      const DropdownMenuThemeData().copyWith().hashCode,
+    );
 
     const DropdownMenuThemeData custom = DropdownMenuThemeData(
       menuStyle: MenuStyle(backgroundColor: MaterialStatePropertyAll<Color>(Colors.green)),
@@ -60,10 +61,11 @@ void main() {
     final DiagnosticPropertiesBuilder builder = DiagnosticPropertiesBuilder();
     const DropdownMenuThemeData().debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-        .map((DiagnosticsNode node) => node.toString())
-        .toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>[]);
   });
@@ -84,7 +86,7 @@ void main() {
             ),
           ),
         ),
-      )
+      ),
     );
 
     final EditableText editableText = tester.widget(find.byType(EditableText));
@@ -107,7 +109,10 @@ void main() {
     expect(material.shadowColor, themeData.colorScheme.shadow);
     expect(material.surfaceTintColor, Colors.transparent);
     expect(material.elevation, 3.0);
-    expect(material.shape, const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4.0))));
+    expect(
+      material.shape,
+      const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4.0))),
+    );
 
     material = getButtonMaterial(tester, 'Item 0');
     expect(material.color, Colors.transparent);
@@ -136,8 +141,11 @@ void main() {
             RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
           ),
         ),
-        inputDecorationTheme: const InputDecorationTheme(filled: true, fillColor: Colors.lightGreen),
-      )
+        inputDecorationTheme: const InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.lightGreen,
+        ),
+      ),
     );
 
     await tester.pumpWidget(
@@ -153,8 +161,8 @@ void main() {
               ],
             ),
           ),
-        )
-      )
+        ),
+      ),
     );
 
     final EditableText editableText = tester.widget(find.byType(EditableText));
@@ -177,7 +185,10 @@ void main() {
     expect(material.shadowColor, Colors.brown);
     expect(material.surfaceTintColor, Colors.amberAccent);
     expect(material.elevation, 10.0);
-    expect(material.shape, const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))));
+    expect(
+      material.shape,
+      const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+    );
 
     material = getButtonMaterial(tester, 'Item 0');
     expect(material.color, Colors.transparent);
@@ -246,8 +257,8 @@ void main() {
               ),
             ),
           ),
-        )
-      )
+        ),
+      ),
     );
 
     final EditableText editableText = tester.widget(find.byType(EditableText));
@@ -271,7 +282,10 @@ void main() {
     expect(material.shadowColor, Colors.green);
     expect(material.surfaceTintColor, Colors.teal);
     expect(material.elevation, 15.0);
-    expect(material.shape, const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))));
+    expect(
+      material.shape,
+      const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+    );
 
     material = getButtonMaterial(tester, 'Item 0');
     expect(material.color, Colors.transparent);
@@ -280,7 +294,9 @@ void main() {
     expect(material.textStyle?.color, theme.colorScheme.onSurface);
   });
 
-  testWidgets('Widget parameters overrides DropdownMenuTheme, ThemeData and defaults', (WidgetTester tester) async {
+  testWidgets('Widget parameters overrides DropdownMenuTheme, ThemeData and defaults', (
+    WidgetTester tester,
+  ) async {
     final DropdownMenuThemeData global = DropdownMenuThemeData(
       textStyle: TextStyle(
         color: Colors.orange,
@@ -349,7 +365,10 @@ void main() {
                     RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15.0))),
                   ),
                 ),
-                inputDecorationTheme: const InputDecorationTheme(filled: true, fillColor: Colors.deepPurple),
+                inputDecorationTheme: const InputDecorationTheme(
+                  filled: true,
+                  fillColor: Colors.deepPurple,
+                ),
                 dropdownMenuEntries: const <DropdownMenuEntry<int>>[
                   DropdownMenuEntry<int>(value: 0, label: 'Item 0'),
                   DropdownMenuEntry<int>(value: 1, label: 'Item 1'),
@@ -358,8 +377,8 @@ void main() {
               ),
             ),
           ),
-        )
-      )
+        ),
+      ),
     );
 
     final EditableText editableText = tester.widget(find.byType(EditableText));
@@ -383,7 +402,10 @@ void main() {
     expect(material.shadowColor, Colors.deepOrangeAccent);
     expect(material.surfaceTintColor, Colors.lightBlue);
     expect(material.elevation, 21.0);
-    expect(material.shape, const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15.0))));
+    expect(
+      material.shape,
+      const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15.0))),
+    );
 
     material = getButtonMaterial(tester, 'Item 0');
     expect(material.color, Colors.transparent);

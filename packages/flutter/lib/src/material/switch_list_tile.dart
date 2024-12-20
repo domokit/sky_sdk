@@ -596,12 +596,9 @@ class SwitchListTile extends StatelessWidget {
 
     final ThemeData theme = Theme.of(context);
     final SwitchThemeData switchTheme = SwitchTheme.of(context);
-    final Set<MaterialState> states = <MaterialState>{
-      if (selected) MaterialState.selected,
-    };
-    final Color effectiveActiveColor = activeColor
-      ?? switchTheme.thumbColor?.resolve(states)
-      ?? theme.colorScheme.secondary;
+    final Set<MaterialState> states = <MaterialState>{if (selected) MaterialState.selected};
+    final Color effectiveActiveColor =
+        activeColor ?? switchTheme.thumbColor?.resolve(states) ?? theme.colorScheme.secondary;
     return MergeSemantics(
       child: ListTile(
         selectedColor: effectiveActiveColor,
@@ -613,7 +610,12 @@ class SwitchListTile extends StatelessWidget {
         dense: dense,
         contentPadding: contentPadding,
         enabled: onChanged != null,
-        onTap: onChanged != null ? () { onChanged!(!value); } : null,
+        onTap:
+            onChanged != null
+                ? () {
+                  onChanged!(!value);
+                }
+                : null,
         selected: selected,
         selectedTileColor: selectedTileColor,
         autofocus: autofocus,

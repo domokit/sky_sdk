@@ -13,9 +13,7 @@ class OverlayApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: OverlayExample(),
-    );
+    return const MaterialApp(home: OverlayExample());
   }
 }
 
@@ -83,10 +81,7 @@ class _OverlayExampleState extends State<OverlayExample> {
                     child: Center(
                       child: Container(
                         decoration: BoxDecoration(
-                          border: Border.all(
-                            color: borderColor,
-                            width: 4.0,
-                          ),
+                          border: Border.all(color: borderColor, width: 4.0),
                         ),
                       ),
                     ),
@@ -120,20 +115,12 @@ class _OverlayExampleState extends State<OverlayExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Overlay Sample'),
-      ),
+      appBar: AppBar(title: const Text('Overlay Sample')),
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentPageIndex,
         destinations: const <NavigationDestination>[
-          NavigationDestination(
-            icon: Icon(Icons.explore),
-            label: 'Explore',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.commute),
-            label: 'Commute',
-          ),
+          NavigationDestination(icon: Icon(Icons.explore), label: 'Explore'),
+          NavigationDestination(icon: Icon(Icons.commute), label: 'Commute'),
           NavigationDestination(
             selectedIcon: Icon(Icons.bookmark),
             icon: Icon(Icons.bookmark_border),

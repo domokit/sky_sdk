@@ -12,8 +12,7 @@ class FadeScaleTransitionDemo extends StatefulWidget {
   const FadeScaleTransitionDemo({super.key});
 
   @override
-  State<FadeScaleTransitionDemo> createState() =>
-      _FadeScaleTransitionDemoState();
+  State<FadeScaleTransitionDemo> createState() => _FadeScaleTransitionDemoState();
 }
 
 class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
@@ -29,12 +28,12 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
       reverseDuration: const Duration(milliseconds: 75),
       vsync: this,
     )..addStatusListener((AnimationStatus status) {
-        setState(() {
-          // setState needs to be called to trigger a rebuild because
-          // the 'HIDE FAB'/'SHOW FAB' button needs to be updated based
-          // the latest value of [_controller.status].
-        });
+      setState(() {
+        // setState needs to be called to trigger a rebuild because
+        // the 'HIDE FAB'/'SHOW FAB' button needs to be updated based
+        // the latest value of [_controller.status].
       });
+    });
   }
 
   @override
@@ -55,10 +54,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
   }
 
   Widget _showExampleAlertDialog() {
-    return Theme(
-      data: Theme.of(context),
-      child: _ExampleAlertDialog(),
-    );
+    return Theme(data: Theme.of(context), child: _ExampleAlertDialog());
   }
 
   @override
@@ -73,10 +69,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
             Text(localizations.demoFadeScaleTitle),
             Text(
               '(${localizations.demoFadeScaleDemoInstructions})',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleSmall!
-                  .copyWith(color: Colors.white),
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Colors.white),
             ),
           ],
         ),
@@ -84,17 +77,11 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
       floatingActionButton: AnimatedBuilder(
         animation: _controller,
         builder: (BuildContext context, Widget? child) {
-          return FadeScaleTransition(
-            animation: _controller,
-            child: child,
-          );
+          return FadeScaleTransition(animation: _controller, child: child);
         },
         child: Visibility(
           visible: !_controller.isDismissed,
-          child: FloatingActionButton(
-            onPressed: () {},
-            child: const Icon(Icons.add),
-          ),
+          child: FloatingActionButton(onPressed: () {}, child: const Icon(Icons.add)),
         ),
       ),
       bottomNavigationBar: Column(
@@ -109,8 +96,9 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
                 ElevatedButton(
                   onPressed: () {
                     showModal<void>(
-                        context: context,
-                        builder: (BuildContext context) => _showExampleAlertDialog());
+                      context: context,
+                      builder: (BuildContext context) => _showExampleAlertDialog(),
+                    );
                   },
                   child: Text(localizations.demoFadeScaleShowAlertDialogButton),
                 ),

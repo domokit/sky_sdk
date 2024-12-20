@@ -1,0 +1,64 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/impeller/tools/impeller.gni")
+import("//flutter/shell/gpu/gpu.gni")
+
+if (is_fuchsia) {
+  import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+}
+
+shell_gpu_configuration("tester_gpu_configuration") {
+  enable_software = true
+  enable_gl = true
+  enable_vulkan = true
+  enable_metal = false
+}
+
+executable("testing") {
+  output_name = "flutter_tester"
+
+  public_configs = [
+    "//flutter:config",
+    "//flutter:export_dynamic_test_symbols",
+  ]
+
+  sources = [ "tester_main.cc" ]
+  libs = []
+  if (is_win) {
+    libs += [
+      "psapi.lib",
+      "user32.lib",
+      "FontSub.lib",
+      "shlwapi.lib",
+    ]
+  }
+
+  deps = [
+    "$dart_src/runtime:libdart_jit",
+    "$dart_src/runtime/bin:dart_io_api",
+    "//flutter/assets",
+    "//flutter/common",
+    "//flutter/flow",
+    "//flutter/fml",
+    "//flutter/lib/snapshot",
+    "//flutter/shell/common",
+    "//flutter/shell/gpu:gpu_surface_software",
+    "//flutter/skia",
+    "//flutter/third_party/abseil-cpp/absl/base:no_destructor",
+    "//flutter/third_party/tonic",
+  ]
+
+  if (impeller_supports_rendering) {
+    deps += [
+      ":tester_gpu_configuration",
+      "//flutter/impeller",
+      "//flutter/third_party/swiftshader/src/Vulkan:swiftshader_libvulkan_static",
+    ]
+  }
+
+  metadata = {
+    entitlement_file_path = [ "flutter_tester" ]
+  }
+}

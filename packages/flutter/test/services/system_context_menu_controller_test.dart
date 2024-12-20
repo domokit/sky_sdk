@@ -20,13 +20,18 @@ void main() {
 
     final List<Map<String, double>> targetRects = <Map<String, double>>[];
     int hideCount = 0;
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(SystemChannels.platform, (MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (MethodCall methodCall) async {
         switch (methodCall.method) {
           case 'ContextMenu.showSystemContextMenu':
             final Map<String, dynamic> arguments = methodCall.arguments as Map<String, dynamic>;
-            final Map<String, dynamic> untypedTargetRect = arguments['targetRect'] as Map<String, dynamic>;
-            final Map<String, double> lastTargetRect = untypedTargetRect.map((String key, dynamic value) {
+            final Map<String, dynamic> untypedTargetRect =
+                arguments['targetRect'] as Map<String, dynamic>;
+            final Map<String, double> lastTargetRect = untypedTargetRect.map((
+              String key,
+              dynamic value,
+            ) {
               return MapEntry<String, double>(key, value as double);
             });
             targetRects.add(lastTargetRect);
@@ -34,10 +39,13 @@ void main() {
             hideCount += 1;
         }
         return;
-      });
+      },
+    );
     addTearDown(() {
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.platform, null);
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      );
     });
 
     final SystemContextMenuController controller = SystemContextMenuController();
@@ -100,13 +108,18 @@ void main() {
 
     final List<Map<String, double>> targetRects = <Map<String, double>>[];
     int hideCount = 0;
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(SystemChannels.platform, (MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (MethodCall methodCall) async {
         switch (methodCall.method) {
           case 'ContextMenu.showSystemContextMenu':
             final Map<String, dynamic> arguments = methodCall.arguments as Map<String, dynamic>;
-            final Map<String, dynamic> untypedTargetRect = arguments['targetRect'] as Map<String, dynamic>;
-            final Map<String, double> lastTargetRect = untypedTargetRect.map((String key, dynamic value) {
+            final Map<String, dynamic> untypedTargetRect =
+                arguments['targetRect'] as Map<String, dynamic>;
+            final Map<String, double> lastTargetRect = untypedTargetRect.map((
+              String key,
+              dynamic value,
+            ) {
               return MapEntry<String, double>(key, value as double);
             });
             targetRects.add(lastTargetRect);
@@ -114,10 +127,13 @@ void main() {
             hideCount += 1;
         }
         return;
-      });
+      },
+    );
     addTearDown(() {
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.platform, null);
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      );
     });
 
     int systemHideCount = 0;
@@ -173,14 +189,18 @@ void main() {
       controller1.dispose();
     });
     const Rect rect1 = Rect.fromLTWH(0.0, 0.0, 100.0, 100.0);
-    expect(() { controller1.show(rect1); }, isNot(throwsAssertionError));
+    expect(() {
+      controller1.show(rect1);
+    }, isNot(throwsAssertionError));
 
     final SystemContextMenuController controller2 = SystemContextMenuController();
     addTearDown(() {
       controller2.dispose();
     });
     const Rect rect2 = Rect.fromLTWH(1.0, 1.0, 200.0, 200.0);
-    expect(() { controller2.show(rect2); }, throwsAssertionError);
+    expect(() {
+      controller2.show(rect2);
+    }, throwsAssertionError);
 
     controller1.hide();
   });
@@ -195,13 +215,18 @@ void main() {
 
     final List<Map<String, double>> targetRects = <Map<String, double>>[];
     int hideCount = 0;
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(SystemChannels.platform, (MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (MethodCall methodCall) async {
         switch (methodCall.method) {
           case 'ContextMenu.showSystemContextMenu':
             final Map<String, dynamic> arguments = methodCall.arguments as Map<String, dynamic>;
-            final Map<String, dynamic> untypedTargetRect = arguments['targetRect'] as Map<String, dynamic>;
-            final Map<String, double> lastTargetRect = untypedTargetRect.map((String key, dynamic value) {
+            final Map<String, dynamic> untypedTargetRect =
+                arguments['targetRect'] as Map<String, dynamic>;
+            final Map<String, double> lastTargetRect = untypedTargetRect.map((
+              String key,
+              dynamic value,
+            ) {
               return MapEntry<String, double>(key, value as double);
             });
             targetRects.add(lastTargetRect);
@@ -209,10 +234,13 @@ void main() {
             hideCount += 1;
         }
         return;
-      });
+      },
+    );
     addTearDown(() {
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.platform, null);
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      );
     });
 
     final SystemContextMenuController controller1 = SystemContextMenuController();

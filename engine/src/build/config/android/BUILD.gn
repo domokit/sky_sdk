@@ -1,0 +1,24 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/android/config.gni")
+import("//build/config/sysroot.gni")
+
+config("sdk") {
+  if (sysroot != "") {
+    cflags = [ "--sysroot=" + sysroot ]
+    ldflags = [ "-L" + rebase_path("$android_lib", root_build_dir) ]
+  }
+}
+
+config("executable_config") {
+  cflags = [ "-fPIE" ]
+  ldflags = [ "-pie" ]
+}
+
+config("hide_all_but_jni_onload") {
+  ldflags = [ "-Wl,--version-script=" + rebase_path(
+                  "//build/android/android_only_explicit_jni_exports.lst",
+                  root_build_dir) ]
+}

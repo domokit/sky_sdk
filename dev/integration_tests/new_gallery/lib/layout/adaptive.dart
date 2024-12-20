@@ -15,8 +15,7 @@ const double maxHomeItemWidth = 1400.0;
 /// where only part of the display is available to said widgets.
 ///
 /// Used to build adaptive and responsive layouts.
-bool isDisplayDesktop(BuildContext context) =>
-    getWindowType(context) >= AdaptiveWindowType.medium;
+bool isDisplayDesktop(BuildContext context) => getWindowType(context) >= AdaptiveWindowType.medium;
 
 /// Returns boolean value whether the window is considered medium size.
 ///

@@ -26,141 +26,101 @@ void main() {
     final SemanticsHandle handle = tester.ensureSemantics();
 
     await tester.pumpWidget(
-      CupertinoApp (
-        home: Center(
-          child: CupertinoCheckbox(
-            value: false,
-            onChanged: (bool? b) { },
-          ),
-        ),
-      ),
+      CupertinoApp(home: Center(child: CupertinoCheckbox(value: false, onChanged: (bool? b) {}))),
     );
 
-    expect(tester.getSemantics(find.byType(Focus).last), matchesSemantics(
-      hasCheckedState: true,
-      hasEnabledState: true,
-      isEnabled: true,
-      hasTapAction: true,
-      hasFocusAction: true,
-      isFocusable: true,
-    ));
+    expect(
+      tester.getSemantics(find.byType(Focus).last),
+      matchesSemantics(
+        hasCheckedState: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+      ),
+    );
 
     await tester.pumpWidget(
-      CupertinoApp (
-        home: Center(
-          child: CupertinoCheckbox(
-            value: true,
-            onChanged: (bool? b) { },
-          ),
-        ),
-      ),
+      CupertinoApp(home: Center(child: CupertinoCheckbox(value: true, onChanged: (bool? b) {}))),
     );
 
-    expect(tester.getSemantics(find.byType(Focus).last), matchesSemantics(
-      hasCheckedState: true,
-      hasEnabledState: true,
-      isChecked: true,
-      isEnabled: true,
-      hasTapAction: true,
-      hasFocusAction: true,
-      isFocusable: true,
-    ));
+    expect(
+      tester.getSemantics(find.byType(Focus).last),
+      matchesSemantics(
+        hasCheckedState: true,
+        hasEnabledState: true,
+        isChecked: true,
+        isEnabled: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+      ),
+    );
 
     await tester.pumpWidget(
-      const CupertinoApp (
-        home: Center(
-          child: CupertinoCheckbox(
-            value: false,
-            onChanged: null,
-          ),
-        ),
-      ),
+      const CupertinoApp(home: Center(child: CupertinoCheckbox(value: false, onChanged: null))),
     );
 
-    expect(tester.getSemantics(find.byType(CupertinoCheckbox)), matchesSemantics(
-      hasCheckedState: true,
-      hasEnabledState: true,
-      // isFocusable is delayed by 1 frame.
-      isFocusable: true,
-      hasFocusAction: true,
-    ));
+    expect(
+      tester.getSemantics(find.byType(CupertinoCheckbox)),
+      matchesSemantics(
+        hasCheckedState: true,
+        hasEnabledState: true,
+        // isFocusable is delayed by 1 frame.
+        isFocusable: true,
+        hasFocusAction: true,
+      ),
+    );
 
     await tester.pump();
     // isFocusable should be false now after the 1 frame delay.
-    expect(tester.getSemantics(find.byType(CupertinoCheckbox)), matchesSemantics(
-      hasCheckedState: true,
-      hasEnabledState: true,
-    ));
+    expect(
+      tester.getSemantics(find.byType(CupertinoCheckbox)),
+      matchesSemantics(hasCheckedState: true, hasEnabledState: true),
+    );
 
     await tester.pumpWidget(
-      const CupertinoApp (
-        home: Center(
-          child: CupertinoCheckbox(
-            value: true,
-            onChanged: null,
-          ),
-        ),
+      const CupertinoApp(home: Center(child: CupertinoCheckbox(value: true, onChanged: null))),
+    );
+
+    expect(
+      tester.getSemantics(find.byType(CupertinoCheckbox)),
+      matchesSemantics(hasCheckedState: true, hasEnabledState: true, isChecked: true),
+    );
+
+    await tester.pumpWidget(
+      const CupertinoApp(
+        home: Center(child: CupertinoCheckbox(value: null, tristate: true, onChanged: null)),
       ),
     );
 
-    expect(tester.getSemantics(find.byType(CupertinoCheckbox)), matchesSemantics(
-      hasCheckedState: true,
-      hasEnabledState: true,
-      isChecked: true,
-    ));
+    expect(
+      tester.getSemantics(find.byType(CupertinoCheckbox)),
+      matchesSemantics(hasCheckedState: true, hasEnabledState: true, isCheckStateMixed: true),
+    );
 
     await tester.pumpWidget(
-      const CupertinoApp (
-        home: Center(
-          child: CupertinoCheckbox(
-            value: null,
-            tristate: true,
-            onChanged: null,
-          ),
-        ),
+      const CupertinoApp(
+        home: Center(child: CupertinoCheckbox(value: true, tristate: true, onChanged: null)),
       ),
     );
 
-    expect(tester.getSemantics(find.byType(CupertinoCheckbox)), matchesSemantics(
-      hasCheckedState: true,
-      hasEnabledState: true,
-      isCheckStateMixed: true,
-    ));
+    expect(
+      tester.getSemantics(find.byType(CupertinoCheckbox)),
+      matchesSemantics(hasCheckedState: true, hasEnabledState: true, isChecked: true),
+    );
 
     await tester.pumpWidget(
-      const CupertinoApp (
-        home: Center(
-          child: CupertinoCheckbox(
-            value: true,
-            tristate: true,
-            onChanged: null,
-          ),
-        ),
+      const CupertinoApp(
+        home: Center(child: CupertinoCheckbox(value: false, tristate: true, onChanged: null)),
       ),
     );
 
-    expect(tester.getSemantics(find.byType(CupertinoCheckbox)), matchesSemantics(
-      hasCheckedState: true,
-      hasEnabledState: true,
-      isChecked: true,
-    ));
-
-    await tester.pumpWidget(
-      const CupertinoApp (
-        home: Center(
-          child: CupertinoCheckbox(
-            value: false,
-            tristate: true,
-            onChanged: null,
-          ),
-        ),
-      ),
+    expect(
+      tester.getSemantics(find.byType(CupertinoCheckbox)),
+      matchesSemantics(hasCheckedState: true, hasEnabledState: true),
     );
-
-    expect(tester.getSemantics(find.byType(CupertinoCheckbox)), matchesSemantics(
-      hasCheckedState: true,
-      hasEnabledState: true,
-    ));
 
     handle.dispose();
   });
@@ -173,24 +133,24 @@ void main() {
         home: Semantics(
           label: 'foo',
           textDirection: TextDirection.ltr,
-          child: CupertinoCheckbox(
-            value: false,
-            onChanged: (bool? b) { },
-          ),
+          child: CupertinoCheckbox(value: false, onChanged: (bool? b) {}),
         ),
       ),
     );
 
-    expect(tester.getSemantics(find.byType(Focus).last), matchesSemantics(
-      label: 'foo',
-      textDirection: TextDirection.ltr,
-      hasCheckedState: true,
-      hasEnabledState: true,
-      isEnabled: true,
-      hasTapAction: true,
-      hasFocusAction: true,
-      isFocusable: true,
-    ));
+    expect(
+      tester.getSemantics(find.byType(Focus).last),
+      matchesSemantics(
+        label: 'foo',
+        textDirection: TextDirection.ltr,
+        hasCheckedState: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+      ),
+    );
     handle.dispose();
   });
 
@@ -242,65 +202,62 @@ void main() {
     final SemanticsTester semantics = SemanticsTester(tester);
     await tester.pumpWidget(
       CupertinoApp(
-        home: CupertinoCheckbox(
-          tristate: true,
-          value: null,
-          onChanged: (bool? newValue) { },
-        ),
+        home: CupertinoCheckbox(tristate: true, value: null, onChanged: (bool? newValue) {}),
       ),
     );
 
-    expect(semantics.nodesWith(
-      flags: <SemanticsFlag>[
-        SemanticsFlag.hasCheckedState,
-        SemanticsFlag.hasEnabledState,
-        SemanticsFlag.isEnabled,
-        SemanticsFlag.isFocusable,
-        SemanticsFlag.isCheckStateMixed,
-      ],
-      actions: <SemanticsAction>[SemanticsAction.focus, SemanticsAction.tap],
-    ), hasLength(1));
+    expect(
+      semantics.nodesWith(
+        flags: <SemanticsFlag>[
+          SemanticsFlag.hasCheckedState,
+          SemanticsFlag.hasEnabledState,
+          SemanticsFlag.isEnabled,
+          SemanticsFlag.isFocusable,
+          SemanticsFlag.isCheckStateMixed,
+        ],
+        actions: <SemanticsAction>[SemanticsAction.focus, SemanticsAction.tap],
+      ),
+      hasLength(1),
+    );
 
     await tester.pumpWidget(
       CupertinoApp(
-        home: CupertinoCheckbox(
-          tristate: true,
-          value: true,
-          onChanged: (bool? newValue) { },
-        ),
+        home: CupertinoCheckbox(tristate: true, value: true, onChanged: (bool? newValue) {}),
       ),
     );
 
-    expect(semantics.nodesWith(
-      flags: <SemanticsFlag>[
-        SemanticsFlag.hasCheckedState,
-        SemanticsFlag.hasEnabledState,
-        SemanticsFlag.isEnabled,
-        SemanticsFlag.isChecked,
-        SemanticsFlag.isFocusable,
-      ],
-      actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-    ), hasLength(1));
+    expect(
+      semantics.nodesWith(
+        flags: <SemanticsFlag>[
+          SemanticsFlag.hasCheckedState,
+          SemanticsFlag.hasEnabledState,
+          SemanticsFlag.isEnabled,
+          SemanticsFlag.isChecked,
+          SemanticsFlag.isFocusable,
+        ],
+        actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
+      ),
+      hasLength(1),
+    );
 
     await tester.pumpWidget(
       CupertinoApp(
-        home: CupertinoCheckbox(
-          tristate: true,
-          value: false,
-          onChanged: (bool? newValue) { },
-        ),
+        home: CupertinoCheckbox(tristate: true, value: false, onChanged: (bool? newValue) {}),
       ),
     );
 
-    expect(semantics.nodesWith(
-      flags: <SemanticsFlag>[
-        SemanticsFlag.hasCheckedState,
-        SemanticsFlag.hasEnabledState,
-        SemanticsFlag.isEnabled,
-        SemanticsFlag.isFocusable,
-      ],
-      actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-    ), hasLength(1));
+    expect(
+      semantics.nodesWith(
+        flags: <SemanticsFlag>[
+          SemanticsFlag.hasCheckedState,
+          SemanticsFlag.hasEnabledState,
+          SemanticsFlag.isEnabled,
+          SemanticsFlag.isFocusable,
+        ],
+        actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
+      ),
+      hasLength(1),
+    );
 
     semantics.dispose();
   });
@@ -308,9 +265,12 @@ void main() {
   testWidgets('has semantic events', (WidgetTester tester) async {
     dynamic semanticEvent;
     bool? checkboxValue = false;
-    tester.binding.defaultBinaryMessenger.setMockDecodedMessageHandler<dynamic>(SystemChannels.accessibility, (dynamic message) async {
-      semanticEvent = message;
-    });
+    tester.binding.defaultBinaryMessenger.setMockDecodedMessageHandler<dynamic>(
+      SystemChannels.accessibility,
+      (dynamic message) async {
+        semanticEvent = message;
+      },
+    );
     final SemanticsTester semanticsTester = SemanticsTester(tester);
 
     await tester.pumpWidget(
@@ -341,7 +301,10 @@ void main() {
     });
     expect(object.debugSemantics!.getSemanticsData().hasAction(SemanticsAction.tap), true);
 
-    tester.binding.defaultBinaryMessenger.setMockDecodedMessageHandler<dynamic>(SystemChannels.accessibility, null);
+    tester.binding.defaultBinaryMessenger.setMockDecodedMessageHandler<dynamic>(
+      SystemChannels.accessibility,
+      null,
+    );
     semanticsTester.dispose();
   });
 
@@ -349,25 +312,28 @@ void main() {
     final SemanticsHandle handle = tester.ensureSemantics();
 
     await tester.pumpWidget(
-      CupertinoApp (
+      CupertinoApp(
         home: Center(
           child: CupertinoCheckbox(
             value: false,
-            onChanged: (bool? b) { },
+            onChanged: (bool? b) {},
             semanticLabel: 'checkbox',
           ),
         ),
       ),
     );
-    expect(tester.getSemantics(find.byType(Focus).last), matchesSemantics(
-      hasCheckedState: true,
-      hasEnabledState: true,
-      isEnabled: true,
-      hasTapAction: true,
-      hasFocusAction: true,
-      isFocusable: true,
-      label: 'checkbox'
-    ));
+    expect(
+      tester.getSemantics(find.byType(Focus).last),
+      matchesSemantics(
+        hasCheckedState: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+        label: 'checkbox',
+      ),
+    );
 
     // If wrapped with semantics, both the parent semantic label and the
     // checkbox's semantic label are used in annotation.
@@ -378,22 +344,25 @@ void main() {
           textDirection: TextDirection.ltr,
           child: CupertinoCheckbox(
             value: false,
-            onChanged: (bool? b) { },
+            onChanged: (bool? b) {},
             semanticLabel: 'checkbox',
           ),
         ),
       ),
     );
-    expect(tester.getSemantics(find.byType(Focus).last), matchesSemantics(
-      label: 'foo\ncheckbox',
-      textDirection: TextDirection.ltr,
-      hasCheckedState: true,
-      hasEnabledState: true,
-      isEnabled: true,
-      hasTapAction: true,
-      hasFocusAction: true,
-      isFocusable: true,
-    ));
+    expect(
+      tester.getSemantics(find.byType(Focus).last),
+      matchesSemantics(
+        label: 'foo\ncheckbox',
+        textDirection: TextDirection.ltr,
+        hasCheckedState: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+      ),
+    );
     handle.dispose();
   });
 
@@ -403,20 +372,26 @@ void main() {
     Widget buildApp({bool enabled = true}) {
       return CupertinoApp(
         home: Center(
-          child: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-            return CupertinoCheckbox(
-              value: value,
-              onChanged: enabled ? (bool? newValue) {
-                setState(() {
-                  value = newValue;
-                });
-              } : null,
-              autofocus: true,
-            );
-          }),
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return CupertinoCheckbox(
+                value: value,
+                onChanged:
+                    enabled
+                        ? (bool? newValue) {
+                          setState(() {
+                            value = newValue;
+                          });
+                        }
+                        : null,
+                autofocus: true,
+              );
+            },
+          ),
         ),
       );
     }
+
     await tester.pumpWidget(buildApp());
     await tester.pumpAndSettle();
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
@@ -435,25 +410,25 @@ void main() {
   });
 
   testWidgets('Checkbox respects shape and side', (WidgetTester tester) async {
-    const RoundedRectangleBorder roundedRectangleBorder =
-        RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5)));
-
-    const BorderSide side = BorderSide(
-      width: 4,
-      color: Color(0xfff44336),
+    const RoundedRectangleBorder roundedRectangleBorder = RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(5)),
     );
+
+    const BorderSide side = BorderSide(width: 4, color: Color(0xfff44336));
 
     Widget buildApp() {
       return CupertinoApp(
         home: Center(
-          child: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-            return CupertinoCheckbox(
-              value: false,
-              onChanged: (bool? newValue) {},
-              shape: roundedRectangleBorder,
-              side: side,
-            );
-          }),
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return CupertinoCheckbox(
+                value: false,
+                onChanged: (bool? newValue) {},
+                shape: roundedRectangleBorder,
+                side: side,
+              );
+            },
+          ),
         ),
       );
     }
@@ -461,21 +436,23 @@ void main() {
     await tester.pumpWidget(buildApp());
     await tester.pumpAndSettle();
 
-    expect(tester.widget<CupertinoCheckbox>(find.byType(CupertinoCheckbox)).shape, roundedRectangleBorder);
+    expect(
+      tester.widget<CupertinoCheckbox>(find.byType(CupertinoCheckbox)).shape,
+      roundedRectangleBorder,
+    );
     expect(tester.widget<CupertinoCheckbox>(find.byType(CupertinoCheckbox)).side, side);
     expect(
       find.byType(CupertinoCheckbox),
-      paints
-        ..drrect(
-          color: const Color(0xfff44336),
-          outer: RRect.fromLTRBR(15.0, 15.0, 29.0, 29.0, const Radius.circular(5)),
-          inner: RRect.fromLTRBR(19.0, 19.0, 25.0, 25.0, const Radius.circular(1)),
-        ),
+      paints..drrect(
+        color: const Color(0xfff44336),
+        outer: RRect.fromLTRBR(15.0, 15.0, 29.0, 29.0, const Radius.circular(5)),
+        inner: RRect.fromLTRBR(19.0, 19.0, 25.0, 25.0, const Radius.circular(1)),
+      ),
     );
   });
 
   testWidgets('Checkbox configures mouse cursor', (WidgetTester tester) async {
-    Widget buildApp({ MouseCursor? mouseCursor, bool enabled = true, bool value = true }) {
+    Widget buildApp({MouseCursor? mouseCursor, bool enabled = true, bool value = true}) {
       return CupertinoApp(
         home: Center(
           child: CupertinoCheckbox(
@@ -486,8 +463,12 @@ void main() {
         ),
       );
     }
+
     await tester.pumpWidget(buildApp(value: false));
-    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse, pointer: 1);
+    final TestGesture gesture = await tester.createGesture(
+      kind: PointerDeviceKind.mouse,
+      pointer: 1,
+    );
     addTearDown(gesture.removePointer);
     await gesture.addPointer(location: tester.getCenter(find.byType(CupertinoCheckbox)));
     await tester.pump();
@@ -499,26 +480,34 @@ void main() {
 
     // Test disabled checkbox.
     await tester.pumpWidget(buildApp(enabled: false, value: false));
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.basic);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.basic,
+    );
 
     // Test mouse cursor can be configured.
     await tester.pumpWidget(buildApp(mouseCursor: SystemMouseCursors.grab));
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.grab);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.grab,
+    );
   });
 
-  testWidgets('Mouse cursor resolves in selected/focused/disabled states', (WidgetTester tester) async {
+  testWidgets('Mouse cursor resolves in selected/focused/disabled states', (
+    WidgetTester tester,
+  ) async {
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
     final FocusNode focusNode = FocusNode(debugLabel: 'Checkbox');
     addTearDown(focusNode.dispose);
 
-    Widget buildCheckbox({ required bool value, required bool enabled }) {
+    Widget buildCheckbox({required bool value, required bool enabled}) {
       return CupertinoApp(
         home: Center(
           child: CupertinoCheckbox(
             value: value,
             onChanged: enabled ? (bool? value) {} : null,
             mouseCursor: const _CheckboxMouseCursor(),
-            focusNode: focusNode
+            focusNode: focusNode,
           ),
         ),
       );
@@ -526,26 +515,41 @@ void main() {
 
     // Test unselected case.
     await tester.pumpWidget(buildCheckbox(value: false, enabled: true));
-    final TestGesture gesture1 = await tester.createGesture(kind: PointerDeviceKind.mouse, pointer: 1);
+    final TestGesture gesture1 = await tester.createGesture(
+      kind: PointerDeviceKind.mouse,
+      pointer: 1,
+    );
     addTearDown(gesture1.removePointer);
     await gesture1.addPointer(location: tester.getCenter(find.byType(CupertinoCheckbox)));
     await tester.pump();
     await gesture1.moveTo(tester.getCenter(find.byType(CupertinoCheckbox)));
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.basic);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.basic,
+    );
 
     // Test selected case.
     await tester.pumpWidget(buildCheckbox(value: true, enabled: true));
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.click);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.click,
+    );
 
     // Test focused case.
     await tester.pumpWidget(buildCheckbox(value: true, enabled: true));
     focusNode.requestFocus();
     await tester.pump();
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.grab);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.grab,
+    );
 
     // Test disabled case.
     await tester.pumpWidget(buildCheckbox(value: true, enabled: false));
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.forbidden);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.forbidden,
+    );
   });
 
   testWidgets('Checkbox default colors, and size in light mode', (WidgetTester tester) async {
@@ -553,14 +557,12 @@ void main() {
       return CupertinoApp(
         home: Center(
           child: RepaintBoundary(
-            child: CupertinoCheckbox(
-              value: value,
-              onChanged: (bool? newValue) {},
-            ),
+            child: CupertinoCheckbox(value: value, onChanged: (bool? newValue) {}),
           ),
         ),
       );
     }
+
     await tester.pumpWidget(buildCheckbox());
     await expectLater(
       find.byType(CupertinoCheckbox),
@@ -579,14 +581,12 @@ void main() {
         theme: const CupertinoThemeData(brightness: Brightness.dark),
         home: Center(
           child: RepaintBoundary(
-            child: CupertinoCheckbox(
-              value: value,
-              onChanged: (bool? newValue) {},
-            ),
+            child: CupertinoCheckbox(value: value, onChanged: (bool? newValue) {}),
           ),
         ),
       );
     }
+
     await tester.pumpWidget(buildCheckbox());
     await expectLater(
       find.byType(CupertinoCheckbox),
@@ -599,19 +599,17 @@ void main() {
     );
   });
 
-  testWidgets('Disabled checkbox default colors, and size in light mode', (WidgetTester tester) async {
+  testWidgets('Disabled checkbox default colors, and size in light mode', (
+    WidgetTester tester,
+  ) async {
     Widget buildCheckbox({bool value = true}) {
       return CupertinoApp(
         home: Center(
-          child: RepaintBoundary(
-            child: CupertinoCheckbox(
-              value: value,
-              onChanged: null,
-            ),
-          ),
+          child: RepaintBoundary(child: CupertinoCheckbox(value: value, onChanged: null)),
         ),
       );
     }
+
     await tester.pumpWidget(buildCheckbox());
     await expectLater(
       find.byType(CupertinoCheckbox),
@@ -624,20 +622,18 @@ void main() {
     );
   });
 
-  testWidgets('Disabled checkbox default colors, and size in dark mode', (WidgetTester tester) async {
+  testWidgets('Disabled checkbox default colors, and size in dark mode', (
+    WidgetTester tester,
+  ) async {
     Widget buildCheckbox({bool value = true}) {
       return CupertinoApp(
         theme: const CupertinoThemeData(brightness: Brightness.dark),
         home: Center(
-          child: RepaintBoundary(
-            child: CupertinoCheckbox(
-              value: value,
-              onChanged: null,
-            ),
-          ),
+          child: RepaintBoundary(child: CupertinoCheckbox(value: value, onChanged: null)),
         ),
       );
     }
+
     await tester.pumpWidget(buildCheckbox());
     await expectLater(
       find.byType(CupertinoCheckbox),
@@ -650,7 +646,9 @@ void main() {
     );
   });
 
-  testWidgets('Checkbox fill color resolves in enabled/disabled states', (WidgetTester tester) async {
+  testWidgets('Checkbox fill color resolves in enabled/disabled states', (
+    WidgetTester tester,
+  ) async {
     const Color activeEnabledFillColor = Color(0xFF000001);
     const Color activeDisabledFillColor = Color(0xFF000002);
 
@@ -668,7 +666,7 @@ void main() {
         home: CupertinoCheckbox(
           value: true,
           fillColor: fillColor,
-          onChanged: enabled ? (bool? value) { } : null,
+          onChanged: enabled ? (bool? value) {} : null,
         ),
       );
     }
@@ -686,7 +684,9 @@ void main() {
     expect(getCheckboxRenderer(), paints..path(color: activeDisabledFillColor));
   });
 
-  testWidgets('Checkbox fill color take precedence over active/inactive colors', (WidgetTester tester) async {
+  testWidgets('Checkbox fill color take precedence over active/inactive colors', (
+    WidgetTester tester,
+  ) async {
     const Color activeEnabledFillColor = Color(0xFF000001);
     const Color activeDisabledFillColor = Color(0xFF000002);
     const Color activeColor = Color(0xFF000003);
@@ -708,7 +708,7 @@ void main() {
           fillColor: fillColor,
           activeColor: activeColor,
           inactiveColor: inactiveColor,
-          onChanged: enabled ? (bool? value) { } : null,
+          onChanged: enabled ? (bool? value) {} : null,
         ),
       );
     }
@@ -726,7 +726,9 @@ void main() {
     expect(getCheckboxRenderer(), paints..path(color: activeDisabledFillColor));
   });
 
-  testWidgets('Checkbox fill color resolves in hovered/focused states', (WidgetTester tester) async {
+  testWidgets('Checkbox fill color resolves in hovered/focused states', (
+    WidgetTester tester,
+  ) async {
     final FocusNode focusNode = FocusNode(debugLabel: 'checkbox');
     addTearDown(focusNode.dispose);
 
@@ -753,7 +755,7 @@ void main() {
           focusNode: focusNode,
           value: enabled,
           fillColor: fillColor,
-          onChanged: enabled ? (bool? value) { } : null,
+          onChanged: enabled ? (bool? value) {} : null,
         ),
       );
     }
@@ -781,11 +783,11 @@ void main() {
   testWidgets('Checkbox configures focus color', (WidgetTester tester) async {
     const Color defaultCheckColor = Color(0xffffffff);
     const Color defaultActiveFillColor = Color(0xff007aff);
-    final Color defaultFocusColor = HSLColor
-      .fromColor(CupertinoColors.activeBlue.withOpacity(kCupertinoFocusColorOpacity))
-      .withLightness(kCupertinoFocusColorBrightness)
-      .withSaturation(kCupertinoFocusColorSaturation)
-      .toColor();
+    final Color defaultFocusColor =
+        HSLColor.fromColor(CupertinoColors.activeBlue.withOpacity(kCupertinoFocusColorOpacity))
+            .withLightness(kCupertinoFocusColorBrightness)
+            .withSaturation(kCupertinoFocusColorSaturation)
+            .toColor();
     const Color testFocusColor = Color(0xffaabbcc);
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
     final FocusNode node = FocusNode();
@@ -794,18 +796,21 @@ void main() {
     Widget buildApp({Color? focusColor, bool autofocus = false, FocusNode? focusNode}) {
       return CupertinoApp(
         home: Center(
-          child: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-            return CupertinoCheckbox(
-              value: true,
-              onChanged: (bool? newValue) {},
-              autofocus: autofocus,
-              focusNode: focusNode,
-              focusColor: focusColor,
-            );
-          }),
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return CupertinoCheckbox(
+                value: true,
+                onChanged: (bool? newValue) {},
+                autofocus: autofocus,
+                focusNode: focusNode,
+                focusColor: focusColor,
+              );
+            },
+          ),
         ),
       );
     }
+
     await tester.pumpWidget(buildApp(focusNode: node, autofocus: true));
     await tester.pump();
     expect(node.hasPrimaryFocus, isTrue);
@@ -819,11 +824,7 @@ void main() {
       reason: 'Checkbox shows the correct focus color',
     );
 
-    await tester.pumpWidget(buildApp(
-      focusColor: testFocusColor,
-      focusNode: node,
-      autofocus: true,
-    ));
+    await tester.pumpWidget(buildApp(focusColor: testFocusColor, focusNode: node, autofocus: true));
     await tester.pump();
     expect(node.hasPrimaryFocus, isTrue);
     expect(
@@ -833,7 +834,7 @@ void main() {
         ..rrect()
         ..path(color: defaultCheckColor)
         ..path(color: testFocusColor, strokeWidth: 3.5, style: PaintingStyle.stroke),
-        reason: 'Checkbox can configure a focus color',
+      reason: 'Checkbox can configure a focus color',
     );
   });
 
@@ -844,17 +845,12 @@ void main() {
     const Color pressedDarkShadow = Color(0x26ffffff);
 
     await tester.pumpWidget(
-      CupertinoApp(
-        home: Center(
-          child: CupertinoCheckbox(
-            value: false,
-            onChanged: (_) {},
-          ),
-        ),
-      ),
+      CupertinoApp(home: Center(child: CupertinoCheckbox(value: false, onChanged: (_) {}))),
     );
 
-    final TestGesture gesture1 = await tester.startGesture(tester.getCenter(find.byType(CupertinoCheckbox)));
+    final TestGesture gesture1 = await tester.startGesture(
+      tester.getCenter(find.byType(CupertinoCheckbox)),
+    );
     await tester.pump();
 
     expect(
@@ -867,17 +863,12 @@ void main() {
     );
 
     await tester.pumpWidget(
-      CupertinoApp(
-        home: Center(
-          child: CupertinoCheckbox(
-            value: true,
-            onChanged: (_) {},
-          ),
-        ),
-      ),
+      CupertinoApp(home: Center(child: CupertinoCheckbox(value: true, onChanged: (_) {}))),
     );
 
-    final TestGesture gesture2 = await tester.startGesture(tester.getCenter(find.byType(CupertinoCheckbox)));
+    final TestGesture gesture2 = await tester.startGesture(
+      tester.getCenter(find.byType(CupertinoCheckbox)),
+    );
     await tester.pump();
 
     expect(
@@ -905,16 +896,13 @@ void main() {
     await tester.pumpWidget(
       CupertinoApp(
         theme: const CupertinoThemeData(brightness: Brightness.dark),
-        home: Center(
-          child: CupertinoCheckbox(
-            value: false,
-            onChanged: (_) {},
-          ),
-        ),
+        home: Center(child: CupertinoCheckbox(value: false, onChanged: (_) {})),
       ),
     );
 
-    final TestGesture gesture1 = await tester.startGesture(tester.getCenter(find.byType(CupertinoCheckbox)));
+    final TestGesture gesture1 = await tester.startGesture(
+      tester.getCenter(find.byType(CupertinoCheckbox)),
+    );
     await tester.pump();
 
     expect(
@@ -929,16 +917,13 @@ void main() {
     await tester.pumpWidget(
       CupertinoApp(
         theme: const CupertinoThemeData(brightness: Brightness.dark),
-        home: Center(
-          child: CupertinoCheckbox(
-            value: true,
-            onChanged: (_) {},
-          ),
-        ),
+        home: Center(child: CupertinoCheckbox(value: true, onChanged: (_) {})),
       ),
     );
 
-    final TestGesture gesture2 = await tester.startGesture(tester.getCenter(find.byType(CupertinoCheckbox)));
+    final TestGesture gesture2 = await tester.startGesture(
+      tester.getCenter(find.byType(CupertinoCheckbox)),
+    );
     await tester.pump();
 
     expect(
@@ -963,15 +948,14 @@ class _CheckboxMouseCursor extends WidgetStateMouseCursor {
 
   @override
   MouseCursor resolve(Set<WidgetState> states) {
-    return const WidgetStateProperty<MouseCursor>.fromMap(
-      <WidgetStatesConstraint, MouseCursor>{
-        WidgetState.disabled: SystemMouseCursors.forbidden,
-        WidgetState.focused: SystemMouseCursors.grab,
-        WidgetState.selected: SystemMouseCursors.click,
-        WidgetState.any: SystemMouseCursors.basic,
-      },
-    ).resolve(states);
+    return const WidgetStateProperty<MouseCursor>.fromMap(<WidgetStatesConstraint, MouseCursor>{
+      WidgetState.disabled: SystemMouseCursors.forbidden,
+      WidgetState.focused: SystemMouseCursors.grab,
+      WidgetState.selected: SystemMouseCursors.click,
+      WidgetState.any: SystemMouseCursors.basic,
+    }).resolve(states);
   }
+
   @override
   String get debugDescription => '_CheckboxMouseCursor()';
 }

@@ -13,9 +13,7 @@ class AboutListTileExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: AboutListTileExample(),
-    );
+    return const MaterialApp(home: AboutListTileExample());
   }
 }
 
@@ -32,11 +30,16 @@ class AboutListTileExample extends StatelessWidget {
         text: TextSpan(
           children: <TextSpan>[
             TextSpan(
-                style: textStyle,
-                text: "Flutter is Google's UI toolkit for building beautiful, "
-                    'natively compiled applications for mobile, web, and desktop '
-                    'from a single codebase. Learn more about Flutter at '),
-            TextSpan(style: textStyle.copyWith(color: theme.colorScheme.primary), text: 'https://flutter.dev'),
+              style: textStyle,
+              text:
+                  "Flutter is Google's UI toolkit for building beautiful, "
+                  'natively compiled applications for mobile, web, and desktop '
+                  'from a single codebase. Learn more about Flutter at ',
+            ),
+            TextSpan(
+              style: textStyle.copyWith(color: theme.colorScheme.primary),
+              text: 'https://flutter.dev',
+            ),
             TextSpan(style: textStyle, text: '.'),
           ],
         ),
@@ -44,9 +47,7 @@ class AboutListTileExample extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Show About Example'),
-      ),
+      appBar: AppBar(title: const Text('Show About Example')),
       drawer: Drawer(
         child: SingleChildScrollView(
           child: SafeArea(

@@ -16,8 +16,7 @@ class PluginEachSettingsGradleProject extends PluginProject {
       PluginEachSettingsGradleDeferredComponentsConfig();
 }
 
-class PluginEachSettingsGradleDeferredComponentsConfig
-    extends PluginDeferredComponentsConfig {
+class PluginEachSettingsGradleDeferredComponentsConfig extends PluginDeferredComponentsConfig {
   @override
   String get androidSettings => r'''
 include ':app'

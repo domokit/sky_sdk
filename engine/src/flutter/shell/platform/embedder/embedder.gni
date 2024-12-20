@@ -1,0 +1,13 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+  # By default, the dynamic library target exposing the embedder API is only
+  # built for the host. The reasoning is that platforms that have target
+  # definitions would not need an embedder API because an embedder
+  # implementation is already provided for said target. This flag allows tbe
+  # builder to obtain a shared library exposing the embedder API for alternative
+  # embedder implementations.
+  embedder_for_target = false
+}

@@ -1,6 +1,9 @@
 # Do not remove or rename entries in this file, only add new ones
 # See https://github.com/flutter/flutter/issues/128635 for more context.
 
+# This is dynamic in a monorepo
+bin/internal/engine.version
+
 # Miscellaneous
 *.class
 *.lock
@@ -74,7 +77,6 @@ unlinked_spec.ds
 **/android/**/GeneratedPluginRegistrant.java
 **/android/key.properties
 *.jks
-**/.cxx/
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
@@ -139,3 +141,11 @@ app.*.symbols
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
 !.vscode/settings.json
+
+# Monorepo
+.cipd
+.gclient
+.gclient_entries
+.python-version
+.gclient_previous_custom_vars
+.gclient_previous_sync_commits

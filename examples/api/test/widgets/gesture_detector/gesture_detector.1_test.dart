@@ -3,50 +3,35 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/gesture_detector/gesture_detector.1.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/gesture_detector/gesture_detector.1.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets(
-    'GestureDetector updates Container color on tap',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const example.GestureDetectorExampleApp(),
-      );
+  testWidgets('GestureDetector updates Container color on tap', (WidgetTester tester) async {
+    await tester.pumpWidget(const example.GestureDetectorExampleApp());
 
-      Container container = tester.widget(
-        find.ancestor(
-          of: find.byType(GestureDetector),
-          matching: find.byType(Container),
-        ),
-      );
+    Container container = tester.widget(
+      find.ancestor(of: find.byType(GestureDetector), matching: find.byType(Container)),
+    );
 
-      expect(container.color, Colors.white);
+    expect(container.color, Colors.white);
 
-      await tester.tap(find.byType(GestureDetector));
-      await tester.pump();
+    await tester.tap(find.byType(GestureDetector));
+    await tester.pump();
 
-      container = tester.widget(
-        find.ancestor(
-          of: find.byType(GestureDetector),
-          matching: find.byType(Container),
-        ),
-      );
+    container = tester.widget(
+      find.ancestor(of: find.byType(GestureDetector), matching: find.byType(Container)),
+    );
 
-      expect(container.color, Colors.yellow);
+    expect(container.color, Colors.yellow);
 
-      await tester.tap(find.byType(GestureDetector));
-      await tester.pump();
+    await tester.tap(find.byType(GestureDetector));
+    await tester.pump();
 
-      container = tester.widget(
-        find.ancestor(
-          of: find.byType(GestureDetector),
-          matching: find.byType(Container),
-        ),
-      );
+    container = tester.widget(
+      find.ancestor(of: find.byType(GestureDetector), matching: find.byType(Container)),
+    );
 
-      expect(container.color, Colors.white);
-    },
-  );
+    expect(container.color, Colors.white);
+  });
 }

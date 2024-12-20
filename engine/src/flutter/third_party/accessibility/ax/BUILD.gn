@@ -1,0 +1,123 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+
+source_set("ax") {
+  visibility = [ "//flutter/third_party/accessibility/*" ]
+  public_configs =
+      [ "//flutter/third_party/accessibility:accessibility_config" ]
+
+  sources = [
+    "platform/ax_platform_node.cc",
+    "platform/ax_platform_node.h",
+    "platform/ax_platform_node_base.cc",
+    "platform/ax_platform_node_base.h",
+    "platform/ax_platform_node_delegate.h",
+    "platform/ax_platform_node_delegate_base.cc",
+    "platform/ax_platform_node_delegate_base.h",
+    "platform/ax_platform_tree_manager.h",
+    "platform/ax_unique_id.cc",
+    "platform/ax_unique_id.h",
+    "platform/compute_attributes.cc",
+    "platform/compute_attributes.h",
+  ]
+
+  sources += [
+    "ax_action_data.cc",
+    "ax_action_data.h",
+    "ax_action_handler.cc",
+    "ax_action_handler.h",
+    "ax_action_handler_base.cc",
+    "ax_action_handler_base.h",
+    "ax_active_popup.cc",
+    "ax_active_popup.h",
+    "ax_base_export.h",
+    "ax_clipping_behavior.h",
+    "ax_constants.h",
+    "ax_coordinate_system.h",
+    "ax_enum_util.cc",
+    "ax_enum_util.h",
+    "ax_enums.h",
+    "ax_event_generator.cc",
+    "ax_event_generator.h",
+    "ax_event_intent.cc",
+    "ax_event_intent.h",
+    "ax_export.h",
+    "ax_mode.cc",
+    "ax_mode.h",
+    "ax_mode_observer.h",
+    "ax_node.cc",
+    "ax_node.h",
+    "ax_node_data.cc",
+    "ax_node_data.h",
+    "ax_node_position.cc",
+    "ax_node_position.h",
+    "ax_node_text_styles.cc",
+    "ax_node_text_styles.h",
+    "ax_offscreen_result.h",
+    "ax_position.h",
+    "ax_range.h",
+    "ax_relative_bounds.cc",
+    "ax_relative_bounds.h",
+    "ax_role_properties.cc",
+    "ax_role_properties.h",
+    "ax_table_info.cc",
+    "ax_table_info.h",
+    "ax_tree.cc",
+    "ax_tree.h",
+    "ax_tree_data.cc",
+    "ax_tree_data.h",
+    "ax_tree_id.cc",
+    "ax_tree_id.h",
+    "ax_tree_id_registry.cc",
+    "ax_tree_id_registry.h",
+    "ax_tree_manager.h",
+    "ax_tree_manager_map.cc",
+    "ax_tree_manager_map.h",
+    "ax_tree_observer.cc",
+    "ax_tree_observer.h",
+    "ax_tree_update.h",
+  ]
+
+  if (is_mac) {
+    cflags_objc = flutter_cflags_objc
+    cflags_objcc = flutter_cflags_objcc
+
+    sources += [
+      "platform/ax_platform_node_mac.h",
+      "platform/ax_platform_node_mac.mm",
+    ]
+  } else if (is_win) {
+    sources += [
+      "platform/ax_fragment_root_delegate_win.h",
+      "platform/ax_fragment_root_win.cc",
+      "platform/ax_fragment_root_win.h",
+      "platform/ax_platform_node_delegate_utils_win.cc",
+      "platform/ax_platform_node_delegate_utils_win.h",
+      "platform/ax_platform_node_textprovider_win.cc",
+      "platform/ax_platform_node_textprovider_win.h",
+      "platform/ax_platform_node_textrangeprovider_win.cc",
+      "platform/ax_platform_node_textrangeprovider_win.h",
+      "platform/ax_platform_node_win.cc",
+      "platform/ax_platform_node_win.h",
+      "platform/uia_registrar_win.cc",
+      "platform/uia_registrar_win.h",
+    ]
+    libs = [
+      "oleacc.lib",
+      "uiautomationcore.lib",
+    ]
+    deps = [
+      "//flutter/fml:fml",
+      "//flutter/third_party/icu:icui18n",
+    ]
+  }
+
+  public_deps = [
+    "//flutter/third_party/accessibility/ax_build",
+    "//flutter/third_party/accessibility/base",
+    "//flutter/third_party/accessibility/gfx",
+  ]
+}

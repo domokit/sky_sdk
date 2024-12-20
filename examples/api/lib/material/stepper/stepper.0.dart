@@ -16,9 +16,7 @@ class StepperExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('Stepper Sample')),
-        body: const Center(
-          child: StepperExample(),
-        ),
+        body: const Center(child: StepperExample()),
       ),
     );
   }
@@ -65,10 +63,7 @@ class _StepperExampleState extends State<StepperExample> {
             child: const Text('Content for Step 1'),
           ),
         ),
-        const Step(
-          title: Text('Step 2 title'),
-          content: Text('Content for Step 2'),
-        ),
+        const Step(title: Text('Step 2 title'), content: Text('Content for Step 2')),
       ],
     );
   }

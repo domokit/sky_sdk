@@ -1,0 +1,270 @@
+{
+    "_comment": [
+        "The builds defined in this file should not contain tests, ",
+        "and the file should not contain builds that are essentially tests. ",
+        "The only builds in this file should be the builds necessary to produce ",
+        "release artifacts. ",
+        "Tests to run on linux hosts should go in one of the other linux_ build ",
+        "definition files."
+    ],
+    "builds": [
+        {
+            "archives": [
+                {
+                    "name": "ci/host_debug",
+                    "base_path": "out/ci/host_debug/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/host_debug/zip_archives/linux-x64/artifacts.zip",
+                        "out/ci/host_debug/zip_archives/linux-x64/impeller_sdk.zip",
+                        "out/ci/host_debug/zip_archives/linux-x64/linux-x64-embedder.zip",
+                        "out/ci/host_debug/zip_archives/linux-x64/font-subset.zip",
+                        "out/ci/host_debug/zip_archives/flutter_patched_sdk.zip",
+                        "out/ci/host_debug/zip_archives/dart-sdk-linux-x64.zip"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/host_debug",
+                "--runtime-mode",
+                "debug",
+                "--prebuilt-dart-sdk",
+                "--build-embedder-examples",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/host_debug",
+            "description": "Produces debug mode Linux host-side tooling and builds host-side unit tests for Linux.",
+            "ninja": {
+                "config": "ci/host_debug",
+                "targets": [
+                    "flutter:unittests",
+                    "flutter/build/archives:artifacts",
+                    "flutter/build/archives:dart_sdk_archive",
+                    "flutter/build/archives:embedder",
+                    "flutter/build/archives:flutter_patched_sdk",
+                    "flutter/build/dart:copy_dart_sdk",
+                    "flutter/tools/font_subset",
+                    "flutter/impeller/toolkit/interop:sdk"
+                ]
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "Host Tests for host_debug",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/host_debug",
+                        "--type",
+                        "dart,dart-host",
+                        "--engine-capture-core-dump"
+                    ]
+                }
+            ]
+        },
+        {
+            "archives": [
+                {
+                    "name": "ci/host_profile",
+                    "base_path": "out/ci/host_profile/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": []
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/host_profile",
+                "--runtime-mode",
+                "profile",
+                "--no-lto",
+                "--prebuilt-dart-sdk",
+                "--build-embedder-examples",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/host_profile",
+            "description": "Produces profile mode Linux host-side tooling and builds host-side unit tests for Linux.",
+            "ninja": {
+                "config": "ci/host_profile",
+                "targets": [
+                    "flutter/build/dart:copy_dart_sdk",
+                    "flutter/shell/testing",
+                    "flutter/tools/path_ops",
+                    "flutter:unittests"
+                ]
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "Host Tests for host_profile",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/host_profile",
+                        "--type",
+                        "dart,dart-host,engine",
+                        "--engine-capture-core-dump"
+                    ]
+                }
+            ]
+        },
+        {
+            "archives": [
+                {
+                    "name": "ci/host_release",
+                    "base_path": "out/ci/host_release/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/host_release/zip_archives/flutter_patched_sdk_product.zip"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "dependencies": [
+                {
+                    "dependency": "goldctl",
+                    "version": "git_revision:720a542f6fe4f92922c3b8f0fdcc4d2ac6bb83cd"
+                }
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/host_release",
+                "--runtime-mode",
+                "release",
+                "--prebuilt-dart-sdk",
+                "--build-embedder-examples",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/host_release",
+            "description": "Produces release mode Linux host-side tooling and builds host-side unit tests and benchmarks for Linux.",
+            "ninja": {
+                "config": "ci/host_release",
+                "targets": [
+                    "flutter/build/dart:copy_dart_sdk",
+                    "flutter/display_list:display_list_benchmarks",
+                    "flutter/display_list:display_list_builder_benchmarks",
+                    "flutter/display_list:display_list_region_benchmarks",
+                    "flutter/display_list:display_list_transform_benchmarks",
+                    "flutter/fml:fml_benchmarks",
+                    "flutter/impeller/geometry:geometry_benchmarks",
+                    "flutter/lib/ui:ui_benchmarks",
+                    "flutter/shell/common:shell_benchmarks",
+                    "flutter/shell/testing",
+                    "flutter/third_party/txt:txt_benchmarks",
+                    "flutter/tools/path_ops",
+                    "flutter/build/archives:flutter_patched_sdk",
+                    "flutter:unittests"
+                ]
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "Host Tests for host_release",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/host_release",
+                        "--type",
+                        "dart,dart-host,engine,benchmarks",
+                        "--engine-capture-core-dump"
+                    ]
+                },
+                {
+                    "language": "bash",
+                    "name": "Generate metrics test",
+                    "script": "flutter/testing/benchmark/generate_metrics.sh",
+                    "parameters": [
+                        "ci/host_release"
+                    ]
+                },
+                {
+                    "language": "bash",
+                    "name": "Upload metrics dry-run",
+                    "script": "flutter/testing/benchmark/upload_metrics.sh",
+                    "parameters": [
+                        "ci/host_release",
+                        "--no-upload"
+                    ]
+                }
+            ]
+        }
+    ],
+    "generators": {
+        "tasks": [
+            {
+                "name": "Verify-export-symbols-release-binaries",
+                "parameters": [
+                    "src/out/ci",
+                    "src/flutter/buildtools"
+                ],
+                "script": "flutter/testing/symbols/verify_exported.dart",
+                "language": "dart"
+            },
+            {
+                "name": "api-documentation",
+                "parameters": [
+                    "out/docs"
+                ],
+                "script": "flutter/tools/gen_docs.py"
+            }
+        ]
+    },
+    "archives": [
+        {
+            "source": "out/docs/ios-docs.zip",
+            "destination": "ios-docs.zip",
+            "realm": "production"
+        },
+        {
+            "source": "out/docs/macos-docs.zip",
+            "destination": "macos-docs.zip",
+            "realm": "production"
+        },
+        {
+            "source": "out/docs/linux-docs.zip",
+            "destination": "linux-docs.zip",
+            "realm": "production"
+        },
+        {
+            "source": "out/docs/windows-docs.zip",
+            "destination": "windows-docs.zip",
+            "realm": "production"
+        },
+        {
+            "source": "out/docs/impeller-docs.zip",
+            "destination": "impeller-docs.zip",
+            "realm": "production"
+        }
+    ]
+}

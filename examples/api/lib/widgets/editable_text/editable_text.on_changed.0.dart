@@ -13,9 +13,7 @@ class OnChangedExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: OnChangedExample(),
-    );
+    return const MaterialApp(home: OnChangedExample());
   }
 }
 

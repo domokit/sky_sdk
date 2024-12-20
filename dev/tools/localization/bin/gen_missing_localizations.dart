@@ -33,7 +33,13 @@ Future<void> main(List<String> rawArgs) async {
   }
   checkCwdIsRepoRoot('gen_missing_localizations');
 
-  final String localizationPath = path.join('packages', 'flutter_localizations', 'lib', 'src', 'l10n');
+  final String localizationPath = path.join(
+    'packages',
+    'flutter_localizations',
+    'lib',
+    'src',
+    'l10n',
+  );
   updateMissingResources(localizationPath, 'material', removeUndefined: removeUndefined);
   updateMissingResources(localizationPath, 'cupertino', removeUndefined: removeUndefined);
 }
@@ -58,7 +64,7 @@ void writeBundle(File file, Map<String, dynamic> bundle) {
 Set<String> resourceKeys(Map<String, dynamic> bundle) {
   return Set<String>.from(
     // Skip any attribute keys
-    bundle.keys.where((String key) => !key.startsWith('@'))
+    bundle.keys.where((String key) => !key.startsWith('@')),
   );
 }
 
@@ -79,14 +85,21 @@ bool isPluralVariation(String key, Map<String, dynamic> bundle) {
   return bundle.containsKey('${prefix}Other');
 }
 
-void updateMissingResources(String localizationPath, String groupPrefix, {bool removeUndefined = false}) {
+void updateMissingResources(
+  String localizationPath,
+  String groupPrefix, {
+  bool removeUndefined = false,
+}) {
   final Directory localizationDir = Directory(localizationPath);
   final RegExp filenamePattern = RegExp('${groupPrefix}_(\\w+)\\.arb');
 
-  final Map<String, dynamic> englishBundle = loadBundle(File(path.join(localizationPath, '${groupPrefix}_en.arb')));
+  final Map<String, dynamic> englishBundle = loadBundle(
+    File(path.join(localizationPath, '${groupPrefix}_en.arb')),
+  );
   final Set<String> requiredKeys = resourceKeys(englishBundle);
 
-  for (final FileSystemEntity entity in localizationDir.listSync().toList()..sort(sortFilesByPath)) {
+  for (final FileSystemEntity entity
+      in localizationDir.listSync().toList()..sort(sortFilesByPath)) {
     final String entityPath = entity.path;
     if (FileSystemEntity.isFileSync(entityPath) && filenamePattern.hasMatch(entityPath)) {
       final String localeString = filenamePattern.firstMatch(entityPath)![1]!;
@@ -105,17 +118,15 @@ void updateMissingResources(String localizationPath, String groupPrefix, {bool r
         // --remove-undefined is passed.
         if (removeUndefined) {
           bool isIncluded(String key) {
-            return !isPluralVariation(key, localeBundle)
-                && !intentionallyOmitted(key, localeBundle);
+            return !isPluralVariation(key, localeBundle) &&
+                !intentionallyOmitted(key, localeBundle);
           }
 
           // Find any resources in this locale that don't appear in the
           // canonical locale, and skipping any which should not be included
           // (plurals and intentionally omitted).
-          final Set<String> extraResources = localeResources
-              .difference(requiredKeys)
-              .where(isIncluded)
-              .toSet();
+          final Set<String> extraResources =
+              localeResources.difference(requiredKeys).where(isIncluded).toSet();
 
           // Remove them.
           localeBundle.removeWhere((String key, dynamic value) {
@@ -132,12 +143,21 @@ void updateMissingResources(String localizationPath, String groupPrefix, {bool r
 
         // Add in any resources that are in the canonical locale and not present
         // in this locale.
-        final Set<String> missingResources = requiredKeys.difference(localeResources).where(
-          (String key) => !isPluralVariation(key, localeBundle) && !intentionallyOmitted(key, localeBundle)
-        ).toSet();
+        final Set<String> missingResources =
+            requiredKeys
+                .difference(localeResources)
+                .where(
+                  (String key) =>
+                      !isPluralVariation(key, localeBundle) &&
+                      !intentionallyOmitted(key, localeBundle),
+                )
+                .toSet();
         if (missingResources.isNotEmpty) {
-          localeBundle.addEntries(missingResources.map((String k) =>
-            MapEntry<String, String>(k, englishBundle[k].toString())));
+          localeBundle.addEntries(
+            missingResources.map(
+              (String k) => MapEntry<String, String>(k, englishBundle[k].toString()),
+            ),
+          );
           shouldWrite = true;
           print('Updating $entityPath with missing entries for $missingResources');
         }

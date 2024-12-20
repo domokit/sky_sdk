@@ -80,21 +80,15 @@ class TextSelectionToolbarLayoutDelegate extends SingleChildLayoutDelegate {
     final Offset anchor = fitsAbove ? anchorAbove : anchorBelow;
 
     return Offset(
-      centerOn(
-        anchor.dx,
-        childSize.width,
-        size.width,
-      ),
-      fitsAbove
-        ? math.max(0.0, anchor.dy - childSize.height)
-        : anchor.dy,
+      centerOn(anchor.dx, childSize.width, size.width),
+      fitsAbove ? math.max(0.0, anchor.dy - childSize.height) : anchor.dy,
     );
   }
 
   @override
   bool shouldRelayout(TextSelectionToolbarLayoutDelegate oldDelegate) {
-    return anchorAbove != oldDelegate.anchorAbove
-        || anchorBelow != oldDelegate.anchorBelow
-        || fitsAbove != oldDelegate.fitsAbove;
+    return anchorAbove != oldDelegate.anchorAbove ||
+        anchorBelow != oldDelegate.anchorBelow ||
+        fitsAbove != oldDelegate.fitsAbove;
   }
 }

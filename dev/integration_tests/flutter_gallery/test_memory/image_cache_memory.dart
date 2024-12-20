@@ -14,29 +14,31 @@ import 'package:flutter_test/flutter_test.dart';
 Future<void> main() async {
   const int numItems = 10;
 
-  runApp(Directionality(
-    textDirection: TextDirection.ltr,
-    child: ListView.builder(
-      key: const Key('ImageList'),
-      itemCount: numItems,
-      itemBuilder: (BuildContext context, int position) {
-        return SizedBox(
-          width: 200,
-          height: 200,
-          child: Center(
-            child: Image.asset(
-              'monochrome/red-square-1024x1024.png',
-              package: 'flutter_gallery_assets',
-              width: 100,
-              height: 100,
-              fit: BoxFit.contain,
-              key: Key('image_$position'),
+  runApp(
+    Directionality(
+      textDirection: TextDirection.ltr,
+      child: ListView.builder(
+        key: const Key('ImageList'),
+        itemCount: numItems,
+        itemBuilder: (BuildContext context, int position) {
+          return SizedBox(
+            width: 200,
+            height: 200,
+            child: Center(
+              child: Image.asset(
+                'monochrome/red-square-1024x1024.png',
+                package: 'flutter_gallery_assets',
+                width: 100,
+                height: 100,
+                fit: BoxFit.contain,
+                key: Key('image_$position'),
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     ),
-  ));
+  );
 
   await SchedulerBinding.instance.endOfFrame;
 
@@ -47,8 +49,7 @@ Future<void> main() async {
   await Future<void>.delayed(const Duration(milliseconds: 50));
   debugPrint('==== MEMORY BENCHMARK ==== READY ====');
 
-  final WidgetController controller =
-      LiveWidgetController(WidgetsBinding.instance);
+  final WidgetController controller = LiveWidgetController(WidgetsBinding.instance);
 
   debugPrint('Scrolling...');
   final Finder list = find.byKey(const Key('ImageList'));

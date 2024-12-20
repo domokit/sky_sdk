@@ -1,0 +1,78 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# ------------------------------------------------------------------------------
+# @brief           Build a Metal Library. The output is a single file. Use
+#                  get_target_outputs to get its location on build.
+#
+# @param[required] name     The name of the Metal library.
+#
+# @param[required] sources  The GLSL (4.60) sources to compiled into the Metal
+#                           library.
+#
+# @param[required] metal_version  The Metal language version to compile for.
+#
+template("metal_library") {
+  assert(is_ios || is_mac)
+  assert(defined(invoker.name), "Metal library name must be specified.")
+  assert(defined(invoker.sources), "Metal source files must be specified.")
+  assert(defined(invoker.metal_version),
+         "Metal language version must be specified.")
+
+  metal_library_name = invoker.name
+
+  action("$target_name") {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "inputs",
+                             "outputs",
+                             "script",
+                             "depfile",
+                             "args",
+                           ])
+
+    inputs = invoker.sources
+
+    metal_library_path = "$root_out_dir/shaders/$metal_library_name.metallib"
+    metal_library_symbols_path =
+        "$root_out_dir/shaders/$metal_library_name.metallibsym"
+
+    outputs = [
+      metal_library_path,
+      metal_library_symbols_path,
+    ]
+
+    script = "//flutter/impeller/tools/metal_library.py"
+
+    depfile = "$target_gen_dir/mtl/$metal_library_name.depfile"
+
+    args = [
+      "--output",
+      rebase_path(metal_library_path, root_out_dir),
+      "--depfile",
+      rebase_path(depfile),
+      "--metal-version=$metal_version",
+    ]
+
+    if (is_ios) {
+      if (use_ios_simulator) {
+        args += [ "--platform=ios-simulator" ]
+      } else {
+        args += [ "--platform=ios" ]
+      }
+    } else if (is_mac) {
+      args += [ "--platform=mac" ]
+    } else {
+      assert(false, "Unsupported platform for generating Metal shaders.")
+    }
+
+    foreach(source, invoker.sources) {
+      args += [
+        "--source",
+        rebase_path(source, root_out_dir),
+      ]
+    }
+  }
+}

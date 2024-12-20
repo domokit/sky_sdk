@@ -14,10 +14,7 @@ class BadgeExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Badge Sample')),
-        body: const BadgeExample(),
-      ),
+      home: Scaffold(appBar: AppBar(title: const Text('Badge Sample')), body: const BadgeExample()),
     );
   }
 }
@@ -41,10 +38,7 @@ class BadgeExample extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           IconButton(
-            icon: Badge.count(
-              count: 9999,
-              child: const Icon(Icons.notifications),
-            ),
+            icon: Badge.count(count: 9999, child: const Icon(Icons.notifications)),
             onPressed: () {},
           ),
         ],

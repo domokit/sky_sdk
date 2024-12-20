@@ -1,0 +1,108 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/tools/fuchsia/clang.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+
+fuchsia_sdk_dist = "$fuchsia_arch_root/dist"
+sysroot_lib = "$fuchsia_arch_root/sysroot/lib"
+sysroot_dist_lib = "$fuchsia_arch_root/sysroot/dist/lib"
+
+ld_so_path = ""
+libcxx_so_2_path = "${clang_manifest_json.md5_19df03aecdc9eb27bc8b4038352f2b27}"
+libcxx_abi_so_1_path =
+    "${clang_manifest_json.md5_6aff1b5f218d4a9278d85d63d0695af8}"
+libunwind_so_1_path =
+    "${clang_manifest_json.md5_fb2bd871885ef42c2cf3138655f901ed}"
+if (is_asan) {
+  ld_so_path = "asan/"
+  libcxx_so_2_path =
+      "${clang_manifest_json.md5_07cbd4a04b921d2ca61badc1b15a3b0b}"
+  libcxx_abi_so_1_path =
+      "${clang_manifest_json.md5_18f605e8fd52a92c5f9c6fde9be8206c}"
+  libunwind_so_1_path =
+      "${clang_manifest_json.md5_85b659ccd825be02f123e3479f1bc280}"
+  libclang_rt_so_path =
+      "${clang_manifest_json.md5_b76b69d6ab2c13408b7a3608f925b0c6}"
+}
+
+common_libs = [
+  {
+    name = "libasync-default.so"
+    path = rebase_path("$fuchsia_sdk_dist")
+  },
+  {
+    name = "libtrace-engine.so"
+    path = rebase_path("$fuchsia_sdk_dist")
+  },
+  {
+    name = "libfdio.so"
+    path = rebase_path("$fuchsia_sdk_dist")
+  },
+  {
+    name = "libvulkan.so"
+    path = rebase_path("$fuchsia_sdk_dist")
+  },
+  {
+    name = "libtrace-provider-so.so"
+    path = rebase_path("$fuchsia_sdk_dist")
+  },
+  {
+    name = "ld.so.1"
+    path = rebase_path("$sysroot_dist_lib/$ld_so_path")
+    output_path = ld_so_path
+  },
+  {
+    name = "libvfs_internal.so"
+    path = rebase_path("$fuchsia_sdk_dist")
+  },
+]
+
+# Note, for clang libs we use the md5 hashes here because of gn limitations of
+# json parsing.
+# This is a hack, and we can migrate to a better way soon.
+common_libs += [
+  {
+    name = "libc++.so.2"
+    path = rebase_path("$clang_base/$libcxx_so_2_path")
+  },
+  {
+    name = "libc++abi.so.1"
+    path = rebase_path("$clang_base/$libcxx_abi_so_1_path")
+  },
+  {
+    name = "libunwind.so.1"
+    path = rebase_path("$clang_base/$libunwind_so_1_path")
+  },
+]
+if (is_asan) {
+  common_libs += [
+    {
+      name = "libclang_rt.asan.so"
+      path = rebase_path("$clang_base/$libclang_rt_so_path")
+    },
+  ]
+}
+
+vulkan_dist = "//fuchsia/sdk/$host_os/arch/$target_cpu/dist"
+
+# Note that the other validation libraries in the Fuchsia SDK seem to have a bug right
+# now causing crashes, so it is only recommended that we use
+# VkLayer_khronos_validation.so until we have a confirmation that they are fixed.
+vulkan_validation_libs = [
+  {
+    name = "VkLayer_khronos_validation.so"
+    path = rebase_path("$vulkan_dist")
+  },
+]
+
+vulkan_data_dir =
+    "//fuchsia/sdk/$host_os/pkg/vulkan_layers/data/vulkan/explicit_layer.d"
+
+vulkan_icds = [
+  {
+    path = rebase_path("$vulkan_data_dir/VkLayer_khronos_validation.json")
+    dest = "vulkan/explicit_layer.d/VkLayer_khronos_validation.json"
+  },
+]

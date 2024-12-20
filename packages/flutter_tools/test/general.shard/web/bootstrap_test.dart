@@ -69,10 +69,15 @@ void main() {
     // See: https://regexr.com/6q0kp
     final RegExp regex = RegExp(
       r'(?:require\.config\(\{)(?:.|\s(?!\}\);))*'
-        r'(?:waitSeconds\:\s*0[,]?)'
-      r'(?:(?!\}\);).|\s)*\}\);');
+      r'(?:waitSeconds\:\s*0[,]?)'
+      r'(?:(?!\}\);).|\s)*\}\);',
+    );
 
-    expect(result, matches(regex), reason: 'require.config must have a waitSeconds: 0 config entry');
+    expect(
+      result,
+      matches(regex),
+      reason: 'require.config must have a waitSeconds: 0 config entry',
+    );
   });
 
   test('generateMainModule hides requireJS injected by DDC', () {
@@ -81,10 +86,16 @@ void main() {
       nullAssertions: false,
       nativeNullAssertions: false,
     );
-    expect(result, contains('''define._amd = define.amd;'''),
-      reason: 'define.amd must be preserved as _amd so users may restore it if needed.');
-    expect(result, contains('''delete define.amd;'''),
-      reason: "define.amd must be removed so packages don't attempt to use Dart's instance.");
+    expect(
+      result,
+      contains('''define._amd = define.amd;'''),
+      reason: 'define.amd must be preserved as _amd so users may restore it if needed.',
+    );
+    expect(
+      result,
+      contains('''delete define.amd;'''),
+      reason: "define.amd must be removed so packages don't attempt to use Dart's instance.",
+    );
   });
 
   test('generateMainModule embeds urls correctly', () {
@@ -94,8 +105,13 @@ void main() {
       nativeNullAssertions: false,
     );
     // bootstrap main module has correct defined module.
-    expect(result, contains('define("main_module.bootstrap", ["foo/bar/main.js", "dart_sdk"], '
-      'function(app, dart_sdk) {'));
+    expect(
+      result,
+      contains(
+        'define("main_module.bootstrap", ["foo/bar/main.js", "dart_sdk"], '
+        'function(app, dart_sdk) {',
+      ),
+    );
   });
 
   test('generateMainModule can set bootstrap name', () {
@@ -106,8 +122,13 @@ void main() {
       bootstrapModule: 'foo_module.bootstrap',
     );
     // bootstrap main module has correct defined module.
-    expect(result, contains('define("foo_module.bootstrap", ["foo/bar/main.js", "dart_sdk"], '
-      'function(app, dart_sdk) {'));
+    expect(
+      result,
+      contains(
+        'define("foo_module.bootstrap", ["foo/bar/main.js", "dart_sdk"], '
+        'function(app, dart_sdk) {',
+      ),
+    );
   });
 
   test('generateMainModule includes null safety switches', () {
@@ -133,7 +154,11 @@ void main() {
   });
 
   test('generateTestBootstrapFileContents embeds urls correctly', () {
-    final String result = generateTestBootstrapFileContents('foo.dart.js', 'require.js', 'mapper.js');
+    final String result = generateTestBootstrapFileContents(
+      'foo.dart.js',
+      'require.js',
+      'mapper.js',
+    );
 
     expect(result, contains('el.setAttribute("data-main", \'foo.dart.js\');'));
   });
@@ -245,7 +270,7 @@ void main() {
         entrypoint: 'foo/bar/main.js',
         nullAssertions: false,
         nativeNullAssertions: false,
-        exportedMain: 'foo__bar__main'
+        exportedMain: 'foo__bar__main',
       );
       // bootstrap main module has correct defined module.
       expect(result, contains('let appName = "foo/bar/main.js"'));
@@ -276,7 +301,11 @@ void main() {
     });
 
     test('generateTestBootstrapFileContents embeds urls correctly', () {
-      final String result = generateTestBootstrapFileContents('foo.dart.js', 'require.js', 'mapper.js');
+      final String result = generateTestBootstrapFileContents(
+        'foo.dart.js',
+        'require.js',
+        'mapper.js',
+      );
 
       expect(result, contains('el.setAttribute("data-main", \'foo.dart.js\');'));
     });

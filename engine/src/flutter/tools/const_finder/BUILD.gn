@@ -1,0 +1,16 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/rules.gni")
+
+application_snapshot("const_finder") {
+  main_dart = "bin/main.dart"
+  snapshot_kind = "kernel"
+
+  training_args = [ "--help" ]
+
+  inputs = [ "bin/main.dart" ]
+
+  deps = [ "//flutter/flutter_frontend_server:frontend_server" ]
+}

@@ -1,0 +1,59 @@
+# Copyright 2016 The Fuchsia Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+config("benchmark_config") {
+  visibility = [ ":*" ]
+  include_dirs = [ "include" ]
+}
+static_library("benchmark") {
+  testonly = true
+
+  sources = [
+    "//flutter/third_party/benchmark/src/arraysize.h",
+    "//flutter/third_party/benchmark/src/benchmark.cc",
+    "//flutter/third_party/benchmark/src/benchmark_api_internal.cc",
+    "//flutter/third_party/benchmark/src/benchmark_api_internal.h",
+    "//flutter/third_party/benchmark/src/benchmark_main.cc",
+    "//flutter/third_party/benchmark/src/benchmark_name.cc",
+    "//flutter/third_party/benchmark/src/benchmark_register.cc",
+    "//flutter/third_party/benchmark/src/benchmark_register.h",
+    "//flutter/third_party/benchmark/src/benchmark_runner.cc",
+    "//flutter/third_party/benchmark/src/benchmark_runner.h",
+    "//flutter/third_party/benchmark/src/check.h",
+    "//flutter/third_party/benchmark/src/colorprint.cc",
+    "//flutter/third_party/benchmark/src/colorprint.h",
+    "//flutter/third_party/benchmark/src/commandlineflags.cc",
+    "//flutter/third_party/benchmark/src/commandlineflags.h",
+    "//flutter/third_party/benchmark/src/complexity.cc",
+    "//flutter/third_party/benchmark/src/complexity.h",
+    "//flutter/third_party/benchmark/src/console_reporter.cc",
+    "//flutter/third_party/benchmark/src/counter.cc",
+    "//flutter/third_party/benchmark/src/counter.h",
+    "//flutter/third_party/benchmark/src/csv_reporter.cc",
+    "//flutter/third_party/benchmark/src/cycleclock.h",
+    "//flutter/third_party/benchmark/src/internal_macros.h",
+    "//flutter/third_party/benchmark/src/json_reporter.cc",
+    "//flutter/third_party/benchmark/src/log.h",
+    "//flutter/third_party/benchmark/src/mutex.h",
+    "//flutter/third_party/benchmark/src/perf_counters.cc",
+    "//flutter/third_party/benchmark/src/perf_counters.h",
+    "//flutter/third_party/benchmark/src/re.h",
+    "//flutter/third_party/benchmark/src/reporter.cc",
+    "//flutter/third_party/benchmark/src/sleep.cc",
+    "//flutter/third_party/benchmark/src/sleep.h",
+    "//flutter/third_party/benchmark/src/statistics.cc",
+    "//flutter/third_party/benchmark/src/statistics.h",
+    "//flutter/third_party/benchmark/src/string_util.cc",
+    "//flutter/third_party/benchmark/src/string_util.h",
+    "//flutter/third_party/benchmark/src/sysinfo.cc",
+    "//flutter/third_party/benchmark/src/thread_manager.h",
+    "//flutter/third_party/benchmark/src/thread_timer.h",
+    "//flutter/third_party/benchmark/src/timers.cc",
+    "//flutter/third_party/benchmark/src/timers.h",
+  ]
+  public_configs = [ ":benchmark_config" ]
+  defines = [
+    "HAVE_STD_REGEX",
+    "HAVE_THREAD_SAFETY_ATTRIBUTES",
+  ]
+}

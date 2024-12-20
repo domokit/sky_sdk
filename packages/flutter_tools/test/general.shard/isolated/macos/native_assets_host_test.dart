@@ -9,30 +9,12 @@ import '../../../src/common.dart';
 
 void main() {
   test('framework name', () {
-    expect(
-      frameworkUri('libfoo.dylib', <String>{}),
-      equals(Uri.file('foo.framework/foo')),
-    );
-    expect(
-      frameworkUri('foo', <String>{}),
-      equals(Uri.file('foo.framework/foo')),
-    );
-    expect(
-      frameworkUri('foo_foo', <String>{}),
-      equals(Uri.file('foo_foo.framework/foo_foo')),
-    );
-    expect(
-      frameworkUri('foo-foo', <String>{}),
-      equals(Uri.file('foo-foo.framework/foo-foo')),
-    );
-    expect(
-      frameworkUri(r'foo$foo', <String>{}),
-      equals(Uri.file('foofoo.framework/foofoo')),
-    );
-    expect(
-      frameworkUri('foo.foo', <String>{}),
-      equals(Uri.file('foofoo.framework/foofoo')),
-    );
+    expect(frameworkUri('libfoo.dylib', <String>{}), equals(Uri.file('foo.framework/foo')));
+    expect(frameworkUri('foo', <String>{}), equals(Uri.file('foo.framework/foo')));
+    expect(frameworkUri('foo_foo', <String>{}), equals(Uri.file('foo_foo.framework/foo_foo')));
+    expect(frameworkUri('foo-foo', <String>{}), equals(Uri.file('foo-foo.framework/foo-foo')));
+    expect(frameworkUri(r'foo$foo', <String>{}), equals(Uri.file('foofoo.framework/foofoo')));
+    expect(frameworkUri('foo.foo', <String>{}), equals(Uri.file('foofoo.framework/foofoo')));
     expect(
       frameworkUri('libatoolongfilenameforaframework.dylib', <String>{}),
       equals(Uri.file('atoolongfilenameforaframework.framework/atoolongfilenameforaframework')),
@@ -41,10 +23,7 @@ void main() {
 
   test('framework name conflicts', () {
     final Set<String> alreadyTakenNames = <String>{};
-    expect(
-      frameworkUri('libfoo.dylib', alreadyTakenNames),
-      equals(Uri.file('foo.framework/foo')),
-    );
+    expect(frameworkUri('libfoo.dylib', alreadyTakenNames), equals(Uri.file('foo.framework/foo')));
     expect(
       frameworkUri('libfoo.dylib', alreadyTakenNames),
       equals(Uri.file('foo1.framework/foo1')),
@@ -70,12 +49,10 @@ void main() {
   group('parseOtoolArchitectureSections', () {
     test('single architecture', () {
       expect(
-        parseOtoolArchitectureSections(
-'''
+        parseOtoolArchitectureSections('''
 /build/native_assets/ios/buz.framework/buz (architecture x86_64):
 @rpath/libfoo.dylib
-'''
-        ),
+'''),
         <Architecture, List<String>>{
           Architecture.x64: <String>['@rpath/libfoo.dylib'],
         },
@@ -84,12 +61,10 @@ void main() {
 
     test('single architecture but not specified', () {
       expect(
-        parseOtoolArchitectureSections(
-'''
+        parseOtoolArchitectureSections('''
 /build/native_assets/ios/buz.framework/buz:
 @rpath/libfoo.dylib
-'''
-        ),
+'''),
         <Architecture?, List<String>>{
           null: <String>['@rpath/libfoo.dylib'],
         },
@@ -98,14 +73,12 @@ void main() {
 
     test('multiple architectures', () {
       expect(
-        parseOtoolArchitectureSections(
-'''
+        parseOtoolArchitectureSections('''
 /build/native_assets/ios/buz.framework/buz (architecture x86_64):
 @rpath/libfoo.dylib
 /build/native_assets/ios/buz.framework/buz (architecture arm64):
 @rpath/libbar.dylib
-'''
-        ),
+'''),
         <Architecture, List<String>>{
           Architecture.x64: <String>['@rpath/libfoo.dylib'],
           Architecture.arm64: <String>['@rpath/libbar.dylib'],
@@ -115,30 +88,23 @@ void main() {
 
     test('multiple lines in section', () {
       expect(
-        parseOtoolArchitectureSections(
-'''
+        parseOtoolArchitectureSections('''
 /build/native_assets/ios/buz.framework/buz (architecture x86_64):
 @rpath/libfoo.dylib
 @rpath/libbar.dylib
-'''
-        ),
+'''),
         <Architecture, List<String>>{
-          Architecture.x64: <String>[
-            '@rpath/libfoo.dylib',
-            '@rpath/libbar.dylib',
-          ],
+          Architecture.x64: <String>['@rpath/libfoo.dylib', '@rpath/libbar.dylib'],
         },
       );
     });
 
     test('trim each line in section', () {
       expect(
-        parseOtoolArchitectureSections(
-'''
+        parseOtoolArchitectureSections('''
 /build/native_assets/ios/buz.framework/buz (architecture x86_64):
   @rpath/libfoo.dylib
-'''
-        ),
+'''),
         <Architecture, List<String>>{
           Architecture.x64: <String>['@rpath/libfoo.dylib'],
         },

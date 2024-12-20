@@ -14,8 +14,7 @@ const String benchmarkViewType = 'benchmark_element';
 
 void _registerFactory() {
   ui_web.platformViewRegistry.registerViewFactory(benchmarkViewType, (int viewId) {
-    final web.HTMLElement htmlElement =
-      web.document.createElement('div') as web.HTMLDivElement;
+    final web.HTMLElement htmlElement = web.document.createElement('div') as web.HTMLDivElement;
     htmlElement.id = '${benchmarkViewType}_$viewId';
     htmlElement.innerText = 'Google';
     htmlElement.style
@@ -32,31 +31,30 @@ void _registerFactory() {
 /// Creates an infinite list of Link widgets and scrolls it.
 class BenchPlatformViewInfiniteScroll extends WidgetRecorder {
   BenchPlatformViewInfiniteScroll.forward()
-      : initialOffset = 0.0,
-        finalOffset = 30000.0,
-        super(name: benchmarkName) {
+    : initialOffset = 0.0,
+      finalOffset = 30000.0,
+      super(name: benchmarkName) {
     _registerFactory();
   }
 
   BenchPlatformViewInfiniteScroll.backward()
-      : initialOffset = 30000.0,
-        finalOffset = 0.0,
-        super(name: benchmarkNameBackward) {
+    : initialOffset = 30000.0,
+      finalOffset = 0.0,
+      super(name: benchmarkNameBackward) {
     _registerFactory();
   }
 
   static const String benchmarkName = 'bench_platform_view_infinite_scroll';
-  static const String benchmarkNameBackward =
-      'bench_platform_view_infinite_scroll_backward';
+  static const String benchmarkNameBackward = 'bench_platform_view_infinite_scroll_backward';
 
   final double initialOffset;
   final double finalOffset;
 
   @override
   Widget createWidget() => MaterialApp(
-        title: 'Infinite Platform View Scroll Benchmark',
-        home: _InfiniteScrollPlatformViews(initialOffset, finalOffset),
-      );
+    title: 'Infinite Platform View Scroll Benchmark',
+    home: _InfiniteScrollPlatformViews(initialOffset, finalOffset),
+  );
 }
 
 class _InfiniteScrollPlatformViews extends StatefulWidget {
@@ -81,9 +79,7 @@ class _InfiniteScrollPlatformViewsState extends State<_InfiniteScrollPlatformVie
 
     offset = widget.initialOffset;
 
-    scrollController = ScrollController(
-      initialScrollOffset: offset,
-    );
+    scrollController = ScrollController(initialScrollOffset: offset);
 
     // Without the timer the animation doesn't begin.
     Timer.run(() async {
@@ -107,10 +103,7 @@ class _InfiniteScrollPlatformViewsState extends State<_InfiniteScrollPlatformVie
       controller: scrollController,
       itemExtent: 100.0,
       itemBuilder: (BuildContext context, int index) {
-        return const SizedBox(
-          height: 100.0,
-          child: HtmlElementView(viewType: benchmarkViewType),
-        );
+        return const SizedBox(height: 100.0, child: HtmlElementView(viewType: benchmarkViewType));
       },
     );
   }

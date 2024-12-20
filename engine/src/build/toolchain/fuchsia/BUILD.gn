@@ -1,0 +1,179 @@
+# Copyright 2018 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/toolchain/clang.gni")
+import("//build/toolchain/rbe.gni")
+import("//build/toolchain/ccache.gni")
+import("//build/toolchain/toolchain.gni")
+
+if (use_rbe) {
+  compiler_args =
+      rewrapper_command + [ "--labels=type=compile,compiler=clang,lang=cpp " ]
+  compiler_prefix = string_join(" ", compiler_args)
+  link_prefix = ""
+} else if (use_ccache) {
+  # ccache only supports compilation, not linking.
+  compiler_prefix = "ccache"
+  link_prefix = ""
+} else {
+  compiler_prefix = ""
+  link_prefix = ""
+}
+
+toolchain("fuchsia") {
+  assert(target_cpu == "x64" || target_cpu == "arm64",
+         "We currently only support 'x64' and 'arm64' targets for fuchsia.")
+  toolchain_bin =
+      rebase_path("$buildtools_path/${host_os}-${host_cpu}/clang/bin", root_out_dir)
+  fuchsia_sdk = rebase_path("//fuchsia/sdk/$host_os", root_out_dir)
+
+  # We can't do string interpolation ($ in strings) on things with dots in
+  # them. To allow us to use $cc below, for example, we create copies of
+  # these values in our scope.
+  cc = "${toolchain_bin}/clang"
+  cxx = "${toolchain_bin}/clang++"
+  ar = "${toolchain_bin}/llvm-ar"
+  ld = "${toolchain_bin}/clang++"
+  readelf = "${toolchain_bin}/llvm-readelf"
+  nm = "${toolchain_bin}/llvm-nm"
+  strip = "${toolchain_bin}/llvm-strip"
+
+  if (target_cpu == "arm64") {
+    target_triple_flags = "--target=aarch64-fuchsia"
+  } else {
+    target_triple_flags = "--target=x86_64-fuchsia"
+  }
+
+  sysroot_flags = "--sysroot ${fuchsia_sdk}/arch/${target_cpu}/sysroot"
+
+  # These library switches can apply to all tools below.
+  lib_switch = "-l"
+  lib_dir_switch = "-L"
+
+  lto_flags = ""
+  if (enable_lto) {
+    lto_flags = "-flto"
+  }
+
+  tool("cc") {
+    depfile = "{{output}}.d"
+    command = "$compiler_prefix $cc -MD -MF $depfile $target_triple_flags $sysroot_flags $lto_flags {{defines}} {{include_dirs}} {{cflags}} {{cflags_c}} -c {{source}} -o {{output}}"
+    depsformat = "gcc"
+    description = "CC {{output}}"
+    outputs =
+        [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+  }
+
+  tool("cxx") {
+    depfile = "{{output}}.d"
+    command = "$compiler_prefix $cxx -MD -MF $depfile $target_triple_flags $sysroot_flags $lto_flags {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} -c {{source}} -o {{output}}"
+    depsformat = "gcc"
+    description = "CXX {{output}}"
+    outputs =
+        [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+  }
+
+  tool("asm") {
+    depfile = "{{output}}.d"
+    command = "$cc -MD -MF $depfile $target_triple_flags $sysroot_flags $lto_flags {{defines}} {{include_dirs}} {{asmflags}} {{cflags}} {{cflags_c}} -c {{source}} -o {{output}}"
+    depsformat = "gcc"
+    description = "ASM {{output}}"
+    outputs =
+        [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+  }
+
+  tool("alink") {
+    rspfile = "{{output}}.rsp"
+    command = "rm -f {{output}} && $ar rcs {{output}} @$rspfile"
+    description = "AR {{output}}"
+    rspfile_content = "{{inputs}}"
+    outputs =
+        [ "{{target_out_dir}}/{{target_output_name}}{{output_extension}}" ]
+    default_output_extension = ".a"
+    output_prefix = "lib"
+  }
+
+  tool("solink") {
+    soname = "{{target_output_name}}{{output_extension}}"  # e.g. "libfoo.so".
+    sofile = "{{root_out_dir}}/$soname"  # Possibly including toolchain dir.
+    unstripped_sofile =
+        "{{root_out_dir}}/so.unstripped/$soname"  # Possibly including toolchain
+                                                  # dir.
+    rspfile = sofile + ".rsp"
+
+    # These variables are not built into GN but are helpers that implement
+    # (1) linking to produce a .so, (2) extracting the symbols from that file
+    # to a temporary file, (3) if the temporary file has differences from the
+    # existing .TOC file, overwrite it, otherwise, don't change it.
+    tocfile = sofile + ".TOC"
+    temporary_tocname = sofile + ".tmp"
+    link_command = "$link_prefix $ld $target_triple_flags $sysroot_flags $lto_flags -shared {{ldflags}} -o $unstripped_sofile -Wl,--build-id=sha1 -Wl,-soname=$soname @$rspfile"
+    toc_command = "{ $readelf -d $unstripped_sofile | grep SONAME ; $nm -gD -f p $unstripped_sofile | cut -f1-2 -d' '; } > $temporary_tocname"
+    replace_command = "if ! cmp -s $temporary_tocname $tocfile; then mv $temporary_tocname $tocfile; fi"
+    strip_command = "$strip -o $sofile $unstripped_sofile"
+
+    command =
+        "$link_command && $toc_command && $replace_command && $strip_command"
+    rspfile_content = "-Wl,--whole-archive {{inputs}} {{solibs}} -Wl,--no-whole-archive {{libs}}"
+
+    description = "SOLINK $sofile"
+
+    default_output_extension = ".so"
+
+    output_prefix = "lib"
+
+    # Since the above commands only updates the .TOC file when it changes, ask
+    # Ninja to check if the timestamp actually changed to know if downstream
+    # dependencies should be recompiled.
+    restat = true
+
+    # Tell GN about the output files. It will link to the sofile but use the
+    # tocfile for dependency management.
+    outputs = [
+      sofile,
+      unstripped_sofile,
+      tocfile,
+    ]
+
+    link_output = sofile
+    depend_output = tocfile
+  }
+
+  tool("link") {
+    exename = "{{target_output_name}}{{output_extension}}"
+    outfile = "{{root_out_dir}}/$exename"
+    rspfile = "$outfile.rsp"
+    unstripped_outfile = "{{root_out_dir}}/exe.unstripped/$exename"
+    command = "$link_prefix $ld $target_triple_flags $sysroot_flags $lto_flags {{ldflags}} -o $unstripped_outfile -Wl,--build-id=sha1 -Wl,--start-group @$rspfile {{solibs}} -Wl,--end-group {{libs}} && ${strip} -o $outfile $unstripped_outfile"
+    description = "LINK $outfile"
+    rspfile_content = "{{inputs}}"
+    outputs = [
+      unstripped_outfile,
+      outfile,
+    ]
+  }
+
+  tool("stamp") {
+    command = "touch {{output}}"
+    description = "STAMP {{output}}"
+  }
+
+  tool("copy") {
+    command = "ln -f {{source}} {{output}} 2>/dev/null || (rm -rf {{output}} && cp -af {{source}} {{output}})"
+    description = "COPY {{source}} {{output}}"
+  }
+
+  # When invoking this toolchain not as the default one, these args will be
+  # passed to the build. They are ignored when this is the default toolchain.
+  toolchain_args = {
+    current_cpu = target_cpu
+    current_os = target_os
+
+    # These values need to be passed through unchanged.
+    target_os = target_os
+    target_cpu = target_cpu
+
+    is_clang = true
+  }
+}

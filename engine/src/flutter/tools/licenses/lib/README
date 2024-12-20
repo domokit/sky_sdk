@@ -1,0 +1,94 @@
+This license collection script is, fundamentally, one giant pile of
+special cases. As such, while there is an attempt to model the rules
+that apply to licenses and apply some sort of order to the process,
+the code is less than clear. This file attempts to provide an overview.
+
+main.dart is the core of the operation. It first walks the entire
+directory tree starting from the root of the repository (which is to
+be specified on the command line as the only argument), creating an
+in-memory representation of the project (make sure to run this only
+after you've run gclient sync, so that all dependencies are on disk).
+This is the step that is labeled "Preparing data structures".
+
+Then, it walks this in-memory representation, attempting to assign to
+each file one or more licenses. This is the step labeled "Collecting
+licenses", which takes a long time.
+
+Finally, it prints out these licenses.
+
+The in-memory representation is a tree of RepositoryEntry objects.
+There's three important types of these objects: RepositoryDirectory
+objects, which represent directories; RepositoryLicensedFile, which
+represents source files and resources that might end up in the binary,
+and RepositoryLicenseFile, which represents license files that do not
+themselves end up in the binary other than as a side-effect of this
+script.
+
+RepositoryDirectory objects contain three lists, the list of
+RepositoryDirectory subdirectories, the list of RepositoryLicensedFile
+children, and the list of RepositoryLicenseFile children.
+
+RepositoryDirectory objects are the objects that crawl the filesystem.
+
+While the script is pretty conservative (including probably more
+licenses than strictly necessary), it tries to avoid including
+material that isn't actually used. To do this, RepositoryDirectory
+objects only crawl directories and files for which shouldRecurse
+returns true. For example, shouldRecurse returns false for ".git"
+files. To simplify the configuration of such rules, the default is to
+apply the rules in the paths.dart file.
+
+Some directories and files require special handling, and have specific
+subclasses of the above classes. To create the appropriate objects,
+RepositoryDirectory calls createSubdirectory and createFile to create
+the nodes of the tree.
+
+
+The low-level handling of files is done by classes in filesystem.dart.
+This code supports transparently crawling into archives (e.g. .jar
+files), as well as handling UTF-8 vs latin1. It contains much magic
+and hard-coded file names and so on to handle distinguishing binary
+files from text files, and so forth.
+
+This code uses the cache described in cache.dart to try to avoid
+having to repeatedly reopen the same file many times in a row.
+
+
+In the case of a binary file, the license is found by crawling around
+the directory structure looking for a "default" license file. In the
+case of text files, though, it's often the case that the file itself
+mentions the license and therefore the file itself is inspected
+looking for copyright or license text. This scanning is done by
+determineLicensesFor() in licenses.dart.
+
+This function uses patterns that are themselves in patterns.dart. In
+this file we find all manner of long complicated and somewhat crazy
+regular expressions. This is where you see quite how absurd this work
+can actually be. It is left as an exercise to the reader to look for
+the implications of many of the regular expressions; as one example,
+though, consider the case of the pattern that matches the AFL/LGPL
+dual license statement: there is one file in which the ZIP code for
+the Free Software Foundation is off by one, for no clear reason,
+leading to the pattern ending with "MA 0211[01]-1307, USA".
+
+
+The license.dart file also contains the License object, the code that
+attempts to determine what copyrights apply to which licenses, and the
+code that attempts to identify the licenses themselves (at a high
+level), to make sure that appropriate clauses are followed (e.g.
+including the copyright with a BSD notice).
+
+
+In formatter.dart you will find the only part of this codebase that is
+actually tested at this time; this is the code that reformats blobs of
+text to remove comments and decorations and the like.
+
+
+The biggest problem with this script right now is that it is absurdly
+slow, largely because of the many, many applications of regular
+expressions in pattern.dart (especially the ones that use _linebreak).
+In regexp_debug.dart we have a wrapper around RegExp that attempts to
+quantify this cost, you can see the results if you run the script with
+`--verbose`. Long term, the right solution is to change from these
+all-in-one patterns to a world where we first tokenize each file, then
+apply word-by-word pattern matching to the tokenized input.

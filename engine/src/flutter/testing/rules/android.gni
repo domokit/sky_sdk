@@ -1,0 +1,43 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/testing/rules/runtime_mode.gni")
+
+template("gradle_task") {
+  action(target_name) {
+    assert(defined(invoker.task), "task is a required parmaeter")
+    assert(defined(invoker.outputs), "outputs is a required parameter")
+    assert(defined(invoker.sources), "sources is a required parameter")
+    assert(defined(invoker.gradle_project_dir),
+           "gradle_project_dir is required (normally: rebase_path(\".\"")
+    assert(defined(invoker.app_name), "app_name is a required parameter")
+
+    script = "//flutter/testing/rules/run_gradle.py"
+
+    inputs = [ "$root_out_dir/flutter.jar" ]
+    sources = invoker.sources
+    outputs = invoker.outputs
+    out_dir = rebase_path("$root_out_dir/${invoker.app_name}")
+    args = [
+      invoker.gradle_project_dir,
+      invoker.task,
+      "--no-daemon",
+      "-Pflutter_jar=" + rebase_path("$root_out_dir/flutter.jar"),
+      "-Pout_dir=$out_dir",
+      "--project-cache-dir=$out_dir/.gradle",
+      "--gradle-user-home=$out_dir/.gradle",
+    ]
+
+    if (is_aot) {
+      args += [ "-Plibapp=" + rebase_path("$target_gen_dir/libs") ]
+      inputs += [ "$target_gen_dir/libs/$android_app_abi/libapp.so" ]
+    }
+
+    deps = [ "//flutter/shell/platform/android:android_jar" ]
+
+    if (defined(invoker.deps)) {
+      deps += invoker.deps
+    }
+  }
+}

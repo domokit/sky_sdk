@@ -30,21 +30,18 @@ void main() {
     expect(pressed, true);
   });
 
-  testWidgets('keeps contrast with background on hover',
-      (WidgetTester tester) async {
+  testWidgets('keeps contrast with background on hover', (WidgetTester tester) async {
     await tester.pumpWidget(
       CupertinoApp(
         home: Center(
-          child: CupertinoDesktopTextSelectionToolbarButton.text(
-            text: 'Tap me',
-            onPressed: () {},
-          ),
+          child: CupertinoDesktopTextSelectionToolbarButton.text(text: 'Tap me', onPressed: () {}),
         ),
       ),
     );
 
-    final BuildContext context =
-        tester.element(find.byType(CupertinoDesktopTextSelectionToolbarButton));
+    final BuildContext context = tester.element(
+      find.byType(CupertinoDesktopTextSelectionToolbarButton),
+    );
 
     // The Text color is a CupertinoDynamicColor so we have to compare the color
     // values instead of just comparing the colors themselves.
@@ -54,13 +51,11 @@ void main() {
     );
 
     // Hover gesture
-    final TestGesture gesture =
-        await tester.createGesture(kind: PointerDeviceKind.mouse);
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
     await gesture.addPointer(location: Offset.zero);
     addTearDown(gesture.removePointer);
     await tester.pump();
-    await gesture.moveTo(tester
-        .getCenter(find.byType(CupertinoDesktopTextSelectionToolbarButton)));
+    await gesture.moveTo(tester.getCenter(find.byType(CupertinoDesktopTextSelectionToolbarButton)));
     await tester.pumpAndSettle();
 
     // The color here should be a standard Color, there's no need to use value.
@@ -75,7 +70,7 @@ void main() {
       CupertinoApp(
         home: Center(
           child: CupertinoDesktopTextSelectionToolbarButton(
-            onPressed: () { },
+            onPressed: () {},
             child: const Text('Tap me'),
           ),
         ),
@@ -83,23 +78,26 @@ void main() {
     );
 
     // Original at full opacity.
-    FadeTransition opacity = tester.widget(find.descendant(
-      of: find.byType(CupertinoDesktopTextSelectionToolbarButton),
-      matching: find.byType(FadeTransition),
-    ));
+    FadeTransition opacity = tester.widget(
+      find.descendant(
+        of: find.byType(CupertinoDesktopTextSelectionToolbarButton),
+        matching: find.byType(FadeTransition),
+      ),
+    );
     expect(opacity.opacity.value, 1.0);
 
     // Make a "down" gesture on the button.
-    final Offset center = tester
-        .getCenter(find.byType(CupertinoDesktopTextSelectionToolbarButton));
+    final Offset center = tester.getCenter(find.byType(CupertinoDesktopTextSelectionToolbarButton));
     final TestGesture gesture = await tester.startGesture(center);
     await tester.pumpAndSettle();
 
     // Opacity reduces during the down gesture.
-    opacity = tester.widget(find.descendant(
-      of: find.byType(CupertinoDesktopTextSelectionToolbarButton),
-      matching: find.byType(FadeTransition),
-    ));
+    opacity = tester.widget(
+      find.descendant(
+        of: find.byType(CupertinoDesktopTextSelectionToolbarButton),
+        matching: find.byType(FadeTransition),
+      ),
+    );
     expect(opacity.opacity.value, 0.7);
 
     // Release the down gesture.
@@ -107,10 +105,12 @@ void main() {
     await tester.pumpAndSettle();
 
     // Opacity is back to normal.
-    opacity = tester.widget(find.descendant(
-      of: find.byType(CupertinoDesktopTextSelectionToolbarButton),
-      matching: find.byType(FadeTransition),
-    ));
+    opacity = tester.widget(
+      find.descendant(
+        of: find.byType(CupertinoDesktopTextSelectionToolbarButton),
+        matching: find.byType(FadeTransition),
+      ),
+    );
     expect(opacity.opacity.value, 1.0);
   });
 
@@ -118,10 +118,7 @@ void main() {
     await tester.pumpWidget(
       const CupertinoApp(
         home: Center(
-          child: CupertinoDesktopTextSelectionToolbarButton(
-            onPressed: null,
-            child: Text('Tap me'),
-          ),
+          child: CupertinoDesktopTextSelectionToolbarButton(onPressed: null, child: Text('Tap me')),
         ),
       ),
     );

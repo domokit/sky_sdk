@@ -1,0 +1,9 @@
+This code is intended to be built into plugins and applications to provide
+higher-level, C++ abstractions for interacting with the Flutter library.
+
+Over time, the goal is to move more of this code into the library in a way that
+provides a usable ABI (e.g., does not use standard library in the interfaces).
+
+Note that this wrapper is still in early stages. Expect significant churn in
+both the APIs and the structure of the wrapper (e.g., the exact set of files
+that need to be built).

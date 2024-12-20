@@ -2,10 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+
 import 'package:flutter_test/flutter_test.dart';
 
 void main() async {
-  TestWidgetsFlutterBinding binding = AutomatedTestWidgetsFlutterBinding.ensureInitialized();
+  TestWidgetsFlutterBinding binding =
+      AutomatedTestWidgetsFlutterBinding.ensureInitialized();
   binding.runTest(
     () async {
       // This will be unchanged as there is no equivalent API.
@@ -15,6 +17,6 @@ void main() async {
         () async {},
       );
     },
-    () { },
+    () {},
   );
 }

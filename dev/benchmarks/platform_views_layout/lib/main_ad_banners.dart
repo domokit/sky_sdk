@@ -8,29 +8,25 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() {
-  runApp(
-    const PlatformViewApp()
-  );
+  runApp(const PlatformViewApp());
 }
 
 class PlatformViewApp extends StatefulWidget {
-  const PlatformViewApp({
-    super.key,
-  });
+  const PlatformViewApp({super.key});
 
   @override
   PlatformViewAppState createState() => PlatformViewAppState();
 }
 
 class PlatformViewAppState extends State<PlatformViewApp> {
-
   AdWidget _getBannerWidget() {
     // Test IDs from Admob:
     // https://developers.google.com/admob/ios/test-ads
     // https://developers.google.com/admob/android/test-ads
-    final String bannerId = Platform.isAndroid
-        ? 'ca-app-pub-3940256099942544/6300978111'
-        : 'ca-app-pub-3940256099942544/2934735716';
+    final String bannerId =
+        Platform.isAndroid
+            ? 'ca-app-pub-3940256099942544/6300978111'
+            : 'ca-app-pub-3940256099942544/2934735716';
     final BannerAd bannerAd = BannerAd(
       adUnitId: bannerId,
       request: const AdRequest(),
@@ -53,12 +49,12 @@ class PlatformViewAppState extends State<PlatformViewApp> {
           itemCount: 250,
           itemBuilder: (BuildContext context, int index) {
             return index.isEven
-              // Use 320x50 Admob standard banner size.
-              ? SizedBox(width: 320, height: 50, child: _getBannerWidget())
-              // Adjust the height to control number of platform views on screen.
-              // TODO(hellohuanlin): Having more than 5 banners on screen causes an unknown crash.
-              // See: https://github.com/flutter/flutter/issues/144339
-              : const SizedBox(height: 150, child: ColoredBox(color: Colors.yellow));
+                // Use 320x50 Admob standard banner size.
+                ? SizedBox(width: 320, height: 50, child: _getBannerWidget())
+                // Adjust the height to control number of platform views on screen.
+                // TODO(hellohuanlin): Having more than 5 banners on screen causes an unknown crash.
+                // See: https://github.com/flutter/flutter/issues/144339
+                : const SizedBox(height: 150, child: ColoredBox(color: Colors.yellow));
           },
         ),
       ),

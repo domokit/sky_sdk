@@ -18,10 +18,7 @@ void main() {
 
     setUp(() {
       caughtArgs = <String>[];
-      processManager = FakeProcessManager((
-        String exec,
-        List<String> args,
-      ) async {
+      processManager = FakeProcessManager((String exec, List<String> args) async {
         assert(caughtArgs.isEmpty, 'Should only catch one call to run');
         caughtArgs = args;
         return FakeProcessManager.ok();
@@ -74,14 +71,14 @@ void main() {
     });
 
     expect(
-      Adb.create(
-        processManager: processManager,
+      Adb.create(processManager: processManager),
+      throwsA(
+        isA<StateError>().having(
+          (StateError e) => e.message,
+          'message',
+          'No device connected: error',
+        ),
       ),
-      throwsA(isA<StateError>().having(
-        (StateError e) => e.message,
-        'message',
-        'No device connected: error',
-      )),
     );
   });
 
@@ -100,9 +97,7 @@ void main() {
       }
     });
 
-    final Adb adb = await Adb.create(
-      processManager: processManager,
-    );
+    final Adb adb = await Adb.create(processManager: processManager);
 
     final Uint8List result = await adb.screencap();
     expect(result, <int>[0, 1, 2, 3]);
@@ -123,9 +118,7 @@ void main() {
       }
     });
 
-    final Adb adb = await Adb.create(
-      processManager: processManager,
-    );
+    final Adb adb = await Adb.create(processManager: processManager);
 
     await adb.tap(1, 2);
   });

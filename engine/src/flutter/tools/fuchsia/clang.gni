@@ -1,0 +1,37 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/toolchain/toolchain.gni")
+
+declare_args() {
+  # The default clang toolchain provided by the prebuilt. This variable is
+  # additionally consumed by the Go toolchain.
+  clang_base = rebase_path("$buildtools_path/${host_os}-${host_cpu}/clang/lib")
+}
+
+if (current_cpu == "arm64") {
+  clang_cpu = "aarch64"
+} else if (current_cpu == "x64") {
+  clang_cpu = "x86_64"
+} else {
+  assert(false, "CPU not supported")
+}
+
+if (is_fuchsia) {
+  clang_target = "${clang_cpu}-fuchsia"
+} else if (is_linux) {
+  clang_target = "${clang_cpu}-linux-gnu"
+} else if (is_mac) {
+  clang_target = "${clang_cpu}-apple-darwin"
+} else {
+  assert(false, "OS not supported")
+}
+
+clang_manifest = rebase_path("$clang_base/runtime.json")
+clang_manifest_json = exec_script("//flutter/tools/fuchsia/parse_manifest.py",
+                                  [
+                                    "--input=${clang_manifest}",
+                                    "--clang-cpu=${clang_cpu}",
+                                  ],
+                                  "json")

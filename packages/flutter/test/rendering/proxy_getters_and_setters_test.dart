@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('RenderConstrainedBox getters and setters', () {
-    final RenderConstrainedBox box = RenderConstrainedBox(additionalConstraints: const BoxConstraints.tightFor(height: 10.0));
+    final RenderConstrainedBox box = RenderConstrainedBox(
+      additionalConstraints: const BoxConstraints.tightFor(height: 10.0),
+    );
     expect(box.additionalConstraints, const BoxConstraints(minHeight: 10.0, maxHeight: 10.0));
     box.additionalConstraints = const BoxConstraints.tightFor(width: 10.0);
     expect(box.additionalConstraints, const BoxConstraints(minWidth: 10.0, maxWidth: 10.0));
@@ -56,11 +58,13 @@ void main() {
       const LinearGradient gradient = LinearGradient(colors: <Color>[Colors.red]);
       return gradient.createShader(Rect.zero);
     }
+
     Shader callback2(Rect bounds) {
       assert(false); // The test should not call this.
       const LinearGradient gradient = LinearGradient(colors: <Color>[Colors.blue]);
       return gradient.createShader(Rect.zero);
     }
+
     final RenderShaderMask box = RenderShaderMask(shaderCallback: callback1);
     expect(box.shaderCallback, equals(callback1));
     box.shaderCallback = callback2;

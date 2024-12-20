@@ -1,0 +1,134 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+assert(is_mac || is_ios)
+
+import("//flutter/common/config.gni")
+import("//flutter/testing/testing.gni")
+import("framework_common.gni")
+
+source_set("common") {
+  cflags_objc = flutter_cflags_objc
+  cflags_objcc = flutter_cflags_objcc
+
+  sources = [
+    "buffer_conversions.h",
+    "buffer_conversions.mm",
+    "command_line.h",
+    "command_line.mm",
+  ]
+
+  deps = [
+    ":availability_version_check",
+    "//flutter/fml",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+}
+
+# Provides an implementation for _availability_version_check.
+#
+# This is required due to an upstream compiler builtin (runtime) change
+# that marked this function as weakly-linked via __attribute__((weak import))
+# As such, no linking failure occurs when the function is unavailable at
+# link time. Since the symbol is no longer linked in, App Store review blocks
+# publishing due to relying on a private symbol. Instead we link in our own
+# implementation, which provides the exact implementation used in clang prior
+# to the upstream change.
+#
+# See: Upstream clang change: https://reviews.llvm.org/D150397
+# See: https://github.com/flutter/flutter/issues/133777
+source_set("availability_version_check") {
+  sources = [ "availability_version_check.cc" ]
+
+  deps = [ "//flutter/fml" ]
+
+  public_configs = [ "//flutter:config" ]
+}
+
+test_fixtures("availability_version_check_fixtures") {
+  fixtures = []
+}
+
+executable("availability_version_check_unittests") {
+  testonly = true
+
+  sources = [ "availability_version_check_unittests.cc" ]
+
+  deps = [
+    ":availability_version_check",
+    ":availability_version_check_fixtures",
+    "//flutter/fml",
+    "//flutter/testing",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+}
+
+# Shared framework headers end up in the same folder as platform-specific
+# framework headers when consumed by clients, so the include paths assume they
+# are next to each other.
+config("framework_relative_headers") {
+  include_dirs = [ "framework/Headers" ]
+}
+
+# Framework code shared between iOS and macOS.
+source_set("framework_common") {
+  cflags_objc = flutter_cflags_objc
+  cflags_objcc = flutter_cflags_objcc
+
+  sources = [
+    "framework/Source/FlutterBinaryMessengerRelay.mm",
+    "framework/Source/FlutterChannels.mm",
+    "framework/Source/FlutterCodecs.mm",
+    "framework/Source/FlutterHourFormat.mm",
+    "framework/Source/FlutterNSBundleUtils.h",
+    "framework/Source/FlutterNSBundleUtils.mm",
+    "framework/Source/FlutterStandardCodec.mm",
+    "framework/Source/FlutterStandardCodecHelper.cc",
+    "framework/Source/FlutterStandardCodec_Internal.h",
+  ]
+
+  public = framework_common_headers
+
+  public += [ "framework/Source/FlutterNSBundleUtils.h" ]
+
+  defines = [ "FLUTTER_FRAMEWORK" ]
+
+  public_configs = [
+    "//flutter:config",
+    ":framework_relative_headers",
+  ]
+
+  deps = [ "//flutter/fml" ]
+}
+
+test_fixtures("framework_common_fixtures") {
+  fixtures = []
+}
+
+# Unit tests for channels.
+executable("framework_common_unittests") {
+  testonly = true
+  cflags_objc = flutter_cflags_objc
+  cflags_objcc = flutter_cflags_objcc
+  ldflags = [ "-ObjC" ]
+
+  sources = [
+    "framework/Source/FlutterBinaryMessengerRelayTest.mm",
+    "framework/Source/FlutterTestUtils.mm",
+    "framework/Source/flutter_codecs_unittest.mm",
+    "framework/Source/flutter_standard_codec_unittest.mm",
+  ]
+
+  deps = [
+    ":framework_common",
+    ":framework_common_fixtures",
+    "$dart_src/runtime:libdart_jit",
+    "//flutter/testing",
+    "//flutter/third_party/ocmock:ocmock",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+}

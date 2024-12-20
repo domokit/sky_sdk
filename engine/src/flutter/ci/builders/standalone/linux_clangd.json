@@ -1,0 +1,39 @@
+{
+  "_comment": [
+    "This build is only used to generate compile_commands.json for clangd ",
+    "and should not be used for any other purpose.",
+    "",
+    "Note the `flutter/tools/font_subset` target is only used because if no ",
+    "targets are specified, the build will fail, and if an empty list of ",
+    "targets are specified, all targets are built (wasteful/slow)"
+  ],
+  "cas_archive": false,
+  "gn": [
+    "--runtime-mode",
+    "debug",
+    "--unoptimized",
+    "--prebuilt-dart-sdk",
+    "--no-lto",
+    "--no-rbe",
+    "--no-goma",
+    "--target-dir",
+    "ci/linux_unopt_debug_no_rbe"
+  ],
+  "name": "ci/linux_unopt_debug_no_rbe",
+  "description": "Tests clangd on Linux.",
+  "ninja": {
+    "config": "ci/linux_unopt_debug_no_rbe",
+    "targets": ["flutter/tools/font_subset"]
+  },
+  "tests": [
+    {
+      "language": "dart",
+      "name": "clangd",
+      "script": "flutter/tools/clangd_check/bin/main.dart",
+      "parameters": [
+        "--clangd=buildtools/linux-x64/clang/bin/clangd",
+        "--compile-commands-dir=../out/ci/linux_unopt_debug_no_rbe"
+      ]
+    }
+  ]
+}

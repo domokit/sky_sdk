@@ -13,7 +13,7 @@ class FontConfigManager {
 
   /// Returns a Font configuration that limits font fallback to the artifact
   /// cache directory.
-  late final File fontConfigFile = (){
+  late final File fontConfigFile = () {
     final StringBuffer sb = StringBuffer();
     sb.writeln('<fontconfig>');
     sb.writeln('  <dir>${globals.cache.getCacheArtifacts().path}</dir>');

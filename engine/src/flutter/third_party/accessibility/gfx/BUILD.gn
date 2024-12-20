@@ -1,0 +1,62 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+
+source_set("gfx") {
+  visibility = [ "//flutter/third_party/accessibility/*" ]
+  include_dirs = [ "//flutter/third_party/accessibility" ]
+
+  sources = [
+    "geometry/insets.cc",
+    "geometry/insets.h",
+    "geometry/insets_f.cc",
+    "geometry/insets_f.h",
+    "geometry/point.cc",
+    "geometry/point.h",
+    "geometry/point_conversions.cc",
+    "geometry/point_conversions.h",
+    "geometry/point_f.cc",
+    "geometry/point_f.h",
+    "geometry/rect.cc",
+    "geometry/rect.h",
+    "geometry/rect_conversions.cc",
+    "geometry/rect_conversions.h",
+    "geometry/rect_f.cc",
+    "geometry/rect_f.h",
+    "geometry/size.cc",
+    "geometry/size.h",
+    "geometry/size_conversions.cc",
+    "geometry/size_conversions.h",
+    "geometry/size_f.cc",
+    "geometry/size_f.h",
+    "geometry/vector2d.cc",
+    "geometry/vector2d.h",
+    "geometry/vector2d_conversions.cc",
+    "geometry/vector2d_conversions.h",
+    "geometry/vector2d_f.cc",
+    "geometry/vector2d_f.h",
+    "gfx_export.h",
+    "native_widget_types.h",
+    "range/gfx_range_export.h",
+    "range/range.cc",
+    "range/range.h",
+    "transform.cc",
+    "transform.h",
+  ]
+
+  if (is_mac) {
+    sources += [
+      "mac/coordinate_conversion.h",
+      "mac/coordinate_conversion.mm",
+    ]
+    cflags_objc = flutter_cflags_objc
+    cflags_objcc = flutter_cflags_objcc
+  }
+
+  deps = [
+    "//flutter/third_party/accessibility/ax_build",
+    "//flutter/third_party/accessibility/base",
+  ]
+}

@@ -15,9 +15,6 @@ void main() {
   testWidgets('a screenshot of a Placeholder', (WidgetTester tester) async {
     await tester.pumpWidget(const Placeholder());
 
-    await expectLater(
-      find.byType(Placeholder),
-      matchesGoldenFile('placeholder.png'),
-    );
+    await expectLater(find.byType(Placeholder), matchesGoldenFile('placeholder.png'));
   });
 }

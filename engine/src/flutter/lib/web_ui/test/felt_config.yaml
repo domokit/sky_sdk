@@ -1,0 +1,267 @@
+# See the `README.md` in this directory for documentation on the structure of
+# this file.
+compile-configs:
+  - name: dart2js-html
+    compiler: dart2js
+    renderer: html
+
+  - name: dart2js-canvaskit
+    compiler: dart2js
+    renderer: canvaskit
+
+  - name: dart2js-skwasm
+    compiler: dart2js
+    renderer: skwasm
+
+  - name: dart2wasm-canvaskit
+    compiler: dart2wasm
+    renderer: canvaskit
+
+  - name: dart2wasm-skwasm
+    compiler: dart2wasm
+    renderer: skwasm
+
+test-sets:
+  # Tests for non-renderer logic
+  - name: engine
+    directory: engine
+
+  # Tests for canvaskit-renderer-specific functionality
+  - name: canvaskit
+    directory: canvaskit
+
+  # Tests for html-renderer-specific functionality
+  - name: html
+    directory: html
+
+  # Tests for renderer functionality that can be run on any renderer
+  - name: ui
+    directory: ui
+
+  # Tests for fallback functionality between build variants
+  - name: fallbacks
+    directory: fallbacks
+
+test-bundles:
+  - name: dart2js-html-html
+    test-set: html
+    compile-configs: dart2js-html
+
+  - name: dart2js-html-ui
+    test-set: ui
+    compile-configs: dart2js-html
+
+  - name: dart2js-canvaskit-engine
+    test-set: engine
+    compile-configs: dart2js-canvaskit
+
+  - name: dart2js-canvaskit-canvaskit
+    test-set: canvaskit
+    compile-configs: dart2js-canvaskit
+
+  - name: dart2js-canvaskit-ui
+    test-set: ui
+    compile-configs: dart2js-canvaskit
+
+  - name: dart2wasm-canvaskit-engine
+    test-set: engine
+    compile-configs: dart2wasm-canvaskit
+
+  - name: dart2wasm-skwasm-ui
+    test-set: ui
+    compile-configs: dart2wasm-skwasm
+
+  - name: fallbacks
+    test-set: fallbacks
+    compile-configs:
+      - dart2wasm-skwasm
+      - dart2js-canvaskit
+
+run-configs:
+  - name: chrome
+    browser: chrome
+    canvaskit-variant: chromium
+
+  - name: chrome-coi
+    browser: chrome
+    canvaskit-variant: chromium
+    cross-origin-isolated: true
+
+  - name: chrome-force-st
+    browser: chrome
+    canvaskit-variant: chromium
+    cross-origin-isolated: true
+    force-single-threaded-skwasm: true
+
+  - name: chrome-full
+    browser: chrome
+    canvaskit-variant: full
+
+  - name: edge
+    browser: edge
+    canvaskit-variant: chromium
+
+  - name: edge-full
+    browser: edge
+    canvaskit-variant: full
+
+  - name: firefox
+    browser: firefox
+    canvaskit-variant: full
+
+  - name: safari
+    browser: safari
+    canvaskit-variant: full
+
+test-suites:
+  - name: chrome-dart2js-html-html
+    test-bundle: dart2js-html-html
+    run-config: chrome
+
+  - name: chrome-dart2js-html-ui
+    test-bundle: dart2js-html-ui
+    run-config: chrome
+
+  - name: chrome-dart2js-canvaskit-engine
+    test-bundle: dart2js-canvaskit-engine
+    run-config: chrome
+    artifact-deps: [ canvaskit_chromium ]
+
+  - name: chrome-dart2js-canvaskit-canvaskit
+    test-bundle: dart2js-canvaskit-canvaskit
+    run-config: chrome
+    artifact-deps: [ canvaskit_chromium ]
+
+  - name: chrome-dart2js-canvaskit-ui
+    test-bundle: dart2js-canvaskit-ui
+    run-config: chrome
+    artifact-deps: [ canvaskit_chromium ]
+
+  - name: chrome-full-dart2js-canvaskit-canvaskit
+    test-bundle: dart2js-canvaskit-canvaskit
+    run-config: chrome-full
+    artifact-deps: [ canvaskit ]
+
+  - name: chrome-full-dart2js-canvaskit-ui
+    test-bundle: dart2js-canvaskit-ui
+    run-config: chrome-full
+    artifact-deps: [ canvaskit ]
+
+  - name: edge-dart2js-html-html
+    test-bundle: dart2js-html-html
+    run-config: edge
+
+  - name: edge-dart2js-html-ui
+    test-bundle: dart2js-html-ui
+    run-config: edge
+
+  - name: edge-dart2js-canvaskit-engine
+    test-bundle: dart2js-canvaskit-engine
+    run-config: edge
+    artifact-deps: [ canvaskit_chromium ]
+
+  - name: edge-dart2js-canvaskit-canvaskit
+    test-bundle: dart2js-canvaskit-canvaskit
+    run-config: edge
+    artifact-deps: [ canvaskit_chromium ]
+
+  - name: edge-dart2js-canvaskit-ui
+    test-bundle: dart2js-canvaskit-ui
+    run-config: edge
+    artifact-deps: [ canvaskit_chromium ]
+
+  - name: edge-full-dart2js-canvaskit-canvaskit
+    test-bundle: dart2js-canvaskit-canvaskit
+    run-config: edge-full
+    artifact-deps: [ canvaskit ]
+
+  - name: edge-full-dart2js-canvaskit-ui
+    test-bundle: dart2js-canvaskit-ui
+    run-config: edge-full
+    artifact-deps: [ canvaskit ]
+
+  - name: firefox-dart2js-html-html
+    test-bundle: dart2js-html-html
+    run-config: firefox
+
+  - name: firefox-dart2js-html-ui
+    test-bundle: dart2js-html-ui
+    run-config: firefox
+
+  - name: firefox-dart2js-canvaskit-engine
+    test-bundle: dart2js-canvaskit-engine
+    run-config: firefox
+    artifact-deps: [ canvaskit ]
+
+  - name: firefox-dart2js-canvaskit-canvaskit
+    test-bundle: dart2js-canvaskit-canvaskit
+    run-config: firefox
+    artifact-deps: [ canvaskit ]
+
+  - name: firefox-dart2js-canvaskit-ui
+    test-bundle: dart2js-canvaskit-ui
+    run-config: firefox
+    artifact-deps: [ canvaskit ]
+
+  - name: safari-dart2js-html-html
+    test-bundle: dart2js-html-html
+    run-config: safari
+
+  - name: safari-dart2js-html-ui
+    test-bundle: dart2js-html-ui
+    run-config: safari
+
+  - name: safari-dart2js-canvaskit-engine
+    test-bundle: dart2js-canvaskit-engine
+    run-config: safari
+    artifact-deps: [ canvaskit ]
+
+  - name: safari-dart2js-canvaskit-canvaskit
+    test-bundle: dart2js-canvaskit-canvaskit
+    run-config: safari
+    artifact-deps: [ canvaskit ]
+
+  - name: safari-dart2js-canvaskit-ui
+    test-bundle: dart2js-canvaskit-ui
+    run-config: safari
+    artifact-deps: [ canvaskit ]
+
+  - name: chrome-dart2wasm-canvaskit-engine
+    test-bundle: dart2wasm-canvaskit-engine
+    run-config: chrome
+    artifact-deps: [ canvaskit_chromium ]
+
+  - name: chrome-coi-dart2wasm-skwasm-ui
+    test-bundle: dart2wasm-skwasm-ui
+    run-config: chrome-coi
+    artifact-deps: [ skwasm ]
+
+  - name: chrome-force-st-dart2wasm-skwasm-ui
+    test-bundle: dart2wasm-skwasm-ui
+    run-config: chrome-force-st
+    artifact-deps: [ skwasm ]
+
+  - name: chrome-fallbacks
+    test-bundle: fallbacks
+    run-config: chrome
+    artifact-deps: [ canvaskit, skwasm ]
+
+  - name: chrome-coi-fallbacks
+    test-bundle: fallbacks
+    run-config: chrome-coi
+    artifact-deps: [ canvaskit, skwasm ]
+
+  - name: chrome-force-st-fallbacks
+    test-bundle: fallbacks
+    run-config: chrome-force-st
+    artifact-deps: [ canvaskit, skwasm ]
+
+  - name: firefox-fallbacks
+    test-bundle: fallbacks
+    run-config: firefox
+    artifact-deps: [ canvaskit ]
+
+  - name: safari-fallbacks
+    test-bundle: fallbacks
+    run-config: safari
+    artifact-deps: [ canvaskit ]

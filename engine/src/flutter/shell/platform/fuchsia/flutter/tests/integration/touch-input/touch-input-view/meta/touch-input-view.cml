@@ -1,0 +1,31 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+    include: [ "syslog/client.shard.cml" ],
+    program: {
+        data: "data/touch-input-view",
+
+        // Always use the jit runner for now.
+        // TODO(fxbug.dev/106577): Implement manifest merging build rules for V2 components.
+        runner: "flutter_jit_runner",
+    },
+    capabilities: [
+        {
+            protocol: [ "fuchsia.ui.app.ViewProvider" ],
+        },
+    ],
+    expose: [
+        {
+            protocol: [ "fuchsia.ui.app.ViewProvider" ],
+            from: "self",
+        },
+    ],
+    use: [
+        {
+            protocol: [
+                "fuchsia.ui.test.input.TouchInputListener",
+            ]
+        }
+    ]
+}

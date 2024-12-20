@@ -9,9 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Can toggle between scroll notification types', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ScrollNotificationDemo(),
-    );
+    await tester.pumpWidget(const example.ScrollNotificationDemo());
 
     expect(find.byType(CustomScrollView), findsOneWidget);
     expect(find.text('Last notification: Null'), findsNothing);
@@ -20,7 +18,7 @@ void main() {
     await tester.tap(
       find.byWidgetPredicate((Widget widget) {
         return widget is Radio<bool> && !widget.value;
-      })
+      }),
     );
     await tester.pumpAndSettle();
 

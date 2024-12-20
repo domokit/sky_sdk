@@ -1,0 +1,6 @@
+package: flutter/fuchsia
+description: Flutter Fuchsia Artifacts
+install_mode: copy
+data:
+  # Don't modify this! This is where the build script put all bucket artifacts.
+  - dir: flutter/

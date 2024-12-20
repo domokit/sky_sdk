@@ -9,20 +9,14 @@ import 'package:flutter/scheduler.dart';
 
 @immutable
 class MyColors extends ThemeExtension<MyColors> {
-  const MyColors({
-    required this.brandColor,
-    required this.danger,
-  });
+  const MyColors({required this.brandColor, required this.danger});
 
   final Color? brandColor;
   final Color? danger;
 
   @override
   MyColors copyWith({Color? brandColor, Color? danger}) {
-    return MyColors(
-      brandColor: brandColor ?? this.brandColor,
-      danger: danger ?? this.danger,
-    );
+    return MyColors(brandColor: brandColor ?? this.brandColor, danger: danger ?? this.danger);
   }
 
   @override
@@ -66,35 +60,22 @@ class _ThemeExtensionExampleAppState extends State<ThemeExtensionExampleApp> {
     return MaterialApp(
       theme: ThemeData.light().copyWith(
         extensions: <ThemeExtension<dynamic>>[
-          const MyColors(
-            brandColor: Color(0xFF1E88E5),
-            danger: Color(0xFFE53935),
-          ),
+          const MyColors(brandColor: Color(0xFF1E88E5), danger: Color(0xFFE53935)),
         ],
       ),
       darkTheme: ThemeData.dark().copyWith(
         extensions: <ThemeExtension<dynamic>>[
-          const MyColors(
-            brandColor: Color(0xFF90CAF9),
-            danger: Color(0xFFEF9A9A),
-          ),
+          const MyColors(brandColor: Color(0xFF90CAF9), danger: Color(0xFFEF9A9A)),
         ],
       ),
       themeMode: isLightTheme ? ThemeMode.light : ThemeMode.dark,
-      home: Home(
-        isLightTheme: isLightTheme,
-        toggleTheme: toggleTheme,
-      ),
+      home: Home(isLightTheme: isLightTheme, toggleTheme: toggleTheme),
     );
   }
 }
 
 class Home extends StatelessWidget {
-  const Home({
-    super.key,
-    required this.isLightTheme,
-    required this.toggleTheme,
-  });
+  const Home({super.key, required this.isLightTheme, required this.toggleTheme});
 
   final bool isLightTheme;
   final void Function() toggleTheme;

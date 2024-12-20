@@ -1,0 +1,12 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+include: ../../../../../analysis_options.yaml
+analyzer:
+  errors:
+    avoid_catches_without_on_clauses: ignore
+    cascade_invocations: ignore
+    only_throw_errors: ignore # adds noise to error messages
+    prefer_foreach: ignore # for-in is preferable to closurization
+    prefer_single_quotes: ignore

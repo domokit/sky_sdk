@@ -14,9 +14,7 @@ void main() {
     const String secondaryTabLabel1 = 'Overview';
     const String secondaryTabLabel2 = 'Specifications';
 
-    await tester.pumpWidget(
-      const example.TabBarApp(),
-    );
+    await tester.pumpWidget(const example.TabBarApp());
 
     final TabBar primaryTabBar = tester.widget<TabBar>(find.byType(TabBar).last);
     expect(primaryTabBar.tabs.length, 3);

@@ -1,0 +1,287 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/tools/executable_action.gni")
+import("//flutter/tools/fuchsia/dart/config.gni")
+import("//flutter/tools/fuchsia/dart/dart.gni")
+import("//flutter/tools/fuchsia/dart/dart_package_config.gni")
+import("//flutter/tools/fuchsia/dart/kernel/dart_kernel.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/cmc.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/component.gni")
+
+# Defines a component which will run in a flutter_runner or dart_runner
+#
+# This template is not intended to be used directly. Users should use the
+# flutter_component and dart_component actions instead.
+#
+# Parameters
+#
+#   manifest (required)
+#     The component manifest
+#     Type: path
+#
+#   main_package (required)
+#     The name of the package containing the main_dart
+#     Type: string
+#
+#   component_name (optional)
+#     The name of the component.
+#     Type: string
+#     Default: target_name
+#
+#   build_cfg (required)
+#    A description of how to build this component. This object needs
+#    to contain the following variables:
+#      runtime_meta: a path to the partial cmx file containing the runner
+#      platform_name: either 'dart_runner' or 'flutter_runner'
+#      is_aot: a boolean indicating if this is an AOT build
+#      is_product: a boolean indicating if this is a product build
+#      enable_asserts: whether we should enable asserts when compiling
+#
+#   main_dart (required)
+#     File containing the main function of the component.
+#     Type: string
+#
+#   generate_asset_manifest (optional)
+#     If true, will generate an asset manifest for this component
+#     Type: boolean
+#     Default: false
+#
+#  deps
+#  testonly
+#  visibility
+template("flutter_dart_component") {
+  assert(defined(invoker.manifest), "must specify a manifest file")
+  assert(defined(invoker.build_cfg), "must specify build_cfg")
+  assert(defined(invoker.main_dart), "Must specify main_dart")
+  assert(defined(invoker.main_package), "Must specify main_package")
+
+  build_cfg = invoker.build_cfg
+
+  _component_deps = []
+  if (defined(invoker.deps)) {
+    _component_deps += invoker.deps
+  }
+
+  if (defined(invoker.component_name)) {
+    _component_name = invoker.component_name
+  } else {
+    _component_name = target_name
+  }
+
+  _resources = []
+  if (defined(invoker.resources)) {
+    _resources = invoker.resources
+  }
+
+  # Flutter and Dart components need to run inside the runner which matches how
+  # they were compiled, for example, a JIT component must run in the JIT runner.
+  # We need to be able to dynamically convert the manifest files to include the
+  # runner requirements so that we can switch based on build modes.
+  _manifest_extension = get_path_info(invoker.manifest, "extension")
+  if (_manifest_extension == "cmx") {
+    # This is a v1 component, merge with the runtime_meta
+    _merged_target_name = "${target_name}_merged.cmx"
+
+    cmc_merge(_merged_target_name) {
+      forward_variables_from(invoker,
+                             [
+                               "testonly",
+                               "visibility",
+                             ])
+      output_name = _merged_target_name
+      sources = [
+        invoker.manifest,
+        rebase_path(build_cfg.runtime_meta, "."),
+      ]
+    }
+
+    _merged_outputs = []
+    _merged_outputs += get_target_outputs(":$_merged_target_name")
+    _manifest = _merged_outputs[0]
+    _manifest_output_name = "meta/" + _component_name + ".cmx"
+
+    _component_deps += [ ":$_merged_target_name" ]
+  } else {
+    # This is a v2 component.
+    # The v2 runners have not been implemented yet so we just leave the manifest
+    # as is to avoid breaking the build.
+    _manifest = invoker.manifest
+    _manifest_output_name = "meta/" + _component_name + ".cm"
+  }
+
+  _dart_package_config_target_name = "${target_name}_dart_package"
+  dart_package_config(_dart_package_config_target_name) {
+    forward_variables_from(invoker,
+                           [
+                             "testonly",
+                             "visibility",
+                           ])
+
+    deps = _component_deps
+  }
+
+  _package_config_output = []
+  _package_config_output =
+      get_target_outputs(":$_dart_package_config_target_name")
+  _packages_path = _package_config_output[0]
+
+  _kernel_target_name = _component_name + "_kernel"
+  _kernel_target_dep_name = _kernel_target_name + "_gen_file"
+  _kernel_path = "$target_gen_dir/__untraced_dart_kernel__/${target_name}.dil"
+
+  dart_kernel(_kernel_target_name) {
+    kernel_path = _kernel_path
+
+    # establishes a dependency chain for the snapshot since
+    # the kernel is wrapped in a group
+    kernel_target_name = _kernel_target_dep_name
+
+    forward_variables_from(invoker,
+                           [
+                             "testonly",
+                             "visibility",
+                             "main_dart",
+                             "main_package",
+                           ])
+
+    deps = [ ":$_dart_package_config_target_name" ]
+
+    packages_path = _packages_path
+    args = [
+      "--component-name",
+      _component_name,
+    ]
+
+    # always generate a manifest for fuchsia builds. If this is an aot build
+    # the kernel will ignore this variable.
+    generate_manifest = true
+
+    platform_name = build_cfg.platform_name
+    product = build_cfg.is_product
+    is_aot = build_cfg.is_aot
+  }
+
+  _component_deps += [ ":$_kernel_target_name" ]
+
+  if (build_cfg.is_aot) {
+    _snapshot_path = "$target_gen_dir/${_component_name}_snapshot.so"
+    _snapshot_target_name = target_name + "_snapshot"
+
+    _stats_json_path =
+        "$target_gen_dir/${_component_name}/stats/symbol_sizes.json"
+
+    if (build_cfg.is_product) {
+      _gen_snapshot_script_target = gen_snapshot_product
+    } else {
+      _gen_snapshot_script_target = gen_snapshot
+    }
+
+    executable_action(_snapshot_target_name) {
+      forward_variables_from(invoker,
+                             [
+                               "testonly",
+                               "visibility",
+                             ])
+
+      deps = [ ":$_kernel_target_dep_name" ]
+      inputs = [ _kernel_path ]
+      outputs = [
+        _snapshot_path,
+        _stats_json_path,
+      ]
+
+      if (defined(invoker.toolchain)) {
+        toolchain = invoker.toolchain
+      } else {
+        toolchain = host_toolchain
+      }
+
+      # Construct the host toolchain version of the tool.
+      # host_tool = invoker.tool + "($toolchain)"
+      host_tool = _gen_snapshot_script_target + "($toolchain)"
+
+      # Get the path to the executable. Currently, this assumes that the tool
+      # does not specify output_name so that the target name is the name to use.
+      # If that's not the case, we'll need another argument to the script to
+      # specify this, since we can't know what the output name is (it might be in
+      # another file not processed yet).
+      host_executable =
+          get_label_info(host_tool, "root_out_dir") + "/" +
+          get_label_info(host_tool, "name") + host_executable_suffix
+
+      # Add the executable itself as an input.
+      inputs += [ host_executable ]
+
+      deps += [ host_tool ]
+
+      tool = host_executable
+
+      args = [
+        "--deterministic",
+        "--snapshot_kind=app-aot-elf",
+        "--elf=" + rebase_path(_snapshot_path, root_build_dir),
+        "--print-instructions-sizes-to=" +
+            rebase_path(_stats_json_path, root_build_dir),
+      ]
+
+      # No asserts in debug or release product.
+      # No asserts in non-product release
+      # Yes asserts in non-product debug.
+      if (build_cfg.enable_asserts) {
+        args += [ "--enable_asserts" ]
+      }
+      args += [ rebase_path(_kernel_path, root_build_dir) ]
+    }
+
+    _component_deps += [ ":$_snapshot_target_name" ]
+  }
+
+  fuchsia_component(_component_name) {
+    forward_variables_from(invoker,
+                           [
+                             "testonly",
+                             "visibility",
+                           ])
+    deps = _component_deps
+    manifest = _manifest
+    manifest_output_name = _manifest_output_name
+
+    if (build_cfg.is_aot) {
+      _resources += [
+        {
+          path = _snapshot_path
+          dest = "data/${_component_name}/app_aot_snapshot.so"
+        },
+      ]
+    } else {
+      _convert_kernel_target_name =
+          "${_kernel_target_name}_convert_kernel_manifest"
+      _convert_kernel_manifest_file =
+          # TODO(richkadel): This is prefixed by "dartlang/", which is not found.
+          # Is the current toolchain set incorrectly somewhere?
+          string_replace(
+              "${target_gen_dir}/${_convert_kernel_target_name}_kernel_manifest.json",
+              "dartlang/",
+              "")
+
+      # TODO(richkadel): Adds the json resource names in the manifest to the
+      # collection of `json_of_resources` files, read by
+      # `prepare_package_inputs.py`. These resources are computed (only known)
+      # at some point during the build/compile phase.
+      resources_in_json_files = [ rebase_path(_convert_kernel_manifest_file) ]
+    }
+
+    resources = _resources
+  }
+
+  group(target_name) {
+    forward_variables_from(invoker,
+                           [
+                             "testonly",
+                             "visibility",
+                           ])
+    deps = [ ":" + _component_name ]
+  }
+}

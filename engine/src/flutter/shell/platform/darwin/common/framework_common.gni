@@ -1,0 +1,15 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+framework_common_headers =
+    get_path_info([
+                    "framework/Headers/FlutterMacros.h",
+                    "framework/Headers/FlutterBinaryMessenger.h",
+                    "framework/Headers/FlutterChannels.h",
+                    "framework/Headers/FlutterCodecs.h",
+                    "framework/Headers/FlutterHourFormat.h",
+                    "framework/Headers/FlutterTexture.h",
+                    "framework/Headers/FlutterDartProject.h",
+                  ],
+                  "abspath")

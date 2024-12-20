@@ -9,18 +9,16 @@ void main() {
 }
 
 class SliverFloatingHeaderApp extends StatelessWidget {
-  const SliverFloatingHeaderApp({ super.key });
+  const SliverFloatingHeaderApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: FloatingHeaderExample(),
-    );
+    return const MaterialApp(home: FloatingHeaderExample());
   }
 }
 
 class FloatingHeaderExample extends StatefulWidget {
-  const FloatingHeaderExample({ super.key });
+  const FloatingHeaderExample({super.key});
 
   @override
   State<FloatingHeaderExample> createState() => _FloatingHeaderExampleState();
@@ -30,14 +28,15 @@ class _FloatingHeaderExampleState extends State<FloatingHeaderExample> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-     body: SafeArea(
+      body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(4),
           child: CustomScrollView(
             slivers: <Widget>[
               SliverFloatingHeader(
                 child: ListHeader(
-                  text: 'SliverFloatingHeader\nScroll down a little to show\nScroll up a little to hide',
+                  text:
+                      'SliverFloatingHeader\nScroll down a little to show\nScroll up a little to hide',
                 ),
               ),
               ItemList(),
@@ -51,10 +50,7 @@ class _FloatingHeaderExampleState extends State<FloatingHeaderExample> {
 
 // A widget that displays its text within a thick rounded rectangle border
 class ListHeader extends StatelessWidget {
-  const ListHeader({
-    super.key,
-    required this.text,
-  });
+  const ListHeader({super.key, required this.text});
 
   final String text;
 
@@ -70,10 +66,7 @@ class ListHeader extends StatelessWidget {
         color: colorScheme.primaryContainer,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
-          side: BorderSide(
-            width: 7,
-            color: colorScheme.outline,
-          ),
+          side: BorderSide(width: 7, color: colorScheme.outline),
         ),
         child: Container(
           alignment: Alignment.center,
@@ -81,9 +74,7 @@ class ListHeader extends StatelessWidget {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: theme.textTheme.headlineMedium!.copyWith(
-              color: colorScheme.onPrimaryContainer,
-            ),
+            style: theme.textTheme.headlineMedium!.copyWith(color: colorScheme.onPrimaryContainer),
           ),
         ),
       ),
@@ -93,10 +84,7 @@ class ListHeader extends StatelessWidget {
 
 // A placeholder SliverList of 50 items.
 class ItemList extends StatelessWidget {
-  const ItemList({
-    super.key,
-    this.itemCount = 50,
-  });
+  const ItemList({super.key, this.itemCount = 50});
 
   final int itemCount;
 
@@ -104,18 +92,12 @@ class ItemList extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          return Card(
-            color: colorScheme.onSecondary,
-            child: ListTile(
-              textColor: colorScheme.secondary,
-              title: Text('Item $index'),
-            ),
-          );
-        },
-        childCount: itemCount,
-      ),
+      delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+        return Card(
+          color: colorScheme.onSecondary,
+          child: ListTile(textColor: colorScheme.secondary, title: Text('Item $index')),
+        );
+      }, childCount: itemCount),
     );
   }
 }

@@ -1,0 +1,313 @@
+folders:
+  - path: .
+settings:
+  files.associations:
+    optional: cpp
+    __bit_reference: cpp
+    __bits: cpp
+    __config: cpp
+    __debug: cpp
+    __errc: cpp
+    __hash_table: cpp
+    __locale: cpp
+    __mutex_base: cpp
+    __node_handle: cpp
+    __nullptr: cpp
+    __split_buffer: cpp
+    __string: cpp
+    __threading_support: cpp
+    __tree: cpp
+    __tuple: cpp
+    any: cpp
+    array: cpp
+    atomic: cpp
+    bitset: cpp
+    cctype: cpp
+    chrono: cpp
+    cinttypes: cpp
+    clocale: cpp
+    cmath: cpp
+    codecvt: cpp
+    compare: cpp
+    complex: cpp
+    concepts: cpp
+    condition_variable: cpp
+    csignal: cpp
+    cstdarg: cpp
+    cstddef: cpp
+    cstdint: cpp
+    cstdio: cpp
+    cstdlib: cpp
+    cstring: cpp
+    ctime: cpp
+    cwchar: cpp
+    cwctype: cpp
+    deque: cpp
+    exception: cpp
+    forward_list: cpp
+    fstream: cpp
+    future: cpp
+    initializer_list: cpp
+    iomanip: cpp
+    ios: cpp
+    iosfwd: cpp
+    iostream: cpp
+    istream: cpp
+    limits: cpp
+    list: cpp
+    locale: cpp
+    map: cpp
+    memory: cpp
+    mutex: cpp
+    new: cpp
+    numeric: cpp
+    ostream: cpp
+    queue: cpp
+    random: cpp
+    ratio: cpp
+    regex: cpp
+    set: cpp
+    span: cpp
+    sstream: cpp
+    stack: cpp
+    stdexcept: cpp
+    streambuf: cpp
+    string: cpp
+    string_view: cpp
+    strstream: cpp
+    system_error: cpp
+    tuple: cpp
+    type_traits: cpp
+    typeinfo: cpp
+    unordered_map: cpp
+    unordered_set: cpp
+    valarray: cpp
+    variant: cpp
+    vector: cpp
+    algorithm: cpp
+    filesystem: cpp
+    memory_resource: cpp
+    bit: cpp
+    charconv: cpp
+    format: cpp
+    functional: cpp
+    iterator: cpp
+    utility: cpp
+    __assert: cpp
+    '*.inc': cpp
+    __verbose_abort: cpp
+    '*.def': cpp
+    '*.hpp11': cpp
+    __functional_base: cpp
+    shared_mutex: cpp
+    coroutine: cpp
+    hash_map: cpp
+    hash_set: cpp
+    thread: cpp
+    propagate_const: cpp
+    '*.gen': cpp
+    simd: cpp
+    barrier: cpp
+    cuchar: cpp
+    latch: cpp
+    numbers: cpp
+    scoped_allocator: cpp
+    semaphore: cpp
+    typeindex: cpp
+    __std_stream: cpp
+    '*.ipp': cpp
+    csetjmp: cpp
+    cfenv: cpp
+  C_Cpp.default.includePath:
+    - ${default}
+    - ${workspaceFolder}/..
+    - ${workspaceFolder}
+  dotnet.defaultSolution: disable
+  dart.showTodos: false
+  testMate.cpp.test.advancedExecutables:
+    - name: impeller_unittests_arm64
+      pattern: ../out/host_debug_unopt_arm64/impeller_unittests
+      runTask:
+        before:
+          - impeller_unittests_arm64
+      gtest:
+        prependTestRunningArgs:
+          - --enable_playground
+      env:
+        MTL_DEBUG_LAYER: "1"
+        MTL_DEBUG_LAYER_ERROR_MODE: assert
+        MTL_DEBUG_LAYER_WARNING_MODE: nslog
+        MTL_SHADER_VALIDATION: "1"
+    - name: display_list_unittests_arm64
+      pattern: ../out/host_debug_unopt_arm64/display_list_unittests
+      runTask:
+        before:
+          - display_list_unittests_arm64
+    - name: shell_unittests_arm64
+      pattern: ../out/host_debug_unopt_arm64/shell_unittests
+      runTask:
+        before:
+          - shell_unittests_arm64
+    - name: ui_unittests_arm64
+      pattern: ../out/host_debug_unopt_arm64/ui_unittests
+      runTask:
+        before:
+          - ui_unittests_arm64
+    - name: impeller_golden_tests_arm64
+      pattern: ../out/host_debug_unopt_arm64/impeller_golden_tests
+      runTask:
+        before:
+          - impeller_golden_tests_arm64
+      gtest:
+        prependTestRunningArgs:
+          - &golden-workspace --working_dir=~/Desktop
+        prependTestListingArgs:
+          - *golden-workspace
+  testMate.cpp.debug.configTemplate:
+    type: cppvsdbg
+    linux:
+      type: cppdbg
+      MIMode: gdb
+    darwin:
+      type: cppdbg
+      MIMode: lldb
+      setupCommands:
+        - description: Source map
+          text: &source-map-cmd settings set target.source-map "flutter/" "${workspaceFolder}"
+          ignoreFailures: false
+    win32:
+      type: cppvsdbg
+    program: ${exec}
+    args: ${argsArray}
+    cwd: ${cwd}
+    env: ${envObj}
+    environment: ${envObjArray}
+    sourceFileMap: ${sourceFileMapObj}
+tasks:
+  version: 2.0.0
+  tasks:
+    - &et-task
+      label: impeller_unittests_arm64
+      type: shell
+      command: &et-cmd ./flutter/bin/et
+      args:
+        - build
+        - -c
+        - host_debug_unopt_arm64
+        - //flutter/impeller:impeller_unittests
+      options:
+        cwd: ${workspaceFolder}/..
+      problemMatcher:
+        - $gcc
+      presentation:
+        echo: true
+        reveal: silent
+        focus: false
+        panel: shared
+        clear: true
+      group:
+        kind: build
+    - <<: *et-task
+      label: host_debug_unopt_arm64
+      args:
+        - build
+        - -c
+        - host_debug_unopt_arm64
+    - <<: *et-task
+      label: display_list_unittests_arm64
+      args:
+        - build
+        - -c
+        - host_debug_unopt_arm64
+        - //flutter/display_list:display_list_unittests
+    - <<: *et-task
+      label: shell_unittests_arm64
+      args:
+        - build
+        - -c
+        - host_debug_unopt_arm64
+        - //flutter/shell:shell_unittests
+    - <<: *et-task
+      label: ui_unittests_arm64
+      args:
+        - build
+        - -c
+        - host_debug_unopt_arm64
+        - //flutter/lib/ui:ui_unittests
+    - <<: *et-task
+      label: impeller_golden_tests_arm64
+      args:
+        - build
+        - -c
+        - host_debug_unopt_arm64
+        - //flutter/impeller/golden_tests:impeller_golden_tests
+    - <<: *et-task
+      label: ios_debug_unopt_arm64
+      args:
+        - build
+        - -c
+        - host_debug_unopt_arm64
+        - "&&"
+        - *et-cmd
+        - build
+        - -c
+        - ios_debug_unopt
+    - <<: *et-task
+      label: android_debug_unopt_arm64
+      args:
+        - build
+        - -c
+        - host_debug_unopt_arm64
+        - "&&"
+        - *et-cmd
+        - build
+        - -c
+        - android_debug_unopt_arm64
+extensions:
+  recommendations:
+    # C++ TestMate
+    - matepek.vscode-catch2-test-adapter
+    # Uses github-styled markdown preview, which supports more features than the default markdown preview.
+    - bierner.github-markdown-preview
+    # Flutter and Dart extensions.
+    - Dart-Code.dart-code
+    # Supports C/C++ in the engine.
+    # See https://github.com/flutter/engine/blob/main/docs/contributing/Setting-up-the-Engine-development-environment.md#vscode-with-cc-intellisense-cc
+    - llvm-vs-code-extensions.vscode-clangd
+    # Auto-formats C/C++ code.
+    # https://github.com/flutter/engine/blob/main/CONTRIBUTING.md#cc
+    - xaver.clang-format
+launch:
+  version: 0.2.0
+  configurations:
+    - &launch
+      name: display_list_unittests_arm64
+      type: cppdbg
+      request: launch
+      program: ${workspaceFolder}/../out/host_debug_unopt_arm64/display_list_unittests
+      stopAtEntry: false
+      cwd: ${workspaceFolder}/../out/host_debug_unopt_arm64
+      environment: []
+      externalConsole: false
+      MIMode: lldb
+      setupCommands:
+        - description: Enable pretty-printing for lldb
+          text: settings set target.pretty-printing true
+          ignoreFailures: true
+        - description: Source map
+          text: *source-map-cmd
+          ignoreFailures: false
+      preLaunchTask: display_list_unittests_arm64
+    - <<: *launch
+      name: impeller_unittests_arm64
+      program: ${workspaceFolder}/../out/host_debug_unopt_arm64/impeller_unittests
+      args:
+        - --enable_playground
+      preLaunchTask: impeller_unittests_arm64
+    - <<: *launch
+      name: impeller_golden_tests_arm64
+      program: ${workspaceFolder}/../out/host_debug_unopt_arm64/impeller_golden_tests
+      args:
+        - *golden-workspace
+      preLaunchTask: impeller_golden_tests_arm64
+  compounds: []

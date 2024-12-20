@@ -14,9 +14,10 @@ import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
 import '../painting/image_test_utils.dart' show TestImageProvider;
 
 Future<ui.Image> createTestImage() {
-  final ui.Paint paint = ui.Paint()
-    ..style = ui.PaintingStyle.stroke
-    ..strokeWidth = 1.0;
+  final ui.Paint paint =
+      ui.Paint()
+        ..style = ui.PaintingStyle.stroke
+        ..strokeWidth = 1.0;
   final ui.PictureRecorder recorder = ui.PictureRecorder();
   final ui.Canvas pictureCanvas = ui.Canvas(recorder);
   pictureCanvas.drawCircle(Offset.zero, 20.0, paint);
@@ -36,121 +37,152 @@ Key routeThreeKey = const Key('routeThree');
 bool transitionFromUserGestures = false;
 
 final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
-  '/': (BuildContext context) => Material(
-    child: ListView(
-      key: homeRouteKey,
-      children: <Widget>[
-        const SizedBox(height: 100.0, width: 100.0),
-        Card(child: Hero(
-          tag: 'a',
-          transitionOnUserGestures: transitionFromUserGestures,
-          child: SizedBox(height: 100.0, width: 100.0, key: firstKey),
-        )),
-        const SizedBox(height: 100.0, width: 100.0),
-        TextButton(
-          child: const Text('two'),
-          onPressed: () { Navigator.pushNamed(context, '/two'); },
+  '/':
+      (BuildContext context) => Material(
+        child: ListView(
+          key: homeRouteKey,
+          children: <Widget>[
+            const SizedBox(height: 100.0, width: 100.0),
+            Card(
+              child: Hero(
+                tag: 'a',
+                transitionOnUserGestures: transitionFromUserGestures,
+                child: SizedBox(height: 100.0, width: 100.0, key: firstKey),
+              ),
+            ),
+            const SizedBox(height: 100.0, width: 100.0),
+            TextButton(
+              child: const Text('two'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/two');
+              },
+            ),
+            TextButton(
+              child: const Text('twoInset'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/twoInset');
+              },
+            ),
+            TextButton(
+              child: const Text('simple'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/simple');
+              },
+            ),
+          ],
         ),
-        TextButton(
-          child: const Text('twoInset'),
-          onPressed: () { Navigator.pushNamed(context, '/twoInset'); },
+      ),
+  '/two':
+      (BuildContext context) => Material(
+        child: ListView(
+          key: routeTwoKey,
+          children: <Widget>[
+            TextButton(
+              child: const Text('pop'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            const SizedBox(height: 150.0, width: 150.0),
+            Card(
+              child: Hero(
+                tag: 'a',
+                transitionOnUserGestures: transitionFromUserGestures,
+                child: SizedBox(height: 150.0, width: 150.0, key: secondKey),
+              ),
+            ),
+            const SizedBox(height: 150.0, width: 150.0),
+            TextButton(
+              child: const Text('three'),
+              onPressed: () {
+                Navigator.push(context, ThreeRoute());
+              },
+            ),
+          ],
         ),
-        TextButton(
-          child: const Text('simple'),
-          onPressed: () { Navigator.pushNamed(context, '/simple'); },
-        ),
-      ],
-    ),
-  ),
-  '/two': (BuildContext context) => Material(
-    child: ListView(
-      key: routeTwoKey,
-      children: <Widget>[
-        TextButton(
-          child: const Text('pop'),
-          onPressed: () { Navigator.pop(context); },
-        ),
-        const SizedBox(height: 150.0, width: 150.0),
-        Card(child: Hero(
-          tag: 'a',
-          transitionOnUserGestures: transitionFromUserGestures,
-          child: SizedBox(height: 150.0, width: 150.0, key: secondKey),
-        )),
-        const SizedBox(height: 150.0, width: 150.0),
-        TextButton(
-          child: const Text('three'),
-          onPressed: () { Navigator.push(context, ThreeRoute()); },
-        ),
-      ],
-    ),
-  ),
+      ),
   // This route is the same as /two except that Hero 'a' is shifted to the right by
   // 50 pixels. When the hero's in-flight bounds between / and /twoInset are animated
   // using MaterialRectArcTween (the default) they'll follow a different path
   // then when the flight starts at /twoInset and returns to /.
-  '/twoInset': (BuildContext context) => Material(
-    child: ListView(
-      key: routeTwoKey,
-      children: <Widget>[
-        TextButton(
-          child: const Text('pop'),
-          onPressed: () { Navigator.pop(context); },
-        ),
-        const SizedBox(height: 150.0, width: 150.0),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 50.0),
-            child: Hero(
-              tag: 'a',
-              transitionOnUserGestures: transitionFromUserGestures,
-              child: SizedBox(height: 150.0, width: 150.0, key: secondKey),
+  '/twoInset':
+      (BuildContext context) => Material(
+        child: ListView(
+          key: routeTwoKey,
+          children: <Widget>[
+            TextButton(
+              child: const Text('pop'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
+            const SizedBox(height: 150.0, width: 150.0),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 50.0),
+                child: Hero(
+                  tag: 'a',
+                  transitionOnUserGestures: transitionFromUserGestures,
+                  child: SizedBox(height: 150.0, width: 150.0, key: secondKey),
+                ),
+              ),
+            ),
+            const SizedBox(height: 150.0, width: 150.0),
+            TextButton(
+              child: const Text('three'),
+              onPressed: () {
+                Navigator.push(context, ThreeRoute());
+              },
+            ),
+          ],
+        ),
+      ),
+  // This route is the same as /two except that Hero 'a' is shifted to the right by
+  // 50 pixels. When the hero's in-flight bounds between / and /twoInset are animated
+  // using MaterialRectArcTween (the default) they'll follow a different path
+  // then when the flight starts at /twoInset and returns to /.
+  '/simple':
+      (BuildContext context) => CupertinoPageScaffold(
+        child: Center(
+          child: Hero(
+            tag: 'a',
+            transitionOnUserGestures: transitionFromUserGestures,
+            child: SizedBox(height: 150.0, width: 150.0, key: simpleKey),
           ),
         ),
-        const SizedBox(height: 150.0, width: 150.0),
-        TextButton(
-          child: const Text('three'),
-          onPressed: () { Navigator.push(context, ThreeRoute()); },
-        ),
-      ],
-    ),
-  ),
-  // This route is the same as /two except that Hero 'a' is shifted to the right by
-  // 50 pixels. When the hero's in-flight bounds between / and /twoInset are animated
-  // using MaterialRectArcTween (the default) they'll follow a different path
-  // then when the flight starts at /twoInset and returns to /.
-  '/simple': (BuildContext context) => CupertinoPageScaffold(
-    child: Center(
-      child: Hero(
-        tag: 'a',
-        transitionOnUserGestures: transitionFromUserGestures,
-        child: SizedBox(height: 150.0, width: 150.0, key: simpleKey),
       ),
-    ),
-  ),
 };
 
 class ThreeRoute extends MaterialPageRoute<void> {
   ThreeRoute()
-    : super(builder: (BuildContext context) {
-        return Material(
-          key: routeThreeKey,
-          child: ListView(
-            children: <Widget>[
-              const SizedBox(height: 200.0, width: 200.0),
-              Card(child: Hero(tag: 'a', child: SizedBox(height: 200.0, width: 200.0, key: thirdKey))),
-              const SizedBox(height: 200.0, width: 200.0),
-            ],
-          ),
-        );
-      });
+    : super(
+        builder: (BuildContext context) {
+          return Material(
+            key: routeThreeKey,
+            child: ListView(
+              children: <Widget>[
+                const SizedBox(height: 200.0, width: 200.0),
+                Card(
+                  child: Hero(
+                    tag: 'a',
+                    child: SizedBox(height: 200.0, width: 200.0, key: thirdKey),
+                  ),
+                ),
+                const SizedBox(height: 200.0, width: 200.0),
+              ],
+            ),
+          );
+        },
+      );
 }
 
 class MutatingRoute extends MaterialPageRoute<void> {
   MutatingRoute()
-    : super(builder: (BuildContext context) {
-        return Hero(tag: 'a', key: UniqueKey(), child: const Text('MutatingRoute'));
-      });
+    : super(
+        builder: (BuildContext context) {
+          return Hero(tag: 'a', key: UniqueKey(), child: const Text('MutatingRoute'));
+        },
+      );
 
   void markNeedsBuild() {
     setState(() {
@@ -160,7 +192,7 @@ class MutatingRoute extends MaterialPageRoute<void> {
 }
 
 class _SimpleStatefulWidget extends StatefulWidget {
-  const _SimpleStatefulWidget({ super.key });
+  const _SimpleStatefulWidget({super.key});
   @override
   _SimpleState createState() => _SimpleState();
 }
@@ -173,7 +205,7 @@ class _SimpleState extends State<_SimpleStatefulWidget> {
 }
 
 class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({ super.key, this.value = '123' });
+  const MyStatefulWidget({super.key, this.value = '123'});
   final String value;
   @override
   MyStatefulWidgetState createState() => MyStatefulWidgetState();
@@ -192,7 +224,6 @@ Future<void> main() async {
   });
 
   testWidgets('Heroes animate', (WidgetTester tester) async {
-
     await tester.pumpWidget(MaterialApp(routes: routes));
 
     // the initial setup.
@@ -301,7 +332,9 @@ Future<void> main() async {
     expect(find.byKey(thirdKey), isInCard);
   });
 
-  testWidgets('Heroes still animate after hero controller is swapped.', (WidgetTester tester) async {
+  testWidgets('Heroes still animate after hero controller is swapped.', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey<NavigatorState> key = GlobalKey<NavigatorState>();
     final UniqueKey heroKey = UniqueKey();
     final HeroController controller1 = HeroController();
@@ -338,23 +371,25 @@ Future<void> main() async {
         ),
       ),
     );
-    key.currentState!.push(MaterialPageRoute<void>(
-      builder: (BuildContext c) {
-        return Hero(
-          tag: 'hero',
-          child: Container(),
-          flightShuttleBuilder: (
-            BuildContext flightContext,
-            Animation<double> animation,
-            HeroFlightDirection flightDirection,
-            BuildContext fromHeroContext,
-            BuildContext toHeroContext,
+    key.currentState!.push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext c) {
+          return Hero(
+            tag: 'hero',
+            child: Container(),
+            flightShuttleBuilder: (
+              BuildContext flightContext,
+              Animation<double> animation,
+              HeroFlightDirection flightDirection,
+              BuildContext fromHeroContext,
+              BuildContext toHeroContext,
             ) {
-            return Container(key: heroKey);
-          },
-        );
-      },
-    ));
+              return Container(key: heroKey);
+            },
+          );
+        },
+      ),
+    );
 
     expect(find.byKey(heroKey), findsNothing);
     // Begins the navigation
@@ -384,7 +419,7 @@ Future<void> main() async {
                       HeroFlightDirection flightDirection,
                       BuildContext fromHeroContext,
                       BuildContext toHeroContext,
-                      ) {
+                    ) {
                       return Container(key: heroKey);
                     },
                   );
@@ -416,10 +451,12 @@ Future<void> main() async {
 
     expect(find.byKey(firstKey), findsNothing);
     final Offstage first = tester.widget(
-      find.ancestor(
-        of: find.byKey(firstKey, skipOffstage: false),
-        matching: find.byType(Offstage, skipOffstage: false),
-      ).first,
+      find
+          .ancestor(
+            of: find.byKey(firstKey, skipOffstage: false),
+            matching: find.byType(Offstage, skipOffstage: false),
+          )
+          .first,
     );
     // Original hero should stay hidden.
     expect(first.offstage, isTrue);
@@ -430,18 +467,25 @@ Future<void> main() async {
   testWidgets('Destination hero is rebuilt midflight', (WidgetTester tester) async {
     final MutatingRoute route = MutatingRoute();
 
-    await tester.pumpWidget(MaterialApp(
-      home: Material(
-        child: ListView(
-          children: <Widget>[
-            const Hero(tag: 'a', child: Text('foo')),
-            Builder(builder: (BuildContext context) {
-              return TextButton(child: const Text('two'), onPressed: () => Navigator.push(context, route));
-            }),
-          ],
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: ListView(
+            children: <Widget>[
+              const Hero(tag: 'a', child: Text('foo')),
+              Builder(
+                builder: (BuildContext context) {
+                  return TextButton(
+                    child: const Text('two'),
+                    onPressed: () => Navigator.push(context, route),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.text('two'));
     await tester.pump(const Duration(milliseconds: 10));
@@ -495,43 +539,37 @@ Future<void> main() async {
   testWidgets('Heroes are not interactive', (WidgetTester tester) async {
     final List<String> log = <String>[];
 
-    await tester.pumpWidget(MaterialApp(
-      home: Center(
-        child: Hero(
-          tag: 'foo',
-          child: GestureDetector(
-            onTap: () {
-              log.add('foo');
-            },
-            child: const SizedBox(
-              width: 100.0,
-              height: 100.0,
-              child: Text('foo'),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: Hero(
+            tag: 'foo',
+            child: GestureDetector(
+              onTap: () {
+                log.add('foo');
+              },
+              child: const SizedBox(width: 100.0, height: 100.0, child: Text('foo')),
             ),
           ),
         ),
-      ),
-      routes: <String, WidgetBuilder>{
-        '/next': (BuildContext context) {
-          return Align(
-            alignment: Alignment.topLeft,
-            child: Hero(
-              tag: 'foo',
-              child: GestureDetector(
-                onTap: () {
-                  log.add('bar');
-                },
-                child: const SizedBox(
-                  width: 100.0,
-                  height: 150.0,
-                  child: Text('bar'),
+        routes: <String, WidgetBuilder>{
+          '/next': (BuildContext context) {
+            return Align(
+              alignment: Alignment.topLeft,
+              child: Hero(
+                tag: 'foo',
+                child: GestureDetector(
+                  onTap: () {
+                    log.add('bar');
+                  },
+                  child: const SizedBox(width: 100.0, height: 150.0, child: Text('bar')),
                 ),
               ),
-            ),
-          );
+            );
+          },
         },
-      },
-    ));
+      ),
+    );
 
     expect(log, isEmpty);
     await tester.tap(find.text('foo'));
@@ -562,15 +600,19 @@ Future<void> main() async {
     expect(log, equals(<String>['bar']));
   });
 
-  testWidgets('Popping on first frame does not cause hero observer to crash', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      onGenerateRoute: (RouteSettings settings) {
-        return MaterialPageRoute<void>(
-          settings: settings,
-          builder: (BuildContext context) => Hero(tag: 'test', child: Container()),
-        );
-      },
-    ));
+  testWidgets('Popping on first frame does not cause hero observer to crash', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        onGenerateRoute: (RouteSettings settings) {
+          return MaterialPageRoute<void>(
+            settings: settings,
+            builder: (BuildContext context) => Hero(tag: 'test', child: Container()),
+          );
+        },
+      ),
+    );
     await tester.pump();
 
     final Finder heroes = find.byType(Hero);
@@ -583,15 +625,19 @@ Future<void> main() async {
     await tester.pump(); // ...and removes it straight away (since it's already at 0.0)
   });
 
-  testWidgets('Overlapping starting and ending a hero transition works ok', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      onGenerateRoute: (RouteSettings settings) {
-        return MaterialPageRoute<void>(
-          settings: settings,
-          builder: (BuildContext context) => Hero(tag: 'test', child: Container()),
-        );
-      },
-    ));
+  testWidgets('Overlapping starting and ending a hero transition works ok', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        onGenerateRoute: (RouteSettings settings) {
+          return MaterialPageRoute<void>(
+            settings: settings,
+            builder: (BuildContext context) => Hero(tag: 'test', child: Container()),
+          );
+        },
+      ),
+    );
     await tester.pump();
 
     final Finder heroes = find.byType(Hero);
@@ -608,35 +654,46 @@ Future<void> main() async {
     Navigator.pop(heroes.evaluate().first);
     await tester.pump();
     Navigator.pop(heroes.evaluate().first);
-    await tester.pump(const Duration(hours: 1)); // so the first transition is finished, but the second hasn't started
+    await tester.pump(
+      const Duration(hours: 1),
+    ); // so the first transition is finished, but the second hasn't started
     await tester.pump();
   });
 
   testWidgets('One route, two heroes, same tag, throws', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Material(
-        child: ListView(
-          children: <Widget>[
-            const Hero(tag: 'a', child: Text('a')),
-            const Hero(tag: 'a', child: Text('a too')),
-            Builder(
-              builder: (BuildContext context) {
-                return TextButton(
-                  child: const Text('push'),
-                  onPressed: () {
-                    Navigator.push(context, PageRouteBuilder<void>(
-                      pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
-                        return const Text('fail');
-                      },
-                    ));
-                  },
-                );
-              },
-            ),
-          ],
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: ListView(
+            children: <Widget>[
+              const Hero(tag: 'a', child: Text('a')),
+              const Hero(tag: 'a', child: Text('a too')),
+              Builder(
+                builder: (BuildContext context) {
+                  return TextButton(
+                    child: const Text('push'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder<void>(
+                          pageBuilder: (
+                            BuildContext context,
+                            Animation<double> _,
+                            Animation<double> __,
+                          ) {
+                            return const Text('fail');
+                          },
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.text('push'));
     await tester.pump();
@@ -648,9 +705,7 @@ Future<void> main() async {
     expect(last, isA<DiagnosticsProperty<StatefulElement>>());
     expect(
       last.toStringDeep(),
-      equalsIgnoringHashCodes(
-        '# Here is the subtree for one of the offending heroes: Hero\n',
-      ),
+      equalsIgnoringHashCodes('# Here is the subtree for one of the offending heroes: Hero\n'),
     );
     expect(last.style, DiagnosticsTreeStyle.dense);
     expect(
@@ -668,9 +723,7 @@ Future<void> main() async {
   });
 
   testWidgets('Hero push transition interrupted by a pop', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      routes: routes,
-    ));
+    await tester.pumpWidget(MaterialApp(routes: routes));
 
     // Initially the firstKey Card on the '/' route is visible
     expect(find.byKey(firstKey), isOnstage);
@@ -693,8 +746,14 @@ Future<void> main() async {
 
     // At this point the hero widgets have been replaced by placeholders
     // and the destination hero has been moved to the overlay.
-    expect(find.descendant(of: find.byKey(homeRouteKey), matching: find.byKey(firstKey)), findsNothing);
-    expect(find.descendant(of: find.byKey(routeTwoKey), matching: find.byKey(secondKey)), findsNothing);
+    expect(
+      find.descendant(of: find.byKey(homeRouteKey), matching: find.byKey(firstKey)),
+      findsNothing,
+    );
+    expect(
+      find.descendant(of: find.byKey(routeTwoKey), matching: find.byKey(secondKey)),
+      findsNothing,
+    );
     expect(find.byKey(firstKey), findsNothing);
     expect(find.byKey(secondKey), isOnstage);
 
@@ -723,7 +782,10 @@ Future<void> main() async {
     // 150ms so we should be just about back to where Hero 'a' started.
     const double epsilon = 0.001;
     await tester.pump(const Duration(milliseconds: 99));
-    moreOrLessEquals(tester.getSize(find.byKey(secondKey)).height - initialHeight, epsilon: epsilon);
+    moreOrLessEquals(
+      tester.getSize(find.byKey(secondKey)).height - initialHeight,
+      epsilon: epsilon,
+    );
 
     // The flight is finished. We're back to where we started.
     await tester.pump(const Duration(milliseconds: 300));
@@ -736,11 +798,13 @@ Future<void> main() async {
     await tester.pumpWidget(
       MaterialApp(
         routes: routes,
-        theme: ThemeData(pageTransitionsTheme: const PageTransitionsTheme(
-          builders: <TargetPlatform, PageTransitionsBuilder>{
-            TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-          },
-        )),
+        theme: ThemeData(
+          pageTransitionsTheme: const PageTransitionsTheme(
+            builders: <TargetPlatform, PageTransitionsBuilder>{
+              TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+            },
+          ),
+        ),
       ),
     );
 
@@ -770,8 +834,14 @@ Future<void> main() async {
 
     // At this point the hero widgets have been replaced by placeholders
     // and the destination hero has been moved to the overlay.
-    expect(find.descendant(of: find.byKey(homeRouteKey), matching: find.byKey(firstKey)), findsNothing);
-    expect(find.descendant(of: find.byKey(routeTwoKey), matching: find.byKey(secondKey)), findsNothing);
+    expect(
+      find.descendant(of: find.byKey(homeRouteKey), matching: find.byKey(firstKey)),
+      findsNothing,
+    );
+    expect(
+      find.descendant(of: find.byKey(routeTwoKey), matching: find.byKey(secondKey)),
+      findsNothing,
+    );
     expect(find.byKey(firstKey), isOnstage);
     expect(find.byKey(secondKey), findsNothing);
 
@@ -825,15 +895,21 @@ Future<void> main() async {
                 builder: (BuildContext context, StateSetter setState) {
                   heroCardSetState = setState;
                   return Card(
-                    child: routeIncludesHero
-                      ? const Hero(tag: 'H', child: SizedBox(key: routeHeroKey, height: 200.0, width: 200.0))
-                      : const SizedBox(height: 200.0, width: 200.0),
+                    child:
+                        routeIncludesHero
+                            ? const Hero(
+                              tag: 'H',
+                              child: SizedBox(key: routeHeroKey, height: 200.0, width: 200.0),
+                            )
+                            : const SizedBox(height: 200.0, width: 200.0),
                   );
                 },
               ),
               TextButton(
                 child: const Text('POP'),
-                onPressed: () { Navigator.pop(context); },
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
             ],
           ),
@@ -846,15 +922,21 @@ Future<void> main() async {
       MaterialApp(
         home: Scaffold(
           body: Builder(
-            builder: (BuildContext context) { // Navigator.push() needs context
+            builder: (BuildContext context) {
+              // Navigator.push() needs context
               return ListView(
-                children: <Widget> [
+                children: <Widget>[
                   const Card(
-                    child: Hero(tag: 'H', child: SizedBox(key: homeHeroKey, height: 100.0, width: 100.0)),
+                    child: Hero(
+                      tag: 'H',
+                      child: SizedBox(key: homeHeroKey, height: 100.0, width: 100.0),
+                    ),
                   ),
                   TextButton(
                     child: const Text('PUSH'),
-                    onPressed: () { Navigator.push(context, route); },
+                    onPressed: () {
+                      Navigator.push(context, route);
+                    },
                   ),
                 ],
               );
@@ -909,7 +991,6 @@ Future<void> main() async {
     await tester.pump(const Duration(milliseconds: 300));
     finalHeight = tester.getSize(find.byKey(homeHeroKey)).height;
     expect(finalHeight, 100.0);
-
   });
 
   testWidgets('Destination hero scrolls mid-flight', (WidgetTester tester) async {
@@ -927,11 +1008,16 @@ Future<void> main() async {
               // This container will appear at Y=100
               Container(
                 key: routeContainerKey,
-                child: const Hero(tag: 'H', child: SizedBox(key: routeHeroKey, height: 200.0, width: 200.0)),
+                child: const Hero(
+                  tag: 'H',
+                  child: SizedBox(key: routeHeroKey, height: 200.0, width: 200.0),
+                ),
               ),
               TextButton(
                 child: const Text('POP'),
-                onPressed: () { Navigator.pop(context); },
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
               const SizedBox(height: 600.0),
             ],
@@ -952,15 +1038,21 @@ Future<void> main() async {
         ),
         home: Scaffold(
           body: Builder(
-            builder: (BuildContext context) { // Navigator.push() needs context
+            builder: (BuildContext context) {
+              // Navigator.push() needs context
               return ListView(
-                children: <Widget> [
+                children: <Widget>[
                   const SizedBox(height: 200.0),
                   // This container will appear at Y=200
-                  const Hero(tag: 'H', child: SizedBox(key: homeHeroKey, height: 100.0, width: 100.0)),
+                  const Hero(
+                    tag: 'H',
+                    child: SizedBox(key: homeHeroKey, height: 100.0, width: 100.0),
+                  ),
                   TextButton(
                     child: const Text('PUSH'),
-                    onPressed: () { Navigator.push(context, route); },
+                    onPressed: () {
+                      Navigator.push(context, route);
+                    },
                   ),
                   const SizedBox(height: 600.0),
                 ],
@@ -986,7 +1078,11 @@ Future<void> main() async {
 
     // Scroll the target upwards by 25 pixels. The Hero flight's Y coordinate
     // will be redirected from 100 to 75.
-    await tester.drag(find.byKey(routeContainerKey), const Offset(0.0, -25.0), warnIfMissed: false); // the container itself wouldn't be hit
+    await tester.drag(
+      find.byKey(routeContainerKey),
+      const Offset(0.0, -25.0),
+      warnIfMissed: false,
+    ); // the container itself wouldn't be hit
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 10));
     final double yAt110ms = tester.getTopLeft(find.byKey(routeHeroKey)).dy;
@@ -1015,7 +1111,10 @@ Future<void> main() async {
               // This container will appear at Y=100
               Container(
                 key: routeContainerKey,
-                child: const Hero(tag: 'H', child: SizedBox(key: routeHeroKey, height: 200.0, width: 200.0)),
+                child: const Hero(
+                  tag: 'H',
+                  child: SizedBox(key: routeHeroKey, height: 200.0, width: 200.0),
+                ),
               ),
               const SizedBox(height: 800.0),
             ],
@@ -1029,15 +1128,21 @@ Future<void> main() async {
       MaterialApp(
         home: Scaffold(
           body: Builder(
-            builder: (BuildContext context) { // Navigator.push() needs context
+            builder: (BuildContext context) {
+              // Navigator.push() needs context
               return ListView(
-                children: <Widget> [
+                children: <Widget>[
                   const SizedBox(height: 200.0),
                   // This container will appear at Y=200
-                  const Hero(tag: 'H', child: SizedBox(key: homeHeroKey, height: 100.0, width: 100.0)),
+                  const Hero(
+                    tag: 'H',
+                    child: SizedBox(key: homeHeroKey, height: 100.0, width: 100.0),
+                  ),
                   TextButton(
                     child: const Text('PUSH'),
-                    onPressed: () { Navigator.push(context, route); },
+                    onPressed: () {
+                      Navigator.push(context, route);
+                    },
                   ),
                 ],
               );
@@ -1060,7 +1165,11 @@ Future<void> main() async {
     expect(yAt100ms, lessThan(200.0));
     expect(yAt100ms, greaterThan(100.0));
 
-    await tester.drag(find.byKey(routeContainerKey), const Offset(0.0, -400.0), warnIfMissed: false); // the container itself wouldn't be hit
+    await tester.drag(
+      find.byKey(routeContainerKey),
+      const Offset(0.0, -400.0),
+      warnIfMissed: false,
+    ); // the container itself wouldn't be hit
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 10));
     expect(find.byKey(routeContainerKey), findsNothing); // Scrolled off the top
@@ -1088,14 +1197,7 @@ Future<void> main() async {
           child: ListView(
             children: const <Widget>[
               // This container will appear at Y=0
-              Hero(
-                tag: 'BC',
-                child: SizedBox(
-                  key: heroBCKey,
-                  height: 150.0,
-                  child: Text('Hero'),
-                ),
-              ),
+              Hero(tag: 'BC', child: SizedBox(key: heroBCKey, height: 150.0, child: Text('Hero'))),
               SizedBox(height: 800.0),
             ],
           ),
@@ -1113,23 +1215,15 @@ Future<void> main() async {
               // This container will appear at Y=100
               const Hero(
                 tag: 'AB',
-                child: SizedBox(
-                  key: heroABKey,
-                  height: 200.0,
-                  child: Text('Hero'),
-                ),
+                child: SizedBox(key: heroABKey, height: 200.0, child: Text('Hero')),
               ),
               TextButton(
                 child: const Text('PUSH C'),
-                onPressed: () { Navigator.push(context, routeC); },
+                onPressed: () {
+                  Navigator.push(context, routeC);
+                },
               ),
-              const Hero(
-                tag: 'BC',
-                child: SizedBox(
-                  height: 150.0,
-                  child: Text('Hero'),
-                ),
-              ),
+              const Hero(tag: 'BC', child: SizedBox(height: 150.0, child: Text('Hero'))),
               const SizedBox(height: 800.0),
             ],
           ),
@@ -1142,22 +1236,21 @@ Future<void> main() async {
       MaterialApp(
         home: Scaffold(
           body: Builder(
-            builder: (BuildContext context) { // Navigator.push() needs context
+            builder: (BuildContext context) {
+              // Navigator.push() needs context
               return ListView(
-                children: <Widget> [
+                children: <Widget>[
                   const SizedBox(height: 200.0),
                   // This container will appear at Y=200
                   const Hero(
                     tag: 'AB',
-                    child: SizedBox(
-                      height: 100.0,
-                      width: 100.0,
-                      child: Text('Hero'),
-                    ),
+                    child: SizedBox(height: 100.0, width: 100.0, child: Text('Hero')),
                   ),
                   TextButton(
                     child: const Text('PUSH B'),
-                    onPressed: () { Navigator.push(context, routeB); },
+                    onPressed: () {
+                      Navigator.push(context, routeB);
+                    },
                   ),
                 ],
               );
@@ -1203,7 +1296,10 @@ Future<void> main() async {
     }
 
     // Of all heroes only one should be visible now.
-    final Iterable<RenderObject> renderObjects = find.text('Hero').evaluate().map((Element e) => e.renderObject!);
+    final Iterable<RenderObject> renderObjects = find
+        .text('Hero')
+        .evaluate()
+        .map((Element e) => e.renderObject!);
     expect(renderObjects.where(isVisible).length, 1);
 
     // Hero BC's flight finishes normally.
@@ -1220,15 +1316,14 @@ Future<void> main() async {
               const Card(
                 child: Hero(
                   tag: 'H',
-                  child: SizedBox(
-                    height: 200.0,
-                    child: MyStatefulWidget(value: '456'),
-                  ),
+                  child: SizedBox(height: 200.0, child: MyStatefulWidget(value: '456')),
                 ),
               ),
               TextButton(
                 child: const Text('POP'),
-                onPressed: () { Navigator.pop(context); },
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
             ],
           ),
@@ -1240,21 +1335,21 @@ Future<void> main() async {
       MaterialApp(
         home: Scaffold(
           body: Builder(
-            builder: (BuildContext context) { // Navigator.push() needs context
+            builder: (BuildContext context) {
+              // Navigator.push() needs context
               return ListView(
-                children: <Widget> [
+                children: <Widget>[
                   const Card(
                     child: Hero(
                       tag: 'H',
-                      child: SizedBox(
-                        height: 100.0,
-                        child: MyStatefulWidget(value: '456'),
-                      ),
+                      child: SizedBox(height: 100.0, child: MyStatefulWidget(value: '456')),
                     ),
                   ),
                   TextButton(
                     child: const Text('PUSH'),
-                    onPressed: () { Navigator.push(context, route); },
+                    onPressed: () {
+                      Navigator.push(context, route);
+                    },
                   ),
                 ],
               );
@@ -1292,7 +1387,6 @@ Future<void> main() async {
     // Pop flight finished
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('456'), findsOneWidget);
-
   });
 
   testWidgets('Hero createRectTween', (WidgetTester tester) async {
@@ -1301,40 +1395,46 @@ Future<void> main() async {
     }
 
     final Map<String, WidgetBuilder> createRectTweenHeroRoutes = <String, WidgetBuilder>{
-      '/': (BuildContext context) => Material(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Hero(
-              tag: 'a',
-              createRectTween: createRectTween,
-              child: SizedBox(height: 100.0, width: 100.0, key: firstKey),
+      '/':
+          (BuildContext context) => Material(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Hero(
+                  tag: 'a',
+                  createRectTween: createRectTween,
+                  child: SizedBox(height: 100.0, width: 100.0, key: firstKey),
+                ),
+                TextButton(
+                  child: const Text('two'),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/two');
+                  },
+                ),
+              ],
             ),
-            TextButton(
-              child: const Text('two'),
-              onPressed: () { Navigator.pushNamed(context, '/two'); },
+          ),
+      '/two':
+          (BuildContext context) => Material(
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 200.0,
+                  child: TextButton(
+                    child: const Text('pop'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                Hero(
+                  tag: 'a',
+                  createRectTween: createRectTween,
+                  child: SizedBox(height: 200.0, width: 100.0, key: secondKey),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-      '/two': (BuildContext context) => Material(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 200.0,
-              child: TextButton(
-                child: const Text('pop'),
-                onPressed: () { Navigator.pop(context); },
-              ),
-            ),
-            Hero(
-              tag: 'a',
-              createRectTween: createRectTween,
-              child: SizedBox(height: 200.0, width: 100.0, key: secondKey),
-            ),
-          ],
-        ),
-      ),
+          ),
     };
 
     await tester.pumpWidget(MaterialApp(routes: createRectTweenHeroRoutes));
@@ -1407,7 +1507,9 @@ Future<void> main() async {
     expect(tester.getCenter(find.byKey(firstKey)), const Offset(50.0, 50.0));
   });
 
-  testWidgets('Hero createRectTween for Navigator that is not full screen', (WidgetTester tester) async {
+  testWidgets('Hero createRectTween for Navigator that is not full screen', (
+    WidgetTester tester,
+  ) async {
     // Regression test for https://github.com/flutter/flutter/issues/25272
 
     RectTween createRectTween(Rect? begin, Rect? end) {
@@ -1415,49 +1517,57 @@ Future<void> main() async {
     }
 
     final Map<String, WidgetBuilder> createRectTweenHeroRoutes = <String, WidgetBuilder>{
-      '/': (BuildContext context) => Material(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Hero(
-              tag: 'a',
-              createRectTween: createRectTween,
-              child: SizedBox(height: 100.0, width: 100.0, key: firstKey),
+      '/':
+          (BuildContext context) => Material(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Hero(
+                  tag: 'a',
+                  createRectTween: createRectTween,
+                  child: SizedBox(height: 100.0, width: 100.0, key: firstKey),
+                ),
+                TextButton(
+                  child: const Text('two'),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/two');
+                  },
+                ),
+              ],
             ),
-            TextButton(
-              child: const Text('two'),
-              onPressed: () { Navigator.pushNamed(context, '/two'); },
+          ),
+      '/two':
+          (BuildContext context) => Material(
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 200.0,
+                  child: TextButton(
+                    child: const Text('pop'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                Hero(
+                  tag: 'a',
+                  createRectTween: createRectTween,
+                  child: SizedBox(height: 200.0, width: 100.0, key: secondKey),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-      '/two': (BuildContext context) => Material(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 200.0,
-              child: TextButton(
-                child: const Text('pop'),
-                onPressed: () { Navigator.pop(context); },
-              ),
-            ),
-            Hero(
-              tag: 'a',
-              createRectTween: createRectTween,
-              child: SizedBox(height: 200.0, width: 100.0, key: secondKey),
-            ),
-          ],
-        ),
-      ),
+          ),
     };
 
     const double leftPadding = 10.0;
 
     // MaterialApp and its Navigator are offset from the left
-    await tester.pumpWidget(Padding(
-      padding: const EdgeInsets.only(left: leftPadding),
-      child: MaterialApp(routes: createRectTweenHeroRoutes),
-    ));
+    await tester.pumpWidget(
+      Padding(
+        padding: const EdgeInsets.only(left: leftPadding),
+        child: MaterialApp(routes: createRectTweenHeroRoutes),
+      ),
+    );
     expect(tester.getCenter(find.byKey(firstKey)), const Offset(leftPadding + 50.0, 50.0));
 
     const double epsilon = 0.001;
@@ -1527,7 +1637,6 @@ Future<void> main() async {
     expect(tester.getCenter(find.byKey(firstKey)), const Offset(50.0 + leftPadding, 50.0));
   });
 
-
   testWidgets('Pop interrupts push, reverses flight', (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(routes: routes));
     await tester.tap(find.text('twoInset'));
@@ -1556,7 +1665,6 @@ Future<void> main() async {
 
     // Pop route /twoInset before the push transition from / to /twoInset has finished.
     await tester.tap(find.text('pop'));
-
 
     // We expect the hero to take the same path as it did flying from /
     // to /twoInset as it does now, flying from '/twoInset' back to /. The most
@@ -1606,10 +1714,16 @@ Future<void> main() async {
     await tester.pump(duration * 0.6);
 
     await tester.pump(duration * 0.1);
-    expect(tester.getTopLeft(find.byKey(firstKey)).dx, isNot(moreOrLessEquals(x4, epsilon: epsilon)));
+    expect(
+      tester.getTopLeft(find.byKey(firstKey)).dx,
+      isNot(moreOrLessEquals(x4, epsilon: epsilon)),
+    );
 
     await tester.pump(duration * 0.1);
-    expect(tester.getTopLeft(find.byKey(firstKey)).dx, isNot(moreOrLessEquals(x3, epsilon: epsilon)));
+    expect(
+      tester.getTopLeft(find.byKey(firstKey)).dx,
+      isNot(moreOrLessEquals(x3, epsilon: epsilon)),
+    );
 
     // At this point the flight path arcs do start to get pretty close so
     // there's no point in comparing them.
@@ -1622,39 +1736,47 @@ Future<void> main() async {
   });
 
   testWidgets('Can override flight shuttle in to hero', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Material(
-        child: ListView(
-          children: <Widget>[
-            const Hero(tag: 'a', child: Text('foo')),
-            Builder(builder: (BuildContext context) {
-              return TextButton(
-                child: const Text('two'),
-                onPressed: () => Navigator.push<void>(context, MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return Material(
-                      child: Hero(
-                        tag: 'a',
-                        child: const Text('bar'),
-                        flightShuttleBuilder: (
-                          BuildContext flightContext,
-                          Animation<double> animation,
-                          HeroFlightDirection flightDirection,
-                          BuildContext fromHeroContext,
-                          BuildContext toHeroContext,
-                        ) {
-                          return const Text('baz');
-                        },
-                      ),
-                    );
-                  },
-                )),
-              );
-            }),
-          ],
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: ListView(
+            children: <Widget>[
+              const Hero(tag: 'a', child: Text('foo')),
+              Builder(
+                builder: (BuildContext context) {
+                  return TextButton(
+                    child: const Text('two'),
+                    onPressed:
+                        () => Navigator.push<void>(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) {
+                              return Material(
+                                child: Hero(
+                                  tag: 'a',
+                                  child: const Text('bar'),
+                                  flightShuttleBuilder: (
+                                    BuildContext flightContext,
+                                    Animation<double> animation,
+                                    HeroFlightDirection flightDirection,
+                                    BuildContext fromHeroContext,
+                                    BuildContext toHeroContext,
+                                  ) {
+                                    return const Text('baz');
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.text('two'));
     await tester.pump();
@@ -1666,37 +1788,45 @@ Future<void> main() async {
   });
 
   testWidgets('Can override flight shuttle in from hero', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Material(
-        child: ListView(
-          children: <Widget>[
-            Hero(
-              tag: 'a',
-              child: const Text('foo'),
-              flightShuttleBuilder: (
-                BuildContext flightContext,
-                Animation<double> animation,
-                HeroFlightDirection flightDirection,
-                BuildContext fromHeroContext,
-                BuildContext toHeroContext,
-              ) { return const Text('baz'); },
-            ),
-            Builder(builder: (BuildContext context) {
-              return TextButton(
-                child: const Text('two'),
-                onPressed: () => Navigator.push<void>(context, MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return const Material(
-                      child: Hero(tag: 'a', child: Text('bar')),
-                    );
-                  },
-                )),
-              );
-            }),
-          ],
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: ListView(
+            children: <Widget>[
+              Hero(
+                tag: 'a',
+                child: const Text('foo'),
+                flightShuttleBuilder: (
+                  BuildContext flightContext,
+                  Animation<double> animation,
+                  HeroFlightDirection flightDirection,
+                  BuildContext fromHeroContext,
+                  BuildContext toHeroContext,
+                ) {
+                  return const Text('baz');
+                },
+              ),
+              Builder(
+                builder: (BuildContext context) {
+                  return TextButton(
+                    child: const Text('two'),
+                    onPressed:
+                        () => Navigator.push<void>(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) {
+                              return const Material(child: Hero(tag: 'a', child: Text('bar')));
+                            },
+                          ),
+                        ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.text('two'));
     await tester.pump();
@@ -1708,48 +1838,62 @@ Future<void> main() async {
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/77720.
-  testWidgets("toHero's shuttle builder over fromHero's shuttle builder", (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Material(
-        child: ListView(
-          children: <Widget>[
-            Hero(
-              tag: 'a',
-              child: const Text('foo'),
-              flightShuttleBuilder: (
-                BuildContext flightContext,
-                Animation<double> animation,
-                HeroFlightDirection flightDirection,
-                BuildContext fromHeroContext,
-                BuildContext toHeroContext,
-              ) { return const Text('fromHero text'); },
-            ),
-            Builder(builder: (BuildContext context) {
-              return TextButton(
-                child: const Text('two'),
-                onPressed: () => Navigator.push<void>(context, MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return Material(
-                      child: Hero(
-                        tag: 'a',
-                        child: const Text('bar'),
-                        flightShuttleBuilder: (
-                          BuildContext flightContext,
-                          Animation<double> animation,
-                          HeroFlightDirection flightDirection,
-                          BuildContext fromHeroContext,
-                          BuildContext toHeroContext,
-                        ) { return const Text('toHero text'); },
-                      ),
-                    );
-                  },
-                )),
-              );
-            }),
-          ],
+  testWidgets("toHero's shuttle builder over fromHero's shuttle builder", (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: ListView(
+            children: <Widget>[
+              Hero(
+                tag: 'a',
+                child: const Text('foo'),
+                flightShuttleBuilder: (
+                  BuildContext flightContext,
+                  Animation<double> animation,
+                  HeroFlightDirection flightDirection,
+                  BuildContext fromHeroContext,
+                  BuildContext toHeroContext,
+                ) {
+                  return const Text('fromHero text');
+                },
+              ),
+              Builder(
+                builder: (BuildContext context) {
+                  return TextButton(
+                    child: const Text('two'),
+                    onPressed:
+                        () => Navigator.push<void>(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) {
+                              return Material(
+                                child: Hero(
+                                  tag: 'a',
+                                  child: const Text('bar'),
+                                  flightShuttleBuilder: (
+                                    BuildContext flightContext,
+                                    Animation<double> animation,
+                                    HeroFlightDirection flightDirection,
+                                    BuildContext fromHeroContext,
+                                    BuildContext toHeroContext,
+                                  ) {
+                                    return const Text('toHero text');
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.text('two'));
     await tester.pump();
@@ -1762,39 +1906,51 @@ Future<void> main() async {
   });
 
   testWidgets('Can override flight launch pads', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Material(
-        child: ListView(
-          children: <Widget>[
-            Hero(
-              tag: 'a',
-              child: const Text('Batman'),
-              placeholderBuilder: (BuildContext context, Size heroSize, Widget child) {
-                return const Text('Venom');
-              },
-            ),
-            Builder(builder: (BuildContext context) {
-              return TextButton(
-                child: const Text('two'),
-                onPressed: () => Navigator.push<void>(context, MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return Material(
-                      child: Hero(
-                        tag: 'a',
-                        child: const Text('Wolverine'),
-                        placeholderBuilder: (BuildContext context, Size size, Widget child) {
-                          return const Text('Joker');
-                        },
-                      ),
-                    );
-                  },
-                )),
-              );
-            }),
-          ],
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: ListView(
+            children: <Widget>[
+              Hero(
+                tag: 'a',
+                child: const Text('Batman'),
+                placeholderBuilder: (BuildContext context, Size heroSize, Widget child) {
+                  return const Text('Venom');
+                },
+              ),
+              Builder(
+                builder: (BuildContext context) {
+                  return TextButton(
+                    child: const Text('two'),
+                    onPressed:
+                        () => Navigator.push<void>(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) {
+                              return Material(
+                                child: Hero(
+                                  tag: 'a',
+                                  child: const Text('Wolverine'),
+                                  placeholderBuilder: (
+                                    BuildContext context,
+                                    Size size,
+                                    Widget child,
+                                  ) {
+                                    return const Text('Joker');
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.text('two'));
     await tester.pump();
@@ -1808,135 +1964,151 @@ Future<void> main() async {
     expect(find.text('Joker'), findsOneWidget);
   });
 
-  testWidgets('Heroes do not transition on back gestures by default', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-     routes: routes,
-    ));
+  testWidgets(
+    'Heroes do not transition on back gestures by default',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(routes: routes));
 
-    expect(find.byKey(firstKey), isOnstage);
-    expect(find.byKey(firstKey), isInCard);
-    expect(find.byKey(secondKey), findsNothing);
+      expect(find.byKey(firstKey), isOnstage);
+      expect(find.byKey(firstKey), isInCard);
+      expect(find.byKey(secondKey), findsNothing);
 
-    await tester.tap(find.text('two'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
+      await tester.tap(find.text('two'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
 
-    expect(find.byKey(firstKey), findsNothing);
-    expect(find.byKey(secondKey), isOnstage);
-    expect(find.byKey(secondKey), isInCard);
+      expect(find.byKey(firstKey), findsNothing);
+      expect(find.byKey(secondKey), isOnstage);
+      expect(find.byKey(secondKey), isInCard);
 
-    final TestGesture  gesture = await tester.startGesture(const Offset(5.0, 200.0));
-    await gesture.moveBy(const Offset(20.0, 0.0));
-    await gesture.moveBy(const Offset(180.0, 0.0));
-    await gesture.up();
-    await tester.pump();
+      final TestGesture gesture = await tester.startGesture(const Offset(5.0, 200.0));
+      await gesture.moveBy(const Offset(20.0, 0.0));
+      await gesture.moveBy(const Offset(180.0, 0.0));
+      await gesture.up();
+      await tester.pump();
 
-    await tester.pump();
+      await tester.pump();
 
-    // Both Heroes exist and are seated in their normal parents.
-    expect(find.byKey(firstKey), isOnstage);
-    expect(find.byKey(firstKey), isInCard);
-    expect(find.byKey(secondKey), isOnstage);
-    expect(find.byKey(secondKey), isInCard);
+      // Both Heroes exist and are seated in their normal parents.
+      expect(find.byKey(firstKey), isOnstage);
+      expect(find.byKey(firstKey), isInCard);
+      expect(find.byKey(secondKey), isOnstage);
+      expect(find.byKey(secondKey), isInCard);
 
-    // To make sure the hero had all chances of starting.
-    await tester.pump(const Duration(milliseconds: 100));
-    expect(find.byKey(firstKey), isOnstage);
-    expect(find.byKey(firstKey), isInCard);
-    expect(find.byKey(secondKey), isOnstage);
-    expect(find.byKey(secondKey), isInCard);
-  }, variant: const TargetPlatformVariant(<TargetPlatform>{ TargetPlatform.iOS,  TargetPlatform.macOS }));
+      // To make sure the hero had all chances of starting.
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.byKey(firstKey), isOnstage);
+      expect(find.byKey(firstKey), isInCard);
+      expect(find.byKey(secondKey), isOnstage);
+      expect(find.byKey(secondKey), isInCard);
+    },
+    variant: const TargetPlatformVariant(<TargetPlatform>{
+      TargetPlatform.iOS,
+      TargetPlatform.macOS,
+    }),
+  );
 
-  testWidgets('Heroes can transition on gesture in one frame', (WidgetTester tester) async {
-    transitionFromUserGestures = true;
-    await tester.pumpWidget(MaterialApp(
-      routes: routes,
-    ));
+  testWidgets(
+    'Heroes can transition on gesture in one frame',
+    (WidgetTester tester) async {
+      transitionFromUserGestures = true;
+      await tester.pumpWidget(MaterialApp(routes: routes));
 
-    await tester.tap(find.text('two'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
+      await tester.tap(find.text('two'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
 
-    expect(find.byKey(firstKey), findsNothing);
-    expect(find.byKey(secondKey), isOnstage);
-    expect(find.byKey(secondKey), isInCard);
+      expect(find.byKey(firstKey), findsNothing);
+      expect(find.byKey(secondKey), isOnstage);
+      expect(find.byKey(secondKey), isInCard);
 
-    final TestGesture gesture = await tester.startGesture(const Offset(5.0, 200.0));
-    await gesture.moveBy(const Offset(200.0, 0.0));
-    await tester.pump();
+      final TestGesture gesture = await tester.startGesture(const Offset(5.0, 200.0));
+      await gesture.moveBy(const Offset(200.0, 0.0));
+      await tester.pump();
 
-    // We're going to page 1 so page 1's Hero is lifted into flight.
-    expect(find.byKey(firstKey), isOnstage);
-    expect(find.byKey(firstKey), isNotInCard);
-    expect(find.byKey(secondKey), findsNothing);
+      // We're going to page 1 so page 1's Hero is lifted into flight.
+      expect(find.byKey(firstKey), isOnstage);
+      expect(find.byKey(firstKey), isNotInCard);
+      expect(find.byKey(secondKey), findsNothing);
 
-    // Move further along.
-    await gesture.moveBy(const Offset(500.0, 0.0));
-    await tester.pump();
+      // Move further along.
+      await gesture.moveBy(const Offset(500.0, 0.0));
+      await tester.pump();
 
-    // Same results.
-    expect(find.byKey(firstKey), isOnstage);
-    expect(find.byKey(firstKey), isNotInCard);
-    expect(find.byKey(secondKey), findsNothing);
+      // Same results.
+      expect(find.byKey(firstKey), isOnstage);
+      expect(find.byKey(firstKey), isNotInCard);
+      expect(find.byKey(secondKey), findsNothing);
 
-    await gesture.up();
-    // Finish transition.
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
+      await gesture.up();
+      // Finish transition.
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
 
-    // Hero A is back in the card.
-    expect(find.byKey(firstKey), isOnstage);
-    expect(find.byKey(firstKey), isInCard);
-    expect(find.byKey(secondKey), findsNothing);
-  }, variant: const TargetPlatformVariant(<TargetPlatform>{ TargetPlatform.iOS,  TargetPlatform.macOS }));
+      // Hero A is back in the card.
+      expect(find.byKey(firstKey), isOnstage);
+      expect(find.byKey(firstKey), isInCard);
+      expect(find.byKey(secondKey), findsNothing);
+    },
+    variant: const TargetPlatformVariant(<TargetPlatform>{
+      TargetPlatform.iOS,
+      TargetPlatform.macOS,
+    }),
+  );
 
-  testWidgets('Heroes animate should hide destination hero and display original hero in case of dismissed', (WidgetTester tester) async {
-    transitionFromUserGestures = true;
-    await tester.pumpWidget(MaterialApp(
-      routes: routes,
-    ));
+  testWidgets(
+    'Heroes animate should hide destination hero and display original hero in case of dismissed',
+    (WidgetTester tester) async {
+      transitionFromUserGestures = true;
+      await tester.pumpWidget(MaterialApp(routes: routes));
 
-    await tester.tap(find.text('two'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('two'));
+      await tester.pumpAndSettle();
 
-    expect(find.byKey(firstKey), findsNothing);
-    expect(find.byKey(secondKey), isOnstage);
-    expect(find.byKey(secondKey), isInCard);
+      expect(find.byKey(firstKey), findsNothing);
+      expect(find.byKey(secondKey), isOnstage);
+      expect(find.byKey(secondKey), isInCard);
 
-    final TestGesture gesture = await tester.startGesture(const Offset(5.0, 200.0));
-    await gesture.moveBy(const Offset(50.0, 0.0));
-    await tester.pump();
-    // It will only register the drag if we move a second time.
-    await gesture.moveBy(const Offset(50.0, 0.0));
-    await tester.pump();
+      final TestGesture gesture = await tester.startGesture(const Offset(5.0, 200.0));
+      await gesture.moveBy(const Offset(50.0, 0.0));
+      await tester.pump();
+      // It will only register the drag if we move a second time.
+      await gesture.moveBy(const Offset(50.0, 0.0));
+      await tester.pump();
 
-    // We're going to page 1 so page 1's Hero is lifted into flight.
-    expect(find.byKey(firstKey), isOnstage);
-    expect(find.byKey(firstKey), isNotInCard);
-    expect(find.byKey(secondKey), findsNothing);
+      // We're going to page 1 so page 1's Hero is lifted into flight.
+      expect(find.byKey(firstKey), isOnstage);
+      expect(find.byKey(firstKey), isNotInCard);
+      expect(find.byKey(secondKey), findsNothing);
 
-    // Dismisses hero transition.
-    await gesture.up();
-    await tester.pump();
-    await tester.pumpAndSettle();
+      // Dismisses hero transition.
+      await gesture.up();
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-    // We goes back to second page.
-    expect(find.byKey(firstKey), findsNothing);
-    expect(find.byKey(secondKey), isOnstage);
-    expect(find.byKey(secondKey), isInCard);
-  }, variant: const TargetPlatformVariant(<TargetPlatform>{ TargetPlatform.iOS,  TargetPlatform.macOS }));
+      // We goes back to second page.
+      expect(find.byKey(firstKey), findsNothing);
+      expect(find.byKey(secondKey), isOnstage);
+      expect(find.byKey(secondKey), isInCard);
+    },
+    variant: const TargetPlatformVariant(<TargetPlatform>{
+      TargetPlatform.iOS,
+      TargetPlatform.macOS,
+    }),
+  );
 
-  testWidgets('Handles transitions when a non-default initial route is set', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      routes: routes,
-      initialRoute: '/two',
-    ));
+  testWidgets('Handles transitions when a non-default initial route is set', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(MaterialApp(routes: routes, initialRoute: '/two'));
     expect(tester.takeException(), isNull);
     expect(find.text('two'), findsNothing);
     expect(find.text('three'), findsOneWidget);
   });
 
-  testWidgets('Can push/pop on outer Navigator if nested Navigator contains Heroes', (WidgetTester tester) async {
+  testWidgets('Can push/pop on outer Navigator if nested Navigator contains Heroes', (
+    WidgetTester tester,
+  ) async {
     // Regression test for https://github.com/flutter/flutter/issues/28042.
 
     const String heroTag = 'You are my hero!';
@@ -1953,12 +2125,7 @@ Future<void> main() async {
           onGenerateRoute: (RouteSettings settings) {
             return MaterialPageRoute<void>(
               builder: (BuildContext context) {
-                return Hero(
-                  tag: heroTag,
-                  child: Placeholder(
-                    key: nestedRouteHeroBottom,
-                  ),
-                );
+                return Hero(tag: heroTag, child: Placeholder(key: nestedRouteHeroBottom));
               },
             );
           },
@@ -1966,16 +2133,13 @@ Future<void> main() async {
       ),
     );
 
-    nestedNavigator.currentState!.push(MaterialPageRoute<void>(
-      builder: (BuildContext context) {
-        return Hero(
-          tag: heroTag,
-          child: Placeholder(
-            key: nestedRouteHeroTop,
-          ),
-        );
-      },
-    ));
+    nestedNavigator.currentState!.push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return Hero(tag: heroTag, child: Placeholder(key: nestedRouteHeroTop));
+        },
+      ),
+    );
     await tester.pumpAndSettle();
 
     // Both heroes are in the tree, one is offstage
@@ -1983,11 +2147,13 @@ Future<void> main() async {
     expect(find.byKey(nestedRouteHeroBottom), findsNothing);
     expect(find.byKey(nestedRouteHeroBottom, skipOffstage: false), findsOneWidget);
 
-    rootNavigator.currentState!.push(MaterialPageRoute<void>(
-      builder: (BuildContext context) {
-        return const Text('Foo');
-      },
-    ));
+    rootNavigator.currentState!.push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return const Text('Foo');
+        },
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('Foo'), findsOneWidget);
@@ -2010,7 +2176,9 @@ Future<void> main() async {
     expect(find.byKey(nestedRouteHeroBottom, skipOffstage: false), findsOneWidget);
   });
 
-  testWidgets('Can hero from route in root Navigator to route in nested Navigator', (WidgetTester tester) async {
+  testWidgets('Can hero from route in root Navigator to route in nested Navigator', (
+    WidgetTester tester,
+  ) async {
     const String heroTag = 'foo';
     final GlobalKey<NavigatorState> rootNavigator = GlobalKey();
     final Key smallContainer = UniqueKey();
@@ -2023,18 +2191,12 @@ Future<void> main() async {
           child: Card(
             child: Hero(
               tag: heroTag,
-              child: Container(
-                key: largeContainer,
-                color: Colors.red,
-                height: 200.0,
-                width: 200.0,
-              ),
+              child: Container(key: largeContainer, color: Colors.red, height: 200.0, width: 200.0),
             ),
           ),
         ),
       ),
     );
-
 
     // The initial setup.
     expect(find.byKey(largeContainer), isOnstage);
@@ -2093,20 +2255,14 @@ Future<void> main() async {
     expect(find.byKey(largeContainer), findsNothing);
     expect(find.byKey(smallContainer), isOnstage);
     expect(find.byKey(smallContainer), isInCard);
-    expect(tester.getSize(find.byKey(smallContainer)), const Size(100,100));
+    expect(tester.getSize(find.byKey(smallContainer)), const Size(100, 100));
   });
 
   testWidgets('Hero within a Hero, throws', (WidgetTester tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Material(
-          child: Hero(
-            tag: 'a',
-            child: Hero(
-              tag: 'b',
-              child: Text('Child of a Hero'),
-            ),
-          ),
+          child: Hero(tag: 'a', child: Hero(tag: 'b', child: Text('Child of a Hero'))),
         ),
       ),
     );
@@ -2114,7 +2270,9 @@ Future<void> main() async {
     expect(tester.takeException(), isAssertionError);
   });
 
-  testWidgets('Can push/pop on outer Navigator if nested Navigators contains same Heroes', (WidgetTester tester) async {
+  testWidgets('Can push/pop on outer Navigator if nested Navigators contains same Heroes', (
+    WidgetTester tester,
+  ) async {
     const String heroTag = 'foo';
     final GlobalKey<NavigatorState> rootNavigator = GlobalKey<NavigatorState>();
     final Key rootRouteHero = UniqueKey();
@@ -2134,12 +2292,9 @@ Future<void> main() async {
           ),
           tabBuilder: (BuildContext context, int index) {
             return CupertinoTabView(
-              builder: (BuildContext context) => Hero(
-                tag: heroTag,
-                child: Placeholder(
-                  key: keys[index],
-                ),
-              ),
+              builder:
+                  (BuildContext context) =>
+                      Hero(tag: heroTag, child: Placeholder(key: keys[index])),
             );
           },
         ),
@@ -2163,12 +2318,8 @@ Future<void> main() async {
 
     rootNavigator.currentState!.push(
       MaterialPageRoute<void>(
-        builder: (BuildContext context) => Hero(
-          tag: heroTag,
-          child: Placeholder(
-            key: rootRouteHero,
-          ),
-        ),
+        builder:
+            (BuildContext context) => Hero(tag: heroTag, child: Placeholder(key: rootRouteHero)),
       ),
     );
 
@@ -2202,13 +2353,7 @@ Future<void> main() async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Material(
-          child: Hero(
-            tag: 'a',
-            child: Hero(
-              tag: 'b',
-              child: Text('Child of a Hero'),
-            ),
-          ),
+          child: Hero(tag: 'a', child: Hero(tag: 'b', child: Text('Child of a Hero'))),
         ),
       ),
     );
@@ -2224,10 +2369,7 @@ Future<void> main() async {
             tag: 'a',
             child: Builder(
               builder: (BuildContext context) {
-                return const Hero(
-                  tag: 'b',
-                  child: Text('Child of a Hero'),
-                );
+                return const Hero(tag: 'b', child: Text('Child of a Hero'));
               },
             ),
           ),
@@ -2235,7 +2377,7 @@ Future<void> main() async {
       ),
     );
 
-    expect(tester.takeException(),isAssertionError);
+    expect(tester.takeException(), isAssertionError);
   });
 
   testWidgets('Hero within a Hero subtree with LayoutBuilder, throws', (WidgetTester tester) async {
@@ -2246,10 +2388,7 @@ Future<void> main() async {
             tag: 'a',
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
-                return const Hero(
-                  tag: 'b',
-                  child: Text('Child of a Hero'),
-                );
+                return const Hero(tag: 'b', child: Text('Child of a Hero'));
               },
             ),
           ),
@@ -2275,12 +2414,7 @@ Future<void> main() async {
           child: Card(
             child: Hero(
               tag: heroTag,
-              child: Container(
-                key: largeContainer,
-                color: Colors.red,
-                height: 200.0,
-                width: 200.0,
-              ),
+              child: Container(key: largeContainer, color: Colors.red, height: 200.0, width: 200.0),
             ),
           ),
         ),
@@ -2344,10 +2478,12 @@ Future<void> main() async {
     expect(find.byKey(largeContainer), findsNothing);
     expect(find.byKey(smallContainer), isOnstage);
     expect(find.byKey(smallContainer), isInCard);
-    expect(tester.getSize(find.byKey(smallContainer)), const Size(100,100));
+    expect(tester.getSize(find.byKey(smallContainer)), const Size(100, 100));
   });
 
-  testWidgets('Can add two page with heroes simultaneously using page API.', (WidgetTester tester) async {
+  testWidgets('Can add two page with heroes simultaneously using page API.', (
+    WidgetTester tester,
+  ) async {
     // Regression test for https://github.com/flutter/flutter/issues/115358.
 
     const String heroTag = 'foo';
@@ -2359,12 +2495,7 @@ Future<void> main() async {
         child: Card(
           child: Hero(
             tag: heroTag,
-            child: Container(
-              key: largeContainer,
-              color: Colors.red,
-              height: 200.0,
-              width: 200.0,
-            ),
+            child: Container(key: largeContainer, color: Colors.red, height: 200.0, width: 200.0),
           ),
         ),
       ),
@@ -2374,11 +2505,7 @@ Future<void> main() async {
         child: Card(
           child: Hero(
             tag: heroTag,
-            child: Container(
-              color: Colors.red,
-              height: 1000.0,
-              width: 1000.0,
-            ),
+            child: Container(color: Colors.red, height: 1000.0, width: 1000.0),
           ),
         ),
       ),
@@ -2388,12 +2515,7 @@ Future<void> main() async {
         child: Card(
           child: Hero(
             tag: heroTag,
-            child: Container(
-              key: smallContainer,
-              color: Colors.red,
-              height: 100.0,
-              width: 100.0,
-            ),
+            child: Container(key: smallContainer, color: Colors.red, height: 100.0, width: 100.0),
           ),
         ),
       ),
@@ -2409,7 +2531,7 @@ Future<void> main() async {
           pages: <Page<void>>[page1],
           onPopPage: (_, __) => false,
         ),
-      )
+      ),
     );
 
     // The initial setup.
@@ -2458,10 +2580,12 @@ Future<void> main() async {
     expect(find.byKey(largeContainer), findsNothing);
     expect(find.byKey(smallContainer), isOnstage);
     expect(find.byKey(smallContainer), isInCard);
-    expect(tester.getSize(find.byKey(smallContainer)), const Size(100,100));
+    expect(tester.getSize(find.byKey(smallContainer)), const Size(100, 100));
   });
 
-  testWidgets('Can still trigger hero even if page underneath changes', (WidgetTester tester) async {
+  testWidgets('Can still trigger hero even if page underneath changes', (
+    WidgetTester tester,
+  ) async {
     // Regression test for https://github.com/flutter/flutter/issues/88578.
 
     const String heroTag = 'foo';
@@ -2471,25 +2595,13 @@ Future<void> main() async {
     final MaterialPage<void> unrelatedPage1 = MaterialPage<void>(
       key: UniqueKey(),
       child: Center(
-        child: Card(
-          child: Container(
-            color: Colors.red,
-            height: 1000.0,
-            width: 1000.0,
-          ),
-        ),
+        child: Card(child: Container(color: Colors.red, height: 1000.0, width: 1000.0)),
       ),
     );
     final MaterialPage<void> unrelatedPage2 = MaterialPage<void>(
       key: UniqueKey(),
       child: Center(
-        child: Card(
-          child: Container(
-            color: Colors.red,
-            height: 1000.0,
-            width: 1000.0,
-          ),
-        ),
+        child: Card(child: Container(color: Colors.red, height: 1000.0, width: 1000.0)),
       ),
     );
     final MaterialPage<void> page1 = MaterialPage<void>(
@@ -2498,12 +2610,7 @@ Future<void> main() async {
         child: Card(
           child: Hero(
             tag: heroTag,
-            child: Container(
-              key: largeContainer,
-              color: Colors.red,
-              height: 200.0,
-              width: 200.0,
-            ),
+            child: Container(key: largeContainer, color: Colors.red, height: 200.0, width: 200.0),
           ),
         ),
       ),
@@ -2514,12 +2621,7 @@ Future<void> main() async {
         child: Card(
           child: Hero(
             tag: heroTag,
-            child: Container(
-              key: smallContainer,
-              color: Colors.red,
-              height: 100.0,
-              width: 100.0,
-            ),
+            child: Container(key: smallContainer, color: Colors.red, height: 100.0, width: 100.0),
           ),
         ),
       ),
@@ -2528,14 +2630,14 @@ Future<void> main() async {
     addTearDown(controller.dispose);
 
     await tester.pumpWidget(
-        MaterialApp(
-          navigatorKey: navigator,
-          home: Navigator(
-            observers: <NavigatorObserver>[controller],
-            pages: <Page<void>>[unrelatedPage1, page1],
-            onPopPage: (_, __) => false,
-          ),
-        )
+      MaterialApp(
+        navigatorKey: navigator,
+        home: Navigator(
+          observers: <NavigatorObserver>[controller],
+          pages: <Page<void>>[unrelatedPage1, page1],
+          onPopPage: (_, __) => false,
+        ),
+      ),
     );
 
     // The initial setup.
@@ -2584,10 +2686,12 @@ Future<void> main() async {
     expect(find.byKey(largeContainer), findsNothing);
     expect(find.byKey(smallContainer), isOnstage);
     expect(find.byKey(smallContainer), isInCard);
-    expect(tester.getSize(find.byKey(smallContainer)), const Size(100,100));
+    expect(tester.getSize(find.byKey(smallContainer)), const Size(100, 100));
   });
 
-  testWidgets('On an iOS back swipe and snap, only a single flight should take place', (WidgetTester tester) async {
+  testWidgets('On an iOS back swipe and snap, only a single flight should take place', (
+    WidgetTester tester,
+  ) async {
     int shuttlesBuilt = 0;
     Widget shuttleBuilder(
       BuildContext flightContext,
@@ -2617,11 +2721,7 @@ Future<void> main() async {
     final CupertinoPageRoute<void> route2 = CupertinoPageRoute<void>(
       builder: (BuildContext context) {
         return CupertinoPageScaffold(
-          child: Hero(
-            tag: navigatorKey,
-            transitionOnUserGestures: true,
-            child: const Text('2'),
-          ),
+          child: Hero(tag: navigatorKey, transitionOnUserGestures: true, child: const Text('2')),
         );
       },
     );
@@ -2650,72 +2750,65 @@ Future<void> main() async {
     expect(shuttlesBuilt, 2);
   });
 
-  testWidgets(
-    "From hero's state should be preserved, "
-    'heroes work well with child widgets that has global keys',
-    (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
-      final GlobalKey<_SimpleState> key1 = GlobalKey<_SimpleState>();
-      final GlobalKey key2 = GlobalKey();
+  testWidgets("From hero's state should be preserved, "
+      'heroes work well with child widgets that has global keys', (WidgetTester tester) async {
+    final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
+    final GlobalKey<_SimpleState> key1 = GlobalKey<_SimpleState>();
+    final GlobalKey key2 = GlobalKey();
 
-      await tester.pumpWidget(
-        CupertinoApp(
-          navigatorKey: navigatorKey,
-          home: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Hero(
-                tag: 'hero',
-                transitionOnUserGestures: true,
-                child: _SimpleStatefulWidget(key: key1),
-              ),
-              const SizedBox(
-                width: 10,
-                height: 10,
-                child: Text('1'),
-              ),
-            ],
-          ),
-        ),
-      );
-
-      final CupertinoPageRoute<void> route2 = CupertinoPageRoute<void>(
-        builder: (BuildContext context) {
-          return CupertinoPageScaffold(
-            child: Hero(
+    await tester.pumpWidget(
+      CupertinoApp(
+        navigatorKey: navigatorKey,
+        home: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Hero(
               tag: 'hero',
               transitionOnUserGestures: true,
-              // key2 is a `GlobalKey`. The hero animation should not
-              // assert by having the same global keyed widget in more
-              // than one place in the tree.
-              child: _SimpleStatefulWidget(key: key2),
+              child: _SimpleStatefulWidget(key: key1),
             ),
-          );
-        },
-      );
+            const SizedBox(width: 10, height: 10, child: Text('1')),
+          ],
+        ),
+      ),
+    );
 
-      final _SimpleState state1 = key1.currentState!;
-      state1.state = 1;
+    final CupertinoPageRoute<void> route2 = CupertinoPageRoute<void>(
+      builder: (BuildContext context) {
+        return CupertinoPageScaffold(
+          child: Hero(
+            tag: 'hero',
+            transitionOnUserGestures: true,
+            // key2 is a `GlobalKey`. The hero animation should not
+            // assert by having the same global keyed widget in more
+            // than one place in the tree.
+            child: _SimpleStatefulWidget(key: key2),
+          ),
+        );
+      },
+    );
 
-      navigatorKey.currentState!.push(route2);
-      await tester.pump();
+    final _SimpleState state1 = key1.currentState!;
+    state1.state = 1;
 
-      expect(state1.mounted, isTrue);
+    navigatorKey.currentState!.push(route2);
+    await tester.pump();
 
-      await tester.pumpAndSettle();
-      expect(state1.state, 1);
-      // The element should be mounted and unique.
-      expect(state1.mounted, isTrue);
+    expect(state1.mounted, isTrue);
 
-      navigatorKey.currentState!.pop();
-      await tester.pumpAndSettle();
+    await tester.pumpAndSettle();
+    expect(state1.state, 1);
+    // The element should be mounted and unique.
+    expect(state1.mounted, isTrue);
 
-      // State is preserved.
-      expect(state1.state, 1);
-      // The element should be mounted and unique.
-      expect(state1.mounted, isTrue);
-    },
-  );
+    navigatorKey.currentState!.pop();
+    await tester.pumpAndSettle();
+
+    // State is preserved.
+    expect(state1.state, 1);
+    // The element should be mounted and unique.
+    expect(state1.mounted, isTrue);
+  });
 
   testWidgets(
     "Hero works with images that don't have both width and height specified",
@@ -2736,19 +2829,9 @@ Future<void> main() async {
               Hero(
                 tag: 'hero',
                 transitionOnUserGestures: true,
-                child: SizedBox(
-                  width: 100,
-                  child: Image(
-                    image: imageProvider,
-                    key: imageKey1,
-                  ),
-                ),
+                child: SizedBox(width: 100, child: Image(image: imageProvider, key: imageKey1)),
               ),
-              const SizedBox(
-                width: 10,
-                height: 10,
-                child: Text('1'),
-              ),
+              const SizedBox(width: 10, height: 10, child: Text('1')),
             ],
           ),
         ),
@@ -2760,10 +2843,7 @@ Future<void> main() async {
             child: Hero(
               tag: 'hero',
               transitionOnUserGestures: true,
-              child: Image(
-                image: imageProvider,
-                key: imageKey2,
-              ),
+              child: Image(image: imageProvider, key: imageKey2),
             ),
           );
         },
@@ -2793,7 +2873,10 @@ Future<void> main() async {
       // image1 should snap to the top left corner of the Row widget.
       expect(
         tester.getRect(find.byKey(imageKey1, skipOffstage: false)),
-        rectMoreOrLessEquals(tester.getTopLeft(find.widgetWithText(Row, '1')) & const Size(100, 100), epsilon: 0.01),
+        rectMoreOrLessEquals(
+          tester.getTopLeft(find.widgetWithText(Row, '1')) & const Size(100, 100),
+          epsilon: 0.01,
+        ),
       );
 
       // Text should respect the correct final size of image1.
@@ -2805,33 +2888,38 @@ Future<void> main() async {
   );
 
   // Regression test for https://github.com/flutter/flutter/issues/38183.
-  testWidgets('Remove user gesture driven flights when the gesture is invalid', (WidgetTester tester) async {
-    transitionFromUserGestures = true;
-    await tester.pumpWidget(MaterialApp(
-      routes: routes,
-    ));
+  testWidgets(
+    'Remove user gesture driven flights when the gesture is invalid',
+    (WidgetTester tester) async {
+      transitionFromUserGestures = true;
+      await tester.pumpWidget(MaterialApp(routes: routes));
 
-    await tester.tap(find.text('simple'));
-    await tester.pump();
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('simple'));
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-    expect(find.byKey(simpleKey), findsOneWidget);
+      expect(find.byKey(simpleKey), findsOneWidget);
 
-    // Tap once to trigger a flight.
-    await tester.tapAt(const Offset(10, 200));
-    await tester.pumpAndSettle();
+      // Tap once to trigger a flight.
+      await tester.tapAt(const Offset(10, 200));
+      await tester.pumpAndSettle();
 
-    // Wait till the previous gesture is accepted.
-    await tester.pump(const Duration(milliseconds: 500));
+      // Wait till the previous gesture is accepted.
+      await tester.pump(const Duration(milliseconds: 500));
 
-    // Tap again to trigger another flight, see if it throws.
-    await tester.tapAt(const Offset(10, 200));
-    await tester.pumpAndSettle();
+      // Tap again to trigger another flight, see if it throws.
+      await tester.tapAt(const Offset(10, 200));
+      await tester.pumpAndSettle();
 
-    // The simple route should still be on top.
-    expect(find.byKey(simpleKey), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  }, variant: const TargetPlatformVariant(<TargetPlatform>{ TargetPlatform.iOS,  TargetPlatform.macOS }));
+      // The simple route should still be on top.
+      expect(find.byKey(simpleKey), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+    variant: const TargetPlatformVariant(<TargetPlatform>{
+      TargetPlatform.iOS,
+      TargetPlatform.macOS,
+    }),
+  );
 
   // Regression test for https://github.com/flutter/flutter/issues/40239.
   testWidgets(
@@ -2843,10 +2931,7 @@ Future<void> main() async {
       await tester.pumpWidget(
         CupertinoApp(
           navigatorKey: navigatorKey,
-          home: Hero(
-            tag: navigatorKey,
-            child: const Placeholder(),
-          ),
+          home: Hero(tag: navigatorKey, child: const Placeholder()),
         ),
       );
 
@@ -2857,8 +2942,8 @@ Future<void> main() async {
               builder: (BuildContext context, StateSetter setter) {
                 setState = setter;
                 return shouldDisplayHero
-                  ? Hero(tag: navigatorKey, child: const Text('text'))
-                  : const SizedBox();
+                    ? Hero(tag: navigatorKey, child: const Text('text'))
+                    : const SizedBox();
               },
             ),
           );
@@ -2871,7 +2956,9 @@ Future<void> main() async {
       expect(find.text('text'), findsOneWidget);
       expect(find.byType(Placeholder), findsNothing);
 
-      setState(() { shouldDisplayHero = false; });
+      setState(() {
+        shouldDisplayHero = false;
+      });
       await tester.pumpAndSettle();
 
       expect(find.text('text'), findsNothing);
@@ -2903,11 +2990,7 @@ Future<void> main() async {
               createRectTween: (Rect? begin, Rect? end) {
                 return RectTween(begin: begin, end: end);
               },
-              child: SizedBox(
-                key: container1,
-                height: 100,
-                width: 100,
-              ),
+              child: SizedBox(key: container1, height: 100, width: 100),
             ),
           ),
         ),
@@ -2916,23 +2999,23 @@ Future<void> main() async {
     final Size originalSize = tester.getSize(find.byKey(container1));
     expect(originalSize, const Size(100, 100));
 
-    navigator.currentState!.push(MaterialPageRoute<void>(builder: (BuildContext context) {
-      return Scaffold(
-        body: Center(
-          child: Hero(
-            tag: 'test',
-            createRectTween: (Rect? begin, Rect? end) {
-              return RectTween(begin: begin, end: end);
-            },
-            child: SizedBox(
-              key: container2,
-              height: 200,
-              width: 200,
+    navigator.currentState!.push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return Scaffold(
+            body: Center(
+              child: Hero(
+                tag: 'test',
+                createRectTween: (Rect? begin, Rect? end) {
+                  return RectTween(begin: begin, end: end);
+                },
+                child: SizedBox(key: container2, height: 200, width: 200),
+              ),
             ),
-          ),
-        ),
-      );
-    }));
+          );
+        },
+      ),
+    );
     await tester.pumpAndSettle();
     final Size newSize = tester.getSize(find.byKey(container2));
     expect(newSize, const Size(200, 200));
@@ -2962,49 +3045,50 @@ Future<void> main() async {
   });
 
   testWidgets('Heroes in enabled HeroMode do transition', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Material(
-        child: Column(
-          children: <Widget>[
-            HeroMode(
-              child: Card(
-                child: Hero(
-                  tag: 'a',
-                  child: SizedBox(
-                    height: 100.0,
-                    width: 100.0,
-                    key: firstKey,
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Column(
+            children: <Widget>[
+              HeroMode(
+                child: Card(
+                  child: Hero(
+                    tag: 'a',
+                    child: SizedBox(height: 100.0, width: 100.0, key: firstKey),
                   ),
                 ),
               ),
-            ),
-            Builder(
-              builder: (BuildContext context) {
-                return TextButton(
-                  child: const Text('push'),
-                  onPressed: () {
-                    Navigator.push(context, PageRouteBuilder<void>(
-                      pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
-                        return Card(
-                          child: Hero(
-                            tag: 'a',
-                            child: SizedBox(
-                              height: 150.0,
-                              width: 150.0,
-                              key: secondKey,
-                            ),
-                          ),
-                        );
-                      },
-                    ));
-                  },
-                );
-              },
-            ),
-          ],
+              Builder(
+                builder: (BuildContext context) {
+                  return TextButton(
+                    child: const Text('push'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder<void>(
+                          pageBuilder: (
+                            BuildContext context,
+                            Animation<double> _,
+                            Animation<double> __,
+                          ) {
+                            return Card(
+                              child: Hero(
+                                tag: 'a',
+                                child: SizedBox(height: 150.0, width: 150.0, key: secondKey),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
 
     expect(find.byKey(firstKey), isOnstage);
     expect(find.byKey(firstKey), isInCard);
@@ -3033,50 +3117,51 @@ Future<void> main() async {
   });
 
   testWidgets('Heroes in disabled HeroMode do not transition', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Material(
-        child: Column(
-          children: <Widget>[
-            HeroMode(
-              enabled: false,
-              child: Card(
-                child: Hero(
-                  tag: 'a',
-                  child: SizedBox(
-                    height: 100.0,
-                    width: 100.0,
-                    key: firstKey,
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Column(
+            children: <Widget>[
+              HeroMode(
+                enabled: false,
+                child: Card(
+                  child: Hero(
+                    tag: 'a',
+                    child: SizedBox(height: 100.0, width: 100.0, key: firstKey),
                   ),
                 ),
               ),
-            ),
-            Builder(
-              builder: (BuildContext context) {
-                return TextButton(
-                  child: const Text('push'),
-                  onPressed: () {
-                    Navigator.push(context, PageRouteBuilder<void>(
-                      pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
-                        return Card(
-                          child: Hero(
-                            tag: 'a',
-                            child: SizedBox(
-                              height: 150.0,
-                              width: 150.0,
-                              key: secondKey,
-                            ),
-                          ),
-                        );
-                      },
-                    ));
-                  },
-                );
-              },
-            ),
-          ],
+              Builder(
+                builder: (BuildContext context) {
+                  return TextButton(
+                    child: const Text('push'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder<void>(
+                          pageBuilder: (
+                            BuildContext context,
+                            Animation<double> _,
+                            Animation<double> __,
+                          ) {
+                            return Card(
+                              child: Hero(
+                                tag: 'a',
+                                child: SizedBox(height: 150.0, width: 150.0, key: secondKey),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
 
     expect(find.byKey(firstKey), isOnstage);
     expect(find.byKey(firstKey), isInCard);
@@ -3110,7 +3195,9 @@ Future<void> main() async {
     expect(find.byKey(secondKey), isOnstage);
   });
 
-  testWidgets('kept alive Hero does not throw when the transition begins', (WidgetTester tester) async {
+  testWidgets('kept alive Hero does not throw when the transition begins', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
     await tester.pumpWidget(
@@ -3122,13 +3209,7 @@ Future<void> main() async {
             addRepaintBoundaries: false,
             addSemanticIndexes: false,
             children: <Widget>[
-              const KeepAlive(
-                keepAlive: true,
-                child: Hero(
-                  tag: 'a',
-                  child: Placeholder(),
-                ),
-              ),
+              const KeepAlive(keepAlive: true, child: Hero(tag: 'a', child: Placeholder())),
               Container(height: 1000.0),
             ],
           ),
@@ -3145,14 +3226,7 @@ Future<void> main() async {
     navigatorKey.currentState?.push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
-          return const Scaffold(
-            body: Center(
-              child: Hero(
-                tag: 'a',
-                child: Placeholder(),
-              ),
-            ),
-          );
+          return const Scaffold(body: Center(child: Hero(tag: 'a', child: Placeholder())));
         },
       ),
     );
@@ -3163,7 +3237,9 @@ Future<void> main() async {
     expect(find.byType(Placeholder), findsOneWidget);
   });
 
-  testWidgets('toHero becomes unpaintable after the transition begins', (WidgetTester tester) async {
+  testWidgets('toHero becomes unpaintable after the transition begins', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
     final ScrollController controller = ScrollController();
     addTearDown(controller.dispose);
@@ -3186,13 +3262,7 @@ Future<void> main() async {
             addRepaintBoundaries: false,
             addSemanticIndexes: false,
             children: <Widget>[
-              const KeepAlive(
-                keepAlive: true,
-                child: Hero(
-                  tag: 'a',
-                  child: Placeholder(),
-                ),
-              ),
+              const KeepAlive(keepAlive: true, child: Hero(tag: 'a', child: Placeholder())),
               Container(height: 1000.0),
             ],
           ),
@@ -3203,14 +3273,7 @@ Future<void> main() async {
     navigatorKey.currentState?.push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
-          return const Scaffold(
-            body: Center(
-              child: Hero(
-                tag: 'a',
-                child: Placeholder(),
-              ),
-            ),
-          );
+          return const Scaffold(body: Center(child: Hero(tag: 'a', child: Placeholder())));
         },
       ),
     );
@@ -3251,13 +3314,7 @@ Future<void> main() async {
             addRepaintBoundaries: false,
             addSemanticIndexes: false,
             children: <Widget>[
-              const KeepAlive(
-                keepAlive: true,
-                child: Hero(
-                  tag: 'a',
-                  child: Placeholder(),
-                ),
-              ),
+              const KeepAlive(keepAlive: true, child: Hero(tag: 'a', child: Placeholder())),
               Container(height: 1000.0),
             ],
           ),
@@ -3275,14 +3332,7 @@ Future<void> main() async {
     navigatorKey.currentState?.push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
-          return const Scaffold(
-            body: Center(
-              child: Hero(
-                tag: 'a',
-                child: Placeholder(),
-              ),
-            ),
-          );
+          return const Scaffold(body: Center(child: Hero(tag: 'a', child: Placeholder())));
         },
       ),
     );
@@ -3292,14 +3342,7 @@ Future<void> main() async {
     navigatorKey.currentState?.push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
-          return const Scaffold(
-            body: Center(
-              child: Hero(
-                tag: 'a',
-                child: Placeholder(),
-              ),
-            ),
-          );
+          return const Scaffold(body: Center(child: Hero(tag: 'a', child: Placeholder())));
         },
       ),
     );
@@ -3339,9 +3382,7 @@ Future<void> main() async {
             child: GridView.count(
               crossAxisCount: 3,
               shrinkWrap: true,
-              children: <Widget>[
-                Image(image: imageProvider, key: imageKey1),
-              ],
+              children: <Widget>[Image(image: imageProvider, key: imageKey1)],
             ),
           ),
         ),
@@ -3356,9 +3397,7 @@ Future<void> main() async {
             child: GridView.count(
               crossAxisCount: 3,
               shrinkWrap: true,
-              children: <Widget>[
-                Image(image: imageProvider, key: imageKey2),
-              ],
+              children: <Widget>[Image(image: imageProvider, key: imageKey2)],
             ),
           ),
         );
@@ -3401,10 +3440,7 @@ class TestDependencies extends StatelessWidget {
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.ltr,
-      child: MediaQuery(
-        data: MediaQueryData.fromView(View.of(context)),
-        child: child,
-      ),
+      child: MediaQuery(data: MediaQueryData.fromView(View.of(context)), child: child),
     );
   }
 }

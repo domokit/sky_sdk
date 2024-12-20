@@ -10,5 +10,5 @@ Future<void> main() => driver.integrationDriver(
       data?['performance'] as Map<String, dynamic>,
       testOutputFilename: 'e2e_perf_summary',
     );
-  }
+  },
 );

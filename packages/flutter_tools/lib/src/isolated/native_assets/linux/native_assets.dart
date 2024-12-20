@@ -18,7 +18,10 @@ Future<CCompilerConfig> cCompilerConfigLinux() async {
   const String kArBinary = 'llvm-ar';
   const String kLdBinary = 'ld.lld';
 
-  final ProcessResult whichResult = await globals.processManager.run(<String>['which', kClangPlusPlusBinary]);
+  final ProcessResult whichResult = await globals.processManager.run(<String>[
+    'which',
+    kClangPlusPlusBinary,
+  ]);
   if (whichResult.exitCode != 0) {
     throwToolExit('Failed to find $kClangPlusPlusBinary on PATH.');
   }

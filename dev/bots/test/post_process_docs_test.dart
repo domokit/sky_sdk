@@ -16,9 +16,7 @@ void main() async {
     const String branchName = 'stable';
     test('getBranchName does not call git if env LUCI_BRANCH provided', () async {
       final Platform platform = FakePlatform(
-        environment: <String, String>{
-          'LUCI_BRANCH': branchName,
-        },
+        environment: <String, String>{'LUCI_BRANCH': branchName},
       );
       final ProcessManager processManager = FakeProcessManager.empty();
       final String calculatedBranchName = await getBranchName(
@@ -29,49 +27,36 @@ void main() async {
     });
 
     test('getBranchName calls git if env LUCI_BRANCH not provided', () async {
-      final Platform platform = FakePlatform(
-        environment: <String, String>{},
-      );
+      final Platform platform = FakePlatform(environment: <String, String>{});
 
-      final ProcessManager processManager = FakeProcessManager.list(
-        <FakeCommand>[
-          const FakeCommand(
-            command: <String>['git', 'status', '-b', '--porcelain'],
-            stdout: '## $branchName',
-          ),
-        ],
-      );
+      final ProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
+        const FakeCommand(
+          command: <String>['git', 'status', '-b', '--porcelain'],
+          stdout: '## $branchName',
+        ),
+      ]);
 
-      final String calculatedBranchName = await getBranchName(platform: platform, processManager: processManager);
-      expect(
-        calculatedBranchName,
-        branchName,
-      );
-      expect(processManager, hasNoRemainingExpectations);
-    });
-    test('getBranchName calls git if env LUCI_BRANCH is empty', () async {
-      final Platform platform = FakePlatform(
-        environment: <String, String>{
-          'LUCI_BRANCH': '',
-        },
-      );
-
-      final ProcessManager processManager = FakeProcessManager.list(
-        <FakeCommand>[
-          const FakeCommand(
-            command: <String>['git', 'status', '-b', '--porcelain'],
-            stdout: '## $branchName',
-          ),
-        ],
-      );
       final String calculatedBranchName = await getBranchName(
         platform: platform,
         processManager: processManager,
       );
-      expect(
-        calculatedBranchName,
-        branchName,
+      expect(calculatedBranchName, branchName);
+      expect(processManager, hasNoRemainingExpectations);
+    });
+    test('getBranchName calls git if env LUCI_BRANCH is empty', () async {
+      final Platform platform = FakePlatform(environment: <String, String>{'LUCI_BRANCH': ''});
+
+      final ProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
+        const FakeCommand(
+          command: <String>['git', 'status', '-b', '--porcelain'],
+          stdout: '## $branchName',
+        ),
+      ]);
+      final String calculatedBranchName = await getBranchName(
+        platform: platform,
+        processManager: processManager,
       );
+      expect(calculatedBranchName, branchName);
       expect(processManager, hasNoRemainingExpectations);
     });
   });
@@ -79,14 +64,9 @@ void main() async {
   group('gitRevision', () {
     test('Return short format', () async {
       const String commitHash = 'e65f01793938e13cac2d321b9fcdc7939f9b2ea6';
-      final ProcessManager processManager = FakeProcessManager.list(
-        <FakeCommand>[
-          const FakeCommand(
-            command: <String>['git', 'rev-parse', 'HEAD'],
-            stdout: commitHash,
-          ),
-        ],
-      );
+      final ProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
+        const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: commitHash),
+      ]);
       final String revision = await gitRevision(processManager: processManager);
       expect(processManager, hasNoRemainingExpectations);
       expect(revision, commitHash.substring(0, 10));
@@ -94,14 +74,9 @@ void main() async {
 
     test('Return full length', () async {
       const String commitHash = 'e65f01793938e13cac2d321b9fcdc7939f9b2ea6';
-      final ProcessManager processManager = FakeProcessManager.list(
-        <FakeCommand>[
-          const FakeCommand(
-            command: <String>['git', 'rev-parse', 'HEAD'],
-            stdout: commitHash,
-          ),
-        ],
-      );
+      final ProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
+        const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: commitHash),
+      ]);
       final String revision = await gitRevision(fullLength: true, processManager: processManager);
       expect(processManager, hasNoRemainingExpectations);
       expect(revision, commitHash);
@@ -111,29 +86,25 @@ void main() async {
   group('runProcessWithValidation', () {
     test('With no error', () async {
       const List<String> command = <String>['git', 'rev-parse', 'HEAD'];
-      final ProcessManager processManager = FakeProcessManager.list(
-        <FakeCommand>[
-          const FakeCommand(
-            command: command,
-          ),
-        ],
-      );
+      final ProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
+        const FakeCommand(command: command),
+      ]);
       await runProcessWithValidations(command, '', processManager: processManager, verbose: false);
       expect(processManager, hasNoRemainingExpectations);
     });
 
     test('With error', () async {
       const List<String> command = <String>['git', 'rev-parse', 'HEAD'];
-      final ProcessManager processManager = FakeProcessManager.list(
-        <FakeCommand>[
-          const FakeCommand(
-            command: command,
-            exitCode: 1,
-          ),
-        ],
-      );
+      final ProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
+        const FakeCommand(command: command, exitCode: 1),
+      ]);
       try {
-        await runProcessWithValidations(command, '', processManager: processManager, verbose: false);
+        await runProcessWithValidations(
+          command,
+          '',
+          processManager: processManager,
+          verbose: false,
+        );
         throw Exception('Exception was not thrown');
       } on CommandException catch (e) {
         expect(e, isA<Exception>());
@@ -157,7 +128,13 @@ void main() async {
 ''';
       final MemoryFileSystem fs = MemoryFileSystem();
       final File footerFile = fs.file('/a/b/c/footer.js')..createSync(recursive: true);
-      await createFooter(footerFile, '3.0.0', timestampParam: '2022-09-22 14:09', branchParam: 'stable', revisionParam: 'abcdef');
+      await createFooter(
+        footerFile,
+        '3.0.0',
+        timestampParam: '2022-09-22 14:09',
+        branchParam: 'stable',
+        revisionParam: 'abcdef',
+      );
       final String content = await footerFile.readAsString();
       expect(content, expectedContent);
     });

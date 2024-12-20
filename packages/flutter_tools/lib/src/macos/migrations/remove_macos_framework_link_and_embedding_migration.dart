@@ -17,9 +17,9 @@ class RemoveMacOSFrameworkLinkAndEmbeddingMigration extends ProjectMigrator {
     super.logger,
     Usage usage,
     Analytics analytics,
-  )   : _xcodeProjectInfoFile = project.xcodeProjectInfoFile,
-        _usage = usage,
-        _analytics = analytics;
+  ) : _xcodeProjectInfoFile = project.xcodeProjectInfoFile,
+      _usage = usage,
+      _analytics = analytics;
 
   final File _xcodeProjectInfoFile;
   final Usage _usage;
@@ -28,8 +28,7 @@ class RemoveMacOSFrameworkLinkAndEmbeddingMigration extends ProjectMigrator {
   @override
   Future<void> migrate() async {
     if (!_xcodeProjectInfoFile.existsSync()) {
-      logger.printTrace(
-          'Xcode project not found, skipping framework link and embedding migration');
+      logger.printTrace('Xcode project not found, skipping framework link and embedding migration');
       return;
     }
 
@@ -86,21 +85,26 @@ class RemoveMacOSFrameworkLinkAndEmbeddingMigration extends ProjectMigrator {
     const String thinBinaryScript = r'/Flutter/ephemeral/.app_filename';
     if (line.contains(thinBinaryScript) && !line.contains(' embed')) {
       return line.replaceFirst(
-          thinBinaryScript, r'/Flutter/ephemeral/.app_filename && \"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh embed');
+        thinBinaryScript,
+        r'/Flutter/ephemeral/.app_filename && \"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh embed',
+      );
     }
 
-    if (line.contains('/* App.framework ') ||
-        line.contains('/* FlutterMacOS.framework ')) {
-      UsageEvent('macos-migration', 'remove-frameworks',
-              label: 'failure', flutterUsage: _usage)
-          .send();
-      _analytics.send(Event.appleUsageEvent(
-        workflow: 'macos-migration',
-        parameter: 'remove-frameworks',
-        result: 'failure',
-      ));
-      throwToolExit(
-          'Your Xcode project requires migration.');
+    if (line.contains('/* App.framework ') || line.contains('/* FlutterMacOS.framework ')) {
+      UsageEvent(
+        'macos-migration',
+        'remove-frameworks',
+        label: 'failure',
+        flutterUsage: _usage,
+      ).send();
+      _analytics.send(
+        Event.appleUsageEvent(
+          workflow: 'macos-migration',
+          parameter: 'remove-frameworks',
+          result: 'failure',
+        ),
+      );
+      throwToolExit('Your Xcode project requires migration.');
     }
 
     return line;

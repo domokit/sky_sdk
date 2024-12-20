@@ -13,8 +13,8 @@ class TokenLogger {
 
   void init({
     required Map<String, dynamic> allTokens,
-    required Map<String, List<String>> versionMap
-  }){
+    required Map<String, List<String>> versionMap,
+  }) {
     _allTokens = allTokens;
     _versionMap = versionMap;
   }
@@ -83,7 +83,11 @@ class TokenLogger {
 
     if (_unavailableTokens.isNotEmpty) {
       print('');
-      print('\x1B[31m' 'Some referenced tokens do not exist: ${_unavailableTokens.length}' '\x1B[0m');
+      print(
+        '\x1B[31m'
+        'Some referenced tokens do not exist: ${_unavailableTokens.length}'
+        '\x1B[0m',
+      );
       for (final String token in _unavailableTokens) {
         print('  $token');
       }

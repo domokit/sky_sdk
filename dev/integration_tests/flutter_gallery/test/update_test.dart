@@ -19,10 +19,7 @@ void main() {
   // Regression test for https://github.com/flutter/flutter/pull/5168
   testWidgets('update dialog', (WidgetTester tester) async {
     await tester.pumpWidget(
-      const GalleryApp(
-        testMode: true,
-        updateUrlFetcher: mockUpdateUrlFetcher,
-      )
+      const GalleryApp(testMode: true, updateUrlFetcher: mockUpdateUrlFetcher),
     );
     await tester.pump(); // see https://github.com/flutter/flutter/issues/1865
     await tester.pump(); // triggers a frame

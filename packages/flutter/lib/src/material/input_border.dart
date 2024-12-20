@@ -37,9 +37,7 @@ abstract class InputBorder extends ShapeBorder {
   /// Applications typically do not specify a [borderSide] parameter because the
   /// [InputDecorator] substitutes its own, using [copyWith], based on the
   /// current theme and [InputDecorator.isFocused].
-  const InputBorder({
-    this.borderSide = BorderSide.none,
-  });
+  const InputBorder({this.borderSide = BorderSide.none});
 
   /// No input border.
   ///
@@ -55,7 +53,7 @@ abstract class InputBorder extends ShapeBorder {
   final BorderSide borderSide;
 
   /// Creates a copy of this input border with the specified `borderSide`.
-  InputBorder copyWith({ BorderSide? borderSide });
+  InputBorder copyWith({BorderSide? borderSide});
 
   /// True if this border will enclose the [InputDecorator]'s container.
   ///
@@ -89,7 +87,7 @@ class _NoInputBorder extends InputBorder {
   const _NoInputBorder() : super(borderSide: BorderSide.none);
 
   @override
-  _NoInputBorder copyWith({ BorderSide? borderSide }) => const _NoInputBorder();
+  _NoInputBorder copyWith({BorderSide? borderSide}) => const _NoInputBorder();
 
   @override
   bool get isOutline => false;
@@ -101,17 +99,17 @@ class _NoInputBorder extends InputBorder {
   _NoInputBorder scale(double t) => const _NoInputBorder();
 
   @override
-  Path getInnerPath(Rect rect, { TextDirection? textDirection }) {
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) {
     return Path()..addRect(rect);
   }
 
   @override
-  Path getOuterPath(Rect rect, { TextDirection? textDirection }) {
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
     return Path()..addRect(rect);
   }
 
   @override
-  void paintInterior(Canvas canvas, Rect rect, Paint paint, { TextDirection? textDirection }) {
+  void paintInterior(Canvas canvas, Rect rect, Paint paint, {TextDirection? textDirection}) {
     canvas.drawRect(rect, paint);
   }
 
@@ -175,7 +173,7 @@ class UnderlineInputBorder extends InputBorder {
   bool get isOutline => false;
 
   @override
-  UnderlineInputBorder copyWith({ BorderSide? borderSide, BorderRadius? borderRadius }) {
+  UnderlineInputBorder copyWith({BorderSide? borderSide, BorderRadius? borderRadius}) {
     return UnderlineInputBorder(
       borderSide: borderSide ?? this.borderSide,
       borderRadius: borderRadius ?? this.borderRadius,
@@ -193,18 +191,19 @@ class UnderlineInputBorder extends InputBorder {
   }
 
   @override
-  Path getInnerPath(Rect rect, { TextDirection? textDirection }) {
-    return Path()
-      ..addRect(Rect.fromLTWH(rect.left, rect.top, rect.width, math.max(0.0, rect.height - borderSide.width)));
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) {
+    return Path()..addRect(
+      Rect.fromLTWH(rect.left, rect.top, rect.width, math.max(0.0, rect.height - borderSide.width)),
+    );
   }
 
   @override
-  Path getOuterPath(Rect rect, { TextDirection? textDirection }) {
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
     return Path()..addRRect(borderRadius.resolve(textDirection).toRRect(rect));
   }
 
   @override
-  void paintInterior(Canvas canvas, Rect rect, Paint paint, { TextDirection? textDirection }) {
+  void paintInterior(Canvas canvas, Rect rect, Paint paint, {TextDirection? textDirection}) {
     canvas.drawRRect(borderRadius.resolve(textDirection).toRRect(rect), paint);
   }
 
@@ -257,7 +256,9 @@ class UnderlineInputBorder extends InputBorder {
         bottomRight: borderRadius.bottomRight.clamp(maximum: Radius.circular(rect.height / 2)),
       );
 
-      BoxBorder.paintNonUniformBorder(canvas, rect,
+      BoxBorder.paintNonUniformBorder(
+        canvas,
+        rect,
         textDirection: textDirection,
         borderRadius: updatedBorderRadius,
         bottom: borderSide.copyWith(strokeAlign: BorderSide.strokeAlignInside),
@@ -265,7 +266,11 @@ class UnderlineInputBorder extends InputBorder {
       );
     } else {
       final Offset alignInsideOffset = Offset(0, borderSide.width / 2);
-      canvas.drawLine(rect.bottomLeft - alignInsideOffset, rect.bottomRight - alignInsideOffset, borderSide.toPaint());
+      canvas.drawLine(
+        rect.bottomLeft - alignInsideOffset,
+        rect.bottomRight - alignInsideOffset,
+        borderSide.toPaint(),
+      );
     }
   }
 
@@ -277,9 +282,9 @@ class UnderlineInputBorder extends InputBorder {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is UnderlineInputBorder
-        && other.borderSide == borderSide
-        && other.borderRadius == borderRadius;
+    return other is UnderlineInputBorder &&
+        other.borderSide == borderSide &&
+        other.borderRadius == borderRadius;
   }
 
   @override
@@ -334,10 +339,10 @@ class OutlineInputBorder extends InputBorder {
   //
   // This can't be checked by the constructor because const constructor.
   static bool _cornersAreCircular(BorderRadius borderRadius) {
-    return borderRadius.topLeft.x == borderRadius.topLeft.y
-        && borderRadius.bottomLeft.x == borderRadius.bottomLeft.y
-        && borderRadius.topRight.x == borderRadius.topRight.y
-        && borderRadius.bottomRight.x == borderRadius.bottomRight.y;
+    return borderRadius.topLeft.x == borderRadius.topLeft.y &&
+        borderRadius.bottomLeft.x == borderRadius.bottomLeft.y &&
+        borderRadius.topRight.x == borderRadius.topRight.y &&
+        borderRadius.bottomRight.x == borderRadius.bottomRight.y;
   }
 
   /// Horizontal padding on either side of the border's
@@ -409,19 +414,18 @@ class OutlineInputBorder extends InputBorder {
   }
 
   @override
-  Path getInnerPath(Rect rect, { TextDirection? textDirection }) {
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) {
     return Path()
       ..addRRect(borderRadius.resolve(textDirection).toRRect(rect).deflate(borderSide.width));
   }
 
   @override
-  Path getOuterPath(Rect rect, { TextDirection? textDirection }) {
-    return Path()
-      ..addRRect(borderRadius.resolve(textDirection).toRRect(rect));
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
+    return Path()..addRRect(borderRadius.resolve(textDirection).toRRect(rect));
   }
 
   @override
-  void paintInterior(Canvas canvas, Rect rect, Paint paint, { TextDirection? textDirection }) {
+  void paintInterior(Canvas canvas, Rect rect, Paint paint, {TextDirection? textDirection}) {
     canvas.drawRRect(borderRadius.resolve(textDirection).toRRect(rect), paint);
   }
 
@@ -466,7 +470,9 @@ class OutlineInputBorder extends InputBorder {
 
     // Top left corner
     if (scaledRRect.tlRadius != Radius.zero) {
-      final double tlCornerArcSweep = math.acos(clampDouble(1 - start / scaledRRect.tlRadiusX, 0.0, 1.0));
+      final double tlCornerArcSweep = math.acos(
+        clampDouble(1 - start / scaledRRect.tlRadiusX, 0.0, 1.0),
+      );
       path.addArc(tlCorner, math.pi, tlCornerArcSweep);
     } else {
       // Because the path is painted with Paint.strokeCap = StrokeCap.butt, horizontal coordinate is moved
@@ -559,10 +565,10 @@ class OutlineInputBorder extends InputBorder {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is OutlineInputBorder
-        && other.borderSide == borderSide
-        && other.borderRadius == borderRadius
-        && other.gapPadding == gapPadding;
+    return other is OutlineInputBorder &&
+        other.borderSide == borderSide &&
+        other.borderRadius == borderRadius &&
+        other.gapPadding == gapPadding;
   }
 
   @override

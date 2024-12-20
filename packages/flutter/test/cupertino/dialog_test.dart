@@ -56,11 +56,9 @@ void main() {
         dialog: CupertinoAlertDialog(
           title: const Text('The title'),
           content: const Text('The content'),
-          actions: List<Widget>.generate(20, (int i) =>
-            CupertinoDialogAction(
-              onPressed: () {},
-              child: Text('Button $i'),
-            ),
+          actions: List<Widget>.generate(
+            20,
+            (int i) => CupertinoDialogAction(onPressed: () {}, child: Text('Button $i')),
           ),
         ),
       ),
@@ -92,9 +90,7 @@ void main() {
             title: const Text('The title'),
             content: const Text('The content'),
             actions: <Widget>[
-              const CupertinoDialogAction(
-                child: Text('Cancel'),
-              ),
+              const CupertinoDialogAction(child: Text('Cancel')),
               CupertinoDialogAction(
                 isDestructiveAction: true,
                 onPressed: () {
@@ -127,8 +123,9 @@ void main() {
       createAppWithButtonThatLaunchesDialog(
         dialogBuilder: (BuildContext context) {
           return CupertinoAlertDialog(
-            actions: List<Widget>.generate(20, (int i) =>
-              CupertinoDialogAction(
+            actions: List<Widget>.generate(
+              20,
+              (int i) => CupertinoDialogAction(
                 onPressed: () {
                   expect(wasPressed, null);
                   wasPressed = i;
@@ -192,9 +189,7 @@ void main() {
 
     expect(wasPressed, isFalse);
 
-    await tester.tapAt(
-      tester.getTopLeft(find.text('One')) - const Offset(20, 0),
-    );
+    await tester.tapAt(tester.getTopLeft(find.text('One')) - const Offset(20, 0));
 
     expect(wasPressed, isTrue);
 
@@ -328,15 +323,18 @@ void main() {
     expect(find.text('Cancel'), findsOne);
   });
 
-  testWidgets('Sliding taps can still yield to scrolling after horizontal movement', (WidgetTester tester) async {
+  testWidgets('Sliding taps can still yield to scrolling after horizontal movement', (
+    WidgetTester tester,
+  ) async {
     int? pressed;
     await tester.pumpWidget(
       createAppWithButtonThatLaunchesDialog(
         dialogBuilder: (BuildContext context) {
           return CupertinoAlertDialog(
             content: Text('Long message' * 200),
-            actions: List<Widget>.generate(10, (int i) =>
-              CupertinoDialogAction(
+            actions: List<Widget>.generate(
+              10,
+              (int i) => CupertinoDialogAction(
                 onPressed: () {
                   expect(pressed, null);
                   pressed = i;
@@ -371,15 +369,18 @@ void main() {
     expect(pressed, 9);
   });
 
-  testWidgets('Sliding taps is responsive even before the drag starts', (WidgetTester tester) async {
+  testWidgets('Sliding taps is responsive even before the drag starts', (
+    WidgetTester tester,
+  ) async {
     int? pressed;
     await tester.pumpWidget(
       createAppWithButtonThatLaunchesDialog(
         dialogBuilder: (BuildContext context) {
           return CupertinoAlertDialog(
             content: Text('Long message' * 200),
-            actions: List<Widget>.generate(10, (int i) =>
-              CupertinoDialogAction(
+            actions: List<Widget>.generate(
+              10,
+              (int i) => CupertinoDialogAction(
                 onPressed: () {
                   expect(pressed, null);
                   pressed = i;
@@ -396,9 +397,9 @@ void main() {
     await tester.pumpAndSettle();
 
     // Find the location right within the upper edge of button 1.
-    final Offset start = tester.getTopLeft(
-      find.widgetWithText(CupertinoDialogAction, 'Button 1'),
-    ) + const Offset(30, 5);
+    final Offset start =
+        tester.getTopLeft(find.widgetWithText(CupertinoDialogAction, 'Button 1')) +
+        const Offset(30, 5);
     // Verify that the start location is within button 1.
     await tester.tapAt(start);
     expect(pressed, 1);
@@ -422,8 +423,9 @@ void main() {
         dialogBuilder: (BuildContext context) {
           return CupertinoAlertDialog(
             title: const Text('The title'),
-            actions: List<Widget>.generate(8, (int i) =>
-              CupertinoDialogAction(
+            actions: List<Widget>.generate(
+              8,
+              (int i) => CupertinoDialogAction(
                 onPressed: () {
                   expect(pressed, null);
                   pressed = i;
@@ -480,8 +482,9 @@ void main() {
       createAppWithButtonThatLaunchesDialog(
         dialogBuilder: (BuildContext context) {
           return CupertinoAlertDialog(
-            actions: List<Widget>.generate(12, (int i) =>
-              CupertinoDialogAction(
+            actions: List<Widget>.generate(
+              12,
+              (int i) => CupertinoDialogAction(
                 onPressed: () {
                   expect(pressed, null);
                   pressed = i;
@@ -518,7 +521,9 @@ void main() {
     expect(pressed, null);
   });
 
-  testWidgets('Taps on legacy button calls onPressed and renders correctly', (WidgetTester tester) async {
+  testWidgets('Taps on legacy button calls onPressed and renders correctly', (
+    WidgetTester tester,
+  ) async {
     // Legacy buttons are implemented with [GestureDetector.onTap]. Apps that
     // use customized legacy buttons should continue to work.
     bool wasPressed = false;
@@ -587,7 +592,6 @@ void main() {
 
     await tester.pumpAndSettle(const Duration(seconds: 1));
     expect(find.text('Dialog'), findsOneWidget);
-
   });
 
   testWidgets('Dialog configurable to be barrier dismissible', (WidgetTester tester) async {
@@ -619,10 +623,9 @@ void main() {
   });
 
   testWidgets('Dialog destructive action style', (WidgetTester tester) async {
-    await tester.pumpWidget(boilerplate(const CupertinoDialogAction(
-      isDestructiveAction: true,
-      child: Text('Ok'),
-    )));
+    await tester.pumpWidget(
+      boilerplate(const CupertinoDialogAction(isDestructiveAction: true, child: Text('Ok'))),
+    );
 
     final DefaultTextStyle widget = tester.widget(find.byType(DefaultTextStyle));
 
@@ -632,12 +635,8 @@ void main() {
   testWidgets('Dialog default action style', (WidgetTester tester) async {
     await tester.pumpWidget(
       CupertinoTheme(
-        data: const CupertinoThemeData(
-          primaryColor: CupertinoColors.systemGreen,
-        ),
-        child: boilerplate(const CupertinoDialogAction(
-          child: Text('Ok'),
-        )),
+        data: const CupertinoThemeData(primaryColor: CupertinoColors.systemGreen),
+        child: boilerplate(const CupertinoDialogAction(child: Text('Ok'))),
       ),
     );
 
@@ -677,24 +676,23 @@ void main() {
       0xFF0A84FF, // dark elevated color of systemBlue.
     );
 
-    expect(
-      find.byType(CupertinoAlertDialog),
-      paints..rect(color: const Color(0xCC2D2D2D)),
-    );
+    expect(find.byType(CupertinoAlertDialog), paints..rect(color: const Color(0xCC2D2D2D)));
   });
 
   testWidgets('Has semantic annotations', (WidgetTester tester) async {
     final SemanticsTester semantics = SemanticsTester(tester);
-    await tester.pumpWidget(const CupertinoApp(
-      home: CupertinoAlertDialog(
-        title: Text('The Title'),
-        content: Text('Content'),
-        actions: <Widget>[
-          CupertinoDialogAction(child: Text('Cancel')),
-          CupertinoDialogAction(child: Text('OK')),
-        ],
+    await tester.pumpWidget(
+      const CupertinoApp(
+        home: CupertinoAlertDialog(
+          title: Text('The Title'),
+          content: Text('Content'),
+          actions: <Widget>[
+            CupertinoDialogAction(child: Text('Cancel')),
+            CupertinoDialogAction(child: Text('OK')),
+          ],
+        ),
       ),
-    ));
+    );
 
     expect(
       semantics,
@@ -709,22 +707,21 @@ void main() {
                       flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
                       children: <TestSemantics>[
                         TestSemantics(
-                          flags: <SemanticsFlag>[SemanticsFlag.scopesRoute, SemanticsFlag.namesRoute],
+                          flags: <SemanticsFlag>[
+                            SemanticsFlag.scopesRoute,
+                            SemanticsFlag.namesRoute,
+                          ],
                           label: 'Alert',
                           children: <TestSemantics>[
                             TestSemantics(
-                              flags: <SemanticsFlag>[
-                                SemanticsFlag.hasImplicitScrolling,
-                              ],
+                              flags: <SemanticsFlag>[SemanticsFlag.hasImplicitScrolling],
                               children: <TestSemantics>[
                                 TestSemantics(label: 'The Title'),
                                 TestSemantics(label: 'Content'),
                               ],
                             ),
                             TestSemantics(
-                              flags: <SemanticsFlag>[
-                                SemanticsFlag.hasImplicitScrolling,
-                              ],
+                              flags: <SemanticsFlag>[SemanticsFlag.hasImplicitScrolling],
                               children: <TestSemantics>[
                                 TestSemantics(
                                   flags: <SemanticsFlag>[SemanticsFlag.isButton],
@@ -756,10 +753,9 @@ void main() {
   });
 
   testWidgets('Dialog default action style', (WidgetTester tester) async {
-    await tester.pumpWidget(boilerplate(const CupertinoDialogAction(
-      isDefaultAction: true,
-      child: Text('Ok'),
-    )));
+    await tester.pumpWidget(
+      boilerplate(const CupertinoDialogAction(isDefaultAction: true, child: Text('Ok'))),
+    );
 
     final DefaultTextStyle widget = tester.widget(find.byType(DefaultTextStyle));
 
@@ -767,11 +763,15 @@ void main() {
   });
 
   testWidgets('Dialog default and destructive action styles', (WidgetTester tester) async {
-    await tester.pumpWidget(boilerplate(const CupertinoDialogAction(
-      isDefaultAction: true,
-      isDestructiveAction: true,
-      child: Text('Ok'),
-    )));
+    await tester.pumpWidget(
+      boilerplate(
+        const CupertinoDialogAction(
+          isDefaultAction: true,
+          isDestructiveAction: true,
+          child: Text('Ok'),
+        ),
+      ),
+    );
 
     final DefaultTextStyle widget = tester.widget(find.byType(DefaultTextStyle));
 
@@ -780,9 +780,7 @@ void main() {
   });
 
   testWidgets('Dialog disabled action style', (WidgetTester tester) async {
-    await tester.pumpWidget(boilerplate(const CupertinoDialogAction(
-      child: Text('Ok'),
-    )));
+    await tester.pumpWidget(boilerplate(const CupertinoDialogAction(child: Text('Ok'))));
 
     final DefaultTextStyle widget = tester.widget(find.byType(DefaultTextStyle));
 
@@ -791,17 +789,18 @@ void main() {
   });
 
   testWidgets('Dialog enabled action style', (WidgetTester tester) async {
-    await tester.pumpWidget(boilerplate(CupertinoDialogAction(
-      child: const Text('Ok'),
-      onPressed: () {},
-    )));
+    await tester.pumpWidget(
+      boilerplate(CupertinoDialogAction(child: const Text('Ok'), onPressed: () {})),
+    );
 
     final DefaultTextStyle widget = tester.widget(find.byType(DefaultTextStyle));
 
     expect(widget.style.color!.opacity, equals(1.0));
   });
 
-  testWidgets('Pressing on disabled buttons does not trigger highlight', (WidgetTester tester) async {
+  testWidgets('Pressing on disabled buttons does not trigger highlight', (
+    WidgetTester tester,
+  ) async {
     bool pressedEnable = false;
     await tester.pumpWidget(
       createAppWithButtonThatLaunchesDialog(
@@ -853,7 +852,9 @@ void main() {
     expect(pressedEnable, true);
   });
 
-  testWidgets('Action buttons shows pressed highlight as soon as the pointer is down', (WidgetTester tester) async {
+  testWidgets('Action buttons shows pressed highlight as soon as the pointer is down', (
+    WidgetTester tester,
+  ) async {
     // Verifies that the the pressed color is not delayed for some milliseconds,
     // a symptom if the color relies on a tap gesture timing out.
     await tester.pumpWidget(
@@ -862,14 +863,8 @@ void main() {
           return CupertinoAlertDialog(
             title: const Text('The title'),
             actions: <Widget>[
-              CupertinoDialogAction(
-                child: const Text('One'),
-                onPressed: () { },
-              ),
-              CupertinoDialogAction(
-                child: const Text('Two'),
-                onPressed: () { },
-              ),
+              CupertinoDialogAction(child: const Text('One'), onPressed: () {}),
+              CupertinoDialogAction(child: const Text('Two'), onPressed: () {}),
             ],
           );
         },
@@ -889,7 +884,9 @@ void main() {
     await pointer.up();
   });
 
-  testWidgets('Message is scrollable, has correct padding with large text sizes', (WidgetTester tester) async {
+  testWidgets('Message is scrollable, has correct padding with large text sizes', (
+    WidgetTester tester,
+  ) async {
     final ScrollController scrollController = ScrollController();
     addTearDown(scrollController.dispose);
     await tester.pumpWidget(
@@ -902,13 +899,8 @@ void main() {
               title: const Text('The Title'),
               content: Text('Very long content ' * 20),
               actions: const <Widget>[
-                CupertinoDialogAction(
-                  child: Text('Cancel'),
-                ),
-                CupertinoDialogAction(
-                  isDestructiveAction: true,
-                  child: Text('OK'),
-                ),
+                CupertinoDialogAction(child: Text('Cancel')),
+                CupertinoDialogAction(isDestructiveAction: true, child: Text('OK')),
               ],
               scrollController: scrollController,
             ),
@@ -929,22 +921,26 @@ void main() {
     await tester.pumpAndSettle();
 
     // Expect the modal dialog box to take all available height.
-    expect(
-      tester.getSize(find.byType(ClipRRect)),
-      equals(const Size(310.0, 560.0 - 24.0 * 2)),
-    );
+    expect(tester.getSize(find.byType(ClipRRect)), equals(const Size(310.0, 560.0 - 24.0 * 2)));
 
     // Check sizes/locations of the text. The text is large so these 2 buttons are stacked.
     // Visually the "Cancel" button and "OK" button are the same height when using the
     // regular font. However, when using the test font, "Cancel" becomes 2 lines which
     // is why the height we're verifying for "Cancel" is larger than "OK".
 
-    if (!kIsWeb || isSkiaWeb) { // https://github.com/flutter/flutter/issues/99933
+    if (!kIsWeb || isSkiaWeb) {
+      // https://github.com/flutter/flutter/issues/99933
       expect(tester.getSize(find.text('The Title')), equals(const Size(270.0, 132.0)));
     }
     expect(tester.getTopLeft(find.text('The Title')), equals(const Offset(265.0, 80.0 + 24.0)));
-    expect(tester.getSize(find.widgetWithText(CupertinoDialogAction, 'Cancel')), equals(const Size(310.0, 148.0)));
-    expect(tester.getSize(find.widgetWithText(CupertinoDialogAction, 'OK')), equals(const Size(310.0, 98.0)));
+    expect(
+      tester.getSize(find.widgetWithText(CupertinoDialogAction, 'Cancel')),
+      equals(const Size(310.0, 148.0)),
+    );
+    expect(
+      tester.getSize(find.widgetWithText(CupertinoDialogAction, 'OK')),
+      equals(const Size(310.0, 98.0)),
+    );
   });
 
   testWidgets('Dialog respects small constraints.', (WidgetTester tester) async {
@@ -962,15 +958,9 @@ void main() {
                 title: const Text('The Title'),
                 content: const Text('The message'),
                 actions: const <Widget>[
-                  CupertinoDialogAction(
-                    child: Text('Option 1'),
-                  ),
-                  CupertinoDialogAction(
-                    child: Text('Option 2'),
-                  ),
-                  CupertinoDialogAction(
-                    child: Text('Option 3'),
-                  ),
+                  CupertinoDialogAction(child: Text('Option 1')),
+                  CupertinoDialogAction(child: Text('Option 2')),
+                  CupertinoDialogAction(child: Text('Option 3')),
                 ],
                 scrollController: scrollController,
               ),
@@ -989,11 +979,15 @@ void main() {
     final Finder modalFinder = find.byType(ClipRRect);
     expect(
       tester.getSize(modalFinder),
-      equals(const Size(200.0 - leftAndRightPadding, 100.0 - topAndBottomMargin - topAndBottomPadding)),
+      equals(
+        const Size(200.0 - leftAndRightPadding, 100.0 - topAndBottomMargin - topAndBottomPadding),
+      ),
     );
   });
 
-  testWidgets('Button list is scrollable, has correct position with large text sizes.', (WidgetTester tester) async {
+  testWidgets('Button list is scrollable, has correct position with large text sizes.', (
+    WidgetTester tester,
+  ) async {
     final ScrollController actionScrollController = ScrollController();
     addTearDown(actionScrollController.dispose);
     await tester.pumpWidget(
@@ -1006,22 +1000,11 @@ void main() {
               title: const Text('The title'),
               content: const Text('The content.'),
               actions: const <Widget>[
-                CupertinoDialogAction(
-                  child: Text('One'),
-                ),
-                CupertinoDialogAction(
-                  child: Text('Two'),
-                ),
-                CupertinoDialogAction(
-                  child: Text('Three'),
-                ),
-                CupertinoDialogAction(
-                  child: Text('Chocolate Brownies'),
-                ),
-                CupertinoDialogAction(
-                  isDestructiveAction: true,
-                  child: Text('Cancel'),
-                ),
+                CupertinoDialogAction(child: Text('One')),
+                CupertinoDialogAction(child: Text('Two')),
+                CupertinoDialogAction(child: Text('Three')),
+                CupertinoDialogAction(child: Text('Chocolate Brownies')),
+                CupertinoDialogAction(isDestructiveAction: true, child: Text('Cancel')),
               ],
               actionScrollController: actionScrollController,
             ),
@@ -1044,15 +1027,30 @@ void main() {
     expect(tester.getCenter(find.widgetWithText(CupertinoDialogAction, 'One')).dx, equals(400.0));
     expect(tester.getCenter(find.widgetWithText(CupertinoDialogAction, 'Two')).dx, equals(400.0));
     expect(tester.getCenter(find.widgetWithText(CupertinoDialogAction, 'Three')).dx, equals(400.0));
-    expect(tester.getCenter(find.widgetWithText(CupertinoDialogAction, 'Chocolate Brownies')).dx, equals(400.0));
-    expect(tester.getCenter(find.widgetWithText(CupertinoDialogAction, 'Cancel')).dx, equals(400.0));
+    expect(
+      tester.getCenter(find.widgetWithText(CupertinoDialogAction, 'Chocolate Brownies')).dx,
+      equals(400.0),
+    );
+    expect(
+      tester.getCenter(find.widgetWithText(CupertinoDialogAction, 'Cancel')).dx,
+      equals(400.0),
+    );
 
     // Check that the action buttons are the correct heights.
     expect(tester.getSize(find.widgetWithText(CupertinoDialogAction, 'One')).height, equals(98.0));
     expect(tester.getSize(find.widgetWithText(CupertinoDialogAction, 'Two')).height, equals(98.0));
-    expect(tester.getSize(find.widgetWithText(CupertinoDialogAction, 'Three')).height, equals(98.0));
-    expect(tester.getSize(find.widgetWithText(CupertinoDialogAction, 'Chocolate Brownies')).height, equals(248.0));
-    expect(tester.getSize(find.widgetWithText(CupertinoDialogAction, 'Cancel')).height, equals(148.0));
+    expect(
+      tester.getSize(find.widgetWithText(CupertinoDialogAction, 'Three')).height,
+      equals(98.0),
+    );
+    expect(
+      tester.getSize(find.widgetWithText(CupertinoDialogAction, 'Chocolate Brownies')).height,
+      equals(248.0),
+    );
+    expect(
+      tester.getSize(find.widgetWithText(CupertinoDialogAction, 'Cancel')).height,
+      equals(148.0),
+    );
   });
 
   testWidgets('Title Section is empty, Button section is not empty.', (WidgetTester tester) async {
@@ -1064,12 +1062,8 @@ void main() {
           return MediaQuery.withNoTextScaling(
             child: CupertinoAlertDialog(
               actions: const <Widget>[
-                CupertinoDialogAction(
-                  child: Text('One'),
-                ),
-                CupertinoDialogAction(
-                  child: Text('Two'),
-                ),
+                CupertinoDialogAction(child: Text('One')),
+                CupertinoDialogAction(child: Text('Two')),
               ],
               actionScrollController: actionScrollController,
             ),
@@ -1091,10 +1085,7 @@ void main() {
 
     final Finder modalBoundaryFinder = find.byType(ClipRRect);
 
-    expect(
-      tester.getSize(contentSectionFinder),
-      tester.getSize(modalBoundaryFinder),
-    );
+    expect(tester.getSize(contentSectionFinder), tester.getSize(modalBoundaryFinder));
 
     // Check that the title/message section is not displayed
     expect(actionScrollController.offset, 0.0);
@@ -1141,13 +1132,12 @@ void main() {
 
     final Finder modalBoundaryFinder = find.byType(ClipRRect);
 
-    expect(
-      tester.getSize(contentSectionFinder),
-      tester.getSize(modalBoundaryFinder),
-    );
+    expect(tester.getSize(contentSectionFinder), tester.getSize(modalBoundaryFinder));
   });
 
-  testWidgets('Actions section height for 1 button is height of button.', (WidgetTester tester) async {
+  testWidgets('Actions section height for 1 button is height of button.', (
+    WidgetTester tester,
+  ) async {
     final ScrollController scrollController = ScrollController();
     addTearDown(scrollController.dispose);
     await tester.pumpWidget(
@@ -1156,11 +1146,7 @@ void main() {
           return CupertinoAlertDialog(
             title: const Text('The Title'),
             content: const Text('The message'),
-            actions: const <Widget>[
-              CupertinoDialogAction(
-                child: Text('OK'),
-              ),
-            ],
+            actions: const <Widget>[CupertinoDialogAction(child: Text('OK'))],
             scrollController: scrollController,
           );
         },
@@ -1177,7 +1163,9 @@ void main() {
     expect(okButtonBox.size.height, actionsSectionBox.size.height);
   });
 
-  testWidgets('Actions section height for 2 side-by-side buttons is height of tallest button.', (WidgetTester tester) async {
+  testWidgets('Actions section height for 2 side-by-side buttons is height of tallest button.', (
+    WidgetTester tester,
+  ) async {
     final ScrollController scrollController = ScrollController();
     addTearDown(scrollController.dispose);
     late double dividerWidth; // Will be set when the dialog builder runs. Needs a BuildContext.
@@ -1189,13 +1177,8 @@ void main() {
             title: const Text('The Title'),
             content: const Text('The message'),
             actions: const <Widget>[
-              CupertinoDialogAction(
-                child: Text('OK'),
-              ),
-              CupertinoDialogAction(
-                isDestructiveAction: true,
-                child: Text('Cancel'),
-              ),
+              CupertinoDialogAction(child: Text('OK')),
+              CupertinoDialogAction(isDestructiveAction: true, child: Text('Cancel')),
             ],
             scrollController: scrollController,
           );
@@ -1223,123 +1206,128 @@ void main() {
     );
   });
 
-  testWidgets('Actions section height for 2 stacked buttons with enough room is height of both buttons.', (WidgetTester tester) async {
-    final ScrollController scrollController = ScrollController();
-    addTearDown(scrollController.dispose);
-    const double dividerThickness = 0.3;
-    await tester.pumpWidget(
-      createAppWithButtonThatLaunchesDialog(
-        dialogBuilder: (BuildContext context) {
-          return CupertinoAlertDialog(
-            title: const Text('The Title'),
-            content: const Text('The message'),
-            actions: const <Widget>[
-              CupertinoDialogAction(
-                child: Text('OK'),
-              ),
-              CupertinoDialogAction(
-                isDestructiveAction: true,
-                child: Text('This is too long to fit'),
-              ),
-            ],
-            scrollController: scrollController,
-          );
-        },
-      ),
-    );
-
-    await tester.tap(find.text('Go'));
-    await tester.pump();
-
-    final RenderBox okButtonBox = findActionButtonRenderBoxByTitle(tester, 'OK');
-    final RenderBox longButtonBox = findActionButtonRenderBoxByTitle(tester, 'This is too long to fit');
-    final RenderBox actionsSectionBox = findScrollableActionsSectionRenderBox(tester);
-
-    expect(okButtonBox.size.width, longButtonBox.size.width);
-
-    expect(okButtonBox.size.width, actionsSectionBox.size.width);
-
-    expect(
-      okButtonBox.size.height + dividerThickness + longButtonBox.size.height,
-      actionsSectionBox.size.height,
-    );
-  });
-
-  testWidgets('Actions section height for 2 stacked buttons without enough room and regular font is 1.5 buttons tall.', (WidgetTester tester) async {
-    final ScrollController scrollController = ScrollController();
-    addTearDown(scrollController.dispose);
-    await tester.pumpWidget(
-      createAppWithButtonThatLaunchesDialog(
-        dialogBuilder: (BuildContext context) {
-          return CupertinoAlertDialog(
-            title: const Text('The Title'),
-            content: Text('The message\n' * 40),
-            actions: const <Widget>[
-              CupertinoDialogAction(
-                child: Text('OK'),
-              ),
-              CupertinoDialogAction(
-                isDestructiveAction: true,
-                child: Text('This is too long to fit'),
-              ),
-            ],
-            scrollController: scrollController,
-          );
-        },
-      ),
-    );
-
-    await tester.tap(find.text('Go'));
-    await tester.pumpAndSettle();
-
-    final RenderBox actionsSectionBox = findScrollableActionsSectionRenderBox(tester);
-
-    expect(actionsSectionBox.size.height, 67.8);
-  });
-
-  testWidgets('Actions section height for 2 stacked buttons without enough room and large accessibility font is 50% of dialog height.', (WidgetTester tester) async {
-    final ScrollController scrollController = ScrollController();
-    addTearDown(scrollController.dispose);
-    await tester.pumpWidget(
-      createAppWithButtonThatLaunchesDialog(
-        dialogBuilder: (BuildContext context) {
-          return MediaQuery.withClampedTextScaling(
-            minScaleFactor: 3.0,
-            maxScaleFactor: 3.0,
-            child: CupertinoAlertDialog(
+  testWidgets(
+    'Actions section height for 2 stacked buttons with enough room is height of both buttons.',
+    (WidgetTester tester) async {
+      final ScrollController scrollController = ScrollController();
+      addTearDown(scrollController.dispose);
+      const double dividerThickness = 0.3;
+      await tester.pumpWidget(
+        createAppWithButtonThatLaunchesDialog(
+          dialogBuilder: (BuildContext context) {
+            return CupertinoAlertDialog(
               title: const Text('The Title'),
-              content: Text('The message\n' * 20),
+              content: const Text('The message'),
               actions: const <Widget>[
-                CupertinoDialogAction(
-                  child: Text('This button is multi line'),
-                ),
+                CupertinoDialogAction(child: Text('OK')),
                 CupertinoDialogAction(
                   isDestructiveAction: true,
-                  child: Text('This button is multi line'),
+                  child: Text('This is too long to fit'),
                 ),
               ],
               scrollController: scrollController,
-            ),
-          );
-        },
-      ),
-    );
+            );
+          },
+        ),
+      );
 
-    await tester.tap(find.text('Go'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Go'));
+      await tester.pump();
 
-    final RenderBox actionsSectionBox = findScrollableActionsSectionRenderBox(tester);
+      final RenderBox okButtonBox = findActionButtonRenderBoxByTitle(tester, 'OK');
+      final RenderBox longButtonBox = findActionButtonRenderBoxByTitle(
+        tester,
+        'This is too long to fit',
+      );
+      final RenderBox actionsSectionBox = findScrollableActionsSectionRenderBox(tester);
 
-    // The two multiline buttons with large text are taller than 50% of the
-    // dialog height, but with the accessibility layout policy, the 2 buttons
-    // should be in a scrollable area equal to half the dialog height.
-    expect(
-      actionsSectionBox.size.height,
-      280.0 - 24.0,
-    );
-  });
+      expect(okButtonBox.size.width, longButtonBox.size.width);
 
-  testWidgets('Actions section height for 3 buttons without enough room is 1.5 buttons tall.', (WidgetTester tester) async {
+      expect(okButtonBox.size.width, actionsSectionBox.size.width);
+
+      expect(
+        okButtonBox.size.height + dividerThickness + longButtonBox.size.height,
+        actionsSectionBox.size.height,
+      );
+    },
+  );
+
+  testWidgets(
+    'Actions section height for 2 stacked buttons without enough room and regular font is 1.5 buttons tall.',
+    (WidgetTester tester) async {
+      final ScrollController scrollController = ScrollController();
+      addTearDown(scrollController.dispose);
+      await tester.pumpWidget(
+        createAppWithButtonThatLaunchesDialog(
+          dialogBuilder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: const Text('The Title'),
+              content: Text('The message\n' * 40),
+              actions: const <Widget>[
+                CupertinoDialogAction(child: Text('OK')),
+                CupertinoDialogAction(
+                  isDestructiveAction: true,
+                  child: Text('This is too long to fit'),
+                ),
+              ],
+              scrollController: scrollController,
+            );
+          },
+        ),
+      );
+
+      await tester.tap(find.text('Go'));
+      await tester.pumpAndSettle();
+
+      final RenderBox actionsSectionBox = findScrollableActionsSectionRenderBox(tester);
+
+      expect(actionsSectionBox.size.height, 67.8);
+    },
+  );
+
+  testWidgets(
+    'Actions section height for 2 stacked buttons without enough room and large accessibility font is 50% of dialog height.',
+    (WidgetTester tester) async {
+      final ScrollController scrollController = ScrollController();
+      addTearDown(scrollController.dispose);
+      await tester.pumpWidget(
+        createAppWithButtonThatLaunchesDialog(
+          dialogBuilder: (BuildContext context) {
+            return MediaQuery.withClampedTextScaling(
+              minScaleFactor: 3.0,
+              maxScaleFactor: 3.0,
+              child: CupertinoAlertDialog(
+                title: const Text('The Title'),
+                content: Text('The message\n' * 20),
+                actions: const <Widget>[
+                  CupertinoDialogAction(child: Text('This button is multi line')),
+                  CupertinoDialogAction(
+                    isDestructiveAction: true,
+                    child: Text('This button is multi line'),
+                  ),
+                ],
+                scrollController: scrollController,
+              ),
+            );
+          },
+        ),
+      );
+
+      await tester.tap(find.text('Go'));
+      await tester.pumpAndSettle();
+
+      final RenderBox actionsSectionBox = findScrollableActionsSectionRenderBox(tester);
+
+      // The two multiline buttons with large text are taller than 50% of the
+      // dialog height, but with the accessibility layout policy, the 2 buttons
+      // should be in a scrollable area equal to half the dialog height.
+      expect(actionsSectionBox.size.height, 280.0 - 24.0);
+    },
+  );
+
+  testWidgets('Actions section height for 3 buttons without enough room is 1.5 buttons tall.', (
+    WidgetTester tester,
+  ) async {
     final ScrollController scrollController = ScrollController();
     addTearDown(scrollController.dispose);
     await tester.pumpWidget(
@@ -1349,15 +1337,9 @@ void main() {
             title: const Text('The Title'),
             content: Text('The message\n' * 40),
             actions: const <Widget>[
-              CupertinoDialogAction(
-                child: Text('Option 1'),
-              ),
-              CupertinoDialogAction(
-                child: Text('Option 2'),
-              ),
-              CupertinoDialogAction(
-                child: Text('Option 3'),
-              ),
+              CupertinoDialogAction(child: Text('Option 1')),
+              CupertinoDialogAction(child: Text('Option 2')),
+              CupertinoDialogAction(child: Text('Option 3')),
             ],
             scrollController: scrollController,
           );
@@ -1378,10 +1360,7 @@ void main() {
 
     // Expected Height = button 1 + divider + 1/2 button 2 = 67.80000000000001
     const double expectedHeight = 67.80000000000001;
-    expect(
-      actionsSectionBox.size.height,
-      moreOrLessEquals(expectedHeight),
-    );
+    expect(actionsSectionBox.size.height, moreOrLessEquals(expectedHeight));
   });
 
   testWidgets('Actions section correctly renders overscrolls', (WidgetTester tester) async {
@@ -1393,11 +1372,9 @@ void main() {
       createAppWithButtonThatLaunchesDialog(
         dialogBuilder: (BuildContext context) {
           return CupertinoAlertDialog(
-            actions: List<Widget>.generate(12, (int i) =>
-              CupertinoDialogAction(
-                onPressed: () {},
-                child: Text('Button ${'*' * i}'),
-              ),
+            actions: List<Widget>.generate(
+              12,
+              (int i) => CupertinoDialogAction(onPressed: () {}, child: Text('Button ${'*' * i}')),
             ),
           );
         },
@@ -1440,7 +1417,9 @@ void main() {
     await gesture.up();
   });
 
-  testWidgets('Actions section correctly renders overscrolls with very far scrolls', (WidgetTester tester) async {
+  testWidgets('Actions section correctly renders overscrolls with very far scrolls', (
+    WidgetTester tester,
+  ) async {
     // When the scroll is really far, the overscroll might be longer than the
     // actions section, causing overflow if not controlled.
     final ScrollController actionScrollController = ScrollController();
@@ -1450,11 +1429,9 @@ void main() {
         dialogBuilder: (BuildContext context) {
           return CupertinoAlertDialog(
             content: Text('content' * 1000),
-            actions: List<Widget>.generate(4, (int i) =>
-              CupertinoActionSheetAction(
-                onPressed: () {},
-                child: Text('Button $i'),
-              ),
+            actions: List<Widget>.generate(
+              4,
+              (int i) => CupertinoActionSheetAction(onPressed: () {}, child: Text('Button $i')),
             ),
           );
         },
@@ -1474,7 +1451,7 @@ void main() {
     // The buttons should be out of the screen
     expect(
       tester.getTopLeft(find.text('Button 0')).dy,
-      greaterThan(tester.getBottomLeft(find.byType(ClipRRect)).dy)
+      greaterThan(tester.getBottomLeft(find.byType(ClipRRect)).dy),
     );
     await expectLater(
       find.byType(CupertinoAlertDialog),
@@ -1497,9 +1474,7 @@ void main() {
                         title: const Text('The title'),
                         content: const Text('The content'),
                         actions: <Widget>[
-                          const CupertinoDialogAction(
-                            child: Text('Cancel'),
-                          ),
+                          const CupertinoDialogAction(child: Text('Cancel')),
                           CupertinoDialogAction(
                             isDestructiveAction: true,
                             onPressed: () {
@@ -1575,9 +1550,7 @@ void main() {
                         title: const Text('The title'),
                         content: const Text('The content'),
                         actions: <Widget>[
-                          const CupertinoDialogAction(
-                            child: Text('Cancel'),
-                          ),
+                          const CupertinoDialogAction(child: Text('Cancel')),
                           CupertinoDialogAction(
                             isDestructiveAction: true,
                             onPressed: () {
@@ -1602,7 +1575,10 @@ void main() {
 
     // Enter animation.
     await tester.pump();
-    final Finder fadeTransitionFinder = find.ancestor(of: find.byType(CupertinoAlertDialog), matching: find.byType(FadeTransition));
+    final Finder fadeTransitionFinder = find.ancestor(
+      of: find.byType(CupertinoAlertDialog),
+      matching: find.byType(FadeTransition),
+    );
     FadeTransition transition = tester.firstWidget(fadeTransitionFinder);
 
     await tester.pump(const Duration(milliseconds: 50));
@@ -1669,14 +1645,8 @@ void main() {
             title: Text('The Title'),
             content: Text('The message'),
             actions: <Widget>[
-              CupertinoDialogAction(
-                key: Key('option_1'),
-                child: Text('Option 1'),
-              ),
-              CupertinoDialogAction(
-                key: Key('option_2'),
-                child: Text('Option 2'),
-              ),
+              CupertinoDialogAction(key: Key('option_1'), child: Text('Option 1')),
+              CupertinoDialogAction(key: Key('option_2'), child: Text('Option 2')),
             ],
           );
         },
@@ -1718,7 +1688,10 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
 
     // once animation settles the dialog is padded by the new viewInsets
-    expect(tester.getRect(find.byType(Placeholder)), placeholderRectWithoutInsets.translate(10, 10));
+    expect(
+      tester.getRect(find.byType(Placeholder)),
+      placeholderRectWithoutInsets.translate(10, 10),
+    );
   });
 
   testWidgets('showCupertinoDialog - custom barrierLabel', (WidgetTester tester) async {
@@ -1754,19 +1727,18 @@ void main() {
       ),
     );
 
-    expect(semantics, isNot(includesNodeWith(
-      label: 'Custom label',
-      flags: <SemanticsFlag>[SemanticsFlag.namesRoute],
-    )));
+    expect(
+      semantics,
+      isNot(
+        includesNodeWith(label: 'Custom label', flags: <SemanticsFlag>[SemanticsFlag.namesRoute]),
+      ),
+    );
     semantics.dispose();
   });
 
   testWidgets('CupertinoDialogRoute is state restorable', (WidgetTester tester) async {
     await tester.pumpWidget(
-      const CupertinoApp(
-        restorationScopeId: 'app',
-        home: _RestorableDialogTestWidget(),
-      ),
+      const CupertinoApp(restorationScopeId: 'app', home: _RestorableDialogTestWidget()),
     );
 
     expect(find.byType(CupertinoAlertDialog), findsNothing);
@@ -1791,54 +1763,54 @@ void main() {
     expect(find.byType(CupertinoAlertDialog), findsOneWidget);
   }, skip: isBrowser); // https://github.com/flutter/flutter/issues/33615
 
-  testWidgets('Conflicting scrollbars are not applied by ScrollBehavior to CupertinoAlertDialog', (WidgetTester tester) async {
-    // Regression test for https://github.com/flutter/flutter/issues/83819
-    final ScrollController actionScrollController = ScrollController();
-    addTearDown(actionScrollController.dispose);
-    await tester.pumpWidget(
-      createAppWithButtonThatLaunchesDialog(
-        dialogBuilder: (BuildContext context) {
-          return MediaQuery.withNoTextScaling(
-            child: CupertinoAlertDialog(
-              title: const Text('Test Title'),
-              content: const Text('Test Content'),
-              actions: const <Widget>[
-                CupertinoDialogAction(
-                  child: Text('One'),
-                ),
-                CupertinoDialogAction(
-                  child: Text('Two'),
-                ),
-              ],
-              actionScrollController: actionScrollController,
-            ),
-          );
-        },
-      ),
-    );
+  testWidgets(
+    'Conflicting scrollbars are not applied by ScrollBehavior to CupertinoAlertDialog',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/83819
+      final ScrollController actionScrollController = ScrollController();
+      addTearDown(actionScrollController.dispose);
+      await tester.pumpWidget(
+        createAppWithButtonThatLaunchesDialog(
+          dialogBuilder: (BuildContext context) {
+            return MediaQuery.withNoTextScaling(
+              child: CupertinoAlertDialog(
+                title: const Text('Test Title'),
+                content: const Text('Test Content'),
+                actions: const <Widget>[
+                  CupertinoDialogAction(child: Text('One')),
+                  CupertinoDialogAction(child: Text('Two')),
+                ],
+                actionScrollController: actionScrollController,
+              ),
+            );
+          },
+        ),
+      );
 
-    await tester.tap(find.text('Go'));
-    await tester.pump();
+      await tester.tap(find.text('Go'));
+      await tester.pump();
 
-    // The inherited ScrollBehavior should not apply Scrollbars since they are
-    // already built in to the widget.
-    expect(find.byType(Scrollbar), findsNothing);
-    expect(find.byType(RawScrollbar), findsNothing);
-    // Built in CupertinoScrollbars should only number 2: one for the actions,
-    // one for the content.
-    expect(find.byType(CupertinoScrollbar), findsNWidgets(2));
-  }, variant: TargetPlatformVariant.all());
+      // The inherited ScrollBehavior should not apply Scrollbars since they are
+      // already built in to the widget.
+      expect(find.byType(Scrollbar), findsNothing);
+      expect(find.byType(RawScrollbar), findsNothing);
+      // Built in CupertinoScrollbars should only number 2: one for the actions,
+      // one for the content.
+      expect(find.byType(CupertinoScrollbar), findsNWidgets(2));
+    },
+    variant: TargetPlatformVariant.all(),
+  );
 
-  testWidgets('CupertinoAlertDialog scrollbars controllers should be different', (WidgetTester tester) async {
+  testWidgets('CupertinoAlertDialog scrollbars controllers should be different', (
+    WidgetTester tester,
+  ) async {
     // https://github.com/flutter/flutter/pull/81278
     await tester.pumpWidget(
       const CupertinoApp(
         home: MediaQuery(
           data: MediaQueryData(),
           child: CupertinoAlertDialog(
-            actions: <Widget>[
-              CupertinoDialogAction(child: Text('OK')),
-            ],
+            actions: <Widget>[CupertinoDialogAction(child: Text('OK'))],
             content: Placeholder(fallbackHeight: 200.0),
           ),
         ),
@@ -1846,10 +1818,14 @@ void main() {
     );
 
     final List<CupertinoScrollbar> scrollbars =
-      find.descendant(
-        of: find.byType(CupertinoAlertDialog),
-        matching: find.byType(CupertinoScrollbar),
-      ).evaluate().map((Element e) => e.widget as CupertinoScrollbar).toList();
+        find
+            .descendant(
+              of: find.byType(CupertinoAlertDialog),
+              matching: find.byType(CupertinoScrollbar),
+            )
+            .evaluate()
+            .map((Element e) => e.widget as CupertinoScrollbar)
+            .toList();
 
     expect(scrollbars.length, 2);
     expect(scrollbars[0].controller != scrollbars[1].controller, isTrue);
@@ -1910,10 +1886,7 @@ void main() {
                   ),
                 ],
               ),
-              child: Directionality(
-                textDirection: TextDirection.rtl,
-                child: child!,
-              ),
+              child: Directionality(textDirection: TextDirection.rtl, child: child!),
             );
           },
           home: const Center(child: Text('Test')),
@@ -1972,7 +1945,9 @@ void main() {
     });
   });
 
-  testWidgets('Hovering over Cupertino alert dialog action updates cursor to clickable on Web', (WidgetTester tester) async {
+  testWidgets('Hovering over Cupertino alert dialog action updates cursor to clickable on Web', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       createAppWithButtonThatLaunchesDialog(
         dialogBuilder: (BuildContext context) {
@@ -1984,14 +1959,8 @@ void main() {
                 title: const Text('Title'),
                 content: const Text('text'),
                 actions: <Widget>[
-                  CupertinoDialogAction(
-                    onPressed: () {},
-                    child: const Text('NO'),
-                  ),
-                  CupertinoDialogAction(
-                    onPressed: () {},
-                    child: const Text('OK'),
-                  ),
+                  CupertinoDialogAction(onPressed: () {}, child: const Text('NO')),
+                  CupertinoDialogAction(onPressed: () {}, child: const Text('OK')),
                 ],
               ),
             ),
@@ -2003,10 +1972,16 @@ void main() {
     await tester.tap(find.text('Go'));
     await tester.pumpAndSettle();
 
-    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse, pointer: 1);
+    final TestGesture gesture = await tester.createGesture(
+      kind: PointerDeviceKind.mouse,
+      pointer: 1,
+    );
     await gesture.addPointer(location: const Offset(10, 10));
     await tester.pumpAndSettle();
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.basic);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.basic,
+    );
 
     final Offset dialogAction = tester.getCenter(find.text('OK'));
     await gesture.moveTo(dialogAction);
@@ -2019,57 +1994,47 @@ void main() {
 }
 
 RenderBox findActionButtonRenderBoxByTitle(WidgetTester tester, String title) {
-  final RenderObject buttonBox = tester.renderObject(find.widgetWithText(CupertinoDialogAction, title));
+  final RenderObject buttonBox = tester.renderObject(
+    find.widgetWithText(CupertinoDialogAction, title),
+  );
   assert(buttonBox is RenderBox);
   return buttonBox as RenderBox;
 }
 
 RenderBox findScrollableActionsSectionRenderBox(WidgetTester tester) {
-  final RenderObject actionsSection = tester.renderObject(find.byElementPredicate((Element element) {
-    return element.widget.runtimeType.toString() == '_CupertinoAlertActionSection';
-  }));
+  final RenderObject actionsSection = tester.renderObject(
+    find.byElementPredicate((Element element) {
+      return element.widget.runtimeType.toString() == '_CupertinoAlertActionSection';
+    }),
+  );
   assert(actionsSection is RenderBox);
   return actionsSection as RenderBox;
 }
 
-Widget createAppWithButtonThatLaunchesDialog({
-  required WidgetBuilder dialogBuilder,
-}) {
+Widget createAppWithButtonThatLaunchesDialog({required WidgetBuilder dialogBuilder}) {
   return CupertinoApp(
     home: Center(
-      child: Builder(builder: (BuildContext context) {
-        return CupertinoButton(
-          onPressed: () {
-            showCupertinoDialog<void>(
-              context: context,
-              builder: dialogBuilder,
-            );
-          },
-          child: const Text('Go'),
-        );
-      }),
-    ),
-  );
-}
-
-Widget boilerplate(Widget child) {
-  return Directionality(
-    textDirection: TextDirection.ltr,
-    child: child,
-  );
-}
-
-Widget createAppWithCenteredButton(Widget child) {
-  return CupertinoApp(
-    home: Center(
-      child: CupertinoButton(
-        onPressed: null,
-        child: child,
+      child: Builder(
+        builder: (BuildContext context) {
+          return CupertinoButton(
+            onPressed: () {
+              showCupertinoDialog<void>(context: context, builder: dialogBuilder);
+            },
+            child: const Text('Go'),
+          );
+        },
       ),
     ),
   );
 }
 
+Widget boilerplate(Widget child) {
+  return Directionality(textDirection: TextDirection.ltr, child: child);
+}
+
+Widget createAppWithCenteredButton(Widget child) {
+  return CupertinoApp(home: Center(child: CupertinoButton(onPressed: null, child: child)));
+}
 
 @pragma('vm:entry-point')
 class _RestorableDialogTestWidget extends StatelessWidget {
@@ -2095,15 +2060,15 @@ class _RestorableDialogTestWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Home'),
+      navigationBar: const CupertinoNavigationBar(middle: Text('Home')),
+      child: Center(
+        child: CupertinoButton(
+          onPressed: () {
+            Navigator.of(context).restorablePush(_dialogBuilder);
+          },
+          child: const Text('X'),
+        ),
       ),
-      child: Center(child: CupertinoButton(
-        onPressed: () {
-          Navigator.of(context).restorablePush(_dialogBuilder);
-        },
-        child: const Text('X'),
-      )),
     );
   }
 }
@@ -2133,25 +2098,29 @@ class TestScaffoldAppState extends State<TestScaffoldApp> {
       // https://github.com/flutter/flutter/pull/150442
       debugShowCheckedModeBanner: false,
       theme: widget.theme,
-      home: Builder(builder: (BuildContext context) =>
-        CupertinoPageScaffold(
-          child: Center(
-            child: _pressedButton ? Container() : CupertinoButton(
-              onPressed: () {
-                setState(() {
-                  _pressedButton = true;
-                });
-                showCupertinoDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return widget.dialog;
-                  },
-                );
-              },
-              child: const Text('Go'),
+      home: Builder(
+        builder:
+            (BuildContext context) => CupertinoPageScaffold(
+              child: Center(
+                child:
+                    _pressedButton
+                        ? Container()
+                        : CupertinoButton(
+                          onPressed: () {
+                            setState(() {
+                              _pressedButton = true;
+                            });
+                            showCupertinoDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return widget.dialog;
+                              },
+                            );
+                          },
+                          child: const Text('Go'),
+                        ),
+              ),
             ),
-          ),
-        ),
       ),
     );
   }
@@ -2160,11 +2129,7 @@ class TestScaffoldAppState extends State<TestScaffoldApp> {
 // Old-style action sheet buttons, which are implemented with
 // `GestureDetector.onTap`.
 class LegacyAction extends StatelessWidget {
-  const LegacyAction({
-    super.key,
-    required this.onPressed,
-    required this.child,
-  });
+  const LegacyAction({super.key, required this.onPressed, required this.child});
 
   final VoidCallback onPressed;
   final Widget child;

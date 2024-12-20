@@ -76,7 +76,6 @@ void main() {
     expect(find.text('Teal ListPage - /list'), findsOneWidget);
   });
 
-
   testWidgets('ListPage', (WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: example.Home()));
     expect(find.text('Teal RootPage - /'), findsOneWidget);

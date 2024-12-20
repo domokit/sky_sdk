@@ -1,0 +1,33 @@
+# Copyright (c) 2017 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This is a dependency-free, header-only, library, and it needs to stay that
+# way to facilitate pulling it into various third-party projects. So, this
+# file is here to protect against accidentally introducing external
+# dependencies or depending on internal implementation details.
+source_set("numerics") {
+  visibility = [ "//flutter/third_party/accessibility/*" ]
+  include_dirs = [ "//flutter/third_party/accessibility" ]
+
+  sources = [
+    "checked_math_impl.h",
+    "clamped_math_impl.h",
+    "safe_conversions_arm_impl.h",
+    "safe_conversions_impl.h",
+    "safe_math_arm_impl.h",
+    "safe_math_clang_gcc_impl.h",
+    "safe_math_shared_impl.h",
+  ]
+
+  public = [
+    "checked_math.h",
+    "clamped_math.h",
+    "math_constants.h",
+    "ranges.h",
+    "safe_conversions.h",
+    "safe_math.h",
+  ]
+
+  deps = [ "//flutter/third_party/accessibility/ax_build" ]
+}

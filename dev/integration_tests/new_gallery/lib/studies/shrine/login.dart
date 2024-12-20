@@ -32,51 +32,51 @@ class LoginPage extends StatelessWidget {
     final bool isDesktop = isDisplayDesktop(context);
 
     return ApplyTextOptions(
-      child: isDesktop
-          ? LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) => Scaffold(
-                body: SafeArea(
-                  child: Center(
-                    child: SizedBox(
-                      width: desktopLoginScreenMainAreaWidth(context: context),
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          _ShrineLogo(),
-                          SizedBox(height: 40),
-                          _UsernameTextField(),
-                          SizedBox(height: 16),
-                          _PasswordTextField(),
-                          SizedBox(height: 24),
-                          _CancelAndNextButtons(),
-                          SizedBox(height: 62),
-                        ],
+      child:
+          isDesktop
+              ? LayoutBuilder(
+                builder:
+                    (BuildContext context, BoxConstraints constraints) => Scaffold(
+                      body: SafeArea(
+                        child: Center(
+                          child: SizedBox(
+                            width: desktopLoginScreenMainAreaWidth(context: context),
+                            child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                _ShrineLogo(),
+                                SizedBox(height: 40),
+                                _UsernameTextField(),
+                                SizedBox(height: 16),
+                                _PasswordTextField(),
+                                SizedBox(height: 24),
+                                _CancelAndNextButtons(),
+                                SizedBox(height: 62),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                     ),
+              )
+              : Scaffold(
+                body: SafeArea(
+                  child: ListView(
+                    restorationId: 'login_list_view',
+                    physics: const ClampingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+                    children: const <Widget>[
+                      SizedBox(height: 80),
+                      _ShrineLogo(),
+                      SizedBox(height: 120),
+                      _UsernameTextField(),
+                      SizedBox(height: 12),
+                      _PasswordTextField(),
+                      _CancelAndNextButtons(),
+                    ],
                   ),
                 ),
               ),
-            )
-          : Scaffold(
-              body: SafeArea(
-                child: ListView(
-                  restorationId: 'login_list_view',
-                  physics: const ClampingScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: _horizontalPadding,
-                  ),
-                  children: const <Widget>[
-                    SizedBox(height: 80),
-                    _ShrineLogo(),
-                    SizedBox(height: 120),
-                    _UsernameTextField(),
-                    SizedBox(height: 12),
-                    _PasswordTextField(),
-                    _CancelAndNextButtons(),
-                  ],
-                ),
-              ),
-            ),
     );
   }
 }
@@ -91,16 +91,10 @@ class _ShrineLogo extends StatelessWidget {
         children: <Widget>[
           const FadeInImagePlaceholder(
             image: AssetImage('packages/shrine_images/diamond.png'),
-            placeholder: SizedBox(
-              width: 34,
-              height: 34,
-            ),
+            placeholder: SizedBox(width: 34, height: 34),
           ),
           const SizedBox(height: 16),
-          Text(
-            'SHRINE',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+          Text('SHRINE', style: Theme.of(context).textTheme.headlineSmall),
         ],
       ),
     );
@@ -120,9 +114,7 @@ class _UsernameTextField extends StatelessWidget {
       cursorColor: colorScheme.onSurface,
       decoration: InputDecoration(
         labelText: GalleryLocalizations.of(context)!.shrineLoginUsernameLabel,
-        labelStyle: TextStyle(
-          letterSpacing: letterSpacingOrNone(mediumLetterSpacing),
-        ),
+        labelStyle: TextStyle(letterSpacing: letterSpacingOrNone(mediumLetterSpacing)),
       ),
     );
   }
@@ -141,9 +133,7 @@ class _PasswordTextField extends StatelessWidget {
       obscureText: true,
       decoration: InputDecoration(
         labelText: GalleryLocalizations.of(context)!.shrineLoginPasswordLabel,
-        labelStyle: TextStyle(
-          letterSpacing: letterSpacingOrNone(mediumLetterSpacing),
-        ),
+        labelStyle: TextStyle(letterSpacing: letterSpacingOrNone(mediumLetterSpacing)),
       ),
     );
   }
@@ -158,9 +148,8 @@ class _CancelAndNextButtons extends StatelessWidget {
 
     final bool isDesktop = isDisplayDesktop(context);
 
-    final EdgeInsets buttonTextPadding = isDesktop
-        ? const EdgeInsets.symmetric(horizontal: 24, vertical: 16)
-        : EdgeInsets.zero;
+    final EdgeInsets buttonTextPadding =
+        isDesktop ? const EdgeInsets.symmetric(horizontal: 24, vertical: 16) : EdgeInsets.zero;
 
     return Padding(
       padding: isDesktop ? EdgeInsets.zero : const EdgeInsets.all(8),
@@ -203,8 +192,7 @@ class _CancelAndNextButtons extends StatelessWidget {
               padding: buttonTextPadding,
               child: Text(
                 GalleryLocalizations.of(context)!.shrineNextButtonCaption,
-                style: TextStyle(
-                    letterSpacing: letterSpacingOrNone(largeLetterSpacing)),
+                style: TextStyle(letterSpacing: letterSpacingOrNone(largeLetterSpacing)),
               ),
             ),
           ),

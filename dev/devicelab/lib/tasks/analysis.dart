@@ -65,10 +65,7 @@ abstract class _Benchmark {
 
   Directory get directory;
 
-  List<String> get options => <String>[
-        '--benchmark',
-        if (watch) '--watch',
-      ];
+  List<String> get options => <String>['--benchmark', if (watch) '--watch'];
 
   Future<double> execute(int iteration, int targetIterations) async {
     section('Analyze $title ${watch ? 'with watcher' : ''} - ${iteration + 1} / $targetIterations');

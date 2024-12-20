@@ -52,7 +52,11 @@ void main() {
       additionalConstraints: BoxConstraints.tight(const Size(100.0, 100.0)),
       child: RenderDecoratedBox(decoration: const BoxDecoration()),
     );
-    final RenderPositionedBox positioner = RenderPositionedBox(child: sizer, widthFactor: 1.0, heightFactor: 0.0);
+    final RenderPositionedBox positioner = RenderPositionedBox(
+      child: sizer,
+      widthFactor: 1.0,
+      heightFactor: 0.0,
+    );
     layout(positioner, constraints: BoxConstraints.loose(const Size(200.0, 200.0)));
 
     expect(positioner.computeMinIntrinsicWidth(200), equals(100.0));

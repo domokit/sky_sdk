@@ -27,22 +27,17 @@ void main() {
   });
 
   test('building web with --wasm produces expected files', () async {
-    final ProcessResult result = processManager.runSync(
-      <String>[
-        flutterBin,
-        'build',
-        'web',
-        '--wasm',
-      ],
-      workingDirectory: exampleAppDir.path,
-    );
-    expect(result, const ProcessResultMatcher());
-
-    final Directory appBuildDir = fileSystem.directory(fileSystem.path.join(
-      exampleAppDir.path,
+    final ProcessResult result = processManager.runSync(<String>[
+      flutterBin,
       'build',
       'web',
-    ));
+      '--wasm',
+    ], workingDirectory: exampleAppDir.path);
+    expect(result, const ProcessResultMatcher());
+
+    final Directory appBuildDir = fileSystem.directory(
+      fileSystem.path.join(exampleAppDir.path, 'build', 'web'),
+    );
     for (final String filename in const <String>[
       'flutter.js',
       'flutter_service_worker.js',

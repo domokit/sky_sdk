@@ -13,7 +13,4 @@ import 'dart:ffi' as ffi;
 
 /// A very short-lived native function.
 @ffi.Native<ffi.IntPtr Function(ffi.IntPtr, ffi.IntPtr)>()
-external int difference(
-  int a,
-  int b,
-);
+external int difference(int a, int b);

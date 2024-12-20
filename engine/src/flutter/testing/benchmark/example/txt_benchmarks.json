@@ -1,0 +1,32 @@
+{
+  "context": {
+    "date": "2019-12-17 15:14:14",
+    "num_cpus": 56,
+    "mhz_per_cpu": 2594,
+    "cpu_scaling_enabled": true,
+    "library_build_type": "release"
+  },
+  "benchmarks": [
+    {
+      "name": "BM_PaintRecordInit",
+      "iterations": 6749079,
+      "real_time": 101,
+      "cpu_time": 101,
+      "time_unit": "ns"
+    },
+    {
+      "name": "BM_ParagraphShortLayout",
+      "iterations": 151761,
+      "real_time": 4460,
+      "cpu_time": 4460,
+      "time_unit": "ns"
+    },
+    {
+      "name": "BM_ParagraphStylesBigO_BigO",
+      "cpu_coefficient": 6548,
+      "real_coefficient": 6548,
+      "big_o": "N",
+      "time_unit": "ns"
+    }
+  ]
+}

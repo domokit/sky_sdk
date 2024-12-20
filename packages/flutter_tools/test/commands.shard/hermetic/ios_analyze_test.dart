@@ -103,7 +103,13 @@ void main() {
       final Directory tempDir = fileSystem.systemTempDirectory.createTempSync('someTemp');
       final Directory anotherTempDir = fileSystem.systemTempDirectory.createTempSync('another');
       await expectLater(
-        runner.run(<String>['analyze', '--ios', '--list-build-options', tempDir.path, anotherTempDir.path]),
+        runner.run(<String>[
+          'analyze',
+          '--ios',
+          '--list-build-options',
+          tempDir.path,
+          anotherTempDir.path,
+        ]),
         throwsA(
           isA<Exception>().having(
             (Exception e) => e.toString(),
@@ -144,12 +150,15 @@ class MockIosProject extends Fake implements IosProject {
   late XcodeProjectInfo expectedProjectInfo;
 
   @override
-  Future<String> outputsUniversalLinkSettings({required String configuration, required String target}) async {
+  Future<String> outputsUniversalLinkSettings({
+    required String configuration,
+    required String target,
+  }) async {
     outputConfiguration = configuration;
     outputTarget = target;
     return outputFileLocation;
   }
+
   @override
   Future<XcodeProjectInfo> projectInfo() async => expectedProjectInfo;
-
 }

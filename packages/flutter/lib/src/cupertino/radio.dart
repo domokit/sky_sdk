@@ -241,7 +241,8 @@ class CupertinoRadio<T> extends StatefulWidget {
   State<CupertinoRadio<T>> createState() => _CupertinoRadioState<T>();
 }
 
-class _CupertinoRadioState<T> extends State<CupertinoRadio<T>> with TickerProviderStateMixin, ToggleableStateMixin {
+class _CupertinoRadioState<T> extends State<CupertinoRadio<T>>
+    with TickerProviderStateMixin, ToggleableStateMixin {
   final _RadioPainter _painter = _RadioPainter();
 
   bool focused = false;
@@ -293,7 +294,7 @@ class _CupertinoRadioState<T> extends State<CupertinoRadio<T>> with TickerProvid
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled) && states.contains(WidgetState.selected)) {
         return widget.fillColor ?? CupertinoDynamicColor.resolve(_kDisabledInnerColor, context);
-     }
+      }
       if (states.contains(WidgetState.selected)) {
         return widget.fillColor ?? CupertinoDynamicColor.resolve(_kDefaultInnerColor, context);
       }
@@ -303,9 +304,9 @@ class _CupertinoRadioState<T> extends State<CupertinoRadio<T>> with TickerProvid
 
   WidgetStateProperty<Color> get _defaultBorderColor {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if ((states.contains(WidgetState.selected) || states.contains(WidgetState.focused))
-        && !states.contains(WidgetState.disabled)) {
-        return  CupertinoColors.transparent;
+      if ((states.contains(WidgetState.selected) || states.contains(WidgetState.focused)) &&
+          !states.contains(WidgetState.disabled)) {
+        return CupertinoColors.transparent;
       }
       if (states.contains(WidgetState.disabled)) {
         return CupertinoDynamicColor.resolve(_kDisabledBorderColor, context);
@@ -328,24 +329,26 @@ class _CupertinoRadioState<T> extends State<CupertinoRadio<T>> with TickerProvid
 
     final Color effectiveInactiveColor = _defaultOuterColor.resolve(inactiveStates);
 
-    final Color effectiveFocusOverlayColor = widget.focusColor ?? HSLColor
-      .fromColor(effectiveActiveColor.withOpacity(kCupertinoFocusColorOpacity))
-      .withLightness(kCupertinoFocusColorBrightness)
-      .withSaturation(kCupertinoFocusColorSaturation)
-      .toColor();
+    final Color effectiveFocusOverlayColor =
+        widget.focusColor ??
+        HSLColor.fromColor(effectiveActiveColor.withOpacity(kCupertinoFocusColorOpacity))
+            .withLightness(kCupertinoFocusColorBrightness)
+            .withSaturation(kCupertinoFocusColorSaturation)
+            .toColor();
 
     final Color effectiveFillColor = _defaultInnerColor.resolve(currentStates);
 
     final Color effectiveBorderColor = _defaultBorderColor.resolve(currentStates);
 
     final WidgetStateProperty<MouseCursor> effectiveMouseCursor =
-      WidgetStateProperty.resolveWith<MouseCursor>((Set<WidgetState> states) {
-        return WidgetStateProperty.resolveAs<MouseCursor?>(widget.mouseCursor, states)
-          ?? (states.contains(WidgetState.disabled)
-              ? SystemMouseCursors.basic
-              : kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic
-            );
-      });
+        WidgetStateProperty.resolveWith<MouseCursor>((Set<WidgetState> states) {
+          return WidgetStateProperty.resolveAs<MouseCursor?>(widget.mouseCursor, states) ??
+              (states.contains(WidgetState.disabled)
+                  ? SystemMouseCursors.basic
+                  : kIsWeb
+                  ? SystemMouseCursors.click
+                  : SystemMouseCursors.basic);
+        });
 
     final bool? accessibilitySelected;
     // Apple devices also use `selected` to annotate radio button's semantics
@@ -371,20 +374,21 @@ class _CupertinoRadioState<T> extends State<CupertinoRadio<T>> with TickerProvid
         autofocus: widget.autofocus,
         onFocusChange: onFocusChange,
         size: _size,
-        painter: _painter
-          ..position = position
-          ..reaction = reaction
-          ..focusColor = effectiveFocusOverlayColor
-          ..downPosition = downPosition
-          ..isFocused = focused
-          ..activeColor = effectiveActiveColor
-          ..inactiveColor = effectiveInactiveColor
-          ..fillColor = effectiveFillColor
-          ..value = value
-          ..checkmarkStyle = widget.useCheckmarkStyle
-          ..isActive = widget.onChanged != null
-          ..borderColor = effectiveBorderColor
-          ..brightness = CupertinoTheme.of(context).brightness,
+        painter:
+            _painter
+              ..position = position
+              ..reaction = reaction
+              ..focusColor = effectiveFocusOverlayColor
+              ..downPosition = downPosition
+              ..isFocused = focused
+              ..activeColor = effectiveActiveColor
+              ..inactiveColor = effectiveInactiveColor
+              ..fillColor = effectiveFillColor
+              ..value = value
+              ..checkmarkStyle = widget.useCheckmarkStyle
+              ..isActive = widget.onChanged != null
+              ..borderColor = effectiveBorderColor
+              ..brightness = CupertinoTheme.of(context).brightness,
       ),
     );
   }
@@ -442,30 +446,38 @@ class _RadioPainter extends ToggleablePainter {
   }
 
   void _drawPressedOverlay(Canvas canvas, Offset center, double radius) {
-    final Paint pressedPaint = Paint()
-      ..color = brightness == Brightness.light
-        ? CupertinoColors.black.withOpacity(_kPressedOverlayOpacity)
-        : CupertinoColors.white.withOpacity(_kPressedOverlayOpacity);
+    final Paint pressedPaint =
+        Paint()
+          ..color =
+              brightness == Brightness.light
+                  ? CupertinoColors.black.withOpacity(_kPressedOverlayOpacity)
+                  : CupertinoColors.white.withOpacity(_kPressedOverlayOpacity);
     canvas.drawCircle(center, radius, pressedPaint);
   }
 
-  void _drawFillGradient(Canvas canvas, Offset center, double radius, Color topColor, Color bottomColor) {
+  void _drawFillGradient(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    Color topColor,
+    Color bottomColor,
+  ) {
     final LinearGradient fillGradient = LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: <Color>[topColor, bottomColor],
     );
     final Rect circleRect = Rect.fromCircle(center: center, radius: radius);
-    final Paint gradientPaint = Paint()
-      ..shader = fillGradient.createShader(circleRect);
+    final Paint gradientPaint = Paint()..shader = fillGradient.createShader(circleRect);
     canvas.drawPath(Path()..addOval(circleRect), gradientPaint);
   }
 
   void _drawOuterBorder(Canvas canvas, Offset center) {
-    final Paint borderPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..color = borderColor
-      ..strokeWidth = _kBorderOutlineStrokeWidth;
+    final Paint borderPaint =
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..color = borderColor
+          ..strokeWidth = _kBorderOutlineStrokeWidth;
     canvas.drawCircle(center, _kOuterRadius, borderPaint);
   }
 
@@ -476,13 +488,14 @@ class _RadioPainter extends ToggleablePainter {
     if (checkmarkStyle) {
       if (value ?? false) {
         final Path path = Path();
-        final Paint checkPaint = Paint()
-          ..color = activeColor
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = _kCheckmarkStrokeWidth
-          ..strokeCap = StrokeCap.round;
+        final Paint checkPaint =
+            Paint()
+              ..color = activeColor
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = _kCheckmarkStrokeWidth
+              ..strokeCap = StrokeCap.round;
         final double width = _size.width;
-        final Offset origin = Offset(center.dx - (width/2), center.dy - (width/2));
+        final Offset origin = Offset(center.dx - (width / 2), center.dy - (width / 2));
         final Offset start = Offset(width * 0.25, width * 0.52);
         final Offset mid = Offset(width * 0.46, width * 0.75);
         final Offset end = Offset(width * 0.85, width * 0.29);
@@ -502,8 +515,12 @@ class _RadioPainter extends ToggleablePainter {
             canvas,
             center,
             _kOuterRadius,
-            outerPaint.color.withOpacity(isActive ? _kDarkGradientOpacities[0] : _kDisabledDarkGradientOpacities[0]),
-            outerPaint.color.withOpacity(isActive ? _kDarkGradientOpacities[1] : _kDisabledDarkGradientOpacities[1]),
+            outerPaint.color.withOpacity(
+              isActive ? _kDarkGradientOpacities[0] : _kDisabledDarkGradientOpacities[0],
+            ),
+            outerPaint.color.withOpacity(
+              isActive ? _kDarkGradientOpacities[1] : _kDisabledDarkGradientOpacities[1],
+            ),
           );
         } else {
           canvas.drawCircle(center, _kOuterRadius, outerPaint);
@@ -526,8 +543,12 @@ class _RadioPainter extends ToggleablePainter {
             canvas,
             center,
             _kOuterRadius,
-            paint.color.withOpacity(isActive ? _kDarkGradientOpacities[0] : _kDisabledDarkGradientOpacities[0]),
-            paint.color.withOpacity(isActive ? _kDarkGradientOpacities[1] : _kDisabledDarkGradientOpacities[1]),
+            paint.color.withOpacity(
+              isActive ? _kDarkGradientOpacities[0] : _kDisabledDarkGradientOpacities[0],
+            ),
+            paint.color.withOpacity(
+              isActive ? _kDarkGradientOpacities[1] : _kDisabledDarkGradientOpacities[1],
+            ),
           );
         } else {
           canvas.drawCircle(center, _kOuterRadius, paint);
@@ -540,10 +561,11 @@ class _RadioPainter extends ToggleablePainter {
       }
     }
     if (isFocused) {
-      final Paint focusPaint = Paint()
-        ..style = PaintingStyle.stroke
-        ..color = focusColor
-        ..strokeWidth = _kFocusOutlineStrokeWidth;
+      final Paint focusPaint =
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..color = focusColor
+            ..strokeWidth = _kFocusOutlineStrokeWidth;
       canvas.drawCircle(center, _kOuterRadius + _kFocusOutlineStrokeWidth / 2, focusPaint);
     }
   }

@@ -1,0 +1,23 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+copy("impeller") {
+  sources = [
+    "blending.glsl",
+    "branching.glsl",
+    "color.glsl",
+    "constants.glsl",
+    "conversions.glsl",
+    "dithering.glsl",
+    "external_texture_oes.glsl",
+    "gaussian.glsl",
+    "gradient.glsl",
+    "path.glsl",
+    "texture.glsl",
+    "tile_mode.glsl",
+    "transform.glsl",
+    "types.glsl",
+  ]
+  outputs = [ "$root_out_dir/shader_lib/impeller/{{source_file_part}}" ]
+}

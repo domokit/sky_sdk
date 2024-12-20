@@ -1,0 +1,9 @@
+# Copyright 2015 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+  # Use libc++ (buildtools/third_party/libc++ and
+  # buildtools/third_party/libc++abi) instead of stdlibc++ as standard library.
+  use_custom_libcxx = false
+}

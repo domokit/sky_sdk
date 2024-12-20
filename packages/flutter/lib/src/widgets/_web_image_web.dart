@@ -29,13 +29,11 @@ class ImgElementPlatformView extends StatelessWidget {
   static void _register() {
     assert(!_registered);
     _registered = true;
-    ui_web.platformViewRegistry.registerViewFactory(_viewType, (int viewId,
-        {Object? params}) {
+    ui_web.platformViewRegistry.registerViewFactory(_viewType, (int viewId, {Object? params}) {
       final Map<Object?, Object?> paramsMap = params! as Map<Object?, Object?>;
       // Create a new <img> element. The browser is able to display the image
       // without fetching it over the network again.
-      final web.HTMLImageElement img =
-          web.document.createElement('img') as web.HTMLImageElement;
+      final web.HTMLImageElement img = web.document.createElement('img') as web.HTMLImageElement;
       img.src = paramsMap['src']! as String;
       return img;
     });
@@ -49,10 +47,7 @@ class ImgElementPlatformView extends StatelessWidget {
     if (src == null) {
       return const SizedBox.expand();
     }
-    return HtmlElementView(
-      viewType: _viewType,
-      creationParams: <String, String?>{'src': src},
-    );
+    return HtmlElementView(viewType: _viewType, creationParams: <String, String?>{'src': src});
   }
 }
 
@@ -100,9 +95,8 @@ class RawWebImage extends SingleChildRenderObjectWidget {
       fit: fit,
       alignment: alignment,
       matchTextDirection: matchTextDirection,
-      textDirection: matchTextDirection || alignment is! Alignment
-          ? Directionality.of(context)
-          : null,
+      textDirection:
+          matchTextDirection || alignment is! Alignment ? Directionality.of(context) : null,
     );
   }
 
@@ -115,9 +109,8 @@ class RawWebImage extends SingleChildRenderObjectWidget {
       ..fit = fit
       ..alignment = alignment
       ..matchTextDirection = matchTextDirection
-      ..textDirection = matchTextDirection || alignment is! Alignment
-          ? Directionality.of(context)
-          : null;
+      ..textDirection =
+          matchTextDirection || alignment is! Alignment ? Directionality.of(context) : null;
   }
 }
 
@@ -133,14 +126,14 @@ class RenderWebImage extends RenderShiftedBox {
     AlignmentGeometry alignment = Alignment.center,
     bool matchTextDirection = false,
     TextDirection? textDirection,
-  })  : _image = image,
-        _width = width,
-        _height = height,
-        _fit = fit,
-        _alignment = alignment,
-        _matchTextDirection = matchTextDirection,
-        _textDirection = textDirection,
-        super(child);
+  }) : _image = image,
+       _width = width,
+       _height = height,
+       _fit = fit,
+       _alignment = alignment,
+       _matchTextDirection = matchTextDirection,
+       _textDirection = textDirection,
+       super(child);
 
   Alignment? _resolvedAlignment;
   bool? _flipHorizontally;
@@ -150,8 +143,7 @@ class RenderWebImage extends RenderShiftedBox {
       return;
     }
     _resolvedAlignment = alignment.resolve(textDirection);
-    _flipHorizontally =
-        matchTextDirection && textDirection == TextDirection.rtl;
+    _flipHorizontally = matchTextDirection && textDirection == TextDirection.rtl;
   }
 
   void _markNeedResolution() {
@@ -211,8 +203,8 @@ class RenderWebImage extends RenderShiftedBox {
     if (value.src == _image.src) {
       return;
     }
-    final bool sizeChanged = _image.naturalWidth != value.naturalWidth ||
-        _image.naturalHeight != value.naturalHeight;
+    final bool sizeChanged =
+        _image.naturalWidth != value.naturalWidth || _image.naturalHeight != value.naturalHeight;
     _image = value;
     markNeedsPaint();
     if (sizeChanged && (_width == null || _height == null)) {
@@ -286,15 +278,11 @@ class RenderWebImage extends RenderShiftedBox {
   Size _sizeForConstraints(BoxConstraints constraints) {
     // Folds the given |width| and |height| into |constraints| so they can all
     // be treated uniformly.
-    constraints = BoxConstraints.tightFor(
-      width: _width,
-      height: _height,
-    ).enforce(constraints);
+    constraints = BoxConstraints.tightFor(width: _width, height: _height).enforce(constraints);
 
-    return constraints.constrainSizeAndAttemptToPreserveAspectRatio(Size(
-      _image.naturalWidth.toDouble(),
-      _image.naturalHeight.toDouble(),
-    ));
+    return constraints.constrainSizeAndAttemptToPreserveAspectRatio(
+      Size(_image.naturalWidth.toDouble(), _image.naturalHeight.toDouble()),
+    );
   }
 
   @override
@@ -303,15 +291,13 @@ class RenderWebImage extends RenderShiftedBox {
     if (_width == null && _height == null) {
       return 0.0;
     }
-    return _sizeForConstraints(BoxConstraints.tightForFinite(height: height))
-        .width;
+    return _sizeForConstraints(BoxConstraints.tightForFinite(height: height)).width;
   }
 
   @override
   double computeMaxIntrinsicWidth(double height) {
     assert(height >= 0.0);
-    return _sizeForConstraints(BoxConstraints.tightForFinite(height: height))
-        .width;
+    return _sizeForConstraints(BoxConstraints.tightForFinite(height: height)).width;
   }
 
   @override
@@ -320,15 +306,13 @@ class RenderWebImage extends RenderShiftedBox {
     if (_width == null && _height == null) {
       return 0.0;
     }
-    return _sizeForConstraints(BoxConstraints.tightForFinite(width: width))
-        .height;
+    return _sizeForConstraints(BoxConstraints.tightForFinite(width: width)).height;
   }
 
   @override
   double computeMaxIntrinsicHeight(double width) {
     assert(width >= 0.0);
-    return _sizeForConstraints(BoxConstraints.tightForFinite(width: width))
-        .height;
+    return _sizeForConstraints(BoxConstraints.tightForFinite(width: width)).height;
   }
 
   @override
@@ -351,19 +335,17 @@ class RenderWebImage extends RenderShiftedBox {
       return;
     }
 
-    final Size inputSize =
-        Size(image.naturalWidth.toDouble(), image.naturalHeight.toDouble());
+    final Size inputSize = Size(image.naturalWidth.toDouble(), image.naturalHeight.toDouble());
     fit ??= BoxFit.scaleDown;
     final FittedSizes fittedSizes = applyBoxFit(fit!, inputSize, size);
     final Size childSize = fittedSizes.destination;
     child!.layout(BoxConstraints.tight(childSize));
     final double halfWidthDelta = (size.width - childSize.width) / 2.0;
     final double halfHeightDelta = (size.height - childSize.height) / 2.0;
-    final double dx = halfWidthDelta +
-        (_flipHorizontally! ? -_resolvedAlignment!.x : _resolvedAlignment!.x) *
-            halfWidthDelta;
-    final double dy =
-        halfHeightDelta + _resolvedAlignment!.y * halfHeightDelta;
+    final double dx =
+        halfWidthDelta +
+        (_flipHorizontally! ? -_resolvedAlignment!.x : _resolvedAlignment!.x) * halfWidthDelta;
+    final double dy = halfHeightDelta + _resolvedAlignment!.y * halfHeightDelta;
     final BoxParentData childParentData = child!.parentData! as BoxParentData;
     childParentData.offset = Offset(dx, dy);
   }
@@ -375,8 +357,8 @@ class RenderWebImage extends RenderShiftedBox {
     properties.add(DoubleProperty('width', width, defaultValue: null));
     properties.add(DoubleProperty('height', height, defaultValue: null));
     properties.add(EnumProperty<BoxFit>('fit', fit, defaultValue: null));
-    properties.add(DiagnosticsProperty<AlignmentGeometry>(
-        'alignment', alignment,
-        defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<AlignmentGeometry>('alignment', alignment, defaultValue: null),
+    );
   }
 }

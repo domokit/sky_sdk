@@ -8,12 +8,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Has 4 CupertinoButton variants', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.CupertinoButtonApp(),
-    );
+    await tester.pumpWidget(const example.CupertinoButtonApp());
 
     expect(find.byType(CupertinoButton), findsNWidgets(4));
-    expect(find.ancestor(of: find.text('Enabled'), matching: find.byType(CupertinoButton)), findsNWidgets(2));
-    expect(find.ancestor(of: find.text('Disabled'), matching: find.byType(CupertinoButton)), findsNWidgets(2));
+    expect(
+      find.ancestor(of: find.text('Enabled'), matching: find.byType(CupertinoButton)),
+      findsNWidgets(2),
+    );
+    expect(
+      find.ancestor(of: find.text('Disabled'), matching: find.byType(CupertinoButton)),
+      findsNWidgets(2),
+    );
   });
 }

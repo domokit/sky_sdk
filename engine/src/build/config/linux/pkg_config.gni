@@ -1,0 +1,128 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/sysroot.gni")
+
+# Defines a config specifying the result of running pkg-config for the given
+# packages. Put the package names you want to query in the "packages" variable
+# inside the template invocation.
+#
+# You can also add defines via the "defines" variable. This can be useful to
+# add this to the config to pass defines that the library expects to get by
+# users of its headers.
+#
+# Example:
+#   pkg_config("mything") {
+#     packages = [ "mything1", "mything2" ]
+#     defines = [ "ENABLE_AWESOME" ]
+#   }
+#
+# You can also use "extra args" to filter out results (see pkg-config.py):
+#   extra_args = [ "-v, "foo" ]
+# To ignore libs and ldflags (only cflags/defines will be set, which is useful
+# when doing manual dynamic linking), set:
+#   ignore_libs = true
+
+declare_args() {
+  # A pkg-config wrapper to call instead of trying to find and call the right
+  # pkg-config directly. Wrappers like this are common in cross-compilation
+  # environments.
+  # Leaving it blank defaults to searching PATH for 'pkg-config' and relying on
+  # the sysroot mechanism to find the right .pc files.
+  pkg_config = ""
+
+  # A optional pkg-config wrapper to use for tools built on the host.
+  host_pkg_config = ""
+
+  # CrOS systemroots place pkgconfig files at <systemroot>/usr/share/pkgconfig
+  # and one of <systemroot>/usr/lib/pkgconfig or <systemroot>/usr/lib64/pkgconfig
+  # depending on whether the systemroot is for a 32 or 64 bit architecture.
+  #
+  # When build under GYP, CrOS board builds specify the 'system_libdir' variable
+  # as part of the GYP_DEFINES provided by the CrOS emerge build or simple
+  # chrome build scheme. This variable permits controlling this for GN builds
+  # in similar fashion by setting the `system_libdir` variable in the build's
+  # args.gn file to 'lib' or 'lib64' as appropriate for the target architecture.
+  system_libdir = "lib"
+}
+
+pkg_config_script = "//build/config/linux/pkg-config.py"
+
+# Define the args we pass to the pkg-config script for other build files that
+# need to invoke it manually.
+pkg_config_args = []
+
+if (sysroot != "") {
+  # Pass the sysroot if we're using one (it requires the CPU arch also).
+  pkg_config_args += [
+    "-s",
+    rebase_path(sysroot, "", root_build_dir),
+    "-a",
+    current_cpu,
+  ]
+}
+
+if (pkg_config != "") {
+  pkg_config_args += [
+    "-p",
+    pkg_config,
+  ]
+}
+
+# Only use the custom libdir when building with the target sysroot.
+if (target_sysroot != "" && sysroot == target_sysroot) {
+  pkg_config_args += [
+    "--system_libdir",
+    system_libdir,
+  ]
+}
+
+if (host_pkg_config != "") {
+  host_pkg_config_args = [
+    "-p",
+    host_pkg_config,
+  ]
+} else {
+  host_pkg_config_args = pkg_config_args
+}
+
+template("pkg_config") {
+  assert(defined(invoker.packages),
+         "Variable |packages| must be defined to be a list in pkg_config.")
+  config(target_name) {
+    if (host_toolchain == current_toolchain) {
+      args = host_pkg_config_args + invoker.packages
+    } else {
+      args = pkg_config_args + invoker.packages
+    }
+    if (defined(invoker.extra_args)) {
+      args += invoker.extra_args
+    }
+
+    pkgresult = exec_script(pkg_config_script, args, "value")
+    cflags = pkgresult[1]
+
+    foreach(include, pkgresult[0]) {
+      if (sysroot != "") {
+        # We want the system include paths to use -isystem instead of -I to
+        # suppress warnings in those headers.
+        include_relativized = rebase_path(include, root_build_dir)
+        cflags += [ "-isystem$include_relativized" ]
+      } else {
+        cflags += [ "-I$include" ]
+      }
+    }
+
+    if (!defined(invoker.ignore_libs) || !invoker.ignore_libs) {
+      libs = pkgresult[2]
+      lib_dirs = pkgresult[3]
+    }
+
+    forward_variables_from(invoker,
+                           [
+                             "defines",
+                             "visibility",
+                           ])
+  }
+}

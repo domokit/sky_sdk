@@ -28,22 +28,12 @@ import 'native_assets_test_utils.dart';
 
 final String hostOs = platform.operatingSystem;
 
-final List<String> devices = <String>[
-  'flutter-tester',
-  hostOs,
-];
+final List<String> devices = <String>['flutter-tester', hostOs];
 
-final List<String> buildSubcommands = <String>[
-  hostOs,
-  if (hostOs == 'macos') 'ios',
-  'apk',
-];
+final List<String> buildSubcommands = <String>[hostOs, if (hostOs == 'macos') 'ios', 'apk'];
 
 final List<String> add2appBuildSubcommands = <String>[
-  if (hostOs == 'macos') ...<String>[
-    'macos-framework',
-    'ios-framework',
-  ],
+  if (hostOs == 'macos') ...<String>['macos-framework', 'ios-framework'],
 ];
 
 /// The build modes to target for each flutter command that supports passing
@@ -51,11 +41,7 @@ final List<String> add2appBuildSubcommands = <String>[
 ///
 /// The flow of compiling kernel as well as bundling dylibs can differ based on
 /// build mode, so we should cover this.
-const List<String> buildModes = <String>[
-  'debug',
-  'profile',
-  'release',
-];
+const List<String> buildModes = <String>['debug', 'profile', 'release'];
 
 const String packageName = 'package_with_native_assets';
 
@@ -68,11 +54,7 @@ void main() {
   }
 
   setUpAll(() {
-    processManager.runSync(<String>[
-      flutterBin,
-      'config',
-      '--enable-native-assets',
-    ]);
+    processManager.runSync(<String>[flutterBin, 'config', '--enable-native-assets']);
   });
 
   for (final String device in devices) {
@@ -87,63 +69,62 @@ void main() {
           final Directory exampleDirectory = packageDirectory.childDirectory('example');
 
           final ProcessTestResult result = await runFlutter(
-            <String>[
-              'run',
-              '-d$device',
-              '--$buildMode',
-            ],
+            <String>['run', '-d$device', '--$buildMode'],
             exampleDirectory.path,
             <Transition>[
-              Multiple(<Pattern>[
-                'Flutter run key commands.',
-              ], handler: (String line) {
-                if (buildMode == 'debug') {
-                  // Do a hot reload diff on the initial dill file.
-                  return 'r';
-                } else {
-                  // No hot reload and hot restart in release mode.
-                  return 'q';
-                }
-              }),
+              Multiple(
+                <Pattern>['Flutter run key commands.'],
+                handler: (String line) {
+                  if (buildMode == 'debug') {
+                    // Do a hot reload diff on the initial dill file.
+                    return 'r';
+                  } else {
+                    // No hot reload and hot restart in release mode.
+                    return 'q';
+                  }
+                },
+              ),
               if (buildMode == 'debug') ...<Transition>[
-                Barrier(
-                  'Performing hot reload...'.padRight(progressMessageWidth),
-                  logging: true,
+                Barrier('Performing hot reload...'.padRight(progressMessageWidth), logging: true),
+                Multiple(
+                  <Pattern>[RegExp('Reloaded .*')],
+                  handler: (String line) {
+                    // Do a hot restart, pushing a new complete dill file.
+                    return 'R';
+                  },
                 ),
-                Multiple(<Pattern>[
-                  RegExp('Reloaded .*'),
-                ], handler: (String line) {
-                  // Do a hot restart, pushing a new complete dill file.
-                  return 'R';
-                }),
                 Barrier('Performing hot restart...'.padRight(progressMessageWidth)),
-                Multiple(<Pattern>[
-                  RegExp('Restarted application .*'),
-                ], handler: (String line) {
-                  // Do another hot reload, pushing a diff to the second dill file.
-                  return 'r';
-                }),
-                Barrier(
-                  'Performing hot reload...'.padRight(progressMessageWidth),
-                  logging: true,
+                Multiple(
+                  <Pattern>[RegExp('Restarted application .*')],
+                  handler: (String line) {
+                    // Do another hot reload, pushing a diff to the second dill file.
+                    return 'r';
+                  },
                 ),
-                Multiple(<Pattern>[
-                  RegExp('Reloaded .*'),
-                ], handler: (String line) {
-                  return 'q';
-                }),
+                Barrier('Performing hot reload...'.padRight(progressMessageWidth), logging: true),
+                Multiple(
+                  <Pattern>[RegExp('Reloaded .*')],
+                  handler: (String line) {
+                    return 'q';
+                  },
+                ),
               ],
               const Barrier('Application finished.'),
             ],
             logging: false,
           );
           if (result.exitCode != 0) {
-            throw Exception('flutter run failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}');
+            throw Exception(
+              'flutter run failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}',
+            );
           }
           final String stdout = result.stdout.join('\n');
           // Check that we did not fail to resolve the native function in the
           // dynamic library.
-          expect(stdout, isNot(contains("Invalid argument(s): Couldn't resolve native function 'sum'")));
+          expect(
+            stdout,
+            isNot(contains("Invalid argument(s): Couldn't resolve native function 'sum'")),
+          );
           // And also check that we did not have any other exceptions that might
           // shadow the exception we would have gotten.
           expect(stdout, isNot(contains('EXCEPTION CAUGHT BY WIDGETS LIBRARY')));
@@ -169,59 +150,58 @@ void main() {
       final Directory packageDirectory = await createTestProject(packageName, tempDirectory);
 
       final ProcessTestResult result = await runFlutter(
-        <String>[
-          'test',
-        ],
+        <String>['test'],
         packageDirectory.path,
-        <Transition>[
-          Barrier(RegExp('.* All tests passed!')),
-        ],
+        <Transition>[Barrier(RegExp('.* All tests passed!'))],
         logging: false,
       );
       if (result.exitCode != 0) {
-        throw Exception('flutter test failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}');
+        throw Exception(
+          'flutter test failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}',
+        );
       }
     });
   });
 
   for (final String buildSubcommand in buildSubcommands) {
     for (final String buildMode in buildModes) {
-      testWithoutContext('flutter build $buildSubcommand with native assets $buildMode', () async {
-        await inTempDir((Directory tempDirectory) async {
-          final Directory packageDirectory = await createTestProject(packageName, tempDirectory);
-          final Directory exampleDirectory = packageDirectory.childDirectory('example');
+      testWithoutContext(
+        'flutter build $buildSubcommand with native assets $buildMode',
+        () async {
+          await inTempDir((Directory tempDirectory) async {
+            final Directory packageDirectory = await createTestProject(packageName, tempDirectory);
+            final Directory exampleDirectory = packageDirectory.childDirectory('example');
 
-          final ProcessResult result = processManager.runSync(
-            <String>[
+            final ProcessResult result = processManager.runSync(<String>[
               flutterBin,
               'build',
               buildSubcommand,
               '--$buildMode',
               if (buildSubcommand == 'ios') '--no-codesign',
-            ],
-            workingDirectory: exampleDirectory.path,
-          );
-          if (result.exitCode != 0) {
-            throw Exception('flutter build failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}');
-          }
+            ], workingDirectory: exampleDirectory.path);
+            if (result.exitCode != 0) {
+              throw Exception(
+                'flutter build failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}',
+              );
+            }
 
-          switch (buildSubcommand) {
-            case 'macos':
-              expectDylibIsBundledMacOS(exampleDirectory, buildMode);
-              expectDylibIsCodeSignedMacOS(exampleDirectory, buildMode);
-            case 'ios':
-              expectDylibIsBundledIos(exampleDirectory, buildMode);
-            case 'linux':
-              expectDylibIsBundledLinux(exampleDirectory, buildMode);
-            case 'windows':
-              expectDylibIsBundledWindows(exampleDirectory, buildMode);
-            case 'apk':
-              expectDylibIsBundledAndroid(exampleDirectory, buildMode);
-          }
-          expectCCompilerIsConfigured(exampleDirectory);
-        });
-      },
-      tags: <String>['flutter-build-apk'],
+            switch (buildSubcommand) {
+              case 'macos':
+                expectDylibIsBundledMacOS(exampleDirectory, buildMode);
+                expectDylibIsCodeSignedMacOS(exampleDirectory, buildMode);
+              case 'ios':
+                expectDylibIsBundledIos(exampleDirectory, buildMode);
+              case 'linux':
+                expectDylibIsBundledLinux(exampleDirectory, buildMode);
+              case 'windows':
+                expectDylibIsBundledWindows(exampleDirectory, buildMode);
+              case 'apk':
+                expectDylibIsBundledAndroid(exampleDirectory, buildMode);
+            }
+            expectCCompilerIsConfigured(exampleDirectory);
+          });
+        },
+        tags: <String>['flutter-build-apk'],
       );
     }
   }
@@ -232,20 +212,23 @@ void main() {
         final Directory packageDirectory = await createTestProject(packageName, tempDirectory);
         final Directory exampleDirectory = packageDirectory.childDirectory('example');
 
-        final ProcessResult result = processManager.runSync(
-          <String>[
-            flutterBin,
-            'build',
-            add2appBuildSubcommand,
-          ],
-          workingDirectory: exampleDirectory.path,
-        );
+        final ProcessResult result = processManager.runSync(<String>[
+          flutterBin,
+          'build',
+          add2appBuildSubcommand,
+        ], workingDirectory: exampleDirectory.path);
         if (result.exitCode != 0) {
-          throw Exception('flutter build failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}');
+          throw Exception(
+            'flutter build failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}',
+          );
         }
 
         for (final String buildMode in buildModes) {
-          expectDylibIsBundledWithFrameworks(exampleDirectory, buildMode, add2appBuildSubcommand.replaceAll('-framework', ''));
+          expectDylibIsBundledWithFrameworks(
+            exampleDirectory,
+            buildMode,
+            add2appBuildSubcommand.replaceAll('-framework', ''),
+          );
         }
         expectCCompilerIsConfigured(exampleDirectory);
       });
@@ -254,13 +237,18 @@ void main() {
 }
 
 void expectDylibIsCodeSignedMacOS(Directory appDirectory, String buildMode) {
-  final Directory appBundle = appDirectory.childDirectory('build/$hostOs/Build/Products/${buildMode.upperCaseFirst()}/$exampleAppName.app');
+  final Directory appBundle = appDirectory.childDirectory(
+    'build/$hostOs/Build/Products/${buildMode.upperCaseFirst()}/$exampleAppName.app',
+  );
   final Directory frameworksFolder = appBundle.childDirectory('Contents/Frameworks');
   expect(frameworksFolder, exists);
   const String frameworkName = packageName;
   final Directory frameworkDir = frameworksFolder.childDirectory('$frameworkName.framework');
-  final ProcessResult codesign =
-      processManager.runSync(<String>['codesign', '-dv', frameworkDir.absolute.path]);
+  final ProcessResult codesign = processManager.runSync(<String>[
+    'codesign',
+    '-dv',
+    frameworkDir.absolute.path,
+  ]);
   expect(codesign.exitCode, 0);
 
   // Expect adhoc signature, but not linker-signed (which would mean no code-signing happened after linking).
@@ -274,10 +262,11 @@ void expectDylibIsCodeSignedMacOS(Directory appDirectory, String buildMode) {
 /// For `flutter build` we can't easily test whether running the app works.
 /// Check that we have the dylibs in the app.
 void expectDylibIsBundledMacOS(Directory appDirectory, String buildMode) {
-  final Directory appBundle = appDirectory.childDirectory('build/$hostOs/Build/Products/${buildMode.upperCaseFirst()}/$exampleAppName.app');
+  final Directory appBundle = appDirectory.childDirectory(
+    'build/$hostOs/Build/Products/${buildMode.upperCaseFirst()}/$exampleAppName.app',
+  );
   expect(appBundle, exists);
-  final Directory frameworksFolder =
-      appBundle.childDirectory('Contents/Frameworks');
+  final Directory frameworksFolder = appBundle.childDirectory('Contents/Frameworks');
   expect(frameworksFolder, exists);
 
   // MyFramework.framework/
@@ -290,8 +279,7 @@ void expectDylibIsBundledMacOS(Directory appDirectory, String buildMode) {
   //         Info.plist
   //     Current  -> A
   const String frameworkName = packageName;
-  final Directory frameworkDir =
-      frameworksFolder.childDirectory('$frameworkName.framework');
+  final Directory frameworkDir = frameworksFolder.childDirectory('$frameworkName.framework');
   final Directory versionsDir = frameworkDir.childDirectory('Versions');
   final Directory versionADir = versionsDir.childDirectory('A');
   final Directory resourcesDir = versionADir.childDirectory('Resources');
@@ -336,7 +324,9 @@ void expectDylibIsBundledMacOS(Directory appDirectory, String buildMode) {
 }
 
 void expectDylibIsBundledIos(Directory appDirectory, String buildMode) {
-  final Directory appBundle = appDirectory.childDirectory('build/ios/${buildMode.upperCaseFirst()}-iphoneos/Runner.app');
+  final Directory appBundle = appDirectory.childDirectory(
+    'build/ios/${buildMode.upperCaseFirst()}-iphoneos/Runner.app',
+  );
   expect(appBundle, exists);
   final Directory frameworksFolder = appBundle.childDirectory('Frameworks');
   expect(frameworksFolder, exists);
@@ -345,9 +335,11 @@ void expectDylibIsBundledIos(Directory appDirectory, String buildMode) {
       .childDirectory('$frameworkName.framework')
       .childFile(frameworkName);
   expect(dylib, exists);
-  final String infoPlist = frameworksFolder
-      .childDirectory('$frameworkName.framework')
-      .childFile('Info.plist').readAsStringSync();
+  final String infoPlist =
+      frameworksFolder
+          .childDirectory('$frameworkName.framework')
+          .childFile('Info.plist')
+          .readAsStringSync();
   expect(infoPlist, '''
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -392,8 +384,7 @@ void expectDylibIsBundledLinux(Directory appDirectory, String buildMode) {
   expect(appBundle, exists);
   final Directory dylibsFolder = appBundle.childDirectory('lib');
   expect(dylibsFolder, exists);
-  final File dylib =
-      dylibsFolder.childFile(OS.linux.dylibFileName(packageName));
+  final File dylib = dylibsFolder.childFile(OS.linux.dylibFileName(packageName));
   expect(dylib, exists);
 }
 
@@ -410,8 +401,7 @@ void expectDylibIsBundledWindows(Directory appDirectory, String buildMode) {
       .childDirectory('runner')
       .childDirectory(buildMode.upperCaseFirst());
   expect(appBundle, exists);
-  final File dylib =
-      appBundle.childFile(OS.windows.dylibFileName(packageName));
+  final File dylib = appBundle.childFile(OS.windows.dylibFileName(packageName));
   expect(dylib, exists);
 }
 
@@ -441,8 +431,7 @@ void expectDylibIsBundledAndroid(Directory appDirectory, String buildMode) {
     if (buildMode != 'debug') {
       expect(archDir.childFile('libapp.so'), exists);
     }
-    final File dylib =
-        archDir.childFile(OS.android.dylibFileName(packageName));
+    final File dylib = archDir.childFile(OS.android.dylibFileName(packageName));
     expect(dylib, exists);
   }
 }
@@ -450,7 +439,9 @@ void expectDylibIsBundledAndroid(Directory appDirectory, String buildMode) {
 /// For `flutter build` we can't easily test whether running the app works.
 /// Check that we have the dylibs in the app.
 void expectDylibIsBundledWithFrameworks(Directory appDirectory, String buildMode, String os) {
-  final Directory frameworksFolder = appDirectory.childDirectory('build/$os/framework/${buildMode.upperCaseFirst()}');
+  final Directory frameworksFolder = appDirectory.childDirectory(
+    'build/$os/framework/${buildMode.upperCaseFirst()}',
+  );
   expect(frameworksFolder, exists);
   const String frameworkName = packageName;
   final File dylib = frameworksFolder
@@ -463,7 +454,9 @@ void expectDylibIsBundledWithFrameworks(Directory appDirectory, String buildMode
 ///
 /// This inspects the build configuration to see if the C compiler was configured.
 void expectCCompilerIsConfigured(Directory appDirectory) {
-  final Directory nativeAssetsBuilderDir = appDirectory.childDirectory('.dart_tool/native_assets_builder/');
+  final Directory nativeAssetsBuilderDir = appDirectory.childDirectory(
+    '.dart_tool/native_assets_builder/',
+  );
   for (final Directory subDir in nativeAssetsBuilderDir.listSync().whereType<Directory>()) {
     // We only want to look at build/link hook invocation directories. The
     // `/shared/*` directory allows the individual hooks to store data that is

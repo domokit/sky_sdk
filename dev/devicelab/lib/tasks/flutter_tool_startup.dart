@@ -13,10 +13,10 @@ import '../framework/utils.dart';
 const int _kRunsPerBenchmark = 10;
 
 Future<TaskResult> flutterToolStartupBenchmarkTask() async {
-  final Directory projectParentDirectory =
-      Directory.systemTemp.createTempSync('flutter_tool_startup_benchmark');
-  final Directory projectDirectory =
-      dir(path.join(projectParentDirectory.path, 'benchmark'));
+  final Directory projectParentDirectory = Directory.systemTemp.createTempSync(
+    'flutter_tool_startup_benchmark',
+  );
+  final Directory projectDirectory = dir(path.join(projectParentDirectory.path, 'benchmark'));
   await inDirectory<void>(flutterDirectory, () async {
     await flutter('update-packages');
     await flutter('create', options: <String>[projectDirectory.path]);
@@ -26,43 +26,37 @@ Future<TaskResult> flutterToolStartupBenchmarkTask() async {
 
   final Map<String, dynamic> data = <String, dynamic>{
     // `flutter test` in dir with no `test` folder.
-    ...(await _Benchmark(
-      projectDirectory,
-      'test startup',
-      'test',
-    ).run())
-        .asMap('flutter_tool_startup_test'),
+    ...(await _Benchmark(projectDirectory, 'test startup', 'test').run()).asMap(
+      'flutter_tool_startup_test',
+    ),
 
     // `flutter test -d foo_device` in dir with no `test` folder.
     ...(await _Benchmark(
-      projectDirectory,
-      'test startup with specified device',
-      'test',
-      options: <String>['-d', 'foo_device'],
-    ).run())
+          projectDirectory,
+          'test startup with specified device',
+          'test',
+          options: <String>['-d', 'foo_device'],
+        ).run())
         .asMap('flutter_tool_startup_test_with_specified_device'),
 
     // `flutter test -v` where no android sdk will be found (at least currently).
     ...(await _Benchmark(
-      projectDirectory,
-      'test startup no android sdk',
-      'test',
-      options: <String>['-v'],
-      environment: <String, String>{
-        'ANDROID_HOME': 'dummy value',
-        'ANDROID_SDK_ROOT': 'dummy value',
-        'PATH': pathWithoutWhereHits(<String>['adb', 'aapt']),
-      },
-    ).run())
+          projectDirectory,
+          'test startup no android sdk',
+          'test',
+          options: <String>['-v'],
+          environment: <String, String>{
+            'ANDROID_HOME': 'dummy value',
+            'ANDROID_SDK_ROOT': 'dummy value',
+            'PATH': pathWithoutWhereHits(<String>['adb', 'aapt']),
+          },
+        ).run())
         .asMap('flutter_tool_startup_test_no_android_sdk'),
 
     // `flutter -h`.
-    ...(await _Benchmark(
-      projectDirectory,
-      'help startup',
-      '-h',
-    ).run())
-        .asMap('flutter_tool_startup_help'),
+    ...(await _Benchmark(projectDirectory, 'help startup', '-h').run()).asMap(
+      'flutter_tool_startup_help',
+    ),
   };
 
   // Cleanup.
@@ -119,17 +113,18 @@ class _BenchmarkResult {
   final int max; // Milliseconds
 
   Map<String, dynamic> asMap(String name) {
-    return <String, dynamic>{
-      name: mean,
-      '${name}_minimum': min,
-      '${name}_maximum': max,
-    };
+    return <String, dynamic>{name: mean, '${name}_minimum': min, '${name}_maximum': max};
   }
 }
 
 class _Benchmark {
-  _Benchmark(this.directory, this.title, this.command,
-      {this.options = const <String>[], this.environment});
+  _Benchmark(
+    this.directory,
+    this.title,
+    this.command, {
+    this.options = const <String>[],
+    this.environment,
+  });
 
   final Directory directory;
 
@@ -148,8 +143,7 @@ class _Benchmark {
       stopwatch.start();
       // canFail is set to true, as e.g. `flutter test` in a dir with no `test`
       // directory sets a non-zero return value.
-      await flutter(command,
-          options: options, canFail: true, environment: environment);
+      await flutter(command, options: options, canFail: true, environment: environment);
       stopwatch.stop();
     });
     return stopwatch.elapsedMilliseconds;

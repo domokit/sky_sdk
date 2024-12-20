@@ -12,7 +12,9 @@ void main() {
   ZoneIgnoringTestBinding.ensureInitialized();
   initTimelineTests();
   test('Widgets with updated keys produce well formed timelines', () async {
-    await runFrame(() { runApp(const TestRoot()); });
+    await runFrame(() {
+      runApp(const TestRoot());
+    });
     await SchedulerBinding.instance.endOfFrame;
 
     debugProfileBuildsEnabled = true;
@@ -65,13 +67,6 @@ class TestRootState extends State<TestRoot> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      key: _localKey,
-      child: SizedBox(
-        key: _globalKey,
-        width: 100,
-        height: 100,
-      ),
-    );
+    return Center(key: _localKey, child: SizedBox(key: _globalKey, width: 100, height: 100));
   }
 }

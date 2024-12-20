@@ -27,10 +27,10 @@ class IOSCoreDeviceControl {
     required ProcessManager processManager,
     required Xcode xcode,
     required FileSystem fileSystem,
-  })  : _logger = logger,
-        _processUtils = ProcessUtils(logger: logger, processManager: processManager),
-        _xcode = xcode,
-        _fileSystem = fileSystem;
+  }) : _logger = logger,
+       _processUtils = ProcessUtils(logger: logger, processManager: processManager),
+       _xcode = xcode,
+       _fileSystem = fileSystem;
 
   final Logger _logger;
   final ProcessUtils _processUtils;
@@ -57,8 +57,9 @@ class IOSCoreDeviceControl {
     Duration validTimeout = timeout;
     if (timeout.inSeconds < _minimumTimeoutInSeconds) {
       _logger.printError(
-          'Timeout of ${timeout.inSeconds} seconds is below the minimum timeout value '
-          'for devicectl. Changing the timeout to the minimum value of $_minimumTimeoutInSeconds.');
+        'Timeout of ${timeout.inSeconds} seconds is below the minimum timeout value '
+        'for devicectl. Changing the timeout to the minimum value of $_minimumTimeoutInSeconds.',
+      );
       validTimeout = const Duration(seconds: _minimumTimeoutInSeconds);
     }
 
@@ -144,10 +145,7 @@ class IOSCoreDeviceControl {
   /// Executes `devicectl` command to get list of apps installed on the device.
   /// If [bundleId] is provided, it will only return apps matching the bundle
   /// identifier exactly.
-  Future<List<Object?>> _listInstalledApps({
-    required String deviceId,
-    String? bundleId,
-  }) async {
+  Future<List<Object?>> _listInstalledApps({required String deviceId, String? bundleId}) async {
     if (!_xcode.isDevicectlInstalled) {
       _logger.printError('devicectl is not installed.');
       return <Object?>[];
@@ -165,9 +163,8 @@ class IOSCoreDeviceControl {
       'apps',
       '--device',
       deviceId,
-      if (bundleId != null)
-        '--bundle-id',
-        bundleId!,
+      if (bundleId != null) '--bundle-id',
+      bundleId!,
       '--json-output',
       output.path,
     ];
@@ -208,15 +205,11 @@ class IOSCoreDeviceControl {
     final List<Object?> appsData = await _listInstalledApps(deviceId: deviceId, bundleId: bundleId);
     return <IOSCoreDeviceInstalledApp>[
       for (final Object? appObject in appsData)
-        if (appObject is Map<String, Object?>)
-          IOSCoreDeviceInstalledApp.fromBetaJson(appObject),
+        if (appObject is Map<String, Object?>) IOSCoreDeviceInstalledApp.fromBetaJson(appObject),
     ];
   }
 
-  Future<bool> isAppInstalled({
-    required String deviceId,
-    required String bundleId,
-  }) async {
+  Future<bool> isAppInstalled({required String deviceId, required String bundleId}) async {
     final List<IOSCoreDeviceInstalledApp> apps = await getInstalledApps(
       deviceId: deviceId,
       bundleId: bundleId,
@@ -227,10 +220,7 @@ class IOSCoreDeviceControl {
     return false;
   }
 
-  Future<bool> installApp({
-    required String deviceId,
-    required String bundlePath,
-  }) async {
+  Future<bool> installApp({required String deviceId, required String bundlePath}) async {
     if (!_xcode.isDevicectlInstalled) {
       _logger.printError('devicectl is not installed.');
       return false;
@@ -279,10 +269,7 @@ class IOSCoreDeviceControl {
 
   /// Uninstalls the app from the device. Will succeed even if the app is not
   /// currently installed on the device.
-  Future<bool> uninstallApp({
-    required String deviceId,
-    required String bundleId,
-  }) async {
+  Future<bool> uninstallApp({required String deviceId, required String bundleId}) async {
     if (!_xcode.isDevicectlInstalled) {
       _logger.printError('devicectl is not installed.');
       return false;
@@ -407,10 +394,7 @@ class IOSCoreDevice {
   ///   "identifier" : "123456BB5-AEDE-7A22-B890-1234567890DD",
   ///   "visibilityClass" : "default"
   /// }
-  factory IOSCoreDevice.fromBetaJson(
-    Map<String, Object?> data, {
-    required Logger logger,
-  }) {
+  factory IOSCoreDevice.fromBetaJson(Map<String, Object?> data, {required Logger logger}) {
     final List<_IOSCoreDeviceCapability> capabilitiesList = <_IOSCoreDeviceCapability>[
       if (data case {'capabilities': final List<Object?> capabilitiesData})
         for (final Object? capabilityData in capabilitiesData)
@@ -454,7 +438,7 @@ class IOSCoreDevice {
   DeviceConnectionInterface? get connectionInterface {
     return switch (connectionProperties?.transportType?.toLowerCase()) {
       'localnetwork' => DeviceConnectionInterface.wireless,
-      'wired'        => DeviceConnectionInterface.attached,
+      'wired' => DeviceConnectionInterface.attached,
       _ => null,
     };
   }
@@ -474,12 +458,8 @@ class IOSCoreDevice {
   final String? visibilityClass;
 }
 
-
 class _IOSCoreDeviceCapability {
-  _IOSCoreDeviceCapability._({
-    required this.featureIdentifier,
-    required this.name,
-  });
+  _IOSCoreDeviceCapability._({required this.featureIdentifier, required this.name});
 
   /// Parse `capabilities` section of JSON from `devicectl list devices --json-output`
   /// while it's in beta preview mode.
@@ -566,7 +546,8 @@ class _IOSCoreDeviceConnectionProperties {
     }
     return _IOSCoreDeviceConnectionProperties._(
       authenticationType: data['authenticationType']?.toString(),
-      isMobileDeviceOnly: data['isMobileDeviceOnly'] is bool? ? data['isMobileDeviceOnly'] as bool? : null,
+      isMobileDeviceOnly:
+          data['isMobileDeviceOnly'] is bool? ? data['isMobileDeviceOnly'] as bool? : null,
       lastConnectionDate: data['lastConnectionDate']?.toString(),
       localHostnames: localHostnames,
       pairingState: data['pairingState']?.toString(),
@@ -625,16 +606,22 @@ class IOSCoreDeviceProperties {
   /// }
   factory IOSCoreDeviceProperties.fromBetaJson(Map<String, Object?> data) {
     return IOSCoreDeviceProperties._(
-      bootedFromSnapshot: data['bootedFromSnapshot'] is bool? ? data['bootedFromSnapshot'] as bool? : null,
+      bootedFromSnapshot:
+          data['bootedFromSnapshot'] is bool? ? data['bootedFromSnapshot'] as bool? : null,
       bootedSnapshotName: data['bootedSnapshotName']?.toString(),
       bootState: data['bootState']?.toString(),
-      ddiServicesAvailable: data['ddiServicesAvailable'] is bool? ? data['ddiServicesAvailable'] as bool? : null,
+      ddiServicesAvailable:
+          data['ddiServicesAvailable'] is bool? ? data['ddiServicesAvailable'] as bool? : null,
       developerModeStatus: data['developerModeStatus']?.toString(),
-      hasInternalOSBuild: data['hasInternalOSBuild'] is bool? ? data['hasInternalOSBuild'] as bool? : null,
+      hasInternalOSBuild:
+          data['hasInternalOSBuild'] is bool? ? data['hasInternalOSBuild'] as bool? : null,
       name: data['name']?.toString(),
       osBuildUpdate: data['osBuildUpdate']?.toString(),
       osVersionNumber: data['osVersionNumber']?.toString(),
-      rootFileSystemIsWritable: data['rootFileSystemIsWritable'] is bool? ? data['rootFileSystemIsWritable'] as bool? : null,
+      rootFileSystemIsWritable:
+          data['rootFileSystemIsWritable'] is bool?
+              ? data['rootFileSystemIsWritable'] as bool?
+              : null,
       screenViewingURL: data['screenViewingURL']?.toString(),
     );
   }
@@ -719,8 +706,7 @@ class _IOSCoreDeviceHardwareProperties {
     if (data case {'supportedCPUTypes': final List<Object?> values}) {
       supportedCPUTypes = <_IOSCoreDeviceCPUType>[
         for (final Object? cpuTypeData in values)
-          if (cpuTypeData is Map<String, Object?>)
-            _IOSCoreDeviceCPUType.fromBetaJson(cpuTypeData),
+          if (cpuTypeData is Map<String, Object?>) _IOSCoreDeviceCPUType.fromBetaJson(cpuTypeData),
       ];
     }
 
@@ -738,7 +724,8 @@ class _IOSCoreDeviceHardwareProperties {
       deviceType: data['deviceType']?.toString(),
       ecid: data['ecid'] is int? ? data['ecid'] as int? : null,
       hardwareModel: data['hardwareModel']?.toString(),
-      internalStorageCapacity: data['internalStorageCapacity'] is int? ? data['internalStorageCapacity'] as int? : null,
+      internalStorageCapacity:
+          data['internalStorageCapacity'] is int? ? data['internalStorageCapacity'] as int? : null,
       marketingName: data['marketingName']?.toString(),
       platform: data['platform']?.toString(),
       productType: data['productType']?.toString(),
@@ -766,11 +753,7 @@ class _IOSCoreDeviceHardwareProperties {
 }
 
 class _IOSCoreDeviceCPUType {
-  _IOSCoreDeviceCPUType._({
-    this.name,
-    this.subType,
-    this.cpuType,
-  });
+  _IOSCoreDeviceCPUType._({this.name, this.subType, this.cpuType});
 
   /// Parse `hardwareProperties.cpuType` and `hardwareProperties.supportedCPUTypes`
   /// sections of JSON from `devicectl list devices --json-output` while it's in beta preview mode.
@@ -830,7 +813,8 @@ class IOSCoreDeviceInstalledApp {
   factory IOSCoreDeviceInstalledApp.fromBetaJson(Map<String, Object?> data) {
     return IOSCoreDeviceInstalledApp._(
       appClip: data['appClip'] is bool? ? data['appClip'] as bool? : null,
-      builtByDeveloper: data['builtByDeveloper'] is bool? ? data['builtByDeveloper'] as bool? : null,
+      builtByDeveloper:
+          data['builtByDeveloper'] is bool? ? data['builtByDeveloper'] as bool? : null,
       bundleIdentifier: data['bundleIdentifier']?.toString(),
       bundleVersion: data['bundleVersion']?.toString(),
       defaultApp: data['defaultApp'] is bool? ? data['defaultApp'] as bool? : null,

@@ -1,0 +1,111 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/impeller/tools/args.gni")
+import("//flutter/impeller/tools/compiler.gni")
+import("//flutter/impeller/tools/embed_blob.gni")
+import("//flutter/impeller/tools/malioc.gni")
+import("//flutter/impeller/tools/shader_archive.gni")
+
+template("impeller_shaders_gles") {
+  assert(defined(invoker.shaders), "Impeller shaders must be specified.")
+  assert(defined(invoker.name), "Name of the shader library must be specified.")
+  assert(defined(invoker.analyze), "Whether to analyze must be specified.")
+
+  require_framebuffer_fetch = false
+  if (defined(invoker.require_framebuffer_fetch) &&
+      invoker.require_framebuffer_fetch) {
+    require_framebuffer_fetch = invoker.require_framebuffer_fetch
+  }
+
+  is_300 = defined(invoker.is_300) && invoker.is_300
+
+  shaders_base_name = string_join("",
+                                  [
+                                    invoker.name,
+                                    "_shaders_gles",
+                                  ])
+  impellerc_gles = "impellerc_$target_name"
+  impellerc(impellerc_gles) {
+    shaders = invoker.shaders
+    sl_file_extension = "gles"
+    require_framebuffer_fetch = require_framebuffer_fetch
+    if (defined(invoker.gles_language_version)) {
+      gles_language_version = invoker.gles_language_version
+    }
+
+    # Metal reflectors generate a superset of information.
+    if (impeller_enable_metal || impeller_enable_vulkan) {
+      if (is_300) {
+        intermediates_subdir = "gles3"
+      } else {
+        intermediates_subdir = "gles"
+      }
+    }
+    shader_target_flags = [ "--opengl-es" ]
+
+    defines = [ "IMPELLER_TARGET_OPENGLES" ]
+    if (is_300) {
+      defines += [ "IMPELLER_TARGET_OPENGLES3" ]
+    }
+  }
+
+  gles_shaders =
+      filter_include(get_target_outputs(":$impellerc_gles"), [ "*.gles" ])
+
+  if (invoker.analyze) {
+    analyze_lib = "analyze_$target_name"
+    malioc_analyze_shaders(analyze_lib) {
+      shaders = gles_shaders
+      if (defined(invoker.gles_language_version)) {
+        gles_language_version = invoker.gles_language_version
+      }
+      deps = [ ":$impellerc_gles" ]
+    }
+  }
+
+  gles_lib = "genlib_$target_name"
+  shader_archive(gles_lib) {
+    shaders = gles_shaders
+    deps = [ ":$impellerc_gles" ]
+  }
+
+  reflect_gles = "reflect_$target_name"
+  impellerc_reflect(reflect_gles) {
+    impellerc_invocation = ":$impellerc_gles"
+  }
+
+  embed_gles_lib = "embed_$target_name"
+  if (is_300) {
+    embed_blob(embed_gles_lib) {
+      gles_library_files = get_target_outputs(":$gles_lib")
+      symbol_name = shaders_base_name + "3"
+      blob = gles_library_files[0]
+      hdr = "$target_gen_dir/gles3/$shaders_base_name.h"
+      cc = "$target_gen_dir/gles3/$shaders_base_name.cc"
+      deps = [ ":$gles_lib" ]
+    }
+  } else {
+    embed_blob(embed_gles_lib) {
+      gles_library_files = get_target_outputs(":$gles_lib")
+      symbol_name = shaders_base_name
+      blob = gles_library_files[0]
+      hdr = "$target_gen_dir/gles/$shaders_base_name.h"
+      cc = "$target_gen_dir/gles/$shaders_base_name.cc"
+      deps = [ ":$gles_lib" ]
+    }
+  }
+
+  group(target_name) {
+    public_deps = [ ":$embed_gles_lib" ]
+
+    if (invoker.analyze) {
+      public_deps += [ ":$analyze_lib" ]
+    }
+
+    if (!impeller_enable_metal && !impeller_enable_vulkan) {
+      public_deps += [ ":$reflect_gles" ]
+    }
+  }
+}

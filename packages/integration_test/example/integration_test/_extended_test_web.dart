@@ -36,9 +36,7 @@ void main() {
       // could look up environment variables in this test that were passed to
       // the run command via `--dart-define=`, and then pass the values to the
       // [integrationDriver.onScreenshot] handler through this 'args' map.
-      <String, Object?>{
-        'someArgumentKey': 'someArgumentValue',
-      },
+      <String, Object?>{'someArgumentKey': 'someArgumentValue'},
     );
 
     // Verify that platform is retrieved.
@@ -46,8 +44,7 @@ void main() {
       find.byWidgetPredicate(
         (Widget widget) =>
             widget is Text &&
-            widget.data!
-                .startsWith('Platform: ${web.window.navigator.platform}\n'),
+            widget.data!.startsWith('Platform: ${web.window.navigator.platform}\n'),
       ),
       findsOneWidget,
     );
@@ -72,9 +69,7 @@ void main() {
       // could look up environment variables in this test that were passed to
       // the run command via `--dart-define=`, and then pass the values to the
       // [integrationDriver.onScreenshot] handler through this 'args' map.
-      <String, Object?>{
-        'someArgumentKey': 'someArgumentValue',
-      },
+      <String, Object?>{'someArgumentKey': 'someArgumentValue'},
     );
   });
 }

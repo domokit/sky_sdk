@@ -1,0 +1,31 @@
+# Copyright 2019 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/esbuild/esbuild.gni")
+import("//flutter/shell/version/version.gni")
+import("sources.gni")
+
+group("flutter_js") {
+  public_deps = [
+    ":flutter_js_bundle",
+    ":flutter_js_sources",
+  ]
+}
+
+copy("flutter_js_sources") {
+  sources = flutter_js_source_list
+  outputs =
+      [ "$root_out_dir/flutter_web_sdk/flutter_js/{{source_target_relative}}" ]
+}
+
+esbuild("flutter_js_bundle") {
+  entry_point = "$root_out_dir/flutter_web_sdk/flutter_js/src/flutter.js"
+  output_bundle = "$root_out_dir/flutter_web_sdk/flutter_js"
+
+  bundle = true
+  minify = true
+  sourcemap = true
+
+  public_deps = [ ":flutter_js_sources" ]
+}

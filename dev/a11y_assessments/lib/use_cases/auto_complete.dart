@@ -25,17 +25,14 @@ class _MainWidget extends StatefulWidget {
 }
 
 class _MainWidgetState extends State<_MainWidget> {
-  static const List<String> _kOptions = <String>[
-    'apple',
-    'banana',
-    'lemon',
-  ];
+  static const List<String> _kOptions = <String>['apple', 'banana', 'lemon'];
 
   static Widget _fieldViewBuilder(
-      BuildContext context,
-      TextEditingController textEditingController,
-      FocusNode focusNode,
-      VoidCallback onFieldSubmitted) {
+    BuildContext context,
+    TextEditingController textEditingController,
+    FocusNode focusNode,
+    VoidCallback onFieldSubmitted,
+  ) {
     return TextFormField(
       focusNode: focusNode,
       controller: textEditingController,
@@ -58,8 +55,7 @@ class _MainWidgetState extends State<_MainWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-                'Type below to autocomplete the following possible results: $_kOptions.'),
+            Text('Type below to autocomplete the following possible results: $_kOptions.'),
             Autocomplete<String>(
               optionsBuilder: (TextEditingValue textEditingValue) {
                 if (textEditingValue.text == '') {

@@ -5,6 +5,7 @@
 /// @docImport 'package:flutter/rendering.dart';
 /// @docImport 'package:flutter/widgets.dart';
 library;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 
@@ -112,14 +113,14 @@ class MouseTrackerAnnotation with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(FlagsSummary<Function?>(
-      'callbacks',
-      <String, Function?> {
+    properties.add(
+      FlagsSummary<Function?>('callbacks', <String, Function?>{
         'enter': onEnter,
         'exit': onExit,
-      },
-      ifEmpty: '<none>',
-    ));
-    properties.add(DiagnosticsProperty<MouseCursor>('cursor', cursor, defaultValue: MouseCursor.defer));
+      }, ifEmpty: '<none>'),
+    );
+    properties.add(
+      DiagnosticsProperty<MouseCursor>('cursor', cursor, defaultValue: MouseCursor.defer),
+    );
   }
 }

@@ -1,0 +1,64 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/compiled_action.gni")
+import("//flutter/impeller/tools/impeller.gni")
+import("//flutter/testing/testing.gni")
+
+if (enable_unittests) {
+  test_shaders = [
+    "10_fract.frag",
+    "11_radians.frag",
+    "12_degrees.frag",
+    "13_sin.frag",
+    "14_cos.frag",
+    "15_tan.frag",
+    "16_asin.frag",
+    "17_acos.frag",
+    "18_atan.frag",
+    "25_atan2.frag",
+    "26_pow.frag",
+    "27_exp.frag",
+    "28_log.frag",
+    "29_exp2.frag",
+    "30_log2.frag",
+    "31_sqrt.frag",
+    "32_inversesqrt.frag",
+    "37_fmin.frag",
+    "40_fmax.frag",
+    "43_fclamp.frag",
+    "46_fmix.frag",
+    "48_step.frag",
+    "49_smoothstep.frag",
+    "4_abs.frag",
+    "66_length.frag",
+    "67_distance.frag",
+    "68_cross.frag",
+    "69_normalize.frag",
+    "6_sign.frag",
+    "70_faceforward.frag",
+    "71_reflect.frag",
+    "8_floor.frag",
+    "9_ceil.frag",
+  ]
+
+  group("supported_glsl_op_shaders") {
+    testonly = true
+    deps = [ ":fixtures" ]
+  }
+
+  impellerc("compile_supported_glsl_shaders") {
+    shaders = test_shaders
+    shader_target_flags = [ "--sksl" ]
+    intermediates_subdir = "iplr"
+    sl_file_extension = "iplr"
+    iplr = true
+  }
+
+  test_fixtures("fixtures") {
+    deps = [ ":compile_supported_glsl_shaders" ]
+    fixtures = get_target_outputs(":compile_supported_glsl_shaders")
+    dest = "$root_gen_dir/flutter/lib/ui"
+  }
+}

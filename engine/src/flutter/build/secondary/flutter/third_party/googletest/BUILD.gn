@@ -1,0 +1,96 @@
+# Copyright 2018 The Fuchsia Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+if (is_fuchsia) {
+  import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+}
+
+config("gtest_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [ "googletest" ]
+}
+
+config("gtest_config") {
+  include_dirs = [ "googletest/include" ]
+}
+
+static_library("gtest") {
+  testonly = true
+  public = [
+    "googletest/include/gtest/gtest-spi.h",
+    "googletest/include/gtest/gtest.h",
+    "googletest/include/gtest/gtest_prod.h",
+  ]
+
+  # Only add the "*-all.cc" files (and no headers) to improve maintainability
+  # from upstream refactoring. The "*-all.cc" files include the respective
+  # source files.
+  sources = [ "googletest/src/gtest-all.cc" ]
+
+  public_configs = [ ":gtest_config" ]
+  configs += [ ":gtest_private_config" ]
+
+  if (is_fuchsia) {
+    if (using_fuchsia_sdk) {
+      deps = [
+        "${fuchsia_sdk}/pkg/fdio",
+        "${fuchsia_sdk}/pkg/zx",
+      ]
+    } else {
+      deps = [
+        "//zircon/public/lib/fdio",
+        "//zircon/public/lib/zx",
+      ]
+    }
+  }
+}
+
+# Library that defines the FRIEND_TEST macro.
+source_set("gtest_prod") {
+  testonly = false
+  public = [ "googletest/include/gtest/gtest_prod.h" ]
+  public_configs = [ ":gtest_config" ]
+}
+
+static_library("gtest_main") {
+  testonly = true
+  sources = [ "googletest/src/gtest_main.cc" ]
+  public_deps = [ ":gtest" ]
+}
+
+config("gmock_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [ "googlemock" ]
+}
+
+config("gmock_config") {
+  include_dirs = [ "googlemock/include" ]
+
+  cflags_cc = [
+    # The MOCK_METHODn() macros do not specify "override", which triggers this
+    # warning in users: "error: 'Method' overrides a member function but is not
+    # marked 'override' [-Werror,-Winconsistent-missing-override]". Suppress
+    # these warnings until https://github.com/google/googletest/issues/533 is
+    # fixed.
+    "-Wno-inconsistent-missing-override",
+  ]
+}
+
+static_library("gmock") {
+  testonly = true
+  public = [ "googlemock/include/gmock/gmock.h" ]
+  sources = [ "googlemock/src/gmock-all.cc" ]
+  public_configs = [ ":gmock_config" ]
+  configs += [ ":gmock_private_config" ]
+  deps = [ ":gtest" ]
+}
+
+static_library("gmock_main") {
+  testonly = true
+  sources = [ "googlemock/src/gmock_main.cc" ]
+  public_deps = [
+    ":gmock",
+    ":gtest",
+  ]
+}

@@ -17,9 +17,7 @@ class ShortcutsExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('Shortcuts Sample')),
-        body: const Center(
-          child: ShortcutsExample(),
-        ),
+        body: const Center(child: ShortcutsExample()),
       ),
     );
   }

@@ -8,18 +8,13 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('OverflowBar displays buttons', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.OverflowBarExampleApp(),
-    );
+    await tester.pumpWidget(const example.OverflowBarExampleApp());
 
     // Creates a finder that matches widgets of the given
     // `widgetType`, ensuring that the given widgets exist
     // inside of an OverflowBar.
     Finder buttonsFinder(Type widgetType) {
-      return find.descendant(
-        of: find.byType(OverflowBar),
-        matching: find.byType(widgetType),
-      );
+      return find.descendant(of: find.byType(OverflowBar), matching: find.byType(widgetType));
     }
 
     expect(buttonsFinder(TextButton), findsNWidgets(2));

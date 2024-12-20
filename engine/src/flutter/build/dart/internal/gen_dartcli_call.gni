@@ -1,0 +1,54 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/dart.gni")
+import("//flutter/build/dart/internal/gen_executable_call.gni")
+import("//flutter/common/config.gni")
+
+# Generates an executable that runs `dart` with a command and set of arguments.
+#
+# Parameters:
+#   args (optional):
+#     Arguments to pass to the Dart CLI.
+#
+#   cwd (optional):
+#     The working directory for the command.
+#
+#   output (optional):
+#     Overrides the full output path.
+#     Defaults to $root_out_dir/gen/$target_path/$target_name; for example
+#     //flutter/foo/bar emits a binary at out/{variant}/gen/flutter/foo/bar.
+template("gen_dartcli_call") {
+  # Build a reference to the Dart CLI (depending on prebuilt or source).
+  ext = ""
+  if (is_win) {
+    ext = ".exe"
+  }
+  if (flutter_prebuilt_dart_sdk) {
+    dart = rebase_path("$host_prebuilt_dart_sdk/bin/dart$ext")
+  } else {
+    dart = rebase_path("$root_out_dir/dart-sdk/bin/dart$ext")
+  }
+
+  # Add default arguments to the Dart CLI.
+  # TODO(https://github.com/flutter/flutter/issues/156171): --suppress-analytics
+  dart_args = []
+  if (defined(invoker.args)) {
+    dart_args += invoker.args
+  }
+
+  # Actually generate the shell script.
+  gen_executable_call(target_name) {
+    command = rebase_path(dart)
+    args = dart_args
+    forward_variables_from(invoker,
+                           [
+                             "cwd",
+                             "output",
+                             "metadata",
+                             "testonly",
+                             "visibility",
+                           ])
+  }
+}

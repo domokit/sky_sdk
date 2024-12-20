@@ -3,32 +3,21 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
-import 'package:flutter_api_samples/widgets/shortcuts/callback_shortcuts.0.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/shortcuts/callback_shortcuts.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Verify correct labels are displayed', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.CallbackShortcutsApp(),
-    );
+    await tester.pumpWidget(const example.CallbackShortcutsApp());
 
     expect(find.text('CallbackShortcuts Sample'), findsOneWidget);
-    expect(
-      find.text('Press the up arrow key to add to the counter'),
-      findsOneWidget,
-    );
-    expect(
-      find.text('Press the down arrow key to subtract from the counter'),
-      findsOneWidget,
-    );
+    expect(find.text('Press the up arrow key to add to the counter'), findsOneWidget);
+    expect(find.text('Press the down arrow key to subtract from the counter'), findsOneWidget);
     expect(find.text('count: 0'), findsOneWidget);
   });
 
   testWidgets('Up and down arrow press updates counter', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.CallbackShortcutsApp(),
-    );
+    await tester.pumpWidget(const example.CallbackShortcutsApp());
 
     int counter = 0;
 

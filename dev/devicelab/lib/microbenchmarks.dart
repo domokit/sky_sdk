@@ -37,57 +37,53 @@ Future<Map<String, double>> readJsonResults(Process process) {
       .transform<String>(const Utf8Decoder())
       .transform<String>(const LineSplitter())
       .listen((String line) async {
-    print('[STDOUT] $line');
+        print('[STDOUT] $line');
 
-    if (line.contains(jsonStart)) {
-      jsonStarted = true;
-      return;
-    }
+        if (line.contains(jsonStart)) {
+          jsonStarted = true;
+          return;
+        }
 
-    if (line.contains(testComplete)) {
-      processWasKilledIntentionally = true;
-      // Sending a SIGINT/SIGTERM to the process here isn't reliable because [process] is
-      // the shell (flutter is a shell script) and doesn't pass the signal on.
-      // Sending a `q` is an instruction to quit using the console runner.
-      // See https://github.com/flutter/flutter/issues/19208
-      process.stdin.write('q');
-      await process.stdin.flush();
-      // Give the process a couple of seconds to exit and run shutdown hooks
-      // before sending kill signal.
-      // TODO(fujino): https://github.com/flutter/flutter/issues/134566
-      await Future<void>.delayed(const Duration(seconds: 2));
-      // Also send a kill signal in case the `q` above didn't work.
-      process.kill(ProcessSignal.sigint);
-      try {
-        final Map<String, double> results =
-            Map<String, double>.from(<String, dynamic>{
-          for (final String data in collectedJson)
-            ...json.decode(data) as Map<String, dynamic>
-        });
-        completer.complete(results);
-      } catch (ex) {
-        completer.completeError(
-            'Decoding JSON failed ($ex). JSON strings where: $collectedJson');
-      }
-      return;
-    }
+        if (line.contains(testComplete)) {
+          processWasKilledIntentionally = true;
+          // Sending a SIGINT/SIGTERM to the process here isn't reliable because [process] is
+          // the shell (flutter is a shell script) and doesn't pass the signal on.
+          // Sending a `q` is an instruction to quit using the console runner.
+          // See https://github.com/flutter/flutter/issues/19208
+          process.stdin.write('q');
+          await process.stdin.flush();
+          // Give the process a couple of seconds to exit and run shutdown hooks
+          // before sending kill signal.
+          // TODO(fujino): https://github.com/flutter/flutter/issues/134566
+          await Future<void>.delayed(const Duration(seconds: 2));
+          // Also send a kill signal in case the `q` above didn't work.
+          process.kill(ProcessSignal.sigint);
+          try {
+            final Map<String, double> results = Map<String, double>.from(<String, dynamic>{
+              for (final String data in collectedJson) ...json.decode(data) as Map<String, dynamic>,
+            });
+            completer.complete(results);
+          } catch (ex) {
+            completer.completeError(
+              'Decoding JSON failed ($ex). JSON strings where: $collectedJson',
+            );
+          }
+          return;
+        }
 
-    if (jsonStarted && line.contains(jsonEnd)) {
-      collectedJson.add(jsonBuf.toString().trim());
-      jsonBuf.clear();
-      jsonStarted = false;
-    }
+        if (jsonStarted && line.contains(jsonEnd)) {
+          collectedJson.add(jsonBuf.toString().trim());
+          jsonBuf.clear();
+          jsonStarted = false;
+        }
 
-    if (jsonStarted && line.contains(jsonPrefix)) {
-      jsonBuf.writeln(line.substring(line.indexOf(jsonPrefix) + jsonPrefix.length));
-    }
-  });
+        if (jsonStarted && line.contains(jsonPrefix)) {
+          jsonBuf.writeln(line.substring(line.indexOf(jsonPrefix) + jsonPrefix.length));
+        }
+      });
 
   process.exitCode.then<void>((int code) async {
-    await Future.wait<void>(<Future<void>>[
-      stdoutSub.cancel(),
-      stderrSub.cancel(),
-    ]);
+    await Future.wait<void>(<Future<void>>[stdoutSub.cancel(), stderrSub.cancel()]);
     if (!processWasKilledIntentionally && code != 0) {
       completer.completeError('flutter run failed: exit code=$code');
     }

@@ -1,0 +1,63 @@
+# A YAML format of https://clang.llvm.org/extra/clang-tidy/.
+
+# Prefix check with "-" to ignore.
+Checks: >-
+  bugprone-argument-comment,
+  bugprone-use-after-move,
+  bugprone-unchecked-optional-access,
+  clang-analyzer-*,
+  clang-diagnostic-*,
+  darwin-*,
+  google-*,
+  modernize-use-default-member-init,
+  objc-*,
+  -objc-nsinvocation-argument-lifetime,
+  readability-identifier-naming,
+  -google-build-using-namespace,
+  -google-default-arguments,
+  -google-objc-global-variable-declaration,
+  -google-objc-avoid-throwing-exception,
+  -clang-analyzer-nullability.NullPassedToNonnull,
+  -clang-analyzer-nullability.NullablePassedToNonnull,
+  -clang-analyzer-nullability.NullReturnedFromNonnull,
+  -clang-analyzer-nullability.NullableReturnedFromNonnull,
+  -clang-analyzer-nullability.NullableDereferenced,
+  performance-for-range-copy,
+  performance-inefficient-vector-operation,
+  performance-move-const-arg,
+  performance-move-constructor-init,
+  performance-unnecessary-copy-initialization,
+  performance-unnecessary-value-param
+
+CheckOptions:
+  - key: modernize-use-default-member-init.UseAssignment
+    value: true
+  - key: readability-identifier-naming.EnumConstantCase
+    value: "CamelCase"
+  - key: readability-identifier-naming.EnumConstantPrefix
+    value: "k"
+  - key: readability-identifier-naming.GlobalConstantCase
+    value: "CamelCase"
+  - key: readability-identifier-naming.GlobalConstantPrefix
+    value: "k"
+  - key: readability-identifier-naming.PrivateMemberCase
+    value: "lower_case"
+  - key: readability-identifier-naming.PrivateMemberSuffix
+    value: "_"
+
+# Intended to include (lint) all headers except:
+# ... those in ../../gen (generated files don't need to follow clang tidy)
+# ... those in flutter/third_party (we didn't author this code, it's a dep)
+#
+# Unfortunately Clang Tidy uses an ancient version of regular expressions
+# without lookaheads, so the next best thing is to write out every directory
+# except third_party.
+#
+# If we ever add a new root directory, we'll have to update this expression.
+#
+# See the test in ./tools/clang_tidy/test/header_filter_regex_test.dart which
+# should theoretically catch if new directories are added but this regex is not
+# updated.
+#
+# tl;dr: I'm sorry.
+HeaderFilterRegex: "[..\/]+\/flutter\/(assets|benchmarking|bin|build|ci|common|display_list|docs|examples|flow|flutter_frontend_server|flutter_vma|fml|impeller|lib|runtime|shell|skia|sky|testing|tools|vulkan|wasm|web_sdk)\/.*"

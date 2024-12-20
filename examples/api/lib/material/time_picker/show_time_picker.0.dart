@@ -178,10 +178,7 @@ class _TimePickerOptionsState extends State<TimePickerOptions> {
                   value: widget.useMaterial3,
                   onChanged: widget.setUseMaterial3,
                   title: 'Material Version',
-                  choiceLabels: const <bool, String>{
-                    false: 'Material 2',
-                    true: 'Material 3',
-                  },
+                  choiceLabels: const <bool, String>{false: 'Material 2', true: 'Material 3'},
                 ),
               ],
             ),
@@ -208,15 +205,13 @@ class _TimePickerOptionsState extends State<TimePickerOptions> {
                           // rarely necessary, because the default values are
                           // usually used as-is.
                           return Theme(
-                            data: Theme.of(context).copyWith(
-                              materialTapTargetSize: tapTargetSize,
-                            ),
+                            data: Theme.of(context).copyWith(materialTapTargetSize: tapTargetSize),
                             child: Directionality(
                               textDirection: textDirection,
                               child: MediaQuery(
-                                data: MediaQuery.of(context).copyWith(
-                                  alwaysUse24HourFormat: use24HourTime,
-                                ),
+                                data: MediaQuery.of(
+                                  context,
+                                ).copyWith(alwaysUse24HourFormat: use24HourTime),
                                 child: child!,
                               ),
                             ),
@@ -269,10 +264,7 @@ class ChoiceCard<T extends Object?> extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(title),
-                ),
+                Padding(padding: const EdgeInsets.all(8.0), child: Text(title)),
                 for (final T choice in choices)
                   RadioSelection<T>(
                     value: choice,
@@ -292,12 +284,7 @@ class ChoiceCard<T extends Object?> extends StatelessWidget {
 // This aggregates a ChoiceCard so that it presents a set of radio buttons for
 // the allowed enum values for the user to select from.
 class EnumCard<T extends Enum> extends StatelessWidget {
-  const EnumCard({
-    super.key,
-    required this.value,
-    required this.choices,
-    required this.onChanged,
-  });
+  const EnumCard({super.key, required this.value, required this.choices, required this.onChanged});
 
   final T value;
   final Iterable<T> choices;
@@ -306,13 +293,12 @@ class EnumCard<T extends Enum> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChoiceCard<T>(
-        value: value,
-        choices: choices,
-        onChanged: onChanged,
-        choiceLabels: <T, String>{
-          for (final T choice in choices) choice: choice.name,
-        },
-        title: value.runtimeType.toString());
+      value: value,
+      choices: choices,
+      onChanged: onChanged,
+      choiceLabels: <T, String>{for (final T choice in choices) choice: choice.name},
+      title: value.runtimeType.toString(),
+    );
   }
 }
 

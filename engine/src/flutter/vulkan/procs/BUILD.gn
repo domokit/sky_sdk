@@ -1,0 +1,21 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+source_set("procs") {
+  sources = [
+    "vulkan_handle.cc",
+    "vulkan_handle.h",
+    "vulkan_interface.cc",
+    "vulkan_interface.h",
+    "vulkan_proc_table.cc",
+    "vulkan_proc_table.h",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+
+  public_deps = [
+    "//flutter/fml",
+    "//flutter/third_party/vulkan-deps/vulkan-headers/src:vulkan_headers",
+  ]
+}

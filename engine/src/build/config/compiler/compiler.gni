@@ -1,0 +1,16 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This is a subset of Chromium's build/config/compiler/compiler.gni
+# required for compatibility with Chromium packages such as zlib.
+
+declare_args() {
+  build_with_chromium = false
+  use_libfuzzer = false
+  is_apple = is_ios || is_mac
+  use_thin_lto = false
+
+  # zlib uses this identifier
+  use_fuzzing_engine = false
+}

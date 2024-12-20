@@ -1,0 +1,11 @@
+# Copyright 2019 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This is a dummy implementation to satisfy the ANGLE build, using the no-op
+# implementation from the real (Chromium) fuzzer_test.gni.
+template("fuzzer_test") {
+  not_needed(invoker, "*")
+  group(target_name) {
+  }
+}

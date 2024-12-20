@@ -17,7 +17,8 @@ import 'analyze.dart';
 final AnalyzeRule protectPublicStateSubtypes = _ProtectPublicStateSubtypes();
 
 class _ProtectPublicStateSubtypes implements AnalyzeRule {
-  final Map<ResolvedUnitResult, List<MethodDeclaration>> _errors = <ResolvedUnitResult, List<MethodDeclaration>>{};
+  final Map<ResolvedUnitResult, List<MethodDeclaration>> _errors =
+      <ResolvedUnitResult, List<MethodDeclaration>>{};
 
   @override
   void applyTo(ResolvedUnitResult unit) {
@@ -35,15 +36,13 @@ class _ProtectPublicStateSubtypes implements AnalyzeRule {
       return;
     }
 
-    foundError(
-      <String>[
-        for (final MapEntry<ResolvedUnitResult, List<MethodDeclaration>> entry in _errors.entries)
-          for (final MethodDeclaration method in entry.value)
-            '${locationInFile(entry.key, method, workingDirectory)}: $method - missing "@protected" annotation.',
-        '\nPublic State subtypes should add @protected when overriding methods,',
-        'to avoid exposing internal logic to developers.',
-      ],
-    );
+    foundError(<String>[
+      for (final MapEntry<ResolvedUnitResult, List<MethodDeclaration>> entry in _errors.entries)
+        for (final MethodDeclaration method in entry.value)
+          '${locationInFile(entry.key, method, workingDirectory)}: $method - missing "@protected" annotation.',
+      '\nPublic State subtypes should add @protected when overriding methods,',
+      'to avoid exposing internal logic to developers.',
+    ]);
   }
 
   @override

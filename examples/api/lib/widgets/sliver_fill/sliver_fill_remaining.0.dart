@@ -29,21 +29,12 @@ class SliverFillRemainingExample extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: <Widget>[
-        SliverToBoxAdapter(
-          child: Container(
-            color: Colors.amber[300],
-            height: 150.0,
-          ),
-        ),
+        SliverToBoxAdapter(child: Container(color: Colors.amber[300], height: 150.0)),
         SliverFillRemaining(
           hasScrollBody: false,
           child: Container(
             color: Colors.blue[100],
-            child: Icon(
-              Icons.sentiment_very_satisfied,
-              size: 75,
-              color: Colors.blue[900],
-            ),
+            child: Icon(Icons.sentiment_very_satisfied, size: 75, color: Colors.blue[900]),
           ),
         ),
       ],

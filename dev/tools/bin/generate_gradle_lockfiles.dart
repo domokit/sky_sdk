@@ -18,23 +18,27 @@ import 'package:file/local.dart';
 import 'package:yaml/yaml.dart';
 
 void main(List<String> arguments) {
-  const String usageMessage = "If you don't wish to re-generate the "
+  const String usageMessage =
+      "If you don't wish to re-generate the "
       'settings.gradle, build.gradle, and gradle-wrapper.properties files,\n'
       'add the flag `--no-gradle-generation`.\n'
       'This tool automatically excludes a set of android subdirectories, '
       'defined at dev/tools/bin/config/lockfile_exclusion.yaml.\n'
       'To disable this behavior, run with `--no-exclusion`.\n';
 
-  final ArgParser argParser = ArgParser()
-    ..addFlag(
-      'gradle-generation',
-      help: 'Re-generate gradle files in each processed directory.',
-      defaultsTo: true,
-    )..addFlag(
-      'exclusion',
-      help: 'Run the script using the config file at ./configs/lockfile_exclusion.yaml to skip the specified subdirectories.',
-      defaultsTo: true,
-    );
+  final ArgParser argParser =
+      ArgParser()
+        ..addFlag(
+          'gradle-generation',
+          help: 'Re-generate gradle files in each processed directory.',
+          defaultsTo: true,
+        )
+        ..addFlag(
+          'exclusion',
+          help:
+              'Run the script using the config file at ./configs/lockfile_exclusion.yaml to skip the specified subdirectories.',
+          defaultsTo: true,
+        );
 
   ArgResults args;
   try {
@@ -55,17 +59,16 @@ void main(List<String> arguments) {
 
   const FileSystem fileSystem = LocalFileSystem();
 
-  final Directory repoRoot = (() {
-    final String repoRootPath = exec(
-      'git',
-      const <String>['rev-parse', '--show-toplevel'],
-    ).trim();
-    final Directory repoRoot = fileSystem.directory(repoRootPath);
-    if (!repoRoot.existsSync()) {
-      throw StateError("Expected $repoRoot to exist but it didn't!");
-    }
-    return repoRoot;
-  })();
+  final Directory repoRoot =
+      (() {
+        final String repoRootPath =
+            exec('git', const <String>['rev-parse', '--show-toplevel']).trim();
+        final Directory repoRoot = fileSystem.directory(repoRootPath);
+        if (!repoRoot.existsSync()) {
+          throw StateError("Expected $repoRoot to exist but it didn't!");
+        }
+        return repoRoot;
+      })();
 
   final Iterable<Directory> androidDirectories = discoverAndroidDirectories(repoRoot);
 
@@ -80,10 +83,9 @@ void main(List<String> arguments) {
   final Set<String> exclusionSet;
   if (useExclusion) {
     exclusionSet = HashSet<String>.from(
-        (loadYaml(exclusionFile.readAsStringSync()) as YamlList)
-            .toList()
-            .cast<String>()
-            .map((String s) => '${repoRoot.path}/$s')
+      (loadYaml(exclusionFile.readAsStringSync()) as YamlList).toList().cast<String>().map(
+        (String s) => '${repoRoot.path}/$s',
+      ),
     );
     print('Loaded exclusion file from ${exclusionFile.path}.');
   } else {
@@ -97,7 +99,9 @@ void main(List<String> arguments) {
     }
 
     if (exclusionSet.contains(androidDirectory.path)) {
-      print('${androidDirectory.path} is included in the exclusion config file at ${exclusionFile.path} - skipping');
+      print(
+        '${androidDirectory.path} is included in the exclusion config file at ${exclusionFile.path} - skipping',
+      );
       continue;
     }
 
@@ -117,7 +121,9 @@ void main(List<String> arguments) {
     } else if (androidDirectory.childFile('settings.gradle.kts').existsSync()) {
       settingsGradle = androidDirectory.childFile('settings.gradle.kts');
     } else {
-      print('${androidDirectory.childFile('settings.gradle').path}(.kts) does not exist - skipping');
+      print(
+        '${androidDirectory.childFile('settings.gradle').path}(.kts) does not exist - skipping',
+      );
       continue;
     }
 
@@ -145,15 +151,15 @@ void main(List<String> arguments) {
       continue;
     }
 
-    if (androidDirectory.parent.childFile('pubspec.yaml').readAsStringSync().contains('deferred-components')) {
+    if (androidDirectory.parent
+        .childFile('pubspec.yaml')
+        .readAsStringSync()
+        .contains('deferred-components')) {
       print('${rootBuildGradle.path} uses deferred components - skipping');
       continue;
     }
 
-    if (!androidDirectory.parent
-        .childDirectory('lib')
-        .childFile('main.dart')
-        .existsSync()) {
+    if (!androidDirectory.parent.childDirectory('lib').childFile('main.dart').existsSync()) {
       print('${rootBuildGradle.path} no main.dart under lib - skipping');
       continue;
     }
@@ -180,43 +186,29 @@ void main(List<String> arguments) {
     final String appDirectory = androidDirectory.parent.absolute.path;
 
     // Fetch pub dependencies.
-    final String flutterPath = repoRoot
-        .childDirectory('bin')
-        .childFile('flutter')
-        .path;
+    final String flutterPath = repoRoot.childDirectory('bin').childFile('flutter').path;
     exec(flutterPath, <String>['pub', 'get'], workingDirectory: appDirectory);
 
     // Verify that the Gradlew wrapper exists.
     final File gradleWrapper = androidDirectory.childFile('gradlew');
     // Generate Gradle wrapper if it doesn't exist.
     if (!gradleWrapper.existsSync()) {
-      exec(
-        flutterPath,
-        <String>['build', 'apk', '--config-only'],
-        workingDirectory: appDirectory,
-      );
+      exec(flutterPath, <String>['build', 'apk', '--config-only'], workingDirectory: appDirectory);
     }
 
     // Generate lock files.
-    exec(
-      gradleWrapper.absolute.path,
-      <String>[':generateLockfiles'],
-      workingDirectory: androidDirectory.absolute.path,
-    );
+    exec(gradleWrapper.absolute.path, <String>[
+      ':generateLockfiles',
+    ], workingDirectory: androidDirectory.absolute.path);
 
     print('Processed');
   }
 }
 
-String exec(
-  String cmd,
-  List<String> args, {
-  String? workingDirectory,
-}) {
+String exec(String cmd, List<String> args, {String? workingDirectory}) {
   final ProcessResult result = Process.runSync(cmd, args, workingDirectory: workingDirectory);
   if (result.exitCode != 0) {
-    throw ProcessException(
-        cmd, args, '${result.stdout}${result.stderr}', result.exitCode);
+    throw ProcessException(cmd, args, '${result.stdout}${result.stderr}', result.exitCode);
   }
   return result.stdout as String;
 }
@@ -311,7 +303,8 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-8.10.2-all.zip
 ''';
 
 Iterable<Directory> discoverAndroidDirectories(Directory repoRoot) {
-  return repoRoot.listSync(recursive: true)
+  return repoRoot
+      .listSync(recursive: true)
       .whereType<Directory>()
       .where((FileSystemEntity entity) => entity.basename == 'android');
 }

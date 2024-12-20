@@ -82,9 +82,7 @@ class TimelineSummary {
   /// This does not take into account the real device frame rate. Prefer using
   /// [computePercentileFrameBuildTimeMillis] for evaluating performance.
   int computeMissedFrameBuildBudgetCount() {
-    return _extractFrameDurations()
-        .where((Duration duration) => duration > kBuildBudget)
-        .length;
+    return _extractFrameDurations().where((Duration duration) => duration > kBuildBudget).length;
   }
 
   /// Average amount of time spent per frame in the engine rasterizer.
@@ -275,8 +273,11 @@ class TimelineSummary {
     final Map<String, dynamic> profilingSummary = _profilingSummarizer().summarize();
     final RasterCacheSummarizer rasterCacheSummarizer = _rasterCacheSummarizer();
     final GCSummarizer gcSummarizer = _gcSummarizer();
-    final RefreshRateSummary refreshRateSummary = RefreshRateSummary(vsyncEvents: _extractNamedEvents(kUIThreadVsyncProcessEvent));
-    final FrameRequestPendingLatencySummarizer frameRequestPendingLatencySummarizer = _frameRequestPendingLatencySummarizer();
+    final RefreshRateSummary refreshRateSummary = RefreshRateSummary(
+      vsyncEvents: _extractNamedEvents(kUIThreadVsyncProcessEvent),
+    );
+    final FrameRequestPendingLatencySummarizer frameRequestPendingLatencySummarizer =
+        _frameRequestPendingLatencySummarizer();
     final GpuSumarizer gpuSummarizer = _gpuSumarizer();
     final GPUMemorySumarizer memorySumarizer = _memorySummarizer();
 
@@ -288,50 +289,80 @@ class TimelineSummary {
       'missed_frame_build_budget_count': computeMissedFrameBuildBudgetCount(),
       'average_frame_rasterizer_time_millis': computeAverageFrameRasterizerTimeMillis(),
       'stddev_frame_rasterizer_time_millis': computeStandardDeviationFrameRasterizerTimeMillis(),
-      '90th_percentile_frame_rasterizer_time_millis': computePercentileFrameRasterizerTimeMillis(90.0),
-      '99th_percentile_frame_rasterizer_time_millis': computePercentileFrameRasterizerTimeMillis(99.0),
+      '90th_percentile_frame_rasterizer_time_millis': computePercentileFrameRasterizerTimeMillis(
+        90.0,
+      ),
+      '99th_percentile_frame_rasterizer_time_millis': computePercentileFrameRasterizerTimeMillis(
+        99.0,
+      ),
       'worst_frame_rasterizer_time_millis': computeWorstFrameRasterizerTimeMillis(),
       'missed_frame_rasterizer_budget_count': computeMissedFrameRasterizerBudgetCount(),
       'frame_count': countFrames(),
       'frame_rasterizer_count': countRasterizations(),
       'new_gen_gc_count': newGenerationGarbageCollections(),
       'old_gen_gc_count': oldGenerationGarbageCollections(),
-      'frame_build_times': _extractFrameDurations()
-          .map<int>((Duration duration) => duration.inMicroseconds)
-          .toList(),
-      'frame_rasterizer_times': _extractGpuRasterizerDrawDurations()
-          .map<int>((Duration duration) => duration.inMicroseconds)
-          .toList(),
-      'frame_begin_times': _extractBeginTimestamps(kBuildFrameEventName)
-          .map<int>((Duration duration) => duration.inMicroseconds)
-          .toList(),
-      'frame_rasterizer_begin_times': _extractBeginTimestamps(kRasterizeFrameEventName)
-          .map<int>((Duration duration) => duration.inMicroseconds)
-          .toList(),
-      'average_vsync_transitions_missed': sceneDisplayLagSummarizer.computeAverageVsyncTransitionsMissed(),
-      '90th_percentile_vsync_transitions_missed': sceneDisplayLagSummarizer.computePercentileVsyncTransitionsMissed(90.0),
-      '99th_percentile_vsync_transitions_missed': sceneDisplayLagSummarizer.computePercentileVsyncTransitionsMissed(99.0),
+      'frame_build_times':
+          _extractFrameDurations()
+              .map<int>((Duration duration) => duration.inMicroseconds)
+              .toList(),
+      'frame_rasterizer_times':
+          _extractGpuRasterizerDrawDurations()
+              .map<int>((Duration duration) => duration.inMicroseconds)
+              .toList(),
+      'frame_begin_times':
+          _extractBeginTimestamps(
+            kBuildFrameEventName,
+          ).map<int>((Duration duration) => duration.inMicroseconds).toList(),
+      'frame_rasterizer_begin_times':
+          _extractBeginTimestamps(
+            kRasterizeFrameEventName,
+          ).map<int>((Duration duration) => duration.inMicroseconds).toList(),
+      'average_vsync_transitions_missed':
+          sceneDisplayLagSummarizer.computeAverageVsyncTransitionsMissed(),
+      '90th_percentile_vsync_transitions_missed': sceneDisplayLagSummarizer
+          .computePercentileVsyncTransitionsMissed(90.0),
+      '99th_percentile_vsync_transitions_missed': sceneDisplayLagSummarizer
+          .computePercentileVsyncTransitionsMissed(99.0),
       'average_vsync_frame_lag': vsyncFrameLagSummarizer.computeAverageVsyncFrameLag(),
-      '90th_percentile_vsync_frame_lag': vsyncFrameLagSummarizer.computePercentileVsyncFrameLag(90.0),
-      '99th_percentile_vsync_frame_lag': vsyncFrameLagSummarizer.computePercentileVsyncFrameLag(99.0),
+      '90th_percentile_vsync_frame_lag': vsyncFrameLagSummarizer.computePercentileVsyncFrameLag(
+        90.0,
+      ),
+      '99th_percentile_vsync_frame_lag': vsyncFrameLagSummarizer.computePercentileVsyncFrameLag(
+        99.0,
+      ),
       'average_layer_cache_count': rasterCacheSummarizer.computeAverageLayerCount(),
       '90th_percentile_layer_cache_count': rasterCacheSummarizer.computePercentileLayerCount(90.0),
       '99th_percentile_layer_cache_count': rasterCacheSummarizer.computePercentileLayerCount(99.0),
-      'average_frame_request_pending_latency': frameRequestPendingLatencySummarizer.computeAverageFrameRequestPendingLatency(),
-      '90th_percentile_frame_request_pending_latency': frameRequestPendingLatencySummarizer.computePercentileFrameRequestPendingLatency(90.0),
-      '99th_percentile_frame_request_pending_latency': frameRequestPendingLatencySummarizer.computePercentileFrameRequestPendingLatency(99.0),
+      'average_frame_request_pending_latency':
+          frameRequestPendingLatencySummarizer.computeAverageFrameRequestPendingLatency(),
+      '90th_percentile_frame_request_pending_latency': frameRequestPendingLatencySummarizer
+          .computePercentileFrameRequestPendingLatency(90.0),
+      '99th_percentile_frame_request_pending_latency': frameRequestPendingLatencySummarizer
+          .computePercentileFrameRequestPendingLatency(99.0),
       'worst_layer_cache_count': rasterCacheSummarizer.computeWorstLayerCount(),
       'average_layer_cache_memory': rasterCacheSummarizer.computeAverageLayerMemory(),
-      '90th_percentile_layer_cache_memory': rasterCacheSummarizer.computePercentileLayerMemory(90.0),
-      '99th_percentile_layer_cache_memory': rasterCacheSummarizer.computePercentileLayerMemory(99.0),
+      '90th_percentile_layer_cache_memory': rasterCacheSummarizer.computePercentileLayerMemory(
+        90.0,
+      ),
+      '99th_percentile_layer_cache_memory': rasterCacheSummarizer.computePercentileLayerMemory(
+        99.0,
+      ),
       'worst_layer_cache_memory': rasterCacheSummarizer.computeWorstLayerMemory(),
       'average_picture_cache_count': rasterCacheSummarizer.computeAveragePictureCount(),
-      '90th_percentile_picture_cache_count': rasterCacheSummarizer.computePercentilePictureCount(90.0),
-      '99th_percentile_picture_cache_count': rasterCacheSummarizer.computePercentilePictureCount(99.0),
+      '90th_percentile_picture_cache_count': rasterCacheSummarizer.computePercentilePictureCount(
+        90.0,
+      ),
+      '99th_percentile_picture_cache_count': rasterCacheSummarizer.computePercentilePictureCount(
+        99.0,
+      ),
       'worst_picture_cache_count': rasterCacheSummarizer.computeWorstPictureCount(),
       'average_picture_cache_memory': rasterCacheSummarizer.computeAveragePictureMemory(),
-      '90th_percentile_picture_cache_memory': rasterCacheSummarizer.computePercentilePictureMemory(90.0),
-      '99th_percentile_picture_cache_memory': rasterCacheSummarizer.computePercentilePictureMemory(99.0),
+      '90th_percentile_picture_cache_memory': rasterCacheSummarizer.computePercentilePictureMemory(
+        90.0,
+      ),
+      '99th_percentile_picture_cache_memory': rasterCacheSummarizer.computePercentilePictureMemory(
+        99.0,
+      ),
       'worst_picture_cache_memory': rasterCacheSummarizer.computeWorstPictureMemory(),
       'total_ui_gc_time': gcSummarizer.totalGCTimeMillis,
       '30hz_frame_percentage': refreshRateSummary.percentageOf30HzFrames,
@@ -375,7 +406,11 @@ class TimelineSummary {
     await file.writeAsString(_encodeJson(_timeline.json, pretty));
 
     if (includeSummary) {
-      await _writeSummaryToFile(traceName, destinationDirectory: destinationDirectory, pretty: pretty);
+      await _writeSummaryToFile(
+        traceName,
+        destinationDirectory: destinationDirectory,
+        pretty: pretty,
+      );
     }
   }
 
@@ -390,21 +425,15 @@ class TimelineSummary {
   }
 
   String _encodeJson(Map<String, dynamic> jsonObject, bool pretty) {
-    return pretty
-      ? _prettyEncoder.convert(jsonObject)
-      : json.encode(jsonObject);
+    return pretty ? _prettyEncoder.convert(jsonObject) : json.encode(jsonObject);
   }
 
   List<TimelineEvent> _extractNamedEvents(String name) {
-    return _timeline.events!
-      .where((TimelineEvent event) => event.name == name)
-      .toList();
+    return _timeline.events!.where((TimelineEvent event) => event.name == name).toList();
   }
 
   List<TimelineEvent> _extractEventsWithNames(Set<String> names) {
-    return _timeline.events!
-      .where((TimelineEvent event) => names.contains(event.name))
-      .toList();
+    return _timeline.events!.where((TimelineEvent event) => names.contains(event.name)).toList();
   }
 
   List<Duration> _extractDurations(
@@ -441,21 +470,18 @@ class TimelineSummary {
   /// See [SceneDisplayLagSummarizer].
   /// See: https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU
   List<Duration> _extractBeginEndEvents(String name) {
-    return _extractDurations(
-      name,
-      (TimelineEvent beginEvent, TimelineEvent endEvent) {
-        return Duration(microseconds: endEvent.timestampMicros! - beginEvent.timestampMicros!);
-      },
-    );
+    return _extractDurations(name, (TimelineEvent beginEvent, TimelineEvent endEvent) {
+      return Duration(microseconds: endEvent.timestampMicros! - beginEvent.timestampMicros!);
+    });
   }
 
   List<Duration> _extractBeginTimestamps(String name) {
-    final List<Duration> result = _extractDurations(
-      name,
-      (TimelineEvent beginEvent, TimelineEvent endEvent) {
-        return Duration(microseconds: beginEvent.timestampMicros!);
-      },
-    );
+    final List<Duration> result = _extractDurations(name, (
+      TimelineEvent beginEvent,
+      TimelineEvent endEvent,
+    ) {
+      return Duration(microseconds: beginEvent.timestampMicros!);
+    });
 
     // Align timestamps so the first event is at 0.
     for (int i = result.length - 1; i >= 0; i -= 1) {
@@ -468,7 +494,10 @@ class TimelineSummary {
     if (durations.isEmpty) {
       throw StateError(_kEmptyDurationMessage);
     }
-    final double total = durations.fold<double>(0.0, (double t, Duration duration) => t + duration.inMicroseconds.toDouble() / 1000.0);
+    final double total = durations.fold<double>(
+      0.0,
+      (double t, Duration duration) => t + duration.inMicroseconds.toDouble() / 1000.0,
+    );
     return total / durations.length;
   }
 
@@ -477,7 +506,10 @@ class TimelineSummary {
       throw StateError(_kEmptyDurationMessage);
     }
     assert(percentile >= 0.0 && percentile <= 100.0);
-    final List<double> doubles = durations.map<double>((Duration duration) => duration.inMicroseconds.toDouble() / 1000.0).toList();
+    final List<double> doubles =
+        durations
+            .map<double>((Duration duration) => duration.inMicroseconds.toDouble() / 1000.0)
+            .toList();
     return findPercentile(doubles, percentile);
   }
 
@@ -490,23 +522,30 @@ class TimelineSummary {
         .reduce(math.max);
   }
 
-  SceneDisplayLagSummarizer _sceneDisplayLagSummarizer() => SceneDisplayLagSummarizer(_extractNamedEvents(kSceneDisplayLagEvent));
+  SceneDisplayLagSummarizer _sceneDisplayLagSummarizer() =>
+      SceneDisplayLagSummarizer(_extractNamedEvents(kSceneDisplayLagEvent));
 
-  List<Duration> _extractGpuRasterizerDrawDurations() => _extractBeginEndEvents(kRasterizeFrameEventName);
+  List<Duration> _extractGpuRasterizerDrawDurations() =>
+      _extractBeginEndEvents(kRasterizeFrameEventName);
 
-  ProfilingSummarizer _profilingSummarizer() => ProfilingSummarizer.fromEvents(_extractEventsWithNames(kProfilingEvents));
+  ProfilingSummarizer _profilingSummarizer() =>
+      ProfilingSummarizer.fromEvents(_extractEventsWithNames(kProfilingEvents));
 
   List<Duration> _extractFrameDurations() => _extractBeginEndEvents(kBuildFrameEventName);
 
-  VsyncFrameLagSummarizer _vsyncFrameLagSummarizer() => VsyncFrameLagSummarizer(_extractEventsWithNames(kVsyncTimelineEventNames));
+  VsyncFrameLagSummarizer _vsyncFrameLagSummarizer() =>
+      VsyncFrameLagSummarizer(_extractEventsWithNames(kVsyncTimelineEventNames));
 
-  RasterCacheSummarizer _rasterCacheSummarizer() => RasterCacheSummarizer(_extractNamedEvents(kRasterCacheEvent));
+  RasterCacheSummarizer _rasterCacheSummarizer() =>
+      RasterCacheSummarizer(_extractNamedEvents(kRasterCacheEvent));
 
-  FrameRequestPendingLatencySummarizer _frameRequestPendingLatencySummarizer() => FrameRequestPendingLatencySummarizer(_extractNamedEvents(kFrameRequestPendingEvent));
+  FrameRequestPendingLatencySummarizer _frameRequestPendingLatencySummarizer() =>
+      FrameRequestPendingLatencySummarizer(_extractNamedEvents(kFrameRequestPendingEvent));
 
   GCSummarizer _gcSummarizer() => GCSummarizer.fromEvents(_extractEventsWithNames(kGCRootEvents));
 
   GpuSumarizer _gpuSumarizer() => GpuSumarizer(_extractEventsWithNames(GpuSumarizer.kGpuEvents));
 
-  GPUMemorySumarizer _memorySummarizer() => GPUMemorySumarizer(_extractEventsWithNames(GPUMemorySumarizer.kMemoryEvents));
+  GPUMemorySumarizer _memorySummarizer() =>
+      GPUMemorySumarizer(_extractEventsWithNames(GPUMemorySumarizer.kMemoryEvents));
 }

@@ -11,9 +11,7 @@ void main() {
     const String datePickerTitle = 'Select date';
     const String initialDate = 'Sun, Jul 25';
 
-    await tester.pumpWidget(
-      const example.DatePickerApp(),
-    );
+    await tester.pumpWidget(const example.DatePickerApp());
 
     // The date picker is not shown initially.
     expect(find.text(datePickerTitle), findsNothing);

@@ -4,15 +4,12 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/gesture_detector/gesture_detector.3.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/gesture_detector/gesture_detector.3.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('The red box always moves inside the green box', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.DragBoundaryExampleApp(),
-    );
+    await tester.pumpWidget(const example.DragBoundaryExampleApp());
     final Finder greenFinder = find.byType(Container).first;
     final Finder redFinder = find.byType(Container).last;
     final TestGesture drag = await tester.startGesture(tester.getCenter(redFinder));

@@ -1,0 +1,24 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+    include: [ "common.shard.cml" ],
+    program: {
+        runner: "elf",
+        binary: "bin/app",
+        forward_stdout_to: "log",
+        forward_stderr_to: "log",
+    },
+    capabilities: [
+        {
+            runner: "dart_aot_runner",
+            path: "/svc/fuchsia.component.runner.ComponentRunner",
+        },
+    ],
+    expose: [
+        {
+            runner: "dart_aot_runner",
+            from: "self",
+        },
+    ],
+}

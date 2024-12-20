@@ -1,0 +1,44 @@
+name: zircon_ffi
+
+environment:
+  sdk: ^3.7.0-0
+
+dependencies:
+  ffi: ^1.0.0
+
+dev_dependencies:
+  ffigen: ^3.0.0
+  lints: ^1.0.1
+
+ffigen:
+  name: ZirconFFIBindings
+  description: Bindings for `dart:zircon_ffi`.
+  output: 'lib/zircon_ffi.dart'
+  headers:
+    entry-points:
+      - 'basic_types.h'
+      - 'channel.h'
+      - 'clock.h'
+      - 'dart_dl.h'
+      - 'handle.h'
+  functions:
+    include:
+      - 'zircon_dart_.*'
+  macros:
+    include:
+      - nothing
+  enums:
+    include:
+      - nothing
+  unnamed-enums:
+    include:
+      - nothing
+  globals:
+    include:
+      - nothing
+  structs:
+    include:
+      - 'zircon_dart_.*'
+    dependency-only: opaque
+  compiler-opts:
+    - '-I../../../../../../third_party/dart/runtime'

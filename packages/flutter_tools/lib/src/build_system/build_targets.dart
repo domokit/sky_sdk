@@ -34,7 +34,8 @@ class NoOpBuildTargets extends BuildTargets {
   Target get dartPluginRegistrantTarget => const _NoOpTarget();
 
   @override
-  Target webServiceWorker(FileSystem fileSystem, List<WebCompilerConfig> compileConfigs) => const _NoOpTarget();
+  Target webServiceWorker(FileSystem fileSystem, List<WebCompilerConfig> compileConfigs) =>
+      const _NoOpTarget();
 }
 
 /// A [Target] that does nothing.

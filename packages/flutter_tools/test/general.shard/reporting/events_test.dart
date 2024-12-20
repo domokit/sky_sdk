@@ -27,14 +27,15 @@ void main() {
 
     expect(doctorResultEvent.send, returnsNormally);
     expect(usage.events.length, 3);
-    expect(usage.events, contains(
-      const TestUsageEvent('doctor-result', 'FakeDoctorValidator', label: 'crash'),
-    ));
+    expect(
+      usage.events,
+      contains(const TestUsageEvent('doctor-result', 'FakeDoctorValidator', label: 'crash')),
+    );
   });
 
   testWithoutContext('DoctorResultEvent does not crash if a synthetic crash result was used instead'
-    ' of validation. This happens when a grouped validator throws an exception, causing subResults to never '
-    ' be instantiated.', () async {
+      ' of validation. This happens when a grouped validator throws an exception, causing subResults to never '
+      ' be instantiated.', () async {
     final TestUsage usage = TestUsage();
     final GroupedValidator groupedValidator = FakeGroupedValidator(<DoctorValidator>[
       FakeDoctorValidator('a'),
@@ -52,9 +53,10 @@ void main() {
     expect(doctorResultEvent.send, returnsNormally);
 
     expect(usage.events.length, 1);
-    expect(usage.events, contains(
-      const TestUsageEvent('doctor-result', 'FakeGroupedValidator', label: 'crash'),
-    ));
+    expect(
+      usage.events,
+      contains(const TestUsageEvent('doctor-result', 'FakeGroupedValidator', label: 'crash')),
+    );
   });
 
   testWithoutContext('Reports null safe analytics events', () {
@@ -65,20 +67,28 @@ void main() {
       Package('baz', Uri.parse('file:///bar/'), languageVersion: LanguageVersion(2, 2)),
     ]);
 
-    NullSafetyAnalysisEvent(
-      packageConfig,
-      NullSafetyMode.sound,
-      'foo',
-      usage,
-    ).send();
+    NullSafetyAnalysisEvent(packageConfig, NullSafetyMode.sound, 'foo', usage).send();
 
-    expect(usage.events, unorderedEquals(<TestUsageEvent>[
-      const TestUsageEvent(NullSafetyAnalysisEvent.kNullSafetyCategory, 'runtime-mode', label: 'NullSafetyMode.sound'),
-      TestUsageEvent(NullSafetyAnalysisEvent.kNullSafetyCategory, 'stats', parameters: CustomDimensions.fromMap(<String, String>{
-      'cd49': '1', 'cd50': '3',
-      })),
-      const TestUsageEvent(NullSafetyAnalysisEvent.kNullSafetyCategory, 'language-version', label: '2.12'),
-    ]));
+    expect(
+      usage.events,
+      unorderedEquals(<TestUsageEvent>[
+        const TestUsageEvent(
+          NullSafetyAnalysisEvent.kNullSafetyCategory,
+          'runtime-mode',
+          label: 'NullSafetyMode.sound',
+        ),
+        TestUsageEvent(
+          NullSafetyAnalysisEvent.kNullSafetyCategory,
+          'stats',
+          parameters: CustomDimensions.fromMap(<String, String>{'cd49': '1', 'cd50': '3'}),
+        ),
+        const TestUsageEvent(
+          NullSafetyAnalysisEvent.kNullSafetyCategory,
+          'language-version',
+          label: '2.12',
+        ),
+      ]),
+    );
   });
 
   testWithoutContext('Does not crash if main package is missing', () {
@@ -96,12 +106,21 @@ void main() {
       usage,
     ).send();
 
-    expect(usage.events, unorderedEquals(<TestUsageEvent>[
-      const TestUsageEvent(NullSafetyAnalysisEvent.kNullSafetyCategory, 'runtime-mode', label: 'NullSafetyMode.sound'),
-      TestUsageEvent(NullSafetyAnalysisEvent.kNullSafetyCategory, 'stats', parameters: CustomDimensions.fromMap(<String, String>{
-        'cd49': '1', 'cd50': '3',
-      })),
-    ]));
+    expect(
+      usage.events,
+      unorderedEquals(<TestUsageEvent>[
+        const TestUsageEvent(
+          NullSafetyAnalysisEvent.kNullSafetyCategory,
+          'runtime-mode',
+          label: 'NullSafetyMode.sound',
+        ),
+        TestUsageEvent(
+          NullSafetyAnalysisEvent.kNullSafetyCategory,
+          'stats',
+          parameters: CustomDimensions.fromMap(<String, String>{'cd49': '1', 'cd50': '3'}),
+        ),
+      ]),
+    );
   });
 
   testWithoutContext('a null language version is treated as unmigrated', () {
@@ -117,12 +136,21 @@ void main() {
       usage,
     ).send();
 
-    expect(usage.events, unorderedEquals(<TestUsageEvent>[
-      const TestUsageEvent(NullSafetyAnalysisEvent.kNullSafetyCategory, 'runtime-mode', label: 'NullSafetyMode.sound'),
-      TestUsageEvent(NullSafetyAnalysisEvent.kNullSafetyCategory, 'stats', parameters: CustomDimensions.fromMap(<String, String>{
-        'cd49': '0', 'cd50': '1',
-      })),
-    ]));
+    expect(
+      usage.events,
+      unorderedEquals(<TestUsageEvent>[
+        const TestUsageEvent(
+          NullSafetyAnalysisEvent.kNullSafetyCategory,
+          'runtime-mode',
+          label: 'NullSafetyMode.sound',
+        ),
+        TestUsageEvent(
+          NullSafetyAnalysisEvent.kNullSafetyCategory,
+          'stats',
+          parameters: CustomDimensions.fromMap(<String, String>{'cd49': '0', 'cd50': '1'}),
+        ),
+      ]),
+    );
   });
 }
 

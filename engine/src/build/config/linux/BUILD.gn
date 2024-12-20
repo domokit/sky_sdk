@@ -1,0 +1,62 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/features.gni")
+import("//build/config/linux/pkg_config.gni")
+import("//build/config/sysroot.gni")
+import("//build/config/ui.gni")
+
+config("sdk") {
+  if (sysroot != "") {
+    cflags = [ "--sysroot=" + sysroot ]
+    ldflags = [ "--sysroot=" + sysroot ]
+
+    # Need to get some linker flags out of the sysroot.
+    ldflags += [ exec_script("sysroot_ld_path.py",
+                             [
+                               rebase_path("//build/linux/sysroot_ld_path.sh",
+                                           root_build_dir),
+                               sysroot,
+                             ],
+                             "value") ]
+  }
+}
+
+config("fontconfig") {
+  libs = [ "fontconfig" ]
+}
+
+pkg_config("freetype2") {
+  packages = [ "freetype2" ]
+}
+
+config("x11") {
+  libs = [
+    "X11",
+    "Xcomposite",
+    "Xcursor",
+    "Xdamage",
+    "Xext",
+    "Xfixes",
+    "Xi",
+    "Xrender",
+    "Xtst",
+  ]
+}
+
+config("xrandr") {
+  libs = [ "Xrandr" ]
+}
+
+config("xinerama") {
+  libs = [ "Xinerama" ]
+}
+
+config("xcomposite") {
+  libs = [ "Xcomposite" ]
+}
+
+config("xext") {
+  libs = [ "Xext" ]
+}

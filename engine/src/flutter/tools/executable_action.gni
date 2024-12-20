@@ -1,0 +1,43 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+if (host_os == "win") {
+  host_executable_suffix = ".exe"
+} else {
+  host_executable_suffix = ""
+}
+
+template("executable_action") {
+  action(target_name) {
+    assert(defined(invoker.tool), "The executable tool must be specified.")
+    assert(defined(invoker.args), "The command line args must be specified.")
+    if (defined(invoker.visibility)) {
+      visibility = invoker.visibility
+    }
+    if (defined(invoker.testonly)) {
+      testonly = invoker.testonly
+    }
+
+    script = "//build/gn_run_binary.py"
+
+    host_executable =
+        rebase_path("${invoker.tool}${host_executable_suffix}", root_build_dir)
+
+    if (defined(invoker.deps)) {
+      deps = invoker.deps
+    } else {
+      deps = []
+    }
+
+    if (defined(invoker.inputs)) {
+      inputs = invoker.inputs
+    } else {
+      inputs = []
+    }
+
+    outputs = invoker.outputs
+
+    args = [ host_executable ] + invoker.args
+  }
+}

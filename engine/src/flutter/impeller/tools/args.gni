@@ -1,0 +1,39 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/testing/testing.gni")
+
+declare_args() {
+  impeller_debug =
+      flutter_runtime_mode == "debug" || flutter_runtime_mode == "profile"
+
+  # Whether the Metal backend is enabled.
+  impeller_enable_metal = (is_mac || is_ios) && target_os != "fuchsia"
+
+  # Whether the OpenGLES backend is enabled.
+  impeller_enable_opengles = (is_linux || is_win || is_android || is_mac ||
+                              enable_unittests) && target_os != "fuchsia"
+
+  # Whether the Vulkan backend is enabled.
+  impeller_enable_vulkan = (is_linux || is_win || is_android || is_mac ||
+                            enable_unittests) && target_os != "fuchsia"
+}
+
+# Arguments that are combinations of other arguments by default but which can
+# be overridden by the user.
+
+declare_args() {
+  # Wether to build and include the validation layers.
+  impeller_enable_vulkan_validation_layers =
+      impeller_enable_vulkan && flutter_runtime_mode == "debug" &&
+      target_cpu == "arm64"
+
+  # Whether Impeller supports rendering on the platform.
+  impeller_supports_rendering =
+      impeller_enable_metal || impeller_enable_opengles ||
+      impeller_enable_vulkan
+
+  impeller_enable_compute = impeller_enable_vulkan || impeller_enable_metal
+}

@@ -24,7 +24,8 @@ import 'sliver.dart';
 /// undesired effects. For example, wrapping a [SliverPersistentHeader] with
 /// `pinned:true` will cause only the appbar to stay pinned while the padding will scroll away.
 /// {@endtemplate}
-abstract class RenderSliverEdgeInsetsPadding extends RenderSliver with RenderObjectWithChildMixin<RenderSliver> {
+abstract class RenderSliverEdgeInsetsPadding extends RenderSliver
+    with RenderObjectWithChildMixin<RenderSliver> {
   /// The amount to pad the child in each dimension.
   ///
   /// The offsets are specified in terms of visual edges, left, top, right, and
@@ -39,11 +40,14 @@ abstract class RenderSliverEdgeInsetsPadding extends RenderSliver with RenderObj
   /// doesn't know what direction it will be laid out in.
   double get beforePadding {
     assert(resolvedPadding != null);
-    return switch (applyGrowthDirectionToAxisDirection(constraints.axisDirection, constraints.growthDirection)) {
-      AxisDirection.up    => resolvedPadding!.bottom,
+    return switch (applyGrowthDirectionToAxisDirection(
+      constraints.axisDirection,
+      constraints.growthDirection,
+    )) {
+      AxisDirection.up => resolvedPadding!.bottom,
       AxisDirection.right => resolvedPadding!.left,
-      AxisDirection.down  => resolvedPadding!.top,
-      AxisDirection.left  => resolvedPadding!.right,
+      AxisDirection.down => resolvedPadding!.top,
+      AxisDirection.left => resolvedPadding!.right,
     };
   }
 
@@ -53,11 +57,14 @@ abstract class RenderSliverEdgeInsetsPadding extends RenderSliver with RenderObj
   /// doesn't know what direction it will be laid out in.
   double get afterPadding {
     assert(resolvedPadding != null);
-    return switch (applyGrowthDirectionToAxisDirection(constraints.axisDirection, constraints.growthDirection)) {
-      AxisDirection.up    => resolvedPadding!.top,
+    return switch (applyGrowthDirectionToAxisDirection(
+      constraints.axisDirection,
+      constraints.growthDirection,
+    )) {
+      AxisDirection.up => resolvedPadding!.top,
       AxisDirection.right => resolvedPadding!.right,
-      AxisDirection.down  => resolvedPadding!.bottom,
-      AxisDirection.left  => resolvedPadding!.left,
+      AxisDirection.down => resolvedPadding!.bottom,
+      AxisDirection.left => resolvedPadding!.left,
     };
   }
 
@@ -96,8 +103,10 @@ abstract class RenderSliverEdgeInsetsPadding extends RenderSliver with RenderObj
   @override
   void performLayout() {
     final SliverConstraints constraints = this.constraints;
-    double paintOffset({required double from, required double to}) => calculatePaintOffset(constraints, from: from, to: to);
-    double cacheOffset({required double from, required double to}) => calculateCacheOffset(constraints, from: from, to: to);
+    double paintOffset({required double from, required double to}) =>
+        calculatePaintOffset(constraints, from: from, to: to);
+    double cacheOffset({required double from, required double to}) =>
+        calculateCacheOffset(constraints, from: from, to: to);
 
     assert(this.resolvedPadding != null);
     final EdgeInsets resolvedPadding = this.resolvedPadding!;
@@ -126,8 +135,10 @@ abstract class RenderSliverEdgeInsetsPadding extends RenderSliver with RenderObj
         scrollOffset: math.max(0.0, constraints.scrollOffset - beforePadding),
         cacheOrigin: math.min(0.0, constraints.cacheOrigin + beforePadding),
         overlap: overlap,
-        remainingPaintExtent: constraints.remainingPaintExtent - paintOffset(from: 0.0, to: beforePadding),
-        remainingCacheExtent: constraints.remainingCacheExtent - cacheOffset(from: 0.0, to: beforePadding),
+        remainingPaintExtent:
+            constraints.remainingPaintExtent - paintOffset(from: 0.0, to: beforePadding),
+        remainingCacheExtent:
+            constraints.remainingCacheExtent - cacheOffset(from: 0.0, to: beforePadding),
         crossAxisExtent: math.max(0.0, constraints.crossAxisExtent - crossAxisPadding),
         precedingScrollExtent: beforePadding + constraints.precedingScrollExtent,
       ),
@@ -135,27 +146,41 @@ abstract class RenderSliverEdgeInsetsPadding extends RenderSliver with RenderObj
     );
     final SliverGeometry childLayoutGeometry = child!.geometry!;
     if (childLayoutGeometry.scrollOffsetCorrection != null) {
-      geometry = SliverGeometry(
-        scrollOffsetCorrection: childLayoutGeometry.scrollOffsetCorrection,
-      );
+      geometry = SliverGeometry(scrollOffsetCorrection: childLayoutGeometry.scrollOffsetCorrection);
       return;
     }
     final double scrollExtent = childLayoutGeometry.scrollExtent;
     final double beforePaddingCacheExtent = cacheOffset(from: 0.0, to: beforePadding);
-    final double afterPaddingCacheExtent = cacheOffset(from: beforePadding + scrollExtent, to: mainAxisPadding + scrollExtent);
-    final double afterPaddingPaintExtent = paintOffset(from: beforePadding + scrollExtent, to: mainAxisPadding + scrollExtent);
+    final double afterPaddingCacheExtent = cacheOffset(
+      from: beforePadding + scrollExtent,
+      to: mainAxisPadding + scrollExtent,
+    );
+    final double afterPaddingPaintExtent = paintOffset(
+      from: beforePadding + scrollExtent,
+      to: mainAxisPadding + scrollExtent,
+    );
     final double mainAxisPaddingCacheExtent = beforePaddingCacheExtent + afterPaddingCacheExtent;
     final double mainAxisPaddingPaintExtent = beforePaddingPaintExtent + afterPaddingPaintExtent;
     final double paintExtent = math.min(
-      beforePaddingPaintExtent + math.max(childLayoutGeometry.paintExtent, childLayoutGeometry.layoutExtent + afterPaddingPaintExtent),
+      beforePaddingPaintExtent +
+          math.max(
+            childLayoutGeometry.paintExtent,
+            childLayoutGeometry.layoutExtent + afterPaddingPaintExtent,
+          ),
       constraints.remainingPaintExtent,
     );
     geometry = SliverGeometry(
       paintOrigin: childLayoutGeometry.paintOrigin,
       scrollExtent: mainAxisPadding + scrollExtent,
       paintExtent: paintExtent,
-      layoutExtent: math.min(mainAxisPaddingPaintExtent + childLayoutGeometry.layoutExtent, paintExtent),
-      cacheExtent: math.min(mainAxisPaddingCacheExtent + childLayoutGeometry.cacheExtent, constraints.remainingCacheExtent),
+      layoutExtent: math.min(
+        mainAxisPaddingPaintExtent + childLayoutGeometry.layoutExtent,
+        paintExtent,
+      ),
+      cacheExtent: math.min(
+        mainAxisPaddingCacheExtent + childLayoutGeometry.cacheExtent,
+        constraints.remainingCacheExtent,
+      ),
       maxPaintExtent: mainAxisPadding + childLayoutGeometry.maxPaintExtent,
       hitTestExtent: math.max(
         mainAxisPaddingPaintExtent + childLayoutGeometry.paintExtent,
@@ -163,16 +188,25 @@ abstract class RenderSliverEdgeInsetsPadding extends RenderSliver with RenderObj
       ),
       hasVisualOverflow: childLayoutGeometry.hasVisualOverflow,
     );
-    final double calculatedOffset = switch (applyGrowthDirectionToAxisDirection(constraints.axisDirection, constraints.growthDirection)) {
-      AxisDirection.up    => paintOffset(from: resolvedPadding.bottom + scrollExtent, to: resolvedPadding.vertical + scrollExtent),
-      AxisDirection.left  => paintOffset(from: resolvedPadding.right + scrollExtent, to: resolvedPadding.horizontal + scrollExtent),
+    final double calculatedOffset = switch (applyGrowthDirectionToAxisDirection(
+      constraints.axisDirection,
+      constraints.growthDirection,
+    )) {
+      AxisDirection.up => paintOffset(
+        from: resolvedPadding.bottom + scrollExtent,
+        to: resolvedPadding.vertical + scrollExtent,
+      ),
+      AxisDirection.left => paintOffset(
+        from: resolvedPadding.right + scrollExtent,
+        to: resolvedPadding.horizontal + scrollExtent,
+      ),
       AxisDirection.right => paintOffset(from: 0.0, to: resolvedPadding.left),
-      AxisDirection.down  => paintOffset(from: 0.0, to: resolvedPadding.top),
+      AxisDirection.down => paintOffset(from: 0.0, to: resolvedPadding.top),
     };
     final SliverPhysicalParentData childParentData = child!.parentData! as SliverPhysicalParentData;
     childParentData.paintOffset = switch (constraints.axis) {
       Axis.horizontal => Offset(calculatedOffset, resolvedPadding.top),
-      Axis.vertical   => Offset(resolvedPadding.left, calculatedOffset),
+      Axis.vertical => Offset(resolvedPadding.left, calculatedOffset),
     };
     assert(beforePadding == this.beforePadding);
     assert(afterPadding == this.afterPadding);
@@ -181,9 +215,14 @@ abstract class RenderSliverEdgeInsetsPadding extends RenderSliver with RenderObj
   }
 
   @override
-  bool hitTestChildren(SliverHitTestResult result, { required double mainAxisPosition, required double crossAxisPosition }) {
+  bool hitTestChildren(
+    SliverHitTestResult result, {
+    required double mainAxisPosition,
+    required double crossAxisPosition,
+  }) {
     if (child != null && child!.geometry!.hitTestExtent > 0.0) {
-      final SliverPhysicalParentData childParentData = child!.parentData! as SliverPhysicalParentData;
+      final SliverPhysicalParentData childParentData =
+          child!.parentData! as SliverPhysicalParentData;
       return result.addWithAxisOffset(
         mainAxisPosition: mainAxisPosition,
         crossAxisPosition: crossAxisPosition,
@@ -208,7 +247,7 @@ abstract class RenderSliverEdgeInsetsPadding extends RenderSliver with RenderObj
     assert(resolvedPadding != null);
     return switch (constraints.axis) {
       Axis.horizontal => resolvedPadding!.top,
-      Axis.vertical   => resolvedPadding!.left,
+      Axis.vertical => resolvedPadding!.left,
     };
   }
 
@@ -228,7 +267,8 @@ abstract class RenderSliverEdgeInsetsPadding extends RenderSliver with RenderObj
   @override
   void paint(PaintingContext context, Offset offset) {
     if (child != null && child!.geometry!.visible) {
-      final SliverPhysicalParentData childParentData = child!.parentData! as SliverPhysicalParentData;
+      final SliverPhysicalParentData childParentData =
+          child!.parentData! as SliverPhysicalParentData;
       context.paintChild(child!, offset + childParentData.paintOffset);
     }
   }
@@ -243,7 +283,8 @@ abstract class RenderSliverEdgeInsetsPadding extends RenderSliver with RenderObj
         Rect? innerRect;
         if (child != null) {
           final Size childSize = child!.getAbsoluteSize();
-          final SliverPhysicalParentData childParentData = child!.parentData! as SliverPhysicalParentData;
+          final SliverPhysicalParentData childParentData =
+              child!.parentData! as SliverPhysicalParentData;
           innerRect = (offset + childParentData.paintOffset) & childSize;
           assert(innerRect.top >= outerRect.top);
           assert(innerRect.left >= outerRect.left);

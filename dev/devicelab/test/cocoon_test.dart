@@ -17,14 +17,16 @@ import 'common.dart';
 
 void main() {
   late ProcessResult processResult;
-  ProcessResult runSyncStub(String executable, List<String> args,
-          {Map<String, String>? environment,
-          bool includeParentEnvironment = true,
-          bool runInShell = false,
-          Encoding? stderrEncoding,
-          Encoding? stdoutEncoding,
-          String? workingDirectory}) =>
-      processResult;
+  ProcessResult runSyncStub(
+    String executable,
+    List<String> args, {
+    Map<String, String>? environment,
+    bool includeParentEnvironment = true,
+    bool runInShell = false,
+    Encoding? stderrEncoding,
+    Encoding? stdoutEncoding,
+    String? workingDirectory,
+  }) => processResult;
 
   // Expected test values.
   const String commitSha = 'a4952838bf288a81d8ea11edfd4b4cd649fa94cc';
@@ -72,18 +74,11 @@ void main() {
       processResult = ProcessResult(1, 0, commitSha, '');
       final TaskResult result = TaskResult.fromJson(<String, dynamic>{
         'success': true,
-        'data': <String, dynamic>{
-          'i': 0,
-          'j': 0,
-          'not_a_metric': 'something',
-        },
+        'data': <String, dynamic>{'i': 0, 'j': 0, 'not_a_metric': 'something'},
         'benchmarkScoreKeys': <String>['i', 'j'],
       });
 
-      cocoon = Cocoon(
-        fs: fs,
-        processRunSync: runSyncStub,
-      );
+      cocoon = Cocoon(fs: fs, processRunSync: runSyncStub);
 
       const String resultsPath = 'results.json';
       await cocoon.writeTaskResultToFile(
@@ -94,7 +89,8 @@ void main() {
       );
 
       final String resultJson = fs.file(resultsPath).readAsStringSync();
-      const String expectedJson = '{'
+      const String expectedJson =
+          '{'
           '"CommitBranch":"master",'
           '"CommitSha":"$commitSha",'
           '"BuilderName":"builderAbc",'
@@ -113,7 +109,10 @@ void main() {
           return Response('{}', 200);
         }
 
-        return Response('Expected: $uploadMetricsRequestWithSpaces\nReceived: ${request.body}', 500);
+        return Response(
+          'Expected: $uploadMetricsRequestWithSpaces\nReceived: ${request.body}',
+          500,
+        );
       });
       cocoon = Cocoon(
         fs: fs,
@@ -124,7 +123,8 @@ void main() {
       );
 
       const String resultsPath = 'results.json';
-      const String updateTaskJson = '{'
+      const String updateTaskJson =
+          '{'
           '"CommitBranch":"master",'
           '"CommitSha":"$commitSha",'
           '"BuilderName":"builder a b c",' //ignore: missing_whitespace_between_adjacent_strings
@@ -146,7 +146,8 @@ void main() {
       );
 
       const String resultsPath = 'results.json';
-      const String updateTaskJson = '{'
+      const String updateTaskJson =
+          '{'
           '"CommitBranch":"master",'
           '"CommitSha":"$commitSha",'
           '"BuilderName":"builderAbc",'
@@ -178,7 +179,8 @@ void main() {
       );
 
       const String resultsPath = 'results.json';
-      const String updateTaskJson = '{'
+      const String updateTaskJson =
+          '{'
           '"CommitBranch":"master",'
           '"CommitSha":"$commitSha",'
           '"BuilderName":"builderAbc",'
@@ -213,7 +215,8 @@ void main() {
       );
 
       const String resultsPath = 'results.json';
-      const String updateTaskJson = '{'
+      const String updateTaskJson =
+          '{'
           '"CommitBranch":"master",'
           '"CommitSha":"$commitSha",'
           '"BuilderName":"builderAbc",'
@@ -248,7 +251,8 @@ void main() {
       );
 
       const String resultsPath = 'results.json';
-      const String updateTaskJson = '{'
+      const String updateTaskJson =
+          '{'
           '"CommitBranch":"master",'
           '"CommitSha":"$commitSha",'
           '"BuilderName":"builderAbc",'
@@ -280,7 +284,8 @@ void main() {
       );
 
       const String resultsPath = 'results.json';
-      const String updateTaskJson = '{'
+      const String updateTaskJson =
+          '{'
           '"CommitBranch":"master",'
           '"CommitSha":"$commitSha",'
           '"BuilderName":"builderAbc",'
@@ -288,7 +293,10 @@ void main() {
           '"ResultData":{"i":0.0,"j":0.0,"not_a_metric":"something"},'
           '"BenchmarkScoreKeys":["i","j"]}';
       fs.file(resultsPath).writeAsStringSync(updateTaskJson);
-      expect(() => cocoon.sendTaskStatus(resultsPath: resultsPath), throwsA(isA<ClientException>()));
+      expect(
+        () => cocoon.sendTaskStatus(resultsPath: resultsPath),
+        throwsA(isA<ClientException>()),
+      );
     });
 
     test('throws client exception on non-200 responses', () async {
@@ -302,7 +310,8 @@ void main() {
       );
 
       const String resultsPath = 'results.json';
-      const String updateTaskJson = '{'
+      const String updateTaskJson =
+          '{'
           '"CommitBranch":"master",'
           '"CommitSha":"$commitSha",'
           '"BuilderName":"builderAbc",'
@@ -310,7 +319,10 @@ void main() {
           '"ResultData":{"i":0.0,"j":0.0,"not_a_metric":"something"},'
           '"BenchmarkScoreKeys":["i","j"]}';
       fs.file(resultsPath).writeAsStringSync(updateTaskJson);
-      expect(() => cocoon.sendTaskStatus(resultsPath: resultsPath), throwsA(isA<ClientException>()));
+      expect(
+        () => cocoon.sendTaskStatus(resultsPath: resultsPath),
+        throwsA(isA<ClientException>()),
+      );
     });
 
     test('does not upload results on non-supported branches', () async {
@@ -325,7 +337,8 @@ void main() {
       );
 
       const String resultsPath = 'results.json';
-      const String updateTaskJson = '{'
+      const String updateTaskJson =
+          '{'
           '"CommitBranch":"stable",'
           '"CommitSha":"$commitSha",'
           '"BuilderName":"builderAbc",'
@@ -350,7 +363,8 @@ void main() {
       );
 
       const String resultsPath = 'results.json';
-      const String updateTaskJson = '{'
+      const String updateTaskJson =
+          '{'
           '"CommitBranch":"master",'
           '"CommitSha":"$commitSha",'
           '"BuilderName":"builderAbc",'
@@ -374,19 +388,28 @@ void main() {
     });
 
     test('reads token from service account file', () {
-      final AuthenticatedCocoonClient client = AuthenticatedCocoonClient(serviceAccountTokenPath, filesystem: fs);
+      final AuthenticatedCocoonClient client = AuthenticatedCocoonClient(
+        serviceAccountTokenPath,
+        filesystem: fs,
+      );
       expect(client.serviceAccountToken, serviceAccountToken);
     });
 
     test('reads token from service account file with whitespace', () {
       final File serviceAccountFile = fs.file(serviceAccountTokenPath)..createSync();
       serviceAccountFile.writeAsStringSync('$serviceAccountToken \n');
-      final AuthenticatedCocoonClient client = AuthenticatedCocoonClient(serviceAccountTokenPath, filesystem: fs);
+      final AuthenticatedCocoonClient client = AuthenticatedCocoonClient(
+        serviceAccountTokenPath,
+        filesystem: fs,
+      );
       expect(client.serviceAccountToken, serviceAccountToken);
     });
 
     test('throws error when service account file not found', () {
-      final AuthenticatedCocoonClient client = AuthenticatedCocoonClient('idontexist', filesystem: fs);
+      final AuthenticatedCocoonClient client = AuthenticatedCocoonClient(
+        'idontexist',
+        filesystem: fs,
+      );
       expect(() => client.serviceAccountToken, throwsA(isA<FileSystemException>()));
     });
   });

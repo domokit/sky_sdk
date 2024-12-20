@@ -26,8 +26,7 @@ String sortImports(String contents) {
     ),
   );
   final List<AnalysisError> errors = <AnalysisError>[];
-  final _ImportOrganizer organizer =
-      _ImportOrganizer(contents, parseResult.unit, errors);
+  final _ImportOrganizer organizer = _ImportOrganizer(contents, parseResult.unit, errors);
   final List<_SourceEdit> edits = organizer.organize();
   // Sort edits in reverse order
   edits.sort((_SourceEdit a, _SourceEdit b) {
@@ -48,8 +47,7 @@ String sortImports(String contents) {
 // this class should probably be replaced.
 // https://github.com/flutter/flutter/issues/86197
 class _ImportOrganizer {
-  _ImportOrganizer(this.initialCode, this.unit, this.errors)
-      : code = initialCode {
+  _ImportOrganizer(this.initialCode, this.unit, this.errors) : code = initialCode {
     endOfLine = getEOL(code);
     hasUnresolvedIdentifierError = errors.any((AnalysisError error) {
       return error.errorCode.isUnresolvedIdentifier;
@@ -88,8 +86,11 @@ class _ImportOrganizer {
     final List<_SourceEdit> edits = <_SourceEdit>[];
     if (code != initialCode) {
       final int suffixLength = findCommonSuffix(initialCode, code);
-      final _SourceEdit edit = _SourceEdit(0, initialCode.length - suffixLength,
-          code.substring(0, code.length - suffixLength));
+      final _SourceEdit edit = _SourceEdit(
+        0,
+        initialCode.length - suffixLength,
+        code.substring(0, code.length - suffixLength),
+      );
       edits.add(edit);
     }
     return edits;
@@ -110,28 +111,26 @@ class _ImportOrganizer {
           int offset = directive.offset;
           int end = directive.end;
 
-          final Token? leadingComment =
-              getLeadingComment(unit, directive, lineInfo);
-          final Token? trailingComment =
-              getTrailingComment(unit, directive, lineInfo, end);
+          final Token? leadingComment = getLeadingComment(unit, directive, lineInfo);
+          final Token? trailingComment = getTrailingComment(unit, directive, lineInfo, end);
 
           String? leadingCommentText;
           if (leadingComment != null) {
-            leadingCommentText =
-                code.substring(leadingComment.offset, directive.offset);
+            leadingCommentText = code.substring(leadingComment.offset, directive.offset);
             offset = leadingComment.offset;
           }
           String? trailingCommentText;
           if (trailingComment != null) {
-            trailingCommentText =
-                code.substring(directive.end, trailingComment.end);
+            trailingCommentText = code.substring(directive.end, trailingComment.end);
             end = trailingComment.end;
           }
           String? documentationText;
           final Comment? documentationComment = directive.documentationComment;
           if (documentationComment != null) {
             documentationText = code.substring(
-                documentationComment.offset, documentationComment.end);
+              documentationComment.offset,
+              documentationComment.end,
+            );
           }
           String? annotationText;
           final Token? beginToken = directive.metadata.beginToken;
@@ -140,8 +139,9 @@ class _ImportOrganizer {
             annotationText = code.substring(beginToken.offset, endToken.end);
           }
           final String text = code.substring(
-              directive.firstTokenAfterCommentAndMetadata.offset,
-              directive.end);
+            directive.firstTokenAfterCommentAndMetadata.offset,
+            directive.end,
+          );
           final String uriContent = directive.uri.stringValue ?? '';
           directives.add(
             _DirectiveInfo(
@@ -264,7 +264,10 @@ class _ImportOrganizer {
   /// comments and not returned unless they contain blank lines, in which case
   /// only the last part of the comment will be returned.
   static Token? getLeadingComment(
-      CompilationUnit unit, UriBasedDirective directive, LineInfo lineInfo) {
+    CompilationUnit unit,
+    UriBasedDirective directive,
+    LineInfo lineInfo,
+  ) {
     if (directive.beginToken.precedingComments == null) {
       return null;
     }
@@ -292,8 +295,7 @@ class _ImportOrganizer {
       // as they will be attached to the end of it.
       Token? comment = firstComment;
       while (comment != null &&
-          previousDirectiveLine ==
-              lineInfo.getLocation(comment.offset).lineNumber) {
+          previousDirectiveLine == lineInfo.getLocation(comment.offset).lineNumber) {
         comment = comment.next;
       }
       return comment;
@@ -306,8 +308,12 @@ class _ImportOrganizer {
   ///
   /// To be considered a trailing comment, the comment must be on the same line
   /// as the directive.
-  static Token? getTrailingComment(CompilationUnit unit,
-      UriBasedDirective directive, LineInfo lineInfo, int end) {
+  static Token? getTrailingComment(
+    CompilationUnit unit,
+    UriBasedDirective directive,
+    LineInfo lineInfo,
+    int end,
+  ) {
     final int line = lineInfo.getLocation(end).lineNumber;
     Token? comment = directive.endToken.next!.precedingComments;
     while (comment != null) {
@@ -395,7 +401,7 @@ enum _DirectivePriority {
   EXPORT_PKG,
   EXPORT_OTHER,
   EXPORT_REL,
-  PART
+  PART,
 }
 
 /// SourceEdit

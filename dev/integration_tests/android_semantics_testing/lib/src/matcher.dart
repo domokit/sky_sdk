@@ -77,7 +77,10 @@ class _AndroidSemanticsMatcher extends Matcher {
     this.isHeading,
     this.isPassword,
     this.isLongClickable,
-  }) : assert(ignoredActions == null || actions != null, 'actions must not be null if ignoredActions is not null'),
+  }) : assert(
+         ignoredActions == null || actions != null,
+         'actions must not be null if ignoredActions is not null',
+       ),
        assert(ignoredActions == null || !actions!.any(ignoredActions.contains));
 
   final String? text;
@@ -105,7 +108,7 @@ class _AndroidSemanticsMatcher extends Matcher {
       description.add(' with text: $text');
     }
     if (contentDescription != null) {
-      description.add( 'with contentDescription $contentDescription');
+      description.add('with contentDescription $contentDescription');
     }
     if (className != null) {
       description.add(' with className: $className');
@@ -178,14 +181,25 @@ class _AndroidSemanticsMatcher extends Matcher {
         itemActions.removeWhere(ignoredActions!.contains);
       }
       if (!unorderedEquals(actions!).matches(itemActions, matchState)) {
-        final List<String> actionsString = actions!.map<String>((AndroidSemanticsAction action) => action.toString()).toList()..sort();
-        final List<String> itemActionsString = itemActions.map<String>((AndroidSemanticsAction action) => action.toString()).toList()..sort();
-        final Set<String> unexpectedInString = itemActionsString.toSet().difference(actionsString.toSet());
-        final Set<String> missingInString = actionsString.toSet().difference(itemActionsString.toSet());
+        final List<String> actionsString =
+            actions!.map<String>((AndroidSemanticsAction action) => action.toString()).toList()
+              ..sort();
+        final List<String> itemActionsString =
+            itemActions.map<String>((AndroidSemanticsAction action) => action.toString()).toList()
+              ..sort();
+        final Set<String> unexpectedInString = itemActionsString.toSet().difference(
+          actionsString.toSet(),
+        );
+        final Set<String> missingInString = actionsString.toSet().difference(
+          itemActionsString.toSet(),
+        );
         if (missingInString.isEmpty && unexpectedInString.isEmpty) {
           return true;
         }
-        return _failWithMessage('Expected actions: $actionsString\nActual actions: $itemActionsString\nUnexpected: $unexpectedInString\nMissing: $missingInString', matchState);
+        return _failWithMessage(
+          'Expected actions: $actionsString\nActual actions: $itemActionsString\nUnexpected: $unexpectedInString\nMissing: $missingInString',
+          matchState,
+        );
       }
     }
     if (isChecked != null && isChecked != item.isChecked) {
@@ -220,10 +234,16 @@ class _AndroidSemanticsMatcher extends Matcher {
   }
 
   @override
-  Description describeMismatch(dynamic item, Description mismatchDescription,
-      Map<dynamic, dynamic> matchState, bool verbose) {
+  Description describeMismatch(
+    dynamic item,
+    Description mismatchDescription,
+    Map<dynamic, dynamic> matchState,
+    bool verbose,
+  ) {
     final String? failure = matchState['failure'] as String?;
-    return mismatchDescription.add(failure ?? 'hasAndroidSemantics matcher does not complete successfully');
+    return mismatchDescription.add(
+      failure ?? 'hasAndroidSemantics matcher does not complete successfully',
+    );
   }
 
   bool _failWithMessage(String value, Map<dynamic, dynamic> matchState) {

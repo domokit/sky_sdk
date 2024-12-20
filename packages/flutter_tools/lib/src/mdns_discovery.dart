@@ -29,11 +29,11 @@ class MDnsVmServiceDiscovery {
     required Logger logger,
     required Usage flutterUsage,
     required Analytics analytics,
-  })  : _client = mdnsClient ?? MDnsClient(),
-        _preliminaryClient = preliminaryMDnsClient,
-        _logger = logger,
-        _flutterUsage = flutterUsage,
-        _analytics = analytics;
+  }) : _client = mdnsClient ?? MDnsClient(),
+       _preliminaryClient = preliminaryMDnsClient,
+       _logger = logger,
+       _flutterUsage = flutterUsage,
+       _analytics = analytics;
 
   final MDnsClient _client;
 
@@ -113,11 +113,14 @@ class MDnsVmServiceDiscovery {
     } else if (results.length > 1) {
       final StringBuffer buffer = StringBuffer();
       buffer.writeln('There are multiple Dart VM Services available.');
-      buffer.writeln('Rerun this command with one of the following passed in as the app-id and device-vmservice-port:');
+      buffer.writeln(
+        'Rerun this command with one of the following passed in as the app-id and device-vmservice-port:',
+      );
       buffer.writeln();
       for (final MDnsVmServiceDiscoveryResult result in results) {
         buffer.writeln(
-            '  flutter attach --app-id "${result.domainName.replaceAll('.$dartVmServiceName', '')}" --device-vmservice-port ${result.port}');
+          '  flutter attach --app-id "${result.domainName.replaceAll('.$dartVmServiceName', '')}" --device-vmservice-port ${result.port}',
+        );
       }
       throwToolExit(buffer.toString());
     }
@@ -216,8 +219,7 @@ class MDnsVmServiceDiscovery {
     try {
       await client.start();
 
-      final List<MDnsVmServiceDiscoveryResult> results =
-          <MDnsVmServiceDiscoveryResult>[];
+      final List<MDnsVmServiceDiscoveryResult> results = <MDnsVmServiceDiscoveryResult>[];
 
       // uniqueDomainNames is used to track all domain names of Dart VM services
       // It is later used in this function to determine whether or not to throw an error.
@@ -245,7 +247,7 @@ class MDnsVmServiceDiscovery {
             'You might be having a permissions issue with your IDE. '
             'Please try going to '
             'System Settings -> Privacy & Security -> Local Network -> '
-            '[Find your IDE] -> Toggle ON, then restart your phone.'
+            '[Find your IDE] -> Toggle ON, then restart your phone.',
           );
         } else {
           rethrow;
@@ -273,11 +275,10 @@ class MDnsVmServiceDiscovery {
         }
 
         _logger.printTrace('Checking for available port on $domainName');
-        final List<SrvResourceRecord> srvRecords = await client
-          .lookup<SrvResourceRecord>(
-            ResourceRecordQuery.service(domainName),
-          )
-          .toList();
+        final List<SrvResourceRecord> srvRecords =
+            await client
+                .lookup<SrvResourceRecord>(ResourceRecordQuery.service(domainName))
+                .toList();
         if (srvRecords.isEmpty) {
           continue;
         }
@@ -286,8 +287,9 @@ class MDnsVmServiceDiscovery {
         final SrvResourceRecord srvRecord = srvRecords.first;
         if (srvRecords.length > 1) {
           _logger.printWarning(
-              'Unexpectedly found more than one Dart VM Service report for $domainName '
-              '- using first one (${srvRecord.port}).');
+            'Unexpectedly found more than one Dart VM Service report for $domainName '
+            '- using first one (${srvRecord.port}).',
+          );
         }
 
         // If deviceVmservicePort is set, only use records that match it
@@ -303,47 +305,46 @@ class MDnsVmServiceDiscovery {
         // Get the IP address of the device if using the IP as the host.
         InternetAddress? ipAddress;
         if (useDeviceIPAsHost) {
-          List<IPAddressResourceRecord> ipAddresses = await client
-            .lookup<IPAddressResourceRecord>(
-              ipv6
-                  ? ResourceRecordQuery.addressIPv6(srvRecord.target)
-                  : ResourceRecordQuery.addressIPv4(srvRecord.target),
-            )
-            .toList();
+          List<IPAddressResourceRecord> ipAddresses =
+              await client
+                  .lookup<IPAddressResourceRecord>(
+                    ipv6
+                        ? ResourceRecordQuery.addressIPv6(srvRecord.target)
+                        : ResourceRecordQuery.addressIPv4(srvRecord.target),
+                  )
+                  .toList();
           if (ipAddresses.isEmpty) {
             throwToolExit('Did not find IP for service ${srvRecord.target}.');
           }
 
           // Filter out link-local addresses.
           if (ipAddresses.length > 1) {
-            ipAddresses = ipAddresses.where((IPAddressResourceRecord element) => !element.address.isLinkLocal).toList();
+            ipAddresses =
+                ipAddresses
+                    .where((IPAddressResourceRecord element) => !element.address.isLinkLocal)
+                    .toList();
           }
 
           ipAddress = ipAddresses.first.address;
           if (ipAddresses.length > 1) {
             _logger.printWarning(
-                'Unexpectedly found more than one IP for Dart VM Service ${srvRecord.target} '
-                '- using first one ($ipAddress).');
+              'Unexpectedly found more than one IP for Dart VM Service ${srvRecord.target} '
+              '- using first one ($ipAddress).',
+            );
           }
         }
 
         _logger.printTrace('Checking for authentication code for $domainName');
-        final List<TxtResourceRecord> txt = await client
-          .lookup<TxtResourceRecord>(
-              ResourceRecordQuery.text(domainName),
-          )
-          .toList();
+        final List<TxtResourceRecord> txt =
+            await client.lookup<TxtResourceRecord>(ResourceRecordQuery.text(domainName)).toList();
 
         String authCode = '';
         if (txt.isNotEmpty) {
           authCode = _getAuthCode(txt.first.text);
         }
-        results.add(MDnsVmServiceDiscoveryResult(
-          domainName,
-          srvRecord.port,
-          authCode,
-          ipAddress: ipAddress
-        ));
+        results.add(
+          MDnsVmServiceDiscoveryResult(domainName, srvRecord.port, authCode, ipAddress: ipAddress),
+        );
         uniqueDomainNamesInResults.add(domainName);
         if (quitOnFind) {
           return results;
@@ -352,10 +353,7 @@ class MDnsVmServiceDiscovery {
 
       // If applicationId is set and quitOnFind is true and no results matching
       // the applicationId were found but other results were found, throw an error.
-      if (applicationId != null &&
-          quitOnFind &&
-          results.isEmpty &&
-          uniqueDomainNames.isNotEmpty) {
+      if (applicationId != null && quitOnFind && results.isEmpty && uniqueDomainNames.isNotEmpty) {
         String message = 'Did not find a Dart VM Service advertised for $applicationId';
         if (deviceVmservicePort != null) {
           message += ' on port $deviceVmservicePort';
@@ -373,15 +371,19 @@ class MDnsVmServiceDiscovery {
   bool deviceNameMatchesTargetName(String deviceName, String targetName) {
     // Remove `.local` from the name along with any non-word, non-digit characters.
     final RegExp cleanedNameRegex = RegExp(r'\.local|\W');
-    final String cleanedDeviceName = deviceName.trim().toLowerCase().replaceAll(cleanedNameRegex, '');
+    final String cleanedDeviceName = deviceName.trim().toLowerCase().replaceAll(
+      cleanedNameRegex,
+      '',
+    );
     final String cleanedTargetName = targetName.toLowerCase().replaceAll(cleanedNameRegex, '');
     return cleanedDeviceName == cleanedTargetName;
   }
 
   String _getAuthCode(String txtRecord) {
     const String authCodePrefix = 'authCode=';
-    final Iterable<String> matchingRecords =
-        LineSplitter.split(txtRecord).where((String record) => record.startsWith(authCodePrefix));
+    final Iterable<String> matchingRecords = LineSplitter.split(
+      txtRecord,
+    ).where((String record) => record.startsWith(authCodePrefix));
     if (matchingRecords.isEmpty) {
       return '';
     }
@@ -427,7 +429,7 @@ class MDnsVmServiceDiscovery {
       deviceVmservicePort: deviceVmservicePort,
       hostVmservicePort: hostVmservicePort,
       usesIpv6: usesIpv6,
-      useDeviceIPAsHost: useDeviceIPAsHost
+      useDeviceIPAsHost: useDeviceIPAsHost,
     );
   }
 
@@ -464,7 +466,7 @@ class MDnsVmServiceDiscovery {
       deviceVmservicePort: deviceVmservicePort,
       hostVmservicePort: hostVmservicePort,
       usesIpv6: usesIpv6,
-      useDeviceIPAsHost: useDeviceIPAsHost
+      useDeviceIPAsHost: useDeviceIPAsHost,
     );
   }
 
@@ -487,9 +489,7 @@ class MDnsVmServiceDiscovery {
     if (useDeviceIPAsHost && ipAddress != null) {
       host = ipAddress.address;
     } else {
-      host = usesIpv6
-      ? InternetAddress.loopbackIPv6.address
-      : InternetAddress.loopbackIPv4.address;
+      host = usesIpv6 ? InternetAddress.loopbackIPv6.address : InternetAddress.loopbackIPv4.address;
     }
     return buildVMServiceUri(
       device,
@@ -505,7 +505,7 @@ class MDnsVmServiceDiscovery {
   // then request user interventions with a `printError()` if possible.
   Future<void> _checkForIPv4LinkLocal(Device device) async {
     _logger.printTrace(
-      'mDNS query failed. Checking for an interface with a ipv4 link local address.'
+      'mDNS query failed. Checking for an interface with a ipv4 link local address.',
     );
     final List<NetworkInterface> interfaces = await listNetworkInterfaces(
       includeLinkLocal: true,
@@ -515,9 +515,8 @@ class MDnsVmServiceDiscovery {
       _logInterfaces(interfaces);
     }
     final bool hasIPv4LinkLocal = interfaces.any(
-      (NetworkInterface interface) => interface.addresses.any(
-        (InternetAddress address) => address.isLinkLocal,
-      ),
+      (NetworkInterface interface) =>
+          interface.addresses.any((InternetAddress address) => address.isLinkLocal),
     );
     if (hasIPv4LinkLocal) {
       _logger.printTrace('An interface with an ipv4 link local address was found.');
@@ -527,13 +526,15 @@ class MDnsVmServiceDiscovery {
     switch (targetPlatform) {
       case TargetPlatform.ios:
         UsageEvent('ios-mdns', 'no-ipv4-link-local', flutterUsage: _flutterUsage).send();
-        _analytics.send(Event.appleUsageEvent(workflow: 'ios-mdns', parameter: 'no-ipv4-link-local'));
+        _analytics.send(
+          Event.appleUsageEvent(workflow: 'ios-mdns', parameter: 'no-ipv4-link-local'),
+        );
         _logger.printError(
           'The mDNS query for an attached iOS device failed. It may '
           'be necessary to disable the "Personal Hotspot" on the device, and '
           'to ensure that the "Disable unless needed" setting is unchecked '
           'under System Preferences > Network > iPhone USB. '
-          'See https://github.com/flutter/flutter/issues/46698 for details.'
+          'See https://github.com/flutter/flutter/issues/46698 for details.',
         );
       case TargetPlatform.android:
       case TargetPlatform.android_arm:
@@ -567,12 +568,7 @@ class MDnsVmServiceDiscovery {
 }
 
 class MDnsVmServiceDiscoveryResult {
-  MDnsVmServiceDiscoveryResult(
-    this.domainName,
-    this.port,
-    this.authCode, {
-    this.ipAddress
-  });
+  MDnsVmServiceDiscoveryResult(this.domainName, this.port, this.authCode, {this.ipAddress});
   final String domainName;
   final int port;
   final String authCode;
@@ -604,9 +600,10 @@ Future<Uri> buildVMServiceUri(
     // so just use the device's port.
     actualHostPort = devicePort;
   } else {
-    actualHostPort = hostVmservicePort == 0 ?
-    await device.portForwarder?.forward(devicePort) :
-    hostVmservicePort;
+    actualHostPort =
+        hostVmservicePort == 0
+            ? await device.portForwarder?.forward(devicePort)
+            : hostVmservicePort;
   }
   return Uri(scheme: 'http', host: host, port: actualHostPort, path: path);
 }

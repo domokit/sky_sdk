@@ -40,20 +40,14 @@ class BottomDrawer extends StatelessWidget {
             const SizedBox(height: 28),
             leading,
             const SizedBox(height: 8),
-            const Divider(
-              color: ReplyColors.blue200,
-              thickness: 0.25,
-              indent: 18,
-              endIndent: 160,
-            ),
+            const Divider(color: ReplyColors.blue200, thickness: 0.25, indent: 18, endIndent: 160),
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsetsDirectional.only(start: 18),
               child: Text(
                 'FOLDERS',
                 style: theme.textTheme.bodySmall!.copyWith(
-                  color:
-                      theme.navigationRailTheme.unselectedLabelTextStyle!.color,
+                  color: theme.navigationRailTheme.unselectedLabelTextStyle!.color,
                 ),
               ),
             ),

@@ -31,19 +31,15 @@ void main() {
     tryToDelete(tempDir);
   });
 
-  test(
-    'flutter build apk -v output should contain gen_snapshot command',
-    () async {
-      final ProcessResult result = processManager.runSync(<String>[
-        flutterBin,
-        ...getLocalEngineArguments(),
-        'build',
-        'apk',
-        '--target-platform=android-arm',
-        '-v',
-      ], workingDirectory: exampleAppDir.path);
-      expect(
-          result.stdout, contains(RegExp(r'executing:\s+.+gen_snapshot\s+')));
-    },
-  );
+  test('flutter build apk -v output should contain gen_snapshot command', () async {
+    final ProcessResult result = processManager.runSync(<String>[
+      flutterBin,
+      ...getLocalEngineArguments(),
+      'build',
+      'apk',
+      '--target-platform=android-arm',
+      '-v',
+    ], workingDirectory: exampleAppDir.path);
+    expect(result.stdout, contains(RegExp(r'executing:\s+.+gen_snapshot\s+')));
+  });
 }

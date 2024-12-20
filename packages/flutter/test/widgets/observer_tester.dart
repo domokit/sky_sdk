@@ -30,7 +30,7 @@ class TestObserver extends NavigatorObserver {
   }
 
   @override
-  void didReplace({ Route<dynamic>? oldRoute, Route<dynamic>? newRoute }) {
+  void didReplace({Route<dynamic>? oldRoute, Route<dynamic>? newRoute}) {
     onReplaced?.call(newRoute, oldRoute);
   }
 

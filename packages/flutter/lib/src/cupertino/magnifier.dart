@@ -76,15 +76,13 @@ class CupertinoTextMagnifier extends StatefulWidget {
 
   /// [CupertinoTextMagnifier] will determine its own positioning
   /// based on the [MagnifierInfo] of this notifier.
-  final ValueNotifier<MagnifierInfo>
-      magnifierInfo;
+  final ValueNotifier<MagnifierInfo> magnifierInfo;
 
   /// The duration that the magnifier drags behind its final position.
   static const Duration _kDragAnimationDuration = Duration(milliseconds: 45);
 
   @override
-  State<CupertinoTextMagnifier> createState() =>
-      _CupertinoTextMagnifierState();
+  State<CupertinoTextMagnifier> createState() => _CupertinoTextMagnifierState();
 }
 
 class _CupertinoTextMagnifierState extends State<CupertinoTextMagnifier>
@@ -98,7 +96,6 @@ class _CupertinoTextMagnifierState extends State<CupertinoTextMagnifier>
   late final Animation<double> _ioAnimation;
   late final CurvedAnimation _ioCurvedAnimation;
 
-
   @override
   void initState() {
     super.initState();
@@ -109,16 +106,12 @@ class _CupertinoTextMagnifierState extends State<CupertinoTextMagnifier>
     )..addListener(() => setState(() {}));
 
     widget.controller.animationController = _ioAnimationController;
-    widget.magnifierInfo
-        .addListener(_determineMagnifierPositionAndFocalPoint);
+    widget.magnifierInfo.addListener(_determineMagnifierPositionAndFocalPoint);
     _ioCurvedAnimation = CurvedAnimation(
       parent: _ioAnimationController,
       curve: widget.animationCurve,
     );
-    _ioAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(_ioCurvedAnimation);
+    _ioAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_ioCurvedAnimation);
   }
 
   @override
@@ -126,8 +119,7 @@ class _CupertinoTextMagnifierState extends State<CupertinoTextMagnifier>
     widget.controller.animationController = null;
     _ioAnimationController.dispose();
     _ioCurvedAnimation.dispose();
-    widget.magnifierInfo
-        .removeListener(_determineMagnifierPositionAndFocalPoint);
+    widget.magnifierInfo.removeListener(_determineMagnifierPositionAndFocalPoint);
     super.dispose();
   }
 
@@ -147,17 +139,14 @@ class _CupertinoTextMagnifierState extends State<CupertinoTextMagnifier>
   }
 
   void _determineMagnifierPositionAndFocalPoint() {
-    final MagnifierInfo textEditingContext =
-        widget.magnifierInfo.value;
+    final MagnifierInfo textEditingContext = widget.magnifierInfo.value;
 
     // The exact Y of the center of the current line.
-    final double verticalCenterOfCurrentLine =
-        textEditingContext.caretRect.center.dy;
+    final double verticalCenterOfCurrentLine = textEditingContext.caretRect.center.dy;
 
     // If the magnifier is currently showing, but we have dragged out of threshold,
     // we should hide it.
-    if (verticalCenterOfCurrentLine -
-            textEditingContext.globalGesturePosition.dy <
+    if (verticalCenterOfCurrentLine - textEditingContext.globalGesturePosition.dy <
         -widget.hideBelowThreshold) {
       // Only signal a hide if we are currently showing.
       if (widget.controller.shown) {
@@ -174,45 +163,44 @@ class _CupertinoTextMagnifierState extends State<CupertinoTextMagnifier>
     // Never go above the center of the line, but have some resistance
     // going downward if the drag goes too far.
     final double verticalPositionOfLens = math.max(
-        verticalCenterOfCurrentLine,
-        verticalCenterOfCurrentLine -
-            (verticalCenterOfCurrentLine -
-                    textEditingContext.globalGesturePosition.dy) /
-                widget.dragResistance);
+      verticalCenterOfCurrentLine,
+      verticalCenterOfCurrentLine -
+          (verticalCenterOfCurrentLine - textEditingContext.globalGesturePosition.dy) /
+              widget.dragResistance,
+    );
 
     // The raw position, tracking the gesture directly.
     final Offset rawMagnifierPosition = Offset(
-      textEditingContext.globalGesturePosition.dx -
-          CupertinoMagnifier.kDefaultSize.width / 2,
+      textEditingContext.globalGesturePosition.dx - CupertinoMagnifier.kDefaultSize.width / 2,
       verticalPositionOfLens -
-          (CupertinoMagnifier.kDefaultSize.height -
-              CupertinoMagnifier.kMagnifierAboveFocalPoint),
+          (CupertinoMagnifier.kDefaultSize.height - CupertinoMagnifier.kMagnifierAboveFocalPoint),
     );
 
     final Rect screenRect = Offset.zero & MediaQuery.sizeOf(context);
 
     // Adjust the magnifier position so that it never exists outside the horizontal
     // padding.
-    final Offset adjustedMagnifierPosition = MagnifierController.shiftWithinBounds(
-      bounds: Rect.fromLTRB(
-          screenRect.left + widget.horizontalScreenEdgePadding,
-          // iOS doesn't reposition for Y, so we should expand the threshold
-          // so we can send the whole magnifier out of bounds if need be.
-          screenRect.top -
-              (CupertinoMagnifier.kDefaultSize.height +
-                  CupertinoMagnifier.kMagnifierAboveFocalPoint),
-          screenRect.right - widget.horizontalScreenEdgePadding,
-          screenRect.bottom +
-              (CupertinoMagnifier.kDefaultSize.height +
-                  CupertinoMagnifier.kMagnifierAboveFocalPoint)),
-      rect: rawMagnifierPosition & CupertinoMagnifier.kDefaultSize,
-    ).topLeft;
+    final Offset adjustedMagnifierPosition =
+        MagnifierController.shiftWithinBounds(
+          bounds: Rect.fromLTRB(
+            screenRect.left + widget.horizontalScreenEdgePadding,
+            // iOS doesn't reposition for Y, so we should expand the threshold
+            // so we can send the whole magnifier out of bounds if need be.
+            screenRect.top -
+                (CupertinoMagnifier.kDefaultSize.height +
+                    CupertinoMagnifier.kMagnifierAboveFocalPoint),
+            screenRect.right - widget.horizontalScreenEdgePadding,
+            screenRect.bottom +
+                (CupertinoMagnifier.kDefaultSize.height +
+                    CupertinoMagnifier.kMagnifierAboveFocalPoint),
+          ),
+          rect: rawMagnifierPosition & CupertinoMagnifier.kDefaultSize,
+        ).topLeft;
 
     setState(() {
       _currentAdjustedMagnifierPosition = adjustedMagnifierPosition;
       // The lens should always point to the center of the line.
-      _verticalFocalPointAdjustment =
-          verticalCenterOfCurrentLine - verticalPositionOfLens;
+      _verticalFocalPointAdjustment = verticalCenterOfCurrentLine - verticalPositionOfLens;
     });
   }
 
@@ -227,10 +215,7 @@ class _CupertinoTextMagnifierState extends State<CupertinoTextMagnifier>
       child: CupertinoMagnifier(
         inOutAnimation: _ioAnimation,
         additionalFocalPointOffset: Offset(0, _verticalFocalPointAdjustment),
-        borderSide: BorderSide(
-          color: themeData.primaryColor,
-          width: 2.0,
-        ),
+        borderSide: BorderSide(color: themeData.primaryColor, width: 2.0),
       ),
     );
   }
@@ -275,15 +260,10 @@ class CupertinoMagnifier extends StatelessWidget {
       ),
     ],
     this.clipBehavior = Clip.none,
-    this.borderSide =
-        const BorderSide(
-          color: Color.fromARGB(255, 0, 124, 255),
-          width: 2.0,
-        ),
+    this.borderSide = const BorderSide(color: Color.fromARGB(255, 0, 124, 255), width: 2.0),
     this.inOutAnimation,
     this.magnificationScale = 1.0,
   }) : assert(magnificationScale > 0, 'The magnification scale should be greater than zero.');
-
 
   /// A list of shadows cast by the [Magnifier].
   ///
@@ -366,26 +346,23 @@ class CupertinoMagnifier extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Offset focalPointOffset =
-        Offset(0, (kDefaultSize.height / 2) - kMagnifierAboveFocalPoint);
+    Offset focalPointOffset = Offset(0, (kDefaultSize.height / 2) - kMagnifierAboveFocalPoint);
     focalPointOffset.scale(1, inOutAnimation?.value ?? 1);
     focalPointOffset += additionalFocalPointOffset;
 
     return Transform.translate(
-      offset: Offset.lerp(
-        const Offset(0, -kMagnifierAboveFocalPoint),
-        Offset.zero,
-        inOutAnimation?.value ?? 1,
-      )!,
+      offset:
+          Offset.lerp(
+            const Offset(0, -kMagnifierAboveFocalPoint),
+            Offset.zero,
+            inOutAnimation?.value ?? 1,
+          )!,
       child: RawMagnifier(
         size: size,
         focalPointOffset: focalPointOffset,
         decoration: MagnifierDecoration(
           opacity: inOutAnimation?.value ?? 1,
-          shape: RoundedRectangleBorder(
-            borderRadius: borderRadius,
-            side: borderSide,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: borderRadius, side: borderSide),
           shadows: shadows,
         ),
         clipBehavior: clipBehavior,

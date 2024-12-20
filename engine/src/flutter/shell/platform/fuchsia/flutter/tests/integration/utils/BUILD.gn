@@ -1,0 +1,60 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+assert(is_fuchsia)
+
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+
+source_set("check_view") {
+  sources = [
+    "check_view.cc",
+    "check_view.h",
+  ]
+
+  deps = [
+    "${fuchsia_sdk}/fidl/fuchsia.ui.observation.geometry",
+    "${fuchsia_sdk}/pkg/zx",
+    "//flutter/fml",
+  ]
+}
+
+source_set("screenshot") {
+  sources = [
+    "screenshot.cc",
+    "screenshot.h",
+  ]
+
+  deps = [
+    "${fuchsia_sdk}/fidl/fuchsia.logger",
+    "${fuchsia_sdk}/pkg/zx",
+    "//flutter/fml",
+  ]
+}
+
+source_set("portable_ui_test") {
+  testonly = true
+  sources = [
+    "portable_ui_test.cc",
+    "portable_ui_test.h",
+  ]
+
+  deps = [
+    ":check_view",
+    "${fuchsia_sdk}/fidl/fuchsia.inspect",
+    "${fuchsia_sdk}/fidl/fuchsia.logger",
+    "${fuchsia_sdk}/fidl/fuchsia.sysmem",
+    "${fuchsia_sdk}/fidl/fuchsia.sysmem2",
+    "${fuchsia_sdk}/fidl/fuchsia.tracing.provider",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.app",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.composition",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.display.singleton",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.input",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.observation.geometry",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.test.input",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.test.scene",
+    "${fuchsia_sdk}/pkg/async-loop-testing",
+    "${fuchsia_sdk}/pkg/sys_component_cpp_testing",
+    "//flutter/fml",
+  ]
+}

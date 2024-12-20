@@ -1,0 +1,1205 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/linux/pkg_config.gni")
+
+if (is_linux) {
+  # This is a dependency on NSS with no libssl. On Linux we use a built-in SSL
+  # library but the system NSS libraries. Non-Linux platforms using NSS use the
+  # hermetic one in //third_party/nss.
+  #
+  # Generally you should depend on //crypto:platform instead of using this
+  # config since that will properly pick up NSS or OpenSSL depending on
+  # platform and build config.
+  pkg_config("system_nss_no_ssl_config") {
+    packages = [ "nss" ]
+    extra_args = [
+      "-v",
+      "-lssl3",
+    ]
+  }
+} else {
+  include_nss_root_certs = is_ios
+  include_nss_libpkix = is_ios
+
+  config("nspr_config") {
+    defines = [ "NO_NSPR_10_SUPPORT" ]
+    include_dirs = [
+      "nspr/pr/include",
+      "nspr/lib/ds",
+      "nspr/lib/libc/include",
+    ]
+
+    if (component_mode != "shared_library") {
+      defines += [ "NSPR_STATIC" ]
+    }
+  }
+
+  component("nspr") {
+    output_name = "crnspr"
+    sources = [
+      "nspr/lib/ds/plarena.c",
+      "nspr/lib/ds/plarena.h",
+      "nspr/lib/ds/plarenas.h",
+      "nspr/lib/ds/plhash.c",
+      "nspr/lib/ds/plhash.h",
+      "nspr/lib/libc/include/plbase64.h",
+      "nspr/lib/libc/include/plerror.h",
+      "nspr/lib/libc/include/plgetopt.h",
+      "nspr/lib/libc/include/plstr.h",
+      "nspr/lib/libc/src/base64.c",
+      "nspr/lib/libc/src/plerror.c",
+      "nspr/lib/libc/src/plgetopt.c",
+      "nspr/lib/libc/src/strcase.c",
+      "nspr/lib/libc/src/strcat.c",
+      "nspr/lib/libc/src/strchr.c",
+      "nspr/lib/libc/src/strcmp.c",
+      "nspr/lib/libc/src/strcpy.c",
+      "nspr/lib/libc/src/strdup.c",
+      "nspr/lib/libc/src/strlen.c",
+      "nspr/lib/libc/src/strpbrk.c",
+      "nspr/lib/libc/src/strstr.c",
+      "nspr/lib/libc/src/strtok.c",
+      "nspr/pr/include/md/_darwin.cfg",
+      "nspr/pr/include/md/_darwin.h",
+      "nspr/pr/include/md/_pcos.h",
+      "nspr/pr/include/md/_pth.h",
+      "nspr/pr/include/md/_unix_errors.h",
+      "nspr/pr/include/md/_unixos.h",
+      "nspr/pr/include/md/_win32_errors.h",
+      "nspr/pr/include/md/_win95.cfg",
+      "nspr/pr/include/md/_win95.h",
+      "nspr/pr/include/md/prosdep.h",
+      "nspr/pr/include/nspr.h",
+      "nspr/pr/include/obsolete/pralarm.h",
+      "nspr/pr/include/obsolete/probslet.h",
+      "nspr/pr/include/obsolete/protypes.h",
+      "nspr/pr/include/obsolete/prsem.h",
+      "nspr/pr/include/pratom.h",
+      "nspr/pr/include/prbit.h",
+      "nspr/pr/include/prclist.h",
+      "nspr/pr/include/prcmon.h",
+      "nspr/pr/include/prcountr.h",
+      "nspr/pr/include/prcpucfg.h",
+      "nspr/pr/include/prcvar.h",
+      "nspr/pr/include/prdtoa.h",
+      "nspr/pr/include/prenv.h",
+      "nspr/pr/include/prerr.h",
+      "nspr/pr/include/prerror.h",
+      "nspr/pr/include/prinet.h",
+      "nspr/pr/include/prinit.h",
+      "nspr/pr/include/prinrval.h",
+      "nspr/pr/include/prio.h",
+      "nspr/pr/include/pripcsem.h",
+      "nspr/pr/include/private/pprio.h",
+      "nspr/pr/include/private/pprmwait.h",
+      "nspr/pr/include/private/pprthred.h",
+      "nspr/pr/include/private/primpl.h",
+      "nspr/pr/include/private/prpriv.h",
+      "nspr/pr/include/prlink.h",
+      "nspr/pr/include/prlock.h",
+      "nspr/pr/include/prlog.h",
+      "nspr/pr/include/prlong.h",
+      "nspr/pr/include/prmem.h",
+      "nspr/pr/include/prmon.h",
+      "nspr/pr/include/prmwait.h",
+      "nspr/pr/include/prnetdb.h",
+      "nspr/pr/include/prolock.h",
+      "nspr/pr/include/prpdce.h",
+      "nspr/pr/include/prprf.h",
+      "nspr/pr/include/prproces.h",
+      "nspr/pr/include/prrng.h",
+      "nspr/pr/include/prrwlock.h",
+      "nspr/pr/include/prshm.h",
+      "nspr/pr/include/prshma.h",
+      "nspr/pr/include/prsystem.h",
+      "nspr/pr/include/prthread.h",
+      "nspr/pr/include/prtime.h",
+      "nspr/pr/include/prtpool.h",
+      "nspr/pr/include/prtrace.h",
+      "nspr/pr/include/prtypes.h",
+      "nspr/pr/include/prvrsion.h",
+      "nspr/pr/include/prwin16.h",
+      "nspr/pr/src/io/prdir.c",
+      "nspr/pr/src/io/prfdcach.c",
+      "nspr/pr/src/io/prfile.c",
+      "nspr/pr/src/io/prio.c",
+      "nspr/pr/src/io/priometh.c",
+      "nspr/pr/src/io/pripv6.c",
+      "nspr/pr/src/io/prlayer.c",
+      "nspr/pr/src/io/prlog.c",
+      "nspr/pr/src/io/prmapopt.c",
+      "nspr/pr/src/io/prmmap.c",
+      "nspr/pr/src/io/prmwait.c",
+      "nspr/pr/src/io/prpolevt.c",
+      "nspr/pr/src/io/prprf.c",
+      "nspr/pr/src/io/prscanf.c",
+      "nspr/pr/src/io/prsocket.c",
+      "nspr/pr/src/io/prstdio.c",
+      "nspr/pr/src/linking/prlink.c",
+      "nspr/pr/src/malloc/prmalloc.c",
+      "nspr/pr/src/malloc/prmem.c",
+      "nspr/pr/src/md/prosdep.c",
+      "nspr/pr/src/md/unix/darwin.c",
+      "nspr/pr/src/md/unix/os_Darwin.s",
+      "nspr/pr/src/md/unix/unix.c",
+      "nspr/pr/src/md/unix/unix_errors.c",
+      "nspr/pr/src/md/unix/uxproces.c",
+      "nspr/pr/src/md/unix/uxrng.c",
+      "nspr/pr/src/md/unix/uxshm.c",
+      "nspr/pr/src/md/unix/uxwrap.c",
+      "nspr/pr/src/md/windows/ntgc.c",
+      "nspr/pr/src/md/windows/ntinrval.c",
+      "nspr/pr/src/md/windows/ntmisc.c",
+      "nspr/pr/src/md/windows/ntsec.c",
+      "nspr/pr/src/md/windows/ntsem.c",
+      "nspr/pr/src/md/windows/w32ipcsem.c",
+      "nspr/pr/src/md/windows/w32poll.c",
+      "nspr/pr/src/md/windows/w32rng.c",
+      "nspr/pr/src/md/windows/w32shm.c",
+      "nspr/pr/src/md/windows/w95cv.c",
+      "nspr/pr/src/md/windows/w95dllmain.c",
+      "nspr/pr/src/md/windows/w95io.c",
+      "nspr/pr/src/md/windows/w95sock.c",
+      "nspr/pr/src/md/windows/w95thred.c",
+      "nspr/pr/src/md/windows/win32_errors.c",
+      "nspr/pr/src/memory/prseg.c",
+      "nspr/pr/src/memory/prshm.c",
+      "nspr/pr/src/memory/prshma.c",
+      "nspr/pr/src/misc/pralarm.c",
+      "nspr/pr/src/misc/pratom.c",
+      "nspr/pr/src/misc/praton.c",
+      "nspr/pr/src/misc/prcountr.c",
+      "nspr/pr/src/misc/prdtoa.c",
+      "nspr/pr/src/misc/prenv.c",
+      "nspr/pr/src/misc/prerr.c",
+      "nspr/pr/src/misc/prerror.c",
+      "nspr/pr/src/misc/prerrortable.c",
+      "nspr/pr/src/misc/prinit.c",
+      "nspr/pr/src/misc/prinrval.c",
+      "nspr/pr/src/misc/pripc.c",
+      "nspr/pr/src/misc/pripcsem.c",
+      "nspr/pr/src/misc/prlog2.c",
+      "nspr/pr/src/misc/prlong.c",
+      "nspr/pr/src/misc/prnetdb.c",
+      "nspr/pr/src/misc/prolock.c",
+      "nspr/pr/src/misc/prrng.c",
+      "nspr/pr/src/misc/prsystem.c",
+      "nspr/pr/src/misc/prthinfo.c",
+      "nspr/pr/src/misc/prtime.c",
+      "nspr/pr/src/misc/prtpool.c",
+      "nspr/pr/src/misc/prtrace.c",
+      "nspr/pr/src/pthreads/ptio.c",
+      "nspr/pr/src/pthreads/ptmisc.c",
+      "nspr/pr/src/pthreads/ptsynch.c",
+      "nspr/pr/src/pthreads/ptthread.c",
+      "nspr/pr/src/threads/combined/prucpu.c",
+      "nspr/pr/src/threads/combined/prucv.c",
+      "nspr/pr/src/threads/combined/prulock.c",
+      "nspr/pr/src/threads/combined/prustack.c",
+      "nspr/pr/src/threads/combined/pruthr.c",
+      "nspr/pr/src/threads/prcmon.c",
+      "nspr/pr/src/threads/prcthr.c",
+      "nspr/pr/src/threads/prdump.c",
+      "nspr/pr/src/threads/prmon.c",
+      "nspr/pr/src/threads/prrwlock.c",
+      "nspr/pr/src/threads/prsem.c",
+      "nspr/pr/src/threads/prtpd.c",
+    ]
+
+    public_configs = [ ":nspr_config" ]
+
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    if (is_win) {
+      configs -= [
+        "//build/config/win:unicode",  # Requires 8-bit mode.
+        "//build/config/win:lean_and_mean",  # Won"t compile with lean and mean.
+      ]
+    }
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      "//build/config/compiler:no_size_t_to_int_warning",
+    ]
+
+    cflags = []
+    defines = [
+      "_NSPR_BUILD_",
+      "FORCE_PR_LOG",
+    ]
+
+    include_dirs = [ "nspr/pr/include/private" ]
+
+    if (is_win) {
+      cflags = [ "/wd4554" ]  # Check precidence.
+      defines += [
+        "XP_PC",
+        "WIN32",
+        "WIN95",
+        "_PR_GLOBAL_THREADS_ONLY",
+        "_CRT_SECURE_NO_WARNINGS",
+      ]
+    } else {
+      sources -= [
+        "nspr/pr/src/md/windows/ntgc.c",
+        "nspr/pr/src/md/windows/ntinrval.c",
+        "nspr/pr/src/md/windows/ntmisc.c",
+        "nspr/pr/src/md/windows/ntsec.c",
+        "nspr/pr/src/md/windows/ntsem.c",
+        "nspr/pr/src/md/windows/w32ipcsem.c",
+        "nspr/pr/src/md/windows/w32poll.c",
+        "nspr/pr/src/md/windows/w32rng.c",
+        "nspr/pr/src/md/windows/w32shm.c",
+        "nspr/pr/src/md/windows/w95cv.c",
+        "nspr/pr/src/md/windows/w95dllmain.c",
+        "nspr/pr/src/md/windows/w95io.c",
+        "nspr/pr/src/md/windows/w95sock.c",
+        "nspr/pr/src/md/windows/w95thred.c",
+        "nspr/pr/src/md/windows/win32_errors.c",
+        "nspr/pr/src/threads/combined/prucpu.c",
+        "nspr/pr/src/threads/combined/prucv.c",
+        "nspr/pr/src/threads/combined/prulock.c",
+        "nspr/pr/src/threads/combined/prustack.c",
+        "nspr/pr/src/threads/combined/pruthr.c",
+      ]
+    }
+
+    if (!is_posix) {
+      sources -= [
+        "nspr/pr/src/md/unix/darwin.c",
+        "nspr/pr/src/md/unix/os_Darwin.s",
+        "nspr/pr/src/md/unix/unix.c",
+        "nspr/pr/src/md/unix/unix_errors.c",
+        "nspr/pr/src/md/unix/uxproces.c",
+        "nspr/pr/src/md/unix/uxrng.c",
+        "nspr/pr/src/md/unix/uxshm.c",
+        "nspr/pr/src/md/unix/uxwrap.c",
+        "nspr/pr/src/pthreads/ptio.c",
+        "nspr/pr/src/pthreads/ptmisc.c",
+        "nspr/pr/src/pthreads/ptsynch.c",
+        "nspr/pr/src/pthreads/ptthread.c",
+      ]
+    }
+
+    if (current_cpu == "x86") {
+      defines += [ "_X86_" ]
+    } else if (current_cpu == "x64") {
+      defines += [ "_AMD64_" ]
+    }
+
+    if (is_mac || is_ios) {
+      sources -= [
+        "nspr/pr/src/io/prdir.c",
+        "nspr/pr/src/io/prfile.c",
+        "nspr/pr/src/io/prio.c",
+        "nspr/pr/src/io/prsocket.c",
+        "nspr/pr/src/misc/pripcsem.c",
+        "nspr/pr/src/threads/prcthr.c",
+        "nspr/pr/src/threads/prdump.c",
+        "nspr/pr/src/threads/prmon.c",
+        "nspr/pr/src/threads/prsem.c",
+      ]
+      defines += [
+        "XP_UNIX",
+        "DARWIN",
+        "XP_MACOSX",
+        "_PR_PTHREADS",
+        "HAVE_BSD_FLOCK",
+        "HAVE_DLADDR",
+        "HAVE_LCHOWN",
+        "HAVE_SOCKLEN_T",
+        "HAVE_STRERROR",
+      ]
+    }
+
+    if (is_mac) {
+      defines += [ "HAVE_CRT_EXTERNS_H" ]
+      libs = [
+        "CoreFoundation.framework",
+        "CoreServices.framework",
+      ]
+    }
+
+    if (is_clang) {
+      cflags += [
+        # nspr uses a bunch of deprecated functions (NSLinkModule etc) in
+        # prlink.c on mac.
+        "-Wno-deprecated-declarations",
+
+        # nspr passes "const char*" through "void*".
+        "-Wno-incompatible-pointer-types",
+
+        # nspr passes "int*" through "unsigned int*".
+        "-Wno-pointer-sign",
+      ]
+
+      # nspr uses assert(!"foo") instead of assert(false && "foo").
+      configs -= [ "//build/config/clang:extra_warnings" ]
+    }
+  }
+
+  component("nss") {
+    output_name = "crnss"
+    sources = [
+      # Ensure at least one object file is produced, so that MSVC does not
+      # warn when creating the static/shared library. See the note for
+      # the "nssckbi" target for why the "nss" target was split as such.
+      "nss/lib/nss/nssver.c",
+    ]
+
+    public_deps = [ ":nss_static" ]
+
+    if (include_nss_root_certs) {
+      public_deps += [ ":nssckbi" ]
+    }
+
+    if (component_mode == "shared_library") {
+      if (is_mac) {
+        ldflags = [ "-all_load" ]
+      } else if (is_win) {
+        # Pass the def file to the linker.
+        ldflags =
+            [ "/DEF:" + rebase_path("nss/exports_win.def", root_build_dir) ]
+      }
+    }
+  }
+
+  config("nssckbi_config") {
+    include_dirs = [ "nss/lib/ckfw/builtins" ]
+  }
+
+  # This is really more of a pseudo-target to work around the fact that
+  # a single static_library target cannot contain two object files of the
+  # same name (hash.o / hash.obj). Logically, this is part of the
+  # "nss_static" target. By separating it out, it creates a possible
+  # circular dependency between "nss_static" and "nssckbi" when
+  # "exclude_nss_root_certs" is not specified, as "nss_static" depends on
+  # the "builtinsC_GetFunctionList" exported by this target. This is an
+  # artifact of how NSS is being statically built, which is not an
+  # officially supported configuration - normally, "nssckbi.dll/so" would
+  # depend on libnss3.dll/so, and the higher layer caller would instruct
+  # libnss3.dll to dynamically load nssckbi.dll, breaking the circle.
+  #
+  # TODO(rsleevi): http://crbug.com/128134 - Break the circular dependency
+  # without requiring nssckbi to be built as a shared library.
+  source_set("nssckbi") {
+    visibility = [ ":nss" ]  # This target is internal implementation detail.
+
+    sources = [
+      "nss/lib/ckfw/builtins/anchor.c",
+      "nss/lib/ckfw/builtins/bfind.c",
+      "nss/lib/ckfw/builtins/binst.c",
+      "nss/lib/ckfw/builtins/bobject.c",
+      "nss/lib/ckfw/builtins/bsession.c",
+      "nss/lib/ckfw/builtins/bslot.c",
+      "nss/lib/ckfw/builtins/btoken.c",
+      "nss/lib/ckfw/builtins/builtins.h",
+      "nss/lib/ckfw/builtins/certdata.c",
+      "nss/lib/ckfw/builtins/ckbiver.c",
+      "nss/lib/ckfw/builtins/constants.c",
+      "nss/lib/ckfw/builtins/nssckbi.h",
+      "nss/lib/ckfw/ck.h",
+      "nss/lib/ckfw/ckfw.h",
+      "nss/lib/ckfw/ckfwm.h",
+      "nss/lib/ckfw/ckfwtm.h",
+      "nss/lib/ckfw/ckmd.h",
+      "nss/lib/ckfw/ckt.h",
+      "nss/lib/ckfw/crypto.c",
+      "nss/lib/ckfw/find.c",
+      "nss/lib/ckfw/hash.c",
+      "nss/lib/ckfw/instance.c",
+      "nss/lib/ckfw/mechanism.c",
+      "nss/lib/ckfw/mutex.c",
+      "nss/lib/ckfw/nssck.api",
+      "nss/lib/ckfw/nssckepv.h",
+      "nss/lib/ckfw/nssckft.h",
+      "nss/lib/ckfw/nssckfw.h",
+      "nss/lib/ckfw/nssckfwc.h",
+      "nss/lib/ckfw/nssckfwt.h",
+      "nss/lib/ckfw/nssckg.h",
+      "nss/lib/ckfw/nssckmdt.h",
+      "nss/lib/ckfw/nssckt.h",
+      "nss/lib/ckfw/object.c",
+      "nss/lib/ckfw/session.c",
+      "nss/lib/ckfw/sessobj.c",
+      "nss/lib/ckfw/slot.c",
+      "nss/lib/ckfw/token.c",
+      "nss/lib/ckfw/wrap.c",
+    ]
+
+    configs -= [ "//build/config/compiler:chromium_code" ]
+
+    if (is_win) {
+      configs -= [ "//build/config/win:unicode" ]  # Requires 8-bit mode.
+    }
+    configs += [ "//build/config/compiler:no_chromium_code" ]
+
+    include_dirs = [ "nss/lib/ckfw" ]
+    public_configs = [ ":nssckbi_config" ]
+
+    public_deps = [ ":nss_static" ]
+  }
+
+  config("nss_static_config") {
+    defines = [
+      "NSS_STATIC",
+      "NSS_USE_STATIC_LIBS",
+      "USE_UTIL_DIRECTLY",
+    ]
+    if (is_win) {
+      defines += [ "_WINDOWS" ]
+    }
+    include_dirs = [
+      "nspr/pr/include",
+      "nspr/lib/ds",
+      "nspr/lib/libc/include",
+      "nss/lib/base",
+      "nss/lib/certdb",
+      "nss/lib/certhigh",
+      "nss/lib/cryptohi",
+      "nss/lib/dev",
+      "nss/lib/freebl",
+      "nss/lib/freebl/ecl",
+      "nss/lib/nss",
+      "nss/lib/pk11wrap",
+      "nss/lib/pkcs7",
+      "nss/lib/pki",
+      "nss/lib/smime",
+      "nss/lib/softoken",
+      "nss/lib/util",
+    ]
+  }
+
+  if (is_win && current_cpu == "x86") {
+    source_set("nss_static_avx") {
+      sources = [
+        "nss/lib/freebl/intel-gcm-wrap.c",
+        "nss/lib/freebl/intel-gcm-x86-masm.asm",
+        "nss/lib/freebl/intel-gcm.h",
+      ]
+      defines = [
+        "_WINDOWS",
+        "_X86_",
+        "INTEL_GCM",
+        "MP_API_COMPATIBLE",
+        "MP_ASSEMBLY_DIV_2DX1D",
+        "MP_ASSEMBLY_MULTIPLY",
+        "MP_ASSEMBLY_SQUARE",
+        "MP_NO_MP_WORD",
+        "MP_USE_UINT_DIGIT",
+        "NSS_DISABLE_DBM",
+        "NSS_STATIC",
+        "NSS_USE_STATIC_LIBS",
+        "NSS_X86",
+        "NSS_X86_OR_X64",
+        "RIJNDAEL_INCLUDE_TABLES",
+        "SHLIB_PREFIX=\"\"",
+        "SHLIB_SUFFIX=\"dll\"",
+        "SHLIB_VERSION=\"3\"",
+        "SOFTOKEN_LIB_NAME=\"softokn3.dll\"",
+        "SOFTOKEN_SHLIB_VERSION=\"3\"",
+        "USE_HW_AES",
+        "USE_UTIL_DIRECTLY",
+        "WIN32",
+        "WIN95",
+        "XP_PC",
+      ]
+      include_dirs = [
+        "nspr/pr/include",
+        "nspr/lib/ds",
+        "nspr/lib/libc/include",
+        "nss/lib/freebl/ecl",
+        "nss/lib/util",
+      ]
+    }
+  }
+
+  source_set("nss_static") {
+    visibility = [ ":*" ]  # Internal implementation detail.
+
+    sources = [
+      "nss/lib/base/arena.c",
+      "nss/lib/base/base.h",
+      "nss/lib/base/baset.h",
+      "nss/lib/base/error.c",
+      "nss/lib/base/errorval.c",
+      "nss/lib/base/hash.c",
+      "nss/lib/base/hashops.c",
+      "nss/lib/base/item.c",
+      "nss/lib/base/libc.c",
+      "nss/lib/base/list.c",
+      "nss/lib/base/nssbase.h",
+      "nss/lib/base/nssbaset.h",
+      "nss/lib/base/nssutf8.c",
+      "nss/lib/base/tracker.c",
+      "nss/lib/certdb/alg1485.c",
+      "nss/lib/certdb/cert.h",
+      "nss/lib/certdb/certdb.c",
+      "nss/lib/certdb/certdb.h",
+      "nss/lib/certdb/certi.h",
+      "nss/lib/certdb/certt.h",
+      "nss/lib/certdb/certv3.c",
+      "nss/lib/certdb/certxutl.c",
+      "nss/lib/certdb/certxutl.h",
+      "nss/lib/certdb/crl.c",
+      "nss/lib/certdb/genname.c",
+      "nss/lib/certdb/genname.h",
+      "nss/lib/certdb/polcyxtn.c",
+      "nss/lib/certdb/secname.c",
+      "nss/lib/certdb/stanpcertdb.c",
+      "nss/lib/certdb/xauthkid.c",
+      "nss/lib/certdb/xbsconst.c",
+      "nss/lib/certdb/xconst.c",
+      "nss/lib/certdb/xconst.h",
+      "nss/lib/certhigh/certhigh.c",
+      "nss/lib/certhigh/certhtml.c",
+      "nss/lib/certhigh/certreq.c",
+      "nss/lib/certhigh/certvfy.c",
+      "nss/lib/certhigh/crlv2.c",
+      "nss/lib/certhigh/ocsp.c",
+      "nss/lib/certhigh/ocsp.h",
+      "nss/lib/certhigh/ocspi.h",
+      "nss/lib/certhigh/ocspsig.c",
+      "nss/lib/certhigh/ocspt.h",
+      "nss/lib/certhigh/ocspti.h",
+      "nss/lib/certhigh/xcrldist.c",
+      "nss/lib/cryptohi/cryptohi.h",
+      "nss/lib/cryptohi/cryptoht.h",
+      "nss/lib/cryptohi/dsautil.c",
+      "nss/lib/cryptohi/key.h",
+      "nss/lib/cryptohi/keyhi.h",
+      "nss/lib/cryptohi/keyi.h",
+      "nss/lib/cryptohi/keyt.h",
+      "nss/lib/cryptohi/keythi.h",
+      "nss/lib/cryptohi/sechash.c",
+      "nss/lib/cryptohi/sechash.h",
+      "nss/lib/cryptohi/seckey.c",
+      "nss/lib/cryptohi/secsign.c",
+      "nss/lib/cryptohi/secvfy.c",
+      "nss/lib/dev/ckhelper.c",
+      "nss/lib/dev/ckhelper.h",
+      "nss/lib/dev/dev.h",
+      "nss/lib/dev/devm.h",
+      "nss/lib/dev/devslot.c",
+      "nss/lib/dev/devt.h",
+      "nss/lib/dev/devtm.h",
+      "nss/lib/dev/devtoken.c",
+      "nss/lib/dev/devutil.c",
+      "nss/lib/dev/nssdev.h",
+      "nss/lib/dev/nssdevt.h",
+      "nss/lib/freebl/aeskeywrap.c",
+      "nss/lib/freebl/alg2268.c",
+      "nss/lib/freebl/alghmac.c",
+      "nss/lib/freebl/alghmac.h",
+      "nss/lib/freebl/arcfive.c",
+      "nss/lib/freebl/arcfour.c",
+      "nss/lib/freebl/blapi.h",
+      "nss/lib/freebl/blapii.h",
+      "nss/lib/freebl/blapit.h",
+      "nss/lib/freebl/camellia.c",
+      "nss/lib/freebl/camellia.h",
+      "nss/lib/freebl/chacha20/chacha20.c",
+      "nss/lib/freebl/chacha20/chacha20.h",
+      "nss/lib/freebl/chacha20/chacha20_vec.c",
+      "nss/lib/freebl/chacha20poly1305.c",
+      "nss/lib/freebl/chacha20poly1305.h",
+      "nss/lib/freebl/ctr.c",
+      "nss/lib/freebl/ctr.h",
+      "nss/lib/freebl/cts.c",
+      "nss/lib/freebl/cts.h",
+      "nss/lib/freebl/des.c",
+      "nss/lib/freebl/des.h",
+      "nss/lib/freebl/desblapi.c",
+      "nss/lib/freebl/dh.c",
+      "nss/lib/freebl/drbg.c",
+      "nss/lib/freebl/dsa.c",
+      "nss/lib/freebl/ec.c",
+      "nss/lib/freebl/ec.h",
+      "nss/lib/freebl/ecdecode.c",
+      "nss/lib/freebl/ecl/ec2.h",
+      "nss/lib/freebl/ecl/ec_naf.c",
+      "nss/lib/freebl/ecl/ecl-curve.h",
+      "nss/lib/freebl/ecl/ecl-exp.h",
+      "nss/lib/freebl/ecl/ecl-priv.h",
+      "nss/lib/freebl/ecl/ecl.c",
+      "nss/lib/freebl/ecl/ecl.h",
+      "nss/lib/freebl/ecl/ecl_curve.c",
+      "nss/lib/freebl/ecl/ecl_gf.c",
+      "nss/lib/freebl/ecl/ecl_mult.c",
+      "nss/lib/freebl/ecl/ecp.h",
+      "nss/lib/freebl/ecl/ecp_256.c",
+      "nss/lib/freebl/ecl/ecp_256_32.c",
+      "nss/lib/freebl/ecl/ecp_384.c",
+      "nss/lib/freebl/ecl/ecp_521.c",
+      "nss/lib/freebl/ecl/ecp_aff.c",
+      "nss/lib/freebl/ecl/ecp_jac.c",
+      "nss/lib/freebl/ecl/ecp_jm.c",
+      "nss/lib/freebl/ecl/ecp_mont.c",
+      "nss/lib/freebl/gcm.c",
+      "nss/lib/freebl/gcm.h",
+      "nss/lib/freebl/hmacct.c",
+      "nss/lib/freebl/hmacct.h",
+      "nss/lib/freebl/intel-aes-x86-masm.asm",
+      "nss/lib/freebl/intel-aes.h",
+      "nss/lib/freebl/jpake.c",
+      "nss/lib/freebl/md2.c",
+      "nss/lib/freebl/md5.c",
+      "nss/lib/freebl/mpi/logtab.h",
+      "nss/lib/freebl/mpi/mp_gf2m-priv.h",
+      "nss/lib/freebl/mpi/mp_gf2m.c",
+      "nss/lib/freebl/mpi/mp_gf2m.h",
+      "nss/lib/freebl/mpi/mpcpucache.c",
+      "nss/lib/freebl/mpi/mpi-config.h",
+      "nss/lib/freebl/mpi/mpi-priv.h",
+      "nss/lib/freebl/mpi/mpi.c",
+      "nss/lib/freebl/mpi/mpi.h",
+      "nss/lib/freebl/mpi/mpi_amd64.c",
+      "nss/lib/freebl/mpi/mpi_arm.c",
+      "nss/lib/freebl/mpi/mpi_arm_mac.c",
+      "nss/lib/freebl/mpi/mpi_x86_asm.c",
+      "nss/lib/freebl/mpi/mplogic.c",
+      "nss/lib/freebl/mpi/mplogic.h",
+      "nss/lib/freebl/mpi/mpmontg.c",
+      "nss/lib/freebl/mpi/mpprime.c",
+      "nss/lib/freebl/mpi/mpprime.h",
+      "nss/lib/freebl/mpi/primes.c",
+      "nss/lib/freebl/nss_build_config_mac.h",
+      "nss/lib/freebl/poly1305/poly1305-donna-x64-sse2-incremental-source.c",
+      "nss/lib/freebl/poly1305/poly1305.c",
+      "nss/lib/freebl/poly1305/poly1305.h",
+      "nss/lib/freebl/pqg.c",
+      "nss/lib/freebl/pqg.h",
+      "nss/lib/freebl/rawhash.c",
+      "nss/lib/freebl/rijndael.c",
+      "nss/lib/freebl/rijndael.h",
+      "nss/lib/freebl/rijndael32.tab",
+      "nss/lib/freebl/rsa.c",
+      "nss/lib/freebl/rsapkcs.c",
+      "nss/lib/freebl/secmpi.h",
+      "nss/lib/freebl/secrng.h",
+      "nss/lib/freebl/seed.c",
+      "nss/lib/freebl/seed.h",
+      "nss/lib/freebl/sha256.h",
+      "nss/lib/freebl/sha512.c",
+      "nss/lib/freebl/sha_fast.c",
+      "nss/lib/freebl/sha_fast.h",
+      "nss/lib/freebl/shsign.h",
+      "nss/lib/freebl/shvfy.c",
+      "nss/lib/freebl/sysrand.c",
+      "nss/lib/freebl/tlsprfalg.c",
+      "nss/lib/freebl/unix_rand.c",
+      "nss/lib/freebl/win_rand.c",
+      "nss/lib/nss/nss.h",
+      "nss/lib/nss/nssinit.c",
+      "nss/lib/nss/nssrenam.h",
+      "nss/lib/nss/utilwrap.c",
+      "nss/lib/pk11wrap/debug_module.c",
+      "nss/lib/pk11wrap/dev3hack.c",
+      "nss/lib/pk11wrap/dev3hack.h",
+      "nss/lib/pk11wrap/pk11akey.c",
+      "nss/lib/pk11wrap/pk11auth.c",
+      "nss/lib/pk11wrap/pk11cert.c",
+      "nss/lib/pk11wrap/pk11cxt.c",
+      "nss/lib/pk11wrap/pk11err.c",
+      "nss/lib/pk11wrap/pk11func.h",
+      "nss/lib/pk11wrap/pk11kea.c",
+      "nss/lib/pk11wrap/pk11list.c",
+      "nss/lib/pk11wrap/pk11load.c",
+      "nss/lib/pk11wrap/pk11mech.c",
+      "nss/lib/pk11wrap/pk11merge.c",
+      "nss/lib/pk11wrap/pk11nobj.c",
+      "nss/lib/pk11wrap/pk11obj.c",
+      "nss/lib/pk11wrap/pk11pars.c",
+      "nss/lib/pk11wrap/pk11pbe.c",
+      "nss/lib/pk11wrap/pk11pk12.c",
+      "nss/lib/pk11wrap/pk11pqg.c",
+      "nss/lib/pk11wrap/pk11pqg.h",
+      "nss/lib/pk11wrap/pk11priv.h",
+      "nss/lib/pk11wrap/pk11pub.h",
+      "nss/lib/pk11wrap/pk11sdr.c",
+      "nss/lib/pk11wrap/pk11sdr.h",
+      "nss/lib/pk11wrap/pk11skey.c",
+      "nss/lib/pk11wrap/pk11slot.c",
+      "nss/lib/pk11wrap/pk11util.c",
+      "nss/lib/pk11wrap/secmod.h",
+      "nss/lib/pk11wrap/secmodi.h",
+      "nss/lib/pk11wrap/secmodt.h",
+      "nss/lib/pk11wrap/secmodti.h",
+      "nss/lib/pk11wrap/secpkcs5.h",
+      "nss/lib/pkcs7/certread.c",
+      "nss/lib/pkcs7/p7common.c",
+      "nss/lib/pkcs7/p7create.c",
+      "nss/lib/pkcs7/p7decode.c",
+      "nss/lib/pkcs7/p7encode.c",
+      "nss/lib/pkcs7/p7local.c",
+      "nss/lib/pkcs7/p7local.h",
+      "nss/lib/pkcs7/pkcs7t.h",
+      "nss/lib/pkcs7/secmime.c",
+      "nss/lib/pkcs7/secmime.h",
+      "nss/lib/pkcs7/secpkcs7.h",
+      "nss/lib/pki/asymmkey.c",
+      "nss/lib/pki/certdecode.c",
+      "nss/lib/pki/certificate.c",
+      "nss/lib/pki/cryptocontext.c",
+      "nss/lib/pki/nsspki.h",
+      "nss/lib/pki/nsspkit.h",
+      "nss/lib/pki/pki.h",
+      "nss/lib/pki/pki3hack.c",
+      "nss/lib/pki/pki3hack.h",
+      "nss/lib/pki/pkibase.c",
+      "nss/lib/pki/pkim.h",
+      "nss/lib/pki/pkistore.c",
+      "nss/lib/pki/pkistore.h",
+      "nss/lib/pki/pkit.h",
+      "nss/lib/pki/pkitm.h",
+      "nss/lib/pki/symmkey.c",
+      "nss/lib/pki/tdcache.c",
+      "nss/lib/pki/trustdomain.c",
+      "nss/lib/smime/cms.h",
+      "nss/lib/smime/cmslocal.h",
+      "nss/lib/smime/cmsreclist.h",
+      "nss/lib/smime/cmst.h",
+      "nss/lib/smime/smime.h",
+      "nss/lib/softoken/fipsaudt.c",
+      "nss/lib/softoken/fipstest.c",
+      "nss/lib/softoken/fipstokn.c",
+      "nss/lib/softoken/jpakesftk.c",
+      "nss/lib/softoken/lgglue.c",
+      "nss/lib/softoken/lgglue.h",
+      "nss/lib/softoken/lowkey.c",
+      "nss/lib/softoken/lowkeyi.h",
+      "nss/lib/softoken/lowkeyti.h",
+      "nss/lib/softoken/lowpbe.c",
+      "nss/lib/softoken/lowpbe.h",
+      "nss/lib/softoken/padbuf.c",
+      "nss/lib/softoken/pkcs11.c",
+      "nss/lib/softoken/pkcs11c.c",
+      "nss/lib/softoken/pkcs11i.h",
+      "nss/lib/softoken/pkcs11ni.h",
+      "nss/lib/softoken/pkcs11u.c",
+      "nss/lib/softoken/sdb.c",
+      "nss/lib/softoken/sdb.h",
+      "nss/lib/softoken/sftkdb.c",
+      "nss/lib/softoken/sftkdb.h",
+      "nss/lib/softoken/sftkdbt.h",
+      "nss/lib/softoken/sftkdbti.h",
+      "nss/lib/softoken/sftkhmac.c",
+      "nss/lib/softoken/sftkpars.c",
+      "nss/lib/softoken/sftkpars.h",
+      "nss/lib/softoken/sftkpwd.c",
+      "nss/lib/softoken/softkver.c",
+      "nss/lib/softoken/softkver.h",
+      "nss/lib/softoken/softoken.h",
+      "nss/lib/softoken/softoknt.h",
+      "nss/lib/softoken/tlsprf.c",
+      "nss/lib/ssl/sslerr.h",
+      "nss/lib/util/SECerrs.h",
+      "nss/lib/util/base64.h",
+      "nss/lib/util/ciferfam.h",
+      "nss/lib/util/derdec.c",
+      "nss/lib/util/derenc.c",
+      "nss/lib/util/dersubr.c",
+      "nss/lib/util/dertime.c",
+      "nss/lib/util/errstrs.c",
+      "nss/lib/util/hasht.h",
+      "nss/lib/util/nssb64.h",
+      "nss/lib/util/nssb64d.c",
+      "nss/lib/util/nssb64e.c",
+      "nss/lib/util/nssb64t.h",
+      "nss/lib/util/nssilckt.h",
+      "nss/lib/util/nssilock.c",
+      "nss/lib/util/nssilock.h",
+      "nss/lib/util/nsslocks.h",
+      "nss/lib/util/nssrwlk.c",
+      "nss/lib/util/nssrwlk.h",
+      "nss/lib/util/nssrwlkt.h",
+      "nss/lib/util/nssutil.h",
+      "nss/lib/util/oidstring.c",
+      "nss/lib/util/pkcs11.h",
+      "nss/lib/util/pkcs11f.h",
+      "nss/lib/util/pkcs11n.h",
+      "nss/lib/util/pkcs11p.h",
+      "nss/lib/util/pkcs11t.h",
+      "nss/lib/util/pkcs11u.h",
+      "nss/lib/util/pkcs1sig.c",
+      "nss/lib/util/pkcs1sig.h",
+      "nss/lib/util/portreg.c",
+      "nss/lib/util/portreg.h",
+      "nss/lib/util/quickder.c",
+      "nss/lib/util/secalgid.c",
+      "nss/lib/util/secasn1.h",
+      "nss/lib/util/secasn1d.c",
+      "nss/lib/util/secasn1e.c",
+      "nss/lib/util/secasn1t.h",
+      "nss/lib/util/secasn1u.c",
+      "nss/lib/util/seccomon.h",
+      "nss/lib/util/secder.h",
+      "nss/lib/util/secdert.h",
+      "nss/lib/util/secdig.c",
+      "nss/lib/util/secdig.h",
+      "nss/lib/util/secdigt.h",
+      "nss/lib/util/secerr.h",
+      "nss/lib/util/secitem.c",
+      "nss/lib/util/secitem.h",
+      "nss/lib/util/secoid.c",
+      "nss/lib/util/secoid.h",
+      "nss/lib/util/secoidt.h",
+      "nss/lib/util/secport.c",
+      "nss/lib/util/secport.h",
+      "nss/lib/util/sectime.c",
+      "nss/lib/util/templates.c",
+      "nss/lib/util/utf8.c",
+      "nss/lib/util/utilmod.c",
+      "nss/lib/util/utilmodt.h",
+      "nss/lib/util/utilpars.c",
+      "nss/lib/util/utilpars.h",
+      "nss/lib/util/utilparst.h",
+      "nss/lib/util/utilrename.h",
+    ]
+
+    sources -= [
+      # mpi_arm.c is included by mpi_arm_mac.c.
+      # NOTE: mpi_arm.c can be used directly on Linux. mpi_arm.c will need
+      # to be excluded conditionally if we start to build NSS on Linux.
+      "nss/lib/freebl/mpi/mpi_arm.c",
+
+      # primes.c is included by mpprime.c.
+      "nss/lib/freebl/mpi/primes.c",
+
+      # unix_rand.c and win_rand.c are included by sysrand.c.
+      "nss/lib/freebl/unix_rand.c",
+      "nss/lib/freebl/win_rand.c",
+
+      # debug_module.c is included by pk11load.c.
+      "nss/lib/pk11wrap/debug_module.c",
+    ]
+
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    if (is_win) {
+      configs -= [ "//build/config/win:unicode" ]  # Requires 8-bit mode.
+    }
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      "//build/config/compiler:no_size_t_to_int_warning",
+    ]
+    public_configs = [ ":nss_static_config" ]
+
+    cflags = []
+
+    # Only need the defines and includes not in nss_static_config.
+    defines = [
+      "MP_API_COMPATIBLE",
+      "NSS_DISABLE_DBM",
+      "RIJNDAEL_INCLUDE_TABLES",
+      "SHLIB_VERSION=\"3\"",
+      "SOFTOKEN_SHLIB_VERSION=\"3\"",
+    ]
+    include_dirs = [
+      "nss/lib/freebl/mpi",
+      "nss/lib/ssl",
+    ]
+
+    if (is_win) {
+      cflags += [ "/wd4101" ]  # Unreferenced local variable.
+    }
+
+    if (include_nss_libpkix) {
+      sources += [
+        "nss/lib/certhigh/certvfypkix.c",
+        "nss/lib/certhigh/certvfypkixprint.c",
+        "nss/lib/libpkix/include/pkix.h",
+        "nss/lib/libpkix/include/pkix_certsel.h",
+        "nss/lib/libpkix/include/pkix_certstore.h",
+        "nss/lib/libpkix/include/pkix_checker.h",
+        "nss/lib/libpkix/include/pkix_crlsel.h",
+        "nss/lib/libpkix/include/pkix_errorstrings.h",
+        "nss/lib/libpkix/include/pkix_params.h",
+        "nss/lib/libpkix/include/pkix_pl_pki.h",
+        "nss/lib/libpkix/include/pkix_pl_system.h",
+        "nss/lib/libpkix/include/pkix_results.h",
+        "nss/lib/libpkix/include/pkix_revchecker.h",
+        "nss/lib/libpkix/include/pkix_sample_modules.h",
+        "nss/lib/libpkix/include/pkix_util.h",
+        "nss/lib/libpkix/include/pkixt.h",
+        "nss/lib/libpkix/pkix/certsel/pkix_certselector.c",
+        "nss/lib/libpkix/pkix/certsel/pkix_certselector.h",
+        "nss/lib/libpkix/pkix/certsel/pkix_comcertselparams.c",
+        "nss/lib/libpkix/pkix/certsel/pkix_comcertselparams.h",
+        "nss/lib/libpkix/pkix/checker/pkix_basicconstraintschecker.c",
+        "nss/lib/libpkix/pkix/checker/pkix_basicconstraintschecker.h",
+        "nss/lib/libpkix/pkix/checker/pkix_certchainchecker.c",
+        "nss/lib/libpkix/pkix/checker/pkix_certchainchecker.h",
+        "nss/lib/libpkix/pkix/checker/pkix_crlchecker.c",
+        "nss/lib/libpkix/pkix/checker/pkix_crlchecker.h",
+        "nss/lib/libpkix/pkix/checker/pkix_ekuchecker.c",
+        "nss/lib/libpkix/pkix/checker/pkix_ekuchecker.h",
+        "nss/lib/libpkix/pkix/checker/pkix_expirationchecker.c",
+        "nss/lib/libpkix/pkix/checker/pkix_expirationchecker.h",
+        "nss/lib/libpkix/pkix/checker/pkix_namechainingchecker.c",
+        "nss/lib/libpkix/pkix/checker/pkix_namechainingchecker.h",
+        "nss/lib/libpkix/pkix/checker/pkix_nameconstraintschecker.c",
+        "nss/lib/libpkix/pkix/checker/pkix_nameconstraintschecker.h",
+        "nss/lib/libpkix/pkix/checker/pkix_ocspchecker.c",
+        "nss/lib/libpkix/pkix/checker/pkix_ocspchecker.h",
+        "nss/lib/libpkix/pkix/checker/pkix_policychecker.c",
+        "nss/lib/libpkix/pkix/checker/pkix_policychecker.h",
+        "nss/lib/libpkix/pkix/checker/pkix_revocationchecker.c",
+        "nss/lib/libpkix/pkix/checker/pkix_revocationchecker.h",
+        "nss/lib/libpkix/pkix/checker/pkix_revocationmethod.c",
+        "nss/lib/libpkix/pkix/checker/pkix_revocationmethod.h",
+        "nss/lib/libpkix/pkix/checker/pkix_signaturechecker.c",
+        "nss/lib/libpkix/pkix/checker/pkix_signaturechecker.h",
+        "nss/lib/libpkix/pkix/checker/pkix_targetcertchecker.c",
+        "nss/lib/libpkix/pkix/checker/pkix_targetcertchecker.h",
+        "nss/lib/libpkix/pkix/crlsel/pkix_comcrlselparams.c",
+        "nss/lib/libpkix/pkix/crlsel/pkix_comcrlselparams.h",
+        "nss/lib/libpkix/pkix/crlsel/pkix_crlselector.c",
+        "nss/lib/libpkix/pkix/crlsel/pkix_crlselector.h",
+        "nss/lib/libpkix/pkix/params/pkix_procparams.c",
+        "nss/lib/libpkix/pkix/params/pkix_procparams.h",
+        "nss/lib/libpkix/pkix/params/pkix_resourcelimits.c",
+        "nss/lib/libpkix/pkix/params/pkix_resourcelimits.h",
+        "nss/lib/libpkix/pkix/params/pkix_trustanchor.c",
+        "nss/lib/libpkix/pkix/params/pkix_trustanchor.h",
+        "nss/lib/libpkix/pkix/params/pkix_valparams.c",
+        "nss/lib/libpkix/pkix/params/pkix_valparams.h",
+        "nss/lib/libpkix/pkix/results/pkix_buildresult.c",
+        "nss/lib/libpkix/pkix/results/pkix_buildresult.h",
+        "nss/lib/libpkix/pkix/results/pkix_policynode.c",
+        "nss/lib/libpkix/pkix/results/pkix_policynode.h",
+        "nss/lib/libpkix/pkix/results/pkix_valresult.c",
+        "nss/lib/libpkix/pkix/results/pkix_valresult.h",
+        "nss/lib/libpkix/pkix/results/pkix_verifynode.c",
+        "nss/lib/libpkix/pkix/results/pkix_verifynode.h",
+        "nss/lib/libpkix/pkix/store/pkix_store.c",
+        "nss/lib/libpkix/pkix/store/pkix_store.h",
+        "nss/lib/libpkix/pkix/top/pkix_build.c",
+        "nss/lib/libpkix/pkix/top/pkix_build.h",
+        "nss/lib/libpkix/pkix/top/pkix_lifecycle.c",
+        "nss/lib/libpkix/pkix/top/pkix_lifecycle.h",
+        "nss/lib/libpkix/pkix/top/pkix_validate.c",
+        "nss/lib/libpkix/pkix/top/pkix_validate.h",
+        "nss/lib/libpkix/pkix/util/pkix_error.c",
+        "nss/lib/libpkix/pkix/util/pkix_error.h",
+        "nss/lib/libpkix/pkix/util/pkix_errpaths.c",
+        "nss/lib/libpkix/pkix/util/pkix_list.c",
+        "nss/lib/libpkix/pkix/util/pkix_list.h",
+        "nss/lib/libpkix/pkix/util/pkix_logger.c",
+        "nss/lib/libpkix/pkix/util/pkix_logger.h",
+        "nss/lib/libpkix/pkix/util/pkix_tools.c",
+        "nss/lib/libpkix/pkix/util/pkix_tools.h",
+        "nss/lib/libpkix/pkix_pl_nss/module/pkix_pl_aiamgr.c",
+        "nss/lib/libpkix/pkix_pl_nss/module/pkix_pl_aiamgr.h",
+        "nss/lib/libpkix/pkix_pl_nss/module/pkix_pl_colcertstore.c",
+        "nss/lib/libpkix/pkix_pl_nss/module/pkix_pl_colcertstore.h",
+        "nss/lib/libpkix/pkix_pl_nss/module/pkix_pl_httpcertstore.c",
+        "nss/lib/libpkix/pkix_pl_nss/module/pkix_pl_httpcertstore.h",
+        "nss/lib/libpkix/pkix_pl_nss/module/pkix_pl_httpdefaultclient.c",
+        "nss/lib/libpkix/pkix_pl_nss/module/pkix_pl_httpdefaultclient.h",
+        "nss/lib/libpkix/pkix_pl_nss/module/pkix_pl_nsscontext.c",
+        "nss/lib/libpkix/pkix_pl_nss/module/pkix_pl_nsscontext.h",
+        "nss/lib/libpkix/pkix_pl_nss/module/pkix_pl_pk11certstore.c",
+        "nss/lib/libpkix/pkix_pl_nss/module/pkix_pl_pk11certstore.h",
+        "nss/lib/libpkix/pkix_pl_nss/module/pkix_pl_socket.c",
+        "nss/lib/libpkix/pkix_pl_nss/module/pkix_pl_socket.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_basicconstraints.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_basicconstraints.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_cert.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_cert.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_certpolicyinfo.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_certpolicyinfo.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_certpolicymap.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_certpolicymap.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_certpolicyqualifier.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_certpolicyqualifier.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_crl.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_crl.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_crldp.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_crldp.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_crlentry.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_crlentry.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_date.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_date.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_generalname.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_generalname.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_infoaccess.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_infoaccess.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_nameconstraints.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_nameconstraints.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_ocspcertid.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_ocspcertid.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_ocsprequest.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_ocsprequest.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_ocspresponse.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_ocspresponse.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_publickey.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_publickey.h",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_x500name.c",
+        "nss/lib/libpkix/pkix_pl_nss/pki/pkix_pl_x500name.h",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_bigint.c",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_bigint.h",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_bytearray.c",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_bytearray.h",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_common.c",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_common.h",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_error.c",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_hashtable.c",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_hashtable.h",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_lifecycle.c",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_lifecycle.h",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_mem.c",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_mem.h",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_monitorlock.c",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_monitorlock.h",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_mutex.c",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_mutex.h",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_object.c",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_object.h",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_oid.c",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_oid.h",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_primhash.c",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_primhash.h",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_rwlock.c",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_rwlock.h",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_string.c",
+        "nss/lib/libpkix/pkix_pl_nss/system/pkix_pl_string.h",
+      ]
+
+      # Disable the LDAP code in libpkix.
+      defines += [ "NSS_PKIX_NO_LDAP" ]
+
+      include_dirs += [
+        "nss/lib/libpkix/include",
+        "nss/lib/libpkix/pkix/certsel",
+        "nss/lib/libpkix/pkix/checker",
+        "nss/lib/libpkix/pkix/crlsel",
+        "nss/lib/libpkix/pkix/params",
+        "nss/lib/libpkix/pkix/results",
+        "nss/lib/libpkix/pkix/store",
+        "nss/lib/libpkix/pkix/top",
+        "nss/lib/libpkix/pkix/util",
+        "nss/lib/libpkix/pkix_pl_nss/module",
+        "nss/lib/libpkix/pkix_pl_nss/pki",
+        "nss/lib/libpkix/pkix_pl_nss/system",
+      ]
+    } else {
+      defines += [ "NSS_DISABLE_LIBPKIX" ]
+    }
+
+    if (!include_nss_root_certs) {
+      defines += [ "NSS_DISABLE_ROOT_CERTS" ]
+    }
+
+    if (current_cpu == "x64" && !is_win) {
+      sources -= [
+        "nss/lib/freebl/chacha20/chacha20.c",
+        "nss/lib/freebl/poly1305/poly1305.c",
+      ]
+    } else {
+      sources -= [
+        "nss/lib/freebl/chacha20/chacha20_vec.c",
+        "nss/lib/freebl/poly1305/poly1305-donna-x64-sse2-incremental-source.c",
+      ]
+    }
+
+    if (is_mac || is_ios) {
+      sources -= [ "nss/lib/freebl/mpi/mpi_amd64.c" ]
+      cflags += [
+        "-include",
+        rebase_path("//third_party/nss/nss/lib/freebl/nss_build_config_mac.h",
+                    root_build_dir),
+      ]
+      defines += [
+        "XP_UNIX",
+        "DARWIN",
+        "HAVE_STRERROR",
+        "HAVE_BSD_FLOCK",
+        "SHLIB_SUFFIX=\"dylib\"",
+        "SHLIB_PREFIX=\"lib\"",
+        "SOFTOKEN_LIB_NAME=\"libsoftokn3.dylib\"",
+      ]
+
+      configs -= [ "//build/config/gcc:symbol_visibility_hidden" ]
+    } else {
+      # Not Mac/iOS.
+      sources -= [ "nss/lib/freebl/mpi/mpi_arm_mac.c" ]
+    }
+
+    if (is_win) {
+      defines += [
+        "SHLIB_SUFFIX=\"dll\"",
+        "SHLIB_PREFIX=\"\"",
+        "SOFTOKEN_LIB_NAME=\"softokn3.dll\"",
+        "XP_PC",
+        "WIN32",
+        "WIN95",
+      ]
+
+      if (current_cpu == "x86") {
+        defines += [
+          "NSS_X86_OR_X64",
+          "NSS_X86",
+          "_X86_",
+          "MP_ASSEMBLY_MULTIPLY",
+          "MP_ASSEMBLY_SQUARE",
+          "MP_ASSEMBLY_DIV_2DX1D",
+          "MP_USE_UINT_DIGIT",
+          "MP_NO_MP_WORD",
+          "USE_HW_AES",
+          "INTEL_GCM",
+        ]
+        sources -= [ "nss/lib/freebl/mpi/mpi_amd64.c" ]
+      } else if (current_cpu == "x64") {
+        sources -= [
+          "nss/lib/freebl/intel-aes-x86-masm.asm",
+          "nss/lib/freebl/mpi/mpi_amd64.c",
+          "nss/lib/freebl/mpi/mpi_x86_asm.c",
+        ]
+        defines += [
+          "NSS_USE_64",
+          "NSS_X86_OR_X64",
+          "NSS_X64",
+          "_AMD64_",
+          "MP_CHAR_STORE_SLOW",
+          "MP_IS_LITTLE_ENDIAN",
+          "WIN64",
+        ]
+      }
+    } else {
+      # Not Windows.
+      sources -= [
+        # mpi_x86_asm.c contains MSVC inline assembly code.
+        "nss/lib/freebl/mpi/mpi_x86_asm.c",
+      ]
+    }
+
+    if (is_clang) {
+      cflags += [
+        # nss doesn"t explicitly cast between different enum types.
+        "-Wno-conversion",
+
+        # nss passes "const char*" through "void*".
+        "-Wno-incompatible-pointer-types",
+
+        # nss prefers `a && b || c` over `(a && b) || c`.
+        "-Wno-logical-op-parentheses",
+
+        # nss doesn"t use exhaustive switches on enums
+        "-Wno-switch",
+
+        # nss has some `unsigned < 0` checks.
+        "-Wno-tautological-compare",
+      ]
+    }
+
+    public_deps = [ ":nspr" ]
+    deps = [
+      ":nspr",
+      "//third_party/sqlite",
+    ]
+
+    if (is_win && current_cpu == "x86") {
+      deps += [ ":nss_static_avx" ]
+    }
+  }
+}  # Windows/Mac/iOS.

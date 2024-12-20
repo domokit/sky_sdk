@@ -19,82 +19,48 @@ void main() {
 
   setUp(() {
     events = <String>[];
-    serial = SerialTapGestureRecognizer()
-      ..onSerialTapDown = (SerialTapDownDetails details) {
-        events.add('down#${details.count}');
-      }
-      ..onSerialTapCancel = (SerialTapCancelDetails details) {
-        events.add('cancel#${details.count}');
-      }
-      ..onSerialTapUp = (SerialTapUpDetails details) {
-        events.add('up#${details.count}');
-      };
+    serial =
+        SerialTapGestureRecognizer()
+          ..onSerialTapDown = (SerialTapDownDetails details) {
+            events.add('down#${details.count}');
+          }
+          ..onSerialTapCancel = (SerialTapCancelDetails details) {
+            events.add('cancel#${details.count}');
+          }
+          ..onSerialTapUp = (SerialTapUpDetails details) {
+            events.add('up#${details.count}');
+          };
     addTearDown(serial.dispose);
   });
 
   // Down/up pair 1: normal tap sequence
-  const PointerDownEvent down1 = PointerDownEvent(
-    pointer: 1,
-    position: Offset(10.0, 10.0),
-  );
+  const PointerDownEvent down1 = PointerDownEvent(pointer: 1, position: Offset(10.0, 10.0));
 
-  const PointerCancelEvent cancel1 = PointerCancelEvent(
-    pointer: 1,
-  );
+  const PointerCancelEvent cancel1 = PointerCancelEvent(pointer: 1);
 
-  const PointerUpEvent up1 = PointerUpEvent(
-    pointer: 1,
-    position: Offset(11.0, 9.0),
-  );
+  const PointerUpEvent up1 = PointerUpEvent(pointer: 1, position: Offset(11.0, 9.0));
 
   // Down/up pair 2: normal tap sequence close to pair 1
-  const PointerDownEvent down2 = PointerDownEvent(
-    pointer: 2,
-    position: Offset(12.0, 12.0),
-  );
+  const PointerDownEvent down2 = PointerDownEvent(pointer: 2, position: Offset(12.0, 12.0));
 
-  const PointerUpEvent up2 = PointerUpEvent(
-    pointer: 2,
-    position: Offset(13.0, 11.0),
-  );
+  const PointerUpEvent up2 = PointerUpEvent(pointer: 2, position: Offset(13.0, 11.0));
 
   // Down/up pair 3: normal tap sequence close to pair 1
-  const PointerDownEvent down3 = PointerDownEvent(
-    pointer: 3,
-    position: Offset(12.0, 12.0),
-  );
+  const PointerDownEvent down3 = PointerDownEvent(pointer: 3, position: Offset(12.0, 12.0));
 
-  const PointerUpEvent up3 = PointerUpEvent(
-    pointer: 3,
-    position: Offset(13.0, 11.0),
-  );
+  const PointerUpEvent up3 = PointerUpEvent(pointer: 3, position: Offset(13.0, 11.0));
 
   // Down/up pair 4: normal tap sequence far away from pair 1
-  const PointerDownEvent down4 = PointerDownEvent(
-    pointer: 4,
-    position: Offset(130.0, 130.0),
-  );
+  const PointerDownEvent down4 = PointerDownEvent(pointer: 4, position: Offset(130.0, 130.0));
 
-  const PointerUpEvent up4 = PointerUpEvent(
-    pointer: 4,
-    position: Offset(131.0, 129.0),
-  );
+  const PointerUpEvent up4 = PointerUpEvent(pointer: 4, position: Offset(131.0, 129.0));
 
   // Down/move/up sequence 5: intervening motion
-  const PointerDownEvent down5 = PointerDownEvent(
-    pointer: 5,
-    position: Offset(10.0, 10.0),
-  );
+  const PointerDownEvent down5 = PointerDownEvent(pointer: 5, position: Offset(10.0, 10.0));
 
-  const PointerMoveEvent move5 = PointerMoveEvent(
-    pointer: 5,
-    position: Offset(25.0, 25.0),
-  );
+  const PointerMoveEvent move5 = PointerMoveEvent(pointer: 5, position: Offset(25.0, 25.0));
 
-  const PointerUpEvent up5 = PointerUpEvent(
-    pointer: 5,
-    position: Offset(25.0, 25.0),
-  );
+  const PointerUpEvent up5 = PointerUpEvent(pointer: 5, position: Offset(25.0, 25.0));
 
   // Down/up pair 7: normal tap sequence close to pair 1 but on secondary button
   const PointerDownEvent down6 = PointerDownEvent(
@@ -103,10 +69,7 @@ void main() {
     buttons: kSecondaryMouseButton,
   );
 
-  const PointerUpEvent up6 = PointerUpEvent(
-    pointer: 6,
-    position: Offset(11.0, 9.0),
-  );
+  const PointerUpEvent up6 = PointerUpEvent(pointer: 6, position: Offset(11.0, 9.0));
 
   testGesture('Recognizes serial taps', (GestureTester tester) {
     serial.addPointer(down1);
@@ -139,13 +102,14 @@ void main() {
   testGesture('Wins over tap gesture below it in the tree', (GestureTester tester) {
     bool recognizedSingleTap = false;
     bool canceledSingleTap = false;
-    final TapGestureRecognizer singleTap = TapGestureRecognizer()
-      ..onTap = () {
-        recognizedSingleTap = true;
-      }
-      ..onTapCancel = () {
-        canceledSingleTap = true;
-      };
+    final TapGestureRecognizer singleTap =
+        TapGestureRecognizer()
+          ..onTap = () {
+            recognizedSingleTap = true;
+          }
+          ..onTapCancel = () {
+            canceledSingleTap = true;
+          };
     addTearDown(singleTap.dispose);
 
     singleTap.addPointer(down1);
@@ -163,13 +127,14 @@ void main() {
   testGesture('Wins over tap gesture above it in the tree', (GestureTester tester) {
     bool recognizedSingleTap = false;
     bool canceledSingleTap = false;
-    final TapGestureRecognizer singleTap = TapGestureRecognizer()
-      ..onTap = () {
-        recognizedSingleTap = true;
-      }
-      ..onTapCancel = () {
-        canceledSingleTap = true;
-      };
+    final TapGestureRecognizer singleTap =
+        TapGestureRecognizer()
+          ..onTap = () {
+            recognizedSingleTap = true;
+          }
+          ..onTapCancel = () {
+            canceledSingleTap = true;
+          };
     addTearDown(singleTap.dispose);
 
     serial.addPointer(down1);
@@ -186,11 +151,12 @@ void main() {
 
   testGesture('Loses to release gesture below it in the tree', (GestureTester tester) {
     bool recognizedRelease = false;
-    final ReleaseGestureRecognizer release = ReleaseGestureRecognizer()
-      ..onRelease = () {
-        recognizedRelease = true;
-      };
-      addTearDown(release.dispose);
+    final ReleaseGestureRecognizer release =
+        ReleaseGestureRecognizer()
+          ..onRelease = () {
+            recognizedRelease = true;
+          };
+    addTearDown(release.dispose);
 
     release.addPointer(down1);
     serial.addPointer(down1);
@@ -204,11 +170,12 @@ void main() {
 
   testGesture('Wins over release gesture above it in the tree', (GestureTester tester) {
     bool recognizedRelease = false;
-    final ReleaseGestureRecognizer release = ReleaseGestureRecognizer()
-      ..onRelease = () {
-        recognizedRelease = true;
-      };
-      addTearDown(release.dispose);
+    final ReleaseGestureRecognizer release =
+        ReleaseGestureRecognizer()
+          ..onRelease = () {
+            recognizedRelease = true;
+          };
+    addTearDown(release.dispose);
 
     serial.addPointer(down1);
     release.addPointer(down1);
@@ -234,10 +201,11 @@ void main() {
 
   testGesture('Wins over double-tap recognizer below it in the tree', (GestureTester tester) {
     bool recognizedDoubleTap = false;
-    final DoubleTapGestureRecognizer doubleTap = DoubleTapGestureRecognizer()
-      ..onDoubleTap = () {
-        recognizedDoubleTap = true;
-      };
+    final DoubleTapGestureRecognizer doubleTap =
+        DoubleTapGestureRecognizer()
+          ..onDoubleTap = () {
+            recognizedDoubleTap = true;
+          };
     addTearDown(doubleTap.dispose);
 
     doubleTap.addPointer(down1);
@@ -272,10 +240,11 @@ void main() {
 
   testGesture('Wins over double-tap recognizer above it in the tree', (GestureTester tester) {
     bool recognizedDoubleTap = false;
-    final DoubleTapGestureRecognizer doubleTap = DoubleTapGestureRecognizer()
-      ..onDoubleTap = () {
-        recognizedDoubleTap = true;
-      };
+    final DoubleTapGestureRecognizer doubleTap =
+        DoubleTapGestureRecognizer()
+          ..onDoubleTap = () {
+            recognizedDoubleTap = true;
+          };
     addTearDown(doubleTap.dispose);
 
     serial.addPointer(down1);
@@ -327,7 +296,9 @@ void main() {
     expect(events, <String>['down#1', 'up#1']);
   });
 
-  testGesture('Fires cancel and resets when pointer dragged past slop tolerance', (GestureTester tester) {
+  testGesture('Fires cancel and resets when pointer dragged past slop tolerance', (
+    GestureTester tester,
+  ) {
     serial.addPointer(down5);
     tester.closeArena(5);
     tester.route(down5);
@@ -382,7 +353,9 @@ void main() {
     expect(events, <String>['down#1', 'up#1']);
   });
 
-  testGesture('Serial taps with different buttons will start a new tap sequence', (GestureTester tester) {
+  testGesture('Serial taps with different buttons will start a new tap sequence', (
+    GestureTester tester,
+  ) {
     serial.addPointer(down1);
     tester.closeArena(1);
     tester.route(down1);
@@ -400,7 +373,9 @@ void main() {
     expect(events, <String>['down#1', 'up#1']);
   });
 
-  testGesture('Interleaving taps cancel first sequence and start second sequence', (GestureTester tester) {
+  testGesture('Interleaving taps cancel first sequence and start second sequence', (
+    GestureTester tester,
+  ) {
     serial.addPointer(down1);
     tester.closeArena(1);
     tester.route(down1);

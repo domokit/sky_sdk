@@ -31,9 +31,7 @@ class ExampleWidget extends StatelessWidget {
       'One million is: 1,000,000.00',
       style: TextStyle(
         fontFamily: 'Source Code Pro',
-        fontFeatures: <FontFeature>[
-          FontFeature.slashedZero(),
-        ],
+        fontFeatures: <FontFeature>[FontFeature.slashedZero()],
       ),
     );
   }

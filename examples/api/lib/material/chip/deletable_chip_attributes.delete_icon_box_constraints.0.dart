@@ -14,11 +14,7 @@ class DeleteIconBoxConstraintsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: DeleteIconBoxConstraintsExample(),
-        ),
-      ),
+      home: Scaffold(body: Center(child: DeleteIconBoxConstraintsExample())),
     );
   }
 }
@@ -36,11 +32,7 @@ class DeleteIconBoxConstraintsExample extends StatelessWidget {
           onDeleted: () {},
           label: const SizedBox(
             width: 150,
-            child: Text(
-              'One line text.',
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
+            child: Text('One line text.', maxLines: 3, overflow: TextOverflow.ellipsis),
           ),
         ),
         const SizedBox(height: 10),

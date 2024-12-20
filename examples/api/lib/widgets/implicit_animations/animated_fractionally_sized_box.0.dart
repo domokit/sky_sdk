@@ -18,13 +18,8 @@ class AnimatedFractionallySizedBoxExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('AnimatedFractionallySizedBox Sample'),
-        ),
-        body: const AnimatedFractionallySizedBoxExample(
-          duration: duration,
-          curve: curve,
-        ),
+        appBar: AppBar(title: const Text('AnimatedFractionallySizedBox Sample')),
+        body: const AnimatedFractionallySizedBoxExample(duration: duration, curve: curve),
       ),
     );
   }
@@ -46,8 +41,7 @@ class AnimatedFractionallySizedBoxExample extends StatefulWidget {
       _AnimatedFractionallySizedBoxExampleState();
 }
 
-class _AnimatedFractionallySizedBoxExampleState
-    extends State<AnimatedFractionallySizedBoxExample> {
+class _AnimatedFractionallySizedBoxExampleState extends State<AnimatedFractionallySizedBoxExample> {
   bool selected = false;
 
   @override
@@ -70,10 +64,7 @@ class _AnimatedFractionallySizedBoxExampleState
               alignment: selected ? Alignment.topLeft : Alignment.bottomRight,
               duration: widget.duration,
               curve: widget.curve,
-              child: const ColoredBox(
-                color: Colors.blue,
-                child: FlutterLogo(size: 75),
-              ),
+              child: const ColoredBox(color: Colors.blue, child: FlutterLogo(size: 75)),
             ),
           ),
         ),

@@ -4,14 +4,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_api_samples/material/checkbox_list_tile/checkbox_list_tile.0.dart' as example;
+import 'package:flutter_api_samples/material/checkbox_list_tile/checkbox_list_tile.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('CheckboxListTile can be checked', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.CheckboxListTileApp(),
-    );
+    await tester.pumpWidget(const example.CheckboxListTileApp());
 
     CheckboxListTile checkboxListTile = tester.widget(find.byType(CheckboxListTile));
     expect(checkboxListTile.value, isFalse);

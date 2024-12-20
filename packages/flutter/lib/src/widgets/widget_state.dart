@@ -69,9 +69,7 @@ class _WidgetStateAnd extends _WidgetStateCombo {
   @override
   // ignore: hash_and_equals, hashCode is defined in the sealed super-class
   bool operator ==(Object other) {
-    return other is _WidgetStateAnd
-        && other.first == first
-        && other.second == second;
+    return other is _WidgetStateAnd && other.first == first && other.second == second;
   }
 
   @override
@@ -89,9 +87,7 @@ class _WidgetStateOr extends _WidgetStateCombo {
   @override
   // ignore: hash_and_equals, hashCode is defined in the sealed super-class
   bool operator ==(Object other) {
-    return other is _WidgetStateOr
-        && other.first == first
-        && other.second == second;
+    return other is _WidgetStateOr && other.first == first && other.second == second;
   }
 
   @override
@@ -381,7 +377,8 @@ class _WidgetStateColorMapper extends WidgetStateMapper<Color> implements Widget
 ///  * [MouseCursor] for introduction on the mouse cursor system.
 ///  * [SystemMouseCursors], which defines cursors that are supported by
 ///    native platforms.
-abstract class WidgetStateMouseCursor extends MouseCursor implements WidgetStateProperty<MouseCursor> {
+abstract class WidgetStateMouseCursor extends MouseCursor
+    implements WidgetStateProperty<MouseCursor> {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
   const WidgetStateMouseCursor();
@@ -404,9 +401,8 @@ abstract class WidgetStateMouseCursor extends MouseCursor implements WidgetState
   /// It should only be used with classes that document support for
   /// [WidgetStateMouseCursor] (throws an error if used as a regular
   /// [MouseCursor].)
-  const factory WidgetStateMouseCursor.fromMap(
-    WidgetStateMap<MouseCursor> map,
-  ) = _WidgetMouseCursorMapper;
+  const factory WidgetStateMouseCursor.fromMap(WidgetStateMap<MouseCursor> map) =
+      _WidgetMouseCursorMapper;
 
   @protected
   @override
@@ -427,7 +423,8 @@ abstract class WidgetStateMouseCursor extends MouseCursor implements WidgetState
   ///
   /// This cursor is the default for many widgets.
   static const WidgetStateMouseCursor clickable = WidgetStateMouseCursor.resolveWith(
-    _clickable, debugDescription: 'WidgetStateMouseCursor(clickable)',
+    _clickable,
+    debugDescription: 'WidgetStateMouseCursor(clickable)',
   );
   static MouseCursor _clickable(Set<WidgetState> states) {
     if (states.contains(WidgetState.disabled)) {
@@ -444,7 +441,8 @@ abstract class WidgetStateMouseCursor extends MouseCursor implements WidgetState
   ///
   /// This cursor is the default for many widgets.
   static const WidgetStateMouseCursor textable = WidgetStateMouseCursor.resolveWith(
-    _textable, debugDescription: 'WidgetStateMouseCursor(textable)',
+    _textable,
+    debugDescription: 'WidgetStateMouseCursor(textable)',
   );
   static MouseCursor _textable(Set<WidgetState> states) {
     if (states.contains(WidgetState.disabled)) {
@@ -469,7 +467,8 @@ class _WidgetStateMouseCursor extends WidgetStateMouseCursor {
   final String debugDescription;
 }
 
-class _WidgetMouseCursorMapper extends WidgetStateMapper<MouseCursor> implements WidgetStateMouseCursor {
+class _WidgetMouseCursorMapper extends WidgetStateMapper<MouseCursor>
+    implements WidgetStateMouseCursor {
   const _WidgetMouseCursorMapper(super.map);
 }
 
@@ -498,7 +497,8 @@ class _WidgetMouseCursorMapper extends WidgetStateMapper<MouseCursor> implements
 ///
 ///  * [MaterialStateBorderSide], the Material specific version of
 ///    `WidgetStateBorderSide`.
-abstract class WidgetStateBorderSide extends BorderSide implements WidgetStateProperty<BorderSide?> {
+abstract class WidgetStateBorderSide extends BorderSide
+    implements WidgetStateProperty<BorderSide?> {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
   const WidgetStateBorderSide();
@@ -540,7 +540,8 @@ abstract class WidgetStateBorderSide extends BorderSide implements WidgetStatePr
   ///   }),
   /// ),
   /// ```
-  const factory WidgetStateBorderSide.resolveWith(WidgetPropertyResolver<BorderSide?> callback) = _WidgetStateBorderSide;
+  const factory WidgetStateBorderSide.resolveWith(WidgetPropertyResolver<BorderSide?> callback) =
+      _WidgetStateBorderSide;
 
   /// Creates a [WidgetStateBorderSide] from a [WidgetStateMap].
   ///
@@ -562,7 +563,8 @@ abstract class WidgetStateBorderSide extends BorderSide implements WidgetStatePr
   /// ```
   ///
   /// {@macro flutter.widgets.WidgetState.any}
-  const factory WidgetStateBorderSide.fromMap(WidgetStateMap<BorderSide?> map) = _WidgetBorderSideMapper;
+  const factory WidgetStateBorderSide.fromMap(WidgetStateMap<BorderSide?> map) =
+      _WidgetBorderSideMapper;
 
   /// Returns a [BorderSide] that's to be used when a Widget is in the
   /// specified state. Return null to defer to the default value of the
@@ -599,10 +601,18 @@ class _LerpSides implements WidgetStateProperty<BorderSide?> {
       return null;
     }
     if (resolvedA == null) {
-      return BorderSide.lerp(BorderSide(width: 0, color: resolvedB!.color.withAlpha(0)), resolvedB, t);
+      return BorderSide.lerp(
+        BorderSide(width: 0, color: resolvedB!.color.withAlpha(0)),
+        resolvedB,
+        t,
+      );
     }
     if (resolvedB == null) {
-      return BorderSide.lerp(resolvedA, BorderSide(width: 0, color: resolvedA.color.withAlpha(0)), t);
+      return BorderSide.lerp(
+        resolvedA,
+        BorderSide(width: 0, color: resolvedA.color.withAlpha(0)),
+        t,
+      );
     }
     return BorderSide.lerp(resolvedA, resolvedB, t);
   }
@@ -617,7 +627,8 @@ class _WidgetStateBorderSide extends WidgetStateBorderSide {
   BorderSide? resolve(Set<WidgetState> states) => _resolve(states);
 }
 
-class _WidgetBorderSideMapper extends WidgetStateMapper<BorderSide?> implements WidgetStateBorderSide {
+class _WidgetBorderSideMapper extends WidgetStateMapper<BorderSide?>
+    implements WidgetStateBorderSide {
   const _WidgetBorderSideMapper(super.map);
 }
 
@@ -646,7 +657,8 @@ class _WidgetBorderSideMapper extends WidgetStateMapper<BorderSide?> implements 
 ///  * [ShapeBorder] the base class for shape outlines.
 ///  * [MaterialStateOutlinedBorder], the Material specific version of
 ///    `WidgetStateOutlinedBorder`.
-abstract class WidgetStateOutlinedBorder extends OutlinedBorder implements WidgetStateProperty<OutlinedBorder?> {
+abstract class WidgetStateOutlinedBorder extends OutlinedBorder
+    implements WidgetStateProperty<OutlinedBorder?> {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
   const WidgetStateOutlinedBorder();
@@ -671,9 +683,8 @@ abstract class WidgetStateOutlinedBorder extends OutlinedBorder implements Widge
   ///
   /// Resolves to `null` if no keys match, deferring to the default value
   /// of the widget or theme.
-  const factory WidgetStateOutlinedBorder.fromMap(
-    WidgetStateMap<OutlinedBorder?> map,
-  ) = _WidgetOutlinedBorderMapper;
+  const factory WidgetStateOutlinedBorder.fromMap(WidgetStateMap<OutlinedBorder?> map) =
+      _WidgetOutlinedBorderMapper;
 
   /// Returns an [OutlinedBorder] that's to be used when a component is in the
   /// specified state. Return null to defer to the default value of the widget
@@ -682,7 +693,8 @@ abstract class WidgetStateOutlinedBorder extends OutlinedBorder implements Widge
   OutlinedBorder? resolve(Set<WidgetState> states);
 }
 
-class _WidgetStateOutlinedBorder extends RoundedRectangleBorder implements WidgetStateOutlinedBorder {
+class _WidgetStateOutlinedBorder extends RoundedRectangleBorder
+    implements WidgetStateOutlinedBorder {
   const _WidgetStateOutlinedBorder(this._resolve);
 
   final WidgetPropertyResolver<OutlinedBorder?> _resolve;
@@ -691,7 +703,8 @@ class _WidgetStateOutlinedBorder extends RoundedRectangleBorder implements Widge
   OutlinedBorder? resolve(Set<WidgetState> states) => _resolve(states);
 }
 
-class _WidgetOutlinedBorderMapper extends WidgetStateMapper<OutlinedBorder?> implements WidgetStateOutlinedBorder {
+class _WidgetOutlinedBorderMapper extends WidgetStateMapper<OutlinedBorder?>
+    implements WidgetStateOutlinedBorder {
   const _WidgetOutlinedBorderMapper(super.map);
 }
 
@@ -730,7 +743,8 @@ abstract class WidgetStateTextStyle extends TextStyle implements WidgetStateProp
   ///
   /// The given callback parameter must return a non-null text style in the default
   /// state.
-  const factory WidgetStateTextStyle.resolveWith(WidgetPropertyResolver<TextStyle> callback) = _WidgetStateTextStyle;
+  const factory WidgetStateTextStyle.resolveWith(WidgetPropertyResolver<TextStyle> callback) =
+      _WidgetStateTextStyle;
 
   /// Creates a [WidgetStateTextStyle] from a [WidgetStateMap].
   ///
@@ -740,7 +754,8 @@ abstract class WidgetStateTextStyle extends TextStyle implements WidgetStateProp
   /// [TextStyle]).
   ///
   /// {@macro flutter.widgets.WidgetState.any}
-  const factory WidgetStateTextStyle.fromMap(WidgetStateMap<TextStyle> map) = _WidgetTextStyleMapper;
+  const factory WidgetStateTextStyle.fromMap(WidgetStateMap<TextStyle> map) =
+      _WidgetTextStyleMapper;
 
   /// Returns a [TextStyle] that's to be used when a component is in the
   /// specified state.
@@ -843,7 +858,8 @@ abstract class WidgetStateProperty<T> {
 
   /// Convenience method for creating a [WidgetStateProperty] from a
   /// [WidgetPropertyResolver] function alone.
-  static WidgetStateProperty<T> resolveWith<T>(WidgetPropertyResolver<T> callback) => _WidgetStatePropertyWith<T>(callback);
+  static WidgetStateProperty<T> resolveWith<T>(WidgetPropertyResolver<T> callback) =>
+      _WidgetStatePropertyWith<T>(callback);
 
   /// Convenience method for creating a [WidgetStateProperty] that resolves
   /// to a single value for all states.
@@ -1062,7 +1078,6 @@ class WidgetStateMapper<T> with Diagnosticable implements WidgetStateProperty<T>
 ///    `WidgetStatePropertyAll`.
 @immutable
 class WidgetStatePropertyAll<T> implements WidgetStateProperty<T> {
-
   /// Constructs a [WidgetStateProperty] that always resolves to the given
   /// value.
   const WidgetStatePropertyAll(this.value);
@@ -1084,9 +1099,9 @@ class WidgetStatePropertyAll<T> implements WidgetStateProperty<T> {
 
   @override
   bool operator ==(Object other) {
-    return other is WidgetStatePropertyAll<T>
-        && other.runtimeType == runtimeType
-        && other.value == value;
+    return other is WidgetStatePropertyAll<T> &&
+        other.runtimeType == runtimeType &&
+        other.value == value;
   }
 
   @override

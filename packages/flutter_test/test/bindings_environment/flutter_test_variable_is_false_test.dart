@@ -6,10 +6,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('$WidgetsBinding initializes with $LiveTestWidgetsFlutterBinding when FLUTTER_TEST = "false"', () {
-    TestWidgetsFlutterBinding.ensureInitialized(<String, String>{'FLUTTER_TEST': 'false'});
-    expect(WidgetsBinding.instance, isA<LiveTestWidgetsFlutterBinding>());
-  }, onPlatform: const <String, dynamic>{
-    'browser': <Skip>[Skip('Browser will not use the live binding')],
-  });
+  test(
+    '$WidgetsBinding initializes with $LiveTestWidgetsFlutterBinding when FLUTTER_TEST = "false"',
+    () {
+      TestWidgetsFlutterBinding.ensureInitialized(<String, String>{'FLUTTER_TEST': 'false'});
+      expect(WidgetsBinding.instance, isA<LiveTestWidgetsFlutterBinding>());
+    },
+    onPlatform: const <String, dynamic>{
+      'browser': <Skip>[Skip('Browser will not use the live binding')],
+    },
+  );
 }

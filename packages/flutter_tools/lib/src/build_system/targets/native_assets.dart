@@ -18,9 +18,8 @@ import 'common.dart';
 
 /// Runs the dart build of the app.
 abstract class DartBuild extends Target {
-  const DartBuild({
-    @visibleForTesting FlutterNativeAssetsBuildRunner? buildRunner,
-  }) : _buildRunner = buildRunner;
+  const DartBuild({@visibleForTesting FlutterNativeAssetsBuildRunner? buildRunner})
+    : _buildRunner = buildRunner;
 
   final FlutterNativeAssetsBuildRunner? _buildRunner;
 
@@ -40,7 +39,8 @@ abstract class DartBuild extends Target {
         logger: environment.logger,
       );
       final Uri projectUri = environment.projectDir.uri;
-      final FlutterNativeAssetsBuildRunner buildRunner = _buildRunner ??
+      final FlutterNativeAssetsBuildRunner buildRunner =
+          _buildRunner ??
           FlutterNativeAssetsBuildRunnerImpl(
             projectUri,
             environment.packageConfigPath,
@@ -64,12 +64,8 @@ abstract class DartBuild extends Target {
     dartBuildResultJsonFile.writeAsStringSync(json.encode(result.toJson()));
 
     final Depfile depfile = Depfile(
-      <File>[
-        for (final Uri dependency in result.dependencies) fileSystem.file(dependency),
-      ],
-      <File>[
-        fileSystem.file(dartBuildResultJsonFile),
-      ],
+      <File>[for (final Uri dependency in result.dependencies) fileSystem.file(dependency)],
+      <File>[fileSystem.file(dartBuildResultJsonFile)],
     );
     final File outputDepfile = environment.buildDir.childFile(depFilename);
     if (!outputDepfile.parent.existsSync()) {
@@ -86,7 +82,9 @@ abstract class DartBuild extends Target {
 
   @override
   List<Source> get inputs => const <Source>[
-    Source.pattern('{FLUTTER_ROOT}/packages/flutter_tools/lib/src/build_system/targets/native_assets.dart'),
+    Source.pattern(
+      '{FLUTTER_ROOT}/packages/flutter_tools/lib/src/build_system/targets/native_assets.dart',
+    ),
     // If different packages are resolved, different native assets might need to be built.
     Source.pattern('{WORKSPACE_DIR}/.dart_tool/package_config_subset'),
     // TODO(mosuem): Should consume resources.json. https://github.com/flutter/flutter/issues/146263
@@ -103,8 +101,12 @@ abstract class DartBuild extends Target {
   /// Dependent build [Target]s can use this to consume the result of the
   /// [DartBuild] target.
   static Future<DartBuildResult> loadBuildResult(Environment environment) async {
-    final File dartBuildResultJsonFile = environment.buildDir.childFile(DartBuild.dartBuildResultFilename);
-    return DartBuildResult.fromJson(json.decode(dartBuildResultJsonFile.readAsStringSync()) as Map<String, Object?>);
+    final File dartBuildResultJsonFile = environment.buildDir.childFile(
+      DartBuild.dartBuildResultFilename,
+    );
+    return DartBuildResult.fromJson(
+      json.decode(dartBuildResultJsonFile.readAsStringSync()) as Map<String, Object?>,
+    );
   }
 
   static const String dartBuildResultFilename = 'dart_build_result.json';
@@ -115,9 +117,7 @@ class DartBuildForNative extends DartBuild {
   const DartBuildForNative({@visibleForTesting super.buildRunner});
 
   @override
-  List<Target> get dependencies => const <Target>[
-    KernelSnapshot(),
-  ];
+  List<Target> get dependencies => const <Target>[KernelSnapshot()];
 }
 
 /// Installs the code assets from a [DartBuild] Flutter app.
@@ -140,18 +140,19 @@ class InstallCodeAssets extends Target {
     // And install/copy the code assets to the right place and create a
     // native_asset.yaml that can be used by the final AOT compilation.
     final Uri nativeAssetsFileUri = environment.buildDir.childFile(nativeAssetsFilename).uri;
-    await installCodeAssets(dartBuildResult: dartBuildResult, environmentDefines: environment.defines,
-      targetPlatform: targetPlatform, projectUri: projectUri, fileSystem: fileSystem,
-      nativeAssetsFileUri: nativeAssetsFileUri);
+    await installCodeAssets(
+      dartBuildResult: dartBuildResult,
+      environmentDefines: environment.defines,
+      targetPlatform: targetPlatform,
+      projectUri: projectUri,
+      fileSystem: fileSystem,
+      nativeAssetsFileUri: nativeAssetsFileUri,
+    );
     assert(await fileSystem.file(nativeAssetsFileUri).exists());
 
     final Depfile depfile = Depfile(
-      <File>[
-        for (final Uri file in dartBuildResult.filesToBeBundled) fileSystem.file(file),
-      ],
-      <File>[
-        fileSystem.file(nativeAssetsFileUri),
-      ],
+      <File>[for (final Uri file in dartBuildResult.filesToBeBundled) fileSystem.file(file)],
+      <File>[fileSystem.file(nativeAssetsFileUri)],
     );
     final File outputDepfile = environment.buildDir.childFile(depFilename);
     environment.depFileService.writeToFile(depfile, outputDepfile);
@@ -164,13 +165,13 @@ class InstallCodeAssets extends Target {
   List<String> get depfiles => <String>[depFilename];
 
   @override
-  List<Target> get dependencies => const <Target>[
-    DartBuildForNative(),
-  ];
+  List<Target> get dependencies => const <Target>[DartBuildForNative()];
 
   @override
   List<Source> get inputs => const <Source>[
-    Source.pattern('{FLUTTER_ROOT}/packages/flutter_tools/lib/src/build_system/targets/native_assets.dart'),
+    Source.pattern(
+      '{FLUTTER_ROOT}/packages/flutter_tools/lib/src/build_system/targets/native_assets.dart',
+    ),
     // If different packages are resolved, different native assets might need to be built.
     Source.pattern('{WORKSPACE_DIR}/.dart_tool/package_config_subset'),
   ];
@@ -179,9 +180,7 @@ class InstallCodeAssets extends Target {
   String get name => 'install_code_assets';
 
   @override
-  List<Source> get outputs => const <Source>[
-    Source.pattern('{BUILD_DIR}/$nativeAssetsFilename'),
-  ];
+  List<Source> get outputs => const <Source>[Source.pattern('{BUILD_DIR}/$nativeAssetsFilename')];
 
   static const String nativeAssetsFilename = 'native_assets.json';
   static const String depFilename = 'install_code_assets.d';

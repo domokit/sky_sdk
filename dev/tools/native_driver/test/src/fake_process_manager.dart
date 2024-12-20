@@ -13,10 +13,7 @@ import 'package:process/process.dart';
 final class FakeProcessManager extends ProcessManager {
   /// Creates a new [FakeProcessManager] with the given delegate callback.
   FakeProcessManager(this._runDelegate);
-  final Future<ProcessResult> Function(
-    String executable,
-    List<String> arguments,
-  ) _runDelegate;
+  final Future<ProcessResult> Function(String executable, List<String> arguments) _runDelegate;
 
   @override
   Never noSuchMethod(_) => throw UnimplementedError();

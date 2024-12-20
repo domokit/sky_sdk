@@ -31,10 +31,10 @@ void main() {
   setUp(() {
     // Create a new filesystem.
     memoryFileSystem = MemoryFileSystem();
-    tmpDir = memoryFileSystem.systemTempDirectory
-        .createTempSync('flutter_snippets_test.');
-    final Directory flutterRoot =
-        memoryFileSystem.directory(path.join(tmpDir.absolute.path, 'flutter'));
+    tmpDir = memoryFileSystem.systemTempDirectory.createTempSync('flutter_snippets_test.');
+    final Directory flutterRoot = memoryFileSystem.directory(
+      path.join(tmpDir.absolute.path, 'flutter'),
+    );
     FlutterInformation.instance = FakeFlutterInformation(flutterRoot);
   });
 
@@ -53,7 +53,9 @@ import 'packages:alpha/alpha.dart'; // first
 
 void main() {}
 ''');
-    expect(result, equals('''
+    expect(
+      result,
+      equals('''
 // Unit comment
 
 // first import
@@ -64,7 +66,8 @@ import 'packages:beta/beta.dart'; // second
 import 'packages:gamma/gamma.dart'; // third
 
 void main() {}
-'''));
+'''),
+    );
   });
   test('Sorting dart and packages works', () async {
     final String result = sortImports('''
@@ -84,7 +87,9 @@ import 'dart:async';
 
 void main() {}
 ''');
-    expect(result, equals('''
+    expect(
+      result,
+      equals('''
 // Unit comment
 
 // first dart
@@ -98,6 +103,7 @@ import 'packages:beta/beta.dart'; // second
 import 'packages:gamma/gamma.dart'; // third
 
 void main() {}
-'''));
+'''),
+    );
   });
 }

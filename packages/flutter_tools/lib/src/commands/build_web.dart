@@ -21,7 +21,8 @@ class BuildWebCommand extends BuildSubCommand {
     required super.logger,
     required FileSystem fileSystem,
     required bool verboseHelp,
-  }) : _fileSystem = fileSystem, super(verboseHelp: verboseHelp) {
+  }) : _fileSystem = fileSystem,
+       super(verboseHelp: verboseHelp) {
     addTreeShakeIconsFlag();
     usesTargetOption();
     usesOutputDir();
@@ -38,11 +39,13 @@ class BuildWebCommand extends BuildSubCommand {
     // Flutter web-specific options
     //
     argParser.addSeparator('Flutter web options');
-    argParser.addOption('base-href',
-      help: 'Overrides the href attribute of the <base> tag in web/index.html. '
+    argParser.addOption(
+      'base-href',
+      help:
+          'Overrides the href attribute of the <base> tag in web/index.html. '
           'No change is done to web/index.html file if this flag is not provided. '
           'The value has to start and end with a slash "/". '
-          'For more information: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base'
+          'For more information: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base',
     );
     argParser.addOption(
       'pwa-strategy',
@@ -59,38 +62,48 @@ class BuildWebCommand extends BuildSubCommand {
     argParser.addOption(
       'optimization-level',
       abbr: 'O',
-      help:
-          'Sets the optimization level used for Dart compilation to JavaScript/Wasm.',
+      help: 'Sets the optimization level used for Dart compilation to JavaScript/Wasm.',
       allowed: const <String>['0', '1', '2', '3', '4'],
     );
     argParser.addFlag(
       'source-maps',
-      help: 'Generate a sourcemap file. These can be used by browsers '
-            'to view and debug the original source code of a compiled and minified Dart '
-            'application.'
+      help:
+          'Generate a sourcemap file. These can be used by browsers '
+          'to view and debug the original source code of a compiled and minified Dart '
+          'application.',
     );
 
     //
     // JavaScript compilation options
     //
     argParser.addSeparator('JavaScript compilation options');
-    argParser.addFlag('csp',
+    argParser.addFlag(
+      'csp',
       negatable: false,
-      help: 'Disable dynamic generation of code in the generated output. '
-            'This is necessary to satisfy CSP restrictions (see http://www.w3.org/TR/CSP/).'
+      help:
+          'Disable dynamic generation of code in the generated output. '
+          'This is necessary to satisfy CSP restrictions (see http://www.w3.org/TR/CSP/).',
     );
-    argParser.addOption('dart2js-optimization',
-      help: 'Sets the optimization level used for Dart compilation to JavaScript. '
-            'Deprecated: Please use "-O=<level>" / "--optimization-level=<level>".',
-       allowed: const <String>['O1', 'O2', 'O3', 'O4'],
-     );
-    argParser.addFlag('dump-info', negatable: false,
-      help: 'Passes "--dump-info" to the Javascript compiler which generates '
-          'information about the generated code is a .js.info.json file.'
+    argParser.addOption(
+      'dart2js-optimization',
+      help:
+          'Sets the optimization level used for Dart compilation to JavaScript. '
+          'Deprecated: Please use "-O=<level>" / "--optimization-level=<level>".',
+      allowed: const <String>['O1', 'O2', 'O3', 'O4'],
     );
-    argParser.addFlag('no-frequency-based-minification', negatable: false,
-      help: 'Disables the frequency based minifier. '
-          'Useful for comparing the output between builds.'
+    argParser.addFlag(
+      'dump-info',
+      negatable: false,
+      help:
+          'Passes "--dump-info" to the Javascript compiler which generates '
+          'information about the generated code is a .js.info.json file.',
+    );
+    argParser.addFlag(
+      'no-frequency-based-minification',
+      negatable: false,
+      help:
+          'Disables the frequency based minifier. '
+          'Useful for comparing the output between builds.',
     );
 
     //
@@ -112,10 +125,9 @@ class BuildWebCommand extends BuildSubCommand {
   final FileSystem _fileSystem;
 
   @override
-  Future<Set<DevelopmentArtifact>> get requiredArtifacts async =>
-      const <DevelopmentArtifact>{
-        DevelopmentArtifact.web,
-      };
+  Future<Set<DevelopmentArtifact>> get requiredArtifacts async => const <DevelopmentArtifact>{
+    DevelopmentArtifact.web,
+  };
 
   @override
   final String name = 'web';
@@ -129,23 +141,30 @@ class BuildWebCommand extends BuildSubCommand {
   @override
   Future<FlutterCommandResult> runCommand() async {
     if (!featureFlags.isWebEnabled) {
-      throwToolExit('"build web" is not currently supported. To enable, run "flutter config --enable-web".');
+      throwToolExit(
+        '"build web" is not currently supported. To enable, run "flutter config --enable-web".',
+      );
     }
 
     final String? optimizationLevelArg = stringArg('optimization-level');
-    final int? optimizationLevel = optimizationLevelArg != null ? int.parse(optimizationLevelArg) : null;
+    final int? optimizationLevel =
+        optimizationLevelArg != null ? int.parse(optimizationLevelArg) : null;
 
     final String? dart2jsOptimizationLevelValue = stringArg('dart2js-optimization');
-    final int? jsOptimizationLevel =  dart2jsOptimizationLevelValue != null
-        ? int.parse(dart2jsOptimizationLevelValue.substring(1))
-        : optimizationLevel;
+    final int? jsOptimizationLevel =
+        dart2jsOptimizationLevelValue != null
+            ? int.parse(dart2jsOptimizationLevelValue.substring(1))
+            : optimizationLevel;
 
     final List<String> dartDefines = extractDartDefines(
-      defineConfigJsonMap: extractDartDefineConfigJsonMap()
+      defineConfigJsonMap: extractDartDefineConfigJsonMap(),
     );
     final bool useWasm = boolArg(FlutterOptions.kWebWasmFlag);
     // See also: RunCommandBase.webRenderer and TestCommand.webRenderer.
-    final WebRendererMode webRenderer = WebRendererMode.fromDartDefines(dartDefines, useWasm: useWasm);
+    final WebRendererMode webRenderer = WebRendererMode.fromDartDefines(
+      dartDefines,
+      useWasm: useWasm,
+    );
 
     final bool sourceMaps = boolArg('source-maps');
 
@@ -156,14 +175,13 @@ class BuildWebCommand extends BuildSubCommand {
 
     if (useWasm) {
       if (webRenderer != WebRendererMode.getDefault(useWasm: true)) {
-        throwToolExit('Do not attempt to set a web renderer when using "--${FlutterOptions.kWebWasmFlag}"');
+        throwToolExit(
+          'Do not attempt to set a web renderer when using "--${FlutterOptions.kWebWasmFlag}"',
+        );
       }
-      globals.logger.printBox(
-        title: 'New feature',
-        '''
+      globals.logger.printBox(title: 'New feature', '''
   WebAssembly compilation is new. Understand the details before deploying to production.
-  $kWasmMoreInfo''',
-      );
+  $kWasmMoreInfo''');
 
       compilerConfigs = <WebCompilerConfig>[
         WasmCompilerConfig(
@@ -178,17 +196,20 @@ class BuildWebCommand extends BuildSubCommand {
           nativeNullAssertions: boolArg('native-null-assertions'),
           noFrequencyBasedMinification: boolArg('no-frequency-based-minification'),
           sourceMaps: sourceMaps,
-        )];
+        ),
+      ];
     } else {
-      compilerConfigs = <WebCompilerConfig>[JsCompilerConfig(
-        csp: boolArg('csp'),
-        optimizationLevel: jsOptimizationLevel,
-        dumpInfo: boolArg('dump-info'),
-        nativeNullAssertions: boolArg('native-null-assertions'),
-        noFrequencyBasedMinification: boolArg('no-frequency-based-minification'),
-        sourceMaps: sourceMaps,
-        renderer: webRenderer,
-      )];
+      compilerConfigs = <WebCompilerConfig>[
+        JsCompilerConfig(
+          csp: boolArg('csp'),
+          optimizationLevel: jsOptimizationLevel,
+          dumpInfo: boolArg('dump-info'),
+          nativeNullAssertions: boolArg('native-null-assertions'),
+          noFrequencyBasedMinification: boolArg('no-frequency-based-minification'),
+          sourceMaps: sourceMaps,
+          renderer: webRenderer,
+        ),
+      ];
     }
 
     final String target = stringArg('target')!;
@@ -204,14 +225,14 @@ class BuildWebCommand extends BuildSubCommand {
       throwToolExit('Missing index.html.');
     }
     if (!_fileSystem.currentDirectory
-        .childDirectory('web')
-        .childFile('index.html')
-        .readAsStringSync()
-        .contains(kBaseHrefPlaceholder) &&
+            .childDirectory('web')
+            .childFile('index.html')
+            .readAsStringSync()
+            .contains(kBaseHrefPlaceholder) &&
         baseHref != null) {
       throwToolExit(
         "Couldn't find the placeholder for base href. "
-        'Please add `<base href="$kBaseHrefPlaceholder">` to web/index.html'
+        'Please add `<base href="$kBaseHrefPlaceholder">` to web/index.html',
       );
     }
 

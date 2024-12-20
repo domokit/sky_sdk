@@ -65,7 +65,8 @@ class _NestedGestureDetectorsExampleState extends State<NestedGestureDetectorsEx
                 // parent-child hit testing. A tap on 'Yellow' is also in
                 // 'Green' bounds. Both enter the gesture arena, 'Yellow' wins
                 // because it is in front.
-                behavior: _isYellowTranslucent ? HitTestBehavior.translucent : HitTestBehavior.opaque,
+                behavior:
+                    _isYellowTranslucent ? HitTestBehavior.translucent : HitTestBehavior.opaque,
                 onTap: () {
                   debugPrint('Yellow onTap');
                   setState(() {

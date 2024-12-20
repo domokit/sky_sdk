@@ -50,7 +50,7 @@ class _NoStopwatches implements AnalyzeRule {
         for (final AstNode node in entry.value)
           '${locationInFile(entry.key, node)}: ${node.parent}',
       '\n${bold}Stopwatches introduce flakes by falling out of sync with the FakeAsync used in testing.$reset',
-      'A Stopwatch that stays in sync with FakeAsync is available through the Gesture or Test bindings, through samplingClock.'
+      'A Stopwatch that stays in sync with FakeAsync is available through the Gesture or Test bindings, through samplingClock.',
     ]);
   }
 
@@ -83,8 +83,11 @@ class _StopwatchVisitor extends RecursiveAstVisitor<void> {
   // The cached version, call this method instead of _checkIfImplementsStopwatchRecursively.
   bool _implementsStopwatch(ClassElement classElement) {
     return classElement.library.isDartCore
-      ? classElement.name == 'Stopwatch'
-      :_isStopwatchClassElementCache.putIfAbsent(classElement, () => _checkIfImplementsStopwatchRecursively(classElement));
+        ? classElement.name == 'Stopwatch'
+        : _isStopwatchClassElementCache.putIfAbsent(
+          classElement,
+          () => _checkIfImplementsStopwatchRecursively(classElement),
+        );
   }
 
   bool _isInternal(LibraryElement libraryElement) {
@@ -96,19 +99,22 @@ class _StopwatchVisitor extends RecursiveAstVisitor<void> {
 
   bool _hasTrailingFlutterIgnore(AstNode node) {
     return compilationUnit.content
-      .substring(node.offset + node.length, compilationUnit.lineInfo.getOffsetOfLineAfter(node.offset + node.length))
-      .contains(_ignoreStopwatch);
+        .substring(
+          node.offset + node.length,
+          compilationUnit.lineInfo.getOffsetOfLineAfter(node.offset + node.length),
+        )
+        .contains(_ignoreStopwatch);
   }
 
   // We don't care about directives or comments, skip them.
   @override
-  void visitImportDirective(ImportDirective node) { }
+  void visitImportDirective(ImportDirective node) {}
 
   @override
-  void visitExportDirective(ExportDirective node) { }
+  void visitExportDirective(ExportDirective node) {}
 
   @override
-  void visitComment(Comment node) { }
+  void visitComment(Comment node) {}
 
   @override
   void visitConstructorName(ConstructorName node) {
@@ -118,7 +124,8 @@ class _StopwatchVisitor extends RecursiveAstVisitor<void> {
       return;
     }
     final bool isAllowed = switch (element.returnType) {
-      InterfaceType(element: final ClassElement classElement) => !_implementsStopwatch(classElement),
+      InterfaceType(element: final ClassElement classElement) =>
+        !_implementsStopwatch(classElement),
       InterfaceType(element: InterfaceElement()) => true,
     };
     if (isAllowed || _hasTrailingFlutterIgnore(node)) {
@@ -132,8 +139,9 @@ class _StopwatchVisitor extends RecursiveAstVisitor<void> {
     final bool isAllowed = switch (node.staticElement) {
       ExecutableElement(
         returnType: DartType(element: final ClassElement classElement),
-        library: final LibraryElement libraryElement
-      ) => _isInternal(libraryElement) || !_implementsStopwatch(classElement),
+        library: final LibraryElement libraryElement,
+      ) =>
+        _isInternal(libraryElement) || !_implementsStopwatch(classElement),
       Element() || null => true,
     };
     if (isAllowed || _hasTrailingFlutterIgnore(node)) {

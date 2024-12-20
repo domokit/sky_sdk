@@ -15,19 +15,13 @@ class RestorablePushReplacementExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const RootRestorationScope(
       restorationId: 'app',
-      child: MaterialApp(
-        restorationScopeId: 'app',
-        home: RestorablePushReplacementExample(),
-      ),
+      child: MaterialApp(restorationScopeId: 'app', home: RestorablePushReplacementExample()),
     );
   }
 }
 
 class RestorablePushReplacementExample extends StatefulWidget {
-  const RestorablePushReplacementExample({
-    this.wasPushed = false,
-    super.key,
-  });
+  const RestorablePushReplacementExample({this.wasPushed = false, super.key});
 
   final bool wasPushed;
 
@@ -40,22 +34,19 @@ class _RestorablePushReplacementExampleState extends State<RestorablePushReplace
   @pragma('vm:entry-point')
   static Route<void> _myRouteBuilder(BuildContext context, Object? arguments) {
     return MaterialPageRoute<void>(
-      builder: (BuildContext context) => const RestorablePushReplacementExample(
-        wasPushed: true,
-      ),
+      builder: (BuildContext context) => const RestorablePushReplacementExample(wasPushed: true),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sample Code'),
-      ),
+      appBar: AppBar(title: const Text('Sample Code')),
       body: Center(
-        child: widget.wasPushed
-            ? const Text('This is a new route.')
-            : const Text('This is the initial route.'),
+        child:
+            widget.wasPushed
+                ? const Text('This is a new route.')
+                : const Text('This is the initial route.'),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.restorablePushReplacement(context, _myRouteBuilder),

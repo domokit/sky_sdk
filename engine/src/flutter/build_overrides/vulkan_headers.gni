@@ -1,0 +1,11 @@
+# Copyright 2020 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This file is needed by the vulkan-headers build, but doesn't need to actually
+# set anything.
+
+if (is_linux) {
+  vulkan_use_x11 = true
+  vulkan_use_wayland = true
+}

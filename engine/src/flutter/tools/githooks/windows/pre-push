@@ -1,0 +1,11 @@
+#!/bin/sh
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+YELLOW='[33m'
+RED='[31m'
+NC='[0m'
+BOLD='[1m'
+echo "${BOLD}${RED}Warning:${NC} ${BOLD}Pre-push checks are not enabled!${NC}"
+echo "${YELLOW}${BOLD}Note:${NC} ${BOLD}Please run 'gclient sync -D' to enable pre-push checks on Windows${NC}"

@@ -38,20 +38,14 @@ void main() {
             key: key,
             child: const ColoredBox(
               color: CupertinoColors.white,
-              child: CupertinoActivityIndicator(
-                animating: false,
-                radius: 35,
-              ),
+              child: CupertinoActivityIndicator(animating: false, radius: 35),
             ),
           ),
         ),
       ),
     );
 
-    await expectLater(
-      find.byKey(key),
-      matchesGoldenFile('activityIndicator.paused.light.png'),
-    );
+    await expectLater(find.byKey(key), matchesGoldenFile('activityIndicator.paused.light.png'));
 
     await tester.pumpWidget(
       Center(
@@ -61,20 +55,14 @@ void main() {
             key: key,
             child: const ColoredBox(
               color: CupertinoColors.black,
-              child: CupertinoActivityIndicator(
-                animating: false,
-                radius: 35,
-              ),
+              child: CupertinoActivityIndicator(animating: false, radius: 35),
             ),
           ),
         ),
       ),
     );
 
-    await expectLater(
-      find.byKey(key),
-      matchesGoldenFile('activityIndicator.paused.dark.png'),
-    );
+    await expectLater(find.byKey(key), matchesGoldenFile('activityIndicator.paused.dark.png'));
   });
 
   testWidgets('Activity indicator 0% in progress', (WidgetTester tester) async {
@@ -85,18 +73,13 @@ void main() {
           key: key,
           child: const ColoredBox(
             color: CupertinoColors.white,
-            child: CupertinoActivityIndicator.partiallyRevealed(
-              progress: 0,
-            ),
+            child: CupertinoActivityIndicator.partiallyRevealed(progress: 0),
           ),
         ),
       ),
     );
 
-    await expectLater(
-      find.byKey(key),
-      matchesGoldenFile('activityIndicator.inprogress.0.0.png'),
-    );
+    await expectLater(find.byKey(key), matchesGoldenFile('activityIndicator.inprogress.0.0.png'));
   });
 
   testWidgets('Activity indicator 30% in progress', (WidgetTester tester) async {
@@ -107,18 +90,13 @@ void main() {
           key: key,
           child: const ColoredBox(
             color: CupertinoColors.white,
-            child: CupertinoActivityIndicator.partiallyRevealed(
-              progress: 0.5,
-            ),
+            child: CupertinoActivityIndicator.partiallyRevealed(progress: 0.5),
           ),
         ),
       ),
     );
 
-    await expectLater(
-      find.byKey(key),
-      matchesGoldenFile('activityIndicator.inprogress.0.3.png'),
-    );
+    await expectLater(find.byKey(key), matchesGoldenFile('activityIndicator.inprogress.0.3.png'));
   });
 
   testWidgets('Activity indicator 100% in progress', (WidgetTester tester) async {
@@ -135,17 +113,12 @@ void main() {
       ),
     );
 
-    await expectLater(
-      find.byKey(key),
-      matchesGoldenFile('activityIndicator.inprogress.1.0.png'),
-    );
+    await expectLater(find.byKey(key), matchesGoldenFile('activityIndicator.inprogress.1.0.png'));
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/41345.
   testWidgets('has the correct corner radius', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const CupertinoActivityIndicator(animating: false, radius: 100),
-    );
+    await tester.pumpWidget(const CupertinoActivityIndicator(animating: false, radius: 100));
 
     // An earlier implementation for the activity indicator started drawing
     // the ticks at 9 o'clock, however, in order to support partially revealed
@@ -153,8 +126,7 @@ void main() {
     // first tick was changed to be at 12 o'clock.
     expect(
       find.byType(CupertinoActivityIndicator),
-      paints
-        ..rrect(rrect: const RRect.fromLTRBXY(-10, -100 / 3, 10, -100, 10, 10)),
+      paints..rrect(rrect: const RRect.fromLTRBXY(-10, -100 / 3, 10, -100, 10, 10)),
     );
   });
 
@@ -178,9 +150,10 @@ void main() {
 
     expect(
       find.byType(CupertinoActivityIndicator),
-      paints
-        ..rrect(rrect: const RRect.fromLTRBXY(-10, -100 / 3, 10, -100, 10, 10),
-                color: const Color(0x935d3fd3)),
+      paints..rrect(
+        rrect: const RRect.fromLTRBXY(-10, -100 / 3, 10, -100, 10, 10),
+        color: const Color(0x935d3fd3),
+      ),
     );
   });
 }
@@ -188,8 +161,6 @@ void main() {
 Widget buildCupertinoActivityIndicator([bool? animating]) {
   return MediaQuery(
     data: const MediaQueryData(),
-    child: CupertinoActivityIndicator(
-      animating: animating ?? true,
-    ),
+    child: CupertinoActivityIndicator(animating: animating ?? true),
   );
 }

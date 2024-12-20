@@ -20,15 +20,40 @@ $cachePath = "$flutterRoot\bin\cache"
 $dartSdkPath = "$cachePath\dart-sdk"
 $dartSdkLicense = "$cachePath\LICENSE.dart_sdk_archive.md"
 $engineStamp = "$cachePath\engine-dart-sdk.stamp"
-$engineRealm = (Get-Content "$flutterRoot\bin\internal\engine.realm")
+$engineRealm = ""
 
-if (Test-Path "$flutterRoot\bin\internal\engine.version") {
-    $engineVersion = (Get-Content "$flutterRoot\bin\internal\engine.version")
-} else {
+# Test for fusion repository
+if ((Test-Path "$flutterRoot\DEPS" -PathType Leaf) -and (Test-Path "$flutterRoot\engine\src\.gn" -PathType Leaf)) {
     # Calculate the engine hash from tracked git files.
-    $lsTree = ((git ls-tree -r HEAD engine DEPS) | Out-String).Replace("`r`n", "`n")
-    $engineVersion = (Get-FileHash -InputStream ([System.IO.MemoryStream] [System.Text.Encoding]::UTF8.GetBytes($lsTree)) -Algorithm SHA1 | ForEach-Object { $_.Hash }).ToLower()
+    $branch = (git -C "$flutterRoot" rev-parse --abbrev-ref HEAD)
+    if ($null -eq $Env:LUCI_CONTEXT) {
+        $ErrorActionPreference = "Continue"
+        git -C "$flutterRoot" remote get-url upstream *> $null
+        $exitCode = $?
+        $ErrorActionPreference = "Stop"
+        if ($exitCode) {
+            $engineVersion = (git -C "$flutterRoot"  merge-base HEAD upstream/master)
+        } else {
+            $engineVersion = (git -C "$flutterRoot"  merge-base HEAD origin/master)
+        }
+    }
+    else {
+        $engineVersion = (git -C "$flutterRoot" rev-parse HEAD)
+    }
+
+    if (($branch -ne "stable" -and $branch -ne "beta")) {
+        # Write the engine version out so downstream tools know what to look for.
+        $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+        [System.IO.File]::WriteAllText("$flutterRoot\bin\internal\engine.version", $engineVersion, $utf8NoBom)
+
+        # The realm on CI is passed in.
+        if ($Env:FLUTTER_REALM) {
+            [System.IO.File]::WriteAllText("$flutterRoot\bin\internal\engine.realm", $Env:FLUTTER_REALM, $utf8NoBom)
+        }
+    }
 }
+$engineVersion = (Get-Content "$flutterRoot\bin\internal\engine.version")
+$engineRealm = (Get-Content "$flutterRoot\bin\internal\engine.realm")
 
 $oldDartSdkPrefix = "dart-sdk.old"
 

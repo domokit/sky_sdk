@@ -3,19 +3,14 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/theme/theme_extension.1.dart'
-    as example;
+import 'package:flutter_api_samples/material/theme/theme_extension.1.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('ThemeExtension can be obtained', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ThemeExtensionExampleApp(),
-    );
+    await tester.pumpWidget(const example.ThemeExtensionExampleApp());
 
-    final ThemeData theme = Theme.of(
-      tester.element(find.byType(example.Home)),
-    );
+    final ThemeData theme = Theme.of(tester.element(find.byType(example.Home)));
     final example.MyColors colors = theme.extension<example.MyColors>()!;
 
     expect(colors.brandColor, equals(const Color(0xFF1E88E5)));
@@ -23,13 +18,9 @@ void main() {
   });
 
   testWidgets('ThemeExtension can be changed', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ThemeExtensionExampleApp(),
-    );
+    await tester.pumpWidget(const example.ThemeExtensionExampleApp());
 
-    ThemeData theme = Theme.of(
-      tester.element(find.byType(example.Home)),
-    );
+    ThemeData theme = Theme.of(tester.element(find.byType(example.Home)));
     example.MyColors colors = theme.extension<example.MyColors>()!;
 
     expect(colors.brandColor, equals(const Color(0xFF1E88E5)));
@@ -39,9 +30,7 @@ void main() {
     await tester.tap(find.byType(IconButton));
     await tester.pumpAndSettle();
 
-    theme = Theme.of(
-      tester.element(find.byType(example.Home)),
-    );
+    theme = Theme.of(tester.element(find.byType(example.Home)));
     colors = theme.extension<example.MyColors>()!;
 
     expect(colors.brandColor, equals(const Color(0xFF90CAF9)));
@@ -53,16 +42,10 @@ void main() {
       MaterialApp(
         theme: ThemeData.light().copyWith(
           extensions: <ThemeExtension<dynamic>>[
-            const example.MyColors(
-              brandColor: Color(0xFF0000FF),
-              danger: Color(0xFFFF0000),
-            ),
+            const example.MyColors(brandColor: Color(0xFF0000FF), danger: Color(0xFFFF0000)),
           ],
         ),
-        home: example.Home(
-          isLightTheme: true,
-          toggleTheme: () {},
-        ),
+        home: example.Home(isLightTheme: true, toggleTheme: () {}),
       ),
     );
 
@@ -75,15 +58,11 @@ void main() {
   });
 
   testWidgets('Home updates IconButton correctly', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ThemeExtensionExampleApp(),
-    );
+    await tester.pumpWidget(const example.ThemeExtensionExampleApp());
 
     example.Home home = tester.widget(find.byType(example.Home));
     IconButton iconButton = tester.widget(find.byType(IconButton));
-    ThemeData theme = Theme.of(
-      tester.element(find.byType(example.Home)),
-    );
+    ThemeData theme = Theme.of(tester.element(find.byType(example.Home)));
 
     expect(theme.brightness, equals(Brightness.light));
     expect(home.isLightTheme, isTrue);
@@ -98,15 +77,10 @@ void main() {
 
     home = tester.widget(find.byType(example.Home));
     iconButton = tester.widget(find.byType(IconButton));
-    theme = Theme.of(
-      tester.element(find.byType(example.Home)),
-    );
+    theme = Theme.of(tester.element(find.byType(example.Home)));
 
     expect(theme.brightness, equals(Brightness.dark));
     expect(home.isLightTheme, isFalse);
-    expect(
-      iconButton.icon,
-      isA<Icon>().having((Icon i) => i.icon, 'icon', equals(Icons.wb_sunny)),
-    );
+    expect(iconButton.icon, isA<Icon>().having((Icon i) => i.icon, 'icon', equals(Icons.wb_sunny)));
   });
 }

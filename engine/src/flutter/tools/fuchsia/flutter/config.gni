@@ -1,0 +1,21 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/tools/fuchsia/flutter/flutter_build_config.gni")
+
+declare_args() {
+  if (flutter_runtime_mode == "release") {
+    # Product AOT
+    flutter_default_build_cfg = flutter_release_build_cfg
+  } else if (flutter_runtime_mode == "jit_release") {
+    # Product JIT
+    flutter_default_build_cfg = flutter_jit_release_build_cfg
+  } else if (flutter_runtime_mode == "debug") {
+    # Non-product JIT
+    flutter_default_build_cfg = flutter_debug_build_cfg
+  } else {  # "profile"
+    # Non-product AOT
+    flutter_default_build_cfg = flutter_profile_build_cfg
+  }
+}

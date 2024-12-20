@@ -8,11 +8,7 @@ final ThemeData kLightGalleryTheme = _buildLightTheme();
 final ThemeData kDarkGalleryTheme = _buildDarkTheme();
 
 TextTheme _buildTextTheme(TextTheme base) {
-  return base.copyWith(
-    titleLarge: base.titleLarge!.copyWith(
-      fontFamily: 'GoogleSans',
-    ),
-  );
+  return base.copyWith(titleLarge: base.titleLarge!.copyWith(fontFamily: 'GoogleSans'));
 }
 
 ThemeData _buildDarkTheme() {

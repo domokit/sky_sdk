@@ -30,46 +30,74 @@ void main() {
   group('Standard message codec', () {
     const MessageCodec<dynamic> standard = StandardMessageCodec();
     test('should encode integers correctly at boundary cases', () {
-      checkEncoding<dynamic>(
-        standard,
-        -0x7fffffff - 1,
-        <int>[3, 0x00, 0x00, 0x00, 0x80],
-      );
-      checkEncoding<dynamic>(
-        standard,
-        -0x7fffffff - 2,
-        <int>[4, 0xff, 0xff, 0xff, 0x7f, 0xff, 0xff, 0xff, 0xff],
-      );
-      checkEncoding<dynamic>(
-        standard,
-        0x7fffffff,
-        <int>[3, 0xff, 0xff, 0xff, 0x7f],
-      );
-      checkEncoding<dynamic>(
-        standard,
-        0x7fffffff + 1,
-        <int>[4, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00, 0x00],
-      );
-      checkEncoding<dynamic>(
-        standard,
-        -0x7fffffffffffffff - 1,
-        <int>[4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80],
-      );
-      checkEncoding<dynamic>(
-        standard,
-        -0x7fffffffffffffff - 2,
-        <int>[4, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f],
-      );
-      checkEncoding<dynamic>(
-        standard,
-        0x7fffffffffffffff,
-        <int>[4, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f],
-      );
-      checkEncoding<dynamic>(
-        standard,
-        0x7fffffffffffffff + 1,
-        <int>[4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80],
-      );
+      checkEncoding<dynamic>(standard, -0x7fffffff - 1, <int>[3, 0x00, 0x00, 0x00, 0x80]);
+      checkEncoding<dynamic>(standard, -0x7fffffff - 2, <int>[
+        4,
+        0xff,
+        0xff,
+        0xff,
+        0x7f,
+        0xff,
+        0xff,
+        0xff,
+        0xff,
+      ]);
+      checkEncoding<dynamic>(standard, 0x7fffffff, <int>[3, 0xff, 0xff, 0xff, 0x7f]);
+      checkEncoding<dynamic>(standard, 0x7fffffff + 1, <int>[
+        4,
+        0x00,
+        0x00,
+        0x00,
+        0x80,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+      ]);
+      checkEncoding<dynamic>(standard, -0x7fffffffffffffff - 1, <int>[
+        4,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x80,
+      ]);
+      checkEncoding<dynamic>(standard, -0x7fffffffffffffff - 2, <int>[
+        4,
+        0xff,
+        0xff,
+        0xff,
+        0xff,
+        0xff,
+        0xff,
+        0xff,
+        0x7f,
+      ]);
+      checkEncoding<dynamic>(standard, 0x7fffffffffffffff, <int>[
+        4,
+        0xff,
+        0xff,
+        0xff,
+        0xff,
+        0xff,
+        0xff,
+        0xff,
+        0x7f,
+      ]);
+      checkEncoding<dynamic>(standard, 0x7fffffffffffffff + 1, <int>[
+        4,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x80,
+      ]);
     });
     test('should encode and decode big numbers', () {
       checkEncodeDecode<dynamic>(standard, 9223372036854775807);

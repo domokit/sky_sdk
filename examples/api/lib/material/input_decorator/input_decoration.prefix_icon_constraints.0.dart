@@ -45,10 +45,7 @@ class PrefixIconConstraintsExample extends StatelessWidget {
               isDense: true,
               hintText: 'Smaller Icon Constraints',
               prefixIcon: Icon(Icons.search),
-              prefixIconConstraints: BoxConstraints(
-                minHeight: 32,
-                minWidth: 32,
-              ),
+              prefixIconConstraints: BoxConstraints(minHeight: 32, minWidth: 32),
             ),
           ),
         ],

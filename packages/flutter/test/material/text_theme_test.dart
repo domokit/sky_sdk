@@ -54,7 +54,6 @@ void main() {
     expect(typography.white, equals(whiteCopy));
   });
 
-
   test('TextTheme merges properly in the presence of null fields.', () {
     const TextTheme partialTheme = TextTheme(titleLarge: TextStyle(color: Color(0xcafefeed)));
     final TextTheme fullTheme = ThemeData.fallback().textTheme.merge(partialTheme);
@@ -71,7 +70,10 @@ void main() {
     TextTheme merged = onlyHeadlineSmallAndTitleLarge.merge(onlyBodyMediumAndTitleLarge);
     expect(merged.bodyLarge, isNull);
     expect(merged.bodyMedium!.color, equals(onlyBodyMediumAndTitleLarge.bodyMedium!.color));
-    expect(merged.headlineSmall!.color, equals(onlyHeadlineSmallAndTitleLarge.headlineSmall!.color));
+    expect(
+      merged.headlineSmall!.color,
+      equals(onlyHeadlineSmallAndTitleLarge.headlineSmall!.color),
+    );
     expect(merged.titleLarge!.color, equals(onlyBodyMediumAndTitleLarge.titleLarge!.color));
 
     merged = onlyHeadlineSmallAndTitleLarge.merge(null);
@@ -138,7 +140,10 @@ void main() {
       theme.labelSmall!,
     ];
     expect(themeStyles.every((TextStyle style) => style.fontFamily == fontFamily), true);
-    expect(themeStyles.every((TextStyle style) => style.fontFamilyFallback == fontFamilyFallback), true);
+    expect(
+      themeStyles.every((TextStyle style) => style.fontFamilyFallback == fontFamilyFallback),
+      true,
+    );
     expect(themeStyles.every((TextStyle style) => style.decorationColor == decorationColor), true);
     expect(themeStyles.every((TextStyle style) => style.decorationStyle == decorationStyle), true);
     expect(themeStyles.every((TextStyle style) => style.decoration == decoration), true);
@@ -147,10 +152,7 @@ void main() {
   test('TextTheme apply fontSizeFactor fontSizeDelta', () {
     final Typography typography = Typography.material2018();
     final TextTheme baseTheme = Typography.englishLike2018.merge(typography.black);
-    final TextTheme sizeTheme = baseTheme.apply(
-      fontSizeFactor: 2.0,
-      fontSizeDelta: 5.0,
-    );
+    final TextTheme sizeTheme = baseTheme.apply(fontSizeFactor: 2.0, fontSizeDelta: 5.0);
 
     expect(sizeTheme.displayLarge!.fontSize, baseTheme.displayLarge!.fontSize! * 2.0 + 5.0);
     expect(sizeTheme.displayMedium!.fontSize, baseTheme.displayMedium!.fontSize! * 2.0 + 5.0);
@@ -247,15 +249,15 @@ void main() {
     expect(fullLerp.vertical, 1.0);
   });
 
-  testWidgets('TextTheme.of(context) is equivalent to Theme.of(context).textTheme', (WidgetTester tester) async {
+  testWidgets('TextTheme.of(context) is equivalent to Theme.of(context).textTheme', (
+    WidgetTester tester,
+  ) async {
     const Key sizedBoxKey = Key('sizedBox');
 
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(
-          textTheme: const TextTheme(
-            displayLarge: TextStyle(color: Colors.blue, fontSize: 30.0),
-          ),
+          textTheme: const TextTheme(displayLarge: TextStyle(color: Colors.blue, fontSize: 30.0)),
         ),
         home: const SizedBox(key: sizedBoxKey),
       ),
@@ -267,10 +269,11 @@ void main() {
     final TextTheme actualTextTheme = TextTheme.of(context);
 
     expect(actualTextTheme, equals(expectedTextTheme));
-
   });
 
-  testWidgets('TextTheme.primaryOf(context) is equivalent to Theme.of(context).primaryTextTheme', (WidgetTester tester) async {
+  testWidgets('TextTheme.primaryOf(context) is equivalent to Theme.of(context).primaryTextTheme', (
+    WidgetTester tester,
+  ) async {
     const Key sizedBoxKey = Key('sizedBox');
 
     await tester.pumpWidget(

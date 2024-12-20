@@ -13,7 +13,9 @@ void main() {
 
       expect(GlobalWidgetsLocalizations.delegate.isSupported(locale), isTrue);
 
-      final WidgetsLocalizations localizations = await GlobalWidgetsLocalizations.delegate.load(locale);
+      final WidgetsLocalizations localizations = await GlobalWidgetsLocalizations.delegate.load(
+        locale,
+      );
 
       expect(localizations.reorderItemDown, isNotNull);
       expect(localizations.reorderItemLeft, isNotNull);

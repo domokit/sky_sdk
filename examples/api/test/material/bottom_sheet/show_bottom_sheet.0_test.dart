@@ -7,10 +7,10 @@ import 'package:flutter_api_samples/material/bottom_sheet/show_bottom_sheet.0.da
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Bottom sheet animation can be customized using AnimationStyle', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.BottomSheetExampleApp(),
-    );
+  testWidgets('Bottom sheet animation can be customized using AnimationStyle', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.BottomSheetExampleApp());
 
     // Show the bottom sheet with default animation style.
     await tester.tap(find.widgetWithText(ElevatedButton, 'showBottomSheet'));

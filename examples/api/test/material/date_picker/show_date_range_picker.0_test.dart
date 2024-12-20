@@ -10,9 +10,7 @@ void main() {
   testWidgets('Can show date range picker', (WidgetTester tester) async {
     const String datePickerTitle = 'Select range';
 
-    await tester.pumpWidget(
-      const example.DatePickerApp(),
-    );
+    await tester.pumpWidget(const example.DatePickerApp());
 
     // The date range picker is not shown initially.
     expect(find.text(datePickerTitle), findsNothing);

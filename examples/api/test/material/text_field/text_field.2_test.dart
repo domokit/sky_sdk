@@ -15,27 +15,39 @@ void main() {
     expect(find.byType(example.FilledTextFieldExample), findsOneWidget);
     expect(find.byType(example.OutlinedTextFieldExample), findsOneWidget);
 
-    final TextField filled = tester.widget<TextField>(find.descendant(
-      of: find.byType(example.FilledTextFieldExample),
-      matching: find.byType(TextField),
-    ));
-    expect(filled.decoration!.prefixIcon, isA<Icon>()
-        .having((Icon icon) => icon.icon, 'icon', Icons.search));
-    expect(filled.decoration!.suffixIcon, isA<Icon>()
-        .having((Icon icon) => icon.icon, 'icon', Icons.clear));
+    final TextField filled = tester.widget<TextField>(
+      find.descendant(
+        of: find.byType(example.FilledTextFieldExample),
+        matching: find.byType(TextField),
+      ),
+    );
+    expect(
+      filled.decoration!.prefixIcon,
+      isA<Icon>().having((Icon icon) => icon.icon, 'icon', Icons.search),
+    );
+    expect(
+      filled.decoration!.suffixIcon,
+      isA<Icon>().having((Icon icon) => icon.icon, 'icon', Icons.clear),
+    );
     expect(filled.decoration!.labelText, 'Filled');
     expect(filled.decoration!.hintText, 'hint text');
     expect(filled.decoration!.helperText, 'supporting text');
     expect(filled.decoration!.filled, true);
 
-    final TextField outlined = tester.widget<TextField>(find.descendant(
-      of: find.byType(example.OutlinedTextFieldExample),
-      matching: find.byType(TextField),
-    ));
-    expect(outlined.decoration!.prefixIcon, isA<Icon>()
-        .having((Icon icon) => icon.icon, 'icon', Icons.search));
-    expect(outlined.decoration!.suffixIcon, isA<Icon>()
-        .having((Icon icon) => icon.icon, 'icon', Icons.clear));
+    final TextField outlined = tester.widget<TextField>(
+      find.descendant(
+        of: find.byType(example.OutlinedTextFieldExample),
+        matching: find.byType(TextField),
+      ),
+    );
+    expect(
+      outlined.decoration!.prefixIcon,
+      isA<Icon>().having((Icon icon) => icon.icon, 'icon', Icons.search),
+    );
+    expect(
+      outlined.decoration!.suffixIcon,
+      isA<Icon>().having((Icon icon) => icon.icon, 'icon', Icons.clear),
+    );
     expect(outlined.decoration!.labelText, 'Outlined');
     expect(outlined.decoration!.hintText, 'hint text');
     expect(outlined.decoration!.helperText, 'supporting text');

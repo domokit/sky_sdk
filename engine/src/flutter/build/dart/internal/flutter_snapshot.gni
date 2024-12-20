@@ -1,0 +1,155 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/compiled_action.gni")
+import("//flutter/build/dart/internal/flutter_frontend_server.gni")
+import("//flutter/common/config.gni")
+
+# Creates a dart kernel (dill) file suitable for use with gen_snapshot, as well
+# as the app-jit, aot-elf, or aot-assembly snapshot for targeting Flutter on
+# Android or iOS.
+#
+# Invoker must supply dart_main. Invoker may optionally supply package_config,
+# which otherwise defaults to the repo-wide pacakge_config, and optionally
+# supply aot as a boolean and product as a boolean.
+#
+# On Android, the invoker may provide output_aot_lib as a string to override
+# the default filename for the aot-elf snapshot.
+template("flutter_snapshot") {
+  assert(!is_fuchsia)
+  assert(defined(invoker.main_dart), "main_dart is a required parameter.")
+
+  kernel_target = "_${target_name}_kernel"
+  snapshot_target = "_${target_name}_snapshot"
+  is_aot =
+      flutter_runtime_mode == "profile" || flutter_runtime_mode == "release"
+
+  kernel_output = "$target_gen_dir/kernel_blob.bin"
+
+  extra_frontend_server_args = []
+  if (is_aot) {
+    extra_frontend_server_args += [
+      "--aot",
+      "--tfa",
+    ]
+  } else {
+    # --no-link-platform is only valid when --aot isn't specified
+    extra_frontend_server_args += [ "--no-link-platform" ]
+  }
+
+  if (defined(invoker.product) && invoker.product) {
+    # Setting this flag in a non-product release build for AOT (a "profile"
+    # build) causes the vm service isolate code to be tree-shaken from an app.
+    # See the pragma on the entrypoint here:
+    #
+    # https://github.com/dart-lang/sdk/blob/main/sdk/lib/_internal/vm/bin/vmservice_io.dart#L240
+    #
+    # Also, this define excludes debugging and profiling code from Flutter.
+    extra_frontend_server_args += [ "-Ddart.vm.product=true" ]
+  } else {
+    if (flutter_runtime_mode == "profile") {
+      # The following define excludes debugging code from Flutter.
+      extra_frontend_server_args += [ "-Ddart.vm.profile=true" ]
+    }
+  }
+
+  if (defined(invoker.package_config)) {
+    flutter_frontend_server(kernel_target) {
+      main_dart = invoker.main_dart
+      package_config = invoker.package_config
+      kernel_output = kernel_output
+      extra_args = extra_frontend_server_args
+    }
+  } else {
+    flutter_frontend_server(kernel_target) {
+      main_dart = invoker.main_dart
+      kernel_output = kernel_output
+      extra_args = extra_frontend_server_args
+    }
+  }
+
+  compiled_action(snapshot_target) {
+    if (target_cpu == "x86" && host_os == "linux") {
+      # By default Dart will create a 32-bit gen_snapshot host binary if the target
+      # platform is 32-bit.  Override this to create a 64-bit gen_snapshot for x86
+      # targets because some host platforms may not support 32-bit binaries.
+      tool = "$dart_src/runtime/bin:gen_snapshot_host_targeting_host"
+      toolchain = "//build/toolchain/$host_os:clang_x64"
+    } else {
+      tool = "$dart_src/runtime/bin:gen_snapshot"
+    }
+
+    inputs = [ kernel_output ]
+    deps = [ ":$kernel_target" ]
+    outputs = []
+
+    args = []
+
+    if (is_debug && flutter_runtime_mode != "profile" &&
+        flutter_runtime_mode != "release" &&
+        flutter_runtime_mode != "jit_release") {
+      args += [ "--enable_asserts" ]
+    }
+
+    if (is_aot) {
+      args += [ "--deterministic" ]
+      if (is_ios) {
+        snapshot_assembly = "$target_gen_dir/ios/snapshot_assembly.S"
+        outputs += [ snapshot_assembly ]
+        args += [
+          "--snapshot_kind=app-aot-assembly",
+          "--assembly=" + rebase_path(snapshot_assembly),
+        ]
+      } else if (is_android) {
+        if (defined(invoker.output_aot_lib)) {
+          output_aot_lib = invoker.output_aot_lib
+        } else {
+          output_aot_lib = "libapp.so"
+        }
+        libapp = "$target_gen_dir/android/libs/$android_app_abi/$output_aot_lib"
+        outputs += [ libapp ]
+        args += [
+          "--snapshot_kind=app-aot-elf",
+          "--elf=" + rebase_path(libapp),
+        ]
+      } else {
+        assert(false)
+      }
+    } else {
+      deps += [ "//flutter/lib/snapshot:generate_snapshot_bin" ]
+      vm_snapshot_data =
+          "$root_gen_dir/flutter/lib/snapshot/vm_isolate_snapshot.bin"
+      snapshot_data = "$root_gen_dir/flutter/lib/snapshot/isolate_snapshot.bin"
+      isolate_snapshot_data = "$target_gen_dir/isolate_snapshot_data"
+      isolate_snapshot_instructions = "$target_gen_dir/isolate_snapshot_instr"
+
+      inputs += [
+        vm_snapshot_data,
+        snapshot_data,
+      ]
+
+      outputs += [
+        isolate_snapshot_data,
+        isolate_snapshot_instructions,
+      ]
+      args += [
+        "--snapshot_kind=app-jit",
+        "--load_vm_snapshot_data=" + rebase_path(vm_snapshot_data),
+        "--load_isolate_snapshot_data=" + rebase_path(snapshot_data),
+        "--isolate_snapshot_data=" + rebase_path(isolate_snapshot_data),
+        "--isolate_snapshot_instructions=" +
+            rebase_path(isolate_snapshot_instructions),
+      ]
+    }
+
+    args += [ rebase_path(kernel_output) ]
+  }
+
+  group(target_name) {
+    public_deps = [
+      ":$kernel_target",
+      ":$snapshot_target",
+    ]
+  }
+}

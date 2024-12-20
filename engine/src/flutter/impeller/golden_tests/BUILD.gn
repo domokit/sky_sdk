@@ -1,0 +1,103 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/impeller/tools/impeller.gni")
+
+impeller_component("golden_playground_test") {
+  testonly = true
+
+  sources = [ "golden_playground_test.h" ]
+
+  deps = [
+    ":digest",
+    ":screenshot",
+    "//flutter/display_list",
+    "//flutter/fml",
+    "//flutter/impeller/display_list:display_list",
+    "//flutter/impeller/playground",
+    "//flutter/impeller/typographer/backends/skia:typographer_skia_backend",
+    "//flutter/testing:testing_lib",
+  ]
+
+  if (is_mac) {
+    sources += [ "golden_playground_test_mac.cc" ]
+    deps += [
+      ":metal_screenshot",
+      "//flutter/third_party/abseil-cpp/absl/base:no_destructor",
+    ]
+  } else {
+    sources += [ "golden_playground_test_stub.cc" ]
+  }
+}
+
+impeller_component("digest") {
+  testonly = true
+
+  sources = [
+    "golden_digest.cc",
+    "golden_digest.h",
+    "working_directory.cc",
+    "working_directory.h",
+  ]
+
+  deps = [ "//flutter/fml" ]
+}
+
+impeller_component("screenshot") {
+  testonly = true
+  sources = [ "screenshot.h" ]
+}
+
+if (is_mac) {
+  impeller_component("metal_screenshot") {
+    testonly = true
+
+    sources = [
+      "metal_screenshot.h",
+      "metal_screenshot.mm",
+      "metal_screenshotter.h",
+      "metal_screenshotter.mm",
+      "screenshotter.h",
+      "vulkan_screenshotter.h",
+      "vulkan_screenshotter.mm",
+    ]
+
+    deps = [
+      ":screenshot",
+      "//flutter/display_list",
+      "//flutter/fml",
+      "//flutter/impeller/display_list",
+      "//flutter/impeller/playground",
+      "//flutter/impeller/renderer/backend/metal:metal",
+      "//flutter/impeller/renderer/backend/vulkan",
+    ]
+  }
+
+  impeller_component("impeller_golden_tests") {
+    target_type = "executable"
+
+    testonly = true
+
+    sources = [
+      "golden_tests.cc",
+      "main.cc",
+    ]
+
+    deps = [
+      ":digest",
+      ":metal_screenshot",
+      "//flutter/display_list",
+      "//flutter/impeller/display_list",
+      "//flutter/impeller/display_list:aiks_unittests_golden",
+      "//flutter/impeller/display_list:display_list_unittests_golden",
+      "//flutter/impeller/fixtures",
+      "//flutter/impeller/renderer:renderer_unittests_golden",
+      "//flutter/third_party/angle:libEGL",
+      "//flutter/third_party/angle:libGLESv2",
+      "//flutter/third_party/googletest:gtest",
+      "//flutter/third_party/swiftshader",
+    ]
+  }
+}

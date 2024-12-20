@@ -1,0 +1,9 @@
+name: web_locale_keymap
+
+publish_to: none
+
+environment:
+  sdk: ^3.7.0-0
+
+dev_dependencies:
+  test: ^1.21.7

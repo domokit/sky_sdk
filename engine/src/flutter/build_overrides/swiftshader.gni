@@ -1,0 +1,9 @@
+# Copyright 2019 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# We are building SwiftShader in Flutter.
+swiftshader_standalone = false
+
+# Path to SwiftShader.
+swiftshader_dir = "//flutter/third_party/swiftshader"

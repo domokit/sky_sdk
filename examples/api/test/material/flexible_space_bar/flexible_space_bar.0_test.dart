@@ -5,7 +5,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/flexible_space_bar/flexible_space_bar.0.dart' as example;
+import 'package:flutter_api_samples/material/flexible_space_bar/flexible_space_bar.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -16,9 +17,7 @@ void main() {
   });
 
   testWidgets('The app bar stretches when over-scrolled', (WidgetTester tester) async {
-    await tester.pumpWidget(
-        const example.FlexibleSpaceBarExampleApp(),
-    );
+    await tester.pumpWidget(const example.FlexibleSpaceBarExampleApp());
 
     expect(find.text('Flight Report'), findsOne);
 

@@ -87,7 +87,8 @@ enum _ChipVariant { flat, elevated }
 ///  * [Wrap], A widget that displays its children in multiple horizontal or
 ///    vertical runs.
 ///  * <https://material.io/design/components/chips.html>
-class ActionChip extends StatelessWidget implements ChipAttributes, TappableChipAttributes, DisabledChipAttributes {
+class ActionChip extends StatelessWidget
+    implements ChipAttributes, TappableChipAttributes, DisabledChipAttributes {
   /// Create a chip that acts like a button.
   ///
   /// The [label], [autofocus], and [clipBehavior] arguments must not be null.
@@ -221,9 +222,10 @@ class ActionChip extends StatelessWidget implements ChipAttributes, TappableChip
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterial(context));
-    final ChipThemeData? defaults = Theme.of(context).useMaterial3
-      ? _ActionChipDefaultsM3(context, isEnabled, _chipVariant)
-      : null;
+    final ChipThemeData? defaults =
+        Theme.of(context).useMaterial3
+            ? _ActionChipDefaultsM3(context, isEnabled, _chipVariant)
+            : null;
     return RawChip(
       defaultProperties: defaults,
       avatar: avatar,
@@ -263,6 +265,7 @@ class ActionChip extends StatelessWidget implements ChipAttributes, TappableChip
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 class _ActionChipDefaultsM3 extends ChipThemeData {
   _ActionChipDefaultsM3(this.context, this.isEnabled, this._chipVariant)
     : super(
@@ -355,5 +358,6 @@ class _ActionChipDefaultsM3 extends ChipThemeData {
     )!;
   }
 }
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - ActionChip

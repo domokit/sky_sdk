@@ -25,5 +25,6 @@ Future<void> main() async {
       }
       return true;
     },
-    writeResponseOnFailure: true);
+    writeResponseOnFailure: true,
+  );
 }

@@ -1,0 +1,9 @@
+# Copyright 2020 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+vulkan_headers_dir = "//flutter/third_party/vulkan-deps/vulkan-headers/src"
+
+# Subdirectories for generated files
+vulkan_data_subdir = ""
+vulkan_gen_subdir = ""

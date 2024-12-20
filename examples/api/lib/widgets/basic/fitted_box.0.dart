@@ -16,9 +16,7 @@ class FittedBoxApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('FittedBox Sample')),
-        body: const Center(
-          child: FittedBoxExample(),
-        ),
+        body: const Center(child: FittedBoxExample()),
       ),
     );
   }

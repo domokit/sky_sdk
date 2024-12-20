@@ -5,7 +5,11 @@
 import 'template.dart';
 
 class ButtonTemplate extends TokenTemplate {
-  const ButtonTemplate(this.tokenGroup, super.blockName, super.fileName, super.tokens, {
+  const ButtonTemplate(
+    this.tokenGroup,
+    super.blockName,
+    super.fileName,
+    super.tokens, {
     super.colorSchemePrefix = '_colors.',
   });
 

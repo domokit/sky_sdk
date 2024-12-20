@@ -1,0 +1,108 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+namespace impeller.fb.shaderbundle;
+
+enum ShaderStage:byte {
+  kVertex,
+  kFragment,
+  kCompute,
+}
+
+// The subset of impeller::ShaderType that may be used for vertex attributes.
+enum InputDataType:uint32 {
+  kBoolean,
+  kSignedByte,
+  kUnsignedByte,
+  kSignedShort,
+  kUnsignedShort,
+  kSignedInt,
+  kUnsignedInt,
+  kSignedInt64,
+  kUnsignedInt64,
+  kFloat,
+  kDouble,
+}
+
+// The subset of impeller::ShaderType that may be used for uniform bindings.
+enum UniformDataType:uint32 {
+  kBoolean,
+  kSignedByte,
+  kUnsignedByte,
+  kSignedShort,
+  kUnsignedShort,
+  kSignedInt,
+  kUnsignedInt,
+  kSignedInt64,
+  kUnsignedInt64,
+  kHalfFloat,
+  kFloat,
+  kDouble,
+  kSampledImage,
+}
+
+// This contains the same attribute reflection data as
+// impeller::ShaderStageIOSlot.
+table ShaderInput {
+  name: string;
+  location: uint64;
+  set: uint64;
+  binding: uint64;
+  type: InputDataType;
+  bit_width: uint64;
+  vec_size: uint64;
+  columns: uint64;
+  offset: uint64;
+}
+
+table ShaderUniformStructField {
+  name: string;
+  type: UniformDataType;
+  offset_in_bytes: uint64;
+  element_size_in_bytes: uint64;
+  total_size_in_bytes: uint64;
+  // Zero indicates that this field is not an array element.
+  array_elements: uint64;
+}
+
+table ShaderUniformStruct {
+  name: string;
+  ext_res_0: uint64;
+  set: uint64;
+  binding: uint64;
+  size_in_bytes: uint64; // Includes all alignment padding.
+  fields: [ShaderUniformStructField];
+}
+
+table ShaderUniformTexture {
+  name: string;
+  ext_res_0: uint64;
+  set: uint64;
+  binding: uint64;
+}
+
+table BackendShader {
+  stage: ShaderStage;
+  entrypoint: string;
+  inputs: [ShaderInput];
+  uniform_structs: [ShaderUniformStruct];
+  uniform_textures: [ShaderUniformTexture];
+  shader: [ubyte];
+}
+
+table Shader {
+  name: string;
+  metal_ios: BackendShader;
+  metal_desktop: BackendShader;
+  opengl_es: BackendShader;
+  opengl_desktop: BackendShader;
+  vulkan: BackendShader;
+}
+
+table ShaderBundle {
+  shaders: [Shader];
+}
+
+root_type ShaderBundle;
+file_identifier "IPSB";

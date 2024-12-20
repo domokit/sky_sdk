@@ -10,7 +10,10 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('FloatingActionButtonThemeData copyWith, ==, hashCode basics', () {
     expect(const FloatingActionButtonThemeData(), const FloatingActionButtonThemeData().copyWith());
-    expect(const FloatingActionButtonThemeData().hashCode, const FloatingActionButtonThemeData().copyWith().hashCode);
+    expect(
+      const FloatingActionButtonThemeData().hashCode,
+      const FloatingActionButtonThemeData().copyWith().hashCode,
+    );
   });
 
   test('FloatingActionButtonThemeData lerp special cases', () {
@@ -19,353 +22,465 @@ void main() {
     expect(identical(FloatingActionButtonThemeData.lerp(data, data, 0.5), data), true);
   });
 
-  testWidgets('Material3: Default values are used when no FloatingActionButton or FloatingActionButtonThemeData properties are specified', (WidgetTester tester) async {
-    const ColorScheme colorScheme = ColorScheme.light();
-    await tester.pumpWidget(MaterialApp(
-      theme: ThemeData.from(useMaterial3: true, colorScheme: colorScheme),
-      home: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () { },
-          child: const Icon(Icons.add),
+  testWidgets(
+    'Material3: Default values are used when no FloatingActionButton or FloatingActionButtonThemeData properties are specified',
+    (WidgetTester tester) async {
+      const ColorScheme colorScheme = ColorScheme.light();
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData.from(useMaterial3: true, colorScheme: colorScheme),
+          home: Scaffold(
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {},
+              child: const Icon(Icons.add),
+            ),
+          ),
         ),
-      ),
-    ));
+      );
 
-    expect(_getRawMaterialButton(tester).fillColor, colorScheme.primaryContainer);
-    expect(_getRichText(tester).text.style!.color, colorScheme.onPrimaryContainer);
+      expect(_getRawMaterialButton(tester).fillColor, colorScheme.primaryContainer);
+      expect(_getRichText(tester).text.style!.color, colorScheme.onPrimaryContainer);
 
-    // These defaults come directly from the [FloatingActionButton].
-    expect(_getRawMaterialButton(tester).elevation, 6);
-    expect(_getRawMaterialButton(tester).highlightElevation, 6);
-    expect(_getRawMaterialButton(tester).shape, const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16.0))));
-    expect(_getRawMaterialButton(tester).splashColor, colorScheme.onPrimaryContainer.withOpacity(0.1));
-    expect(_getRawMaterialButton(tester).constraints, const BoxConstraints.tightFor(width: 56.0, height: 56.0));
-    expect(_getIconSize(tester).width, 24.0);
-    expect(_getIconSize(tester).height, 24.0);
-  });
+      // These defaults come directly from the [FloatingActionButton].
+      expect(_getRawMaterialButton(tester).elevation, 6);
+      expect(_getRawMaterialButton(tester).highlightElevation, 6);
+      expect(
+        _getRawMaterialButton(tester).shape,
+        const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16.0))),
+      );
+      expect(
+        _getRawMaterialButton(tester).splashColor,
+        colorScheme.onPrimaryContainer.withOpacity(0.1),
+      );
+      expect(
+        _getRawMaterialButton(tester).constraints,
+        const BoxConstraints.tightFor(width: 56.0, height: 56.0),
+      );
+      expect(_getIconSize(tester).width, 24.0);
+      expect(_getIconSize(tester).height, 24.0);
+    },
+  );
 
-  testWidgets('Material2: Default values are used when no FloatingActionButton or FloatingActionButtonThemeData properties are specified', (WidgetTester tester) async {
-    const ColorScheme colorScheme = ColorScheme.light();
-    await tester.pumpWidget(MaterialApp(
-      theme: ThemeData.from(useMaterial3: false, colorScheme: colorScheme),
-      home: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () { },
-          child: const Icon(Icons.add),
+  testWidgets(
+    'Material2: Default values are used when no FloatingActionButton or FloatingActionButtonThemeData properties are specified',
+    (WidgetTester tester) async {
+      const ColorScheme colorScheme = ColorScheme.light();
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData.from(useMaterial3: false, colorScheme: colorScheme),
+          home: Scaffold(
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {},
+              child: const Icon(Icons.add),
+            ),
+          ),
         ),
-      ),
-    ));
+      );
 
-    expect(_getRawMaterialButton(tester).fillColor, colorScheme.secondary);
-    expect(_getRichText(tester).text.style!.color, colorScheme.onSecondary);
+      expect(_getRawMaterialButton(tester).fillColor, colorScheme.secondary);
+      expect(_getRichText(tester).text.style!.color, colorScheme.onSecondary);
 
-    // These defaults come directly from the [FloatingActionButton].
-    expect(_getRawMaterialButton(tester).elevation, 6);
-    expect(_getRawMaterialButton(tester).highlightElevation, 12);
-    expect(_getRawMaterialButton(tester).shape, const CircleBorder());
-    expect(_getRawMaterialButton(tester).splashColor, ThemeData().splashColor);
-    expect(_getRawMaterialButton(tester).constraints, const BoxConstraints.tightFor(width: 56.0, height: 56.0));
-    expect(_getIconSize(tester).width, 24.0);
-    expect(_getIconSize(tester).height, 24.0);
-  });
+      // These defaults come directly from the [FloatingActionButton].
+      expect(_getRawMaterialButton(tester).elevation, 6);
+      expect(_getRawMaterialButton(tester).highlightElevation, 12);
+      expect(_getRawMaterialButton(tester).shape, const CircleBorder());
+      expect(_getRawMaterialButton(tester).splashColor, ThemeData().splashColor);
+      expect(
+        _getRawMaterialButton(tester).constraints,
+        const BoxConstraints.tightFor(width: 56.0, height: 56.0),
+      );
+      expect(_getIconSize(tester).width, 24.0);
+      expect(_getIconSize(tester).height, 24.0);
+    },
+  );
 
-  testWidgets('FloatingActionButtonThemeData values are used when no FloatingActionButton properties are specified', (WidgetTester tester) async {
-    const Color backgroundColor = Color(0xBEEFBEEF);
-    const Color foregroundColor = Color(0xFACEFACE);
-    const Color splashColor = Color(0xCAFEFEED);
-    const double elevation = 7;
-    const double disabledElevation = 1;
-    const double highlightElevation = 13;
-    const ShapeBorder shape = StadiumBorder();
-    const BoxConstraints constraints = BoxConstraints.tightFor(width: 100.0, height: 100.0);
+  testWidgets(
+    'FloatingActionButtonThemeData values are used when no FloatingActionButton properties are specified',
+    (WidgetTester tester) async {
+      const Color backgroundColor = Color(0xBEEFBEEF);
+      const Color foregroundColor = Color(0xFACEFACE);
+      const Color splashColor = Color(0xCAFEFEED);
+      const double elevation = 7;
+      const double disabledElevation = 1;
+      const double highlightElevation = 13;
+      const ShapeBorder shape = StadiumBorder();
+      const BoxConstraints constraints = BoxConstraints.tightFor(width: 100.0, height: 100.0);
 
-    await tester.pumpWidget(MaterialApp(
-      theme: ThemeData().copyWith(
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: backgroundColor,
-          foregroundColor: foregroundColor,
-          splashColor: splashColor,
-          elevation: elevation,
-          disabledElevation: disabledElevation,
-          highlightElevation: highlightElevation,
-          shape: shape,
-          sizeConstraints: constraints,
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData().copyWith(
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: backgroundColor,
+              foregroundColor: foregroundColor,
+              splashColor: splashColor,
+              elevation: elevation,
+              disabledElevation: disabledElevation,
+              highlightElevation: highlightElevation,
+              shape: shape,
+              sizeConstraints: constraints,
+            ),
+          ),
+          home: Scaffold(
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {},
+              child: const Icon(Icons.add),
+            ),
+          ),
         ),
-      ),
-      home: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () { },
-          child: const Icon(Icons.add),
+      );
+
+      expect(_getRawMaterialButton(tester).fillColor, backgroundColor);
+      expect(_getRichText(tester).text.style!.color, foregroundColor);
+      expect(_getRawMaterialButton(tester).elevation, elevation);
+      expect(_getRawMaterialButton(tester).disabledElevation, disabledElevation);
+      expect(_getRawMaterialButton(tester).highlightElevation, highlightElevation);
+      expect(_getRawMaterialButton(tester).shape, shape);
+      expect(_getRawMaterialButton(tester).splashColor, splashColor);
+      expect(_getRawMaterialButton(tester).constraints, constraints);
+    },
+  );
+
+  testWidgets(
+    'FloatingActionButton values take priority over FloatingActionButtonThemeData values when both properties are specified',
+    (WidgetTester tester) async {
+      const Color backgroundColor = Color(0x00000001);
+      const Color foregroundColor = Color(0x00000002);
+      const Color splashColor = Color(0x00000003);
+      const double elevation = 7;
+      const double disabledElevation = 1;
+      const double highlightElevation = 13;
+      const ShapeBorder shape = StadiumBorder();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData().copyWith(
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Color(0x00000004),
+              foregroundColor: Color(0x00000005),
+              splashColor: Color(0x00000006),
+              elevation: 23,
+              disabledElevation: 11,
+              highlightElevation: 43,
+              shape: BeveledRectangleBorder(),
+            ),
+          ),
+          home: Scaffold(
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {},
+              backgroundColor: backgroundColor,
+              foregroundColor: foregroundColor,
+              splashColor: splashColor,
+              elevation: elevation,
+              disabledElevation: disabledElevation,
+              highlightElevation: highlightElevation,
+              shape: shape,
+              child: const Icon(Icons.add),
+            ),
+          ),
         ),
-      ),
-    ));
+      );
 
-    expect(_getRawMaterialButton(tester).fillColor, backgroundColor);
-    expect(_getRichText(tester).text.style!.color, foregroundColor);
-    expect(_getRawMaterialButton(tester).elevation, elevation);
-    expect(_getRawMaterialButton(tester).disabledElevation, disabledElevation);
-    expect(_getRawMaterialButton(tester).highlightElevation, highlightElevation);
-    expect(_getRawMaterialButton(tester).shape, shape);
-    expect(_getRawMaterialButton(tester).splashColor, splashColor);
-    expect(_getRawMaterialButton(tester).constraints, constraints);
-  });
+      expect(_getRawMaterialButton(tester).fillColor, backgroundColor);
+      expect(_getRichText(tester).text.style!.color, foregroundColor);
+      expect(_getRawMaterialButton(tester).elevation, elevation);
+      expect(_getRawMaterialButton(tester).disabledElevation, disabledElevation);
+      expect(_getRawMaterialButton(tester).highlightElevation, highlightElevation);
+      expect(_getRawMaterialButton(tester).shape, shape);
+      expect(_getRawMaterialButton(tester).splashColor, splashColor);
+    },
+  );
 
-  testWidgets('FloatingActionButton values take priority over FloatingActionButtonThemeData values when both properties are specified', (WidgetTester tester) async {
-    const Color backgroundColor = Color(0x00000001);
-    const Color foregroundColor = Color(0x00000002);
-    const Color splashColor = Color(0x00000003);
-    const double elevation = 7;
-    const double disabledElevation = 1;
-    const double highlightElevation = 13;
-    const ShapeBorder shape = StadiumBorder();
-
-    await tester.pumpWidget(MaterialApp(
-      theme: ThemeData().copyWith(
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Color(0x00000004),
-          foregroundColor: Color(0x00000005),
-          splashColor: Color(0x00000006),
-          elevation: 23,
-          disabledElevation: 11,
-          highlightElevation: 43,
-          shape: BeveledRectangleBorder(),
-        ),
-      ),
-      home: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () { },
-          backgroundColor: backgroundColor,
-          foregroundColor: foregroundColor,
-          splashColor: splashColor,
-          elevation: elevation,
-          disabledElevation: disabledElevation,
-          highlightElevation: highlightElevation,
-          shape: shape,
-          child: const Icon(Icons.add),
-        ),
-      ),
-    ));
-
-    expect(_getRawMaterialButton(tester).fillColor, backgroundColor);
-    expect(_getRichText(tester).text.style!.color, foregroundColor);
-    expect(_getRawMaterialButton(tester).elevation, elevation);
-    expect(_getRawMaterialButton(tester).disabledElevation, disabledElevation);
-    expect(_getRawMaterialButton(tester).highlightElevation, highlightElevation);
-    expect(_getRawMaterialButton(tester).shape, shape);
-    expect(_getRawMaterialButton(tester).splashColor, splashColor);
-  });
-
-  testWidgets('FloatingActionButton uses a custom shape when specified in the theme', (WidgetTester tester) async {
+  testWidgets('FloatingActionButton uses a custom shape when specified in the theme', (
+    WidgetTester tester,
+  ) async {
     const ShapeBorder customShape = BeveledRectangleBorder();
 
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () { },
-          shape: customShape,
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          floatingActionButton: FloatingActionButton(onPressed: () {}, shape: customShape),
         ),
       ),
-    ));
+    );
 
     expect(_getRawMaterialButton(tester).shape, customShape);
   });
 
-  testWidgets('FloatingActionButton.small uses custom constraints when specified in the theme', (WidgetTester tester) async {
+  testWidgets('FloatingActionButton.small uses custom constraints when specified in the theme', (
+    WidgetTester tester,
+  ) async {
     const BoxConstraints constraints = BoxConstraints.tightFor(width: 100.0, height: 100.0);
     const double iconSize = 24.0;
 
-    await tester.pumpWidget(MaterialApp(
-      theme: ThemeData().copyWith(
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          smallSizeConstraints: constraints,
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData().copyWith(
+          floatingActionButtonTheme: const FloatingActionButtonThemeData(
+            smallSizeConstraints: constraints,
+          ),
+        ),
+        home: Scaffold(
+          floatingActionButton: FloatingActionButton.small(
+            onPressed: () {},
+            child: const Icon(Icons.add),
+          ),
         ),
       ),
-      home: Scaffold(
-        floatingActionButton: FloatingActionButton.small(
-          onPressed: () { },
-          child: const Icon(Icons.add),
-        ),
-      ),
-    ));
+    );
 
     expect(_getRawMaterialButton(tester).constraints, constraints);
     expect(_getIconSize(tester).width, iconSize);
     expect(_getIconSize(tester).height, iconSize);
   });
 
-  testWidgets('FloatingActionButton.large uses custom constraints when specified in the theme', (WidgetTester tester) async {
+  testWidgets('FloatingActionButton.large uses custom constraints when specified in the theme', (
+    WidgetTester tester,
+  ) async {
     const BoxConstraints constraints = BoxConstraints.tightFor(width: 100.0, height: 100.0);
     const double iconSize = 36.0;
 
-    await tester.pumpWidget(MaterialApp(
-      theme: ThemeData().copyWith(
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          largeSizeConstraints: constraints,
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData().copyWith(
+          floatingActionButtonTheme: const FloatingActionButtonThemeData(
+            largeSizeConstraints: constraints,
+          ),
+        ),
+        home: Scaffold(
+          floatingActionButton: FloatingActionButton.large(
+            onPressed: () {},
+            child: const Icon(Icons.add),
+          ),
         ),
       ),
-      home: Scaffold(
-        floatingActionButton: FloatingActionButton.large(
-          onPressed: () { },
-          child: const Icon(Icons.add),
-        ),
-      ),
-    ));
+    );
 
     expect(_getRawMaterialButton(tester).constraints, constraints);
     expect(_getIconSize(tester).width, iconSize);
     expect(_getIconSize(tester).height, iconSize);
   });
 
-  testWidgets('Material3: FloatingActionButton.extended uses custom properties when specified in the theme', (WidgetTester tester) async {
-    const ColorScheme colorScheme = ColorScheme.light();
-    const Key iconKey = Key('icon');
-    const Key labelKey = Key('label');
-    const BoxConstraints constraints = BoxConstraints.tightFor(height: 100.0);
-    const double iconLabelSpacing = 33.0;
-    const EdgeInsetsDirectional padding = EdgeInsetsDirectional.only(start: 5.0, end: 6.0);
-    const TextStyle textStyle = TextStyle(letterSpacing: 2.0);
+  testWidgets(
+    'Material3: FloatingActionButton.extended uses custom properties when specified in the theme',
+    (WidgetTester tester) async {
+      const ColorScheme colorScheme = ColorScheme.light();
+      const Key iconKey = Key('icon');
+      const Key labelKey = Key('label');
+      const BoxConstraints constraints = BoxConstraints.tightFor(height: 100.0);
+      const double iconLabelSpacing = 33.0;
+      const EdgeInsetsDirectional padding = EdgeInsetsDirectional.only(start: 5.0, end: 6.0);
+      const TextStyle textStyle = TextStyle(letterSpacing: 2.0);
 
-    await tester.pumpWidget(MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: colorScheme,
-      ).copyWith(
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          extendedSizeConstraints: constraints,
-          extendedIconLabelSpacing: iconLabelSpacing,
-          extendedPadding: padding,
-          extendedTextStyle: textStyle,
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: true, colorScheme: colorScheme).copyWith(
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              extendedSizeConstraints: constraints,
+              extendedIconLabelSpacing: iconLabelSpacing,
+              extendedPadding: padding,
+              extendedTextStyle: textStyle,
+            ),
+          ),
+          home: Scaffold(
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () {},
+              label: const Text('Extended', key: labelKey),
+              icon: const Icon(Icons.add, key: iconKey),
+            ),
+          ),
         ),
-      ),
-      home: Scaffold(
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () { },
-          label: const Text('Extended', key: labelKey),
-          icon: const Icon(Icons.add, key: iconKey),
+      );
+
+      expect(_getRawMaterialButton(tester).constraints, constraints);
+      expect(
+        tester.getTopLeft(find.byKey(labelKey)).dx - tester.getTopRight(find.byKey(iconKey)).dx,
+        iconLabelSpacing,
+      );
+      expect(
+        tester.getTopLeft(find.byKey(iconKey)).dx -
+            tester.getTopLeft(find.byType(FloatingActionButton)).dx,
+        padding.start,
+      );
+      expect(
+        tester.getTopRight(find.byType(FloatingActionButton)).dx -
+            tester.getTopRight(find.byKey(labelKey)).dx,
+        padding.end,
+      );
+      expect(
+        _getRawMaterialButton(tester).textStyle,
+        textStyle.copyWith(color: colorScheme.onPrimaryContainer),
+      );
+    },
+  );
+
+  testWidgets(
+    'Material2: FloatingActionButton.extended uses custom properties when specified in the theme',
+    (WidgetTester tester) async {
+      const Key iconKey = Key('icon');
+      const Key labelKey = Key('label');
+      const BoxConstraints constraints = BoxConstraints.tightFor(height: 100.0);
+      const double iconLabelSpacing = 33.0;
+      const EdgeInsetsDirectional padding = EdgeInsetsDirectional.only(start: 5.0, end: 6.0);
+      const TextStyle textStyle = TextStyle(letterSpacing: 2.0);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: false).copyWith(
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              extendedSizeConstraints: constraints,
+              extendedIconLabelSpacing: iconLabelSpacing,
+              extendedPadding: padding,
+              extendedTextStyle: textStyle,
+            ),
+          ),
+          home: Scaffold(
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () {},
+              label: const Text('Extended', key: labelKey),
+              icon: const Icon(Icons.add, key: iconKey),
+            ),
+          ),
         ),
-      ),
-    ));
+      );
 
-    expect(_getRawMaterialButton(tester).constraints, constraints);
-    expect(tester.getTopLeft(find.byKey(labelKey)).dx - tester.getTopRight(find.byKey(iconKey)).dx, iconLabelSpacing);
-    expect(tester.getTopLeft(find.byKey(iconKey)).dx - tester.getTopLeft(find.byType(FloatingActionButton)).dx, padding.start);
-    expect(tester.getTopRight(find.byType(FloatingActionButton)).dx - tester.getTopRight(find.byKey(labelKey)).dx, padding.end);
-    expect(_getRawMaterialButton(tester).textStyle, textStyle.copyWith(color: colorScheme.onPrimaryContainer));
-  });
+      expect(_getRawMaterialButton(tester).constraints, constraints);
+      expect(
+        tester.getTopLeft(find.byKey(labelKey)).dx - tester.getTopRight(find.byKey(iconKey)).dx,
+        iconLabelSpacing,
+      );
+      expect(
+        tester.getTopLeft(find.byKey(iconKey)).dx -
+            tester.getTopLeft(find.byType(FloatingActionButton)).dx,
+        padding.start,
+      );
+      expect(
+        tester.getTopRight(find.byType(FloatingActionButton)).dx -
+            tester.getTopRight(find.byKey(labelKey)).dx,
+        padding.end,
+      );
+      // The color comes from the default color scheme's onSecondary value.
+      expect(
+        _getRawMaterialButton(tester).textStyle,
+        textStyle.copyWith(color: const Color(0xffffffff)),
+      );
+    },
+  );
 
-  testWidgets('Material2: FloatingActionButton.extended uses custom properties when specified in the theme', (WidgetTester tester) async {
-    const Key iconKey = Key('icon');
-    const Key labelKey = Key('label');
-    const BoxConstraints constraints = BoxConstraints.tightFor(height: 100.0);
-    const double iconLabelSpacing = 33.0;
-    const EdgeInsetsDirectional padding = EdgeInsetsDirectional.only(start: 5.0, end: 6.0);
-    const TextStyle textStyle = TextStyle(letterSpacing: 2.0);
+  testWidgets(
+    'Material3: FloatingActionButton.extended custom properties takes priority over FloatingActionButtonThemeData spacing',
+    (WidgetTester tester) async {
+      const ColorScheme colorScheme = ColorScheme.light();
+      const Key iconKey = Key('icon');
+      const Key labelKey = Key('label');
+      const double iconLabelSpacing = 33.0;
+      const EdgeInsetsDirectional padding = EdgeInsetsDirectional.only(start: 5.0, end: 6.0);
+      const TextStyle textStyle = TextStyle(letterSpacing: 2.0);
 
-    await tester.pumpWidget(MaterialApp(
-      theme: ThemeData(useMaterial3: false).copyWith(
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          extendedSizeConstraints: constraints,
-          extendedIconLabelSpacing: iconLabelSpacing,
-          extendedPadding: padding,
-          extendedTextStyle: textStyle,
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: true, colorScheme: colorScheme).copyWith(
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              extendedIconLabelSpacing: 25.0,
+              extendedPadding: EdgeInsetsDirectional.only(start: 7.0, end: 8.0),
+              extendedTextStyle: TextStyle(letterSpacing: 3.0),
+            ),
+          ),
+          home: Scaffold(
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () {},
+              label: const Text('Extended', key: labelKey),
+              icon: const Icon(Icons.add, key: iconKey),
+              extendedIconLabelSpacing: iconLabelSpacing,
+              extendedPadding: padding,
+              extendedTextStyle: textStyle,
+            ),
+          ),
         ),
-      ),
-      home: Scaffold(
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () { },
-          label: const Text('Extended', key: labelKey),
-          icon: const Icon(Icons.add, key: iconKey),
+      );
+
+      expect(
+        tester.getTopLeft(find.byKey(labelKey)).dx - tester.getTopRight(find.byKey(iconKey)).dx,
+        iconLabelSpacing,
+      );
+      expect(
+        tester.getTopLeft(find.byKey(iconKey)).dx -
+            tester.getTopLeft(find.byType(FloatingActionButton)).dx,
+        padding.start,
+      );
+      expect(
+        tester.getTopRight(find.byType(FloatingActionButton)).dx -
+            tester.getTopRight(find.byKey(labelKey)).dx,
+        padding.end,
+      );
+      expect(
+        _getRawMaterialButton(tester).textStyle,
+        textStyle.copyWith(color: colorScheme.onPrimaryContainer),
+      );
+    },
+  );
+
+  testWidgets(
+    'Material2: FloatingActionButton.extended custom properties takes priority over FloatingActionButtonThemeData spacing',
+    (WidgetTester tester) async {
+      const Key iconKey = Key('icon');
+      const Key labelKey = Key('label');
+      const double iconLabelSpacing = 33.0;
+      const EdgeInsetsDirectional padding = EdgeInsetsDirectional.only(start: 5.0, end: 6.0);
+      const TextStyle textStyle = TextStyle(letterSpacing: 2.0);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: false).copyWith(
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              extendedIconLabelSpacing: 25.0,
+              extendedPadding: EdgeInsetsDirectional.only(start: 7.0, end: 8.0),
+              extendedTextStyle: TextStyle(letterSpacing: 3.0),
+            ),
+          ),
+          home: Scaffold(
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () {},
+              label: const Text('Extended', key: labelKey),
+              icon: const Icon(Icons.add, key: iconKey),
+              extendedIconLabelSpacing: iconLabelSpacing,
+              extendedPadding: padding,
+              extendedTextStyle: textStyle,
+            ),
+          ),
         ),
-      ),
-    ));
+      );
 
-    expect(_getRawMaterialButton(tester).constraints, constraints);
-    expect(tester.getTopLeft(find.byKey(labelKey)).dx - tester.getTopRight(find.byKey(iconKey)).dx, iconLabelSpacing);
-    expect(tester.getTopLeft(find.byKey(iconKey)).dx - tester.getTopLeft(find.byType(FloatingActionButton)).dx, padding.start);
-    expect(tester.getTopRight(find.byType(FloatingActionButton)).dx - tester.getTopRight(find.byKey(labelKey)).dx, padding.end);
-    // The color comes from the default color scheme's onSecondary value.
-    expect(_getRawMaterialButton(tester).textStyle, textStyle.copyWith(color: const Color(0xffffffff)));
-  });
-
-  testWidgets('Material3: FloatingActionButton.extended custom properties takes priority over FloatingActionButtonThemeData spacing', (WidgetTester tester) async {
-    const ColorScheme colorScheme = ColorScheme.light();
-    const Key iconKey = Key('icon');
-    const Key labelKey = Key('label');
-    const double iconLabelSpacing = 33.0;
-    const EdgeInsetsDirectional padding = EdgeInsetsDirectional.only(start: 5.0, end: 6.0);
-    const TextStyle textStyle = TextStyle(letterSpacing: 2.0);
-
-    await tester.pumpWidget(MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: colorScheme,
-      ).copyWith(
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          extendedIconLabelSpacing: 25.0,
-          extendedPadding: EdgeInsetsDirectional.only(start: 7.0, end: 8.0),
-          extendedTextStyle: TextStyle(letterSpacing: 3.0),
-        ),
-      ),
-      home: Scaffold(
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () { },
-          label: const Text('Extended', key: labelKey),
-          icon: const Icon(Icons.add, key: iconKey),
-          extendedIconLabelSpacing: iconLabelSpacing,
-          extendedPadding: padding,
-          extendedTextStyle: textStyle,
-        ),
-      ),
-    ));
-
-    expect(tester.getTopLeft(find.byKey(labelKey)).dx - tester.getTopRight(find.byKey(iconKey)).dx, iconLabelSpacing);
-    expect(tester.getTopLeft(find.byKey(iconKey)).dx - tester.getTopLeft(find.byType(FloatingActionButton)).dx, padding.start);
-    expect(tester.getTopRight(find.byType(FloatingActionButton)).dx - tester.getTopRight(find.byKey(labelKey)).dx, padding.end);
-    expect(_getRawMaterialButton(tester).textStyle, textStyle.copyWith(color: colorScheme.onPrimaryContainer));
-  });
-
-  testWidgets('Material2: FloatingActionButton.extended custom properties takes priority over FloatingActionButtonThemeData spacing', (WidgetTester tester) async {
-    const Key iconKey = Key('icon');
-    const Key labelKey = Key('label');
-    const double iconLabelSpacing = 33.0;
-    const EdgeInsetsDirectional padding = EdgeInsetsDirectional.only(start: 5.0, end: 6.0);
-    const TextStyle textStyle = TextStyle(letterSpacing: 2.0);
-
-    await tester.pumpWidget(MaterialApp(
-      theme: ThemeData(useMaterial3: false).copyWith(
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          extendedIconLabelSpacing: 25.0,
-          extendedPadding: EdgeInsetsDirectional.only(start: 7.0, end: 8.0),
-          extendedTextStyle: TextStyle(letterSpacing: 3.0),
-        ),
-      ),
-      home: Scaffold(
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () { },
-          label: const Text('Extended', key: labelKey),
-          icon: const Icon(Icons.add, key: iconKey),
-          extendedIconLabelSpacing: iconLabelSpacing,
-          extendedPadding: padding,
-          extendedTextStyle: textStyle,
-        ),
-      ),
-    ));
-
-    expect(tester.getTopLeft(find.byKey(labelKey)).dx - tester.getTopRight(find.byKey(iconKey)).dx, iconLabelSpacing);
-    expect(tester.getTopLeft(find.byKey(iconKey)).dx - tester.getTopLeft(find.byType(FloatingActionButton)).dx, padding.start);
-    expect(tester.getTopRight(find.byType(FloatingActionButton)).dx - tester.getTopRight(find.byKey(labelKey)).dx, padding.end);
-    // The color comes from the default color scheme's onSecondary value.
-    expect(_getRawMaterialButton(tester).textStyle, textStyle.copyWith(color: const Color(0xffffffff)));
-  });
+      expect(
+        tester.getTopLeft(find.byKey(labelKey)).dx - tester.getTopRight(find.byKey(iconKey)).dx,
+        iconLabelSpacing,
+      );
+      expect(
+        tester.getTopLeft(find.byKey(iconKey)).dx -
+            tester.getTopLeft(find.byType(FloatingActionButton)).dx,
+        padding.start,
+      );
+      expect(
+        tester.getTopRight(find.byType(FloatingActionButton)).dx -
+            tester.getTopRight(find.byKey(labelKey)).dx,
+        padding.end,
+      );
+      // The color comes from the default color scheme's onSecondary value.
+      expect(
+        _getRawMaterialButton(tester).textStyle,
+        textStyle.copyWith(color: const Color(0xffffffff)),
+      );
+    },
+  );
 
   testWidgets('default FloatingActionButton debugFillProperties', (WidgetTester tester) async {
     final DiagnosticPropertiesBuilder builder = DiagnosticPropertiesBuilder();
-    const FloatingActionButtonThemeData ().debugFillProperties(builder);
+    const FloatingActionButtonThemeData().debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-      .map((DiagnosticsNode node) => node.toString())
-      .toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>[]);
   });
@@ -396,10 +511,11 @@ void main() {
       mouseCursor: MaterialStateMouseCursor.clickable,
     ).debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-      .map((DiagnosticsNode node) => node.toString())
-      .toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>[
       'foregroundColor: ${const Color(0xfeedfeed)}',
@@ -426,29 +542,37 @@ void main() {
     ]);
   });
 
-  testWidgets('FloatingActionButton.mouseCursor uses FloatingActionButtonThemeData.mouseCursor when specified.', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      theme: ThemeData().copyWith(
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          mouseCursor: MaterialStateProperty.all(SystemMouseCursors.text),
+  testWidgets(
+    'FloatingActionButton.mouseCursor uses FloatingActionButtonThemeData.mouseCursor when specified.',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData().copyWith(
+            floatingActionButtonTheme: FloatingActionButtonThemeData(
+              mouseCursor: MaterialStateProperty.all(SystemMouseCursors.text),
+            ),
+          ),
+          home: Scaffold(
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {},
+              child: const Icon(Icons.add),
+            ),
+          ),
         ),
-      ),
-      home: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () { },
-          child: const Icon(Icons.add),
-        ),
-      ),
-    ));
+      );
 
-    await tester.pumpAndSettle();
-    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
-    await gesture.addPointer();
-    addTearDown(gesture.removePointer);
-    await gesture.moveTo(tester.getCenter(find.byType(FloatingActionButton)));
-    await tester.pumpAndSettle();
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.text);
-  });
+      await tester.pumpAndSettle();
+      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await gesture.addPointer();
+      addTearDown(gesture.removePointer);
+      await gesture.moveTo(tester.getCenter(find.byType(FloatingActionButton)));
+      await tester.pumpAndSettle();
+      expect(
+        RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+        SystemMouseCursors.text,
+      );
+    },
+  );
 }
 
 RawMaterialButton _getRawMaterialButton(WidgetTester tester) {
@@ -462,20 +586,14 @@ RawMaterialButton _getRawMaterialButton(WidgetTester tester) {
 
 RichText _getRichText(WidgetTester tester) {
   return tester.widget<RichText>(
-    find.descendant(
-      of: find.byType(FloatingActionButton),
-      matching: find.byType(RichText),
-    ),
+    find.descendant(of: find.byType(FloatingActionButton), matching: find.byType(RichText)),
   );
 }
 
 SizedBox _getIconSize(WidgetTester tester) {
   return tester.widget<SizedBox>(
     find.descendant(
-      of: find.descendant(
-        of: find.byType(FloatingActionButton),
-        matching: find.byType(Icon),
-      ),
+      of: find.descendant(of: find.byType(FloatingActionButton), matching: find.byType(Icon)),
       matching: find.byType(SizedBox),
     ),
   );

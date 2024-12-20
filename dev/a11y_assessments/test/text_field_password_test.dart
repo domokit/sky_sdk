@@ -31,8 +31,7 @@ void main() {
     }
   });
 
-  testWidgets('text field passwords do not have hint text',
-      (WidgetTester tester) async {
+  testWidgets('text field passwords do not have hint text', (WidgetTester tester) async {
     await pumpsUseCase(tester, TextFieldPasswordUseCase());
     expect(find.byType(TextField), findsExactly(2));
 

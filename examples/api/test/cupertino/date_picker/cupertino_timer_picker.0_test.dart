@@ -9,17 +9,25 @@ const Offset _kRowOffset = Offset(0.0, -50.0);
 
 void main() {
   testWidgets('Can pick a duration from CupertinoTimerPicker', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.TimerPickerApp(),
-    );
+    await tester.pumpWidget(const example.TimerPickerApp());
 
     // Launch the timer picker.
     await tester.tap(find.text('1:23:00.000000'));
     await tester.pumpAndSettle();
 
     // Drag hour, minute to change the time.
-    await tester.drag(find.text('1'), _kRowOffset, touchSlopY: 0, warnIfMissed: false); // see top of file
-    await tester.drag(find.text('23'), _kRowOffset, touchSlopY: 0, warnIfMissed: false); // see top of file
+    await tester.drag(
+      find.text('1'),
+      _kRowOffset,
+      touchSlopY: 0,
+      warnIfMissed: false,
+    ); // see top of file
+    await tester.drag(
+      find.text('23'),
+      _kRowOffset,
+      touchSlopY: 0,
+      warnIfMissed: false,
+    ); // see top of file
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));

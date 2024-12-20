@@ -7,10 +7,10 @@ import 'package:flutter_api_samples/material/refresh_indicator/refresh_indicator
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Pulling from nested scroll view triggers refresh indicator', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.RefreshIndicatorExampleApp(),
-    );
+  testWidgets('Pulling from nested scroll view triggers refresh indicator', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.RefreshIndicatorExampleApp());
 
     // Pull from the upper scroll view.
     await tester.fling(find.text('Pull down here').first, const Offset(0.0, 300.0), 1000.0);

@@ -29,11 +29,7 @@ class WillPopScope extends StatefulWidget {
     'Use PopScope instead. The Android predictive back feature will not work with WillPopScope. '
     'This feature was deprecated after v3.12.0-1.0.pre.',
   )
-  const WillPopScope({
-    super.key,
-    required this.child,
-    required this.onWillPop,
-  });
+  const WillPopScope({super.key, required this.child, required this.onWillPop});
 
   /// The widget below this widget in the tree.
   ///

@@ -15,9 +15,7 @@ import '../../src/fake_process_manager.dart';
 
 const String emulatorID = 'i1234';
 const String errorText = '[Android emulator test error]';
-const List<String> kEmulatorLaunchCommand = <String>[
-  'emulator', '-avd', emulatorID,
-];
+const List<String> kEmulatorLaunchCommand = <String>['emulator', '-avd', emulatorID];
 
 void main() {
   group('android_emulator', () {
@@ -74,9 +72,7 @@ void main() {
     testWithoutContext('prefers displayname for name', () {
       const String emulatorID = '1234';
       const String displayName = 'The best one';
-      final Map<String, String> properties = <String, String>{
-        'avd.ini.displayname': displayName,
-      };
+      final Map<String, String> properties = <String, String>{'avd.ini.displayname': displayName};
       final AndroidEmulator emulator = AndroidEmulator(
         emulatorID,
         properties: properties,
@@ -131,7 +127,8 @@ void main() {
     });
 
     testWithoutContext('succeeds', () async {
-      final AndroidEmulator emulator = AndroidEmulator(emulatorID,
+      final AndroidEmulator emulator = AndroidEmulator(
+        emulatorID,
         processManager: FakeProcessManager.list(<FakeCommand>[
           const FakeCommand(command: kEmulatorLaunchCommand),
         ]),
@@ -147,7 +144,8 @@ void main() {
         ...kEmulatorLaunchCommand,
         '-no-snapshot-load',
       ];
-      final AndroidEmulator emulator = AndroidEmulator(emulatorID,
+      final AndroidEmulator emulator = AndroidEmulator(
+        emulatorID,
         processManager: FakeProcessManager.list(<FakeCommand>[
           FakeCommand(command: kEmulatorLaunchColdBootCommand),
         ]),
@@ -159,8 +157,9 @@ void main() {
     });
 
     testWithoutContext('prints error on failure', () async {
-      final BufferLogger logger =  BufferLogger.test();
-      final AndroidEmulator emulator = AndroidEmulator(emulatorID,
+      final BufferLogger logger = BufferLogger.test();
+      final AndroidEmulator emulator = AndroidEmulator(
+        emulatorID,
         processManager: FakeProcessManager.list(<FakeCommand>[
           const FakeCommand(
             command: kEmulatorLaunchCommand,
@@ -179,8 +178,9 @@ void main() {
     });
 
     testWithoutContext('prints nothing on late failure with empty stderr', () async {
-      final BufferLogger logger =  BufferLogger.test();
-      final AndroidEmulator emulator = AndroidEmulator(emulatorID,
+      final BufferLogger logger = BufferLogger.test();
+      final AndroidEmulator emulator = AndroidEmulator(
+        emulatorID,
         processManager: FakeProcessManager.list(<FakeCommand>[
           FakeCommand(
             command: kEmulatorLaunchCommand,
@@ -209,11 +209,13 @@ void main() {
 
       await expectLater(
         () => emulator.launch(startupDuration: Duration.zero),
-        throwsA(isException.having(
-          (Exception exception) => exception.toString(),
-          'description',
-          contains('Emulator is missing from the Android SDK'),
-        )),
+        throwsA(
+          isException.having(
+            (Exception exception) => exception.toString(),
+            'description',
+            contains('Emulator is missing from the Android SDK'),
+          ),
+        ),
       );
     });
   });

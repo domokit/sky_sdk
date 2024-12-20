@@ -1,0 +1,41 @@
+#!/usr/bin/env vpython3
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+'''
+Runs the post-merge githooks.
+'''
+
+import os
+import subprocess
+import sys
+
+SRC_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+FLUTTER_DIR = os.path.join(SRC_ROOT, 'flutter')
+
+
+def GetDartBin():
+  dart_bin = os.path.join(SRC_ROOT, 'flutter', 'third_party', 'dart', 'tools', 'sdks', 'dart-sdk', 'bin')
+  if not os.path.exists(dart_bin):
+    dart_bin = os.path.join(SRC_ROOT, 'third_party', 'dart', 'tools', 'sdks', 'dart-sdk', 'bin')
+  return dart_bin
+
+
+def Main(argv):
+  githook_args = [
+    '--flutter',
+    FLUTTER_DIR,
+  ]
+
+  result = subprocess.run([
+    os.path.join(GetDartBin(), 'dart'),
+    os.path.join(FLUTTER_DIR, 'tools', 'githooks', 'bin', 'main.dart'),
+  ] + githook_args + [
+    'post-merge',
+  ] + argv[1:], cwd=SRC_ROOT)
+  return result.returncode
+
+
+if __name__ == '__main__':
+    sys.exit(Main(sys.argv))

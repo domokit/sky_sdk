@@ -1,0 +1,48 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+source_root = "//flutter/third_party/imgui"
+
+source_set("imgui") {
+  public = [
+    "$source_root/imgui.h",
+    "$source_root/imgui_internal.h",
+    "$source_root/imstb_rectpack.h",
+    "$source_root/imstb_textedit.h",
+    "$source_root/imstb_truetype.h",
+  ]
+
+  include_dirs = [ "$source_root" ]
+
+  sources = [
+    "$source_root/imgui.cpp",
+    "$source_root/imgui.h",
+    "$source_root/imgui_demo.cpp",
+    "$source_root/imgui_draw.cpp",
+    "$source_root/imgui_internal.h",
+    "$source_root/imgui_tables.cpp",
+    "$source_root/imgui_widgets.cpp",
+    "$source_root/imstb_rectpack.h",
+    "$source_root/imstb_textedit.h",
+    "$source_root/imstb_truetype.h",
+  ]
+}
+
+config("imgui_headers") {
+  include_dirs = [ "$source_root" ]
+}
+
+source_set("imgui_glfw") {
+  public_deps = [
+    ":imgui",
+    "//flutter/third_party/glfw",
+  ]
+
+  public_configs = [ ":imgui_headers" ]
+
+  sources = [
+    "$source_root/backends/imgui_impl_glfw.cpp",
+    "$source_root/backends/imgui_impl_glfw.h",
+  ]
+}

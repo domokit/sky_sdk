@@ -1,0 +1,79 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/rules.gni")
+
+tests = [
+  "assets_test.dart",
+  "canvas_test.dart",
+  "channel_buffers_test.dart",
+  "codec_test.dart",
+  "color_filter_test.dart",
+  "color_test.dart",
+  "compositing_test.dart",
+  "dart_test.dart",
+  "encoding_test.dart",
+  "fragment_shader_test.dart",
+  "geometry_test.dart",
+  "gesture_settings_test.dart",
+  "gpu_test.dart",
+  "gradient_test.dart",
+  "http_allow_http_connections_test.dart",
+  "http_disallow_http_connections_test.dart",
+  "image_descriptor_test.dart",
+  "image_dispose_test.dart",
+  "image_events_test.dart",
+  "image_filter_test.dart",
+  "image_resize_test.dart",
+  "image_shader_test.dart",
+  "image_test.dart",
+  "isolate_name_server_test.dart",
+  "isolate_test.dart",
+  "lerp_test.dart",
+  "locale_test.dart",
+  "mask_filter_test.dart",
+  "painting_test.dart",
+  "paragraph_builder_test.dart",
+  "paragraph_test.dart",
+  "path_test.dart",
+  "picture_test.dart",
+  "platform_dispatcher_test.dart",
+  "platform_view_test.dart",
+  "platform_isolate_test.dart",
+  "platform_isolate_shutdown_test.dart",
+  "plugin_utilities_test.dart",
+  "semantics_test.dart",
+  "serial_gc_test.dart",
+  "spawn_helper.dart",
+  "spawn_test.dart",
+  "stringification_test.dart",
+  "task_order_test.dart",
+  "text_test.dart",
+  "window_test.dart",
+]
+
+foreach(test, tests) {
+  flutter_build_dir = rebase_path("$root_gen_dir")
+  flutter_src_dir = rebase_path("//flutter")
+  skia_gold_work_dir = rebase_path("$root_gen_dir/skia_gold_$test")
+  flutter_frontend_server("compile_$test") {
+    main_dart = test
+    kernel_output = "$root_gen_dir/$test.dill"
+    extra_args = [
+      "-DkFlutterSrcDirectory=$flutter_src_dir",
+      "-DkFlutterBuildDirectory=$flutter_build_dir",
+      "-DkSkiaGoldWorkDirectory=$skia_gold_work_dir",
+    ]
+    deps = [ "//flutter/third_party/txt:txt_fixtures" ]
+    testonly = true
+  }
+}
+
+group("dart") {
+  testonly = true
+  deps = [ "//flutter/testing/dart/observatory" ]
+  foreach(test, tests) {
+    deps += [ ":compile_$test" ]
+  }
+}

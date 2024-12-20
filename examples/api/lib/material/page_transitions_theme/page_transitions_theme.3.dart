@@ -22,7 +22,8 @@ class PageTransitionsThemeApp extends StatelessWidget {
       theme: ThemeData(
         pageTransitionsTheme: PageTransitionsTheme(
           builders: Map<TargetPlatform, PageTransitionsBuilder>.fromIterable(
-            TargetPlatform.values, value: (_) => const FadeForwardsPageTransitionsBuilder()
+            TargetPlatform.values,
+            value: (_) => const FadeForwardsPageTransitionsBuilder(),
           ),
         ),
       ),
@@ -57,10 +58,13 @@ class HomePage extends StatelessWidget {
                 child: ListView(
                   children: List<Widget>.generate(Colors.primaries.length, (int index) {
                     final Text kittenName = Text('Kitten $index');
-                    final CircleAvatar avatar = CircleAvatar(backgroundColor: Colors.primaries[index]);
-                    final String message = index.isEven
-                        ? 'Hello hooman! My name is Kitten $index'
-                        : "What's up hooman! My name is Kitten $index";
+                    final CircleAvatar avatar = CircleAvatar(
+                      backgroundColor: Colors.primaries[index],
+                    );
+                    final String message =
+                        index.isEven
+                            ? 'Hello hooman! My name is Kitten $index'
+                            : "What's up hooman! My name is Kitten $index";
                     return ListTile(
                       leading: avatar,
                       title: kittenName,
@@ -69,12 +73,12 @@ class HomePage extends StatelessWidget {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute<SecondPage>(
-                            builder: (BuildContext context)
-                              => SecondPage(
-                                kittenName: kittenName,
-                                avatar: avatar,
-                                message: message,
-                              ),
+                            builder:
+                                (BuildContext context) => SecondPage(
+                                  kittenName: kittenName,
+                                  avatar: avatar,
+                                  message: message,
+                                ),
                           ),
                         );
                       },
@@ -85,7 +89,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ],
-      )
+      ),
     );
   }
 }
@@ -129,17 +133,17 @@ class SecondPage extends StatelessWidget {
                       topRight: Radius.circular(20),
                       bottomLeft: Radius.circular(5),
                       bottomRight: Radius.circular(20),
-                    )
+                    ),
                   ),
                   color: Theme.of(context).colorScheme.surfaceContainerLowest,
                   child: Center(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                      child: Text(message)
+                      child: Text(message),
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

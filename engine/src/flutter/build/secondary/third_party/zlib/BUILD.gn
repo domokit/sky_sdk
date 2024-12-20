@@ -1,0 +1,19 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+group("zlib") {
+  public_deps = [ "//flutter/third_party/zlib" ]
+
+  # Add the third_party root directory to the include path to support Dart
+  # sources that include zlib headers using "zlib/zlib.h"
+  public_configs = [ ":include_third_party" ]
+}
+
+config("zlib_config") {
+  configs = [ "//flutter/third_party/zlib:zlib_config" ]
+}
+
+config("include_third_party") {
+  include_dirs = [ "//flutter/third_party" ]
+}

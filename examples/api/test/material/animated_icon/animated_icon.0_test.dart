@@ -3,15 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/animated_icon/animated_icon.0.dart'
-    as example;
+import 'package:flutter_api_samples/material/animated_icon/animated_icon.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('AnimatedIcon animates', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.AnimatedIconApp(),
-    );
+    await tester.pumpWidget(const example.AnimatedIconApp());
 
     // Test the AnimatedIcon size.
     final Size iconSize = tester.getSize(find.byType(AnimatedIcon));

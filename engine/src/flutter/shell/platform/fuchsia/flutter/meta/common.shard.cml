@@ -1,0 +1,61 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file
+{
+    use: [
+        // This is used by the Dart VM to communicate from Dart code to C++ code.
+        {
+            storage: "tmp",
+            path: "/tmp",
+        },
+        // This is used by the Dart VM to load i18n data.
+        {
+            directory: "config-data",
+            rights: [ "r*" ],
+            path: "/config/data",
+        },
+        // The ICU time zone data, factored out of `config-data`.
+        // See:
+        // https://fuchsia.dev/fuchsia-src/concepts/process/namespaces?typical_directory_structure
+        {
+            directory: "tzdata-icu",
+            rights: [ "r*" ],
+            path: "/config/tzdata/icu",
+        },
+        {
+            directory: "root-ssl-certificates",
+            rights: [ "r*" ],
+            path: "/config/ssl",
+        },
+        {
+            protocol: [
+                "fuchsia.accessibility.semantics.SemanticsManager",
+                "fuchsia.device.NameProvider",
+                "fuchsia.feedback.CrashReporter",
+                "fuchsia.fonts.Provider",
+                "fuchsia.inspect.InspectSink", // Copied from inspect/client.shard.cml.
+                "fuchsia.intl.PropertyProvider",
+                "fuchsia.logger.LogSink", // Copied from syslog/client.shard.cml.
+                "fuchsia.media.ProfileProvider",
+                "fuchsia.memorypressure.Provider",
+                "fuchsia.scheduler.RoleManager",
+                "fuchsia.net.name.Lookup",
+                "fuchsia.posix.socket.Provider",
+                "fuchsia.sysmem.Allocator",
+                "fuchsia.sysmem2.Allocator",
+                "fuchsia.ui.composition.Allocator",
+                "fuchsia.ui.composition.Flatland",
+                "fuchsia.ui.input.ImeService",
+                "fuchsia.ui.input3.Keyboard",
+                "fuchsia.ui.pointerinjector.Registry",
+                "fuchsia.vulkan.loader.Loader", // Copied from vulkan/client.shard.cml.
+            ],
+        },
+        {
+            protocol: [
+                "fuchsia.tracing.provider.Registry", // Copied from vulkan/client.shard.cml.
+            ],
+            availability: "optional",
+        },
+    ]
+}

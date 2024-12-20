@@ -32,10 +32,6 @@ void main() {
 
   test('Image cache tracing', () async {
     final TimelineFlags flags = await vmService.getVMTimelineFlags();
-    expect(flags.recordedStreams, containsAll(<String>[
-      'Dart',
-      'Embedder',
-      'GC',
-    ]));
+    expect(flags.recordedStreams, containsAll(<String>['Dart', 'Embedder', 'GC']));
   }, skip: isBrowser); // [intended] uses dart:isolate and io.
 }

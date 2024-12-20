@@ -1,0 +1,79 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/compiled_action.gni")
+import("//flutter/common/fuchsia_config.gni")
+import("//flutter/tools/fuchsia/dart_kernel.gni")
+import("$dart_src/build/dart/dart_action.gni")
+
+dart_kernel("shim_kernel") {
+  main_dart = "shim.dart"
+  kernel_platform_files = "../kernel:kernel_platform_files"
+  product = false
+  aot = true
+}
+
+dart_kernel("shim_product_kernel") {
+  main_dart = "shim.dart"
+  kernel_platform_files = "../kernel:kernel_platform_files"
+  product = true
+  aot = true
+}
+
+template("create_aot_snapshot") {
+  assert(defined(invoker.product), "The parameter 'product' must be defined")
+  product_suffix = ""
+  if (invoker.product) {
+    product_suffix = "_product"
+  }
+  compiled_action("${target_name}_assembly") {
+    snapshot_assembly = "$target_gen_dir/aot${product_suffix}_vm_snapshot.S"
+
+    # gen_snapshot only needs this to go through the motions of setting up an isolate.
+    shim_target = ":shim${product_suffix}_kernel($host_toolchain)"
+    shim_kernel = get_label_info(shim_target, "target_gen_dir") +
+                  "/shim${product_suffix}_kernel.dill"
+
+    inputs = [ shim_kernel ]
+    outputs = [ snapshot_assembly ]
+
+    deps = [ shim_target ]
+    if (invoker.product) {
+      tool = gen_snapshot_product
+    } else {
+      tool = gen_snapshot
+    }
+
+    args = [
+      "--deterministic",
+      "--snapshot_kind=vm-aot-assembly",
+      "--assembly=" + rebase_path(snapshot_assembly),
+    ]
+
+    # No asserts in debug or release product.
+    # No asserts in release with flutter_profile=true (non-product)
+    # Yes asserts in non-product debug.
+    if (!invoker.product && (flutter_runtime_mode == "debug" || is_debug)) {
+      args += [ "--enable_asserts" ]
+    }
+    args += [ rebase_path(shim_kernel) ]
+  }
+
+  source_set(target_name) {
+    deps = [ ":${target_name}_assembly" ]
+
+    sources = [
+      "$target_gen_dir/aot${product_suffix}_vm_snapshot.S",
+      "snapshot.h",
+    ]
+  }
+}
+
+create_aot_snapshot("dart_aot_snapshot_cc") {
+  product = false
+}
+
+create_aot_snapshot("dart_aot_product_snapshot_cc") {
+  product = true
+}

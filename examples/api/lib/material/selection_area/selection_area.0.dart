@@ -20,11 +20,7 @@ class SelectionAreaExampleApp extends StatelessWidget {
           body: const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('Row 1'),
-                Text('Row 2'),
-                Text('Row 3'),
-              ],
+              children: <Widget>[Text('Row 1'), Text('Row 2'), Text('Row 3')],
             ),
           ),
         ),

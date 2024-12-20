@@ -26,7 +26,9 @@ LanguageVersion currentLanguageVersion(FileSystem fileSystem, String flutterRoot
   }
   // Either reading the file or parsing the version could fail on a corrupt Dart SDK.
   // let it crash so it shows up in crash logging.
-  final File versionFile = fileSystem.file(fileSystem.path.join(flutterRoot, 'bin', 'cache', 'dart-sdk', 'version'));
+  final File versionFile = fileSystem.file(
+    fileSystem.path.join(flutterRoot, 'bin', 'cache', 'dart-sdk', 'version'),
+  );
   if (!versionFile.existsSync() && _inUnitTest()) {
     return LanguageVersion(2, 12);
   }

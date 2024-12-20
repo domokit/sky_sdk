@@ -1,0 +1,5 @@
+package: flutter_internal/tools/arm-tools
+description: Tools for analyzing shaders
+install_mode: copy
+data:
+  - dir: arm-tools

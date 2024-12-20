@@ -1,0 +1,60 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# See https://github.com/actions/labeler/blob/main/README.md for docs.
+'affects: desktop':
+  - changed-files:
+    - any-glob-to-any-file:
+      - shell/platform/darwin/common/**/*
+      - shell/platform/darwin/macos/**/*
+      - shell/platform/linux/**/*
+      - shell/platform/windows/**/*
+
+embedder:
+  - changed-files:
+    - any-glob-to-any-file:
+      - shell/platform/embedder
+
+'e: impeller':
+  - changed-files:
+    - any-glob-to-any-file:
+      - impeller/**/*
+
+platform-android:
+  - changed-files:
+    - any-glob-to-any-file:
+      - shell/platform/android/**/*
+
+platform-ios:
+  - changed-files:
+    - any-glob-to-any-file:
+      - shell/platform/darwin/common/**/*
+      - shell/platform/darwin/ios/**/*
+
+platform-fuchsia:
+  - changed-files:
+    - any-glob-to-any-file:
+      - shell/platform/fuchsia/**/*
+
+platform-linux:
+  - changed-files:
+    - any-glob-to-any-file:
+      - shell/platform/linux/**/*
+
+platform-macos:
+  - changed-files:
+    - any-glob-to-any-file:
+      - shell/platform/darwin/common/**/*
+      - shell/platform/darwin/macos/**/*
+
+platform-web:
+  - changed-files:
+    - any-glob-to-any-file:
+      - lib/web_ui/**/*
+      - '**/web_sdk/**/*'
+
+platform-windows:
+  - changed-files:
+    - any-glob-to-any-file:
+      - shell/platform/windows/**/*

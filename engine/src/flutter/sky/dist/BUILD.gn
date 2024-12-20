@@ -1,0 +1,56 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/zip_bundle.gni")
+
+if (is_android) {
+  action("sky_engine") {
+    script = "//flutter/sky/tools/dist_dart_pkg.py"
+
+    source = "$root_gen_dir/dart-pkg/sky_engine"
+    dest = "$root_build_dir/dist/packages/sky_engine"
+
+    inputs = [ source ]
+    outputs = [ dest ]
+
+    args = [
+      "--source",
+      rebase_path(source),
+      "--dest",
+      rebase_path(dest),
+    ]
+
+    deps = [ "//flutter/sky/packages/sky_engine" ]
+  }
+
+  zip_bundle("zip") {
+    output = "$android_zip_archive_dir/sky_engine.zip"
+    files = [
+      {
+        source = "$root_build_dir/dist/packages/sky_engine"
+        destination = "sky_engine"
+      },
+    ]
+    deps = [ ":sky_engine" ]
+  }
+
+  zip_bundle("zip_old_location") {
+    # TODO godofredoc: remove after we migrate the tool to use the new location.
+    # Bug: https://github.com/flutter/flutter/issues/105351
+    output = "sky_engine.zip"
+    files = [
+      {
+        source = "$root_build_dir/dist/packages/sky_engine"
+        destination = "sky_engine"
+      },
+    ]
+    deps = [ ":sky_engine" ]
+  }
+}
+
+group("dist") {
+  if (is_android) {
+    deps = [ ":zip" ]
+  }
+}

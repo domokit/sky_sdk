@@ -1,0 +1,51 @@
+{
+    "drone_dimensions": [
+        "device_type=none",
+        "os=Windows-10"
+    ],
+    "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+    },
+    "dependencies": [
+        {
+            "dependency": "certs",
+            "version": "version:9563bb"
+        }
+    ],
+    "gn": [
+        "--target-dir",
+        "ci/host_debug_unopt",
+        "--runtime-mode",
+        "debug",
+        "--unoptimized",
+        "--prebuilt-dart-sdk",
+        "--rbe",
+        "--no-goma"
+    ],
+    "name": "ci\\host_debug_unopt",
+    "description": "Builds a debug mode unopt engine for Windows and runs unit tests.",
+    "ninja": {
+        "config": "ci/host_debug_unopt"
+    },
+    "tests": [
+        {
+            "language": "python3",
+            "name": "test: Host Tests for host_debug_unopt",
+            "script": "flutter/testing/run_tests.py",
+            "parameters": [
+                "--variant",
+                "ci/host_debug_unopt",
+                "--type",
+                "engine",
+                "--engine-capture-core-dump"
+            ]
+        },
+        {
+            "name": "Tests of tools/gn",
+            "language": "python3",
+            "script": "flutter/tools/gn_test.py"
+        }
+    ]
+}

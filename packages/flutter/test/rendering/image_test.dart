@@ -14,18 +14,21 @@ Future<void> main() async {
   TestRenderingFlutterBinding.ensureInitialized();
 
   final ui.Image squareImage = await createTestImage(width: 10, height: 10);
-  final ui.Image wideImage =   await createTestImage(width: 20, height: 10);
-  final ui.Image tallImage =   await createTestImage(width: 10, height: 20);
+  final ui.Image wideImage = await createTestImage(width: 20, height: 10);
+  final ui.Image tallImage = await createTestImage(width: 10, height: 20);
   test('Image sizing', () {
     RenderImage image;
 
     image = RenderImage(image: squareImage);
-    layout(image, constraints: const BoxConstraints(
-      minWidth: 25.0,
-      minHeight: 25.0,
-      maxWidth: 100.0,
-      maxHeight: 100.0,
-    ));
+    layout(
+      image,
+      constraints: const BoxConstraints(
+        minWidth: 25.0,
+        minHeight: 25.0,
+        maxWidth: 100.0,
+        maxHeight: 100.0,
+      ),
+    );
     expect(image.size.width, equals(25.0));
     expect(image.size.height, equals(25.0));
 
@@ -45,82 +48,106 @@ Future<void> main() async {
     );
 
     image = RenderImage(image: wideImage);
-    layout(image, constraints: const BoxConstraints(
-      minWidth: 5.0,
-      minHeight: 30.0,
-      maxWidth: 100.0,
-      maxHeight: 100.0,
-    ));
+    layout(
+      image,
+      constraints: const BoxConstraints(
+        minWidth: 5.0,
+        minHeight: 30.0,
+        maxWidth: 100.0,
+        maxHeight: 100.0,
+      ),
+    );
     expect(image.size.width, equals(60.0));
     expect(image.size.height, equals(30.0));
 
     image = RenderImage(image: tallImage);
-    layout(image, constraints: const BoxConstraints(
-      minWidth: 50.0,
-      minHeight: 5.0,
-      maxWidth: 75.0,
-      maxHeight: 75.0,
-    ));
+    layout(
+      image,
+      constraints: const BoxConstraints(
+        minWidth: 50.0,
+        minHeight: 5.0,
+        maxWidth: 75.0,
+        maxHeight: 75.0,
+      ),
+    );
     expect(image.size.width, equals(50.0));
     expect(image.size.height, equals(75.0));
 
     image = RenderImage(image: wideImage);
-    layout(image, constraints: const BoxConstraints(
-      minWidth: 5.0,
-      minHeight: 5.0,
-      maxWidth: 100.0,
-      maxHeight: 100.0,
-    ));
+    layout(
+      image,
+      constraints: const BoxConstraints(
+        minWidth: 5.0,
+        minHeight: 5.0,
+        maxWidth: 100.0,
+        maxHeight: 100.0,
+      ),
+    );
     expect(image.size.width, equals(20.0));
     expect(image.size.height, equals(10.0));
 
     image = RenderImage(image: wideImage);
-    layout(image, constraints: const BoxConstraints(
-      minWidth: 5.0,
-      minHeight: 5.0,
-      maxWidth: 16.0,
-      maxHeight: 16.0,
-    ));
+    layout(
+      image,
+      constraints: const BoxConstraints(
+        minWidth: 5.0,
+        minHeight: 5.0,
+        maxWidth: 16.0,
+        maxHeight: 16.0,
+      ),
+    );
     expect(image.size.width, equals(16.0));
     expect(image.size.height, equals(8.0));
 
     image = RenderImage(image: tallImage);
-    layout(image, constraints: const BoxConstraints(
-      minWidth: 5.0,
-      minHeight: 5.0,
-      maxWidth: 16.0,
-      maxHeight: 16.0,
-    ));
+    layout(
+      image,
+      constraints: const BoxConstraints(
+        minWidth: 5.0,
+        minHeight: 5.0,
+        maxWidth: 16.0,
+        maxHeight: 16.0,
+      ),
+    );
     expect(image.size.width, equals(8.0));
     expect(image.size.height, equals(16.0));
 
     image = RenderImage(image: squareImage);
-    layout(image, constraints: const BoxConstraints(
-      minWidth: 4.0,
-      minHeight: 4.0,
-      maxWidth: 8.0,
-      maxHeight: 8.0,
-    ));
+    layout(
+      image,
+      constraints: const BoxConstraints(
+        minWidth: 4.0,
+        minHeight: 4.0,
+        maxWidth: 8.0,
+        maxHeight: 8.0,
+      ),
+    );
     expect(image.size.width, equals(8.0));
     expect(image.size.height, equals(8.0));
 
     image = RenderImage(image: wideImage);
-    layout(image, constraints: const BoxConstraints(
-      minWidth: 20.0,
-      minHeight: 20.0,
-      maxWidth: 30.0,
-      maxHeight: 30.0,
-    ));
+    layout(
+      image,
+      constraints: const BoxConstraints(
+        minWidth: 20.0,
+        minHeight: 20.0,
+        maxWidth: 30.0,
+        maxHeight: 30.0,
+      ),
+    );
     expect(image.size.width, equals(30.0));
     expect(image.size.height, equals(20.0));
 
     image = RenderImage(image: tallImage);
-    layout(image, constraints: const BoxConstraints(
-      minWidth: 20.0,
-      minHeight: 20.0,
-      maxWidth: 30.0,
-      maxHeight: 30.0,
-    ));
+    layout(
+      image,
+      constraints: const BoxConstraints(
+        minWidth: 20.0,
+        minHeight: 20.0,
+        maxWidth: 30.0,
+        maxHeight: 30.0,
+      ),
+    );
     expect(image.size.width, equals(20.0));
     expect(image.size.height, equals(30.0));
   });
@@ -129,42 +156,54 @@ Future<void> main() async {
     RenderImage image;
 
     image = RenderImage();
-    layout(image, constraints: const BoxConstraints(
-      minWidth: 25.0,
-      minHeight: 25.0,
-      maxWidth: 100.0,
-      maxHeight: 100.0,
-    ));
+    layout(
+      image,
+      constraints: const BoxConstraints(
+        minWidth: 25.0,
+        minHeight: 25.0,
+        maxWidth: 100.0,
+        maxHeight: 100.0,
+      ),
+    );
     expect(image.size.width, equals(25.0));
     expect(image.size.height, equals(25.0));
 
     image = RenderImage(width: 50.0);
-    layout(image, constraints: const BoxConstraints(
-      minWidth: 25.0,
-      minHeight: 25.0,
-      maxWidth: 100.0,
-      maxHeight: 100.0,
-    ));
+    layout(
+      image,
+      constraints: const BoxConstraints(
+        minWidth: 25.0,
+        minHeight: 25.0,
+        maxWidth: 100.0,
+        maxHeight: 100.0,
+      ),
+    );
     expect(image.size.width, equals(50.0));
     expect(image.size.height, equals(25.0));
 
     image = RenderImage(height: 50.0);
-    layout(image, constraints: const BoxConstraints(
-      minWidth: 25.0,
-      minHeight: 25.0,
-      maxWidth: 100.0,
-      maxHeight: 100.0,
-    ));
+    layout(
+      image,
+      constraints: const BoxConstraints(
+        minWidth: 25.0,
+        minHeight: 25.0,
+        maxWidth: 100.0,
+        maxHeight: 100.0,
+      ),
+    );
     expect(image.size.width, equals(25.0));
     expect(image.size.height, equals(50.0));
 
     image = RenderImage(width: 100.0, height: 100.0);
-    layout(image, constraints: const BoxConstraints(
-      minWidth: 25.0,
-      minHeight: 25.0,
-      maxWidth: 75.0,
-      maxHeight: 75.0,
-    ));
+    layout(
+      image,
+      constraints: const BoxConstraints(
+        minWidth: 25.0,
+        minHeight: 25.0,
+        maxWidth: 75.0,
+        maxHeight: 75.0,
+      ),
+    );
     expect(image.size.width, equals(75.0));
     expect(image.size.height, equals(75.0));
   });

@@ -20,52 +20,30 @@ class AppBarDemo extends StatelessWidget {
           icon: const Icon(Icons.menu),
           onPressed: () {},
         ),
-        title: Text(
-          localization.demoAppBarTitle,
-        ),
+        title: Text(localization.demoAppBarTitle),
         actions: <Widget>[
           IconButton(
             tooltip: localization.starterAppTooltipFavorite,
-            icon: const Icon(
-              Icons.favorite,
-            ),
+            icon: const Icon(Icons.favorite),
             onPressed: () {},
           ),
           IconButton(
             tooltip: localization.starterAppTooltipSearch,
-            icon: const Icon(
-              Icons.search,
-            ),
+            icon: const Icon(Icons.search),
             onPressed: () {},
           ),
           PopupMenuButton<Text>(
             itemBuilder: (BuildContext context) {
               return <PopupMenuEntry<Text>>[
-                PopupMenuItem<Text>(
-                  child: Text(
-                    localization.demoNavigationRailFirst,
-                  ),
-                ),
-                PopupMenuItem<Text>(
-                  child: Text(
-                    localization.demoNavigationRailSecond,
-                  ),
-                ),
-                PopupMenuItem<Text>(
-                  child: Text(
-                    localization.demoNavigationRailThird,
-                  ),
-                ),
+                PopupMenuItem<Text>(child: Text(localization.demoNavigationRailFirst)),
+                PopupMenuItem<Text>(child: Text(localization.demoNavigationRailSecond)),
+                PopupMenuItem<Text>(child: Text(localization.demoNavigationRailThird)),
               ];
             },
-          )
+          ),
         ],
       ),
-      body: Center(
-        child: Text(
-          localization.cupertinoTabBarHomeTab,
-        ),
-      ),
+      body: Center(child: Text(localization.cupertinoTabBarHomeTab)),
     );
   }
 }

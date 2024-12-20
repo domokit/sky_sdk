@@ -1,0 +1,89 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/testing/rules/android.gni")
+
+_android_sources = [
+  "app/build.gradle",
+  "app/src/androidTest/java/dev/flutter/TestRunner.java",
+  "app/src/androidTest/java/dev/flutter/scenarios/ExampleInstrumentedTest.java",
+  "app/src/androidTest/java/dev/flutter/scenariosui/DrawSolidBlueScreenTest.java",
+  "app/src/androidTest/java/dev/flutter/scenariosui/ExternalTextureTests.java",
+  "app/src/androidTest/java/dev/flutter/scenariosui/MemoryLeakTests.java",
+  "app/src/androidTest/java/dev/flutter/scenariosui/PlatformTextureUiTests.java",
+  "app/src/androidTest/java/dev/flutter/scenariosui/PlatformViewUiTests.java",
+  "app/src/androidTest/java/dev/flutter/scenariosui/PlatformViewWithSurfaceViewBadContextUiTest.java",
+  "app/src/androidTest/java/dev/flutter/scenariosui/PlatformViewWithSurfaceViewHybridFallbackUiTest.java",
+  "app/src/androidTest/java/dev/flutter/scenariosui/PlatformViewWithSurfaceViewHybridUiTest.java",
+  "app/src/androidTest/java/dev/flutter/scenariosui/PlatformViewWithSurfaceViewUiTest.java",
+  "app/src/androidTest/java/dev/flutter/scenariosui/PlatformViewWithTextureViewUiTest.java",
+  "app/src/androidTest/java/dev/flutter/scenariosui/ScreenshotUtil.java",
+  "app/src/androidTest/java/dev/flutter/scenariosui/SpawnEngineTests.java",
+  "app/src/androidTest/java/dev/flutter/scenariosui/SpawnMultiEngineTest.java",
+  "app/src/main/AndroidManifest.xml",
+  "app/src/main/assets/sample.mp4",
+  "app/src/main/java/dev/flutter/scenarios/ExternalTextureFlutterActivity.java",
+  "app/src/main/java/dev/flutter/scenarios/PlatformViewsActivity.java",
+  "app/src/main/java/dev/flutter/scenarios/SpawnMultiEngineActivity.java",
+  "app/src/main/java/dev/flutter/scenarios/SpawnedEngineActivity.java",
+  "app/src/main/java/dev/flutter/scenarios/SurfacePlatformViewFactory.java",
+  "app/src/main/java/dev/flutter/scenarios/TestActivity.java",
+  "app/src/main/java/dev/flutter/scenarios/TestableFlutterActivity.java",
+  "app/src/main/java/dev/flutter/scenarios/TextPlatformViewFactory.java",
+  "app/src/main/java/dev/flutter/scenarios/TexturePlatformViewFactory.java",
+  "app/src/main/res/values/colors.xml",
+  "app/src/main/res/values/styles.xml",
+  "app/src/main/res/xml/data_extraction_rules.xml",
+  "app/src/main/res/xml/extraction_config_11_and_below.xml",
+  "build.gradle",
+]
+
+gradle_task("android_lint") {
+  app_name = "scenario_app"
+  task = "lint"
+  gradle_project_dir = rebase_path(".")
+  sources = _android_sources
+  outputs = [ "$root_out_dir/scenario_app/reports/lint-results.xml" ]
+  deps = [ "//flutter/testing/scenario_app:scenario_app_snapshot" ]
+}
+
+gradle_task("build_apk") {
+  app_name = "scenario_app"
+  task = "assembleDebug"
+  gradle_project_dir = rebase_path(".")
+  sources = _android_sources
+  outputs = [ "$root_out_dir/scenario_app/app/outputs/apk/debug/app-debug.apk" ]
+
+  deps = [
+    ":android_lint",
+    "//flutter/testing/scenario_app:scenario_app_snapshot",
+  ]
+}
+
+gradle_task("build_test_apk") {
+  app_name = "scenario_app"
+  task = ":app:packageDebugAndroidTest"
+  gradle_project_dir = rebase_path(".")
+  sources = _android_sources
+  outputs = [ "$root_out_dir/scenario_app/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk" ]
+
+  deps = [
+    ":android_lint",
+    "//flutter/testing/scenario_app:scenario_app_snapshot",
+  ]
+}
+
+copy("firebase_apk") {
+  sources = get_target_outputs(":build_apk")
+  outputs = [ "$root_out_dir/firebase_apks/scenario_app.apk" ]
+  deps = [ ":build_apk" ]
+}
+
+group("android") {
+  deps = [
+    ":build_apk",
+    ":build_test_apk",
+    ":firebase_apk",
+  ]
+}

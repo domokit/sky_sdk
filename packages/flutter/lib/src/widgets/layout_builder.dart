@@ -38,12 +38,10 @@ typedef LayoutWidgetBuilder = Widget Function(BuildContext context, BoxConstrain
 ///
 /// Subclasses must return a [RenderObject] that mixes in
 /// [RenderConstrainedLayoutBuilder].
-abstract class ConstrainedLayoutBuilder<ConstraintType extends Constraints> extends RenderObjectWidget {
+abstract class ConstrainedLayoutBuilder<ConstraintType extends Constraints>
+    extends RenderObjectWidget {
   /// Creates a widget that defers its building until layout.
-  const ConstrainedLayoutBuilder({
-    super.key,
-    required this.builder,
-  });
+  const ConstrainedLayoutBuilder({super.key, required this.builder});
 
   @override
   RenderObjectElement createElement() => _LayoutBuilderElement<ConstraintType>(this);
@@ -82,7 +80,8 @@ class _LayoutBuilderElement<ConstraintType extends Constraints> extends RenderOb
   _LayoutBuilderElement(ConstrainedLayoutBuilder<ConstraintType> super.widget);
 
   @override
-  RenderConstrainedLayoutBuilder<ConstraintType, RenderObject> get renderObject => super.renderObject as RenderConstrainedLayoutBuilder<ConstraintType, RenderObject>;
+  RenderConstrainedLayoutBuilder<ConstraintType, RenderObject> get renderObject =>
+      super.renderObject as RenderConstrainedLayoutBuilder<ConstraintType, RenderObject>;
 
   Element? _child;
 
@@ -103,7 +102,10 @@ class _LayoutBuilderElement<ConstraintType extends Constraints> extends RenderOb
 
     final bool deferMarkNeedsLayout = switch (SchedulerBinding.instance.schedulerPhase) {
       SchedulerPhase.idle || SchedulerPhase.postFrameCallbacks => true,
-      SchedulerPhase.transientCallbacks || SchedulerPhase.midFrameMicrotasks || SchedulerPhase.persistentCallbacks => false,
+      SchedulerPhase.transientCallbacks ||
+      SchedulerPhase.midFrameMicrotasks ||
+      SchedulerPhase.persistentCallbacks =>
+        false,
     };
     if (!deferMarkNeedsLayout) {
       renderObject.markNeedsLayout();
@@ -145,7 +147,8 @@ class _LayoutBuilderElement<ConstraintType extends Constraints> extends RenderOb
   @override
   void update(ConstrainedLayoutBuilder<ConstraintType> newWidget) {
     assert(widget != newWidget);
-    final ConstrainedLayoutBuilder<ConstraintType> oldWidget = widget as ConstrainedLayoutBuilder<ConstraintType>;
+    final ConstrainedLayoutBuilder<ConstraintType> oldWidget =
+        widget as ConstrainedLayoutBuilder<ConstraintType>;
     super.update(newWidget);
     assert(widget == newWidget);
 
@@ -204,10 +207,10 @@ class _LayoutBuilderElement<ConstraintType extends Constraints> extends RenderOb
             ErrorDescription('building $widget'),
             e,
             stack,
-            informationCollector: () => <DiagnosticsNode>[
-              if (kDebugMode)
-                DiagnosticsDebugCreator(DebugCreator(this)),
-            ],
+            informationCollector:
+                () => <DiagnosticsNode>[
+                  if (kDebugMode) DiagnosticsDebugCreator(DebugCreator(this)),
+                ],
           ),
         );
       }
@@ -220,10 +223,10 @@ class _LayoutBuilderElement<ConstraintType extends Constraints> extends RenderOb
             ErrorDescription('building $widget'),
             e,
             stack,
-            informationCollector: () => <DiagnosticsNode>[
-              if (kDebugMode)
-                DiagnosticsDebugCreator(DebugCreator(this)),
-            ],
+            informationCollector:
+                () => <DiagnosticsNode>[
+                  if (kDebugMode) DiagnosticsDebugCreator(DebugCreator(this)),
+                ],
           ),
         );
         _child = updateChild(null, built, slot);
@@ -233,9 +236,8 @@ class _LayoutBuilderElement<ConstraintType extends Constraints> extends RenderOb
       }
     }
 
-    final VoidCallback? callback = _needsBuild || (constraints != _previousConstraints)
-      ? updateChildCallback
-      : null;
+    final VoidCallback? callback =
+        _needsBuild || (constraints != _previousConstraints) ? updateChildCallback : null;
     owner!.buildScope(this, callback);
   }
 
@@ -255,7 +257,8 @@ class _LayoutBuilderElement<ConstraintType extends Constraints> extends RenderOb
 
   @override
   void removeRenderObjectChild(RenderObject child, Object? slot) {
-    final RenderConstrainedLayoutBuilder<ConstraintType, RenderObject> renderObject = this.renderObject;
+    final RenderConstrainedLayoutBuilder<ConstraintType, RenderObject> renderObject =
+        this.renderObject;
     assert(renderObject.child == child);
     renderObject.child = null;
     assert(renderObject == this.renderObject);
@@ -266,8 +269,13 @@ class _LayoutBuilderElement<ConstraintType extends Constraints> extends RenderOb
 ///
 /// Provides a callback that should be called at layout time, typically in
 /// [RenderObject.performLayout].
-mixin RenderConstrainedLayoutBuilder<ConstraintType extends Constraints, ChildType extends RenderObject> on RenderObjectWithChildMixin<ChildType> {
+mixin RenderConstrainedLayoutBuilder<
+  ConstraintType extends Constraints,
+  ChildType extends RenderObject
+>
+    on RenderObjectWithChildMixin<ChildType> {
   LayoutCallback<ConstraintType>? _callback;
+
   /// Change the layout callback.
   void updateCallback(LayoutCallback<ConstraintType>? value) {
     if (value == _callback) {
@@ -319,16 +327,16 @@ mixin RenderConstrainedLayoutBuilder<ConstraintType extends Constraints, ChildTy
 ///  * The [catalog of layout widgets](https://flutter.dev/widgets/layout/).
 class LayoutBuilder extends ConstrainedLayoutBuilder<BoxConstraints> {
   /// Creates a widget that defers its building until layout.
-  const LayoutBuilder({
-    super.key,
-    required super.builder,
-  });
+  const LayoutBuilder({super.key, required super.builder});
 
   @override
   RenderObject createRenderObject(BuildContext context) => _RenderLayoutBuilder();
 }
 
-class _RenderLayoutBuilder extends RenderBox with RenderObjectWithChildMixin<RenderBox>, RenderConstrainedLayoutBuilder<BoxConstraints, RenderBox> {
+class _RenderLayoutBuilder extends RenderBox
+    with
+        RenderObjectWithChildMixin<RenderBox>,
+        RenderConstrainedLayoutBuilder<BoxConstraints, RenderBox> {
   @override
   double computeMinIntrinsicWidth(double height) {
     assert(_debugThrowIfNotCheckingIntrinsics());
@@ -355,19 +363,25 @@ class _RenderLayoutBuilder extends RenderBox with RenderObjectWithChildMixin<Ren
 
   @override
   Size computeDryLayout(BoxConstraints constraints) {
-    assert(debugCannotComputeDryLayout(reason:
-      'Calculating the dry layout would require running the layout callback '
-      'speculatively, which might mutate the live render object tree.',
-    ));
+    assert(
+      debugCannotComputeDryLayout(
+        reason:
+            'Calculating the dry layout would require running the layout callback '
+            'speculatively, which might mutate the live render object tree.',
+      ),
+    );
     return Size.zero;
   }
 
   @override
   double? computeDryBaseline(BoxConstraints constraints, TextBaseline baseline) {
-    assert(debugCannotComputeDryLayout(reason:
-      'Calculating the dry baseline would require running the layout callback '
-      'speculatively, which might mutate the live render object tree.',
-    ));
+    assert(
+      debugCannotComputeDryLayout(
+        reason:
+            'Calculating the dry baseline would require running the layout callback '
+            'speculatively, which might mutate the live render object tree.',
+      ),
+    );
     return null;
   }
 
@@ -385,12 +399,12 @@ class _RenderLayoutBuilder extends RenderBox with RenderObjectWithChildMixin<Ren
 
   @override
   double? computeDistanceToActualBaseline(TextBaseline baseline) {
-    return child?.getDistanceToActualBaseline(baseline)
-        ?? super.computeDistanceToActualBaseline(baseline);
+    return child?.getDistanceToActualBaseline(baseline) ??
+        super.computeDistanceToActualBaseline(baseline);
   }
 
   @override
-  bool hitTestChildren(BoxHitTestResult result, { required Offset position }) {
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
     return child?.hitTest(result, position: position) ?? false;
   }
 

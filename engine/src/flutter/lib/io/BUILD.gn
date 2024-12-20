@@ -1,0 +1,23 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/dart.gni")
+
+source_set("io") {
+  sources = [
+    "dart_io.cc",
+    "dart_io.h",
+  ]
+
+  deps = [
+    "$dart_src/runtime:dart_api",
+    "$dart_src/runtime/bin:dart_io_api",
+    "//flutter/fml",
+    "//flutter/third_party/tonic",
+  ]
+
+  configs += [ "$dart_src/runtime:dart_config" ]
+
+  public_configs = [ "//flutter:config" ]
+}

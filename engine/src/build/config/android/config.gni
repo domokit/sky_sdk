@@ -1,0 +1,111 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This file contains common system config stuff for the Android build.
+
+if (is_android) {
+  if (!defined(default_android_sdk_root)) {
+    default_android_sdk_root = "//flutter/third_party/android_tools/sdk"
+    default_android_sdk_version = "35"
+    default_android_sdk_build_tools_version = "35.0.0-rc4"
+  }
+
+  declare_args() {
+    android_sdk_root = default_android_sdk_root
+    android_sdk_version = default_android_sdk_version
+    android_sdk_build_tools_version = default_android_sdk_build_tools_version
+
+    # Unused. Required for GN files maintained in other buildroots.
+    enable_java_templates = false
+
+    android_api_level = 22
+  }
+
+  # Host stuff -----------------------------------------------------------------
+
+  # Defines the name the Android build gives to the current host CPU
+  # architecture, which is different than the names GN uses.
+  if (host_cpu == "x64" || host_cpu == "x86" || host_cpu == "arm64") {
+    android_host_arch = "x86_64"
+  } else {
+    assert(false, "Need Android toolchain support for your build CPU arch.")
+  }
+
+  # Defines the name the Android build gives to the current host CPU
+  # architecture, which is different than the names GN uses.
+  if (host_os == "linux") {
+    android_host_os = "linux"
+  } else if (host_os == "mac") {
+    android_host_os = "darwin"
+  } else if (host_os == "win") {
+    android_host_os = "win"
+  } else {
+    assert(false, "Need Android toolchain support for your build OS.")
+  }
+
+  # Directories and files ------------------------------------------------------
+  #
+  # We define may of the dirs strings here for each output architecture (rather
+  # than just the current one) since these are needed by the Android toolchain
+  # file to define toolchains for all possible targets in one pass.
+
+  android_sdk = "${android_sdk_root}/platforms/android-${android_sdk_version}"
+
+  # Path to the Android NDK and SDK.
+  android_ndk_root = "//flutter/third_party/android_tools/ndk"
+  android_ndk_include_dir = "$android_ndk_root/usr/include"
+
+  android_sdk = "${android_sdk_root}/platforms/android-${android_sdk_version}"
+
+  android_sdk_tools = "${android_sdk_root}/tools"
+  android_sdk_build_tools =
+      "${android_sdk_root}/build-tools/$android_sdk_build_tools_version"
+
+  # Path to the SDK's android.jar
+  android_sdk_jar = "$android_sdk/android.jar"
+
+  zipalign_path = "$android_sdk_build_tools/zipalign"
+
+  if (current_cpu != "x64" && current_cpu != "arm64") {
+    android_api_level = 21
+  }
+
+  # Toolchain root directory for each build. The actual binaries are inside
+  # a "bin" directory inside of these.
+  llvm_android_toolchain_root = "$android_ndk_root/toolchains/llvm/prebuilt/${android_host_os}-${android_host_arch}"
+  android_toolchain_root = "$android_ndk_root/toolchains/llvm/prebuilt/${android_host_os}-${android_host_arch}"
+
+  # Toolchain stuff ------------------------------------------------------------
+  _android_lib_prefix = "$android_toolchain_root/sysroot/usr/lib"
+
+  if (component_mode == "shared_library") {
+    # By appending .cr, we prevent name collisions with libraries already
+    # loaded by the Android zygote.
+    android_product_extension = ".cr.so"
+  } else {
+    android_product_extension = ".so"
+  }
+
+  # ABI ------------------------------------------------------------------------
+
+  if (current_cpu == "x86") {
+    android_app_abi = "x86"
+    _android_lib_dir = "i686-linux-android"
+  } else if (current_cpu == "arm") {
+    android_app_abi = "armeabi-v7a"
+    _android_lib_dir = "arm-linux-androideabi"
+  } else if (current_cpu == "x64") {
+    android_app_abi = "x86_64"
+    _android_lib_dir = "x86_64-linux-android"
+  } else if (current_cpu == "arm64") {
+    android_app_abi = "arm64-v8a"
+    _android_lib_dir = "aarch64-linux-android"
+  } else {
+    assert(false, "Unknown Android ABI: " + current_cpu)
+  }
+
+  android_lib = "$_android_lib_prefix/$_android_lib_dir/$android_api_level"
+
+  android_log_tag = "\"flutter\""
+}

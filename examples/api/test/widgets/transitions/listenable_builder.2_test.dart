@@ -12,11 +12,10 @@ void main() {
     expect(find.text('ListenableBuilder Example'), findsOneWidget);
     expect(find.text('Current counter value:'), findsOneWidget);
     expect(find.byIcon(Icons.add), findsOneWidget);
-    expect(find.descendant(
-      of: find.byType(FloatingActionButton),
-      matching: find.byIcon(Icons.add)
-    ), findsOneWidget);
-
+    expect(
+      find.descendant(of: find.byType(FloatingActionButton), matching: find.byIcon(Icons.add)),
+      findsOneWidget,
+    );
 
     expect(find.text('0'), findsOneWidget);
     expect(find.text('1'), findsNothing);

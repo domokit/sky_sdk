@@ -1,0 +1,85 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/impeller/tools/args.gni")
+import("//flutter/impeller/tools/compiler.gni")
+import("//flutter/impeller/tools/embed_blob.gni")
+import("//flutter/impeller/tools/malioc.gni")
+import("//flutter/impeller/tools/shader_archive.gni")
+
+template("impeller_shaders_vk") {
+  assert(defined(invoker.shaders), "Impeller shaders must be specified.")
+  assert(defined(invoker.name), "Name of the shader library must be specified.")
+  assert(defined(invoker.analyze), "Whether to analyze must be specified.")
+
+  shaders_base_name = string_join("",
+                                  [
+                                    invoker.name,
+                                    "_shaders_vk",
+                                  ])
+  impellerc_vk = "impellerc_$target_name"
+  impellerc(impellerc_vk) {
+    shaders = invoker.shaders
+    sl_file_extension = "vkspv"
+
+    # Metal reflectors generate a superset of information.
+    if (impeller_enable_metal) {
+      if (defined(invoker.metal_version)) {
+        metal_version = invoker.metal_version
+      }
+
+      intermediates_subdir = "vk"
+    }
+    shader_target_flags = [ "--vulkan" ]
+
+    defines = [ "IMPELLER_TARGET_VULKAN" ]
+  }
+
+  vk_shaders =
+      filter_include(get_target_outputs(":$impellerc_vk"), [ "*.vkspv" ])
+
+  if (invoker.analyze) {
+    analyze_lib = "analyze_$target_name"
+    malioc_analyze_shaders(analyze_lib) {
+      shaders = vk_shaders
+      if (defined(invoker.vulkan_language_version)) {
+        vulkan_language_version = invoker.vulkan_language_version
+      }
+      deps = [ ":$impellerc_vk" ]
+    }
+  }
+
+  vk_lib = "genlib_$target_name"
+  shader_archive(vk_lib) {
+    shaders = vk_shaders
+    deps = [ ":$impellerc_vk" ]
+  }
+
+  reflect_vk = "reflect_$target_name"
+  impellerc_reflect(reflect_vk) {
+    impellerc_invocation = ":$impellerc_vk"
+  }
+
+  embed_vk_lib = "embed_$target_name"
+  embed_blob(embed_vk_lib) {
+    vk_library_files = get_target_outputs(":$vk_lib")
+    symbol_name = shaders_base_name
+    blob = vk_library_files[0]
+    hdr = "$target_gen_dir/vk/$shaders_base_name.h"
+    cc = "$target_gen_dir/vk/$shaders_base_name.cc"
+    deps = [ ":$vk_lib" ]
+  }
+
+  group(target_name) {
+    public_deps = [ ":$embed_vk_lib" ]
+
+    if (invoker.analyze) {
+      public_deps += [ ":$analyze_lib" ]
+    }
+
+    if (!impeller_enable_metal) {
+      public_deps += [ ":$reflect_vk" ]
+    }
+  }
+}

@@ -13,8 +13,7 @@ class SharedYAxisTransitionDemo extends StatefulWidget {
   const SharedYAxisTransitionDemo({super.key});
 
   @override
-  State<SharedYAxisTransitionDemo> createState() =>
-      _SharedYAxisTransitionDemoState();
+  State<SharedYAxisTransitionDemo> createState() => _SharedYAxisTransitionDemoState();
 }
 
 class _SharedYAxisTransitionDemoState extends State<SharedYAxisTransitionDemo>
@@ -25,40 +24,22 @@ class _SharedYAxisTransitionDemoState extends State<SharedYAxisTransitionDemo>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
+    _controller = AnimationController(duration: const Duration(milliseconds: 300), vsync: this);
   }
 
   final ListView _recentList = ListView(
     // Adding [UniqueKey] to make sure the widget rebuilds when transitioning.
     key: UniqueKey(),
-    children: <Widget>[
-      for (int i = 0; i < 10; i++) _AlbumTile((i + 1).toString()),
-    ],
+    children: <Widget>[for (int i = 0; i < 10; i++) _AlbumTile((i + 1).toString())],
   );
 
   final ListView _alphabeticalList = ListView(
     // Adding [UniqueKey] to make sure the widget rebuilds when transitioning.
     key: UniqueKey(),
-    children: <Widget>[
-      for (final String letter in _alphabet) _AlbumTile(letter),
-    ],
+    children: <Widget>[for (final String letter in _alphabet) _AlbumTile(letter)],
   );
 
-  static const List<String> _alphabet = <String>[
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'I',
-    'J',
-  ];
+  static const List<String> _alphabet = <String>['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
   @override
   void dispose() {
@@ -78,10 +59,7 @@ class _SharedYAxisTransitionDemoState extends State<SharedYAxisTransitionDemo>
             Text(localizations.demoSharedYAxisTitle),
             Text(
               '(${localizations.demoSharedYAxisDemoInstructions})',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleSmall!
-                  .copyWith(color: Colors.white),
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Colors.white),
             ),
           ],
         ),
@@ -100,9 +78,7 @@ class _SharedYAxisTransitionDemoState extends State<SharedYAxisTransitionDemo>
                 padding: const EdgeInsets.only(right: 7),
                 child: InkWell(
                   customBorder: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(4),
-                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
                   ),
                   onTap: () {
                     if (!_isAlphabetical) {
@@ -117,12 +93,13 @@ class _SharedYAxisTransitionDemoState extends State<SharedYAxisTransitionDemo>
                   },
                   child: Row(
                     children: <Widget>[
-                      Text(_isAlphabetical
-                          ? localizations.demoSharedYAxisAlphabeticalSortTitle
-                          : localizations.demoSharedYAxisRecentSortTitle),
+                      Text(
+                        _isAlphabetical
+                            ? localizations.demoSharedYAxisAlphabeticalSortTitle
+                            : localizations.demoSharedYAxisRecentSortTitle,
+                      ),
                       RotationTransition(
-                        turns: Tween<double>(begin: 0.0, end: 1.0)
-                            .animate(_controller.view),
+                        turns: Tween<double>(begin: 0.0, end: 1.0).animate(_controller.view),
                         child: const Icon(Icons.arrow_drop_down),
                       ),
                     ],
@@ -135,7 +112,11 @@ class _SharedYAxisTransitionDemoState extends State<SharedYAxisTransitionDemo>
           Expanded(
             child: PageTransitionSwitcher(
               reverse: _isAlphabetical,
-              transitionBuilder: (Widget child, Animation<double> animation, Animation<double> secondaryAnimation) {
+              transitionBuilder: (
+                Widget child,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+              ) {
                 return SharedAxisTransition(
                   animation: animation,
                   secondaryAnimation: secondaryAnimation,
@@ -168,9 +149,7 @@ class _AlbumTile extends StatelessWidget {
             height: 60,
             width: 60,
             decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(4),
-              ),
+              borderRadius: BorderRadius.all(Radius.circular(4)),
               color: Colors.grey,
             ),
             child: Padding(
@@ -181,12 +160,8 @@ class _AlbumTile extends StatelessWidget {
               ),
             ),
           ),
-          title: Text(
-            '${localizations.demoSharedYAxisAlbumTileTitle} $_title',
-          ),
-          subtitle: Text(
-            localizations.demoSharedYAxisAlbumTileSubtitle,
-          ),
+          title: Text('${localizations.demoSharedYAxisAlbumTileTitle} $_title'),
+          subtitle: Text(localizations.demoSharedYAxisAlbumTileSubtitle),
           trailing: Text(
             '${randomNumberGenerator.nextInt(50) + 10} '
             '${localizations.demoSharedYAxisAlbumTileDurationUnit}',

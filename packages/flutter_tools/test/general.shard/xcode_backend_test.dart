@@ -23,8 +23,7 @@ void main() {
         ..createSync(recursive: true);
       final Directory flutterRoot = fileSystem.directory('/path/to/flutter')
         ..createSync(recursive: true);
-      final File pipe = fileSystem.file('/tmp/pipe')
-        ..createSync(recursive: true);
+      final File pipe = fileSystem.file('/tmp/pipe')..createSync(recursive: true);
       const String buildMode = 'Debug';
       final TestContext context = TestContext(
         <String>['build'],
@@ -62,22 +61,15 @@ void main() {
         fileSystem: fileSystem,
         scriptOutputStreamFile: pipe,
       );
-      expect(
-          () => context.run(),
-          throwsException,
-      );
-      expect(
-        context.stderr,
-        contains('ERROR: Unknown FLUTTER_BUILD_MODE: null.\n'),
-      );
+      expect(() => context.run(), throwsException);
+      expect(context.stderr, contains('ERROR: Unknown FLUTTER_BUILD_MODE: null.\n'));
     });
     test('calls flutter assemble', () {
       final Directory buildDir = fileSystem.directory('/path/to/builds')
         ..createSync(recursive: true);
       final Directory flutterRoot = fileSystem.directory('/path/to/flutter')
         ..createSync(recursive: true);
-      final File pipe = fileSystem.file('/tmp/pipe')
-        ..createSync(recursive: true);
+      final File pipe = fileSystem.file('/tmp/pipe')..createSync(recursive: true);
       const String buildMode = 'Debug';
       final TestContext context = TestContext(
         <String>['build'],
@@ -119,10 +111,7 @@ void main() {
       // Ensure after line splitting, the exact string 'done' appears
       expect(streamedLines, contains('done'));
       expect(streamedLines, contains(' └─Compiling, linking and signing...'));
-      expect(
-        context.stdout,
-        contains('built and packaged successfully.'),
-      );
+      expect(context.stdout, contains('built and packaged successfully.'));
       expect(context.stderr, isEmpty);
     });
 
@@ -194,10 +183,7 @@ void main() {
         ],
         fileSystem: fileSystem,
       )..run();
-      expect(
-        context.stdout,
-        contains('built and packaged successfully.'),
-      );
+      expect(context.stdout, contains('built and packaged successfully.'));
       expect(context.stderr, isEmpty);
     });
   });
@@ -219,7 +205,8 @@ void main() {
       expect(
         context.stdout,
         contains(
-            'Info.plist does not exist. Skipping _dartVmService._tcp NSBonjourServices insertion.'),
+          'Info.plist does not exist. Skipping _dartVmService._tcp NSBonjourServices insertion.',
+        ),
       );
     });
   });
@@ -230,8 +217,7 @@ void main() {
         ..createSync(recursive: true);
       final Directory flutterRoot = fileSystem.directory('/path/to/flutter')
         ..createSync(recursive: true);
-      final File pipe = fileSystem.file('/tmp/pipe')
-        ..createSync(recursive: true);
+      final File pipe = fileSystem.file('/tmp/pipe')..createSync(recursive: true);
       const String buildMode = 'Debug';
       final TestContext context = TestContext(
         <String>['prepare'],
@@ -270,22 +256,15 @@ void main() {
         fileSystem: fileSystem,
         scriptOutputStreamFile: pipe,
       );
-      expect(
-          () => context.run(),
-          throwsException,
-      );
-      expect(
-        context.stderr,
-        contains('ERROR: Unknown FLUTTER_BUILD_MODE: null.\n'),
-      );
+      expect(() => context.run(), throwsException);
+      expect(context.stderr, contains('ERROR: Unknown FLUTTER_BUILD_MODE: null.\n'));
     });
     test('calls flutter assemble', () {
       final Directory buildDir = fileSystem.directory('/path/to/builds')
         ..createSync(recursive: true);
       final Directory flutterRoot = fileSystem.directory('/path/to/flutter')
         ..createSync(recursive: true);
-      final File pipe = fileSystem.file('/tmp/pipe')
-        ..createSync(recursive: true);
+      final File pipe = fileSystem.file('/tmp/pipe')..createSync(recursive: true);
       const String buildMode = 'Debug';
       final TestContext context = TestContext(
         <String>['prepare'],
@@ -404,8 +383,7 @@ void main() {
         ..createSync(recursive: true);
       final Directory flutterRoot = fileSystem.directory('/path/to/flutter')
         ..createSync(recursive: true);
-      final File pipe = fileSystem.file('/tmp/pipe')
-        ..createSync(recursive: true);
+      final File pipe = fileSystem.file('/tmp/pipe')..createSync(recursive: true);
       const String buildMode = 'Debug';
       final TestContext context = TestContext(
         <String>['prepare'],
@@ -416,7 +394,7 @@ void main() {
           'INFOPLIST_PATH': 'Info.plist',
           'ARCHS': 'arm64 x86_64',
           'ONLY_ACTIVE_ARCH': 'YES',
-          'NATIVE_ARCH': 'arm64e'
+          'NATIVE_ARCH': 'arm64e',
         },
         commands: <FakeCommand>[
           FakeCommand(
@@ -455,8 +433,7 @@ void main() {
         ..createSync(recursive: true);
       final Directory flutterRoot = fileSystem.directory('/path/to/flutter')
         ..createSync(recursive: true);
-      final File pipe = fileSystem.file('/tmp/pipe')
-        ..createSync(recursive: true);
+      final File pipe = fileSystem.file('/tmp/pipe')..createSync(recursive: true);
       const String buildMode = 'Debug';
       final TestContext context = TestContext(
         <String>['prepare'],
@@ -506,8 +483,7 @@ void main() {
         ..createSync(recursive: true);
       final Directory flutterRoot = fileSystem.directory('/path/to/flutter')
         ..createSync(recursive: true);
-      final File pipe = fileSystem.file('/tmp/pipe')
-        ..createSync(recursive: true);
+      final File pipe = fileSystem.file('/tmp/pipe')..createSync(recursive: true);
       const String buildMode = 'Debug';
       final TestContext context = TestContext(
         <String>['prepare'],
@@ -517,7 +493,7 @@ void main() {
           'FLUTTER_ROOT': flutterRoot.path,
           'INFOPLIST_PATH': 'Info.plist',
           'ARCHS': 'arm64 x86_64',
-          'NATIVE_ARCH': 'arm64e'
+          'NATIVE_ARCH': 'arm64e',
         },
         commands: <FakeCommand>[
           FakeCommand(
@@ -560,8 +536,12 @@ class TestContext extends Context {
     required this.fileSystem,
     required List<FakeCommand> commands,
     File? scriptOutputStreamFile,
-  })  : processManager = FakeProcessManager.list(commands),
-        super(arguments: arguments, environment: environment, scriptOutputStreamFile: scriptOutputStreamFile);
+  }) : processManager = FakeProcessManager.list(commands),
+       super(
+         arguments: arguments,
+         environment: environment,
+         scriptOutputStreamFile: scriptOutputStreamFile,
+       );
 
   final FileSystem fileSystem;
   final FakeProcessManager processManager;

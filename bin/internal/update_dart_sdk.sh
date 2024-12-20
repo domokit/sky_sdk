@@ -19,17 +19,41 @@ FLUTTER_ROOT="$(dirname "$(dirname "$(dirname "${BASH_SOURCE[0]}")")")"
 DART_SDK_PATH="$FLUTTER_ROOT/bin/cache/dart-sdk"
 DART_SDK_PATH_OLD="$DART_SDK_PATH.old"
 ENGINE_STAMP="$FLUTTER_ROOT/bin/cache/engine-dart-sdk.stamp"
-ENGINE_REALM=$(cat "$FLUTTER_ROOT/bin/internal/engine.realm" | tr -d '[:space:]')
+ENGINE_REALM=""
 OS="$(uname -s)"
 
-ENGINE_VERSION=""
-if [ -f "$FLUTTER_ROOT/bin/internal/engine.version" ]; then
-  ENGINE_VERSION=$(cat "$FLUTTER_ROOT/bin/internal/engine.version")
-else
-  # Calculate the engine hash from tracked git files.
-  # The array takes the first part of the sha1sum string.
-  ENGINE_VERSION=($(git ls-tree HEAD -r engine DEPS | sha1sum))
+# Test for fusion repository
+if [ -f "$FLUTTER_ROOT/DEPS" ] && [ -f "$FLUTTER_ROOT/engine/src/.gn" ]; then
+  BRANCH=$(git -C "$FLUTTER_ROOT" rev-parse --abbrev-ref HEAD)
+  # In a fusion repository; the engine.version comes from the git hashes.
+  if [ -z "${LUCI_CONTEXT}" ]; then
+    set +e
+    # Run the git command and capture the exit code
+    git -C "$FLUTTER_ROOT" remote get-url upstream > /dev/null 2>&1
+    exit_code=$?
+    set -e
+
+    if [[ $exit_code -eq 0 ]]; then
+      ENGINE_VERSION=$(git -C "$FLUTTER_ROOT" merge-base HEAD upstream/master)
+    else
+      ENGINE_VERSION=$(git -C "$FLUTTER_ROOT" merge-base HEAD origin/master)
+    fi
+  else
+    ENGINE_VERSION=$(git -C "$FLUTTER_ROOT" rev-parse HEAD)
+  fi
+
+  if [[ "$BRANCH" != "stable" && "$BRANCH" != "beta" ]]; then
+    # Write the engine version out so downstream tools know what to look for.
+    echo $ENGINE_VERSION > "$FLUTTER_ROOT/bin/internal/engine.version"
+
+    # The realm on CI is passed in.
+    if [ -n "${FLUTTER_REALM}" ]; then
+      echo $FLUTTER_REALM > "$FLUTTER_ROOT/bin/internal/engine.realm"
+    fi
+  fi
 fi
+ENGINE_VERSION=$(cat "$FLUTTER_ROOT/bin/internal/engine.version")
+ENGINE_REALM=$(cat "$FLUTTER_ROOT/bin/internal/engine.realm" | tr -d '[:space:]')
 
 if [ ! -f "$ENGINE_STAMP" ] || [ "$ENGINE_VERSION" != `cat "$ENGINE_STAMP"` ]; then
   command -v curl > /dev/null 2>&1 || {

@@ -22,10 +22,7 @@ void main() {
       cursorColor: Colors.red,
       offset: offset,
       textSelectionDelegate: delegate,
-      text: const TextSpan(
-        text: 'test',
-        style: TextStyle(height: 1.0, fontSize: 10.0),
-      ),
+      text: const TextSpan(text: 'test', style: TextStyle(height: 1.0, fontSize: 10.0)),
       startHandleLayerLink: LayerLink(),
       endHandleLayerLink: LayerLink(),
       selection: const TextSelection(
@@ -39,12 +36,10 @@ void main() {
 
     final PipelineOwner owner = PipelineOwner(onNeedVisualUpdate: () {});
     addTearDown(owner.dispose);
-    final _PointerRouterSpy spy =
-        GestureBinding.instance.pointerRouter as _PointerRouterSpy;
+    final _PointerRouterSpy spy = GestureBinding.instance.pointerRouter as _PointerRouterSpy;
     editable.attach(owner);
     // This should register pointer into GestureBinding.instance.pointerRouter.
-    editable.handleEvent(const PointerDownEvent(),
-        BoxHitTestEntry(editable, const Offset(10, 10)));
+    editable.handleEvent(const PointerDownEvent(), BoxHitTestEntry(editable, const Offset(10, 10)));
     GestureBinding.instance.pointerRouter.route(const PointerDownEvent());
     expect(spy.routeCount, greaterThan(0));
     editable.detach();

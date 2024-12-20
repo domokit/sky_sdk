@@ -76,7 +76,7 @@ void main() {
       'Border.all(BorderSide(color: ${const Color(0xff00cc33)}))',
     );
     expect(
-      ShapeBorder.lerp(b2 + b1, b1 + b2, 1/3).toString(),
+      ShapeBorder.lerp(b2 + b1, b1 + b2, 1 / 3).toString(),
       'Border.all(BorderSide(color: ${const Color(0xff0055aa)})) + '
       'Border.all(BorderSide(color: ${const Color(0xff00aa55)}))',
     );
@@ -87,23 +87,37 @@ void main() {
     );
     expect((b1 + b2).dimensions, const EdgeInsets.all(2.0));
     const Rect rect = Rect.fromLTRB(11.0, 15.0, 299.0, 175.0);
-    expect((Canvas canvas) => (b1 + b2).paint(canvas, rect), paints
-      ..rect(rect: rect.deflate(0.5), color: b2.top.color)
-      ..rect(rect: rect.deflate(1.5), color: b1.top.color),
+    expect(
+      (Canvas canvas) => (b1 + b2).paint(canvas, rect),
+      paints
+        ..rect(rect: rect.deflate(0.5), color: b2.top.color)
+        ..rect(rect: rect.deflate(1.5), color: b1.top.color),
     );
     expect((b1 + b2 + b1).dimensions, const EdgeInsets.all(3.0));
-    expect((Canvas canvas) => (b1 + b2 + b1).paint(canvas, rect), paints
-      ..rect(rect: rect.deflate(0.5), color: b1.top.color)
-      ..rect(rect: rect.deflate(1.5), color: b2.top.color)
-      ..rect(rect: rect.deflate(2.5), color: b1.top.color),
+    expect(
+      (Canvas canvas) => (b1 + b2 + b1).paint(canvas, rect),
+      paints
+        ..rect(rect: rect.deflate(0.5), color: b1.top.color)
+        ..rect(rect: rect.deflate(1.5), color: b2.top.color)
+        ..rect(rect: rect.deflate(2.5), color: b1.top.color),
     );
   });
 
   test('Compound borders', () {
     const BorderSide side1 = BorderSide(color: Color(0xFF00FF00));
     const BorderSide side2 = BorderSide(color: Color(0xFF0000FF));
-    const BorderDirectional b1 = BorderDirectional(top: side1, start: side1, end: side1, bottom: side1);
-    const BorderDirectional b2 = BorderDirectional(top: side2, start: side2, end: side2, bottom: side2);
+    const BorderDirectional b1 = BorderDirectional(
+      top: side1,
+      start: side1,
+      end: side1,
+      bottom: side1,
+    );
+    const BorderDirectional b2 = BorderDirectional(
+      top: side2,
+      start: side2,
+      end: side2,
+      bottom: side2,
+    );
     expect(
       (b1 + b2).toString(),
       'BorderDirectional(top: BorderSide(color: ${const Color(0xff00ff00)}), start: BorderSide(color: ${const Color(0xff00ff00)}), end: BorderSide(color: ${const Color(0xff00ff00)}), bottom: BorderSide(color: ${const Color(0xff00ff00)})) + '
@@ -141,7 +155,7 @@ void main() {
       'BorderDirectional(top: BorderSide(color: ${const Color(0xff00cc33)}), start: BorderSide(color: ${const Color(0xff00cc33)}), end: BorderSide(color: ${const Color(0xff00cc33)}), bottom: BorderSide(color: ${const Color(0xff00cc33)}))',
     );
     expect(
-      ShapeBorder.lerp(b2 + b1, b1 + b2, 1/3).toString(),
+      ShapeBorder.lerp(b2 + b1, b1 + b2, 1 / 3).toString(),
       'BorderDirectional(top: BorderSide(color: ${const Color(0xff0055aa)}), start: BorderSide(color: ${const Color(0xff0055aa)}), end: BorderSide(color: ${const Color(0xff0055aa)}), bottom: BorderSide(color: ${const Color(0xff0055aa)})) + '
       'BorderDirectional(top: BorderSide(color: ${const Color(0xff00aa55)}), start: BorderSide(color: ${const Color(0xff00aa55)}), end: BorderSide(color: ${const Color(0xff00aa55)}), bottom: BorderSide(color: ${const Color(0xff00aa55)}))',
     );
@@ -152,15 +166,19 @@ void main() {
     );
     expect((b1 + b2).dimensions, const EdgeInsetsDirectional.fromSTEB(2.0, 2.0, 2.0, 2.0));
     const Rect rect = Rect.fromLTRB(11.0, 15.0, 299.0, 175.0);
-    expect((Canvas canvas) => (b1 + b2).paint(canvas, rect, textDirection: TextDirection.rtl), paints
-      ..rect(rect: rect.deflate(0.5), color: b2.top.color)
-      ..rect(rect: rect.deflate(1.5), color: b1.top.color),
+    expect(
+      (Canvas canvas) => (b1 + b2).paint(canvas, rect, textDirection: TextDirection.rtl),
+      paints
+        ..rect(rect: rect.deflate(0.5), color: b2.top.color)
+        ..rect(rect: rect.deflate(1.5), color: b1.top.color),
     );
     expect((b1 + b2 + b1).dimensions, const EdgeInsetsDirectional.fromSTEB(3.0, 3.0, 3.0, 3.0));
-    expect((Canvas canvas) => (b1 + b2 + b1).paint(canvas, rect, textDirection: TextDirection.rtl), paints
-      ..rect(rect: rect.deflate(0.5), color: b1.top.color)
-      ..rect(rect: rect.deflate(1.5), color: b2.top.color)
-      ..rect(rect: rect.deflate(2.5), color: b1.top.color),
+    expect(
+      (Canvas canvas) => (b1 + b2 + b1).paint(canvas, rect, textDirection: TextDirection.rtl),
+      paints
+        ..rect(rect: rect.deflate(0.5), color: b1.top.color)
+        ..rect(rect: rect.deflate(1.5), color: b2.top.color)
+        ..rect(rect: rect.deflate(2.5), color: b1.top.color),
     );
   });
 }

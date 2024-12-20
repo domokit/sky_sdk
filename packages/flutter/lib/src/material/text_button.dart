@@ -120,7 +120,7 @@ class TextButton extends ButtonStyleButton {
     required Widget label,
     IconAlignment? iconAlignment,
   }) {
-     if (icon == null) {
+    if (icon == null) {
       return TextButton(
         key: key,
         onPressed: onPressed,
@@ -135,7 +135,8 @@ class TextButton extends ButtonStyleButton {
         child: label,
       );
     }
-    return _TextButtonWithIcon( key: key,
+    return _TextButtonWithIcon(
+      key: key,
       onPressed: onPressed,
       onLongPress: onLongPress,
       onHover: onHover,
@@ -225,7 +226,10 @@ class TextButton extends ButtonStyleButton {
     ButtonLayerBuilder? backgroundBuilder,
     ButtonLayerBuilder? foregroundBuilder,
   }) {
-    final MaterialStateProperty<Color?>? backgroundColorProp = switch ((backgroundColor, disabledBackgroundColor)) {
+    final MaterialStateProperty<Color?>? backgroundColorProp = switch ((
+      backgroundColor,
+      disabledBackgroundColor,
+    )) {
       (_?, null) => MaterialStatePropertyAll<Color?>(backgroundColor),
       (_, _) => ButtonStyleButton.defaultColor(backgroundColor, disabledBackgroundColor),
     };
@@ -233,16 +237,18 @@ class TextButton extends ButtonStyleButton {
       (_?, null) => MaterialStatePropertyAll<Color?>(iconColor),
       (_, _) => ButtonStyleButton.defaultColor(iconColor, disabledIconColor),
     };
-    final MaterialStateProperty<Color?>? overlayColorProp = switch ((foregroundColor, overlayColor)) {
+    final MaterialStateProperty<Color?>? overlayColorProp = switch ((
+      foregroundColor,
+      overlayColor,
+    )) {
       (null, null) => null,
       (_, Color(a: 0.0)) => WidgetStatePropertyAll<Color?>(overlayColor),
-      (_, final Color color) || (final Color color, _) => WidgetStateProperty<Color?>.fromMap(
-        <WidgetState, Color?>{
+      (_, final Color color) || (final Color color, _) =>
+        WidgetStateProperty<Color?>.fromMap(<WidgetState, Color?>{
           WidgetState.pressed: color.withOpacity(0.1),
           WidgetState.hovered: color.withOpacity(0.08),
           WidgetState.focused: color.withOpacity(0.1),
-        },
-      ),
+        }),
     };
 
     return ButtonStyle(
@@ -262,12 +268,10 @@ class TextButton extends ButtonStyleButton {
       maximumSize: ButtonStyleButton.allOrNull<Size>(maximumSize),
       side: ButtonStyleButton.allOrNull<BorderSide>(side),
       shape: ButtonStyleButton.allOrNull<OutlinedBorder>(shape),
-      mouseCursor: WidgetStateProperty<MouseCursor?>.fromMap(
-        <WidgetStatesConstraint, MouseCursor?>{
-          WidgetState.disabled: disabledMouseCursor,
-          WidgetState.any: enabledMouseCursor,
-        },
-      ),
+      mouseCursor: WidgetStateProperty<MouseCursor?>.fromMap(<WidgetStatesConstraint, MouseCursor?>{
+        WidgetState.disabled: disabledMouseCursor,
+        WidgetState.any: enabledMouseCursor,
+      }),
       visualDensity: visualDensity,
       tapTargetSize: tapTargetSize,
       animationDuration: animationDuration,
@@ -399,8 +403,8 @@ class TextButton extends ButtonStyleButton {
     final ColorScheme colorScheme = theme.colorScheme;
 
     return Theme.of(context).useMaterial3
-      ? _TextButtonDefaultsM3(context)
-      : styleFrom(
+        ? _TextButtonDefaultsM3(context)
+        : styleFrom(
           foregroundColor: colorScheme.primary,
           disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
           backgroundColor: Colors.transparent,
@@ -436,7 +440,9 @@ EdgeInsetsGeometry _scaledPadding(BuildContext context) {
   final double defaultFontSize = theme.textTheme.labelLarge?.fontSize ?? 14.0;
   final double effectiveTextScale = MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0;
   return ButtonStyleButton.scaledPadding(
-    theme.useMaterial3 ? const EdgeInsets.symmetric(horizontal: 12, vertical: 8) :  const EdgeInsets.all(8),
+    theme.useMaterial3
+        ? const EdgeInsets.symmetric(horizontal: 12, vertical: 8)
+        : const EdgeInsets.all(8),
     const EdgeInsets.symmetric(horizontal: 8),
     const EdgeInsets.symmetric(horizontal: 4),
     effectiveTextScale,
@@ -466,14 +472,16 @@ class _TextButtonWithIcon extends TextButton {
            buttonStyle: style,
            iconAlignment: iconAlignment,
          ),
-      );
+       );
 
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
     final bool useMaterial3 = Theme.of(context).useMaterial3;
     final ButtonStyle buttonStyle = super.defaultStyleOf(context);
-    final double defaultFontSize = buttonStyle.textStyle?.resolve(const <MaterialState>{})?.fontSize ?? 14.0;
-    final double effectiveTextScale = MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0;
+    final double defaultFontSize =
+        buttonStyle.textStyle?.resolve(const <MaterialState>{})?.fontSize ?? 14.0;
+    final double effectiveTextScale =
+        MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0;
     final EdgeInsetsGeometry scaledPadding = ButtonStyleButton.scaledPadding(
       useMaterial3 ? const EdgeInsetsDirectional.fromSTEB(12, 8, 16, 8) : const EdgeInsets.all(8),
       const EdgeInsets.symmetric(horizontal: 4),
@@ -501,19 +509,23 @@ class _TextButtonWithIconChild extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double defaultFontSize = buttonStyle?.textStyle?.resolve(const <MaterialState>{})?.fontSize ?? 14.0;
-    final double scale = clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) - 1.0;
+    final double defaultFontSize =
+        buttonStyle?.textStyle?.resolve(const <MaterialState>{})?.fontSize ?? 14.0;
+    final double scale =
+        clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) - 1.0;
     final double gap = lerpDouble(8, 4, scale)!;
     final TextButtonThemeData textButtonTheme = TextButtonTheme.of(context);
-    final IconAlignment effectiveIconAlignment = iconAlignment
-      ?? textButtonTheme.style?.iconAlignment
-      ?? buttonStyle?.iconAlignment
-      ?? IconAlignment.start;
+    final IconAlignment effectiveIconAlignment =
+        iconAlignment ??
+        textButtonTheme.style?.iconAlignment ??
+        buttonStyle?.iconAlignment ??
+        IconAlignment.start;
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: effectiveIconAlignment == IconAlignment.start
-        ? <Widget>[icon, SizedBox(width: gap), Flexible(child: label)]
-        : <Widget>[Flexible(child: label), SizedBox(width: gap), icon],
+      children:
+          effectiveIconAlignment == IconAlignment.start
+              ? <Widget>[icon, SizedBox(width: gap), Flexible(child: label)]
+              : <Widget>[Flexible(child: label), SizedBox(width: gap), icon],
     );
   }
 }
@@ -525,6 +537,7 @@ class _TextButtonWithIconChild extends StatelessWidget {
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 class _TextButtonDefaultsM3 extends ButtonStyle {
   _TextButtonDefaultsM3(this.context)
    : super(
@@ -641,5 +654,6 @@ class _TextButtonDefaultsM3 extends ButtonStyle {
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
 }
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - TextButton

@@ -10,7 +10,7 @@ abstract class TestWatcher {
   ///
   /// If startPaused was true, the caller needs to resume in DevTools to
   /// start running the tests.
-  void handleStartedDevice(Uri? vmServiceUri) { }
+  void handleStartedDevice(Uri? vmServiceUri) {}
 
   /// Called after the tests finish but before the test device exits.
   ///

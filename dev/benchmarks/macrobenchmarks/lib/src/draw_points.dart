@@ -7,7 +7,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-class DrawPointsPage extends StatefulWidget  {
+class DrawPointsPage extends StatefulWidget {
   const DrawPointsPage({super.key});
 
   @override
@@ -35,7 +35,6 @@ class _DrawPointsPageState extends State<DrawPointsPage> with SingleTickerProvid
     controller.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -77,11 +76,12 @@ class PointsPainter extends CustomPainter {
         data[j] = x;
         data[j + 1] = (size.height / (j + 1)) + 200;
       }
-      final Paint paint = Paint()
-        ..color = kColors[i]
-        ..strokeWidth = 5
-        ..strokeCap = StrokeCap.round
-        ..style = PaintingStyle.stroke;
+      final Paint paint =
+          Paint()
+            ..color = kColors[i]
+            ..strokeWidth = 5
+            ..strokeCap = StrokeCap.round
+            ..style = PaintingStyle.stroke;
       canvas.drawRawPoints(PointMode.points, data, paint);
     }
   }

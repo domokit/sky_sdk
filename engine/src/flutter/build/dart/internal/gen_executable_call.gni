@@ -1,0 +1,68 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Generates an executable that runs a command and set of arguments.
+#
+# Parameters:
+#   command (required):
+#     The command to run, which is typically an absolute path to an executable.
+#
+#   args (optional):
+#     Arguments to pass to the command.
+#
+#   cwd (optional):
+#     The working directory for the command.
+#
+#   output (optional):
+#     Overrides the full output path.
+#     Defaults to $root_out_dir/gen/$target_path/$target_name; for example
+#     //flutter/foo/bar emits a binary at out/{variant}/gen/flutter/foo/bar.
+template("gen_executable_call") {
+  assert(defined(invoker.command), "Must specify 'command'")
+
+  # The command to run.
+  command = invoker.command
+
+  # The output path.
+  output = "$root_gen_dir/$target_name"
+  if (defined(invoker.output)) {
+    output = invoker.output
+  } else {
+    # Construct the output path.
+    output = get_label_info(target_name, "target_gen_dir")
+  }
+
+  # Build the command line arguments.
+  call_args = [
+    "--output",
+    rebase_path(output),
+    "--command",
+    command,
+  ]
+  if (defined(invoker.cwd)) {
+    call_args += [
+      "--cwd",
+      rebase_path(invoker.cwd),
+    ]
+  }
+  if (defined(invoker.args)) {
+    call_args += [
+      "--",
+      string_join(" ", invoker.args),
+    ]
+  }
+
+  # Run build_cmd.py to generate the file and make it executable.
+  action(target_name) {
+    script = "//flutter/build/dart/internal/gen_executable_call.py"
+    outputs = [ output ]
+    args = call_args
+    forward_variables_from(invoker,
+                           [
+                             "metadata",
+                             "testonly",
+                             "visibility",
+                           ])
+  }
+}

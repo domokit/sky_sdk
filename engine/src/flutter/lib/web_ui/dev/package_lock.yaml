@@ -1,0 +1,13 @@
+# Please refer to the "Upgrade Browser Version" section in the README.md for
+# more details on how to update browser version numbers.
+chrome:
+  version: '125.0.6422.141'
+
+firefox:
+  version: '132.0'
+
+edge:
+  launcher_version: '1.2.0.0'
+
+esbuild:
+  version: '0.19.5'

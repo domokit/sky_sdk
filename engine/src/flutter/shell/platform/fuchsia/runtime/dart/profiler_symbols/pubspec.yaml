@@ -1,0 +1,10 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+name: profiler_symbols
+environment:
+  sdk: ^3.7.0-0
+version: 0
+description: Extracts a minimal symbols table for the Dart VM profiler
+author: Dart Team <misc@dartlang.org>

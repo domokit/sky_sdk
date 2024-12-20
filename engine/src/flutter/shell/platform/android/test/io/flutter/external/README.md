@@ -1,0 +1,1 @@
+This `external` package exists to run tests in a package other than where the code under test is defined. This is offered for tests that need to verify that app devs, with their own packages, can reference and execute APIs that Flutter intends to be public.

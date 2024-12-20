@@ -16,13 +16,13 @@ const String _androidStudioPreviewTitle = 'Android Studio Preview';
 const String _androidStudioPreviewId = 'AndroidStudioPreview';
 
 class AndroidStudioValidator extends DoctorValidator {
-  AndroidStudioValidator(this._studio, {
+  AndroidStudioValidator(
+    this._studio, {
     required FileSystem fileSystem,
     required UserMessages userMessages,
-  })
-    : _userMessages = userMessages,
-      _fileSystem = fileSystem,
-      super('Android Studio');
+  }) : _userMessages = userMessages,
+       _fileSystem = fileSystem,
+       super('Android Studio');
 
   final AndroidStudio _studio;
   final FileSystem _fileSystem;
@@ -33,14 +33,20 @@ class AndroidStudioValidator extends DoctorValidator {
     _androidStudioPreviewId: _androidStudioPreviewTitle,
   };
 
-  static List<DoctorValidator> allValidators(Config config, Platform platform, FileSystem fileSystem, UserMessages userMessages) {
+  static List<DoctorValidator> allValidators(
+    Config config,
+    Platform platform,
+    FileSystem fileSystem,
+    UserMessages userMessages,
+  ) {
     final List<AndroidStudio> studios = AndroidStudio.allInstalled();
     return <DoctorValidator>[
       if (studios.isEmpty)
         NoAndroidStudioValidator(config: config, platform: platform, userMessages: userMessages)
       else
         ...studios.map<DoctorValidator>(
-          (AndroidStudio studio) => AndroidStudioValidator(studio, fileSystem: fileSystem, userMessages: userMessages)
+          (AndroidStudio studio) =>
+              AndroidStudioValidator(studio, fileSystem: fileSystem, userMessages: userMessages),
         ),
     ];
   }
@@ -50,15 +56,17 @@ class AndroidStudioValidator extends DoctorValidator {
     final List<ValidationMessage> messages = <ValidationMessage>[];
     ValidationType type = ValidationType.missing;
 
-    final String studioVersionText = _studio.version == null
-      ? _userMessages.androidStudioVersion('unknown')
-      : _userMessages.androidStudioVersion(_studio.version.toString());
-    messages.add(ValidationMessage(
-      _userMessages.androidStudioLocation(_studio.directory),
-    ));
+    final String studioVersionText =
+        _studio.version == null
+            ? _userMessages.androidStudioVersion('unknown')
+            : _userMessages.androidStudioVersion(_studio.version.toString());
+    messages.add(ValidationMessage(_userMessages.androidStudioLocation(_studio.directory)));
 
     if (_studio.pluginsPath != null) {
-      final IntelliJPlugins plugins = IntelliJPlugins(_studio.pluginsPath!, fileSystem: _fileSystem);
+      final IntelliJPlugins plugins = IntelliJPlugins(
+        _studio.pluginsPath!,
+        fileSystem: _fileSystem,
+      );
       plugins.validatePackage(
         messages,
         <String>['flutter-intellij', 'flutter-intellij.jar'],
@@ -79,17 +87,15 @@ class AndroidStudioValidator extends DoctorValidator {
     }
 
     if (_studio.isValid) {
-      type = _hasIssues(messages)
-        ? ValidationType.partial
-        : ValidationType.success;
-      messages.addAll(_studio.validationMessages.map<ValidationMessage>(
-        (String m) => ValidationMessage(m),
-      ));
+      type = _hasIssues(messages) ? ValidationType.partial : ValidationType.success;
+      messages.addAll(
+        _studio.validationMessages.map<ValidationMessage>((String m) => ValidationMessage(m)),
+      );
     } else {
       type = ValidationType.partial;
-      messages.addAll(_studio.validationMessages.map<ValidationMessage>(
-        (String m) => ValidationMessage.error(m),
-      ));
+      messages.addAll(
+        _studio.validationMessages.map<ValidationMessage>((String m) => ValidationMessage.error(m)),
+      );
       messages.add(ValidationMessage(_userMessages.androidStudioNeedsUpdate));
       if (_studio.configuredPath != null) {
         messages.add(ValidationMessage(_userMessages.androidStudioResetDir));
@@ -122,20 +128,12 @@ class NoAndroidStudioValidator extends DoctorValidator {
   Future<ValidationResult> validate() async {
     final List<ValidationMessage> messages = <ValidationMessage>[];
 
-    final String? cfgAndroidStudio = _config.getValue(
-      'android-studio-dir',
-    ) as String?;
+    final String? cfgAndroidStudio = _config.getValue('android-studio-dir') as String?;
     if (cfgAndroidStudio != null) {
-      messages.add(ValidationMessage.error(
-        _userMessages.androidStudioMissing(cfgAndroidStudio),
-      ));
+      messages.add(ValidationMessage.error(_userMessages.androidStudioMissing(cfgAndroidStudio)));
     }
     messages.add(ValidationMessage(_userMessages.androidStudioInstallation(_platform)));
 
-    return ValidationResult(
-      ValidationType.notAvailable,
-      messages,
-      statusInfo: 'not installed',
-    );
+    return ValidationResult(ValidationType.notAvailable, messages, statusInfo: 'not installed');
   }
 }

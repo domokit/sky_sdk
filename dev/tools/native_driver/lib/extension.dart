@@ -45,19 +45,12 @@ final class NativeDriverCommandExtension implements CommandExtension {
     if (await _builtInCall(command.method) case final Result result) {
       return result;
     }
-    final Object? result = await _channel.invokeMethod<Object>(
-      command.method,
-      command.arguments,
-    );
+    final Object? result = await _channel.invokeMethod<Object>(command.method, command.arguments);
     if (result == null) {
       return const _MethodChannelResult(<String, Object?>{});
     }
     if (result is! Map<String, Object?>) {
-      throw ArgumentError.value(
-        result,
-        'result',
-        'Expected a Map<String, Object?>',
-      );
+      throw ArgumentError.value(result, 'result', 'Expected a Map<String, Object?>');
     }
     return _MethodChannelResult(result);
   }
@@ -68,14 +61,12 @@ final class NativeDriverCommandExtension implements CommandExtension {
   Future<Result?> _builtInCall(String method) async {
     switch (method) {
       case 'rotate_landscape':
-        await flt.SystemChrome.setPreferredOrientations(
-          const <flt.DeviceOrientation>[flt.DeviceOrientation.landscapeLeft],
-        );
+        await flt.SystemChrome.setPreferredOrientations(const <flt.DeviceOrientation>[
+          flt.DeviceOrientation.landscapeLeft,
+        ]);
         return Result.empty;
       case 'rotate_default':
-        await flt.SystemChrome.setPreferredOrientations(
-          const <flt.DeviceOrientation>[],
-        );
+        await flt.SystemChrome.setPreferredOrientations(const <flt.DeviceOrientation>[]);
         return Result.empty;
       default:
         return null;
@@ -102,11 +93,7 @@ final class NativeDriverCommandExtension implements CommandExtension {
     } else {
       final Object? intermediate = json.decode(arguments);
       if (intermediate is! Map<String, Object?>) {
-        throw ArgumentError.value(
-          arguments,
-          'arguments',
-          'Expected a Map<String, Object?>',
-        );
+        throw ArgumentError.value(arguments, 'arguments', 'Expected a Map<String, Object?>');
       }
       decoded = intermediate;
     }

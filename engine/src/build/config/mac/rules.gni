@@ -1,0 +1,151 @@
+# Copyright 2015 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+mac_app_script = "//build/config/mac/mac_app.py"
+
+template("code_sign_mac") {
+  assert(defined(invoker.entitlements_path),
+         "The path to the entitlements .xcent file")
+  assert(defined(invoker.identity), "The code signing identity")
+  assert(defined(invoker.application_path), "The application to code sign")
+  assert(defined(invoker.deps))
+
+  action(target_name) {
+    sources = [ invoker.entitlements_path ]
+
+    _application_path = invoker.application_path
+
+    script = mac_app_script
+
+    outputs = [ "$_application_path/_CodeSignature/CodeResources" ]
+
+    args = [
+      "codesign",
+      "-p",
+      rebase_path(invoker.application_path, root_build_dir),
+      "-i",
+      invoker.identity,
+      "-e",
+      rebase_path(invoker.entitlements_path, root_build_dir),
+    ]
+
+    deps = invoker.deps
+  }
+}
+
+template("resource_copy_mac") {
+  assert(defined(invoker.resources),
+         "The source list of resources to copy over")
+  assert(defined(invoker.bundle_directory),
+         "The directory within the bundle to place the sources in")
+  assert(defined(invoker.app_name), "The name of the application")
+
+  _bundle_directory = invoker.bundle_directory
+  _app_name = invoker.app_name
+  _resources = invoker.resources
+
+  copy(target_name) {
+    sources = _resources
+    outputs = [ "$root_build_dir/$_app_name.app/$_bundle_directory/Contents/Resources/{{source_file_part}}" ]
+
+    if (defined(invoker.deps)) {
+      deps = invoker.deps
+    }
+  }
+}
+
+template("mac_app") {
+  assert(defined(invoker.deps),
+         "Dependencies must be specified for $target_name")
+  assert(defined(invoker.info_plist),
+         "The application plist file must be specified for $target_name")
+  assert(defined(invoker.app_name),
+         "The name of Mac application for $target_name")
+
+  # We just create a variable so we can use the same in interpolation
+  app_name = invoker.app_name
+
+  # Generate the project structure
+
+  struct_gen_target_name = target_name + "_struct"
+
+  action(struct_gen_target_name) {
+    script = mac_app_script
+
+    sources = []
+    outputs = [ "$root_build_dir/$app_name.app" ]
+
+    args = [
+      "structure",
+      "-d",
+      rebase_path(root_build_dir),
+      "-n",
+      app_name,
+    ]
+  }
+
+  # Generate the executable
+
+  bin_gen_target_name = target_name + "_bin"
+
+  executable(bin_gen_target_name) {
+    deps = invoker.deps
+    output_name = app_name
+  }
+
+  # Process the Info.plist
+
+  plist_gen_target_name = target_name + "_plist"
+
+  action(plist_gen_target_name) {
+    script = mac_app_script
+
+    sources = [ invoker.info_plist ]
+    outputs = [ "$root_build_dir/plist/$app_name/Info.plist" ]
+
+    args = [
+      "plist",
+      "-i",
+      rebase_path(invoker.info_plist, root_build_dir),
+      "-o",
+      rebase_path("$root_build_dir/plist/$app_name"),
+    ]
+  }
+
+  # Copy the generated binaries and assets to their appropriate locations
+
+  copy_plist_gen_target_name = target_name + "_plist_copy"
+  copy(copy_plist_gen_target_name) {
+    sources = [ "$root_build_dir/plist/$app_name/Info.plist" ]
+
+    outputs = [ "$root_build_dir/$app_name.app/Contents/{{source_file_part}}" ]
+
+    deps = [ ":$plist_gen_target_name" ]
+  }
+
+  copy_bin_target_name = target_name + "_bin_copy"
+  copy(copy_bin_target_name) {
+    sources = [ "$root_build_dir/$app_name" ]
+
+    outputs =
+        [ "$root_build_dir/$app_name.app/Contents/MacOS/{{source_file_part}}" ]
+
+    deps = [ ":$bin_gen_target_name" ]
+  }
+
+  copy_all_target_name = target_name + "_all_copy"
+  group(copy_all_target_name) {
+    deps = [
+      ":$copy_bin_target_name",
+      ":$copy_plist_gen_target_name",
+      ":$struct_gen_target_name",
+    ]
+  }
+
+  # Top level group
+
+  group(target_name) {
+    deps = [ ":$copy_all_target_name" ]
+  }
+}

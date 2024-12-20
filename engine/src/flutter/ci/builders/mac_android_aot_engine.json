@@ -1,0 +1,370 @@
+{
+    "_comment": [
+        "The builds defined in this file should not contain tests, ",
+        "and the file should not contain builds that are essentially tests. ",
+        "The only builds in this file should be the builds necessary to produce ",
+        "release artifacts. ",
+        "Tests to run on mac hosts should go in one of the other mac_ build ",
+        "definition files."
+    ],
+    "builds": [
+        {
+            "archives": [
+                {
+                    "base_path": "out/ci/android_profile/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/android_profile/zip_archives/android-arm-profile/darwin-x64.zip"
+                    ],
+                    "name": "ci/android_profile",
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=x86"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_profile",
+                "--runtime-mode",
+                "profile",
+                "--android",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks"
+            ],
+            "name": "ci/android_profile",
+            "description": "Produces profile mode artifacts to target 32-bit arm Android from a macOS host.",
+            "ninja": {
+                "config": "ci/android_profile",
+                "targets": [
+                    "flutter/lib/snapshot",
+                    "flutter/shell/platform/android:gen_snapshot"
+                ]
+            },
+            "postsubmit_overrides": {
+                "gn": [
+                    "--target-dir",
+                    "ci/android_profile",
+                    "--runtime-mode",
+                    "profile",
+                    "--android",
+                    "--no-rbe",
+                    "--no-goma"
+                ]
+            },
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            }
+        },
+        {
+            "archives": [
+                {
+                    "base_path": "out/ci/android_profile_arm64/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/android_profile_arm64/zip_archives/android-arm64-profile/darwin-x64.zip"
+                    ],
+                    "name": "ci/android_profile_arm64",
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=x86"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_profile_arm64",
+                "--runtime-mode",
+                "profile",
+                "--android",
+                "--android-cpu=arm64",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks"
+            ],
+            "name": "ci/android_profile_arm64",
+            "description": "Produces profile mode artifacts to target 64-bit arm Android from a macOS host.",
+            "ninja": {
+                "config": "ci/android_profile_arm64",
+                "targets": [
+                    "flutter/lib/snapshot",
+                    "flutter/shell/platform/android:gen_snapshot"
+                ]
+            },
+            "postsubmit_overrides": {
+                "gn": [
+                    "--target-dir",
+                    "ci/android_profile_arm64",
+                    "--runtime-mode",
+                    "profile",
+                    "--android",
+                    "--android-cpu=arm64",
+                    "--no-rbe",
+                    "--no-goma"
+                ]
+            },
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            }
+        },
+        {
+            "archives": [
+                {
+                    "base_path": "out/ci/android_profile_x64/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/android_profile_x64/zip_archives/android-x64-profile/darwin-x64.zip"
+                    ],
+                    "name": "ci/android_profile_x64",
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=x86"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_profile_x64",
+                "--runtime-mode",
+                "profile",
+                "--android",
+                "--android-cpu=x64",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks"
+            ],
+            "name": "ci/android_profile_x64",
+            "description": "Produces profile mode artifacts to target x64 Android from a macOS host.",
+            "ninja": {
+                "config": "ci/android_profile_x64",
+                "targets": [
+                    "flutter/lib/snapshot",
+                    "flutter/shell/platform/android:gen_snapshot"
+                ]
+            },
+            "postsubmit_overrides": {
+                "gn": [
+                    "--target-dir",
+                    "ci/android_profile_x64",
+                    "--runtime-mode",
+                    "profile",
+                    "--android",
+                    "--android-cpu=x64",
+                    "--no-rbe",
+                    "--no-goma"
+                ]
+            },
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            }
+        },
+        {
+            "archives": [
+                {
+                    "base_path": "out/ci/android_release/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/android_release/zip_archives/android-arm-release/darwin-x64.zip"
+                    ],
+                    "name": "ci/android_release",
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=x86"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_release",
+                "--runtime-mode",
+                "release",
+                "--android",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks"
+            ],
+            "name": "ci/android_release",
+            "description": "Produces release mode artifacts to target 32-bit arm Android from a macOS host.",
+            "ninja": {
+                "config": "ci/android_release",
+                "targets": [
+                    "flutter/lib/snapshot",
+                    "flutter/shell/platform/android:gen_snapshot"
+                ]
+            },
+            "postsubmit_overrides": {
+                "gn": [
+                    "--target-dir",
+                    "ci/android_release",
+                    "--runtime-mode",
+                    "release",
+                    "--android",
+                    "--no-rbe",
+                    "--no-goma"
+                ]
+            },
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            }
+        },
+        {
+            "archives": [
+                {
+                    "base_path": "out/ci/android_release_arm64/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/android_release_arm64/zip_archives/android-arm64-release/darwin-x64.zip"
+                    ],
+                    "name": "ci/android_release_arm64",
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=x86"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_release_arm64",
+                "--runtime-mode",
+                "release",
+                "--android",
+                "--android-cpu=arm64",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks"
+            ],
+            "name": "ci/android_release_arm64",
+            "description": "Produces release mode artifacts to target 64-bit arm Android from a macOS host.",
+            "ninja": {
+                "config": "ci/android_release_arm64",
+                "targets": [
+                    "flutter/lib/snapshot",
+                    "flutter/shell/platform/android:gen_snapshot"
+                ]
+            },
+            "postsubmit_overrides": {
+                "gn": [
+                    "--target-dir",
+                    "ci/android_release_arm64",
+                    "--runtime-mode",
+                    "release",
+                    "--android",
+                    "--android-cpu=arm64",
+                    "--no-rbe",
+                    "--no-goma"
+                ]
+            },
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            }
+        },
+        {
+            "archives": [
+                {
+                    "base_path": "out/ci/android_release_x64/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/android_release_x64/zip_archives/android-x64-release/darwin-x64.zip"
+                    ],
+                    "name": "ci/android_release_x64",
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=x86"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_release_x64",
+                "--runtime-mode",
+                "release",
+                "--android",
+                "--android-cpu=x64",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks"
+            ],
+            "name": "ci/android_release_x64",
+            "description": "Produces release mode artifacts to target x64 Android from a macOS host.",
+            "ninja": {
+                "config": "ci/android_release_x64",
+                "targets": [
+                    "flutter/lib/snapshot",
+                    "flutter/shell/platform/android:gen_snapshot"
+                ]
+            },
+            "postsubmit_overrides": {
+                "gn": [
+                    "--target-dir",
+                    "ci/android_release_x64",
+                    "--runtime-mode",
+                    "release",
+                    "--android",
+                    "--android-cpu=x64",
+                    "--no-rbe",
+                    "--no-goma"
+                ]
+            },
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            }
+        }
+    ],
+    "generators": {},
+    "archives": []
+}

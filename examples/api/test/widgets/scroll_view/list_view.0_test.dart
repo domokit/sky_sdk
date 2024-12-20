@@ -3,16 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/scroll_view/list_view.0.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/scroll_view/list_view.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('long press ListTile should enable edit mode',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ListViewExampleApp(),
-    );
+  testWidgets('long press ListTile should enable edit mode', (WidgetTester tester) async {
+    await tester.pumpWidget(const example.ListViewExampleApp());
 
     final Finder listView = find.byType(ListView);
     final Finder selectAllFinder = find.text('select all');
@@ -26,11 +22,8 @@ void main() {
     expect(checkBoxFinder, findsWidgets);
   });
 
-  testWidgets('Pressing cross button should disable edit mode',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ListViewExampleApp(),
-    );
+  testWidgets('Pressing cross button should disable edit mode', (WidgetTester tester) async {
+    await tester.pumpWidget(const example.ListViewExampleApp());
 
     final Finder listView = find.byType(ListView);
     final Finder crossIconFinder = find.byIcon(Icons.close);
@@ -49,11 +42,10 @@ void main() {
     expect(crossIconFinder, findsNothing);
   });
 
-  testWidgets('tapping ListTile or checkBox should toggle ListTile state',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ListViewExampleApp(),
-    );
+  testWidgets('tapping ListTile or checkBox should toggle ListTile state', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.ListViewExampleApp());
 
     final Finder listView = find.byType(ListView);
     final Finder selectAllFinder = find.text('select all');

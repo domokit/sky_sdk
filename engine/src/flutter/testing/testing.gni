@@ -1,0 +1,307 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/compiled_action.gni")
+import("//flutter/build/dart/rules.gni")
+import("//flutter/common/config.gni")
+
+is_aot_test =
+    flutter_runtime_mode == "profile" || flutter_runtime_mode == "release"
+
+# Build unit tests when any of the following are true:
+# * host_toolchain: non-cross-compile, so we can run tests on the host.
+# * is_mac: arm64 builds can run x64 binaries.
+# * is_fuchsia: build unittests for testing on device.
+declare_args() {
+  enable_unittests = current_toolchain == host_toolchain || is_fuchsia || is_mac
+}
+
+# Creates a translation unit that defines the flutter::testing::GetFixturesPath
+# method that tests can use to locate their fixtures.
+#
+# Arguments
+#     assets_dir (required): The assets directory
+template("fixtures_location") {
+  testonly = true
+
+  assert(defined(invoker.assets_dir), "The assets directory.")
+
+  location_path = rebase_path(invoker.assets_dir)
+  testing_assets_path = rebase_path("$root_out_dir/gen/flutter/testing/assets")
+  source_path = rebase_path("//")
+
+  # Array of source lines. We use a list to ensure a trailing newline is
+  # emitted by write_file() to comply with -Wnewline-eof.
+  location_source = [
+    "namespace flutter { namespace testing { ",
+    "const char* GetSourcePath() {return \"$source_path\";} ",
+    "const char* GetFixturesPath() {return \"$location_path\";} ",
+    "const char* GetTestingAssetsPath() {return \"$testing_assets_path\";} ",
+    "}}",
+  ]
+  location_source_path = "$target_gen_dir/_fl_$target_name.cc"
+
+  write_file(location_source_path, location_source)
+
+  source_set(target_name) {
+    public = []
+    sources = [ location_source_path ]
+  }
+}
+
+# Generates the Dart kernel snapshot.
+#
+# Arguments
+#     dart_main (required): The Main Dart file.
+#
+#     dart_kernel (required): The path to the output kernel snapshot in the out
+#                             directory.
+template("dart_snapshot_kernel") {
+  testonly = true
+
+  assert(defined(invoker.dart_main), "The Dart Main file must be specified")
+  assert(defined(invoker.dart_kernel),
+         "The Dart Kernel file location must be specified")
+
+  args = []
+  if (flutter_runtime_mode == "release" ||
+      flutter_runtime_mode == "jit_release") {
+    args += [ "-Ddart.vm.product=true" ]
+  }
+
+  if (is_aot_test) {
+    args += [
+      "--aot",
+
+      # type flow analysis
+      "--tfa",
+    ]
+  }
+
+  flutter_frontend_server(target_name) {
+    testonly = true
+    main_dart = invoker.dart_main
+    kernel_output = invoker.dart_kernel
+    extra_args = args
+  }
+}
+
+# Generates an AOT snapshot from a kernel snapshot.
+#
+# Arguments:
+#
+#     dart_kernel (required): The path to the kernel snapshot.
+#
+#     dart_elf_filename (required): The filename of the AOT ELF snapshot.
+template("dart_snapshot_aot") {
+  testonly = true
+
+  assert(defined(invoker.dart_kernel),
+         "The Dart Kernel file location must be specified")
+
+  assert(defined(invoker.dart_elf_filename),
+         "The main Dart ELF filename must be specified.")
+
+  compiled_action(target_name) {
+    testonly = true
+
+    tool = "$dart_src/runtime/bin:gen_snapshot"
+
+    pool = "//build/toolchain:toolchain_pool"
+
+    inputs = [ invoker.dart_kernel ]
+
+    # Custom ELF loader is used for Mac and Windows.
+    elf_object = "$target_gen_dir/assets/${invoker.dart_elf_filename}"
+
+    loading_unit_manifest = "$target_gen_dir/assets/loading_unit_manifest.json"
+
+    outputs = [ elf_object ]
+
+    args = [
+      "--deterministic",
+      "--snapshot_kind=app-aot-elf",
+      "--loading_unit_manifest=" + rebase_path(loading_unit_manifest),
+      "--elf=" + rebase_path(elf_object),
+      rebase_path(invoker.dart_kernel),
+    ]
+
+    forward_variables_from(invoker, [ "deps" ])
+  }
+}
+
+# Generates a kernel or AOT snapshot as necessary from the main Dart file.
+# Other Dart dependencies referenced by that main Dart file will be tracked.
+#
+# Arguments:
+#
+#     dart_main (required): The path to the main Dart file.
+#
+#     dart_kernel_filename (required): The filename of the kernel blob.
+#
+#     dart_elf_filename (required): The filename of the AOT ELF snapshot only if is_aot_test is true.
+template("dart_snapshot") {
+  assert(defined(invoker.dart_main), "The main Dart file must be specified.")
+  assert(defined(invoker.dart_kernel_filename),
+         "The main Dart kernel filename must be specified.")
+
+  testonly = true
+
+  dart_snapshot_kernel_target_name = "_dsk_$target_name"
+
+  dart_snapshot_kernel_path =
+      "$target_gen_dir/assets/${invoker.dart_kernel_filename}"
+
+  dart_snapshot_kernel(dart_snapshot_kernel_target_name) {
+    dart_main = invoker.dart_main
+    dart_kernel = dart_snapshot_kernel_path
+  }
+
+  snapshot_deps = []
+  snapshot_public_deps = [ ":$dart_snapshot_kernel_target_name" ]
+
+  if (is_aot_test) {
+    assert(defined(invoker.dart_elf_filename),
+           "The main Dart ELF filename must be specified.")
+
+    dart_snapshot_aot_target_name = "_dsa_$target_name"
+    dart_snapshot_aot(dart_snapshot_aot_target_name) {
+      dart_kernel = dart_snapshot_kernel_path
+      dart_elf_filename = invoker.dart_elf_filename
+      deps = [ ":$dart_snapshot_kernel_target_name" ]
+    }
+    snapshot_deps += [ ":$dart_snapshot_aot_target_name" ]
+  }
+
+  group(target_name) {
+    testonly = true
+    deps = snapshot_deps
+    public_deps = snapshot_public_deps
+  }
+}
+
+# Copies a (potentially empty) list of fixtures to the fixtures directory for
+# the unit test.
+#
+# Arguments:
+#
+#     fixtures (required): The list of fixtures to copy.
+#
+#     dest (optional): When specified, the fixtures are placed under an
+#                      'assets' subdirectory of this path rather than an
+#                      'assets' subdirectory of target_gen_dir.
+template("copy_fixtures") {
+  testonly = true
+
+  assert(defined(invoker.fixtures), "The test fixtures must be specified.")
+
+  dest = target_gen_dir
+  if (defined(invoker.dest)) {
+    dest = invoker.dest
+  }
+
+  has_fixtures = false
+  foreach(fixture, invoker.fixtures) {
+    has_fixtures = true
+  }
+
+  if (has_fixtures) {
+    copy(target_name) {
+      sources = invoker.fixtures
+      outputs = [ "$dest/assets/{{source_file_part}}" ]
+      forward_variables_from(invoker, [ "deps" ])
+    }
+  } else {
+    group(target_name) {
+      # The copy target cannot accept an empty list.
+    }
+  }
+}
+
+# Specifies the fixtures to copy to a location known by the specific unit test.
+# Test executable can only depend on one such target. You can use either one of
+# both arguments to expand this template. If you have none, then you'll see the
+# unused invoker scope error. In such cases specify the fixtures using an empty
+# array.
+#
+# The targets which generate the outputs from these test fixtures (e.g. the
+# Dart kernel snapshot) are exposed as public dependencies of the test fixture
+# target. This is so that users can depend on the test fixture target directly
+# and be able to access the generated outputs without needing to know about the
+# internal dependency structure generated by this template.
+#
+# Arguments:
+#
+#     fixtures (optional): The list of test fixtures. An empty list may be
+#                          specified.
+#
+#     dart_main (optional): The path to the main Dart file. If specified, it is
+#                           snapshotted.
+#
+#     use_target_as_artifact_prefix(optional): If true, adds the target name as
+#         prefix of the kernel and AOT ELF snapshot filename.
+#
+#     dest (optional): When specified, the fixtures are placed under an
+#                      'assets' subdirectory of this path rather than an
+#                      'assets' subdirectory of target_gen_dir.
+template("test_fixtures") {
+  dest = target_gen_dir
+  if (defined(invoker.dest)) {
+    dest = invoker.dest
+  }
+
+  # Not all paths use 'dest'
+  not_needed([ "dest" ])
+
+  # Even if no fixtures are present, the location of the fixtures directory
+  # must always be known to tests.
+  fixtures_location_target_name = "_fl_$target_name"
+  fixtures_location(fixtures_location_target_name) {
+    if (is_fuchsia) {
+      assets_dir = "/pkg/data/assets"
+    } else {
+      assets_dir = "$dest/assets"
+    }
+  }
+  test_deps = [ ":$fixtures_location_target_name" ]
+  test_public_deps = []
+
+  # If the fixtures are specified, copy them to the assets directory.
+  if (defined(invoker.fixtures)) {
+    copy_fixtures_target_name = "_cf_$target_name"
+    copy_fixtures(copy_fixtures_target_name) {
+      fixtures = invoker.fixtures
+      dest = dest
+      forward_variables_from(invoker, [ "deps" ])
+    }
+    test_public_deps += [ ":$copy_fixtures_target_name" ]
+  }
+
+  # If a Dart file is specified, snapshot it and place it in the generated
+  # assets directory.
+  if (defined(invoker.dart_main)) {
+    if (defined(invoker.use_target_as_artifact_prefix) &&
+        invoker.use_target_as_artifact_prefix) {
+      artifact_prefix = "${target_name}_"
+    } else {
+      artifact_prefix = ""
+    }
+    dart_snapshot_target_name = "_ds_$target_name"
+    dart_snapshot(dart_snapshot_target_name) {
+      dart_main = invoker.dart_main
+      dart_kernel_filename = "${artifact_prefix}kernel_blob.bin"
+      if (is_aot_test) {
+        dart_elf_filename = "${artifact_prefix}app_elf_snapshot.so"
+      }
+    }
+
+    test_public_deps += [ ":$dart_snapshot_target_name" ]
+  }
+
+  group(target_name) {
+    testonly = true
+    deps = test_deps
+    public_deps = test_public_deps
+  }
+}

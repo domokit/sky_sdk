@@ -1,0 +1,22 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+  shell_enable_gl = !is_fuchsia && !is_mac
+
+  # The logic for enabling Vulkan and Metal is in tools/gn.
+  shell_enable_metal = false
+  shell_enable_vulkan = false
+
+  shell_enable_software = true
+}
+
+declare_args() {
+  test_enable_gl = shell_enable_gl
+  test_enable_metal = shell_enable_metal
+
+  # The Vulkan unittests are combined with the GL unittests.
+  test_enable_vulkan = is_fuchsia || shell_enable_gl
+  test_enable_software = shell_enable_software
+}

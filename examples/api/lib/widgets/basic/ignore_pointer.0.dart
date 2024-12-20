@@ -15,10 +15,7 @@ class IgnorePointerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text('IgnorePointer Sample'),
-        ),
+        appBar: AppBar(centerTitle: true, title: const Text('IgnorePointer Sample')),
         body: const Center(child: IgnorePointerExample()),
       ),
     );
@@ -49,9 +46,7 @@ class _IgnorePointerExampleState extends State<IgnorePointerExample> {
         IgnorePointer(
           ignoring: ignoring,
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.all(24.0),
-            ),
+            style: ElevatedButton.styleFrom(padding: const EdgeInsets.all(24.0)),
             onPressed: () {},
             child: const Text('Click me!'),
           ),
@@ -60,9 +55,7 @@ class _IgnorePointerExampleState extends State<IgnorePointerExample> {
           onPressed: () {
             setIgnoring(!ignoring);
           },
-          child: Text(
-            ignoring ? 'Set ignoring to false' : 'Set ignoring to true',
-          ),
+          child: Text(ignoring ? 'Set ignoring to false' : 'Set ignoring to true'),
         ),
       ],
     );

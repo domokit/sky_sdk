@@ -1,0 +1,112 @@
+#!/bin/bash
+set -e
+
+# felt: a command-line utility for building and testing Flutter web engine.
+#       It stands for Flutter Engine Local Tester.
+# TODO: Add git fetch --tags step. Tags are critical for the correct Dart
+# version.
+
+FELT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+KERNEL_NAME=`uname`
+CPU_NAME=`uname -m`
+ENGINE_SRC_DIR="$(dirname $(dirname $(dirname $(dirname ${FELT_DIR}))))"
+FLUTTER_DIR="${ENGINE_SRC_DIR}/flutter"
+SDK_PREBUILTS_DIR="${FLUTTER_DIR}/prebuilts"
+
+# If set to 0 (the default) will run felt non-incrementally. For example, it will
+# run pub get.
+# If set to 1 (via the -i option) will run felt incrementally.
+INCREMENTAL=0
+
+# All arguments passed to felt, except -i, if any.
+ARGS=""
+for arg in "$@" ; do
+  case "$arg" in
+    -i)
+      INCREMENTAL=1
+      shift
+      ;;
+    *)
+      ARGS="${ARGS} ${arg}"
+      ;;
+  esac
+done
+
+if [ -z "${DART_SDK_DIR}" ]
+then
+  if [[ $KERNEL_NAME == *"Darwin"* ]]
+  then
+    TARGET_OS="macos"
+  elif [[ $KERNEL_NAME == *"Linux"* ]]
+  then
+    TARGET_OS="linux"
+  else
+    echo "Unrecognized kernel name: ${KERNEL_NAME}"
+    exit 1
+  fi
+
+  if [[ $CPU_NAME == *"x86_64"* ]]
+  then
+    TARGET_ARCH="x64"
+  elif [[ $CPU_NAME == *"arm64"* ]]
+  then
+    TARGET_ARCH="arm64"
+  else
+    echo "Unrecognized architecture: ${CPU_NAME}"
+    exit 1
+  fi
+
+  PREBUILT_TARGET="${TARGET_OS}-${TARGET_ARCH}"
+  DART_SDK_DIR="${SDK_PREBUILTS_DIR}/${PREBUILT_TARGET}/dart-sdk"
+
+  if [ ! -d "$DART_SDK_DIR" ]
+  then
+    echo "Prebuilt dart sdk for ${PREBUILT_TARGET} not found."
+    echo "Note: You can specify your own path to a built dart sdk with the DART_SDK_DIR environment variable."
+    exit 1
+  fi
+
+else
+  if [ ! -d "$DART_SDK_DIR" ]
+  then
+    echo "Explicitly specified dart SDK not found at ${DART_SDK_DIR}."
+    exit 1
+  fi
+fi
+
+WEB_UI_DIR="${FLUTTER_DIR}/lib/web_ui"
+DART_PATH="$DART_SDK_DIR/bin/dart"
+
+if [[ "$FELT_DEBUG" == "true" || "$FELT_DEBUG" == "1" ]]
+then
+  FELT_DEBUG_FLAGS="--enable-vm-service --pause-isolates-on-start"
+fi
+
+SILENT_LOG=/tmp/felt_pub_get_silent_log.txt
+trap "rm -f $SILENT_LOG" EXIT
+
+verbose_on_failure() {
+  echo "FAILED with the following output:"
+  cat $SILENT_LOG
+  exit 1
+}
+
+silent_on_success() {
+  COMMAND=${1+"$@"}
+  $COMMAND > $SILENT_LOG 2>&1 || verbose_on_failure
+}
+
+install_deps() {
+  # We need to run pub get here before we actually invoke felt.
+  echo "Running \`dart pub get\` in 'engine/src/flutter/lib/web_ui'"
+  (cd "$WEB_UI_DIR"; silent_on_success $DART_PATH pub get)
+}
+
+cd $WEB_UI_DIR
+if [[ "$INCREMENTAL" == "0" ]]
+then
+  install_deps
+fi
+
+(cd $WEB_UI_DIR && $DART_SDK_DIR/bin/dart run $FELT_DEBUG_FLAGS dev/felt.dart ${ARGS})

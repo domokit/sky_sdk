@@ -1,0 +1,11 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/rules.gni")
+
+# Build a minimal snapshot that can be used to launch the VM service isolate.
+flutter_snapshot("vmservice_snapshot") {
+  main_dart = "empty.dart"
+  output_aot_lib = "libvmservice_snapshot.so"
+}

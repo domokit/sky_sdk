@@ -1,0 +1,12 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+config("compression_utils_config") {
+  include_dirs = [ "//flutter/third_party/zlib/google" ]
+}
+
+group("compression_utils_portable") {
+  public_deps = [ "//flutter/third_party/zlib/google:compression_utils_portable" ]
+  public_configs = [ ":compression_utils_config" ]
+}

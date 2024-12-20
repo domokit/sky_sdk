@@ -17,14 +17,15 @@ class MySliverPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => 150.0;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => const Placeholder(color: Colors.teal);
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) =>
+      const Placeholder(color: Colors.teal);
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => false;
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({ super.key });
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -57,17 +58,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       ),
       body: TabBarView(
         controller: tabController,
-        children: List<Widget>.generate(tabCount, (int index) {
-          return CustomScrollView(
-            // The bug only occurs when this key is included
-            key: ValueKey<String>('Page $index'),
-            slivers: <Widget>[
-              SliverPersistentHeader(
-                delegate: MySliverPersistentHeaderDelegate(),
-              ),
-            ],
-          );
-        }).toList(),
+        children:
+            List<Widget>.generate(tabCount, (int index) {
+              return CustomScrollView(
+                // The bug only occurs when this key is included
+                key: ValueKey<String>('Page $index'),
+                slivers: <Widget>[
+                  SliverPersistentHeader(delegate: MySliverPersistentHeaderDelegate()),
+                ],
+              );
+            }).toList(),
       ),
     );
   }

@@ -1,0 +1,12 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/third_party/flatbuffers/flatbuffers.gni")
+import("../tools/impeller.gni")
+
+flatbuffers("shader_bundle_flatbuffers") {
+  flatbuffers = [ "shader_bundle.fbs" ]
+  public_configs = [ "//flutter/impeller:impeller_public_config" ]
+  public_deps = [ "//flutter/third_party/flatbuffers" ]
+}

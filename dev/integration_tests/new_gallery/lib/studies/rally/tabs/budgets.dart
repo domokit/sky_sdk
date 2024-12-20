@@ -17,8 +17,7 @@ class BudgetsView extends StatefulWidget {
   State<BudgetsView> createState() => _BudgetsViewState();
 }
 
-class _BudgetsViewState extends State<BudgetsView>
-    with SingleTickerProviderStateMixin {
+class _BudgetsViewState extends State<BudgetsView> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final List<BudgetData> items = DummyDataService.getBudgetDataList(context);
@@ -41,7 +40,7 @@ class _BudgetsViewState extends State<BudgetsView>
       ),
       sidebarItems: <Widget>[
         for (final UserDetailData item in detailItems)
-          SidebarItem(title: item.title, value: item.value)
+          SidebarItem(title: item.title, value: item.value),
       ],
     );
   }

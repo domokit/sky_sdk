@@ -1,0 +1,30 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/sysroot.gni")
+
+config("sdk") {
+  cflags_cc = [ "-stdlib=libc++" ]
+}
+
+# On Mac, this is used for everything except static libraries.
+config("mac_dynamic_flags") {
+  ldflags = [
+    "-Wl,-search_paths_first",
+    "-L.",
+
+    # Path for loading shared libraries for unbundled binaries.
+    "-Wl,-rpath,@loader_path/.",
+    "-Wl,-rpath,/usr/local/lib/.",
+
+    # Path for loading shared libraries for bundled binaries. Get back from
+    # Binary.app/Contents/MacOS.
+    "-Wl,-rpath,@loader_path/../../..",
+  ]
+}
+
+# On Mac, this is used only for executables.
+config("mac_executable_flags") {
+  ldflags = [ "-Wl,-pie" ]  # Position independent.
+}

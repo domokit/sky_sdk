@@ -1,0 +1,31 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/compiled_action.gni")
+
+# Inflate the input template file using Inja and the specified values.
+template("templater") {
+  assert(defined(invoker.input), "The input template must be specified.")
+  assert(defined(invoker.output), "The output location must be defined.")
+  assert(
+      defined(invoker.values),
+      "The values referenced in the template must be specified. Use the --key=value format for each value.")
+
+  compiled_action(target_name) {
+    tool = "//flutter/tools/templater"
+
+    inputs = [ invoker.input ]
+    outputs = [ invoker.output ]
+
+    templater_input_path = rebase_path(invoker.input, root_build_dir)
+    templater_input_flag = "--templater-input=$templater_input_path"
+    templater_output_path = rebase_path(invoker.output, root_build_dir)
+    templater_output_flag = "--templater-output=$templater_output_path"
+
+    args = [
+             templater_input_flag,
+             templater_output_flag,
+           ] + invoker.values
+  }
+}

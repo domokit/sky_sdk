@@ -1,0 +1,19 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/shell/version/version.gni")
+
+shared_library("path_ops") {
+  public_configs = [ "//flutter:config" ]
+
+  sources = [
+    "path_ops.cc",
+    "path_ops.h",
+  ]
+  deps = [ "//flutter/skia" ]
+
+  metadata = {
+    entitlement_file_path = [ "libpath_ops.dylib" ]
+  }
+}

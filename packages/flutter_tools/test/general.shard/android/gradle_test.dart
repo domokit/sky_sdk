@@ -40,47 +40,35 @@ void main() {
     testWithoutContext('getApkDirectory in app projects', () {
       final FlutterProject project = FlutterProject.fromDirectoryTest(fileSystem.currentDirectory);
 
-      expect(
-        getApkDirectory(project).path, '/build/app/outputs/flutter-apk',
-      );
+      expect(getApkDirectory(project).path, '/build/app/outputs/flutter-apk');
     });
 
     testWithoutContext('getApkDirectory in module projects', () {
-      fileSystem.currentDirectory
-        .childFile('pubspec.yaml')
-        .writeAsStringSync(kModulePubspec);
+      fileSystem.currentDirectory.childFile('pubspec.yaml').writeAsStringSync(kModulePubspec);
       final FlutterProject project = FlutterProject.fromDirectoryTest(fileSystem.currentDirectory);
 
       expect(project.isModule, true);
-      expect(
-        getApkDirectory(project).path, '/build/host/outputs/apk',
-      );
+      expect(getApkDirectory(project).path, '/build/host/outputs/apk');
     });
 
     testWithoutContext('getBundleDirectory in app projects', () {
       final FlutterProject project = FlutterProject.fromDirectoryTest(fileSystem.currentDirectory);
 
-      expect(
-        getBundleDirectory(project).path, '/build/app/outputs/bundle',
-      );
+      expect(getBundleDirectory(project).path, '/build/app/outputs/bundle');
     });
 
     testWithoutContext('getBundleDirectory in module projects', () {
-      fileSystem.currentDirectory
-        .childFile('pubspec.yaml')
-        .writeAsStringSync(kModulePubspec);
+      fileSystem.currentDirectory.childFile('pubspec.yaml').writeAsStringSync(kModulePubspec);
       final FlutterProject project = FlutterProject.fromDirectoryTest(fileSystem.currentDirectory);
 
       expect(project.isModule, true);
-      expect(
-        getBundleDirectory(project).path, '/build/host/outputs/bundle',
-      );
+      expect(getBundleDirectory(project).path, '/build/host/outputs/bundle');
     });
 
     testWithoutContext('getRepoDirectory', () {
       expect(
         getRepoDirectory(fileSystem.directory('foo')).path,
-        equals(fileSystem.path.join('foo','outputs', 'repo')),
+        equals(fileSystem.path.join('foo', 'outputs', 'repo')),
       );
     });
   });
@@ -88,58 +76,65 @@ void main() {
   group('gradle tasks', () {
     testWithoutContext('assemble release', () {
       expect(
-        getAssembleTaskFor(const BuildInfo(
-          BuildMode.release,
-          null,
-          treeShakeIcons: false,
-          packageConfigPath: '.dart_tool/package_config.json',
-        )),
+        getAssembleTaskFor(
+          const BuildInfo(
+            BuildMode.release,
+            null,
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+        ),
         equals('assembleRelease'),
       );
       expect(
-        getAssembleTaskFor(const BuildInfo(
-          BuildMode.release,
-          'flavorFoo',
-          treeShakeIcons: false,
-          packageConfigPath: '.dart_tool/package_config.json',
-        )),
+        getAssembleTaskFor(
+          const BuildInfo(
+            BuildMode.release,
+            'flavorFoo',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+        ),
         equals('assembleFlavorFooRelease'),
       );
     });
 
     testWithoutContext('assemble debug', () {
+      expect(getAssembleTaskFor(BuildInfo.debug), equals('assembleDebug'));
       expect(
-        getAssembleTaskFor(BuildInfo.debug),
-        equals('assembleDebug'),
-      );
-      expect(
-        getAssembleTaskFor(const BuildInfo(
-          BuildMode.debug,
-          'flavorFoo',
-          treeShakeIcons: false,
-          packageConfigPath: '.dart_tool/package_config.json',
-        )),
+        getAssembleTaskFor(
+          const BuildInfo(
+            BuildMode.debug,
+            'flavorFoo',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+        ),
         equals('assembleFlavorFooDebug'),
       );
     });
 
     testWithoutContext('assemble profile', () {
       expect(
-        getAssembleTaskFor(const BuildInfo(
-          BuildMode.profile,
-          null,
-          treeShakeIcons: false,
-          packageConfigPath: '.dart_tool/package_config.json',
-        )),
+        getAssembleTaskFor(
+          const BuildInfo(
+            BuildMode.profile,
+            null,
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+        ),
         equals('assembleProfile'),
       );
       expect(
-        getAssembleTaskFor(const BuildInfo(
-          BuildMode.profile,
-          'flavorFoo',
-          treeShakeIcons: false,
-          packageConfigPath: '.dart_tool/package_config.json',
-        )),
+        getAssembleTaskFor(
+          const BuildInfo(
+            BuildMode.profile,
+            'flavorFoo',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+        ),
         equals('assembleFlavorFooProfile'),
       );
     });
@@ -148,36 +143,42 @@ void main() {
   group('listApkPaths', () {
     testWithoutContext('Finds APK without flavor in debug', () {
       final Iterable<String> apks = listApkPaths(
-        const AndroidBuildInfo(BuildInfo(
-          BuildMode.debug,
-          '',
-          treeShakeIcons: false,
-          packageConfigPath: '.dart_tool/package_config.json',
-        )),
+        const AndroidBuildInfo(
+          BuildInfo(
+            BuildMode.debug,
+            '',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+        ),
       );
       expect(apks, <String>['app-debug.apk']);
     });
 
     testWithoutContext('Finds APK with flavor in debug', () {
       final Iterable<String> apks = listApkPaths(
-        const AndroidBuildInfo(BuildInfo(
-          BuildMode.debug,
-          'flavor1',
-          treeShakeIcons: false,
-          packageConfigPath: '.dart_tool/package_config.json',
-        )),
+        const AndroidBuildInfo(
+          BuildInfo(
+            BuildMode.debug,
+            'flavor1',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+        ),
       );
       expect(apks, <String>['app-flavor1-debug.apk']);
     });
 
     testWithoutContext('Finds APK without flavor in release', () {
       final Iterable<String> apks = listApkPaths(
-        const AndroidBuildInfo(BuildInfo(
-          BuildMode.release,
-          '',
-          treeShakeIcons: false,
-          packageConfigPath: '.dart_tool/package_config.json',
-        )),
+        const AndroidBuildInfo(
+          BuildInfo(
+            BuildMode.release,
+            '',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+        ),
       );
 
       expect(apks, <String>['app-release.apk']);
@@ -185,12 +186,14 @@ void main() {
 
     testWithoutContext('Finds APK with flavor in release mode', () {
       final Iterable<String> apks = listApkPaths(
-        const AndroidBuildInfo(BuildInfo(
-          BuildMode.release,
-          'flavor1',
-          treeShakeIcons: false,
-          packageConfigPath: '.dart_tool/package_config.json',
-        )),
+        const AndroidBuildInfo(
+          BuildInfo(
+            BuildMode.release,
+            'flavor1',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+        ),
       );
 
       expect(apks, <String>['app-flavor1-release.apk']);
@@ -198,8 +201,14 @@ void main() {
 
     testWithoutContext('Finds APK with flavor in release mode', () {
       final Iterable<String> apks = listApkPaths(
-        const AndroidBuildInfo(BuildInfo(BuildMode.release, 'flavorA', treeShakeIcons: false,
-        packageConfigPath: '.dart_tool/package_config.json',)),
+        const AndroidBuildInfo(
+          BuildInfo(
+            BuildMode.release,
+            'flavorA',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+        ),
       );
 
       expect(apks, <String>['app-flavora-release.apk']);
@@ -207,12 +216,14 @@ void main() {
 
     testWithoutContext('Finds APK with flavor in release mode - AGP v3', () {
       final Iterable<String> apks = listApkPaths(
-        const AndroidBuildInfo(BuildInfo(
-          BuildMode.release,
-          'flavor1',
-          treeShakeIcons: false,
-          packageConfigPath: '.dart_tool/package_config.json',
-        )),
+        const AndroidBuildInfo(
+          BuildInfo(
+            BuildMode.release,
+            'flavor1',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+        ),
       );
       expect(apks, <String>['app-flavor1-release.apk']);
     });
@@ -220,53 +231,64 @@ void main() {
     testWithoutContext('Finds APK with split-per-abi', () {
       final Iterable<String> apks = listApkPaths(
         const AndroidBuildInfo(
-            BuildInfo(
-              BuildMode.release,
-              'flavor1',
-              treeShakeIcons: false,
-              packageConfigPath: '.dart_tool/package_config.json',
-            ),
-            splitPerAbi: true),
+          BuildInfo(
+            BuildMode.release,
+            'flavor1',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+          splitPerAbi: true,
+        ),
       );
 
-      expect(apks, unorderedEquals(<String>[
-        'app-armeabi-v7a-flavor1-release.apk',
-        'app-arm64-v8a-flavor1-release.apk',
-        'app-x86_64-flavor1-release.apk',
-      ]));
+      expect(
+        apks,
+        unorderedEquals(<String>[
+          'app-armeabi-v7a-flavor1-release.apk',
+          'app-arm64-v8a-flavor1-release.apk',
+          'app-x86_64-flavor1-release.apk',
+        ]),
+      );
     });
 
     testWithoutContext('Finds APK with split-per-abi when flavor contains uppercase letters', () {
       final Iterable<String> apks = listApkPaths(
         const AndroidBuildInfo(
-            BuildInfo(
-              BuildMode.release,
-              'flavorA',
-              treeShakeIcons: false,
-              packageConfigPath: '.dart_tool/package_config.json',
-            ),
-            splitPerAbi: true),
+          BuildInfo(
+            BuildMode.release,
+            'flavorA',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+          splitPerAbi: true,
+        ),
       );
 
-      expect(apks, unorderedEquals(<String>[
-        'app-armeabi-v7a-flavora-release.apk',
-        'app-arm64-v8a-flavora-release.apk',
-        'app-x86_64-flavora-release.apk',
-      ]));
+      expect(
+        apks,
+        unorderedEquals(<String>[
+          'app-armeabi-v7a-flavora-release.apk',
+          'app-arm64-v8a-flavora-release.apk',
+          'app-x86_64-flavora-release.apk',
+        ]),
+      );
     });
-
   });
 
   group('gradle build', () {
     testUsingContext('do not crash if there is no Android SDK', () async {
-      expect(() {
-        gradle_utils.updateLocalProperties(project: FlutterProject.fromDirectoryTest(globals.fs.currentDirectory));
-      }, throwsToolExit(
-        message: '${globals.logger.terminal.warningMark} No Android SDK found. Try setting the ANDROID_HOME environment variable.',
-      ));
-    }, overrides: <Type, Generator>{
-      AndroidSdk: () => null,
-    });
+      expect(
+        () {
+          gradle_utils.updateLocalProperties(
+            project: FlutterProject.fromDirectoryTest(globals.fs.currentDirectory),
+          );
+        },
+        throwsToolExit(
+          message:
+              '${globals.logger.terminal.warningMark} No Android SDK found. Try setting the ANDROID_HOME environment variable.',
+        ),
+      );
+    }, overrides: <Type, Generator>{AndroidSdk: () => null});
   });
 
   group('Gradle local.properties', () {
@@ -275,20 +297,28 @@ void main() {
 
     setUp(() {
       fs = MemoryFileSystem.test();
-      localEngineArtifacts = Artifacts.testLocalEngine(localEngine: 'out/android_arm', localEngineHost: 'out/host_release');
+      localEngineArtifacts = Artifacts.testLocalEngine(
+        localEngine: 'out/android_arm',
+        localEngineHost: 'out/host_release',
+      );
     });
 
     void testUsingAndroidContext(String description, dynamic Function() testMethod) {
-      testUsingContext(description, testMethod, overrides: <Type, Generator>{
-        Artifacts: () => localEngineArtifacts,
-        Platform: () => FakePlatform(),
-        FileSystem: () => fs,
-        ProcessManager: () => FakeProcessManager.any(),
-      });
+      testUsingContext(
+        description,
+        testMethod,
+        overrides: <Type, Generator>{
+          Artifacts: () => localEngineArtifacts,
+          Platform: () => FakePlatform(),
+          FileSystem: () => fs,
+          ProcessManager: () => FakeProcessManager.any(),
+        },
+      );
     }
 
     String? propertyFor(String key, File file) {
-      final Iterable<String> result = file.readAsLinesSync()
+      final Iterable<String> result = file
+          .readAsLinesSync()
           .where((String line) => line.startsWith('$key='))
           .map((String line) => line.split('=')[1]);
       return result.isEmpty ? null : result.first;
@@ -303,7 +333,6 @@ void main() {
       final File manifestFile = globals.fs.file('path/to/project/pubspec.yaml');
       manifestFile.createSync(recursive: true);
       manifestFile.writeAsStringSync(manifest);
-
 
       gradle_utils.updateLocalProperties(
         project: FlutterProject.fromDirectoryTest(globals.fs.directory('path/to/project')),
@@ -355,11 +384,7 @@ flutter:
         treeShakeIcons: false,
         packageConfigPath: '.dart_tool/package_config.json',
       );
-      await checkBuildVersion(
-        manifest: manifest,
-        buildInfo: buildInfo,
-        expectedBuildName: '1.0.0',
-      );
+      await checkBuildVersion(manifest: manifest, buildInfo: buildInfo, expectedBuildName: '1.0.0');
     });
 
     testUsingAndroidContext('allow build info to override build name', () async {
@@ -601,8 +626,10 @@ flutter:
     });
 
     testWithoutContext('throws on unsupported versions', () {
-      expect(() => gradle_utils.getGradleVersionFor('3.6.0'),
-          throwsA(predicate<Exception>((Exception e) => e is ToolExit)));
+      expect(
+        () => gradle_utils.getGradleVersionFor('3.6.0'),
+        throwsA(predicate<Exception>((Exception e) => e is ToolExit)),
+      );
     });
   });
 
@@ -613,43 +640,58 @@ flutter:
       fs = MemoryFileSystem.test();
     });
 
-    testUsingContext('returns true when the project is using AndroidX', () async {
-      final Directory androidDirectory = globals.fs.systemTempDirectory.createTempSync('flutter_android.');
+    testUsingContext(
+      'returns true when the project is using AndroidX',
+      () async {
+        final Directory androidDirectory = globals.fs.systemTempDirectory.createTempSync(
+          'flutter_android.',
+        );
 
-      androidDirectory
-        .childFile('gradle.properties')
-        .writeAsStringSync('android.useAndroidX=true');
+        androidDirectory
+            .childFile('gradle.properties')
+            .writeAsStringSync('android.useAndroidX=true');
 
-      expect(isAppUsingAndroidX(androidDirectory), isTrue);
+        expect(isAppUsingAndroidX(androidDirectory), isTrue);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fs,
+        ProcessManager: () => FakeProcessManager.any(),
+      },
+    );
 
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fs,
-      ProcessManager: () => FakeProcessManager.any(),
-    });
+    testUsingContext(
+      'returns false when the project is not using AndroidX',
+      () async {
+        final Directory androidDirectory = globals.fs.systemTempDirectory.createTempSync(
+          'flutter_android.',
+        );
 
-    testUsingContext('returns false when the project is not using AndroidX', () async {
-      final Directory androidDirectory = globals.fs.systemTempDirectory.createTempSync('flutter_android.');
+        androidDirectory
+            .childFile('gradle.properties')
+            .writeAsStringSync('android.useAndroidX=false');
 
-      androidDirectory
-        .childFile('gradle.properties')
-        .writeAsStringSync('android.useAndroidX=false');
+        expect(isAppUsingAndroidX(androidDirectory), isFalse);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fs,
+        ProcessManager: () => FakeProcessManager.any(),
+      },
+    );
 
-      expect(isAppUsingAndroidX(androidDirectory), isFalse);
+    testUsingContext(
+      'returns false when gradle.properties does not exist',
+      () async {
+        final Directory androidDirectory = globals.fs.systemTempDirectory.createTempSync(
+          'flutter_android.',
+        );
 
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fs,
-      ProcessManager: () => FakeProcessManager.any(),
-    });
-
-    testUsingContext('returns false when gradle.properties does not exist', () async {
-      final Directory androidDirectory = globals.fs.systemTempDirectory.createTempSync('flutter_android.');
-
-      expect(isAppUsingAndroidX(androidDirectory), isFalse);
-
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fs,
-      ProcessManager: () => FakeProcessManager.any(),
-    });
+        expect(isAppUsingAndroidX(androidDirectory), isFalse);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fs,
+        ProcessManager: () => FakeProcessManager.any(),
+      },
+    );
   });
 
   group('printHowToConsumeAar', () {
@@ -708,8 +750,8 @@ flutter:
           '      }\n'
           '    }\n'
           '\n'
-          'To learn more, visit https://flutter.dev/to/integrate-android-archive\n'
-        )
+          'To learn more, visit https://flutter.dev/to/integrate-android-archive\n',
+        ),
       );
     });
 
@@ -746,8 +788,8 @@ flutter:
           "      releaseImplementation 'com.mycompany:flutter_release:1.0'\n"
           '    }\n'
           '\n'
-          'To learn more, visit https://flutter.dev/to/integrate-android-archive\n'
-        )
+          'To learn more, visit https://flutter.dev/to/integrate-android-archive\n',
+        ),
       );
     });
 
@@ -784,8 +826,8 @@ flutter:
           "      debugImplementation 'com.mycompany:flutter_debug:1.0'\n"
           '    }\n'
           '\n'
-          'To learn more, visit https://flutter.dev/to/integrate-android-archive\n'
-        )
+          'To learn more, visit https://flutter.dev/to/integrate-android-archive\n',
+        ),
       );
     });
 
@@ -834,8 +876,8 @@ flutter:
           '      }\n'
           '    }\n'
           '\n'
-          'To learn more, visit https://flutter.dev/to/integrate-android-archive\n'
-        )
+          'To learn more, visit https://flutter.dev/to/integrate-android-archive\n',
+        ),
       );
     });
   });

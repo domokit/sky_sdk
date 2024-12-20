@@ -14,9 +14,6 @@ void main() {
   });
 
   test('The size of the widget is measured', () {
-    expect(
-      example.measureWidget(const SizedBox(width: 234, height: 567)),
-      const Size(234, 567),
-    );
+    expect(example.measureWidget(const SizedBox(width: 234, height: 567)), const Size(234, 567));
   });
 }

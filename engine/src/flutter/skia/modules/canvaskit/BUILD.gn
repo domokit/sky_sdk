@@ -1,0 +1,227 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+_skia_root = "//flutter/third_party/skia"
+
+import("$_skia_root/gn/skia.gni")
+import("$_skia_root/gn/toolchain/wasm.gni")
+import("$_skia_root/modules/canvaskit/canvaskit.gni")
+
+# Defines a WASM library target.
+template("canvaskit_wasm_lib") {
+  _vars_to_forward = [
+    "cflags",
+    "check_includes",
+    "ldflags",
+    "defines",
+    "deps",
+    "includes",
+    "sources",
+    "include_dirs",
+    "public_configs",
+    "testonly",
+    "visibility",
+  ]
+
+  _lib_name = target_name
+
+  executable("${_lib_name}_js") {
+    forward_variables_from(invoker, _vars_to_forward)
+    output_extension = "js"
+    output_name = "${_lib_name}"
+  }
+
+  group("$_lib_name") {
+    public_deps = [ ":${_lib_name}_js" ]
+  }
+}
+
+canvaskit_wasm_lib("canvaskit") {
+  # Opted out of check_includes, due to (logically) being part of skia.
+  check_includes = false
+  deps = [ "../..:skia" ]
+  if (skia_canvaskit_enable_paragraph) {
+    deps += [
+      "../../modules/skparagraph:skparagraph",
+      "../../modules/skunicode:skunicode",
+    ]
+  }
+
+  sources = [
+    "$_skia_root/modules/canvaskit/WasmCommon.h",
+    "$_skia_root/modules/canvaskit/canvaskit_bindings.cpp",
+  ]
+  if (skia_canvaskit_enable_paragraph) {
+    sources += [
+      "$_skia_root/modules/canvaskit/paragraph_bindings.cpp",
+      "$_skia_root/modules/canvaskit/paragraph_bindings_gen.cpp",
+    ]
+  }
+
+  ldflags = []
+  if (is_debug) {
+    ldflags += [
+      "-O0",
+      "-sDEMANGLE_SUPPORT=1",
+      "-sASSERTIONS=1",
+      "-sGL_ASSERTIONS=1",
+      "-g3",
+      "--pre-js",
+      rebase_path("$_skia_root/modules/canvaskit/debug.js"),
+    ]
+  } else {
+    externs_path = rebase_path("$_skia_root/modules/canvaskit/externs.js")
+    ldflags += [
+      "-Oz",
+      "--closure=1",
+      "--pre-js",
+      rebase_path("$_skia_root/modules/canvaskit/release.js"),
+      "--closure-args=--externs=$externs_path",
+    ]
+  }
+  if (skia_canvaskit_profile_build) {
+    ldflags += [
+      "--profiling-funcs",
+      "--closure=0",
+    ]
+  }
+  ldflags += [ "-fno-rtti" ]
+
+  if (skia_canvaskit_enable_webgl) {
+    ldflags += [
+      "-lGL",
+      "--pre-js",
+      rebase_path("$_skia_root/modules/canvaskit/cpu.js"),
+      "--pre-js",
+      rebase_path("$_skia_root/modules/canvaskit/webgl.js"),
+      "-sUSE_WEBGL2=1",
+      "-sMAX_WEBGL_VERSION=2",
+    ]
+  } else {
+    ldflags += [
+      "--pre-js",
+      rebase_path("$_skia_root/modules/canvaskit/cpu.js"),
+      "-sUSE_WEBGL2=0",
+    ]
+  }
+
+  ldflags += [
+    "-std=c++17",
+    "--bind",
+    "--no-entry",
+    "--pre-js",
+    rebase_path("$_skia_root/modules/canvaskit/preamble.js"),
+    "--pre-js",
+    rebase_path("$_skia_root/modules/canvaskit/color.js"),
+    "--pre-js",
+    rebase_path("$_skia_root/modules/canvaskit/memory.js"),
+    "--pre-js",
+    rebase_path("$_skia_root/modules/canvaskit/util.js"),
+    "--pre-js",
+    rebase_path("$_skia_root/modules/canvaskit/interface.js"),
+  ]
+
+  ldflags += [
+    "--pre-js",
+    rebase_path("$_skia_root/modules/canvaskit/paragraph.js"),
+  ]
+
+  if (skia_canvaskit_enable_pathops) {
+    ldflags += [
+      "--pre-js",
+      rebase_path("$_skia_root/modules/canvaskit/pathops.js"),
+    ]
+  }
+
+  if (skia_canvaskit_enable_font) {
+    ldflags += [
+      "--pre-js",
+      rebase_path("$_skia_root/modules/canvaskit/font.js"),
+    ]
+  }
+
+  if (skia_canvaskit_enable_skp_serialization) {
+    ldflags += [
+      "--pre-js",
+      rebase_path("$_skia_root/modules/canvaskit/skp.js"),
+    ]
+  }
+
+  if (skia_canvaskit_enable_rt_shader) {
+    ldflags += [
+      "--pre-js",
+      rebase_path("$_skia_root/modules/canvaskit/rt_shader.js"),
+    ]
+  }
+
+  ldflags += [
+    "--pre-js",
+    rebase_path("$_skia_root/modules/canvaskit/postamble.js"),
+    "-sALLOW_MEMORY_GROWTH",
+    "-sDISABLE_EXCEPTION_CATCHING",
+    "-sNODEJS_CATCH_EXIT=0",
+    "-sDYNAMIC_EXECUTION=0",
+    "-sEXPORT_NAME=CanvasKitInit",
+    "-sEXPORTED_FUNCTIONS=[_malloc,_free]",
+    "-sEXPORTED_RUNTIME_METHODS=HEAP8,HEAPU8,HEAP16,HEAPU16,HEAP32,HEAPF32,HEAPU32,HEAPF64",
+    "-sINCOMING_MODULE_JS_API=onRuntimeInitialized",
+    "-sFORCE_FILESYSTEM=0",
+    "-sFILESYSTEM=0",
+    "-sMODULARIZE",
+    "-sNO_EXIT_RUNTIME=1",
+    "-sINITIAL_MEMORY=32MB",
+
+    # Grow memory by +100% i.e. double the size each time we run out of memory.
+    "-sMEMORY_GROWTH_GEOMETRIC_STEP=1.0",
+    "-sWASM",
+    "-sSTRICT=1",
+  ]
+
+  defines = []
+  if (is_debug) {
+    defines += [ "SK_DEBUG" ]
+  } else {
+    defines += [ "SK_RELEASE" ]
+  }
+  if (!is_debug && !skia_canvaskit_force_tracing) {
+    defines += [ "SK_DISABLE_TRACING" ]
+  }
+  defines += [
+    "SK_FORCE_AAA",
+    "SK_FORCE_8_BYTE_ALIGNMENT",
+    "EMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0",
+    "SK_SHAPER_HARFBUZZ_AVAILABLE",
+  ]
+  if (skia_canvaskit_enable_paragraph) {
+    defines += [ "CK_INCLUDE_PARAGRAPH" ]
+  }
+  if (skia_canvaskit_enable_skp_serialization) {
+    defines += [ "CK_SERIALIZE_SKP" ]
+  }
+  if (skia_enable_ganesh) {
+    defines += [
+      "SK_GANESH",
+      "SK_DISABLE_LEGACY_SHADERCONTEXT",
+    ]
+    if (skia_canvaskit_enable_webgl) {
+      defines += [
+        "SK_GL",
+        "CK_ENABLE_WEBGL",
+      ]
+    }
+  }
+
+  if (skia_canvaskit_enable_pathops) {
+    defines += [ "CK_INCLUDE_PATHOPS" ]
+  }
+  if (skia_canvaskit_enable_rt_shader) {
+    defines += [ "CK_INCLUDE_RUNTIME_EFFECT" ]
+  }
+  if (!skia_canvaskit_enable_alias_font) {
+    defines += [ "CK_NO_ALIAS_FONT" ]
+  }
+  if (!skia_canvaskit_enable_font) {
+    defines += [ "CK_NO_FONTS" ]
+  }
+}

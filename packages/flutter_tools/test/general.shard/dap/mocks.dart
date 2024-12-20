@@ -23,8 +23,16 @@ class MockFlutterDebugAdapter extends FlutterDebugAdapter {
   }) {
     final StreamController<List<int>> stdinController = StreamController<List<int>>();
     final StreamController<List<int>> stdoutController = StreamController<List<int>>();
-    final ByteStreamServerChannel channel = ByteStreamServerChannel(stdinController.stream, stdoutController.sink, null);
-    final ByteStreamServerChannel clientChannel = ByteStreamServerChannel(stdoutController.stream, stdinController.sink, null);
+    final ByteStreamServerChannel channel = ByteStreamServerChannel(
+      stdinController.stream,
+      stdoutController.sink,
+      null,
+    );
+    final ByteStreamServerChannel clientChannel = ByteStreamServerChannel(
+      stdoutController.stream,
+      stdinController.sink,
+      null,
+    );
 
     return MockFlutterDebugAdapter._(
       channel,
@@ -69,17 +77,23 @@ class MockFlutterDebugAdapter extends FlutterDebugAdapter {
   @override
   bool get sendLogsToClient => false;
 
-  final StreamController<Map<String, Object?>> _dapToClientMessagesController = StreamController<Map<String, Object?>>.broadcast();
+  final StreamController<Map<String, Object?>> _dapToClientMessagesController =
+      StreamController<Map<String, Object?>>.broadcast();
 
   /// A stream of all messages sent from the adapter back to the client.
   Stream<Map<String, Object?>> get dapToClientMessages => _dapToClientMessagesController.stream;
 
   /// A stream of all progress events sent from the adapter back to the client.
   Stream<Map<String, Object?>> get dapToClientProgressEvents {
-    const List<String> progressEventTypes = <String>['progressStart', 'progressUpdate', 'progressEnd'];
+    const List<String> progressEventTypes = <String>[
+      'progressStart',
+      'progressUpdate',
+      'progressEnd',
+    ];
 
-    return dapToClientMessages
-        .where((Map<String, Object?> message) => progressEventTypes.contains(message['event'] as String?));
+    return dapToClientMessages.where(
+      (Map<String, Object?> message) => progressEventTypes.contains(message['event'] as String?),
+    );
   }
 
   /// A list of all messages sent from the adapter to the `flutter run` processes `stdin`.
@@ -87,10 +101,11 @@ class MockFlutterDebugAdapter extends FlutterDebugAdapter {
 
   /// The `method`s of all messages sent to the `flutter run` processes `stdin`
   /// by the debug adapter.
-  List<String> get dapToFlutterRequests => dapToFlutterMessages
-      .map((Map<String, Object?> message) => message['method'] as String?)
-      .nonNulls
-      .toList();
+  List<String> get dapToFlutterRequests =>
+      dapToFlutterMessages
+          .map((Map<String, Object?> message) => message['method'] as String?)
+          .nonNulls
+          .toList();
 
   /// A handler for the 'app.exposeUrl' reverse-request.
   String Function(String)? exposeUrlHandler;
@@ -111,11 +126,7 @@ class MockFlutterDebugAdapter extends FlutterDebugAdapter {
       assert(finished == (message == null));
       simulateStdoutMessage(<String, Object?>{
         'event': 'app.progress',
-        'params': <String, Object?>{
-          'id': 'launch',
-          'message': message,
-          'finished': finished,
-        }
+        'params': <String, Object?>{'id': 'launch', 'message': message, 'finished': finished},
       });
     }
 
@@ -130,21 +141,16 @@ class MockFlutterDebugAdapter extends FlutterDebugAdapter {
           'supportsRestart': supportsRestart,
           'deviceId': 'flutter-tester',
           'mode': 'debug',
-        }
+        },
       });
       sendLaunchProgress(message: 'Step 2…', finished: false);
       sendLaunchProgress(finished: true);
-      simulateStdoutMessage(<String, Object?>{
-        'event': 'app.started',
-      });
+      simulateStdoutMessage(<String, Object?>{'event': 'app.started'});
     }
     if (simulateAppStopError) {
       simulateStdoutMessage(<String, Object?>{
         'event': 'app.stop',
-        'params': <String, Object?>{
-          'appId': 'TEST',
-          'error': 'App stopped due to an error',
-        }
+        'params': <String, Object?>{'appId': 'TEST', 'error': 'App stopped due to an error'},
       });
     }
   }
@@ -163,14 +169,13 @@ class MockFlutterDebugAdapter extends FlutterDebugAdapter {
       final Object? result = _handleReverseRequest(method, params);
 
       // Send the result back in the same way the client would.
-      clientChannel.sendRequest(Request(
-        seq: _seq++,
-        command: 'flutter.sendForwardedRequestResponse',
-        arguments: <String, Object?>{
-          'id': body['id'],
-          'result': result,
-        },
-      ));
+      clientChannel.sendRequest(
+        Request(
+          seq: _seq++,
+          command: 'flutter.sendForwardedRequestResponse',
+          arguments: <String, Object?>{'id': body['id'], 'result': result},
+        ),
+      );
     }
   }
 
@@ -226,7 +231,11 @@ class MockFlutterTestDebugAdapter extends FlutterTestDebugAdapter {
   }) {
     final StreamController<List<int>> stdinController = StreamController<List<int>>();
     final StreamController<List<int>> stdoutController = StreamController<List<int>>();
-    final ByteStreamServerChannel channel = ByteStreamServerChannel(stdinController.stream, stdoutController.sink, null);
+    final ByteStreamServerChannel channel = ByteStreamServerChannel(
+      stdinController.stream,
+      stdoutController.sink,
+      null,
+    );
 
     return MockFlutterTestDebugAdapter._(
       stdinController.sink,
@@ -274,11 +283,11 @@ class MockFlutterTestDebugAdapter extends FlutterTestDebugAdapter {
 
 class MockRequest extends Request {
   MockRequest()
-      : super.fromMap(<String, Object?>{
-          'command': 'mock_command',
-          'type': 'mock_type',
-          'seq': _requestId++,
-        });
+    : super.fromMap(<String, Object?>{
+        'command': 'mock_command',
+        'type': 'mock_type',
+        'seq': _requestId++,
+      });
 
   static int _requestId = 1;
 }

@@ -36,11 +36,7 @@ class MainWidgetState extends State<MainWidget> {
       ),
       body: const Center(
         child: Badge(
-          label: Text(
-            '5',
-            semanticsLabel: '5 new messages',
-            style: TextStyle(color: Colors.white),
-          ),
+          label: Text('5', semanticsLabel: '5 new messages', style: TextStyle(color: Colors.white)),
           backgroundColor: Colors.green,
           child: Icon(Icons.mail, semanticLabel: 'Messages'),
         ),

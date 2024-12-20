@@ -49,7 +49,10 @@ mixin SemanticsBinding on BindingBase {
     assert(_semanticsEnabled.value == (_outstandingHandles > 0));
     return _semanticsEnabled.value;
   }
-  late final ValueNotifier<bool> _semanticsEnabled = ValueNotifier<bool>(platformDispatcher.semanticsEnabled);
+
+  late final ValueNotifier<bool> _semanticsEnabled = ValueNotifier<bool>(
+    platformDispatcher.semanticsEnabled,
+  );
 
   /// Adds a `listener` to be called when [semanticsEnabled] changes.
   ///
@@ -118,9 +121,10 @@ mixin SemanticsBinding on BindingBase {
 
   void _handleSemanticsActionEvent(ui.SemanticsActionEvent action) {
     final Object? arguments = action.arguments;
-    final ui.SemanticsActionEvent decodedAction = arguments is ByteData
-      ? action.copyWith(arguments: const StandardMessageCodec().decodeMessage(arguments))
-      : action;
+    final ui.SemanticsActionEvent decodedAction =
+        arguments is ByteData
+            ? action.copyWith(arguments: const StandardMessageCodec().decodeMessage(arguments))
+            : action;
     performSemanticsAction(decodedAction);
   }
 

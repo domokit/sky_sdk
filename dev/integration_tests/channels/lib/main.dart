@@ -44,17 +44,8 @@ class _TestAppState extends State<TestApp> {
       <String, dynamic>{'key': 42},
     ],
   };
-  static final Uint8List someUint8s = Uint8List.fromList(<int>[
-    0xBA,
-    0x5E,
-    0xBA,
-    0x11,
-  ]);
-  static final Int32List someInt32s = Int32List.fromList(<int>[
-    -0x7fffffff - 1,
-    0,
-    0x7fffffff,
-  ]);
+  static final Uint8List someUint8s = Uint8List.fromList(<int>[0xBA, 0x5E, 0xBA, 0x11]);
+  static final Int32List someInt32s = Int32List.fromList(<int>[-0x7fffffff - 1, 0, 0x7fffffff]);
   static final Int64List someInt64s = Int64List.fromList(<int>[
     -0x7fffffffffffffff - 1,
     0,
@@ -71,8 +62,7 @@ class _TestAppState extends State<TestApp> {
     double.maxFinite,
     double.infinity,
   ]);
-  static final Float64List someFloat64s =
-      Float64List.fromList(<double>[
+  static final Float64List someFloat64s = Float64List.fromList(<double>[
     double.nan,
     double.negativeInfinity,
     -double.maxFinite,
@@ -187,10 +177,7 @@ class _TestAppState extends State<TestApp> {
     });
   }
 
-  Widget _buildTestResultWidget(
-    BuildContext context,
-    AsyncSnapshot<TestStepResult> snapshot,
-  ) {
+  Widget _buildTestResultWidget(BuildContext context, AsyncSnapshot<TestStepResult> snapshot) {
     return TestStepResult.fromSnapshot(snapshot).asWidget(context);
   }
 
@@ -199,15 +186,10 @@ class _TestAppState extends State<TestApp> {
     return MaterialApp(
       title: 'Channels Test',
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Channels Test'),
-        ),
+        appBar: AppBar(title: const Text('Channels Test')),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: FutureBuilder<TestStepResult>(
-            future: _result,
-            builder: _buildTestResultWidget,
-          ),
+          child: FutureBuilder<TestStepResult>(future: _result, builder: _buildTestResultWidget),
         ),
         floatingActionButton: FloatingActionButton(
           key: const ValueKey<String>('step'),

@@ -1,0 +1,99 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/testing/testing.gni")
+
+_public_headers = [ "public/flutter_glfw.h" ]
+
+# Any files that are built by clients (client_wrapper code, library headers for
+# implementations using this shared code, etc.) include the public headers
+# assuming they are in the include path. This configuration should be added to
+# any such code that is also built by GN to make the includes work.
+config("relative_flutter_glfw_headers") {
+  include_dirs = [ "public" ]
+}
+
+# The headers are a separate source set since the client wrapper is allowed
+# to depend on the public headers, but none of the rest of the code.
+source_set("flutter_glfw_headers") {
+  public = _public_headers
+
+  public_deps = [ "//flutter/shell/platform/common:common_cpp_library_headers" ]
+
+  configs +=
+      [ "//flutter/shell/platform/common:desktop_library_implementation" ]
+
+  public_configs =
+      [ "//flutter/shell/platform/common:relative_flutter_library_headers" ]
+}
+
+source_set("flutter_glfw") {
+  public = [ "system_utils.h" ]
+
+  sources = [
+    "event_loop.cc",
+    "event_loop.h",
+    "flutter_glfw.cc",
+    "glfw_event_loop.cc",
+    "glfw_event_loop.h",
+    "headless_event_loop.cc",
+    "headless_event_loop.h",
+    "key_event_handler.cc",
+    "key_event_handler.h",
+    "keyboard_hook_handler.h",
+    "platform_handler.cc",
+    "platform_handler.h",
+    "system_utils.cc",
+    "text_input_plugin.cc",
+    "text_input_plugin.h",
+  ]
+
+  configs +=
+      [ "//flutter/shell/platform/common:desktop_library_implementation" ]
+
+  deps = [
+    ":flutter_glfw_headers",
+    "//flutter/shell/platform/common:common_cpp",
+    "//flutter/shell/platform/common:common_cpp_input",
+    "//flutter/shell/platform/common/client_wrapper:client_wrapper",
+    "//flutter/shell/platform/embedder:embedder_as_internal_library",
+    "//flutter/shell/platform/glfw/client_wrapper:client_wrapper_glfw",
+    "//flutter/third_party/glfw",
+    "//flutter/third_party/rapidjson",
+  ]
+
+  if (is_linux) {
+    libs = [ "GL" ]
+
+    configs += [ "//flutter/shell/platform/linux/config:x11" ]
+  } else if (is_mac) {
+    frameworks = [
+      "CoreVideo.framework",
+      "IOKit.framework",
+    ]
+  }
+}
+
+test_fixtures("flutter_glfw_fixtures") {
+  fixtures = []
+}
+
+executable("flutter_glfw_unittests") {
+  testonly = true
+  sources = [ "system_utils_test.cc" ]
+  deps = [
+    ":flutter_glfw",
+    ":flutter_glfw_fixtures",
+    "//flutter/shell/platform/embedder:embedder_headers",
+    "//flutter/testing",
+  ]
+}
+
+copy("publish_headers_glfw") {
+  sources = _public_headers
+  outputs = [ "$root_out_dir/{{source_file_part}}" ]
+
+  # The GLFW header assumes the presence of the common headers.
+  deps = [ "//flutter/shell/platform/common:publish_headers" ]
+}

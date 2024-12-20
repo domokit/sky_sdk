@@ -17,17 +17,13 @@ class ResizeApp extends StatefulWidget {
   static const Key widthLabel = Key('width label');
   static const Key extendedFab = Key('extended FAB');
 
-  static const MethodChannel platform =
-    MethodChannel('samples.flutter.dev/resize');
+  static const MethodChannel platform = MethodChannel('samples.flutter.dev/resize');
 
   static Future<void> resize(Size size) async {
-    await ResizeApp.platform.invokeMethod<void>(
-      'resize',
-      <String, dynamic>{
-        'width': size.width,
-        'height': size.height,
-      }
-    );
+    await ResizeApp.platform.invokeMethod<void>('resize', <String, dynamic>{
+      'width': size.width,
+      'height': size.height,
+    });
   }
 
   @override
@@ -57,19 +53,13 @@ class _ResizeAppState extends State<ResizeApp> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
-                    key: ResizeApp.widthLabel,
-                    'width: ${currentSize.width}'
-                  ),
-                  Text(
-                    key: ResizeApp.heightLabel,
-                    'height: ${currentSize.height}',
-                  ),
+                  Text(key: ResizeApp.widthLabel, 'width: ${currentSize.width}'),
+                  Text(key: ResizeApp.heightLabel, 'height: ${currentSize.height}'),
                 ],
               ),
             ),
           );
-        }
+        },
       ),
     );
   }

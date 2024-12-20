@@ -28,23 +28,16 @@ AndroidWorkflow? get androidWorkflow => context.get<AndroidWorkflow>();
 AndroidValidator? get androidValidator => context.get<AndroidValidator>();
 AndroidLicenseValidator? get androidLicenseValidator => context.get<AndroidLicenseValidator>();
 
-enum LicensesAccepted {
-  none,
-  some,
-  all,
-  unknown,
-}
+enum LicensesAccepted { none, some, all, unknown }
 
 final RegExp licenseCounts = RegExp(r'(\d+) of (\d+) SDK package licenses? not accepted.');
 final RegExp licenseNotAccepted = RegExp(r'licenses? not accepted', caseSensitive: false);
 final RegExp licenseAccepted = RegExp(r'All SDK package licenses accepted.');
 
 class AndroidWorkflow implements Workflow {
-  AndroidWorkflow({
-    required AndroidSdk? androidSdk,
-    required FeatureFlags featureFlags,
-  }) : _androidSdk = androidSdk,
-       _featureFlags = featureFlags;
+  AndroidWorkflow({required AndroidSdk? androidSdk, required FeatureFlags featureFlags})
+    : _androidSdk = androidSdk,
+      _featureFlags = featureFlags;
 
   final AndroidSdk? _androidSdk;
   final FeatureFlags _featureFlags;
@@ -53,13 +46,15 @@ class AndroidWorkflow implements Workflow {
   bool get appliesToHostPlatform => _featureFlags.isAndroidEnabled;
 
   @override
-  bool get canListDevices => appliesToHostPlatform && _androidSdk != null
-    && _androidSdk.adbPath != null;
+  bool get canListDevices =>
+      appliesToHostPlatform && _androidSdk != null && _androidSdk.adbPath != null;
 
   @override
-  bool get canLaunchDevices => appliesToHostPlatform && _androidSdk != null
-    && _androidSdk.adbPath != null
-    && _androidSdk.validateSdkWellFormed().isEmpty;
+  bool get canLaunchDevices =>
+      appliesToHostPlatform &&
+      _androidSdk != null &&
+      _androidSdk.adbPath != null &&
+      _androidSdk.validateSdkWellFormed().isEmpty;
 
   @override
   bool get canListEmulators => canListDevices && _androidSdk?.emulatorPath != null;
@@ -105,14 +100,13 @@ class AndroidValidator extends DoctorValidator {
         messages.add(ValidationMessage.error(_userMessages.androidMissingJdk));
         return false;
       }
-      messages.add(ValidationMessage(
-        _androidJdkLocationMessage(
-          _java!.binaryPath,
-          _java.javaSource,
-        ),
-      ));
+      messages.add(
+        ValidationMessage(_androidJdkLocationMessage(_java!.binaryPath, _java.javaSource)),
+      );
       if (!_java.canRun()) {
-        messages.add(ValidationMessage.error(_userMessages.androidCantRunJavaBinary(_java.binaryPath)));
+        messages.add(
+          ValidationMessage.error(_userMessages.androidCantRunJavaBinary(_java.binaryPath)),
+        );
         return false;
       }
       Version? javaVersion;
@@ -127,7 +121,9 @@ class AndroidValidator extends DoctorValidator {
         return false;
       }
       if (javaVersion < kAndroidJavaMinVersion) {
-        messages.add(ValidationMessage.error(_userMessages.androidJavaMinimumVersion(javaVersion.toString())));
+        messages.add(
+          ValidationMessage.error(_userMessages.androidJavaMinimumVersion(javaVersion.toString())),
+        );
         return false;
       }
       messages.add(ValidationMessage(_userMessages.androidJavaVersion(javaVersion.toString())));
@@ -145,11 +141,15 @@ class AndroidValidator extends DoctorValidator {
       // No Android SDK found.
       if (_platform.environment.containsKey(kAndroidHome)) {
         final String androidHomeDir = _platform.environment[kAndroidHome]!;
-        messages.add(ValidationMessage.error(_userMessages.androidBadSdkDir(kAndroidHome, androidHomeDir)));
+        messages.add(
+          ValidationMessage.error(_userMessages.androidBadSdkDir(kAndroidHome, androidHomeDir)),
+        );
       } else {
         // Instruct user to set [kAndroidSdkRoot] and not deprecated [kAndroidHome]
         // See https://github.com/flutter/flutter/issues/39301
-        messages.add(ValidationMessage.error(_userMessages.androidMissingSdkInstructions(_platform)));
+        messages.add(
+          ValidationMessage.error(_userMessages.androidMissingSdkInstructions(_platform)),
+        );
       }
       return ValidationResult(ValidationType.missing, messages);
     }
@@ -171,21 +171,31 @@ class AndroidValidator extends DoctorValidator {
     String? sdkVersionText;
     final AndroidSdkVersion? androidSdkLatestVersion = androidSdk.latestVersion;
     if (androidSdkLatestVersion != null) {
-      if (androidSdkLatestVersion.sdkLevel < kAndroidSdkMinVersion || androidSdkLatestVersion.buildToolsVersion < kAndroidSdkBuildToolsMinVersion) {
-        messages.add(ValidationMessage.error(
-          _userMessages.androidSdkBuildToolsOutdated(
-            kAndroidSdkMinVersion,
-            kAndroidSdkBuildToolsMinVersion.toString(),
-            _platform,
-          )),
+      if (androidSdkLatestVersion.sdkLevel < kAndroidSdkMinVersion ||
+          androidSdkLatestVersion.buildToolsVersion < kAndroidSdkBuildToolsMinVersion) {
+        messages.add(
+          ValidationMessage.error(
+            _userMessages.androidSdkBuildToolsOutdated(
+              kAndroidSdkMinVersion,
+              kAndroidSdkBuildToolsMinVersion.toString(),
+              _platform,
+            ),
+          ),
         );
         return ValidationResult(ValidationType.missing, messages);
       }
-      sdkVersionText = _userMessages.androidStatusInfo(androidSdkLatestVersion.buildToolsVersionName);
+      sdkVersionText = _userMessages.androidStatusInfo(
+        androidSdkLatestVersion.buildToolsVersionName,
+      );
 
-      messages.add(ValidationMessage(_userMessages.androidSdkPlatformToolsVersion(
-        androidSdkLatestVersion.platformName,
-        androidSdkLatestVersion.buildToolsVersionName)));
+      messages.add(
+        ValidationMessage(
+          _userMessages.androidSdkPlatformToolsVersion(
+            androidSdkLatestVersion.platformName,
+            androidSdkLatestVersion.buildToolsVersionName,
+          ),
+        ),
+      );
     } else {
       messages.add(ValidationMessage.error(_userMessages.androidMissingSdkInstructions(_platform)));
     }
@@ -204,9 +214,11 @@ class AndroidValidator extends DoctorValidator {
 
     if (validationResult.isNotEmpty) {
       // Android SDK is not functional.
-      messages.addAll(validationResult.map<ValidationMessage>((String message) {
-        return ValidationMessage.error(message);
-      }));
+      messages.addAll(
+        validationResult.map<ValidationMessage>((String message) {
+          return ValidationMessage.error(message);
+        }),
+      );
       messages.add(ValidationMessage(_userMessages.androidSdkInstallHelp(_platform)));
       return ValidationResult(ValidationType.partial, messages, statusInfo: sdkVersionText);
     }
@@ -259,13 +271,16 @@ class AndroidLicenseValidator extends DoctorValidator {
     final List<ValidationMessage> messages = <ValidationMessage>[];
 
     // Match pre-existing early termination behavior
-    if (_androidSdk == null || _androidSdk.latestVersion == null ||
+    if (_androidSdk == null ||
+        _androidSdk.latestVersion == null ||
         _androidSdk.validateSdkWellFormed().isNotEmpty ||
-        ! await _checkJavaVersionNoOutput()) {
+        !await _checkJavaVersionNoOutput()) {
       return ValidationResult(ValidationType.missing, messages);
     }
 
-    final String sdkVersionText = _userMessages.androidStatusInfo(_androidSdk.latestVersion!.buildToolsVersionName);
+    final String sdkVersionText = _userMessages.androidStatusInfo(
+      _androidSdk.latestVersion!.buildToolsVersionName,
+    );
 
     // Check for licenses.
     switch (await licensesAccepted) {
@@ -336,23 +351,25 @@ class AndroidLicenseValidator extends DoctorValidator {
     }
 
     try {
-      final Process process = await _processManager.start(
-        <String>[_androidSdk!.sdkManagerPath!, '--licenses'],
-        environment: _java?.environment,
-      );
+      final Process process = await _processManager.start(<String>[
+        _androidSdk!.sdkManagerPath!,
+        '--licenses',
+      ], environment: _java?.environment);
       await ProcessUtils.writelnToStdinUnsafe(stdin: process.stdin, line: 'n');
       // We expect logcat streams to occasionally contain invalid utf-8,
       // see: https://github.com/flutter/flutter/pull/8864.
-      final Future<void> output = process.stdout
-        .transform<String>(const Utf8Decoder(reportErrors: false))
-        .transform<String>(const LineSplitter())
-        .listen(handleLine)
-        .asFuture<void>();
-      final Future<void> errors = process.stderr
-        .transform<String>(const Utf8Decoder(reportErrors: false))
-        .transform<String>(const LineSplitter())
-        .listen(handleLine)
-        .asFuture<void>();
+      final Future<void> output =
+          process.stdout
+              .transform<String>(const Utf8Decoder(reportErrors: false))
+              .transform<String>(const LineSplitter())
+              .listen(handleLine)
+              .asFuture<void>();
+      final Future<void> errors =
+          process.stderr
+              .transform<String>(const Utf8Decoder(reportErrors: false))
+              .transform<String>(const LineSplitter())
+              .listen(handleLine)
+              .asFuture<void>();
       await Future.wait<void>(<Future<void>>[output, errors]);
       return status ?? LicensesAccepted.unknown;
     } on IOException catch (e) {
@@ -371,28 +388,30 @@ class AndroidLicenseValidator extends DoctorValidator {
     if (!_canRunSdkManager()) {
       throwToolExit(
         'Android sdkmanager not found. Update to the latest Android SDK and ensure that '
-        'the cmdline-tools are installed to resolve this.'
+        'the cmdline-tools are installed to resolve this.',
       );
     }
 
     try {
-      final Process process = await _processManager.start(
-        <String>[_androidSdk.sdkManagerPath!, '--licenses'],
-        environment: _java?.environment,
-      );
+      final Process process = await _processManager.start(<String>[
+        _androidSdk.sdkManagerPath!,
+        '--licenses',
+      ], environment: _java?.environment);
 
       // The real stdin will never finish streaming. Pipe until the child process
       // finishes.
-      unawaited(process.stdin.addStream(_stdio.stdin)
-        // If the process exits unexpectedly with an error, that will be
-        // handled by the caller.
-        .then(
-          (Object? socket) => socket,
-          onError: (dynamic err, StackTrace stack) {
-            _logger.printTrace('Echoing stdin to the licenses subprocess failed:');
-            _logger.printTrace('$err\n$stack');
-          },
-        ),
+      unawaited(
+        process.stdin
+            .addStream(_stdio.stdin)
+            // If the process exits unexpectedly with an error, that will be
+            // handled by the caller.
+            .then(
+              (Object? socket) => socket,
+              onError: (dynamic err, StackTrace stack) {
+                _logger.printTrace('Echoing stdin to the licenses subprocess failed:');
+                _logger.printTrace('$err\n$stack');
+              },
+            ),
       );
 
       final List<String> stderrLines = <String>[];
@@ -417,11 +436,13 @@ class AndroidLicenseValidator extends DoctorValidator {
       }
       return true;
     } on ProcessException catch (e) {
-      throwToolExit(_userMessages.androidCannotRunSdkManager(
-        _androidSdk.sdkManagerPath ?? '',
-        e.toString(),
-        _platform,
-      ));
+      throwToolExit(
+        _userMessages.androidCannotRunSdkManager(
+          _androidSdk.sdkManagerPath ?? '',
+          e.toString(),
+          _platform,
+        ),
+      );
     }
   }
 
@@ -433,23 +454,23 @@ class AndroidLicenseValidator extends DoctorValidator {
     return _processManager.canRun(sdkManagerPath);
   }
 
-  String _messageForSdkManagerError(
-    List<String> androidSdkStderr,
-    int exitCode,
-  ) {
+  String _messageForSdkManagerError(List<String> androidSdkStderr, int exitCode) {
     final String sdkManagerPath = _androidSdk!.sdkManagerPath!;
 
     final bool failedDueToJdkIncompatibility = androidSdkStderr.join().contains(
-      RegExp(r'java\.lang\.UnsupportedClassVersionError.*SdkManagerCli '
-        r'has been compiled by a more recent version of the Java Runtime'));
+      RegExp(
+        r'java\.lang\.UnsupportedClassVersionError.*SdkManagerCli '
+        r'has been compiled by a more recent version of the Java Runtime',
+      ),
+    );
 
     if (failedDueToJdkIncompatibility) {
       return 'Android sdkmanager tool was found, but failed to run ($sdkManagerPath): "exited code $exitCode".\n'
-        'It appears the version of the Java binary used (${_java!.binaryPath}) is '
-        'too out-of-date and is incompatible with the Android sdkmanager tool.\n'
-        'If the Java binary came bundled with Android Studio, consider updating '
-        'your installation of Android studio. Alternatively, you can uninstall '
-        'the Android SDK command-line tools and install an earlier version. ';
+          'It appears the version of the Java binary used (${_java!.binaryPath}) is '
+          'too out-of-date and is incompatible with the Android sdkmanager tool.\n'
+          'If the Java binary came bundled with Android Studio, consider updating '
+          'your installation of Android studio. Alternatively, you can uninstall '
+          'the Android SDK command-line tools and install an earlier version. ';
     }
 
     return _userMessages.androidCannotRunSdkManager(
@@ -465,20 +486,17 @@ String _androidJdkLocationMessage(String location, JavaSource source) {
     JavaSource.androidStudio || JavaSource.path || JavaSource.javaHome =>
       'To manually set the JDK path, use: `flutter config --jdk-dir="path/to/jdk"`.',
     JavaSource.flutterConfig =>
-      'To change the current JDK, run: `flutter config --jdk-dir="path/to/jdk"`.'
+      'To change the current JDK, run: `flutter config --jdk-dir="path/to/jdk"`.',
   };
   final String sourceMessagePart = switch (source) {
     JavaSource.androidStudio =>
       'This is the JDK bundled with the latest Android Studio installation on this machine.',
-    JavaSource.javaHome =>
-      'This JDK is specified by the JAVA_HOME environment variable.',
-    JavaSource.path =>
-      'This JDK was found in the system PATH.',
-    JavaSource.flutterConfig =>
-      'This JDK is specified in your Flutter configuration.',
+    JavaSource.javaHome => 'This JDK is specified by the JAVA_HOME environment variable.',
+    JavaSource.path => 'This JDK was found in the system PATH.',
+    JavaSource.flutterConfig => 'This JDK is specified in your Flutter configuration.',
   };
 
   return 'Java binary at: $location\n'
-  '$sourceMessagePart\n'
-  '$setWithConfigBreadcrumb';
+      '$sourceMessagePart\n'
+      '$setWithConfigBreadcrumb';
 }

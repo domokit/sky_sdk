@@ -1,0 +1,953 @@
+{
+  "builds": [
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--ios",
+        "--runtime-mode",
+        "debug",
+        "--no-stripped",
+        "--no-lto",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/ios_debug",
+      "description": "Builds a debug mode engine that targets iOS from a macOS host.",
+      "ninja": {
+        "config": "ios_debug",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--ios",
+        "--runtime-mode",
+        "debug",
+        "--unoptimized",
+        "--no-stripped",
+        "--no-lto",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/ios_debug_unopt",
+      "description": "Builds an unoptimized debug mode engine that targets iOS from a macOS host.",
+      "ninja": {
+        "config": "ios_debug_unopt",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--ios",
+        "--runtime-mode",
+        "profile",
+        "--no-stripped",
+        "--no-lto",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/ios_profile",
+      "description": "Builds a profile mode engine that targets iOS from a macOS host.",
+      "ninja": {
+        "config": "ios_profile",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--ios",
+        "--runtime-mode",
+        "release",
+        "--no-stripped",
+        "--no-lto",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/ios_release",
+      "description": "Builds a release mode engine that targets iOS from a macOS host.",
+      "ninja": {
+        "config": "ios_release",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--ios",
+        "--simulator",
+        "--runtime-mode",
+        "debug",
+        "--no-stripped",
+        "--no-lto",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/ios_debug_sim",
+      "description": "Builds a debug mode engine that targets the x64 iOS simulator from a macOS host.",
+      "ninja": {
+        "config": "ios_debug_sim",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--ios",
+        "--simulator",
+        "--simulator-cpu=arm64",
+        "--runtime-mode",
+        "debug",
+        "--unoptimized",
+        "--no-stripped",
+        "--no-lto",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/ios_debug_sim_unopt_arm64",
+      "description": "Builds an unoptimized debug mode engine that targets the arm64 iOS simulator from a macOS host.",
+      "ninja": {
+        "config": "ios_debug_sim_unopt_arm64",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "debug",
+        "--android",
+        "--android-cpu=arm64",
+        "--no-stripped",
+        "--no-lto",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/android_debug_arm64",
+      "description": "Builds a debug mode engine that targets 64-bit arm Android from a macOS host.",
+      "ninja": {
+        "config": "android_debug_arm64",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Linux",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "debug",
+        "--android",
+        "--android-cpu=arm64",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "linux/android_debug_arm64",
+      "description": "Builds a debug mode engine that targets 64-bit arm Android from a Linux host.",
+      "ninja": {
+        "config": "android_debug_arm64",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Linux",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "debug",
+        "--unoptimized",
+        "--android",
+        "--android-cpu=arm64",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "linux/android_debug_unopt_arm64",
+      "description": "Builds an unoptimized debug mode engine that targets 64-bit arm Android from a Linux host.",
+      "ninja": {
+        "config": "android_debug_unopt_arm64",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Linux",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "debug",
+        "--unoptimized",
+        "--android",
+        "--android-cpu=x64",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "linux/android_debug_unopt_x64",
+      "description": "Builds an unoptimized debug mode engine that targets 64-bit x64 Android from a Linux host.",
+      "ninja": {
+        "config": "android_debug_unopt_x64",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Windows-10",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "debug",
+        "--android",
+        "--android-cpu=arm64",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "windows/android_debug_arm64",
+      "description": "Builds a debug mode engine that targets 64-bit arm Android from a Windows host.",
+      "ninja": {
+        "config": "android_debug_arm64",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "debug",
+        "--unoptimized",
+        "--android",
+        "--android-cpu=arm64",
+        "--no-stripped",
+        "--no-lto",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/android_debug_unopt_arm64",
+      "description": "Builds a debug mode unopt engine that targets 64-bit arm Android from a macOS host.",
+      "ninja": {
+        "config": "android_debug_unopt_arm64",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "profile",
+        "--android",
+        "--android-cpu=arm64",
+        "--no-stripped",
+        "--no-lto",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/android_profile_arm64",
+      "description": "Builds a profile mode engine that targets 64-bit arm Android from a macOS host.",
+      "ninja": {
+        "config": "android_profile_arm64",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Linux",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "profile",
+        "--android",
+        "--android-cpu=arm64",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "linux/android_profile_arm64",
+      "description": "Builds a profile mode engine that targets 64-bit arm Android from a Linux host.",
+      "ninja": {
+        "config": "android_profile_arm64",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Windows-10",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "profile",
+        "--android",
+        "--android-cpu=arm64",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "windows/android_profile_arm64",
+      "description": "Builds a profile mode engine that targets 64-bit arm Android from a Windows host.",
+      "ninja": {
+        "config": "android_profile_arm64",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "release",
+        "--android",
+        "--android-cpu=arm64",
+        "--no-stripped",
+        "--no-lto",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/android_release_arm64",
+      "description": "Builds a release mode engine that targets 64-bit arm Android from a macOS host.",
+      "ninja": {
+        "config": "android_release_arm64",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Linux",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "release",
+        "--android",
+        "--android-cpu=arm64",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "linux/android_release_arm64",
+      "description": "Builds a release mode engine that targets 64-bit arm Android from a Linux host.",
+      "ninja": {
+        "config": "android_release_arm64",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Windows-10",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "release",
+        "--android",
+        "--android-cpu=arm64",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "windows/android_release_arm64",
+      "description": "Builds a release mode engine that targets 64-bit arm Android from a Windows host.",
+      "ninja": {
+        "config": "android_release_arm64",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "debug",
+        "--no-stripped",
+        "--no-lto",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/host_debug",
+      "description": "Builds a debug mode engine for a macOS host.",
+      "ninja": {
+        "config": "host_debug",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "debug",
+        "--unopt",
+        "--mac-cpu",
+        "arm64",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/host_debug_unopt_arm64",
+      "description": "Builds a debug mode engine for a macOS host on arm64.",
+      "ninja": {
+        "config": "host_debug_unopt_arm64",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "profile",
+        "--no-lto",
+        "--mac-cpu",
+        "arm64",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/host_profile_arm64",
+      "description": "Builds a profile mode engine for a macOS host on arm64.",
+      "ninja": {
+        "config": "host_profile_arm64",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "release",
+        "--no-lto",
+        "--mac-cpu",
+        "arm64",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/host_release_arm64",
+      "description": "Builds a release mode engine for a macOS host on arm64.",
+      "ninja": {
+        "config": "host_release_arm64",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Linux",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "debug",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "linux/host_debug",
+      "description": "Builds a debug mode engine for a Linux host.",
+      "ninja": {
+        "config": "host_debug",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Linux",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "debug",
+        "--unoptimized",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "linux/host_debug_unopt",
+      "description": "Builds an unoptimized debug mode engine for a Linux host.",
+      "ninja": {
+        "config": "host_debug_unopt",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Windows-10",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "debug",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "windows/host_debug",
+      "description": "Builds a debug mode engine for a Windows host.",
+      "ninja": {
+        "config": "host_debug",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Windows-10",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "debug",
+        "--unoptimized",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "windows/host_debug_unopt",
+      "description": "Builds an unoptimized debug mode engine for a Windows host.",
+      "ninja": {
+        "config": "host_debug_unopt",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "profile",
+        "--no-stripped",
+        "--no-lto",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/host_profile",
+      "description": "Builds a profile mode engine for a macOS host.",
+      "ninja": {
+        "config": "host_profile",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Linux",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "profile",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "linux/host_profile",
+      "description": "Builds a profile mode engine for a Linux host.",
+      "ninja": {
+        "config": "host_profile",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Windows-10",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "profile",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "windows/host_profile",
+      "description": "Builds a profile mode engine for a Windows host.",
+      "ninja": {
+        "config": "host_profile",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Mac-13|Mac-14",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "release",
+        "--no-stripped",
+        "--no-lto",
+        "--xcode-symlinks",
+        "--rbe",
+        "--no-goma"
+      ],
+      "name": "macos/host_release",
+      "description": "Builds a release mode engine for a macOS host.",
+      "ninja": {
+        "config": "host_release",
+        "targets": []
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "sdk_version": "15a240d"
+        }
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Linux",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "release",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma",
+        "--xcode-symlinks"
+      ],
+      "name": "linux/host_release",
+      "description": "Builds a release mode engine for a Linux host.",
+      "ninja": {
+        "config": "host_release",
+        "targets": []
+      }
+    },
+    {
+      "cas_archive": false,
+      "drone_dimensions": [
+        "os=Windows-10",
+        "device_type=none"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+      },
+      "gn": [
+        "--runtime-mode",
+        "release",
+        "--no-stripped",
+        "--no-lto",
+        "--rbe",
+        "--no-goma",
+        "--xcode-symlinks"
+      ],
+      "name": "windows/host_release",
+      "description": "Builds a release mode engine for a Windows host.",
+      "ninja": {
+        "config": "host_release",
+        "targets": []
+      }
+    }
+  ]
+}

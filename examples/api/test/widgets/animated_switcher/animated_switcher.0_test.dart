@@ -3,15 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/animated_switcher/animated_switcher.0.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/animated_switcher/animated_switcher.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Increments counter on button tap', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.AnimatedSwitcherExampleApp(),
-    );
+    await tester.pumpWidget(const example.AnimatedSwitcherExampleApp());
 
     int counter = 0;
 
@@ -20,10 +17,7 @@ void main() {
     while (counter < 10) {
       // Tap on the button to increment the counter.
       await tester.tap(
-        find.ancestor(
-          of: find.text('Increment'),
-          matching: find.byType(ElevatedButton),
-        ),
+        find.ancestor(of: find.text('Increment'), matching: find.byType(ElevatedButton)),
       );
       await tester.pumpAndSettle();
 
@@ -35,9 +29,7 @@ void main() {
   });
 
   testWidgets('Animates counter change', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.AnimatedSwitcherExampleApp(),
-    );
+    await tester.pumpWidget(const example.AnimatedSwitcherExampleApp());
 
     // The animation duration defined in the example app.
     const Duration animationDuration = Duration(milliseconds: 500);
@@ -59,10 +51,7 @@ void main() {
 
     // Tap on the button to increment the counter.
     await tester.tap(
-      find.ancestor(
-        of: find.text('Increment'),
-        matching: find.byType(ElevatedButton),
-      ),
+      find.ancestor(of: find.text('Increment'), matching: find.byType(ElevatedButton)),
     );
     await tester.pump();
 

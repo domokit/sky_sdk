@@ -1,0 +1,73 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/toolchain/toolchain.gni")
+import("//flutter/common/fuchsia_config.gni")
+
+# The inputs to this template are 'binary_path' and a boolean 'unstripped'.
+# If 'unstripped' is specified, we append '.debug' to the symbols name.
+template("_copy_debug_symbols") {
+  assert(defined(invoker.binary_path), "'binary_path' needs to be defined.")
+  assert(defined(invoker.unstripped), "'unstripped' needs to be defined.")
+
+  action(target_name) {
+    forward_variables_from(invoker,
+                           [
+                             "deps",
+                             "unstripped",
+                             "binary_path",
+                             "testonly",
+                           ])
+
+    script = "//flutter/tools/fuchsia/copy_debug_symbols.py"
+
+    sources = [ binary_path ]
+
+    _dest_base = "${root_out_dir}/.build-id"
+
+    args = [
+      "--executable-name",
+      target_name,
+      "--executable-path",
+      rebase_path(binary_path),
+      "--destination-base",
+      rebase_path(_dest_base),
+      "--read-elf",
+      rebase_path(
+          "$buildtools_path/${host_os}-${host_cpu}/clang/bin/llvm-readelf"),
+    ]
+
+    if (unstripped) {
+      args += [ "--unstripped" ]
+    }
+
+    outputs = [ "${_dest_base}/.${target_name}_success" ]
+  }
+}
+
+# Takes a binary and generates its debug symbols following
+# the Fuchsia packaging convention.
+template("fuchsia_debug_symbols") {
+  assert(defined(invoker.binary), "'binary' needs to be defined.")
+
+  _copy_debug_symbols("_${target_name}_stripped") {
+    forward_variables_from(invoker, "*")
+    binary_path = rebase_path("${root_out_dir}/$binary")
+    unstripped = false
+  }
+
+  _copy_debug_symbols("_${target_name}_unstripped") {
+    forward_variables_from(invoker, "*")
+    binary_path = "${root_out_dir}/exe.unstripped/$binary"
+    unstripped = true
+  }
+
+  group(target_name) {
+    forward_variables_from(invoker, [ "testonly" ])
+    deps = [
+      ":_${target_name}_stripped",
+      ":_${target_name}_unstripped",
+    ]
+  }
+}

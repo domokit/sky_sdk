@@ -1,0 +1,29 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+flutter_defines = [
+  # Flutter always wants this https://github.com/flutter/flutter/issues/11402
+  "SK_ENABLE_DUMP_GPU",
+
+  # Remove software rasterizers to save some code size.
+  "SK_FORCE_AAA",
+
+  # Staging
+  "SK_LEGACY_IGNORE_DRAW_VERTICES_BLEND_WITH_NO_SHADER",
+  "SK_DISABLE_LEGACY_METAL_BACKEND_SURFACE",
+  "SK_DISABLE_LEGACY_PARAGRAPH_UNICODE",
+
+  # Fast low-precision software rendering isn't a priority for Flutter.
+  "SK_DISABLE_LEGACY_SHADERCONTEXT",
+  "SK_DISABLE_LOWP_RASTER_PIPELINE",
+  "SK_FORCE_RASTER_PIPELINE_BLITTER",
+
+  # When running Metal, ensure that command buffers are scheduled before
+  # returning from submit.
+  "SK_METAL_WAIT_UNTIL_SCHEDULED",
+]
+
+if (!is_fuchsia) {
+  flutter_defines += [ "SK_DISABLE_EFFECT_DESERIALIZATION" ]
+}

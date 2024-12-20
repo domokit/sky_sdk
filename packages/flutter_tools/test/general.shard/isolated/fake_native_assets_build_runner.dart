@@ -11,8 +11,7 @@ export 'package:native_assets_cli/code_assets_builder.dart' show CodeAsset, Dyna
 
 /// Mocks all logic instead of using `package:native_assets_builder`, which
 /// relies on doing process calls to `pub` and the local file system.
-class FakeFlutterNativeAssetsBuildRunner
-    implements FlutterNativeAssetsBuildRunner {
+class FakeFlutterNativeAssetsBuildRunner implements FlutterNativeAssetsBuildRunner {
   FakeFlutterNativeAssetsBuildRunner({
     this.hasPackageConfigResult = true,
     this.packagesWithNativeAssetsResult = const <Package>[],
@@ -22,9 +21,8 @@ class FakeFlutterNativeAssetsBuildRunner
     this.linkResult = const FakeFlutterNativeAssetsBuilderResult(),
     CCompilerConfig? cCompilerConfigResult,
     CCompilerConfig? ndkCCompilerConfigResult,
-  })  : cCompilerConfigResult = cCompilerConfigResult ?? CCompilerConfig(),
-        ndkCCompilerConfigResult =
-            ndkCCompilerConfigResult ?? CCompilerConfig();
+  }) : cCompilerConfigResult = cCompilerConfigResult ?? CCompilerConfig(),
+       ndkCCompilerConfigResult = ndkCCompilerConfigResult ?? CCompilerConfig();
 
   final BuildResult? Function(BuildConfig)? onBuild;
   final LinkResult? Function(LinkConfig)? onLink;
@@ -56,21 +54,19 @@ class FakeFlutterNativeAssetsBuildRunner
   }) async {
     BuildResult? result = buildResult;
     for (final Package package in packagesWithNativeAssetsResult) {
-      final BuildConfigBuilder configBuilder = configCreator()
-          ..setupHookConfig(
-            packageRoot: package.root,
-            packageName: package.name,
-            targetOS: targetOS,
-            supportedAssetTypes: supportedAssetTypes,
-            buildMode: buildMode,
-          )
-          ..setupBuildConfig(
-            dryRun: false,
-            linkingEnabled: linkingEnabled,
+      final BuildConfigBuilder configBuilder =
+          configCreator()
+            ..setupHookConfig(
+              packageRoot: package.root,
+              packageName: package.name,
+              targetOS: targetOS,
+              supportedAssetTypes: supportedAssetTypes,
+              buildMode: buildMode,
             )
-          ..setupBuildRunConfig(
-            outputDirectory: Uri.parse('build-out-dir'),
-            outputDirectoryShared: Uri.parse('build-out-dir-shared'),
+            ..setupBuildConfig(dryRun: false, linkingEnabled: linkingEnabled)
+            ..setupBuildRunConfig(
+              outputDirectory: Uri.parse('build-out-dir'),
+              outputDirectoryShared: Uri.parse('build-out-dir-shared'),
             );
       final BuildConfig buildConfig = BuildConfig(configBuilder.json);
       if (onBuild != null) {
@@ -97,19 +93,20 @@ class FakeFlutterNativeAssetsBuildRunner
   }) async {
     LinkResult? result = linkResult;
     for (final Package package in packagesWithNativeAssetsResult) {
-      final LinkConfigBuilder configBuilder = configCreator()
-          ..setupHookConfig(
-            packageRoot: package.root,
-            packageName: package.name,
-            targetOS: targetOS,
-            supportedAssetTypes: supportedAssetTypes,
-            buildMode: buildMode,
-          )
-          ..setupLinkRunConfig(
-            outputDirectory: Uri.parse('build-out-dir'),
-            outputDirectoryShared: Uri.parse('build-out-dir-shared'),
-            recordedUsesFile: null,
-          );
+      final LinkConfigBuilder configBuilder =
+          configCreator()
+            ..setupHookConfig(
+              packageRoot: package.root,
+              packageName: package.name,
+              targetOS: targetOS,
+              supportedAssetTypes: supportedAssetTypes,
+              buildMode: buildMode,
+            )
+            ..setupLinkRunConfig(
+              outputDirectory: Uri.parse('build-out-dir'),
+              outputDirectoryShared: Uri.parse('build-out-dir-shared'),
+              recordedUsesFile: null,
+            );
       final LinkConfig buildConfig = LinkConfig(configBuilder.json);
       if (onLink != null) {
         result = onLink!(buildConfig);
@@ -139,8 +136,7 @@ class FakeFlutterNativeAssetsBuildRunner
   Future<CCompilerConfig> get ndkCCompilerConfig async => cCompilerConfigResult;
 }
 
-final class FakeFlutterNativeAssetsBuilderResult
-    implements BuildResult, LinkResult {
+final class FakeFlutterNativeAssetsBuilderResult implements BuildResult, LinkResult {
   const FakeFlutterNativeAssetsBuilderResult({
     this.encodedAssets = const <EncodedAsset>[],
     this.encodedAssetsForLinking = const <String, List<EncodedAsset>>{},
@@ -159,8 +155,7 @@ final class FakeFlutterNativeAssetsBuilderResult
       encodedAssetsForLinking: <String, List<EncodedAsset>>{
         for (final String linkerName in codeAssetsForLinking.keys)
           linkerName: <EncodedAsset>[
-            for (final CodeAsset codeAsset in codeAssetsForLinking[linkerName]!)
-              codeAsset.encode(),
+            for (final CodeAsset codeAsset in codeAssetsForLinking[linkerName]!) codeAsset.encode(),
           ],
       },
       dependencies: dependencies,

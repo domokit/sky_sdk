@@ -1,0 +1,127 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("glfw_args.gni")
+
+_checkout_dir = "//flutter/third_party/glfw"
+
+config("relative_glfw_headers") {
+  include_dirs = [
+    "$_checkout_dir/include",
+    "$_checkout_dir/include/GLFW",
+  ]
+}
+
+source_set("glfw") {
+  public = [
+    "$_checkout_dir/include/GLFW/glfw3.h",
+    "$_checkout_dir/include/GLFW/glfw3native.h",
+  ]
+
+  sources = [
+    "$_checkout_dir/src/context.c",
+    "$_checkout_dir/src/egl_context.c",
+    "$_checkout_dir/src/init.c",
+    "$_checkout_dir/src/input.c",
+    "$_checkout_dir/src/monitor.c",
+    "$_checkout_dir/src/null_init.c",
+    "$_checkout_dir/src/null_joystick.c",
+    "$_checkout_dir/src/null_joystick.h",
+    "$_checkout_dir/src/null_monitor.c",
+    "$_checkout_dir/src/null_platform.h",
+    "$_checkout_dir/src/null_window.c",
+    "$_checkout_dir/src/osmesa_context.c",
+    "$_checkout_dir/src/platform.c",
+    "$_checkout_dir/src/vulkan.c",
+    "$_checkout_dir/src/window.c",
+  ]
+
+  include_dirs = [ "$_checkout_dir/src" ]
+
+  public_configs = [ ":relative_glfw_headers" ]
+
+  if (is_win) {
+    sources += [
+      "$_checkout_dir/src/wgl_context.c",
+      "$_checkout_dir/src/win32_init.c",
+      "$_checkout_dir/src/win32_joystick.c",
+      "$_checkout_dir/src/win32_joystick.h",
+      "$_checkout_dir/src/win32_module.c",
+      "$_checkout_dir/src/win32_monitor.c",
+      "$_checkout_dir/src/win32_platform.h",
+      "$_checkout_dir/src/win32_thread.c",
+      "$_checkout_dir/src/win32_time.c",
+      "$_checkout_dir/src/win32_window.c",
+    ]
+
+    libs = [ "Gdi32.lib" ]
+
+    defines = [ "_GLFW_WIN32" ]
+  } else if (is_linux) {
+    sources += [
+      "$_checkout_dir/src/glx_context.c",
+      "$_checkout_dir/src/linux_joystick.c",
+      "$_checkout_dir/src/linux_joystick.h",
+      "$_checkout_dir/src/posix_module.c",
+      "$_checkout_dir/src/posix_poll.c",
+      "$_checkout_dir/src/posix_poll.h",
+      "$_checkout_dir/src/posix_thread.c",
+      "$_checkout_dir/src/posix_thread.h",
+      "$_checkout_dir/src/posix_time.c",
+      "$_checkout_dir/src/posix_time.h",
+      "$_checkout_dir/src/x11_init.c",
+      "$_checkout_dir/src/x11_monitor.c",
+      "$_checkout_dir/src/x11_platform.h",
+      "$_checkout_dir/src/x11_window.c",
+      "$_checkout_dir/src/xkb_unicode.c",
+      "$_checkout_dir/src/xkb_unicode.h",
+    ]
+
+    defines = [
+      "_GLFW_X11",
+      "_GLFW_HAS_XF86VM",
+    ]
+
+    libs = [
+      "X11",
+      "Xcursor",
+      "Xinerama",
+      "Xrandr",
+      "Xxf86vm",
+    ]
+  } else if (is_mac) {
+    sources += [
+      "$_checkout_dir/src/cocoa_init.m",
+      "$_checkout_dir/src/cocoa_joystick.h",
+      "$_checkout_dir/src/cocoa_joystick.m",
+      "$_checkout_dir/src/cocoa_monitor.m",
+      "$_checkout_dir/src/cocoa_platform.h",
+      "$_checkout_dir/src/cocoa_time.c",
+      "$_checkout_dir/src/cocoa_window.m",
+      "$_checkout_dir/src/nsgl_context.m",
+      "$_checkout_dir/src/posix_module.c",
+      "$_checkout_dir/src/posix_thread.c",
+      "$_checkout_dir/src/posix_thread.h",
+    ]
+
+    defines = [ "_GLFW_COCOA" ]
+
+    cflags = [
+      "-Wno-deprecated-declarations",
+      "-Wno-objc-multiple-method-names",
+    ]
+
+    frameworks = [
+      "CoreVideo.framework",
+      "IOKit.framework",
+    ]
+  }
+
+  if (glfw_vulkan_library != "") {
+    defines += [ "_GLFW_VULKAN_LIBRARY=" + glfw_vulkan_library ]
+  }
+
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [ "//build/config/compiler:no_chromium_code" ]
+}

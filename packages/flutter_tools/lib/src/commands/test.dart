@@ -81,164 +81,203 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
     addEnableImpellerFlag(verboseHelp: verboseHelp);
 
     argParser
-      ..addFlag('experimental-faster-testing',
+      ..addFlag(
+        'experimental-faster-testing',
         negatable: false,
         hide: !verboseHelp,
-        help: 'Run each test in a separate lightweight Flutter Engine to speed up testing.'
+        help: 'Run each test in a separate lightweight Flutter Engine to speed up testing.',
       )
-      ..addMultiOption('name',
+      ..addMultiOption(
+        'name',
         help: 'A regular expression matching substrings of the names of tests to run.',
         valueHelp: 'regexp',
         splitCommas: false,
       )
-      ..addMultiOption('plain-name',
+      ..addMultiOption(
+        'plain-name',
         help: 'A plain-text substring of the names of tests to run.',
         valueHelp: 'substring',
         splitCommas: false,
       )
-      ..addOption('tags',
+      ..addOption(
+        'tags',
         abbr: 't',
-        help: 'Run only tests associated with the specified tags. See: https://pub.dev/packages/test#tagging-tests',
+        help:
+            'Run only tests associated with the specified tags. See: https://pub.dev/packages/test#tagging-tests',
       )
-      ..addOption('exclude-tags',
+      ..addOption(
+        'exclude-tags',
         abbr: 'x',
-        help: 'Run only tests that do not have the specified tags. See: https://pub.dev/packages/test#tagging-tests',
+        help:
+            'Run only tests that do not have the specified tags. See: https://pub.dev/packages/test#tagging-tests',
       )
-      ..addFlag('start-paused',
+      ..addFlag(
+        'start-paused',
         negatable: false,
-        help: 'Start in a paused mode and wait for a debugger to connect.\n'
-              'You must specify a single test file to run, explicitly.\n'
-              'Instructions for connecting with a debugger are printed to the '
-              'console once the test has started.',
+        help:
+            'Start in a paused mode and wait for a debugger to connect.\n'
+            'You must specify a single test file to run, explicitly.\n'
+            'Instructions for connecting with a debugger are printed to the '
+            'console once the test has started.',
       )
-      ..addFlag('fail-fast',
-        help: 'Stop running tests after the first failure.',
-      )
-      ..addFlag('run-skipped',
-        help: 'Run skipped tests instead of skipping them.',
-      )
-      ..addFlag('disable-service-auth-codes',
+      ..addFlag('fail-fast', help: 'Stop running tests after the first failure.')
+      ..addFlag('run-skipped', help: 'Run skipped tests instead of skipping them.')
+      ..addFlag(
+        'disable-service-auth-codes',
         negatable: false,
         hide: !verboseHelp,
-        help: '(deprecated) Allow connections to the VM service without using authentication codes. '
-              '(Not recommended! This can open your device to remote code execution attacks!)'
+        help:
+            '(deprecated) Allow connections to the VM service without using authentication codes. '
+            '(Not recommended! This can open your device to remote code execution attacks!)',
       )
-      ..addFlag('coverage',
+      ..addFlag('coverage', negatable: false, help: 'Whether to collect coverage information.')
+      ..addFlag(
+        'merge-coverage',
         negatable: false,
-        help: 'Whether to collect coverage information.',
+        help:
+            'Whether to merge coverage data with "coverage/lcov.base.info".\n'
+            'Implies collecting coverage data. (Requires lcov.)',
       )
-      ..addFlag('merge-coverage',
+      ..addFlag(
+        'branch-coverage',
         negatable: false,
-        help: 'Whether to merge coverage data with "coverage/lcov.base.info".\n'
-              'Implies collecting coverage data. (Requires lcov.)',
+        help:
+            'Whether to collect branch coverage information. '
+            'Implies collecting coverage data.',
       )
-      ..addFlag('branch-coverage',
-        negatable: false,
-        help: 'Whether to collect branch coverage information. '
-              'Implies collecting coverage data.',
-      )
-      ..addFlag('ipv6',
+      ..addFlag(
+        'ipv6',
         negatable: false,
         hide: !verboseHelp,
         help: 'Whether to use IPv6 for the test harness server socket.',
       )
-      ..addOption('coverage-path',
+      ..addOption(
+        'coverage-path',
         defaultsTo: 'coverage/lcov.info',
         help: 'Where to store coverage information (if coverage is enabled).',
       )
-      ..addMultiOption('coverage-package',
-        help: 'A regular expression matching packages names '
-              'to include in the coverage report (if coverage is enabled). '
-              'If unset, matches the current package name.',
+      ..addMultiOption(
+        'coverage-package',
+        help:
+            'A regular expression matching packages names '
+            'to include in the coverage report (if coverage is enabled). '
+            'If unset, matches the current package name.',
         valueHelp: 'package-name-regexp',
         splitCommas: false,
       )
-      ..addFlag('machine',
+      ..addFlag(
+        'machine',
         hide: !verboseHelp,
         negatable: false,
-        help: 'Handle machine structured JSON command input '
-              'and provide output and progress in machine friendly format.',
+        help:
+            'Handle machine structured JSON command input '
+            'and provide output and progress in machine friendly format.',
       )
-      ..addFlag('update-goldens',
+      ..addFlag(
+        'update-goldens',
         negatable: false,
-        help: 'Whether "matchesGoldenFile()" calls within your test methods should ' // flutter_ignore: golden_tag (see analyze.dart)
-              'update the golden files rather than test for an existing match.',
+        help:
+            'Whether "matchesGoldenFile()" calls within your test methods should ' // flutter_ignore: golden_tag (see analyze.dart)
+            'update the golden files rather than test for an existing match.',
       )
-      ..addOption('concurrency',
+      ..addOption(
+        'concurrency',
         abbr: 'j',
-        help: 'The number of concurrent test processes to run. This will be ignored '
-              'when running integration tests.',
+        help:
+            'The number of concurrent test processes to run. This will be ignored '
+            'when running integration tests.',
         valueHelp: 'jobs',
       )
-      ..addFlag('test-assets',
+      ..addFlag(
+        'test-assets',
         defaultsTo: true,
-        help: 'Whether to build the assets bundle for testing. '
-              'This takes additional time before running the tests. '
-              'Consider using "--no-test-assets" if assets are not required.',
+        help:
+            'Whether to build the assets bundle for testing. '
+            'This takes additional time before running the tests. '
+            'Consider using "--no-test-assets" if assets are not required.',
       )
       // --platform is not supported to be used by Flutter developers. It only
       // exists to test the Flutter framework itself and may be removed entirely
       // in the future. Developers should either use plain `flutter test`, or
       // `package:integration_test` instead.
-      ..addOption('platform',
+      ..addOption(
+        'platform',
         allowed: const <String>['tester', 'chrome'],
         hide: !verboseHelp,
         defaultsTo: 'tester',
         help: 'Selects the test backend.',
         allowedHelp: <String, String>{
           'tester': 'Run tests using the VM-based test environment.',
-          'chrome': '(deprecated) Run tests using the Google Chrome web browser. '
-                    'This value is intended for testing the Flutter framework '
-                    'itself and may be removed at any time.',
+          'chrome':
+              '(deprecated) Run tests using the Google Chrome web browser. '
+              'This value is intended for testing the Flutter framework '
+              'itself and may be removed at any time.',
         },
       )
-      ..addOption('test-randomize-ordering-seed',
-        help: 'The seed to randomize the execution order of test cases within test files. '
-              'Must be a 32bit unsigned integer or the string "random", '
-              'which indicates that a seed should be selected randomly. '
-              'By default, tests run in the order they are declared.',
+      ..addOption(
+        'test-randomize-ordering-seed',
+        help:
+            'The seed to randomize the execution order of test cases within test files. '
+            'Must be a 32bit unsigned integer or the string "random", '
+            'which indicates that a seed should be selected randomly. '
+            'By default, tests run in the order they are declared.',
       )
-      ..addOption('total-shards',
-        help: 'Tests can be sharded with the "--total-shards" and "--shard-index" '
-              'arguments, allowing you to split up your test suites and run '
-              'them separately.'
+      ..addOption(
+        'total-shards',
+        help:
+            'Tests can be sharded with the "--total-shards" and "--shard-index" '
+            'arguments, allowing you to split up your test suites and run '
+            'them separately.',
       )
-      ..addOption('shard-index',
-          help: 'Tests can be sharded with the "--total-shards" and "--shard-index" '
-              'arguments, allowing you to split up your test suites and run '
-              'them separately.'
+      ..addOption(
+        'shard-index',
+        help:
+            'Tests can be sharded with the "--total-shards" and "--shard-index" '
+            'arguments, allowing you to split up your test suites and run '
+            'them separately.',
       )
-      ..addFlag('enable-vmservice',
+      ..addFlag(
+        'enable-vmservice',
         hide: !verboseHelp,
-        help: 'Enables the VM service without "--start-paused". This flag is '
-              'intended for use with tests that will use "dart:developer" to '
-              'interact with the VM service at runtime.\n'
-              'This flag is ignored if "--start-paused" or coverage are requested, as '
-              'the VM service will be enabled in those cases regardless.'
+        help:
+            'Enables the VM service without "--start-paused". This flag is '
+            'intended for use with tests that will use "dart:developer" to '
+            'interact with the VM service at runtime.\n'
+            'This flag is ignored if "--start-paused" or coverage are requested, as '
+            'the VM service will be enabled in those cases regardless.',
       )
-      ..addOption('reporter',
+      ..addOption(
+        'reporter',
         abbr: 'r',
-        help: 'Set how to print test results. If unset, value will default to either compact or expanded.',
+        help:
+            'Set how to print test results. If unset, value will default to either compact or expanded.',
         allowed: <String>['compact', 'expanded', 'failures-only', 'github', 'json', 'silent'],
         allowedHelp: <String, String>{
-          'compact':  'A single line, updated continuously (the default).',
-          'expanded': 'A separate line for each update. May be preferred when logging to a file or in continuous integration.',
+          'compact': 'A single line, updated continuously (the default).',
+          'expanded':
+              'A separate line for each update. May be preferred when logging to a file or in continuous integration.',
           'failures-only': 'A separate line for failing tests, with no output for passing tests.',
-          'github':   'A custom reporter for GitHub Actions (the default reporter when running on GitHub Actions).',
-          'json':     'A machine-readable format. See: https://dart.dev/go/test-docs/json_reporter.md',
-          'silent':   'A reporter with no output. May be useful when only the exit code is meaningful.'
+          'github':
+              'A custom reporter for GitHub Actions (the default reporter when running on GitHub Actions).',
+          'json': 'A machine-readable format. See: https://dart.dev/go/test-docs/json_reporter.md',
+          'silent':
+              'A reporter with no output. May be useful when only the exit code is meaningful.',
         },
       )
-      ..addOption('file-reporter',
-        help: 'Enable an additional reporter writing test results to a file.\n'
-          'Should be in the form <reporter>:<filepath>, '
-          'Example: "json:reports/tests.json".'
+      ..addOption(
+        'file-reporter',
+        help:
+            'Enable an additional reporter writing test results to a file.\n'
+            'Should be in the form <reporter>:<filepath>, '
+            'Example: "json:reports/tests.json".',
       )
-      ..addOption('timeout',
-        help: 'The default test timeout, specified either '
-              'in seconds (e.g. "60s"), '
-              'as a multiplier of the default timeout (e.g. "2x"), '
-              'or as the string "none" to disable the timeout entirely.',
+      ..addOption(
+        'timeout',
+        help:
+            'The default test timeout, specified either '
+            'in seconds (e.g. "60s"), '
+            'as a multiplier of the default timeout (e.g. "2x"), '
+            'or as the string "none" to disable the timeout entirely.',
       )
       ..addFlag(
         FlutterOptions.kWebWasmFlag,
@@ -272,10 +311,11 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
 
   @override
   Future<Set<DevelopmentArtifact>> get requiredArtifacts async {
-    final Set<DevelopmentArtifact> results = _isIntegrationTest
-        // Use [DeviceBasedDevelopmentArtifacts].
-        ? await super.requiredArtifacts
-        : <DevelopmentArtifact>{};
+    final Set<DevelopmentArtifact> results =
+        _isIntegrationTest
+            // Use [DeviceBasedDevelopmentArtifacts].
+            ? await super.requiredArtifacts
+            : <DevelopmentArtifact>{};
     if (isWeb) {
       results.add(DevelopmentArtifact.web);
     }
@@ -305,7 +345,7 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
       if (_testFileUris.isEmpty) {
         throwToolExit(
           'Test directory "${testDir.path}" does not appear to contain any test files.\n'
-          'Test files must be in that directory and end with the pattern "_test.dart".'
+          'Test files must be in that directory and end with the pattern "_test.dart".',
         );
       }
     } else {
@@ -325,8 +365,12 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
 
     // This needs to be set before [super.verifyThenRunCommand] so that the
     // correct [requiredArtifacts] can be identified before [run] takes place.
-    final List<String> testFilePaths = _testFileUris.map((Uri uri) => uri.replace(query: '').toFilePath()).toList();
-    _isIntegrationTest = _shouldRunAsIntegrationTests(globals.fs.currentDirectory.absolute.path, testFilePaths);
+    final List<String> testFilePaths =
+        _testFileUris.map((Uri uri) => uri.replace(query: '').toFilePath()).toList();
+    _isIntegrationTest = _shouldRunAsIntegrationTests(
+      globals.fs.currentDirectory.absolute.path,
+      testFilePaths,
+    );
 
     globals.printTrace(
       'Found ${_testFileUris.length} files which will be executed as '
@@ -338,7 +382,7 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
   // Keep in sync with the [RunCommandBase.webRenderer] getter.
   WebRendererMode get webRenderer {
     final List<String> dartDefines = extractDartDefines(
-      defineConfigJsonMap: extractDartDefineConfigJsonMap()
+      defineConfigJsonMap: extractDartDefineConfigJsonMap(),
     );
     return WebRendererMode.fromDartDefines(dartDefines, useWasm: useWasm);
   }
@@ -350,7 +394,8 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
         'Error: No pubspec.yaml file found in the current working directory.\n'
         'Run this command from the root of your project. Test files must be '
         "called *_test.dart and must reside in the package's 'test' "
-        'directory (or one of its subdirectories).');
+        'directory (or one of its subdirectories).',
+      );
     }
     final FlutterProject flutterProject = FlutterProject.current();
     final bool buildTestAssets = boolArg('test-assets');
@@ -360,7 +405,7 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
     final String? excludeTags = stringArg('exclude-tags');
     final BuildInfo buildInfo = await getBuildInfo(
       forcedBuildMode: BuildMode.debug,
-      forcedUseLocalCanvasKit: true
+      forcedUseLocalCanvasKit: true,
     );
 
     TestTimeRecorder? testTimeRecorder;
@@ -432,16 +477,18 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
       );
     }
     if (buildTestAssets || nativeAssetsJson != null) {
-      testAssetPath = globals.fs.path
-          .join(flutterProject.directory.path, 'build', 'unit_test_assets');
+      testAssetPath = globals.fs.path.join(
+        flutterProject.directory.path,
+        'build',
+        'unit_test_assets',
+      );
     }
     if (nativeAssetsJson != null) {
       final Directory testAssetDirectory = globals.fs.directory(testAssetPath);
       if (!testAssetDirectory.existsSync()) {
         await testAssetDirectory.create(recursive: true);
       }
-      final File nativeAssetsManifest =
-          testAssetDirectory.childFile('NativeAssetsManifest.json');
+      final File nativeAssetsManifest = testAssetDirectory.childFile('NativeAssetsManifest.json');
       await globals.fs.file(nativeAssetsJson).copy(nativeAssetsManifest.path);
     }
 
@@ -449,7 +496,7 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
     int? jobs = concurrencyString == null ? null : int.tryParse(concurrencyString);
     if (jobs != null && (jobs <= 0 || !jobs.isFinite)) {
       throwToolExit(
-        'Could not parse -j/--concurrency argument. It must be an integer greater than zero.'
+        'Could not parse -j/--concurrency argument. It must be an integer greater than zero.',
       );
     }
 
@@ -475,22 +522,22 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
     final int? shardIndex = int.tryParse(stringArg('shard-index') ?? '');
     if (shardIndex != null && (shardIndex < 0 || !shardIndex.isFinite)) {
       throwToolExit(
-          'Could not parse --shard-index=$shardIndex argument. It must be an integer greater than -1.');
+        'Could not parse --shard-index=$shardIndex argument. It must be an integer greater than -1.',
+      );
     }
 
     final int? totalShards = int.tryParse(stringArg('total-shards') ?? '');
     if (totalShards != null && (totalShards <= 0 || !totalShards.isFinite)) {
       throwToolExit(
-          'Could not parse --total-shards=$totalShards argument. It must be an integer greater than zero.');
+        'Could not parse --total-shards=$totalShards argument. It must be an integer greater than zero.',
+      );
     }
 
     if (totalShards != null && shardIndex == null) {
-      throwToolExit(
-          'If you set --total-shards you need to also set --shard-index.');
+      throwToolExit('If you set --total-shards you need to also set --shard-index.');
     }
     if (shardIndex != null && totalShards == null) {
-      throwToolExit(
-          'If you set --shard-index you need to also set --total-shards.');
+      throwToolExit('If you set --shard-index you need to also set --total-shards.');
     }
 
     final bool enableVmService = boolArg('enable-vmservice');
@@ -514,8 +561,7 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
 
     final bool machine = boolArg('machine');
     CoverageCollector? collector;
-    if (boolArg('coverage') || boolArg('merge-coverage') ||
-        boolArg('branch-coverage')) {
+    if (boolArg('coverage') || boolArg('merge-coverage') || boolArg('branch-coverage')) {
       final Set<String> packagesToInclude = _getCoveragePackages(
         stringsArg('coverage-package'),
         flutterProject,
@@ -585,7 +631,9 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
       }
     }
 
-    final Stopwatch? testRunnerTimeRecorderStopwatch = testTimeRecorder?.start(TestTimePhases.TestRunner);
+    final Stopwatch? testRunnerTimeRecorderStopwatch = testTimeRecorder?.start(
+      TestTimePhases.TestRunner,
+    );
     final int result;
     if (experimentalFasterTesting) {
       assert(!isWeb && !_isIntegrationTest && _testFileUris.length > 1);
@@ -647,7 +695,9 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
     testTimeRecorder?.stop(TestTimePhases.TestRunner, testRunnerTimeRecorderStopwatch!);
 
     if (collector != null) {
-      final Stopwatch? collectTimeRecorderStopwatch = testTimeRecorder?.start(TestTimePhases.CoverageDataCollect);
+      final Stopwatch? collectTimeRecorderStopwatch = testTimeRecorder?.start(
+        TestTimePhases.CoverageDataCollect,
+      );
       final bool collectionResult = await collector.collectCoverageData(
         stringArg('coverage-path'),
         mergeCoverageData: boolArg('merge-coverage'),
@@ -673,16 +723,12 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
     PackageConfig packageConfig,
   ) {
     final String projectName = flutterProject.manifest.appName;
-    final Set<String> packagesToInclude = <String>{
-      if (packagesRegExps.isEmpty) projectName,
-    };
+    final Set<String> packagesToInclude = <String>{if (packagesRegExps.isEmpty) projectName};
     try {
       for (final String regExpStr in packagesRegExps) {
         final RegExp regExp = RegExp(regExpStr);
         packagesToInclude.addAll(
-          packageConfig.packages
-              .map((Package e) => e.name)
-              .where((String e) => regExp.hasMatch(e)),
+          packageConfig.packages.map((Package e) => e.name).where((String e) => regExp.hasMatch(e)),
         );
       }
     } on FormatException catch (e) {
@@ -703,8 +749,7 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
     filePart = globals.fs.path.absolute(filePart);
     filePart = globals.fs.path.normalize(filePart);
 
-    return Uri.file(filePart)
-        .replace(query: queryPart.isEmpty ? null : queryPart);
+    return Uri.file(filePart).replace(query: queryPart.isEmpty ? null : queryPart);
   }
 
   Future<void> _buildTestAsset({
@@ -714,10 +759,7 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
     required String packageConfigPath,
   }) async {
     final AssetBundle assetBundle = AssetBundleFactory.instance.createBundle();
-    final int build = await assetBundle.build(
-      packageConfigPath: packageConfigPath,
-      flavor: flavor,
-    );
+    final int build = await assetBundle.build(packageConfigPath: packageConfigPath, flavor: flavor);
     if (build != 0) {
       throwToolExit('Error: Failed to build asset bundle');
     }
@@ -753,7 +795,9 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
     //  schema of the contents of the asset manifest file and the user does not
     //  perform a `flutter clean` after upgrading.
     //  See https://github.com/flutter/flutter/issues/128563.
-    final File manifest = globals.fs.file(globals.fs.path.join('build', 'unit_test_assets', 'AssetManifest.bin'));
+    final File manifest = globals.fs.file(
+      globals.fs.path.join('build', 'unit_test_assets', 'AssetManifest.bin'),
+    );
     if (!manifest.existsSync()) {
       return true;
     }
@@ -763,9 +807,8 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
       return true;
     }
 
-    final Iterable<DevFSFileContent> files = entries.values
-      .map((AssetBundleEntry asset) => asset.content)
-      .whereType<DevFSFileContent>();
+    final Iterable<DevFSFileContent> files =
+        entries.values.map((AssetBundleEntry asset) => asset.content).whereType<DevFSFileContent>();
     for (final DevFSFileContent entry in files) {
       // Calling isModified to access file stats first in order for isModifiedAfter
       // to work.
@@ -777,9 +820,8 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
     final File cachedFlavorFile = globals.fs.file(
       globals.fs.path.join('build', 'test_cache', 'flavor.txt'),
     );
-    final String? cachedFlavor = cachedFlavorFile.existsSync()
-        ? cachedFlavorFile.readAsStringSync()
-        : null;
+    final String? cachedFlavor =
+        cachedFlavorFile.existsSync() ? cachedFlavorFile.readAsStringSync() : null;
     if (cachedFlavor != flavor) {
       return true;
     }
@@ -791,9 +833,12 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
 /// Searches [directory] and returns files that end with `_test.dart` as
 /// absolute paths.
 Iterable<String> _findTests(Directory directory) {
-  return directory.listSync(recursive: true, followLinks: false)
-      .where((FileSystemEntity entity) => entity.path.endsWith('_test.dart') &&
-      globals.fs.isFileSync(entity.path))
+  return directory
+      .listSync(recursive: true, followLinks: false)
+      .where(
+        (FileSystemEntity entity) =>
+            entity.path.endsWith('_test.dart') && globals.fs.isFileSync(entity.path),
+      )
       .map((FileSystemEntity entity) => globals.fs.path.absolute(entity.path));
 }
 
@@ -805,9 +850,14 @@ Iterable<String> _findTests(Directory directory) {
 /// Throws an exception if there are both Integration Tests and Widget Tests
 /// found in [testFiles].
 bool _shouldRunAsIntegrationTests(String currentDirectory, List<String> testFiles) {
-  final String integrationTestDirectory = globals.fs.path.join(currentDirectory, _kIntegrationTestDirectory);
+  final String integrationTestDirectory = globals.fs.path.join(
+    currentDirectory,
+    _kIntegrationTestDirectory,
+  );
 
-  if (testFiles.every((String absolutePath) => !absolutePath.startsWith(integrationTestDirectory))) {
+  if (testFiles.every(
+    (String absolutePath) => !absolutePath.startsWith(integrationTestDirectory),
+  )) {
     return false;
   }
 
@@ -818,6 +868,6 @@ bool _shouldRunAsIntegrationTests(String currentDirectory, List<String> testFile
   throwToolExit(
     'Integration tests and unit tests cannot be run in a single invocation.'
     ' Use separate invocations of `flutter test` to run integration tests'
-    ' and unit tests.'
+    ' and unit tests.',
   );
 }

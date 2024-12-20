@@ -25,7 +25,6 @@ class MainWidget extends StatefulWidget {
 }
 
 class MainWidgetState extends State<MainWidget> {
-
   final FocusNode dismissButtonFocusNode = FocusNode();
   final FocusNode showButtonFocusNode = FocusNode();
 
@@ -64,7 +63,7 @@ class MainWidgetState extends State<MainWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo')),

@@ -1,0 +1,24 @@
+Internal property sheets:
+  essential.vsprops
+    Contains the common settings used throughout the projects. Is included by either ..\debug.vsprops or ..\release.vsprops, so in general, it is not included directly.
+
+  release_defaults.vsprops
+    Included by ..\release.vsprops. Its settings are overriden by release_impl$(CHROME_BUILD_TYPE).vsprops. Uses the default VS setting which is "Maximize Speed". Results in relatively fast build with reasonable optimization level but without whole program optimization to reduce build time.
+
+  release_impl.vsprops
+    Included by ..\release.vsprops by default when CHROME_BUILD_TYPE is undefined. Includes release_defaults.vsprops.
+
+  release_impl_checksenabled.vsprops
+    Included by ..\release.vsprops when CHROME_BUILD_TYPE=_checksenabled. Matches what release_defaults.vsprops does, but doesn't actually inherit from it as we couldn't quite get that working. The only difference is that _DEBUG is set instead of NDEBUG. Used for keeping debug checks enabled with a build that is fast enough to dogfood with.
+
+  release_impl_official.vsprops
+    Included by ..\release.vsprops when CHROME_BUILD_TYPE=_official. Includes release_defaults.vsprops. Enables Whole Program Optimizations (WPO), which doubles the build time. Results in much more optimized build. Uses "Full Optimization" and "Flavor small code".
+
+  release_impl_pgo_instrument.vsprops
+    Included by ..\release.vsprops when CHROME_BUILD_TYPE=_pgo_instrument. Includes release_defaults.vsprops. Enables Profile Guided Optimization (PGO) instrumentation (first pass). Uses "Full Optimization" and "Flavor small code".
+
+  release_impl_pgo_optimize.vsprops
+    Included by ..\release.vsprops when CHROME_BUILD_TYPE=_pgo_optimize. Includes release_defaults.vsprops. Enables Profile Guided Optimization (PGO) optimization (second pass). Uses "Full Optimization" and "Flavor small code".
+
+  release_impl_purify.vsprops
+    Included by ..\release.vsprops when CHROME_BUILD_TYPE=_purify. Includes release_defaults.vsprops. Disables optimizations. Used with Purify to test without debug tools and without optimization; i.e. NDEBUG is defined but the compiler doesn't optimize the binary.

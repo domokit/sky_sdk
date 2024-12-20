@@ -70,7 +70,7 @@ abstract final class DeferredComponent {
   static Future<void> installDeferredComponent({required String componentName}) async {
     await SystemChannels.deferredComponent.invokeMethod<void>(
       'installDeferredComponent',
-      <String, dynamic>{ 'loadingUnitId': -1, 'componentName': componentName },
+      <String, dynamic>{'loadingUnitId': -1, 'componentName': componentName},
     );
   }
 
@@ -98,7 +98,7 @@ abstract final class DeferredComponent {
   static Future<void> uninstallDeferredComponent({required String componentName}) async {
     await SystemChannels.deferredComponent.invokeMethod<void>(
       'uninstallDeferredComponent',
-      <String, dynamic>{ 'loadingUnitId': -1, 'componentName': componentName },
+      <String, dynamic>{'loadingUnitId': -1, 'componentName': componentName},
     );
   }
 }

@@ -37,15 +37,17 @@ void main() {
     // some of the checks for devices.
 
     const ProcessManager processManager = LocalProcessManager();
-    final ProcessResult proc = await processManager.run(
-      <String>[flutterBin, 'run', '-d', 'invalid-device-id'],
-      workingDirectory: tempDir.path,
-    );
+    final ProcessResult proc = await processManager.run(<String>[
+      flutterBin,
+      'run',
+      '-d',
+      'invalid-device-id',
+    ], workingDirectory: tempDir.path);
 
     expect(proc.stdout, isNot(contains('flutter has exited unexpectedly')));
     expect(proc.stderr, isNot(contains('flutter has exited unexpectedly')));
-    if (!proc.stderr.toString().contains('Unable to locate a development')
-        && !proc.stdout.toString().contains('No supported devices found with name or id matching')) {
+    if (!proc.stderr.toString().contains('Unable to locate a development') &&
+        !proc.stdout.toString().contains('No supported devices found with name or id matching')) {
       fail("'flutter run -d invalid-device-id' did not produce the expected error");
     }
   });

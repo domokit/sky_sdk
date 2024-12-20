@@ -1,0 +1,36 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/internal/gen_dartcli_call.gni")
+import("//flutter/build/dart/internal/gen_executable_call.gni")
+
+# Manual test targets that can be used to iterate on individual rules.
+
+# ninja -C ../out/host_debug flutter/build/dart/test:gen_executable_call
+# ../out/host_debug/gen/flutter/build/dart/test/gen_executable_call
+#
+# Expected output: "Hello, World!"
+gen_executable_call("gen_executable_call") {
+  command = "echo"
+  args = [ "Hello, World!" ]
+}
+
+# ninja -C ../out/host_debug flutter/build/dart/test:gen_executable_call_with_cwd
+# ../out/host_debug/gen/flutter/build/dart/test/gen_executable_call_with_cwd
+#
+# Expected output: {varies}/flutter/build/dart/test
+gen_executable_call("gen_executable_call_with_cwd") {
+  command = "echo \$PWD"
+  cwd = "//flutter/build/dart/test"
+}
+
+# ninja -C ../out/host_debug flutter/build/dart/test:gen_dartcli_call
+# ../out/host_debug/gen/flutter/build/dart/test/gen_dartcli_call
+#
+# Expected output: Dart SDK version: 3.6.0-273.0.dev (dev)
+#
+# ... or something like ^, obviously it will constantly change as the SDK rolls.
+gen_dartcli_call("gen_dartcli_call") {
+  args = [ "--version" ]
+}

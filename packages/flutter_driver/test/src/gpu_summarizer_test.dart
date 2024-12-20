@@ -10,9 +10,7 @@ import '../common.dart';
 TimelineEvent newGPUTraceEvent(double ms) => TimelineEvent(<String, dynamic>{
   'name': 'GPUStart',
   'ph': 'b',
-  'args': <String, String>{
-    'FrameTimeMS': ms.toString()
-  },
+  'args': <String, String>{'FrameTimeMS': ms.toString()},
 });
 
 void main() {

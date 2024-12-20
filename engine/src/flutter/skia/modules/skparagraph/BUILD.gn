@@ -1,0 +1,40 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+_skia_root = "//flutter/third_party/skia"
+
+import("$_skia_root/gn/skia.gni")
+import("$_skia_root/modules/skparagraph/skparagraph.gni")
+import("$_skia_root/modules/skshaper/skshaper.gni")
+import("$_skia_root/modules/skunicode/skunicode.gni")
+
+declare_args() {
+  skia_enable_skparagraph = true
+  paragraph_gms_enabled = true
+  paragraph_tests_enabled = true
+  paragraph_bench_enabled = false
+}
+
+config("public_config") {
+  defines = [ "SK_ENABLE_PARAGRAPH" ]
+  include_dirs = [
+    "$_skia_root/modules/skparagraph/include",
+    "$_skia_root/modules/skparagraph/utils",
+  ]
+}
+
+skia_component("skparagraph") {
+  import("$_skia_root/modules/skparagraph/skparagraph.gni")
+
+  # Opted out of check_includes, due to (logically) being part of skia.
+  check_includes = false
+  public_configs = [ ":public_config" ]
+  public = skparagraph_public
+  sources = skparagraph_sources
+  public_deps = [
+    "../..:skia",
+    "../skunicode",
+  ]
+  deps = [ "../skshaper" ]
+}

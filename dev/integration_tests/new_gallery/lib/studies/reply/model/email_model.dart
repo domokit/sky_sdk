@@ -41,17 +41,7 @@ class InboxEmail extends Email {
 }
 
 // The different mailbox pages that the Reply app contains.
-enum MailboxPageType {
-  inbox,
-  starred,
-  sent,
-  trash,
-  spam,
-  drafts,
-}
+enum MailboxPageType { inbox, starred, sent, trash, spam, drafts }
 
 // Different types of mail that can be sent to the inbox.
-enum InboxType {
-  normal,
-  spam,
-}
+enum InboxType { normal, spam }

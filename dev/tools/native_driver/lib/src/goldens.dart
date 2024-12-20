@@ -171,8 +171,7 @@ AsyncMatcher matchesGoldenFile(Object key, {int? version}) {
   return switch (key) {
     Uri() => _MatchesGoldenFile(key, version),
     String() => _MatchesGoldenFile.forStringPath(key, version),
-    _ => throw ArgumentError(
-        'Unexpected type for golden file: ${key.runtimeType}'),
+    _ => throw ArgumentError('Unexpected type for golden file: ${key.runtimeType}'),
   };
 }
 
@@ -182,8 +181,7 @@ final class _MatchesGoldenFile extends AsyncMatcher {
   const _MatchesGoldenFile(this.key, this.version);
 
   /// Creates an instance of [MatchesGoldenFile] from a [String] path.
-  _MatchesGoldenFile.forStringPath(String path, this.version)
-      : key = Uri.parse(path);
+  _MatchesGoldenFile.forStringPath(String path, this.version) : key = Uri.parse(path);
 
   /// The [key] to the golden image.
   final Uri key;
@@ -201,9 +199,7 @@ final class _MatchesGoldenFile extends AsyncMatcher {
     } else if (item is FutureOr<NativeScreenshot>) {
       buffer = await (await item).readAsBytes();
     } else {
-      throw ArgumentError(
-        'Unexpected type for golden file: ${item.runtimeType}',
-      );
+      throw ArgumentError('Unexpected type for golden file: ${item.runtimeType}');
     }
 
     if (autoUpdateGoldenFiles) {
@@ -211,10 +207,7 @@ final class _MatchesGoldenFile extends AsyncMatcher {
       return null;
     }
     try {
-      final bool success = await goldenFileComparator.compare(
-        buffer,
-        testNameUri,
-      );
+      final bool success = await goldenFileComparator.compare(buffer, testNameUri);
       return success ? null : 'does not match';
     } on TestFailure catch (e) {
       return e.message;

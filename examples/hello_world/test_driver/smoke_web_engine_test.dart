@@ -38,10 +38,12 @@ void main() {
       // TODO(ianh): this delay violates our style guide. We should instead wait for a triggering event.
       await Future<void>.delayed(const Duration(seconds: 2));
 
-      final WebElement? fltSemantics = await driver.webDriver.execute(
-        'return document.querySelector("flt-semantics")',
-        <dynamic>[],
-      ) as WebElement?;
+      final WebElement? fltSemantics =
+          await driver.webDriver.execute(
+                'return document.querySelector("flt-semantics")',
+                <dynamic>[],
+              )
+              as WebElement?;
       expect(fltSemantics, isNotNull);
     });
   });

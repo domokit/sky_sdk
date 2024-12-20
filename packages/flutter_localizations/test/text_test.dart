@@ -43,17 +43,11 @@ void main() {
                     return <PopupMenuItem<int>>[
                       const PopupMenuItem<int>(
                         value: 1,
-                        child: Text(
-                          'hello, world',
-                          style: TextStyle(color: Colors.blue),
-                        ),
+                        child: Text('hello, world', style: TextStyle(color: Colors.blue)),
                       ),
                       const PopupMenuItem<int>(
                         value: 2,
-                        child: Text(
-                          '你好，世界',
-                          style: TextStyle(color: Colors.blue),
-                        ),
+                        child: Text('你好，世界', style: TextStyle(color: Colors.blue)),
                       ),
                     ];
                   },
@@ -114,17 +108,11 @@ void main() {
                     return <PopupMenuItem<int>>[
                       const PopupMenuItem<int>(
                         value: 1,
-                        child: Text(
-                          'hello, world',
-                          style: TextStyle(color: Colors.blue),
-                        ),
+                        child: Text('hello, world', style: TextStyle(color: Colors.blue)),
                       ),
                       const PopupMenuItem<int>(
                         value: 2,
-                        child: Text(
-                          '你好，世界',
-                          style: TextStyle(color: Colors.blue),
-                        ),
+                        child: Text('你好，世界', style: TextStyle(color: Colors.blue)),
                       ),
                     ];
                   },
@@ -185,17 +173,11 @@ void main() {
                     return <PopupMenuItem<int>>[
                       const PopupMenuItem<int>(
                         value: 1,
-                        child: Text(
-                          'hello, world',
-                          style: TextStyle(color: Colors.blue),
-                        ),
+                        child: Text('hello, world', style: TextStyle(color: Colors.blue)),
                       ),
                       const PopupMenuItem<int>(
                         value: 2,
-                        child: Text(
-                          '你好，世界',
-                          style: TextStyle(color: Colors.blue),
-                        ),
+                        child: Text('你好，世界', style: TextStyle(color: Colors.blue)),
                       ),
                     ];
                   },
@@ -256,17 +238,11 @@ void main() {
                     return <PopupMenuItem<int>>[
                       const PopupMenuItem<int>(
                         value: 1,
-                        child: Text(
-                          'hello, world',
-                          style: TextStyle(color: Colors.blue),
-                        ),
+                        child: Text('hello, world', style: TextStyle(color: Colors.blue)),
                       ),
                       const PopupMenuItem<int>(
                         value: 2,
-                        child: Text(
-                          '你好，世界',
-                          style: TextStyle(color: Colors.blue),
-                        ),
+                        child: Text('你好，世界', style: TextStyle(color: Colors.blue)),
                       ),
                     ];
                   },

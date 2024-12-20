@@ -12,33 +12,30 @@ void main() {
   testWidgets('has only root node if surface size is 0x0', (WidgetTester tester) async {
     final SemanticsTester semantics = SemanticsTester(tester);
 
-    await tester.pumpWidget(Semantics(
-      selected: true,
-    ));
+    await tester.pumpWidget(Semantics(selected: true));
 
-    expect(semantics, hasSemantics(
-      TestSemantics(
-        id: 0,
-        rect: const Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0),
-        children: <TestSemantics>[
-          TestSemantics(
-            id: 1,
-            rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 600.0),
-            flags: <SemanticsFlag>[SemanticsFlag.hasSelectedState, SemanticsFlag.isSelected],
-          ),
-        ],
-      ), ignoreTransform: true,
-    ));
+    expect(
+      semantics,
+      hasSemantics(
+        TestSemantics(
+          id: 0,
+          rect: const Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0),
+          children: <TestSemantics>[
+            TestSemantics(
+              id: 1,
+              rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 600.0),
+              flags: <SemanticsFlag>[SemanticsFlag.hasSelectedState, SemanticsFlag.isSelected],
+            ),
+          ],
+        ),
+        ignoreTransform: true,
+      ),
+    );
 
     await tester.binding.setSurfaceSize(Size.zero);
     await tester.pumpAndSettle();
 
-    expect(semantics, hasSemantics(
-      TestSemantics(
-        id: 0,
-        rect: Rect.zero,
-      ), ignoreTransform: true,
-    ));
+    expect(semantics, hasSemantics(TestSemantics(id: 0, rect: Rect.zero), ignoreTransform: true));
 
     await tester.binding.setSurfaceSize(null);
     semantics.dispose();

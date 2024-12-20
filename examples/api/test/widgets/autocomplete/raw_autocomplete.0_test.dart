@@ -39,9 +39,9 @@ void main() {
     await tester.pump();
 
     expect(find.byType(ListTile), findsNothing);
-    expect(find.descendant(
-      of: find.byType(TextFormField),
-      matching: find.text('bobcat'),
-    ), findsOneWidget);
+    expect(
+      find.descendant(of: find.byType(TextFormField), matching: find.text('bobcat')),
+      findsOneWidget,
+    );
   });
 }

@@ -35,15 +35,13 @@ enum ColorLabel {
         value: color,
         label: color.label,
         enabled: color.label != 'Grey',
-        style: MenuItemButton.styleFrom(
-          foregroundColor: color.color,
-        ),
+        style: MenuItemButton.styleFrom(foregroundColor: color.color),
       ),
     ),
   );
 }
 
-typedef IconEntry  = DropdownMenuEntry<IconLabel>;
+typedef IconEntry = DropdownMenuEntry<IconLabel>;
 
 // DropdownMenuEntry labels and values for the second dropdown menu.
 enum IconLabel {
@@ -58,11 +56,7 @@ enum IconLabel {
 
   static final List<IconEntry> entries = UnmodifiableListView<IconEntry>(
     values.map<IconEntry>(
-      (IconLabel icon) => IconEntry(
-        value: icon,
-        label: icon.label,
-        leadingIcon: Icon(icon.icon),
-      ),
+      (IconLabel icon) => IconEntry(value: icon, label: icon.label, leadingIcon: Icon(icon.icon)),
     ),
   );
 }
@@ -83,10 +77,7 @@ class _DropdownMenuExampleState extends State<DropdownMenuExample> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.green,
-      ),
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.green),
       home: Scaffold(
         body: SafeArea(
           child: Column(
@@ -140,15 +131,12 @@ class _DropdownMenuExampleState extends State<DropdownMenuExample> {
                     Text('You selected a ${selectedColor?.label} ${selectedIcon?.label}'),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Icon(
-                        selectedIcon?.icon,
-                        color: selectedColor?.color,
-                      ),
-                    )
+                      child: Icon(selectedIcon?.icon, color: selectedColor?.color),
+                    ),
                   ],
                 )
               else
-                const Text('Please select a color and an icon.')
+                const Text('Please select a color and an icon.'),
             ],
           ),
         ),

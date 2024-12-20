@@ -40,40 +40,37 @@ class DesktopProductCardColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-      final int currentColumnProductCount = products.length;
-      final int currentColumnWidgetCount =
-          max(2 * currentColumnProductCount - 1, 0);
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final int currentColumnProductCount = products.length;
+        final int currentColumnWidgetCount = max(2 * currentColumnProductCount - 1, 0);
 
-      return SizedBox(
-        width: largeImageWidth,
-        child: Column(
-          crossAxisAlignment:
-              alignToEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: <Widget>[
-            if (lowerStart) Container(height: columnTopSpace),
-            ...List<Widget>.generate(currentColumnWidgetCount, (int index) {
-              Widget card;
-              if (index.isEven) {
-                // This is a product.
-                final int productCardIndex = index ~/ 2;
-                card = DesktopProductCard(
-                  product: products[productCardIndex],
-                  imageWidth: startLarge == productCardIndex.isEven
-                      ? largeImageWidth
-                      : smallImageWidth,
-                );
-              } else {
-                // This is just a divider.
-                card = Container(
-                  height: productCardDividerHeight,
-                );
-              }
-              return RepaintBoundary(child: card);
-            }),
-          ],
-        ),
-      );
-    });
+        return SizedBox(
+          width: largeImageWidth,
+          child: Column(
+            crossAxisAlignment: alignToEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: <Widget>[
+              if (lowerStart) Container(height: columnTopSpace),
+              ...List<Widget>.generate(currentColumnWidgetCount, (int index) {
+                Widget card;
+                if (index.isEven) {
+                  // This is a product.
+                  final int productCardIndex = index ~/ 2;
+                  card = DesktopProductCard(
+                    product: products[productCardIndex],
+                    imageWidth:
+                        startLarge == productCardIndex.isEven ? largeImageWidth : smallImageWidth,
+                  );
+                } else {
+                  // This is just a divider.
+                  card = Container(height: productCardDividerHeight);
+                }
+                return RepaintBoundary(child: card);
+              }),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

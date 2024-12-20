@@ -1,0 +1,26 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+config("expat_config") {
+  include_dirs = [
+    "expat/lib",
+    "//flutter/build/secondary/flutter/third_party/expat/expat_config",
+  ]
+
+  defines = [
+    "XML_STATIC",
+    "XML_DEV_URANDOM",
+  ]
+}
+
+static_library("expat") {
+  sources = [
+    "expat/lib/expat.h",
+    "expat/lib/xmlparse.c",
+    "expat/lib/xmlrole.c",
+    "expat/lib/xmltok.c",
+  ]
+
+  public_configs = [ ":expat_config" ]
+}

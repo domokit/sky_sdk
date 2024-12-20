@@ -43,7 +43,7 @@ import 'framework.dart';
 ///    recent interaction is needed for widget building.
 abstract class StreamBuilderBase<T, S> extends StatefulWidget {
   /// Creates a [StreamBuilderBase] connected to the specified [stream].
-  const StreamBuilderBase({ super.key, required this.stream });
+  const StreamBuilderBase({super.key, required this.stream});
 
   /// The asynchronous computation to which this builder is currently connected,
   /// possibly null. When changed, the current summary is updated using
@@ -130,19 +130,23 @@ class _StreamBuilderBaseState<T, S> extends State<StreamBuilderBase<T, S>> {
 
   void _subscribe() {
     if (widget.stream != null) {
-      _subscription = widget.stream!.listen((T data) {
-        setState(() {
-          _summary = widget.afterData(_summary, data);
-        });
-      }, onError: (Object error, StackTrace stackTrace) {
-        setState(() {
-          _summary = widget.afterError(_summary, error, stackTrace);
-        });
-      }, onDone: () {
-        setState(() {
-          _summary = widget.afterDone(_summary);
-        });
-      });
+      _subscription = widget.stream!.listen(
+        (T data) {
+          setState(() {
+            _summary = widget.afterData(_summary, data);
+          });
+        },
+        onError: (Object error, StackTrace stackTrace) {
+          setState(() {
+            _summary = widget.afterError(_summary, error, stackTrace);
+          });
+        },
+        onDone: () {
+          setState(() {
+            _summary = widget.afterDone(_summary);
+          });
+        },
+      );
       _summary = widget.afterConnected(_summary);
     }
   }
@@ -213,7 +217,7 @@ class AsyncSnapshot<T> {
   const AsyncSnapshot.waiting() : this._(ConnectionState.waiting, null, null, null);
 
   /// Creates an [AsyncSnapshot] in the specified [state] and with the specified [data].
-  const AsyncSnapshot.withData(ConnectionState state, T data): this._(state, data, null, null);
+  const AsyncSnapshot.withData(ConnectionState state, T data) : this._(state, data, null, null);
 
   /// Creates an [AsyncSnapshot] in the specified [state] with the specified [error]
   /// and a [stackTrace].
@@ -273,7 +277,8 @@ class AsyncSnapshot<T> {
   ///
   /// The [data], [error], and [stackTrace] fields persist unmodified, even if
   /// the new state is [ConnectionState.none].
-  AsyncSnapshot<T> inState(ConnectionState state) => AsyncSnapshot<T>._(state, data, error, stackTrace);
+  AsyncSnapshot<T> inState(ConnectionState state) =>
+      AsyncSnapshot<T>._(state, data, error, stackTrace);
 
   /// Returns whether this snapshot contains a non-null [data] value.
   ///
@@ -290,18 +295,19 @@ class AsyncSnapshot<T> {
   bool get hasError => error != null;
 
   @override
-  String toString() => '${objectRuntimeType(this, 'AsyncSnapshot')}($connectionState, $data, $error, $stackTrace)';
+  String toString() =>
+      '${objectRuntimeType(this, 'AsyncSnapshot')}($connectionState, $data, $error, $stackTrace)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
-    return other is AsyncSnapshot<T>
-        && other.connectionState == connectionState
-        && other.data == data
-        && other.error == error
-        && other.stackTrace == stackTrace;
+    return other is AsyncSnapshot<T> &&
+        other.connectionState == connectionState &&
+        other.data == data &&
+        other.error == error &&
+        other.stackTrace == stackTrace;
   }
 
   @override
@@ -403,12 +409,7 @@ class StreamBuilder<T> extends StreamBuilderBase<T, AsyncSnapshot<T>> {
   /// strategy is given by [builder].
   ///
   /// The [initialData] is used to create the initial snapshot.
-  const StreamBuilder({
-    super.key,
-    this.initialData,
-    required super.stream,
-    required this.builder,
-  });
+  const StreamBuilder({super.key, this.initialData, required super.stream, required this.builder});
 
   /// The build strategy currently used by this builder.
   ///
@@ -427,12 +428,14 @@ class StreamBuilder<T> extends StreamBuilderBase<T, AsyncSnapshot<T>> {
   final T? initialData;
 
   @override
-  AsyncSnapshot<T> initial() => initialData == null
-      ? AsyncSnapshot<T>.nothing()
-      : AsyncSnapshot<T>.withData(ConnectionState.none, initialData as T);
+  AsyncSnapshot<T> initial() =>
+      initialData == null
+          ? AsyncSnapshot<T>.nothing()
+          : AsyncSnapshot<T>.withData(ConnectionState.none, initialData as T);
 
   @override
-  AsyncSnapshot<T> afterConnected(AsyncSnapshot<T> current) => current.inState(ConnectionState.waiting);
+  AsyncSnapshot<T> afterConnected(AsyncSnapshot<T> current) =>
+      current.inState(ConnectionState.waiting);
 
   @override
   AsyncSnapshot<T> afterData(AsyncSnapshot<T> current, T data) {
@@ -448,10 +451,12 @@ class StreamBuilder<T> extends StreamBuilderBase<T, AsyncSnapshot<T>> {
   AsyncSnapshot<T> afterDone(AsyncSnapshot<T> current) => current.inState(ConnectionState.done);
 
   @override
-  AsyncSnapshot<T> afterDisconnected(AsyncSnapshot<T> current) => current.inState(ConnectionState.none);
+  AsyncSnapshot<T> afterDisconnected(AsyncSnapshot<T> current) =>
+      current.inState(ConnectionState.none);
 
   @override
-  Widget build(BuildContext context, AsyncSnapshot<T> currentSummary) => builder(context, currentSummary);
+  Widget build(BuildContext context, AsyncSnapshot<T> currentSummary) =>
+      builder(context, currentSummary);
 }
 
 /// A widget that builds itself based on the latest snapshot of interaction with
@@ -532,12 +537,7 @@ class StreamBuilder<T> extends StreamBuilderBase<T, AsyncSnapshot<T>> {
 class FutureBuilder<T> extends StatefulWidget {
   /// Creates a widget that builds itself based on the latest snapshot of
   /// interaction with a [Future].
-  const FutureBuilder({
-    super.key,
-    required this.future,
-    this.initialData,
-    required this.builder,
-  });
+  const FutureBuilder({super.key, required this.future, this.initialData, required this.builder});
 
   /// The asynchronous computation to which this builder is currently connected,
   /// possibly null.
@@ -603,9 +603,10 @@ class _FutureBuilderState<T> extends State<FutureBuilder<T>> {
   @override
   void initState() {
     super.initState();
-    _snapshot = widget.initialData == null
-        ? AsyncSnapshot<T>.nothing()
-        : AsyncSnapshot<T>.withData(ConnectionState.none, widget.initialData as T);
+    _snapshot =
+        widget.initialData == null
+            ? AsyncSnapshot<T>.nothing()
+            : AsyncSnapshot<T>.withData(ConnectionState.none, widget.initialData as T);
     _subscribe();
   }
 
@@ -638,25 +639,28 @@ class _FutureBuilderState<T> extends State<FutureBuilder<T>> {
     }
     final Object callbackIdentity = Object();
     _activeCallbackIdentity = callbackIdentity;
-    widget.future!.then<void>((T data) {
-      if (_activeCallbackIdentity == callbackIdentity) {
-        setState(() {
-          _snapshot = AsyncSnapshot<T>.withData(ConnectionState.done, data);
-        });
-      }
-    }, onError: (Object error, StackTrace stackTrace) {
-      if (_activeCallbackIdentity == callbackIdentity) {
-        setState(() {
-          _snapshot = AsyncSnapshot<T>.withError(ConnectionState.done, error, stackTrace);
-        });
-      }
-      assert(() {
-        if (FutureBuilder.debugRethrowError) {
-          Future<Object>.error(error, stackTrace);
+    widget.future!.then<void>(
+      (T data) {
+        if (_activeCallbackIdentity == callbackIdentity) {
+          setState(() {
+            _snapshot = AsyncSnapshot<T>.withData(ConnectionState.done, data);
+          });
         }
-        return true;
-      }());
-    });
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        if (_activeCallbackIdentity == callbackIdentity) {
+          setState(() {
+            _snapshot = AsyncSnapshot<T>.withError(ConnectionState.done, error, stackTrace);
+          });
+        }
+        assert(() {
+          if (FutureBuilder.debugRethrowError) {
+            Future<Object>.error(error, stackTrace);
+          }
+          return true;
+        }());
+      },
+    );
     // An implementation like `SynchronousFuture` may have already called the
     // .then closure. Do not overwrite it in that case.
     if (_snapshot.connectionState != ConnectionState.done) {

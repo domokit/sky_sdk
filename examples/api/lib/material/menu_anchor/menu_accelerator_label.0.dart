@@ -36,21 +36,17 @@ class MyMenuBar extends StatelessWidget {
                       ),
                       MenuItemButton(
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Saved!'),
-                            ),
-                          );
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(const SnackBar(content: Text('Saved!')));
                         },
                         child: const MenuAcceleratorLabel('&Save'),
                       ),
                       MenuItemButton(
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Quit!'),
-                            ),
-                          );
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(const SnackBar(content: Text('Quit!')));
                         },
                         child: const MenuAcceleratorLabel('&Quit'),
                       ),
@@ -61,21 +57,17 @@ class MyMenuBar extends StatelessWidget {
                     menuChildren: <Widget>[
                       MenuItemButton(
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Magnify!'),
-                            ),
-                          );
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(const SnackBar(content: Text('Magnify!')));
                         },
                         child: const MenuAcceleratorLabel('&Magnify'),
                       ),
                       MenuItemButton(
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Minify!'),
-                            ),
-                          );
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(const SnackBar(content: Text('Minify!')));
                         },
                         child: const MenuAcceleratorLabel('Mi&nify'),
                       ),
@@ -87,11 +79,7 @@ class MyMenuBar extends StatelessWidget {
             ),
           ],
         ),
-        Expanded(
-          child: FlutterLogo(
-            size: MediaQuery.of(context).size.shortestSide * 0.5,
-          ),
-        ),
+        Expanded(child: FlutterLogo(size: MediaQuery.of(context).size.shortestSide * 0.5)),
       ],
     );
   }

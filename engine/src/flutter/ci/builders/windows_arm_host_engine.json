@@ -1,0 +1,144 @@
+{
+    "builds": [
+        {
+            "archives": [
+                {
+                    "base_path": "out/ci/host_debug_arm64/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/host_debug_arm64/zip_archives/windows-arm64/artifacts.zip",
+                        "out/ci/host_debug_arm64/zip_archives/windows-arm64/impeller_sdk.zip",
+                        "out/ci/host_debug_arm64/zip_archives/windows-arm64/windows-arm64-embedder.zip",
+                        "out/ci/host_debug_arm64/zip_archives/windows-arm64/font-subset.zip",
+                        "out/ci/host_debug_arm64/zip_archives/dart-sdk-windows-arm64.zip",
+                        "out/ci/host_debug_arm64/zip_archives/windows-arm64-debug/windows-arm64-flutter.zip",
+                        "out/ci/host_debug_arm64/zip_archives/windows-arm64/flutter-cpp-client-wrapper.zip"
+                    ],
+                    "name": "ci/host_debug_arm64",
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Windows-10"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/host_debug_arm64",
+                "--runtime-mode",
+                "debug",
+                "--no-lto",
+                "--windows-cpu",
+                "arm64",
+                "--no-goma",
+                "--rbe"
+            ],
+            "name": "ci\\host_debug_arm64",
+            "description": "Produces debug mode artifacts to target arm64 Windows from an x64 Windows host.",
+            "ninja": {
+                "config": "ci/host_debug_arm64",
+                "targets": [
+                    "flutter/build/archives:artifacts",
+                    "flutter/build/archives:embedder",
+                    "flutter/tools/font_subset",
+                    "flutter/build/archives:dart_sdk_archive",
+                    "flutter/shell/platform/windows/client_wrapper:client_wrapper_archive",
+                    "flutter/build/archives:windows_flutter",
+                    "flutter/impeller/toolkit/interop:sdk"
+                ]
+            }
+        },
+        {
+            "archives": [
+                {
+                    "base_path": "out/ci/host_profile_arm64/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/host_profile_arm64/zip_archives/windows-arm64-profile/windows-arm64-flutter.zip"
+                    ],
+                    "name": "ci/host_profile_arm64",
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Windows-10"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/host_profile_arm64",
+                "--runtime-mode",
+                "profile",
+                "--no-lto",
+                "--windows-cpu",
+                "arm64",
+                "--no-goma",
+                "--rbe"
+            ],
+            "name": "ci\\host_profile_arm64",
+            "description": "Produces profile mode artifacts to target arm64 Windows from an x64 Windows host.",
+            "ninja": {
+                "config": "ci/host_profile_arm64",
+                "targets": [
+                    "windows",
+                    "gen_snapshot",
+                    "flutter/build/archives:windows_flutter"
+                ]
+            }
+        },
+        {
+            "archives": [
+                {
+                    "base_path": "out/ci/host_release_arm64/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/host_release_arm64/zip_archives/windows-arm64-release/windows-arm64-flutter.zip"
+                    ],
+                    "name": "ci/host_profile_arm64",
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Windows-10"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "generators": {},
+            "gn": [
+                "--target-dir",
+                "ci/host_release_arm64",
+                "--runtime-mode",
+                "release",
+                "--no-lto",
+                "--windows-cpu",
+                "arm64",
+                "--no-goma",
+                "--rbe"
+            ],
+            "name": "ci\\host_release_arm64",
+            "description": "Produces release mode artifacts to target arm64 Windows from an x64 Windows host.",
+            "ninja": {
+                "config": "ci/host_release_arm64",
+                "targets": [
+                    "windows",
+                    "gen_snapshot",
+                    "flutter/build/archives:windows_flutter"
+                ]
+            }
+        }
+    ]
+}

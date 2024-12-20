@@ -12,29 +12,28 @@ const String alternativeText = 'Everything is awesome!!';
 void main() {
   testWidgets('CupertinoTextFormFieldRow restoration', (WidgetTester tester) async {
     await tester.pumpWidget(
-      const CupertinoApp(
-        restorationScopeId: 'app',
-        home: RestorableTestWidget(),
-      ),
+      const CupertinoApp(restorationScopeId: 'app', home: RestorableTestWidget()),
     );
 
     await restoreAndVerify(tester);
   });
 
-  testWidgets('CupertinoTextFormFieldRow restoration with external controller', (WidgetTester tester) async {
+  testWidgets('CupertinoTextFormFieldRow restoration with external controller', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       const CupertinoApp(
         restorationScopeId: 'root',
-        home: RestorableTestWidget(
-          useExternalController: true,
-        ),
+        home: RestorableTestWidget(useExternalController: true),
       ),
     );
 
     await restoreAndVerify(tester);
   });
 
-  testWidgets('State restoration (No Form ancestor) - onUserInteraction error text validation', (WidgetTester tester) async {
+  testWidgets('State restoration (No Form ancestor) - onUserInteraction error text validation', (
+    WidgetTester tester,
+  ) async {
     String? errorText(String? value) => '$value/error';
     late GlobalKey<FormFieldState<String>> formState;
 
@@ -92,79 +91,82 @@ void main() {
     expect(find.text(errorText('bar')!), findsOneWidget);
   });
 
-  testWidgets('State Restoration (No Form ancestor) - validator sets the error text only when validate is called', (WidgetTester tester) async {
-    String? errorText(String? value) => '$value/error';
-    late GlobalKey<FormFieldState<String>> formState;
+  testWidgets(
+    'State Restoration (No Form ancestor) - validator sets the error text only when validate is called',
+    (WidgetTester tester) async {
+      String? errorText(String? value) => '$value/error';
+      late GlobalKey<FormFieldState<String>> formState;
 
-    Widget builder(AutovalidateMode mode) {
-      return CupertinoApp(
-        restorationScopeId: 'app',
-        home: MediaQuery(
-          data: const MediaQueryData(),
-          child: Directionality(
-            textDirection: TextDirection.ltr,
-            child: Center(
-              child: StatefulBuilder(
-                builder: (BuildContext context, StateSetter state) {
-                  formState = GlobalKey<FormFieldState<String>>();
-                  return Material(
-                    child: CupertinoTextFormFieldRow(
-                      key: formState,
-                      restorationId: 'form_field',
-                      autovalidateMode: mode,
-                      initialValue: 'foo',
-                      validator: errorText,
-                    ),
-                  );
-                },
+      Widget builder(AutovalidateMode mode) {
+        return CupertinoApp(
+          restorationScopeId: 'app',
+          home: MediaQuery(
+            data: const MediaQueryData(),
+            child: Directionality(
+              textDirection: TextDirection.ltr,
+              child: Center(
+                child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter state) {
+                    formState = GlobalKey<FormFieldState<String>>();
+                    return Material(
+                      child: CupertinoTextFormFieldRow(
+                        key: formState,
+                        restorationId: 'form_field',
+                        autovalidateMode: mode,
+                        initialValue: 'foo',
+                        validator: errorText,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),
-        ),
-      );
-    }
+        );
+      }
 
-    // Start off not autovalidating.
-    await tester.pumpWidget(builder(AutovalidateMode.disabled));
-
-    Future<void> checkErrorText(String testValue) async {
-      formState.currentState!.reset();
+      // Start off not autovalidating.
       await tester.pumpWidget(builder(AutovalidateMode.disabled));
-      await tester.enterText(find.byType(CupertinoTextFormFieldRow), testValue);
-      await tester.pump();
 
-      // We have to manually validate if we're not autovalidating.
-      expect(find.text(errorText(testValue)!), findsNothing);
-      formState.currentState!.validate();
-      await tester.pump();
-      expect(find.text(errorText(testValue)!), findsOneWidget);
-      final TestRestorationData data = await tester.getRestorationData();
-      await tester.restartAndRestore();
-      // Error text should be present after restart and restore.
-      expect(find.text(errorText(testValue)!), findsOneWidget);
+      Future<void> checkErrorText(String testValue) async {
+        formState.currentState!.reset();
+        await tester.pumpWidget(builder(AutovalidateMode.disabled));
+        await tester.enterText(find.byType(CupertinoTextFormFieldRow), testValue);
+        await tester.pump();
 
-      formState.currentState!.reset();
-      await tester.pumpAndSettle();
-      expect(find.text(errorText(testValue)!), findsNothing);
+        // We have to manually validate if we're not autovalidating.
+        expect(find.text(errorText(testValue)!), findsNothing);
+        formState.currentState!.validate();
+        await tester.pump();
+        expect(find.text(errorText(testValue)!), findsOneWidget);
+        final TestRestorationData data = await tester.getRestorationData();
+        await tester.restartAndRestore();
+        // Error text should be present after restart and restore.
+        expect(find.text(errorText(testValue)!), findsOneWidget);
 
-      await tester.restoreFrom(data);
-      expect(find.text(errorText(testValue)!), findsOneWidget);
+        formState.currentState!.reset();
+        await tester.pumpAndSettle();
+        expect(find.text(errorText(testValue)!), findsNothing);
 
-      // Try again with autovalidation. Should validate immediately.
-      formState.currentState!.reset();
-      await tester.pumpWidget(builder(AutovalidateMode.always));
-      await tester.enterText(find.byType(CupertinoTextFormFieldRow), testValue);
-      await tester.pump();
+        await tester.restoreFrom(data);
+        expect(find.text(errorText(testValue)!), findsOneWidget);
 
-      expect(find.text(errorText(testValue)!), findsOneWidget);
-      await tester.restartAndRestore();
-      // Error text should be present after restart and restore.
-      expect(find.text(errorText(testValue)!), findsOneWidget);
-    }
+        // Try again with autovalidation. Should validate immediately.
+        formState.currentState!.reset();
+        await tester.pumpWidget(builder(AutovalidateMode.always));
+        await tester.enterText(find.byType(CupertinoTextFormFieldRow), testValue);
+        await tester.pump();
 
-    await checkErrorText('Test');
-    await checkErrorText('');
-  });
+        expect(find.text(errorText(testValue)!), findsOneWidget);
+        await tester.restartAndRestore();
+        // Error text should be present after restart and restore.
+        expect(find.text(errorText(testValue)!), findsOneWidget);
+      }
+
+      await checkErrorText('Test');
+      await checkErrorText('');
+    },
+  );
 }
 
 Future<void> restoreAndVerify(WidgetTester tester) async {

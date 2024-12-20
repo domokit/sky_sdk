@@ -36,14 +36,15 @@ class LogScanningVMServiceDiscoveryForAttach extends VMServiceDiscoveryForAttach
     required bool ipv6,
     required Logger logger,
   }) {
-    _protocolDiscovery = (() async => ProtocolDiscovery.vmService(
-      await logReader,
-      portForwarder: portForwarder,
-      ipv6: ipv6,
-      devicePort: devicePort,
-      hostPort: hostPort,
-      logger: logger,
-    ))();
+    _protocolDiscovery =
+        (() async => ProtocolDiscovery.vmService(
+          await logReader,
+          portForwarder: portForwarder,
+          ipv6: ipv6,
+          devicePort: devicePort,
+          hostPort: hostPort,
+          logger: logger,
+        ))();
   }
 
   late final Future<ProtocolDiscovery> _protocolDiscovery;
@@ -51,13 +52,10 @@ class LogScanningVMServiceDiscoveryForAttach extends VMServiceDiscoveryForAttach
   @override
   Stream<Uri> get uris {
     final StreamController<Uri> controller = StreamController<Uri>();
-    _protocolDiscovery.then(
-      (ProtocolDiscovery protocolDiscovery) async {
-        await controller.addStream(protocolDiscovery.uris);
-        await controller.close();
-      },
-      onError: (Object error) => controller.addError(error),
-    );
+    _protocolDiscovery.then((ProtocolDiscovery protocolDiscovery) async {
+      await controller.addStream(protocolDiscovery.uris);
+      await controller.close();
+    }, onError: (Object error) => controller.addError(error));
     return controller.stream;
   }
 }
@@ -83,16 +81,19 @@ class MdnsVMServiceDiscoveryForAttach extends VMServiceDiscoveryForAttach {
 
   @override
   Stream<Uri> get uris {
-    final Future<Uri?> mDNSDiscoveryFuture = MDnsVmServiceDiscovery.instance!.getVMServiceUriForAttach(
-      appId,
-      device,
-      usesIpv6: usesIpv6,
-      useDeviceIPAsHost: useDeviceIPAsHost,
-      deviceVmservicePort: deviceVmservicePort,
-      hostVmservicePort: hostVmservicePort,
-    );
+    final Future<Uri?> mDNSDiscoveryFuture = MDnsVmServiceDiscovery.instance!
+        .getVMServiceUriForAttach(
+          appId,
+          device,
+          usesIpv6: usesIpv6,
+          useDeviceIPAsHost: useDeviceIPAsHost,
+          deviceVmservicePort: deviceVmservicePort,
+          hostVmservicePort: hostVmservicePort,
+        );
 
-    return Stream<Uri?>.fromFuture(mDNSDiscoveryFuture).where((Uri? uri) => uri != null).cast<Uri>().asBroadcastStream();
+    return Stream<Uri?>.fromFuture(
+      mDNSDiscoveryFuture,
+    ).where((Uri? uri) => uri != null).cast<Uri>().asBroadcastStream();
   }
 }
 
@@ -104,7 +105,7 @@ class DelegateVMServiceDiscoveryForAttach extends VMServiceDiscoveryForAttach {
   final List<VMServiceDiscoveryForAttach> delegates;
 
   @override
-  Stream<Uri> get uris =>
-      StreamGroup.merge<Uri>(
-        delegates.map((VMServiceDiscoveryForAttach delegate) => delegate.uris));
+  Stream<Uri> get uris => StreamGroup.merge<Uri>(
+    delegates.map((VMServiceDiscoveryForAttach delegate) => delegate.uris),
+  );
 }

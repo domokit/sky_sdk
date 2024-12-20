@@ -1,0 +1,22 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/fuchsia_config.gni")
+
+template("fuchsia_host_bundle") {
+  assert(defined(invoker.name), "'name' must be defined for $target_name.")
+
+  _dest_dir_base = "${root_out_dir}/host_bundle"
+  _dest_dir = "${_dest_dir_base}/${invoker.name}-${flutter_runtime_mode}-${host_os}-${host_cpu}"
+
+  copy(target_name) {
+    if (defined(invoker.deps)) {
+      deps = invoker.deps
+    }
+
+    sources = invoker.sources
+
+    outputs = [ "${_dest_dir}/{{source_file_part}}" ]
+  }
+}

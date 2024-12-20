@@ -13,10 +13,7 @@ class CheckboxListTileApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      home: const CheckboxListTileExample(),
-    );
+    return MaterialApp(theme: ThemeData(useMaterial3: true), home: const CheckboxListTileExample());
   }
 }
 
@@ -58,7 +55,8 @@ class _CheckboxListTileExampleState extends State<CheckboxListTileExample> {
             },
             title: const Text('Headline'),
             subtitle: const Text(
-                'Longer supporting text to demonstrate how the text wraps and the checkbox is centered vertically with the text.'),
+              'Longer supporting text to demonstrate how the text wraps and the checkbox is centered vertically with the text.',
+            ),
           ),
           const Divider(height: 0),
           CheckboxListTile(
@@ -70,7 +68,8 @@ class _CheckboxListTileExampleState extends State<CheckboxListTileExample> {
             },
             title: const Text('Headline'),
             subtitle: const Text(
-                "Longer supporting text to demonstrate how the text wraps and how setting 'CheckboxListTile.isThreeLine = true' aligns the checkbox to the top vertically with the text."),
+              "Longer supporting text to demonstrate how the text wraps and how setting 'CheckboxListTile.isThreeLine = true' aligns the checkbox to the top vertically with the text.",
+            ),
             isThreeLine: true,
           ),
           const Divider(height: 0),

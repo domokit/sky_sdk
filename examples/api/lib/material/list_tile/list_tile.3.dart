@@ -13,10 +13,7 @@ class ListTileApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      home: const ListTileExample(),
-    );
+    return MaterialApp(theme: ThemeData(useMaterial3: true), home: const ListTileExample());
   }
 }
 
@@ -48,7 +45,7 @@ class _ListTileExampleState extends State<ListTileExample> {
           iconColor: const WidgetStateColor.fromMap(<WidgetStatesConstraint, Color>{
             WidgetState.disabled: Colors.red,
             WidgetState.selected: Colors.green,
-            WidgetState.any:      Colors.black,
+            WidgetState.any: Colors.black,
           }),
           // The same can be achieved using the .resolveWith() constructor.
           // The text color will be identical to the icon color above.

@@ -1,0 +1,331 @@
+{
+    "builds": [
+        {
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=arm64"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--runtime-mode",
+                "debug",
+                "--prebuilt-dart-sdk",
+                "--no-lto",
+                "--target-dir",
+                "ci/host_debug_clang_tidy",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks"
+            ],
+            "name": "ci/host_debug_clang_tidy",
+            "description": "A debug mode macOS host build used only as the basis for a clang-tidy run.",
+            "ninja": {
+                "config": "ci/host_debug_clang_tidy"
+            }
+        },
+        {
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=arm64"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--ios",
+                "--runtime-mode",
+                "debug",
+                "--simulator",
+                "--no-lto",
+                "--target-dir",
+                "ci/ios_debug_sim_clang_tidy",
+                "--rbe",
+                "--no-goma",
+                "--xcode-symlinks"
+            ],
+            "name": "ci/ios_debug_sim_clang_tidy",
+            "description": "A debug mode iOS simulator build used only as the basis for a clang-tidy run.",
+            "ninja": {
+                "config": "ci/ios_debug_sim_clang_tidy"
+            }
+        }
+    ],
+    "tests": [
+        {
+            "name": "test: lint host_debug 0",
+            "recipe": "engine_v2/tester_engine",
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=arm64"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "dependencies": [
+                "ci/host_debug_clang_tidy"
+            ],
+            "contexts": [
+                "osx_sdk"
+            ],
+            "tasks": [
+                {
+                    "name": "gn for host_debug",
+                    "langauge": "python",
+                    "script": "flutter/tools/gn",
+                    "parameters": [
+                        "--runtime-mode",
+                        "debug",
+                        "--prebuilt-dart-sdk",
+                        "--no-lto",
+                        "--target-dir",
+                        "ci/host_debug_clang_tidy",
+                        "--rbe",
+                        "--no-goma",
+                        "--xcode-symlinks"
+                    ]
+                },
+                {
+                    "name": "test: lint host_debug",
+                    "parameters": [
+                        "--variant",
+                        "ci/host_debug_clang_tidy",
+                        "--lint-all",
+                        "--shard-id=0",
+                        "--shard-variants=ci/host_debug_clang_tidy,ci/host_debug_clang_tidy,ci/host_debug_clang_tidy"
+                    ],
+                    "max_attempts": 1,
+                    "script": "flutter/ci/clang_tidy.sh"
+                }
+            ]
+        },
+        {
+            "name": "test: lint host_debug 1",
+            "recipe": "engine_v2/tester_engine",
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=arm64"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "dependencies": [
+                "ci/host_debug_clang_tidy"
+            ],
+            "contexts": [
+                "osx_sdk"
+            ],
+            "tasks": [
+                {
+                    "name": "gn for host_debug",
+                    "langauge": "python",
+                    "script": "flutter/tools/gn",
+                    "parameters": [
+                        "--runtime-mode",
+                        "debug",
+                        "--prebuilt-dart-sdk",
+                        "--no-lto",
+                        "--target-dir",
+                        "ci/host_debug_clang_tidy",
+                        "--rbe",
+                        "--no-goma",
+                        "--xcode-symlinks"
+                    ]
+                },
+                {
+                    "name": "test: lint host_debug",
+                    "parameters": [
+                        "--variant",
+                        "ci/host_debug_clang_tidy",
+                        "--lint-all",
+                        "--shard-id=1",
+                        "--shard-variants=ci/host_debug_clang_tidy,ci/host_debug_clang_tidy,ci/host_debug_clang_tidy"
+                    ],
+                    "max_attempts": 1,
+                    "script": "flutter/ci/clang_tidy.sh"
+                }
+            ]
+        },
+        {
+            "name": "test: lint host_debug 2",
+            "recipe": "engine_v2/tester_engine",
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=arm64"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "dependencies": [
+                "ci/host_debug_clang_tidy"
+            ],
+            "contexts": [
+                "osx_sdk"
+            ],
+            "tasks": [
+                {
+                    "name": "gn for host_debug",
+                    "langauge": "python",
+                    "script": "flutter/tools/gn",
+                    "parameters": [
+                        "--runtime-mode",
+                        "debug",
+                        "--prebuilt-dart-sdk",
+                        "--no-lto",
+                        "--target-dir",
+                        "ci/host_debug_clang_tidy",
+                        "--rbe",
+                        "--no-goma",
+                        "--xcode-symlinks"
+                    ]
+                },
+                {
+                    "name": "test: lint host_debug",
+                    "parameters": [
+                        "--variant",
+                        "ci/host_debug_clang_tidy",
+                        "--lint-all",
+                        "--shard-id=2",
+                        "--shard-variants=ci/host_debug_clang_tidy,ci/host_debug_clang_tidy,ci/host_debug_clang_tidy"
+                    ],
+                    "max_attempts": 1,
+                    "script": "flutter/ci/clang_tidy.sh"
+                }
+            ]
+        },
+        {
+            "name": "test: lint host_debug 3",
+            "recipe": "engine_v2/tester_engine",
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=arm64"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "dependencies": [
+                "ci/host_debug_clang_tidy"
+            ],
+            "contexts": [
+                "osx_sdk"
+            ],
+            "tasks": [
+                {
+                    "name": "gn for host_debug",
+                    "langauge": "python",
+                    "script": "flutter/tools/gn",
+                    "parameters": [
+                        "--runtime-mode",
+                        "debug",
+                        "--prebuilt-dart-sdk",
+                        "--no-lto",
+                        "--target-dir",
+                        "ci/host_debug_clang_tidy",
+                        "--rbe",
+                        "--no-goma",
+                        "--xcode-symlinks"
+                    ]
+                },
+                {
+                    "name": "test: lint host_debug",
+                    "parameters": [
+                        "--variant",
+                        "ci/host_debug_clang_tidy",
+                        "--lint-all",
+                        "--shard-id=3",
+                        "--shard-variants=ci/host_debug_clang_tidy,ci/host_debug_clang_tidy,ci/host_debug_clang_tidy"
+                    ],
+                    "max_attempts": 1,
+                    "script": "flutter/ci/clang_tidy.sh"
+                }
+            ]
+        },
+        {
+            "name": "test: lint ios_debug_sim",
+            "recipe": "engine_v2/tester_engine",
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Mac-13|Mac-14",
+                "cpu=arm64"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "dependencies": [
+                "ci/host_debug_clang_tidy",
+                "ci/ios_debug_sim_clang_tidy"
+            ],
+            "contexts": [
+                "osx_sdk"
+            ],
+            "tasks": [
+                {
+                    "name": "gn for host_debug",
+                    "langauge": "python",
+                    "script": "flutter/tools/gn",
+                    "parameters": [
+                        "--runtime-mode",
+                        "debug",
+                        "--prebuilt-dart-sdk",
+                        "--no-lto",
+                        "--target-dir",
+                        "ci/host_debug_clang_tidy",
+                        "--rbe",
+                        "--no-goma",
+                        "--xcode-symlinks"
+                    ]
+                },
+                {
+                    "name": "gn for ios_debug_sim",
+                    "langauge": "python",
+                    "script": "flutter/tools/gn",
+                    "parameters": [
+                        "--ios",
+                        "--runtime-mode",
+                        "debug",
+                        "--simulator",
+                        "--no-lto",
+                        "--target-dir",
+                        "ci/ios_debug_sim_clang_tidy",
+                        "--rbe",
+                        "--no-goma",
+                        "--xcode-symlinks"
+                    ]
+                },
+                {
+                    "name": "test: lint ios_debug_sim",
+                    "parameters": [
+                        "--variant",
+                        "ci/ios_debug_sim_clang_tidy",
+                        "--lint-all",
+                        "--shard-id=0",
+                        "--shard-variants=ci/host_debug_clang_tidy"
+                    ],
+                    "max_attempts": 1,
+                    "script": "flutter/ci/clang_tidy.sh"
+                }
+            ]
+        }
+    ]
+}

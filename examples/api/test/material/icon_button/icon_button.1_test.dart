@@ -8,18 +8,13 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('IconButton', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.IconButtonExampleApp(),
-    );
+    await tester.pumpWidget(const example.IconButtonExampleApp());
 
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.android), findsOneWidget);
     final Ink ink = tester.widget<Ink>(
-      find.ancestor(
-        of: find.byIcon(Icons.android),
-        matching: find.byType(Ink),
-      ),
+      find.ancestor(of: find.byIcon(Icons.android), matching: find.byType(Ink)),
     );
 
     final ShapeDecoration decoration = ink.decoration! as ShapeDecoration;
@@ -27,6 +22,6 @@ void main() {
     expect(decoration.shape, const CircleBorder());
 
     final IconButton iconButton = ink.child! as IconButton;
-    expect(iconButton.color, Colors.white) ;
+    expect(iconButton.color, Colors.white);
   });
 }

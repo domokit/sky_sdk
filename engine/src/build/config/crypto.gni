@@ -1,0 +1,29 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This file declares build flags for the SSL library configuration.
+#
+# TODO(brettw) this should probably be moved to src/crypto or somewhere, and
+# the global build dependency on it should be removed.
+#
+# PLEASE TRY TO AVOID ADDING FLAGS TO THIS FILE in cases where grit isn't
+# required. See the declare_args block of BUILDCONFIG.gn for advice on how
+# to set up feature flags.
+
+declare_args() {
+  # Use OpenSSL instead of NSS. This is used for all platforms but iOS. (See
+  # http://crbug.com/338886).
+  use_openssl = !is_ios
+}
+
+# True when we're using OpenSSL for representing certificates. When targeting
+# Android, the platform certificate library is used for certificate
+# verification. On other targets, this flag also enables OpenSSL for certificate
+# verification, but this configuration is unsupported.
+use_openssl_certs = is_android
+
+# True if NSS is used for certificate verification. Note that this is
+# independent from use_openssl. It is possible to use OpenSSL for the crypto
+# library, but NSS for the platform certificate library.
+use_nss_certs = false

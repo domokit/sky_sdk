@@ -16,9 +16,7 @@ class CharacterActivatorExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('CharacterActivator Sample')),
-        body: const Center(
-          child: CharacterActivatorExample(),
-        ),
+        body: const Center(child: CharacterActivatorExample()),
       ),
     );
   }
@@ -39,27 +37,21 @@ class _CharacterActivatorExampleState extends State<CharacterActivatorExample> {
   @override
   Widget build(BuildContext context) {
     return Shortcuts(
-      shortcuts: const <ShortcutActivator, Intent>{
-        CharacterActivator('?'): HelpMenuIntent(),
-      },
+      shortcuts: const <ShortcutActivator, Intent>{CharacterActivator('?'): HelpMenuIntent()},
       child: Actions(
         actions: <Type, Action<Intent>>{
           HelpMenuIntent: CallbackAction<HelpMenuIntent>(
             onInvoke: (HelpMenuIntent intent) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Keep calm and carry on!')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Keep calm and carry on!')));
               return null;
             },
           ),
         },
         child: const Focus(
           autofocus: true,
-          child: Column(
-            children: <Widget>[
-              Text('Press question mark for help'),
-            ],
-          ),
+          child: Column(children: <Widget>[Text('Press question mark for help')]),
         ),
       ),
     );

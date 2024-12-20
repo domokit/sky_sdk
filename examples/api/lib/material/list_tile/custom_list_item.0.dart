@@ -13,9 +13,7 @@ class CustomListItemApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: CustomListItemExample(),
-    );
+    return const MaterialApp(home: CustomListItemExample());
   }
 }
 
@@ -40,22 +38,12 @@ class CustomListItem extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: thumbnail,
-          ),
+          Expanded(flex: 2, child: thumbnail),
           Expanded(
             flex: 3,
-            child: _VideoDescription(
-              title: title,
-              user: user,
-              viewCount: viewCount,
-            ),
+            child: _VideoDescription(title: title, user: user, viewCount: viewCount),
           ),
-          const Icon(
-            Icons.more_vert,
-            size: 16.0,
-          ),
+          const Icon(Icons.more_vert, size: 16.0),
         ],
       ),
     );
@@ -63,11 +51,7 @@ class CustomListItem extends StatelessWidget {
 }
 
 class _VideoDescription extends StatelessWidget {
-  const _VideoDescription({
-    required this.title,
-    required this.user,
-    required this.viewCount,
-  });
+  const _VideoDescription({required this.title, required this.user, required this.viewCount});
 
   final String title;
   final String user;
@@ -80,23 +64,11 @@ class _VideoDescription extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 14.0,
-            ),
-          ),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14.0)),
           const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
-          Text(
-            user,
-            style: const TextStyle(fontSize: 10.0),
-          ),
+          Text(user, style: const TextStyle(fontSize: 10.0)),
           const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
-          Text(
-            '$viewCount views',
-            style: const TextStyle(fontSize: 10.0),
-          ),
+          Text('$viewCount views', style: const TextStyle(fontSize: 10.0)),
         ],
       ),
     );
@@ -117,17 +89,13 @@ class CustomListItemExample extends StatelessWidget {
           CustomListItem(
             user: 'Flutter',
             viewCount: 999000,
-            thumbnail: Container(
-              decoration: const BoxDecoration(color: Colors.blue),
-            ),
+            thumbnail: Container(decoration: const BoxDecoration(color: Colors.blue)),
             title: 'The Flutter YouTube Channel',
           ),
           CustomListItem(
             user: 'Dash',
             viewCount: 884000,
-            thumbnail: Container(
-              decoration: const BoxDecoration(color: Colors.yellow),
-            ),
+            thumbnail: Container(decoration: const BoxDecoration(color: Colors.yellow)),
             title: 'Announcing Flutter 1.0',
           ),
         ],

@@ -17,26 +17,26 @@ enum ServiceWorkerStrategy implements CliEnum {
   @override
   String get cliName => kebabCase(name);
 
-  static ServiceWorkerStrategy fromCliName(String? value) => value == null
-      ? ServiceWorkerStrategy.offlineFirst
-      : values.singleWhere(
-          (ServiceWorkerStrategy element) => element.cliName == value,
-          orElse: () =>
-              throw ArgumentError.value(value, 'value', 'Not supported.'),
-        );
+  static ServiceWorkerStrategy fromCliName(String? value) =>
+      value == null
+          ? ServiceWorkerStrategy.offlineFirst
+          : values.singleWhere(
+            (ServiceWorkerStrategy element) => element.cliName == value,
+            orElse: () => throw ArgumentError.value(value, 'value', 'Not supported.'),
+          );
 
   @override
   String get helpText => switch (this) {
-        ServiceWorkerStrategy.offlineFirst =>
-          'Attempt to cache the application shell eagerly and then lazily '
-              'cache all subsequent assets as they are loaded. When making a '
-              'network request for an asset, the offline cache will be '
-              'preferred.',
-        ServiceWorkerStrategy.none =>
-          'Generate a service worker with no body. This is useful for local '
-              'testing or in cases where the service worker caching '
-              'functionality is not desirable'
-      };
+    ServiceWorkerStrategy.offlineFirst =>
+      'Attempt to cache the application shell eagerly and then lazily '
+          'cache all subsequent assets as they are loaded. When making a '
+          'network request for an asset, the offline cache will be '
+          'preferred.',
+    ServiceWorkerStrategy.none =>
+      'Generate a service worker with no body. This is useful for local '
+          'testing or in cases where the service worker caching '
+          'functionality is not desirable',
+  };
 }
 
 /// Generate a service worker with an app-specific cache name a map of
@@ -67,8 +67,5 @@ String generateServiceWorker(
         r'$$RESOURCES_MAP',
         '{${resources.entries.map((MapEntry<String, String> entry) => '"${entry.key}": "${entry.value}"').join(",\n")}}',
       )
-      .replaceAll(
-        r'$$CORE_LIST',
-        '[${coreBundle.map((String file) => '"$file"').join(',\n')}]',
-      );
+      .replaceAll(r'$$CORE_LIST', '[${coreBundle.map((String file) => '"$file"').join(',\n')}]');
 }

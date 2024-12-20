@@ -6,7 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:flutter_api_samples/widgets/navigator_pop_handler/navigator_pop_handler.1.dart' as example;
+import 'package:flutter_api_samples/widgets/navigator_pop_handler/navigator_pop_handler.1.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../navigator_utils.dart';
@@ -15,31 +16,34 @@ void main() {
   bool? lastFrameworkHandlesBack;
   setUp(() async {
     lastFrameworkHandlesBack = null;
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(SystemChannels.platform, (MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (MethodCall methodCall) async {
         if (methodCall.method == 'SystemNavigator.setFrameworkHandlesBack') {
           expect(methodCall.arguments, isA<bool>());
           lastFrameworkHandlesBack = methodCall.arguments as bool;
         }
         return;
-      });
-    await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .handlePlatformMessage(
-          'flutter/lifecycle',
-          const StringCodec().encodeMessage(AppLifecycleState.resumed.toString()),
-          (ByteData? data) {},
-        );
+      },
+    );
+    await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+      'flutter/lifecycle',
+      const StringCodec().encodeMessage(AppLifecycleState.resumed.toString()),
+      (ByteData? data) {},
+    );
   });
 
   tearDown(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(SystemChannels.platform, null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      null,
+    );
   });
 
-  testWidgets("System back gesture operates on current tab's nested Navigator", (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NavigatorPopHandlerApp(),
-    );
+  testWidgets("System back gesture operates on current tab's nested Navigator", (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.NavigatorPopHandlerApp());
 
     expect(find.text('Bottom nav - tab Home Tab - route _TabPage.home'), findsOneWidget);
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
@@ -81,9 +85,7 @@ void main() {
   });
 
   testWidgets('restoring the app preserves the navigation stack', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NavigatorPopHandlerApp(),
-    );
+    await tester.pumpWidget(const example.NavigatorPopHandlerApp());
 
     expect(find.text('Bottom nav - tab Home Tab - route _TabPage.home'), findsOneWidget);
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {

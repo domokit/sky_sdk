@@ -17,27 +17,48 @@ void main() {
 
     parentData.width = -100.0;
     expect(parentData.isPositioned, isTrue);
-    expect(parentData.positionedChildConstraints(stackSize), const BoxConstraints.tightFor(width: 0.0));
+    expect(
+      parentData.positionedChildConstraints(stackSize),
+      const BoxConstraints.tightFor(width: 0.0),
+    );
 
     parentData.width = 100.0;
-    expect(parentData.positionedChildConstraints(stackSize), const BoxConstraints.tightFor(width: 100.0));
+    expect(
+      parentData.positionedChildConstraints(stackSize),
+      const BoxConstraints.tightFor(width: 100.0),
+    );
 
     parentData.left = 0.0;
     parentData.right = 0.0;
-    expect(parentData.positionedChildConstraints(stackSize), const BoxConstraints.tightFor(width: 800.0));
+    expect(
+      parentData.positionedChildConstraints(stackSize),
+      const BoxConstraints.tightFor(width: 800.0),
+    );
 
     parentData.height = -100.0;
-    expect(parentData.positionedChildConstraints(stackSize), const BoxConstraints.tightFor(width: 800.0, height: 0.0));
+    expect(
+      parentData.positionedChildConstraints(stackSize),
+      const BoxConstraints.tightFor(width: 800.0, height: 0.0),
+    );
 
     parentData.height = 100.0;
-    expect(parentData.positionedChildConstraints(stackSize), const BoxConstraints.tightFor(width: 800.0, height: 100.0));
+    expect(
+      parentData.positionedChildConstraints(stackSize),
+      const BoxConstraints.tightFor(width: 800.0, height: 100.0),
+    );
 
     parentData.top = 0.0;
     parentData.bottom = 0.0;
-    expect(parentData.positionedChildConstraints(stackSize), const BoxConstraints.tightFor(width: 800.0, height: 600.0));
+    expect(
+      parentData.positionedChildConstraints(stackSize),
+      const BoxConstraints.tightFor(width: 800.0, height: 600.0),
+    );
 
     parentData.bottom = 1000.0;
-    expect(parentData.positionedChildConstraints(stackSize), const BoxConstraints.tightFor(width: 800.0, height: 0.0));
+    expect(
+      parentData.positionedChildConstraints(stackSize),
+      const BoxConstraints.tightFor(width: 800.0, height: 0.0),
+    );
   });
 
   test('Stack can layout with top, right, bottom, left 0.0', () {
@@ -46,16 +67,12 @@ void main() {
     );
 
     final RenderBox red = RenderDecoratedBox(
-      decoration: const BoxDecoration(
-        color: Color(0xFFFF0000),
-      ),
+      decoration: const BoxDecoration(color: Color(0xFFFF0000)),
       child: size,
     );
 
     final RenderBox green = RenderDecoratedBox(
-      decoration: const BoxDecoration(
-        color: Color(0xFFFF0000),
-      ),
+      decoration: const BoxDecoration(color: Color(0xFFFF0000)),
     );
 
     final RenderBox stack = RenderStack(
@@ -82,10 +99,7 @@ void main() {
   });
 
   test('Stack can layout with no children', () {
-    final RenderBox stack = RenderStack(
-      textDirection: TextDirection.ltr,
-      children: <RenderBox>[],
-    );
+    final RenderBox stack = RenderStack(textDirection: TextDirection.ltr, children: <RenderBox>[]);
 
     layout(stack, constraints: BoxConstraints.tight(const Size(100.0, 100.0)));
 
@@ -100,7 +114,7 @@ void main() {
       final TestClipPaintingContext context = TestClipPaintingContext();
       final RenderBox child = box200x200;
       final RenderStack stack;
-      switch (clip){
+      switch (clip) {
         case Clip.none:
         case Clip.hardEdge:
         case Clip.antiAlias:
@@ -111,16 +125,19 @@ void main() {
             clipBehavior: clip!,
           );
         case null:
-          stack = RenderStack(
-            textDirection: TextDirection.ltr,
-            children: <RenderBox>[child],
-          );
+          stack = RenderStack(textDirection: TextDirection.ltr, children: <RenderBox>[child]);
       }
-      { // Make sure that the child is positioned so the stack will consider it as overflowed.
+      {
+        // Make sure that the child is positioned so the stack will consider it as overflowed.
         final StackParentData parentData = child.parentData! as StackParentData;
         parentData.left = parentData.right = 0;
       }
-      layout(stack, constraints: viewport, phase: EnginePhase.composite, onErrors: expectNoFlutterErrors);
+      layout(
+        stack,
+        constraints: viewport,
+        phase: EnginePhase.composite,
+        onErrors: expectNoFlutterErrors,
+      );
       context.paintChild(stack, Offset.zero);
       // By default, clipBehavior should be Clip.hardEdge
       expect(context.clipBehavior, equals(clip ?? Clip.hardEdge), reason: 'for $clip');
@@ -218,12 +235,7 @@ void main() {
     final RenderFlex flex = RenderFlex(
       textDirection: TextDirection.ltr,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <RenderBox>[
-        RenderStack(
-          textDirection: TextDirection.ltr,
-          children: <RenderBox>[],
-        ),
-      ]
+      children: <RenderBox>[RenderStack(textDirection: TextDirection.ltr, children: <RenderBox>[])],
     );
 
     bool stackFlutterErrorThrown = false;
@@ -232,7 +244,7 @@ void main() {
       constraints: BoxConstraints.tight(const Size(100.0, 100.0)),
       onErrors: () {
         stackFlutterErrorThrown = true;
-      }
+      },
     );
 
     expect(stackFlutterErrorThrown, false);

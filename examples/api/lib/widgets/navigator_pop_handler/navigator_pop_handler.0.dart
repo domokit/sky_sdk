@@ -21,25 +21,19 @@ class NavigatorPopHandlerApp extends StatelessWidget {
       onGenerateRoute: (RouteSettings settings) {
         return switch (settings.name) {
           '/' => MaterialPageRoute<void>(
-            settings: const RouteSettings(
-              name: '/',
-            ),
+            settings: const RouteSettings(name: '/'),
             builder: (BuildContext context) {
               return _HomePage();
             },
           ),
           '/nested_navigators' => MaterialPageRoute<void>(
-            settings: const RouteSettings(
-              name: '/nested_navigators',
-            ),
+            settings: const RouteSettings(name: '/nested_navigators'),
             builder: (BuildContext context) {
               return const _NestedNavigatorsPage();
             },
           ),
           _ => MaterialPageRoute<void>(
-            settings: const RouteSettings(
-              name: 'unknown_page',
-            ),
+            settings: const RouteSettings(name: 'unknown_page'),
             builder: (BuildContext context) {
               return const _UnknownPage();
             },
@@ -54,9 +48,7 @@ class _HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Nested Navigators Example'),
-      ),
+      appBar: AppBar(title: const Text('Nested Navigators Example')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -66,7 +58,9 @@ class _HomePage extends StatelessWidget {
             const SizedBox(height: 20.0),
             ListTile(
               title: const Text('Nested Navigator route'),
-              subtitle: const Text('This route has another Navigator widget in addition to the one inside MaterialApp above.'),
+              subtitle: const Text(
+                'This route has another Navigator widget in addition to the one inside MaterialApp above.',
+              ),
               onTap: () {
                 Navigator.of(context).restorablePushNamed('/nested_navigators');
               },
@@ -102,25 +96,20 @@ class _NestedNavigatorsPageState extends State<_NestedNavigatorsPage> {
           final BuildContext rootContext = context;
           return switch (settings.name) {
             'nested_navigators/one' => MaterialPageRoute<void>(
-              settings: const RouteSettings(
-                name: 'nested_navigators/one',
-              ),
-              builder: (BuildContext context) => _NestedNavigatorsPageOne(
-                onBack: () {
-                  Navigator.of(rootContext).pop();
-                },
-              ),
+              settings: const RouteSettings(name: 'nested_navigators/one'),
+              builder:
+                  (BuildContext context) => _NestedNavigatorsPageOne(
+                    onBack: () {
+                      Navigator.of(rootContext).pop();
+                    },
+                  ),
             ),
             'nested_navigators/one/another_one' => MaterialPageRoute<void>(
-              settings: const RouteSettings(
-                name: 'nested_navigators/one',
-              ),
+              settings: const RouteSettings(name: 'nested_navigators/one'),
               builder: (BuildContext context) => const _NestedNavigatorsPageTwo(),
             ),
             _ => MaterialPageRoute<void>(
-              settings: const RouteSettings(
-                name: 'unknown_page',
-              ),
+              settings: const RouteSettings(name: 'unknown_page'),
               builder: (BuildContext context) {
                 return const _UnknownPage();
               },
@@ -133,9 +122,7 @@ class _NestedNavigatorsPageState extends State<_NestedNavigatorsPage> {
 }
 
 class _NestedNavigatorsPageOne extends StatelessWidget {
-  const _NestedNavigatorsPageOne({
-    required this.onBack,
-  });
+  const _NestedNavigatorsPageOne({required this.onBack});
 
   final VoidCallback onBack;
 
@@ -203,12 +190,7 @@ class _UnknownPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey.withBlue(180),
       body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('404'),
-          ],
-        ),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[Text('404')]),
       ),
     );
   }

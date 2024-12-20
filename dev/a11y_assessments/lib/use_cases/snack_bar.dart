@@ -25,7 +25,6 @@ class MainWidget extends StatefulWidget {
 }
 
 class MainWidgetState extends State<MainWidget> {
-
   String pageTitle = getUseCaseName(SnackBarUseCase());
 
   @override
@@ -41,11 +40,9 @@ class MainWidgetState extends State<MainWidget> {
             ElevatedButton(
               child: const Text('Show Snackbar'),
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Awesome Snackbar!'),
-                  ),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('Awesome Snackbar!')));
               },
             ),
             ElevatedButton(
@@ -54,10 +51,7 @@ class MainWidgetState extends State<MainWidget> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: const Text('Awesome Snackbar!'),
-                    action: SnackBarAction(
-                      label: 'Action',
-                      onPressed: () {},
-                    ),
+                    action: SnackBarAction(label: 'Action', onPressed: () {}),
                   ),
                 );
               },

@@ -1,0 +1,305 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/toolchain/clang.gni")
+import("//build/toolchain/clang_static_analyzer.gni")
+import("//build/toolchain/rbe.gni")
+
+# Path to the Clang static analysis wrapper script.
+analyzer_wrapper =
+    rebase_path("//build/toolchain/clang_static_analyzer_wrapper.py",
+                root_build_dir) + " --mode=clang"
+
+# This template defines a toolchain for something that works like gcc
+# (including clang).
+#
+# It requires the following variables specifying the executables to run:
+#  - asm
+#  - cc
+#  - cxx
+#  - ar
+#  - ld
+#  - readelf
+#  - nm
+# and the following which is used in the toolchain_args
+#  - toolchain_cpu  (What "current_cpu" should be set to when invoking a
+#                    build using this toolchain.)
+#  - toolchain_os  (What "current_os" should be set to when invoking a
+#                   build using this toolchain.)
+#
+# Optional parameters:
+#  - libs_section_prefix
+#  - libs_section_postfix
+#      The contents of these strings, if specified, will be placed around
+#      the libs section of the linker line. It allows one to inject libraries
+#      at the beginning and end for all targets in a toolchain.
+#  - solink_libs_section_prefix
+#  - solink_libs_section_postfix
+#      Same as libs_section_{pre,post}fix except used for solink instead of link.
+#  - post_solink
+#      The content of this string, if specified, will be appended to the solink
+#      command.
+#  - deps
+#      Just forwarded to the toolchain definition.
+#  - is_clang
+#  - strip
+#      Location of the strip executable. When specified, strip will be run on
+#      all shared libraries and executables as they are built. The pre-stripped
+#      artifacts will be put in lib.stripped/ and exe.stripped/.
+#  - llvm_objcopy
+#      Location of the llvm-objcopy executable. Used as strip instead of strip
+#      when specified.
+template("gcc_toolchain") {
+  toolchain(target_name) {
+    assert(defined(invoker.asm), "gcc_toolchain() must specify a \"asm\" value")
+    assert(defined(invoker.cc), "gcc_toolchain() must specify a \"cc\" value")
+    assert(defined(invoker.cxx), "gcc_toolchain() must specify a \"cxx\" value")
+    assert(defined(invoker.ar), "gcc_toolchain() must specify a \"ar\" value")
+    assert(defined(invoker.ld), "gcc_toolchain() must specify a \"ld\" value")
+    assert(defined(invoker.readelf),
+           "gcc_toolchain() must specify a \"readelf\" value")
+    assert(defined(invoker.nm), "gcc_toolchain() must specify a \"nm\" value")
+    assert(defined(invoker.toolchain_cpu),
+           "gcc_toolchain() must specify a \"toolchain_cpu\"")
+    assert(defined(invoker.toolchain_os),
+           "gcc_toolchain() must specify a \"toolchain_os\"")
+
+    # Use the static analysis script if static analysis is turned on
+    # AND the tool has not opted out by setting
+    # 'is_clang_static_analysis_supported' to false.
+    if (is_clang && use_clang_static_analyzer &&
+        (!defined(invoker.is_clang_analysis_supported) ||
+         invoker.is_clang_analysis_supported)) {
+      compiler_prefix = "${analyzer_wrapper} "
+    } else {
+      compiler_prefix = ""
+    }
+
+    # We can't do string interpolation ($ in strings) on things with dots in
+    # them. To allow us to use $cc below, for example, we create copies of
+    # these values in our scope.
+    asm = invoker.asm
+    cc = compiler_prefix + invoker.cc
+    cxx = compiler_prefix + invoker.cxx
+    ar = invoker.ar
+    ld = invoker.ld
+    readelf = invoker.readelf
+    nm = invoker.nm
+
+    # Bring these into our scope for string interpolation with default values.
+    if (defined(invoker.libs_section_prefix)) {
+      libs_section_prefix = invoker.libs_section_prefix
+    } else {
+      libs_section_prefix = ""
+    }
+
+    if (defined(invoker.libs_section_postfix)) {
+      libs_section_postfix = invoker.libs_section_postfix
+    } else {
+      libs_section_postfix = ""
+    }
+
+    if (defined(invoker.solink_libs_section_prefix)) {
+      solink_libs_section_prefix = invoker.solink_libs_section_prefix
+    } else {
+      solink_libs_section_prefix = ""
+    }
+
+    if (defined(invoker.solink_libs_section_postfix)) {
+      solink_libs_section_postfix = invoker.solink_libs_section_postfix
+    } else {
+      solink_libs_section_postfix = ""
+    }
+
+    # These library switches can apply to all tools below.
+    lib_switch = "-l"
+    lib_dir_switch = "-L"
+
+    coverage_flags = ""
+    if (enable_coverage) {
+      coverage_flags = "-fprofile-instr-generate -fcoverage-mapping"
+    }
+
+    tool("cc") {
+      depfile = "{{output}}.d"
+      command = "$cc -MMD -MF$depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_c}} $coverage_flags -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      description = "CC {{output}}"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+    }
+
+    tool("cxx") {
+      depfile = "{{output}}.d"
+      command = "$cxx -MMD -MF$depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}}  $coverage_flags -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      description = "CXX {{output}}"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+    }
+
+    tool("asm") {
+      pool = "//build/toolchain:toolchain_pool($current_toolchain)"
+      depfile = "{{output}}.d"
+      command = "$asm -MMD -MF$depfile {{defines}} {{include_dirs}} {{asmflags}} {{cflags}} {{cflags_c}} $coverage_flags -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      description = "ASM {{output}}"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+    }
+
+    tool("alink") {
+      pool = "//build/toolchain:toolchain_pool($current_toolchain)"
+      rspfile = "{{output}}.rsp"
+      command = "rm -f {{output}} && $ar rcs {{output}} @$rspfile"
+      description = "AR {{output}}"
+      rspfile_content = "{{inputs}}"
+      outputs =
+          [ "{{target_out_dir}}/{{target_output_name}}{{output_extension}}" ]
+      default_output_extension = ".a"
+      output_prefix = "lib"
+    }
+
+    tool("solink") {
+      pool = "//build/toolchain:toolchain_pool($current_toolchain)"
+      soname = "{{target_output_name}}{{output_extension}}"  # e.g. "libfoo.so".
+      sofile = "{{root_out_dir}}/$soname"  # Possibly including toolchain dir.
+      rspfile = sofile + ".rsp"
+
+      # These variables are not built into GN but are helpers that implement
+      # (1) linking to produce a .so, (2) extracting the symbols from that file
+      # to a temporary file, (3) if the temporary file has differences from the
+      # existing .TOC file, overwrite it, otherwise, don't change it.
+      tocfile = sofile + ".TOC"
+      temporary_tocname = sofile + ".tmp"
+      link_command = "$ld -shared {{ldflags}} $coverage_flags -o $sofile -Wl,--build-id=sha1 -Wl,-soname=$soname @$rspfile"
+      toc_command = "{ $readelf -d $sofile | grep SONAME ; $nm -gD -f posix $sofile | cut -f1-2 -d' '; } > $temporary_tocname"
+      replace_command = "if ! cmp -s $temporary_tocname $tocfile; then mv $temporary_tocname $tocfile; fi"
+
+      command = "$link_command && $toc_command && $replace_command"
+      if (stripped_symbols) {
+        if (defined(invoker.strip) || defined(invoker.llvm_objcopy)) {
+          unstripped_outfile = "{{root_out_dir}}/lib.unstripped/$sofile"
+          pre_strip_command = "mkdir -p {{root_out_dir}}/lib.unstripped && cp $sofile {{root_out_dir}}/lib.unstripped/"
+        }
+        if (defined(invoker.strip)) {
+          strip = invoker.strip
+          strip_command =
+              "${strip} --strip-unneeded -o  $sofile $unstripped_outfile"
+          command += " && " + pre_strip_command + " && " + strip_command
+        } else if (defined(invoker.llvm_objcopy)) {
+          strip = invoker.llvm_objcopy
+          strip_command = "${strip} --strip-all $unstripped_outfile $sofile"
+          command += " && " + pre_strip_command + " && " + strip_command
+        }
+      }
+      if (defined(invoker.postsolink)) {
+        command += " && " + invoker.postsolink
+      }
+      rspfile_content = "-Wl,--whole-archive {{inputs}} {{solibs}} -Wl,--no-whole-archive $solink_libs_section_prefix {{libs}} $solink_libs_section_postfix"
+
+      description = "SOLINK $sofile"
+
+      # Use this for {{output_extension}} expansions unless a target manually
+      # overrides it (in which case {{output_extension}} will be what the target
+      # specifies).
+      default_output_extension = ".so"
+      if (defined(invoker.default_output_extension)) {
+        default_output_extension = invoker.default_output_extension
+      }
+
+      output_prefix = "lib"
+
+      # Since the above commands only updates the .TOC file when it changes, ask
+      # Ninja to check if the timestamp actually changed to know if downstream
+      # dependencies should be recompiled.
+      restat = true
+
+      # Tell GN about the output files. It will link to the sofile but use the
+      # tocfile for dependency management.
+      outputs = [
+        sofile,
+        tocfile,
+      ]
+      if (defined(invoker.solink_outputs)) {
+        outputs += invoker.solink_outputs
+      }
+      link_output = sofile
+      depend_output = tocfile
+    }
+
+    tool("link") {
+      pool = "//build/toolchain:toolchain_pool($current_toolchain)"
+      exename = "{{target_output_name}}{{output_extension}}"
+      outfile = "{{root_out_dir}}/$exename"
+      rspfile = "$outfile.rsp"
+      unstripped_outfile = outfile
+
+      if (defined(invoker.strip) || defined(invoker.llvm_objcopy)) {
+        unstripped_outfile = "{{root_out_dir}}/exe.unstripped/$exename"
+      }
+
+      build_id = "-Wl,--build-id=sha1"
+      if (invoker.toolchain_cpu == "wasm") {
+        build_id = ""
+      }
+      command = "$ld {{ldflags}} $coverage_flags -o $unstripped_outfile $build_id -Wl,--start-group @$rspfile {{solibs}} -Wl,--end-group $libs_section_prefix {{libs}} $libs_section_postfix"
+      if (defined(invoker.strip)) {
+        strip = invoker.strip
+        strip_command =
+            "${strip} --strip-unneeded -o $outfile $unstripped_outfile"
+        command += " && " + strip_command
+      } else if (defined(invoker.llvm_objcopy)) {
+        strip = invoker.llvm_objcopy
+        strip_command = "${strip} --strip-all $unstripped_outfile $outfile"
+        command += " && " + strip_command
+      }
+      if (defined(invoker.postlink)) {
+        command += " && " + invoker.postlink
+      }
+      description = "LINK $outfile"
+      rspfile_content = "{{inputs}}"
+      outputs = [ outfile ]
+      if (outfile != unstripped_outfile) {
+        outputs += [ unstripped_outfile ]
+      }
+      if (defined(invoker.link_outputs)) {
+        outputs += invoker.link_outputs
+      }
+    }
+
+    tool("stamp") {
+      command = "touch {{output}}"
+      description = "STAMP {{output}}"
+    }
+
+    tool("copy") {
+      command = "ln -f {{source}} {{output}} 2>/dev/null || (rm -rf {{output}} && cp -af {{source}} {{output}})"
+      description = "COPY {{source}} {{output}}"
+    }
+
+    # When invoking this toolchain not as the default one, these args will be
+    # passed to the build. They are ignored when this is the default toolchain.
+    toolchain_args = {
+      current_cpu = invoker.toolchain_cpu
+      current_os = invoker.toolchain_os
+
+      # These values need to be passed through unchanged.
+      target_os = target_os
+      target_cpu = target_cpu
+
+      if (defined(invoker.is_clang)) {
+        is_clang = invoker.is_clang
+      }
+
+      if (defined(invoker.extra_toolchain_args)) {
+        forward_variables_from(invoker.extra_toolchain_args, "*")
+      }
+    }
+
+    if (defined(invoker.deps)) {
+      deps = invoker.deps
+    }
+  }
+}

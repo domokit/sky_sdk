@@ -3,16 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/drawer/drawer.0.dart'
-    as example;
+import 'package:flutter_api_samples/material/drawer/drawer.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Navigation bar updates destination on tap',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.DrawerApp(),
-    );
+  testWidgets('Navigation bar updates destination on tap', (WidgetTester tester) async {
+    await tester.pumpWidget(const example.DrawerApp());
 
     await tester.tap(find.byIcon(Icons.menu));
     await tester.pumpAndSettle();

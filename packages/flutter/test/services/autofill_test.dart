@@ -43,8 +43,12 @@ void main() {
     test(
       'AutofillClients send the correct configuration to the platform and responds to updateEditingStateWithTag method correctly',
       () async {
-        final FakeAutofillClient client1 = FakeAutofillClient(const TextEditingValue(text: 'test1'));
-        final FakeAutofillClient client2 = FakeAutofillClient(const TextEditingValue(text: 'test2'));
+        final FakeAutofillClient client1 = FakeAutofillClient(
+          const TextEditingValue(text: 'test1'),
+        );
+        final FakeAutofillClient client2 = FakeAutofillClient(
+          const TextEditingValue(text: 'test2'),
+        );
 
         client1.textInputConfiguration = TextInputConfiguration(
           autofillConfiguration: AutofillConfiguration(
@@ -80,10 +84,12 @@ void main() {
         ]);
 
         const TextEditingValue text2 = TextEditingValue(text: 'Text 2');
-        fakeTextChannel.incoming?.call(MethodCall(
-          'TextInputClient.updateEditingStateWithTag',
-          <dynamic>[0, <String, dynamic>{ client2.autofillId : text2.toJSON() }],
-        ));
+        fakeTextChannel.incoming?.call(
+          MethodCall('TextInputClient.updateEditingStateWithTag', <dynamic>[
+            0,
+            <String, dynamic>{client2.autofillId: text2.toJSON()},
+          ]),
+        );
 
         expect(client2.currentTextEditingValue, text2);
       },

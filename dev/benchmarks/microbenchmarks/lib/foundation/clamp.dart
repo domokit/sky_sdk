@@ -10,8 +10,7 @@ const int _kBatchSize = 100000;
 const int _kNumIterations = 1000;
 
 Future<void> execute() async {
-  assert(false,
-      "Don't run benchmarks in debug mode! Use 'flutter run --release'.");
+  assert(false, "Don't run benchmarks in debug mode! Use 'flutter run --release'.");
   final BenchmarkResultPrinter printer = BenchmarkResultPrinter();
 
   final Stopwatch watch = Stopwatch();

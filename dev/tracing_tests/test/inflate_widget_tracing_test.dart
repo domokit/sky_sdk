@@ -21,7 +21,9 @@ void main() {
   test('Children of MultiChildRenderObjectElement show up in tracing', () async {
     // We don't have expectations around the first frame because there's a race around
     // the warm-up frame that we don't want to get involved in here.
-    await runFrame(() { runApp(const TestRoot()); });
+    await runFrame(() {
+      runApp(const TestRoot());
+    });
     await SchedulerBinding.instance.endOfFrame;
     await fetchInterestingEvents(interestingLabels);
 
@@ -30,10 +32,14 @@ void main() {
     await runFrame(() {
       TestRoot.state.showRow();
     });
-    expect(
-      await fetchInterestingEventNames(interestingLabels),
-      <String>['TestRoot', 'Row', 'TestChildWidget', 'Container', 'TestChildWidget', 'Container'],
-    );
+    expect(await fetchInterestingEventNames(interestingLabels), <String>[
+      'TestRoot',
+      'Row',
+      'TestChildWidget',
+      'Container',
+      'TestChildWidget',
+      'Container',
+    ]);
 
     debugProfileBuildsEnabled = false;
   }, skip: isBrowser); // [intended] uses dart:isolate and io.
@@ -65,13 +71,8 @@ class TestRootState extends State<TestRoot> {
   @override
   Widget build(BuildContext context) {
     return _showRow
-      ? const Row(
-          children: <Widget>[
-            TestChildWidget(),
-            TestChildWidget(),
-          ],
-        )
-      : Container();
+        ? const Row(children: <Widget>[TestChildWidget(), TestChildWidget()])
+        : Container();
   }
 }
 

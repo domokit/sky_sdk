@@ -7,9 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('RouteObserver notifies RouteAware widget', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.RouteObserverApp(),
-    );
+    await tester.pumpWidget(const example.RouteObserverApp());
 
     // Check the initial RouteObserver logs.
     expect(find.text('didPush'), findsOneWidget);

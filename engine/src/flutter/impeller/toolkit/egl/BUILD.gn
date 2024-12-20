@@ -1,0 +1,32 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../../tools/impeller.gni")
+
+impeller_component("egl") {
+  sources = [
+    "config.cc",
+    "config.h",
+    "context.cc",
+    "context.h",
+    "display.cc",
+    "display.h",
+    "egl.cc",
+    "egl.h",
+    "image.cc",
+    "image.h",
+    "surface.cc",
+    "surface.h",
+  ]
+
+  deps = [
+    "../../base",
+    "//flutter/fml",
+  ]
+
+  libs = []
+  if (is_android) {
+    libs = [ "EGL" ]
+  }
+}

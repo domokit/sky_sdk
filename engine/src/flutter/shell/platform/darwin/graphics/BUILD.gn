@@ -1,0 +1,42 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+assert(is_ios || is_mac)
+
+import("//flutter/common/config.gni")
+import("//flutter/impeller/tools/impeller.gni")
+
+source_set("graphics") {
+  cflags_objc = flutter_cflags_objc
+  cflags_objcc = flutter_cflags_objcc
+
+  sources = [
+    "FlutterDarwinContextMetalSkia.h",
+    "FlutterDarwinContextMetalSkia.mm",
+    "FlutterDarwinExternalTextureMetal.h",
+    "FlutterDarwinExternalTextureMetal.mm",
+  ]
+
+  deps = [
+    "//flutter/common/graphics",
+    "//flutter/display_list",
+    "//flutter/fml",
+    "//flutter/shell/common",
+    "//flutter/shell/platform/darwin/common:framework_common",
+  ]
+
+  if (impeller_supports_rendering) {
+    sources += [
+      "FlutterDarwinContextMetalImpeller.h",
+      "FlutterDarwinContextMetalImpeller.mm",
+    ]
+    deps += [ "//flutter/impeller" ]
+  }
+
+  frameworks = [ "CoreVideo.framework" ]
+
+  public_deps = [ "//flutter/skia" ]
+
+  public_configs = [ "//flutter:config" ]
+}

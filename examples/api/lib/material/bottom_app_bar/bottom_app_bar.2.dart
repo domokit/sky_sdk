@@ -27,10 +27,11 @@ class _BottomAppBarDemoState extends State<BottomAppBarDemo> {
     Colors.cyan,
   ];
 
-  static final List<Widget> items = List<Widget>.generate(
-    colors.length,
-    (int index) => Container(color: colors[index], height: 150.0),
-  ).reversed.toList();
+  static final List<Widget> items =
+      List<Widget>.generate(
+        colors.length,
+        (int index) => Container(color: colors[index], height: 150.0),
+      ).reversed.toList();
 
   late ScrollController _controller;
   bool _showFab = true;
@@ -38,7 +39,9 @@ class _BottomAppBarDemoState extends State<BottomAppBarDemo> {
   bool _isVisible = true;
 
   FloatingActionButtonLocation get _fabLocation =>
-      _isVisible ? FloatingActionButtonLocation.endContained : FloatingActionButtonLocation.endFloat;
+      _isVisible
+          ? FloatingActionButtonLocation.endContained
+          : FloatingActionButtonLocation.endFloat;
 
   void _listen() {
     switch (_controller.position.userScrollDirection) {
@@ -77,10 +80,7 @@ class _BottomAppBarDemoState extends State<BottomAppBarDemo> {
 
   void _addNewItem() {
     setState(() {
-      items.insert(
-        0,
-        Container(color: colors[items.length % 5], height: 150.0),
-      );
+      items.insert(0, Container(color: colors[items.length % 5], height: 150.0));
     });
   }
 
@@ -103,9 +103,7 @@ class _BottomAppBarDemoState extends State<BottomAppBarDemo> {
     return MaterialApp(
       theme: ThemeData(useMaterial3: true),
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Bottom App Bar Demo'),
-        ),
+        appBar: AppBar(title: const Text('Bottom App Bar Demo')),
         body: Column(
           children: <Widget>[
             SwitchListTile(
@@ -118,22 +116,18 @@ class _BottomAppBarDemoState extends State<BottomAppBarDemo> {
               value: _isElevated,
               onChanged: _onElevatedChanged,
             ),
-            Expanded(
-              child: ListView(
-                controller: _controller,
-                children: items.toList(),
-              ),
-            ),
+            Expanded(child: ListView(controller: _controller, children: items.toList())),
           ],
         ),
-        floatingActionButton: _showFab
-            ? FloatingActionButton(
-                onPressed: _addNewItem,
-                tooltip: 'Add New Item',
-                elevation: _isVisible ? 0.0 : null,
-                child: const Icon(Icons.add),
-              )
-            : null,
+        floatingActionButton:
+            _showFab
+                ? FloatingActionButton(
+                  onPressed: _addNewItem,
+                  tooltip: 'Add New Item',
+                  elevation: _isVisible ? 0.0 : null,
+                  child: const Icon(Icons.add),
+                )
+                : null,
         floatingActionButtonLocation: _fabLocation,
         bottomNavigationBar: _DemoBottomAppBar(isElevated: _isElevated, isVisible: _isVisible),
       ),
@@ -142,10 +136,7 @@ class _BottomAppBarDemoState extends State<BottomAppBarDemo> {
 }
 
 class _DemoBottomAppBar extends StatelessWidget {
-  const _DemoBottomAppBar({
-    required this.isElevated,
-    required this.isVisible,
-  });
+  const _DemoBottomAppBar({required this.isElevated, required this.isVisible});
 
   final bool isElevated;
   final bool isVisible;
@@ -165,10 +156,7 @@ class _DemoBottomAppBar extends StatelessWidget {
               onPressed: () {
                 final SnackBar snackBar = SnackBar(
                   content: const Text('Yay! A SnackBar!'),
-                  action: SnackBarAction(
-                    label: 'Undo',
-                    onPressed: () {},
-                  ),
+                  action: SnackBarAction(label: 'Undo', onPressed: () {}),
                 );
 
                 // Find the ScaffoldMessenger in the widget tree
@@ -176,16 +164,8 @@ class _DemoBottomAppBar extends StatelessWidget {
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
               },
             ),
-            IconButton(
-              tooltip: 'Search',
-              icon: const Icon(Icons.search),
-              onPressed: () {},
-            ),
-            IconButton(
-              tooltip: 'Favorite',
-              icon: const Icon(Icons.favorite),
-              onPressed: () {},
-            ),
+            IconButton(tooltip: 'Search', icon: const Icon(Icons.search), onPressed: () {}),
+            IconButton(tooltip: 'Favorite', icon: const Icon(Icons.favorite), onPressed: () {}),
           ],
         ),
       ),

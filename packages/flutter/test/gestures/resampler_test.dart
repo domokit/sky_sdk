@@ -6,76 +6,54 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  PointerEvent createSimulatedPointerAddedEvent(
-      int timeStampUs,
-      double x,
-      double y,
-  ) {
+  PointerEvent createSimulatedPointerAddedEvent(int timeStampUs, double x, double y) {
     return PointerAddedEvent(
-        timeStamp: Duration(microseconds: timeStampUs),
-        position: Offset(x, y),
+      timeStamp: Duration(microseconds: timeStampUs),
+      position: Offset(x, y),
     );
   }
 
-  PointerEvent createSimulatedPointerRemovedEvent(
-      int timeStampUs,
-      double x,
-      double y,
-  ) {
+  PointerEvent createSimulatedPointerRemovedEvent(int timeStampUs, double x, double y) {
     return PointerRemovedEvent(
-        timeStamp: Duration(microseconds: timeStampUs),
-        position: Offset(x, y),
+      timeStamp: Duration(microseconds: timeStampUs),
+      position: Offset(x, y),
     );
   }
 
-  PointerEvent createSimulatedPointerDownEvent(
-      int timeStampUs,
-      double x,
-      double y,
-  ) {
-    return PointerDownEvent(
-        timeStamp: Duration(microseconds: timeStampUs),
-        position: Offset(x, y),
-    );
+  PointerEvent createSimulatedPointerDownEvent(int timeStampUs, double x, double y) {
+    return PointerDownEvent(timeStamp: Duration(microseconds: timeStampUs), position: Offset(x, y));
   }
 
   PointerEvent createSimulatedPointerMoveEvent(
-      int timeStampUs,
-      double x,
-      double y,
-      double deltaX,
-      double deltaY,
+    int timeStampUs,
+    double x,
+    double y,
+    double deltaX,
+    double deltaY,
   ) {
     return PointerMoveEvent(
-        timeStamp: Duration(microseconds: timeStampUs),
-        position: Offset(x, y),
-        delta: Offset(deltaX, deltaY),
+      timeStamp: Duration(microseconds: timeStampUs),
+      position: Offset(x, y),
+      delta: Offset(deltaX, deltaY),
     );
   }
 
   PointerEvent createSimulatedPointerHoverEvent(
-      int timeStampUs,
-      double x,
-      double y,
-      double deltaX,
-      double deltaY,
+    int timeStampUs,
+    double x,
+    double y,
+    double deltaX,
+    double deltaY,
   ) {
     return PointerHoverEvent(
-        timeStamp: Duration(microseconds: timeStampUs),
-        position: Offset(x, y),
-        delta: Offset(deltaX, deltaY),
+      timeStamp: Duration(microseconds: timeStampUs),
+      position: Offset(x, y),
+      delta: Offset(deltaX, deltaY),
     );
   }
 
-  PointerEvent createSimulatedPointerUpEvent(
-      int timeStampUs,
-      double x,
-      double y,
-  ) {
-    return PointerUpEvent(
-        timeStamp: Duration(microseconds: timeStampUs),
-        position: Offset(x, y),
-    );
+  PointerEvent createSimulatedPointerUpEvent(int timeStampUs, double x, double y) {
+    return PointerUpEvent(timeStamp: Duration(microseconds: timeStampUs), position: Offset(x, y));
   }
 
   test('basic', () {

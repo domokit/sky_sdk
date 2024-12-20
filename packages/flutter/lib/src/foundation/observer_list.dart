@@ -43,7 +43,7 @@ class ObserverList<T> extends Iterable<T> {
   ///
   /// Returns whether the item was present in the list.
   bool remove(T item) {
-   final bool removed = _list.remove(item);
+    final bool removed = _list.remove(item);
     if (removed) {
       _isDirty = true;
       _set.clear(); // Clear the set so that we don't leak items.
@@ -155,10 +155,6 @@ class HashedObserverList<T> extends Iterable<T> {
   @override
   List<T> toList({bool growable = true}) {
     final Iterator<T> iterator = _map.keys.iterator;
-    return List<T>.generate(
-      _map.length,
-      (_) => (iterator..moveNext()).current,
-      growable: growable,
-    );
+    return List<T>.generate(_map.length, (_) => (iterator..moveNext()).current, growable: growable);
   }
 }

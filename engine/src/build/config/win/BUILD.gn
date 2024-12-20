@@ -1,0 +1,198 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/win/visual_studio_version.gni")
+
+# Compiler setup for the Windows SDK. Applied to all targets.
+config("sdk") {
+  # The include path is the stuff returned by the script.
+  #include_dirs = msvc_config[0]  TODO(brettw) make this work.
+
+  defines = [
+    "_ATL_NO_OPENGL",
+    "_WINDOWS",
+    "CERT_CHAIN_PARA_HAS_EXTRA_FIELDS",
+    "NTDDI_VERSION=0x06030000",
+    "PSAPI_VERSION=1",
+    "WIN32",
+    "_SECURE_ATL",
+
+    # This is required for ATL to use XP-safe versions of its functions.
+    "_USING_V110_SDK71_",
+  ]
+
+  if (target_os == "winuwp") {
+    defines += [ "WINUWP" ]
+  }
+}
+
+# Sets the default Windows build version. This is separated because some
+# targets need to manually override it for their compiles.
+config("winver") {
+  defines = [
+    "_WIN32_WINNT=0x0603",
+    "WINVER=0x0603",
+  ]
+}
+
+# Linker flags for Windows SDK setup, this is applied only to EXEs and DLLs.
+config("sdk_link") {
+  if (current_cpu == "x64") {
+    ldflags = [ "/MACHINE:X64" ]
+    lib_dirs = [
+      "$windows_sdk_path\Lib\winv6.3\um\x64",
+      "$visual_studio_path\VC\lib\amd64",
+      "$visual_studio_path\VC\atlmfc\lib\amd64",
+    ]
+  } else if (current_cpu == "x86") {
+    ldflags = [
+      "/MACHINE:X86",
+      "/SAFESEH",  # Not compatible with x64 so use only for x86.
+    ]
+    lib_dirs = [
+      "$windows_sdk_path\Lib\winv6.3\um\x86",
+      "$visual_studio_path\VC\lib",
+      "$visual_studio_path\VC\atlmfc\lib",
+    ]
+    if (!is_asan) {
+      ldflags += [ "/largeaddressaware" ]
+    }
+  } else if (current_cpu == "arm64") {
+    ldflags = [ "/MACHINE:ARM64" ]
+    lib_dirs = [
+      "$windows_sdk_path\Lib\winv6.3\um\arm64",
+      "$visual_studio_path\VC\lib\arm64",
+      "$visual_studio_path\VC\atlmfc\lib\arm64",
+    ]
+  } else {
+    assert(false, "Unsupported CPU type")
+  }
+}
+
+# This default linker setup is provided separately from the SDK setup so
+# targets who want different library configurations can remove this and specify
+# their own.
+config("common_linker_setup") {
+  ldflags = [
+    "/FIXED:NO",
+    "/ignore:4199",
+    "/ignore:4221",
+    "/NXCOMPAT",
+
+    # Suggested by Microsoft Devrel to avoid
+    #   LINK : fatal error LNK1248: image size (80000000)
+    #   exceeds maximum allowable size (80000000)
+    # which started happening more regularly after VS2013 Update 4.
+    "/maxilksize:2147483647",
+  ]
+
+  # ASLR makes debugging with windbg difficult because Chrome.exe and
+  # Chrome.dll share the same base name. As result, windbg will name the
+  # Chrome.dll module like chrome_<base address>, where <base address>
+  # typically changes with each launch. This in turn means that breakpoints in
+  # Chrome.dll don't stick from one launch to the next. For this reason, we
+  # turn ASLR off in debug builds.
+  # /DYNAMICBASE:NO isn't compatible with arm64.
+  if (is_debug && current_cpu != "arm64") {
+    ldflags += [ "/DYNAMICBASE:NO" ]
+  } else {
+    ldflags += [ "/DYNAMICBASE" ]
+  }
+
+  # Delay loaded DLLs.
+  ldflags += [
+    "/DELAYLOAD:dbghelp.dll",
+    "/DELAYLOAD:dwmapi.dll",
+    "/DELAYLOAD:shell32.dll",
+    "/DELAYLOAD:uxtheme.dll",
+  ]
+}
+
+# Subsystem --------------------------------------------------------------------
+
+# This is appended to the subsystem to specify a minimum version.
+if (current_cpu == "x64") {
+  # The number after the comma is the minimum required OS version.
+  # 5.02 = Windows Server 2003.
+  subsystem_version_suffix = ",5.02"
+} else if (current_cpu == "arm64") {
+  # Windows ARM64 requires Windows 10.
+  subsystem_version_suffix = ",10.0"
+} else {
+  # 5.01 = Windows XP.
+  subsystem_version_suffix = ",5.01"
+}
+
+config("console") {
+  ldflags = [ "/SUBSYSTEM:CONSOLE$subsystem_version_suffix" ]
+}
+config("windowed") {
+  ldflags = [ "/SUBSYSTEM:WINDOWS$subsystem_version_suffix" ]
+}
+
+# Incremental linking ----------------------------------------------------------
+
+incremental_linking_on_switch = [ "/INCREMENTAL" ]
+incremental_linking_off_switch = [ "/INCREMENTAL:NO" ]
+if (is_debug) {
+  default_incremental_linking_switch = incremental_linking_on_switch
+} else {
+  default_incremental_linking_switch = incremental_linking_off_switch
+}
+
+# Applies incremental linking or not depending on the current configuration.
+config("default_incremental_linking") {
+  ldflags = default_incremental_linking_switch
+}
+
+# Explicitly on or off incremental linking
+config("incremental_linking") {
+  ldflags = incremental_linking_on_switch
+}
+config("no_incremental_linking") {
+  ldflags = incremental_linking_off_switch
+}
+
+# Some large modules can't handle incremental linking in some situations. This
+# config should be applied to large modules to turn off incremental linking
+# when it won't work.
+config("default_large_module_incremental_linking") {
+  if (symbol_level > 0 && (current_cpu == "x86" || !is_component_build)) {
+    # When symbols are on, things get so large that the tools fail due to the
+    # size of the .ilk files.
+    ldflags = incremental_linking_off_switch
+  } else {
+    # Otherwise just do the default incremental linking for this build type.
+    ldflags = default_incremental_linking_switch
+  }
+}
+
+# Character set ----------------------------------------------------------------
+
+# Not including this config means "ansi" (8-bit system codepage).
+config("unicode") {
+  defines = [
+    "_UNICODE",
+    "UNICODE",
+  ]
+}
+
+# Lean and mean ----------------------------------------------------------------
+
+# Some third party code might not compile with WIN32_LEAN_AND_MEAN so we have
+# to have a separate config for it. Remove this config from your target to
+# get the "bloaty and accomodating" version of windows.h.
+config("lean_and_mean") {
+  defines = [ "WIN32_LEAN_AND_MEAN" ]
+}
+
+# Nominmax --------------------------------------------------------------------
+
+# Some third party code defines NOMINMAX before including windows.h, which
+# then causes warnings when it's been previously defined on the command line.
+# For such targets, this config can be removed.
+
+config("nominmax") {
+  defines = [ "NOMINMAX" ]
+}

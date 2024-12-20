@@ -31,7 +31,8 @@ import 'theme.dart';
 ///    theme down its subtree.
 ///  * [ThemeData.progressIndicatorTheme], which describes the defaults for
 ///    any progress indicators as part of the application's [ThemeData].
-class ProgressIndicatorThemeData with Diagnosticable {
+class ProgressIndicatorThemeData
+    with Diagnosticable {
   /// Creates the set of properties used to configure [ProgressIndicator] widgets.
   const ProgressIndicatorThemeData({
     this.color,
@@ -50,7 +51,7 @@ class ProgressIndicatorThemeData with Diagnosticable {
     this.circularTrackPadding,
     @Deprecated(
       'Use ProgressIndicatorTheme to customize the ProgressIndicator appearance. '
-      'This feature was deprecated after v3.27.0-0.2.pre.'
+      'This feature was deprecated after v3.27.0-0.2.pre.',
     )
     this.year2023,
   });
@@ -132,7 +133,7 @@ class ProgressIndicatorThemeData with Diagnosticable {
   /// If [ThemeData.useMaterial3] is false, then this property is ignored.
   @Deprecated(
     'Use ProgressIndicatorTheme to customize the ProgressIndicator appearance. '
-    'This feature was deprecated after v3.27.0-0.2.pre.'
+    'This feature was deprecated after v3.27.0-0.2.pre.',
   )
   final bool? year2023;
 
@@ -157,18 +158,18 @@ class ProgressIndicatorThemeData with Diagnosticable {
   }) {
     return ProgressIndicatorThemeData(
       color: color ?? this.color,
-      linearTrackColor : linearTrackColor ?? this.linearTrackColor,
-      linearMinHeight : linearMinHeight ?? this.linearMinHeight,
-      circularTrackColor : circularTrackColor ?? this.circularTrackColor,
-      refreshBackgroundColor : refreshBackgroundColor ?? this.refreshBackgroundColor,
-      borderRadius : borderRadius ?? this.borderRadius,
-      stopIndicatorColor : stopIndicatorColor ?? this.stopIndicatorColor,
-      stopIndicatorRadius : stopIndicatorRadius ?? this.stopIndicatorRadius,
-      strokeWidth : strokeWidth ?? this.strokeWidth,
-      strokeAlign : strokeAlign ?? this.strokeAlign,
-      strokeCap : strokeCap ?? this.strokeCap,
+      linearTrackColor: linearTrackColor ?? this.linearTrackColor,
+      linearMinHeight: linearMinHeight ?? this.linearMinHeight,
+      circularTrackColor: circularTrackColor ?? this.circularTrackColor,
+      refreshBackgroundColor: refreshBackgroundColor ?? this.refreshBackgroundColor,
+      borderRadius: borderRadius ?? this.borderRadius,
+      stopIndicatorColor: stopIndicatorColor ?? this.stopIndicatorColor,
+      stopIndicatorRadius: stopIndicatorRadius ?? this.stopIndicatorRadius,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
+      strokeAlign: strokeAlign ?? this.strokeAlign,
+      strokeCap: strokeCap ?? this.strokeCap,
       constraints: constraints ?? this.constraints,
-      trackGap : trackGap ?? this.trackGap,
+      trackGap: trackGap ?? this.trackGap,
       circularTrackPadding: circularTrackPadding ?? this.circularTrackPadding,
       year2023: year2023 ?? this.year2023,
     );
@@ -177,25 +178,33 @@ class ProgressIndicatorThemeData with Diagnosticable {
   /// Linearly interpolate between two progress indicator themes.
   ///
   /// If both arguments are null, then null is returned.
-  static ProgressIndicatorThemeData? lerp(ProgressIndicatorThemeData? a, ProgressIndicatorThemeData? b, double t) {
+  static ProgressIndicatorThemeData? lerp(
+    ProgressIndicatorThemeData? a,
+    ProgressIndicatorThemeData? b,
+    double t,
+  ) {
     if (identical(a, b)) {
       return a;
     }
     return ProgressIndicatorThemeData(
       color: Color.lerp(a?.color, b?.color, t),
-      linearTrackColor : Color.lerp(a?.linearTrackColor, b?.linearTrackColor, t),
-      linearMinHeight : lerpDouble(a?.linearMinHeight, b?.linearMinHeight, t),
-      circularTrackColor : Color.lerp(a?.circularTrackColor, b?.circularTrackColor, t),
-      refreshBackgroundColor : Color.lerp(a?.refreshBackgroundColor, b?.refreshBackgroundColor, t),
-      borderRadius : BorderRadiusGeometry.lerp(a?.borderRadius, b?.borderRadius, t),
-      stopIndicatorColor : Color.lerp(a?.stopIndicatorColor, b?.stopIndicatorColor, t),
-      stopIndicatorRadius : lerpDouble(a?.stopIndicatorRadius, b?.stopIndicatorRadius, t),
-      strokeWidth : lerpDouble(a?.strokeWidth, b?.strokeWidth, t),
-      strokeAlign : lerpDouble(a?.strokeAlign, b?.strokeAlign, t),
-      strokeCap : t < 0.5 ? a?.strokeCap : b?.strokeCap,
+      linearTrackColor: Color.lerp(a?.linearTrackColor, b?.linearTrackColor, t),
+      linearMinHeight: lerpDouble(a?.linearMinHeight, b?.linearMinHeight, t),
+      circularTrackColor: Color.lerp(a?.circularTrackColor, b?.circularTrackColor, t),
+      refreshBackgroundColor: Color.lerp(a?.refreshBackgroundColor, b?.refreshBackgroundColor, t),
+      borderRadius: BorderRadiusGeometry.lerp(a?.borderRadius, b?.borderRadius, t),
+      stopIndicatorColor: Color.lerp(a?.stopIndicatorColor, b?.stopIndicatorColor, t),
+      stopIndicatorRadius: lerpDouble(a?.stopIndicatorRadius, b?.stopIndicatorRadius, t),
+      strokeWidth: lerpDouble(a?.strokeWidth, b?.strokeWidth, t),
+      strokeAlign: lerpDouble(a?.strokeAlign, b?.strokeAlign, t),
+      strokeCap: t < 0.5 ? a?.strokeCap : b?.strokeCap,
       constraints: BoxConstraints.lerp(a?.constraints, b?.constraints, t),
-      trackGap : lerpDouble(a?.trackGap, b?.trackGap, t),
-      circularTrackPadding: EdgeInsetsGeometry.lerp(a?.circularTrackPadding, b?.circularTrackPadding, t),
+      trackGap: lerpDouble(a?.trackGap, b?.trackGap, t),
+      circularTrackPadding: EdgeInsetsGeometry.lerp(
+        a?.circularTrackPadding,
+        b?.circularTrackPadding,
+        t,
+      ),
       year2023: t < 0.5 ? a?.year2023 : b?.year2023,
     );
   }
@@ -220,29 +229,29 @@ class ProgressIndicatorThemeData with Diagnosticable {
   );
 
   @override
-  bool operator==(Object other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ProgressIndicatorThemeData
-      && other.color == color
-      && other.linearTrackColor == linearTrackColor
-      && other.linearMinHeight == linearMinHeight
-      && other.circularTrackColor == circularTrackColor
-      && other.refreshBackgroundColor == refreshBackgroundColor
-      && other.borderRadius == borderRadius
-      && other.stopIndicatorColor == stopIndicatorColor
-      && other.stopIndicatorRadius == stopIndicatorRadius
-      && other.strokeAlign == strokeAlign
-      && other.strokeWidth == strokeWidth
-      && other.strokeCap == strokeCap
-      && other.constraints == constraints
-      && other.trackGap == trackGap
-      && other.circularTrackPadding == circularTrackPadding
-      && other.year2023 == year2023;
+    return other is ProgressIndicatorThemeData &&
+        other.color == color &&
+        other.linearTrackColor == linearTrackColor &&
+        other.linearMinHeight == linearMinHeight &&
+        other.circularTrackColor == circularTrackColor &&
+        other.refreshBackgroundColor == refreshBackgroundColor &&
+        other.borderRadius == borderRadius &&
+        other.stopIndicatorColor == stopIndicatorColor &&
+        other.stopIndicatorRadius == stopIndicatorRadius &&
+        other.strokeAlign == strokeAlign &&
+        other.strokeWidth == strokeWidth &&
+        other.strokeCap == strokeCap &&
+        other.constraints == constraints &&
+        other.trackGap == trackGap &&
+        other.circularTrackPadding == circularTrackPadding &&
+        other.year2023 == year2023;
   }
 
   @override
@@ -252,16 +261,28 @@ class ProgressIndicatorThemeData with Diagnosticable {
     properties.add(ColorProperty('linearTrackColor', linearTrackColor, defaultValue: null));
     properties.add(DoubleProperty('linearMinHeight', linearMinHeight, defaultValue: null));
     properties.add(ColorProperty('circularTrackColor', circularTrackColor, defaultValue: null));
-    properties.add(ColorProperty('refreshBackgroundColor', refreshBackgroundColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<BorderRadiusGeometry>('borderRadius', borderRadius, defaultValue: null));
+    properties.add(
+      ColorProperty('refreshBackgroundColor', refreshBackgroundColor, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<BorderRadiusGeometry>('borderRadius', borderRadius, defaultValue: null),
+    );
     properties.add(ColorProperty('stopIndicatorColor', stopIndicatorColor, defaultValue: null));
     properties.add(DoubleProperty('stopIndicatorRadius', stopIndicatorRadius, defaultValue: null));
     properties.add(DoubleProperty('strokeWidth', strokeWidth, defaultValue: null));
     properties.add(DoubleProperty('strokeAlign', strokeAlign, defaultValue: null));
     properties.add(DiagnosticsProperty<StrokeCap>('strokeCap', strokeCap, defaultValue: null));
-    properties.add(DiagnosticsProperty<BoxConstraints>('constraints', constraints, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<BoxConstraints>('constraints', constraints, defaultValue: null),
+    );
     properties.add(DoubleProperty('trackGap', trackGap, defaultValue: null));
-    properties.add(DiagnosticsProperty<EdgeInsetsGeometry>('circularTrackPadding', circularTrackPadding, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<EdgeInsetsGeometry>(
+        'circularTrackPadding',
+        circularTrackPadding,
+        defaultValue: null,
+      ),
+    );
     properties.add(DiagnosticsProperty<bool>('year2023', year2023, defaultValue: null));
   }
 }
@@ -289,11 +310,7 @@ class ProgressIndicatorThemeData with Diagnosticable {
 class ProgressIndicatorTheme extends InheritedTheme {
   /// Creates a theme that controls the configurations for [ProgressIndicator]
   /// widgets.
-  const ProgressIndicatorTheme({
-    super.key,
-    required this.data,
-    required super.child,
-  });
+  const ProgressIndicatorTheme({super.key, required this.data, required super.child});
 
   /// The properties for descendant [ProgressIndicator] widgets.
   final ProgressIndicatorThemeData data;
@@ -307,7 +324,8 @@ class ProgressIndicatorTheme extends InheritedTheme {
   /// ProgressIndicatorThemeData theme = ProgressIndicatorTheme.of(context);
   /// ```
   static ProgressIndicatorThemeData of(BuildContext context) {
-    final ProgressIndicatorTheme? progressIndicatorTheme = context.dependOnInheritedWidgetOfExactType<ProgressIndicatorTheme>();
+    final ProgressIndicatorTheme? progressIndicatorTheme =
+        context.dependOnInheritedWidgetOfExactType<ProgressIndicatorTheme>();
     return progressIndicatorTheme?.data ?? Theme.of(context).progressIndicatorTheme;
   }
 

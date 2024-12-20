@@ -1,0 +1,9 @@
+# Copyright (c) 2017 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+# Defines the configuration of Clang static analysis tools.
+# See docs/clang_static_analyzer.md for more information.
+declare_args() {
+  # Uses the Clang static analysis tools during compilation.
+  use_clang_static_analyzer = false
+}

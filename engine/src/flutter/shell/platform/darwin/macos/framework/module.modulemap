@@ -1,0 +1,6 @@
+framework module FlutterMacOS {
+  umbrella header "FlutterMacOS.h"
+
+  export *
+  module * { export * }
+}

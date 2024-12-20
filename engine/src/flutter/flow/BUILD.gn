@@ -1,0 +1,212 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/impeller/tools/impeller.gni")
+import("//flutter/shell/config.gni")
+import("//flutter/testing/testing.gni")
+
+if (is_fuchsia) {
+  import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+}
+
+source_set("flow") {
+  sources = [
+    "compositor_context.cc",
+    "compositor_context.h",
+    "diff_context.cc",
+    "diff_context.h",
+    "embedded_views.cc",
+    "embedded_views.h",
+    "frame_timings.cc",
+    "frame_timings.h",
+    "layers/backdrop_filter_layer.cc",
+    "layers/backdrop_filter_layer.h",
+    "layers/cacheable_layer.cc",
+    "layers/cacheable_layer.h",
+    "layers/clip_path_layer.cc",
+    "layers/clip_path_layer.h",
+    "layers/clip_rect_layer.cc",
+    "layers/clip_rect_layer.h",
+    "layers/clip_rrect_layer.cc",
+    "layers/clip_rrect_layer.h",
+    "layers/clip_shape_layer.h",
+    "layers/color_filter_layer.cc",
+    "layers/color_filter_layer.h",
+    "layers/container_layer.cc",
+    "layers/container_layer.h",
+    "layers/display_list_layer.cc",
+    "layers/display_list_layer.h",
+    "layers/display_list_raster_cache_item.cc",
+    "layers/display_list_raster_cache_item.h",
+    "layers/image_filter_layer.cc",
+    "layers/image_filter_layer.h",
+    "layers/layer.cc",
+    "layers/layer.h",
+    "layers/layer_raster_cache_item.cc",
+    "layers/layer_raster_cache_item.h",
+    "layers/layer_state_stack.cc",
+    "layers/layer_state_stack.h",
+    "layers/layer_tree.cc",
+    "layers/layer_tree.h",
+    "layers/offscreen_surface.cc",
+    "layers/offscreen_surface.h",
+    "layers/opacity_layer.cc",
+    "layers/opacity_layer.h",
+    "layers/performance_overlay_layer.cc",
+    "layers/performance_overlay_layer.h",
+    "layers/platform_view_layer.cc",
+    "layers/platform_view_layer.h",
+    "layers/shader_mask_layer.cc",
+    "layers/shader_mask_layer.h",
+    "layers/texture_layer.cc",
+    "layers/texture_layer.h",
+    "layers/transform_layer.cc",
+    "layers/transform_layer.h",
+    "paint_region.cc",
+    "paint_region.h",
+    "paint_utils.cc",
+    "paint_utils.h",
+    "raster_cache.cc",
+    "raster_cache.h",
+    "raster_cache_item.h",
+    "raster_cache_key.cc",
+    "raster_cache_key.h",
+    "raster_cache_util.cc",
+    "raster_cache_util.h",
+    "skia_gpu_object.h",
+    "stopwatch.cc",
+    "stopwatch.h",
+    "stopwatch_dl.cc",
+    "stopwatch_dl.h",
+    "stopwatch_sk.cc",
+    "stopwatch_sk.h",
+    "surface.cc",
+    "surface.h",
+    "surface_frame.cc",
+    "surface_frame.h",
+    "view_slicer.cc",
+    "view_slicer.h",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+
+  public_deps = [
+    "//flutter/common",
+    "//flutter/common/graphics",
+    "//flutter/display_list",
+    "//flutter/fml",
+    "//flutter/third_party/txt",
+  ]
+
+  deps = [ "//flutter/skia" ]
+
+  if (impeller_supports_rendering) {
+    deps += [
+      "//flutter/impeller",
+      "//flutter/impeller/typographer/backends/skia:typographer_skia_backend",
+    ]
+  }
+}
+
+if (enable_unittests) {
+  test_fixtures("flow_fixtures") {
+    fixtures =
+        [ "//flutter/third_party/txt/third_party/fonts/Roboto-Regular.ttf" ]
+  }
+
+  source_set("flow_testing") {
+    testonly = true
+
+    sources = [
+      "testing/diff_context_test.cc",
+      "testing/diff_context_test.h",
+      "testing/gl_context_switch_test.cc",
+      "testing/gl_context_switch_test.h",
+      "testing/layer_test.h",
+      "testing/mock_embedder.cc",
+      "testing/mock_embedder.h",
+      "testing/mock_layer.cc",
+      "testing/mock_layer.h",
+      "testing/mock_raster_cache.cc",
+      "testing/mock_raster_cache.h",
+      "testing/mock_texture.cc",
+      "testing/mock_texture.h",
+    ]
+
+    public_deps = [
+      "//flutter/testing:skia",
+      "//flutter/third_party/googletest:gtest",
+    ]
+
+    deps = [
+      ":flow",
+      "//flutter/common/graphics",
+    ]
+  }
+
+  executable("flow_unittests") {
+    testonly = true
+
+    sources = [
+      "diff_context_unittests.cc",
+      "embedded_view_params_unittests.cc",
+      "flow_run_all_unittests.cc",
+      "flow_test_utils.cc",
+      "flow_test_utils.h",
+      "frame_timings_recorder_unittests.cc",
+      "gl_context_switch_unittests.cc",
+      "layers/backdrop_filter_layer_unittests.cc",
+      "layers/clip_path_layer_unittests.cc",
+      "layers/clip_rect_layer_unittests.cc",
+      "layers/clip_rrect_layer_unittests.cc",
+      "layers/color_filter_layer_unittests.cc",
+      "layers/container_layer_unittests.cc",
+      "layers/display_list_layer_unittests.cc",
+      "layers/image_filter_layer_unittests.cc",
+      "layers/layer_state_stack_unittests.cc",
+      "layers/layer_tree_unittests.cc",
+      "layers/offscreen_surface_unittests.cc",
+      "layers/opacity_layer_unittests.cc",
+      "layers/performance_overlay_layer_unittests.cc",
+      "layers/platform_view_layer_unittests.cc",
+      "layers/shader_mask_layer_unittests.cc",
+      "layers/texture_layer_unittests.cc",
+      "layers/transform_layer_unittests.cc",
+      "mutators_stack_unittests.cc",
+      "raster_cache_unittests.cc",
+      "skia_gpu_object_unittests.cc",
+      "stopwatch_dl_unittests.cc",
+      "stopwatch_unittests.cc",
+      "surface_frame_unittests.cc",
+      "testing/mock_layer_unittests.cc",
+      "testing/mock_texture_unittests.cc",
+      "texture_unittests.cc",
+      "view_slicer_unittests.cc",
+    ]
+
+    deps = [
+      ":flow",
+      ":flow_fixtures",
+      ":flow_testing",
+      "$dart_src/runtime:libdart_jit",  # for tracing
+      "//flutter/common/graphics",
+      "//flutter/display_list/testing:display_list_testing",
+      "//flutter/fml",
+      "//flutter/shell/common:base64",
+      "//flutter/skia",
+      "//flutter/testing:skia",
+      "//flutter/testing:testing_lib",
+      "//flutter/third_party/googletest:gtest",
+    ]
+
+    if (!defined(defines)) {
+      defines = []
+    }
+    if (is_win) {
+      # Required for M_PI and others.
+      defines += [ "_USE_MATH_DEFINES" ]
+    }
+  }
+}

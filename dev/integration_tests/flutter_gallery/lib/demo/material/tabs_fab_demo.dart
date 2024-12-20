@@ -7,13 +7,13 @@ import 'package:flutter/material.dart';
 import '../../gallery/demo.dart';
 
 const String _explanatoryText =
-  "When the Scaffold's floating action button changes, the new button fades and "
-  'turns into view. In this demo, changing tabs can cause the app to be rebuilt '
-  'with a FloatingActionButton that the Scaffold distinguishes from the others '
-  'by its key.';
+    "When the Scaffold's floating action button changes, the new button fades and "
+    'turns into view. In this demo, changing tabs can cause the app to be rebuilt '
+    'with a FloatingActionButton that the Scaffold distinguishes from the others '
+    'by its key.';
 
 class _Page {
-  _Page({ this.label, this.colors, this.icon });
+  _Page({this.label, this.colors, this.icon});
 
   final String? label;
   final MaterialColor? colors;
@@ -74,7 +74,7 @@ class _TabsFabDemoState extends State<TabsFabDemo> with SingleTickerProviderStat
     _scaffoldKey.currentState!.showBottomSheet((BuildContext context) {
       return Container(
         decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: Theme.of(context).dividerColor))
+          border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
         ),
         child: Padding(
           padding: const EdgeInsets.all(32.0),
@@ -92,17 +92,15 @@ class _TabsFabDemoState extends State<TabsFabDemo> with SingleTickerProviderStat
           padding: const EdgeInsets.fromLTRB(48.0, 48.0, 48.0, 96.0),
           child: Card(
             child: Center(
-              child: Text(page.label!,
-                style: TextStyle(
-                  color: page.labelColor,
-                  fontSize: 32.0,
-                ),
+              child: Text(
+                page.label!,
+                style: TextStyle(color: page.labelColor, fontSize: 32.0),
                 textAlign: TextAlign.center,
               ),
             ),
           ),
         );
-      }
+      },
     );
   }
 
@@ -139,12 +137,16 @@ class _TabsFabDemoState extends State<TabsFabDemo> with SingleTickerProviderStat
         title: const Text('FAB per tab'),
         bottom: TabBar(
           controller: _controller,
-          tabs: _allPages.map<Widget>((_Page page) => Tab(text: page.label!.toUpperCase())).toList(),
+          tabs:
+              _allPages.map<Widget>((_Page page) => Tab(text: page.label!.toUpperCase())).toList(),
         ),
         actions: <Widget>[
           MaterialDemoDocumentationButton(TabsFabDemo.routeName),
           IconButton(
-            icon: const Icon(Icons.sentiment_very_satisfied, semanticLabel: 'Toggle extended buttons'),
+            icon: const Icon(
+              Icons.sentiment_very_satisfied,
+              semanticLabel: 'Toggle extended buttons',
+            ),
             onPressed: () {
               setState(() {
                 _extendedButtons = !_extendedButtons;

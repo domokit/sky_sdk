@@ -1,0 +1,188 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This file introduces two related templates that act like action and
+# action_foreach but instead of running a Python script, it will compile a
+# given tool in the host toolchain and run that (either once or over the list
+# of inputs, depending on the variant).
+#
+# Parameters
+#
+#   tool (required)
+#       [label] Label of the tool to run. This should be an executable, and
+#       this label should not include a toolchain (anything in parens). The
+#       host compile of this tool will be used.
+#
+#   outputs (required)
+#       [list of files] Like the outputs of action (if using "compiled_action",
+#       this would be just the list of outputs), or action_foreach (if using
+#       "compiled_action_foreach", this would contain source expansions mapping
+#       input to output files).
+#
+#   args (required)
+#       [list of strings] Same meaning as action/action_foreach.
+#
+#   inputs (optional)
+#       Files the binary takes as input. The step will be re-run whenever any
+#       of these change. If inputs is empty, the step will run only when the
+#       binary itself changes.
+#
+#   visibility
+#   deps
+#   args   (all optional)
+#       Same meaning as action/action_foreach.
+#
+#
+# Example of usage:
+#
+#   compiled_action("run_my_tool") {
+#     tool = "//tools/something:mytool"
+#     outputs = [
+#       "$target_gen_dir/mysource.cc",
+#       "$target_gen_dir/mysource.h",
+#     ]
+#
+#     # The tool takes this input.
+#     inputs = [ "my_input_file.idl" ]
+#
+#     # In this case, the tool takes as arguments the input file and the output
+#     # build dir (both relative to the "cd" that the script will be run in)
+#     # and will produce the output files listed above.
+#     args = [
+#       rebase_path("my_input_file.idl", root_build_dir),
+#       "--output-dir", rebase_path(target_gen_dir, root_build_dir),
+#     ]
+#   }
+#
+# You would typically declare your tool like this:
+#   if (host_toolchain == current_toolchain) {
+#     executable("mytool") {
+#       ...
+#     }
+#   }
+# The if statement around the executable is optional. That says "I only care
+# about this target in the host toolchain". Usually this is what you want, and
+# saves unnecessarily compiling your tool for the target platform. But if you
+# need a target build of your tool as well, just leave off the if statement.
+
+if (host_os == "win") {
+  _host_executable_suffix = ".exe"
+} else {
+  _host_executable_suffix = ""
+}
+
+template("compiled_action") {
+  assert(defined(invoker.tool), "tool must be defined for $target_name")
+  assert(defined(invoker.outputs), "outputs must be defined for $target_name")
+  assert(defined(invoker.args), "args must be defined for $target_name")
+
+  assert(!defined(invoker.sources),
+         "compiled_action doesn't take a sources arg. Use inputs instead.")
+
+  action(target_name) {
+    forward_variables_from(invoker,
+                           [
+                             "visibility",
+                             "metadata",
+                             "testonly",
+                             "pool",
+                             "outputs",
+                           ])
+
+    script = "//build/gn_run_binary.py"
+
+    if (defined(invoker.inputs)) {
+      inputs = invoker.inputs
+    } else {
+      inputs = []
+    }
+
+    if (defined(invoker.toolchain)) {
+      toolchain = invoker.toolchain
+    } else {
+      toolchain = host_toolchain
+    }
+
+    # Constuct the host toolchain version of the tool.
+    host_tool = invoker.tool + "($toolchain)"
+
+    # Get the path to the executable. Currently, this assumes that the tool
+    # does not specify output_name so that the target name is the name to use.
+    # If that's not the case, we'll need another argument to the script to
+    # specify this, since we can't know what the output name is (it might be in
+    # another file not processed yet).
+    host_executable =
+        get_label_info(host_tool, "root_out_dir") + "/" +
+        get_label_info(host_tool, "name") + _host_executable_suffix
+
+    # Add the executable itself as an input.
+    inputs += [ host_executable ]
+
+    deps = [ host_tool ]
+    if (defined(invoker.deps)) {
+      deps += invoker.deps
+    }
+    if (defined(invoker.depfile)) {
+      depfile = invoker.depfile
+    }
+
+    # The script takes as arguments the binary to run, and then the arguments
+    # to pass it.
+    args = [ rebase_path(host_executable, root_build_dir) ] + invoker.args
+  }
+}
+
+template("compiled_action_foreach") {
+  assert(defined(invoker.sources), "sources must be defined for $target_name")
+  assert(defined(invoker.tool), "tool must be defined for $target_name")
+  assert(defined(invoker.outputs), "outputs must be defined for $target_name")
+  assert(defined(invoker.args), "args must be defined for $target_name")
+
+  action_foreach(target_name) {
+    # Otherwise this is a standalone action, define visibility if requested.
+    if (defined(invoker.visibility)) {
+      visibility = invoker.visibility
+    }
+    if (defined(invoker.pool)) {
+      pool = invoker.pool
+    }
+
+    script = "//build/gn_run_binary.py"
+    sources = invoker.sources
+
+    if (defined(invoker.inputs)) {
+      inputs = invoker.inputs
+    } else {
+      inputs = []
+    }
+    outputs = invoker.outputs
+
+    # Constuct the host toolchain version of the tool.
+    host_tool = invoker.tool + "($host_toolchain)"
+
+    # Get the path to the executable. Currently, this assumes that the tool
+    # does not specify output_name so that the target name is the name to use.
+    # If that's not the case, we'll need another argument to the script to
+    # specify this, since we can't know what the output name is (it might be in
+    # another file not processed yet).
+    host_executable =
+        get_label_info(host_tool, "root_out_dir") + "/" +
+        get_label_info(host_tool, "name") + _host_executable_suffix
+
+    # Add the executable itself as an input.
+    inputs += [ host_executable ]
+
+    deps = [ host_tool ]
+    if (defined(invoker.deps)) {
+      deps += invoker.deps
+    }
+    if (defined(invoker.depfile)) {
+      depfile = invoker.depfile
+    }
+
+    # The script takes as arguments the binary to run, and then the arguments
+    # to pass it.
+    args = [ rebase_path(host_executable, root_build_dir) ] + invoker.args
+  }
+}

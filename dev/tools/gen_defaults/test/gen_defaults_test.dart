@@ -43,7 +43,11 @@ void main() {
 
       // Have a test template append new parameterized content to the end of
       // the file.
-      final Map<String, dynamic> tokens = <String, dynamic>{'version': '0.0', 'foo': 'Foobar', 'bar': 'Barfoo'};
+      final Map<String, dynamic> tokens = <String, dynamic>{
+        'version': '0.0',
+        'foo': 'Foobar',
+        'bar': 'Barfoo',
+      };
       TestTemplate('Test', tempFile.path, tokens).updateFile();
 
       expect(tempFile.readAsStringSync(), '''
@@ -58,12 +62,13 @@ void main() {
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 static final String tokenFoo = 'Foobar';
 static final String tokenBar = 'Barfoo';
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - Test
 ''');
-
     } finally {
       tempDir.deleteSync(recursive: true);
     }
@@ -87,15 +92,21 @@ static final String tokenBar = 'Barfoo';
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 static final String tokenFoo = 'Foobar';
 static final String tokenBar = 'Barfoo';
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - Test
 ''');
 
       // Have a test template append new parameterized content to the end of
       // the file.
-      final Map<String, dynamic> tokens = <String, dynamic>{'version': '0.0', 'foo': 'foo', 'bar': 'bar'};
+      final Map<String, dynamic> tokens = <String, dynamic>{
+        'version': '0.0',
+        'foo': 'foo',
+        'bar': 'bar',
+      };
       TestTemplate('Test', tempFile.path, tokens).updateFile();
 
       expect(tempFile.readAsStringSync(), '''
@@ -110,12 +121,13 @@ static final String tokenBar = 'Barfoo';
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 static final String tokenFoo = 'foo';
 static final String tokenBar = 'bar';
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - Test
 ''');
-
     } finally {
       tempDir.deleteSync(recursive: true);
     }
@@ -135,7 +147,11 @@ static final String tokenBar = 'bar';
 
       // Update file with a template for 'Block 1'
       {
-        final Map<String, dynamic> tokens = <String, dynamic>{'version': '0.0', 'foo': 'foo', 'bar': 'bar'};
+        final Map<String, dynamic> tokens = <String, dynamic>{
+          'version': '0.0',
+          'foo': 'foo',
+          'bar': 'bar',
+        };
         TestTemplate('Block 1', tempFile.path, tokens).updateFile();
       }
       expect(tempFile.readAsStringSync(), '''
@@ -150,8 +166,10 @@ static final String tokenBar = 'bar';
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 static final String tokenFoo = 'foo';
 static final String tokenBar = 'bar';
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - Block 1
 ''');
@@ -159,7 +177,11 @@ static final String tokenBar = 'bar';
       // Update file with a template for 'Block 2', which should append but not
       // disturb the code in 'Block 1'.
       {
-        final Map<String, dynamic> tokens = <String, dynamic>{'version': '0.0', 'foo': 'bar', 'bar': 'foo'};
+        final Map<String, dynamic> tokens = <String, dynamic>{
+          'version': '0.0',
+          'foo': 'bar',
+          'bar': 'foo',
+        };
         TestTemplate('Block 2', tempFile.path, tokens).updateFile();
       }
       expect(tempFile.readAsStringSync(), '''
@@ -174,8 +196,10 @@ static final String tokenBar = 'bar';
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 static final String tokenFoo = 'foo';
 static final String tokenBar = 'bar';
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - Block 1
 
@@ -186,8 +210,10 @@ static final String tokenBar = 'bar';
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 static final String tokenFoo = 'bar';
 static final String tokenBar = 'foo';
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - Block 2
 ''');
@@ -195,7 +221,11 @@ static final String tokenBar = 'foo';
       // Update 'Block 1' again which should just update that block,
       // leaving 'Block 2' undisturbed.
       {
-        final Map<String, dynamic> tokens = <String, dynamic>{'version': '0.0', 'foo': 'FOO', 'bar': 'BAR'};
+        final Map<String, dynamic> tokens = <String, dynamic>{
+          'version': '0.0',
+          'foo': 'FOO',
+          'bar': 'BAR',
+        };
         TestTemplate('Block 1', tempFile.path, tokens).updateFile();
       }
       expect(tempFile.readAsStringSync(), '''
@@ -210,8 +240,10 @@ static final String tokenBar = 'foo';
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 static final String tokenFoo = 'FOO';
 static final String tokenBar = 'BAR';
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - Block 1
 
@@ -222,12 +254,13 @@ static final String tokenBar = 'BAR';
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 static final String tokenFoo = 'bar';
 static final String tokenBar = 'foo';
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - Block 2
 ''');
-
     } finally {
       tempDir.deleteSync(recursive: true);
     }
@@ -244,12 +277,13 @@ static final String tokenBar = 'foo';
         'bottomLeft': 3.0,
         'bottomRight': 4.0,
       },
-      'shape.full': <String, dynamic>{
-        'family': 'SHAPE_FAMILY_CIRCULAR',
-      },
+      'shape.full': <String, dynamic>{'family': 'SHAPE_FAMILY_CIRCULAR'},
     };
     final TestTemplate template = TestTemplate('Test', 'foobar.dart', tokens);
-    expect(template.shape('foo'), 'const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(1.0), topRight: Radius.circular(2.0), bottomLeft: Radius.circular(3.0), bottomRight: Radius.circular(4.0)))');
+    expect(
+      template.shape('foo'),
+      'const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(1.0), topRight: Radius.circular(2.0), bottomLeft: Radius.circular(3.0), bottomRight: Radius.circular(4.0)))',
+    );
     expect(template.shape('bar'), 'const StadiumBorder()');
   });
 
@@ -263,7 +297,7 @@ static final String tokenBar = 'foo';
       final ZoneSpecification spec = ZoneSpecification(
         print: (_, __, ___, String msg) {
           printLog.add(msg);
-        }
+        },
       );
       return Zone.current.fork(specification: spec).run<void>(testFn);
     };
@@ -286,151 +320,190 @@ static final String tokenBar = 'foo';
       'v2.0.0': <String>['file_2.json, file_3.json'],
     };
 
-    test('can print empty usage', overridePrint(() {
-      logger.printVersionUsage(verbose: true);
-      expect(printLog, contains('Versions used: '));
+    test(
+      'can print empty usage',
+      overridePrint(() {
+        logger.printVersionUsage(verbose: true);
+        expect(printLog, contains('Versions used: '));
 
-      logger.printTokensUsage(verbose: true);
-      expect(printLog, contains('Tokens used: 0/0'));
-    }));
+        logger.printTokensUsage(verbose: true);
+        expect(printLog, contains('Tokens used: 0/0'));
+      }),
+    );
 
-    test('can print version usage', overridePrint(() {
-      versionMap.addAll(testVersions);
+    test(
+      'can print version usage',
+      overridePrint(() {
+        versionMap.addAll(testVersions);
 
-      logger.printVersionUsage(verbose: false);
+        logger.printVersionUsage(verbose: false);
 
-      expect(printLog, contains('Versions used: v1.0.0, v2.0.0'));
-    }));
+        expect(printLog, contains('Versions used: v1.0.0, v2.0.0'));
+      }),
+    );
 
-    test('can print version usage (verbose)', overridePrint(() {
-      versionMap.addAll(testVersions);
+    test(
+      'can print version usage (verbose)',
+      overridePrint(() {
+        versionMap.addAll(testVersions);
 
-      logger.printVersionUsage(verbose: true);
+        logger.printVersionUsage(verbose: true);
 
-      expect(printLog, contains('Versions used: v1.0.0, v2.0.0'));
-      expect(printLog, contains('  v1.0.0:'));
-      expect(printLog, contains('    file_1.json'));
-      expect(printLog, contains('  v2.0.0:'));
-      expect(printLog, contains('    file_2.json, file_3.json'));
-    }));
+        expect(printLog, contains('Versions used: v1.0.0, v2.0.0'));
+        expect(printLog, contains('  v1.0.0:'));
+        expect(printLog, contains('    file_1.json'));
+        expect(printLog, contains('  v2.0.0:'));
+        expect(printLog, contains('    file_2.json, file_3.json'));
+      }),
+    );
 
-    test('can log and print tokens usage', overridePrint(() {
-      allTokens['foo'] = 'value';
+    test(
+      'can log and print tokens usage',
+      overridePrint(() {
+        allTokens['foo'] = 'value';
 
-      logger.log('foo');
-      logger.printTokensUsage(verbose: false);
+        logger.log('foo');
+        logger.printTokensUsage(verbose: false);
 
-      expect(printLog, contains('Tokens used: 1/1'));
-    }));
+        expect(printLog, contains('Tokens used: 1/1'));
+      }),
+    );
 
-    test('can log and print tokens usage (verbose)', overridePrint(() {
-      allTokens['foo'] = 'value';
+    test(
+      'can log and print tokens usage (verbose)',
+      overridePrint(() {
+        allTokens['foo'] = 'value';
 
-      logger.log('foo');
-      logger.printTokensUsage(verbose: true);
+        logger.log('foo');
+        logger.printTokensUsage(verbose: true);
 
-      expect(printLog, contains('✅ foo'));
-      expect(printLog, contains('Tokens used: 1/1'));
-    }));
+        expect(printLog, contains('✅ foo'));
+        expect(printLog, contains('Tokens used: 1/1'));
+      }),
+    );
 
-    test('detects invalid logs', overridePrint(() {
-      allTokens['foo'] = 'value';
+    test(
+      'detects invalid logs',
+      overridePrint(() {
+        allTokens['foo'] = 'value';
 
-      logger.log('baz');
-      logger.log('foobar');
-      logger.printTokensUsage(verbose: true);
+        logger.log('baz');
+        logger.log('foobar');
+        logger.printTokensUsage(verbose: true);
 
-      expect(printLog, contains('❌ foo'));
-      expect(printLog, contains('Tokens used: 0/1'));
-      expect(printLog, contains(errorColoredString('Some referenced tokens do not exist: 2')));
-      expect(printLog, contains('  baz'));
-      expect(printLog, contains('  foobar'));
-    }));
+        expect(printLog, contains('❌ foo'));
+        expect(printLog, contains('Tokens used: 0/1'));
+        expect(printLog, contains(errorColoredString('Some referenced tokens do not exist: 2')));
+        expect(printLog, contains('  baz'));
+        expect(printLog, contains('  foobar'));
+      }),
+    );
 
-    test("color function doesn't log when providing a default", overridePrint(() {
-      allTokens['color_foo_req'] = 'value';
+    test(
+      "color function doesn't log when providing a default",
+      overridePrint(() {
+        allTokens['color_foo_req'] = 'value';
 
-      // color_foo_opt is not available, but because it has a default value, it won't warn about it
+        // color_foo_opt is not available, but because it has a default value, it won't warn about it
 
-      TestColorTemplate('block', 'filename', allTokens).generate();
-      logger.printTokensUsage(verbose: true);
+        TestColorTemplate('block', 'filename', allTokens).generate();
+        logger.printTokensUsage(verbose: true);
 
-      expect(printLog, contains('✅ color_foo_req'));
-      expect(printLog, contains('Tokens used: 1/1'));
-    }));
+        expect(printLog, contains('✅ color_foo_req'));
+        expect(printLog, contains('Tokens used: 1/1'));
+      }),
+    );
 
-    test('color function logs when not providing a default', overridePrint(() {
-      // Nor color_foo_req or color_foo_opt are available, but only color_foo_req will be logged.
-      // This mimics a token being removed, but expected to exist.
+    test(
+      'color function logs when not providing a default',
+      overridePrint(() {
+        // Nor color_foo_req or color_foo_opt are available, but only color_foo_req will be logged.
+        // This mimics a token being removed, but expected to exist.
 
-      TestColorTemplate('block', 'filename', allTokens).generate();
-      logger.printTokensUsage(verbose: true);
+        TestColorTemplate('block', 'filename', allTokens).generate();
+        logger.printTokensUsage(verbose: true);
 
-      expect(printLog, contains('Tokens used: 0/0'));
-      expect(printLog, contains(errorColoredString('Some referenced tokens do not exist: 1')));
-      expect(printLog, contains('  color_foo_req'));
-    }));
+        expect(printLog, contains('Tokens used: 0/0'));
+        expect(printLog, contains(errorColoredString('Some referenced tokens do not exist: 1')));
+        expect(printLog, contains('  color_foo_req'));
+      }),
+    );
 
-    test('border function logs width token when available', overridePrint(() {
-      allTokens['border_foo.color'] = 'red';
-      allTokens['border_foo.width'] = 3.0;
+    test(
+      'border function logs width token when available',
+      overridePrint(() {
+        allTokens['border_foo.color'] = 'red';
+        allTokens['border_foo.width'] = 3.0;
 
-      TestBorderTemplate('block', 'filename', allTokens).generate();
-      logger.printTokensUsage(verbose: true);
+        TestBorderTemplate('block', 'filename', allTokens).generate();
+        logger.printTokensUsage(verbose: true);
 
-      expect(printLog, contains('✅ border_foo.color'));
-      expect(printLog, contains('✅ border_foo.width'));
-      expect(printLog, contains('Tokens used: 2/2'));
-    }));
+        expect(printLog, contains('✅ border_foo.color'));
+        expect(printLog, contains('✅ border_foo.width'));
+        expect(printLog, contains('Tokens used: 2/2'));
+      }),
+    );
 
-    test('border function logs height token when width token not available', overridePrint(() {
-      allTokens['border_foo.color'] = 'red';
-      allTokens['border_foo.height'] = 3.0;
+    test(
+      'border function logs height token when width token not available',
+      overridePrint(() {
+        allTokens['border_foo.color'] = 'red';
+        allTokens['border_foo.height'] = 3.0;
 
-      TestBorderTemplate('block', 'filename', allTokens).generate();
-      logger.printTokensUsage(verbose: true);
+        TestBorderTemplate('block', 'filename', allTokens).generate();
+        logger.printTokensUsage(verbose: true);
 
-      expect(printLog, contains('✅ border_foo.color'));
-      expect(printLog, contains('✅ border_foo.height'));
-      expect(printLog, contains('Tokens used: 2/2'));
-    }));
+        expect(printLog, contains('✅ border_foo.color'));
+        expect(printLog, contains('✅ border_foo.height'));
+        expect(printLog, contains('Tokens used: 2/2'));
+      }),
+    );
 
-    test("border function doesn't log when width or height tokens not available", overridePrint(() {
-      allTokens['border_foo.color'] = 'red';
+    test(
+      "border function doesn't log when width or height tokens not available",
+      overridePrint(() {
+        allTokens['border_foo.color'] = 'red';
 
-      TestBorderTemplate('block', 'filename', allTokens).generate();
-      logger.printTokensUsage(verbose: true);
+        TestBorderTemplate('block', 'filename', allTokens).generate();
+        logger.printTokensUsage(verbose: true);
 
-      expect(printLog, contains('✅ border_foo.color'));
-      expect(printLog, contains('Tokens used: 1/1'));
-    }));
+        expect(printLog, contains('✅ border_foo.color'));
+        expect(printLog, contains('Tokens used: 1/1'));
+      }),
+    );
 
-    test('can log and dump versions & tokens to a file', overridePrint(() {
-      versionMap.addAll(testVersions);
-      allTokens['foo'] = 'value';
-      allTokens['bar'] = 'value';
+    test(
+      'can log and dump versions & tokens to a file',
+      overridePrint(() {
+        versionMap.addAll(testVersions);
+        allTokens['foo'] = 'value';
+        allTokens['bar'] = 'value';
 
-      logger.log('foo');
-      logger.log('bar');
-      logger.dumpToFile('test.json');
+        logger.log('foo');
+        logger.log('bar');
+        logger.dumpToFile('test.json');
 
-      final String fileContent = File('test.json').readAsStringSync();
-      expect(fileContent, contains('Versions used, v1.0.0, v2.0.0'));
-      expect(fileContent, contains('bar,'));
-      expect(fileContent, contains('foo'));
-    }));
+        final String fileContent = File('test.json').readAsStringSync();
+        expect(fileContent, contains('Versions used, v1.0.0, v2.0.0'));
+        expect(fileContent, contains('bar,'));
+        expect(fileContent, contains('foo'));
+      }),
+    );
 
-    test('integration test', overridePrint(() {
-      allTokens['foo'] = 'value';
-      allTokens['bar'] = 'value';
+    test(
+      'integration test',
+      overridePrint(() {
+        allTokens['foo'] = 'value';
+        allTokens['bar'] = 'value';
 
-      TestTemplate('block', 'filename', allTokens).generate();
-      logger.printTokensUsage(verbose: true);
+        TestTemplate('block', 'filename', allTokens).generate();
+        logger.printTokensUsage(verbose: true);
 
-      expect(printLog, contains('✅ foo'));
-      expect(printLog, contains('✅ bar'));
-      expect(printLog, contains('Tokens used: 2/2'));
-    }));
+        expect(printLog, contains('✅ foo'));
+        expect(printLog, contains('✅ bar'));
+        expect(printLog, contains('Tokens used: 2/2'));
+      }),
+    );
   });
 }
 

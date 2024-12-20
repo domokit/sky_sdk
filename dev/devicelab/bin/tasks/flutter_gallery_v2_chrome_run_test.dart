@@ -32,75 +32,70 @@ class NewGalleryChromeRunTest {
 
   /// Runs the test.
   Future<TaskResult> run() async {
-    final TaskResult result = await inDirectory<TaskResult>('${flutterDirectory.path}/dev/integration_tests/new_gallery/', () async {
-      await flutter('create', options: <String>[
-        '--platforms',
-        'web,android,ios',
-        '--no-overwrite',
-        '.'
-      ]);
-      await flutter('doctor');
-      await flutter('packages', options: <String>['get']);
+    final TaskResult result = await inDirectory<TaskResult>(
+      '${flutterDirectory.path}/dev/integration_tests/new_gallery/',
+      () async {
+        await flutter(
+          'create',
+          options: <String>['--platforms', 'web,android,ios', '--no-overwrite', '.'],
+        );
+        await flutter('doctor');
+        await flutter('packages', options: <String>['get']);
 
-      await flutter('build', options: <String>[
-        'web',
-        '-v',
-        '--release',
-        '--no-pub',
-      ]);
+        await flutter('build', options: <String>['web', '-v', '--release', '--no-pub']);
 
-      final List<String> options = <String>['-d', 'chrome', '--verbose', '--resident'];
-      final Process process = await startFlutter(
-        'run',
-        options: options,
-      );
+        final List<String> options = <String>['-d', 'chrome', '--verbose', '--resident'];
+        final Process process = await startFlutter('run', options: options);
 
-      final Completer<void> stdoutDone = Completer<void>();
-      final Completer<void> stderrDone = Completer<void>();
+        final Completer<void> stdoutDone = Completer<void>();
+        final Completer<void> stderrDone = Completer<void>();
 
-      bool success = true;
+        bool success = true;
 
-      process.stdout
-          .transform<String>(utf8.decoder)
-          .transform<String>(const LineSplitter())
-          .listen((String line) {
-        if (line.contains(successfullyLoadedString)) {
-          // Successfully started.
-          Future<void>.delayed(
-            durationToWaitForError,
-            () {process.stdin.write('q');}
-          );
+        process.stdout
+            .transform<String>(utf8.decoder)
+            .transform<String>(const LineSplitter())
+            .listen(
+              (String line) {
+                if (line.contains(successfullyLoadedString)) {
+                  // Successfully started.
+                  Future<void>.delayed(durationToWaitForError, () {
+                    process.stdin.write('q');
+                  });
+                }
+                if (line.contains(exceptionString)) {
+                  success = false;
+                }
+                print('stdout: $line');
+              },
+              onDone: () {
+                stdoutDone.complete();
+              },
+            );
+
+        process.stderr
+            .transform<String>(utf8.decoder)
+            .transform<String>(const LineSplitter())
+            .listen(
+              (String line) {
+                print('stderr: $line');
+              },
+              onDone: () {
+                stderrDone.complete();
+              },
+            );
+
+        await Future.wait<void>(<Future<void>>[stdoutDone.future, stderrDone.future]);
+
+        await process.exitCode;
+
+        if (success) {
+          return TaskResult.success(<String, dynamic>{});
+        } else {
+          return TaskResult.failure('An exception was thrown.');
         }
-        if (line.contains(exceptionString)) {
-          success = false;
-        }
-        print('stdout: $line');
-      }, onDone: () {
-        stdoutDone.complete();
-      });
-
-      process.stderr
-          .transform<String>(utf8.decoder)
-          .transform<String>(const LineSplitter())
-          .listen((String line) {
-        print('stderr: $line');
-      }, onDone: () {
-        stderrDone.complete();
-      });
-
-      await Future.wait<void>(<Future<void>>[
-        stdoutDone.future,
-        stderrDone.future,
-      ]);
-
-      await process.exitCode;
-
-      if (success) {
-        return TaskResult.success(<String, dynamic>{});
-      } else {
-        return TaskResult.failure('An exception was thrown.');
-      }
-    });
+      },
+    );
 
     return result;
   }

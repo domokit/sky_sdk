@@ -10,23 +10,16 @@ import '../../src/common.dart';
 import '../../src/fakes.dart';
 
 void main() {
-  final Platform linux = FakePlatform(
-    environment: <String, String>{},
-  );
+  final Platform linux = FakePlatform(environment: <String, String>{});
   final Platform notLinux = FakePlatform(
     operatingSystem: 'windows',
     environment: <String, String>{},
   );
-  final FeatureFlags enabledFlags = TestFeatureFlags(
-    isLinuxEnabled: true,
-  );
+  final FeatureFlags enabledFlags = TestFeatureFlags(isLinuxEnabled: true);
   final FeatureFlags disabledFlags = TestFeatureFlags();
 
   testWithoutContext('Applies to Linux platform', () {
-    final LinuxWorkflow linuxWorkflow = LinuxWorkflow(
-      platform: linux,
-      featureFlags: enabledFlags,
-    );
+    final LinuxWorkflow linuxWorkflow = LinuxWorkflow(platform: linux, featureFlags: enabledFlags);
 
     expect(linuxWorkflow.appliesToHostPlatform, true);
     expect(linuxWorkflow.canLaunchDevices, true);
@@ -47,10 +40,7 @@ void main() {
   });
 
   testWithoutContext('Does not apply when the Linux desktop feature is disabled', () {
-    final LinuxWorkflow linuxWorkflow = LinuxWorkflow(
-      platform: linux,
-      featureFlags: disabledFlags,
-    );
+    final LinuxWorkflow linuxWorkflow = LinuxWorkflow(platform: linux, featureFlags: disabledFlags);
 
     expect(linuxWorkflow.appliesToHostPlatform, false);
     expect(linuxWorkflow.canLaunchDevices, false);

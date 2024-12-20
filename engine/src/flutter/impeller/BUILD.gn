@@ -1,0 +1,112 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/third_party/glfw/glfw_args.gni")
+import("tools/impeller.gni")
+
+config("impeller_public_config") {
+  include_dirs = [ ".." ]
+
+  defines = []
+
+  if (impeller_debug) {
+    defines += [ "IMPELLER_DEBUG=1" ]
+  }
+
+  if (impeller_supports_rendering) {
+    defines += [ "IMPELLER_SUPPORTS_RENDERING=1" ]
+  }
+
+  if (impeller_enable_metal) {
+    defines += [ "IMPELLER_ENABLE_METAL=1" ]
+  }
+
+  if (impeller_enable_opengles) {
+    defines += [ "IMPELLER_ENABLE_OPENGLES=1" ]
+  }
+
+  if (impeller_enable_vulkan) {
+    defines += [ "IMPELLER_ENABLE_VULKAN=1" ]
+  }
+}
+
+group("impeller") {
+  public_deps = [
+    "base",
+    "geometry",
+    "tessellator",
+  ]
+
+  if (impeller_supports_rendering) {
+    public_deps += [
+      "display_list",
+      "entity",
+      "renderer",
+      "renderer/backend",
+      "typographer/backends/skia:typographer_skia_backend",
+    ]
+  }
+}
+
+impeller_component("impeller_unittests") {
+  target_type = "executable"
+
+  testonly = true
+
+  deps = [
+    "base:base_unittests",
+    "compiler:compiler_unittests",
+    "core:allocator_unittests",
+    "display_list:skia_conversions_unittests",
+    "geometry:geometry_unittests",
+    "runtime_stage:runtime_stage_unittests",
+    "shader_archive:shader_archive_unittests",
+    "tessellator:tessellator_unittests",
+    "toolkit/interop:interop_unittests",
+  ]
+
+  if (impeller_supports_rendering) {
+    deps += [
+      "display_list:aiks_unittests",
+      "display_list:display_list_unittests",
+      "entity:entity_unittests",
+      "fixtures",
+      "geometry:geometry_unittests",
+      "playground",
+      "renderer:renderer_unittests",
+      "typographer:typographer_unittests",
+    ]
+  }
+
+  if (impeller_enable_metal) {
+    deps += [ "//flutter/impeller/renderer/backend/metal:metal_unittests" ]
+  }
+
+  if (impeller_enable_vulkan) {
+    deps += [ "//flutter/impeller/renderer/backend/vulkan:vulkan_unittests" ]
+  }
+
+  if (impeller_enable_opengles) {
+    deps += [ "//flutter/impeller/renderer/backend/gles:gles_unittests" ]
+  }
+
+  if (glfw_vulkan_library != "") {
+    deps += [
+      "//flutter/third_party/swiftshader",
+      "//flutter/third_party/vulkan-deps/vulkan-loader/src:libvulkan",
+      "//third_party/vulkan_validation_layers",
+      "//third_party/vulkan_validation_layers:vulkan_gen_json_files",
+    ]
+  }
+}
+
+if (impeller_supports_rendering) {
+  impeller_component("impeller_dart_unittests") {
+    target_type = "executable"
+
+    testonly = true
+
+    deps = [ "renderer:renderer_dart_unittests" ]
+  }
+}

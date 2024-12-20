@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class TestBinding extends BindingBase { }
+class TestBinding extends BindingBase {}
 
 void main() {
   test('BindingBase.debugCheckZone', () async {
@@ -20,7 +20,8 @@ void main() {
         fail('expected an exception');
       } catch (error) {
         expect(error, isA<FlutterError>());
-        expect(error.toString(),
+        expect(
+          error.toString(),
           'Zone mismatch.\n'
           'The Flutter bindings were initialized in a different zone than is now being used. '
           'This will likely cause confusion and bugs as any zone-specific configuration will '
@@ -41,7 +42,8 @@ void main() {
       FlutterError.onError = (FlutterErrorDetails details) {
         final Object error = details.exception;
         expect(error, isA<FlutterError>());
-        expect(error.toString(),
+        expect(
+          error.toString(),
           'Zone mismatch.\n'
           'The Flutter bindings were initialized in a different zone than is now being used. '
           'This will likely cause confusion and bugs as any zone-specific configuration will '

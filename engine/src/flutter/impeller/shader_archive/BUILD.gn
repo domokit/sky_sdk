@@ -1,0 +1,57 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/third_party/flatbuffers/flatbuffers.gni")
+import("../tools/impeller.gni")
+
+config("shader_archive_config") {
+  configs = [ "//flutter/impeller:impeller_public_config" ]
+  include_dirs = [ "$root_gen_dir/flutter" ]
+}
+
+flatbuffers("shader_archive_flatbuffers") {
+  flatbuffers = [ "shader_archive.fbs" ]
+  public_configs = [ ":shader_archive_config" ]
+  public_deps = [ "//flutter/third_party/flatbuffers" ]
+}
+
+impeller_component("shader_archive") {
+  sources = [
+    "shader_archive.cc",
+    "shader_archive.h",
+    "shader_archive_types.h",
+    "shader_archive_writer.cc",
+    "shader_archive_writer.h",
+  ]
+
+  public_deps = [
+    ":shader_archive_flatbuffers",
+    "../base",
+    "//flutter/fml",
+  ]
+}
+
+impeller_component("shader_archiver") {
+  target_type = "executable"
+
+  sources = [ "shader_archive_main.cc" ]
+
+  deps = [
+    ":shader_archive",
+    "../base",
+    "//flutter/fml",
+  ]
+}
+
+impeller_component("shader_archive_unittests") {
+  testonly = true
+
+  sources = [ "shader_archive_unittests.cc" ]
+
+  deps = [
+    ":shader_archive",
+    "//flutter/fml",
+    "//flutter/testing",
+  ]
+}

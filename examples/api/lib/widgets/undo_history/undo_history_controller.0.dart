@@ -15,9 +15,7 @@ class UndoHistoryControllerExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MyHomePage(),
-    );
+    return const MaterialApp(home: MyHomePage());
   }
 }
 
@@ -34,7 +32,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final UndoHistoryController _undoController = UndoHistoryController();
 
   TextStyle? get enabledStyle => Theme.of(context).textTheme.bodyMedium;
-  TextStyle? get disabledStyle => Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey);
+  TextStyle? get disabledStyle =>
+      Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey);
 
   @override
   Widget build(BuildContext context) {

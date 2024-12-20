@@ -14,9 +14,7 @@ class ExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MyWidget(),
-    );
+    return const MaterialApp(home: MyWidget());
   }
 }
 
@@ -29,8 +27,32 @@ class MyWidget extends StatefulWidget {
 
 class _MyWidgetState extends State<MyWidget> {
   final List<String> _alphabet = <String>[
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-    'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z',
   ];
   final Widget _spacer = const SizedBox.square(dimension: 10);
   final UniqueKey _center = UniqueKey();
@@ -38,9 +60,9 @@ class _MyWidgetState extends State<MyWidget> {
 
   Widget _getArrows(AxisDirection axisDirection) {
     final Widget arrow = switch (axisDirection) {
-      AxisDirection.up    => const Icon(Icons.arrow_upward_rounded),
-      AxisDirection.down  => const Icon(Icons.arrow_downward_rounded),
-      AxisDirection.left  => const Icon(Icons.arrow_back_rounded),
+      AxisDirection.up => const Icon(Icons.arrow_upward_rounded),
+      AxisDirection.down => const Icon(Icons.arrow_downward_rounded),
+      AxisDirection.left => const Icon(Icons.arrow_back_rounded),
       AxisDirection.right => const Icon(Icons.arrow_forward_rounded),
     };
     return Flex(
@@ -88,9 +110,7 @@ class _MyWidgetState extends State<MyWidget> {
     return DefaultTextStyle(
       style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
       child: RadioTheme(
-        data: RadioThemeData(
-          fillColor: WidgetStateProperty.all<Color>(Colors.white),
-        ),
+        data: RadioThemeData(fillColor: WidgetStateProperty.all<Color>(Colors.white)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
@@ -145,17 +165,15 @@ class _MyWidgetState extends State<MyWidget> {
               child = _getLeading(constraints, isForward);
             } else {
               child = Container(
-                color: isForward
-                    ? (index.isEven ? Colors.amber[100] : Colors.amberAccent)
-                    : (index.isEven ? Colors.green[100] : Colors.lightGreen),
+                color:
+                    isForward
+                        ? (index.isEven ? Colors.amber[100] : Colors.amberAccent)
+                        : (index.isEven ? Colors.green[100] : Colors.lightGreen),
                 padding: const EdgeInsets.all(8.0),
                 child: Center(child: Text(_alphabet[index - 1])),
               );
             }
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: child,
-            );
+            return Padding(padding: const EdgeInsets.all(8.0), child: child);
           },
         );
       },
@@ -169,10 +187,7 @@ class _MyWidgetState extends State<MyWidget> {
         title: const Text('GrowthDirections'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(50),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: _getRadioRow(),
-          ),
+          child: Padding(padding: const EdgeInsets.all(8.0), child: _getRadioRow()),
         ),
       ),
       body: CustomScrollView(

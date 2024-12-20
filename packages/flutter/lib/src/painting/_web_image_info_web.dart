@@ -30,10 +30,7 @@ class WebImageInfo implements ImageInfo {
     // There is no need to actually clone the <img> element here. We create
     // another reference to the <img> element and let the browser garbage
     // collect it when there are no more live references.
-    return WebImageInfo(
-      htmlImage,
-      debugLabel: debugLabel,
-    );
+    return WebImageInfo(htmlImage, debugLabel: debugLabel);
   }
 
   @override
@@ -46,10 +43,12 @@ class WebImageInfo implements ImageInfo {
   }
 
   @override
-  Image get image => throw UnsupportedError(
-      'Could not create image data for this image because access to it is '
-      'restricted by the Same-Origin Policy.\n'
-      'See https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy');
+  Image get image =>
+      throw UnsupportedError(
+        'Could not create image data for this image because access to it is '
+        'restricted by the Same-Origin Policy.\n'
+        'See https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy',
+      );
 
   @override
   bool isCloneOf(ImageInfo other) {
@@ -65,6 +64,5 @@ class WebImageInfo implements ImageInfo {
   double get scale => 1.0;
 
   @override
-  int get sizeBytes =>
-      (4 * htmlImage.naturalWidth * htmlImage.naturalHeight).toInt();
+  int get sizeBytes => (4 * htmlImage.naturalWidth * htmlImage.naturalHeight).toInt();
 }

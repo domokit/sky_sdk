@@ -91,12 +91,10 @@ class _CupertinoContextMenuActionState extends State<CupertinoContextMenuAction>
       );
     }
     if (widget.isDestructiveAction) {
-      return _kActionSheetActionStyle.copyWith(
-        color: CupertinoColors.destructiveRed,
-      );
+      return _kActionSheetActionStyle.copyWith(color: CupertinoColors.destructiveRed);
     }
     return _kActionSheetActionStyle.copyWith(
-      color: CupertinoDynamicColor.resolve(CupertinoColors.label, context)
+      color: CupertinoDynamicColor.resolve(CupertinoColors.label, context),
     );
   }
 
@@ -112,15 +110,17 @@ class _CupertinoContextMenuActionState extends State<CupertinoContextMenuAction>
         onTap: widget.onPressed,
         behavior: HitTestBehavior.opaque,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            minHeight: _kButtonHeight,
-          ),
+          constraints: const BoxConstraints(minHeight: _kButtonHeight),
           child: Semantics(
             button: true,
             child: ColoredBox(
-              color: _isPressed
-                  ? CupertinoDynamicColor.resolve(_kBackgroundColorPressed, context)
-                  : CupertinoDynamicColor.resolve(CupertinoContextMenu.kBackgroundColor, context),
+              color:
+                  _isPressed
+                      ? CupertinoDynamicColor.resolve(_kBackgroundColorPressed, context)
+                      : CupertinoDynamicColor.resolve(
+                        CupertinoContextMenu.kBackgroundColor,
+                        context,
+                      ),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(15.5, 8.0, 17.5, 8.0),
                 child: DefaultTextStyle(
@@ -130,11 +130,7 @@ class _CupertinoContextMenuActionState extends State<CupertinoContextMenuAction>
                     children: <Widget>[
                       Flexible(child: widget.child),
                       if (widget.trailingIcon != null)
-                        Icon(
-                          widget.trailingIcon,
-                          color: _textStyle.color,
-                          size: 21.0,
-                        ),
+                        Icon(widget.trailingIcon, color: _textStyle.color, size: 21.0),
                     ],
                   ),
                 ),

@@ -17,7 +17,7 @@ import '../cmake_project.dart';
 /// ```
 class CmakeNativeAssetsMigration extends ProjectMigrator {
   CmakeNativeAssetsMigration(CmakeBasedProject project, this.os, super.logger)
-      : _cmakeFile = project.managedCmakeFile;
+    : _cmakeFile = project.managedCmakeFile;
 
   final File _cmakeFile;
   final String os;

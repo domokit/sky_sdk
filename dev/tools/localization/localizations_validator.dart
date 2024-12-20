@@ -13,7 +13,7 @@ const List<String> kPluralSuffixes = <String>['Other', 'Zero', 'One', 'Two', 'Fe
 final RegExp kPluralRegexp = RegExp(r'(\w*)(' + kPluralSuffixes.skip(1).join(r'|') + r')$');
 
 class ValidationError implements Exception {
-  ValidationError(this. message);
+  ValidationError(this.message);
   final String message;
   @override
   String toString() => message;
@@ -51,6 +51,7 @@ void validateEnglishLocalizations(File file) {
       final int suffixIndex = resourceId.indexOf(suffix);
       return suffixIndex != -1 && bundle['@${resourceId.substring(0, suffixIndex)}'] != null;
     }
+
     if (kPluralSuffixes.any(checkPluralResource)) {
       continue;
     }
@@ -107,10 +108,9 @@ void validateEnglishLocalizations(File file) {
 ///    keys in the resources for this locale, but which _aren't_ keys in the
 ///    canonical list.
 /// 5. Removes the invalid mappings from this resource's locale.
-void removeUndefinedLocalizations(
-  Map<LocaleInfo, Map<String, String>> localeToResources,
-) {
-  final Map<String, String> canonicalLocalizations = localeToResources[LocaleInfo.fromString('en')]!;
+void removeUndefinedLocalizations(Map<LocaleInfo, Map<String, String>> localeToResources) {
+  final Map<String, String> canonicalLocalizations =
+      localeToResources[LocaleInfo.fromString('en')]!;
   final Set<String> canonicalKeys = Set<String>.from(canonicalLocalizations.keys);
 
   localeToResources.forEach((LocaleInfo locale, Map<String, String> resources) {
@@ -124,7 +124,7 @@ void removeUndefinedLocalizations(
     }
 
     final Set<String> keys = Set<String>.from(
-        resources.keys.where((String key) => !isPluralVariation(key))
+      resources.keys.where((String key) => !isPluralVariation(key)),
     );
 
     final Set<String> invalidKeys = keys.difference(canonicalKeys);
@@ -146,7 +146,8 @@ void validateLocalizations(
   Map<LocaleInfo, Map<String, dynamic>> localeToAttributes, {
   bool removeUndefined = false,
 }) {
-  final Map<String, String> canonicalLocalizations = localeToResources[LocaleInfo.fromString('en')]!;
+  final Map<String, String> canonicalLocalizations =
+      localeToResources[LocaleInfo.fromString('en')]!;
   final Set<String> canonicalKeys = Set<String>.from(canonicalLocalizations.keys);
   final StringBuffer errorMessages = StringBuffer();
   bool explainMissingKeys = false;
@@ -168,14 +169,16 @@ void validateLocalizations(
     }
 
     final Set<String> keys = Set<String>.from(
-      resources.keys.where((String key) => !isPluralVariation(key))
+      resources.keys.where((String key) => !isPluralVariation(key)),
     );
 
     // Make sure keys are valid (i.e. they also exist in the canonical
     // localizations)
     final Set<String> invalidKeys = keys.difference(canonicalKeys);
     if (invalidKeys.isNotEmpty && !removeUndefined) {
-      errorMessages.writeln('Locale "$locale" contains invalid resource keys: ${invalidKeys.join(', ')}');
+      errorMessages.writeln(
+        'Locale "$locale" contains invalid resource keys: ${invalidKeys.join(', ')}',
+      );
     }
 
     // For language-level locales only, check that they have a complete list of
@@ -183,7 +186,7 @@ void validateLocalizations(
     if (locale.length == 1) {
       final Map<String, dynamic>? attributes = localeToAttributes[locale];
       final List<String?> missingKeys = <String?>[];
-       for (final String missingKey in canonicalKeys.difference(keys)) {
+      for (final String missingKey in canonicalKeys.difference(keys)) {
         final dynamic attribute = attributes?[missingKey];
         final bool intentionallyOmitted = attribute is Map && attribute.containsKey('notUsed');
         if (!intentionallyOmitted && !isPluralVariation(missingKey)) {
@@ -192,23 +195,25 @@ void validateLocalizations(
       }
       if (missingKeys.isNotEmpty) {
         explainMissingKeys = true;
-        errorMessages.writeln('Locale "$locale" is missing the following resource keys: ${missingKeys.join(', ')}');
+        errorMessages.writeln(
+          'Locale "$locale" is missing the following resource keys: ${missingKeys.join(', ')}',
+        );
       }
     }
   }
 
   if (errorMessages.isNotEmpty) {
     if (explainMissingKeys) {
-        errorMessages
-          ..writeln()
-          ..writeln(
-            'If a resource key is intentionally omitted, add an attribute corresponding '
-            'to the key name with a "notUsed" property explaining why. Example:'
-          )
-          ..writeln()
-          ..writeln('"@anteMeridiemAbbreviation": {')
-          ..writeln('  "notUsed": "Sindhi time format does not use a.m. indicator"')
-          ..writeln('}');
+      errorMessages
+        ..writeln()
+        ..writeln(
+          'If a resource key is intentionally omitted, add an attribute corresponding '
+          'to the key name with a "notUsed" property explaining why. Example:',
+        )
+        ..writeln()
+        ..writeln('"@anteMeridiemAbbreviation": {')
+        ..writeln('  "notUsed": "Sindhi time format does not use a.m. indicator"')
+        ..writeln('}');
     }
     throw ValidationError(errorMessages.toString());
   }

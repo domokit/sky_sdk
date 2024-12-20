@@ -1,0 +1,85 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/fuchsia_config.gni")
+import("//flutter/tools/fuchsia/dart.gni")
+import("$dart_src/build/dart/dart_action.gni")
+
+template("dart_kernel") {
+  prebuilt_dart_action(target_name) {
+    assert(defined(invoker.main_dart), "main_dart is a required parameter.")
+    assert(defined(invoker.kernel_platform_files),
+           "kernel_platform_files target must be defined.")
+
+    main_dart = rebase_path(invoker.main_dart)
+
+    deps = [ invoker.kernel_platform_files ]
+
+    gen_kernel_script = "$dart_src/pkg/vm/bin/gen_kernel.dart"
+    platform_dill = "$root_out_dir/dart_runner_patched_sdk/platform_strong.dill"
+
+    dot_packages = rebase_path("$dart_src/.dart_tool/package_config.json")
+
+    inputs = [
+      platform_dill,
+      gen_kernel_script,
+      main_dart,
+      dot_packages,
+    ]
+
+    output = "$target_gen_dir/$target_name.dill"
+    outputs = [ output ]
+
+    depfile = "$output.d"
+    abs_depfile = rebase_path(depfile)
+    rebased_output = rebase_path(output, root_build_dir)
+    vm_args = [
+      "--depfile=$abs_depfile",
+      "--depfile_output_filename=$rebased_output",
+    ]
+
+    script = gen_kernel_script
+
+    args = [
+      "--packages=" + rebase_path(dot_packages),
+      "--target=dart_runner",
+      "--platform=" + rebase_path(platform_dill),
+      "--output=" + rebase_path(output),
+    ]
+
+    if (flutter_runtime_mode == "debug") {
+      args += [ "--embed-sources" ]
+    } else {
+      args += [ "--no-embed-sources" ]
+    }
+
+    if (defined(invoker.aot) && invoker.aot) {
+      args += [
+        "--aot",
+        "--tfa",
+      ]
+    } else {
+      # --no-link-platform is only valid when --aot isn't specified
+      args += [ "--no-link-platform" ]
+    }
+
+    if (defined(invoker.product) && invoker.product) {
+      # Setting this flag in a non-product release build for AOT (a "profile"
+      # build) causes the vm service isolate code to be tree-shaken from an app.
+      # See the pragma on the entrypoint here:
+      #
+      # https://github.com/dart-lang/sdk/blob/main/sdk/lib/_internal/vm/bin/vmservice_io.dart#L240
+      #
+      # Also, this define excludes debugging and profiling code from Flutter.
+      args += [ "-Ddart.vm.product=true" ]
+    } else {
+      if (flutter_runtime_mode == "profile") {
+        # The following define excludes debugging code from Flutter.
+        args += [ "-Ddart.vm.profile=true" ]
+      }
+    }
+
+    args += [ rebase_path(main_dart) ]
+  }
+}

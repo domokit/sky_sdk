@@ -33,23 +33,15 @@ class _TabScaffoldExampleState extends State<TabScaffoldExample> {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.search_circle_fill),
-            label: 'Explore',
-          ),
+          BottomNavigationBarItem(icon: Icon(CupertinoIcons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(CupertinoIcons.search_circle_fill), label: 'Explore'),
         ],
       ),
       tabBuilder: (BuildContext context, int index) {
         return CupertinoTabView(
           builder: (BuildContext context) {
             return CupertinoPageScaffold(
-              navigationBar: CupertinoNavigationBar(
-                middle: Text('Page 1 of tab $index'),
-              ),
+              navigationBar: CupertinoNavigationBar(middle: Text('Page 1 of tab $index')),
               child: Center(
                 child: CupertinoButton(
                   child: const Text('Next page'),

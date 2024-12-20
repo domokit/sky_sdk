@@ -11,15 +11,24 @@ void main() {
     await tester.pumpWidget(const example.SliverFillRemainingExampleApp());
     expect(find.text('SliverFillRemaining Sample'), findsOneWidget);
     expect(find.byType(CustomScrollView), findsOneWidget);
-    expect(find.byWidgetPredicate((Widget widget) => (widget is Container)
-      && widget.color == Colors.amber[200]),
-      findsNWidgets(2));
-    expect(find.byWidgetPredicate((Widget widget) => (widget is Container)
-      && widget.color == Colors.blue[200]),
-      findsOneWidget);
-    expect(find.byWidgetPredicate((Widget widget) => (widget is Container)
-      && widget.color == Colors.orange[300]),
-      findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (Widget widget) => (widget is Container) && widget.color == Colors.amber[200],
+      ),
+      findsNWidgets(2),
+    );
+    expect(
+      find.byWidgetPredicate(
+        (Widget widget) => (widget is Container) && widget.color == Colors.blue[200],
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.byWidgetPredicate(
+        (Widget widget) => (widget is Container) && widget.color == Colors.orange[300],
+      ),
+      findsOneWidget,
+    );
     expect(find.byType(SliverFixedExtentList), findsOneWidget);
     expect(find.byType(SliverFillRemaining), findsOneWidget);
     expect(find.byType(FlutterLogo), findsOneWidget);
@@ -30,12 +39,17 @@ void main() {
 
     final double listSpace = tester.getSize(find.byType(CustomScrollView)).height;
     double contentHeight = 0.0;
-    for (final Widget widget in tester.widgetList(find.byWidgetPredicate(
-      (Widget widget) =>
-        (widget is Container)
-        && <Color>[Colors.orange[300]!, Colors.blue[200]!, Colors.amber[200]!]
-          .contains(widget.color)))
-    ) {
+    for (final Widget widget in tester.widgetList(
+      find.byWidgetPredicate(
+        (Widget widget) =>
+            (widget is Container) &&
+            <Color>[
+              Colors.orange[300]!,
+              Colors.blue[200]!,
+              Colors.amber[200]!,
+            ].contains(widget.color),
+      ),
+    )) {
       contentHeight += tester.getSize(find.byWidget(widget)).height;
     }
     expectLater(contentHeight, equals(listSpace));

@@ -1,0 +1,112 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/tools/fuchsia/dart/dart_library.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/fidl_library.gni")
+
+template("_fuchsia_dart_library") {
+  assert(defined(invoker.meta), "The meta file content must be specified.")
+  meta = invoker.meta
+  assert(meta.type == "dart_library")
+
+  _output_name = meta.name
+  _sources = []
+  _deps = []
+
+  _dart_language_version = "2.12"
+
+  foreach(source, meta.sources) {
+    _sources += [ string_replace("$source", "${meta.root}/lib/", "") ]
+  }
+
+  foreach(dep, meta.deps) {
+    _deps += [ "../dart:$dep" ]
+  }
+
+  foreach(dep, meta.fidl_deps) {
+    _deps += [ "//flutter/tools/fuchsia/fidl:$dep" ]
+  }
+
+  # Compute the third_party deps. The Fuchsia SDK doesn't know where to resolve
+  # a third_party dep, and Flutter has third_party Dart libraries in more than
+  # one location (some downloaded directly, others as part of the Dart SDK or
+  # bundled as a Dart SDK third_party dep). Find a matching library. If a match
+  # is required by a build dependency, and a match is not found, you may need to
+  # add an entry for it in `flutter/DEPS`.
+  known_pkg_paths = [
+    "third_party/pkg",
+    "third_party/dart/pkg",
+    "third_party/dart/third_party/pkg",
+  ]
+
+  args = [
+    "--ignore-missing",
+    "--root",
+    rebase_path("//"),
+    "--target",
+    rebase_path(target_name, "//"),
+  ]
+
+  foreach(path, known_pkg_paths) {
+    args += [
+      "--local-path",
+      path,
+    ]
+  }
+
+  foreach(third_party_dep, meta.third_party_deps) {
+    _deps += [ "//flutter/shell/platform/fuchsia/dart:" + third_party_dep.name ]
+  }
+
+  dart_library(target_name) {
+    package_root = "${fuchsia_sdk}/${meta.root}"
+    package_name = _output_name
+    language_version = _dart_language_version
+    sources = _sources
+    deps = _deps
+  }
+}
+
+template("sdk_targets") {
+  assert(defined(invoker.meta), "The meta.json file path must be specified.")
+
+  target_type = invoker.target_name
+
+  meta_json = read_file(invoker.meta, "json")
+
+  foreach(part, meta_json.parts) {
+    part_meta_json = {
+    }
+    part_meta = part.meta
+    part_meta_rebased = "$fuchsia_sdk/$part_meta"
+
+    if (part_meta != "version_history.json") {
+      part_meta_json = read_file(part_meta_rebased, "json")
+      subtarget_name = part_meta_json.name
+
+      # Check if the part is using `part.element_type` or `part.type`.
+      part_type = ""
+      if (defined(part.element_type)) {
+        part_type = part.element_type
+      } else if (defined(part.type)) {
+        part_type = part.type
+      }
+
+      if (part_type == target_type) {
+        if (target_type == "dart_library") {
+          _fuchsia_dart_library(subtarget_name) {
+            meta = part_meta_json
+          }
+        } else if (target_type == "fidl_library") {
+          fidl_library(subtarget_name) {
+            meta = part_meta_json
+          }
+        }
+      }
+    }
+  }
+
+  group(target_name) {
+  }
+}

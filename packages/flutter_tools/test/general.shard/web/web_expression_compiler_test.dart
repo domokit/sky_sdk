@@ -20,45 +20,81 @@ void main() {
 
   testWithoutContext('WebExpressionCompiler handles successful expression compilation', () async {
     fileSystem.file('compilerOutput').writeAsStringSync('a');
-    final ResidentCompiler residentCompiler = FakeResidentCompiler(const CompilerOutput('compilerOutput', 0, <Uri>[]));
-    final ExpressionCompiler expressionCompiler = WebExpressionCompiler(residentCompiler, fileSystem: fileSystem);
+    final ResidentCompiler residentCompiler = FakeResidentCompiler(
+      const CompilerOutput('compilerOutput', 0, <Uri>[]),
+    );
+    final ExpressionCompiler expressionCompiler = WebExpressionCompiler(
+      residentCompiler,
+      fileSystem: fileSystem,
+    );
 
-    final ExpressionCompilationResult result =
-      await expressionCompiler.compileExpressionToJs(
-        '', '', 1, 1, <String, String>{}, <String, String>{}, '', '');
+    final ExpressionCompilationResult result = await expressionCompiler.compileExpressionToJs(
+      '',
+      '',
+      1,
+      1,
+      <String, String>{},
+      <String, String>{},
+      '',
+      '',
+    );
 
     expectResult(result, false, 'a');
   });
 
   testWithoutContext('WebExpressionCompiler handles compilation error', () async {
     fileSystem.file('compilerOutput').writeAsStringSync('Error: a');
-    final ResidentCompiler residentCompiler = FakeResidentCompiler(const CompilerOutput('compilerOutput', 1, <Uri>[]));
-    final ExpressionCompiler expressionCompiler = WebExpressionCompiler(residentCompiler, fileSystem: fileSystem);
+    final ResidentCompiler residentCompiler = FakeResidentCompiler(
+      const CompilerOutput('compilerOutput', 1, <Uri>[]),
+    );
+    final ExpressionCompiler expressionCompiler = WebExpressionCompiler(
+      residentCompiler,
+      fileSystem: fileSystem,
+    );
 
-    final ExpressionCompilationResult result =
-      await expressionCompiler.compileExpressionToJs(
-        '', '', 1, 1, <String, String>{}, <String, String>{}, '', '');
+    final ExpressionCompilationResult result = await expressionCompiler.compileExpressionToJs(
+      '',
+      '',
+      1,
+      1,
+      <String, String>{},
+      <String, String>{},
+      '',
+      '',
+    );
 
     expectResult(result, true, 'Error: a');
   });
 
   testWithoutContext('WebExpressionCompiler handles internal error', () async {
     final ResidentCompiler residentCompiler = FakeResidentCompiler(null);
-    final ExpressionCompiler expressionCompiler = WebExpressionCompiler(residentCompiler, fileSystem: fileSystem);
+    final ExpressionCompiler expressionCompiler = WebExpressionCompiler(
+      residentCompiler,
+      fileSystem: fileSystem,
+    );
 
-    final ExpressionCompilationResult result =
-      await expressionCompiler.compileExpressionToJs(
-        '', '', 1, 1, <String, String>{}, <String, String>{}, '', 'a');
+    final ExpressionCompilationResult result = await expressionCompiler.compileExpressionToJs(
+      '',
+      '',
+      1,
+      1,
+      <String, String>{},
+      <String, String>{},
+      '',
+      'a',
+    );
 
     expectResult(result, true, "InternalError: frontend server failed to compile 'a'");
   });
 }
 
 void expectResult(ExpressionCompilationResult result, bool isError, String value) {
-  expect(result,
+  expect(
+    result,
     const TypeMatcher<ExpressionCompilationResult>()
-      .having((ExpressionCompilationResult instance) => instance.isError, 'isError', isError)
-      .having((ExpressionCompilationResult instance) => instance.result, 'result', value));
+        .having((ExpressionCompilationResult instance) => instance.isError, 'isError', isError)
+        .having((ExpressionCompilationResult instance) => instance.result, 'result', value),
+  );
 }
 
 class FakeResidentCompiler extends Fake implements ResidentCompiler {

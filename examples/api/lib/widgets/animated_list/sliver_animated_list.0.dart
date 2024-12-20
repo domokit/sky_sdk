@@ -18,7 +18,8 @@ class SliverAnimatedListSample extends StatefulWidget {
 class _SliverAnimatedListSampleState extends State<SliverAnimatedListSample> {
   final GlobalKey<SliverAnimatedListState> _listKey = GlobalKey<SliverAnimatedListState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
   late ListModel<int> _list;
   int? _selectedItem;
   late int _nextItem; // The next item inserted when the user presses the '+' button.
@@ -56,10 +57,7 @@ class _SliverAnimatedListSampleState extends State<SliverAnimatedListSample> {
   /// widget will be used by the [AnimatedListState.removeItem] method's
   /// [AnimatedRemovedItemBuilder] parameter.
   Widget _buildRemovedItem(int item, BuildContext context, Animation<double> animation) {
-    return CardItem(
-      animation: animation,
-      item: item,
-    );
+    return CardItem(animation: animation, item: item);
   }
 
   // Insert the "next item" into the list model.
@@ -76,12 +74,11 @@ class _SliverAnimatedListSampleState extends State<SliverAnimatedListSample> {
         _selectedItem = null;
       });
     } else {
-      _scaffoldMessengerKey.currentState!.showSnackBar(const SnackBar(
-        content: Text(
-          'Select an item to remove from the list.',
-          style: TextStyle(fontSize: 20),
+      _scaffoldMessengerKey.currentState!.showSnackBar(
+        const SnackBar(
+          content: Text('Select an item to remove from the list.', style: TextStyle(fontSize: 20)),
         ),
-      ));
+      );
     }
   }
 
@@ -94,10 +91,7 @@ class _SliverAnimatedListSampleState extends State<SliverAnimatedListSample> {
         body: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
-              title: const Text(
-                'SliverAnimatedList',
-                style: TextStyle(fontSize: 30),
-              ),
+              title: const Text('SliverAnimatedList', style: TextStyle(fontSize: 30)),
               expandedHeight: 60,
               centerTitle: true,
               backgroundColor: Colors.amber[900],
@@ -128,7 +122,8 @@ class _SliverAnimatedListSampleState extends State<SliverAnimatedListSample> {
   }
 }
 
-typedef RemovedItemBuilder<E> = Widget Function(E item, BuildContext context, Animation<double> animation);
+typedef RemovedItemBuilder<E> =
+    Widget Function(E item, BuildContext context, Animation<double> animation);
 
 // Keeps a Dart [List] in sync with an [AnimatedList].
 //
@@ -140,11 +135,8 @@ typedef RemovedItemBuilder<E> = Widget Function(E item, BuildContext context, An
 // mutate the list must make the same changes to the animated list in terms
 // of [AnimatedListState.insertItem] and [AnimatedList.removeItem].
 class ListModel<E> {
-  ListModel({
-    required this.listKey,
-    required this.removedItemBuilder,
-    Iterable<E>? initialItems,
-  }) : _items = List<E>.from(initialItems ?? <E>[]);
+  ListModel({required this.listKey, required this.removedItemBuilder, Iterable<E>? initialItems})
+    : _items = List<E>.from(initialItems ?? <E>[]);
 
   final GlobalKey<SliverAnimatedListState> listKey;
   final RemovedItemBuilder<E> removedItemBuilder;
@@ -162,7 +154,8 @@ class ListModel<E> {
     if (removedItem != null) {
       _animatedList.removeItem(
         index,
-        (BuildContext context, Animation<double> animation) => removedItemBuilder(removedItem, context, animation),
+        (BuildContext context, Animation<double> animation) =>
+            removedItemBuilder(removedItem, context, animation),
       );
     }
     return removedItem;
@@ -198,11 +191,7 @@ class CardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 2.0,
-        right: 2.0,
-        top: 2.0,
-      ),
+      padding: const EdgeInsets.only(left: 2.0, right: 2.0, top: 2.0),
       child: SizeTransition(
         sizeFactor: animation,
         child: GestureDetector(
@@ -212,10 +201,7 @@ class CardItem extends StatelessWidget {
             child: Card(
               color: selected ? Colors.black12 : Colors.primaries[item % Colors.primaries.length],
               child: Center(
-                child: Text(
-                  'Item $item',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
+                child: Text('Item $item', style: Theme.of(context).textTheme.headlineMedium),
               ),
             ),
           ),

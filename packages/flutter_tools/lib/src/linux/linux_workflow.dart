@@ -11,11 +11,9 @@ import '../features.dart';
 /// This workflow requires the flutter-desktop-embedding as a sibling
 /// repository to the flutter repo.
 class LinuxWorkflow implements Workflow {
-  const LinuxWorkflow({
-    required Platform platform,
-    required FeatureFlags featureFlags,
-  }) : _platform = platform,
-       _featureFlags = featureFlags;
+  const LinuxWorkflow({required Platform platform, required FeatureFlags featureFlags})
+    : _platform = platform,
+      _featureFlags = featureFlags;
 
   final Platform _platform;
   final FeatureFlags _featureFlags;

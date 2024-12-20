@@ -1,0 +1,25 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+name: header_guard_check
+publish_to: none
+
+# Required for workspace support.
+environment:
+  sdk: ^3.7.0-0
+
+# This package is managed as part of the engine workspace.
+resolution: workspace
+
+dependencies:
+  args: any
+  git_repo_tools: any
+  engine_repo_tools: any
+  meta: any
+  path: any
+  source_span: any
+
+dev_dependencies:
+  process_fakes: any
+  test: any

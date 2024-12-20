@@ -126,16 +126,19 @@ void main() {
     expect(device.isSupported(), isTrue);
     expect(device.getLogReader(), isA<DesktopLogReader>());
 
-     expect(await device.stopApp(FakeIOSApp()), isFalse);
+    expect(await device.stopApp(FakeIOSApp()), isFalse);
 
     await expectLater(
-          () => device.startApp(
+      () => device.startApp(
         FakeIOSApp(),
         debuggingOptions: DebuggingOptions.disabled(BuildInfo.debug),
       ),
       throwsA(isA<UnimplementedError>()),
     );
-    await expectLater(() => device.buildForDevice(buildInfo: BuildInfo.debug), throwsA(isA<UnimplementedError>()));
+    await expectLater(
+      () => device.buildForDevice(buildInfo: BuildInfo.debug),
+      throwsA(isA<UnimplementedError>()),
+    );
     expect(device.executablePathForDevice(FakeIOSApp(), BuildInfo.debug), null);
   });
 }
@@ -148,4 +151,5 @@ class FakeIOSWorkflow extends Fake implements IOSWorkflow {
 }
 
 class FakeApplicationPackage extends Fake implements ApplicationPackage {}
+
 class FakeIOSApp extends Fake implements IOSApp {}

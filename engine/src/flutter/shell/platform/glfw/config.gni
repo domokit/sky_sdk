@@ -1,0 +1,13 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+  # Whether to build the GLFW shell for the host platform, if available.
+  #
+  # By default, the GLFW shell is not built if there is a native toolkit shell,
+  # but it can be enabled for supported platforms (Windows, macOS, and Linux)
+  # as an extra build artifact with this flag. The native toolkit shell will
+  # still be built as well.
+  build_glfw_shell = is_linux && current_toolchain == host_toolchain
+}

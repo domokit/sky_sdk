@@ -1,0 +1,60 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/compiled_action.gni")
+import("//flutter/impeller/tools/impeller.gni")
+import("//flutter/testing/testing.gni")
+
+if (enable_unittests) {
+  test_shaders = [
+    "127_OpFNegate.frag",
+    "129_OpFAdd.frag",
+    "131_OpFSub.frag",
+    "142_OpVectorTimesScalar.frag",
+    "143_OpMatrixTimesScalar.frag",
+    "144_OpVectorTimesMatrix.frag",
+    "145_OpMatrixTimesVector.frag",
+    "146_OpMatrixTimesMatrix.frag",
+    "148_OpDot.frag",
+    "164_OpLogicalEqual.frag",
+    "165_OpLogicalNotEqual.frag",
+    "166_OpLogicalOr.frag",
+    "167_OpLogicalAnd.frag",
+    "168_OpLogicalNot.frag",
+    "180_OpFOrdEqual.frag",
+    "183_OpFUnordNotEqual.frag",
+    "184_OpFOrdLessThan.frag",
+    "186_OpFOrdGreaterThan.frag",
+    "188_OpFOrdLessThanEqual.frag",
+    "190_OpFOrdGreaterThanEqual.frag",
+    "19_OpTypeVoid.frag",
+    "20_OpTypeBool.frag",
+    "21_OpTypeInt.frag",
+    "22_OpTypeFloat.frag",
+    "23_OpTypeVector.frag",
+    "246_OpLoopMerge.frag",
+    "24_OpTypeMatrix.frag",
+    "250_OpBranchConditional.frag",
+    "33_OpTypeFunction.frag",
+  ]
+
+  group("supported_op_shaders") {
+    testonly = true
+    deps = [ ":fixtures" ]
+  }
+
+  impellerc("compile_supported_op_shaders") {
+    shaders = test_shaders
+    shader_target_flags = [ "--sksl" ]
+    intermediates_subdir = "iplr"
+    sl_file_extension = "iplr"
+    iplr = true
+  }
+
+  test_fixtures("fixtures") {
+    deps = [ ":compile_supported_op_shaders" ]
+    fixtures = get_target_outputs(":compile_supported_op_shaders")
+    dest = "$root_gen_dir/flutter/lib/ui"
+  }
+}

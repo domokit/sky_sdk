@@ -1,0 +1,536 @@
+# THIS FILE IS GENERATED FROM BUILD.input.gn BY gen.py
+# EDIT BUILD.input.gn FIRST AND THEN RUN gen.py
+#
+#
+# Copyright 2017 The Fuchsia Authors. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#    * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#    * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import("//build/test.gni")
+import("//third_party/protobuf/proto_library.gni")
+
+config("protobuf_config") {
+  include_dirs = [ "//flutter/third_party/protobuf/src" ]
+  defines = [
+    "GOOGLE_PROTOBUF_NO_RTTI",
+    "HAVE_PTHREAD",
+  ]
+  cflags = []
+  if (is_clang) {
+    cflags += [
+      # Needed to support PROTOBUF_INTERNAL_CHECK_CLASS_SIZE in descriptor.h
+      "-Wno-c++98-compat-extra-semi",
+
+      # There are implicit conversions in parse_context.h
+      "-Wno-shorten-64-to-32",
+    ]
+  }
+}
+
+config("protobuf_warnings") {
+  cflags = []
+
+  if (is_clang) {
+    # These are all needed as of https://github.com/protocolbuffers/protobuf/releases/tag/v3.21.12
+    cflags += [
+      "-Wno-deprecated-pragma",
+      "-Wno-enum-enum-conversion",
+      "-Wno-extra-semi",
+      "-Wno-float-conversion",
+      "-Wno-implicit-float-conversion",
+      "-Wno-implicit-int-conversion",
+      "-Wno-implicit-int-float-conversion",
+      "-Wno-invalid-noreturn",
+      "-Wno-missing-field-initializers",
+      "-Wno-sign-compare",
+      "-Wno-unused-function",
+      "-Wno-unused-private-field",
+      "-Wno-deprecated-declarations", # Mac deprecated sprintf
+    ]
+  }
+}
+
+# This config should be applied to targets using generated code from the proto
+# compiler. It sets up the include directories properly.
+config("using_proto") {
+  include_dirs = [
+    "//flutter/third_party/protobuf/src",
+    "$root_gen_dir",
+  ]
+}
+
+static_library("protobuf_lite") {
+  sources = [
+    "//flutter/third_party/protobuf/src/google/protobuf/any_lite.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/arena.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/arenastring.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/arenaz_sampler.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/extension_set.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_enum_util.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_tctable_lite.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_util.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/implicit_weak_message.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/inlined_string_field.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/coded_stream.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/io_win32.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/strtod.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/zero_copy_stream.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/zero_copy_stream_impl.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/zero_copy_stream_impl_lite.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/map.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/message_lite.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/parse_context.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/repeated_field.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/repeated_ptr_field.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/bytestream.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/common.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/int128.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/status.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/statusor.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/stringpiece.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/stringprintf.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/structurally_valid.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/strutil.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/time.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/wire_format_lite.cc",
+  ]
+
+  # git ls-files -- ':!*/compiler/*' ':!*/testing/*' ':!*/util/*' 'src/google/protobuf/*.h' | sed 's/^/"/' | sed 's/$/",/'
+  public = [
+    "//flutter/third_party/protobuf/src/google/protobuf/any.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/any.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/api.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/arena.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/arena_impl.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/arena_test_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/arenastring.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/arenaz_sampler.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/descriptor.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/descriptor.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/descriptor_database.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/duration.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/dynamic_message.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/empty.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/endian.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/explicitly_constructed.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/extension_set.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/extension_set_inl.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/field_access_listener.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/field_mask.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_enum_reflection.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_enum_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_bases.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_reflection.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_tctable_decl.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_tctable_impl.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/has_bits.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/implicit_weak_message.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/inlined_string_field.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/coded_stream.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/gzip_stream.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/io_win32.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/package_info.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/printer.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/strtod.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/tokenizer.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/zero_copy_stream.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/zero_copy_stream_impl.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/zero_copy_stream_impl_lite.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_entry.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_entry_lite.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_field.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_field_inl.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_field_lite.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_lite_test_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_test_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_test_util_impl.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_type_handler.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/message.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/message_lite.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/metadata.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/metadata_lite.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/package_info.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/parse_context.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/port.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/reflection.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/reflection_internal.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/reflection_ops.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/reflection_tester.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/repeated_field.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/repeated_ptr_field.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/service.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/source_context.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/string_member_robber.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/struct.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/bytestream.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/callback.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/casts.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/common.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/hash.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/int128.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/logging.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/macros.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/map_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/mathutil.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/mutex.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/once.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/platform_macros.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/port.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/status.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/status_macros.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/statusor.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/stl_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/stringpiece.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/stringprintf.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/strutil.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/substitute.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/template_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/time.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/test_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/test_util2.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/test_util_lite.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/text_format.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/timestamp.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/type.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/unknown_field_set.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/wire_format.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/wire_format_lite.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/wrappers.pb.h",
+  ]
+  configs += [ ":protobuf_warnings" ]
+  public_configs = [ ":protobuf_config" ]
+}
+
+# This is the full, heavy protobuf lib that's needed for c++ .protos that don't
+# specify the LITE_RUNTIME option. The protocol compiler itself (protoc) falls
+# into that category.
+static_library("protobuf_full") {
+  sources = [
+    "//flutter/third_party/protobuf/src/google/protobuf/any.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/any.pb.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/api.pb.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/compiler/importer.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/compiler/parser.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/descriptor.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/descriptor.pb.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/descriptor_database.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/duration.pb.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/dynamic_message.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/empty.pb.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/extension_set_heavy.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/field_mask.pb.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_bases.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_reflection.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_tctable_full.cc",
+
+    # gzip_stream.cc pulls in zlib, but it's not actually used by protoc, just
+    # by test code, so instead of compiling zlib for the host, let's just
+    # exclude this.
+    # "//flutter/third_party/protobuf/src/google/protobuf/io/gzip_stream.cc",
+
+    "//flutter/third_party/protobuf/src/google/protobuf/io/printer.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/tokenizer.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_field.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/message.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/reflection_ops.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/service.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/source_context.pb.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/struct.pb.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/substitute.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/text_format.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/timestamp.pb.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/type.pb.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/unknown_field_set.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/delimited_message_util.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/field_comparator.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/field_mask_util.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/datapiece.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/default_value_objectwriter.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/error_listener.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/field_mask_utility.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/json_escaping.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/json_objectwriter.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/json_stream_parser.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/object_writer.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/proto_writer.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/protostream_objectsource.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/protostream_objectwriter.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/type_info.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/utility.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/json_util.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/message_differencer.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/time_util.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/type_resolver_util.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/wire_format.cc",
+    "//flutter/third_party/protobuf/src/google/protobuf/wrappers.pb.cc",
+  ]
+
+  # git ls-files -- ':!*/compiler/*' ':!*/testing/*' 'src/google/protobuf/*.h' | sed 's/^/"/' | sed 's/$/",/'
+  public = [
+    "//flutter/third_party/protobuf/src/google/protobuf/any.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/any.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/api.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/arena.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/arena_impl.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/arena_test_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/arenastring.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/arenaz_sampler.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/descriptor.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/descriptor.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/descriptor_database.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/duration.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/dynamic_message.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/empty.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/endian.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/explicitly_constructed.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/extension_set.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/extension_set_inl.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/field_access_listener.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/field_mask.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_enum_reflection.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_enum_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_bases.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_reflection.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_tctable_decl.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_tctable_impl.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/generated_message_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/has_bits.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/implicit_weak_message.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/inlined_string_field.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/coded_stream.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/gzip_stream.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/io_win32.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/package_info.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/printer.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/strtod.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/tokenizer.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/zero_copy_stream.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/zero_copy_stream_impl.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/io/zero_copy_stream_impl_lite.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_entry.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_entry_lite.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_field.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_field_inl.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_field_lite.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_lite_test_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_test_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_test_util_impl.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/map_type_handler.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/message.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/message_lite.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/metadata.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/metadata_lite.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/package_info.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/parse_context.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/port.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/reflection.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/reflection_internal.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/reflection_ops.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/reflection_tester.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/repeated_field.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/repeated_ptr_field.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/service.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/source_context.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/string_member_robber.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/struct.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/bytestream.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/callback.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/casts.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/common.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/hash.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/int128.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/logging.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/macros.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/map_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/mathutil.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/mutex.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/once.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/platform_macros.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/port.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/status.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/status_macros.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/statusor.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/stl_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/stringpiece.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/stringprintf.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/strutil.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/substitute.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/template_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/stubs/time.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/test_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/test_util2.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/test_util_lite.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/text_format.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/timestamp.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/type.pb.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/unknown_field_set.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/delimited_message_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/field_comparator.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/field_mask_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/constants.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/datapiece.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/default_value_objectwriter.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/error_listener.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/expecting_objectwriter.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/field_mask_utility.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/json_escaping.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/json_objectwriter.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/json_stream_parser.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/location_tracker.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/mock_error_listener.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/object_location_tracker.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/object_source.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/object_writer.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/proto_writer.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/protostream_objectsource.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/protostream_objectwriter.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/structured_objectwriter.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/type_info.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/type_info_test_helper.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/internal/utility.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/json_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/message_differencer.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/package_info.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/time_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/type_resolver.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/util/type_resolver_util.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/wire_format.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/wire_format_lite.h",
+    "//flutter/third_party/protobuf/src/google/protobuf/wrappers.pb.h",
+  ]
+  configs += [ ":protobuf_warnings" ]
+  public_configs = [ ":protobuf_config" ]
+  deps = [ ":protobuf_lite" ]
+}
+
+# Only compile the compiler for the host architecture.
+if (current_toolchain == host_toolchain) {
+  # protoc compiler is separated into protoc library and executable targets to
+  # support protoc plugins that need to link libprotoc, but not the main()
+  # itself. See src/google/protobuf/compiler/plugin.h
+  #
+  # git ls-files -- ':!*/main.cc' ':!*test*' ':!*mock*' 'src/google/protobuf/compiler/*.cc' | sed 's/^/"/' | sed 's/$/",/'
+  static_library("protoc_lib") {
+    sources = [
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/code_generator.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/command_line_interface.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/enum.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/enum_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/extension.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/file.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/generator.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/helpers.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/map_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/message.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/message_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/padding_optimizer.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/parse_function_generator.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/primitive_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/service.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/cpp/string_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_doc_comment.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_enum.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_enum_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_field_base.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_generator.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_helpers.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_map_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_message.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_message_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_primitive_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_reflection_class.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_repeated_enum_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_repeated_message_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_repeated_primitive_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_source_generator_base.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/csharp/csharp_wrapper_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/importer.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/context.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/doc_comment.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/enum.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/enum_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/enum_field_lite.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/enum_lite.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/extension.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/extension_lite.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/file.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/generator.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/generator_factory.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/helpers.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/kotlin_generator.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/map_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/map_field_lite.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/message.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/message_builder.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/message_builder_lite.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/message_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/message_field_lite.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/message_lite.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/name_resolver.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/primitive_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/primitive_field_lite.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/service.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/shared_code_generator.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/string_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/java/string_field_lite.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/objectivec/objectivec_enum.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/objectivec/objectivec_enum_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/objectivec/objectivec_extension.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/objectivec/objectivec_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/objectivec/objectivec_file.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/objectivec/objectivec_generator.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/objectivec/objectivec_helpers.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/objectivec/objectivec_map_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/objectivec/objectivec_message.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/objectivec/objectivec_message_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/objectivec/objectivec_oneof.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/objectivec/objectivec_primitive_field.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/parser.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/php/php_generator.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/plugin.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/plugin.pb.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/python/generator.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/python/helpers.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/python/pyi_generator.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/ruby/ruby_generator.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/subprocess.cc",
+      "//flutter/third_party/protobuf/src/google/protobuf/compiler/zip_writer.cc",
+    ]
+    configs += [ ":protobuf_warnings" ]
+    public_deps = [ ":protobuf_full" ]
+  }
+
+  executable("protoc") {
+    sources = [ "//flutter/third_party/protobuf/src/google/protobuf/compiler/main.cc" ]
+    deps = [ ":protoc_lib" ]
+  }
+}

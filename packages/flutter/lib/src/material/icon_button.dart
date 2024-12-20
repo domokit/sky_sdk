@@ -648,13 +648,11 @@ class IconButton extends StatelessWidget {
     if ((hoverColor ?? focusColor ?? highlightColor ?? overlayFallback) != null) {
       overlayColorProp = switch (overlayColor) {
         Color(a: 0.0) => WidgetStatePropertyAll<Color>(overlayColor),
-        _ => WidgetStateProperty<Color?>.fromMap(
-          <WidgetState, Color?>{
-            WidgetState.pressed: highlightColor ?? overlayFallback?.withOpacity(0.1),
-            WidgetState.hovered: hoverColor     ?? overlayFallback?.withOpacity(0.08),
-            WidgetState.focused: focusColor     ?? overlayFallback?.withOpacity(0.1),
-          },
-        ),
+        _ => WidgetStateProperty<Color?>.fromMap(<WidgetState, Color?>{
+          WidgetState.pressed: highlightColor ?? overlayFallback?.withOpacity(0.1),
+          WidgetState.hovered: hoverColor ?? overlayFallback?.withOpacity(0.08),
+          WidgetState.focused: focusColor ?? overlayFallback?.withOpacity(0.1),
+        }),
       };
     }
 
@@ -672,12 +670,10 @@ class IconButton extends StatelessWidget {
       iconSize: ButtonStyleButton.allOrNull<double>(iconSize),
       side: ButtonStyleButton.allOrNull<BorderSide>(side),
       shape: ButtonStyleButton.allOrNull<OutlinedBorder>(shape),
-      mouseCursor: WidgetStateProperty<MouseCursor?>.fromMap(
-        <WidgetStatesConstraint, MouseCursor?>{
-          WidgetState.disabled: disabledMouseCursor,
-          WidgetState.any: enabledMouseCursor,
-        },
-      ),
+      mouseCursor: WidgetStateProperty<MouseCursor?>.fromMap(<WidgetStatesConstraint, MouseCursor?>{
+        WidgetState.disabled: disabledMouseCursor,
+        WidgetState.any: enabledMouseCursor,
+      }),
       visualDensity: visualDensity,
       tapTargetSize: tapTargetSize,
       animationDuration: animationDuration,
@@ -692,12 +688,10 @@ class IconButton extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     if (theme.useMaterial3) {
-      final Size? minSize = constraints == null
-          ? null
-          : Size(constraints!.minWidth, constraints!.minHeight);
-      final Size? maxSize = constraints == null
-          ? null
-          : Size(constraints!.maxWidth, constraints!.maxHeight);
+      final Size? minSize =
+          constraints == null ? null : Size(constraints!.minWidth, constraints!.minHeight);
+      final Size? maxSize =
+          constraints == null ? null : Size(constraints!.maxWidth, constraints!.maxHeight);
 
       ButtonStyle adjustedStyle = styleFrom(
         visualDensity: visualDensity,
@@ -747,11 +741,11 @@ class IconButton extends StatelessWidget {
 
     final VisualDensity effectiveVisualDensity = visualDensity ?? theme.visualDensity;
 
-    final BoxConstraints unadjustedConstraints = constraints ?? const BoxConstraints(
-      minWidth: _kMinButtonSize,
-      minHeight: _kMinButtonSize,
+    final BoxConstraints unadjustedConstraints =
+        constraints ?? const BoxConstraints(minWidth: _kMinButtonSize, minHeight: _kMinButtonSize);
+    final BoxConstraints adjustedConstraints = effectiveVisualDensity.effectiveConstraints(
+      unadjustedConstraints,
     );
-    final BoxConstraints adjustedConstraints = effectiveVisualDensity.effectiveConstraints(unadjustedConstraints);
     final double effectiveIconSize = iconSize ?? IconTheme.of(context).size ?? 24.0;
     final EdgeInsetsGeometry effectivePadding = padding ?? const EdgeInsets.all(8.0);
     final AlignmentGeometry effectiveAlignment = alignment ?? Alignment.center;
@@ -767,10 +761,7 @@ class IconButton extends StatelessWidget {
           child: Align(
             alignment: effectiveAlignment,
             child: IconTheme.merge(
-              data: IconThemeData(
-                size: effectiveIconSize,
-                color: currentColor,
-              ),
+              data: IconThemeData(size: effectiveIconSize, color: currentColor),
               child: icon,
             ),
           ),
@@ -783,32 +774,29 @@ class IconButton extends StatelessWidget {
       autofocus: autofocus,
       canRequestFocus: onPressed != null,
       onTap: onPressed,
-      mouseCursor: mouseCursor ?? (onPressed == null ? SystemMouseCursors.basic : SystemMouseCursors.click),
+      mouseCursor:
+          mouseCursor ?? (onPressed == null ? SystemMouseCursors.basic : SystemMouseCursors.click),
       enableFeedback: effectiveEnableFeedback,
       focusColor: focusColor ?? theme.focusColor,
       hoverColor: hoverColor ?? theme.hoverColor,
       highlightColor: highlightColor ?? theme.highlightColor,
       splashColor: splashColor ?? theme.splashColor,
-      radius: splashRadius ?? math.max(
-        Material.defaultSplashRadius,
-        (effectiveIconSize + math.min(effectivePadding.horizontal, effectivePadding.vertical)) * 0.7,
-        // x 0.5 for diameter -> radius and + 40% overflow derived from other Material apps.
-      ),
+      radius:
+          splashRadius ??
+          math.max(
+            Material.defaultSplashRadius,
+            (effectiveIconSize + math.min(effectivePadding.horizontal, effectivePadding.vertical)) *
+                0.7,
+            // x 0.5 for diameter -> radius and + 40% overflow derived from other Material apps.
+          ),
       child: result,
     );
 
     if (tooltip != null) {
-      result = Tooltip(
-        message: tooltip,
-        child: result,
-      );
+      result = Tooltip(message: tooltip, child: result);
     }
 
-    return Semantics(
-      button: true,
-      enabled: onPressed != null,
-      child: result,
-    );
+    return Semantics(button: true, enabled: onPressed != null, child: result);
   }
 
   @override
@@ -862,7 +850,7 @@ class _SelectableIconButtonState extends State<_SelectableIconButton> {
       statesController = MaterialStatesController();
     } else {
       statesController = MaterialStatesController(<MaterialState>{
-        if (widget.isSelected!) MaterialState.selected
+        if (widget.isSelected!) MaterialState.selected,
       });
     }
   }
@@ -894,10 +882,7 @@ class _SelectableIconButtonState extends State<_SelectableIconButton> {
       variant: widget.variant,
       toggleable: toggleable,
       tooltip: widget.tooltip,
-      child: Semantics(
-        selected: widget.isSelected,
-        child: widget.child,
-      ),
+      child: Semantics(selected: widget.isSelected, child: widget.child),
     );
   }
 
@@ -919,11 +904,7 @@ class _IconButtonM3 extends ButtonStyleButton {
     required this.toggleable,
     super.tooltip,
     required Widget super.child,
-  }) : super(
-      onLongPress: null,
-      onHover: null,
-      onFocusChange: null,
-      clipBehavior: Clip.none);
+  }) : super(onLongPress: null, onHover: null, onFocusChange: null, clipBehavior: Clip.none);
 
   final _IconButtonVariant variant;
   final bool toggleable;
@@ -968,10 +949,10 @@ class _IconButtonM3 extends ButtonStyleButton {
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
     return switch (variant) {
-      _IconButtonVariant.filled      => _FilledIconButtonDefaultsM3(context, toggleable),
+      _IconButtonVariant.filled => _FilledIconButtonDefaultsM3(context, toggleable),
       _IconButtonVariant.filledTonal => _FilledTonalIconButtonDefaultsM3(context, toggleable),
-      _IconButtonVariant.outlined    => _OutlinedIconButtonDefaultsM3(context, toggleable),
-      _IconButtonVariant.standard    => _IconButtonDefaultsM3(context, toggleable),
+      _IconButtonVariant.outlined => _OutlinedIconButtonDefaultsM3(context, toggleable),
+      _IconButtonVariant.standard => _IconButtonDefaultsM3(context, toggleable),
     };
   }
 
@@ -983,17 +964,14 @@ class _IconButtonM3 extends ButtonStyleButton {
   ButtonStyle? themeStyleOf(BuildContext context) {
     final IconThemeData iconTheme = IconTheme.of(context);
     final bool isDefaultSize = iconTheme.size == const IconThemeData.fallback().size;
-    final bool isDefaultColor = identical(
-      iconTheme.color,
-      switch (Theme.of(context).brightness) {
-        Brightness.light => kDefaultIconDarkColor,
-        Brightness.dark => kDefaultIconLightColor,
-      },
-    );
+    final bool isDefaultColor = identical(iconTheme.color, switch (Theme.of(context).brightness) {
+      Brightness.light => kDefaultIconDarkColor,
+      Brightness.dark => kDefaultIconLightColor,
+    });
 
     final ButtonStyle iconThemeStyle = IconButton.styleFrom(
       foregroundColor: isDefaultColor ? null : iconTheme.color,
-      iconSize: isDefaultSize ? null : iconTheme.size
+      iconSize: isDefaultSize ? null : iconTheme.size,
     );
 
     return IconButtonTheme.of(context).style?.merge(iconThemeStyle) ?? iconThemeStyle;
@@ -1007,6 +985,7 @@ class _IconButtonM3 extends ButtonStyleButton {
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 class _IconButtonDefaultsM3 extends ButtonStyle {
   _IconButtonDefaultsM3(this.context, this.toggleable)
     : super(
@@ -1118,6 +1097,7 @@ class _IconButtonDefaultsM3 extends ButtonStyle {
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
 }
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - IconButton
 
@@ -1128,6 +1108,7 @@ class _IconButtonDefaultsM3 extends ButtonStyle {
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 class _FilledIconButtonDefaultsM3 extends ButtonStyle {
   _FilledIconButtonDefaultsM3(this.context, this.toggleable)
     : super(
@@ -1264,6 +1245,7 @@ class _FilledIconButtonDefaultsM3 extends ButtonStyle {
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
 }
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - FilledIconButton
 
@@ -1274,6 +1256,7 @@ class _FilledIconButtonDefaultsM3 extends ButtonStyle {
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 class _FilledTonalIconButtonDefaultsM3 extends ButtonStyle {
   _FilledTonalIconButtonDefaultsM3(this.context, this.toggleable)
     : super(
@@ -1410,6 +1393,7 @@ class _FilledTonalIconButtonDefaultsM3 extends ButtonStyle {
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
 }
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - FilledTonalIconButton
 
@@ -1420,6 +1404,7 @@ class _FilledTonalIconButtonDefaultsM3 extends ButtonStyle {
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 class _OutlinedIconButtonDefaultsM3 extends ButtonStyle {
   _OutlinedIconButtonDefaultsM3(this.context, this.toggleable)
     : super(
@@ -1551,5 +1536,6 @@ class _OutlinedIconButtonDefaultsM3 extends ButtonStyle {
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
 }
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - OutlinedIconButton

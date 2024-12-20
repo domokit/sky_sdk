@@ -22,11 +22,8 @@ import 'framework.dart';
 /// existence of a render tree (the [container]) to attach the element tree to.
 class RenderObjectToWidgetAdapter<T extends RenderObject> extends RenderObjectWidget {
   /// Creates a bridge from a [RenderObject] to an [Element] tree.
-  RenderObjectToWidgetAdapter({
-    this.child,
-    required this.container,
-    this.debugShortDescription,
-  }) : super(key: GlobalObjectKey(container));
+  RenderObjectToWidgetAdapter({this.child, required this.container, this.debugShortDescription})
+    : super(key: GlobalObjectKey(container));
 
   /// The widget below this widget in the tree.
   ///
@@ -46,14 +43,17 @@ class RenderObjectToWidgetAdapter<T extends RenderObject> extends RenderObjectWi
   RenderObjectWithChildMixin<T> createRenderObject(BuildContext context) => container;
 
   @override
-  void updateRenderObject(BuildContext context, RenderObject renderObject) { }
+  void updateRenderObject(BuildContext context, RenderObject renderObject) {}
 
   /// Inflate this widget and actually set the resulting [RenderObject] as the
   /// child of [container].
   ///
   /// If `element` is null, this function will create a new element. Otherwise,
   /// the given element will have an update scheduled to switch to this widget.
-  RenderObjectToWidgetElement<T> attachToRenderTree(BuildOwner owner, [ RenderObjectToWidgetElement<T>? element ]) {
+  RenderObjectToWidgetElement<T> attachToRenderTree(
+    BuildOwner owner, [
+    RenderObjectToWidgetElement<T>? element,
+  ]) {
     if (element == null) {
       owner.lockState(() {
         element = createElement();
@@ -82,7 +82,8 @@ class RenderObjectToWidgetAdapter<T extends RenderObject> extends RenderObjectWi
 ///
 /// In typical usage, it will be instantiated for a [RenderObjectToWidgetAdapter]
 /// whose container is the [RenderView].
-class RenderObjectToWidgetElement<T extends RenderObject> extends RenderTreeRootElement with RootElementMixin {
+class RenderObjectToWidgetElement<T extends RenderObject> extends RenderTreeRootElement
+    with RootElementMixin {
   /// Creates an element that is hosted by a [RenderObject].
   ///
   /// The [RenderObject] created by this element is not automatically set as a
@@ -143,7 +144,11 @@ class RenderObjectToWidgetElement<T extends RenderObject> extends RenderTreeRoot
   @pragma('vm:notify-debugger-on-exception')
   void _rebuild() {
     try {
-      _child = updateChild(_child, (widget as RenderObjectToWidgetAdapter<T>).child, _rootChildSlot);
+      _child = updateChild(
+        _child,
+        (widget as RenderObjectToWidgetAdapter<T>).child,
+        _rootChildSlot,
+      );
     } catch (exception, stack) {
       final FlutterErrorDetails details = FlutterErrorDetails(
         exception: exception,
@@ -158,7 +163,8 @@ class RenderObjectToWidgetElement<T extends RenderObject> extends RenderTreeRoot
   }
 
   @override
-  RenderObjectWithChildMixin<T> get renderObject => super.renderObject as RenderObjectWithChildMixin<T>;
+  RenderObjectWithChildMixin<T> get renderObject =>
+      super.renderObject as RenderObjectWithChildMixin<T>;
 
   @override
   void insertRenderObjectChild(RenderObject child, Object? slot) {

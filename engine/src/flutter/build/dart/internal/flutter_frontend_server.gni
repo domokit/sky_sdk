@@ -1,0 +1,121 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/dart.gni")
+import("//flutter/common/config.gni")
+
+import("$dart_src/build/dart/dart_action.gni")
+
+# Generates a Dart kernel snapshot using flutter_frontend_server.
+#
+# Arguments
+#     main_dart (required):
+#       The Dart entrypoint file.
+#
+#     kernel_output (required):
+#       The path to the output kernel snapshot in the out directory.
+#
+#     package_config (optional):
+#       The path to the package_config.json file.
+#
+#     deps (optional):
+#       Additional dependencies. Dependencies on the frontend server and
+#       Flutter's platform.dill are included by default. This rule creates and
+#       uses a depfile, so listing all Dart sources is not necessary.
+#
+#     extra_args (optional):
+#       Additional frontend server command line arguments.
+template("flutter_frontend_server") {
+  assert(defined(invoker.main_dart), "The Dart test file must be specified.")
+  assert(defined(invoker.kernel_output),
+         "The Dart Kernel file location must be specified.")
+
+  kernel_output = invoker.kernel_output
+
+  common_deps = [ "//flutter/lib/snapshot:strong_platform" ]
+  if (defined(invoker.deps)) {
+    common_deps += invoker.deps
+  }
+
+  extra_args = []
+  if (defined(invoker.extra_args)) {
+    extra_args += invoker.extra_args
+  }
+
+  packages_args = []
+  package_config = ""
+  if (defined(invoker.package_config)) {
+    package_config = rebase_path(invoker.package_config, root_build_dir)
+  } else {
+    # Use the root engine package config by default.
+    # As we move towards a single pub workspace for the engine, this will be
+    # the correct package config to use, as we will no longer have a per-package
+    # .dart_tool/package_config.json.
+    package_config = rebase_path("//flutter/.dart_tool/package_config.json")
+  }
+  packages_args += [
+    "--packages",
+    package_config,
+  ]
+  snapshot_depfile = "$kernel_output.d"
+
+  flutter_patched_sdk =
+      rebase_path("$root_out_dir/flutter_patched_sdk", root_build_dir)
+
+  common_args = extra_args + packages_args + [
+                  "--sdk-root",
+                  flutter_patched_sdk,
+                  "--target=flutter",
+                  "--depfile",
+                  rebase_path(snapshot_depfile, root_build_dir),
+                  "--output-dill",
+                  rebase_path(invoker.kernel_output, root_build_dir),
+                  rebase_path(invoker.main_dart, root_build_dir),
+                ]
+
+  if (flutter_prebuilt_dart_sdk) {
+    common_deps += [ "//flutter/flutter_frontend_server:frontend_server" ]
+    action(target_name) {
+      forward_variables_from(invoker,
+                             [
+                               "visibility",
+                               "testonly",
+                             ],
+                             [ "pool" ])
+      deps = common_deps
+      pool = "//build/toolchain:toolchain_pool"
+      script = "//build/gn_run_binary.py"
+      inputs = [ invoker.main_dart ]
+      outputs = [ invoker.kernel_output ]
+      depfile = snapshot_depfile
+
+      ext = ""
+      if (is_win) {
+        ext = ".exe"
+      }
+      dart = rebase_path("$host_prebuilt_dart_sdk/bin/dartaotruntime$ext",
+                         root_out_dir)
+      frontend_server =
+          rebase_path("$root_gen_dir/frontend_server_aot.dart.snapshot")
+
+      args = [ dart ] + [ frontend_server ] + common_args
+    }
+  } else {
+    prebuilt_dart_action(target_name) {
+      forward_variables_from(invoker,
+                             [
+                               "visibility",
+                               "testonly",
+                             ],
+                             [ "pool" ])
+      deps = common_deps
+      pool = "//build/toolchain:toolchain_pool"
+      script = "$dart_src/pkg/frontend_server/bin/frontend_server_starter.dart"
+      inputs = [ invoker.main_dart ]
+      outputs = [ invoker.kernel_output ]
+      depfile = snapshot_depfile
+      args = common_args
+    }
+  }
+}

@@ -32,9 +32,7 @@ class ExampleWidget extends StatelessWidget {
       'Fractions: 1/2 2/3 3/4 4/5',
       style: TextStyle(
         fontFamily: 'Piazzolla',
-        fontFeatures: <FontFeature>[
-          FontFeature.numerators(),
-        ],
+        fontFeatures: <FontFeature>[FontFeature.numerators()],
       ),
     );
   }

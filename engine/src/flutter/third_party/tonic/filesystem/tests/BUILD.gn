@@ -1,0 +1,18 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+executable("files_unittests") {
+  testonly = true
+
+  sources = [
+    "directory_unittest.cc",
+    "file_descriptor_unittest.cc",
+    "file_unittest.cc",
+    "files_unittest_main.cc",
+    "path_unittest.cc",
+    "scoped_temp_dir_unittest.cc",
+  ]
+
+  deps = [ ":../:filesystem" ]
+}

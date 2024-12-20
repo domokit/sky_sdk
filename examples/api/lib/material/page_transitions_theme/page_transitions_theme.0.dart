@@ -43,9 +43,7 @@ class HomePage extends StatelessWidget {
         child: ElevatedButton(
           onPressed: () {
             Navigator.of(context).push(
-              MaterialPageRoute<SecondPage>(
-                builder: (BuildContext context) => const SecondPage(),
-              ),
+              MaterialPageRoute<SecondPage>(builder: (BuildContext context) => const SecondPage()),
             );
           },
           child: const Text('To SecondPage'),

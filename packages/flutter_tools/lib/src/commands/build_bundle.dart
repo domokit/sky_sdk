@@ -20,7 +20,8 @@ class BuildBundleCommand extends BuildSubCommand {
     required super.logger,
     bool verboseHelp = false,
     BundleBuilder? bundleBuilder,
-  }) :  _bundleBuilder = bundleBuilder ?? BundleBuilder(), super(verboseHelp: verboseHelp) {
+  }) : _bundleBuilder = bundleBuilder ?? BundleBuilder(),
+       super(verboseHelp: verboseHelp) {
     usesTargetOption();
     usesFilesystemOptions(hide: !verboseHelp);
     usesBuildNumberOption();
@@ -28,12 +29,15 @@ class BuildBundleCommand extends BuildSubCommand {
     usesDartDefineOption();
     usesExtraDartFlagOptions(verboseHelp: verboseHelp);
     argParser
-      ..addOption('depfile',
+      ..addOption(
+        'depfile',
         defaultsTo: defaultDepfilePath,
-        help: 'A file path where a depfile will be written. '
-              'This contains all build inputs and outputs in a Make-style syntax.'
+        help:
+            'A file path where a depfile will be written. '
+            'This contains all build inputs and outputs in a Make-style syntax.',
       )
-      ..addOption('target-platform',
+      ..addOption(
+        'target-platform',
         defaultsTo: 'android-arm',
         allowed: const <String>[
           'android-arm',
@@ -49,10 +53,12 @@ class BuildBundleCommand extends BuildSubCommand {
         ],
         help: 'The architecture for which to build the application.',
       )
-      ..addOption('asset-dir',
+      ..addOption(
+        'asset-dir',
         defaultsTo: getAssetBuildDirectory(),
-        help: 'The output directory for the kernel_blob.bin file, the native snapshot, the assets, etc. '
-              'Can be used to redirect the output when driving the Flutter toolchain from another build system.',
+        help:
+            'The output directory for the kernel_blob.bin file, the native snapshot, the assets, etc. '
+            'Can be used to redirect the output when driving the Flutter toolchain from another build system.',
       )
       ..addFlag(
         'tree-shake-icons',
@@ -72,14 +78,17 @@ class BuildBundleCommand extends BuildSubCommand {
   final String description = 'Build the Flutter assets directory from your app.';
 
   @override
-  final String usageFooter = 'The Flutter assets directory contains your '
+  final String usageFooter =
+      'The Flutter assets directory contains your '
       'application code and resources; they are used by some Flutter Android and'
       ' iOS runtimes.';
 
   @override
   Future<CustomDimensions> get usageValues async {
     final String projectDir = globals.fs.file(targetFile).parent.parent.path;
-    final FlutterProject flutterProject = FlutterProject.fromDirectory(globals.fs.directory(projectDir));
+    final FlutterProject flutterProject = FlutterProject.fromDirectory(
+      globals.fs.directory(projectDir),
+    );
     return CustomDimensions(
       commandBuildBundleTargetPlatform: stringArg('target-platform'),
       commandBuildBundleIsModule: flutterProject.isModule,
@@ -89,7 +98,9 @@ class BuildBundleCommand extends BuildSubCommand {
   @override
   Future<Event> unifiedAnalyticsUsageValues(String commandPath) async {
     final String projectDir = globals.fs.file(targetFile).parent.parent.path;
-    final FlutterProject flutterProject = FlutterProject.fromDirectory(globals.fs.directory(projectDir));
+    final FlutterProject flutterProject = FlutterProject.fromDirectory(
+      globals.fs.directory(projectDir),
+    );
     return Event.commandUsageValues(
       workflow: commandPath,
       commandHasTerminal: hasTerminal,
@@ -101,7 +112,9 @@ class BuildBundleCommand extends BuildSubCommand {
   @override
   Future<void> validateCommand() async {
     if (boolArg('tree-shake-icons')) {
-      throwToolExit('The "--tree-shake-icons" flag is deprecated for "build bundle" and will be removed in a future version of Flutter.');
+      throwToolExit(
+        'The "--tree-shake-icons" flag is deprecated for "build bundle" and will be removed in a future version of Flutter.',
+      );
     }
     return super.validateCommand();
   }

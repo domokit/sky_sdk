@@ -9,9 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('The reset button resets the view with an animation', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ConstrainedExampleApp(),
-    );
+    await tester.pumpWidget(const example.ConstrainedExampleApp());
 
     expect(find.widgetWithText(AppBar, 'Constrained Sample'), findsOne);
     expect(find.byType(InteractiveViewer), findsOne);

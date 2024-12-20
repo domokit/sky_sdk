@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('DataTable Smoke Test', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.DataTableExampleApp(),
-    );
+    await tester.pumpWidget(const example.DataTableExampleApp());
     expect(find.widgetWithText(AppBar, 'DataTable Sample'), findsOneWidget);
     expect(find.byType(DataTable), findsOneWidget);
     final DataTable dataTable = tester.widget<DataTable>(find.byType(DataTable));

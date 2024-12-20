@@ -56,15 +56,11 @@ This indicates non-trivial changes have been made to the Windows runner in the
 
     // Migrate the windows/runner/flutter_window.cpp file.
     final String originalContents = _file.readAsStringSync();
-    final String newContents = replaceFirst(
-      originalContents,
-      _before,
-      _after,
-    );
+    final String newContents = replaceFirst(originalContents, _before, _after);
     if (originalContents != newContents) {
       logger.printStatus(
         'windows/runner/flutter_window.cpp does not ensure the show window '
-        'callback is called, updating.'
+        'callback is called, updating.',
       );
       _file.writeAsStringSync(newContents);
     }

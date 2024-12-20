@@ -12,15 +12,18 @@ void main() {
 
     const String title = 'Medium App Bar';
 
-    expect(find.descendant(
-      of: find.byType(CustomScrollView),
-      matching: find.widgetWithText(SliverAppBar, title),
-    ), findsOne);
+    expect(
+      find.descendant(
+        of: find.byType(CustomScrollView),
+        matching: find.widgetWithText(SliverAppBar, title),
+      ),
+      findsOne,
+    );
 
-    expect(find.descendant(
-      of: find.byType(SliverAppBar),
-      matching: find.byType(IconButton),
-    ), findsExactly(2));
+    expect(
+      find.descendant(of: find.byType(SliverAppBar), matching: find.byType(IconButton)),
+      findsExactly(2),
+    );
 
     // Based on https://m3.material.io/components/top-app-bar/specs the title of
     // the SliverAppBar.medium widget is formatted with the headlineSmall style.

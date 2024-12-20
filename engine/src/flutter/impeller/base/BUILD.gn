@@ -1,0 +1,46 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../tools/impeller.gni")
+
+impeller_component("base") {
+  sources = [
+    "allocation.cc",
+    "allocation.h",
+    "allocation_size.cc",
+    "allocation_size.h",
+    "backend_cast.h",
+    "comparable.cc",
+    "comparable.h",
+    "config.h",
+    "mask.h",
+    "promise.cc",
+    "promise.h",
+    "strings.cc",
+    "strings.h",
+    "thread.cc",
+    "thread.h",
+    "thread_safety.cc",
+    "thread_safety.h",
+    "timing.h",
+    "validation.cc",
+    "validation.h",
+    "version.cc",
+    "version.h",
+  ]
+
+  deps = [ "//flutter/fml" ]
+}
+
+impeller_component("base_unittests") {
+  testonly = true
+  sources = [
+    "allocation_size_unittests.cc",
+    "base_unittests.cc",
+  ]
+  deps = [
+    ":base",
+    "//flutter/testing",
+  ]
+}

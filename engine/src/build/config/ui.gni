@@ -1,0 +1,26 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This file contains UI-related build flags. It should theoretically be in the
+# src/ui directory and only things that depend on the ui module should get the
+# definitions.
+#
+# However, today we have many "bad" dependencies on some of these flags from,
+# e.g. base, so they need to be global.
+#
+# See also build/config/features.gni
+
+declare_args() {
+  # Indicates if GLFW is enabled. GLFW is an abstraction layer for the
+  # windowing system and OpenGL rendering, providing cross-platform support
+  # for creating windows and OpenGL surfaces and contexts, and handling
+  # window system events and input.
+  use_glfw = false
+}
+
+# For ANGLE build. It's a build option there, but hard-coded here.
+use_x11 = false
+
+# For ANGLE build. It's a build option there, but hard-coded here.
+use_ozone = false

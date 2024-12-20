@@ -18,7 +18,14 @@ final String _scriptLocation = path.fromUri(Platform.script);
 final String _flutterRoot = path.dirname(path.dirname(path.dirname(_scriptLocation)));
 final String _exampleDirectoryPath = path.join(_flutterRoot, 'examples', 'api');
 final String _packageDirectoryPath = path.join(_flutterRoot, 'packages');
-final String _dartUIDirectoryPath = path.join(_flutterRoot, 'bin', 'cache', 'pkg', 'sky_engine', 'lib');
+final String _dartUIDirectoryPath = path.join(
+  _flutterRoot,
+  'bin',
+  'cache',
+  'pkg',
+  'sky_engine',
+  'lib',
+);
 
 final List<String> _knownUnlinkedExamples = <String>[
   // These are template files that aren't expected to be linked.
@@ -29,11 +36,7 @@ final List<String> _knownUnlinkedExamples = <String>[
 
 void main(List<String> args) {
   final ArgParser argParser = ArgParser();
-  argParser.addFlag(
-    'help',
-    negatable: false,
-    help: 'Print help for this command.',
-  );
+  argParser.addFlag('help', negatable: false, help: 'Print help for this command.');
   argParser.addOption(
     'examples',
     valueHelp: 'path',
@@ -134,7 +137,9 @@ class SampleChecker {
     // Get a list of all the example link paths that appear in the source files.
     final (Set<String> exampleLinks, Set<LinkInfo> malformedLinks) = getExampleLinks(packages);
     // Also add in any that might be found in the dart:ui directory.
-    final (Set<String> uiExampleLinks, Set<LinkInfo> uiMalformedLinks) = getExampleLinks(dartUIPath);
+    final (Set<String> uiExampleLinks, Set<LinkInfo> uiMalformedLinks) = getExampleLinks(
+      dartUIPath,
+    );
 
     exampleLinks.addAll(uiExampleLinks);
     malformedLinks.addAll(uiMalformedLinks);
@@ -163,8 +168,9 @@ class SampleChecker {
     }
 
     if (missingFilenames.isNotEmpty) {
-      final StringBuffer buffer =
-          StringBuffer('The following examples are not linked from any source file API doc comments:\n');
+      final StringBuffer buffer = StringBuffer(
+        'The following examples are not linked from any source file API doc comments:\n',
+      );
       for (final String name in missingFilenames) {
         buffer.writeln('  $name');
       }
@@ -173,14 +179,15 @@ class SampleChecker {
     }
 
     if (malformedLinks.isNotEmpty) {
-      final StringBuffer buffer =
-          StringBuffer('The following malformed links were found in API doc comments:\n');
+      final StringBuffer buffer = StringBuffer(
+        'The following malformed links were found in API doc comments:\n',
+      );
       for (final LinkInfo link in malformedLinks) {
         buffer.writeln('  $link');
       }
       buffer.write(
         'Correct the formatting of these links so that they match the exact pattern:\n'
-        r"  r'\*\* See code in (?<path>.+) \*\*'"
+        r"  r'\*\* See code in (?<path>.+) \*\*'",
       );
       foundError(buffer.toString().split('\n'));
     }
@@ -193,27 +200,28 @@ class SampleChecker {
   }
 
   List<File> getFiles(Directory directory, [Pattern? filenamePattern]) {
-    final List<File> filenames = directory
-        .listSync(recursive: true)
-        .map((FileSystemEntity entity) {
-          if (entity is File) {
-            return entity;
-          } else {
-            return null;
-          }
-        })
-        .where((File? filename) =>
-            filename != null && (filenamePattern == null || filename.absolute.path.contains(filenamePattern)))
-        .map<File>((File? s) => s!)
-        .toList();
+    final List<File> filenames =
+        directory
+            .listSync(recursive: true)
+            .map((FileSystemEntity entity) {
+              if (entity is File) {
+                return entity;
+              } else {
+                return null;
+              }
+            })
+            .where(
+              (File? filename) =>
+                  filename != null &&
+                  (filenamePattern == null || filename.absolute.path.contains(filenamePattern)),
+            )
+            .map<File>((File? s) => s!)
+            .toList();
     return filenames;
   }
 
   List<File> getExampleFilenames(Directory directory) {
-    return getFiles(
-      directory.childDirectory('lib'),
-      RegExp(r'\d+\.dart$'),
-    );
+    return getFiles(directory.childDirectory('lib'), RegExp(r'\d+\.dart$'));
   }
 
   (Set<String>, Set<LinkInfo>) getExampleLinks(Directory searchDirectory) {
@@ -225,7 +233,9 @@ class SampleChecker {
     // something that is at minimum "///*seecode<something>*" to indicate that it
     // looks like an example link. It should be narrowed if we start getting false
     // positives.
-    final RegExp malformedLinkRe = RegExp(r'^(?<malformed>\s*///\s*\*\*?\s*[sS][eE][eE]\s*[Cc][Oo][Dd][Ee].+\*\*?)');
+    final RegExp malformedLinkRe = RegExp(
+      r'^(?<malformed>\s*///\s*\*\*?\s*[sS][eE][eE]\s*[Cc][Oo][Dd][Ee].+\*\*?)',
+    );
     for (final File file in files) {
       final String contents = file.readAsStringSync();
       final List<String> lines = contents.split('\n');

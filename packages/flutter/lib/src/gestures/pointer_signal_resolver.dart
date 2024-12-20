@@ -103,9 +103,7 @@ class PointerSignalResolver {
       assert(_currentEvent == null);
       // Nothing in the framework/app wants to handle the `event`. Allow the
       // platform to trigger any default native actions.
-      event.respond(
-        allowPlatformDefault: true
-      );
+      event.respond(allowPlatformDefault: true);
       return;
     }
     assert(_isSameEvent(_currentEvent!, event));
@@ -114,18 +112,25 @@ class PointerSignalResolver {
     } catch (exception, stack) {
       InformationCollector? collector;
       assert(() {
-        collector = () => <DiagnosticsNode>[
-          DiagnosticsProperty<PointerSignalEvent>('Event', event, style: DiagnosticsTreeStyle.errorProperty),
-        ];
+        collector =
+            () => <DiagnosticsNode>[
+              DiagnosticsProperty<PointerSignalEvent>(
+                'Event',
+                event,
+                style: DiagnosticsTreeStyle.errorProperty,
+              ),
+            ];
         return true;
       }());
-      FlutterError.reportError(FlutterErrorDetails(
-        exception: exception,
-        stack: stack,
-        library: 'gesture library',
-        context: ErrorDescription('while resolving a PointerSignalEvent'),
-        informationCollector: collector,
-      ));
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: exception,
+          stack: stack,
+          library: 'gesture library',
+          context: ErrorDescription('while resolving a PointerSignalEvent'),
+          informationCollector: collector,
+        ),
+      );
     }
     _firstRegisteredCallback = null;
     _currentEvent = null;

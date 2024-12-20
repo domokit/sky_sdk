@@ -53,13 +53,10 @@ class _DatePickerExampleState extends State<DatePickerExample> {
       children: <Widget>[
         Text(
           selectedDate != null
-            ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
-            : 'No date selected',
+              ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
+              : 'No date selected',
         ),
-        OutlinedButton(
-          onPressed: _selectDate,
-          child: const Text('Select Date'),
-        ),
+        OutlinedButton(onPressed: _selectDate, child: const Text('Select Date')),
       ],
     );
   }

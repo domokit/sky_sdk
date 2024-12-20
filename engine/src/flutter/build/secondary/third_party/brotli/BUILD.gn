@@ -1,0 +1,39 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+source_root = "//flutter/third_party/brotli"
+
+config("brotli_public") {
+  include_dirs = [
+    "$source_root/c/include",
+    "$source_root/c/common/dictionary.h",
+  ]
+
+  cflags = []
+  foreach(dir, include_dirs) {
+    cflags += [
+      "-isystem",
+      rebase_path(dir),
+    ]
+  }
+}
+
+static_library("brotli") {
+  # Brotli is used by freetype; it only needs the brotli decoder.
+  sources = [
+    "$source_root/c/common/constants.c",
+    "$source_root/c/common/context.c",
+    "$source_root/c/common/dictionary.c",
+    "$source_root/c/common/platform.c",
+    "$source_root/c/common/shared_dictionary.c",
+    "$source_root/c/common/transform.c",
+    "$source_root/c/dec/bit_reader.c",
+    "$source_root/c/dec/decode.c",
+    "$source_root/c/dec/huffman.c",
+    "$source_root/c/dec/state.c",
+  ]
+
+  public_configs = [ ":brotli_public" ]
+  cflags = [ "-w" ]
+}

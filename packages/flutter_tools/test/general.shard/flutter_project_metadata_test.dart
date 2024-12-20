@@ -65,7 +65,10 @@ project_type: plugin
     expect(projectMetadata.versionChannel, isNull);
     expect(projectMetadata.versionRevision, isNull);
 
-    expect(logger.traceText, contains('The value of key `version` in .metadata was expected to be YamlMap but was Null'));
+    expect(
+      logger.traceText,
+      contains('The value of key `version` in .metadata was expected to be YamlMap but was Null'),
+    );
   });
 
   testWithoutContext('projectType is populated when version is malformed', () {
@@ -80,7 +83,10 @@ project_type: plugin
     expect(projectMetadata.versionChannel, isNull);
     expect(projectMetadata.versionRevision, isNull);
 
-    expect(logger.traceText, contains('The value of key `version` in .metadata was expected to be YamlMap but was String'));
+    expect(
+      logger.traceText,
+      contains('The value of key `version` in .metadata was expected to be YamlMap but was String'),
+    );
   });
 
   testWithoutContext('version is populated when projectType is malformed', () {
@@ -97,7 +103,12 @@ project_type: {}
     expect(projectMetadata.versionChannel, 'stable');
     expect(projectMetadata.versionRevision, 'b59b226a49391949247e3d6122e34bb001049ae4');
 
-    expect(logger.traceText, contains('The value of key `project_type` in .metadata was expected to be String but was YamlMap'));
+    expect(
+      logger.traceText,
+      contains(
+        'The value of key `project_type` in .metadata was expected to be String but was YamlMap',
+      ),
+    );
   });
 
   testWithoutContext('migrate config is populated when version is malformed', () {
@@ -118,12 +129,26 @@ migration:
       ''');
     final FlutterProjectMetadata projectMetadata = FlutterProjectMetadata(metadataFile, logger);
     expect(projectMetadata.projectType, isNull);
-    expect(projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]?.createRevision, 'abcdefg');
-    expect(projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]?.baseRevision, 'baserevision');
+    expect(
+      projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]?.createRevision,
+      'abcdefg',
+    );
+    expect(
+      projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]?.baseRevision,
+      'baserevision',
+    );
     expect(projectMetadata.migrateConfig.unmanagedFiles[0], 'file1');
 
-    expect(logger.traceText, contains('The value of key `version` in .metadata was expected to be YamlMap but was String'));
-    expect(logger.traceText, contains('The value of key `project_type` in .metadata was expected to be String but was YamlMap'));
+    expect(
+      logger.traceText,
+      contains('The value of key `version` in .metadata was expected to be YamlMap but was String'),
+    );
+    expect(
+      logger.traceText,
+      contains(
+        'The value of key `project_type` in .metadata was expected to be String but was YamlMap',
+      ),
+    );
   });
 
   testWithoutContext('migrate config is populated when unmanaged_files is malformed', () {
@@ -145,12 +170,23 @@ migration:
       ''');
     final FlutterProjectMetadata projectMetadata = FlutterProjectMetadata(metadataFile, logger);
     expect(projectMetadata.projectType, FlutterProjectType.app);
-    expect(projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]?.createRevision, 'abcdefg');
-    expect(projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]?.baseRevision, 'baserevision');
+    expect(
+      projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]?.createRevision,
+      'abcdefg',
+    );
+    expect(
+      projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]?.baseRevision,
+      'baserevision',
+    );
     // Tool uses default unmanaged files list when malformed.
     expect(projectMetadata.migrateConfig.unmanagedFiles[0], 'lib/main.dart');
 
-    expect(logger.traceText, contains('The value of key `unmanaged_files` in .metadata was expected to be YamlList but was YamlMap'));
+    expect(
+      logger.traceText,
+      contains(
+        'The value of key `unmanaged_files` in .metadata was expected to be YamlList but was YamlMap',
+      ),
+    );
   });
 
   testWithoutContext('platforms is populated with a malformed entry', () {
@@ -178,11 +214,26 @@ migration:
       ''');
     final FlutterProjectMetadata projectMetadata = FlutterProjectMetadata(metadataFile, logger);
     expect(projectMetadata.projectType, FlutterProjectType.app);
-    expect(projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]?.createRevision, 'abcdefg');
-    expect(projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]?.baseRevision, 'baserevision');
-    expect(projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.ios]?.createRevision, 'abcdefg');
-    expect(projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.ios]?.baseRevision, 'baserevision');
-    expect(projectMetadata.migrateConfig.platformConfigs.containsKey(SupportedPlatform.android), false);
+    expect(
+      projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]?.createRevision,
+      'abcdefg',
+    );
+    expect(
+      projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]?.baseRevision,
+      'baserevision',
+    );
+    expect(
+      projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.ios]?.createRevision,
+      'abcdefg',
+    );
+    expect(
+      projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.ios]?.baseRevision,
+      'baserevision',
+    );
+    expect(
+      projectMetadata.migrateConfig.platformConfigs.containsKey(SupportedPlatform.android),
+      false,
+    );
     expect(projectMetadata.migrateConfig.unmanagedFiles[0], 'file1');
 
     expect(logger.traceText, contains('The key `create_revision` was not found'));
@@ -193,10 +244,12 @@ migration:
     expect(FlutterProjectType.enabledValues, contains(FlutterProjectType.plugin));
   });
 
-  testUsingContext('enabledValues contains packageFfi if natives-assets enabled', () {
-    expect(FlutterProjectType.enabledValues, contains(FlutterProjectType.packageFfi));
-    expect(FlutterProjectType.enabledValues, contains(FlutterProjectType.plugin));
-  }, overrides: <Type, Generator>{
-    FeatureFlags: () => TestFeatureFlags(isNativeAssetsEnabled: true),
-  });
+  testUsingContext(
+    'enabledValues contains packageFfi if natives-assets enabled',
+    () {
+      expect(FlutterProjectType.enabledValues, contains(FlutterProjectType.packageFfi));
+      expect(FlutterProjectType.enabledValues, contains(FlutterProjectType.plugin));
+    },
+    overrides: <Type, Generator>{FeatureFlags: () => TestFeatureFlags(isNativeAssetsEnabled: true)},
+  );
 }

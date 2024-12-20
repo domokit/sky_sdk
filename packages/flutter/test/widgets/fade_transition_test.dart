@@ -19,10 +19,7 @@ void main() {
       duration: const Duration(seconds: 2),
     );
     addTearDown(controller.dispose);
-    await tester.pumpWidget(FadeTransition(
-      opacity: controller,
-      child: const Placeholder(),
-    ));
+    await tester.pumpWidget(FadeTransition(opacity: controller, child: const Placeholder()));
     expect(log, hasLength(2));
     expect(log.last, 'buildScope finished');
     await tester.pump();
@@ -35,7 +32,9 @@ void main() {
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/157312
-  testWidgets('No exception when calling markNeedsPaint during opacity changes', (WidgetTester tester) async {
+  testWidgets('No exception when calling markNeedsPaint during opacity changes', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey key = GlobalKey();
     final AnimationController controller = AnimationController(
       vsync: const TestVSync(),
@@ -43,10 +42,7 @@ void main() {
       duration: const Duration(seconds: 2),
     );
     addTearDown(controller.dispose);
-    await tester.pumpWidget(FadeTransition(
-      opacity: controller,
-      child: Placeholder(key: key),
-    ));
+    await tester.pumpWidget(FadeTransition(opacity: controller, child: Placeholder(key: key)));
     controller.value = 0.5;
     key.currentContext?.findRenderObject()?.markNeedsPaint();
     controller.value = 0;

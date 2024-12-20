@@ -11,16 +11,18 @@ import 'package:flutter/material.dart';
 
 /// An animated GIF image with 3 1x1 pixel frames (a red, green, and blue
 /// frames). The GIF animates forever, and each frame has a 100ms delay.
-const String kAnimatedGif = 'R0lGODlhAQABAKEDAAAA//8AAAD/AP///yH/C05FVFNDQVBFMi'
-                            '4wAwEAAAAh+QQACgD/ACwAAAAAAQABAAACAkwBACH5BAAKAP8A'
-                            'LAAAAAABAAEAAAICVAEAIfkEAAoA/wAsAAAAAAEAAQAAAgJEAQ'
-                            'A7';
+const String kAnimatedGif =
+    'R0lGODlhAQABAKEDAAAA//8AAAD/AP///yH/C05FVFNDQVBFMi'
+    '4wAwEAAAAh+QQACgD/ACwAAAAAAQABAAACAkwBACH5BAAKAP8A'
+    'LAAAAAABAAEAAAICVAEAIfkEAAoA/wAsAAAAAAEAAQAAAgJEAQ'
+    'A7';
 
 /// A 50x50 blue square png
-const String kBlueSquare = 'iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAASEl'
-                           'EQVR42u3PMQ0AMAgAsGFjL/4tYQU08JLWQSN/9TsgRERERERERE'
-                           'REREREREREREREREREREREREREREREREREREREREQ2BgNuaUcSj'
-                           'uqqAAAAAElFTkSuQmCC';
+const String kBlueSquare =
+    'iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAASEl'
+    'EQVR42u3PMQ0AMAgAsGFjL/4tYQU08JLWQSN/9TsgRERERERERE'
+    'REREREREREREREREREREREREREREREREREREREREQ2BgNuaUcSj'
+    'uqqAAAAAElFTkSuQmCC';
 
 /// A 10x10 grid of animated looping placeholder gifts that fade into a
 /// blue square.
@@ -43,6 +45,7 @@ class AnimatedPlaceholderPage extends StatelessWidget {
 }
 
 int _key = 0;
+
 /// An image provider that is always unique from other DelayedBase64Images and
 /// simulates a delay in loading.
 class DelayedBase64Image extends ImageProvider<int> {

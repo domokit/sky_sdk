@@ -1,0 +1,31 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/tools/fuchsia/dart/dart_library.gni")
+import("//flutter/tools/fuchsia/flutter/flutter_component.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/package.gni")
+
+dart_library("lib") {
+  package_name = "parent-view"
+  sources = [ "parent_view.dart" ]
+
+  deps = [
+    "//flutter/shell/platform/fuchsia/dart:args",
+    "//flutter/shell/platform/fuchsia/dart:vector_math",
+  ]
+}
+
+flutter_component("component") {
+  main_package = "parent-view"
+  component_name = "parent-view"
+  main_dart = "parent_view.dart"
+  manifest = rebase_path("meta/parent-view.cml")
+  deps = [ ":lib" ]
+}
+
+fuchsia_package("package") {
+  package_name = "parent-view"
+  deps = [ ":component" ]
+}

@@ -1,0 +1,20 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+name: flutter_gpu
+description: a powerful, low-level graphics API for Flutter
+homepage: https://flutter.dev
+repository: https://github.com/flutter/engine/tree/main/lib/gpu
+
+environment:
+  sdk: ^3.7.0-0
+
+dependencies:
+  # To update these, use "flutter update-packages --force-upgrade".
+  #
+  # For detailed instructions, refer to:
+  # https://github.com/flutter/flutter/blob/main/docs/infra/Updating-dependencies-in-Flutter.md
+  vector_math: ^2.1.4
+  sky_engine:
+    sdk: flutter

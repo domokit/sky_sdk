@@ -1,0 +1,30 @@
+# Copyright (c) 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Defines the configuration of ccache - a c/c++ compiler cache which can
+# greatly reduce recompilation times.
+#
+# TIPS:
+#
+# Set clang_use_chrome_plugins=false if using ccache 3.1.9 or earlier, since
+# these versions don't support -Xclang.  (3.1.10 and later will silently
+# ignore -Xclang, so it doesn't matter if you disable clang_use_chrome_plugins
+# or not).
+#
+# Use ccache 3.2 or later to avoid clang unused argument warnings:
+# https://bugzilla.samba.org/show_bug.cgi?id=8118
+#
+# To avoid -Wparentheses-equality clang warnings, at some cost in terms of
+# speed, you can do:
+# export CCACHE_CPP2=yes
+
+import("//build/toolchain/rbe.gni") # for use_rbe
+
+declare_args() {
+  # Set to true to enable ccache.  Probably doesn't work on windows.
+  use_ccache = false
+}
+
+assert(!is_win || !use_ccache, "ccache is not supported on Windows")
+assert(!use_ccache || !use_rbe, "ccache is not supported with RBE")

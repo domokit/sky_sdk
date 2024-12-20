@@ -12,18 +12,15 @@ void main() {
     expect(identical(OutlinedButtonThemeData.lerp(data, data, 0.5), data), true);
   });
 
-  testWidgets('Material3: Passing no OutlinedButtonTheme returns defaults', (WidgetTester tester) async {
+  testWidgets('Material3: Passing no OutlinedButtonTheme returns defaults', (
+    WidgetTester tester,
+  ) async {
     const ColorScheme colorScheme = ColorScheme.light();
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData.from(useMaterial3: true, colorScheme: colorScheme),
         home: Scaffold(
-          body: Center(
-            child: OutlinedButton(
-              onPressed: () { },
-              child: const Text('button'),
-            ),
-          ),
+          body: Center(child: OutlinedButton(onPressed: () {}, child: const Text('button'))),
         ),
       ),
     );
@@ -49,22 +46,21 @@ void main() {
     expect(material.textStyle!.fontSize, 14);
     expect(material.textStyle!.fontWeight, FontWeight.w500);
 
-    final Align align = tester.firstWidget<Align>(find.ancestor(of: find.text('button'), matching: find.byType(Align)));
+    final Align align = tester.firstWidget<Align>(
+      find.ancestor(of: find.text('button'), matching: find.byType(Align)),
+    );
     expect(align.alignment, Alignment.center);
   });
 
-  testWidgets('Material2: Passing no OutlinedButtonTheme returns defaults', (WidgetTester tester) async {
+  testWidgets('Material2: Passing no OutlinedButtonTheme returns defaults', (
+    WidgetTester tester,
+  ) async {
     const ColorScheme colorScheme = ColorScheme.light();
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData.from(useMaterial3: false, colorScheme: colorScheme),
         home: Scaffold(
-          body: Center(
-            child: OutlinedButton(
-              onPressed: () { },
-              child: const Text('button'),
-            ),
-          ),
+          body: Center(child: OutlinedButton(onPressed: () {}, child: const Text('button'))),
         ),
       ),
     );
@@ -91,7 +87,9 @@ void main() {
     expect(material.textStyle!.fontSize, 14);
     expect(material.textStyle!.fontWeight, FontWeight.w500);
 
-    final Align align = tester.firstWidget<Align>(find.ancestor(of: find.text('button'), matching: find.byType(Align)));
+    final Align align = tester.firstWidget<Align>(
+      find.ancestor(of: find.text('button'), matching: find.byType(Align)),
+    );
     expect(align.alignment, Alignment.center);
   });
 
@@ -105,7 +103,10 @@ void main() {
     const EdgeInsets padding = EdgeInsets.all(3);
     const Size minimumSize = Size(200, 200);
     const BorderSide side = BorderSide(color: Colors.green, width: 2);
-    const OutlinedBorder shape = RoundedRectangleBorder(side: side, borderRadius: BorderRadius.all(Radius.circular(2)));
+    const OutlinedBorder shape = RoundedRectangleBorder(
+      side: side,
+      borderRadius: BorderRadius.all(Radius.circular(2)),
+    );
     const MouseCursor enabledMouseCursor = SystemMouseCursors.text;
     const MouseCursor disabledMouseCursor = SystemMouseCursors.grab;
     const MaterialTapTargetSize tapTargetSize = MaterialTapTargetSize.shrinkWrap;
@@ -133,28 +134,31 @@ void main() {
       alignment: alignment,
     );
 
-    Widget buildFrame({ ButtonStyle? buttonStyle, ButtonStyle? themeStyle, ButtonStyle? overallStyle }) {
+    Widget buildFrame({
+      ButtonStyle? buttonStyle,
+      ButtonStyle? themeStyle,
+      ButtonStyle? overallStyle,
+    }) {
       final Widget child = Builder(
         builder: (BuildContext context) {
-          return OutlinedButton(
-            style: buttonStyle,
-            onPressed: () { },
-            child: const Text('button'),
-          );
+          return OutlinedButton(style: buttonStyle, onPressed: () {}, child: const Text('button'));
         },
       );
       return MaterialApp(
-        theme: ThemeData.from(colorScheme: const ColorScheme.light()).copyWith(
-          outlinedButtonTheme: OutlinedButtonThemeData(style: overallStyle),
-        ),
+        theme: ThemeData.from(
+          colorScheme: const ColorScheme.light(),
+        ).copyWith(outlinedButtonTheme: OutlinedButtonThemeData(style: overallStyle)),
         home: Scaffold(
           body: Center(
             // If the OutlinedButtonTheme widget is present, it's used
             // instead of the Theme's ThemeData.outlinedButtonTheme.
-            child: themeStyle == null ? child : OutlinedButtonTheme(
-              data: OutlinedButtonThemeData(style: themeStyle),
-              child: child,
-            ),
+            child:
+                themeStyle == null
+                    ? child
+                    : OutlinedButtonTheme(
+                      data: OutlinedButtonThemeData(style: themeStyle),
+                      child: child,
+                    ),
           ),
         ),
       );
@@ -171,9 +175,9 @@ void main() {
     );
 
     const Set<MaterialState> enabled = <MaterialState>{};
-    const Set<MaterialState> disabled = <MaterialState>{ MaterialState.disabled };
-    const Set<MaterialState> hovered = <MaterialState>{ MaterialState.hovered };
-    const Set<MaterialState> focused = <MaterialState>{ MaterialState.focused };
+    const Set<MaterialState> disabled = <MaterialState>{MaterialState.disabled};
+    const Set<MaterialState> hovered = <MaterialState>{MaterialState.hovered};
+    const Set<MaterialState> focused = <MaterialState>{MaterialState.focused};
 
     void checkButton(WidgetTester tester) {
       final Material material = tester.widget<Material>(findMaterial);
@@ -183,8 +187,14 @@ void main() {
       expect(material.color, backgroundColor);
       expect(material.shadowColor, shadowColor);
       expect(material.elevation, elevation);
-      expect(MaterialStateProperty.resolveAs<MouseCursor?>(inkWell.mouseCursor, enabled), enabledMouseCursor);
-      expect(MaterialStateProperty.resolveAs<MouseCursor?>(inkWell.mouseCursor, disabled), disabledMouseCursor);
+      expect(
+        MaterialStateProperty.resolveAs<MouseCursor?>(inkWell.mouseCursor, enabled),
+        enabledMouseCursor,
+      );
+      expect(
+        MaterialStateProperty.resolveAs<MouseCursor?>(inkWell.mouseCursor, disabled),
+        disabledMouseCursor,
+      );
       expect(inkWell.overlayColor!.resolve(hovered), foregroundColor.withOpacity(0.08));
       expect(inkWell.overlayColor!.resolve(focused), foregroundColor.withOpacity(0.1));
       expect(inkWell.enableFeedback, enableFeedback);
@@ -192,7 +202,9 @@ void main() {
       expect(material.shape, shape);
       expect(material.animationDuration, animationDuration);
       expect(tester.getSize(find.byType(OutlinedButton)), const Size(200, 200));
-      final Align align = tester.firstWidget<Align>(find.ancestor(of: find.text('button'), matching: find.byType(Align)));
+      final Align align = tester.firstWidget<Align>(
+        find.ancestor(of: find.text('button'), matching: find.byType(Align)),
+      );
       expect(align.alignment, alignment);
     }
 
@@ -216,23 +228,42 @@ void main() {
 
     // Same as the previous tests with empty ButtonStyle's instead of null.
 
-    testWidgets('Button style overrides defaults, empty theme and overall styles', (WidgetTester tester) async {
-      await tester.pumpWidget(buildFrame(buttonStyle: style, themeStyle: const ButtonStyle(), overallStyle: const ButtonStyle()));
+    testWidgets('Button style overrides defaults, empty theme and overall styles', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildFrame(
+          buttonStyle: style,
+          themeStyle: const ButtonStyle(),
+          overallStyle: const ButtonStyle(),
+        ),
+      );
       await tester.pumpAndSettle(); // allow the animations to finish
       checkButton(tester);
     });
 
-    testWidgets('Button theme style overrides defaults, empty button and overall styles', (WidgetTester tester) async {
-      await tester.pumpWidget(buildFrame(buttonStyle: const ButtonStyle(), themeStyle: style, overallStyle: const ButtonStyle()));
+    testWidgets('Button theme style overrides defaults, empty button and overall styles', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildFrame(
+          buttonStyle: const ButtonStyle(),
+          themeStyle: style,
+          overallStyle: const ButtonStyle(),
+        ),
+      );
       await tester.pumpAndSettle(); // allow the animations to finish
       checkButton(tester);
     });
 
-    testWidgets('Overall Theme button theme style overrides defaults, null theme and empty overall style', (WidgetTester tester) async {
-      await tester.pumpWidget(buildFrame(buttonStyle: const ButtonStyle(), overallStyle: style));
-      await tester.pumpAndSettle(); // allow the animations to finish
-      checkButton(tester);
-    });
+    testWidgets(
+      'Overall Theme button theme style overrides defaults, null theme and empty overall style',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(buildFrame(buttonStyle: const ButtonStyle(), overallStyle: style));
+        await tester.pumpAndSettle(); // allow the animations to finish
+        checkButton(tester);
+      },
+    );
   });
 
   testWidgets('Material3 - OutlinedButton repsects Theme shadowColor', (WidgetTester tester) async {
@@ -240,7 +271,7 @@ void main() {
     const Color shadowColor = Color(0xff000001);
     const Color overriddenColor = Color(0xff000002);
 
-    Widget buildFrame({ Color? overallShadowColor, Color? themeShadowColor, Color? shadowColor }) {
+    Widget buildFrame({Color? overallShadowColor, Color? themeShadowColor, Color? shadowColor}) {
       return MaterialApp(
         theme: ThemeData.from(
           useMaterial3: true,
@@ -250,17 +281,13 @@ void main() {
           body: Center(
             child: OutlinedButtonTheme(
               data: OutlinedButtonThemeData(
-                style: OutlinedButton.styleFrom(
-                  shadowColor: themeShadowColor,
-                ),
+                style: OutlinedButton.styleFrom(shadowColor: themeShadowColor),
               ),
               child: Builder(
                 builder: (BuildContext context) {
                   return OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      shadowColor: shadowColor,
-                    ),
-                    onPressed: () { },
+                    style: OutlinedButton.styleFrom(shadowColor: shadowColor),
+                    onPressed: () {},
                     child: const Text('button'),
                   );
                 },
@@ -295,12 +322,16 @@ void main() {
     material = tester.widget<Material>(buttonMaterialFinder);
     expect(material.shadowColor, shadowColor);
 
-    await tester.pumpWidget(buildFrame(overallShadowColor: overriddenColor, themeShadowColor: shadowColor));
+    await tester.pumpWidget(
+      buildFrame(overallShadowColor: overriddenColor, themeShadowColor: shadowColor),
+    );
     await tester.pumpAndSettle(); // theme animation
     material = tester.widget<Material>(buttonMaterialFinder);
     expect(material.shadowColor, shadowColor);
 
-    await tester.pumpWidget(buildFrame(themeShadowColor: overriddenColor, shadowColor: shadowColor));
+    await tester.pumpWidget(
+      buildFrame(themeShadowColor: overriddenColor, shadowColor: shadowColor),
+    );
     await tester.pumpAndSettle(); // theme animation
     material = tester.widget<Material>(buttonMaterialFinder);
     expect(material.shadowColor, shadowColor);
@@ -311,26 +342,23 @@ void main() {
     const Color shadowColor = Color(0xff000001);
     const Color overriddenColor = Color(0xff000002);
 
-    Widget buildFrame({ Color? overallShadowColor, Color? themeShadowColor, Color? shadowColor }) {
+    Widget buildFrame({Color? overallShadowColor, Color? themeShadowColor, Color? shadowColor}) {
       return MaterialApp(
-        theme: ThemeData.from(useMaterial3: false, colorScheme: colorScheme).copyWith(
-          shadowColor: overallShadowColor,
-        ),
+        theme: ThemeData.from(
+          useMaterial3: false,
+          colorScheme: colorScheme,
+        ).copyWith(shadowColor: overallShadowColor),
         home: Scaffold(
           body: Center(
             child: OutlinedButtonTheme(
               data: OutlinedButtonThemeData(
-                style: OutlinedButton.styleFrom(
-                  shadowColor: themeShadowColor,
-                ),
+                style: OutlinedButton.styleFrom(shadowColor: themeShadowColor),
               ),
               child: Builder(
                 builder: (BuildContext context) {
                   return OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      shadowColor: shadowColor,
-                    ),
-                    onPressed: () { },
+                    style: OutlinedButton.styleFrom(shadowColor: shadowColor),
+                    onPressed: () {},
                     child: const Text('button'),
                   );
                 },
@@ -365,50 +393,57 @@ void main() {
     material = tester.widget<Material>(buttonMaterialFinder);
     expect(material.shadowColor, shadowColor);
 
-    await tester.pumpWidget(buildFrame(overallShadowColor: overriddenColor, themeShadowColor: shadowColor));
+    await tester.pumpWidget(
+      buildFrame(overallShadowColor: overriddenColor, themeShadowColor: shadowColor),
+    );
     await tester.pumpAndSettle(); // theme animation
     material = tester.widget<Material>(buttonMaterialFinder);
     expect(material.shadowColor, shadowColor);
 
-    await tester.pumpWidget(buildFrame(themeShadowColor: overriddenColor, shadowColor: shadowColor));
+    await tester.pumpWidget(
+      buildFrame(themeShadowColor: overriddenColor, shadowColor: shadowColor),
+    );
     await tester.pumpAndSettle(); // theme animation
     material = tester.widget<Material>(buttonMaterialFinder);
     expect(material.shadowColor, shadowColor);
   });
 
-  testWidgets('OutlinedButton.icon alignment respects OutlinedButtonTheme ButtonStyle.iconAlignment', (WidgetTester tester) async {
-    Widget buildButton({ IconAlignment? iconAlignment }) {
-      return MaterialApp(
-        theme: ThemeData(
-          outlinedButtonTheme: OutlinedButtonThemeData(
-            style: ButtonStyle(iconAlignment: iconAlignment),
-          ),
-        ),
-        home: Scaffold(
-          body: Center(
-            child: OutlinedButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.add),
-              label: const Text('button'),
+  testWidgets(
+    'OutlinedButton.icon alignment respects OutlinedButtonTheme ButtonStyle.iconAlignment',
+    (WidgetTester tester) async {
+      Widget buildButton({IconAlignment? iconAlignment}) {
+        return MaterialApp(
+          theme: ThemeData(
+            outlinedButtonTheme: OutlinedButtonThemeData(
+              style: ButtonStyle(iconAlignment: iconAlignment),
             ),
           ),
-        ),
-      );
-    }
+          home: Scaffold(
+            body: Center(
+              child: OutlinedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.add),
+                label: const Text('button'),
+              ),
+            ),
+          ),
+        );
+      }
 
-    await tester.pumpWidget(buildButton());
+      await tester.pumpWidget(buildButton());
 
-    final Offset buttonTopLeft = tester.getTopLeft(find.byType(Material).last);
-    final Offset iconTopLeft = tester.getTopLeft(find.byIcon(Icons.add));
+      final Offset buttonTopLeft = tester.getTopLeft(find.byType(Material).last);
+      final Offset iconTopLeft = tester.getTopLeft(find.byIcon(Icons.add));
 
-    expect(buttonTopLeft.dx, iconTopLeft.dx - 16.0);
+      expect(buttonTopLeft.dx, iconTopLeft.dx - 16.0);
 
-    await tester.pumpWidget(buildButton(iconAlignment: IconAlignment.end));
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(buildButton(iconAlignment: IconAlignment.end));
+      await tester.pumpAndSettle();
 
-    final Offset buttonTopRight = tester.getTopRight(find.byType(Material).last);
-    final Offset iconTopRight = tester.getTopRight(find.byIcon(Icons.add));
+      final Offset buttonTopRight = tester.getTopRight(find.byType(Material).last);
+      final Offset iconTopRight = tester.getTopRight(find.byIcon(Icons.add));
 
-    expect(buttonTopRight.dx, iconTopRight.dx + 24.0);
-  });
+      expect(buttonTopRight.dx, iconTopRight.dx + 24.0);
+    },
+  );
 }

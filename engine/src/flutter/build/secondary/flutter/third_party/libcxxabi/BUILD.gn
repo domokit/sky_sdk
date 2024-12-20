@@ -1,0 +1,86 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+config("libcxxabi_config") {
+  common_cc_flags = [
+    "-nostdinc++",
+    "-fvisibility=hidden",
+  ]
+
+  cflags_cc = common_cc_flags
+  cflags_objcc = common_cc_flags
+
+  include_dirs = [ "include" ]
+
+  if (is_ios) {
+    ldflags = [ "-Wl,-unexported_symbols_list," +
+                rebase_path("lib/new-delete.exp", root_build_dir) ]
+  }
+}
+
+source_set("libcxxabi") {
+  visibility = [ "../libcxx:*" ]
+
+  public_configs = [ ":libcxxabi_config" ]
+
+  defines = [
+    "_LIBCPP_BUILDING_LIBRARY",
+    "_LIBCXXABI_BUILDING_LIBRARY",
+    "LIBCXXABI_SILENT_TERMINATE",
+    "_LIBCXXABI_DISABLE_VISIBILITY_ANNOTATIONS",
+  ]
+
+  sources = []
+
+  # Compile libcxx ABI using C++11. This replicates the rule in the
+  # CMakeLists on the "cxx_abiobjects" target.
+  configs -= [ "//build/config/compiler:cxx_version_default" ]
+  configs += [ "//build/config/compiler:cxx_version_20" ]
+
+  configs += [ "//flutter/third_party/libcxx:src_include" ]
+
+  # No translation units in the engine are built with exceptions. But, using
+  # Objective-C exceptions requires some infrastructure setup for exceptions.
+  # Build support for the same in cxxabi on Darwin.
+  if (is_mac || is_ios) {
+    configs -= [ "//build/config/gcc:no_exceptions" ]
+    sources += [
+      "src/cxa_exception.cpp",
+      "src/cxa_personality.cpp",
+    ]
+  } else {
+    if (!is_tsan) {
+      sources += [ "src/cxa_noexception.cpp" ]
+    }
+  }
+
+  # Third party dependencies may depend on RTTI. Add support for the same in
+  # cxxabi.
+  configs -= [ "//build/config/compiler:no_rtti" ]
+  configs += [ "//build/config/compiler:rtti" ]
+
+  sources += [
+    "src/abort_message.cpp",
+    "src/cxa_aux_runtime.cpp",
+    "src/cxa_default_handlers.cpp",
+    "src/cxa_demangle.cpp",
+    "src/cxa_exception_storage.cpp",
+    "src/cxa_handlers.cpp",
+    "src/cxa_vector.cpp",
+    "src/cxa_virtual.cpp",
+    "src/fallback_malloc.cpp",
+    "src/private_typeinfo.cpp",
+    "src/stdlib_exception.cpp",
+    "src/stdlib_stdexcept.cpp",
+    "src/stdlib_typeinfo.cpp",
+  ]
+
+  if (!(is_tsan && is_linux)) {
+    sources += [ "src/cxa_guard.cpp" ]
+  }
+
+  if (is_fuchsia || (is_posix && !is_apple)) {
+    sources += [ "src/cxa_thread_atexit.cpp" ]
+  }
+}

@@ -1,0 +1,92 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/testing/testing.gni")
+import("//flutter/tools/fuchsia/dart/dart_library.gni")
+import("//flutter/tools/fuchsia/flutter/flutter_component.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/package.gni")
+
+config("zircon_config") {
+  include_dirs = [ "." ]
+}
+
+source_set("zircon") {
+  public_configs = [ ":zircon_config" ]
+
+  sources = [
+    "sdk_ext/handle.cc",
+    "sdk_ext/handle.h",
+    "sdk_ext/handle_disposition.cc",
+    "sdk_ext/handle_disposition.h",
+    "sdk_ext/handle_waiter.cc",
+    "sdk_ext/handle_waiter.h",
+    "sdk_ext/natives.cc",
+    "sdk_ext/natives.h",
+    "sdk_ext/system.cc",
+    "sdk_ext/system.h",
+  ]
+
+  deps = [
+    "${fuchsia_sdk}/fidl/fuchsia.io",
+    "${fuchsia_sdk}/pkg/async-cpp",
+    "${fuchsia_sdk}/pkg/async-default",
+    "${fuchsia_sdk}/pkg/async-loop-cpp",
+    "${fuchsia_sdk}/pkg/fdio",
+    "${fuchsia_sdk}/pkg/zx",
+    "//flutter/fml",
+    "//flutter/third_party/tonic",
+  ]
+}
+
+dart_library("zircon_lib") {
+  testonly = true
+  package_name = "zircon"
+  language_version = "2.12"
+  source_dir = "lib"
+
+  sources = [
+    "src/handle.dart",
+    "src/handle_disposition.dart",
+    "src/handle_waiter.dart",
+    "src/init.dart",
+    "src/system.dart",
+    "src/zd_channel.dart",
+    "src/zd_handle.dart",
+    "zircon.dart",
+  ]
+}
+
+dart_library("zircon_tests_lib") {
+  testonly = true
+  package_name = "zircon_tests"
+  source_dir = "."
+  package_root = "test"
+
+  sources = [ "zircon_tests.dart" ]
+  deps = [ "//flutter/shell/platform/fuchsia/dart:async_helper" ]
+}
+
+flutter_component("zircon_tests_component") {
+  testonly = true
+  main_package = "zircon_tests"
+  component_name = "zircon_tests"
+  main_dart = "zircon_tests.dart"
+  manifest = rebase_path("test/meta/zircon_tests.cml")
+
+  deps = [ ":zircon_tests_lib" ]
+}
+
+fuchsia_package("zircon_tests_package") {
+  testonly = true
+  package_name = "zircon_tests"
+  deps = [ ":zircon_tests_component" ]
+}
+
+if (enable_unittests) {
+  source_set("tests") {
+    testonly = true
+    deps = [ ":zircon_tests_package" ]
+  }
+}

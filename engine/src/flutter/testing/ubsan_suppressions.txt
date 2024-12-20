@@ -1,0 +1,10 @@
+# For more information on how to add additional suppressions here go to
+# https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html#id13
+
+# Ignore errors is Dart VM.
+alignment:third_party/dart
+null:third_party/dart
+
+# Ignore errors in SwiftShader
+undefined:flutter/third_party/swiftshader
+

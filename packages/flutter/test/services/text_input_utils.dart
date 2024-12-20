@@ -22,10 +22,12 @@ class FakeTextChannel implements MethodChannel {
   MethodCodec get codec => const JSONMethodCodec();
 
   @override
-  Future<List<T>> invokeListMethod<T>(String method, [dynamic arguments]) => throw UnimplementedError();
+  Future<List<T>> invokeListMethod<T>(String method, [dynamic arguments]) =>
+      throw UnimplementedError();
 
   @override
-  Future<Map<K, V>> invokeMapMethod<K, V>(String method, [dynamic arguments]) => throw UnimplementedError();
+  Future<Map<K, V>> invokeMapMethod<K, V>(String method, [dynamic arguments]) =>
+      throw UnimplementedError();
 
   @override
   Future<T> invokeMethod<T>(String method, [dynamic arguments]) async {
@@ -67,8 +69,8 @@ class FakeTextChannel implements MethodChannel {
 
 class FakeScribbleElement implements ScribbleClient {
   FakeScribbleElement({required String elementIdentifier, Rect bounds = Rect.zero})
-      : _elementIdentifier = elementIdentifier,
-        _bounds = bounds;
+    : _elementIdentifier = elementIdentifier,
+      _bounds = bounds;
 
   final String _elementIdentifier;
   final Rect _bounds;

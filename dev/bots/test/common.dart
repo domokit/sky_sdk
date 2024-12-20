@@ -24,10 +24,10 @@ void tryToDelete(Directory directory) {
 
 Matcher throwsExceptionWith(String messageSubString) {
   return throwsA(
-      isA<Exception>().having(
-          (Exception e) => e.toString(),
-          'description',
-          contains(messageSubString),
-      ),
+    isA<Exception>().having(
+      (Exception e) => e.toString(),
+      'description',
+      contains(messageSubString),
+    ),
   );
 }

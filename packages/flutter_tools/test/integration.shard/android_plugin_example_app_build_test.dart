@@ -15,8 +15,7 @@ void main() {
 
   setUp(() async {
     tempDirPluginMethodChannels = createResolvedTempDirectorySync('flutter_plugin_test.');
-    tempDirPluginFfi =
-        createResolvedTempDirectorySync('flutter_ffi_plugin_test.');
+    tempDirPluginFfi = createResolvedTempDirectorySync('flutter_ffi_plugin_test.');
   });
 
   tearDown(() async {
@@ -24,10 +23,7 @@ void main() {
     tryToDelete(tempDirPluginFfi);
   });
 
-  Future<void> testPlugin({
-    required String template,
-    required Directory tempDir,
-  }) async {
+  Future<void> testPlugin({required String template, required Directory tempDir}) async {
     final String testName = '${template}_test';
 
     ProcessResult result = processManager.runSync(<String>[
@@ -39,11 +35,12 @@ void main() {
       testName,
     ], workingDirectory: tempDir.path);
     if (result.exitCode != 0) {
-      throw Exception('flutter create failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}');
+      throw Exception(
+        'flutter create failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}',
+      );
     }
 
-    final Directory exampleAppDir =
-        tempDir.childDirectory(testName).childDirectory('example');
+    final Directory exampleAppDir = tempDir.childDirectory(testName).childDirectory('example');
 
     result = processManager.runSync(<String>[
       flutterBin,
@@ -53,17 +50,21 @@ void main() {
       '--target-platform=android-arm',
     ], workingDirectory: exampleAppDir.path);
     if (result.exitCode != 0) {
-      throw Exception('flutter build failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}');
+      throw Exception(
+        'flutter build failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}',
+      );
     }
 
-    final File exampleApk = fileSystem.file(fileSystem.path.join(
-      exampleAppDir.path,
-      'build',
-      'app',
-      'outputs',
-      'flutter-apk',
-      'app-release.apk',
-    ));
+    final File exampleApk = fileSystem.file(
+      fileSystem.path.join(
+        exampleAppDir.path,
+        'build',
+        'app',
+        'outputs',
+        'flutter-apk',
+        'app-release.apk',
+      ),
+    );
     expect(exampleApk, exists);
 
     if (template == 'plugin_ffi') {
@@ -78,18 +79,20 @@ void main() {
       'clean',
     ], workingDirectory: exampleAppDir.path);
     if (result.exitCode != 0) {
-      throw Exception('flutter clean failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}');
+      throw Exception(
+        'flutter clean failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}',
+      );
     }
 
     // Remove Gradle wrapper
     fileSystem
-        .directory(fileSystem.path
-            .join(exampleAppDir.path, 'android', 'gradle', 'wrapper'))
+        .directory(fileSystem.path.join(exampleAppDir.path, 'android', 'gradle', 'wrapper'))
         .deleteSync(recursive: true);
 
     // Enable R8 in gradle.properties
-    final File gradleProperties =
-        exampleAppDir.childDirectory('android').childFile('gradle.properties');
+    final File gradleProperties = exampleAppDir
+        .childDirectory('android')
+        .childFile('gradle.properties');
     expect(gradleProperties, exists);
 
     gradleProperties.writeAsStringSync('''
@@ -107,24 +110,18 @@ android.enableR8=true''');
       '--target-platform=android-arm',
     ], workingDirectory: exampleAppDir.path);
     if (result.exitCode != 0) {
-      throw Exception('flutter build failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}');
+      throw Exception(
+        'flutter build failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}',
+      );
     }
     expect(exampleApk, exists);
   }
 
-  test('plugin example can be built using current Flutter Gradle plugin',
-      () async {
-    await testPlugin(
-      template: 'plugin',
-      tempDir: tempDirPluginMethodChannels,
-    );
+  test('plugin example can be built using current Flutter Gradle plugin', () async {
+    await testPlugin(template: 'plugin', tempDir: tempDirPluginMethodChannels);
   });
 
-  test('FFI plugin example can be built using current Flutter Gradle plugin',
-      () async {
-    await testPlugin(
-      template: 'plugin_ffi',
-      tempDir: tempDirPluginFfi,
-    );
+  test('FFI plugin example can be built using current Flutter Gradle plugin', () async {
+    await testPlugin(template: 'plugin_ffi', tempDir: tempDirPluginFfi);
   });
 }

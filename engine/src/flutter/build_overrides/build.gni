@@ -1,0 +1,15 @@
+# Copyright 2019 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# The engine build uses some Chromium-sourced versions of third-party
+# dependencies (e.g, ANGLE, abseil) to use their GN build files, but we don't
+# want the Chromium-specific parts of the build.
+build_with_chromium = false
+
+# Perfetto targets fail to build without this variable. It is used by Perfetto
+# targets to distinguish embedder builds from Perfetto standalone builds, and
+# builds in the Android tree.
+perfetto_build_with_embedder = true
+
+perfetto_root_path = "//flutter/third_party/perfetto/"

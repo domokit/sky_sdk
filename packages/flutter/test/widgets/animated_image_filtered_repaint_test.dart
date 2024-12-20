@@ -18,7 +18,7 @@ void main() {
           imageFilter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: const TestWidget(),
         ),
-      )
+      ),
     );
 
     expect(RenderTestObject.paintCount, 1);
@@ -30,7 +30,7 @@ void main() {
           imageFilter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
           child: const TestWidget(),
         ),
-      )
+      ),
     );
 
     expect(RenderTestObject.paintCount, 1);

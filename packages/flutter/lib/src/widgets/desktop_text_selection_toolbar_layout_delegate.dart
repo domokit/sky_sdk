@@ -23,9 +23,7 @@ import 'package:flutter/rendering.dart';
 ///     the mobile text selection toolbars.
 class DesktopTextSelectionToolbarLayoutDelegate extends SingleChildLayoutDelegate {
   /// Creates an instance of TextSelectionToolbarLayoutDelegate.
-  DesktopTextSelectionToolbarLayoutDelegate({
-    required this.anchor,
-  });
+  DesktopTextSelectionToolbarLayoutDelegate({required this.anchor});
 
   /// The point at which to render the menu, if possible.
   ///

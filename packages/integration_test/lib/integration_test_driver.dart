@@ -31,10 +31,7 @@ Future<void> writeResponseData(
 }) async {
   destinationDirectory ??= testOutputsDirectory;
   await fs.directory(destinationDirectory).create(recursive: true);
-  final File file = fs.file(path.join(
-    destinationDirectory,
-    '$testOutputFilename.json',
-  ));
+  final File file = fs.file(path.join(destinationDirectory, '$testOutputFilename.json'));
   final String resultString = _encodeJson(data, true);
   await file.writeAsString(resultString);
 }

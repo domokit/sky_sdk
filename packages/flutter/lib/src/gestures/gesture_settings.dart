@@ -23,15 +23,13 @@ export 'dart:ui' show FlutterView;
 class DeviceGestureSettings {
   /// Create a new [DeviceGestureSettings] with configured settings in logical
   /// pixels.
-  const DeviceGestureSettings({
-    this.touchSlop,
-  });
+  const DeviceGestureSettings({this.touchSlop});
 
   /// Create a new [DeviceGestureSettings] from the provided [view].
   factory DeviceGestureSettings.fromView(ui.FlutterView view) {
     final double? physicalTouchSlop = view.gestureSettings.physicalTouchSlop;
     return DeviceGestureSettings(
-      touchSlop: physicalTouchSlop == null ? null : physicalTouchSlop / view.devicePixelRatio
+      touchSlop: physicalTouchSlop == null ? null : physicalTouchSlop / view.devicePixelRatio,
     );
   }
 
@@ -50,8 +48,7 @@ class DeviceGestureSettings {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is DeviceGestureSettings
-      && other.touchSlop == touchSlop;
+    return other is DeviceGestureSettings && other.touchSlop == touchSlop;
   }
 
   @override

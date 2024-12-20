@@ -12,7 +12,9 @@ import '../framework/task_result.dart';
 import '../framework/utils.dart';
 import 'build_test_task.dart';
 
-final Directory galleryDirectory = dir('${flutterDirectory.path}/dev/integration_tests/flutter_gallery');
+final Directory galleryDirectory = dir(
+  '${flutterDirectory.path}/dev/integration_tests/flutter_gallery',
+);
 
 /// Temp function during gallery tests transition to build+test model.
 ///
@@ -42,14 +44,9 @@ TaskFunction createGalleryTransitionE2EBuildTest(
   ).call;
 }
 
-TaskFunction createGalleryTransitionE2ETest({
-  bool semanticsEnabled = false,
-  bool? enableImpeller,
-}) {
+TaskFunction createGalleryTransitionE2ETest({bool semanticsEnabled = false, bool? enableImpeller}) {
   return GalleryTransitionTest(
-    testFile: semanticsEnabled
-        ? 'transitions_perf_e2e_with_semantics'
-        : 'transitions_perf_e2e',
+    testFile: semanticsEnabled ? 'transitions_perf_e2e_with_semantics' : 'transitions_perf_e2e',
     needFullTimeline: false,
     timelineSummaryFile: 'e2e_perf_summary',
     transitionDurationFile: null,
@@ -66,21 +63,24 @@ TaskFunction createGalleryTransitionHybridBuildTest(
   return GalleryTransitionBuildTest(
     args,
     semanticsEnabled: semanticsEnabled,
-    driverFile: semanticsEnabled ? 'transitions_perf_hybrid_with_semantics_test' : 'transitions_perf_hybrid_test',
+    driverFile:
+        semanticsEnabled
+            ? 'transitions_perf_hybrid_with_semantics_test'
+            : 'transitions_perf_hybrid_test',
   ).call;
 }
 
 TaskFunction createGalleryTransitionHybridTest({bool semanticsEnabled = false}) {
   return GalleryTransitionTest(
     semanticsEnabled: semanticsEnabled,
-    driverFile: semanticsEnabled
-        ? 'transitions_perf_hybrid_with_semantics_test'
-        : 'transitions_perf_hybrid_test',
+    driverFile:
+        semanticsEnabled
+            ? 'transitions_perf_hybrid_with_semantics_test'
+            : 'transitions_perf_hybrid_test',
   ).call;
 }
 
 class GalleryTransitionTest {
-
   GalleryTransitionTest({
     this.semanticsEnabled = false,
     this.testFile = 'transitions_perf',
@@ -109,7 +109,9 @@ class GalleryTransitionTest {
     final Device device = await devices.workingDevice;
     await device.unlock();
     final String deviceId = device.deviceId;
-    final Directory galleryDirectory = dir('${flutterDirectory.path}/dev/integration_tests/flutter_gallery');
+    final Directory galleryDirectory = dir(
+      '${flutterDirectory.path}/dev/integration_tests/flutter_gallery',
+    );
     await inDirectory<void>(galleryDirectory, () async {
       String? applicationBinaryPath;
       if (deviceOperatingSystem == DeviceOperatingSystem.android) {
@@ -129,41 +131,39 @@ class GalleryTransitionTest {
         applicationBinaryPath = 'build/app/outputs/flutter-apk/app-profile.apk';
       }
 
-      final String testDriver = driverFile ?? (semanticsEnabled
-          ? '${testFile}_with_semantics_test'
-          : '${testFile}_test');
+      final String testDriver =
+          driverFile ?? (semanticsEnabled ? '${testFile}_with_semantics_test' : '${testFile}_test');
       section('DRIVE START');
-      await flutter('drive', options: <String>[
-        '--profile',
-        if (enableImpeller != null && enableImpeller!) '--enable-impeller',
-        if (enableImpeller != null && !enableImpeller!) '--no-enable-impeller',
-        if (needFullTimeline)
-          '--trace-startup',
-        if (applicationBinaryPath != null)
-          '--use-application-binary=$applicationBinaryPath'
-        else
-          ...<String>[
-            '-t',
-            'test_driver/$testFile.dart',
-          ],
-        '--driver',
-        'test_driver/$testDriver.dart',
-        '-d',
-        deviceId,
-        '-v',
-        '--verbose-system-logs'
-      ]);
+      await flutter(
+        'drive',
+        options: <String>[
+          '--profile',
+          if (enableImpeller != null && enableImpeller!) '--enable-impeller',
+          if (enableImpeller != null && !enableImpeller!) '--no-enable-impeller',
+          if (needFullTimeline) '--trace-startup',
+          if (applicationBinaryPath != null)
+            '--use-application-binary=$applicationBinaryPath'
+          else ...<String>['-t', 'test_driver/$testFile.dart'],
+          '--driver',
+          'test_driver/$testDriver.dart',
+          '-d',
+          deviceId,
+          '-v',
+          '--verbose-system-logs',
+        ],
+      );
     });
 
-    final String testOutputDirectory = Platform.environment['FLUTTER_TEST_OUTPUTS_DIR'] ?? '${galleryDirectory.path}/build';
-    final Map<String, dynamic> summary = json.decode(
-      file('$testOutputDirectory/$timelineSummaryFile.json').readAsStringSync(),
-    ) as Map<String, dynamic>;
+    final String testOutputDirectory =
+        Platform.environment['FLUTTER_TEST_OUTPUTS_DIR'] ?? '${galleryDirectory.path}/build';
+    final Map<String, dynamic> summary =
+        json.decode(file('$testOutputDirectory/$timelineSummaryFile.json').readAsStringSync())
+            as Map<String, dynamic>;
 
     if (transitionDurationFile != null) {
-      final Map<String, dynamic> original = json.decode(
-        file('$testOutputDirectory/$transitionDurationFile.json').readAsStringSync(),
-      ) as Map<String, dynamic>;
+      final Map<String, dynamic> original =
+          json.decode(file('$testOutputDirectory/$transitionDurationFile.json').readAsStringSync())
+              as Map<String, dynamic>;
       final Map<String, List<int>> transitions = <String, List<int>>{};
       for (final String key in original.keys) {
         transitions[key] = List<int>.from(original[key] as List<dynamic>);
@@ -173,16 +173,14 @@ class GalleryTransitionTest {
     }
 
     final bool isAndroid = deviceOperatingSystem == DeviceOperatingSystem.android;
-    return TaskResult.success(summary,
+    return TaskResult.success(
+      summary,
       detailFiles: <String>[
-        if (transitionDurationFile != null)
-          '$testOutputDirectory/$transitionDurationFile.json',
-        if (timelineTraceFile != null)
-          '$testOutputDirectory/$timelineTraceFile.json',
+        if (transitionDurationFile != null) '$testOutputDirectory/$transitionDurationFile.json',
+        if (timelineTraceFile != null) '$testOutputDirectory/$timelineTraceFile.json',
       ],
       benchmarkScoreKeys: <String>[
-        if (transitionDurationFile != null)
-          'missed_transition_count',
+        if (transitionDurationFile != null) 'missed_transition_count',
         'average_frame_build_time_millis',
         'worst_frame_build_time_millis',
         '90th_percentile_frame_build_time_millis',
@@ -250,7 +248,8 @@ class GalleryTransitionBuildTest extends BuildTestTask {
   final String? transitionDurationFile;
   final String? driverFile;
 
-  final String testOutputDirectory = Platform.environment['FLUTTER_TEST_OUTPUTS_DIR'] ?? '${galleryDirectory.path}/build';
+  final String testOutputDirectory =
+      Platform.environment['FLUTTER_TEST_OUTPUTS_DIR'] ?? '${galleryDirectory.path}/build';
 
   @override
   void copyArtifacts() {
@@ -283,20 +282,15 @@ class GalleryTransitionBuildTest extends BuildTestTask {
         'android-arm,android-arm64',
       ];
     } else if (deviceOperatingSystem == DeviceOperatingSystem.ios) {
-      return <String>[
-        'ios',
-        '--codesign',
-        '--profile',
-        '-t',
-        'test_driver/$testFile.dart',
-      ];
+      return <String>['ios', '--codesign', '--profile', '-t', 'test_driver/$testFile.dart'];
     }
     throw Exception('$deviceOperatingSystem has no build configuration');
   }
 
   @override
   List<String> getTestArgs(DeviceOperatingSystem deviceOperatingSystem, String deviceId) {
-    final String testDriver = driverFile ?? (semanticsEnabled ? '${testFile}_with_semantics_test' : '${testFile}_test');
+    final String testDriver =
+        driverFile ?? (semanticsEnabled ? '${testFile}_with_semantics_test' : '${testFile}_test');
     return <String>[
       '--no-dds',
       '--profile',
@@ -315,14 +309,14 @@ class GalleryTransitionBuildTest extends BuildTestTask {
 
   @override
   Future<TaskResult> parseTaskResult() async {
-    final Map<String, dynamic> summary = json.decode(
-      file('$testOutputDirectory/$timelineSummaryFile.json').readAsStringSync(),
-    ) as Map<String, dynamic>;
+    final Map<String, dynamic> summary =
+        json.decode(file('$testOutputDirectory/$timelineSummaryFile.json').readAsStringSync())
+            as Map<String, dynamic>;
 
     if (transitionDurationFile != null) {
-      final Map<String, dynamic> original = json.decode(
-        file('$testOutputDirectory/$transitionDurationFile.json').readAsStringSync(),
-      ) as Map<String, dynamic>;
+      final Map<String, dynamic> original =
+          json.decode(file('$testOutputDirectory/$transitionDurationFile.json').readAsStringSync())
+              as Map<String, dynamic>;
       final Map<String, List<int>> transitions = <String, List<int>>{};
       for (final String key in original.keys) {
         transitions[key] = List<int>.from(original[key] as List<dynamic>);
@@ -397,7 +391,9 @@ int _countMissedTransitions(Map<String, List<int>> transitions) {
   transitions.forEach((String demoName, List<int> durations) {
     final int longestDuration = durations.reduce(math.max);
     if (longestDuration > kTransitionBudget) {
-      print('$demoName missed transition time budget ($longestDuration µs > $kTransitionBudget µs)');
+      print(
+        '$demoName missed transition time budget ($longestDuration µs > $kTransitionBudget µs)',
+      );
       count++;
     }
   });

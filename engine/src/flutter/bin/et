@@ -1,0 +1,60 @@
+#!/bin/bash
+#
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+set -e
+
+# Needed because if it is set, cd may print the path it changed to.
+unset CDPATH
+
+# Returns the canonical path for its argument, with any symlinks resolved.
+function canonical_path() {
+  if [[ -x "$(which realpath)" ]]; then
+    realpath -q -- "$1"
+  elif [[ -x "$(which readlink)" ]]; then
+    readlink -f -- "$1"
+  else
+    echo "The host platform is not supported by this tool"
+    exit 1
+  fi
+}
+
+SCRIPT_DIR="$(dirname -- "$(canonical_path "${BASH_SOURCE[0]}")")"
+ENGINE_DIR="$(cd "$SCRIPT_DIR/.."; pwd -P)"
+
+case "$(uname -s)" in
+  Linux)
+    OS="linux"
+    ;;
+  Darwin)
+    OS="macos"
+    ;;
+  *)
+    echo "The host platform is not supported by this tool"
+    exit 1
+esac
+
+case "$(uname -m)" in
+  arm64)
+    CPU="arm64"
+    ;;
+  x86_64)
+    CPU="x64"
+    ;;
+  *)
+    echo "The host platform is not supported by this tool"
+    exit 1
+esac
+
+PLATFORM="${OS}-${CPU}"
+DART_SDK_DIR="${ENGINE_DIR}/prebuilts/${PLATFORM}/dart-sdk"
+DART="${DART_SDK_DIR}/bin/dart"
+
+if [ ! -d "${ENGINE_DIR}/tools/engine_tool/.dart_tool" ]; then
+  echo "You must run 'gclient sync -D' before using this tool."
+  exit 1
+fi
+
+"${DART}" "${ENGINE_DIR}/tools/engine_tool/bin/et.dart" "$@"

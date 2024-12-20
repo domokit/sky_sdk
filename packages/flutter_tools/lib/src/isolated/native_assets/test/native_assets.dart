@@ -13,13 +13,11 @@ import '../../../native_assets.dart';
 import '../../../project.dart';
 import '../native_assets.dart';
 
-class TestCompilerNativeAssetsBuilderImpl
-    implements TestCompilerNativeAssetsBuilder {
+class TestCompilerNativeAssetsBuilderImpl implements TestCompilerNativeAssetsBuilder {
   const TestCompilerNativeAssetsBuilderImpl();
 
   @override
-  Future<Uri?> build(BuildInfo buildInfo) =>
-      testCompilerBuildNativeAssets(buildInfo);
+  Future<Uri?> build(BuildInfo buildInfo) => testCompilerBuildNativeAssets(buildInfo);
 
   @override
   String windowsBuildDirectory(FlutterProject project) =>
@@ -39,9 +37,7 @@ Future<Uri?> testCompilerBuildNativeAssets(BuildInfo buildInfo) async {
     globals.logger,
   );
 
-  if (!globals.platform.isMacOS &&
-      !globals.platform.isLinux &&
-      !globals.platform.isWindows) {
+  if (!globals.platform.isMacOS && !globals.platform.isLinux && !globals.platform.isWindows) {
     await ensureNoNativeAssetsOrOsIsSupported(
       projectUri,
       const LocalPlatform().operatingSystem,
@@ -64,16 +60,22 @@ Future<Uri?> testCompilerBuildNativeAssets(BuildInfo buildInfo) async {
 
   // First perform the dart build.
   final DartBuildResult dartBuildResult = await runFlutterSpecificDartBuild(
-      environmentDefines: environmentDefines,
-      buildRunner: buildRunner,
-      targetPlatform: TargetPlatform.tester,
-      projectUri: projectUri,
-      fileSystem: globals.fs);
+    environmentDefines: environmentDefines,
+    buildRunner: buildRunner,
+    targetPlatform: TargetPlatform.tester,
+    projectUri: projectUri,
+    fileSystem: globals.fs,
+  );
 
   // Then "install" the code assets so they can be used at runtime.
-  await installCodeAssets(dartBuildResult: dartBuildResult, environmentDefines: environmentDefines,
-    targetPlatform: TargetPlatform.tester, projectUri: projectUri, fileSystem: globals.fs,
-    nativeAssetsFileUri: nativeAssetsFileUri);
+  await installCodeAssets(
+    dartBuildResult: dartBuildResult,
+    environmentDefines: environmentDefines,
+    targetPlatform: TargetPlatform.tester,
+    projectUri: projectUri,
+    fileSystem: globals.fs,
+    nativeAssetsFileUri: nativeAssetsFileUri,
+  );
   assert(await globals.fs.file(nativeAssetsFileUri).exists());
 
   return nativeAssetsFileUri;

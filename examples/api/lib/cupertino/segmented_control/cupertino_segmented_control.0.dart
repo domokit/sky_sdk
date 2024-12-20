@@ -119,11 +119,7 @@ class _SegmentedControlExampleState extends State<SegmentedControlExample> {
                         _toggleOne = false;
                         _disabledChildren = <Sky>{};
                       } else {
-                        _disabledChildren = <Sky>{
-                          Sky.midnight,
-                          Sky.viridian,
-                          Sky.cerulean,
-                        };
+                        _disabledChildren = <Sky>{Sky.midnight, Sky.viridian, Sky.cerulean};
                       }
                     });
                   },

@@ -6,21 +6,18 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class TestRoute extends PageRouteBuilder<void> {
-  TestRoute(Widget child) : super(
-    pageBuilder: (BuildContext _, Animation<double> __, Animation<double> ___) => child,
-  );
+  TestRoute(Widget child)
+    : super(pageBuilder: (BuildContext _, Animation<double> __, Animation<double> ___) => child);
 }
 
 class IconTextBox extends StatelessWidget {
-  const IconTextBox(this.text, { super.key });
+  const IconTextBox(this.text, {super.key});
   final String text;
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      child: Row(
-        children: <Widget>[const Icon(IconData(0x41, fontFamily: 'Roboto')), Text(text)],
-      ),
+      child: Row(children: <Widget>[const Icon(IconData(0x41, fontFamily: 'Roboto')), Text(text)]),
     );
   }
 }
@@ -62,8 +59,8 @@ void main() {
                             Navigator.of(context).push(
                               TestRoute(
                                 useCaptureAll
-                                  ? InheritedTheme.captureAll(context, const IconTextBox('Hello'))
-                                  : const IconTextBox('Hello'),
+                                    ? InheritedTheme.captureAll(context, const IconTextBox('Hello'))
+                                    : const IconTextBox('Hello'),
                               ),
                             );
                           },
@@ -81,21 +78,17 @@ void main() {
     }
 
     TextStyle getIconStyle() {
-      return tester.widget<RichText>(
-        find.descendant(
-          of: find.byType(Icon),
-          matching: find.byType(RichText),
-        ),
-      ).text.style!;
+      return tester
+          .widget<RichText>(find.descendant(of: find.byType(Icon), matching: find.byType(RichText)))
+          .text
+          .style!;
     }
 
     TextStyle getTextStyle(String text) {
-      return tester.widget<RichText>(
-        find.descendant(
-          of: find.text(text),
-          matching: find.byType(RichText),
-        ),
-      ).text.style!;
+      return tester
+          .widget<RichText>(find.descendant(of: find.text(text), matching: find.byType(RichText)))
+          .text
+          .style!;
     }
 
     useCaptureAll = false;
@@ -146,7 +139,9 @@ void main() {
     expect(getIconStyle().fontSize, iconSize);
   });
 
-  testWidgets('InheritedTheme.captureAll() multiple IconTheme ancestors', (WidgetTester tester) async {
+  testWidgets('InheritedTheme.captureAll() multiple IconTheme ancestors', (
+    WidgetTester tester,
+  ) async {
     // This is a regression test for https://github.com/flutter/flutter/issues/39087
 
     const Color outerColor = Color(0xFF0000FF);
@@ -192,12 +187,10 @@ void main() {
     );
 
     TextStyle getIconStyle(Key key) {
-      return tester.widget<RichText>(
-        find.descendant(
-          of: find.byKey(key),
-          matching: find.byType(RichText),
-        ),
-      ).text.style!;
+      return tester
+          .widget<RichText>(find.descendant(of: find.byKey(key), matching: find.byType(RichText)))
+          .text
+          .style!;
     }
 
     expect(getIconStyle(icon1).color, innerColor);
@@ -206,7 +199,9 @@ void main() {
     expect(getIconStyle(icon2).fontSize, iconSize);
   });
 
-  testWidgets('InheritedTheme.captureAll() multiple DefaultTextStyle ancestors', (WidgetTester tester) async {
+  testWidgets('InheritedTheme.captureAll() multiple DefaultTextStyle ancestors', (
+    WidgetTester tester,
+  ) async {
     // This is a regression test for https://github.com/flutter/flutter/issues/39087
 
     const Color textColor = Color(0xFF00FF00);
@@ -238,12 +233,10 @@ void main() {
     );
 
     TextStyle getTextStyle(String text) {
-      return tester.widget<RichText>(
-        find.descendant(
-          of: find.text(text),
-          matching: find.byType(RichText),
-        ),
-      ).text.style!;
+      return tester
+          .widget<RichText>(find.descendant(of: find.text(text), matching: find.byType(RichText)))
+          .text
+          .style!;
     }
 
     expect(getTextStyle('Hello').fontSize, null);

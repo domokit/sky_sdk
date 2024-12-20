@@ -1,0 +1,178 @@
+# Copyright 2017 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This file is based on:
+# https://skia.googlesource.com/skia/+/main/third_party/libwebp/BUILD.gn
+config("libwebp_config") {
+  include_dirs = [
+    "//flutter/third_party/libwebp/src",
+    "//flutter/third_party/libwebp",
+  ]
+}
+
+config("libwebp_defines") {
+  defines = [
+    # WebP naturally decodes to RGB_565, Skia with BGR_565.
+    # This makes WebP decode to BGR_565 when we ask for RGB_565.
+    # (It also swaps the color order for 4444, but we don't care today.)
+    "WEBP_SWAP_16BIT_CSP",
+
+    # Prevent WebP symbols from being exposed.
+    "WEBP_EXTERN=extern",
+  ]
+}
+
+source_set("libwebp_sse41") {
+  include_dirs = [
+    "//flutter/third_party/libwebp/src",
+    "//flutter/third_party/libwebp",
+  ]
+  configs += [ ":libwebp_defines" ]
+  sources = [
+    "//flutter/third_party/libwebp/src/dsp/alpha_processing_sse41.c",
+    "//flutter/third_party/libwebp/src/dsp/dec_sse41.c",
+    "//flutter/third_party/libwebp/src/dsp/enc_sse41.c",
+    "//flutter/third_party/libwebp/src/dsp/lossless_enc_sse41.c",
+    "//flutter/third_party/libwebp/src/dsp/lossless_sse41.c",
+    "//flutter/third_party/libwebp/src/dsp/upsampling_sse41.c",
+    "//flutter/third_party/libwebp/src/dsp/yuv_sse41.c",
+  ]
+  if ((current_cpu == "x86" || current_cpu == "x64") && (!is_win || is_clang)) {
+    cflags_c = [ "-msse4.1" ]
+  }
+}
+
+source_set("libwebp") {
+  public_configs = [ ":libwebp_config" ]
+  include_dirs = [
+    "//flutter/third_party/libwebp/src",
+    "//flutter/third_party/libwebp",
+  ]
+
+  deps = [ ":libwebp_sse41" ]
+
+  if (is_android) {
+    deps += [ "//third_party/cpu_features:ndk_compat" ]
+  }
+
+  configs += [ ":libwebp_defines" ]
+
+  sources = [
+    "//flutter/third_party/libwebp/sharpyuv/sharpyuv.c",
+    "//flutter/third_party/libwebp/sharpyuv/sharpyuv_cpu.c",
+    "//flutter/third_party/libwebp/sharpyuv/sharpyuv_csp.c",
+    "//flutter/third_party/libwebp/sharpyuv/sharpyuv_dsp.c",
+    "//flutter/third_party/libwebp/sharpyuv/sharpyuv_gamma.c",
+    "//flutter/third_party/libwebp/sharpyuv/sharpyuv_neon.c",
+    "//flutter/third_party/libwebp/sharpyuv/sharpyuv_sse2.c",
+    "//flutter/third_party/libwebp/src/dec/alpha_dec.c",
+    "//flutter/third_party/libwebp/src/dec/buffer_dec.c",
+    "//flutter/third_party/libwebp/src/dec/frame_dec.c",
+    "//flutter/third_party/libwebp/src/dec/idec_dec.c",
+    "//flutter/third_party/libwebp/src/dec/io_dec.c",
+    "//flutter/third_party/libwebp/src/dec/quant_dec.c",
+    "//flutter/third_party/libwebp/src/dec/tree_dec.c",
+    "//flutter/third_party/libwebp/src/dec/vp8_dec.c",
+    "//flutter/third_party/libwebp/src/dec/vp8l_dec.c",
+    "//flutter/third_party/libwebp/src/dec/webp_dec.c",
+    "//flutter/third_party/libwebp/src/demux/anim_decode.c",
+    "//flutter/third_party/libwebp/src/demux/demux.c",
+    "//flutter/third_party/libwebp/src/dsp/alpha_processing.c",
+    "//flutter/third_party/libwebp/src/dsp/alpha_processing_mips_dsp_r2.c",
+    "//flutter/third_party/libwebp/src/dsp/alpha_processing_neon.c",
+    "//flutter/third_party/libwebp/src/dsp/alpha_processing_sse2.c",
+    "//flutter/third_party/libwebp/src/dsp/cost.c",
+    "//flutter/third_party/libwebp/src/dsp/cost_mips32.c",
+    "//flutter/third_party/libwebp/src/dsp/cost_mips_dsp_r2.c",
+    "//flutter/third_party/libwebp/src/dsp/cost_neon.c",
+    "//flutter/third_party/libwebp/src/dsp/cost_sse2.c",
+    "//flutter/third_party/libwebp/src/dsp/cpu.c",
+    "//flutter/third_party/libwebp/src/dsp/dec.c",
+    "//flutter/third_party/libwebp/src/dsp/dec_clip_tables.c",
+    "//flutter/third_party/libwebp/src/dsp/dec_mips32.c",
+    "//flutter/third_party/libwebp/src/dsp/dec_mips_dsp_r2.c",
+    "//flutter/third_party/libwebp/src/dsp/dec_msa.c",
+    "//flutter/third_party/libwebp/src/dsp/dec_neon.c",
+    "//flutter/third_party/libwebp/src/dsp/dec_sse2.c",
+    "//flutter/third_party/libwebp/src/dsp/enc.c",
+    "//flutter/third_party/libwebp/src/dsp/enc_mips32.c",
+    "//flutter/third_party/libwebp/src/dsp/enc_mips_dsp_r2.c",
+    "//flutter/third_party/libwebp/src/dsp/enc_msa.c",
+    "//flutter/third_party/libwebp/src/dsp/enc_neon.c",
+    "//flutter/third_party/libwebp/src/dsp/enc_sse2.c",
+    "//flutter/third_party/libwebp/src/dsp/filters.c",
+    "//flutter/third_party/libwebp/src/dsp/filters_mips_dsp_r2.c",
+    "//flutter/third_party/libwebp/src/dsp/filters_msa.c",
+    "//flutter/third_party/libwebp/src/dsp/filters_neon.c",
+    "//flutter/third_party/libwebp/src/dsp/filters_sse2.c",
+    "//flutter/third_party/libwebp/src/dsp/lossless.c",
+    "//flutter/third_party/libwebp/src/dsp/lossless_enc.c",
+    "//flutter/third_party/libwebp/src/dsp/lossless_enc_mips32.c",
+    "//flutter/third_party/libwebp/src/dsp/lossless_enc_mips_dsp_r2.c",
+    "//flutter/third_party/libwebp/src/dsp/lossless_enc_msa.c",
+    "//flutter/third_party/libwebp/src/dsp/lossless_enc_neon.c",
+    "//flutter/third_party/libwebp/src/dsp/lossless_enc_sse2.c",
+    "//flutter/third_party/libwebp/src/dsp/lossless_mips_dsp_r2.c",
+    "//flutter/third_party/libwebp/src/dsp/lossless_msa.c",
+    "//flutter/third_party/libwebp/src/dsp/lossless_neon.c",
+    "//flutter/third_party/libwebp/src/dsp/lossless_sse2.c",
+    "//flutter/third_party/libwebp/src/dsp/rescaler.c",
+    "//flutter/third_party/libwebp/src/dsp/rescaler_mips32.c",
+    "//flutter/third_party/libwebp/src/dsp/rescaler_mips_dsp_r2.c",
+    "//flutter/third_party/libwebp/src/dsp/rescaler_msa.c",
+    "//flutter/third_party/libwebp/src/dsp/rescaler_neon.c",
+    "//flutter/third_party/libwebp/src/dsp/rescaler_sse2.c",
+    "//flutter/third_party/libwebp/src/dsp/ssim.c",
+    "//flutter/third_party/libwebp/src/dsp/ssim_sse2.c",
+    "//flutter/third_party/libwebp/src/dsp/upsampling.c",
+    "//flutter/third_party/libwebp/src/dsp/upsampling_mips_dsp_r2.c",
+    "//flutter/third_party/libwebp/src/dsp/upsampling_msa.c",
+    "//flutter/third_party/libwebp/src/dsp/upsampling_neon.c",
+    "//flutter/third_party/libwebp/src/dsp/upsampling_sse2.c",
+    "//flutter/third_party/libwebp/src/dsp/yuv.c",
+    "//flutter/third_party/libwebp/src/dsp/yuv_mips32.c",
+    "//flutter/third_party/libwebp/src/dsp/yuv_mips_dsp_r2.c",
+    "//flutter/third_party/libwebp/src/dsp/yuv_neon.c",
+    "//flutter/third_party/libwebp/src/dsp/yuv_sse2.c",
+    "//flutter/third_party/libwebp/src/enc/alpha_enc.c",
+    "//flutter/third_party/libwebp/src/enc/analysis_enc.c",
+    "//flutter/third_party/libwebp/src/enc/backward_references_cost_enc.c",
+    "//flutter/third_party/libwebp/src/enc/backward_references_enc.c",
+    "//flutter/third_party/libwebp/src/enc/config_enc.c",
+    "//flutter/third_party/libwebp/src/enc/cost_enc.c",
+    "//flutter/third_party/libwebp/src/enc/filter_enc.c",
+    "//flutter/third_party/libwebp/src/enc/frame_enc.c",
+    "//flutter/third_party/libwebp/src/enc/histogram_enc.c",
+    "//flutter/third_party/libwebp/src/enc/iterator_enc.c",
+    "//flutter/third_party/libwebp/src/enc/near_lossless_enc.c",
+    "//flutter/third_party/libwebp/src/enc/picture_csp_enc.c",
+    "//flutter/third_party/libwebp/src/enc/picture_enc.c",
+    "//flutter/third_party/libwebp/src/enc/picture_psnr_enc.c",
+    "//flutter/third_party/libwebp/src/enc/picture_rescale_enc.c",
+    "//flutter/third_party/libwebp/src/enc/picture_tools_enc.c",
+    "//flutter/third_party/libwebp/src/enc/predictor_enc.c",
+    "//flutter/third_party/libwebp/src/enc/quant_enc.c",
+    "//flutter/third_party/libwebp/src/enc/syntax_enc.c",
+    "//flutter/third_party/libwebp/src/enc/token_enc.c",
+    "//flutter/third_party/libwebp/src/enc/tree_enc.c",
+    "//flutter/third_party/libwebp/src/enc/vp8l_enc.c",
+    "//flutter/third_party/libwebp/src/enc/webp_enc.c",
+    "//flutter/third_party/libwebp/src/mux/anim_encode.c",
+    "//flutter/third_party/libwebp/src/mux/muxedit.c",
+    "//flutter/third_party/libwebp/src/mux/muxinternal.c",
+    "//flutter/third_party/libwebp/src/mux/muxread.c",
+    "//flutter/third_party/libwebp/src/utils/bit_reader_utils.c",
+    "//flutter/third_party/libwebp/src/utils/bit_writer_utils.c",
+    "//flutter/third_party/libwebp/src/utils/color_cache_utils.c",
+    "//flutter/third_party/libwebp/src/utils/filters_utils.c",
+    "//flutter/third_party/libwebp/src/utils/huffman_encode_utils.c",
+    "//flutter/third_party/libwebp/src/utils/huffman_utils.c",
+    "//flutter/third_party/libwebp/src/utils/quant_levels_dec_utils.c",
+    "//flutter/third_party/libwebp/src/utils/quant_levels_utils.c",
+    "//flutter/third_party/libwebp/src/utils/random_utils.c",
+    "//flutter/third_party/libwebp/src/utils/rescaler_utils.c",
+    "//flutter/third_party/libwebp/src/utils/thread_utils.c",
+    "//flutter/third_party/libwebp/src/utils/utils.c",
+  ]
+}

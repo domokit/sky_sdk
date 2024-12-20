@@ -1,0 +1,101 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+_skia_root = "//flutter/third_party/skia"
+
+import("$_skia_root/modules/skcms/skcms.gni")
+
+# Use for CPU-specific skcms transform code that needs particular compiler flags.
+# (This is patterned after `opts` in Skia's BUILD.gn.)
+template("arch") {
+  if (invoker.enabled) {
+    source_set(target_name) {
+      visibility = [ ":*" ]
+      check_includes = false
+      forward_variables_from(invoker, "*")
+    }
+  } else {
+    # If not enabled, a phony empty target that swallows all otherwise unused variables.
+    source_set(target_name) {
+      visibility = [ ":*" ]
+      check_includes = false
+      forward_variables_from(invoker,
+                             "*",
+                             [
+                               "sources",
+                               "cflags",
+                               "defines",
+                             ])
+    }
+  }
+}
+
+arch("skcms_TransformHsw") {
+  enabled = current_cpu == "x64" && target_os != "android"
+  sources = skcms_TransformHsw
+  if (is_win) {
+    if (is_clang) {
+      cflags = [
+        "/clang:-mavx2",
+        "/clang:-mf16c",
+        "/clang:-ffp-contract=off",
+      ]
+    } else {
+      cflags = [ "/arch:AVX2" ]
+    }
+  } else {
+    cflags = [
+      "-mavx2",
+      "-mf16c",
+      "-std=c11",
+    ]
+  }
+}
+
+arch("skcms_TransformSkx") {
+  enabled = current_cpu == "x64" && target_os != "android"
+  sources = skcms_TransformSkx
+  if (is_win) {
+    if (is_clang) {
+      cflags = [
+        "/clang:-mavx512f",
+        "/clang:-mavx512dq",
+        "/clang:-mavx512cd",
+        "/clang:-mavx512bw",
+        "/clang:-mavx512vl",
+        "/clang:-ffp-contract=off",
+      ]
+    } else {
+      cflags = [ "/arch:AVX512" ]
+    }
+  } else {
+    cflags = [
+      "-mavx512f",
+      "-mavx512dq",
+      "-mavx512cd",
+      "-mavx512bw",
+      "-mavx512vl",
+      "-std=c11",
+    ]
+  }
+}
+
+static_library("skcms") {
+  cflags = []
+  if (!is_win || is_clang) {
+    cflags += [ "-std=c11" ]
+  }
+  if (target_cpu != "x64" || target_os == "android") {
+    defines = [
+      "SKCMS_DISABLE_HSW",
+      "SKCMS_DISABLE_SKX",
+    ]
+  }
+  public = skcms_public_headers
+  sources = skcms_public + skcms_TransformBaseline
+  deps = [
+    ":skcms_TransformHsw",
+    ":skcms_TransformSkx",
+  ]
+}

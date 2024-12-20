@@ -1,0 +1,58 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+{
+    include: [
+        "sys/testing/gtest_runner.shard.cml",
+        "sys/component/realm_builder_absolute.shard.cml",
+
+        // This test needs both the vulkan facet and the hermetic-tier-2 facet,
+        // so we are forced to make it a system test.
+        "sys/testing/system-test.shard.cml",
+    ],
+    program: {
+        binary: "bin/app",
+    },
+    offer: [
+        {
+            // Offer capabilities needed by components in this test realm.
+            // Keep it minimal, describe only what's actually needed.
+            protocol: [
+                "fuchsia.inspect.InspectSink",
+                "fuchsia.logger.LogSink",
+                "fuchsia.sysmem.Allocator",
+                "fuchsia.sysmem2.Allocator",
+                "fuchsia.tracing.provider.Registry",
+                "fuchsia.vulkan.loader.Loader",
+                "fuchsia.posix.socket.Provider",
+                "fuchsia.intl.PropertyProvider",
+            ],
+            from: "parent",
+            to: "#realm_builder",
+        },
+        {
+            directory: "pkg",
+            subdir: "config",
+            as: "config-data",
+            from: "framework",
+            to: "#realm_builder",
+        },
+        // See common.shard.cml.
+        {
+            directory: "tzdata-icu",
+            from: "framework",
+            to: "#realm_builder",
+        },
+    ],
+    // TODO(https://fxbug.dev/114584): Figure out how to bring these in as deps (if possible oot).
+    facets: {
+        "fuchsia.test": {
+            "deprecated-allowed-packages": [
+                "dart_jit_echo_server",
+                "test_manager",
+                "oot_dart_jit_runner"
+            ],
+        },
+    },
+}

@@ -1,0 +1,23 @@
+# Copyright 2015 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+  # Track where uninitialized memory originates from. From fastest to slowest:
+  # 0 - no tracking, 1 - track only the initial allocation site, 2 - track the
+  # chain of stores leading from allocation site to use site.
+  msan_track_origins = 2
+
+  # Use dynamic libraries instrumented by one of the sanitizers instead of the
+  # standard system libraries. Set this flag to download prebuilt binaries from
+  # GCS.
+  use_prebuilt_instrumented_libraries = false
+
+  is_ubsan_vptr = false
+
+  # Perfetto targets fail to build if this argument isn't defined. When true,
+  # the preprocessor macro ADDRESS_SANITIZER_WITHOUT_INSTRUMENTATION is defined.
+  use_sanitizer_configs_without_instrumentation = false
+}
+
+use_fuzzing_engine = false

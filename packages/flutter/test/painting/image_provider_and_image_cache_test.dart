@@ -16,8 +16,18 @@ import 'mocks_for_image_cache.dart';
 void main() {
   TestRenderingFlutterBinding.ensureInitialized();
 
-  Future<ui.Codec> basicDecoder(ui.ImmutableBuffer bytes, {int? cacheWidth, int? cacheHeight, bool? allowUpscaling}) {
-    return PaintingBinding.instance.instantiateImageCodecFromBuffer(bytes, cacheWidth: cacheWidth, cacheHeight: cacheHeight, allowUpscaling: allowUpscaling ?? false);
+  Future<ui.Codec> basicDecoder(
+    ui.ImmutableBuffer bytes, {
+    int? cacheWidth,
+    int? cacheHeight,
+    bool? allowUpscaling,
+  }) {
+    return PaintingBinding.instance.instantiateImageCodecFromBuffer(
+      bytes,
+      cacheWidth: cacheWidth,
+      cacheHeight: cacheHeight,
+      allowUpscaling: allowUpscaling ?? false,
+    );
   }
 
   FlutterExceptionHandler? oldError;
@@ -62,7 +72,9 @@ void main() {
     final MemoryImage imageProvider = MemoryImage(bytes);
     final ImageStream stream = imageProvider.resolve(ImageConfiguration.empty);
     final Completer<void> completer = Completer<void>();
-    stream.addListener(ImageStreamListener((ImageInfo info, bool syncCall) => completer.complete()));
+    stream.addListener(
+      ImageStreamListener((ImageInfo info, bool syncCall) => completer.complete()),
+    );
     await completer.future;
 
     expect(imageCache.currentSize, 1);
@@ -74,18 +86,24 @@ void main() {
     final ImageCache otherCache = ImageCache();
     final Uint8List bytes = Uint8List.fromList(kTransparentImage);
     final MemoryImage imageProvider = MemoryImage(bytes);
-    final ImageStreamCompleter cacheStream = otherCache.putIfAbsent(
-      imageProvider, () => imageProvider.loadBuffer(imageProvider, basicDecoder),
-    )!;
+    final ImageStreamCompleter cacheStream =
+        otherCache.putIfAbsent(
+          imageProvider,
+          () => imageProvider.loadBuffer(imageProvider, basicDecoder),
+        )!;
     final ImageStream stream = imageProvider.resolve(ImageConfiguration.empty);
     final Completer<void> completer = Completer<void>();
     final Completer<void> cacheCompleter = Completer<void>();
-    stream.addListener(ImageStreamListener((ImageInfo info, bool syncCall) {
-      completer.complete();
-    }));
-    cacheStream.addListener(ImageStreamListener((ImageInfo info, bool syncCall) {
-      cacheCompleter.complete();
-    }));
+    stream.addListener(
+      ImageStreamListener((ImageInfo info, bool syncCall) {
+        completer.complete();
+      }),
+    );
+    cacheStream.addListener(
+      ImageStreamListener((ImageInfo info, bool syncCall) {
+        cacheCompleter.complete();
+      }),
+    );
     await Future.wait(<Future<void>>[completer.future, cacheCompleter.future]);
 
     expect(otherCache.currentSize, 1);
@@ -102,11 +120,16 @@ void main() {
       caughtError.complete(false);
     };
     final ImageStream stream = imageProvider.resolve(ImageConfiguration.empty);
-    stream.addListener(ImageStreamListener((ImageInfo info, bool syncCall) {
-      caughtError.complete(false);
-    }, onError: (dynamic error, StackTrace? stackTrace) {
-      caughtError.complete(true);
-    }));
+    stream.addListener(
+      ImageStreamListener(
+        (ImageInfo info, bool syncCall) {
+          caughtError.complete(false);
+        },
+        onError: (dynamic error, StackTrace? stackTrace) {
+          caughtError.complete(true);
+        },
+      ),
+    );
     expect(await caughtError.future, true);
   });
 }

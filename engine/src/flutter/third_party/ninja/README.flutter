@@ -1,0 +1,17 @@
+Name: ninja
+Short Name: ninja
+URL: https://github.com/ninja-build/ninja
+Revision: See the CIPD version in DEPS
+License: Apache License 2.0
+License File: https://github.com/ninja-build/ninja/blob/master/COPYING
+Security Critical: no
+
+Description:
+Ninja is a small build system with a focus on speed, and is used to build
+this project.
+
+The CIPD packages are built using the 3pp pipeline.
+https://chromium.googlesource.com/infra/infra/+/refs/heads/main/3pp/ninja/
+
+Local Modifications:
+None

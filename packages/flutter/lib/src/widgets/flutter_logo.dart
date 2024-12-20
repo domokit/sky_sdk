@@ -70,10 +70,7 @@ class FlutterLogo extends StatelessWidget {
       height: iconSize,
       duration: duration,
       curve: curve,
-      decoration: FlutterLogoDecoration(
-        style: style,
-        textColor: textColor,
-      ),
+      decoration: FlutterLogoDecoration(style: style, textColor: textColor),
     );
   }
 }

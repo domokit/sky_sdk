@@ -1,0 +1,48 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+    include: [
+        "sys/testing/gtest_runner.shard.cml",
+        "sys/component/realm_builder_absolute.shard.cml",
+
+        // This test needs both the vulkan facet and the hermetic-tier-2 facet,
+        // so we are forced to make it a system test.
+        "sys/testing/system-test.shard.cml",
+    ],
+    program: {
+        binary: "bin/app",
+    },
+    offer: [
+        {
+            // Offer capabilities needed by components in this test realm.
+            // Keep it minimal, describe only what's actually needed.
+            protocol: [
+                "fuchsia.inspect.InspectSink",
+                "fuchsia.logger.LogSink",
+                "fuchsia.sysmem.Allocator",
+                "fuchsia.sysmem2.Allocator",
+                "fuchsia.tracing.provider.Registry",
+                "fuchsia.vulkan.loader.Loader",
+            ],
+            from: "parent",
+            to: "#realm_builder",
+        },
+    ],
+    // TODO(https://fxbug.dev/114584): Figure out how to bring these in as deps (if possible oot).
+    facets: {
+        "fuchsia.test": {
+            "deprecated-allowed-packages": [
+                "child-view",
+                "flatland-scene-manager-test-ui-stack",
+                "oot_flutter_aot_runner",
+                "oot_flutter_jit_runner",
+                "oot_flutter_jit_product_runner",
+                "oot_flutter_aot_product_runner",
+                "parent-view",
+                "test-ui-stack",
+                "test_manager",
+            ],
+        },
+    },
+}

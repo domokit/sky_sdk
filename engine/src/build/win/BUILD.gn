@@ -1,0 +1,12 @@
+# Copyright 2019 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Windows DLLs on which Flutter has a runtime dependency that should be shipped
+# with our distributable binaries.
+#
+# This target is for compatibility with the Chromium buildroot. In particular,
+# //third_party/angle depends on it.
+group("runtime_libs") {
+  data = []
+}

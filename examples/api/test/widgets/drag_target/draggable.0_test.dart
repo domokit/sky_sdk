@@ -3,15 +3,11 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/drag_target/draggable.0.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/drag_target/draggable.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  Finder findContainerWith({
-    required Finder child,
-    required Color color,
-  }) {
+  Finder findContainerWith({required Finder child, required Color color}) {
     return find.ancestor(
       of: child,
       matching: find.byWidgetPredicate(
@@ -21,33 +17,25 @@ void main() {
   }
 
   testWidgets('Verify initial state', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.DraggableExampleApp(),
-    );
+    await tester.pumpWidget(const example.DraggableExampleApp());
 
     expect(find.text('Draggable Sample'), findsOneWidget);
 
     expect(
-      findContainerWith(
-        color: Colors.lightGreenAccent,
-        child: find.text('Draggable'),
-      ),
+      findContainerWith(color: Colors.lightGreenAccent, child: find.text('Draggable')),
       findsOneWidget,
     );
 
     expect(
-      findContainerWith(
-        color: Colors.cyan,
-        child: find.text('Value is updated to: 0'),
-      ),
+      findContainerWith(color: Colors.cyan, child: find.text('Value is updated to: 0')),
       findsOneWidget,
     );
   });
 
-  testWidgets('Verify correct containers are displayed while dragging', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.DraggableExampleApp(),
-    );
+  testWidgets('Verify correct containers are displayed while dragging', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.DraggableExampleApp());
 
     final Finder idleContainer = findContainerWith(
       color: Colors.lightGreenAccent,
@@ -66,9 +54,7 @@ void main() {
     expect(draggingContainer, findsNothing);
     expect(feedbackContainer, findsNothing);
 
-    final TestGesture gesture = await tester.startGesture(
-      tester.getCenter(idleContainer),
-    );
+    final TestGesture gesture = await tester.startGesture(tester.getCenter(idleContainer));
     await tester.pump();
 
     expect(idleContainer, findsNothing);
@@ -90,10 +76,10 @@ void main() {
     expect(feedbackContainer, findsNothing);
   });
 
-  testWidgets('Dropping Draggable over DragTarget updates the counter', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.DraggableExampleApp(),
-    );
+  testWidgets('Dropping Draggable over DragTarget updates the counter', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.DraggableExampleApp());
 
     final Finder draggable = find.byType(Draggable<int>);
     final Finder target = find.byType(DragTarget<int>);
@@ -101,9 +87,7 @@ void main() {
     int counter = 0;
 
     for (int i = 0; i < 5; i++) {
-      final TestGesture gesture = await tester.startGesture(
-        tester.getCenter(draggable),
-      );
+      final TestGesture gesture = await tester.startGesture(tester.getCenter(draggable));
       await gesture.moveTo(tester.getCenter(target));
       await gesture.up();
       await tester.pump();
@@ -111,10 +95,7 @@ void main() {
       counter += 10;
 
       expect(
-        findContainerWith(
-          color: Colors.cyan,
-          child: find.text('Value is updated to: $counter'),
-        ),
+        findContainerWith(color: Colors.cyan, child: find.text('Value is updated to: $counter')),
         findsOneWidget,
       );
     }

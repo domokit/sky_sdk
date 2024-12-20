@@ -1,0 +1,262 @@
+# Copyright 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/sysroot.gni")
+import("//build/toolchain/ccache.gni")
+import("//build/toolchain/gcc_toolchain.gni")
+import("//build/toolchain/rbe.gni")
+import("//build/toolchain/toolchain.gni")
+
+declare_args() {
+  toolchain_prefix = ""
+}
+
+if (use_rbe) {
+  remote_wrapper =
+      rebase_path("//flutter/build/rbe/remote_wrapper_linux.sh", root_build_dir)
+  local_wrapper =
+      rebase_path("//flutter/build/rbe/local_wrapper.sh", root_build_dir)
+  compiler_args = rewrapper_command + [
+    "--remote_wrapper=$remote_wrapper",
+    "--local_wrapper=$local_wrapper",
+    "--labels=type=compile,compiler=clang,lang=cpp ",
+  ]
+  compiler_prefix = string_join(" ", compiler_args)
+  link_prefix = ""
+} else if (use_ccache) {
+  # ccache only supports compilation, not linking.
+  compiler_prefix = "ccache "
+  link_prefix = ""
+} else {
+  compiler_prefix = ""
+  link_prefix = ""
+}
+
+if (host_cpu == "arm64") {
+  rebased_clang_dir =
+      rebase_path("$buildtools_path/linux-arm64/clang/bin", root_build_dir)
+} else {
+  rebased_clang_dir =
+      rebase_path("$buildtools_path/linux-x64/clang/bin", root_build_dir)
+}
+
+gcc_toolchain("arm") {
+  prefix = "arm-linux-gnueabihf-"
+  if (toolchain_prefix != "") {
+    prefix = toolchain_prefix
+  }
+
+  asm = "${prefix}gcc"
+  cc = "${compiler_prefix}${prefix}gcc"
+  cxx = "${compiler_prefix}${prefix}g++"
+
+  ar = "${prefix}ar"
+  ld = "${link_prefix}${prefix}g++"
+  readelf = "${prefix}readelf"
+  nm = "${prefix}nm"
+  strip = "${prefix}strip"
+
+  toolchain_cpu = "arm"
+  toolchain_os = "linux"
+  is_clang = false
+}
+
+gcc_toolchain("clang_arm") {
+  prefix = rebased_clang_dir
+  asm = "${prefix}/clang"
+  cc = "${compiler_prefix}${prefix}/clang"
+  cxx = "${compiler_prefix}${prefix}/clang++"
+
+  readelf = "${prefix}/llvm-readelf"
+  nm = "${prefix}/llvm-nm"
+  ar = "${prefix}/llvm-ar"
+  ld = "${link_prefix}${prefix}/clang++"
+  llvm_objcopy = "${prefix}/llvm-objcopy"
+
+  toolchain_cpu = "arm"
+  toolchain_os = "linux"
+  is_clang = true
+}
+
+gcc_toolchain("arm64") {
+  prefix = "aarch64-linux-gnu-"
+  if (toolchain_prefix != "") {
+    prefix = toolchain_prefix
+  }
+
+  asm = "${prefix}gcc"
+  cc = "${compiler_prefix}${prefix}gcc"
+  cxx = "${compiler_prefix}${prefix}g++"
+
+  ar = "${prefix}ar"
+  ld = "${link_prefix}${prefix}g++"
+  readelf = "${prefix}readelf"
+  nm = "${prefix}nm"
+  strip = "${prefix}strip"
+
+  toolchain_cpu = "arm64"
+  toolchain_os = "linux"
+  is_clang = false
+}
+
+gcc_toolchain("clang_arm64") {
+  prefix = rebased_clang_dir
+  asm = "${prefix}/clang"
+  cc = "${compiler_prefix}${prefix}/clang"
+  cxx = "${compiler_prefix}${prefix}/clang++"
+
+  readelf = "readelf"
+  nm = "${prefix}/llvm-nm"
+  ar = "${prefix}/llvm-ar"
+  ld = "${link_prefix}${prefix}/clang++"
+  llvm_objcopy = "${prefix}/llvm-objcopy"
+
+  toolchain_cpu = "arm64"
+  toolchain_os = "linux"
+  is_clang = true
+}
+
+gcc_toolchain("clang_x86") {
+  prefix = rebased_clang_dir
+  asm = "${prefix}/clang"
+  cc = "${compiler_prefix}${prefix}/clang"
+  cxx = "${compiler_prefix}${prefix}/clang++"
+
+  readelf = "${prefix}/llvm-readelf"
+  nm = "${prefix}/llvm-nm"
+  ar = "${prefix}/llvm-ar"
+  ld = "${link_prefix}${prefix}/clang++"
+  llvm_objcopy = "${prefix}/llvm-objcopy"
+
+  toolchain_cpu = "x86"
+  toolchain_os = "linux"
+  is_clang = true
+}
+
+gcc_toolchain("x86") {
+  prefix = ""
+  asm = "${prefix}gcc"
+  cc = "${compiler_prefix}${prefix}gcc"
+  cxx = "${compiler_prefix}${prefix}g++"
+
+  readelf = "${prefix}readelf"
+  nm = "${prefix}nm"
+  ar = "${prefix}ar"
+  ld = "${link_prefix}${prefix}g++"
+  strip = "${prefix}strip"
+
+  toolchain_cpu = "x86"
+  toolchain_os = "linux"
+  is_clang = false
+}
+
+gcc_toolchain("clang_x64") {
+  prefix = rebased_clang_dir
+  asm = "${prefix}/clang"
+  cc = "${compiler_prefix}${prefix}/clang"
+  cxx = "${compiler_prefix}${prefix}/clang++"
+
+  readelf = "${prefix}/llvm-readelf"
+  nm = "${prefix}/llvm-nm"
+  ar = "${prefix}/llvm-ar"
+  ld = "${link_prefix}${prefix}/clang++"
+  llvm_objcopy = "${prefix}/llvm-objcopy"
+
+  toolchain_cpu = "x64"
+  toolchain_os = "linux"
+  is_clang = true
+}
+
+gcc_toolchain("x64") {
+  prefix = ""
+  asm = "${prefix}gcc"
+  cc = "${compiler_prefix}${prefix}gcc"
+  cxx = "${compiler_prefix}${prefix}g++"
+
+  readelf = "${prefix}readelf"
+  nm = "${prefix}nm"
+  ar = "${prefix}ar"
+  ld = "${link_prefix}${prefix}g++"
+  strip = "${prefix}strip"
+
+  toolchain_cpu = "x64"
+  toolchain_os = "linux"
+  is_clang = false
+}
+
+gcc_toolchain("riscv32") {
+  prefix = "riscv32-linux-gnu-"
+  if (toolchain_prefix != "") {
+    prefix = toolchain_prefix
+  }
+
+  asm = "${prefix}gcc"
+  cc = "${compiler_prefix}${prefix}gcc"
+  cxx = "${compiler_prefix}${prefix}g++"
+
+  ar = "${prefix}ar"
+  ld = "${link_prefix}${prefix}g++"
+  readelf = "${prefix}readelf"
+  nm = "${prefix}nm"
+  strip = "${prefix}strip"
+
+  toolchain_cpu = "riscv32"
+  toolchain_os = "linux"
+  is_clang = false
+}
+
+gcc_toolchain("clang_riscv32") {
+  prefix = rebased_clang_dir
+  asm = "${prefix}/clang"
+  cc = "${compiler_prefix}${prefix}/clang"
+  cxx = "${compiler_prefix}${prefix}/clang++"
+
+  readelf = "readelf"
+  nm = "${prefix}/llvm-nm"
+  ar = "${prefix}/llvm-ar"
+  ld = "${link_prefix}${prefix}/clang++"
+  llvm_objcopy = "${prefix}/llvm-objcopy"
+
+  toolchain_cpu = "riscv32"
+  toolchain_os = "linux"
+  is_clang = true
+}
+
+gcc_toolchain("riscv64") {
+  prefix = "riscv64-linux-gnu-"
+  if (toolchain_prefix != "") {
+    prefix = toolchain_prefix
+  }
+
+  asm = "${prefix}gcc"
+  cc = "${compiler_prefix}${prefix}gcc"
+  cxx = "${compiler_prefix}${prefix}g++"
+
+  ar = "${prefix}ar"
+  ld = "${link_prefix}${prefix}g++"
+  readelf = "${prefix}readelf"
+  nm = "${prefix}nm"
+  strip = "${prefix}strip"
+
+  toolchain_cpu = "riscv64"
+  toolchain_os = "linux"
+  is_clang = false
+}
+
+gcc_toolchain("clang_riscv64") {
+  prefix = rebased_clang_dir
+  asm = "${prefix}/clang"
+  cc = "${compiler_prefix}${prefix}/clang"
+  cxx = "${compiler_prefix}${prefix}/clang++"
+
+  readelf = "readelf"
+  nm = "${prefix}/llvm-nm"
+  ar = "${prefix}/llvm-ar"
+  ld = "${link_prefix}${prefix}/clang++"
+  llvm_objcopy = "${prefix}/llvm-objcopy"
+
+  toolchain_cpu = "riscv64"
+  toolchain_os = "linux"
+  is_clang = true
+}

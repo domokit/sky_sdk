@@ -1,0 +1,3 @@
+# Dart sources have to be normalized so that source offsets in kernel files
+# with source embedded in them match across all platforms.
+*.dart text eol=lf

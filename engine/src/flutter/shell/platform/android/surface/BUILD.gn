@@ -1,0 +1,63 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/shell/config.gni")
+
+source_set("surface") {
+  sources = [
+    "android_surface.cc",
+    "android_surface.h",
+    "snapshot_surface_producer.cc",
+    "snapshot_surface_producer.h",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+
+  deps = [
+    ":native_window",
+    "//flutter/flow",
+    "//flutter/fml",
+    "//flutter/shell/common",
+    "//flutter/shell/platform/android/context",
+    "//flutter/shell/platform/android/jni",
+    "//flutter/skia",
+  ]
+}
+
+source_set("native_window") {
+  sources = [
+    "android_native_window.cc",
+    "android_native_window.h",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+
+  deps = [
+    "//flutter/fml",
+    "//flutter/skia",
+  ]
+}
+
+source_set("surface_mock") {
+  testonly = true
+
+  sources = [
+    "android_surface_mock.cc",
+    "android_surface_mock.h",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+
+  deps = [
+    ":surface",
+    "//flutter/flow",
+    "//flutter/shell/gpu:gpu_surface_gl",
+    "//flutter/third_party/googletest:gmock",
+    "//flutter/third_party/googletest:gtest",
+  ]
+
+  if (shell_enable_vulkan) {
+    deps += [ "//flutter/vulkan" ]
+  }
+}

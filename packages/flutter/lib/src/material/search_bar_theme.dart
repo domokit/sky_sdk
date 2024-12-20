@@ -131,15 +131,55 @@ class SearchBarThemeData with Diagnosticable {
     }
     return SearchBarThemeData(
       elevation: MaterialStateProperty.lerp<double?>(a?.elevation, b?.elevation, t, lerpDouble),
-      backgroundColor: MaterialStateProperty.lerp<Color?>(a?.backgroundColor, b?.backgroundColor, t, Color.lerp),
-      shadowColor: MaterialStateProperty.lerp<Color?>(a?.shadowColor, b?.shadowColor, t, Color.lerp),
-      surfaceTintColor: MaterialStateProperty.lerp<Color?>(a?.surfaceTintColor, b?.surfaceTintColor, t, Color.lerp),
-      overlayColor: MaterialStateProperty.lerp<Color?>(a?.overlayColor, b?.overlayColor, t, Color.lerp),
+      backgroundColor: MaterialStateProperty.lerp<Color?>(
+        a?.backgroundColor,
+        b?.backgroundColor,
+        t,
+        Color.lerp,
+      ),
+      shadowColor: MaterialStateProperty.lerp<Color?>(
+        a?.shadowColor,
+        b?.shadowColor,
+        t,
+        Color.lerp,
+      ),
+      surfaceTintColor: MaterialStateProperty.lerp<Color?>(
+        a?.surfaceTintColor,
+        b?.surfaceTintColor,
+        t,
+        Color.lerp,
+      ),
+      overlayColor: MaterialStateProperty.lerp<Color?>(
+        a?.overlayColor,
+        b?.overlayColor,
+        t,
+        Color.lerp,
+      ),
       side: _lerpSides(a?.side, b?.side, t),
-      shape: MaterialStateProperty.lerp<OutlinedBorder?>(a?.shape, b?.shape, t, OutlinedBorder.lerp),
-      padding: MaterialStateProperty.lerp<EdgeInsetsGeometry?>(a?.padding, b?.padding, t, EdgeInsetsGeometry.lerp),
-      textStyle: MaterialStateProperty.lerp<TextStyle?>(a?.textStyle, b?.textStyle, t, TextStyle.lerp),
-      hintStyle: MaterialStateProperty.lerp<TextStyle?>(a?.hintStyle, b?.hintStyle, t, TextStyle.lerp),
+      shape: MaterialStateProperty.lerp<OutlinedBorder?>(
+        a?.shape,
+        b?.shape,
+        t,
+        OutlinedBorder.lerp,
+      ),
+      padding: MaterialStateProperty.lerp<EdgeInsetsGeometry?>(
+        a?.padding,
+        b?.padding,
+        t,
+        EdgeInsetsGeometry.lerp,
+      ),
+      textStyle: MaterialStateProperty.lerp<TextStyle?>(
+        a?.textStyle,
+        b?.textStyle,
+        t,
+        TextStyle.lerp,
+      ),
+      hintStyle: MaterialStateProperty.lerp<TextStyle?>(
+        a?.hintStyle,
+        b?.hintStyle,
+        t,
+        TextStyle.lerp,
+      ),
       constraints: BoxConstraints.lerp(a?.constraints, b?.constraints, t),
       textCapitalization: t < 0.5 ? a?.textCapitalization : b?.textCapitalization,
     );
@@ -169,40 +209,108 @@ class SearchBarThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is SearchBarThemeData
-      && other.elevation == elevation
-      && other.backgroundColor == backgroundColor
-      && other.shadowColor == shadowColor
-      && other.surfaceTintColor == surfaceTintColor
-      && other.overlayColor == overlayColor
-      && other.side == side
-      && other.shape == shape
-      && other.padding == padding
-      && other.textStyle == textStyle
-      && other.hintStyle == hintStyle
-      && other.constraints == constraints
-      && other.textCapitalization == textCapitalization;
+    return other is SearchBarThemeData &&
+        other.elevation == elevation &&
+        other.backgroundColor == backgroundColor &&
+        other.shadowColor == shadowColor &&
+        other.surfaceTintColor == surfaceTintColor &&
+        other.overlayColor == overlayColor &&
+        other.side == side &&
+        other.shape == shape &&
+        other.padding == padding &&
+        other.textStyle == textStyle &&
+        other.hintStyle == hintStyle &&
+        other.constraints == constraints &&
+        other.textCapitalization == textCapitalization;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<MaterialStateProperty<double?>>('elevation', elevation, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('backgroundColor', backgroundColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('shadowColor', shadowColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('surfaceTintColor', surfaceTintColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('overlayColor', overlayColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<BorderSide?>>('side', side, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<OutlinedBorder?>>('shape', shape, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<EdgeInsetsGeometry?>>('padding', padding, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<TextStyle?>>('textStyle', textStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<TextStyle?>>('hintStyle', hintStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<BoxConstraints>('constraints', constraints, defaultValue: null));
-    properties.add(DiagnosticsProperty<TextCapitalization>('textCapitalization', textCapitalization, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<double?>>(
+        'elevation',
+        elevation,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>>(
+        'backgroundColor',
+        backgroundColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>>(
+        'shadowColor',
+        shadowColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>>(
+        'surfaceTintColor',
+        surfaceTintColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>>(
+        'overlayColor',
+        overlayColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<BorderSide?>>('side', side, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<OutlinedBorder?>>(
+        'shape',
+        shape,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<EdgeInsetsGeometry?>>(
+        'padding',
+        padding,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<TextStyle?>>(
+        'textStyle',
+        textStyle,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<TextStyle?>>(
+        'hintStyle',
+        hintStyle,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<BoxConstraints>('constraints', constraints, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<TextCapitalization>(
+        'textCapitalization',
+        textCapitalization,
+        defaultValue: null,
+      ),
+    );
   }
 
   // Special case because BorderSide.lerp() doesn't support null arguments
-  static MaterialStateProperty<BorderSide?>? _lerpSides(MaterialStateProperty<BorderSide?>? a, MaterialStateProperty<BorderSide?>? b, double t) {
+  static MaterialStateProperty<BorderSide?>? _lerpSides(
+    MaterialStateProperty<BorderSide?>? a,
+    MaterialStateProperty<BorderSide?>? b,
+    double t,
+  ) {
     if (identical(a, b)) {
       return a;
     }
@@ -225,11 +333,7 @@ class SearchBarThemeData with Diagnosticable {
 ///    theme.
 class SearchBarTheme extends InheritedWidget {
   /// Constructs a search bar theme that configures all descendant [SearchBar] widgets.
-  const SearchBarTheme({
-    super.key,
-    required this.data,
-    required super.child,
-  });
+  const SearchBarTheme({super.key, required this.data, required super.child});
 
   /// The properties used for all descendant [SearchBar] widgets.
   final SearchBarThemeData data;
@@ -243,7 +347,8 @@ class SearchBarTheme extends InheritedWidget {
   /// SearchBarThemeData theme = SearchBarTheme.of(context);
   /// ```
   static SearchBarThemeData of(BuildContext context) {
-    final SearchBarTheme? searchBarTheme = context.dependOnInheritedWidgetOfExactType<SearchBarTheme>();
+    final SearchBarTheme? searchBarTheme =
+        context.dependOnInheritedWidgetOfExactType<SearchBarTheme>();
     return searchBarTheme?.data ?? Theme.of(context).searchBarTheme;
   }
 

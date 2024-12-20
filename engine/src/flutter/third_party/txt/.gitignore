@@ -1,0 +1,17 @@
+*.pyc
+*~
+.*.sw?
+.DS_Store
+.classpath
+.cproject
+.gdb_history
+.gdbinit
+.landmines
+.project
+.pydevproject
+.checkstyle
+.vscode
+cscope.*
+Session.vim
+tags
+Thumbs.db

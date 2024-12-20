@@ -30,8 +30,8 @@ class AppStateModel extends Model {
   // Totaled prices of the items in the cart.
   double get subtotalCost {
     return _productsInCart.keys
-      .map((int id) => _availableProducts![id].price * _productsInCart[id]!)
-      .fold(0.0, (double sum, int e) => sum + e);
+        .map((int id) => _availableProducts![id].price * _productsInCart[id]!)
+        .fold(0.0, (double sum, int e) => sum + e);
   }
 
   // Total shipping cost for the items in the cart.
@@ -54,9 +54,7 @@ class AppStateModel extends Model {
     if (_selectedCategory == Category.all) {
       return List<Product>.from(_availableProducts!);
     } else {
-      return _availableProducts!
-        .where((Product p) => p.category == _selectedCategory)
-        .toList();
+      return _availableProducts!.where((Product p) => p.category == _selectedCategory).toList();
     }
   }
 

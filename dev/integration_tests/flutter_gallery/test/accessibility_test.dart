@@ -9,16 +9,13 @@ import 'package:flutter_gallery/gallery/themes.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class TestMaterialApp extends StatelessWidget {
-  const TestMaterialApp({ super.key, required this.home });
+  const TestMaterialApp({super.key, required this.home});
 
   final Widget home;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: false),
-      home: home,
-    );
+    return MaterialApp(theme: ThemeData(useMaterial3: false), home: home);
   }
 }
 
@@ -299,12 +296,17 @@ void main() {
       handle.dispose();
     });
 
-    testWidgets('data_table_demo', (WidgetTester tester) async {
-      final SemanticsHandle handle = tester.ensureSemantics();
-      await tester.pumpWidget(const TestMaterialApp(home: DataTableDemo()));
-      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
-      handle.dispose();
-    }, skip: true); // DataTables are not accessible, https://github.com/flutter/flutter/issues/10830
+    testWidgets(
+      'data_table_demo',
+      (WidgetTester tester) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+        await tester.pumpWidget(const TestMaterialApp(home: DataTableDemo()));
+        await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+        handle.dispose();
+      },
+      // DataTables are not accessible, https://github.com/flutter/flutter/issues/10830
+      skip: true,
+    );
 
     testWidgets('date_and_time_picker_demo', (WidgetTester tester) async {
       final SemanticsHandle handle = tester.ensureSemantics();
@@ -490,15 +492,9 @@ void main() {
   });
 
   group('All material demos meet text contrast guidelines', () {
-    final List<ThemeData> themes = <ThemeData>[
-      kLightGalleryTheme,
-      kDarkGalleryTheme,
-    ];
+    final List<ThemeData> themes = <ThemeData>[kLightGalleryTheme, kDarkGalleryTheme];
 
-    const List<String> themeNames = <String>[
-      'kLightGalleryTheme',
-      'kDarkGalleryTheme',
-    ];
+    const List<String> themeNames = <String>['kLightGalleryTheme', 'kDarkGalleryTheme'];
 
     for (int themeIndex = 0; themeIndex < themes.length; themeIndex += 1) {
       final ThemeData theme = themes[themeIndex];
@@ -625,9 +621,7 @@ void main() {
 
       testWidgets('modal_bottom_sheet_demo $themeName', (WidgetTester tester) async {
         final SemanticsHandle handle = tester.ensureSemantics();
-        await tester.pumpWidget(
-          MaterialApp(theme: theme, home: const ModalBottomSheetDemo())
-        );
+        await tester.pumpWidget(MaterialApp(theme: theme, home: const ModalBottomSheetDemo()));
         await expectLater(tester, meetsGuideline(textContrastGuideline));
         handle.dispose();
       });
@@ -648,9 +642,7 @@ void main() {
 
       testWidgets('persistent_bottom_sheet_demo $themeName', (WidgetTester tester) async {
         final SemanticsHandle handle = tester.ensureSemantics();
-        await tester.pumpWidget(
-          MaterialApp(theme: theme, home: const PersistentBottomSheetDemo())
-        );
+        await tester.pumpWidget(MaterialApp(theme: theme, home: const PersistentBottomSheetDemo()));
         await expectLater(tester, meetsGuideline(textContrastGuideline));
         handle.dispose();
       });
@@ -699,9 +691,7 @@ void main() {
 
       testWidgets('snack_bar_demo $themeName', (WidgetTester tester) async {
         final SemanticsHandle handle = tester.ensureSemantics();
-        await tester.pumpWidget(
-          MaterialApp(theme: theme, home: const SnackBarDemo())
-        );
+        await tester.pumpWidget(MaterialApp(theme: theme, home: const SnackBarDemo()));
         await expectLater(tester, meetsGuideline(textContrastGuideline));
         handle.dispose();
       });

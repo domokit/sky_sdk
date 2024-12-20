@@ -1,0 +1,23 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../../tools/impeller.gni")
+
+impeller_component("glvk") {
+  sources = [
+    "proc_table.cc",
+    "proc_table.h",
+    "trampoline.cc",
+    "trampoline.h",
+  ]
+
+  public_deps = [
+    "../../renderer",
+    "../../renderer/backend/gles",
+    "../../renderer/backend/vulkan",
+    "../../toolkit/egl",
+    "../../toolkit/gles",
+    "//flutter/fml",
+  ]
+}

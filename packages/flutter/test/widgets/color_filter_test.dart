@@ -24,19 +24,15 @@ void main() {
         ),
       ),
     );
-    await expectLater(
-      find.byType(ColorFiltered),
-      matchesGoldenFile('color_filter_red.png'),
-    );
+    await expectLater(find.byType(ColorFiltered), matchesGoldenFile('color_filter_red.png'));
   });
 
   testWidgets('Color filter - sepia', (WidgetTester tester) async {
-
     const ColorFilter sepia = ColorFilter.matrix(<double>[
-      0.39,  0.769, 0.189, 0, 0, //
+      0.39, 0.769, 0.189, 0, 0, //
       0.349, 0.686, 0.168, 0, 0, //
       0.272, 0.534, 0.131, 0, 0, //
-      0,     0,     0,     1, 0, //
+      0, 0, 0, 1, 0, //
     ]);
     await tester.pumpWidget(
       RepaintBoundary(
@@ -47,14 +43,10 @@ void main() {
             title: 'Flutter Demo',
             theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: false),
             home: Scaffold(
-              appBar: AppBar(
-                title: const Text('Sepia ColorFilter Test'),
-              ),
-              body: const Center(
-                child:Text('Hooray!'),
-              ),
+              appBar: AppBar(title: const Text('Sepia ColorFilter Test')),
+              body: const Center(child: Text('Hooray!')),
               floatingActionButton: FloatingActionButton(
-                onPressed: () { },
+                onPressed: () {},
                 tooltip: 'Increment',
                 child: const Icon(Icons.add),
               ),
@@ -63,10 +55,7 @@ void main() {
         ),
       ),
     );
-    await expectLater(
-      find.byType(ColorFiltered),
-      matchesGoldenFile('color_filter_sepia.png'),
-    );
+    await expectLater(find.byType(ColorFiltered), matchesGoldenFile('color_filter_sepia.png'));
   }, skip: impellerEnabled); // https://github.com/flutter/flutter/issues/143616
 
   testWidgets('Color filter - reuses its layer', (WidgetTester tester) async {

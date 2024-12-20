@@ -12,36 +12,34 @@ class Item {
   @override
   String toString() => 'Item($key1, $key2)';
 }
+
 List<Item> items = <Item>[Item(), Item()];
 
 class StatefulLeaf extends StatefulWidget {
-  const StatefulLeaf({ GlobalKey? key }) : super(key: key);
+  const StatefulLeaf({GlobalKey? key}) : super(key: key);
 
   @override
   StatefulLeafState createState() => StatefulLeafState();
 }
 
 class StatefulLeafState extends State<StatefulLeaf> {
-  void markNeedsBuild() { setState(() { }); }
+  void markNeedsBuild() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) => const Text('leaf', textDirection: TextDirection.ltr);
 }
 
 class KeyedWrapper extends StatelessWidget {
-  const KeyedWrapper(this.key1, this.key2, { super.key });
+  const KeyedWrapper(this.key1, this.key2, {super.key});
 
   final Key key1;
   final GlobalKey key2;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      key: key1,
-      child: StatefulLeaf(
-        key: key2,
-      ),
-    );
+    return Container(key: key1, child: StatefulLeaf(key: key2));
   }
 }
 

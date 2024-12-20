@@ -7,7 +7,9 @@ import 'package:flutter_api_samples/material/search_anchor/search_anchor.3.dart'
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('can search and find options after waiting for fake network delay', (WidgetTester tester) async {
+  testWidgets('can search and find options after waiting for fake network delay', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const example.SearchAnchorAsyncExampleApp());
 
     await tester.tap(find.byIcon(Icons.search));

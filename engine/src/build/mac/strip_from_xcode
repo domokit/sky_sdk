@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Copyright (c) 2008 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This is a handy wrapper script that figures out how to call the strip
+# utility (strip_save_dsym in this case), if it even needs to be called at all,
+# and then does it.  This script should be called by a post-link phase in
+# targets that might generate Mach-O executables, dynamic libraries, or
+# loadable bundles.
+#
+# An example "Strip If Needed" build phase placed after "Link Binary With
+# Libraries" would do:
+# exec "${XCODEPROJ_DEPTH}/build/mac/strip_from_xcode"
+
+if [ "${CONFIGURATION}" != "Release" ] ; then
+  # Only strip in release mode.
+  exit 0
+fi
+
+declare -a FLAGS
+
+# MACH_O_TYPE is not set for a command-line tool, so check PRODUCT_TYPE too.
+# Weird.
+if [ "${MACH_O_TYPE}" = "mh_execute" ] || \
+   [ "${PRODUCT_TYPE}" = "com.apple.product-type.tool" ] ; then
+  # Strip everything (no special flags).  No-op.
+  true
+elif [ "${MACH_O_TYPE}" = "mh_dylib" ] || \
+     [ "${MACH_O_TYPE}" = "mh_bundle" ]; then
+  # Strip debugging symbols and local symbols
+  FLAGS[${#FLAGS[@]}]=-S
+  FLAGS[${#FLAGS[@]}]=-x
+elif [ "${MACH_O_TYPE}" = "staticlib" ] ; then
+  # Don't strip static libraries.
+  exit 0
+else
+  # Warn, but don't treat this as an error.
+  echo $0: warning: unrecognized MACH_O_TYPE ${MACH_O_TYPE}
+  exit 0
+fi
+
+if [ -n "${STRIPFLAGS}" ] ; then
+  # Pick up the standard STRIPFLAGS Xcode setting, used for "Additional Strip
+  # Flags".
+  for stripflag in "${STRIPFLAGS}" ; do
+    FLAGS[${#FLAGS[@]}]="${stripflag}"
+  done
+fi
+
+if [ -n "${CHROMIUM_STRIP_SAVE_FILE}" ] ; then
+  # An Xcode project can communicate a file listing symbols to saved in this
+  # environment variable by setting it as a build setting.  This isn't a
+  # standard Xcode setting.  It's used in preference to STRIPFLAGS to
+  # eliminate quoting ambiguity concerns.
+  FLAGS[${#FLAGS[@]}]=-s
+  FLAGS[${#FLAGS[@]}]="${CHROMIUM_STRIP_SAVE_FILE}"
+fi
+
+exec "$(dirname ${0})/strip_save_dsym" "${FLAGS[@]}" \
+     "${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}"

@@ -5,8 +5,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/image/image.frame_builder.0.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/image/image.frame_builder.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -16,10 +15,10 @@ void main() {
     HttpOverrides.global = null;
   });
 
-  testWidgets('The frame builder returns an AnimatedOpacity when not synchronously loaded', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.FrameBuilderExampleApp(),
-    );
+  testWidgets('The frame builder returns an AnimatedOpacity when not synchronously loaded', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.FrameBuilderExampleApp());
     await tester.pumpAndSettle();
 
     final Image image = tester.widget<Image>(find.byType(Image));
@@ -29,17 +28,15 @@ void main() {
     const Key key = Key('child');
 
     expect(
-      frameBuilder(context, const SizedBox(key: key), null,  false),
-      isA<AnimatedOpacity>().having(
-        (AnimatedOpacity opacity) => opacity.child!.key, 'key', key,
-      ),
+      frameBuilder(context, const SizedBox(key: key), null, false),
+      isA<AnimatedOpacity>().having((AnimatedOpacity opacity) => opacity.child!.key, 'key', key),
     );
   });
 
-  testWidgets('The frame builder returns the child when synchronously loaded', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.FrameBuilderExampleApp(),
-    );
+  testWidgets('The frame builder returns the child when synchronously loaded', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.FrameBuilderExampleApp());
     await tester.pumpAndSettle();
 
     final Image image = tester.widget<Image>(find.byType(Image));
@@ -49,10 +46,8 @@ void main() {
     const Key key = Key('child');
 
     expect(
-      frameBuilder(context, const SizedBox(key: key), null,  true),
-      isA<SizedBox>().having(
-        (SizedBox widget) => widget.key, 'key', key,
-      ),
+      frameBuilder(context, const SizedBox(key: key), null, true),
+      isA<SizedBox>().having((SizedBox widget) => widget.key, 'key', key),
     );
   });
 }

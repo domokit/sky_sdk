@@ -15,12 +15,8 @@ class TweenAnimationBuilderExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('TweenAnimationBuilder Sample'),
-        ),
-        body: const Center(
-          child: TweenAnimationBuilderExample(),
-        ),
+        appBar: AppBar(title: const Text('TweenAnimationBuilder Sample')),
+        body: const Center(child: TweenAnimationBuilderExample()),
       ),
     );
   }
@@ -30,12 +26,10 @@ class TweenAnimationBuilderExample extends StatefulWidget {
   const TweenAnimationBuilderExample({super.key});
 
   @override
-  State<TweenAnimationBuilderExample> createState() =>
-      _TweenAnimationBuilderExampleState();
+  State<TweenAnimationBuilderExample> createState() => _TweenAnimationBuilderExampleState();
 }
 
-class _TweenAnimationBuilderExampleState
-    extends State<TweenAnimationBuilderExample> {
+class _TweenAnimationBuilderExampleState extends State<TweenAnimationBuilderExample> {
   double _targetValue = 24.0;
 
   @override

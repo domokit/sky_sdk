@@ -1,0 +1,86 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../../../tools/impeller.gni")
+
+impeller_component("metal") {
+  sources = [
+    "allocator_mtl.h",
+    "allocator_mtl.mm",
+    "blit_pass_mtl.h",
+    "blit_pass_mtl.mm",
+    "command_buffer_mtl.h",
+    "command_buffer_mtl.mm",
+    "compute_pass_bindings_cache_mtl.h",
+    "compute_pass_bindings_cache_mtl.mm",
+    "compute_pass_mtl.h",
+    "compute_pass_mtl.mm",
+    "compute_pipeline_mtl.h",
+    "compute_pipeline_mtl.mm",
+    "context_mtl.h",
+    "context_mtl.mm",
+    "device_buffer_mtl.h",
+    "device_buffer_mtl.mm",
+    "formats_mtl.h",
+    "formats_mtl.mm",
+    "gpu_tracer_mtl.h",
+    "gpu_tracer_mtl.mm",
+    "lazy_drawable_holder.h",
+    "lazy_drawable_holder.mm",
+    "pass_bindings_cache_mtl.h",
+    "pass_bindings_cache_mtl.mm",
+    "pipeline_library_mtl.h",
+    "pipeline_library_mtl.mm",
+    "pipeline_mtl.h",
+    "pipeline_mtl.mm",
+    "render_pass_mtl.h",
+    "render_pass_mtl.mm",
+    "sampler_library_mtl.h",
+    "sampler_library_mtl.mm",
+    "sampler_mtl.h",
+    "sampler_mtl.mm",
+    "shader_function_mtl.h",
+    "shader_function_mtl.mm",
+    "shader_library_mtl.h",
+    "shader_library_mtl.mm",
+    "surface_mtl.h",
+    "surface_mtl.mm",
+    "texture_mtl.h",
+    "texture_mtl.mm",
+    "texture_wrapper_mtl.h",
+    "texture_wrapper_mtl.mm",
+    "vertex_descriptor_mtl.h",
+    "vertex_descriptor_mtl.mm",
+  ]
+
+  public_deps = [
+    "../../:renderer",
+    "//flutter/fml",
+  ]
+
+  frameworks = [
+    "Metal.framework",
+    "MetalPerformanceShaders.framework",
+  ]
+}
+
+impeller_component("metal_unittests") {
+  testonly = true
+
+  sources = [
+    "allocator_mtl_unittests.mm",
+    "texture_mtl_unittests.mm",
+  ]
+
+  deps = [
+    ":metal",
+    "//flutter/impeller/playground:playground_test",
+    "//flutter/testing:testing_lib",
+  ]
+
+  frameworks = [
+    "AppKit.framework",
+    "QuartzCore.framework",
+  ]
+}

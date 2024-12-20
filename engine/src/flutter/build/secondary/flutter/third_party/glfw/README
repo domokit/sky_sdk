@@ -1,0 +1,13 @@
+Name: GLFW
+License: zlib/libpng (BSD-like)
+Upstream Git: https://github.com/glfw/glfw
+Version: 3.2.1
+Description:
+
+GLFW is an Open Source, multi-platform library for OpenGL, OpenGL ES and
+Vulkan development on the desktop.
+
+To update:
+- Advance the pinned hash in DEPS, which should map the repository to
+  //third_party/glfw
+- Update BUILD.gn if necessary for changes.

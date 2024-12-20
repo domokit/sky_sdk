@@ -14,10 +14,16 @@ import 'test_utils.dart';
 // TODO(egarciad): Migrate existing files, https://github.com/flutter/flutter/issues/54566
 void main() {
   test('android project using deprecated settings.gradle will still build', () async {
-    final String workingDirectory = fileSystem.path.join(getFlutterRoot(), 'dev', 'integration_tests', 'gradle_deprecated_settings');
+    final String workingDirectory = fileSystem.path.join(
+      getFlutterRoot(),
+      'dev',
+      'integration_tests',
+      'gradle_deprecated_settings',
+    );
 
     final File settingsDotGradleFile = fileSystem.file(
-        fileSystem.path.join(workingDirectory, 'android', 'settings.gradle'));
+      fileSystem.path.join(workingDirectory, 'android', 'settings.gradle'),
+    );
     const String expectedSettingsDotGradle = r"""
 // Copyright 2014 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -55,14 +61,21 @@ plugins.each { name, path ->
       'build',
       'apk',
       '--debug',
-      '--target-platform', 'android-arm',
+      '--target-platform',
+      'android-arm',
       '--verbose',
     ], workingDirectory: workingDirectory);
 
     expect(result, const ProcessResultMatcher());
 
     final String apkPath = fileSystem.path.join(
-      workingDirectory, 'build', 'app', 'outputs', 'flutter-apk', 'app-debug.apk');
+      workingDirectory,
+      'build',
+      'app',
+      'outputs',
+      'flutter-apk',
+      'app-debug.apk',
+    );
     expect(fileSystem.file(apkPath), exists);
   });
 }

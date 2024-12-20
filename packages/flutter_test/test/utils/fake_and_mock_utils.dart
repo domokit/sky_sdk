@@ -34,8 +34,9 @@ void verifyPropertyFaked<TProperty>({
   expect(
     realValue == fakeValue,
     isFalse,
-    reason: 'Since the real value and fake value are equal, we cannot validate '
-      'that a property has been faked. Choose a different fake value to test.',
+    reason:
+        'Since the real value and fake value are equal, we cannot validate '
+        'that a property has been faked. Choose a different fake value to test.',
   );
   expect(propertyBeforeFaking, matcher(realValue));
   expect(propertyAfterFaking, matcher(fakeValue));
@@ -81,21 +82,34 @@ class _FakeViewPaddingMatcher extends Matcher {
   }
 
   @override
-  Description describeMismatch(dynamic item, Description mismatchDescription, Map<dynamic, dynamic> matchState, bool verbose) {
+  Description describeMismatch(
+    dynamic item,
+    Description mismatchDescription,
+    Map<dynamic, dynamic> matchState,
+    bool verbose,
+  ) {
     assert(item is ViewPadding, 'Can only match against implementations of ViewPadding.');
     final ViewPadding actual = item as ViewPadding;
 
     if (actual.left != expected.left) {
-      mismatchDescription.add('actual.left (${actual.left}) did not match expected.left (${expected.left})');
+      mismatchDescription.add(
+        'actual.left (${actual.left}) did not match expected.left (${expected.left})',
+      );
     }
     if (actual.top != expected.top) {
-      mismatchDescription.add('actual.top (${actual.top}) did not match expected.top (${expected.top})');
+      mismatchDescription.add(
+        'actual.top (${actual.top}) did not match expected.top (${expected.top})',
+      );
     }
     if (actual.right != expected.right) {
-      mismatchDescription.add('actual.right (${actual.right}) did not match expected.right (${expected.right})');
+      mismatchDescription.add(
+        'actual.right (${actual.right}) did not match expected.right (${expected.right})',
+      );
     }
     if (actual.bottom != expected.bottom) {
-      mismatchDescription.add('actual.bottom (${actual.bottom}) did not match expected.bottom (${expected.bottom})');
+      mismatchDescription.add(
+        'actual.bottom (${actual.bottom}) did not match expected.bottom (${expected.bottom})',
+      );
     }
 
     return mismatchDescription;
@@ -107,8 +121,8 @@ class _FakeViewPaddingMatcher extends Matcher {
     final ViewPadding actual = item as ViewPadding;
 
     return actual.left == expected.left &&
-      actual.top == expected.top &&
-      actual.right == expected.right &&
-      actual.bottom == expected.bottom;
+        actual.top == expected.top &&
+        actual.right == expected.right &&
+        actual.bottom == expected.bottom;
   }
 }

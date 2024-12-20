@@ -13,10 +13,7 @@ class GeneralDialogApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      restorationScopeId: 'app',
-      home: GeneralDialogExample(),
-    );
+    return const MaterialApp(restorationScopeId: 'app', home: GeneralDialogExample());
   }
 }
 

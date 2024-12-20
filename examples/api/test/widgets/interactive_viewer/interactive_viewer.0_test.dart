@@ -9,9 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Has correct items on screen', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.InteractiveViewerExampleApp(),
-    );
+    await tester.pumpWidget(const example.InteractiveViewerExampleApp());
 
     expect(find.widgetWithText(AppBar, 'InteractiveViewer Sample'), findsOne);
     expect(find.byType(InteractiveViewer), findsOne);

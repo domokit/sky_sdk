@@ -13,9 +13,7 @@ class ProgressIndicatorExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: ProgressIndicatorExample(),
-    );
+    return const MaterialApp(home: ProgressIndicatorExample());
   }
 }
 
@@ -23,26 +21,28 @@ class ProgressIndicatorExample extends StatefulWidget {
   const ProgressIndicatorExample({super.key});
 
   @override
-  State<ProgressIndicatorExample> createState() =>
-      _ProgressIndicatorExampleState();
+  State<ProgressIndicatorExample> createState() => _ProgressIndicatorExampleState();
 }
 
-class _ProgressIndicatorExampleState extends State<ProgressIndicatorExample> with TickerProviderStateMixin {
+class _ProgressIndicatorExampleState extends State<ProgressIndicatorExample>
+    with TickerProviderStateMixin {
   late AnimationController controller;
   bool year2023 = true;
 
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-      /// [AnimationController]s can be created with `vsync: this` because of
-      /// [TickerProviderStateMixin].
-      vsync: this,
-      duration: const Duration(seconds: 5),
-    )..addListener(() {
-      setState(() {});
-    })
-    ..repeat(reverse: true);
+    controller =
+        AnimationController(
+            /// [AnimationController]s can be created with `vsync: this` because of
+            /// [TickerProviderStateMixin].
+            vsync: this,
+            duration: const Duration(seconds: 5),
+          )
+          ..addListener(() {
+            setState(() {});
+          })
+          ..repeat(reverse: true);
   }
 
   @override
@@ -61,10 +61,7 @@ class _ProgressIndicatorExampleState extends State<ProgressIndicatorExample> wit
           const Text('Determinate LinearProgressIndicator'),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: LinearProgressIndicator(
-              year2023: year2023,
-              value: controller.value,
-            ),
+            child: LinearProgressIndicator(year2023: year2023, value: controller.value),
           ),
           const Text('Indeterminate LinearProgressIndicator'),
           Padding(
@@ -73,7 +70,10 @@ class _ProgressIndicatorExampleState extends State<ProgressIndicatorExample> wit
           ),
           SwitchListTile(
             value: year2023,
-            title: year2023 ? const Text('Switch to latest M3 style') : const Text('Switch to year2023 M3 style'),
+            title:
+                year2023
+                    ? const Text('Switch to latest M3 style')
+                    : const Text('Switch to year2023 M3 style'),
             onChanged: (bool value) {
               setState(() {
                 year2023 = !year2023;

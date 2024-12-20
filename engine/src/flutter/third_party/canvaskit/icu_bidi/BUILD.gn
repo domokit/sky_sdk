@@ -1,0 +1,54 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+public_include_dirs = [
+  "//flutter/third_party/icu/source/common",
+  "//flutter/third_party/icu/source/i18n",
+]
+
+config("icu_bidi_public") {
+  include_dirs = public_include_dirs
+  defines = [
+    "U_USING_ICU_NAMESPACE=0",
+    "U_DISABLE_RENAMING=0",
+    "U_HAVE_LIB_SUFFIX=1",
+    "U_LIB_SUFFIX_C_NAME=_skia",
+    "U_DISABLE_VERSION_SUFFIX=1",
+    "SK_USING_THIRD_PARTY_ICU",
+  ]
+  cflags = []
+
+  foreach(dir, include_dirs) {
+    cflags += [
+      "-isystem",
+      rebase_path(dir),
+    ]
+  }
+}
+
+static_library("icu_bidi") {
+  defines = [
+    "U_COMMON_IMPLEMENTATION",
+    "U_STATIC_IMPLEMENTATION",
+    "U_I18N_IMPLEMENTATION",
+  ]
+  sources = [
+    "//flutter/third_party/icu/source/common/cmemory.cpp",
+    "//flutter/third_party/icu/source/common/cstring.cpp",
+    "//flutter/third_party/icu/source/common/ubidi.cpp",
+    "//flutter/third_party/icu/source/common/ubidi_props.cpp",
+    "//flutter/third_party/icu/source/common/ubidiln.cpp",
+    "//flutter/third_party/icu/source/common/ubidiwrt.cpp",
+    "//flutter/third_party/icu/source/common/uchar.cpp",
+    "//flutter/third_party/icu/source/common/udataswp.cpp",
+    "//flutter/third_party/icu/source/common/uinvchar.cpp",
+    "//flutter/third_party/icu/source/common/ustring.cpp",
+    "//flutter/third_party/icu/source/common/ustrtrns.cpp",
+    "//flutter/third_party/icu/source/common/utf_impl.cpp",
+    "//flutter/third_party/icu/source/common/utrie2.cpp",
+    "//flutter/third_party/icu/source/common/utypes.cpp",
+  ]
+  public_configs = [ ":icu_bidi_public" ]
+  cflags = [ "-w" ]
+}

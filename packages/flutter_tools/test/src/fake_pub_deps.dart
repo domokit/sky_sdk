@@ -26,17 +26,10 @@ final class FakePubWithPrimedDeps implements Pub {
       <String, Object?>{
         'name': rootPackageName,
         'kind': 'root',
-        'dependencies': <String>[
-          ...dependencies.keys,
-          ...devDependencies,
-        ]..sort(),
-        'directDependencies': <String>[
-          ...?dependencies[rootPackageName],
-          ...devDependencies,
-        ]..sort(),
-        'devDependencies': <String>[
-          ...devDependencies,
-        ],
+        'dependencies': <String>[...dependencies.keys, ...devDependencies]..sort(),
+        'directDependencies': <String>[...?dependencies[rootPackageName], ...devDependencies]
+          ..sort(),
+        'devDependencies': <String>[...devDependencies],
       },
     ];
 
@@ -46,12 +39,8 @@ final class FakePubWithPrimedDeps implements Pub {
       packages.add(<String, Object?>{
         'name': packageName,
         'kind': direct ? 'direct' : 'transitive',
-        'dependencies': <String>[
-          ...?dependencies[packageName],
-        ],
-        'directDependencies': <String>[
-          ...?dependencies[packageName],
-        ],
+        'dependencies': <String>[...?dependencies[packageName]],
+        'directDependencies': <String>[...?dependencies[packageName]],
       });
     }
 

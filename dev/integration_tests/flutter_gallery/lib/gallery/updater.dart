@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 typedef UpdateUrlFetcher = Future<String?> Function();
 
 class Updater extends StatefulWidget {
-  const Updater({ required this.updateUrlFetcher, this.child, super.key });
+  const Updater({required this.updateUrlFetcher, this.child, super.key});
 
   final UpdateUrlFetcher updateUrlFetcher;
   final Widget? child;
@@ -45,8 +45,9 @@ class UpdaterState extends State<Updater> {
 
   Widget _buildDialog(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final TextStyle dialogTextStyle =
-        theme.textTheme.titleMedium!.copyWith(color: theme.textTheme.bodySmall!.color);
+    final TextStyle dialogTextStyle = theme.textTheme.titleMedium!.copyWith(
+      color: theme.textTheme.bodySmall!.color,
+    );
     return AlertDialog(
       title: const Text('Update Flutter Gallery?'),
       content: Text('A newer version is available.', style: dialogTextStyle),

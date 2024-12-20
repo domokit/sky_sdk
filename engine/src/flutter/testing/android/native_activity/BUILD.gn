@@ -1,0 +1,41 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# To create an native activity, deps in this source set in a
+# `native_activity_apk` target and make sure to add the implementation of
+# `NativeActivityMain` which returns a `flutter::NativeActivity` subclass.
+source_set("native_activity") {
+  assert(is_android)
+
+  sources = [
+    "native_activity.cc",
+    "native_activity.h",
+  ]
+
+  public_deps = [
+    "//flutter/fml",
+    "//flutter/impeller/toolkit/android",
+  ]
+
+  libs = [
+    "android",
+    "log",
+  ]
+}
+
+source_set("gtest_activity") {
+  assert(is_android)
+
+  testonly = true
+
+  sources = [
+    "gtest_activity.cc",
+    "gtest_activity.h",
+  ]
+
+  public_deps = [
+    ":native_activity",
+    "//flutter/testing:testing_lib",
+  ]
+}

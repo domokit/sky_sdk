@@ -13,7 +13,9 @@ void main() {
         appBar: AppBar(title: const Text('Image.frameBuilder Sample')),
         body: const Center(
           child: ImageClipExample(
-            image: NetworkImage('https://flutter.github.io/assets-for-api-docs/assets/widgets/puffin.jpg'),
+            image: NetworkImage(
+              'https://flutter.github.io/assets-for-api-docs/assets/widgets/puffin.jpg',
+            ),
           ),
         ),
       ),
@@ -36,16 +38,15 @@ class ImageClipExample extends StatelessWidget {
         height: 300,
         image: image,
         child: InkWell(
-          onTap: () {/* ... */},
+          onTap: () {
+            /* ... */
+          },
           child: const Align(
             child: Padding(
               padding: EdgeInsets.all(10.0),
               child: Text(
                 'PUFFIN',
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w900, color: Colors.white),
               ),
             ),
           ),

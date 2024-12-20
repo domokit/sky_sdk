@@ -24,41 +24,32 @@ class TwoProductCardColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-      return ListView(
-        physics: const ClampingScrollPhysics(),
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsetsDirectional.only(start: horizontalPadding),
-            child: top != null
-                ? MobileProductCard(
-                    imageAspectRatio: imageAspectRatio,
-                    product: top!,
-                  )
-                : const SizedBox(
-                    height: spacerHeight,
-                  ),
-          ),
-          const SizedBox(height: spacerHeight),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(end: horizontalPadding),
-            child: MobileProductCard(
-              imageAspectRatio: imageAspectRatio,
-              product: bottom,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return ListView(
+          physics: const ClampingScrollPhysics(),
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: horizontalPadding),
+              child:
+                  top != null
+                      ? MobileProductCard(imageAspectRatio: imageAspectRatio, product: top!)
+                      : const SizedBox(height: spacerHeight),
             ),
-          ),
-        ],
-      );
-    });
+            const SizedBox(height: spacerHeight),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: horizontalPadding),
+              child: MobileProductCard(imageAspectRatio: imageAspectRatio, product: bottom),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
 class OneProductCardColumn extends StatelessWidget {
-  const OneProductCardColumn({
-    super.key,
-    required this.product,
-    required this.reverse,
-  });
+  const OneProductCardColumn({super.key, required this.product, required this.reverse});
 
   final Product product;
 
@@ -70,14 +61,7 @@ class OneProductCardColumn extends StatelessWidget {
     return ListView(
       physics: const ClampingScrollPhysics(),
       reverse: reverse,
-      children: <Widget>[
-        const SizedBox(
-          height: 40,
-        ),
-        MobileProductCard(
-          product: product,
-        ),
-      ],
+      children: <Widget>[const SizedBox(height: 40), MobileProductCard(product: product)],
     );
   }
 }

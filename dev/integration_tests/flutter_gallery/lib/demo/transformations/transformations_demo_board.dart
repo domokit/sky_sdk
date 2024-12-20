@@ -81,7 +81,7 @@ class Board extends IterableMixin<BoardPoint?> {
   // Get the BoardPoint that comes after the given BoardPoint. If given null,
   // returns the origin BoardPoint. If given BoardPoint is the last, returns
   // null.
-  BoardPoint? _getNextBoardPoint (BoardPoint? boardPoint) {
+  BoardPoint? _getNextBoardPoint(BoardPoint? boardPoint) {
     // If before the first element.
     if (boardPoint == null) {
       return BoardPoint(-boardRadius, 0);
@@ -114,8 +114,7 @@ class Board extends IterableMixin<BoardPoint?> {
   static int getDistance(BoardPoint a, BoardPoint b) {
     final Vector3 a3 = a.cubeCoordinates;
     final Vector3 b3 = b.cubeCoordinates;
-    return
-      ((a3.x - b3.x).abs() + (a3.y - b3.y).abs() + (a3.z - b3.z).abs()) ~/ 2;
+    return ((a3.x - b3.x).abs() + (a3.y - b3.y).abs() + (a3.z - b3.z).abs()) ~/ 2;
   }
 
   // Return the q,r BoardPoint for a point in the scene, where the origin is in
@@ -148,9 +147,10 @@ class Board extends IterableMixin<BoardPoint?> {
   Vertices getVerticesForBoardPoint(BoardPoint boardPoint, Color color) {
     final Point<double> centerOfHexZeroCenter = boardPointToPoint(boardPoint);
 
-    final List<Offset> positions = positionsForHexagonAtOrigin.map((Offset offset) {
-      return offset.translate(centerOfHexZeroCenter.x, centerOfHexZeroCenter.y);
-    }).toList();
+    final List<Offset> positions =
+        positionsForHexagonAtOrigin.map((Offset offset) {
+          return offset.translate(centerOfHexZeroCenter.x, centerOfHexZeroCenter.y);
+        }).toList();
 
     return Vertices(
       VertexMode.triangleFan,
@@ -177,8 +177,8 @@ class Board extends IterableMixin<BoardPoint?> {
   // Return a new board where boardPoint has the given color.
   Board copyWithBoardPointColor(BoardPoint boardPoint, Color color) {
     final BoardPoint nextBoardPoint = boardPoint.copyWithColor(color);
-    final int boardPointIndex = _boardPoints.indexWhere((BoardPoint boardPointI) =>
-      boardPointI.q == boardPoint.q && boardPointI.r == boardPoint.r
+    final int boardPointIndex = _boardPoints.indexWhere(
+      (BoardPoint boardPointI) => boardPointI.q == boardPoint.q && boardPointI.r == boardPoint.r,
     );
 
     if (elementAt(boardPointIndex) == boardPoint && boardPoint.color == color) {
@@ -187,9 +187,7 @@ class Board extends IterableMixin<BoardPoint?> {
 
     final List<BoardPoint> nextBoardPoints = List<BoardPoint>.from(_boardPoints);
     nextBoardPoints[boardPointIndex] = nextBoardPoint;
-    final BoardPoint? selectedBoardPoint = boardPoint == selected
-      ? nextBoardPoint
-      : selected;
+    final BoardPoint? selectedBoardPoint = boardPoint == selected ? nextBoardPoint : selected;
     return Board(
       boardRadius: boardRadius,
       hexagonRadius: hexagonRadius,
@@ -231,28 +229,20 @@ class _BoardIterator implements Iterator<BoardPoint?> {
 // A range of q/r board coordinate values.
 @immutable
 class _Range {
-  const _Range(this.min, this.max)
-    : assert(min <= max);
+  const _Range(this.min, this.max) : assert(min <= max);
 
   final int min;
   final int max;
 }
 
-final Set<Color> boardPointColors = <Color>{
-  Colors.grey,
-  Colors.black,
-  Colors.red,
-  Colors.blue,
-};
+final Set<Color> boardPointColors = <Color>{Colors.grey, Colors.black, Colors.red, Colors.blue};
 
 // A location on the board in axial coordinates.
 // Axial coordinates use two integers, q and r, to locate a hexagon on a grid.
 // https://www.redblobgames.com/grids/hexagons/#coordinates-axial
 @immutable
 class BoardPoint {
-  const BoardPoint(this.q, this.r, {
-    this.color = Colors.grey,
-  });
+  const BoardPoint(this.q, this.r, {this.color = Colors.grey});
 
   final int q;
   final int r;
@@ -269,9 +259,7 @@ class BoardPoint {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is BoardPoint
-        && other.q == q
-        && other.r == r;
+    return other is BoardPoint && other.q == q && other.r == r;
   }
 
   @override
@@ -281,10 +269,6 @@ class BoardPoint {
 
   // Convert from q,r axial coords to x,y,z cube coords.
   Vector3 get cubeCoordinates {
-    return Vector3(
-      q.toDouble(),
-      r.toDouble(),
-      (-q - r).toDouble(),
-    );
+    return Vector3(q.toDouble(), r.toDouble(), (-q - r).toDouble());
   }
 }

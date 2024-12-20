@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Can toggle switch', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SwitchApp(),
-    );
+    await tester.pumpWidget(const example.SwitchApp());
 
     final Finder switchFinder = find.byType(Switch).first;
     Switch materialSwitch = tester.widget<Switch>(switchFinder);

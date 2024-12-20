@@ -34,10 +34,11 @@ void main() {
     final DiagnosticPropertiesBuilder builder = DiagnosticPropertiesBuilder();
     const BadgeThemeData().debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-      .map((DiagnosticsNode node) => node.toString())
-      .toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>[]);
   });
@@ -55,10 +56,11 @@ void main() {
       offset: Offset.zero,
     ).debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-        .map((DiagnosticsNode node) => node.toString())
-        .toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>[
       'backgroundColor: ${const Color(0xfffffff0)}',
@@ -68,7 +70,7 @@ void main() {
       'textStyle: TextStyle(inherit: true, size: 4.0)',
       'padding: EdgeInsets.all(5.0)',
       'alignment: AlignmentDirectional(6.0, 7.0)',
-      'offset: Offset(0.0, 0.0)'
+      'offset: Offset(0.0, 0.0)',
     ]);
   });
 
@@ -88,15 +90,8 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.light(useMaterial3: true).copyWith(
-          badgeTheme: badgeTheme,
-        ),
-        home: const Scaffold(
-          body: Badge(
-            label: Text('1234'),
-            child: Icon(Icons.add),
-          ),
-        ),
+        theme: ThemeData.light(useMaterial3: true).copyWith(badgeTheme: badgeTheme),
+        home: const Scaffold(body: Badge(label: Text('1234'), child: Icon(Icons.add))),
       ),
     );
 
@@ -104,7 +99,6 @@ void main() {
     expect(tester.getSize(find.text('1234')), const Size(48, 12));
 
     expect(tester.getTopLeft(find.text('1234')), const Offset(33, 2));
-
 
     expect(tester.getSize(find.byType(Badge)), const Size(24, 24)); // default Icon size
     expect(tester.getTopLeft(find.byType(Badge)), Offset.zero);
@@ -114,9 +108,12 @@ void main() {
     expect(textStyle.color, black);
 
     final RenderBox box = tester.renderObject(find.byType(Badge));
-    expect(box, paints..rrect(rrect: RRect.fromLTRBR(28, -2, 86, 18, const Radius.circular(10)), color: green));
+    expect(
+      box,
+      paints
+        ..rrect(rrect: RRect.fromLTRBR(28, -2, 86, 18, const Radius.circular(10)), color: green),
+    );
   });
-
 
   // This test is essentially the same as 'Badge uses ThemeData badge theme'. In
   // this case the theme is introduced with the BadgeTheme widget instead of
@@ -139,12 +136,7 @@ void main() {
       const MaterialApp(
         home: BadgeTheme(
           data: badgeTheme,
-          child: Scaffold(
-            body: Badge(
-              label: Text('1234'),
-              child: Icon(Icons.add),
-            ),
-          ),
+          child: Scaffold(body: Badge(label: Text('1234'), child: Icon(Icons.add))),
         ),
       ),
     );
@@ -157,6 +149,10 @@ void main() {
     expect(textStyle.fontSize, 12);
     expect(textStyle.color, black);
     final RenderBox box = tester.renderObject(find.byType(Badge));
-    expect(box, paints..rrect(rrect: RRect.fromLTRBR(28, -2, 86, 18, const Radius.circular(10)), color: green));
+    expect(
+      box,
+      paints
+        ..rrect(rrect: RRect.fromLTRBR(28, -2, 86, 18, const Radius.circular(10)), color: green),
+    );
   });
 }

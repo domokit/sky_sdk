@@ -14,9 +14,7 @@ void main() {
     const double containerTwoWidth = 50;
     const double containerThreeWidth = (rowWidth - 50) * 1 / 3;
 
-    await tester.pumpWidget(
-      const example.ExpandedApp(),
-    );
+    await tester.pumpWidget(const example.ExpandedApp());
 
     final Size row = tester.getSize(find.byType(Row));
     expect(row, const Size(rowWidth, rowHeight));

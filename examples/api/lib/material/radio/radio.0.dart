@@ -16,9 +16,7 @@ class RadioExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('Radio Sample')),
-        body: const Center(
-          child: RadioExample(),
-        ),
+        body: const Center(child: RadioExample()),
       ),
     );
   }

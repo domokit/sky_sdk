@@ -1,0 +1,25 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+if (is_android) {
+  gcc_version = 49
+} else if (current_toolchain == "//build/toolchain/cros:target") {
+  gcc_version = exec_script("../../compiler_version.py",
+                            [
+                              "target",
+                              "compiler",
+                            ],
+                            "value")
+} else if (current_toolchain == "//build/toolchain/linux:x64" ||
+           current_toolchain == "//build/toolchain/linux:x86") {
+  # These are both the same and just use the default gcc on the system.
+  gcc_version = exec_script("../../compiler_version.py",
+                            [
+                              "host",
+                              "compiler",
+                            ],
+                            "value")
+} else {
+  gcc_version = 0
+}

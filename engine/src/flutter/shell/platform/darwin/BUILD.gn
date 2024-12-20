@@ -1,0 +1,19 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+assert(is_mac || is_ios)
+
+import("//flutter/shell/platform/config.gni")
+
+group("darwin") {
+  if (is_ios) {
+    deps = [ "ios:flutter_framework" ]
+  }
+  if (is_mac) {
+    deps = []
+    if (enable_desktop_embeddings) {
+      deps += [ "macos" ]
+    }
+  }
+}

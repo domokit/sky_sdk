@@ -1,0 +1,59 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+
+# Builds the component in a non-product JIT build. This will
+# launch the vm service in the runner.
+dart_debug_build_cfg = {
+  runner_dep = "//flutter/shell/platform/fuchsia/dart_runner:dart_jit_runner"
+  platform_name = "dart_runner"
+  is_aot = false
+  is_product = false
+  enable_asserts = true
+}
+
+# Builds the component in a non-product AOT build. This will
+# launch the vm service in the runner.
+# This configuration is not compatible with a --release build since the
+# profile aot runner is built without asserts.
+dart_aot_debug_build_cfg = {
+  runner_dep = "//flutter/shell/platform/fuchsia/dart_runner:dart_aot_runner"
+  platform_name = "dart_runner"
+  is_aot = true
+  is_product = false
+  enable_asserts = true
+}
+
+# Builds the component in a non-product AOT build. This will
+# launch the vm service in the runner.
+dart_profile_build_cfg = {
+  runner_dep = "//flutter/shell/platform/fuchsia/dart_runner:dart_aot_runner"
+  platform_name = "dart_runner"
+  is_aot = true
+  is_product = false
+  enable_asserts = false
+}
+
+# Builds the component in a product JIT build. This will
+# not launch the vm service in the runner.
+dart_jit_release_build_cfg = {
+  runner_dep =
+      "//flutter/shell/platform/fuchsia/dart_runner:dart_jit_product_runner"
+  platform_name = "dart_runner"
+  is_aot = true
+  is_product = true
+  enable_asserts = false
+}
+
+# Builds the component in a product AOT build. This will
+# not launch the vm service in the runner.
+dart_release_build_cfg = {
+  runner_dep =
+      "//flutter/shell/platform/fuchsia/dart_runner:dart_aot_product_runner"
+  platform_name = "dart_runner"
+  is_aot = true
+  is_product = true
+  enable_asserts = false
+}

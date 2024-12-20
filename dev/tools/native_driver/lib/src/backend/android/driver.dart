@@ -44,10 +44,7 @@ final class AndroidNativeDriver implements NativeDriver {
     String? adbPath,
     io.Directory? tempDirectory,
   }) async {
-    final Adb adb = await Adb.create(
-      adbPath: adbPath,
-      target: target,
-    );
+    final Adb adb = await Adb.create(adbPath: adbPath, target: target);
     tempDirectory ??= io.Directory.systemTemp.createTempSync('native_driver.');
     final AndroidNativeDriver nativeDriver = AndroidNativeDriver.forTesting(
       adb: adb,

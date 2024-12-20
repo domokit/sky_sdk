@@ -7,10 +7,10 @@ import 'package:flutter_api_samples/material/expansion_tile/expansion_tile.2.dar
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('ExpansionTile animation can be customized using AnimationStyle', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ExpansionTileAnimationStyleApp(),
-    );
+  testWidgets('ExpansionTile animation can be customized using AnimationStyle', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.ExpansionTileAnimationStyleApp());
 
     double getHeight(WidgetTester tester) {
       return tester.getSize(find.byType(ExpansionTile)).height;

@@ -1,0 +1,17 @@
+{
+  "comment:0": "NOTE: THIS FILE IS GENERATED. DO NOT EDIT.",
+  "comment:1": "Instead modify 'flutter/lib/snapshot/libraries.yaml' and follow the instructions therein.",
+  "flutter": {
+    "include": [
+      {
+        "path": "../../third_party/dart/sdk/lib/libraries.json",
+        "target": "vm_common"
+      }
+    ],
+    "libraries": {
+      "ui": {
+        "uri": "../../lib/ui/ui.dart"
+      }
+    }
+  }
+}

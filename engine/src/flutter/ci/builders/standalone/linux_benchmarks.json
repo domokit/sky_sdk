@@ -1,0 +1,63 @@
+{
+    "drone_dimensions": [
+        "device_type=none",
+        "os=Linux"
+    ],
+    "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "use_rbe": true
+    },
+    "gn": [
+        "--target-dir",
+        "ci/host_release_benchmarks",
+        "--runtime-mode",
+        "release",
+        "--prebuilt-dart-sdk",
+        "--build-embedder-examples",
+        "--rbe",
+        "--no-goma"
+    ],
+    "name": "ci/host_release_benchmarks",
+    "description": "Builds and runs host-side benchmarks on Linux.",
+    "ninja": {
+        "config": "ci/host_release_benchmarks",
+        "targets": [
+            "flutter/build/dart:copy_dart_sdk",
+            "flutter/display_list:display_list_benchmarks",
+            "flutter/display_list:display_list_builder_benchmarks",
+            "flutter/display_list:display_list_region_benchmarks",
+            "flutter/display_list:display_list_transform_benchmarks",
+            "flutter/fml:fml_benchmarks",
+            "flutter/impeller/geometry:geometry_benchmarks",
+            "flutter/lib/ui:ui_benchmarks",
+            "flutter/shell/common:shell_benchmarks",
+            "flutter/shell/testing",
+            "flutter/third_party/txt:txt_benchmarks",
+            "flutter/tools/path_ops",
+            "flutter/build/archives:flutter_patched_sdk",
+            "flutter:unittests"
+        ]
+    },
+    "tests": [
+        {
+            "language": "bash",
+            "name": "Generate metrics test",
+            "script": "flutter/testing/benchmark/generate_metrics.sh",
+            "parameters": [
+                "ci/host_release_benchmarks"
+            ]
+        },
+        {
+            "contexts": [
+                "metric_center_token"
+            ],
+            "language": "bash",
+            "name": "Upload metrics",
+            "script": "flutter/testing/benchmark/upload_metrics.sh",
+            "parameters": [
+                "ci/host_release_benchmarks"
+            ]
+        }
+    ]
+}

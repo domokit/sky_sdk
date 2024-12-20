@@ -1,0 +1,305 @@
+# This file represents a "workspace" that applies to the whole repository.
+#
+# See <https://flutter.dev/go/pub-workspace> for details.
+#
+# The `flutter/engine` repository is a quasi-monorepo, with multiple Dart tools
+# and packages that are all interdependent. Third party dependencies are managed
+# by the `DEPS` file in the root of the repository, and are synced to either the
+# `third_party` (i.e. `//flutter/third_party`) or `../third_party` (i.e.
+# `//third_party`) directories by `gclient sync`.
+#
+# Every dependency declared here are dependencies used by _one or more_ of the
+# packages in the repository (though there is no enforcement of this). This file
+# then generates a `.dart_tool/package_config.json` file that is used by the
+# rest of the repository to resolve dependencies.
+#
+# ==============================================================================
+# WORKFLOWS
+# ==============================================================================
+#
+# ------------------------------------------------------------------------------
+# (1) ADDING A NEW DEPENDENCY
+# ------------------------------------------------------------------------------
+# Dependencies need to be added either via the DEPS file, or by checking if they
+# are available in the vendored Dart SDK (see notes below on library locations).
+# If dependencies are available, see (4) for how to add dependencies to a package in the workspace.
+#
+# ------------------------------------------------------------------------------
+# (2) CREATING A NEW PACKAGE
+# ------------------------------------------------------------------------------
+# If creating a package, say in ./tools or ./tools/pkg, ensure the following
+# header in its respective `pubspec.yaml`:
+# ```
+# # We don't publish packages to pub.dev from the engine repository.
+# publish_to: none
+#
+# # Required for workspace support.
+# environment:
+#   sdk: ^3.7.0-0
+#
+# # This package is managed as part of the engine workspace.
+# resolution: workspace
+# ```
+#
+# See (4) for how to add dependencies to a package in the workspace.
+#
+# ------------------------------------------------------------------------------
+# (3) MIGRATING A NON-WORKSPACE PACKAGE TO USING THE WORKSPACE
+# ------------------------------------------------------------------------------
+# Many packages in this repo are still using a pre-workspace style pubspec.yaml,
+# either with manually declared `dependency_overrides` (much of ./tools) or by
+# using pub (./web_sdk, ./lib/web_ui). To migrate a package to the workspace:
+#
+# A. Add the `resolution: workspace` field to the pubspec.yaml.
+# B. Update the minimum SDK version to at least `^3.5.0-294.0.dev`.
+# C. Add the package to the `workspace` field in this file.
+# D. Ensure every dependency in the package is added to the `dependencies` field
+#    in this file, following instructions in (4).
+#
+# Once `dart pub get` is run on the workspace, the package will be resolved as
+# part of the workspace, and the `dependency_overrides` in this file will be
+# applied to the package.
+#
+# ------------------------------------------------------------------------------
+# (4) ADDING DEPENDENCIES TO A PACKAGE IN THIS WORKSPACE
+# ------------------------------------------------------------------------------
+# When adding a dependency to a package in the workspace, add the dependency to
+# the `dependencies` field in this file. If the dependency is located within
+# the repository, use the `path` field to point to the package.
+#
+# If the dependency is a third party package, add it to the
+# `dependency_overrides` field in this file. The `any` version constraint is
+# used to indicate that the version of the package is not important, as it is
+# managed by the `DEPS` file.
+
+name: _engine_workspace
+
+# Required for workspace support.
+environment:
+  sdk: ^3.7.0-0
+
+# Declare all packages that are part of the workspace.
+workspace:
+  - ci
+  - flutter_frontend_server
+  - impeller/tessellator/dart
+  - shell/vmservice
+  - testing/benchmark
+  - testing/dart
+  - testing/scenario_app
+  - testing/skia_gold_client
+  - testing/smoke_test_failure
+  - testing/symbols
+  - tools/android_lint
+  - tools/api_check
+  - tools/build_bucket_golden_scraper
+  - tools/clang_tidy
+  - tools/clangd_check
+  - tools/compare_goldens
+  - tools/const_finder
+  - tools/dir_contents_diff
+  - tools/engine_tool
+  - tools/header_guard_check
+  - tools/gen_web_locale_keymap
+  - tools/githooks
+  - tools/licenses
+  - tools/path_ops/dart
+  - tools/golden_tests_harvester
+  - tools/pkg/engine_build_configs
+  - tools/pkg/engine_repo_tools
+  - tools/pkg/git_repo_tools
+  - tools/pkg/process_fakes
+
+# Declare all dependencies that are used by one or more packages.
+#
+# A few notes:
+# 1. There is no distinction between "dependencies" and "dev_dependencies";
+#    those notions are for *publishing* packages, not for managing a workspace.
+#    Specific packages in the workspace itself will declare whether they are
+#    dependencies or dev_dependencies, but here it is a union of both.
+#
+# 2. The `any` version constraint is used to indicate that the version of the
+#    package is not important, as it is managed by the `DEPS` file. In other
+#    words, "if the test pass, ship it".
+#
+# While not enforced by tooling, try to keep this list in alphabetical order.
+# TODO(matanlurey): https://dart.dev/tools/linter-rules/sort_pub_dependencies.
+dependencies:
+  args: any
+  async_helper: any
+  expect: any
+  file: any
+  logging: any
+  meta: any
+  path: any
+  platform: any
+  process_runner: any
+  smith: any
+
+dev_dependencies:
+  process_fakes:
+    path: ./tools/pkg/process_fakes
+  skia_gold_client:
+    path: ./testing/skia_gold_client
+
+# Instructs pub on how to resolve the dependencies that are part of "DEPS".
+#
+# For historic reasons, there are ~3 or so places packages might be located:
+#
+# - `./third_party/pkg/{name}`: for packages vended directly as part of "DEPS".
+#    Usually these are Flutter engine specific packages, i.e. they did not exist
+#    in the Dart vended SDK (the other options below). Typically these originate
+#    from pub (https://pub.dev) and are mirrored into a Google Git repository:
+#    <https://flutter.googlesource.com/>.
+#
+# - `./third_party/dart/pkg/{name}`: for packages that lives *in* the Dart SDK,
+#    which is in turn vendored into the Flutter engine repository. You can see
+#    a full list of available packages here:
+#    <https://github.com/dart-lang/sdk/tree/main/pkg>.
+#
+# - `./third_party/dart/third_party/pkg/{name}`: for packages that are vendored
+#    into the Dart SDK from pub.dev. These are often first-party packages from
+#    the Dart team, but not part of the Dart SDK itself. You can see a full list
+#    of available packages here:
+#    <https://github.com/dart-lang/sdk/blob/main/DEPS>.
+dependency_overrides:
+  _discoveryapis_commons:
+    path: ./third_party/pkg/googleapis/discoveryapis_commons
+  _fe_analyzer_shared:
+    path: ./third_party/dart/pkg/_fe_analyzer_shared
+  _macros:
+    path: ./third_party/dart/pkg/_macros
+  analyzer:
+    path: ./third_party/dart/pkg/analyzer
+  archive:
+    path: ./third_party/pkg/archive
+  args:
+    path: ./third_party/dart/third_party/pkg/core/pkgs/args
+  async:
+    path: ./third_party/dart/third_party/pkg/core/pkgs/async
+  async_helper:
+    path: ./third_party/dart/pkg/async_helper
+  boolean_selector:
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/boolean_selector
+  collection:
+    path: ./third_party/dart/third_party/pkg/core/pkgs/collection
+  convert:
+    path: ./third_party/dart/third_party/pkg/core/pkgs/convert
+  coverage:
+    path: ./third_party/pkg/coverage
+  crypto:
+    path: ./third_party/dart/third_party/pkg/core/pkgs/crypto
+  equatable:
+    path: ./third_party/pkg/equatable
+  expect:
+    path: ./third_party/dart/pkg/expect
+  file:
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/file
+  ffi:
+    path: ./third_party/dart/third_party/pkg/native/pkgs/ffi
+  fixnum:
+    path: ./third_party/dart/third_party/pkg/core/pkgs/fixnum
+  frontend_server_client:
+    path: ./third_party/dart/third_party/pkg/webdev/frontend_server_client
+  gcloud:
+    path: ./third_party/pkg/gcloud
+  glob:
+    path: ./third_party/dart/third_party/pkg/glob
+  googleapis:
+    path: ./third_party/pkg/googleapis/generated/googleapis
+  googleapis_auth:
+    path: ./third_party/pkg/googleapis/googleapis_auth
+  http:
+    path: ./third_party/dart/third_party/pkg/http/pkgs/http
+  http_multi_server:
+    path: ./third_party/dart/third_party/pkg/http_multi_server
+  http_parser:
+    path: ./third_party/dart/third_party/pkg/http/pkgs/http_parser
+  io:
+    path: ./third_party/pkg/io
+  js:
+    path: ./third_party/dart/pkg/js
+  kernel:
+    path: ./third_party/dart/pkg/kernel
+  logging:
+    path: ./third_party/dart/third_party/pkg/core/pkgs/logging
+  macros:
+    path: ./third_party/dart/pkg/macros
+  matcher:
+    path: ./third_party/dart/third_party/pkg/test/pkgs/matcher
+  meta:
+    path: ./third_party/dart/pkg/meta
+  metrics_center:
+    path: ./third_party/pkg/flutter_packages/packages/metrics_center
+  mime:
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/mime
+  node_preamble:
+    path: ./third_party/pkg/node_preamble
+  package_config:
+    path: ./third_party/dart/third_party/pkg/package_config
+  path:
+    path: ./third_party/dart/third_party/pkg/core/pkgs/path
+  platform:
+    path: ./third_party/dart/third_party/pkg/core/pkgs/platform
+  pool:
+    path: ./third_party/dart/third_party/pkg/pool
+  process:
+    path: ./third_party/pkg/process
+  process_runner:
+    path: ./third_party/pkg/process_runner
+  protobuf:
+    path: ./third_party/dart/third_party/pkg/protobuf/protobuf
+  pub_semver:
+    path: ./third_party/dart/third_party/pkg/pub_semver
+  shelf:
+    path: ./third_party/dart/third_party/pkg/shelf/pkgs/shelf
+  shelf_packages_handler:
+    path: ./third_party/dart/third_party/pkg/shelf/pkgs/shelf_packages_handler
+  shelf_static:
+    path: ./third_party/dart/third_party/pkg/shelf/pkgs/shelf_static
+  shelf_web_socket:
+    path: ./third_party/dart/third_party/pkg/shelf/pkgs/shelf_web_socket
+  sky_engine:
+    path: ./sky/packages/sky_engine
+  smith:
+    path: ./third_party/dart/pkg/smith
+  source_map_stack_trace:
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/source_map_stack_trace
+  source_maps:
+    path: ./third_party/dart/third_party/pkg/source_maps
+  source_span:
+    path: ./third_party/dart/third_party/pkg/source_span
+  stack_trace:
+    path: ./third_party/dart/third_party/pkg/stack_trace
+  stream_channel:
+    path: ./third_party/dart/third_party/pkg/stream_channel
+  string_scanner:
+    path: ./third_party/dart/third_party/pkg/string_scanner
+  term_glyph:
+    path: ./third_party/dart/third_party/pkg/term_glyph
+  test:
+    path: ./third_party/dart/third_party/pkg/test/pkgs/test
+  test_api:
+    path: ./third_party/dart/third_party/pkg/test/pkgs/test_api
+  test_core:
+    path: ./third_party/dart/third_party/pkg/test/pkgs/test_core
+  typed_data:
+    path: ./third_party/dart/third_party/pkg/core/pkgs/typed_data
+  vector_math:
+    path: ./third_party/pkg/vector_math
+  vm_service:
+    path: ./third_party/dart/pkg/vm_service
+  vm_service_protos:
+    path: ./third_party/dart/pkg/vm_service_protos
+  watcher:
+    path: ./third_party/dart/third_party/pkg/watcher
+  web:
+    path: ./third_party/dart/third_party/pkg/web/web
+  web_socket:
+    path: ./third_party/dart/third_party/pkg/http/pkgs/web_socket
+  web_socket_channel:
+    path: ./third_party/dart/third_party/pkg/web_socket_channel
+  webkit_inspection_protocol:
+    path: ./third_party/dart/third_party/pkg/webkit_inspection_protocol
+  yaml:
+    path: ./third_party/dart/third_party/pkg/yaml

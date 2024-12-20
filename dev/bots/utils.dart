@@ -11,6 +11,7 @@ import 'dart:math' as math;
 
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/source/line_info.dart';
 import 'package:collection/collection.dart';
 import 'package:file/file.dart' as fs;
 import 'package:file/local.dart';
@@ -30,20 +31,27 @@ typedef ShardRunner = Future<void> Function();
 /// appropriate error message.
 typedef OutputChecker = String? Function(CommandResult);
 
-const Duration _quietTimeout = Duration(minutes: 10); // how long the output should be hidden between calls to printProgress before just being verbose
+const Duration _quietTimeout = Duration(
+  minutes: 10,
+); // how long the output should be hidden between calls to printProgress before just being verbose
 
 // If running from LUCI set to False.
-final bool isLuci =  Platform.environment['LUCI_CI'] == 'True';
+final bool isLuci = Platform.environment['LUCI_CI'] == 'True';
 final bool hasColor = stdout.supportsAnsiEscapes && !isLuci;
-final bool _isRandomizationOff = bool.tryParse(Platform.environment['TEST_RANDOMIZATION_OFF'] ?? '') ?? false;
+final bool _isRandomizationOff =
+    bool.tryParse(Platform.environment['TEST_RANDOMIZATION_OFF'] ?? '') ?? false;
 
 final String bold = hasColor ? '\x1B[1m' : ''; // shard titles
 final String red = hasColor ? '\x1B[31m' : ''; // errors
 final String green = hasColor ? '\x1B[32m' : ''; // section titles, commands
-final String yellow = hasColor ? '\x1B[33m' : ''; // indications that a test was skipped (usually renders orange or brown)
+final String yellow =
+    hasColor
+        ? '\x1B[33m'
+        : ''; // indications that a test was skipped (usually renders orange or brown)
 final String cyan = hasColor ? '\x1B[36m' : ''; // paths
 final String reverse = hasColor ? '\x1B[7m' : ''; // clocks
-final String gray = hasColor ? '\x1B[30m' : ''; // subtle decorative items (usually renders as dark gray)
+final String gray =
+    hasColor ? '\x1B[30m' : ''; // subtle decorative items (usually renders as dark gray)
 final String white = hasColor ? '\x1B[37m' : ''; // last log line (usually renders as light gray)
 final String reset = hasColor ? '\x1B[0m' : '';
 
@@ -65,7 +73,7 @@ const String CIRRUS_TASK_NAME = 'CIRRUS_TASK_NAME';
 
 /// Environment variables to override the local engine when running `pub test`,
 /// if such flags are provided to `test.dart`.
-final Map<String,String> localEngineEnv = <String, String>{};
+final Map<String, String> localEngineEnv = <String, String>{};
 
 /// The arguments to pass to `flutter test` (typically the local engine
 /// configuration) -- prefilled with  the arguments passed to test.dart.
@@ -88,6 +96,7 @@ void enableDryRun() {
   }
   _dryRun = true;
 }
+
 bool? _dryRun;
 
 const int kESC = 0x1B;
@@ -109,10 +118,10 @@ String get redLine {
 String get clock {
   final DateTime now = DateTime.now();
   return '$reverse▌'
-         '${now.hour.toString().padLeft(2, "0")}:'
-         '${now.minute.toString().padLeft(2, "0")}:'
-         '${now.second.toString().padLeft(2, "0")}'
-         '▐$reset';
+      '${now.hour.toString().padLeft(2, "0")}:'
+      '${now.minute.toString().padLeft(2, "0")}:'
+      '${now.second.toString().padLeft(2, "0")}'
+      '▐$reset';
 }
 
 String prettyPrintDuration(Duration duration) {
@@ -251,21 +260,29 @@ void _printQuietly(Object? message) {
     int index = start;
     int length = 0;
     while (index < line.length && length < stdout.terminalColumns) {
-      if (line.codeUnitAt(index) == kESC) { // 0x1B
+      if (line.codeUnitAt(index) == kESC) {
+        // 0x1B
         index += 1;
-        if (index < line.length && line.codeUnitAt(index) == kOpenSquareBracket) { // 0x5B, [
+        if (index < line.length && line.codeUnitAt(index) == kOpenSquareBracket) {
+          // 0x5B, [
           // That was the start of a CSI sequence.
           index += 1;
-          while (index < line.length && line.codeUnitAt(index) >= kCSIParameterRangeStart
-                                     && line.codeUnitAt(index) <= kCSIParameterRangeEnd) { // 0x30..0x3F
+          while (index < line.length &&
+              line.codeUnitAt(index) >= kCSIParameterRangeStart &&
+              line.codeUnitAt(index) <= kCSIParameterRangeEnd) {
+            // 0x30..0x3F
             index += 1; // ...parameter bytes...
           }
-          while (index < line.length && line.codeUnitAt(index) >= kCSIIntermediateRangeStart
-                                     && line.codeUnitAt(index) <= kCSIIntermediateRangeEnd) { // 0x20..0x2F
+          while (index < line.length &&
+              line.codeUnitAt(index) >= kCSIIntermediateRangeStart &&
+              line.codeUnitAt(index) <= kCSIIntermediateRangeEnd) {
+            // 0x20..0x2F
             index += 1; // ...intermediate bytes...
           }
-          if (index < line.length && line.codeUnitAt(index) >= kCSIFinalRangeStart
-                                  && line.codeUnitAt(index) <= kCSIFinalRangeEnd) { // 0x40..0x7E
+          if (index < line.length &&
+              line.codeUnitAt(index) >= kCSIFinalRangeStart &&
+              line.codeUnitAt(index) <= kCSIFinalRangeEnd) {
+            // 0x40..0x7E
             index += 1; // ...final byte.
           }
         }
@@ -324,6 +341,50 @@ String locationInFile(ResolvedUnitResult unit, AstNode node, String workingDirec
   return '${path.relative(path.relative(unit.path, from: workingDirectory))}:${unit.lineInfo.getLocation(node.offset).lineNumber}';
 }
 
+/// Whether the given [AstNode] within the `compilationUnit` is under the effect
+/// of an inline ignore directive described by `ignoreDirectivePattern`.
+///
+/// The `compilationUnit` parameter is the parsed dart file containing the given
+/// [AstNode]. The `ignoreDirectivePattern` is a [Pattern] that should precisely
+/// match the ignore directive of interest (including the slashes, example:
+/// `// flutter_ignore: deprecation_syntax`).
+///
+/// The implementation assumes the `ignoreDirectivePattern` matches no more than
+/// one line. It searches for the given `ignoreDirectivePattern` in the
+/// `compilationUnit`, that either starts the line above the given `node`, or
+/// appears after `node` but on the same line, such that the ignore directive
+/// works the same way as dart's "ignore" comment: it can either be added above
+/// or after the line that needs to be exemped.
+bool hasInlineIgnore(
+  AstNode node,
+  ParseStringResult compilationUnit,
+  Pattern ignoreDirectivePattern,
+) {
+  final LineInfo lineInfo = compilationUnit.lineInfo;
+  // In case the node has multiple lines, match from its start offset.
+  final String textAfterNode = compilationUnit.content.substring(
+    node.offset,
+    // This assumes every line ends with a newline character (including the last
+    // line) and the new line character is not included to match the given pattern.
+    lineInfo.getOffsetOfLineAfter(node.offset) - 1,
+  );
+  if (textAfterNode.contains(ignoreDirectivePattern)) {
+    return true;
+  }
+  // The lineNumber getter uses one-based index while everything else uses zero-based index.
+  final int lineNumber = lineInfo.getLocation(node.offset).lineNumber - 1;
+  if (lineNumber <= 0) {
+    return false;
+  }
+  return compilationUnit.content
+      .substring(
+        lineInfo.getOffsetOfLine(lineNumber - 1),
+        lineInfo.getOffsetOfLine(lineNumber) - 1, // Excludes LF, see the comment above.
+      )
+      .trimLeft()
+      .contains(ignoreDirectivePattern);
+}
+
 // The seed used to shuffle tests. If not passed with
 // --test-randomize-ordering-seed=<seed> on the command line, it will be set the
 // first time it is accessed. Pass zero to turn off shuffling.
@@ -353,7 +414,8 @@ String get shuffleSeed {
 // properly when overriding the local engine (for example, because some platform
 // dependent targets are only built on some engines).
 // See https://github.com/flutter/flutter/issues/72368
-Future<void> runDartTest(String workingDirectory, {
+Future<void> runDartTest(
+  String workingDirectory, {
   List<String>? testPaths,
   bool enableFlutterToolAsserts = true,
   bool useBuildRunner = false,
@@ -397,26 +459,18 @@ Future<void> runDartTest(String workingDirectory, {
     '--file-reporter=json:${metricFile.path}',
     if (shuffleTests) '--test-randomize-ordering-seed=$shuffleSeed',
     '-j$cpus',
-    if (!hasColor)
-      '--no-color',
-    if (coverage != null)
-      '--coverage=$coverage',
-    if (perTestTimeout != null)
-      '--timeout=${perTestTimeout.inMilliseconds}ms',
-    if (runSkipped)
-      '--run-skipped',
-    if (tags != null)
-      ...tags.map((String t) => '--tags=$t'),
+    if (!hasColor) '--no-color',
+    if (coverage != null) '--coverage=$coverage',
+    if (perTestTimeout != null) '--timeout=${perTestTimeout.inMilliseconds}ms',
+    if (runSkipped) '--run-skipped',
+    if (tags != null) ...tags.map((String t) => '--tags=$t'),
     if (testPaths != null)
-      for (final String testPath in testPaths)
-        testPath,
+      for (final String testPath in testPaths) testPath,
   ];
   final Map<String, String> environment = <String, String>{
     'FLUTTER_ROOT': flutterRoot,
-    if (includeLocalEngineEnv)
-      ...localEngineEnv,
-    if (Directory(pubCache).existsSync())
-      'PUB_CACHE': pubCache,
+    if (includeLocalEngineEnv) ...localEngineEnv,
+    if (Directory(pubCache).existsSync()) 'PUB_CACHE': pubCache,
   };
   if (enableFlutterToolAsserts) {
     adjustEnvironmentToEnableFlutterAsserts(environment);
@@ -439,7 +493,9 @@ Future<void> runDartTest(String workingDirectory, {
     return;
   }
 
-  final TestFileReporterResults test = TestFileReporterResults.fromFile(metricFile); // --file-reporter name
+  final TestFileReporterResults test = TestFileReporterResults.fromFile(
+    metricFile,
+  ); // --file-reporter name
   final File info = fileSystem.file(path.join(flutterRoot, 'error.log'));
   info.writeAsStringSync(json.encode(test.errors));
 
@@ -452,8 +508,7 @@ Future<void> runDartTest(String workingDirectory, {
       }
       if (testList.isNotEmpty) {
         final String testJson = json.encode(testList);
-        final File testResults = fileSystem.file(
-            path.join(flutterRoot, 'test_results.json'));
+        final File testResults = fileSystem.file(path.join(flutterRoot, 'test_results.json'));
         testResults.writeAsStringSync(testJson);
       }
     } on fs.FileSystemException catch (e) {
@@ -467,7 +522,8 @@ Future<void> runDartTest(String workingDirectory, {
   metricFile.deleteSync();
 }
 
-Future<void> runFlutterTest(String workingDirectory, {
+Future<void> runFlutterTest(
+  String workingDirectory, {
   String? script,
   bool expectFailure = false,
   bool printOutput = true,
@@ -478,7 +534,10 @@ Future<void> runFlutterTest(String workingDirectory, {
   bool shuffleTests = true,
   bool fatalWarnings = true,
 }) async {
-  assert(!printOutput || outputChecker == null, 'Output either can be printed or checked but not both');
+  assert(
+    !printOutput || outputChecker == null,
+    'Output either can be printed or checked but not both',
+  );
 
   final List<String> tags = <String>[];
   // Recipe-configured reduced test shards will only execute tests with the
@@ -508,8 +567,7 @@ Future<void> runFlutterTest(String workingDirectory, {
         '${red}Could not find test$reset: $green$fullScriptPath$reset',
         'Working directory: $cyan$workingDirectory$reset',
         'Script: $green$script$reset',
-        if (!printOutput)
-          'This is one of the tests that does not normally print output.',
+        if (!printOutput) 'This is one of the tests that does not normally print output.',
       ]);
       return;
     }
@@ -518,9 +576,8 @@ Future<void> runFlutterTest(String workingDirectory, {
 
   args.addAll(tests);
 
-  final OutputMode outputMode = outputChecker == null && printOutput
-    ? OutputMode.print
-    : OutputMode.capture;
+  final OutputMode outputMode =
+      outputChecker == null && printOutput ? OutputMode.print : OutputMode.capture;
 
   final CommandResult result = await runCommand(
     flutter,
@@ -558,8 +615,10 @@ void adjustEnvironmentToEnableFlutterAsserts(Map<String, String> environment) {
   environment['FLUTTER_TOOL_ARGS'] = toolsArgs.trim();
 }
 
-Future<void> selectShard(Map<String, ShardRunner> shards) => _runFromList(shards, kShardKey, 'shard', 0);
-Future<void> selectSubshard(Map<String, ShardRunner> subshards) => _runFromList(subshards, kSubshardKey, 'subshard', 1);
+Future<void> selectShard(Map<String, ShardRunner> shards) =>
+    _runFromList(shards, kShardKey, 'shard', 0);
+Future<void> selectSubshard(Map<String, ShardRunner> subshards) =>
+    _runFromList(subshards, kSubshardKey, 'subshard', 1);
 
 Future<void> runShardRunnerIndexOfTotalSubshard(List<ShardRunner> tests) async {
   final List<ShardRunner> sublist = selectIndexOfTotalSubshard<ShardRunner>(tests);
@@ -567,6 +626,7 @@ Future<void> runShardRunnerIndexOfTotalSubshard(List<ShardRunner> tests) async {
     await test();
   }
 }
+
 /// Parse (one-)index/total-named subshards from environment variable SUBSHARD
 /// and equally distribute [tests] between them.
 /// The format of SUBSHARD is "{index}_{total number of shards}".
@@ -639,14 +699,20 @@ List<T> selectIndexOfTotalSubshard<T>(List<T> tests, {String subshardKey = kSubs
   // Lastly, compute the indices of the items in buckets[index].
   // We derive this from the toal number items in previous buckets and the number
   // of items in this bucket.
-  final int numberOfItemsInPreviousBuckets = subShardIndex == 0 ? 0 : buckets.sublist(0, subShardIndex - 1).sum;
+  final int numberOfItemsInPreviousBuckets =
+      subShardIndex == 0 ? 0 : buckets.sublist(0, subShardIndex - 1).sum;
   final int start = numberOfItemsInPreviousBuckets;
   final int end = start + buckets[subShardIndex - 1];
 
   return (start, end);
 }
 
-Future<void> _runFromList(Map<String, ShardRunner> items, String key, String name, int positionInTaskName) async {
+Future<void> _runFromList(
+  Map<String, ShardRunner> items,
+  String key,
+  String name,
+  int positionInTaskName,
+) async {
   try {
     String? item = Platform.environment[key];
     if (item == null && Platform.environment.containsKey(CIRRUS_TASK_NAME)) {
@@ -683,8 +749,7 @@ Future<void> _runFromList(Map<String, ShardRunner> items, String key, String nam
 /// Returns null if the contents are good. Returns a string if they are bad.
 /// The string is an error message.
 Future<String?> verifyVersion(File file) async {
-  final RegExp pattern = RegExp(
-    r'^(\d+)\.(\d+)\.(\d+)((-\d+\.\d+)?\.pre(\.\d+)?)?$');
+  final RegExp pattern = RegExp(r'^(\d+)\.(\d+)\.(\d+)((-\d+\.\d+)?\.pre(\.\d+)?)?$');
   if (!file.existsSync()) {
     return 'The version logic failed to create the Flutter version file.';
   }

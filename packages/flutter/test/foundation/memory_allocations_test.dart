@@ -12,7 +12,7 @@ class PrintOverrideTestBinding extends AutomatedTestWidgetsFlutterBinding {
   @override
   DebugPrintCallback get debugPrintOverride => _enablePrint ? debugPrint : _emptyPrint;
 
-  static void _emptyPrint(String? message, { int? wrapWidth }) {}
+  static void _emptyPrint(String? message, {int? wrapWidth}) {}
 
   static bool _enablePrint = true;
 
@@ -40,7 +40,6 @@ void main() {
   });
 
   test('addListener and removeListener add and remove listeners.', () {
-
     final ObjectEvent event = ObjectDisposed(object: 'object');
     ObjectEvent? receivedEvent;
     void listener(ObjectEvent event) => receivedEvent = event;
@@ -67,11 +66,13 @@ void main() {
       log.add('badListener1');
       throw ArgumentError();
     }
+
     void listener1(ObjectEvent event) => log.add('listener1');
     void badListener2(ObjectEvent event) {
       log.add('badListener2');
       throw ArgumentError();
     }
+
     void listener2(ObjectEvent event) => log.add('listener2');
 
     ma.addListener(badListener1);
@@ -80,10 +81,8 @@ void main() {
     ma.addListener(badListener2);
     ma.addListener(listener2);
 
-    PrintOverrideTestBinding.runWithDebugPrintDisabled(
-      () => ma.dispatchObjectEvent(event)
-    );
-    expect(log, <String>['badListener1', 'listener1', 'badListener2','listener2']);
+    PrintOverrideTestBinding.runWithDebugPrintDisabled(() => ma.dispatchObjectEvent(event));
+    expect(log, <String>['badListener1', 'listener1', 'badListener2', 'listener2']);
     expect(tester.takeException(), contains('Multiple exceptions (2)'));
 
     ma.removeListener(badListener1);
@@ -117,7 +116,7 @@ void main() {
     log.clear();
 
     ma.dispatchObjectEvent(event);
-    expect(log, <String>['listener1','listener2']);
+    expect(log, <String>['listener1', 'listener2']);
     log.clear();
 
     ma.removeListener(listener1);
@@ -206,16 +205,26 @@ void _checkSdkHandlersNotSet() {
 Future<int> _activateFlutterObjectsAndReturnCountOfEvents() async {
   int count = 0;
 
-  final ValueNotifier<bool> valueNotifier = ValueNotifier<bool>(true); count++;
-  final ChangeNotifier changeNotifier = ChangeNotifier()..addListener(() {}); count++;
-  final Picture picture = _createPicture(); count++;
+  final ValueNotifier<bool> valueNotifier = ValueNotifier<bool>(true);
+  count++;
+  final ChangeNotifier changeNotifier = ChangeNotifier()..addListener(() {});
+  count++;
+  final Picture picture = _createPicture();
+  count++;
 
-  valueNotifier.dispose(); count++;
-  changeNotifier.dispose(); count++;
-  picture.dispose(); count++;
+  valueNotifier.dispose();
+  count++;
+  changeNotifier.dispose();
+  count++;
+  picture.dispose();
+  count++;
 
-  final Image image = await _createImage(); count++; count++; count++;
-  image.dispose(); count++;
+  final Image image = await _createImage();
+  count++;
+  count++;
+  count++;
+  image.dispose();
+  count++;
 
   return count;
 }

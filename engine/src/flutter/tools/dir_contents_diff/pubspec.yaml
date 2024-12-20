@@ -1,0 +1,14 @@
+name: dir_contents_diff
+publish_to: none
+
+# Required for workspace support.
+environment:
+  sdk: ^3.7.0-0
+
+# This package is managed as part of the engine workspace.
+resolution: workspace
+
+dev_dependencies:
+  engine_repo_tools: any
+  path: any
+  test: any

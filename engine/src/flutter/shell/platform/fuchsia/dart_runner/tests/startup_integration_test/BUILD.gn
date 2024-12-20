@@ -1,0 +1,13 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+
+group("startup_integration_test") {
+  testonly = true
+  deps = [
+    "dart_aot_runner:tests",
+    "dart_jit_runner:tests",
+  ]
+}

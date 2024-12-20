@@ -1,0 +1,1298 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0A02E8F724EFAD27002D54E5 /* BogusFontTextTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A02E8F624EFAD27002D54E5 /* BogusFontTextTest.m */; };
+		0A57B3BD2323C4BD00DD9521 /* ScreenBeforeFlutter.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A57B3BC2323C4BD00DD9521 /* ScreenBeforeFlutter.m */; };
+		0A57B3BF2323C74200DD9521 /* FlutterEngine+ScenariosTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A57B3BE2323C74200DD9521 /* FlutterEngine+ScenariosTest.m */; };
+		0A57B3C22323D2D700DD9521 /* AppLifecycleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A57B3C12323D2D700DD9521 /* AppLifecycleTests.m */; };
+		0A97D7C024BA937000050525 /* FlutterViewControllerInitialRouteTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A97D7BF24BA937000050525 /* FlutterViewControllerInitialRouteTest.m */; };
+		0D8470A4240F0B1F0030B565 /* StatusBarTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D8470A3240F0B1F0030B565 /* StatusBarTest.m */; };
+		0DB781EF22E931BE00E9B371 /* ../../Flutter.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 246B4E4522E3B61000073EBF /* ../../Flutter.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		0DB781F122E933E800E9B371 /* ../../Flutter.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 246B4E4522E3B61000073EBF /* ../../Flutter.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		0DB781FE22EA2C6D00E9B371 /* ../../Flutter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246B4E4522E3B61000073EBF /* ../../Flutter.xcframework */; };
+		0DB781FF22EA2C7200E9B371 /* ../../Flutter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246B4E4522E3B61000073EBF /* ../../Flutter.xcframework */; };
+		0DB7820022EA2C9D00E9B371 /* App.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 246B4E4122E3B5F700073EBF /* App.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		0DB7820122EA2CA500E9B371 /* App.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 246B4E4122E3B5F700073EBF /* App.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		0DB7820222EA493B00E9B371 /* FlutterViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DB781FC22EA2C0300E9B371 /* FlutterViewControllerTest.m */; };
+		0DDEBC89258830B40065D0E8 /* SpawnEngineTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DDEBC88258830B40065D0E8 /* SpawnEngineTest.m */; };
+		242F37A222E636DE001E83D4 /* ../../Flutter.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 246B4E4522E3B61000073EBF /* ../../Flutter.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		242F37A322E636DE001E83D4 /* App.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 246B4E4122E3B5F700073EBF /* App.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		246B4E4222E3B5F700073EBF /* App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246B4E4122E3B5F700073EBF /* App.framework */; };
+		246B4E4622E3B61000073EBF /* ../../Flutter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246B4E4522E3B61000073EBF /* ../../Flutter.xcframework */; };
+		248D76CC22E388370012F0C1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 248D76CB22E388370012F0C1 /* AppDelegate.m */; };
+		248D76D422E388380012F0C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 248D76D322E388380012F0C1 /* Assets.xcassets */; };
+		248D76DA22E388380012F0C1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 248D76D922E388380012F0C1 /* main.m */; };
+		248D76EF22E388380012F0C1 /* PlatformViewUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 248D76EE22E388380012F0C1 /* PlatformViewUITests.m */; };
+		248FDFC422FE7CD0009CC7CD /* FlutterEngineTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 248FDFC322FE7CD0009CC7CD /* FlutterEngineTest.m */; };
+		24F1FB89230B4579005ACE7C /* TextPlatformView.m in Sources */ = {isa = PBXBuildFile; fileRef = 24F1FB87230B4579005ACE7C /* TextPlatformView.m */; };
+		3BFD97202A990CF50094F51B /* golden_bogus_font_text_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BFD971E2A990CF40094F51B /* golden_bogus_font_text_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		3BFD97212A990CF50094F51B /* golden_spawn_engine_works_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BFD971F2A990CF40094F51B /* golden_spawn_engine_works_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		4F06F1B32473296E000AF246 /* LocalizationInitializationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F06F1B124731F66000AF246 /* LocalizationInitializationTest.m */; };
+		6402EBD124147BDA00987DCB /* UnobstructedPlatformViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6402EBD024147BDA00987DCB /* UnobstructedPlatformViewTests.m */; };
+		6816DB9E231750ED00A51400 /* GoldenPlatformViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6816DB9D231750ED00A51400 /* GoldenPlatformViewTests.m */; };
+		6816DBA12317573300A51400 /* GoldenImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 6816DBA02317573300A51400 /* GoldenImage.m */; };
+		6816DBA42318358200A51400 /* GoldenTestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6816DBA32318358200A51400 /* GoldenTestManager.m */; };
+		684FFF7C29F9C10700281002 /* golden_platform_view_cliprrect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF6829F9C10300281002 /* golden_platform_view_cliprrect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF7D29F9C10700281002 /* golden_platform_view_cliprect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF6929F9C10300281002 /* golden_platform_view_cliprect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF7E29F9C10700281002 /* golden_platform_view_opacity_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF6A29F9C10300281002 /* golden_platform_view_opacity_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF7F29F9C10700281002 /* golden_platform_view_rotate_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF6B29F9C10400281002 /* golden_platform_view_rotate_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8029F9C10700281002 /* golden_platform_view_cliprect_after_moved_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF6C29F9C10400281002 /* golden_platform_view_cliprect_after_moved_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8129F9C10700281002 /* golden_platform_view_large_cliprrect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF6D29F9C10400281002 /* golden_platform_view_large_cliprrect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8229F9C10700281002 /* golden_two_platform_views_with_other_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF6E29F9C10400281002 /* golden_two_platform_views_with_other_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8329F9C10700281002 /* golden_platform_view_transform_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF6F29F9C10400281002 /* golden_platform_view_transform_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8429F9C10700281002 /* golden_non_full_screen_flutter_view_platform_view_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF7029F9C10500281002 /* golden_non_full_screen_flutter_view_platform_view_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8529F9C10700281002 /* golden_platform_view_cliprrect_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF7129F9C10500281002 /* golden_platform_view_cliprrect_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8629F9C10700281002 /* golden_bogus_font_text_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF7229F9C10500281002 /* golden_bogus_font_text_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8729F9C10700281002 /* golden_platform_view_multiple_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF7329F9C10500281002 /* golden_platform_view_multiple_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8829F9C10700281002 /* golden_platform_view_cliprect_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF7429F9C10500281002 /* golden_platform_view_cliprect_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8929F9C10700281002 /* golden_platform_view_multiple_background_foreground_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF7529F9C10600281002 /* golden_platform_view_multiple_background_foreground_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8A29F9C10700281002 /* golden_platform_view_clippath_with_transform_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF7629F9C10600281002 /* golden_platform_view_clippath_with_transform_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8B29F9C10700281002 /* golden_platform_view_clippath_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF7729F9C10600281002 /* golden_platform_view_clippath_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8C29F9C10700281002 /* golden_platform_view_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF7829F9C10600281002 /* golden_platform_view_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8D29F9C10700281002 /* golden_platform_view_large_cliprrect_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF7929F9C10600281002 /* golden_platform_view_large_cliprrect_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8E29F9C10700281002 /* golden_spawn_engine_works_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF7A29F9C10700281002 /* golden_spawn_engine_works_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		684FFF8F29F9C10700281002 /* golden_platform_view_with_other_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 684FFF7B29F9C10700281002 /* golden_platform_view_with_other_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		6860CE252A01B2FF00B68EC5 /* golden_two_platform_view_clip_rrect_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 6860CE222A01B2FF00B68EC5 /* golden_two_platform_view_clip_rrect_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		6860CE262A01B2FF00B68EC5 /* golden_two_platform_view_clip_rect_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 6860CE232A01B2FF00B68EC5 /* golden_two_platform_view_clip_rect_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		6860CE272A01B2FF00B68EC5 /* golden_two_platform_view_clip_path_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 6860CE242A01B2FF00B68EC5 /* golden_two_platform_view_clip_path_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		686382EC2AC1F9F300E27AAD /* ShareViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 686382EB2AC1F9F300E27AAD /* ShareViewController.m */; };
+		686382EF2AC1F9F300E27AAD /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 686382ED2AC1F9F300E27AAD /* MainInterface.storyboard */; };
+		686382F32AC1F9F300E27AAD /* ScenariosShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 686382E82AC1F9F300E27AAD /* ScenariosShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		686383132AC202B700E27AAD /* AppExtensionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 686383122AC202B700E27AAD /* AppExtensionTests.m */; };
+		686383152AC2175100E27AAD /* ../../Flutter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246B4E4522E3B61000073EBF /* ../../Flutter.xcframework */; };
+		686383162AC2175100E27AAD /* ../../Flutter.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 246B4E4522E3B61000073EBF /* ../../Flutter.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		68A5B63423EB71D300BDBCDB /* PlatformViewGestureRecognizerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 68A5B63323EB71D300BDBCDB /* PlatformViewGestureRecognizerTests.m */; };
+		68C9D8012AD9B0EF00DF9D79 /* DarwinSystemFontTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 68C9D8002AD9B0EF00DF9D79 /* DarwinSystemFontTests.m */; };
+		68C9D8092AD9B6C800DF9D79 /* golden_darwin_system_font_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 68C9D8082AD9B6C800DF9D79 /* golden_darwin_system_font_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		68D4017D2564859300ECD91A /* ContinuousTexture.m in Sources */ = {isa = PBXBuildFile; fileRef = 68D4017C2564859300ECD91A /* ContinuousTexture.m */; };
+		68D93AEE2A46097E0054AB6D /* golden_platform_view_with_negative_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 68D93AED2A46097E0054AB6D /* golden_platform_view_with_negative_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		E0D5A1DE2C8115F7003BB890 /* golden_platform_view_cliprect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = E0D5A1D52C8115F7003BB890 /* golden_platform_view_cliprect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		E0D5A1DF2C8115F7003BB890 /* golden_platform_view_clippath_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = E0D5A1D22C8115F7003BB890 /* golden_platform_view_clippath_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		E0D5A1E02C8115F7003BB890 /* golden_platform_view_cliprect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = E0D5A1D62C8115F7003BB890 /* golden_platform_view_cliprect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		E0D5A1E12C8115F7003BB890 /* golden_platform_view_cliprrect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = E0D5A1D82C8115F7003BB890 /* golden_platform_view_cliprrect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		E0D5A1E22C8115F7003BB890 /* golden_platform_view_large_cliprrect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = E0D5A1DA2C8115F7003BB890 /* golden_platform_view_large_cliprrect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		E0D5A1E32C8115F7003BB890 /* golden_two_platform_view_clip_path_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = E0D5A1DB2C8115F7003BB890 /* golden_two_platform_view_clip_path_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		E0D5A1E42C8115F7003BB890 /* golden_two_platform_view_clip_rrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = E0D5A1DD2C8115F7003BB890 /* golden_two_platform_view_clip_rrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		E0D5A1E52C8115F7003BB890 /* golden_two_platform_view_clip_rect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = E0D5A1DC2C8115F7003BB890 /* golden_two_platform_view_clip_rect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		E0D5A1E62C8115F7003BB890 /* golden_platform_view_cliprrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = E0D5A1D72C8115F7003BB890 /* golden_platform_view_cliprrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		E0D5A1E72C8115F7003BB890 /* golden_platform_view_clippath_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = E0D5A1D32C8115F7003BB890 /* golden_platform_view_clippath_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		E0D5A1E82C8115F7003BB890 /* golden_platform_view_large_cliprrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = E0D5A1D92C8115F7003BB890 /* golden_platform_view_large_cliprrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		E0D5A1E92C8115F7003BB890 /* golden_platform_view_cliprect_after_moved_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = E0D5A1D42C8115F7003BB890 /* golden_platform_view_cliprect_after_moved_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F26F15B8268B6B5600EC54D3 /* iPadGestureTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F26F15B7268B6B5500EC54D3 /* iPadGestureTests.m */; };
+		F76CA8C92C8BB0E6002A7EF5 /* golden_two_platform_view_clip_path_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8C62C8BB0E6002A7EF5 /* golden_two_platform_view_clip_path_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8CA2C8BB0E6002A7EF5 /* golden_two_platform_view_clip_rrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8C82C8BB0E6002A7EF5 /* golden_two_platform_view_clip_rrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8CB2C8BB0E6002A7EF5 /* golden_platform_view_with_other_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8C52C8BB0E6002A7EF5 /* golden_platform_view_with_other_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8CC2C8BB0E6002A7EF5 /* golden_platform_view_cliprect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8C22C8BB0E6002A7EF5 /* golden_platform_view_cliprect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8CD2C8BB0E6002A7EF5 /* golden_platform_view_cliprect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8C02C8BB0E6002A7EF5 /* golden_platform_view_cliprect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8CE2C8BB0E6002A7EF5 /* golden_platform_view_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8C42C8BB0E6002A7EF5 /* golden_platform_view_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8CF2C8BB0E6002A7EF5 /* golden_platform_view_cliprrect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8C32C8BB0E6002A7EF5 /* golden_platform_view_cliprrect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8D02C8BB0E6002A7EF5 /* golden_platform_view_clippath_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8BF2C8BB0E6002A7EF5 /* golden_platform_view_clippath_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8D12C8BB0E6002A7EF5 /* golden_platform_view_cliprect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8C12C8BB0E6002A7EF5 /* golden_platform_view_cliprect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8D22C8BB0E6002A7EF5 /* golden_two_platform_view_clip_path_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8C72C8BB0E6002A7EF5 /* golden_two_platform_view_clip_path_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8E02C8BB574002A7EF5 /* golden_platform_view_cliprrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8D92C8BB574002A7EF5 /* golden_platform_view_cliprrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8E12C8BB574002A7EF5 /* golden_two_platform_views_with_other_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8DF2C8BB574002A7EF5 /* golden_two_platform_views_with_other_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8E22C8BB574002A7EF5 /* golden_platform_view_cliprrect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8DB2C8BB574002A7EF5 /* golden_platform_view_cliprrect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8E32C8BB574002A7EF5 /* golden_platform_view_cliprect_after_moved_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8D82C8BB574002A7EF5 /* golden_platform_view_cliprect_after_moved_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8E42C8BB574002A7EF5 /* golden_platform_view_opacity_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8DD2C8BB574002A7EF5 /* golden_platform_view_opacity_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8E52C8BB574002A7EF5 /* golden_platform_view_clippath_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8D62C8BB574002A7EF5 /* golden_platform_view_clippath_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8E62C8BB574002A7EF5 /* golden_platform_view_clippath_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8D72C8BB574002A7EF5 /* golden_platform_view_clippath_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8E72C8BB574002A7EF5 /* golden_platform_view_multiple_background_foreground_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8DC2C8BB574002A7EF5 /* golden_platform_view_multiple_background_foreground_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8E82C8BB574002A7EF5 /* golden_platform_view_with_negative_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8DE2C8BB574002A7EF5 /* golden_platform_view_with_negative_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8E92C8BB574002A7EF5 /* golden_darwin_system_font_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8D52C8BB574002A7EF5 /* golden_darwin_system_font_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8EA2C8BB574002A7EF5 /* golden_platform_view_cliprrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8DA2C8BB574002A7EF5 /* golden_platform_view_cliprrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8ED2C8BB5E7002A7EF5 /* golden_non_full_screen_flutter_view_platform_view_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8EB2C8BB5E7002A7EF5 /* golden_non_full_screen_flutter_view_platform_view_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8F02C8BB623002A7EF5 /* golden_platform_view_cliprect_after_moved_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8EF2C8BB623002A7EF5 /* golden_platform_view_cliprect_after_moved_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8F62C8BB73E002A7EF5 /* golden_two_platform_view_clip_rrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8F52C8BB73E002A7EF5 /* golden_two_platform_view_clip_rrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8F82C8BB73E002A7EF5 /* golden_platform_view_clippath_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8F12C8BB73E002A7EF5 /* golden_platform_view_clippath_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8F92C8BB73E002A7EF5 /* golden_platform_view_cliprect_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8F32C8BB73E002A7EF5 /* golden_platform_view_cliprect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8FA2C8BB73E002A7EF5 /* golden_platform_view_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8F42C8BB73E002A7EF5 /* golden_platform_view_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA8FF2C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8FD2C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA9002C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8FB2C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA9012C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8FC2C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA9022C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA8FE2C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA9042C8BB7FC002A7EF5 /* golden_platform_view_rotate_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA9032C8BB7FC002A7EF5 /* golden_platform_view_rotate_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA9092C8BBAD6002A7EF5 /* golden_platform_view_multiple_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA9062C8BBAD6002A7EF5 /* golden_platform_view_multiple_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA90A2C8BBAD6002A7EF5 /* golden_two_platform_view_clip_rect_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA9072C8BBAD6002A7EF5 /* golden_two_platform_view_clip_rect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+		F76CA90B2C8BBAD6002A7EF5 /* golden_two_platform_view_clip_rect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */ = {isa = PBXBuildFile; fileRef = F76CA9082C8BBAD6002A7EF5 /* golden_two_platform_view_clip_rect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		248D76E022E388380012F0C1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 248D76BF22E388370012F0C1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 248D76C622E388370012F0C1;
+			remoteInfo = Scenarios;
+		};
+		248D76EB22E388380012F0C1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 248D76BF22E388370012F0C1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 248D76C622E388370012F0C1;
+			remoteInfo = Scenarios;
+		};
+		686382F12AC1F9F300E27AAD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 248D76BF22E388370012F0C1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 686382E72AC1F9F300E27AAD;
+			remoteInfo = ScenariosShare;
+		};
+		6863830A2AC2024200E27AAD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 686383052AC2024200E27AAD /* FlutterAppExtensionTestHost.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 686382C12ABE172F00E27AAD;
+			remoteInfo = FlutterAppExtensionTestHost;
+		};
+		686383102AC2027100E27AAD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 686383052AC2024200E27AAD /* FlutterAppExtensionTestHost.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 686382C02ABE172F00E27AAD;
+			remoteInfo = FlutterAppExtensionTestHost;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0DB781EE22E931B000E9B371 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0DB781EF22E931BE00E9B371 /* ../../Flutter.xcframework in CopyFiles */,
+				0DB7820122EA2CA500E9B371 /* App.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0DB781F022E933E000E9B371 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0DB781F122E933E800E9B371 /* ../../Flutter.xcframework in CopyFiles */,
+				0DB7820022EA2C9D00E9B371 /* App.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		246B4E4422E3B5F700073EBF /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				242F37A222E636DE001E83D4 /* ../../Flutter.xcframework in Embed Frameworks */,
+				242F37A322E636DE001E83D4 /* App.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		686382F42AC1F9F300E27AAD /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				686382F32AC1F9F300E27AAD /* ScenariosShare.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		686383172AC2175100E27AAD /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				686383162AC2175100E27AAD /* ../../Flutter.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0A02E8F624EFAD27002D54E5 /* BogusFontTextTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BogusFontTextTest.m; sourceTree = "<group>"; };
+		0A57B3BB2323C4BD00DD9521 /* ScreenBeforeFlutter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenBeforeFlutter.h; sourceTree = "<group>"; };
+		0A57B3BC2323C4BD00DD9521 /* ScreenBeforeFlutter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScreenBeforeFlutter.m; sourceTree = "<group>"; };
+		0A57B3BE2323C74200DD9521 /* FlutterEngine+ScenariosTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FlutterEngine+ScenariosTest.m"; sourceTree = "<group>"; };
+		0A57B3C02323C74D00DD9521 /* FlutterEngine+ScenariosTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FlutterEngine+ScenariosTest.h"; sourceTree = "<group>"; };
+		0A57B3C12323D2D700DD9521 /* AppLifecycleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppLifecycleTests.m; sourceTree = "<group>"; };
+		0A97D7BF24BA937000050525 /* FlutterViewControllerInitialRouteTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FlutterViewControllerInitialRouteTest.m; sourceTree = "<group>"; };
+		0D8470A2240F0B1F0030B565 /* StatusBarTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StatusBarTest.h; sourceTree = "<group>"; };
+		0D8470A3240F0B1F0030B565 /* StatusBarTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StatusBarTest.m; sourceTree = "<group>"; };
+		0DB781FC22EA2C0300E9B371 /* FlutterViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlutterViewControllerTest.m; sourceTree = "<group>"; };
+		0DDEBC88258830B40065D0E8 /* SpawnEngineTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpawnEngineTest.m; sourceTree = "<group>"; };
+		246B4E4122E3B5F700073EBF /* App.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = App.framework; sourceTree = "<group>"; };
+		246B4E4522E3B61000073EBF /* ../../Flutter.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = ../../Flutter.xcframework; sourceTree = "<group>"; };
+		248D76C722E388370012F0C1 /* Scenarios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Scenarios.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		248D76CA22E388370012F0C1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		248D76CB22E388370012F0C1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		248D76D322E388380012F0C1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		248D76D822E388380012F0C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		248D76D922E388380012F0C1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		248D76DF22E388380012F0C1 /* ScenariosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScenariosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		248D76E522E388380012F0C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		248D76EA22E388380012F0C1 /* ScenariosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScenariosUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		248D76EE22E388380012F0C1 /* PlatformViewUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlatformViewUITests.m; sourceTree = "<group>"; };
+		248D76F022E388380012F0C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		248FDFC322FE7CD0009CC7CD /* FlutterEngineTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlutterEngineTest.m; sourceTree = "<group>"; };
+		24D47D1E230CA4480069DD5E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		24F1FB87230B4579005ACE7C /* TextPlatformView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextPlatformView.m; sourceTree = "<group>"; };
+		24F1FB88230B4579005ACE7C /* TextPlatformView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextPlatformView.h; sourceTree = "<group>"; };
+		3BFD971E2A990CF40094F51B /* golden_bogus_font_text_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_bogus_font_text_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		3BFD971F2A990CF40094F51B /* golden_spawn_engine_works_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_spawn_engine_works_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		4F06F1B124731F66000AF246 /* LocalizationInitializationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalizationInitializationTest.m; sourceTree = "<group>"; };
+		6402EBD024147BDA00987DCB /* UnobstructedPlatformViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnobstructedPlatformViewTests.m; sourceTree = "<group>"; };
+		6816DB9C231750ED00A51400 /* GoldenPlatformViewTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GoldenPlatformViewTests.h; sourceTree = "<group>"; };
+		6816DB9D231750ED00A51400 /* GoldenPlatformViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GoldenPlatformViewTests.m; sourceTree = "<group>"; };
+		6816DB9F2317573300A51400 /* GoldenImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GoldenImage.h; sourceTree = "<group>"; };
+		6816DBA02317573300A51400 /* GoldenImage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GoldenImage.m; sourceTree = "<group>"; };
+		6816DBA22318358200A51400 /* GoldenTestManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GoldenTestManager.h; sourceTree = "<group>"; };
+		6816DBA32318358200A51400 /* GoldenTestManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GoldenTestManager.m; sourceTree = "<group>"; };
+		684FFF6829F9C10300281002 /* golden_platform_view_cliprrect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprrect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF6929F9C10300281002 /* golden_platform_view_cliprect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF6A29F9C10300281002 /* golden_platform_view_opacity_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_opacity_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF6B29F9C10400281002 /* golden_platform_view_rotate_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_rotate_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF6C29F9C10400281002 /* golden_platform_view_cliprect_after_moved_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprect_after_moved_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF6D29F9C10400281002 /* golden_platform_view_large_cliprrect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_large_cliprrect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF6E29F9C10400281002 /* golden_two_platform_views_with_other_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_two_platform_views_with_other_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF6F29F9C10400281002 /* golden_platform_view_transform_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_transform_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF7029F9C10500281002 /* golden_non_full_screen_flutter_view_platform_view_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_non_full_screen_flutter_view_platform_view_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF7129F9C10500281002 /* golden_platform_view_cliprrect_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprrect_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF7229F9C10500281002 /* golden_bogus_font_text_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_bogus_font_text_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF7329F9C10500281002 /* golden_platform_view_multiple_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_multiple_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF7429F9C10500281002 /* golden_platform_view_cliprect_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprect_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF7529F9C10600281002 /* golden_platform_view_multiple_background_foreground_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_multiple_background_foreground_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF7629F9C10600281002 /* golden_platform_view_clippath_with_transform_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_clippath_with_transform_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF7729F9C10600281002 /* golden_platform_view_clippath_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_clippath_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF7829F9C10600281002 /* golden_platform_view_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF7929F9C10600281002 /* golden_platform_view_large_cliprrect_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_large_cliprrect_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF7A29F9C10700281002 /* golden_spawn_engine_works_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_spawn_engine_works_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		684FFF7B29F9C10700281002 /* golden_platform_view_with_other_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_with_other_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		6860CE222A01B2FF00B68EC5 /* golden_two_platform_view_clip_rrect_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_two_platform_view_clip_rrect_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		6860CE232A01B2FF00B68EC5 /* golden_two_platform_view_clip_rect_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_two_platform_view_clip_rect_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		6860CE242A01B2FF00B68EC5 /* golden_two_platform_view_clip_path_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_two_platform_view_clip_path_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		686382E82AC1F9F300E27AAD /* ScenariosShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ScenariosShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		686382EA2AC1F9F300E27AAD /* ShareViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShareViewController.h; sourceTree = "<group>"; };
+		686382EB2AC1F9F300E27AAD /* ShareViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShareViewController.m; sourceTree = "<group>"; };
+		686382EE2AC1F9F300E27AAD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		686382F02AC1F9F300E27AAD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		686383052AC2024200E27AAD /* FlutterAppExtensionTestHost.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterAppExtensionTestHost.xcodeproj; path = ../FlutterAppExtensionTestHost/FlutterAppExtensionTestHost.xcodeproj; sourceTree = "<group>"; };
+		686383122AC202B700E27AAD /* AppExtensionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppExtensionTests.m; sourceTree = "<group>"; };
+		68A5B63323EB71D300BDBCDB /* PlatformViewGestureRecognizerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlatformViewGestureRecognizerTests.m; sourceTree = "<group>"; };
+		68C9D8002AD9B0EF00DF9D79 /* DarwinSystemFontTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DarwinSystemFontTests.m; sourceTree = "<group>"; };
+		68C9D8082AD9B6C800DF9D79 /* golden_darwin_system_font_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_darwin_system_font_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		68D4017B2564859300ECD91A /* ContinuousTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContinuousTexture.h; sourceTree = "<group>"; };
+		68D4017C2564859300ECD91A /* ContinuousTexture.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContinuousTexture.m; sourceTree = "<group>"; };
+		68D93AED2A46097E0054AB6D /* golden_platform_view_with_negative_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_with_negative_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		E0D5A1D22C8115F7003BB890 /* golden_platform_view_clippath_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_clippath_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		E0D5A1D32C8115F7003BB890 /* golden_platform_view_clippath_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_clippath_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		E0D5A1D42C8115F7003BB890 /* golden_platform_view_cliprect_after_moved_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprect_after_moved_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		E0D5A1D52C8115F7003BB890 /* golden_platform_view_cliprect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		E0D5A1D62C8115F7003BB890 /* golden_platform_view_cliprect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		E0D5A1D72C8115F7003BB890 /* golden_platform_view_cliprrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		E0D5A1D82C8115F7003BB890 /* golden_platform_view_cliprrect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprrect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		E0D5A1D92C8115F7003BB890 /* golden_platform_view_large_cliprrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_large_cliprrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		E0D5A1DA2C8115F7003BB890 /* golden_platform_view_large_cliprrect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_large_cliprrect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		E0D5A1DB2C8115F7003BB890 /* golden_two_platform_view_clip_path_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_two_platform_view_clip_path_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		E0D5A1DC2C8115F7003BB890 /* golden_two_platform_view_clip_rect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_two_platform_view_clip_rect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		E0D5A1DD2C8115F7003BB890 /* golden_two_platform_view_clip_rrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_two_platform_view_clip_rrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F26F15B7268B6B5500EC54D3 /* iPadGestureTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iPadGestureTests.m; sourceTree = "<group>"; };
+		F72114B628EF99F500184A2D /* Info_Skia.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info_Skia.plist; sourceTree = "<group>"; };
+		F76CA8BF2C8BB0E6002A7EF5 /* golden_platform_view_clippath_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_clippath_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8C02C8BB0E6002A7EF5 /* golden_platform_view_cliprect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8C12C8BB0E6002A7EF5 /* golden_platform_view_cliprect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8C22C8BB0E6002A7EF5 /* golden_platform_view_cliprect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8C32C8BB0E6002A7EF5 /* golden_platform_view_cliprrect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprrect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8C42C8BB0E6002A7EF5 /* golden_platform_view_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8C52C8BB0E6002A7EF5 /* golden_platform_view_with_other_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_with_other_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8C62C8BB0E6002A7EF5 /* golden_two_platform_view_clip_path_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_two_platform_view_clip_path_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8C72C8BB0E6002A7EF5 /* golden_two_platform_view_clip_path_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_two_platform_view_clip_path_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8C82C8BB0E6002A7EF5 /* golden_two_platform_view_clip_rrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_two_platform_view_clip_rrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8D52C8BB574002A7EF5 /* golden_darwin_system_font_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_darwin_system_font_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8D62C8BB574002A7EF5 /* golden_platform_view_clippath_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_clippath_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8D72C8BB574002A7EF5 /* golden_platform_view_clippath_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_clippath_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8D82C8BB574002A7EF5 /* golden_platform_view_cliprect_after_moved_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprect_after_moved_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8D92C8BB574002A7EF5 /* golden_platform_view_cliprrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8DA2C8BB574002A7EF5 /* golden_platform_view_cliprrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8DB2C8BB574002A7EF5 /* golden_platform_view_cliprrect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprrect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8DC2C8BB574002A7EF5 /* golden_platform_view_multiple_background_foreground_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_multiple_background_foreground_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8DD2C8BB574002A7EF5 /* golden_platform_view_opacity_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_opacity_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8DE2C8BB574002A7EF5 /* golden_platform_view_with_negative_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_with_negative_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8DF2C8BB574002A7EF5 /* golden_two_platform_views_with_other_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_two_platform_views_with_other_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8EB2C8BB5E7002A7EF5 /* golden_non_full_screen_flutter_view_platform_view_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_non_full_screen_flutter_view_platform_view_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8EF2C8BB623002A7EF5 /* golden_platform_view_cliprect_after_moved_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprect_after_moved_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8F12C8BB73E002A7EF5 /* golden_platform_view_clippath_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_clippath_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8F32C8BB73E002A7EF5 /* golden_platform_view_cliprect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_cliprect_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8F42C8BB73E002A7EF5 /* golden_platform_view_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8F52C8BB73E002A7EF5 /* golden_two_platform_view_clip_rrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_two_platform_view_clip_rrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8FB2C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_large_cliprrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8FC2C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_large_cliprrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8FD2C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_large_cliprrect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA8FE2C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_large_cliprrect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA9032C8BB7FC002A7EF5 /* golden_platform_view_rotate_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_rotate_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA9062C8BBAD6002A7EF5 /* golden_platform_view_multiple_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_platform_view_multiple_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA9072C8BBAD6002A7EF5 /* golden_two_platform_view_clip_rect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_two_platform_view_clip_rect_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+		F76CA9082C8BBAD6002A7EF5 /* golden_two_platform_view_clip_rect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "golden_two_platform_view_clip_rect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		248D76C422E388370012F0C1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				246B4E4222E3B5F700073EBF /* App.framework in Frameworks */,
+				246B4E4622E3B61000073EBF /* ../../Flutter.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		248D76DC22E388380012F0C1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0DB781FF22EA2C7200E9B371 /* ../../Flutter.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		248D76E722E388380012F0C1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0DB781FE22EA2C6D00E9B371 /* ../../Flutter.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		686382E52AC1F9F300E27AAD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				686383152AC2175100E27AAD /* ../../Flutter.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		248D76BE22E388370012F0C1 = {
+			isa = PBXGroup;
+			children = (
+				686383052AC2024200E27AAD /* FlutterAppExtensionTestHost.xcodeproj */,
+				248D76C922E388370012F0C1 /* Scenarios */,
+				248D76E222E388380012F0C1 /* ScenariosTests */,
+				248D76ED22E388380012F0C1 /* ScenariosUITests */,
+				686382E92AC1F9F300E27AAD /* ScenariosShare */,
+				248D76C822E388370012F0C1 /* Products */,
+				248D76FC22E388900012F0C1 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		248D76C822E388370012F0C1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				248D76C722E388370012F0C1 /* Scenarios.app */,
+				248D76DF22E388380012F0C1 /* ScenariosTests.xctest */,
+				248D76EA22E388380012F0C1 /* ScenariosUITests.xctest */,
+				686382E82AC1F9F300E27AAD /* ScenariosShare.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		248D76C922E388370012F0C1 /* Scenarios */ = {
+			isa = PBXGroup;
+			children = (
+				24F1FB88230B4579005ACE7C /* TextPlatformView.h */,
+				24F1FB87230B4579005ACE7C /* TextPlatformView.m */,
+				248D76CA22E388370012F0C1 /* AppDelegate.h */,
+				248D76CB22E388370012F0C1 /* AppDelegate.m */,
+				248D76D322E388380012F0C1 /* Assets.xcassets */,
+				248D76D822E388380012F0C1 /* Info.plist */,
+				F72114B628EF99F500184A2D /* Info_Skia.plist */,
+				248D76D922E388380012F0C1 /* main.m */,
+				0A57B3BB2323C4BD00DD9521 /* ScreenBeforeFlutter.h */,
+				0A57B3BC2323C4BD00DD9521 /* ScreenBeforeFlutter.m */,
+				0A57B3BE2323C74200DD9521 /* FlutterEngine+ScenariosTest.m */,
+				0A57B3C02323C74D00DD9521 /* FlutterEngine+ScenariosTest.h */,
+				68D4017B2564859300ECD91A /* ContinuousTexture.h */,
+				68D4017C2564859300ECD91A /* ContinuousTexture.m */,
+			);
+			path = Scenarios;
+			sourceTree = "<group>";
+		};
+		248D76E222E388380012F0C1 /* ScenariosTests */ = {
+			isa = PBXGroup;
+			children = (
+				248FDFC322FE7CD0009CC7CD /* FlutterEngineTest.m */,
+				0DB781FC22EA2C0300E9B371 /* FlutterViewControllerTest.m */,
+				0A97D7BF24BA937000050525 /* FlutterViewControllerInitialRouteTest.m */,
+				248D76E522E388380012F0C1 /* Info.plist */,
+				0A57B3C12323D2D700DD9521 /* AppLifecycleTests.m */,
+			);
+			path = ScenariosTests;
+			sourceTree = "<group>";
+		};
+		248D76ED22E388380012F0C1 /* ScenariosUITests */ = {
+			isa = PBXGroup;
+			children = (
+				F7B464DC2759D02B00079189 /* Goldens */,
+				4F06F1B124731F66000AF246 /* LocalizationInitializationTest.m */,
+				6402EBD024147BDA00987DCB /* UnobstructedPlatformViewTests.m */,
+				248D76EE22E388380012F0C1 /* PlatformViewUITests.m */,
+				0A02E8F624EFAD27002D54E5 /* BogusFontTextTest.m */,
+				248D76F022E388380012F0C1 /* Info.plist */,
+				24D47D1E230CA4480069DD5E /* README.md */,
+				6816DB9C231750ED00A51400 /* GoldenPlatformViewTests.h */,
+				6816DB9D231750ED00A51400 /* GoldenPlatformViewTests.m */,
+				6816DB9F2317573300A51400 /* GoldenImage.h */,
+				6816DBA02317573300A51400 /* GoldenImage.m */,
+				6816DBA22318358200A51400 /* GoldenTestManager.h */,
+				6816DBA32318358200A51400 /* GoldenTestManager.m */,
+				68A5B63323EB71D300BDBCDB /* PlatformViewGestureRecognizerTests.m */,
+				0D8470A2240F0B1F0030B565 /* StatusBarTest.h */,
+				0D8470A3240F0B1F0030B565 /* StatusBarTest.m */,
+				0DDEBC88258830B40065D0E8 /* SpawnEngineTest.m */,
+				F26F15B7268B6B5500EC54D3 /* iPadGestureTests.m */,
+				686383122AC202B700E27AAD /* AppExtensionTests.m */,
+				68C9D8002AD9B0EF00DF9D79 /* DarwinSystemFontTests.m */,
+			);
+			path = ScenariosUITests;
+			sourceTree = "<group>";
+		};
+		248D76FC22E388900012F0C1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				246B4E4522E3B61000073EBF /* ../../Flutter.xcframework */,
+				246B4E4122E3B5F700073EBF /* App.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		686382E92AC1F9F300E27AAD /* ScenariosShare */ = {
+			isa = PBXGroup;
+			children = (
+				686382EA2AC1F9F300E27AAD /* ShareViewController.h */,
+				686382EB2AC1F9F300E27AAD /* ShareViewController.m */,
+				686382ED2AC1F9F300E27AAD /* MainInterface.storyboard */,
+				686382F02AC1F9F300E27AAD /* Info.plist */,
+			);
+			path = ScenariosShare;
+			sourceTree = "<group>";
+		};
+		686383062AC2024200E27AAD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6863830B2AC2024200E27AAD /* FlutterAppExtensionTestHost.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F7B464DC2759D02B00079189 /* Goldens */ = {
+			isa = PBXGroup;
+			children = (
+				3BFD971E2A990CF40094F51B /* golden_bogus_font_text_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF7229F9C10500281002 /* golden_bogus_font_text_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8D52C8BB574002A7EF5 /* golden_darwin_system_font_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				68C9D8082AD9B6C800DF9D79 /* golden_darwin_system_font_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8EB2C8BB5E7002A7EF5 /* golden_non_full_screen_flutter_view_platform_view_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF7029F9C10500281002 /* golden_non_full_screen_flutter_view_platform_view_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8D62C8BB574002A7EF5 /* golden_platform_view_clippath_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF7729F9C10600281002 /* golden_platform_view_clippath_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8BF2C8BB0E6002A7EF5 /* golden_platform_view_clippath_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				E0D5A1D22C8115F7003BB890 /* golden_platform_view_clippath_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8D72C8BB574002A7EF5 /* golden_platform_view_clippath_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF7629F9C10600281002 /* golden_platform_view_clippath_with_transform_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8F12C8BB73E002A7EF5 /* golden_platform_view_clippath_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				E0D5A1D32C8115F7003BB890 /* golden_platform_view_clippath_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8EF2C8BB623002A7EF5 /* golden_platform_view_cliprect_after_moved_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF6C29F9C10400281002 /* golden_platform_view_cliprect_after_moved_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8D82C8BB574002A7EF5 /* golden_platform_view_cliprect_after_moved_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				E0D5A1D42C8115F7003BB890 /* golden_platform_view_cliprect_after_moved_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8F32C8BB73E002A7EF5 /* golden_platform_view_cliprect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF7429F9C10500281002 /* golden_platform_view_cliprect_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8C02C8BB0E6002A7EF5 /* golden_platform_view_cliprect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				E0D5A1D52C8115F7003BB890 /* golden_platform_view_cliprect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8C12C8BB0E6002A7EF5 /* golden_platform_view_cliprect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF6929F9C10300281002 /* golden_platform_view_cliprect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8C22C8BB0E6002A7EF5 /* golden_platform_view_cliprect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				E0D5A1D62C8115F7003BB890 /* golden_platform_view_cliprect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8D92C8BB574002A7EF5 /* golden_platform_view_cliprrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF7129F9C10500281002 /* golden_platform_view_cliprrect_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8DA2C8BB574002A7EF5 /* golden_platform_view_cliprrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				E0D5A1D72C8115F7003BB890 /* golden_platform_view_cliprrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8C32C8BB0E6002A7EF5 /* golden_platform_view_cliprrect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF6829F9C10300281002 /* golden_platform_view_cliprrect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8DB2C8BB574002A7EF5 /* golden_platform_view_cliprrect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				E0D5A1D82C8115F7003BB890 /* golden_platform_view_cliprrect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8F42C8BB73E002A7EF5 /* golden_platform_view_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF7829F9C10600281002 /* golden_platform_view_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8FB2C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF7929F9C10600281002 /* golden_platform_view_large_cliprrect_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8FC2C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				E0D5A1D92C8115F7003BB890 /* golden_platform_view_large_cliprrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8FD2C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF6D29F9C10400281002 /* golden_platform_view_large_cliprrect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8FE2C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				E0D5A1DA2C8115F7003BB890 /* golden_platform_view_large_cliprrect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8DC2C8BB574002A7EF5 /* golden_platform_view_multiple_background_foreground_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF7529F9C10600281002 /* golden_platform_view_multiple_background_foreground_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA9062C8BBAD6002A7EF5 /* golden_platform_view_multiple_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF7329F9C10500281002 /* golden_platform_view_multiple_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8DD2C8BB574002A7EF5 /* golden_platform_view_opacity_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF6A29F9C10300281002 /* golden_platform_view_opacity_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA9032C8BB7FC002A7EF5 /* golden_platform_view_rotate_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF6B29F9C10400281002 /* golden_platform_view_rotate_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8C42C8BB0E6002A7EF5 /* golden_platform_view_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF6F29F9C10400281002 /* golden_platform_view_transform_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8DE2C8BB574002A7EF5 /* golden_platform_view_with_negative_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				68D93AED2A46097E0054AB6D /* golden_platform_view_with_negative_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8C52C8BB0E6002A7EF5 /* golden_platform_view_with_other_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF7B29F9C10700281002 /* golden_platform_view_with_other_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png */,
+				3BFD971F2A990CF40094F51B /* golden_spawn_engine_works_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF7A29F9C10700281002 /* golden_spawn_engine_works_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8C62C8BB0E6002A7EF5 /* golden_two_platform_view_clip_path_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				6860CE242A01B2FF00B68EC5 /* golden_two_platform_view_clip_path_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8C72C8BB0E6002A7EF5 /* golden_two_platform_view_clip_path_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				E0D5A1DB2C8115F7003BB890 /* golden_two_platform_view_clip_path_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA9072C8BBAD6002A7EF5 /* golden_two_platform_view_clip_rect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				6860CE232A01B2FF00B68EC5 /* golden_two_platform_view_clip_rect_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA9082C8BBAD6002A7EF5 /* golden_two_platform_view_clip_rect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				E0D5A1DC2C8115F7003BB890 /* golden_two_platform_view_clip_rect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8C82C8BB0E6002A7EF5 /* golden_two_platform_view_clip_rrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				6860CE222A01B2FF00B68EC5 /* golden_two_platform_view_clip_rrect_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8F52C8BB73E002A7EF5 /* golden_two_platform_view_clip_rrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				E0D5A1DD2C8115F7003BB890 /* golden_two_platform_view_clip_rrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png */,
+				F76CA8DF2C8BB574002A7EF5 /* golden_two_platform_views_with_other_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png */,
+				684FFF6E29F9C10400281002 /* golden_two_platform_views_with_other_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png */,
+			);
+			name = Goldens;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		248D76C622E388370012F0C1 /* Scenarios */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 248D76F322E388380012F0C1 /* Build configuration list for PBXNativeTarget "Scenarios" */;
+			buildPhases = (
+				248D76C322E388370012F0C1 /* Sources */,
+				248D76C422E388370012F0C1 /* Frameworks */,
+				248D76C522E388370012F0C1 /* Resources */,
+				246B4E4422E3B5F700073EBF /* Embed Frameworks */,
+				686382F42AC1F9F300E27AAD /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				686382F22AC1F9F300E27AAD /* PBXTargetDependency */,
+			);
+			name = Scenarios;
+			productName = Scenarios;
+			productReference = 248D76C722E388370012F0C1 /* Scenarios.app */;
+			productType = "com.apple.product-type.application";
+		};
+		248D76DE22E388380012F0C1 /* ScenariosTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 248D76F622E388380012F0C1 /* Build configuration list for PBXNativeTarget "ScenariosTests" */;
+			buildPhases = (
+				248D76DB22E388380012F0C1 /* Sources */,
+				248D76DC22E388380012F0C1 /* Frameworks */,
+				248D76DD22E388380012F0C1 /* Resources */,
+				0DB781F022E933E000E9B371 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				248D76E122E388380012F0C1 /* PBXTargetDependency */,
+			);
+			name = ScenariosTests;
+			productName = ScenariosTests;
+			productReference = 248D76DF22E388380012F0C1 /* ScenariosTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		248D76E922E388380012F0C1 /* ScenariosUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 248D76F922E388380012F0C1 /* Build configuration list for PBXNativeTarget "ScenariosUITests" */;
+			buildPhases = (
+				248D76E622E388380012F0C1 /* Sources */,
+				248D76E722E388380012F0C1 /* Frameworks */,
+				248D76E822E388380012F0C1 /* Resources */,
+				0DB781EE22E931B000E9B371 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				686383112AC2027100E27AAD /* PBXTargetDependency */,
+				248D76EC22E388380012F0C1 /* PBXTargetDependency */,
+			);
+			name = ScenariosUITests;
+			productName = ScenariosUITests;
+			productReference = 248D76EA22E388380012F0C1 /* ScenariosUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		686382E72AC1F9F300E27AAD /* ScenariosShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 686382F72AC1F9F300E27AAD /* Build configuration list for PBXNativeTarget "ScenariosShare" */;
+			buildPhases = (
+				686382E42AC1F9F300E27AAD /* Sources */,
+				686382E52AC1F9F300E27AAD /* Frameworks */,
+				686382E62AC1F9F300E27AAD /* Resources */,
+				686383172AC2175100E27AAD /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ScenariosShare;
+			productName = ScenariosShare;
+			productReference = 686382E82AC1F9F300E27AAD /* ScenariosShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		248D76BF22E388370012F0C1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1310;
+				ORGANIZATIONNAME = flutter;
+				TargetAttributes = {
+					248D76C622E388370012F0C1 = {
+						CreatedOnToolsVersion = 10.2.1;
+						LastSwiftMigration = 1030;
+					};
+					248D76DE22E388380012F0C1 = {
+						CreatedOnToolsVersion = 10.2.1;
+						LastSwiftMigration = 1030;
+						TestTargetID = 248D76C622E388370012F0C1;
+					};
+					248D76E922E388380012F0C1 = {
+						CreatedOnToolsVersion = 10.2.1;
+						LastSwiftMigration = 1030;
+						TestTargetID = 248D76C622E388370012F0C1;
+					};
+					686382E72AC1F9F300E27AAD = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = 248D76C222E388370012F0C1 /* Build configuration list for PBXProject "Scenarios" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 248D76BE22E388370012F0C1;
+			productRefGroup = 248D76C822E388370012F0C1 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 686383062AC2024200E27AAD /* Products */;
+					ProjectRef = 686383052AC2024200E27AAD /* FlutterAppExtensionTestHost.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				248D76C622E388370012F0C1 /* Scenarios */,
+				248D76DE22E388380012F0C1 /* ScenariosTests */,
+				248D76E922E388380012F0C1 /* ScenariosUITests */,
+				686382E72AC1F9F300E27AAD /* ScenariosShare */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		6863830B2AC2024200E27AAD /* FlutterAppExtensionTestHost.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = FlutterAppExtensionTestHost.app;
+			remoteRef = 6863830A2AC2024200E27AAD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		248D76C522E388370012F0C1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				248D76D422E388380012F0C1 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		248D76DD22E388380012F0C1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		248D76E822E388380012F0C1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				684FFF8C29F9C10700281002 /* golden_platform_view_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8E29F9C10700281002 /* golden_spawn_engine_works_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8229F9C10700281002 /* golden_two_platform_views_with_other_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8ED2C8BB5E7002A7EF5 /* golden_non_full_screen_flutter_view_platform_view_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF7D29F9C10700281002 /* golden_platform_view_cliprect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8829F9C10700281002 /* golden_platform_view_cliprect_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8529F9C10700281002 /* golden_platform_view_cliprrect_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8FF2C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA9002C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA9012C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA9022C8BB7BF002A7EF5 /* golden_platform_view_large_cliprrect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				6860CE252A01B2FF00B68EC5 /* golden_two_platform_view_clip_rrect_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8F29F9C10700281002 /* golden_platform_view_with_other_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8E02C8BB574002A7EF5 /* golden_platform_view_cliprrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8E12C8BB574002A7EF5 /* golden_two_platform_views_with_other_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8E22C8BB574002A7EF5 /* golden_platform_view_cliprrect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8E32C8BB574002A7EF5 /* golden_platform_view_cliprect_after_moved_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8E42C8BB574002A7EF5 /* golden_platform_view_opacity_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8E52C8BB574002A7EF5 /* golden_platform_view_clippath_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8E62C8BB574002A7EF5 /* golden_platform_view_clippath_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8E72C8BB574002A7EF5 /* golden_platform_view_multiple_background_foreground_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8E82C8BB574002A7EF5 /* golden_platform_view_with_negative_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8E92C8BB574002A7EF5 /* golden_darwin_system_font_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8EA2C8BB574002A7EF5 /* golden_platform_view_cliprrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				6860CE262A01B2FF00B68EC5 /* golden_two_platform_view_clip_rect_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8A29F9C10700281002 /* golden_platform_view_clippath_with_transform_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				3BFD97212A990CF50094F51B /* golden_spawn_engine_works_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8429F9C10700281002 /* golden_non_full_screen_flutter_view_platform_view_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF7C29F9C10700281002 /* golden_platform_view_cliprrect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF7F29F9C10700281002 /* golden_platform_view_rotate_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8029F9C10700281002 /* golden_platform_view_cliprect_after_moved_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8929F9C10700281002 /* golden_platform_view_multiple_background_foreground_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8629F9C10700281002 /* golden_bogus_font_text_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8F62C8BB73E002A7EF5 /* golden_two_platform_view_clip_rrect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8F82C8BB73E002A7EF5 /* golden_platform_view_clippath_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8F92C8BB73E002A7EF5 /* golden_platform_view_cliprect_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA9092C8BBAD6002A7EF5 /* golden_platform_view_multiple_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA90A2C8BBAD6002A7EF5 /* golden_two_platform_view_clip_rect_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA90B2C8BBAD6002A7EF5 /* golden_two_platform_view_clip_rect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8FA2C8BB73E002A7EF5 /* golden_platform_view_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF7E29F9C10700281002 /* golden_platform_view_opacity_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8729F9C10700281002 /* golden_platform_view_multiple_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				68D93AEE2A46097E0054AB6D /* golden_platform_view_with_negative_backdrop_filter_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				3BFD97202A990CF50094F51B /* golden_bogus_font_text_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8C92C8BB0E6002A7EF5 /* golden_two_platform_view_clip_path_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8CA2C8BB0E6002A7EF5 /* golden_two_platform_view_clip_rrect_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8CB2C8BB0E6002A7EF5 /* golden_platform_view_with_other_backdrop_filter_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8CC2C8BB0E6002A7EF5 /* golden_platform_view_cliprect_with_transform_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8CD2C8BB0E6002A7EF5 /* golden_platform_view_cliprect_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8CE2C8BB0E6002A7EF5 /* golden_platform_view_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8CF2C8BB0E6002A7EF5 /* golden_platform_view_cliprrect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8D02C8BB0E6002A7EF5 /* golden_platform_view_clippath_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8F02C8BB623002A7EF5 /* golden_platform_view_cliprect_after_moved_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8D12C8BB0E6002A7EF5 /* golden_platform_view_cliprect_with_transform_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA8D22C8BB0E6002A7EF5 /* golden_two_platform_view_clip_path_multiple_clips_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				E0D5A1DE2C8115F7003BB890 /* golden_platform_view_cliprect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				F76CA9042C8BB7FC002A7EF5 /* golden_platform_view_rotate_impeller_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				E0D5A1DF2C8115F7003BB890 /* golden_platform_view_clippath_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				E0D5A1E02C8115F7003BB890 /* golden_platform_view_cliprect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				E0D5A1E12C8115F7003BB890 /* golden_platform_view_cliprrect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				E0D5A1E22C8115F7003BB890 /* golden_platform_view_large_cliprrect_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				E0D5A1E32C8115F7003BB890 /* golden_two_platform_view_clip_path_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				E0D5A1E42C8115F7003BB890 /* golden_two_platform_view_clip_rrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				E0D5A1E52C8115F7003BB890 /* golden_two_platform_view_clip_rect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				E0D5A1E62C8115F7003BB890 /* golden_platform_view_cliprrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				E0D5A1E72C8115F7003BB890 /* golden_platform_view_clippath_with_transform_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				E0D5A1E82C8115F7003BB890 /* golden_platform_view_large_cliprrect_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				E0D5A1E92C8115F7003BB890 /* golden_platform_view_cliprect_after_moved_multiple_clips_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				68C9D8092AD9B6C800DF9D79 /* golden_darwin_system_font_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8D29F9C10700281002 /* golden_platform_view_large_cliprrect_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8329F9C10700281002 /* golden_platform_view_transform_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8B29F9C10700281002 /* golden_platform_view_clippath_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				6860CE272A01B2FF00B68EC5 /* golden_two_platform_view_clip_path_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+				684FFF8129F9C10700281002 /* golden_platform_view_large_cliprrect_with_transform_iPhone SE (3rd generation)_17.0_simulator.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		686382E62AC1F9F300E27AAD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				686382EF2AC1F9F300E27AAD /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		248D76C322E388370012F0C1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				248D76DA22E388380012F0C1 /* main.m in Sources */,
+				68D4017D2564859300ECD91A /* ContinuousTexture.m in Sources */,
+				24F1FB89230B4579005ACE7C /* TextPlatformView.m in Sources */,
+				248D76CC22E388370012F0C1 /* AppDelegate.m in Sources */,
+				0A57B3BF2323C74200DD9521 /* FlutterEngine+ScenariosTest.m in Sources */,
+				0A57B3BD2323C4BD00DD9521 /* ScreenBeforeFlutter.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		248D76DB22E388380012F0C1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0DB7820222EA493B00E9B371 /* FlutterViewControllerTest.m in Sources */,
+				0A57B3C22323D2D700DD9521 /* AppLifecycleTests.m in Sources */,
+				0A97D7C024BA937000050525 /* FlutterViewControllerInitialRouteTest.m in Sources */,
+				248FDFC422FE7CD0009CC7CD /* FlutterEngineTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		248D76E622E388380012F0C1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6402EBD124147BDA00987DCB /* UnobstructedPlatformViewTests.m in Sources */,
+				68A5B63423EB71D300BDBCDB /* PlatformViewGestureRecognizerTests.m in Sources */,
+				68C9D8012AD9B0EF00DF9D79 /* DarwinSystemFontTests.m in Sources */,
+				6816DBA12317573300A51400 /* GoldenImage.m in Sources */,
+				0A02E8F724EFAD27002D54E5 /* BogusFontTextTest.m in Sources */,
+				6816DB9E231750ED00A51400 /* GoldenPlatformViewTests.m in Sources */,
+				6816DBA42318358200A51400 /* GoldenTestManager.m in Sources */,
+				248D76EF22E388380012F0C1 /* PlatformViewUITests.m in Sources */,
+				0D8470A4240F0B1F0030B565 /* StatusBarTest.m in Sources */,
+				F26F15B8268B6B5600EC54D3 /* iPadGestureTests.m in Sources */,
+				4F06F1B32473296E000AF246 /* LocalizationInitializationTest.m in Sources */,
+				686383132AC202B700E27AAD /* AppExtensionTests.m in Sources */,
+				0DDEBC89258830B40065D0E8 /* SpawnEngineTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		686382E42AC1F9F300E27AAD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				686382EC2AC1F9F300E27AAD /* ShareViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		248D76E122E388380012F0C1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 248D76C622E388370012F0C1 /* Scenarios */;
+			targetProxy = 248D76E022E388380012F0C1 /* PBXContainerItemProxy */;
+		};
+		248D76EC22E388380012F0C1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 248D76C622E388370012F0C1 /* Scenarios */;
+			targetProxy = 248D76EB22E388380012F0C1 /* PBXContainerItemProxy */;
+		};
+		686382F22AC1F9F300E27AAD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 686382E72AC1F9F300E27AAD /* ScenariosShare */;
+			targetProxy = 686382F12AC1F9F300E27AAD /* PBXContainerItemProxy */;
+		};
+		686383112AC2027100E27AAD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = FlutterAppExtensionTestHost;
+			targetProxy = 686383102AC2027100E27AAD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		686382ED2AC1F9F300E27AAD /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				686382EE2AC1F9F300E27AAD /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		248D76F122E388380012F0C1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		248D76F222E388380012F0C1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		248D76F422E388380012F0C1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				INFOPLIST_FILE = Scenarios/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.Scenarios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		248D76F522E388380012F0C1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				INFOPLIST_FILE = Scenarios/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.Scenarios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		248D76F722E388380012F0C1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				INFOPLIST_FILE = ScenariosTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Flutter,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.ScenariosTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Scenarios.app/Scenarios";
+			};
+			name = Debug;
+		};
+		248D76F822E388380012F0C1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				INFOPLIST_FILE = ScenariosTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Flutter,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.ScenariosTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Scenarios.app/Scenarios";
+			};
+			name = Release;
+		};
+		248D76FA22E388380012F0C1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				INFOPLIST_FILE = ScenariosUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Flutter,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.ScenariosUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Scenarios;
+			};
+			name = Debug;
+		};
+		248D76FB22E388380012F0C1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				INFOPLIST_FILE = ScenariosUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Flutter,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.ScenariosUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Scenarios;
+			};
+			name = Release;
+		};
+		686382F52AC1F9F300E27AAD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScenariosShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ScenariosShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 flutter. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.Scenarios.ScenariosShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		686382F62AC1F9F300E27AAD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScenariosShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ScenariosShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 flutter. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.Scenarios.ScenariosShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		248D76C222E388370012F0C1 /* Build configuration list for PBXProject "Scenarios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				248D76F122E388380012F0C1 /* Debug */,
+				248D76F222E388380012F0C1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		248D76F322E388380012F0C1 /* Build configuration list for PBXNativeTarget "Scenarios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				248D76F422E388380012F0C1 /* Debug */,
+				248D76F522E388380012F0C1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		248D76F622E388380012F0C1 /* Build configuration list for PBXNativeTarget "ScenariosTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				248D76F722E388380012F0C1 /* Debug */,
+				248D76F822E388380012F0C1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		248D76F922E388380012F0C1 /* Build configuration list for PBXNativeTarget "ScenariosUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				248D76FA22E388380012F0C1 /* Debug */,
+				248D76FB22E388380012F0C1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		686382F72AC1F9F300E27AAD /* Build configuration list for PBXNativeTarget "ScenariosShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				686382F52AC1F9F300E27AAD /* Debug */,
+				686382F62AC1F9F300E27AAD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 248D76BF22E388370012F0C1 /* Project object */;
+}

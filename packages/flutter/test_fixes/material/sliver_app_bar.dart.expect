@@ -20,5 +20,6 @@ void main() {
   SliverAppBar sliverAppBar = SliverAppBar();
   sliverAppBar = SliverAppBar();
   sliverAppBar = SliverAppBar();
-  sliverAppBar.backwardsCompatibility; // Removing field reference not supported.
+  sliverAppBar
+      .backwardsCompatibility; // Removing field reference not supported.
 }

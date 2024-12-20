@@ -11,7 +11,6 @@ import 'package:flutter_tools/src/template.dart';
 import '../../src/common.dart';
 
 void main() {
-
   testWithoutContext('kotlin reserved keywords', () {
     final FileSystem fileSystem = MemoryFileSystem.test();
     final BufferLogger logger = BufferLogger.test();
@@ -28,20 +27,17 @@ void main() {
     sourceFile.writeAsStringSync('package {{androidIdentifier}};');
 
     final Template template = Template(
-        templateSource,
-        imageSourceDir,
-        fileSystem: fileSystem,
-        logger: logger,
-        templateRenderer: const MustacheTemplateRenderer(),
+      templateSource,
+      imageSourceDir,
+      fileSystem: fileSystem,
+      logger: logger,
+      templateRenderer: const MustacheTemplateRenderer(),
     );
 
-    final Map<String, Object> context = <String, Object>{
-      'androidIdentifier': 'is.in.when.there',
-    };
+    final Map<String, Object> context = <String, Object>{'androidIdentifier': 'is.in.when.there'};
     template.render(destination, context);
 
     final File destinationFile = destination.childFile(outputClass);
     expect(destinationFile.readAsStringSync(), equals('package `is`.`in`.`when`.there;'));
   });
-
 }

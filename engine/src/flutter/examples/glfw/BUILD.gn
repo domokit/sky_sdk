@@ -1,0 +1,20 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/examples/examples.gni")
+
+if (build_embedder_examples) {
+  executable("glfw") {
+    output_name = "embedder_example"
+
+    sources = [ "FlutterEmbedderGLFW.cc" ]
+
+    ldflags = [ "-rdynamic" ]
+
+    deps = [
+      "//flutter/shell/platform/embedder:embedder",
+      "//flutter/third_party/glfw",
+    ]
+  }
+}

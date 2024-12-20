@@ -1,0 +1,14 @@
+name: web_engine_tester
+
+# Keep the SDK version range in sync with lib/web_ui/pubspec.yaml
+environment:
+  sdk: ^3.7.0-0
+
+dependencies:
+  js: ^0.7.0
+  stream_channel: 2.1.1
+  test: 1.25.8
+  webkit_inspection_protocol: 1.0.0
+  stack_trace: 1.10.0
+  ui:
+    path: ../../lib/web_ui

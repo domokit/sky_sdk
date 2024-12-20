@@ -1,0 +1,20 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+executable("vulkan_glfw") {
+  output_name = "embedder_example_vulkan"
+
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [ "//build/config/compiler:no_chromium_code" ]
+
+  sources = [ "src/main.cc" ]
+
+  ldflags = [ "-rdynamic" ]
+
+  deps = [
+    "//flutter/shell/platform/embedder:embedder",
+    "//flutter/third_party/glfw",
+    "//flutter/third_party/vulkan-deps/vulkan-headers/src:vulkan_headers",
+  ]
+}

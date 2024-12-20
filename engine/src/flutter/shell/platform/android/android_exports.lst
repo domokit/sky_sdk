@@ -1,0 +1,16 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Linker script that exports the minimal symbols required for libflutter.so
+
+{
+  global:
+    JNI_OnLoad;
+    _binary_icudtl_dat_start;
+    _binary_icudtl_dat_size;
+    InternalFlutterGpu*;
+    kInternalFlutterGpu*;
+  local:
+    *;
+};

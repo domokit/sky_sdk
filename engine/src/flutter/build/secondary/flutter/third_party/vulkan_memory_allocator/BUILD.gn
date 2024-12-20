@@ -1,0 +1,40 @@
+# Copyright 2020 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# Custom GN integration for VulkanMemoryAllocator.
+
+declare_args() {
+  vma_vulkan_headers_dir = "//flutter/third_party/vulkan-deps/vulkan-headers/src"
+}
+
+config("vulkan_memory_allocator_config") {
+  include_dirs = [ "include" ]
+  if (is_clang) {
+    cflags_cc = [
+      "-Wno-c++98-compat-extra-semi",
+      "-Wno-deprecated-copy",
+      "-Wno-implicit-fallthrough",
+      "-Wno-nullability-completeness",
+      "-Wno-suggest-destructor-override",
+      "-Wno-suggest-override",
+      "-Wno-unused-private-field",
+      "-Wno-unused-variable",
+    ]
+  }
+  if (is_win && !is_clang) {
+    cflags_cc = [
+      "/wd4189",  # local variable is initialized but not referenced
+    ]
+  }
+  defines = [
+    "VMA_DYNAMIC_VULKAN_FUNCTIONS=0",
+    "VMA_STATIC_VULKAN_FUNCTIONS=0",
+  ]
+}
+
+source_set("vulkan_memory_allocator") {
+  sources = [ "include/vk_mem_alloc.h" ]
+  deps = [ "${vma_vulkan_headers_dir}:vulkan_headers" ]
+  public_configs = [ ":vulkan_memory_allocator_config" ]
+}

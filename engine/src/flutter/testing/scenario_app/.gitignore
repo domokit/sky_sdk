@@ -1,0 +1,11 @@
+.packages
+pubspec.lock   # This only has local dependencies in it.
+build/
+
+ios/Scenarios/*.framework/
+ios/Scenarios/*.xcframework/
+android/app/libs/flutter.jar
+android/app/src/main/jniLibs/arm64-v8a/libapp.so
+android/gradle-home/.cache
+
+!.vpython

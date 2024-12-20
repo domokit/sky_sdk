@@ -1,0 +1,24 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../../tools/impeller.gni")
+
+group("backend") {
+  public_deps = []
+
+  if (impeller_enable_metal) {
+    assert(is_mac || is_ios)
+    public_deps += [ "metal" ]
+  }
+
+  if (impeller_enable_opengles) {
+    assert(is_mac || is_linux || is_win || is_android)
+    public_deps += [ "gles" ]
+  }
+
+  if (impeller_enable_vulkan) {
+    assert(is_mac || is_linux || is_win || is_android)
+    public_deps += [ "vulkan" ]
+  }
+}

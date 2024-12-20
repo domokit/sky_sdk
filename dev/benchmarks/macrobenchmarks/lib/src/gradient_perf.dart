@@ -11,7 +11,8 @@ import '../common.dart';
 
 Map<String, WidgetBuilder> gradientPerfRoutes = <String, WidgetBuilder>{
   kGradientPerfRecreateDynamicRouteName: (BuildContext _) => const RecreateDynamicPainterPage(),
-  kGradientPerfRecreateConsistentRouteName: (BuildContext _) => const RecreateConsistentPainterPage(),
+  kGradientPerfRecreateConsistentRouteName:
+      (BuildContext _) => const RecreateConsistentPainterPage(),
   kGradientPerfStaticConsistentRouteName: (BuildContext _) => const StaticConsistentPainterPage(),
 };
 
@@ -66,7 +67,7 @@ class _PainterPage extends StatefulWidget {
 
 class RecreateDynamicPainterPage extends _PainterPage {
   const RecreateDynamicPainterPage({super.key})
-      : super(title: 'Recreate Dynamic Gradients', factory: makePainter);
+    : super(title: 'Recreate Dynamic Gradients', factory: makePainter);
 
   static CustomPainter makePainter(double f) {
     return RecreatedDynamicGradients(baseFactor: f);
@@ -75,7 +76,7 @@ class RecreateDynamicPainterPage extends _PainterPage {
 
 class RecreateConsistentPainterPage extends _PainterPage {
   const RecreateConsistentPainterPage({super.key})
-      : super(title: 'Recreate Same Gradients', factory: makePainter);
+    : super(title: 'Recreate Same Gradients', factory: makePainter);
 
   static CustomPainter makePainter(double f) {
     return RecreatedConsistentGradients(baseFactor: f);
@@ -84,7 +85,7 @@ class RecreateConsistentPainterPage extends _PainterPage {
 
 class StaticConsistentPainterPage extends _PainterPage {
   const StaticConsistentPainterPage({super.key})
-      : super(title: 'Reuse Same Gradients', factory: makePainter);
+    : super(title: 'Reuse Same Gradients', factory: makePainter);
 
   static CustomPainter makePainter(double f) {
     return StaticConsistentGradients(baseFactor: f);
@@ -110,9 +111,7 @@ class _PainterPageState extends State<_PainterPage> with SingleTickerProviderSta
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: Center(
         child: AnimatedBuilder(
           animation: _controller,
@@ -155,16 +154,13 @@ Color color(double factor) {
 }
 
 Shader rotatingGradient(double factor, double x, double y, double h) {
-  final double s = sin(factor * 2 * pi) * h/8;
-  final double c = cos(factor * 2 * pi) * h/8;
+  final double s = sin(factor * 2 * pi) * h / 8;
+  final double c = cos(factor * 2 * pi) * h / 8;
   final double cx = x;
-  final double cy = y + h/2;
+  final double cy = y + h / 2;
   final Offset p0 = Offset(cx + s, cy + c);
   final Offset p1 = Offset(cx - s, cy - c);
-  return ui.Gradient.linear(p0, p1, <Color>[
-    color(factor),
-    color(factor + 0.5),
-  ]);
+  return ui.Gradient.linear(p0, p1, <Color>[color(factor), color(factor + 0.5)]);
 }
 
 const int nAcross = 12;
@@ -185,8 +181,8 @@ double y(int i, int j) {
 }
 
 Shader gradient(double baseFactor, int i, int j) {
-  final double lineFactor = baseFactor + 1/3 + 0.5 * (j + 1) / (nDown + 1);
-  final double cellFactor = lineFactor + 1/3 * (i + 1) / (nAcross + 1);
+  final double lineFactor = baseFactor + 1 / 3 + 0.5 * (j + 1) / (nDown + 1);
+  final double cellFactor = lineFactor + 1 / 3 * (i + 1) / (nAcross + 1);
   return rotatingGradient(cellFactor, x(i, j) + cellW / 2, y(i, j), cellH);
 }
 
@@ -240,11 +236,7 @@ class StaticConsistentGradients extends CustomPainter {
   final double baseFactor;
 
   static List<List<Shader>> gradients = <List<Shader>>[
-    for (int j = 0; j < nDown; j++)
-      <Shader>[
-        for (int i = 0; i < nAcross; i++)
-          gradient(0, i, j),
-      ],
+    for (int j = 0; j < nDown; j++) <Shader>[for (int i = 0; i < nAcross; i++) gradient(0, i, j)],
   ];
 
   @override

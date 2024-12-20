@@ -231,7 +231,7 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
   /// pointer being added while [addAllowedPointerPanZoom] is only called for pointers
   /// that are allowed by this recognizer.
   @protected
-  void addAllowedPointerPanZoom(PointerPanZoomStartEvent event) { }
+  void addAllowedPointerPanZoom(PointerPanZoomStartEvent event) {}
 
   /// Registers a new pointer that might be relevant to this gesture
   /// detector.
@@ -265,7 +265,7 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
   /// pointer being added while [addAllowedPointer] is only called for pointers
   /// that are allowed by this recognizer.
   @protected
-  void addAllowedPointer(PointerDownEvent event) { }
+  void addAllowedPointer(PointerDownEvent event) {}
 
   /// Handles a pointer being added that's not allowed by this recognizer.
   ///
@@ -274,20 +274,20 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
   /// See:
   /// - [OneSequenceGestureRecognizer.handleNonAllowedPointer].
   @protected
-  void handleNonAllowedPointer(PointerDownEvent event) { }
+  void handleNonAllowedPointer(PointerDownEvent event) {}
 
   /// Checks whether or not a pointer is allowed to be tracked by this recognizer.
   @protected
   bool isPointerAllowed(PointerDownEvent event) {
-    return (supportedDevices == null || supportedDevices!.contains(event.kind))
-        && allowedButtonsFilter(event.buttons);
+    return (supportedDevices == null || supportedDevices!.contains(event.kind)) &&
+        allowedButtonsFilter(event.buttons);
   }
 
   /// Handles a pointer pan/zoom being added that's not allowed by this recognizer.
   ///
   /// Subclasses can override this method and reject the gesture.
   @protected
-  void handleNonAllowedPointerPanZoom(PointerPanZoomStartEvent event) { }
+  void handleNonAllowedPointerPanZoom(PointerPanZoomStartEvent event) {}
 
   /// Checks whether or not a pointer pan/zoom is allowed to be tracked by this recognizer.
   @protected
@@ -335,7 +335,11 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
   /// e.g. the arguments passed to the callback.
   @protected
   @pragma('vm:notify-debugger-on-exception')
-  T? invokeCallback<T>(String name, RecognizerCallback<T> callback, { String Function()? debugReport }) {
+  T? invokeCallback<T>(
+    String name,
+    RecognizerCallback<T> callback, {
+    String Function()? debugReport,
+  }) {
     T? result;
     try {
       assert(() {
@@ -344,7 +348,9 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
           // The 19 in the line below is the width of the prefix used by
           // _debugLogDiagnostic in arena.dart.
           final String prefix = debugPrintGestureArenaDiagnostics ? '${' ' * 19}❙ ' : '';
-          debugPrint('$prefix$this calling $name callback.${ (report?.isNotEmpty ?? false) ? " $report" : "" }');
+          debugPrint(
+            '$prefix$this calling $name callback.${(report?.isNotEmpty ?? false) ? " $report" : ""}',
+          );
         }
         return true;
       }());
@@ -352,19 +358,26 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
     } catch (exception, stack) {
       InformationCollector? collector;
       assert(() {
-        collector = () => <DiagnosticsNode>[
-          StringProperty('Handler', name),
-          DiagnosticsProperty<GestureRecognizer>('Recognizer', this, style: DiagnosticsTreeStyle.errorProperty),
-        ];
+        collector =
+            () => <DiagnosticsNode>[
+              StringProperty('Handler', name),
+              DiagnosticsProperty<GestureRecognizer>(
+                'Recognizer',
+                this,
+                style: DiagnosticsTreeStyle.errorProperty,
+              ),
+            ];
         return true;
       }());
-      FlutterError.reportError(FlutterErrorDetails(
-        exception: exception,
-        stack: stack,
-        library: 'gesture',
-        context: ErrorDescription('while handling a gesture'),
-        informationCollector: collector,
-      ));
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: exception,
+          stack: stack,
+          library: 'gesture',
+          context: ErrorDescription('while handling a gesture'),
+          informationCollector: collector,
+        ),
+      );
     }
     return result;
   }
@@ -428,10 +441,10 @@ abstract class OneSequenceGestureRecognizer extends GestureRecognizer {
   void handleEvent(PointerEvent event);
 
   @override
-  void acceptGesture(int pointer) { }
+  void acceptGesture(int pointer) {}
 
   @override
-  void rejectGesture(int pointer) { }
+  void rejectGesture(int pointer) {}
 
   /// Called when the number of pointers this recognizer is tracking changes from one to zero.
   ///
@@ -487,6 +500,7 @@ abstract class OneSequenceGestureRecognizer extends GestureRecognizer {
   /// is shortly after creating the recognizer.
   GestureArenaTeam? get team => _team;
   GestureArenaTeam? _team;
+
   /// The [team] can only be set once.
   set team(GestureArenaTeam? value) {
     assert(value != null);
@@ -696,7 +710,8 @@ abstract class PrimaryPointerGestureRecognizer extends OneSequenceGestureRecogni
           postAcceptSlopTolerance != null &&
           _getGlobalDistance(event) > postAcceptSlopTolerance!;
 
-      if (event is PointerMoveEvent && (isPreAcceptSlopPastTolerance || isPostAcceptSlopPastTolerance)) {
+      if (event is PointerMoveEvent &&
+          (isPreAcceptSlopPastTolerance || isPostAcceptSlopPastTolerance)) {
         resolve(GestureDisposition.rejected);
         stopTrackingPointer(primaryPointer!);
       } else {
@@ -789,22 +804,17 @@ abstract class PrimaryPointerGestureRecognizer extends OneSequenceGestureRecogni
 @immutable
 class OffsetPair {
   /// Creates a [OffsetPair] combining a [local] and [global] [Offset].
-  const OffsetPair({
-    required this.local,
-    required this.global,
-  });
+  const OffsetPair({required this.local, required this.global});
 
   /// Creates a [OffsetPair] from [PointerEvent.localPosition] and
   /// [PointerEvent.position].
   OffsetPair.fromEventPosition(PointerEvent event)
-      : local = event.localPosition,
-        global = event.position;
+    : local = event.localPosition,
+      global = event.position;
 
   /// Creates a [OffsetPair] from [PointerEvent.localDelta] and
   /// [PointerEvent.delta].
-  OffsetPair.fromEventDelta(PointerEvent event)
-      : local = event.localDelta,
-        global = event.delta;
+  OffsetPair.fromEventDelta(PointerEvent event) : local = event.localDelta, global = event.delta;
 
   /// A [OffsetPair] where both [Offset]s are [Offset.zero].
   static const OffsetPair zero = OffsetPair(local: Offset.zero, global: Offset.zero);
@@ -817,19 +827,13 @@ class OffsetPair {
   final Offset global;
 
   /// Adds the `other.global` to [global] and `other.local` to [local].
-  OffsetPair operator+(OffsetPair other) {
-    return OffsetPair(
-      local: local + other.local,
-      global: global + other.global,
-    );
+  OffsetPair operator +(OffsetPair other) {
+    return OffsetPair(local: local + other.local, global: global + other.global);
   }
 
   /// Subtracts the `other.global` from [global] and `other.local` from [local].
-  OffsetPair operator-(OffsetPair other) {
-    return OffsetPair(
-      local: local - other.local,
-      global: global - other.global,
-    );
+  OffsetPair operator -(OffsetPair other) {
+    return OffsetPair(local: local - other.local, global: global - other.global);
   }
 
   @override

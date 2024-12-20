@@ -1,0 +1,29 @@
+layout(local_size_x = 128) in;
+layout(std430) buffer;
+
+layout(binding = 0) writeonly buffer Output {
+  uint count;
+  uint elements[];
+}
+output_data;
+
+layout(binding = 1) readonly buffer Input {
+  uint count;
+  uint elements[];
+}
+input_data;
+
+void main() {
+  uint ident = gl_GlobalInvocationID.x;
+
+  if (ident >= input_data.count) {
+    return;
+  }
+
+  uint out_slot = ident * 2;
+
+  output_data.count = input_data.count * 2;
+
+  output_data.elements[out_slot] = input_data.elements[ident] * 2;
+  output_data.elements[out_slot + 1] = input_data.elements[ident] * 3;
+}

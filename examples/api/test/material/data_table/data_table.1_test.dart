@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('DataTable is scrollable', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.DataTableExampleApp(),
-    );
+    await tester.pumpWidget(const example.DataTableExampleApp());
 
     expect(find.byType(SingleChildScrollView), findsOneWidget);
 

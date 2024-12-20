@@ -1,0 +1,15 @@
+# For more information on how to add additional suppressions here go to
+# https://github.com/google/sanitizers/wiki/ThreadSanitizerSuppressions
+
+# We don't care about errors from the Dart VM.
+race:dart::*
+thread:dart::*
+
+# Data race on animator begin frame when the engine is shutting down.
+# https://github.com/flutter/flutter/issues/42190
+race:flutter::Shell::OnAnimatorBeginFrame
+race:flutter::Shell::OnAnimatorNotifyIdle
+
+# Data race in MessageLoopTaskQueues disposal.
+# https://github.com/flutter/flutter/issues/42192
+race:fml::MessageLoopTaskQueues::Dispose

@@ -198,15 +198,17 @@ class AnimatedList extends _AnimatedScrollView {
     assert(() {
       if (result == null) {
         throw FlutterError.fromParts(<DiagnosticsNode>[
-          ErrorSummary('AnimatedList.of() called with a context that does not contain an AnimatedList.'),
+          ErrorSummary(
+            'AnimatedList.of() called with a context that does not contain an AnimatedList.',
+          ),
           ErrorDescription(
             'No AnimatedList ancestor could be found starting from the context that was passed to AnimatedList.of().',
           ),
           ErrorHint(
             'This can happen when the context provided is from the same StatefulWidget that '
-                'built the AnimatedList. Please see the AnimatedList documentation for examples '
-                'of how to refer to an AnimatedListState object:\n'
-                '  https://api.flutter.dev/flutter/widgets/AnimatedListState-class.html',
+            'built the AnimatedList. Please see the AnimatedList documentation for examples '
+            'of how to refer to an AnimatedListState object:\n'
+            '  https://api.flutter.dev/flutter/widgets/AnimatedListState-class.html',
           ),
           context.describeElement('The context used was'),
         ]);
@@ -384,7 +386,7 @@ class AnimatedGrid extends _AnimatedScrollView {
     super.physics,
     super.padding,
     super.clipBehavior = Clip.hardEdge,
-  })  : assert(initialItemCount >= 0);
+  }) : assert(initialItemCount >= 0);
 
   /// {@template flutter.widgets.AnimatedGrid.gridDelegate}
   /// A delegate that controls the layout of the children within the
@@ -422,7 +424,9 @@ class AnimatedGrid extends _AnimatedScrollView {
     assert(() {
       if (result == null) {
         throw FlutterError.fromParts(<DiagnosticsNode>[
-          ErrorSummary('AnimatedGrid.of() called with a context that does not contain an AnimatedGrid.'),
+          ErrorSummary(
+            'AnimatedGrid.of() called with a context that does not contain an AnimatedGrid.',
+          ),
           ErrorDescription(
             'No AnimatedGrid ancestor could be found starting from the context that was passed to AnimatedGrid.of().',
           ),
@@ -658,8 +662,10 @@ abstract class _AnimatedScrollView extends StatefulWidget {
   final Clip clipBehavior;
 }
 
-abstract class _AnimatedScrollViewState<T extends _AnimatedScrollView> extends State<T> with TickerProviderStateMixin {
-  final GlobalKey<_SliverAnimatedMultiBoxAdaptorState<_SliverAnimatedMultiBoxAdaptor>> _sliverAnimatedMultiBoxKey = GlobalKey();
+abstract class _AnimatedScrollViewState<T extends _AnimatedScrollView> extends State<T>
+    with TickerProviderStateMixin {
+  final GlobalKey<_SliverAnimatedMultiBoxAdaptorState<_SliverAnimatedMultiBoxAdaptor>>
+  _sliverAnimatedMultiBoxKey = GlobalKey();
 
   /// Insert an item at [index] and start an animation that will be passed
   /// to [AnimatedGrid.itemBuilder] or [AnimatedList.itemBuilder] when the item
@@ -671,7 +677,7 @@ abstract class _AnimatedScrollViewState<T extends _AnimatedScrollView> extends S
   /// This method's semantics are the same as Dart's [List.insert] method: it
   /// increases the length of the list of items by one and shifts
   /// all items at or after [index] towards the end of the list of items.
-  void insertItem(int index, { Duration duration = _kDuration }) {
+  void insertItem(int index, {Duration duration = _kDuration}) {
     if (widget.removedSeparatorBuilder == null) {
       _sliverAnimatedMultiBoxKey.currentState!.insertItem(index, duration: duration);
     } else {
@@ -690,13 +696,22 @@ abstract class _AnimatedScrollViewState<T extends _AnimatedScrollView> extends S
   /// are visible.
   ///
   /// If using [AnimatedList.separated] the animation will also be passed to `separatorBuilder`.
-  void insertAllItems(int index, int length, { Duration duration = _kDuration, bool isAsync = false }) {
+  void insertAllItems(
+    int index,
+    int length, {
+    Duration duration = _kDuration,
+    bool isAsync = false,
+  }) {
     if (widget.removedSeparatorBuilder == null) {
       _sliverAnimatedMultiBoxKey.currentState!.insertAllItems(index, length, duration: duration);
     } else {
       final int itemIndex = _computeItemIndex(index);
       final int lengthWithSeparators = _itemsCount == 0 ? length * 2 - 1 : length * 2;
-      _sliverAnimatedMultiBoxKey.currentState!.insertAllItems(itemIndex, lengthWithSeparators, duration: duration);
+      _sliverAnimatedMultiBoxKey.currentState!.insertAllItems(
+        itemIndex,
+        lengthWithSeparators,
+        duration: duration,
+      );
     }
   }
 
@@ -719,7 +734,7 @@ abstract class _AnimatedScrollViewState<T extends _AnimatedScrollView> extends S
   ///
   ///   * [AnimatedRemovedItemBuilder], which describes the arguments to the
   ///     [builder] argument.
-  void removeItem(int index, AnimatedRemovedItemBuilder builder, { Duration duration = _kDuration }) {
+  void removeItem(int index, AnimatedRemovedItemBuilder builder, {Duration duration = _kDuration}) {
     final AnimatedItemBuilder? removedSeparatorBuilder = widget.removedSeparatorBuilder;
     if (removedSeparatorBuilder == null) {
       // There are no separators. Remove only the item.
@@ -731,11 +746,19 @@ abstract class _AnimatedScrollViewState<T extends _AnimatedScrollView> extends S
       if (_itemsCount > 1) {
         if (itemIndex == _itemsCount - 1) {
           // The item was removed from the end of the list, so the separator to remove is the one at `last index` - 1.
-          _sliverAnimatedMultiBoxKey.currentState!.removeItem(itemIndex - 1, _toRemovedItemBuilder(removedSeparatorBuilder, index - 1), duration: duration);
+          _sliverAnimatedMultiBoxKey.currentState!.removeItem(
+            itemIndex - 1,
+            _toRemovedItemBuilder(removedSeparatorBuilder, index - 1),
+            duration: duration,
+          );
         } else {
           // The item was removed from the middle or beginning of the list,
           // so the corresponding separator took its place and needs to be removed at `itemIndex`.
-          _sliverAnimatedMultiBoxKey.currentState!.removeItem(itemIndex, _toRemovedItemBuilder(removedSeparatorBuilder, index), duration: duration);
+          _sliverAnimatedMultiBoxKey.currentState!.removeItem(
+            itemIndex,
+            _toRemovedItemBuilder(removedSeparatorBuilder, index),
+            duration: duration,
+          );
         }
       }
     }
@@ -758,7 +781,7 @@ abstract class _AnimatedScrollViewState<T extends _AnimatedScrollView> extends S
   ///
   ///   * [AnimatedRemovedItemBuilder], which describes the arguments to the
   ///     [builder] argument.
-  void removeAllItems(AnimatedRemovedItemBuilder builder, { Duration duration = _kDuration }) {
+  void removeAllItems(AnimatedRemovedItemBuilder builder, {Duration duration = _kDuration}) {
     final AnimatedItemBuilder? removedSeparatorBuilder = widget.removedSeparatorBuilder;
     if (removedSeparatorBuilder == null) {
       // There are no separators. We can remove all items with the same builder.
@@ -768,13 +791,17 @@ abstract class _AnimatedScrollViewState<T extends _AnimatedScrollView> extends S
 
     // There are separators. We need to remove items and separators separately
     // with the corresponding builders.
-    for (int index = _itemsCount - 1; index >= 0 ; index--) {
+    for (int index = _itemsCount - 1; index >= 0; index--) {
       if (index.isEven) {
         _sliverAnimatedMultiBoxKey.currentState!.removeItem(index, builder, duration: duration);
       } else {
         // The index of the separator's corresponding item
         final int itemIndex = index ~/ 2;
-        _sliverAnimatedMultiBoxKey.currentState!.removeItem(index, _toRemovedItemBuilder(removedSeparatorBuilder, itemIndex), duration: duration);
+        _sliverAnimatedMultiBoxKey.currentState!.removeItem(
+          index,
+          _toRemovedItemBuilder(removedSeparatorBuilder, itemIndex),
+          duration: duration,
+        );
       }
     }
   }
@@ -809,20 +836,24 @@ abstract class _AnimatedScrollViewState<T extends _AnimatedScrollView> extends S
       final MediaQueryData? mediaQuery = MediaQuery.maybeOf(context);
       if (mediaQuery != null) {
         // Automatically pad sliver with padding from MediaQuery.
-        final EdgeInsets mediaQueryHorizontalPadding =
-            mediaQuery.padding.copyWith(top: 0.0, bottom: 0.0);
-        final EdgeInsets mediaQueryVerticalPadding =
-            mediaQuery.padding.copyWith(left: 0.0, right: 0.0);
+        final EdgeInsets mediaQueryHorizontalPadding = mediaQuery.padding.copyWith(
+          top: 0.0,
+          bottom: 0.0,
+        );
+        final EdgeInsets mediaQueryVerticalPadding = mediaQuery.padding.copyWith(
+          left: 0.0,
+          right: 0.0,
+        );
         // Consume the main axis padding with SliverPadding.
-        effectivePadding = direction == Axis.vertical
-            ? mediaQueryVerticalPadding
-            : mediaQueryHorizontalPadding;
+        effectivePadding =
+            direction == Axis.vertical ? mediaQueryVerticalPadding : mediaQueryHorizontalPadding;
         // Leave behind the cross axis padding.
         sliver = MediaQuery(
           data: mediaQuery.copyWith(
-            padding: direction == Axis.vertical
-                ? mediaQueryHorizontalPadding
-                : mediaQueryVerticalPadding,
+            padding:
+                direction == Axis.vertical
+                    ? mediaQueryHorizontalPadding
+                    : mediaQueryVerticalPadding,
           ),
           child: sliver,
         );
@@ -840,7 +871,7 @@ abstract class _AnimatedScrollViewState<T extends _AnimatedScrollView> extends S
       physics: widget.physics,
       clipBehavior: widget.clipBehavior,
       shrinkWrap: widget.shrinkWrap,
-      slivers: <Widget>[ sliver ],
+      slivers: <Widget>[sliver],
     );
   }
 }
@@ -865,7 +896,8 @@ abstract class _AnimatedScrollViewState<T extends _AnimatedScrollView> extends S
 ///
 /// * [AnimatedRemovedItemBuilder], a builder that is for removing items with
 ///   animations instead of adding them.
-typedef AnimatedItemBuilder = Widget Function(BuildContext context, int index, Animation<double> animation);
+typedef AnimatedItemBuilder =
+    Widget Function(BuildContext context, int index, Animation<double> animation);
 
 /// Signature for the builder callback used in [AnimatedListState.removeItem] and
 /// [AnimatedGridState.removeItem] to animate their children after they have
@@ -879,7 +911,8 @@ typedef AnimatedItemBuilder = Widget Function(BuildContext context, int index, A
 ///
 /// * [AnimatedItemBuilder], a builder that is for adding items with animations
 ///   instead of removing them.
-typedef AnimatedRemovedItemBuilder = Widget Function(BuildContext context, Animation<double> animation);
+typedef AnimatedRemovedItemBuilder =
+    Widget Function(BuildContext context, Animation<double> animation);
 
 // The default insert/remove animation duration.
 const Duration _kDuration = Duration(milliseconds: 300);
@@ -888,9 +921,7 @@ const Duration _kDuration = Duration(milliseconds: 300);
 class _ActiveItem implements Comparable<_ActiveItem> {
   _ActiveItem.incoming(this.controller, this.itemIndex) : removedItemBuilder = null;
   _ActiveItem.outgoing(this.controller, this.itemIndex, this.removedItemBuilder);
-  _ActiveItem.index(this.itemIndex)
-      : controller = null,
-        removedItemBuilder = null;
+  _ActiveItem.index(this.itemIndex) : controller = null, removedItemBuilder = null;
 
   final AnimationController? controller;
   final AnimatedRemovedItemBuilder? removedItemBuilder;
@@ -961,14 +992,14 @@ class SliverAnimatedList extends _SliverAnimatedMultiBoxAdaptor {
       if (result == null) {
         throw FlutterError(
           'SliverAnimatedList.of() called with a context that does not contain a SliverAnimatedList.\n'
-              'No SliverAnimatedListState ancestor could be found starting from the '
-              'context that was passed to SliverAnimatedListState.of(). This can '
-              'happen when the context provided is from the same StatefulWidget that '
-              'built the AnimatedList. Please see the SliverAnimatedList documentation '
-              'for examples of how to refer to an AnimatedListState object: '
-              'https://api.flutter.dev/flutter/widgets/SliverAnimatedListState-class.html\n'
-              'The context used was:\n'
-              '  $context',
+          'No SliverAnimatedListState ancestor could be found starting from the '
+          'context that was passed to SliverAnimatedListState.of(). This can '
+          'happen when the context provided is from the same StatefulWidget that '
+          'built the AnimatedList. Please see the SliverAnimatedList documentation '
+          'for examples of how to refer to an AnimatedListState object: '
+          'https://api.flutter.dev/flutter/widgets/SliverAnimatedListState-class.html\n'
+          'The context used was:\n'
+          '  $context',
         );
       }
       return true;
@@ -1043,9 +1074,7 @@ class SliverAnimatedListState extends _SliverAnimatedMultiBoxAdaptorState<Sliver
   @protected
   @override
   Widget build(BuildContext context) {
-    return SliverList(
-      delegate: _createDelegate(),
-    );
+    return SliverList(delegate: _createDelegate());
   }
 }
 
@@ -1081,7 +1110,7 @@ class SliverAnimatedGrid extends _SliverAnimatedMultiBoxAdaptor {
     required this.gridDelegate,
     super.findChildIndexCallback,
     super.initialItemCount = 0,
-  })  : assert(initialItemCount >= 0);
+  }) : assert(initialItemCount >= 0);
 
   @override
   SliverAnimatedGridState createState() => SliverAnimatedGridState();
@@ -1105,7 +1134,8 @@ class SliverAnimatedGrid extends _SliverAnimatedMultiBoxAdaptor {
   ///  * [maybeOf], a similar function that will return null if no
   ///    [SliverAnimatedGrid] ancestor is found.
   static SliverAnimatedGridState of(BuildContext context) {
-    final SliverAnimatedGridState? result = context.findAncestorStateOfType<SliverAnimatedGridState>();
+    final SliverAnimatedGridState? result =
+        context.findAncestorStateOfType<SliverAnimatedGridState>();
     assert(() {
       if (result == null) {
         throw FlutterError(
@@ -1190,10 +1220,7 @@ class SliverAnimatedGridState extends _SliverAnimatedMultiBoxAdaptorState<Sliver
   @protected
   @override
   Widget build(BuildContext context) {
-    return SliverGrid(
-      gridDelegate: widget.gridDelegate,
-      delegate: _createDelegate(),
-    );
+    return SliverGrid(gridDelegate: widget.gridDelegate, delegate: _createDelegate());
   }
 }
 
@@ -1204,7 +1231,7 @@ abstract class _SliverAnimatedMultiBoxAdaptor extends StatefulWidget {
     required this.itemBuilder,
     this.findChildIndexCallback,
     this.initialItemCount = 0,
-  })  : assert(initialItemCount >= 0);
+  }) : assert(initialItemCount >= 0);
 
   /// {@macro flutter.widgets.AnimatedScrollView.itemBuilder}
   final AnimatedItemBuilder itemBuilder;
@@ -1216,8 +1243,9 @@ abstract class _SliverAnimatedMultiBoxAdaptor extends StatefulWidget {
   final int initialItemCount;
 }
 
-abstract class _SliverAnimatedMultiBoxAdaptorState<T extends _SliverAnimatedMultiBoxAdaptor> extends State<T> with TickerProviderStateMixin {
-
+abstract class _SliverAnimatedMultiBoxAdaptorState<T extends _SliverAnimatedMultiBoxAdaptor>
+    extends State<T>
+    with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
@@ -1282,31 +1310,25 @@ abstract class _SliverAnimatedMultiBoxAdaptorState<T extends _SliverAnimatedMult
     return SliverChildBuilderDelegate(
       _itemBuilder,
       childCount: _itemsCount,
-      findChildIndexCallback: widget.findChildIndexCallback == null
-          ? null
-          : (Key key) {
-        final int? index = widget.findChildIndexCallback!(key);
-        return index != null ? _indexToItemIndex(index) : null;
-      },
+      findChildIndexCallback:
+          widget.findChildIndexCallback == null
+              ? null
+              : (Key key) {
+                final int? index = widget.findChildIndexCallback!(key);
+                return index != null ? _indexToItemIndex(index) : null;
+              },
     );
   }
 
   Widget _itemBuilder(BuildContext context, int itemIndex) {
     final _ActiveItem? outgoingItem = _activeItemAt(_outgoingItems, itemIndex);
     if (outgoingItem != null) {
-      return outgoingItem.removedItemBuilder!(
-        context,
-        outgoingItem.controller!.view,
-      );
+      return outgoingItem.removedItemBuilder!(context, outgoingItem.controller!.view);
     }
 
     final _ActiveItem? incomingItem = _activeItemAt(_incomingItems, itemIndex);
     final Animation<double> animation = incomingItem?.controller?.view ?? kAlwaysCompleteAnimation;
-    return widget.itemBuilder(
-      context,
-      _itemIndexToIndex(itemIndex),
-      animation,
-    );
+    return widget.itemBuilder(context, _itemIndexToIndex(itemIndex), animation);
   }
 
   /// Insert an item at [index] and start an animation that will be passed to
@@ -1316,7 +1338,7 @@ abstract class _SliverAnimatedMultiBoxAdaptorState<T extends _SliverAnimatedMult
   /// This method's semantics are the same as Dart's [List.insert] method: it
   /// increases the length of the list of items by one and shifts
   /// all items at or after [index] towards the end of the list of items.
-  void insertItem(int index, { Duration duration = _kDuration }) {
+  void insertItem(int index, {Duration duration = _kDuration}) {
     assert(index >= 0);
 
     final int itemIndex = _indexToItemIndex(index);
@@ -1335,14 +1357,8 @@ abstract class _SliverAnimatedMultiBoxAdaptorState<T extends _SliverAnimatedMult
       }
     }
 
-    final AnimationController controller = AnimationController(
-      duration: duration,
-      vsync: this,
-    );
-    final _ActiveItem incomingItem = _ActiveItem.incoming(
-      controller,
-      itemIndex,
-    );
+    final AnimationController controller = AnimationController(duration: duration, vsync: this);
+    final _ActiveItem incomingItem = _ActiveItem.incoming(controller, itemIndex);
     setState(() {
       _incomingItems
         ..add(incomingItem)
@@ -1358,7 +1374,7 @@ abstract class _SliverAnimatedMultiBoxAdaptorState<T extends _SliverAnimatedMult
   /// Insert multiple items at [index] and start an animation that will be passed
   /// to [AnimatedGrid.itemBuilder] or [AnimatedList.itemBuilder] when the items
   /// are visible.
-  void insertAllItems(int index, int length, { Duration duration = _kDuration }) {
+  void insertAllItems(int index, int length, {Duration duration = _kDuration}) {
     for (int i = 0; i < length; i++) {
       insertItem(index + i, duration: duration);
     }
@@ -1376,7 +1392,7 @@ abstract class _SliverAnimatedMultiBoxAdaptorState<T extends _SliverAnimatedMult
   /// This method's semantics are the same as Dart's [List.remove] method: it
   /// decreases the length of items by one and shifts
   /// all items at or before [index] towards the beginning of the list of items.
-  void removeItem(int index, AnimatedRemovedItemBuilder builder, { Duration duration = _kDuration }) {
+  void removeItem(int index, AnimatedRemovedItemBuilder builder, {Duration duration = _kDuration}) {
     assert(index >= 0);
 
     final int itemIndex = _indexToItemIndex(index);
@@ -1385,7 +1401,8 @@ abstract class _SliverAnimatedMultiBoxAdaptorState<T extends _SliverAnimatedMult
 
     final _ActiveItem? incomingItem = _removeActiveItemAt(_incomingItems, itemIndex);
     final AnimationController controller =
-        incomingItem?.controller ?? AnimationController(duration: duration, value: 1.0, vsync: this);
+        incomingItem?.controller ??
+        AnimationController(duration: duration, value: 1.0, vsync: this);
     final _ActiveItem outgoingItem = _ActiveItem.outgoing(controller, itemIndex, builder);
     setState(() {
       _outgoingItems
@@ -1422,8 +1439,8 @@ abstract class _SliverAnimatedMultiBoxAdaptorState<T extends _SliverAnimatedMult
   ///
   /// This method's semantics are the same as Dart's [List.clear] method: it
   /// removes all the items in the list.
-  void removeAllItems(AnimatedRemovedItemBuilder builder, { Duration duration = _kDuration }) {
-    for (int i = _itemsCount - 1 ; i >= 0; i--) {
+  void removeAllItems(AnimatedRemovedItemBuilder builder, {Duration duration = _kDuration}) {
+    for (int i = _itemsCount - 1; i >= 0; i--) {
       removeItem(i, builder, duration: duration);
     }
   }

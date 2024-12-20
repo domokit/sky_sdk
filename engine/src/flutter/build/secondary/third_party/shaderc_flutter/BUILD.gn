@@ -1,0 +1,83 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+shaderc_base = "//flutter/third_party/shaderc"
+
+config("shaderc_util_config") {
+  include_dirs = [ "$shaderc_base/libshaderc_util/include/" ]
+}
+
+source_set("shaderc_util_flutter") {
+  public_configs = [ ":shaderc_util_config" ]
+
+  configs +=
+      [ "//flutter/third_party/vulkan-deps/spirv-tools/src:spvtools_public_config" ]
+
+  public_deps = [
+    "//flutter/third_party/vulkan-deps/glslang/src:glslang_sources",
+    "//flutter/third_party/vulkan-deps/spirv-tools/src:spvtools",
+  ]
+
+  defines = [ "ENABLE_HLSL=1" ]
+
+  if (is_clang) {
+    cflags_cc = [
+      "-Wno-deprecated-copy",
+      "-Wno-unknown-warning-option",
+    ]
+  }
+
+  sources = [
+    "$shaderc_base/libshaderc_util/include/libshaderc_util/counting_includer.h",
+    "$shaderc_base/libshaderc_util/include/libshaderc_util/exceptions.h",
+    "$shaderc_base/libshaderc_util/include/libshaderc_util/file_finder.h",
+    "$shaderc_base/libshaderc_util/include/libshaderc_util/format.h",
+    "$shaderc_base/libshaderc_util/include/libshaderc_util/io_shaderc.h",
+    "$shaderc_base/libshaderc_util/include/libshaderc_util/message.h",
+    "$shaderc_base/libshaderc_util/include/libshaderc_util/mutex.h",
+    "$shaderc_base/libshaderc_util/include/libshaderc_util/resources.h",
+    "$shaderc_base/libshaderc_util/include/libshaderc_util/spirv_tools_wrapper.h",
+    "$shaderc_base/libshaderc_util/include/libshaderc_util/string_piece.h",
+    "$shaderc_base/libshaderc_util/include/libshaderc_util/universal_unistd.h",
+    "$shaderc_base/libshaderc_util/include/libshaderc_util/version_profile.h",
+    "$shaderc_base/libshaderc_util/src/compiler.cc",
+    "$shaderc_base/libshaderc_util/src/file_finder.cc",
+    "$shaderc_base/libshaderc_util/src/io_shaderc.cc",
+    "$shaderc_base/libshaderc_util/src/message.cc",
+    "$shaderc_base/libshaderc_util/src/resources.cc",
+    "$shaderc_base/libshaderc_util/src/shader_stage.cc",
+    "$shaderc_base/libshaderc_util/src/spirv_tools_wrapper.cc",
+    "$shaderc_base/libshaderc_util/src/version_profile.cc",
+  ]
+}
+
+config("shaderc_config") {
+  include_dirs = [ "$shaderc_base/libshaderc/include/" ]
+}
+
+source_set("shaderc_flutter") {
+  defines = [ "SHADERC_IMPLEMENTATION" ]
+
+  public_configs = [ ":shaderc_config" ]
+
+  configs +=
+      [ "//flutter/third_party/vulkan-deps/spirv-tools/src:spvtools_public_config" ]
+
+  deps = [ ":shaderc_util_flutter" ]
+
+  public_deps = [
+    "//flutter/third_party/vulkan-deps/glslang/src:glslang_sources",
+    "//flutter/third_party/vulkan-deps/spirv-tools/src:spvtools",
+  ]
+
+  sources = [
+    "$shaderc_base/libshaderc/include/shaderc/env.h",
+    "$shaderc_base/libshaderc/include/shaderc/shaderc.h",
+    "$shaderc_base/libshaderc/include/shaderc/shaderc.hpp",
+    "$shaderc_base/libshaderc/include/shaderc/status.h",
+    "$shaderc_base/libshaderc/include/shaderc/visibility.h",
+    "$shaderc_base/libshaderc/src/shaderc.cc",
+    "$shaderc_base/libshaderc/src/shaderc_private.h",
+  ]
+}

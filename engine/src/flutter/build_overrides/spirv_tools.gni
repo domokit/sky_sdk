@@ -1,0 +1,11 @@
+# Copyright 2019 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# We are building inside Flutter.
+spirv_tools_standalone = false
+
+# Paths to SPIRV-Tools dependencies in Flutter.
+spirv_tools_googletest_dir = "//third_party/googletest/googletest/src"
+spirv_tools_spirv_headers_dir =
+    "//flutter/third_party/vulkan-deps/spirv-headers/src"

@@ -11,7 +11,8 @@ class ColorFilterWithUnstableChildPage extends StatefulWidget {
   State<StatefulWidget> createState() => _ColorFilterWithUnstableChildPageState();
 }
 
-class _ColorFilterWithUnstableChildPageState extends State<ColorFilterWithUnstableChildPage> with SingleTickerProviderStateMixin {
+class _ColorFilterWithUnstableChildPageState extends State<ColorFilterWithUnstableChildPage>
+    with SingleTickerProviderStateMixin {
   late Animation<double> _offsetY;
   late AnimationController _controller;
 
@@ -34,21 +35,27 @@ class _ColorFilterWithUnstableChildPageState extends State<ColorFilterWithUnstab
     return AnimatedBuilder(
       animation: _offsetY,
       builder: (BuildContext context, Widget? child) {
-        return Stack(children: List<Widget>.generate(50, (int i) => Positioned(
-          left: 0,
-          top: (200 * i).toDouble() + _offsetY.value,
-            child: ColorFiltered(
-              colorFilter: ColorFilter.mode(Colors.green[300]!, BlendMode.luminosity),
-              child: RepaintBoundary(
-                child: Container(
-                  // Slightly change width to invalidate raster cache.
-                  width: 1000 - (_offsetY.value / 100),
-                  height: 100, color: Colors.red,
+        return Stack(
+          children: List<Widget>.generate(
+            50,
+            (int i) => Positioned(
+              left: 0,
+              top: (200 * i).toDouble() + _offsetY.value,
+              child: ColorFiltered(
+                colorFilter: ColorFilter.mode(Colors.green[300]!, BlendMode.luminosity),
+                child: RepaintBoundary(
+                  child: Container(
+                    // Slightly change width to invalidate raster cache.
+                    width: 1000 - (_offsetY.value / 100),
+                    height: 100,
+                    color: Colors.red,
+                  ),
                 ),
               ),
             ),
-        )));
-      }
+          ),
+        );
+      },
     );
   }
 }

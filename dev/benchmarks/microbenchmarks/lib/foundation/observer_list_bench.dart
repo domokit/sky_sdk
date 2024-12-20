@@ -20,8 +20,7 @@ class TestAnimationController extends AnimationController {
 }
 
 Future<void> execute() async {
-  assert(false,
-      "Don't run benchmarks in debug mode! Use 'flutter run --release'.");
+  assert(false, "Don't run benchmarks in debug mode! Use 'flutter run --release'.");
 
   final BenchmarkResultPrinter printer = BenchmarkResultPrinter();
 
@@ -38,21 +37,17 @@ Future<void> execute() async {
     for (final int callbackCount in callbackCounts) {
       final int iterations = totalIterations ~/ callbackCount;
 
-      final ObserverList<VoidCallback> observerList =
-          ObserverList<VoidCallback>();
+      final ObserverList<VoidCallback> observerList = ObserverList<VoidCallback>();
       for (int i = 0; i < callbackCount; ++i) {
-        observerList.add(
-          switch (failRemoval) {
-            false => () {
-                final VoidCallback first =
-                    (observerList.iterator..moveNext()).current;
+        observerList.add(switch (failRemoval) {
+          false => () {
+            final VoidCallback first = (observerList.iterator..moveNext()).current;
 
-                observerList.remove(first);
-                observerList.add(first);
-              },
-            true => () => observerList.remove(miss),
+            observerList.remove(first);
+            observerList.add(first);
           },
-        );
+          true => () => observerList.remove(miss),
+        });
       }
 
       final Stopwatch watch = Stopwatch()..start();
@@ -79,21 +74,16 @@ Future<void> execute() async {
     }
   }
 
-  void runNotifyListenersLoopWithHashedObserverList(
-    int totalIterations, {
-    bool addResult = true,
-  }) {
+  void runNotifyListenersLoopWithHashedObserverList(int totalIterations, {bool addResult = true}) {
     const String name = 'notifyListeners:HashedObserverList';
 
     for (final int callbackCount in callbackCounts) {
       final int iterations = totalIterations ~/ callbackCount;
 
-      final HashedObserverList<VoidCallback> observerList =
-          HashedObserverList<VoidCallback>();
+      final HashedObserverList<VoidCallback> observerList = HashedObserverList<VoidCallback>();
       for (int i = 0; i < callbackCount; ++i) {
         observerList.add(() {
-          final VoidCallback first =
-              (observerList.iterator..moveNext()).current;
+          final VoidCallback first = (observerList.iterator..moveNext()).current;
 
           observerList.remove(first);
           observerList.add(first);
@@ -124,10 +114,7 @@ Future<void> execute() async {
     }
   }
 
-  void runNotifyListenersLoopWithAnimationController(
-    int totalIterations, {
-    bool addResult = true,
-  }) {
+  void runNotifyListenersLoopWithAnimationController(int totalIterations, {bool addResult = true}) {
     const String name = 'notifyListeners:AnimationController';
 
     for (final int callbackCount in callbackCounts) {
@@ -163,8 +150,7 @@ Future<void> execute() async {
   }
 
   runNotifyListenersLoopWithObserverList(_kNumIterationsList);
-  runNotifyListenersLoopWithObserverList(_kNumIterationsList,
-      failRemoval: true);
+  runNotifyListenersLoopWithObserverList(_kNumIterationsList, failRemoval: true);
   runNotifyListenersLoopWithHashedObserverList(_kNumIterationsHashed);
   runNotifyListenersLoopWithAnimationController(_kNumIterationsHashed);
 

@@ -11,12 +11,7 @@ import '../../gallery_localizations.dart';
 const double kColorItemHeight = 48;
 
 class _Palette {
-  _Palette({
-    required this.name,
-    required this.primary,
-    this.accent,
-    this.threshold = 900,
-  });
+  _Palette({required this.name, required this.primary, this.accent, this.threshold = 900});
 
   final String name;
   final MaterialColor primary;
@@ -101,16 +96,8 @@ List<_Palette> _allPalettes(BuildContext context) {
       accent: Colors.limeAccent,
       threshold: 800,
     ),
-    _Palette(
-      name: localizations.colorsYellow,
-      primary: Colors.yellow,
-      accent: Colors.yellowAccent,
-    ),
-    _Palette(
-      name: localizations.colorsAmber,
-      primary: Colors.amber,
-      accent: Colors.amberAccent,
-    ),
+    _Palette(name: localizations.colorsYellow, primary: Colors.yellow, accent: Colors.yellowAccent),
+    _Palette(name: localizations.colorsAmber, primary: Colors.amber, accent: Colors.amberAccent),
     _Palette(
       name: localizations.colorsOrange,
       primary: Colors.orange,
@@ -123,37 +110,20 @@ List<_Palette> _allPalettes(BuildContext context) {
       accent: Colors.deepOrangeAccent,
       threshold: 400,
     ),
-    _Palette(
-      name: localizations.colorsBrown,
-      primary: Colors.brown,
-      threshold: 200,
-    ),
-    _Palette(
-      name: localizations.colorsGrey,
-      primary: Colors.grey,
-      threshold: 500,
-    ),
-    _Palette(
-      name: localizations.colorsBlueGrey,
-      primary: Colors.blueGrey,
-      threshold: 500,
-    ),
+    _Palette(name: localizations.colorsBrown, primary: Colors.brown, threshold: 200),
+    _Palette(name: localizations.colorsGrey, primary: Colors.grey, threshold: 500),
+    _Palette(name: localizations.colorsBlueGrey, primary: Colors.blueGrey, threshold: 500),
   ];
 }
 
 class _ColorItem extends StatelessWidget {
-  const _ColorItem({
-    required this.index,
-    required this.color,
-    this.prefix = '',
-  });
+  const _ColorItem({required this.index, required this.color, this.prefix = ''});
 
   final int index;
   final Color color;
   final String prefix;
 
-  String get _colorString =>
-      "#${color.value.toRadixString(16).padLeft(8, '0').toUpperCase()}";
+  String get _colorString => "#${color.value.toRadixString(16).padLeft(8, '0').toUpperCase()}";
 
   @override
   Widget build(BuildContext context) {
@@ -165,10 +135,7 @@ class _ColorItem extends StatelessWidget {
         color: color,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text('$prefix$index'),
-            Flexible(child: Text(_colorString)),
-          ],
+          children: <Widget>[Text('$prefix$index'), Flexible(child: Text(_colorString))],
         ),
       ),
     );
@@ -179,29 +146,14 @@ class _PaletteTabView extends StatelessWidget {
   const _PaletteTabView({required this.colors});
 
   final _Palette colors;
-  static const List<int> primaryKeys = <int>[
-    50,
-    100,
-    200,
-    300,
-    400,
-    500,
-    600,
-    700,
-    800,
-    900
-  ];
+  static const List<int> primaryKeys = <int>[50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
   static const List<int> accentKeys = <int>[100, 200, 400, 700];
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final TextStyle whiteTextStyle = textTheme.bodyMedium!.copyWith(
-      color: Colors.white,
-    );
-    final TextStyle blackTextStyle = textTheme.bodyMedium!.copyWith(
-      color: Colors.black,
-    );
+    final TextStyle whiteTextStyle = textTheme.bodyMedium!.copyWith(color: Colors.white);
+    final TextStyle blackTextStyle = textTheme.bodyMedium!.copyWith(color: Colors.black);
     return Scrollbar(
       child: ListView(
         itemExtent: kColorItemHeight,
@@ -215,11 +167,7 @@ class _PaletteTabView extends StatelessWidget {
             for (final int key in accentKeys)
               DefaultTextStyle(
                 style: key > colors.threshold ? whiteTextStyle : blackTextStyle,
-                child: _ColorItem(
-                  index: key,
-                  color: colors.accent![key]!,
-                  prefix: 'A',
-                ),
+                child: _ColorItem(index: key, color: colors.accent![key]!, prefix: 'A'),
               ),
         ],
       ),
@@ -241,9 +189,7 @@ class ColorsDemo extends StatelessWidget {
           title: Text(GalleryLocalizations.of(context)!.demoColorsTitle),
           bottom: TabBar(
             isScrollable: true,
-            tabs: <Widget>[
-              for (final _Palette palette in palettes) Tab(text: palette.name),
-            ],
+            tabs: <Widget>[for (final _Palette palette in palettes) Tab(text: palette.name)],
             labelColor: Theme.of(context).colorScheme.onPrimary,
           ),
         ),

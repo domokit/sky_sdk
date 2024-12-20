@@ -3,22 +3,20 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/value_listenable_builder/value_listenable_builder.0.dart' as example;
+import 'package:flutter_api_samples/widgets/value_listenable_builder/value_listenable_builder.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Tapping FAB increments counter', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ValueListenableBuilderExampleApp(),
-    );
+    await tester.pumpWidget(const example.ValueListenableBuilderExampleApp());
 
     String getCount() {
       return (tester.widget(
-        find.descendant(
-          of: find.byType(example.CountDisplay),
-          matching: find.byType(Text),
-        ),
-      ) as Text).data!;
+                find.descendant(of: find.byType(example.CountDisplay), matching: find.byType(Text)),
+              )
+              as Text)
+          .data!;
     }
 
     expect(find.text('You have pushed the button this many times:'), findsOneWidget);

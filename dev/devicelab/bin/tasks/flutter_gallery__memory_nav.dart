@@ -7,10 +7,12 @@ import 'package:flutter_devicelab/framework/utils.dart';
 import 'package:flutter_devicelab/tasks/perf_tests.dart';
 
 Future<void> main() async {
-  await task(MemoryTest(
-    '${flutterDirectory.path}/dev/integration_tests/flutter_gallery',
-    'test_memory/memory_nav.dart',
-    'io.flutter.demo.gallery',
-    requiresTapToStart: true,
-  ).run);
+  await task(
+    MemoryTest(
+      '${flutterDirectory.path}/dev/integration_tests/flutter_gallery',
+      'test_memory/memory_nav.dart',
+      'io.flutter.demo.gallery',
+      requiresTapToStart: true,
+    ).run,
+  );
 }

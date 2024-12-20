@@ -1,0 +1,5 @@
+# Defines the Chromium style for automatic reformatting.
+# http://clang.llvm.org/docs/ClangFormatStyleOptions.html
+BasedOnStyle: Chromium
+Standard: c++17
+EmptyLineBeforeAccessModifier: Always

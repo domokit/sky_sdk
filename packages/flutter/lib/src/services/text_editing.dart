@@ -27,13 +27,11 @@ class TextSelection extends TextRange {
   /// A collapsed selection starts and ends at the same offset, which means it
   /// contains zero characters but instead serves as an insertion point in the
   /// text.
-  const TextSelection.collapsed({
-    required int offset,
-    this.affinity = TextAffinity.downstream,
-  }) : baseOffset = offset,
-       extentOffset = offset,
-       isDirectional = false,
-       super.collapsed(offset);
+  const TextSelection.collapsed({required int offset, this.affinity = TextAffinity.downstream})
+    : baseOffset = offset,
+      extentOffset = offset,
+      isDirectional = false,
+      super.collapsed(offset);
 
   /// Creates a collapsed selection at the given text position.
   ///
@@ -130,8 +128,8 @@ class TextSelection extends TextRange {
       return '$typeName.invalid';
     }
     return isCollapsed
-      ? '$typeName.collapsed(offset: $baseOffset, affinity: $affinity, isDirectional: $isDirectional)'
-      : '$typeName(baseOffset: $baseOffset, extentOffset: $extentOffset, isDirectional: $isDirectional)';
+        ? '$typeName.collapsed(offset: $baseOffset, affinity: $affinity, isDirectional: $isDirectional)'
+        : '$typeName(baseOffset: $baseOffset, extentOffset: $extentOffset, isDirectional: $isDirectional)';
   }
 
   @override
@@ -145,10 +143,10 @@ class TextSelection extends TextRange {
     if (!isValid) {
       return !other.isValid;
     }
-    return other.baseOffset == baseOffset
-        && other.extentOffset == extentOffset
-        && (!isCollapsed || other.affinity == affinity)
-        && other.isDirectional == isDirectional;
+    return other.baseOffset == baseOffset &&
+        other.extentOffset == extentOffset &&
+        (!isCollapsed || other.affinity == affinity) &&
+        other.isDirectional == isDirectional;
   }
 
   @override
@@ -158,9 +156,13 @@ class TextSelection extends TextRange {
     }
 
     final int affinityHash = isCollapsed ? affinity.hashCode : TextAffinity.downstream.hashCode;
-    return Object.hash(baseOffset.hashCode, extentOffset.hashCode, affinityHash, isDirectional.hashCode);
+    return Object.hash(
+      baseOffset.hashCode,
+      extentOffset.hashCode,
+      affinityHash,
+      isDirectional.hashCode,
+    );
   }
-
 
   /// Creates a new [TextSelection] based on the current selection, with the
   /// provided parameters overridden.
@@ -250,9 +252,6 @@ class TextSelection extends TextRange {
       return this;
     }
 
-    return copyWith(
-      extentOffset: position.offset,
-      affinity: position.affinity,
-    );
+    return copyWith(extentOffset: position.offset, affinity: position.affinity);
   }
 }

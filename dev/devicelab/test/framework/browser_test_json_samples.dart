@@ -8,7 +8,8 @@ import 'dart:convert' show jsonDecode;
 // integration tests of this package that dumped all the data as captured.
 
 /// To test isBeginFrame. (Sampled from Chrome 89+)
-final Map<String, Object?> beginMainFrameJson_89plus = jsonDecode('''
+final Map<String, Object?> beginMainFrameJson_89plus =
+    jsonDecode('''
 {
     "args": {
         "frameTime": 2338687248768
@@ -23,10 +24,12 @@ final Map<String, Object?> beginMainFrameJson_89plus = jsonDecode('''
     "ts": 2338687258440,
     "tts": 375499
 }
-''') as Map<String, Object?>;
+''')
+        as Map<String, Object?>;
 
 /// To test isUpdateAllLifecyclePhases. (Sampled from Chrome 89+)
-final Map<String, Object?> updateLifecycleJson_89plus = jsonDecode('''
+final Map<String, Object?> updateLifecycleJson_89plus =
+    jsonDecode('''
 {
     "args": {},
     "cat": "blink",
@@ -39,10 +42,12 @@ final Map<String, Object?> updateLifecycleJson_89plus = jsonDecode('''
     "ts": 2338687265284,
     "tts": 375900
 }
-''') as Map<String, Object?>;
+''')
+        as Map<String, Object?>;
 
 /// To test isBeginMeasuredFrame. (Sampled from Chrome 89+)
-final Map<String, Object?> beginMeasuredFrameJson_89plus = jsonDecode('''
+final Map<String, Object?> beginMeasuredFrameJson_89plus =
+    jsonDecode('''
 {
     "args": {},
     "cat": "blink.user_timing",
@@ -54,10 +59,12 @@ final Map<String, Object?> beginMeasuredFrameJson_89plus = jsonDecode('''
     "tid": 1,
     "ts": 2338687265932
 }
-''') as Map<String, Object?>;
+''')
+        as Map<String, Object?>;
 
 /// To test isEndMeasuredFrame. (Sampled from Chrome 89+)
-final Map<String, Object?> endMeasuredFrameJson_89plus = jsonDecode('''
+final Map<String, Object?> endMeasuredFrameJson_89plus =
+    jsonDecode('''
 {
     "args": {},
     "cat": "blink.user_timing",
@@ -69,10 +76,12 @@ final Map<String, Object?> endMeasuredFrameJson_89plus = jsonDecode('''
     "tid": 1,
     "ts": 2338687440485
 }
-''') as Map<String, Object?>;
+''')
+        as Map<String, Object?>;
 
 /// An unrelated data frame to test negative cases.
-final Map<String, Object?> unrelatedPhXJson = jsonDecode('''
+final Map<String, Object?> unrelatedPhXJson =
+    jsonDecode('''
 {
     "args": {},
     "cat": "blink,rail",
@@ -85,10 +94,12 @@ final Map<String, Object?> unrelatedPhXJson = jsonDecode('''
     "ts": 2338691143317,
     "tts": 1685405
 }
-''') as Map<String, Object?>;
+''')
+        as Map<String, Object?>;
 
 /// Another unrelated data frame to test negative cases.
-final Map<String, Object?> anotherUnrelatedJson = jsonDecode('''
+final Map<String, Object?> anotherUnrelatedJson =
+    jsonDecode('''
 {
     "args": {
         "sort_index": -1
@@ -100,4 +111,5 @@ final Map<String, Object?> anotherUnrelatedJson = jsonDecode('''
     "tid": 1,
     "ts": 2338692906482
 }
-''') as Map<String, Object?>;
+''')
+        as Map<String, Object?>;

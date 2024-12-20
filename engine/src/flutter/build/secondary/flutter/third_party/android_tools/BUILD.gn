@@ -1,0 +1,19 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/android/rules.gni")
+
+config("cpu_features_include") {
+  include_dirs = [ "ndk/sources/android/cpufeatures" ]
+}
+
+# This is the GN version of
+# //build/android/ndk.gyp:cpu_features
+source_set("cpu_features") {
+  sources = [ "ndk/sources/android/cpufeatures/cpu-features.c" ]
+  public_configs = [ ":cpu_features_include" ]
+
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [ "//build/config/compiler:no_chromium_code" ]
+}

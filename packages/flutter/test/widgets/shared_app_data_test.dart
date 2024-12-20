@@ -29,14 +29,26 @@ void main() {
                     Builder(
                       builder: (BuildContext context) {
                         child1BuildCount += 1;
-                        return Text(SharedAppData.getValue<String, String>(context, 'child1Text', () => 'null'));
+                        return Text(
+                          SharedAppData.getValue<String, String>(
+                            context,
+                            'child1Text',
+                            () => 'null',
+                          ),
+                        );
                       },
                     ),
                     Builder(
                       builder: (BuildContext context) {
                         child2BuildCount += 1;
-                        return Text(SharedAppData.getValue<String, String>(context, 'child2Text', () => 'null'));
-                      }
+                        return Text(
+                          SharedAppData.getValue<String, String>(
+                            context,
+                            'child2Text',
+                            () => 'null',
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -134,7 +146,9 @@ void main() {
               child: Builder(
                 builder: (BuildContext context) {
                   childBuildCount += 1;
-                  return Text(SharedAppData.getValue<String, String>(context, 'childText', () => 'null'));
+                  return Text(
+                    SharedAppData.getValue<String, String>(context, 'childText', () => 'null'),
+                  );
                 },
               ),
             ),
@@ -177,7 +191,9 @@ void main() {
                         innerTapCount += 1;
                         SharedAppData.setValue<String, String>(context, 'childText', 'child');
                       },
-                      child: Text(SharedAppData.getValue<String, String>(context, 'childText', () => 'null')),
+                      child: Text(
+                        SharedAppData.getValue<String, String>(context, 'childText', () => 'null'),
+                      ),
                     );
                   },
                 ),

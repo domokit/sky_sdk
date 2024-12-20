@@ -9,9 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('has correct items on screen', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.IVBuilderExampleApp(),
-    );
+    await tester.pumpWidget(const example.IVBuilderExampleApp());
 
     final Finder positionedFinder = find.byType(Positioned);
     final Finder zeroFinder = find.text('0 x 0');

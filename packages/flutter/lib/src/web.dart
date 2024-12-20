@@ -45,17 +45,11 @@ extension type CSSStyleDeclaration._(JSObject _) implements JSObject {
 }
 
 extension type CSSStyleSheet._(JSObject _) implements JSObject {
-  external int insertRule(
-    String rule, [
-    int index,
-  ]);
+  external int insertRule(String rule, [int index]);
 }
 
 extension type Document._(JSObject _) implements JSObject {
-  external Element createElement(
-    String localName, [
-    JSAny options,
-  ]);
+  external Element createElement(String localName, [JSAny options]);
   external Range createRange();
   external HTMLHeadElement? get head;
 }
@@ -73,11 +67,7 @@ extension type Element._(JSObject _) implements Node, JSObject {
 extension type Event._(JSObject _) implements JSObject {}
 
 extension type EventTarget._(JSObject _) implements JSObject {
-  external void addEventListener(
-    String type,
-    EventListener? callback, [
-    JSAny options,
-  ]);
+  external void addEventListener(String type, EventListener? callback, [JSAny options]);
 }
 
 extension type HTMLElement._(JSObject _) implements Element, JSObject {
@@ -141,20 +131,10 @@ extension type Window._(JSObject _) implements EventTarget, JSObject {
   external String get origin;
 }
 
-extension type XMLHttpRequest._(JSObject _)
-    implements XMLHttpRequestEventTarget, JSObject {
+extension type XMLHttpRequest._(JSObject _) implements XMLHttpRequestEventTarget, JSObject {
   external factory XMLHttpRequest();
-  external void open(
-    String method,
-    String url, [
-    bool async,
-    String? username,
-    String? password,
-  ]);
-  external void setRequestHeader(
-    String name,
-    String value,
-  );
+  external void open(String method, String url, [bool async, String? username, String? password]);
+  external void setRequestHeader(String name, String value);
   external void send([JSAny? body]);
   external int get status;
   external set responseType(XMLHttpRequestResponseType value);
@@ -162,5 +142,4 @@ extension type XMLHttpRequest._(JSObject _)
   external JSAny? get response;
 }
 
-extension type XMLHttpRequestEventTarget._(JSObject _)
-    implements EventTarget, JSObject {}
+extension type XMLHttpRequestEventTarget._(JSObject _) implements EventTarget, JSObject {}

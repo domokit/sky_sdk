@@ -1,0 +1,53 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/shell/config.gni")
+
+template("shell_gpu_configuration") {
+  assert(defined(invoker.enable_software),
+         "Caller must declare if the Software backend must be enabled.")
+  assert(defined(invoker.enable_vulkan),
+         "Caller must declare if the Vulkan backend must be enabled.")
+  assert(defined(invoker.enable_gl),
+         "Caller must declare if the Open GL backend must be enabled.")
+  assert(defined(invoker.enable_metal),
+         "Caller must declare if the Metal backend must be enabled.")
+
+  group(target_name) {
+    public_deps = []
+
+    if (invoker.enable_software) {
+      public_deps += [ "//flutter/shell/gpu:gpu_surface_software" ]
+    }
+
+    if (invoker.enable_gl) {
+      public_deps += [ "//flutter/shell/gpu:gpu_surface_gl" ]
+    }
+
+    if (invoker.enable_vulkan) {
+      public_deps += [ "//flutter/shell/gpu:gpu_surface_vulkan" ]
+    }
+
+    if (invoker.enable_metal) {
+      public_deps += [ "//flutter/shell/gpu:gpu_surface_metal" ]
+    }
+  }
+
+  config("${target_name}_config") {
+    defines = []
+
+    if (invoker.enable_software) {
+      defines += [ "SHELL_ENABLE_SOFTWARE" ]
+    }
+    if (invoker.enable_gl) {
+      defines += [ "SHELL_ENABLE_GL" ]
+    }
+    if (invoker.enable_vulkan) {
+      defines += [ "SHELL_ENABLE_VULKAN" ]
+    }
+    if (invoker.enable_metal) {
+      defines += [ "SHELL_ENABLE_METAL" ]
+    }
+  }
+}

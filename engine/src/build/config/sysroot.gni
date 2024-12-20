@@ -1,0 +1,46 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This header file defines the "sysroot" variable which is the absolute path
+# of the sysroot. If no sysroot applies, the variable will be an empty string.
+
+declare_args() {
+  # The absolute path of the sysroot that is applied when compiling using
+  # the target toolchain.
+  target_sysroot = ""
+
+  # Whether to use the default sysroot when building for Linux, if an explicit
+  # sysroot isn't set.
+  use_default_linux_sysroot = true
+}
+
+if (current_toolchain == default_toolchain && target_sysroot != "") {
+  sysroot = target_sysroot
+} else if (is_android) {
+  import("//build/config/android/config.gni")
+  sysroot = rebase_path("$android_toolchain_root/sysroot", root_build_dir)
+} else if (is_linux && !is_chromeos) {
+  if (use_default_linux_sysroot && !is_fuchsia) {
+    if (current_cpu == "x64") {
+      sysroot =
+          rebase_path("//build/linux/debian_sid_amd64-sysroot", root_build_dir)
+    } else {
+      sysroot =
+          rebase_path("//build/linux/debian_sid_arm64-sysroot", root_build_dir)
+    }
+    assert(
+        exec_script("//build/dir_exists.py", [ sysroot ], "string") == "True",
+        "Missing sysroot ($sysroot). To fix, run: build/linux/sysroot_scripts/install-sysroot.py --arch=$current_cpu")
+  } else {
+    sysroot = ""
+  }
+} else if (is_mac) {
+  import("//build/config/mac/mac_sdk.gni")
+  sysroot = mac_sdk_path
+} else if (is_ios) {
+  import("//build/config/ios/ios_sdk.gni")
+  sysroot = ios_sdk_path
+} else {
+  sysroot = ""
+}

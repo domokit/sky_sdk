@@ -11,13 +11,7 @@ import 'package:web/web.dart' as web;
 external void objectDefineProperty(JSAny o, String symbol, JSAny desc);
 
 void createGetter(JSAny mock, String key, JSAny? Function() get) {
-  objectDefineProperty(
-    mock,
-    key,
-    <String, JSFunction>{
-      'get': (() => get()).toJS,
-    }.jsify()!,
-  );
+  objectDefineProperty(mock, key, <String, JSFunction>{'get': (() => get()).toJS}.jsify()!);
 }
 
 @JS()
@@ -40,15 +34,14 @@ typedef _DartDomEventListener = JSVoid Function(web.Event event);
 class TestHttpRequest {
   TestHttpRequest() {
     _mock = DomXMLHttpRequestMock(
-        open: open.toJS,
-        send: send.toJS,
-        setRequestHeader: setRequestHeader.toJS,
-        addEventListener: addEventListener.toJS,
+      open: open.toJS,
+      send: send.toJS,
+      setRequestHeader: setRequestHeader.toJS,
+      addEventListener: addEventListener.toJS,
     );
     final JSAny mock = _mock as JSAny;
     createGetter(mock, 'headers', () => headers.jsify());
-    createGetter(mock,
-        'responseHeaders', () => responseHeaders.jsify());
+    createGetter(mock, 'responseHeaders', () => responseHeaders.jsify());
     createGetter(mock, 'status', () => status.toJS);
     createGetter(mock, 'response', () => response.jsify());
   }
@@ -88,37 +81,44 @@ class MockEvent {
 @staticInterop
 @anonymous
 class ImgElementMock {
-  external factory ImgElementMock({
-    JSFunction? decode,
-  });
+  external factory ImgElementMock({JSFunction? decode});
 }
 
 class TestImgElement {
   TestImgElement() {
     _mock = ImgElementMock(decode: decode.toJS);
     final JSAny mock = _mock as JSAny;
-    objectDefineProperty(mock, 'src',
+    objectDefineProperty(
+      mock,
+      'src',
       <String, JSFunction>{
         'get': (() => src).toJS,
-        'set': ((JSString newValue) {
-          src = newValue.toDart;
-        }).toJS,
+        'set':
+            ((JSString newValue) {
+              src = newValue.toDart;
+            }).toJS,
       }.jsify()!,
     );
-    objectDefineProperty(mock, 'naturalWidth',
+    objectDefineProperty(
+      mock,
+      'naturalWidth',
       <String, JSFunction>{
         'get': (() => naturalWidth).toJS,
-        'set': ((JSNumber newValue) {
-          naturalWidth = newValue.toDartInt;
-        }).toJS,
+        'set':
+            ((JSNumber newValue) {
+              naturalWidth = newValue.toDartInt;
+            }).toJS,
       }.jsify()!,
     );
-    objectDefineProperty(mock, 'naturalHeight',
+    objectDefineProperty(
+      mock,
+      'naturalHeight',
       <String, JSFunction>{
         'get': (() => naturalHeight).toJS,
-        'set': ((JSNumber newValue) {
-          naturalHeight = newValue.toDartInt;
-        }).toJS,
+        'set':
+            ((JSNumber newValue) {
+              naturalHeight = newValue.toDartInt;
+            }).toJS,
       }.jsify()!,
     );
   }
@@ -133,10 +133,12 @@ class TestImgElement {
   late JSFunction _rejectFunc;
 
   JSPromise<JSAny?> decode() {
-    return JSPromise<JSAny?>((JSFunction resolveFunc, JSFunction rejectFunc) {
-      _resolveFunc = resolveFunc;
-      _rejectFunc = rejectFunc;
-    }.toJS);
+    return JSPromise<JSAny?>(
+      (JSFunction resolveFunc, JSFunction rejectFunc) {
+        _resolveFunc = resolveFunc;
+        _rejectFunc = rejectFunc;
+      }.toJS,
+    );
   }
 
   void decodeSuccess() {

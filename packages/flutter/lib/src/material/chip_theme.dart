@@ -51,11 +51,7 @@ import 'theme.dart';
 ///    application.
 class ChipTheme extends InheritedTheme {
   /// Applies the given theme [data] to [child].
-  const ChipTheme({
-    super.key,
-    required this.data,
-    required super.child,
-  });
+  const ChipTheme({super.key, required this.data, required super.child});
 
   /// Specifies the color, shape, and text style values for descendant chip
   /// widgets.
@@ -234,8 +230,14 @@ class ChipThemeData with Diagnosticable {
     required Color secondaryColor,
     required TextStyle labelStyle,
   }) {
-    assert(primaryColor != null || brightness != null, 'One of primaryColor or brightness must be specified');
-    assert(primaryColor == null || brightness == null, 'Only one of primaryColor or brightness may be specified');
+    assert(
+      primaryColor != null || brightness != null,
+      'One of primaryColor or brightness must be specified',
+    );
+    assert(
+      primaryColor == null || brightness == null,
+      'Only one of primaryColor or brightness may be specified',
+    );
 
     if (primaryColor != null) {
       brightness = ThemeData.estimateBrightnessForColor(primaryColor);
@@ -543,11 +545,20 @@ class ChipThemeData with Diagnosticable {
       brightness: t < 0.5 ? a?.brightness ?? Brightness.light : b?.brightness ?? Brightness.light,
       elevation: lerpDouble(a?.elevation, b?.elevation, t),
       pressElevation: lerpDouble(a?.pressElevation, b?.pressElevation, t),
-      iconTheme: a?.iconTheme != null || b?.iconTheme != null
-        ? IconThemeData.lerp(a?.iconTheme, b?.iconTheme, t)
-        : null,
-      avatarBoxConstraints: BoxConstraints.lerp(a?.avatarBoxConstraints, b?.avatarBoxConstraints, t),
-      deleteIconBoxConstraints: BoxConstraints.lerp(a?.deleteIconBoxConstraints, b?.deleteIconBoxConstraints, t),
+      iconTheme:
+          a?.iconTheme != null || b?.iconTheme != null
+              ? IconThemeData.lerp(a?.iconTheme, b?.iconTheme, t)
+              : null,
+      avatarBoxConstraints: BoxConstraints.lerp(
+        a?.avatarBoxConstraints,
+        b?.avatarBoxConstraints,
+        t,
+      ),
+      deleteIconBoxConstraints: BoxConstraints.lerp(
+        a?.deleteIconBoxConstraints,
+        b?.deleteIconBoxConstraints,
+        t,
+      ),
     );
   }
 
@@ -614,57 +625,81 @@ class ChipThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ChipThemeData
-        && other.color == color
-        && other.backgroundColor == backgroundColor
-        && other.deleteIconColor == deleteIconColor
-        && other.disabledColor == disabledColor
-        && other.selectedColor == selectedColor
-        && other.secondarySelectedColor == secondarySelectedColor
-        && other.shadowColor == shadowColor
-        && other.surfaceTintColor == surfaceTintColor
-        && other.selectedShadowColor == selectedShadowColor
-        && other.showCheckmark == showCheckmark
-        && other.checkmarkColor == checkmarkColor
-        && other.labelPadding == labelPadding
-        && other.padding == padding
-        && other.side == side
-        && other.shape == shape
-        && other.labelStyle == labelStyle
-        && other.secondaryLabelStyle == secondaryLabelStyle
-        && other.brightness == brightness
-        && other.elevation == elevation
-        && other.pressElevation == pressElevation
-        && other.iconTheme == iconTheme
-        && other.avatarBoxConstraints == avatarBoxConstraints
-        && other.deleteIconBoxConstraints == deleteIconBoxConstraints;
+    return other is ChipThemeData &&
+        other.color == color &&
+        other.backgroundColor == backgroundColor &&
+        other.deleteIconColor == deleteIconColor &&
+        other.disabledColor == disabledColor &&
+        other.selectedColor == selectedColor &&
+        other.secondarySelectedColor == secondarySelectedColor &&
+        other.shadowColor == shadowColor &&
+        other.surfaceTintColor == surfaceTintColor &&
+        other.selectedShadowColor == selectedShadowColor &&
+        other.showCheckmark == showCheckmark &&
+        other.checkmarkColor == checkmarkColor &&
+        other.labelPadding == labelPadding &&
+        other.padding == padding &&
+        other.side == side &&
+        other.shape == shape &&
+        other.labelStyle == labelStyle &&
+        other.secondaryLabelStyle == secondaryLabelStyle &&
+        other.brightness == brightness &&
+        other.elevation == elevation &&
+        other.pressElevation == pressElevation &&
+        other.iconTheme == iconTheme &&
+        other.avatarBoxConstraints == avatarBoxConstraints &&
+        other.deleteIconBoxConstraints == deleteIconBoxConstraints;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('color', color, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>>('color', color, defaultValue: null),
+    );
     properties.add(ColorProperty('backgroundColor', backgroundColor, defaultValue: null));
     properties.add(ColorProperty('deleteIconColor', deleteIconColor, defaultValue: null));
     properties.add(ColorProperty('disabledColor', disabledColor, defaultValue: null));
     properties.add(ColorProperty('selectedColor', selectedColor, defaultValue: null));
-    properties.add(ColorProperty('secondarySelectedColor', secondarySelectedColor, defaultValue: null));
+    properties.add(
+      ColorProperty('secondarySelectedColor', secondarySelectedColor, defaultValue: null),
+    );
     properties.add(ColorProperty('shadowColor', shadowColor, defaultValue: null));
     properties.add(ColorProperty('surfaceTintColor', surfaceTintColor, defaultValue: null));
     properties.add(ColorProperty('selectedShadowColor', selectedShadowColor, defaultValue: null));
     properties.add(DiagnosticsProperty<bool>('showCheckmark', showCheckmark, defaultValue: null));
     properties.add(ColorProperty('checkMarkColor', checkmarkColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<EdgeInsetsGeometry>('labelPadding', labelPadding, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<EdgeInsetsGeometry>('labelPadding', labelPadding, defaultValue: null),
+    );
     properties.add(DiagnosticsProperty<EdgeInsetsGeometry>('padding', padding, defaultValue: null));
     properties.add(DiagnosticsProperty<BorderSide>('side', side, defaultValue: null));
     properties.add(DiagnosticsProperty<ShapeBorder>('shape', shape, defaultValue: null));
     properties.add(DiagnosticsProperty<TextStyle>('labelStyle', labelStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<TextStyle>('secondaryLabelStyle', secondaryLabelStyle, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<TextStyle>(
+        'secondaryLabelStyle',
+        secondaryLabelStyle,
+        defaultValue: null,
+      ),
+    );
     properties.add(EnumProperty<Brightness>('brightness', brightness, defaultValue: null));
     properties.add(DoubleProperty('elevation', elevation, defaultValue: null));
     properties.add(DoubleProperty('pressElevation', pressElevation, defaultValue: null));
     properties.add(DiagnosticsProperty<IconThemeData>('iconTheme', iconTheme, defaultValue: null));
-    properties.add(DiagnosticsProperty<BoxConstraints>('avatarBoxConstraints', avatarBoxConstraints, defaultValue: null));
-    properties.add(DiagnosticsProperty<BoxConstraints>('deleteIconBoxConstraints', deleteIconBoxConstraints, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<BoxConstraints>(
+        'avatarBoxConstraints',
+        avatarBoxConstraints,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<BoxConstraints>(
+        'deleteIconBoxConstraints',
+        deleteIconBoxConstraints,
+        defaultValue: null,
+      ),
+    );
   }
 }

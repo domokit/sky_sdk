@@ -1,0 +1,33 @@
+# Copyright (c) 2017, the Dart project authors.  Please see the AUTHORS file
+# for details. All rights reserved. Use of this source code is governed by a
+# BSD-style license that can be found in the LICENSE file.
+
+# Note: if you edit this file, you must also generate libraries.json in this
+# directory:
+#
+# dart third_party/dart/tools/yaml2json.dart flutter/shell/platform/fuchsia/flutter/kernel/libraries.yaml flutter/shell/platform/fuchsia/flutter/kernel/libraries.json
+#
+# We currently have several different files that needs to be updated when
+# changing libraries, sources, and patch files.  See
+# https://github.com/dart-lang/sdk/issues/28836.
+
+flutter_runner:
+  include:
+    - {path: "../../../../../../third_party/dart/sdk/lib/libraries.json", target: vm_common}
+  libraries:
+    fuchsia.builtin:
+      uri: "../../dart_runner/embedder/builtin.dart"
+
+    zircon:
+      uri: "../../dart-pkg/zircon/lib/zircon.dart"
+
+    zircon_ffi:
+      uri: "../../dart-pkg/zircon_ffi/lib/zircon_ffi.dart"
+
+    fuchsia:
+      uri: "../../dart-pkg/fuchsia/lib/fuchsia.dart"
+
+    ui:
+      uri: "../../../../../lib/ui/ui.dart"
+
+

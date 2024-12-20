@@ -75,18 +75,14 @@ class _TestScrollingWidgetState extends State<_TestScrollingWidget> {
   void initState() {
     super.initState();
 
-    scrollController = ScrollController(
-      initialScrollOffset: widget.initialScrollOffset,
-    );
+    scrollController = ScrollController(initialScrollOffset: widget.initialScrollOffset);
 
     // Without the timer the animation doesn't begin.
     Timer.run(() async {
       bool forward = true;
       while (true) {
         await scrollController.animateTo(
-          forward
-              ? widget.initialScrollOffset + widget.scrollDistance
-              : widget.initialScrollOffset,
+          forward ? widget.initialScrollOffset + widget.scrollDistance : widget.initialScrollOffset,
           curve: Curves.linear,
           duration: widget.scrollDuration,
         );

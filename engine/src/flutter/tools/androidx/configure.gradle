@@ -1,0 +1,37 @@
+// Copyright 2014 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import groovy.json.JsonSlurper
+
+// Configures the embedding dependencies.
+ext.configureEmbedderDependencies = { engineRootDir, add ->
+    def filesJson = new File(engineRootDir, 'tools/androidx/files.json')
+    if (!filesJson.exists()) {
+        throw new Exception("${filesJson.absolutePath} not found. Did you provide the wrong engine root directory to configureDependencies?")
+    }
+    def dependencies = new JsonSlurper().parseText(filesJson.text)
+    assert dependencies instanceof List
+    dependencies.each { dependency ->
+        assert dependency.maven_dependency instanceof String
+        add(dependency.maven_dependency)
+    }
+}
+
+// Configures the embedding dependencies. To match the logic in
+// generate_pom_file.py, this does not include transitive dependencies since
+// they aren't used by the embedding.
+ext.configureDependencies = { engineRootDir, add ->
+    def filesJson = new File(engineRootDir, 'tools/androidx/files.json')
+    if (!filesJson.exists()) {
+        throw new Exception("${filesJson.absolutePath} not found. Did you provide the wrong engine root directory to configureDependencies?")
+    }
+    def dependencies = new JsonSlurper().parseText(filesJson.text)
+    assert dependencies instanceof List
+    dependencies.each { dependency ->
+        assert dependency.maven_dependency instanceof String
+        if (dependency.provides) {
+            add(dependency.maven_dependency)
+        }
+    }
+}

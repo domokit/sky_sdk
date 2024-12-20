@@ -31,9 +31,7 @@ class ExampleWidget extends StatelessWidget {
       '1st, 2nd, 3rd, 4th...',
       style: TextStyle(
         fontFamily: 'Piazzolla',
-        fontFeatures: <FontFeature>[
-          FontFeature.ordinalForms(),
-        ],
+        fontFeatures: <FontFeature>[FontFeature.ordinalForms()],
       ),
     );
   }

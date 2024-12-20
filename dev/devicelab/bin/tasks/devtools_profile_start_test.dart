@@ -9,7 +9,5 @@ import 'package:flutter_devicelab/tasks/perf_tests.dart';
 
 Future<void> main() async {
   deviceOperatingSystem = DeviceOperatingSystem.android;
-  await task(DevtoolsStartupTest(
-    '${flutterDirectory.path}/examples/hello_world',
-  ).run);
+  await task(DevtoolsStartupTest('${flutterDirectory.path}/examples/hello_world').run);
 }

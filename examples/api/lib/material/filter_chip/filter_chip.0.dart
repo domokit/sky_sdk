@@ -18,9 +18,7 @@ class ChipApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(useMaterial3: true),
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('FilterChip Sample'),
-        ),
+        appBar: AppBar(title: const Text('FilterChip Sample')),
         body: const FilterChipExample(),
       ),
     );
@@ -49,21 +47,22 @@ class _FilterChipExampleState extends State<FilterChipExample> {
           const SizedBox(height: 5.0),
           Wrap(
             spacing: 5.0,
-            children: ExerciseFilter.values.map((ExerciseFilter exercise) {
-              return FilterChip(
-                label: Text(exercise.name),
-                selected: filters.contains(exercise),
-                onSelected: (bool selected) {
-                  setState(() {
-                    if (selected) {
-                      filters.add(exercise);
-                    } else {
-                      filters.remove(exercise);
-                    }
-                  });
-                },
-              );
-            }).toList(),
+            children:
+                ExerciseFilter.values.map((ExerciseFilter exercise) {
+                  return FilterChip(
+                    label: Text(exercise.name),
+                    selected: filters.contains(exercise),
+                    onSelected: (bool selected) {
+                      setState(() {
+                        if (selected) {
+                          filters.add(exercise);
+                        } else {
+                          filters.remove(exercise);
+                        }
+                      });
+                    },
+                  );
+                }).toList(),
           ),
           const SizedBox(height: 10.0),
           Text(

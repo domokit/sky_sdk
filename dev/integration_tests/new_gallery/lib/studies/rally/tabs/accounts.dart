@@ -31,7 +31,7 @@ class AccountsView extends StatelessWidget {
       ),
       sidebarItems: <Widget>[
         for (final UserDetailData item in detailItems)
-          SidebarItem(title: item.title, value: item.value)
+          SidebarItem(title: item.title, value: item.value),
       ],
     );
   }

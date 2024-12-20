@@ -3,32 +3,21 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
-import 'package:flutter_api_samples/widgets/shortcuts/shortcuts.0.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/shortcuts/shortcuts.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Verify correct labels are displayed', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ShortcutsExampleApp(),
-    );
+    await tester.pumpWidget(const example.ShortcutsExampleApp());
 
     expect(find.text('Shortcuts Sample'), findsOneWidget);
-    expect(
-      find.text('Add to the counter by pressing the up arrow key'),
-      findsOneWidget,
-    );
-    expect(
-      find.text('Subtract from the counter by pressing the down arrow key'),
-      findsOneWidget,
-    );
+    expect(find.text('Add to the counter by pressing the up arrow key'), findsOneWidget);
+    expect(find.text('Subtract from the counter by pressing the down arrow key'), findsOneWidget);
     expect(find.text('count: 0'), findsOneWidget);
   });
 
   testWidgets('Up and down arrow press updates counter', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ShortcutsExampleApp(),
-    );
+    await tester.pumpWidget(const example.ShortcutsExampleApp());
 
     int counter = 0;
 

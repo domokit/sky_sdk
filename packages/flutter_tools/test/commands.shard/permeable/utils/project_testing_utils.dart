@@ -42,19 +42,15 @@ class LoggingProcessManager extends LocalProcessManager {
   }
 }
 
-Future<void> analyzeProject(String workingDir, { List<String> expectedFailures = const <String>[] }) async {
-  final String flutterToolsSnapshotPath = globals.fs.path.absolute(globals.fs.path.join(
-    '..',
-    '..',
-    'bin',
-    'cache',
-    'flutter_tools.snapshot',
-  ));
+Future<void> analyzeProject(
+  String workingDir, {
+  List<String> expectedFailures = const <String>[],
+}) async {
+  final String flutterToolsSnapshotPath = globals.fs.path.absolute(
+    globals.fs.path.join('..', '..', 'bin', 'cache', 'flutter_tools.snapshot'),
+  );
 
-  final List<String> args = <String>[
-    flutterToolsSnapshotPath,
-    'analyze',
-  ];
+  final List<String> args = <String>[flutterToolsSnapshotPath, 'analyze'];
 
   final ProcessResult exec = await Process.run(
     globals.artifacts!.getArtifactPath(Artifact.engineDartBinary),
@@ -80,6 +76,7 @@ Future<void> analyzeProject(String workingDir, { List<String> expectedFailures =
       throw RangeError('Received "$err" while trying to parse: "$line".');
     }
   }
+
   final String stdout = exec.stdout.toString();
   final List<String> errors = <String>[];
   try {
@@ -98,27 +95,19 @@ Future<void> analyzeProject(String workingDir, { List<String> expectedFailures =
   } on Exception catch (err) {
     fail('$err\n\nComplete STDOUT was:\n\n$stdout');
   }
-  expect(errors, unorderedEquals(expectedFailures),
-      reason: 'Failed with stdout:\n\n$stdout');
+  expect(errors, unorderedEquals(expectedFailures), reason: 'Failed with stdout:\n\n$stdout');
 }
 
-
 Future<void> ensureFlutterToolsSnapshot() async {
-  final String flutterToolsPath = globals.fs.path.absolute(globals.fs.path.join(
-    'bin',
-    'flutter_tools.dart',
-  ));
-  final String flutterToolsSnapshotPath = globals.fs.path.absolute(globals.fs.path.join(
-    '..',
-    '..',
-    'bin',
-    'cache',
-    'flutter_tools.snapshot',
-  ));
-  final String packageConfig = globals.fs.path.absolute(globals.fs.path.join(
-    '.dart_tool',
-    'package_config.json'
-  ));
+  final String flutterToolsPath = globals.fs.path.absolute(
+    globals.fs.path.join('bin', 'flutter_tools.dart'),
+  );
+  final String flutterToolsSnapshotPath = globals.fs.path.absolute(
+    globals.fs.path.join('..', '..', 'bin', 'cache', 'flutter_tools.snapshot'),
+  );
+  final String packageConfig = globals.fs.path.absolute(
+    globals.fs.path.join('.dart_tool', 'package_config.json'),
+  );
 
   final File snapshotFile = globals.fs.file(flutterToolsSnapshotPath);
   if (snapshotFile.existsSync()) {
@@ -141,13 +130,9 @@ Future<void> ensureFlutterToolsSnapshot() async {
 }
 
 Future<void> restoreFlutterToolsSnapshot() async {
-  final String flutterToolsSnapshotPath = globals.fs.path.absolute(globals.fs.path.join(
-    '..',
-    '..',
-    'bin',
-    'cache',
-    'flutter_tools.snapshot',
-  ));
+  final String flutterToolsSnapshotPath = globals.fs.path.absolute(
+    globals.fs.path.join('..', '..', 'bin', 'cache', 'flutter_tools.snapshot'),
+  );
 
   final File snapshotBackup = globals.fs.file('$flutterToolsSnapshotPath.bak');
   if (!snapshotBackup.existsSync()) {

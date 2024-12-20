@@ -19,11 +19,10 @@ class DriverTest {
   DriverTest(
     this.testDirectory,
     this.testTarget, {
-      this.extraOptions = const <String>[],
-      this.deviceIdOverride,
-      this.environment,
-    }
-  );
+    this.extraOptions = const <String>[],
+    this.deviceIdOverride,
+    this.environment,
+  });
 
   final String testDirectory;
   final String testTarget;

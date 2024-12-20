@@ -35,13 +35,18 @@ abstract class AssetManifest {
       // json+base64-decoded to get to the binary data.
       return bundle.loadStructuredData(_kAssetManifestWebFilename, (String jsonData) async {
         // Decode the manifest JSON file to the underlying BIN, and convert to ByteData.
-        final ByteData message = ByteData.sublistView(base64.decode(json.decode(jsonData) as String));
+        final ByteData message = ByteData.sublistView(
+          base64.decode(json.decode(jsonData) as String),
+        );
         // Now we can keep operating as usual.
         return _AssetManifestBin.fromStandardMessageCodecMessage(message);
       });
     }
     // On every other platform, the binary file contents are used directly.
-    return bundle.loadStructuredBinaryData(_kAssetManifestFilename, _AssetManifestBin.fromStandardMessageCodecMessage);
+    return bundle.loadStructuredBinaryData(
+      _kAssetManifestFilename,
+      _AssetManifestBin.fromStandardMessageCodecMessage,
+    );
   }
 
   /// Lists the keys of all main assets. This does not include assets
@@ -76,7 +81,7 @@ abstract class AssetManifest {
 // New fields could be added to this object schema to support new asset variation
 // features, such as themes, locale/region support, reading directions, and so on.
 class _AssetManifestBin implements AssetManifest {
-  _AssetManifestBin(Map<Object?, Object?> standardMessageData): _data = standardMessageData;
+  _AssetManifestBin(Map<Object?, Object?> standardMessageData) : _data = standardMessageData;
 
   factory _AssetManifestBin.fromStandardMessageCodecMessage(ByteData message) {
     final dynamic data = const StandardMessageCodec().decodeMessage(message);
@@ -96,18 +101,18 @@ class _AssetManifestBin implements AssetManifest {
       if (variantData == null) {
         return null;
       }
-      _typeCastedData[key] = ((_data[key] ?? <Object?>[]) as Iterable<Object?>)
-        .cast<Map<Object?, Object?>>()
-        .map((Map<Object?, Object?> data) {
-          final String asset = data['asset']! as String;
-          final Object? dpr = data['dpr'];
-          return AssetMetadata(
-            key: data['asset']! as String,
-            targetDevicePixelRatio: dpr as double?,
-            main: key == asset,
-          );
-        })
-        .toList();
+      _typeCastedData[key] =
+          ((_data[key] ?? <Object?>[]) as Iterable<Object?>).cast<Map<Object?, Object?>>().map((
+            Map<Object?, Object?> data,
+          ) {
+            final String asset = data['asset']! as String;
+            final Object? dpr = data['dpr'];
+            return AssetMetadata(
+              key: data['asset']! as String,
+              targetDevicePixelRatio: dpr as double?,
+              main: key == asset,
+            );
+          }).toList();
 
       _data.remove(key);
     }

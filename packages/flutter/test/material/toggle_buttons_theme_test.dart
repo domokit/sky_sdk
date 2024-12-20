@@ -8,16 +8,16 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget boilerplate({required Widget child}) {
-  return Directionality(
-    textDirection: TextDirection.ltr,
-    child: Center(child: child),
-  );
+  return Directionality(textDirection: TextDirection.ltr, child: Center(child: child));
 }
 
 void main() {
   test('ToggleButtonsThemeData copyWith, ==, hashCode basics', () {
     expect(const ToggleButtonsThemeData(), const ToggleButtonsThemeData().copyWith());
-    expect(const ToggleButtonsThemeData().hashCode, const ToggleButtonsThemeData().copyWith().hashCode);
+    expect(
+      const ToggleButtonsThemeData().hashCode,
+      const ToggleButtonsThemeData().copyWith().hashCode,
+    );
   });
 
   test('ToggleButtonsThemeData lerp special cases', () {
@@ -44,7 +44,10 @@ void main() {
     expect(themeData.borderRadius, null);
     expect(themeData.borderWidth, null);
 
-    const ToggleButtonsTheme theme = ToggleButtonsTheme(data: ToggleButtonsThemeData(), child: SizedBox());
+    const ToggleButtonsTheme theme = ToggleButtonsTheme(
+      data: ToggleButtonsThemeData(),
+      child: SizedBox(),
+    );
     expect(theme.data.textStyle, null);
     expect(theme.data.constraints, null);
     expect(theme.data.color, null);
@@ -66,10 +69,11 @@ void main() {
     final DiagnosticPropertiesBuilder builder = DiagnosticPropertiesBuilder();
     const ToggleButtonsThemeData().debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-      .map((DiagnosticsNode node) => node.toString())
-      .toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>[]);
   });
@@ -94,10 +98,11 @@ void main() {
       borderWidth: 2.0,
     ).debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-        .map((DiagnosticsNode node) => node.toString())
-        .toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>[
       'textStyle.inherit: true',
@@ -134,10 +139,7 @@ void main() {
             child: ToggleButtons(
               isSelected: const <bool>[false, true],
               onPressed: (int index) {},
-              children: const <Widget>[
-                Text('First child'),
-                Text('Second child'),
-              ],
+              children: const <Widget>[Text('First child'), Text('Second child')],
             ),
           ),
         ),
@@ -145,18 +147,28 @@ void main() {
     );
 
     TextStyle textStyle;
-    textStyle = tester.widget<DefaultTextStyle>(find.descendant(
-      of: find.widgetWithText(TextButton, 'First child'),
-      matching: find.byType(DefaultTextStyle),
-    )).style;
+    textStyle =
+        tester
+            .widget<DefaultTextStyle>(
+              find.descendant(
+                of: find.widgetWithText(TextButton, 'First child'),
+                matching: find.byType(DefaultTextStyle),
+              ),
+            )
+            .style;
     expect(textStyle.textBaseline, TextBaseline.ideographic);
     expect(textStyle.fontSize, 20.0);
     expect(textStyle.color, isNot(Colors.orange));
 
-    textStyle = tester.widget<DefaultTextStyle>(find.descendant(
-        of: find.widgetWithText(TextButton, 'Second child'),
-        matching: find.byType(DefaultTextStyle),
-    )).style;
+    textStyle =
+        tester
+            .widget<DefaultTextStyle>(
+              find.descendant(
+                of: find.widgetWithText(TextButton, 'Second child'),
+                matching: find.byType(DefaultTextStyle),
+              ),
+            )
+            .style;
     expect(textStyle.textBaseline, TextBaseline.ideographic);
     expect(textStyle.fontSize, 20.0);
     expect(textStyle.color, isNot(Colors.orange));
@@ -169,10 +181,7 @@ void main() {
         child: boilerplate(
           child: ToggleButtonsTheme(
             data: const ToggleButtonsThemeData(
-              constraints: BoxConstraints(
-                minWidth: 50.0,
-                minHeight: 60.0,
-              ),
+              constraints: BoxConstraints(minWidth: 50.0, minHeight: 60.0),
             ),
             child: ToggleButtons(
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -205,10 +214,7 @@ void main() {
         child: boilerplate(
           child: ToggleButtonsTheme(
             data: const ToggleButtonsThemeData(
-              constraints: BoxConstraints(
-                maxWidth: 20.0,
-                maxHeight: 10.0,
-              ),
+              constraints: BoxConstraints(maxWidth: 20.0, maxHeight: 10.0),
             ),
             child: ToggleButtons(
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -236,109 +242,103 @@ void main() {
     expect(thirdRect.height, 10.0);
   });
 
-  testWidgets(
-    'Theme text/icon colors for enabled, selected and disabled states',
-    (WidgetTester tester) async {
-      TextStyle buttonTextStyle(String text) {
-        return tester.widget<DefaultTextStyle>(find.descendant(
-          of: find.widgetWithText(TextButton, text),
-          matching: find.byType(DefaultTextStyle),
-        )).style;
-      }
-      IconTheme iconTheme(IconData icon) {
-        return tester.widget(find.descendant(
+  testWidgets('Theme text/icon colors for enabled, selected and disabled states', (
+    WidgetTester tester,
+  ) async {
+    TextStyle buttonTextStyle(String text) {
+      return tester
+          .widget<DefaultTextStyle>(
+            find.descendant(
+              of: find.widgetWithText(TextButton, text),
+              matching: find.byType(DefaultTextStyle),
+            ),
+          )
+          .style;
+    }
+
+    IconTheme iconTheme(IconData icon) {
+      return tester.widget(
+        find.descendant(
           of: find.widgetWithIcon(TextButton, icon),
           matching: find.byType(IconTheme),
-        ));
-      }
-      final ThemeData theme = ThemeData();
-      const Color enabledColor = Colors.lime;
-      const Color selectedColor = Colors.green;
-      const Color disabledColor = Colors.yellow;
+        ),
+      );
+    }
 
-      await tester.pumpWidget(
-        Material(
-          child: boilerplate(
-            child: ToggleButtonsTheme(
-              data: const ToggleButtonsThemeData(),
-              child: ToggleButtons(
-                color: enabledColor,
-                isSelected: const <bool>[false],
-                onPressed: (int index) {},
-                children: const <Widget>[
-                  // This Row is used like this to test for both TextStyle
-                  // and IconTheme for Text and Icon widgets respectively.
-                  Row(children: <Widget>[
-                    Text('First child'),
-                    Icon(Icons.check),
-                  ]),
-                ],
-              ),
+    final ThemeData theme = ThemeData();
+    const Color enabledColor = Colors.lime;
+    const Color selectedColor = Colors.green;
+    const Color disabledColor = Colors.yellow;
+
+    await tester.pumpWidget(
+      Material(
+        child: boilerplate(
+          child: ToggleButtonsTheme(
+            data: const ToggleButtonsThemeData(),
+            child: ToggleButtons(
+              color: enabledColor,
+              isSelected: const <bool>[false],
+              onPressed: (int index) {},
+              children: const <Widget>[
+                // This Row is used like this to test for both TextStyle
+                // and IconTheme for Text and Icon widgets respectively.
+                Row(children: <Widget>[Text('First child'), Icon(Icons.check)]),
+              ],
             ),
           ),
         ),
-      );
-      // Custom theme enabled color
-      expect(theme.colorScheme.onSurface, isNot(enabledColor));
-      expect(buttonTextStyle('First child').color, enabledColor);
-      expect(iconTheme(Icons.check).data.color, enabledColor);
+      ),
+    );
+    // Custom theme enabled color
+    expect(theme.colorScheme.onSurface, isNot(enabledColor));
+    expect(buttonTextStyle('First child').color, enabledColor);
+    expect(iconTheme(Icons.check).data.color, enabledColor);
 
-      await tester.pumpWidget(
-        Material(
-          child: boilerplate(
-            child: ToggleButtonsTheme(
-              data: const ToggleButtonsThemeData(
-                selectedColor: selectedColor,
-              ),
-              child: ToggleButtons(
-                color: enabledColor,
-                isSelected: const <bool>[true],
-                onPressed: (int index) {},
-                children: const <Widget>[
-                  Row(children: <Widget>[
-                    Text('First child'),
-                    Icon(Icons.check),
-                  ]),
-                ],
-              ),
+    await tester.pumpWidget(
+      Material(
+        child: boilerplate(
+          child: ToggleButtonsTheme(
+            data: const ToggleButtonsThemeData(selectedColor: selectedColor),
+            child: ToggleButtons(
+              color: enabledColor,
+              isSelected: const <bool>[true],
+              onPressed: (int index) {},
+              children: const <Widget>[
+                Row(children: <Widget>[Text('First child'), Icon(Icons.check)]),
+              ],
             ),
           ),
         ),
-      );
-      await tester.pumpAndSettle();
-      // Custom theme selected color
-      expect(theme.colorScheme.primary, isNot(selectedColor));
-      expect(buttonTextStyle('First child').color, selectedColor);
-      expect(iconTheme(Icons.check).data.color, selectedColor);
+      ),
+    );
+    await tester.pumpAndSettle();
+    // Custom theme selected color
+    expect(theme.colorScheme.primary, isNot(selectedColor));
+    expect(buttonTextStyle('First child').color, selectedColor);
+    expect(iconTheme(Icons.check).data.color, selectedColor);
 
-      await tester.pumpWidget(
-        Material(
-          child: boilerplate(
-            child: ToggleButtonsTheme(
-              data: const ToggleButtonsThemeData(
-                disabledColor: disabledColor,
-              ),
-              child: ToggleButtons(
-                color: enabledColor,
-                isSelected: const <bool>[false],
-                children: const <Widget>[
-                  Row(children: <Widget>[
-                    Text('First child'),
-                    Icon(Icons.check),
-                  ]),
-                ],
-              ),
+    await tester.pumpWidget(
+      Material(
+        child: boilerplate(
+          child: ToggleButtonsTheme(
+            data: const ToggleButtonsThemeData(disabledColor: disabledColor),
+            child: ToggleButtons(
+              color: enabledColor,
+              isSelected: const <bool>[false],
+              children: const <Widget>[
+                Row(children: <Widget>[Text('First child'), Icon(Icons.check)]),
+              ],
             ),
           ),
         ),
-      );
-      await tester.pumpAndSettle();
-      // Custom theme disabled color
-      expect(theme.disabledColor, isNot(disabledColor));
-      expect(buttonTextStyle('First child').color, disabledColor);
-      expect(iconTheme(Icons.check).data.color, disabledColor);
-    },
-  );
+      ),
+    );
+    await tester.pumpAndSettle();
+    // Custom theme disabled color
+    expect(theme.disabledColor, isNot(disabledColor));
+    expect(buttonTextStyle('First child').color, disabledColor);
+    expect(iconTheme(Icons.check).data.color, disabledColor);
+  });
 
   testWidgets('Theme button fillColor', (WidgetTester tester) async {
     const Color customFillColor = Colors.green;
@@ -351,9 +351,7 @@ void main() {
               isSelected: const <bool>[true],
               onPressed: (int index) {},
               children: const <Widget>[
-                Row(children: <Widget>[
-                  Text('First child'),
-                ]),
+                Row(children: <Widget>[Text('First child')]),
               ],
             ),
           ),
@@ -361,10 +359,9 @@ void main() {
       ),
     );
 
-    final Material material = tester.widget<Material>(find.descendant(
-      of: find.byType(TextButton),
-      matching: find.byType(Material),
-    ));
+    final Material material = tester.widget<Material>(
+      find.descendant(of: find.byType(TextButton), matching: find.byType(Material)),
+    );
     expect(material.color, customFillColor);
     expect(material.type, MaterialType.button);
   });
@@ -372,10 +369,7 @@ void main() {
   testWidgets('Custom Theme button fillColor in different states', (WidgetTester tester) async {
     Material buttonColor(String text) {
       return tester.widget<Material>(
-        find.descendant(
-          of: find.byType(TextButton),
-          matching: find.widgetWithText(Material, text),
-        ),
+        find.descendant(of: find.byType(TextButton), matching: find.widgetWithText(Material, text)),
       );
     }
 
@@ -400,10 +394,7 @@ void main() {
             child: ToggleButtons(
               isSelected: const <bool>[true, false],
               onPressed: (int index) {},
-              children: const <Widget> [
-                Text('First child'),
-                Text('Second child'),
-              ],
+              children: const <Widget>[Text('First child'), Text('Second child')],
             ),
           ),
         ),
@@ -422,10 +413,7 @@ void main() {
             data: ToggleButtonsThemeData(fillColor: MaterialStateColor.resolveWith(getColor)),
             child: ToggleButtons(
               isSelected: const <bool>[true, false],
-              children: const <Widget>[
-                Text('First child'),
-                Text('Second child'),
-              ],
+              children: const <Widget>[Text('First child'), Text('Second child')],
             ),
           ),
         ),
@@ -457,9 +445,7 @@ void main() {
               isSelected: const <bool>[true],
               onPressed: (int index) {},
               focusNodes: <FocusNode>[focusNode],
-              children: const <Widget>[
-                Text('First child'),
-              ],
+              children: const <Widget>[Text('First child')],
             ),
           ),
         ),
@@ -478,19 +464,13 @@ void main() {
     inkFeatures = tester.allRenderObjects.firstWhere((RenderObject object) {
       return object.runtimeType.toString() == '_RenderInkFeatures';
     });
-    expect(
-      inkFeatures,
-      paints
-        ..circle(color: splashColor)
-    );
+    expect(inkFeatures, paints..circle(color: splashColor));
 
     await touchGesture.up();
     await tester.pumpAndSettle();
 
     // hoverColor
-    final TestGesture hoverGesture = await tester.createGesture(
-      kind: PointerDeviceKind.mouse,
-    );
+    final TestGesture hoverGesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
     await hoverGesture.addPointer();
     await hoverGesture.moveTo(center);
     await tester.pumpAndSettle();
@@ -514,118 +494,96 @@ void main() {
     focusNode.dispose();
   });
 
-  testWidgets(
-    'Theme border width and border colors for enabled, selected and disabled states',
-    (WidgetTester tester) async {
-      const Color borderColor = Color(0xff4caf50);
-      const Color selectedBorderColor = Color(0xffcddc39);
-      const Color disabledBorderColor = Color(0xffffeb3b);
-      const double customWidth = 2.0;
+  testWidgets('Theme border width and border colors for enabled, selected and disabled states', (
+    WidgetTester tester,
+  ) async {
+    const Color borderColor = Color(0xff4caf50);
+    const Color selectedBorderColor = Color(0xffcddc39);
+    const Color disabledBorderColor = Color(0xffffeb3b);
+    const double customWidth = 2.0;
 
-      await tester.pumpWidget(
-        Material(
-          child: boilerplate(
-            child: ToggleButtonsTheme(
-              data: const ToggleButtonsThemeData(
-                borderColor: borderColor,
-                borderWidth: customWidth,
-              ),
-              child: ToggleButtons(
-                isSelected: const <bool>[false],
-                onPressed: (int index) {},
-                children: const <Widget>[
-                  Text('First child'),
-                ],
-              ),
+    await tester.pumpWidget(
+      Material(
+        child: boilerplate(
+          child: ToggleButtonsTheme(
+            data: const ToggleButtonsThemeData(borderColor: borderColor, borderWidth: customWidth),
+            child: ToggleButtons(
+              isSelected: const <bool>[false],
+              onPressed: (int index) {},
+              children: const <Widget>[Text('First child')],
             ),
           ),
         ),
-      );
+      ),
+    );
 
-      RenderObject toggleButtonRenderObject;
-      toggleButtonRenderObject = tester.allRenderObjects.firstWhere((RenderObject object) {
-        return object.runtimeType.toString() == '_SelectToggleButtonRenderObject';
-      });
-      expect(
-        toggleButtonRenderObject,
-        paints
-          // physical model layer paint
-          ..path()
-          ..path(
-            style: PaintingStyle.stroke,
-            color: borderColor,
-            strokeWidth: customWidth,
-          ),
-      );
+    RenderObject toggleButtonRenderObject;
+    toggleButtonRenderObject = tester.allRenderObjects.firstWhere((RenderObject object) {
+      return object.runtimeType.toString() == '_SelectToggleButtonRenderObject';
+    });
+    expect(
+      toggleButtonRenderObject,
+      paints
+        // physical model layer paint
+        ..path()
+        ..path(style: PaintingStyle.stroke, color: borderColor, strokeWidth: customWidth),
+    );
 
-      await tester.pumpWidget(
-        Material(
-          child: boilerplate(
-            child: ToggleButtonsTheme(
-              data: const ToggleButtonsThemeData(
-                selectedBorderColor: selectedBorderColor,
-                borderWidth: customWidth,
-              ),
-              child: ToggleButtons(
-                isSelected: const <bool>[true],
-                onPressed: (int index) {},
-                children: const <Widget>[
-                  Text('First child'),
-                ],
-              ),
+    await tester.pumpWidget(
+      Material(
+        child: boilerplate(
+          child: ToggleButtonsTheme(
+            data: const ToggleButtonsThemeData(
+              selectedBorderColor: selectedBorderColor,
+              borderWidth: customWidth,
+            ),
+            child: ToggleButtons(
+              isSelected: const <bool>[true],
+              onPressed: (int index) {},
+              children: const <Widget>[Text('First child')],
             ),
           ),
         ),
-      );
+      ),
+    );
 
-      toggleButtonRenderObject = tester.allRenderObjects.firstWhere((RenderObject object) {
-        return object.runtimeType.toString() == '_SelectToggleButtonRenderObject';
-      });
-      expect(
-        toggleButtonRenderObject,
-        paints
-          // physical model layer paint
-          ..path()
-          ..path(
-            style: PaintingStyle.stroke,
-            color: selectedBorderColor,
-            strokeWidth: customWidth,
-          ),
-      );
+    toggleButtonRenderObject = tester.allRenderObjects.firstWhere((RenderObject object) {
+      return object.runtimeType.toString() == '_SelectToggleButtonRenderObject';
+    });
+    expect(
+      toggleButtonRenderObject,
+      paints
+        // physical model layer paint
+        ..path()
+        ..path(style: PaintingStyle.stroke, color: selectedBorderColor, strokeWidth: customWidth),
+    );
 
-      await tester.pumpWidget(
-        Material(
-          child: boilerplate(
-            child: ToggleButtonsTheme(
-              data: const ToggleButtonsThemeData(
-                disabledBorderColor: disabledBorderColor,
-                borderWidth: customWidth,
-              ),
-              child: ToggleButtons(
-                isSelected: const <bool>[false],
-                children: const <Widget>[
-                  Text('First child'),
-                ],
-              ),
+    await tester.pumpWidget(
+      Material(
+        child: boilerplate(
+          child: ToggleButtonsTheme(
+            data: const ToggleButtonsThemeData(
+              disabledBorderColor: disabledBorderColor,
+              borderWidth: customWidth,
+            ),
+            child: ToggleButtons(
+              isSelected: const <bool>[false],
+              children: const <Widget>[Text('First child')],
             ),
           ),
         ),
-      );
+      ),
+    );
 
-      toggleButtonRenderObject = tester.allRenderObjects.firstWhere((RenderObject object) {
-        return object.runtimeType.toString() == '_SelectToggleButtonRenderObject';
-      });
-      expect(
-        toggleButtonRenderObject,
-        paints
-          // physical model layer paint
-          ..path()
-          ..path(
-            style: PaintingStyle.stroke,
-            color: disabledBorderColor,
-            strokeWidth: customWidth,
-          ),
-      );
-    },
-  );
+    toggleButtonRenderObject = tester.allRenderObjects.firstWhere((RenderObject object) {
+      return object.runtimeType.toString() == '_SelectToggleButtonRenderObject';
+    });
+    expect(
+      toggleButtonRenderObject,
+      paints
+        // physical model layer paint
+        ..path()
+        ..path(style: PaintingStyle.stroke, color: disabledBorderColor, strokeWidth: customWidth),
+    );
+  });
 }

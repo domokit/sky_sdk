@@ -1,0 +1,128 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/testing/testing.gni")
+
+config("accessibility_config") {
+  visibility = [
+    "//flutter/shell/platform/common:common_cpp_accessibility",
+    "//flutter/third_party/accessibility/*",
+  ]
+  if (is_win) {
+    # TODO(cbracken): https://github.com/flutter/flutter/issues/92229
+    defines = [ "_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING" ]
+  }
+  include_dirs = [ "//flutter/third_party/accessibility" ]
+}
+
+source_set("accessibility") {
+  defines = []
+
+  public_deps = [
+    "ax",
+    "ax_build",
+    "base",
+    "gfx",
+  ]
+
+  public_configs = [ ":accessibility_config" ]
+
+  if (is_mac) {
+    frameworks = [
+      "AppKit.framework",
+      "CoreFoundation.framework",
+      "CoreGraphics.framework",
+      "CoreText.framework",
+      "IOSurface.framework",
+    ]
+  }
+}
+
+if (enable_unittests) {
+  test_fixtures("accessibility_fixtures") {
+    fixtures = []
+  }
+
+  executable("accessibility_unittests") {
+    testonly = true
+
+    public_configs = [ ":accessibility_config" ]
+
+    if (is_mac || is_win) {
+      sources = [
+        "ax/ax_enum_util_unittest.cc",
+        "ax/ax_event_generator_unittest.cc",
+        "ax/ax_node_data_unittest.cc",
+        "ax/ax_node_position_unittest.cc",
+        "ax/ax_range_unittest.cc",
+        "ax/ax_role_properties_unittest.cc",
+        "ax/ax_table_info_unittest.cc",
+        "ax/ax_tree_unittest.cc",
+        "ax/test_ax_node_helper.cc",
+        "ax/test_ax_node_helper.h",
+        "ax/test_ax_tree_manager.cc",
+        "ax/test_ax_tree_manager.h",
+      ]
+
+      sources += [
+        "ax/platform/ax_platform_node_base_unittest.cc",
+        "ax/platform/ax_platform_node_unittest.cc",
+        "ax/platform/ax_platform_node_unittest.h",
+        "ax/platform/ax_unique_id_unittest.cc",
+        "ax/platform/test_ax_node_wrapper.cc",
+        "ax/platform/test_ax_node_wrapper.h",
+      ]
+
+      if (is_mac) {
+        cflags_objc = flutter_cflags_objc
+        cflags_objcc = flutter_cflags_objcc
+        ldflags = [ "-ObjC" ]
+
+        sources += [ "ax/platform/ax_platform_node_mac_unittest.mm" ]
+        frameworks = [
+          "AppKit.framework",
+          "CoreFoundation.framework",
+          "CoreGraphics.framework",
+          "CoreText.framework",
+          "IOSurface.framework",
+        ]
+      }
+      if (is_win) {
+        sources += [
+          "ax/platform/ax_fragment_root_win_unittest.cc",
+          "ax/platform/ax_platform_node_textprovider_win_unittest.cc",
+          "ax/platform/ax_platform_node_textrangeprovider_win_unittest.cc",
+          "ax/platform/ax_platform_node_win_unittest.cc",
+          "base/win/dispatch_stub.cc",
+          "base/win/dispatch_stub.h",
+          "base/win/display_unittest.cc",
+          "base/win/scoped_bstr_unittest.cc",
+          "base/win/scoped_safearray_unittest.cc",
+          "base/win/scoped_variant_unittest.cc",
+        ]
+      }
+
+      sources += [
+        "base/logging_unittests.cc",
+        "base/string_utils_unittest.cc",
+        "gfx/geometry/insets_unittest.cc",
+        "gfx/geometry/point_unittest.cc",
+        "gfx/geometry/rect_unittest.cc",
+        "gfx/geometry/size_unittest.cc",
+        "gfx/geometry/vector2d_unittest.cc",
+        "gfx/range/range_unittest.cc",
+        "gfx/test/gfx_util.cc",
+        "gfx/test/gfx_util.h",
+      ]
+
+      deps = [
+        ":accessibility",
+        ":accessibility_fixtures",
+        "//flutter/testing",
+        "//flutter/testing:dart",
+      ]
+    }
+  }
+}

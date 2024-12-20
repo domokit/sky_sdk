@@ -22,21 +22,17 @@ class ProductPage extends StatelessWidget {
     final bool isDesktop = isDisplayDesktop(context);
 
     return ScopedModelDescendant<AppStateModel>(
-        builder: (BuildContext context, Widget? child, AppStateModel model) {
-      return isDesktop
-          ? DesktopAsymmetricView(products: model.getProducts())
-          : MobileAsymmetricView(products: model.getProducts());
-    });
+      builder: (BuildContext context, Widget? child, AppStateModel model) {
+        return isDesktop
+            ? DesktopAsymmetricView(products: model.getProducts())
+            : MobileAsymmetricView(products: model.getProducts());
+      },
+    );
   }
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({
-    this.expandingBottomSheet,
-    this.scrim,
-    this.backdrop,
-    super.key,
-  });
+  const HomePage({this.expandingBottomSheet, this.scrim, this.backdrop, super.key});
 
   final ExpandingBottomSheet? expandingBottomSheet;
   final Widget? scrim;
@@ -59,9 +55,7 @@ class HomePage extends StatelessWidget {
           ),
           ExcludeSemantics(child: scrim),
           Align(
-            alignment: isDesktop
-                ? AlignmentDirectional.topEnd
-                : AlignmentDirectional.bottomEnd,
+            alignment: isDesktop ? AlignmentDirectional.topEnd : AlignmentDirectional.bottomEnd,
             child: Semantics(
               container: true,
               sortKey: const OrdinalSortKey(0, name: _ordinalSortKeyName),

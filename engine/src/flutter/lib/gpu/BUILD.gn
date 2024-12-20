@@ -1,0 +1,73 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/impeller/tools/impeller.gni")
+import("//flutter/testing/testing.gni")
+
+source_set("gpu") {
+  cflags = [
+    # Dart gives us doubles. Skia and Impeller work in floats.
+    # If Dart gives us a double > FLT_MAX or < -FLT_MAX, implicit conversion
+    # will convert it to either inf/-inf or FLT_MAX/-FLT_MAX (undefined
+    # behavior). This can result in surprising and difficult to debug behavior
+    # for Flutter application developers, so it should be explicitly handled
+    # via SafeNarrow.
+    "-Wimplicit-float-conversion",
+  ]
+
+  if (is_win) {
+    # This causes build failures in third_party dependencies on Windows.
+    cflags += [ "-Wno-implicit-int-float-conversion" ]
+  }
+
+  public_configs = [ "//flutter:config" ]
+
+  public_deps = []
+
+  if (!defined(defines)) {
+    defines = []
+  }
+
+  if (!is_fuchsia) {
+    sources = [
+      "command_buffer.cc",
+      "command_buffer.h",
+      "context.cc",
+      "context.h",
+      "device_buffer.cc",
+      "device_buffer.h",
+      "export.cc",
+      "export.h",
+      "formats.cc",
+      "formats.h",
+      "render_pass.cc",
+      "render_pass.h",
+      "render_pipeline.cc",
+      "render_pipeline.h",
+      "shader.cc",
+      "shader.h",
+      "shader_library.cc",
+      "shader_library.h",
+      "texture.cc",
+      "texture.h",
+    ]
+  }
+  deps = [
+    "//flutter/assets",
+    "//flutter/impeller",
+    "//flutter/impeller/display_list:skia_conversions",
+    "//flutter/impeller/shader_bundle:shader_bundle_flatbuffers",
+    "//flutter/lib/ui",
+    "//flutter/third_party/tonic",
+  ]
+
+  if (is_win) {
+    # Required for M_PI and others.
+    defines += [ "_USE_MATH_DEFINES" ]
+  }
+}
+
+if (enable_unittests) {
+}

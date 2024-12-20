@@ -1,0 +1,43 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+source_root = "//flutter/third_party/inja"
+
+config("inja_public_config") {
+  include_dirs = [ "$source_root/include" ]
+
+  if (is_clang) {
+    cflags_cc = [
+      "-Wno-unused-variable",
+      "-Wno-newline-eof",
+    ]
+  }
+
+  defines = [ "INJA_NOEXCEPTION=1" ]
+}
+
+source_set("inja") {
+  public_configs = [ ":inja_public_config" ]
+
+  public = [ "$source_root/include/inja/inja.hpp" ]
+
+  sources = [
+    "$source_root/include/inja/config.hpp",
+    "$source_root/include/inja/environment.hpp",
+    "$source_root/include/inja/exceptions.hpp",
+    "$source_root/include/inja/function_storage.hpp",
+    "$source_root/include/inja/inja.hpp",
+    "$source_root/include/inja/lexer.hpp",
+    "$source_root/include/inja/node.hpp",
+    "$source_root/include/inja/parser.hpp",
+    "$source_root/include/inja/renderer.hpp",
+    "$source_root/include/inja/statistics.hpp",
+    "$source_root/include/inja/string_view.hpp",
+    "$source_root/include/inja/template.hpp",
+    "$source_root/include/inja/token.hpp",
+    "$source_root/include/inja/utils.hpp",
+  ]
+
+  public_deps = [ "//flutter/third_party/json" ]
+}

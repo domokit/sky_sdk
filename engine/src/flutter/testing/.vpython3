@@ -1,0 +1,23 @@
+python_version: "3.8"
+
+# Used by:
+#   auth.py
+#   gerrit_util.py
+#   git_cl.py
+#   my_activity.py
+#   TODO(crbug.com/1002153): Add ninjalog_uploader.py
+wheel: <
+  name: "infra/python/wheels/httplib2-py3"
+  version: "version:0.13.1"
+>
+
+# Used by:
+#   my_activity.py
+wheel: <
+  name: "infra/python/wheels/python-dateutil-py2_py3"
+  version: "version:2.7.3"
+>
+wheel: <
+  name: "infra/python/wheels/six-py2_py3"
+  version: "version:1.10.0"
+>

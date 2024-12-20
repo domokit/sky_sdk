@@ -19,9 +19,7 @@ class AdaptiveAlertDialogApp extends StatelessWidget {
       theme: ThemeData(platform: TargetPlatform.iOS, useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(title: const Text('AlertDialog Sample')),
-        body: const Center(
-          child: AdaptiveDialogExample(),
-        ),
+        body: const Center(child: AdaptiveDialogExample()),
       ),
     );
   }
@@ -33,7 +31,7 @@ class AdaptiveDialogExample extends StatelessWidget {
   Widget adaptiveAction({
     required BuildContext context,
     required VoidCallback onPressed,
-    required Widget child
+    required Widget child,
   }) {
     final ThemeData theme = Theme.of(context);
     switch (theme.platform) {
@@ -51,25 +49,27 @@ class AdaptiveDialogExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () => showAdaptiveDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog.adaptive(
-          title: const Text('AlertDialog Title'),
-          content: const Text('AlertDialog description'),
-          actions: <Widget>[
-            adaptiveAction(
-              context: context,
-              onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: const Text('Cancel'),
-            ),
-            adaptiveAction(
-              context: context,
-              onPressed: () => Navigator.pop(context, 'OK'),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      ),
+      onPressed:
+          () => showAdaptiveDialog<String>(
+            context: context,
+            builder:
+                (BuildContext context) => AlertDialog.adaptive(
+                  title: const Text('AlertDialog Title'),
+                  content: const Text('AlertDialog description'),
+                  actions: <Widget>[
+                    adaptiveAction(
+                      context: context,
+                      onPressed: () => Navigator.pop(context, 'Cancel'),
+                      child: const Text('Cancel'),
+                    ),
+                    adaptiveAction(
+                      context: context,
+                      onPressed: () => Navigator.pop(context, 'OK'),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+          ),
       child: const Text('Show Dialog'),
     );
   }

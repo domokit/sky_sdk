@@ -1,0 +1,75 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Defines the configuration of RBE.
+
+import("//build/toolchain/toolchain.gni")
+
+declare_args() {
+  # Set to true to enable distributed compilation using Goma.
+  use_rbe = false
+
+  # Set to true to create symlinks to Xcode toolchain/SDK directories.
+  #
+  # RBE does not allow for include paths outside of the buildroot. Creating
+  # symlinks is a work around for that when using a local Xcode toolchain.
+  # This property should not be set to true on LUCI.
+  #
+  # If use_rbe is false, this property is ignored.
+  create_xcode_symlinks = false
+
+  rbe_exec_root = rebase_path("//")
+
+  rbe_server_address = ""
+
+  rbe_exec_strategy = ""
+
+  rbe_dial_timeout = ""
+
+  rbe_exec_timeout = ""
+
+  rbe_reclient_timeout = ""
+
+  rbe_platform = ""
+
+  rbe_dir = rebase_path("$buildtools_path/linux-x64/reclient")
+
+  rbe_cfg = rebase_path("//flutter/build/rbe/rewrapper-linux.cfg")
+}
+
+rewrapper_command = [
+  "$rbe_dir/rewrapper",
+  "--cfg=$rbe_cfg",
+  "--exec_root=$rbe_exec_root",
+]
+if (rbe_server_address != "") {
+  rewrapper_command += [
+    "--server_address=$rbe_server_address",
+  ]
+}
+if (rbe_exec_strategy != "") {
+  rewrapper_command += [
+    "--exec_strategy=$rbe_exec_strategy",
+  ]
+}
+if (rbe_dial_timeout != "") {
+  rewrapper_command += [
+    "--dial_timeout=$rbe_dial_timeout",
+  ]
+}
+if (rbe_exec_timeout != "") {
+  rewrapper_command += [
+    "--exec_timeout=$rbe_exec_timeout",
+  ]
+}
+if (rbe_reclient_timeout != "") {
+  rewrapper_command += [
+    "--reclient_timeout=$rbe_reclient_timeout",
+  ]
+}
+if (rbe_platform != "") {
+  rewrapper_command += [
+    "--platform=$rbe_platform",
+  ]
+}

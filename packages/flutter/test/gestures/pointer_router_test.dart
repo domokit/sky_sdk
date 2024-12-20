@@ -33,6 +33,7 @@ void main() {
     void callback(PointerEvent event) {
       callbackRan = true;
     }
+
     final PointerRouter router = PointerRouter();
     router.addRoute(2, (PointerEvent event) {
       router.removeRoute(2, callback);
@@ -67,6 +68,7 @@ void main() {
     void callback(PointerEvent event) {
       callbackRan = true;
     }
+
     final PointerRouter router = PointerRouter();
     router.addGlobalRoute((PointerEvent event) {
       router.removeGlobalRoute(callback);
@@ -82,6 +84,7 @@ void main() {
     void callback(PointerEvent event) {
       callbackRan = true;
     }
+
     final PointerRouter router = PointerRouter();
     bool perPointerCallbackRan = false;
     router.addRoute(2, (PointerEvent event) {
@@ -111,12 +114,7 @@ void main() {
     });
     final TestPointer pointer2 = TestPointer(2);
     router.route(pointer2.down(Offset.zero));
-    expect(log, equals(<String>[
-      'per-pointer 1',
-      'per-pointer 2',
-      'global 1',
-      'global 2',
-    ]));
+    expect(log, equals(<String>['per-pointer 1', 'per-pointer 2', 'global 1', 'global 2']));
   });
 
   test('Exceptions do not stop pointer routing', () {
@@ -140,12 +138,10 @@ void main() {
 
     final TestPointer pointer2 = TestPointer(2);
     router.route(pointer2.down(Offset.zero));
-    expect(log, equals(<String>[
-      'per-pointer 1',
-      'per-pointer 2',
-      'error report',
-      'per-pointer 3',
-    ]));
+    expect(
+      log,
+      equals(<String>['per-pointer 1', 'per-pointer 2', 'error report', 'per-pointer 3']),
+    );
 
     FlutterError.onError = previousErrorHandler;
   });
@@ -165,7 +161,9 @@ void main() {
     final List<PointerEvent> events = <PointerEvent>[];
     final List<PointerEvent> globalEvents = <PointerEvent>[];
     final PointerRouter router = PointerRouter();
-    final Matrix4 transform = (Matrix4.identity()..scale(1 / 2.0, 1 / 2.0, 1.0)).multiplied(Matrix4.translationValues(-10, -30, 0));
+    final Matrix4 transform = (Matrix4.identity()..scale(1 / 2.0, 1 / 2.0, 1.0)).multiplied(
+      Matrix4.translationValues(-10, -30, 0),
+    );
 
     router.addRoute(1, (PointerEvent event) {
       events.add(event);

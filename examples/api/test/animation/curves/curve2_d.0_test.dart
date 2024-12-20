@@ -8,14 +8,12 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('The buzz widget should move around', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.Curve2DExampleApp(),
-    );
+    await tester.pumpWidget(const example.Curve2DExampleApp());
 
     final Finder textFinder = find.widgetWithText(CircleAvatar, 'B');
     expect(tester.getCenter(textFinder), const Offset(58, 440));
 
-    const List<Offset> expectedOffsets= <Offset>[
+    const List<Offset> expectedOffsets = <Offset>[
       Offset(43, 407),
       Offset(81, 272),
       Offset(185, 103),

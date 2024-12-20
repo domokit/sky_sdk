@@ -1,0 +1,9 @@
+# Below is a list of Flutter hackers GitHub handles who are
+# suggested reviewers for contributions to this repository.
+#
+# These names are just suggestions. It is fine to have your changes
+# reviewed by someone else.
+#
+# Use git ls-files '<pattern>' without a / prefix to see the list of matching files.
+
+/build/config/ios/** @jmagman

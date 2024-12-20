@@ -16,21 +16,12 @@ class FadeTransitionExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: FadeTransitionExample(
-        duration: duration,
-        curve: curve,
-      ),
-    );
+    return const MaterialApp(home: FadeTransitionExample(duration: duration, curve: curve));
   }
 }
 
 class FadeTransitionExample extends StatefulWidget {
-  const FadeTransitionExample({
-    required this.duration,
-    required this.curve,
-    super.key,
-  });
+  const FadeTransitionExample({required this.duration, required this.curve, super.key});
 
   final Duration duration;
 
@@ -48,10 +39,7 @@ class _FadeTransitionExampleState extends State<FadeTransitionExample>
     duration: widget.duration,
     vsync: this,
   )..repeat(reverse: true);
-  late final CurvedAnimation _animation = CurvedAnimation(
-    parent: _controller,
-    curve: widget.curve,
-  );
+  late final CurvedAnimation _animation = CurvedAnimation(parent: _controller, curve: widget.curve);
 
   @override
   void didUpdateWidget(FadeTransitionExample oldWidget) {
@@ -81,10 +69,7 @@ class _FadeTransitionExampleState extends State<FadeTransitionExample>
       color: Colors.white,
       child: FadeTransition(
         opacity: _animation,
-        child: const Padding(
-          padding: EdgeInsets.all(8),
-          child: FlutterLogo(),
-        ),
+        child: const Padding(padding: EdgeInsets.all(8), child: FlutterLogo()),
       ),
     );
   }

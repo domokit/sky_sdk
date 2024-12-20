@@ -1,0 +1,341 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/tools/fuchsia/dart/dart.gni")
+import("//flutter/tools/fuchsia/dart/dart_package_config.gni")
+import("//flutter/tools/fuchsia/dart/toolchain.gni")
+
+# Defines a Dart library
+#
+# Parameters
+#
+#   sources
+#     The list of all sources in this library.
+#     These sources must be within source_dir.
+#
+#   package_root (optional)
+#     Path to the directory hosting the library.
+#     This is useful for generated content, and can be ignored otherwise.
+#     Defaults to ".".
+#
+#   package_name (optional)
+#     Name of the Dart package. This is used as an identifier in code that
+#     depends on this library.
+#
+#   language_version (optional)
+#     Specify the Dart language version to use for this package.
+#     If language_version is not specified but pubspec is then the language
+#     version will be read from the pubspec. If no language version can be
+#     determined then we will default to version "2.8".
+#     It is recommended to specify a language_version if it is well known
+#     instead of relying on the pubspec file since this will improve compilation
+#     times.
+#
+#   infer_package_name (optional)
+#     Infer the package name based on the path to the package.
+#
+#     NOTE: Exactly one of package_name or infer_package_name must be set.
+#
+#   source_dir (optional)
+#     Path to the directory containing the package sources, relative to
+#     package_root. All non third-party dart files under source_dir must be
+#     included in sources.
+#     Defaults to "lib".
+#
+#   deps (optional)
+#     List of labels this library depends on.
+#
+#   TODO(fxb/63133): non_dart_deps is deprecated. Use deps instead.
+#   non_dart_deps (optional, deprecated)
+#     List of labels this library depends on that are not Dart libraries. This
+#     includes things like actions that generate Dart code. It typically doesn't
+#     need to be set.
+#     Note that these labels *must* have an explicit toolchain attached.
+#
+#   TODO(fxbug.dev/71902): set up allowlist for disable_source_verification when
+#   dart_test no longer depends on dart_library.
+#   NOTE: Do NOT disable source verification unless you are 100% sure it is
+#   absolutely necessary.
+#   disable_source_verification (optional)
+#     Prevents source verification from being run on this target.
+#
+#   extra_sources (optional)
+#     Additional sources to consider for analysis.
+#
+#   pubspec (optional)
+#     Path to the pubspec.yaml. If not provided, will default to looking for
+#     the pubspec.yaml in the package root. It is not common that this value will
+#     need to be set but can be useful for generated code.
+#
+#   options_file (optional)
+#     Path to the analysis_options.yaml file. If not provided, will default to
+#     looking for the analysis_options.yaml in the package root. It is not common
+#     that this value needs to be set but can be useful for generated code.
+#
+#   disable_metadata_entry (optional)
+#     Prevents metedata entry from being written to the dart_packag_config json file.
+#
+# Example of usage:
+#
+#   dart_library("baz") {
+#     package_name = "foo.bar.baz"
+#
+#     sources = [
+#       "blah.dart",
+#     ]
+#
+#     deps = [
+#       "//foo/bar/owl",
+#     ]
+#   }
+if (current_toolchain == dart_toolchain) {
+  template("dart_library") {
+    forward_variables_from(invoker,
+                           [
+                             "visibility",
+                             "hermetic_deps",
+                           ])
+
+    if (defined(invoker.package_name)) {
+      package_name = invoker.package_name
+    } else if (defined(invoker.infer_package_name) &&
+               invoker.infer_package_name) {
+      # Compute a package name from the label:
+      #   //foo/bar --> foo.bar
+      #   //foo/bar:blah --> foo.bar._blah
+      #   //garnet/public/foo/bar --> foo.bar
+      # Strip public directories.
+      full_dir = get_label_info(":$target_name", "dir")
+      package_name = full_dir
+      package_name = string_replace(package_name, "//", "")
+      package_name = string_replace(package_name, "/", ".")
+
+      # If the last directory name does not match the target name, add the
+      # target name to the resulting package name.
+      name = get_label_info(":$target_name", "name")
+      last_dir = get_path_info(full_dir, "name")
+      if (last_dir != name) {
+        package_name = "$package_name._$name"
+      }
+    } else {
+      assert(false, "Must specify either a package_name or infer_package_name")
+    }
+
+    _dart_deps = []
+    if (defined(invoker.deps)) {
+      foreach(dep, invoker.deps) {
+        _dart_deps += [ get_label_info(dep, "label_no_toolchain") ]
+      }
+    }
+
+    _non_dart_deps = []
+    if (defined(invoker.non_dart_deps)) {
+      _non_dart_deps += invoker.non_dart_deps
+    }
+
+    package_root = "."
+    if (defined(invoker.package_root)) {
+      package_root = invoker.package_root
+    }
+
+    source_dir = "$package_root/lib"
+    if (defined(invoker.source_dir)) {
+      source_dir = "$package_root/${invoker.source_dir}"
+    }
+
+    assert(defined(invoker.sources), "Sources must be defined")
+
+    disable_source_verification =
+        defined(invoker.disable_source_verification) &&
+        invoker.disable_source_verification
+    if (disable_source_verification && invoker.sources == []) {
+      not_needed([ source_dir ])
+    }
+
+    rebased_sources = []
+    foreach(source, invoker.sources) {
+      rebased_source_dir = rebase_path(source_dir)
+      rebased_sources += [ "$rebased_source_dir/$source" ]
+    }
+    if (defined(invoker.extra_sources)) {
+      foreach(source, invoker.extra_sources) {
+        rebased_sources += [ rebase_path(source) ]
+      }
+    }
+    source_file = "$target_gen_dir/$target_name.sources"
+    write_file(source_file, rebased_sources, "list lines")
+
+    # Dependencies of the umbrella group for the targets in this file.
+    group_deps = []
+
+    _public_deps = []
+    if (defined(invoker.public_deps)) {
+      _public_deps = invoker.public_deps
+    }
+
+    _metadata = {
+      package_config_entries = [
+        {
+          name = package_name
+          if (defined(invoker.language_version)) {
+            language_version = invoker.language_version
+          } else if (defined(invoker.pubspec)) {
+            pubspec_path = rebase_path(invoker.pubspec, root_build_dir)
+          } else {
+            language_version = "2.12"
+          }
+          root_uri = rebase_path(package_root, root_build_dir)
+          if (defined(invoker.source_dir)) {
+            package_uri = invoker.source_dir
+          } else {
+            package_uri = "lib"
+          }
+        },
+      ]
+      dart_build_info = [
+        {
+          __is_current_target = false
+          __package_name = package_name
+          __deps = _dart_deps + _non_dart_deps
+          __public_deps = _public_deps
+          __rebased_sources = rebased_sources
+        },
+      ]
+
+      dart_build_info_barrier = []
+    }
+
+    # When we generate a package_config for the analyzer we need to make sure
+    # that we are including this library in that file. The dart_package_config
+    # collects metadata from its dependencies so we create this group to expose
+    # that data. We also expose this in the group target below so that users of
+    # the dart_package_config target can just add the targets to the deps list.
+    _publish_metadata_target_name = "${target_name}_package_metadata"
+    group(_publish_metadata_target_name) {
+      metadata = _metadata
+    }
+
+    _dart_package_config_target_name = "${target_name}_dart_package"
+    _packages_path = "$target_gen_dir/${target_name}_package_config.json"
+    dart_package_config(_dart_package_config_target_name) {
+      # Do not publish the metadata to the dart_package_config json file if the
+      # disable_metadata_entry flag is enabled in the dart_tool. The reason this is here
+      # is to avoid entries that may have identical rootUris as fxb/58781 has highlighted.
+      deps = _dart_deps
+      if (!defined(invoker.disable_metadata_entry) ||
+          !invoker.disable_metadata_entry) {
+        deps += [ ":$_publish_metadata_target_name" ]
+      }
+      public_deps = _non_dart_deps
+      outputs = [ _packages_path ]
+      forward_variables_from(invoker, [ "testonly" ])
+    }
+    group_deps += [ ":$_dart_package_config_target_name" ]
+
+    ################################
+    # Dart source "verification"
+    #
+    # Warn if there are dart sources from the source directory that are
+    # not explicitly part of sources. This may cause a failure when syncing to
+    # another repository, as they will be excluded from the resulting BUILD
+    # file.
+    #
+    # Also warn if nonexistent files are included in sources.
+    if (!disable_source_verification) {
+      source_verification_target_name = "${target_name}_source_verification"
+      action(source_verification_target_name) {
+        script = "//flutter/tools/fuchsia/dart/verify_sources.py"
+        output_file = "$target_gen_dir/$target_name.missing"
+
+        sources = rebased_sources
+        outputs = [ output_file ]
+
+        args = [
+                 "--source_dir",
+                 rebase_path(source_dir),
+                 "--stamp",
+                 rebase_path(output_file),
+               ] + invoker.sources
+
+        forward_variables_from(invoker, [ "testonly" ])
+
+        # Deps may include codegen dependencies that generate dart sources.
+        deps = _dart_deps + _non_dart_deps
+      }
+      group_deps += [ ":$source_verification_target_name" ]
+    }
+
+    # Generate a file that lists files containing full (including all direct and
+    # transitive dependencies) sources for this target's dependencies.
+    _all_deps_sources_list_target = "${target_name}.all_deps_sources.list"
+    _all_deps_sources_list_file =
+        "${target_gen_dir}/${target_name}.all_deps_sources.list"
+    generated_file(_all_deps_sources_list_target) {
+      forward_variables_from(invoker, [ "testonly" ])
+      outputs = [ _all_deps_sources_list_file ]
+      data_keys = [ "all_deps_sources" ]
+      walk_keys = [ "all_deps_sources_barrier" ]
+      deps = _dart_deps
+    }
+
+    # Generate full sources for this target by combining sources of this target
+    # with full sources of all dependencies.
+    #
+    # The generated file contains sources of this target and all of its direct
+    # and transitive dependencies.
+    #
+    # The output file is useful when writing depfiles for actions like dart
+    # analyzer, which recursively reads all sources.
+    _all_deps_sources_target = "${target_name}.all_deps_sources"
+    _all_deps_sources_file = "${target_gen_dir}/${target_name}.all_deps_sources"
+    action(_all_deps_sources_target) {
+      forward_variables_from(invoker, [ "testonly" ])
+
+      script = "//flutter/tools/fuchsia/dart/merge_deps_sources.py"
+
+      outputs = [ _all_deps_sources_file ]
+      depfile = "${_all_deps_sources_file}.d"
+      args = [
+               "--output",
+               rebase_path(outputs[0], root_build_dir),
+               "--depfile",
+               rebase_path(depfile, root_build_dir),
+               "--source_lists",
+               "@" + rebase_path(_all_deps_sources_list_file, root_build_dir),
+               "--sources",
+             ] + rebase_path(rebased_sources, root_build_dir)
+
+      inputs = [ _all_deps_sources_list_file ]
+      deps = [ ":${_all_deps_sources_list_target}" ]
+      metadata = {
+        all_deps_sources = [ rebase_path(outputs[0], root_build_dir) ]
+        all_deps_sources_barrier = []
+      }
+    }
+    group_deps += [ ":${_all_deps_sources_target}" ]
+
+    not_needed(invoker, [ "options_file" ])
+
+    group(target_name) {
+      # _dart_deps are added here to ensure they are fully built.
+      # Up to this point, only the targets generating .packages had been
+      # depended on.
+      deps = _dart_deps + _non_dart_deps
+
+      public_deps = group_deps
+
+      metadata = _metadata
+      forward_variables_from(invoker, [ "testonly" ])
+    }
+  }
+} else {  # Not the Dart toolchain.
+  template("dart_library") {
+    group(target_name) {
+      forward_variables_from(invoker, [ "testonly" ])
+      not_needed(invoker, "*")
+
+      public_deps = [ ":$target_name($dart_toolchain)" ]
+    }
+  }
+}

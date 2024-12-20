@@ -1,0 +1,84 @@
+# This configuration file specifies several test suites with their package and
+# test command for femu_test.py.
+
+- test_command: test run fuchsia-pkg://fuchsia.com/dart_runner_tests#meta/dart_runner_tests.cm
+  package: dart_runner_tests-0.far
+- test_command: test run fuchsia-pkg://fuchsia.com/flutter_runner_tests#meta/flutter_runner_tests.cm
+  package: flutter_runner_tests-0.far
+- test_command: test run fuchsia-pkg://fuchsia.com/flutter_runner_tzdata_tests#meta/flutter_runner_tzdata_tests.cm
+  package: flutter_runner_tzdata_tests-0.far
+- test_command: test run fuchsia-pkg://fuchsia.com/flutter_runner_tzdata_missing_tests#meta/flutter_runner_tzdata_missing_tests.cm
+  package: flutter_runner_tzdata_missing_tests-0.far
+- test_command: test run fuchsia-pkg://fuchsia.com/fml_tests#meta/fml_tests.cm
+  package: fml_tests-0.far
+- test_command: test run fuchsia-pkg://fuchsia.com/display_list_tests#meta/display_list_tests.cm
+  package: display_list_tests-0.far
+- test_command: test run fuchsia-pkg://fuchsia.com/display_list_render_tests#meta/display_list_render_tests.cm
+  package: display_list_render_tests-0.far
+  disabled: on arm64 because of the slowness
+  variant: x64
+- test_command: test run fuchsia-pkg://fuchsia.com/flow_tests#meta/flow_tests.cm
+  package: flow_tests-0.far
+- test_command: test run fuchsia-pkg://fuchsia.com/runtime_tests#meta/runtime_tests.cm
+  package: runtime_tests-0.far
+  disabled: on debug_arm64 because of the slowness
+  variant: debug_x64
+- test_command: test run fuchsia-pkg://fuchsia.com/shell_tests#meta/shell_tests.cm
+  package: shell_tests-0.far
+  variant: debug_x64
+- test_command: test run fuchsia-pkg://fuchsia.com/txt_tests#meta/txt_tests.cm -- --gtest_filter=-ParagraphTest.*
+  package: txt_tests-0.far
+  variant: debug
+- test_command: test run fuchsia-pkg://fuchsia.com/ui_tests#meta/ui_tests.cm
+  package: ui_tests-0.far
+  disabled: on debug_arm64 because of the slowness
+  variant: debug_x64
+- test_command: test run fuchsia-pkg://fuchsia.com/embedder_tests#meta/embedder_tests.cm
+  package: embedder_tests-0.far
+  variant: debug_x64
+- test_command: test run fuchsia-pkg://fuchsia.com/dart_utils_tests#meta/dart_utils_tests.cm
+  package: dart_utils_tests-0.far
+- test_command: test run fuchsia-pkg://fuchsia.com/dart-jit-runner-integration-test#meta/dart-jit-runner-integration-test.cm
+  packages:
+    - oot_dart_jit_runner-0.far
+    - dart-jit-runner-integration-test-0.far
+    - gen/flutter/shell/platform/fuchsia/dart_runner/tests/startup_integration_test/dart_echo_server/dart_jit_echo_server/dart_jit_echo_server.far
+  emulator_arch:
+    - 'x64'
+    - 'arm64'
+  variant: debug
+- test_command: test run fuchsia-pkg://fuchsia.com/dart-aot-runner-integration-test#meta/dart-aot-runner-integration-test.cm
+  run_with_dart_aot: 'true'
+  packages:
+    - oot_dart_aot_runner-0.far
+    - dart-aot-runner-integration-test-0.far
+    - gen/flutter/shell/platform/fuchsia/dart_runner/tests/startup_integration_test/dart_echo_server/dart_aot_echo_server/dart_aot_echo_server.far
+  emulator_arch:
+    - 'x64'
+    - 'arm64'
+  variant: profile
+- test_command: test run fuchsia-pkg://fuchsia.com/flutter-embedder-test#meta/flutter-embedder-test.cm
+  packages:
+    - flutter-embedder-test-0.far
+    - oot_flutter_jit_runner-0.far
+    - gen/flutter/shell/platform/fuchsia/flutter/tests/integration/embedder/child-view/child-view/child-view.far
+    - gen/flutter/shell/platform/fuchsia/flutter/tests/integration/embedder/parent-view/parent-view/parent-view.far
+  variant: debug_x64
+- test_command: test run fuchsia-pkg://fuchsia.com/touch-input-test#meta/touch-input-test.cm
+  packages:
+    - touch-input-test-0.far
+    - oot_flutter_jit_runner-0.far
+    - gen/flutter/shell/platform/fuchsia/flutter/tests/integration/touch-input/touch-input-view/touch-input-view/touch-input-view.far
+    - gen/flutter/shell/platform/fuchsia/flutter/tests/integration/touch-input/embedding-flutter-view/embedding-flutter-view/embedding-flutter-view.far
+  variant: debug_x64
+- test_command: test run fuchsia-pkg://fuchsia.com/mouse-input-test#meta/mouse-input-test.cm
+  packages:
+    - mouse-input-test-0.far
+    - oot_flutter_jit_runner-0.far
+    - gen/flutter/shell/platform/fuchsia/flutter/tests/integration/mouse-input/mouse-input-view/mouse-input-view/mouse-input-view.far
+- test_command: test run fuchsia-pkg://fuchsia.com/text-input-test#meta/text-input-test.cm
+  packages:
+    - text-input-test-0.far
+    - oot_flutter_jit_runner-0.far
+    - gen/flutter/shell/platform/fuchsia/flutter/tests/integration/text-input/text-input-view/text-input-view/text-input-view.far
+  variant: debug_x64

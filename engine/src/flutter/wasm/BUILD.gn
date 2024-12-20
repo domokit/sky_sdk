@@ -1,0 +1,14 @@
+# Copyright 2022 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This BUILD.gn is kept separate from //flutter/BUILD.gn because
+# //flutter/BUILD.gn pulls in Flutter SDK dependencies which will crash
+# when the target CPU is WASM.
+
+import("//flutter/common/config.gni")
+
+# This is the default target when building when the target CPU is WASM.
+group("wasm") {
+  deps = [ "//flutter/web_sdk:flutter_web_sdk_archive" ]
+}

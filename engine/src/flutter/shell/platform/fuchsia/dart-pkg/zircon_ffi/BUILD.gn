@@ -1,0 +1,33 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+
+config("zircon_ffi_config") {
+  include_dirs = [ "." ]
+}
+
+shared_library("zircon_ffi") {
+  public_configs = [ ":zircon_ffi_config" ]
+
+  sources = [
+    "basic_types.cc",
+    "basic_types.h",
+    "channel.cc",
+    "channel.h",
+    "clock.cc",
+    "clock.h",
+    "dart_dl.cc",
+    "dart_dl.h",
+    "handle.cc",
+    "handle.h",
+    "macros.h",
+  ]
+
+  deps = [
+    "$dart_src/runtime:dart_api",
+    "${fuchsia_sdk}/pkg/zx",
+    "//flutter/fml",
+  ]
+}

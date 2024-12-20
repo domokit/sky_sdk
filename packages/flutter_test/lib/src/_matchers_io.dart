@@ -82,7 +82,8 @@ class MatchesGoldenFile extends AsyncMatcher {
       }
     }
     Future<ui.Image?> imageFuture;
-    final bool disposeImage; // set to true if the matcher created and owns the image and must therefore dispose it.
+    final bool
+    disposeImage; // set to true if the matcher created and owns the image and must therefore dispose it.
     if (item is Future<ui.Image?>) {
       imageFuture = item;
       disposeImage = false;
@@ -99,7 +100,9 @@ class MatchesGoldenFile extends AsyncMatcher {
       imageFuture = captureImage(elements.single);
       disposeImage = true;
     } else {
-      throw AssertionError('must provide a Finder, Image, Future<Image>, List<int>, or Future<List<int>>');
+      throw AssertionError(
+        'must provide a Finder, Image, Future<Image>, List<int>, or Future<List<int>>',
+      );
     }
 
     final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.instance;
@@ -118,7 +121,10 @@ class MatchesGoldenFile extends AsyncMatcher {
           return null;
         }
         try {
-          final bool success = await goldenFileComparator.compare(bytes.buffer.asUint8List(), testNameUri);
+          final bool success = await goldenFileComparator.compare(
+            bytes.buffer.asUint8List(),
+            testNameUri,
+          );
           return success ? null : 'does not match';
         } on TestFailure catch (ex) {
           return ex.message;

@@ -1,0 +1,58 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/tools/fuchsia/toolchain/default_tools.gni")
+
+declare_args() {
+  toolchain_variant = {
+  }
+}
+
+# Define a basic GN toolchain() instance that only has the "stamp" and "copy"
+# tools. Use this for toolchains that will only have action() targets.
+#
+# Parameters:
+#   expected_label: Optional
+#     If provided, this template will assert that the full toolchain label
+#     matches this value. This is useful when the definition should match
+#     a global variable (e.g. go_toolchain or dart_toolchain).
+#     Type: GN label
+#
+#  toolchain_args: Optional
+#     A scope of extra toolchain_args keys for this toolchain instance.
+#
+# NOTE: This also ensures this defines the global `toolchain_variant.base`
+# variable, allowing BUILDCONFIG.gn to detect that this is not the default
+# toolchain (see the definition of in_default_toolchain in that file for
+# more details).
+template("basic_toolchain") {
+  # The line below is required, otherwise 'gn gen' will complain with an error
+  # (i.e. 'You set the variable "invoker" here and it was unused before it went
+  # out of scope') if the template is called without any arguments.
+  not_needed([ "invoker" ])
+
+  toolchain(target_name) {
+    tool("stamp") {
+      command = stamp_command
+      description = stamp_description
+    }
+    tool("copy") {
+      command = copy_command
+      description = copy_description
+    }
+    toolchain_args = {
+      if (defined(invoker.toolchain_args)) {
+        forward_variables_from(invoker.toolchain_args, "*")
+      }
+      toolchain_variant = {
+        base = get_label_info(":$target_name", "label_no_toolchain")
+        if (defined(invoker.expected_label)) {
+          assert(
+              base == invoker.expected_label,
+              "Invalid toolchain label $base, expected ${invoker.expected_label}")
+        }
+      }
+    }
+  }
+}

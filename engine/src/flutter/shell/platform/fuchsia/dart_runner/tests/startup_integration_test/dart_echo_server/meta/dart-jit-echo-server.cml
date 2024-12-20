@@ -1,0 +1,21 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+{
+    include: [ "syslog/client.shard.cml" ],
+    program: {
+        data: "data/dart-jit-echo-server",
+        runner: "dart_jit_runner",
+    },
+    // Capabilities provided by this component.
+    capabilities: [
+        { protocol: "dart.test.Echo" },
+    ],
+    expose: [
+        {
+            protocol: "dart.test.Echo",
+            from: "self",
+        },
+    ],
+}

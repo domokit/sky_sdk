@@ -1,0 +1,11 @@
+# Copyright 2019 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# The ANGLE build rules have a target that depends on jsoncpp, but the Flutter
+# engine never actually builds that target, so just this provides empty dummy
+# dependencies to satisfy the generation-time resolution.
+config("jsoncpp_config") {
+}
+group("jsoncpp") {
+}

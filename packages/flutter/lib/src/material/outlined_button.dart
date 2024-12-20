@@ -218,20 +218,25 @@ class OutlinedButton extends ButtonStyleButton {
     ButtonLayerBuilder? backgroundBuilder,
     ButtonLayerBuilder? foregroundBuilder,
   }) {
-    final MaterialStateProperty<Color?>? backgroundColorProp = switch ((backgroundColor, disabledBackgroundColor)) {
+    final MaterialStateProperty<Color?>? backgroundColorProp = switch ((
+      backgroundColor,
+      disabledBackgroundColor,
+    )) {
       (_?, null) => WidgetStatePropertyAll<Color?>(backgroundColor),
       (_, _) => ButtonStyleButton.defaultColor(backgroundColor, disabledBackgroundColor),
     };
-    final MaterialStateProperty<Color?>? overlayColorProp = switch ((foregroundColor, overlayColor)) {
+    final MaterialStateProperty<Color?>? overlayColorProp = switch ((
+      foregroundColor,
+      overlayColor,
+    )) {
       (null, null) => null,
       (_, Color(a: 0.0)) => WidgetStatePropertyAll<Color?>(overlayColor),
-      (_, final Color color) || (final Color color, _) => WidgetStateProperty<Color?>.fromMap(
-        <WidgetState, Color?>{
+      (_, final Color color) || (final Color color, _) =>
+        WidgetStateProperty<Color?>.fromMap(<WidgetState, Color?>{
           WidgetState.pressed: color.withOpacity(0.1),
           WidgetState.hovered: color.withOpacity(0.08),
           WidgetState.focused: color.withOpacity(0.1),
-        },
-      ),
+        }),
     };
 
     return ButtonStyle(
@@ -251,12 +256,10 @@ class OutlinedButton extends ButtonStyleButton {
       maximumSize: ButtonStyleButton.allOrNull<Size>(maximumSize),
       side: ButtonStyleButton.allOrNull<BorderSide>(side),
       shape: ButtonStyleButton.allOrNull<OutlinedBorder>(shape),
-      mouseCursor: WidgetStateProperty<MouseCursor?>.fromMap(
-        <WidgetStatesConstraint, MouseCursor?>{
-          WidgetState.disabled: disabledMouseCursor,
-          WidgetState.any: enabledMouseCursor,
-        },
-      ),
+      mouseCursor: WidgetStateProperty<MouseCursor?>.fromMap(<WidgetStatesConstraint, MouseCursor?>{
+        WidgetState.disabled: disabledMouseCursor,
+        WidgetState.any: enabledMouseCursor,
+      }),
       visualDensity: visualDensity,
       tapTargetSize: tapTargetSize,
       animationDuration: animationDuration,
@@ -370,8 +373,8 @@ class OutlinedButton extends ButtonStyleButton {
     final ColorScheme colorScheme = theme.colorScheme;
 
     return Theme.of(context).useMaterial3
-      ? _OutlinedButtonDefaultsM3(context)
-      : styleFrom(
+        ? _OutlinedButtonDefaultsM3(context)
+        : styleFrom(
           foregroundColor: colorScheme.primary,
           disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
           backgroundColor: Colors.transparent,
@@ -407,10 +410,10 @@ EdgeInsetsGeometry _scaledPadding(BuildContext context) {
   final double defaultFontSize = theme.textTheme.labelLarge?.fontSize ?? 14.0;
   final double effectiveTextScale = MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0;
   return ButtonStyleButton.scaledPadding(
-     EdgeInsets.symmetric(horizontal: padding1x),
-     EdgeInsets.symmetric(horizontal: padding1x / 2),
-     EdgeInsets.symmetric(horizontal: padding1x / 2 / 2),
-     effectiveTextScale,
+    EdgeInsets.symmetric(horizontal: padding1x),
+    EdgeInsets.symmetric(horizontal: padding1x / 2),
+    EdgeInsets.symmetric(horizontal: padding1x / 2 / 2),
+    effectiveTextScale,
   );
 }
 
@@ -437,7 +440,7 @@ class _OutlinedButtonWithIcon extends OutlinedButton {
            buttonStyle: style,
            iconAlignment: iconAlignment,
          ),
-      );
+       );
 
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
@@ -446,8 +449,10 @@ class _OutlinedButtonWithIcon extends OutlinedButton {
       return super.defaultStyleOf(context);
     }
     final ButtonStyle buttonStyle = super.defaultStyleOf(context);
-    final double defaultFontSize = buttonStyle.textStyle?.resolve(const <MaterialState>{})?.fontSize ?? 14.0;
-    final double effectiveTextScale = MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0;
+    final double defaultFontSize =
+        buttonStyle.textStyle?.resolve(const <MaterialState>{})?.fontSize ?? 14.0;
+    final double effectiveTextScale =
+        MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0;
     final EdgeInsetsGeometry scaledPadding = ButtonStyleButton.scaledPadding(
       const EdgeInsetsDirectional.fromSTEB(16, 0, 24, 0),
       const EdgeInsetsDirectional.fromSTEB(8, 0, 12, 0),
@@ -475,19 +480,23 @@ class _OutlinedButtonWithIconChild extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double defaultFontSize = buttonStyle?.textStyle?.resolve(const <MaterialState>{})?.fontSize ?? 14.0;
-    final double scale = clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) - 1.0;
+    final double defaultFontSize =
+        buttonStyle?.textStyle?.resolve(const <MaterialState>{})?.fontSize ?? 14.0;
+    final double scale =
+        clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) - 1.0;
     final double gap = lerpDouble(8, 4, scale)!;
     final OutlinedButtonThemeData outlinedButtonTheme = OutlinedButtonTheme.of(context);
-    final IconAlignment effectiveIconAlignment = iconAlignment
-      ?? outlinedButtonTheme.style?.iconAlignment
-      ?? buttonStyle?.iconAlignment
-      ?? IconAlignment.start;
+    final IconAlignment effectiveIconAlignment =
+        iconAlignment ??
+        outlinedButtonTheme.style?.iconAlignment ??
+        buttonStyle?.iconAlignment ??
+        IconAlignment.start;
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: effectiveIconAlignment == IconAlignment.start
-        ? <Widget>[icon, SizedBox(width: gap), Flexible(child: label)]
-        : <Widget>[Flexible(child: label), SizedBox(width: gap), icon],
+      children:
+          effectiveIconAlignment == IconAlignment.start
+              ? <Widget>[icon, SizedBox(width: gap), Flexible(child: label)]
+              : <Widget>[Flexible(child: label), SizedBox(width: gap), icon],
     );
   }
 }
@@ -499,6 +508,7 @@ class _OutlinedButtonWithIconChild extends StatelessWidget {
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 class _OutlinedButtonDefaultsM3 extends ButtonStyle {
   _OutlinedButtonDefaultsM3(this.context)
    : super(
@@ -625,5 +635,6 @@ class _OutlinedButtonDefaultsM3 extends ButtonStyle {
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
 }
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - OutlinedButton

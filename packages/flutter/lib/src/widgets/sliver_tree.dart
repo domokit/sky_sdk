@@ -30,13 +30,10 @@ const double _kDefaultRowExtent = 40.0;
 /// managed by the [TreeSliver]'s state.
 class TreeSliverNode<T> {
   /// Creates a [TreeSliverNode] instance for use in a [TreeSliver].
-  TreeSliverNode(
-    T content, {
-    List<TreeSliverNode<T>>? children,
-    bool expanded = false,
-  }) : _expanded = (children?.isNotEmpty ?? false) && expanded,
-       _content = content,
-       _children = children ?? <TreeSliverNode<T>>[];
+  TreeSliverNode(T content, {List<TreeSliverNode<T>>? children, bool expanded = false})
+    : _expanded = (children?.isNotEmpty ?? false) && expanded,
+      _content = content,
+      _children = children ?? <TreeSliverNode<T>>[];
 
   /// The subject matter of the node.
   ///
@@ -68,7 +65,7 @@ class TreeSliverNode<T> {
   @override
   String toString() {
     return 'TreeSliverNode: $content, depth: ${depth == 0 ? 'root' : depth}, '
-      '${children.isEmpty ? 'leaf' : 'parent, expanded: $isExpanded'}';
+        '${children.isEmpty ? 'leaf' : 'parent, expanded: $isExpanded'}';
   }
 }
 
@@ -77,11 +74,12 @@ class TreeSliverNode<T> {
 ///
 /// Used by [TreeSliver.treeNodeBuilder] to build rows on demand for the
 /// tree.
-typedef TreeSliverNodeBuilder = Widget Function(
-  BuildContext context,
-  TreeSliverNode<Object?> node,
-  AnimationStyle animationStyle,
-);
+typedef TreeSliverNodeBuilder =
+    Widget Function(
+      BuildContext context,
+      TreeSliverNode<Object?> node,
+      AnimationStyle animationStyle,
+    );
 
 /// Signature for a function that returns an extent for the given
 /// [TreeSliverNode] in the [TreeSliver].
@@ -94,10 +92,8 @@ typedef TreeSliverNodeBuilder = Widget Function(
 ///
 ///   * [SliverVariedExtentList], which uses a similar item extent builder for
 ///     dynamic child sizing in the list.
-typedef TreeSliverRowExtentBuilder = double Function(
-  TreeSliverNode<Object?> node,
-  SliverLayoutDimensions dimensions,
-);
+typedef TreeSliverRowExtentBuilder =
+    double Function(TreeSliverNode<Object?> node, SliverLayoutDimensions dimensions);
 
 /// Signature for a function that is called when a [TreeSliverNode] is toggled,
 /// changing its expanded state.
@@ -521,14 +517,16 @@ class TreeSliver<T> extends StatefulWidget {
     required TreeSliverNode<Object?> node,
     required Widget child,
   }) {
-    return Builder(builder: (BuildContext context) {
-      return GestureDetector(
-        onTap: () {
-          TreeSliverController.of(context).toggleNode(node);
-        },
-        child: child,
-      );
-    });
+    return Builder(
+      builder: (BuildContext context) {
+        return GestureDetector(
+          onTap: () {
+            TreeSliverController.of(context).toggleNode(node);
+          },
+          child: child,
+        );
+      },
+    );
   }
 
   /// Returns the fixed default extent for rows in the tree, which is 40 pixels.
@@ -552,38 +550,40 @@ class TreeSliver<T> extends StatefulWidget {
   static Widget defaultTreeNodeBuilder(
     BuildContext context,
     TreeSliverNode<Object?> node,
-    AnimationStyle toggleAnimationStyle
+    AnimationStyle toggleAnimationStyle,
   ) {
-    final Duration animationDuration = toggleAnimationStyle.duration
-      ?? TreeSliver.defaultAnimationDuration;
-    final Curve animationCurve = toggleAnimationStyle.curve
-      ?? TreeSliver.defaultAnimationCurve;
+    final Duration animationDuration =
+        toggleAnimationStyle.duration ?? TreeSliver.defaultAnimationDuration;
+    final Curve animationCurve = toggleAnimationStyle.curve ?? TreeSliver.defaultAnimationCurve;
     final int index = TreeSliverController.of(context).getActiveIndexFor(node)!;
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(children: <Widget>[
-        // Icon for parent nodes
-        TreeSliver.wrapChildToToggleNode(
-          node: node,
-          child: SizedBox.square(
-            dimension: 30.0,
-            child: node.children.isNotEmpty
-                ? AnimatedRotation(
-                    key: ValueKey<int>(index),
-                    turns: node.isExpanded ? 0.25 : 0.0,
-                    duration: animationDuration,
-                    curve: animationCurve,
-                    // Renders a unicode right-facing arrow. >
-                    child: const Icon(IconData(0x25BA), size: 14),
-                  )
-                : null,
+      child: Row(
+        children: <Widget>[
+          // Icon for parent nodes
+          TreeSliver.wrapChildToToggleNode(
+            node: node,
+            child: SizedBox.square(
+              dimension: 30.0,
+              child:
+                  node.children.isNotEmpty
+                      ? AnimatedRotation(
+                        key: ValueKey<int>(index),
+                        turns: node.isExpanded ? 0.25 : 0.0,
+                        duration: animationDuration,
+                        curve: animationCurve,
+                        // Renders a unicode right-facing arrow. >
+                        child: const Icon(IconData(0x25BA), size: 14),
+                      )
+                      : null,
+            ),
           ),
-        ),
-        // Spacer
-        const SizedBox(width: 8.0),
-        // Content
-        Text(node.content.toString()),
-      ]),
+          // Spacer
+          const SizedBox(width: 8.0),
+          // Content
+          Text(node.content.toString()),
+        ],
+      ),
     );
   }
 
@@ -592,13 +592,11 @@ class TreeSliver<T> extends StatefulWidget {
 }
 
 // Used in _SliverTreeState for code simplicity.
-typedef _AnimationRecord = ({
-  AnimationController controller,
-  CurvedAnimation animation,
-  UniqueKey key,
-});
+typedef _AnimationRecord =
+    ({AnimationController controller, CurvedAnimation animation, UniqueKey key});
 
-class _TreeSliverState<T> extends State<TreeSliver<T>> with TickerProviderStateMixin, TreeSliverStateMixin<T> {
+class _TreeSliverState<T> extends State<TreeSliver<T>>
+    with TickerProviderStateMixin, TreeSliverStateMixin<T> {
   TreeSliverController get controller => _treeController!;
   TreeSliverController? _treeController;
 
@@ -616,6 +614,7 @@ class _TreeSliverState<T> extends State<TreeSliver<T>> with TickerProviderStateM
     // If we are not animating, respect node.isExpanded.
     return node.isExpanded;
   }
+
   void _unpackActiveNodes({
     int depth = 0,
     List<TreeSliverNode<T>>? nodes,
@@ -630,17 +629,15 @@ class _TreeSliverState<T> extends State<TreeSliver<T>> with TickerProviderStateM
       node._parent = parent;
       _activeNodes.add(node);
       if (_shouldUnpackNode(node)) {
-        _unpackActiveNodes(
-          depth: depth + 1,
-          nodes: node.children,
-          parent: node,
-        );
+        _unpackActiveNodes(depth: depth + 1, nodes: node.children, parent: node);
       }
     }
   }
 
-  final Map<TreeSliverNode<T>, _AnimationRecord> _currentAnimationForParent = <TreeSliverNode<T>, _AnimationRecord>{};
-  final Map<UniqueKey, TreeSliverNodesAnimation> _activeAnimations = <UniqueKey, TreeSliverNodesAnimation>{};
+  final Map<TreeSliverNode<T>, _AnimationRecord> _currentAnimationForParent =
+      <TreeSliverNode<T>, _AnimationRecord>{};
+  final Map<UniqueKey, TreeSliverNodesAnimation> _activeAnimations =
+      <UniqueKey, TreeSliverNodesAnimation>{};
 
   @override
   void initState() {
@@ -726,10 +723,7 @@ class _TreeSliverState<T> extends State<TreeSliver<T>> with TickerProviderStateM
           }
         }
 
-        return _TreeNodeParentDataWidget(
-          depth: node.depth!,
-          child: child,
-        );
+        return _TreeNodeParentDataWidget(depth: node.depth!, child: child);
       },
       itemExtentBuilder: (int index, SliverLayoutDimensions dimensions) {
         return widget.treeRowExtentBuilder(_activeNodes[index], dimensions);
@@ -782,10 +776,8 @@ class _TreeSliverState<T> extends State<TreeSliver<T>> with TickerProviderStateM
     _expandAll(widget.tree, activeNodesToExpand);
     activeNodesToExpand.reversed.forEach(toggleNode);
   }
-  void _expandAll(
-    List<TreeSliverNode<T>> tree,
-    List<TreeSliverNode<T>> activeNodesToExpand,
-  ) {
+
+  void _expandAll(List<TreeSliverNode<T>> tree, List<TreeSliverNode<T>> activeNodesToExpand) {
     for (final TreeSliverNode<T> node in tree) {
       if (node.children.isNotEmpty) {
         // This is a parent node.
@@ -813,10 +805,8 @@ class _TreeSliverState<T> extends State<TreeSliver<T>> with TickerProviderStateM
     _collapseAll(widget.tree, activeNodesToCollapse);
     activeNodesToCollapse.reversed.forEach(toggleNode);
   }
-  void _collapseAll(
-    List<TreeSliverNode<T>> tree,
-    List<TreeSliverNode<T>> activeNodesToCollapse,
-  ) {
+
+  void _collapseAll(List<TreeSliverNode<T>> tree, List<TreeSliverNode<T>> activeNodesToCollapse) {
     for (final TreeSliverNode<T> node in tree) {
       if (node.children.isNotEmpty) {
         // This is a parent node.
@@ -877,39 +867,43 @@ class _TreeSliverState<T> extends State<TreeSliver<T>> with TickerProviderStateM
       // and immediately update the active nodes. This prevents the app from freezing
       // due to the tree being incorrectly updated when the animation duration is zero.
       // This is because, in this case, the node's children are no longer active.
-      if (widget.toggleAnimationStyle == AnimationStyle.noAnimation || widget.toggleAnimationStyle?.duration == Duration.zero) {
+      if (widget.toggleAnimationStyle == AnimationStyle.noAnimation ||
+          widget.toggleAnimationStyle?.duration == Duration.zero) {
         _unpackActiveNodes();
         return;
       }
 
-      final AnimationController controller = _currentAnimationForParent[node]?.controller
-        ?? AnimationController(
-          value: node._expanded ? 0.0 : 1.0,
-          vsync: this,
-          duration: widget.toggleAnimationStyle?.duration
-            ?? TreeSliver.defaultAnimationDuration,
-        )..addStatusListener((AnimationStatus status) {
-          switch (status) {
-            case AnimationStatus.dismissed:
-            case AnimationStatus.completed:
-              _currentAnimationForParent[node]!.animation.dispose();
-              _currentAnimationForParent[node]!.controller.dispose();
-              _currentAnimationForParent.remove(node);
-              _updateActiveAnimations();
-              // If the node is collapsing, we need to unpack the active
-              // nodes to remove the ones that were removed from the tree.
-              // This is only necessary if the node is collapsing.
-              if (!node._expanded) {
-                _unpackActiveNodes();
+      final AnimationController controller =
+          _currentAnimationForParent[node]?.controller ??
+                AnimationController(
+                  value: node._expanded ? 0.0 : 1.0,
+                  vsync: this,
+                  duration:
+                      widget.toggleAnimationStyle?.duration ?? TreeSliver.defaultAnimationDuration,
+                )
+            ..addStatusListener((AnimationStatus status) {
+              switch (status) {
+                case AnimationStatus.dismissed:
+                case AnimationStatus.completed:
+                  _currentAnimationForParent[node]!.animation.dispose();
+                  _currentAnimationForParent[node]!.controller.dispose();
+                  _currentAnimationForParent.remove(node);
+                  _updateActiveAnimations();
+                  // If the node is collapsing, we need to unpack the active
+                  // nodes to remove the ones that were removed from the tree.
+                  // This is only necessary if the node is collapsing.
+                  if (!node._expanded) {
+                    _unpackActiveNodes();
+                  }
+                case AnimationStatus.forward:
+                case AnimationStatus.reverse:
               }
-            case AnimationStatus.forward:
-            case AnimationStatus.reverse:
-          }
-        })..addListener(() {
-          setState((){
-            _updateActiveAnimations();
-          });
-        });
+            })
+            ..addListener(() {
+              setState(() {
+                _updateActiveAnimations();
+              });
+            });
 
       switch (controller.status) {
         case AnimationStatus.forward:
@@ -945,16 +939,14 @@ class _TreeSliverState<T> extends State<TreeSliver<T>> with TickerProviderStateM
 }
 
 class _TreeNodeParentDataWidget extends ParentDataWidget<TreeSliverNodeParentData> {
-  const _TreeNodeParentDataWidget({
-    required this.depth,
-    required super.child,
-  }) : assert(depth >= 0);
+  const _TreeNodeParentDataWidget({required this.depth, required super.child}) : assert(depth >= 0);
 
   final int depth;
 
   @override
   void applyParentData(RenderObject renderObject) {
-    final TreeSliverNodeParentData parentData = renderObject.parentData! as TreeSliverNodeParentData;
+    final TreeSliverNodeParentData parentData =
+        renderObject.parentData! as TreeSliverNodeParentData;
     bool needsLayout = false;
 
     if (parentData.depth != depth) {
@@ -987,14 +979,16 @@ class _SliverTree extends SliverVariedExtentList {
     ChildIndexGetter? findChildIndexCallback,
     required int itemCount,
     bool addAutomaticKeepAlives = true,
-  }) : super(delegate: SliverChildBuilderDelegate(
-    itemBuilder,
-    findChildIndexCallback: findChildIndexCallback,
-    childCount: itemCount,
-    addAutomaticKeepAlives: addAutomaticKeepAlives,
-    addRepaintBoundaries: false, // Added in the _SliverTreeState
-    addSemanticIndexes: false, // Added in the _SliverTreeState
-  ));
+  }) : super(
+         delegate: SliverChildBuilderDelegate(
+           itemBuilder,
+           findChildIndexCallback: findChildIndexCallback,
+           childCount: itemCount,
+           addAutomaticKeepAlives: addAutomaticKeepAlives,
+           addRepaintBoundaries: false, // Added in the _SliverTreeState
+           addSemanticIndexes: false, // Added in the _SliverTreeState
+         ),
+       );
 
   final Map<UniqueKey, TreeSliverNodesAnimation> activeAnimations;
   final double indentation;

@@ -1,0 +1,24 @@
+name: web_test_utils
+
+# Keep the SDK version range in sync with lib/web_ui/pubspec.yaml
+environment:
+  sdk: ^3.7.0-0
+
+dependencies:
+  collection: 1.17.0
+  crypto: 3.0.3
+  image: 3.0.1
+  js: ^0.7.0
+  meta: ^1.7.0
+  path: 1.8.0
+  process: 4.2.3
+  skia_gold_client:
+    path: ../../testing/skia_gold_client
+  typed_data: 1.3.0
+  yaml: 3.0.0
+
+dependency_overrides:
+  engine_repo_tools:
+    path: ../../tools/pkg/engine_repo_tools
+  git_repo_tools:
+    path: ../../tools/pkg/git_repo_tools

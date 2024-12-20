@@ -15,10 +15,7 @@ class RestorablePushAndRemoveUntilExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const RootRestorationScope(
       restorationId: 'app',
-      child: MaterialApp(
-        restorationScopeId: 'app',
-        home: RestorablePushAndRemoveUntilExample(),
-      ),
+      child: MaterialApp(restorationScopeId: 'app', home: RestorablePushAndRemoveUntilExample()),
     );
   }
 }
@@ -27,7 +24,8 @@ class RestorablePushAndRemoveUntilExample extends StatefulWidget {
   const RestorablePushAndRemoveUntilExample({super.key});
 
   @override
-  State<RestorablePushAndRemoveUntilExample> createState() => _RestorablePushAndRemoveUntilExampleState();
+  State<RestorablePushAndRemoveUntilExample> createState() =>
+      _RestorablePushAndRemoveUntilExampleState();
 }
 
 @pragma('vm:entry-point')
@@ -42,14 +40,12 @@ class _RestorablePushAndRemoveUntilExampleState extends State<RestorablePushAndR
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sample Code'),
-      ),
+      appBar: AppBar(title: const Text('Sample Code')),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).restorablePushAndRemoveUntil(
-          _myRouteBuilder,
-          ModalRoute.withName('/'),
-        ),
+        onPressed:
+            () => Navigator.of(
+              context,
+            ).restorablePushAndRemoveUntil(_myRouteBuilder, ModalRoute.withName('/')),
         tooltip: 'Increment Counter',
         child: const Icon(Icons.add),
       ),

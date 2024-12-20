@@ -1,0 +1,39 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/shell/config.gni")
+import("//flutter/testing/testing.gni")
+
+source_set("graphics") {
+  sources = [
+    "gl_context_switch.cc",
+    "gl_context_switch.h",
+    "persistent_cache.cc",
+    "persistent_cache.h",
+    "texture.cc",
+    "texture.h",
+  ]
+
+  # Heed caution when adding targets to the dependencies. This is a minimal
+  # target containing graphics sources that embedders can depend on. Any
+  # additions here could result in added app sizes across embeddings.
+  deps = [
+    "//flutter/assets",
+    "//flutter/display_list",
+    "//flutter/fml",
+    "//flutter/shell/common:base64",
+    "//flutter/shell/version:version",
+    "//flutter/skia",
+    "//flutter/third_party/boringssl",
+    "//flutter/third_party/rapidjson",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+  if (shell_enable_vulkan) {
+    public_deps = [
+      "//flutter/third_party/vulkan-deps/vulkan-headers/src:vulkan_headers",
+    ]
+  }
+}

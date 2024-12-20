@@ -1,0 +1,98 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/impeller/tools/impeller.gni")
+
+impeller_component("geometry") {
+  sources = [
+    "color.cc",
+    "color.h",
+    "constants.cc",
+    "constants.h",
+    "gradient.cc",
+    "gradient.h",
+    "half.h",
+    "matrix.cc",
+    "matrix.h",
+    "matrix_decomposition.cc",
+    "matrix_decomposition.h",
+    "path.cc",
+    "path.h",
+    "path_builder.cc",
+    "path_builder.h",
+    "path_component.cc",
+    "path_component.h",
+    "point.cc",
+    "point.h",
+    "quaternion.cc",
+    "quaternion.h",
+    "rect.cc",
+    "rect.h",
+    "round_rect.cc",
+    "round_rect.h",
+    "saturated_math.h",
+    "scalar.h",
+    "separated_vector.cc",
+    "separated_vector.h",
+    "shear.cc",
+    "shear.h",
+    "sigma.cc",
+    "sigma.h",
+    "size.cc",
+    "size.h",
+    "trig.cc",
+    "trig.h",
+    "type_traits.cc",
+    "type_traits.h",
+    "vector.cc",
+    "vector.h",
+    "wangs_formula.cc",
+    "wangs_formula.h",
+  ]
+
+  deps = [
+    "../base",
+    "//flutter/fml",
+  ]
+}
+
+impeller_component("geometry_asserts") {
+  testonly = true
+  sources = [ "geometry_asserts.h" ]
+  deps = [
+    ":geometry",
+    "//flutter/testing:testing_lib",
+  ]
+}
+
+impeller_component("geometry_unittests") {
+  testonly = true
+  sources = [
+    "geometry_unittests.cc",
+    "matrix_unittests.cc",
+    "path_unittests.cc",
+    "rect_unittests.cc",
+    "round_rect_unittests.cc",
+    "saturated_math_unittests.cc",
+    "size_unittests.cc",
+    "trig_unittests.cc",
+  ]
+
+  deps = [
+    ":geometry",
+    ":geometry_asserts",
+    "//flutter/testing:testing_lib",
+  ]
+}
+
+executable("geometry_benchmarks") {
+  testonly = true
+  sources = [ "geometry_benchmarks.cc" ]
+  deps = [
+    ":geometry",
+    "../entity",
+    "../tessellator:tessellator_libtess",
+    "//flutter/benchmarking",
+  ]
+}

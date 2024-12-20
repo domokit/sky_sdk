@@ -1,0 +1,50 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+config("gmock_config") {
+  # Gmock headers need to be able to find themselves.
+  include_dirs = [ "include" ]
+}
+
+static_library("gmock") {
+  # TODO http://crbug.com/412064 enable this flag all the time.
+  testonly = !is_component_build
+  sources = [
+    # Sources based on files in r173 of gmock.
+    "include/gmock/gmock-actions.h",
+    "include/gmock/gmock-cardinalities.h",
+    "include/gmock/gmock-generated-actions.h",
+    "include/gmock/gmock-generated-function-mockers.h",
+    "include/gmock/gmock-generated-matchers.h",
+    "include/gmock/gmock-generated-nice-strict.h",
+    "include/gmock/gmock-matchers.h",
+    "include/gmock/gmock-spec-builders.h",
+    "include/gmock/gmock.h",
+    "include/gmock/internal/gmock-generated-internal-utils.h",
+    "include/gmock/internal/gmock-internal-utils.h",
+    "include/gmock/internal/gmock-port.h",
+
+    #"src/gmock-all.cc",  # Not needed by our build.
+    "src/gmock-cardinalities.cc",
+    "src/gmock-internal-utils.cc",
+    "src/gmock-matchers.cc",
+    "src/gmock-spec-builders.cc",
+    "src/gmock.cc",
+  ]
+
+  # This project includes some stuff form gtest's guts.
+  include_dirs = [ "../gtest/include" ]
+
+  public_configs = [
+    ":gmock_config",
+    "//testing/gtest:gtest_config",
+  ]
+}
+
+static_library("gmock_main") {
+  # TODO http://crbug.com/412064 enable this flag all the time.
+  testonly = !is_component_build
+  sources = [ "src/gmock_main.cc" ]
+  deps = [ ":gmock" ]
+}

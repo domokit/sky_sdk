@@ -1,0 +1,68 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/dart.gni")
+import("//flutter/testing/rules/runtime_mode.gni")
+
+import("$dart_src/build/dart/copy_tree.gni")
+
+_app_framework_dir = "$root_out_dir/scenario_app/Scenarios/App.framework"
+
+shared_library("app_framework_dylib") {
+  visibility = [ ":*" ]
+
+  output_name = "app"
+
+  if (is_aot) {
+    sources = [ "$target_gen_dir/snapshot_assembly.S" ]
+  } else {
+    sources = [ "app_stub.c" ]
+  }
+
+  ldflags = [ "-Wl,-install_name,@rpath/App.framework/App" ]
+
+  deps = [ "//flutter/testing/scenario_app:scenario_app_snapshot" ]
+}
+
+copy("copy_dylib") {
+  visibility = [ ":*" ]
+
+  sources = [ "$root_out_dir/libapp.dylib" ]
+  outputs = [ "$_app_framework_dir/App" ]
+  deps = [ ":app_framework_dylib" ]
+}
+
+copy("copy_info_plist") {
+  visibility = [ ":*" ]
+  sources = [ "AppFrameworkInfo.plist" ]
+  outputs = [ "$_app_framework_dir/Info.plist" ]
+}
+
+copy_trees("scenario_ios") {
+  sources = [
+    {
+      target = "copy_ios_xcodeproj"
+      visibility = [ ":*" ]
+      source = "."
+      dest = "$root_out_dir/scenario_app"
+
+      # Ignore any stale App.framework or Flutter.xcframework files from
+      # historical builds.
+      # This can eventually be set to "{}" when all CI builder caches have been
+      # flushed that might still have these stale gitignored files from previous
+      # build scripts.
+      ignore_patterns = "*.*framework"
+    },
+  ]
+}
+
+group("ios") {
+  deps = [
+    ":app_framework_dylib",
+    ":copy_dylib",
+    ":copy_info_plist",
+    ":copy_ios_xcodeproj",
+    "//flutter/shell/platform/darwin/ios:flutter_framework",
+  ]
+}

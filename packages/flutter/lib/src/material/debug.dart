@@ -34,12 +34,16 @@ import 'scaffold.dart' show Scaffold, ScaffoldMessenger;
 bool debugCheckHasMaterial(BuildContext context) {
   assert(() {
     if (LookupBoundary.findAncestorWidgetOfExactType<Material>(context) == null) {
-      final bool hiddenByBoundary = LookupBoundary.debugIsHidingAncestorWidgetOfExactType<Material>(context);
+      final bool hiddenByBoundary = LookupBoundary.debugIsHidingAncestorWidgetOfExactType<Material>(
+        context,
+      );
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary('No Material widget found${hiddenByBoundary ? ' within the closest LookupBoundary' : ''}.'),
+        ErrorSummary(
+          'No Material widget found${hiddenByBoundary ? ' within the closest LookupBoundary' : ''}.',
+        ),
         if (hiddenByBoundary)
           ErrorDescription(
-            'There is an ancestor Material widget, but it is hidden by a LookupBoundary.'
+            'There is an ancestor Material widget, but it is hidden by a LookupBoundary.',
           ),
         ErrorDescription(
           '${context.widget.runtimeType} widgets require a Material '
@@ -138,7 +142,9 @@ bool debugCheckHasScaffold(BuildContext context) {
     if (context.widget is! Scaffold && context.findAncestorWidgetOfExactType<Scaffold>() == null) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
         ErrorSummary('No Scaffold widget found.'),
-        ErrorDescription('${context.widget.runtimeType} widgets require a Scaffold widget ancestor.'),
+        ErrorDescription(
+          '${context.widget.runtimeType} widgets require a Scaffold widget ancestor.',
+        ),
         ...context.describeMissingAncestor(expectedAncestorType: Scaffold),
         ErrorHint(
           'Typically, the Scaffold widget is introduced by the MaterialApp or '
@@ -175,7 +181,9 @@ bool debugCheckHasScaffoldMessenger(BuildContext context) {
     if (context.findAncestorWidgetOfExactType<ScaffoldMessenger>() == null) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
         ErrorSummary('No ScaffoldMessenger widget found.'),
-        ErrorDescription('${context.widget.runtimeType} widgets require a ScaffoldMessenger widget ancestor.'),
+        ErrorDescription(
+          '${context.widget.runtimeType} widgets require a ScaffoldMessenger widget ancestor.',
+        ),
         ...context.describeMissingAncestor(expectedAncestorType: ScaffoldMessenger),
         ErrorHint(
           'Typically, the ScaffoldMessenger widget is introduced by the MaterialApp '

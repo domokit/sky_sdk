@@ -16,7 +16,10 @@ void main() {
       expect(PhysicalKeyboardKey.findKeyByCode(0x000700e1), equals(PhysicalKeyboardKey.shiftLeft));
     });
     test('Values are equal', () async {
-      expect(PhysicalKeyboardKey.keyA == PhysicalKeyboardKey(PhysicalKeyboardKey.keyA.usbHidUsage), true);
+      expect(
+        PhysicalKeyboardKey.keyA == PhysicalKeyboardKey(PhysicalKeyboardKey.keyA.usbHidUsage),
+        true,
+      );
       // ignore: prefer_const_constructors, intentionally test if a const key is equal to a non-const key
       expect(const PhysicalKeyboardKey(0x12345) == PhysicalKeyboardKey(0x12345), true);
     });
@@ -29,11 +32,20 @@ void main() {
   group(LogicalKeyboardKey, () {
     test('Various classes of keys can be looked up by code', () async {
       // Check a letter key
-      expect(LogicalKeyboardKey.findKeyByKeyId(LogicalKeyboardKey.keyA.keyId), equals(LogicalKeyboardKey.keyA));
+      expect(
+        LogicalKeyboardKey.findKeyByKeyId(LogicalKeyboardKey.keyA.keyId),
+        equals(LogicalKeyboardKey.keyA),
+      );
       // Check a control key
-      expect(LogicalKeyboardKey.findKeyByKeyId(LogicalKeyboardKey.escape.keyId), equals(LogicalKeyboardKey.escape));
+      expect(
+        LogicalKeyboardKey.findKeyByKeyId(LogicalKeyboardKey.escape.keyId),
+        equals(LogicalKeyboardKey.escape),
+      );
       // Check a modifier key
-      expect(LogicalKeyboardKey.findKeyByKeyId(LogicalKeyboardKey.shiftLeft.keyId), equals(LogicalKeyboardKey.shiftLeft));
+      expect(
+        LogicalKeyboardKey.findKeyByKeyId(LogicalKeyboardKey.shiftLeft.keyId),
+        equals(LogicalKeyboardKey.shiftLeft),
+      );
     });
     test('Control characters are recognized as such', () async {
       // Check some common control characters
@@ -52,7 +64,10 @@ void main() {
     test('Control characters are not using incorrect values', () async {
       // Check some common control characters to make sure they're using
       // their char code values, and not something else.
-      expect(LogicalKeyboardKey.backspace.keyId, equals(LogicalKeyboardKey.unprintablePlane + 0x08));
+      expect(
+        LogicalKeyboardKey.backspace.keyId,
+        equals(LogicalKeyboardKey.unprintablePlane + 0x08),
+      );
       expect(LogicalKeyboardKey.tab.keyId, equals(LogicalKeyboardKey.unprintablePlane + 0x09));
       expect(LogicalKeyboardKey.enter.keyId, equals(LogicalKeyboardKey.unprintablePlane + 0x0d));
       expect(LogicalKeyboardKey.escape.keyId, equals(LogicalKeyboardKey.unprintablePlane + 0x1b));

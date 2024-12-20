@@ -77,98 +77,100 @@ void main() {
   });
 
   testUsingContext(
-      'FlutterWebPlatform serves the correct dart_sdk.js (amd module system) for the passed web renderer',
-      () async {
-    final ChromiumLauncher chromiumLauncher = ChromiumLauncher(
-      fileSystem: fileSystem,
-      platform: platform,
-      processManager: processManager,
-      operatingSystemUtils: operatingSystemUtils,
-      browserFinder: (Platform platform, FileSystem filesystem) => 'chrome',
-      logger: logger,
-    );
-    final MockServer server = MockServer();
-    final FlutterWebPlatform webPlatform = await FlutterWebPlatform.start(
-      'ProjectRoot',
-      flutterProject: FlutterProject.fromDirectoryTest(tempDir),
-      buildInfo: BuildInfo.debug,
-      webMemoryFS: WebMemoryFS(),
-      fileSystem: fileSystem,
-      buildDirectory: fileSystem.directory('build'),
-      logger: logger,
-      chromiumLauncher: chromiumLauncher,
-      flutterTesterBinPath: artifacts.getArtifactPath(Artifact.flutterTester),
-      artifacts: artifacts,
-      processManager: processManager,
-      webRenderer: WebRendererMode.canvaskit,
-      useWasm: false,
-      serverFactory: () async => server,
-      testPackageUri: Uri.parse('test'),
-    );
-    final shelf.Handler? handler = server.mountedHandler;
-    expect(handler, isNotNull);
-    handler!;
-    final shelf.Response response = await handler(shelf.Request(
-      'GET',
-      Uri.parse('http://localhost/dart_sdk.js'),
-    ));
-    final String contents = await response.readAsString();
-    expect(contents, HostArtifact.webPrecompiledAmdCanvaskitSoundSdk.name);
-    await webPlatform.close();
-  }, overrides: <Type, Generator>{
-    FileSystem: () => fileSystem,
-    ProcessManager: () => processManager,
-    Logger: () => logger,
-  });
+    'FlutterWebPlatform serves the correct dart_sdk.js (amd module system) for the passed web renderer',
+    () async {
+      final ChromiumLauncher chromiumLauncher = ChromiumLauncher(
+        fileSystem: fileSystem,
+        platform: platform,
+        processManager: processManager,
+        operatingSystemUtils: operatingSystemUtils,
+        browserFinder: (Platform platform, FileSystem filesystem) => 'chrome',
+        logger: logger,
+      );
+      final MockServer server = MockServer();
+      final FlutterWebPlatform webPlatform = await FlutterWebPlatform.start(
+        'ProjectRoot',
+        flutterProject: FlutterProject.fromDirectoryTest(tempDir),
+        buildInfo: BuildInfo.debug,
+        webMemoryFS: WebMemoryFS(),
+        fileSystem: fileSystem,
+        buildDirectory: fileSystem.directory('build'),
+        logger: logger,
+        chromiumLauncher: chromiumLauncher,
+        flutterTesterBinPath: artifacts.getArtifactPath(Artifact.flutterTester),
+        artifacts: artifacts,
+        processManager: processManager,
+        webRenderer: WebRendererMode.canvaskit,
+        useWasm: false,
+        serverFactory: () async => server,
+        testPackageUri: Uri.parse('test'),
+      );
+      final shelf.Handler? handler = server.mountedHandler;
+      expect(handler, isNotNull);
+      handler!;
+      final shelf.Response response = await handler(
+        shelf.Request('GET', Uri.parse('http://localhost/dart_sdk.js')),
+      );
+      final String contents = await response.readAsString();
+      expect(contents, HostArtifact.webPrecompiledAmdCanvaskitSoundSdk.name);
+      await webPlatform.close();
+    },
+    overrides: <Type, Generator>{
+      FileSystem: () => fileSystem,
+      ProcessManager: () => processManager,
+      Logger: () => logger,
+    },
+  );
 
   testUsingContext(
-      'FlutterWebPlatform serves the correct dart_sdk.js (ddc module system) for the passed web renderer',
-      () async {
-    final ChromiumLauncher chromiumLauncher = ChromiumLauncher(
-      fileSystem: fileSystem,
-      platform: platform,
-      processManager: processManager,
-      operatingSystemUtils: operatingSystemUtils,
-      browserFinder: (Platform platform, FileSystem filesystem) => 'chrome',
-      logger: logger,
-    );
-    final MockServer server = MockServer();
-    final FlutterWebPlatform webPlatform = await FlutterWebPlatform.start(
-      'ProjectRoot',
-      flutterProject: FlutterProject.fromDirectoryTest(tempDir),
-      buildInfo: const BuildInfo(
-        BuildMode.debug,
-        '',
-        packageConfigPath: '.dart_tool/package_config.json',
-        treeShakeIcons: false,
-        extraFrontEndOptions: <String>['--dartdevc-module-format=ddc'],
-      ),
-      webMemoryFS: WebMemoryFS(),
-      fileSystem: fileSystem,
-      buildDirectory: fileSystem.directory('build'),
-      logger: logger,
-      chromiumLauncher: chromiumLauncher,
-      flutterTesterBinPath: artifacts.getArtifactPath(Artifact.flutterTester),
-      artifacts: artifacts,
-      processManager: processManager,
-      webRenderer: WebRendererMode.canvaskit,
-      useWasm: false,
-      serverFactory: () async => server,
-      testPackageUri: Uri.parse('test'),
-    );
-    final shelf.Handler? handler = server.mountedHandler;
-    expect(handler, isNotNull);
-    handler!;
-    final shelf.Response response = await handler(shelf.Request(
-      'GET',
-      Uri.parse('http://localhost/dart_sdk.js'),
-    ));
-    final String contents = await response.readAsString();
-    expect(contents, HostArtifact.webPrecompiledDdcCanvaskitSoundSdk.name);
-    await webPlatform.close();
-  }, overrides: <Type, Generator>{
-    FileSystem: () => fileSystem,
-    ProcessManager: () => processManager,
-    Logger: () => logger,
-  });
+    'FlutterWebPlatform serves the correct dart_sdk.js (ddc module system) for the passed web renderer',
+    () async {
+      final ChromiumLauncher chromiumLauncher = ChromiumLauncher(
+        fileSystem: fileSystem,
+        platform: platform,
+        processManager: processManager,
+        operatingSystemUtils: operatingSystemUtils,
+        browserFinder: (Platform platform, FileSystem filesystem) => 'chrome',
+        logger: logger,
+      );
+      final MockServer server = MockServer();
+      final FlutterWebPlatform webPlatform = await FlutterWebPlatform.start(
+        'ProjectRoot',
+        flutterProject: FlutterProject.fromDirectoryTest(tempDir),
+        buildInfo: const BuildInfo(
+          BuildMode.debug,
+          '',
+          packageConfigPath: '.dart_tool/package_config.json',
+          treeShakeIcons: false,
+          extraFrontEndOptions: <String>['--dartdevc-module-format=ddc'],
+        ),
+        webMemoryFS: WebMemoryFS(),
+        fileSystem: fileSystem,
+        buildDirectory: fileSystem.directory('build'),
+        logger: logger,
+        chromiumLauncher: chromiumLauncher,
+        flutterTesterBinPath: artifacts.getArtifactPath(Artifact.flutterTester),
+        artifacts: artifacts,
+        processManager: processManager,
+        webRenderer: WebRendererMode.canvaskit,
+        useWasm: false,
+        serverFactory: () async => server,
+        testPackageUri: Uri.parse('test'),
+      );
+      final shelf.Handler? handler = server.mountedHandler;
+      expect(handler, isNotNull);
+      handler!;
+      final shelf.Response response = await handler(
+        shelf.Request('GET', Uri.parse('http://localhost/dart_sdk.js')),
+      );
+      final String contents = await response.readAsString();
+      expect(contents, HostArtifact.webPrecompiledDdcCanvaskitSoundSdk.name);
+      await webPlatform.close();
+    },
+    overrides: <Type, Generator>{
+      FileSystem: () => fileSystem,
+      ProcessManager: () => processManager,
+      Logger: () => logger,
+    },
+  );
 }

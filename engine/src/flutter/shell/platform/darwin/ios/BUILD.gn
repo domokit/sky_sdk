@@ -1,0 +1,442 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+assert(is_ios)
+
+import("//build/config/ios/ios_sdk.gni")
+import("//build/toolchain/clang.gni")
+import("//build/toolchain/toolchain.gni")
+import("//flutter/common/config.gni")
+import("//flutter/shell/config.gni")
+import("//flutter/shell/gpu/gpu.gni")
+import("//flutter/shell/platform/darwin/common/framework_common.gni")
+import("//flutter/testing/testing.gni")
+
+_flutter_framework_dir = "$root_out_dir/Flutter.framework"
+
+shell_gpu_configuration("ios_gpu_configuration") {
+  enable_software = true
+  enable_gl = false
+  enable_vulkan = false
+  enable_metal = true
+}
+
+# The headers that will be copied to the Flutter.framework and be accessed
+# from outside the Flutter engine source root.
+_flutter_framework_headers = [
+  "framework/Headers/Flutter.h",
+  "framework/Headers/FlutterAppDelegate.h",
+  "framework/Headers/FlutterCallbackCache.h",
+  "framework/Headers/FlutterEngine.h",
+  "framework/Headers/FlutterEngineGroup.h",
+  "framework/Headers/FlutterHeadlessDartRunner.h",
+  "framework/Headers/FlutterPlatformViews.h",
+  "framework/Headers/FlutterPlugin.h",
+  "framework/Headers/FlutterPluginAppLifeCycleDelegate.h",
+  "framework/Headers/FlutterViewController.h",
+]
+
+_flutter_framework_headers_copy_dir = "$_flutter_framework_dir/Headers"
+
+source_set("flutter_framework_source") {
+  visibility = [ ":*" ]
+  cflags_objc = flutter_cflags_objc
+  cflags_objcc = flutter_cflags_objcc
+
+  defines = [ "FLUTTER_FRAMEWORK=1" ]
+  if (darwin_extension_safe) {
+    defines += [ "APPLICATION_EXTENSION_API_ONLY=1" ]
+  }
+  public_configs = [
+    ":ios_gpu_configuration_config",
+    "//flutter:config",
+  ]
+
+  sources = [
+    "framework/Source/FlutterAppDelegate.mm",
+    "framework/Source/FlutterCallbackCache.mm",
+    "framework/Source/FlutterCallbackCache_Internal.h",
+    "framework/Source/FlutterChannelKeyResponder.h",
+    "framework/Source/FlutterChannelKeyResponder.mm",
+    "framework/Source/FlutterDartProject.mm",
+    "framework/Source/FlutterDartProject_Internal.h",
+    "framework/Source/FlutterDartVMServicePublisher.h",
+    "framework/Source/FlutterDartVMServicePublisher.mm",
+    "framework/Source/FlutterEmbedderKeyResponder.h",
+    "framework/Source/FlutterEmbedderKeyResponder.mm",
+    "framework/Source/FlutterEngine.mm",
+    "framework/Source/FlutterEngineGroup.mm",
+    "framework/Source/FlutterEngine_Internal.h",
+    "framework/Source/FlutterHeadlessDartRunner.mm",
+    "framework/Source/FlutterKeyPrimaryResponder.h",
+    "framework/Source/FlutterKeySecondaryResponder.h",
+    "framework/Source/FlutterKeyboardManager.h",
+    "framework/Source/FlutterKeyboardManager.mm",
+    "framework/Source/FlutterMetalLayer.h",
+    "framework/Source/FlutterMetalLayer.mm",
+    "framework/Source/FlutterOverlayView.h",
+    "framework/Source/FlutterOverlayView.mm",
+    "framework/Source/FlutterPlatformPlugin.h",
+    "framework/Source/FlutterPlatformPlugin.mm",
+    "framework/Source/FlutterPlatformViews.mm",
+    "framework/Source/FlutterPlatformViewsController.h",
+    "framework/Source/FlutterPlatformViewsController.mm",
+    "framework/Source/FlutterPlatformViews_Internal.h",
+    "framework/Source/FlutterPluginAppLifeCycleDelegate.mm",
+    "framework/Source/FlutterRestorationPlugin.h",
+    "framework/Source/FlutterRestorationPlugin.mm",
+    "framework/Source/FlutterSemanticsScrollView.h",
+    "framework/Source/FlutterSemanticsScrollView.mm",
+    "framework/Source/FlutterSpellCheckPlugin.h",
+    "framework/Source/FlutterSpellCheckPlugin.mm",
+    "framework/Source/FlutterTextInputDelegate.h",
+    "framework/Source/FlutterTextInputPlugin.h",
+    "framework/Source/FlutterTextInputPlugin.mm",
+    "framework/Source/FlutterTextureRegistryRelay.h",
+    "framework/Source/FlutterTextureRegistryRelay.mm",
+    "framework/Source/FlutterUIPressProxy.h",
+    "framework/Source/FlutterUIPressProxy.mm",
+    "framework/Source/FlutterUndoManagerDelegate.h",
+    "framework/Source/FlutterUndoManagerPlugin.h",
+    "framework/Source/FlutterUndoManagerPlugin.mm",
+    "framework/Source/FlutterView.h",
+    "framework/Source/FlutterView.mm",
+    "framework/Source/FlutterViewController.mm",
+    "framework/Source/FlutterViewController_Internal.h",
+    "framework/Source/FlutterViewResponder.h",
+    "framework/Source/KeyCodeMap.g.mm",
+    "framework/Source/KeyCodeMap_Internal.h",
+    "framework/Source/SemanticsObject+UIFocusSystem.mm",
+    "framework/Source/SemanticsObject.h",
+    "framework/Source/SemanticsObject.mm",
+    "framework/Source/TextInputSemanticsObject.h",
+    "framework/Source/TextInputSemanticsObject.mm",
+    "framework/Source/UIViewController+FlutterScreenAndSceneIfLoaded.h",
+    "framework/Source/UIViewController+FlutterScreenAndSceneIfLoaded.mm",
+    "framework/Source/accessibility_bridge.h",
+    "framework/Source/accessibility_bridge.mm",
+    "framework/Source/connection_collection.h",
+    "framework/Source/connection_collection.mm",
+    "framework/Source/overlay_layer_pool.h",
+    "framework/Source/overlay_layer_pool.mm",
+    "framework/Source/platform_message_response_darwin.h",
+    "framework/Source/platform_message_response_darwin.mm",
+    "framework/Source/profiler_metrics_ios.h",
+    "framework/Source/profiler_metrics_ios.mm",
+    "framework/Source/vsync_waiter_ios.h",
+    "framework/Source/vsync_waiter_ios.mm",
+    "ios_context.h",
+    "ios_context.mm",
+    "ios_context_metal_impeller.h",
+    "ios_context_metal_impeller.mm",
+    "ios_context_metal_skia.h",
+    "ios_context_metal_skia.mm",
+    "ios_context_noop.h",
+    "ios_context_noop.mm",
+    "ios_context_software.h",
+    "ios_context_software.mm",
+    "ios_external_texture_metal.h",
+    "ios_external_texture_metal.mm",
+    "ios_external_view_embedder.h",
+    "ios_external_view_embedder.mm",
+    "ios_surface.h",
+    "ios_surface.mm",
+    "ios_surface_metal_impeller.h",
+    "ios_surface_metal_impeller.mm",
+    "ios_surface_metal_skia.h",
+    "ios_surface_metal_skia.mm",
+    "ios_surface_noop.h",
+    "ios_surface_noop.mm",
+    "ios_surface_software.h",
+    "ios_surface_software.mm",
+    "platform_message_handler_ios.h",
+    "platform_message_handler_ios.mm",
+    "platform_view_ios.h",
+    "platform_view_ios.mm",
+    "rendering_api_selection.h",
+    "rendering_api_selection.mm",
+  ]
+  sources += _flutter_framework_headers
+
+  frameworks = [
+    "AudioToolbox.framework",
+    "CoreMedia.framework",
+    "CoreVideo.framework",
+    "IOSurface.framework",
+    "QuartzCore.framework",
+    "WebKit.framework",
+    "UIKit.framework",
+  ]
+  if (flutter_runtime_mode == "profile" || flutter_runtime_mode == "debug") {
+    # This is required by the profiler_metrics_ios.mm to get GPU statistics.
+    # Usage in release builds will cause rejection from the App Store.
+    frameworks += [ "IOKit.framework" ]
+  }
+
+  deps = [
+    ":ios_gpu_configuration",
+    "//flutter/common:common",
+    "//flutter/common/graphics",
+    "//flutter/fml",
+    "//flutter/lib/ui",
+    "//flutter/runtime",
+    "//flutter/shell/common",
+    "//flutter/shell/platform/common:common_cpp_input",
+    "//flutter/shell/platform/darwin/common",
+    "//flutter/shell/platform/darwin/common:framework_common",
+    "//flutter/shell/platform/darwin/graphics",
+    "//flutter/shell/platform/embedder:embedder_as_internal_library",
+    "//flutter/shell/profiling:profiling",
+    "//flutter/third_party/icu",
+    "//flutter/third_party/spring_animation",
+  ]
+}
+
+platform_frameworks_path =
+    rebase_path("$ios_sdk_path/../../Library/Frameworks/")
+
+shared_library("ios_test_flutter") {
+  testonly = true
+  visibility = [ "*" ]
+
+  cflags_objc = flutter_cflags_objc
+  cflags_objcc = flutter_cflags_objcc
+  cflags = [
+    "-fvisibility=default",
+    "-F$platform_frameworks_path",
+    "-mios-simulator-version-min=$ios_testing_deployment_target",
+  ]
+
+  ldflags = [
+    "-F$platform_frameworks_path",
+    "-Wl,-install_name,@rpath/Frameworks/libios_test_flutter.dylib",
+  ]
+  frameworks = [ "XCTest.framework" ]
+  configs -= [
+    "//build/config/gcc:symbol_visibility_hidden",
+    "//build/config:symbol_visibility_hidden",
+  ]
+  sources = [
+    "framework/Source/FlutterAppDelegateTest.mm",
+    "framework/Source/FlutterChannelKeyResponderTest.mm",
+    "framework/Source/FlutterDartProjectTest.mm",
+    "framework/Source/FlutterEmbedderKeyResponderTest.mm",
+    "framework/Source/FlutterEngineGroupTest.mm",
+    "framework/Source/FlutterEnginePlatformViewTest.mm",
+    "framework/Source/FlutterEngineTest.mm",
+    "framework/Source/FlutterFakeKeyEvents.h",
+    "framework/Source/FlutterFakeKeyEvents.mm",
+    "framework/Source/FlutterKeyboardManagerTest.mm",
+    "framework/Source/FlutterMetalLayerTest.mm",
+    "framework/Source/FlutterPlatformPluginTest.mm",
+    "framework/Source/FlutterPlatformViewsTest.mm",
+    "framework/Source/FlutterPluginAppLifeCycleDelegateTest.mm",
+    "framework/Source/FlutterRestorationPluginTest.mm",
+    "framework/Source/FlutterSpellCheckPluginTest.mm",
+    "framework/Source/FlutterTextInputPluginTest.mm",
+    "framework/Source/FlutterTextureRegistryRelayTest.mm",
+    "framework/Source/FlutterTouchInterceptingView_Test.h",
+    "framework/Source/FlutterUndoManagerPluginTest.mm",
+    "framework/Source/FlutterViewControllerTest.mm",
+    "framework/Source/FlutterViewTest.mm",
+    "framework/Source/SemanticsObjectTest.mm",
+    "framework/Source/SemanticsObjectTestMocks.h",
+    "framework/Source/UIViewController_FlutterScreenAndSceneIfLoadedTest.mm",
+    "framework/Source/VsyncWaiterIosTest.mm",
+    "framework/Source/accessibility_bridge_test.mm",
+    "framework/Source/availability_version_check_test.mm",
+    "framework/Source/connection_collection_test.mm",
+    "ios_context_noop_unittests.mm",
+    "ios_surface_noop_unittests.mm",
+    "platform_message_handler_ios_test.mm",
+  ]
+  deps = [
+    ":flutter_framework",
+    ":flutter_framework_source",
+    ":ios_gpu_configuration",
+    "//flutter/common:common",
+    "//flutter/lib/ui:ui",
+    "//flutter/shell/platform/darwin/common:framework_common",
+    "//flutter/shell/platform/embedder:embedder_as_internal_library",
+    "//flutter/shell/platform/embedder:embedder_test_utils",
+    "//flutter/skia",
+    "//flutter/third_party/ocmock:ocmock_shared",
+    "//flutter/third_party/rapidjson",
+    "//flutter/third_party/spring_animation",
+    "//flutter/third_party/tonic",
+    "//flutter/third_party/txt",
+  ]
+  public_configs = [
+    ":ios_gpu_configuration_config",
+    "//flutter:config",
+  ]
+
+  if (darwin_extension_safe) {
+    defines = [ "APPLICATION_EXTENSION_API_ONLY=1" ]
+  }
+}
+
+shared_library("create_flutter_framework_dylib") {
+  visibility = [ ":*" ]
+
+  output_name = "Flutter"
+
+  ldflags = [ "-Wl,-install_name,@rpath/Flutter.framework/Flutter" ]
+
+  if (darwin_extension_safe) {
+    ldflags += [ "-fapplication-extension" ]
+  }
+
+  public = _flutter_framework_headers
+
+  deps = [ ":flutter_framework_source" ]
+
+  public_configs = [ "//flutter:config" ]
+}
+
+copy("copy_dylib") {
+  visibility = [ ":*" ]
+
+  sources = [ "$root_out_dir/libFlutter.dylib" ]
+  outputs = [ "$_flutter_framework_dir/Flutter" ]
+
+  deps = [ ":create_flutter_framework_dylib" ]
+}
+
+copy("copy_asan_runtime_dylib") {
+  visibility = [ ":*" ]
+
+  _libclang_base_path =
+      "$buildtools_path/mac-x64/clang/lib/clang/13.0.0/lib/darwin/"
+
+  if (defined(use_ios_simulator) && use_ios_simulator) {
+    _dylib_name = "libclang_rt.asan_iossim_dynamic.dylib"
+  } else {
+    _dylib_name = "libclang_rt.asan_ios_dynamic.dylib"
+  }
+
+  sources = [ "$_libclang_base_path/$_dylib_name" ]
+  outputs = [ "$root_out_dir/$_dylib_name" ]
+
+  deps = [ ":create_flutter_framework_dylib" ]
+}
+
+action("copy_framework_info_plist") {
+  script = "//flutter/build/copy_info_plist.py"
+  visibility = [ ":*" ]
+  sources = [ "framework/Info.plist" ]
+  outputs = [ "$_flutter_framework_dir/Info.plist" ]
+  args = [
+    "--source",
+    rebase_path(sources[0]),
+    "--destination",
+    rebase_path(outputs[0]),
+    "--minversion",
+    ios_deployment_target,
+  ]
+}
+
+copy("copy_framework_module_map") {
+  visibility = [ ":*" ]
+  sources = [ "framework/module.modulemap" ]
+  outputs = [ "$_flutter_framework_dir/Modules/module.modulemap" ]
+}
+
+# Copy privacy manifest. This file is required by Apple for third-party SDKs,
+# and documents engine and third_party usage of timestamps and boot time APIs.
+# See https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
+copy("copy_framework_privacy_manifest") {
+  visibility = [ ":*" ]
+  sources = [ "framework/PrivacyInfo.xcprivacy" ]
+  outputs = [ "$_flutter_framework_dir/PrivacyInfo.xcprivacy" ]
+}
+
+action("copy_framework_headers") {
+  script = "//flutter/sky/tools/install_framework_headers.py"
+  visibility = [ ":*" ]
+  sources = get_path_info(_flutter_framework_headers, "abspath") +
+            framework_common_headers
+  outputs = []
+  foreach(header, sources) {
+    header_basename = get_path_info(header, "file")
+    outputs += [ "$_flutter_framework_headers_copy_dir/$header_basename" ]
+  }
+  args = [
+           "--location",
+           rebase_path("$_flutter_framework_headers_copy_dir"),
+           "--headers",
+         ] + rebase_path(sources, "", "//")
+}
+
+copy("copy_framework_icu") {
+  visibility = [ ":*" ]
+  sources = [ "//flutter/third_party/icu/flutter/icudtl.dat" ]
+  outputs = [ "$_flutter_framework_dir/{{source_file_part}}" ]
+}
+
+copy("copy_license") {
+  visibility = [ ":*" ]
+  sources = [ "//LICENSE" ]
+  outputs = [ "$root_out_dir/LICENSE" ]
+}
+
+shared_library("copy_and_verify_framework_module") {
+  framework_search_path = rebase_path("$root_out_dir")
+  visibility = [ ":*" ]
+  cflags_objc = [
+    "-F$framework_search_path",
+    "-fapplication-extension",
+  ]
+
+  sources = [ "framework/Source/FlutterUmbrellaImport.m" ]
+  deps = [
+    ":copy_framework_headers",
+    ":copy_framework_info_plist",
+    ":copy_framework_module_map",
+    ":copy_framework_privacy_manifest",
+  ]
+
+  if (darwin_extension_safe) {
+    ldflags = [
+      "-F$framework_search_path",
+      "-fapplication-extension",
+      "-Xlinker",
+      "-fatal_warnings",
+    ]
+    deps += [ ":copy_dylib" ]
+    frameworks = [ "Flutter.framework" ]
+  }
+}
+
+group("universal_flutter_framework") {
+  visibility = [ ":*" ]
+  deps = [
+    ":copy_and_verify_framework_module",
+    ":copy_dylib",
+    ":copy_framework_icu",
+    ":copy_framework_info_plist",
+    ":copy_framework_module_map",
+    ":copy_framework_privacy_manifest",
+    ":copy_license",
+  ]
+
+  if (is_asan) {
+    deps += [ ":copy_asan_runtime_dylib" ]
+  }
+}
+
+action("flutter_framework") {
+  script = "//flutter/sky/tools/create_xcframework.py"
+  outputs = [ "$root_out_dir/Flutter.xcframework" ]
+  args = [
+    "--frameworks",
+    rebase_path("$_flutter_framework_dir"),
+    "--name",
+    "Flutter",
+    "--location",
+    rebase_path("$root_out_dir"),
+  ]
+
+  deps = [ ":universal_flutter_framework" ]
+}

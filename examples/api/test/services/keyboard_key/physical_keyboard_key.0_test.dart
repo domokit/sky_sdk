@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Responds to key', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.KeyExampleApp(),
-    );
+    await tester.pumpWidget(const example.KeyExampleApp());
 
     await tester.tap(find.text('Click to focus'));
     await tester.pumpAndSettle();

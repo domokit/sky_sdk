@@ -1,0 +1,189 @@
+# Copyright 2017 Google Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//flutter/common/config.gni")
+import("//flutter/testing/testing.gni")
+
+if (is_fuchsia) {
+  import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+}
+
+declare_args() {
+  flutter_use_fontconfig = false
+}
+
+if (flutter_use_fontconfig) {
+  assert(is_linux)
+}
+
+config("txt_config") {
+  visibility = [ ":*" ]
+  include_dirs = [ "src" ]
+}
+
+config("allow_posix_names") {
+  if (is_win && is_clang) {
+    # POSIX names of many functions are marked deprecated by default;
+    # disable that since they are used for cross-platform compatibility.
+    defines = [ "_CRT_NONSTDC_NO_DEPRECATE" ]
+  }
+}
+
+source_set("txt") {
+  sources = [
+    "src/skia/paragraph_builder_skia.cc",
+    "src/skia/paragraph_builder_skia.h",
+    "src/skia/paragraph_skia.cc",
+    "src/skia/paragraph_skia.h",
+    "src/txt/asset_font_manager.cc",
+    "src/txt/asset_font_manager.h",
+    "src/txt/font_asset_provider.cc",
+    "src/txt/font_asset_provider.h",
+    "src/txt/font_collection.cc",
+    "src/txt/font_collection.h",
+    "src/txt/font_features.cc",
+    "src/txt/font_features.h",
+    "src/txt/font_style.h",
+    "src/txt/font_weight.h",
+    "src/txt/line_metrics.h",
+    "src/txt/paragraph.h",
+    "src/txt/paragraph_builder.cc",
+    "src/txt/paragraph_builder.h",
+    "src/txt/paragraph_style.cc",
+    "src/txt/paragraph_style.h",
+    "src/txt/placeholder_run.cc",
+    "src/txt/placeholder_run.h",
+    "src/txt/platform.h",
+    "src/txt/run_metrics.h",
+    "src/txt/test_font_manager.cc",
+    "src/txt/test_font_manager.h",
+    "src/txt/text_baseline.h",
+    "src/txt/text_decoration.cc",
+    "src/txt/text_decoration.h",
+    "src/txt/text_shadow.cc",
+    "src/txt/text_shadow.h",
+    "src/txt/text_style.cc",
+    "src/txt/text_style.h",
+    "src/txt/typeface_font_asset_provider.cc",
+    "src/txt/typeface_font_asset_provider.h",
+  ]
+
+  public_configs = [ ":txt_config" ]
+
+  public_deps = [
+    "//flutter/display_list",
+    "//flutter/fml",
+    "//flutter/impeller/typographer/backends/skia:typographer_skia_backend",
+    "//flutter/skia",
+    "//flutter/third_party/harfbuzz",
+    "//flutter/third_party/icu",
+  ]
+
+  deps = [
+    "//flutter/skia",
+    "//flutter/skia/modules/skparagraph",
+  ]
+
+  libs = []
+  if (flutter_use_fontconfig) {
+    libs += [ "fontconfig" ]
+  }
+
+  if (is_mac || is_ios) {
+    sources += [
+      "src/txt/platform_mac.h",
+      "src/txt/platform_mac.mm",
+    ]
+    deps += [ "//flutter/fml" ]
+  } else if (is_android) {
+    sources += [ "src/txt/platform_android.cc" ]
+  } else if (is_linux) {
+    sources += [ "src/txt/platform_linux.cc" ]
+  } else if (is_fuchsia) {
+    sources += [ "src/txt/platform_fuchsia.cc" ]
+    deps += [ "${fuchsia_sdk}/fidl/fuchsia.fonts" ]
+  } else if (is_win) {
+    sources += [ "src/txt/platform_windows.cc" ]
+  } else {
+    sources += [ "src/txt/platform.cc" ]
+  }
+}
+
+if (enable_unittests) {
+  test_fixtures("txt_fixtures") {
+    fixtures = [
+      "third_party/fonts/Roboto-Regular.ttf",
+      "third_party/fonts/NotoColorEmoji.ttf",
+    ]
+
+    if (host_os == "mac") {
+      fixtures += [ "/System/Library/Fonts/Apple Color Emoji.ttc" ]
+    }
+  }
+
+  executable("txt_benchmarks") {
+    testonly = true
+
+    sources = [
+      "benchmarks/skparagraph_benchmarks.cc",
+      "benchmarks/txt_run_all_benchmarks.cc",
+      "tests/txt_test_utils.cc",
+      "tests/txt_test_utils.h",
+    ]
+
+    deps = [
+      ":txt",
+      ":txt_fixtures",
+      "//flutter/fml",
+      "//flutter/skia/modules/skparagraph",
+      "//flutter/testing:testing_lib",
+      "//flutter/third_party/benchmark",
+    ]
+  }
+
+  executable("txt_unittests") {
+    testonly = true
+
+    sources = [
+      "tests/font_collection_tests.cc",
+      "tests/paragraph_builder_skia_tests.cc",
+      "tests/paragraph_unittests.cc",
+      "tests/txt_run_all_unittests.cc",
+    ]
+
+    if (is_mac || is_ios) {
+      sources += [ "tests/platform_mac_tests.cc" ]
+    }
+
+    public_configs = [ ":txt_config" ]
+
+    configs += [ ":allow_posix_names" ]
+
+    deps = [
+      ":txt",
+      ":txt_fixtures",
+      "//flutter/fml",
+      "//flutter/runtime:test_font",
+      "//flutter/skia/modules/skparagraph:skparagraph",
+      "//flutter/testing:skia",
+      "//flutter/testing:testing_lib",
+    ]
+
+    # This is needed for //flutter/third_party/googletest for linking zircon
+    # symbols.
+    if (is_fuchsia) {
+      libs = [ "${fuchsia_arch_root}/sysroot/lib/libzircon.so" ]
+    }
+  }
+}

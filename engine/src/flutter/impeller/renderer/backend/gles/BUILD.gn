@@ -1,0 +1,112 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/vulkan/config.gni")
+import("../../../tools/impeller.gni")
+
+config("gles_config") {
+  # Generic GL/GLES/EGL/Vulkan headers. Any will do. We just pick one from Angle
+  # because they are there.
+  include_dirs = [ "//flutter/third_party/angle/include" ]
+}
+
+impeller_component("gles_unittests") {
+  testonly = true
+  sources = [
+    "buffer_bindings_gles_unittests.cc",
+    "device_buffer_gles_unittests.cc",
+    "test/capabilities_unittests.cc",
+    "test/formats_gles_unittests.cc",
+    "test/gpu_tracer_gles_unittests.cc",
+    "test/mock_gles.cc",
+    "test/mock_gles.h",
+    "test/mock_gles_unittests.cc",
+    "test/pipeline_library_gles_unittests.cc",
+    "test/proc_table_gles_unittests.cc",
+    "test/reactor_unittests.cc",
+    "test/specialization_constants_unittests.cc",
+    "test/surface_gles_unittests.cc",
+    "test/texture_gles_unittests.cc",
+    "unique_handle_gles_unittests.cc",
+  ]
+  deps = [
+    ":gles",
+    "//flutter/impeller/playground:playground_test",
+    "//flutter/testing:testing_lib",
+  ]
+}
+
+impeller_component("gles") {
+  public_configs = []
+
+  sources = [
+    "allocator_gles.cc",
+    "allocator_gles.h",
+    "blit_command_gles.cc",
+    "blit_command_gles.h",
+    "blit_pass_gles.cc",
+    "blit_pass_gles.h",
+    "buffer_bindings_gles.cc",
+    "buffer_bindings_gles.h",
+    "capabilities_gles.cc",
+    "capabilities_gles.h",
+    "command_buffer_gles.cc",
+    "command_buffer_gles.h",
+    "context_gles.cc",
+    "context_gles.h",
+    "description_gles.cc",
+    "description_gles.h",
+    "device_buffer_gles.cc",
+    "device_buffer_gles.h",
+    "formats_gles.cc",
+    "formats_gles.h",
+    "gles.h",
+    "gpu_tracer_gles.cc",
+    "gpu_tracer_gles.h",
+    "handle_gles.cc",
+    "handle_gles.h",
+    "pipeline_gles.cc",
+    "pipeline_gles.h",
+    "pipeline_library_gles.cc",
+    "pipeline_library_gles.h",
+    "proc_table_gles.cc",
+    "proc_table_gles.h",
+    "reactor_gles.cc",
+    "reactor_gles.h",
+    "render_pass_gles.cc",
+    "render_pass_gles.h",
+    "sampler_gles.cc",
+    "sampler_gles.h",
+    "sampler_library_gles.cc",
+    "sampler_library_gles.h",
+    "shader_function_gles.cc",
+    "shader_function_gles.h",
+    "shader_library_gles.cc",
+    "shader_library_gles.h",
+    "surface_gles.cc",
+    "surface_gles.h",
+    "texture_gles.cc",
+    "texture_gles.h",
+    "unique_handle_gles.cc",
+    "unique_handle_gles.h",
+  ]
+
+  if (!is_android && !is_fuchsia) {
+    public_configs = [ ":gles_config" ]
+    sources += [
+      "//flutter/third_party/angle/include/GLES2/gl2ext.h",
+
+      # The GLES3 API is a superset of GLES2. Although we target GLES2, we use
+      # some GLES3 features if the driver supports them.
+      "//flutter/third_party/angle/include/GLES3/gl3.h",
+    ]
+  }
+
+  public_deps = [
+    "../../:renderer",
+    "../../../shader_archive",
+    "//flutter/fml",
+    "//flutter/third_party/abseil-cpp/absl/container:flat_hash_map",
+  ]
+}

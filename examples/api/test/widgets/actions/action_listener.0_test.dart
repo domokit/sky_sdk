@@ -8,7 +8,9 @@ import 'package:flutter_api_samples/widgets/actions/action_listener.0.dart' as e
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('ActionListener can be enabled, triggered, and disabled', (WidgetTester tester) async {
+  testWidgets('ActionListener can be enabled, triggered, and disabled', (
+    WidgetTester tester,
+  ) async {
     final List<String?> log = <String?>[];
 
     final DebugPrintCallback originalDebugPrint = debugPrint;
@@ -16,9 +18,7 @@ void main() {
       log.add(message);
     };
     try {
-      await tester.pumpWidget(
-        const example.ActionListenerExampleApp(),
-      );
+      await tester.pumpWidget(const example.ActionListenerExampleApp());
 
       expect(find.widgetWithText(AppBar, 'ActionListener Sample'), findsOne);
       expect(find.widgetWithText(OutlinedButton, 'Enable'), findsOne);
@@ -39,10 +39,7 @@ void main() {
       await tester.pump();
 
       expect(find.widgetWithText(OutlinedButton, 'Enable'), findsOne);
-      expect(
-        log,
-        const <String?>['Action Listener was added', 'Action Listener was removed'],
-      );
+      expect(log, const <String?>['Action Listener was added', 'Action Listener was removed']);
     } finally {
       debugPrint = originalDebugPrint;
     }

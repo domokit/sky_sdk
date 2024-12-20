@@ -7,7 +7,7 @@
 
 class MyStopwatch implements Stopwatch {
   MyStopwatch();
-  MyStopwatch.create(): this();
+  MyStopwatch.create() : this();
 
   @override
   Duration get elapsed => throw UnimplementedError();
@@ -28,13 +28,13 @@ class MyStopwatch implements Stopwatch {
   bool get isRunning => throw UnimplementedError();
 
   @override
-  void reset() { }
+  void reset() {}
 
   @override
-  void start() { }
+  void start() {}
 
   @override
-  void stop() { }
+  void stop() {}
 }
 
 final MyStopwatch stopwatch = MyStopwatch.create();

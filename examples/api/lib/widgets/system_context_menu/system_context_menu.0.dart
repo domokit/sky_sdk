@@ -15,17 +15,13 @@ class SystemContextMenuExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('SystemContextMenu Basic Example'),
-        ),
+        appBar: AppBar(title: const Text('SystemContextMenu Basic Example')),
         body: Center(
           child: TextField(
             contextMenuBuilder: (BuildContext context, EditableTextState editableTextState) {
               // If supported, show the system context menu.
               if (SystemContextMenu.isSupported(context)) {
-                return SystemContextMenu.editableText(
-                  editableTextState: editableTextState,
-                );
+                return SystemContextMenu.editableText(editableTextState: editableTextState);
               }
               // Otherwise, show the flutter-rendered context menu for the current
               // platform.

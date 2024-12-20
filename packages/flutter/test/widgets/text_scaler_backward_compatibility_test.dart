@@ -58,13 +58,15 @@ void main() {
 
     test('copyWith specifying both textScaler and textScalingFactor asserts', () {
       const MediaQueryData data = MediaQueryData();
-       expect(
+      expect(
         () => data.copyWith(textScaleFactor: 2, textScaler: const TextScaler.linear(2.0)),
         throwsAssertionError,
       );
     });
 
-    testWidgets('MediaQuery.textScaleFactorOf overriding compatibility', (WidgetTester tester) async {
+    testWidgets('MediaQuery.textScaleFactorOf overriding compatibility', (
+      WidgetTester tester,
+    ) async {
       late final double outsideTextScaleFactor;
       late final TextScaler outsideTextScaler;
       late final double insideTextScaleFactor;
@@ -76,9 +78,7 @@ void main() {
             outsideTextScaleFactor = MediaQuery.textScaleFactorOf(context);
             outsideTextScaler = MediaQuery.textScalerOf(context);
             return MediaQuery(
-              data: const MediaQueryData(
-                textScaleFactor: 4.0,
-              ),
+              data: const MediaQueryData(textScaleFactor: 4.0),
               child: Builder(
                 builder: (BuildContext context) {
                   insideTextScaleFactor = MediaQuery.textScaleFactorOf(context);
@@ -145,10 +145,7 @@ void main() {
         cursorColor: const Color.fromARGB(0xFF, 0xFF, 0x00, 0x00),
         offset: ViewportOffset.zero(),
         textSelectionDelegate: _FakeEditableTextState(),
-        text: const TextSpan(
-          text: 'test',
-          style: TextStyle(height: 1.0, fontSize: 10.0),
-        ),
+        text: const TextSpan(text: 'test', style: TextStyle(height: 1.0, fontSize: 10.0)),
         startHandleLayerLink: LayerLink(),
         endHandleLayerLink: LayerLink(),
         selection: const TextSelection.collapsed(offset: 0),
@@ -165,10 +162,7 @@ void main() {
 
     test('RenderParagraph', () {
       final RenderParagraph renderObject = RenderParagraph(
-        const TextSpan(
-          text: 'test',
-          style: TextStyle(height: 1.0, fontSize: 10.0),
-        ),
+        const TextSpan(text: 'test', style: TextStyle(height: 1.0, fontSize: 10.0)),
         textDirection: TextDirection.ltr,
       );
       expect(renderObject.textScaleFactor, 1.0);
@@ -185,11 +179,7 @@ void main() {
   group('Widgets backward compatibility', () {
     testWidgets('RichText', (WidgetTester tester) async {
       await tester.pumpWidget(
-        RichText(
-          textDirection: TextDirection.ltr,
-          text: const TextSpan(),
-          textScaleFactor: 2.0,
-        ),
+        RichText(textDirection: TextDirection.ltr, text: const TextSpan(), textScaleFactor: 2.0),
       );
 
       expect(
@@ -201,11 +191,7 @@ void main() {
 
     testWidgets('Text', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const Text(
-          'text',
-          textDirection: TextDirection.ltr,
-          textScaleFactor: 2.0,
-        ),
+        const Text('text', textDirection: TextDirection.ltr, textScaleFactor: 2.0),
       );
 
       expect(
@@ -238,11 +224,9 @@ void main() {
         ),
       );
 
-      final RenderEditable renderEditable = tester.allRenderObjects.whereType<RenderEditable>().first;
-      expect(
-        renderEditable.textScaler,
-        const TextScaler.linear(2.0),
-      );
+      final RenderEditable renderEditable =
+          tester.allRenderObjects.whereType<RenderEditable>().first;
+      expect(renderEditable.textScaler, const TextScaler.linear(2.0));
     });
   });
 }
@@ -254,7 +238,7 @@ class _FakeEditableTextState with TextSelectionDelegate {
   TextSelection? selection;
 
   @override
-  void hideToolbar([bool hideHandles = true]) { }
+  void hideToolbar([bool hideHandles = true]) {}
 
   @override
   void userUpdateTextEditingValue(TextEditingValue value, SelectionChangedCause cause) {
@@ -262,10 +246,10 @@ class _FakeEditableTextState with TextSelectionDelegate {
   }
 
   @override
-  void bringIntoView(TextPosition position) { }
+  void bringIntoView(TextPosition position) {}
 
   @override
-  void cutSelection(SelectionChangedCause cause) { }
+  void cutSelection(SelectionChangedCause cause) {}
 
   @override
   Future<void> pasteText(SelectionChangedCause cause) {
@@ -273,8 +257,8 @@ class _FakeEditableTextState with TextSelectionDelegate {
   }
 
   @override
-  void selectAll(SelectionChangedCause cause) { }
+  void selectAll(SelectionChangedCause cause) {}
 
   @override
-  void copySelection(SelectionChangedCause cause) { }
+  void copySelection(SelectionChangedCause cause) {}
 }

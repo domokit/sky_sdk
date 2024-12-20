@@ -20,12 +20,14 @@ void main() {
     // initInstances (and before the imageCache was initialized, which
     // was a problem), but now it happens asynchronously just after.
 
-    ui.channelBuffers.push(SystemChannels.system.name, SystemChannels.system.codec.encodeMessage(<String, dynamic>{
-      'type': 'memoryPressure',
-    }), (ByteData? responseData) {
-      // The result is: SystemChannels.system.codec.decodeMessage(responseData)
-      // ...but we ignore it for the purposes of this test.
-    });
+    ui.channelBuffers.push(
+      SystemChannels.system.name,
+      SystemChannels.system.codec.encodeMessage(<String, dynamic>{'type': 'memoryPressure'}),
+      (ByteData? responseData) {
+        // The result is: SystemChannels.system.codec.decodeMessage(responseData)
+        // ...but we ignore it for the purposes of this test.
+      },
+    );
 
     final TestPaintingBinding binding = TestPaintingBinding();
     expect(binding._handled, isFalse);
@@ -37,7 +39,8 @@ void main() {
   });
 }
 
-class TestPaintingBinding extends BindingBase with SchedulerBinding, ServicesBinding, PaintingBinding {
+class TestPaintingBinding extends BindingBase
+    with SchedulerBinding, ServicesBinding, PaintingBinding {
   @override
   void handleMemoryPressure() {
     super.handleMemoryPressure();

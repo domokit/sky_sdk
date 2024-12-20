@@ -33,8 +33,7 @@ void main() {
 
   testWithoutContext('parseLocalizationsOptions handles valid yaml configuration', () async {
     final FileSystem fileSystem = MemoryFileSystem.test();
-    final File configFile = fileSystem.file('l10n.yaml')
-      ..writeAsStringSync('''
+    final File configFile = fileSystem.file('l10n.yaml')..writeAsStringSync('''
 arb-dir: arb
 template-arb-file: example.arb
 output-localization-file: bar
@@ -70,8 +69,7 @@ nullable-getter: false
     expect(options.nullableGetter, false);
   });
 
-  testWithoutContext(
-      'parseLocalizationsOptions uses defaultSyntheticPackage = true', () async {
+  testWithoutContext('parseLocalizationsOptions uses defaultSyntheticPackage = true', () async {
     final FileSystem fileSystem = MemoryFileSystem.test();
     final File configFile = fileSystem.file('l10n.yaml')..writeAsStringSync('''
 arb-dir: arb
@@ -99,9 +97,7 @@ nullable-getter: false
     expect(options.syntheticPackage, true);
   });
 
-  testWithoutContext(
-      'parseLocalizationsOptions uses defaultSyntheticPackage = false',
-      () async {
+  testWithoutContext('parseLocalizationsOptions uses defaultSyntheticPackage = false', () async {
     final FileSystem fileSystem = MemoryFileSystem.test();
     final File configFile = fileSystem.file('l10n.yaml')..writeAsStringSync('''
 arb-dir: arb
@@ -129,40 +125,44 @@ nullable-getter: false
     expect(options.syntheticPackage, false);
   });
 
-  testWithoutContext('parseLocalizationsOptions handles preferredSupportedLocales as list', () async {
-    final FileSystem fileSystem = MemoryFileSystem.test();
-    final File configFile = fileSystem.file('l10n.yaml')..writeAsStringSync('''
+  testWithoutContext(
+    'parseLocalizationsOptions handles preferredSupportedLocales as list',
+    () async {
+      final FileSystem fileSystem = MemoryFileSystem.test();
+      final File configFile = fileSystem.file('l10n.yaml')..writeAsStringSync('''
 preferred-supported-locales: ['en_US', 'de']
 ''');
 
-    final LocalizationOptions options = parseLocalizationsOptionsFromYAML(
-      file: configFile,
-      logger: BufferLogger.test(),
-      defaultArbDir: fileSystem.path.join('lib', 'l10n'),
-      defaultSyntheticPackage: true,
-    );
-
-    expect(options.preferredSupportedLocales, <String>['en_US', 'de']);
-  });
-
-  testWithoutContext(
-      'parseLocalizationsOptions throws exception on invalid yaml configuration',
-      () async {
-    final FileSystem fileSystem = MemoryFileSystem.test();
-    final File configFile = fileSystem.file('l10n.yaml')..writeAsStringSync('''
-use-deferred-loading: string
-''');
-
-    expect(
-      () => parseLocalizationsOptionsFromYAML(
+      final LocalizationOptions options = parseLocalizationsOptionsFromYAML(
         file: configFile,
         logger: BufferLogger.test(),
         defaultArbDir: fileSystem.path.join('lib', 'l10n'),
         defaultSyntheticPackage: true,
-      ),
-      throwsException,
-    );
-  });
+      );
+
+      expect(options.preferredSupportedLocales, <String>['en_US', 'de']);
+    },
+  );
+
+  testWithoutContext(
+    'parseLocalizationsOptions throws exception on invalid yaml configuration',
+    () async {
+      final FileSystem fileSystem = MemoryFileSystem.test();
+      final File configFile = fileSystem.file('l10n.yaml')..writeAsStringSync('''
+use-deferred-loading: string
+''');
+
+      expect(
+        () => parseLocalizationsOptionsFromYAML(
+          file: configFile,
+          logger: BufferLogger.test(),
+          defaultArbDir: fileSystem.path.join('lib', 'l10n'),
+          defaultSyntheticPackage: true,
+        ),
+        throwsException,
+      );
+    },
+  );
 
   testWithoutContext('parseLocalizationsOptions tool exits on malformed Yaml', () async {
     final FileSystem fileSystem = MemoryFileSystem.test();

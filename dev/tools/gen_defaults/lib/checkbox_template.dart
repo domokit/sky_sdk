@@ -5,7 +5,10 @@
 import 'template.dart';
 
 class CheckboxTemplate extends TokenTemplate {
-  const CheckboxTemplate(super.blockName, super.fileName, super.tokens, {
+  const CheckboxTemplate(
+    super.blockName,
+    super.fileName,
+    super.tokens, {
     super.colorSchemePrefix = '_colors.',
   });
 

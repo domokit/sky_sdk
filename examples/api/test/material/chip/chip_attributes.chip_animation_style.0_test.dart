@@ -3,14 +3,15 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/chip/chip_attributes.chip_animation_style.0.dart' as example;
+import 'package:flutter_api_samples/material/chip/chip_attributes.chip_animation_style.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('ChipAnimationStyle.enableAnimation overrides chip enable animation', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ChipAnimationStyleExampleApp(),
-    );
+  testWidgets('ChipAnimationStyle.enableAnimation overrides chip enable animation', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.ChipAnimationStyleExampleApp());
 
     final RenderBox materialBox = tester.firstRenderObject<RenderBox>(
       find.descendant(
@@ -42,10 +43,10 @@ void main() {
     expect(materialBox, paints..rrect(color: const Color(0xffffc107)));
   });
 
-  testWidgets('ChipAnimationStyle.selectAnimation overrides chip select animation', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ChipAnimationStyleExampleApp(),
-    );
+  testWidgets('ChipAnimationStyle.selectAnimation overrides chip select animation', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.ChipAnimationStyleExampleApp());
 
     final RenderBox materialBox = tester.firstRenderObject<RenderBox>(
       find.descendant(
@@ -77,10 +78,10 @@ void main() {
     expect(materialBox, paints..rrect(color: const Color(0xffffc107)));
   });
 
-  testWidgets('ChipAnimationStyle.avatarDrawerAnimation overrides chip checkmark animation', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ChipAnimationStyleExampleApp(),
-    );
+  testWidgets('ChipAnimationStyle.avatarDrawerAnimation overrides chip checkmark animation', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.ChipAnimationStyleExampleApp());
 
     expect(tester.getSize(find.widgetWithText(RawChip, 'Checked')).width, closeTo(152.6, 0.1));
 
@@ -105,10 +106,10 @@ void main() {
     expect(tester.getSize(find.widgetWithText(RawChip, 'Checked')).width, closeTo(152.6, 0.1));
   });
 
-  testWidgets('ChipAnimationStyle.deleteDrawerAnimation overrides chip delete icon animation', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ChipAnimationStyleExampleApp(),
-    );
+  testWidgets('ChipAnimationStyle.deleteDrawerAnimation overrides chip delete icon animation', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.ChipAnimationStyleExampleApp());
 
     expect(tester.getSize(find.widgetWithText(RawChip, 'Deletable')).width, closeTo(180.9, 0.1));
 

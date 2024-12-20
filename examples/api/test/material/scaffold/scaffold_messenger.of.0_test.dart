@@ -7,10 +7,10 @@ import 'package:flutter_api_samples/material/scaffold/scaffold_messenger.of.0.da
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('The snack bar should be visible after tapping the button', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.OfExampleApp(),
-    );
+  testWidgets('The snack bar should be visible after tapping the button', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.OfExampleApp());
 
     expect(find.widgetWithText(AppBar, 'ScaffoldMessenger.of Sample'), findsOne);
 

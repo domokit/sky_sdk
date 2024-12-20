@@ -65,10 +65,7 @@ class _WidgetStateMouseCursorExampleState extends State<WidgetStateMouseCursorEx
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Enabled: ',
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
+            Text('Enabled: ', style: Theme.of(context).textTheme.titleSmall),
             Switch(
               value: _enabled,
               onChanged: (_) {

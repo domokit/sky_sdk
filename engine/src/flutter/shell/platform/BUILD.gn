@@ -1,0 +1,28 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/shell/platform/config.gni")
+
+group("platform") {
+  if (is_mac || is_ios) {
+    deps = [ "darwin" ]
+  } else if (is_android) {
+    deps = [ "android" ]
+  } else if (is_linux) {
+    deps = []
+    if (enable_desktop_embeddings) {
+      deps += [ "linux" ]
+    }
+  } else if (is_win) {
+    deps = []
+    if (enable_desktop_embeddings) {
+      deps += [ "windows" ]
+    }
+  } else if (is_fuchsia) {
+    import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+    deps = [ "fuchsia" ]
+  } else {
+    assert(false, "Unknown/Unsupported platform.")
+  }
+}

@@ -1,0 +1,194 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/allocator.gni")
+import("//build/config/crypto.gni")
+import("//build/config/dcheck_always_on.gni")
+import("//build/config/features.gni")
+import("//build/config/ui.gni")
+
+declare_args() {
+  # When set, turns off the (normally-on) iterator debugging and related stuff
+  # that is normally turned on for Debug builds. These are generally useful for
+  # catching bugs but in some cases may cause conflicts or excessive slowness.
+  disable_iterator_debugging = false
+
+  # Set to true to compile with the OpenGL ES 2.0 conformance tests.
+  internal_gles2_conform_tests = false
+}
+
+# TODO(brettw) Most of these should be removed. Instead of global feature
+# flags, we should have more modular flags that apply only to a target and its
+# dependents. For example, depending on the "x11" meta-target should define
+# USE_X11 for all dependents so that everything that could use X11 gets the
+# define, but anything that doesn't depend on X11 doesn't see it.
+#
+# For now we define these globally to match the current GYP build.
+config("feature_flags") {
+  defines = []
+
+  if (dcheck_always_on) {
+    defines += [ "DCHECK_ALWAYS_ON=1" ]
+  }
+  if (use_glfw) {
+    defines += [ "USE_GLFW=1" ]
+  }
+  if (use_openssl) {
+    defines += [ "USE_OPENSSL=1" ]
+  }
+  if (use_openssl_certs) {
+    defines += [ "USE_OPENSSL_CERTS=1" ]
+  }
+  if (use_nss_certs) {
+    defines += [ "USE_NSS_CERTS=1" ]
+  }
+  if (is_asan) {
+    defines += [ "ADDRESS_SANITIZER" ]
+  }
+  if (is_lsan) {
+    defines += [ "LEAK_SANITIZER" ]
+  }
+  if (is_tsan) {
+    defines += [
+      "THREAD_SANITIZER",
+      "DYNAMIC_ANNOTATIONS_EXTERNAL_IMPL=1",
+      "WTF_USE_DYNAMIC_ANNOTATIONS_NOIMPL=1",
+    ]
+  }
+  if (is_msan) {
+    defines += [ "MEMORY_SANITIZER" ]
+  }
+}
+
+# Debug/release ----------------------------------------------------------------
+
+config("debug") {
+  defines = [ "_DEBUG" ]
+
+  if (is_win) {
+    if (disable_iterator_debugging) {
+      # Iterator debugging is enabled by the compiler on debug builds, and we
+      # have to tell it to turn it off.
+      defines += [ "_HAS_ITERATOR_DEBUGGING=0" ]
+    }
+  } else if (is_linux && !is_android && current_cpu == "x64" &&
+             !disable_iterator_debugging) {
+    # Enable libstdc++ debugging facilities to help catch problems early, see
+    # http://crbug.com/65151 .
+    # TODO(phajdan.jr): Should we enable this for all of POSIX?
+    defines += [ "_GLIBCXX_DEBUG=1" ]
+  }
+}
+
+config("release") {
+  defines = [ "NDEBUG" ]
+
+  # Sanitizers.
+  # TODO(GYP) The GYP build has "release_valgrind_build == 0" for this
+  # condition. When Valgrind is set up, we need to do the same here.
+  if (is_tsan) {
+    defines += [
+      "DYNAMIC_ANNOTATIONS_ENABLED=1",
+      "WTF_USE_DYNAMIC_ANNOTATIONS=1",
+    ]
+  } else {
+    defines += [ "NVALGRIND" ]
+    defines += [ "DYNAMIC_ANNOTATIONS_ENABLED=0" ]
+  }
+}
+
+# Default libraries ------------------------------------------------------------
+
+# This config defines the default libraries applied to all targets.
+config("default_libs") {
+  if (is_win) {
+    # TODO(brettw) this list of defaults should probably be smaller, and
+    # instead the targets that use the less common ones (e.g. wininet or
+    # winspool) should include those explicitly.
+    libs = [
+      "advapi32.lib",
+      "comdlg32.lib",
+      "delayimp.lib",
+      "dnsapi.lib",
+      "iphlpapi.lib",
+      "msimg32.lib",
+      "odbc32.lib",
+      "odbccp32.lib",
+      "ole32.lib",
+      "oleaut32.lib",
+      "psapi.lib",
+      "shell32.lib",
+      "shlwapi.lib",
+      "Rpcrt4.lib",
+      "uuid.lib",
+      "version.lib",
+      "wininet.lib",
+      "winmm.lib",
+      "winspool.lib",
+      "ws2_32.lib",
+
+      # Please don't add more stuff here. We should actually be making this
+      # list smaller, since all common things should be covered. If you need
+      # some extra libraries, please just add a libs = [ "foo.lib" ] to your
+      # target that needs it.
+    ]
+  } else if (is_android) {
+    # Android uses -nostdlib so we need to add even libc here.
+    libs = [
+      # TODO(brettw) write a version of this, hopefully we can express this
+      # without forking out to GCC just to get the library name. The android
+      # toolchain directory should probably be extracted into a .gni file that
+      # this file and the android toolchain .gn file can share.
+      #   # Manually link the libgcc.a that the cross compiler uses.
+      #   '<!(<(android_toolchain)/*-gcc -print-libgcc-file-name)',
+      "c",
+      "dl",
+      "m",
+    ]
+  } else if (is_linux) {
+    libs = [ "dl" ]
+  }
+}
+
+# Add this config to your target to enable precompiled headers.
+#
+# On Windows, precompiled headers are done on a per-target basis. If you have
+# just a couple of files, the time it takes to precompile (~2 seconds) can
+# actually be longer than the time saved. On a Z620, a 100 file target compiles
+# about 2 seconds faster with precompiled headers, with greater savings for
+# larger targets.
+#
+# Recommend precompiled headers for targets with more than 50 .cc files.
+config("precompiled_headers") {
+  # TODO(brettw) enable this when GN support in the binary has been rolled.
+  #if (is_win) {
+  if (false) {
+    # This is a string rather than a file GN knows about. It has to match
+    # exactly what's in the /FI flag below, and what might appear in the source
+    # code in quotes for an #include directive.
+    precompiled_header = "build/precompile.h"
+
+    # This is a file that GN will compile with the above header. It will be
+    # implicitly added to the sources (potentially multiple times, with one
+    # variant for each language used in the target).
+    precompiled_source = "//build/precompile.cc"
+
+    # Force include the header.
+    cflags = [ "/FI$precompiled_header" ]
+  }
+}
+
+config("symbol_visibility_hidden") {
+  # Empty but present because this is also present in other buildroots.
+  # The same config from gcc/BUILD.gn is used instead.
+}
+
+config("no_rtti") {
+  if (is_win) {
+    cflags_cc = [ "/GR-" ]
+  } else {
+    cflags_cc = [ "-fno-rtti" ]
+    cflags_objcc = cflags_cc
+  }
+}

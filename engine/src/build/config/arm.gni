@@ -1,0 +1,68 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+if (current_cpu == "arm" || current_cpu == "arm64") {
+  declare_args() {
+    # Version of the ARM processor when compiling on ARM. Ignored on non-ARM
+    # platforms.
+    if (current_cpu == "arm") {
+      arm_version = 7
+    } else if (current_cpu == "arm64") {
+      arm_version = 8
+    } else {
+      assert(false, "Unconfigured arm version")
+    }
+
+    # The ARM floating point mode. This is either the string "hard", "soft", or
+    # "softfp". An empty string means to use the default one for the
+    # arm_version.
+    arm_float_abi = ""
+
+    # The ARM variant-specific tuning mode. This will be a string like "armv6"
+    # or "cortex-a15". An empty string means to use the default for the
+    # arm_version.
+    arm_tune = ""
+
+    # Whether to use the neon FPU instruction set or not.
+    arm_use_neon = true
+
+    # Whether to enable optional NEON code paths.
+    arm_optionally_use_neon = false
+  }
+
+  assert(arm_float_abi == "" || arm_float_abi == "hard" ||
+         arm_float_abi == "soft" || arm_float_abi == "softfp")
+
+  if (arm_version == 6) {
+    arm_arch = "armv6"
+    if (arm_tune != "") {
+      arm_tune = ""
+    }
+    if (arm_float_abi == "") {
+      arm_float_abi = "softfp"
+    }
+    arm_fpu = "vfp"
+
+    # Thumb is a reduced instruction set available on some ARM processors that
+    # has increased code density.
+    arm_use_thumb = false
+  } else if (arm_version == 7) {
+    arm_arch = "armv7-a"
+    if (arm_tune == "") {
+      arm_tune = "generic-armv7-a"
+    }
+
+    if (arm_float_abi == "") {
+      arm_float_abi = "softfp"
+    }
+
+    arm_use_thumb = true
+
+    if (arm_use_neon) {
+      arm_fpu = "neon"
+    } else {
+      arm_fpu = "vfpv3-d16"
+    }
+  }
+}

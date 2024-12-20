@@ -1,0 +1,69 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/testing/testing.gni")
+import("core_wrapper_files.gni")
+
+# Client library build for internal use by the shell implementation.
+source_set("client_wrapper") {
+  sources = core_cpp_client_wrapper_sources
+  public = core_cpp_client_wrapper_includes +
+           core_cpp_client_wrapper_internal_headers
+
+  deps = [ "//flutter/shell/platform/common:common_cpp_library_headers" ]
+
+  configs +=
+      [ "//flutter/shell/platform/common:desktop_library_implementation" ]
+
+  public_configs =
+      [ "//flutter/shell/platform/common:relative_flutter_library_headers" ]
+}
+
+source_set("client_wrapper_library_stubs") {
+  sources = [
+    "testing/stub_flutter_api.cc",
+    "testing/stub_flutter_api.h",
+  ]
+
+  defines = [ "FLUTTER_DESKTOP_LIBRARY" ]
+
+  public_deps = [ "//flutter/shell/platform/common:common_cpp_library_headers" ]
+}
+
+test_fixtures("client_wrapper_fixtures") {
+  fixtures = []
+}
+
+executable("client_wrapper_unittests") {
+  testonly = true
+
+  sources = [
+    "basic_message_channel_unittests.cc",
+    "encodable_value_unittests.cc",
+    "event_channel_unittests.cc",
+    "method_call_unittests.cc",
+    "method_channel_unittests.cc",
+    "method_result_functions_unittests.cc",
+    "plugin_registrar_unittests.cc",
+    "standard_message_codec_unittests.cc",
+    "standard_method_codec_unittests.cc",
+    "testing/test_codec_extensions.cc",
+    "testing/test_codec_extensions.h",
+    "texture_registrar_unittests.cc",
+  ]
+
+  deps = [
+    ":client_wrapper",
+    ":client_wrapper_fixtures",
+    ":client_wrapper_library_stubs",
+    "//flutter/testing",
+
+    # TODO(chunhtai): Consider refactoring flutter_root/testing so that there's a testing
+    # target that doesn't require a Dart runtime to be linked in.
+    # https://github.com/flutter/flutter/issues/41414.
+    "$dart_src/runtime:libdart_jit",
+  ]
+
+  defines = [ "FLUTTER_DESKTOP_LIBRARY" ]
+}

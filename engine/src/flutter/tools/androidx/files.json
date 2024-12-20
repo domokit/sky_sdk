@@ -1,0 +1,96 @@
+[
+  {
+    "url": "https://maven.google.com/androidx/lifecycle/lifecycle-common/2.7.0/lifecycle-common-2.7.0.jar",
+    "out_file_name": "androidx_lifecycle_common.jar",
+    "maven_dependency": "androidx.lifecycle:lifecycle-common:2.7.0",
+    "provides": [
+      "androidx.lifecycle.Lifecycle",
+      "androidx.lifecycle.LifecycleObserver",
+      "androidx.lifecycle.LifecycleOwner"
+    ]
+  },
+  {
+    "url": "https://maven.google.com/androidx/lifecycle/lifecycle-common-java8/2.8.0/lifecycle-common-java8-2.7.0.jar",
+    "out_file_name": "androidx_lifecycle_common_java8.jar",
+    "maven_dependency": "androidx.lifecycle:lifecycle-common-java8:2.7.0",
+    "provides": ["androidx.lifecycle.DefaultLifecycleObserver"]
+  },
+  {
+    "url": "https://maven.google.com/androidx/lifecycle/lifecycle-process/2.7.0/lifecycle-process-2.7.0.aar",
+    "out_file_name": "androidx_lifecycle_process.aar",
+    "maven_dependency": "androidx.lifecycle:lifecycle-process:2.7.0",
+    "provides": ["androidx.lifecycle.ProcessLifecycleOwner"]
+  },
+  {
+    "url": "https://maven.google.com/androidx/lifecycle/lifecycle-runtime/2.8.0/lifecycle-runtime-2.7.0.aar",
+    "out_file_name": "androidx_lifecycle_runtime.aar",
+    "maven_dependency": "androidx.lifecycle:lifecycle-runtime:2.7.0",
+    "provides": ["androidx.lifecycle.LifecycleRegistry"]
+  },
+  {
+    "url": "https://maven.google.com/androidx/fragment/fragment/1.7.1/fragment-1.7.1.aar",
+    "out_file_name": "androidx_fragment.aar",
+    "maven_dependency": "androidx.fragment:fragment:1.7.1",
+    "provides": [
+      "androidx.fragment.app.Fragment",
+      "androidx.fragment.app.FragmentActivity"
+    ]
+  },
+  {
+    "url": "https://maven.google.com/androidx/annotation/annotation/1.8.0/annotation-1.8.0.jar",
+    "out_file_name": "androidx_annotation.jar",
+    "maven_dependency": "androidx.annotation:annotation:1.8.0",
+    "provides": [
+      "androidx.annotation.CallSuper",
+      "androidx.annotation.FloatRange",
+      "androidx.annotation.IntDef",
+      "androidx.annotation.Keep",
+      "androidx.annotation.NonNull",
+      "androidx.annotation.Nullable",
+      "androidx.annotation.RequiresApi",
+      "androidx.annotation.UiThread",
+      "androidx.annotation.VisibleForTesting"
+    ]
+  },
+  {
+    "url": "https://maven.google.com/androidx/tracing/tracing/1.2.0/tracing-1.2.0.aar",
+    "out_file_name": "androidx_tracing.aar",
+    "maven_dependency": "androidx.tracing:tracing:1.2.0",
+    "provides": ["androidx.tracing.Trace"]
+  },
+  {
+    "url": "https://dl.google.com/android/maven2/androidx/core/core/1.13.1/core-1.13.1.aar",
+    "out_file_name": "androidx_core.aar",
+    "maven_dependency": "androidx.core:core:1.13.1",
+    "provides": [
+	"androidx.core.view.WindowInsetsControllerCompat",
+	"androidx.core.view.inputmethod.EditorInfoCompat"
+    ]
+  },
+  {
+    "url": "https://maven.google.com/androidx/window/window-java/1.2.0/window-java-1.2.0.aar",
+    "out_file_name": "androidx_window_java.aar",
+    "maven_dependency": "androidx.window:window-java:1.2.0",
+    "provides": [
+      "androidx.window.java.layout.WindowInfoRepositoryCallbackAdapter",
+      "androidx.window.layout.DisplayFeature",
+      "androidx.window.layout.FoldingFeature",
+      "androidx.window.layout.FoldingFeature.OcclusionType",
+      "androidx.window.layout.FoldingFeature.State",
+      "androidx.window.layout.WindowLayoutInfo",
+      "androidx.window.layout.WindowInfoRepository"
+    ]
+  },
+  {
+    "url": "https://dl.google.com/android/maven2/com/google/android/play/core/1.10.3/core-1.10.3.aar",
+    "out_file_name": "core-1.10.3.aar",
+    "maven_dependency": "com.google.android.play:core:1.10.3",
+    "provides": []
+  },
+  {
+    "url": "https://repo1.maven.org/maven2/com/getkeepsafe/relinker/relinker/1.4.5/relinker-1.4.5.aar",
+    "out_file_name": "relinker-1.4.5.aar",
+    "maven_dependency": "com.getkeepsafe.relinker:relinker:1.4.5",
+    "provides": ["com.getkeepsafe.relinker.ReLinker"]
+  }
+]

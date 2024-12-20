@@ -64,9 +64,7 @@ enum PerformanceOverlayOption {
 /// to true.
 class RenderPerformanceOverlay extends RenderBox {
   /// Creates a performance overlay render object.
-  RenderPerformanceOverlay({
-    int optionsMask = 0,
-  }) : _optionsMask = optionsMask;
+  RenderPerformanceOverlay({int optionsMask = 0}) : _optionsMask = optionsMask;
 
   /// The mask is created by shifting 1 by the index of the specific
   /// [PerformanceOverlayOption] to enable.
@@ -129,9 +127,11 @@ class RenderPerformanceOverlay extends RenderBox {
   @override
   void paint(PaintingContext context, Offset offset) {
     assert(needsCompositing);
-    context.addLayer(PerformanceOverlayLayer(
-      overlayRect: Rect.fromLTWH(offset.dx, offset.dy, size.width, size.height),
-      optionsMask: optionsMask,
-    ));
+    context.addLayer(
+      PerformanceOverlayLayer(
+        overlayRect: Rect.fromLTWH(offset.dx, offset.dy, size.width, size.height),
+        optionsMask: optionsMask,
+      ),
+    );
   }
 }

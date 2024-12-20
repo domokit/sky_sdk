@@ -11,7 +11,6 @@ const double appPaddingLarge = 120.0;
 const double appPaddingSmall = 24.0;
 
 class HeaderFormField {
-
   const HeaderFormField({
     required this.index,
     required this.iconData,
@@ -25,7 +24,6 @@ class HeaderFormField {
 }
 
 class HeaderForm extends StatelessWidget {
-
   const HeaderForm({super.key, required this.fields});
   final List<HeaderFormField> fields;
 
@@ -36,48 +34,49 @@ class HeaderForm extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal:
-            isDesktop && !isSmallDesktop ? appPaddingLarge : appPaddingSmall,
+        horizontal: isDesktop && !isSmallDesktop ? appPaddingLarge : appPaddingSmall,
       ),
-      child: isDesktop
-          ? LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-              int crossAxisCount = isSmallDesktop ? 2 : 4;
-              if (fields.length < crossAxisCount) {
-                crossAxisCount = fields.length;
-              }
-              final double itemWidth = constraints.maxWidth / crossAxisCount;
-              return GridView.count(
-                crossAxisCount: crossAxisCount,
-                childAspectRatio: itemWidth / textFieldHeight,
-                physics: const NeverScrollableScrollPhysics(),
+      child:
+          isDesktop
+              ? LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  int crossAxisCount = isSmallDesktop ? 2 : 4;
+                  if (fields.length < crossAxisCount) {
+                    crossAxisCount = fields.length;
+                  }
+                  final double itemWidth = constraints.maxWidth / crossAxisCount;
+                  return GridView.count(
+                    crossAxisCount: crossAxisCount,
+                    childAspectRatio: itemWidth / textFieldHeight,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: <Widget>[
+                      for (final HeaderFormField field in fields)
+                        if ((field.index + 1) % crossAxisCount == 0)
+                          _HeaderTextField(field: field)
+                        else
+                          Padding(
+                            padding: const EdgeInsetsDirectional.only(end: 16),
+                            child: _HeaderTextField(field: field),
+                          ),
+                    ],
+                  );
+                },
+              )
+              : Column(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   for (final HeaderFormField field in fields)
-                    if ((field.index + 1) % crossAxisCount == 0)
-                      _HeaderTextField(field: field)
-                    else
-                      Padding(
-                        padding: const EdgeInsetsDirectional.only(end: 16),
-                        child: _HeaderTextField(field: field),
-                      ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: _HeaderTextField(field: field),
+                    ),
                 ],
-              );
-            })
-          : Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                for (final HeaderFormField field in fields)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: _HeaderTextField(field: field),
-                  )
-              ],
-            ),
+              ),
     );
   }
 }
 
 class _HeaderTextField extends StatelessWidget {
-
   const _HeaderTextField({required this.field});
   final HeaderFormField field;
 
@@ -86,8 +85,7 @@ class _HeaderTextField extends StatelessWidget {
     return TextField(
       controller: field.textController,
       cursorColor: Theme.of(context).colorScheme.secondary,
-      style:
-          Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white),
+      style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white),
       onTap: () {},
       decoration: InputDecoration(
         border: OutlineInputBorder(
@@ -99,11 +97,7 @@ class _HeaderTextField extends StatelessWidget {
         filled: true,
         hintText: field.title,
         floatingLabelBehavior: FloatingLabelBehavior.never,
-        prefixIcon: Icon(
-          field.iconData,
-          size: 24,
-          color: Theme.of(context).iconTheme.color,
-        ),
+        prefixIcon: Icon(field.iconData, size: 24, color: Theme.of(context).iconTheme.color),
       ),
     );
   }

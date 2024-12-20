@@ -1,0 +1,103 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/tools/fuchsia/dart/dart_library.gni")
+import("//flutter/tools/fuchsia/dart/dart_package_config.gni")
+import("//flutter/tools/fuchsia/dart/toolchain.gni")
+
+# Wraps a dart snapshot in a script to be invoked by dart
+#
+# Parameters
+#
+#   dart (required)
+#     The path to the dart binary
+#
+#   snapshot (required)
+#     The path to the dart snapshot
+#
+#   deps (optional)
+#     Dependencies of this application
+#
+#   output_name (optional)
+#     Name of the output file to generate. Defaults to $target_name.
+template("_dart_snapshot_invocation") {
+  assert(defined(invoker.dart), "Must specify the path to the dart binary")
+  assert(defined(invoker.snapshot),
+         "Must specify the path to the dart snapshot")
+
+  if (defined(invoker.output_name)) {
+    app_name = invoker.output_name
+  } else {
+    app_name = target_name
+  }
+
+  # Builds a convenience script to invoke the app.
+  action(target_name) {
+    forward_variables_from(invoker,
+                           [
+                             "testonly",
+                             "deps",
+                           ])
+
+    script = "//flutter/tools/fuchsia/dart/gen_app_invocation.py"
+
+    app_path = "$root_out_dir/dart-tools/$app_name"
+    dart_binary = invoker.dart
+    snapshot = invoker.snapshot
+
+    inputs = [
+      dart_binary,
+      snapshot,
+    ]
+    outputs = [ app_path ]
+
+    args = [
+      "--out",
+      rebase_path(app_path, root_build_dir),
+
+      # `--dart` and `--snapshot` are used in the output app script, use
+      # absolute path so the script would work regardless where it's invoked.
+      "--dart",
+      rebase_path(dart_binary),
+      "--snapshot",
+      rebase_path(snapshot),
+    ]
+
+    metadata = {
+      # Record metadata for the //:tool_paths build API.
+      tool_paths = [
+        {
+          cpu = current_cpu
+          label = get_label_info(":$target_name", "label_with_toolchain")
+          name = app_name
+          os = current_os
+          path = rebase_path(app_path, root_build_dir)
+        },
+      ]
+      snapshot_path = [ rebase_path(snapshot, root_build_dir) ]
+    }
+  }
+}
+
+# Defines a Dart application that can be run on the host which is
+# compiled from an existing snapshot
+#
+# Parameters
+#
+#   snapshot (required)
+#     The path to the dart snapshot
+#
+#   deps (optional)
+#     Dependencies of this application
+#
+#   output_name (optional)
+#     Name of the output file to generate. Defaults to $target_name.
+template("dart_prebuilt_tool") {
+  assert(defined(invoker.snapshot),
+         "Must specify the path to the dart snapshot")
+  _dart_snapshot_invocation(target_name) {
+    dart = prebuilt_dart
+    forward_variables_from(invoker, "*")
+  }
+}

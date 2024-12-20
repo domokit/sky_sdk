@@ -12,8 +12,7 @@ void main() {
     final HitTestEntry entry3 = HitTestEntry(_DummyHitTestTarget());
     final Matrix4 transform = Matrix4.translationValues(40.0, 150.0, 0.0);
 
-    final HitTestResult wrapped = MyHitTestResult()
-      ..publicPushTransform(transform);
+    final HitTestResult wrapped = MyHitTestResult()..publicPushTransform(transform);
     wrapped.add(entry1);
     expect(wrapped.path, equals(<HitTestEntry>[entry1]));
     expect(entry1.transform, transform);

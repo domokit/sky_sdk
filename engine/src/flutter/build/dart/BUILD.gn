@@ -1,0 +1,31 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/dart.gni")
+import("//flutter/common/config.gni")
+
+import("$dart_src/build/dart/copy_tree.gni")
+
+if (build_engine_artifacts) {
+  if (flutter_prebuilt_dart_sdk) {
+    copy_trees("_copy_trees") {
+      sources = [
+        {
+          target = "copy_dart_sdk"
+          visibility = [ ":dart_sdk" ]
+          source = prebuilt_dart_sdk
+          dest = "$root_out_dir/dart-sdk"
+          ignore_patterns = "{}"
+        },
+      ]
+    }
+    group("dart_sdk") {
+      public_deps = [ ":copy_dart_sdk" ]
+    }
+  } else {
+    group("dart_sdk") {
+      public_deps = [ "$dart_src:create_sdk" ]
+    }
+  }
+}

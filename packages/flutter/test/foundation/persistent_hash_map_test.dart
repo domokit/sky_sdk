@@ -21,8 +21,7 @@ class _MockKey {
 
 void main() {
   test('PersistentHashMap - Simple Test', () {
-    final List<PersistentHashMap<String, int>> maps =
-        <PersistentHashMap<String, int>>[];
+    final List<PersistentHashMap<String, int>> maps = <PersistentHashMap<String, int>>[];
     maps.add(const PersistentHashMap<String, int>.empty());
     for (int i = 0; i < 50; i++) {
       maps.add(maps.last.put('key:$i', i));
@@ -66,8 +65,7 @@ void main() {
   });
 
   test('PersistentHashMap - inflation of nodes', () {
-    final List<PersistentHashMap<_MockKey, int>> maps =
-        <PersistentHashMap<_MockKey, int>>[];
+    final List<PersistentHashMap<_MockKey, int>> maps = <PersistentHashMap<_MockKey, int>>[];
     maps.add(const PersistentHashMap<_MockKey, int>.empty());
     for (int i = 0; i < 32 * 32; i++) {
       maps.add(maps.last.put(_MockKey(hashCode: i, payload: '$i'), i));

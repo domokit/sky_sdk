@@ -1,0 +1,81 @@
+{
+    "gclient_variables": {
+        "use_rbe": true
+    },
+    "gn": [
+        "--android",
+        "--android-cpu=x64",
+        "--no-lto",
+        "--rbe",
+        "--no-goma",
+        "--target-dir",
+        "ci/android_emulator_skia_debug_x64"
+    ],
+    "dependencies": [
+        {
+            "dependency": "goldctl",
+            "version": "git_revision:720a542f6fe4f92922c3b8f0fdcc4d2ac6bb83cd"
+        }
+    ],
+    "name": "ci/android_emulator_skia_debug_x64",
+    "description": "Build for debug mode x64 Android Skia scenario app tests.",
+    "ninja": {
+        "config": "ci/android_emulator_skia_debug_x64",
+        "targets": [
+            "flutter/impeller/toolkit/android:unittests",
+            "flutter/shell/platform/android:flutter_shell_native_unittests",
+            "flutter/testing/scenario_app"
+        ]
+    },
+    "tests": [
+        {
+            "language": "dart",
+            "name": "Android Scenario App Integration Tests (Skia)",
+            "test_timeout_secs": 900,
+            "max_attempts": 2,
+            "test_dependencies": [
+                {
+                    "dependency": "android_virtual_device",
+                    "version": "android_34_google_apis_x64.textpb"
+                },
+                {
+                    "dependency": "avd_cipd_version",
+                    "version": "build_id:8733065022087935185"
+                }
+            ],
+            "contexts": [
+                "android_virtual_device"
+            ],
+            "script": "flutter/testing/scenario_app/bin/run_android_tests.dart",
+            "parameters": [
+                "--out-dir=../out/ci/android_emulator_skia_debug_x64",
+                "--no-enable-impeller"
+            ]
+        },
+        {
+            "language": "dart",
+            "name": "Android Scenario App Integration Tests (Skia, SurfaceTexture)",
+            "test_timeout_secs": 900,
+            "max_attempts": 2,
+            "test_dependencies": [
+                {
+                    "dependency": "android_virtual_device",
+                    "version": "android_34_google_apis_x64.textpb"
+                },
+                {
+                    "dependency": "avd_cipd_version",
+                    "version": "build_id:8733065022087935185"
+                }
+            ],
+            "contexts": [
+                "android_virtual_device"
+            ],
+            "script": "flutter/testing/scenario_app/bin/run_android_tests.dart",
+            "parameters": [
+                "--out-dir=../out/ci/android_emulator_skia_debug_x64",
+                "--no-enable-impeller",
+                "--force-surface-producer-surface-texture"
+            ]
+        }
+    ]
+}

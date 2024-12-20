@@ -25,10 +25,9 @@ void main() {
       goldenKey = Uri.parse('file://golden_key');
       imageFile2 = globals.fs.file('second_test_image_file');
       goldenKey2 = Uri.parse('file://second_golden_key');
-      createFakeProcess = (String stdout) => FakeProcess(
-        exitCode: Future<int>.value(0),
-        stdout: stdoutFromString(stdout),
-      );
+      createFakeProcess =
+          (String stdout) =>
+              FakeProcess(exitCode: Future<int>.value(0), stdout: stdoutFromString(stdout));
     });
 
     testWithoutContext('can pass data', () async {
@@ -40,14 +39,20 @@ void main() {
       final FakeProcess mockProcess = createFakeProcess('${jsonEncode(expectedResponse)}\n');
       final MemoryIOSink ioSink = mockProcess.stdin as MemoryIOSink;
 
-      final TestGoldenComparatorProcess process = TestGoldenComparatorProcess(mockProcess, logger: BufferLogger.test());
+      final TestGoldenComparatorProcess process = TestGoldenComparatorProcess(
+        mockProcess,
+        logger: BufferLogger.test(),
+      );
       process.sendCommand(imageFile, goldenKey, false);
 
       final Map<String, dynamic> response = await process.getResponse();
       final String stringToStdin = ioSink.getAndClear();
 
       expect(response, expectedResponse);
-      expect(stringToStdin, '{"imageFile":"test_image_file","key":"file://golden_key/","update":false}\n');
+      expect(
+        stringToStdin,
+        '{"imageFile":"test_image_file","key":"file://golden_key/","update":false}\n',
+      );
     });
 
     testWithoutContext('can handle multiple requests', () async {
@@ -60,10 +65,15 @@ void main() {
         'message': 'some other message',
       };
 
-      final FakeProcess mockProcess = createFakeProcess('${jsonEncode(expectedResponse1)}\n${jsonEncode(expectedResponse2)}\n');
+      final FakeProcess mockProcess = createFakeProcess(
+        '${jsonEncode(expectedResponse1)}\n${jsonEncode(expectedResponse2)}\n',
+      );
       final MemoryIOSink ioSink = mockProcess.stdin as MemoryIOSink;
 
-      final TestGoldenComparatorProcess process = TestGoldenComparatorProcess(mockProcess, logger: BufferLogger.test());
+      final TestGoldenComparatorProcess process = TestGoldenComparatorProcess(
+        mockProcess,
+        logger: BufferLogger.test(),
+      );
       process.sendCommand(imageFile, goldenKey, false);
 
       final Map<String, dynamic> response1 = await process.getResponse();
@@ -75,7 +85,10 @@ void main() {
 
       expect(response1, expectedResponse1);
       expect(response2, expectedResponse2);
-      expect(stringToStdin, '{"imageFile":"test_image_file","key":"file://golden_key/","update":false}\n{"imageFile":"second_test_image_file","key":"file://second_golden_key/","update":true}\n');
+      expect(
+        stringToStdin,
+        '{"imageFile":"test_image_file","key":"file://golden_key/","update":false}\n{"imageFile":"second_test_image_file","key":"file://second_golden_key/","update":true}\n',
+      );
     });
 
     testWithoutContext('ignores anything that does not look like JSON', () async {
@@ -93,18 +106,23 @@ Other JSON data after the initial data
 ''');
       final MemoryIOSink ioSink = mockProcess.stdin as MemoryIOSink;
 
-      final TestGoldenComparatorProcess process = TestGoldenComparatorProcess(mockProcess,logger: BufferLogger.test());
+      final TestGoldenComparatorProcess process = TestGoldenComparatorProcess(
+        mockProcess,
+        logger: BufferLogger.test(),
+      );
       process.sendCommand(imageFile, goldenKey, false);
 
       final Map<String, dynamic> response = await process.getResponse();
       final String stringToStdin = ioSink.getAndClear();
 
       expect(response, expectedResponse);
-      expect(stringToStdin, '{"imageFile":"test_image_file","key":"file://golden_key/","update":false}\n');
+      expect(
+        stringToStdin,
+        '{"imageFile":"test_image_file","key":"file://golden_key/","update":false}\n',
+      );
     });
   });
 }
 
-Stream<List<int>> stdoutFromString(String string) => Stream<List<int>>.fromIterable(<List<int>>[
-  utf8.encode(string),
-]);
+Stream<List<int>> stdoutFromString(String string) =>
+    Stream<List<int>>.fromIterable(<List<int>>[utf8.encode(string)]);

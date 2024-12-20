@@ -1,0 +1,341 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+assert(is_linux)
+
+import("//flutter/build/zip_bundle.gni")
+import("//flutter/shell/platform/glfw/config.gni")
+import("//flutter/testing/testing.gni")
+
+group("linux") {
+  deps = [
+    ":flutter_linux_gtk",
+    ":publish_headers_linux",
+  ]
+  if (build_glfw_shell) {
+    deps += [
+      ":flutter_linux_glfw",
+      "//flutter/shell/platform/glfw:publish_headers_glfw",
+      "//flutter/shell/platform/glfw/client_wrapper:publish_wrapper_glfw",
+    ]
+  }
+}
+
+# Temporary workaround for the issue describe in
+# https://github.com/flutter/flutter/issues/14509 and
+# https://github.com/flutter/flutter/issues/14438
+# Remove once the build infrastructure moves to Ubuntu 18.04 or newer, where
+# the underlying issue is fixed.
+config("disable_fatal_link_warnings") {
+  visibility = [ ":*" ]
+  ldflags = [ "-Wl,--no-fatal-warnings" ]
+}
+
+if (build_glfw_shell) {
+  shared_library("flutter_linux_glfw") {
+    deps = [ "//flutter/shell/platform/glfw:flutter_glfw" ]
+
+    configs += [ ":disable_fatal_link_warnings" ]
+
+    public_configs = [ "//flutter:config" ]
+  }
+}
+
+_public_headers = [
+  "public/flutter_linux/fl_application.h",
+  "public/flutter_linux/fl_basic_message_channel.h",
+  "public/flutter_linux/fl_binary_codec.h",
+  "public/flutter_linux/fl_binary_messenger.h",
+  "public/flutter_linux/fl_dart_project.h",
+  "public/flutter_linux/fl_engine.h",
+  "public/flutter_linux/fl_event_channel.h",
+  "public/flutter_linux/fl_json_message_codec.h",
+  "public/flutter_linux/fl_json_method_codec.h",
+  "public/flutter_linux/fl_message_codec.h",
+  "public/flutter_linux/fl_method_call.h",
+  "public/flutter_linux/fl_method_channel.h",
+  "public/flutter_linux/fl_method_codec.h",
+  "public/flutter_linux/fl_method_response.h",
+  "public/flutter_linux/fl_pixel_buffer_texture.h",
+  "public/flutter_linux/fl_plugin_registrar.h",
+  "public/flutter_linux/fl_plugin_registry.h",
+  "public/flutter_linux/fl_standard_message_codec.h",
+  "public/flutter_linux/fl_standard_method_codec.h",
+  "public/flutter_linux/fl_string_codec.h",
+  "public/flutter_linux/fl_texture.h",
+  "public/flutter_linux/fl_texture_gl.h",
+  "public/flutter_linux/fl_texture_registrar.h",
+  "public/flutter_linux/fl_value.h",
+  "public/flutter_linux/fl_view.h",
+  "public/flutter_linux/flutter_linux.h",
+]
+
+config("relative_flutter_linux_headers") {
+  include_dirs = [ "public" ]
+}
+
+source_set("flutter_linux_sources") {
+  public = _public_headers + [
+             "fl_binary_messenger_private.h",
+             "fl_dart_project_private.h",
+             "fl_engine_private.h",
+             "fl_keyboard_handler.h",
+             "fl_keyboard_manager.h",
+             "fl_keyboard_pending_event.h",
+             "fl_keyboard_view_delegate.h",
+             "fl_key_event.h",
+             "fl_key_channel_responder.h",
+             "fl_key_embedder_responder.h",
+             "fl_key_embedder_responder_private.h",
+             "fl_method_call_private.h",
+             "fl_method_channel_private.h",
+             "fl_method_codec_private.h",
+             "fl_plugin_registrar_private.h",
+             "fl_pointer_manager.h",
+             "fl_window_state_monitor.h",
+             "key_mapping.h",
+           ]
+
+  configs += [ "//flutter/shell/platform/linux/config:gtk" ]
+
+  sources = [
+    "fl_accessible_node.cc",
+    "fl_accessible_text_field.cc",
+    "fl_application.cc",
+    "fl_basic_message_channel.cc",
+    "fl_binary_codec.cc",
+    "fl_binary_messenger.cc",
+    "fl_dart_project.cc",
+    "fl_engine.cc",
+    "fl_event_channel.cc",
+    "fl_framebuffer.cc",
+    "fl_gnome_settings.cc",
+    "fl_json_message_codec.cc",
+    "fl_json_method_codec.cc",
+    "fl_key_channel_responder.cc",
+    "fl_key_embedder_responder.cc",
+    "fl_key_event.cc",
+    "fl_key_event_channel.cc",
+    "fl_keyboard_channel.cc",
+    "fl_keyboard_handler.cc",
+    "fl_keyboard_layout.cc",
+    "fl_keyboard_manager.cc",
+    "fl_keyboard_pending_event.cc",
+    "fl_keyboard_view_delegate.cc",
+    "fl_message_codec.cc",
+    "fl_method_call.cc",
+    "fl_method_channel.cc",
+    "fl_method_codec.cc",
+    "fl_method_response.cc",
+    "fl_mouse_cursor_channel.cc",
+    "fl_mouse_cursor_handler.cc",
+    "fl_pixel_buffer_texture.cc",
+    "fl_platform_channel.cc",
+    "fl_platform_handler.cc",
+    "fl_plugin_registrar.cc",
+    "fl_plugin_registry.cc",
+    "fl_pointer_manager.cc",
+    "fl_renderable.cc",
+    "fl_renderer.cc",
+    "fl_renderer_gdk.cc",
+    "fl_renderer_headless.cc",
+    "fl_scrolling_manager.cc",
+    "fl_settings.cc",
+    "fl_settings_channel.cc",
+    "fl_settings_handler.cc",
+    "fl_settings_portal.cc",
+    "fl_socket_accessible.cc",
+    "fl_standard_message_codec.cc",
+    "fl_standard_method_codec.cc",
+    "fl_string_codec.cc",
+    "fl_task_runner.cc",
+    "fl_task_runner.h",
+    "fl_text_input_channel.cc",
+    "fl_text_input_handler.cc",
+    "fl_text_input_view_delegate.cc",
+    "fl_texture.cc",
+    "fl_texture_gl.cc",
+    "fl_texture_registrar.cc",
+    "fl_touch_manager.cc",
+    "fl_value.cc",
+    "fl_view.cc",
+    "fl_view_accessible.cc",
+    "fl_window_state_monitor.cc",
+    "key_mapping.g.cc",
+  ]
+
+  # Set flag to stop headers being directly included (library users should not do this)
+  defines = [
+    "FLUTTER_LINUX_COMPILATION",
+    "FLUTTER_ENGINE_NO_PROTOTYPES",
+  ]
+
+  deps = [
+    "//flutter/fml",
+    "//flutter/shell/platform/common:common_cpp_enums",
+    "//flutter/shell/platform/common:common_cpp_input",
+    "//flutter/shell/platform/common:common_cpp_switches",
+    "//flutter/shell/platform/embedder:embedder_headers",
+    "//flutter/third_party/rapidjson",
+  ]
+}
+
+source_set("flutter_linux") {
+  configs += [
+    "//flutter/shell/platform/linux/config:gtk",
+    "//flutter/shell/platform/linux/config:epoxy",
+  ]
+
+  defines = [ "FLUTTER_ENGINE_NO_PROTOTYPES" ]
+
+  public_deps = [ ":flutter_linux_sources" ]
+
+  deps = [ "//flutter/shell/platform/embedder:embedder_as_internal_library" ]
+}
+
+test_fixtures("flutter_linux_fixtures") {
+  fixtures = []
+}
+
+copy("flutter_linux_gschemas") {
+  testonly = true
+
+  sources = [ "testing/gschemas/ubuntu-20.04.compiled" ]
+  outputs = [ "$target_gen_dir/assets/{{source_name_part}}/gschemas.compiled" ]
+}
+
+executable("flutter_linux_unittests") {
+  testonly = true
+
+  sources = [
+    "fl_accessible_node_test.cc",
+    "fl_accessible_text_field_test.cc",
+    "fl_application_test.cc",
+    "fl_basic_message_channel_test.cc",
+    "fl_binary_codec_test.cc",
+    "fl_binary_messenger_test.cc",
+    "fl_dart_project_test.cc",
+    "fl_engine_test.cc",
+    "fl_event_channel_test.cc",
+    "fl_framebuffer_test.cc",
+    "fl_gnome_settings_test.cc",
+    "fl_json_message_codec_test.cc",
+    "fl_json_method_codec_test.cc",
+    "fl_key_channel_responder_test.cc",
+    "fl_key_embedder_responder_test.cc",
+    "fl_keyboard_handler_test.cc",
+    "fl_keyboard_layout_test.cc",
+    "fl_keyboard_manager_test.cc",
+    "fl_message_codec_test.cc",
+    "fl_method_channel_test.cc",
+    "fl_method_codec_test.cc",
+    "fl_method_response_test.cc",
+    "fl_pixel_buffer_texture_test.cc",
+    "fl_platform_channel_test.cc",
+    "fl_platform_handler_test.cc",
+    "fl_plugin_registrar_test.cc",
+    "fl_pointer_manager_test.cc",
+    "fl_renderer_test.cc",
+    "fl_scrolling_manager_test.cc",
+    "fl_settings_handler_test.cc",
+    "fl_settings_portal_test.cc",
+    "fl_standard_message_codec_test.cc",
+    "fl_standard_method_codec_test.cc",
+    "fl_string_codec_test.cc",
+    "fl_text_input_handler_test.cc",
+    "fl_texture_gl_test.cc",
+    "fl_texture_registrar_test.cc",
+    "fl_touch_manager_test.cc",
+    "fl_value_test.cc",
+    "fl_view_accessible_test.cc",
+    "fl_view_test.cc",
+    "fl_window_state_monitor_test.cc",
+    "key_mapping_test.cc",
+    "testing/fl_mock_binary_messenger.cc",
+    "testing/fl_test.cc",
+    "testing/fl_test_gtk_logs.cc",
+    "testing/fl_test_gtk_logs.h",
+    "testing/mock_engine.cc",
+    "testing/mock_epoxy.cc",
+    "testing/mock_im_context.cc",
+    "testing/mock_keymap.cc",
+    "testing/mock_plugin_registrar.cc",
+    "testing/mock_renderer.cc",
+    "testing/mock_settings.cc",
+    "testing/mock_signal_handler.cc",
+    "testing/mock_text_input_view_delegate.cc",
+    "testing/mock_texture_registrar.cc",
+    "testing/mock_window.cc",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+
+  configs += [
+    "//flutter/shell/platform/linux/config:gtk",
+    "//flutter/shell/platform/linux/config:epoxy",
+  ]
+
+  defines = [
+    "FLUTTER_ENGINE_NO_PROTOTYPES",
+
+    # Set flag to allow public headers to be directly included
+    # (library users should not do this)
+    "FLUTTER_LINUX_COMPILATION",
+  ]
+
+  deps = [
+    ":flutter_linux_fixtures",
+    ":flutter_linux_gschemas",
+    ":flutter_linux_sources",
+    "//flutter/runtime:libdart",
+    "//flutter/shell/platform/common:common_cpp_enums",
+    "//flutter/shell/platform/embedder:embedder_headers",
+    "//flutter/shell/platform/embedder:embedder_test_utils",
+    "//flutter/testing",
+  ]
+}
+
+shared_library("flutter_linux_gtk") {
+  deps = [ ":flutter_linux" ]
+
+  ldflags = [ "-Wl,-rpath,\$ORIGIN" ]
+
+  public_configs = [ "//flutter:config" ]
+}
+
+copy("publish_headers_linux") {
+  sources = _public_headers
+  outputs = [ "$root_out_dir/flutter_linux/{{source_file_part}}" ]
+}
+
+zip_bundle("flutter_gtk") {
+  prefix = "$full_target_platform_name-$flutter_runtime_mode/"
+  output = "${prefix}${full_target_platform_name}-flutter-gtk.zip"
+  deps = [
+    ":flutter_linux_gtk",
+    ":publish_headers_linux",
+    "$dart_src/runtime/bin:gen_snapshot",
+  ]
+  sources = get_target_outputs(":publish_headers_linux")
+  tmp_files = []
+  foreach(source, sources) {
+    tmp_files += [
+      {
+        source = source
+        destination = rebase_path(source, "$root_build_dir")
+      },
+    ]
+  }
+  tmp_files += [
+    {
+      source = "$root_build_dir/libflutter_${host_os}_gtk.so"
+      destination = "libflutter_${host_os}_gtk.so"
+    },
+    {
+      source = "$root_build_dir/gen_snapshot"
+      destination = "gen_snapshot"
+    },
+  ]
+  files = tmp_files
+}

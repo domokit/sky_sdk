@@ -1,0 +1,95 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/profiler.gni")
+import("//build/toolchain/rbe.gni")
+
+# This config causes functions not to be automatically exported from shared
+# libraries. By default, all symbols are exported but this means there are
+# lots of exports that slow everything down. In general we explicitly mark
+# which functiosn we want to export from components.
+#
+# Some third_party code assumes all functions are exported so this is separated
+# into its own config so such libraries can remove this config to make symbols
+# public again.
+#
+# See http://gcc.gnu.org/wiki/Visibility
+config("symbol_visibility_hidden") {
+  # Note that -fvisibility-inlines-hidden is set globally in the compiler
+  # config since that can almost always be applied.
+  if (!enable_profiling && !disable_hidden_visibility) {
+    defines = [ "_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS" ]
+    cflags = [ "-fvisibility=hidden" ]
+  }
+}
+
+# Settings for executables and shared libraries.
+config("executable_ldconfig") {
+  if (is_android) {
+    ldflags = [
+      "-Bdynamic",
+      "-Wl,-z,nocopyreloc",
+    ]
+  } else {
+    # Android doesn't support rpath.
+    ldflags = [
+      # Want to pass "\$". GN will re-escape as required for ninja.
+      "-Wl,-rpath=\$ORIGIN/",
+      "-Wl,-rpath-link=",
+
+      # Newer binutils don't set DT_RPATH unless you disable "new" dtags
+      # and the new DT_RUNPATH doesn't work without --no-as-needed flag.
+      "-Wl,--disable-new-dtags",
+    ]
+  }
+}
+
+config("no_exceptions") {
+  no_exceptions_flags = [ "-fno-exceptions" ]
+  cflags_cc = no_exceptions_flags
+  cflags_objcc = no_exceptions_flags
+}
+
+config("relative_paths") {
+  # Make builds independent of absolute file path.  The file names
+  # embedded in debugging information will be expressed as relative to
+  # the build directory, e.g. "../.." for an "out/subdir" under //.
+  # This is consistent with the file names in __FILE__ expansions
+  # (e.g. in assertion messages), which the compiler doesn't provide a
+  # way to remap.  That way source file names in logging and
+  # symbolization can all be treated the same way.  This won't go well
+  # if root_build_dir is not a subdirectory //, but there isn't a better
+  # option to keep all source file name references uniformly relative to
+  # a single root.
+  cflags = []
+  cflags_objcc = []
+  absolute_path = rebase_path("//")
+  relative_path = ""
+  if (use_rbe) {
+    # objc builds are always local even when rbe is enabled.
+    cflags_objcc += [
+      # This makes sure that the DW_AT_comp_dir string (the current
+      # directory while running the compiler, which is the basis for all
+      # relative source file names in the DWARF info) is represented as
+      # relative to //.
+      "-fdebug-prefix-map=$absolute_path=$relative_path",
+    ]
+  } else {
+    cflags += [
+      "-fdebug-prefix-map=$absolute_path=$relative_path",
+    ]
+  }
+  cflags += [
+    # This makes sure that include directories in the toolchain are
+    # represented as relative to the build directory (because that's how
+    # we invoke the compiler), rather than absolute.  This can affect
+    # __FILE__ expansions (e.g. assertions in system headers).  We
+    # normally run a compiler that's someplace within the source tree
+    # (//buildtools/...), so its absolute installation path will have a
+    # prefix matching absolute_path and hence be mapped to relative_path
+    # in the debugging information, so this should actually be
+    # superfluous for purposes of the debugging information.
+    "-no-canonical-prefixes",
+  ]
+}

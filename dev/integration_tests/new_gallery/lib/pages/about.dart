@@ -8,9 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../gallery_localizations.dart';
 
-void showAboutDialog({
-  required BuildContext context,
-}) {
+void showAboutDialog({required BuildContext context}) {
   showDialog<void>(
     context: context,
     builder: (BuildContext context) {
@@ -28,8 +26,7 @@ class _AboutDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final TextStyle bodyTextStyle =
-        textTheme.bodyLarge!.apply(color: colorScheme.onPrimary);
+    final TextStyle bodyTextStyle = textTheme.bodyLarge!.apply(color: colorScheme.onPrimary);
     final GalleryLocalizations localizations = GalleryLocalizations.of(context)!;
 
     const String name = 'Flutter Gallery'; // Don't need to localize.
@@ -52,71 +49,59 @@ class _AboutDialog extends StatelessWidget {
           children: <Widget>[
             FutureBuilder<String>(
               future: getVersionNumber(),
-              builder: (BuildContext context, AsyncSnapshot<String> snapshot) => SelectableText(
-                snapshot.hasData ? '$name ${snapshot.data}' : name,
-                style: textTheme.headlineMedium!.apply(
-                  color: colorScheme.onPrimary,
-                ),
-              ),
+              builder:
+                  (BuildContext context, AsyncSnapshot<String> snapshot) => SelectableText(
+                    snapshot.hasData ? '$name ${snapshot.data}' : name,
+                    style: textTheme.headlineMedium!.apply(color: colorScheme.onPrimary),
+                  ),
             ),
             const SizedBox(height: 24),
             SelectableText.rich(
               TextSpan(
                 children: <InlineSpan>[
+                  TextSpan(style: bodyTextStyle, text: seeSourceFirst),
                   TextSpan(
-                    style: bodyTextStyle,
-                    text: seeSourceFirst,
-                  ),
-                  TextSpan(
-                    style: bodyTextStyle.copyWith(
-                      color: colorScheme.primary,
-                    ),
+                    style: bodyTextStyle.copyWith(color: colorScheme.primary),
                     text: repoText,
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () async {
-                        final Uri url =
-                            Uri.parse('https://github.com/flutter/gallery/');
-                        if (await canLaunchUrl(url)) {
-                          await launchUrl(url);
-                        }
-                      },
+                    recognizer:
+                        TapGestureRecognizer()
+                          ..onTap = () async {
+                            final Uri url = Uri.parse('https://github.com/flutter/gallery/');
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url);
+                            }
+                          },
                   ),
-                  TextSpan(
-                    style: bodyTextStyle,
-                    text: seeSourceSecond,
-                  ),
+                  TextSpan(style: bodyTextStyle, text: seeSourceSecond),
                 ],
               ),
             ),
             const SizedBox(height: 18),
-            SelectableText(
-              legalese,
-              style: bodyTextStyle,
-            ),
+            SelectableText(legalese, style: bodyTextStyle),
           ],
         ),
       ),
       actions: <Widget>[
         TextButton(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute<void>(
-              builder: (BuildContext context) => Theme(
-                data: Theme.of(context).copyWith(
-                  textTheme: Typography.material2018(
-                    platform: Theme.of(context).platform,
-                  ).black,
-                  cardColor: Colors.white,
-                ),
-                child: const LicensePage(
-                  applicationName: name,
-                  applicationLegalese: legalese,
-                ),
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder:
+                    (BuildContext context) => Theme(
+                      data: Theme.of(context).copyWith(
+                        textTheme:
+                            Typography.material2018(platform: Theme.of(context).platform).black,
+                        cardColor: Colors.white,
+                      ),
+                      child: const LicensePage(
+                        applicationName: name,
+                        applicationLegalese: legalese,
+                      ),
+                    ),
               ),
-            ));
+            );
           },
-          child: Text(
-            MaterialLocalizations.of(context).viewLicensesButtonLabel,
-          ),
+          child: Text(MaterialLocalizations.of(context).viewLicensesButtonLabel),
         ),
         TextButton(
           onPressed: () {

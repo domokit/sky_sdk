@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="dev.flutter.testing.{{apk-library-name}}"
+    android:versionCode="1"
+    android:versionName="1.0"
+    >
+  <uses-sdk android:minSdkVersion="23"/>
+  <application android:hasCode="false">
+    <activity android:name="android.app.NativeActivity"
+              android:configChanges="orientation|keyboardHidden"
+              android:exported="true">
+      <meta-data android:name="android.app.lib_name"
+                 android:value="{{apk-library-name}}" />
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+  </application>
+</manifest>

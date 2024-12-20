@@ -8,12 +8,7 @@ import 'package:intl/intl.dart';
 import '../../gallery/demo.dart';
 
 class _InputDropdown extends StatelessWidget {
-  const _InputDropdown({
-    this.labelText,
-    this.valueText,
-    this.valueStyle,
-    this.onPressed,
-  });
+  const _InputDropdown({this.labelText, this.valueText, this.valueStyle, this.onPressed});
 
   final String? labelText;
   final String? valueText;
@@ -25,17 +20,19 @@ class _InputDropdown extends StatelessWidget {
     return InkWell(
       onTap: onPressed,
       child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: labelText,
-        ),
+        decoration: InputDecoration(labelText: labelText),
         baseStyle: valueStyle,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(valueText!, style: valueStyle),
-            Icon(Icons.arrow_drop_down,
-              color: Theme.of(context).brightness == Brightness.light ? Colors.grey.shade700 : Colors.white70,
+            Icon(
+              Icons.arrow_drop_down,
+              color:
+                  Theme.of(context).brightness == Brightness.light
+                      ? Colors.grey.shade700
+                      : Colors.white70,
             ),
           ],
         ),
@@ -72,10 +69,7 @@ class _DateTimePicker extends StatelessWidget {
   }
 
   Future<void> _selectTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: selectedTime!,
-    );
+    final TimeOfDay? picked = await showTimePicker(context: context, initialTime: selectedTime!);
     if (picked != null && picked != selectedTime) {
       selectTime!(picked);
     }
@@ -93,7 +87,9 @@ class _DateTimePicker extends StatelessWidget {
             labelText: labelText,
             valueText: DateFormat.yMMMd().format(selectedDate!),
             valueStyle: valueStyle,
-            onPressed: () { _selectDate(context); },
+            onPressed: () {
+              _selectDate(context);
+            },
           ),
         ),
         const SizedBox(width: 12.0),
@@ -102,7 +98,9 @@ class _DateTimePicker extends StatelessWidget {
           child: _InputDropdown(
             valueText: selectedTime!.format(context),
             valueStyle: valueStyle,
-            onPressed: () { _selectTime(context); },
+            onPressed: () {
+              _selectTime(context);
+            },
           ),
         ),
       ],
@@ -150,9 +148,7 @@ class _DateAndTimePickerDemoState extends State<DateAndTimePickerDemo> {
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Location',
-                ),
+                decoration: const InputDecoration(labelText: 'Location'),
                 style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontSize: 20.0),
               ),
               _DateTimePicker(
@@ -200,12 +196,10 @@ class _DateAndTimePickerDemoState extends State<DateAndTimePickerDemo> {
                       _activity = newValue;
                     });
                   },
-                  items: _allActivities.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+                  items:
+                      _allActivities.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(value: value, child: Text(value));
+                      }).toList(),
                 ),
               ),
             ],

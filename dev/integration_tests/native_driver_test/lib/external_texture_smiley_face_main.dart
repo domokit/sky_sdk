@@ -13,21 +13,16 @@ import 'src/allow_list_devices.dart';
 
 const MethodChannel _channel = MethodChannel('smiley_face_texture');
 Future<int> _fetchTexture(int width, int height) async {
-  final int? result = await _channel.invokeMethod<int>(
-    'initTexture',
-    <String, int>{
-      'width': width,
-      'height': height,
-    },
-  );
+  final int? result = await _channel.invokeMethod<int>('initTexture', <String, int>{
+    'width': width,
+    'height': height,
+  });
   return result!;
 }
 
 void main() async {
   ensureAndroidOrIosDevice();
-  enableFlutterDriverExtension(commands: <CommandExtension>[
-    nativeDriverCommands,
-  ]);
+  enableFlutterDriverExtension(commands: <CommandExtension>[nativeDriverCommands]);
 
   // Run on full screen.
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);

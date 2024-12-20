@@ -93,9 +93,12 @@ void main() {
   SliverAnimatedList.of(context);
 
   // Changes made in https://github.com/flutter/flutter/pull/59127
-  const BottomNavigationBarItem bottomNavigationBarItem = BottomNavigationBarItem(label: myTitle);
-  const BottomNavigationBarItem bottomNavigationBarItem = BottomNavigationBarItem();
-  const BottomNavigationBarItem bottomNavigationBarItem = BottomNavigationBarItem(error: '');
+  const BottomNavigationBarItem bottomNavigationBarItem =
+      BottomNavigationBarItem(label: myTitle);
+  const BottomNavigationBarItem bottomNavigationBarItem =
+      BottomNavigationBarItem();
+  const BottomNavigationBarItem bottomNavigationBarItem =
+      BottomNavigationBarItem(error: '');
   bottomNavigationBarItem.label;
 
   // Changes made in https://github.com/flutter/flutter/pull/79160
@@ -121,19 +124,23 @@ void main() {
   listWheelElement.insertRenderObjectChild(renderObject, object);
   listWheelElement.moveRenderObjectChild(renderObject, object);
   listWheelElement.removeRenderObjectChild(renderObject);
-  final MultiChildRenderObjectElement multiChildRenderObjectElement = MultiChildRenderObjectElement();
+  final MultiChildRenderObjectElement multiChildRenderObjectElement =
+      MultiChildRenderObjectElement();
   multiChildRenderObjectElement.insertRenderObjectChild(renderObject, object);
   multiChildRenderObjectElement.moveRenderObjectChild(renderObject, object);
   multiChildRenderObjectElement.removeRenderObjectChild(renderObject);
-  final SingleChildRenderObjectElement singleChildRenderObjectElement = SingleChildRenderObjectElement();
+  final SingleChildRenderObjectElement singleChildRenderObjectElement =
+      SingleChildRenderObjectElement();
   singleChildRenderObjectElement.insertRenderObjectChild(renderObject, object);
   singleChildRenderObjectElement.moveRenderObjectChild(renderObject, object);
   singleChildRenderObjectElement.removeRenderObjectChild(renderObject);
-  final SliverMultiBoxAdaptorElement sliverMultiBoxAdaptorElement = SliverMultiBoxAdaptorElement();
+  final SliverMultiBoxAdaptorElement sliverMultiBoxAdaptorElement =
+      SliverMultiBoxAdaptorElement();
   sliverMultiBoxAdaptorElement.insertRenderObjectChild(renderObject, object);
   sliverMultiBoxAdaptorElement.moveRenderObjectChild(renderObject, object);
   sliverMultiBoxAdaptorElement.removeRenderObjectChild(renderObject);
-  final RenderObjectToWidgetElement renderObjectToWidgetElement = RenderObjectToWidgetElement(widget);
+  final RenderObjectToWidgetElement renderObjectToWidgetElement =
+      RenderObjectToWidgetElement(widget);
   renderObjectToWidgetElement.insertRenderObjectChild(renderObject, object);
   renderObjectToWidgetElement.moveRenderObjectChild(renderObject, object);
   renderObjectToWidgetElement.removeRenderObjectChild(renderObject);
@@ -146,8 +153,10 @@ void main() {
   listWheelViewport.clipBehavior;
 
   // Changes made in https://github.com/flutter/flutter/pull/87839
-  final OverscrollIndicatorNotification notification = OverscrollIndicatorNotification(leading: true);
-  final OverscrollIndicatorNotification notification = OverscrollIndicatorNotification(error: '');
+  final OverscrollIndicatorNotification notification =
+      OverscrollIndicatorNotification(leading: true);
+  final OverscrollIndicatorNotification notification =
+      OverscrollIndicatorNotification(error: '');
   notification.disallowIndicator();
 
   // Changes made in https://github.com/flutter/flutter/pull/96957
@@ -171,7 +180,10 @@ void main() {
   );
   final Clip clip = details.decorationClipBehavior;
 
-  final PlatformMenuBar platformMenuBar = PlatformMenuBar(menus: <PlatformMenuItem>[], child: const SizedBox());
+  final PlatformMenuBar platformMenuBar = PlatformMenuBar(
+    menus: <PlatformMenuItem>[],
+    child: const SizedBox(),
+  );
   final Widget bodyValue = platformMenuBar.child;
 
   // Changes made in https://github.com/flutter/flutter/pull/139260

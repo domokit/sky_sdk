@@ -59,52 +59,45 @@ baz=qux
 
     group('isWithinVersionRange', () {
       test('unknown not included', () {
-        expect(isWithinVersionRange('unknown', min: '1.0.0', max: '1.1.3'),
-            isFalse);
+        expect(isWithinVersionRange('unknown', min: '1.0.0', max: '1.1.3'), isFalse);
       });
 
       test('pre java 8 format included', () {
-        expect(isWithinVersionRange('1.0.0_201', min: '1.0.0', max: '1.1.3'),
-            isTrue);
+        expect(isWithinVersionRange('1.0.0_201', min: '1.0.0', max: '1.1.3'), isTrue);
       });
 
       test('min included by default', () {
-        expect(
-            isWithinVersionRange('1.0.0', min: '1.0.0', max: '1.1.3'), isTrue);
+        expect(isWithinVersionRange('1.0.0', min: '1.0.0', max: '1.1.3'), isTrue);
       });
 
       test('max included by default', () {
-        expect(
-            isWithinVersionRange('1.1.3', min: '1.0.0', max: '1.1.3'), isTrue);
+        expect(isWithinVersionRange('1.1.3', min: '1.0.0', max: '1.1.3'), isTrue);
       });
 
       test('inclusive min excluded', () {
         expect(
-            isWithinVersionRange('1.0.0',
-                min: '1.0.0', max: '1.1.3', inclusiveMin: false),
-            isFalse);
+          isWithinVersionRange('1.0.0', min: '1.0.0', max: '1.1.3', inclusiveMin: false),
+          isFalse,
+        );
       });
 
       test('inclusive max excluded', () {
         expect(
-            isWithinVersionRange('1.1.3',
-                min: '1.0.0', max: '1.1.3', inclusiveMax: false),
-            isFalse);
+          isWithinVersionRange('1.1.3', min: '1.0.0', max: '1.1.3', inclusiveMax: false),
+          isFalse,
+        );
       });
 
       test('lower value excluded', () {
-        expect(
-            isWithinVersionRange('0.1.0', min: '1.0.0', max: '1.1.3'), isFalse);
+        expect(isWithinVersionRange('0.1.0', min: '1.0.0', max: '1.1.3'), isFalse);
       });
 
       test('higher value excluded', () {
-        expect(
-            isWithinVersionRange('1.1.4', min: '1.0.0', max: '1.1.3'), isFalse);
+        expect(isWithinVersionRange('1.1.4', min: '1.0.0', max: '1.1.3'), isFalse);
       });
 
       test('middle value included', () {
-        expect(
-            isWithinVersionRange('1.1.0', min: '1.0.0', max: '1.1.3'), isTrue);
+        expect(isWithinVersionRange('1.1.0', min: '1.0.0', max: '1.1.3'), isTrue);
       });
     });
   });
@@ -158,29 +151,36 @@ baz=qux
   group('text wrapping', () {
     const int lineLength = 40;
     const String longLine = 'This is a long line that needs to be wrapped.';
-    final String longLineWithNewlines = 'This is a long line with newlines that\n'
+    final String longLineWithNewlines =
+        'This is a long line with newlines that\n'
         'needs to be wrapped.\n\n'
         '${'0123456789' * 5}';
-    final String longAnsiLineWithNewlines = '${AnsiTerminal.red}This${AnsiTerminal.resetAll} is a long line with newlines that\n'
+    final String longAnsiLineWithNewlines =
+        '${AnsiTerminal.red}This${AnsiTerminal.resetAll} is a long line with newlines that\n'
         'needs to be wrapped.\n\n'
         '${AnsiTerminal.green}0123456789${AnsiTerminal.resetAll}'
         '${'0123456789' * 3}'
         '${AnsiTerminal.green}0123456789${AnsiTerminal.resetAll}';
     const String onlyAnsiSequences = '${AnsiTerminal.red}${AnsiTerminal.resetAll}';
-    final String indentedLongLineWithNewlines = '    This is an indented long line with newlines that\n'
+    final String indentedLongLineWithNewlines =
+        '    This is an indented long line with newlines that\n'
         'needs to be wrapped.\n\tAnd preserves tabs.\n      \n  '
         '${'0123456789' * 5}';
     const String shortLine = 'Short line.';
-    const String indentedLongLine = '    This is an indented long line that needs to be '
+    const String indentedLongLine =
+        '    This is an indented long line that needs to be '
         'wrapped and indentation preserved.';
     testWithoutContext('does not wrap by default in tests', () {
       expect(wrapText(longLine, columnWidth: 80, shouldWrap: true), equals(longLine));
     });
 
     testWithoutContext('can override wrap preference if preference is off', () {
-      expect(wrapText(longLine, columnWidth: lineLength, shouldWrap: true), equals('''
+      expect(
+        wrapText(longLine, columnWidth: lineLength, shouldWrap: true),
+        equals('''
 This is a long line that needs to be
-wrapped.'''));
+wrapped.'''),
+      );
     });
 
     testWithoutContext('can override wrap preference if preference is on', () {
@@ -196,30 +196,44 @@ wrapped.'''));
     });
 
     testWithoutContext('able to wrap long lines', () {
-      expect(wrapText(longLine, columnWidth: lineLength, shouldWrap: true), equals('''
+      expect(
+        wrapText(longLine, columnWidth: lineLength, shouldWrap: true),
+        equals('''
 This is a long line that needs to be
-wrapped.'''));
+wrapped.'''),
+      );
     });
 
     testWithoutContext('able to handle dynamically changing terminal column size', () {
-      expect(wrapText(longLine, columnWidth: 20, shouldWrap: true), equals('''
+      expect(
+        wrapText(longLine, columnWidth: 20, shouldWrap: true),
+        equals('''
 This is a long line
 that needs to be
-wrapped.'''));
+wrapped.'''),
+      );
 
-      expect(wrapText(longLine, columnWidth: lineLength, shouldWrap: true), equals('''
+      expect(
+        wrapText(longLine, columnWidth: lineLength, shouldWrap: true),
+        equals('''
 This is a long line that needs to be
-wrapped.'''));
+wrapped.'''),
+      );
     });
 
     testWithoutContext('wrap long lines with no whitespace', () {
-      expect(wrapText('0123456789' * 5, columnWidth: lineLength, shouldWrap: true), equals('''
+      expect(
+        wrapText('0123456789' * 5, columnWidth: lineLength, shouldWrap: true),
+        equals('''
 0123456789012345678901234567890123456789
-0123456789'''));
+0123456789'''),
+      );
     });
 
     testWithoutContext('refuses to wrap to a column smaller than 10 characters', () {
-      expect(wrapText('$longLine ${'0123456789' * 4}', columnWidth: 1, shouldWrap: true), equals('''
+      expect(
+        wrapText('$longLine ${'0123456789' * 4}', columnWidth: 1, shouldWrap: true),
+        equals('''
 This is a
 long line
 that needs
@@ -228,181 +242,253 @@ wrapped.
 0123456789
 0123456789
 0123456789
-0123456789'''));
+0123456789'''),
+      );
     });
     testWithoutContext('preserves indentation', () {
-      expect(wrapText(indentedLongLine, columnWidth: lineLength, shouldWrap: true), equals('''
+      expect(
+        wrapText(indentedLongLine, columnWidth: lineLength, shouldWrap: true),
+        equals('''
     This is an indented long line that
     needs to be wrapped and indentation
-    preserved.'''));
+    preserved.'''),
+      );
     });
 
     testWithoutContext('preserves indentation and stripping trailing whitespace', () {
-      expect(wrapText('$indentedLongLine   ', columnWidth: lineLength, shouldWrap: true), equals('''
+      expect(
+        wrapText('$indentedLongLine   ', columnWidth: lineLength, shouldWrap: true),
+        equals('''
     This is an indented long line that
     needs to be wrapped and indentation
-    preserved.'''));
+    preserved.'''),
+      );
     });
 
     testWithoutContext('wraps text with newlines', () {
-      expect(wrapText(longLineWithNewlines, columnWidth: lineLength, shouldWrap: true), equals('''
+      expect(
+        wrapText(longLineWithNewlines, columnWidth: lineLength, shouldWrap: true),
+        equals('''
 This is a long line with newlines that
 needs to be wrapped.
 
 0123456789012345678901234567890123456789
-0123456789'''));
+0123456789'''),
+      );
     });
 
     testWithoutContext('wraps text with ANSI sequences embedded', () {
-      expect(wrapText(longAnsiLineWithNewlines, columnWidth: lineLength, shouldWrap: true), equals('''
+      expect(
+        wrapText(longAnsiLineWithNewlines, columnWidth: lineLength, shouldWrap: true),
+        equals('''
 ${AnsiTerminal.red}This${AnsiTerminal.resetAll} is a long line with newlines that
 needs to be wrapped.
 
 ${AnsiTerminal.green}0123456789${AnsiTerminal.resetAll}012345678901234567890123456789
-${AnsiTerminal.green}0123456789${AnsiTerminal.resetAll}'''));
+${AnsiTerminal.green}0123456789${AnsiTerminal.resetAll}'''),
+      );
     });
 
     testWithoutContext('wraps text with only ANSI sequences', () {
-      expect(wrapText(onlyAnsiSequences, columnWidth: lineLength, shouldWrap: true),
-          equals('${AnsiTerminal.red}${AnsiTerminal.resetAll}'));
+      expect(
+        wrapText(onlyAnsiSequences, columnWidth: lineLength, shouldWrap: true),
+        equals('${AnsiTerminal.red}${AnsiTerminal.resetAll}'),
+      );
     });
 
     testWithoutContext('preserves indentation in the presence of newlines', () {
-      expect(wrapText(indentedLongLineWithNewlines, columnWidth: lineLength, shouldWrap: true), equals('''
+      expect(
+        wrapText(indentedLongLineWithNewlines, columnWidth: lineLength, shouldWrap: true),
+        equals('''
     This is an indented long line with
     newlines that
 needs to be wrapped.
 \tAnd preserves tabs.
 
   01234567890123456789012345678901234567
-  890123456789'''));
+  890123456789'''),
+      );
     });
 
     testWithoutContext('removes trailing whitespace when wrapping', () {
-      expect(wrapText('$longLine     \t', columnWidth: lineLength, shouldWrap: true), equals('''
+      expect(
+        wrapText('$longLine     \t', columnWidth: lineLength, shouldWrap: true),
+        equals('''
 This is a long line that needs to be
-wrapped.'''));
+wrapped.'''),
+      );
     });
 
     testWithoutContext('honors hangingIndent parameter', () {
-      expect(wrapText(longLine, columnWidth: lineLength, hangingIndent: 6, shouldWrap: true), equals('''
+      expect(
+        wrapText(longLine, columnWidth: lineLength, hangingIndent: 6, shouldWrap: true),
+        equals('''
 This is a long line that needs to be
-      wrapped.'''));
+      wrapped.'''),
+      );
     });
 
     testWithoutContext('handles hangingIndent with a single unwrapped line.', () {
-      expect(wrapText(shortLine, columnWidth: lineLength, hangingIndent: 6, shouldWrap: true), equals('''
-Short line.'''));
+      expect(
+        wrapText(shortLine, columnWidth: lineLength, hangingIndent: 6, shouldWrap: true),
+        equals('''
+Short line.'''),
+      );
     });
 
-    testWithoutContext('handles hangingIndent with two unwrapped lines and the second is empty.', () {
-      expect(wrapText('$shortLine\n', columnWidth: lineLength, hangingIndent: 6, shouldWrap: true), equals('''
+    testWithoutContext(
+      'handles hangingIndent with two unwrapped lines and the second is empty.',
+      () {
+        expect(
+          wrapText('$shortLine\n', columnWidth: lineLength, hangingIndent: 6, shouldWrap: true),
+          equals('''
 Short line.
-'''));
-    });
+'''),
+        );
+      },
+    );
 
     testWithoutContext('honors hangingIndent parameter on already indented line.', () {
-      expect(wrapText(indentedLongLine, columnWidth: lineLength, hangingIndent: 6, shouldWrap: true), equals('''
+      expect(
+        wrapText(indentedLongLine, columnWidth: lineLength, hangingIndent: 6, shouldWrap: true),
+        equals('''
     This is an indented long line that
           needs to be wrapped and
-          indentation preserved.'''));
+          indentation preserved.'''),
+      );
     });
 
     testWithoutContext('honors hangingIndent and indent parameters at the same time.', () {
-      expect(wrapText(indentedLongLine, columnWidth: lineLength, indent: 6, hangingIndent: 6, shouldWrap: true), equals('''
+      expect(
+        wrapText(
+          indentedLongLine,
+          columnWidth: lineLength,
+          indent: 6,
+          hangingIndent: 6,
+          shouldWrap: true,
+        ),
+        equals('''
           This is an indented long line
                 that needs to be wrapped
                 and indentation
-                preserved.'''));
+                preserved.'''),
+      );
     });
 
     testWithoutContext('honors indent parameter on already indented line.', () {
-      expect(wrapText(indentedLongLine, columnWidth: lineLength, indent: 6, shouldWrap: true), equals('''
+      expect(
+        wrapText(indentedLongLine, columnWidth: lineLength, indent: 6, shouldWrap: true),
+        equals('''
           This is an indented long line
           that needs to be wrapped and
-          indentation preserved.'''));
+          indentation preserved.'''),
+      );
     });
 
     testWithoutContext('honors hangingIndent parameter on already indented line.', () {
-      expect(wrapText(indentedLongLineWithNewlines, columnWidth: lineLength, hangingIndent: 6, shouldWrap: true), equals('''
+      expect(
+        wrapText(
+          indentedLongLineWithNewlines,
+          columnWidth: lineLength,
+          hangingIndent: 6,
+          shouldWrap: true,
+        ),
+        equals('''
     This is an indented long line with
           newlines that
 needs to be wrapped.
 	And preserves tabs.
 
   01234567890123456789012345678901234567
-        890123456789'''));
+        890123456789'''),
+      );
     });
 
     testWithoutContext('', () {
-      expect(wrapText(
-        '${' ' * 7}abc def ghi', columnWidth: 20, hangingIndent: 5, indent: 3, shouldWrap: true),
+      expect(
+        wrapText(
+          '${' ' * 7}abc def ghi',
+          columnWidth: 20,
+          hangingIndent: 5,
+          indent: 3,
+          shouldWrap: true,
+        ),
         equals(
           '          abc def\n'
-          '          ghi'
+          '          ghi',
         ),
       );
-      expect(wrapText(
-        'abc def ghi', columnWidth: 0, hangingIndent: 5, shouldWrap: true),
+      expect(
+        wrapText('abc def ghi', columnWidth: 0, hangingIndent: 5, shouldWrap: true),
         equals(
           'abc def\n'
-          'ghi'
+          'ghi',
         ),
       );
-      expect(wrapText(
-        'abc def ghi', columnWidth: 0, indent: 5, shouldWrap: true),
+      expect(
+        wrapText('abc def ghi', columnWidth: 0, indent: 5, shouldWrap: true),
         equals(
           'abc def\n'
-          'ghi'
+          'ghi',
         ),
       );
-      expect(wrapText(
-        '     abc def ghi', columnWidth: 0, shouldWrap: true),
+      expect(
+        wrapText('     abc def ghi', columnWidth: 0, shouldWrap: true),
         equals(
           'abc def\n'
-          'ghi'
+          'ghi',
         ),
       );
-      expect(wrapText(
-        'abc def ghi', columnWidth: kMinColumnWidth - 2, hangingIndent: 5, shouldWrap: true),
+      expect(
+        wrapText(
+          'abc def ghi',
+          columnWidth: kMinColumnWidth - 2,
+          hangingIndent: 5,
+          shouldWrap: true,
+        ),
         equals(
           'abc def\n'
-          'ghi'
+          'ghi',
         ),
       );
-      expect(wrapText(
-        'abc def ghi', columnWidth: kMinColumnWidth - 2, indent: 5, shouldWrap: true),
+      expect(
+        wrapText('abc def ghi', columnWidth: kMinColumnWidth - 2, indent: 5, shouldWrap: true),
         equals(
           'abc def\n'
-          'ghi'
+          'ghi',
         ),
       );
-      expect(wrapText(
-        '     abc def ghi', columnWidth: kMinColumnWidth - 2, shouldWrap: true),
+      expect(
+        wrapText('     abc def ghi', columnWidth: kMinColumnWidth - 2, shouldWrap: true),
         equals(
           'abc def\n'
-          'ghi'
+          'ghi',
         ),
       );
-      expect(wrapText(
-        'abc def ghi jkl', columnWidth: kMinColumnWidth + 2, hangingIndent: 5, shouldWrap: true),
+      expect(
+        wrapText(
+          'abc def ghi jkl',
+          columnWidth: kMinColumnWidth + 2,
+          hangingIndent: 5,
+          shouldWrap: true,
+        ),
         equals(
           'abc def ghi\n'
-          '  jkl'
+          '  jkl',
         ),
       );
-      expect(wrapText(
-        'abc def ghi', columnWidth: kMinColumnWidth + 2, indent: 5, shouldWrap: true),
+      expect(
+        wrapText('abc def ghi', columnWidth: kMinColumnWidth + 2, indent: 5, shouldWrap: true),
         equals(
           '  abc def\n'
-          '  ghi'
+          '  ghi',
         ),
       );
-      expect(wrapText(
-        '     abc def ghi', columnWidth: kMinColumnWidth + 2, shouldWrap: true),
+      expect(
+        wrapText('     abc def ghi', columnWidth: kMinColumnWidth + 2, shouldWrap: true),
         equals(
           '  abc def\n'
-          '  ghi'
+          '  ghi',
         ),
       );
     });
@@ -414,10 +500,25 @@ needs to be wrapped.
       getSizeAsPlatformMB(10 * 1000 * 1000, platform: FakePlatform(operatingSystem: 'linux')),
       '10.0MB',
     );
-    expect(getSizeAsPlatformMB(10 * 1000 * 1000, platform: FakePlatform(operatingSystem: 'macos')), '10.0MB');
-    expect(getSizeAsPlatformMB(10 * 1000 * 1000, platform: FakePlatform(operatingSystem: 'windows')), '9.5MB');
-    expect(getSizeAsPlatformMB(10 * 1000 * 1000, platform: FakePlatform(operatingSystem: 'android')), '10.0MB');
-    expect(getSizeAsPlatformMB(10 * 1000 * 1000, platform: FakePlatform(operatingSystem: 'ios')), '10.0MB');
-    expect(getSizeAsPlatformMB(10 * 1000 * 1000, platform: FakePlatform(operatingSystem: 'web')), '10.0MB');
+    expect(
+      getSizeAsPlatformMB(10 * 1000 * 1000, platform: FakePlatform(operatingSystem: 'macos')),
+      '10.0MB',
+    );
+    expect(
+      getSizeAsPlatformMB(10 * 1000 * 1000, platform: FakePlatform(operatingSystem: 'windows')),
+      '9.5MB',
+    );
+    expect(
+      getSizeAsPlatformMB(10 * 1000 * 1000, platform: FakePlatform(operatingSystem: 'android')),
+      '10.0MB',
+    );
+    expect(
+      getSizeAsPlatformMB(10 * 1000 * 1000, platform: FakePlatform(operatingSystem: 'ios')),
+      '10.0MB',
+    );
+    expect(
+      getSizeAsPlatformMB(10 * 1000 * 1000, platform: FakePlatform(operatingSystem: 'web')),
+      '10.0MB',
+    );
   });
 }

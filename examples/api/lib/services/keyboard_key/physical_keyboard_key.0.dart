@@ -32,27 +32,28 @@ class MyPhysicalKeyExample extends StatefulWidget {
 }
 
 class _MyPhysicalKeyExampleState extends State<MyPhysicalKeyExample> {
-// The node used to request the keyboard focus.
+  // The node used to request the keyboard focus.
   final FocusNode _focusNode = FocusNode();
-// The message to display.
+  // The message to display.
   String? _message;
 
-// Focus nodes need to be disposed.
+  // Focus nodes need to be disposed.
   @override
   void dispose() {
     _focusNode.dispose();
     super.dispose();
   }
 
-// Handles the key events from the RawKeyboardListener and update the
-// _message.
+  // Handles the key events from the RawKeyboardListener and update the
+  // _message.
   KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) {
     setState(() {
       if (event.physicalKey == PhysicalKeyboardKey.keyA) {
         _message = 'Pressed the key next to CAPS LOCK!';
       } else {
         if (kReleaseMode) {
-          _message = 'Not the key next to CAPS LOCK: Pressed 0x${event.physicalKey.usbHidUsage.toRadixString(16)}';
+          _message =
+              'Not the key next to CAPS LOCK: Pressed 0x${event.physicalKey.usbHidUsage.toRadixString(16)}';
         } else {
           // As the name implies, the debugName will only print useful
           // information in debug mode.
@@ -60,7 +61,9 @@ class _MyPhysicalKeyExampleState extends State<MyPhysicalKeyExample> {
         }
       }
     });
-    return event.physicalKey == PhysicalKeyboardKey.keyA ? KeyEventResult.handled : KeyEventResult.ignored;
+    return event.physicalKey == PhysicalKeyboardKey.keyA
+        ? KeyEventResult.handled
+        : KeyEventResult.ignored;
   }
 
   @override

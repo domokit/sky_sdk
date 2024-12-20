@@ -26,15 +26,19 @@ Future<void> main(List<String> rawArguments) async {
   final ArgParser argParser = ArgParser();
   argParser.addOption(
     'temp_dir',
-    help: 'A location where temporary files may be written. Defaults to a '
+    help:
+        'A location where temporary files may be written. Defaults to a '
         'directory in the system temp folder. Will write a few GiB of data, '
         'so it should have sufficient free space. If a temp_dir is not '
         'specified, then the default temp_dir will be created, used, and '
         'removed automatically.',
   );
-  argParser.addOption('revision',
-      help: 'The Flutter git repo revision to build the '
-          'archive with. Must be the full 40-character hash. Required.');
+  argParser.addOption(
+    'revision',
+    help:
+        'The Flutter git repo revision to build the '
+        'archive with. Must be the full 40-character hash. Required.',
+  );
   argParser.addOption(
     'branch',
     allowed: Branch.values.map<String>((Branch branch) => branch.name),
@@ -42,32 +46,26 @@ Future<void> main(List<String> rawArguments) async {
   );
   argParser.addOption(
     'output',
-    help: 'The path to the directory where the output archive should be '
+    help:
+        'The path to the directory where the output archive should be '
         'written. If --output is not specified, the archive will be written to '
         "the current directory. If the output directory doesn't exist, it, and "
         'the path to it, will be created.',
   );
   argParser.addFlag(
     'publish',
-    help: 'If set, will publish the archive to Google Cloud Storage upon '
+    help:
+        'If set, will publish the archive to Google Cloud Storage upon '
         'successful creation of the archive. Will publish under this '
         'directory: $baseUrl$releaseFolder',
   );
-  argParser.addFlag(
-    'force',
-    abbr: 'f',
-    help: 'Overwrite a previously uploaded package.',
-  );
+  argParser.addFlag('force', abbr: 'f', help: 'Overwrite a previously uploaded package.');
   argParser.addFlag(
     'dry_run',
     negatable: false,
     help: 'Prints gsutil commands instead of executing them.',
   );
-  argParser.addFlag(
-    'help',
-    negatable: false,
-    help: 'Print help for this command.',
-  );
+  argParser.addFlag('help', negatable: false, help: 'Print help for this command.');
 
   final ArgResults parsedArguments = argParser.parse(rawArguments);
 

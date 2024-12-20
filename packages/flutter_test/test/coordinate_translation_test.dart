@@ -8,15 +8,14 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   final LiveTestWidgetsFlutterBinding binding = LiveTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('localToGlobal and globalToLocal calculate correct results', (WidgetTester tester) async {
+  testWidgets('localToGlobal and globalToLocal calculate correct results', (
+    WidgetTester tester,
+  ) async {
     tester.view.physicalSize = const Size(2400, 1800);
     tester.view.devicePixelRatio = 3.0;
     final RenderView renderView = RenderView(
       view: tester.view,
-      configuration: TestViewConfiguration.fromView(
-        view: tester.view,
-        size: const Size(400, 200),
-      )
+      configuration: TestViewConfiguration.fromView(view: tester.view, size: const Size(400, 200)),
     );
 
     // The configuration above defines a view with a resolution of 2400x1800

@@ -7,18 +7,9 @@ import 'package:flutter/material.dart';
 import '../../gallery_localizations.dart';
 import 'material_demo_types.dart';
 
-enum SimpleValue {
-  one,
-  two,
-  three,
-}
+enum SimpleValue { one, two, three }
 
-enum CheckedValue {
-  one,
-  two,
-  three,
-  four,
-}
+enum CheckedValue { one, two, three, four }
 
 class MenuDemo extends StatefulWidget {
   const MenuDemo({super.key, required this.type});
@@ -32,9 +23,7 @@ class MenuDemo extends StatefulWidget {
 class _MenuDemoState extends State<MenuDemo> {
   void showInSnackBar(String value) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(value),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(value)));
   }
 
   @override
@@ -58,9 +47,7 @@ class _MenuDemoState extends State<MenuDemo> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Center(
-          child: demo,
-        ),
+        child: Center(child: demo),
       ),
     );
   }
@@ -83,29 +70,22 @@ class _ContextMenuDemo extends StatelessWidget {
       title: Text(localizations.demoMenuAnItemWithAContextMenuButton),
       trailing: PopupMenuButton<String>(
         padding: EdgeInsets.zero,
-        onSelected: (String value) => showInSnackBar(
-          localizations.demoMenuSelected(value),
-        ),
-        itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
-          PopupMenuItem<String>(
-            value: localizations.demoMenuContextMenuItemOne,
-            child: Text(
-              localizations.demoMenuContextMenuItemOne,
-            ),
-          ),
-          PopupMenuItem<String>(
-            enabled: false,
-            child: Text(
-              localizations.demoMenuADisabledMenuItem,
-            ),
-          ),
-          PopupMenuItem<String>(
-            value: localizations.demoMenuContextMenuItemThree,
-            child: Text(
-              localizations.demoMenuContextMenuItemThree,
-            ),
-          ),
-        ],
+        onSelected: (String value) => showInSnackBar(localizations.demoMenuSelected(value)),
+        itemBuilder:
+            (BuildContext context) => <PopupMenuItem<String>>[
+              PopupMenuItem<String>(
+                value: localizations.demoMenuContextMenuItemOne,
+                child: Text(localizations.demoMenuContextMenuItemOne),
+              ),
+              PopupMenuItem<String>(
+                enabled: false,
+                child: Text(localizations.demoMenuADisabledMenuItem),
+              ),
+              PopupMenuItem<String>(
+                value: localizations.demoMenuContextMenuItemThree,
+                child: Text(localizations.demoMenuContextMenuItemThree),
+              ),
+            ],
       ),
     );
   }
@@ -130,47 +110,39 @@ class _SectionedMenuDemo extends StatelessWidget {
       title: Text(localizations.demoMenuAnItemWithASectionedMenu),
       trailing: PopupMenuButton<String>(
         padding: EdgeInsets.zero,
-        onSelected: (String value) =>
-            showInSnackBar(localizations.demoMenuSelected(value)),
-        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-          PopupMenuItem<String>(
-            value: localizations.demoMenuPreview,
-            child: ListTile(
-              leading: const Icon(Icons.visibility),
-              title: Text(
-                localizations.demoMenuPreview,
+        onSelected: (String value) => showInSnackBar(localizations.demoMenuSelected(value)),
+        itemBuilder:
+            (BuildContext context) => <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: localizations.demoMenuPreview,
+                child: ListTile(
+                  leading: const Icon(Icons.visibility),
+                  title: Text(localizations.demoMenuPreview),
+                ),
               ),
-            ),
-          ),
-          PopupMenuItem<String>(
-            value: localizations.demoMenuShare,
-            child: ListTile(
-              leading: const Icon(Icons.person_add),
-              title: Text(
-                localizations.demoMenuShare,
+              PopupMenuItem<String>(
+                value: localizations.demoMenuShare,
+                child: ListTile(
+                  leading: const Icon(Icons.person_add),
+                  title: Text(localizations.demoMenuShare),
+                ),
               ),
-            ),
-          ),
-          PopupMenuItem<String>(
-            value: localizations.demoMenuGetLink,
-            child: ListTile(
-              leading: const Icon(Icons.link),
-              title: Text(
-                localizations.demoMenuGetLink,
+              PopupMenuItem<String>(
+                value: localizations.demoMenuGetLink,
+                child: ListTile(
+                  leading: const Icon(Icons.link),
+                  title: Text(localizations.demoMenuGetLink),
+                ),
               ),
-            ),
-          ),
-          const PopupMenuDivider(),
-          PopupMenuItem<String>(
-            value: localizations.demoMenuRemove,
-            child: ListTile(
-              leading: const Icon(Icons.delete),
-              title: Text(
-                localizations.demoMenuRemove,
+              const PopupMenuDivider(),
+              PopupMenuItem<String>(
+                value: localizations.demoMenuRemove,
+                child: ListTile(
+                  leading: const Icon(Icons.delete),
+                  title: Text(localizations.demoMenuRemove),
+                ),
               ),
-            ),
-          ),
-        ],
+            ],
       ),
     );
   }
@@ -200,8 +172,7 @@ class _SimpleMenuDemoState extends State<_SimpleMenuDemo> {
       _simpleValue = value;
     });
     widget.showInSnackBar(
-      GalleryLocalizations.of(context)!
-          .demoMenuSelected(simpleValueToString(context, value)),
+      GalleryLocalizations.of(context)!.demoMenuSelected(simpleValueToString(context, value)),
     );
   }
 
@@ -226,32 +197,23 @@ class _SimpleMenuDemoState extends State<_SimpleMenuDemo> {
       padding: EdgeInsets.zero,
       initialValue: _simpleValue,
       onSelected: (SimpleValue value) => showAndSetMenuSelection(context, value),
-      itemBuilder: (BuildContext context) => <PopupMenuItem<SimpleValue>>[
-        PopupMenuItem<SimpleValue>(
-          value: SimpleValue.one,
-          child: Text(simpleValueToString(
-            context,
-            SimpleValue.one,
-          )),
-        ),
-        PopupMenuItem<SimpleValue>(
-          value: SimpleValue.two,
-          child: Text(simpleValueToString(
-            context,
-            SimpleValue.two,
-          )),
-        ),
-        PopupMenuItem<SimpleValue>(
-          value: SimpleValue.three,
-          child: Text(simpleValueToString(
-            context,
-            SimpleValue.three,
-          )),
-        ),
-      ],
+      itemBuilder:
+          (BuildContext context) => <PopupMenuItem<SimpleValue>>[
+            PopupMenuItem<SimpleValue>(
+              value: SimpleValue.one,
+              child: Text(simpleValueToString(context, SimpleValue.one)),
+            ),
+            PopupMenuItem<SimpleValue>(
+              value: SimpleValue.two,
+              child: Text(simpleValueToString(context, SimpleValue.two)),
+            ),
+            PopupMenuItem<SimpleValue>(
+              value: SimpleValue.three,
+              child: Text(simpleValueToString(context, SimpleValue.three)),
+            ),
+          ],
       child: ListTile(
-        title: Text(
-            GalleryLocalizations.of(context)!.demoMenuAnItemWithASimpleMenu),
+        title: Text(GalleryLocalizations.of(context)!.demoMenuAnItemWithASimpleMenu),
         subtitle: Text(simpleValueToString(context, _simpleValue)),
       ),
     );
@@ -315,16 +277,17 @@ class _RestorableCheckedValues extends RestorableProperty<Set<CheckedValue>> {
   @override
   Set<CheckedValue> fromPrimitives(Object? data) {
     final List<dynamic> checkedValues = data! as List<dynamic>;
-    return Set<CheckedValue>.from(checkedValues.map<CheckedValue>((dynamic id) {
-      return CheckedValue.values[id as int];
-    }));
+    return Set<CheckedValue>.from(
+      checkedValues.map<CheckedValue>((dynamic id) {
+        return CheckedValue.values[id as int];
+      }),
+    );
   }
 }
 
-class _ChecklistMenuDemoState extends State<_ChecklistMenuDemo>
-    with RestorationMixin {
-  final _RestorableCheckedValues _checkedValues = _RestorableCheckedValues()
-    ..check(CheckedValue.three);
+class _ChecklistMenuDemoState extends State<_ChecklistMenuDemo> with RestorationMixin {
+  final _RestorableCheckedValues _checkedValues =
+      _RestorableCheckedValues()..check(CheckedValue.three);
 
   @override
   String get restorationId => 'checklist_menu_demo';
@@ -346,9 +309,9 @@ class _ChecklistMenuDemoState extends State<_ChecklistMenuDemo>
     }
 
     widget.showInSnackBar(
-      GalleryLocalizations.of(context)!.demoMenuChecked(
-        _checkedValues.checkedValuesToString(context),
-      ),
+      GalleryLocalizations.of(
+        context,
+      )!.demoMenuChecked(_checkedValues.checkedValuesToString(context)),
     );
   }
 
@@ -371,43 +334,34 @@ class _ChecklistMenuDemoState extends State<_ChecklistMenuDemo>
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(
-        GalleryLocalizations.of(context)!.demoMenuAnItemWithAChecklistMenu,
-      ),
+      title: Text(GalleryLocalizations.of(context)!.demoMenuAnItemWithAChecklistMenu),
       trailing: PopupMenuButton<CheckedValue>(
         padding: EdgeInsets.zero,
         onSelected: (CheckedValue value) => showCheckedMenuSelections(context, value),
-        itemBuilder: (BuildContext context) => <PopupMenuItem<CheckedValue>>[
-          CheckedPopupMenuItem<CheckedValue>(
-            value: CheckedValue.one,
-            checked: _checkedValues.isChecked(CheckedValue.one),
-            child: Text(
-              checkedValueToString(context, CheckedValue.one),
-            ),
-          ),
-          CheckedPopupMenuItem<CheckedValue>(
-            value: CheckedValue.two,
-            enabled: false,
-            checked: _checkedValues.isChecked(CheckedValue.two),
-            child: Text(
-              checkedValueToString(context, CheckedValue.two),
-            ),
-          ),
-          CheckedPopupMenuItem<CheckedValue>(
-            value: CheckedValue.three,
-            checked: _checkedValues.isChecked(CheckedValue.three),
-            child: Text(
-              checkedValueToString(context, CheckedValue.three),
-            ),
-          ),
-          CheckedPopupMenuItem<CheckedValue>(
-            value: CheckedValue.four,
-            checked: _checkedValues.isChecked(CheckedValue.four),
-            child: Text(
-              checkedValueToString(context, CheckedValue.four),
-            ),
-          ),
-        ],
+        itemBuilder:
+            (BuildContext context) => <PopupMenuItem<CheckedValue>>[
+              CheckedPopupMenuItem<CheckedValue>(
+                value: CheckedValue.one,
+                checked: _checkedValues.isChecked(CheckedValue.one),
+                child: Text(checkedValueToString(context, CheckedValue.one)),
+              ),
+              CheckedPopupMenuItem<CheckedValue>(
+                value: CheckedValue.two,
+                enabled: false,
+                checked: _checkedValues.isChecked(CheckedValue.two),
+                child: Text(checkedValueToString(context, CheckedValue.two)),
+              ),
+              CheckedPopupMenuItem<CheckedValue>(
+                value: CheckedValue.three,
+                checked: _checkedValues.isChecked(CheckedValue.three),
+                child: Text(checkedValueToString(context, CheckedValue.three)),
+              ),
+              CheckedPopupMenuItem<CheckedValue>(
+                value: CheckedValue.four,
+                checked: _checkedValues.isChecked(CheckedValue.four),
+                child: Text(checkedValueToString(context, CheckedValue.four)),
+              ),
+            ],
       ),
     );
   }

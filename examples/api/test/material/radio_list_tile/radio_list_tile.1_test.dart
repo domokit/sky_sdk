@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Radio aligns appropriately', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.RadioListTileApp(),
-    );
+    await tester.pumpWidget(const example.RadioListTileApp());
 
     expect(find.byType(RadioListTile<example.Groceries>), findsNWidgets(3));
 
@@ -34,9 +32,7 @@ void main() {
   });
 
   testWidgets('Radios can be checked', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.RadioListTileApp(),
-    );
+    await tester.pumpWidget(const example.RadioListTileApp());
 
     expect(find.byType(RadioListTile<example.Groceries>), findsNWidgets(3));
     final Finder radioListTile = find.byType(RadioListTile<example.Groceries>);

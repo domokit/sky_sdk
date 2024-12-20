@@ -1,0 +1,763 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+_skia_root = "//flutter/third_party/skia"
+
+import("$_skia_root/gn/shared_sources.gni")
+import("$_skia_root/gn/skia.gni")
+import("$_skia_root/gn/toolchain/wasm.gni")
+import("flutter_defines.gni")
+
+if (is_fuchsia) {
+  import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+}
+
+# Skia public API, generally provided by :skia.
+config("skia_public") {
+  include_dirs = [ "$_skia_root" ]
+
+  defines = [
+    "SK_CODEC_DECODES_BMP",
+    "SK_CODEC_DECODES_WBMP",
+  ]
+  defines += flutter_defines
+
+  cflags_objcc = []
+  if (is_fuchsia || is_linux) {
+    defines += [ "SK_R32_SHIFT=16" ]
+  }
+
+  # TODO(zra): Try using this.
+  if (skia_enable_optimize_size) {
+    defines += [
+      "SK_ENABLE_OPTIMIZE_SIZE",
+      "SK_FORCE_AAA",
+    ]
+  }
+  if (skia_enable_precompile) {
+    defines += [ "SK_ENABLE_PRECOMPILE" ]
+  }
+  if (is_wasm) {
+    defines += wasm_defines
+  }
+  if (skia_gl_standard == "gles") {
+    defines += [ "SK_ASSUME_GL_ES=1" ]
+  } else if (skia_gl_standard == "gl") {
+    defines += [ "SK_ASSUME_GL=1" ]
+  } else if (skia_gl_standard == "webgl") {
+    defines += [
+      "SK_ASSUME_WEBGL=1",
+      "SK_USE_WEBGL",
+    ]
+  }
+  if (skia_enable_ganesh) {
+    defines += [ "SK_GANESH" ]
+  }
+
+  # TODO(zra): Try turning this off.
+  if (skia_use_perfetto) {
+    defines += [ "SK_USE_PERFETTO" ]
+  }
+
+  # Some older versions of the Clang toolchain change the visibility of
+  # symbols decorated with API_AVAILABLE macro to be visible. Users of such
+  # toolchains suppress the use of this macro till toolchain updates are made.
+  if (is_mac || is_ios) {
+    cflags_objcc += [ "-Wno-unguarded-availability" ]
+  }
+}
+
+# Skia internal APIs, used by Skia itself and a few test tools.
+config("skia_private") {
+  visibility = [ "./*" ]
+
+  defines = [ "SK_GAMMA_APPLY_TO_A8" ]
+  if (skia_use_fixed_gamma_text) {
+    defines += [
+      "SK_GAMMA_EXPONENT=1.4",
+      "SK_GAMMA_CONTRAST=0.0",
+    ]
+  }
+  libs = []
+  lib_dirs = []
+  if (skia_use_vma) {
+    defines += [ "SK_USE_VMA" ]
+  }
+}
+
+# Any code that's linked into Skia-the-library should use this config
+# via += skia_library_configs.
+config("skia_library") {
+  visibility = [ "./*" ]
+  defines = [ "SKIA_IMPLEMENTATION=1" ]
+}
+
+skia_library_configs = [
+  ":skia_public",
+  ":skia_private",
+  ":skia_library",
+]
+
+config("our_vulkan_headers") {
+  include_dirs = [ "include/third_party/vulkan" ]
+  defines = [ "SK_USE_INTERNAL_VULKAN_HEADERS" ]
+}
+
+# Use for CPU-specific Skia code that needs particular compiler flags.
+template("opts") {
+  if (invoker.enabled) {
+    skia_source_set(target_name) {
+      visibility = [ ":*" ]
+      check_includes = false
+      configs = skia_library_configs
+      forward_variables_from(invoker, "*")
+      if (defined(invoker.configs)) {
+        configs += invoker.configs
+      }
+    }
+  } else {
+    # If not enabled, a phony empty target that swallows all otherwise unused
+    # variables.
+    skia_source_set(target_name) {
+      visibility = [ ":*" ]
+      check_includes = false
+      forward_variables_from(invoker,
+                             "*",
+                             [
+                               "sources",
+                               "cflags",
+                             ])
+    }
+  }
+}
+
+is_x86 = current_cpu == "x64" || current_cpu == "x86"
+
+opts("hsw") {
+  enabled = is_x86
+  sources = skia_opts.hsw_sources
+  if (is_win) {
+    cflags = [ "/arch:AVX2" ]
+  } else {
+    cflags = [ "-march=haswell" ]
+  }
+}
+
+# Any feature of Skia that requires third-party code should be optional and use
+# this template.
+template("optional") {
+  if (invoker.enabled) {
+    config(target_name + "_public") {
+      if (defined(invoker.public_defines)) {
+        defines = invoker.public_defines
+      }
+      if (defined(invoker.public_configs)) {
+        configs = invoker.public_configs
+      }
+      if (defined(invoker.public_include_dirs)) {
+        include_dirs = invoker.public_include_dirs
+      }
+    }
+    skia_source_set(target_name) {
+      visibility = [ ":*" ]
+
+      # Opted out of check_includes, due to (logically) being part of skia.
+      check_includes = false
+      configs = skia_library_configs
+
+      # "*" clobbers the current scope; append to existing configs
+      forward_variables_from(invoker,
+                             "*",
+                             [
+                               "configs",
+                               "public_defines",
+                               "sources_for_tests",
+                               "sources_when_disabled",
+                             ])
+      if (defined(invoker.configs)) {
+        configs += invoker.configs
+      }
+      all_dependent_configs = [ ":" + target_name + "_public" ]
+    }
+  } else {
+    skia_source_set(target_name) {
+      visibility = [ ":*" ]
+      configs = skia_library_configs
+
+      # "*" clobbers the current scope; append to existing configs
+      forward_variables_from(invoker,
+                             "*",
+                             [
+                               "configs",
+                               "public",
+                               "public_defines",
+                               "public_deps",
+                               "deps",
+                               "libs",
+                               "frameworks",
+                               "sources",
+                               "sources_for_tests",
+                               "sources_when_disabled",
+                             ])
+      if (defined(invoker.configs)) {
+        configs += invoker.configs
+      }
+      if (defined(invoker.sources_when_disabled)) {
+        sources = invoker.sources_when_disabled
+      }
+    }
+    if (defined(invoker.sources_for_tests)) {
+      skia_source_set(target_name + "_tests") {
+        visibility = [ ":*" ]
+      }
+    }
+  }
+}
+
+optional("fontmgr_android") {
+  enabled = skia_enable_fontmgr_android
+  public_defines = [ "SK_FONTMGR_ANDROID_AVAILABLE" ]
+
+  deps = [
+    ":typeface_freetype",
+    ":typeface_proxy",
+    "//flutter/third_party/expat",
+  ]
+  public = skia_ports_fontmgr_android_public
+  sources = skia_ports_fontmgr_android_sources
+}
+
+optional("fontmgr_custom") {
+  enabled =
+      skia_enable_fontmgr_custom_directory ||
+      skia_enable_fontmgr_custom_embedded || skia_enable_fontmgr_custom_empty
+
+  deps = [ ":typeface_freetype" ]
+  sources = skia_ports_fontmgr_custom_sources
+}
+
+optional("fontmgr_custom_directory") {
+  enabled = skia_enable_fontmgr_custom_directory
+  public_defines = [ "SK_FONTMGR_FREETYPE_DIRECTORY_AVAILABLE" ]
+  deps = [
+    ":fontmgr_custom",
+    ":typeface_freetype",
+  ]
+  public = skia_ports_fontmgr_directory_public
+  sources = skia_ports_fontmgr_directory_sources
+}
+
+optional("fontmgr_custom_embedded") {
+  enabled = skia_enable_fontmgr_custom_embedded
+  public_defines = [ "SK_FONTMGR_FREETYPE_EMBEDDED_AVAILABLE" ]
+
+  deps = [
+    ":fontmgr_custom",
+    ":typeface_freetype",
+  ]
+  sources = skia_ports_fontmgr_embedded_sources
+}
+
+optional("fontmgr_custom_empty") {
+  enabled = skia_enable_fontmgr_custom_empty
+  public_defines = [ "SK_FONTMGR_FREETYPE_EMPTY_AVAILABLE" ]
+
+  deps = [
+    ":fontmgr_custom",
+    ":typeface_freetype",
+  ]
+  public = skia_ports_fontmgr_empty_public
+  sources = skia_ports_fontmgr_empty_sources
+}
+
+skia_source_set("typeface_proxy") {
+  configs = [ ":skia_public" ]
+  sources = skia_ports_typeface_proxy_sources
+}
+
+optional("fontmgr_fontconfig") {
+  enabled = skia_enable_fontmgr_fontconfig
+  public_defines = [ "SK_FONTMGR_FONTCONFIG_AVAILABLE" ]
+
+  # The public header includes fontconfig.h and uses FcConfig*
+  public_deps = [ "//third_party:fontconfig" ]
+  public = skia_ports_fontmgr_fontconfig_public
+  deps = [
+    ":typeface_freetype",
+    ":typeface_proxy",
+  ]
+  sources = skia_ports_fontmgr_fontconfig_sources
+}
+
+optional("fontmgr_fuchsia") {
+  enabled = skia_enable_fontmgr_fuchsia
+  public_defines = [ "SK_FONTMGR_FUCHSIA_AVAILABLE" ]
+
+  deps = []
+
+  if (is_fuchsia) {
+    deps += [ "${fuchsia_sdk}/fidl/fuchsia.fonts" ]
+  } else {
+    deps = [ "//sdk/fidl/fuchsia.fonts" ]
+  }
+  public = skia_ports_fontmgr_fuchsia_public
+  sources = skia_ports_fontmgr_fuchsia_sources
+}
+
+optional("fontmgr_mac_ct") {
+  enabled = skia_use_fonthost_mac
+
+  public_defines = [
+    "SK_TYPEFACE_FACTORY_CORETEXT",
+    "SK_FONTMGR_CORETEXT_AVAILABLE",
+  ]
+  public = skia_ports_fontmgr_coretext_public
+  sources = skia_ports_fontmgr_coretext_sources
+
+  if (is_mac) {
+    frameworks = [
+      # AppKit symbols NSFontWeightXXX may be dlsym'ed.
+      "AppKit.framework",
+      "ApplicationServices.framework",
+    ]
+  }
+
+  if (is_ios) {
+    frameworks = [
+      "CoreFoundation.framework",
+      "CoreGraphics.framework",
+      "CoreText.framework",
+
+      # UIKit symbols UIFontWeightXXX may be dlsym'ed.
+      "UIKit.framework",
+    ]
+  }
+}
+
+optional("fontmgr_win") {
+  enabled = skia_enable_fontmgr_win
+
+  public_defines = [
+    "SK_TYPEFACE_FACTORY_DIRECTWRITE",
+    "SK_FONTMGR_DIRECTWRITE_AVAILABLE",
+  ]
+  public = skia_ports_windows_fonts_public
+  sources = skia_ports_windows_fonts_sources
+  if (skia_dwritecore_sdk != "") {
+    defines = [ "DWRITE_CORE" ]
+    if (is_win && is_clang) {
+      # Clang complains about these headers, so mark them as system. These
+      # headers are hiding SDK headers of the same name, which are also
+      # included as system headers, so these need to go first in the cflags
+      # "includes" before the SDK. gn appends configs in the order listed,
+      # so these flags will be first.
+      cflags = [
+        "-imsvc",
+        "${skia_dwritecore_sdk}/include",
+      ]
+    } else {
+      include_dirs = [ "${skia_dwritecore_sdk}/include" ]
+    }
+  }
+}
+
+optional("gpu_shared") {
+  enabled = skia_enable_ganesh
+
+  configs = []
+  deps = []
+  libs = []
+  public_defines = []
+  public_deps = []
+  frameworks = []
+
+  sources = skia_shared_gpu_sources
+  sources += skia_sksl_pipeline_sources
+  sources += skia_sksl_codegen_sources
+
+  if (skia_use_vulkan) {
+    public_defines += [ "SK_VULKAN" ]
+    sources += skia_shared_vk_sources
+    configs += [ ":our_vulkan_headers" ]
+    if (skia_enable_vulkan_debug_layers) {
+      public_defines += [ "SK_ENABLE_VK_LAYERS" ]
+    }
+    if (skia_use_vma) {
+      public_deps += [ "$_skia_root/src/gpu/vk/vulkanmemoryallocator" ]
+    }
+  }
+
+  if (skia_use_metal) {
+    public_defines += [ "SK_METAL" ]
+    sources += skia_shared_mtl_sources
+  }
+}
+
+optional("gpu") {
+  enabled = skia_enable_ganesh
+
+  configs = []
+  deps = [ ":gpu_shared" ]
+  public_defines = []
+  public_configs = []
+  public_deps = []
+
+  public = skia_gpu_public
+  sources = skia_ganesh_private
+
+  libs = []
+  frameworks = []
+
+  if (is_android) {
+    sources += skia_gpu_android_private
+  }
+
+  if (skia_use_gl) {
+    public_defines += [ "SK_GL" ]
+    if (is_android) {
+      sources += [
+        "$_skia_root/src/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.cpp",
+        "$_skia_root/src/gpu/ganesh/gl/egl/GrGLMakeNativeInterface_egl.cpp",
+      ]
+      sources += skia_android_gl_sources
+
+      # this lib is required to link against AHardwareBuffer
+      if (defined(ndk_api) && ndk_api >= 26) {
+        libs += [ "android" ]
+      }
+      public_defines += [ "SK_EGL" ]
+    } else if (skia_use_webgl) {
+      sources += [
+        "$_skia_root/src/gpu/ganesh/gl/webgl/GrGLMakeNativeInterface_webgl.cpp",
+      ]
+    } else if (is_linux && skia_use_x11) {
+      sources += [
+        "$_skia_root/src/gpu/ganesh/gl/glx/GrGLMakeGLXInterface.cpp",
+        "$_skia_root/src/gpu/ganesh/gl/glx/GrGLMakeNativeInterface_glx.cpp",
+      ]
+      libs += [ "GL" ]
+      public_defines += [ "SK_GLX" ]
+    } else if (is_mac) {
+      sources += [
+        "$_skia_root/src/gpu/ganesh/gl/mac/GrGLMakeNativeInterface_mac.cpp",
+      ]
+    } else if (is_ios) {
+      sources += [
+        "$_skia_root/src/gpu/ganesh/gl/iOS/GrGLMakeNativeInterface_iOS.cpp",
+      ]
+    } else if (is_win) {
+      sources += [
+        "$_skia_root/src/gpu/ganesh/gl/win/GrGLMakeNativeInterface_win.cpp",
+        "$_skia_root/src/gpu/ganesh/gl/win/GrGLMakeWinInterface.cpp",
+      ]
+      libs += [ "OpenGL32.lib" ]
+    } else {
+      sources +=
+          [ "$_skia_root/src/gpu/ganesh/gl/GrGLMakeNativeInterface_none.cpp" ]
+    }
+    public += skia_gpu_gl_public
+    sources += skia_gpu_gl_private
+  }
+
+  if (skia_use_vulkan) {
+    public += skia_gpu_vk_public
+    sources += skia_gpu_vk_private
+    configs += [ ":our_vulkan_headers" ]
+    if (is_fuchsia) {
+      public_deps += [ "${fuchsia_sdk}/pkg/vulkan" ]
+    }
+    if (is_android) {
+      sources += skia_gpu_vk_android_private
+    }
+  }
+
+  if (is_android && (skia_use_gl || skia_use_vulkan)) {
+    # this lib is required to link against AHardwareBuffer
+    if (defined(ndk_api) && ndk_api >= 26) {
+      libs += [ "android" ]
+    }
+  }
+
+  cflags_objcc = []
+  if (skia_use_metal) {
+    public_defines += [ "SK_METAL" ]
+    public += skia_gpu_metal_public
+    sources += skia_gpu_metal_private
+    sources += skia_gpu_metal_cpp
+    frameworks += [ "Metal.framework" ]
+    frameworks += [ "Foundation.framework" ]
+    if (is_ios) {
+      frameworks += [ "UIKit.framework" ]
+    }
+    cflags_objcc += [ "-fobjc-arc" ]
+  }
+
+  if (is_debug) {
+    public_defines += [ "SK_ENABLE_DUMP_GPU" ]
+  }
+}
+
+optional("jpeg_decode") {
+  enabled = skia_use_libjpeg_turbo_decode
+  public_defines = [ "SK_CODEC_DECODES_JPEG" ]
+
+  deps = [ "//flutter/third_party/libjpeg-turbo:libjpeg" ]
+  sources = [
+    "$_skia_root/src/codec/SkJpegCodec.cpp",
+    "$_skia_root/src/codec/SkJpegDecoderMgr.cpp",
+    "$_skia_root/src/codec/SkJpegMetadataDecoderImpl.cpp",
+    "$_skia_root/src/codec/SkJpegSourceMgr.cpp",
+    "$_skia_root/src/codec/SkJpegUtility.cpp",
+  ]
+}
+
+optional("jpeg_encode") {
+  enabled = skia_use_libjpeg_turbo_encode && !skia_use_ndk_images
+  public_defines = [ "SK_CODEC_ENCODES_JPEG" ]
+
+  deps = [ "//flutter/third_party/libjpeg-turbo:libjpeg" ]
+  public = skia_encode_jpeg_public
+  sources = skia_encode_jpeg_srcs
+}
+
+optional("ndk_images") {
+  enabled = skia_use_ndk_images
+  public_defines = [ "SK_ENABLE_NDK_IMAGES" ]
+  sources = [
+    "$_skia_root/src/ports/SkImageEncoder_NDK.cpp",
+    "$_skia_root/src/ports/SkImageGeneratorNDK.cpp",
+    "$_skia_root/src/ports/SkNDKConversions.cpp",
+  ]
+  libs = [ "jnigraphics" ]
+}
+
+optional("xps") {
+  enabled = skia_use_xps && is_win
+  public_defines = [ "SK_SUPPORT_XPS" ]
+  public = skia_xps_public
+  sources = skia_xps_sources
+}
+
+optional("png_decode_libpng") {
+  enabled = skia_use_libpng_decode
+  public_defines = [
+    "SK_CODEC_DECODES_PNG",
+    "SK_CODEC_DECODES_ICO",
+    "SK_CODEC_DECODES_PNG_WITH_LIBPNG",
+  ]
+
+  deps = [ "//flutter/third_party/libpng" ]
+  sources = [ "$_skia_root/src/codec/SkIcoCodec.cpp" ] + skia_codec_png_base +
+            skia_codec_libpng_srcs
+}
+
+optional("png_encode") {
+  enabled = skia_use_libpng_encode && !skia_use_ndk_images
+  public_defines = [
+    "SK_CODEC_ENCODES_PNG",
+    "SK_CODEC_ENCODES_PNG_WITH_LIBPNG",
+  ]
+
+  public = skia_encode_png_public
+  deps = [ "//flutter/third_party/libpng" ]
+  sources = skia_encode_png_srcs
+}
+
+optional("typeface_freetype") {
+  enabled = skia_use_freetype
+
+  public_defines = [ "SK_TYPEFACE_FACTORY_FREETYPE" ]
+  deps = [ "//flutter/third_party/freetype2" ]
+  sources = skia_ports_freetype_sources
+}
+
+optional("webp_decode") {
+  enabled = skia_use_libwebp_decode
+  public_defines = [ "SK_CODEC_DECODES_WEBP" ]
+
+  deps = [ "//flutter/third_party/libwebp" ]
+  sources = [ "$_skia_root/src/codec/SkWebpCodec.cpp" ]
+}
+
+optional("webp_encode") {
+  enabled = skia_use_libwebp_encode && !skia_use_ndk_images
+  public_defines = [ "SK_CODEC_ENCODES_WEBP" ]
+  public = skia_encode_webp_public
+
+  deps = [ "//flutter/third_party/libwebp" ]
+  sources = skia_encode_webp_srcs
+}
+
+optional("wuffs") {
+  enabled = skia_use_wuffs
+  public_defines = [
+    "SK_HAS_WUFFS_LIBRARY",  # TODO remove after rolling
+                             # http://review.skia.org/811816
+    "SK_CODEC_DECODES_GIF",
+  ]
+
+  deps = [ "//flutter/third_party/wuffs" ]
+  sources = [ "$_skia_root/src/codec/SkWuffsCodec.cpp" ]
+}
+
+optional("xml") {
+  enabled = skia_use_expat || skia_use_jpeg_gainmaps
+  public_defines = [ "SK_XML" ]
+
+  deps = [ "//flutter/third_party/expat" ]
+  sources = skia_xml_sources + skia_codec_xmp + [
+              "$_skia_root/src/svg/SkSVGCanvas.cpp",
+              "$_skia_root/src/svg/SkSVGDevice.cpp",
+            ]
+}
+
+import("$_skia_root/gn/codec.gni")
+
+skia_component("skia") {
+  public_configs = [ ":skia_public" ]
+  configs = skia_library_configs
+
+  # Opted out of check_includes, due to (logically) being part of skia.
+  check_includes = false
+
+  public_deps = [
+    ":fontmgr_android",
+    ":fontmgr_custom_directory",
+    ":fontmgr_custom_embedded",
+    ":fontmgr_custom_empty",
+    ":fontmgr_fontconfig",
+    ":fontmgr_fuchsia",
+    ":fontmgr_mac_ct",
+    ":fontmgr_win",
+    ":gpu",
+    ":jpeg_encode",
+    ":png_encode",
+    ":webp_encode",
+    ":xps",
+  ]
+
+  deps = [
+    ":hsw",
+    ":jpeg_decode",
+    ":ndk_images",
+    ":png_decode_libpng",
+    ":webp_decode",
+    ":wuffs",
+    ":xml",
+    "modules/skcms",
+  ]
+
+  public = skia_core_public
+  public += skia_codec_public
+  public += skia_utils_public
+  public += skia_effects_public
+  public += skia_effects_imagefilter_public
+
+  sources = []
+  sources += skia_core_sources
+  sources += skia_utils_private
+  sources += skia_utils_chromium
+  sources += skia_effects_sources
+  sources += skia_colorfilters_sources
+  sources += skia_effects_imagefilter_sources
+  sources += skia_codec_shared
+  sources += skia_codec_decode_bmp
+  sources += skia_encode_srcs
+  sources += skia_sksl_core_sources
+  sources += skia_sksl_core_module_sources
+  sources += skia_ports_sources
+  sources += [
+    "$_skia_root/src/android/SkAndroidFrameworkUtils.cpp",
+    "$_skia_root/src/android/SkAnimatedImage.cpp",
+    "$_skia_root/src/codec/SkAndroidCodec.cpp",
+    "$_skia_root/src/codec/SkAndroidCodecAdapter.cpp",
+    "$_skia_root/src/codec/SkSampledCodec.cpp",
+    "$_skia_root/src/ports/SkDiscardableMemory_none.cpp",
+    "$_skia_root/src/ports/SkMemory_malloc.cpp",
+    "$_skia_root/src/sfnt/SkOTTable_name.cpp",
+    "$_skia_root/src/sfnt/SkOTUtils.cpp",
+  ]
+
+  defines = []
+  libs = []
+
+  if (skia_use_no_jpeg_encode) {
+    sources += skia_no_encode_jpeg_srcs
+  }
+  if (skia_use_no_png_encode) {
+    sources += skia_no_encode_png_srcs
+  }
+  if (skia_use_no_webp_encode) {
+    sources += skia_no_encode_webp_srcs
+  }
+
+  if (is_win) {
+    sources += skia_ports_windows_sources
+    sources += [
+      "$_skia_root/src/ports/SkDebug_win.cpp",
+      "$_skia_root/src/ports/SkImageGeneratorWIC.cpp",
+    ]
+    libs += [
+      "Ole32.lib",
+      "OleAut32.lib",
+    ]
+
+    if (!skia_enable_winuwp) {
+      libs += [
+        "FontSub.lib",
+        "User32.lib",
+        "Usp10.lib",
+      ]
+    }
+  } else {
+    sources += [ "$_skia_root/src/ports/SkOSFile_posix.cpp" ]
+    libs += [ "dl" ]
+  }
+
+  if (is_android) {
+    deps += [ "//flutter/third_party/expat" ]
+    sources += [ "$_skia_root/src/ports/SkDebug_android.cpp" ]
+    libs += [
+      "EGL",
+      "GLESv2",
+      "log",
+    ]
+  }
+
+  if (is_linux || is_wasm) {
+    sources += [ "$_skia_root/src/ports/SkDebug_stdio.cpp" ]
+    if (skia_use_egl) {
+      libs += [ "GLESv2" ]
+    }
+  }
+
+  if (is_mac) {
+    public += [ "$_skia_root/include/ports/SkCFObject.h" ]
+    sources += [
+      "$_skia_root/src/ports/SkDebug_stdio.cpp",
+      "$_skia_root/src/ports/SkImageGeneratorCG.cpp",
+    ]
+    frameworks = [
+      "ApplicationServices.framework",
+      "OpenGL.framework",
+    ]
+  }
+
+  if (is_ios) {
+    public += [ "$_skia_root/include/ports/SkCFObject.h" ]
+    sources += [
+      "$_skia_root/src/ports/SkDebug_stdio.cpp",
+      "$_skia_root/src/ports/SkImageGeneratorCG.cpp",
+    ]
+    frameworks = [
+      "CoreFoundation.framework",
+      "ImageIO.framework",
+      "MobileCoreServices.framework",
+    ]
+  }
+
+  if (is_fuchsia) {
+    sources += [ "$_skia_root/src/ports/SkDebug_stdio.cpp" ]
+  }
+}

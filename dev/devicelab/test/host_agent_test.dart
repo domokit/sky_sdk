@@ -34,7 +34,10 @@ void main() {
     });
 
     test('not set by environment', () async {
-      final FakePlatform fakePlatform = FakePlatform(environment: <String, String>{}, operatingSystem: 'windows');
+      final FakePlatform fakePlatform = FakePlatform(
+        environment: <String, String>{},
+        operatingSystem: 'windows',
+      );
       final HostAgent agent = HostAgent(platform: fakePlatform, fileSystem: fs);
 
       expect(agent.dumpDirectory, null);

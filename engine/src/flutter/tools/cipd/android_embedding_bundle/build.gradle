@@ -1,0 +1,106 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// To use, run:
+//  $  gradle updateDependencies
+//
+// This script downloads the embedding dependencies into a lib/ directory,
+// extract jar files from AARs, so they can be used in gn.
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:7.3.0"
+    }
+}
+
+plugins {
+    id "com.github.hierynomus.license-report" version "0.16.1"
+}
+
+def destinationDir = "lib"
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: "com.android.application"
+
+android {
+  compileSdk 35
+}
+
+configurations {
+  embedding
+}
+
+println project.buildDir
+
+// Configure the embedding dependencies.
+// NB: '../../androidx/configure.gradle' is expected to resolve to the path
+// 'src/flutter/tools/androidx', and '../../..' is expected to resolve to the
+// path 'src/flutter'.
+apply from: new File(rootDir, '../../androidx/configure.gradle').absolutePath;
+configureEmbedderDependencies(new File(rootDir, '../../..')) { dependency ->
+  dependencies {
+     embedding "$dependency"
+  }
+}
+
+task updateDependencies() {
+  delete destinationDir
+  // Copy the dependencies from the compileOnly configuration into
+  // the destination directory.
+  copy {
+    from configurations.embedding
+    into destinationDir
+  }
+  doLast {
+    // Extract classes.jar from aar and rename it as the dependency name .jar
+    // since javac doesn't support AARs.
+    fileTree(destinationDir)
+      .filter { it.name.endsWith(".aar") }
+      .collect { aarDependency ->
+        def dependencyName = "${aarDependency.name.take(aarDependency.name.lastIndexOf('.'))}";
+        copy {
+          into destinationDir
+          from(zipTree(aarDependency)) {
+            include "classes.jar"
+          }
+          rename "classes.jar", "${dependencyName}.jar"
+        }
+        delete aarDependency
+      }
+  }
+  doLast {
+    fileTree(destinationDir)
+      .collect { dependency ->
+        println "\"//third_party/robolectric/lib/${dependency.name}\","
+      }
+  }
+}
+
+downloadLicenses {
+  ext.apacheTwo = license(
+    'The Apache License, Version 2.0',
+    'http://www.apache.org/licenses/LICENSE-2.0.txt',
+  )
+  aliases = [
+    (apacheTwo) : [
+      'The Apache Software License, Version 2.0',
+      'Apache 2',
+      'Apache License Version 2.0',
+      'Apache License, Version 2.0',
+      'Apache License 2.0',
+      license('Apache License', 'http://www.apache.org/licenses/LICENSE-2.0'),
+      license('Apache License, Version 2.0', 'http://opensource.org/licenses/Apache-2.0'),
+    ],
+  ]
+  dependencyConfiguration = 'embedding'
+}

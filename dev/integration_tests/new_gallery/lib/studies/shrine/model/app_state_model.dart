@@ -36,8 +36,7 @@ class AppStateModel extends Model {
 
   // Total shipping cost for the items in the cart.
   double get shippingCost {
-    return _shippingCostPerItem *
-        _productsInCart.values.fold(0.0, (num sum, int e) => sum + e);
+    return _shippingCostPerItem * _productsInCart.values.fold(0.0, (num sum, int e) => sum + e);
   }
 
   // Sales tax for the items in the cart
@@ -51,9 +50,7 @@ class AppStateModel extends Model {
     if (_selectedCategory == categoryAll) {
       return List<Product>.from(_availableProducts);
     } else {
-      return _availableProducts
-          .where((Product p) => p.category == _selectedCategory)
-          .toList();
+      return _availableProducts.where((Product p) => p.category == _selectedCategory).toList();
     }
   }
 

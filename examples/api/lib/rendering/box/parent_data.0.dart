@@ -37,16 +37,14 @@ class _SampleAppState extends State<SampleApp> {
       'effectiveness and thus to developer happiness.',
     ),
     Headline('Bugs affecting more people are more valuable (maximize N)'),
-    Paragraph(
-      'We will make more people happier if we fix a bug experienced by more people.'
-    ),
+    Paragraph('We will make more people happier if we fix a bug experienced by more people.'),
     Paragraph(
       'One thing to be careful about is to think about the number of '
       'people we are ignoring in our metrics. For example, if we had '
       'a bug that prevented our product from working on Windows, we '
       'would have no Windows users, so the bug would affect nobody. '
       'However, fixing the bug would enable millions of developers '
-      "to use our product, and that's the number that counts."
+      "to use our product, and that's the number that counts.",
     ),
     Headline('Bugs with greater impact on developers are more valuable (maximize ΔH)'),
     Paragraph(
@@ -54,7 +52,7 @@ class _SampleAppState extends State<SampleApp> {
       'than a greater improvement. For example, if our application, '
       'under certain conditions, shows a message with a typo, and '
       'then crashes because of an off-by-one error in the code, '
-      'fixing the crash is a higher priority than fixing the typo.'
+      'fixing the crash is a higher priority than fixing the typo.',
     ),
   ];
 
@@ -72,14 +70,18 @@ class _SampleAppState extends State<SampleApp> {
               icon: const Icon(Icons.density_small),
               isSelected: _compact,
               onPressed: () {
-                setState(() { _compact = true; });
+                setState(() {
+                  _compact = true;
+                });
               },
             ),
             IconButton(
               icon: const Icon(Icons.density_large),
               isSelected: !_compact,
               onPressed: () {
-                setState(() { _compact = false; });
+                setState(() {
+                  _compact = false;
+                });
               },
             ),
           ],
@@ -99,7 +101,7 @@ class _SampleAppState extends State<SampleApp> {
 // widgets can read to determine what kind of child is being rendered.
 
 class Headline extends StatelessWidget {
-  const Headline(this.text, { super.key });
+  const Headline(this.text, {super.key});
 
   final String text;
 
@@ -113,7 +115,7 @@ class Headline extends StatelessWidget {
 }
 
 class Paragraph extends StatelessWidget {
-  const Paragraph(this.text, { super.key });
+  const Paragraph(this.text, {super.key});
 
   final String text;
 
@@ -131,7 +133,7 @@ class Paragraph extends StatelessWidget {
 // without violating the principle of agnostic composition (wherein parents should
 // work with any child, not only support a fixed set of children).
 class TextCategory extends ParentDataWidget<TextFlowParentData> {
-  const TextCategory({ super.key, required this.category, required super.child });
+  const TextCategory({super.key, required this.category, required super.child});
 
   final String category;
 
@@ -151,7 +153,7 @@ class TextCategory extends ParentDataWidget<TextFlowParentData> {
 // This is one of the two layout variants. It is a widget that defers to
 // a render object defined below (RenderCompactLayout).
 class CompactLayout extends MultiChildRenderObjectWidget {
-  const CompactLayout({ super.key, super.children });
+  const CompactLayout({super.key, super.children});
 
   @override
   RenderCompactLayout createRenderObject(BuildContext context) {
@@ -167,7 +169,7 @@ class CompactLayout extends MultiChildRenderObjectWidget {
 // This is the other of the two layout variants. It is a widget that defers to a
 // render object defined below (RenderOpenLayout).
 class OpenLayout extends MultiChildRenderObjectWidget {
-  const OpenLayout({ super.key, super.children });
+  const OpenLayout({super.key, super.children});
 
   @override
   RenderOpenLayout createRenderObject(BuildContext context) {
@@ -197,9 +199,10 @@ class TextFlowParentData extends ContainerBoxParentData<RenderBox> {
 // The documentation for the RenderBox class and its members provides much
 // more detail on how to implement each of the methods below.
 abstract class RenderTextFlow extends RenderBox
-    with ContainerRenderObjectMixin<RenderBox, TextFlowParentData>,
-         RenderBoxContainerDefaultsMixin<RenderBox, TextFlowParentData> {
-  RenderTextFlow({ List<RenderBox>? children }) {
+    with
+        ContainerRenderObjectMixin<RenderBox, TextFlowParentData>,
+        RenderBoxContainerDefaultsMixin<RenderBox, TextFlowParentData> {
+  RenderTextFlow({List<RenderBox>? children}) {
     addAll(children);
   }
 
@@ -354,7 +357,7 @@ abstract class RenderTextFlow extends RenderBox
 
   // Hit testing is normal for this widget, so we defer to the default implementation.
   @override
-  bool hitTestChildren(BoxHitTestResult result, { required Offset position }) {
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
     return defaultHitTestChildren(result, position: position);
   }
 

@@ -1,0 +1,93 @@
+# Copyright 2014 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/android/config.gni")
+import("//build/config/arm.gni")
+import("//build/config/compiler/compiler.gni")
+import("//build/config/sanitizers/sanitizers.gni")
+import("//build_overrides/build.gni")
+import("src/gen/sources.gni")
+
+# Config for us and everybody else depending on BoringSSL.
+config("external_config") {
+  include_dirs = [ "src/include" ]
+  if (is_component_build) {
+    defines = [ "BORINGSSL_SHARED_LIBRARY" ]
+  }
+}
+
+# The config used by the :boringssl component itself, and the fuzzer copies.
+config("component_config") {
+  visibility = [ ":*" ]
+  configs = [ ":internal_config" ]
+  defines = [ "BORINGSSL_IMPLEMENTATION" ]
+
+  cflags_c = [ "-std=c17" ]
+}
+
+# This config is used by anything that consumes internal headers. Tests consume
+# this rather than :component_config.
+config("internal_config") {
+  visibility = [ ":*" ]
+  defines = [
+    "OPENSSL_SMALL",
+    "OPENSSL_STATIC_ARMCAP",
+  ]
+  if (is_posix) {
+    defines += [ "_XOPEN_SOURCE=700" ]
+  }
+}
+
+config("no_asm_config") {
+  visibility = [ ":*" ]
+  defines = [ "OPENSSL_NO_ASM" ]
+}
+
+# TODO(crbug.com/42290535): Move Chromium's use of libpki to the public API and
+# unexport pki_internal_headers.
+all_sources = bcm_internal_headers + bcm_sources + crypto_internal_headers +
+              crypto_sources + ssl_internal_headers + ssl_sources + pki_sources
+all_headers = crypto_headers + ssl_headers + pki_headers + pki_internal_headers
+
+if (is_msan) {
+  # MSan instrumentation is incompatible with assembly optimizations.
+  # BoringSSL's GAS-compatible assembly knows how to detect MSan, but the NASM
+  # assembly does not, so we check for MSan explicitly.
+  source_set("boringssl_asm") {
+    visibility = [ ":*" ]
+    public_configs = [ ":no_asm_config" ]
+  }
+} else if (is_win && (current_cpu == "x86" || current_cpu == "x64")) {
+  # Windows' x86 and x86_64 assembly is built with NASM.
+  source_set("boringssl_asm") {
+    visibility = [ ":*" ]
+    public_configs = [ ":no_asm_config" ]
+  }
+} else {
+  # All other targets use GAS-compatible assembler. BoringSSL's assembly files
+  # are all wrapped in processor checks for the corresponding target, so there
+  # is no need to add target conditions in the build.
+  source_set("boringssl_asm") {
+    visibility = [ ":*" ]
+    sources = rebase_path(bcm_sources_asm + crypto_sources_asm, ".", "src")
+    include_dirs = [ "src/include" ]
+  }
+}
+
+source_set("boringssl") {
+  sources = rebase_path(all_sources, ".", "src")
+  public = rebase_path(all_headers, ".", "src")
+
+  if (is_win) {
+    configs += [ ":no_asm_config" ]
+  } else {
+    deps = [ ":boringssl_asm" ]
+  }
+
+  public_configs = [ ":external_config" ]
+  configs += [ ":component_config" ]
+
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [ "//build/config/compiler:no_chromium_code" ]
+}

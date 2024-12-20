@@ -1,0 +1,329 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/toolchain/rbe.gni")
+import("//build/toolchain/toolchain.gni")
+import("//build/toolchain/win/win_toolchain_data.gni")
+
+default_clang_base_path = "$buildtools_path/windows-x64/clang"
+
+declare_args() {
+  # Path to the directory containing the VC binaries for the right
+  # combination of host and target architectures. Currently only the
+  # 64-bit host toolchain is supported, with either 32-bit or 64-bit targets.
+  # If vc_bin_dir is not specified on the command line (and it normally
+  # isn't), we will dynamically determine the right value to use at runtime.
+  vc_bin_dir = ""
+
+  # Path to the clang toolchain.
+  clang_base_path = default_clang_base_path
+}
+
+import("//build/config/win/visual_studio_version.gni")
+
+# Should only be running on Windows.
+assert(is_win)
+
+# Setup the Visual Studio state.
+#
+# Its arguments are the VS path and the compiler wrapper tool. It will write
+# "environment.x86" and "environment.x64" to the build directory and return a
+# list to us.
+
+# This tool will is used as a wrapper for various commands below.
+tool_wrapper_path = rebase_path("tool_wrapper.py", root_build_dir)
+
+if (use_rbe) {
+  compiler_args = rewrapper_command + [
+    "--labels=type=compile,compiler=clang-cl,lang=cpp ",
+  ]
+  compiler_prefix = string_join(" ", compiler_args)
+  asm_prefix = " "
+} else {
+  compiler_prefix = ""
+  asm_prefix = ""
+}
+
+if (current_toolchain == default_toolchain) {
+  if (is_debug) {
+    configuration = "Debug"
+  } else {
+    configuration = "Release"
+  }
+  exec_script("//build/vs_toolchain.py",
+              [
+                "copy_dlls",
+                rebase_path(root_build_dir),
+                configuration,
+                current_cpu,
+              ])
+}
+
+# Parameters:
+#  toolchain_args: Settings for the toolchain, including at least:
+#     current_cpu: current_cpu to pass as a build arg
+#  environment: File name of environment file.
+template("msvc_toolchain") {
+  toolchain(target_name) {
+    # When invoking this toolchain not as the default one, these args will be
+    # passed to the build. They are ignored when this is the default toolchain.
+    assert(defined(invoker.toolchain_args))
+    toolchain_args = {
+      if (defined(invoker.toolchain_args)) {
+        forward_variables_from(invoker.toolchain_args, "*")
+      }
+    }
+
+    # TODO(zanderso): Assert that clang is always used or remove this logic.
+    if (defined(toolchain_args.is_clang)) {
+      toolchain_is_clang = toolchain_args.is_clang
+    } else {
+      toolchain_is_clang = is_clang
+    }
+
+    env = invoker.environment
+    env_path = "$root_out_dir/$env"
+    print(env_path)
+    env_file = read_file(env_path, "string")
+    print(env_file)
+
+    cl = invoker.cl
+
+    # Make these apply to all tools below.
+    lib_switch = ""
+    lib_dir_switch = "/LIBPATH:"
+
+    # If possible, pass system includes as flags to the compiler.  When that's
+    # not possible, load a full environment file (containing %INCLUDE% and
+    # %PATH%) -- e.g. 32-bit MSVS builds require %PATH% to be set and just
+    # passing in a list of include directories isn't enough.
+    if (defined(invoker.sys_include_flags)) {
+      assert(toolchain_is_clang)
+      env_wrapper = ""
+      sys_include_flags =
+          "${invoker.sys_include_flags} "  # Note trailing space.
+    } else {
+      # clang-cl doesn't need this env hoop, so omit it there.
+      assert(!toolchain_is_clang)
+      env_wrapper = "ninja -t msvc -e $env -- "  # Note trailing space.
+      sys_include_flags = ""
+    }
+
+    tool("cc") {
+      precompiled_header_type = "msvc"
+      pdbname = "{{target_out_dir}}/{{label_name}}_c.pdb"
+      depsformat = "msvc"
+      description = "CC {{output}}"
+      outputs = [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.obj" ]
+
+      # Label names may have spaces in them so the pdbname must be quoted. The
+      # source and output don't need to be quoted because GN knows they're a
+      # full file name and will quote automatically when necessary.
+      command = "$env_wrapper$cl /c {{source}} /nologo /showIncludes:user $sys_include_flags{{defines}} {{include_dirs}} {{cflags}} {{cflags_c}} /Fo{{output}} /Fd\"$pdbname\""
+    }
+
+    tool("cxx") {
+      precompiled_header_type = "msvc"
+
+      # The PDB name needs to be different between C and C++ compiled files.
+      pdbname = "{{target_out_dir}}/{{label_name}}_cc.pdb"
+
+      # TODO(zanderso): This logic should be moved to be with the other compiler
+      # flag logic in build/config/compiler/BUILD.gn or so.
+      flags = ""
+      if (is_clang && invoker.current_cpu == "x86") {
+        flags = "-m32"
+      }
+
+      depsformat = "msvc"
+      description = "CXX {{output}}"
+      outputs = [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.obj" ]
+
+      # See comment in CC tool about quoting.
+      command = "$env_wrapper$cl /c {{source}} /Fo{{output}} $flags /nologo /showIncludes:user $sys_include_flags{{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} /Fd\"$pdbname\""
+    }
+
+    tool("rc") {
+      command = "\"$python_path\" $tool_wrapper_path rc-wrapper $env rc.exe /nologo {{defines}} {{include_dirs}} /fo{{output}} {{source}}"
+      depsformat = "msvc"
+      outputs = [
+        "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.res",
+      ]
+      description = "RC {{output}}"
+    }
+
+    tool("asm") {
+      is_msvc_assembler = true
+      if (toolchain_args.current_cpu == "x64") {
+        ml = "ml64.exe"
+        x64 = "-D_ML64_X64"
+      } else if (toolchain_args.current_cpu == "arm64") {
+        is_msvc_assembler = false
+        prefix = rebase_path("$clang_base_path/bin", root_build_dir)
+        ml = "${compiler_prefix}${prefix}/clang-cl.exe --target=arm64-windows"
+        x64 = ""
+      } else {
+        ml = "ml.exe"
+        x64 = ""
+      }
+      command = "\"$python_path\" $tool_wrapper_path asm-wrapper $env $ml $x64 {{defines}} {{include_dirs}} {{asmflags}} "
+      if (is_msvc_assembler) {
+        command += "-c -o{{output}} {{source}}"
+      } else {
+        command += "/c /Fo{{output}} {{source}}"
+      }
+      outputs = [
+        "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.obj",
+      ]
+    }
+
+    tool("alink") {
+      rspfile = "{{output}}.rsp"
+      command = "\"$python_path\" $tool_wrapper_path link-wrapper $env False lib.exe /nologo /ignore:4221 /OUT:{{output}} @$rspfile"
+      description = "LIB {{output}}"
+      outputs = [
+        # Ignore {{output_extension}} and always use .lib, there's no reason to
+        # allow targets to override this extension on Windows.
+        "{{target_out_dir}}/{{target_output_name}}.lib",
+      ]
+      default_output_extension = ".lib"
+
+      # The use of inputs_newline is to work around a fixed per-line buffer
+      # size in the linker.
+      rspfile_content = "{{inputs_newline}}"
+    }
+
+    tool("solink") {
+      # E.g. "foo.dll":
+      dllname = "{{root_out_dir}}/{{target_output_name}}{{output_extension}}"
+      libname = "${dllname}.lib"  # e.g. foo.dll.lib
+      expname = "${dllname}.exp"
+      pdbname = "${dllname}.pdb"
+      rspfile = "${dllname}.rsp"
+
+      link_command = "\"$python_path\" $tool_wrapper_path link-wrapper $env False link.exe /nologo /IMPLIB:$libname /DLL /OUT:$dllname /PDB:${dllname}.pdb @$rspfile"
+
+      # TODO(brettw) support manifests
+      #manifest_command = "\"$python_path\" $tool_wrapper_path manifest-wrapper $env mt.exe -nologo -manifest $manifests -out:${dllname}.manifest"
+      #command = "cmd /c $link_command && $manifest_command"
+      command = link_command
+
+      default_output_extension = ".dll"
+      description = "LINK(DLL) {{output}}"
+      outputs = [
+        dllname,
+        expname,
+        libname,
+        pdbname,
+      ]
+      link_output = libname
+      depend_output = libname
+
+      # The use of inputs_newline is to work around a fixed per-line buffer
+      # size in the linker.
+      rspfile_content = "{{libs}} {{solibs}} {{inputs_newline}} {{ldflags}}"
+
+      restat = true
+    }
+
+    tool("link") {
+      binary_output =
+          "{{root_out_dir}}/{{target_output_name}}{{output_extension}}"
+      rspfile = "$binary_output.rsp"
+      pdbfile = "$binary_output.pdb"
+
+      link_command = "\"$python_path\" $tool_wrapper_path link-wrapper $env False link.exe /nologo /OUT:$binary_output /PDB:$pdbfile @$rspfile"
+
+      # TODO(brettw) support manifests
+      #manifest_command = "\"$python_path\" $tool_wrapper_path manifest-wrapper $env mt.exe -nologo -manifest $manifests -out:{{output}}.manifest"
+      #command = "cmd /c $link_command && $manifest_command"
+      command = link_command
+
+      default_output_extension = ".exe"
+      description = "LINK $binary_output"
+      outputs = [
+        binary_output,
+        pdbfile,
+      ]
+
+      # The use of inputs_newline is to work around a fixed per-line buffer
+      # size in the linker.
+      rspfile_content = "{{inputs_newline}} {{libs}} {{solibs}} {{ldflags}}"
+
+      restat = true
+    }
+
+    tool("stamp") {
+      command = "cmd /c type nul > \"{{output}}\""
+      description = "STAMP {{output}}"
+    }
+
+    tool("copy") {
+      command = "\"$python_path\" $tool_wrapper_path recursive-mirror {{source}} {{output}}"
+      description = "COPY {{source}} {{output}}"
+    }
+  }
+}
+
+template("win_toolchains") {
+  assert(defined(invoker.toolchain_arch))
+  toolchain_arch = invoker.toolchain_arch
+
+  # The toolchain data for `msvc_toolchain()`.
+  if (toolchain_arch == "x86") {
+    win_toolchain_data = win_toolchain_data_x86
+  } else if (toolchain_arch == "x64") {
+    win_toolchain_data = win_toolchain_data_x64
+  } else if (toolchain_arch == "arm64") {
+    win_toolchain_data = win_toolchain_data_arm64
+  } else {
+    error("Unsupported toolchain_arch, add it to win_toolchain_data.gni")
+  }
+
+  msvc_toolchain("clang_" + target_name) {
+    environment = "environment." + toolchain_arch
+    prefix = rebase_path("$clang_base_path/bin", root_build_dir)
+    cl = "${compiler_prefix}$prefix/clang-cl.exe"
+    sys_include_flags = "${win_toolchain_data.include_flags_imsvc}"
+    toolchain_args = {
+      if (defined(invoker.toolchain_args)) {
+        forward_variables_from(invoker.toolchain_args, "*")
+      }
+      current_cpu = toolchain_arch
+      is_clang = true
+    }
+  }
+}
+
+if (target_cpu == "x86") {
+  win_toolchains("x86") {
+    toolchain_arch = "x86"
+  }
+}
+
+if (target_cpu == "x64") {
+  win_toolchains("x64") {
+    toolchain_arch = "x64"
+  }
+}
+
+if (target_cpu == "arm") {
+  # When the target cpu is "arm", we use the 32-bit intel toolchain "x86".
+  win_toolchains("x86") {
+    toolchain_arch = "x86"
+  }
+}
+
+if (target_cpu == "arm64") {
+  win_toolchains("arm64") {
+    toolchain_arch = "arm64"
+  }
+
+  # Cross-compilation support for x64 hosts.
+  if (host_cpu != "arm64") {
+    win_toolchains(host_cpu) {
+      toolchain_arch = host_cpu
+    }
+  }
+}

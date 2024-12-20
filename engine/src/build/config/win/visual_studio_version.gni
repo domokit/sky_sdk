@@ -1,0 +1,39 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+  # Path to Visual Studio. If empty, the default is used which is to use the
+  # automatic toolchain in depot_tools. If set, you must also set the
+  # visual_studio_version and wdk_path.
+  visual_studio_path = ""
+
+  # Version of Visual Studio pointed to by the visual_studio_path.
+  # Use "2013" for Visual Studio 2013, or "2013e" for the Express version.
+  visual_studio_version = ""
+
+  # Directory of the Windows driver kit. If visual_studio_path is empty, this
+  # will be auto-filled.
+  wdk_path = ""
+
+  # Full path to the Windows SDK, not including a backslash at the end.
+  # This value is the default location, override if you have a different
+  # installation location.
+  windows_sdk_path = "C:\Program Files (x86)\Windows Kits\8.1"
+}
+
+if (visual_studio_path == "") {
+  _toolchain_data =
+      exec_script("//build/vs_toolchain.py", [ "get_toolchain_dir" ], "scope")
+  visual_studio_path = _toolchain_data.vs_path
+  windows_sdk_path = _toolchain_data.sdk_path
+  visual_studio_version = _toolchain_data.vs_version
+  wdk_path = _toolchain_data.wdk_dir
+  visual_studio_runtime_dirs = _toolchain_data.runtime_dirs
+} else {
+  assert(visual_studio_version != "",
+         "You must set the visual_studio_version if you set the path")
+  assert(wdk_path != "",
+         "You must set the wdk_path if you set the visual studio path")
+  visual_studio_runtime_dirs = []
+}

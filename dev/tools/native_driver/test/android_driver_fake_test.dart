@@ -13,9 +13,7 @@ import 'src/fake_driver.dart';
 
 void main() async {
   test('screenshot calls ADB screencap', () async {
-    final FakeAdb adb = FakeAdb(
-      screencap: () async => Uint8List.fromList(<int>[1, 2, 3, 4]),
-    );
+    final FakeAdb adb = FakeAdb(screencap: () async => Uint8List.fromList(<int>[1, 2, 3, 4]));
     final io.Directory tmpDir = io.Directory.systemTemp.createTempSync();
     final AndroidNativeDriver driver = AndroidNativeDriver.forTesting(
       adb: adb,

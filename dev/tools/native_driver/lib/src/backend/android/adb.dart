@@ -29,10 +29,10 @@ class Adb {
   }) async {
     target ??= const AndroidDeviceTarget.onlyEmulatorOrDevice();
     final String tool = adbPath ?? 'adb';
-    final Adb adb = Adb._(
-      <String>[tool, ...target._toAdbArgs()],
-      processManager ?? const LocalProcessManager(),
-    );
+    final Adb adb = Adb._(<String>[
+      tool,
+      ...target._toAdbArgs(),
+    ], processManager ?? const LocalProcessManager());
     final (bool connected, String? error) = await adb.isDeviceConnected();
     if (!connected) {
       throw StateError('No device connected: $error');
@@ -41,12 +41,7 @@ class Adb {
   }
 
   Future<AdbStringResult> _runString(List<String> args) async {
-    final io.ProcessResult result = await _process.run(
-      <String>[
-        ..._prefixArgs,
-        ...args,
-      ],
-    );
+    final io.ProcessResult result = await _process.run(<String>[..._prefixArgs, ...args]);
     return AdbStringResult(
       result.stdout as String,
       exitCode: result.exitCode,
@@ -55,13 +50,10 @@ class Adb {
   }
 
   Future<AdbBinaryResult> _runBinary(List<String> args) async {
-    final io.ProcessResult result = await _process.run(
-      <String>[
-        ..._prefixArgs,
-        ...args,
-      ],
-      stdoutEncoding: null,
-    );
+    final io.ProcessResult result = await _process.run(<String>[
+      ..._prefixArgs,
+      ...args,
+    ], stdoutEncoding: null);
     return AdbBinaryResult(
       result.stdout as Uint8List,
       exitCode: result.exitCode,
@@ -78,11 +70,7 @@ class Adb {
   /// and an error message if the device is not connected. If the device is
   /// connected, the error message is `null`.
   Future<(bool connected, String? error)> isDeviceConnected() async {
-    final AdbStringResult result = await _runString(<String>[
-      'shell',
-      'echo',
-      'connected',
-    ]);
+    final AdbStringResult result = await _runString(<String>['shell', 'echo', 'connected']);
     if (result.exitCode != 0) {
       return (false, result.stderr);
     } else {
@@ -92,11 +80,7 @@ class Adb {
 
   /// Takes a screenshot of the device.
   Future<Uint8List> screencap() async {
-    final AdbBinaryResult result = await _runBinary(<String>[
-      'exec-out',
-      'screencap',
-      '-p',
-    ]);
+    final AdbBinaryResult result = await _runBinary(<String>['exec-out', 'screencap', '-p']);
     if (result.exitCode != 0) {
       throw StateError('Failed to take screenshot: ${result.stderr}');
     }
@@ -105,13 +89,7 @@ class Adb {
 
   /// Taps on the screen at the given [x] and [y] coordinates.
   Future<void> tap(int x, int y) async {
-    final AdbStringResult result = await _runString(<String>[
-      'shell',
-      'input',
-      'tap',
-      '$x',
-      '$y',
-    ]);
+    final AdbStringResult result = await _runString(<String>['shell', 'input', 'tap', '$x', '$y']);
     if (result.exitCode != 0) {
       throw StateError('Failed to tap at $x, $y: ${result.stderr}');
     }
@@ -145,10 +123,7 @@ class Adb {
   }
 
   /// Resume a backgrounded app (i.e. after [sendToHome]).
-  Future<void> resumeApp({
-    required String appName,
-    String activityName = '.MainActivity',
-  }) async {
+  Future<void> resumeApp({required String appName, String activityName = '.MainActivity'}) async {
     final AdbStringResult result = await _runString(<String>[
       'shell',
       'am',
@@ -172,9 +147,7 @@ class Adb {
       'confirmed',
     ]);
     if (result.exitCode != 0) {
-      throw StateError(
-        'Failed to disable immersive mode confirmations: ${result.stderr}',
-      );
+      throw StateError('Failed to disable immersive mode confirmations: ${result.stderr}');
     }
   }
 
@@ -250,9 +223,7 @@ sealed class AndroidDeviceTarget {
   /// ```dart
   /// const AndroidDeviceTarget target = AndroidDeviceTarget.bySerial('emulator-5554');
   /// ```
-  const factory AndroidDeviceTarget.bySerial(
-    String serialNumber,
-  ) = _SerialDeviceTarget;
+  const factory AndroidDeviceTarget.bySerial(String serialNumber) = _SerialDeviceTarget;
 
   /// Represents the only running emulator _or_ connected device.
   ///
@@ -314,5 +285,5 @@ enum AdbUserRotation {
   reversePortrait,
 
   /// Reverse landscape orientation, i.e., landscape upside down.
-  reverseLandscape;
+  reverseLandscape,
 }

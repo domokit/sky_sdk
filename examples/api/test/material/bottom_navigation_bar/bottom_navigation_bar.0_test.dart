@@ -3,14 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/bottom_navigation_bar/bottom_navigation_bar.0.dart' as example;
+import 'package:flutter_api_samples/material/bottom_navigation_bar/bottom_navigation_bar.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('BottomNavigationBar Updates Screen Content', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.BottomNavigationBarExampleApp(),
-    );
+    await tester.pumpWidget(const example.BottomNavigationBarExampleApp());
 
     expect(find.widgetWithText(AppBar, 'BottomNavigationBar Sample'), findsOneWidget);
     expect(find.byType(BottomNavigationBar), findsOneWidget);

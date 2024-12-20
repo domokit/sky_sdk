@@ -38,7 +38,9 @@ class ViewConfiguration {
 
   /// Creates a view configuration for the provided [ui.FlutterView].
   factory ViewConfiguration.fromView(ui.FlutterView view) {
-    final BoxConstraints physicalConstraints = BoxConstraints.fromViewConstraints(view.physicalConstraints);
+    final BoxConstraints physicalConstraints = BoxConstraints.fromViewConstraints(
+      view.physicalConstraints,
+    );
     final double devicePixelRatio = view.devicePixelRatio;
     return ViewConfiguration(
       physicalConstraints: physicalConstraints,
@@ -103,10 +105,10 @@ class ViewConfiguration {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ViewConfiguration
-        && other.logicalConstraints == logicalConstraints
-        && other.physicalConstraints == physicalConstraints
-        && other.devicePixelRatio == devicePixelRatio;
+    return other is ViewConfiguration &&
+        other.logicalConstraints == logicalConstraints &&
+        other.physicalConstraints == physicalConstraints &&
+        other.devicePixelRatio == devicePixelRatio;
   }
 
   @override
@@ -141,11 +143,8 @@ class RenderView extends RenderObject with RenderObjectWithChildMixin<RenderBox>
   /// [RenderView] object from configuring it. Typically, the object is created
   /// by the [View] widget and configured by the [RendererBinding] when the
   /// [RenderView] is registered with it by the [View] widget.
-  RenderView({
-    RenderBox? child,
-    ViewConfiguration? configuration,
-    required ui.FlutterView view,
-  }) : _view = view {
+  RenderView({RenderBox? child, ViewConfiguration? configuration, required ui.FlutterView view})
+    : _view = view {
     if (configuration != null) {
       this.configuration = configuration;
     }
@@ -198,7 +197,9 @@ class RenderView extends RenderObject with RenderObjectWithChildMixin<RenderBox>
   @override
   BoxConstraints get constraints {
     if (!hasConfiguration) {
-      throw StateError('Constraints are not available because RenderView has not been given a configuration yet.');
+      throw StateError(
+        'Constraints are not available because RenderView has not been given a configuration yet.',
+      );
     }
     return configuration.logicalConstraints;
   }
@@ -249,8 +250,14 @@ class RenderView extends RenderObject with RenderObjectWithChildMixin<RenderBox>
   ///
   /// This method calls [scheduleInitialLayout] and [scheduleInitialPaint].
   void prepareInitialFrame() {
-    assert(owner != null, 'attach the RenderView to a PipelineOwner before calling prepareInitialFrame');
-    assert(_rootTransform == null, 'prepareInitialFrame must only be called once'); // set by _updateMatricesAndCreateNewRootLayer
+    assert(
+      owner != null,
+      'attach the RenderView to a PipelineOwner before calling prepareInitialFrame',
+    );
+    assert(
+      _rootTransform == null,
+      'prepareInitialFrame must only be called once',
+    ); // set by _updateMatricesAndCreateNewRootLayer
     assert(hasConfiguration, 'set a configuration before calling prepareInitialFrame');
     scheduleInitialLayout();
     scheduleInitialPaint(_updateMatricesAndCreateNewRootLayer());
@@ -271,7 +278,9 @@ class RenderView extends RenderObject with RenderObjectWithChildMixin<RenderBox>
   // We never call layout() on this class, so this should never get
   // checked. (This class is laid out using scheduleInitialLayout().)
   @override
-  void debugAssertDoesMeetConstraints() { assert(false); }
+  void debugAssertDoesMeetConstraints() {
+    assert(false);
+  }
 
   @override
   void performResize() {
@@ -298,7 +307,7 @@ class RenderView extends RenderObject with RenderObjectWithChildMixin<RenderBox>
   /// which is to say, in logical pixels. This is not necessarily the same
   /// coordinate system as that expected by the root [Layer], which will
   /// normally be in physical (device) pixels.
-  bool hitTest(HitTestResult result, { required Offset position }) {
+  bool hitTest(HitTestResult result, {required Offset position}) {
     child?.hitTest(BoxHitTestResult.wrap(result), position: position);
     result.add(HitTestEntry(this));
     return true;
@@ -355,7 +364,9 @@ class RenderView extends RenderObject with RenderObjectWithChildMixin<RenderBox>
       scene.dispose();
       assert(() {
         if (debugRepaintRainbowEnabled || debugRepaintTextRainbowEnabled) {
-          debugCurrentRepaintColor = debugCurrentRepaintColor.withHue((debugCurrentRepaintColor.hue + 2.0) % 360.0);
+          debugCurrentRepaintColor = debugCurrentRepaintColor.withHue(
+            (debugCurrentRepaintColor.hue + 2.0) % 360.0,
+          );
         }
         return true;
       }());
@@ -466,9 +477,12 @@ class RenderView extends RenderObject with RenderObjectWithChildMixin<RenderBox>
       statusBarColor: definedOverlayStyle.statusBarColor,
       systemStatusBarContrastEnforced: definedOverlayStyle.systemStatusBarContrastEnforced,
       systemNavigationBarColor: isAndroid ? definedOverlayStyle.systemNavigationBarColor : null,
-      systemNavigationBarDividerColor: isAndroid ? definedOverlayStyle.systemNavigationBarDividerColor : null,
-      systemNavigationBarIconBrightness: isAndroid ? definedOverlayStyle.systemNavigationBarIconBrightness : null,
-      systemNavigationBarContrastEnforced: isAndroid ? definedOverlayStyle.systemNavigationBarContrastEnforced : null,
+      systemNavigationBarDividerColor:
+          isAndroid ? definedOverlayStyle.systemNavigationBarDividerColor : null,
+      systemNavigationBarIconBrightness:
+          isAndroid ? definedOverlayStyle.systemNavigationBarIconBrightness : null,
+      systemNavigationBarContrastEnforced:
+          isAndroid ? definedOverlayStyle.systemNavigationBarContrastEnforced : null,
     );
     SystemChrome.setSystemUIOverlayStyle(overlayStyle);
   }
@@ -488,12 +502,30 @@ class RenderView extends RenderObject with RenderObjectWithChildMixin<RenderBox>
     // root superclasses don't include any interesting information for this
     // class
     assert(() {
-      properties.add(DiagnosticsNode.message('debug mode enabled - ${kIsWeb ? 'Web' :  Platform.operatingSystem}'));
+      properties.add(
+        DiagnosticsNode.message(
+          'debug mode enabled - ${kIsWeb ? 'Web' : Platform.operatingSystem}',
+        ),
+      );
       return true;
     }());
-    properties.add(DiagnosticsProperty<Size>('view size', _view.physicalSize, tooltip: 'in physical pixels'));
-    properties.add(DoubleProperty('device pixel ratio', _view.devicePixelRatio, tooltip: 'physical pixels per logical pixel'));
-    properties.add(DiagnosticsProperty<ViewConfiguration>('configuration', configuration, tooltip: 'in logical pixels'));
+    properties.add(
+      DiagnosticsProperty<Size>('view size', _view.physicalSize, tooltip: 'in physical pixels'),
+    );
+    properties.add(
+      DoubleProperty(
+        'device pixel ratio',
+        _view.devicePixelRatio,
+        tooltip: 'physical pixels per logical pixel',
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<ViewConfiguration>(
+        'configuration',
+        configuration,
+        tooltip: 'in logical pixels',
+      ),
+    );
     if (_view.platformDispatcher.semanticsEnabled) {
       properties.add(DiagnosticsNode.message('semantics enabled'));
     }
@@ -541,4 +573,5 @@ class RenderView extends RenderObject with RenderObjectWithChildMixin<RenderBox>
 ///
 /// Used by [RenderView.debugAddPaintCallback] and
 /// [RenderView.debugRemovePaintCallback].
-typedef DebugPaintCallback = void Function(PaintingContext context, Offset offset, RenderView renderView);
+typedef DebugPaintCallback =
+    void Function(PaintingContext context, Offset offset, RenderView renderView);

@@ -1,0 +1,59 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+config("wuffs_public") {
+  include_dirs = [ "release/c" ]
+
+  cflags = []
+
+  if (is_clang) {
+    cflags += [
+      "-Wno-unused-function",
+      "-Wno-c++11-narrowing",
+    ]
+  }
+}
+
+source_set("wuffs") {
+  public_configs = [ ":wuffs_public" ]
+
+  defines = [
+    # Copy/pasting from "../externals/wuffs/release/c/wuffs-*.c":
+    #
+    # ----
+    #
+    # Wuffs ships as a "single file C library" or "header file library" as per
+    # https://github.com/nothings/stb/blob/master/docs/stb_howto.txt
+    #
+    # To use that single file as a "foo.c"-like implementation, instead of a
+    # "foo.h"-like header, #define WUFFS_IMPLEMENTATION before #include'ing or
+    # compiling it.
+    #
+    # ----
+    "WUFFS_IMPLEMENTATION",
+
+    # Continuing to copy/paste:
+    #
+    # ----
+    #
+    # Defining the WUFFS_CONFIG__MODULE* macros are optional, but it lets users
+    # of Wuffs' .c file explicitly include which parts of Wuffs to build. That
+    # file contains the entire Wuffs standard library, implementing a variety of
+    # codecs and file formats. Without this macro definition, an optimizing
+    # compiler or linker may very well discard Wuffs code for unused codecs,
+    # but listing the Wuffs modules we use makes that process explicit.
+    # Preprocessing means that such code simply isn't compiled.
+    #
+    # ----
+    #
+    # For Skia, we're only interested in particular image codes (e.g. GIF) and
+    # their dependencies (e.g. BASE, LZW).
+    "WUFFS_CONFIG__MODULES",
+    "WUFFS_CONFIG__MODULE__BASE",
+    "WUFFS_CONFIG__MODULE__GIF",
+    "WUFFS_CONFIG__MODULE__LZW",
+  ]
+
+  sources = [ "release/c/wuffs-v0.3.c" ]
+}

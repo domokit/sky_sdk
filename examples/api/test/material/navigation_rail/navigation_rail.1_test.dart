@@ -3,18 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/navigation_rail/navigation_rail.1.dart'
-    as example;
+import 'package:flutter_api_samples/material/navigation_rail/navigation_rail.1.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Navigation rail updates destination on tap',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NavigationRailExampleApp(),
-    );
-    final NavigationRail navigationRailWidget =
-        tester.firstWidget(find.byType(NavigationRail));
+  testWidgets('Navigation rail updates destination on tap', (WidgetTester tester) async {
+    await tester.pumpWidget(const example.NavigationRailExampleApp());
+    final NavigationRail navigationRailWidget = tester.firstWidget(find.byType(NavigationRail));
 
     /// NavigationRailDestinations must be rendered
     expect(find.text('First'), findsOneWidget);
@@ -36,9 +31,7 @@ void main() {
   });
 
   testWidgets('Navigation rail updates label type', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NavigationRailExampleApp(),
-    );
+    await tester.pumpWidget(const example.NavigationRailExampleApp());
 
     // initial label type set to all.
     expect(find.text('Label type: all'), findsOneWidget);
@@ -55,9 +48,7 @@ void main() {
   });
 
   testWidgets('Navigation rail updates group alignment', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NavigationRailExampleApp(),
-    );
+    await tester.pumpWidget(const example.NavigationRailExampleApp());
 
     // initial group alignment set top top.
     expect(find.text('Group alignment: -1.0'), findsOneWidget);
@@ -74,9 +65,7 @@ void main() {
   });
 
   testWidgets('Navigation rail shows leading/trailing widgets', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NavigationRailExampleApp(),
-    );
+    await tester.pumpWidget(const example.NavigationRailExampleApp());
 
     // Initially leading/trailing widgets are hidden.
     expect(find.byType(FloatingActionButton), findsNothing);
@@ -96,22 +85,18 @@ void main() {
   });
 
   testWidgets('Destinations have badge', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NavigationRailExampleApp(),
-    );
+    await tester.pumpWidget(const example.NavigationRailExampleApp());
 
     // Test badge without label.
-    final Badge notificationBadge = tester.firstWidget(find.ancestor(
-      of: find.byIcon(Icons.bookmark_border),
-      matching: find.byType(Badge),
-    ));
+    final Badge notificationBadge = tester.firstWidget(
+      find.ancestor(of: find.byIcon(Icons.bookmark_border), matching: find.byType(Badge)),
+    );
     expect(notificationBadge.label, null);
 
     // Test badge with label.
-    final Badge messagesBadge = tester.firstWidget(find.ancestor(
-      of: find.byIcon(Icons.star_border),
-      matching: find.byType(Badge),
-    ));
+    final Badge messagesBadge = tester.firstWidget(
+      find.ancestor(of: find.byIcon(Icons.star_border), matching: find.byType(Badge)),
+    );
     expect(messagesBadge.label, isNotNull);
   });
 }

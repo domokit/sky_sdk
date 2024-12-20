@@ -45,12 +45,10 @@ class OpenContainerTransformDemo extends StatefulWidget {
   const OpenContainerTransformDemo({super.key});
 
   @override
-  State<OpenContainerTransformDemo> createState() =>
-      _OpenContainerTransformDemoState();
+  State<OpenContainerTransformDemo> createState() => _OpenContainerTransformDemoState();
 }
 
-class _OpenContainerTransformDemoState
-    extends State<OpenContainerTransformDemo> {
+class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
@@ -72,18 +70,17 @@ class _OpenContainerTransformDemoState
                     localizations!.demoContainerTransformModalBottomSheetTitle,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
-                  const SizedBox(
-                    height: 12,
-                  ),
+                  const SizedBox(height: 12),
                   ToggleButtons(
                     borderRadius: BorderRadius.circular(2),
                     selectedBorderColor: Theme.of(context).colorScheme.primary,
                     onPressed: (int index) {
                       setModalState(() {
                         setState(() {
-                          _transitionType = index == 0
-                              ? ContainerTransitionType.fade
-                              : ContainerTransitionType.fadeThrough;
+                          _transitionType =
+                              index == 0
+                                  ? ContainerTransitionType.fade
+                                  : ContainerTransitionType.fadeThrough;
                         });
                       });
                     },
@@ -92,16 +89,10 @@ class _OpenContainerTransformDemoState
                       _transitionType == ContainerTransitionType.fadeThrough,
                     ],
                     children: <Widget>[
-                      Text(
-                        localizations.demoContainerTransformTypeFade,
-                      ),
+                      Text(localizations.demoContainerTransformTypeFade),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                        ),
-                        child: Text(
-                          localizations.demoContainerTransformTypeFadeThrough,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Text(localizations.demoContainerTransformTypeFadeThrough),
                       ),
                     ],
                   ),
@@ -125,189 +116,159 @@ class _OpenContainerTransformDemoState
       key: ValueKey<ContainerTransitionType>(_transitionType),
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute<void>(
-          builder: (BuildContext context) => Scaffold(
-            key: _scaffoldKey,
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              title: Column(
-                children: <Widget>[
-                  Text(
-                    localizations!.demoContainerTransformTitle,
-                  ),
-                  Text(
-                    '(${localizations.demoContainerTransformDemoInstructions})',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall!
-                        .copyWith(color: Colors.white),
-                  ),
-                ],
-              ),
-              actions: <Widget>[
-                IconButton(
-                  icon: const Icon(
-                    Icons.settings,
-                  ),
-                  onPressed: () {
-                    _showSettingsBottomModalSheet(context);
-                  },
-                ),
-              ],
-            ),
-            body: ListView(
-              padding: const EdgeInsets.all(8),
-              children: <Widget>[
-                _OpenContainerWrapper(
-                  transitionType: _transitionType,
-                  closedBuilder: (BuildContext context, void Function() openContainer) {
-                    return _DetailsCard(openContainer: openContainer);
-                  },
-                ),
-                const SizedBox(height: 16),
-                _OpenContainerWrapper(
-                  transitionType: _transitionType,
-                  closedBuilder: (BuildContext context, void Function() openContainer) {
-                    return _DetailsListTile(openContainer: openContainer);
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: _OpenContainerWrapper(
-                        transitionType: _transitionType,
-                        closedBuilder: (BuildContext context, void Function() openContainer) {
-                          return _SmallDetailsCard(
-                            openContainer: openContainer,
-                            subtitle:
-                                localizations.demoMotionPlaceholderSubtitle,
-                          );
-                        },
+          builder:
+              (BuildContext context) => Scaffold(
+                key: _scaffoldKey,
+                appBar: AppBar(
+                  automaticallyImplyLeading: false,
+                  title: Column(
+                    children: <Widget>[
+                      Text(localizations!.demoContainerTransformTitle),
+                      Text(
+                        '(${localizations.demoContainerTransformDemoInstructions})',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.titleSmall!.copyWith(color: Colors.white),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Expanded(
-                      child: _OpenContainerWrapper(
-                        transitionType: _transitionType,
-                        closedBuilder: (BuildContext context, void Function() openContainer) {
-                          return _SmallDetailsCard(
-                            openContainer: openContainer,
-                            subtitle:
-                                localizations.demoMotionPlaceholderSubtitle,
-                          );
-                        },
-                      ),
+                    ],
+                  ),
+                  actions: <Widget>[
+                    IconButton(
+                      icon: const Icon(Icons.settings),
+                      onPressed: () {
+                        _showSettingsBottomModalSheet(context);
+                      },
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Row(
+                body: ListView(
+                  padding: const EdgeInsets.all(8),
                   children: <Widget>[
-                    Expanded(
-                      child: _OpenContainerWrapper(
+                    _OpenContainerWrapper(
+                      transitionType: _transitionType,
+                      closedBuilder: (BuildContext context, void Function() openContainer) {
+                        return _DetailsCard(openContainer: openContainer);
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    _OpenContainerWrapper(
+                      transitionType: _transitionType,
+                      closedBuilder: (BuildContext context, void Function() openContainer) {
+                        return _DetailsListTile(openContainer: openContainer);
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: _OpenContainerWrapper(
+                            transitionType: _transitionType,
+                            closedBuilder: (BuildContext context, void Function() openContainer) {
+                              return _SmallDetailsCard(
+                                openContainer: openContainer,
+                                subtitle: localizations.demoMotionPlaceholderSubtitle,
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _OpenContainerWrapper(
+                            transitionType: _transitionType,
+                            closedBuilder: (BuildContext context, void Function() openContainer) {
+                              return _SmallDetailsCard(
+                                openContainer: openContainer,
+                                subtitle: localizations.demoMotionPlaceholderSubtitle,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: _OpenContainerWrapper(
+                            transitionType: _transitionType,
+                            closedBuilder: (BuildContext context, void Function() openContainer) {
+                              return _SmallDetailsCard(
+                                openContainer: openContainer,
+                                subtitle: localizations.demoMotionSmallPlaceholderSubtitle,
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _OpenContainerWrapper(
+                            transitionType: _transitionType,
+                            closedBuilder: (BuildContext context, void Function() openContainer) {
+                              return _SmallDetailsCard(
+                                openContainer: openContainer,
+                                subtitle: localizations.demoMotionSmallPlaceholderSubtitle,
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _OpenContainerWrapper(
+                            transitionType: _transitionType,
+                            closedBuilder: (BuildContext context, void Function() openContainer) {
+                              return _SmallDetailsCard(
+                                openContainer: openContainer,
+                                subtitle: localizations.demoMotionSmallPlaceholderSubtitle,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    ...List<OpenContainer<bool>>.generate(10, (int index) {
+                      return OpenContainer<bool>(
                         transitionType: _transitionType,
+                        openBuilder:
+                            (BuildContext context, void Function() openContainer) =>
+                                const _DetailsPage(),
+                        tappable: false,
+                        closedShape: const RoundedRectangleBorder(),
+                        closedElevation: 0,
                         closedBuilder: (BuildContext context, void Function() openContainer) {
-                          return _SmallDetailsCard(
-                            openContainer: openContainer,
-                            subtitle: localizations
-                                .demoMotionSmallPlaceholderSubtitle,
+                          return ListTile(
+                            leading: Image.asset(
+                              'placeholders/avatar_logo.png',
+                              package: 'flutter_gallery_assets',
+                              width: 40,
+                            ),
+                            onTap: openContainer,
+                            title: Text('${localizations.demoMotionListTileTitle} ${index + 1}'),
+                            subtitle: Text(localizations.demoMotionPlaceholderSubtitle),
                           );
                         },
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Expanded(
-                      child: _OpenContainerWrapper(
-                        transitionType: _transitionType,
-                        closedBuilder: (BuildContext context, void Function() openContainer) {
-                          return _SmallDetailsCard(
-                            openContainer: openContainer,
-                            subtitle: localizations
-                                .demoMotionSmallPlaceholderSubtitle,
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Expanded(
-                      child: _OpenContainerWrapper(
-                        transitionType: _transitionType,
-                        closedBuilder: (BuildContext context, void Function() openContainer) {
-                          return _SmallDetailsCard(
-                            openContainer: openContainer,
-                            subtitle: localizations
-                                .demoMotionSmallPlaceholderSubtitle,
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                ...List<OpenContainer<bool>>.generate(10, (int index) {
-                  return OpenContainer<bool>(
-                    transitionType: _transitionType,
-                    openBuilder: (BuildContext context, void Function() openContainer) =>
-                        const _DetailsPage(),
-                    tappable: false,
-                    closedShape: const RoundedRectangleBorder(),
-                    closedElevation: 0,
-                    closedBuilder: (BuildContext context, void Function() openContainer) {
-                      return ListTile(
-                        leading: Image.asset(
-                          'placeholders/avatar_logo.png',
-                          package: 'flutter_gallery_assets',
-                          width: 40,
-                        ),
-                        onTap: openContainer,
-                        title: Text(
-                          '${localizations.demoMotionListTileTitle} ${index + 1}',
-                        ),
-                        subtitle: Text(
-                          localizations.demoMotionPlaceholderSubtitle,
-                        ),
                       );
-                    },
-                  );
-                }),
-              ],
-            ),
-            floatingActionButton: OpenContainer(
-              transitionType: _transitionType,
-              openBuilder: (BuildContext context, void Function() openContainer) => const _DetailsPage(),
-              closedElevation: 6,
-              closedShape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(_fabDimension / 2),
+                    }),
+                  ],
+                ),
+                floatingActionButton: OpenContainer(
+                  transitionType: _transitionType,
+                  openBuilder:
+                      (BuildContext context, void Function() openContainer) => const _DetailsPage(),
+                  closedElevation: 6,
+                  closedShape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(_fabDimension / 2)),
+                  ),
+                  closedColor: colorScheme.secondary,
+                  closedBuilder: (BuildContext context, void Function() openContainer) {
+                    return SizedBox(
+                      height: _fabDimension,
+                      width: _fabDimension,
+                      child: Center(child: Icon(Icons.add, color: colorScheme.onSecondary)),
+                    );
+                  },
                 ),
               ),
-              closedColor: colorScheme.secondary,
-              closedBuilder: (BuildContext context, void Function() openContainer) {
-                return SizedBox(
-                  height: _fabDimension,
-                  width: _fabDimension,
-                  child: Center(
-                    child: Icon(
-                      Icons.add,
-                      color: colorScheme.onSecondary,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
         );
       },
     );
@@ -315,10 +276,7 @@ class _OpenContainerTransformDemoState
 }
 
 class _OpenContainerWrapper extends StatelessWidget {
-  const _OpenContainerWrapper({
-    required this.closedBuilder,
-    required this.transitionType,
-  });
+  const _OpenContainerWrapper({required this.closedBuilder, required this.transitionType});
 
   final CloseContainerBuilder closedBuilder;
   final ContainerTransitionType transitionType;
@@ -362,26 +320,17 @@ class _DetailsCard extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: Text(
-              localizations.demoMotionPlaceholderTitle,
-            ),
-            subtitle: Text(
-              localizations.demoMotionPlaceholderSubtitle,
-            ),
+            title: Text(localizations.demoMotionPlaceholderTitle),
+            subtitle: Text(localizations.demoMotionPlaceholderSubtitle),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-              bottom: 16,
-            ),
+            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
             child: Text(
               'Lorem ipsum dolor sit amet, consectetur '
               'adipiscing elit, sed do eiusmod tempor.',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Colors.black54,
-                    inherit: false,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium!.copyWith(color: Colors.black54, inherit: false),
             ),
           ),
         ],
@@ -391,10 +340,7 @@ class _DetailsCard extends StatelessWidget {
 }
 
 class _SmallDetailsCard extends StatelessWidget {
-  const _SmallDetailsCard({
-    required this.openContainer,
-    required this.subtitle,
-  });
+  const _SmallDetailsCard({required this.openContainer, required this.subtitle});
 
   final VoidCallback openContainer;
   final String subtitle;
@@ -428,17 +374,11 @@ class _SmallDetailsCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    GalleryLocalizations.of(context)!
-                        .demoMotionPlaceholderTitle,
+                    GalleryLocalizations.of(context)!.demoMotionPlaceholderTitle,
                     style: textTheme.titleLarge,
                   ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    subtitle,
-                    style: textTheme.bodySmall,
-                  ),
+                  const SizedBox(height: 4),
+                  Text(subtitle, style: textTheme.bodySmall),
                 ],
               ),
             ),
@@ -483,13 +423,10 @@ class _DetailsListTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    GalleryLocalizations.of(context)!
-                        .demoMotionPlaceholderTitle,
+                    GalleryLocalizations.of(context)!.demoMotionPlaceholderTitle,
                     style: textTheme.titleMedium,
                   ),
-                  const SizedBox(
-                    height: 8,
-                  ),
+                  const SizedBox(height: 8),
                   Text(
                     'Lorem ipsum dolor sit amet, consectetur '
                     'adipiscing elit,',
@@ -506,11 +443,7 @@ class _DetailsListTile extends StatelessWidget {
 }
 
 class _InkWellOverlay extends StatelessWidget {
-  const _InkWellOverlay({
-    required this.openContainer,
-    required this.height,
-    required this.child,
-  });
+  const _InkWellOverlay({required this.openContainer, required this.height, required this.child});
 
   final VoidCallback openContainer;
   final double height;
@@ -518,13 +451,7 @@ class _InkWellOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      child: InkWell(
-        onTap: openContainer,
-        child: child,
-      ),
-    );
+    return SizedBox(height: height, child: InkWell(onTap: openContainer, child: child));
   }
 }
 
@@ -537,11 +464,7 @@ class _DetailsPage extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          localizations.demoMotionDetailsPageTitle,
-        ),
-      ),
+      appBar: AppBar(title: Text(localizations.demoMotionDetailsPageTitle)),
       body: ListView(
         children: <Widget>[
           Container(
@@ -562,14 +485,9 @@ class _DetailsPage extends StatelessWidget {
               children: <Widget>[
                 Text(
                   localizations.demoMotionPlaceholderTitle,
-                  style: textTheme.headlineSmall!.copyWith(
-                    color: Colors.black54,
-                    fontSize: 30,
-                  ),
+                  style: textTheme.headlineSmall!.copyWith(color: Colors.black54, fontSize: 30),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 Text(
                   _loremIpsumParagraph,
                   style: textTheme.bodyMedium!.copyWith(

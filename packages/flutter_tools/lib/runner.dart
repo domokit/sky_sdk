@@ -30,14 +30,14 @@ import 'src/runner/flutter_command_runner.dart';
 Future<int> run(
   List<String> args,
   List<FlutterCommand> Function() commands, {
-    bool muteCommandLogging = false,
-    bool verbose = false,
-    bool verboseHelp = false,
-    bool? reportCrashes,
-    String? flutterVersion,
-    Map<Type, Generator>? overrides,
-    required ShutdownHooks shutdownHooks,
-  }) async {
+  bool muteCommandLogging = false,
+  bool verbose = false,
+  bool verboseHelp = false,
+  bool? reportCrashes,
+  String? flutterVersion,
+  Map<Type, Generator>? overrides,
+  required ShutdownHooks shutdownHooks,
+}) async {
   if (muteCommandLogging) {
     // Remove the verbose option; for help and doctor, users don't need to see
     // verbose logs.
@@ -55,73 +55,90 @@ Future<int> run(
     // Initialize the system locale.
     final String systemLocale = await intl_standalone.findSystemLocale();
     intl.Intl.defaultLocale = intl.Intl.verifiedLocale(
-      systemLocale, intl.NumberFormat.localeExists,
+      systemLocale,
+      intl.NumberFormat.localeExists,
       onFailure: (String _) => 'en_US',
     );
 
-    String getVersion() => flutterVersion ?? globals.flutterVersion.getVersionString(redactUnknownBranches: true);
+    String getVersion() =>
+        flutterVersion ?? globals.flutterVersion.getVersionString(redactUnknownBranches: true);
     Object? firstError;
     StackTrace? firstStackTrace;
-    return runZoned<Future<int>>(() async {
-      try {
-        if (args.contains('--disable-analytics') &&
-            args.contains('--enable-analytics')) {
-          throwToolExit(
+    return runZoned<Future<int>>(
+      () async {
+        try {
+          if (args.contains('--disable-analytics') && args.contains('--enable-analytics')) {
+            throwToolExit(
               'Both enable and disable analytics commands were detected '
               'when only one can be supplied per invocation.',
-              exitCode: 1);
-        }
-
-        if (args.contains('--disable-analytics')) {
-          if (globals.analytics.telemetryEnabled) {
-            globals.analytics.send(
-              Event.analyticsCollectionEnabled(status: false),
-            );
-            // Before disablig analytics, we need to close the client to make
-            // sure the above collection event is sent.
-            await globals.analytics.close();
-          }
-          await globals.analytics.setTelemetry(false);
-          globals.printStatus('Analytics reporting disabled.');
-        }
-
-        if (args.contains('--enable-analytics')) {
-          final bool alreadyEnabled = globals.analytics.telemetryEnabled;
-          await globals.analytics.setTelemetry(true);
-          if (!alreadyEnabled) {
-            globals.analytics.send(
-              Event.analyticsCollectionEnabled(status: true),
+              exitCode: 1,
             );
           }
-          globals.printStatus('Analytics reporting enabled.');
+
+          if (args.contains('--disable-analytics')) {
+            if (globals.analytics.telemetryEnabled) {
+              globals.analytics.send(Event.analyticsCollectionEnabled(status: false));
+              // Before disablig analytics, we need to close the client to make
+              // sure the above collection event is sent.
+              await globals.analytics.close();
+            }
+            await globals.analytics.setTelemetry(false);
+            globals.printStatus('Analytics reporting disabled.');
+          }
+
+          if (args.contains('--enable-analytics')) {
+            final bool alreadyEnabled = globals.analytics.telemetryEnabled;
+            await globals.analytics.setTelemetry(true);
+            if (!alreadyEnabled) {
+              globals.analytics.send(Event.analyticsCollectionEnabled(status: true));
+            }
+            globals.printStatus('Analytics reporting enabled.');
+          }
+
+          await runner.run(args);
+
+          // Triggering [runZoned]'s error callback does not necessarily mean that
+          // we stopped executing the body. See https://github.com/dart-lang/sdk/issues/42150.
+          if (firstError == null) {
+            return await exitWithHooks(0, shutdownHooks: shutdownHooks);
+          }
+
+          // We already hit some error, so don't return success. The error path
+          // (which should be in progress) is responsible for calling _exit().
+          return 1;
+          // This catches all exceptions to send to crash logging, etc.
+          // ignore: avoid_catches_without_on_clauses
+        } catch (error, stackTrace) {
+          firstError = error;
+          firstStackTrace = stackTrace;
+          return _handleToolError(
+            error,
+            stackTrace,
+            verbose,
+            args,
+            reportCrashes!,
+            getVersion,
+            shutdownHooks,
+          );
         }
-
-        await runner.run(args);
-
-        // Triggering [runZoned]'s error callback does not necessarily mean that
-        // we stopped executing the body. See https://github.com/dart-lang/sdk/issues/42150.
-        if (firstError == null) {
-          return await exitWithHooks(0, shutdownHooks: shutdownHooks);
-        }
-
-        // We already hit some error, so don't return success. The error path
-        // (which should be in progress) is responsible for calling _exit().
-        return 1;
-        // This catches all exceptions to send to crash logging, etc.
-        // ignore: avoid_catches_without_on_clauses
-      } catch (error, stackTrace) {
-        firstError = error;
-        firstStackTrace = stackTrace;
-        return _handleToolError(error, stackTrace, verbose, args, reportCrashes!, getVersion, shutdownHooks);
-      }
-    }, onError: (Object error, StackTrace stackTrace) async {
-      // If sending a crash report throws an error into the zone, we don't want
-      // to re-try sending the crash report with *that* error. Rather, we want
-      // to send the original error that triggered the crash report.
-      firstError ??= error;
-      firstStackTrace ??= stackTrace;
-      await _handleToolError(firstError!, firstStackTrace, verbose, args, reportCrashes!, getVersion, shutdownHooks);
-    });
+      },
+      onError: (Object error, StackTrace stackTrace) async {
+        // If sending a crash report throws an error into the zone, we don't want
+        // to re-try sending the crash report with *that* error. Rather, we want
+        // to send the original error that triggered the crash report.
+        firstError ??= error;
+        firstStackTrace ??= stackTrace;
+        await _handleToolError(
+          firstError!,
+          firstStackTrace,
+          verbose,
+          args,
+          reportCrashes!,
+          getVersion,
+          shutdownHooks,
+        );
+      },
+    );
   }, overrides: overrides);
 }
 
@@ -136,7 +153,9 @@ Future<int> _handleToolError(
 ) async {
   if (error is UsageException) {
     globals.printError('${error.message}\n');
-    globals.printError("Run 'flutter -h' (or 'flutter <command> -h') for available flutter commands and options.");
+    globals.printError(
+      "Run 'flutter -h' (or 'flutter <command> -h') for available flutter commands and options.",
+    );
     // Argument error exit code.
     return exitWithHooks(64, shutdownHooks: shutdownHooks);
   } else if (error is ToolExit) {
@@ -177,22 +196,25 @@ Future<int> _handleToolError(
     }
 
     globals.analytics.send(Event.exception(exception: error.runtimeType.toString()));
-    await asyncGuard(() async {
-      final CrashReportSender crashReportSender = CrashReportSender(
-        platform: globals.platform,
-        logger: globals.logger,
-        operatingSystemUtils: globals.os,
-        analytics: globals.analytics,
-      );
-      await crashReportSender.sendReport(
-        error: error,
-        stackTrace: stackTrace!,
-        getFlutterVersion: getFlutterVersion,
-        command: args.join(' '),
-      );
-    }, onError: (dynamic error) {
-      globals.printError('Error sending crash report: $error');
-    });
+    await asyncGuard(
+      () async {
+        final CrashReportSender crashReportSender = CrashReportSender(
+          platform: globals.platform,
+          logger: globals.logger,
+          operatingSystemUtils: globals.os,
+          analytics: globals.analytics,
+        );
+        await crashReportSender.sendReport(
+          error: error,
+          stackTrace: stackTrace!,
+          getFlutterVersion: getFlutterVersion,
+          command: args.join(' '),
+        );
+      },
+      onError: (dynamic error) {
+        globals.printError('Error sending crash report: $error');
+      },
+    );
 
     globals.printError('Oops; flutter has exited unexpectedly: "$error".');
 
@@ -214,8 +236,8 @@ Future<int> _handleToolError(
       await globals.crashReporter!.informUser(details, file);
 
       return exitWithHooks(1, shutdownHooks: shutdownHooks);
-    // This catch catches all exceptions to ensure the message below is printed.
-    // ignore: avoid_catches_without_on_clauses
+      // This catch catches all exceptions to ensure the message below is printed.
+      // ignore: avoid_catches_without_on_clauses
     } catch (error, st) {
       globals.stdio.stderrWrite(
         'Unable to generate crash report due to secondary error: $error\n$st\n'
@@ -254,20 +276,12 @@ Future<File> _createLocalCrashReport(CrashDetails details) async {
   late File crashFile;
   ErrorHandlingFileSystem.noExitOnFailure(() {
     try {
-      crashFile = globals.fsUtils.getUniqueFile(
-        globals.fs.currentDirectory,
-        'flutter',
-        'log',
-      );
+      crashFile = globals.fsUtils.getUniqueFile(globals.fs.currentDirectory, 'flutter', 'log');
       crashFile.writeAsStringSync(buffer.toString());
     } on FileSystemException catch (_) {
       // Fallback to the system temporary directory.
       try {
-        crashFile = globals.fsUtils.getUniqueFile(
-          globals.fs.systemTempDirectory,
-          'flutter',
-          'log',
-        );
+        crashFile = globals.fsUtils.getUniqueFile(globals.fs.systemTempDirectory, 'flutter', 'log');
         crashFile.writeAsStringSync(buffer.toString());
       } on FileSystemException catch (e) {
         globals.printError('Could not write crash report to disk: $e');
@@ -293,9 +307,7 @@ bool _isErrorDueToGitMissing(
   try {
     return !processManager.canRun('git');
   } on Object catch (error) {
-    logger.printTrace(
-      'Unable to check whether git is runnable: $error\n'
-    );
+    logger.printTrace('Unable to check whether git is runnable: $error\n');
     return true;
   }
 }

@@ -30,38 +30,26 @@ Widget wrapForChip({
 
 RenderBox getMaterialBox(WidgetTester tester, Finder type) {
   return tester.firstRenderObject<RenderBox>(
-    find.descendant(
-      of: type,
-      matching: find.byType(CustomPaint),
-    ),
+    find.descendant(of: type, matching: find.byType(CustomPaint)),
   );
 }
 
 Material getMaterial(WidgetTester tester) {
   return tester.widget<Material>(
-    find.descendant(
-      of: find.byType(ActionChip),
-      matching: find.byType(Material),
-    ),
+    find.descendant(of: find.byType(ActionChip), matching: find.byType(Material)),
   );
 }
 
 IconThemeData getIconData(WidgetTester tester) {
   final IconTheme iconTheme = tester.firstWidget(
-    find.descendant(
-      of: find.byType(RawChip),
-      matching: find.byType(IconTheme),
-    ),
+    find.descendant(of: find.byType(RawChip), matching: find.byType(IconTheme)),
   );
   return iconTheme.data;
 }
 
 DefaultTextStyle getLabelStyle(WidgetTester tester, String labelText) {
   return tester.widget(
-    find.ancestor(
-      of: find.text(labelText),
-      matching: find.byType(DefaultTextStyle),
-    ).first,
+    find.ancestor(of: find.text(labelText), matching: find.byType(DefaultTextStyle)).first,
   );
 }
 
@@ -84,12 +72,7 @@ void main() {
       MaterialApp(
         theme: theme,
         home: Material(
-          child: Center(
-            child: ActionChip(
-              onPressed: () {},
-              label: const Text(label),
-            ),
-          ),
+          child: Center(child: ActionChip(onPressed: () {}, label: const Text(label))),
         ),
       ),
     );
@@ -107,19 +90,13 @@ void main() {
     expect(chipMaterial.shadowColor, Colors.black);
     expect(chipMaterial.shape, const StadiumBorder());
 
-    ShapeDecoration decoration = tester.widget<Ink>(find.byType(Ink)).decoration! as ShapeDecoration;
+    ShapeDecoration decoration =
+        tester.widget<Ink>(find.byType(Ink)).decoration! as ShapeDecoration;
     expect(decoration.color, Colors.black.withAlpha(0x1f));
 
     // Test disabled ActionChip defaults.
     await tester.pumpWidget(
-      MaterialApp(
-        theme: theme,
-        home: const Material(
-          child: ActionChip(
-            label: Text(label),
-          ),
-        ),
-      ),
+      MaterialApp(theme: theme, home: const Material(child: ActionChip(label: Text(label)))),
     );
     await tester.pumpAndSettle();
 
@@ -141,12 +118,7 @@ void main() {
       MaterialApp(
         theme: theme,
         home: Material(
-          child: Center(
-            child: ActionChip(
-              onPressed: () {},
-              label: const Text(label),
-            ),
-          ),
+          child: Center(child: ActionChip(onPressed: () {}, label: const Text(label))),
         ),
       ),
     );
@@ -157,10 +129,7 @@ void main() {
       within<Size>(distance: 0.01, from: const Size(189.1, 48.0)),
     );
     // Test default label style.
-    expect(
-      getLabelStyle(tester, label).style.color!.value,
-      theme.colorScheme.onSurface.value,
-    );
+    expect(getLabelStyle(tester, label).style.color!.value, theme.colorScheme.onSurface.value);
 
     Material chipMaterial = getMaterial(tester);
     expect(chipMaterial.elevation, 0);
@@ -174,19 +143,13 @@ void main() {
       ),
     );
 
-    ShapeDecoration decoration = tester.widget<Ink>(find.byType(Ink)).decoration! as ShapeDecoration;
+    ShapeDecoration decoration =
+        tester.widget<Ink>(find.byType(Ink)).decoration! as ShapeDecoration;
     expect(decoration.color, null);
 
     // Test disabled ActionChip defaults.
     await tester.pumpWidget(
-      MaterialApp(
-        theme: theme,
-        home: const Material(
-          child: ActionChip(
-            label: Text(label),
-          ),
-        ),
-      ),
+      MaterialApp(theme: theme, home: const Material(child: ActionChip(label: Text(label)))),
     );
     await tester.pumpAndSettle();
 
@@ -215,12 +178,7 @@ void main() {
       MaterialApp(
         theme: theme,
         home: Material(
-          child: Center(
-            child: ActionChip.elevated(
-              onPressed: () {},
-              label: const Text(label),
-            ),
-          ),
+          child: Center(child: ActionChip.elevated(onPressed: () {}, label: const Text(label))),
         ),
       ),
     );
@@ -231,10 +189,7 @@ void main() {
       within<Size>(distance: 0.01, from: const Size(189.1, 48.0)),
     );
     // Test default label style.
-    expect(
-      getLabelStyle(tester, label).style.color!.value,
-      theme.colorScheme.onSurface.value,
-    );
+    expect(getLabelStyle(tester, label).style.color!.value, theme.colorScheme.onSurface.value);
 
     Material chipMaterial = getMaterial(tester);
     expect(chipMaterial.elevation, 1);
@@ -248,18 +203,15 @@ void main() {
       ),
     );
 
-    ShapeDecoration decoration = tester.widget<Ink>(find.byType(Ink)).decoration! as ShapeDecoration;
+    ShapeDecoration decoration =
+        tester.widget<Ink>(find.byType(Ink)).decoration! as ShapeDecoration;
     expect(decoration.color, theme.colorScheme.surfaceContainerLow);
 
     // Test disabled ActionChip.elevated defaults.
     await tester.pumpWidget(
       MaterialApp(
         theme: theme,
-        home: const Material(
-          child: ActionChip.elevated(
-            label: Text(label),
-          ),
-        ),
+        home: const Material(child: ActionChip.elevated(label: Text(label))),
       ),
     );
     await tester.pumpAndSettle();
@@ -283,23 +235,25 @@ void main() {
   testWidgets('ActionChip.color resolves material states', (WidgetTester tester) async {
     const Color disabledColor = Color(0xff00ff00);
     const Color backgroundColor = Color(0xff0000ff);
-    final MaterialStateProperty<Color?> color = MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+    final MaterialStateProperty<Color?> color = MaterialStateProperty.resolveWith((
+      Set<MaterialState> states,
+    ) {
       if (states.contains(MaterialState.disabled)) {
         return disabledColor;
       }
       return backgroundColor;
     });
-    Widget buildApp({ required bool enabled, required bool selected }) {
+    Widget buildApp({required bool enabled, required bool selected}) {
       return wrapForChip(
         child: Column(
           children: <Widget>[
             ActionChip(
-              onPressed: enabled ? () { } : null,
+              onPressed: enabled ? () {} : null,
               color: color,
               label: const Text('ActionChip'),
             ),
             ActionChip.elevated(
-              onPressed: enabled ? () { } : null,
+              onPressed: enabled ? () {} : null,
               color: color,
               label: const Text('ActionChip.elevated'),
             ),
@@ -327,32 +281,26 @@ void main() {
     await tester.pumpAndSettle();
 
     // Disabled ActionChip should have the provided disabledColor.
-    expect(
-      getMaterialBox(tester, find.byType(RawChip).first),
-      paints..rrect(color: disabledColor),
-    );
+    expect(getMaterialBox(tester, find.byType(RawChip).first), paints..rrect(color: disabledColor));
     // Disabled elevated ActionChip should have the provided disabledColor.
-    expect(
-      getMaterialBox(tester, find.byType(RawChip).last),
-      paints..rrect(color: disabledColor),
-    );
+    expect(getMaterialBox(tester, find.byType(RawChip).last), paints..rrect(color: disabledColor));
   });
 
   testWidgets('ActionChip uses provided state color properties', (WidgetTester tester) async {
     const Color disabledColor = Color(0xff00ff00);
     const Color backgroundColor = Color(0xff0000ff);
-    Widget buildApp({ required bool enabled, required bool selected }) {
+    Widget buildApp({required bool enabled, required bool selected}) {
       return wrapForChip(
         child: Column(
           children: <Widget>[
             ActionChip(
-              onPressed: enabled ? () { } : null,
+              onPressed: enabled ? () {} : null,
               disabledColor: disabledColor,
               backgroundColor: backgroundColor,
               label: const Text('ActionChip'),
             ),
             ActionChip.elevated(
-              onPressed: enabled ? () { } : null,
+              onPressed: enabled ? () {} : null,
               disabledColor: disabledColor,
               backgroundColor: backgroundColor,
               label: const Text('ActionChip.elevated'),
@@ -381,26 +329,15 @@ void main() {
     await tester.pumpAndSettle();
 
     // Disabled ActionChip should have the provided disabledColor.
-    expect(
-      getMaterialBox(tester, find.byType(RawChip).first),
-      paints..rrect(color: disabledColor),
-    );
+    expect(getMaterialBox(tester, find.byType(RawChip).first), paints..rrect(color: disabledColor));
     // Disabled elevated ActionChip should have the provided disabledColor.
-    expect(
-      getMaterialBox(tester, find.byType(RawChip).last),
-      paints..rrect(color: disabledColor),
-    );
+    expect(getMaterialBox(tester, find.byType(RawChip).last), paints..rrect(color: disabledColor));
   });
 
   testWidgets('ActionChip can be tapped', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: Material(
-          child: ActionChip(
-            onPressed: () { },
-            label: const Text('action chip'),
-          ),
-        ),
+        home: Material(child: ActionChip(onPressed: () {}, label: const Text('action chip'))),
       ),
     );
 
@@ -408,23 +345,27 @@ void main() {
     expect(tester.takeException(), null);
   });
 
-  testWidgets('ActionChip clipBehavior properly passes through to the Material', (WidgetTester tester) async {
+  testWidgets('ActionChip clipBehavior properly passes through to the Material', (
+    WidgetTester tester,
+  ) async {
     const Text label = Text('label');
-    await tester.pumpWidget(wrapForChip(child: ActionChip(label: label, onPressed: () { })));
+    await tester.pumpWidget(wrapForChip(child: ActionChip(label: label, onPressed: () {})));
     checkChipMaterialClipBehavior(tester, Clip.none);
 
-    await tester.pumpWidget(wrapForChip(child: ActionChip(label: label, clipBehavior: Clip.antiAlias, onPressed: () { })));
+    await tester.pumpWidget(
+      wrapForChip(child: ActionChip(label: label, clipBehavior: Clip.antiAlias, onPressed: () {})),
+    );
     checkChipMaterialClipBehavior(tester, Clip.antiAlias);
   });
 
   testWidgets('ActionChip uses provided iconTheme', (WidgetTester tester) async {
-    Widget buildChip({ IconThemeData? iconTheme }) {
+    Widget buildChip({IconThemeData? iconTheme}) {
       return MaterialApp(
         home: Material(
           child: ActionChip(
             iconTheme: iconTheme,
             avatar: const Icon(Icons.add),
-            onPressed: () { },
+            onPressed: () {},
             label: const Text('action chip'),
           ),
         ),
@@ -442,7 +383,9 @@ void main() {
     expect(getIconData(tester).color, const Color(0xff00ff00));
   });
 
-  testWidgets('ActionChip avatar layout constraints can be customized', (WidgetTester tester) async {
+  testWidgets('ActionChip avatar layout constraints can be customized', (
+    WidgetTester tester,
+  ) async {
     const double border = 1.0;
     const double iconSize = 18.0;
     const double labelPadding = 8.0;
@@ -504,32 +447,38 @@ void main() {
       selectAnimation: AnimationStyle.noAnimation,
     );
 
-    await tester.pumpWidget(wrapForChip(
-      child: Center(
-        child: ActionChip(
-          chipAnimationStyle: chipAnimationStyle,
-          label: const Text('ActionChip'),
+    await tester.pumpWidget(
+      wrapForChip(
+        child: Center(
+          child: ActionChip(
+            chipAnimationStyle: chipAnimationStyle,
+            label: const Text('ActionChip'),
+          ),
         ),
       ),
-    ));
+    );
 
     expect(tester.widget<RawChip>(find.byType(RawChip)).chipAnimationStyle, chipAnimationStyle);
   });
 
-  testWidgets('Elevated ActionChip.chipAnimationStyle is passed to RawChip', (WidgetTester tester) async {
+  testWidgets('Elevated ActionChip.chipAnimationStyle is passed to RawChip', (
+    WidgetTester tester,
+  ) async {
     final ChipAnimationStyle chipAnimationStyle = ChipAnimationStyle(
       enableAnimation: AnimationStyle(duration: Durations.extralong4),
       selectAnimation: AnimationStyle.noAnimation,
     );
 
-    await tester.pumpWidget(wrapForChip(
-      child: Center(
-        child: ActionChip.elevated(
-          chipAnimationStyle: chipAnimationStyle,
-          label: const Text('ActionChip'),
+    await tester.pumpWidget(
+      wrapForChip(
+        child: Center(
+          child: ActionChip.elevated(
+            chipAnimationStyle: chipAnimationStyle,
+            label: const Text('ActionChip'),
+          ),
         ),
       ),
-    ));
+    );
 
     expect(tester.widget<RawChip>(find.byType(RawChip)).chipAnimationStyle, chipAnimationStyle);
   });
@@ -537,48 +486,45 @@ void main() {
   testWidgets('ActionChip mouse cursor behavior', (WidgetTester tester) async {
     const SystemMouseCursor customCursor = SystemMouseCursors.grab;
 
-    await tester.pumpWidget(wrapForChip(
-      child: const Center(
-        child: ActionChip(
-          mouseCursor: customCursor,
-          label: Text('Chip'),
-        ),
+    await tester.pumpWidget(
+      wrapForChip(
+        child: const Center(child: ActionChip(mouseCursor: customCursor, label: Text('Chip'))),
       ),
-    ));
+    );
 
-    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse, pointer: 1);
+    final TestGesture gesture = await tester.createGesture(
+      kind: PointerDeviceKind.mouse,
+      pointer: 1,
+    );
     await gesture.addPointer(location: const Offset(10, 10));
     await tester.pump();
     expect(
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
-   );
+    );
 
     final Offset chip = tester.getCenter(find.text('Chip'));
     await gesture.moveTo(chip);
     await tester.pump();
-    expect(
-      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
-      customCursor,
-    );
+    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), customCursor);
   });
 
-  testWidgets('Mouse cursor resolves in focused/unfocused/disabled states', (WidgetTester tester) async {
+  testWidgets('Mouse cursor resolves in focused/unfocused/disabled states', (
+    WidgetTester tester,
+  ) async {
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
     final FocusNode focusNode = FocusNode(debugLabel: 'Chip');
     addTearDown(focusNode.dispose);
 
-    Widget buildChip({ required bool enabled }) {
+    Widget buildChip({required bool enabled}) {
       return wrapForChip(
         child: Center(
           child: ActionChip(
-            mouseCursor: const WidgetStateMouseCursor.fromMap(
-              <WidgetStatesConstraint, MouseCursor>{
-                WidgetState.disabled: SystemMouseCursors.forbidden,
-                WidgetState.focused: SystemMouseCursors.grab,
-                WidgetState.any: SystemMouseCursors.basic,
-              },
-            ),
+            mouseCursor: const WidgetStateMouseCursor.fromMap(<WidgetStatesConstraint, MouseCursor>{
+              WidgetState.disabled: SystemMouseCursors.forbidden,
+              WidgetState.focused: SystemMouseCursors.grab,
+              WidgetState.any: SystemMouseCursors.basic,
+            }),
             focusNode: focusNode,
             label: const Text('Chip'),
             onPressed: enabled ? () {} : null,
@@ -590,20 +536,32 @@ void main() {
     await tester.pumpWidget(buildChip(enabled: true));
 
     // Unfocused case.
-    final TestGesture gesture1 = await tester.createGesture(kind: PointerDeviceKind.mouse, pointer: 1);
+    final TestGesture gesture1 = await tester.createGesture(
+      kind: PointerDeviceKind.mouse,
+      pointer: 1,
+    );
     addTearDown(gesture1.removePointer);
     await gesture1.addPointer(location: tester.getCenter(find.text('Chip')));
     await tester.pump();
     await gesture1.moveTo(tester.getCenter(find.text('Chip')));
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.basic);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.basic,
+    );
 
     // Focused case.
     focusNode.requestFocus();
     await tester.pump();
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.grab);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.grab,
+    );
 
     // Disabled case.
     await tester.pumpWidget(buildChip(enabled: false));
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.forbidden);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.forbidden,
+    );
   });
 }

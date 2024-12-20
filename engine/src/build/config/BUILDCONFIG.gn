@@ -1,0 +1,828 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# =============================================================================
+# PLATFORM SELECTION
+# =============================================================================
+#
+# There are two main things to set: "os" and "cpu". The "toolchain" is the name
+# of the GN thing that encodes combinations of these things.
+#
+# Users typically only set the variables "target_os" and "target_cpu" in "gn
+# args", the rest are set up by our build and internal to GN.
+#
+# There are three different types of each of these things: The "host"
+# represents the computer doing the compile and never changes. The "target"
+# represents the main thing we're trying to build. The "current" represents
+# which configuration is currently being defined, which can be either the
+# host, the target, or something completely different (like nacl). GN will
+# run the same build file multiple times for the different required
+# configuration in the same build.
+#
+# This gives the following variables:
+#  - host_os, host_cpu, host_toolchain
+#  - target_os, target_cpu, default_toolchain
+#  - current_os, current_cpu, current_toolchain.
+#
+# Note the default_toolchain isn't symmetrical (you would expect
+# target_toolchain). This is because the "default" toolchain is a GN built-in
+# concept, and "target" is something our build sets up that's symmetrical with
+# its GYP counterpart. Potentially the built-in default_toolchain variable
+# could be renamed in the future.
+#
+# When writing build files, to do something only for the host:
+#   if (current_toolchain == host_toolchain) { ...
+
+if (target_os == "") {
+  target_os = host_os
+}
+
+if (target_cpu == "") {
+  if (target_os == "android") {
+    # If we're building for Android, we should assume that we want to
+    # build for ARM by default, not the host_cpu (which is likely x64).
+    # This allows us to not have to specify both target_os and target_cpu
+    # on the command line.
+    target_cpu = "arm"
+  } else {
+    target_cpu = host_cpu
+  }
+}
+
+if (current_cpu == "") {
+  current_cpu = target_cpu
+}
+if (current_os == "") {
+  if (host_os == "win") {
+    current_os = "win"
+  } else {
+    current_os = target_os
+  }
+}
+
+# =============================================================================
+# BUILD FLAGS
+# =============================================================================
+#
+# This block lists input arguments to the build, along with their default
+# values.
+#
+# If a value is specified on the command line, it will overwrite the defaults
+# given in a declare_args block, otherwise the default will be used.
+#
+# YOU SHOULD ALMOST NEVER NEED TO ADD FLAGS TO THIS FILE. GN allows any file in
+# the build to declare build flags. If you need a flag for a single component,
+# you can just declare it in the corresponding BUILD.gn file. If you need a
+# flag in multiple components, there are a few options:
+#
+# - If your feature is a single target, say //components/foo, and the targets
+#   depending on foo need to have some define set if foo is enabled: (1) Write
+#   a declare_args block in foo's BUILD.gn file listing your enable_foo build
+#   flag. (2) Write a config in that file listing the define, and list that
+#   config in foo's public_configs. This will propagate that define to all the
+#   targets depending on foo. (3) When foo is not enabled, just make it expand
+#   to an empty group (or whatever's appropriate for the "off" state of your
+#   feature.
+#
+# - If a semi-random set of targets need to know about a define: (1) In the
+#   lowest level of the build that knows about this feature, add a declare_args
+#   block in the build file for your enable flag. (2) Write a config that adds
+#   a define conditionally based on that build flags. (3) Manually add that
+#   config to the "configs" applying to the targets that need the define.
+#
+# - If a semi-random set of targets need to know about the build flag (to do
+#   file inclusion or exclusion, more than just defines): (1) Write a .gni file
+#   in the lowest-level directory that knows about the feature. (2) Put the
+#   declare_args block with your build flag in that .gni file. (3) Import that
+#   .gni file from the BUILD.gn files that need the flag.
+#
+# Other advice:
+#
+# - Use boolean values when possible. If you need a default value that expands
+#   to some complex thing in the default case (like the location of the
+#   compiler which would be computed by a script), use a default value of -1 or
+#   the empty string. Outside of the declare_args block, conditionally expand
+#   the default value as necessary.
+#
+# - Use a name like "use_foo" or "is_foo" (whatever is more appropriate for
+#   your feature) rather than just "foo".
+#
+# - Write good comments directly above the declaration with no blank line.
+#   These comments will appear as documentation in "gn args --list".
+#
+# - Don't call exec_script inside declare_args. This will execute the script
+#   even if the value is overridden, which is wasteful. See first bullet.
+
+declare_args() {
+  # How many symbols to include in the build. This affects the performance of
+  # the build since the symbols are large and dealing with them is slow.
+  #   2 means regular build with symbols.
+  #   1 means minimal symbols, usually enough for backtraces only.
+  #   0 means no symbols.
+  #   -1 means auto-set (off in release, regular in debug).
+  symbol_level = -1
+
+  # Component build.
+  is_component_build = false
+
+  # Official build.
+  is_official_build = false
+
+  # Debug build.
+  is_debug = true
+
+  # Whether we're a traditional desktop unix.
+  is_desktop_linux = current_os == "linux" && current_os != "chromeos"
+
+  # Set to true when compiling with the Clang compiler. Typically this is used
+  # to configure warnings.
+  is_clang = current_os == "mac" || current_os == "ios" ||
+             current_os == "linux" || current_os == "chromeos"
+
+  # Compile for Address Sanitizer to find memory bugs.
+  is_asan = false
+
+  # Compile for Leak Sanitizer to find leaks.
+  is_lsan = false
+
+  # Compile for Memory Sanitizer to find uninitialized reads.
+  is_msan = false
+
+  # Compile for Thread Sanitizer to find threading bugs.
+  is_tsan = false
+
+  # Compile for Undefined Behavior Sanitizer.
+  is_ubsan = false
+
+  # protobuf-gn fails to build if this argument isn't defined. This should never
+  # be set to true, becuase we never build within the Fuchsia tree.
+  is_fuchsia_tree = false
+
+  if (current_os == "chromeos") {
+    # Allows the target toolchain to be injected as arguments. This is needed
+    # to support the CrOS build system which supports per-build-configuration
+    # toolchains.
+    cros_use_custom_toolchain = false
+  }
+
+  # DON'T ADD MORE FLAGS HERE. Read the comment above.
+}
+
+# =============================================================================
+# OS DEFINITIONS
+# =============================================================================
+#
+# We set these various is_FOO booleans for convenience in writing OS-based
+# conditions.
+#
+# - is_android, is_chromeos, is_ios, and is_win should be obvious.
+# - is_mac is set only for desktop Mac. It is not set on iOS.
+# - is_posix is true for mac and any Unix-like system (basically everything
+#   except Windows).
+# - is_linux is true for desktop Linux and ChromeOS, but not Android (which is
+#   generally too different despite being based on the Linux kernel).
+#
+# Do not add more is_* variants here for random lesser-used Unix systems like
+# aix or one of the BSDs. If you need to check these, just check the
+# current_os value directly.
+
+if (current_os == "win") {
+  is_android = false
+  is_chromeos = false
+  is_fuchsia = false
+  is_fuchsia_host = false
+  is_ios = false
+  is_linux = false
+  is_mac = false
+  is_posix = false
+  is_win = true
+  is_wasm = false
+} else if (current_os == "mac") {
+  is_android = false
+  is_chromeos = false
+  is_fuchsia = false
+  is_fuchsia_host = false
+  is_ios = false
+  is_linux = false
+  is_mac = true
+  is_posix = true
+  is_win = false
+  is_wasm = false
+} else if (current_os == "android") {
+  is_android = true
+  is_chromeos = false
+  is_fuchsia = false
+  is_fuchsia_host = false
+  is_ios = false
+  is_linux = false
+  is_mac = false
+  is_posix = true
+  is_win = false
+  is_wasm = false
+} else if (current_os == "chromeos") {
+  is_android = false
+  is_chromeos = true
+  is_fuchsia = false
+  is_fuchsia_host = false
+  is_ios = false
+  is_linux = true
+  is_mac = false
+  is_posix = true
+  is_win = false
+  is_wasm = false
+} else if (current_os == "nacl") {
+  # current_os == "nacl" will be passed by the nacl toolchain definition.
+  # It is not set by default or on the command line. We treat is as a
+  # Posix variant.
+  is_android = false
+  is_chromeos = false
+  is_fuchsia = false
+  is_fuchsia_host = false
+  is_ios = false
+  is_linux = false
+  is_mac = false
+  is_posix = true
+  is_win = false
+  is_wasm = false
+} else if (current_os == "ios") {
+  is_android = false
+  is_chromeos = false
+  is_fuchsia = false
+  is_fuchsia_host = false
+  is_ios = true
+  is_linux = false
+  is_mac = false
+  is_posix = true
+  is_win = false
+  is_wasm = false
+} else if (current_os == "linux") {
+  is_android = false
+  is_chromeos = false
+  is_fuchsia = false
+  is_fuchsia_host = false
+  is_ios = false
+  is_linux = true
+  is_mac = false
+  is_posix = true
+  is_win = false
+  is_wasm = false
+} else if (current_os == "fuchsia" || target_os == "fuchsia") {
+  is_android = false
+  is_chromeos = false
+  is_fuchsia = true
+  is_fuchsia_host = false
+  is_ios = false
+  is_linux = false
+  is_mac = false
+  is_posix = true
+  is_win = false
+  is_wasm = false
+} else if (current_os == "wasm") {
+  is_android = false
+  is_chromeos = false
+  is_fuchsia = false
+  is_fuchsia_host = false
+  is_ios = false
+  is_linux = false
+  is_mac = false
+  is_posix = false
+  is_win = false
+  is_wasm = true
+}
+
+is_apple = is_ios || is_mac
+
+# Needed for some third_party build files from Chromium.
+is_nacl = false
+
+# Needed for //third_party/angle.
+is_castos = false
+is_chromecast = false
+is_chromeos_lacros = false
+ozone_platform_headless = false
+
+# Needed for //flutter/third_party/swiftshader and //third_party/angle.
+if (is_linux) {
+  ozone_platform_x11 = true
+  ozone_platform_wayland = true
+} else {
+  ozone_platform_x11 = false
+  ozone_platform_wayland = false
+}
+
+default_library_type = "static_library"
+
+# =============================================================================
+# BUILD OPTIONS
+# =============================================================================
+
+# These Sanitizers all imply using the Clang compiler. On Windows they either
+# don't work or work differently.
+using_sanitizer = !is_win && (is_asan || is_lsan || is_tsan || is_msan)
+if (!is_clang && using_sanitizer) {
+  is_clang = true
+}
+
+use_flutter_cxx = is_clang && (is_linux || is_android || is_mac || is_ios)
+
+if (is_msan && !is_linux) {
+  assert(false, "Memory sanitizer is only available on Linux.")
+}
+
+# =============================================================================
+# TARGET DEFAULTS
+# =============================================================================
+#
+# Set up the default configuration for every build target of the given type.
+# The values configured here will be automatically set on the scope of the
+# corresponding target. Target definitions can add or remove to the settings
+# here as needed.
+
+# Holds all configs used for making native executables and libraries, to avoid
+# duplication in each target below.
+_native_compiler_configs = [
+  "//build/config:feature_flags",
+  "//build/config/compiler:compiler",
+  "//build/config/compiler:cxx_version_default",
+  "//build/config/compiler:compiler_arm_fpu",
+  "//build/config/compiler:chromium_code",
+  "//build/config/compiler:default_include_dirs",
+  "//build/config/compiler:no_rtti",
+  "//build/config/compiler:runtime_library",
+]
+
+if (use_flutter_cxx) {
+  _native_compiler_configs += [
+    "//flutter/third_party/libcxxabi:libcxxabi_config",
+    "//flutter/third_party/libcxx:libcxx_config",
+  ]
+}
+
+if (is_win) {
+  _native_compiler_configs += [
+    "//build/config/win:lean_and_mean",
+    "//build/config/win:nominmax",
+    "//build/config/win:sdk",
+    "//build/config/win:unicode",
+    "//build/config/win:winver",
+  ]
+}
+if (is_posix) {
+  _native_compiler_configs += [
+    "//build/config/gcc:no_exceptions",
+    "//build/config/gcc:relative_paths",
+    "//build/config/gcc:symbol_visibility_hidden",
+    "//build/config:symbol_visibility_hidden",
+  ]
+}
+
+if (is_linux) {
+  _native_compiler_configs += [ "//build/config/linux:sdk" ]
+} else if (is_mac) {
+  _native_compiler_configs += [ "//build/config/mac:sdk" ]
+} else if (is_ios) {
+  _native_compiler_configs += [ "//build/config/ios:sdk" ]
+} else if (is_android) {
+  _native_compiler_configs += [ "//build/config/android:sdk" ]
+}
+
+if (is_clang) {
+  _native_compiler_configs += [ "//build/config/clang:extra_warnings" ]
+  _native_compiler_configs += [ "//build/config/clang:find_bad_constructs" ]
+}
+
+# Optimizations and debug checking.
+if (is_debug) {
+  _native_compiler_configs += [ "//build/config:debug" ]
+  _default_optimization_config = "//build/config/compiler:no_optimize"
+} else {
+  _native_compiler_configs += [ "//build/config:release" ]
+  _default_optimization_config = "//build/config/compiler:optimize"
+}
+_native_compiler_configs += [ _default_optimization_config ]
+
+# zlib's BUILD.gn expects to have this config among default configs.
+_native_compiler_configs += [ "//build/config/compiler:default_optimization" ]
+
+# If it wasn't manually set, set to an appropriate default.
+if (symbol_level == -1) {
+  # Linux is slowed by having symbols as part of the target binary, whereas
+  # Mac and Windows have them separate, so in Release Linux, default them off.
+  # Wasm we definitely want to strip symbols in release mode because binary
+  # size is paramount.
+  if (is_debug || (!is_linux && !is_wasm)) {
+    symbol_level = 2
+  } else if (is_asan || is_lsan || is_tsan || is_msan) {
+    # Sanitizers require symbols for filename suppressions to work.
+    symbol_level = 1
+  } else {
+    symbol_level = 0
+  }
+}
+
+# Symbol setup.
+if (symbol_level == 2) {
+  _default_symbols_config = "//build/config/compiler:symbols"
+} else if (symbol_level == 1) {
+  _default_symbols_config = "//build/config/compiler:minimal_symbols"
+} else if (symbol_level == 0) {
+  _default_symbols_config = "//build/config/compiler:no_symbols"
+} else {
+  assert(false, "Bad value for symbol_level.")
+}
+_native_compiler_configs += [ _default_symbols_config ]
+
+# Windows linker setup for EXEs and DLLs.
+if (is_win) {
+  _windows_linker_configs = [
+    "//build/config/win:default_incremental_linking",
+    "//build/config/win:sdk_link",
+    "//build/config/win:common_linker_setup",
+
+    # Default to console-mode apps. Most of our targets are tests and such
+    # that shouldn't use the windows subsystem.
+    "//build/config/win:console",
+  ]
+}
+
+# Executable defaults.
+_executable_configs =
+    _native_compiler_configs + [ "//build/config:default_libs" ]
+if (is_win) {
+  _executable_configs += _windows_linker_configs
+} else if (is_mac) {
+  _executable_configs += [
+    "//build/config/mac:mac_dynamic_flags",
+    "//build/config/mac:mac_executable_flags",
+  ]
+} else if (is_linux || is_android) {
+  _executable_configs += [ "//build/config/gcc:executable_ldconfig" ]
+  if (is_android) {
+    _executable_configs += [ "//build/config/android:executable_config" ]
+  }
+}
+set_defaults("executable") {
+  configs = _executable_configs
+}
+
+# Static library defaults.
+set_defaults("static_library") {
+  configs = _native_compiler_configs
+}
+
+# Shared library defaults (also for components in component mode).
+_shared_library_configs =
+    _native_compiler_configs + [ "//build/config:default_libs" ]
+if (is_win) {
+  _shared_library_configs += _windows_linker_configs
+} else if (is_mac) {
+  _shared_library_configs += [ "//build/config/mac:mac_dynamic_flags" ]
+}
+set_defaults("shared_library") {
+  configs = _shared_library_configs
+}
+if (is_component_build) {
+  set_defaults("component") {
+    configs = _shared_library_configs
+  }
+}
+
+# Source set defaults (also for components in non-component mode).
+set_defaults("source_set") {
+  configs = _native_compiler_configs
+}
+if (!is_component_build) {
+  set_defaults("component") {
+    configs = _native_compiler_configs
+  }
+}
+
+# Test defaults.
+set_defaults("test") {
+  if (is_android) {
+    configs = _shared_library_configs
+  } else {
+    configs = _executable_configs
+  }
+}
+
+# ==============================================================================
+# TOOLCHAIN SETUP
+# ==============================================================================
+#
+# Here we set the default toolchain, as well as the variable host_toolchain
+# which will identify the toolchain corresponding to the local system when
+# doing cross-compiles. When not cross-compiling, this will be the same as the
+# default toolchain.
+import("//build/toolchain/custom/custom.gni")
+
+# Define this to allow Fuchsia's fork of harfbuzz to build.
+# shlib_toolchain is a Fuchsia-specific symbol and not used by Flutter.
+shlib_toolchain = false
+
+if (custom_toolchain != "") {
+  assert(custom_sysroot != "")
+  assert(custom_target_triple != "")
+  host_toolchain = "//build/toolchain/linux:clang_$host_cpu"
+  set_default_toolchain("//build/toolchain/custom")
+} else if (is_win) {
+  assert(is_clang)
+  host_toolchain = "//build/toolchain/win:clang_$host_cpu"
+  set_default_toolchain("//build/toolchain/win:clang_$current_cpu")
+} else if (is_android) {
+  if (host_os == "linux") {
+    # Use clang for the x86/64 Linux host builds.
+    if (host_cpu == "x86" || host_cpu == "x64") {
+      host_toolchain = "//build/toolchain/linux:clang_$host_cpu"
+    } else {
+      host_toolchain = "//build/toolchain/linux:$host_cpu"
+    }
+  } else if (host_os == "mac") {
+    host_toolchain = "//build/toolchain/mac:clang_$host_cpu"
+  } else if (host_os == "win") {
+    assert(is_clang)
+    host_toolchain = "//build/toolchain/win:clang_$host_cpu"
+  } else {
+    assert(false, "Unknown host for android cross compile")
+  }
+  if (is_clang) {
+    set_default_toolchain("//build/toolchain/android:clang_$current_cpu")
+  } else {
+    set_default_toolchain("//build/toolchain/android:$current_cpu")
+  }
+} else if (is_linux) {
+  if (is_clang) {
+    host_toolchain = "//build/toolchain/linux:clang_$host_cpu"
+    set_default_toolchain("//build/toolchain/linux:clang_$current_cpu")
+  } else {
+    host_toolchain = "//build/toolchain/linux:$host_cpu"
+    set_default_toolchain("//build/toolchain/linux:$current_cpu")
+  }
+  if (is_chromeos && cros_use_custom_toolchain) {
+    set_default_toolchain("//build/toolchain/cros:target")
+  }
+} else if (is_mac) {
+  host_toolchain = "//build/toolchain/mac:clang_$host_cpu"
+  set_default_toolchain("//build/toolchain/mac:clang_$current_cpu")
+} else if (is_ios) {
+  import("//build/config/ios/ios_sdk.gni")  # For use_ios_simulator
+  host_toolchain = "//build/toolchain/mac:clang_$host_cpu"
+  if (use_ios_simulator) {
+    if (target_cpu == "arm64") {
+      set_default_toolchain("//build/toolchain/mac:ios_clang_arm_sim")
+    } else {
+      set_default_toolchain("//build/toolchain/mac:ios_clang_x64_sim")
+    }
+  } else {
+    set_default_toolchain("//build/toolchain/mac:ios_clang_arm")
+  }
+} else if (is_fuchsia) {
+  if (host_os == "mac") {
+    host_toolchain = "//build/toolchain/mac:clang_$host_cpu"
+  } else {
+    host_toolchain = "//build/toolchain/linux:clang_$host_cpu"
+  }
+  set_default_toolchain("//build/toolchain/fuchsia")
+} else if (is_wasm) {
+  ar = "ar"
+  cc = "cc"
+  cxx = "c++"
+  win_vc = ""
+  win_toolchain_version = ""
+  clang_win = ""
+  clang_win_version = ""
+  host_toolchain = "//build/toolchain/wasm"
+  set_default_toolchain("//build/toolchain/wasm")
+} else {
+  assert(false, "Toolchain not set because of unknown platform.")
+}
+
+# Sets default dependencies for executable and shared_library targets.
+#
+# Variables
+#   no_default_deps: If true, no standard dependencies will be added.
+if (use_flutter_cxx) {
+  foreach(_target_type,
+          [
+            "executable",
+            "loadable_module",
+            "shared_library",
+          ]) {
+    template(_target_type) {
+      target(_target_type, target_name) {
+        forward_variables_from(invoker, "*", [ "no_default_deps" ])
+        if (!defined(deps)) {
+          deps = []
+        }
+        if (!defined(invoker.no_default_deps) || !invoker.no_default_deps) {
+          deps += [ "//flutter/third_party/libcxx" ]
+        }
+      }
+    }
+  }
+}
+
+# ==============================================================================
+# COMPONENT SETUP
+# ==============================================================================
+
+# TODO(brettw) erase this once the built-in "component" function is removed.
+if (is_component_build) {
+  component_mode = "shared_library"
+} else {
+  component_mode = "source_set"
+}
+
+template("component") {
+  if (is_component_build) {
+    shared_library(target_name) {
+      # Configs will always be defined since we set_defaults for a component
+      # above. We want to use those rather than whatever came with the nested
+      # shared/static library inside the component.
+      configs = []  # Prevent list overwriting warning.
+      configs = invoker.configs
+
+      if (defined(invoker.all_dependent_configs)) {
+        all_dependent_configs = invoker.all_dependent_configs
+      }
+      if (defined(invoker.allow_circular_includes_from)) {
+        allow_circular_includes_from = invoker.allow_circular_includes_from
+      }
+      if (defined(invoker.cflags)) {
+        cflags = invoker.cflags
+      }
+      if (defined(invoker.cflags_c)) {
+        cflags_c = invoker.cflags_c
+      }
+      if (defined(invoker.cflags_cc)) {
+        cflags_cc = invoker.cflags_cc
+      }
+      if (defined(invoker.cflags_objc)) {
+        cflags_objc = invoker.cflags_objc
+      }
+      if (defined(invoker.cflags_objcc)) {
+        cflags_objcc = invoker.cflags_objcc
+      }
+      if (defined(invoker.check_includes)) {
+        check_includes = invoker.check_includes
+      }
+      if (defined(invoker.data)) {
+        data = invoker.data
+      }
+      if (defined(invoker.data_deps)) {
+        data_deps = invoker.data_deps
+      }
+      if (defined(invoker.datadeps)) {
+        datadeps = invoker.datadeps
+      }
+      if (defined(invoker.defines)) {
+        defines = invoker.defines
+      }
+
+      # All shared libraries must have the sanitizer deps to properly link in
+      # asan mode (this target will be empty in other cases).
+      if (defined(invoker.deps)) {
+        deps = invoker.deps + [ "//build/config/sanitizers:deps" ]
+      } else {
+        deps = [ "//build/config/sanitizers:deps" ]
+      }
+      if (defined(invoker.direct_dependent_configs)) {
+        direct_dependent_configs = invoker.direct_dependent_configs
+      }
+      if (defined(invoker.forward_dependent_configs_from)) {
+        forward_dependent_configs_from = invoker.forward_dependent_configs_from
+      }
+      if (defined(invoker.frameworks)) {
+        frameworks = invoker.frameworks
+      }
+      if (defined(invoker.include_dirs)) {
+        include_dirs = invoker.include_dirs
+      }
+      if (defined(invoker.ldflags)) {
+        ldflags = invoker.ldflags
+      }
+      if (defined(invoker.lib_dirs)) {
+        lib_dirs = invoker.lib_dirs
+      }
+      if (defined(invoker.libs)) {
+        libs = invoker.libs
+      }
+      if (defined(invoker.output_extension)) {
+        output_extension = invoker.output_extension
+      }
+      if (defined(invoker.output_name)) {
+        output_name = invoker.output_name
+      }
+      if (defined(invoker.public)) {
+        public = invoker.public
+      }
+      if (defined(invoker.public_configs)) {
+        public_configs = invoker.public_configs
+      }
+      if (defined(invoker.public_deps)) {
+        public_deps = invoker.public_deps
+      }
+      if (defined(invoker.sources)) {
+        sources = invoker.sources
+      }
+      if (defined(invoker.testonly)) {
+        testonly = invoker.testonly
+      }
+      if (defined(invoker.visibility)) {
+        visibility = invoker.visibility
+      }
+    }
+  } else {
+    source_set(target_name) {
+      # See above.
+      configs = []  # Prevent list overwriting warning.
+      configs = invoker.configs
+
+      if (defined(invoker.all_dependent_configs)) {
+        all_dependent_configs = invoker.all_dependent_configs
+      }
+      if (defined(invoker.allow_circular_includes_from)) {
+        allow_circular_includes_from = invoker.allow_circular_includes_from
+      }
+      if (defined(invoker.cflags)) {
+        cflags = invoker.cflags
+      }
+      if (defined(invoker.cflags_c)) {
+        cflags_c = invoker.cflags_c
+      }
+      if (defined(invoker.cflags_cc)) {
+        cflags_cc = invoker.cflags_cc
+      }
+      if (defined(invoker.cflags_objc)) {
+        cflags_objc = invoker.cflags_objc
+      }
+      if (defined(invoker.cflags_objcc)) {
+        cflags_objcc = invoker.cflags_objcc
+      }
+      if (defined(invoker.check_includes)) {
+        check_includes = invoker.check_includes
+      }
+      if (defined(invoker.data)) {
+        data = invoker.data
+      }
+      if (defined(invoker.data_deps)) {
+        data_deps = invoker.data_deps
+      }
+      if (defined(invoker.datadeps)) {
+        datadeps = invoker.datadeps
+      }
+      if (defined(invoker.defines)) {
+        defines = invoker.defines
+      }
+      if (defined(invoker.deps)) {
+        deps = invoker.deps
+      }
+      if (defined(invoker.direct_dependent_configs)) {
+        direct_dependent_configs = invoker.direct_dependent_configs
+      }
+      if (defined(invoker.forward_dependent_configs_from)) {
+        forward_dependent_configs_from = invoker.forward_dependent_configs_from
+      }
+      if (defined(invoker.frameworks)) {
+        frameworks = invoker.frameworks
+      }
+      if (defined(invoker.include_dirs)) {
+        include_dirs = invoker.include_dirs
+      }
+      if (defined(invoker.ldflags)) {
+        ldflags = invoker.ldflags
+      }
+      if (defined(invoker.lib_dirs)) {
+        lib_dirs = invoker.lib_dirs
+      }
+      if (defined(invoker.libs)) {
+        libs = invoker.libs
+      }
+      if (defined(invoker.output_extension)) {
+        output_extension = invoker.output_extension
+      }
+      if (defined(invoker.output_name)) {
+        output_name = invoker.output_name
+      }
+      if (defined(invoker.public)) {
+        public = invoker.public
+      }
+      if (defined(invoker.public_configs)) {
+        public_configs = invoker.public_configs
+      }
+      if (defined(invoker.public_deps)) {
+        public_deps = invoker.public_deps
+      }
+      if (defined(invoker.sources)) {
+        sources = invoker.sources
+      }
+      if (defined(invoker.testonly)) {
+        testonly = invoker.testonly
+      }
+      if (defined(invoker.visibility)) {
+        visibility = invoker.visibility
+      }
+    }
+  }
+}

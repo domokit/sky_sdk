@@ -1,0 +1,62 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+assert(is_fuchsia)
+
+import("//flutter/tools/fuchsia/fuchsia_archive.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+
+group("tests") {
+  testonly = true
+  deps = [ ":flutter-embedder-test" ]
+}
+
+executable("flutter-embedder-test-bin") {
+  testonly = true
+
+  output_name = "flutter-embedder-test"
+
+  sources = [ "flutter-embedder-test.cc" ]
+
+  # This is needed for //flutter/third_party/googletest for linking zircon
+  # symbols.
+  libs = [ "${fuchsia_arch_root}/sysroot/lib/libzircon.so" ]
+
+  deps = [
+    "${fuchsia_sdk}/fidl/fuchsia.inspect",
+    "${fuchsia_sdk}/fidl/fuchsia.logger",
+    "${fuchsia_sdk}/fidl/fuchsia.sysmem",
+    "${fuchsia_sdk}/fidl/fuchsia.sysmem2",
+    "${fuchsia_sdk}/fidl/fuchsia.tracing.provider",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.app",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.composition",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.display.singleton",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.observation.geometry",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.test.input",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.test.scene",
+    "${fuchsia_sdk}/pkg/async",
+    "${fuchsia_sdk}/pkg/async-loop-testing",
+    "${fuchsia_sdk}/pkg/fidl_cpp",
+    "${fuchsia_sdk}/pkg/sys_component_cpp_testing",
+    "${fuchsia_sdk}/pkg/zx",
+    "//flutter/fml",
+    "//flutter/shell/platform/fuchsia/flutter/tests/integration/utils:check_view",
+    "//flutter/shell/platform/fuchsia/flutter/tests/integration/utils:screenshot",
+    "//flutter/third_party/googletest:gtest",
+    "//flutter/third_party/googletest:gtest_main",
+  ]
+}
+
+fuchsia_test_archive("flutter-embedder-test") {
+  deps = [
+    ":flutter-embedder-test-bin",
+    "child-view:package",
+    "parent-view:package",
+
+    # "OOT" copies of the runners used by tests, to avoid conflicting with the
+    # runners in the base fuchsia image.
+    # TODO(fxbug.dev/106575): Fix this with subpackages.
+    "//flutter/shell/platform/fuchsia/flutter:oot_flutter_jit_runner",
+  ]
+}

@@ -7,22 +7,25 @@ import 'package:flutter_api_samples/material/tabs/tab_bar.indicator_animation.0.
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('TabBar.indicatorAnimation can customize tab indicator animation', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.IndicatorAnimationExampleApp(),
-    );
+  testWidgets('TabBar.indicatorAnimation can customize tab indicator animation', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.IndicatorAnimationExampleApp());
 
     final RenderBox tabBarBox = tester.firstRenderObject<RenderBox>(find.byType(TabBar));
 
     late RRect indicatorRRect;
 
-    expect(tabBarBox, paints..something((Symbol method, List<dynamic> arguments) {
-      if (method != #drawRRect) {
-        return false;
-      }
-      indicatorRRect = arguments[0] as RRect;
-      return true;
-    }));
+    expect(
+      tabBarBox,
+      paints..something((Symbol method, List<dynamic> arguments) {
+        if (method != #drawRRect) {
+          return false;
+        }
+        indicatorRRect = arguments[0] as RRect;
+        return true;
+      }),
+    );
     expect(indicatorRRect.left, equals(16.0));
     expect(indicatorRRect.top, equals(45.0));
     expect(indicatorRRect.right, closeTo(142.9, 0.1));
@@ -33,13 +36,16 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
-    expect(tabBarBox, paints..something((Symbol method, List<dynamic> arguments) {
-      if (method != #drawRRect) {
-        return false;
-      }
-      indicatorRRect = arguments[0] as RRect;
-      return true;
-    }));
+    expect(
+      tabBarBox,
+      paints..something((Symbol method, List<dynamic> arguments) {
+        if (method != #drawRRect) {
+          return false;
+        }
+        indicatorRRect = arguments[0] as RRect;
+        return true;
+      }),
+    );
     expect(indicatorRRect.left, closeTo(107.5, 0.1));
     expect(indicatorRRect.top, equals(45.0));
     expect(indicatorRRect.right, closeTo(348.2, 0.1));
@@ -49,13 +55,16 @@ void main() {
     await tester.tap(find.text('Short Tab').first);
     await tester.pumpAndSettle();
 
-    expect(tabBarBox, paints..something((Symbol method, List<dynamic> arguments) {
-      if (method != #drawRRect) {
-        return false;
-      }
-      indicatorRRect = arguments[0] as RRect;
-      return true;
-    }));
+    expect(
+      tabBarBox,
+      paints..something((Symbol method, List<dynamic> arguments) {
+        if (method != #drawRRect) {
+          return false;
+        }
+        indicatorRRect = arguments[0] as RRect;
+        return true;
+      }),
+    );
     expect(indicatorRRect.left, equals(16.0));
     expect(indicatorRRect.top, equals(45.0));
     expect(indicatorRRect.right, closeTo(142.9, 0.1));
@@ -70,13 +79,16 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
-    expect(tabBarBox, paints..something((Symbol method, List<dynamic> arguments) {
-      if (method != #drawRRect) {
-        return false;
-      }
-      indicatorRRect = arguments[0] as RRect;
-      return true;
-    }));
+    expect(
+      tabBarBox,
+      paints..something((Symbol method, List<dynamic> arguments) {
+        if (method != #drawRRect) {
+          return false;
+        }
+        indicatorRRect = arguments[0] as RRect;
+        return true;
+      }),
+    );
     expect(indicatorRRect.left, closeTo(51.0, 0.1));
     expect(indicatorRRect.top, equals(45.0));
     expect(indicatorRRect.right, closeTo(221.4, 0.1));

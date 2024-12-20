@@ -6,7 +6,8 @@ import 'dart:io' hide Platform;
 
 const String gobMirror = 'https://flutter.googlesource.com/mirrors/flutter';
 const String githubRepo = 'https://github.com/flutter/flutter.git';
-const String mingitForWindowsUrl = 'https://storage.googleapis.com/flutter_infra_release/mingit/'
+const String mingitForWindowsUrl =
+    'https://storage.googleapis.com/flutter_infra_release/mingit/'
     '603511c649b00bbef0a6122a827ac419b656bc19/mingit.zip';
 const String releaseFolder = '/releases';
 const String gsBase = 'gs://flutter_infra_release';
@@ -17,12 +18,7 @@ const String frameworkVersionTag = 'frameworkVersionFromGit';
 const String dartVersionTag = 'dartSdkVersion';
 const String dartTargetArchTag = 'dartTargetArch';
 
-enum Branch {
-  beta,
-  stable,
-  master,
-  main;
-}
+enum Branch { beta, stable, master, main }
 
 /// Exception class for when a process fails to run, so we can catch
 /// it and provide something more readable than a stack trace.

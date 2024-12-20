@@ -13,7 +13,12 @@ class StubNestedCommandExtension extends CommandExtension {
   String get commandKind => 'StubNestedCommand';
 
   @override
-  Future<Result> call(Command command, WidgetController prober, CreateFinderFactory finderFactory, CommandHandlerFactory handlerFactory) async {
+  Future<Result> call(
+    Command command,
+    WidgetController prober,
+    CreateFinderFactory finderFactory,
+    CommandHandlerFactory handlerFactory,
+  ) async {
     final StubNestedCommand stubCommand = command as StubNestedCommand;
     handlerFactory.waitForElement(finderFactory.createFinder(stubCommand.finder));
     for (int index = 0; index < stubCommand.times; index++) {
@@ -23,7 +28,11 @@ class StubNestedCommandExtension extends CommandExtension {
   }
 
   @override
-  Command deserialize(Map<String, String> params, DeserializeFinderFactory finderFactory, DeserializeCommandFactory commandFactory) {
+  Command deserialize(
+    Map<String, String> params,
+    DeserializeFinderFactory finderFactory,
+    DeserializeCommandFactory commandFactory,
+  ) {
     return StubNestedCommand.deserialize(params, finderFactory);
   }
 }
@@ -33,7 +42,12 @@ class StubProberCommandExtension extends CommandExtension {
   String get commandKind => 'StubProberCommand';
 
   @override
-  Future<Result> call(Command command, WidgetController prober, CreateFinderFactory finderFactory, CommandHandlerFactory handlerFactory) async {
+  Future<Result> call(
+    Command command,
+    WidgetController prober,
+    CreateFinderFactory finderFactory,
+    CommandHandlerFactory handlerFactory,
+  ) async {
     final StubProberCommand stubCommand = command as StubProberCommand;
     final Finder finder = finderFactory.createFinder(stubCommand.finder);
     handlerFactory.waitForElement(finder);
@@ -44,7 +58,11 @@ class StubProberCommandExtension extends CommandExtension {
   }
 
   @override
-  Command deserialize(Map<String, String> params, DeserializeFinderFactory finderFactory, DeserializeCommandFactory commandFactory) {
+  Command deserialize(
+    Map<String, String> params,
+    DeserializeFinderFactory finderFactory,
+    DeserializeCommandFactory commandFactory,
+  ) {
     return StubProberCommand.deserialize(params, finderFactory);
   }
 }

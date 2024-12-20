@@ -1,0 +1,344 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# NOTE: Generally, the build rules in //flutter/tools/fuchsia/dart/,
+# //flutter/tools/fuchsia/dart/kernel/, and similar SUBDIRECTORIES of
+# //flutter/tools/fuchsia/ (such as //flutter/tools/fuchsia/flutter/)
+# mirror the directory paths and much of the build rule content of fuchsia.git
+# //build/...
+#
+# Most of the fuchsia-derived build rules were implemented after some similar
+# build rules already existed in the directory //flutter/tools/fuchsia/
+# and several existing build targets use these (legacy) build rules.
+# Though some rules and targets in //flutter/tools/fuchsia/ have similar names
+# to the fuchsia.git-derived rules, the rule structures and behavior can be
+# different. Therefore both are maintained for now.
+#
+# This file--dart_kernel.gni--and its primary template--dart_kernel()--match
+# pre-existing (legacy) template and filename in
+# //flutter/tools/fuchsia/dart_kernel.gni.
+#
+# The templates appear to have different behavior, so both will be maintained
+# until we can determine a better way to reconcile them.
+
+import("//flutter/tools/fuchsia/dart/config.gni")
+import("//flutter/tools/fuchsia/dart/dart_library.gni")
+import("//flutter/tools/fuchsia/dart/toolchain.gni")
+
+_gen_kernel_label =
+    "//flutter/tools/fuchsia/dart/kernel:gen_kernel($host_toolchain)"
+_gen_kernel_path =
+    get_label_info(_gen_kernel_label, "root_out_dir") + "/dart-tools/gen_kernel"
+
+flutter_platform_name = "flutter_runner"
+dart_platform_name = "dart_runner"
+
+# Converts the kernel manifest file from fini format to JSON format and
+# registers the metadata for the fuchsia_package to pick up.
+#
+# Parameters
+#
+#  manifest (required)
+#    Path to the kernel manifest
+#    Type: Path
+template("_convert_kernel_manifest") {
+  assert(defined(invoker.manifest), "dart_kernel() requires a manifest")
+
+  action(target_name) {
+    forward_variables_from(invoker,
+                           [
+                             "deps",
+                             "testonly",
+                             "visibility",
+                           ])
+    _converted_file_name =
+        "${target_gen_dir}/${target_name}_kernel_manifest.json"
+
+    script = "//flutter/tools/fuchsia/dart/kernel/convert_manifest_to_json.py"
+    args = [
+      "--path_prefix",
+      rebase_path(root_out_dir) + "/",
+      "--input",
+      rebase_path(invoker.manifest, root_build_dir),
+      "--output",
+      rebase_path(_converted_file_name, root_build_dir),
+    ]
+
+    sources = [ invoker.manifest ]
+
+    outputs = [ _converted_file_name ]
+
+    metadata = {
+      distribution_entries = [
+        {
+          file = rebase_path(_converted_file_name, root_build_dir)
+          label = get_label_info(target_name, "label_with_toolchain")
+        },
+      ]
+    }
+  }
+}
+
+# Generates dill files for a Dart application.
+#
+# It is not likely that this target will be used directly. Instead, developers
+# should use the dart_tool or dart/flutter_component targets which create a
+# kernel for you.
+#
+# Parameters
+#
+#  platform_name (required)
+#    The name of the platform, either "flutter_runner" or "dart_runner".
+#
+#  packages_path (required)
+#    Path to the package_config.json file.
+#
+#  main_dart (required, mutually exclusive)
+#    Path to Dart source file containing main(). Mutually exclusive with
+#    main_dart_file. This is relative to source_dir, should exist in the
+#    main_package, and uses a package: URI.
+#
+#  main_package (required, mutually exclusive)
+#    The name of the package which contains main. Mutually exclusive with
+#    main_dart_file.
+#
+#  main_dart_file (required, mutually exclusive)
+#    Path to Dart source file containing main(). Mutually exclusive with
+#    main_dart. This doesn't need to necessarily exist in main_package and uses
+#    a fuchsia-source: URI.
+#
+#  product (required)
+#    Whether this should be built with the product runner.
+#
+#  is_aot required)
+#    Whether this kernel is an aot build.
+#
+#  generate_manifest (optional)
+#    Whether the compiler should generate a kernel manifest containing the list
+#    of partial dill files in JIT builds. This flag is ignored in aot builds
+#    Default: false
+#
+#  kernel_path (optional)
+#    The path to the kernel output. Defaults to target_gen_dir/${target_name}.dil
+#
+#  kernel_target_name (optional)
+#    The name of the kernel target. This parameter is required if you are
+#    depending on the kernel_path for an input. This allows you to establish a
+#    dependency chain on the generated file.
+#
+#  args (optional)
+#    A list of additional arguments to the compiler.dart program in this
+#    directory that generates the kernel files.
+#
+#  link_platform (optional)
+#    Whether the kernel compiler should link the current platform.dill into
+#    the build. If false, the --no-link-platform flag will be passed to the
+#    compiler. Defaults to false.
+template("dart_kernel") {
+  assert(defined(invoker.platform_name), "dart_kernel() requires platform_name")
+  assert(defined(invoker.packages_path),
+         "dart_kernel() requires the path to the package config")
+  assert(
+      (defined(invoker.main_dart) && defined(invoker.main_package)) !=
+          defined(invoker.main_dart_file),
+      "dart_kernel() requires either (main_dart and main_package) or main_dart_file")
+  assert(defined(invoker.product), "dart_kernel() requires product")
+  assert(defined(invoker.is_aot), "dart_kernel() requires is_aot")
+
+  if (defined(invoker.kernel_target_name)) {
+    _kernel_target_name = invoker.kernel_target_name
+  } else {
+    _kernel_target_name = "${target_name}_kernel"
+  }
+  _group_deps = [ ":$_kernel_target_name" ]
+
+  _kernel_deps = []
+  if (defined(invoker.deps)) {
+    _kernel_deps += invoker.deps
+  }
+
+  # TODO(richkadel): The manifest (if not using AOT) is used by
+  # flutter_dart_component, to populate the file it calls
+  # `_convert_kernel_manifest_file`.
+  _generate_manifest = false
+  if (invoker.is_aot) {
+    not_needed(invoker, [ "generate_manifest" ])
+  } else {
+    if (defined(invoker.generate_manifest)) {
+      _generate_manifest = invoker.generate_manifest
+    }
+  }
+
+  if (_generate_manifest) {
+    _kernel_manifest = "$target_gen_dir/${target_name}.dilpmanifest"
+
+    _convert_target_name = "${target_name}_convert_kernel_manifest"
+    _convert_kernel_manifest(_convert_target_name) {
+      forward_variables_from(invoker,
+                             [
+                               "testonly",
+                               "visibility",
+                             ])
+      manifest = _kernel_manifest
+
+      # must depend on the kernel target so we have the kernel manifest
+      deps = [ ":$_kernel_target_name" ]
+    }
+
+    _group_deps += [ ":$_convert_target_name" ]
+  }
+
+  action(_kernel_target_name) {
+    forward_variables_from(invoker,
+                           [
+                             "testonly",
+                             "visibility",
+                           ])
+
+    if (defined(invoker.kernel_path)) {
+      _kernel_path = invoker.kernel_path
+    } else {
+      _kernel_path =
+          "$target_gen_dir/__untraced_dart_kernel__/${target_name}.dil"
+    }
+
+    depfile = "${_kernel_path}.d"
+
+    _kernel_deps += [ _gen_kernel_label ]
+
+    if (invoker.platform_name == flutter_platform_name) {
+      _kernel_deps += [
+        "//flutter/shell/platform/fuchsia/flutter/kernel:kernel_platform_files",
+      ]
+      _platform_path = "$root_out_dir/flutter_runner_patched_sdk"
+    } else if (invoker.platform_name == dart_platform_name) {
+      _kernel_deps += [ "//flutter/shell/platform/fuchsia/dart_runner/kernel:kernel_platform_files" ]
+      _platform_path = "$root_out_dir/dart_runner_patched_sdk"
+    } else {
+      assert(false,
+             "platform_name must be either dart_runner or flutter_runner")
+    }
+
+    _platform_strong_dill = "${_platform_path}/platform_strong.dill"
+    inputs = [
+      _gen_kernel_path,
+      _platform_strong_dill,
+      invoker.packages_path,
+    ]
+    outputs = [ _kernel_path ]
+
+    if (_generate_manifest) {
+      outputs += [
+        # Explicit output when using --manifest.
+        _kernel_manifest,
+
+        # Implicit output when using --manifest; see createManifest in compiler.dart.
+        _kernel_manifest + ".dilplist",
+        _kernel_manifest + ".frameworkversion",
+      ]
+    }
+
+    _multi_root_scheme = "fuchsia-source"
+
+    # Rebase against // instead of root_build_dir since the package_config is
+    # relative to the sources.
+    _rebased_packages_path = rebase_path(invoker.packages_path, "//")
+
+    # gen_kernel writes absolute paths to depfiles, convert them to relative.
+    # See more information in https://fxbug.dev/75451.
+    script = "//flutter/tools/fuchsia/depfile_path_to_relative.py"
+    args = [
+      "--depfile=" + rebase_path(depfile, root_build_dir),
+      "--",
+      rebase_path(_gen_kernel_path, root_out_dir),
+    ]
+    if (defined(invoker.args)) {
+      args += invoker.args
+    }
+    args += [
+      "--verbosity=warning",
+      "--target",
+      invoker.platform_name,
+      "--platform",
+      rebase_path(_platform_strong_dill, root_build_dir),
+      "--filesystem-scheme",
+      _multi_root_scheme,
+      "--filesystem-root",
+      rebase_path("//"),
+      "--packages",
+      "$_multi_root_scheme:///$_rebased_packages_path",
+
+      # Repeating "--depfile" because the previous one is for
+      # `depfile_path_to_relative.py`, and this one is for `_gen_kernel_path`.
+      "--depfile",
+      rebase_path(depfile, root_build_dir),
+      "--output",
+      rebase_path(_kernel_path, root_build_dir),
+      "--sound-null-safety",
+    ]
+
+    # TODO(richkadel): It should be possible to remove all of the build rules
+    # related to `generate_manifest`. Without the following two flags, the
+    # `gen_kernel` step will produce one large `.dil` file, instead of multiple
+    # `.dilp` files with a `.dilplist`. But the Fuchsia flutter runner
+    # _currently_ only looks for a `.dilplist`. If the runner is changed to
+    # support loading a single `.dil` for the Dart Fuchsia component code, then
+    # consider removing all code supporting `generate_manifest` (and remove
+    # `convert_manifest_to_json.py`).
+    if (_generate_manifest) {
+      args += [
+        "--split-output-by-packages",
+        "--manifest",
+        rebase_path(_kernel_manifest, root_build_dir),
+      ]
+    }
+
+    if (flutter_runtime_mode == "debug") {
+      args += [ "--embed-sources" ]
+    } else {
+      args += [ "--no-embed-sources" ]
+    }
+
+    if (invoker.is_aot) {
+      args += [
+        "--aot",
+        "--tfa",
+      ]
+    } else if (!defined(invoker.link_platform) || !invoker.link_platform) {
+      args += [ "--no-link-platform" ]
+    }
+
+    if (invoker.product) {
+      # Setting this flag in a non-product release build for AOT (a "profile"
+      # build) causes the vm service isolate code to be tree-shaken from an app.
+      # See the pragma on the entrypoint here:
+      #
+      # This define excludes debugging and profiling code from Flutter.
+      args += [ "-Ddart.vm.product=true" ]
+    } else {
+      if (flutter_runtime_mode == "profile") {
+        # The following define excludes debugging code from Flutter.
+        args += [ "-Ddart.vm.profile=true" ]
+      }
+    }
+
+    if (defined(invoker.main_dart)) {
+      args += [ "package:${invoker.main_package}/${invoker.main_dart}" ]
+    } else {
+      rebased_main_dart = rebase_path(invoker.main_dart_file, "//")
+      args += [ "$_multi_root_scheme:///$rebased_main_dart" ]
+    }
+
+    deps = _kernel_deps
+  }
+
+  group(target_name) {
+    forward_variables_from(invoker,
+                           [
+                             "testonly",
+                             "visibility",
+                           ])
+    public_deps = _group_deps
+  }
+}

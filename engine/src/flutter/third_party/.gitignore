@@ -1,0 +1,24 @@
+# Ignore everything by default, as these come from gclient/DEPS.
+# We'll explicitly include the folders we want to track.
+/*
+/boringssl/src
+
+# Include the .gitignore file itself and .clang-tidy.
+!.gitignore
+!.clang-tidy
+!README.md
+
+# Allow custom README.flutter files in each folder.
+**/README.flutter
+
+# Include folders that have hand-written code (not DEPS).
+!accessibility/
+!boringssl/
+!canvaskit/
+!spring_animation/
+!test_shaders/
+!tonic/
+!txt/
+!web_locale_keymap/
+!web_test_fonts/
+!web_unicode/

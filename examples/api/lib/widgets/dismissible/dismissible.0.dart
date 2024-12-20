@@ -39,20 +39,14 @@ class _DismissibleExampleState extends State<DismissibleExample> {
       padding: const EdgeInsets.symmetric(vertical: 16),
       itemBuilder: (BuildContext context, int index) {
         return Dismissible(
-          background: Container(
-            color: Colors.green,
-          ),
+          background: Container(color: Colors.green),
           key: ValueKey<int>(items[index]),
           onDismissed: (DismissDirection direction) {
             setState(() {
               items.removeAt(index);
             });
           },
-          child: ListTile(
-            title: Text(
-              'Item ${items[index]}',
-            ),
-          ),
+          child: ListTile(title: Text('Item ${items[index]}')),
         );
       },
     );

@@ -16,9 +16,7 @@ class CheckboxExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('Checkbox Sample')),
-        body: const Center(
-          child: CheckboxExample(),
-        ),
+        body: const Center(child: CheckboxExample()),
       ),
     );
   }

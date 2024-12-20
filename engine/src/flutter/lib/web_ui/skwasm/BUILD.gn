@@ -1,0 +1,101 @@
+# Copyright 2019 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/toolchain/wasm.gni")
+
+template("skwasm_variant") {
+  wasm_lib(target_name) {
+    public_configs = [ "//flutter:config" ]
+
+    sources = [
+      "canvas.cpp",
+      "contour_measure.cpp",
+      "data.cpp",
+      "export.h",
+      "filters.cpp",
+      "fonts.cpp",
+      "helpers.h",
+      "image.cpp",
+      "paint.cpp",
+      "path.cpp",
+      "picture.cpp",
+      "shaders.cpp",
+      "skwasm_support.h",
+      "string.cpp",
+      "surface.cpp",
+      "text/line_metrics.cpp",
+      "text/paragraph.cpp",
+      "text/paragraph_builder.cpp",
+      "text/paragraph_style.cpp",
+      "text/strut_style.cpp",
+      "text/text_style.cpp",
+      "vertices.cpp",
+      "wrappers.h",
+    ]
+
+    cflags = [ "-mreference-types" ]
+
+    ldflags = [
+      "-std=c++20",
+      "-lGL",
+      "-sUSE_WEBGL2=1",
+      "-sMAX_WEBGL_VERSION=2",
+      "-sOFFSCREENCANVAS_SUPPORT",
+      "-sALLOW_MEMORY_GROWTH",
+      "-sALLOW_TABLE_GROWTH",
+      "-lexports.js",
+      "-sEXPORTED_FUNCTIONS=[stackAlloc]",
+      "-sEXPORTED_RUNTIME_METHODS=[addFunction,wasmExports,wasmMemory,stackAlloc]",
+      "-sSHARED_MEMORY=1",
+      "-sINCOMING_MODULE_JS_API=[instantiateWasm,noExitRuntime,mainScriptUrlOrBlob]",
+      "-sUSE_ES6_IMPORT_META=0",
+      "--js-library",
+      rebase_path("library_skwasm_support.js"),
+    ]
+
+    inputs = [ rebase_path("library_skwasm_support.js") ]
+
+    if (invoker.multi_threaded) {
+      sources += [ "surface_mt.cpp" ]
+      ldflags += [
+        "-sPTHREAD_POOL_SIZE=1",
+        "-Wno-pthreads-mem-growth",
+        "--js-library",
+        rebase_path("library_skwasm_multi_threaded.js"),
+      ]
+      inputs += [ rebase_path("library_skwasm_multi_threaded.js") ]
+    } else {
+      sources += [ "surface_st.cpp" ]
+      ldflags += [
+        "--js-library",
+        rebase_path("library_skwasm_single_threaded.js"),
+      ]
+      inputs += [ rebase_path("library_skwasm_single_threaded.js") ]
+    }
+
+    if (is_debug) {
+      ldflags += [
+        "-sDEMANGLE_SUPPORT=1",
+        "-sASSERTIONS=1",
+        "-sGL_ASSERTIONS=1",
+      ]
+    } else {
+      ldflags += [ "--closure=1" ]
+    }
+
+    deps = [
+      "//flutter/skia",
+      "//flutter/skia/modules/skparagraph",
+      "//flutter/skia/modules/skunicode",
+    ]
+  }
+}
+
+skwasm_variant("skwasm") {
+  multi_threaded = true
+}
+
+skwasm_variant("skwasm_st") {
+  multi_threaded = false
+}

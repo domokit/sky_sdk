@@ -13,11 +13,8 @@ import '../model/app_state_model.dart';
 import '../model/product.dart';
 
 class MobileProductCard extends StatelessWidget {
-  const MobileProductCard({
-    super.key,
-    this.imageAspectRatio = 33 / 49,
-    required this.product,
-  }) : assert(imageAspectRatio > 0);
+  const MobileProductCard({super.key, this.imageAspectRatio = 33 / 49, required this.product})
+    : assert(imageAspectRatio > 0);
 
   final double imageAspectRatio;
   final Product product;
@@ -40,22 +37,14 @@ class MobileProductCard extends StatelessWidget {
 }
 
 class DesktopProductCard extends StatelessWidget {
-  const DesktopProductCard({
-    super.key,
-    required this.product,
-    required this.imageWidth,
-  });
+  const DesktopProductCard({super.key, required this.product, required this.imageWidth});
 
   final Product product;
   final double imageWidth;
 
   @override
   Widget build(BuildContext context) {
-    return _buildProductCard(
-      context: context,
-      product: product,
-      imageWidth: imageWidth,
-    );
+    return _buildProductCard(context: context, product: product, imageWidth: imageWidth);
   }
 }
 
@@ -69,8 +58,7 @@ Widget _buildProductCard({
   // In case of desktop , imageWidth is passed through [DesktopProductCard] in
   // case of mobile imageAspectRatio is passed through [MobileProductCard].
   // Below assert is so that correct combination should always be present.
-  assert(isDesktop && imageWidth != null ||
-      !isDesktop && imageAspectRatio != null);
+  assert(isDesktop && imageWidth != null || !isDesktop && imageAspectRatio != null);
 
   final NumberFormat formatter = NumberFormat.simpleCurrency(
     decimalDigits: 0,
@@ -93,8 +81,7 @@ Widget _buildProductCard({
   return ScopedModelDescendant<AppStateModel>(
     builder: (BuildContext context, Widget? child, AppStateModel model) {
       return Semantics(
-        hint: GalleryLocalizations.of(context)!
-            .shrineScreenReaderProductAddToCart,
+        hint: GalleryLocalizations.of(context)!.shrineScreenReaderProductAddToCart,
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           child: GestureDetector(
@@ -111,10 +98,10 @@ Widget _buildProductCard({
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            if (isDesktop) imageWidget else AspectRatio(
-                    aspectRatio: imageAspectRatio!,
-                    child: imageWidget,
-                  ),
+            if (isDesktop)
+              imageWidget
+            else
+              AspectRatio(aspectRatio: imageAspectRatio!, child: imageWidget),
             SizedBox(
               child: Column(
                 children: <Widget>[
@@ -129,19 +116,13 @@ Widget _buildProductCard({
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    formatter.format(product.price),
-                    style: theme.textTheme.bodySmall,
-                  ),
+                  Text(formatter.format(product.price), style: theme.textTheme.bodySmall),
                 ],
               ),
             ),
           ],
         ),
-        const Padding(
-          padding: EdgeInsets.all(16),
-          child: Icon(Icons.add_shopping_cart),
-        ),
+        const Padding(padding: EdgeInsets.all(16), child: Icon(Icons.add_shopping_cart)),
       ],
     ),
   );

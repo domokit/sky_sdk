@@ -156,7 +156,8 @@ class RawKeyEventDataAndroid extends RawKeyEventData {
 
   // Android only reports a single code point for the key label.
   @override
-  String get keyLabel => plainCodePoint == 0 ? '' : String.fromCharCode(plainCodePoint & _kCombiningCharacterMask);
+  String get keyLabel =>
+      plainCodePoint == 0 ? '' : String.fromCharCode(plainCodePoint & _kCombiningCharacterMask);
 
   @override
   PhysicalKeyboardKey get physicalKey {
@@ -202,7 +203,8 @@ class RawKeyEventDataAndroid extends RawKeyEventData {
     // plane.
     if (keyLabel.isNotEmpty && !LogicalKeyboardKey.isControlCharacter(keyLabel)) {
       final int combinedCodePoint = plainCodePoint & _kCombiningCharacterMask;
-      final int keyId = LogicalKeyboardKey.unicodePlane | (combinedCodePoint & LogicalKeyboardKey.valueMask);
+      final int keyId =
+          LogicalKeyboardKey.unicodePlane | (combinedCodePoint & LogicalKeyboardKey.valueMask);
       return LogicalKeyboardKey.findKeyByKeyId(keyId) ?? LogicalKeyboardKey(keyId);
     }
 
@@ -220,25 +222,45 @@ class RawKeyEventDataAndroid extends RawKeyEventData {
       return false;
     }
     return switch (side) {
-      KeyboardSide.any   => true,
-      KeyboardSide.all   => (metaState & leftMask != 0) && (metaState & rightMask != 0),
-      KeyboardSide.left  => metaState & leftMask != 0,
+      KeyboardSide.any => true,
+      KeyboardSide.all => (metaState & leftMask != 0) && (metaState & rightMask != 0),
+      KeyboardSide.left => metaState & leftMask != 0,
       KeyboardSide.right => metaState & rightMask != 0,
     };
   }
 
   @override
-  bool isModifierPressed(ModifierKey key, { KeyboardSide side = KeyboardSide.any }) {
+  bool isModifierPressed(ModifierKey key, {KeyboardSide side = KeyboardSide.any}) {
     return switch (key) {
-      ModifierKey.controlModifier    => _isLeftRightModifierPressed(side, modifierControl, modifierLeftControl, modifierRightControl),
-      ModifierKey.shiftModifier      => _isLeftRightModifierPressed(side, modifierShift, modifierLeftShift, modifierRightShift),
-      ModifierKey.altModifier        => _isLeftRightModifierPressed(side, modifierAlt, modifierLeftAlt, modifierRightAlt),
-      ModifierKey.metaModifier       => _isLeftRightModifierPressed(side, modifierMeta, modifierLeftMeta, modifierRightMeta),
-      ModifierKey.capsLockModifier   => metaState & modifierCapsLock != 0,
-      ModifierKey.numLockModifier    => metaState & modifierNumLock != 0,
+      ModifierKey.controlModifier => _isLeftRightModifierPressed(
+        side,
+        modifierControl,
+        modifierLeftControl,
+        modifierRightControl,
+      ),
+      ModifierKey.shiftModifier => _isLeftRightModifierPressed(
+        side,
+        modifierShift,
+        modifierLeftShift,
+        modifierRightShift,
+      ),
+      ModifierKey.altModifier => _isLeftRightModifierPressed(
+        side,
+        modifierAlt,
+        modifierLeftAlt,
+        modifierRightAlt,
+      ),
+      ModifierKey.metaModifier => _isLeftRightModifierPressed(
+        side,
+        modifierMeta,
+        modifierLeftMeta,
+        modifierRightMeta,
+      ),
+      ModifierKey.capsLockModifier => metaState & modifierCapsLock != 0,
+      ModifierKey.numLockModifier => metaState & modifierNumLock != 0,
       ModifierKey.scrollLockModifier => metaState & modifierScrollLock != 0,
-      ModifierKey.functionModifier   => metaState & modifierFunction != 0,
-      ModifierKey.symbolModifier     => metaState & modifierSym != 0,
+      ModifierKey.functionModifier => metaState & modifierFunction != 0,
+      ModifierKey.symbolModifier => metaState & modifierSym != 0,
     };
   }
 
@@ -293,31 +315,24 @@ class RawKeyEventDataAndroid extends RawKeyEventData {
   }
 
   @override
-  bool operator==(Object other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is RawKeyEventDataAndroid
-        && other.flags == flags
-        && other.codePoint == codePoint
-        && other.plainCodePoint == plainCodePoint
-        && other.keyCode == keyCode
-        && other.scanCode == scanCode
-        && other.metaState == metaState;
+    return other is RawKeyEventDataAndroid &&
+        other.flags == flags &&
+        other.codePoint == codePoint &&
+        other.plainCodePoint == plainCodePoint &&
+        other.keyCode == keyCode &&
+        other.scanCode == scanCode &&
+        other.metaState == metaState;
   }
 
   @override
-  int get hashCode => Object.hash(
-    flags,
-    codePoint,
-    plainCodePoint,
-    keyCode,
-    scanCode,
-    metaState,
-  );
+  int get hashCode => Object.hash(flags, codePoint, plainCodePoint, keyCode, scanCode, metaState);
 
   // Modifier key masks.
 

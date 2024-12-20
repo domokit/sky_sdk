@@ -72,14 +72,8 @@ void main() {
       expect(node.children.first.depth, isNull);
       expect(node.children.first.parent, isNull);
 
-      expect(
-        node.toString(),
-        'TreeSliverNode: parent, depth: null, parent, expanded: true',
-      );
-      expect(
-        node.children.first.toString(),
-        'TreeSliverNode: child, depth: null, leaf',
-      );
+      expect(node.toString(), 'TreeSliverNode: parent, depth: null, parent, expanded: true');
+      expect(node.children.first.toString(), 'TreeSliverNode: child, depth: null, leaf');
     });
 
     testWidgets('TreeSliverNode sets ups parent and depth properties', (WidgetTester tester) async {
@@ -91,15 +85,15 @@ void main() {
         children: children,
         expanded: true,
       );
-      await tester.pumpWidget(MaterialApp(
-        home: CustomScrollView(
-          slivers: <Widget>[
-            TreeSliver<String>(
-              tree: <TreeSliverNode<String>>[node],
-            ),
-          ],
-        )
-      ));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CustomScrollView(
+            slivers: <Widget>[
+              TreeSliver<String>(tree: <TreeSliverNode<String>>[node]),
+            ],
+          ),
+        ),
+      );
       expect(node.content, 'parent');
       expect(node.children, children);
       expect(node.isExpanded, isTrue);
@@ -112,14 +106,8 @@ void main() {
       expect(node.children.first.depth, 1);
       expect(node.children.first.parent, node);
 
-      expect(
-        node.toString(),
-        'TreeSliverNode: parent, depth: root, parent, expanded: true',
-      );
-      expect(
-        node.children.first.toString(),
-        'TreeSliverNode: child, depth: 1, leaf',
-      );
+      expect(node.toString(), 'TreeSliverNode: parent, depth: root, parent, expanded: true');
+      expect(node.children.first.toString(), 'TreeSliverNode: child, depth: 1, leaf');
     });
   });
 
@@ -150,224 +138,144 @@ void main() {
     testWidgets('Can set controller on TreeSliver', (WidgetTester tester) async {
       final TreeSliverController controller = TreeSliverController();
       TreeSliverController? returnedController;
-      await tester.pumpWidget(MaterialApp(
-        home: CustomScrollView(
-          slivers: <Widget>[
-            TreeSliver<String>(
-              tree: simpleNodeSet,
-              controller: controller,
-              treeNodeBuilder: (
-                BuildContext context,
-                TreeSliverNode<Object?> node,
-                AnimationStyle toggleAnimationStyle,
-              ) {
-                returnedController ??= TreeSliverController.of(context);
-                return TreeSliver.defaultTreeNodeBuilder(
-                  context,
-                  node,
-                  toggleAnimationStyle,
-                );
-              },
-            ),
-          ],
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CustomScrollView(
+            slivers: <Widget>[
+              TreeSliver<String>(
+                tree: simpleNodeSet,
+                controller: controller,
+                treeNodeBuilder: (
+                  BuildContext context,
+                  TreeSliverNode<Object?> node,
+                  AnimationStyle toggleAnimationStyle,
+                ) {
+                  returnedController ??= TreeSliverController.of(context);
+                  return TreeSliver.defaultTreeNodeBuilder(context, node, toggleAnimationStyle);
+                },
+              ),
+            ],
+          ),
         ),
-      ));
+      );
       expect(controller, returnedController);
     });
 
     testWidgets('Can get default controller on TreeSliver', (WidgetTester tester) async {
       TreeSliverController? returnedController;
-      await tester.pumpWidget(MaterialApp(
-        home: CustomScrollView(
-          slivers: <Widget>[
-            TreeSliver<String>(
-              tree: simpleNodeSet,
-              treeNodeBuilder: (
-                BuildContext context,
-                TreeSliverNode<Object?> node,
-                AnimationStyle toggleAnimationStyle,
-              ) {
-                returnedController ??= TreeSliverController.maybeOf(context);
-                return TreeSliver.defaultTreeNodeBuilder(
-                  context,
-                  node,
-                  toggleAnimationStyle,
-                );
-              },
-            ),
-          ],
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CustomScrollView(
+            slivers: <Widget>[
+              TreeSliver<String>(
+                tree: simpleNodeSet,
+                treeNodeBuilder: (
+                  BuildContext context,
+                  TreeSliverNode<Object?> node,
+                  AnimationStyle toggleAnimationStyle,
+                ) {
+                  returnedController ??= TreeSliverController.maybeOf(context);
+                  return TreeSliver.defaultTreeNodeBuilder(context, node, toggleAnimationStyle);
+                },
+              ),
+            ],
+          ),
         ),
-      ));
+      );
       expect(returnedController, isNotNull);
     });
 
     testWidgets('Can get node for TreeSliverNode.content', (WidgetTester tester) async {
       final TreeSliverController controller = TreeSliverController();
-      await tester.pumpWidget(MaterialApp(
-        home: CustomScrollView(
-          slivers: <Widget>[
-            TreeSliver<String>(
-              tree: simpleNodeSet,
-              controller: controller,
-            ),
-          ],
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CustomScrollView(
+            slivers: <Widget>[TreeSliver<String>(tree: simpleNodeSet, controller: controller)],
+          ),
         ),
-      ));
+      );
 
       expect(controller.getNodeFor('Root 0'), simpleNodeSet[0]);
     });
 
     testWidgets('Can get isExpanded for a node', (WidgetTester tester) async {
       final TreeSliverController controller = TreeSliverController();
-      await tester.pumpWidget(MaterialApp(
-        home: CustomScrollView(
-          slivers: <Widget>[
-            TreeSliver<String>(
-              tree: simpleNodeSet,
-              controller: controller,
-            ),
-          ],
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CustomScrollView(
+            slivers: <Widget>[TreeSliver<String>(tree: simpleNodeSet, controller: controller)],
+          ),
         ),
-      ));
-      expect(
-        controller.isExpanded(simpleNodeSet[0]),
-        isFalse,
       );
-      expect(
-        controller.isExpanded(simpleNodeSet[1]),
-        isTrue,
-      );
+      expect(controller.isExpanded(simpleNodeSet[0]), isFalse);
+      expect(controller.isExpanded(simpleNodeSet[1]), isTrue);
     });
 
     testWidgets('Can get isActive for a node', (WidgetTester tester) async {
       final TreeSliverController controller = TreeSliverController();
-      await tester.pumpWidget(MaterialApp(
-        home: CustomScrollView(
-          slivers: <Widget>[
-            TreeSliver<String>(
-              tree: simpleNodeSet,
-              controller: controller,
-            ),
-          ],
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CustomScrollView(
+            slivers: <Widget>[TreeSliver<String>(tree: simpleNodeSet, controller: controller)],
+          ),
         ),
-      ));
-      expect(
-        controller.isActive(simpleNodeSet[0]),
-        isTrue,
       );
-      expect(
-        controller.isActive(simpleNodeSet[1]),
-        isTrue,
-      );
+      expect(controller.isActive(simpleNodeSet[0]), isTrue);
+      expect(controller.isActive(simpleNodeSet[1]), isTrue);
       // The parent 'Root 2' is not expanded, so its children are not active.
-      expect(
-        controller.isExpanded(simpleNodeSet[2]),
-        isFalse,
-      );
-      expect(
-        controller.isActive(simpleNodeSet[2].children[0]),
-        isFalse,
-      );
+      expect(controller.isExpanded(simpleNodeSet[2]), isFalse);
+      expect(controller.isActive(simpleNodeSet[2].children[0]), isFalse);
     });
 
     testWidgets('Can toggleNode, to collapse or expand', (WidgetTester tester) async {
       final TreeSliverController controller = TreeSliverController();
-      await tester.pumpWidget(MaterialApp(
-        home: CustomScrollView(
-          slivers: <Widget>[
-            TreeSliver<String>(
-              tree: simpleNodeSet,
-              controller: controller,
-            ),
-          ],
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CustomScrollView(
+            slivers: <Widget>[TreeSliver<String>(tree: simpleNodeSet, controller: controller)],
+          ),
         ),
-      ));
+      );
 
       // The parent 'Root 2' is not expanded, so its children are not active.
-      expect(
-        controller.isExpanded(simpleNodeSet[2]),
-        isFalse,
-      );
-      expect(
-        controller.isActive(simpleNodeSet[2].children[0]),
-        isFalse,
-      );
+      expect(controller.isExpanded(simpleNodeSet[2]), isFalse);
+      expect(controller.isActive(simpleNodeSet[2].children[0]), isFalse);
       // Toggle 'Root 2' to expand it
       controller.toggleNode(simpleNodeSet[2]);
-      expect(
-        controller.isExpanded(simpleNodeSet[2]),
-        isTrue,
-      );
-      expect(
-        controller.isActive(simpleNodeSet[2].children[0]),
-        isTrue,
-      );
+      expect(controller.isExpanded(simpleNodeSet[2]), isTrue);
+      expect(controller.isActive(simpleNodeSet[2].children[0]), isTrue);
 
       // The parent 'Root 1' is expanded, so its children are active.
-      expect(
-        controller.isExpanded(simpleNodeSet[1]),
-        isTrue,
-      );
-      expect(
-        controller.isActive(simpleNodeSet[1].children[0]),
-        isTrue,
-      );
+      expect(controller.isExpanded(simpleNodeSet[1]), isTrue);
+      expect(controller.isActive(simpleNodeSet[1].children[0]), isTrue);
       // Collapse 'Root 1'
       controller.toggleNode(simpleNodeSet[1]);
-      expect(
-        controller.isExpanded(simpleNodeSet[1]),
-        isFalse,
-      );
-      expect(
-        controller.isActive(simpleNodeSet[1].children[0]),
-        isTrue,
-      );
+      expect(controller.isExpanded(simpleNodeSet[1]), isFalse);
+      expect(controller.isActive(simpleNodeSet[1].children[0]), isTrue);
       // Nodes are not removed from the active list until the collapse animation
       // completes. The parent expansion state also updates.
       await tester.pumpAndSettle();
-      expect(
-        controller.isExpanded(simpleNodeSet[1]),
-        isFalse,
-      );
-      expect(
-        controller.isActive(simpleNodeSet[1].children[0]),
-        isFalse,
-      );
+      expect(controller.isExpanded(simpleNodeSet[1]), isFalse);
+      expect(controller.isActive(simpleNodeSet[1].children[0]), isFalse);
     });
 
-    testWidgets('Can expandNode, then collapseAll',
-        (WidgetTester tester) async {
+    testWidgets('Can expandNode, then collapseAll', (WidgetTester tester) async {
       final TreeSliverController controller = TreeSliverController();
-      await tester.pumpWidget(MaterialApp(
-        home: CustomScrollView(
-          slivers: <Widget>[
-            TreeSliver<String>(
-              tree: simpleNodeSet,
-              controller: controller,
-            ),
-          ],
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CustomScrollView(
+            slivers: <Widget>[TreeSliver<String>(tree: simpleNodeSet, controller: controller)],
+          ),
         ),
-      ));
+      );
 
       // The parent 'Root 2' is not expanded, so its children are not active.
-      expect(
-        controller.isExpanded(simpleNodeSet[2]),
-        isFalse,
-      );
-      expect(
-        controller.isActive(simpleNodeSet[2].children[0]),
-        isFalse,
-      );
+      expect(controller.isExpanded(simpleNodeSet[2]), isFalse);
+      expect(controller.isActive(simpleNodeSet[2].children[0]), isFalse);
       // Expand 'Root 2'
       controller.expandNode(simpleNodeSet[2]);
-      expect(
-        controller.isExpanded(simpleNodeSet[2]),
-        isTrue,
-      );
-      expect(
-        controller.isActive(simpleNodeSet[2].children[0]),
-        isTrue,
-      );
+      expect(controller.isExpanded(simpleNodeSet[2]), isTrue);
+      expect(controller.isActive(simpleNodeSet[2].children[0]), isTrue);
 
       // Both parents from our simple node set are expanded.
       // 'Root 1'
@@ -386,43 +294,25 @@ void main() {
 
     testWidgets('Can collapseNode, then expandAll', (WidgetTester tester) async {
       final TreeSliverController controller = TreeSliverController();
-      await tester.pumpWidget(MaterialApp(
-        home: CustomScrollView(
-          slivers: <Widget>[
-            TreeSliver<String>(
-              tree: simpleNodeSet,
-              controller: controller,
-            ),
-          ],
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CustomScrollView(
+            slivers: <Widget>[TreeSliver<String>(tree: simpleNodeSet, controller: controller)],
+          ),
         ),
-      ));
+      );
 
       // The parent 'Root 1' is expanded, so its children are active.
-      expect(
-        controller.isExpanded(simpleNodeSet[1]),
-        isTrue,
-      );
-      expect(
-        controller.isActive(simpleNodeSet[1].children[0]),
-        isTrue,
-      );
+      expect(controller.isExpanded(simpleNodeSet[1]), isTrue);
+      expect(controller.isActive(simpleNodeSet[1].children[0]), isTrue);
       // Collapse 'Root 1'
       controller.collapseNode(simpleNodeSet[1]);
-      expect(
-        controller.isExpanded(simpleNodeSet[1]),
-        isFalse,
-      );
-      expect(
-        controller.isActive(simpleNodeSet[1].children[0]),
-        isTrue,
-      );
+      expect(controller.isExpanded(simpleNodeSet[1]), isFalse);
+      expect(controller.isActive(simpleNodeSet[1].children[0]), isTrue);
       // Nodes are not removed from the active list until the collapse animation
       // completes.
       await tester.pumpAndSettle();
-      expect(
-        controller.isActive(simpleNodeSet[1].children[0]),
-        isFalse,
-      );
+      expect(controller.isActive(simpleNodeSet[1].children[0]), isFalse);
 
       // Both parents from our simple node set are collapsed.
       // 'Root 1'
@@ -475,20 +365,22 @@ void main() {
     // The default node builder wraps the leading icon with toggleNodeWith.
     bool toggled = false;
     TreeSliverNode<String>? toggledNode;
-    await tester.pumpWidget(MaterialApp(
-      home: CustomScrollView(
-        slivers: <Widget>[
-          TreeSliver<String>(
-            tree: simpleNodeSet,
-            controller: controller,
-            onNodeToggle: (TreeSliverNode<Object?> node) {
-              toggled = true;
-              toggledNode = node as TreeSliverNode<String>;
-            },
-          ),
-        ],
+    await tester.pumpWidget(
+      MaterialApp(
+        home: CustomScrollView(
+          slivers: <Widget>[
+            TreeSliver<String>(
+              tree: simpleNodeSet,
+              controller: controller,
+              onNodeToggle: (TreeSliverNode<Object?> node) {
+                toggled = true;
+                toggledNode = node as TreeSliverNode<String>;
+              },
+            ),
+          ],
+        ),
       ),
-    ));
+    );
     expect(controller.isExpanded(simpleNodeSet[1]), isTrue);
     await tester.tap(find.byType(Icon).first);
     await tester.pump();
@@ -500,55 +392,60 @@ void main() {
     toggled = false;
     toggledNode = null;
     // Use toggleNodeWith to make the whole row trigger the node state.
-    await tester.pumpWidget(MaterialApp(
-      home: CustomScrollView(
-        slivers: <Widget>[
-          TreeSliver<String>(
-            tree: simpleNodeSet,
-            controller: controller,
-            onNodeToggle: (TreeSliverNode<Object?> node) {
-              toggled = true;
-              toggledNode = node as TreeSliverNode<String>;
-            },
-            treeNodeBuilder: (
-              BuildContext context,
-              TreeSliverNode<Object?> node,
-              AnimationStyle toggleAnimationStyle,
-            ) {
-              final Duration animationDuration =
-                toggleAnimationStyle.duration ?? TreeSliver.defaultAnimationDuration;
-              final Curve animationCurve =
-                toggleAnimationStyle.curve ?? TreeSliver.defaultAnimationCurve;
-              // This makes the whole row trigger toggling.
-              return TreeSliver.wrapChildToToggleNode(
-                node: node,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(children: <Widget>[
-                    // Icon for parent nodes
-                    SizedBox.square(
-                    dimension: 30.0,
-                    child: node.children.isNotEmpty
-                      ? AnimatedRotation(
-                          turns: node.isExpanded ? 0.25 : 0.0,
-                          duration: animationDuration,
-                          curve: animationCurve,
-                          child: const Icon(IconData(0x25BA), size: 14),
-                        )
-                      : null,
+    await tester.pumpWidget(
+      MaterialApp(
+        home: CustomScrollView(
+          slivers: <Widget>[
+            TreeSliver<String>(
+              tree: simpleNodeSet,
+              controller: controller,
+              onNodeToggle: (TreeSliverNode<Object?> node) {
+                toggled = true;
+                toggledNode = node as TreeSliverNode<String>;
+              },
+              treeNodeBuilder: (
+                BuildContext context,
+                TreeSliverNode<Object?> node,
+                AnimationStyle toggleAnimationStyle,
+              ) {
+                final Duration animationDuration =
+                    toggleAnimationStyle.duration ?? TreeSliver.defaultAnimationDuration;
+                final Curve animationCurve =
+                    toggleAnimationStyle.curve ?? TreeSliver.defaultAnimationCurve;
+                // This makes the whole row trigger toggling.
+                return TreeSliver.wrapChildToToggleNode(
+                  node: node,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: <Widget>[
+                        // Icon for parent nodes
+                        SizedBox.square(
+                          dimension: 30.0,
+                          child:
+                              node.children.isNotEmpty
+                                  ? AnimatedRotation(
+                                    turns: node.isExpanded ? 0.25 : 0.0,
+                                    duration: animationDuration,
+                                    curve: animationCurve,
+                                    child: const Icon(IconData(0x25BA), size: 14),
+                                  )
+                                  : null,
+                        ),
+                        // Spacer
+                        const SizedBox(width: 8.0),
+                        // Content
+                        Text(node.content.toString()),
+                      ],
                     ),
-                    // Spacer
-                    const SizedBox(width: 8.0),
-                    // Content
-                    Text(node.content.toString()),
-                  ]),
-                ),
-              );
-            },
-          ),
-        ],
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
-    ));
+    );
     // Still collapsed from earlier
     expect(controller.isExpanded(simpleNodeSet[1]), isFalse);
     // Tapping on the text instead of the Icon.
@@ -581,76 +478,84 @@ void main() {
     ];
 
     AnimationStyle? style;
-    await tester.pumpWidget(MaterialApp(
-      home: CustomScrollView(
-        slivers: <Widget>[
-          TreeSliver<String>(
-            tree: simpleNodeSet,
-            treeNodeBuilder: (
-              BuildContext context,
-              TreeSliverNode<Object?> node,
-              AnimationStyle toggleAnimationStyle,
-            ) {
-              style ??= toggleAnimationStyle;
-              return Text(node.content.toString());
-            },
-          ),
-        ],
+    await tester.pumpWidget(
+      MaterialApp(
+        home: CustomScrollView(
+          slivers: <Widget>[
+            TreeSliver<String>(
+              tree: simpleNodeSet,
+              treeNodeBuilder: (
+                BuildContext context,
+                TreeSliverNode<Object?> node,
+                AnimationStyle toggleAnimationStyle,
+              ) {
+                style ??= toggleAnimationStyle;
+                return Text(node.content.toString());
+              },
+            ),
+          ],
+        ),
       ),
-    ));
+    );
     // Default
     expect(style, TreeSliver.defaultToggleAnimationStyle);
 
-    await tester.pumpWidget(MaterialApp(
-      home: CustomScrollView(
-        slivers: <Widget>[
-          TreeSliver<String>(
-            tree: simpleNodeSet,
-            toggleAnimationStyle: AnimationStyle.noAnimation,
-            treeNodeBuilder: (
-              BuildContext context,
-              TreeSliverNode<Object?> node,
-              AnimationStyle toggleAnimationStyle,
-            ) {
-              style = toggleAnimationStyle;
-              return Text(node.content.toString());
-            },
-          ),
-        ],
+    await tester.pumpWidget(
+      MaterialApp(
+        home: CustomScrollView(
+          slivers: <Widget>[
+            TreeSliver<String>(
+              tree: simpleNodeSet,
+              toggleAnimationStyle: AnimationStyle.noAnimation,
+              treeNodeBuilder: (
+                BuildContext context,
+                TreeSliverNode<Object?> node,
+                AnimationStyle toggleAnimationStyle,
+              ) {
+                style = toggleAnimationStyle;
+                return Text(node.content.toString());
+              },
+            ),
+          ],
+        ),
       ),
-    ));
+    );
     expect(style, isNotNull);
     expect(style!.curve, isNull);
     expect(style!.duration, Duration.zero);
     style = null;
 
-    await tester.pumpWidget(MaterialApp(
-      home: CustomScrollView(
-        slivers: <Widget>[
-          TreeSliver<String>(
-            tree: simpleNodeSet,
-            toggleAnimationStyle: AnimationStyle(
-              curve: Curves.easeIn,
-              duration: const Duration(milliseconds: 200),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: CustomScrollView(
+          slivers: <Widget>[
+            TreeSliver<String>(
+              tree: simpleNodeSet,
+              toggleAnimationStyle: AnimationStyle(
+                curve: Curves.easeIn,
+                duration: const Duration(milliseconds: 200),
+              ),
+              treeNodeBuilder: (
+                BuildContext context,
+                TreeSliverNode<Object?> node,
+                AnimationStyle toggleAnimationStyle,
+              ) {
+                style ??= toggleAnimationStyle;
+                return Text(node.content.toString());
+              },
             ),
-            treeNodeBuilder: (
-              BuildContext context,
-              TreeSliverNode<Object?> node,
-              AnimationStyle toggleAnimationStyle,
-            ) {
-              style ??= toggleAnimationStyle;
-              return Text(node.content.toString());
-            },
-          ),
-        ],
+          ],
+        ),
       ),
-    ));
+    );
     expect(style, isNotNull);
     expect(style!.curve, Curves.easeIn);
     expect(style!.duration, const Duration(milliseconds: 200));
   });
 
-  testWidgets('Adding more root TreeViewNodes are reflected in the tree', (WidgetTester tester) async {
+  testWidgets('Adding more root TreeViewNodes are reflected in the tree', (
+    WidgetTester tester,
+  ) async {
     simpleNodeSet = <TreeSliverNode<String>>[
       TreeSliverNode<String>('Root 0'),
       TreeSliverNode<String>(
@@ -671,29 +576,26 @@ void main() {
       TreeSliverNode<String>('Root 3'),
     ];
     final TreeSliverController controller = TreeSliverController();
-    await tester.pumpWidget(MaterialApp(
-      home: StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return Scaffold(
-            body: CustomScrollView(
-              slivers: <Widget>[
-                TreeSliver<String>(
-                  tree: simpleNodeSet,
-                  controller: controller,
-                ),
-              ],
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                setState(() {
-                  simpleNodeSet.add(TreeSliverNode<String>('Added root'));
-                });
-              },
-            ),
-          );
-        },
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Scaffold(
+              body: CustomScrollView(
+                slivers: <Widget>[TreeSliver<String>(tree: simpleNodeSet, controller: controller)],
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  setState(() {
+                    simpleNodeSet.add(TreeSliverNode<String>('Added root'));
+                  });
+                },
+              ),
+            );
+          },
+        ),
       ),
-    ));
+    );
     await tester.pump();
 
     expect(find.text('Root 0'), findsOneWidget);
@@ -721,7 +623,9 @@ void main() {
     expect(find.text('Added root'), findsOneWidget);
   });
 
-  testWidgets('Adding more TreeViewNodes below the root are reflected in the tree', (WidgetTester tester) async {
+  testWidgets('Adding more TreeViewNodes below the root are reflected in the tree', (
+    WidgetTester tester,
+  ) async {
     simpleNodeSet = <TreeSliverNode<String>>[
       TreeSliverNode<String>('Root 0'),
       TreeSliverNode<String>(
@@ -742,29 +646,26 @@ void main() {
       TreeSliverNode<String>('Root 3'),
     ];
     final TreeSliverController controller = TreeSliverController();
-    await tester.pumpWidget(MaterialApp(
-      home: StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return Scaffold(
-            body: CustomScrollView(
-              slivers: <Widget>[
-                TreeSliver<String>(
-                  tree: simpleNodeSet,
-                  controller: controller,
-                ),
-              ],
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                setState(() {
-                  simpleNodeSet[1].children.add(TreeSliverNode<String>('Added child'));
-                });
-              },
-            ),
-          );
-        },
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Scaffold(
+              body: CustomScrollView(
+                slivers: <Widget>[TreeSliver<String>(tree: simpleNodeSet, controller: controller)],
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  setState(() {
+                    simpleNodeSet[1].children.add(TreeSliverNode<String>('Added child'));
+                  });
+                },
+              ),
+            );
+          },
+        ),
       ),
-    ));
+    );
     await tester.pump();
     expect(find.text('Root 0'), findsOneWidget);
     expect(find.text('Root 1'), findsOneWidget);
@@ -789,152 +690,59 @@ void main() {
     expect(find.text('Root 3'), findsOneWidget);
   });
 
-  testWidgets('TreeSliverNode should close all children when collapsed when animation is disabled', (WidgetTester tester) async {
-    // Regression test for https://github.com/flutter/flutter/issues/153889
-    final TreeSliverController controller = TreeSliverController();
-    final List<TreeSliverNode<String>> tree = <TreeSliverNode<String>>[
-      TreeSliverNode<String>('First'),
-      TreeSliverNode<String>(
-        'Second',
-        children: <TreeSliverNode<String>>[
-          TreeSliverNode<String>(
-            'alpha',
-            children: <TreeSliverNode<String>>[
-              TreeSliverNode<String>('uno'),
-              TreeSliverNode<String>('dos'),
-              TreeSliverNode<String>('tres'),
-            ],
-          ),
-          TreeSliverNode<String>('beta'),
-          TreeSliverNode<String>('kappa'),
-        ],
-      ),
-      TreeSliverNode<String>(
-        'Third',
-        expanded: true,
-        children: <TreeSliverNode<String>>[
-          TreeSliverNode<String>('gamma'),
-          TreeSliverNode<String>('delta'),
-          TreeSliverNode<String>('epsilon'),
-        ],
-      ),
-      TreeSliverNode<String>('Fourth'),
-    ];
+  testWidgets(
+    'TreeSliverNode should close all children when collapsed when animation is disabled',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/153889
+      final TreeSliverController controller = TreeSliverController();
+      final List<TreeSliverNode<String>> tree = <TreeSliverNode<String>>[
+        TreeSliverNode<String>('First'),
+        TreeSliverNode<String>(
+          'Second',
+          children: <TreeSliverNode<String>>[
+            TreeSliverNode<String>(
+              'alpha',
+              children: <TreeSliverNode<String>>[
+                TreeSliverNode<String>('uno'),
+                TreeSliverNode<String>('dos'),
+                TreeSliverNode<String>('tres'),
+              ],
+            ),
+            TreeSliverNode<String>('beta'),
+            TreeSliverNode<String>('kappa'),
+          ],
+        ),
+        TreeSliverNode<String>(
+          'Third',
+          expanded: true,
+          children: <TreeSliverNode<String>>[
+            TreeSliverNode<String>('gamma'),
+            TreeSliverNode<String>('delta'),
+            TreeSliverNode<String>('epsilon'),
+          ],
+        ),
+        TreeSliverNode<String>('Fourth'),
+      ];
 
-    await tester.pumpWidget(MaterialApp(
-      home: CustomScrollView(
-        slivers: <Widget>[
-          TreeSliver<String>(
-            tree: tree,
-            controller: controller,
-            toggleAnimationStyle: AnimationStyle.noAnimation,
-            treeNodeBuilder: (
-              BuildContext context,
-              TreeSliverNode<Object?> node,
-              AnimationStyle animationStyle,
-            ) {
-              final Widget child = GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () => controller.toggleNode(node),
-                child: TreeSliver.defaultTreeNodeBuilder(
-                  context,
-                  node,
-                  animationStyle,
-                ),
-              );
-
-              return child;
-            },
-          ),
-        ],
-      ),
-    ));
-
-    expect(find.text('First'), findsOneWidget);
-    expect(find.text('Second'), findsOneWidget);
-    expect(find.text('Third'), findsOneWidget);
-    expect(find.text('Fourth'), findsOneWidget);
-    expect(find.text('alpha'), findsNothing);
-    expect(find.text('beta'), findsNothing);
-    expect(find.text('kappa'), findsNothing);
-    expect(find.text('gamma'), findsOneWidget);
-    expect(find.text('delta'), findsOneWidget);
-    expect(find.text('epsilon'), findsOneWidget);
-    expect(find.text('uno'), findsNothing);
-    expect(find.text('dos'), findsNothing);
-    expect(find.text('tres'), findsNothing);
-
-    await tester.tap(find.text('Second'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('alpha'), findsOneWidget);
-
-    await tester.tap(find.text('alpha'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('uno'), findsOneWidget);
-    expect(find.text('dos'), findsOneWidget);
-    expect(find.text('tres'), findsOneWidget);
-
-    await tester.tap(find.text('alpha'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('uno'), findsNothing);
-    expect(find.text('dos'), findsNothing);
-    expect(find.text('tres'), findsNothing);
-  });
-
-  testWidgets('TreeSliverNode should close all children when collapsed when animation is completed', (WidgetTester tester) async {
-    final TreeSliverController controller = TreeSliverController();
-    final List<TreeSliverNode<String>> tree = <TreeSliverNode<String>>[
-      TreeSliverNode<String>(
-        'First',
-        expanded: true,
-        children: <TreeSliverNode<String>>[
-          TreeSliverNode<String>(
-            'alpha',
-            expanded: true,
-            children: <TreeSliverNode<String>>[
-              TreeSliverNode<String>('uno'),
-              TreeSliverNode<String>('dos'),
-              TreeSliverNode<String>('tres'),
-            ],
-          ),
-          TreeSliverNode<String>('beta'),
-          TreeSliverNode<String>('kappa'),
-        ],
-      ),
-    ];
-
-
-    Widget buildTreeSliver(TreeSliverController controller) {
-      return MaterialApp(
-        home: Scaffold(
-          body: CustomScrollView(
-            shrinkWrap: true,
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CustomScrollView(
             slivers: <Widget>[
               TreeSliver<String>(
                 tree: tree,
                 controller: controller,
-                toggleAnimationStyle: AnimationStyle(
-                  curve: Curves.easeInOut,
-                  duration: const Duration(milliseconds: 200),
-                ),
+                toggleAnimationStyle: AnimationStyle.noAnimation,
                 treeNodeBuilder: (
                   BuildContext context,
                   TreeSliverNode<Object?> node,
                   AnimationStyle animationStyle,
                 ) {
                   final Widget child = GestureDetector(
-                    key: ValueKey<String>(node.content! as String),
                     behavior: HitTestBehavior.translucent,
                     onTap: () => controller.toggleNode(node),
-                    child: TreeSliver.defaultTreeNodeBuilder(
-                      context,
-                      node,
-                      animationStyle,
-                    ),
+                    child: TreeSliver.defaultTreeNodeBuilder(context, node, animationStyle),
                   );
+
                   return child;
                 },
               ),
@@ -942,23 +750,115 @@ void main() {
           ),
         ),
       );
-    }
 
-    await tester.pumpWidget(buildTreeSliver(controller));
+      expect(find.text('First'), findsOneWidget);
+      expect(find.text('Second'), findsOneWidget);
+      expect(find.text('Third'), findsOneWidget);
+      expect(find.text('Fourth'), findsOneWidget);
+      expect(find.text('alpha'), findsNothing);
+      expect(find.text('beta'), findsNothing);
+      expect(find.text('kappa'), findsNothing);
+      expect(find.text('gamma'), findsOneWidget);
+      expect(find.text('delta'), findsOneWidget);
+      expect(find.text('epsilon'), findsOneWidget);
+      expect(find.text('uno'), findsNothing);
+      expect(find.text('dos'), findsNothing);
+      expect(find.text('tres'), findsNothing);
 
-    expect(find.text('alpha'), findsOneWidget);
-    expect(find.text('uno'), findsOneWidget);
-    expect(find.text('dos'), findsOneWidget);
-    expect(find.text('tres'), findsOneWidget);
+      await tester.tap(find.text('Second'));
+      await tester.pumpAndSettle();
 
-    // Using runAsync to handle collapse and animations properly.
-    await tester.runAsync(() async {
+      expect(find.text('alpha'), findsOneWidget);
+
+      await tester.tap(find.text('alpha'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('uno'), findsOneWidget);
+      expect(find.text('dos'), findsOneWidget);
+      expect(find.text('tres'), findsOneWidget);
+
       await tester.tap(find.text('alpha'));
       await tester.pumpAndSettle();
 
       expect(find.text('uno'), findsNothing);
       expect(find.text('dos'), findsNothing);
       expect(find.text('tres'), findsNothing);
-    });
-  });
+    },
+  );
+
+  testWidgets(
+    'TreeSliverNode should close all children when collapsed when animation is completed',
+    (WidgetTester tester) async {
+      final TreeSliverController controller = TreeSliverController();
+      final List<TreeSliverNode<String>> tree = <TreeSliverNode<String>>[
+        TreeSliverNode<String>(
+          'First',
+          expanded: true,
+          children: <TreeSliverNode<String>>[
+            TreeSliverNode<String>(
+              'alpha',
+              expanded: true,
+              children: <TreeSliverNode<String>>[
+                TreeSliverNode<String>('uno'),
+                TreeSliverNode<String>('dos'),
+                TreeSliverNode<String>('tres'),
+              ],
+            ),
+            TreeSliverNode<String>('beta'),
+            TreeSliverNode<String>('kappa'),
+          ],
+        ),
+      ];
+
+      Widget buildTreeSliver(TreeSliverController controller) {
+        return MaterialApp(
+          home: Scaffold(
+            body: CustomScrollView(
+              shrinkWrap: true,
+              slivers: <Widget>[
+                TreeSliver<String>(
+                  tree: tree,
+                  controller: controller,
+                  toggleAnimationStyle: AnimationStyle(
+                    curve: Curves.easeInOut,
+                    duration: const Duration(milliseconds: 200),
+                  ),
+                  treeNodeBuilder: (
+                    BuildContext context,
+                    TreeSliverNode<Object?> node,
+                    AnimationStyle animationStyle,
+                  ) {
+                    final Widget child = GestureDetector(
+                      key: ValueKey<String>(node.content! as String),
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () => controller.toggleNode(node),
+                      child: TreeSliver.defaultTreeNodeBuilder(context, node, animationStyle),
+                    );
+                    return child;
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildTreeSliver(controller));
+
+      expect(find.text('alpha'), findsOneWidget);
+      expect(find.text('uno'), findsOneWidget);
+      expect(find.text('dos'), findsOneWidget);
+      expect(find.text('tres'), findsOneWidget);
+
+      // Using runAsync to handle collapse and animations properly.
+      await tester.runAsync(() async {
+        await tester.tap(find.text('alpha'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('uno'), findsNothing);
+        expect(find.text('dos'), findsNothing);
+        expect(find.text('tres'), findsNothing);
+      });
+    },
+  );
 }

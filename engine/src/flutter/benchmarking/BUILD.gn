@@ -1,0 +1,49 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+config("benchmark_config") {
+  include_dirs = [ "//flutter/third_party/benchmark:benchmark_config" ]
+}
+
+source_set("benchmarking") {
+  testonly = true
+
+  sources = [
+    "benchmarking.cc",
+    "benchmarking.h",
+  ]
+
+  public_deps = [
+    "//flutter/fml",
+    "//flutter/third_party/benchmark",
+  ]
+
+  public_configs = [
+    "//flutter:config",
+    ":benchmark_config",
+  ]
+}
+
+config("benchmark_library_config") {
+  if (is_ios) {
+    ldflags = [ "-Wl,-exported_symbol,_RunBenchmarks" ]
+  }
+}
+
+source_set("benchmarking_library") {
+  testonly = true
+
+  sources = [
+    "library.cc",
+    "library.h",
+  ]
+
+  public_deps = [ "//flutter/third_party/benchmark" ]
+
+  public_configs = [
+    "//flutter:config",
+    ":benchmark_config",
+    ":benchmark_library_config",
+  ]
+}

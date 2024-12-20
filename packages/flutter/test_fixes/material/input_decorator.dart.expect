@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 
 void main() {
   // Changes made in https://github.com/flutter/flutter/pull/46115.
-  const InputDecoration inputDecoration = InputDecoration(floatingLabelBehavior: FloatingLabelBehavior.auto);
+  const InputDecoration inputDecoration = InputDecoration(
+    floatingLabelBehavior: FloatingLabelBehavior.auto,
+  );
   InputDecoration(floatingLabelBehavior: FloatingLabelBehavior.never);
   InputDecoration();
   InputDecoration(error: '');
@@ -15,7 +17,9 @@ void main() {
   InputDecoration.collapsed();
   InputDecoration.collapsed(error: '');
   inputDecoration.floatingLabelBehavior;
-  const InputDecorationTheme inputDecorationTheme = InputDecorationTheme(floatingLabelBehavior: FloatingLabelBehavior.auto);
+  const InputDecorationTheme inputDecorationTheme = InputDecorationTheme(
+    floatingLabelBehavior: FloatingLabelBehavior.auto,
+  );
   InputDecorationTheme(floatingLabelBehavior: FloatingLabelBehavior.never);
   InputDecorationTheme();
   InputDecorationTheme(error: '');

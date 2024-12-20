@@ -1,0 +1,40 @@
+# commonly generated files
+*.pyc
+*~
+.*.sw?
+.ccls-cache
+.checkstyle
+.clangd
+.classpath
+.cproject
+.DS_Store
+.gdb_history
+.gdbinit
+.idea
+.ignore
+.landmines
+.packages
+.project
+.pub
+.pydevproject
+.vscode
+.cache
+compile_commands.json
+cscope.*
+Session.vim
+tags
+Thumbs.db
+
+# directories pulled in via deps or hooks
+/buildtools/
+/gradle/
+/ios_tools/
+/out/
+/third_party/
+/build/secondary/third_party/protobuf/
+
+# This is where the gclient hook downloads the Fuchsia SDK and toolchain.
+/fuchsia/
+
+# Override higher level build ignore
+!build/

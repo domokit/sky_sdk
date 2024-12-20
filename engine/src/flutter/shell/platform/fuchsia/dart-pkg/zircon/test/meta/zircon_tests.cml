@@ -1,0 +1,6 @@
+{
+    program: {
+        data: "data/zircon_tests",
+        runner: "dart_jit_runner",
+    },
+}

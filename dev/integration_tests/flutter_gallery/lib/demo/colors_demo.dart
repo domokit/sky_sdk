@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 const double kColorItemHeight = 48.0;
 
 class Palette {
-  Palette({ this.name, this.primary, this.accent, this.threshold = 900});
+  Palette({this.name, this.primary, this.accent, this.threshold = 900});
 
   final String? name;
   final MaterialColor? primary;
@@ -21,32 +21,46 @@ final List<Palette> allPalettes = <Palette>[
   Palette(name: 'RED', primary: Colors.red, accent: Colors.redAccent, threshold: 300),
   Palette(name: 'PINK', primary: Colors.pink, accent: Colors.pinkAccent, threshold: 200),
   Palette(name: 'PURPLE', primary: Colors.purple, accent: Colors.purpleAccent, threshold: 200),
-  Palette(name: 'DEEP PURPLE', primary: Colors.deepPurple, accent: Colors.deepPurpleAccent, threshold: 200),
+  Palette(
+    name: 'DEEP PURPLE',
+    primary: Colors.deepPurple,
+    accent: Colors.deepPurpleAccent,
+    threshold: 200,
+  ),
   Palette(name: 'INDIGO', primary: Colors.indigo, accent: Colors.indigoAccent, threshold: 200),
   Palette(name: 'BLUE', primary: Colors.blue, accent: Colors.blueAccent, threshold: 400),
-  Palette(name: 'LIGHT BLUE', primary: Colors.lightBlue, accent: Colors.lightBlueAccent, threshold: 500),
+  Palette(
+    name: 'LIGHT BLUE',
+    primary: Colors.lightBlue,
+    accent: Colors.lightBlueAccent,
+    threshold: 500,
+  ),
   Palette(name: 'CYAN', primary: Colors.cyan, accent: Colors.cyanAccent, threshold: 600),
   Palette(name: 'TEAL', primary: Colors.teal, accent: Colors.tealAccent, threshold: 400),
   Palette(name: 'GREEN', primary: Colors.green, accent: Colors.greenAccent, threshold: 500),
-  Palette(name: 'LIGHT GREEN', primary: Colors.lightGreen, accent: Colors.lightGreenAccent, threshold: 600),
+  Palette(
+    name: 'LIGHT GREEN',
+    primary: Colors.lightGreen,
+    accent: Colors.lightGreenAccent,
+    threshold: 600,
+  ),
   Palette(name: 'LIME', primary: Colors.lime, accent: Colors.limeAccent, threshold: 800),
   Palette(name: 'YELLOW', primary: Colors.yellow, accent: Colors.yellowAccent),
   Palette(name: 'AMBER', primary: Colors.amber, accent: Colors.amberAccent),
   Palette(name: 'ORANGE', primary: Colors.orange, accent: Colors.orangeAccent, threshold: 700),
-  Palette(name: 'DEEP ORANGE', primary: Colors.deepOrange, accent: Colors.deepOrangeAccent, threshold: 400),
+  Palette(
+    name: 'DEEP ORANGE',
+    primary: Colors.deepOrange,
+    accent: Colors.deepOrangeAccent,
+    threshold: 400,
+  ),
   Palette(name: 'BROWN', primary: Colors.brown, threshold: 200),
   Palette(name: 'GREY', primary: Colors.grey, threshold: 500),
   Palette(name: 'BLUE GREY', primary: Colors.blueGrey, threshold: 500),
 ];
 
-
 class ColorItem extends StatelessWidget {
-  const ColorItem({
-    super.key,
-    required this.index,
-    required this.color,
-    this.prefix = '',
-  });
+  const ColorItem({super.key, required this.index, required this.color, this.prefix = ''});
 
   final int index;
   final Color color;
@@ -67,10 +81,7 @@ class ColorItem extends StatelessWidget {
           bottom: false,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text('$prefix$index'),
-              Text(colorString()),
-            ],
+            children: <Widget>[Text('$prefix$index'), Text(colorString())],
           ),
         ),
       ),
@@ -79,10 +90,7 @@ class ColorItem extends StatelessWidget {
 }
 
 class PaletteTabView extends StatelessWidget {
-  PaletteTabView({
-    super.key,
-    required this.colors,
-  }) : assert(colors.isValid);
+  PaletteTabView({super.key, required this.colors}) : assert(colors.isValid);
 
   final Palette colors;
 
@@ -137,9 +145,10 @@ class ColorsDemo extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-          children: allPalettes.map<Widget>((Palette colors) {
-            return PaletteTabView(colors: colors);
-          }).toList(),
+          children:
+              allPalettes.map<Widget>((Palette colors) {
+                return PaletteTabView(colors: colors);
+              }).toList(),
         ),
       ),
     );

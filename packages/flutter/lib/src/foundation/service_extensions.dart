@@ -58,7 +58,6 @@ enum FoundationServiceExtensions {
   ///   registered.
   activeDevToolsServerAddress,
 
-
   /// Name of service extension that, when called, will change the value of
   /// [defaultTargetPlatform], which controls which [TargetPlatform] that the
   /// framework will execute for.

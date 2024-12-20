@@ -1,0 +1,10 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+dart_toolchain = "//flutter/tools/fuchsia/dart:dartlang"
+
+dart_root_gen_dir = get_label_info("//bogus($dart_toolchain)", "root_gen_dir")
+# In order to access the target_gen_dir in the Dart toolchain from some location
+# in the source tree, use the following:
+#   dart_target_gen_dir = get_label_info(":bogus($dart_toolchain)", "target_gen_dir")

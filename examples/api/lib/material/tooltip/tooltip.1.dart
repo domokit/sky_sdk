@@ -17,9 +17,7 @@ class TooltipExampleApp extends StatelessWidget {
       theme: ThemeData(tooltipTheme: const TooltipThemeData(preferBelow: false)),
       home: Scaffold(
         appBar: AppBar(title: const Text('Tooltip Sample')),
-        body: const Center(
-          child: TooltipSample(),
-        ),
+        body: const Center(child: TooltipSample()),
       ),
     );
   }
@@ -39,9 +37,7 @@ class TooltipSample extends StatelessWidget {
       height: 50,
       padding: const EdgeInsets.all(8.0),
       preferBelow: true,
-      textStyle: const TextStyle(
-        fontSize: 24,
-      ),
+      textStyle: const TextStyle(fontSize: 24),
       showDuration: const Duration(seconds: 2),
       waitDuration: const Duration(seconds: 1),
       child: const Text('Tap this text and hold down to show a tooltip.'),

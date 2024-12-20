@@ -31,9 +31,7 @@ class ExampleWidget extends StatelessWidget {
       'Queer & Romantic',
       style: TextStyle(
         fontFamily: 'BioRhyme Expanded',
-        fontFeatures: <FontFeature>[
-          FontFeature.swash(),
-        ],
+        fontFeatures: <FontFeature>[FontFeature.swash()],
       ),
     );
   }

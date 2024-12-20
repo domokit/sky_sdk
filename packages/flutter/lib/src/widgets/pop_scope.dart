@@ -93,7 +93,10 @@ class PopScope<T> extends StatefulWidget {
       'This feature was deprecated after v3.22.0-12.0.pre.',
     )
     this.onPopInvoked,
-  }) : assert(onPopInvokedWithResult == null || onPopInvoked == null, 'onPopInvoked is deprecated, use onPopInvokedWithResult');
+  }) : assert(
+         onPopInvokedWithResult == null || onPopInvoked == null,
+         'onPopInvoked is deprecated, use onPopInvokedWithResult',
+       );
 
   /// The widget below this widget in the tree.
   ///

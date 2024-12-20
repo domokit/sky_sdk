@@ -21,13 +21,10 @@ class CupertinoTextMagnifierApp extends StatelessWidget {
 }
 
 class CupertinoTextMagnifierExampleApp extends StatefulWidget {
-  const CupertinoTextMagnifierExampleApp({
-    super.key,
-  });
+  const CupertinoTextMagnifierExampleApp({super.key});
 
   @override
-  State<CupertinoTextMagnifierExampleApp> createState() =>
-      _CupertinoTextMagnifierExampleAppState();
+  State<CupertinoTextMagnifierExampleApp> createState() => _CupertinoTextMagnifierExampleAppState();
 }
 
 class _CupertinoTextMagnifierExampleAppState extends State<CupertinoTextMagnifierExampleApp> {
@@ -36,9 +33,7 @@ class _CupertinoTextMagnifierExampleAppState extends State<CupertinoTextMagnifie
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('CupertinoTextMagnifier Sample'),
-      ),
+      navigationBar: const CupertinoNavigationBar(middle: Text('CupertinoTextMagnifier Sample')),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 48.0),
         child: Center(

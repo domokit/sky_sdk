@@ -1,0 +1,59 @@
+#!/bin/bash
+# Copyright (c) 2012 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This program wraps around pkg-config to generate the correct include and
+# library paths when cross-compiling using a sysroot.
+# The assumption is that the sysroot contains the .pc files in usr/lib/pkgconfig
+# and usr/share/pkgconfig (relative to the sysroot) and that they output paths
+# relative to some parent path of the sysroot.
+# This assumption is valid for a range of sysroots, in particular: a
+# LSB-compliant root filesystem mounted at the sysroot, and a board build
+# directory of a Chromium OS chroot.
+# Additional directories containing .pc files may be specified by setting
+# the PKG_CONFIG_PATH environment variable- these will be prepended to the
+# generated paths.
+
+root="$1"
+shift
+target_arch="$1"
+shift
+libpath="$1"
+shift
+
+if [ -z "$root" -o -z "$target_arch" ]
+then
+  echo "usage: $0 /path/to/sysroot target_arch libdir [pkg-config-arguments] package" >&2
+  exit 1
+fi
+
+if [ "$target_arch" = "x64" ]
+then
+  : ${libpath:="lib64"}
+else
+  : ${libpath:="lib"}
+fi
+
+rewrite=`dirname $0`/rewrite_dirs.py
+package=${!#}
+
+config_path=$root/usr/$libpath/pkgconfig:$root/usr/share/pkgconfig
+
+# prepend any paths specified by the environment
+if [ -n "$PKG_CONFIG_PATH" ]
+then
+  config_path="$PKG_CONFIG_PATH:$config_path"
+fi
+
+set -e
+# Some sysroots, like the Chromium OS ones, may generate paths that are not
+# relative to the sysroot. For example,
+# /path/to/chroot/build/x86-generic/usr/lib/pkgconfig/pkg.pc may have all paths
+# relative to /path/to/chroot (i.e. prefix=/build/x86-generic/usr) instead of
+# relative to /path/to/chroot/build/x86-generic (i.e prefix=/usr).
+# To support this correctly, it's necessary to extract the prefix to strip from
+# pkg-config's |prefix| variable.
+prefix=`PKG_CONFIG_PATH=$config_path pkg-config --variable=prefix "$package" | sed -e 's|/usr$||'`
+result=`PKG_CONFIG_PATH=$config_path pkg-config "$@"`
+echo "$result"| $rewrite --sysroot "$root" --strip-prefix "$prefix"

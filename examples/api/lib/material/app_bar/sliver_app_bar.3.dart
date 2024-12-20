@@ -16,19 +16,14 @@ class AppBarLargeApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: const Color(0xff6750A4),
-      ),
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: const Color(0xff6750A4)),
       home: Material(
         child: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar.large(
               leading: IconButton(icon: const Icon(Icons.menu), onPressed: () {}),
               title: const Text('Large App Bar'),
-              actions: <Widget>[
-                IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
-              ],
+              actions: <Widget>[IconButton(icon: const Icon(Icons.more_vert), onPressed: () {})],
             ),
             // Just some content big enough to have something to scroll.
             SliverToBoxAdapter(

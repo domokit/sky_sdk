@@ -1,0 +1,117 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+config("libcxx_config") {
+  defines = [ "_LIBCPP_DISABLE_AVAILABILITY=1" ]
+  include_dirs = [ "//flutter/build/secondary/flutter/third_party/libcxx/config" ]
+}
+
+config("src_include") {
+  include_dirs = [ "src" ]
+}
+
+source_set("libcxx") {
+  sources = [
+    "src/algorithm.cpp",
+    "src/any.cpp",
+    "src/bind.cpp",
+    "src/charconv.cpp",
+    "src/chrono.cpp",
+    "src/condition_variable.cpp",
+    "src/condition_variable_destructor.cpp",
+    "src/debug.cpp",
+    "src/exception.cpp",
+    "src/filesystem/directory_iterator.cpp",
+    "src/filesystem/filesystem_common.h",
+    "src/filesystem/int128_builtins.cpp",
+    "src/filesystem/operations.cpp",
+    "src/functional.cpp",
+    "src/future.cpp",
+    "src/hash.cpp",
+    "src/ios.cpp",
+    "src/ios.instantiations.cpp",
+    "src/iostream.cpp",
+    "src/locale.cpp",
+    "src/memory.cpp",
+    "src/mutex.cpp",
+    "src/mutex_destructor.cpp",
+    "src/new.cpp",
+    "src/optional.cpp",
+    "src/random.cpp",
+    "src/regex.cpp",
+    "src/ryu/d2fixed.cpp",
+    "src/ryu/d2s.cpp",
+    "src/ryu/f2s.cpp",
+    "src/shared_mutex.cpp",
+    "src/stdexcept.cpp",
+    "src/string.cpp",
+    "src/strstream.cpp",
+    "src/system_error.cpp",
+    "src/thread.cpp",
+    "src/typeinfo.cpp",
+    "src/utility.cpp",
+    "src/valarray.cpp",
+    "src/variant.cpp",
+    "src/vector.cpp",
+  ]
+
+  deps = [ "//flutter/third_party/libcxxabi" ]
+
+  # TODO(goderbauer): remove when all sources build with LTO for android_arm64 and android_x64.
+  if (is_android && (current_cpu == "arm64" || current_cpu == "x64")) {
+    sources -= [ "src/new.cpp" ]
+    deps += [ ":libcxx_nolto" ]
+  }
+
+  public_configs = [
+    ":libcxx_config",
+    "//flutter/third_party/libcxxabi:libcxxabi_config",
+  ]
+
+  defines = [
+    "_LIBCPP_NO_EXCEPTIONS",
+    "_LIBCPP_NO_RTTI",
+    "_LIBCPP_BUILDING_LIBRARY",
+    "LIBCXX_BUILDING_LIBCXXABI",
+  ]
+
+  # While no translation units in Flutter engine enable RTTI, it may be enabled
+  # in one of the third party dependencies. This mirrors the configuration in
+  # libcxxabi.
+  configs -= [ "//build/config/compiler:no_rtti" ]
+  configs += [ "//build/config/compiler:rtti" ]
+
+  # libcxx requires C++20
+  configs -= [ "//build/config/compiler:cxx_version_default" ]
+  configs += [ "//build/config/compiler:cxx_version_20" ]
+
+  configs += [ ":src_include" ]
+
+  if (is_clang) {
+    # shared_mutex.cpp and debug.cpp are purposefully in violation.
+    cflags_cc = [ "-Wno-thread-safety-analysis" ]
+  }
+}
+
+source_set("libcxx_nolto") {
+  visibility = [ ":*" ]
+
+  sources = [ "src/new.cpp" ]
+
+  cflags_cc = [ "-fno-lto" ]
+
+  deps = [ "//flutter/third_party/libcxxabi" ]
+
+  public_configs = [
+    ":libcxx_config",
+    "//flutter/third_party/libcxxabi:libcxxabi_config",
+  ]
+
+  defines = [
+    "_LIBCPP_NO_EXCEPTIONS",
+    "_LIBCPP_NO_RTTI",
+    "_LIBCPP_BUILDING_LIBRARY",
+    "LIBCXX_BUILDING_LIBCXXABI",
+  ]
+}

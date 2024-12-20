@@ -1,0 +1,364 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/fuchsia/config.gni")
+import("//build/toolchain/toolchain.gni")
+
+declare_args() {
+  # The path to where GN targets derived from the Fuchsia SDK are instantiated.
+  fuchsia_sdk_root = "//build/fuchsia"
+
+  # The Flutter buildroot is outside the Fuchsia root and can only use the SDK.
+  using_fuchsia_sdk = true
+
+  # This is set by the dart sources. Once the engine repo switches to using the GN SDK,
+  # this flag can be unified with `using_fuchsia_sdk`.
+  using_fuchsia_gn_sdk = false
+
+  # The following variables are Flutter buildroot specific.
+  fuchsia_sdk_path = "//fuchsia/sdk/$host_os"
+  fuchsia_toolchain_path = "$buildtools_path/${host_os}-${host_cpu}/clang"
+}
+
+declare_args() {
+  # The Skia buildroot uses this flag to decide if it should be using the
+  # Fuchsia SDK to build its translation units.
+  skia_using_fuchsia_sdk = using_fuchsia_sdk
+}
+
+_fuchsia_sdk_path = "//fuchsia/sdk/$host_os"
+_fuchsia_tools_path = "${_fuchsia_sdk_path}/tools/${host_cpu}"
+
+template("_fuchsia_sysroot") {
+  assert(defined(invoker.meta), "The meta.json file path must be specified.")
+  assert(target_cpu == "x64" || target_cpu == "arm64",
+         "We currently only support 'x64' and 'arm64' targets for fuchsia.")
+
+  meta_json = read_file(invoker.meta, "json")
+
+  assert(meta_json.type == "sysroot")
+
+  meta_json_versions = meta_json.versions
+  if (target_cpu == "x64") {
+    defs = meta_json_versions.x64
+  } else {
+    defs = meta_json_versions.arm64
+  }
+
+  _libs = []
+  _lib_dirs = []
+  _include_dirs = []
+
+  foreach(link_lib, defs.link_libs) {
+    if (link_lib != "arch/${target_cpu}/sysroot/lib/Scrt1.o") {
+      _libs += [ "$_fuchsia_sdk_path/$link_lib" ]
+    }
+  }
+
+  defs_include_dir = defs.include_dir
+  _include_dirs += [ "$_fuchsia_sdk_path/$defs_include_dir" ]
+
+  config_name = "config_$target_name"
+  config(config_name) {
+    lib_dirs = _lib_dirs
+    libs = _libs
+    include_dirs = _include_dirs
+  }
+
+  group(target_name) {
+    public_configs = [ ":$config_name" ]
+  }
+}
+
+template("fuchsia_fidl_library") {
+  assert(defined(invoker.meta), "The meta.json file path must be specified.")
+  assert(target_cpu == "x64" || target_cpu == "arm64",
+         "We currently only support 'x64' and 'arm64' targets for fuchsia.")
+
+  meta_json = read_file(invoker.meta, "json")
+  assert(meta_json.type == "fidl_library")
+
+  _deps = [
+    "//build/fuchsia/pkg:fidl_cpp",
+    "//build/fuchsia/pkg:fidl_cpp_hlcpp_conversion",
+    "//build/fuchsia/pkg:fidl_cpp_natural_ostream",
+    "//build/fuchsia/pkg:fidl_cpp_v2",
+    "//build/fuchsia/pkg:fidl_cpp_wire",
+  ]
+
+  library_name = meta_json.name
+  library_name_json = "${meta_json.name}.json"
+
+  foreach(dep, meta_json.deps) {
+    # TODO(https://fxbug.dev/42172334): Make zx less special.
+    if (dep != "zx") {
+      _deps += [ ":$dep" ]
+    }
+  }
+
+  config_name = "config_$target_name"
+  config(config_name) {
+    include_dirs = [ target_gen_dir ]
+  }
+
+  fidl_gen_target_name = "fidlgen_$target_name"
+  action(fidl_gen_target_name) {
+    script = "//build/fuchsia/fidl_gen_cpp.py"
+
+    library_name_slashes = string_replace(library_name, ".", "/")
+
+    inputs = [ invoker.meta ]
+
+    args = [
+      "--fidlc-bin",
+      rebase_path("${_fuchsia_tools_path}/fidlc"),
+      "--sdk-base",
+      rebase_path(_fuchsia_sdk_path),
+      "--root",
+      rebase_path(invoker.meta),
+      "--json",
+      rebase_path("$target_gen_dir/$library_name_json"),
+    ]
+
+    if (fuchsia_target_api_level != -1) {
+      args += [
+        "--target-api-level",
+        "${fuchsia_target_api_level}",
+      ]
+    }
+
+    outputs = [
+      "$target_gen_dir/$library_name_slashes/cpp/fidl.cc",
+      "$target_gen_dir/$library_name_slashes/cpp/fidl.h",
+      "$target_gen_dir/$library_name_slashes/cpp/fidl_test_base.h",
+      "$target_gen_dir/$library_name_slashes/cpp/tables.c",
+
+      "$target_gen_dir/fidl/$library_name/cpp/common_types.cc",
+      "$target_gen_dir/fidl/$library_name/cpp/common_types.h",
+      "$target_gen_dir/fidl/$library_name/cpp/fidl.h",
+      "$target_gen_dir/fidl/$library_name/cpp/hlcpp_conversion.h",
+      "$target_gen_dir/fidl/$library_name/cpp/markers.h",
+      "$target_gen_dir/fidl/$library_name/cpp/natural_messaging.cc",
+      "$target_gen_dir/fidl/$library_name/cpp/natural_messaging.h",
+      "$target_gen_dir/fidl/$library_name/cpp/natural_ostream.cc",
+      "$target_gen_dir/fidl/$library_name/cpp/natural_ostream.h",
+      "$target_gen_dir/fidl/$library_name/cpp/natural_types.cc",
+      "$target_gen_dir/fidl/$library_name/cpp/natural_types.h",
+      "$target_gen_dir/fidl/$library_name/cpp/type_conversions.cc",
+      "$target_gen_dir/fidl/$library_name/cpp/type_conversions.h",
+      "$target_gen_dir/fidl/$library_name/cpp/wire.h",
+      "$target_gen_dir/fidl/$library_name/cpp/wire_messaging.cc",
+      "$target_gen_dir/fidl/$library_name/cpp/wire_messaging.h",
+      "$target_gen_dir/fidl/$library_name/cpp/wire_test_base.h",
+      "$target_gen_dir/fidl/$library_name/cpp/wire_types.cc",
+      "$target_gen_dir/fidl/$library_name/cpp/wire_types.h",
+    ]
+
+    args += [
+      "--fidlgen-bin",
+      rebase_path("${_fuchsia_tools_path}/fidlgen_cpp"),
+      "--fidlgen-bin",
+      rebase_path("${_fuchsia_tools_path}/fidlgen_hlcpp"),
+      "--fidlgen-output-root",
+      rebase_path("$target_gen_dir"),
+    ]
+  }
+
+  source_set(target_name) {
+    public_configs = [ ":$config_name" ]
+
+    sources = get_target_outputs(":$fidl_gen_target_name")
+
+    deps = [ ":$fidl_gen_target_name" ]
+
+    public_deps = _deps
+  }
+}
+
+template("_fuchsia_cc_source_library") {
+  assert(defined(invoker.meta), "The meta.json file path must be specified.")
+
+  meta_json = read_file(invoker.meta, "json")
+
+  assert(meta_json.type == "cc_source_library")
+
+  _output_name = meta_json.name
+  _include_dirs = []
+  _public_headers = []
+  _sources = []
+  _deps = []
+
+  meta_json_include_dir = meta_json.include_dir
+  _include_dirs += [ "$_fuchsia_sdk_path/$meta_json_include_dir" ]
+
+  foreach(header, meta_json.headers) {
+    rebased_header = []
+    rebased_header = [ "$_fuchsia_sdk_path/$header" ]
+    _public_headers += rebased_header
+    _sources += rebased_header
+  }
+
+  foreach(source, meta_json.sources) {
+    _sources += [ "$_fuchsia_sdk_path/$source" ]
+  }
+
+  config_name = "config_$target_name"
+  config(config_name) {
+    include_dirs = _include_dirs
+  }
+
+  foreach(dep, meta_json.deps) {
+    _deps += [ "../pkg:$dep" ]
+  }
+
+  foreach(dep, meta_json.fidl_deps) {
+    _deps += [ "../fidl:$dep" ]
+  }
+
+  foreach(binding_dep, meta_json.fidl_binding_deps) {
+    # No need to check "binding_deps.binding_type" because we always
+    # generate both hlcpp and natural bindings.
+    foreach(dep, binding_dep.deps) {
+      _deps += [ "../fidl:$dep" ]
+    }
+  }
+
+  source_set(target_name) {
+    output_name = _output_name
+    public = _public_headers
+    sources = _sources
+    public_configs = [ ":$config_name" ]
+    public_deps = _deps
+  }
+}
+
+template("_fuchsia_cc_prebuilt_library") {
+  assert(defined(invoker.meta), "The meta.json file path must be specified.")
+  meta_json = read_file(invoker.meta, "json")
+
+  _include_dirs = []
+  _deps = []
+  _libs = []
+
+  meta_json_include_dir = meta_json.include_dir
+  _include_dirs += [ "$_fuchsia_sdk_path/$meta_json_include_dir" ]
+
+  foreach(dep, meta_json.deps) {
+    _deps += [ ":$dep" ]
+  }
+
+  meta_json_binaries = meta_json.binaries
+  if (target_cpu == "x64") {
+    meta_json_binaries_arch = meta_json_binaries.x64
+  } else {
+    meta_json_binaries_arch = meta_json_binaries.arm64
+  }
+  prebuilt_lib = meta_json_binaries_arch.link
+  _libs = [ "$_fuchsia_sdk_path/$prebuilt_lib" ]
+
+  config_name = "config_$target_name"
+  config(config_name) {
+    include_dirs = _include_dirs
+    libs = _libs
+  }
+
+  group(target_name) {
+    public_configs = [ ":$config_name" ]
+    public_deps = _deps
+  }
+}
+
+template("fuchsia_sdk") {
+  assert(defined(invoker.meta), "The meta.json file path must be specified.")
+  assert(defined(invoker.enabled_parts),
+         "A list containing the parts of the SDK to generate targets for.")
+
+  meta_json = read_file(invoker.meta, "json")
+
+  foreach(part, meta_json.parts) {
+    part_meta_json = {
+    }
+    part_meta = part.meta
+    part_meta_rebased = "$_fuchsia_sdk_path/$part_meta"
+
+    # Check if the part is using `part.element_type` or `part.type`.
+    part_type = ""
+    if (defined(part.element_type)) {
+      part_type = part.element_type
+    } else if (defined(part.type)) {
+      part_type = part.type
+    }
+
+    # Check if the part type is in `invoker.enabled_parts`.
+    if (invoker.enabled_parts + [ part_type ] - [ part_type ] !=
+        invoker.enabled_parts) {
+      part_meta_json = read_file(part_meta_rebased, "json")
+      subtarget_name = part_meta_json.name
+
+      if (part_type == "cc_source_library") {
+        _fuchsia_cc_source_library(subtarget_name) {
+          meta = part_meta_rebased
+        }
+      } else if (part_type == "sysroot") {
+        _fuchsia_sysroot(subtarget_name) {
+          meta = part_meta_rebased
+        }
+      } else if (part_type == "fidl_library") {
+        # TODO(https://fxbug.dev/42172334): Make zx less special.
+        if (subtarget_name != "zx") {
+          fuchsia_fidl_library(subtarget_name) {
+            meta = part_meta_rebased
+          }
+        }
+      } else if (part_type == "cc_prebuilt_library") {
+        _fuchsia_cc_prebuilt_library(subtarget_name) {
+          meta = part_meta_rebased
+        }
+      }
+    }
+  }
+
+  group(target_name) {
+  }
+}
+
+template("fuchsia_repo") {
+  assert(defined(invoker.archives),
+         "The list of archives to publish must be specified.")
+  assert(defined(invoker.repo), "The location of the repo should be specified.")
+
+  action(target_name) {
+    script = "//flutter/tools/fuchsia/gen_repo.py"
+
+    pm_binary = rebase_path("${_fuchsia_tools_path}/pm")
+    repo_directory = invoker.repo
+
+    inputs = [ pm_binary ]
+
+    archive_flags = []
+
+    foreach(archive, invoker.archives) {
+      assert(get_path_info(archive, "extension") == "far",
+             "Archive '$archive' does not have the .far extension.")
+      inputs += [ archive ]
+      archive_flags += [
+        "--archive",
+        rebase_path(archive),
+      ]
+    }
+
+    outputs = [ repo_directory ]
+
+    args = [
+             "--pm-bin",
+             pm_binary,
+             "--repo-dir",
+             rebase_path(repo_directory),
+           ] + archive_flags
+
+    if (defined(invoker.deps)) {
+      deps = invoker.deps
+    }
+  }
+}

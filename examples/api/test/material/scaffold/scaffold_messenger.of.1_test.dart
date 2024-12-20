@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('A snack bar is displayed after 10 taps', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.OfExampleApp(),
-    );
+    await tester.pumpWidget(const example.OfExampleApp());
 
     expect(find.widgetWithText(AppBar, 'ScaffoldMessenger Demo'), findsOne);
     expect(find.text('You have pushed the button this many times:'), findsOne);

@@ -1,0 +1,154 @@
+# Copyright 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/sysroot.gni")  # Imports android/config.gni.
+import("//build/toolchain/ccache.gni")
+import("//build/toolchain/clang.gni")
+import("//build/toolchain/gcc_toolchain.gni")
+import("//build/toolchain/rbe.gni")
+import("//build/toolchain/toolchain.gni")
+
+# The Android GCC toolchains share most of the same parameters, so we have this
+# wrapper around gcc_toolchain to avoid duplication of logic.
+#
+# Parameters:
+#  - android_ndk_lib_dir
+#      Libraries for this architecture
+#  - tool_prefix
+#      Prefix to be added to the tool names.
+#  - toolchain_cpu
+#      Same as gcc_toolchain
+template("android_toolchain") {
+  gcc_toolchain(target_name) {
+    extra_toolchain_args = {
+      if (defined(invoker.extra_toolchain_args)) {
+        forward_variables_from(invoker.extra_toolchain_args, "*")
+      }
+    }
+
+    # Make our manually injected libs relative to the build dir.
+    android_ndk_lib = rebase_path(android_lib, root_build_dir)
+
+    libs_section_prefix = "$android_ndk_lib/crtbegin_dynamic.o"
+    libs_section_postfix = "$android_ndk_lib/crtend_android.o"
+
+    solink_libs_section_prefix = "$android_ndk_lib/crtbegin_so.o"
+    solink_libs_section_postfix = "$android_ndk_lib/crtend_so.o"
+
+    if (use_rbe) {
+      remote_wrapper = ""
+      if (host_os == "linux") {
+        remote_wrapper =
+            rebase_path("//flutter/build/rbe/remote_wrapper_linux.sh", root_build_dir)
+      } else if (host_os == "mac") {
+        remote_wrapper =
+            rebase_path("//flutter/build/rbe/remote_wrapper.sh", root_build_dir)
+      } else {
+        assert(false, "Unknown host")
+      }
+      local_wrapper =
+          rebase_path("//flutter/build/rbe/local_wrapper.sh", root_build_dir)
+      compiler_args = rewrapper_command + [
+        "--remote_wrapper=$remote_wrapper",
+        "--local_wrapper=$local_wrapper",
+        "--labels=type=compile,compiler=clang,lang=cpp ",
+      ]
+      assembler_prefix = ""
+      compiler_prefix = string_join(" ", compiler_args)
+      link_prefix = ""
+    } else if (use_ccache) {
+      # ccache only supports compilation, not linking.
+      assembler_prefix = "ccache "
+      compiler_prefix = ""
+      link_prefix = ""
+    } else {
+      compiler_prefix = ""
+      link_prefix = ""
+      assembler_prefix = ""
+    }
+
+    assert(invoker.is_clang)
+    host_dir = ""
+    if (host_os == "linux") {
+      host_dir = "linux-x64"
+    } else if (host_os == "mac") {
+      host_dir = "mac-x64"
+    } else {
+      assert(false, "Unknown host")
+    }
+
+    prefix = rebase_path("$buildtools_path/$host_dir/clang/bin", root_build_dir)
+
+    cc = "${compiler_prefix}${prefix}/clang"
+    cxx = "${compiler_prefix}${prefix}/clang++"
+    asm = "${assembler_prefix}${prefix}/clang"
+    ar = prefix + "/llvm-ar"
+    ld = "${link_prefix}${prefix}/clang++"
+    readelf = prefix + "/llvm-readelf"
+    nm = prefix + "/llvm-nm"
+    android_strip = prefix + "/llvm-strip"
+
+    toolchain_os = "android"
+    toolchain_cpu = invoker.toolchain_cpu
+
+    # We make the assumption that the gcc_toolchain will produce a soname with
+    # the following definition.
+    soname = "{{target_output_name}}{{output_extension}}"
+
+    stripped_soname = "lib.stripped/${soname}"
+    temp_stripped_soname = "${stripped_soname}.tmp"
+
+    strip_command = "$android_strip --strip-unneeded -o $temp_stripped_soname {{root_out_dir}}/$soname"
+    replace_command = "if ! cmp -s $temp_stripped_soname $stripped_soname; then mv $temp_stripped_soname $stripped_soname; fi"
+    postsolink = "$strip_command && $replace_command"
+    solink_outputs = [ stripped_soname ]
+    default_output_extension = android_product_extension
+
+    # We make the assumption that the gcc_toolchain will produce an exe with
+    # the following definition.
+    exe = "{{root_out_dir}}/{{target_output_name}}{{output_extension}}"
+    stripped_exe = "exe.stripped/$exe"
+    postlink = "$android_strip --strip-unneeded -o $stripped_exe $exe"
+    link_outputs = [ stripped_exe ]
+  }
+}
+
+template("android_toolchains_helper") {
+  android_toolchain("clang_$target_name") {
+    extra_toolchain_args = {
+      if (defined(invoker.extra_toolchain_args)) {
+        forward_variables_from(invoker.extra_toolchain_args, "*")
+      }
+    }
+    toolchain_cpu = invoker.toolchain_cpu
+    is_clang = true
+  }
+}
+
+android_toolchains_helper("x86") {
+  toolchain_cpu = "x86"
+}
+
+android_toolchains_helper("arm") {
+  toolchain_cpu = "arm"
+}
+
+android_toolchains_helper("x64") {
+  toolchain_cpu = "x86_64"
+}
+
+android_toolchains_helper("arm64") {
+  toolchain_cpu = "aarch64"
+}
+
+# This toolchain should only be used to build the target
+# //third_party/vulkan_validation_layers. This is because vulkan validation
+# layers requires API level >= 26, but Flutter officially supports down to API
+# level 22, which is the default value of the android_api_level argument.
+android_toolchains_helper("arm64_apilevel26") {
+  toolchain_cpu = "arm64"
+  extra_toolchain_args = {
+    android_api_level = 26
+  }
+}

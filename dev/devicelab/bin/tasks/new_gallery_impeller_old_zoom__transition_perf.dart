@@ -9,5 +9,10 @@ import 'package:flutter_devicelab/tasks/new_gallery.dart';
 Future<void> main() async {
   deviceOperatingSystem = DeviceOperatingSystem.android;
 
-  await task(NewGalleryPerfTest(enableImpeller: true, dartDefine: 'flutter.benchmarks.force_disable_snapshot=true').run);
+  await task(
+    NewGalleryPerfTest(
+      enableImpeller: true,
+      dartDefine: 'flutter.benchmarks.force_disable_snapshot=true',
+    ).run,
+  );
 }

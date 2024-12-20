@@ -89,7 +89,7 @@ abstract class MethodCodec {
   ///
   /// The specified error [code], human-readable error [message] and error
   /// [details] correspond to the fields of [PlatformException].
-  ByteData encodeErrorEnvelope({ required String code, String? message, Object? details});
+  ByteData encodeErrorEnvelope({required String code, String? message, Object? details});
 }
 
 /// Thrown to indicate that a platform interaction failed in the platform
@@ -109,12 +109,7 @@ class PlatformException implements Exception {
   /// Creates a [PlatformException] with the specified error [code] and optional
   /// [message], and with the optional error [details] which must be a valid
   /// value for the [MethodCodec] involved in the interaction.
-  PlatformException({
-    required this.code,
-    this.message,
-    this.details,
-    this.stacktrace,
-  });
+  PlatformException({required this.code, this.message, this.details, this.stacktrace});
 
   /// An error code.
   final String code;

@@ -35,7 +35,7 @@ void main() {
 // for readability/accessibility.
 
 class ThemeDataExampleApp extends StatelessWidget {
-  const ThemeDataExampleApp({ super.key });
+  const ThemeDataExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,7 @@ class ThemeDataExampleApp extends StatelessWidget {
 }
 
 class Home extends StatefulWidget {
-  const Home({ super.key });
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -74,9 +74,7 @@ class _HomeState extends State<Home> {
     final double pointCount = 8 + (buttonPressCount % 6);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Press the + Button'),
-      ),
+      appBar: AppBar(title: const Text('Press the + Button')),
       // An AnimatedContainer makes the decoration changes entertaining.
       body: AnimatedContainer(
         duration: const Duration(milliseconds: 500),
@@ -88,17 +86,12 @@ class _HomeState extends State<Home> {
             points: pointCount,
             pointRounding: 0.4,
             valleyRounding: 0.6,
-            side: BorderSide(
-              width: 9,
-              color: colorScheme.tertiary
-            ),
+            side: BorderSide(width: 9, color: colorScheme.tertiary),
           ),
         ),
         child: Text(
           '${pointCount.toInt()} Points',
-          style: theme.textTheme.headlineMedium!.copyWith(
-            color: colorScheme.onPrimaryContainer,
-          ),
+          style: theme.textTheme.headlineMedium!.copyWith(color: colorScheme.onPrimaryContainer),
         ),
       ),
       floatingActionButton: FloatingActionButton(

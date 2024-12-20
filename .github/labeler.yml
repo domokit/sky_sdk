@@ -63,7 +63,8 @@
 engine:
   - changed-files:
     - any-glob-to-any-file:
-      - bin/internal/engine.version
+      - DEPS
+      - engine/**/*
       - docs/engine/**/*
 
 'f: cupertino':

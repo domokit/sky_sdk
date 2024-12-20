@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Translate FlutterLogo using AnimatedSlide', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.AnimatedSlideApp(),
-    );
+    await tester.pumpWidget(const example.AnimatedSlideApp());
 
     Offset logoOffset = tester.getCenter(find.byType(FlutterLogo));
     expect(logoOffset.dx, 376.0);

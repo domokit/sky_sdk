@@ -1,0 +1,1077 @@
+[stdout] --------- beginning of main
+[stdout] 02-15 10:20:33.023  1735  1941 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@ac23b3f)
+[stdout] 02-15 10:20:33.023  1735  1749 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@ac23b3f)
+[stdout] 02-15 10:20:34.028  1735  1941 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@47a9c0c)
+[stdout] 02-15 10:20:34.028  1735  1749 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@47a9c0c)
+[stdout] 02-15 10:20:35.033  1735  1941 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@1084955)
+[stdout] 02-15 10:20:35.033  1735  1749 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@1084955)
+[stdout] 02-15 10:20:36.036  1735  1941 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@39d4f6a)
+[stdout] 02-15 10:20:36.036  1735  1749 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@39d4f6a)
+[stdout] 02-15 10:20:36.232  1735  1747 W system_server: Long monitor contention with owner PackageInstaller (1783) at java.lang.Object android.util.ArrayMap.get(java.lang.Object)(ArrayMap.java:420) waiters=0 in void com.android.server.pm.PackageInstallerSession.write(org.xmlpull.v1.XmlSerializer, java.io.File) for 1.347s
+[stdout] 02-15 10:20:36.238  1735  3071 W system_server: Long monitor contention with owner Binder:1735_2 (1747) at void com.android.server.pm.PackageInstallerService$InternalCallback.onSessionSealedBlocking(com.android.server.pm.PackageInstallerSession)(PackageInstallerService.java:1136) waiters=0 in android.content.pm.PackageInstaller$SessionInfo com.android.server.pm.PackageInstallerService.getSessionInfo(int) for 1.354s
+[stdout] --------- beginning of system
+[stdout] 02-15 10:20:36.657  1735  1763 D PackageManager: Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+[stdout] 02-15 10:20:36.657  1735  1763 D PackageManager: Clear ephemeral installer activity
+[stdout] 02-15 10:20:36.658  1735  1763 V BackupManagerService: restoreAtInstall pkg=dev.flutter.scenarios token=d restoreSet=0
+[stdout] 02-15 10:20:36.658  1735  1763 V BackupManagerService: Finishing install immediately
+[stdout] 02-15 10:20:36.666  1578  1784 E         : Couldn't opendir /data/app/vmdl831937340.tmp: No such file or directory
+[stdout] 02-15 10:20:36.666  1578  1784 E installd: Failed to delete /data/app/vmdl831937340.tmp: No such file or directory
+[stdout] 02-15 10:20:36.668  3621  3621 I CarrierServices: [2] RcsAutoStartReceiver.b: carrierServicesJibeServiceEnabled changed from true to true
+[stdout] 02-15 10:20:36.668  3621  3621 I CarrierServices: [2] RcsAutoStartReceiver.b: enableRcs changed from true to true
+[stdout] 02-15 10:20:36.668  3621  3621 I CarrierServices: [2] RcsAutoStartReceiver.b: RcsAutoStartReceiver triggered. Fetching RCS State. Action: android.intent.action.PACKAGE_ADDED
+[stdout] 02-15 10:20:36.669  3621  3621 I CarrierServices: [2] aws.a: Migration binding to RcsMigrationService
+[stdout] 02-15 10:20:36.670  1735  1811 I InputReader: Reconfiguring input devices.  changes=0x00000010
+[stdout] 02-15 10:20:36.673  1735  3071 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios flg=0x4000010 (has extras) } to com.android.musicfx/.Compatibility$Receiver
+[stdout] 02-15 10:20:36.673  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios flg=0x4000010 (has extras) } to com.google.android.gms/.games.chimera.GamesSystemBroadcastReceiverProxy
+[stdout] 02-15 10:20:36.674  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios flg=0x4000010 (has extras) } to com.google.android.gms/.gass.chimera.PackageChangeBroadcastReceiver
+[stdout] 02-15 10:20:36.674  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios flg=0x4000010 (has extras) } to com.google.android.gms/.chimera.GmsIntentOperationService$PersistentTrustedReceiver
+[stdout] 02-15 10:20:36.674  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios flg=0x4000010 (has extras) } to com.google.android.googlequicksearchbox/com.google.android.apps.gsa.googlequicksearchbox.GelStubAppWatcher
+[stdout] 02-15 10:20:36.674  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios flg=0x4000010 (has extras) } to com.google.android.ims/.receivers.RcsAutoStartReceiver
+[stdout] 02-15 10:20:36.678  1735  1751 D AutofillUI: destroySaveUiUiThread(): already destroyed
+[stdout] 02-15 10:20:36.679  2863  2863 I Bugle   : returning RCS state provider.
+[stdout] 02-15 10:20:36.681  2863  2972 I CarrierServices: [168] inq.shouldUseCarrierServicesApkForV1Apis: Checking if using CarrierServices.apk is possible. Enabled: true, isAtLeastM: true, runningInsideBugle: true
+[stdout] 02-15 10:20:36.681  2863  2972 I CarrierServices: [168] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:36.681  1964  1964 D CarrierSvcBindHelper: No carrier app for: 0
+[stdout] 02-15 10:20:36.681  1735  1735 I Telecom : DefaultDialerCache: Refreshing default dialer for user 0: now com.google.android.dialer: DDC.oR@AQE
+[stdout] 02-15 10:20:36.682  1735  1735 V BackupManagerConstants: getFullBackupIntervalMilliseconds(...) returns 86400000
+[stdout] 02-15 10:20:36.683  1964  1964 D ImsResolver: maybeAddedImsService, packageName: dev.flutter.scenarios
+[stdout] 02-15 10:20:36.683  1964  1964 D CarrierConfigLoader: mHandler: 9 phoneId: 0
+[stdout] 02-15 10:20:36.683  2863  2972 I CarrierServices: [168] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:36.683  2863  2972 I CarrierServices: [168] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:36.684  1735  1749 D AutofillManagerServiceImpl: Set component for user 0 as AutofillServiceInfo[ServiceInfo{96b5821 com.google.android.gms.autofill.service.AutofillService}, settings:com.google.android.gms.autofill.ui.AutofillSettingsActivity, hasCompatPckgs:false]
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: 	at java.io.FileInputStream.open0(Native Method)
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: 	at java.io.FileInputStream.open(FileInputStream.java:231)
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: 	at ion.a(SourceFile:2)
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: 	at idl.a(SourceFile:4)
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: 	at idm.a(SourceFile:7)
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.buildRcsState(SourceFile:81)
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.getRcsState(SourceFile:6)
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:10)
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+[stdout] 02-15 10:20:36.686  2863  2972 W RcsProvisioning: 	at android.os.Binder.execTransact(Binder.java:731)
+[stdout] 02-15 10:20:36.686  2863  2972 D RcsProvisioning: Retrieving backup token
+[stdout] 02-15 10:20:36.686  2863  2972 D RcsProvisioning: Exception while getting subscriber Id. Using default
+[stdout] 02-15 10:20:36.696  4721  6807 I FontLog : Package dev.flutter.scenarios has no metadata [CONTEXT service_id=132 ]
+[stdout] 02-15 10:20:36.696  4721  6807 W GCM     : Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+[stdout] 02-15 10:20:36.697  4721  6809 W GCM     : Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+[stdout] 02-15 10:20:36.698  4770  6815 I Auth    : [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
+[stdout] 02-15 10:20:36.699  4770  4770 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+[stdout] 02-15 10:20:36.699  4770  4770 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+[stdout] 02-15 10:20:36.699  4770  6804 I BlockstoreStorage: Clearing Blockstore Data for package dev.flutter.scenarios [CONTEXT service_id=258 ]
+[stdout] 02-15 10:20:36.700  4770  6804 I BlockstoreStorage: No metadata found. Skipping deletion. [CONTEXT service_id=258 ]
+[stdout] 02-15 10:20:36.701  4770  4770 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+[stdout] 02-15 10:20:36.706  4721  4769 E BluetoothAdapter: Bluetooth binder is null
+[stdout] 02-15 10:20:36.711  4721  4769 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+[stdout] 02-15 10:20:36.711  4721  4769 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+[stdout] 02-15 10:20:36.719  4770  4876 E Icing   : Couldn't handle android.intent.action.PACKAGE_ADDED intent due to initialization failure.
+[stdout] 02-15 10:20:36.726  4770  4876 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=ContactsIndexer serviceId=33
+[stdout] 02-15 10:20:36.726  4770  4876 W Icing   : IndexManager failed to initialize. SearchIndex.API is unavailable.
+[stdout] 02-15 10:20:36.727  4770  6817 W IcingInternalCorpora: Failed to get global search sources
+[stdout] 02-15 10:20:36.729  4770  6818 I ChimeraConfigurator: Starting update, reason: 4 urgentFeatures: pay:-1
+[stdout] 02-15 10:20:36.732  4770  6818 W FeatureMgr: Attempted to request and unrequest the same feature: antifingerprinting. Ignoring unrequest.
+[stdout] 02-15 10:20:36.733  4770  4876 W Icing   : IndexManager failed to initialize. AppIndex.API is unavailable.
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: Apps indexing failed. [CONTEXT service_id=255 ]
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: ciev: API: AppIndexing.API is not available on this device. Connection failed with: ConnectionResult{statusCode=API_UNAVAILABLE, resolution=null, message=null}
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at ciez.a(:com.google.android.gms@214515028@21.45.15 (100400-411636772):2)
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at wlo.c(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at wof.p(:com.google.android.gms@214515028@21.45.15 (100400-411636772):4)
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at wof.d(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at wof.g(:com.google.android.gms@214515028@21.45.15 (100400-411636772):19)
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at wof.onConnectionFailed(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at xgi.gE(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at xfi.b(:com.google.android.gms@214515028@21.45.15 (100400-411636772):1)
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at xez.a(:com.google.android.gms@214515028@21.45.15 (100400-411636772):7)
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at xfc.handleMessage(:com.google.android.gms@214515028@21.45.15 (100400-411636772):23)
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at android.os.Handler.dispatchMessage(Handler.java:106)
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at alyk.jj(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at alyk.dispatchMessage(:com.google.android.gms@214515028@21.45.15 (100400-411636772):11)
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at android.os.Looper.loop(Looper.java:193)
+[stdout] 02-15 10:20:36.734  4770  4770 W GmscoreIpa: 	at android.os.HandlerThread.run(HandlerThread.java:65)
+[stdout] 02-15 10:20:36.741  4770  4876 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=AppsCorpus serviceId=36
+[stdout] 02-15 10:20:36.741  4770  4876 W Icing   : IndexManager failed to initialize. SearchIndex.API is unavailable.
+[stdout] 02-15 10:20:36.742  4770  6632 W IcingInternalCorpora: Couldn't fetch status for corpus apps
+[stdout] 02-15 10:20:36.745  4770  6818 I GmsDebugLogger: [73] 1801
+[stdout] 02-15 10:20:36.746  4770  6818 I GmsDebugLogger: [30] [Pay.optional:214515100000]
+[stdout] 02-15 10:20:36.747  4770  6818 W ChimeraConfigService: Retry attempt was throttled. [CONTEXT service_id=264 ]
+[stdout] 02-15 10:20:36.747  4770  6818 I GmsDebugLogger: [83] 1 [pay]
+[stdout] 02-15 10:20:36.782  1735  1763 D PackageManager: Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+[stdout] 02-15 10:20:36.782  1735  1763 D PackageManager: Clear ephemeral installer activity
+[stdout] 02-15 10:20:36.782  1735  1763 V BackupManagerService: restoreAtInstall pkg=dev.flutter.scenarios.test token=e restoreSet=0
+[stdout] 02-15 10:20:36.783  1735  1763 V BackupManagerService: Finishing install immediately
+[stdout] 02-15 10:20:36.786  1578  1784 E         : Couldn't opendir /data/app/vmdl1936275788.tmp: No such file or directory
+[stdout] 02-15 10:20:36.786  1578  1784 E installd: Failed to delete /data/app/vmdl1936275788.tmp: No such file or directory
+[stdout] 02-15 10:20:36.798  1735  1749 W system_server: Unknown chunk type '200'.
+[stdout] 02-15 10:20:36.802  1735  1811 I InputReader: Reconfiguring input devices.  changes=0x00000010
+[stdout] 02-15 10:20:36.803  1735  1836 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios.test flg=0x4000010 (has extras) } to com.android.musicfx/.Compatibility$Receiver
+[stdout] 02-15 10:20:36.803  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios.test flg=0x4000010 (has extras) } to com.google.android.gms/.games.chimera.GamesSystemBroadcastReceiverProxy
+[stdout] 02-15 10:20:36.803  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios.test flg=0x4000010 (has extras) } to com.google.android.gms/.gass.chimera.PackageChangeBroadcastReceiver
+[stdout] 02-15 10:20:36.803  1735  1735 I Telecom : DefaultDialerCache: Refreshing default dialer for user 0: now com.google.android.dialer: DDC.oR@AQU
+[stdout] 02-15 10:20:36.803  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios.test flg=0x4000010 (has extras) } to com.google.android.gms/.chimera.GmsIntentOperationService$PersistentTrustedReceiver
+[stdout] 02-15 10:20:36.803  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios.test flg=0x4000010 (has extras) } to com.google.android.googlequicksearchbox/com.google.android.apps.gsa.googlequicksearchbox.GelStubAppWatcher
+[stdout] 02-15 10:20:36.803  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios.test flg=0x4000010 (has extras) } to com.google.android.ims/.receivers.RcsAutoStartReceiver
+[stdout] 02-15 10:20:36.804  1735  1735 V BackupManagerConstants: getFullBackupIntervalMilliseconds(...) returns 86400000
+[stdout] 02-15 10:20:36.807  1735  1751 D AutofillUI: destroySaveUiUiThread(): already destroyed
+[stdout] 02-15 10:20:36.807  1735  1749 D AutofillManagerServiceImpl: Set component for user 0 as AutofillServiceInfo[ServiceInfo{51b1cd5 com.google.android.gms.autofill.service.AutofillService}, settings:com.google.android.gms.autofill.ui.AutofillSettingsActivity, hasCompatPckgs:false]
+[stdout] 02-15 10:20:36.813  1964  1964 D CarrierSvcBindHelper: No carrier app for: 0
+[stdout] 02-15 10:20:36.815  1964  1964 D ImsResolver: maybeAddedImsService, packageName: dev.flutter.scenarios.test
+[stdout] 02-15 10:20:36.815  1964  1964 D CarrierConfigLoader: mHandler: 9 phoneId: 0
+[stdout] 02-15 10:20:36.817  4721  6812 W GCM     : Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios.test flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+[stdout] 02-15 10:20:36.817  4721  6800 W GCM     : Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:dev.flutter.scenarios.test flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+[stdout] 02-15 10:20:36.817  4721  6810 I FontLog : Package dev.flutter.scenarios.test has no metadata [CONTEXT service_id=132 ]
+[stdout] 02-15 10:20:36.818  4770  6817 I Auth    : [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
+[stdout] 02-15 10:20:36.819  4770  4770 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+[stdout] 02-15 10:20:36.819  4770  4770 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+[stdout] 02-15 10:20:36.819  4770  6816 I BlockstoreStorage: Clearing Blockstore Data for package dev.flutter.scenarios.test [CONTEXT service_id=258 ]
+[stdout] 02-15 10:20:36.819  4770  6816 I BlockstoreStorage: No metadata found. Skipping deletion. [CONTEXT service_id=258 ]
+[stdout] 02-15 10:20:36.819  4770  4770 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+[stdout] 02-15 10:20:36.823  4770  4876 E Icing   : Couldn't handle android.intent.action.PACKAGE_ADDED intent due to initialization failure.
+[stdout] 02-15 10:20:36.825  4721  4809 E BluetoothAdapter: Bluetooth binder is null
+[stdout] 02-15 10:20:36.826  2863  2972 D RcsProvisioning: No backup token found
+[stdout] 02-15 10:20:36.826  2863  2972 D RcsProvisioning: Retrieving backup token
+[stdout] 02-15 10:20:36.826  2863  2972 D RcsProvisioning: Exception while getting subscriber Id. Using default
+[stdout] 02-15 10:20:36.826  4721  4809 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+[stdout] 02-15 10:20:36.826  4721  4809 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+[stdout] 02-15 10:20:36.833  4770  4876 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=ContactsIndexer serviceId=33
+[stdout] 02-15 10:20:36.833  4770  4876 W Icing   : IndexManager failed to initialize. SearchIndex.API is unavailable.
+[stdout] 02-15 10:20:36.836  4770  6817 W IcingInternalCorpora: Failed to get global search sources
+[stdout] 02-15 10:20:36.863  6827  6827 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+[stdout] 02-15 10:20:36.871  4770  6817 I ChimeraConfigurator: Starting update, reason: 4 urgentFeatures: pay:-1
+[stdout] 02-15 10:20:36.875  4770  6817 W FeatureMgr: Attempted to request and unrequest the same feature: antifingerprinting. Ignoring unrequest.
+[stdout] 02-15 10:20:36.876  4770  4876 W Icing   : IndexManager failed to initialize. AppIndex.API is unavailable.
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: Apps indexing failed. [CONTEXT service_id=255 ]
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: ciev: API: AppIndexing.API is not available on this device. Connection failed with: ConnectionResult{statusCode=API_UNAVAILABLE, resolution=null, message=null}
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at ciez.a(:com.google.android.gms@214515028@21.45.15 (100400-411636772):2)
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at wlo.c(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at wof.p(:com.google.android.gms@214515028@21.45.15 (100400-411636772):4)
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at wof.d(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at wof.g(:com.google.android.gms@214515028@21.45.15 (100400-411636772):19)
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at wof.onConnectionFailed(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at xgi.gE(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at xfi.b(:com.google.android.gms@214515028@21.45.15 (100400-411636772):1)
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at xez.a(:com.google.android.gms@214515028@21.45.15 (100400-411636772):7)
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at xfc.handleMessage(:com.google.android.gms@214515028@21.45.15 (100400-411636772):23)
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at android.os.Handler.dispatchMessage(Handler.java:106)
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at alyk.jj(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at alyk.dispatchMessage(:com.google.android.gms@214515028@21.45.15 (100400-411636772):11)
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at android.os.Looper.loop(Looper.java:193)
+[stdout] 02-15 10:20:36.877  4770  4770 W GmscoreIpa: 	at android.os.HandlerThread.run(HandlerThread.java:65)
+[stdout] 02-15 10:20:36.886  4770  4876 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=AppsCorpus serviceId=36
+[stdout] 02-15 10:20:36.886  4770  4876 W Icing   : IndexManager failed to initialize. SearchIndex.API is unavailable.
+[stdout] 02-15 10:20:36.886  6827  6827 I app_process: The ClassLoaderContext is a special shared library.
+[stdout] 02-15 10:20:36.886  4770  6820 W IcingInternalCorpora: Couldn't fetch status for corpus apps
+[stdout] 02-15 10:20:36.893  4770  6817 I GmsDebugLogger: [73] 1801
+[stdout] 02-15 10:20:36.895  4770  6817 I GmsDebugLogger: [30] [Pay.optional:214515100000]
+[stdout] 02-15 10:20:36.896  4770  6817 W ChimeraConfigService: Retry attempt was throttled. [CONTEXT service_id=264 ]
+[stdout] 02-15 10:20:36.896  4770  6817 I GmsDebugLogger: [83] 1 [pay]
+[stdout] 02-15 10:20:36.899  6827  6827 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+[stdout] 02-15 10:20:36.903  1735  1836 I ActivityManager: Force stopping dev.flutter.scenarios appid=10098 user=0: start instr
+[stdout] 02-15 10:20:36.908  6840  6840 I utter.scenario: Late-enabling -Xcheck:jni
+[stdout] 02-15 10:20:36.914  1735  1752 I ActivityManager: Start proc 6840:dev.flutter.scenarios/u0a98 for added application dev.flutter.scenarios
+[stdout] 02-15 10:20:36.931  6840  6840 W ActivityThread: Package uses different ABI(s) than its instrumentation: package[dev.flutter.scenarios]: arm64-v8a, null instrumentation[dev.flutter.scenarios.test]: null, null
+[stdout] 02-15 10:20:36.932  6840  6840 I utter.scenario: The ClassLoaderContext is a special shared library.
+[stdout] 02-15 10:20:36.932  6840  6840 I utter.scenario: The ClassLoaderContext is a special shared library.
+[stdout] 02-15 10:20:36.966  2863  2972 D RcsProvisioning: No backup token found
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: 	at java.io.FileInputStream.open0(Native Method)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: 	at java.io.FileInputStream.open(FileInputStream.java:231)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: 	at ion.a(SourceFile:2)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: 	at idl.a(SourceFile:4)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: 	at idm.a(SourceFile:7)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: 	at iez.buildConferencesFileName(SourceFile:30)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.buildRcsState(SourceFile:129)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.getRcsState(SourceFile:6)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:10)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+[stdout] 02-15 10:20:36.968  2863  2972 W RcsProvisioning: 	at android.os.Binder.execTransact(Binder.java:731)
+[stdout] 02-15 10:20:36.968  2863  2972 D RcsProvisioning: Retrieving backup token
+[stdout] 02-15 10:20:36.968  2863  2972 D RcsProvisioning: Exception while getting subscriber Id. Using default
+[stdout] 02-15 10:20:37.038  1735  1941 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@3bc90c1)
+[stdout] 02-15 10:20:37.039  1735  1749 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@3bc90c1)
+[stdout] 02-15 10:20:37.054  6840  6840 I utter.scenario: The ClassLoaderContext is a special shared library.
+[stdout] 02-15 10:20:37.055  6840  6840 I utter.scenario: The ClassLoaderContext is a special shared library.
+[stdout] 02-15 10:20:37.108  2863  2972 D RcsProvisioning: No backup token found
+[stdout] 02-15 10:20:37.108  2863  2972 E CarrierServices: [168] iez.getFile: File not found.: /data/user/0/com.google.android.apps.messaging/files/httpft_pending (No such file or directory)
+[stdout] 02-15 10:20:37.108  2863  2972 E CarrierServices: 	java.io.FileInputStream.open0(Native Method)
+[stdout] 02-15 10:20:37.108  2863  2972 E CarrierServices: 	java.io.FileInputStream.open(FileInputStream.java:231)
+[stdout] 02-15 10:20:37.108  2863  2972 E CarrierServices: 	java.io.FileInputStream.<init>(FileInputStream.java:165)
+[stdout] 02-15 10:20:37.108  2863  2972 E CarrierServices: 	android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+[stdout] 02-15 10:20:37.108  2863  2972 E CarrierServices: 	android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+[stdout] 02-15 10:20:37.108  2863  2972 E CarrierServices: 	iez.getFile(SourceFile:20)
+[stdout] 02-15 10:20:37.108  2863  2972 E CarrierServices: 	com.google.android.apps.messaging.rcsmigration.RcsStateProvider.buildRcsState(SourceFile:136)
+[stdout] 02-15 10:20:37.108  2863  2972 E CarrierServices: 	com.google.android.apps.messaging.rcsmigration.RcsStateProvider.getRcsState(SourceFile:6)
+[stdout] 02-15 10:20:37.108  2863  2972 E CarrierServices: 	com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:10)
+[stdout] 02-15 10:20:37.108  2863  2972 E CarrierServices: 	com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+[stdout] 02-15 10:20:37.108  2863  2972 E CarrierServices: 	android.os.Binder.execTransact(Binder.java:731)
+[stdout] 02-15 10:20:37.109  3621  6687 I CarrierServices: [236] awt.doInBackground: Saving RCS State
+[stdout] 02-15 10:20:37.109  3621  6687 I CarrierServices: [236] awt.doInBackground: Old operation mode: 2
+[stdout] 02-15 10:20:37.109  3621  3621 I CarrierServices: [2] RcsAutoStartReceiver.b: carrierServicesJibeServiceEnabled changed from true to true
+[stdout] 02-15 10:20:37.109  3621  3621 I CarrierServices: [2] RcsAutoStartReceiver.b: enableRcs changed from true to true
+[stdout] 02-15 10:20:37.109  3621  3621 I CarrierServices: [2] RcsAutoStartReceiver.b: RcsAutoStartReceiver triggered. Fetching RCS State. Action: android.intent.action.PACKAGE_ADDED
+[stdout] 02-15 10:20:37.110  3621  3621 I CarrierServices: [2] aws.a: Migration binding to RcsMigrationService
+[stdout] 02-15 10:20:37.111  2863  4286 I CarrierServices: [209] inq.shouldUseCarrierServicesApkForV1Apis: Checking if using CarrierServices.apk is possible. Enabled: true, isAtLeastM: true, runningInsideBugle: true
+[stdout] 02-15 10:20:37.111  2863  4286 I CarrierServices: [209] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.111  2863  4286 I CarrierServices: [209] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.111  2863  4286 I CarrierServices: [209] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: 	at java.io.FileInputStream.open0(Native Method)
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: 	at java.io.FileInputStream.open(FileInputStream.java:231)
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: 	at ion.a(SourceFile:2)
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: 	at idl.a(SourceFile:4)
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: 	at idm.a(SourceFile:7)
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.buildRcsState(SourceFile:81)
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.getRcsState(SourceFile:6)
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:10)
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+[stdout] 02-15 10:20:37.112  2863  4286 W RcsProvisioning: 	at android.os.Binder.execTransact(Binder.java:731)
+[stdout] 02-15 10:20:37.112  2863  4286 D RcsProvisioning: Retrieving backup token
+[stdout] 02-15 10:20:37.112  2863  4286 D RcsProvisioning: Exception while getting subscriber Id. Using default
+[stdout] 02-15 10:20:37.112  3621  6687 I CarrierServices: [236] awt.doInBackground: New operation mode: 2
+[stdout] 02-15 10:20:37.172  6840  6840 W utter.scenario: Accessing hidden method Landroid/app/Instrumentation;->execStartActivity(Landroid/content/Context;Landroid/os/IBinder;Landroid/os/IBinder;Landroid/app/Activity;Landroid/content/Intent;ILandroid/os/Bundle;)Landroid/app/Instrumentation$ActivityResult; (light greylist, linking)
+[stdout] 02-15 10:20:37.172  6840  6840 W utter.scenario: Accessing hidden method Landroid/app/Instrumentation;->execStartActivity(Landroid/content/Context;Landroid/os/IBinder;Landroid/os/IBinder;Ljava/lang/String;Landroid/content/Intent;ILandroid/os/Bundle;)Landroid/app/Instrumentation$ActivityResult; (light greylist, linking)
+[stdout] 02-15 10:20:37.177  6840  6840 I MonitoringInstr: Instrumentation started!
+[stdout] 02-15 10:20:37.178  6840  6840 I MonitoringInstr: Setting context classloader to 'dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/android.test.runner.jar", zip file "/system/framework/android.test.mock.jar", zip file "/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk", zip file "/data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk"],nativeLibraryDirectories=[/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/lib/arm64, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/lib/arm64, /data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk!/lib/arm64-v8a, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk!/lib/arm64-v8a, /system/lib64]]]', Original: 'dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/android.test.runner.jar", zip file "/system/framework/android.test.mock.jar", zip file "/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk", zip file "/data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk"],nativeLibraryDirectories=[/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/lib/arm64, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/lib/arm64, /data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk!/lib/arm64-v8a, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk!/lib/arm64-v8a, /system/lib64]]]'
+[stdout] 02-15 10:20:37.181  6840  6840 I MonitoringInstr: No JSBridge.
+[stdout] 02-15 10:20:37.182  6840  6861 I MonitoringInstr: Setting context classloader to 'dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/android.test.runner.jar", zip file "/system/framework/android.test.mock.jar", zip file "/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk", zip file "/data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk"],nativeLibraryDirectories=[/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/lib/arm64, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/lib/arm64, /data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk!/lib/arm64-v8a, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk!/lib/arm64-v8a, /system/lib64]]]', Original: 'dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/android.test.runner.jar", zip file "/system/framework/android.test.mock.jar", zip file "/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk", zip file "/data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk"],nativeLibraryDirectories=[/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/lib/arm64, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/lib/arm64, /data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk!/lib/arm64-v8a, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk!/lib/arm64-v8a, /system/lib64]]]'
+[stdout] 02-15 10:20:37.183  6840  6863 I ResourceExtractor: Resource version mismatch res_timestamp-1-1708021236564
+[stdout] 02-15 10:20:37.187  6840  6861 I UsageTrackerFacilitator: Usage tracking enabled
+[stdout] 02-15 10:20:37.188  6840  6861 I TestRequestBuilder: Scanning classpath to find tests in paths [/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk]
+[stdout] 02-15 10:20:37.188  6840  6861 W utter.scenario: Opening an oat file without a class loader. Are you using the deprecated DexFile APIs?
+[stdout] 02-15 10:20:37.229  6840  6863 I ResourceExtractor: Extracted baseline resource assets/flutter_assets/kernel_blob.bin
+[stdout] 02-15 10:20:37.246  2863  4286 D RcsProvisioning: No backup token found
+[stdout] 02-15 10:20:37.246  2863  4286 D RcsProvisioning: Retrieving backup token
+[stdout] 02-15 10:20:37.246  2863  4286 D RcsProvisioning: Exception while getting subscriber Id. Using default
+[stdout] 02-15 10:20:37.307  6840  6863 I ResourceExtractor: Extracted baseline resource assets/flutter_assets/isolate_snapshot_data
+[stdout] 02-15 10:20:37.364  6840  6861 D TestExecutor: Adding listener androidx.test.internal.runner.listener.LogRunListener
+[stdout] 02-15 10:20:37.364  6840  6861 D TestExecutor: Adding listener androidx.test.internal.runner.listener.InstrumentationResultPrinter
+[stdout] 02-15 10:20:37.364  6840  6861 D TestExecutor: Adding listener androidx.test.internal.runner.listener.ActivityFinisherRunListener
+[stdout] 02-15 10:20:37.369  6840  6861 I TestRunner: run started: 66 tests
+[stdout] 02-15 10:20:37.371  6840  6861 I TestRunner: started: smokeTestEngineLaunch(dev.flutter.scenarios.EngineLaunchE2ETest)
+[stdout] 02-15 10:20:37.371  6840  6840 I MonitoringInstr: Activities that are still in CREATED to STOPPED: 0
+[stdout] 02-15 10:20:37.372  6840  6840 W utter.scenarios: type=1400 audit(0.0:71): avc: denied { read } for name="max_map_count" dev="proc" ino=60316 scontext=u:r:untrusted_app:s0:c98,c256,c512,c768 tcontext=u:object_r:proc_max_map_count:s0 tclass=file permissive=0
+[stdout] 02-15 10:20:37.386  2863  4286 D RcsProvisioning: No backup token found
+[stdout] 02-15 10:20:37.387  6840  6840 D HostConnection: HostConnection::get() New Host Connection established 0x758aed7120, tid 6840
+[stdout] 02-15 10:20:37.388  6840  6840 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_sync_buffer_data GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+[stdout] 02-15 10:20:37.388  2863  4286 W RcsProvisioning: Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: 	at java.io.FileInputStream.open0(Native Method)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: 	at java.io.FileInputStream.open(FileInputStream.java:231)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: 	at ion.a(SourceFile:2)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: 	at idl.a(SourceFile:4)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: 	at idm.a(SourceFile:7)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: 	at iez.buildConferencesFileName(SourceFile:30)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.buildRcsState(SourceFile:129)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.getRcsState(SourceFile:6)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:10)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+[stdout] 02-15 10:20:37.389  2863  4286 W RcsProvisioning: 	at android.os.Binder.execTransact(Binder.java:731)
+[stdout] 02-15 10:20:37.389  2863  4286 D RcsProvisioning: Retrieving backup token
+[stdout] 02-15 10:20:37.389  2863  4286 D RcsProvisioning: Exception while getting subscriber Id. Using default
+[stdout] 02-15 10:20:37.389  6840  6840 I ConfigStore: android::hardware::configstore::V1_0::ISurfaceFlingerConfigs::hasWideColorDisplay retrieved: 0
+[stdout] 02-15 10:20:37.389  6840  6840 I ConfigStore: android::hardware::configstore::V1_0::ISurfaceFlingerConfigs::hasHDRDisplay retrieved: 0
+[stdout] 02-15 10:20:37.390  6840  6840 D eglCodecCommon: setVertexArrayObject: set vao to 0 (0) 0 0
+[stdout] 02-15 10:20:37.390  6840  6840 D EGL_emulation: eglCreateContext: 0x758aed8020: maj 3 min 0 rcv 3
+[stdout] 02-15 10:20:37.390  6840  6840 D eglCodecCommon: setVertexArrayObject: set vao to 0 (0) 0 0
+[stdout] 02-15 10:20:37.390  6840  6840 D EGL_emulation: eglCreateContext: 0x758aed80c0: maj 3 min 0 rcv 3
+[stdout] 02-15 10:20:37.391  6840  6869 D HostConnection: HostConnection::get() New Host Connection established 0x758aed8340, tid 6869
+[stdout] 02-15 10:20:37.391  6840  6869 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_sync_buffer_data GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+[stdout] 02-15 10:20:37.392  6840  6869 D EGL_emulation: eglMakeCurrent: 0x758aed80c0: ver 3 0 (tinfo 0x75894bcf60)
+[stdout] 02-15 10:20:37.430  6840  6840 E GeneratedPluginsRegister: Tried to automatically register plugins with FlutterEngine (io.flutter.embedding.engine.FlutterEngine@144d737) but could not find or invoke the GeneratedPluginRegistrant.
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: Received exception while registering
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: java.lang.ClassNotFoundException: io.flutter.plugins.GeneratedPluginRegistrant
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at java.lang.Class.classForName(Native Method)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at java.lang.Class.forName(Class.java:453)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at java.lang.Class.forName(Class.java:378)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at io.flutter.embedding.engine.plugins.util.GeneratedPluginRegister.registerGeneratedPlugins(GeneratedPluginRegister.java:77)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at io.flutter.embedding.engine.FlutterEngine.<init>(FlutterEngine.java:385)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at io.flutter.embedding.engine.FlutterEngine.<init>(FlutterEngine.java:287)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at io.flutter.embedding.engine.FlutterEngine.<init>(FlutterEngine.java:268)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at io.flutter.embedding.engine.FlutterEngine.<init>(FlutterEngine.java:248)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at io.flutter.embedding.engine.FlutterEngine.<init>(FlutterEngine.java:168)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at io.flutter.embedding.engine.FlutterEngine.<init>(FlutterEngine.java:159)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at dev.flutter.scenarios.EngineLaunchE2ETest.lambda$smokeTestEngineLaunch$0(EngineLaunchE2ETest.java:36)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at dev.flutter.scenarios.EngineLaunchE2ETest$$ExternalSyntheticLambda0.run(Unknown Source:4)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:458)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:458)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at android.app.Instrumentation$SyncRunnable.run(Instrumentation.java:2163)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at android.os.Handler.handleCallback(Handler.java:873)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at android.os.Handler.dispatchMessage(Handler.java:99)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at android.os.Looper.loop(Looper.java:193)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at android.app.ActivityThread.main(ActivityThread.java:6669)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at java.lang.reflect.Method.invoke(Native Method)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:493)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:858)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: Caused by: java.lang.ClassNotFoundException: Didn't find class "io.flutter.plugins.GeneratedPluginRegistrant" on path: DexPathList[[zip file "/system/framework/android.test.runner.jar", zip file "/system/framework/android.test.mock.jar", zip file "/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk", zip file "/data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk"],nativeLibraryDirectories=[/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/lib/arm64, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/lib/arm64, /data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk!/lib/arm64-v8a, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk!/lib/arm64-v8a, /system/lib64]]
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at dalvik.system.BaseDexClassLoader.findClass(BaseDexClassLoader.java:134)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at java.lang.ClassLoader.loadClass(ClassLoader.java:379)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	at java.lang.ClassLoader.loadClass(ClassLoader.java:312)
+[stdout] 02-15 10:20:37.431  6840  6840 E GeneratedPluginsRegister: 	... 24 more
+[stdout] 02-15 10:20:37.463  6840  6876 I flutter : The Dart VM service is listening on http://127.0.0.1:46424/ubaMX7XzZVU=/
+[stdout] 02-15 10:20:37.465  6840  6867 W utter.scenario: Accessing hidden method Landroid/os/Trace;->asyncTraceBegin(JLjava/lang/String;I)V (light greylist, reflection)
+[stdout] 02-15 10:20:37.465  6840  6840 W utter.scenario: Accessing hidden method Landroid/os/Trace;->asyncTraceEnd(JLjava/lang/String;I)V (light greylist, reflection)
+[stdout] 02-15 10:20:37.470  6840  6861 I TestRunner: finished: smokeTestEngineLaunch(dev.flutter.scenarios.EngineLaunchE2ETest)
+[stdout] 02-15 10:20:37.470  6840  6840 I MonitoringInstr: Activities that are still in CREATED to STOPPED: 0
+[stdout] 02-15 10:20:37.470  6840  6861 I TestRunner: started: useAppContext(dev.flutter.scenarios.ExampleInstrumentedTest)
+[stdout] 02-15 10:20:37.471  6840  6840 I MonitoringInstr: Activities that are still in CREATED to STOPPED: 0
+[stdout] 02-15 10:20:37.471  6840  6861 I TestRunner: finished: useAppContext(dev.flutter.scenarios.ExampleInstrumentedTest)
+[stdout] 02-15 10:20:37.471  6840  6840 I MonitoringInstr: Activities that are still in CREATED to STOPPED: 0
+[stdout] 02-15 10:20:37.472  6840  6861 I TestRunner: started: testCroppedRotatedMediaSurface_bottomLeft_90(dev.flutter.scenariosui.ExternalTextureTests)
+[stdout] 02-15 10:20:37.472  6840  6840 I MonitoringInstr: Activities that are still in CREATED to STOPPED: 0
+[stdout] 02-15 10:20:37.474  1735  1836 I ActivityManager: START u0 {act=android.intent.action.MAIN flg=0x14000000 cmp=dev.flutter.scenarios/.ExternalTextureFlutterActivity (has extras)} from uid 10098
+[stdout] 02-15 10:20:37.479  6840  6840 W ActivityThread: handleWindowVisibility: no activity for token android.os.BinderProxy@22f6c0e
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario: Rejecting re-init on previously-failed class java.lang.Class<io.flutter.embedding.android.FlutterActivity$1>: java.lang.NoClassDefFoundError: Failed resolution of: Landroid/window/OnBackInvokedCallback;
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at java.lang.Object java.lang.Class.newInstance() (Class.java:-2)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.AppComponentFactory.instantiateActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (AppComponentFactory.java:69)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity androidx.core.app.CoreComponentFactory.instantiateActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (CoreComponentFactory.java:45)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.Instrumentation.newActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (Instrumentation.java:1215)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity androidx.test.runner.MonitoringInstrumentation.newActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (MonitoringInstrumentation.java:789)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.ActivityThread.performLaunchActivity(android.app.ActivityThread$ActivityClientRecord, android.content.Intent) (ActivityThread.java:2831)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.ActivityThread.handleLaunchActivity(android.app.ActivityThread$ActivityClientRecord, android.app.servertransaction.PendingTransactionActions, android.content.Intent) (ActivityThread.java:3048)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.servertransaction.LaunchActivityItem.execute(android.app.ClientTransactionHandler, android.os.IBinder, android.app.servertransaction.PendingTransactionActions) (LaunchActivityItem.java:78)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.servertransaction.TransactionExecutor.executeCallbacks(android.app.servertransaction.ClientTransaction) (TransactionExecutor.java:108)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.servertransaction.TransactionExecutor.execute(android.app.servertransaction.ClientTransaction) (TransactionExecutor.java:68)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.ActivityThread$H.handleMessage(android.os.Message) (ActivityThread.java:1808)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:106)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.os.Looper.loop() (Looper.java:193)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6669)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:493)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:858)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario: Caused by: java.lang.ClassNotFoundException: Didn't find class "android.window.OnBackInvokedCallback" on path: DexPathList[[zip file "/system/framework/android.test.runner.jar", zip file "/system/framework/android.test.mock.jar", zip file "/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk", zip file "/data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk"],nativeLibraryDirectories=[/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/lib/arm64, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/lib/arm64, /data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk!/lib/arm64-v8a, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk!/lib/arm64-v8a, /system/lib64]]
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at java.lang.Class dalvik.system.BaseDexClassLoader.findClass(java.lang.String) (BaseDexClassLoader.java:134)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String, boolean) (ClassLoader.java:379)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String) (ClassLoader.java:312)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at java.lang.Object java.lang.Class.newInstance() (Class.java:-2)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.AppComponentFactory.instantiateActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (AppComponentFactory.java:69)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity androidx.core.app.CoreComponentFactory.instantiateActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (CoreComponentFactory.java:45)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.Instrumentation.newActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (Instrumentation.java:1215)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity androidx.test.runner.MonitoringInstrumentation.newActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (MonitoringInstrumentation.java:789)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.ActivityThread.performLaunchActivity(android.app.ActivityThread$ActivityClientRecord, android.content.Intent) (ActivityThread.java:2831)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.ActivityThread.handleLaunchActivity(android.app.ActivityThread$ActivityClientRecord, android.app.servertransaction.PendingTransactionActions, android.content.Intent) (ActivityThread.java:3048)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.servertransaction.LaunchActivityItem.execute(android.app.ClientTransactionHandler, android.os.IBinder, android.app.servertransaction.PendingTransactionActions) (LaunchActivityItem.java:78)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.servertransaction.TransactionExecutor.executeCallbacks(android.app.servertransaction.ClientTransaction) (TransactionExecutor.java:108)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.servertransaction.TransactionExecutor.execute(android.app.servertransaction.ClientTransaction) (TransactionExecutor.java:68)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.ActivityThread$H.handleMessage(android.os.Message) (ActivityThread.java:1808)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:106)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.os.Looper.loop() (Looper.java:193)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6669)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:493)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:858)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario: 
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario: Rejecting re-init on previously-failed class java.lang.Class<io.flutter.embedding.android.FlutterActivity$1>: java.lang.NoClassDefFoundError: Failed resolution of: Landroid/window/OnBackInvokedCallback;
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at java.lang.Object java.lang.Class.newInstance() (Class.java:-2)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.AppComponentFactory.instantiateActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (AppComponentFactory.java:69)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity androidx.core.app.CoreComponentFactory.instantiateActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (CoreComponentFactory.java:45)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.Instrumentation.newActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (Instrumentation.java:1215)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity androidx.test.runner.MonitoringInstrumentation.newActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (MonitoringInstrumentation.java:789)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.ActivityThread.performLaunchActivity(android.app.ActivityThread$ActivityClientRecord, android.content.Intent) (ActivityThread.java:2831)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.ActivityThread.handleLaunchActivity(android.app.ActivityThread$ActivityClientRecord, android.app.servertransaction.PendingTransactionActions, android.content.Intent) (ActivityThread.java:3048)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.servertransaction.LaunchActivityItem.execute(android.app.ClientTransactionHandler, android.os.IBinder, android.app.servertransaction.PendingTransactionActions) (LaunchActivityItem.java:78)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.servertransaction.TransactionExecutor.executeCallbacks(android.app.servertransaction.ClientTransaction) (TransactionExecutor.java:108)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.servertransaction.TransactionExecutor.execute(android.app.servertransaction.ClientTransaction) (TransactionExecutor.java:68)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.ActivityThread$H.handleMessage(android.os.Message) (ActivityThread.java:1808)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:106)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.os.Looper.loop() (Looper.java:193)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6669)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:493)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:858)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario: Caused by: java.lang.ClassNotFoundException: Didn't find class "android.window.OnBackInvokedCallback" on path: DexPathList[[zip file "/system/framework/android.test.runner.jar", zip file "/system/framework/android.test.mock.jar", zip file "/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk", zip file "/data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk"],nativeLibraryDirectories=[/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/lib/arm64, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/lib/arm64, /data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk!/lib/arm64-v8a, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk!/lib/arm64-v8a, /system/lib64]]
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at java.lang.Class dalvik.system.BaseDexClassLoader.findClass(java.lang.String) (BaseDexClassLoader.java:134)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String, boolean) (ClassLoader.java:379)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String) (ClassLoader.java:312)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at java.lang.Object java.lang.Class.newInstance() (Class.java:-2)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.AppComponentFactory.instantiateActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (AppComponentFactory.java:69)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity androidx.core.app.CoreComponentFactory.instantiateActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (CoreComponentFactory.java:45)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.Instrumentation.newActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (Instrumentation.java:1215)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity androidx.test.runner.MonitoringInstrumentation.newActivity(java.lang.ClassLoader, java.lang.String, android.content.Intent) (MonitoringInstrumentation.java:789)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.ActivityThread.performLaunchActivity(android.app.ActivityThread$ActivityClientRecord, android.content.Intent) (ActivityThread.java:2831)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at android.app.Activity android.app.ActivityThread.handleLaunchActivity(android.app.ActivityThread$ActivityClientRecord, android.app.servertransaction.PendingTransactionActions, android.content.Intent) (ActivityThread.java:3048)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.servertransaction.LaunchActivityItem.execute(android.app.ClientTransactionHandler, android.os.IBinder, android.app.servertransaction.PendingTransactionActions) (LaunchActivityItem.java:78)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.servertransaction.TransactionExecutor.executeCallbacks(android.app.servertransaction.ClientTransaction) (TransactionExecutor.java:108)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.servertransaction.TransactionExecutor.execute(android.app.servertransaction.ClientTransaction) (TransactionExecutor.java:68)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.ActivityThread$H.handleMessage(android.os.Message) (ActivityThread.java:1808)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:106)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.os.Looper.loop() (Looper.java:193)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6669)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:493)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario:   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:858)
+[stdout] 02-15 10:20:37.482  6840  6840 I utter.scenario: 
+[stdout] 02-15 10:20:37.484  6840  6840 D LifecycleMonitor: Lifecycle status change: dev.flutter.scenarios.ExternalTextureFlutterActivity@8bbd5c5 in: PRE_ON_CREATE
+[stdout] 02-15 10:20:37.486  6840  6840 D eglCodecCommon: setVertexArrayObject: set vao to 0 (0) 0 0
+[stdout] 02-15 10:20:37.486  6840  6840 D EGL_emulation: eglCreateContext: 0x758aed82a0: maj 3 min 0 rcv 3
+[stdout] 02-15 10:20:37.486  6840  6840 D eglCodecCommon: setVertexArrayObject: set vao to 0 (0) 0 0
+[stdout] 02-15 10:20:37.486  6840  6840 D EGL_emulation: eglCreateContext: 0x758aed8f20: maj 3 min 0 rcv 3
+[stdout] 02-15 10:20:37.487  6840  6882 D HostConnection: HostConnection::get() New Host Connection established 0x758c844ee0, tid 6882
+[stdout] 02-15 10:20:37.495  6840  6882 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_sync_buffer_data GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+[stdout] 02-15 10:20:37.495  6840  6882 D EGL_emulation: eglMakeCurrent: 0x758aed8f20: ver 3 0 (tinfo 0x7575cee720)
+[stdout] 02-15 10:20:37.502  6840  6840 D OpenGLRenderer: Skia GL Pipeline
+[stdout] 02-15 10:20:37.508  1384  2162 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+[stdout] 02-15 10:20:37.522  6840  6840 W utter.scenario: Accessing hidden method Landroid/view/accessibility/AccessibilityNodeInfo;->getSourceNodeId()J (light greylist, reflection)
+[stdout] 02-15 10:20:37.522  6840  6840 W utter.scenario: Accessing hidden method Landroid/view/accessibility/AccessibilityRecord;->getSourceNodeId()J (light greylist, reflection)
+[stdout] 02-15 10:20:37.522  6840  6840 W utter.scenario: Accessing hidden field Landroid/view/accessibility/AccessibilityNodeInfo;->mChildNodeIds:Landroid/util/LongArray; (light greylist, reflection)
+[stdout] 02-15 10:20:37.522  6840  6840 W utter.scenario: Accessing hidden method Landroid/util/LongArray;->get(I)J (light greylist, reflection)
+[stdout] 02-15 10:20:37.524  2863  4286 D RcsProvisioning: No backup token found
+[stdout] 02-15 10:20:37.524  2863  4286 E CarrierServices: [209] iez.getFile: File not found.: /data/user/0/com.google.android.apps.messaging/files/httpft_pending (No such file or directory)
+[stdout] 02-15 10:20:37.524  2863  4286 E CarrierServices: 	java.io.FileInputStream.open0(Native Method)
+[stdout] 02-15 10:20:37.524  2863  4286 E CarrierServices: 	java.io.FileInputStream.open(FileInputStream.java:231)
+[stdout] 02-15 10:20:37.524  2863  4286 E CarrierServices: 	java.io.FileInputStream.<init>(FileInputStream.java:165)
+[stdout] 02-15 10:20:37.524  2863  4286 E CarrierServices: 	android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+[stdout] 02-15 10:20:37.524  2863  4286 E CarrierServices: 	android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+[stdout] 02-15 10:20:37.524  2863  4286 E CarrierServices: 	iez.getFile(SourceFile:20)
+[stdout] 02-15 10:20:37.524  2863  4286 E CarrierServices: 	com.google.android.apps.messaging.rcsmigration.RcsStateProvider.buildRcsState(SourceFile:136)
+[stdout] 02-15 10:20:37.524  2863  4286 E CarrierServices: 	com.google.android.apps.messaging.rcsmigration.RcsStateProvider.getRcsState(SourceFile:6)
+[stdout] 02-15 10:20:37.524  2863  4286 E CarrierServices: 	com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:10)
+[stdout] 02-15 10:20:37.524  2863  4286 E CarrierServices: 	com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+[stdout] 02-15 10:20:37.524  2863  4286 E CarrierServices: 	android.os.Binder.execTransact(Binder.java:731)
+[stdout] 02-15 10:20:37.525  3621  6584 I CarrierServices: [234] awt.doInBackground: Saving RCS State
+[stdout] 02-15 10:20:37.525  3621  6584 I CarrierServices: [234] awt.doInBackground: Old operation mode: 2
+[stdout] 02-15 10:20:37.525  3621  6584 I CarrierServices: [234] awt.doInBackground: New operation mode: 2
+[stdout] 02-15 10:20:37.526  2863  4286 I CarrierServices: [209] RcsStateProvider.onMigrationComplete: Migration complete.
+[stdout] 02-15 10:20:37.526  2863  4286 I CarrierServices: [209] inq.shouldUseCarrierServicesApkForV1Apis: Checking if using CarrierServices.apk is possible. Enabled: true, isAtLeastM: true, runningInsideBugle: true
+[stdout] 02-15 10:20:37.527  2863  4286 I CarrierServices: [209] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.527  2863  4286 I CarrierServices: [209] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.527  2863  4286 I CarrierServices: [209] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.527  2863  4286 I CarrierServices: [209] RcsStateProvider.onMigrationComplete: Rcs Engine should be running in cs.apk. Stopping JibeService.
+[stdout] 02-15 10:20:37.528  2863  4286 I CarrierServices: [209] RcsStateProvider.onMigrationComplete: JibeService stopped: true
+[stdout] 02-15 10:20:37.529  2863  4286 I CarrierServices: [209] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.529  2863  4286 I CarrierServices: [209] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.529  2863  4286 I CarrierServices: [209] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.529  2863  4286 I CarrierServices: [209] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.529  2863  4286 I CarrierServices: [209] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.530  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.chatsession.ChatSessionService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.530  2863  2863 V BugleRcs: com.google.android.rcs.client.chatsession.ChatSessionService RCS service connected
+[stdout] 02-15 10:20:37.530  2863  4286 I CarrierServices: [209] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.531  2863  4286 I CarrierServices: [209] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.531  2863  4286 I CarrierServices: [209] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.531  2863  4286 I CarrierServices: [209] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.531  2863  4286 I CarrierServices: [209] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.531  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.events.EventService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.531  2863  2863 V BugleRcs: com.google.android.rcs.client.events.EventService RCS service connected
+[stdout] 02-15 10:20:37.532  2863  4286 I CarrierServices: [209] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.532  2863  4286 I CarrierServices: [209] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.532  2863  4286 I CarrierServices: [209] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.533  2863  4286 I CarrierServices: [209] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.533  2863  4286 I CarrierServices: [209] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.533  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.contacts.ContactsService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.533  2863  2863 V BugleRcs: com.google.android.rcs.client.contacts.ContactsService RCS service connected
+[stdout] 02-15 10:20:37.534  2863  4286 I CarrierServices: [209] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.534  2863  4286 I CarrierServices: [209] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.534  2863  4286 I CarrierServices: [209] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.534  2863  4286 I CarrierServices: [209] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.534  2863  4286 I CarrierServices: [209] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.535  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.filetransfer.FileTransferService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.535  2863  2863 V BugleRcs: com.google.android.rcs.client.filetransfer.FileTransferService RCS service connected
+[stdout] 02-15 10:20:37.535  2863  4286 I CarrierServices: [209] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.536  2863  4286 I CarrierServices: [209] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.536  2863  4286 I CarrierServices: [209] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.536  2863  4286 I CarrierServices: [209] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.536  2863  4286 I CarrierServices: [209] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.536  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.locationsharing.LocationSharingService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.536  2863  2863 V BugleRcs: com.google.android.rcs.client.locationsharing.LocationSharingService RCS service connected
+[stdout] 02-15 10:20:37.536  2863  4286 I CarrierServices: [209] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.536  2863  4286 I CarrierServices: [209] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.536  2863  4286 I CarrierServices: [209] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.537  2863  4286 I CarrierServices: [209] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.537  2863  4286 I CarrierServices: [209] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.537  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.ims.ImsConnectionTrackerService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.537  2863  2863 V BugleRcs: com.google.android.rcs.client.ims.ImsConnectionTrackerService RCS service connected
+[stdout] 02-15 10:20:37.537  2863  2863 V BugleRcs: kicking off RCS sending/receiving
+[stdout] 02-15 10:20:37.537  2863  2863 V BugleAction: no RCS because we're not registered
+[stdout] 02-15 10:20:37.538  2863  4286 I CarrierServices: [209] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.538  2863  4286 I CarrierServices: [209] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.538  2863  4286 I CarrierServices: [209] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.538  2863  4286 I CarrierServices: [209] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.538  2863  4286 I CarrierServices: [209] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.538  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.profile.RcsProfileService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.538  2863  2863 V BugleRcs: com.google.android.rcs.client.profile.RcsProfileService RCS service connected
+[stdout] 02-15 10:20:37.538  2863  2863 V BugleRcs: kicking off RCS sending/receiving
+[stdout] 02-15 10:20:37.538  2863  2863 V BugleAction: no RCS because we're not registered
+[stdout] 02-15 10:20:37.538  3621  3657 W CarrierServices: [190] bmc.a: No config URL. RCS will be disabled!
+[stdout] 02-15 10:20:37.538  2863  2863 I BugleRcs: RcsAvailability ACS url: null
+[stdout] 02-15 10:20:37.539  2863  4286 I CarrierServices: [209] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.539  2863  4286 I CarrierServices: [209] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.539  2863  4286 I CarrierServices: [209] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.539  2863  4286 I CarrierServices: [209] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.539  2863  4286 I CarrierServices: [209] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.539  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.businessinfo.BusinessInfoService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.539  2863  2863 V BugleRcs: com.google.android.rcs.client.businessinfo.BusinessInfoService RCS service connected
+[stdout] 02-15 10:20:37.539  2863  2863 V BugleRcs: kicking off RCS sending/receiving
+[stdout] 02-15 10:20:37.540  2863  2863 V BugleAction: no RCS because we're not registered
+[stdout] 02-15 10:20:37.540  3621  3657 W CarrierServices: [190] bmc.a: No config URL. RCS will be disabled!
+[stdout] 02-15 10:20:37.540  2863  2863 I BugleRcs: RcsAvailability ACS url: null
+[stdout] 02-15 10:20:37.540  6840  6862 W FlutterJNI: FlutterJNI.loadLibrary called more than once
+[stdout] 02-15 10:20:37.540  6840  6865 W FlutterJNI: FlutterJNI.prefetchDefaultFontManager called more than once
+[stdout] 02-15 10:20:37.540  6840  6883 I ResourceExtractor: Found extracted resources res_timestamp-1-1708021236564
+[stdout] 02-15 10:20:37.541  6840  6840 W FlutterJNI: FlutterJNI.init called more than once
+[stdout] 02-15 10:20:37.541  2863  4286 W RcsProvisioning: Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:37.541  2863  4286 W RcsProvisioning: java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:37.541  2863  4286 W RcsProvisioning: 	at java.io.FileInputStream.open0(Native Method)
+[stdout] 02-15 10:20:37.541  2863  4286 W RcsProvisioning: 	at java.io.FileInputStream.open(FileInputStream.java:231)
+[stdout] 02-15 10:20:37.541  2863  4286 W RcsProvisioning: 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+[stdout] 02-15 10:20:37.541  2863  4286 W RcsProvisioning: 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+[stdout] 02-15 10:20:37.541  2863  4286 W RcsProvisioning: 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+[stdout] 02-15 10:20:37.541  2863  4286 W RcsProvisioning: 	at ion.a(SourceFile:2)
+[stdout] 02-15 10:20:37.541  2863  4286 W RcsProvisioning: 	at idl.a(SourceFile:4)
+[stdout] 02-15 10:20:37.541  2863  4286 W RcsProvisioning: 	at idm.a(SourceFile:7)
+[stdout] 02-15 10:20:37.541  2863  4286 W RcsProvisioning: 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:27)
+[stdout] 02-15 10:20:37.541  2863  4286 W RcsProvisioning: 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+[stdout] 02-15 10:20:37.541  2863  4286 W RcsProvisioning: 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+[stdout] 02-15 10:20:37.541  2863  4286 W RcsProvisioning: 	at android.os.Binder.execTransact(Binder.java:731)
+[stdout] 02-15 10:20:37.541  2863  4286 D RcsProvisioning: Retrieving backup token
+[stdout] 02-15 10:20:37.541  2863  4286 D RcsProvisioning: Exception while getting subscriber Id. Using default
+[stdout] 02-15 10:20:37.541  6840  6840 W utter.scenario: Accessing hidden method Landroid/media/ImageWriter;->newInstance(Landroid/view/Surface;II)Landroid/media/ImageWriter; (dark greylist, linking)
+[stdout] 02-15 10:20:37.543  6840  6840 D LifecycleMonitor: Lifecycle status change: dev.flutter.scenarios.ExternalTextureFlutterActivity@8bbd5c5 in: CREATED
+[stdout] 02-15 10:20:37.543  6840  6840 D LifecycleMonitor: Lifecycle status change: dev.flutter.scenarios.ExternalTextureFlutterActivity@8bbd5c5 in: STARTED
+[stdout] 02-15 10:20:37.544  6840  6840 D LifecycleMonitor: Lifecycle status change: dev.flutter.scenarios.ExternalTextureFlutterActivity@8bbd5c5 in: RESUMED
+[stdout] 02-15 10:20:37.546  1572  1709 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario: Rejecting re-init on previously-failed class java.lang.Class<androidx.window.layout.SidecarCompat$DistinctSidecarElementCallback>: java.lang.NoClassDefFoundError: Failed resolution of: Landroidx/window/sidecar/SidecarInterface$SidecarCallback;
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.ExtensionInterfaceCompat androidx.window.layout.SidecarWindowBackend$Companion.initAndVerifyExtension(android.content.Context) (SidecarWindowBackend.kt:200)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.SidecarWindowBackend androidx.window.layout.SidecarWindowBackend$Companion.getInstance(android.content.Context) (SidecarWindowBackend.kt:184)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.WindowBackend androidx.window.layout.WindowInfoTracker$Companion.windowBackend$window_release(android.content.Context) (WindowInfoTracker.kt:86)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.WindowInfoTracker androidx.window.layout.WindowInfoTracker$Companion.getOrCreate(android.content.Context) (WindowInfoTracker.kt:70)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at io.flutter.embedding.android.WindowInfoRepositoryCallbackAdapterWrapper io.flutter.embedding.android.FlutterView.createWindowInfoRepo() (FlutterView.java:491)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void io.flutter.embedding.android.FlutterView.onAttachedToWindow() (FlutterView.java:511)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.View.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (View.java:18347)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3397)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+[stdout] 02-15 10:20:37.568  6840  6840 I chatty  : uid=10098(dev.flutter.scenarios) identical 1 line
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewRootImpl.performTraversals() (ViewRootImpl.java:1761)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewRootImpl.doTraversal() (ViewRootImpl.java:1460)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewRootImpl$TraversalRunnable.run() (ViewRootImpl.java:7183)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer$CallbackRecord.run(long) (Choreographer.java:949)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer.doCallbacks(int, long) (Choreographer.java:761)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer.doFrame(long, int) (Choreographer.java:696)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer$FrameDisplayEventReceiver.run() (Choreographer.java:935)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.os.Handler.handleCallback(android.os.Message) (Handler.java:873)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:99)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.os.Looper.loop() (Looper.java:193)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6669)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:493)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:858)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario: Caused by: java.lang.ClassNotFoundException: Didn't find class "androidx.window.sidecar.SidecarInterface$SidecarCallback" on path: DexPathList[[zip file "/system/framework/android.test.runner.jar", zip file "/system/framework/android.test.mock.jar", zip file "/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk", zip file "/data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk"],nativeLibraryDirectories=[/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/lib/arm64, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/lib/arm64, /data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk!/lib/arm64-v8a, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk!/lib/arm64-v8a, /system/lib64]]
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at java.lang.Class dalvik.system.BaseDexClassLoader.findClass(java.lang.String) (BaseDexClassLoader.java:134)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String, boolean) (ClassLoader.java:379)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String) (ClassLoader.java:312)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.ExtensionInterfaceCompat androidx.window.layout.SidecarWindowBackend$Companion.initAndVerifyExtension(android.content.Context) (SidecarWindowBackend.kt:200)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.SidecarWindowBackend androidx.window.layout.SidecarWindowBackend$Companion.getInstance(android.content.Context) (SidecarWindowBackend.kt:184)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.WindowBackend androidx.window.layout.WindowInfoTracker$Companion.windowBackend$window_release(android.content.Context) (WindowInfoTracker.kt:86)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.WindowInfoTracker androidx.window.layout.WindowInfoTracker$Companion.getOrCreate(android.content.Context) (WindowInfoTracker.kt:70)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at io.flutter.embedding.android.WindowInfoRepositoryCallbackAdapterWrapper io.flutter.embedding.android.FlutterView.createWindowInfoRepo() (FlutterView.java:491)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void io.flutter.embedding.android.FlutterView.onAttachedToWindow() (FlutterView.java:511)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.View.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (View.java:18347)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3397)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+[stdout] 02-15 10:20:37.568  6840  6840 I chatty  : uid=10098(dev.flutter.scenarios) identical 1 line
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewRootImpl.performTraversals() (ViewRootImpl.java:1761)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewRootImpl.doTraversal() (ViewRootImpl.java:1460)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewRootImpl$TraversalRunnable.run() (ViewRootImpl.java:7183)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer$CallbackRecord.run(long) (Choreographer.java:949)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer.doCallbacks(int, long) (Choreographer.java:761)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer.doFrame(long, int) (Choreographer.java:696)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer$FrameDisplayEventReceiver.run() (Choreographer.java:935)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.os.Handler.handleCallback(android.os.Message) (Handler.java:873)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:99)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.os.Looper.loop() (Looper.java:193)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6669)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:493)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:858)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario: 
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario: Rejecting re-init on previously-failed class java.lang.Class<androidx.window.layout.SidecarCompat$DistinctSidecarElementCallback>: java.lang.NoClassDefFoundError: Failed resolution of: Landroidx/window/sidecar/SidecarInterface$SidecarCallback;
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.ExtensionInterfaceCompat androidx.window.layout.SidecarWindowBackend$Companion.initAndVerifyExtension(android.content.Context) (SidecarWindowBackend.kt:200)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.SidecarWindowBackend androidx.window.layout.SidecarWindowBackend$Companion.getInstance(android.content.Context) (SidecarWindowBackend.kt:184)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.WindowBackend androidx.window.layout.WindowInfoTracker$Companion.windowBackend$window_release(android.content.Context) (WindowInfoTracker.kt:86)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.WindowInfoTracker androidx.window.layout.WindowInfoTracker$Companion.getOrCreate(android.content.Context) (WindowInfoTracker.kt:70)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at io.flutter.embedding.android.WindowInfoRepositoryCallbackAdapterWrapper io.flutter.embedding.android.FlutterView.createWindowInfoRepo() (FlutterView.java:491)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void io.flutter.embedding.android.FlutterView.onAttachedToWindow() (FlutterView.java:511)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.View.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (View.java:18347)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3397)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+[stdout] 02-15 10:20:37.568  6840  6840 I chatty  : uid=10098(dev.flutter.scenarios) identical 1 line
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewRootImpl.performTraversals() (ViewRootImpl.java:1761)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewRootImpl.doTraversal() (ViewRootImpl.java:1460)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewRootImpl$TraversalRunnable.run() (ViewRootImpl.java:7183)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer$CallbackRecord.run(long) (Choreographer.java:949)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer.doCallbacks(int, long) (Choreographer.java:761)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer.doFrame(long, int) (Choreographer.java:696)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer$FrameDisplayEventReceiver.run() (Choreographer.java:935)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.os.Handler.handleCallback(android.os.Message) (Handler.java:873)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:99)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.os.Looper.loop() (Looper.java:193)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6669)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:493)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:858)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario: Caused by: java.lang.ClassNotFoundException: Didn't find class "androidx.window.sidecar.SidecarInterface$SidecarCallback" on path: DexPathList[[zip file "/system/framework/android.test.runner.jar", zip file "/system/framework/android.test.mock.jar", zip file "/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk", zip file "/data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk"],nativeLibraryDirectories=[/data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/lib/arm64, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/lib/arm64, /data/app/dev.flutter.scenarios.test-KKXe9YDNYEL7yOuj25XZ6g==/base.apk!/lib/arm64-v8a, /data/app/dev.flutter.scenarios-rlxf5VuTV43PTiaP6mOD-g==/base.apk!/lib/arm64-v8a, /system/lib64]]
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at java.lang.Class dalvik.system.BaseDexClassLoader.findClass(java.lang.String) (BaseDexClassLoader.java:134)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String, boolean) (ClassLoader.java:379)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String) (ClassLoader.java:312)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.ExtensionInterfaceCompat androidx.window.layout.SidecarWindowBackend$Companion.initAndVerifyExtension(android.content.Context) (SidecarWindowBackend.kt:200)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.SidecarWindowBackend androidx.window.layout.SidecarWindowBackend$Companion.getInstance(android.content.Context) (SidecarWindowBackend.kt:184)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.WindowBackend androidx.window.layout.WindowInfoTracker$Companion.windowBackend$window_release(android.content.Context) (WindowInfoTracker.kt:86)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at androidx.window.layout.WindowInfoTracker androidx.window.layout.WindowInfoTracker$Companion.getOrCreate(android.content.Context) (WindowInfoTracker.kt:70)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at io.flutter.embedding.android.WindowInfoRepositoryCallbackAdapterWrapper io.flutter.embedding.android.FlutterView.createWindowInfoRepo() (FlutterView.java:491)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void io.flutter.embedding.android.FlutterView.onAttachedToWindow() (FlutterView.java:511)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.View.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (View.java:18347)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3397)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+[stdout] 02-15 10:20:37.568  6840  6840 I chatty  : uid=10098(dev.flutter.scenarios) identical 1 line
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3404)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewRootImpl.performTraversals() (ViewRootImpl.java:1761)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewRootImpl.doTraversal() (ViewRootImpl.java:1460)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.ViewRootImpl$TraversalRunnable.run() (ViewRootImpl.java:7183)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer$CallbackRecord.run(long) (Choreographer.java:949)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer.doCallbacks(int, long) (Choreographer.java:761)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer.doFrame(long, int) (Choreographer.java:696)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.view.Choreographer$FrameDisplayEventReceiver.run() (Choreographer.java:935)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.os.Handler.handleCallback(android.os.Message) (Handler.java:873)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:99)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.os.Looper.loop() (Looper.java:193)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6669)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:493)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario:   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:858)
+[stdout] 02-15 10:20:37.568  6840  6840 I utter.scenario: 
+[stdout] 02-15 10:20:37.583  6840  6886 I OpenGLRenderer: Initialized EGL, version 1.4
+[stdout] 02-15 10:20:37.583  6840  6886 D OpenGLRenderer: Swap behavior 1
+[stdout] 02-15 10:20:37.583  6840  6886 D HostConnection: HostConnection::get() New Host Connection established 0x758c8455c0, tid 6886
+[stdout] 02-15 10:20:37.584  6840  6886 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_sync_buffer_data GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+[stdout] 02-15 10:20:37.584  6840  6886 W OpenGLRenderer: Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+[stdout] 02-15 10:20:37.584  6840  6886 D OpenGLRenderer: Swap behavior 0
+[stdout] 02-15 10:20:37.584  6840  6886 D eglCodecCommon: setVertexArrayObject: set vao to 0 (0) 0 0
+[stdout] 02-15 10:20:37.584  6840  6886 D EGL_emulation: eglCreateContext: 0x758c8458e0: maj 3 min 0 rcv 3
+[stdout] 02-15 10:20:37.585  6840  6886 D EGL_emulation: eglMakeCurrent: 0x758c8458e0: ver 3 0 (tinfo 0x7576d7d2e0)
+[stdout] 02-15 10:20:37.585  1572  1709 W ServiceManager: Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10098 pid=6840
+[stdout] 02-15 10:20:37.585  1572  1709 D PermissionCache: checking android.permission.ACCESS_SURFACE_FLINGER for uid=10098 => denied (83 us)
+[stdout] 02-15 10:20:37.586  1572  1805 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+[stdout] 02-15 10:20:37.590  1384  2162 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+[stdout] 02-15 10:20:37.591  6840  6886 D HostConnection: createUnique: call
+[stdout] 02-15 10:20:37.591  6840  6886 D HostConnection: HostConnection::get() New Host Connection established 0x758c845b60, tid 6886
+[stdout] 02-15 10:20:37.592  6840  6886 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_sync_buffer_data GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+[stdout] 02-15 10:20:37.596  1384  2162 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9826304
+[stdout] 02-15 10:20:37.596  6840  6881 D HostConnection: HostConnection::get() New Host Connection established 0x758ae650a0, tid 6881
+[stdout] 02-15 10:20:37.597  6840  6881 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_sync_buffer_data GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+[stdout] 02-15 10:20:37.597  6840  6881 D EGL_emulation: eglMakeCurrent: 0x758aed82a0: ver 3 0 (tinfo 0x75932f3220)
+[stdout] 02-15 10:20:37.599  6840  6881 D eglCodecCommon: setVertexArrayObject: set vao to 0 (0) 0 0
+[stdout] 02-15 10:20:37.599  6840  6881 D EGL_emulation: eglCreateContext: 0x758ae66220: maj 3 min 0 rcv 3
+[stdout] 02-15 10:20:37.599  6840  6881 D EGL_emulation: eglMakeCurrent: 0x758ae66220: ver 3 0 (tinfo 0x75932f3220)
+[stdout] 02-15 10:20:37.599  6840  6881 D EGL_emulation: eglMakeCurrent: 0x758aed82a0: ver 3 0 (tinfo 0x75932f3220)
+[stdout] 02-15 10:20:37.603  6840  6881 D EGL_emulation: eglMakeCurrent: 0x758aed82a0: ver 3 0 (tinfo 0x75932f3220)
+[stdout] 02-15 10:20:37.603  1572  1572 D SurfaceFlinger: duplicate layer name: changing SurfaceView - dev.flutter.scenarios/dev.flutter.scenarios.ExternalTextureFlutterActivity to SurfaceView - dev.flutter.scenarios/dev.flutter.scenarios.ExternalTextureFlutterActivity#1
+[stdout] 02-15 10:20:37.604  1572  1572 D SurfaceFlinger: duplicate layer name: changing Background for -SurfaceView - dev.flutter.scenarios/dev.flutter.scenarios.ExternalTextureFlutterActivity to Background for -SurfaceView - dev.flutter.scenarios/dev.flutter.scenarios.ExternalTextureFlutterActivity#1
+[stdout] 02-15 10:20:37.616  1384  2162 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9826304
+[stdout] 02-15 10:20:37.622  6840  6893 D CCodec  : allocate(c2.android.avc.decoder)
+[stdout] 02-15 10:20:37.623  6840  6893 I CCodec  : setting up 'default' as default (vendor) store
+[stdout] 02-15 10:20:37.623  1588  2090 V C2Store : in init
+[stdout] 02-15 10:20:37.623  1588  2090 V C2Store : loading dll
+[stdout] 02-15 10:20:37.624  6840  6893 I CCodec  : Created component [c2.android.avc.decoder]
+[stdout] 02-15 10:20:37.624  6840  6893 D CCodecConfig: read media type: video/avc
+[stdout] 02-15 10:20:37.624  6840  6893 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.max-count.values
+[stdout] 02-15 10:20:37.624  6840  6893 D ReflectedParamUpdater: extent() != 1 for single value type: output.subscribed-indices.values
+[stdout] 02-15 10:20:37.624  6840  6893 D ReflectedParamUpdater: extent() != 1 for single value type: input.buffers.allocator-ids.values
+[stdout] 02-15 10:20:37.624  6840  6893 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.allocator-ids.values
+[stdout] 02-15 10:20:37.624  6840  6893 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.allocator-ids.values
+[stdout] 02-15 10:20:37.624  6840  6893 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.pool-ids.values
+[stdout] 02-15 10:20:37.624  6840  6893 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.pool-ids.values
+[stdout] 02-15 10:20:37.624  6840  6893 D ReflectedParamUpdater: ignored struct field coded.color-format.locations
+[stdout] 02-15 10:20:37.624  6840  6893 D CCodecConfig: ignoring local param raw.size (0xd2001800) as it is already supported
+[stdout] 02-15 10:20:37.624  6840  6893 D CCodecConfig: ignoring local param raw.color (0xd2001809) as it is already supported
+[stdout] 02-15 10:20:37.624  6840  6893 D ReflectedParamUpdater: ignored struct field raw.hdr-static-info.mastering
+[stdout] 02-15 10:20:37.625  6840  6893 I CCodecConfig: query failed after returning 11 values (BAD_INDEX)
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig: c2 config is Dict {
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 coded.pl.level = 20496
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 coded.pl.profile = 20481
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 coded.vui.color.matrix = 0
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 coded.vui.color.primaries = 0
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 coded.vui.color.range = 2
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 coded.vui.color.transfer = 0
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 default.color.matrix = 0
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 default.color.primaries = 0
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 default.color.range = 0
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 default.color.transfer = 0
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 input.buffers.max-size.value = 57600
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 input.delay.actual.value = 0
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   string input.media-type.value = "video/avc"
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   string output.media-type.value = "video/raw"
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 raw.color.matrix = 0
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 raw.color.primaries = 0
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 raw.color.range = 2
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 raw.color.transfer = 0
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 raw.max-size.height = 240
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 raw.max-size.width = 320
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 raw.pixel-format.value = 35
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::i32 raw.rotation.flip = 0
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::i32 raw.rotation.value = 0
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 raw.sar.height = 1
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 raw.sar.width = 1
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 raw.size.height = 240
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 raw.size.width = 320
+[stdout] 02-15 10:20:37.625  6840  6893 D CCodecConfig:   c2::u32 raw.surface-scaling.value = 
+[stdout] 02-15 10:20:37.625  6840  6893 W ColorUtils: expected specified color aspects (2:0:0:0)
+[stdout] 02-15 10:20:37.626  6840  6886 D EGL_emulation: eglMakeCurrent: 0x758c8458e0: ver 3 0 (tinfo 0x7576d7d2e0)
+[stdout] 02-15 10:20:37.626  6840  6889 D SurfaceUtils: connecting to surface 0x757d4c0010, reason connectToSurface
+[stdout] 02-15 10:20:37.626  6840  6889 I MediaCodec: [c2.android.avc.decoder] setting surface generation to 7004161
+[stdout] 02-15 10:20:37.626  6840  6889 D SurfaceUtils: disconnecting from surface 0x757d4c0010, reason connectToSurface(reconnect)
+[stdout] 02-15 10:20:37.626  6840  6889 D SurfaceUtils: connecting to surface 0x757d4c0010, reason connectToSurface(reconnect)
+[stdout] 02-15 10:20:37.626  6840  6880 I flutter : Loading scenario display_texture
+[stdout] 02-15 10:20:37.627  6840  6896 D CCodec  : allocate(c2.android.avc.decoder)
+[stdout] 02-15 10:20:37.627  1384  2162 E gralloc_ranchu: gralloc_alloc: Requested auto format selection, but no known format for this usage: 192 x 256, usage 0
+[stdout] 02-15 10:20:37.627  6840  6893 E GraphicBufferAllocator: Failed to allocate (192 x 256) layerCount 1 format 34 usage 0: 3
+[stdout] 02-15 10:20:37.627  6840  6893 E BufferQueueProducer: [ImageReader-192x256f22m2-6840-0] dequeueBuffer: createGraphicBuffer failed
+[stdout] --------- beginning of crash
+[stdout] 02-15 10:20:37.627  6840  6893 F libc    : Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x756f15a214 in tid 6893 (CodecLooper), pid 6840 (utter.scenarios)
+[stdout] 02-15 10:20:37.633  6840  6896 I CCodec  : setting up 'default' as default (vendor) store
+[stdout] 02-15 10:20:37.636  6840  6896 I CCodec  : Created component [c2.android.avc.decoder]
+[stdout] 02-15 10:20:37.637  6840  6896 D CCodecConfig: read media type: video/avc
+[stdout] 02-15 10:20:37.637  6840  6886 D eglCodecCommon: setVertexArrayObject: set vao to 0 (0) 1 2
+[stdout] 02-15 10:20:37.638  6840  6896 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.max-count.values
+[stdout] 02-15 10:20:37.638  6840  6896 D ReflectedParamUpdater: extent() != 1 for single value type: output.subscribed-indices.values
+[stdout] 02-15 10:20:37.638  6840  6896 D ReflectedParamUpdater: extent() != 1 for single value type: input.buffers.allocator-ids.values
+[stdout] 02-15 10:20:37.638  6840  6896 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.allocator-ids.values
+[stdout] 02-15 10:20:37.638  6840  6896 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.allocator-ids.values
+[stdout] 02-15 10:20:37.638  6840  6896 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.pool-ids.values
+[stdout] 02-15 10:20:37.638  6840  6896 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.pool-ids.values
+[stdout] 02-15 10:20:37.638  6840  6896 D ReflectedParamUpdater: ignored struct field coded.color-format.locations
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig: ignoring local param raw.size (0xd2001800) as it is already supported
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig: ignoring local param raw.color (0xd2001809) as it is already supported
+[stdout] 02-15 10:20:37.638  6840  6896 D ReflectedParamUpdater: ignored struct field raw.hdr-static-info.mastering
+[stdout] 02-15 10:20:37.638  6840  6896 I CCodecConfig: query failed after returning 11 values (BAD_INDEX)
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig: c2 config is Dict {
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 coded.pl.level = 20496
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 coded.pl.profile = 20481
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 coded.vui.color.matrix = 0
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 coded.vui.color.primaries = 0
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 coded.vui.color.range = 2
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 coded.vui.color.transfer = 0
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 default.color.matrix = 0
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 default.color.primaries = 0
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 default.color.range = 0
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 default.color.transfer = 0
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 input.buffers.max-size.value = 57600
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 input.delay.actual.value = 0
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   string input.media-type.value = "video/avc"
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   string output.media-type.value = "video/raw"
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 raw.color.matrix = 0
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 raw.color.primaries = 0
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 raw.color.range = 2
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 raw.color.transfer = 0
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 raw.max-size.height = 240
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 raw.max-size.width = 320
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 raw.pixel-format.value = 35
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::i32 raw.rotation.flip = 0
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::i32 raw.rotation.value = 0
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 raw.sar.height = 1
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 raw.sar.width = 1
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 raw.size.height = 240
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 raw.size.width = 320
+[stdout] 02-15 10:20:37.638  6840  6896 D CCodecConfig:   c2::u32 raw.surface-scaling.value = 
+[stdout] 02-15 10:20:37.638  6840  6896 W ColorUtils: expected specified color aspects (2:0:0:0)
+[stdout] 02-15 10:20:37.642  6840  6892 D SurfaceUtils: connecting to surface 0x7576eb4010, reason connectToSurface
+[stdout] 02-15 10:20:37.642  6840  6892 I MediaCodec: [c2.android.avc.decoder] setting surface generation to 7004162
+[stdout] 02-15 10:20:37.642  6840  6892 D SurfaceUtils: disconnecting from surface 0x7576eb4010, reason connectToSurface(reconnect)
+[stdout] 02-15 10:20:37.642  6840  6892 D SurfaceUtils: connecting to surface 0x7576eb4010, reason connectToSurface(reconnect)
+[stdout] 02-15 10:20:37.642  1384  2162 E gralloc_ranchu: gralloc_alloc: Requested auto format selection, but no known format for this usage: 192 x 256, usage 0
+[stdout] 02-15 10:20:37.642  6840  6896 E GraphicBufferAllocator: Failed to allocate (192 x 256) layerCount 1 format 34 usage 0: 3
+[stdout] 02-15 10:20:37.642  6840  6896 E BufferQueueProducer: [ImageReader-192x256f22m2-6840-1] dequeueBuffer: createGraphicBuffer failed
+[stdout] 02-15 10:20:37.650  1384  2162 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+[stdout] 02-15 10:20:37.651  6901  6901 I crash_dump64: obtaining output fd from tombstoned, type: kDebuggerdTombstone
+[stdout] 02-15 10:20:37.651  1593  1593 I /system/bin/tombstoned: received crash request for pid 6893
+[stdout] 02-15 10:20:37.651  6901  6901 I crash_dump64: performing dump of process 6840 (target tid = 6893)
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   : Build fingerprint: 'Android/sdk_gphone_arm64/generic_arm64:9/PSR1.210301.009.B6/9767327:userdebug/dev-keys'
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   : Revision: '0'
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   : ABI: 'arm64'
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   : pid: 6840, tid: 6893, name: CodecLooper  >>> dev.flutter.scenarios <<<
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   : signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x756f15a214
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   :     x0  000000757d9fee58  x1  000000756eb53f50  x2  000000757d400000  x3  ffffffff9a31b499
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   :     x4  001350fd7a000000  x5  0000000000000018  x6  0000007618ab4000  x7  00000000000518be
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   :     x8  000000756f15a210  x9  000000756f15a214  x10 0000000000000076  x11 0000000038bac926
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   :     x12 0000000000000018  x13 0000000065ce55f5  x14 002512f7f8ee4080  x15 000056d3b3ab5c7d
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   :     x16 00000076181a7c50  x17 000000761589ac10  x18 000000756eb53190  x19 00000075894c4180
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   :     x20 000000756eb54060  x21 000000757d4c0010  x22 000000761532fba8  x23 0000000000000000
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   :     x24 0000000000000000  x25 00000075933ddc19  x26 000000756eb54588  x27 0000000000000000
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   :     x28 000000756eb54588  x29 000000756eb53fb0
+[stdout] 02-15 10:20:37.653  6901  6901 F DEBUG   :     sp  000000756eb53f40  lr  000000756f108090  pc  000000761589ac20
+[stdout] 02-15 10:20:37.653  1735  1758 I ActivityManager: Displayed dev.flutter.scenarios/.ExternalTextureFlutterActivity: +174ms
+[stdout] 02-15 10:20:37.654  2846  2846 I GoogleInputMethod: onFinishInput() : Dummy InputConnection bound
+[stdout] 02-15 10:20:37.654  2846  2846 I GoogleInputMethod: onStartInput() : Dummy InputConnection bound
+[stdout] 02-15 10:20:37.655  6901  6901 F DEBUG   : 
+[stdout] 02-15 10:20:37.655  6901  6901 F DEBUG   : backtrace:
+[stdout] 02-15 10:20:37.655  6901  6901 F DEBUG   :     #00 pc 000000000000bc20  /system/lib64/libutils.so (android::RefBase::incStrong(void const*) const+16)
+[stdout] 02-15 10:20:37.655  6901  6901 F DEBUG   :     #01 pc 000000000004a08c  /system/lib64/libstagefright_ccodec.so (android::CCodecBufferChannel::setSurface(android::sp<android::Surface> const&)+240)
+[stdout] 02-15 10:20:37.655  6901  6901 F DEBUG   :     #02 pc 0000000000036c98  /system/lib64/libstagefright_ccodec.so (_ZNSt3__110__function6__funcIZN7android6CCodec9configureERKNS2_2spINS2_8AMessageEEEE3$_4NS_9allocatorIS9_EEFivEEclEv+660)
+[stdout] 02-15 10:20:37.655  6901  6901 F DEBUG   :     #03 pc 000000000002e174  /system/lib64/libstagefright_ccodec.so (android::CCodec::configure(android::sp<android::AMessage> const&)+724)
+[stdout] 02-15 10:20:37.655  6901  6901 F DEBUG   :     #04 pc 0000000000029e7c  /system/lib64/libstagefright_ccodec.so (android::CCodec::onMessageReceived(android::sp<android::AMessage> const&)+776)
+[stdout] 02-15 10:20:37.655  6901  6901 F DEBUG   :     #05 pc 0000000000019904  /system/lib64/libstagefright_foundation.so (android::AHandler::deliverMessage(android::sp<android::AMessage> const&)+92)
+[stdout] 02-15 10:20:37.655  6901  6901 F DEBUG   :     #06 pc 0000000000020f6c  /system/lib64/libstagefright_foundation.so (android::AMessage::deliver()+180)
+[stdout] 02-15 10:20:37.655  6901  6901 F DEBUG   :     #07 pc 000000000001c48c  /system/lib64/libstagefright_foundation.so (android::ALooper::loop()+556)
+[stdout] 02-15 10:20:37.655  6901  6901 F DEBUG   :     #08 pc 000000000000f974  /system/lib64/libutils.so (android::Thread::_threadLoop(void*)+276)
+[stdout] 02-15 10:20:37.655  6901  6901 F DEBUG   :     #09 pc 0000000000081080  /system/lib64/libc.so (__pthread_start(void*)+36)
+[stdout] 02-15 10:20:37.655  6901  6901 F DEBUG   :     #10 pc 0000000000023510  /system/lib64/libc.so (__start_thread+68)
+[stdout] 02-15 10:20:37.661  6840  6881 D eglCodecCommon: setVertexArrayObject: set vao to 0 (0) 1 0
+[stdout] 02-15 10:20:37.667  1384  2744 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+[stdout] 02-15 10:20:37.667  1384  2162 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9826304
+[stdout] 02-15 10:20:37.678  2863  4286 D RcsProvisioning: No backup token found
+[stdout] 02-15 10:20:37.678  2863  4286 D RcsProvisioning: Clearing backup token
+[stdout] 02-15 10:20:37.678  2863  4286 D RcsProvisioning: Exception while getting subscriber Id. Using default
+[stdout] 02-15 10:20:37.686  2863  4286 I CarrierServices: [209] RcsStateProvider.onMigrationComplete: Deleted transfers file: false
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: 	at java.io.FileInputStream.open0(Native Method)
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: 	at java.io.FileInputStream.open(FileInputStream.java:231)
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: 	at ion.a(SourceFile:2)
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: 	at idl.a(SourceFile:4)
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: 	at idm.a(SourceFile:7)
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: 	at iez.buildConferencesFileName(SourceFile:30)
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:48)
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+[stdout] 02-15 10:20:37.687  2863  4286 W RcsProvisioning: 	at android.os.Binder.execTransact(Binder.java:731)
+[stdout] 02-15 10:20:37.687  2863  4286 D RcsProvisioning: Retrieving backup token
+[stdout] 02-15 10:20:37.687  2863  4286 D RcsProvisioning: Exception while getting subscriber Id. Using default
+[stdout] 02-15 10:20:37.785  1572  1709 W SurfaceFlinger: Attempting to set client state on removed layer: Surface(name=AppWindowToken{7e3563e token=Token{2196f9 ActivityRecord{73fc9c0 u0 dev.flutter.scenarios/.ExternalTextureFlutterActivity t10}}})/@0x5c21b8f - animation-leash#0
+[stdout] 02-15 10:20:37.785  1572  1709 W SurfaceFlinger: Attempting to set client state on removed layer: Surface(name=AppWindowToken{310ffb3 token=Token{f40d922 ActivityRecord{df186ed u0 com.android.launcher3/.Launcher t5}}})/@0x278ca58 - animation-leash#0
+[stdout] 02-15 10:20:37.785  1572  1709 W SurfaceFlinger: Attempting to destroy on removed layer: Surface(name=AppWindowToken{7e3563e token=Token{2196f9 ActivityRecord{73fc9c0 u0 dev.flutter.scenarios/.ExternalTextureFlutterActivity t10}}})/@0x5c21b8f - animation-leash#0
+[stdout] 02-15 10:20:37.785  1572  1709 W SurfaceFlinger: Attempting to destroy on removed layer: Surface(name=AppWindowToken{310ffb3 token=Token{f40d922 ActivityRecord{df186ed u0 com.android.launcher3/.Launcher t5}}})/@0x278ca58 - animation-leash#0
+[stdout] 02-15 10:20:37.802  2647  2730 D EGL_emulation: eglMakeCurrent: 0x758c83b5e0: ver 3 0 (tinfo 0x758c80df40)
+[stdout] 02-15 10:20:37.809  1593  1593 E /system/bin/tombstoned: Tombstone written to: /data/tombstones/tombstone_05
+[stdout] 02-15 10:20:37.813  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.DROPBOX_ENTRY_ADDED flg=0x10 (has extras) } to com.google.android.gms/.stats.service.DropBoxEntryAddedReceiver
+[stdout] 02-15 10:20:37.813  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.DROPBOX_ENTRY_ADDED flg=0x10 (has extras) } to com.google.android.gms/.chimera.GmsIntentOperationService$PersistentTrustedReceiver
+[stdout] 02-15 10:20:37.816  1933  2157 D EGL_emulation: eglMakeCurrent: 0x75795b6c40: ver 3 0 (tinfo 0x758aeecba0)
+[stdout] 02-15 10:20:37.818  1933  2157 D EGL_emulation: eglMakeCurrent: 0x75795b6c40: ver 3 0 (tinfo 0x758aeecba0)
+[stdout] 02-15 10:20:37.819  1572  1643 W SurfaceFlinger: Attempting to set client state on removed layer: Splash Screen dev.flutter.scenarios#0
+[stdout] 02-15 10:20:37.819  1572  1643 W SurfaceFlinger: Attempting to destroy on removed layer: Splash Screen dev.flutter.scenarios#0
+[stdout] 02-15 10:20:37.826  2863  4286 D RcsProvisioning: No backup token found
+[stdout] 02-15 10:20:37.828  3621  3621 I CarrierServices: [2] aww.a: Unbinding RcsMigrationService
+[stdout] 02-15 10:20:37.828  2863  5308 I CarrierServices: [379] RcsStateProvider.onMigrationComplete: Migration complete.
+[stdout] 02-15 10:20:37.829  2863  5308 I CarrierServices: [379] inq.shouldUseCarrierServicesApkForV1Apis: Checking if using CarrierServices.apk is possible. Enabled: true, isAtLeastM: true, runningInsideBugle: true
+[stdout] 02-15 10:20:37.829  2863  5308 I CarrierServices: [379] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.829  2863  5308 I CarrierServices: [379] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.829  2863  5308 I CarrierServices: [379] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.829  2863  5308 I CarrierServices: [379] RcsStateProvider.onMigrationComplete: Rcs Engine should be running in cs.apk. Stopping JibeService.
+[stdout] 02-15 10:20:37.830  2863  5308 I CarrierServices: [379] RcsStateProvider.onMigrationComplete: JibeService stopped: true
+[stdout] 02-15 10:20:37.830  2863  5308 I CarrierServices: [379] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.830  2863  5308 I CarrierServices: [379] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.830  2863  5308 I CarrierServices: [379] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.830  2863  5308 I CarrierServices: [379] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.830  2863  5308 I CarrierServices: [379] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.830  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.chatsession.ChatSessionService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.830  2863  2863 V BugleRcs: com.google.android.rcs.client.chatsession.ChatSessionService RCS service connected
+[stdout] 02-15 10:20:37.830  2863  5308 I CarrierServices: [379] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.831  2863  5308 I CarrierServices: [379] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.831  2863  5308 I CarrierServices: [379] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.831  2863  5308 I CarrierServices: [379] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.831  2863  5308 I CarrierServices: [379] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.831  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.events.EventService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.831  2863  2863 V BugleRcs: com.google.android.rcs.client.events.EventService RCS service connected
+[stdout] 02-15 10:20:37.831  2863  5308 I CarrierServices: [379] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.831  2863  5308 I CarrierServices: [379] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.831  2863  5308 I CarrierServices: [379] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.832  2863  5308 I CarrierServices: [379] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.832  2863  5308 I CarrierServices: [379] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.832  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.contacts.ContactsService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.832  2863  2863 V BugleRcs: com.google.android.rcs.client.contacts.ContactsService RCS service connected
+[stdout] 02-15 10:20:37.832  2863  5308 I CarrierServices: [379] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.832  2863  5308 I CarrierServices: [379] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.832  2863  5308 I CarrierServices: [379] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.832  2863  5308 I CarrierServices: [379] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.832  2863  5308 I CarrierServices: [379] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.832  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.filetransfer.FileTransferService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.832  2863  2863 V BugleRcs: com.google.android.rcs.client.filetransfer.FileTransferService RCS service connected
+[stdout] 02-15 10:20:37.832  2863  5308 I CarrierServices: [379] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.833  2863  5308 I CarrierServices: [379] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.833  2863  5308 I CarrierServices: [379] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.833  2863  5308 I CarrierServices: [379] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.833  2863  5308 I CarrierServices: [379] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.833  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.locationsharing.LocationSharingService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.833  2863  2863 V BugleRcs: com.google.android.rcs.client.locationsharing.LocationSharingService RCS service connected
+[stdout] 02-15 10:20:37.834  2863  5308 I CarrierServices: [379] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.835  2863  5308 I CarrierServices: [379] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.835  2863  5308 I CarrierServices: [379] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.839  2863  5308 I CarrierServices: [379] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.839  2863  5308 I CarrierServices: [379] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.839  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.ims.ImsConnectionTrackerService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.839  2863  2863 V BugleRcs: com.google.android.rcs.client.ims.ImsConnectionTrackerService RCS service connected
+[stdout] 02-15 10:20:37.840  2863  2863 V BugleRcs: kicking off RCS sending/receiving
+[stdout] 02-15 10:20:37.840  2863  2863 V BugleAction: no RCS because we're not registered
+[stdout] 02-15 10:20:37.840  2863  5308 I CarrierServices: [379] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.840  2863  5308 I CarrierServices: [379] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.840  2863  5308 I CarrierServices: [379] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.840  2863  5308 I CarrierServices: [379] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.840  2863  5308 I CarrierServices: [379] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.841  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.profile.RcsProfileService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.841  2863  2863 V BugleRcs: com.google.android.rcs.client.profile.RcsProfileService RCS service connected
+[stdout] 02-15 10:20:37.841  2863  2863 V BugleRcs: kicking off RCS sending/receiving
+[stdout] 02-15 10:20:37.841  2863  5308 I CarrierServices: [379] inq.e: Network Operator: 310260
+[stdout] 02-15 10:20:37.841  2863  2863 V BugleAction: no RCS because we're not registered
+[stdout] 02-15 10:20:37.841  3621  3657 W CarrierServices: [190] bmc.a: No config URL. RCS will be disabled!
+[stdout] 02-15 10:20:37.841  2863  2863 I BugleRcs: RcsAvailability ACS url: null
+[stdout] 02-15 10:20:37.841  2863  5308 I CarrierServices: [379] inq.e: carrierWithOldEcApis: false
+[stdout] 02-15 10:20:37.841  2863  5308 I CarrierServices: [379] inq.e: hasDialerThatSupportsNewEc: false
+[stdout] 02-15 10:20:37.841  2863  5308 I CarrierServices: [379] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+[stdout] 02-15 10:20:37.841  2863  5308 I CarrierServices: [379] jsn.connect: Binding to JibeService in CarrierServices.
+[stdout] 02-15 10:20:37.841  2863  2863 D RcsClientLib: Service com.google.android.rcs.client.businessinfo.BusinessInfoService connected. Will notify listeners: true
+[stdout] 02-15 10:20:37.841  2863  2863 V BugleRcs: com.google.android.rcs.client.businessinfo.BusinessInfoService RCS service connected
+[stdout] 02-15 10:20:37.841  2863  2863 V BugleRcs: kicking off RCS sending/receiving
+[stdout] 02-15 10:20:37.842  2863  2863 V BugleAction: no RCS because we're not registered
+[stdout] 02-15 10:20:37.842  3621  3657 W CarrierServices: [190] bmc.a: No config URL. RCS will be disabled!
+[stdout] 02-15 10:20:37.842  2863  2863 I BugleRcs: RcsAvailability ACS url: null
+[stdout] 02-15 10:20:37.842  2863  5308 W RcsProvisioning: Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:37.842  2863  5308 W RcsProvisioning: java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:37.842  2863  5308 W RcsProvisioning: 	at java.io.FileInputStream.open0(Native Method)
+[stdout] 02-15 10:20:37.842  2863  5308 W RcsProvisioning: 	at java.io.FileInputStream.open(FileInputStream.java:231)
+[stdout] 02-15 10:20:37.842  2863  5308 W RcsProvisioning: 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+[stdout] 02-15 10:20:37.842  2863  5308 W RcsProvisioning: 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+[stdout] 02-15 10:20:37.842  2863  5308 W RcsProvisioning: 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+[stdout] 02-15 10:20:37.842  2863  5308 W RcsProvisioning: 	at ion.a(SourceFile:2)
+[stdout] 02-15 10:20:37.842  2863  5308 W RcsProvisioning: 	at idl.a(SourceFile:4)
+[stdout] 02-15 10:20:37.842  2863  5308 W RcsProvisioning: 	at idm.a(SourceFile:7)
+[stdout] 02-15 10:20:37.842  2863  5308 W RcsProvisioning: 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:27)
+[stdout] 02-15 10:20:37.842  2863  5308 W RcsProvisioning: 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+[stdout] 02-15 10:20:37.842  2863  5308 W RcsProvisioning: 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+[stdout] 02-15 10:20:37.842  2863  5308 W RcsProvisioning: 	at android.os.Binder.execTransact(Binder.java:731)
+[stdout] 02-15 10:20:37.842  2863  5308 D RcsProvisioning: Retrieving backup token
+[stdout] 02-15 10:20:37.843  2863  5308 D RcsProvisioning: Exception while getting subscriber Id. Using default
+[stdout] 02-15 10:20:37.857  1735  1810 W InputDispatcher: channel 'ad6b076 dev.flutter.scenarios/dev.flutter.scenarios.ExternalTextureFlutterActivity (server)' ~ Consumer closed input channel or an error occurred.  events=0x9
+[stdout] 02-15 10:20:37.857  1735  1810 E InputDispatcher: channel 'ad6b076 dev.flutter.scenarios/dev.flutter.scenarios.ExternalTextureFlutterActivity (server)' ~ Channel is unrecoverably broken and will be disposed!
+[stdout] 02-15 10:20:37.857  1588  2005 V C2Store : in ~ComponentModule
+[stdout] 02-15 10:20:37.857  1588  2005 V C2Store : unloading dll
+[stdout] 02-15 10:20:37.858  1735  3126 I ActivityManager: Process dev.flutter.scenarios (pid 6840) has died: fore TOP 
+[stdout] 02-15 10:20:37.858  1735  3126 W ActivityManager: Force removing ActivityRecord{73fc9c0 u0 dev.flutter.scenarios/.ExternalTextureFlutterActivity t10}: app died, no saved state
+[stdout] 02-15 10:20:37.858  1735  1753 W libprocessgroup: kill(-6840, 9) failed: No such process
+[stdout] 02-15 10:20:37.859  1735  2050 I WindowManager: WIN DEATH: Window{ad6b076 u0 dev.flutter.scenarios/dev.flutter.scenarios.ExternalTextureFlutterActivity}
+[stdout] 02-15 10:20:37.859  1735  2050 W InputDispatcher: Attempted to unregister already unregistered input channel 'ad6b076 dev.flutter.scenarios/dev.flutter.scenarios.ExternalTextureFlutterActivity (server)'
+[stdout] 02-15 10:20:37.859  1573  1573 I Zygote  : Process 6840 exited due to signal (11)
+[stdout] 02-15 10:20:37.859  1572  1709 W SurfaceFlinger: Attempting to destroy on removed layer: AppWindowToken{7e3563e token=Token{2196f9 ActivityRecord{73fc9c0 u0 dev.flutter.scenarios/.ExternalTextureFlutterActivity t10}}}#0
+[stdout] 02-15 10:20:37.860  1735  3126 W ActivityManager: Crash of app dev.flutter.scenarios running instrumentation ComponentInfo{dev.flutter.scenarios.test/dev.flutter.TestRunner}
+[stdout] 02-15 10:20:37.860  1735  3126 I ActivityManager: Force stopping dev.flutter.scenarios appid=10098 user=0: finished inst
+[stdout] 02-15 10:20:37.860  1735  6915 W Binder  : Outgoing transactions from this process must be FLAG_ONEWAY
+[stdout] 02-15 10:20:37.860  1735  6915 W Binder  : java.lang.Throwable
+[stdout] 02-15 10:20:37.860  1735  6915 W Binder  : 	at android.os.BinderProxy.transact(Binder.java:1114)
+[stdout] 02-15 10:20:37.860  1735  6915 W Binder  : 	at android.app.IInstrumentationWatcher$Stub$Proxy.instrumentationFinished(IInstrumentationWatcher.java:164)
+[stdout] 02-15 10:20:37.860  1735  6915 W Binder  : 	at com.android.server.am.InstrumentationReporter$MyThread.run(InstrumentationReporter.java:86)
+[stdout] 02-15 10:20:37.860  6827  6827 D AndroidRuntime: Shutting down VM
+[stdout] 02-15 10:20:37.862  1735  1758 W ActivityManager: setHasOverlayUi called on unknown pid: 6840
+[stdout] 02-15 10:20:37.868  1572  1572 W SurfaceFlinger: couldn't log to binary event log: overflow.
+[stdout] 02-15 10:20:37.888  1384  2162 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+[stdout] 02-15 10:20:37.889  1384  2162 I chatty  : uid=1000(system) HwBinder:1384_2 identical 1 line
+[stdout] 02-15 10:20:37.889  1384  2162 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+[stdout] 02-15 10:20:37.890  2846  2846 I GoogleInputMethod: onFinishInput() : Dummy InputConnection bound
+[stdout] 02-15 10:20:37.890  2846  2846 I GoogleInputMethod: onStartInput() : Dummy InputConnection bound
+[stdout] 02-15 10:20:37.896  1735  1753 W libprocessgroup: kill(-6840, 9) failed: No such process
+[stdout] 02-15 10:20:37.896  1735  1753 I libprocessgroup: Successfully killed process cgroup uid 10098 pid 6840 in 37ms
+[stdout] 02-15 10:20:37.903  2647  2730 D EGL_emulation: eglMakeCurrent: 0x758c83b5e0: ver 3 0 (tinfo 0x758c80df40)
+[stdout] 02-15 10:20:37.908  1572  1572 D SurfaceFlinger: duplicate layer name: changing Surface(name=773ae4d StatusBar)/@0x80ae899 - animation-leash to Surface(name=773ae4d StatusBar)/@0x80ae899 - animation-leash#1
+[stdout] 02-15 10:20:37.921  1933  2157 D EGL_emulation: eglMakeCurrent: 0x75795b6c40: ver 3 0 (tinfo 0x758aeecba0)
+[stdout] 02-15 10:20:37.929  1735  1750 I ActivityManager: Force stopping dev.flutter.scenarios appid=10098 user=-1: deletePackageX
+[stdout] 02-15 10:20:37.936  1933  2157 D EGL_emulation: eglMakeCurrent: 0x75795b6c40: ver 3 0 (tinfo 0x758aeecba0)
+[stdout] 02-15 10:20:37.943  2863  5308 D RcsProvisioning: No backup token found
+[stdout] 02-15 10:20:37.943  2863  5308 D RcsProvisioning: Clearing backup token
+[stdout] 02-15 10:20:37.943  2863  5308 D RcsProvisioning: Exception while getting subscriber Id. Using default
+[stdout] 02-15 10:20:37.948  2863  5308 I CarrierServices: [379] RcsStateProvider.onMigrationComplete: Deleted transfers file: false
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: 	at java.io.FileInputStream.open0(Native Method)
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: 	at java.io.FileInputStream.open(FileInputStream.java:231)
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: 	at ion.a(SourceFile:2)
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: 	at idl.a(SourceFile:4)
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: 	at idm.a(SourceFile:7)
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: 	at iez.buildConferencesFileName(SourceFile:30)
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:48)
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+[stdout] 02-15 10:20:37.972  2863  5308 W RcsProvisioning: 	at android.os.Binder.execTransact(Binder.java:731)
+[stdout] 02-15 10:20:37.972  2863  5308 D RcsProvisioning: Retrieving backup token
+[stdout] 02-15 10:20:37.972  2863  5308 D RcsProvisioning: Exception while getting subscriber Id. Using default
+[stdout] 02-15 10:20:37.973  1579  1579 I keystore: clear_uid 10098
+[stdout] 02-15 10:20:37.973  1735  1763 D PackageManager: Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+[stdout] 02-15 10:20:37.973  1735  1763 D PackageManager: Clear ephemeral installer activity
+[stdout] 02-15 10:20:37.987  1735  1763 I system_server: Explicit concurrent copying GC freed 45480(2MB) AllocSpace objects, 16(640KB) LOS objects, 40% free, 8MB/14MB, paused 17us total 14.150ms
+[stdout] 02-15 10:20:38.012  1735  1763 I ActivityManager: Force stopping dev.flutter.scenarios appid=10098 user=0: pkg removed
+[stdout] 02-15 10:20:38.015  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_REMOVED dat=package:dev.flutter.scenarios flg=0x4000010 (has extras) } to com.android.musicfx/.Compatibility$Receiver
+[stdout] 02-15 10:20:38.015  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_REMOVED dat=package:dev.flutter.scenarios flg=0x4000010 (has extras) } to com.google.android.gms/.games.chimera.GamesSystemBroadcastReceiverProxy
+[stdout] 02-15 10:20:38.015  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_REMOVED dat=package:dev.flutter.scenarios flg=0x4000010 (has extras) } to com.google.android.gms/.chimera.GmsIntentOperationService$PersistentTrustedReceiver
+[stdout] 02-15 10:20:38.015  1735  1750 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_REMOVED dat=package:dev.flutter.scenarios flg=0x4000010 (has extras) } to com.google.android.googlequicksearchbox/com.google.android.apps.gsa.googlequicksearchbox.GelStubAppWatcher
+[stdout] 02-15 10:20:38.016  1735  1874 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+[stdout] 02-15 10:20:38.022  1964  1964 D CarrierSvcBindHelper: No carrier app for: 0
+[stdout] 02-15 10:20:38.024  1735  1735 W system_server: Unknown chunk type '200'.
+[stdout] 02-15 10:20:38.025  1735  1735 D ZenLog  : config: removeAutomaticZenRules,ZenModeConfig[user=0,allowAlarms=true,allowMedia=true,allowSystem=false,allowReminders=false,allowEvents=false,allowCalls=true,allowRepeatCallers=true,allowMessages=false,allowCallsFrom=stars,allowMessagesFrom=contacts,suppressedVisualEffects=511,areChannelsBypassingDnd=false,automaticRules={EVENTS_DEFAULT_RULE=ZenRule[enabled=false,snoozing=false,name=Event,zenMode=ZEN_MODE_IMPORTANT_INTERRUPTIONS,conditionId=condition://android/event?userId=-10000&calendar=&reply=1,condition=Condition[id=condition://android/event?userId=-10000&calendar=&reply=1,summary=...,line1=...,line2=...,icon=0,state=STATE_FALSE,flags=2],component=ComponentInfo{android/com.android.server.notification.EventConditionProvider},id=EVENTS_DEFAULT_RULE,creationTime=1679084832814,enabler=null], EVERY_NIGHT_DEFAULT_RULE=ZenRule[enabled=false,snoozing=false,name=Sleeping,zenMode=ZEN_MODE_IMPORTANT_INTERRUPTIONS,conditionId=condition://android/schedule?days=1.2.3.4.5.6.7&start=22.0&end=7.0&exitAtAlarm=true,condition=Condition[id=condition://android/schedule?days=1.2.3.4.5.6.7&start=22.0&end=7.0&exitAtAlarm=true,summary=...,line1=...,line2=...,icon=0,state=STATE_FALSE,flags=2],component=ComponentInfo{android/com.android.server.notification.ScheduleConditionProvider},id=EVERY_NIGHT_DEFAULT_RULE,creationTime=1679084832814,enabler=null]},manualRule=null],Diff[]
+[stdout] 02-15 10:20:38.025  1735  1735 I ConditionProviders: Disallowing condition provider dev.flutter.scenarios
+[stdout] 02-15 10:20:38.026  1735  1811 I InputReader: Reconfiguring input devices.  changes=0x00000010
+[stdout] 02-15 10:20:38.026  4770  6816 I BlockstoreStorage: Clearing all the Blockstore Data for package dev.flutter.scenarios [CONTEXT service_id=258 ]
+[stdout] 02-15 10:20:38.026  4770  6816 I BlockstoreStorage: Clearing all the Blockstore Data for 1 packages [CONTEXT service_id=258 ]
+[stdout] 02-15 10:20:38.030  1735  1846 D WifiConfigManager: Remove all networks for app ApplicationInfo{b46fa72 dev.flutter.scenarios}
+[stdout] 02-15 10:20:38.031  1735  1735 D ZenLog  : set_zen_mode: off,removeAutomaticZenRules
+[stdout] 02-15 10:20:38.033  4770  4876 E Icing   : Couldn't handle android.intent.action.PACKAGE_REMOVED intent due to initialization failure.
+[stdout] 02-15 10:20:38.035  4770  4876 W Icing   : IndexManager failed to initialize. AppIndex.API is unavailable.
+[stdout] 02-15 10:20:38.041  1735  2283 W ActivityManager: Unable to start service Intent { act=com.android.vending.developergroupidinfo.IDeveloperGroupIdInfoService.BIND cmp=com.android.vending/com.google.android.finsky.developergroupidinfo.DeveloperGroupIdInfoService } U=0: not found
+[stdout] 02-15 10:20:38.044  1735  1941 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@5ee1496)
+[stdout] 02-15 10:20:38.045  4770  4770 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+[stdout] 02-15 10:20:38.045  4770  4770 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+[stdout] 02-15 10:20:38.046  4770  4876 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=ContactsIndexer serviceId=33
+[stdout] 02-15 10:20:38.047  4770  4889 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=AppsCorpus serviceId=36
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: Apps indexing failed. [CONTEXT service_id=255 ]
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: ciev: API: AppIndexing.API is not available on this device. Connection failed with: ConnectionResult{statusCode=API_UNAVAILABLE, resolution=null, message=null}
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at ciez.a(:com.google.android.gms@214515028@21.45.15 (100400-411636772):2)
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at wlo.c(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at wof.p(:com.google.android.gms@214515028@21.45.15 (100400-411636772):4)
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at wof.d(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at wof.g(:com.google.android.gms@214515028@21.45.15 (100400-411636772):19)
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at wof.onConnectionFailed(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at xgi.gE(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at xfi.b(:com.google.android.gms@214515028@21.45.15 (100400-411636772):1)
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at xez.a(:com.google.android.gms@214515028@21.45.15 (100400-411636772):7)
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at xfc.handleMessage(:com.google.android.gms@214515028@21.45.15 (100400-411636772):23)
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at android.os.Handler.dispatchMessage(Handler.java:106)
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at alyk.jj(:com.google.android.gms@214515028@21.45.15 (100400-411636772):0)
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at alyk.dispatchMessage(:com.google.android.gms@214515028@21.45.15 (100400-411636772):11)
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at android.os.Looper.loop(Looper.java:193)
+[stdout] 02-15 10:20:38.047  4770  4770 W GmscoreIpa: 	at android.os.HandlerThread.run(HandlerThread.java:65)
+[stdout] 02-15 10:20:38.047  4770  4889 W Icing   : IndexManager failed to initialize. SearchIndex.API is unavailable.
+[stdout] 02-15 10:20:38.047  1735  1751 D AutofillUI: destroySaveUiUiThread(): already destroyed
+[stdout] 02-15 10:20:38.047  1735  1749 D AutofillManagerServiceImpl: Set component for user 0 as AutofillServiceInfo[ServiceInfo{cb4dded com.google.android.gms.autofill.service.AutofillService}, settings:com.google.android.gms.autofill.ui.AutofillSettingsActivity, hasCompatPckgs:false]
+[stdout] 02-15 10:20:38.047  1735  1750 I ActivityManager: Force stopping dev.flutter.scenarios.test appid=10099 user=-1: deletePackageX
+[stdout] 02-15 10:20:38.047  4770  4770 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+[stdout] 02-15 10:20:38.048  4770  4876 W Icing   : IndexManager failed to initialize. SearchIndex.API is unavailable.
+[stdout] 02-15 10:20:38.048  4770  6820 W IcingInternalCorpora: Couldn't fetch status for corpus apps
+[stdout] 02-15 10:20:38.048  4770  6804 W IcingInternalCorpora: Failed to get global search sources
+[stdout] 02-15 10:20:38.048  1735  1749 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@5ee1496)
+[stdout] 02-15 10:20:38.051  4721  6812 I Fitness : FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_REMOVED [CONTEXT service_id=17 ]
+[stdout] 02-15 10:20:38.074  2863  5308 D RcsProvisioning: No backup token found
+[stdout] 02-15 10:20:38.101  3621  3621 I CarrierServices: [2] aww.a: Unbinding RcsMigrationService
+[stdout] 02-15 10:20:38.101  1579  1579 I keystore: clear_uid 10099
+[stdout] 02-15 10:20:38.103  1735  1763 D PackageManager: Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+[stdout] 02-15 10:20:38.103  1735  1763 D PackageManager: Clear ephemeral installer activity
+[stdout] 02-15 10:20:38.104  3621  3621 E CarrierServices: [2] btx.a: Invalid signature found for com.android.contacts: E39B7BFBE0A67D78292F6CC62E06CA27A2EBF255
+[stdout] 02-15 10:20:38.106  3621  3621 E CarrierServices: [2] btx.a: Invalid signature found for com.android.contacts: E39B7BFBE0A67D78292F6CC62E06CA27A2EBF255
+[stdout] 02-15 10:20:38.119  1735  1763 I system_server: Explicit concurrent copying GC freed 30159(1729KB) AllocSpace objects, 12(496KB) LOS objects, 40% free, 8MB/14MB, paused 18us total 15.908ms

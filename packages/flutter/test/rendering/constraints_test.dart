@@ -15,13 +15,13 @@ void main() {
     root = RenderPositionedBox(
       child: RenderConstrainedBox(
         additionalConstraints: BoxConstraints.tight(const Size(200.0, 200.0)),
-        child: test = RenderFractionallySizedOverflowBox(
-          widthFactor: 2.0,
-          heightFactor: 0.5,
-          child: leaf = RenderConstrainedBox(
-            additionalConstraints: const BoxConstraints.expand(),
-          ),
-        ),
+        child:
+            test = RenderFractionallySizedOverflowBox(
+              widthFactor: 2.0,
+              heightFactor: 0.5,
+              child:
+                  leaf = RenderConstrainedBox(additionalConstraints: const BoxConstraints.expand()),
+            ),
       ),
     );
     layout(root);
@@ -38,16 +38,24 @@ void main() {
 
     result = 'no exception';
     try {
-      const BoxConstraints constraints = BoxConstraints(minWidth: double.nan, maxWidth: double.nan, minHeight: 2.0, maxHeight: double.nan);
+      const BoxConstraints constraints = BoxConstraints(
+        minWidth: double.nan,
+        maxWidth: double.nan,
+        minHeight: 2.0,
+        maxHeight: double.nan,
+      );
       assert(constraints.debugAssertIsValid());
     } on FlutterError catch (e) {
       result = '$e';
     }
-    expect(result, equals(
-      'BoxConstraints has NaN values in minWidth, maxWidth, and maxHeight.\n'
-      'The offending constraints were:\n'
-      '  BoxConstraints(NaN<=w<=NaN, 2.0<=h<=NaN; NOT NORMALIZED)',
-    ));
+    expect(
+      result,
+      equals(
+        'BoxConstraints has NaN values in minWidth, maxWidth, and maxHeight.\n'
+        'The offending constraints were:\n'
+        '  BoxConstraints(NaN<=w<=NaN, 2.0<=h<=NaN; NOT NORMALIZED)',
+      ),
+    );
 
     result = 'no exception';
     try {
@@ -56,23 +64,29 @@ void main() {
     } on FlutterError catch (e) {
       result = '$e';
     }
-    expect(result, equals(
-      'BoxConstraints has a NaN value in minHeight.\n'
-      'The offending constraints were:\n'
-      '  BoxConstraints(0.0<=w<=Infinity, NaN<=h<=Infinity; NOT NORMALIZED)',
-    ));
+    expect(
+      result,
+      equals(
+        'BoxConstraints has a NaN value in minHeight.\n'
+        'The offending constraints were:\n'
+        '  BoxConstraints(0.0<=w<=Infinity, NaN<=h<=Infinity; NOT NORMALIZED)',
+      ),
+    );
 
     result = 'no exception';
     try {
-      const BoxConstraints constraints = BoxConstraints(minHeight: double.nan, maxWidth: 0.0/0.0);
+      const BoxConstraints constraints = BoxConstraints(minHeight: double.nan, maxWidth: 0.0 / 0.0);
       assert(constraints.debugAssertIsValid());
     } on FlutterError catch (e) {
       result = '$e';
     }
-    expect(result, equals(
-      'BoxConstraints has NaN values in maxWidth and minHeight.\n'
-      'The offending constraints were:\n'
-      '  BoxConstraints(0.0<=w<=NaN, NaN<=h<=Infinity; NOT NORMALIZED)',
-    ));
+    expect(
+      result,
+      equals(
+        'BoxConstraints has NaN values in maxWidth and minHeight.\n'
+        'The offending constraints were:\n'
+        '  BoxConstraints(0.0<=w<=NaN, NaN<=h<=Infinity; NOT NORMALIZED)',
+      ),
+    );
   });
 }

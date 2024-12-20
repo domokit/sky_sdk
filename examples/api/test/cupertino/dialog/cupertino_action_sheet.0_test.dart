@@ -9,9 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('Perform an action on CupertinoActionSheet', (WidgetTester tester) async {
     const String actionText = 'Destructive Action';
-    await tester.pumpWidget(
-      const example.ActionSheetApp(),
-    );
+    await tester.pumpWidget(const example.ActionSheetApp());
 
     // Launch the CupertinoActionSheet.
     await tester.tap(find.byType(CupertinoButton));

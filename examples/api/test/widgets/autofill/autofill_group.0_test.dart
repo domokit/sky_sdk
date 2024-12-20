@@ -33,70 +33,32 @@ void main() {
       findsNWidgets(7), // 5 initial + 2 billing address fields
     );
 
-    final TextField shippingAddress1 = tester.widget(
-      find.byType(TextField).at(0),
-    );
-    expect(
-      shippingAddress1.autofillHints,
-      contains(AutofillHints.streetAddressLine1),
-    );
+    final TextField shippingAddress1 = tester.widget(find.byType(TextField).at(0));
+    expect(shippingAddress1.autofillHints, contains(AutofillHints.streetAddressLine1));
 
-    final TextField shippingAddress2 = tester.widget(
-      find.byType(TextField).at(1),
-    );
-    expect(
-      shippingAddress2.autofillHints,
-      contains(AutofillHints.streetAddressLine2),
-    );
+    final TextField shippingAddress2 = tester.widget(find.byType(TextField).at(1));
+    expect(shippingAddress2.autofillHints, contains(AutofillHints.streetAddressLine2));
 
-    final TextField billingAddress1 = tester.widget(
-      find.byType(TextField).at(2),
-    );
-    expect(
-      billingAddress1.autofillHints,
-      contains(AutofillHints.streetAddressLine1),
-    );
+    final TextField billingAddress1 = tester.widget(find.byType(TextField).at(2));
+    expect(billingAddress1.autofillHints, contains(AutofillHints.streetAddressLine1));
 
-    final TextField billingAddress2 = tester.widget(
-      find.byType(TextField).at(3),
-    );
-    expect(
-      billingAddress2.autofillHints,
-      contains(AutofillHints.streetAddressLine2),
-    );
+    final TextField billingAddress2 = tester.widget(find.byType(TextField).at(3));
+    expect(billingAddress2.autofillHints, contains(AutofillHints.streetAddressLine2));
 
     // Credit card information fields.
-    final TextField creditCardNumber = tester.widget(
-      find.byType(TextField).at(4),
-    );
-    expect(
-      creditCardNumber.autofillHints,
-      contains(AutofillHints.creditCardNumber),
-    );
+    final TextField creditCardNumber = tester.widget(find.byType(TextField).at(4));
+    expect(creditCardNumber.autofillHints, contains(AutofillHints.creditCardNumber));
 
-    final TextField creditCardSecurityCode = tester.widget(
-      find.byType(TextField).at(5),
-    );
-    expect(
-      creditCardSecurityCode.autofillHints,
-      contains(AutofillHints.creditCardSecurityCode),
-    );
+    final TextField creditCardSecurityCode = tester.widget(find.byType(TextField).at(5));
+    expect(creditCardSecurityCode.autofillHints, contains(AutofillHints.creditCardSecurityCode));
 
     // Contact phone number field.
-    final TextField phoneNumber = tester.widget(
-      find.byType(TextField).at(6),
-    );
-    expect(
-      phoneNumber.autofillHints,
-      contains(AutofillHints.telephoneNumber),
-    );
+    final TextField phoneNumber = tester.widget(find.byType(TextField).at(6));
+    expect(phoneNumber.autofillHints, contains(AutofillHints.telephoneNumber));
 
     await tester.tap(find.byType(Checkbox));
     await tester.pump();
 
-    expect(
-      find.byType(TextField),
-      findsNWidgets(5),
-    );
+    expect(find.byType(TextField), findsNWidgets(5));
   });
 }

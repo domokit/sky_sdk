@@ -17,8 +17,7 @@ Future<TaskResult> run() async {
   deviceOperatingSystem = DeviceOperatingSystem.android;
   final Device device = await devices.workingDevice;
   await device.unlock();
-  final Directory appDir =
-      dir(path.join(flutterDirectory.path, 'examples/hello_world'));
+  final Directory appDir = dir(path.join(flutterDirectory.path, 'examples/hello_world'));
 
   bool isUsingValidationLayers = false;
   bool hasValidationErrors = false;
@@ -27,38 +26,32 @@ Future<TaskResult> run() async {
 
   await inDirectory(appDir, () async {
     await flutter('packages', options: <String>['get']);
-    const String validationLayersMessage = 'Using the Impeller rendering backend (Vulkan with Validation Layers)';
-    final StreamSubscription<String> adb = device.logcat.listen(
-      (String data) {
-        if (data.contains('Using the Impeller rendering backend')) {
-          // Sometimes more than one of these will be printed out if there is a
-          // fallback.
-          if (!data.contains(validationLayersMessage)) {
-            invalidBackendCount += 1;
-          }
-          if (!didReceiveBackendMessage.isCompleted) {
-            didReceiveBackendMessage.complete();
-          }
+    const String validationLayersMessage =
+        'Using the Impeller rendering backend (Vulkan with Validation Layers)';
+    final StreamSubscription<String> adb = device.logcat.listen((String data) {
+      if (data.contains('Using the Impeller rendering backend')) {
+        // Sometimes more than one of these will be printed out if there is a
+        // fallback.
+        if (!data.contains(validationLayersMessage)) {
+          invalidBackendCount += 1;
         }
-        if (data.contains(validationLayersMessage)) {
-          isUsingValidationLayers = true;
+        if (!didReceiveBackendMessage.isCompleted) {
+          didReceiveBackendMessage.complete();
         }
-        // "ImpellerValidationBreak" comes from the engine:
-        // https://github.com/flutter/engine/blob/4160ebacdae2081d6f3160432f5f0dd87dbebec1/impeller/base/validation.cc#L40
-        if (data.contains('ImpellerValidationBreak')) {
-          hasValidationErrors = true;
-        }
-      },
-    );
+      }
+      if (data.contains(validationLayersMessage)) {
+        isUsingValidationLayers = true;
+      }
+      // "ImpellerValidationBreak" comes from the engine:
+      // https://github.com/flutter/engine/blob/4160ebacdae2081d6f3160432f5f0dd87dbebec1/impeller/base/validation.cc#L40
+      if (data.contains('ImpellerValidationBreak')) {
+        hasValidationErrors = true;
+      }
+    });
 
     final Process process = await startFlutter(
       'run',
-      options: <String>[
-        '--enable-impeller',
-        '--enable-vulkan-validation',
-        '-d',
-        device.deviceId,
-      ],
+      options: <String>['--enable-impeller', '--enable-vulkan-validation', '-d', device.deviceId],
     );
 
     await didReceiveBackendMessage.future;
@@ -72,7 +65,7 @@ Future<TaskResult> run() async {
   if (!isUsingValidationLayers || invalidBackendCount != 0) {
     return TaskResult.failure('Not using Vulkan validation layers.');
   }
-  if (hasValidationErrors){
+  if (hasValidationErrors) {
     return TaskResult.failure('Impeller validation errors detected.');
   }
   return TaskResult.success(null);

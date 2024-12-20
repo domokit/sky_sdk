@@ -20,7 +20,10 @@ class MyCheckboxMenu extends StatefulWidget {
 
 class _MyCheckboxMenuState extends State<MyCheckboxMenu> {
   final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
-  static const SingleActivator _showShortcut = SingleActivator(LogicalKeyboardKey.keyS, control: true);
+  static const SingleActivator _showShortcut = SingleActivator(
+    LogicalKeyboardKey.keyS,
+    control: true,
+  );
   bool _showingMessage = false;
 
   @override

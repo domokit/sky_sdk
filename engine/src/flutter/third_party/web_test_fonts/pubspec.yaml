@@ -1,0 +1,10 @@
+name: web_test_fonts
+
+publish_to: none
+
+environment:
+  sdk: ^3.7.0-0
+
+dev_dependencies:
+  args: any
+  path: any

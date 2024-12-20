@@ -1,0 +1,7 @@
+This directory contains canonical text files representing licenses
+that are often referenced (by name or URL), so that the license script
+doesn't need to actively go out to the network to find the license
+files.
+
+The mapping of URL to these files is in ../lib/license.dart in the
+License.fromUrl constructor.

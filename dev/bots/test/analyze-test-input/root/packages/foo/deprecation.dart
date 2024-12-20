@@ -4,10 +4,12 @@
 
 @Deprecated(
   'This is the reason and what you should use instead. '
-  'This feature was deprecated after v1.2.3.'
+  'This feature was deprecated after v1.2.3.',
 )
-void test1() { }
+void test1() {}
 
+// The code below is intentionally miss-formatted for testing.
+// dart format off
 @Deprecated(
   'Missing space ->.' //ignore: missing_whitespace_between_adjacent_strings
   'This feature was deprecated after v1.2.3.'
@@ -105,3 +107,14 @@ void test18() { }
   'Missing the version line. '
 )
 void test19() { }
+// dart format on
+
+// flutter_ignore: deprecation_syntax, https://github.com/flutter/flutter/issues/000000
+@Deprecated('Missing the version line. ')
+void test20() {}
+
+class TestClass1 {
+  // flutter_ignore: deprecation_syntax, https://github.com/flutter/flutter/issues/000000
+  @Deprecated('Missing the version line. ')
+  void test() {}
+}

@@ -24,9 +24,7 @@ void main() {
 
     analyticsOverride = getInitializedFakeAnalyticsInstance(
       fs: fs,
-      fakeFlutterVersion: FakeFlutterVersion(
-        branch: userBranch,
-      ),
+      fakeFlutterVersion: FakeFlutterVersion(branch: userBranch),
       clientIde: clientIde,
     );
   });
@@ -43,13 +41,15 @@ void main() {
 
       final String? enabledFeatures = getEnabledFeatures(config);
       expect(enabledFeatures, isNotNull);
-      expect(enabledFeatures!.split(','), unorderedEquals(<String>['enable-flutter-preview', 'cli-animations']));
+      expect(
+        enabledFeatures!.split(','),
+        unorderedEquals(<String>['enable-flutter-preview', 'cli-animations']),
+      );
     });
   });
 
   group('Unit testing getAnalytics', () {
-    testWithoutContext('Successfully creates the instance for standard branch',
-        () {
+    testWithoutContext('Successfully creates the instance for standard branch', () {
       final Analytics analytics = getAnalytics(
         runningOnBot: false,
         flutterVersion: FakeFlutterVersion(),
@@ -59,8 +59,11 @@ void main() {
         config: config,
       );
 
-      expect(analytics.clientId, isNot(NoOpAnalytics.staticClientId),
-          reason: 'The CLIENT ID should be a randomly generated id');
+      expect(
+        analytics.clientId,
+        isNot(NoOpAnalytics.staticClientId),
+        reason: 'The CLIENT ID should be a randomly generated id',
+      );
       expect(analytics, isNot(isA<NoOpAnalytics>()));
     });
 
@@ -88,9 +91,7 @@ void main() {
     testWithoutContext('NoOp instance for unknown branch', () {
       final Analytics analytics = getAnalytics(
         runningOnBot: false,
-        flutterVersion: FakeFlutterVersion(
-          frameworkRevision: 'unknown',
-        ),
+        flutterVersion: FakeFlutterVersion(frameworkRevision: 'unknown'),
         environment: const <String, String>{},
         analyticsOverride: analyticsOverride,
         clientIde: clientIde,

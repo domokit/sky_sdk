@@ -12,18 +12,16 @@ void main() {
 }
 
 class ScrollEndNotificationApp extends StatelessWidget {
-  const ScrollEndNotificationApp({ super.key });
+  const ScrollEndNotificationApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: ScrollEndNotificationExample(),
-    );
+    return const MaterialApp(home: ScrollEndNotificationExample());
   }
 }
 
 class ScrollEndNotificationExample extends StatefulWidget {
-  const ScrollEndNotificationExample({ super.key });
+  const ScrollEndNotificationExample({super.key});
 
   @override
   State<ScrollEndNotificationExample> createState() => _ScrollEndNotificationExampleState();
@@ -60,7 +58,10 @@ class _ScrollEndNotificationExampleState extends State<ScrollEndNotificationExam
     }
     if (notification is ScrollEndNotification) {
       final ScrollMetrics m = notification.metrics;
-      final int lastIndex = ((m.extentBefore + m.extentInside) ~/ itemExtent).clamp(0, itemCount - 1);
+      final int lastIndex = ((m.extentBefore + m.extentInside) ~/ itemExtent).clamp(
+        0,
+        itemCount - 1,
+      );
       final double alignedScrollOffset = itemExtent * (lastIndex + 1) - m.extentInside;
       final double scrollOffset = scrollController.position.pixels;
       if (scrollOffset > 0 && (scrollOffset - lastScrollOffset).abs() > itemExtent) {
@@ -92,15 +93,12 @@ class _ScrollEndNotificationExampleState extends State<ScrollEndNotificationExam
                 slivers: <Widget>[
                   SliverFixedExtentList(
                     itemExtent: itemExtent,
-                    delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                        return Item(
-                          title: 'Item $index',
-                          color: Color.lerp(Colors.red, Colors.blue, index / itemCount)!
-                        );
-                      },
-                      childCount: itemCount,
-                    ),
+                    delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                      return Item(
+                        title: 'Item $index',
+                        color: Color.lerp(Colors.red, Colors.blue, index / itemCount)!,
+                      );
+                    }, childCount: itemCount),
                   ),
                 ],
               ),
@@ -113,19 +111,13 @@ class _ScrollEndNotificationExampleState extends State<ScrollEndNotificationExam
 }
 
 class Item extends StatelessWidget {
-  const Item({ super.key, required this.title, required this.color });
+  const Item({super.key, required this.title, required this.color});
 
   final String title;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: color,
-      child: ListTile(
-        textColor: Colors.white,
-        title: Text(title),
-      ),
-    );
+    return Card(color: color, child: ListTile(textColor: Colors.white, title: Text(title)));
   }
 }

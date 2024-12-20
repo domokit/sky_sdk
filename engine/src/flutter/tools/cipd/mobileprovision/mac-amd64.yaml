@@ -1,0 +1,29 @@
+# Comments are allowed.
+
+# The package name is required. Third-party chromium dependencies should
+# unsurprisingly all be prefixed with chromium/third_party/.
+package: flutter_internal/mac/mobileprovision/mac-amd64
+
+# The description is optional and is solely for the reader's benefit. It
+# isn't used in creating the CIPD package.
+description: iOS provisioning provide for "match Development" signing certificate
+
+# The root is optional and, if unspecified, defaults to ".". It specifies the
+# root directory of the files and directories specified below in "data".
+#
+# You won't typically need to specify this explicitly.
+root: "."
+
+# The install mode is optional. If provided, it specifies how CIPD should
+# install a package: "copy", which will copy the contents of the package
+# to the installation directory; and "symlink", which will create symlinks
+# to the contents of the package in the CIPD root inside the installation
+# directory.
+#
+# You won't typically need to specify this explicitly.
+install_mode: "copy"
+
+# The data is required and described what should be included in the CIPD
+# package.
+data:
+  - file: development.mobileprovision

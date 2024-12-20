@@ -6,7 +6,7 @@ import '../../foo/fake_render_box.dart';
 
 mixin ARenderBoxMixin on RenderBox {
   @override
-  void computeMaxIntrinsicWidth() {  }
+  void computeMaxIntrinsicWidth() {}
 
   @override
   void computeMinIntrinsicWidth() => computeMaxIntrinsicWidth(); // BAD
@@ -41,7 +41,7 @@ class RenderBoxSubclass2 extends RenderBox with ARenderBoxMixin {
   @override
   void computeMaxIntrinsicWidth() {
     super.computeMinIntrinsicHeight(); // OK
-    super.computeMaxIntrinsicWidth();  // OK
+    super.computeMaxIntrinsicWidth(); // OK
     final void Function() f = super.computeDryBaseline; // OK
     f();
   }

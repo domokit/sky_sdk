@@ -12,8 +12,10 @@ Future<void> main() async {
   await task(() async {
     final TaskResult withoutSemantics = await createGalleryTransitionTest()();
     final TaskResult withSemantics = await createGalleryTransitionTest(semanticsEnabled: true)();
-    final bool withSemanticsDataMissing = withSemantics.benchmarkScoreKeys == null || withSemantics.benchmarkScoreKeys!.isEmpty;
-    final bool withoutSemanticsDataMissing = withoutSemantics.benchmarkScoreKeys == null || withoutSemantics.benchmarkScoreKeys!.isEmpty;
+    final bool withSemanticsDataMissing =
+        withSemantics.benchmarkScoreKeys == null || withSemantics.benchmarkScoreKeys!.isEmpty;
+    final bool withoutSemanticsDataMissing =
+        withoutSemantics.benchmarkScoreKeys == null || withoutSemantics.benchmarkScoreKeys!.isEmpty;
     if (withSemanticsDataMissing || withoutSemanticsDataMissing) {
       String message = 'Lack of data';
       if (withSemanticsDataMissing) {

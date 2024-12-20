@@ -73,7 +73,7 @@ class DefaultTextStyle extends InheritedTheme {
   ///
   /// This constructor creates a [DefaultTextStyle] with an invalid [child], which
   /// means the constructed value cannot be incorporated into the tree.
-  const DefaultTextStyle.fallback({ super.key })
+  const DefaultTextStyle.fallback({super.key})
     : style = const TextStyle(),
       textAlign = null,
       softWrap = true,
@@ -182,7 +182,8 @@ class DefaultTextStyle extends InheritedTheme {
   /// DefaultTextStyle style = DefaultTextStyle.of(context);
   /// ```
   static DefaultTextStyle of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<DefaultTextStyle>() ?? const DefaultTextStyle.fallback();
+    return context.dependOnInheritedWidgetOfExactType<DefaultTextStyle>() ??
+        const DefaultTextStyle.fallback();
   }
 
   @override
@@ -215,11 +216,31 @@ class DefaultTextStyle extends InheritedTheme {
     super.debugFillProperties(properties);
     style.debugFillProperties(properties);
     properties.add(EnumProperty<TextAlign>('textAlign', textAlign, defaultValue: null));
-    properties.add(FlagProperty('softWrap', value: softWrap, ifTrue: 'wrapping at box width', ifFalse: 'no wrapping except at line break characters', showName: true));
+    properties.add(
+      FlagProperty(
+        'softWrap',
+        value: softWrap,
+        ifTrue: 'wrapping at box width',
+        ifFalse: 'no wrapping except at line break characters',
+        showName: true,
+      ),
+    );
     properties.add(EnumProperty<TextOverflow>('overflow', overflow, defaultValue: null));
     properties.add(IntProperty('maxLines', maxLines, defaultValue: null));
-    properties.add(EnumProperty<TextWidthBasis>('textWidthBasis', textWidthBasis, defaultValue: TextWidthBasis.parent));
-    properties.add(DiagnosticsProperty<ui.TextHeightBehavior>('textHeightBehavior', textHeightBehavior, defaultValue: null));
+    properties.add(
+      EnumProperty<TextWidthBasis>(
+        'textWidthBasis',
+        textWidthBasis,
+        defaultValue: TextWidthBasis.parent,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<ui.TextHeightBehavior>(
+        'textHeightBehavior',
+        textHeightBehavior,
+        defaultValue: null,
+      ),
+    );
   }
 }
 
@@ -277,7 +298,9 @@ class DefaultTextHeightBehavior extends InheritedTheme {
   /// * [DefaultTextHeightBehavior.maybeOf], which is similar to this method,
   ///   but asserts if no [DefaultTextHeightBehavior] ancestor is found.
   static TextHeightBehavior? maybeOf(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<DefaultTextHeightBehavior>()?.textHeightBehavior;
+    return context
+        .dependOnInheritedWidgetOfExactType<DefaultTextHeightBehavior>()
+        ?.textHeightBehavior;
   }
 
   /// The closest instance of [DefaultTextHeightBehavior] that encloses the
@@ -326,16 +349,19 @@ class DefaultTextHeightBehavior extends InheritedTheme {
 
   @override
   Widget wrap(BuildContext context, Widget child) {
-    return DefaultTextHeightBehavior(
-      textHeightBehavior: textHeightBehavior,
-      child: child,
-    );
+    return DefaultTextHeightBehavior(textHeightBehavior: textHeightBehavior, child: child);
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<ui.TextHeightBehavior>('textHeightBehavior', textHeightBehavior, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<ui.TextHeightBehavior>(
+        'textHeightBehavior',
+        textHeightBehavior,
+        defaultValue: null,
+      ),
+    );
   }
 }
 
@@ -667,10 +693,10 @@ class Text extends StatelessWidget {
     }
     final SelectionRegistrar? registrar = SelectionContainer.maybeOf(context);
     final TextScaler textScaler = switch ((this.textScaler, textScaleFactor)) {
-      (final TextScaler textScaler, _)     => textScaler,
+      (final TextScaler textScaler, _) => textScaler,
       // For unmigrated apps, fall back to textScaleFactor.
       (null, final double textScaleFactor) => TextScaler.linear(textScaleFactor),
-      (null, null)                         => MediaQuery.textScalerOf(context),
+      (null, null) => MediaQuery.textScalerOf(context),
     };
     late Widget result;
     if (registrar != null) {
@@ -678,16 +704,24 @@ class Text extends StatelessWidget {
         cursor: DefaultSelectionStyle.of(context).mouseCursor ?? SystemMouseCursors.text,
         child: _SelectableTextContainer(
           textAlign: textAlign ?? defaultTextStyle.textAlign ?? TextAlign.start,
-          textDirection: textDirection, // RichText uses Directionality.of to obtain a default if this is null.
-          locale: locale, // RichText uses Localizations.localeOf to obtain a default if this is null
+          textDirection:
+              textDirection, // RichText uses Directionality.of to obtain a default if this is null.
+          locale:
+              locale, // RichText uses Localizations.localeOf to obtain a default if this is null
           softWrap: softWrap ?? defaultTextStyle.softWrap,
           overflow: overflow ?? effectiveTextStyle?.overflow ?? defaultTextStyle.overflow,
           textScaler: textScaler,
           maxLines: maxLines ?? defaultTextStyle.maxLines,
           strutStyle: strutStyle,
           textWidthBasis: textWidthBasis ?? defaultTextStyle.textWidthBasis,
-          textHeightBehavior: textHeightBehavior ?? defaultTextStyle.textHeightBehavior ?? DefaultTextHeightBehavior.maybeOf(context),
-          selectionColor: selectionColor ?? DefaultSelectionStyle.of(context).selectionColor ?? DefaultSelectionStyle.defaultColor,
+          textHeightBehavior:
+              textHeightBehavior ??
+              defaultTextStyle.textHeightBehavior ??
+              DefaultTextHeightBehavior.maybeOf(context),
+          selectionColor:
+              selectionColor ??
+              DefaultSelectionStyle.of(context).selectionColor ??
+              DefaultSelectionStyle.defaultColor,
           text: TextSpan(
             style: effectiveTextStyle,
             text: data,
@@ -698,7 +732,8 @@ class Text extends StatelessWidget {
     } else {
       result = RichText(
         textAlign: textAlign ?? defaultTextStyle.textAlign ?? TextAlign.start,
-        textDirection: textDirection, // RichText uses Directionality.of to obtain a default if this is null.
+        textDirection:
+            textDirection, // RichText uses Directionality.of to obtain a default if this is null.
         locale: locale, // RichText uses Localizations.localeOf to obtain a default if this is null
         softWrap: softWrap ?? defaultTextStyle.softWrap,
         overflow: overflow ?? effectiveTextStyle?.overflow ?? defaultTextStyle.overflow,
@@ -706,8 +741,14 @@ class Text extends StatelessWidget {
         maxLines: maxLines ?? defaultTextStyle.maxLines,
         strutStyle: strutStyle,
         textWidthBasis: textWidthBasis ?? defaultTextStyle.textWidthBasis,
-        textHeightBehavior: textHeightBehavior ?? defaultTextStyle.textHeightBehavior ?? DefaultTextHeightBehavior.maybeOf(context),
-        selectionColor: selectionColor ?? DefaultSelectionStyle.of(context).selectionColor ?? DefaultSelectionStyle.defaultColor,
+        textHeightBehavior:
+            textHeightBehavior ??
+            defaultTextStyle.textHeightBehavior ??
+            DefaultTextHeightBehavior.maybeOf(context),
+        selectionColor:
+            selectionColor ??
+            DefaultSelectionStyle.of(context).selectionColor ??
+            DefaultSelectionStyle.defaultColor,
         text: TextSpan(
           style: effectiveTextStyle,
           text: data,
@@ -719,9 +760,7 @@ class Text extends StatelessWidget {
       result = Semantics(
         textDirection: textDirection,
         label: semanticsLabel,
-        child: ExcludeSemantics(
-          child: result,
-        ),
+        child: ExcludeSemantics(child: result),
       );
     }
     return result;
@@ -732,18 +771,36 @@ class Text extends StatelessWidget {
     super.debugFillProperties(properties);
     properties.add(StringProperty('data', data, showName: false));
     if (textSpan != null) {
-      properties.add(textSpan!.toDiagnosticsNode(name: 'textSpan', style: DiagnosticsTreeStyle.transition));
+      properties.add(
+        textSpan!.toDiagnosticsNode(name: 'textSpan', style: DiagnosticsTreeStyle.transition),
+      );
     }
     style?.debugFillProperties(properties);
     properties.add(EnumProperty<TextAlign>('textAlign', textAlign, defaultValue: null));
     properties.add(EnumProperty<TextDirection>('textDirection', textDirection, defaultValue: null));
     properties.add(DiagnosticsProperty<Locale>('locale', locale, defaultValue: null));
-    properties.add(FlagProperty('softWrap', value: softWrap, ifTrue: 'wrapping at box width', ifFalse: 'no wrapping except at line break characters', showName: true));
+    properties.add(
+      FlagProperty(
+        'softWrap',
+        value: softWrap,
+        ifTrue: 'wrapping at box width',
+        ifFalse: 'no wrapping except at line break characters',
+        showName: true,
+      ),
+    );
     properties.add(EnumProperty<TextOverflow>('overflow', overflow, defaultValue: null));
     properties.add(DoubleProperty('textScaleFactor', textScaleFactor, defaultValue: null));
     properties.add(IntProperty('maxLines', maxLines, defaultValue: null));
-    properties.add(EnumProperty<TextWidthBasis>('textWidthBasis', textWidthBasis, defaultValue: null));
-    properties.add(DiagnosticsProperty<ui.TextHeightBehavior>('textHeightBehavior', textHeightBehavior, defaultValue: null));
+    properties.add(
+      EnumProperty<TextWidthBasis>('textWidthBasis', textWidthBasis, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<ui.TextHeightBehavior>(
+        'textHeightBehavior',
+        textHeightBehavior,
+        defaultValue: null,
+      ),
+    );
     if (semanticsLabel != null) {
       properties.add(StringProperty('semanticsLabel', semanticsLabel));
     }
@@ -908,10 +965,14 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
     // First pass, if the position is on a placeholder then dispatch the selection
     // event to the [Selectable] at the location and terminate.
     for (int index = 0; index < selectables.length; index += 1) {
-      final bool selectableIsPlaceholder = !paragraph.selectableBelongsToParagraph(selectables[index]);
+      final bool selectableIsPlaceholder =
+          !paragraph.selectableBelongsToParagraph(selectables[index]);
       if (selectableIsPlaceholder && selectables[index].boundingBoxes.isNotEmpty) {
         for (final Rect rect in selectables[index].boundingBoxes) {
-          final Rect globalRect = MatrixUtils.transformRect(selectables[index].getTransformTo(null), rect);
+          final Rect globalRect = MatrixUtils.transformRect(
+            selectables[index].getTransformTo(null),
+            rect,
+          );
           if (globalRect.contains(event.globalPosition)) {
             currentSelectionStartIndex = currentSelectionEndIndex = index;
             return dispatchSelectionEventToChild(selectables[index], event);
@@ -926,8 +987,14 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
     for (int index = 0; index < selectables.length; index += 1) {
       if (!paragraph.selectableBelongsToParagraph(selectables[index])) {
         if (foundStart) {
-          final SelectionEvent synthesizedEvent = SelectParagraphSelectionEvent(globalPosition: event.globalPosition, absorb: true);
-          final SelectionResult result = dispatchSelectionEventToChild(selectables[index], synthesizedEvent);
+          final SelectionEvent synthesizedEvent = SelectParagraphSelectionEvent(
+            globalPosition: event.globalPosition,
+            absorb: true,
+          );
+          final SelectionResult result = dispatchSelectionEventToChild(
+            selectables[index],
+            synthesizedEvent,
+          );
           if (selectables.length - 1 == index) {
             currentSelectionEndIndex = index;
             _flushInactiveSelections();
@@ -953,7 +1020,9 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
         if (selectables[index].value != existingGeometry && !foundStart) {
           assert(selectables[index].boundingBoxes.isNotEmpty);
           assert(selectables[index].value.selectionRects.isNotEmpty);
-          final bool selectionAtStartOfSelectable = selectables[index].boundingBoxes[0].overlaps(selectables[index].value.selectionRects[0]);
+          final bool selectionAtStartOfSelectable = selectables[index].boundingBoxes[0].overlaps(
+            selectables[index].value.selectionRects[0],
+          );
           int startIndex = 0;
           if (lastNextIndex != null && selectionAtStartOfSelectable) {
             startIndex = lastNextIndex + 1;
@@ -961,7 +1030,10 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
             startIndex = lastNextIndex == null && selectionAtStartOfSelectable ? 0 : index;
           }
           for (int i = startIndex; i < index; i += 1) {
-            final SelectionEvent synthesizedEvent = SelectParagraphSelectionEvent(globalPosition: event.globalPosition, absorb: true);
+            final SelectionEvent synthesizedEvent = SelectParagraphSelectionEvent(
+              globalPosition: event.globalPosition,
+              absorb: true,
+            );
             dispatchSelectionEventToChild(selectables[i], synthesizedEvent);
           }
           currentSelectionStartIndex = startIndex;
@@ -976,7 +1048,10 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
         if (!foundStart && lastNextIndex == null) {
           currentSelectionStartIndex = 0;
           for (int i = 0; i < index; i += 1) {
-            final SelectionEvent synthesizedEvent = SelectParagraphSelectionEvent(globalPosition: event.globalPosition, absorb: true);
+            final SelectionEvent synthesizedEvent = SelectParagraphSelectionEvent(
+              globalPosition: event.globalPosition,
+              absorb: true,
+            );
             dispatchSelectionEventToChild(selectables[i], synthesizedEvent);
           }
         }
@@ -1003,10 +1078,13 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
   /// drag selection, once for start edge update event, once for end edge update
   /// event.
   SelectionResult _initSelection(SelectionEdgeUpdateEvent event, {required bool isEnd}) {
-    assert((isEnd && currentSelectionEndIndex == -1) || (!isEnd && currentSelectionStartIndex == -1));
+    assert(
+      (isEnd && currentSelectionEndIndex == -1) || (!isEnd && currentSelectionStartIndex == -1),
+    );
     SelectionResult? finalResult;
     // Begin the search for the selection edge at the opposite edge if it exists.
-    final bool hasOppositeEdge = isEnd ? currentSelectionStartIndex != -1 : currentSelectionEndIndex != -1;
+    final bool hasOppositeEdge =
+        isEnd ? currentSelectionStartIndex != -1 : currentSelectionEndIndex != -1;
     int newIndex = switch ((isEnd, hasOppositeEdge)) {
       (true, true) => currentSelectionStartIndex,
       (true, false) => 0,
@@ -1085,8 +1163,10 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
     //
     // This can happen when there is a scrollable child and the edge being adjusted
     // has been scrolled out of view.
-    final bool isCurrentEdgeWithinViewport = isEnd ? value.endSelectionPoint != null : value.startSelectionPoint != null;
-    final bool isOppositeEdgeWithinViewport = isEnd ? value.startSelectionPoint != null : value.endSelectionPoint != null;
+    final bool isCurrentEdgeWithinViewport =
+        isEnd ? value.endSelectionPoint != null : value.startSelectionPoint != null;
+    final bool isOppositeEdgeWithinViewport =
+        isEnd ? value.startSelectionPoint != null : value.endSelectionPoint != null;
     int newIndex = switch ((isEnd, isCurrentEdgeWithinViewport, isOppositeEdgeWithinViewport)) {
       (true, true, true) => currentSelectionEndIndex,
       (true, true, false) => currentSelectionEndIndex,
@@ -1144,13 +1224,17 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
     }
     if (isEnd) {
       final bool forwardSelection = currentSelectionEndIndex >= currentSelectionStartIndex;
-      if (forward != null && ((!forwardSelection && forward && newIndex >= currentSelectionStartIndex) || (forwardSelection && !forward && newIndex <= currentSelectionStartIndex))) {
+      if (forward != null &&
+          ((!forwardSelection && forward && newIndex >= currentSelectionStartIndex) ||
+              (forwardSelection && !forward && newIndex <= currentSelectionStartIndex))) {
         currentSelectionStartIndex = currentSelectionEndIndex;
       }
       currentSelectionEndIndex = newIndex;
     } else {
       final bool forwardSelection = currentSelectionEndIndex >= currentSelectionStartIndex;
-      if (forward != null && ((!forwardSelection && !forward && newIndex <= currentSelectionEndIndex) || (forwardSelection && forward && newIndex >= currentSelectionEndIndex))) {
+      if (forward != null &&
+          ((!forwardSelection && !forward && newIndex <= currentSelectionEndIndex) ||
+              (forwardSelection && forward && newIndex >= currentSelectionEndIndex))) {
         currentSelectionEndIndex = currentSelectionStartIndex;
       }
       currentSelectionStartIndex = newIndex;
@@ -1169,14 +1253,8 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
   static int _compareScreenOrder(Selectable a, Selectable b) {
     // Attempt to sort the selectables under a [_SelectableTextContainerDelegate]
     // by the top left rect.
-    final Rect rectA = MatrixUtils.transformRect(
-      a.getTransformTo(null),
-      a.boundingBoxes.first,
-    );
-    final Rect rectB = MatrixUtils.transformRect(
-      b.getTransformTo(null),
-      b.boundingBoxes.first,
-    );
+    final Rect rectA = MatrixUtils.transformRect(a.getTransformTo(null), a.boundingBoxes.first);
+    final Rect rectB = MatrixUtils.transformRect(b.getTransformTo(null), b.boundingBoxes.first);
     final int result = _compareVertically(rectA, rectB);
     if (result != 0) {
       return result;
@@ -1191,8 +1269,10 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
   /// order can't be determine solely by their vertical position.
   static int _compareVertically(Rect a, Rect b) {
     // The rectangles overlap so defer to horizontal comparison.
-    if ((a.top - b.top < _kSelectableVerticalComparingThreshold && a.bottom - b.bottom > - _kSelectableVerticalComparingThreshold) ||
-        (b.top - a.top < _kSelectableVerticalComparingThreshold && b.bottom - a.bottom > - _kSelectableVerticalComparingThreshold)) {
+    if ((a.top - b.top < _kSelectableVerticalComparingThreshold &&
+            a.bottom - b.bottom > -_kSelectableVerticalComparingThreshold) ||
+        (b.top - a.top < _kSelectableVerticalComparingThreshold &&
+            b.bottom - a.bottom > -_kSelectableVerticalComparingThreshold)) {
       return 0;
     }
     if ((a.top - b.top).abs() > _kSelectableVerticalComparingThreshold) {
@@ -1207,11 +1287,11 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
   /// Returns positive if a is lower, negative if a is higher.
   static int _compareHorizontally(Rect a, Rect b) {
     // a encloses b.
-    if (a.left - b.left < precisionErrorTolerance && a.right - b.right > - precisionErrorTolerance) {
+    if (a.left - b.left < precisionErrorTolerance && a.right - b.right > -precisionErrorTolerance) {
       return -1;
     }
     // b encloses a.
-    if (b.left - a.left < precisionErrorTolerance && b.right - a.right > - precisionErrorTolerance) {
+    if (b.left - a.left < precisionErrorTolerance && b.right - a.right > -precisionErrorTolerance) {
       return 1;
     }
     if ((a.left - b.left).abs() > precisionErrorTolerance) {
@@ -1236,8 +1316,10 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
     if (currentSelectionEndIndex == currentSelectionStartIndex) {
       // Determining selection direction is innacurate if currentSelectionStartIndex == currentSelectionEndIndex.
       // Use the range from the selectable within the selection as the source of truth for selection direction.
-      final SelectedContentRange rangeAtSelectableInSelection = selectables[currentSelectionStartIndex].getSelection()!;
-      forwardSelection = rangeAtSelectableInSelection.endOffset >= rangeAtSelectableInSelection.startOffset;
+      final SelectedContentRange rangeAtSelectableInSelection =
+          selectables[currentSelectionStartIndex].getSelection()!;
+      forwardSelection =
+          rangeAtSelectableInSelection.endOffset >= rangeAtSelectableInSelection.startOffset;
     }
     for (int index = 0; index < selections.length; index++) {
       final _SelectionInfo selection = selections[index];
@@ -1252,21 +1334,38 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
         endOffset = startOffset;
         continue;
       }
-      final int selectionStartNormalized = min(selection.range!.startOffset, selection.range!.endOffset);
-      final int selectionEndNormalized = max(selection.range!.startOffset, selection.range!.endOffset);
+      final int selectionStartNormalized = min(
+        selection.range!.startOffset,
+        selection.range!.endOffset,
+      );
+      final int selectionEndNormalized = max(
+        selection.range!.startOffset,
+        selection.range!.endOffset,
+      );
       if (!foundStart) {
         // Because a RenderParagraph may split its content into multiple selectables
         // we have to consider at what offset a selectable starts at relative
         // to the RenderParagraph, when the selectable is not the start of the content.
-        final bool shouldConsiderContentStart = index > 0 && paragraph.selectableBelongsToParagraph(selectables[index]);
-        startOffset += (selectionStartNormalized - (shouldConsiderContentStart ? paragraph.getPositionForOffset(selectables[index].boundingBoxes.first.centerLeft).offset : 0)).abs();
+        final bool shouldConsiderContentStart =
+            index > 0 && paragraph.selectableBelongsToParagraph(selectables[index]);
+        startOffset +=
+            (selectionStartNormalized -
+                    (shouldConsiderContentStart
+                        ? paragraph
+                            .getPositionForOffset(selectables[index].boundingBoxes.first.centerLeft)
+                            .offset
+                        : 0))
+                .abs();
         endOffset = startOffset + (selectionEndNormalized - selectionStartNormalized).abs();
         foundStart = true;
       } else {
         endOffset += (selectionEndNormalized - selectionStartNormalized).abs();
       }
     }
-    assert(foundStart, 'The start of the selection has not been found despite this selection delegate having an existing currentSelectionStartIndex and currentSelectionEndIndex.');
+    assert(
+      foundStart,
+      'The start of the selection has not been found despite this selection delegate having an existing currentSelectionStartIndex and currentSelectionEndIndex.',
+    );
     return SelectedContentRange(
       startOffset: forwardSelection ? startOffset : endOffset,
       endOffset: forwardSelection ? endOffset : startOffset,
@@ -1282,7 +1381,7 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
   SelectedContentRange? getSelection() {
     final List<_SelectionInfo> selections = <_SelectionInfo>[
       for (final Selectable selectable in selectables)
-        (contentLength: selectable.contentLength, range: selectable.getSelection())
+        (contentLength: selectable.contentLength, range: selectable.getSelection()),
     ];
     return _calculateLocalRange(selections);
   }
@@ -1301,10 +1400,14 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
       return;
     }
     if (currentSelectionStartIndex == -1 || currentSelectionEndIndex == -1) {
-      final int skipIndex = currentSelectionStartIndex == -1 ? currentSelectionEndIndex : currentSelectionStartIndex;
+      final int skipIndex =
+          currentSelectionStartIndex == -1 ? currentSelectionEndIndex : currentSelectionStartIndex;
       selectables
-        .where((Selectable target) => target != selectables[skipIndex])
-        .forEach((Selectable target) => dispatchSelectionEventToChild(target, const ClearSelectionEvent()));
+          .where((Selectable target) => target != selectables[skipIndex])
+          .forEach(
+            (Selectable target) =>
+                dispatchSelectionEventToChild(target, const ClearSelectionEvent()),
+          );
       return;
     }
     final int skipStart = min(currentSelectionStartIndex, currentSelectionEndIndex);
@@ -1327,9 +1430,13 @@ class _SelectableTextContainerDelegate extends StaticSelectionContainerDelegate 
       forEnd: event.type == SelectionEventType.endEdgeUpdate,
     );
     if (event.type == SelectionEventType.endEdgeUpdate) {
-      return currentSelectionEndIndex == -1 ? _initSelection(event, isEnd: true) : _adjustSelection(event, isEnd: true);
+      return currentSelectionEndIndex == -1
+          ? _initSelection(event, isEnd: true)
+          : _adjustSelection(event, isEnd: true);
     }
-    return currentSelectionStartIndex == -1 ? _initSelection(event, isEnd: false) : _adjustSelection(event, isEnd: false);
+    return currentSelectionStartIndex == -1
+        ? _initSelection(event, isEnd: false)
+        : _adjustSelection(event, isEnd: false);
   }
 }
 

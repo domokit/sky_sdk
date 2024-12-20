@@ -1,0 +1,20 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("version.gni")
+
+source_set("version") {
+  sources = [
+    "version.cc",
+    "version.h",
+  ]
+
+  defines = [
+    "FLUTTER_ENGINE_VERSION=\"$engine_version\"",
+    "SKIA_VERSION=\"$skia_version\"",
+    "DART_VERSION=\"$dart_version\"",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+}

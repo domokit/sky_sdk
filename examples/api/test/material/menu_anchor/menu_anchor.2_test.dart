@@ -8,13 +8,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('The menu should display three items', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.MenuAnchorApp(),
-    );
+    await tester.pumpWidget(const example.MenuAnchorApp());
 
     expect(find.widgetWithText(AppBar, 'MenuAnchorButton'), findsOne);
     expect(
-      find.descendant(of: find.byType(MenuAnchor), matching: find.widgetWithIcon(IconButton, Icons.more_horiz)),
+      find.descendant(
+        of: find.byType(MenuAnchor),
+        matching: find.widgetWithIcon(IconButton, Icons.more_horiz),
+      ),
       findsOne,
     );
 

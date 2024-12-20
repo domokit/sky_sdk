@@ -14,8 +14,7 @@ void main() {
     pageDelay: const Duration(seconds: 1),
     duration: const Duration(seconds: 10),
     setupOps: (FlutterDriver driver) async {
-      final SerializableFinder animateButton =
-          find.byValueKey('animate_button');
+      final SerializableFinder animateButton = find.byValueKey('animate_button');
       await driver.tap(animateButton);
       await Future<void>.delayed(const Duration(seconds: 1));
     },

@@ -17,7 +17,10 @@ abstract class TestWrapper {
   const factory TestWrapper() = _DefaultTestWrapper;
 
   Future<void> main(List<String> args);
-  void registerPlatformPlugin(Iterable<Runtime> runtimes, FutureOr<PlatformPlugin> Function() platforms);
+  void registerPlatformPlugin(
+    Iterable<Runtime> runtimes,
+    FutureOr<PlatformPlugin> Function() platforms,
+  );
 }
 
 class _DefaultTestWrapper implements TestWrapper {
@@ -29,7 +32,10 @@ class _DefaultTestWrapper implements TestWrapper {
   }
 
   @override
-  void registerPlatformPlugin(Iterable<Runtime> runtimes, FutureOr<PlatformPlugin> Function() platforms) {
+  void registerPlatformPlugin(
+    Iterable<Runtime> runtimes,
+    FutureOr<PlatformPlugin> Function() platforms,
+  ) {
     hack.registerPlatformPlugin(runtimes, platforms);
   }
 }

@@ -44,13 +44,11 @@ class PathUrlStrategy extends ui_web.HashUrlStrategy {
   ///
   /// The [ui_web.PlatformLocation] parameter is useful for testing to mock out browser
   /// interactions.
-  PathUrlStrategy([
-    super.platformLocation,
-    this.includeHash = false,
-  ])  : _platformLocation = platformLocation,
-        _basePath = stripTrailingSlash(extractPathname(checkBaseHref(
-          platformLocation.getBaseHref(),
-        )));
+  PathUrlStrategy([super.platformLocation, this.includeHash = false])
+    : _platformLocation = platformLocation,
+      _basePath = stripTrailingSlash(
+        extractPathname(checkBaseHref(platformLocation.getBaseHref())),
+      );
 
   final ui_web.PlatformLocation _platformLocation;
   final String _basePath;

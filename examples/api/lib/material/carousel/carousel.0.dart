@@ -60,9 +60,10 @@ class _CarouselExampleState extends State<CarouselExample> {
             controller: controller,
             itemSnapping: true,
             flexWeights: const <int>[1, 7, 1],
-            children: ImageInfo.values.map((ImageInfo image) {
-              return HeroLayoutCard(imageInfo: image);
-            }).toList(),
+            children:
+                ImageInfo.values.map((ImageInfo image) {
+                  return HeroLayoutCard(imageInfo: image);
+                }).toList(),
           ),
         ),
         const SizedBox(height: 20),
@@ -89,20 +90,26 @@ class _CarouselExampleState extends State<CarouselExample> {
           child: CarouselView.weighted(
             flexWeights: const <int>[3, 3, 3, 2, 1],
             consumeMaxWeight: false,
-            children: CardInfo.values.map((CardInfo info) {
-              return ColoredBox(
-                color: info.backgroundColor,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(info.icon, color: info.color, size: 32.0),
-                      Text(info.label, style: const TextStyle(fontWeight: FontWeight.bold), overflow: TextOverflow.clip, softWrap: false),
-                    ],
-                  ),
-                ),
-              );
-            }).toList()
+            children:
+                CardInfo.values.map((CardInfo info) {
+                  return ColoredBox(
+                    color: info.backgroundColor,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(info.icon, color: info.color, size: 32.0),
+                          Text(
+                            info.label,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.clip,
+                            softWrap: false,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
           ),
         ),
         const SizedBox(height: 20),
@@ -115,21 +122,18 @@ class _CarouselExampleState extends State<CarouselExample> {
           child: CarouselView(
             itemExtent: 330,
             shrinkExtent: 200,
-            children: List<Widget>.generate(20, (int index){
+            children: List<Widget>.generate(20, (int index) {
               return UncontainedLayoutCard(index: index, label: 'Show $index');
             }),
           ),
-        )
+        ),
       ],
     );
   }
 }
 
 class HeroLayoutCard extends StatelessWidget {
-  const HeroLayoutCard({
-    super.key,
-    required this.imageInfo,
-  });
+  const HeroLayoutCard({super.key, required this.imageInfo});
 
   final ImageInfo imageInfo;
 
@@ -146,7 +150,7 @@ class HeroLayoutCard extends StatelessWidget {
             child: Image(
               fit: BoxFit.cover,
               image: NetworkImage(
-                'https://flutter.github.io/assets-for-api-docs/assets/material/${imageInfo.url}'
+                'https://flutter.github.io/assets-for-api-docs/assets/material/${imageInfo.url}',
               ),
             ),
           ),
@@ -169,21 +173,17 @@ class HeroLayoutCard extends StatelessWidget {
                 overflow: TextOverflow.clip,
                 softWrap: false,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
-              )
+              ),
             ],
           ),
         ),
-      ]
+      ],
     );
   }
 }
 
 class UncontainedLayoutCard extends StatelessWidget {
-  const UncontainedLayoutCard({
-    super.key,
-    required this.index,
-    required this.label,
-  });
+  const UncontainedLayoutCard({super.key, required this.index, required this.label});
 
   final int index;
   final String label;
@@ -223,7 +223,11 @@ enum CardInfo {
 
 enum ImageInfo {
   image0('The Flow', 'Sponsored | Season 1 Now Streaming', 'content_based_color_scheme_1.png'),
-  image1('Through the Pane', 'Sponsored | Season 1 Now Streaming', 'content_based_color_scheme_2.png'),
+  image1(
+    'Through the Pane',
+    'Sponsored | Season 1 Now Streaming',
+    'content_based_color_scheme_2.png',
+  ),
   image2('Iridescence', 'Sponsored | Season 1 Now Streaming', 'content_based_color_scheme_3.png'),
   image3('Sea Change', 'Sponsored | Season 1 Now Streaming', 'content_based_color_scheme_4.png'),
   image4('Blue Symphony', 'Sponsored | Season 1 Now Streaming', 'content_based_color_scheme_5.png'),

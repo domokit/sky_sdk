@@ -69,20 +69,13 @@ class _RestorableCounterState extends State<RestorableCounter> with RestorationM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Restorable Counter'),
-      ),
+      appBar: AppBar(title: const Text('Restorable Counter')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '${_counter.value}',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            const Text('You have pushed the button this many times:'),
+            Text('${_counter.value}', style: Theme.of(context).textTheme.headlineMedium),
           ],
         ),
       ),

@@ -3,15 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/animated_grid/animated_grid.0.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/animated_grid/animated_grid.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('AnimatedGrid example', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.AnimatedGridSample(),
-    );
+    await tester.pumpWidget(const example.AnimatedGridSample());
 
     expect(find.text('1'), findsOneWidget);
     expect(find.text('2'), findsOneWidget);

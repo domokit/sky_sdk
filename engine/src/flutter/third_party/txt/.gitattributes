@@ -1,0 +1,10 @@
+# Auto detect text files and perform LF normalization
+*      text=auto
+
+# Always perform LF normalization on these files
+*.c    text
+*.cc   text
+*.cpp  text
+*.h    text
+*.gn   text
+*.md   text

@@ -9,8 +9,10 @@ import 'package:flutter_devicelab/tasks/perf_tests.dart';
 
 Future<void> main() async {
   deviceOperatingSystem = DeviceOperatingSystem.android;
-  await task(DevToolsMemoryTest(
-    '${flutterDirectory.path}/dev/benchmarks/macrobenchmarks',
-    'test_driver/large_image_changer.dart',
-  ).run);
+  await task(
+    DevToolsMemoryTest(
+      '${flutterDirectory.path}/dev/benchmarks/macrobenchmarks',
+      'test_driver/large_image_changer.dart',
+    ).run,
+  );
 }

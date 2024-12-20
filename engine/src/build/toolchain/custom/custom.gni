@@ -1,0 +1,17 @@
+# Copyright 2018 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+  # Path to a custom toolchain containing the compilers, linkers and associated
+  # tools to build native executables.
+  custom_toolchain = ""
+
+  # Path to the sysroot containing the system libraries and associated headers
+  # on the target. Binaries generated on the host will be able to link against
+  # these libraries.
+  custom_sysroot = ""
+
+  # The target triple. For example: arm-linux-gnueabihf.
+  custom_target_triple = ""
+}

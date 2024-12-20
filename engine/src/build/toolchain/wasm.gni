@@ -1,0 +1,121 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/toolchain/ccache.gni")
+import("//build/toolchain/gcc_toolchain.gni")
+
+# Defines the configuration of emscripten for building WASM targets.
+
+declare_args() {
+  # The location of an activated embedded emsdk.
+  emsdk_dir = rebase_path("//flutter/prebuilts/emsdk")
+
+  wasm_use_pthreads = false
+  wasm_use_dwarf = false
+}
+
+em_config_path = "$emsdk_dir/.emscripten"
+
+if (use_ccache) {
+  # ccache only supports compilation, not linking.
+  compiler_prefix = "ccache "
+} else {
+  compiler_prefix = ""
+}
+
+template("wasm_toolchain") {
+  gcc_toolchain(target_name) {
+    extra_toolchain_args = {
+      if (defined(invoker.extra_toolchain_args)) {
+        forward_variables_from(invoker.extra_toolchain_args, "*")
+      }
+    }
+
+    # emsdk_dir and em_config are defined in wasm.gni.
+    ar = "$emsdk_dir/upstream/emscripten/emar --em-config $em_config_path"
+    cc = "$compiler_prefix$emsdk_dir/upstream/emscripten/emcc --em-config $em_config_path"
+    cxx = "$compiler_prefix$emsdk_dir/upstream/emscripten/em++ --em-config $em_config_path"
+    asm = "$emsdk_dir/upstream/emscripten/emcc --em-config $em_config_path"
+
+    # emscripten emits this .worker.js file conditionally depending on whether
+    # pthreads are on or not. Unfortunately, there is no way to conditionally
+    # change the outputs of the toolchain depending on flags that are specified
+    # in the target or configs. In order to resolve this, we will always
+    # specify the .worker.js file as an output, and touch the path to create a
+    # dummy file. If the target does use pthreads, this dummy file will be
+    # overwritten. If the target does not, the dummy file will satisfy the
+    # toolchain's requirement that it has this as an output.
+    ld = "$emsdk_dir/upstream/emscripten/em++ --em-config $em_config_path"
+    readelf = "readelf"
+    nm = "nm"
+
+    toolchain_cpu = "wasm"
+    toolchain_os = "wasm"
+
+    is_clang = true
+
+    link_outputs = [
+      "{{root_out_dir}}/{{target_output_name}}.wasm",
+
+      # We always output a symbol map.
+      "{{root_out_dir}}/{{target_output_name}}.js.symbols",
+    ]
+
+    if (is_debug && !wasm_use_dwarf) {
+      link_outputs += [ "{{root_out_dir}}/{{target_output_name}}.wasm.map" ]
+    }
+  }
+}
+
+# Defines a WASM library target.
+# Args:
+#  export_name: The public name of the module to expose (EXPORT_NAME for
+#               emscripten).  Defaults to target_name.
+template("wasm_lib") {
+  export_name = target_name
+  if (defined(invoker.export_name)) {
+    export_name = invoker.export_name
+  }
+
+  _target_ldflags = [
+    # This is to prevent that two different wasm modules end up generating
+    # JS that overrides the same global variable (var Module = ...)
+    "-s",
+    "EXPORT_NAME=${export_name}",
+  ]
+
+  if (defined(invoker.ldflags)) {
+    _target_ldflags += invoker.ldflags
+  }
+
+  _target_cflags = [
+    "-s",
+    "MAIN_MODULE=1",
+  ]
+
+  if (defined(invoker.cflags)) {
+    _target_cflags += invoker.cflags
+  }
+
+  _vars_to_forward = [
+    "defines",
+    "deps",
+    "includes",
+    "inputs",
+    "sources",
+    "include_dirs",
+    "public_configs",
+    "testonly",
+    "visibility",
+  ]
+
+  _lib_name = target_name
+
+  executable("$_lib_name") {
+    forward_variables_from(invoker, _vars_to_forward)
+    cflags = _target_cflags
+    ldflags = _target_ldflags
+    output_extension = "js"
+  }
+}

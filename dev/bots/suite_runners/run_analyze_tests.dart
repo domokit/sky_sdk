@@ -9,12 +9,8 @@ import '../utils.dart';
 
 Future<void> analyzeRunner() async {
   printProgress('${green}Running analysis testing$reset');
-  await runCommand(
-    'dart',
-    <String>[
-      '--enable-asserts',
-      path.join(flutterRoot, 'dev', 'bots', 'analyze.dart'),
-    ],
-    workingDirectory: flutterRoot,
-  );
+  await runCommand('dart', <String>[
+    '--enable-asserts',
+    path.join(flutterRoot, 'dev', 'bots', 'analyze.dart'),
+  ], workingDirectory: flutterRoot);
 }

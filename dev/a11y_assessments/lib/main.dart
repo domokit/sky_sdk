@@ -21,21 +21,26 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData lightTheme = ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xff6750a4),
-      contrastLevel: MediaQuery.highContrastOf(context) ? 1.0 : 0.0,
-    ));
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xff6750a4),
+        contrastLevel: MediaQuery.highContrastOf(context) ? 1.0 : 0.0,
+      ),
+    );
     final ThemeData darkTheme = ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-      brightness: Brightness.dark,
-      seedColor: const Color(0xff6750a4),
-      contrastLevel: MediaQuery.highContrastOf(context) ? 1.0 : 0.0,
-    ));
+      colorScheme: ColorScheme.fromSeed(
+        brightness: Brightness.dark,
+        seedColor: const Color(0xff6750a4),
+        contrastLevel: MediaQuery.highContrastOf(context) ? 1.0 : 0.0,
+      ),
+    );
 
-    final Map<String, WidgetBuilder> routes =
-        Map<String, WidgetBuilder>.fromEntries(
-      useCases.map((UseCase useCase) =>
-          MapEntry<String, WidgetBuilder>(useCase.route, (BuildContext context) => useCase.buildWithTitle(context))),
+    final Map<String, WidgetBuilder> routes = Map<String, WidgetBuilder>.fromEntries(
+      useCases.map(
+        (UseCase useCase) => MapEntry<String, WidgetBuilder>(
+          useCase.route,
+          (BuildContext context) => useCase.buildWithTitle(context),
+        ),
+      ),
     );
 
     return MaterialApp(
@@ -65,22 +70,25 @@ class HomePageState extends State<HomePage> {
 
   Widget _buildUseCaseItem(int index, UseCase useCase) {
     return Padding(
-        padding: const EdgeInsets.all(10),
-        child: Builder(builder: (BuildContext context) {
+      padding: const EdgeInsets.all(10),
+      child: Builder(
+        builder: (BuildContext context) {
           return TextButton(
             key: Key(useCase.name),
-            onPressed: () => Navigator.of(context).pushNamed(useCase.route, arguments: useCase.name),
+            onPressed:
+                () => Navigator.of(context).pushNamed(useCase.route, arguments: useCase.name),
             child: Text(useCase.name),
           );
-        }));
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
-      title: Semantics(headingLevel: 1, child: const Text('Accessibility Assessments')),
+        title: Semantics(headingLevel: 1, child: const Text('Accessibility Assessments')),
       ),
       body: Center(
         child: ListView(

@@ -30,7 +30,7 @@ class FakeProcess extends Fake implements Process {
   bool killed = false;
 
   @override
-  bool kill([io.ProcessSignal signal =  io.ProcessSignal.sigterm])  {
+  bool kill([io.ProcessSignal signal = io.ProcessSignal.sigterm]) {
     return killed = true;
   }
 }

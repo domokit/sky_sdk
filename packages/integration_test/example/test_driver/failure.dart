@@ -32,8 +32,7 @@ void main() {
     // Verify that platform version is retrieved.
     await expectLater(
       find.byWidgetPredicate(
-        (Widget widget) =>
-            widget is Text && widget.data!.startsWith('This should fail'),
+        (Widget widget) => widget is Text && widget.data!.startsWith('This should fail'),
       ),
       findsOneWidget,
     );

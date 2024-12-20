@@ -29,12 +29,19 @@ void main() {
         expect(rawImageSize, const Size(1, 1));
 
         const Size resizeDims = Size(14, 7);
-        final ResizeImage resizedImage = ResizeImage(MemoryImage(bytes), width: resizeDims.width.round(), height: resizeDims.height.round(), allowUpscaling: true);
+        final ResizeImage resizedImage = ResizeImage(
+          MemoryImage(bytes),
+          width: resizeDims.width.round(),
+          height: resizeDims.height.round(),
+          allowUpscaling: true,
+        );
         const ImageConfiguration resizeConfig = ImageConfiguration(size: resizeDims);
-        final Size resizedImageSize = await _resolveAndGetSize(resizedImage, configuration: resizeConfig);
+        final Size resizedImageSize = await _resolveAndGetSize(
+          resizedImage,
+          configuration: resizeConfig,
+        );
         expect(resizedImageSize, resizeDims);
       });
-
 
       test('downscales to the correct dimensions', () async {
         final Uint8List bytes = Uint8List.fromList(kBlueSquarePng);
@@ -43,9 +50,17 @@ void main() {
         expect(rawImageSize, const Size(50, 50));
 
         const Size resizeDims = Size(25, 25);
-        final ResizeImage resizedImage = ResizeImage(MemoryImage(bytes), width: resizeDims.width.round(), height: resizeDims.height.round(), allowUpscaling: true);
+        final ResizeImage resizedImage = ResizeImage(
+          MemoryImage(bytes),
+          width: resizeDims.width.round(),
+          height: resizeDims.height.round(),
+          allowUpscaling: true,
+        );
         const ImageConfiguration resizeConfig = ImageConfiguration(size: resizeDims);
-        final Size resizedImageSize = await _resolveAndGetSize(resizedImage, configuration: resizeConfig);
+        final Size resizedImageSize = await _resolveAndGetSize(
+          resizedImage,
+          configuration: resizeConfig,
+        );
         expect(resizedImageSize, resizeDims);
       });
 
@@ -56,9 +71,16 @@ void main() {
         expect(rawImageSize, const Size(1, 1));
 
         const Size resizeDims = Size(50, 50);
-        final ResizeImage resizedImage = ResizeImage(MemoryImage(bytes), width: resizeDims.width.round(), height: resizeDims.height.round());
+        final ResizeImage resizedImage = ResizeImage(
+          MemoryImage(bytes),
+          width: resizeDims.width.round(),
+          height: resizeDims.height.round(),
+        );
         const ImageConfiguration resizeConfig = ImageConfiguration(size: resizeDims);
-        final Size resizedImageSize = await _resolveAndGetSize(resizedImage, configuration: resizeConfig);
+        final Size resizedImageSize = await _resolveAndGetSize(
+          resizedImage,
+          configuration: resizeConfig,
+        );
         expect(resizedImageSize, const Size(1, 1));
       });
 
@@ -66,112 +88,186 @@ void main() {
         test('constrains square image to bounded portrait rect', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueSquarePng));
           await _expectImageSize(rawImage, const Size(50, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 25, height: 50, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 25,
+            height: 50,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(25, 25));
         });
 
         test('constrains square image to bounded landscape rect', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueSquarePng));
           await _expectImageSize(rawImage, const Size(50, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 50, height: 25, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 50,
+            height: 25,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(25, 25));
         });
 
         test('constrains square image to bounded square', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueSquarePng));
           await _expectImageSize(rawImage, const Size(50, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 25, height: 25, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 25,
+            height: 25,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(25, 25));
         });
 
         test('constrains square image to bounded width', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueSquarePng));
           await _expectImageSize(rawImage, const Size(50, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 25, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 25,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(25, 25));
         });
 
         test('constrains square image to bounded height', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueSquarePng));
           await _expectImageSize(rawImage, const Size(50, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, height: 25, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            height: 25,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(25, 25));
         });
 
         test('constrains portrait image to bounded portrait rect', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBluePortraitPng));
           await _expectImageSize(rawImage, const Size(50, 100));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 25, height: 60, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 25,
+            height: 60,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(25, 50));
         });
 
         test('constrains portrait image to bounded landscape rect', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBluePortraitPng));
           await _expectImageSize(rawImage, const Size(50, 100));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 60, height: 25, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 60,
+            height: 25,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(12, 25));
         });
 
         test('constrains portrait image to bounded square', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBluePortraitPng));
           await _expectImageSize(rawImage, const Size(50, 100));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 25, height: 25, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 25,
+            height: 25,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(12, 25));
         });
 
         test('constrains portrait image to bounded width', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBluePortraitPng));
           await _expectImageSize(rawImage, const Size(50, 100));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 25, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 25,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(25, 50));
         });
 
         test('constrains portrait image to bounded height', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBluePortraitPng));
           await _expectImageSize(rawImage, const Size(50, 100));
-          final ResizeImage resizedImage = ResizeImage(rawImage, height: 25, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            height: 25,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(12, 25));
         });
 
         test('constrains landscape image to bounded portrait rect', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueLandscapePng));
           await _expectImageSize(rawImage, const Size(100, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 25, height: 60, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 25,
+            height: 60,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(25, 12));
         });
 
         test('constrains landscape image to bounded landscape rect', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueLandscapePng));
           await _expectImageSize(rawImage, const Size(100, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 60, height: 25, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 60,
+            height: 25,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(50, 25));
         });
 
         test('constrains landscape image to bounded square', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueLandscapePng));
           await _expectImageSize(rawImage, const Size(100, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 25, height: 25, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 25,
+            height: 25,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(25, 12));
         });
 
         test('constrains landscape image to bounded width', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueLandscapePng));
           await _expectImageSize(rawImage, const Size(100, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 25, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 25,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(25, 12));
         });
 
         test('constrains landscape image to bounded height', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueLandscapePng));
           await _expectImageSize(rawImage, const Size(100, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, height: 25, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            height: 25,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(50, 25));
         });
 
         test('leaves image as-is if constraints are bigger than image', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueSquarePng));
           await _expectImageSize(rawImage, const Size(50, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 120, height: 100, policy: ResizeImagePolicy.fit);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 120,
+            height: 100,
+            policy: ResizeImagePolicy.fit,
+          );
           await _expectImageSize(resizedImage, const Size(50, 50));
         });
       });
@@ -180,112 +276,202 @@ void main() {
         test('constrains square image to bounded portrait rect', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueSquarePng));
           await _expectImageSize(rawImage, const Size(50, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 100, height: 200, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 100,
+            height: 200,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(100, 100));
         });
 
         test('constrains square image to bounded landscape rect', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueSquarePng));
           await _expectImageSize(rawImage, const Size(50, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 200, height: 100, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 200,
+            height: 100,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(100, 100));
         });
 
         test('constrains square image to bounded square', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueSquarePng));
           await _expectImageSize(rawImage, const Size(50, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 100, height: 100, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 100,
+            height: 100,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(100, 100));
         });
 
         test('constrains square image to bounded width', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueSquarePng));
           await _expectImageSize(rawImage, const Size(50, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 100, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 100,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(100, 100));
         });
 
         test('constrains square image to bounded height', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueSquarePng));
           await _expectImageSize(rawImage, const Size(50, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, height: 100, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            height: 100,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(100, 100));
         });
 
         test('constrains portrait image to bounded portrait rect', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBluePortraitPng));
           await _expectImageSize(rawImage, const Size(50, 100));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 100, height: 250, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 100,
+            height: 250,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(100, 200));
         });
 
         test('constrains portrait image to bounded landscape rect', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBluePortraitPng));
           await _expectImageSize(rawImage, const Size(50, 100));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 400, height: 200, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 400,
+            height: 200,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(100, 200));
         });
 
         test('constrains portrait image to bounded square', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBluePortraitPng));
           await _expectImageSize(rawImage, const Size(50, 100));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 200, height: 200, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 200,
+            height: 200,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(100, 200));
         });
 
         test('constrains portrait image to bounded width', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBluePortraitPng));
           await _expectImageSize(rawImage, const Size(50, 100));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 100, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 100,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(100, 200));
         });
 
         test('constrains portrait image to bounded height', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBluePortraitPng));
           await _expectImageSize(rawImage, const Size(50, 100));
-          final ResizeImage resizedImage = ResizeImage(rawImage, height: 200, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            height: 200,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(100, 200));
         });
 
         test('constrains landscape image to bounded portrait rect', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueLandscapePng));
           await _expectImageSize(rawImage, const Size(100, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 200, height: 400, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 200,
+            height: 400,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(200, 100));
         });
 
         test('constrains landscape image to bounded landscape rect', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueLandscapePng));
           await _expectImageSize(rawImage, const Size(100, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 250, height: 100, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 250,
+            height: 100,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(200, 100));
         });
 
         test('constrains landscape image to bounded square', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueLandscapePng));
           await _expectImageSize(rawImage, const Size(100, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 200, height: 200, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 200,
+            height: 200,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(200, 100));
         });
 
         test('constrains landscape image to bounded width', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueLandscapePng));
           await _expectImageSize(rawImage, const Size(100, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 200, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 200,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(200, 100));
         });
 
         test('constrains landscape image to bounded height', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueLandscapePng));
           await _expectImageSize(rawImage, const Size(100, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, height: 100, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            height: 100,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(200, 100));
         });
 
         test('shrinks image if constraints are smaller than image', () async {
           final MemoryImage rawImage = MemoryImage(Uint8List.fromList(kBlueSquarePng));
           await _expectImageSize(rawImage, const Size(50, 50));
-          final ResizeImage resizedImage = ResizeImage(rawImage, width: 25, height: 30, policy: ResizeImagePolicy.fit, allowUpscaling: true);
+          final ResizeImage resizedImage = ResizeImage(
+            rawImage,
+            width: 25,
+            height: 30,
+            policy: ResizeImagePolicy.fit,
+            allowUpscaling: true,
+          );
           await _expectImageSize(resizedImage, const Size(25, 25));
         });
       });
@@ -297,7 +483,11 @@ void main() {
       final Size rawImageSize = await _resolveAndGetSize(imageProvider);
       expect(rawImageSize, const Size(1, 1));
 
-      final ImageProvider<Object> resizedImage = ResizeImage.resizeIfNeeded(null, null, imageProvider);
+      final ImageProvider<Object> resizedImage = ResizeImage.resizeIfNeeded(
+        null,
+        null,
+        imageProvider,
+      );
       final Size resizedImageSize = await _resolveAndGetSize(resizedImage);
       expect(resizedImageSize, const Size(1, 1));
     });
@@ -310,7 +500,11 @@ void main() {
       expect(resizeImage.width, 10);
       expect(resizeImage.height, 20);
       expect(resizeImage.imageProvider, memoryImage);
-      expect(memoryImage.resolve(ImageConfiguration.empty) != resizeImage.resolve(ImageConfiguration.empty), true);
+      expect(
+        memoryImage.resolve(ImageConfiguration.empty) !=
+            resizeImage.resolve(ImageConfiguration.empty),
+        true,
+      );
     });
 
     test('takes one dim', () async {
@@ -320,22 +514,37 @@ void main() {
       expect(resizeImage.width, 10);
       expect(resizeImage.height, null);
       expect(resizeImage.imageProvider, memoryImage);
-      expect(memoryImage.resolve(ImageConfiguration.empty) != resizeImage.resolve(ImageConfiguration.empty), true);
+      expect(
+        memoryImage.resolve(ImageConfiguration.empty) !=
+            resizeImage.resolve(ImageConfiguration.empty),
+        true,
+      );
     });
 
     test('forms closure', () async {
       final Uint8List bytes = Uint8List.fromList(kTransparentImage);
       final MemoryImage memoryImage = MemoryImage(bytes);
-      final ResizeImage resizeImage = ResizeImage(memoryImage, width: 123, height: 321, allowUpscaling: true);
+      final ResizeImage resizeImage = ResizeImage(
+        memoryImage,
+        width: 123,
+        height: 321,
+        allowUpscaling: true,
+      );
 
-      Future<ui.Codec> decode(ui.ImmutableBuffer buffer, {ui.TargetImageSizeCallback? getTargetSize}) {
-        return PaintingBinding.instance.instantiateImageCodecWithSize(buffer, getTargetSize: (int intrinsicWidth, int intrinsicHeight) {
-          expect(getTargetSize, isNotNull);
-          final ui.TargetImageSize targetSize = getTargetSize!(intrinsicWidth, intrinsicHeight);
-          expect(targetSize.width, 123);
-          expect(targetSize.height, 321);
-          return targetSize;
-        });
+      Future<ui.Codec> decode(
+        ui.ImmutableBuffer buffer, {
+        ui.TargetImageSizeCallback? getTargetSize,
+      }) {
+        return PaintingBinding.instance.instantiateImageCodecWithSize(
+          buffer,
+          getTargetSize: (int intrinsicWidth, int intrinsicHeight) {
+            expect(getTargetSize, isNotNull);
+            final ui.TargetImageSize targetSize = getTargetSize!(intrinsicWidth, intrinsicHeight);
+            expect(targetSize.width, 123);
+            expect(targetSize.height, 321);
+            return targetSize;
+          },
+        );
       }
 
       resizeImage.loadImage(await resizeImage.obtainKey(ImageConfiguration.empty), decode);
@@ -389,13 +598,11 @@ Future<Size> _resolveAndGetSize(
 }) async {
   final ImageStream stream = imageProvider.resolve(configuration);
   final Completer<Size> completer = Completer<Size>();
-  final ImageStreamListener listener =
-    ImageStreamListener((ImageInfo image, bool synchronousCall) {
-      final int height = image.image.height;
-      final int width = image.image.width;
-      completer.complete(Size(width.toDouble(), height.toDouble()));
-    }
-  );
+  final ImageStreamListener listener = ImageStreamListener((ImageInfo image, bool synchronousCall) {
+    final int height = image.image.height;
+    final int width = image.image.width;
+    completer.complete(Size(width.toDouble(), height.toDouble()));
+  });
   stream.addListener(listener);
   return completer.future;
 }

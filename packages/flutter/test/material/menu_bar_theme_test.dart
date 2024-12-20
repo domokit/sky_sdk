@@ -10,7 +10,8 @@ void main() {
 
   Finder findMenuPanels(Axis orientation) {
     return find.byWidgetPredicate((Widget widget) {
-      return widget.runtimeType.toString() == '_MenuPanel' && (widget as dynamic).orientation == orientation;
+      return widget.runtimeType.toString() == '_MenuPanel' &&
+          (widget as dynamic).orientation == orientation;
     });
   }
 
@@ -27,21 +28,20 @@ void main() {
   }
 
   Material getMenuBarPanelMaterial(WidgetTester tester) {
-    return tester.widget<Material>(find.descendant(of: findMenuBarPanel(), matching: find.byType(Material)).first);
+    return tester.widget<Material>(
+      find.descendant(of: findMenuBarPanel(), matching: find.byType(Material)).first,
+    );
   }
 
   Material getSubmenuPanelMaterial(WidgetTester tester) {
-    return tester.widget<Material>(find.descendant(of: findSubmenuPanel(), matching: find.byType(Material)).first);
+    return tester.widget<Material>(
+      find.descendant(of: findSubmenuPanel(), matching: find.byType(Material)).first,
+    );
   }
 
   DefaultTextStyle getLabelStyle(WidgetTester tester, String labelText) {
     return tester.widget<DefaultTextStyle>(
-      find
-          .ancestor(
-            of: find.text(labelText),
-            matching: find.byType(DefaultTextStyle),
-          )
-          .first,
+      find.ancestor(of: find.text(labelText), matching: find.byType(DefaultTextStyle)).first,
     );
   }
 
@@ -56,36 +56,36 @@ void main() {
       MaterialApp(
         theme: ThemeData(useMaterial3: false),
         home: Material(
-          child: Builder(builder: (BuildContext context) {
-            return MenuTheme(
-              data: const MenuThemeData(
-                style: MenuStyle(
-                  backgroundColor: MaterialStatePropertyAll<Color?>(Colors.green),
-                  elevation: MaterialStatePropertyAll<double?>(20.0),
-                ),
-              ),
-              child: MenuBarTheme(
-                data: const MenuBarThemeData(
+          child: Builder(
+            builder: (BuildContext context) {
+              return MenuTheme(
+                data: const MenuThemeData(
                   style: MenuStyle(
-                    backgroundColor: MaterialStatePropertyAll<Color?>(Colors.red),
-                    elevation: MaterialStatePropertyAll<double?>(15.0),
-                    shape: MaterialStatePropertyAll<OutlinedBorder?>(StadiumBorder()),
-                    padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(
-                      EdgeInsetsDirectional.all(10.0),
-                    ),
+                    backgroundColor: MaterialStatePropertyAll<Color?>(Colors.green),
+                    elevation: MaterialStatePropertyAll<double?>(20.0),
                   ),
                 ),
-                child: Column(
-                  children: <Widget>[
-                    MenuBar(
-                      children: createTestMenus(onPressed: onPressed),
+                child: MenuBarTheme(
+                  data: const MenuBarThemeData(
+                    style: MenuStyle(
+                      backgroundColor: MaterialStatePropertyAll<Color?>(Colors.red),
+                      elevation: MaterialStatePropertyAll<double?>(15.0),
+                      shape: MaterialStatePropertyAll<OutlinedBorder?>(StadiumBorder()),
+                      padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(
+                        EdgeInsetsDirectional.all(10.0),
+                      ),
                     ),
-                    const Expanded(child: Placeholder()),
-                  ],
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      MenuBar(children: createTestMenus(onPressed: onPressed)),
+                      const Expanded(child: Placeholder()),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -93,13 +93,19 @@ void main() {
     // Open a test menu.
     await tester.tap(find.text(TestMenu.mainMenu1.label));
     await tester.pump();
-    expect(tester.getRect(findMenuBarPanel().first), equals(const Rect.fromLTRB(228.0, 0.0, 572.0, 68.0)));
+    expect(
+      tester.getRect(findMenuBarPanel().first),
+      equals(const Rect.fromLTRB(228.0, 0.0, 572.0, 68.0)),
+    );
     final Material menuBarMaterial = getMenuBarPanelMaterial(tester);
     expect(menuBarMaterial.elevation, equals(15));
     expect(menuBarMaterial.color, equals(Colors.red));
 
     final Material subMenuMaterial = getSubmenuPanelMaterial(tester);
-    expect(tester.getRect(findSubmenuPanel()), equals(const Rect.fromLTRB(346.0, 58.0, 560.0, 218.0)));
+    expect(
+      tester.getRect(findSubmenuPanel()),
+      equals(const Rect.fromLTRB(346.0, 58.0, 560.0, 218.0)),
+    );
     expect(subMenuMaterial.elevation, equals(20));
     expect(subMenuMaterial.color, equals(Colors.green));
   });
@@ -167,13 +173,19 @@ void main() {
     await tester.tap(find.text(TestMenu.mainMenu1.label));
     await tester.pump();
 
-    expect(tester.getRect(findMenuBarPanel().first), equals(const Rect.fromLTRB(226.0, 0.0, 574.0, 72.0)));
+    expect(
+      tester.getRect(findMenuBarPanel().first),
+      equals(const Rect.fromLTRB(226.0, 0.0, 574.0, 72.0)),
+    );
     final Material menuBarMaterial = getMenuBarPanelMaterial(tester);
     expect(menuBarMaterial.elevation, equals(10.0));
     expect(menuBarMaterial.color, equals(Colors.blue));
 
     final Material subMenuMaterial = getSubmenuPanelMaterial(tester);
-    expect(tester.getRect(findSubmenuPanel()), equals(const Rect.fromLTRB(332.0, 60.0, 574.0, 232.0)));
+    expect(
+      tester.getRect(findSubmenuPanel()),
+      equals(const Rect.fromLTRB(332.0, 60.0, 574.0, 232.0)),
+    );
     expect(subMenuMaterial.elevation, equals(18));
     expect(subMenuMaterial.color, equals(Colors.cyan));
     expect(subMenuMaterial.shape, equals(const BeveledRectangleBorder()));
@@ -181,20 +193,27 @@ void main() {
     final Finder menuItem = findSubMenuItem();
     expect(tester.getRect(menuItem.first), equals(const Rect.fromLTRB(346.0, 74.0, 560.0, 122.0)));
     final Material menuItemMaterial = tester.widget<Material>(
-        find.ancestor(of: find.text(TestMenu.subMenu10.label), matching: find.byType(Material)).first);
+      find.ancestor(of: find.text(TestMenu.subMenu10.label), matching: find.byType(Material)).first,
+    );
     expect(menuItemMaterial.color, equals(Colors.amber));
     expect(menuItemMaterial.elevation, equals(0.0));
     expect(menuItemMaterial.shape, equals(const StadiumBorder()));
     expect(getLabelStyle(tester, TestMenu.subMenu10.label).style.color, equals(Colors.grey));
-    final ButtonStyle? textButtonStyle = tester
-        .widget<TextButton>(find
-            .ancestor(
-              of: find.text(TestMenu.subMenu10.label),
-              matching: find.byType(TextButton),
+    final ButtonStyle? textButtonStyle =
+        tester
+            .widget<TextButton>(
+              find
+                  .ancestor(
+                    of: find.text(TestMenu.subMenu10.label),
+                    matching: find.byType(TextButton),
+                  )
+                  .first,
             )
-            .first)
-        .style;
-    expect(textButtonStyle?.overlayColor?.resolve(<MaterialState>{MaterialState.hovered}), equals(Colors.blueGrey));
+            .style;
+    expect(
+      textButtonStyle?.overlayColor?.resolve(<MaterialState>{MaterialState.hovered}),
+      equals(Colors.blueGrey),
+    );
   });
 }
 
@@ -216,15 +235,18 @@ List<Widget> createTestMenus({
 }) {
   final MenuStyle menuStyle = MenuStyle(
     padding: menuPadding != null ? MaterialStatePropertyAll<EdgeInsetsGeometry>(menuPadding) : null,
-    backgroundColor: menuBackground != null ? MaterialStatePropertyAll<Color>(menuBackground) : null,
+    backgroundColor:
+        menuBackground != null ? MaterialStatePropertyAll<Color>(menuBackground) : null,
     elevation: menuElevation != null ? MaterialStatePropertyAll<double>(menuElevation) : null,
     shape: menuShape != null ? MaterialStatePropertyAll<OutlinedBorder>(menuShape) : null,
   );
   final ButtonStyle itemStyle = ButtonStyle(
     padding: itemPadding != null ? MaterialStatePropertyAll<EdgeInsetsGeometry>(itemPadding) : null,
     shape: itemShape != null ? MaterialStatePropertyAll<OutlinedBorder>(itemShape) : null,
-    foregroundColor: itemForeground != null ? MaterialStatePropertyAll<Color>(itemForeground) : null,
-    backgroundColor: itemBackground != null ? MaterialStatePropertyAll<Color>(itemBackground) : null,
+    foregroundColor:
+        itemForeground != null ? MaterialStatePropertyAll<Color>(itemForeground) : null,
+    backgroundColor:
+        itemBackground != null ? MaterialStatePropertyAll<Color>(itemBackground) : null,
     overlayColor: itemOverlay != null ? MaterialStatePropertyAll<Color>(itemOverlay) : null,
   );
   final List<Widget> result = <Widget>[

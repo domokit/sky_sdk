@@ -12,8 +12,7 @@ class GalleryThemeData {
   static final Color _lightFocusColor = Colors.black.withOpacity(0.12);
   static final Color _darkFocusColor = Colors.white.withOpacity(0.12);
 
-  static ThemeData lightThemeData =
-      themeData(lightColorScheme, _lightFocusColor);
+  static ThemeData lightThemeData = themeData(lightColorScheme, _lightFocusColor);
   static ThemeData darkThemeData = themeData(darkColorScheme, _darkFocusColor);
 
   static ThemeData themeData(ColorScheme colorScheme, Color focusColor) {
@@ -32,10 +31,7 @@ class GalleryThemeData {
       focusColor: focusColor,
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Color.alphaBlend(
-          _lightFillColor.withOpacity(0.80),
-          _darkFillColor,
-        ),
+        backgroundColor: Color.alphaBlend(_lightFillColor.withOpacity(0.80), _darkFillColor),
         contentTextStyle: _textTheme.titleMedium!.apply(color: _darkFillColor),
       ),
     );

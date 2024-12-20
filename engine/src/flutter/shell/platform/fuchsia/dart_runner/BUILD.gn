@@ -1,0 +1,336 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+assert(is_fuchsia)
+
+import("//flutter/common/fuchsia_config.gni")
+import("//flutter/testing/testing.gni")
+import("//flutter/tools/fuchsia/dart.gni")
+import("//flutter/tools/fuchsia/fuchsia_archive.gni")
+import("//flutter/tools/fuchsia/fuchsia_libs.gni")
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+
+template("runner_sources") {
+  assert(defined(invoker.product), "runner_sources must define product")
+  source_set(target_name) {
+    forward_variables_from(invoker, [ "defines" ])
+    sources = [
+      "builtin_libraries.cc",
+      "builtin_libraries.h",
+      "dart_component_controller.cc",
+      "dart_component_controller.h",
+      "dart_runner.cc",
+      "dart_runner.h",
+      "dart_test_component_controller.cc",
+      "dart_test_component_controller.h",
+      "logging.h",
+      "service_isolate.cc",
+      "service_isolate.h",
+    ]
+
+    dart_public_deps = []
+    if (!invoker.product) {
+      dart_public_deps += [
+        "$dart_src/runtime/bin:dart_io_api",
+        "//flutter/shell/platform/fuchsia/runtime/dart/utils:utils",
+      ]
+    } else {
+      dart_public_deps += [
+        "$dart_src/runtime/bin:dart_io_api_product",
+        "//flutter/shell/platform/fuchsia/runtime/dart/utils:utils_product",
+      ]
+    }
+
+    public_deps = [
+                    "${fuchsia_sdk}/fidl/fuchsia.component.runner",
+                    "${fuchsia_sdk}/fidl/fuchsia.test",
+                    "${fuchsia_sdk}/pkg/sys_cpp",
+                    "//flutter/fml",
+                  ] + dart_public_deps
+
+    deps = [
+      "${fuchsia_sdk}/fidl/fuchsia.logger",
+      "${fuchsia_sdk}/pkg/async",
+      "${fuchsia_sdk}/pkg/async-cpp",
+      "${fuchsia_sdk}/pkg/async-default",
+      "${fuchsia_sdk}/pkg/async-loop",
+      "${fuchsia_sdk}/pkg/async-loop-cpp",
+      "${fuchsia_sdk}/pkg/async-loop-default",
+      "${fuchsia_sdk}/pkg/fidl_cpp",
+      "${fuchsia_sdk}/pkg/inspect",
+      "${fuchsia_sdk}/pkg/inspect_component_cpp",
+      "${fuchsia_sdk}/pkg/sys_cpp",
+      "${fuchsia_sdk}/pkg/sys_cpp_testing",
+      "${fuchsia_sdk}/pkg/trace",
+      "${fuchsia_sdk}/pkg/vfs_cpp",
+      "${fuchsia_sdk}/pkg/zx",
+      "fidl:dart_test",
+      "//flutter/common",
+      "//flutter/shell/platform/fuchsia/dart-pkg/fuchsia",
+      "//flutter/shell/platform/fuchsia/dart-pkg/zircon",
+      "//flutter/third_party/tonic",
+    ]
+  }
+}
+
+template("runner") {
+  assert(defined(invoker.product), "The parameter 'product' must be defined.")
+  assert(defined(invoker.output_name),
+         "The parameter 'output_name' must be defined")
+
+  invoker_output_name = invoker.output_name
+  extra_defines = invoker.extra_defines
+  extra_deps = invoker.extra_deps
+  if (is_debug) {
+    extra_defines += [ "DEBUG" ]  # Needed due to direct dart dependencies.
+  }
+
+  runner_sources(target_name + "_runner_sources") {
+    product = invoker.product
+    defines = extra_defines
+  }
+
+  executable(target_name) {
+    output_name = invoker_output_name
+
+    sources = [ "main.cc" ]
+
+    defines = extra_defines
+
+    deps = [
+             ":" + target_name + "_runner_sources",
+             "${fuchsia_sdk}/pkg/inspect_component_cpp",
+             "${fuchsia_sdk}/pkg/trace-provider-so",
+           ] + extra_deps
+  }
+}
+
+runner("dart_jit_runner_bin") {
+  output_name = "dart_jit_runner"
+  product = false
+  extra_defines = []
+  if (flutter_runtime_mode == "profile") {
+    extra_defines += [ "FLUTTER_PROFILE" ]
+  }
+  extra_deps = [
+    "$dart_src/runtime:libdart_jit",
+    "$dart_src/runtime/platform:libdart_platform_jit",
+  ]
+}
+
+runner("dart_jit_product_runner_bin") {
+  output_name = "dart_jit_product_runner"
+  product = true
+  extra_defines = [ "DART_PRODUCT" ]
+  extra_deps = [
+    "$dart_src/runtime:libdart_jit",
+    "$dart_src/runtime/platform:libdart_platform_jit",
+  ]
+}
+
+runner("dart_aot_runner_bin") {
+  output_name = "dart_aot_runner"
+  product = false
+  extra_defines = [ "AOT_RUNTIME" ]
+  if (flutter_runtime_mode == "profile") {
+    extra_defines += [ "FLUTTER_PROFILE" ]
+  }
+  extra_deps = [
+    "$dart_src/runtime:libdart_aotruntime",
+    "$dart_src/runtime/platform:libdart_platform_aotruntime",
+    "embedder:dart_aot_snapshot_cc",
+  ]
+}
+
+runner("dart_aot_product_runner_bin") {
+  output_name = "dart_aot_product_runner"
+  product = true
+  extra_defines = [
+    "AOT_RUNTIME",
+    "DART_PRODUCT",
+  ]
+  extra_deps = [
+    "$dart_src/runtime:libdart_aotruntime",
+    "$dart_src/runtime/platform:libdart_platform_aotruntime",
+    "embedder:dart_aot_product_snapshot_cc",
+  ]
+}
+
+template("aot_runner_package") {
+  assert(defined(invoker.product), "The parameter 'product' must be defined")
+  product_suffix = ""
+  if (invoker.product) {
+    product_suffix = "_product"
+  }
+  fuchsia_archive(target_name) {
+    deps = [ ":dart_aot${product_suffix}_runner_bin" ]
+    if (!invoker.product) {
+      deps += [
+        "vmservice:vmservice_snapshot",
+        "//flutter/shell/platform/fuchsia/runtime/dart/profiler_symbols:dart_aot_runner",
+
+        # TODO(kaushikiska): Figure out how to get the profiler symbols for `libdart_aotruntime`
+        # "$dart_src/runtime:libdart_aotruntime",
+        observatory_target,
+      ]
+    }
+
+    binary = "dart_aot${product_suffix}_runner"
+
+    libraries = common_libs
+
+    resources = []
+    if (!invoker.product) {
+      vmservice_snapshot = rebase_path(
+              get_label_info("vmservice:vmservice_snapshot", "target_gen_dir") +
+              "/vmservice_snapshot.so")
+      dart_profiler_symbols = rebase_path(
+              get_label_info(
+                  "//flutter/shell/platform/fuchsia/runtime/dart/profiler_symbols:dart_aot_runner",
+                  "target_gen_dir") + "/dart_aot_runner.dartprofilersymbols")
+
+      resources += [
+        {
+          path = vmservice_snapshot
+          dest = "vmservice_snapshot.so"
+        },
+        {
+          path = rebase_path(observatory_archive_file)
+          dest = "observatory.tar"
+        },
+        {
+          path = dart_profiler_symbols
+          dest = "dart_aot_runner.dartprofilersymbols"
+        },
+      ]
+    }
+  }
+}
+
+template("jit_runner_package") {
+  assert(defined(invoker.product), "The parameter 'product' must be defined")
+  product_suffix = ""
+  if (invoker.product) {
+    product_suffix = "_product"
+  }
+
+  fuchsia_archive(target_name) {
+    deps = [
+      ":dart_jit${product_suffix}_runner_bin",
+      "kernel:kernel_core_snapshot${product_suffix}",
+    ]
+
+    if (!invoker.product) {
+      deps += [
+        "//flutter/shell/platform/fuchsia/runtime/dart/profiler_symbols:dart_jit_runner",
+        observatory_target,
+      ]
+    }
+
+    binary = "dart_jit${product_suffix}_runner"
+
+    libraries = common_libs
+
+    resources = [
+      {
+        path =
+            rebase_path("$target_gen_dir/kernel/vm_data${product_suffix}.bin")
+        dest = "vm_snapshot_data.bin"
+      },
+      {
+        path = rebase_path(
+                "$target_gen_dir/kernel/isolate_data${product_suffix}.bin")
+        dest = "isolate_core_snapshot_data.bin"
+      },
+    ]
+
+    if (!invoker.product) {
+      resources += [
+        {
+          path = rebase_path(observatory_archive_file)
+          dest = "observatory.tar"
+        },
+        {
+          path = rebase_path(
+                  get_label_info(
+                      "//flutter/shell/platform/fuchsia/runtime/dart/profiler_symbols:dart_jit_runner",
+                      "target_gen_dir") + "/dart_jit_runner.dartprofilersymbols")
+          dest = "dart_jit_runner.dartprofilersymbols"
+        },
+      ]
+    }
+  }
+}
+
+aot_runner_package("dart_aot_runner") {
+  product = false
+}
+
+aot_runner_package("dart_aot_product_runner") {
+  product = true
+}
+
+jit_runner_package("dart_jit_runner") {
+  product = false
+}
+
+jit_runner_package("dart_jit_product_runner") {
+  product = true
+}
+
+# "OOT" copy of the runner used by tests, to avoid conflicting with the runner
+# in the base fuchsia image.
+# TODO(fxbug.dev/106575): Fix this with subpackages.
+aot_runner_package("oot_dart_aot_runner") {
+  product = false
+}
+
+# "OOT" copy of the runner used by tests, to avoid conflicting with the runner
+# in the base fuchsia image.
+# TODO(fxbug.dev/106575): Fix this with subpackages.
+jit_runner_package("oot_dart_jit_runner") {
+  product = false
+}
+
+if (enable_unittests) {
+  runner_sources("jit_runner_sources_for_test") {
+    product = false
+  }
+
+  executable("dart_test_runner_unittests") {
+    testonly = true
+
+    output_name = "dart_runner_tests"
+
+    sources = [ "tests/suite_impl_unittests.cc" ]
+
+    # This is needed for //flutter/third_party/googletest for linking zircon
+    # symbols.
+    libs = [ "${fuchsia_arch_root}/sysroot/lib/libzircon.so" ]
+
+    deps = [
+      ":jit_runner_sources_for_test",
+      "$dart_src/runtime:libdart_jit",
+      "$dart_src/runtime/platform:libdart_platform_jit",
+      "//flutter/fml",
+      "//flutter/third_party/googletest:gtest_main",
+    ]
+  }
+
+  fuchsia_test_archive("dart_runner_tests") {
+    deps = [ ":dart_test_runner_unittests" ]
+    gen_cml_file = true
+  }
+
+  # When adding a new dep here, please also ensure the dep is added to
+  # testing/fuchsia/test_suites.yaml.
+  group("tests") {
+    testonly = true
+
+    deps = [
+      ":dart_runner_tests",
+      "tests/startup_integration_test",
+    ]
+  }
+}

@@ -1,0 +1,78 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/impeller/tools/args.gni")
+import("//flutter/impeller/tools/compiler.gni")
+import("//flutter/impeller/tools/embed_blob.gni")
+import("//flutter/impeller/tools/metal_library.gni")
+
+template("impeller_shaders_metal") {
+  assert(defined(invoker.shaders), "Impeller shaders must be specified.")
+  assert(defined(invoker.name), "Name of the shader library must be specified.")
+
+  metal_version = "1.2"
+  if (defined(invoker.metal_version)) {
+    metal_version = invoker.metal_version
+  }
+
+  use_half_textures = false
+  if (defined(invoker.use_half_textures) && invoker.use_half_textures) {
+    use_half_textures = invoker.use_half_textures
+  }
+
+  shaders_base_name = string_join("",
+                                  [
+                                    invoker.name,
+                                    "_shaders",
+                                  ])
+  impellerc_mtl = "impellerc_$target_name"
+  impellerc(impellerc_mtl) {
+    shaders = invoker.shaders
+    metal_version = metal_version
+    sl_file_extension = "metal"
+    use_half_textures = use_half_textures
+    shader_target_flags = []
+    defines = [ "IMPELLER_TARGET_METAL" ]
+    if (is_ios) {
+      shader_target_flags += [ "--metal-ios" ]
+      defines += [ "IMPELLER_TARGET_METAL_IOS" ]
+    } else if (is_mac) {
+      shader_target_flags = [ "--metal-desktop" ]
+      defines += [ "IMPELLER_TARGET_METAL_DESKTOP" ]
+    } else {
+      assert(false, "Metal not supported on this platform.")
+    }
+  }
+
+  mtl_lib = "genlib_$target_name"
+  metal_library(mtl_lib) {
+    name = invoker.name
+    metal_version = metal_version
+    sources =
+        filter_include(get_target_outputs(":$impellerc_mtl"), [ "*.metal" ])
+    deps = [ ":$impellerc_mtl" ]
+  }
+
+  reflect_mtl = "reflect_$target_name"
+  impellerc_reflect(reflect_mtl) {
+    impellerc_invocation = ":$impellerc_mtl"
+  }
+
+  embed_mtl_lib = "embed_$target_name"
+  embed_blob(embed_mtl_lib) {
+    metal_library_files = get_target_outputs(":$mtl_lib")
+    symbol_name = shaders_base_name
+    blob = metal_library_files[0]
+    hdr = "$target_gen_dir/mtl/$shaders_base_name.h"
+    cc = "$target_gen_dir/mtl/$shaders_base_name.cc"
+    deps = [ ":$mtl_lib" ]
+  }
+
+  group(target_name) {
+    public_deps = [
+      ":$embed_mtl_lib",
+      ":$reflect_mtl",
+    ]
+  }
+}

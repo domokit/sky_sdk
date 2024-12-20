@@ -29,12 +29,8 @@ void main() {
         'CommitBranch': 'master',
         'CommitSha': 'abc',
         'BuilderName': 'Linux test',
-        'ResultData': <String, dynamic>{
-          'average_frame_build_time_millis': 0.4550425531914895,
-        },
-        'BenchmarkScoreKeys': <String>[
-          'average_frame_build_time_millis',
-        ],
+        'ResultData': <String, dynamic>{'average_frame_build_time_millis': 0.4550425531914895},
+        'BenchmarkScoreKeys': <String>['average_frame_build_time_millis'],
       };
       final List<MetricPoint> metricPoints = parse(results, <String, String>{}, 'test');
 
@@ -170,7 +166,11 @@ void main() {
     });
 
     test('with device host and arch tags', () async {
-      final Map<String, dynamic> tags = <String, dynamic>{'device_type': 'ab-c', 'host_type': 'de-f', 'arch': 'm1'};
+      final Map<String, dynamic> tags = <String, dynamic>{
+        'device_type': 'ab-c',
+        'host_type': 'de-f',
+        'arch': 'm1',
+      };
       final String fileName = metricFileName('test', tags);
       expect(fileName, 'test_m1_def_abc');
     });

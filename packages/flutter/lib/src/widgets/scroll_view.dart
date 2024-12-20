@@ -41,6 +41,7 @@ enum ScrollViewKeyboardDismissBehavior {
   /// `manual` means there is no automatic dismissal of the on-screen keyboard.
   /// It is up to the client to dismiss the keyboard.
   manual,
+
   /// `onDrag` means that the [ScrollView] will dismiss an on-screen keyboard
   /// when a drag begins.
   onDrag,
@@ -130,7 +131,14 @@ abstract class ScrollView extends StatelessWidget {
        assert(!shrinkWrap || center == null),
        assert(anchor >= 0.0 && anchor <= 1.0),
        assert(semanticChildCount == null || semanticChildCount >= 0),
-       physics = physics ?? ((primary ?? false) || (primary == null && controller == null && identical(scrollDirection, Axis.vertical)) ? const AlwaysScrollableScrollPhysics() : null);
+       physics =
+           physics ??
+           ((primary ?? false) ||
+                   (primary == null &&
+                       controller == null &&
+                       identical(scrollDirection, Axis.vertical))
+               ? const AlwaysScrollableScrollPhysics()
+               : null);
 
   /// {@template flutter.widgets.scroll_view.scrollDirection}
   /// The [Axis] along which the scroll view's offset increases.
@@ -436,8 +444,9 @@ abstract class ScrollView extends StatelessWidget {
           return debugCheckHasDirectionality(
             context,
             why: 'to determine the cross-axis direction of the scroll view',
-            hint: 'Vertical scroll views create Viewport widgets that try to determine their cross axis direction '
-                  'from the ambient Directionality.',
+            hint:
+                'Vertical scroll views create Viewport widgets that try to determine their cross axis direction '
+                'from the ambient Directionality.',
           );
         case AxisDirection.left:
         case AxisDirection.right:
@@ -468,12 +477,12 @@ abstract class ScrollView extends StatelessWidget {
     final List<Widget> slivers = buildSlivers(context);
     final AxisDirection axisDirection = getDirection(context);
 
-    final bool effectivePrimary = primary
-        ?? controller == null && PrimaryScrollController.shouldInherit(context, scrollDirection);
+    final bool effectivePrimary =
+        primary ??
+        controller == null && PrimaryScrollController.shouldInherit(context, scrollDirection);
 
-    final ScrollController? scrollController = effectivePrimary
-        ? PrimaryScrollController.maybeOf(context)
-        : controller;
+    final ScrollController? scrollController =
+        effectivePrimary ? PrimaryScrollController.maybeOf(context) : controller;
 
     final Scrollable scrollable = Scrollable(
       dragStartBehavior: dragStartBehavior,
@@ -490,17 +499,20 @@ abstract class ScrollView extends StatelessWidget {
       clipBehavior: clipBehavior,
     );
 
-    final Widget scrollableResult = effectivePrimary && scrollController != null
-        // Further descendant ScrollViews will not inherit the same PrimaryScrollController
-        ? PrimaryScrollController.none(child: scrollable)
-        : scrollable;
+    final Widget scrollableResult =
+        effectivePrimary && scrollController != null
+            // Further descendant ScrollViews will not inherit the same PrimaryScrollController
+            ? PrimaryScrollController.none(child: scrollable)
+            : scrollable;
 
     if (keyboardDismissBehavior == ScrollViewKeyboardDismissBehavior.onDrag) {
       return NotificationListener<ScrollUpdateNotification>(
         child: scrollableResult,
         onNotification: (ScrollUpdateNotification notification) {
           final FocusScopeNode currentScope = FocusScope.of(context);
-          if (notification.dragDetails != null && !currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+          if (notification.dragDetails != null &&
+              !currentScope.hasPrimaryFocus &&
+              currentScope.hasFocus) {
             FocusManager.instance.primaryFocus?.unfocus();
           }
           return false;
@@ -516,10 +528,23 @@ abstract class ScrollView extends StatelessWidget {
     super.debugFillProperties(properties);
     properties.add(EnumProperty<Axis>('scrollDirection', scrollDirection));
     properties.add(FlagProperty('reverse', value: reverse, ifTrue: 'reversed', showName: true));
-    properties.add(DiagnosticsProperty<ScrollController>('controller', controller, showName: false, defaultValue: null));
-    properties.add(FlagProperty('primary', value: primary, ifTrue: 'using primary controller', showName: true));
-    properties.add(DiagnosticsProperty<ScrollPhysics>('physics', physics, showName: false, defaultValue: null));
-    properties.add(FlagProperty('shrinkWrap', value: shrinkWrap, ifTrue: 'shrink-wrapping', showName: true));
+    properties.add(
+      DiagnosticsProperty<ScrollController>(
+        'controller',
+        controller,
+        showName: false,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      FlagProperty('primary', value: primary, ifTrue: 'using primary controller', showName: true),
+    );
+    properties.add(
+      DiagnosticsProperty<ScrollPhysics>('physics', physics, showName: false, defaultValue: null),
+    );
+    properties.add(
+      FlagProperty('shrinkWrap', value: shrinkWrap, ifTrue: 'shrink-wrapping', showName: true),
+    );
   }
 }
 
@@ -827,20 +852,26 @@ abstract class BoxScrollView extends ScrollView {
       final MediaQueryData? mediaQuery = MediaQuery.maybeOf(context);
       if (mediaQuery != null) {
         // Automatically pad sliver with padding from MediaQuery.
-        final EdgeInsets mediaQueryHorizontalPadding =
-            mediaQuery.padding.copyWith(top: 0.0, bottom: 0.0);
-        final EdgeInsets mediaQueryVerticalPadding =
-            mediaQuery.padding.copyWith(left: 0.0, right: 0.0);
+        final EdgeInsets mediaQueryHorizontalPadding = mediaQuery.padding.copyWith(
+          top: 0.0,
+          bottom: 0.0,
+        );
+        final EdgeInsets mediaQueryVerticalPadding = mediaQuery.padding.copyWith(
+          left: 0.0,
+          right: 0.0,
+        );
         // Consume the main axis padding with SliverPadding.
-        effectivePadding = scrollDirection == Axis.vertical
-            ? mediaQueryVerticalPadding
-            : mediaQueryHorizontalPadding;
+        effectivePadding =
+            scrollDirection == Axis.vertical
+                ? mediaQueryVerticalPadding
+                : mediaQueryHorizontalPadding;
         // Leave behind the cross axis padding.
         sliver = MediaQuery(
           data: mediaQuery.copyWith(
-            padding: scrollDirection == Axis.vertical
-                ? mediaQueryHorizontalPadding
-                : mediaQueryVerticalPadding,
+            padding:
+                scrollDirection == Axis.vertical
+                    ? mediaQueryHorizontalPadding
+                    : mediaQueryVerticalPadding,
           ),
           child: sliver,
         );
@@ -850,7 +881,7 @@ abstract class BoxScrollView extends ScrollView {
     if (effectivePadding != null) {
       sliver = SliverPadding(padding: effectivePadding, sliver: sliver);
     }
-    return <Widget>[ sliver ];
+    return <Widget>[sliver];
   }
 
   /// Subclasses should override this method to build the layout model.
@@ -1253,8 +1284,8 @@ class ListView extends BoxScrollView {
     super.hitTestBehavior,
   }) : assert(
          (itemExtent == null && prototypeItem == null) ||
-         (itemExtent == null && itemExtentBuilder == null) ||
-         (prototypeItem == null && itemExtentBuilder == null),
+             (itemExtent == null && itemExtentBuilder == null) ||
+             (prototypeItem == null && itemExtentBuilder == null),
          'You can only pass one of itemExtent, prototypeItem and itemExtentBuilder.',
        ),
        childrenDelegate = SliverChildListDelegate(
@@ -1263,9 +1294,7 @@ class ListView extends BoxScrollView {
          addRepaintBoundaries: addRepaintBoundaries,
          addSemanticIndexes: addSemanticIndexes,
        ),
-       super(
-         semanticChildCount: semanticChildCount ?? children.length,
-       );
+       super(semanticChildCount: semanticChildCount ?? children.length);
 
   /// Creates a scrollable, linear array of widgets that are created on demand.
   ///
@@ -1334,8 +1363,8 @@ class ListView extends BoxScrollView {
        assert(semanticChildCount == null || semanticChildCount <= itemCount!),
        assert(
          (itemExtent == null && prototypeItem == null) ||
-         (itemExtent == null && itemExtentBuilder == null) ||
-         (prototypeItem == null && itemExtentBuilder == null),
+             (itemExtent == null && itemExtentBuilder == null) ||
+             (prototypeItem == null && itemExtentBuilder == null),
          'You can only pass one of itemExtent, prototypeItem and itemExtentBuilder.',
        ),
        childrenDelegate = SliverChildBuilderDelegate(
@@ -1346,9 +1375,7 @@ class ListView extends BoxScrollView {
          addRepaintBoundaries: addRepaintBoundaries,
          addSemanticIndexes: addSemanticIndexes,
        ),
-       super(
-         semanticChildCount: semanticChildCount ?? itemCount,
-       );
+       super(semanticChildCount: semanticChildCount ?? itemCount);
 
   /// Creates a fixed-length scrollable linear array of list "items" separated
   /// by list item "separators".
@@ -1444,9 +1471,7 @@ class ListView extends BoxScrollView {
            return index.isEven ? index ~/ 2 : null;
          },
        ),
-       super(
-         semanticChildCount: itemCount,
-       );
+       super(semanticChildCount: itemCount);
 
   /// Creates a scrollable, linear array of widgets with a custom child model.
   ///
@@ -1481,8 +1506,8 @@ class ListView extends BoxScrollView {
     super.hitTestBehavior,
   }) : assert(
          (itemExtent == null && prototypeItem == null) ||
-         (itemExtent == null && itemExtentBuilder == null) ||
-         (prototypeItem == null && itemExtentBuilder == null),
+             (itemExtent == null && itemExtentBuilder == null) ||
+             (prototypeItem == null && itemExtentBuilder == null),
          'You can only pass one of itemExtent, prototypeItem and itemExtentBuilder.',
        );
 
@@ -1569,20 +1594,14 @@ class ListView extends BoxScrollView {
   @override
   Widget buildChildLayout(BuildContext context) {
     if (itemExtent != null) {
-      return SliverFixedExtentList(
-        delegate: childrenDelegate,
-        itemExtent: itemExtent!,
-      );
+      return SliverFixedExtentList(delegate: childrenDelegate, itemExtent: itemExtent!);
     } else if (itemExtentBuilder != null) {
       return SliverVariedExtentList(
         delegate: childrenDelegate,
         itemExtentBuilder: itemExtentBuilder!,
       );
     } else if (prototypeItem != null) {
-      return SliverPrototypeExtentList(
-        delegate: childrenDelegate,
-        prototypeItem: prototypeItem!,
-      );
+      return SliverPrototypeExtentList(delegate: childrenDelegate, prototypeItem: prototypeItem!);
     }
     return SliverList(delegate: childrenDelegate);
   }
@@ -1877,9 +1896,7 @@ class GridView extends BoxScrollView {
          addRepaintBoundaries: addRepaintBoundaries,
          addSemanticIndexes: addSemanticIndexes,
        ),
-       super(
-         semanticChildCount: semanticChildCount ?? children.length,
-       );
+       super(semanticChildCount: semanticChildCount ?? children.length);
 
   /// Creates a scrollable, 2D array of widgets that are created on demand.
   ///
@@ -1936,9 +1953,7 @@ class GridView extends BoxScrollView {
          addRepaintBoundaries: addRepaintBoundaries,
          addSemanticIndexes: addSemanticIndexes,
        ),
-       super(
-         semanticChildCount: semanticChildCount ?? itemCount,
-       );
+       super(semanticChildCount: semanticChildCount ?? itemCount);
 
   /// Creates a scrollable, 2D array of widgets with both a custom
   /// [SliverGridDelegate] and a custom [SliverChildDelegate].
@@ -2015,9 +2030,7 @@ class GridView extends BoxScrollView {
          addRepaintBoundaries: addRepaintBoundaries,
          addSemanticIndexes: addSemanticIndexes,
        ),
-       super(
-         semanticChildCount: semanticChildCount ?? children.length,
-       );
+       super(semanticChildCount: semanticChildCount ?? children.length);
 
   /// Creates a scrollable, 2D array of widgets with tiles that each have a
   /// maximum cross-axis extent.
@@ -2069,9 +2082,7 @@ class GridView extends BoxScrollView {
          addRepaintBoundaries: addRepaintBoundaries,
          addSemanticIndexes: addSemanticIndexes,
        ),
-       super(
-         semanticChildCount: semanticChildCount ?? children.length,
-       );
+       super(semanticChildCount: semanticChildCount ?? children.length);
 
   /// A delegate that controls the layout of the children within the [GridView].
   ///
@@ -2089,9 +2100,6 @@ class GridView extends BoxScrollView {
 
   @override
   Widget buildChildLayout(BuildContext context) {
-    return SliverGrid(
-      delegate: childrenDelegate,
-      gridDelegate: gridDelegate,
-    );
+    return SliverGrid(delegate: childrenDelegate, gridDelegate: gridDelegate);
   }
 }

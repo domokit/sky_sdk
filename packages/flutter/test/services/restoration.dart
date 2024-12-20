@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class MockRestorationManager extends TestRestorationManager {
-  MockRestorationManager({ this.enableChannels = false });
+  MockRestorationManager({this.enableChannels = false});
 
   bool get updateScheduled => _updateScheduled;
   bool _updateScheduled = false;
@@ -54,6 +54,7 @@ class MockRestorationManager extends TestRestorationManager {
     rootBucketAccessed++;
     return _rootBucket;
   }
+
   late Future<RestorationBucket?> _rootBucket;
   set rootBucket(Future<RestorationBucket?> value) {
     _rootBucket = value;

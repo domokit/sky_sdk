@@ -11,67 +11,44 @@ import 'package:flutter_api_samples/material/material_state/material_state_mouse
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets(
-    'MaterialStateMouseCursorExampleApp displays ListTile',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const example.MaterialStateMouseCursorExampleApp(),
-      );
+  testWidgets('MaterialStateMouseCursorExampleApp displays ListTile', (WidgetTester tester) async {
+    await tester.pumpWidget(const example.MaterialStateMouseCursorExampleApp());
 
-      expect(find.byType(ListTile), findsOneWidget);
-      expect(find.text('ListTile'), findsOneWidget);
-    },
-  );
+    expect(find.byType(ListTile), findsOneWidget);
+    expect(find.text('ListTile'), findsOneWidget);
+  });
 
-  testWidgets(
-    'ListTile displays correct mouse cursor when enabled',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: example.MaterialStateMouseCursorExample(enabled: true),
-          ),
-        ),
-      );
+  testWidgets('ListTile displays correct mouse cursor when enabled', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: example.MaterialStateMouseCursorExample(enabled: true)),
+      ),
+    );
 
-      final TestGesture gesture = await tester.createGesture(
-        kind: PointerDeviceKind.mouse,
-      );
-      await gesture.addPointer(
-        location: tester.getCenter(find.byType(ListTile)),
-      );
-      addTearDown(gesture.removePointer);
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer(location: tester.getCenter(find.byType(ListTile)));
+    addTearDown(gesture.removePointer);
 
-      expect(
-        RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
-        SystemMouseCursors.click,
-      );
-    },
-  );
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.click,
+    );
+  });
 
-  testWidgets(
-    'ListTile displays correct mouse cursor when disabled',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: example.MaterialStateMouseCursorExample(enabled: false),
-          ),
-        ),
-      );
+  testWidgets('ListTile displays correct mouse cursor when disabled', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: example.MaterialStateMouseCursorExample(enabled: false)),
+      ),
+    );
 
-      final TestGesture gesture = await tester.createGesture(
-        kind: PointerDeviceKind.mouse,
-      );
-      await gesture.addPointer(
-        location: tester.getCenter(find.byType(ListTile)),
-      );
-      addTearDown(gesture.removePointer);
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer(location: tester.getCenter(find.byType(ListTile)));
+    addTearDown(gesture.removePointer);
 
-      expect(
-        RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
-        SystemMouseCursors.forbidden,
-      );
-    },
-  );
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.forbidden,
+    );
+  });
 }

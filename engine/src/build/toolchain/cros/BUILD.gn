@@ -1,0 +1,35 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/toolchain/clang.gni")
+import("//build/toolchain/gcc_toolchain.gni")
+
+declare_args() {
+  # The CrOS build system supports many different kinds of targets across
+  # many different architectures. Bringing your own toolchain is also supported,
+  # so it's actually impossible to enumerate all toolchains for all targets
+  # as GN toolchain specifications.
+  # These arguments provide a mechanism for specifying your CC, CXX and AR at
+  # buildfile-generation time, allowing the CrOS build system to always use
+  # the right tools for the current target.
+  cros_target_cc = ""
+  cros_target_cxx = ""
+  cros_target_ar = ""
+}
+
+gcc_toolchain("target") {
+  assert(cros_target_cc != "", "Must provide target CC.")
+  assert(cros_target_cxx != "", "Must provide target CXX.")
+  assert(cros_target_ar != "", "Must provide target AR.")
+
+  cc = "${cros_target_cc}"
+  cxx = "${cros_target_cxx}"
+
+  ar = "${cros_target_ar}"
+  ld = cxx
+
+  toolchain_cpu = "${target_cpu}"
+  toolchain_os = "linux"
+  is_clang = is_clang
+}

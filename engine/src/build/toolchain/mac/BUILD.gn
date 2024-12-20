@@ -1,0 +1,329 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+assert(host_os == "mac")
+
+import("//build/config/ios/ios_sdk.gni")
+import("//build/config/mac/mac_sdk.gni")
+import("//build/config/sysroot.gni")
+import("//build/toolchain/clang.gni")
+import("//build/toolchain/clang_static_analyzer.gni")
+import("//build/toolchain/rbe.gni")
+import("//build/toolchain/ccache.gni")
+import("//build/toolchain/toolchain.gni")
+
+if (host_cpu == "arm64") {
+  rebased_clang_dir =
+      rebase_path("$buildtools_path/mac-arm64/clang/bin", root_build_dir)
+} else {
+  rebased_clang_dir =
+      rebase_path("$buildtools_path/mac-x64/clang/bin", root_build_dir)
+}
+
+if (use_ccache) {
+  # ccache only supports compilation, not linking.
+  cxx_prefix = "ccache "
+  objc_prefix = "ccache "
+  link_prefix = ""
+} else if (use_rbe) {
+  remote_wrapper =
+      rebase_path("//flutter/build/rbe/remote_wrapper.sh", root_build_dir)
+  local_wrapper =
+      rebase_path("//flutter/build/rbe/local_wrapper.sh", root_build_dir)
+  compiler_args = rewrapper_command + [
+    "--remote_wrapper=$remote_wrapper",
+    "--local_wrapper=$local_wrapper",
+    "--labels=type=compile,compiler=clang,lang=cpp ",
+  ]
+  cxx_prefix = string_join(" ", compiler_args)
+  # RBE does not support objc out of the box.
+  objc_prefix = ""
+  # Remote links time out without reporting an actionable error.
+  link_prefix = ""
+} else {
+  cxx_prefix = ""
+  objc_prefix = ""
+  link_prefix = ""
+}
+
+# Shared toolchain definition. Invocations should set toolchain_os to set the
+# build args in this definition.
+template("mac_toolchain") {
+  toolchain(target_name) {
+    assert(defined(invoker.asm), "mac_toolchain() must specify a \"asm\" value")
+    assert(defined(invoker.cc), "mac_toolchain() must specify a \"cc\" value")
+    assert(defined(invoker.cxx), "mac_toolchain() must specify a \"cxx\" value")
+    assert(defined(invoker.objc), "mac_toolchain() must specify a \"objc\" value")
+    assert(defined(invoker.ld), "mac_toolchain() must specify a \"ld\" value")
+    assert(defined(invoker.ar), "mac_toolchain() must specify a \"ar\" value")
+    assert(defined(invoker.toolchain_cpu),
+           "mac_toolchain() must specify a \"toolchain_cpu\"")
+    assert(defined(invoker.toolchain_os),
+           "mac_toolchain() must specify a \"toolchain_os\"")
+
+    # We can't do string interpolation ($ in strings) on things with dots in
+    # them. To allow us to use $cc below, for example, we create copies of
+    # these values in our scope.
+    ar = invoker.ar
+    asm = invoker.asm
+    cc = invoker.cc
+    cxx = invoker.cxx
+    objc = invoker.objc
+    ld = invoker.ld
+
+    if (use_clang_static_analyzer) {
+      analyzer_wrapper =
+          rebase_path("//build/toolchain/clang_static_analyzer_wrapper.py",
+                      root_build_dir) + "  --mode=clang"
+      cc = analyzer_wrapper + " ${cc}"
+      cxx = analyzer_wrapper + " ${cxx}"
+    }
+
+    # Make these apply to all tools below.
+    lib_switch = "-l"
+    lib_dir_switch = "-L"
+
+    sysroot_flags = ""
+
+    if (defined(invoker.sysroot_flags)) {
+      sysroot_flags = invoker.sysroot_flags
+    }
+
+    coverage_flags = ""
+    if (enable_coverage) {
+      coverage_flags = "-fprofile-instr-generate -fcoverage-mapping"
+    }
+
+    tool("cc") {
+      depfile = "{{output}}.d"
+      command = "$cc -MMD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_c}} $sysroot_flags $coverage_flags -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      description = "CC {{output}}"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+    }
+
+    tool("cxx") {
+      depfile = "{{output}}.d"
+      command = "$cxx -MMD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} $sysroot_flags $coverage_flags -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      description = "CXX {{output}}"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+    }
+
+    tool("asm") {
+      pool = "//build/toolchain:toolchain_pool($current_toolchain)"
+      depfile = "{{output}}.d"
+      command = "$asm -MMD -MF $depfile {{defines}} {{include_dirs}} {{asmflags}} {{cflags}} {{cflags_c}} $sysroot_flags -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      description = "ASM {{output}}"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+    }
+
+    tool("objc") {
+      pool = "//build/toolchain:toolchain_pool($current_toolchain)"
+      depfile = "{{output}}.d"
+      command = "$objc -MMD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_c}} {{cflags_objc}} $sysroot_flags $coverage_flags -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      description = "OBJC {{output}}"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+    }
+
+    tool("objcxx") {
+      pool = "//build/toolchain:toolchain_pool($current_toolchain)"
+      depfile = "{{output}}.d"
+      command = "$objc -MMD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} {{cflags_objcc}} $sysroot_flags $coverage_flags -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      description = "OBJCXX {{output}}"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+    }
+
+    tool("alink") {
+      pool = "//build/toolchain:toolchain_pool($current_toolchain)"
+      command = "rm -f {{output}} && $ar rcs {{output}} {{inputs}}"
+      description = "CREATE ARCHIVE {{output}}"
+      outputs =
+          [ "{{target_out_dir}}/{{target_output_name}}{{output_extension}}" ]
+      default_output_extension = ".a"
+      output_prefix = "lib"
+    }
+
+    tool("solink") {
+      pool = "//build/toolchain:toolchain_pool($current_toolchain)"
+      dylib = "{{root_out_dir}}/{{target_output_name}}{{output_extension}}"  # eg
+                                                                             # "./libfoo.dylib"
+      rspfile = dylib + ".rsp"
+
+      # These variables are not build into GN but are helpers that implement
+      # (1) linking to produce a .so, (2) extracting the symbols from that file
+      # to a temporary file, (3) if the temporary file has differences from the
+      # existing .TOC file, overwrite it, oterwise, don't change it.
+      #
+      # As a special case, if the library reexports symbols from other dynamic
+      # libraries, we always update the .TOC and skip the temporary file and
+      # diffing steps, since that library always needs to be re-linked.
+      tocname = dylib + ".TOC"
+      temporary_tocname = dylib + ".tmp"
+
+      lto_object_file = "{{root_out_dir}}/lto_{{target_output_name}}.o"
+
+      does_reexport_command = "[ ! -e $dylib -o ! -e $tocname ] || otool -l $dylib | grep -q LC_REEXPORT_DYLIB"
+      link_command = "$ld -shared $sysroot_flags $coverage_flags -Wl,-object_path_lto,$lto_object_file {{ldflags}} -o $dylib -Wl,-filelist,$rspfile {{solibs}} {{libs}} {{frameworks}}"
+      replace_command = "if ! cmp -s $temporary_tocname $tocname; then mv $temporary_tocname $tocname"
+      extract_toc_command = "{ otool -l $dylib | grep LC_ID_DYLIB -A 5; nm -gP $dylib | cut -f1-2 -d' ' | grep -v U\$\$; true; }"
+
+      command = "if $does_reexport_command ; then $link_command && $extract_toc_command > $tocname; else $link_command && $extract_toc_command > $temporary_tocname && $replace_command ; fi; fi"
+
+      rspfile_content = "{{inputs_newline}}"
+
+      description = "SOLINK {{output}}"
+
+      # Use this for {{output_extension}} expansions unless a target manually
+      # overrides it (in which case {{output_extension}} will be what the target
+      # specifies).
+      default_output_extension = ".dylib"
+
+      output_prefix = "lib"
+
+      # Since the above commands only updates the .TOC file when it changes, ask
+      # Ninja to check if the timestamp actually changed to know if downstream
+      # dependencies should be recompiled.
+      restat = true
+
+      # Tell GN about the output files. It will link to the dylib but use the
+      # tocname for dependency management.
+      outputs = [
+        dylib,
+        tocname,
+      ]
+      link_output = dylib
+      depend_output = tocname
+    }
+
+    tool("link") {
+      pool = "//build/toolchain:toolchain_pool($current_toolchain)"
+      outfile = "{{root_out_dir}}/{{target_output_name}}{{output_extension}}"
+      rspfile = "$outfile.rsp"
+
+      command = "$ld $sysroot_flags {{ldflags}} $coverage_flags -Xlinker -rpath -Xlinker @executable_path/Frameworks -o $outfile -Wl,-filelist,$rspfile {{solibs}} {{libs}} {{frameworks}}"
+      description = "LINK $outfile"
+      rspfile_content = "{{inputs_newline}}"
+      outputs = [ outfile ]
+    }
+
+    tool("stamp") {
+      command = "touch {{output}}"
+      description = "STAMP {{output}}"
+    }
+
+    tool("copy") {
+      command = "ln -f {{source}} {{output}} 2>/dev/null || (rsync -a --delete {{source}} {{output}})"
+      description = "COPY {{source}} {{output}}"
+    }
+
+    toolchain_args = {
+      current_cpu = invoker.toolchain_cpu
+      current_os = invoker.toolchain_os
+
+      # These values need to be passed through unchanged.
+      target_os = target_os
+      target_cpu = target_cpu
+
+      if (defined(invoker.is_clang)) {
+        is_clang = invoker.is_clang
+      }
+    }
+  }
+}
+
+# Toolchain used for iOS device targets.
+mac_toolchain("ios_clang_arm") {
+  toolchain_cpu = "arm"
+  toolchain_os = "mac"
+  prefix = rebased_clang_dir
+  ar = "${prefix}/llvm-ar"
+  asm = "${prefix}/clang"
+  cc = "${cxx_prefix}${prefix}/clang"
+  cxx = "${cxx_prefix}${prefix}/clang++"
+  objc = "${objc_prefix}${prefix}/clang++"
+  ld = "${link_prefix}${prefix}/clang++"
+  is_clang = true
+
+  sysroot_rel = rebase_path(ios_sdk_path, root_build_dir)
+  sysroot_flags = "-isysroot $sysroot_rel -miphoneos-version-min=$ios_deployment_target"
+}
+
+# Toolchain used for iOS simulator targets (arm64).
+mac_toolchain("ios_clang_arm_sim") {
+  toolchain_cpu = "arm"
+  toolchain_os = "mac"
+  prefix = rebased_clang_dir
+  ar = "${prefix}/llvm-ar"
+  asm = "${prefix}/clang"
+  cc = "${cxx_prefix}${prefix}/clang"
+  cxx = "${cxx_prefix}${prefix}/clang++"
+  objc = "${objc_prefix}${prefix}/clang++"
+  ld = "${link_prefix}${prefix}/clang++"
+  is_clang = true
+
+  sysroot_rel = rebase_path(ios_sdk_path, root_build_dir)
+  sysroot_flags = "-isysroot $sysroot_rel -mios-simulator-version-min=$ios_deployment_target"
+}
+
+# Toolchain used for iOS simulator targets (x64).
+mac_toolchain("ios_clang_x64_sim") {
+  toolchain_cpu = "x64"
+  toolchain_os = "mac"
+  prefix = rebased_clang_dir
+  ar = "${prefix}/llvm-ar"
+  asm = "${prefix}/clang"
+  cc = "${cxx_prefix}${prefix}/clang"
+  cxx = "${cxx_prefix}${prefix}/clang++"
+  objc = "${objc_prefix}${prefix}/clang++"
+  ld = "${link_prefix}${prefix}/clang++"
+  is_clang = true
+
+  sysroot_rel = rebase_path(ios_sdk_path, root_build_dir)
+  sysroot_flags = "-isysroot $sysroot_rel -mios-simulator-version-min=$ios_deployment_target"
+}
+
+# Toolchain used for Mac X64 host targets.
+mac_toolchain("clang_x64") {
+  toolchain_cpu = "x64"
+  toolchain_os = "mac"
+  prefix = rebased_clang_dir
+  ar = "${prefix}/llvm-ar"
+  asm = "${prefix}/clang"
+  cc = "${cxx_prefix}${prefix}/clang"
+  cxx = "${cxx_prefix}${prefix}/clang++"
+  objc = "${objc_prefix}${prefix}/clang++"
+  ld = "${link_prefix}${prefix}/clang++"
+  is_clang = true
+
+  sysroot_rel = rebase_path(mac_sdk_path, root_build_dir)
+  sysroot_flags =
+      "-isysroot $sysroot_rel -mmacosx-version-min=$mac_deployment_target"
+}
+
+# Toolchain used for Mac ARM64 host targets.
+mac_toolchain("clang_arm64") {
+  toolchain_cpu = "arm64"
+  toolchain_os = "mac"
+  prefix = rebased_clang_dir
+  ar = "${prefix}/llvm-ar"
+  asm = "${prefix}/clang"
+  cc = "${cxx_prefix}${prefix}/clang"
+  cxx = "${cxx_prefix}${prefix}/clang++"
+  objc = "${objc_prefix}${prefix}/clang++"
+  ld = "${link_prefix}${prefix}/clang++"
+  is_clang = true
+
+  sysroot_rel = rebase_path(mac_sdk_path, root_build_dir)
+  sysroot_flags =
+      "-isysroot $sysroot_rel -mmacosx-version-min=$mac_deployment_target"
+}

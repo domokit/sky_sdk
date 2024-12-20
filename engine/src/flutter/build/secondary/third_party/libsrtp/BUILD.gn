@@ -1,0 +1,345 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+  use_system_libsrtp = false
+  use_srtp_boringssl = true
+}
+
+config("libsrtp_config") {
+  defines = [
+    "HAVE_CONFIG_H",
+    "HAVE_STDLIB_H",
+    "HAVE_STRING_H",
+    "TESTAPP_SOURCE",
+  ]
+
+  include_dirs = [
+    "config",
+    "srtp/include",
+    "srtp/crypto/include",
+  ]
+
+  if (use_srtp_boringssl) {
+    defines += [ "OPENSSL" ]
+  }
+
+  if (is_posix) {
+    defines += [
+      "HAVE_INT16_T",
+      "HAVE_INT32_T",
+      "HAVE_INT8_T",
+      "HAVE_UINT16_T",
+      "HAVE_UINT32_T",
+      "HAVE_UINT64_T",
+      "HAVE_UINT8_T",
+      "HAVE_STDINT_H",
+      "HAVE_INTTYPES_H",
+      "HAVE_NETINET_IN_H",
+      "HAVE_ARPA_INET_H",
+      "HAVE_UNISTD_H",
+    ]
+    cflags = [ "-Wno-unused-variable" ]
+  }
+
+  if (is_win) {
+    defines += [
+      "HAVE_BYTESWAP_METHODS_H",
+
+      # All Windows architectures are this way.
+      "SIZEOF_UNSIGNED_LONG=4",
+      "SIZEOF_UNSIGNED_LONG_LONG=8",
+    ]
+  }
+
+  if (current_cpu == "x64" || current_cpu == "x86" || current_cpu == "arm") {
+    defines += [
+      # TODO(leozwang): CPU_RISC doesn"t work properly on android/arm
+      # platform for unknown reasons, need to investigate the root cause
+      # of it. CPU_RISC is used for optimization only, and CPU_CISC should
+      # just work just fine, it has been tested on android/arm with srtp
+      # test applications and libjingle.
+      "CPU_CISC",
+    ]
+  }
+}
+
+config("system_libsrtp_config") {
+  defines = [ "USE_SYSTEM_LIBSRTP" ]
+  include_dirs = [ "/usr/include/srtp" ]
+}
+
+if (use_system_libsrtp) {
+  group("libsrtp") {
+    public_configs = [
+      ":libsrtp_config",
+      ":system_libsrtp_config",
+    ]
+    libs = [ "-lsrtp" ]
+  }
+} else {
+  static_library("libsrtp") {
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [ "//build/config/compiler:no_chromium_code" ]
+    public_configs = [ ":libsrtp_config" ]
+
+    sources = [
+      # includes
+      "srtp/include/ekt.h",
+      "srtp/include/getopt_s.h",
+      "srtp/include/rtp.h",
+      "srtp/include/rtp_priv.h",
+      "srtp/include/srtp.h",
+      "srtp/include/srtp_priv.h",
+      "srtp/include/ut_sim.h",
+
+      # headers
+      "srtp/crypto/include/aes.h",
+      "srtp/crypto/include/aes_cbc.h",
+      "srtp/crypto/include/aes_icm.h",
+      "srtp/crypto/include/alloc.h",
+      "srtp/crypto/include/auth.h",
+      "srtp/crypto/include/cipher.h",
+      "srtp/crypto/include/crypto.h",
+      "srtp/crypto/include/crypto_kernel.h",
+      "srtp/crypto/include/crypto_math.h",
+      "srtp/crypto/include/crypto_types.h",
+      "srtp/crypto/include/cryptoalg.h",
+      "srtp/crypto/include/datatypes.h",
+      "srtp/crypto/include/err.h",
+      "srtp/crypto/include/gf2_8.h",
+      "srtp/crypto/include/hmac.h",
+      "srtp/crypto/include/integers.h",
+      "srtp/crypto/include/kernel_compat.h",
+      "srtp/crypto/include/key.h",
+      "srtp/crypto/include/null_auth.h",
+      "srtp/crypto/include/null_cipher.h",
+      "srtp/crypto/include/prng.h",
+      "srtp/crypto/include/rand_source.h",
+      "srtp/crypto/include/rdb.h",
+      "srtp/crypto/include/rdbx.h",
+      "srtp/crypto/include/sha1.h",
+      "srtp/crypto/include/stat.h",
+      "srtp/crypto/include/xfm.h",
+
+      # sources
+      "srtp/crypto/cipher/aes.c",
+      "srtp/crypto/cipher/aes_cbc.c",
+      "srtp/crypto/cipher/aes_icm.c",
+      "srtp/crypto/cipher/cipher.c",
+      "srtp/crypto/cipher/null_cipher.c",
+      "srtp/crypto/hash/auth.c",
+      "srtp/crypto/hash/hmac.c",
+      "srtp/crypto/hash/null_auth.c",
+      "srtp/crypto/hash/sha1.c",
+      "srtp/crypto/kernel/alloc.c",
+      "srtp/crypto/kernel/crypto_kernel.c",
+      "srtp/crypto/kernel/err.c",
+      "srtp/crypto/kernel/key.c",
+      "srtp/crypto/math/datatypes.c",
+      "srtp/crypto/math/gf2_8.c",
+      "srtp/crypto/math/stat.c",
+      "srtp/crypto/replay/rdb.c",
+      "srtp/crypto/replay/rdbx.c",
+      "srtp/crypto/replay/ut_sim.c",
+      "srtp/crypto/rng/ctr_prng.c",
+      "srtp/crypto/rng/prng.c",
+      "srtp/crypto/rng/rand_source.c",
+      "srtp/srtp/ekt.c",
+      "srtp/srtp/srtp.c",
+    ]
+
+    if (is_clang) {
+      cflags = [ "-Wno-implicit-function-declaration" ]
+    }
+
+    if (use_srtp_boringssl) {
+      deps = [ "//flutter/third_party/boringssl:boringssl" ]
+      public_deps = [ "//flutter/third_party/boringssl:boringssl" ]
+      sources -= [
+        "srtp/crypto/cipher/aes_cbc.c",
+        "srtp/crypto/cipher/aes_icm.c",
+        "srtp/crypto/hash/hmac.c",
+        "srtp/crypto/hash/sha1.c",
+        "srtp/crypto/rng/ctr_prng.c",
+        "srtp/crypto/rng/prng.c",
+      ]
+      sources += [
+        "srtp/crypto/cipher/aes_gcm_ossl.c",
+        "srtp/crypto/cipher/aes_icm_ossl.c",
+        "srtp/crypto/hash/hmac_ossl.c",
+        "srtp/crypto/include/aes_gcm_ossl.h",
+        "srtp/crypto/include/aes_icm_ossl.h",
+      ]
+    }
+  }
+
+  # TODO(GYP): A bunch of these tests don't compile (in gyp either). They're
+  # not very broken, so could probably be made to work if it's useful.
+  if (!is_win) {
+    executable("rdbx_driver") {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      deps = [ ":libsrtp" ]
+      sources = [
+        "srtp/include/getopt_s.h",
+        "srtp/test/getopt_s.c",
+        "srtp/test/rdbx_driver.c",
+      ]
+    }
+
+    executable("srtp_driver") {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      deps = [ ":libsrtp" ]
+      sources = [
+        "srtp/include/getopt_s.h",
+        "srtp/include/srtp_priv.h",
+        "srtp/test/getopt_s.c",
+        "srtp/test/srtp_driver.c",
+      ]
+    }
+
+    executable("roc_driver") {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      deps = [ ":libsrtp" ]
+      sources = [
+        "srtp/crypto/include/rdbx.h",
+        "srtp/include/ut_sim.h",
+        "srtp/test/roc_driver.c",
+      ]
+    }
+
+    executable("replay_driver") {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      deps = [ ":libsrtp" ]
+      sources = [
+        "srtp/crypto/include/rdbx.h",
+        "srtp/include/ut_sim.h",
+        "srtp/test/replay_driver.c",
+      ]
+    }
+
+    executable("rtpw") {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      deps = [ ":libsrtp" ]
+      sources = [
+        "srtp/crypto/include/datatypes.h",
+        "srtp/include/getopt_s.h",
+        "srtp/include/rtp.h",
+        "srtp/include/srtp.h",
+        "srtp/test/getopt_s.c",
+        "srtp/test/rtp.c",
+        "srtp/test/rtpw.c",
+      ]
+      if (is_android) {
+        defines = [ "HAVE_SYS_SOCKET_H" ]
+      }
+      if (is_clang) {
+        cflags = [ "-Wno-implicit-function-declaration" ]
+      }
+    }
+
+    executable("srtp_test_cipher_driver") {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      deps = [ ":libsrtp" ]
+      sources = [
+        "srtp/crypto/test/cipher_driver.c",
+        "srtp/include/getopt_s.h",
+        "srtp/test/getopt_s.c",
+      ]
+    }
+
+    executable("srtp_test_datatypes_driver") {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      deps = [ ":libsrtp" ]
+      sources = [ "srtp/crypto/test/datatypes_driver.c" ]
+    }
+
+    executable("srtp_test_stat_driver") {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      deps = [ ":libsrtp" ]
+      sources = [ "srtp/crypto/test/stat_driver.c" ]
+    }
+
+    executable("srtp_test_sha1_driver") {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      deps = [ ":libsrtp" ]
+      sources = [ "srtp/crypto/test/sha1_driver.c" ]
+    }
+
+    executable("srtp_test_kernel_driver") {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      deps = [ ":libsrtp" ]
+      sources = [
+        "srtp/crypto/test/kernel_driver.c",
+        "srtp/include/getopt_s.h",
+        "srtp/test/getopt_s.c",
+      ]
+    }
+
+    executable("srtp_test_aes_calc") {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      deps = [ ":libsrtp" ]
+      sources = [ "srtp/crypto/test/aes_calc.c" ]
+    }
+
+    executable("srtp_test_rand_gen") {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      deps = [ ":libsrtp" ]
+      sources = [
+        "srtp/crypto/test/rand_gen.c",
+        "srtp/include/getopt_s.h",
+        "srtp/test/getopt_s.c",
+      ]
+    }
+
+    executable("srtp_test_rand_gen_soak") {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      deps = [ ":libsrtp" ]
+      sources = [
+        "srtp/crypto/test/rand_gen_soak.c",
+        "srtp/include/getopt_s.h",
+        "srtp/test/getopt_s.c",
+      ]
+    }
+
+    executable("srtp_test_env") {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      deps = [ ":libsrtp" ]
+      sources = [ "srtp/crypto/test/env.c" ]
+    }
+
+    group("srtp_runtest") {
+      deps = [
+        ":rdbx_driver",
+        ":replay_driver",
+        ":roc_driver",
+        ":rtpw",
+        ":srtp_driver",
+        ":srtp_test_aes_calc",
+        ":srtp_test_cipher_driver",
+        ":srtp_test_datatypes_driver",
+        ":srtp_test_env",
+        ":srtp_test_kernel_driver",
+        ":srtp_test_rand_gen",
+        ":srtp_test_rand_gen_soak",
+        ":srtp_test_sha1_driver",
+        ":srtp_test_stat_driver",
+      ]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+assert(is_fuchsia)
+
+import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+
+source_set("scenic") {
+  testonly = true
+
+  sources = [
+    "fake_flatland.cc",
+    "fake_flatland.h",
+    "fake_flatland_types.cc",
+    "fake_flatland_types.h",
+  ]
+
+  public_deps = [
+    "${fuchsia_sdk}/fidl/fuchsia.images",
+    "${fuchsia_sdk}/fidl/fuchsia.scenic.scheduling",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.composition",
+    "${fuchsia_sdk}/fidl/fuchsia.ui.views",
+    "${fuchsia_sdk}/pkg/async-cpp",
+    "${fuchsia_sdk}/pkg/async-testing",
+    "${fuchsia_sdk}/pkg/fidl_cpp",
+    "//flutter/fml",
+  ]
+}

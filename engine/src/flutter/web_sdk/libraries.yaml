@@ -1,0 +1,92 @@
+# Copyright (c) 2017, the Dart project authors.  Please see the AUTHORS file
+# for details. All rights reserved. Use of this source code is governed by a
+# BSD-style license that can be found in the LICENSE file.
+
+# This libraries file is only used for building the ddc kernel.
+#
+# Note: if you edit this file, you must also edit libraries.json in this
+# directory:
+#
+#.    dart third_party/dart/tools/yaml2json.dart flutter/web_sdk/libraries.yaml flutter/web_sdk/libraries.json
+#
+# We currently have several different files that needs to be updated when
+# changing libraries, sources, and patch files.  See
+# https://github.com/dart-lang/sdk/issues/28836.
+
+dartdevc:
+  include:
+    - {path: "../dart-sdk/lib/libraries.json", target: dartdevc}
+
+  libraries:
+    ui:
+      uri: "lib/ui/ui.dart"
+
+    ui_web:
+      uri: "lib/ui_web/ui_web.dart"
+
+    _engine:
+      uri: "lib/_engine/engine.dart"
+
+    _skwasm_stub:
+      uri: "lib/_skwasm_stub/skwasm_stub.dart"
+
+    _web_unicode:
+      uri: "lib/_web_unicode/web_unicode.dart"
+
+    _web_locale_keymap:
+      uri: "lib/_web_locale_keymap/web_locale_keymap.dart"
+
+    _web_test_fonts:
+      uri: "lib/_web_test_fonts/web_test_fonts.dart"
+
+dart2js:
+  include:
+    - {path: "../dart-sdk/lib/libraries.json", target: dart2js}
+
+  libraries:
+    ui:
+      uri: "lib/ui/ui.dart"
+
+    ui_web:
+      uri: "lib/ui_web/ui_web.dart"
+
+    _engine:
+      uri: "lib/_engine/engine.dart"
+
+    _skwasm_stub:
+      uri: "lib/_skwasm_stub/skwasm_stub.dart"
+
+    _web_unicode:
+      uri: "lib/_web_unicode/web_unicode.dart"
+
+    _web_locale_keymap:
+      uri: "lib/_web_locale_keymap/web_locale_keymap.dart"
+
+    _web_test_fonts:
+      uri: "lib/_web_test_fonts/web_test_fonts.dart"
+
+wasm:
+  include:
+    - {path: "../dart-sdk/lib/libraries.json", target: wasm}
+
+  libraries:
+    ui:
+      uri: "lib/ui/ui.dart"
+
+    ui_web:
+      uri: "lib/ui_web/ui_web.dart"
+
+    _engine:
+      uri: "lib/_engine/engine.dart"
+
+    _skwasm_impl:
+      uri: "lib/_skwasm_impl/skwasm_impl.dart"
+
+    _web_unicode:
+      uri: "lib/_web_unicode/web_unicode.dart"
+
+    _web_locale_keymap:
+      uri: "lib/_web_locale_keymap/web_locale_keymap.dart"
+
+    _web_test_fonts:
+      uri: "lib/_web_test_fonts/web_test_fonts.dart"

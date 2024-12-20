@@ -1,0 +1,41 @@
+# Copyright 2016 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+source_root = "//flutter/third_party/vulkan-deps/spirv-cross/src"
+
+config("spirv_cross_public") {
+  include_dirs = [ source_root ]
+
+  defines = [ "SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS" ]
+}
+
+source_set("spirv_cross_flutter") {
+  public_configs = [ ":spirv_cross_public" ]
+
+  sources = [
+    "$source_root/GLSL.std.450.h",
+    "$source_root/spirv.hpp",
+    "$source_root/spirv_cfg.cpp",
+    "$source_root/spirv_cfg.hpp",
+    "$source_root/spirv_common.hpp",
+    "$source_root/spirv_cross.cpp",
+    "$source_root/spirv_cross.hpp",
+    "$source_root/spirv_cross_containers.hpp",
+    "$source_root/spirv_cross_error_handling.hpp",
+    "$source_root/spirv_cross_parsed_ir.cpp",
+    "$source_root/spirv_cross_parsed_ir.hpp",
+    "$source_root/spirv_cross_util.cpp",
+    "$source_root/spirv_cross_util.hpp",
+    "$source_root/spirv_glsl.cpp",
+    "$source_root/spirv_glsl.hpp",
+    "$source_root/spirv_hlsl.cpp",
+    "$source_root/spirv_hlsl.hpp",
+    "$source_root/spirv_msl.cpp",
+    "$source_root/spirv_msl.hpp",
+    "$source_root/spirv_parser.cpp",
+    "$source_root/spirv_parser.hpp",
+    "$source_root/spirv_reflect.cpp",
+    "$source_root/spirv_reflect.hpp",
+  ]
+}

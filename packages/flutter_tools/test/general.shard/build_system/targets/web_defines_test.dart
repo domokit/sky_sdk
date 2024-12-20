@@ -6,7 +6,6 @@ import 'package:flutter_tools/src/web/compile.dart';
 import 'package:test/test.dart';
 
 void main() {
-
   group('dart-defines and web-renderer options', () {
     late List<String> dartDefines;
 

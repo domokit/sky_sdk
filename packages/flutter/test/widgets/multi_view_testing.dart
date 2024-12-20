@@ -7,11 +7,12 @@ import 'dart:ui';
 import 'package:flutter_test/flutter_test.dart';
 
 class FakeView extends TestFlutterView {
-  FakeView(FlutterView view, { this.viewId = 100 }) : super(
-    view: view,
-    platformDispatcher: view.platformDispatcher as TestPlatformDispatcher,
-    display: view.display as TestDisplay,
-  );
+  FakeView(FlutterView view, {this.viewId = 100})
+    : super(
+        view: view,
+        platformDispatcher: view.platformDispatcher as TestPlatformDispatcher,
+        display: view.display as TestDisplay,
+      );
 
   @override
   final int viewId;
@@ -35,7 +36,8 @@ class FakeView extends TestFlutterView {
 /// A test platform dispatcher that can show/hide its underlying `implicitView`,
 /// depending on the value of the [implicitViewHidden] flag.
 class NoImplicitViewPlatformDispatcher extends TestPlatformDispatcher {
-  NoImplicitViewPlatformDispatcher({ required super.platformDispatcher }) : superPlatformDispatcher = platformDispatcher;
+  NoImplicitViewPlatformDispatcher({required super.platformDispatcher})
+    : superPlatformDispatcher = platformDispatcher;
 
   final PlatformDispatcher superPlatformDispatcher;
 
@@ -43,9 +45,7 @@ class NoImplicitViewPlatformDispatcher extends TestPlatformDispatcher {
 
   @override
   TestFlutterView? get implicitView {
-    return implicitViewHidden
-        ? null
-        : superPlatformDispatcher.implicitView as TestFlutterView?;
+    return implicitViewHidden ? null : superPlatformDispatcher.implicitView as TestFlutterView?;
   }
 }
 
@@ -63,7 +63,8 @@ class NoImplicitViewPlatformDispatcher extends TestPlatformDispatcher {
 ///
 /// See: multi_view_no_implicitView_binding_test.dart
 class NoImplicitViewWidgetsBinding extends AutomatedTestWidgetsFlutterBinding {
-  late final NoImplicitViewPlatformDispatcher _platformDispatcher = NoImplicitViewPlatformDispatcher(platformDispatcher: super.platformDispatcher);
+  late final NoImplicitViewPlatformDispatcher _platformDispatcher =
+      NoImplicitViewPlatformDispatcher(platformDispatcher: super.platformDispatcher);
 
   @override
   NoImplicitViewPlatformDispatcher get platformDispatcher => _platformDispatcher;

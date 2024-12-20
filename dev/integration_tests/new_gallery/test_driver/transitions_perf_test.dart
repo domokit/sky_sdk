@@ -89,28 +89,21 @@ Future<void> scrollToTop(SerializableFinder demoItem, FlutterDriver driver) asyn
   stdout.writeln('scrolling to top');
 
   // Scroll to the Categories header.
-  await driver.scroll(
-    demoItem,
-    0,
-    5000,
-    const Duration(milliseconds: 200),
-  );
+  await driver.scroll(demoItem, 0, 5000, const Duration(milliseconds: 200));
   handleOverscrollAnimation();
 
   // Scroll to top.
-  await driver.scroll(
-    categoriesHeader,
-    0,
-    500,
-    const Duration(milliseconds: 200),
-  );
+  await driver.scroll(categoriesHeader, 0, 500, const Duration(milliseconds: 200));
   handleOverscrollAnimation();
 }
 
 /// Returns a [Future] that resolves to true if the widget specified by [finder]
 /// is present, false otherwise.
-Future<bool> isPresent(SerializableFinder finder, FlutterDriver driver,
-    {Duration timeout = const Duration(seconds: 5)}) async {
+Future<bool> isPresent(
+  SerializableFinder finder,
+  FlutterDriver driver, {
+  Duration timeout = const Duration(seconds: 5),
+}) async {
   try {
     await driver.waitFor(finder, timeout: timeout);
     return true;
@@ -180,10 +173,14 @@ Future<void> runDemos(
     // back to its previous position, if it's too large, it may scroll too far.
     // To resolve this, we scroll 75% of the list width/height dimensions on
     // each increment.
-    final DriverOffset topLeft =
-        await driver.getTopLeft(demoList, timeout: const Duration(seconds: 10));
-    final DriverOffset bottomRight = await driver.getBottomRight(demoList,
-        timeout: const Duration(seconds: 10));
+    final DriverOffset topLeft = await driver.getTopLeft(
+      demoList,
+      timeout: const Duration(seconds: 10),
+    );
+    final DriverOffset bottomRight = await driver.getBottomRight(
+      demoList,
+      timeout: const Duration(seconds: 10),
+    );
     final double listWidth = bottomRight.dx - topLeft.dx;
     final double listHeight = bottomRight.dy - topLeft.dy;
     await driver.scrollUntilVisible(
@@ -234,20 +231,18 @@ void main([List<String> args = const <String>[]]) {
       driver = await FlutterDriver.connect();
 
       // See _handleMessages() in transitions_perf.dart.
-      _allDemos = List<String>.from(json.decode(
-        await driver.requestData('demoDescriptions'),
-      ) as List<dynamic>);
+      _allDemos = List<String>.from(
+        json.decode(await driver.requestData('demoDescriptions')) as List<dynamic>,
+      );
       if (_allDemos.isEmpty) {
         throw 'no demo names found';
       }
 
       // See _handleMessages() in transitions_perf.dart.
-      isTestingCraneOnly =
-          await driver.requestData('isTestingCraneOnly') == 'true';
+      isTestingCraneOnly = await driver.requestData('isTestingCraneOnly') == 'true';
 
       // See _handleMessages() in transitions_perf.dart.
-      isTestingReplyOnly =
-          await driver.requestData('isTestingReplyOnly') == 'true';
+      isTestingReplyOnly = await driver.requestData('isTestingReplyOnly') == 'true';
 
       if (args.contains('--with_semantics')) {
         stdout.writeln('Enabling semantics...');
@@ -261,7 +256,8 @@ void main([List<String> args = const <String>[]]) {
       await driver.close();
 
       stdout.writeln(
-          'Timeline summaries for profiled demos have been output to the build/ directory.');
+        'Timeline summaries for profiled demos have been output to the build/ directory.',
+      );
     });
 
     test('only Crane', () async {
@@ -270,25 +266,15 @@ void main([List<String> args = const <String>[]]) {
       }
 
       // Collect timeline data for just the Crane study.
-      final Timeline timeline = await driver.traceAction(
-        () async {
-          await runDemos(
-            <String>['crane@study'],
-            driver,
-            additionalActions: () async => driver.scroll(
-              craneFlyList,
-              0,
-              -1000,
-              const Duration(seconds: 1),
-            ),
-            scrollToTopWhenDone: false,
-          );
-        },
-        streams: const <TimelineStream>[
-          TimelineStream.dart,
-          TimelineStream.embedder,
-        ],
-      );
+      final Timeline timeline = await driver.traceAction(() async {
+        await runDemos(
+          <String>['crane@study'],
+          driver,
+          additionalActions:
+              () async => driver.scroll(craneFlyList, 0, -1000, const Duration(seconds: 1)),
+          scrollToTopWhenDone: false,
+        );
+      }, streams: const <TimelineStream>[TimelineStream.dart, TimelineStream.embedder]);
 
       final TimelineSummary summary = TimelineSummary.summarize(timeline);
       await summary.writeTimelineToFile('transitions-crane', pretty: true);
@@ -300,41 +286,35 @@ void main([List<String> args = const <String>[]]) {
       }
 
       // Collect timeline data for just the Crane study.
-      final Timeline timeline = await driver.traceAction(
-        () async {
-          await runDemos(
-            <String>['reply@study'],
-            driver,
-            additionalActions: () async {
-              // Tap compose fab to trigger open container transform/fade through
-              await driver.tap(replyFab);
-              // Exit compose page
-              await driver.tap(replyExit);
-              // Tap search icon to trigger shared axis transition
-              await driver.tap(replySearch);
-              // Exit search page
-              await driver.tap(replyExit);
-              // Tap on email to trigger open container transform
-              await driver.tap(replyEmail);
-              // Exit email page
-              await driver.tap(replyExit);
-              // Tap Reply logo to open bottom drawer/navigation rail
-              await driver.tap(replyLogo);
-              // Tap Reply logo to close bottom drawer/navigation rail
-              await driver.tap(replyLogo);
-              // Tap Reply logo to open bottom drawer/navigation rail
-              await driver.tap(replyLogo);
-              // Tap sent mailbox destination to trigger fade through transition
-              await driver.tap(replySentMailbox);
-            },
-            scrollToTopWhenDone: false,
-          );
-        },
-        streams: const <TimelineStream>[
-          TimelineStream.dart,
-          TimelineStream.embedder,
-        ],
-      );
+      final Timeline timeline = await driver.traceAction(() async {
+        await runDemos(
+          <String>['reply@study'],
+          driver,
+          additionalActions: () async {
+            // Tap compose fab to trigger open container transform/fade through
+            await driver.tap(replyFab);
+            // Exit compose page
+            await driver.tap(replyExit);
+            // Tap search icon to trigger shared axis transition
+            await driver.tap(replySearch);
+            // Exit search page
+            await driver.tap(replyExit);
+            // Tap on email to trigger open container transform
+            await driver.tap(replyEmail);
+            // Exit email page
+            await driver.tap(replyExit);
+            // Tap Reply logo to open bottom drawer/navigation rail
+            await driver.tap(replyLogo);
+            // Tap Reply logo to close bottom drawer/navigation rail
+            await driver.tap(replyLogo);
+            // Tap Reply logo to open bottom drawer/navigation rail
+            await driver.tap(replyLogo);
+            // Tap sent mailbox destination to trigger fade through transition
+            await driver.tap(replySentMailbox);
+          },
+          scrollToTopWhenDone: false,
+        );
+      }, streams: const <TimelineStream>[TimelineStream.dart, TimelineStream.embedder]);
 
       final TimelineSummary summary = TimelineSummary.summarize(timeline);
       await summary.writeTimelineToFile('transitions-reply', pretty: true);
@@ -350,10 +330,7 @@ void main([List<String> args = const <String>[]]) {
         () async {
           await runDemos(_profiledDemos, driver);
         },
-        streams: const <TimelineStream>[
-          TimelineStream.dart,
-          TimelineStream.embedder,
-        ],
+        streams: const <TimelineStream>[TimelineStream.dart, TimelineStream.embedder],
         retainPriorEvents: true,
       );
 
@@ -361,8 +338,7 @@ void main([List<String> args = const <String>[]]) {
       await summary.writeTimelineToFile('transitions', pretty: true);
 
       // Execute the remaining tests.
-      final Set<String> unprofiledDemos = Set<String>.from(_allDemos)
-        ..removeAll(_profiledDemos);
+      final Set<String> unprofiledDemos = Set<String>.from(_allDemos)..removeAll(_profiledDemos);
       await runDemos(unprofiledDemos.toList(), driver);
     }, timeout: Timeout.none);
   });

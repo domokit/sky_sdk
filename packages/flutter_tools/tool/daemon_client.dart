@@ -22,13 +22,15 @@ Future<void> main() async {
   print('daemon process started, pid: ${daemon.pid}');
 
   daemon.stdout
-    .transform<String>(utf8.decoder)
-    .transform<String>(const LineSplitter())
-    .listen((String line) => print('<== $line'));
+      .transform<String>(utf8.decoder)
+      .transform<String>(const LineSplitter())
+      .listen((String line) => print('<== $line'));
   daemon.stderr.listen(stderr.add);
 
   stdout.write('> ');
-  stdin.transform<String>(utf8.decoder).transform<String>(const LineSplitter()).listen((String line) {
+  stdin.transform<String>(utf8.decoder).transform<String>(const LineSplitter()).listen((
+    String line,
+  ) {
     final List<String> words = line.split(' ');
 
     if (line == 'version' || line == 'v') {
@@ -71,8 +73,7 @@ Future<void> main() async {
         'method': 'emulator.launch',
         'params': <String, dynamic>{
           'emulatorId': words[1],
-          if (words.contains('coldBoot'))
-            'coldBoot': true,
+          if (words.contains('coldBoot')) 'coldBoot': true,
         },
       });
     } else if (line == 'enable') {
@@ -84,10 +85,12 @@ Future<void> main() async {
   });
 
   // Print in the callback can't fail.
-  unawaited(daemon.exitCode.then<int>((int code) {
-    print('daemon exiting ($code)');
-    exit(code);
-  }));
+  unawaited(
+    daemon.exitCode.then<int>((int code) {
+      print('daemon exiting ($code)');
+      exit(code);
+    }),
+  );
 }
 
 int id = 0;

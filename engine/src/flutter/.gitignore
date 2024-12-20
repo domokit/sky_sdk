@@ -1,0 +1,147 @@
+# commonly generated files
+*.pyc
+*~
+.*.sw?
+.DS_Store
+.ccls-cache
+.cache
+.classpath
+.clangd/
+.cproject
+.dart_tool
+.gdb_history
+.checkstyle
+.gdbinit
+.landmines
+.packages
+.project
+.pub
+.pydevproject
+compile_commands.json
+cscope.*
+Session.vim
+tags
+Thumbs.db
+.idea
+pubspec.lock
+docs/doxygen/
+xcuserdata
+
+# Miscellaneous
+*.class
+*.lock
+*.log
+*.pyc
+*.swp
+.atom/
+.buildlog/
+.history
+.svn/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Visual Studio Code related
+.classpath
+.project
+.settings/
+.vscode/
+
+# packages file containing multi-root paths
+.packages.generated
+
+# Flutter/Dart/Pub related
+**/doc/api/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+*/**/build/
+flutter_*.png
+linked_*.ds
+unlinked.ds
+unlinked_spec.ds
+*.dill.deps
+
+# Android related
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/key.properties
+*.jks
+
+# iOS/Xcode related
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vagrant/
+**/ios/**/DerivedData/
+**/ios/**/Icon?
+**/ios/**/Pods/
+**/ios/**/.symlinks/
+**/ios/**/profile
+**/ios/**/xcuserdata
+**/ios/.generated/
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.xcframework
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# macOS
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/macos/Flutter/Flutter-Debug.xcconfig
+**/macos/Flutter/Flutter-Release.xcconfig
+**/macos/Flutter/Flutter-Profile.xcconfig
+
+# Coverage
+coverage/
+
+# Symbols
+app.*.symbols
+
+# Exceptions to above rules.
+!**/ios/**/default.mode1v3
+!**/ios/**/default.mode2v3
+!**/ios/**/default.pbxuser
+!**/ios/**/default.perspectivev3
+!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+!/dev/ci/**/Gemfile.lock
+
+# Prebuilt binaries.
+/prebuilts/
+
+# TODO(67373): This entry is temporarily disabled, but can be restored once the
+# buildmoot is completed.
+# GN build support for protobufs vended by Fuchsia.
+# /build/secondary/third_party/protobuf
+
+# Build tools vended from CIPD
+/buildtools
+
+# RBE support configurations and scripts vended from CIPD
+/build/rbe
+
+# The test-scripts from Chromium and managed by DEPS and gclient.
+/tools/fuchsia/test_scripts
+
+# The gn-sdk from Chromium and managed by DEPS and gclient.
+/tools/fuchsia/gn-sdk

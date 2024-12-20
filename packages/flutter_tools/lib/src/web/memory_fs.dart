@@ -24,12 +24,7 @@ class WebMemoryFS {
   /// Update the filesystem with the provided source and manifest files.
   ///
   /// Returns the list of updated files.
-  List<String> write(
-    File codeFile,
-    File manifestFile,
-    File sourcemapFile,
-    File metadataFile,
-  ) {
+  List<String> write(File codeFile, File manifestFile, File sourcemapFile, File metadataFile) {
     final List<String> modules = <String>[];
     final Uint8List codeBytes = codeFile.readAsBytesSync();
     final Uint8List sourcemapBytes = sourcemapFile.readAsBytesSync();
@@ -37,17 +32,11 @@ class WebMemoryFS {
     final Map<String, dynamic> manifest =
         castStringKeyedMap(json.decode(manifestFile.readAsStringSync()))!;
     for (final String filePath in manifest.keys) {
-      final Map<String, dynamic> offsets =
-          castStringKeyedMap(manifest[filePath])!;
-      final List<int> codeOffsets =
-          (offsets['code'] as List<dynamic>).cast<int>();
-      final List<int> sourcemapOffsets =
-          (offsets['sourcemap'] as List<dynamic>).cast<int>();
-      final List<int> metadataOffsets =
-          (offsets['metadata'] as List<dynamic>).cast<int>();
-      if (codeOffsets.length != 2 ||
-          sourcemapOffsets.length != 2 ||
-          metadataOffsets.length != 2) {
+      final Map<String, dynamic> offsets = castStringKeyedMap(manifest[filePath])!;
+      final List<int> codeOffsets = (offsets['code'] as List<dynamic>).cast<int>();
+      final List<int> sourcemapOffsets = (offsets['sourcemap'] as List<dynamic>).cast<int>();
+      final List<int> metadataOffsets = (offsets['metadata'] as List<dynamic>).cast<int>();
+      if (codeOffsets.length != 2 || sourcemapOffsets.length != 2 || metadataOffsets.length != 2) {
         continue;
       }
 
@@ -56,13 +45,8 @@ class WebMemoryFS {
       if (codeStart < 0 || codeEnd > codeBytes.lengthInBytes) {
         continue;
       }
-      final Uint8List byteView = Uint8List.view(
-        codeBytes.buffer,
-        codeStart,
-        codeEnd - codeStart,
-      );
-      final String fileName =
-          filePath.startsWith('/') ? filePath.substring(1) : filePath;
+      final Uint8List byteView = Uint8List.view(codeBytes.buffer, codeStart, codeEnd - codeStart);
+      final String fileName = filePath.startsWith('/') ? filePath.substring(1) : filePath;
       files[fileName] = byteView;
 
       final int sourcemapStart = sourcemapOffsets[0];
@@ -95,8 +79,8 @@ class WebMemoryFS {
     }
 
     _mergedMetadata = metadataFiles.values
-      .map((Uint8List encoded) => utf8.decode(encoded))
-      .join('\n');
+        .map((Uint8List encoded) => utf8.decode(encoded))
+        .join('\n');
 
     return modules;
   }

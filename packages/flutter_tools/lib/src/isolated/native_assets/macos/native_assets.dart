@@ -16,9 +16,9 @@ const int targetMacOSVersion = 13;
 /// Extract the [Architecture] from a [DarwinArch].
 Architecture getNativeMacOSArchitecture(DarwinArch darwinArch) {
   return switch (darwinArch) {
-    DarwinArch.arm64  => Architecture.arm64,
+    DarwinArch.arm64 => Architecture.arm64,
     DarwinArch.x86_64 => Architecture.x64,
-    DarwinArch.armv7  => throw Exception('Unknown DarwinArch: $darwinArch.'),
+    DarwinArch.armv7 => throw Exception('Unknown DarwinArch: $darwinArch.'),
   };
 }
 
@@ -27,17 +27,12 @@ Map<KernelAssetPath, List<CodeAsset>> fatAssetTargetLocationsMacOS(
   Uri? absolutePath,
 ) {
   final Set<String> alreadyTakenNames = <String>{};
-  final Map<KernelAssetPath, List<CodeAsset>> result =
-      <KernelAssetPath, List<CodeAsset>>{};
+  final Map<KernelAssetPath, List<CodeAsset>> result = <KernelAssetPath, List<CodeAsset>>{};
   final Map<String, KernelAssetPath> idToPath = <String, KernelAssetPath>{};
   for (final CodeAsset asset in nativeAssets) {
     // Use same target path for all assets with the same id.
-    final KernelAssetPath path = idToPath[asset.id] ??
-        _targetLocationMacOS(
-          asset,
-          absolutePath,
-          alreadyTakenNames,
-        ).path;
+    final KernelAssetPath path =
+        idToPath[asset.id] ?? _targetLocationMacOS(asset, absolutePath, alreadyTakenNames).path;
     idToPath[asset.id] = path;
     result[path] ??= <CodeAsset>[];
     result[path]!.add(asset);
@@ -53,8 +48,8 @@ Map<CodeAsset, KernelAsset> assetTargetLocationsMacOS(
   final Map<String, KernelAssetPath> idToPath = <String, KernelAssetPath>{};
   final Map<CodeAsset, KernelAsset> result = <CodeAsset, KernelAsset>{};
   for (final CodeAsset asset in nativeAssets) {
-    final KernelAssetPath path = idToPath[asset.id] ??
-        _targetLocationMacOS(asset, absolutePath, alreadyTakenNames).path;
+    final KernelAssetPath path =
+        idToPath[asset.id] ?? _targetLocationMacOS(asset, absolutePath, alreadyTakenNames).path;
     idToPath[asset.id] = path;
     result[asset] = KernelAsset(
       id: asset.id,
@@ -93,9 +88,7 @@ KernelAsset _targetLocationMacOS(
       }
       kernelAssetPath = KernelAssetAbsolutePath(uri);
     default:
-      throw Exception(
-        'Unsupported asset link mode $linkMode in asset $asset',
-      );
+      throw Exception('Unsupported asset link mode $linkMode in asset $asset');
   }
   return KernelAsset(
     id: asset.id,
@@ -158,21 +151,21 @@ Future<void> copyNativeCodeAssetsMacOS(
     await resourcesDir.create(recursive: true);
     final File dylibFile = versionADir.childFile(name);
     final Link currentLink = versionsDir.childLink('Current');
-    await currentLink.create(fileSystem.path.relative(
-      versionADir.path,
-      from: currentLink.parent.path,
-    ));
+    await currentLink.create(
+      fileSystem.path.relative(versionADir.path, from: currentLink.parent.path),
+    );
     final Link resourcesLink = frameworkDir.childLink('Resources');
-    await resourcesLink.create(fileSystem.path.relative(
-      resourcesDir.path,
-      from: resourcesLink.parent.path,
-    ));
+    await resourcesLink.create(
+      fileSystem.path.relative(resourcesDir.path, from: resourcesLink.parent.path),
+    );
     await lipoDylibs(dylibFile, sources);
     final Link dylibLink = frameworkDir.childLink(name);
-    await dylibLink.create(fileSystem.path.relative(
-      versionsDir.childDirectory('Current').childFile(name).path,
-      from: dylibLink.parent.path,
-    ));
+    await dylibLink.create(
+      fileSystem.path.relative(
+        versionsDir.childDirectory('Current').childFile(name).path,
+        from: dylibLink.parent.path,
+      ),
+    );
 
     final String dylibFileName = dylibFile.basename;
     final String newInstallName = '@rpath/$dylibFileName.framework/$dylibFileName';

@@ -64,7 +64,8 @@ class MacrobenchmarksApp extends StatelessWidget {
         kPostBackdropFilterRouteName: (BuildContext context) => const PostBackdropFilterPage(),
         kSimpleAnimationRouteName: (BuildContext context) => const SimpleAnimationPage(),
         kPictureCacheRouteName: (BuildContext context) => const PictureCachePage(),
-        kPictureCacheComplexityScoringRouteName: (BuildContext context) => const PictureCacheComplexityScoringPage(),
+        kPictureCacheComplexityScoringRouteName:
+            (BuildContext context) => const PictureCacheComplexityScoringPage(),
         kLargeImageChangerRouteName: (BuildContext context) => const LargeImageChangerPage(),
         kLargeImagesRouteName: (BuildContext context) => const LargeImagesPage(),
         kTextRouteName: (BuildContext context) => const TextPage(),
@@ -74,23 +75,30 @@ class MacrobenchmarksApp extends StatelessWidget {
         kClipperCacheRouteName: (BuildContext context) => const ClipperCachePage(),
         kColorFilterAndFadeRouteName: (BuildContext context) => const ColorFilterAndFadePage(),
         kColorFilterCacheRouteName: (BuildContext context) => const ColorFilterCachePage(),
-        kColorFilterWithUnstableChildName: (BuildContext context) => const ColorFilterWithUnstableChildPage(),
-        kFadingChildAnimationRouteName: (BuildContext context) => const FilteredChildAnimationPage(FilterType.opacity),
-        kImageFilteredTransformAnimationRouteName: (BuildContext context) => const FilteredChildAnimationPage(FilterType.rotateFilter),
-        kMultiWidgetConstructionRouteName: (BuildContext context) => const MultiWidgetConstructTable(10, 20),
+        kColorFilterWithUnstableChildName:
+            (BuildContext context) => const ColorFilterWithUnstableChildPage(),
+        kFadingChildAnimationRouteName:
+            (BuildContext context) => const FilteredChildAnimationPage(FilterType.opacity),
+        kImageFilteredTransformAnimationRouteName:
+            (BuildContext context) => const FilteredChildAnimationPage(FilterType.rotateFilter),
+        kMultiWidgetConstructionRouteName:
+            (BuildContext context) => const MultiWidgetConstructTable(10, 20),
         kHeavyGridViewRouteName: (BuildContext context) => const HeavyGridViewPage(),
         kRasterCacheUseMemory: (BuildContext context) => const RasterCacheUseMemory(),
         kShaderMaskCacheRouteName: (BuildContext context) => const ShaderMaskCachePage(),
         kSimpleScrollRouteName: (BuildContext context) => const SimpleScroll(),
-        kAnimationWithMicrotasksRouteName: (BuildContext context) => const AnimationWithMicrotasks(),
+        kAnimationWithMicrotasksRouteName:
+            (BuildContext context) => const AnimationWithMicrotasks(),
         kAnimatedImageRouteName: (BuildContext context) => const AnimatedImagePage(),
         kOpacityPeepholeRouteName: (BuildContext context) => const OpacityPeepholePage(),
         ...opacityPeepholeRoutes,
         kGradientPerfRouteName: (BuildContext context) => const GradientPerfHomePage(),
         ...gradientPerfRoutes,
-        kAnimatedComplexOpacityPerfRouteName: (BuildContext context) => const AnimatedComplexOpacity(),
+        kAnimatedComplexOpacityPerfRouteName:
+            (BuildContext context) => const AnimatedComplexOpacity(),
         kListTextLayoutRouteName: (BuildContext context) => const ColumnOfText(),
-        kAnimatedComplexImageFilteredPerfRouteName: (BuildContext context) => const AnimatedComplexImageFiltered(),
+        kAnimatedComplexImageFilteredPerfRouteName:
+            (BuildContext context) => const AnimatedComplexImageFiltered(),
         kAnimatedBlurBackdropFilter: (BuildContext context) => const AnimatedBlurBackdropFilter(),
         kSlidersRouteName: (BuildContext context) => const SlidersPage(),
         kDrawPointsPageRougeName: (BuildContext context) => const DrawPointsPage(),
@@ -98,7 +106,8 @@ class MacrobenchmarksApp extends StatelessWidget {
         kDrawAtlasPageRouteName: (BuildContext context) => const DrawAtlasPage(),
         kAnimatedAdvancedBlend: (BuildContext context) => const AnimatedAdvancedBlend(),
         kRRectBlurRouteName: (BuildContext context) => const RRectBlur(),
-        kVeryLongPictureScrollingRouteName: (BuildContext context) => const VeryLongPictureScrollingPerf(),
+        kVeryLongPictureScrollingRouteName:
+            (BuildContext context) => const VeryLongPictureScrollingPerf(),
       },
     );
   }

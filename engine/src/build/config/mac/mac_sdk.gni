@@ -1,0 +1,44 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/toolchain/rbe.gni")
+
+declare_args() {
+  # Minimum supported version of the Mac SDK.
+  mac_sdk_min = ""
+
+  # The MACOSX_DEPLOYMENT_TARGET variable used when compiling.
+  # Must be of the form x.x.x for Info.plist files.
+  mac_deployment_target = ""
+
+  # Path to a specific version of the Mac SDK, not including a backslash at
+  # the end. If empty, the path to the lowest version greater than or equal to
+  # mac_sdk_min is used.
+  mac_sdk_path = ""
+}
+
+assert(mac_sdk_min != "")
+assert(mac_deployment_target != "")
+
+if (mac_sdk_path == "") {
+  find_sdk_args = []
+  if (use_rbe && create_xcode_symlinks) {
+    # RBE has a restriction that paths cannot come from outside the build root.
+    find_sdk_args += [
+      "--symlink",
+      rebase_path("//flutter/prebuilts"),
+    ]
+  }
+  find_sdk_args += [
+    "--print_sdk_path",
+    mac_sdk_min,
+  ]
+
+  # The tool will print the SDK path on the first line, and the version on the
+  # second line.
+  find_sdk_lines =
+      exec_script("//build/mac/find_sdk.py", find_sdk_args, "list lines")
+
+  mac_sdk_path = find_sdk_lines[0]
+}

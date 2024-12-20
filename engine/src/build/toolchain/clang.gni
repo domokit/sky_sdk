@@ -1,0 +1,23 @@
+# Copyright (c) 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+if (is_mac || is_ios) {
+  import("//build/config/ios/ios_sdk.gni")  # For use_ios_simulator
+}
+
+declare_args() {
+  # Enable the optional type profiler in Clang, which will tag heap allocations
+  # with the allocation type.
+  use_clang_type_profiler = false
+
+  # Enable Link Time Optimzations. This significantly slows down linking but
+  # results in a smaller binary.
+  enable_lto = true
+
+  # Generate code with instrumentation for code coverage generation using LLVM.
+  enable_coverage = false
+
+  # Set this flag to strip .so files.
+  stripped_symbols = !is_debug
+}

@@ -8,7 +8,8 @@ import 'package:clock/src/clock.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() async {
-  TestWidgetsFlutterBinding binding = AutomatedTestWidgetsFlutterBinding.ensureInitialized();
+  TestWidgetsFlutterBinding binding =
+      AutomatedTestWidgetsFlutterBinding.ensureInitialized();
   binding.runTest(
     () async {
       // This will be unchanged as there is no equivalent API.
@@ -20,7 +21,7 @@ void main() async {
         additionalTime: Duration(seconds: 25),
       );
     },
-    () { },
+    () {},
     // This timeout will be removed and not replaced since there is no
     // equivalent API at this layer.
     timeout: Duration(minutes: 30),

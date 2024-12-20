@@ -41,15 +41,17 @@ void beginFrame(Duration timeStamp) {
   // COMPOSITE
 
   final double devicePixelRatio = view.devicePixelRatio;
-  final Float64List deviceTransform = Float64List(16)
-    ..[0] = devicePixelRatio
-    ..[5] = devicePixelRatio
-    ..[10] = 1.0
-    ..[15] = 1.0;
-  final ui.SceneBuilder sceneBuilder = ui.SceneBuilder()
-    ..pushTransform(deviceTransform)
-    ..addPicture(ui.Offset.zero, picture)
-    ..pop();
+  final Float64List deviceTransform =
+      Float64List(16)
+        ..[0] = devicePixelRatio
+        ..[5] = devicePixelRatio
+        ..[10] = 1.0
+        ..[15] = 1.0;
+  final ui.SceneBuilder sceneBuilder =
+      ui.SceneBuilder()
+        ..pushTransform(deviceTransform)
+        ..addPicture(ui.Offset.zero, picture)
+        ..pop();
   view.render(sceneBuilder.build());
 
   // After rendering the current frame of the animation, we ask the engine to

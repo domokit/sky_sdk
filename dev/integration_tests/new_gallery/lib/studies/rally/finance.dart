@@ -39,42 +39,39 @@ class FinancialEntityView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double maxWidth = pieChartMaxSize + (cappedTextScale(context) - 1.0) * 100.0;
-    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-      return Column(
-        children: <Widget>[
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              // We decrease the max height to ensure the [RallyPieChart] does
-              // not take up the full height when it is smaller than
-              // [kPieChartMaxSize].
-              maxHeight: math.min(
-                constraints.biggest.shortestSide * 0.9,
-                maxWidth,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return Column(
+          children: <Widget>[
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                // We decrease the max height to ensure the [RallyPieChart] does
+                // not take up the full height when it is smaller than
+                // [kPieChartMaxSize].
+                maxHeight: math.min(constraints.biggest.shortestSide * 0.9, maxWidth),
+              ),
+              child: RallyPieChart(
+                heroLabel: heroLabel,
+                heroAmount: heroAmount,
+                wholeAmount: wholeAmount,
+                segments: segments,
               ),
             ),
-            child: RallyPieChart(
-              heroLabel: heroLabel,
-              heroAmount: heroAmount,
-              wholeAmount: wholeAmount,
-              segments: segments,
+            const SizedBox(height: 24),
+            Container(
+              height: 1,
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              color: RallyColors.inputBackground,
             ),
-          ),
-          const SizedBox(height: 24),
-          Container(
-            height: 1,
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            color: RallyColors.inputBackground,
-          ),
-          Container(
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            color: RallyColors.cardBackground,
-            child: Column(
-              children: financialEntityCards,
+            Container(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              color: RallyColors.cardBackground,
+              child: Column(children: financialEntityCards),
             ),
-          ),
-        ],
-      );
-    });
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -103,17 +100,14 @@ class FinancialEntityCategoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Semantics.fromProperties(
-      properties: SemanticsProperties(
-        button: true,
-        enabled: true,
-        label: semanticsLabel,
-      ),
+      properties: SemanticsProperties(button: true, enabled: true, label: semanticsLabel),
       excludeSemantics: true,
       // TODO(x): State restoration of FinancialEntityCategoryDetailsPage on mobile is blocked because OpenContainer does not support restorablePush, https://github.com/flutter/gallery/issues/570.
       child: OpenContainer(
         transitionDuration: const Duration(milliseconds: 350),
-        openBuilder: (BuildContext context, void Function() openContainer) =>
-            FinancialEntityCategoryDetailsPage(),
+        openBuilder:
+            (BuildContext context, void Function() openContainer) =>
+                FinancialEntityCategoryDetailsPage(),
         openColor: RallyColors.primaryBackground,
         closedColor: RallyColors.primaryBackground,
         closedElevation: 0,
@@ -124,8 +118,7 @@ class FinancialEntityCategoryView extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                   child: Row(
                     children: <Widget>[
                       Container(
@@ -146,15 +139,10 @@ class FinancialEntityCategoryView extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text(
-                                  title,
-                                  style: textTheme.bodyMedium!
-                                      .copyWith(fontSize: 16),
-                                ),
+                                Text(title, style: textTheme.bodyMedium!.copyWith(fontSize: 16)),
                                 Text(
                                   subtitle,
-                                  style: textTheme.bodyMedium!
-                                      .copyWith(color: RallyColors.gray60),
+                                  style: textTheme.bodyMedium!.copyWith(color: RallyColors.gray60),
                                 ),
                               ],
                             ),
@@ -221,11 +209,9 @@ FinancialEntityCategoryView buildFinancialEntityFromAccountData(
     suffix: const Icon(Icons.chevron_right, color: Colors.grey),
     title: model.name,
     subtitle: '• • • • • • $shortAccountNumber',
-    semanticsLabel: GalleryLocalizations.of(context)!.rallyAccountAmount(
-      model.name,
-      shortAccountNumber,
-      amount,
-    ),
+    semanticsLabel: GalleryLocalizations.of(
+      context,
+    )!.rallyAccountAmount(model.name, shortAccountNumber, amount),
     indicatorColor: RallyColors.accountColor(accountDataIndex),
     indicatorFraction: 1,
     amount: amount,
@@ -242,11 +228,9 @@ FinancialEntityCategoryView buildFinancialEntityFromBillData(
     suffix: const Icon(Icons.chevron_right, color: Colors.grey),
     title: model.name,
     subtitle: model.dueDate,
-    semanticsLabel: GalleryLocalizations.of(context)!.rallyBillAmount(
-      model.name,
-      model.dueDate,
-      amount,
-    ),
+    semanticsLabel: GalleryLocalizations.of(
+      context,
+    )!.rallyBillAmount(model.name, model.dueDate, amount),
     indicatorColor: RallyColors.billColor(billDataIndex),
     indicatorFraction: 1,
     amount: amount,
@@ -260,25 +244,20 @@ FinancialEntityCategoryView buildFinancialEntityFromBudgetData(
 ) {
   final String amountUsed = usdWithSignFormat(context).format(model.amountUsed);
   final String primaryAmount = usdWithSignFormat(context).format(model.primaryAmount);
-  final String amount =
-      usdWithSignFormat(context).format(model.primaryAmount - model.amountUsed);
+  final String amount = usdWithSignFormat(context).format(model.primaryAmount - model.amountUsed);
 
   return FinancialEntityCategoryView(
     suffix: Text(
       GalleryLocalizations.of(context)!.rallyFinanceLeft,
-      style: Theme.of(context)
-          .textTheme
-          .bodyMedium!
-          .copyWith(color: RallyColors.gray60, fontSize: 10),
+      style: Theme.of(
+        context,
+      ).textTheme.bodyMedium!.copyWith(color: RallyColors.gray60, fontSize: 10),
     ),
     title: model.name,
     subtitle: '$amountUsed / $primaryAmount',
-    semanticsLabel: GalleryLocalizations.of(context)!.rallyBudgetAmount(
-      model.name,
-      model.amountUsed,
-      model.primaryAmount,
-      amount,
-    ),
+    semanticsLabel: GalleryLocalizations.of(
+      context,
+    )!.rallyBudgetAmount(model.name, model.amountUsed, model.primaryAmount, amount),
     indicatorColor: RallyColors.budgetColor(budgetDataIndex),
     indicatorFraction: model.amountUsed / model.primaryAmount,
     amount: amount,
@@ -310,16 +289,14 @@ List<FinancialEntityCategoryView> buildBudgetDataListViews(
   BuildContext context,
 ) {
   return <FinancialEntityCategoryView>[
-    for (int i = 0; i < items.length; i++)
-      buildFinancialEntityFromBudgetData(items[i], i, context)
+    for (int i = 0; i < items.length; i++) buildFinancialEntityFromBudgetData(items[i], i, context),
   ];
 }
 
 class FinancialEntityCategoryDetailsPage extends StatelessWidget {
   FinancialEntityCategoryDetailsPage({super.key});
 
-  final List<DetailedEventData> items =
-      DummyDataService.getDetailedEventItems();
+  final List<DetailedEventData> items = DummyDataService.getDetailedEventItems();
 
   @override
   Widget build(BuildContext context) {
@@ -332,17 +309,12 @@ class FinancialEntityCategoryDetailsPage extends StatelessWidget {
           centerTitle: true,
           title: Text(
             GalleryLocalizations.of(context)!.rallyAccountDataChecking,
-            style:
-                Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 18),
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 18),
           ),
         ),
         body: Column(
           children: <Widget>[
-            SizedBox(
-              height: 200,
-              width: double.infinity,
-              child: RallyLineChart(events: items),
-            ),
+            SizedBox(height: 200, width: double.infinity, child: RallyLineChart(events: items)),
             Expanded(
               child: Padding(
                 padding: isDesktop ? const EdgeInsets.all(40) : EdgeInsets.zero,
@@ -367,11 +339,7 @@ class FinancialEntityCategoryDetailsPage extends StatelessWidget {
 }
 
 class _DetailedEventCard extends StatelessWidget {
-  const _DetailedEventCard({
-    required this.title,
-    required this.date,
-    required this.amount,
-  });
+  const _DetailedEventCard({required this.title, required this.date, required this.amount});
 
   final String title;
   final DateTime date;
@@ -391,42 +359,33 @@ class _DetailedEventCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(vertical: 16),
             width: double.infinity,
-            child: isDesktop
-                ? Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: _EventTitle(title: title),
-                      ),
-                      _EventDate(date: date),
-                      Expanded(
-                        child: Align(
-                          alignment: AlignmentDirectional.centerEnd,
-                          child: _EventAmount(amount: amount),
+            child:
+                isDesktop
+                    ? Row(
+                      children: <Widget>[
+                        Expanded(child: _EventTitle(title: title)),
+                        _EventDate(date: date),
+                        Expanded(
+                          child: Align(
+                            alignment: AlignmentDirectional.centerEnd,
+                            child: _EventAmount(amount: amount),
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                : Wrap(
-                    alignment: WrapAlignment.spaceBetween,
-                    children: <Widget>[
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          _EventTitle(title: title),
-                          _EventDate(date: date),
-                        ],
-                      ),
-                      _EventAmount(amount: amount),
-                    ],
-                  ),
+                      ],
+                    )
+                    : Wrap(
+                      alignment: WrapAlignment.spaceBetween,
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[_EventTitle(title: title), _EventDate(date: date)],
+                        ),
+                        _EventAmount(amount: amount),
+                      ],
+                    ),
           ),
-          SizedBox(
-            height: 1,
-            child: Container(
-              color: RallyColors.dividerColor,
-            ),
-          ),
+          SizedBox(height: 1, child: Container(color: RallyColors.dividerColor)),
         ],
       ),
     );
@@ -443,10 +402,7 @@ class _EventAmount extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Text(
       usdWithSignFormat(context).format(amount),
-      style: textTheme.bodyLarge!.copyWith(
-        fontSize: 20,
-        color: RallyColors.gray,
-      ),
+      style: textTheme.bodyLarge!.copyWith(fontSize: 20, color: RallyColors.gray),
     );
   }
 }
@@ -475,9 +431,6 @@ class _EventTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return Text(
-      title,
-      style: textTheme.bodyMedium!.copyWith(fontSize: 16),
-    );
+    return Text(title, style: textTheme.bodyMedium!.copyWith(fontSize: 16));
   }
 }

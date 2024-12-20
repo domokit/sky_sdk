@@ -1,0 +1,47 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+template("embed_blob") {
+  assert(defined(invoker.symbol_name), "The symbol name must be specified.")
+  assert(defined(invoker.blob), "The blob file to embed must be specified")
+  assert(defined(invoker.hdr),
+         "The header file containing the symbol name must be specified.")
+  assert(defined(invoker.cc),
+         "The CC file containing the symbol data must be specified.")
+  assert(defined(invoker.deps), "The target dependencies must be specified")
+
+  gen_blob_target_name = "gen_blob_$target_name"
+  action(gen_blob_target_name) {
+    inputs = [ invoker.blob ]
+    outputs = [
+      invoker.hdr,
+      invoker.cc,
+    ]
+    args = [
+      "--symbol-name",
+      invoker.symbol_name,
+      "--output-header",
+      rebase_path(invoker.hdr),
+      "--output-source",
+      rebase_path(invoker.cc),
+      "--source",
+      rebase_path(invoker.blob),
+    ]
+    script = "//flutter/impeller/tools/xxd.py"
+    deps = invoker.deps
+  }
+
+  embed_config = "embed_$target_name"
+  config(embed_config) {
+    include_dirs = [ get_path_info(
+            get_label_info("//flutter/impeller:impeller", "target_gen_dir"),
+            "dir") ]
+  }
+
+  source_set(target_name) {
+    public_configs = [ ":$embed_config" ]
+    sources = get_target_outputs(":$gen_blob_target_name")
+    deps = [ ":$gen_blob_target_name" ]
+  }
+}

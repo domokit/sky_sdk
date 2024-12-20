@@ -1,0 +1,11 @@
+# Copyright (c) 2016 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Needed for ANGLE build.
+dcheck_is_configurable = false
+
+declare_args() {
+  # Set to true to enable dcheck in Release builds.
+  dcheck_always_on = false
+}

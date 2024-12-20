@@ -83,7 +83,11 @@ final class TestGoldenComparator {
       return _previousComparator!;
     }
 
-    final String bootstrap = TestGoldenComparatorProcess.generateBootstrap(_fileSystem.file(testUri), testUri, logger: _logger);
+    final String bootstrap = TestGoldenComparatorProcess.generateBootstrap(
+      _fileSystem.file(testUri),
+      testUri,
+      logger: _logger,
+    );
     final Process? process = await _startProcess(bootstrap);
     if (process == null) {
       return null;
@@ -135,8 +139,15 @@ final class TestGoldenComparator {
   }
 
   @useResult
-  Future<String?> _compareGoldens(Uri testUri, Uint8List bytes, Uri goldenKey, bool? updateGoldens) async {
-    final File imageFile = await (await _tempDir.createTemp('image')).childFile('image').writeAsBytes(bytes);
+  Future<String?> _compareGoldens(
+    Uri testUri,
+    Uint8List bytes,
+    Uri goldenKey,
+    bool? updateGoldens,
+  ) async {
+    final File imageFile = await (await _tempDir.createTemp(
+      'image',
+    )).childFile('image').writeAsBytes(bytes);
     final TestGoldenComparatorProcess? process = await _processForTestFile(testUri);
     if (process == null) {
       return 'process was null';
@@ -145,7 +156,9 @@ final class TestGoldenComparator {
     process.sendCommand(imageFile, goldenKey, updateGoldens);
 
     final Map<String, dynamic> result = await process.getResponse();
-    return (result['success'] as bool) ? null : ((result['message'] as String?) ?? 'does not match');
+    return (result['success'] as bool)
+        ? null
+        : ((result['message'] as String?) ?? 'does not match');
   }
 }
 
@@ -257,21 +270,21 @@ class TestGoldenComparatorProcess {
     // Also parse stdout as a stream of JSON objects.
     streamIterator = StreamIterator<Map<String, dynamic>>(
       process.stdout
-        .transform<String>(utf8.decoder)
-        .transform<String>(const LineSplitter())
-        .where((String line) {
-          logger.printTrace('<<< $line');
-          return line.isNotEmpty && line[0] == '{';
-        })
-        .map<dynamic>(jsonDecode)
-        .cast<Map<String, dynamic>>());
+          .transform<String>(utf8.decoder)
+          .transform<String>(const LineSplitter())
+          .where((String line) {
+            logger.printTrace('<<< $line');
+            return line.isNotEmpty && line[0] == '{';
+          })
+          .map<dynamic>(jsonDecode)
+          .cast<Map<String, dynamic>>(),
+    );
 
-    process.stderr
-        .transform<String>(utf8.decoder)
-        .transform<String>(const LineSplitter())
-        .forEach((String line) {
-          logger.printError('<<< $line');
-        });
+    process.stderr.transform<String>(utf8.decoder).transform<String>(const LineSplitter()).forEach((
+      String line,
+    ) {
+      logger.printError('<<< $line');
+    });
   }
 
   final Logger _logger;

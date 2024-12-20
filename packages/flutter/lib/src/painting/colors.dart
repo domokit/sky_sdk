@@ -27,22 +27,21 @@ double _getHue(double red, double green, double blue, double max, double delta) 
   return hue;
 }
 
-Color _colorFromHue(
-  double alpha,
-  double hue,
-  double chroma,
-  double secondary,
-  double match,
-) {
+Color _colorFromHue(double alpha, double hue, double chroma, double secondary, double match) {
   final (double red, double green, double blue) = switch (hue) {
-    <  60.0 => (chroma, secondary, 0.0),
+    < 60.0 => (chroma, secondary, 0.0),
     < 120.0 => (secondary, chroma, 0.0),
     < 180.0 => (0.0, chroma, secondary),
     < 240.0 => (0.0, secondary, chroma),
     < 300.0 => (secondary, 0.0, chroma),
-    _       => (chroma, 0.0, secondary),
+    _ => (chroma, 0.0, secondary),
   };
-  return Color.fromARGB((alpha * 0xFF).round(), ((red + match) * 0xFF).round(), ((green + match) * 0xFF).round(), ((blue + match) * 0xFF).round());
+  return Color.fromARGB(
+    (alpha * 0xFF).round(),
+    ((red + match) * 0xFF).round(),
+    ((green + match) * 0xFF).round(),
+    ((blue + match) * 0xFF).round(),
+  );
 }
 
 /// A color represented using [alpha], [hue], [saturation], and [value].
@@ -199,11 +198,11 @@ class HSVColor {
     if (identical(this, other)) {
       return true;
     }
-    return other is HSVColor
-        && other.alpha == alpha
-        && other.hue == hue
-        && other.saturation == saturation
-        && other.value == value;
+    return other is HSVColor &&
+        other.alpha == alpha &&
+        other.hue == hue &&
+        other.saturation == saturation &&
+        other.value == value;
   }
 
   @override
@@ -266,9 +265,10 @@ class HSLColor {
     final double hue = _getHue(red, green, blue, max, delta);
     final double lightness = (max + min) / 2.0;
     // Saturation can exceed 1.0 with rounding errors, so clamp it.
-    final double saturation = lightness == 1.0
-      ? 0.0
-      : clampDouble(delta / (1.0 - (2.0 * lightness - 1.0).abs()), 0.0, 1.0);
+    final double saturation =
+        lightness == 1.0
+            ? 0.0
+            : clampDouble(delta / (1.0 - (2.0 * lightness - 1.0).abs()), 0.0, 1.0);
     return HSLColor.fromAHSL(alpha, hue, saturation, lightness);
   }
 
@@ -382,18 +382,19 @@ class HSLColor {
     if (identical(this, other)) {
       return true;
     }
-    return other is HSLColor
-        && other.alpha == alpha
-        && other.hue == hue
-        && other.saturation == saturation
-        && other.lightness == lightness;
+    return other is HSLColor &&
+        other.alpha == alpha &&
+        other.hue == hue &&
+        other.saturation == saturation &&
+        other.lightness == lightness;
   }
 
   @override
   int get hashCode => Object.hash(alpha, hue, saturation, lightness);
 
   @override
-  String toString() => '${objectRuntimeType(this, 'HSLColor')}($alpha, $hue, $saturation, $lightness)';
+  String toString() =>
+      '${objectRuntimeType(this, 'HSLColor')}($alpha, $hue, $saturation, $lightness)';
 }
 
 /// A color that has a small table of related colors called a "swatch".
@@ -433,16 +434,15 @@ class ColorSwatch<T> extends Color {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return super == other
-        && other is ColorSwatch<T>
-        && mapEquals<T, Color>(other._swatch, _swatch);
+    return super == other && other is ColorSwatch<T> && mapEquals<T, Color>(other._swatch, _swatch);
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, value, _swatch);
 
   @override
-  String toString() => '${objectRuntimeType(this, 'ColorSwatch')}(primary value: ${super.toString()})';
+  String toString() =>
+      '${objectRuntimeType(this, 'ColorSwatch')}(primary value: ${super.toString()})';
 
   /// Linearly interpolate between two [ColorSwatch]es.
   ///
@@ -470,12 +470,18 @@ class ColorSwatch<T> extends Color {
     }
     final Map<T, Color> swatch;
     if (b == null) {
-      swatch = a!._swatch.map((T key, Color color) => MapEntry<T, Color>(key, Color.lerp(color, null, t)!));
+      swatch = a!._swatch.map(
+        (T key, Color color) => MapEntry<T, Color>(key, Color.lerp(color, null, t)!),
+      );
     } else {
       if (a == null) {
-        swatch = b._swatch.map((T key, Color color) => MapEntry<T, Color>(key, Color.lerp(null, color, t)!));
+        swatch = b._swatch.map(
+          (T key, Color color) => MapEntry<T, Color>(key, Color.lerp(null, color, t)!),
+        );
       } else {
-        swatch = a._swatch.map((T key, Color color) => MapEntry<T, Color>(key, Color.lerp(color, b[key], t)!));
+        swatch = a._swatch.map(
+          (T key, Color color) => MapEntry<T, Color>(key, Color.lerp(color, b[key], t)!),
+        );
       }
     }
     return ColorSwatch<T>(Color.lerp(a, b, t)!.value, swatch);

@@ -1,0 +1,80 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/testing/android/native_activity/native_activity.gni")
+import("../../tools/impeller.gni")
+
+config("public_android_config") {
+  defines = [ "__ANDROID_UNAVAILABLE_SYMBOLS_ARE_WEAK__" ]
+}
+
+impeller_component("android") {
+  sources = [
+    "choreographer.cc",
+    "choreographer.h",
+    "hardware_buffer.cc",
+    "hardware_buffer.h",
+    "native_window.cc",
+    "native_window.h",
+    "proc_table.cc",
+    "proc_table.h",
+    "shadow_realm.cc",
+    "shadow_realm.h",
+    "surface_control.cc",
+    "surface_control.h",
+    "surface_transaction.cc",
+    "surface_transaction.h",
+    "surface_transaction_stats.cc",
+    "surface_transaction_stats.h",
+  ]
+
+  public_deps = [
+    "../../base",
+    "../../geometry",
+    "//flutter/fml",
+  ]
+
+  public_configs = [ ":public_android_config" ]
+}
+
+test_fixtures("unittests_fixtures") {
+  fixtures = []
+}
+
+source_set("unittests_lib") {
+  visibility = [ ":*" ]
+
+  testonly = true
+
+  sources = [ "toolkit_android_unittests.cc" ]
+
+  deps = [
+    ":android",
+    ":unittests_fixtures",
+    "//flutter/testing",
+  ]
+
+  defines = [ "TESTING" ]
+}
+
+executable("unittests") {
+  assert(is_android)
+
+  testonly = true
+
+  output_name = "impeller_toolkit_android_unittests"
+
+  deps = [ ":unittests_lib" ]
+}
+
+native_activity_apk("apk_unittests") {
+  apk_name = "impeller_toolkit_android_unittests"
+
+  testonly = true
+
+  deps = [
+    ":unittests_lib",
+    "//flutter/testing/android/native_activity:gtest_activity",
+  ]
+}

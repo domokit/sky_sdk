@@ -9,22 +9,19 @@ import 'watcher.dart';
 
 /// Prints JSON events when running a test in --machine mode.
 class EventPrinter extends TestWatcher {
-  EventPrinter({required StringSink out, TestWatcher? parent})
-    : _out = out,
-      _parent = parent;
+  EventPrinter({required StringSink out, TestWatcher? parent}) : _out = out, _parent = parent;
 
   final StringSink _out;
   final TestWatcher? _parent;
 
   @override
   void handleStartedDevice(Uri? vmServiceUri) {
-    _sendEvent('test.startedProcess',
-        <String, dynamic>{
-          'vmServiceUri': vmServiceUri?.toString(),
-          // TODO(bkonyi): remove references to Observatory
-          // See https://github.com/flutter/flutter/issues/121271
-          'observatoryUri': vmServiceUri?.toString()
-        });
+    _sendEvent('test.startedProcess', <String, dynamic>{
+      'vmServiceUri': vmServiceUri?.toString(),
+      // TODO(bkonyi): remove references to Observatory
+      // See https://github.com/flutter/flutter/issues/121271
+      'observatoryUri': vmServiceUri?.toString(),
+    });
     _parent?.handleStartedDevice(vmServiceUri);
   }
 
@@ -43,7 +40,7 @@ class EventPrinter extends TestWatcher {
     return _parent?.handleFinishedTest(testDevice);
   }
 
-  void _sendEvent(String name, [ dynamic params ]) {
+  void _sendEvent(String name, [dynamic params]) {
     final Map<String, dynamic> map = <String, dynamic>{'event': name};
     if (params != null) {
       map['params'] = params;

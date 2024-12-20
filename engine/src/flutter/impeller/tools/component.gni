@@ -1,0 +1,58 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/testing/testing.gni")
+
+# ------------------------------------------------------------------------------
+# @brief           Define an Impeller component. Components are different
+#                  Impeller subsystems part of the umbrella framework.
+#
+# @param[optional] target_type  The type of the component. This can be any of
+#                               the target types supported by GN. Defaults to
+#                               source_set. If Impeller is not supported on the
+#                               target platform, this target is a no-op.
+#
+template("impeller_component") {
+  if (defined(invoker.testonly) && invoker.testonly && !enable_unittests) {
+    group(target_name) {
+      not_needed(invoker, "*")
+    }
+  } else {
+    target_type = "source_set"
+    if (defined(invoker.target_type)) {
+      target_type = invoker.target_type
+    }
+    target(target_type, target_name) {
+      forward_variables_from(invoker, "*")
+
+      if (!defined(invoker.public_configs)) {
+        public_configs = []
+      }
+
+      public_configs += [ "//flutter/impeller:impeller_public_config" ]
+
+      if (!defined(invoker.cflags)) {
+        cflags = []
+      }
+      cflags += [ "-Wthread-safety-analysis" ]
+
+      if (!defined(invoker.cflags_objc)) {
+        cflags_objc = []
+      }
+
+      if (is_ios || is_mac) {
+        cflags_objc += flutter_cflags_objc
+      }
+
+      if (!defined(invoker.cflags_objcc)) {
+        cflags_objcc = []
+      }
+
+      if (is_ios || is_mac) {
+        cflags_objcc += flutter_cflags_objcc
+      }
+    }
+  }
+}

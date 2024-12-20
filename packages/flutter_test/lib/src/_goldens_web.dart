@@ -61,18 +61,22 @@ class DefaultWebGoldenComparator extends WebGoldenComparator {
   @override
   Future<bool> compare(double width, double height, Uri golden) async {
     final String key = golden.toString();
-    final web.Response response = await web.window.fetch(
-      'flutter_goldens'.toJS,
-      web.RequestInit(
-        method: 'POST',
-        body: json.encode(<String, Object>{
-          'testUri': testUri.toString(),
-          'key': key,
-          'width': width.round(),
-          'height': height.round(),
-        }).toJS,
-      )
-    ).toDart;
+    final web.Response response =
+        await web.window
+            .fetch(
+              'flutter_goldens'.toJS,
+              web.RequestInit(
+                method: 'POST',
+                body:
+                    json.encode(<String, Object>{
+                      'testUri': testUri.toString(),
+                      'key': key,
+                      'width': width.round(),
+                      'height': height.round(),
+                    }).toJS,
+              ),
+            )
+            .toDart;
     final String responseText = (await response.text().toDart).toDart;
     if (responseText == 'true') {
       return true;
@@ -90,17 +94,21 @@ class DefaultWebGoldenComparator extends WebGoldenComparator {
   Future<bool> compareBytes(Uint8List bytes, Uri golden) async {
     final String key = golden.toString();
     final String bytesEncoded = base64.encode(bytes);
-    final web.Response response = await web.window.fetch(
-      'flutter_goldens'.toJS,
-      web.RequestInit(
-        method: 'POST',
-        body: json.encode(<String, Object>{
-          'testUri': testUri.toString(),
-          'key': key,
-          'bytes': bytesEncoded,
-        }).toJS,
-      )
-    ).toDart;
+    final web.Response response =
+        await web.window
+            .fetch(
+              'flutter_goldens'.toJS,
+              web.RequestInit(
+                method: 'POST',
+                body:
+                    json.encode(<String, Object>{
+                      'testUri': testUri.toString(),
+                      'key': key,
+                      'bytes': bytesEncoded,
+                    }).toJS,
+              ),
+            )
+            .toDart;
     final String responseText = (await response.text().toDart).toDart;
     if (responseText == 'true') {
       return true;

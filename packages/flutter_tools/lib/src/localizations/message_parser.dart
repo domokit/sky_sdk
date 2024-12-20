@@ -82,7 +82,17 @@ Map<ST, List<List<ST>>> grammar = <ST, List<List<ST>>>{
     <ST>[ST.other, ST.openBrace, ST.message, ST.closeBrace],
   ],
   ST.argumentExpr: <List<ST>>[
-    <ST>[ST.openBrace, ST.identifier, ST.comma, ST.argType, ST.comma, ST.colon, ST.colon, ST.identifier, ST.closeBrace],
+    <ST>[
+      ST.openBrace,
+      ST.identifier,
+      ST.comma,
+      ST.argType,
+      ST.comma,
+      ST.colon,
+      ST.colon,
+      ST.identifier,
+      ST.closeBrace,
+    ],
   ],
   ST.argType: <List<ST>>[
     <ST>[ST.date],
@@ -91,28 +101,34 @@ Map<ST, List<List<ST>>> grammar = <ST, List<List<ST>>>{
 };
 
 class Node {
-  Node(this.type, this.positionInMessage, { this.expectedSymbolCount = 0, this.value, List<Node>? children }): children = children ?? <Node>[];
+  Node(
+    this.type,
+    this.positionInMessage, {
+    this.expectedSymbolCount = 0,
+    this.value,
+    List<Node>? children,
+  }) : children = children ?? <Node>[];
 
   // Token constructors.
-  Node.openBrace(this.positionInMessage): type = ST.openBrace, value = '{';
-  Node.closeBrace(this.positionInMessage): type = ST.closeBrace, value = '}';
+  Node.openBrace(this.positionInMessage) : type = ST.openBrace, value = '{';
+  Node.closeBrace(this.positionInMessage) : type = ST.closeBrace, value = '}';
   Node.brace(this.positionInMessage, String this.value)
-      : type = switch (value) {
-          '{' => ST.openBrace,
-          '}' => ST.closeBrace,
-          _ => throw L10nException('Provided value $value is not a brace.')
-        };
-  Node.equalSign(this.positionInMessage): type = ST.equalSign, value = '=';
-  Node.comma(this.positionInMessage): type = ST.comma, value = ',';
-  Node.string(this.positionInMessage, String this.value): type = ST.string;
-  Node.number(this.positionInMessage, String this.value): type = ST.number;
-  Node.identifier(this.positionInMessage, String this.value): type = ST.identifier;
-  Node.pluralKeyword(this.positionInMessage): type = ST.plural, value = 'plural';
-  Node.selectKeyword(this.positionInMessage): type = ST.select, value = 'select';
-  Node.otherKeyword(this.positionInMessage): type = ST.other, value = 'other';
-  Node.empty(this.positionInMessage): type = ST.empty, value = '';
-  Node.dateKeyword(this.positionInMessage): type = ST.date, value = 'date';
-  Node.timeKeyword(this.positionInMessage): type = ST.time, value = 'time';
+    : type = switch (value) {
+        '{' => ST.openBrace,
+        '}' => ST.closeBrace,
+        _ => throw L10nException('Provided value $value is not a brace.'),
+      };
+  Node.equalSign(this.positionInMessage) : type = ST.equalSign, value = '=';
+  Node.comma(this.positionInMessage) : type = ST.comma, value = ',';
+  Node.string(this.positionInMessage, String this.value) : type = ST.string;
+  Node.number(this.positionInMessage, String this.value) : type = ST.number;
+  Node.identifier(this.positionInMessage, String this.value) : type = ST.identifier;
+  Node.pluralKeyword(this.positionInMessage) : type = ST.plural, value = 'plural';
+  Node.selectKeyword(this.positionInMessage) : type = ST.select, value = 'select';
+  Node.otherKeyword(this.positionInMessage) : type = ST.other, value = 'other';
+  Node.empty(this.positionInMessage) : type = ST.empty, value = '';
+  Node.dateKeyword(this.positionInMessage) : type = ST.date, value = 'date';
+  Node.timeKeyword(this.positionInMessage) : type = ST.time, value = 'time';
 
   String? value;
   late ST type;
@@ -131,7 +147,9 @@ class Node {
       return '''
 ${indent}Node($type, $positionInMessage${value == null ? '' : ", value: '$value'"})''';
     }
-    final String childrenString = children.map((Node child) => child._toStringHelper(indentLevel + 1)).join(',\n');
+    final String childrenString = children
+        .map((Node child) => child._toStringHelper(indentLevel + 1))
+        .join(',\n');
     return '''
 ${indent}Node($type, $positionInMessage${value == null ? '' : ", value: '$value'"}, children: <Node>[
 $childrenString,
@@ -143,12 +161,11 @@ $indent])''';
   // have meaning after calling compress.
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes, hash_and_equals
-  bool operator==(covariant Node other) {
-    if (value != other.value
-      || type != other.type
-      || positionInMessage != other.positionInMessage
-      || children.length != other.children.length
-    ) {
+  bool operator ==(covariant Node other) {
+    if (value != other.value ||
+        type != other.type ||
+        positionInMessage != other.positionInMessage ||
+        children.length != other.children.length) {
       return false;
     }
     for (int i = 0; i < children.length; i++) {
@@ -191,13 +208,11 @@ class Parser {
   Parser(
     this.messageId,
     this.filename,
-    this.messageString,
-    {
-      this.useEscaping = false,
-      this.logger,
-      this.placeholders,
-    }
-  );
+    this.messageString, {
+    this.useEscaping = false,
+    this.logger,
+    this.placeholders,
+  });
 
   final String messageId;
   final String messageString;
@@ -272,8 +287,12 @@ class Parser {
           final String matchedBrace = match.group(0)!;
           if (useRelaxedLexer) {
             final Match? whitespaceMatch = whitespace.matchAsPrefix(messageString, match.end);
-            final int endOfWhitespace = whitespaceMatch?.group(0) == null ? match.end : whitespaceMatch!.end;
-            final Match? identifierMatch = alphanumeric.matchAsPrefix(messageString, endOfWhitespace);
+            final int endOfWhitespace =
+                whitespaceMatch?.group(0) == null ? match.end : whitespaceMatch!.end;
+            final Match? identifierMatch = alphanumeric.matchAsPrefix(
+              messageString,
+              endOfWhitespace,
+            );
             // If we match a "}" and the depth is 0, treat it as a string.
             // If we match a "{" and the next token is not a valid placeholder, treat it as a string.
             if (matchedBrace == '}' && depth == 0) {
@@ -281,7 +300,8 @@ class Parser {
               startIndex = match.end;
               continue;
             }
-            if (matchedBrace == '{' && (identifierMatch == null || !placeholders!.contains(identifierMatch.group(0)))) {
+            if (matchedBrace == '{' &&
+                (identifierMatch == null || !placeholders!.contains(identifierMatch.group(0)))) {
               tokens.add(Node.string(startIndex, matchedBrace));
               startIndex = match.end;
               continue;
@@ -337,7 +357,7 @@ class Parser {
             filename,
             messageId,
             messageString,
-            startIndex
+            startIndex,
           );
         } else if (matchedType == ST.empty) {
           // Do not add whitespace as a token.
@@ -385,7 +405,11 @@ class Parser {
 
       // When we run out of tokens, just use -1 to represent the last index.
       final int positionInMessage = tokens.isNotEmpty ? tokens.first.positionInMessage : -1;
-      final Node node = Node(nonterminal, positionInMessage, expectedSymbolCount: grammarRule.length);
+      final Node node = Node(
+        nonterminal,
+        positionInMessage,
+        expectedSymbolCount: grammarRule.length,
+      );
       parsingStack.addAll(grammarRule.reversed);
 
       // For tree construction, add nodes to the parent until the parent has all
@@ -414,7 +438,8 @@ class Parser {
               parseAndConstructNode(ST.message, 2);
             } else if (3 < tokens.length && tokens[3].type == ST.select) {
               parseAndConstructNode(ST.message, 3);
-            } else if (3 < tokens.length && (tokens[3].type == ST.date || tokens[3].type == ST.time)) {
+            } else if (3 < tokens.length &&
+                (tokens[3].type == ST.date || tokens[3].type == ST.time)) {
               parseAndConstructNode(ST.message, 4);
             } else {
               parseAndConstructNode(ST.message, 1);
@@ -438,12 +463,10 @@ class Parser {
         case ST.pluralExpr:
           parseAndConstructNode(ST.pluralExpr, 0);
         case ST.pluralParts:
-          if (tokens.isNotEmpty && (
-              tokens[0].type == ST.identifier ||
-              tokens[0].type == ST.other ||
-              tokens[0].type == ST.equalSign
-            )
-          ) {
+          if (tokens.isNotEmpty &&
+              (tokens[0].type == ST.identifier ||
+                  tokens[0].type == ST.other ||
+                  tokens[0].type == ST.equalSign)) {
             parseAndConstructNode(ST.pluralParts, 0);
           } else {
             parseAndConstructNode(ST.pluralParts, 1);
@@ -467,11 +490,10 @@ class Parser {
         case ST.selectExpr:
           parseAndConstructNode(ST.selectExpr, 0);
         case ST.selectParts:
-          if (tokens.isNotEmpty && (
-            tokens[0].type == ST.identifier ||
-            tokens[0].type == ST.number ||
-            tokens[0].type == ST.other
-          )) {
+          if (tokens.isNotEmpty &&
+              (tokens[0].type == ST.identifier ||
+                  tokens[0].type == ST.number ||
+                  tokens[0].type == ST.other)) {
             parseAndConstructNode(ST.selectParts, 0);
           } else {
             parseAndConstructNode(ST.selectParts, 1);
@@ -489,7 +511,7 @@ class Parser {
               filename,
               messageId,
               messageString,
-              tokens[0].positionInMessage
+              tokens[0].positionInMessage,
             );
           }
         // At this point, we are only handling terminal symbols.
@@ -601,14 +623,15 @@ class Parser {
             filename,
             messageId,
             messageString,
-            syntaxTree.positionInMessage
+            syntaxTree.positionInMessage,
           );
         }
         // Identifier must be one of "zero", "one", "two", "few", "many".
         for (final Node node in children) {
           final Node pluralPartFirstToken = node.children[0];
           const List<String> validIdentifiers = <String>['zero', 'one', 'two', 'few', 'many'];
-          if (pluralPartFirstToken.type == ST.identifier && !validIdentifiers.contains(pluralPartFirstToken.value)) {
+          if (pluralPartFirstToken.type == ST.identifier &&
+              !validIdentifiers.contains(pluralPartFirstToken.value)) {
             throw L10nParserException(
               'ICU Syntax Error: Plural expressions case must be one of "zero", "one", "two", "few", "many", or "other".',
               filename,

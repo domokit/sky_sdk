@@ -21,9 +21,7 @@ import '../../src/common.dart';
 import '../../src/fake_process_manager.dart';
 import '../../src/fakes.dart';
 
-final FakePlatform macOS = FakePlatform(
-  operatingSystem: 'macos',
-);
+final FakePlatform macOS = FakePlatform(operatingSystem: 'macos');
 
 final FakePlatform linux = FakePlatform();
 
@@ -83,34 +81,37 @@ void main() {
   });
 
   testWithoutContext('No devices listed if platform is unsupported', () async {
-    expect(await MacOSDevices(
-      fileSystem: MemoryFileSystem.test(),
-      processManager: FakeProcessManager.any(),
-      logger: BufferLogger.test(),
-      platform: linux,
-      operatingSystemUtils: FakeOperatingSystemUtils(),
-      macOSWorkflow: MacOSWorkflow(
-        featureFlags: TestFeatureFlags(isMacOSEnabled: true),
+    expect(
+      await MacOSDevices(
+        fileSystem: MemoryFileSystem.test(),
+        processManager: FakeProcessManager.any(),
+        logger: BufferLogger.test(),
         platform: linux,
-      ),
-    ).devices(), isEmpty);
-  });
-
-  testWithoutContext('No devices listed if platform is supported and feature is disabled', () async {
-    final MacOSDevices macOSDevices = MacOSDevices(
-      fileSystem: MemoryFileSystem.test(),
-      processManager: FakeProcessManager.any(),
-      logger: BufferLogger.test(),
-      platform: macOS,
-      operatingSystemUtils: FakeOperatingSystemUtils(),
-      macOSWorkflow: MacOSWorkflow(
-        featureFlags: TestFeatureFlags(),
-        platform: macOS,
-      ),
+        operatingSystemUtils: FakeOperatingSystemUtils(),
+        macOSWorkflow: MacOSWorkflow(
+          featureFlags: TestFeatureFlags(isMacOSEnabled: true),
+          platform: linux,
+        ),
+      ).devices(),
+      isEmpty,
     );
-
-    expect(await macOSDevices.devices(), isEmpty);
   });
+
+  testWithoutContext(
+    'No devices listed if platform is supported and feature is disabled',
+    () async {
+      final MacOSDevices macOSDevices = MacOSDevices(
+        fileSystem: MemoryFileSystem.test(),
+        processManager: FakeProcessManager.any(),
+        logger: BufferLogger.test(),
+        platform: macOS,
+        operatingSystemUtils: FakeOperatingSystemUtils(),
+        macOSWorkflow: MacOSWorkflow(featureFlags: TestFeatureFlags(), platform: macOS),
+      );
+
+      expect(await macOSDevices.devices(), isEmpty);
+    },
+  );
 
   testWithoutContext('devices listed if platform is supported and feature is enabled', () async {
     final MacOSDevices macOSDevices = MacOSDevices(
@@ -158,7 +159,9 @@ void main() {
     );
 
     // Timeout ignored.
-    final List<Device> devices = await macOSDevices.discoverDevices(timeout: const Duration(seconds: 10));
+    final List<Device> devices = await macOSDevices.discoverDevices(
+      timeout: const Duration(seconds: 10),
+    );
 
     expect(devices, hasLength(1));
   });
@@ -180,8 +183,7 @@ void main() {
   });
 
   testWithoutContext('target platform display name on x86_64', () async {
-    final FakeOperatingSystemUtils fakeOperatingSystemUtils =
-        FakeOperatingSystemUtils();
+    final FakeOperatingSystemUtils fakeOperatingSystemUtils = FakeOperatingSystemUtils();
     fakeOperatingSystemUtils.hostPlatform = HostPlatform.darwin_x64;
     final MacOSDevice device = MacOSDevice(
       fileSystem: MemoryFileSystem.test(),
@@ -194,8 +196,7 @@ void main() {
   });
 
   testWithoutContext('target platform display name on ARM', () async {
-    final FakeOperatingSystemUtils fakeOperatingSystemUtils =
-        FakeOperatingSystemUtils();
+    final FakeOperatingSystemUtils fakeOperatingSystemUtils = FakeOperatingSystemUtils();
     fakeOperatingSystemUtils.hostPlatform = HostPlatform.darwin_arm64;
     final MacOSDevice device = MacOSDevice(
       fileSystem: MemoryFileSystem.test(),
@@ -254,7 +255,7 @@ class FakeMacOSApp extends Fake implements MacOSApp {
       BuildInfo.debug => 'debug/executable',
       BuildInfo.profile => 'profile/executable',
       BuildInfo.release => 'release/executable',
-      _ => throw StateError('')
+      _ => throw StateError(''),
     };
   }
 }

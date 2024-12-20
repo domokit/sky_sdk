@@ -44,7 +44,7 @@ class DefaultSelectionStyle extends InheritedTheme {
   ///
   /// This constructor creates a [DefaultTextStyle] with an invalid [child],
   /// which means the constructed value cannot be incorporated into the tree.
-  const DefaultSelectionStyle.fallback({ super.key })
+  const DefaultSelectionStyle.fallback({super.key})
     : cursorColor = null,
       selectionColor = null,
       mouseCursor = null,
@@ -107,7 +107,8 @@ class DefaultSelectionStyle extends InheritedTheme {
   /// DefaultSelectionStyle style = DefaultSelectionStyle.of(context);
   /// ```
   static DefaultSelectionStyle of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<DefaultSelectionStyle>() ?? const DefaultSelectionStyle.fallback();
+    return context.dependOnInheritedWidgetOfExactType<DefaultSelectionStyle>() ??
+        const DefaultSelectionStyle.fallback();
   }
 
   @override
@@ -116,15 +117,15 @@ class DefaultSelectionStyle extends InheritedTheme {
       cursorColor: cursorColor,
       selectionColor: selectionColor,
       mouseCursor: mouseCursor,
-      child: child
+      child: child,
     );
   }
 
   @override
   bool updateShouldNotify(DefaultSelectionStyle oldWidget) {
     return cursorColor != oldWidget.cursorColor ||
-           selectionColor != oldWidget.selectionColor ||
-           mouseCursor != oldWidget.mouseCursor;
+        selectionColor != oldWidget.selectionColor ||
+        mouseCursor != oldWidget.mouseCursor;
   }
 }
 

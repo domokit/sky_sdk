@@ -1,0 +1,81 @@
+# Copyright 2019 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/dart.gni")
+import("//flutter/common/config.gni")
+
+import("$dart_src/build/dart/dart_action.gni")
+
+dart_sdk_package_config = "$dart_src/.dart_tool/package_config.json"
+
+template("sdk_rewriter") {
+  ui = defined(invoker.ui) && invoker.ui
+  if (!ui) {
+    assert(defined(invoker.library_name), "Must pass 'library_name'")
+    assert(defined(invoker.api_file), "Must pass 'api_file'")
+  }
+  assert(defined(invoker.input_dir), "Must pass 'input_dir'")
+  assert(defined(invoker.output_dir), "Must pass 'output_dir'")
+
+  prebuilt_dart_action(target_name) {
+    packages = dart_sdk_package_config
+    pool = "//build/toolchain:toolchain_pool"
+
+    script = "//flutter/web_sdk/sdk_rewriter.dart"
+
+    depfile = "$target_gen_dir/$target_name.d"
+
+    stamp_location = "$target_gen_dir/$target_name.stamp"
+    outputs = [
+      stamp_location,
+      invoker.output_dir,
+    ]
+
+    build_dir = rebase_path(root_out_dir)
+    input_dir = rebase_path(invoker.input_dir)
+    output_dir = rebase_path(invoker.output_dir)
+
+    args = [
+      "--build-dir=$build_dir",
+      "--output-dir=$output_dir",
+      "--input-dir=$input_dir",
+      "--depfile",
+      rebase_path(depfile),
+      "--stamp",
+      rebase_path(stamp_location, root_build_dir),
+    ]
+
+    if (defined(invoker.exclude_pattern)) {
+      args += [
+        "--exclude-pattern",
+        invoker.exclude_pattern,
+      ]
+    }
+
+    if (defined(invoker.is_public) && invoker.is_public) {
+      args += [ "--public" ]
+    }
+
+    if (ui) {
+      args += [ "--ui" ]
+    } else {
+      library_name = invoker.library_name
+      api_file = rebase_path(invoker.api_file)
+      args += [
+        "--library-name=$library_name",
+        "--api-file=$api_file",
+      ]
+    }
+  }
+}
+
+template("web_ui_ui_web_with_output") {
+  sdk_rewriter(target_name) {
+    library_name = "ui_web"
+    is_public = true
+    api_file = "//flutter/lib/web_ui/lib/ui_web/src/ui_web.dart"
+    input_dir = "//flutter/lib/web_ui/lib/ui_web/src/ui_web/"
+    output_dir = invoker.output_dir
+  }
+}

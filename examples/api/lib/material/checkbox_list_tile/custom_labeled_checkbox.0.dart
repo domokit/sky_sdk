@@ -15,10 +15,7 @@ class LabeledCheckboxApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      home: const LabeledCheckboxExample(),
-    );
+    return MaterialApp(theme: ThemeData(useMaterial3: true), home: const LabeledCheckboxExample());
   }
 }
 
@@ -50,10 +47,11 @@ class LinkedLabelCheckbox extends StatelessWidget {
                   color: Colors.blueAccent,
                   decoration: TextDecoration.underline,
                 ),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    debugPrint('Label has been tapped.');
-                  },
+                recognizer:
+                    TapGestureRecognizer()
+                      ..onTap = () {
+                        debugPrint('Label has been tapped.');
+                      },
               ),
             ),
           ),

@@ -9,8 +9,7 @@ import 'dart:core';
 /// Throws an [ArgumentError] if the address is neither.
 void validateAddress(String address) {
   if (!(isIpV4Address(address) || isIpV6Address(address))) {
-    throw ArgumentError(
-        '"$address" is neither a valid IPv4 nor IPv6 address');
+    throw ArgumentError('"$address" is neither a valid IPv4 nor IPv6 address');
   }
 }
 

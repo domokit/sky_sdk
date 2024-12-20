@@ -1,0 +1,18 @@
+# Copyright 2019 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+flutter_js_source_list = [
+  "src/browser_environment.js",
+  "src/canvaskit_loader.js",
+  "src/entrypoint_loader.js",
+  "src/flutter.js",
+  "src/instantiate_wasm.js",
+  "src/loader.js",
+  "src/service_worker_loader.js",
+  "src/skwasm_loader.js",
+  "src/trusted_types.js",
+  "src/utils.js",
+
+  "src/types.d.ts",
+]

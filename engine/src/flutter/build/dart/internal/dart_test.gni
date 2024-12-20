@@ -1,0 +1,40 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/internal/gen_dartcli_call.gni")
+
+# Generates an executable that runs `dart test` on a single test program.
+#
+# Parameters:
+#   main_dart (required):
+#     The entrypoint to the Dart test program.
+#
+#   output (optional):
+#     Overrides the full output path.
+#     Defaults to $root_out_dir/gen/$target_path/$target_name; for example
+#     //flutter/foo/bar emits a binary at out/{variant}/gen/flutter/foo/bar.
+template("dart_test") {
+  assert(defined(invoker.main_dart), "Must specify 'main_dart'")
+
+  # Generate the CWD based on the directory of the invoking GN file.
+  parent_dir = get_label_info(target_name, "dir")
+  cwd = get_path_info(parent_dir, "dir")
+
+  gen_dartcli_call(target_name) {
+    args = [
+      "test",
+      invoker.main_dart,
+    ]
+    cwd = rebase_path(cwd)
+    metadata = {
+      action_type = [ "dart_test" ]
+    }
+    testonly = true
+    forward_variables_from(invoker,
+                           [
+                             "output",
+                             "visibility",
+                           ])
+  }
+}

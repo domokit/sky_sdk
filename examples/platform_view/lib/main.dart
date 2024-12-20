@@ -18,9 +18,7 @@ class PlatformView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Platform View',
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
-      ),
+      theme: ThemeData(primarySwatch: Colors.grey),
       home: const MyHomePage(title: 'Platform View'),
     );
   }
@@ -36,8 +34,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static const MethodChannel _methodChannel =
-      MethodChannel('samples.flutter.io/platform_view');
+  static const MethodChannel _methodChannel = MethodChannel('samples.flutter.io/platform_view');
 
   int _counter = 0;
 
@@ -49,16 +46,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   static Widget get _buttonText => switch (defaultTargetPlatform) {
     TargetPlatform.android => const Text('Continue in Android view'),
-    TargetPlatform.iOS     => const Text('Continue in iOS view'),
+    TargetPlatform.iOS => const Text('Continue in iOS view'),
     TargetPlatform.windows => const Text('Continue in Windows view'),
-    TargetPlatform.macOS   => const Text('Continue in macOS view'),
-    TargetPlatform.linux   => const Text('Continue in Linux view'),
+    TargetPlatform.macOS => const Text('Continue in macOS view'),
+    TargetPlatform.linux => const Text('Continue in Linux view'),
     TargetPlatform.fuchsia => throw UnimplementedError('Platform not yet implemented'),
   };
 
   Future<void> _launchPlatformCount() async {
-    final int? platformCounter =
-        await _methodChannel.invokeMethod('switchView', _counter);
+    final int? platformCounter = await _methodChannel.invokeMethod('switchView', _counter);
     setState(() {
       _counter = platformCounter!;
     });
@@ -66,50 +62,42 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      'Button tapped $_counter time${ _counter == 1 ? '' : 's' }.',
-                      style: const TextStyle(fontSize: 17.0),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: ElevatedButton(
-                        onPressed: _launchPlatformCount,
-                        child: _buttonText,
-                      ),
-                    ),
-                  ],
+    appBar: AppBar(title: Text(widget.title)),
+    body: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Button tapped $_counter time${_counter == 1 ? '' : 's'}.',
+                  style: const TextStyle(fontSize: 17.0),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: ElevatedButton(onPressed: _launchPlatformCount, child: _buttonText),
+                ),
+              ],
             ),
-            Container(
-              padding: const EdgeInsets.only(bottom: 15.0, left: 5.0),
-              child: Row(
-                children: <Widget>[
-                  Image.asset('assets/flutter-mark-square-64.png', scale: 1.5),
-                  const Text(
-                    'Flutter',
-                    style: TextStyle(fontSize: 30.0),
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _incrementCounter,
-          tooltip: 'Increment',
-          child: const Icon(Icons.add),
+        Container(
+          padding: const EdgeInsets.only(bottom: 15.0, left: 5.0),
+          child: Row(
+            children: <Widget>[
+              Image.asset('assets/flutter-mark-square-64.png', scale: 1.5),
+              const Text('Flutter', style: TextStyle(fontSize: 30.0)),
+            ],
+          ),
         ),
-      );
+      ],
+    ),
+    floatingActionButton: FloatingActionButton(
+      onPressed: _incrementCounter,
+      tooltip: 'Increment',
+      child: const Icon(Icons.add),
+    ),
+  );
 }

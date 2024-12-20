@@ -1,0 +1,104 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("core_wrapper_files.gni")
+
+# Publishes client wrapper files to the output directory for distribution.
+# This can be used multiple times to combine various portions of a wrapper
+# library into one cohesive library for clients to consume.
+#
+# Files that should be built by clients go into 'sources', while headers meant
+# to be included by the consuming code go into 'public'.
+#
+# All public code is assumed to be in the 'flutter' namespace.
+template("publish_client_wrapper") {
+  forward_variables_from(invoker, [ "directory_suffix" ])
+  if (defined(directory_suffix)) {
+    publish_dir_root = "$root_out_dir/cpp_client_wrapper_$directory_suffix"
+  } else {
+    publish_dir_root = "$root_out_dir/cpp_client_wrapper"
+  }
+  template_target_name = target_name
+  namespace = "flutter"
+
+  group(template_target_name) {
+    forward_variables_from(invoker,
+                           [
+                             "public_deps",
+                             "visibility",
+                           ])
+    deps = [
+      ":${template_target_name}_publish_includes",
+      ":${template_target_name}_publish_sources",
+    ]
+    if (defined(invoker.deps)) {
+      deps += invoker.deps
+    }
+  }
+
+  copy("${template_target_name}_publish_includes") {
+    visibility = [
+      ":$template_target_name",
+      ":${template_target_name}_publish_sources",
+    ]
+
+    sources = invoker.public
+    outputs = [ "$publish_dir_root/include/$namespace/{{source_file_part}}" ]
+  }
+
+  copy("${template_target_name}_publish_sources") {
+    visibility = [ ":$template_target_name" ]
+
+    sources = invoker.sources
+    outputs = [ "$publish_dir_root/{{source_file_part}}" ]
+
+    # GN on Windows appears to do #include checks even for copy
+    # targets, so add the dependency to the headers to satisfy
+    # the check.
+    deps = [ ":${template_target_name}_publish_includes" ]
+  }
+}
+
+_wrapper_readme = get_path_info("README", "abspath")
+
+# Copies the client wrapper code to the output directory.
+template("publish_client_wrapper_core") {
+  publish_client_wrapper(target_name) {
+    forward_variables_from(invoker,
+                           [
+                             "directory_suffix",
+                             "visibility",
+                           ])
+    public = core_cpp_client_wrapper_includes
+    sources = core_cpp_client_wrapper_sources +
+              core_cpp_client_wrapper_internal_headers + [ _wrapper_readme ] +
+              temporary_shim_files
+  }
+}
+
+# A wrapper for publish_client_wrapper that will also
+# publish_client_wrapper_core into the same directory.
+#
+# This is a convenience utility for the common case of wanting to publish
+# the core wrapper and a single set of extra wrapper files corresponding to
+# the platform.
+template("publish_client_wrapper_extension") {
+  extension_target_name = target_name
+  core_target_name = "${target_name}_core"
+
+  publish_client_wrapper_core(core_target_name) {
+    visibility = [ ":$extension_target_name" ]
+    forward_variables_from(invoker, [ "directory_suffix" ])
+  }
+
+  publish_client_wrapper(extension_target_name) {
+    forward_variables_from(invoker,
+                           [
+                             "public",
+                             "sources",
+                             "directory_suffix",
+                           ])
+    public_deps = [ ":$core_target_name" ]
+  }
+}

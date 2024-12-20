@@ -9,18 +9,19 @@ import 'package:flutter_tools/src/custom_devices/custom_device_config.dart';
 void writeCustomDevicesConfigFile(
   Directory dir, {
   List<CustomDeviceConfig>? configs,
-  dynamic json
+  dynamic json,
 }) {
   dir.createSync(recursive: true);
 
   final File file = dir.childFile('.flutter_custom_devices.json');
-  file.writeAsStringSync(jsonEncode(
-    <String, dynamic>{
-      'custom-devices': configs != null ?
-        configs.map<dynamic>((CustomDeviceConfig c) => c.toJson()).toList() :
-        json,
-    },
-  ));
+  file.writeAsStringSync(
+    jsonEncode(<String, dynamic>{
+      'custom-devices':
+          configs != null
+              ? configs.map<dynamic>((CustomDeviceConfig c) => c.toJson()).toList()
+              : json,
+    }),
+  );
 }
 
 final CustomDeviceConfig testConfig = CustomDeviceConfig(
@@ -35,7 +36,7 @@ final CustomDeviceConfig testConfig = CustomDeviceConfig(
   uninstallCommand: const <String>['testuninstall'],
   runDebugCommand: const <String>['testrundebug'],
   forwardPortCommand: const <String>['testforwardport'],
-  forwardPortSuccessRegex: RegExp('testforwardportsuccess')
+  forwardPortSuccessRegex: RegExp('testforwardportsuccess'),
 );
 
 const Map<String, dynamic> testConfigJson = <String, dynamic>{

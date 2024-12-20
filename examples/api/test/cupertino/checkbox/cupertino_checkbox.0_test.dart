@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Checkbox can be checked', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.CupertinoCheckboxApp(),
-    );
+    await tester.pumpWidget(const example.CupertinoCheckboxApp());
 
     CupertinoCheckbox checkbox = tester.widget(find.byType(CupertinoCheckbox));
 

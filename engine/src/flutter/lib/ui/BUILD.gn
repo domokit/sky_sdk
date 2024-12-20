@@ -1,0 +1,296 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/impeller/tools/impeller.gni")
+import("//flutter/shell/config.gni")
+import("//flutter/testing/testing.gni")
+
+if (is_fuchsia) {
+  import("//flutter/tools/fuchsia/gn-sdk/src/gn_configs.gni")
+}
+
+source_set("ui") {
+  cflags = [
+    # Dart gives us doubles. Skia and Impeller work in floats.
+    # If Dart gives us a double > FLT_MAX or < -FLT_MAX, implicit conversion
+    # will convert it to either inf/-inf or FLT_MAX/-FLT_MAX (undefined
+    # behavior). This can result in surprising and difficult to debug behavior
+    # for Flutter application developers, so it should be explicitly handled
+    # via SafeNarrow.
+    "-Wimplicit-float-conversion",
+  ]
+
+  if (is_win) {
+    # This causes build failures in third_party dependencies on Windows.
+    cflags += [ "-Wno-implicit-int-float-conversion" ]
+  }
+
+  sources = [
+    "compositing/scene.cc",
+    "compositing/scene.h",
+    "compositing/scene_builder.cc",
+    "compositing/scene_builder.h",
+    "dart_runtime_hooks.cc",
+    "dart_runtime_hooks.h",
+    "dart_ui.cc",
+    "dart_ui.h",
+    "dart_wrapper.h",
+    "floating_point.h",
+    "io_manager.cc",
+    "io_manager.h",
+    "isolate_name_server/isolate_name_server.cc",
+    "isolate_name_server/isolate_name_server.h",
+    "isolate_name_server/isolate_name_server_natives.cc",
+    "isolate_name_server/isolate_name_server_natives.h",
+    "painting/canvas.cc",
+    "painting/canvas.h",
+    "painting/codec.cc",
+    "painting/codec.h",
+    "painting/color_filter.cc",
+    "painting/color_filter.h",
+    "painting/display_list_deferred_image_gpu_skia.cc",
+    "painting/display_list_deferred_image_gpu_skia.h",
+    "painting/display_list_image_gpu.cc",
+    "painting/display_list_image_gpu.h",
+    "painting/engine_layer.cc",
+    "painting/engine_layer.h",
+    "painting/fragment_program.cc",
+    "painting/fragment_program.h",
+    "painting/fragment_shader.cc",
+    "painting/fragment_shader.h",
+    "painting/gradient.cc",
+    "painting/gradient.h",
+    "painting/image.cc",
+    "painting/image.h",
+    "painting/image_decoder.cc",
+    "painting/image_decoder.h",
+    "painting/image_decoder_skia.cc",
+    "painting/image_decoder_skia.h",
+    "painting/image_descriptor.cc",
+    "painting/image_descriptor.h",
+    "painting/image_encoding.cc",
+    "painting/image_encoding.h",
+    "painting/image_encoding_impl.h",
+    "painting/image_encoding_skia.cc",
+    "painting/image_encoding_skia.h",
+    "painting/image_filter.cc",
+    "painting/image_filter.h",
+    "painting/image_generator.cc",
+    "painting/image_generator.h",
+    "painting/image_generator_apng.cc",
+    "painting/image_generator_apng.h",
+    "painting/image_generator_registry.cc",
+    "painting/image_generator_registry.h",
+    "painting/image_shader.cc",
+    "painting/image_shader.h",
+    "painting/immutable_buffer.cc",
+    "painting/immutable_buffer.h",
+    "painting/matrix.cc",
+    "painting/matrix.h",
+    "painting/multi_frame_codec.cc",
+    "painting/multi_frame_codec.h",
+    "painting/paint.cc",
+    "painting/paint.h",
+    "painting/path.cc",
+    "painting/path.h",
+    "painting/path_measure.cc",
+    "painting/path_measure.h",
+    "painting/picture.cc",
+    "painting/picture.h",
+    "painting/picture_recorder.cc",
+    "painting/picture_recorder.h",
+    "painting/rrect.cc",
+    "painting/rrect.h",
+    "painting/shader.cc",
+    "painting/shader.h",
+    "painting/single_frame_codec.cc",
+    "painting/single_frame_codec.h",
+    "painting/vertices.cc",
+    "painting/vertices.h",
+    "plugins/callback_cache.cc",
+    "plugins/callback_cache.h",
+    "semantics/custom_accessibility_action.cc",
+    "semantics/custom_accessibility_action.h",
+    "semantics/semantics_node.cc",
+    "semantics/semantics_node.h",
+    "semantics/semantics_update.cc",
+    "semantics/semantics_update.h",
+    "semantics/semantics_update_builder.cc",
+    "semantics/semantics_update_builder.h",
+    "semantics/string_attribute.cc",
+    "semantics/string_attribute.h",
+    "snapshot_delegate.h",
+    "text/asset_manager_font_provider.cc",
+    "text/asset_manager_font_provider.h",
+    "text/font_collection.cc",
+    "text/font_collection.h",
+    "text/paragraph.cc",
+    "text/paragraph.h",
+    "text/paragraph_builder.cc",
+    "text/paragraph_builder.h",
+    "ui_dart_state.cc",
+    "ui_dart_state.h",
+    "window/key_data.cc",
+    "window/key_data.h",
+    "window/key_data_packet.cc",
+    "window/key_data_packet.h",
+    "window/platform_configuration.cc",
+    "window/platform_configuration.h",
+    "window/platform_isolate.cc",
+    "window/platform_isolate.h",
+    "window/platform_message.cc",
+    "window/platform_message.h",
+    "window/platform_message_response.cc",
+    "window/platform_message_response.h",
+    "window/platform_message_response_dart.cc",
+    "window/platform_message_response_dart.h",
+    "window/platform_message_response_dart_port.cc",
+    "window/platform_message_response_dart_port.h",
+    "window/pointer_data.cc",
+    "window/pointer_data.h",
+    "window/pointer_data_packet.cc",
+    "window/pointer_data_packet.h",
+    "window/pointer_data_packet_converter.cc",
+    "window/pointer_data_packet_converter.h",
+    "window/viewport_metrics.cc",
+    "window/viewport_metrics.h",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+
+  public_deps = [
+    "//flutter/flow",
+    "//flutter/shell/common:display",
+    "//flutter/shell/common:platform_message_handler",
+    "//flutter/skia/modules/skparagraph",
+    "//flutter/third_party/txt",
+  ]
+
+  deps = [
+    "$dart_src/runtime/bin:dart_io_api",
+    "//flutter/assets",
+    "//flutter/common",
+    "//flutter/common/graphics",
+    "//flutter/display_list",
+    "//flutter/fml",
+    "//flutter/impeller/runtime_stage",
+    "//flutter/runtime:dart_plugin_registrant",
+    "//flutter/runtime:test_font",
+    "//flutter/skia",
+    "//flutter/third_party/rapidjson",
+    "//flutter/third_party/tonic",
+    "//third_party/zlib:zlib",
+  ]
+
+  if (impeller_supports_rendering) {
+    sources += [
+      "painting/display_list_deferred_image_gpu_impeller.cc",
+      "painting/display_list_deferred_image_gpu_impeller.h",
+      "painting/image_decoder_impeller.cc",
+      "painting/image_decoder_impeller.h",
+      "painting/image_encoding_impeller.cc",
+      "painting/image_encoding_impeller.h",
+    ]
+
+    deps += [
+      "//flutter/impeller",
+      "//flutter/impeller/display_list:skia_conversions",
+    ]
+  }
+
+  if (!defined(defines)) {
+    defines = []
+  }
+  if (is_win) {
+    # Required for M_PI and others.
+    defines += [ "_USE_MATH_DEFINES" ]
+  }
+}
+
+if (enable_unittests) {
+  test_fixtures("ui_unittests_fixtures") {
+    deps = [ "fixtures/shaders" ]
+    dart_main = "fixtures/ui_test.dart"
+    fixtures = [
+      "fixtures/DashInNooglerHat.jpg",
+      "fixtures/DashInNooglerHat%20WithSpace.jpg",
+      "fixtures/DisplayP3Logo.jpg",
+      "fixtures/DisplayP3Logo.png",
+      "fixtures/Horizontal.jpg",
+      "fixtures/Horizontal.png",
+      "fixtures/heart_end.png",
+      "fixtures/hello_loop_2.gif",
+      "fixtures/hello_loop_2.webp",
+      "fixtures/FontManifest.json",
+      "fixtures/unmultiplied_alpha.png",
+      "fixtures/WideGamutIndexed.png",
+      "//flutter/third_party/txt/third_party/fonts/Roboto-Medium.ttf",
+    ]
+  }
+
+  executable("ui_benchmarks") {
+    testonly = true
+
+    public_configs = [ "//flutter:export_dynamic_symbols" ]
+
+    sources = [ "ui_benchmarks.cc" ]
+
+    deps = [
+      ":ui",
+      ":ui_unittests_fixtures",
+      "//flutter/benchmarking",
+      "//flutter/lib/snapshot",
+      "//flutter/shell/common",
+      "//flutter/testing:fixture_test",
+    ]
+  }
+
+  executable("ui_unittests") {
+    testonly = true
+
+    public_configs = [ "//flutter:export_dynamic_symbols" ]
+
+    sources = [
+      "compositing/scene_builder_unittests.cc",
+      "hooks_unittests.cc",
+      "painting/image_decoder_no_gl_unittests.cc",
+      "painting/image_decoder_no_gl_unittests.h",
+      "painting/image_dispose_unittests.cc",
+      "painting/image_encoding_unittests.cc",
+      "painting/image_generator_registry_unittests.cc",
+      "painting/paint_unittests.cc",
+      "painting/path_unittests.cc",
+      "painting/single_frame_codec_unittests.cc",
+      "semantics/semantics_update_builder_unittests.cc",
+      "window/platform_configuration_unittests.cc",
+      "window/platform_message_response_dart_port_unittests.cc",
+      "window/platform_message_response_dart_unittests.cc",
+      "window/pointer_data_packet_converter_unittests.cc",
+      "window/pointer_data_packet_unittests.cc",
+    ]
+
+    deps = [
+      ":ui",
+      ":ui_unittests_fixtures",
+      "$dart_src/runtime/bin:elf_loader",
+      "//flutter/common",
+      "//flutter/impeller",
+      "//flutter/lib/snapshot",
+      "//flutter/shell/common:shell_test_fixture_sources",
+      "//flutter/testing",
+      "//flutter/testing:dart",
+      "//flutter/testing:fixture_test",
+      "//flutter/third_party/libpng",
+      "//flutter/third_party/tonic",
+    ]
+
+    # TODO(https://github.com/flutter/flutter/issues/63837): This test is hard-coded to use a TestGLSurface so it cannot run on fuchsia.
+    if (shell_enable_gl) {
+      sources += [ "painting/image_decoder_unittests.cc" ]
+
+      deps += [ "//flutter/testing:opengl" ]
+    }
+  }
+}

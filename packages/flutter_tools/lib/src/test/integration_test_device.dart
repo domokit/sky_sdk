@@ -66,7 +66,10 @@ class IntegrationTestTestDevice implements TestDevice {
     }
     Uri? vmServiceUri = launchResult.vmServiceUri;
     if (vmServiceUri == null) {
-      throw TestDeviceException('The VM Service is not available on the test device.', StackTrace.current);
+      throw TestDeviceException(
+        'The VM Service is not available on the test device.',
+        StackTrace.current,
+      );
     }
 
     // No need to set up the log reader because the logs are captured and
@@ -78,7 +81,9 @@ class IntegrationTestTestDevice implements TestDevice {
         vmServiceUri,
         debuggingOptions: debuggingOptions,
       );
-      globals.printTrace('test $id: Dart Development Service started at ${_ddsLauncher.uri}, forwarding to VM service at $vmServiceUri.');
+      globals.printTrace(
+        'test $id: Dart Development Service started at ${_ddsLauncher.uri}, forwarding to VM service at $vmServiceUri.',
+      );
       vmServiceUri = _ddsLauncher.uri;
     }
 
@@ -94,7 +99,9 @@ class IntegrationTestTestDevice implements TestDevice {
       onTimeout: () => throw TimeoutException('Connecting to the VM Service timed out.'),
     );
 
-    globals.printTrace('test $id: Finding the correct isolate with the integration test service extension');
+    globals.printTrace(
+      'test $id: Finding the correct isolate with the integration test service extension',
+    );
     final vm_service.IsolateRef isolateRef = await vmService.findExtensionIsolate(
       kIntegrationTestMethod,
     );
@@ -110,9 +117,7 @@ class IntegrationTestTestDevice implements TestDevice {
       vmService.service.callServiceExtension(
         kIntegrationTestMethod,
         isolateId: isolateRef.id,
-        args: <String, String>{
-          kIntegrationTestData: event,
-        },
+        args: <String, String>{kIntegrationTestData: event},
       );
     });
 
@@ -120,9 +125,7 @@ class IntegrationTestTestDevice implements TestDevice {
       (String s) => controller.local.sink.add(s),
       onError: (Object error, StackTrace stack) => controller.local.sink.addError(error, stack),
     );
-    unawaited(vmService.service.onDone.whenComplete(
-      () => controller.local.sink.close(),
-    ));
+    unawaited(vmService.service.onDone.whenComplete(() => controller.local.sink.close()));
 
     return controller.foreign;
   }

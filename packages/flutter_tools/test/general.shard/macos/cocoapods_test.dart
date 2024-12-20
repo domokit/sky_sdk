@@ -25,10 +25,7 @@ import '../../src/fake_process_manager.dart';
 import '../../src/fake_pub_deps.dart';
 import '../../src/fakes.dart';
 
-enum _StdioStream {
-  stdout,
-  stderr,
-}
+enum _StdioStream { stdout, stderr }
 
 void main() {
   late MemoryFileSystem fileSystem;
@@ -46,33 +43,27 @@ void main() {
 
   void pretendPodVersionFails() {
     fakeProcessManager.addCommand(
-      const FakeCommand(
-        command: <String>['pod', '--version'],
-        exitCode: 1,
-      ),
+      const FakeCommand(command: <String>['pod', '--version'], exitCode: 1),
     );
   }
 
   void pretendPodVersionIs(String versionText) {
     fakeProcessManager.addCommand(
-      FakeCommand(
-        command: const <String>['pod', '--version'],
-        stdout: versionText,
-      ),
+      FakeCommand(command: const <String>['pod', '--version'], stdout: versionText),
     );
   }
 
   void podsIsInHomeDir() {
-    fileSystem.directory(fileSystem.path.join(
-      '.cocoapods',
-      'repos',
-      'master',
-    )).createSync(recursive: true);
+    fileSystem
+        .directory(fileSystem.path.join('.cocoapods', 'repos', 'master'))
+        .createSync(recursive: true);
   }
 
   FlutterProject setupProjectUnderTest() {
     // This needs to be run within testWithoutContext and not setUp since FlutterProject uses context.
-    final FlutterProject projectUnderTest = FlutterProject.fromDirectory(fileSystem.directory('project'));
+    final FlutterProject projectUnderTest = FlutterProject.fromDirectory(
+      fileSystem.directory('project'),
+    );
     projectUnderTest.ios.xcodeProject.createSync(recursive: true);
     projectUnderTest.macos.xcodeProject.createSync(recursive: true);
     return projectUnderTest;
@@ -97,51 +88,62 @@ void main() {
       usage: usage,
       analytics: fakeAnalytics,
     );
-    fileSystem.file(fileSystem.path.join(
-      Cache.flutterRoot!, 'packages', 'flutter_tools', 'templates', 'cocoapods', 'Podfile-ios-objc',
-    ))
-        ..createSync(recursive: true)
-        ..writeAsStringSync('Objective-C iOS podfile template');
-    fileSystem.file(fileSystem.path.join(
-      Cache.flutterRoot!, 'packages', 'flutter_tools', 'templates', 'cocoapods', 'Podfile-ios-swift',
-    ))
-        ..createSync(recursive: true)
-        ..writeAsStringSync('Swift iOS podfile template');
-    fileSystem.file(fileSystem.path.join(
-      Cache.flutterRoot!, 'packages', 'flutter_tools', 'templates', 'cocoapods', 'Podfile-macos',
-    ))
-        ..createSync(recursive: true)
-        ..writeAsStringSync('macOS podfile template');
+    fileSystem.file(
+        fileSystem.path.join(
+          Cache.flutterRoot!,
+          'packages',
+          'flutter_tools',
+          'templates',
+          'cocoapods',
+          'Podfile-ios-objc',
+        ),
+      )
+      ..createSync(recursive: true)
+      ..writeAsStringSync('Objective-C iOS podfile template');
+    fileSystem.file(
+        fileSystem.path.join(
+          Cache.flutterRoot!,
+          'packages',
+          'flutter_tools',
+          'templates',
+          'cocoapods',
+          'Podfile-ios-swift',
+        ),
+      )
+      ..createSync(recursive: true)
+      ..writeAsStringSync('Swift iOS podfile template');
+    fileSystem.file(
+        fileSystem.path.join(
+          Cache.flutterRoot!,
+          'packages',
+          'flutter_tools',
+          'templates',
+          'cocoapods',
+          'Podfile-macos',
+        ),
+      )
+      ..createSync(recursive: true)
+      ..writeAsStringSync('macOS podfile template');
   });
 
   void pretendPodIsNotInstalled() {
     fakeProcessManager.addCommand(
-      const FakeCommand(
-        command: <String>['which', 'pod'],
-        exitCode: 1,
-      ),
+      const FakeCommand(command: <String>['which', 'pod'], exitCode: 1),
     );
   }
 
   void pretendPodIsBroken() {
     fakeProcessManager.addCommands(<FakeCommand>[
       // it is present
-      const FakeCommand(
-        command: <String>['which', 'pod'],
-      ),
+      const FakeCommand(command: <String>['which', 'pod']),
       // but is not working
-      const FakeCommand(
-        command: <String>['pod', '--version'],
-        exitCode: 1,
-      ),
+      const FakeCommand(command: <String>['pod', '--version'], exitCode: 1),
     ]);
   }
 
   void pretendPodIsInstalled() {
     fakeProcessManager.addCommands(<FakeCommand>[
-      const FakeCommand(
-        command: <String>['which', 'pod'],
-      ),
+      const FakeCommand(command: <String>['which', 'pod']),
     ]);
   }
 
@@ -160,25 +162,37 @@ void main() {
     testWithoutContext('detects installed', () async {
       pretendPodIsInstalled();
       pretendPodVersionIs('0.0.1');
-      expect(await cocoaPodsUnderTest.evaluateCocoaPodsInstallation, isNot(CocoaPodsStatus.notInstalled));
+      expect(
+        await cocoaPodsUnderTest.evaluateCocoaPodsInstallation,
+        isNot(CocoaPodsStatus.notInstalled),
+      );
     });
 
     testWithoutContext('detects unknown version', () async {
       pretendPodIsInstalled();
       pretendPodVersionIs('Plugin loaded.\n1.5.3');
-      expect(await cocoaPodsUnderTest.evaluateCocoaPodsInstallation, CocoaPodsStatus.unknownVersion);
+      expect(
+        await cocoaPodsUnderTest.evaluateCocoaPodsInstallation,
+        CocoaPodsStatus.unknownVersion,
+      );
     });
 
     testWithoutContext('detects below minimum version', () async {
       pretendPodIsInstalled();
       pretendPodVersionIs('1.9.0');
-      expect(await cocoaPodsUnderTest.evaluateCocoaPodsInstallation, CocoaPodsStatus.belowMinimumVersion);
+      expect(
+        await cocoaPodsUnderTest.evaluateCocoaPodsInstallation,
+        CocoaPodsStatus.belowMinimumVersion,
+      );
     });
 
     testWithoutContext('detects below recommended version', () async {
       pretendPodIsInstalled();
       pretendPodVersionIs('1.12.5');
-      expect(await cocoaPodsUnderTest.evaluateCocoaPodsInstallation, CocoaPodsStatus.belowRecommendedVersion);
+      expect(
+        await cocoaPodsUnderTest.evaluateCocoaPodsInstallation,
+        CocoaPodsStatus.belowRecommendedVersion,
+      );
     });
 
     testWithoutContext('detects at recommended version', () async {
@@ -204,9 +218,9 @@ void main() {
 
     testUsingContext('creates swift Podfile if swift', () async {
       final FlutterProject projectUnderTest = setupProjectUnderTest();
-      final FakeXcodeProjectInterpreter fakeXcodeProjectInterpreter = FakeXcodeProjectInterpreter(buildSettings: <String, String>{
-        'SWIFT_VERSION': '5.0',
-      });
+      final FakeXcodeProjectInterpreter fakeXcodeProjectInterpreter = FakeXcodeProjectInterpreter(
+        buildSettings: <String, String>{'SWIFT_VERSION': '5.0'},
+      );
       final CocoaPods cocoaPodsUnderTest = CocoaPods(
         fileSystem: fileSystem,
         processManager: fakeProcessManager,
@@ -217,7 +231,9 @@ void main() {
         analytics: fakeAnalytics,
       );
 
-      final FlutterProject project = FlutterProject.fromDirectoryTest(fileSystem.directory('project'));
+      final FlutterProject project = FlutterProject.fromDirectoryTest(
+        fileSystem.directory('project'),
+      );
       await cocoaPodsUnderTest.setupPodfile(project.ios);
 
       expect(projectUnderTest.ios.podfile.readAsStringSync(), 'Swift iOS podfile template');
@@ -233,9 +249,13 @@ void main() {
 
     testUsingContext('does not recreate Podfile when already present', () async {
       final FlutterProject projectUnderTest = setupProjectUnderTest();
-      projectUnderTest.ios.podfile..createSync()..writeAsStringSync('Existing Podfile');
+      projectUnderTest.ios.podfile
+        ..createSync()
+        ..writeAsStringSync('Existing Podfile');
 
-      final FlutterProject project = FlutterProject.fromDirectoryTest(fileSystem.directory('project'));
+      final FlutterProject project = FlutterProject.fromDirectoryTest(
+        fileSystem.directory('project'),
+      );
       await cocoaPodsUnderTest.setupPodfile(project.ios);
 
       expect(projectUnderTest.ios.podfile.readAsStringSync(), 'Existing Podfile');
@@ -253,7 +273,9 @@ void main() {
         analytics: fakeAnalytics,
       );
 
-      final FlutterProject project = FlutterProject.fromDirectoryTest(fileSystem.directory('project'));
+      final FlutterProject project = FlutterProject.fromDirectoryTest(
+        fileSystem.directory('project'),
+      );
       await cocoaPodsUnderTest.setupPodfile(project.ios);
 
       expect(projectUnderTest.ios.podfile.existsSync(), false);
@@ -261,7 +283,9 @@ void main() {
 
     testUsingContext('includes Pod config in xcconfig files, if not present', () async {
       final FlutterProject projectUnderTest = setupProjectUnderTest();
-      projectUnderTest.ios.podfile..createSync()..writeAsStringSync('Existing Podfile');
+      projectUnderTest.ios.podfile
+        ..createSync()
+        ..writeAsStringSync('Existing Podfile');
       projectUnderTest.ios.xcodeConfigFor('Debug')
         ..createSync(recursive: true)
         ..writeAsStringSync('Existing debug config');
@@ -269,106 +293,157 @@ void main() {
         ..createSync(recursive: true)
         ..writeAsStringSync('Existing release config');
 
-      final FlutterProject project = FlutterProject.fromDirectoryTest(fileSystem.directory('project'));
+      final FlutterProject project = FlutterProject.fromDirectoryTest(
+        fileSystem.directory('project'),
+      );
       await cocoaPodsUnderTest.setupPodfile(project.ios);
 
       final String debugContents = projectUnderTest.ios.xcodeConfigFor('Debug').readAsStringSync();
-      expect(debugContents, contains(
-          '#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"\n'));
+      expect(
+        debugContents,
+        contains('#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"\n'),
+      );
       expect(debugContents, contains('Existing debug config'));
-      final String releaseContents = projectUnderTest.ios.xcodeConfigFor('Release').readAsStringSync();
-      expect(releaseContents, contains(
-          '#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"\n'));
+      final String releaseContents =
+          projectUnderTest.ios.xcodeConfigFor('Release').readAsStringSync();
+      expect(
+        releaseContents,
+        contains(
+          '#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"\n',
+        ),
+      );
       expect(releaseContents, contains('Existing release config'));
     });
 
-    testUsingContext('does not include Pod config in xcconfig files, if legacy non-option include present', () async {
-      final FlutterProject projectUnderTest = setupProjectUnderTest();
-      projectUnderTest.ios.podfile..createSync()..writeAsStringSync('Existing Podfile');
+    testUsingContext(
+      'does not include Pod config in xcconfig files, if legacy non-option include present',
+      () async {
+        final FlutterProject projectUnderTest = setupProjectUnderTest();
+        projectUnderTest.ios.podfile
+          ..createSync()
+          ..writeAsStringSync('Existing Podfile');
 
-      const String legacyDebugInclude = '#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig';
-      projectUnderTest.ios.xcodeConfigFor('Debug')
-        ..createSync(recursive: true)
-        ..writeAsStringSync(legacyDebugInclude);
-      const String legacyReleaseInclude = '#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig';
-      projectUnderTest.ios.xcodeConfigFor('Release')
-        ..createSync(recursive: true)
-        ..writeAsStringSync(legacyReleaseInclude);
+        const String legacyDebugInclude =
+            '#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig';
+        projectUnderTest.ios.xcodeConfigFor('Debug')
+          ..createSync(recursive: true)
+          ..writeAsStringSync(legacyDebugInclude);
+        const String legacyReleaseInclude =
+            '#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig';
+        projectUnderTest.ios.xcodeConfigFor('Release')
+          ..createSync(recursive: true)
+          ..writeAsStringSync(legacyReleaseInclude);
 
-      final FlutterProject project = FlutterProject.fromDirectoryTest(fileSystem.directory('project'));
-      await cocoaPodsUnderTest.setupPodfile(project.ios);
+        final FlutterProject project = FlutterProject.fromDirectoryTest(
+          fileSystem.directory('project'),
+        );
+        await cocoaPodsUnderTest.setupPodfile(project.ios);
 
-      final String debugContents = projectUnderTest.ios.xcodeConfigFor('Debug').readAsStringSync();
-      // Redundant contains check, but this documents what we're testing--that the optional
-      // #include? doesn't get written in addition to the previous style #include.
-      expect(debugContents, isNot(contains('#include?')));
-      expect(debugContents, equals(legacyDebugInclude));
-      final String releaseContents = projectUnderTest.ios.xcodeConfigFor('Release').readAsStringSync();
-      expect(releaseContents, isNot(contains('#include?')));
-      expect(releaseContents, equals(legacyReleaseInclude));
-    });
+        final String debugContents =
+            projectUnderTest.ios.xcodeConfigFor('Debug').readAsStringSync();
+        // Redundant contains check, but this documents what we're testing--that the optional
+        // #include? doesn't get written in addition to the previous style #include.
+        expect(debugContents, isNot(contains('#include?')));
+        expect(debugContents, equals(legacyDebugInclude));
+        final String releaseContents =
+            projectUnderTest.ios.xcodeConfigFor('Release').readAsStringSync();
+        expect(releaseContents, isNot(contains('#include?')));
+        expect(releaseContents, equals(legacyReleaseInclude));
+      },
+    );
 
-    testUsingContext('does not include Pod config in xcconfig files, if flavor include present', () async {
-      final FlutterProject projectUnderTest = setupProjectUnderTest();
-      projectUnderTest.ios.podfile..createSync()..writeAsStringSync('Existing Podfile');
+    testUsingContext(
+      'does not include Pod config in xcconfig files, if flavor include present',
+      () async {
+        final FlutterProject projectUnderTest = setupProjectUnderTest();
+        projectUnderTest.ios.podfile
+          ..createSync()
+          ..writeAsStringSync('Existing Podfile');
 
-      const String flavorDebugInclude = '#include? "Pods/Target Support Files/Pods-Free App/Pods-Free App.debug free.xcconfig"';
-      projectUnderTest.ios.xcodeConfigFor('Debug')
-        ..createSync(recursive: true)
-        ..writeAsStringSync(flavorDebugInclude);
-      const String flavorReleaseInclude = '#include? "Pods/Target Support Files/Pods-Free App/Pods-Free App.release free.xcconfig"';
-      projectUnderTest.ios.xcodeConfigFor('Release')
-        ..createSync(recursive: true)
-        ..writeAsStringSync(flavorReleaseInclude);
+        const String flavorDebugInclude =
+            '#include? "Pods/Target Support Files/Pods-Free App/Pods-Free App.debug free.xcconfig"';
+        projectUnderTest.ios.xcodeConfigFor('Debug')
+          ..createSync(recursive: true)
+          ..writeAsStringSync(flavorDebugInclude);
+        const String flavorReleaseInclude =
+            '#include? "Pods/Target Support Files/Pods-Free App/Pods-Free App.release free.xcconfig"';
+        projectUnderTest.ios.xcodeConfigFor('Release')
+          ..createSync(recursive: true)
+          ..writeAsStringSync(flavorReleaseInclude);
 
-      final FlutterProject project = FlutterProject.fromDirectoryTest(fileSystem.directory('project'));
-      await cocoaPodsUnderTest.setupPodfile(project.ios);
+        final FlutterProject project = FlutterProject.fromDirectoryTest(
+          fileSystem.directory('project'),
+        );
+        await cocoaPodsUnderTest.setupPodfile(project.ios);
 
-      final String debugContents = projectUnderTest.ios.xcodeConfigFor('Debug').readAsStringSync();
-      // Redundant contains check, but this documents what we're testing--that the optional
-      // #include? doesn't get written in addition to the previous style #include.
-      expect(debugContents, isNot(contains('Pods-Runner/Pods-Runner.debug')));
-      expect(debugContents, equals(flavorDebugInclude));
-      final String releaseContents = projectUnderTest.ios.xcodeConfigFor('Release').readAsStringSync();
-      expect(releaseContents, isNot(contains('Pods-Runner/Pods-Runner.release')));
-      expect(releaseContents, equals(flavorReleaseInclude));
-    });
+        final String debugContents =
+            projectUnderTest.ios.xcodeConfigFor('Debug').readAsStringSync();
+        // Redundant contains check, but this documents what we're testing--that the optional
+        // #include? doesn't get written in addition to the previous style #include.
+        expect(debugContents, isNot(contains('Pods-Runner/Pods-Runner.debug')));
+        expect(debugContents, equals(flavorDebugInclude));
+        final String releaseContents =
+            projectUnderTest.ios.xcodeConfigFor('Release').readAsStringSync();
+        expect(releaseContents, isNot(contains('Pods-Runner/Pods-Runner.release')));
+        expect(releaseContents, equals(flavorReleaseInclude));
+      },
+    );
   });
 
   group('Update xcconfig', () {
-    testUsingContext('includes Pod config in xcconfig files, if the user manually added Pod dependencies without using Flutter plugins', () async {
-      final FlutterProject projectUnderTest = setupProjectUnderTest();
-      final File packageConfigFile = fileSystem.file(
-        fileSystem.path.join('project', '.dart_tool', 'package_config.json'),
-      );
-      packageConfigFile.createSync(recursive: true);
-      packageConfigFile.writeAsStringSync('{"configVersion":2,"packages":[]}');
-      projectUnderTest.ios.podfile..createSync()..writeAsStringSync('Custom Podfile');
-      projectUnderTest.ios.podfileLock..createSync()..writeAsStringSync('Podfile.lock from user executed `pod install`');
-      projectUnderTest.ios.xcodeConfigFor('Debug')
-        ..createSync(recursive: true)
-        ..writeAsStringSync('Existing debug config');
-      projectUnderTest.ios.xcodeConfigFor('Release')
-        ..createSync(recursive: true)
-        ..writeAsStringSync('Existing release config');
+    testUsingContext(
+      'includes Pod config in xcconfig files, if the user manually added Pod dependencies without using Flutter plugins',
+      () async {
+        final FlutterProject projectUnderTest = setupProjectUnderTest();
+        final File packageConfigFile = fileSystem.file(
+          fileSystem.path.join('project', '.dart_tool', 'package_config.json'),
+        );
+        packageConfigFile.createSync(recursive: true);
+        packageConfigFile.writeAsStringSync('{"configVersion":2,"packages":[]}');
+        projectUnderTest.ios.podfile
+          ..createSync()
+          ..writeAsStringSync('Custom Podfile');
+        projectUnderTest.ios.podfileLock
+          ..createSync()
+          ..writeAsStringSync('Podfile.lock from user executed `pod install`');
+        projectUnderTest.ios.xcodeConfigFor('Debug')
+          ..createSync(recursive: true)
+          ..writeAsStringSync('Existing debug config');
+        projectUnderTest.ios.xcodeConfigFor('Release')
+          ..createSync(recursive: true)
+          ..writeAsStringSync('Existing release config');
 
-      final FlutterProject project = FlutterProject.fromDirectoryTest(fileSystem.directory('project'));
-      await injectPlugins(project, iosPlatform: true);
+        final FlutterProject project = FlutterProject.fromDirectoryTest(
+          fileSystem.directory('project'),
+        );
+        await injectPlugins(project, iosPlatform: true);
 
-      final String debugContents = projectUnderTest.ios.xcodeConfigFor('Debug').readAsStringSync();
-      expect(debugContents, contains(
-          '#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"\n'));
-      expect(debugContents, contains('Existing debug config'));
-      final String releaseContents = projectUnderTest.ios.xcodeConfigFor('Release').readAsStringSync();
-      expect(releaseContents, contains(
-          '#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"\n'));
-      expect(releaseContents, contains('Existing release config'));
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => FakeProcessManager.any(),
-      FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
-    });
+        final String debugContents =
+            projectUnderTest.ios.xcodeConfigFor('Debug').readAsStringSync();
+        expect(
+          debugContents,
+          contains(
+            '#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"\n',
+          ),
+        );
+        expect(debugContents, contains('Existing debug config'));
+        final String releaseContents =
+            projectUnderTest.ios.xcodeConfigFor('Release').readAsStringSync();
+        expect(
+          releaseContents,
+          contains(
+            '#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"\n',
+          ),
+        );
+        expect(releaseContents, contains('Existing release config'));
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => FakeProcessManager.any(),
+        FeatureFlags: enableExplicitPackageDependencies,
+        Pub: FakePubWithPrimedDeps.new,
+      },
+    );
   });
 
   group('Process pods', () {
@@ -380,10 +455,13 @@ void main() {
       final FlutterProject projectUnderTest = setupProjectUnderTest();
       pretendPodIsNotInstalled();
       projectUnderTest.ios.podfile.createSync();
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.ios,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit(message: 'CocoaPods not installed or not in valid state'));
+      await expectLater(
+        cocoaPodsUnderTest.processPods(
+          xcodeProject: projectUnderTest.ios,
+          buildMode: BuildMode.debug,
+        ),
+        throwsToolExit(message: 'CocoaPods not installed or not in valid state'),
+      );
       expect(fakeProcessManager, hasNoRemainingExpectations);
       expect(fakeProcessManager, hasNoRemainingExpectations);
     });
@@ -392,10 +470,13 @@ void main() {
       final FlutterProject projectUnderTest = setupProjectUnderTest();
       pretendPodIsBroken();
       projectUnderTest.ios.podfile.createSync();
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.ios,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit(message: 'CocoaPods not installed or not in valid state'));
+      await expectLater(
+        cocoaPodsUnderTest.processPods(
+          xcodeProject: projectUnderTest.ios,
+          buildMode: BuildMode.debug,
+        ),
+        throwsToolExit(message: 'CocoaPods not installed or not in valid state'),
+      );
       expect(fakeProcessManager, hasNoRemainingExpectations);
       expect(fakeProcessManager, hasNoRemainingExpectations);
     });
@@ -406,14 +487,16 @@ void main() {
         ..createSync()
         ..writeAsStringSync('Existing Podfile');
 
-      final Directory symlinks = projectUnderTest.ios.symlinks
-        ..createSync(recursive: true);
+      final Directory symlinks = projectUnderTest.ios.symlinks..createSync(recursive: true);
       symlinks.childLink('flutter').createSync('cache');
 
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.ios,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit(message: 'Podfile is out of date'));
+      await expectLater(
+        cocoaPodsUnderTest.processPods(
+          xcodeProject: projectUnderTest.ios,
+          buildMode: BuildMode.debug,
+        ),
+        throwsToolExit(message: 'Podfile is out of date'),
+      );
       expect(fakeProcessManager, hasNoRemainingExpectations);
     });
 
@@ -423,10 +506,13 @@ void main() {
         ..createSync()
         ..writeAsStringSync("plugin_pods = parse_KV_file('../.flutter-plugins')");
 
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.ios,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit(message: 'Podfile is out of date'));
+      await expectLater(
+        cocoaPodsUnderTest.processPods(
+          xcodeProject: projectUnderTest.ios,
+          buildMode: BuildMode.debug,
+        ),
+        throwsToolExit(message: 'Podfile is out of date'),
+      );
       expect(fakeProcessManager, hasNoRemainingExpectations);
     });
 
@@ -435,12 +521,8 @@ void main() {
       pretendPodIsInstalled();
       pretendPodVersionIs('100.0.0');
       fakeProcessManager.addCommands(const <FakeCommand>[
-        FakeCommand(
-          command: <String>['pod', 'install', '--verbose'],
-        ),
-        FakeCommand(
-          command: <String>['touch', 'project/macos/Podfile.lock'],
-        ),
+        FakeCommand(command: <String>['pod', 'install', '--verbose']),
+        FakeCommand(command: <String>['touch', 'project/macos/Podfile.lock']),
       ]);
 
       projectUnderTest.macos.podfile
@@ -462,25 +544,32 @@ void main() {
 
     testUsingContext('throws, if Podfile is missing.', () async {
       final FlutterProject projectUnderTest = setupProjectUnderTest();
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.ios,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit(message: 'Podfile missing'));
+      await expectLater(
+        cocoaPodsUnderTest.processPods(
+          xcodeProject: projectUnderTest.ios,
+          buildMode: BuildMode.debug,
+        ),
+        throwsToolExit(message: 'Podfile missing'),
+      );
       expect(fakeProcessManager, hasNoRemainingExpectations);
     });
 
-    testUsingContext("doesn't throw, if using Swift Package Manager and Podfile is missing.", () async {
-      final FlutterProject projectUnderTest = setupProjectUnderTest();
-      final bool didInstall = await cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.ios,
-        buildMode: BuildMode.debug,
-      );
-      expect(didInstall, isFalse);
-      expect(fakeProcessManager, hasNoRemainingExpectations);
-    }, overrides: <Type, Generator>{
-      FeatureFlags: () => TestFeatureFlags(isSwiftPackageManagerEnabled: true),
-      XcodeProjectInterpreter: () => FakeXcodeProjectInterpreter(version: Version(15, 0, 0)),
-    });
+    testUsingContext(
+      "doesn't throw, if using Swift Package Manager and Podfile is missing.",
+      () async {
+        final FlutterProject projectUnderTest = setupProjectUnderTest();
+        final bool didInstall = await cocoaPodsUnderTest.processPods(
+          xcodeProject: projectUnderTest.ios,
+          buildMode: BuildMode.debug,
+        );
+        expect(didInstall, isFalse);
+        expect(fakeProcessManager, hasNoRemainingExpectations);
+      },
+      overrides: <Type, Generator>{
+        FeatureFlags: () => TestFeatureFlags(isSwiftPackageManagerEnabled: true),
+        XcodeProjectInterpreter: () => FakeXcodeProjectInterpreter(version: Version(15, 0, 0)),
+      },
+    );
 
     testUsingContext('throws, if specs repo is outdated.', () async {
       final FlutterProject projectUnderTest = setupProjectUnderTest();
@@ -494,10 +583,7 @@ void main() {
         const FakeCommand(
           command: <String>['pod', 'install', '--verbose'],
           workingDirectory: 'project/ios',
-          environment: <String, String>{
-            'COCOAPODS_DISABLE_STATS': 'true',
-            'LANG': 'en_US.UTF-8',
-          },
+          environment: <String, String>{'COCOAPODS_DISABLE_STATS': 'true', 'LANG': 'en_US.UTF-8'},
           exitCode: 1,
           // This output is the output that a real CocoaPods install would generate.
           stdout: '''
@@ -517,10 +603,13 @@ Note: as of CocoaPods 1.0, `pod repo update` does not happen on `pod install` by
         ),
       );
 
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.ios,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit());
+      await expectLater(
+        cocoaPodsUnderTest.processPods(
+          xcodeProject: projectUnderTest.ios,
+          buildMode: BuildMode.debug,
+        ),
+        throwsToolExit(),
+      );
       expect(
         logger.errorText,
         contains("CocoaPods's specs repository is too out-of-date to satisfy dependencies"),
@@ -540,10 +629,7 @@ Note: as of CocoaPods 1.0, `pod repo update` does not happen on `pod install` by
         const FakeCommand(
           command: <String>['pod', 'install', '--verbose'],
           workingDirectory: 'project/ios',
-          environment: <String, String>{
-            'COCOAPODS_DISABLE_STATS': 'true',
-            'LANG': 'en_US.UTF-8',
-          },
+          environment: <String, String>{'COCOAPODS_DISABLE_STATS': 'true', 'LANG': 'en_US.UTF-8'},
           exitCode: 1,
           // This output is the output that a real CocoaPods install would generate.
           stdout: '''
@@ -560,10 +646,13 @@ If this ISA was generated by Xcode please file an issue: https://github.com/Coco
         ),
       );
 
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.ios,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit());
+      await expectLater(
+        cocoaPodsUnderTest.processPods(
+          xcodeProject: projectUnderTest.ios,
+          buildMode: BuildMode.debug,
+        ),
+        throwsToolExit(),
+      );
       expect(
         logger.errorText,
         contains(
@@ -573,21 +662,23 @@ If this ISA was generated by Xcode please file an issue: https://github.com/Coco
       );
     });
 
-    testUsingContext('throws if plugin requires higher minimum iOS version using "platform"', () async {
-      final FlutterProject projectUnderTest = setupProjectUnderTest();
-      pretendPodIsInstalled();
-      pretendPodVersionIs('100.0.0');
-      fileSystem.file(fileSystem.path.join('project', 'ios', 'Podfile'))
-        ..createSync()
-        ..writeAsStringSync('Existing Podfile');
-      const String fakePluginName = 'some_plugin';
-      final File podspec = projectUnderTest.ios.symlinks
-          .childDirectory('plugins')
-          .childDirectory(fakePluginName)
-          .childDirectory('ios')
-          .childFile('$fakePluginName.podspec');
-      podspec.createSync(recursive: true);
-      podspec.writeAsStringSync('''
+    testUsingContext(
+      'throws if plugin requires higher minimum iOS version using "platform"',
+      () async {
+        final FlutterProject projectUnderTest = setupProjectUnderTest();
+        pretendPodIsInstalled();
+        pretendPodVersionIs('100.0.0');
+        fileSystem.file(fileSystem.path.join('project', 'ios', 'Podfile'))
+          ..createSync()
+          ..writeAsStringSync('Existing Podfile');
+        const String fakePluginName = 'some_plugin';
+        final File podspec = projectUnderTest.ios.symlinks
+            .childDirectory('plugins')
+            .childDirectory(fakePluginName)
+            .childDirectory('ios')
+            .childFile('$fakePluginName.podspec');
+        podspec.createSync(recursive: true);
+        podspec.writeAsStringSync('''
 Pod::Spec.new do |s|
   s.name             = '$fakePluginName'
   s.version          = '0.0.1'
@@ -598,56 +689,62 @@ Pod::Spec.new do |s|
   s.platform = :ios, '15.0'
 end''');
 
-      fakeProcessManager.addCommand(
-        FakeCommand(
-          command: const <String>['pod', 'install', '--verbose'],
-          workingDirectory: 'project/ios',
-          environment: const <String, String>{
-            'COCOAPODS_DISABLE_STATS': 'true',
-            'LANG': 'en_US.UTF-8',
-          },
-          exitCode: 1,
-          stdout: _fakeHigherMinimumIOSVersionPodInstallOutput(fakePluginName),
-        ),
-      );
+        fakeProcessManager.addCommand(
+          FakeCommand(
+            command: const <String>['pod', 'install', '--verbose'],
+            workingDirectory: 'project/ios',
+            environment: const <String, String>{
+              'COCOAPODS_DISABLE_STATS': 'true',
+              'LANG': 'en_US.UTF-8',
+            },
+            exitCode: 1,
+            stdout: _fakeHigherMinimumIOSVersionPodInstallOutput(fakePluginName),
+          ),
+        );
 
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.ios,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit());
-      expect(
-        logger.errorText,
-        contains(
-          'The plugin "$fakePluginName" requires a higher minimum iOS '
-          'deployment version than your application is targeting.'
-        ),
-      );
-      // The error should contain specific instructions for fixing the build
-      // based on parsing the plugin's podspec.
-      expect(
-        logger.errorText,
-        contains(
-          "To build, increase your application's deployment target to at least "
-          '15.0 as described at https://flutter.dev/to/ios-deploy'
-        ),
-      );
-    });
+        await expectLater(
+          cocoaPodsUnderTest.processPods(
+            xcodeProject: projectUnderTest.ios,
+            buildMode: BuildMode.debug,
+          ),
+          throwsToolExit(),
+        );
+        expect(
+          logger.errorText,
+          contains(
+            'The plugin "$fakePluginName" requires a higher minimum iOS '
+            'deployment version than your application is targeting.',
+          ),
+        );
+        // The error should contain specific instructions for fixing the build
+        // based on parsing the plugin's podspec.
+        expect(
+          logger.errorText,
+          contains(
+            "To build, increase your application's deployment target to at least "
+            '15.0 as described at https://flutter.dev/to/ios-deploy',
+          ),
+        );
+      },
+    );
 
-    testUsingContext('throws if plugin requires higher minimum iOS version using "deployment_target"', () async {
-      final FlutterProject projectUnderTest = setupProjectUnderTest();
-      pretendPodIsInstalled();
-      pretendPodVersionIs('100.0.0');
-      fileSystem.file(fileSystem.path.join('project', 'ios', 'Podfile'))
-        ..createSync()
-        ..writeAsStringSync('Existing Podfile');
-      const String fakePluginName = 'some_plugin';
-      final File podspec = projectUnderTest.ios.symlinks
-          .childDirectory('plugins')
-          .childDirectory(fakePluginName)
-          .childDirectory('ios')
-          .childFile('$fakePluginName.podspec');
-      podspec.createSync(recursive: true);
-      podspec.writeAsStringSync('''
+    testUsingContext(
+      'throws if plugin requires higher minimum iOS version using "deployment_target"',
+      () async {
+        final FlutterProject projectUnderTest = setupProjectUnderTest();
+        pretendPodIsInstalled();
+        pretendPodVersionIs('100.0.0');
+        fileSystem.file(fileSystem.path.join('project', 'ios', 'Podfile'))
+          ..createSync()
+          ..writeAsStringSync('Existing Podfile');
+        const String fakePluginName = 'some_plugin';
+        final File podspec = projectUnderTest.ios.symlinks
+            .childDirectory('plugins')
+            .childDirectory(fakePluginName)
+            .childDirectory('ios')
+            .childFile('$fakePluginName.podspec');
+        podspec.createSync(recursive: true);
+        podspec.writeAsStringSync('''
 Pod::Spec.new do |s|
   s.name             = '$fakePluginName'
   s.version          = '0.0.1'
@@ -658,56 +755,62 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '15.0'
 end''');
 
-      fakeProcessManager.addCommand(
-        FakeCommand(
-          command: const <String>['pod', 'install', '--verbose'],
-          workingDirectory: 'project/ios',
-          environment: const <String, String>{
-            'COCOAPODS_DISABLE_STATS': 'true',
-            'LANG': 'en_US.UTF-8',
-          },
-          exitCode: 1,
-          stdout: _fakeHigherMinimumIOSVersionPodInstallOutput(fakePluginName),
-        ),
-      );
+        fakeProcessManager.addCommand(
+          FakeCommand(
+            command: const <String>['pod', 'install', '--verbose'],
+            workingDirectory: 'project/ios',
+            environment: const <String, String>{
+              'COCOAPODS_DISABLE_STATS': 'true',
+              'LANG': 'en_US.UTF-8',
+            },
+            exitCode: 1,
+            stdout: _fakeHigherMinimumIOSVersionPodInstallOutput(fakePluginName),
+          ),
+        );
 
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.ios,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit());
-      expect(
-        logger.errorText,
-        contains(
-          'The plugin "$fakePluginName" requires a higher minimum iOS '
-          'deployment version than your application is targeting.'
-        ),
-      );
-      // The error should contain specific instructions for fixing the build
-      // based on parsing the plugin's podspec.
-      expect(
-        logger.errorText,
-        contains(
-          "To build, increase your application's deployment target to at least "
-          '15.0 as described at https://flutter.dev/to/ios-deploy'
-        ),
-      );
-    });
+        await expectLater(
+          cocoaPodsUnderTest.processPods(
+            xcodeProject: projectUnderTest.ios,
+            buildMode: BuildMode.debug,
+          ),
+          throwsToolExit(),
+        );
+        expect(
+          logger.errorText,
+          contains(
+            'The plugin "$fakePluginName" requires a higher minimum iOS '
+            'deployment version than your application is targeting.',
+          ),
+        );
+        // The error should contain specific instructions for fixing the build
+        // based on parsing the plugin's podspec.
+        expect(
+          logger.errorText,
+          contains(
+            "To build, increase your application's deployment target to at least "
+            '15.0 as described at https://flutter.dev/to/ios-deploy',
+          ),
+        );
+      },
+    );
 
-    testUsingContext('throws if plugin requires higher minimum iOS version with darwin layout', () async {
-      final FlutterProject projectUnderTest = setupProjectUnderTest();
-      pretendPodIsInstalled();
-      pretendPodVersionIs('100.0.0');
-      fileSystem.file(fileSystem.path.join('project', 'ios', 'Podfile'))
-        ..createSync()
-        ..writeAsStringSync('Existing Podfile');
-      const String fakePluginName = 'some_plugin';
-      final File podspec = projectUnderTest.ios.symlinks
-          .childDirectory('plugins')
-          .childDirectory(fakePluginName)
-          .childDirectory('darwin')
-          .childFile('$fakePluginName.podspec');
-      podspec.createSync(recursive: true);
-      podspec.writeAsStringSync('''
+    testUsingContext(
+      'throws if plugin requires higher minimum iOS version with darwin layout',
+      () async {
+        final FlutterProject projectUnderTest = setupProjectUnderTest();
+        pretendPodIsInstalled();
+        pretendPodVersionIs('100.0.0');
+        fileSystem.file(fileSystem.path.join('project', 'ios', 'Podfile'))
+          ..createSync()
+          ..writeAsStringSync('Existing Podfile');
+        const String fakePluginName = 'some_plugin';
+        final File podspec = projectUnderTest.ios.symlinks
+            .childDirectory('plugins')
+            .childDirectory(fakePluginName)
+            .childDirectory('darwin')
+            .childFile('$fakePluginName.podspec');
+        podspec.createSync(recursive: true);
+        podspec.writeAsStringSync('''
 Pod::Spec.new do |s|
   s.name             = '$fakePluginName'
   s.version          = '0.0.1'
@@ -719,40 +822,44 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '15.0'
 end''');
 
-      fakeProcessManager.addCommand(
-        FakeCommand(
-          command: const <String>['pod', 'install', '--verbose'],
-          workingDirectory: 'project/ios',
-          environment: const <String, String>{
-            'COCOAPODS_DISABLE_STATS': 'true',
-            'LANG': 'en_US.UTF-8',
-          },
-          exitCode: 1,
-          stdout: _fakeHigherMinimumIOSVersionPodInstallOutput(fakePluginName, subdir: 'darwin'),
-        ),
-      );
+        fakeProcessManager.addCommand(
+          FakeCommand(
+            command: const <String>['pod', 'install', '--verbose'],
+            workingDirectory: 'project/ios',
+            environment: const <String, String>{
+              'COCOAPODS_DISABLE_STATS': 'true',
+              'LANG': 'en_US.UTF-8',
+            },
+            exitCode: 1,
+            stdout: _fakeHigherMinimumIOSVersionPodInstallOutput(fakePluginName, subdir: 'darwin'),
+          ),
+        );
 
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.ios,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit());
-      expect(
-        logger.errorText,
-        contains(
-          'The plugin "$fakePluginName" requires a higher minimum iOS '
-          'deployment version than your application is targeting.'
-        ),
-      );
-      // The error should contain specific instructions for fixing the build
-      // based on parsing the plugin's podspec.
-      expect(
-        logger.errorText,
-        contains(
-          "To build, increase your application's deployment target to at least "
-          '15.0 as described at https://flutter.dev/to/ios-deploy'
-        ),
-      );
-    });
+        await expectLater(
+          cocoaPodsUnderTest.processPods(
+            xcodeProject: projectUnderTest.ios,
+            buildMode: BuildMode.debug,
+          ),
+          throwsToolExit(),
+        );
+        expect(
+          logger.errorText,
+          contains(
+            'The plugin "$fakePluginName" requires a higher minimum iOS '
+            'deployment version than your application is targeting.',
+          ),
+        );
+        // The error should contain specific instructions for fixing the build
+        // based on parsing the plugin's podspec.
+        expect(
+          logger.errorText,
+          contains(
+            "To build, increase your application's deployment target to at least "
+            '15.0 as described at https://flutter.dev/to/ios-deploy',
+          ),
+        );
+      },
+    );
 
     testUsingContext('throws if plugin requires unknown higher minimum iOS version', () async {
       final FlutterProject projectUnderTest = setupProjectUnderTest();
@@ -796,15 +903,18 @@ end''');
         ),
       );
 
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.ios,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit());
+      await expectLater(
+        cocoaPodsUnderTest.processPods(
+          xcodeProject: projectUnderTest.ios,
+          buildMode: BuildMode.debug,
+        ),
+        throwsToolExit(),
+      );
       expect(
         logger.errorText,
         contains(
           'The plugin "$fakePluginName" requires a higher minimum iOS '
-          'deployment version than your application is targeting.'
+          'deployment version than your application is targeting.',
         ),
       );
       // The error should contain non-specific instructions for fixing the build
@@ -820,33 +930,32 @@ end''');
         logger.errorText,
         contains(
           'The minimum required version for "$fakePluginName" could not be '
-              'determined',
+          'determined',
         ),
       );
     });
 
-    testUsingContext('throws if plugin has a dependency that requires a higher minimum iOS version', () async {
-      final FlutterProject projectUnderTest = setupProjectUnderTest();
-      pretendPodIsInstalled();
-      pretendPodVersionIs('100.0.0');
-      fileSystem.file(fileSystem.path.join('project', 'ios', 'Podfile'))
-        ..createSync()
-        ..writeAsStringSync('Existing Podfile');
+    testUsingContext(
+      'throws if plugin has a dependency that requires a higher minimum iOS version',
+      () async {
+        final FlutterProject projectUnderTest = setupProjectUnderTest();
+        pretendPodIsInstalled();
+        pretendPodVersionIs('100.0.0');
+        fileSystem.file(fileSystem.path.join('project', 'ios', 'Podfile'))
+          ..createSync()
+          ..writeAsStringSync('Existing Podfile');
 
-      fakeProcessManager.addCommand(
-        const FakeCommand(
-          command: <String>['pod', 'install', '--verbose'],
-          workingDirectory: 'project/ios',
-          environment: <String, String>{
-            'COCOAPODS_DISABLE_STATS': 'true',
-            'LANG': 'en_US.UTF-8',
-          },
-          exitCode: 1,
-          // This is the (very slightly abridged) output from updating the
-          // minimum version of the GoogleMaps dependency in
-          // google_maps_flutter_ios without updating the minimum iOS version to
-          // match, as an example of a misconfigured plugin.
-          stdout: '''
+        fakeProcessManager.addCommand(
+          const FakeCommand(
+            command: <String>['pod', 'install', '--verbose'],
+            workingDirectory: 'project/ios',
+            environment: <String, String>{'COCOAPODS_DISABLE_STATS': 'true', 'LANG': 'en_US.UTF-8'},
+            exitCode: 1,
+            // This is the (very slightly abridged) output from updating the
+            // minimum version of the GoogleMaps dependency in
+            // google_maps_flutter_ios without updating the minimum iOS version to
+            // match, as an example of a misconfigured plugin.
+            stdout: '''
 Analyzing dependencies
 
 Inspecting targets to integrate
@@ -866,56 +975,59 @@ Resolving dependencies of `Podfile`
       GoogleMaps (~> 8.0)
 
 Specs satisfying the `GoogleMaps (~> 8.0)` dependency were found, but they required a higher minimum deployment target.''',
-        ),
-      );
+          ),
+        );
 
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.ios,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit());
-      expect(
-        logger.errorText,
-        contains(
-          'The pod "GoogleMaps" required by the plugin "google_maps_flutter_ios" '
-          "requires a higher minimum iOS deployment version than the plugin's "
-          'reported minimum version.'
-        ),
-      );
-      // The error should tell the user to contact the plugin author, as this
-      // case is hard for us to give exact advice on, and should only be
-      // possible if there's a mistake in the plugin's podspec.
-      expect(
-        logger.errorText,
-        contains(
-          'To build, remove the plugin "google_maps_flutter_ios", or contact '
-          "the plugin's developers for assistance.",
-        ),
-      );
-    });
+        await expectLater(
+          cocoaPodsUnderTest.processPods(
+            xcodeProject: projectUnderTest.ios,
+            buildMode: BuildMode.debug,
+          ),
+          throwsToolExit(),
+        );
+        expect(
+          logger.errorText,
+          contains(
+            'The pod "GoogleMaps" required by the plugin "google_maps_flutter_ios" '
+            "requires a higher minimum iOS deployment version than the plugin's "
+            'reported minimum version.',
+          ),
+        );
+        // The error should tell the user to contact the plugin author, as this
+        // case is hard for us to give exact advice on, and should only be
+        // possible if there's a mistake in the plugin's podspec.
+        expect(
+          logger.errorText,
+          contains(
+            'To build, remove the plugin "google_maps_flutter_ios", or contact '
+            "the plugin's developers for assistance.",
+          ),
+        );
+      },
+    );
 
-    testUsingContext('throws if plugin has a dependency that requires a higher minimum macOS version', () async {
-      final FlutterProject projectUnderTest = setupProjectUnderTest();
-      pretendPodIsInstalled();
-      pretendPodVersionIs('100.0.0');
-      fileSystem.file(fileSystem.path.join('project', 'macos', 'Podfile'))
-        ..createSync()
-        ..writeAsStringSync('Existing Podfile');
+    testUsingContext(
+      'throws if plugin has a dependency that requires a higher minimum macOS version',
+      () async {
+        final FlutterProject projectUnderTest = setupProjectUnderTest();
+        pretendPodIsInstalled();
+        pretendPodVersionIs('100.0.0');
+        fileSystem.file(fileSystem.path.join('project', 'macos', 'Podfile'))
+          ..createSync()
+          ..writeAsStringSync('Existing Podfile');
 
-      fakeProcessManager.addCommand(
-        const FakeCommand(
-          command: <String>['pod', 'install', '--verbose'],
-          workingDirectory: 'project/macos',
-          environment: <String, String>{
-            'COCOAPODS_DISABLE_STATS': 'true',
-            'LANG': 'en_US.UTF-8',
-          },
-          exitCode: 1,
-          // This is the (very slightly abridged) output from updating the
-          // minimum version of the GoogleMaps dependency in
-          // google_maps_flutter_ios without updating the minimum iOS version to
-          // match, as an example of a misconfigured plugin, but with the paths
-          // modified to simulate a macOS plugin.
-          stdout: '''
+        fakeProcessManager.addCommand(
+          const FakeCommand(
+            command: <String>['pod', 'install', '--verbose'],
+            workingDirectory: 'project/macos',
+            environment: <String, String>{'COCOAPODS_DISABLE_STATS': 'true', 'LANG': 'en_US.UTF-8'},
+            exitCode: 1,
+            // This is the (very slightly abridged) output from updating the
+            // minimum version of the GoogleMaps dependency in
+            // google_maps_flutter_ios without updating the minimum iOS version to
+            // match, as an example of a misconfigured plugin, but with the paths
+            // modified to simulate a macOS plugin.
+            stdout: '''
 Analyzing dependencies
 
 Inspecting targets to integrate
@@ -935,49 +1047,55 @@ Resolving dependencies of `Podfile`
       GoogleMaps (~> 8.0)
 
 Specs satisfying the `GoogleMaps (~> 8.0)` dependency were found, but they required a higher minimum deployment target.''',
-        ),
-      );
+          ),
+        );
 
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.macos,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit());
-      expect(
-        logger.errorText,
-        contains(
-          'The pod "GoogleMaps" required by the plugin "google_maps_flutter_ios" '
-          "requires a higher minimum macOS deployment version than the plugin's "
-          'reported minimum version.'
-        ),
-      );
-      // The error should tell the user to contact the plugin author, as this
-      // case is hard for us to give exact advice on, and should only be
-      // possible if there's a mistake in the plugin's podspec.
-      expect(
-        logger.errorText,
-        contains(
-          'To build, remove the plugin "google_maps_flutter_ios", or contact '
-          "the plugin's developers for assistance.",
-        ),
-      );
-    });
+        await expectLater(
+          cocoaPodsUnderTest.processPods(
+            xcodeProject: projectUnderTest.macos,
+            buildMode: BuildMode.debug,
+          ),
+          throwsToolExit(),
+        );
+        expect(
+          logger.errorText,
+          contains(
+            'The pod "GoogleMaps" required by the plugin "google_maps_flutter_ios" '
+            "requires a higher minimum macOS deployment version than the plugin's "
+            'reported minimum version.',
+          ),
+        );
+        // The error should tell the user to contact the plugin author, as this
+        // case is hard for us to give exact advice on, and should only be
+        // possible if there's a mistake in the plugin's podspec.
+        expect(
+          logger.errorText,
+          contains(
+            'To build, remove the plugin "google_maps_flutter_ios", or contact '
+            "the plugin's developers for assistance.",
+          ),
+        );
+      },
+    );
 
-    testUsingContext('throws if plugin requires higher minimum macOS version using "platform"', () async {
-      final FlutterProject projectUnderTest = setupProjectUnderTest();
-      pretendPodIsInstalled();
-      pretendPodVersionIs('100.0.0');
-      fileSystem.file(fileSystem.path.join('project', 'macos', 'Podfile'))
-        ..createSync()
-        ..writeAsStringSync('Existing Podfile');
-      const String fakePluginName = 'some_plugin';
-      final File podspec = projectUnderTest.macos.ephemeralDirectory
-          .childDirectory('.symlinks')
-          .childDirectory('plugins')
-          .childDirectory(fakePluginName)
-          .childDirectory('macos')
-          .childFile('$fakePluginName.podspec');
-      podspec.createSync(recursive: true);
-      podspec.writeAsStringSync('''
+    testUsingContext(
+      'throws if plugin requires higher minimum macOS version using "platform"',
+      () async {
+        final FlutterProject projectUnderTest = setupProjectUnderTest();
+        pretendPodIsInstalled();
+        pretendPodVersionIs('100.0.0');
+        fileSystem.file(fileSystem.path.join('project', 'macos', 'Podfile'))
+          ..createSync()
+          ..writeAsStringSync('Existing Podfile');
+        const String fakePluginName = 'some_plugin';
+        final File podspec = projectUnderTest.macos.ephemeralDirectory
+            .childDirectory('.symlinks')
+            .childDirectory('plugins')
+            .childDirectory(fakePluginName)
+            .childDirectory('macos')
+            .childFile('$fakePluginName.podspec');
+        podspec.createSync(recursive: true);
+        podspec.writeAsStringSync('''
 Pod::Spec.new do |spec|
   spec.name             = '$fakePluginName'
   spec.version          = '0.0.1'
@@ -988,57 +1106,63 @@ Pod::Spec.new do |spec|
   spec.platform = :osx, "12.7"
 end''');
 
-      fakeProcessManager.addCommand(
-        FakeCommand(
-          command: const <String>['pod', 'install', '--verbose'],
-          workingDirectory: 'project/macos',
-          environment: const <String, String>{
-            'COCOAPODS_DISABLE_STATS': 'true',
-            'LANG': 'en_US.UTF-8',
-          },
-          exitCode: 1,
-          stdout: _fakeHigherMinimumMacOSVersionPodInstallOutput(fakePluginName),
-        ),
-      );
+        fakeProcessManager.addCommand(
+          FakeCommand(
+            command: const <String>['pod', 'install', '--verbose'],
+            workingDirectory: 'project/macos',
+            environment: const <String, String>{
+              'COCOAPODS_DISABLE_STATS': 'true',
+              'LANG': 'en_US.UTF-8',
+            },
+            exitCode: 1,
+            stdout: _fakeHigherMinimumMacOSVersionPodInstallOutput(fakePluginName),
+          ),
+        );
 
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.macos,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit());
-      expect(
-        logger.errorText,
-        contains(
-          'The plugin "$fakePluginName" requires a higher minimum macOS '
-          'deployment version than your application is targeting.'
-        ),
-      );
-      // The error should contain specific instructions for fixing the build
-      // based on parsing the plugin's podspec.
-      expect(
-        logger.errorText,
-        contains(
-          "To build, increase your application's deployment target to at least "
-          '12.7 as described at https://flutter.dev/to/macos-deploy'
-        ),
-      );
-    });
+        await expectLater(
+          cocoaPodsUnderTest.processPods(
+            xcodeProject: projectUnderTest.macos,
+            buildMode: BuildMode.debug,
+          ),
+          throwsToolExit(),
+        );
+        expect(
+          logger.errorText,
+          contains(
+            'The plugin "$fakePluginName" requires a higher minimum macOS '
+            'deployment version than your application is targeting.',
+          ),
+        );
+        // The error should contain specific instructions for fixing the build
+        // based on parsing the plugin's podspec.
+        expect(
+          logger.errorText,
+          contains(
+            "To build, increase your application's deployment target to at least "
+            '12.7 as described at https://flutter.dev/to/macos-deploy',
+          ),
+        );
+      },
+    );
 
-    testUsingContext('throws if plugin requires higher minimum macOS version using "deployment_target"', () async {
-      final FlutterProject projectUnderTest = setupProjectUnderTest();
-      pretendPodIsInstalled();
-      pretendPodVersionIs('100.0.0');
-      fileSystem.file(fileSystem.path.join('project', 'macos', 'Podfile'))
-        ..createSync()
-        ..writeAsStringSync('Existing Podfile');
-      const String fakePluginName = 'some_plugin';
-      final File podspec = projectUnderTest.macos.ephemeralDirectory
-          .childDirectory('.symlinks')
-          .childDirectory('plugins')
-          .childDirectory(fakePluginName)
-          .childDirectory('macos')
-          .childFile('$fakePluginName.podspec');
-      podspec.createSync(recursive: true);
-      podspec.writeAsStringSync('''
+    testUsingContext(
+      'throws if plugin requires higher minimum macOS version using "deployment_target"',
+      () async {
+        final FlutterProject projectUnderTest = setupProjectUnderTest();
+        pretendPodIsInstalled();
+        pretendPodVersionIs('100.0.0');
+        fileSystem.file(fileSystem.path.join('project', 'macos', 'Podfile'))
+          ..createSync()
+          ..writeAsStringSync('Existing Podfile');
+        const String fakePluginName = 'some_plugin';
+        final File podspec = projectUnderTest.macos.ephemeralDirectory
+            .childDirectory('.symlinks')
+            .childDirectory('plugins')
+            .childDirectory(fakePluginName)
+            .childDirectory('macos')
+            .childFile('$fakePluginName.podspec');
+        podspec.createSync(recursive: true);
+        podspec.writeAsStringSync('''
 Pod::Spec.new do |spec|
   spec.name             = '$fakePluginName'
   spec.version          = '0.0.1'
@@ -1049,97 +1173,105 @@ Pod::Spec.new do |spec|
   spec.osx.deployment_target = '12.7'
 end''');
 
-      fakeProcessManager.addCommand(
-        FakeCommand(
-          command: const <String>['pod', 'install', '--verbose'],
-          workingDirectory: 'project/macos',
-          environment: const <String, String>{
-            'COCOAPODS_DISABLE_STATS': 'true',
-            'LANG': 'en_US.UTF-8',
-          },
-          exitCode: 1,
-          stdout: _fakeHigherMinimumMacOSVersionPodInstallOutput(fakePluginName),
-        ),
-      );
+        fakeProcessManager.addCommand(
+          FakeCommand(
+            command: const <String>['pod', 'install', '--verbose'],
+            workingDirectory: 'project/macos',
+            environment: const <String, String>{
+              'COCOAPODS_DISABLE_STATS': 'true',
+              'LANG': 'en_US.UTF-8',
+            },
+            exitCode: 1,
+            stdout: _fakeHigherMinimumMacOSVersionPodInstallOutput(fakePluginName),
+          ),
+        );
 
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.macos,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit());
-      expect(
-        logger.errorText,
-        contains(
-          'The plugin "$fakePluginName" requires a higher minimum macOS '
-          'deployment version than your application is targeting.'
-        ),
-      );
-      // The error should contain specific instructions for fixing the build
-      // based on parsing the plugin's podspec.
-      expect(
-        logger.errorText,
-        contains(
-          "To build, increase your application's deployment target to at least "
-          '12.7 as described at https://flutter.dev/to/macos-deploy'
-        ),
-      );
-    });
+        await expectLater(
+          cocoaPodsUnderTest.processPods(
+            xcodeProject: projectUnderTest.macos,
+            buildMode: BuildMode.debug,
+          ),
+          throwsToolExit(),
+        );
+        expect(
+          logger.errorText,
+          contains(
+            'The plugin "$fakePluginName" requires a higher minimum macOS '
+            'deployment version than your application is targeting.',
+          ),
+        );
+        // The error should contain specific instructions for fixing the build
+        // based on parsing the plugin's podspec.
+        expect(
+          logger.errorText,
+          contains(
+            "To build, increase your application's deployment target to at least "
+            '12.7 as described at https://flutter.dev/to/macos-deploy',
+          ),
+        );
+      },
+    );
 
     final Map<String, String> possibleErrors = <String, String>{
-      'symbol not found': 'LoadError - dlsym(0x7fbbeb6837d0, Init_ffi_c): symbol not found - /Library/Ruby/Gems/2.6.0/gems/ffi-1.13.1/lib/ffi_c.bundle',
-      'incompatible architecture': "LoadError - (mach-o file, but is an incompatible architecture (have 'arm64', need 'x86_64')), '/usr/lib/ffi_c.bundle' (no such file) - /Library/Ruby/Gems/2.6.0/gems/ffi-1.15.4/lib/ffi_c.bundle",
-      'bus error': '/Library/Ruby/Gems/2.6.0/gems/ffi-1.15.5/lib/ffi/library.rb:275: [BUG] Bus Error at 0x000000010072c000',
+      'symbol not found':
+          'LoadError - dlsym(0x7fbbeb6837d0, Init_ffi_c): symbol not found - /Library/Ruby/Gems/2.6.0/gems/ffi-1.13.1/lib/ffi_c.bundle',
+      'incompatible architecture':
+          "LoadError - (mach-o file, but is an incompatible architecture (have 'arm64', need 'x86_64')), '/usr/lib/ffi_c.bundle' (no such file) - /Library/Ruby/Gems/2.6.0/gems/ffi-1.15.4/lib/ffi_c.bundle",
+      'bus error':
+          '/Library/Ruby/Gems/2.6.0/gems/ffi-1.15.5/lib/ffi/library.rb:275: [BUG] Bus Error at 0x000000010072c000',
     };
     possibleErrors.forEach((String errorName, String cocoaPodsError) {
       void testToolExitsWithCocoapodsMessage(_StdioStream outputStream) {
         final String streamName = outputStream == _StdioStream.stdout ? 'stdout' : 'stderr';
-        testUsingContext('ffi $errorName failure to $streamName on ARM macOS prompts gem install', () async {
-          final FlutterProject projectUnderTest = setupProjectUnderTest();
-          pretendPodIsInstalled();
-          pretendPodVersionIs('100.0.0');
-          fileSystem.file(fileSystem.path.join('project', 'ios', 'Podfile'))
-            ..createSync()
-            ..writeAsStringSync('Existing Podfile');
+        testUsingContext(
+          'ffi $errorName failure to $streamName on ARM macOS prompts gem install',
+          () async {
+            final FlutterProject projectUnderTest = setupProjectUnderTest();
+            pretendPodIsInstalled();
+            pretendPodVersionIs('100.0.0');
+            fileSystem.file(fileSystem.path.join('project', 'ios', 'Podfile'))
+              ..createSync()
+              ..writeAsStringSync('Existing Podfile');
 
-          fakeProcessManager.addCommands(<FakeCommand>[
-            FakeCommand(
-              command: const <String>['pod', 'install', '--verbose'],
-              workingDirectory: 'project/ios',
-              environment: const <String, String>{
-                'COCOAPODS_DISABLE_STATS': 'true',
-                'LANG': 'en_US.UTF-8',
-              },
-              exitCode: 1,
-              stdout: outputStream == _StdioStream.stdout ? cocoaPodsError : '',
-              stderr: outputStream == _StdioStream.stderr ? cocoaPodsError : '',
-            ),
-            const FakeCommand(
-              command: <String>['which', 'sysctl'],
-            ),
-            const FakeCommand(
-              command: <String>['sysctl', 'hw.optional.arm64'],
-              stdout: 'hw.optional.arm64: 1',
-            ),
-          ]);
+            fakeProcessManager.addCommands(<FakeCommand>[
+              FakeCommand(
+                command: const <String>['pod', 'install', '--verbose'],
+                workingDirectory: 'project/ios',
+                environment: const <String, String>{
+                  'COCOAPODS_DISABLE_STATS': 'true',
+                  'LANG': 'en_US.UTF-8',
+                },
+                exitCode: 1,
+                stdout: outputStream == _StdioStream.stdout ? cocoaPodsError : '',
+                stderr: outputStream == _StdioStream.stderr ? cocoaPodsError : '',
+              ),
+              const FakeCommand(command: <String>['which', 'sysctl']),
+              const FakeCommand(
+                command: <String>['sysctl', 'hw.optional.arm64'],
+                stdout: 'hw.optional.arm64: 1',
+              ),
+            ]);
 
-          await expectToolExitLater(
-            cocoaPodsUnderTest.processPods(
-              xcodeProject: projectUnderTest.ios,
-              buildMode: BuildMode.debug,
-            ),
-            equals('Error running pod install'),
-          );
-          expect(
-            logger.errorText,
-            contains('set up CocoaPods for ARM macOS'),
-          );
-          expect(
-            logger.errorText,
-            contains('enable-libffi-alloc'),
-          );
-          expect(usage.events, contains(const TestUsageEvent('pod-install-failure', 'arm-ffi')));
-          expect(fakeAnalytics.sentEvents, contains(Event.appleUsageEvent(workflow: 'pod-install-failure', parameter: 'arm-ffi')));
-        });
+            await expectToolExitLater(
+              cocoaPodsUnderTest.processPods(
+                xcodeProject: projectUnderTest.ios,
+                buildMode: BuildMode.debug,
+              ),
+              equals('Error running pod install'),
+            );
+            expect(logger.errorText, contains('set up CocoaPods for ARM macOS'));
+            expect(logger.errorText, contains('enable-libffi-alloc'));
+            expect(usage.events, contains(const TestUsageEvent('pod-install-failure', 'arm-ffi')));
+            expect(
+              fakeAnalytics.sentEvents,
+              contains(
+                Event.appleUsageEvent(workflow: 'pod-install-failure', parameter: 'arm-ffi'),
+              ),
+            );
+          },
+        );
       }
+
       testToolExitsWithCocoapodsMessage(_StdioStream.stdout);
       testToolExitsWithCocoapodsMessage(_StdioStream.stderr);
     });
@@ -1156,35 +1288,26 @@ end''');
         const FakeCommand(
           command: <String>['pod', 'install', '--verbose'],
           workingDirectory: 'project/ios',
-          environment: <String, String>{
-            'COCOAPODS_DISABLE_STATS': 'true',
-            'LANG': 'en_US.UTF-8',
-          },
+          environment: <String, String>{'COCOAPODS_DISABLE_STATS': 'true', 'LANG': 'en_US.UTF-8'},
           exitCode: 1,
-          stderr: 'LoadError - dlsym(0x7fbbeb6837d0, Init_ffi_c): symbol not found - /Library/Ruby/Gems/2.6.0/gems/ffi-1.13.1/lib/ffi_c.bundle',
+          stderr:
+              'LoadError - dlsym(0x7fbbeb6837d0, Init_ffi_c): symbol not found - /Library/Ruby/Gems/2.6.0/gems/ffi-1.13.1/lib/ffi_c.bundle',
         ),
-        const FakeCommand(
-          command: <String>['which', 'sysctl'],
-        ),
-        const FakeCommand(
-          command: <String>['sysctl', 'hw.optional.arm64'],
-          exitCode: 1,
-        ),
+        const FakeCommand(command: <String>['which', 'sysctl']),
+        const FakeCommand(command: <String>['sysctl', 'hw.optional.arm64'], exitCode: 1),
       ]);
 
       // Capture Usage.test() events.
-      final StringBuffer buffer =
-      await capturedConsolePrint(() => expectToolExitLater(
-        cocoaPodsUnderTest.processPods(
-          xcodeProject: projectUnderTest.ios,
-          buildMode: BuildMode.debug,
+      final StringBuffer buffer = await capturedConsolePrint(
+        () => expectToolExitLater(
+          cocoaPodsUnderTest.processPods(
+            xcodeProject: projectUnderTest.ios,
+            buildMode: BuildMode.debug,
+          ),
+          equals('Error running pod install'),
         ),
-        equals('Error running pod install'),
-      ));
-      expect(
-        logger.errorText,
-        isNot(contains('ARM macOS')),
       );
+      expect(logger.errorText, isNot(contains('ARM macOS')));
       expect(buffer.isEmpty, true);
     });
 
@@ -1231,9 +1354,7 @@ end''');
           workingDirectory: 'project/ios',
           environment: <String, String>{'COCOAPODS_DISABLE_STATS': 'true', 'LANG': 'en_US.UTF-8'},
         ),
-        FakeCommand(
-          command: <String>['touch', 'project/ios/Podfile.lock'],
-        ),
+        FakeCommand(command: <String>['touch', 'project/ios/Podfile.lock']),
       ]);
       final bool didInstall = await cocoaPodsUnderTest.processPods(
         xcodeProject: projectUnderTest.ios,
@@ -1260,9 +1381,7 @@ end''');
           workingDirectory: 'project/macos',
           environment: <String, String>{'COCOAPODS_DISABLE_STATS': 'true', 'LANG': 'en_US.UTF-8'},
         ),
-        FakeCommand(
-          command: <String>['touch', 'project/macos/Podfile.lock'],
-        ),
+        FakeCommand(command: <String>['touch', 'project/macos/Podfile.lock']),
       ]);
       final bool didInstall = await cocoaPodsUnderTest.processPods(
         xcodeProject: projectUnderTest.macos,
@@ -1292,9 +1411,7 @@ end''');
           workingDirectory: 'project/ios',
           environment: <String, String>{'COCOAPODS_DISABLE_STATS': 'true', 'LANG': 'en_US.UTF-8'},
         ),
-        FakeCommand(
-          command: <String>['touch', 'project/ios/Podfile.lock'],
-        ),
+        FakeCommand(command: <String>['touch', 'project/ios/Podfile.lock']),
       ]);
       final bool didInstall = await cocoaPodsUnderTest.processPods(
         xcodeProject: projectUnderTest.ios,
@@ -1324,9 +1441,7 @@ end''');
           workingDirectory: 'project/ios',
           environment: <String, String>{'COCOAPODS_DISABLE_STATS': 'true', 'LANG': 'en_US.UTF-8'},
         ),
-        FakeCommand(
-          command: <String>['touch', 'project/ios/Podfile.lock'],
-        ),
+        FakeCommand(command: <String>['touch', 'project/ios/Podfile.lock']),
       ]);
       final bool didInstall = await cocoaPodsUnderTest.processPods(
         xcodeProject: projectUnderTest.ios,
@@ -1360,9 +1475,7 @@ end''');
           workingDirectory: 'project/ios',
           environment: <String, String>{'COCOAPODS_DISABLE_STATS': 'true', 'LANG': 'en_US.UTF-8'},
         ),
-        FakeCommand(
-          command: <String>['touch', 'project/ios/Podfile.lock'],
-        ),
+        FakeCommand(command: <String>['touch', 'project/ios/Podfile.lock']),
       ]);
 
       final CocoaPods cocoaPodsUnderTestXcode143 = CocoaPods(
@@ -1370,7 +1483,10 @@ end''');
         processManager: fakeProcessManager,
         logger: logger,
         platform: FakePlatform(operatingSystem: 'macos'),
-        xcodeProjectInterpreter: XcodeProjectInterpreter.test(processManager: fakeProcessManager, version: Version(14, 3, 0)),
+        xcodeProjectInterpreter: XcodeProjectInterpreter.test(
+          processManager: fakeProcessManager,
+          version: Version(14, 3, 0),
+        ),
         usage: usage,
         analytics: fakeAnalytics,
       );
@@ -1382,7 +1498,10 @@ end''');
       expect(didInstall, isTrue);
       expect(fakeProcessManager, hasNoRemainingExpectations);
       // Now has readlink -f flag.
-      expect(projectUnderTest.ios.podRunnerFrameworksScript.readAsStringSync(), contains(r'source="$(readlink -f "${source}")"'));
+      expect(
+        projectUnderTest.ios.podRunnerFrameworksScript.readAsStringSync(),
+        contains(r'source="$(readlink -f "${source}")"'),
+      );
       expect(logger.statusText, contains('Upgrading Pods-Runner-frameworks.sh'));
     });
 
@@ -1400,17 +1519,14 @@ end''');
         ..createSync(recursive: true)
         ..writeAsStringSync('Existing lock file.');
       await Future<void>.delayed(const Duration(milliseconds: 10));
-      projectUnderTest.ios.podfile
-        .writeAsStringSync('Updated Podfile');
+      projectUnderTest.ios.podfile.writeAsStringSync('Updated Podfile');
       fakeProcessManager.addCommands(const <FakeCommand>[
         FakeCommand(
           command: <String>['pod', 'install', '--verbose'],
           workingDirectory: 'project/ios',
           environment: <String, String>{'COCOAPODS_DISABLE_STATS': 'true', 'LANG': 'en_US.UTF-8'},
         ),
-        FakeCommand(
-          command: <String>['touch', 'project/ios/Podfile.lock'],
-        ),
+        FakeCommand(command: <String>['touch', 'project/ios/Podfile.lock']),
       ]);
       await cocoaPodsUnderTest.processPods(
         xcodeProject: projectUnderTest.ios,
@@ -1462,16 +1578,22 @@ end''');
         ),
       );
 
-      await expectLater(cocoaPodsUnderTest.processPods(
-        xcodeProject: projectUnderTest.ios,
-        buildMode: BuildMode.debug,
-      ), throwsToolExit(message: 'Error running pod install'));
+      await expectLater(
+        cocoaPodsUnderTest.processPods(
+          xcodeProject: projectUnderTest.ios,
+          buildMode: BuildMode.debug,
+        ),
+        throwsToolExit(message: 'Error running pod install'),
+      );
       expect(projectUnderTest.ios.podManifestLock.existsSync(), isFalse);
     });
   });
 }
 
-String _fakeHigherMinimumIOSVersionPodInstallOutput(String fakePluginName, {String subdir = 'ios'}) {
+String _fakeHigherMinimumIOSVersionPodInstallOutput(
+  String fakePluginName, {
+  String subdir = 'ios',
+}) {
   return '''
 Preparing
 
@@ -1495,7 +1617,10 @@ Resolving dependencies of `Podfile`
 Specs satisfying the `$fakePluginName (from `.symlinks/plugins/$fakePluginName/subdir`)` dependency were found, but they required a higher minimum deployment target.''';
 }
 
-String _fakeHigherMinimumMacOSVersionPodInstallOutput(String fakePluginName, {String subdir = 'macos'}) {
+String _fakeHigherMinimumMacOSVersionPodInstallOutput(
+  String fakePluginName, {
+  String subdir = 'macos',
+}) {
   return '''
 Preparing
 

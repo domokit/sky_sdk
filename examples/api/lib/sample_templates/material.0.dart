@@ -41,11 +41,7 @@ class SampleApp extends StatelessWidget {
   const SampleApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: PlaceholderExample(),
-      ),
-    );
+    return const MaterialApp(home: Scaffold(body: PlaceholderExample()));
   }
 }
 

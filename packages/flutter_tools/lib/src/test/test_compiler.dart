@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
-
 import 'dart:async';
 
 import 'package:meta/meta.dart';
@@ -48,30 +46,41 @@ class TestCompiler {
     this.flutterProject, {
     String? precompiledDillPath,
     this.testTimeRecorder,
-  }) : testFilePath = precompiledDillPath ?? globals.fs.path.join(
-        flutterProject!.directory.path,
-        getBuildDirectory(),
-        'test_cache',
-        getDefaultCachedKernelPath(
-          trackWidgetCreation: buildInfo.trackWidgetCreation,
-          dartDefines: buildInfo.dartDefines,
-          extraFrontEndOptions: buildInfo.extraFrontEndOptions,
-        )),
-        shouldCopyDillFile = precompiledDillPath == null {
+  }) : testFilePath =
+           precompiledDillPath ??
+           globals.fs.path.join(
+             flutterProject!.directory.path,
+             getBuildDirectory(),
+             'test_cache',
+             getDefaultCachedKernelPath(
+               trackWidgetCreation: buildInfo.trackWidgetCreation,
+               dartDefines: buildInfo.dartDefines,
+               extraFrontEndOptions: buildInfo.extraFrontEndOptions,
+             ),
+           ),
+       shouldCopyDillFile = precompiledDillPath == null {
     // Compiler maintains and updates single incremental dill file.
     // Incremental compilation requests done for each test copy that file away
     // for independent execution.
-    final Directory outputDillDirectory = globals.fs.systemTempDirectory.createTempSync('flutter_test_compiler.');
+    final Directory outputDillDirectory = globals.fs.systemTempDirectory.createTempSync(
+      'flutter_test_compiler.',
+    );
     outputDill = outputDillDirectory.childFile('output.dill');
-    globals.printTrace('Compiler will use the following file as its incremental dill file: ${outputDill.path}');
+    globals.printTrace(
+      'Compiler will use the following file as its incremental dill file: ${outputDill.path}',
+    );
     globals.printTrace('Listening to compiler controller...');
-    compilerController.stream.listen(_onCompilationRequest, onDone: () {
-      globals.printTrace('Deleting ${outputDillDirectory.path}...');
-      outputDillDirectory.deleteSync(recursive: true);
-    });
+    compilerController.stream.listen(
+      _onCompilationRequest,
+      onDone: () {
+        globals.printTrace('Deleting ${outputDillDirectory.path}...');
+        outputDillDirectory.deleteSync(recursive: true);
+      },
+    );
   }
 
-  final StreamController<CompilationRequest> compilerController = StreamController<CompilationRequest>();
+  final StreamController<CompilationRequest> compilerController =
+      StreamController<CompilationRequest>();
   final List<CompilationRequest> compilationQueue = <CompilationRequest>[];
   final FlutterProject? flutterProject;
   final BuildInfo buildInfo;
@@ -153,8 +162,9 @@ class TestCompiler {
       final List<Uri> invalidatedRegistrantFiles = <Uri>[];
       if (flutterProject != null) {
         // Update the generated registrant to use the test target's main.
-        final String mainUriString = buildInfo.packageConfig.toPackageUri(request.mainUri)?.toString()
-          ?? request.mainUri.toString();
+        final String mainUriString =
+            buildInfo.packageConfig.toPackageUri(request.mainUri)?.toString() ??
+            request.mainUri.toString();
         await generateMainDartWithPluginRegistrant(
           flutterProject!,
           buildInfo.packageConfig,
@@ -188,7 +198,9 @@ class TestCompiler {
           final File outputFile = globals.fs.file(outputPath);
           final File kernelReadyToRun = await outputFile.copy('$path.dill');
           final File testCache = globals.fs.file(testFilePath);
-          if (firstCompile || !testCache.existsSync() || (testCache.lengthSync() < outputFile.lengthSync())) {
+          if (firstCompile ||
+              !testCache.existsSync() ||
+              (testCache.lengthSync() < outputFile.lengthSync())) {
             // The idea is to keep the cache file up-to-date and include as
             // much as possible in an effort to re-use as many packages as
             // possible.

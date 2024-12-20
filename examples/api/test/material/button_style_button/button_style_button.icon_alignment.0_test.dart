@@ -3,20 +3,18 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/button_style_button/button_style_button.icon_alignment.0.dart' as example;
+import 'package:flutter_api_samples/material/button_style_button/button_style_button.icon_alignment.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('ButtonStyleButton.iconAlignment updates button icons alignment', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ButtonStyleButtonIconAlignmentApp(),
-    );
+  testWidgets('ButtonStyleButton.iconAlignment updates button icons alignment', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.ButtonStyleButtonIconAlignmentApp());
 
     Finder findButtonMaterial(String text) {
-      return find.ancestor(
-        of: find.text(text),
-        matching: find.byType(Material),
-      ).first;
+      return find.ancestor(of: find.text(text), matching: find.byType(Material)).first;
     }
 
     void expectedLeftIconPosition({

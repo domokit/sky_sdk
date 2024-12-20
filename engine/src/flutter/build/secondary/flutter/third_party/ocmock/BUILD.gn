@@ -1,0 +1,121 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+ocmock_path = "//flutter/third_party/ocmock/Source"
+
+# OCMock headers use `#import <OCMock/Foo.h>`.
+config("ocmock_config") {
+  include_dirs = [ "$ocmock_path" ]
+}
+
+# Target that compiles all sources to .o files but does not produce a static
+# library for use in macOS desktop tests.
+source_set("ocmock_src") {
+  configs -= [
+    "//build/config/compiler:chromium_code",
+    "//build/config/gcc:symbol_visibility_hidden",
+    "//build/config:symbol_visibility_hidden",
+  ]
+  all_dependent_configs = [ ":ocmock_config" ]
+  cflags = [
+    "-fvisibility=default",
+    "-Wno-misleading-indentation",
+  ]
+  if (is_ios) {
+    cflags += [ "-mios-simulator-version-min=$ios_testing_deployment_target" ]
+  }
+
+  sources = [
+    "$ocmock_path/OCMock/NSInvocation+OCMAdditions.h",
+    "$ocmock_path/OCMock/NSInvocation+OCMAdditions.m",
+    "$ocmock_path/OCMock/NSMethodSignature+OCMAdditions.h",
+    "$ocmock_path/OCMock/NSMethodSignature+OCMAdditions.m",
+    "$ocmock_path/OCMock/NSNotificationCenter+OCMAdditions.h",
+    "$ocmock_path/OCMock/NSNotificationCenter+OCMAdditions.m",
+    "$ocmock_path/OCMock/NSObject+OCMAdditions.h",
+    "$ocmock_path/OCMock/NSObject+OCMAdditions.m",
+    "$ocmock_path/OCMock/NSValue+OCMAdditions.h",
+    "$ocmock_path/OCMock/NSValue+OCMAdditions.m",
+    "$ocmock_path/OCMock/OCClassMockObject.h",
+    "$ocmock_path/OCMock/OCClassMockObject.m",
+    "$ocmock_path/OCMock/OCMArg.h",
+    "$ocmock_path/OCMock/OCMArg.m",
+    "$ocmock_path/OCMock/OCMArgAction.h",
+    "$ocmock_path/OCMock/OCMArgAction.m",
+    "$ocmock_path/OCMock/OCMBlockArgCaller.h",
+    "$ocmock_path/OCMock/OCMBlockArgCaller.m",
+    "$ocmock_path/OCMock/OCMBlockCaller.h",
+    "$ocmock_path/OCMock/OCMBlockCaller.m",
+    "$ocmock_path/OCMock/OCMBoxedReturnValueProvider.h",
+    "$ocmock_path/OCMock/OCMBoxedReturnValueProvider.m",
+    "$ocmock_path/OCMock/OCMConstraint.h",
+    "$ocmock_path/OCMock/OCMConstraint.m",
+    "$ocmock_path/OCMock/OCMExceptionReturnValueProvider.h",
+    "$ocmock_path/OCMock/OCMExceptionReturnValueProvider.m",
+    "$ocmock_path/OCMock/OCMExpectationRecorder.h",
+    "$ocmock_path/OCMock/OCMExpectationRecorder.m",
+    "$ocmock_path/OCMock/OCMFunctions.h",
+    "$ocmock_path/OCMock/OCMFunctions.m",
+    "$ocmock_path/OCMock/OCMFunctionsPrivate.h",
+    "$ocmock_path/OCMock/OCMIndirectReturnValueProvider.h",
+    "$ocmock_path/OCMock/OCMIndirectReturnValueProvider.m",
+    "$ocmock_path/OCMock/OCMInvocationExpectation.h",
+    "$ocmock_path/OCMock/OCMInvocationExpectation.m",
+    "$ocmock_path/OCMock/OCMInvocationMatcher.h",
+    "$ocmock_path/OCMock/OCMInvocationMatcher.m",
+    "$ocmock_path/OCMock/OCMInvocationStub.h",
+    "$ocmock_path/OCMock/OCMInvocationStub.m",
+    "$ocmock_path/OCMock/OCMLocation.h",
+    "$ocmock_path/OCMock/OCMLocation.m",
+    "$ocmock_path/OCMock/OCMMacroState.h",
+    "$ocmock_path/OCMock/OCMMacroState.m",
+    "$ocmock_path/OCMock/OCMNonRetainingObjectReturnValueProvider.h",
+    "$ocmock_path/OCMock/OCMNonRetainingObjectReturnValueProvider.m",
+    "$ocmock_path/OCMock/OCMNotificationPoster.h",
+    "$ocmock_path/OCMock/OCMNotificationPoster.m",
+    "$ocmock_path/OCMock/OCMObjectReturnValueProvider.h",
+    "$ocmock_path/OCMock/OCMObjectReturnValueProvider.m",
+    "$ocmock_path/OCMock/OCMObserverRecorder.h",
+    "$ocmock_path/OCMock/OCMObserverRecorder.m",
+    "$ocmock_path/OCMock/OCMPassByRefSetter.h",
+    "$ocmock_path/OCMock/OCMPassByRefSetter.m",
+    "$ocmock_path/OCMock/OCMQuantifier.h",
+    "$ocmock_path/OCMock/OCMQuantifier.m",
+    "$ocmock_path/OCMock/OCMRealObjectForwarder.h",
+    "$ocmock_path/OCMock/OCMRealObjectForwarder.m",
+    "$ocmock_path/OCMock/OCMRecorder.h",
+    "$ocmock_path/OCMock/OCMRecorder.m",
+    "$ocmock_path/OCMock/OCMStubRecorder.h",
+    "$ocmock_path/OCMock/OCMStubRecorder.m",
+    "$ocmock_path/OCMock/OCMVerifier.h",
+    "$ocmock_path/OCMock/OCMVerifier.m",
+    "$ocmock_path/OCMock/OCMock.h",
+    "$ocmock_path/OCMock/OCMockObject.h",
+    "$ocmock_path/OCMock/OCMockObject.m",
+    "$ocmock_path/OCMock/OCObserverMockObject.h",
+    "$ocmock_path/OCMock/OCObserverMockObject.m",
+    "$ocmock_path/OCMock/OCPartialMockObject.h",
+    "$ocmock_path/OCMock/OCPartialMockObject.m",
+    "$ocmock_path/OCMock/OCProtocolMockObject.h",
+    "$ocmock_path/OCMock/OCProtocolMockObject.m",
+  ]
+
+  frameworks = [ "Foundation.framework" ]
+}
+
+shared_library("ocmock_shared") {
+  deps = [ ":ocmock_src" ]
+  cflags = [ "-fvisibility=default" ]
+  ldflags = [ "-Wl,-install_name,@rpath/Frameworks/libocmock_shared.dylib" ]
+}
+
+# Generates a static library, used in iOS unit test targets
+static_library("ocmock") {
+  # Force the static lib to include code from dependencies
+  complete_static_lib = true
+  if (is_ios) {
+    cflags = [ "-mios-simulator-version-min=$ios_testing_deployment_target" ]
+  }
+  public_deps = [ ":ocmock_src" ]
+}

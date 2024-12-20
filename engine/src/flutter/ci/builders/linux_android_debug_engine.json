@@ -1,0 +1,199 @@
+{
+    "_comment": [
+        "The builds defined in this file should not contain tests, ",
+        "and the file should not contain builds that are essentially tests. ",
+        "The only builds in this file should be the builds necessary to produce ",
+        "release artifacts. ",
+        "Tests to run on linux hosts should go in one of the other linux_ build ",
+        "definition files."
+    ],
+    "builds": [
+        {
+            "archives": [
+                {
+                    "name": "ci/android_debug",
+                    "type": "gcs",
+                    "base_path": "out/ci/android_debug/zip_archives/",
+                    "include_paths": [
+                        "out/ci/android_debug/zip_archives/android-arm/artifacts.zip",
+                        "out/ci/android_debug/zip_archives/android-arm/impeller_sdk.zip",
+                        "out/ci/android_debug/zip_archives/android-arm/symbols.zip",
+                        "out/ci/android_debug/zip_archives/download.flutter.io",
+                        "out/ci/android_debug/zip_archives/sky_engine.zip",
+                        "out/ci/android_debug/zip_archives/android-javadoc.zip",
+                        "out/ci/android_debug/zip_archives/flutter_gpu.zip"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_debug",
+                "--android",
+                "--android-cpu=arm",
+                "--no-lto",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/android_debug",
+            "description": "Produces debug mode artifacts to target 32-bit arm Android from a Linux host.",
+            "ninja": {
+                "config": "ci/android_debug",
+                "targets": [
+                    "flutter",
+                    "flutter/sky/dist:zip_old_location",
+                    "flutter/lib/gpu/dist:zip_old_location",
+                    "flutter/shell/platform/android:embedding_jars",
+                    "flutter/shell/platform/android:abi_jars",
+                    "flutter/impeller/toolkit/interop:sdk"
+                ]
+            }
+        },
+        {
+            "archives": [
+                {
+                    "name": "ci/android_debug_arm64",
+                    "type": "gcs",
+                    "base_path": "out/ci/android_debug_arm64/zip_archives/",
+                    "include_paths": [
+                        "out/ci/android_debug_arm64/zip_archives/android-arm64/artifacts.zip",
+                        "out/ci/android_debug_arm64/zip_archives/android-arm64/impeller_sdk.zip",
+                        "out/ci/android_debug_arm64/zip_archives/android-arm64/symbols.zip",
+                        "out/ci/android_debug_arm64/zip_archives/download.flutter.io"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_debug_arm64",
+                "--android",
+                "--android-cpu=arm64",
+                "--no-lto",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/android_debug_arm64",
+            "description": "Produces debug mode artifacts to target 64-bit arm Android from a Linux host.",
+            "ninja": {
+                "config": "ci/android_debug_arm64",
+                "targets": [
+                    "flutter",
+                    "flutter/shell/platform/android:abi_jars",
+                    "flutter/impeller/toolkit/interop:sdk"
+                ]
+            }
+        },
+        {
+            "archives": [
+                {
+                    "name": "ci/android_debug_x86",
+                    "type": "gcs",
+                    "base_path": "out/ci/android_debug_x86/zip_archives/",
+                    "include_paths": [
+                        "out/ci/android_debug_x86/zip_archives/android-x86/artifacts.zip",
+                        "out/ci/android_debug_x86/zip_archives/android-x86/impeller_sdk.zip",
+                        "out/ci/android_debug_x86/zip_archives/android-x86/symbols.zip",
+                        "out/ci/android_debug_x86/zip_archives/download.flutter.io"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_debug_x86",
+                "--android",
+                "--android-cpu=x86",
+                "--no-lto",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/android_debug_x86",
+            "description": "Produces debug mode artifacts to target x86 Android from a Linux host.",
+            "ninja": {
+                "config": "ci/android_debug_x86",
+                "targets": [
+                    "flutter",
+                    "flutter/shell/platform/android:abi_jars",
+                    "flutter/impeller/toolkit/interop:sdk"
+                ]
+            }
+        },
+        {
+            "archives": [
+                {
+                    "name": "ci/android_debug_x64",
+                    "type": "gcs",
+                    "base_path": "out/ci/android_debug_x64/zip_archives/",
+                    "include_paths": [
+                        "out/ci/android_debug_x64/zip_archives/android-x64/artifacts.zip",
+                        "out/ci/android_debug_x64/zip_archives/android-x64/impeller_sdk.zip",
+                        "out/ci/android_debug_x64/zip_archives/android-x64/symbols.zip",
+                        "out/ci/android_debug_x64/zip_archives/download.flutter.io"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_debug_x64",
+                "--android",
+                "--android-cpu=x64",
+                "--no-lto",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/android_debug_x64",
+            "description": "Produces debug mode artifacts to target x64 Android from a Linux host.",
+            "ninja": {
+                "config": "ci/android_debug_x64",
+                "targets": [
+                    "flutter",
+                    "flutter/shell/platform/android:abi_jars",
+                    "flutter/impeller/toolkit/interop:sdk"
+                ]
+            }
+        }
+    ],
+    "generators": {
+        "tasks": [
+            {
+                "name": "Verify-export-symbols-release-binaries",
+                "parameters": [
+                    "src/out/ci",
+                    "src/flutter/buildtools"
+                ],
+                "script": "flutter/testing/symbols/verify_exported.dart",
+                "language": "dart"
+            }
+        ]
+    }
+}

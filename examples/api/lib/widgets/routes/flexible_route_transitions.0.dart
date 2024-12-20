@@ -82,7 +82,7 @@ class _MyHomePage extends StatelessWidget {
                 final CupertinoPageRoute<void> route = CupertinoPageRoute<void>(
                   builder: (BuildContext context) {
                     return const _MyHomePage(title: 'Cupertino Page');
-                  }
+                  },
                 );
                 Navigator.of(context).push(route);
               },
@@ -97,15 +97,13 @@ class _MyHomePage extends StatelessWidget {
 
 // A PageRoute that applies a _VerticalPageTransition.
 class _VerticalTransitionPageRoute<T> extends PageRoute<T> {
-
-  _VerticalTransitionPageRoute({
-    required this.builder,
-  });
+  _VerticalTransitionPageRoute({required this.builder});
 
   final WidgetBuilder builder;
 
   @override
-  DelegatedTransitionBuilder? get delegatedTransition => _VerticalPageTransition._delegatedTransitionBuilder;
+  DelegatedTransitionBuilder? get delegatedTransition =>
+      _VerticalPageTransition._delegatedTransitionBuilder;
 
   @override
   Color? get barrierColor => const Color(0x00000000);
@@ -126,12 +124,21 @@ class _VerticalTransitionPageRoute<T> extends PageRoute<T> {
   Duration get transitionDuration => const Duration(milliseconds: 2000);
 
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
     return builder(context);
   }
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return _VerticalPageTransition(
       primaryRouteAnimation: animation,
       secondaryRouteAnimation: secondaryAnimation,
@@ -147,19 +154,16 @@ class _VerticalPageTransition extends StatelessWidget {
     required Animation<double> primaryRouteAnimation,
     required this.secondaryRouteAnimation,
     required this.child,
-  }) : _primaryPositionAnimation =
-           CurvedAnimation(
-                 parent: primaryRouteAnimation,
-                 curve: _curve,
-                 reverseCurve: _curve,
-               ).drive(_kBottomUpTween),
-      _secondaryPositionAnimation =
-           CurvedAnimation(
-                 parent: secondaryRouteAnimation,
-                 curve: _curve,
-                 reverseCurve: _curve,
-               )
-           .drive(_kTopDownTween);
+  }) : _primaryPositionAnimation = CurvedAnimation(
+         parent: primaryRouteAnimation,
+         curve: _curve,
+         reverseCurve: _curve,
+       ).drive(_kBottomUpTween),
+       _secondaryPositionAnimation = CurvedAnimation(
+         parent: secondaryRouteAnimation,
+         curve: _curve,
+         reverseCurve: _curve,
+       ).drive(_kTopDownTween);
 
   final Animation<Offset> _primaryPositionAnimation;
 
@@ -189,17 +193,14 @@ class _VerticalPageTransition extends StatelessWidget {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
     bool allowSnapshotting,
-    Widget? child
+    Widget? child,
   ) {
     final Animatable<Offset> tween = Tween<Offset>(
       begin: Offset.zero,
       end: const Offset(0.0, -1.0),
     ).chain(CurveTween(curve: _curve));
 
-    return SlideTransition(
-      position: secondaryAnimation.drive(tween),
-      child: child,
-    );
+    return SlideTransition(position: secondaryAnimation.drive(tween), child: child);
   }
 
   @override
@@ -210,13 +211,13 @@ class _VerticalPageTransition extends StatelessWidget {
       position: _secondaryPositionAnimation,
       textDirection: textDirection,
       transformHitTests: false,
-      child:  SlideTransition(
+      child: SlideTransition(
         position: _primaryPositionAnimation,
         textDirection: textDirection,
         child: ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
           child: child,
-        )
+        ),
       ),
     );
   }

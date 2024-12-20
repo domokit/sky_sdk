@@ -1,0 +1,43 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/testing/testing.gni")
+
+source_set("platform_view_android_delegate") {
+  sources = [
+    "platform_view_android_delegate.cc",
+    "platform_view_android_delegate.h",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+
+  deps = [
+    "//flutter/common",
+    "//flutter/fml",
+    "//flutter/lib/ui",
+    "//flutter/shell/common",
+    "//flutter/shell/platform/android/jni",
+    "//flutter/skia",
+  ]
+}
+
+test_fixtures("platform_view_android_delegate_fixtures") {
+  fixtures = []
+}
+
+executable("platform_view_android_delegate_unittests") {
+  testonly = true
+
+  sources = [ "platform_view_android_delegate_unittests.cc" ]
+
+  deps = [
+    ":platform_view_android_delegate",
+    ":platform_view_android_delegate_fixtures",
+    "//flutter/shell/platform/android/jni:jni_mock",
+    "//flutter/testing",
+    "//flutter/testing:dart",
+    "//flutter/third_party/txt",
+  ]
+}

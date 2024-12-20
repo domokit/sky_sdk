@@ -13,9 +13,7 @@ class SliderApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: SliderExample(),
-    );
+    return const MaterialApp(home: SliderExample());
   }
 }
 

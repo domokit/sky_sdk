@@ -1,0 +1,94 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/android/config.gni")
+import("//flutter/tools/templater/templater.gni")
+
+android_buildtools =
+    "//flutter/third_party/android_tools/sdk/build-tools/35.0.0-rc4"
+aapt2 = "$android_buildtools/aapt2"
+zipalign = "$android_buildtools/zipalign"
+apksigner = "$android_buildtools/apksigner"
+android_jar =
+    "//flutter/third_party/android_tools/sdk/platforms/android-35/android.jar"
+src_root = "//flutter/testing/android/native_activity"
+
+# A drop in replacement for an executable or shared library target. Providing a
+# (required) apk_name packages that native code into an APK suitable for
+# debugging.
+template("native_activity_apk") {
+  assert(defined(invoker.apk_name), "The name of the APK must be specified.")
+
+  invoker_apk_name = invoker.apk_name
+  apk_dylib_name = "lib$invoker_apk_name.so"
+
+  android_manifest_template = "$src_root/AndroidManifest.xml.template"
+  android_manifest = "$target_gen_dir/AndroidManifest.xml"
+
+  android_manifest_target_name = "android_manifest_$target_name"
+  templater(android_manifest_target_name) {
+    input = android_manifest_template
+    output = android_manifest
+    values = [ "--apk-library-name=$invoker_apk_name" ]
+  }
+
+  shared_library_target_name = "shared_library_$target_name"
+  shared_library(shared_library_target_name) {
+    forward_variables_from(invoker, "*", [ "output_name" ])
+    output_name = invoker_apk_name
+  }
+
+  apk_target_name = "apk_$target_name"
+  action(apk_target_name) {
+    forward_variables_from(invoker, [ "testonly" ])
+
+    script = "$src_root/native_activity_apk.py"
+
+    apk_path = "$root_build_dir/$invoker_apk_name.apk"
+
+    sources = [
+      "$root_build_dir/$apk_dylib_name",
+      aapt2,
+      android_jar,
+      android_manifest_template,
+      apksigner,
+      zipalign,
+    ]
+
+    outputs = [ apk_path ]
+
+    args = [
+      "--aapt2-bin",
+      rebase_path(aapt2, root_build_dir),
+      "--zipalign-bin",
+      rebase_path(zipalign, root_build_dir),
+      "--android-manifest",
+      rebase_path(android_manifest, root_build_dir),
+      "--android-jar",
+      rebase_path(android_jar, root_build_dir),
+      "--output-path",
+      rebase_path(apk_path, root_build_dir),
+      "--library",
+      rebase_path("$root_build_dir/$apk_dylib_name", root_build_dir),
+      "--apksigner-bin",
+      rebase_path(apksigner, root_build_dir),
+      "--keystore",
+      rebase_path("$src_root/debug.keystore", root_build_dir),
+      "--gen-dir",
+      rebase_path(target_gen_dir, root_build_dir),
+      "--android-abi",
+      android_app_abi,
+    ]
+    deps = [
+      ":$android_manifest_target_name",
+      ":$shared_library_target_name",
+    ]
+  }
+
+  group(target_name) {
+    forward_variables_from(invoker, [ "testonly" ])
+
+    deps = [ ":$apk_target_name" ]
+  }
+}

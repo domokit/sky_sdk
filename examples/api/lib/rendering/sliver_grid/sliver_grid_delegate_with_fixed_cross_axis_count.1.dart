@@ -33,9 +33,11 @@ class SliverGridDelegateWithFixedCrossAxisCountExample extends StatelessWidget {
         mainAxisExtent: 150.0,
       ),
       children: List<Widget>.generate(20, (int i) {
-        return Builder(builder: (BuildContext context) {
-          return Text('$i');
-        });
+        return Builder(
+          builder: (BuildContext context) {
+            return Text('$i');
+          },
+        );
       }),
     );
   }

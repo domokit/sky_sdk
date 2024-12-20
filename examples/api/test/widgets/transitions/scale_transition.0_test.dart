@@ -11,22 +11,26 @@ void main() {
     await tester.pumpWidget(const example.ScaleTransitionExampleApp());
     expect(find.byType(FlutterLogo), findsOneWidget);
     expect(find.byType(Center), findsOneWidget);
-    expect(find.descendant(
-      of: find.byType(Center),
-      matching: find.byType(ScaleTransition)
-    ), findsOneWidget);
     expect(
-      find.byWidgetPredicate((Widget widget) => widget is ScaleTransition
-        && widget.scale is CurvedAnimation
-        && (widget.scale as CurvedAnimation).curve == Curves.fastOutSlowIn,
-      ), findsOneWidget);
+      find.descendant(of: find.byType(Center), matching: find.byType(ScaleTransition)),
+      findsOneWidget,
+    );
+    expect(
+      find.byWidgetPredicate(
+        (Widget widget) =>
+            widget is ScaleTransition &&
+            widget.scale is CurvedAnimation &&
+            (widget.scale as CurvedAnimation).curve == Curves.fastOutSlowIn,
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Scales every 2 seconds', (WidgetTester tester) async {
     await tester.pumpWidget(const example.ScaleTransitionExampleApp());
     final Finder transformFinder = find.descendant(
       of: find.byType(Center),
-      matching: find.byType(Transform)
+      matching: find.byType(Transform),
     );
 
     Transform transform = tester.widget(transformFinder);

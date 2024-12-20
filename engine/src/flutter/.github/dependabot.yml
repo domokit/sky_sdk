@@ -1,0 +1,27 @@
+# See Dependabot documentation for all configuration options:
+# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      time: "22:00" # 10 PM MTV
+      timezone: "America/Los_Angeles"
+    labels:
+      - "autosubmit"
+    groups:
+      all-github-actions:
+        patterns: [ "*" ]
+    ignore:
+      # ignore patch versions, just rely on minor in order to update fewer times
+      - dependency-name: "github/codeql-action"
+        update-types: ["version-update:semver-minor"]
+
+  - package-ecosystem: "pub"
+    directory: "/lib/web_ui"
+    schedule:
+      interval: "daily"
+    labels:
+      - "autosubmit"

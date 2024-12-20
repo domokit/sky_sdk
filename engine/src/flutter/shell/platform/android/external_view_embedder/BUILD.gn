@@ -1,0 +1,53 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/common/config.gni")
+import("//flutter/testing/testing.gni")
+
+source_set("external_view_embedder") {
+  sources = [
+    "external_view_embedder.cc",
+    "external_view_embedder.h",
+    "surface_pool.cc",
+    "surface_pool.h",
+  ]
+
+  public_configs = [ "//flutter:config" ]
+
+  deps = [
+    "//flutter/common",
+    "//flutter/flow",
+    "//flutter/fml",
+    "//flutter/shell/platform/android/context",
+    "//flutter/shell/platform/android/jni",
+    "//flutter/shell/platform/android/surface",
+    "//flutter/skia",
+  ]
+}
+
+test_fixtures("external_view_embedder_fixtures") {
+  fixtures = []
+}
+
+executable("android_external_view_embedder_unittests") {
+  testonly = true
+
+  sources = [
+    "external_view_embedder_unittests.cc",
+    "surface_pool_unittests.cc",
+  ]
+
+  deps = [
+    ":external_view_embedder",
+    ":external_view_embedder_fixtures",
+    "//flutter/flow",
+    "//flutter/shell/gpu:gpu_surface_gl",
+    "//flutter/shell/platform/android/jni:jni_mock",
+    "//flutter/shell/platform/android/surface",
+    "//flutter/shell/platform/android/surface:surface_mock",
+    "//flutter/testing",
+    "//flutter/testing:dart",
+    "//flutter/testing:skia",
+  ]
+}

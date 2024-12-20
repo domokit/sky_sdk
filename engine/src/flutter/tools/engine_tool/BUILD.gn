@@ -1,0 +1,111 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/rules.gni")
+
+group("tests") {
+  testonly = true
+  public_deps = [
+    ":build_command_test",
+    ":build_plan_test",
+    ":cleanup_command_test",
+    ":entry_point_test",
+    ":fetch_command_test",
+    ":flutter_tools_test",
+    ":format_command_test",
+    ":gn_test",
+    ":label_test",
+    ":lint_command_test",
+    ":logger_test",
+    ":phone_home_test",
+    ":proc_utils_test",
+    ":query_command_test",
+    ":run_command_test",
+    ":run_target_test",
+    ":test_command_test",
+    ":typed_json_test",
+    ":utils_test",
+    ":worker_pool_test",
+  ]
+}
+
+dart_test("flutter_tools_test") {
+  main_dart = "test/external_tools/flutter_tools_test.dart"
+}
+
+dart_test("gn_test") {
+  main_dart = "test/external_tools/gn_test.dart"
+}
+
+dart_test("build_command_test") {
+  main_dart = "test/commands/build_command_test.dart"
+}
+
+dart_test("cleanup_command_test") {
+  main_dart = "test/commands/cleanup_command_test.dart"
+}
+
+dart_test("build_plan_test") {
+  main_dart = "test/commands/build_plan_test.dart"
+}
+
+dart_test("entry_point_test") {
+  main_dart = "test/entry_point_test.dart"
+}
+
+dart_test("fetch_command_test") {
+  main_dart = "test/commands/fetch_command_test.dart"
+}
+
+dart_test("format_command_test") {
+  main_dart = "test/commands/format_command_test.dart"
+}
+
+dart_test("label_test") {
+  main_dart = "test/label_test.dart"
+}
+
+dart_test("lint_command_test") {
+  main_dart = "test/commands/lint_command_test.dart"
+}
+
+dart_test("logger_test") {
+  main_dart = "test/logger_test.dart"
+}
+
+dart_test("phone_home_test") {
+  main_dart = "test/phone_home_test.dart"
+}
+
+dart_test("proc_utils_test") {
+  main_dart = "test/proc_utils_test.dart"
+}
+
+dart_test("query_command_test") {
+  main_dart = "test/commands/query_command_test.dart"
+}
+
+dart_test("run_command_test") {
+  main_dart = "test/commands/run_command_test.dart"
+}
+
+dart_test("run_target_test") {
+  main_dart = "test/run_target_test.dart"
+}
+
+dart_test("test_command_test") {
+  main_dart = "test/commands/test_command_test.dart"
+}
+
+dart_test("typed_json_test") {
+  main_dart = "test/typed_json_test.dart"
+}
+
+dart_test("utils_test") {
+  main_dart = "test/utils_test.dart"
+}
+
+dart_test("worker_pool_test") {
+  main_dart = "test/worker_pool_test.dart"
+}

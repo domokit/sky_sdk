@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('The thumb shape is a stadium border', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ShapeExampleApp(),
-    );
+    await tester.pumpWidget(const example.ShapeExampleApp());
 
     expect(find.byType(RawScrollbar), findsOne);
     expect(find.byType(ListView), findsOne);

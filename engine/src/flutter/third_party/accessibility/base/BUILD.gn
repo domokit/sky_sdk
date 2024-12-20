@@ -1,0 +1,52 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/build/dart/dart.gni")
+import("//flutter/common/config.gni")
+
+source_set("base") {
+  visibility = [ "//flutter/third_party/accessibility/*" ]
+  include_dirs = [ "//flutter/third_party/accessibility" ]
+
+  sources = [
+    "auto_reset.h",
+    "color_utils.h",
+    "compiler_specific.h",
+    "container_utils.h",
+    "logging.cc",
+    "logging.h",
+    "macros.h",
+    "no_destructor.h",
+    "simple_token.cc",
+    "simple_token.h",
+    "string_utils.cc",
+    "string_utils.h",
+  ]
+  if (is_win) {
+    sources += [
+      "win/atl.h",
+      "win/atl_module.h",
+      "win/display.cc",
+      "win/display.h",
+      "win/enum_variant.cc",
+      "win/enum_variant.h",
+      "win/scoped_bstr.cc",
+      "win/scoped_bstr.h",
+      "win/scoped_safearray.h",
+      "win/scoped_variant.cc",
+      "win/scoped_variant.h",
+      "win/variant_util.h",
+      "win/variant_vector.cc",
+      "win/variant_vector.h",
+    ]
+    libs = [ "propsys.lib" ]
+  }
+
+  public_deps = [
+    "$dart_src/third_party/double-conversion/src:libdouble_conversion",
+    "numerics",
+    "//flutter/fml:string_conversion",
+    "//flutter/third_party/accessibility/ax_build",
+  ]
+}

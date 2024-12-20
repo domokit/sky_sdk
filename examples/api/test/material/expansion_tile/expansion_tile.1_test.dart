@@ -7,9 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Test the basics of ExpansionTileControllerApp', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ExpansionTileControllerApp(),
-    );
+    await tester.pumpWidget(const example.ExpansionTileControllerApp());
 
     expect(find.text('ExpansionTile Contents'), findsNothing);
     expect(find.text('Collapse This Tile'), findsNothing);

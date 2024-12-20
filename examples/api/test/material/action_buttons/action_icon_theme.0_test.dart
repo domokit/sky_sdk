@@ -12,10 +12,7 @@ void main() {
 
     expect(find.byType(DrawerButton), findsOneWidget);
     final Icon drawerButtonIcon = tester.widget(
-      find.descendant(
-        of: find.byType(DrawerButton),
-        matching: find.byType(Icon),
-      ),
+      find.descendant(of: find.byType(DrawerButton), matching: find.byType(Icon)),
     );
     expect(drawerButtonIcon.icon, Icons.segment);
 
@@ -25,19 +22,13 @@ void main() {
 
     expect(find.byType(EndDrawerButton), findsOneWidget);
     final Icon endDrawerButtonIcon = tester.widget(
-      find.descendant(
-        of: find.byType(EndDrawerButton),
-        matching: find.byType(Icon),
-      ),
+      find.descendant(of: find.byType(EndDrawerButton), matching: find.byType(Icon)),
     );
     expect(endDrawerButtonIcon.icon, Icons.more_horiz);
 
     expect(find.byType(BackButton), findsOneWidget);
     final Icon backButtonIcon = tester.widget(
-      find.descendant(
-        of: find.byType(BackButton),
-        matching: find.byType(Icon),
-      ),
+      find.descendant(of: find.byType(BackButton), matching: find.byType(Icon)),
     );
     expect(backButtonIcon.icon, Icons.arrow_back_ios_new_rounded);
   });

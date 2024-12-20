@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Appbar updates on navigation', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.AppBarApp(),
-    );
+    await tester.pumpWidget(const example.AppBarApp());
 
     expect(find.widgetWithText(AppBar, 'AppBar Demo'), findsOneWidget);
     expect(find.text('This is the home page'), findsOneWidget);

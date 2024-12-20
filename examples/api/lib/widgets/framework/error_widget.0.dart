@@ -49,12 +49,13 @@ class _ErrorWidgetExampleAppState extends State<ErrorWidgetExampleApp> {
           appBar: AppBar(title: const Text('ErrorWidget Sample')),
           body: Center(
             child: TextButton(
-                onPressed: () {
-                  setState(() {
-                    throwError = true;
-                  });
-                },
-                child: const Text('Error Prone')),
+              onPressed: () {
+                setState(() {
+                  throwError = true;
+                });
+              },
+              child: const Text('Error Prone'),
+            ),
           ),
         ),
       );

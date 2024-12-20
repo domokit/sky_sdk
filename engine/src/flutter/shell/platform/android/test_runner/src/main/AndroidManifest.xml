@@ -1,0 +1,13 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <application>
+
+    <activity android:name="io.flutter.embedding.android.FlutterActivity" />
+
+    <activity android:name="io.flutter.embedding.android.FlutterFragmentActivity" />
+
+    <activity android:name="io.flutter.embedding.android.FlutterFragmentActivityTest$FlutterFragmentActivityWithProvidedEngine" />
+
+  </application>
+
+</manifest>
