@@ -20,6 +20,7 @@
 
   // The number of submenu items changes depending on what the OS decides to inject.
   // Just check there's at least one per menu item.
+  XCTAssertGreaterThanOrEqual([mainMenu itemWithTitle:@"File"].submenu.numberOfItems, 1);
   XCTAssertGreaterThanOrEqual([mainMenu itemWithTitle:@"Edit"].submenu.numberOfItems, 1);
   XCTAssertGreaterThanOrEqual([mainMenu itemWithTitle:@"View"].submenu.numberOfItems, 1);
   XCTAssertGreaterThanOrEqual([mainMenu itemWithTitle:@"Window"].submenu.numberOfItems, 1);
