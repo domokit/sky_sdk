@@ -89,7 +89,7 @@ abstract class ButtonStyleButton extends StatefulWidget {
     @Deprecated(
       'Remove this parameter as it is now ignored. '
       'Use ButtonStyle.iconAlignment instead. '
-      'This feature was deprecated after v3.28.0-0.1.pre.'
+      'This feature was deprecated after v3.28.0-1.0.pre.'
     )
     this.iconAlignment,
     this.tooltip,
@@ -166,7 +166,7 @@ abstract class ButtonStyleButton extends StatefulWidget {
   @Deprecated(
     'Remove this parameter as it is now ignored. '
     'Use ButtonStyle.iconAlignment instead. '
-    'This feature was deprecated after v3.28.0-0.1.pre.'
+    'This feature was deprecated after v3.28.0-1.0.pre.'
   )
   final IconAlignment? iconAlignment;
 
