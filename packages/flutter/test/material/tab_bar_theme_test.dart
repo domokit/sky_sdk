@@ -1476,8 +1476,7 @@ void main() {
 
     const Color tabBarThemeIndicatorColor = Color(0xffffff00);
 
-    Widget buildTabBar({Color? themeIndicatorColor, Color? tabBarThemeIndicatorColor}) {
-    Widget buildTabBar({ Color? tabBarThemeIndicatorColor }) {
+    Widget buildTabBar({Color? tabBarThemeIndicatorColor}) {
       return MaterialApp(
         theme: ThemeData(
           tabBarTheme: TabBarThemeData(indicatorColor: tabBarThemeIndicatorColor),
@@ -1495,7 +1494,7 @@ void main() {
     await tester.pumpWidget(buildTabBar(tabBarThemeIndicatorColor: tabBarThemeIndicatorColor));
 
     final RenderBox tabBarBox = tester.firstRenderObject<RenderBox>(find.byType(TabBar));
-    expect(tabBarBox,paints..line(color: tabBarThemeIndicatorColor));
+    expect(tabBarBox, paints..line(color: tabBarThemeIndicatorColor));
   });
 
   testWidgets('TabBarTheme.labelColor resolves material states', (WidgetTester tester) async {

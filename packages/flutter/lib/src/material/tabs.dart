@@ -2512,15 +2512,16 @@ class _TabPageSelectorState extends State<TabPageSelector> {
 
 // Hand coded defaults based on Material Design 2.
 class _TabsDefaultsM2 extends TabBarThemeData {
-  _TabsDefaultsM2(this.context, this.isScrollable)
-    : super(indicatorSize: TabBarIndicatorSize.tab);
+  _TabsDefaultsM2(this.context, this.isScrollable) : super(indicatorSize: TabBarIndicatorSize.tab);
 
   final BuildContext context;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
   final bool isScrollable;
+  late final bool isDark = Theme.of(context).brightness == Brightness.dark;
+  late final Color primaryColor = isDark ? Colors.grey[900]! : Colors.blue;
 
   @override
-  Color? get indicatorColor => _colors.secondary == _colors.primary ? Colors.white : _colors.secondary;
+  Color? get indicatorColor => _colors.secondary == primaryColor ? Colors.white : _colors.secondary;
 
   @override
   Color? get labelColor => Theme.of(context).primaryTextTheme.bodyLarge!.color!;

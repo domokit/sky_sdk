@@ -2777,6 +2777,14 @@ class ThemeData with Diagnosticable {
         level: DiagnosticLevel.debug,
       ),
     );
+    properties.add(
+      ColorProperty(
+        'indicatorColor',
+        indicatorColor,
+        defaultValue: defaultData.indicatorColor,
+        level: DiagnosticLevel.debug,
+      ),
+    );
   }
 }
 
