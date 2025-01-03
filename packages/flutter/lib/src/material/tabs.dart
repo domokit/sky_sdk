@@ -2516,9 +2516,9 @@ class _TabsDefaultsM2 extends TabBarThemeData {
 
   final BuildContext context;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
-  final bool isScrollable;
   late final bool isDark = Theme.of(context).brightness == Brightness.dark;
   late final Color primaryColor = isDark ? Colors.grey[900]! : Colors.blue;
+  final bool isScrollable;
 
   @override
   Color? get indicatorColor => _colors.secondary == primaryColor ? Colors.white : _colors.secondary;

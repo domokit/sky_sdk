@@ -366,7 +366,7 @@ class ThemeData with Diagnosticable {
     Color? dialogBackgroundColor,
     @Deprecated(
       'Use TabBarThemeData.indicatorColor instead. '
-      'This feature was deprecated after v3.27.0-0.2.pre.',
+      'This feature was deprecated after v3.28.0-1.0.pre.',
     )
     Color? indicatorColor,
   }) {
@@ -792,7 +792,7 @@ class ThemeData with Diagnosticable {
     required this.dialogBackgroundColor,
     @Deprecated(
       'Use TabBarThemeData.indicatorColor instead. '
-      'This feature was deprecated after v3.27.0-0.2.pre.',
+      'This feature was deprecated after v3.28.0-1.0.pre.',
     )
     required this.indicatorColor,
   }) : // DEPRECATED (newest deprecations at the bottom)
@@ -1459,7 +1459,7 @@ class ThemeData with Diagnosticable {
   /// The color of the selected tab indicator in a tab bar.
   @Deprecated(
     'Use TabBarThemeData.indicatorColor instead. '
-    'This feature was deprecated after v3.27.0-0.2.pre.',
+    'This feature was deprecated after v3.28.0-1.0.pre.',
   )
   final Color indicatorColor;
 
@@ -1581,7 +1581,7 @@ class ThemeData with Diagnosticable {
     Color? dialogBackgroundColor,
     @Deprecated(
       'Use TabBarThemeData.indicatorColor instead. '
-      'This feature was deprecated after v3.27.0-0.2.pre.',
+      'This feature was deprecated after v3.28.0-1.0.pre.',
     )
     Color? indicatorColor,
   }) {
