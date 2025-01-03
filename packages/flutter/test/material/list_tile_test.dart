@@ -2636,7 +2636,7 @@ void main() {
     // List tile width is 100 as a result, an exception should be thrown.
     await tester.pumpWidget(buildListTile(leading: const SizedBox(width: 61)));
 
-    // Error message cannot be as there too many errors thrown.
+    // Error message cannot be tested as there too many errors thrown.
     expect(tester.takeException(), isNotNull);
 
     // Test a trailing widget that exceeds the list tile width.
@@ -2644,7 +2644,7 @@ void main() {
     // List tile width is 100 as a result, an exception should be thrown.
     await tester.pumpWidget(buildListTile(trailing: const SizedBox(width: 61)));
 
-    // Error message cannot be as there too many errors thrown.
+    // Error message cannot tested be as there too many errors thrown.
     expect(tester.takeException(), isNotNull);
   });
 
