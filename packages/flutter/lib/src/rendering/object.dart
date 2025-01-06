@@ -3086,7 +3086,7 @@ abstract class RenderObject with DiagnosticableTreeMixin implements HitTestTarge
     if (!isRepaintBoundary && _wasRepaintBoundary) {
       _needsPaint = false;
       _needsCompositedLayerUpdate = false;
-      owner?._nodesNeedingPaint.remove(this);
+      owner?._nodesNeedingPaint.removeWhere((RenderObject t) => identical(t, this));
       _needsCompositingBitsUpdate = false;
       markNeedsPaint();
     } else if (oldNeedsCompositing != _needsCompositing) {
@@ -4262,6 +4262,12 @@ mixin ContainerRenderObjectMixin<
     assert(child != _firstChild);
     assert(child != _lastChild);
     adoptChild(child);
+    assert(
+      child.parentData is ParentDataType,
+      'A child of $runtimeType has parentData of type ${child.parentData.runtimeType}, '
+      'which does not conform to $ParentDataType. Class using ContainerRenderObjectMixin '
+      'should override setupParentData() to set parentData to type $ParentDataType.',
+    );
     _insertIntoChildList(child, after: after);
   }
 
