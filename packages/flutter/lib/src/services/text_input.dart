@@ -7,6 +7,7 @@
 /// @docImport 'package:flutter/rendering.dart';
 ///
 /// @docImport 'live_text.dart';
+/// @docImport 'scribe.dart';
 /// @docImport 'text_formatter.dart';
 library;
 

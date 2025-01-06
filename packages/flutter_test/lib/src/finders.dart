@@ -1293,8 +1293,8 @@ class _StaticTextRangeFinder extends FinderBase<TextRangeContext> {
   @override
   String describeMatch(Plurality plurality) {
     return switch (plurality) {
-      Plurality.zero || Plurality.many =>
-        'non-overlapping TextRanges that match the Pattern "$pattern"',
+      Plurality.zero ||
+      Plurality.many => 'non-overlapping TextRanges that match the Pattern "$pattern"',
       Plurality.one => 'non-overlapping TextRange that matches the Pattern "$pattern"',
     };
   }

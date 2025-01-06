@@ -6,8 +6,7 @@ import 'package:native_assets_builder/native_assets_builder.dart';
 import 'package:native_assets_cli/code_assets_builder.dart';
 
 import '../../../base/file_system.dart';
-import '../../../build_info.dart' hide BuildMode;
-import '../../../build_info.dart' as build_info;
+import '../../../build_info.dart';
 import 'native_assets_host.dart';
 
 // TODO(dcharkes): Fetch minimum MacOS version from somewhere. https://github.com/flutter/flutter/issues/145104
@@ -116,7 +115,7 @@ Future<void> copyNativeCodeAssetsMacOS(
   Uri buildUri,
   Map<KernelAssetPath, List<CodeAsset>> assetTargetLocations,
   String? codesignIdentity,
-  build_info.BuildMode buildMode,
+  BuildMode buildMode,
   FileSystem fileSystem,
 ) async {
   assert(assetTargetLocations.isNotEmpty);
@@ -204,7 +203,7 @@ Future<void> copyNativeCodeAssetsMacOSFlutterTester(
   Uri buildUri,
   Map<KernelAssetPath, List<CodeAsset>> assetTargetLocations,
   String? codesignIdentity,
-  build_info.BuildMode buildMode,
+  BuildMode buildMode,
   FileSystem fileSystem,
 ) async {
   assert(assetTargetLocations.isNotEmpty);

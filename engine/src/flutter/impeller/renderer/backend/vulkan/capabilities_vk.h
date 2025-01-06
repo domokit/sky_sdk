@@ -15,6 +15,7 @@
 #include "impeller/base/backend_cast.h"
 #include "impeller/core/texture_descriptor.h"
 #include "impeller/renderer/backend/vulkan/vk.h"
+#include "impeller/renderer/backend/vulkan/workarounds_vk.h"
 #include "impeller/renderer/capabilities.h"
 
 namespace impeller {
@@ -281,6 +282,10 @@ class CapabilitiesVK final : public Capabilities,
       CompressionType compression_type,
       const FRCFormatDescriptor& desc) const;
 
+  //----------------------------------------------------------------------------
+  /// @brief      Update capabilities for the given set of workarounds.
+  void ApplyWorkarounds(const WorkaroundsVK& workarounds);
+
  private:
   bool validations_enabled_ = false;
   std::map<std::string, std::set<std::string>> exts_;
@@ -298,6 +303,7 @@ class CapabilitiesVK final : public Capabilities,
   bool supports_texture_fixed_rate_compression_ = false;
   ISize max_render_pass_attachment_size_ = ISize{0, 0};
   bool has_triangle_fans_ = true;
+  bool has_primitive_restart_ = true;
   bool is_valid_ = false;
 
   // The embedder.h API is responsible for providing the instance and device

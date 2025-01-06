@@ -12,7 +12,7 @@ import 'package:flutter_tools/src/runner/local_engine.dart';
 
 import '../../src/common.dart';
 
-const String kEngineRoot = '/flutter/engine';
+const String kEngineRoot = '/flutter/flutter/engine';
 const String kArbitraryEngineRoot = '/arbitrary/engine';
 const String kPackageConfig = '.dart_tool/package_config.json';
 
@@ -372,11 +372,11 @@ void main() {
         localHostEngine: 'host_debug',
       ),
       matchesEngineBuildPaths(
-        hostEngine: 'flutter/engine/src/out/host_debug',
-        targetEngine: 'flutter/engine/src/out/ios_debug',
+        hostEngine: 'flutter/flutter/engine/src/out/host_debug',
+        targetEngine: 'flutter/flutter/engine/src/out/ios_debug',
       ),
     );
-    expect(logger.traceText, contains('Local engine source at flutter/engine/src'));
+    expect(logger.traceText, contains('Local engine source at flutter/flutter/engine/src'));
   });
 
   testWithoutContext('fails if --local-engine is specified and --local-engine-src-path '

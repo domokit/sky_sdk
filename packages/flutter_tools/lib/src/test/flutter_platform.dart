@@ -3,16 +3,20 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 import 'package:package_config/package_config.dart';
+import 'package:process/process.dart';
 import 'package:stream_channel/stream_channel.dart';
 import 'package:test_core/src/platform.dart'; // ignore: implementation_imports
+import 'package:vm_service/vm_service.dart';
 
 import '../base/async_guard.dart';
 import '../base/common.dart';
 import '../base/file_system.dart';
 import '../base/io.dart';
+import '../base/logger.dart';
 import '../base/process.dart';
 import '../build_info.dart';
 import '../cache.dart';
@@ -32,6 +36,7 @@ import 'integration_test_device.dart';
 import 'test_compiler.dart';
 import 'test_config.dart';
 import 'test_device.dart';
+import 'test_golden_comparator.dart';
 import 'test_time_recorder.dart';
 import 'watcher.dart';
 
@@ -53,6 +58,10 @@ FlutterPlatform installHook({
   TestWrapper testWrapper = const TestWrapper(),
   required String shellPath,
   required DebuggingOptions debuggingOptions,
+  required BuildInfo buildInfo,
+  required FileSystem fileSystem,
+  required Logger logger,
+  required ProcessManager processManager,
   TestWatcher? watcher,
   bool enableVmService = false,
   bool machine = false,
@@ -69,7 +78,6 @@ FlutterPlatform installHook({
   String? integrationTestUserIdentifier,
   TestTimeRecorder? testTimeRecorder,
   TestCompilerNativeAssetsBuilder? nativeAssetsBuilder,
-  BuildInfo? buildInfo,
 }) {
   assert(
     enableVmService ||
@@ -101,6 +109,9 @@ FlutterPlatform installHook({
     testTimeRecorder: testTimeRecorder,
     nativeAssetsBuilder: nativeAssetsBuilder,
     buildInfo: buildInfo,
+    fileSystem: fileSystem,
+    logger: logger,
+    processManager: processManager,
   );
   platformPluginRegistration(platform);
   return platform;
@@ -289,6 +300,10 @@ class FlutterPlatform extends PlatformPlugin {
   FlutterPlatform({
     required this.shellPath,
     required this.debuggingOptions,
+    required this.buildInfo,
+    required this.logger,
+    required FileSystem fileSystem,
+    required ProcessManager processManager,
     this.watcher,
     this.enableVmService,
     this.machine,
@@ -304,9 +319,19 @@ class FlutterPlatform extends PlatformPlugin {
     this.integrationTestUserIdentifier,
     this.testTimeRecorder,
     this.nativeAssetsBuilder,
-    this.buildInfo,
     this.shutdownHooks,
-  });
+  }) {
+    _testGoldenComparator = TestGoldenComparator(
+      flutterTesterBinPath: shellPath,
+      compilerFactory:
+          () =>
+              compiler ??
+              TestCompiler(buildInfo, flutterProject, testTimeRecorder: testTimeRecorder),
+      fileSystem: fileSystem,
+      logger: logger,
+      processManager: processManager,
+    );
+  }
 
   final String shellPath;
   final DebuggingOptions debuggingOptions;
@@ -323,7 +348,8 @@ class FlutterPlatform extends PlatformPlugin {
   final String? icudtlPath;
   final TestTimeRecorder? testTimeRecorder;
   final TestCompilerNativeAssetsBuilder? nativeAssetsBuilder;
-  final BuildInfo? buildInfo;
+  final BuildInfo buildInfo;
+  final Logger logger;
   final ShutdownHooks? shutdownHooks;
 
   /// The device to run the test on for Integration Tests.
@@ -332,6 +358,7 @@ class FlutterPlatform extends PlatformPlugin {
   /// Tester; otherwise it will run as a Integration Test on this device.
   final Device? integrationTestDevice;
   bool get _isIntegrationTest => integrationTestDevice != null;
+  late final TestGoldenComparator _testGoldenComparator;
 
   final String? integrationTestUserIdentifier;
 
@@ -375,7 +402,9 @@ class FlutterPlatform extends PlatformPlugin {
     return controller.suite;
   }
 
-  StreamChannel<dynamic> loadChannel(String path, SuitePlatform platform) {
+  /// Used as an implementation detail for [load]ing a test suite.
+  @visibleForTesting
+  StreamChannel<Object?> loadChannel(String path, SuitePlatform platform) {
     if (_testCount > 0) {
       // Fail if there will be a port conflict.
       if (debuggingOptions.hostVmServicePort != null) {
@@ -481,13 +510,62 @@ class FlutterPlatform extends PlatformPlugin {
     );
   }
 
-  void _handleStartedDevice(Uri? uri, int testCount) {
+  void _handleStartedDevice({required Uri? uri, required int testCount, required String testPath}) {
     if (uri != null) {
       globals.printTrace('test $testCount: VM Service uri is available at $uri');
+      if (_isIntegrationTest) {
+        _listenToVmServiceForGoldens(uri: uri, testPath: testPath);
+      }
     } else {
       globals.printTrace('test $testCount: VM Service uri is not available');
     }
     watcher?.handleStartedDevice(uri);
+  }
+
+  static const String _kEventName = 'integration_test.VmServiceProxyGoldenFileComparator';
+  static const String _kExtension = 'ext.$_kEventName';
+
+  Future<void> _listenToVmServiceForGoldens({required Uri uri, required String testPath}) async {
+    final Uri goldensBaseUri = Uri.parse(testPath);
+    final FlutterVmService vmService = await connectToVmService(uri, logger: logger);
+    final IsolateRef testAppIsolate = await vmService.findExtensionIsolate(_kExtension);
+    await vmService.service.streamListen(_kEventName);
+    vmService.service.onEvent(_kEventName).listen((Event e) async {
+      if (!const <String>['compare', 'update'].contains(e.extensionKind)) {
+        throw StateError('Unexpected command: "${e.extensionKind}".');
+      }
+
+      final Map<String, Object?>? data = e.extensionData?.data;
+      if (data == null) {
+        throw StateError('Expected VM service data, but got null.');
+      }
+      final int id = data['id']! as int;
+      final Uri relativePath = Uri.parse(data['path']! as String);
+      final Uint8List bytes = base64.decode(data['bytes']! as String);
+
+      final Map<String, Object?> args;
+      if (e.extensionKind == 'update') {
+        switch (await _testGoldenComparator.update(goldensBaseUri, bytes, relativePath)) {
+          case TestGoldenUpdateDone():
+            args = <String, Object?>{'result': true};
+          case TestGoldenUpdateError(error: final String error):
+            args = <String, Object?>{'error': error};
+        }
+      } else {
+        switch (await _testGoldenComparator.compare(goldensBaseUri, bytes, relativePath)) {
+          case TestGoldenComparisonDone(matched: final bool matched):
+            args = <String, Object?>{'result': matched};
+          case TestGoldenComparisonError(error: final String error):
+            args = <String, Object?>{'error': error};
+        }
+      }
+
+      await vmService.callMethodWrapper(
+        _kExtension,
+        isolateId: testAppIsolate.id,
+        args: <String, Object?>{'id': id, ...args},
+      );
+    });
   }
 
   Future<_AsyncError?> _startTest(
@@ -625,7 +703,11 @@ class FlutterPlatform extends PlatformPlugin {
               // This future may depend on [_handleStartedDevice] having been called
               remoteChannelCompleter.future,
               testDevice.vmServiceUri.then<void>((Uri? processVmServiceUri) {
-                _handleStartedDevice(processVmServiceUri, ourTestCount);
+                _handleStartedDevice(
+                  uri: processVmServiceUri,
+                  testCount: ourTestCount,
+                  testPath: testPath,
+                );
               }),
             ],
             // If [remoteChannelCompleter.future] errors, we may never get the
@@ -727,8 +809,7 @@ class FlutterPlatform extends PlatformPlugin {
       testUrl: testUrl,
       testConfigFile: findTestConfigFile(globals.fs.file(testUrl), globals.logger),
       // This MUST be a file URI.
-      packageConfigUri:
-          buildInfo != null ? globals.fs.path.toUri(buildInfo!.packageConfigPath) : null,
+      packageConfigUri: globals.fs.path.toUri(buildInfo.packageConfigPath),
       host: host!,
       updateGoldens: updateGoldens!,
       flutterTestDep: packageConfig['flutter_test'] != null,

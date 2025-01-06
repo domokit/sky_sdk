@@ -1,0 +1,6 @@
+# Normally (from the root) we ignore .idea folders, but the ones present
+# in ide_templates/ and templates/ are real folders we intend to copy as part of
+# "flutter create".
+
+!ide_templates/intellij/.idea
+!templates/**/.idea

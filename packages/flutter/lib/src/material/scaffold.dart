@@ -1212,8 +1212,7 @@ class _ScaffoldLayout extends MultiChildLayoutDelegate {
         FloatingActionButtonLocation.endTop ||
         FloatingActionButtonLocation.miniStartTop ||
         FloatingActionButtonLocation.miniCenterTop ||
-        FloatingActionButtonLocation.miniEndTop =>
-          false,
+        FloatingActionButtonLocation.miniEndTop => false,
         FloatingActionButtonLocation.startDocked ||
         FloatingActionButtonLocation.startFloat ||
         FloatingActionButtonLocation.centerDocked ||
@@ -1226,8 +1225,7 @@ class _ScaffoldLayout extends MultiChildLayoutDelegate {
         FloatingActionButtonLocation.miniCenterDocked ||
         FloatingActionButtonLocation.miniCenterFloat ||
         FloatingActionButtonLocation.miniEndDocked ||
-        FloatingActionButtonLocation.miniEndFloat =>
-          true,
+        FloatingActionButtonLocation.miniEndFloat => true,
         FloatingActionButtonLocation() => true,
       };
       if (floatingActionButtonRect.size != Size.zero && isSnackBarFloating && showAboveFab) {

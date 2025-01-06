@@ -1919,8 +1919,9 @@ class _TabBarState extends State<TabBar> {
       if (theme.useMaterial3) {
         final AlignmentGeometry effectiveAlignment = switch (effectiveTabAlignment) {
           TabAlignment.center => Alignment.center,
-          TabAlignment.start || TabAlignment.startOffset || TabAlignment.fill =>
-            AlignmentDirectional.centerStart,
+          TabAlignment.start ||
+          TabAlignment.startOffset ||
+          TabAlignment.fill => AlignmentDirectional.centerStart,
         };
 
         final Color dividerColor =

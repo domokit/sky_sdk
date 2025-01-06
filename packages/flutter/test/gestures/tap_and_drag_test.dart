@@ -1027,4 +1027,30 @@ void main() {
     GestureBinding.instance.gestureArena.sweep(1);
     expect(events, <String>['down#1']);
   });
+
+  testGesture('Contains correct positions in the drag end details', (GestureTester tester) {
+    late TapDragEndDetails tapDragEndDetails;
+    tapAndDrag =
+        TapAndHorizontalDragGestureRecognizer()
+          ..dragStartBehavior = DragStartBehavior.down
+          ..eagerVictoryOnDrag = true
+          ..maxConsecutiveTap = 3
+          ..onDragEnd = (TapDragEndDetails details) {
+            tapDragEndDetails = details;
+          };
+    addTearDown(tapAndDrag.dispose);
+
+    final TestPointer pointer = TestPointer(5);
+    final PointerDownEvent pointerDown = pointer.down(const Offset(10.0, 10.0));
+
+    tapAndDrag.addPointer(pointerDown);
+    tester.closeArena(pointer.pointer);
+    tester.route(pointerDown);
+    tester.route(pointer.move(const Offset(50.0, 20.0)));
+    tester.route(pointer.move(const Offset(90.0, 30.0)));
+    tester.route(pointer.move(const Offset(120.0, 45.0)));
+    tester.route(pointer.up());
+
+    expect(tapDragEndDetails.globalPosition, const Offset(120.0, 45.0));
+  });
 }

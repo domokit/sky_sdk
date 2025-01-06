@@ -141,8 +141,9 @@ class Version {
     int? nextN = previousVersion.n;
     nextVersionType ??= switch (previousVersion.type) {
       VersionType.stable => VersionType.stable,
-      VersionType.latest || VersionType.gitDescribe || VersionType.development =>
-        VersionType.development,
+      VersionType.latest ||
+      VersionType.gitDescribe ||
+      VersionType.development => VersionType.development,
     };
 
     switch (increment) {

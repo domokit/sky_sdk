@@ -5969,7 +5969,7 @@
             "longest_path_cycles": [
               0.078125,
               0.078125,
-              0.078125,
+              0.015625,
               0.0,
               3.0,
               0.0
@@ -5988,7 +5988,7 @@
             "shortest_path_cycles": [
               0.078125,
               0.078125,
-              0.078125,
+              0.015625,
               0.0,
               3.0,
               0.0
@@ -5999,7 +5999,7 @@
             "total_cycles": [
               0.078125,
               0.078125,
-              0.078125,
+              0.015625,
               0.0,
               3.0,
               0.0
@@ -6008,7 +6008,7 @@
           "stack_spill_bytes": 0,
           "thread_occupancy": 100,
           "uniform_registers_used": 16,
-          "work_registers_used": 8
+          "work_registers_used": 9
         }
       }
     },
@@ -8771,7 +8771,7 @@
             "longest_path_cycles": [
               0.078125,
               0.078125,
-              0.078125,
+              0.015625,
               0.0,
               3.0,
               0.0
@@ -8790,7 +8790,7 @@
             "shortest_path_cycles": [
               0.078125,
               0.078125,
-              0.078125,
+              0.015625,
               0.0,
               3.0,
               0.0
@@ -8801,7 +8801,7 @@
             "total_cycles": [
               0.078125,
               0.078125,
-              0.078125,
+              0.015625,
               0.0,
               3.0,
               0.0
@@ -8810,7 +8810,7 @@
           "stack_spill_bytes": 0,
           "thread_occupancy": 100,
           "uniform_registers_used": 32,
-          "work_registers_used": 8
+          "work_registers_used": 9
         }
       }
     }

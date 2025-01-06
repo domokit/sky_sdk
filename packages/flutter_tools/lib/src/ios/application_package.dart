@@ -201,7 +201,7 @@ class BuildableIOSApp extends IOSApp {
   }
 
   String _templateImageAssetDirNameSuffix(String asset) =>
-      globals.fs.path.join('app_shared', 'ios.tmpl', 'Runner', 'Assets.xcassets', asset);
+      globals.fs.path.join('app', 'ios.tmpl', 'Runner', 'Assets.xcassets', asset);
 
   String get _appIconAsset => 'AppIcon.appiconset';
   String get _launchImageAsset => 'LaunchImage.imageset';

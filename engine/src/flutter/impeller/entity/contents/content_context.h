@@ -257,6 +257,9 @@ using VerticesUberShader = RenderPipelineHandle<PorterDuffBlendVertexShader,
 using TiledTextureExternalPipeline =
     RenderPipelineHandle<TextureFillVertexShader,
                          TiledTextureFillExternalFragmentShader>;
+using TiledTextureUvExternalPipeline =
+    RenderPipelineHandle<TextureUvFillVertexShader,
+                         TiledTextureFillExternalFragmentShader>;
 using TextureDownsampleGlesPipeline =
     RenderPipelineHandle<TextureFillVertexShader,
                          TextureDownsampleGlesFragmentShader>;
@@ -468,6 +471,13 @@ class ContentContext {
     FML_DCHECK(GetContext()->GetBackendType() ==
                Context::BackendType::kOpenGLES);
     return GetPipeline(tiled_texture_external_pipelines_, opts);
+  }
+
+  PipelineRef GetTiledTextureUvExternalPipeline(
+      ContentContextOptions opts) const {
+    FML_DCHECK(GetContext()->GetBackendType() ==
+               Context::BackendType::kOpenGLES);
+    return GetPipeline(tiled_texture_uv_external_pipelines_, opts);
   }
 #endif  // IMPELLER_ENABLE_OPENGLES
 
@@ -892,6 +902,8 @@ class ContentContext {
       tiled_texture_external_pipelines_;
   mutable Variants<TextureDownsampleGlesPipeline>
       texture_downsample_gles_pipelines_;
+  mutable Variants<TiledTextureUvExternalPipeline>
+      tiled_texture_uv_external_pipelines_;
 #endif  // IMPELLER_ENABLE_OPENGLES
   mutable Variants<TiledTexturePipeline> tiled_texture_pipelines_;
   mutable Variants<GaussianBlurPipeline> gaussian_blur_pipelines_;

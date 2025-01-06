@@ -314,8 +314,7 @@ class IOSDevice extends Device {
   /// to connect, wireless devices will have an interface of `usb`/`attached`.
   /// This may change after waiting for the device to connect in
   /// `waitForDeviceToConnect`.
-  DeviceConnectionInterface
-  connectionInterface;
+  DeviceConnectionInterface connectionInterface;
 
   @override
   bool isConnected;

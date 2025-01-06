@@ -115,7 +115,7 @@ const double _kLowDprLimit = 2.0;
 ///
 /// The following shows the code required to write a widget that fully conforms
 /// to the [AssetImage] and [Widget] protocols. (It is essentially a
-/// bare-bones version of the [widgets.Image] widget made to work specifically for
+/// bare-bones version of the [Image] widget made to work specifically for
 /// an [AssetImage].)
 ///
 /// ```dart

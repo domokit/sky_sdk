@@ -6,6 +6,9 @@ import 'package:native_assets_cli/code_assets.dart';
 
 void main(List<String> args) async {
   await link(args, (LinkConfig config, LinkOutputBuilder output) async {
+    if (!config.buildAssetTypes.contains(CodeAsset.type)) {
+      return;
+    }
     final CodeAsset asset = config.codeAssets.single;
     final String packageName = config.packageName;
     output.codeAssets.add(

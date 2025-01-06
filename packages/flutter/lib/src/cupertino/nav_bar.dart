@@ -2268,11 +2268,8 @@ class _NavigationBarComponentsTransition {
        bottomLargeExpanded = bottomNavBar.largeExpanded,
        topLargeExpanded = topNavBar.largeExpanded,
        transitionBox =
-           // paintBounds are based on offset zero so it's ok to expand the Rects.
-           bottomNavBar
-           .renderBox
-           .paintBounds
-           .expandToInclude(topNavBar.renderBox.paintBounds),
+       // paintBounds are based on offset zero so it's ok to expand the Rects.
+       bottomNavBar.renderBox.paintBounds.expandToInclude(topNavBar.renderBox.paintBounds),
        forwardDirection = directionality == TextDirection.ltr ? 1.0 : -1.0;
 
   static final Animatable<double> fadeOut = Tween<double>(begin: 1.0, end: 0.0);

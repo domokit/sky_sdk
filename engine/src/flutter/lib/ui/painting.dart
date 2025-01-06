@@ -52,45 +52,52 @@ Color _scaleAlpha(Color x, double factor) {
   return x.withValues(alpha: clampDouble(x.a * factor, 0, 1));
 }
 
-/// An immutable 32 bit color value in ARGB format.
+/// An immutable color value in ARGB format.
 ///
-/// Consider the light teal of the Flutter logo. It is fully opaque, with a red
-/// channel value of 0x42 (66), a green channel value of 0xA5 (165), and a blue
-/// channel value of 0xF5 (245). In the common "hash syntax" for color values,
-/// it would be described as `#42A5F5`.
+/// Consider the light teal of the [Flutter logo](https://flutter.dev/brand). It
+/// is fully opaque, with a red [r] channel value of `0.2588` (or `0x42` or `66`
+/// as an 8-bit value), a green [g] channel value of `0.6471` (or `0xA5` or
+/// `165` as an 8-bit value), and a blue [b] channel value of `0.9608` (or
+/// `0xF5` or `245` as an 8-bit value). In a common [CSS hex color syntax](https://developer.mozilla.org/en-US/docs/Web/CSS/hex-color)
+/// for RGB color values, it would be described as `#42A5F5`.
 ///
 /// Here are some ways it could be constructed:
 ///
 /// ```dart
-/// Color c1 = const Color(0xFF42A5F5);
-/// Color c2 = const Color.fromARGB(0xFF, 0x42, 0xA5, 0xF5);
-/// Color c3 = const Color.fromARGB(255, 66, 165, 245);
-/// Color c4 = const Color.fromRGBO(66, 165, 245, 1.0);
+/// const Color c1 = Color.from(alpha: 1.0, red: 0.2588, green: 0.6471, blue: 0.9608);
+/// const Color c2 = Color(0xFF42A5F5);
+/// const Color c3 = Color.fromARGB(0xFF, 0x42, 0xA5, 0xF5);
+/// const Color c4 = Color.fromARGB(255, 66, 165, 245);
+/// const Color c5 = Color.fromRGBO(66, 165, 245, 1.0);
 /// ```
 ///
-/// If you are having a problem with `Color` wherein it seems your color is just
-/// not painting, check to make sure you are specifying the full 8 hexadecimal
-/// digits. If you only specify six, then the leading two digits are assumed to
-/// be zero, which means fully-transparent:
+/// If you are having a problem with [Color.new] wherein it seems your color is
+/// just not painting, check to make sure you are specifying the full 8
+/// hexadecimal digits. If you only specify six, then the leading two digits are
+/// assumed to be zero, which means fully-transparent:
 ///
 /// ```dart
-/// Color c1 = const Color(0xFFFFFF); // fully transparent white (invisible)
-/// Color c2 = const Color(0xFFFFFFFF); // fully opaque white (visible)
+/// const Color c1 = Color(0xFFFFFF); // fully transparent white (invisible)
+/// const Color c2 = Color(0xFFFFFFFF); // fully opaque white (visible)
+///
+/// // Or use double-based channel values:
+/// const Color c3 = Color.from(alpha: 1.0, red: 1.0, green: 1.0, blue: 1.0);
 /// ```
 ///
 /// [Color]'s color components are stored as floating-point values. Care should
 /// be taken if one does not want the literal equality provided by `operator==`.
-/// To test equality inside of Flutter tests consider using `package:test`'s
-/// `isSameColorAs`.
+/// To test equality inside of Flutter tests consider using [`isSameColorAs`][].
 ///
 /// See also:
 ///
 ///  * [Colors](https://api.flutter.dev/flutter/material/Colors-class.html),
 ///    which defines the colors found in the Material Design specification.
-///  * [`isSameColorAs`](https://api.flutter.dev/flutter/flutter_test/isSameColorAs.html),
+///  * [`isSameColorAs`][],
 ///    a Matcher to handle floating-point deltas when checking [Color] equality.
+///
+/// [`isSameColorAs`]: https://api.flutter.dev/flutter/flutter_test/isSameColorAs.html
 class Color {
-  /// Construct an sRGB color from the lower 32 bits of an [int].
+  /// Construct an [ColorSpace.sRGB] color from the lower 32 bits of an [int].
   ///
   /// The bits are interpreted as follows:
   ///
@@ -101,19 +108,40 @@ class Color {
   ///
   /// In other words, if AA is the alpha value in hex, RR the red value in hex,
   /// GG the green value in hex, and BB the blue value in hex, a color can be
-  /// expressed as `const Color(0xAARRGGBB)`.
+  /// expressed as `Color(0xAARRGGBB)`.
   ///
   /// For example, to get a fully opaque orange, you would use `const
   /// Color(0xFFFF9000)` (`FF` for the alpha, `FF` for the red, `90` for the
   /// green, and `00` for the blue).
+  ///
+  /// {@template dart.ui.Color.componentsStoredAsFloatingPoint}
+  /// > [!NOTE]
+  /// > Each color is stored as normalized floating-point color components,
+  /// > where the final value of each component is approximated by storing
+  /// > `c / 255`, where `c` is one of the four components (alpha, red, green,
+  /// > blue).
+  /// {@endtemplate}
   const Color(int value)
     : this._fromARGBC(value >> 24, value >> 16, value >> 8, value, ColorSpace.sRGB);
 
-  /// Construct a color with normalized color components.
+  /// Construct a color with normalized color components from `0.0` to `1.0`.
   ///
   /// Normalized color components allows arbitrary bit depths for color
   /// components to be be supported. The values will be normalized relative to
   /// the [ColorSpace] argument.
+  ///
+  /// ## Example
+  ///
+  /// ```dart
+  /// // Fully opaque maximum red color
+  /// const Color c1 = Color.from(alpha: 1.0, red: 1.0, green: 0.0, blue: 0.0);
+  ///
+  /// // Partially transparent moderately blue and green color
+  /// const Color c2 = Color.from(alpha: 0.5, red: 0.0, green: 0.5, blue: 0.5);
+  ///
+  /// // Fully transparent color
+  /// const Color c3 = Color.from(alpha: 0.0, red: 0.0, green: 0.0, blue: 0.0);
+  /// ```
   const Color.from({
     required double alpha,
     required double red,
@@ -137,6 +165,8 @@ class Color {
   ///
   /// See also [fromRGBO], which takes the alpha value as a floating point
   /// value.
+  ///
+  /// {@macro dart.ui.Color.componentsStoredAsFloatingPoint}
   const Color.fromARGB(int a, int r, int g, int b) : this._fromARGBC(a, r, g, b, ColorSpace.sRGB);
 
   const Color._fromARGBC(int alpha, int red, int green, int blue, ColorSpace colorSpace)
@@ -154,6 +184,8 @@ class Color {
   /// Out of range values are brought into range using modulo 255.
   ///
   /// See also [fromARGB], which takes the opacity as an integer value.
+  ///
+  /// {@macro dart.ui.Color.componentsStoredAsFloatingPoint}
   const Color.fromRGBO(int r, int g, int b, double opacity)
     : this._fromRGBOC(r, g, b, opacity, ColorSpace.sRGB);
 
@@ -163,19 +195,28 @@ class Color {
       g = (g & 0xff) / 255,
       b = (b & 0xff) / 255;
 
-  /// The alpha channel of this color.
+  /// The normalized alpha channel of this color.
   ///
-  /// A value of 0.0 means this color is fully transparent. A value of 1.0 means
-  /// this color is fully opaque.
+  /// A value of `0.0` means this color is fully transparent. A value of `1.0`
+  /// means this color is fully opaque.
   final double a;
 
-  /// The red channel of this color.
+  /// The normalized red channel of this color.
+  ///
+  /// A value of `0.0` represents no red in this color. A value of `1.0`
+  /// represents the maximum amount of red.
   final double r;
 
-  /// The green channel of this color.
+  /// The normalized green channel of this color.
+  ///
+  /// A value of `0.0` represents no red in this color. A value of `1.0`
+  /// represents the maximum amount of green.
   final double g;
 
   /// The blue channel of this color.
+  ///
+  /// A value of `0.0` represents no blue in this color. A value of `1.0`
+  /// represents the maximum amount of blue.
   final double b;
 
   /// The color space of this color.
@@ -187,16 +228,16 @@ class Color {
 
   /// A 32 bit value representing this color.
   ///
-  /// The bits are assigned as follows:
-  ///
-  /// * Bits 24-31 are the alpha value.
-  /// * Bits 16-23 are the red value.
-  /// * Bits 8-15 are the green value.
-  /// * Bits 0-7 are the blue value.
+  /// This getter is a _stub_. It is recommended instead to use the explicit
+  /// [toARGB32] method.
   @Deprecated('Use component accessors like .r or .g, or toARGB32 for an explicit conversion')
   int get value => toARGB32();
 
   /// Returns a 32-bit value representing this color.
+  ///
+  /// The returned value is compatible with the default constructor
+  /// ([Color.new]) but does _not_ guarantee to result in the same color due to
+  /// [imprecisions in numeric conversions](https://en.wikipedia.org/wiki/Floating-point_error_mitigation).
   ///
   /// Unlike accessing the floating point equivalent channels individually
   /// ([a], [r], [g], [b]), this method is intentionally _lossy_, and scales
@@ -212,6 +253,13 @@ class Color {
   /// * Bits 16-23 represents the [r] channel as an 8-bit unsigned integer.
   /// * Bits 8-15 represents the [g] channel as an 8-bit unsigned integer.
   /// * Bits 0-7 represents the [b] channel as an 8-bit unsigned integer.
+  ///
+  /// > [!WARNING]
+  /// > The value returned by this getter implicitly converts normalized
+  /// > component values (such as `0.5`) into their 8-bit equivalent by using
+  /// > the [toARGB32] method; the returned value is not guaranteed to be stable
+  /// > across different platforms or executions due to the complexity of
+  /// > floating-point math.
   int toARGB32() {
     return _floatToInt8(a) << 24 |
         _floatToInt8(r) << 16 |
@@ -245,11 +293,15 @@ class Color {
   @Deprecated('Use .b.')
   int get blue => (0x000000ff & value) >> 0;
 
-  /// Returns a new color that matches this color with the passed in components
-  /// changed.
+  /// Returns a new color with the provided components updated.
   ///
-  /// Changes to color components will be applied before applying changes to the
-  /// color space.
+  /// Each component ([alpha], [red], [green], [blue]) represents a normalized
+  /// floating-point value wher `0.0` is the minimum and `1.0` is the maximum;
+  /// see [Color.from] for details and examples.
+  ///
+  /// If [colorSpace] is provided, and is different than the current color
+  /// space, the component values are updated before transforming them to the
+  /// provided color space.
   Color withValues({
     double? alpha,
     double? red,

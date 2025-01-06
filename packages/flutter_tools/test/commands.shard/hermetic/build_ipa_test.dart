@@ -1868,9 +1868,9 @@ void main() {
       const String projectIconImagePath =
           'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png';
       final String templateIconContentsJsonPath =
-          '${Cache.flutterRoot!}/packages/flutter_tools/templates/app_shared/ios.tmpl/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json';
+          '${Cache.flutterRoot!}/packages/flutter_tools/templates/app/ios.tmpl/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json';
       const String templateIconImagePath =
-          '/flutter_template_images/templates/app_shared/ios.tmpl/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png';
+          '/flutter_template_images/templates/app/ios.tmpl/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png';
 
       fakeProcessManager.addCommands(<FakeCommand>[
         xattrCommand,
@@ -1962,9 +1962,9 @@ void main() {
       const String projectIconImagePath =
           'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png';
       final String templateIconContentsJsonPath =
-          '${Cache.flutterRoot!}/packages/flutter_tools/templates/app_shared/ios.tmpl/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json';
+          '${Cache.flutterRoot!}/packages/flutter_tools/templates/app/ios.tmpl/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json';
       const String templateIconImagePath =
-          '/flutter_template_images/templates/app_shared/ios.tmpl/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png';
+          '/flutter_template_images/templates/app/ios.tmpl/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png';
 
       fakeProcessManager.addCommands(<FakeCommand>[
         xattrCommand,
@@ -2484,9 +2484,9 @@ void main() {
       const String projectLaunchImagePath =
           'ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png';
       final String templateLaunchImageContentsJsonPath =
-          '${Cache.flutterRoot!}/packages/flutter_tools/templates/app_shared/ios.tmpl/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json';
+          '${Cache.flutterRoot!}/packages/flutter_tools/templates/app/ios.tmpl/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json';
       const String templateLaunchImagePath =
-          '/flutter_template_images/templates/app_shared/ios.tmpl/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png';
+          '/flutter_template_images/templates/app/ios.tmpl/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png';
 
       fakeProcessManager.addCommands(<FakeCommand>[
         xattrCommand,
@@ -2576,9 +2576,9 @@ void main() {
       const String projectLaunchImagePath =
           'ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png';
       final String templateLaunchImageContentsJsonPath =
-          '${Cache.flutterRoot!}/packages/flutter_tools/templates/app_shared/ios.tmpl/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json';
+          '${Cache.flutterRoot!}/packages/flutter_tools/templates/app/ios.tmpl/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json';
       const String templateLaunchImagePath =
-          '/flutter_template_images/templates/app_shared/ios.tmpl/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png';
+          '/flutter_template_images/templates/app/ios.tmpl/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png';
 
       fakeProcessManager.addCommands(<FakeCommand>[
         xattrCommand,

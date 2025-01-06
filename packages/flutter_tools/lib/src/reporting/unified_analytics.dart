@@ -34,8 +34,7 @@ Analytics getAnalytics({
   if ( // Ignore local user branches.
   version.startsWith('[user-branch]') ||
       // Many CI systems don't do a full git checkout.
-          version
-          .endsWith('/unknown') ||
+      version.endsWith('/unknown') ||
       // Ignore bots.
       runningOnBot ||
       // Ignore when suppressed by FLUTTER_SUPPRESS_ANALYTICS.

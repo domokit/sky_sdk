@@ -101,21 +101,6 @@ void main() {
         command: <String>['adb', '-s', '1234', 'shell', 'getprop'],
         stdout: '[ro.build.version.sdk]: [16]',
       ),
-      const FakeCommand(
-        command: <String>[
-          'adb',
-          '-s',
-          '1234',
-          'shell',
-          'pm',
-          'list',
-          'packages',
-          '--user',
-          '10',
-          'app',
-        ],
-        stdout: '\n',
-      ),
       kInstallCommand,
       kStoreShaCommand,
     ]);
@@ -137,21 +122,6 @@ void main() {
       kAdbVersionCommand,
       kAdbStartServerCommand,
       const FakeCommand(command: <String>['adb', '-s', '1234', 'shell', 'getprop']),
-      const FakeCommand(
-        command: <String>[
-          'adb',
-          '-s',
-          '1234',
-          'shell',
-          'pm',
-          'list',
-          'packages',
-          '--user',
-          '10',
-          'app',
-        ],
-        stdout: '\n',
-      ),
       kInstallCommand,
       kStoreShaCommand,
     ]);
@@ -179,22 +149,6 @@ void main() {
           'adb',
           '-s',
           '1234',
-          'shell',
-          'pm',
-          'list',
-          'packages',
-          '--user',
-          'jane',
-          'app',
-        ],
-        stderr: 'Blah blah',
-        exitCode: 1,
-      ),
-      const FakeCommand(
-        command: <String>[
-          'adb',
-          '-s',
-          '1234',
           'install',
           '-t',
           '-r',
@@ -204,7 +158,9 @@ void main() {
         ],
         exitCode: 1,
         stderr:
-            'Exception occurred while executing: java.lang.IllegalArgumentException: Bad user number: jane',
+            'Exception occurred while executing: '
+            'java.lang.IllegalArgumentException: '
+            'Bad user number: jane',
       ),
     ]);
     final File apk = fileSystem.file('app-debug.apk')..createSync();
@@ -220,13 +176,14 @@ void main() {
     expect(
       logger.errorText,
       contains(
-        'Error: User "jane" not found. Run "adb shell pm list users" to see list of available identifiers.',
+        'Error: User "jane" not found. Run "adb shell pm list users" '
+        'to see list of available identifiers.',
       ),
     );
     expect(processManager, hasNoRemainingExpectations);
   });
 
-  testWithoutContext('Will skip install if the correct version is up to date', () async {
+  testWithoutContext('Will continue install if the correct version is up to date', () async {
     final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
       kAdbVersionCommand,
       kAdbStartServerCommand,
@@ -234,23 +191,19 @@ void main() {
         command: <String>['adb', '-s', '1234', 'shell', 'getprop'],
         stdout: '[ro.build.version.sdk]: [16]',
       ),
+      kInstallCommand,
       const FakeCommand(
         command: <String>[
           'adb',
           '-s',
           '1234',
           'shell',
-          'pm',
-          'list',
-          'packages',
-          '--user',
-          '10',
-          'app',
+          'echo',
+          '-n',
+          'example_sha',
+          '>',
+          '/data/local/tmp/sky.app.sha1',
         ],
-        stdout: 'package:app\n',
-      ),
-      const FakeCommand(
-        command: <String>['adb', '-s', '1234', 'shell', 'cat', '/data/local/tmp/sky.app.sha1'],
         stdout: 'example_sha',
       ),
     ]);
@@ -283,25 +236,6 @@ void main() {
             'adb',
             '-s',
             '1234',
-            'shell',
-            'pm',
-            'list',
-            'packages',
-            '--user',
-            '10',
-            'app',
-          ],
-          stdout: 'package:app\n',
-        ),
-        const FakeCommand(
-          command: <String>['adb', '-s', '1234', 'shell', 'cat', '/data/local/tmp/sky.app.sha1'],
-          stdout: 'different_example_sha',
-        ),
-        const FakeCommand(
-          command: <String>[
-            'adb',
-            '-s',
-            '1234',
             'install',
             '-t',
             '-r',
@@ -311,6 +245,21 @@ void main() {
           ],
           exitCode: 1,
           stderr: '[INSTALL_FAILED_INSUFFICIENT_STORAGE]',
+        ),
+        const FakeCommand(
+          command: <String>[
+            'adb',
+            '-s',
+            '1234',
+            'shell',
+            'pm',
+            'list',
+            'packages',
+            '--user',
+            '10',
+            'app',
+          ],
+          stdout: 'package:app\n',
         ),
         const FakeCommand(
           command: <String>['adb', '-s', '1234', 'uninstall', '--user', '10', 'app'],
@@ -354,21 +303,6 @@ void main() {
         const FakeCommand(
           command: <String>['adb', '-s', '1234', 'shell', 'getprop'],
           stdout: '[ro.build.version.sdk]: [16]',
-        ),
-        const FakeCommand(
-          command: <String>[
-            'adb',
-            '-s',
-            '1234',
-            'shell',
-            'pm',
-            'list',
-            'packages',
-            '--user',
-            '10',
-            'app',
-          ],
-          stdout: '\n',
         ),
         const FakeCommand(
           command: <String>[

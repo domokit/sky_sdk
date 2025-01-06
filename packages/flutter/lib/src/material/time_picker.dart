@@ -2948,8 +2948,8 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
     final Orientation orientation = _orientation.value ?? MediaQuery.orientationOf(context);
     final HourFormat timeOfDayHour = hourFormat(of: timeOfDayFormat);
     final _HourDialType hourMode = switch (timeOfDayHour) {
-      HourFormat.HH || HourFormat.H when theme.useMaterial3 =>
-        _HourDialType.twentyFourHourDoubleRing,
+      HourFormat.HH ||
+      HourFormat.H when theme.useMaterial3 => _HourDialType.twentyFourHourDoubleRing,
       HourFormat.HH || HourFormat.H => _HourDialType.twentyFourHour,
       HourFormat.h => _HourDialType.twelveHour,
     };

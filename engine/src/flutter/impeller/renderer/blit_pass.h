@@ -146,13 +146,10 @@ class BlitPass {
   //----------------------------------------------------------------------------
   /// @brief      Encode the recorded commands to the underlying command buffer.
   ///
-  /// @param      transients_allocator  The transients allocator.
-  ///
   /// @return     If the commands were encoded to the underlying command
   ///             buffer.
   ///
-  virtual bool EncodeCommands(
-      const std::shared_ptr<Allocator>& transients_allocator) const = 0;
+  virtual bool EncodeCommands() const = 0;
 
  protected:
   explicit BlitPass();

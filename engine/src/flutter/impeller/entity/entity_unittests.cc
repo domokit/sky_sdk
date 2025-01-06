@@ -1646,7 +1646,7 @@ static std::vector<std::shared_ptr<Texture>> CreateTestYUVTextures(
 
   blit_pass->AddCopy(DeviceBuffer::AsBufferView(uv_mapping_buffer), uv_texture);
 
-  if (!blit_pass->EncodeCommands(context->GetResourceAllocator()) ||
+  if (!blit_pass->EncodeCommands() ||
       !context->GetCommandQueue()->Submit({cmd_buffer}).ok()) {
     FML_DLOG(ERROR) << "Could not copy contents into Y/UV texture.";
   }

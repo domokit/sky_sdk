@@ -54,51 +54,42 @@ void main() {
   );
   final String testGenDefaultsPath = path.join('test', 'analyze-gen-defaults');
 
-  test(
-    'analyze.dart - verifyDeprecations',
-    () async {
-      final String result = await capture(
-        () => verifyDeprecations(testRootPath, minimumMatches: 2),
-        shouldHaveErrors: true,
-      );
-      final String lines = <String>[
-            '║ test/analyze-test-input/root/packages/foo/deprecation.dart:14: Deprecation notice does not match required pattern. There might be a missing space character at the end of the line.',
-            '║ test/analyze-test-input/root/packages/foo/deprecation.dart:20: Deprecation notice should be a grammatically correct sentence and start with a capital letter; see style guide: STYLE_GUIDE_URL',
-            '║ test/analyze-test-input/root/packages/foo/deprecation.dart:27: Deprecation notice should be a grammatically correct sentence and end with a period; notice appears to be "Also bad grammar".',
-            '║ test/analyze-test-input/root/packages/foo/deprecation.dart:31: Deprecation notice does not match required pattern.',
-            '║ test/analyze-test-input/root/packages/foo/deprecation.dart:34: Deprecation notice does not match required pattern.',
-            '║ test/analyze-test-input/root/packages/foo/deprecation.dart:39: Deprecation notice does not match required pattern. It might be missing the line saying "This feature was deprecated after...".',
-            '║ test/analyze-test-input/root/packages/foo/deprecation.dart:43: Deprecation notice does not match required pattern. There might not be an explanatory message.',
-            '║ test/analyze-test-input/root/packages/foo/deprecation.dart:50: End of deprecation notice does not match required pattern.',
-            '║ test/analyze-test-input/root/packages/foo/deprecation.dart:53: Unexpected deprecation notice indent.',
-            '║ test/analyze-test-input/root/packages/foo/deprecation.dart:72: Deprecation notice does not accurately indicate a beta branch version number; please see RELEASES_URL to find the latest beta build version number.',
-            '║ test/analyze-test-input/root/packages/foo/deprecation.dart:78: Deprecation notice does not accurately indicate a beta branch version number; please see RELEASES_URL to find the latest beta build version number.',
-            '║ test/analyze-test-input/root/packages/foo/deprecation.dart:101: Deprecation notice does not match required pattern. You might have used double quotes (") for the string instead of single quotes (\').',
-          ]
-          .map((String line) {
-            return line
-                .replaceAll('/', Platform.isWindows ? r'\' : '/')
-                .replaceAll(
-                  'STYLE_GUIDE_URL',
-                  'https://github.com/flutter/flutter/blob/main/docs/contributing/Style-guide-for-Flutter-repo.md',
-                )
-                .replaceAll(
-                  'RELEASES_URL',
-                  'https://flutter.dev/docs/development/tools/sdk/releases',
-                );
-          })
-          .join('\n');
-      expect(
-        result,
-        '╔═╡ERROR #1╞════════════════════════════════════════════════════════════════════\n'
-        '$lines\n'
-        '║ See: https://github.com/flutter/flutter/blob/main/docs/contributing/Tree-hygiene.md#handling-breaking-changes\n'
-        '╚═══════════════════════════════════════════════════════════════════════════════\n',
-      );
-    },
-    // TODO(goderbauer): Update and re-enable this after formatting changes have landed.
-    skip: true,
-  );
+  test('analyze.dart - verifyDeprecations', () async {
+    final String result = await capture(
+      () => verifyDeprecations(testRootPath, minimumMatches: 2),
+      shouldHaveErrors: true,
+    );
+    final String lines = <String>[
+          '║ test/analyze-test-input/root/packages/foo/deprecation.dart:14: Deprecation notice should be a grammatically correct sentence and start with a capital letter; see style guide: STYLE_GUIDE_URL',
+          '║ test/analyze-test-input/root/packages/foo/deprecation.dart:20: Deprecation notice should be a grammatically correct sentence and end with a period; notice appears to be "Also bad grammar".',
+          '║ test/analyze-test-input/root/packages/foo/deprecation.dart:25: Deprecation notice must be an adjacent string.',
+          '║ test/analyze-test-input/root/packages/foo/deprecation.dart:28: Deprecation notice must be an adjacent string.',
+          '║ test/analyze-test-input/root/packages/foo/deprecation.dart:33: Deprecation notice must be an adjacent string.',
+          '║ test/analyze-test-input/root/packages/foo/deprecation.dart:52: Deprecation notice does not accurately indicate a beta branch version number; please see RELEASES_URL to find the latest beta build version number.',
+          '║ test/analyze-test-input/root/packages/foo/deprecation.dart:58: Deprecation notice does not accurately indicate a beta branch version number; please see RELEASES_URL to find the latest beta build version number.',
+          '║ test/analyze-test-input/root/packages/foo/deprecation.dart:81: Deprecation notice does not match required pattern. You might have used double quotes (") for the string instead of single quotes (\').',
+        ]
+        .map((String line) {
+          return line
+              .replaceAll('/', Platform.isWindows ? r'\' : '/')
+              .replaceAll(
+                'STYLE_GUIDE_URL',
+                'https://github.com/flutter/flutter/blob/main/docs/contributing/Style-guide-for-Flutter-repo.md',
+              )
+              .replaceAll(
+                'RELEASES_URL',
+                'https://flutter.dev/docs/development/tools/sdk/releases',
+              );
+        })
+        .join('\n');
+    expect(
+      result,
+      '╔═╡ERROR #1╞════════════════════════════════════════════════════════════════════\n'
+      '$lines\n'
+      '║ See: https://github.com/flutter/flutter/blob/main/docs/contributing/Tree-hygiene.md#handling-breaking-changes\n'
+      '╚═══════════════════════════════════════════════════════════════════════════════\n',
+    );
+  });
 
   test('analyze.dart - verifyGoldenTags', () async {
     final List<String> result = (await capture(
@@ -288,8 +279,15 @@ void main() {
       shouldHaveErrors: true,
     );
 
-    expect(result, contains(':16'));
     expect(result, isNot(contains(':13')));
+    expect(result, isNot(contains(':14')));
+    expect(result, isNot(contains(':15')));
+    expect(result, isNot(contains(':19')));
+    expect(result, isNot(contains(':20')));
+    expect(result, isNot(contains(':21')));
+    expect(result, isNot(contains(':22')));
+
+    expect(result, contains(':17'));
   });
 
   test('analyze.dart - verifyTabooDocumentation', () async {
@@ -298,9 +296,9 @@ void main() {
       shouldHaveErrors: true,
     );
 
-    expect(result, isNot(contains(':19')));
-    expect(result, contains(':20'));
-    expect(result, contains(':21'));
+    expect(result, isNot(contains(':27')));
+    expect(result, contains(':28'));
+    expect(result, contains(':29'));
   });
 
   test('analyze.dart - clampDouble', () async {
@@ -313,12 +311,12 @@ void main() {
       shouldHaveErrors: true,
     );
     final String lines = <String>[
-      '║ packages/flutter/lib/bar.dart:37: input.clamp(0.0, 2)',
-      '║ packages/flutter/lib/bar.dart:38: input.toDouble().clamp(0, 2)',
-      '║ packages/flutter/lib/bar.dart:42: nullableInt?.clamp(0, 2.0)',
-      '║ packages/flutter/lib/bar.dart:43: nullableDouble?.clamp(0, 2)',
-      '║ packages/flutter/lib/bar.dart:48: nullableInt?.clamp',
-      '║ packages/flutter/lib/bar.dart:50: nullableDouble?.clamp',
+      '║ packages/flutter/lib/bar.dart:45: input.clamp(0.0, 2)',
+      '║ packages/flutter/lib/bar.dart:46: input.toDouble().clamp(0, 2)',
+      '║ packages/flutter/lib/bar.dart:50: nullableInt?.clamp(0, 2.0)',
+      '║ packages/flutter/lib/bar.dart:51: nullableDouble?.clamp(0, 2)',
+      '║ packages/flutter/lib/bar.dart:56: nullableInt?.clamp',
+      '║ packages/flutter/lib/bar.dart:58: nullableDouble?.clamp',
     ].map((String line) => line.replaceAll('/', Platform.isWindows ? r'\' : '/')).join('\n');
     expect(
       result,

@@ -56,7 +56,7 @@ void main() {
                 return 'q';
               },
             ),
-            const Barrier('Application finished.'),
+            Barrier('Application finished.'),
           ],
         );
         expect(existsDuringTest, isNot(isNull));
@@ -136,7 +136,7 @@ void main() {
               return 'q';
             },
           ),
-          const Barrier('Application finished.'),
+          Barrier('Application finished.'),
         ],
         logging:
             false, // we ignore leading log lines to avoid making this test sensitive to e.g. the help message text
@@ -232,7 +232,7 @@ void main() {
               return 'q';
             },
           ),
-          const Barrier('Application finished.'),
+          Barrier('Application finished.'),
         ],
         logging:
             false, // we ignore leading log lines to avoid making this test sensitive to e.g. the help message text
@@ -391,7 +391,7 @@ void main() {
             return 'q';
           },
         ),
-        const Barrier('Application finished.'),
+        Barrier('Application finished.'),
       ],
     );
     expect(result.exitCode, 0);

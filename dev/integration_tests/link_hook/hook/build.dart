@@ -9,6 +9,10 @@ import 'package:native_toolchain_c/native_toolchain_c.dart';
 
 void main(List<String> args) async {
   await build(args, (BuildConfig config, BuildOutputBuilder output) async {
+    if (!config.buildAssetTypes.contains(CodeAsset.type)) {
+      return;
+    }
+
     final String assetName;
     if (config.linkingEnabled) {
       // The link hook will be run. So emit an asset with a name that is

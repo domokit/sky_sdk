@@ -915,8 +915,8 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
             (FocusNode node) => node.rect != target && node.rect.center.dx <= target.left,
           TraversalDirection.right =>
             (FocusNode node) => node.rect != target && node.rect.center.dx >= target.right,
-          TraversalDirection.up || TraversalDirection.down =>
-            throw ArgumentError('Invalid direction $direction'),
+          TraversalDirection.up ||
+          TraversalDirection.down => throw ArgumentError('Invalid direction $direction'),
         }).toList();
     // Sort all nodes from left to right.
     mergeSort<FocusNode>(
@@ -941,8 +941,8 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
             (FocusNode node) => node.rect != target && node.rect.center.dy <= target.top,
           TraversalDirection.down =>
             (FocusNode node) => node.rect != target && node.rect.center.dy >= target.bottom,
-          TraversalDirection.left || TraversalDirection.right =>
-            throw ArgumentError('Invalid direction $direction'),
+          TraversalDirection.left ||
+          TraversalDirection.right => throw ArgumentError('Invalid direction $direction'),
         }).toList();
     mergeSort<FocusNode>(
       sorted,

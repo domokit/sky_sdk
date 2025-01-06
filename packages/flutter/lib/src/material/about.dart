@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'package:flutter/cupertino.dart';
+///
 /// @docImport 'drawer.dart';
 /// @docImport 'list_tile_theme.dart';
 library;

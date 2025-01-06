@@ -86,7 +86,6 @@ class DaemonCommand extends FlutterCommand {
       ).run();
       return FlutterCommandResult.success();
     }
-    globals.printStatus('Starting device daemon...');
     final Daemon daemon = Daemon(
       DaemonConnection(
         daemonStreams: DaemonStreams.fromStdio(globals.stdio, logger: globals.logger),
@@ -94,6 +93,7 @@ class DaemonCommand extends FlutterCommand {
       ),
       notifyingLogger: asLogger<NotifyingLogger>(globals.logger),
     );
+    globals.printStatus('Device daemon started.');
     final int code = await daemon.onExit;
     if (code != 0) {
       throwToolExit('Daemon exited with non-zero exit code: $code', exitCode: code);

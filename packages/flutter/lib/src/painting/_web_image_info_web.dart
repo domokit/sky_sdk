@@ -12,7 +12,7 @@ import 'image_stream.dart';
 ///
 /// This occurs on the web when the image resource is from a different origin
 /// and is not configured for CORS. Since the image bytes cannot be directly
-/// fetched, [ui.Image]s cannot be created from it. However, the image can
+/// fetched, [Image]s cannot be created from it. However, the image can
 /// still be displayed if an <img> element is used.
 class WebImageInfo implements ImageInfo {
   /// Creates a new [WebImageInfo] from a given <img> element.

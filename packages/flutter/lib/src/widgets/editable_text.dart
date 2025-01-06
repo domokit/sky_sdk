@@ -3961,8 +3961,7 @@ class EditableTextState extends State<EditableText>
     TargetPlatform.fuchsia ||
     TargetPlatform.linux ||
     TargetPlatform.macOS ||
-    TargetPlatform.windows =>
-      false,
+    TargetPlatform.windows => false,
   };
 
   bool _isInternalScrollableNotification(BuildContext? notificationContext) {

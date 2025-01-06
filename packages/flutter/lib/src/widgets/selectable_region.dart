@@ -307,8 +307,7 @@ class SelectableRegion extends StatefulWidget {
       TargetPlatform.macOS ||
       TargetPlatform.fuchsia ||
       TargetPlatform.linux ||
-      TargetPlatform.windows =>
-        false,
+      TargetPlatform.windows => false,
       // TODO(bleroux): the share button should be shown on iOS but the share
       // functionality requires some changes on the engine side because, on iPad,
       // it needs an anchor for the popup.
@@ -531,10 +530,8 @@ class SelectableRegionState extends State<SelectableRegion>
   void _updateSelectionStatus() {
     final SelectionGeometry geometry = _selectionDelegate.value;
     final TextSelection selection = switch (geometry.status) {
-      SelectionStatus.uncollapsed || SelectionStatus.collapsed => const TextSelection(
-        baseOffset: 0,
-        extentOffset: 1,
-      ),
+      SelectionStatus.uncollapsed ||
+      SelectionStatus.collapsed => const TextSelection(baseOffset: 0, extentOffset: 1),
       SelectionStatus.none => const TextSelection.collapsed(offset: 1),
     };
     textEditingValue = TextEditingValue(text: '__', selection: selection);
@@ -3065,8 +3062,8 @@ abstract class MultiSelectableSelectionContainerDelegate extends SelectionContai
     if (currentSelectionStartIndex == -1) {
       currentSelectionStartIndex =
           currentSelectionEndIndex = switch (event.direction) {
-            SelectionExtendDirection.previousLine || SelectionExtendDirection.backward =>
-              selectables.length - 1,
+            SelectionExtendDirection.previousLine ||
+            SelectionExtendDirection.backward => selectables.length - 1,
             SelectionExtendDirection.nextLine || SelectionExtendDirection.forward => 0,
           };
     }

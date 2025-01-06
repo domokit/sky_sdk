@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'switch.dart';
+library;
+
 import 'dart:collection';
 import 'dart:math' as math;
 
@@ -75,7 +78,7 @@ const Duration _kFadeDuration = Duration(milliseconds: 165);
 /// the parent gets rebuilt.
 ///
 /// This example also demonstrates how to use the [disabledChildren] property by
-/// toggling each [Switch] to enable or disable the segments.
+/// toggling each [CupertinoSwitch] to enable or disable the segments.
 ///
 /// ** See code in examples/api/lib/cupertino/segmented_control/cupertino_segmented_control.0.dart **
 /// {@end-tool}

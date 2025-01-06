@@ -950,6 +950,7 @@
 ../../../flutter/third_party/boringssl/src/.github
 ../../../flutter/third_party/boringssl/src/.gitignore
 ../../../flutter/third_party/boringssl/src/API-CONVENTIONS.md
+../../../flutter/third_party/boringssl/src/AUTHORS
 ../../../flutter/third_party/boringssl/src/BREAKING-CHANGES.md
 ../../../flutter/third_party/boringssl/src/BUILD.bazel
 ../../../flutter/third_party/boringssl/src/BUILDING.md
@@ -1009,6 +1010,7 @@
 ../../../flutter/third_party/boringssl/src/crypto/fipsmodule/ec/p256_test.cc
 ../../../flutter/third_party/boringssl/src/crypto/fipsmodule/ecdsa/ecdsa_test.cc
 ../../../flutter/third_party/boringssl/src/crypto/fipsmodule/hkdf/hkdf_test.cc
+../../../flutter/third_party/boringssl/src/crypto/fipsmodule/keccak/keccak_test.cc
 ../../../flutter/third_party/boringssl/src/crypto/fipsmodule/modes/gcm_test.cc
 ../../../flutter/third_party/boringssl/src/crypto/fipsmodule/rand/ctrdrbg_test.cc
 ../../../flutter/third_party/boringssl/src/crypto/fipsmodule/service_indicator/service_indicator_test.cc
@@ -1018,7 +1020,6 @@
 ../../../flutter/third_party/boringssl/src/crypto/hpke/translate_test_vectors.py
 ../../../flutter/third_party/boringssl/src/crypto/hrss/hrss_test.cc
 ../../../flutter/third_party/boringssl/src/crypto/impl_dispatch_test.cc
-../../../flutter/third_party/boringssl/src/crypto/keccak/keccak_test.cc
 ../../../flutter/third_party/boringssl/src/crypto/kyber/kyber_test.cc
 ../../../flutter/third_party/boringssl/src/crypto/lhash/lhash_test.cc
 ../../../flutter/third_party/boringssl/src/crypto/md5/md5_test.cc
@@ -1242,6 +1243,10 @@
 ../../../flutter/third_party/boringssl/src/third_party/wycheproof_testvectors/mldsa_65_standard_sign_test.txt
 ../../../flutter/third_party/boringssl/src/third_party/wycheproof_testvectors/mldsa_65_standard_verify_test.json
 ../../../flutter/third_party/boringssl/src/third_party/wycheproof_testvectors/mldsa_65_standard_verify_test.txt
+../../../flutter/third_party/boringssl/src/third_party/wycheproof_testvectors/mldsa_87_standard_sign_test.json
+../../../flutter/third_party/boringssl/src/third_party/wycheproof_testvectors/mldsa_87_standard_sign_test.txt
+../../../flutter/third_party/boringssl/src/third_party/wycheproof_testvectors/mldsa_87_standard_verify_test.json
+../../../flutter/third_party/boringssl/src/third_party/wycheproof_testvectors/mldsa_87_standard_verify_test.txt
 ../../../flutter/third_party/boringssl/src/third_party/wycheproof_testvectors/primality_test.json
 ../../../flutter/third_party/boringssl/src/third_party/wycheproof_testvectors/primality_test.txt
 ../../../flutter/third_party/boringssl/src/third_party/wycheproof_testvectors/rsa_oaep_2048_sha1_mgf1sha1_test.json

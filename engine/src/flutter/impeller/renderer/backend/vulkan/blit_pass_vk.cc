@@ -57,8 +57,7 @@ bool BlitPassVK::IsValid() const {
 }
 
 // |BlitPass|
-bool BlitPassVK::EncodeCommands(
-    const std::shared_ptr<Allocator>& transients_allocator) const {
+bool BlitPassVK::EncodeCommands() const {
   return true;
 }
 

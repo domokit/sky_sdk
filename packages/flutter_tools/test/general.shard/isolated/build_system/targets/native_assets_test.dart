@@ -13,8 +13,7 @@ import 'package:flutter_tools/src/build_system/exceptions.dart';
 import 'package:flutter_tools/src/build_system/targets/native_assets.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/isolated/native_assets/native_assets.dart';
-import 'package:native_assets_cli/code_assets_builder.dart' hide BuildMode;
-import 'package:native_assets_cli/native_assets_cli.dart' as native_assets_cli show BuildMode;
+import 'package:native_assets_cli/code_assets_builder.dart';
 import 'package:package_config/package_config.dart' show Package;
 
 import '../../../../src/common.dart';
@@ -279,7 +278,6 @@ void main() {
           linkResult: FakeFlutterNativeAssetsBuilderResult.fromAssets(codeAssets: codeAssets),
         );
         await DartBuildForNative(buildRunner: buildRunner).build(androidEnvironment);
-        expect(buildRunner.lastBuildMode, native_assets_cli.BuildMode.release);
       },
     );
   }

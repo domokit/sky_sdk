@@ -108,8 +108,8 @@ class _RenderBoxSubclassVisitor extends RecursiveAstVisitor<void> {
       return;
     }
     final bool isCallingSuperImplementation = switch (node.parent) {
-      PropertyAccess(target: SuperExpression()) || MethodInvocation(target: SuperExpression()) =>
-        true,
+      PropertyAccess(target: SuperExpression()) ||
+      MethodInvocation(target: SuperExpression()) => true,
       _ => false,
     };
     if (isCallingSuperImplementation) {

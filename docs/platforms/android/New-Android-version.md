@@ -96,7 +96,9 @@ https://github.com/flutter/engine/blob/9289cb6a36aa86990e3ffe0f20324dafa38e7c11/
 - Update buildroot version in DEPS file to consume the changes in the flutter/buildroot steps above
 https://github.com/flutter/engine/blob/9289cb6a36aa86990e3ffe0f20324dafa38e7c11/DEPS#L260
 
-**In flutter/packages:** Set examples to build with the new API.
+**In flutter/packages:**
+- Set examples to build with the new API.
+- Update `create_all_packages` to use new api as compile sdk [source](https://github.com/flutter/packages/blob/3515abab07d0bb2441277f43c2411c9b5e4ecf94/script/tool/lib/src/create_all_packages_app_command.dart#L245-L249).
 
 #### Test “Integration Test” package
 

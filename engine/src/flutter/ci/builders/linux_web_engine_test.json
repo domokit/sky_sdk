@@ -193,18 +193,14 @@
           "parameters": [
             "check-licenses"
           ],
-          "scripts": [
-            "flutter/lib/web_ui/dev/felt"
-          ]
+          "script": "flutter/lib/web_ui/dev/felt"
         },
         {
           "name": "web engine analysis",
           "parameters": [
             "analyze"
           ],
-          "scripts": [
-            "flutter/lib/web_ui/dev/felt"
-          ]
+          "script": "flutter/lib/web_ui/dev/felt"
         }
       ]
     },
@@ -220,7 +216,6 @@
         "download_jdk": false
       },
       "dependencies": [
-        "web_tests/artifacts",
         "web_tests/test_bundles/dart2js-html-html",
         "web_tests/test_bundles/dart2js-html-ui",
         "web_tests/test_bundles/dart2js-canvaskit-engine",
@@ -412,7 +407,6 @@
         "download_jdk": false
       },
       "dependencies": [
-        "web_tests/artifacts",
         "web_tests/test_bundles/dart2js-html-html",
         "web_tests/test_bundles/dart2js-html-ui",
         "web_tests/test_bundles/dart2js-canvaskit-engine",
@@ -540,7 +534,6 @@
         "download_jdk": false
       },
       "dependencies": [
-        "web_tests/artifacts",
         "web_tests/test_bundles/dart2js-html-html",
         "web_tests/test_bundles/dart2js-html-ui",
         "web_tests/test_bundles/dart2js-canvaskit-engine",

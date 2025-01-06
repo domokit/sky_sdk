@@ -396,7 +396,8 @@ class _FlutterLogoPainter extends BoxPainter {
         final double finalLeftTextPosition = // position of text in rest position
             (256.4 / 820.0) *
                 rect.width - // 256.4 is the distance from the left edge to the left of the F when the whole logo is 820.0 wide
-            (32.0 / 350.0) * fontSize; // 32 is the distance from the text bounding box edge to the left edge of the F when the font size is 350
+            (32.0 / 350.0) *
+                fontSize; // 32 is the distance from the text bounding box edge to the left edge of the F when the font size is 350
         final double initialLeftTextPosition = // position of text when just starting the animation
             rect.width / 2.0 - _textBoundingRect.width * scale;
         final Offset textOffset = Offset(

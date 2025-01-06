@@ -174,12 +174,9 @@ class FlutterConfiguration {
 
   /// Auto detect which rendering backend to use.
   ///
-  /// Using flutter tools option "--web-renderer=auto" or not specifying one
-  /// would set the value to true. Otherwise, it would be false.
-  static const bool flutterWebAutoDetect = bool.fromEnvironment(
-    'FLUTTER_WEB_AUTO_DETECT',
-    defaultValue: true,
-  );
+  /// Using flutter tools option "--web-renderer=auto" would set the value to
+  /// true. Otherwise, it would be false.
+  static const bool flutterWebAutoDetect = bool.fromEnvironment('FLUTTER_WEB_AUTO_DETECT');
 
   static const bool flutterWebUseSkwasm = bool.fromEnvironment('FLUTTER_WEB_USE_SKWASM');
 

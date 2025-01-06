@@ -519,7 +519,7 @@ TEST_P(AiksTest, MipmapGenerationWorksCorrectly) {
   blit_pass->AddCopy(DeviceBuffer::AsBufferView(std::move(device_buffer)),
                      texture);
   blit_pass->GenerateMipmap(texture);
-  EXPECT_TRUE(blit_pass->EncodeCommands(GetContext()->GetResourceAllocator()));
+  EXPECT_TRUE(blit_pass->EncodeCommands());
   EXPECT_TRUE(GetContext()->GetCommandQueue()->Submit({command_buffer}).ok());
 
   auto image = DlImageImpeller::Make(texture);
@@ -579,7 +579,7 @@ TEST_P(AiksTest, SetContentsWithRegion) {
                      IRect::MakeLTRB(50, 50, 150, 150));
 
   auto did_submit =
-      blit_pass->EncodeCommands(GetContext()->GetResourceAllocator()) &&
+      blit_pass->EncodeCommands() &&
       GetContext()->GetCommandQueue()->Submit({std::move(cmd_buffer)}).ok();
   ASSERT_TRUE(did_submit);
 

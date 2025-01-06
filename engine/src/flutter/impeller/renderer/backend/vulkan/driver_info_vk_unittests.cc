@@ -82,7 +82,8 @@ bool CanBatchSubmitTest(std::string_view driver_name, bool qc = true) {
                 prop->deviceType = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
               })
           .Build();
-  return context->GetDriverInfo()->CanBatchSubmitCommandBuffers();
+  return !GetWorkarounds(*context->GetDriverInfo())
+              .batch_submit_command_buffer_timeout;
 }
 
 TEST(DriverInfoVKTest, CanBatchSubmitCommandBuffers) {
@@ -91,6 +92,35 @@ TEST(DriverInfoVKTest, CanBatchSubmitCommandBuffers) {
 
   EXPECT_TRUE(CanBatchSubmitTest("Mali-G51", false));
   EXPECT_TRUE(CanBatchSubmitTest("Adreno (TM) 750", true));
+}
+
+bool CanUsePrimitiveRestartSubmitTest(std::string_view driver_name,
+                                      bool qc = true) {
+  auto const context =
+      MockVulkanContextBuilder()
+          .SetPhysicalPropertiesCallback(
+              [&driver_name, qc](VkPhysicalDevice device,
+                                 VkPhysicalDeviceProperties* prop) {
+                if (qc) {
+                  prop->vendorID = 0x168C;  // Qualcomm
+                } else {
+                  prop->vendorID = 0x13B5;  // ARM
+                }
+                driver_name.copy(prop->deviceName, driver_name.size());
+                prop->deviceType = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
+              })
+          .Build();
+  return !GetWorkarounds(*context->GetDriverInfo())
+              .slow_primitive_restart_performance;
+}
+
+TEST(DriverInfoVKTest, CanUsePrimitiveRestart) {
+  // Adreno no primitive restart
+  EXPECT_FALSE(CanUsePrimitiveRestartSubmitTest("Adreno (TM) 540", true));
+  EXPECT_FALSE(CanUsePrimitiveRestartSubmitTest("Adreno (TM) 750", true));
+
+  // Mali A-OK
+  EXPECT_TRUE(CanUsePrimitiveRestartSubmitTest("Mali-G51", false));
 }
 
 TEST(DriverInfoVKTest, DriverParsingMali) {

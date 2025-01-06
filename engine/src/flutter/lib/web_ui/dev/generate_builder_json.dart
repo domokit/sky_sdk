@@ -115,12 +115,12 @@ class GenerateBuilderJsonCommand extends Command<bool> {
         <String, dynamic>{
           'name': 'check licenses',
           'parameters': <String>['check-licenses'],
-          'scripts': <String>['flutter/lib/web_ui/dev/felt'],
+          'script': 'flutter/lib/web_ui/dev/felt',
         },
         <String, dynamic>{
           'name': 'web engine analysis',
           'parameters': <String>['analyze'],
-          'scripts': <String>['flutter/lib/web_ui/dev/felt'],
+          'script': 'flutter/lib/web_ui/dev/felt',
         },
       ],
     };
@@ -161,10 +161,7 @@ class GenerateBuilderJsonCommand extends Command<bool> {
         if (cpu != null) 'cpu=$cpu',
       ],
       'gclient_variables': <String, dynamic>{'download_android_deps': false, 'download_jdk': false},
-      'dependencies': <String>[
-        'web_tests/artifacts',
-        ...bundles.map((bundle) => 'web_tests/test_bundles/${bundle.name}'),
-      ],
+      'dependencies': <String>[...bundles.map((bundle) => 'web_tests/test_bundles/${bundle.name}')],
       'test_dependencies': <dynamic>[
         <String, dynamic>{
           'dependency': 'goldctl',

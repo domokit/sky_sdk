@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:meta/meta.dart';
 import 'package:yaml/yaml.dart';
 
 import 'base/file_system.dart';
@@ -12,73 +13,122 @@ import 'project.dart';
 import 'template.dart';
 import 'version.dart';
 
-enum FlutterProjectType implements CliEnum {
-  /// This is the default project with the user-managed host code.
-  /// It is different than the "module" template in that it exposes and doesn't
-  /// manage the platform code.
-  app,
+/// The result of parsing `--template=` for `flutter create` and related commands.
+@immutable
+sealed class ParsedFlutterTemplateType implements CliEnum {
+  static const List<ParsedFlutterTemplateType> _values = <ParsedFlutterTemplateType>[
+    ...FlutterTemplateType.values,
+    ...RemovedFlutterTemplateType.values,
+  ];
 
-  /// A List/Detail app template that follows community best practices.
-  skeleton,
-
-  /// The is a project that has managed platform host code. It is an application with
-  /// ephemeral .ios and .android directories that can be updated automatically.
-  module,
-
-  /// This is a Flutter Dart package project. It doesn't have any native
-  /// components, only Dart.
-  package,
-
-  /// This is a Dart package project with external builds for native components.
-  packageFfi,
-
-  /// This is a native plugin project.
-  plugin,
-
-  /// This is an FFI native plugin project.
-  pluginFfi;
-
-  @override
-  String get cliName => snakeCase(name);
-
-  @override
-  String get helpText => switch (this) {
-    FlutterProjectType.app => '(default) Generate a Flutter application.',
-    FlutterProjectType.skeleton =>
-      'Generate a List View / Detail View Flutter application that follows community best practices.',
-    FlutterProjectType.package =>
-      'Generate a shareable Flutter project containing modular Dart code.',
-    FlutterProjectType.plugin =>
-      'Generate a shareable Flutter project containing an API '
-          'in Dart code with a platform-specific implementation through method channels for Android, iOS, '
-          'Linux, macOS, Windows, web, or any combination of these.',
-    FlutterProjectType.pluginFfi =>
-      'Generate a shareable Flutter project containing an API '
-          'in Dart code with a platform-specific implementation through dart:ffi for Android, iOS, '
-          'Linux, macOS, Windows, or any combination of these.',
-    FlutterProjectType.packageFfi =>
-      'Generate a shareable Dart/Flutter project containing an API '
-          'in Dart code with a platform-specific implementation through dart:ffi for Android, iOS, '
-          'Linux, macOS, and Windows.',
-    FlutterProjectType.module =>
-      'Generate a project to add a Flutter module to an existing Android or iOS application.',
-  };
-
-  static FlutterProjectType? fromCliName(String value) {
-    for (final FlutterProjectType type in FlutterProjectType.values) {
-      if (value == type.cliName) {
+  /// Parses and returns a [ParsedFlutterTemplateType], if any, for [cliName].
+  ///
+  /// If no match was found `null` is returned.
+  static ParsedFlutterTemplateType? fromCliName(String cliName) {
+    for (final ParsedFlutterTemplateType type in _values) {
+      if (cliName == type.cliName) {
         return type;
       }
     }
     return null;
   }
 
-  static List<FlutterProjectType> get enabledValues {
-    return <FlutterProjectType>[
-      for (final FlutterProjectType value in values)
-        if (value != FlutterProjectType.packageFfi || featureFlags.isNativeAssetsEnabled) value,
-    ];
+  /// Returns template types that are enabled based on the current [featureFlags].
+  static List<ParsedFlutterTemplateType> enabledValues(FeatureFlags featureFlags) {
+    return _values.toList()..retainWhere((ParsedFlutterTemplateType templateType) {
+      return templateType.isEnabled(featureFlags);
+    });
   }
+
+  /// Whether the flag is enabled based on a flag being set.
+  bool isEnabled(FeatureFlags featureFlags) => true;
+}
+
+/// A [ParsedFlutterTemplateType] that is no longer operable.
+///
+/// The CLI can give a hint to a developer that the [cliName] _did_ use to exist,
+/// but does no longer, and provides [helpText] for other resources to use instead.
+enum RemovedFlutterTemplateType implements ParsedFlutterTemplateType {
+  skeleton(
+    helpText:
+        'Formerly generated a list view / detail view Flutter application that '
+        'followed some community best practices. For up to date resources, see '
+        'https://flutter.github.io/samples, https://docs.flutter.dev/codelabs, '
+        'and community resources such as https://flutter-builder.app/.',
+  );
+
+  const RemovedFlutterTemplateType({required this.helpText});
+
+  @override
+  bool isEnabled(FeatureFlags featureFlags) => true;
+
+  @override
+  final String helpText;
+
+  @override
+  String get cliName => snakeCase(name);
+}
+
+/// The result of parsing a recognized `--template` for `flutter create` and related commands.
+enum FlutterTemplateType implements ParsedFlutterTemplateType {
+  /// The default project with the user-managed host code.
+  ///
+  /// It is different than the "module" template in that it exposes and doesn't
+  /// manage the platform code.
+  app(helpText: '(default) Generate a Flutter application.'),
+
+  /// A project that has managed platform host code.
+  ///
+  /// It is an application with ephemeral .ios and .android directories that can be updated automatically.
+  module(
+    helpText:
+        'Generate a project to add a Flutter module to an existing Android or iOS application.',
+  ),
+
+  /// A Flutter Dart package project.
+  ///
+  /// It doesn't have any native components, only Dart.
+  package(helpText: 'Generate a shareable Flutter project containing modular Dart code.'),
+
+  /// A Dart package project with external builds for native components.
+  packageFfi(
+    helpText:
+        'Generate a shareable Dart/Flutter project containing an API '
+        'in Dart code with a platform-specific implementation through dart:ffi for Android, iOS, '
+        'Linux, macOS, and Windows.',
+  ),
+
+  /// A native plugin project.
+  plugin(
+    helpText:
+        'Generate a shareable Flutter project containing an API '
+        'in Dart code with a platform-specific implementation through method channels for Android, iOS, '
+        'Linux, macOS, Windows, web, or any combination of these.',
+  ),
+
+  /// This is an FFI native plugin project.
+  pluginFfi(
+    helpText:
+        'Generate a shareable Flutter project containing an API '
+        'in Dart code with a platform-specific implementation through dart:ffi for Android, iOS, '
+        'Linux, macOS, Windows, or any combination of these.',
+  );
+
+  const FlutterTemplateType({required this.helpText});
+
+  @override
+  bool isEnabled(FeatureFlags featureFlags) {
+    return switch (this) {
+      FlutterTemplateType.packageFfi => featureFlags.isNativeAssetsEnabled,
+      _ => true,
+    };
+  }
+
+  @override
+  final String helpText;
+
+  @override
+  String get cliName => snakeCase(name);
 }
 
 /// Verifies the expected yaml keys are present in the file.
@@ -135,7 +185,13 @@ class FlutterProjectMetadata {
       }
     }
     if (_validateMetadataMap(yamlRoot, <String, Type>{'project_type': String}, _logger)) {
-      _projectType = FlutterProjectType.fromCliName(yamlRoot['project_type'] as String);
+      final ParsedFlutterTemplateType? templateType = ParsedFlutterTemplateType.fromCliName(
+        yamlRoot['project_type'] as String,
+      );
+      _projectType = switch (templateType) {
+        RemovedFlutterTemplateType() || null => null,
+        FlutterTemplateType() => templateType,
+      };
     }
     final Object? migrationYaml = yamlRoot['migration'];
     if (migrationYaml is YamlMap) {
@@ -148,7 +204,7 @@ class FlutterProjectMetadata {
     required this.file,
     required String? versionRevision,
     required String? versionChannel,
-    required FlutterProjectType? projectType,
+    required FlutterTemplateType? projectType,
     required this.migrateConfig,
     required Logger logger,
   }) : _logger = logger,
@@ -165,8 +221,8 @@ class FlutterProjectMetadata {
   String? _versionChannel;
   String? get versionChannel => _versionChannel;
 
-  FlutterProjectType? _projectType;
-  FlutterProjectType? get projectType => _projectType;
+  FlutterTemplateType? _projectType;
+  FlutterTemplateType? get projectType => _projectType;
 
   /// Metadata and configuration for the migrate command.
   MigrateConfig migrateConfig;

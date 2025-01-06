@@ -115,12 +115,8 @@ void main() {
 }
 ''');
         expect(
-          (await templatePathProvider.imageDirectory(
-            'app_shared',
-            globals.fs,
-            globals.logger,
-          )).path,
-          globals.fs.path.absolute('flutter_template_images', 'templates', 'app_shared'),
+          (await templatePathProvider.imageDirectory('app', globals.fs, globals.logger)).path,
+          globals.fs.path.absolute('flutter_template_images', 'templates', 'app'),
         );
       },
       overrides: overrides,

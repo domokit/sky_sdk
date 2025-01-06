@@ -1671,8 +1671,7 @@ bool Canvas::BlitToOnscreen() {
     auto blit_pass = command_buffer->CreateBlitPass();
     blit_pass->AddCopy(offscreen_target.GetRenderTargetTexture(),
                        render_target_.GetRenderTargetTexture());
-    if (!blit_pass->EncodeCommands(
-            renderer_.GetContext()->GetResourceAllocator())) {
+    if (!blit_pass->EncodeCommands()) {
       VALIDATION_LOG << "Failed to encode root pass blit command.";
       return false;
     }

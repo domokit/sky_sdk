@@ -285,8 +285,7 @@ mixin RendererBinding
     'This feature was deprecated after v3.10.0-12.0.pre.',
   )
   // TODO(goderbauer): When this deprecated property is removed also delete the _ReusableRenderView class.
-  late final RenderView
-  renderView = _ReusableRenderView(view: platformDispatcher.implicitView!);
+  late final RenderView renderView = _ReusableRenderView(view: platformDispatcher.implicitView!);
 
   /// Creates the [PipelineOwner] that serves as the root of the pipeline owner
   /// tree ([rootPipelineOwner]).

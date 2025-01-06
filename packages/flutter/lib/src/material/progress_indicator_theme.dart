@@ -31,8 +31,7 @@ import 'theme.dart';
 ///    theme down its subtree.
 ///  * [ThemeData.progressIndicatorTheme], which describes the defaults for
 ///    any progress indicators as part of the application's [ThemeData].
-class ProgressIndicatorThemeData
-    with Diagnosticable {
+class ProgressIndicatorThemeData with Diagnosticable {
   /// Creates the set of properties used to configure [ProgressIndicator] widgets.
   const ProgressIndicatorThemeData({
     this.color,

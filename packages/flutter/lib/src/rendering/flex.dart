@@ -829,8 +829,7 @@ class RenderFlex extends RenderBox
       CrossAxisAlignment.start ||
       CrossAxisAlignment.center ||
       CrossAxisAlignment.end ||
-      CrossAxisAlignment.stretch =>
-        false,
+      CrossAxisAlignment.stretch => false,
     };
   }
 
@@ -884,8 +883,7 @@ class RenderFlex extends RenderBox
       CrossAxisAlignment.start ||
       CrossAxisAlignment.center ||
       CrossAxisAlignment.end ||
-      CrossAxisAlignment.baseline =>
-        false,
+      CrossAxisAlignment.baseline => false,
     };
     return switch (_direction) {
       Axis.horizontal =>
@@ -915,8 +913,7 @@ class RenderFlex extends RenderBox
       CrossAxisAlignment.start ||
       CrossAxisAlignment.center ||
       CrossAxisAlignment.end ||
-      CrossAxisAlignment.baseline =>
-        false,
+      CrossAxisAlignment.baseline => false,
     };
     return switch (_direction) {
       Axis.horizontal => BoxConstraints(

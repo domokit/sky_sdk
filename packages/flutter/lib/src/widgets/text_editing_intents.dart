@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 /// @docImport 'default_text_editing_shortcuts.dart';
+/// @docImport 'editable_text.dart';
 library;
 
 import 'package:flutter/services.dart';

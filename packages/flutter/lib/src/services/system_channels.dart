@@ -14,6 +14,7 @@
 /// @docImport 'raw_keyboard.dart';
 /// @docImport 'raw_keyboard_android.dart';
 /// @docImport 'raw_keyboard_fuchsia.dart';
+/// @docImport 'scribe.dart';
 /// @docImport 'system_chrome.dart';
 /// @docImport 'system_navigator.dart';
 /// @docImport 'system_sound.dart';

@@ -194,8 +194,7 @@ class _FlexibleSpaceBarState extends State<FlexibleSpaceBar> {
           TargetPlatform.android ||
           TargetPlatform.fuchsia ||
           TargetPlatform.linux ||
-          TargetPlatform.windows =>
-            false,
+          TargetPlatform.windows => false,
           TargetPlatform.iOS || TargetPlatform.macOS => true,
         };
   }

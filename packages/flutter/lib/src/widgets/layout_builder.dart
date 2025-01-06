@@ -104,8 +104,7 @@ class _LayoutBuilderElement<ConstraintType extends Constraints> extends RenderOb
       SchedulerPhase.idle || SchedulerPhase.postFrameCallbacks => true,
       SchedulerPhase.transientCallbacks ||
       SchedulerPhase.midFrameMicrotasks ||
-      SchedulerPhase.persistentCallbacks =>
-        false,
+      SchedulerPhase.persistentCallbacks => false,
     };
     if (!deferMarkNeedsLayout) {
       renderObject.markNeedsLayout();

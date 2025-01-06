@@ -1022,8 +1022,7 @@ class _AppBarState extends State<AppBar> {
             TargetPlatform.android ||
             TargetPlatform.fuchsia ||
             TargetPlatform.linux ||
-            TargetPlatform.windows =>
-              true,
+            TargetPlatform.windows => true,
             TargetPlatform.iOS || TargetPlatform.macOS => null,
           },
           header: true,

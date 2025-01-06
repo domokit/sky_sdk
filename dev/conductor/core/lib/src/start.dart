@@ -242,8 +242,9 @@ class StartContext extends Context {
 
     return switch (lastVersion.type) {
       VersionType.stable => ReleaseType.STABLE_HOTFIX,
-      VersionType.development || VersionType.gitDescribe || VersionType.latest =>
-        ReleaseType.STABLE_INITIAL,
+      VersionType.development ||
+      VersionType.gitDescribe ||
+      VersionType.latest => ReleaseType.STABLE_INITIAL,
     };
   }
 

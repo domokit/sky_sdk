@@ -17,7 +17,7 @@ import 'package:flutter_tools/src/build_system/targets/native_assets.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:flutter_tools/src/isolated/native_assets/native_assets.dart';
-import 'package:native_assets_cli/code_assets_builder.dart' hide BuildMode;
+import 'package:native_assets_cli/code_assets_builder.dart';
 import 'package:package_config/package_config_types.dart';
 
 import '../../../src/common.dart';
@@ -108,8 +108,8 @@ void main() {
         expect(
           (globals.logger as BufferLogger).traceText,
           stringContainsInOrder(<String>[
-            'Building native assets for android arm64 $buildMode.',
-            'Building native assets for android arm64 $buildMode done.',
+            'Building native assets for android arm64.',
+            'Building native assets for android arm64 done.',
           ]),
         );
 

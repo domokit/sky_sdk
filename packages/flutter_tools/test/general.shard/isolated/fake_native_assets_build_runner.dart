@@ -19,10 +19,9 @@ class FakeFlutterNativeAssetsBuildRunner implements FlutterNativeAssetsBuildRunn
     this.onLink,
     this.buildResult = const FakeFlutterNativeAssetsBuilderResult(),
     this.linkResult = const FakeFlutterNativeAssetsBuilderResult(),
-    CCompilerConfig? cCompilerConfigResult,
-    CCompilerConfig? ndkCCompilerConfigResult,
-  }) : cCompilerConfigResult = cCompilerConfigResult ?? CCompilerConfig(),
-       ndkCCompilerConfigResult = ndkCCompilerConfigResult ?? CCompilerConfig();
+    this.cCompilerConfigResult,
+    this.ndkCCompilerConfigResult,
+  });
 
   final BuildResult? Function(BuildConfig)? onBuild;
   final LinkResult? Function(LinkConfig)? onLink;
@@ -30,25 +29,22 @@ class FakeFlutterNativeAssetsBuildRunner implements FlutterNativeAssetsBuildRunn
   final LinkResult? linkResult;
   final bool hasPackageConfigResult;
   final List<Package> packagesWithNativeAssetsResult;
-  final CCompilerConfig cCompilerConfigResult;
-  final CCompilerConfig ndkCCompilerConfigResult;
+  final CCompilerConfig? cCompilerConfigResult;
+  final CCompilerConfig? ndkCCompilerConfigResult;
 
   int buildInvocations = 0;
   int linkInvocations = 0;
   int hasPackageConfigInvocations = 0;
   int packagesWithNativeAssetsInvocations = 0;
-  BuildMode? lastBuildMode;
 
   @override
   Future<BuildResult?> build({
-    required List<String> supportedAssetTypes,
+    required List<String> buildAssetTypes,
     required BuildConfigValidator configValidator,
     required BuildConfigCreator configCreator,
     required BuildValidator buildValidator,
     required ApplicationAssetValidator applicationAssetValidator,
     required bool includeParentEnvironment,
-    required BuildMode buildMode,
-    required OS targetOS,
     required Uri workingDirectory,
     required bool linkingEnabled,
   }) async {
@@ -59,9 +55,7 @@ class FakeFlutterNativeAssetsBuildRunner implements FlutterNativeAssetsBuildRunn
             ..setupHookConfig(
               packageRoot: package.root,
               packageName: package.name,
-              targetOS: targetOS,
-              supportedAssetTypes: supportedAssetTypes,
-              buildMode: buildMode,
+              buildAssetTypes: buildAssetTypes,
             )
             ..setupBuildConfig(dryRun: false, linkingEnabled: linkingEnabled)
             ..setupBuildRunConfig(
@@ -72,7 +66,6 @@ class FakeFlutterNativeAssetsBuildRunner implements FlutterNativeAssetsBuildRunn
       if (onBuild != null) {
         result = onBuild!(buildConfig);
       }
-      lastBuildMode = buildConfig.buildMode;
       buildInvocations++;
     }
     return result;
@@ -80,14 +73,12 @@ class FakeFlutterNativeAssetsBuildRunner implements FlutterNativeAssetsBuildRunn
 
   @override
   Future<LinkResult?> link({
-    required List<String> supportedAssetTypes,
+    required List<String> buildAssetTypes,
     required LinkConfigCreator configCreator,
     required LinkConfigValidator configValidator,
     required LinkValidator linkValidator,
     required ApplicationAssetValidator applicationAssetValidator,
     required bool includeParentEnvironment,
-    required BuildMode buildMode,
-    required OS targetOS,
     required Uri workingDirectory,
     required BuildResult buildResult,
   }) async {
@@ -98,9 +89,7 @@ class FakeFlutterNativeAssetsBuildRunner implements FlutterNativeAssetsBuildRunn
             ..setupHookConfig(
               packageRoot: package.root,
               packageName: package.name,
-              targetOS: targetOS,
-              supportedAssetTypes: supportedAssetTypes,
-              buildMode: buildMode,
+              buildAssetTypes: buildAssetTypes,
             )
             ..setupLinkRunConfig(
               outputDirectory: Uri.parse('build-out-dir'),
@@ -111,7 +100,6 @@ class FakeFlutterNativeAssetsBuildRunner implements FlutterNativeAssetsBuildRunn
       if (onLink != null) {
         result = onLink!(buildConfig);
       }
-      lastBuildMode = buildMode;
       linkInvocations++;
     }
     return result;
@@ -130,10 +118,10 @@ class FakeFlutterNativeAssetsBuildRunner implements FlutterNativeAssetsBuildRunn
   }
 
   @override
-  Future<CCompilerConfig> get cCompilerConfig async => cCompilerConfigResult;
+  Future<CCompilerConfig?> get cCompilerConfig async => cCompilerConfigResult;
 
   @override
-  Future<CCompilerConfig> get ndkCCompilerConfig async => cCompilerConfigResult;
+  Future<CCompilerConfig?> get ndkCCompilerConfig async => cCompilerConfigResult;
 }
 
 final class FakeFlutterNativeAssetsBuilderResult implements BuildResult, LinkResult {

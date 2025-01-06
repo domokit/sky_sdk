@@ -15,8 +15,8 @@ import 'package:flutter_tools/src/dart/package_map.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:flutter_tools/src/isolated/native_assets/native_assets.dart';
-import 'package:native_assets_cli/code_assets_builder.dart' hide BuildMode;
-import 'package:native_assets_cli/native_assets_cli_internal.dart' as native_assets_cli;
+import 'package:native_assets_cli/code_assets.dart' as native_assets_cli;
+import 'package:native_assets_cli/code_assets_builder.dart';
 import 'package:package_config/package_config_types.dart';
 
 import '../../../src/common.dart';
@@ -136,8 +136,8 @@ void main() {
           expect(
             (globals.logger as BufferLogger).traceText,
             stringContainsInOrder(<String>[
-              'Building native assets for $expectedOS $expectedArch $buildMode.',
-              'Building native assets for $expectedOS $expectedArch $buildMode done.',
+              'Building native assets for $expectedOS $expectedArch.',
+              'Building native assets for $expectedOS $expectedArch done.',
             ]),
           );
           expect(
@@ -145,8 +145,8 @@ void main() {
             stringContainsInOrder(<String>[
               'package:bar/bar.dart',
               if (flutterTester)
-                    // Tests run on host system, so the have the full path on the system.
-                    projectUri
+                // Tests run on host system, so the have the full path on the system.
+                projectUri
                     .resolve('build/native_assets/$expectedDirectory/bar.dll')
                     .toFilePath()
                     .replaceAll(r'\', r'\\') // Undo JSON string escaping.
@@ -270,10 +270,10 @@ void main() {
         fileSystem,
         logger,
       );
-      final CCompilerConfig result = await runner.cCompilerConfig;
-      expect(result.compiler?.toFilePath(), msvcBinDir.childFile('cl.exe').uri.toFilePath());
-      expect(result.archiver?.toFilePath(), msvcBinDir.childFile('lib.exe').uri.toFilePath());
-      expect(result.linker?.toFilePath(), msvcBinDir.childFile('link.exe').uri.toFilePath());
+      final CCompilerConfig result = (await runner.cCompilerConfig)!;
+      expect(result.compiler.toFilePath(), msvcBinDir.childFile('cl.exe').uri.toFilePath());
+      expect(result.archiver.toFilePath(), msvcBinDir.childFile('lib.exe').uri.toFilePath());
+      expect(result.linker.toFilePath(), msvcBinDir.childFile('link.exe').uri.toFilePath());
       expect(result.envScript, isNotNull);
       expect(result.envScriptArgs, isNotNull);
     },

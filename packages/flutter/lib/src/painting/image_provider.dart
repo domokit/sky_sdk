@@ -12,6 +12,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -268,7 +269,7 @@ typedef ImageDecoderCallback =
 ///
 /// The following shows the code required to write a widget that fully conforms
 /// to the [ImageProvider] and [Widget] protocols. (It is essentially a
-/// bare-bones version of the [widgets.Image] widget.)
+/// bare-bones version of the [Image] widget.)
 ///
 /// ```dart
 /// class MyImage extends StatefulWidget {

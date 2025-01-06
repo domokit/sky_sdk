@@ -268,11 +268,10 @@ ContentContext::ContentContext(
     auto buffer_view = host_buffer.Emplace(data);
     blit_pass->AddCopy(buffer_view, empty_texture_);
 
-    if (!blit_pass->EncodeCommands(GetContext()->GetResourceAllocator()) ||
-        !GetContext()
-             ->GetCommandQueue()
-             ->Submit({std::move(cmd_buffer)})
-             .ok()) {
+    if (!blit_pass->EncodeCommands() || !GetContext()
+                                             ->GetCommandQueue()
+                                             ->Submit({std::move(cmd_buffer)})
+                                             .ok()) {
       VALIDATION_LOG << "Failed to create empty texture.";
     }
   }
@@ -465,6 +464,7 @@ ContentContext::ContentContext(
 #if !defined(FML_OS_MACOSX)
     // GLES only shader that is unsupported on macOS.
     tiled_texture_external_pipelines_.CreateDefault(*context_, options);
+    tiled_texture_uv_external_pipelines_.CreateDefault(*context_, options);
 #endif  // !defined(FML_OS_MACOSX)
     texture_downsample_gles_pipelines_.CreateDefault(*context_,
                                                      options_trianglestrip);

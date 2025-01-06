@@ -13,14 +13,7 @@ import 'test_utils.dart';
 
 void main() {
   group('pass analyze template:', () {
-    final List<String> templates = <String>[
-      'app',
-      'module',
-      'package',
-      'plugin',
-      'plugin_ffi',
-      'skeleton',
-    ];
+    final List<String> templates = <String>['app', 'module', 'package', 'plugin', 'plugin_ffi'];
     late Directory tempDir;
 
     setUp(() {

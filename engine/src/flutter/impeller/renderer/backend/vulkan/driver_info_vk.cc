@@ -317,12 +317,6 @@ void DriverInfoVK::DumpToLog() const {
   FML_LOG(IMPORTANT) << stream.str();
 }
 
-bool DriverInfoVK::CanBatchSubmitCommandBuffers() const {
-  return vendor_ == VendorVK::kARM ||
-         (adreno_gpu_.has_value() &&
-          adreno_gpu_.value() >= AdrenoGPU::kAdreno702);
-}
-
 bool DriverInfoVK::IsEmulator() const {
 #if FML_OS_ANDROID
   // Google SwiftShader on Android.
@@ -356,6 +350,14 @@ bool DriverInfoVK::IsKnownBadDriver() const {
     return true;
   }
   return false;
+}
+
+std::optional<MaliGPU> DriverInfoVK::GetMaliGPUInfo() const {
+  return mali_gpu_;
+}
+
+std::optional<AdrenoGPU> DriverInfoVK::GetAdrenoGPUInfo() const {
+  return adreno_gpu_;
 }
 
 }  // namespace impeller

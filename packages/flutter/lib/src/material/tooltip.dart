@@ -771,10 +771,12 @@ class TooltipState extends State<Tooltip> with SingleTickerProviderStateMixin {
 
   EdgeInsets _getDefaultPadding() {
     return switch (Theme.of(context).platform) {
-      TargetPlatform.macOS || TargetPlatform.linux || TargetPlatform.windows =>
-        const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-      TargetPlatform.android || TargetPlatform.fuchsia || TargetPlatform.iOS =>
-        const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      TargetPlatform.macOS ||
+      TargetPlatform.linux ||
+      TargetPlatform.windows => const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      TargetPlatform.android ||
+      TargetPlatform.fuchsia ||
+      TargetPlatform.iOS => const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
     };
   }
 

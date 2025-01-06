@@ -43,7 +43,6 @@ void main() {
           '--incremental',
           '--target=dartdevc',
           '--experimental-emit-debug-metadata',
-          '-DFLUTTER_WEB_AUTO_DETECT=false',
           '-DFLUTTER_WEB_USE_SKIA=true',
           '-DFLUTTER_WEB_USE_SKWASM=false',
           '--output-dill',

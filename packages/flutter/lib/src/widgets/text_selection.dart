@@ -2310,8 +2310,8 @@ class TextSelectionGestureDetectorBuilder {
       case TargetPlatform.android:
         if (editableText.widget.stylusHandwritingEnabled) {
           final bool stylusEnabled = switch (kind) {
-            PointerDeviceKind.stylus || PointerDeviceKind.invertedStylus =>
-              editableText.widget.stylusHandwritingEnabled,
+            PointerDeviceKind.stylus ||
+            PointerDeviceKind.invertedStylus => editableText.widget.stylusHandwritingEnabled,
             _ => false,
           };
           if (stylusEnabled) {

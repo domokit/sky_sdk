@@ -163,7 +163,7 @@ class Ticker {
   bool get isActive => _future != null;
 
   /// The frame timestamp when the ticker was last started,
-  /// as reported by [SchedulerBinding.currentFrameTimestamp].
+  /// as reported by [SchedulerBinding.currentFrameTimeStamp].
   Duration? _startTime;
 
   /// Starts the clock for this [Ticker]. If the ticker is not [muted], then this

@@ -162,8 +162,7 @@ mixin RenderInlineChildrenContainerDefaults
             ui.PlaceholderAlignment.belowBaseline ||
             ui.PlaceholderAlignment.bottom ||
             ui.PlaceholderAlignment.middle ||
-            ui.PlaceholderAlignment.top =>
-              null,
+            ui.PlaceholderAlignment.top => null,
             ui.PlaceholderAlignment.baseline => getBaseline(
               child,
               childConstraints,

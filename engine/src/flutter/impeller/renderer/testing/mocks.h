@@ -60,10 +60,7 @@ class MockAllocator : public Allocator {
 class MockBlitPass : public BlitPass {
  public:
   MOCK_METHOD(bool, IsValid, (), (const, override));
-  MOCK_METHOD(bool,
-              EncodeCommands,
-              (const std::shared_ptr<Allocator>& transients_allocator),
-              (const, override));
+  MOCK_METHOD(bool, EncodeCommands, (), (const, override));
   MOCK_METHOD(void, OnSetLabel, (std::string_view label), (override));
 
   MOCK_METHOD(bool,

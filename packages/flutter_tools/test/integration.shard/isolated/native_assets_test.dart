@@ -13,6 +13,7 @@
 @Timeout(Duration(minutes: 10))
 library;
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file/file.dart';
@@ -72,7 +73,7 @@ void main() {
             <String>['run', '-d$device', '--$buildMode'],
             exampleDirectory.path,
             <Transition>[
-              Multiple(
+              Multiple.contains(
                 <Pattern>['Flutter run key commands.'],
                 handler: (String line) {
                   if (buildMode == 'debug') {
@@ -85,7 +86,7 @@ void main() {
                 },
               ),
               if (buildMode == 'debug') ...<Transition>[
-                Barrier('Performing hot reload...'.padRight(progressMessageWidth), logging: true),
+                Barrier.contains('Performing hot reload...', logging: true),
                 Multiple(
                   <Pattern>[RegExp('Reloaded .*')],
                   handler: (String line) {
@@ -93,7 +94,7 @@ void main() {
                     return 'R';
                   },
                 ),
-                Barrier('Performing hot restart...'.padRight(progressMessageWidth)),
+                Barrier.contains('Performing hot restart...'),
                 Multiple(
                   <Pattern>[RegExp('Restarted application .*')],
                   handler: (String line) {
@@ -101,7 +102,7 @@ void main() {
                     return 'r';
                   },
                 ),
-                Barrier('Performing hot reload...'.padRight(progressMessageWidth), logging: true),
+                Barrier.contains('Performing hot reload...', logging: true),
                 Multiple(
                   <Pattern>[RegExp('Reloaded .*')],
                   handler: (String line) {
@@ -109,7 +110,7 @@ void main() {
                   },
                 ),
               ],
-              const Barrier('Application finished.'),
+              Barrier.contains('Application finished.'),
             ],
             logging: false,
           );
@@ -465,14 +466,14 @@ void expectCCompilerIsConfigured(Directory appDirectory) {
       continue;
     }
 
-    final File config = subDir.childFile('config.json');
-    expect(config, exists);
-    final String contents = config.readAsStringSync();
-    // Dry run does not pass compiler info.
-    if (contents.contains('"dry_run": true')) {
+    final File configFile = subDir.childFile('config.json');
+    expect(configFile, exists);
+    final Map<String, Object?> config =
+        json.decode(configFile.readAsStringSync()) as Map<String, Object?>;
+    if (!(config['supported_asset_types']! as List<dynamic>).contains(CodeAsset.type)) {
       continue;
     }
-    expect(contents, contains('"cc": '));
+    expect((config['c_compiler']! as Map<String, Object?>)['cc'], isNotNull);
   }
 }
 

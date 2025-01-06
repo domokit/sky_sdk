@@ -399,11 +399,8 @@ class _ReorderableListViewState extends State<ReorderableListView> {
 
     final EdgeInsets startPadding, endPadding, listPadding;
     (startPadding, endPadding, listPadding) = switch (widget.scrollDirection) {
-      Axis.horizontal || Axis.vertical when (start ?? end) == null => (
-        EdgeInsets.zero,
-        EdgeInsets.zero,
-        padding,
-      ),
+      Axis.horizontal ||
+      Axis.vertical when (start ?? end) == null => (EdgeInsets.zero, EdgeInsets.zero, padding),
       Axis.horizontal => (
         padding.copyWith(left: 0),
         padding.copyWith(right: 0),

@@ -151,19 +151,19 @@ Future<void> run(List<String> args) async {
     }
 
     // TODO(dnfield): This should be injected.
+    final BuildInfo buildInfo = BuildInfo(
+      BuildMode.debug,
+      '',
+      treeShakeIcons: false,
+      packageConfigPath: globals.fs.path.normalize(
+        globals.fs.path.absolute(argResults[_kOptionPackages] as String),
+      ),
+    );
     exitCode = await const FlutterTestRunner().runTests(
       const TestWrapper(),
       tests.keys.map(Uri.file).toList(),
-      debuggingOptions: DebuggingOptions.enabled(
-        BuildInfo(
-          BuildMode.debug,
-          '',
-          treeShakeIcons: false,
-          packageConfigPath: globals.fs.path.normalize(
-            globals.fs.path.absolute(argResults[_kOptionPackages] as String),
-          ),
-        ),
-      ),
+      debuggingOptions: DebuggingOptions.enabled(buildInfo),
+      buildInfo: buildInfo,
       watcher: collector,
       enableVmService: collector != null,
       precompiledDillFiles: tests,

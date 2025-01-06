@@ -12,6 +12,7 @@
 #include "impeller/renderer/backend/vulkan/command_queue_vk.h"
 #include "impeller/renderer/backend/vulkan/descriptor_pool_vk.h"
 #include "impeller/renderer/backend/vulkan/render_pass_builder_vk.h"
+#include "impeller/renderer/backend/vulkan/workarounds_vk.h"
 #include "impeller/renderer/render_target.h"
 
 #ifdef FML_OS_ANDROID
@@ -457,10 +458,16 @@ void ContextVK::Setup(Settings settings) {
   //----------------------------------------------------------------------------
   /// All done!
   ///
+
+  // Apply workarounds for broken drivers.
+  auto driver_info =
+      std::make_unique<DriverInfoVK>(device_holder->physical_device);
+  WorkaroundsVK workarounds = GetWorkarounds(*driver_info);
+  caps->ApplyWorkarounds(workarounds);
+
   device_holder_ = std::move(device_holder);
   idle_waiter_vk_ = std::make_shared<IdleWaiterVK>(device_holder_);
-  driver_info_ =
-      std::make_unique<DriverInfoVK>(device_holder_->physical_device);
+  driver_info_ = std::move(driver_info);
   debug_report_ = std::move(debug_report);
   allocator_ = std::move(allocator);
   shader_library_ = std::move(shader_library);
@@ -477,7 +484,7 @@ void ContextVK::Setup(Settings settings) {
   device_name_ = std::string(physical_device_properties.deviceName);
   command_queue_vk_ = std::make_shared<CommandQueueVK>(weak_from_this());
   should_disable_surface_control_ = settings.disable_surface_control;
-  should_batch_cmd_buffers_ = driver_info_->CanBatchSubmitCommandBuffers();
+  should_batch_cmd_buffers_ = !workarounds.batch_submit_command_buffer_timeout;
   is_valid_ = true;
 
   // Create the GPU Tracer later because it depends on state from

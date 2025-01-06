@@ -27,6 +27,44 @@ void main() {
     daemonProcess.kill();
   });
 
+  testWithoutContext('startup events', () async {
+    final BasicProject project = BasicProject();
+    await project.setUpIn(tempDir);
+
+    const ProcessManager processManager = LocalProcessManager();
+    daemonProcess = await processManager.start(<String>[
+      flutterBin,
+      ...getLocalEngineArguments(),
+      '--show-test-device',
+      'daemon',
+    ], workingDirectory: tempDir.path);
+
+    final StreamController<String> stdout = StreamController<String>.broadcast();
+    transformToLines(daemonProcess.stdout).listen((String line) => stdout.add(line));
+    final Stream<Map<String, Object?>> stream =
+        stdout.stream
+            .map<Map<String, Object?>?>(parseFlutterResponse)
+            .where((Map<String, Object?>? value) => value != null)
+            .cast<Map<String, Object?>>();
+
+    final [
+      Map<String, Object?> connectedEvent,
+      Map<String, Object?> logMessage,
+    ] = await Future.wait(<Future<Map<String, Object?>>>[
+      stream.firstWhere((Map<String, Object?> e) => e['event'] == 'daemon.connected'),
+      stream.firstWhere((Map<String, Object?> e) => e['event'] == 'daemon.logMessage'),
+    ]);
+
+    // Check the connected message has a version.
+    final Map<String, Object?> connectedParams = connectedEvent['params']! as Map<String, Object?>;
+    expect(connectedParams['version'], isNotNull);
+
+    // Check we got the startup message.
+    final Map<String, Object?> logParams = logMessage['params']! as Map<String, Object?>;
+    expect(logParams['level'], 'status');
+    expect(logParams['message'], 'Device daemon started.');
+  });
+
   testWithoutContext('device.getDevices', () async {
     final BasicProject project = BasicProject();
     await project.setUpIn(tempDir);

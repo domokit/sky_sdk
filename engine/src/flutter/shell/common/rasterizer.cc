@@ -942,7 +942,7 @@ ScreenshotLayerTreeAsImageImpeller(
   command_buffer->SetLabel("BlitTextureToBuffer Command Buffer");
   auto pass = command_buffer->CreateBlitPass();
   pass->AddCopy(texture, buffer);
-  pass->EncodeCommands(impeller_context->GetResourceAllocator());
+  pass->EncodeCommands();
   fml::AutoResetWaitableEvent latch;
   sk_sp<SkData> sk_data;
   auto completion = [buffer, &buffer_desc, &sk_data,

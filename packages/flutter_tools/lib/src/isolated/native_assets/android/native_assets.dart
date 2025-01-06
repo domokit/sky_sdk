@@ -9,7 +9,7 @@ import '../../../android/android_sdk.dart';
 import '../../../android/gradle_utils.dart';
 import '../../../base/common.dart';
 import '../../../base/file_system.dart';
-import '../../../build_info.dart' hide BuildMode;
+import '../../../build_info.dart';
 
 int targetAndroidNdkApi(Map<String, String> environmentDefines) {
   return int.parse(environmentDefines[kMinSdkVersion] ?? minSdkVersion);
@@ -105,14 +105,17 @@ Future<CCompilerConfig> cCompilerConfigAndroid() async {
   if (androidSdk == null) {
     throwToolExit('Android SDK could not be found.');
   }
-  final CCompilerConfig result = CCompilerConfig(
-    compiler: _toOptionalFileUri(androidSdk.getNdkClangPath()),
-    archiver: _toOptionalFileUri(androidSdk.getNdkArPath()),
-    linker: _toOptionalFileUri(androidSdk.getNdkLdPath()),
-  );
-  if (result.compiler == null || result.archiver == null || result.linker == null) {
+  final Uri? compiler = _toOptionalFileUri(androidSdk.getNdkClangPath());
+  final Uri? archiver = _toOptionalFileUri(androidSdk.getNdkArPath());
+  final Uri? linker = _toOptionalFileUri(androidSdk.getNdkLdPath());
+  if (compiler == null || archiver == null || linker == null) {
     throwToolExit('Android NDK Clang could not be found.');
   }
+  final CCompilerConfig result = CCompilerConfig(
+    compiler: compiler,
+    archiver: archiver,
+    linker: linker,
+  );
   return result;
 }
 

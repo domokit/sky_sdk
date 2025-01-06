@@ -399,7 +399,6 @@ targets:
       cores: "8"
 
   - name: Linux linux_web_engine_tests
-    bringup: true
     recipe: engine_v2/engine_v2
     timeout: 120
     properties:
@@ -558,9 +557,3 @@ targets:
     timeout: 120
     properties:
       config_name: windows_unopt
-
-  - name: Linux ci_yaml engine roller
-    bringup: true
-    recipe: infra/ci_yaml
-    properties:
-      backfill: "false"

@@ -158,7 +158,7 @@ mixin CreateBase on FlutterCommand {
   /// Throws assertion if [projectDir] does not exist or empty.
   /// Returns null if no project type can be determined.
   @protected
-  FlutterProjectType? determineTemplateType() {
+  FlutterTemplateType? determineTemplateType() {
     assert(projectDir.existsSync() && projectDir.listSync().isNotEmpty);
     final File metadataFile = globals.fs.file(
       globals.fs.path.join(projectDir.absolute.path, '.metadata'),
@@ -167,7 +167,7 @@ mixin CreateBase on FlutterCommand {
       metadataFile,
       globals.logger,
     );
-    final FlutterProjectType? projectType = projectMetadata.projectType;
+    final FlutterTemplateType? projectType = projectMetadata.projectType;
     if (projectType != null) {
       return projectType;
     }
@@ -184,7 +184,7 @@ mixin CreateBase on FlutterCommand {
     if (exists(<String>['android', 'app']) ||
         exists(<String>['ios', 'Runner']) ||
         exists(<String>['ios', 'Flutter'])) {
-      return FlutterProjectType.app;
+      return FlutterTemplateType.app;
     }
     // Since we can't really be definitive on nearly-empty directories, err on
     // the side of prudence and just say we don't know.
@@ -472,11 +472,11 @@ mixin CreateBase on FlutterCommand {
     bool pluginExampleApp = false,
     bool printStatusWhenWriting = true,
     bool generateMetadata = true,
-    FlutterProjectType? projectType,
+    FlutterTemplateType? projectType,
   }) async {
     int generatedCount = 0;
     generatedCount += await renderMerged(
-      <String>[...templateNames, 'app_shared'],
+      <String>[...templateNames],
       directory,
       templateContext,
       overwrite: overwrite,

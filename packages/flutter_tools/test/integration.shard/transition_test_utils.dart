@@ -43,48 +43,56 @@ abstract class Transition {
   bool matches(String line);
 
   @protected
-  bool lineMatchesPattern(String line, Pattern pattern) {
-    if (pattern is String) {
-      return line == pattern;
+  bool lineMatchesPattern(String line, Pattern pattern, bool contains) {
+    if (pattern is RegExp) {
+      // Ideally this would also distinguish between "contains" and "equals"
+      // operation.
+      return line.contains(pattern);
     }
-    return line.contains(pattern);
+    return contains ? line.contains(pattern) : line == pattern;
   }
 
   @protected
-  String describe(Pattern pattern) {
-    if (pattern is String) {
-      return '"$pattern"';
-    }
+  String describe(Pattern pattern, bool contains) {
     if (pattern is RegExp) {
       return '/${pattern.pattern}/';
     }
-    return '$pattern';
+    return contains ? '"...$pattern..."' : '"$pattern"';
   }
 }
 
 class Barrier extends Transition {
-  const Barrier(this.pattern, {super.handler, super.logging});
+  Barrier(this.pattern, {super.handler, super.logging}) : contains = false;
+  Barrier.contains(this.pattern, {super.handler, super.logging}) : contains = true;
+
   final Pattern pattern;
+  final bool contains;
 
   @override
-  bool matches(String line) => lineMatchesPattern(line, pattern);
+  bool matches(String line) => lineMatchesPattern(line, pattern, contains);
 
   @override
-  String toString() => describe(pattern);
+  String toString() => describe(pattern, contains);
 }
 
 class Multiple extends Transition {
   Multiple(List<Pattern> patterns, {super.handler, super.logging})
     : _originalPatterns = patterns,
-      patterns = patterns.toList();
+      patterns = patterns.toList(),
+      contains = false;
+  Multiple.contains(List<Pattern> patterns, {super.handler, super.logging})
+    : _originalPatterns = patterns,
+      patterns = patterns.toList(),
+      contains = true;
 
   final List<Pattern> _originalPatterns;
   final List<Pattern> patterns;
+  final bool contains;
 
   @override
   bool matches(String line) {
     for (int index = 0; index < patterns.length; index += 1) {
-      if (lineMatchesPattern(line, patterns[index])) {
+      if (lineMatchesPattern(line, patterns[index], contains)) {
         patterns.removeAt(index);
         break;
       }
@@ -94,6 +102,7 @@ class Multiple extends Transition {
 
   @override
   String toString() {
+    String describe(Pattern pattern) => super.describe(pattern, contains);
     if (patterns.isEmpty) {
       return '${_originalPatterns.map(describe).join(', ')} (all matched)';
     }

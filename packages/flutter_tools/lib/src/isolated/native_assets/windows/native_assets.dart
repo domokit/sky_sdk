@@ -7,7 +7,7 @@ import 'package:native_assets_cli/code_assets_builder.dart';
 import '../../../globals.dart' as globals;
 import '../../../windows/visual_studio.dart';
 
-Future<CCompilerConfig> cCompilerConfigWindows() async {
+Future<CCompilerConfig?> cCompilerConfigWindows() async {
   final VisualStudio visualStudio = VisualStudio(
     fileSystem: globals.fs,
     platform: globals.platform,
@@ -16,11 +16,21 @@ Future<CCompilerConfig> cCompilerConfigWindows() async {
     osUtils: globals.os,
   );
 
+  final Uri? compiler = _toOptionalFileUri(visualStudio.clPath);
+  final Uri? archiver = _toOptionalFileUri(visualStudio.libPath);
+  final Uri? linker = _toOptionalFileUri(visualStudio.linkPath);
+  final Uri? envScript = _toOptionalFileUri(visualStudio.vcvarsPath);
+
+  if (compiler == null || archiver == null || linker == null || envScript == null) {
+    // Visual Studio might not be installed, don't exit tool.
+    return null;
+  }
+
   return CCompilerConfig(
-    compiler: _toOptionalFileUri(visualStudio.clPath),
-    linker: _toOptionalFileUri(visualStudio.linkPath),
-    archiver: _toOptionalFileUri(visualStudio.libPath),
-    envScript: _toOptionalFileUri(visualStudio.vcvarsPath),
+    compiler: compiler,
+    archiver: archiver,
+    linker: linker,
+    envScript: envScript,
     envScriptArgs: <String>[],
   );
 }

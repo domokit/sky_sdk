@@ -19,7 +19,7 @@ See also:
 
 1. [Flutter tool's Windows logic](https://github.com/flutter/flutter/tree/master/packages/flutter_tools/lib/src/windows) - Builds and runs Flutter Windows apps on
 the command line.
-1. [Windows app template](https://github.com/flutter/flutter/tree/master/packages/flutter_tools/templates/app_shared/windows.tmpl) - The entrypoint for Flutter Windows app. This
+1. [Windows app template](https://github.com/flutter/flutter/tree/master/packages/flutter_tools/templates/app/windows.tmpl) - The entrypoint for Flutter Windows app. This
 launches the Windows embedder.
 1. [`platform-windows` GitHub issues label](https://github.com/flutter/flutter/issues?q=is%3Aopen+label%3Aplatform-windows+sort%3Aupdated-desc)
 1. [`#hackers-desktop` Discord channel](https://discord.com/channels/608014603317936148/608020180177780791)

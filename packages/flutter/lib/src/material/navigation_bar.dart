@@ -705,7 +705,7 @@ class _NavigationDestinationInfo extends InheritedWidget {
   /// The text style of the label.
   final MaterialStateProperty<TextStyle?>? labelTextStyle;
 
-  /// The padding around the [label] widget.
+  /// The padding around the label.
   ///
   /// Defaults to a padding of 4 pixels on the top.
   final EdgeInsetsGeometry? labelPadding;

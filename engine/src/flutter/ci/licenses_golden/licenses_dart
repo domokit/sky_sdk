@@ -1,4 +1,4 @@
-Signature: da61ac66343c72a7a601b65f748e7b7a
+Signature: c4c853f94251a32ef03aa438039471fa
 
 ====================================================================================================
 LIBRARY: dart
@@ -599,7 +599,6 @@ ORIGIN: ../../../flutter/third_party/dart/runtime/platform/utils_macos.h + ../..
 ORIGIN: ../../../flutter/third_party/dart/runtime/platform/utils_win.cc + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/runtime/platform/utils_win.h + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/runtime/vm/allocation.cc + ../../../flutter/third_party/dart/LICENSE
-ORIGIN: ../../../flutter/third_party/dart/runtime/vm/base_isolate.h + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/runtime/vm/bit_set.h + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/runtime/vm/bit_vector.cc + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/runtime/vm/bit_vector.h + ../../../flutter/third_party/dart/LICENSE
@@ -951,7 +950,6 @@ FILE: ../../../flutter/third_party/dart/runtime/platform/utils_macos.h
 FILE: ../../../flutter/third_party/dart/runtime/platform/utils_win.cc
 FILE: ../../../flutter/third_party/dart/runtime/platform/utils_win.h
 FILE: ../../../flutter/third_party/dart/runtime/vm/allocation.cc
-FILE: ../../../flutter/third_party/dart/runtime/vm/base_isolate.h
 FILE: ../../../flutter/third_party/dart/runtime/vm/bit_set.h
 FILE: ../../../flutter/third_party/dart/runtime/vm/bit_vector.cc
 FILE: ../../../flutter/third_party/dart/runtime/vm/bit_vector.h
@@ -4807,7 +4805,7 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
   This Source Code Form is "Incompatible With Secondary Licenses", as
   defined by the Mozilla Public License, v. 2.0.
 
-You may obtain a copy of this library's Source Code Form from: https://dart.googlesource.com/sdk/+/7ed58b3c462ace547fbf3a2c119e515c676ba20a
+You may obtain a copy of this library's Source Code Form from: https://dart.googlesource.com/sdk/+/fc5db8ea92782a303a0ab4a69a58a50618ac4ae4
 /third_party/fallback_root_certificates/
 
 ====================================================================================================

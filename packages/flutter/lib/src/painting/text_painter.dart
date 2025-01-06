@@ -139,8 +139,7 @@ class PlaceholderDimensions {
       ui.PlaceholderAlignment.bottom ||
       ui.PlaceholderAlignment.middle ||
       ui.PlaceholderAlignment.aboveBaseline ||
-      ui.PlaceholderAlignment.belowBaseline =>
-        'PlaceholderDimensions($size, $alignment)',
+      ui.PlaceholderAlignment.belowBaseline => 'PlaceholderDimensions($size, $alignment)',
       ui.PlaceholderAlignment.baseline =>
         'PlaceholderDimensions($size, $alignment($baselineOffset from top))',
     };
@@ -222,8 +221,7 @@ class WordBoundary extends TextBoundary {
       0x000B || // Form Feed
       0x000C || // Vertical Feed
       0x2028 || // Line Separator
-      0x2029 =>
-        true, // Paragraph Separator
+      0x2029 => true, // Paragraph Separator
       _ => false,
     };
   }
@@ -381,8 +379,7 @@ class _TextLayout {
       0x0009 => true, // horizontal tab
       0x00A0 || // no-break space
       0x2007 || // figure space
-      0x202F =>
-        false, // narrow no-break space
+      0x202F => false, // narrow no-break space
       _ => _regExpSpaceSeparators.hasMatch(lastCodeUnit),
     };
 

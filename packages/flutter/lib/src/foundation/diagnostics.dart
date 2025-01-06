@@ -1445,7 +1445,7 @@ class TextTreeRenderer {
 /// The JSON representation of a [DiagnosticsNode].
 typedef _JsonDiagnosticsNode = Map<String, Object?>;
 
-/// Stack containing [DiagnosticNode]s to convert to JSON and the callback to
+/// Stack containing [DiagnosticsNode]s to convert to JSON and the callback to
 /// call with the JSON.
 ///
 /// Using a stack is required to process the widget tree iteratively instead of

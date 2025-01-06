@@ -101,8 +101,6 @@ class ColorSourceContents : public Contents {
 
  protected:
   using BindFragmentCallback = std::function<bool(RenderPass& pass)>;
-  using PipelineBuilderMethod = std::shared_ptr<Pipeline<PipelineDescriptor>> (
-      impeller::ContentContext::*)(ContentContextOptions) const;
   using PipelineBuilderCallback =
       std::function<PipelineRef(ContentContextOptions)>;
   using CreateGeometryCallback =

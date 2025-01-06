@@ -2174,83 +2174,30 @@ void main() {
     expect(controller.text, isEmpty);
   });
 
-  // Regression test for https://github.com/flutter/flutter/issues/155660.
-  testWidgets('Updating the menu entries refreshes the initial selection', (
-    WidgetTester tester,
-  ) async {
-    final TextEditingController controller = TextEditingController();
-    addTearDown(controller.dispose);
-
-    Widget boilerplate(List<DropdownMenuEntry<TestMenu>> entries) {
-      return MaterialApp(
-        home: StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Scaffold(
-              body: DropdownMenu<TestMenu>(
-                initialSelection: TestMenu.mainMenu3,
-                dropdownMenuEntries: entries,
-                controller: controller,
-              ),
-            );
-          },
-        ),
-      );
-    }
-
-    // The text field should be empty when the initial selection does not match
-    // any menu items.
-    await tester.pumpWidget(boilerplate(menuChildren.getRange(0, 1).toList()));
-    expect(controller.text, '');
-
-    // When the menu entries is updated the initial selection should be rematched.
-    await tester.pumpWidget(boilerplate(menuChildren));
-    expect(controller.text, TestMenu.mainMenu3.label);
-
-    // Update the entries with none matching the initial selection.
-    await tester.pumpWidget(boilerplate(menuChildren.getRange(0, 1).toList()));
-    expect(controller.text, '');
-  });
-
-  // Regression test for https://github.com/flutter/flutter/issues/155660.
   testWidgets(
-    'Updating the menu entries refreshes the initial selection only if the current selection is no more valid',
+    'Text field content is not cleared when the initial selection does not match any menu entries',
     (WidgetTester tester) async {
-      final TextEditingController controller = TextEditingController();
+      final TextEditingController controller = TextEditingController(text: 'Flutter');
       addTearDown(controller.dispose);
 
-      Widget boilerplate(List<DropdownMenuEntry<TestMenu>> entries) {
-        return MaterialApp(
+      await tester.pumpWidget(
+        MaterialApp(
           home: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Scaffold(
                 body: DropdownMenu<TestMenu>(
                   initialSelection: TestMenu.mainMenu3,
-                  dropdownMenuEntries: entries,
+                  // Use a menu entries which does not contain TestMenu.mainMenu3.
+                  dropdownMenuEntries: menuChildren.getRange(0, 1).toList(),
                   controller: controller,
                 ),
               );
             },
           ),
-        );
-      }
+        ),
+      );
 
-      await tester.pumpWidget(boilerplate(menuChildren));
-      expect(controller.text, TestMenu.mainMenu3.label);
-
-      // Open the menu.
-      await tester.tap(find.byType(DropdownMenu<TestMenu>));
-      await tester.pump();
-
-      // Select another item.
-      final Finder item2 = findMenuItemButton('Item 2');
-      await tester.tap(item2);
-      await tester.pumpAndSettle();
-      expect(controller.text, TestMenu.mainMenu2.label);
-
-      // Update the menu entries with another instance of list containing the
-      // same entries.
-      await tester.pumpWidget(boilerplate(List<DropdownMenuEntry<TestMenu>>.from(menuChildren)));
-      expect(controller.text, TestMenu.mainMenu2.label);
+      expect(controller.text, 'Flutter');
     },
   );
 

@@ -406,17 +406,12 @@ class AndroidDevice extends Device {
     if (!await _adbIsValid) {
       return false;
     }
-    final bool wasInstalled = await isAppInstalled(app, userIdentifier: userIdentifier);
-    if (wasInstalled && await isLatestBuildInstalled(app)) {
-      _logger.printTrace('Latest build already installed.');
-      return true;
-    }
     _logger.printTrace('Installing APK.');
     if (await _installApp(app, userIdentifier: userIdentifier)) {
       return true;
     }
     _logger.printTrace('Warning: Failed to install APK.');
-    if (!wasInstalled) {
+    if (!await isAppInstalled(app, userIdentifier: userIdentifier)) {
       return false;
     }
     _logger.printStatus('Uninstalling old version...');

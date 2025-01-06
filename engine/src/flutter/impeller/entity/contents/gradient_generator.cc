@@ -41,7 +41,7 @@ std::shared_ptr<Texture> CreateGradientTexture(
   auto blit_pass = cmd_buffer->CreateBlitPass();
   blit_pass->AddCopy(DeviceBuffer::AsBufferView(std::move(buffer)), texture);
 
-  if (!blit_pass->EncodeCommands(context->GetResourceAllocator()) ||
+  if (!blit_pass->EncodeCommands() ||
       !context->GetCommandQueue()->Submit({std::move(cmd_buffer)}).ok()) {
     return nullptr;
   }

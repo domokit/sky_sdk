@@ -892,8 +892,7 @@ std::optional<Entity> BlendFilterContents::CreateFramebufferAdvancedBlend(
         foreground_color->Premultiply().ToR8G8B8A8(), /*alignment=*/4);
 
     blit_pass->AddCopy(std::move(buffer_view), foreground_texture);
-    if (!blit_pass->EncodeCommands(
-            renderer.GetContext()->GetResourceAllocator())) {
+    if (!blit_pass->EncodeCommands()) {
       return std::nullopt;
     }
   }

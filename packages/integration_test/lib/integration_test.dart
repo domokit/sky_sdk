@@ -24,6 +24,8 @@ import 'src/callback.dart' as driver_actions;
 import 'src/channel.dart';
 import 'src/extension.dart';
 
+export 'src/vm_service_golden_client.dart';
+
 const String _success = 'success';
 
 /// Whether results should be reported to the native side over the method

@@ -421,7 +421,7 @@ static std::shared_ptr<Texture> CreateTextureForDecompressedImage(
     blit_pass->SetLabel("Mipmap Blit Pass");
     blit_pass->GenerateMipmap(texture);
   }
-  blit_pass->EncodeCommands(context->GetResourceAllocator());
+  blit_pass->EncodeCommands();
   if (!context->GetCommandQueue()->Submit({command_buffer}).ok()) {
     FML_DLOG(ERROR) << "Failed to submit blit pass command buffer.";
     return nullptr;
@@ -490,7 +490,7 @@ std::shared_ptr<Texture> Playground::CreateTextureCubeForFixture(
                        "", /*mip_level=*/0, /*slice=*/i);
   }
 
-  if (!blit_pass->EncodeCommands(context_->GetResourceAllocator()) ||
+  if (!blit_pass->EncodeCommands() ||
       !context_->GetCommandQueue()->Submit({std::move(cmd_buffer)}).ok()) {
     VALIDATION_LOG << "Could not upload texture to device memory.";
     return nullptr;

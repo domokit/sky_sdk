@@ -4,6 +4,7 @@
 
 import 'dart:io';
 import 'dart:isolate';
+
 import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:flutter/foundation.dart';
@@ -168,11 +169,11 @@ dynamic testInvalidError(int square) {
   }
 }
 
-String? testDebugName(_) {
+String? testDebugName(void _) {
   return Isolate.current.debugName;
 }
 
-int? testReturnNull(_) {
+int? testReturnNull(void _) {
   return null;
 }
 

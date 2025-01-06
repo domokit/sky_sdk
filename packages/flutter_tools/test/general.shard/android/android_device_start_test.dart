@@ -89,11 +89,6 @@ void main() {
       );
       processManager.addCommand(
         const FakeCommand(
-          command: <String>['adb', '-s', '1234', 'shell', 'pm', 'list', 'packages', 'FlutterApp'],
-        ),
-      );
-      processManager.addCommand(
-        const FakeCommand(
           command: <String>['adb', '-s', '1234', 'install', '-t', '-r', 'app-debug.apk'],
         ),
       );
@@ -206,22 +201,6 @@ void main() {
           'shell',
           'am',
           'force-stop',
-          '--user',
-          '10',
-          'FlutterApp',
-        ],
-      ),
-    );
-    processManager.addCommand(
-      const FakeCommand(
-        command: <String>[
-          'adb',
-          '-s',
-          '1234',
-          'shell',
-          'pm',
-          'list',
-          'packages',
           '--user',
           '10',
           'FlutterApp',

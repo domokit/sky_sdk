@@ -302,12 +302,12 @@ class FilledButton extends ButtonStyleButton {
     )) {
       (null, null) => null,
       (_, Color(a: 0.0)) => WidgetStatePropertyAll<Color?>(overlayColor),
-      (_, final Color color) || (final Color color, _) =>
-        WidgetStateProperty<Color?>.fromMap(<WidgetState, Color?>{
-          WidgetState.pressed: color.withOpacity(0.1),
-          WidgetState.hovered: color.withOpacity(0.08),
-          WidgetState.focused: color.withOpacity(0.1),
-        }),
+      (_, final Color color) ||
+      (final Color color, _) => WidgetStateProperty<Color?>.fromMap(<WidgetState, Color?>{
+        WidgetState.pressed: color.withOpacity(0.1),
+        WidgetState.hovered: color.withOpacity(0.08),
+        WidgetState.focused: color.withOpacity(0.1),
+      }),
     };
 
     return ButtonStyle(

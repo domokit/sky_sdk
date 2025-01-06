@@ -1027,8 +1027,7 @@ class OverscrollIndicatorNotification extends Notification with ViewportNotifica
   /// indicator from showing.
   ///
   /// Defaults to true.
-  bool
-  accepted = true;
+  bool accepted = true;
 
   /// Call this method if the overscroll indicator should be prevented.
   void disallowIndicator() {

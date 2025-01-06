@@ -96,8 +96,7 @@ class CupertinoTextSelectionToolbarButton extends StatefulWidget {
       ContextMenuButtonType.share => localizations.shareButtonLabel,
       ContextMenuButtonType.liveTextInput ||
       ContextMenuButtonType.delete ||
-      ContextMenuButtonType.custom =>
-        '',
+      ContextMenuButtonType.custom => '',
     };
   }
 

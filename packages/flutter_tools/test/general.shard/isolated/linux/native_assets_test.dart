@@ -15,7 +15,7 @@ import 'package:flutter_tools/src/dart/package_map.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:flutter_tools/src/isolated/native_assets/native_assets.dart';
-import 'package:native_assets_cli/code_assets_builder.dart' hide BuildMode;
+import 'package:native_assets_cli/code_assets_builder.dart';
 import 'package:package_config/package_config_types.dart';
 
 import '../../../src/common.dart';
@@ -118,7 +118,7 @@ void main() {
         fileSystem,
         logger,
       );
-      final CCompilerConfig result = await runner.cCompilerConfig;
+      final CCompilerConfig result = (await runner.cCompilerConfig)!;
       expect(result.compiler, Uri.file('/some/path/to/clang'));
     },
   );

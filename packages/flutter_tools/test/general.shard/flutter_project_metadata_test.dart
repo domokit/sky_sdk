@@ -61,7 +61,7 @@ version:
 project_type: plugin
       ''');
     final FlutterProjectMetadata projectMetadata = FlutterProjectMetadata(metadataFile, logger);
-    expect(projectMetadata.projectType, FlutterProjectType.plugin);
+    expect(projectMetadata.projectType, FlutterTemplateType.plugin);
     expect(projectMetadata.versionChannel, isNull);
     expect(projectMetadata.versionRevision, isNull);
 
@@ -79,7 +79,7 @@ version: STRING INSTEAD OF MAP
 project_type: plugin
       ''');
     final FlutterProjectMetadata projectMetadata = FlutterProjectMetadata(metadataFile, logger);
-    expect(projectMetadata.projectType, FlutterProjectType.plugin);
+    expect(projectMetadata.projectType, FlutterTemplateType.plugin);
     expect(projectMetadata.versionChannel, isNull);
     expect(projectMetadata.versionRevision, isNull);
 
@@ -169,7 +169,7 @@ migration:
   unmanaged_files: {}
       ''');
     final FlutterProjectMetadata projectMetadata = FlutterProjectMetadata(metadataFile, logger);
-    expect(projectMetadata.projectType, FlutterProjectType.app);
+    expect(projectMetadata.projectType, FlutterTemplateType.app);
     expect(
       projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]?.createRevision,
       'abcdefg',
@@ -213,7 +213,7 @@ migration:
     - 'file1'
       ''');
     final FlutterProjectMetadata projectMetadata = FlutterProjectMetadata(metadataFile, logger);
-    expect(projectMetadata.projectType, FlutterProjectType.app);
+    expect(projectMetadata.projectType, FlutterTemplateType.app);
     expect(
       projectMetadata.migrateConfig.platformConfigs[SupportedPlatform.root]?.createRevision,
       'abcdefg',
@@ -240,15 +240,27 @@ migration:
   });
 
   testUsingContext('enabledValues does not contain packageFfi if native-assets not enabled', () {
-    expect(FlutterProjectType.enabledValues, isNot(contains(FlutterProjectType.packageFfi)));
-    expect(FlutterProjectType.enabledValues, contains(FlutterProjectType.plugin));
+    expect(
+      ParsedFlutterTemplateType.enabledValues(featureFlags),
+      isNot(contains(FlutterTemplateType.packageFfi)),
+    );
+    expect(
+      ParsedFlutterTemplateType.enabledValues(featureFlags),
+      contains(FlutterTemplateType.plugin),
+    );
   });
 
   testUsingContext(
     'enabledValues contains packageFfi if natives-assets enabled',
     () {
-      expect(FlutterProjectType.enabledValues, contains(FlutterProjectType.packageFfi));
-      expect(FlutterProjectType.enabledValues, contains(FlutterProjectType.plugin));
+      expect(
+        ParsedFlutterTemplateType.enabledValues(featureFlags),
+        contains(FlutterTemplateType.packageFfi),
+      );
+      expect(
+        ParsedFlutterTemplateType.enabledValues(featureFlags),
+        contains(FlutterTemplateType.plugin),
+      );
     },
     overrides: <Type, Generator>{FeatureFlags: () => TestFeatureFlags(isNativeAssetsEnabled: true)},
   );

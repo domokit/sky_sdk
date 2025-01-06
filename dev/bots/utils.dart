@@ -377,10 +377,7 @@ bool hasInlineIgnore(
     return false;
   }
   return compilationUnit.content
-      .substring(
-        lineInfo.getOffsetOfLine(lineNumber - 1),
-        lineInfo.getOffsetOfLine(lineNumber) - 1, // Excludes LF, see the comment above.
-      )
+      .substring(lineInfo.getOffsetOfLine(lineNumber - 1), lineInfo.getOffsetOfLine(lineNumber))
       .trimLeft()
       .contains(ignoreDirectivePattern);
 }

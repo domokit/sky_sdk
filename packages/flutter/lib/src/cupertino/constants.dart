@@ -3,6 +3,11 @@
 // found in the LICENSE file.
 
 /// @docImport 'package:flutter/material.dart';
+///
+/// @docImport 'checkbox.dart';
+/// @docImport 'radio.dart';
+/// @docImport 'switch.dart';
+/// @docImport 'text_theme.dart';
 library;
 
 import 'package:flutter/widgets.dart';

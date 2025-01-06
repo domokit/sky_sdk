@@ -598,6 +598,7 @@ void DlDispatcherBase::drawDiffRoundRect(const DlRoundRect& outer,
   PathBuilder builder;
   builder.AddRoundRect(outer);
   builder.AddRoundRect(inner);
+  builder.SetBounds(outer.GetBounds().Union(inner.GetBounds()));
   GetCanvas().DrawPath(builder.TakePath(FillType::kOdd), paint_);
 }
 

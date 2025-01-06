@@ -1,0 +1,10 @@
+# Flutter-related
+**/Flutter/ephemeral/
+**/Pods/
+
+# Xcode-related
+**/dgph
+**/xcuserdata/
+
+# Swift Package Manager related
+macos/integration_test_macos/.build/
