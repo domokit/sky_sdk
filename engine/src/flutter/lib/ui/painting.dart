@@ -127,7 +127,7 @@ class Color {
   /// Construct a color with normalized color components from `0.0` to `1.0`.
   ///
   /// Normalized color components allows arbitrary bit depths for color
-  /// components to be be supported. The values will be normalized relative to
+  /// components to be supported. The values will be normalized relative to
   /// the [ColorSpace] argument.
   ///
   /// ## Example
