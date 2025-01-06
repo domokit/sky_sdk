@@ -170,7 +170,8 @@ mixin _RenderTransition<L extends Listenable> on RenderObject {
     _listenable.removeListener(_listener);
     _listenable = value;
     if (attached) {
-      value.addListener(_listener..call());
+      value.addListener(_listener);
+      _listener();
     }
   }
 
@@ -178,6 +179,7 @@ mixin _RenderTransition<L extends Listenable> on RenderObject {
   void attach(PipelineOwner owner) {
     super.attach(owner);
     listenable.addListener(_listener);
+    _listener();
   }
 
   @override
@@ -1023,6 +1025,8 @@ class _RenderAnimatedAlign extends RenderPositionedBox
 
   @override
   void _listener() {
+    // Sets the alignment to match the listenable's current value,
+    // and triggers a layout update.
     alignment = _listenable.value;
   }
 }
