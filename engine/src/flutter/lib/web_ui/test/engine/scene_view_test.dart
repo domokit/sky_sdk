@@ -90,6 +90,9 @@ class StubFlutterView implements EngineFlutterView {
   void updateSemantics(ui.SemanticsUpdate update) {}
 
   @override
+  void setSemanticsTreeEnabled(bool enabled) {}
+
+  @override
   int get viewId => throw UnimplementedError();
 
   @override

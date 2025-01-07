@@ -140,6 +140,7 @@ if (enable_unittests) {
       "dart_service_isolate_unittests.cc",
       "dart_vm_unittests.cc",
       "platform_isolate_manager_unittests.cc",
+      "runtime_controller_unittests.cc",
       "type_conversions_unittests.cc",
     ]
 
@@ -153,6 +154,7 @@ if (enable_unittests) {
       "//flutter/common",
       "//flutter/fml",
       "//flutter/lib/snapshot",
+      "//flutter/shell/common:shell_test_fixture_sources",
       "//flutter/skia",
       "//flutter/testing",
       "//flutter/testing:dart",

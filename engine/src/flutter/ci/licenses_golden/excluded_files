@@ -276,6 +276,7 @@
 ../../../flutter/runtime/fixtures
 ../../../flutter/runtime/no_dart_plugin_registrant_unittests.cc
 ../../../flutter/runtime/platform_isolate_manager_unittests.cc
+../../../flutter/runtime/runtime_controller_unittests.cc
 ../../../flutter/runtime/type_conversions_unittests.cc
 ../../../flutter/shell/common/animator_unittests.cc
 ../../../flutter/shell/common/base64_unittests.cc
