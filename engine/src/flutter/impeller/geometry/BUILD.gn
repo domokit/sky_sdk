@@ -31,6 +31,8 @@ impeller_component("geometry") {
     "rect.h",
     "round_rect.cc",
     "round_rect.h",
+    "rounding_radii.cc",
+    "rounding_radii.h",
     "saturated_math.h",
     "scalar.h",
     "separated_vector.cc",
