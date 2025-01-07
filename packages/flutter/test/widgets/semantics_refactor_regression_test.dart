@@ -16,15 +16,15 @@ void main() {
       Directionality(
         textDirection: TextDirection.ltr,
         child: Semantics(
-            key: key1,
+          key: key1,
+          label: label,
+          container: true,
+          child: Semantics(
+            key: key2,
             label: label,
             container: true,
-            child: Semantics(
-              key: key2,
-              label: label,
-              container: true,
-              child: const SizedBox(width: 100, height: 100),
-            )
+            child: const SizedBox(width: 100, height: 100),
+          ),
         ),
       ),
     );
@@ -37,13 +37,9 @@ void main() {
         // key2 widget should merge up to key1, its dirty cached semantics node
         // should not show up in the finder.
         child: Semantics(
-            key: key1,
-            container: true,
-            child: Semantics(
-              key: key2,
-              label: label,
-              child: const SizedBox(width: 100, height: 100),
-            )
+          key: key1,
+          container: true,
+          child: Semantics(key: key2, label: label, child: const SizedBox(width: 100, height: 100)),
         ),
       ),
     );
