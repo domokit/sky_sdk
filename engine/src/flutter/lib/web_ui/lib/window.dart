@@ -26,6 +26,7 @@ abstract class FlutterView {
   Display get display;
   void render(Scene scene, {Size? size});
   void updateSemantics(SemanticsUpdate update) => platformDispatcher.updateSemantics(update);
+  void setSemanticsTreeEnabled(bool enabled) {}
 }
 
 abstract class SingletonFlutterWindow extends FlutterView {
