@@ -8332,6 +8332,64 @@ void main() {
 
       expect(textSizeWithIcons.width, equals(textSizeWithoutIcon.width));
     });
+
+    testWidgets('depends on hint width and content width when decorator is empty', (
+      WidgetTester tester,
+    ) async {
+      const InputDecoration decorationWithHint = InputDecoration(
+        contentPadding: EdgeInsets.zero,
+        hintText: 'Hint',
+      );
+      const double hintTextWidth = 66.0;
+      const double smallContentWidth = 20.0;
+      const double largeContentWidth = 80.0;
+
+      await tester.pumpWidget(
+        buildInputDecorator(
+          decoration: decorationWithHint,
+          useIntrinsicWidth: true,
+          isEmpty: true,
+          child: const SizedBox(width: smallContentWidth),
+        ),
+      );
+
+      // Decorator width depends on the hint because the hint is larger than the content.
+      expect(getDecoratorRect(tester).width, hintTextWidth);
+
+      await tester.pumpWidget(
+        buildInputDecorator(
+          decoration: decorationWithHint,
+          useIntrinsicWidth: true,
+          isEmpty: true,
+          child: const SizedBox(width: largeContentWidth),
+        ),
+      );
+
+      // Decorator width depends on the content because the content is larger than the hint.
+      expect(getDecoratorRect(tester).width, largeContentWidth);
+    });
+
+    // Regression test for https://github.com/flutter/flutter/issues/93337.
+    testWidgets('depends on content width when decorator is not empty', (
+      WidgetTester tester,
+    ) async {
+      const InputDecoration decorationWithHint = InputDecoration(
+        contentPadding: EdgeInsets.zero,
+        hintText: 'Hint',
+      );
+      const double contentWidth = 20.0;
+
+      await tester.pumpWidget(
+        buildInputDecorator(
+          decoration: decorationWithHint,
+          useIntrinsicWidth: true,
+          child: const SizedBox(width: contentWidth),
+        ),
+      );
+
+      // The hint width is ignored even if larger than the content width.
+      expect(getDecoratorRect(tester).width, contentWidth);
+    });
   });
 
   testWidgets('Ensure the height of labelStyle remains unchanged when TextField is focused', (
