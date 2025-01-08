@@ -194,13 +194,6 @@
             "check-licenses"
           ],
           "script": "flutter/lib/web_ui/dev/felt"
-        },
-        {
-          "name": "web engine analysis",
-          "parameters": [
-            "analyze"
-          ],
-          "script": "flutter/lib/web_ui/dev/felt"
         }
       ]
     },

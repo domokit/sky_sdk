@@ -102,40 +102,6 @@ class FlutterExtension {
     }
 }
 
-// This buildscript block supplies dependencies for this file's own import
-// declarations above. It exists solely for compatibility with projects that
-// have not migrated to declaratively apply the Flutter Gradle Plugin;
-// for those that have, FGP's `build.gradle.kts`  takes care of this.
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        // When bumping, also update:
-        //  * ndkVersion in FlutterExtension in packages/flutter_tools/gradle/src/main/groovy/flutter.groovy
-        //  * AGP version in the buildscript block in packages/flutter_tools/gradle/src/main/kotlin/dependency_version_checker.gradle.kts
-        //  * AGP version constants in packages/flutter_tools/lib/src/android/gradle_utils.dart
-        //  * AGP version in dependencies block in packages/flutter_tools/gradle/build.gradle.kts
-        classpath("com.android.tools.build:gradle:7.3.0")
-    }
-}
-
-/**
- * Some apps don't set default compile options.
- * Apps can change these values in the app-level Gradle build file
- * (android/app/build.gradle or android/app/build.gradle.kts).
- * This just ensures that default values are set.
- */
-android {
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-}
-
-apply plugin: FlutterPlugin
-
 class FlutterPlugin implements Plugin<Project> {
 
     private static final String DEFAULT_MAVEN_HOST = "https://storage.googleapis.com"

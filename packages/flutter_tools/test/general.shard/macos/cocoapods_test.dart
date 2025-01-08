@@ -566,7 +566,11 @@ void main() {
         expect(fakeProcessManager, hasNoRemainingExpectations);
       },
       overrides: <Type, Generator>{
-        FeatureFlags: () => TestFeatureFlags(isSwiftPackageManagerEnabled: true),
+        FeatureFlags:
+            () => TestFeatureFlags(
+              isSwiftPackageManagerEnabled: true,
+              isSwiftPackageManagerMigrationEnabled: true,
+            ),
         XcodeProjectInterpreter: () => FakeXcodeProjectInterpreter(version: Version(15, 0, 0)),
       },
     );

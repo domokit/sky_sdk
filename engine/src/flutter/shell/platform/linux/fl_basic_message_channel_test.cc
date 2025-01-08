@@ -19,7 +19,7 @@ TEST(FlBasicMessageChannelTest, SendMessageWithoutResponse) {
   gboolean called = FALSE;
   fl_mock_binary_messenger_set_standard_message_channel(
       messenger, "test",
-      [](FlMockBinaryMessenger* messenger, FlValue* message,
+      [](FlMockBinaryMessenger* messenger, GTask* task, FlValue* message,
          gpointer user_data) {
         gboolean* called = static_cast<gboolean*>(user_data);
         *called = TRUE;
@@ -50,7 +50,7 @@ TEST(FlBasicMessageChannelTest, SendMessageWithResponse) {
   g_autoptr(FlMockBinaryMessenger) messenger = fl_mock_binary_messenger_new();
   fl_mock_binary_messenger_set_standard_message_channel(
       messenger, "test",
-      [](FlMockBinaryMessenger* messenger, FlValue* message,
+      [](FlMockBinaryMessenger* messenger, GTask* task, FlValue* message,
          gpointer user_data) {
         EXPECT_NE(message, nullptr);
         EXPECT_EQ(fl_value_get_type(message), FL_VALUE_TYPE_STRING);
@@ -164,7 +164,7 @@ TEST(FlBasicMessageChannelTest, SendNullMessageWithResponse) {
   g_autoptr(FlMockBinaryMessenger) messenger = fl_mock_binary_messenger_new();
   fl_mock_binary_messenger_set_standard_message_channel(
       messenger, "test",
-      [](FlMockBinaryMessenger* messenger, FlValue* message,
+      [](FlMockBinaryMessenger* messenger, GTask* task, FlValue* message,
          gpointer user_data) { return fl_value_new_null(); },
       nullptr);
 
@@ -196,7 +196,7 @@ TEST(FlBasicMessageChannelTest, CustomType) {
   g_autoptr(FlMockBinaryMessenger) messenger = fl_mock_binary_messenger_new();
   fl_mock_binary_messenger_set_standard_message_channel(
       messenger, "test",
-      [](FlMockBinaryMessenger* messenger, FlValue* message,
+      [](FlMockBinaryMessenger* messenger, GTask* task, FlValue* message,
          gpointer user_data) { return fl_value_new_null(); },
       nullptr);
 

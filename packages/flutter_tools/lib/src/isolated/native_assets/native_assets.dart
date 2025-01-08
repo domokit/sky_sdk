@@ -221,16 +221,27 @@ class FlutterNativeAssetsBuildRunnerImpl implements FlutterNativeAssetsBuildRunn
       }
     });
 
-  late final Uri _dartExecutable = fileSystem.directory(Cache.flutterRoot).uri.resolve('bin/dart');
+  // Flutter wraps the Dart executable to update it in place
+  // ($FLUTTER_ROOT/bin/dart). However, since this is a Dart process invocation
+  // in a Flutter process invocation, it should not try to update in place, so
+  // use the Dart standalone executable
+  // ($FLUTTER_ROOT/bin/cache/dart-sdk/bin/dart).
+  late final Uri _dartExecutable = fileSystem
+      .directory(Cache.flutterRoot)
+      .uri
+      .resolve('bin/cache/dart-sdk/bin/dart');
 
   late final NativeAssetsBuildRunner _buildRunner = NativeAssetsBuildRunner(
     logger: _logger,
     dartExecutable: _dartExecutable,
     fileSystem: fileSystem,
-    // TODO(dcharkes): Filter the environment with
-    // NativeAssetsBuildRunner.hookEnvironmentVariablesFilter.
-    hookEnvironment: const LocalPlatform().environment,
+    hookEnvironment: filteredEnvironment(NativeAssetsBuildRunner.hookEnvironmentVariablesFilter),
   );
+
+  static Map<String, String> filteredEnvironment(Set<String> allowList) => <String, String>{
+    for (final MapEntry<String, String> entry in const LocalPlatform().environment.entries)
+      if (allowList.contains(entry.key.toUpperCase())) entry.key: entry.value,
+  };
 
   @override
   Future<bool> hasPackageConfig() {

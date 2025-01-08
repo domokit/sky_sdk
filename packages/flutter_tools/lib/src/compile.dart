@@ -8,7 +8,7 @@ import 'dart:typed_data';
 import 'package:meta/meta.dart';
 import 'package:package_config/package_config.dart';
 import 'package:process/process.dart';
-import 'package:usage/uuid/uuid.dart';
+import 'package:uuid/v4.dart';
 
 import 'artifacts.dart';
 import 'base/common.dart';
@@ -753,7 +753,7 @@ class DefaultResidentCompiler implements ResidentCompiler {
         nativeAssetsUri: nativeAssets,
       );
     }
-    final String inputKey = Uuid().generateV4();
+    final String inputKey = const UuidV4().generate();
 
     if (nativeAssets != null && nativeAssets.isNotEmpty) {
       server.stdin.writeln('native-assets $nativeAssets');
@@ -953,7 +953,7 @@ class DefaultResidentCompiler implements ResidentCompiler {
       return null;
     }
 
-    final String inputKey = Uuid().generateV4();
+    final String inputKey = const UuidV4().generate();
     server.stdin
       ..writeln('compile-expression $inputKey')
       ..writeln(request.expression);
@@ -1016,7 +1016,7 @@ class DefaultResidentCompiler implements ResidentCompiler {
       return null;
     }
 
-    final String inputKey = Uuid().generateV4();
+    final String inputKey = const UuidV4().generate();
     server.stdin
       ..writeln('compile-expression-to-js $inputKey')
       ..writeln(request.libraryUri ?? '')

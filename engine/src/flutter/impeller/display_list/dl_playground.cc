@@ -45,13 +45,14 @@ bool DlPlayground::OpenPlaygroundHere(DisplayListPlaygroundCallback callback) {
           wireframe = !wireframe;
           context.GetContentContext().SetWireframe(wireframe);
         }
-        return RenderToOnscreen(
+        return RenderToTarget(
             context.GetContentContext(),  //
             render_target,                //
             callback(),                   //
             SkIRect::MakeWH(render_target.GetRenderTargetSize().width,
                             render_target.GetRenderTargetSize().height),  //
-            /*reset_host_buffer=*/true                                    //
+            /*reset_host_buffer=*/true,                                   //
+            /*is_onscreen=*/false                                         //
         );
       });
 }

@@ -6,7 +6,6 @@
 
 #include "impeller/core/formats.h"
 #include "impeller/renderer/backend/vulkan/formats_vk.h"
-#include "vulkan/vulkan_enums.hpp"
 
 namespace impeller {
 

@@ -63,7 +63,11 @@ void main() {
         residentCompiler,
       );
 
-      expect(await testCompiler.compile(Uri.parse('test/foo.dart')), 'test/foo.dart.dill');
+      final Uri input = Uri.parse('test/foo.dart');
+      expect(
+        await testCompiler.compile(input),
+        TestCompilerComplete(outputPath: 'test/foo.dart.dill', mainUri: input),
+      );
     },
     overrides: <Type, Generator>{
       FileSystem: () => fileSystem,
@@ -86,7 +90,11 @@ void main() {
         precompiledDillPath: 'precompiled.dill',
       );
 
-      expect(await testCompiler.compile(Uri.parse('test/foo.dart')), 'abc.dill');
+      final Uri input = Uri.parse('test/foo.dart');
+      expect(
+        await testCompiler.compile(input),
+        TestCompilerComplete(outputPath: 'abc.dill', mainUri: input),
+      );
     },
     overrides: <Type, Generator>{
       FileSystem: () => fileSystem,
@@ -99,16 +107,25 @@ void main() {
   );
 
   testUsingContext(
-    'TestCompiler reports null when a compile fails',
+    'TestCompiler reports an error when a compile fails',
     () async {
-      residentCompiler.compilerOutput = const CompilerOutput('abc.dill', 1, <Uri>[]);
+      residentCompiler.compilerOutput = const CompilerOutput(
+        'abc.dill',
+        1,
+        <Uri>[],
+        errorMessage: 'A big bad happened',
+      );
       final FakeTestCompiler testCompiler = FakeTestCompiler(
         debugBuild,
         FlutterProject.fromDirectoryTest(fileSystem.currentDirectory),
         residentCompiler,
       );
 
-      expect(await testCompiler.compile(Uri.parse('test/foo.dart')), null);
+      final Uri input = Uri.parse('test/foo.dart');
+      expect(
+        await testCompiler.compile(input),
+        TestCompilerFailure(error: 'A big bad happened', mainUri: input),
+      );
       expect(residentCompiler.didShutdown, true);
     },
     overrides: <Type, Generator>{
@@ -132,7 +149,12 @@ void main() {
         residentCompiler,
         testTimeRecorder: testTimeRecorder,
       );
-      expect(await testCompiler.compile(Uri.parse('test/foo.dart')), 'test/foo.dart.dill');
+
+      final Uri input = Uri.parse('test/foo.dart');
+      expect(
+        await testCompiler.compile(Uri.parse('test/foo.dart')),
+        TestCompilerComplete(outputPath: 'test/foo.dart.dill', mainUri: input),
+      );
       testTimeRecorder.print();
 
       // Expect one message for each phase.

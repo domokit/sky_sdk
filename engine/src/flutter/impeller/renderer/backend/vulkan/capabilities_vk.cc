@@ -627,7 +627,7 @@ bool CapabilitiesVK::SupportsTextureToTextureBlits() const {
 
 // |Capabilities|
 bool CapabilitiesVK::SupportsFramebufferFetch() const {
-  return true;
+  return has_framebuffer_fetch_;
 }
 
 // |Capabilities|
@@ -762,6 +762,7 @@ ISize CapabilitiesVK::GetMaximumRenderPassAttachmentSize() const {
 
 void CapabilitiesVK::ApplyWorkarounds(const WorkaroundsVK& workarounds) {
   has_primitive_restart_ = !workarounds.slow_primitive_restart_performance;
+  has_framebuffer_fetch_ = !workarounds.input_attachment_self_dependency_broken;
 }
 
 }  // namespace impeller

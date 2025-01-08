@@ -104,19 +104,21 @@ final class TestGoldenComparator {
     final File listenerFile = (await _tempDir.createTemp('listener')).childFile('listener.dart');
     await listenerFile.writeAsString(testBootstrap);
 
-    final String? output = await _compiler.compile(listenerFile.uri);
-    if (output == null) {
-      return null;
-    }
-    final List<String> command = <String>[
-      _flutterTesterBinPath,
-      '--disable-vm-service',
-      '--non-interactive',
-      '--packages=${_fileSystem.path.join('.dart_tool', 'package_config.json')}',
-      output,
-    ];
+    final TestCompilerResult result = await _compiler.compile(listenerFile.uri);
+    switch (result) {
+      case TestCompilerFailure(:final String error):
+        _logger.printWarning('An error occurred compiling ${listenerFile.uri}: $error.');
+        return null;
+      case TestCompilerComplete(:final String outputPath):
+        final List<String> command = <String>[
+          _flutterTesterBinPath,
+          '--disable-vm-service',
+          '--non-interactive',
+          outputPath,
+        ];
 
-    return _processManager.start(command, environment: _environment);
+        return _processManager.start(command, environment: _environment);
+    }
   }
 
   /// Compares the golden file designated by [goldenKey], relative to [testUri], to the provide [bytes].

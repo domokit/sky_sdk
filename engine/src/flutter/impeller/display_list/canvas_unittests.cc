@@ -56,10 +56,12 @@ std::unique_ptr<Canvas> CreateTestCanvas(
   render_target.SetColorAttachment(color0, 0);
 
   if (cull_rect.has_value()) {
-    return std::make_unique<Canvas>(context, render_target, requires_readback,
-                                    cull_rect.value());
+    return std::make_unique<Canvas>(
+        context, render_target, /*is_onscreen=*/false,
+        /*requires_readback=*/requires_readback, cull_rect.value());
   }
-  return std::make_unique<Canvas>(context, render_target, requires_readback);
+  return std::make_unique<Canvas>(context, render_target, /*is_onscreen=*/false,
+                                  /*requires_readback=*/requires_readback);
 }
 
 TEST_P(AiksTest, TransformMultipliesCorrectly) {

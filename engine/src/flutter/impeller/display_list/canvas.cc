@@ -43,6 +43,7 @@
 #include "impeller/geometry/color.h"
 #include "impeller/geometry/constants.h"
 #include "impeller/geometry/path_builder.h"
+#include "impeller/renderer/command_buffer.h"
 
 namespace impeller {
 
@@ -162,9 +163,11 @@ static std::unique_ptr<EntityPassTarget> CreateRenderTarget(
 
 Canvas::Canvas(ContentContext& renderer,
                const RenderTarget& render_target,
+               bool is_onscreen,
                bool requires_readback)
     : renderer_(renderer),
       render_target_(render_target),
+      is_onscreen_(is_onscreen),
       requires_readback_(requires_readback),
       clip_coverage_stack_(EntityPassClipStack(
           Rect::MakeSize(render_target.GetRenderTargetSize()))) {
@@ -174,10 +177,12 @@ Canvas::Canvas(ContentContext& renderer,
 
 Canvas::Canvas(ContentContext& renderer,
                const RenderTarget& render_target,
+               bool is_onscreen,
                bool requires_readback,
                Rect cull_rect)
     : renderer_(renderer),
       render_target_(render_target),
+      is_onscreen_(is_onscreen),
       requires_readback_(requires_readback),
       clip_coverage_stack_(EntityPassClipStack(
           Rect::MakeSize(render_target.GetRenderTargetSize()))) {
@@ -187,10 +192,12 @@ Canvas::Canvas(ContentContext& renderer,
 
 Canvas::Canvas(ContentContext& renderer,
                const RenderTarget& render_target,
+               bool is_onscreen,
                bool requires_readback,
                IRect cull_rect)
     : renderer_(renderer),
       render_target_(render_target),
+      is_onscreen_(is_onscreen),
       requires_readback_(requires_readback),
       clip_coverage_stack_(EntityPassClipStack(
           Rect::MakeSize(render_target.GetRenderTargetSize()))) {
@@ -1658,7 +1665,7 @@ std::shared_ptr<Texture> Canvas::FlipBackdrop(Point global_pass_position,
   return input_texture;
 }
 
-bool Canvas::BlitToOnscreen() {
+bool Canvas::BlitToOnscreen(bool is_onscreen) {
   auto command_buffer = renderer_.GetContext()->CreateCommandBuffer();
   command_buffer->SetLabel("EntityPass Root Command Buffer");
   auto offscreen_target = render_passes_.back()
@@ -1673,10 +1680,6 @@ bool Canvas::BlitToOnscreen() {
                        render_target_.GetRenderTargetTexture());
     if (!blit_pass->EncodeCommands()) {
       VALIDATION_LOG << "Failed to encode root pass blit command.";
-      return false;
-    }
-    if (!renderer_.GetContext()->EnqueueCommandBuffer(
-            std::move(command_buffer))) {
       return false;
     }
   } else {
@@ -1704,25 +1707,28 @@ bool Canvas::BlitToOnscreen() {
       VALIDATION_LOG << "Failed to encode root pass command buffer.";
       return false;
     }
-    if (!renderer_.GetContext()->EnqueueCommandBuffer(
-            std::move(command_buffer))) {
-      return false;
-    }
   }
-  return true;
+
+  if (is_onscreen) {
+    return renderer_.GetContext()->SubmitOnscreen(std::move(command_buffer));
+  } else {
+    return renderer_.GetContext()->EnqueueCommandBuffer(
+        std::move(command_buffer));
+  }
 }
 
 void Canvas::EndReplay() {
   FML_DCHECK(render_passes_.size() == 1u);
   render_passes_.back().inline_pass_context->GetRenderPass();
-  render_passes_.back().inline_pass_context->EndPass();
+  render_passes_.back().inline_pass_context->EndPass(
+      /*is_onscreen=*/!requires_readback_ && is_onscreen_);
   backdrop_data_.clear();
 
   // If requires_readback_ was true, then we rendered to an offscreen texture
   // instead of to the onscreen provided in the render target. Now we need to
   // draw or blit the offscreen back to the onscreen.
   if (requires_readback_) {
-    BlitToOnscreen();
+    BlitToOnscreen(/*is_onscreen_=*/is_onscreen_);
   }
 
   if (!renderer_.GetContext()->FlushCommandBuffers()) {

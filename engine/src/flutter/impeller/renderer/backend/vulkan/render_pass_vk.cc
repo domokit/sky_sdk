@@ -14,7 +14,6 @@
 #include "impeller/core/formats.h"
 #include "impeller/core/texture.h"
 #include "impeller/core/vertex_buffer.h"
-#include "impeller/renderer/backend/vulkan/barrier_vk.h"
 #include "impeller/renderer/backend/vulkan/command_buffer_vk.h"
 #include "impeller/renderer/backend/vulkan/context_vk.h"
 #include "impeller/renderer/backend/vulkan/device_buffer_vk.h"
@@ -82,17 +81,19 @@ SharedHandleVK<vk::RenderPass> RenderPassVK::CreateVKRenderPass(
     const std::shared_ptr<CommandBufferVK>& command_buffer) const {
   RenderPassBuilderVK builder;
 
-  render_target_.IterateAllColorAttachments(
-      [&](size_t bind_point, const ColorAttachment& attachment) -> bool {
-        builder.SetColorAttachment(
-            bind_point,                                               //
-            attachment.texture->GetTextureDescriptor().format,        //
-            attachment.texture->GetTextureDescriptor().sample_count,  //
-            attachment.load_action,                                   //
-            attachment.store_action                                   //
-        );
-        return true;
-      });
+  render_target_.IterateAllColorAttachments([&](size_t bind_point,
+                                                const ColorAttachment&
+                                                    attachment) -> bool {
+    builder.SetColorAttachment(
+        bind_point,                                                          //
+        attachment.texture->GetTextureDescriptor().format,                   //
+        attachment.texture->GetTextureDescriptor().sample_count,             //
+        attachment.load_action,                                              //
+        attachment.store_action,                                             //
+        /*current_layout=*/TextureVK::Cast(*attachment.texture).GetLayout()  //
+    );
+    return true;
+  });
 
   if (auto depth = render_target_.GetDepthAttachment(); depth.has_value()) {
     builder.SetDepthStencilAttachment(
@@ -179,6 +180,8 @@ RenderPassVK::RenderPassVK(const std::shared_ptr<const Context>& context,
   if (resolve_image_vk_) {
     TextureVK::Cast(*resolve_image_vk_).SetCachedFramebuffer(framebuffer);
     TextureVK::Cast(*resolve_image_vk_).SetCachedRenderPass(render_pass_);
+    TextureVK::Cast(*resolve_image_vk_)
+        .SetLayoutWithoutEncoding(vk::ImageLayout::eGeneral);
   }
 
   std::array<vk::ClearValue, kMaxAttachments> clears;

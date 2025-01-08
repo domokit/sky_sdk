@@ -10,6 +10,7 @@
 #include "flutter/fml/build_config.h"
 #include "impeller/geometry/size.h"
 #include "impeller/renderer/backend/vulkan/vk.h"
+#include "impeller/renderer/command_buffer.h"
 #include "impeller/renderer/context.h"
 #include "impeller/renderer/surface.h"
 
@@ -51,6 +52,9 @@ class SwapchainVK {
   virtual std::unique_ptr<Surface> AcquireNextDrawable() = 0;
 
   virtual vk::Format GetSurfaceFormat() const = 0;
+
+  virtual void AddFinalCommandBuffer(
+      std::shared_ptr<CommandBuffer> cmd_buffer) const = 0;
 
   /// @brief Mark the current swapchain configuration as dirty, forcing it to be
   ///        recreated on the next frame.

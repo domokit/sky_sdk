@@ -2,13 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// This file exists solely for the compatibility with projects that have
+// This file existed solely for the compatibility with apps that have
 // not migrated to the declarative apply of the Flutter Gradle Plugin.
+// The old (imperative) apply of this plugin is not possible anymore.
 
-logger.error("You are applying Flutter's main Gradle plugin imperatively using \
-the apply script method, which is deprecated and will be removed in a future \
-release. Migrate to applying Gradle plugins with the declarative plugins \
-block: https://flutter.dev/to/flutter-gradle-plugin-apply\n")
-
-def pathToThisDirectory = buildscript.sourceFile.parentFile
-apply from: "$pathToThisDirectory/src/main/groovy/flutter.groovy"
+throw new GradleException("You are applying Flutter's main Gradle plugin imperatively using \
+the apply script method, which is not possible anymore. \
+Migrate to applying Gradle plugins with the declarative plugins block: \
+https://flutter.dev/to/flutter-gradle-plugin-apply\n\
+")

@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:js_interop';
+import 'dart:typed_data';
 
 import 'package:test/bootstrap/browser.dart';
 import 'package:test/test.dart';
@@ -145,6 +146,126 @@ class StubFlutterView implements EngineFlutterView {
   EngineSemanticsOwner get semantics => throw UnimplementedError();
 }
 
+class StubPath implements ScenePath {
+  StubPath(this.pathString, this.transformedPathString);
+
+  final String pathString;
+  final String transformedPathString;
+  Float64List? appliedTransform;
+
+  @override
+  ui.PathFillType get fillType => throw UnimplementedError();
+
+  @override
+  set fillType(ui.PathFillType value) => throw UnimplementedError();
+
+  @override
+  void moveTo(double x, double y) => throw UnimplementedError();
+
+  @override
+  void relativeMoveTo(double dx, double dy) => throw UnimplementedError();
+
+  @override
+  void lineTo(double x, double y) => throw UnimplementedError();
+
+  @override
+  void relativeLineTo(double dx, double dy) => throw UnimplementedError();
+
+  @override
+  void quadraticBezierTo(double x1, double y1, double x2, double y2) => throw UnimplementedError();
+
+  @override
+  void relativeQuadraticBezierTo(double x1, double y1, double x2, double y2) =>
+      throw UnimplementedError();
+
+  @override
+  void cubicTo(double x1, double y1, double x2, double y2, double x3, double y3) =>
+      throw UnimplementedError();
+
+  @override
+  void relativeCubicTo(double x1, double y1, double x2, double y2, double x3, double y3) =>
+      throw UnimplementedError();
+
+  @override
+  void conicTo(double x1, double y1, double x2, double y2, double w) => throw UnimplementedError();
+
+  @override
+  void relativeConicTo(double x1, double y1, double x2, double y2, double w) =>
+      throw UnimplementedError();
+
+  @override
+  void arcTo(ui.Rect rect, double startAngle, double sweepAngle, bool forceMoveTo) =>
+      throw UnimplementedError();
+
+  @override
+  void arcToPoint(
+    ui.Offset arcEnd, {
+    ui.Radius radius = ui.Radius.zero,
+    double rotation = 0.0,
+    bool largeArc = false,
+    bool clockwise = true,
+  }) => throw UnimplementedError();
+
+  @override
+  void relativeArcToPoint(
+    ui.Offset arcEndDelta, {
+    ui.Radius radius = ui.Radius.zero,
+    double rotation = 0.0,
+    bool largeArc = false,
+    bool clockwise = true,
+  }) => throw UnimplementedError();
+
+  @override
+  void addRect(ui.Rect rect) => throw UnimplementedError();
+
+  @override
+  void addOval(ui.Rect oval) => throw UnimplementedError();
+
+  @override
+  void addArc(ui.Rect oval, double startAngle, double sweepAngle) => throw UnimplementedError();
+
+  @override
+  void addPolygon(List<ui.Offset> points, bool close) => throw UnimplementedError();
+
+  @override
+  void addRRect(ui.RRect rrect) => throw UnimplementedError();
+
+  @override
+  void addPath(ui.Path path, ui.Offset offset, {Float64List? matrix4}) =>
+      throw UnimplementedError();
+
+  @override
+  void extendWithPath(ui.Path path, ui.Offset offset, {Float64List? matrix4}) =>
+      throw UnimplementedError();
+
+  @override
+  void close() => throw UnimplementedError();
+
+  @override
+  void reset() => throw UnimplementedError();
+
+  @override
+  bool contains(ui.Offset point) => throw UnimplementedError();
+
+  @override
+  ui.Path shift(ui.Offset offset) => throw UnimplementedError();
+
+  @override
+  StubPath transform(Float64List matrix4) {
+    appliedTransform = matrix4;
+    return StubPath(transformedPathString, '');
+  }
+
+  @override
+  ui.Rect getBounds() => throw UnimplementedError();
+
+  @override
+  ui.PathMetrics computeMetrics({bool forceClosed = false}) => throw UnimplementedError();
+
+  @override
+  String toSvgString() => pathString;
+}
+
 void testMain() {
   late EngineSceneView sceneView;
   late StubPictureRenderer stubPictureRenderer;
@@ -187,10 +308,12 @@ void testMain() {
   test('SceneView places platform view according to device-pixel ratio', () async {
     debugOverrideDevicePixelRatio(2.0);
 
+    final StubPath clipPath = StubPath('M 2 2', 'M 1 1');
+
     final PlatformView platformView = PlatformView(
       1,
       const ui.Rect.fromLTWH(50, 80, 100, 120),
-      const PlatformViewStyling(),
+      PlatformViewStyling(clip: PlatformViewPathClip(clipPath)),
     );
     final EngineRootLayer rootLayer = EngineRootLayer();
     rootLayer.slices.add(LayerSlice(StubPicture(ui.Rect.zero), <PlatformView>[platformView]));
@@ -203,6 +326,12 @@ void testMain() {
     expect(children.length, 1);
     final DomElement clipElement = children.first;
     expect(clipElement.tagName, equalsIgnoringCase('flt-clip'));
+
+    expect(clipElement.style.clipPath, 'path("M 1 1")');
+
+    // We expect the path to be scaled down by 1 / DPR
+    final Matrix4 expectedTransform = Matrix4.identity()..scale(0.5);
+    expect(clipPath.appliedTransform, expectedTransform.toFloat64());
 
     final List<DomElement> clipChildren = clipElement.children.toList();
     expect(clipChildren.length, 1);

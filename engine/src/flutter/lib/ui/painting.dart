@@ -116,19 +116,18 @@ class Color {
   ///
   /// {@template dart.ui.Color.componentsStoredAsFloatingPoint}
   /// > [!NOTE]
-  /// > Each color is stored as normalized floating-point color components,
-  /// > where the final value of each component is approximated by storing
-  /// > `c / 255`, where `c` is one of the four components (alpha, red, green,
-  /// > blue).
+  /// > Each color is stored as floating-point color components, where the final
+  /// > value of each component is approximated by storing `c / 255`, where `c`
+  /// is one of the four components (alpha, red, green, blue).
   /// {@endtemplate}
   const Color(int value)
     : this._fromARGBC(value >> 24, value >> 16, value >> 8, value, ColorSpace.sRGB);
 
-  /// Construct a color with normalized color components from `0.0` to `1.0`.
+  /// Construct a color with floating-point color components.
   ///
-  /// Normalized color components allows arbitrary bit depths for color
-  /// components to be be supported. The values will be normalized relative to
-  /// the [ColorSpace] argument.
+  /// Color components allows arbitrary bit depths for color components to be be
+  /// supported. The values are interpreted relative to the [ColorSpace]
+  /// argument.
   ///
   /// ## Example
   ///
@@ -195,28 +194,16 @@ class Color {
       g = (g & 0xff) / 255,
       b = (b & 0xff) / 255;
 
-  /// The normalized alpha channel of this color.
-  ///
-  /// A value of `0.0` means this color is fully transparent. A value of `1.0`
-  /// means this color is fully opaque.
+  /// The alpha channel of this color.
   final double a;
 
-  /// The normalized red channel of this color.
-  ///
-  /// A value of `0.0` represents no red in this color. A value of `1.0`
-  /// represents the maximum amount of red.
+  /// The red channel of this color.
   final double r;
 
-  /// The normalized green channel of this color.
-  ///
-  /// A value of `0.0` represents no red in this color. A value of `1.0`
-  /// represents the maximum amount of green.
+  /// The green channel of this color.
   final double g;
 
   /// The blue channel of this color.
-  ///
-  /// A value of `0.0` represents no blue in this color. A value of `1.0`
-  /// represents the maximum amount of blue.
   final double b;
 
   /// The color space of this color.
@@ -255,7 +242,7 @@ class Color {
   /// * Bits 0-7 represents the [b] channel as an 8-bit unsigned integer.
   ///
   /// > [!WARNING]
-  /// > The value returned by this getter implicitly converts normalized
+  /// > The value returned by this getter implicitly converts floating-point
   /// > component values (such as `0.5`) into their 8-bit equivalent by using
   /// > the [toARGB32] method; the returned value is not guaranteed to be stable
   /// > across different platforms or executions due to the complexity of
@@ -295,13 +282,12 @@ class Color {
 
   /// Returns a new color with the provided components updated.
   ///
-  /// Each component ([alpha], [red], [green], [blue]) represents a normalized
-  /// floating-point value wher `0.0` is the minimum and `1.0` is the maximum;
-  /// see [Color.from] for details and examples.
+  /// Each component ([alpha], [red], [green], [blue]) represents a
+  /// floating-point value; see [Color.from] for details and examples.
   ///
   /// If [colorSpace] is provided, and is different than the current color
   /// space, the component values are updated before transforming them to the
-  /// provided color space.
+  /// provided [ColorSpace].
   Color withValues({
     double? alpha,
     double? red,

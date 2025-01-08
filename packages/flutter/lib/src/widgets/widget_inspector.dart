@@ -1090,7 +1090,7 @@ mixin WidgetInspectorService {
       getter: () async => WidgetsBinding.instance.debugShowWidgetInspectorOverride,
       setter: (bool value) {
         if (WidgetsBinding.instance.debugShowWidgetInspectorOverride != value) {
-          WidgetsBinding.instance.debugShowWidgetInspectorOverride = value;
+          _changeWidgetSelectionMode(value, notifyStateChange: false);
         }
         return Future<void>.value();
       },
@@ -1633,9 +1633,15 @@ mixin WidgetInspectorService {
   }
 
   /// Changes whether widget selection mode is [enabled].
-  void _changeWidgetSelectionMode(bool enabled) {
+  void _changeWidgetSelectionMode(bool enabled, {bool notifyStateChange = true}) {
     WidgetsBinding.instance.debugShowWidgetInspectorOverride = enabled;
-    _postExtensionStateChangedEvent(WidgetInspectorServiceExtensions.show.name, enabled);
+    if (notifyStateChange) {
+      _postExtensionStateChangedEvent(WidgetInspectorServiceExtensions.show.name, enabled);
+    }
+    if (!enabled) {
+      // If turning off selection mode, clear the current selection.
+      selection.currentElement = null;
+    }
   }
 
   /// Returns a DevTools uri linking to a specific element on the inspector page.
@@ -3056,7 +3062,7 @@ class InspectorSelection with ChangeNotifier {
     }
     if (currentElement != element) {
       _currentElement = element;
-      _current = element!.findRenderObject();
+      _current = element?.findRenderObject();
       notifyListeners();
     }
   }

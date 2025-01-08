@@ -56,7 +56,7 @@ typedef PlatformPluginRegistration = void Function(FlutterPlatform platform);
 /// main()`), you can set a VM Service port explicitly.
 FlutterPlatform installHook({
   TestWrapper testWrapper = const TestWrapper(),
-  required String shellPath,
+  required String flutterTesterBinPath,
   required DebuggingOptions debuggingOptions,
   required BuildInfo buildInfo,
   required FileSystem fileSystem,
@@ -91,7 +91,7 @@ FlutterPlatform installHook({
     });
   };
   final FlutterPlatform platform = FlutterPlatform(
-    shellPath: shellPath,
+    flutterTesterBinPath: flutterTesterBinPath,
     debuggingOptions: debuggingOptions,
     watcher: watcher,
     machine: machine,
@@ -298,7 +298,7 @@ typedef Finalizer = Future<void> Function();
 /// The flutter test platform used to integrate with package:test.
 class FlutterPlatform extends PlatformPlugin {
   FlutterPlatform({
-    required this.shellPath,
+    required this.flutterTesterBinPath,
     required this.debuggingOptions,
     required this.buildInfo,
     required this.logger,
@@ -322,7 +322,7 @@ class FlutterPlatform extends PlatformPlugin {
     this.shutdownHooks,
   }) {
     _testGoldenComparator = TestGoldenComparator(
-      flutterTesterBinPath: shellPath,
+      flutterTesterBinPath: flutterTesterBinPath,
       compilerFactory:
           () =>
               compiler ??
@@ -333,7 +333,7 @@ class FlutterPlatform extends PlatformPlugin {
     );
   }
 
-  final String shellPath;
+  final String flutterTesterBinPath;
   final DebuggingOptions debuggingOptions;
   final TestWatcher? watcher;
   final bool? enableVmService;
@@ -496,7 +496,7 @@ class FlutterPlatform extends PlatformPlugin {
       fileSystem: globals.fs,
       processManager: globals.processManager,
       logger: globals.logger,
-      shellPath: shellPath,
+      flutterTesterBinPath: flutterTesterBinPath,
       enableVmService: enableVmService!,
       machine: machine,
       debuggingOptions: debuggingOptions,
@@ -656,11 +656,14 @@ class FlutterPlatform extends PlatformPlugin {
             flutterProject,
             testTimeRecorder: testTimeRecorder,
           );
-          mainDart = await compiler!.compile(globals.fs.file(mainDart).uri);
-
-          if (mainDart == null) {
-            testHarnessChannel.sink.addError('Compilation failed for testPath=$testPath');
-            return null;
+          switch (await compiler!.compile(globals.fs.file(mainDart).uri)) {
+            case TestCompilerComplete(:final String outputPath):
+              mainDart = outputPath;
+            case TestCompilerFailure(:final String? error):
+              testHarnessChannel.sink.addError(
+                'Compilation failed for testPath=$testPath: $error.',
+              );
+              return null;
           }
         } else {
           // For integration tests, we may still need to set up expression compilation service.

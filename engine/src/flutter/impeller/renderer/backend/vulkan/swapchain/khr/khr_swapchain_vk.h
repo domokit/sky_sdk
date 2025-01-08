@@ -37,6 +37,10 @@ class KHRSwapchainVK final : public SwapchainVK {
   // |SwapchainVK|
   void UpdateSurfaceSize(const ISize& size) override;
 
+  // |SwapchainVK|
+  void AddFinalCommandBuffer(
+      std::shared_ptr<CommandBuffer> cmd_buffer) const override;
+
  private:
   friend class SwapchainVK;
 

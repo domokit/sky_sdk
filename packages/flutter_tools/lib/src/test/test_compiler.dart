@@ -17,11 +17,72 @@ import '../project.dart';
 import 'test_time_recorder.dart';
 
 /// A request to the [TestCompiler] for recompilation.
-class CompilationRequest {
-  CompilationRequest(this.mainUri, this.result);
+final class _CompilationRequest {
+  _CompilationRequest(this.mainUri);
 
-  Uri mainUri;
-  Completer<String?> result;
+  /// The entrypoint (containing `main()`) to the Dart program being compiled.
+  final Uri mainUri;
+
+  /// Invoked when compilation is completed with the compilation output path.
+  Future<TestCompilerResult> get result => _result.future;
+  final Completer<TestCompilerResult> _result = Completer<TestCompilerResult>();
+}
+
+/// The result of [TestCompiler.compile].
+@immutable
+sealed class TestCompilerResult {
+  const TestCompilerResult({required this.mainUri});
+
+  /// The program that was or was attempted to be compiled.
+  final Uri mainUri;
+}
+
+/// A successful run of [TestCompiler.compile].
+final class TestCompilerComplete extends TestCompilerResult {
+  const TestCompilerComplete({required this.outputPath, required super.mainUri});
+
+  /// Output path of the compiled program.
+  final String outputPath;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! TestCompilerComplete) {
+      return false;
+    }
+    return mainUri == other.mainUri && outputPath == other.outputPath;
+  }
+
+  @override
+  int get hashCode => Object.hash(mainUri, outputPath);
+
+  @override
+  String toString() {
+    return 'TestCompilerComplete(mainUri: $mainUri, outputPath: $outputPath)';
+  }
+}
+
+/// A failed run of [TestCompiler.compile].
+final class TestCompilerFailure extends TestCompilerResult {
+  const TestCompilerFailure({required this.error, required super.mainUri});
+
+  /// Error message that occurred failing compilation.
+  final String error;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! TestCompilerFailure) {
+      return false;
+    }
+    return mainUri == other.mainUri && error == other.error;
+  }
+
+  @override
+  int get hashCode => Object.hash(mainUri, error);
+
+  @override
+  String toString() {
+    return 'TestCompilerComplete(mainUri: $mainUri, error: $error)';
+  }
 }
 
 /// A frontend_server wrapper for the flutter test runner.
@@ -79,9 +140,9 @@ class TestCompiler {
     );
   }
 
-  final StreamController<CompilationRequest> compilerController =
-      StreamController<CompilationRequest>();
-  final List<CompilationRequest> compilationQueue = <CompilationRequest>[];
+  final StreamController<_CompilationRequest> compilerController =
+      StreamController<_CompilationRequest>();
+  final List<_CompilationRequest> compilationQueue = <_CompilationRequest>[];
   final FlutterProject? flutterProject;
   final BuildInfo buildInfo;
   final String testFilePath;
@@ -91,13 +152,14 @@ class TestCompiler {
   ResidentCompiler? compiler;
   late File outputDill;
 
-  Future<String?> compile(Uri mainDart) {
-    final Completer<String?> completer = Completer<String?>();
+  /// Compiles the Dart program (an entrypoint containing `main()`).
+  Future<TestCompilerResult> compile(Uri dartEntrypointPath) {
     if (compilerController.isClosed) {
-      return Future<String?>.value();
+      throw StateError('TestCompiler is already disposed.');
     }
-    compilerController.add(CompilationRequest(mainDart, completer));
-    return completer.future;
+    final _CompilationRequest request = _CompilationRequest(dartEntrypointPath);
+    compilerController.add(request);
+    return request.result;
   }
 
   Future<void> _shutdown() async {
@@ -139,7 +201,7 @@ class TestCompiler {
   }
 
   // Handle a compilation request.
-  Future<void> _onCompilationRequest(CompilationRequest request) async {
+  Future<void> _onCompilationRequest(_CompilationRequest request) async {
     final bool isEmpty = compilationQueue.isEmpty;
     compilationQueue.add(request);
     // Only trigger processing if queue was empty - i.e. no other requests
@@ -149,7 +211,7 @@ class TestCompiler {
       return;
     }
     while (compilationQueue.isNotEmpty) {
-      final CompilationRequest request = compilationQueue.first;
+      final _CompilationRequest request = compilationQueue.first;
       globals.printTrace('Compiling ${request.mainUri}');
       final Stopwatch compilerTime = Stopwatch()..start();
       final Stopwatch? testTimeRecorderStopwatch = testTimeRecorder?.start(TestTimePhases.Compile);
@@ -190,7 +252,12 @@ class TestCompiler {
       // compiler to avoid reusing compiler that might have gotten into
       // a weird state.
       if (outputPath == null || compilerOutput!.errorCount > 0) {
-        request.result.complete();
+        request._result.complete(
+          TestCompilerFailure(
+            error: compilerOutput!.errorMessage ?? 'Unknown Error',
+            mainUri: request.mainUri,
+          ),
+        );
         await _shutdown();
       } else {
         if (shouldCopyDillFile) {
@@ -209,9 +276,13 @@ class TestCompiler {
             }
             await outputFile.copy(testFilePath);
           }
-          request.result.complete(kernelReadyToRun.path);
+          request._result.complete(
+            TestCompilerComplete(outputPath: kernelReadyToRun.path, mainUri: request.mainUri),
+          );
         } else {
-          request.result.complete(outputPath);
+          request._result.complete(
+            TestCompilerComplete(outputPath: outputPath, mainUri: request.mainUri),
+          );
         }
         compiler!.accept();
         compiler!.reset();

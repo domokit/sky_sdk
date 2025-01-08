@@ -192,6 +192,12 @@ bool AHBSwapchainImplVK::Present(
   });
 }
 
+void AHBSwapchainImplVK::AddFinalCommandBuffer(
+    std::shared_ptr<CommandBuffer> cmd_buffer) {
+  FML_DCHECK(!pending_cmd_buffer_);
+  pending_cmd_buffer_ = std::move(cmd_buffer);
+}
+
 std::shared_ptr<ExternalFenceVK>
 AHBSwapchainImplVK::SubmitSignalForPresentReady(
     const std::shared_ptr<AHBTextureSourceVK>& texture) const {
@@ -204,7 +210,7 @@ AHBSwapchainImplVK::SubmitSignalForPresentReady(
     return nullptr;
   }
 
-  auto command_buffer = context->CreateCommandBuffer();
+  auto command_buffer = pending_cmd_buffer_;
   if (!command_buffer) {
     return nullptr;
   }

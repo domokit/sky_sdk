@@ -18,12 +18,9 @@ import '../dart/package_map.dart';
 /// The flutter tool can be run with the output files of one or more engine builds
 /// replacing the cached artifacts. Typically this is done by setting the
 /// `--local-engine` command line flag to the name of the desired engine variant
-/// (e.g. "host_debug_unopt"). Provided that the `flutter/` and `engine/` directories
-/// are located adjacent to one another, the output folder will be located
-/// automatically.
-///
-/// For scenarios where the engine is not adjacent to flutter, the
-/// `--local-engine-src-path` can be provided to give an exact path.
+/// (e.g. "host_debug_unopt"). The `--local-engine-src-path` can be provided to
+/// give an exact path to the engine subtree. If it is not specified, the `engine`
+/// subfolder in this repository is used.
 ///
 /// For more information on local engines, see README.md.
 class LocalEngineLocator {
@@ -77,7 +74,7 @@ class LocalEngineLocator {
 
       // If engineSourcePath is still not set, try to determine it by flutter root.
       engineSourcePath ??= _tryEnginePath(
-        _fileSystem.path.join(_fileSystem.directory(_flutterRoot).parent.path, 'engine', 'src'),
+        _fileSystem.path.join(_fileSystem.directory(_flutterRoot).path, 'engine', 'src'),
       );
     }
 
