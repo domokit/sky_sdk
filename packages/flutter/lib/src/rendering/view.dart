@@ -377,18 +377,6 @@ class RenderView extends RenderObject with RenderObjectWithChildMixin<RenderBox>
     }
   }
 
-  @override
-  void scheduleInitialSemantics() {
-    super.scheduleInitialSemantics();
-    _view.setSemanticsTreeEnabled(true);
-  }
-
-  @override
-  void clearSemantics() {
-    _view.setSemanticsTreeEnabled(false);
-    super.clearSemantics();
-  }
-
   /// Sends the provided [ui.SemanticsUpdate] to the [ui.FlutterView] associated with
   /// this [RenderView].
   ///
