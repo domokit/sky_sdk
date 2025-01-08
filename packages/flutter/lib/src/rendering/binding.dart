@@ -63,7 +63,6 @@ mixin RendererBinding
     if (kIsWeb) {
       addPostFrameCallback(_handleWebFirstFrame, debugLabel: 'RendererBinding.webFirstFrame');
     }
-    addSemanticsEnabledListener(_handleSemanticsEnabledChanged);
     rootPipelineOwner.attach(_manifold);
   }
 
@@ -396,10 +395,6 @@ mixin RendererBinding
   /// This is used by the [PaintingContext] after creating a [PictureRecorder]
   /// using [createPictureRecorder].
   Canvas createCanvas(ui.PictureRecorder recorder) => Canvas(recorder);
-
-  void _handleSemanticsEnabledChanged() {
-    platformDispatcher.implicitView!.setSemanticsTreeEnabled(semanticsEnabled);
-  }
 
   /// Called when the system metrics change.
   ///
