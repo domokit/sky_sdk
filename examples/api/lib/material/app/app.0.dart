@@ -51,9 +51,9 @@ class _MaterialAppExampleState extends State<MaterialAppExample> {
                       case AnimationStyles.defaultStyle:
                         _animationStyle = null;
                       case AnimationStyles.custom:
-                        _animationStyle = AnimationStyle(
+                        _animationStyle = const AnimationStyle(
                           curve: Easing.emphasizedAccelerate,
-                          duration: const Duration(seconds: 1),
+                          duration: Duration(seconds: 1),
                         );
                       case AnimationStyles.none:
                         _animationStyle = AnimationStyle.noAnimation;

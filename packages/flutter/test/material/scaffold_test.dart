@@ -2954,9 +2954,9 @@ void main() {
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('I am a snack bar.'), showCloseIcon: true),
-                    snackBarAnimationStyle: AnimationStyle(
-                      duration: const Duration(milliseconds: 1200),
-                      reverseDuration: const Duration(milliseconds: 600),
+                    snackBarAnimationStyle: const AnimationStyle(
+                      duration: Duration(milliseconds: 1200),
+                      reverseDuration: Duration(milliseconds: 600),
                     ),
                   );
                 },
@@ -3026,9 +3026,9 @@ void main() {
     // Test custom animation style.
     await tester.pumpWidget(
       buildSnackBar(
-        AnimationStyle(
-          duration: const Duration(milliseconds: 800),
-          reverseDuration: const Duration(milliseconds: 400),
+        const AnimationStyle(
+          duration: Duration(milliseconds: 800),
+          reverseDuration: Duration(milliseconds: 400),
         ),
       ),
     );
@@ -3098,7 +3098,7 @@ void main() {
 
     // Test custom animation style with only reverseDuration.
     await tester.pumpWidget(
-      buildSnackBar(AnimationStyle(reverseDuration: const Duration(milliseconds: 400))),
+      buildSnackBar(const AnimationStyle(reverseDuration: Duration(milliseconds: 400))),
     );
 
     // Tap the button to show the SnackBar.
@@ -3235,9 +3235,9 @@ void main() {
     // Test custom animation style.
     await tester.pumpWidget(
       buildWidget(
-        sheetAnimationStyle: AnimationStyle(
-          duration: const Duration(milliseconds: 800),
-          reverseDuration: const Duration(milliseconds: 400),
+        sheetAnimationStyle: const AnimationStyle(
+          duration: Duration(milliseconds: 800),
+          reverseDuration: Duration(milliseconds: 400),
         ),
       ),
     );

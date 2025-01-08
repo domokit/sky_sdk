@@ -531,9 +531,9 @@ void main() {
           slivers: <Widget>[
             TreeSliver<String>(
               tree: simpleNodeSet,
-              toggleAnimationStyle: AnimationStyle(
+              toggleAnimationStyle: const AnimationStyle(
                 curve: Curves.easeIn,
-                duration: const Duration(milliseconds: 200),
+                duration: Duration(milliseconds: 200),
               ),
               treeNodeBuilder: (
                 BuildContext context,
@@ -819,9 +819,9 @@ void main() {
                 TreeSliver<String>(
                   tree: tree,
                   controller: controller,
-                  toggleAnimationStyle: AnimationStyle(
+                  toggleAnimationStyle: const AnimationStyle(
                     curve: Curves.easeInOut,
-                    duration: const Duration(milliseconds: 200),
+                    duration: Duration(milliseconds: 200),
                   ),
                   treeNodeBuilder: (
                     BuildContext context,
