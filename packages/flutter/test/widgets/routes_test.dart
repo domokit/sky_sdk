@@ -2625,6 +2625,37 @@ void main() {
       expect(notifications.last.canHandlePop, isTrue);
     });
   });
+
+  testWidgets("ModalRoute's default traversalDirectionedEdgeBehavior is the same as Navigator's", (
+    WidgetTester tester,
+  ) async {
+    Future<void> pumpWith(TraversalEdgeBehavior behavior) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Navigator(
+            key: UniqueKey(),
+            routeTraversalDirectionedEdgeBehavior: behavior,
+            onGenerateRoute: (RouteSettings settings) {
+              return MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return const Center(child: Text('page'));
+                },
+                settings: settings,
+              );
+            },
+          ),
+        ),
+      );
+    }
+
+    for (final TraversalEdgeBehavior element in TraversalEdgeBehavior.values) {
+      await pumpWith(element);
+      await tester.pumpAndSettle();
+      final FocusScopeNode focusScope = FocusScope.of(tester.element(find.text('page')));
+      expect(focusScope.traversalDirectionedEdgeBehavior, element);
+    }
+  });
 }
 
 double _getOpacity(GlobalKey key, WidgetTester tester) {
