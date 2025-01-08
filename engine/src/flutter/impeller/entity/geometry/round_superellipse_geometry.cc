@@ -246,16 +246,15 @@ size_t FlipAndTransform(Point* output,
                         const Point* input,
                         size_t input_length,
                         bool flip,
-                        const Point& scale,
-                        const Point& transition) {
+                        const Matrix& transform) {
   if (!flip) {
     for (size_t i = 0; i < input_length; i++) {
-      output[i] = input[i] * scale + transition;
+      output[i] = transform * input[i];
     }
   } else {
     for (size_t i = 0; i < input_length; i++) {
       const Point& point = input[input_length - i - 1];
-      output[i] = Point(point.y, point.x) * scale + transition;
+      output[i] = transform * Point(point.y, point.x);
     }
   }
   return input_length;
@@ -277,26 +276,35 @@ size_t FlipAndTransform(Point* output,
 void RearrangeIntoTriangleStrip(Point* quads[4],
                                 size_t quad_lengths[4],
                                 Point* output) {
-  auto GetPoint = [quads, quad_lengths](size_t i) -> Point {
-    if (i < quad_lengths[0]) {
+  //      output           from             quad
+  //      0 ... l0-2    0    ... l0-2   quads[0]
+  // next 0 ... l1-2    l1-1 ... 1      quads[1]
+  // next 0 ... l2-2    0    ... l2-2   quads[2]
+  // next 0 ... l3-2    l3-1 ... 1      quads[3]
+  auto GetPoint = [quads, l0 = quad_lengths[0], l1 = quad_lengths[1],
+                   l2 = quad_lengths[2],
+                   l3 = quad_lengths[3]](size_t i) -> Point {
+    if (i < l0 - 1) {
       return quads[0][i];
     }
-    i = i - quad_lengths[0];
-    if (i < quad_lengths[1]) {
-      return quads[1][quad_lengths[1] - i];
+    i -= l0 - 1;
+    if (i < l1 - 1) {
+      return quads[1][l1 - 1 - i];
     }
-    i = i - quad_lengths[1];
-    if (i < quad_lengths[2]) {
+    i -= l1 - 1;
+    if (i < l2 - 1) {
       return quads[2][i];
     }
-    i = i - quad_lengths[2];
-    if (i < quad_lengths[3]) {
-      return quads[3][quad_lengths[3] - i];
+    i -= l2 - 1;
+    if (i < l3 - 1) {
+      return quads[3][l3 - 1 - i];
     } else {
       // Unreachable
       return Point();
     }
   };
+
+  GetPoint(180);
 
   size_t index_count = 0;
 
@@ -304,7 +312,7 @@ void RearrangeIntoTriangleStrip(Point* quads[4],
 
   size_t a = 1;
   size_t contour_length =
-      quad_lengths[0] + quad_lengths[1] + quad_lengths[2] + quad_lengths[3];
+      quad_lengths[0] + quad_lengths[1] + quad_lengths[2] + quad_lengths[3] - 4;
   size_t b = contour_length - 1;
   while (a < b) {
     output[index_count++] = GetPoint(a);
@@ -434,13 +442,20 @@ static size_t DrawQuadrant(Point* output,
   Point norm_size = signed_size.Abs() / radius_scale;
   Point signed_scale = signed_size / norm_size;
 
+  // Each quadrant curve is composed of two octant curves, each of which belongs
+  // to a square-like rounded rectangle. When `norm_size`'s width != height, the
+  // centers of such square-like rounded rectangles are offset from the origin
+  // by a distance denoted as `c`.
+  Scalar c = (norm_size.x - norm_size.y) / 2;
+
   Point* next = output;
   size_t octant_length;
 
   octant_length =
       DrawOctantSquareLikeSquircle(octant_cache, norm_size.x, norm_radius);
   next += FlipAndTransform(next, octant_cache, octant_length, /*flip=*/false,
-                           signed_scale, center);
+                           Matrix::MakeTranslateScale(signed_scale, center) *
+                               Matrix::MakeTranslation(Size{0, -c}));
 
   *(next++) = Point(outer) -
               CalculateGap(norm_radius) * signed_scale;  // Middle of corner
@@ -448,7 +463,8 @@ static size_t DrawQuadrant(Point* output,
   octant_length =
       DrawOctantSquareLikeSquircle(octant_cache, norm_size.y, norm_radius);
   next += FlipAndTransform(next, octant_cache, octant_length, /*flip=*/true,
-                           signed_scale, center);
+                           Matrix::MakeTranslateScale(signed_scale, center) *
+                               Matrix::MakeTranslation(Size{c, 0}));
 
   return next - output;
 }
@@ -472,10 +488,10 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
   // 2 for storing other sporatic points (an extremely conservative estimate).
   static_assert(kMaxQuadrantLength > 2 * kMaxQuadrantSteps);
 
-  Point* quadrant_caches[4] = {
+  Point* quads[4] = {
       cache + kMaxQuadrantLength * 0, cache + kMaxQuadrantLength * 1,
       cache + kMaxQuadrantLength * 2, cache + kMaxQuadrantLength * 3};
-  size_t quadrant_lengths[4];
+  size_t quad_lengths[4];
   Point* octant_cache = cache + kMaxQuadrantLength * 4;
 
   // === SPLITS ===
@@ -491,29 +507,29 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
   Scalar left_split = split(bounds_.GetTop(), bounds_.GetBottom(),
                             radii_.top_left.height, radii_.bottom_left.height);
 
-  quadrant_lengths[0] = DrawQuadrant(quadrant_caches[0], octant_cache,
-                                     Point{top_split, right_split},
-                                     bounds_.GetRightTop(), radii_.top_right);
-  quadrant_lengths[1] = DrawQuadrant(
-      quadrant_caches[1], octant_cache, Point{bottom_split, right_split},
-      bounds_.GetRightBottom(), radii_.bottom_right);
-  quadrant_lengths[2] = DrawQuadrant(
-      quadrant_caches[2], octant_cache, Point{bottom_split, left_split},
-      bounds_.GetLeftBottom(), radii_.bottom_left);
-  quadrant_lengths[3] = DrawQuadrant(quadrant_caches[3], octant_cache,
-                                     Point{top_split, left_split},
-                                     bounds_.GetLeftTop(), radii_.top_left);
+  quad_lengths[0] =
+      DrawQuadrant(quads[0], octant_cache, Point{top_split, right_split},
+                   bounds_.GetRightTop(), radii_.top_right);
+  quad_lengths[1] =
+      DrawQuadrant(quads[1], octant_cache, Point{bottom_split, right_split},
+                   bounds_.GetRightBottom(), radii_.bottom_right);
+  quad_lengths[2] =
+      DrawQuadrant(quads[2], octant_cache, Point{bottom_split, left_split},
+                   bounds_.GetLeftBottom(), radii_.bottom_left);
+  quad_lengths[3] =
+      DrawQuadrant(quads[3], octant_cache, Point{top_split, left_split},
+                   bounds_.GetLeftTop(), radii_.top_left);
 
   // TODO(dkwingsmt): Exclude duplicates
-  size_t contour_length = quadrant_lengths[0] + quadrant_lengths[1] +
-                          quadrant_lengths[2] + quadrant_lengths[3];
+  size_t contour_length =
+      quad_lengths[0] + quad_lengths[1] + quad_lengths[2] + quad_lengths[3] - 4;
   BufferView vertex_buffer = renderer.GetTransientsBuffer().Emplace(
       nullptr, sizeof(Point) * contour_length, alignof(Point));
   Point* vertex_data =
       reinterpret_cast<Point*>(vertex_buffer.GetBuffer()->OnGetContents() +
                                vertex_buffer.GetRange().offset);
 
-  RearrangeIntoTriangleStrip(quadrant_caches, quadrant_lengths, vertex_data);
+  RearrangeIntoTriangleStrip(quads, quad_lengths, vertex_data);
 
   return GeometryResult{
       .type = PrimitiveType::kTriangleStrip,
