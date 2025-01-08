@@ -1029,16 +1029,22 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
   Iterable<FocusNode> _sortAndFilterHorizontally(
     TraversalDirection direction,
     Rect target,
-    Iterable<FocusNode> nodes,
-    {bool forward = true}
-  ) {
+    Iterable<FocusNode> nodes, {
+    bool forward = true,
+  }) {
     assert(direction == TraversalDirection.left || direction == TraversalDirection.right);
     final List<FocusNode> sorted =
         nodes.where(switch (direction) {
           TraversalDirection.left =>
-            (FocusNode node) => node.rect != target && (forward ? node.rect.center.dx <= target.left : node.rect.center.dx >= target.left),
+            (FocusNode node) =>
+                node.rect != target &&
+                (forward ? node.rect.center.dx <= target.left : node.rect.center.dx >= target.left),
           TraversalDirection.right =>
-            (FocusNode node) => node.rect != target && (forward ? node.rect.center.dx >= target.right : node.rect.center.dx <= target.right),
+            (FocusNode node) =>
+                node.rect != target &&
+                (forward
+                    ? node.rect.center.dx >= target.right
+                    : node.rect.center.dx <= target.right),
           TraversalDirection.up ||
           TraversalDirection.down => throw ArgumentError('Invalid direction $direction'),
         }).toList();
@@ -1056,16 +1062,22 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
   Iterable<FocusNode> _sortAndFilterVertically(
     TraversalDirection direction,
     Rect target,
-    Iterable<FocusNode> nodes,
-    {bool forward = true}
-  ) {
+    Iterable<FocusNode> nodes, {
+    bool forward = true,
+  }) {
     assert(direction == TraversalDirection.up || direction == TraversalDirection.down);
     final List<FocusNode> sorted =
         nodes.where(switch (direction) {
           TraversalDirection.up =>
-            (FocusNode node) => node.rect != target && (forward ? node.rect.center.dy <= target.top : node.rect.center.dy >= target.top),
+            (FocusNode node) =>
+                node.rect != target &&
+                (forward ? node.rect.center.dy <= target.top : node.rect.center.dy >= target.top),
           TraversalDirection.down =>
-            (FocusNode node) => node.rect != target && (forward ? node.rect.center.dy >= target.bottom : node.rect.center.dy <= target.bottom),
+            (FocusNode node) =>
+                node.rect != target &&
+                (forward
+                    ? node.rect.center.dy >= target.bottom
+                    : node.rect.center.dy <= target.bottom),
           TraversalDirection.left ||
           TraversalDirection.right => throw ArgumentError('Invalid direction $direction'),
         }).toList();

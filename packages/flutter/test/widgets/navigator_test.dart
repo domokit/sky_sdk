@@ -5622,7 +5622,9 @@ void main() {
     expect(results.first, result);
   });
 
-  testWidgets('Directional focus traversal behavior with nested Navigators.', (WidgetTester tester) async {
+  testWidgets('Directional focus traversal behavior with nested Navigators.', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
     List<bool?> focus = List<bool?>.generate(4, (int _) => null);
     final List<FocusNode> nodes = List<FocusNode>.generate(
@@ -5642,6 +5644,7 @@ void main() {
         child: const SizedBox(width: 100, height: 100),
       );
     }
+
     await tester.pumpWidget(
       MaterialApp(
         home: Column(
@@ -5662,6 +5665,7 @@ void main() {
         ),
       ),
     );
+
     /// Layout is:
     /// ---------MaterialApp---------
     ///          [0]
@@ -5676,24 +5680,22 @@ void main() {
         MaterialPageRoute<void>(
           traversalDirectionedEdgeBehavior: behavior,
           builder: (BuildContext context) {
-            return Column(
-              children: <Widget>[
-                makeFocus(1),
-                makeFocus(2),
-              ],
-            );
+            return Column(children: <Widget>[makeFocus(1), makeFocus(2)]);
           },
-        )
+        ),
       );
     }
+
     void clear() {
       focus = List<bool?>.generate(focus.length, (int _) => null);
     }
+
     Future<void> resetTo(int index) async {
       nodes[index].requestFocus();
       await tester.pump();
       clear();
     }
+
     pushWith(TraversalEdgeBehavior.stop);
     await tester.pumpAndSettle();
     await resetTo(2);

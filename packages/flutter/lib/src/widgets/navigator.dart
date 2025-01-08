@@ -1258,7 +1258,8 @@ const TraversalEdgeBehavior kDefaultRouteTraversalEdgeBehavior = TraversalEdgeBe
 /// The default value of [Navigator.routeTraversalDirectionedEdgeBehavior].
 ///
 /// {@macro flutter.widgets.navigator.routeTraversalEdgeBehavior}
-const TraversalEdgeBehavior kDefaultRouteTraversalDirectionedEdgeBehavior = TraversalEdgeBehavior.stop;
+const TraversalEdgeBehavior kDefaultRouteTraversalDirectionedEdgeBehavior =
+    TraversalEdgeBehavior.stop;
 
 /// A widget that manages a set of child widgets with a stack discipline.
 ///
