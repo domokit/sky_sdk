@@ -68,10 +68,10 @@ Scalar LerpPrecomputedVariable(size_t column, Scalar ratio) {
 //
 // Corner radii longer than 1/2 of the side length does not make sense, and will
 // be limited to the longest possible.
-Scalar LimitRadius(Scalar corner_radius, const Rect& bounds) {
-  return std::min(corner_radius,
-                  std::min(bounds.GetWidth() / 2, bounds.GetHeight() / 2));
-}
+// Scalar LimitRadius(Scalar corner_radius, const Rect& bounds) {
+//   return std::min(corner_radius,
+//                   std::min(bounds.GetWidth() / 2, bounds.GetHeight() / 2));
+// }
 
 // The max angular step that the algorithm will traverse a quadrant of the
 // curve.
@@ -236,31 +236,32 @@ size_t DrawOctantSquareLikeSquircle(Point* output,
   return next - output;
 }
 
-// Optionally `flip` the input points before offsetting it by `center`, and
-// append the result to `output`.
+// Optionally `flip` the input points before transforming it with `scale` and
+// then `transition`, and append the result to `output`.
 //
 // If `flip` is true, then the entire input list is reversed, and the x and y
 // coordinate of each point is swapped as well. This effectively mirrors the
 // input point list by the y=x line.
-size_t FlipAndOffset(Point* output,
-                     const Point* input,
-                     size_t input_length,
-                     bool flip,
-                     const Point& center) {
+size_t FlipAndTransform(Point* output,
+                        const Point* input,
+                        size_t input_length,
+                        bool flip,
+                        const Point& scale,
+                        const Point& transition) {
   if (!flip) {
     for (size_t i = 0; i < input_length; i++) {
-      output[i] = input[i] + center;
+      output[i] = input[i] * scale + transition;
     }
   } else {
     for (size_t i = 0; i < input_length; i++) {
       const Point& point = input[input_length - i - 1];
-      output[i] = Point(point.y + center.x, point.x + center.y);
+      output[i] = Point(point.y, point.x) * scale + transition;
     }
   }
   return input_length;
 }
 
-constexpr Point kReflection[4] = {{1, 1}, {1, -1}, {-1, -1}, {-1, 1}};
+// constexpr Point kReflection[4] = {{1, 1}, {1, -1}, {-1, -1}, {-1, 1}};
 
 // Mirror the point list `quad` into other quadrants and output as a triangle
 // strip.
@@ -273,28 +274,24 @@ constexpr Point kReflection[4] = {{1, 1}, {1, -1}, {-1, -1}, {-1, 1}};
 //
 // A total of (quad_length - 1) * 4 points will be appended, and `output` must
 // have sufficient memory allocated before this call.
-void MirrorIntoTriangleStrip(const Point* quad,
-                             size_t quad_length,
-                             const Point& center,
-                             Point* output) {
-  // The length of 1/4 arc including the starting point but excluding the
-  // ending point.
-  const size_t arc_length = quad_length - 1;
-  auto GetPoint = [quad, arc_length](size_t i) -> Point {
-    if (i < arc_length) {
-      return quad[i];
+void RearrangeIntoTriangleStrip(Point* quads[4],
+                                size_t quad_lengths[4],
+                                Point* output) {
+  auto GetPoint = [quads, quad_lengths](size_t i) -> Point {
+    if (i < quad_lengths[0]) {
+      return quads[0][i];
     }
-    i = i - arc_length;
-    if (i < arc_length) {
-      return quad[arc_length - i] * kReflection[1];
+    i = i - quad_lengths[0];
+    if (i < quad_lengths[1]) {
+      return quads[1][quad_lengths[1] - i];
     }
-    i = i - arc_length;
-    if (i < arc_length) {
-      return quad[i] * kReflection[2];
+    i = i - quad_lengths[1];
+    if (i < quad_lengths[2]) {
+      return quads[2][i];
     }
-    i = i - arc_length;
-    if (i < arc_length) {
-      return quad[arc_length - i] * kReflection[3];
+    i = i - quad_lengths[2];
+    if (i < quad_lengths[3]) {
+      return quads[3][quad_lengths[3] - i];
     } else {
       // Unreachable
       return Point();
@@ -303,44 +300,164 @@ void MirrorIntoTriangleStrip(const Point* quad,
 
   size_t index_count = 0;
 
-  output[index_count++] = GetPoint(0) + center;
+  output[index_count++] = GetPoint(0);
 
   size_t a = 1;
-  size_t b = arc_length * 4 - 1;
+  size_t contour_length =
+      quad_lengths[0] + quad_lengths[1] + quad_lengths[2] + quad_lengths[3];
+  size_t b = contour_length - 1;
   while (a < b) {
-    output[index_count++] = GetPoint(a) + center;
-    output[index_count++] = GetPoint(b) + center;
+    output[index_count++] = GetPoint(a);
+    output[index_count++] = GetPoint(b);
     a++;
     b--;
   }
   if (a == b) {
-    output[index_count++] = GetPoint(b) + center;
+    output[index_count++] = GetPoint(b);
   }
+}
+
+// void RearrangeIntoTriangleStrip(const Point* contour,
+//                              size_t contour_length,
+//                              Point* output) {
+//   size_t index_count = 0;
+
+//   output[index_count++] = contour[0];
+
+//   size_t a = 1;
+//   size_t b = contour_length - 1;
+//   while (a < b) {
+//     output[index_count++] = contour[a];
+//     output[index_count++] = contour[b];
+//     a++;
+//     b--;
+//   }
+//   if (a == b) {
+//     output[index_count++] = contour[b];
+//   }
+// }
+
+static inline void NormalizeEmptyToZero(Size& radii) {
+  if (radii.IsEmpty()) {
+    radii = Size();
+  }
+}
+
+static inline void AdjustScale(Scalar& radius1,
+                               Scalar& radius2,
+                               Scalar dimension,
+                               Scalar& scale) {
+  FML_DCHECK(radius1 >= 0.0f && radius2 >= 0.0f);
+  FML_DCHECK(dimension > 0.0f);
+  if (radius1 + radius2 > dimension) {
+    scale = std::min(scale, dimension / (radius1 + radius2));
+  }
+}
+
+RoundingRadii LimitRadii(const Rect& bounds, const RoundingRadii& in_radii) {
+  if (bounds.IsEmpty() || !bounds.IsFinite() ||  //
+      in_radii.AreAllCornersEmpty() || !in_radii.IsFinite()) {
+    // preserve the empty bounds as they might be strokable
+    return RoundingRadii();
+  }
+
+  // Copy the incoming radii so that we can work on normalizing them to the
+  // particular rectangle they are paired with without disturbing the caller.
+  RoundingRadii radii = in_radii;
+
+  // If any corner is flat or has a negative value, normalize it to zeros
+  // We do this first so that the unnecessary non-flat part of that radius
+  // does not contribute to the global scaling below.
+  NormalizeEmptyToZero(radii.top_left);
+  NormalizeEmptyToZero(radii.top_right);
+  NormalizeEmptyToZero(radii.bottom_left);
+  NormalizeEmptyToZero(radii.bottom_right);
+
+  // Now determine a global scale to apply to all of the radii to ensure
+  // that none of the adjacent pairs of radius values sum to larger than
+  // the corresponding dimension of the rectangle.
+  Size size = bounds.GetSize();
+  Scalar scale = 1.0f;
+  // clang-format off
+  AdjustScale(radii.top_left.width,    radii.top_right.width,     size.width,
+              scale);
+  AdjustScale(radii.bottom_left.width, radii.bottom_right.width,  size.width,
+              scale);
+  AdjustScale(radii.top_left.height,   radii.bottom_left.height,  size.height,
+              scale);
+  AdjustScale(radii.top_right.height,  radii.bottom_right.height, size.height,
+              scale);
+  // clang-format on
+  if (scale < 1.0f) {
+    radii = radii * scale;
+  }
+
+  return radii;
 }
 
 }  // namespace
 
 RoundSuperellipseGeometry::RoundSuperellipseGeometry(const Rect& bounds,
-                                                     Scalar corner_radius)
-    : bounds_(bounds), corner_radius_(LimitRadius(corner_radius, bounds)) {}
+                                                     const RoundingRadii& radii)
+    : bounds_(bounds), radii_(LimitRadii(bounds, radii)) {}
+
+RoundSuperellipseGeometry::RoundSuperellipseGeometry(const Rect& bounds,
+                                                     float corner_radius)
+    : RoundSuperellipseGeometry(bounds,
+                                RoundingRadii::MakeRadius(corner_radius)) {}
 
 RoundSuperellipseGeometry::~RoundSuperellipseGeometry() {}
+
+static Scalar split(Scalar left,
+                    Scalar right,
+                    Scalar ratio_left,
+                    Scalar ratio_right) {
+  return (left * ratio_right + right * ratio_left) / (ratio_left + ratio_right);
+}
+
+// Draw a quadrant curve.
+//
+// Both ends are included. The number of points is returned.
+//
+// The quadrant is specified by `outer` relative to `center`, going from the X
+// axis to the Y axis.
+static size_t DrawQuadrant(Point* output,
+                           Point* octant_cache,
+                           Point center,
+                           Point outer,
+                           Size radii) {
+  // Normalize sizes and radii into symmetrical radius by scaling the longer of
+  // `radii` to the shorter.
+  Scalar norm_radius = radii.MinDimension();
+  Size radius_scale = radii / norm_radius;
+  Point signed_size = (outer - center) * 2;
+  Point norm_size = signed_size.Abs() / radius_scale;
+  Point signed_scale = signed_size / norm_size;
+
+  Point* next = output;
+  size_t octant_length;
+
+  octant_length =
+      DrawOctantSquareLikeSquircle(octant_cache, norm_size.x, norm_radius);
+  next += FlipAndTransform(next, octant_cache, octant_length, /*flip=*/false,
+                           signed_scale, center);
+
+  *(next++) = Point(outer) -
+              CalculateGap(norm_radius) * signed_scale;  // Middle of corner
+
+  octant_length =
+      DrawOctantSquareLikeSquircle(octant_cache, norm_size.y, norm_radius);
+  next += FlipAndTransform(next, octant_cache, octant_length, /*flip=*/true,
+                           signed_scale, center);
+
+  return next - output;
+}
 
 GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
     const ContentContext& renderer,
     const Entity& entity,
     RenderPass& pass) const {
-  const Size size = bounds_.GetSize();
-  const Point center = bounds_.GetCenter();
-
-  // The full shape is divided into 4 segments: the top and bottom edges come
-  // from two square-like rounded superellipses (called "width-aligned"), while
-  // the left and right squircles come from another two ("height-aligned").
-  //
-  // Denote the distance from the center of the square-like squircles to the
-  // origin as `c`. The width-aligned square-like squircle and the
-  // height-aligned one have the same offset in different directions.
-  const Scalar c = (size.width - size.height) / 2;
+  // === CACHE ===
 
   // The cache is allocated as follows:
   //
@@ -349,47 +466,54 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
   Point* cache = renderer.GetTessellator().GetStrokePointCache().data();
 
   // The memory size (in units of Points) allocated to store the first chunk.
-  constexpr size_t kMaxQuadrantLength = kPointArenaSize / 4;
+  constexpr size_t kMaxQuadrantLength = kPointArenaSize / 5;
   // Since the curve is traversed in steps bounded by kMaxQuadrantSteps, the
   // curving part will have fewer points than kMaxQuadrantSteps. Multiply it by
   // 2 for storing other sporatic points (an extremely conservative estimate).
   static_assert(kMaxQuadrantLength > 2 * kMaxQuadrantSteps);
 
-  // Draw the first quadrant of the shape and store in `quadrant`, including
-  // both ends. It will be mirrored to other quadrants later.
-  Point* quadrant = cache;
-  size_t quadrant_length;
-  {
-    Point* next = quadrant;
+  Point* quadrant_caches[4] = {
+      cache + kMaxQuadrantLength * 0, cache + kMaxQuadrantLength * 1,
+      cache + kMaxQuadrantLength * 2, cache + kMaxQuadrantLength * 3};
+  size_t quadrant_lengths[4];
+  Point* octant_cache = cache + kMaxQuadrantLength * 4;
 
-    Point* octant_cache = cache + kMaxQuadrantLength;
-    size_t octant_length;
+  // === SPLITS ===
 
-    octant_length =
-        DrawOctantSquareLikeSquircle(octant_cache, size.width, corner_radius_);
-    next += FlipAndOffset(next, octant_cache, octant_length, /*flip=*/false,
-                          Point(0, -c));
+  Scalar top_split = split(bounds_.GetLeft(), bounds_.GetRight(),
+                           radii_.top_left.width, radii_.top_right.width);
+  Scalar right_split =
+      split(bounds_.GetTop(), bounds_.GetBottom(), radii_.top_right.height,
+            radii_.bottom_right.height);
+  Scalar bottom_split =
+      split(bounds_.GetLeft(), bounds_.GetRight(), radii_.bottom_left.width,
+            radii_.bottom_right.width);
+  Scalar left_split = split(bounds_.GetTop(), bounds_.GetBottom(),
+                            radii_.top_left.height, radii_.bottom_left.height);
 
-    *(next++) = Point(size / 2) - CalculateGap(corner_radius_);  // Point M
+  quadrant_lengths[0] = DrawQuadrant(quadrant_caches[0], octant_cache,
+                                     Point{top_split, right_split},
+                                     bounds_.GetRightTop(), radii_.top_right);
+  quadrant_lengths[1] = DrawQuadrant(
+      quadrant_caches[1], octant_cache, Point{bottom_split, right_split},
+      bounds_.GetRightBottom(), radii_.bottom_right);
+  quadrant_lengths[2] = DrawQuadrant(
+      quadrant_caches[2], octant_cache, Point{bottom_split, left_split},
+      bounds_.GetLeftBottom(), radii_.bottom_left);
+  quadrant_lengths[3] = DrawQuadrant(quadrant_caches[3], octant_cache,
+                                     Point{top_split, left_split},
+                                     bounds_.GetLeftTop(), radii_.top_left);
 
-    octant_length =
-        DrawOctantSquareLikeSquircle(octant_cache, size.height, corner_radius_);
-    next += FlipAndOffset(next, octant_cache, octant_length, /*flip=*/true,
-                          Point(c, 0));
-
-    quadrant_length = next - quadrant;
-  }
-
-  // The `contour_point_count` include all points on the border. The "-1" comes
-  // from duplicate ends from the mirrored arcs.
-  size_t contour_length = 4 * (quadrant_length - 1);
+  // TODO(dkwingsmt): Exclude duplicates
+  size_t contour_length = quadrant_lengths[0] + quadrant_lengths[1] +
+                          quadrant_lengths[2] + quadrant_lengths[3];
   BufferView vertex_buffer = renderer.GetTransientsBuffer().Emplace(
       nullptr, sizeof(Point) * contour_length, alignof(Point));
   Point* vertex_data =
       reinterpret_cast<Point*>(vertex_buffer.GetBuffer()->OnGetContents() +
                                vertex_buffer.GetRange().offset);
 
-  MirrorIntoTriangleStrip(quadrant, quadrant_length, center, vertex_data);
+  RearrangeIntoTriangleStrip(quadrant_caches, quadrant_lengths, vertex_data);
 
   return GeometryResult{
       .type = PrimitiveType::kTriangleStrip,
@@ -413,9 +537,13 @@ bool RoundSuperellipseGeometry::CoversArea(const Matrix& transform,
   if (!transform.IsTranslationScaleOnly()) {
     return false;
   }
+  if (!radii_.AreAllCornersSame() || !radii_.top_left.IsSquare()) {
+    // TODO(dkwingsmt): At least try some estimates here.
+    return false;
+  }
   // Use the rectangle formed by the four 45deg points (point M) as a
   // conservative estimate of the inner rectangle.
-  Scalar g = CalculateGap(corner_radius_);
+  Scalar g = CalculateGap(radii_.top_left.width);
   Rect coverage =
       Rect::MakeLTRB(bounds_.GetLeft() + g, bounds_.GetTop() + g,
                      bounds_.GetRight() - g, bounds_.GetBottom() - g)

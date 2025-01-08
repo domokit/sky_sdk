@@ -4,6 +4,4 @@
 
 #include "flutter/impeller/geometry/rounding_radii.h"
 
-namespace impeller {
-
-}  // namespace impeller
+namespace impeller {}  // namespace impeller

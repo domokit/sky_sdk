@@ -6,6 +6,7 @@
 #define FLUTTER_IMPELLER_ENTITY_GEOMETRY_ROUND_SUPERELLIPSE_GEOMETRY_H_
 
 #include "impeller/entity/geometry/geometry.h"
+#include "impeller/geometry/rounding_radii.h"
 
 namespace impeller {
 
@@ -25,7 +26,8 @@ namespace impeller {
 /// not exactly equals to, the radius of the corner circles.
 class RoundSuperellipseGeometry final : public Geometry {
  public:
-  explicit RoundSuperellipseGeometry(const Rect& bounds, Scalar corner_radius);
+  RoundSuperellipseGeometry(const Rect& bounds, const RoundingRadii& radii);
+  RoundSuperellipseGeometry(const Rect& bounds, float corner_radius);
 
   ~RoundSuperellipseGeometry() override;
 
@@ -45,7 +47,7 @@ class RoundSuperellipseGeometry final : public Geometry {
   std::optional<Rect> GetCoverage(const Matrix& transform) const override;
 
   const Rect bounds_;
-  double corner_radius_;
+  const RoundingRadii radii_;
 
   RoundSuperellipseGeometry(const RoundSuperellipseGeometry&) = delete;
 
