@@ -46,7 +46,7 @@ void main() {
       );
 
       await tester.pumpWidget(transitionUnderTest);
-      RenderDecoratedBox actualBox = tester.renderObject(find.byType(DecoratedBox));
+      RenderDecoratedBox actualBox = tester.renderObject(find.byType(DecoratedBoxTransition));
       BoxDecoration actualDecoration = actualBox.decoration as BoxDecoration;
 
       expect(actualDecoration.color, isSameColorAs(const Color(0xFFFFFFFF)));
@@ -57,7 +57,7 @@ void main() {
       controller.value = 0.5;
 
       await tester.pump();
-      actualBox = tester.renderObject(find.byType(DecoratedBox));
+      actualBox = tester.renderObject(find.byType(DecoratedBoxTransition));
       actualDecoration = actualBox.decoration as BoxDecoration;
 
       expect(actualDecoration.color, isSameColorAs(const Color(0xFF7F7F7F)));
@@ -76,7 +76,7 @@ void main() {
       controller.value = 1.0;
 
       await tester.pump();
-      actualBox = tester.renderObject(find.byType(DecoratedBox));
+      actualBox = tester.renderObject(find.byType(DecoratedBoxTransition));
       actualDecoration = actualBox.decoration as BoxDecoration;
 
       expect(actualDecoration.color, const Color(0xFF000000));
@@ -101,7 +101,7 @@ void main() {
 
       await tester.pumpWidget(transitionUnderTest);
 
-      RenderDecoratedBox actualBox = tester.renderObject(find.byType(DecoratedBox));
+      RenderDecoratedBox actualBox = tester.renderObject(find.byType(DecoratedBoxTransition));
       BoxDecoration actualDecoration = actualBox.decoration as BoxDecoration;
 
       expect(actualDecoration.color, isSameColorAs(const Color(0xFFFFFFFF)));
@@ -112,7 +112,7 @@ void main() {
       controller.value = 0.5;
 
       await tester.pump();
-      actualBox = tester.renderObject(find.byType(DecoratedBox));
+      actualBox = tester.renderObject(find.byType(DecoratedBoxTransition));
       actualDecoration = actualBox.decoration as BoxDecoration;
 
       // Same as the test above but the values should be much closer to the

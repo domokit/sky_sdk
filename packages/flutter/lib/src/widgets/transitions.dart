@@ -14,6 +14,7 @@ import 'package:flutter/rendering.dart';
 import 'basic.dart';
 import 'container.dart';
 import 'framework.dart';
+import 'image.dart' show createLocalImageConfiguration;
 import 'text.dart';
 
 export 'package:flutter/rendering.dart' show RelativeRect;
@@ -905,7 +906,7 @@ class RelativePositionedTransition extends AnimatedWidget {
 ///  * [DecoratedBox], which also draws a [Decoration] but is not animated.
 ///  * [AnimatedContainer], a more full-featured container that also animates on
 ///    decoration using an internal animation.
-class DecoratedBoxTransition extends AnimatedWidget {
+class DecoratedBoxTransition extends SingleChildRenderObjectWidget {
   /// Creates an animated [DecoratedBox] whose [Decoration] animation updates
   /// the widget.
   ///
@@ -916,8 +917,8 @@ class DecoratedBoxTransition extends AnimatedWidget {
     super.key,
     required this.decoration,
     this.position = DecorationPosition.background,
-    required this.child,
-  }) : super(listenable: decoration);
+    required Widget super.child,
+  });
 
   /// Animation of the decoration to paint.
   ///
@@ -928,14 +929,41 @@ class DecoratedBoxTransition extends AnimatedWidget {
   /// Whether to paint the box decoration behind or in front of the child.
   final DecorationPosition position;
 
-  /// The widget below this widget in the tree.
-  ///
-  /// {@macro flutter.widgets.ProxyWidget.child}
-  final Widget child;
+  @override
+  RenderDecoratedBox createRenderObject(BuildContext context) {
+    return _RenderAnimatedDecoration(
+      listenable: decoration,
+      position: position,
+      configuration: createLocalImageConfiguration(context),
+    );
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(decoration: decoration.value, position: position, child: child);
+  void updateRenderObject(BuildContext context, RenderDecoratedBox renderObject) {
+    (renderObject as _RenderAnimatedDecoration)
+      ..listenable = decoration
+      ..position = position
+      ..configuration = createLocalImageConfiguration(context);
+  }
+}
+
+class _RenderAnimatedDecoration extends RenderDecoratedBox
+    with _RenderTransition<ValueListenable<Decoration>> {
+  _RenderAnimatedDecoration({
+    required ValueListenable<Decoration> listenable,
+    required super.position,
+    required super.configuration,
+  }) : _listenable = listenable,
+       super(decoration: listenable.value);
+
+  @override
+  ValueListenable<Decoration> _listenable;
+
+  @override
+  void _listener() {
+    // Sets the decoration to match the listenable's current value
+    // and triggers a repaint.
+    decoration = _listenable.value;
   }
 }
 
