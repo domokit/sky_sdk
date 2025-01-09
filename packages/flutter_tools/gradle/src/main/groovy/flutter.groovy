@@ -169,8 +169,8 @@ class FlutterPlugin implements Plugin<Project> {
     private Properties localProperties
     private String engineVersion
     private String engineRealm
-    private List<Map<String, Object>> pluginList
-    private List<Map<String, Object>> pluginDependencies
+    private List<APlugin> pluginList
+    private List<DependencyEntry> pluginDependencies
 
     /**
      * Flutter Docs Website URLs for help messages.
@@ -221,6 +221,8 @@ class FlutterPlugin implements Plugin<Project> {
             : "$hostedRepository/${engineRealm}download.flutter.io"
         rootProject.allprojects {
             repositories {
+//                google()
+//                mavenCentral()
                 maven {
                     url(repository)
                 }
@@ -619,7 +621,10 @@ class FlutterPlugin implements Plugin<Project> {
      * Finally, the project's `settings.gradle` loads each plugin's android directory as a subproject.
      */
     private void configurePlugins(Project project) {
+        project.logger.quiet("configurePlugins 1!")
+        println("configurePlugins 2!")
         configureLegacyPluginEachProjects(project)
+        println("there are ${getPluginList(project).size()} plugins")
         getPluginList(project).each(this.&configurePluginProject)
         getPluginList(project).each(this.&configurePluginDependencies)
     }
@@ -662,7 +667,7 @@ class FlutterPlugin implements Plugin<Project> {
         project.logger.quiet("Warning: This project is still reading the deprecated '.flutter-plugins. file.")
         project.logger.quiet("In an upcoming stable release support for this file will be completely removed and your build will fail.")
         project.logger.quiet("See https:/flutter.dev/to/flutter-plugins-configuration.")
-        List<Map<String, Object>> deps = getPluginDependencies(project)
+        List<DependencyEntry> deps = getPluginDependencies(project)
         List<String> plugins = getPluginList(project).collect { it.name as String }
         deps.removeIf { plugins.contains(it.name) }
         deps.each {
@@ -673,7 +678,7 @@ class FlutterPlugin implements Plugin<Project> {
             } else if (pluginSupportsAndroidPlatform(pluginProject)) {
                 // Plugin has a functioning `android` folder and is included successfully, although it's not supported.
                 // It must be configured nonetheless, to not throw an "Unresolved reference" exception.
-                configurePluginProject(it)
+                configurePluginProject([name: it.name, dependencies: it.dependencies])
             /* groovylint-disable-next-line EmptyElseBlock */
             } else {
             // Plugin has no or an empty `android` folder. No action required.
@@ -731,8 +736,10 @@ class FlutterPlugin implements Plugin<Project> {
     /** Adds the plugin project dependency to the app project. */
     private void configurePluginProject(Map<String, Object> pluginObject) {
         assert(pluginObject.name instanceof String)
+        println("configuring plugin project: ${pluginObject.name}")
         Project pluginProject = project.rootProject.findProject(":${pluginObject.name}")
         if (pluginProject == null) {
+            println("Plugin project is null, no-op")
             return
         }
         // Apply the "flutter" Gradle extension to plugins so that they can use it's vended
@@ -966,6 +973,7 @@ class FlutterPlugin implements Plugin<Project> {
                 return
             }
             def dependencies = pluginObject.dependencies
+            println("pluginObject is: ${pluginObject}")
             assert(dependencies instanceof List<String>)
             dependencies.each { pluginDependencyName ->
                 if (pluginDependencyName.empty) {
@@ -993,25 +1001,36 @@ class FlutterPlugin implements Plugin<Project> {
      * See [NativePluginLoader#getPlugins] in packages/flutter_tools/gradle/src/main/groovy/native_plugin_loader.groovy
      */
     private List<Map<String, Object>> getPluginList(Project project) {
+        println("getPluginList() called")
         if (pluginList == null) {
+            println("pluginList is null, will call NativePluginLoader.INSTANCE.getPlugins()")
             pluginList = NativePluginLoader.INSTANCE.getPlugins(getFlutterSourceDirectory())
+            println("Got ${pluginList.size()} plugins from NativePluginLoader")
         }
-        return pluginList
+        return pluginList.collect {
+            return [
+                    "name"          : it.name,
+                    "path"          : it.path,
+                    "dependencies"  : it.dependencies,
+                    "native_build"  : it.nativeBuild,
+                    "dev_dependency": it.devDependency,
+            ]
+        }
     }
 
     // TODO(54566, 48918): Remove in favor of [getPluginList] only, see also
     //  https://github.com/flutter/flutter/blob/1c90ed8b64d9ed8ce2431afad8bc6e6d9acc4556/packages/flutter_tools/lib/src/flutter_plugins.dart#L212
     /** Gets the plugins dependencies from `.flutter-plugins-dependencies`. */
-    private List<Map<String, Object>> getPluginDependencies(Project project) {
+    private List<DependencyEntry> getPluginDependencies(Project project) {
         if (pluginDependencies == null) {
             project.logger.error("BEFORE CALL, arg: ${getFlutterSourceDirectory()}")
-            Map meta = NativePluginLoader.INSTANCE.getDependenciesMetadata(getFlutterSourceDirectory())
-            project.logger.error("AFTER CALL, retval: ${meta}")
-            if (meta == null) {
+            FlutterPluginsDependencies flutterPluginsDependencies = NativePluginLoader.INSTANCE.getDependenciesMetadata(getFlutterSourceDirectory())
+            project.logger.error("AFTER CALL, retval: ${flutterPluginsDependencies}")
+            if (flutterPluginsDependencies == null) {
                 pluginDependencies = []
             } else {
-                assert(meta.dependencyGraph instanceof List<Map>)
-                pluginDependencies = meta.dependencyGraph as List<Map<String, Object>>
+//                assert(flutterPluginsDependencies.dependencyGraph instanceof List<Map>)
+                pluginDependencies = flutterPluginsDependencies.dependencyGraph /*as List<Map<String, Object>>*/
             }
         }
         return pluginDependencies
