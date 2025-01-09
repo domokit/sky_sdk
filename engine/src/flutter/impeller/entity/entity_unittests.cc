@@ -2357,6 +2357,52 @@ TEST_P(EntityTest, DrawRoundSuperEllipse) {
   ASSERT_TRUE(OpenPlaygroundHere(callback));
 }
 
+TEST_P(EntityTest, DrawRoundSuperEllipseArbitrary) {
+  auto callback = [&](ContentContext& context, RenderPass& pass) -> bool {
+    // UI state.
+    static float center_x = 100;
+    static float center_y = 100;
+    static float width = 900;
+    static float height = 900;
+    static float radius_tl[2] = {20, 20};
+    static float radius_tr[2] = {20, 20};
+    static float radius_bl[2] = {20, 20};
+    static float radius_br[2] = {20, 20};
+    static Color color = Color::Red();
+
+    ImGui::Begin("Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::SliderFloat("Center X", &center_x, 0, 1000);
+    ImGui::SliderFloat("Center Y", &center_y, 0, 1000);
+    ImGui::SliderFloat("Width", &width, 0, 1000);
+    ImGui::SliderFloat("Height", &height, 0, 1000);
+    ImGui::SliderFloat2("Radius: Top Left", radius_tl, 0, 500);
+    ImGui::SliderFloat2("Radius: Top Right", radius_tr, 0, 500);
+    ImGui::SliderFloat2("Radius: Bottom Left", radius_bl, 0, 500);
+    ImGui::SliderFloat2("Radius: Bottom Right", radius_br, 0, 500);
+    ImGui::End();
+
+    auto contents = std::make_shared<SolidColorContents>();
+    std::unique_ptr<RoundSuperellipseGeometry> geom =
+        std::make_unique<RoundSuperellipseGeometry>(
+            Rect::MakeOriginSize({center_x, center_y}, {width, height}),
+            RoundingRadii{
+              .top_left = {radius_tl[0], radius_tl[1]},
+              .top_right = {radius_tr[0], radius_tr[1]},
+              .bottom_left = {radius_bl[0], radius_bl[1]},
+              .bottom_right = {radius_br[0], radius_br[1]},
+            });
+    contents->SetColor(color);
+    contents->SetGeometry(geom.get());
+
+    Entity entity;
+    entity.SetContents(contents);
+
+    return entity.Render(context, pass);
+  };
+
+  ASSERT_TRUE(OpenPlaygroundHere(callback));
+}
+
 TEST_P(EntityTest, SolidColorApplyColorFilter) {
   auto contents = SolidColorContents();
   contents.SetColor(Color::CornflowerBlue().WithAlpha(0.75));
