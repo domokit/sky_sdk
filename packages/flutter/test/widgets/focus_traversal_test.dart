@@ -3594,41 +3594,56 @@ void main() {
       );
     }
 
-    /// Layout is:
-    ///          [0]
-    /// ---------Child FocusScope---------
-    ///          [1]
-    ///          [2]
-    ///              [3]
-    /// ---------Child FocusScope End---------
-    ///          [4] [5]
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[makeFocus(0)]),
-            FocusScope(
-              node: childScope,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  makeFocus(1),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      makeFocus(2),
-                      Padding(padding: const EdgeInsets.only(top: 100), child: makeFocus(3)),
-                    ],
-                  ),
-                ],
-              ),
+    Future<void> pumpApp() async {
+      /// Layout is:
+      ///          [0]
+      /// ---------Child FocusScope---------
+      ///          [1]
+      ///          [2]
+      ///              [3]
+      /// ---------Child FocusScope End---------
+      ///          [4] [5]
+      Widget home = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[makeFocus(0)]),
+          FocusScope(
+            node: childScope,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                makeFocus(1),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    makeFocus(2),
+                    Padding(padding: const EdgeInsets.only(top: 100), child: makeFocus(3)),
+                  ],
+                ),
+              ],
             ),
-            Row(children: <Widget>[makeFocus(4), makeFocus(5)]),
-          ],
+          ),
+          Row(children: <Widget>[makeFocus(4), makeFocus(5)]),
+        ],
+      );
+      // Prevent the arrow keys from scrolling on the web.
+      if (isBrowser) {
+        home = Shortcuts(
+          shortcuts: const <ShortcutActivator, Intent>{
+            SingleActivator(LogicalKeyboardKey.arrowUp): DirectionalFocusIntent(TraversalDirection.up),
+            SingleActivator(LogicalKeyboardKey.arrowDown): DirectionalFocusIntent(TraversalDirection.down),
+          },
+          child: home,
+        );
+      }
+      await tester.pumpWidget(
+        MaterialApp(
+          home: home,
         ),
-      ),
-    );
+      );
+    }
+
+    await pumpApp();
 
     void clear() {
       focus = List<bool?>.generate(focus.length, (int _) => null);
