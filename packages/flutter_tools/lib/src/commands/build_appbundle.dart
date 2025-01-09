@@ -143,6 +143,13 @@ class BuildAppBundleCommand extends BuildSubCommand {
     // Do all setup verification that doesn't involve loading units. Checks that
     // require generated loading units are done after gen_snapshot in assemble.
     final List<DeferredComponent>? deferredComponents = FlutterProject.current().manifest.deferredComponents;
+    if (deferredComponents != null && boolArg('deferred-components')) {
+      // Record to analytics that DeferredComponents is being used.
+      globals.analytics.send(Event.flutterBuildInfo(
+        label: 'build-appbundle-deferred-components',
+        buildType: 'android',
+      ));
+    }
     if (deferredComponents != null && boolArg('deferred-components') && boolArg('validate-deferred-components') && !boolArg('debug')) {
       final DeferredComponentsPrebuildValidator validator = DeferredComponentsPrebuildValidator(
         project.directory,

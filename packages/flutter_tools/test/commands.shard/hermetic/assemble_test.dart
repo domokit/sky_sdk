@@ -94,6 +94,35 @@ void main() {
     FeatureFlags: () => TestFeatureFlags(isMacOSEnabled: true),
   });
 
+  testUsingContext('flutter assemble sends assemble-deferred-components', () async {
+    final AssembleCommand command = AssembleCommand(
+      buildSystem: TestBuildSystem.all(BuildResult(success: true)),
+    );
+    final CommandRunner<void> commandRunner = createTestCommandRunner(command);
+    await commandRunner.run(<String>[
+      'assemble',
+      '-o Output',
+      '-dTargetPlatform=android',
+      '-dBuildMode=release',
+      'android_aot_deferred_components_bundle_release_android-arm64',
+    ]);
+    expect(
+      fakeAnalytics.sentEvents,
+      contains(
+        Event.flutterBuildInfo(
+          label: 'assemble-deferred-components',
+          buildType: 'android',
+          settings: 'android_aot_deferred_components_bundle_release_android-arm64',
+        ),
+      ),
+    );
+  }, overrides: <Type, Generator>{
+    Analytics: () => fakeAnalytics,
+    Cache: () => Cache.test(processManager: FakeProcessManager.any()),
+    FileSystem: () => MemoryFileSystem.test(),
+    ProcessManager: () => FakeProcessManager.any(),
+  });
+
   testUsingContext('flutter assemble sends usage values correctly with platform', () async {
     final AssembleCommand command = AssembleCommand(
         buildSystem: TestBuildSystem.all(BuildResult(success: true)));

@@ -310,6 +310,14 @@ class AssembleCommand extends FlutterCommand {
         "Try re-running 'flutter build ios' or the appropriate build command."
       );
     }
+    if (deferredTargets.isNotEmpty) {
+      // Record to analytics that DeferredComponents is being used.
+      globals.analytics.send(Event.flutterBuildInfo(
+        label: 'assemble-deferred-components',
+        buildType: 'android',
+        settings: deferredTargets.map((Target t) => t.name).join(','),
+      ));
+    }
     if (_flutterProject.manifest.deferredComponents != null
         && decodedDefines.contains('validate-deferred-components=true')
         && deferredTargets.isNotEmpty
