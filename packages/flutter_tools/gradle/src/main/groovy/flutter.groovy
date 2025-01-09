@@ -29,6 +29,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.internal.os.OperatingSystem
+import NativePluginLoader
 
 /**
  * For apps only. Provides the flutter extension used in the app-level Gradle
@@ -227,7 +228,8 @@ class FlutterPlugin implements Plugin<Project> {
         }
 
         // Load shared gradle functions
-        project.apply from: Paths.get(flutterRoot.absolutePath, "packages", "flutter_tools", "gradle", "src", "main", "groovy", "native_plugin_loader.groovy")
+        // project.apply from: Paths.get(flutterRoot.absolutePath, "packages", "flutter_tools", "gradle", "src", "main", "groovy", "native_plugin_loader.groovy")
+
 
         FlutterExtension extension = project.extensions.create("flutter", FlutterExtension)
         Properties localProperties = new Properties()
@@ -992,7 +994,7 @@ class FlutterPlugin implements Plugin<Project> {
      */
     private List<Map<String, Object>> getPluginList(Project project) {
         if (pluginList == null) {
-            pluginList = project.ext.nativePluginLoader.getPlugins(getFlutterSourceDirectory())
+            pluginList = NativePluginLoader.INSTANCE.getPlugins(getFlutterSourceDirectory())
         }
         return pluginList
     }
@@ -1002,7 +1004,7 @@ class FlutterPlugin implements Plugin<Project> {
     /** Gets the plugins dependencies from `.flutter-plugins-dependencies`. */
     private List<Map<String, Object>> getPluginDependencies(Project project) {
         if (pluginDependencies == null) {
-            Map meta = project.ext.nativePluginLoader.getDependenciesMetadata(getFlutterSourceDirectory())
+            Map meta = NativePluginLoader.INSTANCE.getDependenciesMetadata(getFlutterSourceDirectory())
             if (meta == null) {
                 pluginDependencies = []
             } else {

@@ -1,19 +1,16 @@
-/*
-// Copyright 2014 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import org.gradle.internal.impldep.com.google.gson.annotations.SerializedName
+import java.io.File
 
-import groovy.json.JsonSlurper
+object NativePluginLoader {
+    private const val flutterPluginsDependenciesFile = ".flutter-plugins-dependencies"
 
-class NativePluginLoader {
+    private var parsedFlutterPluginsDependencies: DependenciesMetadata? = null
 
-    // This string must match _kFlutterPluginsHasNativeBuildKey defined in
-    // packages/flutter_tools/lib/src/flutter_plugins.dart.
-    static final String nativeBuildKey = "native_build"
-    static final String flutterPluginsDependenciesFile = ".flutter-plugins-dependencies"
+    private val json: Json = Json { ignoreUnknownKeys = true }
 
-    */
-/**
+    /**
      * Gets the list of plugins that support the Android platform.
      * The list contains map elements with the following content:
      * {
@@ -23,47 +20,31 @@ class NativePluginLoader {
      *     "native_build": true
      *     "dev_dependency": false
      * }
-     *
-     * Therefore the map value can either be a `String`, a `List<String>` or a `Boolean`.
-     *//*
+     */
+    fun getPlugins(flutterSourceDirectory: File): List<Plugin> {
+        val nativePlugins = mutableListOf<Plugin>()
+        val depsMetadata = getDependenciesMetadata(flutterSourceDirectory) ?: return nativePlugins
 
-    List<Map<String, Object>> getPlugins(File flutterSourceDirectory) {
-        List<Map<String, Object>> nativePlugins = []
-        def meta = getDependenciesMetadata(flutterSourceDirectory)
-        if (meta == null) {
-            return nativePlugins
-        }
-
-        assert(meta.plugins instanceof Map<String, Object>)
-        def androidPlugins = meta.plugins.android
-        assert(androidPlugins instanceof List<Map>)
+        val androidPlugins = depsMetadata.plugins.android
         // Includes the Flutter plugins that support the Android platform.
-        androidPlugins.each { Map<String, Object> androidPlugin ->
+        for (androidBuild in androidPlugins) {
             // The property types can be found in _filterPluginsByPlatform defined in
             // packages/flutter_tools/lib/src/flutter_plugins.dart.
-            assert(androidPlugin.name instanceof String)
-            assert(androidPlugin.path instanceof String)
-            assert(androidPlugin.dependencies instanceof List<String>)
-            assert(androidPlugin.dev_dependency instanceof Boolean)
+
             // Skip plugins that have no native build (such as a Dart-only implementation
-            // of a federated plugin).
-            def needsBuild = androidPlugin.containsKey(nativeBuildKey) ? androidPlugin[nativeBuildKey] : true
+            // of a federated androidBuild).
+            val needsBuild = androidBuild.nativeBuild ?: true
             if (needsBuild) {
-                nativePlugins.add(androidPlugin)
+                nativePlugins.add(androidBuild)
             }
         }
         return nativePlugins
     }
 
-
-    private Map<String, Object> parsedFlutterPluginsDependencies
-
-    */
-/**
-     * Parses <project-src>/.flutter-plugins-dependencies
-     *//*
-
-    Map<String, Object> getDependenciesMetadata(File flutterSourceDirectory) {
+    /**
+     * Parses `<project-src>/.flutter-plugins-dependencies`
+     */
+    fun getDependenciesMetadata(flutterSourceDirectory: File): DependenciesMetadata? {
         // Consider a `.flutter-plugins-dependencies` file with the following content:
         // {
         //     "plugins": {
@@ -122,22 +103,36 @@ class NativePluginLoader {
         // `plugin-c` doesn't depend on anything.
         // `plugin-d` also doesn't depend on anything, but it is a dev
         // dependency to the Flutter project, so it is marked as such.
-        if (parsedFlutterPluginsDependencies) {
+
+        if (parsedFlutterPluginsDependencies != null) {
             return parsedFlutterPluginsDependencies
         }
-        File pluginsDependencyFile = new File(flutterSourceDirectory, flutterPluginsDependenciesFile)
+
+        val pluginsDependencyFile = File(flutterSourceDirectory, flutterPluginsDependenciesFile)
         if (pluginsDependencyFile.exists()) {
-            def object = new JsonSlurper().parseText(pluginsDependencyFile.text)
-            assert(object instanceof Map<String, Object>)
-            parsedFlutterPluginsDependencies = object
-            return object
+            val jsonContents = pluginsDependencyFile.readText()
+            parsedFlutterPluginsDependencies = json.decodeFromString(jsonContents)
+            return parsedFlutterPluginsDependencies
         }
         return null
     }
 }
 
-// TODO(135392): Remove and use declarative form when migrated
-ext {
-    nativePluginLoader = new NativePluginLoader()
-}
-*/
+@Serializable
+data class DependenciesMetadata(
+    val plugins: Plugins,
+)
+
+@Serializable
+data class Plugins(
+    val android: List<Plugin>,
+)
+
+@Serializable
+data class Plugin(
+    @SerializedName("name") val name: String,
+    @SerializedName("path") val path: String,
+    @SerializedName("dependencies") val dependencies: List<String>,
+    @SerializedName("native_build") val nativeBuild: Boolean? = null, // Optional field
+    @SerializedName("dev_dependency") val devDependency: Boolean? = null, // Required field
+)
