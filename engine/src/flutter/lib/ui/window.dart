@@ -390,8 +390,8 @@ class FlutterView {
 
   /// Change the retained semantics data about this [FlutterView].
   ///
-  /// Th [setSemanticsTreeEnabled] must be called with true before sending
-  /// update through this method.
+  /// Th [PlatformDispatcher.setSemanticsTreeEnabled] must be called with true
+  /// before sending update through this method.
   ///
   /// This function disposes the given update, which means the semantics update
   /// cannot be used further.

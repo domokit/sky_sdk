@@ -744,7 +744,7 @@ class EnginePlatformDispatcher extends ui.PlatformDispatcher {
   @override
   void setSemanticsTreeEnabled(bool enabled) {
     if (!enabled) {
-      for (EngineFlutterView view in views) {
+      for (final EngineFlutterView view in views) {
         view.semantics.reset();
       }
     }
