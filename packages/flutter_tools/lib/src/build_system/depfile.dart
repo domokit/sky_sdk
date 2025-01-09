@@ -8,11 +8,9 @@ import '../base/logger.dart';
 
 /// A service for creating and parsing [Depfile]s.
 class DepfileService {
-  DepfileService({
-    required Logger logger,
-    required FileSystem fileSystem,
-  }) : _logger = logger,
-       _fileSystem = fileSystem;
+  DepfileService({required Logger logger, required FileSystem fileSystem})
+    : _logger = logger,
+      _fileSystem = fileSystem;
 
   final Logger _logger;
   final FileSystem _fileSystem;
@@ -52,7 +50,6 @@ class DepfileService {
     return Depfile(inputs, outputs);
   }
 
-
   /// Parse the output of dart2js's used dependencies.
   ///
   /// The [file] contains a list of newline separated file URIs. The output
@@ -72,13 +69,10 @@ class DepfileService {
       if (_fileSystem.path.style.separator == r'\') {
         // backslashes and spaces in a depfile have to be escaped if the
         // platform separator is a backslash.
-        final String path = outputFile.path
-          .replaceAll(r'\', r'\\')
-          .replaceAll(r' ', r'\ ');
+        final String path = outputFile.path.replaceAll(r'\', r'\\').replaceAll(r' ', r'\ ');
         buffer.write(' $path');
       } else {
-        final String path = outputFile.path
-          .replaceAll(r' ', r'\ ');
+        final String path = outputFile.path.replaceAll(r' ', r'\ ');
         buffer.write(' $path');
       }
     }
@@ -86,14 +80,17 @@ class DepfileService {
 
   List<File> _processList(String rawText) {
     return rawText
-    // Put every file on right-hand side on the separate line
+        // Put every file on right-hand side on the separate line
         .replaceAllMapped(_separatorExpr, (Match match) => '${match.group(1)}\n')
         .split('\n')
-    // Expand escape sequences, so that '\ ', for example,ß becomes ' '
-        .map<String>((String path) => path.replaceAllMapped(_escapeExpr, (Match match) => match.group(1)!).trim())
+        // Expand escape sequences, so that '\ ', for example,ß becomes ' '
+        .map<String>(
+          (String path) =>
+              path.replaceAllMapped(_escapeExpr, (Match match) => match.group(1)!).trim(),
+        )
         .where((String path) => path.isNotEmpty)
-    // The tool doesn't write duplicates to these lists. This call is an attempt to
-    // be resilient to the outputs of other tools which write or user edits to depfiles.
+        // The tool doesn't write duplicates to these lists. This call is an attempt to
+        // be resilient to the outputs of other tools which write or user edits to depfiles.
         .toSet()
         .map(_fileSystem.file)
         .toList();

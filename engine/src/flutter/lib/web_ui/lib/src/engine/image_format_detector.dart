@@ -61,14 +61,7 @@ ImageType? detectImageType(Uint8List data) {
 }
 
 /// The supported image file formats in Flutter Web.
-enum ImageFileType {
-  png,
-  gif,
-  jpeg,
-  webp,
-  bmp,
-  avif,
-}
+enum ImageFileType { png, gif, jpeg, webp, bmp, avif }
 
 /// The file format of the image, and whether or not it is animated.
 enum ImageType {
@@ -96,43 +89,25 @@ enum ImageType {
 
 /// The signature bytes in an image file that identify the format.
 enum ImageFileSignature {
-  png(
-    <int?>[0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
-    ImageType.png,
-  ),
-  gif87a(
-    <int?>[0x47, 0x49, 0x46, 0x38, 0x37, 0x61],
-    ImageType.animatedGif,
-  ),
-  gif89a(
-    <int?>[0x47, 0x49, 0x46, 0x38, 0x39, 0x61],
-    ImageType.animatedGif,
-  ),
-  jpeg(
-    <int?>[0xFF, 0xD8, 0xFF],
-    ImageType.jpeg,
-  ),
-  webp(
-    <int?>[
-      0x52,
-      0x49,
-      0x46,
-      0x46,
-      null,
-      null,
-      null,
-      null,
-      0x57,
-      0x45,
-      0x42,
-      0x50
-    ],
-    ImageType.webp,
-  ),
-  bmp(
-    <int?>[0x42, 0x4D],
-    ImageType.bmp,
-  );
+  png(<int?>[0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A], ImageType.png),
+  gif87a(<int?>[0x47, 0x49, 0x46, 0x38, 0x37, 0x61], ImageType.animatedGif),
+  gif89a(<int?>[0x47, 0x49, 0x46, 0x38, 0x39, 0x61], ImageType.animatedGif),
+  jpeg(<int?>[0xFF, 0xD8, 0xFF], ImageType.jpeg),
+  webp(<int?>[
+    0x52,
+    0x49,
+    0x46,
+    0x46,
+    null,
+    null,
+    null,
+    null,
+    0x57,
+    0x45,
+    0x42,
+    0x50,
+  ], ImageType.webp),
+  bmp(<int?>[0x42, 0x4D], ImageType.bmp);
 
   const ImageFileSignature(this.header, this.imageType);
 
@@ -290,8 +265,7 @@ class _GifHeaderReader {
 
     final int logicalScreenDescriptorFields = _readUint8();
     const int globalColorTableFlagMask = 1 << 7;
-    final bool hasGlobalColorTable =
-        logicalScreenDescriptorFields & globalColorTableFlagMask != 0;
+    final bool hasGlobalColorTable = logicalScreenDescriptorFields & globalColorTableFlagMask != 0;
 
     // Skip over the background color index and pixel aspect ratio.
     _position += 2;
@@ -299,11 +273,9 @@ class _GifHeaderReader {
     if (hasGlobalColorTable) {
       // Skip past the global color table.
       const int globalColorTableSizeMask = 1 << 2 | 1 << 1 | 1;
-      final int globalColorTableSize =
-          logicalScreenDescriptorFields & globalColorTableSizeMask;
+      final int globalColorTableSize = logicalScreenDescriptorFields & globalColorTableSizeMask;
       // This is 3 * 2^(Global Color Table Size + 1).
-      final int globalColorTableSizeInBytes =
-          3 * (1 << (globalColorTableSize + 1));
+      final int globalColorTableSizeInBytes = 3 * (1 << (globalColorTableSize + 1));
       _position += globalColorTableSizeInBytes;
     }
 
@@ -411,16 +383,13 @@ class _GifHeaderReader {
 
     final int packedImageDescriptorFields = _readUint8();
     const int localColorTableFlagMask = 1 << 7;
-    final bool hasLocalColorTable =
-        packedImageDescriptorFields & localColorTableFlagMask != 0;
+    final bool hasLocalColorTable = packedImageDescriptorFields & localColorTableFlagMask != 0;
     if (hasLocalColorTable) {
       // Skip past the local color table.
       const int localColorTableSizeMask = 1 << 2 | 1 << 1 | 1;
-      final int localColorTableSize =
-          packedImageDescriptorFields & localColorTableSizeMask;
+      final int localColorTableSize = packedImageDescriptorFields & localColorTableSizeMask;
       // This is 3 * 2^(Local Color Table Size + 1).
-      final int localColorTableSizeInBytes =
-          3 * (1 << (localColorTableSize + 1));
+      final int localColorTableSizeInBytes = 3 * (1 << (localColorTableSize + 1));
       _position += localColorTableSizeInBytes;
     }
     // Skip LZW minimum code size byte.

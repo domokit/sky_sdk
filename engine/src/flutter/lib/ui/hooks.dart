@@ -73,12 +73,14 @@ void _updateDisplays(
   final List<Display> displays = <Display>[];
   for (int index = 0; index < ids.length; index += 1) {
     final int displayId = ids[index];
-    displays.add(Display._(
-      id: displayId,
-      size: Size(widths[index], heights[index]),
-      devicePixelRatio: devicePixelRatios[index],
-      refreshRate: refreshRates[index],
-    ));
+    displays.add(
+      Display._(
+        id: displayId,
+        size: Size(widths[index], heights[index]),
+        devicePixelRatio: devicePixelRatios[index],
+        refreshRate: refreshRates[index],
+      ),
+    );
   }
 
   PlatformDispatcher.instance._updateDisplays(displays);
@@ -93,20 +95,23 @@ List<DisplayFeature> _decodeDisplayFeatures({
   assert(bounds.length / 4 == type.length, 'Bounds are rectangles, requiring 4 measurements each');
   assert(type.length == state.length);
   final List<DisplayFeature> result = <DisplayFeature>[];
-  for(int i = 0; i < type.length; i++) {
+  for (int i = 0; i < type.length; i++) {
     final int rectOffset = i * 4;
-    result.add(DisplayFeature(
-      bounds: Rect.fromLTRB(
-        bounds[rectOffset] / devicePixelRatio,
-        bounds[rectOffset + 1] / devicePixelRatio,
-        bounds[rectOffset + 2] / devicePixelRatio,
-        bounds[rectOffset + 3] / devicePixelRatio,
+    result.add(
+      DisplayFeature(
+        bounds: Rect.fromLTRB(
+          bounds[rectOffset] / devicePixelRatio,
+          bounds[rectOffset + 1] / devicePixelRatio,
+          bounds[rectOffset + 2] / devicePixelRatio,
+          bounds[rectOffset + 3] / devicePixelRatio,
+        ),
+        type: DisplayFeatureType.values[type[i]],
+        state:
+            state[i] < DisplayFeatureState.values.length
+                ? DisplayFeatureState.values[state[i]]
+                : DisplayFeatureState.unknown,
       ),
-      type: DisplayFeatureType.values[type[i]],
-      state: state[i] < DisplayFeatureState.values.length
-          ? DisplayFeatureState.values[state[i]]
-          : DisplayFeatureState.unknown,
-    ));
+    );
   }
   return result;
 }
@@ -291,9 +296,7 @@ bool _onError(Object error, StackTrace? stackTrace) {
 typedef _ListStringArgFunction = Object? Function(List<String> args);
 
 @pragma('vm:entry-point')
-void _runMain(Function startMainIsolateFunction,
-              Function userMainFunction,
-              List<String> args) {
+void _runMain(Function startMainIsolateFunction, Function userMainFunction, List<String> args) {
   // ignore: avoid_dynamic_calls
   startMainIsolateFunction(() {
     if (userMainFunction is _ListStringArgFunction) {
@@ -355,7 +358,13 @@ void _invoke2<A1, A2>(void Function(A1 a1, A2 a2)? callback, Zone zone, A1 arg1,
 /// The 3 in the name refers to the number of arguments expected by
 /// the callback (and thus passed to this function, in addition to the
 /// callback itself and the zone in which the callback is executed).
-void _invoke3<A1, A2, A3>(void Function(A1 a1, A2 a2, A3 a3)? callback, Zone zone, A1 arg1, A2 arg2, A3 arg3) {
+void _invoke3<A1, A2, A3>(
+  void Function(A1 a1, A2 a2, A3 a3)? callback,
+  Zone zone,
+  A1 arg1,
+  A2 arg2,
+  A3 arg3,
+) {
   if (callback == null) {
     return;
   }
@@ -388,24 +397,25 @@ bool _isLoopback(String host) {
 @pragma('vm:entry-point')
 void Function(Uri) _getHttpConnectionHookClosure(bool mayInsecurelyConnectToAllDomains) {
   return (Uri uri) {
-      final Object? zoneOverride = Zone.current[#flutter.io.allow_http];
-      if (zoneOverride == true) {
-        return;
-      }
-      if (zoneOverride == false && uri.isScheme('http')) {
-        // Going to _isLoopback check before throwing
-      } else if (mayInsecurelyConnectToAllDomains || uri.isScheme('https')) {
-        // In absence of zone override, if engine setting allows the connection
-        // or if connection is to `https`, allow the connection.
-        return;
-      }
-      // Loopback connections are always allowed
-      // Check at last resort to avoid debug annoyance of try/on ArgumentError
-      if (_isLoopback(uri.host)) {
-        return;
-      }
-      throw UnsupportedError(
-        'Non-https connection "$uri" is not supported by the platform. '
-        'Refer to https://flutter.dev/docs/release/breaking-changes/network-policy-ios-android.');
-    };
+    final Object? zoneOverride = Zone.current[#flutter.io.allow_http];
+    if (zoneOverride == true) {
+      return;
+    }
+    if (zoneOverride == false && uri.isScheme('http')) {
+      // Going to _isLoopback check before throwing
+    } else if (mayInsecurelyConnectToAllDomains || uri.isScheme('https')) {
+      // In absence of zone override, if engine setting allows the connection
+      // or if connection is to `https`, allow the connection.
+      return;
+    }
+    // Loopback connections are always allowed
+    // Check at last resort to avoid debug annoyance of try/on ArgumentError
+    if (_isLoopback(uri.host)) {
+      return;
+    }
+    throw UnsupportedError(
+      'Non-https connection "$uri" is not supported by the platform. '
+      'Refer to https://flutter.dev/docs/release/breaking-changes/network-policy-ios-android.',
+    );
+  };
 }

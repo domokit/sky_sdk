@@ -15,11 +15,9 @@ WindowsWorkflow? get windowsWorkflow => context.get<WindowsWorkflow>();
 /// This workflow requires the host machine to be Windows, and the Windows
 /// desktop configuration setting to be enabled.
 class WindowsWorkflow implements Workflow {
-  const WindowsWorkflow({
-    required Platform platform,
-    required FeatureFlags featureFlags,
-  }) : _platform = platform,
-       _featureFlags = featureFlags;
+  const WindowsWorkflow({required Platform platform, required FeatureFlags featureFlags})
+    : _platform = platform,
+      _featureFlags = featureFlags;
 
   final Platform _platform;
   final FeatureFlags _featureFlags;

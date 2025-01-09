@@ -19,11 +19,14 @@ void setUpRenderingForTests() {
   // Set `onDrawFrame` to call `renderer.renderScene`.
   EnginePlatformDispatcher.instance.onDrawFrame = () {
     if (_sceneToRender != null) {
-      EnginePlatformDispatcher.instance.render(_sceneToRender!).then<void>((_) {
-        _sceneCompleter?.complete();
-      }).catchError((Object error) {
-        _sceneCompleter?.completeError(error);
-      });
+      EnginePlatformDispatcher.instance
+          .render(_sceneToRender!)
+          .then<void>((_) {
+            _sceneCompleter?.complete();
+          })
+          .catchError((Object error) {
+            _sceneCompleter?.completeError(error);
+          });
       _sceneToRender = null;
     }
   };

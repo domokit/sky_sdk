@@ -23,10 +23,8 @@ export 'velocity_tracker.dart' show Velocity;
 ///  * [DragEndDetails], the details for [GestureDragEndCallback].
 class DragDownDetails {
   /// Creates details for a [GestureDragDownCallback].
-  DragDownDetails({
-    this.globalPosition = Offset.zero,
-    Offset? localPosition,
-  }) : localPosition = localPosition ?? globalPosition;
+  DragDownDetails({this.globalPosition = Offset.zero, Offset? localPosition})
+    : localPosition = localPosition ?? globalPosition;
 
   /// The global position at which the pointer contacted the screen.
   ///
@@ -136,9 +134,9 @@ class DragUpdateDetails {
     required this.globalPosition,
     Offset? localPosition,
   }) : assert(
-         primaryDelta == null
-           || (primaryDelta == delta.dx && delta.dy == 0.0)
-           || (primaryDelta == delta.dy && delta.dx == 0.0),
+         primaryDelta == null ||
+             (primaryDelta == delta.dx && delta.dy == 0.0) ||
+             (primaryDelta == delta.dy && delta.dx == 0.0),
        ),
        localPosition = localPosition ?? globalPosition;
 
@@ -220,11 +218,11 @@ class DragEndDetails {
     this.globalPosition = Offset.zero,
     Offset? localPosition,
   }) : assert(
-         primaryVelocity == null
-           || (primaryVelocity == velocity.pixelsPerSecond.dx && velocity.pixelsPerSecond.dy == 0)
-           || (primaryVelocity == velocity.pixelsPerSecond.dy && velocity.pixelsPerSecond.dx == 0),
+         primaryVelocity == null ||
+             (primaryVelocity == velocity.pixelsPerSecond.dx && velocity.pixelsPerSecond.dy == 0) ||
+             (primaryVelocity == velocity.pixelsPerSecond.dy && velocity.pixelsPerSecond.dx == 0),
        ),
-      localPosition = localPosition ?? globalPosition;
+       localPosition = localPosition ?? globalPosition;
 
   /// The velocity the pointer was moving when it stopped contacting the screen.
   ///

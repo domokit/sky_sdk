@@ -13,14 +13,14 @@ const Key avatarD = Key('D');
 
 Future<void> pumpTestWidget(
   WidgetTester tester, {
-      bool withName = true,
-      bool withEmail = true,
-      bool withOnDetailsPressedHandler = true,
-      Size otherAccountsPictureSize = const Size.square(40.0),
-      Size currentAccountPictureSize  = const Size.square(72.0),
-      Color? primaryColor,
-      Color? colorSchemePrimary,
-    }) async {
+  bool withName = true,
+  bool withEmail = true,
+  bool withOnDetailsPressedHandler = true,
+  Size otherAccountsPictureSize = const Size.square(40.0),
+  Size currentAccountPictureSize = const Size.square(72.0),
+  Color? primaryColor,
+  Color? colorSchemePrimary,
+}) async {
   await tester.pumpWidget(
     MaterialApp(
       theme: ThemeData(
@@ -29,40 +29,22 @@ Future<void> pumpTestWidget(
       ),
       home: MediaQuery(
         data: const MediaQueryData(
-          padding: EdgeInsets.only(
-            left: 10.0,
-            top: 20.0,
-            right: 30.0,
-            bottom: 40.0,
-          ),
+          padding: EdgeInsets.only(left: 10.0, top: 20.0, right: 30.0, bottom: 40.0),
         ),
         child: Material(
           child: Center(
             child: UserAccountsDrawerHeader(
-              onDetailsPressed: withOnDetailsPressedHandler ? () { } : null,
+              onDetailsPressed: withOnDetailsPressedHandler ? () {} : null,
               currentAccountPictureSize: currentAccountPictureSize,
               otherAccountsPicturesSize: otherAccountsPictureSize,
               currentAccountPicture: const ExcludeSemantics(
-                child: CircleAvatar(
-                  key: avatarA,
-                  child: Text('A'),
-                ),
+                child: CircleAvatar(key: avatarA, child: Text('A')),
               ),
               otherAccountsPictures: const <Widget>[
-                CircleAvatar(
-                  child: Text('B'),
-                ),
-                CircleAvatar(
-                  key: avatarC,
-                  child: Text('C'),
-                ),
-                CircleAvatar(
-                  key: avatarD,
-                  child: Text('D'),
-                ),
-                CircleAvatar(
-                  child: Text('E'),
-                ),
+                CircleAvatar(child: Text('B')),
+                CircleAvatar(key: avatarC, child: Text('C')),
+                CircleAvatar(key: avatarD, child: Text('D')),
+                CircleAvatar(child: Text('E')),
               ],
               accountName: withName ? const Text('name') : null,
               accountEmail: withEmail ? const Text('email') : null,
@@ -85,11 +67,14 @@ void main() {
     const Color primaryColor = Color(0xff00ff00);
     const Color colorSchemePrimary = Color(0xff0000ff);
 
-    await pumpTestWidget(tester, primaryColor: primaryColor, colorSchemePrimary: colorSchemePrimary);
+    await pumpTestWidget(
+      tester,
+      primaryColor: primaryColor,
+      colorSchemePrimary: colorSchemePrimary,
+    );
 
-    final BoxDecoration? boxDecoration = tester.widget<DrawerHeader>(
-      find.byType(DrawerHeader),
-    ).decoration as BoxDecoration?;
+    final BoxDecoration? boxDecoration =
+        tester.widget<DrawerHeader>(find.byType(DrawerHeader)).decoration as BoxDecoration?;
     expect(boxDecoration?.color == primaryColor, false);
     expect(boxDecoration?.color == colorSchemePrimary, true);
   });
@@ -185,22 +170,26 @@ void main() {
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/25801.
-  testWidgets('UserAccountsDrawerHeader icon does not rotate after setState', (WidgetTester tester) async {
+  testWidgets('UserAccountsDrawerHeader icon does not rotate after setState', (
+    WidgetTester tester,
+  ) async {
     late StateSetter testSetState;
-    await tester.pumpWidget(MaterialApp(
-      home: Material(
-        child: StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            testSetState = setState;
-            return UserAccountsDrawerHeader(
-              onDetailsPressed: () { },
-              accountName: const Text('name'),
-              accountEmail: const Text('email'),
-            );
-          },
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              testSetState = setState;
+              return UserAccountsDrawerHeader(
+                onDetailsPressed: () {},
+                accountName: const Text('name'),
+                accountEmail: const Text('email'),
+              );
+            },
+          ),
         ),
       ),
-    ));
+    );
 
     Transform transformWidget = tester.firstWidget(findTransform);
 
@@ -208,7 +197,7 @@ void main() {
     expect(transformWidget.transform.getRotation()[0], 1.0);
     expect(transformWidget.transform.getRotation()[4], 1.0);
 
-    testSetState(() { });
+    testSetState(() {});
     await tester.pump(const Duration(milliseconds: 10));
     expect(tester.hasRunningAnimations, isFalse);
 
@@ -220,7 +209,9 @@ void main() {
     expect(transformWidget.transform.getRotation()[4], 1.0);
   });
 
-  testWidgets('UserAccountsDrawerHeader icon rotation test speeeeeedy', (WidgetTester tester) async {
+  testWidgets('UserAccountsDrawerHeader icon rotation test speeeeeedy', (
+    WidgetTester tester,
+  ) async {
     await pumpTestWidget(tester);
     Transform transformWidget = tester.firstWidget(findTransform);
 
@@ -262,31 +253,35 @@ void main() {
   });
 
   testWidgets('UserAccountsDrawerHeader icon color changes', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Material(
-        child: UserAccountsDrawerHeader(
-          onDetailsPressed: () {},
-          accountName: const Text('name'),
-          accountEmail: const Text('email'),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: UserAccountsDrawerHeader(
+            onDetailsPressed: () {},
+            accountName: const Text('name'),
+            accountEmail: const Text('email'),
+          ),
         ),
       ),
-    ));
+    );
 
     Icon iconWidget = tester.firstWidget(find.byType(Icon));
     // Default icon color is white.
     expect(iconWidget.color, Colors.white);
 
     const Color arrowColor = Colors.red;
-    await tester.pumpWidget(MaterialApp(
-      home: Material(
-        child: UserAccountsDrawerHeader(
-          onDetailsPressed: () { },
-          accountName: const Text('name'),
-          accountEmail: const Text('email'),
-          arrowColor: arrowColor,
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: UserAccountsDrawerHeader(
+            onDetailsPressed: () {},
+            accountName: const Text('name'),
+            accountEmail: const Text('email'),
+            arrowColor: arrowColor,
+          ),
         ),
       ),
-    ));
+    );
 
     iconWidget = tester.firstWidget(find.byType(Icon));
     expect(iconWidget.color, arrowColor);
@@ -322,46 +317,35 @@ void main() {
     expect(box.size.height, equals(160.0 + 1.0)); // height + bottom edge)
     expect(find.byType(Icon), findsNothing);
 
-    await tester.pumpWidget(buildFrame(
-      onDetailsPressed: () { },
-    ));
+    await tester.pumpWidget(buildFrame(onDetailsPressed: () {}));
     expect(find.byType(Icon), findsOneWidget);
 
-    await tester.pumpWidget(buildFrame(
-      accountName: const Text('accountName'),
-      onDetailsPressed: () { },
-    ));
-    expect(
-      tester.getCenter(find.text('accountName')).dy,
-      tester.getCenter(find.byType(Icon)).dy,
+    await tester.pumpWidget(
+      buildFrame(accountName: const Text('accountName'), onDetailsPressed: () {}),
     );
+    expect(tester.getCenter(find.text('accountName')).dy, tester.getCenter(find.byType(Icon)).dy);
     expect(
       tester.getCenter(find.text('accountName')).dx,
       lessThan(tester.getCenter(find.byType(Icon)).dx),
     );
 
-    await tester.pumpWidget(buildFrame(
-      accountEmail: const Text('accountEmail'),
-      onDetailsPressed: () { },
-    ));
-    expect(
-      tester.getCenter(find.text('accountEmail')).dy,
-      tester.getCenter(find.byType(Icon)).dy,
+    await tester.pumpWidget(
+      buildFrame(accountEmail: const Text('accountEmail'), onDetailsPressed: () {}),
     );
+    expect(tester.getCenter(find.text('accountEmail')).dy, tester.getCenter(find.byType(Icon)).dy);
     expect(
       tester.getCenter(find.text('accountEmail')).dx,
       lessThan(tester.getCenter(find.byType(Icon)).dx),
     );
 
-    await tester.pumpWidget(buildFrame(
-      accountName: const Text('accountName'),
-      accountEmail: const Text('accountEmail'),
-      onDetailsPressed: () { },
-    ));
-    expect(
-      tester.getCenter(find.text('accountEmail')).dy,
-      tester.getCenter(find.byType(Icon)).dy,
+    await tester.pumpWidget(
+      buildFrame(
+        accountName: const Text('accountName'),
+        accountEmail: const Text('accountEmail'),
+        onDetailsPressed: () {},
+      ),
     );
+    expect(tester.getCenter(find.text('accountEmail')).dy, tester.getCenter(find.byType(Icon)).dy);
     expect(
       tester.getCenter(find.text('accountEmail')).dx,
       lessThan(tester.getCenter(find.byType(Icon)).dx),
@@ -375,21 +359,23 @@ void main() {
       tester.getBottomLeft(find.text('accountName')).dx,
     );
 
-    await tester.pumpWidget(buildFrame(
-      currentAccountPicture: const CircleAvatar(child: Text('A')),
-    ));
+    await tester.pumpWidget(
+      buildFrame(currentAccountPicture: const CircleAvatar(child: Text('A'))),
+    );
     expect(find.text('A'), findsOneWidget);
 
-    await tester.pumpWidget(buildFrame(
-      otherAccountsPictures: <Widget>[const CircleAvatar(child: Text('A'))],
-    ));
+    await tester.pumpWidget(
+      buildFrame(otherAccountsPictures: <Widget>[const CircleAvatar(child: Text('A'))]),
+    );
     expect(find.text('A'), findsOneWidget);
 
     const Key avatarA = Key('A');
-    await tester.pumpWidget(buildFrame(
-      currentAccountPicture: const CircleAvatar(key: avatarA, child: Text('A')),
-      accountName: const Text('accountName'),
-    ));
+    await tester.pumpWidget(
+      buildFrame(
+        currentAccountPicture: const CircleAvatar(key: avatarA, child: Text('A')),
+        accountName: const Text('accountName'),
+      ),
+    );
     expect(
       tester.getBottomLeft(find.byKey(avatarA)).dx,
       tester.getBottomLeft(find.text('accountName')).dx,
@@ -433,46 +419,35 @@ void main() {
     expect(box.size.height, equals(160.0 + 1.0)); // height + bottom edge)
     expect(find.byType(Icon), findsNothing);
 
-    await tester.pumpWidget(buildFrame(
-      onDetailsPressed: () { },
-    ));
+    await tester.pumpWidget(buildFrame(onDetailsPressed: () {}));
     expect(find.byType(Icon), findsOneWidget);
 
-    await tester.pumpWidget(buildFrame(
-      accountName: const Text('accountName'),
-      onDetailsPressed: () { },
-    ));
-    expect(
-      tester.getCenter(find.text('accountName')).dy,
-      tester.getCenter(find.byType(Icon)).dy,
+    await tester.pumpWidget(
+      buildFrame(accountName: const Text('accountName'), onDetailsPressed: () {}),
     );
+    expect(tester.getCenter(find.text('accountName')).dy, tester.getCenter(find.byType(Icon)).dy);
     expect(
       tester.getCenter(find.text('accountName')).dx,
       greaterThan(tester.getCenter(find.byType(Icon)).dx),
     );
 
-    await tester.pumpWidget(buildFrame(
-      accountEmail: const Text('accountEmail'),
-      onDetailsPressed: () { },
-    ));
-    expect(
-      tester.getCenter(find.text('accountEmail')).dy,
-      tester.getCenter(find.byType(Icon)).dy,
+    await tester.pumpWidget(
+      buildFrame(accountEmail: const Text('accountEmail'), onDetailsPressed: () {}),
     );
+    expect(tester.getCenter(find.text('accountEmail')).dy, tester.getCenter(find.byType(Icon)).dy);
     expect(
       tester.getCenter(find.text('accountEmail')).dx,
       greaterThan(tester.getCenter(find.byType(Icon)).dx),
     );
 
-    await tester.pumpWidget(buildFrame(
-      accountName: const Text('accountName'),
-      accountEmail: const Text('accountEmail'),
-      onDetailsPressed: () { },
-    ));
-    expect(
-      tester.getCenter(find.text('accountEmail')).dy,
-      tester.getCenter(find.byType(Icon)).dy,
+    await tester.pumpWidget(
+      buildFrame(
+        accountName: const Text('accountName'),
+        accountEmail: const Text('accountEmail'),
+        onDetailsPressed: () {},
+      ),
     );
+    expect(tester.getCenter(find.text('accountEmail')).dy, tester.getCenter(find.byType(Icon)).dy);
     expect(
       tester.getCenter(find.text('accountEmail')).dx,
       greaterThan(tester.getCenter(find.byType(Icon)).dx),
@@ -486,21 +461,23 @@ void main() {
       tester.getBottomRight(find.text('accountName')).dx,
     );
 
-    await tester.pumpWidget(buildFrame(
-      currentAccountPicture: const CircleAvatar(child: Text('A')),
-    ));
+    await tester.pumpWidget(
+      buildFrame(currentAccountPicture: const CircleAvatar(child: Text('A'))),
+    );
     expect(find.text('A'), findsOneWidget);
 
-    await tester.pumpWidget(buildFrame(
-      otherAccountsPictures: <Widget>[const CircleAvatar(child: Text('A'))],
-    ));
+    await tester.pumpWidget(
+      buildFrame(otherAccountsPictures: <Widget>[const CircleAvatar(child: Text('A'))]),
+    );
     expect(find.text('A'), findsOneWidget);
 
     const Key avatarA = Key('A');
-    await tester.pumpWidget(buildFrame(
-      currentAccountPicture: const CircleAvatar(key: avatarA, child: Text('A')),
-      accountName: const Text('accountName'),
-    ));
+    await tester.pumpWidget(
+      buildFrame(
+        currentAccountPicture: const CircleAvatar(key: avatarA, child: Text('A')),
+        accountName: const Text('accountName'),
+      ),
+    );
     expect(
       tester.getBottomRight(find.byKey(avatarA)).dx,
       tester.getBottomRight(find.text('accountName')).dx,
@@ -533,18 +510,9 @@ void main() {
                           textDirection: TextDirection.ltr,
                           actions: <SemanticsAction>[SemanticsAction.focus],
                           children: <TestSemantics>[
-                            TestSemantics(
-                              label: r'B',
-                              textDirection: TextDirection.ltr,
-                            ),
-                            TestSemantics(
-                              label: r'C',
-                              textDirection: TextDirection.ltr,
-                            ),
-                            TestSemantics(
-                              label: r'D',
-                              textDirection: TextDirection.ltr,
-                            ),
+                            TestSemantics(label: r'B', textDirection: TextDirection.ltr),
+                            TestSemantics(label: r'C', textDirection: TextDirection.ltr),
+                            TestSemantics(label: r'D', textDirection: TextDirection.ltr),
                             TestSemantics(
                               flags: <SemanticsFlag>[SemanticsFlag.isButton],
                               actions: <SemanticsAction>[SemanticsAction.tap],
@@ -561,35 +529,41 @@ void main() {
             ),
           ],
         ),
-        ignoreId: true, ignoreTransform: true, ignoreRect: true,
+        ignoreId: true,
+        ignoreTransform: true,
+        ignoreRect: true,
       ),
     );
 
     semantics.dispose();
   });
 
-  testWidgets('alternative account selectors have sufficient tap targets', (WidgetTester tester) async {
+  testWidgets('alternative account selectors have sufficient tap targets', (
+    WidgetTester tester,
+  ) async {
     final SemanticsHandle handle = tester.ensureSemantics();
     await pumpTestWidget(tester);
 
-    expect(tester.getSemantics(find.text('B')), matchesSemantics(
-      label: 'B',
-      size: const Size(48.0, 48.0),
-    ));
+    expect(
+      tester.getSemantics(find.text('B')),
+      matchesSemantics(label: 'B', size: const Size(48.0, 48.0)),
+    );
 
-    expect(tester.getSemantics(find.text('C')), matchesSemantics(
-      label: 'C',
-      size: const Size(48.0, 48.0),
-    ));
+    expect(
+      tester.getSemantics(find.text('C')),
+      matchesSemantics(label: 'C', size: const Size(48.0, 48.0)),
+    );
 
-    expect(tester.getSemantics(find.text('D')), matchesSemantics(
-      label: 'D',
-      size: const Size(48.0, 48.0),
-    ));
+    expect(
+      tester.getSemantics(find.text('D')),
+      matchesSemantics(label: 'D', size: const Size(48.0, 48.0)),
+    );
     handle.dispose();
   });
 
-  testWidgets('UserAccountsDrawerHeader provides semantics with missing properties', (WidgetTester tester) async {
+  testWidgets('UserAccountsDrawerHeader provides semantics with missing properties', (
+    WidgetTester tester,
+  ) async {
     final SemanticsTester semantics = SemanticsTester(tester);
     await pumpTestWidget(
       tester,
@@ -614,18 +588,9 @@ void main() {
                           label: 'Signed in',
                           textDirection: TextDirection.ltr,
                           children: <TestSemantics>[
-                            TestSemantics(
-                              label: r'B',
-                              textDirection: TextDirection.ltr,
-                            ),
-                            TestSemantics(
-                              label: r'C',
-                              textDirection: TextDirection.ltr,
-                            ),
-                            TestSemantics(
-                              label: r'D',
-                              textDirection: TextDirection.ltr,
-                            ),
+                            TestSemantics(label: r'B', textDirection: TextDirection.ltr),
+                            TestSemantics(label: r'C', textDirection: TextDirection.ltr),
+                            TestSemantics(label: r'D', textDirection: TextDirection.ltr),
                           ],
                         ),
                       ],
@@ -636,7 +601,9 @@ void main() {
             ),
           ],
         ),
-        ignoreId: true, ignoreTransform: true, ignoreRect: true,
+        ignoreId: true,
+        ignoreTransform: true,
+        ignoreRect: true,
       ),
     );
 

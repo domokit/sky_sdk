@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Cupertino form section displays cupertino form rows', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.CupertinoFormRowApp(),
-    );
+    await tester.pumpWidget(const example.CupertinoFormRowApp());
 
     expect(find.byType(CupertinoFormSection), findsOneWidget);
     expect(find.byType(CupertinoFormRow), findsNWidgets(4));

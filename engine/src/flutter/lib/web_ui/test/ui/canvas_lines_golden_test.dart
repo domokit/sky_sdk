@@ -15,10 +15,7 @@ void main() {
 }
 
 Future<void> testMain() async {
-  setUpUnitTests(
-    withImplicitView: true,
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(withImplicitView: true, setUpTestViewDimensions: false);
 
   const Rect region = Rect.fromLTWH(0, 0, 300, 300);
 
@@ -37,26 +34,32 @@ Future<void> testMain() async {
     final Canvas canvas = Canvas(recorder, region);
 
     // test rendering lines correctly with negative offset when using DOM
-    final Paint paintWithStyle = Paint()
-    ..color = const Color(0xFFE91E63) // Colors.pink
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 16
-    ..strokeCap = StrokeCap.round;
+    final Paint paintWithStyle =
+        Paint()
+          ..color = const Color(0xFFE91E63) // Colors.pink
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 16
+          ..strokeCap = StrokeCap.round;
 
     // canvas.drawLine ignores paint.style (defaults to fill) according to api docs.
     // expect lines are rendered the same regardless of the set paint.style
-    final Paint paintWithoutStyle = Paint()
-    ..color = const Color(0xFF4CAF50) // Colors.green
-    ..strokeWidth = 16
-    ..strokeCap = StrokeCap.round;
+    final Paint paintWithoutStyle =
+        Paint()
+          ..color = const Color(0xFF4CAF50) // Colors.green
+          ..strokeWidth = 16
+          ..strokeCap = StrokeCap.round;
 
     // test vertical, horizontal, and diagonal lines
     final List<Offset> points = <Offset>[
-      const Offset(-25, 50), const Offset(45, 50),
-      const Offset(100, -25), const Offset(100, 200),
-      const Offset(-150, -145), const Offset(100, 200),
+      const Offset(-25, 50),
+      const Offset(45, 50),
+      const Offset(100, -25),
+      const Offset(100, 200),
+      const Offset(-150, -145),
+      const Offset(100, 200),
     ];
-    final List<Offset> shiftedPoints = points.map((Offset point) => point.translate(20, 20)).toList();
+    final List<Offset> shiftedPoints =
+        points.map((Offset point) => point.translate(20, 20)).toList();
 
     paintLinesFromPoints(canvas, paintWithStyle, points);
     paintLinesFromPoints(canvas, paintWithoutStyle, shiftedPoints);
@@ -69,29 +72,37 @@ Future<void> testMain() async {
     final PictureRecorder recorder = PictureRecorder();
     final Canvas canvas = Canvas(recorder, region);
 
-    final Paint paintStrokeCapRound = Paint()
-    ..color = const Color(0xFFE91E63) // Colors.pink
-    ..strokeWidth = 16
-    ..strokeCap = StrokeCap.round;
+    final Paint paintStrokeCapRound =
+        Paint()
+          ..color = const Color(0xFFE91E63) // Colors.pink
+          ..strokeWidth = 16
+          ..strokeCap = StrokeCap.round;
 
-    final Paint paintStrokeCapSquare = Paint()
-    ..color = const Color(0xFF4CAF50) // Colors.green
-    ..strokeWidth = 16
-    ..strokeCap = StrokeCap.square;
+    final Paint paintStrokeCapSquare =
+        Paint()
+          ..color = const Color(0xFF4CAF50) // Colors.green
+          ..strokeWidth = 16
+          ..strokeCap = StrokeCap.square;
 
-    final Paint paintStrokeCapButt = Paint()
-    ..color = const Color(0xFFFF9800) // Colors.orange
-    ..strokeWidth = 16
-    ..strokeCap = StrokeCap.butt;
+    final Paint paintStrokeCapButt =
+        Paint()
+          ..color = const Color(0xFFFF9800) // Colors.orange
+          ..strokeWidth = 16
+          ..strokeCap = StrokeCap.butt;
 
     // test vertical, horizontal, and diagonal lines
     final List<Offset> points = <Offset>[
-      const Offset(5, 50), const Offset(45, 50),
-      const Offset(100, 5), const Offset(100, 200),
-      const Offset(5, 10), const Offset(100, 200),
+      const Offset(5, 50),
+      const Offset(45, 50),
+      const Offset(100, 5),
+      const Offset(100, 200),
+      const Offset(5, 10),
+      const Offset(100, 200),
     ];
-    final List<Offset> shiftedPoints = points.map((Offset point) => point.translate(50, 50)).toList();
-    final List<Offset> twiceShiftedPoints = shiftedPoints.map((Offset point) => point.translate(50, 50)).toList();
+    final List<Offset> shiftedPoints =
+        points.map((Offset point) => point.translate(50, 50)).toList();
+    final List<Offset> twiceShiftedPoints =
+        shiftedPoints.map((Offset point) => point.translate(50, 50)).toList();
 
     paintLinesFromPoints(canvas, paintStrokeCapRound, points);
     paintLinesFromPoints(canvas, paintStrokeCapSquare, shiftedPoints);
@@ -103,21 +114,25 @@ Future<void> testMain() async {
 }
 
 void paintLines(Canvas canvas) {
-  final Paint nullPaint = Paint()
-    ..strokeWidth = 1.0
-    ..style = PaintingStyle.stroke;
-  final Paint paint1 = Paint()
-      ..color = const Color(0xFF9E9E9E) // Colors.grey
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
-  final Paint paint2 = Paint()
-      ..color = const Color(0x7fff0000)
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
-  final Paint paint3 = Paint()
-      ..color = const Color(0xFF4CAF50) //Colors.green
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
+  final Paint nullPaint =
+      Paint()
+        ..strokeWidth = 1.0
+        ..style = PaintingStyle.stroke;
+  final Paint paint1 =
+      Paint()
+        ..color = const Color(0xFF9E9E9E) // Colors.grey
+        ..strokeWidth = 1.0
+        ..style = PaintingStyle.stroke;
+  final Paint paint2 =
+      Paint()
+        ..color = const Color(0x7fff0000)
+        ..strokeWidth = 1.0
+        ..style = PaintingStyle.stroke;
+  final Paint paint3 =
+      Paint()
+        ..color = const Color(0xFF4CAF50) //Colors.green
+        ..strokeWidth = 1.0
+        ..style = PaintingStyle.stroke;
   // Draw markers around 100x100 box
   canvas.drawLine(const Offset(50, 40), const Offset(148, 40), nullPaint);
   canvas.drawLine(const Offset(50, 50), const Offset(52, 50), paint1);

@@ -14,27 +14,21 @@ class SelectionControlsDemo extends StatelessWidget {
   String _title(BuildContext context) {
     switch (type) {
       case SelectionControlsDemoType.checkbox:
-        return GalleryLocalizations.of(context)!
-            .demoSelectionControlsCheckboxTitle;
+        return GalleryLocalizations.of(context)!.demoSelectionControlsCheckboxTitle;
       case SelectionControlsDemoType.radio:
-        return GalleryLocalizations.of(context)!
-            .demoSelectionControlsRadioTitle;
+        return GalleryLocalizations.of(context)!.demoSelectionControlsRadioTitle;
       case SelectionControlsDemoType.switches:
-        return GalleryLocalizations.of(context)!
-            .demoSelectionControlsSwitchTitle;
+        return GalleryLocalizations.of(context)!.demoSelectionControlsSwitchTitle;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(_title(context)),
-      ),
+      appBar: AppBar(automaticallyImplyLeading: false, title: Text(_title(context))),
       body: switch (type) {
         SelectionControlsDemoType.checkbox => _CheckboxDemo(),
-        SelectionControlsDemoType.radio    => _RadioDemo(),
+        SelectionControlsDemoType.radio => _RadioDemo(),
         SelectionControlsDemoType.switches => _SwitchDemo(),
       },
     );
@@ -110,19 +104,9 @@ class _CheckboxDemoState extends State<_CheckboxDemo> with RestorationMixin {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Checkbox(
-              value: checkboxValueA.value,
-              onChanged: null,
-            ),
-            Checkbox(
-              value: checkboxValueB.value,
-              onChanged: null,
-            ),
-            Checkbox(
-              value: checkboxValueC.value,
-              tristate: true,
-              onChanged: null,
-            ),
+            Checkbox(value: checkboxValueA.value, onChanged: null),
+            Checkbox(value: checkboxValueB.value, onChanged: null),
+            Checkbox(value: checkboxValueC.value, tristate: true, onChanged: null),
           ],
         ),
       ],
@@ -183,11 +167,7 @@ class _RadioDemoState extends State<_RadioDemo> with RestorationMixin {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             for (int index = 0; index < 2; ++index)
-              Radio<int>(
-                value: index,
-                groupValue: radioValue.value,
-                onChanged: null,
-              ),
+              Radio<int>(value: index, groupValue: radioValue.value, onChanged: null),
           ],
         ),
       ],
@@ -254,14 +234,8 @@ class _SwitchDemoState extends State<_SwitchDemo> with RestorationMixin {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Switch(
-              value: switchValueA.value,
-              onChanged: null,
-            ),
-            Switch(
-              value: switchValueB.value,
-              onChanged: null,
-            ),
+            Switch(value: switchValueA.value, onChanged: null),
+            Switch(value: switchValueB.value, onChanged: null),
           ],
         ),
       ],

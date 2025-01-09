@@ -23,18 +23,19 @@ String readDataFile(String fileName) {
 }
 
 final PhysicalKeyData physicalData = PhysicalKeyData.fromJson(
-    json.decode(readDataFile('physical_key_data.g.json')) as Map<String, dynamic>);
+  json.decode(readDataFile('physical_key_data.g.json')) as Map<String, dynamic>,
+);
 final LogicalKeyData logicalData = LogicalKeyData.fromJson(
-    json.decode(readDataFile('logical_key_data.g.json')) as Map<String, dynamic>);
-final Map<String, bool> keyGoals = parseMapOfBool(
-    readDataFile('layout_goals.json'));
+  json.decode(readDataFile('logical_key_data.g.json')) as Map<String, dynamic>,
+);
+final Map<String, bool> keyGoals = parseMapOfBool(readDataFile('layout_goals.json'));
 
 void main() {
   setUp(() {
     testDataRoot = path.canonicalize(path.join(Directory.current.absolute.path, 'data'));
   });
 
-  tearDown((){
+  tearDown(() {
     testDataRoot = null;
   });
 
@@ -50,10 +51,7 @@ void main() {
 
   test('Generate Keycodes for Android', () {
     const String platform = 'android';
-    final PlatformCodeGenerator codeGenerator = AndroidCodeGenerator(
-      physicalData,
-      logicalData,
-    );
+    final PlatformCodeGenerator codeGenerator = AndroidCodeGenerator(physicalData, logicalData);
     final String output = codeGenerator.generate();
 
     expect(codeGenerator.outputPath(platform), endsWith('KeyboardMap.java'));
@@ -84,10 +82,7 @@ void main() {
   });
   test('Generate Keycodes for iOS', () {
     const String platform = 'ios';
-    final PlatformCodeGenerator codeGenerator = IOSCodeGenerator(
-      physicalData,
-      logicalData,
-    );
+    final PlatformCodeGenerator codeGenerator = IOSCodeGenerator(physicalData, logicalData);
     final String output = codeGenerator.generate();
 
     expect(codeGenerator.outputPath(platform), endsWith('KeyCodeMap.g.mm'));
@@ -152,20 +147,12 @@ void main() {
 
     // Regression tests for https://github.com/flutter/flutter/pull/87098
 
-    expect(
-      entries.indexWhere((LogicalKeyEntry entry) => entry.name == 'ShiftLeft'),
-      isNot(-1));
-    expect(
-      entries.indexWhere((LogicalKeyEntry entry) => entry.webNames.contains('ShiftLeft')),
-      -1);
+    expect(entries.indexWhere((LogicalKeyEntry entry) => entry.name == 'ShiftLeft'), isNot(-1));
+    expect(entries.indexWhere((LogicalKeyEntry entry) => entry.webNames.contains('ShiftLeft')), -1);
     // 'Shift' maps to both 'ShiftLeft' and 'ShiftRight', and should be resolved
     // by other ways.
-    expect(
-      entries.indexWhere((LogicalKeyEntry entry) => entry.webNames.contains('Shift')),
-      -1);
+    expect(entries.indexWhere((LogicalKeyEntry entry) => entry.webNames.contains('Shift')), -1);
     // Printable keys must not be added with Web key of their names.
-    expect(
-      entries.indexWhere((LogicalKeyEntry entry) => entry.webNames.contains('Slash')),
-      -1);
+    expect(entries.indexWhere((LogicalKeyEntry entry) => entry.webNames.contains('Slash')), -1);
   });
 }

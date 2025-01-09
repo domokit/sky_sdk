@@ -17,18 +17,14 @@ class CkVertices implements ui.Vertices {
     List<ui.Color>? colors,
     List<int>? indices,
   }) {
-    if (textureCoordinates != null &&
-        textureCoordinates.length != positions.length) {
-      throw ArgumentError(
-          '"positions" and "textureCoordinates" lengths must match.');
+    if (textureCoordinates != null && textureCoordinates.length != positions.length) {
+      throw ArgumentError('"positions" and "textureCoordinates" lengths must match.');
     }
     if (colors != null && colors.length != positions.length) {
       throw ArgumentError('"positions" and "colors" lengths must match.');
     }
-    if (indices != null &&
-        indices.any((int i) => i < 0 || i >= positions.length)) {
-      throw ArgumentError(
-          '"indices" values must be valid indices in the positions list.');
+    if (indices != null && indices.any((int i) => i < 0 || i >= positions.length)) {
+      throw ArgumentError('"indices" values must be valid indices in the positions list.');
     }
 
     return CkVertices._(
@@ -47,18 +43,14 @@ class CkVertices implements ui.Vertices {
     Int32List? colors,
     Uint16List? indices,
   }) {
-    if (textureCoordinates != null &&
-        textureCoordinates.length != positions.length) {
-      throw ArgumentError(
-          '"positions" and "textureCoordinates" lengths must match.');
+    if (textureCoordinates != null && textureCoordinates.length != positions.length) {
+      throw ArgumentError('"positions" and "textureCoordinates" lengths must match.');
     }
     if (colors != null && colors.length * 2 != positions.length) {
       throw ArgumentError('"positions" and "colors" lengths must match.');
     }
-    if (indices != null &&
-        indices.any((int i) => i < 0 || i >= positions.length)) {
-      throw ArgumentError(
-          '"indices" values must be valid indices in the positions list.');
+    if (indices != null && indices.any((int i) => i < 0 || i >= positions.length)) {
+      throw ArgumentError('"indices" values must be valid indices in the positions list.');
     }
 
     Uint32List? unsignedColors;
@@ -75,13 +67,7 @@ class CkVertices implements ui.Vertices {
     );
   }
 
-  CkVertices._(
-    this._mode,
-    this._positions,
-    this._textureCoordinates,
-    this._colors,
-    this._indices,
-  ) {
+  CkVertices._(this._mode, this._positions, this._textureCoordinates, this._colors, this._indices) {
     final SkVertices skVertices = canvasKit.MakeVertices(
       _mode,
       _positions,

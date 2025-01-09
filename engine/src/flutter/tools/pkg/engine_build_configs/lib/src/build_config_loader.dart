@@ -41,17 +41,15 @@ class BuildConfigLoader {
       errors.add('${buildConfigsDir.path} does not exist.');
       return result;
     }
-    final List<io.File> jsonFiles = dir
-        .listSync(recursive: true)
-        .whereType<io.File>()
-        .where((io.File f) => f.path.endsWith('.json'))
-        .toList();
+    final List<io.File> jsonFiles =
+        dir
+            .listSync(recursive: true)
+            .whereType<io.File>()
+            .where((io.File f) => f.path.endsWith('.json'))
+            .toList();
     for (final io.File jsonFile in jsonFiles) {
       final String basename = p.basename(jsonFile.path);
-      final String name = basename.substring(
-        0,
-        basename.length - 5,
-      );
+      final String name = basename.substring(0, basename.length - 5);
       final String jsonData = jsonFile.readAsStringSync();
       final dynamic maybeJson;
       try {
@@ -64,8 +62,7 @@ class BuildConfigLoader {
         errors.add('${jsonFile.path} did not contain a json map.');
         continue;
       }
-      result[name] =
-          BuilderConfig.fromJson(path: jsonFile.path, map: maybeJson);
+      result[name] = BuilderConfig.fromJson(path: jsonFile.path, map: maybeJson);
     }
     return result;
   }

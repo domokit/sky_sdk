@@ -4,22 +4,21 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_api_samples/widgets/binding/widget_binding_observer.0.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/binding/widget_binding_observer.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('App tracks lifecycle states', (WidgetTester tester) async {
     Future<void> setAppLifeCycleState(AppLifecycleState state) async {
-      final ByteData? message =
-          const StringCodec().encodeMessage(state.toString());
+      final ByteData? message = const StringCodec().encodeMessage(state.toString());
       await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
-          'flutter/lifecycle', message, (_) {});
+        'flutter/lifecycle',
+        message,
+        (_) {},
+      );
     }
 
-    await tester.pumpWidget(
-     const example.WidgetBindingObserverExampleApp(),
-    );
+    await tester.pumpWidget(const example.WidgetBindingObserverExampleApp());
 
     expect(find.text('There are no AppLifecycleStates to show.'), findsOneWidget);
 

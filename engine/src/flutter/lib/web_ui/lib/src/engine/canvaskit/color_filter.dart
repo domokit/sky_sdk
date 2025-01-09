@@ -20,8 +20,7 @@ import 'native_memory.dart';
 /// * [CkPaint.colorFilter], which uses a [ManagedSkColorFilter] to manage
 ///   the lifecycle of its [SkColorFilter].
 class ManagedSkColorFilter {
-  ManagedSkColorFilter(CkColorFilter ckColorFilter)
-      : colorFilter = ckColorFilter {
+  ManagedSkColorFilter(CkColorFilter ckColorFilter) : colorFilter = ckColorFilter {
     _ref = UniqueRef<SkColorFilter>(this, colorFilter._initRawColorFilter(), 'ColorFilter');
   }
 
@@ -71,7 +70,8 @@ abstract class CkColorFilter implements CkManagedSkImageFilterConvertible {
   SkColorFilter _initRawColorFilter();
 
   @override
-  void withSkImageFilter(SkImageFilterBorrow borrow, {
+  void withSkImageFilter(
+    SkImageFilterBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   }) {
     // Since ColorFilter has a const constructor it cannot store dynamically
@@ -109,8 +109,7 @@ Float32List _computeIdentityTransform() {
   return result;
 }
 
-SkColorFilter createSkColorFilterFromColorAndBlendMode(
-    ui.Color color, ui.BlendMode blendMode) {
+SkColorFilter createSkColorFilterFromColorAndBlendMode(ui.Color color, ui.BlendMode blendMode) {
   final SkColorFilter? filter = canvasKit.ColorFilter.MakeBlend(
     toSharedSkColor1(color),
     toSkBlendMode(blendMode),
@@ -123,7 +122,6 @@ SkColorFilter createSkColorFilterFromColorAndBlendMode(
   }
   return filter;
 }
-
 
 class CkBlendModeColorFilter extends CkColorFilter {
   const CkBlendModeColorFilter(this.color, this.blendMode);
@@ -144,9 +142,7 @@ class CkBlendModeColorFilter extends CkColorFilter {
     if (runtimeType != other.runtimeType) {
       return false;
     }
-    return other is CkBlendModeColorFilter &&
-        other.color == color &&
-        other.blendMode == blendMode;
+    return other is CkBlendModeColorFilter && other.color == color && other.blendMode == blendMode;
   }
 
   @override
@@ -199,8 +195,7 @@ class CkMatrixColorFilter extends CkColorFilter {
 class CkLinearToSrgbGammaColorFilter extends CkColorFilter {
   const CkLinearToSrgbGammaColorFilter();
   @override
-  SkColorFilter _initRawColorFilter() =>
-      canvasKit.ColorFilter.MakeLinearToSRGBGamma();
+  SkColorFilter _initRawColorFilter() => canvasKit.ColorFilter.MakeLinearToSRGBGamma();
 
   @override
   bool operator ==(Object other) => runtimeType == other.runtimeType;
@@ -215,8 +210,7 @@ class CkLinearToSrgbGammaColorFilter extends CkColorFilter {
 class CkSrgbToLinearGammaColorFilter extends CkColorFilter {
   const CkSrgbToLinearGammaColorFilter();
   @override
-  SkColorFilter _initRawColorFilter() =>
-      canvasKit.ColorFilter.MakeSRGBToLinearGamma();
+  SkColorFilter _initRawColorFilter() => canvasKit.ColorFilter.MakeSRGBToLinearGamma();
 
   @override
   bool operator ==(Object other) => runtimeType == other.runtimeType;
@@ -260,20 +254,20 @@ class CkComposeColorFilter extends CkColorFilter {
 /// avoid repainting.
 CkColorFilter? createCkColorFilter(EngineColorFilter colorFilter) {
   switch (colorFilter.type) {
-      case ColorFilterType.mode:
-        if (colorFilter.color == null || colorFilter.blendMode == null) {
-          return null;
-        }
-        return CkBlendModeColorFilter(colorFilter.color!, colorFilter.blendMode!);
-      case ColorFilterType.matrix:
-        if (colorFilter.matrix == null) {
-          return null;
-        }
-        assert(colorFilter.matrix!.length == 20, 'Color Matrix must have 20 entries.');
-        return CkMatrixColorFilter(colorFilter.matrix!);
-      case ColorFilterType.linearToSrgbGamma:
-        return const CkLinearToSrgbGammaColorFilter();
-      case ColorFilterType.srgbToLinearGamma:
-        return const CkSrgbToLinearGammaColorFilter();
-    }
+    case ColorFilterType.mode:
+      if (colorFilter.color == null || colorFilter.blendMode == null) {
+        return null;
+      }
+      return CkBlendModeColorFilter(colorFilter.color!, colorFilter.blendMode!);
+    case ColorFilterType.matrix:
+      if (colorFilter.matrix == null) {
+        return null;
+      }
+      assert(colorFilter.matrix!.length == 20, 'Color Matrix must have 20 entries.');
+      return CkMatrixColorFilter(colorFilter.matrix!);
+    case ColorFilterType.linearToSrgbGamma:
+      return const CkLinearToSrgbGammaColorFilter();
+    case ColorFilterType.srgbToLinearGamma:
+      return const CkSrgbToLinearGammaColorFilter();
+  }
 }

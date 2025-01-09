@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('CupertinoNavigationBar is large', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NavBarApp(),
-    );
+    await tester.pumpWidget(const example.NavBarApp());
 
     final Finder navBarFinder = find.byType(CupertinoNavigationBar);
     expect(navBarFinder, findsOneWidget);

@@ -28,8 +28,7 @@ part of dart.ui;
 /// This API is currently experimental.
 Future<R> runOnPlatformThread<R>(FutureOr<R> Function() computation) {
   if (!_platformIsolatesEnabled) {
-    throw UnsupportedError(
-        'Platform thread isolates are not supported by this platform.');
+    throw UnsupportedError('Platform thread isolates are not supported by this platform.');
   }
   if (isRunningOnPlatformThread) {
     return Future<R>(computation);
@@ -38,8 +37,9 @@ Future<R> runOnPlatformThread<R>(FutureOr<R> Function() computation) {
   if (sendPort != null) {
     return _sendComputation(sendPort, computation);
   } else {
-    return (_platformRunnerSendPortFuture ??= _spawnPlatformIsolate())
-        .then((SendPort port) => _sendComputation(port, computation));
+    return (_platformRunnerSendPortFuture ??= _spawnPlatformIsolate()).then(
+      (SendPort port) => _sendComputation(port, computation),
+    );
   }
 }
 
@@ -59,9 +59,9 @@ Future<SendPort> _spawnPlatformIsolate() {
       // isolate, and errors are fatal is false. But if the isolate does
       // shutdown unexpectedly, clear the singleton so we can create another.
       for (final Completer<Object?> completer in _pending.values) {
-        completer.completeError(RemoteError(
-            'PlatformIsolate shutdown unexpectedly',
-            StackTrace.empty.toString()));
+        completer.completeError(
+          RemoteError('PlatformIsolate shutdown unexpectedly', StackTrace.empty.toString()),
+        );
       }
       _pending.clear();
       _platformRunnerSendPort = null;
@@ -80,8 +80,7 @@ Future<SendPort> _spawnPlatformIsolate() {
         } else {
           // onError handler message, uncaught async error.
           // Both values are strings, so calling `toString` is efficient.
-          final RemoteError error =
-              RemoteError(remoteError!.toString(), remoteStack.toString());
+          final RemoteError error = RemoteError(remoteError!.toString(), remoteStack.toString());
           resultCompleter.completeError(error, error.stackTrace);
         }
       } else {
@@ -90,13 +89,11 @@ Future<SendPort> _spawnPlatformIsolate() {
     } else {
       // We encountered an error while starting the new isolate.
       if (!sendPortCompleter.isCompleted) {
-        sendPortCompleter.completeError(
-            IsolateSpawnException('Unable to spawn isolate: $message'));
+        sendPortCompleter.completeError(IsolateSpawnException('Unable to spawn isolate: $message'));
         return;
       }
       // This shouldn't happen.
-      throw IsolateSpawnException(
-          "Internal error: unexpected message: '$message'");
+      throw IsolateSpawnException("Internal error: unexpected message: '$message'");
     }
   };
   final Isolate parentIsolate = Isolate.current;
@@ -110,8 +107,7 @@ Future<SendPort> _spawnPlatformIsolate() {
   return sendPortCompleter.future;
 }
 
-Future<R> _sendComputation<R>(
-    SendPort port, FutureOr<R> Function() computation) {
+Future<R> _sendComputation<R>(SendPort port, FutureOr<R> Function() computation) {
   final int id = ++_nextId;
   final Completer<R> resultCompleter = Completer<R>();
   _pending[id] = resultCompleter;
@@ -119,8 +115,7 @@ Future<R> _sendComputation<R>(
   return resultCompleter.future;
 }
 
-void _safeSend(SendPort sendPort, int id, Object? result, Object? error,
-    Object? stackTrace) {
+void _safeSend(SendPort sendPort, int id, Object? result, Object? error, Object? stackTrace) {
   try {
     sendPort.send(_ComputationResult(id, result, error, stackTrace));
   } catch (sendError, sendStack) {
@@ -146,11 +141,14 @@ void _platformIsolateMain(Isolate parentIsolate, SendPort sendPort) {
     }
 
     if (potentiallyAsyncResult is Future<Object?>) {
-      potentiallyAsyncResult.then((Object? result) {
-        _safeSend(sendPort, message.id, result, null, null);
-      }, onError: (Object? e, Object? s) {
-        _safeSend(sendPort, message.id, null, e, s ?? StackTrace.empty);
-      });
+      potentiallyAsyncResult.then(
+        (Object? result) {
+          _safeSend(sendPort, message.id, result, null, null);
+        },
+        onError: (Object? e, Object? s) {
+          _safeSend(sendPort, message.id, null, e, s ?? StackTrace.empty);
+        },
+      );
     } else {
       _safeSend(sendPort, message.id, potentiallyAsyncResult, null, null);
     }
@@ -167,7 +165,9 @@ external void _nativeSpawn(Function entryPoint);
 final bool isRunningOnPlatformThread = _isRunningOnPlatformThread();
 
 @Native<Bool Function()>(
-    symbol: 'PlatformIsolateNativeApi::IsRunningOnPlatformThread', isLeaf: true)
+  symbol: 'PlatformIsolateNativeApi::IsRunningOnPlatformThread',
+  isLeaf: true,
+)
 external bool _isRunningOnPlatformThread();
 
 class _PlatformIsolateReadyMessage {

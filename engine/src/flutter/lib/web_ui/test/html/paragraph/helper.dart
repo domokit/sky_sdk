@@ -36,20 +36,13 @@ const Color blue = Color(0xFF0000FF);
 const Color yellow = Color(0xFFFFEB3B);
 const Color lightPurple = Color(0xFFE1BEE7);
 
-final EngineParagraphStyle ahemStyle = EngineParagraphStyle(
-  fontFamily: 'Ahem',
-  fontSize: 10,
-);
+final EngineParagraphStyle ahemStyle = EngineParagraphStyle(fontFamily: 'Ahem', fontSize: 10);
 
 ParagraphConstraints constrain(double width) {
   return ParagraphConstraints(width: width);
 }
 
-CanvasParagraph plain(
-  EngineParagraphStyle style,
-  String text, {
-  EngineTextStyle? textStyle,
-}) {
+CanvasParagraph plain(EngineParagraphStyle style, String text, {EngineTextStyle? textStyle}) {
   final CanvasParagraphBuilder builder = CanvasParagraphBuilder(style);
   if (textStyle != null) {
     builder.pushStyle(textStyle);
@@ -58,20 +51,13 @@ CanvasParagraph plain(
   return builder.build();
 }
 
-CanvasParagraph rich(
-  EngineParagraphStyle style,
-  void Function(CanvasParagraphBuilder) callback,
-) {
+CanvasParagraph rich(EngineParagraphStyle style, void Function(CanvasParagraphBuilder) callback) {
   final CanvasParagraphBuilder builder = CanvasParagraphBuilder(style);
   callback(builder);
   return builder.build();
 }
 
-Future<void> takeScreenshot(
-  EngineCanvas canvas,
-  Rect region,
-  String fileName,
-) async {
+Future<void> takeScreenshot(EngineCanvas canvas, Rect region, String fileName) async {
   final DomElement sceneElement = createDomElement('flt-scene');
   if (isIosSafari) {
     // Shrink to fit on the iPhone screen.
@@ -95,16 +81,11 @@ Future<void> takeScreenshot(
 /// The placeholder is filled relative to [offset].
 ///
 /// Throws if the paragraph contains more than one placeholder.
-void fillPlaceholder(
-  EngineCanvas canvas,
-  Offset offset,
-  CanvasParagraph paragraph,
-) {
+void fillPlaceholder(EngineCanvas canvas, Offset offset, CanvasParagraph paragraph) {
   final TextBox placeholderBox = paragraph.getBoxesForPlaceholders().single;
   final SurfacePaint paint = SurfacePaint()..color = red;
   canvas.drawRect(placeholderBox.toRect().shift(offset), paint.paintData);
 }
-
 
 /// Fill the given [boxes] with rectangles of the given [color].
 ///

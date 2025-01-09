@@ -18,7 +18,8 @@ import 'tap.dart';
 export 'dart:ui' show Offset, PointerDeviceKind;
 
 export 'events.dart' show PointerDownEvent;
-export 'tap.dart' show GestureTapCancelCallback, GestureTapDownCallback, TapDownDetails, TapUpDetails;
+export 'tap.dart'
+    show GestureTapCancelCallback, GestureTapDownCallback, TapDownDetails, TapUpDetails;
 
 /// Signature for callback when the user has tapped the screen at the same
 /// location twice in quick succession.
@@ -46,7 +47,7 @@ typedef GestureMultiTapCancelCallback = void Function(int pointer);
 /// CountdownZoned tracks whether the specified duration has elapsed since
 /// creation, honoring [Zone].
 class _CountdownZoned {
-  _CountdownZoned({ required Duration duration }) {
+  _CountdownZoned({required Duration duration}) {
     Timer(duration, _onTimeout);
   }
 
@@ -202,9 +203,7 @@ class DoubleTapGestureRecognizer extends GestureRecognizer {
   @override
   bool isPointerAllowed(PointerDownEvent event) {
     if (_firstTap == null) {
-      if (onDoubleTapDown == null &&
-          onDoubleTap == null &&
-          onDoubleTapCancel == null) {
+      if (onDoubleTapDown == null && onDoubleTap == null && onDoubleTapCancel == null) {
         return false;
       }
     }
@@ -270,15 +269,13 @@ class DoubleTapGestureRecognizer extends GestureRecognizer {
   }
 
   @override
-  void acceptGesture(int pointer) { }
+  void acceptGesture(int pointer) {}
 
   @override
   void rejectGesture(int pointer) {
     _TapTracker? tracker = _trackers[pointer];
     // If tracker isn't in the list, check if this is the first tap tracker
-    if (tracker == null &&
-        _firstTap != null &&
-        _firstTap!.pointer == pointer) {
+    if (tracker == null && _firstTap != null && _firstTap!.pointer == pointer) {
       tracker = _firstTap;
     }
     // If tracker is still null, we rejected ourselves already
@@ -385,7 +382,6 @@ class DoubleTapGestureRecognizer extends GestureRecognizer {
 /// as part of a [MultiTapGestureRecognizer]. Tap gestures are passive, meaning
 /// that they will not preempt any other arena member in play.
 class _TapGesture extends _TapTracker {
-
   _TapGesture({
     required this.gestureRecognizer,
     required PointerEvent event,
@@ -393,10 +389,10 @@ class _TapGesture extends _TapTracker {
     required super.gestureSettings,
   }) : _lastPosition = OffsetPair.fromEventPosition(event),
        super(
-    event: event as PointerDownEvent,
-    entry: GestureBinding.instance.gestureArena.add(event.pointer, gestureRecognizer),
-    doubleTapMinTime: kDoubleTapMinTime,
-  ) {
+         event: event as PointerDownEvent,
+         entry: GestureBinding.instance.gestureArena.add(event.pointer, gestureRecognizer),
+         doubleTapMinTime: kDoubleTapMinTime,
+       ) {
     startTrackingPointer(handleEvent, event.transform);
     if (longTapDelay > Duration.zero) {
       _timer = Timer(longTapDelay, () {
@@ -523,11 +519,14 @@ class MultiTapGestureRecognizer extends GestureRecognizer {
     );
     if (onTapDown != null) {
       invokeCallback<void>('onTapDown', () {
-        onTapDown!(event.pointer, TapDownDetails(
-          globalPosition: event.position,
-          localPosition: event.localPosition,
-          kind: event.kind,
-        ));
+        onTapDown!(
+          event.pointer,
+          TapDownDetails(
+            globalPosition: event.position,
+            localPosition: event.localPosition,
+            kind: event.kind,
+          ),
+        );
       });
     }
   }
@@ -558,11 +557,14 @@ class MultiTapGestureRecognizer extends GestureRecognizer {
     _gestureMap.remove(pointer);
     if (onTapUp != null) {
       invokeCallback<void>('onTapUp', () {
-        onTapUp!(pointer, TapUpDetails(
-          kind: getKindForPointer(pointer),
-          localPosition: position.local,
-          globalPosition: position.global,
-        ));
+        onTapUp!(
+          pointer,
+          TapUpDetails(
+            kind: getKindForPointer(pointer),
+            localPosition: position.local,
+            globalPosition: position.global,
+          ),
+        );
       });
     }
     if (onTap != null) {
@@ -671,9 +673,7 @@ class SerialTapCancelDetails {
   /// Creates details for a [GestureSerialTapCancelCallback].
   ///
   /// The `count` argument must be greater than zero.
-  SerialTapCancelDetails({
-    this.count = 1,
-  }) : assert(count > 0);
+  SerialTapCancelDetails({this.count = 1}) : assert(count > 0);
 
   /// The number of consecutive taps that were in progress when the gesture was
   /// interrupted.
@@ -856,9 +856,7 @@ class SerialTapGestureRecognizer extends GestureRecognizer {
 
   @override
   bool isPointerAllowed(PointerDownEvent event) {
-    if (onSerialTapDown == null &&
-        onSerialTapCancel == null &&
-        onSerialTapUp == null) {
+    if (onSerialTapDown == null && onSerialTapCancel == null && onSerialTapUp == null) {
       return false;
     }
     return super.isPointerAllowed(event);
@@ -866,17 +864,19 @@ class SerialTapGestureRecognizer extends GestureRecognizer {
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
-    if ((_completedTaps.isNotEmpty && !_representsSameSeries(_completedTaps.last, event))
-        || _pendingTap != null) {
+    if ((_completedTaps.isNotEmpty && !_representsSameSeries(_completedTaps.last, event)) ||
+        _pendingTap != null) {
       _reset();
     }
     _trackTap(event);
   }
 
   bool _representsSameSeries(_TapTracker tap, PointerDownEvent event) {
-    return tap.hasElapsedMinTime() // touch screens often detect touches intermittently
-        && tap.hasSameButton(event)
-        && tap.isWithinGlobalTolerance(event, kDoubleTapSlop);
+    return tap
+            .hasElapsedMinTime() // touch screens often detect touches intermittently
+            &&
+        tap.hasSameButton(event) &&
+        tap.isWithinGlobalTolerance(event, kDoubleTapSlop);
   }
 
   void _trackTap(PointerDownEvent event) {
@@ -1006,9 +1006,7 @@ class SerialTapGestureRecognizer extends GestureRecognizer {
 
   void _checkCancel(int count) {
     if (onSerialTapCancel != null) {
-      final SerialTapCancelDetails details = SerialTapCancelDetails(
-        count: count,
-      );
+      final SerialTapCancelDetails details = SerialTapCancelDetails(count: count);
       invokeCallback<void>('onSerialTapCancel', () => onSerialTapCancel!(details));
     }
   }

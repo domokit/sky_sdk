@@ -34,7 +34,9 @@ class _SelectableButtonState extends State<SelectableButton> {
   @override
   void initState() {
     super.initState();
-    statesController = WidgetStatesController(<WidgetState>{if (widget.selected) WidgetState.selected});
+    statesController = WidgetStatesController(<WidgetState>{
+      if (widget.selected) WidgetState.selected,
+    });
   }
 
   @override

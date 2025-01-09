@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:ui/src/engine.dart';
@@ -19,23 +20,19 @@ abstract class SkwasmImageFilter implements SceneImageFilter {
     ui.TileMode? tileMode,
   }) => SkwasmBlurFilter(sigmaX, sigmaY, tileMode);
 
-  factory SkwasmImageFilter.dilate({
-    double radiusX = 0.0,
-    double radiusY = 0.0,
-  }) => SkwasmDilateFilter(radiusX, radiusY);
+  factory SkwasmImageFilter.dilate({double radiusX = 0.0, double radiusY = 0.0}) =>
+      SkwasmDilateFilter(radiusX, radiusY);
 
-  factory SkwasmImageFilter.erode({
-    double radiusX = 0.0,
-    double radiusY = 0.0,
-  }) => SkwasmErodeFilter(radiusX, radiusY);
+  factory SkwasmImageFilter.erode({double radiusX = 0.0, double radiusY = 0.0}) =>
+      SkwasmErodeFilter(radiusX, radiusY);
 
   factory SkwasmImageFilter.matrix(
     Float64List matrix4, {
-    ui.FilterQuality filterQuality = ui.FilterQuality.low
+    ui.FilterQuality filterQuality = ui.FilterQuality.low,
   }) => SkwasmMatrixFilter(matrix4, filterQuality);
 
   factory SkwasmImageFilter.fromColorFilter(SkwasmColorFilter filter) =>
-    SkwasmColorImageFilter(filter);
+      SkwasmColorImageFilter(filter);
 
   factory SkwasmImageFilter.fromUiFilter(ui.ImageFilter filter) {
     if (filter is ui.ColorFilter) {
@@ -47,13 +44,11 @@ abstract class SkwasmImageFilter implements SceneImageFilter {
     }
   }
 
-  factory SkwasmImageFilter.compose(
-    ui.ImageFilter outer,
-    ui.ImageFilter inner,
-  ) => SkwasmComposedImageFilter(
-    SkwasmImageFilter.fromUiFilter(outer),
-    SkwasmImageFilter.fromUiFilter(inner),
-  );
+  factory SkwasmImageFilter.compose(ui.ImageFilter outer, ui.ImageFilter inner) =>
+      SkwasmComposedImageFilter(
+        SkwasmImageFilter.fromUiFilter(outer),
+        SkwasmImageFilter.fromUiFilter(inner),
+      );
 
   /// Creates a temporary [ImageFilterHandle] and passes it to the [borrow]
   /// function.
@@ -63,7 +58,8 @@ abstract class SkwasmImageFilter implements SceneImageFilter {
   ///
   /// The handle is deleted immediately after [borrow] returns. The [borrow]
   /// function must not store the handle to avoid dangling pointer bugs.
-  void withRawImageFilter(ImageFilterHandleBorrow borrow, {
+  void withRawImageFilter(
+    ImageFilterHandleBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   });
 
@@ -90,10 +86,15 @@ class SkwasmBlurFilter extends SkwasmImageFilter {
   ui.TileMode? get backdropTileMode => tileMode;
 
   @override
-  void withRawImageFilter(ImageFilterHandleBorrow borrow, {
+  void withRawImageFilter(
+    ImageFilterHandleBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   }) {
-    final rawImageFilter = imageFilterCreateBlur(sigmaX, sigmaY, (tileMode ?? defaultBlurTileMode).index);
+    final rawImageFilter = imageFilterCreateBlur(
+      sigmaX,
+      sigmaY,
+      (tileMode ?? defaultBlurTileMode).index,
+    );
     borrow(rawImageFilter);
     imageFilterDispose(rawImageFilter);
   }
@@ -112,7 +113,8 @@ class SkwasmDilateFilter extends SkwasmImageFilter {
   final double radiusY;
 
   @override
-  void withRawImageFilter(ImageFilterHandleBorrow borrow, {
+  void withRawImageFilter(
+    ImageFilterHandleBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   }) {
     final rawImageFilter = imageFilterCreateDilate(radiusX, radiusY);
@@ -134,7 +136,8 @@ class SkwasmErodeFilter extends SkwasmImageFilter {
   final double radiusY;
 
   @override
-  void withRawImageFilter(ImageFilterHandleBorrow borrow, {
+  void withRawImageFilter(
+    ImageFilterHandleBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   }) {
     final rawImageFilter = imageFilterCreateErode(radiusX, radiusY);
@@ -156,7 +159,8 @@ class SkwasmMatrixFilter extends SkwasmImageFilter {
   final ui.FilterQuality filterQuality;
 
   @override
-  void withRawImageFilter(ImageFilterHandleBorrow borrow, {
+  void withRawImageFilter(
+    ImageFilterHandleBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   }) {
     withStackScope((scope) {
@@ -182,7 +186,8 @@ class SkwasmColorImageFilter extends SkwasmImageFilter {
   final SkwasmColorFilter filter;
 
   @override
-  void withRawImageFilter(ImageFilterHandleBorrow borrow, {
+  void withRawImageFilter(
+    ImageFilterHandleBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   }) {
     filter.withRawColorFilter((colroFilterHandle) {
@@ -206,7 +211,8 @@ class SkwasmComposedImageFilter extends SkwasmImageFilter {
   final SkwasmImageFilter inner;
 
   @override
-  void withRawImageFilter(ImageFilterHandleBorrow borrow, {
+  void withRawImageFilter(
+    ImageFilterHandleBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   }) {
     outer.withRawImageFilter((outerHandle) {
@@ -238,17 +244,15 @@ abstract class SkwasmColorFilter {
   const SkwasmColorFilter();
 
   factory SkwasmColorFilter.fromEngineColorFilter(EngineColorFilter colorFilter) =>
-    switch (colorFilter.type) {
-      ColorFilterType.mode => SkwasmModeColorFilter(colorFilter.color!, colorFilter.blendMode!),
-      ColorFilterType.linearToSrgbGamma => const SkwasmLinearToSrgbGammaColorFilter(),
-      ColorFilterType.srgbToLinearGamma => const SkwasmSrgbToLinearGammaColorFilter(),
-      ColorFilterType.matrix => SkwasmMatrixColorFilter(colorFilter.matrix!),
-    };
+      switch (colorFilter.type) {
+        ColorFilterType.mode => SkwasmModeColorFilter(colorFilter.color!, colorFilter.blendMode!),
+        ColorFilterType.linearToSrgbGamma => const SkwasmLinearToSrgbGammaColorFilter(),
+        ColorFilterType.srgbToLinearGamma => const SkwasmSrgbToLinearGammaColorFilter(),
+        ColorFilterType.matrix => SkwasmMatrixColorFilter(colorFilter.matrix!),
+      };
 
-  factory SkwasmColorFilter.composed(
-    SkwasmColorFilter outer,
-    SkwasmColorFilter inner,
-  ) => SkwasmComposedColorFilter(outer, inner);
+  factory SkwasmColorFilter.composed(SkwasmColorFilter outer, SkwasmColorFilter inner) =>
+      SkwasmComposedColorFilter(outer, inner);
 
   /// Creates a temporary [ColorFilterHandle] and passes it to the [borrow]
   /// function.
@@ -259,20 +263,14 @@ abstract class SkwasmColorFilter {
 }
 
 class SkwasmModeColorFilter extends SkwasmColorFilter {
-  const SkwasmModeColorFilter(
-    this.color,
-    this.blendMode,
-  );
+  const SkwasmModeColorFilter(this.color, this.blendMode);
 
   final ui.Color color;
   final ui.BlendMode blendMode;
 
   @override
   void withRawColorFilter(ColorFilterHandleBorrow borrow) {
-    final rawColorFilter = colorFilterCreateMode(
-      color.value,
-      blendMode.index,
-    );
+    final rawColorFilter = colorFilterCreateMode(color.value, blendMode.index);
     borrow(rawColorFilter);
     colorFilterDispose(rawColorFilter);
   }
@@ -321,9 +319,18 @@ class SkwasmMatrixColorFilter extends SkwasmColorFilter {
   @override
   void withRawColorFilter(ColorFilterHandleBorrow borrow) {
     withStackScope((scope) {
-      final rawColorFilter = colorFilterCreateMatrix(
-        scope.convertDoublesToNative(matrix),
-      );
+      assert(matrix.length == 20);
+      final Pointer<Float> rawMatrix = scope.convertDoublesToNative(matrix);
+
+      /// Flutter documentation says the translation column of the color matrix
+      /// is specified in unnormalized 0..255 space. Skia expects the
+      /// translation values to be normalized to 0..1 space.
+      ///
+      /// See [https://api.flutter.dev/flutter/dart-ui/ColorFilter/ColorFilter.matrix.html].
+      for (final i in <int>[4, 9, 14, 19]) {
+        rawMatrix[i] /= 255.0;
+      }
+      final rawColorFilter = colorFilterCreateMatrix(rawMatrix);
       borrow(rawColorFilter);
       colorFilterDispose(rawColorFilter);
     });
@@ -357,12 +364,10 @@ class SkwasmComposedColorFilter extends SkwasmColorFilter {
 class SkwasmMaskFilter extends SkwasmObjectWrapper<RawMaskFilter> {
   SkwasmMaskFilter._(MaskFilterHandle handle) : super(handle, _registry);
 
-  factory SkwasmMaskFilter.fromUiMaskFilter(ui.MaskFilter maskFilter) =>
-    SkwasmMaskFilter._(maskFilterCreateBlur(
-      maskFilter.webOnlyBlurStyle.index,
-      maskFilter.webOnlySigma
-    ));
+  factory SkwasmMaskFilter.fromUiMaskFilter(ui.MaskFilter maskFilter) => SkwasmMaskFilter._(
+    maskFilterCreateBlur(maskFilter.webOnlyBlurStyle.index, maskFilter.webOnlySigma),
+  );
 
   static final SkwasmFinalizationRegistry<RawMaskFilter> _registry =
-    SkwasmFinalizationRegistry<RawMaskFilter>(maskFilterDispose);
+      SkwasmFinalizationRegistry<RawMaskFilter>(maskFilterDispose);
 }

@@ -12,18 +12,14 @@ final bool _isLocalEnvWithoutSkiaGold =
     !SkiaGoldClient.isAvailable(environment: io.Platform.environment) ||
     !SkiaGoldClient.isLuciEnv(environment: io.Platform.environment);
 
-final ArgParser _argParser = ArgParser()
-  ..addFlag(
-    'help',
-    abbr: 'h',
-    negatable: false,
-    help: 'Prints this usage information.',
-  )
-  ..addFlag(
-    'dry-run',
-    defaultsTo: _isLocalEnvWithoutSkiaGold,
-    help: 'Do not upload images to Skia Gold.',
-  );
+final ArgParser _argParser =
+    ArgParser()
+      ..addFlag('help', abbr: 'h', negatable: false, help: 'Prints this usage information.')
+      ..addFlag(
+        'dry-run',
+        defaultsTo: _isLocalEnvWithoutSkiaGold,
+        help: 'Do not upload images to Skia Gold.',
+      );
 
 Future<void> main(List<String> args) async {
   final ArgResults results = _argParser.parse(args);
@@ -45,12 +41,9 @@ Future<void> main(List<String> args) async {
   final Harvester harvester;
   if (isDryRun) {
     io.stderr.writeln('=== DRY RUN. Results not submitted to Skia Gold. ===');
-    harvester =
-      await Harvester.create(workDirectory, io.stderr,
-        addImageToSkiaGold: _dryRunAddImg);
+    harvester = await Harvester.create(workDirectory, io.stderr, addImageToSkiaGold: _dryRunAddImg);
   } else {
-    harvester =
-      await Harvester.create(workDirectory, io.stderr);
+    harvester = await Harvester.create(workDirectory, io.stderr);
   }
   await harvest(harvester);
 }
@@ -62,7 +55,8 @@ Future<void> _dryRunAddImg(
   double differentPixelsRate = 0.01,
   int pixelColorDelta = 0,
 }) async {
-  io.stderr.writeln('addImg '
+  io.stderr.writeln(
+    'addImg '
     'testName:$testName '
     'goldenFile:${goldenFile.path} '
     'screenshotSize:$screenshotSize '

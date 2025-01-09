@@ -23,24 +23,72 @@ const int greenSideScaled = 0x80005500;
 const int greenCornerScaled = 0x40002B00;
 
 const List<double> grayscaleColorMatrix = <double>[
-  0.2126, 0.7152, 0.0722, 0, 0,
-  0.2126, 0.7152, 0.0722, 0, 0,
-  0.2126, 0.7152, 0.0722, 0, 0,
-  0,      0,      0,      1, 0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
 ];
 
 const List<double> constValueColorMatrix = <double>[
-  0, 0, 0, 0, 2,
-  0, 0, 0, 0, 2,
-  0, 0, 0, 0, 2,
-  0, 0, 0, 0, 255,
+  0,
+  0,
+  0,
+  0,
+  2,
+  0,
+  0,
+  0,
+  0,
+  2,
+  0,
+  0,
+  0,
+  0,
+  2,
+  0,
+  0,
+  0,
+  0,
+  255,
 ];
 
 const List<double> halvesBrightnessColorMatrix = <double>[
-  0.5, 0,   0,   0, 0,
-  0,   0.5, 0,   0, 0,
-  0,   0,   0.5, 0, 0,
-  0,   0,   0,   1, 0,
+  0.5,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0.5,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0.5,
+  0,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
 ];
 
 void main() async {
@@ -69,37 +117,56 @@ void main() async {
   }
 
   ImageFilter makeBlur(double sigmaX, double sigmaY, [TileMode? tileMode]) =>
-    ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY, tileMode: tileMode);
+      ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY, tileMode: tileMode);
 
   ImageFilter makeDilate(double radiusX, double radiusY) =>
-    ImageFilter.dilate(radiusX: radiusX, radiusY: radiusY);
+      ImageFilter.dilate(radiusX: radiusX, radiusY: radiusY);
 
   ImageFilter makeErode(double radiusX, double radiusY) =>
-    ImageFilter.erode(radiusX: radiusX, radiusY: radiusY);
+      ImageFilter.erode(radiusX: radiusX, radiusY: radiusY);
 
-  ImageFilter makeScale(double scX, double scY,
-                        [double trX = 0.0, double trY = 0.0,
-                         FilterQuality quality = FilterQuality.low]) {
+  ImageFilter makeScale(
+    double scX,
+    double scY, [
+    double trX = 0.0,
+    double trY = 0.0,
+    FilterQuality quality = FilterQuality.low,
+  ]) {
     trX *= 1.0 - scX;
     trY *= 1.0 - scY;
-    return ImageFilter.matrix(Float64List.fromList(<double>[
-      scX, 0.0, 0.0, 0.0,
-      0.0, scY, 0.0, 0.0,
-      0.0, 0.0, 1.0, 0.0,
-      trX, trY, 0.0, 1.0,
-    ]), filterQuality: quality);
+    return ImageFilter.matrix(
+      Float64List.fromList(<double>[
+        scX,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        scY,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        trX,
+        trY,
+        0.0,
+        1.0,
+      ]),
+      filterQuality: quality,
+    );
   }
 
   List<ColorFilter> colorFilters() {
     // Create new color filter instances on each invocation.
     // ignore: prefer_const_constructors
-    return <ColorFilter> [
-      ColorFilter.mode(green, BlendMode.color),   // ignore: prefer_const_constructors
-      ColorFilter.mode(red, BlendMode.color),     // ignore: prefer_const_constructors
-      ColorFilter.mode(red, BlendMode.screen),    // ignore: prefer_const_constructors
-      ColorFilter.matrix(grayscaleColorMatrix),   // ignore: prefer_const_constructors
-      ColorFilter.linearToSrgbGamma(),            // ignore: prefer_const_constructors
-      ColorFilter.srgbToLinearGamma(),            // ignore: prefer_const_constructors
+    return <ColorFilter>[
+      ColorFilter.mode(green, BlendMode.color), // ignore: prefer_const_constructors
+      ColorFilter.mode(red, BlendMode.color), // ignore: prefer_const_constructors
+      ColorFilter.mode(red, BlendMode.screen), // ignore: prefer_const_constructors
+      ColorFilter.matrix(grayscaleColorMatrix), // ignore: prefer_const_constructors
+      ColorFilter.linearToSrgbGamma(), // ignore: prefer_const_constructors
+      ColorFilter.srgbToLinearGamma(), // ignore: prefer_const_constructors
     ];
   }
 
@@ -131,7 +198,7 @@ void main() async {
 
   void checkEquality(List<ImageFilter> a, List<ImageFilter> b) {
     for (int i = 0; i < a.length; i++) {
-      for(int j = 0; j < a.length; j++) {
+      for (int j = 0; j < a.length; j++) {
         if (i == j) {
           expect(a[i], equals(b[j]));
           expect(a[i].hashCode, equals(b[j].hashCode));
@@ -146,7 +213,10 @@ void main() async {
   }
 
   List<ImageFilter> composed(List<ImageFilter> a, List<ImageFilter> b) {
-    return <ImageFilter>[for (final ImageFilter x in a) for (final ImageFilter y in b) ImageFilter.compose(outer: x, inner: y)];
+    return <ImageFilter>[
+      for (final ImageFilter x in a)
+        for (final ImageFilter y in b) ImageFilter.compose(outer: x, inner: y),
+    ];
   }
 
   test('ImageFilter - equals', () async {
@@ -179,16 +249,16 @@ void main() async {
       print('Disabled - see https://github.com/flutter/flutter/issues/135712');
       return;
     }
-    final Paint paint = Paint()
-      ..color = green
-      ..imageFilter = makeBlur(1.0, 1.0, TileMode.decal);
+    final Paint paint =
+        Paint()
+          ..color = green
+          ..imageFilter = makeBlur(1.0, 1.0, TileMode.decal);
 
     final Uint32List bytes = await getBytesForPaint(paint);
     checkBytes(bytes, greenCenterBlurred, greenSideBlurred, greenCornerBlurred);
   });
 
   test('ImageFilter - blur toString', () async {
-
     var filter = makeBlur(1.9, 2.1);
     expect(filter.toString(), 'ImageFilter.blur(1.9, 2.1, unspecified)');
 
@@ -206,18 +276,20 @@ void main() async {
   });
 
   test('ImageFilter - dilate', () async {
-    final Paint paint = Paint()
-      ..color = green
-      ..imageFilter = makeDilate(1.0, 1.0);
+    final Paint paint =
+        Paint()
+          ..color = green
+          ..imageFilter = makeDilate(1.0, 1.0);
 
     final Uint32List bytes = await getBytesForPaint(paint);
     checkBytes(bytes, green.value, green.value, green.value);
   });
 
   test('ImageFilter - erode', () async {
-    final Paint paint = Paint()
-      ..color = green
-      ..imageFilter = makeErode(1.0, 1.0);
+    final Paint paint =
+        Paint()
+          ..color = green
+          ..imageFilter = makeErode(1.0, 1.0);
 
     final Uint32List bytes = await getBytesForPaint(paint);
     checkBytes(bytes, 0, 0, 0);
@@ -229,9 +301,10 @@ void main() async {
       return;
     }
 
-    final Paint paint = Paint()
-      ..color = green
-      ..imageFilter = makeScale(2.0, 2.0, 1.5, 1.5);
+    final Paint paint =
+        Paint()
+          ..color = green
+          ..imageFilter = makeScale(2.0, 2.0, 1.5, 1.5);
 
     final Uint32List bytes = await getBytesForPaint(paint);
     checkBytes(bytes, greenCenterScaled, greenSideScaled, greenCornerScaled);
@@ -239,10 +312,22 @@ void main() async {
 
   test('ImageFilter - matrix: copies the list', () async {
     final Float64List matrix = Float64List.fromList(<double>[
-      1.0, 0.0, 0.0, 0.0,
-      0.0, 1.0, 0.0, 0.0,
-      0.0, 0.0, 1.0, 0.0,
-      0.0, 0.0, 0.0, 1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
     ]);
 
     final ImageFilter filter = ImageFilter.matrix(matrix);
@@ -250,7 +335,10 @@ void main() async {
 
     // Modify the matrix.
     matrix[0] = 12345;
-    expect(filter.toString(), contains('[1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]'));
+    expect(
+      filter.toString(),
+      contains('[1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]'),
+    );
     expect(filter.toString(), originalDescription);
   });
 
@@ -260,9 +348,10 @@ void main() async {
       return;
     }
 
-    final Paint paint = Paint()
-      ..color = green
-      ..imageFilter = const ColorFilter.matrix(constValueColorMatrix);
+    final Paint paint =
+        Paint()
+          ..color = green
+          ..imageFilter = const ColorFilter.matrix(constValueColorMatrix);
 
     final Uint32List bytes = await getBytesForColorPaint(paint);
     expect(bytes[0], 0xFF020202);
@@ -284,9 +373,10 @@ void main() async {
       inner: const ColorFilter.matrix(halvesBrightnessColorMatrix),
     );
 
-    final Paint paint = Paint()
-      ..color = green
-      ..imageFilter = compOrder1;
+    final Paint paint =
+        Paint()
+          ..color = green
+          ..imageFilter = compOrder1;
 
     Uint32List bytes = await getBytesForColorPaint(paint);
     expect(bytes[0], 0xFF010101);
@@ -300,14 +390,20 @@ void main() async {
 
   test('Composite ImageFilter toString', () {
     expect(
-      ImageFilter.compose(outer: makeBlur(20.0, 20.0, TileMode.decal), inner: makeBlur(10.0, 10.0)).toString(),
+      ImageFilter.compose(
+        outer: makeBlur(20.0, 20.0, TileMode.decal),
+        inner: makeBlur(10.0, 10.0),
+      ).toString(),
       contains('blur(10.0, 10.0, unspecified) -> blur(20.0, 20.0, decal)'),
     );
 
     // Produces a flat list of filters
     expect(
       ImageFilter.compose(
-        outer: ImageFilter.compose(outer: makeBlur(30.0, 30.0, TileMode.mirror), inner: makeBlur(20.0, 20.0, TileMode.repeated)),
+        outer: ImageFilter.compose(
+          outer: makeBlur(30.0, 30.0, TileMode.mirror),
+          inner: makeBlur(20.0, 20.0, TileMode.repeated),
+        ),
         inner: ImageFilter.compose(
           outer: const ColorFilter.mode(Color(0xFFABCDEF), BlendMode.color),
           inner: makeScale(10.0, 10.0),
@@ -317,7 +413,7 @@ void main() async {
         'matrix([10.0, 0.0, 0.0, 0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -0.0, -0.0, 0.0, 1.0], FilterQuality.low) -> '
         'ColorFilter.mode(${const Color(0xFFABCDEF)}, BlendMode.color) -> '
         'blur(20.0, 20.0, repeated) -> '
-        'blur(30.0, 30.0, mirror)'
+        'blur(30.0, 30.0, mirror)',
       ),
     );
   });
@@ -325,10 +421,7 @@ void main() async {
   // Tests that FilterQuality.<value> produces the expected golden file.
   group('ImageFilter|FilterQuality', () {
     /// Draw a red-green checkerboard pattern with 1x1 squares (pixels).
-    Future<Image> drawCheckerboard({
-      int width = 100,
-      int height = 100,
-    }) async {
+    Future<Image> drawCheckerboard({int width = 100, int height = 100}) async {
       final Completer<Image> completer = Completer<Image>();
       final Uint32List pixels = Uint32List.fromList(
         List<int>.generate(width * height, (int index) {
@@ -377,7 +470,10 @@ void main() async {
       final ImageComparer comparer = await ImageComparer.create();
       final Image base = await redGreenCheckerboard;
       final Image scaled = await shrinkAndScaleImage(base, FilterQuality.none);
-      await comparer.addGoldenImage(scaled, 'dart_ui_filter_quality_none_scale_1x1_red_green_checkerboard.png');
+      await comparer.addGoldenImage(
+        scaled,
+        'dart_ui_filter_quality_none_scale_1x1_red_green_checkerboard.png',
+      );
     });
   });
 }

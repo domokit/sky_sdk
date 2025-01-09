@@ -31,14 +31,18 @@ base class ShaderLibrary extends NativeFieldWrapperClass1 {
     // counterpart (if it hasn't been wrapped already) is a hack to work around
     // this.
     return shaders_.putIfAbsent(
-        shaderName, () => _getShader(shaderName, Shader._()));
+      shaderName,
+      () => _getShader(shaderName, Shader._()),
+    );
   }
 
   @Native<Handle Function(Handle, Handle)>(
-      symbol: 'InternalFlutterGpu_ShaderLibrary_InitializeWithAsset')
+    symbol: 'InternalFlutterGpu_ShaderLibrary_InitializeWithAsset',
+  )
   external String? _initializeWithAsset(String assetName);
 
   @Native<Handle Function(Pointer<Void>, Handle, Handle)>(
-      symbol: 'InternalFlutterGpu_ShaderLibrary_GetShader')
+    symbol: 'InternalFlutterGpu_ShaderLibrary_GetShader',
+  )
   external Shader? _getShader(String shaderName, Shader shaderWrapper);
 }

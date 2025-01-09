@@ -8,7 +8,6 @@ import 'package:ui/ui.dart';
 
 import '../common/test_initialization.dart';
 
-
 class _ColorMatcher extends Matcher {
   _ColorMatcher(this._target, this._threshold);
 
@@ -75,8 +74,7 @@ Future<void> testMain() async {
 
   test('two colors are only == if they have the same runtime type', () {
     expect(const Color(123), equals(const Color(123)));
-    expect(const Color(123),
-        equals(const Color(123)));
+    expect(const Color(123), equals(const Color(123)));
     expect(const Color(123), isNot(equals(const Color(321))));
     expect(const Color(123), isNot(equals(const NotAColor(123))));
     expect(const NotAColor(123), isNot(equals(const Color(123))));

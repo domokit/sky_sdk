@@ -10,6 +10,5 @@ import 'package:flutter_devicelab/tasks/perf_tests.dart';
 
 Future<void> main() async {
   deviceOperatingSystem = DeviceOperatingSystem.android;
-  await task(createAnimatedAdvancedBlendPerfTest(
-      enableImpeller: true, forceOpenGLES: true));
+  await task(createAnimatedAdvancedBlendPerfTest(enableImpeller: true, forceOpenGLES: true));
 }

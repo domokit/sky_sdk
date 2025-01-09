@@ -20,11 +20,7 @@ class SolidBlueScenario extends Scenario {
     canvas.drawPaint(Paint()..color = const Color(0xFF0000FF));
     final Picture picture = recorder.endRecording();
 
-    builder.addPicture(
-      Offset.zero,
-      picture,
-      willChangeHint: true,
-    );
+    builder.addPicture(Offset.zero, picture, willChangeHint: true);
     final Scene scene = builder.build();
     view.render(scene);
     scene.dispose();

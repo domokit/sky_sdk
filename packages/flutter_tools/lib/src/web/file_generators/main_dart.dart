@@ -5,13 +5,13 @@
 import 'package:package_config/package_config.dart';
 
 /// Generates the main.dart file.
-String generateMainDartFile(String appEntrypoint, {
+String generateMainDartFile(
+  String appEntrypoint, {
   required String pluginRegistrantEntrypoint,
   LanguageVersion? languageVersion,
 }) {
   return <String>[
-    if (languageVersion != null)
-      '// @dart=${languageVersion.major}.${languageVersion.minor}',
+    if (languageVersion != null) '// @dart=${languageVersion.major}.${languageVersion.minor}',
     '// Flutter web bootstrap script for $appEntrypoint.',
     '//',
     '// Generated file. Do not edit.',

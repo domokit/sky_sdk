@@ -42,8 +42,14 @@ Future<void> testMain() async {
 
     // Check that we have both root nodes in the DOM (root nodes have id == 0)
     expect(domDocument.querySelectorAll('flutter-view'), hasLength(2));
-    expect(domDocument.querySelectorAll('flutter-view[flt-view-id="${view1.viewId}"]'), hasLength(1));
-    expect(domDocument.querySelectorAll('flutter-view[flt-view-id="${view2.viewId}"]'), hasLength(1));
+    expect(
+      domDocument.querySelectorAll('flutter-view[flt-view-id="${view1.viewId}"]'),
+      hasLength(1),
+    );
+    expect(
+      domDocument.querySelectorAll('flutter-view[flt-view-id="${view2.viewId}"]'),
+      hasLength(1),
+    );
     expect(domDocument.querySelectorAll('flt-semantics[id=flt-semantic-node-0]'), hasLength(2));
 
     // Check that each is attached to its own view
@@ -51,8 +57,14 @@ Future<void> testMain() async {
     expect(view2.semantics.semanticsHost, view2.dom.semanticsHost);
 
     // Check semantics
-    expectSemanticsTree(view1.semantics, '<sem style="filter: opacity(0%); color: rgba(0, 0, 0, 0)"></sem>');
-    expectSemanticsTree(view2.semantics, '<sem style="filter: opacity(0%); color: rgba(0, 0, 0, 0)"></sem>');
+    expectSemanticsTree(
+      view1.semantics,
+      '<sem style="filter: opacity(0%); color: rgba(0, 0, 0, 0)"></sem>',
+    );
+    expectSemanticsTree(
+      view2.semantics,
+      '<sem style="filter: opacity(0%); color: rgba(0, 0, 0, 0)"></sem>',
+    );
 
     // Add some children
     tester1.updateNode(
@@ -66,7 +78,7 @@ Future<void> testMain() async {
           isEnabled: true,
           isButton: true,
           rect: const ui.Rect.fromLTRB(0, 0, 100, 50),
-        )
+        ),
       ],
     );
     tester1.apply();
@@ -85,18 +97,13 @@ Future<void> testMain() async {
     tester2.apply();
 
     // Test that each view renders its own semantics tree.
-    expectSemanticsTree(
-      view1.semantics,
-      '''
+    expectSemanticsTree(view1.semantics, '''
 <sem style="filter: opacity(0%); color: rgba(0, 0, 0, 0)">
   <sem-c>
     <sem flt-tappable="" role="button"></sem>
   </sem-c>
-</sem>''',
-    );
-    expectSemanticsTree(
-      view2.semantics,
-      '''
+</sem>''');
+    expectSemanticsTree(view2.semantics, '''
 <sem style="filter: opacity(0%); color: rgba(0, 0, 0, 0)">
   <sem-c>
     <sem aria-label="d"><input aria-valuemax="1" aria-valuemin="1" aria-valuenow="1" aria-valuetext="" role="slider"></sem>

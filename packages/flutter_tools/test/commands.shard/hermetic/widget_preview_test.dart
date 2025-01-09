@@ -39,8 +39,7 @@ void main() {
         final FlutterManifest root = rootProject.manifest;
         final FlutterManifest updated = command.buildPubspec(
           rootManifest: rootProject.manifest,
-          widgetPreviewManifest:
-              rootProject.widgetPreviewScaffoldProject.manifest,
+          widgetPreviewManifest: rootProject.widgetPreviewScaffoldProject.manifest,
         );
 
         final List<AssetsEntry> rootAssets = root.assets;
@@ -49,10 +48,7 @@ void main() {
         for (int i = 0; i < rootAssets.length; ++i) {
           final AssetsEntry rootEntry = rootAssets[i];
           final AssetsEntry updatedEntry = updatedAssets[i];
-          expect(
-            updatedEntry,
-            WidgetPreviewStartCommand.transformAssetsEntry(rootEntry),
-          );
+          expect(updatedEntry, WidgetPreviewStartCommand.transformAssetsEntry(rootEntry));
         }
 
         expect(updated.fonts.length, root.fonts.length);
@@ -66,25 +62,15 @@ void main() {
             final FontAsset updatedFontAsset = updatedFont.fontAssets[j];
             expect(
               updatedFontAsset.descriptor,
-              WidgetPreviewStartCommand.transformFontAsset(rootFontAsset)
-                  .descriptor,
+              WidgetPreviewStartCommand.transformFontAsset(rootFontAsset).descriptor,
             );
           }
         }
 
-        expect(
-          updated.shaders,
-          root.shaders.map(WidgetPreviewStartCommand.transformAssetUri),
-        );
-        expect(
-          updated.models,
-          root.models.map(WidgetPreviewStartCommand.transformAssetUri),
-        );
+        expect(updated.shaders, root.shaders.map(WidgetPreviewStartCommand.transformAssetUri));
+        expect(updated.models, root.models.map(WidgetPreviewStartCommand.transformAssetUri));
 
-        expect(
-          updated.deferredComponents?.length,
-          root.deferredComponents?.length,
-        );
+        expect(updated.deferredComponents?.length, root.deferredComponents?.length);
         if (root.deferredComponents != null) {
           for (int i = 0; i < root.deferredComponents!.length; ++i) {
             expect(
@@ -106,19 +92,14 @@ void main() {
       'can add flutter_gen to package_config.json if generate is set in the parent project',
       () async {
         command.maybeAddFlutterGenToPackageConfig(rootProject: rootProject);
-        final Map<String, Object?> packageConfig = jsonDecode(
-          rootProject.widgetPreviewScaffoldProject.packageConfig
-              .readAsStringSync(),
-        ) as Map<String, Object?>;
+        final Map<String, Object?> packageConfig =
+            jsonDecode(rootProject.widgetPreviewScaffoldProject.packageConfig.readAsStringSync())
+                as Map<String, Object?>;
         expect(packageConfig.containsKey('packages'), true);
         final List<Map<String, Object?>> packages =
-            (packageConfig['packages']! as List<dynamic>)
-                .cast<Map<String, Object?>>();
+            (packageConfig['packages']! as List<dynamic>).cast<Map<String, Object?>>();
         expect(packages.length, 2);
-        expect(
-          packages.last,
-          WidgetPreviewStartCommand.flutterGenPackageConfigEntry,
-        );
+        expect(packages.last, WidgetPreviewStartCommand.flutterGenPackageConfigEntry);
       },
       overrides: <Type, Generator>{
         FileSystem: () => fileSystem,
@@ -129,11 +110,7 @@ void main() {
 }
 
 class FakeFlutterProject extends Fake implements FlutterProject {
-  FakeFlutterProject({
-    required this.projectRoot,
-    required this.fileSystem,
-    required this.logger,
-  });
+  FakeFlutterProject({required this.projectRoot, required this.fileSystem, required this.logger});
 
   static const String complexPubspec = '''
 name: test
@@ -197,28 +174,19 @@ flutter:
   final Logger logger;
 
   @override
-  late final FlutterManifest manifest = FlutterManifest.createFromPath(
-    pubspecFile.path,
-    fileSystem: fileSystem,
-    logger: logger,
-  )!;
+  late final FlutterManifest manifest =
+      FlutterManifest.createFromPath(pubspecFile.path, fileSystem: fileSystem, logger: logger)!;
 
   @override
   late FlutterProject widgetPreviewScaffoldProject = FakeFlutterProject(
-    projectRoot: fileSystem.path.join(
-      projectRoot,
-      '.dart_tool',
-      'widget_preview_scaffold',
-    ),
+    projectRoot: fileSystem.path.join(projectRoot, '.dart_tool', 'widget_preview_scaffold'),
     fileSystem: fileSystem,
     logger: logger,
   );
 
   @override
   late final File pubspecFile = () {
-    final File file = fileSystem
-        .directory(projectRoot)
-        .childFile('pubspec.yaml')
+    final File file = fileSystem.directory(projectRoot).childFile('pubspec.yaml')
       ..createSync(recursive: true);
     file.writeAsStringSync(complexPubspec);
     return file;
@@ -227,9 +195,8 @@ flutter:
   @override
   late final File packageConfig = () {
     final File file = fileSystem
-        .directory(fileSystem.path.join(projectRoot, '.dart_tool'))
-        .childFile('package_config.json')
-      ..createSync(recursive: true);
+      .directory(fileSystem.path.join(projectRoot, '.dart_tool'))
+      .childFile('package_config.json')..createSync(recursive: true);
     file.writeAsStringSync(basicPackageConfig);
     return file;
   }();

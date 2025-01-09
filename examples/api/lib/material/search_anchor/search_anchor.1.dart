@@ -32,18 +32,16 @@ class _PinnedSearchBarAppState extends State<PinnedSearchBarApp> {
                 scrolledUnderElevation: 0.0,
                 titleSpacing: 0.0,
                 backgroundColor: Colors.transparent,
-                floating: true, // We can also uncomment this line and set `pinned` to true to see a pinned search bar.
+                floating:
+                    true, // We can also uncomment this line and set `pinned` to true to see a pinned search bar.
                 title: SearchAnchor.bar(
                   suggestionsBuilder: (BuildContext context, SearchController controller) {
-                    return List<Widget>.generate(
-                      5,
-                      (int index) {
-                        return ListTile(
-                          titleAlignment: ListTileTitleAlignment.center,
-                          title: Text('Initial list item $index'),
-                        );
-                      },
-                    );
+                    return List<Widget>.generate(5, (int index) {
+                      return ListTile(
+                        titleAlignment: ListTileTitleAlignment.center,
+                        title: Text('Initial list item $index'),
+                      );
+                    });
                   },
                 ),
               ),
@@ -60,9 +58,7 @@ class _PinnedSearchBarAppState extends State<PinnedSearchBarApp> {
                       itemBuilder: (BuildContext context, int index) {
                         return SizedBox(
                           width: 100.0,
-                          child: Card(
-                            child: Center(child: Text('Card $index')),
-                          ),
+                          child: Card(child: Center(child: Text('Card $index'))),
                         );
                       },
                     ),
@@ -72,10 +68,7 @@ class _PinnedSearchBarAppState extends State<PinnedSearchBarApp> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Container(
-                    height: 1000,
-                    color: Colors.deepPurple.withOpacity(0.5),
-                  ),
+                  child: Container(height: 1000, color: Colors.deepPurple.withOpacity(0.5)),
                 ),
               ),
             ],

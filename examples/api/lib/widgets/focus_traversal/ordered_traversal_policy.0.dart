@@ -16,21 +16,14 @@ class OrderedTraversalPolicyExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('OrderedTraversalPolicy Sample')),
-        body: const Center(
-          child: OrderedTraversalPolicyExample(),
-        ),
+        body: const Center(child: OrderedTraversalPolicyExample()),
       ),
     );
   }
 }
 
 class DemoButton extends StatelessWidget {
-  const DemoButton({
-    super.key,
-    required this.name,
-    this.autofocus = false,
-    required this.order,
-  });
+  const DemoButton({super.key, required this.name, this.autofocus = false, required this.order});
 
   final String name;
   final bool autofocus;
@@ -66,9 +59,7 @@ class OrderedTraversalPolicyExample extends StatelessWidget {
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              DemoButton(name: 'Six', order: 6),
-            ],
+            children: <Widget>[DemoButton(name: 'Six', order: 6)],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

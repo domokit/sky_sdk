@@ -49,10 +49,7 @@ class MyApp extends StatelessWidget {
 ''';
 
   void uncommentHotReloadPrint() {
-    final String newMainContents = main.replaceAll(
-      'LOADED DATA',
-      'SECOND DATA',
-    );
+    final String newMainContents = main.replaceAll('LOADED DATA', 'SECOND DATA');
     writeFile(
       fileSystem.path.join(dir.path, 'lib', 'main.dart'),
       newMainContents,

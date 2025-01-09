@@ -23,7 +23,10 @@ Future<void> doTests() async {
 
     group('registerView', () {
       test('can register view', () {
-        final EngineFlutterView view = EngineFlutterView(platformDispatcher, createDomElement('div'));
+        final EngineFlutterView view = EngineFlutterView(
+          platformDispatcher,
+          createDomElement('div'),
+        );
         final int viewId = view.viewId;
 
         viewManager.registerView(view);
@@ -32,19 +35,27 @@ Future<void> doTests() async {
       });
 
       test('fails if the same viewId is already registered', () {
-        final EngineFlutterView view = EngineFlutterView(platformDispatcher, createDomElement('div'));
+        final EngineFlutterView view = EngineFlutterView(
+          platformDispatcher,
+          createDomElement('div'),
+        );
 
         viewManager.registerView(view);
 
-        expect(() { viewManager.registerView(view); }, throwsAssertionError);
+        expect(() {
+          viewManager.registerView(view);
+        }, throwsAssertionError);
       });
 
       test('stores JSOptions that getOptions can retrieve', () {
-        final EngineFlutterView view = EngineFlutterView(platformDispatcher, createDomElement('div'));
+        final EngineFlutterView view = EngineFlutterView(
+          platformDispatcher,
+          createDomElement('div'),
+        );
         final int viewId = view.viewId;
-        final JsFlutterViewOptions expectedOptions = jsify(<String, Object?>{
-          'hostElement': createDomElement('div'),
-        }) as JsFlutterViewOptions;
+        final JsFlutterViewOptions expectedOptions =
+            jsify(<String, Object?>{'hostElement': createDomElement('div')})
+                as JsFlutterViewOptions;
 
         viewManager.registerView(view, jsViewOptions: expectedOptions);
 
@@ -55,7 +66,10 @@ Future<void> doTests() async {
 
     group('unregisterView', () {
       test('unregisters a view', () {
-        final EngineFlutterView view = EngineFlutterView(platformDispatcher, createDomElement('div'));
+        final EngineFlutterView view = EngineFlutterView(
+          platformDispatcher,
+          createDomElement('div'),
+        );
         final int viewId = view.viewId;
 
         viewManager.registerView(view);
@@ -71,17 +85,24 @@ Future<void> doTests() async {
       // can't hang "forever" waiting for this to complete. This stream will close
       // after 100ms of inactivity, regardless of what the test or the code do.
       final Stream<int> onViewCreated = viewManager.onViewCreated.timeout(
-          const Duration(milliseconds: 100), onTimeout: (EventSink<int> sink) {
-        sink.close();
-      });
+        const Duration(milliseconds: 100),
+        onTimeout: (EventSink<int> sink) {
+          sink.close();
+        },
+      );
 
       final Stream<int> onViewDisposed = viewManager.onViewDisposed.timeout(
-          const Duration(milliseconds: 100), onTimeout: (EventSink<int> sink) {
-        sink.close();
-      });
+        const Duration(milliseconds: 100),
+        onTimeout: (EventSink<int> sink) {
+          sink.close();
+        },
+      );
 
       test('on view registered/unregistered - fires event', () async {
-        final EngineFlutterView view = EngineFlutterView(platformDispatcher, createDomElement('div'));
+        final EngineFlutterView view = EngineFlutterView(
+          platformDispatcher,
+          createDomElement('div'),
+        );
         final int viewId = view.viewId;
 
         final Future<List<void>> viewCreatedEvents = onViewCreated.toList();
@@ -95,10 +116,16 @@ Future<void> doTests() async {
         final List<void> createdViewsList = await viewCreatedEvents;
         final List<void> disposedViewsList = await viewCreatedEvents;
 
-        expect(createdViewsList, listEqual(<int>[viewId]),
-            reason: 'Should fire creation event for view');
-        expect(disposedViewsList, listEqual(<int>[viewId]),
-            reason: 'Should fire dispose event for view');
+        expect(
+          createdViewsList,
+          listEqual(<int>[viewId]),
+          reason: 'Should fire creation event for view',
+        );
+        expect(
+          disposedViewsList,
+          listEqual(<int>[viewId]),
+          reason: 'Should fire dispose event for view',
+        );
       });
     });
 

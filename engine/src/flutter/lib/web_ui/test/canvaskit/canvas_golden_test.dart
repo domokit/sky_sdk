@@ -27,8 +27,7 @@ void testMain() {
       renderer.fontCollection.debugResetFallbackFonts();
     });
 
-    test('renders using non-recording canvas if weak refs are supported',
-        () async {
+    test('renders using non-recording canvas if weak refs are supported', () async {
       final CkPictureRecorder recorder = CkPictureRecorder();
       final CkCanvas canvas = recorder.beginRecording(kDefaultRegion);
       expect(canvas.runtimeType, CkCanvas);
@@ -40,21 +39,14 @@ void testMain() {
       );
     });
 
-    test(
-        'text style - foreground/background/color do not leak across paragraphs',
-        () async {
+    test('text style - foreground/background/color do not leak across paragraphs', () async {
       const double testWidth = 440;
       const double middle = testWidth / 2;
-      CkParagraph createTestParagraph(
-          {ui.Color? color, CkPaint? foreground, CkPaint? background}) {
-        final CkParagraphBuilder builder =
-            CkParagraphBuilder(CkParagraphStyle());
-        builder.pushStyle(CkTextStyle(
-          fontSize: 16,
-          color: color,
-          foreground: foreground,
-          background: background,
-        ));
+      CkParagraph createTestParagraph({ui.Color? color, CkPaint? foreground, CkPaint? background}) {
+        final CkParagraphBuilder builder = CkParagraphBuilder(CkParagraphStyle());
+        builder.pushStyle(
+          CkTextStyle(fontSize: 16, color: color, foreground: foreground, background: background),
+        );
         final StringBuffer text = StringBuffer();
         if (color == null && foreground == null && background == null) {
           text.write('Default');
@@ -84,18 +76,16 @@ void testMain() {
       final List<ParagraphFactory> variations = <ParagraphFactory>[
         () => createTestParagraph(),
         () => createTestParagraph(color: const ui.Color(0xFF009900)),
+        () => createTestParagraph(foreground: CkPaint()..color = const ui.Color(0xFF990000)),
+        () => createTestParagraph(background: CkPaint()..color = const ui.Color(0xFF7777FF)),
         () => createTestParagraph(
-            foreground: CkPaint()..color = const ui.Color(0xFF990000)),
+          color: const ui.Color(0xFFFF00FF),
+          background: CkPaint()..color = const ui.Color(0xFF0000FF),
+        ),
         () => createTestParagraph(
-            background: CkPaint()..color = const ui.Color(0xFF7777FF)),
-        () => createTestParagraph(
-              color: const ui.Color(0xFFFF00FF),
-              background: CkPaint()..color = const ui.Color(0xFF0000FF),
-            ),
-        () => createTestParagraph(
-              foreground: CkPaint()..color = const ui.Color(0xFF00FFFF),
-              background: CkPaint()..color = const ui.Color(0xFF0000FF),
-            ),
+          foreground: CkPaint()..color = const ui.Color(0xFF00FFFF),
+          background: CkPaint()..color = const ui.Color(0xFF0000FF),
+        ),
       ];
 
       final CkPictureRecorder recorder = CkPictureRecorder();
@@ -109,13 +99,14 @@ void testMain() {
           canvas.drawParagraph(fromParagraph, ui.Offset.zero);
 
           final ui.Offset leftEnd = ui.Offset(
-              fromParagraph.maxIntrinsicWidth + 10, fromParagraph.height / 2);
+            fromParagraph.maxIntrinsicWidth + 10,
+            fromParagraph.height / 2,
+          );
           final ui.Offset rightEnd = ui.Offset(middle - 10, leftEnd.dy);
           const ui.Offset tipOffset = ui.Offset(-5, -5);
           canvas.drawLine(leftEnd, rightEnd, CkPaint());
           canvas.drawLine(rightEnd, rightEnd + tipOffset, CkPaint());
-          canvas.drawLine(
-              rightEnd, rightEnd + tipOffset.scale(1, -1), CkPaint());
+          canvas.drawLine(rightEnd, rightEnd + tipOffset.scale(1, -1), CkPaint());
 
           canvas.translate(middle, 0);
           canvas.drawParagraph(to(), ui.Offset.zero);
@@ -137,8 +128,10 @@ void testMain() {
       // First draw a frame with a red rectangle
       final CkPictureRecorder recorder = CkPictureRecorder();
       final CkCanvas canvas = recorder.beginRecording(ui.Rect.largest);
-      canvas.drawRect(const ui.Rect.fromLTRB(20, 20, 100, 100),
-          CkPaint()..color = const ui.Color(0xffff0000));
+      canvas.drawRect(
+        const ui.Rect.fromLTRB(20, 20, 100, 100),
+        CkPaint()..color = const ui.Color(0xffff0000),
+      );
       final CkPicture picture = recorder.endRecording();
       final LayerSceneBuilder builder = LayerSceneBuilder();
       builder.pushOffset(0, 0);
@@ -151,64 +144,71 @@ void testMain() {
       final LayerSceneBuilder emptySceneBuilder = LayerSceneBuilder();
       emptySceneBuilder.pushOffset(0, 0);
       final LayerScene emptyScene = emptySceneBuilder.build();
-      await matchSceneGolden('canvaskit_empty_scene.png', emptyScene,
-          region: const ui.Rect.fromLTRB(0, 0, 100, 100));
+      await matchSceneGolden(
+        'canvaskit_empty_scene.png',
+        emptyScene,
+        region: const ui.Rect.fromLTRB(0, 0, 100, 100),
+      );
     });
 
     // Regression test for https://github.com/flutter/flutter/issues/121758
     test(
-        'resources used in temporary surfaces for Image.toByteData can cross to rendering overlays',
-        () async {
-      ui_web.platformViewRegistry.registerViewFactory(
-        'test-platform-view',
-        (int viewId) => createDomHTMLDivElement()..id = 'view-0',
-      );
-      await createPlatformView(0, 'test-platform-view');
-
-      CkPicture makeTextPicture(String text, ui.Offset offset) {
-        final CkPictureRecorder recorder = CkPictureRecorder();
-        final CkCanvas canvas = recorder.beginRecording(ui.Rect.largest);
-        final CkParagraphBuilder builder = CkParagraphBuilder(CkParagraphStyle());
-        builder.addText(text);
-        final CkParagraph paragraph = builder.build();
-        paragraph.layout(const ui.ParagraphConstraints(width: 100));
-        canvas.drawRect(
-          ui.Rect.fromLTWH(offset.dx, offset.dy, paragraph.width, paragraph.height).inflate(10),
-          CkPaint()..color = const ui.Color(0xFF00FF00)
+      'resources used in temporary surfaces for Image.toByteData can cross to rendering overlays',
+      () async {
+        ui_web.platformViewRegistry.registerViewFactory(
+          'test-platform-view',
+          (int viewId) => createDomHTMLDivElement()..id = 'view-0',
         );
-        canvas.drawParagraph(paragraph, offset);
-        return recorder.endRecording();
-      }
+        await createPlatformView(0, 'test-platform-view');
 
-      CkPicture imageToPicture(CkImage image, ui.Offset offset) {
-        final CkPictureRecorder recorder = CkPictureRecorder();
-        final CkCanvas canvas = recorder.beginRecording(ui.Rect.largest);
-        canvas.drawImage(image, offset, CkPaint());
-        return recorder.endRecording();
-      }
+        CkPicture makeTextPicture(String text, ui.Offset offset) {
+          final CkPictureRecorder recorder = CkPictureRecorder();
+          final CkCanvas canvas = recorder.beginRecording(ui.Rect.largest);
+          final CkParagraphBuilder builder = CkParagraphBuilder(CkParagraphStyle());
+          builder.addText(text);
+          final CkParagraph paragraph = builder.build();
+          paragraph.layout(const ui.ParagraphConstraints(width: 100));
+          canvas.drawRect(
+            ui.Rect.fromLTWH(offset.dx, offset.dy, paragraph.width, paragraph.height).inflate(10),
+            CkPaint()..color = const ui.Color(0xFF00FF00),
+          );
+          canvas.drawParagraph(paragraph, offset);
+          return recorder.endRecording();
+        }
 
-      final CkPicture helloPicture = makeTextPicture('Hello', ui.Offset.zero);
+        CkPicture imageToPicture(CkImage image, ui.Offset offset) {
+          final CkPictureRecorder recorder = CkPictureRecorder();
+          final CkCanvas canvas = recorder.beginRecording(ui.Rect.largest);
+          canvas.drawImage(image, offset, CkPaint());
+          return recorder.endRecording();
+        }
 
-      final CkImage helloImage = helloPicture.toImageSync(100, 100);
+        final CkPicture helloPicture = makeTextPicture('Hello', ui.Offset.zero);
 
-      // Calling toByteData is essential to hit the bug.
-      await helloImage.toByteData(format: ui.ImageByteFormat.png);
+        final CkImage helloImage = helloPicture.toImageSync(100, 100);
 
-      final LayerSceneBuilder sb = LayerSceneBuilder();
-      sb.pushOffset(0, 0);
-      sb.addPicture(ui.Offset.zero, helloPicture);
-      sb.addPlatformView(0, width: 10, height: 10);
+        // Calling toByteData is essential to hit the bug.
+        await helloImage.toByteData(format: ui.ImageByteFormat.png);
 
-      // The image is rendered after the platform view so that it's rendered into
-      // a separate surface, which is what triggers the bug. If the bug is present
-      // the image will not appear on the UI.
-      sb.addPicture(const ui.Offset(0, 50), imageToPicture(helloImage, ui.Offset.zero));
-      sb.pop();
+        final LayerSceneBuilder sb = LayerSceneBuilder();
+        sb.pushOffset(0, 0);
+        sb.addPicture(ui.Offset.zero, helloPicture);
+        sb.addPlatformView(0, width: 10, height: 10);
 
-      // The below line should not throw an error.
-      await matchSceneGolden('cross_overlay_resources.png', sb.build(),
-          region: const ui.Rect.fromLTRB(0, 0, 100, 100));
-    });
+        // The image is rendered after the platform view so that it's rendered into
+        // a separate surface, which is what triggers the bug. If the bug is present
+        // the image will not appear on the UI.
+        sb.addPicture(const ui.Offset(0, 50), imageToPicture(helloImage, ui.Offset.zero));
+        sb.pop();
+
+        // The below line should not throw an error.
+        await matchSceneGolden(
+          'cross_overlay_resources.png',
+          sb.build(),
+          region: const ui.Rect.fromLTRB(0, 0, 100, 100),
+        );
+      },
+    );
   });
 }
 
@@ -223,15 +223,8 @@ void drawTestPicture(CkCanvas canvas) {
   canvas.save();
 
   canvas.save();
-  canvas.clipRect(
-    const ui.Rect.fromLTRB(0, 0, 45, 45),
-    ui.ClipOp.intersect,
-    true,
-  );
-  canvas.clipRRect(
-    ui.RRect.fromLTRBR(5, 5, 50, 50, const ui.Radius.circular(8)),
-    true,
-  );
+  canvas.clipRect(const ui.Rect.fromLTRB(0, 0, 45, 45), ui.ClipOp.intersect, true);
+  canvas.clipRRect(ui.RRect.fromLTRBR(5, 5, 50, 50, const ui.Radius.circular(8)), true);
   canvas.clipPath(
     CkPath()
       ..moveTo(5, 5)
@@ -245,11 +238,7 @@ void drawTestPicture(CkCanvas canvas) {
   canvas.restore(); // remove clips
 
   canvas.translate(60, 0);
-  canvas.drawCircle(
-    const ui.Offset(30, 25),
-    15,
-    CkPaint()..color = const ui.Color(0xFF0000AA),
-  );
+  canvas.drawCircle(const ui.Offset(30, 25), 15, CkPaint()..color = const ui.Color(0xFF0000AA));
 
   canvas.translate(60, 0);
   canvas.drawArc(
@@ -261,11 +250,7 @@ void drawTestPicture(CkCanvas canvas) {
   );
 
   canvas.translate(60, 0);
-  canvas.drawImage(
-    generateTestImage(),
-    const ui.Offset(20, 20),
-    CkPaint(),
-  );
+  canvas.drawImage(generateTestImage(), const ui.Offset(20, 20), CkPaint());
 
   canvas.translate(60, 0);
   final ui.RSTransform transform = ui.RSTransform.fromComponents(
@@ -325,10 +310,7 @@ void drawTestPicture(CkCanvas canvas) {
   canvas.drawLine(ui.Offset.zero, const ui.Offset(40, 30), CkPaint());
 
   canvas.translate(60, 0);
-  canvas.drawOval(
-    const ui.Rect.fromLTRB(0, 0, 40, 30),
-    CkPaint(),
-  );
+  canvas.drawOval(const ui.Rect.fromLTRB(0, 0, 40, 30), CkPaint());
 
   canvas.translate(60, 0);
   canvas.save();
@@ -339,8 +321,7 @@ void drawTestPicture(CkCanvas canvas) {
   canvas.translate(60, 0);
   {
     final CkPictureRecorder otherRecorder = CkPictureRecorder();
-    final CkCanvas otherCanvas =
-        otherRecorder.beginRecording(const ui.Rect.fromLTRB(0, 0, 40, 20));
+    final CkCanvas otherCanvas = otherRecorder.beginRecording(const ui.Rect.fromLTRB(0, 0, 40, 20));
     otherCanvas.drawCircle(
       const ui.Offset(30, 15),
       10,
@@ -364,21 +345,15 @@ void drawTestPicture(CkCanvas canvas) {
       ui.Offset(10, 10),
       ui.Offset(20, 10),
       ui.Offset(30, 20),
-      ui.Offset(40, 20)
+      ui.Offset(40, 20),
     ]),
   );
 
   canvas.translate(60, 0);
-  canvas.drawRRect(
-    ui.RRect.fromLTRBR(0, 0, 40, 30, const ui.Radius.circular(10)),
-    CkPaint(),
-  );
+  canvas.drawRRect(ui.RRect.fromLTRBR(0, 0, 40, 30, const ui.Radius.circular(10)), CkPaint());
 
   canvas.translate(60, 0);
-  canvas.drawRect(
-    const ui.Rect.fromLTRB(0, 0, 40, 30),
-    CkPaint(),
-  );
+  canvas.drawRect(const ui.Rect.fromLTRB(0, 0, 40, 30), CkPaint());
 
   canvas.translate(60, 0);
   canvas.drawShadow(
@@ -395,14 +370,11 @@ void drawTestPicture(CkCanvas canvas) {
   canvas.save();
 
   canvas.drawVertices(
-    CkVertices(
-      ui.VertexMode.triangleFan,
-      const <ui.Offset>[
-        ui.Offset(10, 30),
-        ui.Offset(30, 50),
-        ui.Offset(10, 60),
-      ],
-    ),
+    CkVertices(ui.VertexMode.triangleFan, const <ui.Offset>[
+      ui.Offset(10, 30),
+      ui.Offset(30, 50),
+      ui.Offset(10, 60),
+    ]),
     ui.BlendMode.srcOver,
     CkPaint(),
   );
@@ -422,14 +394,14 @@ void drawTestPicture(CkCanvas canvas) {
   canvas.save();
   canvas.rotate(-math.pi / 8);
   canvas.drawLine(ui.Offset.zero, const ui.Offset(30, 30), CkPaint());
-  canvas.drawCircle(
-      const ui.Offset(30, 30), 7, CkPaint()..color = const ui.Color(0xFF00AA00));
+  canvas.drawCircle(const ui.Offset(30, 30), 7, CkPaint()..color = const ui.Color(0xFF00AA00));
   canvas.restore();
 
   canvas.translate(60, 0);
-  final CkPaint thickStroke = CkPaint()
-    ..style = ui.PaintingStyle.stroke
-    ..strokeWidth = 20;
+  final CkPaint thickStroke =
+      CkPaint()
+        ..style = ui.PaintingStyle.stroke
+        ..strokeWidth = 20;
   final CkPaint semitransparent = CkPaint()..color = const ui.Color(0x66000000);
 
   canvas.saveLayer(kDefaultRegion, semitransparent);
@@ -450,7 +422,9 @@ void drawTestPicture(CkCanvas canvas) {
   canvas.drawCircle(const ui.Offset(30, 30), 10, CkPaint());
   {
     canvas.saveLayerWithFilter(
-        kDefaultRegion, ui.ImageFilter.blur(sigmaX: 5, sigmaY: 10, tileMode: ui.TileMode.clamp));
+      kDefaultRegion,
+      ui.ImageFilter.blur(sigmaX: 5, sigmaY: 10, tileMode: ui.TileMode.clamp),
+    );
     canvas.drawCircle(const ui.Offset(10, 10), 10, CkPaint());
     canvas.drawCircle(const ui.Offset(50, 50), 10, CkPaint());
     canvas.restore();
@@ -487,10 +461,7 @@ void drawTestPicture(CkCanvas canvas) {
 
   canvas.translate(60, 0);
   final CkParagraph p = makeSimpleText('Hello', fontSize: 18, color: const ui.Color(0xFF0000AA));
-  canvas.drawParagraph(
-    p,
-    const ui.Offset(10, 20),
-  );
+  canvas.drawParagraph(p, const ui.Offset(10, 20));
 
   canvas.translate(60, 0);
   canvas.drawPath(
@@ -516,17 +487,18 @@ CkImage generateTestImage() {
   ctx.fillRect(10, 0, 10, 10);
   ctx.fillStyle = '#FF00FF';
   ctx.fillRect(10, 10, 10, 10);
-  final Uint8List imageData =
-      ctx.getImageData(0, 0, 20, 20).data.buffer.asUint8List();
-  final SkImage skImage = canvasKit.MakeImage(
-      SkImageInfo(
-        width: 20,
-        height: 20,
-        alphaType: canvasKit.AlphaType.Premul,
-        colorType: canvasKit.ColorType.RGBA_8888,
-        colorSpace: SkColorSpaceSRGB,
-      ),
-      imageData,
-      4 * 20)!;
+  final Uint8List imageData = ctx.getImageData(0, 0, 20, 20).data.buffer.asUint8List();
+  final SkImage skImage =
+      canvasKit.MakeImage(
+        SkImageInfo(
+          width: 20,
+          height: 20,
+          alphaType: canvasKit.AlphaType.Premul,
+          colorType: canvasKit.ColorType.RGBA_8888,
+          colorSpace: SkColorSpaceSRGB,
+        ),
+        imageData,
+        4 * 20,
+      )!;
   return CkImage(skImage);
 }

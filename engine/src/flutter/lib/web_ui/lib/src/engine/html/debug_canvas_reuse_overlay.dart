@@ -60,13 +60,11 @@ class DebugCanvasReuseOverlay {
             ..append(_inRecycle),
         )
         ..append(
-          createDomHTMLDivElement()
-            ..append(
-              createDomHTMLButtonElement()
-                ..text = 'Reset'
-                ..addEventListener('click',
-                    createDomEventListener((_) => _reset())),
-            ),
+          createDomHTMLDivElement()..append(
+            createDomHTMLButtonElement()
+              ..text = 'Reset'
+              ..addEventListener('click', createDomEventListener((_) => _reset())),
+          ),
         ),
     );
   }
@@ -134,8 +132,7 @@ class DebugCanvasReuseOverlay {
   }
 
   void _reset() {
-    _createdCount =
-        _keptCount = _reusedCount = _disposedCount = _inRecycleCount = 0;
+    _createdCount = _keptCount = _reusedCount = _disposedCount = _inRecycleCount = 0;
     _update();
   }
 }

@@ -59,15 +59,15 @@ abstract class TextScaler {
 
   /// Returns a new [TextScaler] that restricts the scaled font size to within
   /// the range `[minScaleFactor * fontSize, maxScaleFactor * fontSize]`.
-  TextScaler clamp({ double minScaleFactor = 0, double maxScaleFactor = double.infinity }) {
+  TextScaler clamp({double minScaleFactor = 0, double maxScaleFactor = double.infinity}) {
     assert(maxScaleFactor >= minScaleFactor);
     assert(!maxScaleFactor.isNaN);
     assert(minScaleFactor.isFinite);
     assert(minScaleFactor >= 0);
 
     return minScaleFactor == maxScaleFactor
-      ? TextScaler.linear(minScaleFactor)
-      : _ClampedTextScaler(this, minScaleFactor, maxScaleFactor);
+        ? TextScaler.linear(minScaleFactor)
+        : _ClampedTextScaler(this, minScaleFactor, maxScaleFactor);
   }
 }
 
@@ -85,7 +85,7 @@ final class _LinearTextScaler implements TextScaler {
   }
 
   @override
-  TextScaler clamp({ double minScaleFactor = 0, double maxScaleFactor = double.infinity }) {
+  TextScaler clamp({double minScaleFactor = 0, double maxScaleFactor = double.infinity}) {
     assert(maxScaleFactor >= minScaleFactor);
     assert(!maxScaleFactor.isNaN);
     assert(minScaleFactor.isFinite);
@@ -124,15 +124,15 @@ final class _ClampedTextScaler implements TextScaler {
     assert(fontSize >= 0);
     assert(fontSize.isFinite);
     return minScale == maxScale
-      ? minScale * fontSize
-      : clampDouble(scaler.scale(fontSize), minScale * fontSize, maxScale * fontSize);
+        ? minScale * fontSize
+        : clampDouble(scaler.scale(fontSize), minScale * fontSize, maxScale * fontSize);
   }
 
   @override
-  TextScaler clamp({ double minScaleFactor = 0, double maxScaleFactor = double.infinity }) {
+  TextScaler clamp({double minScaleFactor = 0, double maxScaleFactor = double.infinity}) {
     return minScaleFactor == maxScaleFactor
-      ? _LinearTextScaler(minScaleFactor)
-      : _ClampedTextScaler(scaler, max(minScaleFactor, minScale), min(maxScaleFactor, maxScale));
+        ? _LinearTextScaler(minScaleFactor)
+        : _ClampedTextScaler(scaler, max(minScaleFactor, minScale), min(maxScaleFactor, maxScale));
   }
 
   @override
@@ -140,12 +140,13 @@ final class _ClampedTextScaler implements TextScaler {
     if (identical(this, other)) {
       return true;
     }
-    return other is _ClampedTextScaler
-        && minScale == other.minScale
-        && maxScale == other.maxScale
-        && (minScale == maxScale || scaler == other.scaler);
+    return other is _ClampedTextScaler &&
+        minScale == other.minScale &&
+        maxScale == other.maxScale &&
+        (minScale == maxScale || scaler == other.scaler);
   }
 
   @override
-  int get hashCode => minScale == maxScale ? minScale.hashCode : Object.hash(scaler, minScale, maxScale);
+  int get hashCode =>
+      minScale == maxScale ? minScale.hashCode : Object.hash(scaler, minScale, maxScale);
 }

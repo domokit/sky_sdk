@@ -18,9 +18,7 @@ class HeroApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: HeroExample(),
-    );
+    return const MaterialApp(home: HeroExample());
   }
 }
 
@@ -72,56 +70,49 @@ class HeroExample extends StatelessWidget {
   }
 
   void _gotoDetailsPage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute<void>(
-      builder: (BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('Second Page'),
-        ),
-        body: Align(
-          alignment: Alignment.bottomRight,
-          child: Stack(
-            children: <Widget>[
-              Hero(
-                tag: 'hero-custom-tween',
-                createRectTween: (Rect? begin, Rect? end) {
-                  return MaterialRectCenterArcTween(begin: begin, end: end);
-                },
-                child: BoxWidget(
-                  size: const Size(400.0, 400.0),
-                  color: Colors.blue[700]!.withOpacity(0.5),
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder:
+            (BuildContext context) => Scaffold(
+              appBar: AppBar(title: const Text('Second Page')),
+              body: Align(
+                alignment: Alignment.bottomRight,
+                child: Stack(
+                  children: <Widget>[
+                    Hero(
+                      tag: 'hero-custom-tween',
+                      createRectTween: (Rect? begin, Rect? end) {
+                        return MaterialRectCenterArcTween(begin: begin, end: end);
+                      },
+                      child: BoxWidget(
+                        size: const Size(400.0, 400.0),
+                        color: Colors.blue[700]!.withOpacity(0.5),
+                      ),
+                    ),
+                    Hero(
+                      tag: 'hero-default-tween',
+                      child: BoxWidget(
+                        size: const Size(400.0, 400.0),
+                        color: Colors.red[700]!.withOpacity(0.5),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Hero(
-                tag: 'hero-default-tween',
-                child: BoxWidget(
-                  size: const Size(400.0, 400.0),
-                  color: Colors.red[700]!.withOpacity(0.5),
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
       ),
-    ));
+    );
   }
 }
 
 class BoxWidget extends StatelessWidget {
-  const BoxWidget({
-    super.key,
-    required this.size,
-    required this.color,
-  });
+  const BoxWidget({super.key, required this.size, required this.color});
 
   final Size size;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size.width,
-      height: size.height,
-      color: color,
-    );
+    return Container(width: size.width, height: size.height, color: color);
   }
 }

@@ -17,10 +17,7 @@ import 'dart:io';
 import 'package:test/test.dart';
 
 // Libraries that allow making arbitrary calls to JavaScript.
-const List<String> _jsAccessLibraries = <String>[
-  'dart:js_util',
-  'package:js',
-];
+const List<String> _jsAccessLibraries = <String>['dart:js_util', 'package:js'];
 
 // Libraries that are allowed to make direct calls to JavaScript. These
 // libraries must be reviewed carefully to make sure JavaScript APIs are used
@@ -38,23 +35,18 @@ Future<void> main(List<String> args) async {
   }());
 
   if (shouldThrow) {
-    throw ArgumentError(
-      'This test must run with --enable-asserts',
-    );
+    throw ArgumentError('This test must run with --enable-asserts');
   }
 
   test('Self-test', () {
     // A library that doesn't directly access JavaScript API should pass.
     {
-      final _CheckResult result = _checkFile(
-          File('lib/web_ui/lib/src/engine/alarm_clock.dart'),
-'''
+      final _CheckResult result = _checkFile(File('lib/web_ui/lib/src/engine/alarm_clock.dart'), '''
 // A comment
 import 'dart:async';
 import 'package:ui/ui.dart' as ui;
 export 'foo.dart';
-''',
-      );
+''');
       expect(result.passed, isTrue);
       expect(result.failed, isFalse);
       expect(result.violations, isEmpty);
@@ -62,45 +54,34 @@ export 'foo.dart';
 
     // A library that doesn't directly access JavaScript API should pass.
     expect(
-      _checkFile(
-        File('lib/web_ui/lib/src/engine/alarm_clock.dart'),
-'''
+      _checkFile(File('lib/web_ui/lib/src/engine/alarm_clock.dart'), '''
 import 'dart:async';
 import 'package:ui/ui.dart' as ui;
-''',
-      ).passed,
+''').passed,
       isTrue,
     );
 
     // A non-audited library that directly accesses JavaScript API should fail.
     for (final String jsAccessLibrary in _jsAccessLibraries) {
-      final _CheckResult result = _checkFile(
-          File('lib/web_ui/lib/src/engine/alarm_clock.dart'),
-  '''
+      final _CheckResult result = _checkFile(File('lib/web_ui/lib/src/engine/alarm_clock.dart'), '''
   import 'dart:async';
   import 'package:ui/ui.dart' as ui;
   import '$jsAccessLibrary';
-  ''',
-      );
+  ''');
       expect(result.passed, isFalse);
       expect(result.failed, isTrue);
-      expect(result.violations, <String>[
-        'on line 3: library accesses $jsAccessLibrary directly',
-      ]);
+      expect(result.violations, <String>['on line 3: library accesses $jsAccessLibrary directly']);
     }
 
     // Audited libraries that directly accesses JavaScript API should pass.
     for (final String auditedLibrary in _auditedLibraries) {
       for (final String jsAccessLibrary in _jsAccessLibraries) {
         expect(
-          _checkFile(
-            File(auditedLibrary),
-    '''
+          _checkFile(File(auditedLibrary), '''
     import 'dart:async';
     import 'package:ui/ui.dart' as ui;
     import '$jsAccessLibrary';
-    ''',
-          ).passed,
+    ''').passed,
           isTrue,
         );
       }
@@ -109,20 +90,18 @@ import 'package:ui/ui.dart' as ui;
 
   test('Check JavaScript access', () async {
     final Directory webUiLibDir = Directory('lib/web_ui/lib');
-    final List<File> dartFiles = webUiLibDir
-      .listSync(recursive: true)
-      .whereType<File>()
-      .where((File file) => file.path.endsWith('.dart'))
-      .toList();
+    final List<File> dartFiles =
+        webUiLibDir
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((File file) => file.path.endsWith('.dart'))
+            .toList();
 
     expect(dartFiles, isNotEmpty);
 
     final List<_CheckResult> results = <_CheckResult>[];
     for (final File dartFile in dartFiles) {
-      results.add(_checkFile(
-        dartFile,
-        await dartFile.readAsString(),
-      ));
+      results.add(_checkFile(dartFile, await dartFile.readAsString()));
     }
 
     if (results.any((_CheckResult result) => result.failed)) {
@@ -165,7 +144,9 @@ _CheckResult _checkFile(File dartFile, String code) {
     }
 
     if (line.contains('"')) {
-      violations.add('on line $lineNumber: import is using double quotes instead of single quotes: $line');
+      violations.add(
+        'on line $lineNumber: import is using double quotes instead of single quotes: $line',
+      );
       continue;
     }
 

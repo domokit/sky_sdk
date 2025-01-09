@@ -18,9 +18,7 @@ void main() {
 }
 
 Future<void> testMain() async {
-  setUpUnitTests(
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(setUpTestViewDimensions: false);
 
   tearDown(() {
     ContextStateHandle.debugEmulateWebKitMaskFilter = false;
@@ -39,14 +37,11 @@ Future<void> testMain() async {
       final RecordingCanvas rc = RecordingCanvas(screenRect);
       rc.translate(0, 75);
 
-      final SurfacePaint paint = SurfacePaint()
-          ..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 5);
+      final SurfacePaint paint =
+          SurfacePaint()..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 5);
 
       rc.translate(50, 0);
-      rc.drawRect(
-        ui.Rect.fromCircle(center: ui.Offset.zero, radius: 30),
-        paint,
-      );
+      rc.drawRect(ui.Rect.fromCircle(center: ui.Offset.zero, radius: 30), paint);
 
       rc.translate(100, 0);
       paint.color = const ui.Color(0xFF00FF00);
@@ -76,19 +71,12 @@ Future<void> testMain() async {
 
       rc.translate(100, 0);
       paint.color = const ui.Color(0xFFFF00FF);
-      rc.drawOval(
-        ui.Rect.fromCenter(center: ui.Offset.zero, width: 40, height: 100),
-        paint,
-      );
+      rc.drawOval(ui.Rect.fromCenter(center: ui.Offset.zero, width: 40, height: 100), paint);
 
       rc.translate(100, 0);
       paint.color = const ui.Color(0xFF888800);
       paint.strokeWidth = 5;
-      rc.drawLine(
-        const ui.Offset(-20, -50),
-        const ui.Offset(20, 50),
-        paint,
-      );
+      rc.drawLine(const ui.Offset(-20, -50), const ui.Offset(20, 50), paint);
 
       rc.translate(100, 0);
       paint.color = const ui.Color(0xFF888888);
@@ -124,8 +112,8 @@ Future<void> testMain() async {
       final RecordingCanvas rc = RecordingCanvas(screenRect);
       rc.translate(150, 150);
 
-      final SurfacePaint paint = SurfacePaint()
-          ..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 5);
+      final SurfacePaint paint =
+          SurfacePaint()..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 5);
 
       const List<ui.Color> colors = <ui.Color>[
         ui.Color(0xFF000000),
@@ -141,14 +129,10 @@ Future<void> testMain() async {
       for (final ui.Color color in colors) {
         paint.color = color;
         rc.rotate(math.pi / 4);
-        rc.drawRect(
-          ui.Rect.fromCircle(center: const ui.Offset(90, 0), radius: 20),
-          paint,
-        );
+        rc.drawRect(ui.Rect.fromCircle(center: const ui.Offset(90, 0), radius: 20), paint);
       }
 
-      await canvasScreenshot(rc, 'mask_filter_transformed_$browser',
-          region: screenRect);
+      await canvasScreenshot(rc, 'mask_filter_transformed_$browser', region: screenRect);
     });
   }
 
@@ -163,17 +147,13 @@ Future<void> testMain() async {
       final RecordingCanvas rc = RecordingCanvas(screenRect);
       rc.translate(0, 75);
 
-      final SurfacePaint paint = SurfacePaint()
-          ..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 5);
+      final SurfacePaint paint =
+          SurfacePaint()..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 5);
 
       rc.translate(75, 0);
-      rc.drawRect(
-        ui.Rect.fromCircle(center: ui.Offset.zero, radius: 30),
-        paint,
-      );
+      rc.drawRect(ui.Rect.fromCircle(center: ui.Offset.zero, radius: 30), paint);
 
-      await canvasScreenshot(rc, 'mask_filter_blur_dpr_$testDpr',
-          region: screenRect);
+      await canvasScreenshot(rc, 'mask_filter_blur_dpr_$testDpr', region: screenRect);
       EngineFlutterDisplay.instance.debugOverrideDevicePixelRatio(1.0);
     });
   }

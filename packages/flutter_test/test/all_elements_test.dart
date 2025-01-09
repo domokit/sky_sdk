@@ -8,21 +8,21 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('collectAllElements goes in LTR DFS', (WidgetTester tester) async {
     final GlobalKey key = GlobalKey();
-    await tester.pumpWidget(Directionality(
-      key: key,
-      textDirection: TextDirection.ltr,
-      child: Row(
-        children: <Widget>[
-          RichText(text: const TextSpan(text: 'a')),
-          RichText(text: const TextSpan(text: 'b')),
-        ],
+    await tester.pumpWidget(
+      Directionality(
+        key: key,
+        textDirection: TextDirection.ltr,
+        child: Row(
+          children: <Widget>[
+            RichText(text: const TextSpan(text: 'a')),
+            RichText(text: const TextSpan(text: 'b')),
+          ],
+        ),
       ),
-    ));
+    );
 
-    final List<Element> elements = collectAllElementsFrom(
-      key.currentContext! as Element,
-      skipOffstage: false,
-    ).toList();
+    final List<Element> elements =
+        collectAllElementsFrom(key.currentContext! as Element, skipOffstage: false).toList();
 
     expect(elements.length, 3);
     expect(elements[0].widget, isA<Row>());

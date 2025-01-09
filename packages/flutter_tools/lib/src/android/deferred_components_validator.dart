@@ -19,19 +19,22 @@ import '../base/terminal.dart';
 /// The results of each check are handled internally as they are not meant to
 /// be run isolated.
 abstract class DeferredComponentsValidator {
-  DeferredComponentsValidator(this.projectDir, this.logger, this.platform, {
+  DeferredComponentsValidator(
+    this.projectDir,
+    this.logger,
+    this.platform, {
     this.exitOnFail = true,
     String? title,
   }) : outputDir = projectDir
-        .childDirectory('build')
-        .childDirectory(kDeferredComponentsTempDirectory),
-      inputs = <File>[],
-      outputs = <File>[],
-      title = title ?? 'Deferred components setup verification',
-      generatedFiles = <String>[],
-      modifiedFiles = <String>[],
-      invalidFiles = <String, String>{},
-      diffLines = <String>[];
+           .childDirectory('build')
+           .childDirectory(kDeferredComponentsTempDirectory),
+       inputs = <File>[],
+       outputs = <File>[],
+       title = title ?? 'Deferred components setup verification',
+       generatedFiles = <String>[],
+       modifiedFiles = <String>[],
+       invalidFiles = <String, String>{},
+       diffLines = <String>[];
 
   /// Logger to use for [displayResults] output.
   final Logger logger;
@@ -45,6 +48,7 @@ abstract class DeferredComponentsValidator {
   /// The name of the golden file that tracks the latest loading units
   /// generated.
   static const String kLoadingUnitsCacheFileName = 'deferred_components_loading_units.yaml';
+
   /// The directory in the build folder to generate missing/modified files into.
   static const String kDeferredComponentsTempDirectory = 'android_deferred_components_setup_files';
 
@@ -78,6 +82,7 @@ abstract class DeferredComponentsValidator {
 
   /// All files read by the validator.
   final List<File> inputs;
+
   /// All files output by the validator.
   final List<File> outputs;
 
@@ -88,10 +93,11 @@ abstract class DeferredComponentsValidator {
   ///
   /// If no checks are run, then this will default to false and will remain so
   /// until a failing check finishes running.
-  bool get changesNeeded => generatedFiles.isNotEmpty
-    || modifiedFiles.isNotEmpty
-    || invalidFiles.isNotEmpty
-    || (loadingUnitComparisonResults != null && !(loadingUnitComparisonResults!['match'] as bool));
+  bool get changesNeeded =>
+      generatedFiles.isNotEmpty ||
+      modifiedFiles.isNotEmpty ||
+      invalidFiles.isNotEmpty ||
+      (loadingUnitComparisonResults != null && !(loadingUnitComparisonResults!['match'] as bool));
 
   /// Handles the results of all executed checks by calling [displayResults] and
   /// [attemptToolExit].
@@ -102,8 +108,10 @@ abstract class DeferredComponentsValidator {
     attemptToolExit();
   }
 
-  static const String _thickDivider = '=================================================================================';
-  static const String _thinDivider = '---------------------------------------------------------------------------------';
+  static const String _thickDivider =
+      '=================================================================================';
+  static const String _thinDivider =
+      '---------------------------------------------------------------------------------';
 
   /// Displays the results of this validator's executed checks and tasks in a
   /// human readable format.
@@ -134,7 +142,7 @@ abstract class DeferredComponentsValidator {
           final TerminalColor color = switch (line[0]) {
             '+' => TerminalColor.green,
             '-' => TerminalColor.red,
-            _   => TerminalColor.grey,
+            _ => TerminalColor.grey,
           };
           logger.printStatus(line, color: color);
         }
@@ -176,14 +184,16 @@ The recommended changes can be quickly applied by running:
       if (loadingUnitComparisonResults != null) {
         if ((loadingUnitComparisonResults!['new'] as List<LoadingUnit>).isNotEmpty) {
           logger.printStatus('New loading units were found:', emphasis: true);
-          for (final LoadingUnit unit in loadingUnitComparisonResults!['new'] as List<LoadingUnit>) {
+          for (final LoadingUnit unit
+              in loadingUnitComparisonResults!['new'] as List<LoadingUnit>) {
             logger.printStatus(unit.toString(), color: TerminalColor.grey, indent: 2);
           }
           logger.printStatus('');
         }
         if ((loadingUnitComparisonResults!['missing'] as Set<LoadingUnit>).isNotEmpty) {
           logger.printStatus('Previously existing loading units no longer exist:', emphasis: true);
-          for (final LoadingUnit unit in loadingUnitComparisonResults!['missing'] as Set<LoadingUnit>) {
+          for (final LoadingUnit unit
+              in loadingUnitComparisonResults!['missing'] as Set<LoadingUnit>) {
             logger.printStatus(unit.toString(), color: TerminalColor.grey, indent: 2);
           }
           logger.printStatus('');
@@ -216,7 +226,10 @@ $_thickDivider''');
 
   void attemptToolExit() {
     if (exitOnFail && changesNeeded) {
-      throwToolExit('Setup for deferred components incomplete. See recommended actions.', exitCode: 1);
+      throwToolExit(
+        'Setup for deferred components incomplete. See recommended actions.',
+        exitCode: 1,
+      );
     }
   }
 }

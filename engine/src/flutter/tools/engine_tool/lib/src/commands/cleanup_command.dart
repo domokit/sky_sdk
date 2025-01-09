@@ -14,11 +14,7 @@ import 'flags.dart';
 /// The `cleanup` command for removing unnecessary on-disk artifacts.
 final class CleanupCommand extends CommandBase {
   /// Constructs the `cleanup` command.
-  CleanupCommand({
-    required super.environment,
-    super.help = false,
-    super.usageLineLength,
-  }) {
+  CleanupCommand({required super.environment, super.help = false, super.usageLineLength}) {
     argParser.addFlag(
       dryRunFlag,
       abbr: 'd',
@@ -69,15 +65,11 @@ final class CleanupCommand extends CommandBase {
     environment.logger.status('Checking ${environment.engine.outDir.path}...');
     final toDelete = [
       await for (final entity in environment.engine.outDir.list())
-        if (entity is Directory &&
-            _shouldDelete(entity, ifAccessedLaterThan: since))
-          entity
+        if (entity is Directory && _shouldDelete(entity, ifAccessedLaterThan: since)) entity,
     ]..sort((a, b) => a.path.compareTo(b.path));
 
     if (toDelete.isEmpty) {
-      environment.logger.status(
-        'No directories were accessed later than ${_toDateString(since)}.',
-      );
+      environment.logger.status('No directories were accessed later than ${_toDateString(since)}.');
       return 0;
     }
 
@@ -115,10 +107,7 @@ final class CleanupCommand extends CommandBase {
     return 0;
   }
 
-  static bool _shouldDelete(
-    Directory entity, {
-    required DateTime ifAccessedLaterThan,
-  }) {
+  static bool _shouldDelete(Directory entity, {required DateTime ifAccessedLaterThan}) {
     final accessed = entity.statSync().accessed;
     return accessed.isBefore(ifAccessedLaterThan);
   }

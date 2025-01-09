@@ -20,11 +20,11 @@ final class BuildBucketGoldenScraper {
     this.dryRun = false,
     String? engineSrcPath,
     StringSink? outSink,
-  }) :
-      engine = engineSrcPath != null ?
-          Engine.fromSrcPath(engineSrcPath) :
-          Engine.findWithin(p.dirname(p.fromUri(io.Platform.script))),
-      _outSink = outSink ?? io.stdout;
+  }) : engine =
+           engineSrcPath != null
+               ? Engine.fromSrcPath(engineSrcPath)
+               : Engine.findWithin(p.dirname(p.fromUri(io.Platform.script))),
+       _outSink = outSink ?? io.stdout;
 
   /// Creates a scraper from the command line arguments.
   ///
@@ -61,23 +61,19 @@ final class BuildBucketGoldenScraper {
     throw FormatException(output.toString(), args.join(' '));
   }
 
-  static final ArgParser _argParser = ArgParser()
-    ..addFlag(
-      'help',
-      abbr: 'h',
-      help: 'Print this help message.',
-      negatable: false,
-    )
-    ..addFlag(
-      'dry-run',
-      help: "If true, don't write any files to disk (other than temporary files).",
-      negatable: false,
-    )
-    ..addOption(
-      'engine-src-path',
-      help: 'The path to the engine source code.',
-      valueHelp: 'path/that/contains/src (defaults to the directory containing this script)',
-    );
+  static final ArgParser _argParser =
+      ArgParser()
+        ..addFlag('help', abbr: 'h', help: 'Print this help message.', negatable: false)
+        ..addFlag(
+          'dry-run',
+          help: "If true, don't write any files to disk (other than temporary files).",
+          negatable: false,
+        )
+        ..addOption(
+          'engine-src-path',
+          help: 'The path to the engine source code.',
+          valueHelp: 'path/that/contains/src (defaults to the directory containing this script)',
+        );
 
   /// A local path or a URL to a buildbucket log file.
   final String pathOrUrl;
@@ -153,7 +149,8 @@ final class BuildBucketGoldenScraper {
     // Write the goldens to disk (or pretend to in dry-run mode).
     _outSink.writeln('${dryRun ? 'Found' : 'Wrote'} ${uniqueGoldens.length} golden file changes:');
     for (final _Golden golden in uniqueGoldens) {
-      final String truncatedPathAfterFlutterDir = golden.outFile.path.split('flutter${p.separator}').last;
+      final String truncatedPathAfterFlutterDir =
+          golden.outFile.path.split('flutter${p.separator}').last;
       _outSink.writeln('  $truncatedPathAfterFlutterDir');
       if (!dryRun) {
         await golden.outFile.writeAsBytes(golden.bytes);

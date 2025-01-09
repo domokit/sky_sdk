@@ -10,9 +10,13 @@ import 'package:flutter_api_samples/material/color_scheme/dynamic_content_color.
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  final List<(ImageProvider<Object>, Brightness)> loadColorSchemeCalls = <(ImageProvider<Object>, Brightness)>[];
+  final List<(ImageProvider<Object>, Brightness)> loadColorSchemeCalls =
+      <(ImageProvider<Object>, Brightness)>[];
 
-  Future<ColorScheme> fakeColorSchemeLoader(ImageProvider<Object> provider, Brightness brightness) async {
+  Future<ColorScheme> fakeColorSchemeLoader(
+    ImageProvider<Object> provider,
+    Brightness brightness,
+  ) async {
     loadColorSchemeCalls.add((provider, brightness));
     final int index = example.DynamicColorExample.images.indexOf(provider);
     final int seedColor = 0xf * pow(0x10, index).toInt();
@@ -30,17 +34,10 @@ void main() {
   });
 
   testWidgets('The content is visible', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      example.DynamicColorExample(
-        loadColorScheme: fakeColorSchemeLoader,
-      ),
-    );
+    await tester.pumpWidget(example.DynamicColorExample(loadColorScheme: fakeColorSchemeLoader));
     await tester.pump();
 
-    expect(
-      find.widgetWithText(AppBar, 'Content Based Dynamic Color'),
-      findsOne,
-    );
+    expect(find.widgetWithText(AppBar, 'Content Based Dynamic Color'), findsOne);
     expect(find.byType(Switch), findsOne);
     expect(find.byIcon(Icons.light_mode), findsOne);
 
@@ -74,43 +71,31 @@ void main() {
     expect(loadColorSchemeCalls, hasLength(1));
     expect(
       loadColorSchemeCalls.single.$1,
-      isA<NetworkImage>()
-        .having(
-          (NetworkImage provider) => provider.url,
-          'url',
-          'https://flutter.github.io/assets-for-api-docs/assets/material/content_based_color_scheme_1.png',
-        ),
+      isA<NetworkImage>().having(
+        (NetworkImage provider) => provider.url,
+        'url',
+        'https://flutter.github.io/assets-for-api-docs/assets/material/content_based_color_scheme_1.png',
+      ),
     );
-    expect(
-      loadColorSchemeCalls.single.$2,
-      Brightness.light,
-    );
+    expect(loadColorSchemeCalls.single.$2, Brightness.light);
 
     await tester.pumpAndSettle(); // Clears the timers from image loading.
   });
 
   testWidgets('The brightness can be changed', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      example.DynamicColorExample(
-        loadColorScheme: fakeColorSchemeLoader,
-      ),
-    );
+    await tester.pumpWidget(example.DynamicColorExample(loadColorScheme: fakeColorSchemeLoader));
     await tester.pump();
 
     expect(loadColorSchemeCalls, hasLength(1));
     expect(
       loadColorSchemeCalls.single.$1,
-      isA<NetworkImage>()
-        .having(
-          (NetworkImage provider) => provider.url,
-          'url',
-          'https://flutter.github.io/assets-for-api-docs/assets/material/content_based_color_scheme_1.png',
-        ),
+      isA<NetworkImage>().having(
+        (NetworkImage provider) => provider.url,
+        'url',
+        'https://flutter.github.io/assets-for-api-docs/assets/material/content_based_color_scheme_1.png',
+      ),
     );
-    expect(
-      loadColorSchemeCalls.single.$2,
-      Brightness.light,
-    );
+    expect(loadColorSchemeCalls.single.$2, Brightness.light);
     await tester.pump();
     await tester.pump(kThemeChangeDuration);
 
@@ -125,17 +110,13 @@ void main() {
     expect(loadColorSchemeCalls, hasLength(2));
     expect(
       loadColorSchemeCalls.last.$1,
-      isA<NetworkImage>()
-        .having(
-          (NetworkImage provider) => provider.url,
-          'url',
-          'https://flutter.github.io/assets-for-api-docs/assets/material/content_based_color_scheme_1.png',
-        ),
+      isA<NetworkImage>().having(
+        (NetworkImage provider) => provider.url,
+        'url',
+        'https://flutter.github.io/assets-for-api-docs/assets/material/content_based_color_scheme_1.png',
+      ),
     );
-    expect(
-      loadColorSchemeCalls.last.$2,
-      Brightness.dark,
-    );
+    expect(loadColorSchemeCalls.last.$2, Brightness.dark);
 
     await tester.pump(kThemeChangeDuration);
 
@@ -146,11 +127,7 @@ void main() {
   });
 
   testWidgets('Tapping an image loads a new color scheme', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      example.DynamicColorExample(
-        loadColorScheme: fakeColorSchemeLoader,
-      ),
-    );
+    await tester.pumpWidget(example.DynamicColorExample(loadColorScheme: fakeColorSchemeLoader));
     await tester.pump();
 
     await tester.tapAt(tester.getCenter(find.byType(Image).at(3)));
@@ -159,17 +136,13 @@ void main() {
     expect(loadColorSchemeCalls, hasLength(2));
     expect(
       loadColorSchemeCalls.last.$1,
-      isA<NetworkImage>()
-        .having(
-          (NetworkImage provider) => provider.url,
-          'url',
-          'https://flutter.github.io/assets-for-api-docs/assets/material/content_based_color_scheme_4.png',
-        ),
+      isA<NetworkImage>().having(
+        (NetworkImage provider) => provider.url,
+        'url',
+        'https://flutter.github.io/assets-for-api-docs/assets/material/content_based_color_scheme_4.png',
+      ),
     );
-    expect(
-      loadColorSchemeCalls.last.$2,
-      Brightness.light,
-    );
+    expect(loadColorSchemeCalls.last.$2, Brightness.light);
 
     await tester.pump(kThemeChangeDuration);
 

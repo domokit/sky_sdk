@@ -17,9 +17,21 @@ class MultiWidgetConstructTable extends StatefulWidget {
 class _MultiWidgetConstructTableState extends State<MultiWidgetConstructTable>
     with SingleTickerProviderStateMixin {
   static const List<MaterialColor> colorList = <MaterialColor>[
-    Colors.pink, Colors.red, Colors.deepOrange, Colors.orange, Colors.amber,
-    Colors.yellow, Colors.lime, Colors.lightGreen, Colors.green, Colors.teal,
-    Colors.cyan, Colors.lightBlue, Colors.blue, Colors.indigo, Colors.purple,
+    Colors.pink,
+    Colors.red,
+    Colors.deepOrange,
+    Colors.orange,
+    Colors.amber,
+    Colors.yellow,
+    Colors.lime,
+    Colors.lightGreen,
+    Colors.green,
+    Colors.teal,
+    Colors.cyan,
+    Colors.lightBlue,
+    Colors.blue,
+    Colors.indigo,
+    Colors.purple,
   ];
   int counter = 0;
 
@@ -60,32 +72,27 @@ class _MultiWidgetConstructTableState extends State<MultiWidgetConstructTable>
             children: List<TableRow>.generate(
               widget.rowCount,
               (int row) => TableRow(
-                children: List<Widget>.generate(
-                  widget.columnCount,
-                  (int column) {
-                    final int label = row * widget.columnCount + column;
-                    // This implementation rebuild the widget tree for every
-                    // frame, and is intentionally designed of poor performance
-                    // for benchmark purposes.
-                    return counter.isEven
-                        ? Container(
-                            // This key forces rebuilding the element
-                            key: ValueKey<int>(widgetCounter + label),
-                            color: Color.lerp(
-                                Colors.white, baseColor, label / totalLength),
-                            constraints: BoxConstraints.expand(height: height),
-                            child: Text('${widgetCounter + label}'),
-                          )
-                        : MyContainer(
-                            // This key forces rebuilding the element
-                            key: ValueKey<int>(widgetCounter + label),
-                            color: Color.lerp(
-                                Colors.white, baseColor, label / totalLength)!,
-                            constraints: BoxConstraints.expand(height: height),
-                            child: Text('${widgetCounter + label}'),
-                          );
-                  },
-                ),
+                children: List<Widget>.generate(widget.columnCount, (int column) {
+                  final int label = row * widget.columnCount + column;
+                  // This implementation rebuild the widget tree for every
+                  // frame, and is intentionally designed of poor performance
+                  // for benchmark purposes.
+                  return counter.isEven
+                      ? Container(
+                        // This key forces rebuilding the element
+                        key: ValueKey<int>(widgetCounter + label),
+                        color: Color.lerp(Colors.white, baseColor, label / totalLength),
+                        constraints: BoxConstraints.expand(height: height),
+                        child: Text('${widgetCounter + label}'),
+                      )
+                      : MyContainer(
+                        // This key forces rebuilding the element
+                        key: ValueKey<int>(widgetCounter + label),
+                        color: Color.lerp(Colors.white, baseColor, label / totalLength)!,
+                        constraints: BoxConstraints.expand(height: height),
+                        child: Text('${widgetCounter + label}'),
+                      );
+                }),
               ),
             ),
           ),
@@ -97,17 +104,18 @@ class _MultiWidgetConstructTableState extends State<MultiWidgetConstructTable>
 
 // This class is intended to break the original Widget tree
 class MyContainer extends StatelessWidget {
-  const MyContainer({required this.color, required this.child, required this.constraints, super.key});
+  const MyContainer({
+    required this.color,
+    required this.child,
+    required this.constraints,
+    super.key,
+  });
   final Color color;
   final Widget child;
   final BoxConstraints constraints;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: color,
-      constraints: constraints,
-      child: child,
-    );
+    return Container(color: color, constraints: constraints, child: child);
   }
 }

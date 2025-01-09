@@ -27,14 +27,19 @@ void main() {
   });
 
   group(VsCodeValidator, () {
-    testUsingContext('Warns if VS Code version could not be found', () async {
-      final VsCodeValidator validator = VsCodeValidator(_FakeVsCode());
-      final ValidationResult result = await validator.validate();
-      expect(result.messages, contains(const ValidationMessage.error('Unable to determine VS Code version.')));
-      expect(result.statusInfo, 'version unknown');
-    }, overrides: <Type, Generator>{
-      UserMessages: () => UserMessages(),
-    });
+    testUsingContext(
+      'Warns if VS Code version could not be found',
+      () async {
+        final VsCodeValidator validator = VsCodeValidator(_FakeVsCode());
+        final ValidationResult result = await validator.validate();
+        expect(
+          result.messages,
+          contains(const ValidationMessage.error('Unable to determine VS Code version.')),
+        );
+        expect(result.statusInfo, 'version unknown');
+      },
+      overrides: <Type, Generator>{UserMessages: () => UserMessages()},
+    );
   });
 }
 

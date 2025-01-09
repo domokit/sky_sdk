@@ -37,25 +37,32 @@ void main() {
     });
 
     group('on value to match against', () {
-
       test('ignores trailing spaces.', () {
-        expect('Give  me  any value to include!   ',
-          containsIgnoringWhitespace('any value to include!'));
+        expect(
+          'Give  me  any value to include!   ',
+          containsIgnoringWhitespace('any value to include!'),
+        );
       });
 
       test('ignores leading spaces.', () {
-        expect('     Give me    any value to include!',
-          containsIgnoringWhitespace('any value to include!'));
+        expect(
+          '     Give me    any value to include!',
+          containsIgnoringWhitespace('any value to include!'),
+        );
       });
 
       test('ignores linebreaks.', () {
-        expect('Give me \n any \n value \n to \n include!',
-          containsIgnoringWhitespace('any value to include!'));
+        expect(
+          'Give me \n any \n value \n to \n include!',
+          containsIgnoringWhitespace('any value to include!'),
+        );
       });
 
       test('ignores tabs.', () {
-        expect('\tGive\t me any\t value \t to \t include!',
-          containsIgnoringWhitespace('any value to include!'));
+        expect(
+          '\tGive\t me any\t value \t to \t include!',
+          containsIgnoringWhitespace('any value to include!'),
+        );
       });
     });
   });

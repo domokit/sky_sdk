@@ -38,6 +38,7 @@ class FrameTimingRecorder {
 
   /// The last time (in microseconds) we submitted frame timings.
   static int _frameTimingsLastSubmitTime = _nowMicros();
+
   /// The amount of time in microseconds we wait between submitting
   /// frame timings.
   static const int _kFrameTimingsSubmitInterval = 100000; // 100 milliseconds
@@ -76,10 +77,8 @@ class FrameTimingRecorder {
 
   void submitTimings() {
     assert(
-      _buildFinishMicros != null &&
-      _rasterStartMicros != null &&
-      _rasterFinishMicros != null,
-      'Attempted to submit an incomplete timings.'
+      _buildFinishMicros != null && _rasterStartMicros != null && _rasterFinishMicros != null,
+      'Attempted to submit an incomplete timings.',
     );
     final ui.FrameTiming timing = ui.FrameTiming(
       vsyncStart: _vsyncStartMicros,

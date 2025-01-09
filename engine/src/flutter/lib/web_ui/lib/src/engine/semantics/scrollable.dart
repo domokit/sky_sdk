@@ -24,11 +24,11 @@ import 'package:ui/ui.dart' as ui;
 /// viewport "scrollTop" may take positive values.
 class SemanticScrollable extends SemanticRole {
   SemanticScrollable(SemanticsObject semanticsObject)
-      : super.withBasics(
-          SemanticRoleKind.scrollable,
-          semanticsObject,
-          preferredLabelRepresentation: LabelRepresentation.ariaLabel,
-        ) {
+    : super.withBasics(
+        SemanticRoleKind.scrollable,
+        semanticsObject,
+        preferredLabelRepresentation: LabelRepresentation.ariaLabel,
+      ) {
     // Mark as group to prevent the browser from merging this element along with
     // all the children into one giant node. This is what happened with the
     // repro provided in https://github.com/flutter/flutter/issues/130950.
@@ -67,8 +67,7 @@ class SemanticScrollable extends SemanticRole {
       if (!EngineSemantics.instance.shouldAcceptBrowserGesture('scroll')) {
         return;
       }
-      final bool doScrollForward =
-          _domScrollPosition > _effectiveNeutralScrollPosition;
+      final bool doScrollForward = _domScrollPosition > _effectiveNeutralScrollPosition;
       _neutralizeDomScrollPosition();
       semanticsObject.recomputePositionAndSize();
 
@@ -76,20 +75,36 @@ class SemanticScrollable extends SemanticRole {
       if (doScrollForward) {
         if (semanticsObject.isVerticalScrollContainer) {
           EnginePlatformDispatcher.instance.invokeOnSemanticsAction(
-              viewId, semanticsId, ui.SemanticsAction.scrollUp, null);
+            viewId,
+            semanticsId,
+            ui.SemanticsAction.scrollUp,
+            null,
+          );
         } else {
           assert(semanticsObject.isHorizontalScrollContainer);
           EnginePlatformDispatcher.instance.invokeOnSemanticsAction(
-              viewId, semanticsId, ui.SemanticsAction.scrollLeft, null);
+            viewId,
+            semanticsId,
+            ui.SemanticsAction.scrollLeft,
+            null,
+          );
         }
       } else {
         if (semanticsObject.isVerticalScrollContainer) {
           EnginePlatformDispatcher.instance.invokeOnSemanticsAction(
-              viewId, semanticsId, ui.SemanticsAction.scrollDown, null);
+            viewId,
+            semanticsId,
+            ui.SemanticsAction.scrollDown,
+            null,
+          );
         } else {
           assert(semanticsObject.isHorizontalScrollContainer);
           EnginePlatformDispatcher.instance.invokeOnSemanticsAction(
-              viewId, semanticsId, ui.SemanticsAction.scrollRight, null);
+            viewId,
+            semanticsId,
+            ui.SemanticsAction.scrollRight,
+            null,
+          );
         }
       }
     }
@@ -188,8 +203,7 @@ class SemanticScrollable extends SemanticRole {
       // Read back because the effective value depends on the amount of content.
       _effectiveNeutralScrollPosition = element.scrollTop.toInt();
       semanticsObject
-        ..verticalContainerAdjustment =
-            _effectiveNeutralScrollPosition.toDouble()
+        ..verticalContainerAdjustment = _effectiveNeutralScrollPosition.toDouble()
         ..horizontalContainerAdjustment = 0.0;
     } else {
       // Place the _scrollOverflowElement at the end of the content and
@@ -206,8 +220,7 @@ class SemanticScrollable extends SemanticRole {
       _effectiveNeutralScrollPosition = element.scrollLeft.toInt();
       semanticsObject
         ..verticalContainerAdjustment = 0.0
-        ..horizontalContainerAdjustment =
-            _effectiveNeutralScrollPosition.toDouble();
+        ..horizontalContainerAdjustment = _effectiveNeutralScrollPosition.toDouble();
     }
   }
 

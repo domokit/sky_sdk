@@ -6,15 +6,15 @@ import '../build_info.dart' show BuildMode;
 import '../convert.dart';
 import 'compile.dart';
 
-enum CompileTarget {
-  js,
-  wasm,
-}
+enum CompileTarget { js, wasm }
 
 sealed class WebCompilerConfig {
-  const WebCompilerConfig({required this.renderer,
-                           this.optimizationLevel,
-                           required this.sourceMaps});
+  const WebCompilerConfig({
+    required this.renderer,
+    this.optimizationLevel,
+    required this.sourceMaps,
+  });
+
   /// Build environment flag for [optimizationLevel].
   static const String kOptimizationLevel = 'OptimizationLevel';
 
@@ -24,11 +24,12 @@ sealed class WebCompilerConfig {
   /// Calculates the optimization level for dart2js/dart2wasm for the given
   /// build mode.
   int optimizationLevelForBuildMode(BuildMode mode) =>
-    optimizationLevel ?? switch (mode) {
-      BuildMode.debug => 0,
-      BuildMode.profile || BuildMode.release => 4,
-      BuildMode.jitRelease => throw ArgumentError('Invalid build mode for web'),
-    };
+      optimizationLevel ??
+      switch (mode) {
+        BuildMode.debug => 0,
+        BuildMode.profile || BuildMode.release => 4,
+        BuildMode.jitRelease => throw ArgumentError('Invalid build mode for web'),
+      };
 
   /// The compiler optimization level specified by the user.
   ///
@@ -49,7 +50,6 @@ sealed class WebCompilerConfig {
   Map<String, Object> get buildEventAnalyticsValues => <String, Object>{
     if (optimizationLevel != null) 'optimizationLevel': optimizationLevel!,
   };
-
 
   Map<String, dynamic> get _buildKeyMap => <String, dynamic>{
     'optimizationLevel': optimizationLevel,
@@ -73,17 +73,13 @@ class JsCompilerConfig extends WebCompilerConfig {
   const JsCompilerConfig.run({
     required bool nativeNullAssertions,
     required WebRendererMode renderer,
-  }) : this(
-          nativeNullAssertions: nativeNullAssertions,
-          renderer: renderer,
-        );
+  }) : this(nativeNullAssertions: nativeNullAssertions, renderer: renderer);
 
   /// Build environment flag for [dumpInfo].
   static const String kDart2jsDumpInfo = 'Dart2jsDumpInfo';
 
   /// Build environment flag for [noFrequencyBasedMinification].
-  static const String kDart2jsNoFrequencyBasedMinification =
-      'Dart2jsNoFrequencyBasedMinification';
+  static const String kDart2jsNoFrequencyBasedMinification = 'Dart2jsNoFrequencyBasedMinification';
 
   /// Build environment flag for [csp].
   static const String kCspMode = 'cspMode';
@@ -109,10 +105,10 @@ class JsCompilerConfig extends WebCompilerConfig {
 
   /// Arguments to use in both phases: full JS compile and CFE-only.
   List<String> toSharedCommandOptions(BuildMode buildMode) => <String>[
-        if (nativeNullAssertions) '--native-null-assertions',
-        if (!sourceMaps) '--no-source-maps',
-        if (buildMode == BuildMode.debug) '--enable-asserts',
-      ];
+    if (nativeNullAssertions) '--native-null-assertions',
+    if (!sourceMaps) '--no-source-maps',
+    if (buildMode == BuildMode.debug) '--enable-asserts',
+  ];
 
   @override
   int optimizationLevelForBuildMode(BuildMode mode) {
@@ -127,13 +123,13 @@ class JsCompilerConfig extends WebCompilerConfig {
   ///
   /// Includes the contents of [toSharedCommandOptions].
   List<String> toCommandOptions(BuildMode buildMode) => <String>[
-        if (buildMode != BuildMode.release) '--no-minify',
-        ...toSharedCommandOptions(buildMode),
-        '-O${optimizationLevelForBuildMode(buildMode)}',
-        if (dumpInfo) '--stage=dump-info-all',
-        if (noFrequencyBasedMinification) '--no-frequency-based-minification',
-        if (csp) '--csp',
-      ];
+    if (buildMode != BuildMode.release) '--no-minify',
+    ...toSharedCommandOptions(buildMode),
+    '-O${optimizationLevelForBuildMode(buildMode)}',
+    if (dumpInfo) '--stage=dump-info-all',
+    if (noFrequencyBasedMinification) '--no-frequency-based-minification',
+    if (csp) '--csp',
+  ];
 
   @override
   String get buildKey {

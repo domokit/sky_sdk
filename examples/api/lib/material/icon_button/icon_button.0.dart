@@ -16,9 +16,7 @@ class IconButtonExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('IconButton Sample')),
-        body: const Center(
-          child: IconButtonExample(),
-        ),
+        body: const Center(child: IconButtonExample()),
       ),
     );
   }

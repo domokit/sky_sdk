@@ -40,22 +40,22 @@ void testMain() {
       final String punctuationSpace = String.fromCharCode(0x2008);
       final String mathSpace = String.fromCharCode(0x205F);
       final String ideographicSpace = String.fromCharCode(0x3000);
-      expectWords(
-        'foo$oghamSpace ${punctuationSpace}bar',
-        <String>['foo', '$oghamSpace $punctuationSpace', 'bar'],
-      );
-      expectWords(
-        '$mathSpace$ideographicSpace${oghamSpace}foo',
-        <String>['$mathSpace$ideographicSpace$oghamSpace', 'foo'],
-      );
-      expectWords(
-        'foo$punctuationSpace$mathSpace ',
-        <String>['foo', '$punctuationSpace$mathSpace '],
-      );
-      expectWords(
+      expectWords('foo$oghamSpace ${punctuationSpace}bar', <String>[
+        'foo',
+        '$oghamSpace $punctuationSpace',
+        'bar',
+      ]);
+      expectWords('$mathSpace$ideographicSpace${oghamSpace}foo', <String>[
+        '$mathSpace$ideographicSpace$oghamSpace',
+        'foo',
+      ]);
+      expectWords('foo$punctuationSpace$mathSpace ', <String>[
+        'foo',
+        '$punctuationSpace$mathSpace ',
+      ]);
+      expectWords('$oghamSpace $punctuationSpace$mathSpace$ideographicSpace', <String>[
         '$oghamSpace $punctuationSpace$mathSpace$ideographicSpace',
-        <String>['$oghamSpace $punctuationSpace$mathSpace$ideographicSpace'],
-      );
+      ]);
     });
 
     test('Punctuation', () {
@@ -73,10 +73,18 @@ void testMain() {
     test('Quotes', () {
       expectWords("Mike's bike", <String>["Mike's", ' ', 'bike']);
       expectWords("Students' grades", <String>['Students', "'", ' ', 'grades']);
-      expectWords(
-        'Joe said: "I\'m here"',
-        <String>['Joe', ' ', 'said', ':', ' ', '"', "I'm", ' ', 'here', '"'],
-      );
+      expectWords('Joe said: "I\'m here"', <String>[
+        'Joe',
+        ' ',
+        'said',
+        ':',
+        ' ',
+        '"',
+        "I'm",
+        ' ',
+        'here',
+        '"',
+      ]);
     });
 
     // Hebrew letters have the same rules as other letters, except
@@ -110,8 +118,7 @@ void testMain() {
 
       expectWords('foo\n\nbar', <String>['foo', '\n', '\n', 'bar']);
       expectWords('foo\r\rbar', <String>['foo', '\r', '\r', 'bar']);
-      expectWords(
-          'foo$newline${newline}bar', <String>['foo', newline, newline, 'bar']);
+      expectWords('foo$newline${newline}bar', <String>['foo', newline, newline, 'bar']);
 
       expectWords('foo\n\rbar', <String>['foo', '\n', '\r', 'bar']);
       expectWords('foo$newline\rbar', <String>['foo', newline, '\r', 'bar']);
@@ -143,8 +150,9 @@ void expectWords(String text, List<String> expectedWords) {
   for (final String word in expectedWords) {
     final int nextBreak = WordBreaker.nextBreakIndex(text, strIndex);
     expect(
-      nextBreak, strIndex + word.length,
-      reason: 'Forward word break lookup: expecting to move to the end of "$word" in "$text".'
+      nextBreak,
+      strIndex + word.length,
+      reason: 'Forward word break lookup: expecting to move to the end of "$word" in "$text".',
     );
     strIndex += word.length;
   }
@@ -154,8 +162,9 @@ void expectWords(String text, List<String> expectedWords) {
   for (final String word in expectedWords.reversed) {
     final int prevBreak = WordBreaker.prevBreakIndex(text, strIndex);
     expect(
-      prevBreak, strIndex - word.length,
-      reason: 'Backward word break lookup: expecting to move to the start of "$word" in "$text".'
+      prevBreak,
+      strIndex - word.length,
+      reason: 'Backward word break lookup: expecting to move to the start of "$word" in "$text".',
     );
     strIndex -= word.length;
   }

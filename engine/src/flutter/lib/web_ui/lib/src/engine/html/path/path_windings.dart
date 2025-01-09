@@ -98,8 +98,14 @@ class PathWinding {
 
   // Check if point starts the line, handle special case for horizontal lines
   // where and point except the end point is considered on curve.
-  static bool _checkOnCurve(double x, double y, double startX, double startY,
-      double endX, double endY) {
+  static bool _checkOnCurve(
+    double x,
+    double y,
+    double startX,
+    double startY,
+    double endX,
+    double endY,
+  ) {
     if (startY == endY) {
       // Horizontal line.
       return SPath.between(startX, x, endX) && x != endX;
@@ -116,16 +122,27 @@ class PathWinding {
       n = _chopQuadAtExtrema(_buffer);
     }
     int winding = _computeMonoQuadWinding(
-        _buffer[0], _buffer[1], _buffer[2], _buffer[3], _buffer[4], _buffer[5]);
+      _buffer[0],
+      _buffer[1],
+      _buffer[2],
+      _buffer[3],
+      _buffer[4],
+      _buffer[5],
+    );
     if (n > 0) {
-      winding += _computeMonoQuadWinding(_buffer[4], _buffer[5], _buffer[6],
-          _buffer[7], _buffer[8], _buffer[9]);
+      winding += _computeMonoQuadWinding(
+        _buffer[4],
+        _buffer[5],
+        _buffer[6],
+        _buffer[7],
+        _buffer[8],
+        _buffer[9],
+      );
     }
     _w += winding;
   }
 
-  int _computeMonoQuadWinding(
-      double x0, double y0, double x1, double y1, double x2, double y2) {
+  int _computeMonoQuadWinding(double x0, double y0, double x1, double y1, double x2, double y2) {
     int dir = 1;
     final double startY = y0;
     final double endY = y2;
@@ -147,8 +164,7 @@ class PathWinding {
     }
 
     final QuadRoots quadRoots = QuadRoots();
-    final int n = quadRoots.findRoots(
-        startY - 2 * y1 + endY, 2 * (y1 - startY), startY - y);
+    final int n = quadRoots.findRoots(startY - 2 * y1 + endY, 2 * (y1 - startY), startY - y);
     assert(n <= 1);
     double xt;
     if (0 == n) {
@@ -220,8 +236,15 @@ class PathWinding {
   }
 
   void _computeConicWinding(double weight) {
-    final Conic conic = Conic(_buffer[0], _buffer[1], _buffer[2], _buffer[3],
-        _buffer[4], _buffer[5], weight);
+    final Conic conic = Conic(
+      _buffer[0],
+      _buffer[1],
+      _buffer[2],
+      _buffer[3],
+      _buffer[4],
+      _buffer[5],
+      weight,
+    );
     // If the data points are very large, the conic may not be monotonic but may also
     // fail to chop. Then, the chopper does not split the original conic in two.
     final bool isMono = _isQuadMonotonic(_buffer);
@@ -275,7 +298,7 @@ class PathWinding {
       final double root = quadRoots.root0!;
       xt =
           Conic.evalNumerator(conic.p0x, conic.p1x, conic.p2x, conic.fW, root) /
-              Conic.evalDenominator(conic.fW, root);
+          Conic.evalDenominator(conic.fW, root);
     }
     if (SPath.nearlyEqual(xt, x)) {
       if (x != conic.p2x || y != conic.p2y) {

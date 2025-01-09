@@ -75,7 +75,7 @@ typedef ShardRunner = Future<void> Function();
 
 /// Environment variables to override the local engine when running `pub test`,
 /// if such flags are provided to `test.dart`.
-final Map<String,String> localEngineEnv = <String, String>{};
+final Map<String, String> localEngineEnv = <String, String>{};
 
 const String CIRRUS_TASK_NAME = 'CIRRUS_TASK_NAME';
 
@@ -101,7 +101,9 @@ Future<void> main(List<String> args) async {
         localEngineEnv['FLUTTER_LOCAL_ENGINE_HOST'] = arg.substring('--local-engine-host='.length);
         flutterTestArgs.add(arg);
       } else if (arg.startsWith('--local-engine-src-path=')) {
-        localEngineEnv['FLUTTER_LOCAL_ENGINE_SRC_PATH'] = arg.substring('--local-engine-src-path='.length);
+        localEngineEnv['FLUTTER_LOCAL_ENGINE_SRC_PATH'] = arg.substring(
+          '--local-engine-src-path='.length,
+        );
         flutterTestArgs.add(arg);
       } else if (arg.startsWith('--test-randomize-ordering-seed=')) {
         shuffleSeed = arg.substring('--test-randomize-ordering-seed='.length);
@@ -155,7 +157,8 @@ Future<void> main(List<String> args) async {
       'snippets': _runSnippetsTests,
       'docs': docsRunner,
       'verify_binaries_codesigned': verifyCodesignedTestRunner,
-      kTestHarnessShardName: testHarnessTestsRunner, // Used for testing this script; also run as part of SHARD=framework_tests, SUBSHARD=misc.
+      kTestHarnessShardName:
+          testHarnessTestsRunner, // Used for testing this script; also run as part of SHARD=framework_tests, SUBSHARD=misc.
     });
   } catch (error, stackTrace) {
     foundError(<String>[
@@ -197,8 +200,10 @@ Future<void> _runCommandsToolTests() async {
 }
 
 Future<void> _runWebToolTests() async {
-  final List<File> allFiles = Directory(path.join(_toolsPath, 'test', 'web.shard'))
-      .listSync(recursive: true).whereType<File>().toList();
+  final List<File> allFiles =
+      Directory(
+        path.join(_toolsPath, 'test', 'web.shard'),
+      ).listSync(recursive: true).whereType<File>().toList();
   final List<String> allTests = <String>[];
   for (final File file in allFiles) {
     if (file.path.endsWith('_test.dart')) {
@@ -223,10 +228,13 @@ Future<void> _runToolHostCrossArchTests() {
 }
 
 Future<void> _runIntegrationToolTests() async {
-  final List<String> allTests = Directory(path.join(_toolsPath, 'test', 'integration.shard'))
-      .listSync(recursive: true).whereType<File>()
-      .map<String>((FileSystemEntity entry) => path.relative(entry.path, from: _toolsPath))
-      .where((String testPath) => path.basename(testPath).endsWith('_test.dart')).toList();
+  final List<String> allTests =
+      Directory(path.join(_toolsPath, 'test', 'integration.shard'))
+          .listSync(recursive: true)
+          .whereType<File>()
+          .map<String>((FileSystemEntity entry) => path.relative(entry.path, from: _toolsPath))
+          .where((String testPath) => path.basename(testPath).endsWith('_test.dart'))
+          .toList();
 
   await runDartTest(
     _toolsPath,
@@ -245,10 +253,13 @@ Future<void> _runToolTests() async {
 
 Future<void> _runSnippetsTests() async {
   final String snippetsPath = path.join(flutterRoot, 'dev', 'snippets');
-  final List<String> allTests = Directory(path.join(snippetsPath, 'test'))
-      .listSync(recursive: true).whereType<File>()
-      .map<String>((FileSystemEntity entry) => path.relative(entry.path, from: _toolsPath))
-      .where((String testPath) => path.basename(testPath).endsWith('_test.dart')).toList();
+  final List<String> allTests =
+      Directory(path.join(snippetsPath, 'test'))
+          .listSync(recursive: true)
+          .whereType<File>()
+          .map<String>((FileSystemEntity entry) => path.relative(entry.path, from: _toolsPath))
+          .where((String testPath) => path.basename(testPath).endsWith('_test.dart'))
+          .toList();
 
   await runDartTest(
     snippetsPath,
@@ -282,31 +293,30 @@ Future<void> runForbiddenFromReleaseTests() async {
   // First, a smoke test.
   final List<String> smokeTestArgs = <String>[
     path.join(flutterRoot, 'dev', 'forbidden_from_release_tests', 'bin', 'main.dart'),
-    '--snapshot', path.join(tempDirectory.path, 'snapshot.arm64-v8a.json'),
-    '--package-config', path.join(flutterRoot, 'examples', 'hello_world', '.dart_tool', 'package_config.json'),
-    '--forbidden-type', 'package:flutter/src/widgets/framework.dart::Widget',
+    '--snapshot',
+    path.join(tempDirectory.path, 'snapshot.arm64-v8a.json'),
+    '--package-config',
+    path.join(flutterRoot, 'examples', 'hello_world', '.dart_tool', 'package_config.json'),
+    '--forbidden-type',
+    'package:flutter/src/widgets/framework.dart::Widget',
   ];
-  await runCommand(
-    dart,
-    smokeTestArgs,
-    workingDirectory: flutterRoot,
-    expectNonZeroExit: true,
-  );
+  await runCommand(dart, smokeTestArgs, workingDirectory: flutterRoot, expectNonZeroExit: true);
 
   // Actual test.
   final List<String> args = <String>[
     path.join(flutterRoot, 'dev', 'forbidden_from_release_tests', 'bin', 'main.dart'),
-    '--snapshot', path.join(tempDirectory.path, 'snapshot.arm64-v8a.json'),
-    '--package-config', path.join(flutterRoot, 'examples', 'hello_world', '.dart_tool', 'package_config.json'),
-    '--forbidden-type', 'package:flutter/src/widgets/widget_inspector.dart::WidgetInspectorService',
-    '--forbidden-type', 'package:flutter/src/widgets/framework.dart::DebugCreator',
-    '--forbidden-type', 'package:flutter/src/foundation/print.dart::debugPrint',
+    '--snapshot',
+    path.join(tempDirectory.path, 'snapshot.arm64-v8a.json'),
+    '--package-config',
+    path.join(flutterRoot, 'examples', 'hello_world', '.dart_tool', 'package_config.json'),
+    '--forbidden-type',
+    'package:flutter/src/widgets/widget_inspector.dart::WidgetInspectorService',
+    '--forbidden-type',
+    'package:flutter/src/widgets/framework.dart::DebugCreator',
+    '--forbidden-type',
+    'package:flutter/src/foundation/print.dart::debugPrint',
   ];
-  await runCommand(
-    dart,
-    args,
-    workingDirectory: flutterRoot,
-  );
+  await runCommand(dart, args, workingDirectory: flutterRoot);
 }
 
 /// Verifies that APK, and IPA (if on macOS), and native desktop builds the
@@ -317,21 +327,35 @@ Future<void> runForbiddenFromReleaseTests() async {
 ///
 /// Also does some checking about types included in hello_world.
 Future<void> _runBuildTests() async {
-  final List<Directory> exampleDirectories = Directory(path.join(flutterRoot, 'examples')).listSync()
-    // API example builds will be tested in a separate shard.
-    .where((FileSystemEntity entity) => entity is Directory && path.basename(entity.path) != 'api').cast<Directory>().toList()
-    ..add(Directory(path.join(flutterRoot, 'packages', 'integration_test', 'example')))
-    ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'android_semantics_testing')))
-    ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'android_views')))
-    ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'channels')))
-    ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'hybrid_android_views')))
-    ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'flutter_gallery')))
-    ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'ios_platform_view_tests')))
-    ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'ios_app_with_extensions')))
-    ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'non_nullable')))
-    ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'platform_interaction')))
-    ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'spell_check')))
-    ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'ui')));
+  final List<Directory> exampleDirectories =
+      Directory(path.join(flutterRoot, 'examples'))
+          .listSync()
+          // API example builds will be tested in a separate shard.
+          .where(
+            (FileSystemEntity entity) => entity is Directory && path.basename(entity.path) != 'api',
+          )
+          .cast<Directory>()
+          .toList()
+        ..add(Directory(path.join(flutterRoot, 'packages', 'integration_test', 'example')))
+        ..add(
+          Directory(
+            path.join(flutterRoot, 'dev', 'integration_tests', 'android_semantics_testing'),
+          ),
+        )
+        ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'android_views')))
+        ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'channels')))
+        ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'hybrid_android_views')))
+        ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'flutter_gallery')))
+        ..add(
+          Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'ios_platform_view_tests')),
+        )
+        ..add(
+          Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'ios_app_with_extensions')),
+        )
+        ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'non_nullable')))
+        ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'platform_interaction')))
+        ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'spell_check')))
+        ..add(Directory(path.join(flutterRoot, 'dev', 'integration_tests', 'ui')));
 
   // The tests are randomly distributed into subshards so as to get a uniform
   // distribution of costs, but the seed is fixed so that issues are reproducible.
@@ -341,20 +365,20 @@ Future<void> _runBuildTests() async {
     ...<ShardRunner>[
       // Web compilation tests.
       () => _flutterBuildDart2js(
-            path.join('dev', 'integration_tests', 'web'),
-            path.join('lib', 'main.dart'),
-          ),
+        path.join('dev', 'integration_tests', 'web'),
+        path.join('lib', 'main.dart'),
+      ),
       // Should not fail to compile with dart:io.
       () => _flutterBuildDart2js(
-            path.join('dev', 'integration_tests', 'web_compile_tests'),
-            path.join('lib', 'dart_io_import.dart'),
-          ),
+        path.join('dev', 'integration_tests', 'web_compile_tests'),
+        path.join('lib', 'dart_io_import.dart'),
+      ),
       // Should be able to compile with a call to:
       // BackgroundIsolateBinaryMessenger.ensureInitialized.
       () => _flutterBuildDart2js(
-            path.join('dev', 'integration_tests', 'web_compile_tests'),
-            path.join('lib', 'background_isolate_binary_messenger.dart'),
-          ),
+        path.join('dev', 'integration_tests', 'web_compile_tests'),
+        path.join('lib', 'background_isolate_binary_messenger.dart'),
+      ),
     ],
     runForbiddenFromReleaseTests,
   ]..shuffle(math.Random(0));
@@ -370,113 +394,195 @@ Future<void> _runExampleProjectBuildTests(Directory exampleDirectory, [File? mai
     if (mainFile != null) path.relative(mainFile.path, from: exampleDirectory.absolute.path),
   ];
   if (Directory(path.join(examplePath, 'android')).existsSync()) {
-    await _flutterBuildApk(examplePath, release: false, additionalArgs: additionalArgs, verifyCaching: verifyCaching);
-    await _flutterBuildApk(examplePath, release: true, additionalArgs: additionalArgs, verifyCaching: verifyCaching);
+    await _flutterBuildApk(
+      examplePath,
+      release: false,
+      additionalArgs: additionalArgs,
+      verifyCaching: verifyCaching,
+    );
+    await _flutterBuildApk(
+      examplePath,
+      release: true,
+      additionalArgs: additionalArgs,
+      verifyCaching: verifyCaching,
+    );
   } else {
     print('Example project ${path.basename(examplePath)} has no android directory, skipping apk');
   }
   if (Platform.isMacOS) {
     if (Directory(path.join(examplePath, 'ios')).existsSync()) {
-      await _flutterBuildIpa(examplePath, release: false, additionalArgs: additionalArgs, verifyCaching: verifyCaching);
-      await _flutterBuildIpa(examplePath, release: true, additionalArgs: additionalArgs, verifyCaching: verifyCaching);
+      await _flutterBuildIpa(
+        examplePath,
+        release: false,
+        additionalArgs: additionalArgs,
+        verifyCaching: verifyCaching,
+      );
+      await _flutterBuildIpa(
+        examplePath,
+        release: true,
+        additionalArgs: additionalArgs,
+        verifyCaching: verifyCaching,
+      );
     } else {
       print('Example project ${path.basename(examplePath)} has no ios directory, skipping ipa');
     }
   }
   if (Platform.isLinux) {
     if (Directory(path.join(examplePath, 'linux')).existsSync()) {
-      await _flutterBuildLinux(examplePath, release: false, additionalArgs: additionalArgs, verifyCaching: verifyCaching);
-      await _flutterBuildLinux(examplePath, release: true, additionalArgs: additionalArgs, verifyCaching: verifyCaching);
+      await _flutterBuildLinux(
+        examplePath,
+        release: false,
+        additionalArgs: additionalArgs,
+        verifyCaching: verifyCaching,
+      );
+      await _flutterBuildLinux(
+        examplePath,
+        release: true,
+        additionalArgs: additionalArgs,
+        verifyCaching: verifyCaching,
+      );
     } else {
       print('Example project ${path.basename(examplePath)} has no linux directory, skipping Linux');
     }
   }
   if (Platform.isMacOS) {
     if (Directory(path.join(examplePath, 'macos')).existsSync()) {
-      await _flutterBuildMacOS(examplePath, release: false, additionalArgs: additionalArgs, verifyCaching: verifyCaching);
-      await _flutterBuildMacOS(examplePath, release: true, additionalArgs: additionalArgs, verifyCaching: verifyCaching);
+      await _flutterBuildMacOS(
+        examplePath,
+        release: false,
+        additionalArgs: additionalArgs,
+        verifyCaching: verifyCaching,
+      );
+      await _flutterBuildMacOS(
+        examplePath,
+        release: true,
+        additionalArgs: additionalArgs,
+        verifyCaching: verifyCaching,
+      );
     } else {
       print('Example project ${path.basename(examplePath)} has no macos directory, skipping macOS');
     }
   }
   if (Platform.isWindows) {
     if (Directory(path.join(examplePath, 'windows')).existsSync()) {
-      await _flutterBuildWin32(examplePath, release: false, additionalArgs: additionalArgs, verifyCaching: verifyCaching);
-      await _flutterBuildWin32(examplePath, release: true, additionalArgs: additionalArgs, verifyCaching: verifyCaching);
+      await _flutterBuildWin32(
+        examplePath,
+        release: false,
+        additionalArgs: additionalArgs,
+        verifyCaching: verifyCaching,
+      );
+      await _flutterBuildWin32(
+        examplePath,
+        release: true,
+        additionalArgs: additionalArgs,
+        verifyCaching: verifyCaching,
+      );
     } else {
-      print('Example project ${path.basename(examplePath)} has no windows directory, skipping Win32');
+      print(
+        'Example project ${path.basename(examplePath)} has no windows directory, skipping Win32',
+      );
     }
   }
 }
 
-Future<void> _flutterBuildApk(String relativePathToApplication, {
+Future<void> _flutterBuildApk(
+  String relativePathToApplication, {
   required bool release,
   bool verifyCaching = false,
   List<String> additionalArgs = const <String>[],
 }) async {
-  printProgress('${green}Testing APK ${release ? 'release' : 'debug'} build$reset for $cyan$relativePathToApplication$reset...');
-  await _flutterBuild(relativePathToApplication, 'APK', 'apk',
+  printProgress(
+    '${green}Testing APK ${release ? 'release' : 'debug'} build$reset for $cyan$relativePathToApplication$reset...',
+  );
+  await _flutterBuild(
+    relativePathToApplication,
+    'APK',
+    'apk',
     release: release,
     verifyCaching: verifyCaching,
-    additionalArgs: additionalArgs
+    additionalArgs: additionalArgs,
   );
 }
 
-Future<void> _flutterBuildIpa(String relativePathToApplication, {
+Future<void> _flutterBuildIpa(
+  String relativePathToApplication, {
   required bool release,
   List<String> additionalArgs = const <String>[],
   bool verifyCaching = false,
 }) async {
   assert(Platform.isMacOS);
-  printProgress('${green}Testing IPA ${release ? 'release' : 'debug'} build$reset for $cyan$relativePathToApplication$reset...');
-  await _flutterBuild(relativePathToApplication, 'IPA', 'ios',
+  printProgress(
+    '${green}Testing IPA ${release ? 'release' : 'debug'} build$reset for $cyan$relativePathToApplication$reset...',
+  );
+  await _flutterBuild(
+    relativePathToApplication,
+    'IPA',
+    'ios',
     release: release,
     verifyCaching: verifyCaching,
     additionalArgs: <String>[...additionalArgs, '--no-codesign'],
   );
 }
 
-Future<void> _flutterBuildLinux(String relativePathToApplication, {
+Future<void> _flutterBuildLinux(
+  String relativePathToApplication, {
   required bool release,
   bool verifyCaching = false,
   List<String> additionalArgs = const <String>[],
 }) async {
   assert(Platform.isLinux);
   await runCommand(flutter, <String>['config', '--enable-linux-desktop']);
-  printProgress('${green}Testing Linux ${release ? 'release' : 'debug'} build$reset for $cyan$relativePathToApplication$reset...');
-  await _flutterBuild(relativePathToApplication, 'Linux', 'linux',
+  printProgress(
+    '${green}Testing Linux ${release ? 'release' : 'debug'} build$reset for $cyan$relativePathToApplication$reset...',
+  );
+  await _flutterBuild(
+    relativePathToApplication,
+    'Linux',
+    'linux',
     release: release,
     verifyCaching: verifyCaching,
-    additionalArgs: additionalArgs
+    additionalArgs: additionalArgs,
   );
 }
 
-Future<void> _flutterBuildMacOS(String relativePathToApplication, {
+Future<void> _flutterBuildMacOS(
+  String relativePathToApplication, {
   required bool release,
   bool verifyCaching = false,
   List<String> additionalArgs = const <String>[],
 }) async {
   assert(Platform.isMacOS);
   await runCommand(flutter, <String>['config', '--enable-macos-desktop']);
-  printProgress('${green}Testing macOS ${release ? 'release' : 'debug'} build$reset for $cyan$relativePathToApplication$reset...');
-  await _flutterBuild(relativePathToApplication, 'macOS', 'macos',
+  printProgress(
+    '${green}Testing macOS ${release ? 'release' : 'debug'} build$reset for $cyan$relativePathToApplication$reset...',
+  );
+  await _flutterBuild(
+    relativePathToApplication,
+    'macOS',
+    'macos',
     release: release,
     verifyCaching: verifyCaching,
-    additionalArgs: additionalArgs
+    additionalArgs: additionalArgs,
   );
 }
 
-Future<void> _flutterBuildWin32(String relativePathToApplication, {
+Future<void> _flutterBuildWin32(
+  String relativePathToApplication, {
   required bool release,
   bool verifyCaching = false,
   List<String> additionalArgs = const <String>[],
 }) async {
   assert(Platform.isWindows);
-  printProgress('${green}Testing ${release ? 'release' : 'debug'} Windows build$reset for $cyan$relativePathToApplication$reset...');
-  await _flutterBuild(relativePathToApplication, 'Windows', 'windows',
+  printProgress(
+    '${green}Testing ${release ? 'release' : 'debug'} Windows build$reset for $cyan$relativePathToApplication$reset...',
+  );
+  await _flutterBuild(
+    relativePathToApplication,
+    'Windows',
+    'windows',
     release: release,
     verifyCaching: verifyCaching,
-    additionalArgs: additionalArgs
+    additionalArgs: additionalArgs,
   );
 }
 
@@ -488,36 +594,26 @@ Future<void> _flutterBuild(
   bool verifyCaching = false,
   List<String> additionalArgs = const <String>[],
 }) async {
-  await runCommand(flutter,
-    <String>[
-      'build',
-      platformBuildName,
-      ...additionalArgs,
-      if (release)
-        '--release'
-      else
-        '--debug',
-      '-v',
-    ],
-    workingDirectory: path.join(flutterRoot, relativePathToApplication),
-  );
+  await runCommand(flutter, <String>[
+    'build',
+    platformBuildName,
+    ...additionalArgs,
+    if (release) '--release' else '--debug',
+    '-v',
+  ], workingDirectory: path.join(flutterRoot, relativePathToApplication));
 
   if (verifyCaching) {
-    printProgress('${green}Testing $platformLabel cache$reset for $cyan$relativePathToApplication$reset...');
-    await runCommand(flutter,
-      <String>[
-        'build',
-        platformBuildName,
-        '--performance-measurement-file=perf.json',
-        ...additionalArgs,
-        if (release)
-          '--release'
-        else
-          '--debug',
-        '-v',
-      ],
-      workingDirectory: path.join(flutterRoot, relativePathToApplication),
+    printProgress(
+      '${green}Testing $platformLabel cache$reset for $cyan$relativePathToApplication$reset...',
     );
+    await runCommand(flutter, <String>[
+      'build',
+      platformBuildName,
+      '--performance-measurement-file=perf.json',
+      ...additionalArgs,
+      if (release) '--release' else '--debug',
+      '-v',
+    ], workingDirectory: path.join(flutterRoot, relativePathToApplication));
     final File file = File(path.join(flutterRoot, relativePathToApplication, 'perf.json'));
     if (!_allTargetsCached(file)) {
       foundError(<String>[
@@ -532,21 +628,24 @@ bool _allTargetsCached(File performanceFile) {
   if (dryRun) {
     return true;
   }
-  final Map<String, Object?> data = json.decode(performanceFile.readAsStringSync())
-    as Map<String, Object?>;
-  final List<Map<String, Object?>> targets = (data['targets']! as List<Object?>)
-    .cast<Map<String, Object?>>();
+  final Map<String, Object?> data =
+      json.decode(performanceFile.readAsStringSync()) as Map<String, Object?>;
+  final List<Map<String, Object?>> targets =
+      (data['targets']! as List<Object?>).cast<Map<String, Object?>>();
   return targets.every((Map<String, Object?> element) => element['skipped'] == true);
 }
 
-Future<void> _flutterBuildDart2js(String relativePathToApplication, String target, { bool expectNonZeroExit = false }) async {
+Future<void> _flutterBuildDart2js(
+  String relativePathToApplication,
+  String target, {
+  bool expectNonZeroExit = false,
+}) async {
   printProgress('${green}Testing Dart2JS build$reset for $cyan$relativePathToApplication$reset...');
-  await runCommand(flutter,
+  await runCommand(
+    flutter,
     <String>['build', 'web', '-v', '--target=$target'],
     workingDirectory: path.join(flutterRoot, relativePathToApplication),
     expectNonZeroExit: expectNonZeroExit,
-    environment: <String, String>{
-      'FLUTTER_WEB': 'true',
-    },
+    environment: <String, String>{'FLUTTER_WEB': 'true'},
   );
 }

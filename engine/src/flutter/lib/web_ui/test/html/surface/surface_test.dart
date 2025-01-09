@@ -28,14 +28,18 @@ void testMain() {
       final SceneBuilder builder = SceneBuilder();
       final PersistedOpacity opacityLayer = builder.pushOpacity(100) as PersistedOpacity;
       try {
-        debugAssertSurfaceState(opacityLayer, PersistedSurfaceState.active, PersistedSurfaceState.pendingRetention);
+        debugAssertSurfaceState(
+          opacityLayer,
+          PersistedSurfaceState.active,
+          PersistedSurfaceState.pendingRetention,
+        );
         fail('Expected $PersistedSurfaceException');
       } on PersistedSurfaceException catch (exception) {
         expect(
           '$exception',
           'PersistedOpacity: is in an unexpected state.\n'
-          'Expected one of: PersistedSurfaceState.active, PersistedSurfaceState.pendingRetention\n'
-          'But was: PersistedSurfaceState.created',
+              'Expected one of: PersistedSurfaceState.active, PersistedSurfaceState.pendingRetention\n'
+              'But was: PersistedSurfaceState.created',
         );
       }
     });
@@ -105,8 +109,7 @@ void testMain() {
       expect(opacityLayer1.isReleased, isTrue);
       expect(opacityLayer1.rootElement, isNull);
       expect(opacityLayer2.isActive, isTrue);
-      expect(
-          opacityLayer2.rootElement, element); // adopts old surface's element
+      expect(opacityLayer2.rootElement, element); // adopts old surface's element
       expect(opacityLayer2.oldLayer, isNull);
     });
 
@@ -158,58 +161,69 @@ void testMain() {
     // Layer "L" is a logging layer used to track what would happen to the
     // child of "C" as it's being dragged around the tree. For example, we
     // check that the child doesn't get discarded by mistake.
-    test('reparents DOM element when updated', () {
-      final _LoggingTestSurface logger = _LoggingTestSurface();
-      final SurfaceSceneBuilder builder1 = SurfaceSceneBuilder();
-      final PersistedTransform a1 =
-          builder1.pushTransform(
-              (Matrix4.identity()..scale(EngineFlutterDisplay.instance.browserDevicePixelRatio)).toFloat64()) as PersistedTransform;
-      final PersistedOpacity b1 = builder1.pushOpacity(100) as PersistedOpacity;
-      final PersistedTransform c1 =
-          builder1.pushTransform(Matrix4.identity().toFloat64()) as PersistedTransform;
-      builder1.debugAddSurface(logger);
-      builder1.pop();
-      builder1.pop();
-      builder1.pop();
-      builder1.build();
-      expect(logger.log, <String>['build', 'createElement', 'apply']);
+    test(
+      'reparents DOM element when updated',
+      () {
+        final _LoggingTestSurface logger = _LoggingTestSurface();
+        final SurfaceSceneBuilder builder1 = SurfaceSceneBuilder();
+        final PersistedTransform a1 =
+            builder1.pushTransform(
+                  (Matrix4.identity()..scale(EngineFlutterDisplay.instance.browserDevicePixelRatio))
+                      .toFloat64(),
+                )
+                as PersistedTransform;
+        final PersistedOpacity b1 = builder1.pushOpacity(100) as PersistedOpacity;
+        final PersistedTransform c1 =
+            builder1.pushTransform(Matrix4.identity().toFloat64()) as PersistedTransform;
+        builder1.debugAddSurface(logger);
+        builder1.pop();
+        builder1.pop();
+        builder1.pop();
+        builder1.build();
+        expect(logger.log, <String>['build', 'createElement', 'apply']);
 
-      final DomElement elementA = a1.rootElement!;
-      final DomElement elementB = b1.rootElement!;
-      final DomElement elementC = c1.rootElement!;
+        final DomElement elementA = a1.rootElement!;
+        final DomElement elementB = b1.rootElement!;
+        final DomElement elementC = c1.rootElement!;
 
-      expect(elementC.parent, elementB);
-      expect(elementB.parent, elementA);
+        expect(elementC.parent, elementB);
+        expect(elementB.parent, elementA);
 
-      final SurfaceSceneBuilder builder2 = SurfaceSceneBuilder();
-      final PersistedTransform a2 =
-          builder2.pushTransform(
-              (Matrix4.identity()..scale(EngineFlutterDisplay.instance.browserDevicePixelRatio)).toFloat64(),
-              oldLayer: a1) as PersistedTransform;
-      final PersistedTransform c2 =
-          builder2.pushTransform(Matrix4.identity().toFloat64(), oldLayer: c1) as PersistedTransform;
-      builder2.addRetained(logger);
-      builder2.pop();
-      builder2.pop();
+        final SurfaceSceneBuilder builder2 = SurfaceSceneBuilder();
+        final PersistedTransform a2 =
+            builder2.pushTransform(
+                  (Matrix4.identity()..scale(EngineFlutterDisplay.instance.browserDevicePixelRatio))
+                      .toFloat64(),
+                  oldLayer: a1,
+                )
+                as PersistedTransform;
+        final PersistedTransform c2 =
+            builder2.pushTransform(Matrix4.identity().toFloat64(), oldLayer: c1)
+                as PersistedTransform;
+        builder2.addRetained(logger);
+        builder2.pop();
+        builder2.pop();
 
-      expect(c1.isPendingUpdate, isTrue);
-      expect(c2.isCreated, isTrue);
-      builder2.build();
-      expect(logger.log, <String>['build', 'createElement', 'apply', 'retain']);
-      expect(c1.isReleased, isTrue);
-      expect(c2.isActive, isTrue);
+        expect(c1.isPendingUpdate, isTrue);
+        expect(c2.isCreated, isTrue);
+        builder2.build();
+        expect(logger.log, <String>['build', 'createElement', 'apply', 'retain']);
+        expect(c1.isReleased, isTrue);
+        expect(c2.isActive, isTrue);
 
-      expect(a2.rootElement, elementA);
-      expect(b1.rootElement, isNull);
-      expect(c2.rootElement, elementC);
+        expect(a2.rootElement, elementA);
+        expect(b1.rootElement, isNull);
+        expect(c2.rootElement, elementC);
 
-      expect(elementC.parent, elementA);
-      expect(elementB.parent, null);
-    },
-        // This method failed on iOS Safari.
-        // TODO(ferhat): https://github.com/flutter/flutter/issues/60036
-        skip: ui_web.browser.browserEngine == ui_web.BrowserEngine.webkit &&
-            ui_web.browser.operatingSystem == ui_web.OperatingSystem.iOs);
+        expect(elementC.parent, elementA);
+        expect(elementB.parent, null);
+      },
+      // This method failed on iOS Safari.
+      // TODO(ferhat): https://github.com/flutter/flutter/issues/60036
+      skip:
+          ui_web.browser.browserEngine == ui_web.BrowserEngine.webkit &&
+          ui_web.browser.operatingSystem == ui_web.OperatingSystem.iOs,
+    );
 
     test('is retained', () {
       final SceneBuilder builder1 = SceneBuilder();
@@ -335,11 +349,7 @@ void testMain() {
       expect(d1.rootElement, elementD);
 
       expect(
-        <DomElement>[
-          elementD.parent!,
-          elementC.parent!,
-          elementB.parent!,
-        ],
+        <DomElement>[elementD.parent!, elementC.parent!, elementB.parent!],
         <DomElement>[elementC, elementB, elementA],
       );
     });
@@ -362,24 +372,32 @@ void testMain() {
       expect(opacityLayer1.isReleased, isTrue);
       expect(opacityLayer1.rootElement, isNull);
       expect(opacityLayer2.isActive, isTrue);
-      expect(
-          opacityLayer2.rootElement, element); // adopts old surface's element
+      expect(opacityLayer2.rootElement, element); // adopts old surface's element
     });
   });
 
   final Map<String, TestEngineLayerFactory> layerFactories = <String, TestEngineLayerFactory>{
-    'ColorFilterEngineLayer': (SurfaceSceneBuilder builder) => builder.pushColorFilter(const ColorFilter.mode(
-      Color(0xFFFF0000),
-      BlendMode.srcIn,
-    )),
+    'ColorFilterEngineLayer':
+        (SurfaceSceneBuilder builder) =>
+            builder.pushColorFilter(const ColorFilter.mode(Color(0xFFFF0000), BlendMode.srcIn)),
     'OffsetEngineLayer': (SurfaceSceneBuilder builder) => builder.pushOffset(1, 2),
-    'TransformEngineLayer': (SurfaceSceneBuilder builder) => builder.pushTransform(Matrix4.identity().toFloat64()),
-    'ClipRectEngineLayer': (SurfaceSceneBuilder builder) => builder.pushClipRect(const Rect.fromLTRB(0, 0, 10, 10)),
-    'ClipRRectEngineLayer': (SurfaceSceneBuilder builder) => builder.pushClipRRect(RRect.fromRectXY(const Rect.fromLTRB(0, 0, 10, 10), 1, 2)),
-    'ClipPathEngineLayer': (SurfaceSceneBuilder builder) => builder.pushClipPath(Path()..addRect(const Rect.fromLTRB(0, 0, 10, 10))),
+    'TransformEngineLayer':
+        (SurfaceSceneBuilder builder) => builder.pushTransform(Matrix4.identity().toFloat64()),
+    'ClipRectEngineLayer':
+        (SurfaceSceneBuilder builder) => builder.pushClipRect(const Rect.fromLTRB(0, 0, 10, 10)),
+    'ClipRRectEngineLayer':
+        (SurfaceSceneBuilder builder) =>
+            builder.pushClipRRect(RRect.fromRectXY(const Rect.fromLTRB(0, 0, 10, 10), 1, 2)),
+    'ClipPathEngineLayer':
+        (SurfaceSceneBuilder builder) =>
+            builder.pushClipPath(Path()..addRect(const Rect.fromLTRB(0, 0, 10, 10))),
     'OpacityEngineLayer': (SurfaceSceneBuilder builder) => builder.pushOpacity(100),
-    'ImageFilterEngineLayer': (SurfaceSceneBuilder builder) => builder.pushImageFilter(ImageFilter.blur(sigmaX: 0.1, sigmaY: 0.2)),
-    'BackdropEngineLayer': (SurfaceSceneBuilder builder) => builder.pushBackdropFilter(ImageFilter.blur(sigmaX: 0.1, sigmaY: 0.2)),
+    'ImageFilterEngineLayer':
+        (SurfaceSceneBuilder builder) =>
+            builder.pushImageFilter(ImageFilter.blur(sigmaX: 0.1, sigmaY: 0.2)),
+    'BackdropEngineLayer':
+        (SurfaceSceneBuilder builder) =>
+            builder.pushBackdropFilter(ImageFilter.blur(sigmaX: 0.1, sigmaY: 0.2)),
     // Firefox does not support WebGL in headless mode.
     if (!isFirefox)
       'ShaderMaskEngineLayer': (SurfaceSceneBuilder builder) {
@@ -389,7 +407,10 @@ void testMain() {
         final EngineGradient shader = GradientLinear(
           Offset(200 - shaderBounds.left, 30 - shaderBounds.top),
           Offset(320 - shaderBounds.left, 150 - shaderBounds.top),
-          colors, stops, TileMode.clamp, Matrix4.identity().storage,
+          colors,
+          stops,
+          TileMode.clamp,
+          Matrix4.identity().storage,
         );
         return builder.pushShaderMask(shader, shaderBounds, BlendMode.srcOver);
       },

@@ -13,12 +13,9 @@ import '../../xcode_project.dart';
 // This caused issues switching between a real device and simulator due to architecture mismatch.
 // Remove the linking and embedding logic from the Xcode project to give the tool more control over these.
 class RemoveFrameworkLinkAndEmbeddingMigration extends ProjectMigrator {
-  RemoveFrameworkLinkAndEmbeddingMigration(
-    IosProject project,
-    super.logger,
-    Analytics analytics,
-  ) : _xcodeProjectInfoFile = project.xcodeProjectInfoFile,
-        _analytics = analytics;
+  RemoveFrameworkLinkAndEmbeddingMigration(IosProject project, super.logger, Analytics analytics)
+    : _xcodeProjectInfoFile = project.xcodeProjectInfoFile,
+      _analytics = analytics;
 
   final File _xcodeProjectInfoFile;
   final Analytics _analytics;
@@ -45,8 +42,8 @@ class RemoveFrameworkLinkAndEmbeddingMigration extends ProjectMigrator {
 
     // App.framework Embed Framework reference (build phase to embed framework).
     // 3B80C3951E831B6300D905FE /* App.framework in Embed Frameworks */,
-    if (line.contains('3B80C3951E831B6300D905FE')
-        || line.contains('741F496821356857001E2961')) { // Ephemeral add-to-app variant.
+    if (line.contains('3B80C3951E831B6300D905FE') || line.contains('741F496821356857001E2961')) {
+      // Ephemeral add-to-app variant.
       return null;
     }
 
@@ -54,8 +51,8 @@ class RemoveFrameworkLinkAndEmbeddingMigration extends ProjectMigrator {
     // isa = PBXGroup;
     // children = (
     //	 3B80C3931E831B6300D905FE /* App.framework */,
-    if (line.contains('3B80C3931E831B6300D905FE')
-        || line.contains('741F496521356807001E2961')) { // Ephemeral add-to-app variant.
+    if (line.contains('3B80C3931E831B6300D905FE') || line.contains('741F496521356807001E2961')) {
+      // Ephemeral add-to-app variant.
       return null;
     }
 
@@ -69,8 +66,8 @@ class RemoveFrameworkLinkAndEmbeddingMigration extends ProjectMigrator {
 
     // Flutter.framework Embed Framework reference (build phase to embed framework).
     // 9705A1C71CF904A300538489 /* Flutter.framework in Embed Frameworks */,
-    if (line.contains('9705A1C71CF904A300538489')
-        || line.contains('741F496221355F47001E2961')) { // Ephemeral add-to-app variant.
+    if (line.contains('9705A1C71CF904A300538489') || line.contains('741F496221355F47001E2961')) {
+      // Ephemeral add-to-app variant.
       return null;
     }
 
@@ -78,8 +75,8 @@ class RemoveFrameworkLinkAndEmbeddingMigration extends ProjectMigrator {
     // isa = PBXGroup;
     // children = (
     //	 9740EEBA1CF902C7004384FC /* Flutter.framework */,
-    if (line.contains('9740EEBA1CF902C7004384FC')
-        || line.contains('741F495E21355F27001E2961')) { // Ephemeral add-to-app variant.
+    if (line.contains('9740EEBA1CF902C7004384FC') || line.contains('741F495E21355F27001E2961')) {
+      // Ephemeral add-to-app variant.
       return null;
     }
 
@@ -91,12 +88,16 @@ class RemoveFrameworkLinkAndEmbeddingMigration extends ProjectMigrator {
 
     if (line.contains('/* App.framework ') || line.contains('/* Flutter.framework ')) {
       // Print scary message.
-      _analytics.send(Event.appleUsageEvent(
-        workflow: 'ios-migration',
-        parameter: 'remove-frameworks',
-        result: 'failure',
-      ));
-      throwToolExit('Your Xcode project requires migration. See https://docs.flutter.dev/ios-project-migration for details.');
+      _analytics.send(
+        Event.appleUsageEvent(
+          workflow: 'ios-migration',
+          parameter: 'remove-frameworks',
+          result: 'failure',
+        ),
+      );
+      throwToolExit(
+        'Your Xcode project requires migration. See https://docs.flutter.dev/ios-project-migration for details.',
+      );
     }
 
     return line;

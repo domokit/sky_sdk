@@ -8,12 +8,10 @@ import '../../xcode_project.dart';
 
 /// Update the minimum iOS deployment version to the minimum allowed by Xcode without causing a warning.
 class IOSDeploymentTargetMigration extends ProjectMigrator {
-  IOSDeploymentTargetMigration(
-    IosProject project,
-    super.logger,
-  )   : _xcodeProjectInfoFile = project.xcodeProjectInfoFile,
-        _podfile = project.podfile,
-        _appFrameworkInfoPlist = project.appFrameworkInfoPlist;
+  IOSDeploymentTargetMigration(IosProject project, super.logger)
+    : _xcodeProjectInfoFile = project.xcodeProjectInfoFile,
+      _podfile = project.podfile,
+      _appFrameworkInfoPlist = project.appFrameworkInfoPlist;
 
   final File _xcodeProjectInfoFile;
   final File _podfile;
@@ -24,7 +22,9 @@ class IOSDeploymentTargetMigration extends ProjectMigrator {
     if (_xcodeProjectInfoFile.existsSync()) {
       processFileLines(_xcodeProjectInfoFile);
     } else {
-      logger.printTrace('Xcode project not found, skipping iOS deployment target version migration.');
+      logger.printTrace(
+        'Xcode project not found, skipping iOS deployment target version migration.',
+      );
     }
 
     if (_appFrameworkInfoPlist.existsSync()) {
@@ -76,11 +76,11 @@ class IOSDeploymentTargetMigration extends ProjectMigrator {
     const String podfilePlatformVersionOriginal9 = "platform :ios, '9.0'";
     const String podfilePlatformVersionOriginal11 = "platform :ios, '11.0'";
 
-    if (line.contains(deploymentTargetOriginal8)
-        || line.contains(deploymentTargetOriginal9)
-        || line.contains(deploymentTargetOriginal11)
-        || line.contains(podfilePlatformVersionOriginal9)
-        || line.contains(podfilePlatformVersionOriginal11)) {
+    if (line.contains(deploymentTargetOriginal8) ||
+        line.contains(deploymentTargetOriginal9) ||
+        line.contains(deploymentTargetOriginal11) ||
+        line.contains(podfilePlatformVersionOriginal9) ||
+        line.contains(podfilePlatformVersionOriginal11)) {
       if (!migrationRequired) {
         // Only print for the first discovered change found.
         logger.printStatus('Updating minimum iOS deployment target to 12.0.');

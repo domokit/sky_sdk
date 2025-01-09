@@ -27,11 +27,8 @@ Future<void> main() async {
       MaterialApp(
         home: DecoratedBox(
           decoration: ShapeDecoration(
-            shape: Border.all(color: Colors.white) +
-                   Border.all(),
-            image: DecorationImage(
-              image: image,
-            ),
+            shape: Border.all(color: Colors.white) + Border.all(),
+            image: DecorationImage(image: image),
           ),
         ),
       ),
@@ -50,8 +47,7 @@ Future<void> main() async {
       MaterialApp(
         home: DecoratedBox(
           decoration: ShapeDecoration(
-            shape: Border.all(color: Colors.white) +
-                   Border.all(),
+            shape: Border.all(color: Colors.white) + Border.all(),
             color: Colors.blue,
           ),
         ),
@@ -79,20 +75,14 @@ Future<void> main() async {
     await tester.pumpWidget(
       MaterialApp(
         home: DecoratedBox(
-          decoration: ShapeDecoration(
-            shape: TestBorder(log.add),
-            color: Colors.green,
-          ),
+          decoration: ShapeDecoration(shape: TestBorder(log.add), color: Colors.green),
         ),
       ),
     );
-    expect(
-      log,
-      <String>[
-        'getOuterPath Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) TextDirection.ltr',
-        'paint Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) TextDirection.ltr',
-      ],
-    );
+    expect(log, <String>[
+      'getOuterPath Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) TextDirection.ltr',
+      'paint Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) TextDirection.ltr',
+    ]);
   });
 
   testWidgets('TestBorder and Directionality - 2', (WidgetTester tester) async {
@@ -104,20 +94,15 @@ Future<void> main() async {
         child: DecoratedBox(
           decoration: ShapeDecoration(
             shape: TestBorder(log.add),
-            image: DecorationImage(
-              image: image,
-            ),
+            image: DecorationImage(image: image),
           ),
         ),
       ),
     );
-    expect(
-      log,
-      <String>[
-        'getInnerPath Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) TextDirection.rtl',
-        'paint Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) TextDirection.rtl',
-      ],
-    );
+    expect(log, <String>[
+      'getInnerPath Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) TextDirection.rtl',
+      'paint Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) TextDirection.rtl',
+    ]);
   });
 
   testWidgets('Does not crash with directional gradient', (WidgetTester tester) async {
@@ -135,9 +120,7 @@ Future<void> main() async {
               colors: <Color>[Colors.red, Colors.black],
               stops: <double>[0.0, 0.4],
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
           ),
         ),
       ),
@@ -181,9 +164,7 @@ Future<void> main() async {
             height: 250,
             decoration: ShapeDecoration(
               color: Colors.black,
-              shape: CircleBorder(
-                side: BorderSide(color: color, width: 50),
-              ),
+              shape: CircleBorder(side: BorderSide(color: color, width: 50)),
             ),
           ),
         );
@@ -197,16 +178,9 @@ Future<void> main() async {
           height: 800,
           decoration: const ShapeDecoration(
             color: Colors.redAccent,
-            shape: CircleBorder(
-              side: BorderSide(strokeAlign: BorderSide.strokeAlignOutside),
-            ),
+            shape: CircleBorder(side: BorderSide(strokeAlign: BorderSide.strokeAlignOutside)),
           ),
-          child: Directionality(
-            textDirection: TextDirection.ltr,
-            child: Stack(
-              children: circles,
-            ),
-          ),
+          child: Directionality(textDirection: TextDirection.ltr, child: Stack(children: circles)),
         ),
       );
     }

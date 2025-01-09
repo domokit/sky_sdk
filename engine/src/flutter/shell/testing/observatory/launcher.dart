@@ -11,10 +11,7 @@ import 'dart:io';
 class ShellProcess {
   ShellProcess(this._process) {
     // Scan stdout and scrape the VM Service Uri.
-    _process.stdout
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen((String line) {
+    _process.stdout.transform(utf8.decoder).transform(const LineSplitter()).listen((String line) {
       final uri = _extractVMServiceUri(line);
       if (uri != null) {
         _vmServiceUriCompleter.complete(uri);
@@ -74,10 +71,7 @@ class ShellLauncher {
       }
       shellArguments.addAll(args);
       print('Launching $shellExecutablePath $shellArguments');
-      final Process process = await Process.start(
-        shellExecutablePath,
-        shellArguments,
-      );
+      final Process process = await Process.start(shellExecutablePath, shellArguments);
       return ShellProcess(process);
     } catch (e) {
       print('Error launching shell: $e');

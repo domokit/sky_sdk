@@ -47,9 +47,11 @@ const String outOfDatePluginsPodfileConsequence = '''
   See https://flutter.dev/to/pubspec-plugin-platforms for details.
   If you have local Podfile edits you would like to keep, see https://github.com/flutter/flutter/issues/45197 for instructions.''';
 
-const String cocoaPodsInstallInstructions = 'see https://guides.cocoapods.org/using/getting-started.html#installation';
+const String cocoaPodsInstallInstructions =
+    'see https://guides.cocoapods.org/using/getting-started.html#installation';
 
-const String cocoaPodsUpdateInstructions = 'see https://guides.cocoapods.org/using/getting-started.html#updating-cocoapods';
+const String cocoaPodsUpdateInstructions =
+    'see https://guides.cocoapods.org/using/getting-started.html#updating-cocoapods';
 
 const String podfileIosMigrationInstructions = '''
   rm ios/Podfile''';
@@ -61,15 +63,20 @@ const String podfileMacOSMigrationInstructions = '''
 enum CocoaPodsStatus {
   /// iOS plugins will not work, installation required.
   notInstalled,
+
   /// iOS plugins might not work, upgrade recommended.
   unknownVersion,
+
   /// iOS plugins will not work, upgrade required.
   belowMinimumVersion,
+
   /// iOS plugins may not work in certain situations (Swift, static libraries),
   /// upgrade recommended.
   belowRecommendedVersion,
+
   /// Everything should be fine.
   recommended,
+
   /// iOS plugins will not work, re-install required.
   brokenInstall,
 }
@@ -96,18 +103,18 @@ class CocoaPods {
     required Usage usage,
     required Analytics analytics,
   }) : _fileSystem = fileSystem,
-      _processManager = processManager,
-      _xcodeProjectInterpreter = xcodeProjectInterpreter,
-      _logger = logger,
-      _usage = usage,
-      _analytics = analytics,
-      _processUtils = ProcessUtils(processManager: processManager, logger: logger),
-      _operatingSystemUtils = OperatingSystemUtils(
-        fileSystem: fileSystem,
-        logger: logger,
-        platform: platform,
-        processManager: processManager,
-      );
+       _processManager = processManager,
+       _xcodeProjectInterpreter = xcodeProjectInterpreter,
+       _logger = logger,
+       _usage = usage,
+       _analytics = analytics,
+       _processUtils = ProcessUtils(processManager: processManager, logger: logger),
+       _operatingSystemUtils = OperatingSystemUtils(
+         fileSystem: fileSystem,
+         logger: logger,
+         platform: platform,
+         processManager: processManager,
+       );
 
   final FileSystem _fileSystem;
   final ProcessManager _processManager;
@@ -120,18 +127,14 @@ class CocoaPods {
 
   Future<String?>? _versionText;
 
-  Future<bool> get isInstalled =>
-    _processUtils.exitsHappy(<String>['which', 'pod']);
+  Future<bool> get isInstalled => _processUtils.exitsHappy(<String>['which', 'pod']);
 
   Future<String?> get cocoaPodsVersionText {
-    _versionText ??= _processUtils.run(
-      <String>['pod', '--version'],
-      environment: <String, String>{
-        'LANG': 'en_US.UTF-8',
-      },
-    ).then<String?>((RunResult result) {
-      return result.exitCode == 0 ? result.stdout.trim() : null;
-    }, onError: (dynamic _) => null);
+    _versionText ??= _processUtils
+        .run(<String>['pod', '--version'], environment: <String, String>{'LANG': 'en_US.UTF-8'})
+        .then<String?>((RunResult result) {
+          return result.exitCode == 0 ? result.stdout.trim() : null;
+        }, onError: (dynamic _) => null);
     return _versionText!;
   }
 
@@ -183,11 +186,7 @@ class CocoaPods {
       // This migrator works around a CocoaPods bug, and should be run after `pod install` is run.
       final ProjectMigration postPodMigration = ProjectMigration(<ProjectMigrator>[
         CocoaPodsScriptReadlink(xcodeProject, _xcodeProjectInterpreter, _logger),
-        CocoaPodsToolchainDirectoryMigration(
-          xcodeProject,
-          _xcodeProjectInterpreter,
-          _logger,
-        ),
+        CocoaPodsToolchainDirectoryMigration(xcodeProject, _xcodeProjectInterpreter, _logger),
       ]);
       await postPodMigration.run();
 
@@ -262,18 +261,12 @@ class CocoaPods {
       addPodsDependencyToFlutterXcconfig(xcodeProject);
       return;
     }
-    final File podfileTemplate = await getPodfileTemplate(
-      xcodeProject,
-      runnerProject,
-    );
+    final File podfileTemplate = await getPodfileTemplate(xcodeProject, runnerProject);
     podfileTemplate.copySync(podfile.path);
     addPodsDependencyToFlutterXcconfig(xcodeProject);
   }
 
-  Future<File> getPodfileTemplate(
-    XcodeBasedProject xcodeProject,
-    Directory runnerProject,
-  ) async {
+  Future<File> getPodfileTemplate(XcodeBasedProject xcodeProject, Directory runnerProject) async {
     String podfileTemplateName;
     if (xcodeProject is MacOSProject) {
       podfileTemplateName = 'Podfile-macos';
@@ -284,14 +277,16 @@ class CocoaPods {
       )).containsKey('SWIFT_VERSION');
       podfileTemplateName = isSwift ? 'Podfile-ios-swift' : 'Podfile-ios-objc';
     }
-    return _fileSystem.file(_fileSystem.path.join(
-      Cache.flutterRoot!,
-      'packages',
-      'flutter_tools',
-      'templates',
-      'cocoapods',
-      podfileTemplateName,
-    ));
+    return _fileSystem.file(
+      _fileSystem.path.join(
+        Cache.flutterRoot!,
+        'packages',
+        'flutter_tools',
+        'templates',
+        'cocoapods',
+        podfileTemplateName,
+      ),
+    );
   }
 
   /// Ensures all `Flutter/Xxx.xcconfig` files for the given Xcode-based
@@ -302,8 +297,7 @@ class CocoaPods {
   }
 
   String includePodsXcconfig(String mode) {
-    return 'Pods/Target Support Files/Pods-Runner/Pods-Runner.${mode
-        .toLowerCase()}.xcconfig';
+    return 'Pods/Target Support Files/Pods-Runner/Pods-Runner.${mode.toLowerCase()}.xcconfig';
   }
 
   bool xcconfigIncludesPods(File xcodeConfig) {
@@ -347,10 +341,10 @@ class CocoaPods {
     final File podfileLockFile = xcodeProject.podfileLock;
     final File manifestLockFile = xcodeProject.podManifestLock;
 
-    return !podfileLockFile.existsSync()
-        || !manifestLockFile.existsSync()
-        || podfileLockFile.statSync().modified.isBefore(podfileFile.statSync().modified)
-        || podfileLockFile.readAsStringSync() != manifestLockFile.readAsStringSync();
+    return !podfileLockFile.existsSync() ||
+        !manifestLockFile.existsSync() ||
+        podfileLockFile.statSync().modified.isBefore(podfileFile.statSync().modified) ||
+        podfileLockFile.readAsStringSync() != manifestLockFile.readAsStringSync();
   }
 
   Future<void> _runPodInstall(XcodeBasedProject xcodeProject, BuildMode buildMode) async {
@@ -386,10 +380,10 @@ class CocoaPods {
     } else if (xcodeProject.podfileLock.existsSync()) {
       // Even if the Podfile.lock didn't change, update its modified date to now
       // so Podfile.lock is newer than Podfile.
-      _processManager.runSync(
-        <String>['touch', xcodeProject.podfileLock.path],
-        workingDirectory: _fileSystem.path.dirname(xcodeProject.podfile.path),
-      );
+      _processManager.runSync(<String>[
+        'touch',
+        xcodeProject.podfileLock.path,
+      ], workingDirectory: _fileSystem.path.dirname(xcodeProject.podfile.path));
     }
   }
 
@@ -409,23 +403,16 @@ class CocoaPods {
     } else if ((_isFfiX86Error(stdout) || _isFfiX86Error(stderr)) &&
         _operatingSystemUtils.hostPlatform == HostPlatform.darwin_arm64) {
       // https://github.com/flutter/flutter/issues/70796
-      UsageEvent(
-        'pod-install-failure',
-        'arm-ffi',
-        flutterUsage: _usage,
-      ).send();
-      _analytics.send(Event.appleUsageEvent(
-        workflow: 'pod-install-failure',
-        parameter: 'arm-ffi',
-      ));
+      UsageEvent('pod-install-failure', 'arm-ffi', flutterUsage: _usage).send();
+      _analytics.send(Event.appleUsageEvent(workflow: 'pod-install-failure', parameter: 'arm-ffi'));
       _logger.printError(
         'Error: To set up CocoaPods for ARM macOS, run:\n'
         '  sudo gem uninstall ffi && sudo gem install ffi -- --enable-libffi-alloc\n',
         emphasis: true,
       );
     } else if (stdout.contains('required a higher minimum deployment target')) {
-      final ({String failingPod, String sourcePlugin, String podPluginSubdir})?
-          podInfo = _parseMinDeploymentFailureInfo(stdout);
+      final ({String failingPod, String sourcePlugin, String podPluginSubdir})? podInfo =
+          _parseMinDeploymentFailureInfo(stdout);
       if (podInfo != null) {
         final Directory symlinksDir;
         final String podPlatformString;
@@ -460,7 +447,7 @@ class CocoaPods {
               .childFile('$sourcePlugin.podspec');
           final String? minDeploymentVersion = _findPodspecMinDeploymentVersion(
             podspec,
-            podPlatformString
+            podPlatformString,
           );
           if (minDeploymentVersion != null) {
             _logger.printError(
@@ -514,10 +501,12 @@ class CocoaPods {
   }
 
   ({String failingPod, String sourcePlugin, String podPluginSubdir})?
-      _parseMinDeploymentFailureInfo(String podInstallOutput) {
+  _parseMinDeploymentFailureInfo(String podInstallOutput) {
     final RegExp sourceLine = RegExp(r'\(from `.*\.symlinks/plugins/([^/]+)/([^/]+)`\)');
-    final RegExp dependencyLine = RegExp(r'Specs satisfying the `([^ ]+).*` dependency were found, '
-        'but they required a higher minimum deployment target');
+    final RegExp dependencyLine = RegExp(
+      r'Specs satisfying the `([^ ]+).*` dependency were found, '
+      'but they required a higher minimum deployment target',
+    );
     final RegExpMatch? sourceMatch = sourceLine.firstMatch(podInstallOutput);
     final RegExpMatch? dependencyMatch = dependencyLine.firstMatch(podInstallOutput);
     if (sourceMatch == null || dependencyMatch == null) {
@@ -525,8 +514,8 @@ class CocoaPods {
     }
     return (
       failingPod: dependencyMatch.group(1)!,
-      sourcePlugin:  sourceMatch.group(1)!,
-      podPluginSubdir: sourceMatch.group(2)!
+      sourcePlugin: sourceMatch.group(1)!,
+      podPluginSubdir: sourceMatch.group(2)!,
     );
   }
 
@@ -542,7 +531,7 @@ class CocoaPods {
       r'^\s*[a-zA-Z_]+\.platform\s*=\s*'
       ':$platformString'
       r'''\s*,\s*["']([^"']+)["']''',
-      multiLine: true
+      multiLine: true,
     );
     final RegExp deploymentTargetPlatform = RegExp(
       // Example: spec.osx.deployment_target = '10.8'
@@ -550,10 +539,11 @@ class CocoaPods {
       r'^\s*[a-zA-Z_]+\.'
       '$platformString\\.deployment_target'
       r'''\s*=\s*["']([^"']+)["']''',
-      multiLine: true
+      multiLine: true,
     );
     final String podspecContents = podspec.readAsStringSync();
-    final RegExpMatch? match = platformPattern.firstMatch(podspecContents) ??
+    final RegExpMatch? match =
+        platformPattern.firstMatch(podspecContents) ??
         deploymentTargetPlatform.firstMatch(podspecContents);
     return match?.group(1);
   }
@@ -572,16 +562,15 @@ class CocoaPods {
       // Xcode build configuration was Release, which caused App Store submission rejections.
       //
       // Warn the user if they are still symlinking to the framework.
-      final Link flutterSymlink = _fileSystem.link(_fileSystem.path.join(
-        xcodeProject.symlinks.path,
-        'flutter',
-      ));
+      final Link flutterSymlink = _fileSystem.link(
+        _fileSystem.path.join(xcodeProject.symlinks.path, 'flutter'),
+      );
       if (flutterSymlink.existsSync()) {
         throwToolExit(
           'Warning: Podfile is out of date\n'
-              '$outOfDateFrameworksPodfileConsequence\n'
-              'To regenerate the Podfile, run:\n'
-              '$podfileIosMigrationInstructions\n',
+          '$outOfDateFrameworksPodfileConsequence\n'
+          'To regenerate the Podfile, run:\n'
+          '$podfileIosMigrationInstructions\n',
         );
       }
     }
@@ -590,8 +579,9 @@ class CocoaPods {
     // the old parsed .flutter-plugins file, prompt the regeneration. Old line was:
     // plugin_pods = parse_KV_file('../.flutter-plugins')
     if (xcodeProject.podfile.existsSync() &&
-      xcodeProject.podfile.readAsStringSync().contains(".flutter-plugins'")) {
-      const String warning = 'Warning: Podfile is out of date\n'
+        xcodeProject.podfile.readAsStringSync().contains(".flutter-plugins'")) {
+      const String warning =
+          'Warning: Podfile is out of date\n'
           '$outOfDatePluginsPodfileConsequence\n'
           'To regenerate the Podfile, run:\n';
       if (isIos) {

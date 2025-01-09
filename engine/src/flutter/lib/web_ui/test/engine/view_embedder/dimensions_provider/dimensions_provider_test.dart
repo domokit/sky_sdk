@@ -18,12 +18,9 @@ void doTests() {
       expect(provider, isA<FullPageDimensionsProvider>());
     });
 
-    test('Creates a CustomElement instance when hostElement is not null',
-        () async {
+    test('Creates a CustomElement instance when hostElement is not null', () async {
       final DomElement element = createDomElement('some-random-element');
-      final DimensionsProvider provider = DimensionsProvider.create(
-        hostElement: element,
-      );
+      final DimensionsProvider provider = DimensionsProvider.create(hostElement: element);
 
       expect(provider, isA<CustomElementDimensionsProvider>());
     });

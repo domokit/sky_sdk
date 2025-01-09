@@ -92,7 +92,9 @@ android {
         applicationId "com.example.asset_sample"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        ''' + minSdkVersionString + r'''
+        ''' +
+      minSdkVersionString +
+      r'''
 
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
@@ -139,13 +141,14 @@ void main() {
       });
 
       testUsingContext('skipped if files are missing', () async {
-        final TopLevelGradleBuildFileMigration androidProjectMigration = TopLevelGradleBuildFileMigration(
-          project,
-          bufferLogger,
-        );
+        final TopLevelGradleBuildFileMigration androidProjectMigration =
+            TopLevelGradleBuildFileMigration(project, bufferLogger);
         await androidProjectMigration.migrate();
         expect(topLevelGradleBuildFile.existsSync(), isFalse);
-        expect(bufferLogger.traceText, contains('Top-level Gradle build file not found, skipping migration of task "clean".'));
+        expect(
+          bufferLogger.traceText,
+          contains('Top-level Gradle build file not found, skipping migration of task "clean".'),
+        );
       });
 
       testUsingContext('skipped if nothing to upgrade', () async {
@@ -155,10 +158,8 @@ tasks.register("clean", Delete) {
 }
         ''');
 
-        final TopLevelGradleBuildFileMigration androidProjectMigration = TopLevelGradleBuildFileMigration(
-          project,
-          bufferLogger,
-        );
+        final TopLevelGradleBuildFileMigration androidProjectMigration =
+            TopLevelGradleBuildFileMigration(project, bufferLogger);
         final DateTime previousLastModified = topLevelGradleBuildFile.lastModifiedSync();
         await androidProjectMigration.migrate();
 
@@ -172,18 +173,22 @@ task clean(type: Delete) {
 }
 ''');
 
-        final TopLevelGradleBuildFileMigration androidProjectMigration = TopLevelGradleBuildFileMigration(
-          project,
-          bufferLogger,
-        );
+        final TopLevelGradleBuildFileMigration androidProjectMigration =
+            TopLevelGradleBuildFileMigration(project, bufferLogger);
         await androidProjectMigration.migrate();
 
-        expect(bufferLogger.traceText, contains('Migrating "clean" Gradle task to lazy declaration style.'));
-        expect(topLevelGradleBuildFile.readAsStringSync(), equals('''
+        expect(
+          bufferLogger.traceText,
+          contains('Migrating "clean" Gradle task to lazy declaration style.'),
+        );
+        expect(
+          topLevelGradleBuildFile.readAsStringSync(),
+          equals('''
 tasks.register("clean", Delete) {
     delete rootProject.layout.buildDirectory
 }
-'''));
+'''),
+        );
       });
     });
 
@@ -200,7 +205,8 @@ tasks.register("clean", Delete) {
         project = FakeAndroidProject(
           root: memoryFileSystem.currentDirectory.childDirectory('android')..createSync(),
         );
-        project.hostAppGradleRoot.childDirectory(gradleDirectoryName)
+        project.hostAppGradleRoot
+            .childDirectory(gradleDirectoryName)
             .childDirectory(gradleWrapperDirectoryName)
             .createSync(recursive: true);
         gradleWrapperPropertiesFile = project.hostAppGradleRoot
@@ -210,66 +216,67 @@ tasks.register("clean", Delete) {
       });
 
       testWithoutContext('skipped if files are missing', () async {
-        final AndroidStudioJavaGradleConflictMigration migration = AndroidStudioJavaGradleConflictMigration(
-          java: FakeJava(version: _javaVersion17),
-          bufferLogger,
-          project: project,
-          androidStudio: FakeAndroidStudio(version: androidStudioDolphin),
-        );
+        final AndroidStudioJavaGradleConflictMigration migration =
+            AndroidStudioJavaGradleConflictMigration(
+              java: FakeJava(version: _javaVersion17),
+              bufferLogger,
+              project: project,
+              androidStudio: FakeAndroidStudio(version: androidStudioDolphin),
+            );
         await migration.migrate();
         expect(gradleWrapperPropertiesFile.existsSync(), isFalse);
         expect(bufferLogger.traceText, contains(gradleWrapperNotFound));
       });
 
-
       testWithoutContext('skipped if android studio is null', () async {
-        final AndroidStudioJavaGradleConflictMigration migration = AndroidStudioJavaGradleConflictMigration(
-          java: FakeJava(version: _javaVersion17),
-          bufferLogger,
-          project: project,
-        );
+        final AndroidStudioJavaGradleConflictMigration migration =
+            AndroidStudioJavaGradleConflictMigration(
+              java: FakeJava(version: _javaVersion17),
+              bufferLogger,
+              project: project,
+            );
         gradleWrapperPropertiesFile.writeAsStringSync(gradleWrapperToMigrate);
         await migration.migrate();
         expect(bufferLogger.traceText, contains(androidStudioNotFound));
-        expect(gradleWrapperPropertiesFile.readAsStringSync(),
-            gradleWrapperToMigrate);
+        expect(gradleWrapperPropertiesFile.readAsStringSync(), gradleWrapperToMigrate);
       });
 
       testWithoutContext('skipped if android studio version is null', () async {
-        final AndroidStudioJavaGradleConflictMigration migration = AndroidStudioJavaGradleConflictMigration(
-          java: FakeJava(version: _javaVersion17),
-          bufferLogger,
-          project: project,
-          androidStudio: FakeAndroidStudio(version: null),
-        );
+        final AndroidStudioJavaGradleConflictMigration migration =
+            AndroidStudioJavaGradleConflictMigration(
+              java: FakeJava(version: _javaVersion17),
+              bufferLogger,
+              project: project,
+              androidStudio: FakeAndroidStudio(version: null),
+            );
         gradleWrapperPropertiesFile.writeAsStringSync(gradleWrapperToMigrate);
         await migration.migrate();
         expect(bufferLogger.traceText, contains(androidStudioNotFound));
-        expect(gradleWrapperPropertiesFile.readAsStringSync(),
-            gradleWrapperToMigrate);
+        expect(gradleWrapperPropertiesFile.readAsStringSync(), gradleWrapperToMigrate);
       });
 
       testWithoutContext('skipped if error is encountered in migrate()', () async {
-        final AndroidStudioJavaGradleConflictMigration migration = AndroidStudioJavaGradleConflictMigration(
-          java: FakeErroringJava(),
-          bufferLogger,
-          project: project,
-          androidStudio: FakeAndroidStudio(version: androidStudioFlamingo),
-        );
+        final AndroidStudioJavaGradleConflictMigration migration =
+            AndroidStudioJavaGradleConflictMigration(
+              java: FakeErroringJava(),
+              bufferLogger,
+              project: project,
+              androidStudio: FakeAndroidStudio(version: androidStudioFlamingo),
+            );
         gradleWrapperPropertiesFile.writeAsStringSync(gradleWrapperToMigrate);
         await migration.migrate();
         expect(bufferLogger.traceText, contains(errorWhileMigrating));
-        expect(gradleWrapperPropertiesFile.readAsStringSync(),
-            gradleWrapperToMigrate);
+        expect(gradleWrapperPropertiesFile.readAsStringSync(), gradleWrapperToMigrate);
       });
 
       testWithoutContext('skipped if android studio version is less than flamingo', () async {
-        final AndroidStudioJavaGradleConflictMigration migration = AndroidStudioJavaGradleConflictMigration(
-          java: FakeJava(),
-          bufferLogger,
-          project: project,
-          androidStudio: FakeAndroidStudio(version: androidStudioDolphin),
-        );
+        final AndroidStudioJavaGradleConflictMigration migration =
+            AndroidStudioJavaGradleConflictMigration(
+              java: FakeJava(),
+              bufferLogger,
+              project: project,
+              androidStudio: FakeAndroidStudio(version: androidStudioDolphin),
+            );
         gradleWrapperPropertiesFile.writeAsStringSync(gradleWrapperToMigrate);
         await migration.migrate();
         expect(gradleWrapperPropertiesFile.readAsStringSync(), gradleWrapperToMigrate);
@@ -277,12 +284,13 @@ tasks.register("clean", Delete) {
       });
 
       testWithoutContext('skipped if bundled java version is less than 17', () async {
-        final AndroidStudioJavaGradleConflictMigration migration = AndroidStudioJavaGradleConflictMigration(
-          java: FakeJava(version: _javaVersion16),
-          bufferLogger,
-          project: project,
-          androidStudio: FakeAndroidStudio(version: androidStudioFlamingo),
-        );
+        final AndroidStudioJavaGradleConflictMigration migration =
+            AndroidStudioJavaGradleConflictMigration(
+              java: FakeJava(version: _javaVersion16),
+              bufferLogger,
+              project: project,
+              androidStudio: FakeAndroidStudio(version: androidStudioFlamingo),
+            );
         gradleWrapperPropertiesFile.writeAsStringSync(gradleWrapperToMigrate);
         await migration.migrate();
         expect(gradleWrapperPropertiesFile.readAsStringSync(), gradleWrapperToMigrate);
@@ -291,12 +299,13 @@ tasks.register("clean", Delete) {
 
       testWithoutContext('nothing is changed if gradle version not one that was '
           'used by flutter create', () async {
-        final AndroidStudioJavaGradleConflictMigration migration = AndroidStudioJavaGradleConflictMigration(
-          java: FakeJava(version: _javaVersion17),
-          bufferLogger,
-          project: project,
-          androidStudio: FakeAndroidStudio(version: androidStudioFlamingo),
-        );
+        final AndroidStudioJavaGradleConflictMigration migration =
+            AndroidStudioJavaGradleConflictMigration(
+              java: FakeJava(version: _javaVersion17),
+              bufferLogger,
+              project: project,
+              androidStudio: FakeAndroidStudio(version: androidStudioFlamingo),
+            );
         gradleWrapperPropertiesFile.writeAsStringSync(otherGradleVersionWrapper);
         await migration.migrate();
         expect(gradleWrapperPropertiesFile.readAsStringSync(), otherGradleVersionWrapper);
@@ -305,27 +314,34 @@ tasks.register("clean", Delete) {
 
       testWithoutContext('change is made with one of the specific gradle versions'
           ' we migrate for', () async {
-        final AndroidStudioJavaGradleConflictMigration migration = AndroidStudioJavaGradleConflictMigration(
-          java: FakeJava(version: _javaVersion17),
-          bufferLogger,
-          project: project,
-          androidStudio: FakeAndroidStudio(version: androidStudioFlamingo),
-        );
+        final AndroidStudioJavaGradleConflictMigration migration =
+            AndroidStudioJavaGradleConflictMigration(
+              java: FakeJava(version: _javaVersion17),
+              bufferLogger,
+              project: project,
+              androidStudio: FakeAndroidStudio(version: androidStudioFlamingo),
+            );
         gradleWrapperPropertiesFile.writeAsStringSync(gradleWrapperToMigrate);
         await migration.migrate();
         expect(gradleWrapperPropertiesFile.readAsStringSync(), gradleWrapperToMigrateTo);
-        expect(bufferLogger.statusText, contains('Conflict detected between '
+        expect(
+          bufferLogger.statusText,
+          contains(
+            'Conflict detected between '
             'Android Studio Java version and Gradle version, upgrading Gradle '
-            'version from 6.7 to $gradleVersion7_6_1.'));
+            'version from 6.7 to $gradleVersion7_6_1.',
+          ),
+        );
       });
 
       testWithoutContext('change is not made when opt out flag is set', () async {
-        final AndroidStudioJavaGradleConflictMigration migration = AndroidStudioJavaGradleConflictMigration(
-          java: FakeJava(version: _javaVersion17),
-          bufferLogger,
-          project: project,
-          androidStudio: FakeAndroidStudio(version: androidStudioFlamingo),
-        );
+        final AndroidStudioJavaGradleConflictMigration migration =
+            AndroidStudioJavaGradleConflictMigration(
+              java: FakeJava(version: _javaVersion17),
+              bufferLogger,
+              project: project,
+              androidStudio: FakeAndroidStudio(version: androidStudioFlamingo),
+            );
         gradleWrapperPropertiesFile.writeAsStringSync(gradleWrapperToMigrate + optOutFlag);
         await migration.migrate();
         expect(gradleWrapperPropertiesFile.readAsStringSync(), gradleWrapperToMigrate + optOutFlag);
@@ -334,8 +350,7 @@ tasks.register("clean", Delete) {
     });
 
     group('migrate min sdk versions less than 21 to flutter.minSdkVersion '
-        'when in a FlutterProject that is an app', ()
-    {
+        'when in a FlutterProject that is an app', () {
       late MemoryFileSystem memoryFileSystem;
       late BufferLogger bufferLogger;
       late FakeAndroidProject project;
@@ -349,10 +364,7 @@ tasks.register("clean", Delete) {
           root: memoryFileSystem.currentDirectory.childDirectory('android'),
         );
         project.appGradleFile.parent.createSync(recursive: true);
-        migration = MinSdkVersionMigration(
-            project,
-            bufferLogger
-        );
+        migration = MinSdkVersionMigration(project, bufferLogger);
       });
 
       testWithoutContext('do nothing when files missing', () async {
@@ -364,32 +376,45 @@ tasks.register("clean", Delete) {
         const String minSdkVersion19 = 'minSdkVersion 19';
         project.appGradleFile.writeAsStringSync(sampleModuleGradleBuildFile(minSdkVersion19));
         await migration.migrate();
-        expect(project.appGradleFile.readAsStringSync(), sampleModuleGradleBuildFile(replacementMinSdkText));
+        expect(
+          project.appGradleFile.readAsStringSync(),
+          sampleModuleGradleBuildFile(replacementMinSdkText),
+        );
       });
 
       testWithoutContext('replace when api 20', () async {
         const String minSdkVersion20 = 'minSdkVersion 20';
         project.appGradleFile.writeAsStringSync(sampleModuleGradleBuildFile(minSdkVersion20));
         await migration.migrate();
-        expect(project.appGradleFile.readAsStringSync(), sampleModuleGradleBuildFile(replacementMinSdkText));
+        expect(
+          project.appGradleFile.readAsStringSync(),
+          sampleModuleGradleBuildFile(replacementMinSdkText),
+        );
       });
 
       testWithoutContext('do nothing when >=api 21', () async {
         const String minSdkVersion21 = 'minSdkVersion 21';
         project.appGradleFile.writeAsStringSync(sampleModuleGradleBuildFile(minSdkVersion21));
         await migration.migrate();
-        expect(project.appGradleFile.readAsStringSync(), sampleModuleGradleBuildFile(minSdkVersion21));
+        expect(
+          project.appGradleFile.readAsStringSync(),
+          sampleModuleGradleBuildFile(minSdkVersion21),
+        );
       });
 
       testWithoutContext('do nothing when already using '
           'flutter.minSdkVersion', () async {
         project.appGradleFile.writeAsStringSync(sampleModuleGradleBuildFile(replacementMinSdkText));
         await migration.migrate();
-        expect(project.appGradleFile.readAsStringSync(), sampleModuleGradleBuildFile(replacementMinSdkText));
+        expect(
+          project.appGradleFile.readAsStringSync(),
+          sampleModuleGradleBuildFile(replacementMinSdkText),
+        );
       });
 
       testWithoutContext('avoid rewriting comments', () async {
-        const String code = '// minSdkVersion 19  // old default\n'
+        const String code =
+            '// minSdkVersion 19  // old default\n'
             '        minSdkVersion 23  // new version';
         project.appGradleFile.writeAsStringSync(sampleModuleGradleBuildFile(code));
         await migration.migrate();
@@ -401,14 +426,14 @@ tasks.register("clean", Delete) {
           root: memoryFileSystem.currentDirectory.childDirectory('android'),
           module: true,
         );
-        migration = MinSdkVersionMigration(
-            project,
-            bufferLogger
-        );
+        migration = MinSdkVersionMigration(project, bufferLogger);
         const String minSdkVersion19 = 'minSdkVersion 19';
         project.appGradleFile.writeAsStringSync(sampleModuleGradleBuildFile(minSdkVersion19));
         await migration.migrate();
-        expect(project.appGradleFile.readAsStringSync(), sampleModuleGradleBuildFile(minSdkVersion19));
+        expect(
+          project.appGradleFile.readAsStringSync(),
+          sampleModuleGradleBuildFile(minSdkVersion19),
+        );
       });
 
       testWithoutContext('do nothing when minSdkVersion is set '
@@ -416,20 +441,27 @@ tasks.register("clean", Delete) {
         const String minSdkVersionConstant = 'minSdkVersion kMinSdkversion';
         project.appGradleFile.writeAsStringSync(sampleModuleGradleBuildFile(minSdkVersionConstant));
         await migration.migrate();
-        expect(project.appGradleFile.readAsStringSync(), sampleModuleGradleBuildFile(minSdkVersionConstant));
+        expect(
+          project.appGradleFile.readAsStringSync(),
+          sampleModuleGradleBuildFile(minSdkVersionConstant),
+        );
       });
 
       testWithoutContext('do nothing when minSdkVersion is set '
           'using = syntax', () async {
         const String equalsSyntaxMinSdkVersion19 = 'minSdkVersion = 19';
-        project.appGradleFile.writeAsStringSync(sampleModuleGradleBuildFile(equalsSyntaxMinSdkVersion19));
+        project.appGradleFile.writeAsStringSync(
+          sampleModuleGradleBuildFile(equalsSyntaxMinSdkVersion19),
+        );
         await migration.migrate();
-        expect(project.appGradleFile.readAsStringSync(), sampleModuleGradleBuildFile(equalsSyntaxMinSdkVersion19));
+        expect(
+          project.appGradleFile.readAsStringSync(),
+          sampleModuleGradleBuildFile(equalsSyntaxMinSdkVersion19),
+        );
       });
     });
 
-    group('delete FlutterMultiDexApplication.java, if it exists', ()
-    {
+    group('delete FlutterMultiDexApplication.java, if it exists', () {
       late MemoryFileSystem memoryFileSystem;
       late BufferLogger bufferLogger;
       late FakeAndroidProject project;
@@ -443,40 +475,43 @@ tasks.register("clean", Delete) {
           root: memoryFileSystem.currentDirectory.childDirectory('android'),
         );
         project.appGradleFile.parent.createSync(recursive: true);
-        migration = MultidexRemovalMigration(
-            project,
-            bufferLogger
-        );
+        migration = MultidexRemovalMigration(project, bufferLogger);
       });
 
-      testWithoutContext('do nothing when FlutterMultiDexApplication.java is not present', () async {
-        await migration.migrate();
-        expect(bufferLogger.traceText, isEmpty);
-      });
+      testWithoutContext(
+        'do nothing when FlutterMultiDexApplication.java is not present',
+        () async {
+          await migration.migrate();
+          expect(bufferLogger.traceText, isEmpty);
+        },
+      );
 
-      testWithoutContext('delete and note when FlutterMultiDexApplication.java is present', () async {
-        // Write a blank string to the FlutterMultiDexApplication.java file.
-        final File flutterMultiDexApplication =  project.hostAppGradleRoot
+      testWithoutContext(
+        'delete and note when FlutterMultiDexApplication.java is present',
+        () async {
+          // Write a blank string to the FlutterMultiDexApplication.java file.
+          final File flutterMultiDexApplication = project.hostAppGradleRoot
             .childDirectory('src')
             .childDirectory('main')
             .childDirectory('java')
             .childDirectory('io')
             .childDirectory('flutter')
             .childDirectory('app')
-            .childFile('FlutterMultiDexApplication.java')
-          ..createSync(recursive: true);
-        flutterMultiDexApplication.writeAsStringSync('');
+            .childFile('FlutterMultiDexApplication.java')..createSync(recursive: true);
+          flutterMultiDexApplication.writeAsStringSync('');
 
-        await migration.migrate();
-        expect(bufferLogger.traceText, contains(MultidexRemovalMigration.deletionMessage));
-        expect(flutterMultiDexApplication.existsSync(), false);
-      });
+          await migration.migrate();
+          expect(bufferLogger.traceText, contains(MultidexRemovalMigration.deletionMessage));
+          expect(flutterMultiDexApplication.existsSync(), false);
+        },
+      );
     });
   });
 }
 
 class FakeAndroidProject extends Fake implements AndroidProject {
-  FakeAndroidProject({required Directory root, this.module, this.plugin}) : hostAppGradleRoot = root;
+  FakeAndroidProject({required Directory root, this.module, this.plugin})
+    : hostAppGradleRoot = root;
 
   @override
   Directory hostAppGradleRoot;

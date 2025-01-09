@@ -17,8 +17,7 @@ void debugCheckBuilds(List<Build> builds) {
   final Set<String> names = <String>{};
 
   for (final Build build in builds) {
-    assert(!names.contains(build.name),
-        'More than one build has the name ${build.name}');
+    assert(!names.contains(build.name), 'More than one build has the name ${build.name}');
     names.add(build.name);
   }
 }
@@ -86,10 +85,7 @@ Future<int> runBuild(
   int concurrency = 0,
   RbeConfig rbeConfig = const RbeConfig(),
 }) async {
-  final List<String> gnArgs = <String>[
-    if (!enableRbe) '--no-rbe',
-    ...extraGnArgs,
-  ];
+  final List<String> gnArgs = <String>[if (!enableRbe) '--no-rbe', ...extraGnArgs];
 
   // TODO(loic-sharma): Fetch dependencies if needed.
   final BuildRunner buildRunner = BuildRunner(
@@ -152,10 +148,7 @@ Future<bool> ensureBuildDir(
 }) async {
   // TODO(matanlurey): https://github.com/flutter/flutter/issues/148442.
   final io.Directory buildDir = io.Directory(
-    p.join(
-      environment.engine.outDir.path,
-      build.ninja.config,
-    ),
+    p.join(environment.engine.outDir.path, build.ninja.config),
   );
   if (buildDir.existsSync()) {
     return true;
@@ -183,10 +176,7 @@ Future<bool> _runGn(
   List<String> extraGnArgs = const <String>[],
   required bool enableRbe,
 }) async {
-  final List<String> gnArgs = <String>[
-    if (!enableRbe) '--no-rbe',
-    ...extraGnArgs,
-  ];
+  final List<String> gnArgs = <String>[if (!enableRbe) '--no-rbe', ...extraGnArgs];
 
   final BuildRunner buildRunner = BuildRunner(
     platform: environment.platform,

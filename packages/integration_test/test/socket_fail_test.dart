@@ -15,7 +15,8 @@ class SocketExceptionHttpClient extends Fake implements HttpClient {
 }
 
 Future<void> main() async {
-  final IntegrationTestWidgetsFlutterBinding binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  final IntegrationTestWidgetsFlutterBinding binding =
+      IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   test('Prints an appropriate message on socket exception', () async {
     bool gotStateError = false;

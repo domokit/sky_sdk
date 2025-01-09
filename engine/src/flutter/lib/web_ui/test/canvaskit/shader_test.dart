@@ -21,54 +21,51 @@ void testMain() {
     setUpCanvasKitTest();
 
     test('Sweep gradient', () {
-      final CkGradientSweep gradient = ui.Gradient.sweep(
-        ui.Offset.zero,
-        testColors,
-      ) as CkGradientSweep;
+      final CkGradientSweep gradient =
+          ui.Gradient.sweep(ui.Offset.zero, testColors) as CkGradientSweep;
       expect(gradient.getSkShader(ui.FilterQuality.none), isNotNull);
     });
 
     test('Linear gradient', () {
-      final CkGradientLinear gradient = ui.Gradient.linear(
-        ui.Offset.zero,
-        const ui.Offset(0, 1),
-        testColors,
-      ) as CkGradientLinear;
+      final CkGradientLinear gradient =
+          ui.Gradient.linear(ui.Offset.zero, const ui.Offset(0, 1), testColors) as CkGradientLinear;
       expect(gradient.getSkShader(ui.FilterQuality.none), isNotNull);
     });
 
     test('Radial gradient', () {
-      final CkGradientRadial gradient = ui.Gradient.radial(
-        ui.Offset.zero,
-        10,
-        testColors,
-      ) as CkGradientRadial;
+      final CkGradientRadial gradient =
+          ui.Gradient.radial(ui.Offset.zero, 10, testColors) as CkGradientRadial;
       expect(gradient.getSkShader(ui.FilterQuality.none), isNotNull);
     });
 
     test('Conical gradient', () {
-      final CkGradientConical gradient = ui.Gradient.radial(
-        ui.Offset.zero,
-        10,
-        testColors,
-        null,
-        ui.TileMode.clamp,
-        null,
-        const ui.Offset(10, 10),
-        40,
-      ) as CkGradientConical;
+      final CkGradientConical gradient =
+          ui.Gradient.radial(
+                ui.Offset.zero,
+                10,
+                testColors,
+                null,
+                ui.TileMode.clamp,
+                null,
+                const ui.Offset(10, 10),
+                40,
+              )
+              as CkGradientConical;
       expect(gradient.getSkShader(ui.FilterQuality.none), isNotNull);
     });
 
     test('Image shader initialize/dispose cycle', () {
-      final SkImage skImage = canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!.makeImageAtCurrentFrame();
+      final SkImage skImage =
+          canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!.makeImageAtCurrentFrame();
       final CkImage image = CkImage(skImage);
-      final CkImageShader imageShader = ui.ImageShader(
-        image,
-        ui.TileMode.clamp,
-        ui.TileMode.repeated,
-        Float64List.fromList(Matrix4.diagonal3Values(1, 2, 3).storage),
-      ) as CkImageShader;
+      final CkImageShader imageShader =
+          ui.ImageShader(
+                image,
+                ui.TileMode.clamp,
+                ui.TileMode.repeated,
+                Float64List.fromList(Matrix4.diagonal3Values(1, 2, 3).storage),
+              )
+              as CkImageShader;
       expect(imageShader, isA<CkImageShader>());
 
       final UniqueRef<SkShader> ref = imageShader.ref!;
@@ -84,14 +81,17 @@ void testMain() {
     });
 
     test('Image shader withQuality', () {
-      final SkImage skImage = canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!.makeImageAtCurrentFrame();
+      final SkImage skImage =
+          canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!.makeImageAtCurrentFrame();
       final CkImage image = CkImage(skImage);
-      final CkImageShader imageShader = ui.ImageShader(
-        image,
-        ui.TileMode.clamp,
-        ui.TileMode.repeated,
-        Float64List.fromList(Matrix4.diagonal3Values(1, 2, 3).storage),
-      ) as CkImageShader;
+      final CkImageShader imageShader =
+          ui.ImageShader(
+                image,
+                ui.TileMode.clamp,
+                ui.TileMode.repeated,
+                Float64List.fromList(Matrix4.diagonal3Values(1, 2, 3).storage),
+              )
+              as CkImageShader;
       expect(imageShader, isA<CkImageShader>());
 
       final UniqueRef<SkShader> ref1 = imageShader.ref!;
@@ -108,7 +108,11 @@ void testMain() {
       expect(imageShader.getSkShader(ui.FilterQuality.medium), isNotNull);
       final UniqueRef<SkShader> ref3 = imageShader.ref!;
       expect(ref1, isNot(same(ref3)));
-      expect(ref1.isDisposed, true, reason: 'The previous reference must be released to avoid a memory leak');
+      expect(
+        ref1.isDisposed,
+        true,
+        reason: 'The previous reference must be released to avoid a memory leak',
+      );
       expect(image.debugDisposed, false);
       expect(imageShader.ref!.nativeObject, same(ref3.nativeObject));
 

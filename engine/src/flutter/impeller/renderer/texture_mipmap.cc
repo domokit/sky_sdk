@@ -17,7 +17,7 @@ fml::Status AddMipmapGeneration(
   if (!success) {
     return fml::Status(fml::StatusCode::kUnknown, "");
   }
-  success = blit_pass->EncodeCommands(context->GetResourceAllocator());
+  success = blit_pass->EncodeCommands();
   if (!success) {
     return fml::Status(fml::StatusCode::kUnknown, "");
   }

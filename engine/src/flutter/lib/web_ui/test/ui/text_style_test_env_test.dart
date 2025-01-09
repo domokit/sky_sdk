@@ -21,9 +21,7 @@ Future<void> testMain() async {
     final ui.TextStyle style1 = ui.TextStyle();
     expect(style1.toString(), contains('fontFamily: unspecified'));
 
-    final ui.TextStyle style2 = ui.TextStyle(
-      fontFamily: 'Hello',
-    );
+    final ui.TextStyle style2 = ui.TextStyle(fontFamily: 'Hello');
     expect(style2.toString(), contains('fontFamily: Hello'));
   });
 
@@ -31,9 +29,7 @@ Future<void> testMain() async {
     final ui.ParagraphStyle style1 = ui.ParagraphStyle();
     expect(style1.toString(), contains('fontFamily: unspecified'));
 
-    final ui.ParagraphStyle style2 = ui.ParagraphStyle(
-      fontFamily: 'Hello',
-    );
+    final ui.ParagraphStyle style2 = ui.ParagraphStyle(fontFamily: 'Hello');
     expect(style2.toString(), contains('fontFamily: Hello'));
   });
 }

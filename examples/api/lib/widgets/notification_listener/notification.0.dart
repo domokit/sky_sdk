@@ -13,9 +13,7 @@ class NotificationExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: NotificationExample(),
-    );
+    return const MaterialApp(home: NotificationExample());
   }
 }
 
@@ -23,16 +21,8 @@ class NotificationExample extends StatelessWidget {
   const NotificationExample({super.key});
 
   static const List<String> _tabs = <String>['Months', 'Days'];
-  static const List<String> _months = <String>[
-    'January',
-    'February',
-    'March',
-  ];
-  static const List<String> _days = <String>[
-    'Sunday',
-    'Monday',
-    'Tuesday',
-  ];
+  static const List<String> _months = <String>['January', 'February', 'March'];
+  static const List<String> _days = <String>['Sunday', 'Monday', 'Tuesday'];
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +47,7 @@ class NotificationExample extends StatelessWidget {
                   title: const Text('Notification Sample'),
                   pinned: true,
                   floating: true,
-                  bottom: TabBar(
-                    tabs: _tabs.map((String name) => Tab(text: name)).toList(),
-                  ),
+                  bottom: TabBar(tabs: _tabs.map((String name) => Tab(text: name)).toList()),
                 ),
               ];
             },

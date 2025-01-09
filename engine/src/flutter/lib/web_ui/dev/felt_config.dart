@@ -5,16 +5,9 @@
 import 'dart:io' as io;
 import 'package:yaml/yaml.dart';
 
-enum Compiler {
-  dart2js,
-  dart2wasm
-}
+enum Compiler { dart2js, dart2wasm }
 
-enum Renderer {
-  html,
-  canvaskit,
-  skwasm,
-}
+enum Renderer { html, canvaskit, skwasm }
 
 class CompileConfiguration {
   CompileConfiguration(this.name, this.compiler, this.renderer);
@@ -39,17 +32,9 @@ class TestBundle {
   final List<CompileConfiguration> compileConfigs;
 }
 
-enum CanvasKitVariant {
-  full,
-  chromium,
-}
+enum CanvasKitVariant { full, chromium }
 
-enum BrowserName {
-  chrome,
-  edge,
-  firefox,
-  safari,
-}
+enum BrowserName { chrome, edge, firefox, safari }
 
 class RunConfiguration {
   RunConfiguration(
@@ -57,7 +42,7 @@ class RunConfiguration {
     this.browser,
     this.variant,
     this.crossOriginIsolated,
-    this.forceSingleThreadedSkwasm
+    this.forceSingleThreadedSkwasm,
   );
 
   final String name;
@@ -71,18 +56,15 @@ class ArtifactDependencies {
   ArtifactDependencies({
     required this.canvasKit,
     required this.canvasKitChromium,
-    required this.skwasm
+    required this.skwasm,
   });
 
-  ArtifactDependencies.none() :
-    canvasKit = false,
-    canvasKitChromium = false,
-    skwasm = false;
+  ArtifactDependencies.none() : canvasKit = false, canvasKitChromium = false, skwasm = false;
   final bool canvasKit;
   final bool canvasKitChromium;
   final bool skwasm;
 
-  ArtifactDependencies operator|(ArtifactDependencies other) {
+  ArtifactDependencies operator |(ArtifactDependencies other) {
     return ArtifactDependencies(
       canvasKit: canvasKit || other.canvasKit,
       canvasKitChromium: canvasKitChromium || other.canvasKitChromium,
@@ -90,7 +72,7 @@ class ArtifactDependencies {
     );
   }
 
-  ArtifactDependencies operator&(ArtifactDependencies other) {
+  ArtifactDependencies operator &(ArtifactDependencies other) {
     return ArtifactDependencies(
       canvasKit: canvasKit && other.canvasKit,
       canvasKitChromium: canvasKitChromium && other.canvasKitChromium,
@@ -100,12 +82,7 @@ class ArtifactDependencies {
 }
 
 class TestSuite {
-  TestSuite(
-    this.name,
-    this.testBundle,
-    this.runConfig,
-    this.artifactDependencies
-  );
+  TestSuite(this.name, this.testBundle, this.runConfig, this.artifactDependencies);
 
   String name;
   TestBundle testBundle;
@@ -163,16 +140,19 @@ class FeltConfig {
       final String testSetName = testBundleYaml['test-set'] as String;
       final TestSet? testSet = testSetsByName[testSetName];
       if (testSet == null) {
-        throw AssertionError('Test set not found with name: `$testSetName` (referenced by test bundle: `$name`)');
+        throw AssertionError(
+          'Test set not found with name: `$testSetName` (referenced by test bundle: `$name`)',
+        );
       }
       final dynamic compileConfigsValue = testBundleYaml['compile-configs'];
       final List<CompileConfiguration> compileConfigs;
       if (compileConfigsValue is String) {
         compileConfigs = <CompileConfiguration>[compileConfigsByName[compileConfigsValue]!];
       } else {
-        compileConfigs = (compileConfigsValue as List<dynamic>).map(
-          (dynamic configName) => compileConfigsByName[configName as String]!
-        ).toList();
+        compileConfigs =
+            (compileConfigsValue as List<dynamic>)
+                .map((dynamic configName) => compileConfigsByName[configName as String]!)
+                .toList();
       }
       final TestBundle bundle = TestBundle(name, testSet, compileConfigs);
       testBundles.add(bundle);
@@ -189,17 +169,17 @@ class FeltConfig {
       final String name = runConfigYaml['name'] as String;
       final BrowserName browser = BrowserName.values.byName(runConfigYaml['browser'] as String);
       final dynamic variantNode = runConfigYaml['canvaskit-variant'];
-      final CanvasKitVariant? variant = variantNode == null
-        ? null
-        : CanvasKitVariant.values.byName(variantNode as String);
+      final CanvasKitVariant? variant =
+          variantNode == null ? null : CanvasKitVariant.values.byName(variantNode as String);
       final bool crossOriginIsolated = runConfigYaml['cross-origin-isolated'] as bool? ?? false;
-      final bool forceSingleThreadedSkwasm = runConfigYaml['force-single-threaded-skwasm'] as bool? ?? false;
+      final bool forceSingleThreadedSkwasm =
+          runConfigYaml['force-single-threaded-skwasm'] as bool? ?? false;
       final RunConfiguration runConfig = RunConfiguration(
         name,
         browser,
         variant,
         crossOriginIsolated,
-        forceSingleThreadedSkwasm
+        forceSingleThreadedSkwasm,
       );
       runConfigs.add(runConfig);
       if (runConfigsByName.containsKey(name)) {
@@ -215,12 +195,16 @@ class FeltConfig {
       final String testBundleName = testSuiteYaml['test-bundle'] as String;
       final TestBundle? bundle = testBundlesByName[testBundleName];
       if (bundle == null) {
-        throw AssertionError('Test bundle not found with name: `$testBundleName` (referenced by test suite: `$name`)');
+        throw AssertionError(
+          'Test bundle not found with name: `$testBundleName` (referenced by test suite: `$name`)',
+        );
       }
       final String runConfigName = testSuiteYaml['run-config'] as String;
       final RunConfiguration? runConfig = runConfigsByName[runConfigName];
       if (runConfig == null) {
-        throw AssertionError('Run config not found with name: `$runConfigName` (referenced by test suite: `$name`)');
+        throw AssertionError(
+          'Run config not found with name: `$runConfigName` (referenced by test suite: `$name`)',
+        );
       }
       bool canvasKit = false;
       bool canvasKitChromium = false;
@@ -252,7 +236,7 @@ class FeltConfig {
       final ArtifactDependencies artifactDeps = ArtifactDependencies(
         canvasKit: canvasKit,
         canvasKitChromium: canvasKitChromium,
-        skwasm: skwasm
+        skwasm: skwasm,
       );
       final TestSuite suite = TestSuite(name, bundle, runConfig, artifactDeps);
       testSuites.add(suite);

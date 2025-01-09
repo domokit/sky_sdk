@@ -13,45 +13,43 @@ void main() {
   internalBootstrapBrowserTest(() => testMain);
 }
 
-enum PaintMode {
-  kStrokeAndFill,
-  kStroke,
-  kFill,
-  kStrokeWidthOnly,
-}
+enum PaintMode { kStrokeAndFill, kStroke, kFill, kStrokeWidthOnly }
 
 Future<void> testMain() async {
-  const Rect region =
-      Rect.fromLTWH(8, 8, 600, 400); // Compensate for old golden tester padding
+  const Rect region = Rect.fromLTWH(8, 8, 600, 400); // Compensate for old golden tester padding
 
-  Future<void> testPath(Path path, String goldenFileName,
-      {SurfacePaint? paint,
-      PaintMode mode = PaintMode.kStrokeAndFill}) async {
+  Future<void> testPath(
+    Path path,
+    String goldenFileName, {
+    SurfacePaint? paint,
+    PaintMode mode = PaintMode.kStrokeAndFill,
+  }) async {
     const Rect canvasBounds = Rect.fromLTWH(0, 0, 600, 400);
-    final BitmapCanvas bitmapCanvas =
-        BitmapCanvas(canvasBounds, RenderStrategy());
+    final BitmapCanvas bitmapCanvas = BitmapCanvas(canvasBounds, RenderStrategy());
     final RecordingCanvas canvas = RecordingCanvas(canvasBounds);
 
-    final bool enableFill =
-        mode == PaintMode.kStrokeAndFill || mode == PaintMode.kFill;
+    final bool enableFill = mode == PaintMode.kStrokeAndFill || mode == PaintMode.kFill;
     if (enableFill) {
-      paint ??= SurfacePaint()
-        ..color = const Color(0x807F7F7F)
-        ..style = PaintingStyle.fill;
+      paint ??=
+          SurfacePaint()
+            ..color = const Color(0x807F7F7F)
+            ..style = PaintingStyle.fill;
       canvas.drawPath(path, paint);
     }
 
     if (mode == PaintMode.kStrokeAndFill || mode == PaintMode.kStroke) {
-      paint = SurfacePaint()
-        ..strokeWidth = 2
-        ..color = enableFill ? const Color(0xFFFF0000) : const Color(0xFF000000)
-        ..style = PaintingStyle.stroke;
+      paint =
+          SurfacePaint()
+            ..strokeWidth = 2
+            ..color = enableFill ? const Color(0xFFFF0000) : const Color(0xFF000000)
+            ..style = PaintingStyle.stroke;
     }
 
     if (mode == PaintMode.kStrokeWidthOnly) {
-      paint = SurfacePaint()
-        ..color = const Color(0xFF4060E0)
-        ..strokeWidth = 10;
+      paint =
+          SurfacePaint()
+            ..color = const Color(0xFF4060E0)
+            ..strokeWidth = 10;
     }
 
     canvas.drawPath(path, paint!);
@@ -72,8 +70,7 @@ Future<void> testMain() async {
     sceneElement.append(bitmapCanvas.rootElement);
     sceneElement.append(svgElement);
 
-    await matchGoldenFile('$goldenFileName.png',
-        region: region);
+    await matchGoldenFile('$goldenFileName.png', region: region);
 
     bitmapCanvas.rootElement.remove();
     svgElement.remove();
@@ -87,11 +84,15 @@ Future<void> testMain() async {
     final Path path = Path();
     path.moveTo(50, 60);
     path.lineTo(200, 300);
-    await testPath(path, 'svg_stroke_line',
-        paint: SurfacePaint()
-          ..color = const Color(0xFFFF0000)
-          ..strokeWidth = 2.0
-          ..style = PaintingStyle.stroke);
+    await testPath(
+      path,
+      'svg_stroke_line',
+      paint:
+          SurfacePaint()
+            ..color = const Color(0xFFFF0000)
+            ..strokeWidth = 2.0
+            ..style = PaintingStyle.stroke,
+    );
   });
 
   test('render quad bezier curve', () async {
@@ -111,17 +112,13 @@ Future<void> testMain() async {
   test('render arcs', () async {
     final List<ArcSample> arcs = <ArcSample>[
       ArcSample(Offset.zero, distance: 20),
-      ArcSample(const Offset(200, 0),
-          largeArc: true, distance: 20),
+      ArcSample(const Offset(200, 0), largeArc: true, distance: 20),
       ArcSample(Offset.zero, clockwise: true, distance: 20),
-      ArcSample(const Offset(200, 0),
-          largeArc: true, clockwise: true, distance: 20),
+      ArcSample(const Offset(200, 0), largeArc: true, clockwise: true, distance: 20),
       ArcSample(Offset.zero, distance: -20),
-      ArcSample(const Offset(200, 0),
-          largeArc: true, distance: -20),
+      ArcSample(const Offset(200, 0), largeArc: true, distance: -20),
       ArcSample(Offset.zero, clockwise: true, distance: -20),
-      ArcSample(const Offset(200, 0),
-          largeArc: true, clockwise: true, distance: -20)
+      ArcSample(const Offset(200, 0), largeArc: true, clockwise: true, distance: -20),
     ];
     int sampleIndex = 0;
     for (final ArcSample sample in arcs) {
@@ -143,9 +140,7 @@ Future<void> testMain() async {
     path.moveTo(0, 0);
     path.lineTo(83, 0);
     path.quadraticBezierTo(98, 0, 99.97, 7.8);
-    path.arcToPoint(const Offset(162, 7.8),
-        radius: const Radius.circular(32),
-        clockwise: false);
+    path.arcToPoint(const Offset(162, 7.8), radius: const Radius.circular(32), clockwise: false);
     path.lineTo(200, 7.8);
     path.lineTo(200, 80);
     path.lineTo(0, 80);
@@ -192,8 +187,7 @@ DomElement pathToSvgElement(Path path, Paint paint, bool enableFill) {
 
   final SVGPathElement pathElement = createSVGPathElement();
   root.append(pathElement);
-  if (paint.style == PaintingStyle.stroke ||
-      paint.strokeWidth != 0.0) {
+  if (paint.style == PaintingStyle.stroke || paint.strokeWidth != 0.0) {
     pathElement.setAttribute('stroke', paint.color.toCssString());
     pathElement.setAttribute('stroke-width', paint.strokeWidth);
     if (!enableFill) {
@@ -203,13 +197,15 @@ DomElement pathToSvgElement(Path path, Paint paint, bool enableFill) {
   if (paint.style == PaintingStyle.fill) {
     pathElement.setAttribute('fill', paint.color.toCssString());
   }
-  pathElement.setAttribute('d', pathToSvg((path as SurfacePath).pathRef)); // This is what we're testing!
+  pathElement.setAttribute(
+    'd',
+    pathToSvg((path as SurfacePath).pathRef),
+  ); // This is what we're testing!
   return root;
 }
 
 class ArcSample {
-  ArcSample(this.offset,
-      {this.largeArc = false, this.clockwise = false, this.distance = 0});
+  ArcSample(this.offset, {this.largeArc = false, this.clockwise = false, this.distance = 0});
 
   final Offset offset;
   final bool largeArc;
@@ -217,17 +213,17 @@ class ArcSample {
   final double distance;
 
   Path createPath() {
-    final Offset startP =
-        Offset(75 - distance + offset.dx, 75 - distance + offset.dy);
-    final Offset endP =
-        Offset(75.0 + distance + offset.dx, 75.0 + distance + offset.dy);
+    final Offset startP = Offset(75 - distance + offset.dx, 75 - distance + offset.dy);
+    final Offset endP = Offset(75.0 + distance + offset.dx, 75.0 + distance + offset.dy);
     final Path path = Path();
     path.moveTo(startP.dx, startP.dy);
-    path.arcToPoint(endP,
-        rotation: 60,
-        radius: const Radius.elliptical(40, 60),
-        largeArc: largeArc,
-        clockwise: clockwise);
+    path.arcToPoint(
+      endP,
+      rotation: 60,
+      radius: const Radius.elliptical(40, 60),
+      largeArc: largeArc,
+      clockwise: clockwise,
+    );
     return path;
   }
 }

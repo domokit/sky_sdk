@@ -32,12 +32,8 @@ void main() {
   });
 
   test('should ignore comments and empty lines', () {
-    final ReleaseVersion version = ReleaseVersion.parse(<String>[
-      '# This is a comment',
-      '',
-      '3.21',
-      '',
-    ].join('\n'))!;
+    final ReleaseVersion version =
+        ReleaseVersion.parse(<String>['# This is a comment', '', '3.21', ''].join('\n'))!;
     expect(version.major, equals(3));
     expect(version.minor, equals(21));
   });

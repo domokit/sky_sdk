@@ -43,17 +43,8 @@ interface class Gn {
   /// The [outDir] is the output directory of the build, e.g. `out/Release`.
   ///
   /// See also: <https://gn.googlesource.com/gn/+/main/docs/reference.md#cmd_desc>.
-  Future<List<BuildTarget>> desc(
-    String outDir,
-    TargetPattern pattern,
-  ) async {
-    final command = [
-      _gnPath,
-      'desc',
-      '--format=json',
-      outDir,
-      pattern.toGnPattern(),
-    ];
+  Future<List<BuildTarget>> desc(String outDir, TargetPattern pattern) async {
+    final command = [_gnPath, 'desc', '--format=json', outDir, pattern.toGnPattern()];
     final process = await _environment.processRunner.runProcess(
       command,
       workingDirectory: _environment.engine.srcDir,
@@ -73,9 +64,7 @@ interface class Gn {
             'Did you mean `//flutter/$gnPattern`?',
           );
         } else {
-          _environment.logger.warning(
-            'No targets matched the pattern `${pattern.toGnPattern()}`',
-          );
+          _environment.logger.warning('No targets matched the pattern `${pattern.toGnPattern()}`');
         }
         return [];
       }
@@ -106,10 +95,7 @@ interface class Gn {
           if (properties is! Map<String, Object?>) {
             return null;
           }
-          final target = BuildTarget._fromJson(
-            label,
-            JsonObject(properties),
-          );
+          final target = BuildTarget._fromJson(label, JsonObject(properties));
           if (target == null) {
             _environment.logger.warning(
               'Unknown target type for $label: type=${properties['type']}',
@@ -126,10 +112,7 @@ interface class Gn {
 /// Information about a build target.
 @immutable
 sealed class BuildTarget {
-  const BuildTarget({
-    required this.label,
-    required this.testOnly,
-  });
+  const BuildTarget({required this.label, required this.testOnly});
 
   factory BuildTarget._parseFromAction(
     String label, {
@@ -155,44 +138,33 @@ sealed class BuildTarget {
         );
       }
     }
-    return ActionBuildTarget(
-      label: Label.parseGn(label),
-      testOnly: testOnly,
-    );
+    return ActionBuildTarget(label: Label.parseGn(label), testOnly: testOnly);
   }
 
   /// Returns a build target from JSON originating from `gn desc --format=json`.
   ///
   /// If the JSON is not a supported build target, returns `null`.
   static BuildTarget? _fromJson(String label, JsonObject json) {
-    final (
-      String type,
-      bool testOnly,
-    ) = json.map((json) => (
-          json.string('type'),
-          json.boolean('testonly'),
-        ));
+    final (String type, bool testOnly) = json.map(
+      (json) => (json.string('type'), json.boolean('testonly')),
+    );
     return switch (type) {
       'executable' => ExecutableBuildTarget(
-          label: Label.parseGn(label),
-          testOnly: testOnly,
-          // Remove the leading // from the path.
-          executable: json.stringList('outputs').first.substring(2),
-        ),
+        label: Label.parseGn(label),
+        testOnly: testOnly,
+        // Remove the leading // from the path.
+        executable: json.stringList('outputs').first.substring(2),
+      ),
       'shared_library' || 'static_library' => LibraryBuildTarget(
-          label: Label.parseGn(label),
-          testOnly: testOnly,
-        ),
-      'action' => BuildTarget._parseFromAction(
-          label,
-          testOnly: testOnly,
-          json: json,
-        ),
+        label: Label.parseGn(label),
+        testOnly: testOnly,
+      ),
+      'action' => BuildTarget._parseFromAction(label, testOnly: testOnly, json: json),
       'group' => GroupBuildTarget(
-          label: Label.parseGn(label),
-          testOnly: testOnly,
-          deps: json.stringList('deps').map(Label.parseGn).toList(),
-        ),
+        label: Label.parseGn(label),
+        testOnly: testOnly,
+        deps: json.stringList('deps').map(Label.parseGn).toList(),
+      ),
       _ => null,
     };
   }
@@ -221,16 +193,11 @@ sealed class BuildTarget {
 /// [action]: https://gn.googlesource.com/gn/+/main/docs/reference.md#func_action
 final class ActionBuildTarget extends BuildTarget {
   /// Construct an action build target.
-  const ActionBuildTarget({
-    required super.label,
-    required super.testOnly,
-  });
+  const ActionBuildTarget({required super.label, required super.testOnly});
 
   @override
   bool operator ==(Object other) {
-    return other is LibraryBuildTarget &&
-        label == other.label &&
-        testOnly == other.testOnly;
+    return other is LibraryBuildTarget && label == other.label && testOnly == other.testOnly;
   }
 
   @override
@@ -246,16 +213,11 @@ final class ActionBuildTarget extends BuildTarget {
 /// [static library]: https://gn.googlesource.com/gn/+/main/docs/reference.md#func_static_library
 final class LibraryBuildTarget extends BuildTarget {
   /// Construct a library build target.
-  const LibraryBuildTarget({
-    required super.label,
-    required super.testOnly,
-  });
+  const LibraryBuildTarget({required super.label, required super.testOnly});
 
   @override
   bool operator ==(Object other) {
-    return other is LibraryBuildTarget &&
-        label == other.label &&
-        testOnly == other.testOnly;
+    return other is LibraryBuildTarget && label == other.label && testOnly == other.testOnly;
   }
 
   @override
@@ -291,8 +253,7 @@ final class ExecutableBuildTarget extends BuildTarget {
   int get hashCode => Object.hash(label, testOnly, executable);
 
   @override
-  String toString() =>
-      'ExecutableBuildTarget($label, testOnly=$testOnly, executable=$executable)';
+  String toString() => 'ExecutableBuildTarget($label, testOnly=$testOnly, executable=$executable)';
 }
 
 /// A build target that [group]s a meta-target of other build targets.
@@ -300,11 +261,7 @@ final class ExecutableBuildTarget extends BuildTarget {
 /// [group]: https://gn.googlesource.com/gn/+/main/docs/reference.md#func_group
 final class GroupBuildTarget extends BuildTarget {
   /// Construct a group build target.
-  const GroupBuildTarget({
-    required super.label,
-    required super.testOnly,
-    required this.deps,
-  });
+  const GroupBuildTarget({required super.label, required super.testOnly, required this.deps});
 
   /// The list of dependencies for this group target.
   final List<Label> deps;
@@ -324,6 +281,5 @@ final class GroupBuildTarget extends BuildTarget {
   int get hashCode => Object.hash(label, testOnly, Object.hashAll(deps));
 
   @override
-  String toString() =>
-      'GroupBuildTarget($label, testOnly=$testOnly, deps=$deps)';
+  String toString() => 'GroupBuildTarget($label, testOnly=$testOnly, deps=$deps)';
 }

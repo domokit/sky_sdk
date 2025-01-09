@@ -50,14 +50,18 @@ Future<int> runTest({bool coverage = false, bool noPub = false}) async {
   int badLines = 0;
   TestStep step = TestStep.starting;
 
-  analysis.stdout.transform<String>(utf8.decoder).transform<String>(const LineSplitter()).listen((String entry) {
+  analysis.stdout.transform<String>(utf8.decoder).transform<String>(const LineSplitter()).listen((
+    String entry,
+  ) {
     print('test stdout ($step): $entry');
     if (step == TestStep.starting && entry == 'Building flutter tool...') {
       // ignore this line
       step = TestStep.buildingFlutterTool;
-    } else if (step == TestStep.testPassed && entry.contains('Collecting coverage information...')) {
+    } else if (step == TestStep.testPassed &&
+        entry.contains('Collecting coverage information...')) {
       // ignore this line
-    } else if (step.index < TestStep.runningPubGet.index && entry == 'Running "flutter pub get" in automated_tests...') {
+    } else if (step.index < TestStep.runningPubGet.index &&
+        entry == 'Running "flutter pub get" in automated_tests...') {
       // ignore this line
       step = TestStep.runningPubGet;
     } else if (step.index <= TestStep.testWritesFirstCarriageReturn.index && entry.trim() == '') {
@@ -68,13 +72,17 @@ Future<int> runTest({bool coverage = false, bool noPub = false}) async {
       if (match == null) {
         badLines += 1;
       } else {
-        if (step.index >= TestStep.testWritesFirstCarriageReturn.index && step.index <= TestStep.testLoading.index && match.group(1)!.startsWith('loading ')) {
+        if (step.index >= TestStep.testWritesFirstCarriageReturn.index &&
+            step.index <= TestStep.testLoading.index &&
+            match.group(1)!.startsWith('loading ')) {
           // first the test loads
           step = TestStep.testLoading;
-        } else if (step.index <= TestStep.testRunning.index && match.group(1) == 'A trivial widget test') {
+        } else if (step.index <= TestStep.testRunning.index &&
+            match.group(1) == 'A trivial widget test') {
           // then the test runs
           step = TestStep.testRunning;
-        } else if (step.index < TestStep.testPassed.index && match.group(1) == 'All tests passed!') {
+        } else if (step.index < TestStep.testPassed.index &&
+            match.group(1) == 'All tests passed!') {
           // then the test finishes
           step = TestStep.testPassed;
         } else {
@@ -83,7 +91,9 @@ Future<int> runTest({bool coverage = false, bool noPub = false}) async {
       }
     }
   });
-  analysis.stderr.transform<String>(utf8.decoder).transform<String>(const LineSplitter()).listen((String entry) {
+  analysis.stderr.transform<String>(utf8.decoder).transform<String>(const LineSplitter()).listen((
+    String entry,
+  ) {
     print('test stderr: $entry');
     badLines += 1;
   });
@@ -112,26 +122,43 @@ Future<void> pubGetDependencies(List<Directory> directories) async {
 
 void main() {
   task(() async {
-    final File nodeSourceFile = File(path.join(
-      flutterDirectory.path, 'packages', 'flutter', 'lib', 'src', 'foundation', 'node.dart',
-    ));
-    await pubGetDependencies(<Directory>[Directory(path.join(flutterDirectory.path, 'dev', 'automated_tests')),]);
+    final File nodeSourceFile = File(
+      path.join(
+        flutterDirectory.path,
+        'packages',
+        'flutter',
+        'lib',
+        'src',
+        'foundation',
+        'node.dart',
+      ),
+    );
+    await pubGetDependencies(<Directory>[
+      Directory(path.join(flutterDirectory.path, 'dev', 'automated_tests')),
+    ]);
     final String originalSource = await nodeSourceFile.readAsString();
     try {
-      await runTest(noPub: true); // first number is meaningless; could have had to build the tool, run pub get, have a cache, etc
+      await runTest(
+        noPub: true,
+      ); // first number is meaningless; could have had to build the tool, run pub get, have a cache, etc
       final int withoutChange = await runTest(noPub: true); // run test again with no change
-      await nodeSourceFile.writeAsString( // only change implementation
-        originalSource
-          .replaceAll('_owner', '_xyzzy')
+      await nodeSourceFile.writeAsString(
+        // only change implementation
+        originalSource.replaceAll('_owner', '_xyzzy'),
       );
-      final int implementationChange = await runTest(noPub: true); // run test again with implementation changed
-      await nodeSourceFile.writeAsString( // change interface as well
+      final int implementationChange = await runTest(
+        noPub: true,
+      ); // run test again with implementation changed
+      await nodeSourceFile.writeAsString(
+        // change interface as well
         originalSource
-          .replaceAll('_owner', '_xyzzy')
-          .replaceAll('owner', '_owner')
-          .replaceAll('_xyzzy', 'owner')
+            .replaceAll('_owner', '_xyzzy')
+            .replaceAll('owner', '_owner')
+            .replaceAll('_xyzzy', 'owner'),
       );
-      final int interfaceChange = await runTest(noPub: true); // run test again with interface changed
+      final int interfaceChange = await runTest(
+        noPub: true,
+      ); // run test again with interface changed
       // run test with coverage enabled.
       final int withCoverage = await runTest(coverage: true, noPub: true);
       final Map<String, dynamic> data = <String, dynamic>{

@@ -98,8 +98,7 @@ class CanvasParagraph implements ui.Paragraph {
     _layoutService.performLayout(constraints);
     if (Profiler.isBenchmarkMode) {
       stopwatch.stop();
-      Profiler.instance
-          .benchmark('text_layout', stopwatch.elapsedMicroseconds.toDouble());
+      Profiler.instance.benchmark('text_layout', stopwatch.elapsedMicroseconds.toDouble());
     }
 
     isLaidOut = true;
@@ -195,7 +194,8 @@ class CanvasParagraph implements ui.Paragraph {
   }
 
   @override
-  ui.GlyphInfo? getClosestGlyphInfoForOffset(ui.Offset offset) => _layoutService.getClosestGlyphInfo(offset);
+  ui.GlyphInfo? getClosestGlyphInfoForOffset(ui.Offset offset) =>
+      _layoutService.getClosestGlyphInfo(offset);
 
   @override
   ui.GlyphInfo? getGlyphInfoAt(int codeUnitOffset) {
@@ -255,9 +255,7 @@ class CanvasParagraph implements ui.Paragraph {
 
   @override
   EngineLineMetrics? getLineMetricsAt(int lineNumber) {
-    return 0 <= lineNumber && lineNumber < lines.length
-      ? lines[lineNumber].lineMetrics
-      : null;
+    return 0 <= lineNumber && lineNumber < lines.length ? lines[lineNumber].lineMetrics : null;
   }
 
   @override
@@ -268,9 +266,10 @@ class CanvasParagraph implements ui.Paragraph {
 
   int? _findLine(int codeUnitOffset, int startLine, int endLine) {
     assert(endLine <= lines.length);
-    final bool isOutOfBounds = endLine <= startLine
-                            || codeUnitOffset < lines[startLine].startIndex
-                            || (endLine < numberOfLines && lines[endLine].startIndex <= codeUnitOffset);
+    final bool isOutOfBounds =
+        endLine <= startLine ||
+        codeUnitOffset < lines[startLine].startIndex ||
+        (endLine < numberOfLines && lines[endLine].startIndex <= codeUnitOffset);
     if (isOutOfBounds) {
       return null;
     }
@@ -283,7 +282,8 @@ class CanvasParagraph implements ui.Paragraph {
     // endLine >= startLine + 2 thus we have
     // startLine + 1 <= midIndex <= endLine - 1
     final int midIndex = (startLine + endLine) ~/ 2;
-    return _findLine(codeUnitOffset, midIndex, endLine) ?? _findLine(codeUnitOffset, startLine, midIndex);
+    return _findLine(codeUnitOffset, midIndex, endLine) ??
+        _findLine(codeUnitOffset, startLine, midIndex);
   }
 
   bool _disposed = false;
@@ -334,11 +334,7 @@ void _positionSpanElement(DomElement element, ParagraphLine line, LayoutFragment
 class ParagraphSpan {
   /// Creates a [ParagraphSpan] with the given [style], representing the span of
   /// text in the range between [start] and [end].
-  ParagraphSpan({
-    required this.style,
-    required this.start,
-    required this.end,
-  });
+  ParagraphSpan({required this.style, required this.start, required this.end});
 
   /// The resolved style of the span.
   final EngineTextStyle style;
@@ -360,13 +356,7 @@ class PlaceholderSpan extends ParagraphPlaceholder implements ParagraphSpan {
     ui.PlaceholderAlignment alignment, {
     required double baselineOffset,
     required ui.TextBaseline baseline,
-  }) : super(
-          width,
-          height,
-          alignment,
-          baselineOffset: baselineOffset,
-          baseline: baseline,
-        );
+  }) : super(width, height, alignment, baselineOffset: baselineOffset, baseline: baseline);
 
   @override
   final EngineTextStyle style;
@@ -511,7 +501,8 @@ class ChildStyleNode extends StyleNode {
   }
 
   @override
-  ui.TextLeadingDistribution? get _leadingDistribution => style.leadingDistribution ?? parent._leadingDistribution;
+  ui.TextLeadingDistribution? get _leadingDistribution =>
+      style.leadingDistribution ?? parent._leadingDistribution;
 
   @override
   ui.Locale? get _locale => style.locale ?? parent._locale;
@@ -612,8 +603,8 @@ class CanvasParagraphBuilder implements ui.ParagraphBuilder {
   /// Creates a [CanvasParagraphBuilder] object, which is used to create a
   /// [CanvasParagraph].
   CanvasParagraphBuilder(EngineParagraphStyle style)
-      : _paragraphStyle = style,
-        _rootStyleNode = RootStyleNode(style);
+    : _paragraphStyle = style,
+      _rootStyleNode = RootStyleNode(style);
 
   final StringBuffer _plainTextBuffer = StringBuffer();
   final EngineParagraphStyle _paragraphStyle;
@@ -622,9 +613,8 @@ class CanvasParagraphBuilder implements ui.ParagraphBuilder {
   final List<StyleNode> _styleStack = <StyleNode>[];
 
   final RootStyleNode _rootStyleNode;
-  StyleNode get _currentStyleNode => _styleStack.isEmpty
-      ? _rootStyleNode
-      : _styleStack[_styleStack.length - 1];
+  StyleNode get _currentStyleNode =>
+      _styleStack.isEmpty ? _rootStyleNode : _styleStack[_styleStack.length - 1];
 
   @override
   int get placeholderCount => _placeholderCount;
@@ -644,9 +634,12 @@ class CanvasParagraphBuilder implements ui.ParagraphBuilder {
     ui.TextBaseline? baseline,
   }) {
     // Require a baseline to be specified if using a baseline-based alignment.
-    assert(!(alignment == ui.PlaceholderAlignment.aboveBaseline ||
-            alignment == ui.PlaceholderAlignment.belowBaseline ||
-            alignment == ui.PlaceholderAlignment.baseline) || baseline != null);
+    assert(
+      !(alignment == ui.PlaceholderAlignment.aboveBaseline ||
+              alignment == ui.PlaceholderAlignment.belowBaseline ||
+              alignment == ui.PlaceholderAlignment.baseline) ||
+          baseline != null,
+    );
 
     final int start = _plainTextBuffer.length;
     _plainTextBuffer.write(placeholderChar);
@@ -657,16 +650,18 @@ class CanvasParagraphBuilder implements ui.ParagraphBuilder {
 
     _placeholderCount++;
     _placeholderScales.add(scale);
-    _spans.add(PlaceholderSpan(
-      style,
-      start,
-      end,
-      width * scale,
-      height * scale,
-      alignment,
-      baselineOffset: (baselineOffset ?? height) * scale,
-      baseline: baseline ?? ui.TextBaseline.alphabetic,
-    ));
+    _spans.add(
+      PlaceholderSpan(
+        style,
+        start,
+        end,
+        width * scale,
+        height * scale,
+        alignment,
+        baselineOffset: (baselineOffset ?? height) * scale,
+        baseline: baseline ?? ui.TextBaseline.alphabetic,
+      ),
+    );
   }
 
   @override
@@ -732,9 +727,7 @@ class CanvasParagraphBuilder implements ui.ParagraphBuilder {
       //
       // We want the paragraph to always have a non-empty list of spans to match
       // the expectations of the [LayoutFragmenter].
-      _spans.add(
-        ParagraphSpan(style: _rootStyleNode.resolveStyle(), start: 0, end: 0),
-      );
+      _spans.add(ParagraphSpan(style: _rootStyleNode.resolveStyle(), start: 0, end: 0));
     }
 
     return CanvasParagraph(

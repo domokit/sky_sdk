@@ -31,13 +31,12 @@ Future<void> testMain() async {
 
       ui.PlatformDispatcher.instance.sendPlatformMessage(
         'flutter/platform',
-        codec.encodeMethodCall(const MethodCall(
-          'SystemChrome.setApplicationSwitcherDescription',
-          <String, dynamic>{
+        codec.encodeMethodCall(
+          const MethodCall('SystemChrome.setApplicationSwitcherDescription', <String, dynamic>{
             'label': 'Title Test',
             'primaryColor': 0xFF00FF00,
-          },
-        )),
+          }),
+        ),
         null,
       );
 
@@ -48,13 +47,12 @@ Future<void> testMain() async {
 
       ui.PlatformDispatcher.instance.sendPlatformMessage(
         'flutter/platform',
-        codec.encodeMethodCall(const MethodCall(
-          'SystemChrome.setApplicationSwitcherDescription',
-          <String, dynamic>{
+        codec.encodeMethodCall(
+          const MethodCall('SystemChrome.setApplicationSwitcherDescription', <String, dynamic>{
             'label': 'Different title',
             'primaryColor': 0xFFFABADA,
-          },
-        )),
+          }),
+        ),
         null,
       );
 
@@ -75,13 +73,12 @@ Future<void> testMain() async {
 
       ui.PlatformDispatcher.instance.sendPlatformMessage(
         'flutter/platform',
-        codec.encodeMethodCall(const MethodCall(
-          'SystemChrome.setApplicationSwitcherDescription',
-          <String, dynamic>{
+        codec.encodeMethodCall(
+          const MethodCall('SystemChrome.setApplicationSwitcherDescription', <String, dynamic>{
             'label': null,
             'primaryColor': null,
-          },
-        )),
+          }),
+        ),
         null,
       );
 
@@ -93,10 +90,9 @@ Future<void> testMain() async {
 
       ui.PlatformDispatcher.instance.sendPlatformMessage(
         'flutter/platform',
-        codec.encodeMethodCall(const MethodCall(
-          'SystemChrome.setApplicationSwitcherDescription',
-          <String, dynamic>{},
-        )),
+        codec.encodeMethodCall(
+          const MethodCall('SystemChrome.setApplicationSwitcherDescription', <String, dynamic>{}),
+        ),
         null,
       );
 

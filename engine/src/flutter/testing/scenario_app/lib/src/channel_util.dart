@@ -17,10 +17,7 @@ void sendJsonMethodCall({
   sendJsonMessage(
     dispatcher: dispatcher,
     channel: channel,
-    json: <String, dynamic>{
-        'method': method,
-        'args': arguments,
-    },
+    json: <String, dynamic>{'method': method, 'args': arguments},
   );
 }
 
@@ -35,9 +32,7 @@ void sendJsonMessage({
     channel,
     // This recreates a combination of OptionalMethodChannel, JSONMethodCodec,
     // and _DefaultBinaryMessenger in the framework.
-    utf8.encode(
-      const JsonCodec().encode(json)
-    ).buffer.asByteData(),
+    utf8.encode(const JsonCodec().encode(json)).buffer.asByteData(),
     callback,
   );
 }

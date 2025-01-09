@@ -16,22 +16,17 @@ const String kStateOption = 'state-file';
 
 /// Command to print the status of the current Flutter release.
 class StatusCommand extends Command<void> {
-  StatusCommand({
-    required this.checkouts,
-  })  : platform = checkouts.platform,
-        fileSystem = checkouts.fileSystem,
-        stdio = checkouts.stdio {
+  StatusCommand({required this.checkouts})
+    : platform = checkouts.platform,
+      fileSystem = checkouts.fileSystem,
+      stdio = checkouts.stdio {
     final String defaultPath = defaultStateFilePath(platform);
     argParser.addOption(
       kStateOption,
       defaultsTo: defaultPath,
       help: 'Path to persistent state file. Defaults to $defaultPath',
     );
-    argParser.addFlag(
-      kVerboseFlag,
-      abbr: 'v',
-      help: 'Also print logs.',
-    );
+    argParser.addFlag(kVerboseFlag, abbr: 'v', help: 'Also print logs.');
   }
 
   final Checkouts checkouts;
@@ -49,8 +44,7 @@ class StatusCommand extends Command<void> {
   void run() {
     final File stateFile = checkouts.fileSystem.file(argResults![kStateOption]);
     if (!stateFile.existsSync()) {
-      stdio.printStatus(
-          'No persistent state file found at ${argResults![kStateOption]}.');
+      stdio.printStatus('No persistent state file found at ${argResults![kStateOption]}.');
       return;
     }
     final pb.ConductorState state = readStateFromFile(stateFile);

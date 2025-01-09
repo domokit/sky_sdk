@@ -10,20 +10,20 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('first frame callback sets the default UserTag', () {
-      final WidgetsBinding binding = WidgetsFlutterBinding.ensureInitialized();
+    final WidgetsBinding binding = WidgetsFlutterBinding.ensureInitialized();
 
-      // TODO(iskakaushik): https://github.com/flutter/flutter/issues/86947
-      final String userTag = developer.getCurrentTag().label;
-      final bool isValid = <String>{'Default', 'AppStartUp'}.contains(userTag);
-      expect(isValid, equals(true));
+    // TODO(iskakaushik): https://github.com/flutter/flutter/issues/86947
+    final String userTag = developer.getCurrentTag().label;
+    final bool isValid = <String>{'Default', 'AppStartUp'}.contains(userTag);
+    expect(isValid, equals(true));
 
-      developer.UserTag('test tag').makeCurrent();
-      expect(developer.getCurrentTag().label, equals('test tag'));
+    developer.UserTag('test tag').makeCurrent();
+    expect(developer.getCurrentTag().label, equals('test tag'));
 
-      binding.drawFrame();
-      // Simulates the engine again.
-      binding.platformDispatcher.onReportTimings!(<FrameTiming>[]);
+    binding.drawFrame();
+    // Simulates the engine again.
+    binding.platformDispatcher.onReportTimings!(<FrameTiming>[]);
 
-      expect(developer.getCurrentTag().label, equals('Default'));
+    expect(developer.getCurrentTag().label, equals('Default'));
   });
 }

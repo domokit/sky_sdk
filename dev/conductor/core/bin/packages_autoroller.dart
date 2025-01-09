@@ -29,14 +29,11 @@ Future<void> run(
   ProcessManager processManager = const LocalProcessManager(),
 }) async {
   final ArgParser parser = ArgParser();
-  parser.addOption(
-    kTokenOption,
-    help: 'Path to GitHub access token file.',
-    mandatory: true,
-  );
+  parser.addOption(kTokenOption, help: 'Path to GitHub access token file.', mandatory: true);
   parser.addOption(
     kGithubClient,
-    help: 'Path to GitHub CLI client. If not provided, it is assumed `gh` is '
+    help:
+        'Path to GitHub CLI client. If not provided, it is assumed `gh` is '
         'present on the PATH.',
   );
   parser.addOption(
@@ -139,6 +136,4 @@ Directory get _localFlutterRoot {
 }
 
 @visibleForTesting
-void validateTokenFile(String filePath, [FileSystem fs = const LocalFileSystem()]) {
-
-}
+void validateTokenFile(String filePath, [FileSystem fs = const LocalFileSystem()]) {}

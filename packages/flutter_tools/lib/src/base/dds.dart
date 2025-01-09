@@ -15,21 +15,20 @@ import 'io.dart' as io;
 import 'logger.dart';
 
 export 'package:dds/dds.dart'
-    show
-        DartDevelopmentServiceException,
-        ExistingDartDevelopmentServiceException;
+    show DartDevelopmentServiceException, ExistingDartDevelopmentServiceException;
 
-typedef DDSLauncherCallback = Future<DartDevelopmentServiceLauncher> Function({
-  required Uri remoteVmServiceUri,
-  Uri? serviceUri,
-  bool enableAuthCodes,
-  bool serveDevTools,
-  Uri? devToolsServerAddress,
-  bool enableServicePortFallback,
-  List<String> cachedUserTags,
-  String? dartExecutable,
-  String? google3WorkspaceRoot,
-});
+typedef DDSLauncherCallback =
+    Future<DartDevelopmentServiceLauncher> Function({
+      required Uri remoteVmServiceUri,
+      Uri? serviceUri,
+      bool enableAuthCodes,
+      bool serveDevTools,
+      Uri? devToolsServerAddress,
+      bool enableServicePortFallback,
+      List<String> cachedUserTags,
+      String? dartExecutable,
+      String? google3WorkspaceRoot,
+    });
 
 // TODO(fujino): This should be direct injected, rather than mutable global state.
 /// Used by tests to override the DDS spawn behavior for mocking purposes.
@@ -65,10 +64,9 @@ class DartDevelopmentService with DartDevelopmentServiceLocalOperationsMixin {
     assert(_ddsInstance == null);
     final Uri ddsUri = Uri(
       scheme: 'http',
-      host: ((ipv6 ?? false)
-              ? io.InternetAddress.loopbackIPv6
-              : io.InternetAddress.loopbackIPv4)
-          .host,
+      host:
+          ((ipv6 ?? false) ? io.InternetAddress.loopbackIPv6 : io.InternetAddress.loopbackIPv4)
+              .host,
       port: ddsPort ?? 0,
     );
     _logger.printTrace(
@@ -87,14 +85,10 @@ class DartDevelopmentService with DartDevelopmentServiceLocalOperationsMixin {
         serviceUri: ddsUri,
         enableAuthCodes: disableServiceAuthCodes != true,
         // Enables caching of CPU samples collected during application startup.
-        cachedUserTags: cacheStartupProfile
-            ? const <String>['AppStartUp']
-            : const <String>[],
+        cachedUserTags: cacheStartupProfile ? const <String>['AppStartUp'] : const <String>[],
         devToolsServerAddress: devToolsServerAddress,
         google3WorkspaceRoot: google3WorkspaceRoot,
-        dartExecutable: globals.artifacts!.getArtifactPath(
-          Artifact.engineDartBinary,
-        ),
+        dartExecutable: globals.artifacts!.getArtifactPath(Artifact.engineDartBinary),
       );
       unawaited(_ddsInstance!.done.whenComplete(completeFuture));
     } on DartDevelopmentServiceException catch (e) {
@@ -129,15 +123,14 @@ mixin DartDevelopmentServiceLocalOperationsMixin {
   Future<void> startDartDevelopmentServiceFromDebuggingOptions(
     Uri vmServiceUri, {
     required DebuggingOptions debuggingOptions,
-  }) =>
-      startDartDevelopmentService(
-        vmServiceUri,
-        ddsPort: debuggingOptions.ddsPort,
-        disableServiceAuthCodes: debuggingOptions.disableServiceAuthCodes,
-        ipv6: debuggingOptions.ipv6,
-        enableDevTools: debuggingOptions.enableDevTools,
-        cacheStartupProfile: debuggingOptions.cacheStartupProfile,
-        google3WorkspaceRoot: debuggingOptions.google3WorkspaceRoot,
-        devToolsServerAddress: debuggingOptions.devToolsServerAddress,
-      );
+  }) => startDartDevelopmentService(
+    vmServiceUri,
+    ddsPort: debuggingOptions.ddsPort,
+    disableServiceAuthCodes: debuggingOptions.disableServiceAuthCodes,
+    ipv6: debuggingOptions.ipv6,
+    enableDevTools: debuggingOptions.enableDevTools,
+    cacheStartupProfile: debuggingOptions.cacheStartupProfile,
+    google3WorkspaceRoot: debuggingOptions.google3WorkspaceRoot,
+    devToolsServerAddress: debuggingOptions.devToolsServerAddress,
+  );
 }

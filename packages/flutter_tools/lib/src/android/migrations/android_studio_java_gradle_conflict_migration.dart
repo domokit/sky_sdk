@@ -29,8 +29,7 @@ final Version flamingoBundledJava = Version(17, 0, 0);
 // These gradle versions were chosen because they
 // 1. Were output by 'flutter create' at some point in flutter's history and
 // 2. Are less than 7.3, the lowest supported gradle version for JDK 17
-const List<String> gradleVersionsToUpgradeFrom =
-    <String>['5.6.2', '6.7'];
+const List<String> gradleVersionsToUpgradeFrom = <String>['5.6.2', '6.7'];
 
 // Define log messages as constants to re-use in testing.
 @visibleForTesting
@@ -48,21 +47,23 @@ const String androidStudioVersionBelowFlamingo =
 const String javaVersionNot17 =
     'Version of Java is different than impacted version, no migration attempted.';
 @visibleForTesting
-const String javaVersionNotFound =
-    'Version of Java not found, no migration attempted.';
+const String javaVersionNotFound = 'Version of Java not found, no migration attempted.';
 @visibleForTesting
-const String conflictDetected = 'Conflict detected between versions of Android Studio '
+const String conflictDetected =
+    'Conflict detected between versions of Android Studio '
     'and Gradle, upgrading Gradle version from current to 7.4';
 @visibleForTesting
-const String gradleVersionNotFound = 'Failed to parse Gradle version from distribution url, '
+const String gradleVersionNotFound =
+    'Failed to parse Gradle version from distribution url, '
     'skipping Gradle-Java version compatibility check.';
 @visibleForTesting
-const String optOutFlagEnabled = 'Skipping Android Studio Java-Gradle compatibility '
+const String optOutFlagEnabled =
+    'Skipping Android Studio Java-Gradle compatibility '
     "because opt out flag: '$optOutFlag' is enabled in gradle-wrapper.properties file.";
 @visibleForTesting
-const String errorWhileMigrating = 'Encountered an error while attempting Gradle-Java '
+const String errorWhileMigrating =
+    'Encountered an error while attempting Gradle-Java '
     'version compatibility check, skipping migration attempt. Error was: ';
-
 
 /// Migrate to a newer version of Gradle when the existing one does not support
 /// the version of Java provided by the detected Android Studio version.
@@ -71,8 +72,8 @@ const String errorWhileMigrating = 'Encountered an error while attempting Gradle
 /// https://docs.gradle.org/current/userguide/compatibility.html
 class AndroidStudioJavaGradleConflictMigration extends ProjectMigrator {
   AndroidStudioJavaGradleConflictMigration(
-    super.logger,
-    {required AndroidProject project,
+    super.logger, {
+    required AndroidProject project,
     AndroidStudio? androidStudio,
     required Java? java,
   }) : _gradleWrapperPropertiesFile = getGradleWrapperFile(project.hostAppGradleRoot),
@@ -124,20 +125,24 @@ class AndroidStudioJavaGradleConflictMigration extends ProjectMigrator {
       return fileContents;
     }
     final RegExpMatch? gradleDistributionUrl = gradleOrgVersionMatch.firstMatch(fileContents);
-    if (gradleDistributionUrl == null
-        || gradleDistributionUrl.groupCount < 1
-        || gradleDistributionUrl[1] == null) {
+    if (gradleDistributionUrl == null ||
+        gradleDistributionUrl.groupCount < 1 ||
+        gradleDistributionUrl[1] == null) {
       logger.printTrace(gradleVersionNotFound);
       return fileContents;
     }
     final String existingVersionString = gradleDistributionUrl[1]!;
     if (gradleVersionsToUpgradeFrom.contains(existingVersionString)) {
-      logger.printStatus('Conflict detected between Android Studio Java version and Gradle version, '
-          'upgrading Gradle version from $existingVersionString to $gradleVersion7_6_1.');
+      logger.printStatus(
+        'Conflict detected between Android Studio Java version and Gradle version, '
+        'upgrading Gradle version from $existingVersionString to $gradleVersion7_6_1.',
+      );
       final String? gradleDistributionUrlString = gradleDistributionUrl.group(0);
       if (gradleDistributionUrlString != null) {
-        final String upgradedDistributionUrl =
-          gradleDistributionUrlString.replaceAll(existingVersionString, gradleVersion7_6_1);
+        final String upgradedDistributionUrl = gradleDistributionUrlString.replaceAll(
+          existingVersionString,
+          gradleVersion7_6_1,
+        );
         fileContents = fileContents.replaceFirst(gradleOrgVersionMatch, upgradedDistributionUrl);
       } else {
         logger.printTrace(gradleVersionNotFound);

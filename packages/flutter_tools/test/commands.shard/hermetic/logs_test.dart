@@ -39,28 +39,30 @@ void main() {
       );
       await expectLater(
         () => createTestCommandRunner(command).run(<String>['-d', 'abc123', 'logs']),
-        throwsA(isA<ToolExit>().having((ToolExit error) => error.exitCode, 'exitCode', anyOf(isNull, 1))),
+        throwsA(
+          isA<ToolExit>().having((ToolExit error) => error.exitCode, 'exitCode', anyOf(isNull, 1)),
+        ),
       );
     });
 
-    testUsingContext('does not try to complete exitCompleter multiple times', () async {
-      final FakeDevice fakeDevice = FakeDevice('phone', deviceId);
-      deviceManager.attachedDevices.add(fakeDevice);
-      final FakeProcessSignal termSignal = FakeProcessSignal();
-      final FakeProcessSignal intSignal = FakeProcessSignal();
-      final LogsCommand command = LogsCommand(
-        sigterm: termSignal,
-        sigint: intSignal,
-      );
-      final Future<void> commandFuture = createTestCommandRunner(command).run(<String>['-d', deviceId, 'logs']);
-      intSignal.send(1);
-      termSignal.send(1);
-      await pumpEventQueue(times: 5);
-      await commandFuture;
-    }, overrides: <Type, Generator>{
-      Platform: () => platform,
-      DeviceManager: () => deviceManager,
-    });
+    testUsingContext(
+      'does not try to complete exitCompleter multiple times',
+      () async {
+        final FakeDevice fakeDevice = FakeDevice('phone', deviceId);
+        deviceManager.attachedDevices.add(fakeDevice);
+        final FakeProcessSignal termSignal = FakeProcessSignal();
+        final FakeProcessSignal intSignal = FakeProcessSignal();
+        final LogsCommand command = LogsCommand(sigterm: termSignal, sigint: intSignal);
+        final Future<void> commandFuture = createTestCommandRunner(
+          command,
+        ).run(<String>['-d', deviceId, 'logs']);
+        intSignal.send(1);
+        termSignal.send(1);
+        await pumpEventQueue(times: 5);
+        await commandFuture;
+      },
+      overrides: <Type, Generator>{Platform: () => platform, DeviceManager: () => deviceManager},
+    );
   });
 }
 

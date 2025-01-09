@@ -60,7 +60,8 @@ final List<String> _kGoalKeys = kLayoutGoals.keys.toList();
 /// auto-incremental index.
 final Map<String, int> _kGoalToIndex = Map<String, int>.fromEntries(
   _kGoalKeys.asMap().entries.map(
-    (MapEntry<int, String> entry) => MapEntry<String, int>(entry.value, entry.key)),
+    (MapEntry<int, String> entry) => MapEntry<String, int>(entry.value, entry.key),
+  ),
 );
 
 /// Retrieve a string using the procedure defined by `ifNotExist` based on the
@@ -74,7 +75,11 @@ final Map<String, int> _kGoalToIndex = Map<String, int>.fromEntries(
 ///
 /// Exceptions from `ifNotExist` will be thrown, while exceptions related to
 /// caching are only printed.
-Future<String> _tryCached(String cachePath, bool forceRefresh, AsyncGetter<String> ifNotExist) async {
+Future<String> _tryCached(
+  String cachePath,
+  bool forceRefresh,
+  AsyncGetter<String> ifNotExist,
+) async {
   final File cacheFile = File(cachePath);
   if (!forceRefresh && cacheFile.existsSync()) {
     try {
@@ -105,7 +110,11 @@ Future<String> _tryCached(String cachePath, bool forceRefresh, AsyncGetter<Strin
 /// If `forceRefresh` is false, this function tries to read the cache file at
 /// `cachePath`. Regardless of `forceRefresh`, the response is always recorded
 /// in the cache file.
-Future<Map<String, dynamic>> _fetchGithub(String githubToken, bool forceRefresh, String cachePath) async {
+Future<Map<String, dynamic>> _fetchGithub(
+  String githubToken,
+  bool forceRefresh,
+  String cachePath,
+) async {
   final String response = await _tryCached(cachePath, forceRefresh, () async {
     final String condensedQuery = _githubQuery
         .replaceAll(RegExp(r'\{ +'), '{')
@@ -116,12 +125,12 @@ Future<Map<String, dynamic>> _fetchGithub(String githubToken, bool forceRefresh,
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'bearer $githubToken',
       },
-      body: jsonEncode(<String, String>{
-        'query': condensedQuery,
-      }),
+      body: jsonEncode(<String, String>{'query': condensedQuery}),
     );
     if (response.statusCode != 200) {
-      throw Exception('Request to GitHub failed with status code ${response.statusCode}: ${response.reasonPhrase}');
+      throw Exception(
+        'Request to GitHub failed with status code ${response.statusCode}: ${response.reasonPhrase}',
+      );
     }
     return response.body;
   });
@@ -162,12 +171,13 @@ String _parsePrintable(String rawString, int isDeadKey) {
     return String.fromCharCode(codeUnit);
   }
   return const <String, String>{
-    r'\\': r'\',
-    r'\r': '\r',
-    r'\b': '\b',
-    r'\t': '\t',
-    r"\'": "'",
-  }[rawString] ?? rawString;
+        r'\\': r'\',
+        r'\r': '\r',
+        r'\b': '\b',
+        r'\t': '\t',
+        r"\'": "'",
+      }[rawString] ??
+      rawString;
 }
 
 LayoutPlatform _platformFromGithubString(String origin) {
@@ -218,14 +228,12 @@ Layout _parseLayoutFromGithubFile(_GitHubFile file) {
     assert(listMatch != null, 'Unable to match $definition');
     final int deadMask = int.parse(listMatch!.group(5)!, radix: 10);
 
-    entries[eventCode] = LayoutEntry(
-      <String>[
-        _parsePrintable(listMatch.group(1)!, deadMask & 0x1),
-        _parsePrintable(listMatch.group(2)!, deadMask & 0x2),
-        _parsePrintable(listMatch.group(3)!, deadMask & 0x4),
-        _parsePrintable(listMatch.group(4)!, deadMask & 0x8),
-      ],
-    );
+    entries[eventCode] = LayoutEntry(<String>[
+      _parsePrintable(listMatch.group(1)!, deadMask & 0x1),
+      _parsePrintable(listMatch.group(2)!, deadMask & 0x2),
+      _parsePrintable(listMatch.group(3)!, deadMask & 0x4),
+      _parsePrintable(listMatch.group(4)!, deadMask & 0x8),
+    ]);
   });
 
   for (final String goalKey in _kGoalKeys) {
@@ -303,17 +311,15 @@ Future<GithubResult> fetchFromGithub({
     (int index) => _jsonGetGithubFile(fileListJson, index),
   ).where(
     // Exclude controlling files, which contain no layout information.
-    (_GitHubFile file) => !file.name.startsWith('layout.contribution.')
-                      && !file.name.startsWith('_.contribution'),
+    (_GitHubFile file) =>
+        !file.name.startsWith('layout.contribution.') && !file.name.startsWith('_.contribution'),
   );
 
   // Layouts must be sorted to ensure that the output file has a fixed order.
-  final List<Layout> layouts = files.map(_parseLayoutFromGithubFile)
-    .toList()
-    ..sort(_sortLayout);
+  final List<Layout> layouts = files.map(_parseLayoutFromGithubFile).toList()..sort(_sortLayout);
 
   final String url = 'https://github.com/microsoft/vscode/tree/$commitId/$_githubTargetFolder';
   return GithubResult(layouts, url);
 
-//
+  //
 }

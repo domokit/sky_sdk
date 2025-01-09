@@ -7,18 +7,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('It should show the home page', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NavigatorExampleApp(),
-    );
+    await tester.pumpWidget(const example.NavigatorExampleApp());
 
     expect(find.text('Home Page'), findsOne);
   });
 
-  testWidgets('It should start from the sign up page and follow the flow to reach the home page', (WidgetTester tester) async {
+  testWidgets('It should start from the sign up page and follow the flow to reach the home page', (
+    WidgetTester tester,
+  ) async {
     tester.platformDispatcher.defaultRouteNameTestValue = '/signup';
-    await tester.pumpWidget(
-      const example.NavigatorExampleApp(),
-    );
+    await tester.pumpWidget(const example.NavigatorExampleApp());
 
     expect(find.text('Collect Personal Info Page'), findsOne);
 

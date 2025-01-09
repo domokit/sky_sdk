@@ -13,9 +13,7 @@ class SingleChildScrollViewExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: SingleChildScrollViewExample(),
-    );
+    return const MaterialApp(home: SingleChildScrollViewExample());
   }
 }
 
@@ -30,9 +28,7 @@ class SingleChildScrollViewExample extends StatelessWidget {
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
           return SingleChildScrollView(
             child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: viewportConstraints.maxHeight,
-              ),
+              constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,

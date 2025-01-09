@@ -14,17 +14,15 @@ void main() {
 }
 
 Future<void> testMain() async {
-  setUpUnitTests(
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(setUpTestViewDimensions: false);
 
   test('Should blur rectangles based on sigma.', () async {
-    final RecordingCanvas rc =
-        RecordingCanvas(const Rect.fromLTRB(0, 0, 500, 500));
+    final RecordingCanvas rc = RecordingCanvas(const Rect.fromLTRB(0, 0, 500, 500));
     for (int blurSigma = 1; blurSigma < 10; blurSigma += 2) {
-      final SurfacePaint paint = SurfacePaint()
-        ..color = const Color(0xFF2fdfd2)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, blurSigma.toDouble());
+      final SurfacePaint paint =
+          SurfacePaint()
+            ..color = const Color(0xFF2fdfd2)
+            ..maskFilter = MaskFilter.blur(BlurStyle.normal, blurSigma.toDouble());
       rc.drawRect(Rect.fromLTWH(15.0, 15.0 + blurSigma * 40, 200, 20), paint);
     }
     await canvasScreenshot(rc, 'dom_mask_filter_blur');

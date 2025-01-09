@@ -13,13 +13,7 @@ class TextPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          SizedBox(
-            width: 200,
-            height: 100,
-            child: TextField(
-              key: Key('basic-textfield'),
-            ),
-          ),
+          SizedBox(width: 200, height: 100, child: TextField(key: Key('basic-textfield'))),
         ],
       ),
     );

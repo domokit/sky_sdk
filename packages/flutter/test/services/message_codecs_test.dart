@@ -48,15 +48,9 @@ void main() {
     const StandardMessageCodec messageCodec = StandardMessageCodec();
 
     test('Should encode and decode objects produced from codec', () {
-      final ByteData? data = messageCodec.encodeMessage(<Object, Object>{
-        'foo': true,
-        3: 'fizz',
-      });
+      final ByteData? data = messageCodec.encodeMessage(<Object, Object>{'foo': true, 3: 'fizz'});
 
-      expect(messageCodec.decodeMessage(data), <Object?, Object?>{
-        'foo': true,
-        3: 'fizz',
-      });
+      expect(messageCodec.decodeMessage(data), <Object?, Object?>{'foo': true, 3: 'fizz'});
     });
 
     test('should decode error envelope without native stacktrace', () {
@@ -67,12 +61,12 @@ void main() {
       );
       expect(
         () => method.decodeEnvelope(errorData),
-        throwsA(predicate(
-          (PlatformException e) =>
-              e.code == 'errorCode' &&
-              e.message == 'errorMessage' &&
-              e.details == 'errorDetails',
-        )),
+        throwsA(
+          predicate(
+            (PlatformException e) =>
+                e.code == 'errorCode' && e.message == 'errorMessage' && e.details == 'errorDetails',
+          ),
+        ),
       );
     });
 
@@ -99,9 +93,7 @@ void main() {
         () => method.decodeEnvelope(errorData),
         throwsA(
           predicate((PlatformException e) {
-            return e.code == 'errorCode' &&
-              e.message == null &&
-              e.details == 'errorDetails';
+            return e.code == 'errorCode' && e.message == null && e.details == 'errorDetails';
           }),
         ),
       );
@@ -119,21 +111,18 @@ void main() {
       );
       expect(
         () => jsonMethodCodec.decodeEnvelope(errorData),
-        throwsA(predicate(
-          (PlatformException e) =>
-            e.code == 'errorCode' &&
-            e.message == 'errorMessage' &&
-            e.details == 'errorDetails',
-        )),
+        throwsA(
+          predicate(
+            (PlatformException e) =>
+                e.code == 'errorCode' && e.message == 'errorMessage' && e.details == 'errorDetails',
+          ),
+        ),
       );
     });
     test('should decode error envelope with native stacktrace.', () {
-      final ByteData? errorData = stringCodec.encodeMessage(json.encode(<dynamic>[
-        'errorCode',
-        'errorMessage',
-        'errorDetails',
-        'errorStacktrace',
-      ]));
+      final ByteData? errorData = stringCodec.encodeMessage(
+        json.encode(<dynamic>['errorCode', 'errorMessage', 'errorDetails', 'errorStacktrace']),
+      );
       expect(
         () => jsonMethodCodec.decodeEnvelope(errorData!),
         throwsA(predicate((PlatformException e) => e.stacktrace == 'errorStacktrace')),
@@ -175,26 +164,30 @@ void main() {
   group('Standard message codec', () {
     const MessageCodec<dynamic> standard = StandardMessageCodec();
     test('should encode sizes correctly at boundary cases', () {
-      checkEncoding<dynamic>(
-        standard,
-        Uint8List(253),
-        <int>[8, 253, ...List<int>.filled(253, 0)],
-      );
-      checkEncoding<dynamic>(
-        standard,
-        Uint8List(254),
-        <int>[8, 254, 254, 0, ...List<int>.filled(254, 0)],
-      );
-      checkEncoding<dynamic>(
-        standard,
-        Uint8List(0xffff),
-        <int>[8, 254, 0xff, 0xff, ...List<int>.filled(0xffff, 0)],
-      );
-      checkEncoding<dynamic>(
-        standard,
-        Uint8List(0xffff + 1),
-        <int>[8, 255, 0, 0, 1, 0, ...List<int>.filled(0xffff + 1, 0)],
-      );
+      checkEncoding<dynamic>(standard, Uint8List(253), <int>[8, 253, ...List<int>.filled(253, 0)]);
+      checkEncoding<dynamic>(standard, Uint8List(254), <int>[
+        8,
+        254,
+        254,
+        0,
+        ...List<int>.filled(254, 0),
+      ]);
+      checkEncoding<dynamic>(standard, Uint8List(0xffff), <int>[
+        8,
+        254,
+        0xff,
+        0xff,
+        ...List<int>.filled(0xffff, 0),
+      ]);
+      checkEncoding<dynamic>(standard, Uint8List(0xffff + 1), <int>[
+        8,
+        255,
+        0,
+        0,
+        1,
+        0,
+        ...List<int>.filled(0xffff + 1, 0),
+      ]);
     });
     test('should encode and decode simple messages', () {
       checkEncodeDecode<dynamic>(standard, null);
@@ -254,28 +247,24 @@ void main() {
       checkEncodeDecode<dynamic>(standard, message);
     });
     test('should align doubles to 8 bytes', () {
-      checkEncoding<dynamic>(
-        standard,
-        1.0,
-        <int>[
-          6,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0xf0,
-          0x3f,
-        ],
-      );
+      checkEncoding<dynamic>(standard, 1.0, <int>[
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0xf0,
+        0x3f,
+      ]);
     });
   });
 

@@ -17,6 +17,7 @@ class AnimatedColorSquareScenario extends Scenario {
   AnimatedColorSquareScenario(super.view);
 
   static const double _squareSize = 200;
+
   /// Used to animate the red value in the color of the square.
   final _NumberSwinger<int> _r = _NumberSwinger<int>(0, 255);
   late _NumberSwinger<double> _top = _NumberSwinger<double>(
@@ -41,11 +42,7 @@ class AnimatedColorSquareScenario extends Scenario {
     final Picture picture = recorder.endRecording();
 
     builder.pushOffset(_left.swing(), _top.swing());
-    builder.addPicture(
-      Offset.zero,
-      picture,
-      willChangeHint: true,
-    );
+    builder.addPicture(Offset.zero, picture, willChangeHint: true);
     final Scene scene = builder.build();
     view.render(scene);
     scene.dispose();
@@ -72,8 +69,7 @@ class AnimatedColorSquareScenario extends Scenario {
 }
 
 class _NumberSwinger<T extends num> {
-  _NumberSwinger(this._begin, this._end, [T? current])
-      : _up = _begin < _end {
+  _NumberSwinger(this._begin, this._end, [T? current]) : _up = _begin < _end {
     _current = current ?? _begin;
   }
 

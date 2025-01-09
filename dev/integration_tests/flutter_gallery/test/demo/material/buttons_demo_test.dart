@@ -10,7 +10,9 @@ void main() {
   testWidgets('Button locations are OK', (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/pull/85351
     {
-      await tester.pumpWidget(MaterialApp(theme: ThemeData(useMaterial3: false), home: const ButtonsDemo()));
+      await tester.pumpWidget(
+        MaterialApp(theme: ThemeData(useMaterial3: false), home: const ButtonsDemo()),
+      );
       expect(find.byType(ElevatedButton).evaluate().length, 2);
       final Offset topLeft1 = tester.getTopLeft(find.byType(ElevatedButton).first);
       final Offset topLeft2 = tester.getTopLeft(find.byType(ElevatedButton).last);

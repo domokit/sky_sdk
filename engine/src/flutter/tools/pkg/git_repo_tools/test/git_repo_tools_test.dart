@@ -90,7 +90,8 @@ void main() {
             return FakeProcess();
           }
 
-          if (command.join(' ') == 'git diff-tree --no-commit-id --name-only --diff-filter=ACMRT -r HEAD') {
+          if (command.join(' ') ==
+              'git diff-tree --no-commit-id --name-only --diff-filter=ACMRT -r HEAD') {
             return FakeProcess(stdout: 'file1\nfile2');
           }
 
@@ -118,7 +119,8 @@ void main() {
             return FakeProcess();
           }
 
-          if (command.join(' ') == 'git diff-tree --no-commit-id --name-only --diff-filter=ACMRT -r HEAD') {
+          if (command.join(' ') ==
+              'git diff-tree --no-commit-id --name-only --diff-filter=ACMRT -r HEAD') {
             return FakeProcess(stdout: 'file1\nfile2');
           }
 
@@ -175,7 +177,10 @@ void main() {
 
     try {
       await fixture.gitRepo.changedFiles;
-      expect(fixture.logSink.toString(), contains('git merge-base --fork-point failed, using default merge-base'));
+      expect(
+        fixture.logSink.toString(),
+        contains('git merge-base --fork-point failed, using default merge-base'),
+      );
       expect(fixture.logSink.toString(), contains('git diff output:\nfile1\nfile2'));
     } finally {
       fixture.gitRepo.root.deleteSync(recursive: true);
@@ -184,15 +189,13 @@ void main() {
 }
 
 final class Fixture {
-  factory Fixture({
-    FakeProcessManager? processManager,
-    bool verbose = false,
-  }) {
+  factory Fixture({FakeProcessManager? processManager, bool verbose = false}) {
     final io.Directory root = io.Directory.systemTemp.createTempSync('git_repo_tools.test');
     final StringBuffer logSink = StringBuffer();
     processManager ??= FakeProcessManager();
     return Fixture._(
-      gitRepo: GitRepo.fromRoot(root,
+      gitRepo: GitRepo.fromRoot(
+        root,
         logSink: logSink,
         processManager: processManager,
         verbose: verbose,
@@ -201,10 +204,7 @@ final class Fixture {
     );
   }
 
-  const Fixture._({
-    required this.gitRepo,
-    required this.logSink,
-  });
+  const Fixture._({required this.gitRepo, required this.logSink});
 
   final GitRepo gitRepo;
   final StringBuffer logSink;

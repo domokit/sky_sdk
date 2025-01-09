@@ -25,9 +25,7 @@ class ScrollNotificationObserverApp extends StatelessWidget {
       // If you're not using a [Scaffold] widget, you can create a  [ScrollNotificationObserver]
       // to notify its descendants of scroll notifications by adding it to the subtree.
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('ScrollNotificationObserver Sample'),
-        ),
+        appBar: AppBar(title: const Text('ScrollNotificationObserver Sample')),
         body: const ScrollNotificationObserverExample(),
       ),
     );
@@ -38,7 +36,8 @@ class ScrollNotificationObserverExample extends StatefulWidget {
   const ScrollNotificationObserverExample({super.key});
 
   @override
-  State<ScrollNotificationObserverExample> createState() => _ScrollNotificationObserverExampleState();
+  State<ScrollNotificationObserverExample> createState() =>
+      _ScrollNotificationObserverExampleState();
 }
 
 class _ScrollNotificationObserverExampleState extends State<ScrollNotificationObserverExample> {
@@ -71,7 +70,8 @@ class _ScrollNotificationObserverExampleState extends State<ScrollNotificationOb
     // Check if the notification is a scroll update notification and if the
     // `notification.depth` is 0. This way we only listen to the scroll
     // notifications from the closest scrollable, instead of those that may be nested.
-    if (notification is ScrollUpdateNotification && defaultScrollNotificationPredicate(notification)) {
+    if (notification is ScrollUpdateNotification &&
+        defaultScrollNotificationPredicate(notification)) {
       final ScrollMetrics metrics = notification.metrics;
       // Check if the user scrolled down.
       if (_scrolledDown != metrics.extentBefore > 0) {
@@ -96,16 +96,17 @@ class _ScrollNotificationObserverExampleState extends State<ScrollNotificationOb
               child: GestureDetector(
                 onTap: () {
                   // Scroll to the top when the user taps the button.
-                  controller.animateTo(0, duration: const Duration(milliseconds: 200), curve:Curves.fastOutSlowIn);
+                  controller.animateTo(
+                    0,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.fastOutSlowIn,
+                  );
                 },
                 child: const Card(
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Column(
-                      children: <Widget>[
-                        Icon(Icons.arrow_upward_rounded),
-                        Text('Scroll to top')
-                      ],
+                      children: <Widget>[Icon(Icons.arrow_upward_rounded), Text('Scroll to top')],
                     ),
                   ),
                 ),

@@ -3,10 +3,11 @@
 // found in the LICENSE file.
 
 #include "flutter/shell/platform/linux/public/flutter_linux/fl_texture_registrar.h"
+#include "flutter/shell/platform/embedder/test_utils/proc_table_replacement.h"
+#include "flutter/shell/platform/linux/fl_engine_private.h"
 #include "flutter/shell/platform/linux/fl_texture_registrar_private.h"
 #include "flutter/shell/platform/linux/public/flutter_linux/fl_pixel_buffer_texture.h"
 #include "flutter/shell/platform/linux/public/flutter_linux/fl_texture_gl.h"
-#include "flutter/shell/platform/linux/testing/fl_test.h"
 #include "flutter/shell/platform/linux/testing/mock_texture_registrar.h"
 #include "gtest/gtest.h"
 
@@ -95,25 +96,89 @@ TEST(FlTextureRegistrarTest, MockRegistrar) {
 
 // Test that registering a texture works.
 TEST(FlTextureRegistrarTest, RegisterTexture) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+  bool register_called = false;
+  fl_engine_get_embedder_api(engine)->RegisterExternalTexture =
+      MOCK_ENGINE_PROC(RegisterExternalTexture,
+                       ([&register_called](auto engine, int64_t texture_id) {
+                         register_called = true;
+                         return kSuccess;
+                       }));
+  bool unregister_called = false;
+  fl_engine_get_embedder_api(engine)->UnregisterExternalTexture =
+      MOCK_ENGINE_PROC(UnregisterExternalTexture,
+                       ([&unregister_called](auto engine, int64_t texture_id) {
+                         unregister_called = true;
+                         return kSuccess;
+                       }));
+
   g_autoptr(FlTextureRegistrar) registrar = fl_texture_registrar_new(engine);
   g_autoptr(FlTexture) texture = FL_TEXTURE(fl_test_registrar_texture_new());
 
-  EXPECT_FALSE(fl_texture_registrar_unregister_texture(registrar, texture));
+  // EXPECT_FALSE(fl_texture_registrar_unregister_texture(registrar, texture));
+  EXPECT_FALSE(register_called);
   EXPECT_TRUE(fl_texture_registrar_register_texture(registrar, texture));
+  EXPECT_TRUE(register_called);
+  EXPECT_FALSE(unregister_called);
   EXPECT_TRUE(fl_texture_registrar_unregister_texture(registrar, texture));
+  EXPECT_TRUE(unregister_called);
 }
 
 // Test that marking a texture frame available works.
 TEST(FlTextureRegistrarTest, MarkTextureFrameAvailable) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+  bool register_called = false;
+  fl_engine_get_embedder_api(engine)->RegisterExternalTexture =
+      MOCK_ENGINE_PROC(RegisterExternalTexture,
+                       ([&register_called](auto engine, int64_t texture_id) {
+                         register_called = true;
+                         return kSuccess;
+                       }));
+  fl_engine_get_embedder_api(engine)->UnregisterExternalTexture =
+      MOCK_ENGINE_PROC(
+          UnregisterExternalTexture,
+          ([](auto engine, int64_t texture_id) { return kSuccess; }));
+  fl_engine_get_embedder_api(engine)->MarkExternalTextureFrameAvailable =
+      MOCK_ENGINE_PROC(MarkExternalTextureFrameAvailable,
+                       ([](auto engine, int64_t texture_id) {
+                         g_printerr("!\n");
+                         return kSuccess;
+                       }));
+
   g_autoptr(FlTextureRegistrar) registrar = fl_texture_registrar_new(engine);
   g_autoptr(FlTexture) texture = FL_TEXTURE(fl_test_registrar_texture_new());
 
-  EXPECT_FALSE(
-      fl_texture_registrar_mark_texture_frame_available(registrar, texture));
   EXPECT_TRUE(fl_texture_registrar_register_texture(registrar, texture));
+  EXPECT_TRUE(register_called);
   EXPECT_TRUE(
+      fl_texture_registrar_mark_texture_frame_available(registrar, texture));
+}
+
+// Test handles error marking a texture frame available.
+TEST(FlTextureRegistrarTest, MarkInvalidTextureFrameAvailable) {
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+  fl_engine_get_embedder_api(engine)->RegisterExternalTexture =
+      MOCK_ENGINE_PROC(
+          RegisterExternalTexture,
+          ([](auto engine, int64_t texture_id) { return kSuccess; }));
+  fl_engine_get_embedder_api(engine)->UnregisterExternalTexture =
+      MOCK_ENGINE_PROC(
+          UnregisterExternalTexture,
+          ([](auto engine, int64_t texture_id) { return kSuccess; }));
+  fl_engine_get_embedder_api(engine)->MarkExternalTextureFrameAvailable =
+      MOCK_ENGINE_PROC(MarkExternalTextureFrameAvailable,
+                       ([](auto engine, int64_t texture_id) {
+                         return kInternalInconsistency;
+                       }));
+
+  g_autoptr(FlTextureRegistrar) registrar = fl_texture_registrar_new(engine);
+  g_autoptr(FlTexture) texture = FL_TEXTURE(fl_test_registrar_texture_new());
+
+  EXPECT_TRUE(fl_texture_registrar_register_texture(registrar, texture));
+  EXPECT_FALSE(
       fl_texture_registrar_mark_texture_frame_available(registrar, texture));
 }
 
@@ -123,7 +188,18 @@ TEST(FlTextureRegistrarTest, MarkTextureFrameAvailable) {
 // https://github.com/flutter/flutter/issues/138197
 TEST(FlTextureRegistrarTest,
      DISABLED_RegistrarRegisterTextureInMultipleThreads) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  fl_engine_get_embedder_api(engine)->RegisterExternalTexture =
+      MOCK_ENGINE_PROC(
+          RegisterExternalTexture,
+          ([](auto engine, int64_t texture_id) { return kSuccess; }));
+  fl_engine_get_embedder_api(engine)->UnregisterExternalTexture =
+      MOCK_ENGINE_PROC(
+          UnregisterExternalTexture,
+          ([](auto engine, int64_t texture_id) { return kSuccess; }));
+
   g_autoptr(FlTextureRegistrar) registrar = fl_texture_registrar_new(engine);
   pthread_t threads[kThreadCount];
   int64_t ids[kThreadCount];

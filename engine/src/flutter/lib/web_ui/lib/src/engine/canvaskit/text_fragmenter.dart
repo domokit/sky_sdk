@@ -10,11 +10,7 @@ import '../text/line_breaker.dart';
 import '../util.dart';
 import 'canvaskit_api.dart';
 
-typedef SegmentationResult = ({
-  Uint32List words,
-  Uint32List graphemes,
-  Uint32List breaks,
-});
+typedef SegmentationResult = ({Uint32List words, Uint32List graphemes, Uint32List breaks});
 
 // The cache numbers below were picked based on the following logic.
 //
@@ -38,11 +34,12 @@ const SegmentationCacheSpec kSmallParagraphCacheSpec = (cacheSize: 100000, maxTe
 const SegmentationCacheSpec kMediumParagraphCacheSpec = (cacheSize: 10000, maxTextLength: 100);
 const SegmentationCacheSpec kLargeParagraphCacheSpec = (cacheSize: 20, maxTextLength: 50000);
 
-typedef SegmentationCache = ({
-  LruCache<String, SegmentationResult> small,
-  LruCache<String, SegmentationResult> medium,
-  LruCache<String, SegmentationResult> large,
-});
+typedef SegmentationCache =
+    ({
+      LruCache<String, SegmentationResult> small,
+      LruCache<String, SegmentationResult> medium,
+      LruCache<String, SegmentationResult> large,
+    });
 
 /// Caches segmentation results for small, medium and large paragraphts.
 ///
@@ -121,20 +118,15 @@ SegmentationResult segmentText(String text) {
 ///
 /// To find all supported granularities, see:
 /// - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Segmenter/Segmenter
-enum IntlSegmenterGranularity {
-  grapheme,
-  word,
-}
+enum IntlSegmenterGranularity { grapheme, word }
 
-final Map<IntlSegmenterGranularity, DomSegmenter> _intlSegmenters = <IntlSegmenterGranularity, DomSegmenter>{
-  IntlSegmenterGranularity.grapheme: createIntlSegmenter(granularity: 'grapheme'),
-  IntlSegmenterGranularity.word: createIntlSegmenter(granularity: 'word'),
-};
+final Map<IntlSegmenterGranularity, DomSegmenter> _intlSegmenters =
+    <IntlSegmenterGranularity, DomSegmenter>{
+      IntlSegmenterGranularity.grapheme: createIntlSegmenter(granularity: 'grapheme'),
+      IntlSegmenterGranularity.word: createIntlSegmenter(granularity: 'word'),
+    };
 
-Uint32List fragmentUsingIntlSegmenter(
-  String text,
-  IntlSegmenterGranularity granularity,
-) {
+Uint32List fragmentUsingIntlSegmenter(String text, IntlSegmenterGranularity granularity) {
   final DomSegmenter segmenter = _intlSegmenters[granularity]!;
   final DomIteratorWrapper<DomSegment> iterator = segmenter.segment(text).iterator();
 
@@ -153,8 +145,11 @@ const int _kHardLineBreak = 1;
 final DomV8BreakIterator _v8LineBreaker = createV8BreakIterator();
 
 Uint32List fragmentUsingV8LineBreaker(String text) {
-  final List<LineBreakFragment> fragments =
-      breakLinesUsingV8BreakIterator(text, text.toJS, _v8LineBreaker);
+  final List<LineBreakFragment> fragments = breakLinesUsingV8BreakIterator(
+    text,
+    text.toJS,
+    _v8LineBreaker,
+  );
 
   final int size = (fragments.length + 1) * 2;
   final Uint32List typedArray = Uint32List(size);
@@ -166,9 +161,8 @@ Uint32List fragmentUsingV8LineBreaker(String text) {
     final LineBreakFragment fragment = fragments[i];
     final int uint32Index = 2 + i * 2;
     typedArray[uint32Index] = fragment.end;
-    typedArray[uint32Index + 1] = fragment.type == LineBreakType.mandatory
-        ? _kHardLineBreak
-        : _kSoftLineBreak;
+    typedArray[uint32Index + 1] =
+        fragment.type == LineBreakType.mandatory ? _kHardLineBreak : _kSoftLineBreak;
   }
 
   return typedArray;

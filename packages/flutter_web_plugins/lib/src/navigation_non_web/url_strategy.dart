@@ -129,5 +129,5 @@ class PathUrlStrategy extends HashUrlStrategy {
   ///
   /// The [PlatformLocation] parameter is useful for testing to mock out browser
   /// integrations.
-  const PathUrlStrategy([PlatformLocation? _, bool __ = false,]);
+  const PathUrlStrategy([PlatformLocation? _, bool __ = false]);
 }

@@ -3,16 +3,14 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/navigation_bar/navigation_bar.1.dart'
-    as example;
+import 'package:flutter_api_samples/material/navigation_bar/navigation_bar.1.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Navigation bar updates label behavior when tapping buttons',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NavigationBarApp(),
-    );
+  testWidgets('Navigation bar updates label behavior when tapping buttons', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.NavigationBarApp());
     NavigationBar navigationBarWidget = tester.firstWidget(find.byType(NavigationBar));
 
     expect(find.text('Label behavior: alwaysShow'), findsOneWidget);
@@ -38,10 +36,7 @@ void main() {
 
     expect(find.text('Label behavior: alwaysHide'), findsOneWidget);
     navigationBarWidget = tester.firstWidget(find.byType(NavigationBar));
-    expect(
-      navigationBarWidget.labelBehavior,
-      NavigationDestinationLabelBehavior.alwaysHide,
-    );
+    expect(navigationBarWidget.labelBehavior, NavigationDestinationLabelBehavior.alwaysHide);
   });
 
   testWidgets('Overflow buttons are aligned in the center', (WidgetTester tester) async {

@@ -10,17 +10,20 @@ import 'dart:ffi';
 import 'package:ui/src/engine/skwasm/skwasm_impl.dart';
 
 final class RawVertices extends Opaque {}
+
 typedef VerticesHandle = Pointer<RawVertices>;
 
-@Native<VerticesHandle Function(
-  Int vertexMode,
-  Int vertexCount,
-  RawPointArray positions,
-  RawPointArray textureCoordinates,
-  RawColorArray colors,
-  Int indexCount,
-  Pointer<Uint16> indices,
-)>(symbol: 'vertices_create', isLeaf: true)
+@Native<
+  VerticesHandle Function(
+    Int vertexMode,
+    Int vertexCount,
+    RawPointArray positions,
+    RawPointArray textureCoordinates,
+    RawColorArray colors,
+    Int indexCount,
+    Pointer<Uint16> indices,
+  )
+>(symbol: 'vertices_create', isLeaf: true)
 external VerticesHandle verticesCreate(
   int vertexMode,
   int vertexCount,

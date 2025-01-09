@@ -73,9 +73,12 @@ void main() {
   const TextFormField textFormField = TextFormField(error: '');
 
   // Changes made in https://github.com/flutter/flutter/pull/61648
-  const DropdownButtonFormField dropDownButtonFormField = DropdownButtonFormField(autovalidateMode: AutovalidateMode.always);
-  const DropdownButtonFormField dropdownButtonFormField = DropdownButtonFormField(autovalidateMode: AutovalidateMode.disabled);
-  const DropdownButtonFormField dropdownButtonFormField = DropdownButtonFormField(error: '');
+  const DropdownButtonFormField dropDownButtonFormField =
+      DropdownButtonFormField(autovalidateMode: AutovalidateMode.always);
+  const DropdownButtonFormField dropdownButtonFormField =
+      DropdownButtonFormField(autovalidateMode: AutovalidateMode.disabled);
+  const DropdownButtonFormField dropdownButtonFormField =
+      DropdownButtonFormField(error: '');
 
   // Changes made in https://github.com/flutter/flutter/pull/68736
   MediaQuery.maybeOf(context);
@@ -154,9 +157,12 @@ void main() {
   TextFormField(error: '');
 
   // Changes made in https://github.com/flutter/flutter/pull/59127
-  const BottomNavigationBarItem bottomNavigationBarItem = BottomNavigationBarItem(label: myTitle);
-  const BottomNavigationBarItem bottomNavigationBarItem = BottomNavigationBarItem();
-  const BottomNavigationBarItem bottomNavigationBarItem = BottomNavigationBarItem(error: '');
+  const BottomNavigationBarItem bottomNavigationBarItem =
+      BottomNavigationBarItem(label: myTitle);
+  const BottomNavigationBarItem bottomNavigationBarItem =
+      BottomNavigationBarItem();
+  const BottomNavigationBarItem bottomNavigationBarItem =
+      BottomNavigationBarItem(error: '');
   bottomNavigationBarItem.label;
 
   // Changes made in https://github.com/flutter/flutter/pull/65246
@@ -186,19 +192,23 @@ void main() {
   listWheelElement.insertRenderObjectChild(renderObject, object);
   listWheelElement.moveRenderObjectChild(renderObject, object);
   listWheelElement.removeRenderObjectChild(renderObject);
-  final MultiChildRenderObjectElement multiChildRenderObjectElement = MultiChildRenderObjectElement();
+  final MultiChildRenderObjectElement multiChildRenderObjectElement =
+      MultiChildRenderObjectElement();
   multiChildRenderObjectElement.insertRenderObjectChild(renderObject, object);
   multiChildRenderObjectElement.moveRenderObjectChild(renderObject, object);
   multiChildRenderObjectElement.removeRenderObjectChild(renderObject);
-  final SingleChildRenderObjectElement singleChildRenderObjectElement = SingleChildRenderObjectElement();
+  final SingleChildRenderObjectElement singleChildRenderObjectElement =
+      SingleChildRenderObjectElement();
   singleChildRenderObjectElement.insertRenderObjectChild(renderObject, object);
   singleChildRenderObjectElement.moveRenderObjectChild(renderObject, object);
   singleChildRenderObjectElement.removeRenderObjectChild(renderObject);
-  final SliverMultiBoxAdaptorElement sliverMultiBoxAdaptorElement = SliverMultiBoxAdaptorElement();
+  final SliverMultiBoxAdaptorElement sliverMultiBoxAdaptorElement =
+      SliverMultiBoxAdaptorElement();
   sliverMultiBoxAdaptorElement.insertRenderObjectChild(renderObject, object);
   sliverMultiBoxAdaptorElement.moveRenderObjectChild(renderObject, object);
   sliverMultiBoxAdaptorElement.removeRenderObjectChild(renderObject);
-  final RenderObjectToWidgetElement renderObjectToWidgetElement = RenderObjectToWidgetElement(widget);
+  final RenderObjectToWidgetElement renderObjectToWidgetElement =
+      RenderObjectToWidgetElement(widget);
   renderObjectToWidgetElement.insertRenderObjectChild(renderObject, object);
   renderObjectToWidgetElement.moveRenderObjectChild(renderObject, object);
   renderObjectToWidgetElement.removeRenderObjectChild(renderObject);
@@ -220,8 +230,10 @@ void main() {
   listWheelViewport.clipBehavior;
 
   // Changes made in https://github.com/flutter/flutter/pull/87839
-  final OverscrollIndicatorNotification notification = OverscrollIndicatorNotification(leading: true);
-  final OverscrollIndicatorNotification notification = OverscrollIndicatorNotification(error: '');
+  final OverscrollIndicatorNotification notification =
+      OverscrollIndicatorNotification(leading: true);
+  final OverscrollIndicatorNotification notification =
+      OverscrollIndicatorNotification(error: '');
   notification.disallowIndicator();
 
   // Changes made in https://github.com/flutter/flutter/pull/96115
@@ -230,7 +242,9 @@ void main() {
   // Changes made in https://github.com/flutter/flutter/pull/96957
   Scrollbar scrollbar = Scrollbar(thumbVisibility: true);
   bool nowShowing = scrollbar.thumbVisibility;
-  ScrollbarThemeData scrollbarTheme = ScrollbarThemeData(thumbVisibility: nowShowing);
+  ScrollbarThemeData scrollbarTheme = ScrollbarThemeData(
+    thumbVisibility: nowShowing,
+  );
   scrollbarTheme.copyWith(thumbVisibility: nowShowing);
   scrollbarTheme.thumbVisibility;
   RawScrollbar rawScrollbar = RawScrollbar(thumbVisibility: true);
@@ -240,21 +254,27 @@ void main() {
   Chip chip = Chip();
   chip = Chip(deleteButtonTooltipMessage: '');
   chip = Chip();
-  chip = Chip(deleteButtonTooltipMessage: 'Delete Tooltip');
+  chip = Chip(
+    deleteButtonTooltipMessage: 'Delete Tooltip',
+  );
   chip.deleteButtonTooltipMessage;
 
   // Changes made in https://github.com/flutter/flutter/pull/96174
   InputChip inputChip = InputChip();
   inputChip = InputChip(deleteButtonTooltipMessage: '');
   inputChip = InputChip();
-  inputChip = InputChip(deleteButtonTooltipMessage: 'Delete Tooltip');
+  inputChip = InputChip(
+    deleteButtonTooltipMessage: 'Delete Tooltip',
+  );
   inputChip.deleteButtonTooltipMessage;
 
   // Changes made in https://github.com/flutter/flutter/pull/96174
   RawChip rawChip = Rawchip();
   rawChip = RawChip(deleteButtonTooltipMessage: '');
   rawChip = RawChip();
-  rawChip = RawChip(deleteButtonTooltipMessage: 'Delete Tooltip');
+  rawChip = RawChip(
+    deleteButtonTooltipMessage: 'Delete Tooltip',
+  );
   rawChip.deleteButtonTooltipMessage;
 
   // Change made in https://github.com/flutter/flutter/pull/100381
@@ -274,7 +294,8 @@ void main() {
   // Changes made in https://github.com/flutter/flutter/pull/78588
   final ScrollBehavior scrollBehavior = ScrollBehavior();
   scrollBehavior.buildOverscrollIndicator(context, child, axisDirection);
-  final MaterialScrollBehavior materialScrollBehavior = MaterialScrollBehavior();
+  final MaterialScrollBehavior materialScrollBehavior =
+      MaterialScrollBehavior();
   materialScrollBehavior.buildOverscrollIndicator(context, child, axisDirection);
 
   // Changes made in https://github.com/flutter/flutter/pull/111706
@@ -300,14 +321,18 @@ void main() {
   const Curve curve = Easing.legacyAccelerate;
   const Curve curve = Easing.legacyDecelerate;
 
-  final PlatformMenuBar platformMenuBar = PlatformMenuBar(menus: <PlatformMenuItem>[], child: const SizedBox());
+  final PlatformMenuBar platformMenuBar = PlatformMenuBar(
+    menus: <PlatformMenuItem>[],
+    child: const SizedBox(),
+  );
   final Widget bodyValue = platformMenuBar.child;
 
   // Changes made in https://github.com/flutter/flutter/pull/154972
   final InputBorder outlineBorder = WidgetStateInputBorder.resolveWith(
     (states) => const OutlineInputBorder(),
   );
-  final InputBorder underlineBorder = WidgetStateInputBorder.resolveWith(
-    (states) => const UnderlineInputBorder(),
-  );
+  final InputBorder underlineBorder =
+      WidgetStateInputBorder.resolveWith(
+        (states) => const UnderlineInputBorder(),
+      );
 }

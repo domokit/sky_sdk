@@ -62,8 +62,12 @@ void testMain() {
       final CrossFrameCache<TestItem> cache = CrossFrameCache<TestItem>();
       final TestItem testItem1 = TestItem('item1');
       final TestItem testItem2 = TestItem('item2');
-      cache.cache(testItem1.label, testItem1, (TestItem item) {evictedItems.add(item);});
-      cache.cache(testItem2.label, testItem2, (TestItem item) {evictedItems.add(item);});
+      cache.cache(testItem1.label, testItem1, (TestItem item) {
+        evictedItems.add(item);
+      });
+      cache.cache(testItem2.label, testItem2, (TestItem item) {
+        evictedItems.add(item);
+      });
       cache.commitFrame();
       expect(evictedItems.length, 0);
       cache.reuse('item2');

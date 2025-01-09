@@ -138,18 +138,18 @@ class CupertinoSearchTextField extends StatefulWidget {
     this.cursorRadius = const Radius.circular(2.0),
     this.cursorOpacityAnimates = true,
     this.cursorColor,
-  })  : assert(
-          !((decoration != null) && (backgroundColor != null)),
-          'Cannot provide both a background color and a decoration\n'
-          'To provide both, use "decoration: BoxDecoration(color: '
-          'backgroundColor)"',
-        ),
-        assert(
-          !((decoration != null) && (borderRadius != null)),
-          'Cannot provide both a border radius and a decoration\n'
-          'To provide both, use "decoration: BoxDecoration(borderRadius: '
-          'borderRadius)"',
-        );
+  }) : assert(
+         !((decoration != null) && (backgroundColor != null)),
+         'Cannot provide both a background color and a decoration\n'
+         'To provide both, use "decoration: BoxDecoration(color: '
+         'backgroundColor)"',
+       ),
+       assert(
+         !((decoration != null) && (borderRadius != null)),
+         'Cannot provide both a border radius and a decoration\n'
+         'To provide both, use "decoration: BoxDecoration(borderRadius: '
+         'borderRadius)"',
+       );
 
   /// Controls the text being edited.
   ///
@@ -351,17 +351,14 @@ class CupertinoSearchTextField extends StatefulWidget {
   State<StatefulWidget> createState() => _CupertinoSearchTextFieldState();
 }
 
-class _CupertinoSearchTextFieldState extends State<CupertinoSearchTextField>
-    with RestorationMixin {
+class _CupertinoSearchTextFieldState extends State<CupertinoSearchTextField> with RestorationMixin {
   /// Default value for the border radius. Radius value was determined using the
   /// comparison tool in https://github.com/flutter/platform_tests/.
-  final BorderRadius _kDefaultBorderRadius =
-      const BorderRadius.all(Radius.circular(9.0));
+  final BorderRadius _kDefaultBorderRadius = const BorderRadius.all(Radius.circular(9.0));
 
   RestorableTextEditingController? _controller;
 
-  TextEditingController get _effectiveController =>
-      widget.controller ?? _controller!.value;
+  TextEditingController get _effectiveController => widget.controller ?? _controller!.value;
 
   ScrollNotificationObserverState? _scrollNotificationObserver;
   double _fadeExtent = 0.0;
@@ -421,9 +418,10 @@ class _CupertinoSearchTextFieldState extends State<CupertinoSearchTextField>
 
   void _createLocalController([TextEditingValue? value]) {
     assert(_controller == null);
-    _controller = value == null
-        ? RestorableTextEditingController()
-        : RestorableTextEditingController.fromValue(value);
+    _controller =
+        value == null
+            ? RestorableTextEditingController()
+            : RestorableTextEditingController.fromValue(value);
     if (!restorePending) {
       _registerController();
     }
@@ -443,11 +441,12 @@ class _CupertinoSearchTextFieldState extends State<CupertinoSearchTextField>
   void _handleScrollNotification(ScrollNotification notification) {
     if (_maxHeight == null) {
       _maxHeight ??= (context.findRenderObject() as RenderBox?)?.size.height;
-    }
-    else {
+    } else {
       final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
       final double currentHeight = renderBox?.size.height ?? 0.0;
-      setState(() { _fadeExtent = _calculateScrollOpacity(currentHeight, _maxHeight!); });
+      setState(() {
+        _fadeExtent = _calculateScrollOpacity(currentHeight, _maxHeight!);
+      });
     }
   }
 
@@ -466,10 +465,11 @@ class _CupertinoSearchTextFieldState extends State<CupertinoSearchTextField>
 
   @override
   Widget build(BuildContext context) {
-    final String placeholder = widget.placeholder ??
-        CupertinoLocalizations.of(context).searchTextFieldPlaceholderLabel;
+    final String placeholder =
+        widget.placeholder ?? CupertinoLocalizations.of(context).searchTextFieldPlaceholderLabel;
 
-    final TextStyle placeholderStyle = widget.placeholderStyle ??
+    final TextStyle placeholderStyle =
+        widget.placeholderStyle ??
         TextStyle(color: CupertinoColors.systemGrey.withOpacity(1.0 - _fadeExtent));
 
     // The icon size will be scaled by a factor of the accessibility text scale,
@@ -478,7 +478,8 @@ class _CupertinoSearchTextFieldState extends State<CupertinoSearchTextField>
 
     // If decoration was not provided, create a decoration with the provided
     // background color and border radius.
-    final BoxDecoration decoration = widget.decoration ??
+    final BoxDecoration decoration =
+        widget.decoration ??
         BoxDecoration(
           color: widget.backgroundColor ?? CupertinoColors.tertiarySystemFill,
           borderRadius: widget.borderRadius ?? _kDefaultBorderRadius,
@@ -502,10 +503,7 @@ class _CupertinoSearchTextFieldState extends State<CupertinoSearchTextField>
       opacity: 1.0 - _fadeExtent,
       child: Padding(
         padding: widget.prefixInsets,
-        child: IconTheme(
-          data: iconThemeData,
-          child: widget.prefixIcon,
-        ),
+        child: IconTheme(data: iconThemeData, child: widget.prefixIcon),
       ),
     );
 
@@ -517,10 +515,7 @@ class _CupertinoSearchTextFieldState extends State<CupertinoSearchTextField>
           onPressed: widget.onSuffixTap ?? _defaultOnSuffixTap,
           minSize: 0,
           padding: EdgeInsets.zero,
-          child: IconTheme(
-            data: iconThemeData,
-            child: widget.suffixIcon,
-          ),
+          child: IconTheme(data: iconThemeData, child: widget.suffixIcon),
         ),
       ),
     );

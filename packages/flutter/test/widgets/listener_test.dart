@@ -39,11 +39,7 @@ void main() {
 
     await tester.tap(find.text('X'));
 
-    expect(log, equals(<String>[
-      'bottom',
-      'middle',
-      'top',
-    ]));
+    expect(log, equals(<String>['bottom', 'middle', 'top']));
   });
 
   testWidgets('Detects hover events from touch devices', (WidgetTester tester) async {
@@ -68,9 +64,7 @@ void main() {
     await gesture.addPointer();
     await gesture.moveTo(tester.getCenter(find.byType(Listener)));
 
-    expect(log, equals(<String>[
-      'bottom',
-    ]));
+    expect(log, equals(<String>['bottom']));
   });
 
   group('transformed events', () {
@@ -93,12 +87,7 @@ void main() {
             onPointerSignal: (PointerSignalEvent event) {
               events.add(event);
             },
-            child: Container(
-              key: key,
-              color: Colors.red,
-              height: 100,
-              width: 100,
-            ),
+            child: Container(key: key, color: Colors.red, height: 100, width: 100),
           ),
         ),
       );
@@ -169,12 +158,7 @@ void main() {
               onPointerSignal: (PointerSignalEvent event) {
                 events.add(event);
               },
-              child: Container(
-                key: key,
-                color: Colors.red,
-                height: 100,
-                width: 100,
-              ),
+              child: Container(key: key, color: Colors.red, height: 100, width: 100),
             ),
           ),
         ),
@@ -190,8 +174,8 @@ void main() {
       final PointerMoveEvent move = events[1] as PointerMoveEvent;
       final PointerUpEvent up = events[2] as PointerUpEvent;
 
-      final Matrix4 expectedTransform = Matrix4.identity()
-        ..scale(1 / scaleFactor, 1 / scaleFactor, 1.0);
+      final Matrix4 expectedTransform =
+          Matrix4.identity()..scale(1 / scaleFactor, 1 / scaleFactor, 1.0);
 
       expect(center, isNot(const Offset(50, 50)));
 
@@ -245,12 +229,7 @@ void main() {
               onPointerSignal: (PointerSignalEvent event) {
                 events.add(event);
               },
-              child: Container(
-                key: key,
-                color: Colors.red,
-                height: 100,
-                width: 100,
-              ),
+              child: Container(key: key, color: Colors.red, height: 100, width: 100),
             ),
           ),
         ),
@@ -267,9 +246,10 @@ void main() {
       final PointerMoveEvent move = events[1] as PointerMoveEvent;
       final PointerUpEvent up = events[2] as PointerUpEvent;
 
-      final Matrix4 expectedTransform = Matrix4.identity()
-        ..scale(1 / scaleFactor, 1 / scaleFactor, 1.0)
-        ..translate(-topLeft.dx, -topLeft.dy);
+      final Matrix4 expectedTransform =
+          Matrix4.identity()
+            ..scale(1 / scaleFactor, 1 / scaleFactor, 1.0)
+            ..translate(-topLeft.dx, -topLeft.dy);
 
       expect(center, isNot(const Offset(50, 50)));
 
@@ -307,8 +287,9 @@ void main() {
       await tester.pumpWidget(
         Center(
           child: Transform(
-            transform: Matrix4.identity()
-              ..rotateZ(math.pi / 2), // 90 degrees clockwise around Container origin
+            transform:
+                Matrix4.identity()
+                  ..rotateZ(math.pi / 2), // 90 degrees clockwise around Container origin
             child: Listener(
               onPointerDown: (PointerDownEvent event) {
                 events.add(event);
@@ -322,12 +303,7 @@ void main() {
               onPointerSignal: (PointerSignalEvent event) {
                 events.add(event);
               },
-              child: Container(
-                key: key,
-                color: Colors.red,
-                height: 100,
-                width: 100,
-              ),
+              child: Container(key: key, color: Colors.red, height: 100, width: 100),
             ),
           ),
         ),
@@ -344,9 +320,10 @@ void main() {
       final PointerUpEvent up = events[2] as PointerUpEvent;
 
       const Offset offset = Offset((800 - 100) / 2, (600 - 100) / 2);
-      final Matrix4 expectedTransform = Matrix4.identity()
-        ..rotateZ(-math.pi / 2)
-        ..translate(-offset.dx, -offset.dy);
+      final Matrix4 expectedTransform =
+          Matrix4.identity()
+            ..rotateZ(-math.pi / 2)
+            ..translate(-offset.dx, -offset.dy);
 
       final Offset localDownPosition = const Offset(50, 50) + const Offset(5, -10);
       expect(down.localPosition, within(distance: 0.001, from: localDownPosition));
@@ -378,17 +355,20 @@ void main() {
     });
   });
 
-  testWidgets("RenderPointerListener's debugFillProperties when default", (WidgetTester tester) async {
+  testWidgets("RenderPointerListener's debugFillProperties when default", (
+    WidgetTester tester,
+  ) async {
     final DiagnosticPropertiesBuilder builder = DiagnosticPropertiesBuilder();
     final RenderPointerListener renderListener = RenderPointerListener();
     addTearDown(renderListener.dispose);
 
     renderListener.debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-      .map((DiagnosticsNode node) => node.toString())
-      .toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>[
       'parentData: MISSING',
@@ -419,10 +399,11 @@ void main() {
 
     renderListener.debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-      .map((DiagnosticsNode node) => node.toString())
-      .toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>[
       'parentData: MISSING',

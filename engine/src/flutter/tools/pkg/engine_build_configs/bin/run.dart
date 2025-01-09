@@ -55,22 +55,16 @@ The build names are the "name" fields of the maps in the list of "builds".
   }
 
   // Find and parse the engine build configs.
-  final io.Directory buildConfigsDir = io.Directory(p.join(
-    engine.flutterDir.path,
-    'ci',
-    'builders',
-  ));
-  final BuildConfigLoader loader = BuildConfigLoader(
-    buildConfigsDir: buildConfigsDir,
+  final io.Directory buildConfigsDir = io.Directory(
+    p.join(engine.flutterDir.path, 'ci', 'builders'),
   );
+  final BuildConfigLoader loader = BuildConfigLoader(buildConfigsDir: buildConfigsDir);
 
   // Treat it as an error if no build configs were found. The caller likely
   // expected to find some.
   final Map<String, BuilderConfig> configs = loader.configs;
   if (configs.isEmpty) {
-    io.stderr.writeln(
-      'Error: No build configs found under ${buildConfigsDir.path}',
-    );
+    io.stderr.writeln('Error: No build configs found under ${buildConfigsDir.path}');
     io.exitCode = 1;
     return;
   }
@@ -104,20 +98,13 @@ The build names are the "name" fields of the maps in the list of "builds".
     }
   }
   if (targetBuild == null) {
-    io.stderr.writeln(
-      'Target build not found. No build called $buildName in $configName',
-    );
+    io.stderr.writeln('Target build not found. No build called $buildName in $configName');
     io.exitCode = 1;
     return;
   }
 
   // If RBE config files aren't in the tree, then disable RBE.
-  final String rbeConfigPath = p.join(
-    engine.srcDir.path,
-    'flutter',
-    'build',
-    'rbe',
-  );
+  final String rbeConfigPath = p.join(engine.srcDir.path, 'flutter', 'build', 'rbe');
   final List<String> extraGnArgs = <String>[
     if (!io.Directory(rbeConfigPath).existsSync()) '--no-rbe',
   ];

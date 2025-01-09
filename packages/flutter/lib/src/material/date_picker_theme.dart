@@ -430,11 +430,15 @@ class DatePickerThemeData with Diagnosticable {
       rangePickerShadowColor: rangePickerShadowColor ?? this.rangePickerShadowColor,
       rangePickerSurfaceTintColor: rangePickerSurfaceTintColor ?? this.rangePickerSurfaceTintColor,
       rangePickerShape: rangePickerShape ?? this.rangePickerShape,
-      rangePickerHeaderBackgroundColor: rangePickerHeaderBackgroundColor ?? this.rangePickerHeaderBackgroundColor,
-      rangePickerHeaderForegroundColor: rangePickerHeaderForegroundColor ?? this.rangePickerHeaderForegroundColor,
-      rangePickerHeaderHeadlineStyle: rangePickerHeaderHeadlineStyle ?? this.rangePickerHeaderHeadlineStyle,
+      rangePickerHeaderBackgroundColor:
+          rangePickerHeaderBackgroundColor ?? this.rangePickerHeaderBackgroundColor,
+      rangePickerHeaderForegroundColor:
+          rangePickerHeaderForegroundColor ?? this.rangePickerHeaderForegroundColor,
+      rangePickerHeaderHeadlineStyle:
+          rangePickerHeaderHeadlineStyle ?? this.rangePickerHeaderHeadlineStyle,
       rangePickerHeaderHelpStyle: rangePickerHeaderHelpStyle ?? this.rangePickerHeaderHelpStyle,
-      rangeSelectionBackgroundColor: rangeSelectionBackgroundColor ?? this.rangeSelectionBackgroundColor,
+      rangeSelectionBackgroundColor:
+          rangeSelectionBackgroundColor ?? this.rangeSelectionBackgroundColor,
       rangeSelectionOverlayColor: rangeSelectionOverlayColor ?? this.rangeSelectionOverlayColor,
       dividerColor: dividerColor ?? this.dividerColor,
       inputDecorationTheme: inputDecorationTheme ?? this.inputDecorationTheme,
@@ -461,28 +465,106 @@ class DatePickerThemeData with Diagnosticable {
       headerHelpStyle: TextStyle.lerp(a?.headerHelpStyle, b?.headerHelpStyle, t),
       weekdayStyle: TextStyle.lerp(a?.weekdayStyle, b?.weekdayStyle, t),
       dayStyle: TextStyle.lerp(a?.dayStyle, b?.dayStyle, t),
-      dayForegroundColor: MaterialStateProperty.lerp<Color?>(a?.dayForegroundColor, b?.dayForegroundColor, t, Color.lerp),
-      dayBackgroundColor: MaterialStateProperty.lerp<Color?>(a?.dayBackgroundColor, b?.dayBackgroundColor, t, Color.lerp),
-      dayOverlayColor: MaterialStateProperty.lerp<Color?>(a?.dayOverlayColor, b?.dayOverlayColor, t, Color.lerp),
-      dayShape: MaterialStateProperty.lerp<OutlinedBorder?>(a?.dayShape, b?.dayShape, t, OutlinedBorder.lerp),
-      todayForegroundColor: MaterialStateProperty.lerp<Color?>(a?.todayForegroundColor, b?.todayForegroundColor, t, Color.lerp),
-      todayBackgroundColor: MaterialStateProperty.lerp<Color?>(a?.todayBackgroundColor, b?.todayBackgroundColor, t, Color.lerp),
+      dayForegroundColor: MaterialStateProperty.lerp<Color?>(
+        a?.dayForegroundColor,
+        b?.dayForegroundColor,
+        t,
+        Color.lerp,
+      ),
+      dayBackgroundColor: MaterialStateProperty.lerp<Color?>(
+        a?.dayBackgroundColor,
+        b?.dayBackgroundColor,
+        t,
+        Color.lerp,
+      ),
+      dayOverlayColor: MaterialStateProperty.lerp<Color?>(
+        a?.dayOverlayColor,
+        b?.dayOverlayColor,
+        t,
+        Color.lerp,
+      ),
+      dayShape: MaterialStateProperty.lerp<OutlinedBorder?>(
+        a?.dayShape,
+        b?.dayShape,
+        t,
+        OutlinedBorder.lerp,
+      ),
+      todayForegroundColor: MaterialStateProperty.lerp<Color?>(
+        a?.todayForegroundColor,
+        b?.todayForegroundColor,
+        t,
+        Color.lerp,
+      ),
+      todayBackgroundColor: MaterialStateProperty.lerp<Color?>(
+        a?.todayBackgroundColor,
+        b?.todayBackgroundColor,
+        t,
+        Color.lerp,
+      ),
       todayBorder: _lerpBorderSide(a?.todayBorder, b?.todayBorder, t),
       yearStyle: TextStyle.lerp(a?.yearStyle, b?.yearStyle, t),
-      yearForegroundColor: MaterialStateProperty.lerp<Color?>(a?.yearForegroundColor, b?.yearForegroundColor, t, Color.lerp),
-      yearBackgroundColor: MaterialStateProperty.lerp<Color?>(a?.yearBackgroundColor, b?.yearBackgroundColor, t, Color.lerp),
-      yearOverlayColor: MaterialStateProperty.lerp<Color?>(a?.yearOverlayColor, b?.yearOverlayColor, t, Color.lerp),
-      rangePickerBackgroundColor: Color.lerp(a?.rangePickerBackgroundColor, b?.rangePickerBackgroundColor, t),
+      yearForegroundColor: MaterialStateProperty.lerp<Color?>(
+        a?.yearForegroundColor,
+        b?.yearForegroundColor,
+        t,
+        Color.lerp,
+      ),
+      yearBackgroundColor: MaterialStateProperty.lerp<Color?>(
+        a?.yearBackgroundColor,
+        b?.yearBackgroundColor,
+        t,
+        Color.lerp,
+      ),
+      yearOverlayColor: MaterialStateProperty.lerp<Color?>(
+        a?.yearOverlayColor,
+        b?.yearOverlayColor,
+        t,
+        Color.lerp,
+      ),
+      rangePickerBackgroundColor: Color.lerp(
+        a?.rangePickerBackgroundColor,
+        b?.rangePickerBackgroundColor,
+        t,
+      ),
       rangePickerElevation: lerpDouble(a?.rangePickerElevation, b?.rangePickerElevation, t),
       rangePickerShadowColor: Color.lerp(a?.rangePickerShadowColor, b?.rangePickerShadowColor, t),
-      rangePickerSurfaceTintColor: Color.lerp(a?.rangePickerSurfaceTintColor, b?.rangePickerSurfaceTintColor, t),
+      rangePickerSurfaceTintColor: Color.lerp(
+        a?.rangePickerSurfaceTintColor,
+        b?.rangePickerSurfaceTintColor,
+        t,
+      ),
       rangePickerShape: ShapeBorder.lerp(a?.rangePickerShape, b?.rangePickerShape, t),
-      rangePickerHeaderBackgroundColor: Color.lerp(a?.rangePickerHeaderBackgroundColor, b?.rangePickerHeaderBackgroundColor, t),
-      rangePickerHeaderForegroundColor: Color.lerp(a?.rangePickerHeaderForegroundColor, b?.rangePickerHeaderForegroundColor, t),
-      rangePickerHeaderHeadlineStyle: TextStyle.lerp(a?.rangePickerHeaderHeadlineStyle, b?.rangePickerHeaderHeadlineStyle, t),
-      rangePickerHeaderHelpStyle: TextStyle.lerp(a?.rangePickerHeaderHelpStyle, b?.rangePickerHeaderHelpStyle, t),
-      rangeSelectionBackgroundColor: Color.lerp(a?.rangeSelectionBackgroundColor, b?.rangeSelectionBackgroundColor, t),
-      rangeSelectionOverlayColor: MaterialStateProperty.lerp<Color?>(a?.rangeSelectionOverlayColor, b?.rangeSelectionOverlayColor, t, Color.lerp),
+      rangePickerHeaderBackgroundColor: Color.lerp(
+        a?.rangePickerHeaderBackgroundColor,
+        b?.rangePickerHeaderBackgroundColor,
+        t,
+      ),
+      rangePickerHeaderForegroundColor: Color.lerp(
+        a?.rangePickerHeaderForegroundColor,
+        b?.rangePickerHeaderForegroundColor,
+        t,
+      ),
+      rangePickerHeaderHeadlineStyle: TextStyle.lerp(
+        a?.rangePickerHeaderHeadlineStyle,
+        b?.rangePickerHeaderHeadlineStyle,
+        t,
+      ),
+      rangePickerHeaderHelpStyle: TextStyle.lerp(
+        a?.rangePickerHeaderHelpStyle,
+        b?.rangePickerHeaderHelpStyle,
+        t,
+      ),
+      rangeSelectionBackgroundColor: Color.lerp(
+        a?.rangeSelectionBackgroundColor,
+        b?.rangeSelectionBackgroundColor,
+        t,
+      ),
+      rangeSelectionOverlayColor: MaterialStateProperty.lerp<Color?>(
+        a?.rangeSelectionOverlayColor,
+        b?.rangeSelectionOverlayColor,
+        t,
+        Color.lerp,
+      ),
       dividerColor: Color.lerp(a?.dividerColor, b?.dividerColor, t),
       inputDecorationTheme: t < 0.5 ? a?.inputDecorationTheme : b?.inputDecorationTheme,
       cancelButtonStyle: ButtonStyle.lerp(a?.cancelButtonStyle, b?.cancelButtonStyle, t),
@@ -548,45 +630,45 @@ class DatePickerThemeData with Diagnosticable {
     if (identical(this, other)) {
       return true;
     }
-    return other is DatePickerThemeData
-      && other.backgroundColor == backgroundColor
-      && other.elevation == elevation
-      && other.shadowColor == shadowColor
-      && other.surfaceTintColor == surfaceTintColor
-      && other.shape == shape
-      && other.headerBackgroundColor == headerBackgroundColor
-      && other.headerForegroundColor == headerForegroundColor
-      && other.headerHeadlineStyle == headerHeadlineStyle
-      && other.headerHelpStyle == headerHelpStyle
-      && other.weekdayStyle == weekdayStyle
-      && other.dayStyle == dayStyle
-      && other.dayForegroundColor == dayForegroundColor
-      && other.dayBackgroundColor == dayBackgroundColor
-      && other.dayOverlayColor == dayOverlayColor
-      && other.dayShape == dayShape
-      && other.todayForegroundColor == todayForegroundColor
-      && other.todayBackgroundColor == todayBackgroundColor
-      && other.todayBorder == todayBorder
-      && other.yearStyle == yearStyle
-      && other.yearForegroundColor == yearForegroundColor
-      && other.yearBackgroundColor == yearBackgroundColor
-      && other.yearOverlayColor == yearOverlayColor
-      && other.rangePickerBackgroundColor == rangePickerBackgroundColor
-      && other.rangePickerElevation == rangePickerElevation
-      && other.rangePickerShadowColor == rangePickerShadowColor
-      && other.rangePickerSurfaceTintColor == rangePickerSurfaceTintColor
-      && other.rangePickerShape == rangePickerShape
-      && other.rangePickerHeaderBackgroundColor == rangePickerHeaderBackgroundColor
-      && other.rangePickerHeaderForegroundColor == rangePickerHeaderForegroundColor
-      && other.rangePickerHeaderHeadlineStyle == rangePickerHeaderHeadlineStyle
-      && other.rangePickerHeaderHelpStyle == rangePickerHeaderHelpStyle
-      && other.rangeSelectionBackgroundColor == rangeSelectionBackgroundColor
-      && other.rangeSelectionOverlayColor == rangeSelectionOverlayColor
-      && other.dividerColor == dividerColor
-      && other.inputDecorationTheme == inputDecorationTheme
-      && other.cancelButtonStyle == cancelButtonStyle
-      && other.confirmButtonStyle == confirmButtonStyle
-      && other.locale == locale;
+    return other is DatePickerThemeData &&
+        other.backgroundColor == backgroundColor &&
+        other.elevation == elevation &&
+        other.shadowColor == shadowColor &&
+        other.surfaceTintColor == surfaceTintColor &&
+        other.shape == shape &&
+        other.headerBackgroundColor == headerBackgroundColor &&
+        other.headerForegroundColor == headerForegroundColor &&
+        other.headerHeadlineStyle == headerHeadlineStyle &&
+        other.headerHelpStyle == headerHelpStyle &&
+        other.weekdayStyle == weekdayStyle &&
+        other.dayStyle == dayStyle &&
+        other.dayForegroundColor == dayForegroundColor &&
+        other.dayBackgroundColor == dayBackgroundColor &&
+        other.dayOverlayColor == dayOverlayColor &&
+        other.dayShape == dayShape &&
+        other.todayForegroundColor == todayForegroundColor &&
+        other.todayBackgroundColor == todayBackgroundColor &&
+        other.todayBorder == todayBorder &&
+        other.yearStyle == yearStyle &&
+        other.yearForegroundColor == yearForegroundColor &&
+        other.yearBackgroundColor == yearBackgroundColor &&
+        other.yearOverlayColor == yearOverlayColor &&
+        other.rangePickerBackgroundColor == rangePickerBackgroundColor &&
+        other.rangePickerElevation == rangePickerElevation &&
+        other.rangePickerShadowColor == rangePickerShadowColor &&
+        other.rangePickerSurfaceTintColor == rangePickerSurfaceTintColor &&
+        other.rangePickerShape == rangePickerShape &&
+        other.rangePickerHeaderBackgroundColor == rangePickerHeaderBackgroundColor &&
+        other.rangePickerHeaderForegroundColor == rangePickerHeaderForegroundColor &&
+        other.rangePickerHeaderHeadlineStyle == rangePickerHeaderHeadlineStyle &&
+        other.rangePickerHeaderHelpStyle == rangePickerHeaderHelpStyle &&
+        other.rangeSelectionBackgroundColor == rangeSelectionBackgroundColor &&
+        other.rangeSelectionOverlayColor == rangeSelectionOverlayColor &&
+        other.dividerColor == dividerColor &&
+        other.inputDecorationTheme == inputDecorationTheme &&
+        other.cancelButtonStyle == cancelButtonStyle &&
+        other.confirmButtonStyle == confirmButtonStyle &&
+        other.locale == locale;
   }
 
   @override
@@ -597,38 +679,168 @@ class DatePickerThemeData with Diagnosticable {
     properties.add(ColorProperty('shadowColor', shadowColor, defaultValue: null));
     properties.add(ColorProperty('surfaceTintColor', surfaceTintColor, defaultValue: null));
     properties.add(DiagnosticsProperty<ShapeBorder>('shape', shape, defaultValue: null));
-    properties.add(ColorProperty('headerBackgroundColor', headerBackgroundColor, defaultValue: null));
-    properties.add(ColorProperty('headerForegroundColor', headerForegroundColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<TextStyle>('headerHeadlineStyle', headerHeadlineStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<TextStyle>('headerHelpStyle', headerHelpStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<TextStyle>('weekDayStyle', weekdayStyle, defaultValue: null));
+    properties.add(
+      ColorProperty('headerBackgroundColor', headerBackgroundColor, defaultValue: null),
+    );
+    properties.add(
+      ColorProperty('headerForegroundColor', headerForegroundColor, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<TextStyle>(
+        'headerHeadlineStyle',
+        headerHeadlineStyle,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<TextStyle>('headerHelpStyle', headerHelpStyle, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<TextStyle>('weekDayStyle', weekdayStyle, defaultValue: null),
+    );
     properties.add(DiagnosticsProperty<TextStyle>('dayStyle', dayStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('dayForegroundColor', dayForegroundColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('dayBackgroundColor', dayBackgroundColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('dayOverlayColor', dayOverlayColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<OutlinedBorder?>>('dayShape', dayShape, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('todayForegroundColor', todayForegroundColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('todayBackgroundColor', todayBackgroundColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<BorderSide?>('todayBorder', todayBorder, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>>(
+        'dayForegroundColor',
+        dayForegroundColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>>(
+        'dayBackgroundColor',
+        dayBackgroundColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>>(
+        'dayOverlayColor',
+        dayOverlayColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<OutlinedBorder?>>(
+        'dayShape',
+        dayShape,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>>(
+        'todayForegroundColor',
+        todayForegroundColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>>(
+        'todayBackgroundColor',
+        todayBackgroundColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<BorderSide?>('todayBorder', todayBorder, defaultValue: null),
+    );
     properties.add(DiagnosticsProperty<TextStyle>('yearStyle', yearStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('yearForegroundColor', yearForegroundColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('yearBackgroundColor', yearBackgroundColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('yearOverlayColor', yearOverlayColor, defaultValue: null));
-    properties.add(ColorProperty('rangePickerBackgroundColor', rangePickerBackgroundColor, defaultValue: null));
-    properties.add(DoubleProperty('rangePickerElevation', rangePickerElevation, defaultValue: null));
-    properties.add(ColorProperty('rangePickerShadowColor', rangePickerShadowColor, defaultValue: null));
-    properties.add(ColorProperty('rangePickerSurfaceTintColor', rangePickerSurfaceTintColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<ShapeBorder>('rangePickerShape', rangePickerShape, defaultValue: null));
-    properties.add(ColorProperty('rangePickerHeaderBackgroundColor', rangePickerHeaderBackgroundColor, defaultValue: null));
-    properties.add(ColorProperty('rangePickerHeaderForegroundColor', rangePickerHeaderForegroundColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<TextStyle>('rangePickerHeaderHeadlineStyle', rangePickerHeaderHeadlineStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<TextStyle>('rangePickerHeaderHelpStyle', rangePickerHeaderHelpStyle, defaultValue: null));
-    properties.add(ColorProperty('rangeSelectionBackgroundColor', rangeSelectionBackgroundColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('rangeSelectionOverlayColor', rangeSelectionOverlayColor, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>>(
+        'yearForegroundColor',
+        yearForegroundColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>>(
+        'yearBackgroundColor',
+        yearBackgroundColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>>(
+        'yearOverlayColor',
+        yearOverlayColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      ColorProperty('rangePickerBackgroundColor', rangePickerBackgroundColor, defaultValue: null),
+    );
+    properties.add(
+      DoubleProperty('rangePickerElevation', rangePickerElevation, defaultValue: null),
+    );
+    properties.add(
+      ColorProperty('rangePickerShadowColor', rangePickerShadowColor, defaultValue: null),
+    );
+    properties.add(
+      ColorProperty('rangePickerSurfaceTintColor', rangePickerSurfaceTintColor, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<ShapeBorder>('rangePickerShape', rangePickerShape, defaultValue: null),
+    );
+    properties.add(
+      ColorProperty(
+        'rangePickerHeaderBackgroundColor',
+        rangePickerHeaderBackgroundColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      ColorProperty(
+        'rangePickerHeaderForegroundColor',
+        rangePickerHeaderForegroundColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<TextStyle>(
+        'rangePickerHeaderHeadlineStyle',
+        rangePickerHeaderHeadlineStyle,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<TextStyle>(
+        'rangePickerHeaderHelpStyle',
+        rangePickerHeaderHelpStyle,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      ColorProperty(
+        'rangeSelectionBackgroundColor',
+        rangeSelectionBackgroundColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>>(
+        'rangeSelectionOverlayColor',
+        rangeSelectionOverlayColor,
+        defaultValue: null,
+      ),
+    );
     properties.add(ColorProperty('dividerColor', dividerColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<InputDecorationTheme>('inputDecorationTheme', inputDecorationTheme, defaultValue: null));
-    properties.add(DiagnosticsProperty<ButtonStyle>('cancelButtonStyle', cancelButtonStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<ButtonStyle>('confirmButtonStyle', confirmButtonStyle, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<InputDecorationTheme>(
+        'inputDecorationTheme',
+        inputDecorationTheme,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<ButtonStyle>('cancelButtonStyle', cancelButtonStyle, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<ButtonStyle>(
+        'confirmButtonStyle',
+        confirmButtonStyle,
+        defaultValue: null,
+      ),
+    );
     properties.add(DiagnosticsProperty<Locale>('locale', locale, defaultValue: null));
   }
 }
@@ -641,11 +853,7 @@ class DatePickerThemeData with Diagnosticable {
 class DatePickerTheme extends InheritedTheme {
   /// Creates a [DatePickerTheme] that controls visual parameters for
   /// descendent [DatePickerDialog]s.
-  const DatePickerTheme({
-    super.key,
-    required this.data,
-    required super.child,
-  });
+  const DatePickerTheme({super.key, required this.data, required super.child});
 
   /// Specifies the visual properties used by descendant [DatePickerDialog]
   /// widgets.
@@ -716,8 +924,8 @@ class DatePickerTheme extends InheritedTheme {
   ///    [DatePickerTheme] ancestor.
   static DatePickerThemeData defaults(BuildContext context) {
     return Theme.of(context).useMaterial3
-      ? _DatePickerDefaultsM3(context)
-      : _DatePickerDefaultsM2(context);
+        ? _DatePickerDefaultsM3(context)
+        : _DatePickerDefaultsM2(context);
   }
 
   @override
@@ -769,70 +977,69 @@ class _DatePickerDefaultsM2 extends DatePickerThemeData {
   TextStyle? get headerHelpStyle => _textTheme.labelSmall;
 
   @override
-  TextStyle? get weekdayStyle => _textTheme.bodySmall?.apply(
-    color: _colors.onSurface.withOpacity(0.60),
-  );
+  TextStyle? get weekdayStyle =>
+      _textTheme.bodySmall?.apply(color: _colors.onSurface.withOpacity(0.60));
 
   @override
   TextStyle? get dayStyle => _textTheme.bodySmall;
 
   @override
   MaterialStateProperty<Color?>? get dayForegroundColor =>
-    MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-      if (states.contains(MaterialState.selected)) {
-        return _colors.onPrimary;
-      } else if (states.contains(MaterialState.disabled)) {
-        return _colors.onSurface.withOpacity(0.38);
-      }
-      return _colors.onSurface;
-    });
+      MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+        if (states.contains(MaterialState.selected)) {
+          return _colors.onPrimary;
+        } else if (states.contains(MaterialState.disabled)) {
+          return _colors.onSurface.withOpacity(0.38);
+        }
+        return _colors.onSurface;
+      });
 
   @override
   MaterialStateProperty<Color?>? get dayBackgroundColor =>
-    MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-      if (states.contains(MaterialState.selected)) {
-        return _colors.primary;
-      }
-      return null;
-    });
+      MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+        if (states.contains(MaterialState.selected)) {
+          return _colors.primary;
+        }
+        return null;
+      });
 
   @override
   MaterialStateProperty<Color?>? get dayOverlayColor =>
-    MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-      if (states.contains(MaterialState.selected)) {
-        if (states.contains(MaterialState.pressed)) {
-          return _colors.onPrimary.withOpacity(0.38);
+      MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+        if (states.contains(MaterialState.selected)) {
+          if (states.contains(MaterialState.pressed)) {
+            return _colors.onPrimary.withOpacity(0.38);
+          }
+          if (states.contains(MaterialState.hovered)) {
+            return _colors.onPrimary.withOpacity(0.08);
+          }
+          if (states.contains(MaterialState.focused)) {
+            return _colors.onPrimary.withOpacity(0.12);
+          }
+        } else {
+          if (states.contains(MaterialState.pressed)) {
+            return _colors.onSurfaceVariant.withOpacity(0.12);
+          }
+          if (states.contains(MaterialState.hovered)) {
+            return _colors.onSurfaceVariant.withOpacity(0.08);
+          }
+          if (states.contains(MaterialState.focused)) {
+            return _colors.onSurfaceVariant.withOpacity(0.12);
+          }
         }
-        if (states.contains(MaterialState.hovered)) {
-          return _colors.onPrimary.withOpacity(0.08);
-        }
-        if (states.contains(MaterialState.focused)) {
-          return _colors.onPrimary.withOpacity(0.12);
-        }
-      } else {
-        if (states.contains(MaterialState.pressed)) {
-          return _colors.onSurfaceVariant.withOpacity(0.12);
-        }
-        if (states.contains(MaterialState.hovered)) {
-          return _colors.onSurfaceVariant.withOpacity(0.08);
-        }
-        if (states.contains(MaterialState.focused)) {
-          return _colors.onSurfaceVariant.withOpacity(0.12);
-        }
-      }
-      return null;
-    });
+        return null;
+      });
 
   @override
   MaterialStateProperty<Color?>? get todayForegroundColor =>
-    MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-      if (states.contains(MaterialState.selected)) {
-        return _colors.onPrimary;
-      } else if (states.contains(MaterialState.disabled)) {
-        return _colors.onSurface.withOpacity(0.38);
-      }
-      return _colors.primary;
-    });
+      MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+        if (states.contains(MaterialState.selected)) {
+          return _colors.onPrimary;
+        } else if (states.contains(MaterialState.disabled)) {
+          return _colors.onSurface.withOpacity(0.38);
+        }
+        return _colors.primary;
+      });
 
   @override
   MaterialStateProperty<Color?>? get todayBackgroundColor => dayBackgroundColor;
@@ -869,30 +1076,30 @@ class _DatePickerDefaultsM2 extends DatePickerThemeData {
 
   @override
   MaterialStateProperty<Color?>? get rangeSelectionOverlayColor =>
-    MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-      if (states.contains(MaterialState.selected)) {
-        if (states.contains(MaterialState.pressed)) {
-          return _colors.onPrimary.withOpacity(0.38);
+      MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+        if (states.contains(MaterialState.selected)) {
+          if (states.contains(MaterialState.pressed)) {
+            return _colors.onPrimary.withOpacity(0.38);
+          }
+          if (states.contains(MaterialState.hovered)) {
+            return _colors.onPrimary.withOpacity(0.08);
+          }
+          if (states.contains(MaterialState.focused)) {
+            return _colors.onPrimary.withOpacity(0.12);
+          }
+        } else {
+          if (states.contains(MaterialState.pressed)) {
+            return _colors.onSurfaceVariant.withOpacity(0.12);
+          }
+          if (states.contains(MaterialState.hovered)) {
+            return _colors.onSurfaceVariant.withOpacity(0.08);
+          }
+          if (states.contains(MaterialState.focused)) {
+            return _colors.onSurfaceVariant.withOpacity(0.12);
+          }
         }
-        if (states.contains(MaterialState.hovered)) {
-          return _colors.onPrimary.withOpacity(0.08);
-        }
-        if (states.contains(MaterialState.focused)) {
-          return _colors.onPrimary.withOpacity(0.12);
-        }
-      } else {
-        if (states.contains(MaterialState.pressed)) {
-          return _colors.onSurfaceVariant.withOpacity(0.12);
-        }
-        if (states.contains(MaterialState.hovered)) {
-          return _colors.onSurfaceVariant.withOpacity(0.08);
-        }
-        if (states.contains(MaterialState.focused)) {
-          return _colors.onSurfaceVariant.withOpacity(0.12);
-        }
-      }
-      return null;
-    });
+        return null;
+      });
 }
 
 // BEGIN GENERATED TOKEN PROPERTIES - DatePicker
@@ -902,6 +1109,7 @@ class _DatePickerDefaultsM2 extends DatePickerThemeData {
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 class _DatePickerDefaultsM3 extends DatePickerThemeData {
   _DatePickerDefaultsM3(this.context)
     : super(
@@ -1108,5 +1316,6 @@ class _DatePickerDefaultsM3 extends DatePickerThemeData {
   @override
   TextStyle? get rangePickerHeaderHelpStyle => _textTheme.titleSmall;
 }
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - DatePicker

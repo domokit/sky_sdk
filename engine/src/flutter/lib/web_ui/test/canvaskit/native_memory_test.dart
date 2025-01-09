@@ -22,7 +22,8 @@ void testMain() {
 
   setUp(() {
     TestSkDeletableMock.deleteCount = 0;
-    nativeMemoryFinalizationRegistry = mockFinalizationRegistry = _MockNativeMemoryFinalizationRegistry();
+    nativeMemoryFinalizationRegistry =
+        mockFinalizationRegistry = _MockNativeMemoryFinalizationRegistry();
   });
 
   tearDown(() {
@@ -34,7 +35,11 @@ void testMain() {
       expect(mockFinalizationRegistry.registeredPairs, hasLength(0));
       final Object owner = Object();
       final TestSkDeletable nativeObject = TestSkDeletable();
-      final UniqueRef<TestSkDeletable> ref = UniqueRef<TestSkDeletable>(owner, nativeObject, 'TestSkDeletable');
+      final UniqueRef<TestSkDeletable> ref = UniqueRef<TestSkDeletable>(
+        owner,
+        nativeObject,
+        'TestSkDeletable',
+      );
       expect(ref.isDisposed, isFalse);
       expect(ref.nativeObject, same(nativeObject));
       expect(TestSkDeletableMock.deleteCount, 0);
@@ -47,11 +52,13 @@ void testMain() {
       expect(ref.isDisposed, isTrue);
       expect(
         reason: 'Cannot access object that was disposed',
-        () => ref.nativeObject, throwsA(isA<AssertionError>()),
+        () => ref.nativeObject,
+        throwsA(isA<AssertionError>()),
       );
       expect(
         reason: 'Cannot dispose object more than once',
-        () => ref.dispose(), throwsA(isA<AssertionError>()),
+        () => ref.dispose(),
+        throwsA(isA<AssertionError>()),
       );
       expect(TestSkDeletableMock.deleteCount, 1);
 
@@ -59,7 +66,8 @@ void testMain() {
       mockFinalizationRegistry.registeredPairs.single.ref.collect();
       expect(
         reason: 'Manually disposed object should not be deleted again by GC.',
-        TestSkDeletableMock.deleteCount, 1,
+        TestSkDeletableMock.deleteCount,
+        1,
       );
     });
 
@@ -67,7 +75,11 @@ void testMain() {
       expect(mockFinalizationRegistry.registeredPairs, hasLength(0));
       final Object owner = Object();
       final TestSkDeletable nativeObject = TestSkDeletable();
-      final UniqueRef<TestSkDeletable> ref = UniqueRef<TestSkDeletable>(owner, nativeObject, 'TestSkDeletable');
+      final UniqueRef<TestSkDeletable> ref = UniqueRef<TestSkDeletable>(
+        owner,
+        nativeObject,
+        'TestSkDeletable',
+      );
       expect(ref.isDisposed, isFalse);
       expect(ref.nativeObject, same(nativeObject));
       expect(TestSkDeletableMock.deleteCount, 0);
@@ -89,10 +101,12 @@ void testMain() {
       final TestSkDeletable nativeObject = TestSkDeletable();
 
       expect(Instrumentation.instance.debugCounters, <String, int>{});
-      final UniqueRef<TestSkDeletable> ref = UniqueRef<TestSkDeletable>(owner, nativeObject, 'TestSkDeletable');
-      expect(Instrumentation.instance.debugCounters, <String, int>{
-        'TestSkDeletable Created': 1,
-      });
+      final UniqueRef<TestSkDeletable> ref = UniqueRef<TestSkDeletable>(
+        owner,
+        nativeObject,
+        'TestSkDeletable',
+      );
+      expect(Instrumentation.instance.debugCounters, <String, int>{'TestSkDeletable Created': 1});
       ref.dispose();
       expect(Instrumentation.instance.debugCounters, <String, int>{
         'TestSkDeletable Created': 1,
@@ -108,10 +122,12 @@ void testMain() {
       final TestSkDeletable nativeObject = TestSkDeletable();
 
       expect(Instrumentation.instance.debugCounters, <String, int>{});
-      final UniqueRef<TestSkDeletable> ref = UniqueRef<TestSkDeletable>(owner, nativeObject, 'TestSkDeletable');
-      expect(Instrumentation.instance.debugCounters, <String, int>{
-        'TestSkDeletable Created': 1,
-      });
+      final UniqueRef<TestSkDeletable> ref = UniqueRef<TestSkDeletable>(
+        owner,
+        nativeObject,
+        'TestSkDeletable',
+      );
+      expect(Instrumentation.instance.debugCounters, <String, int>{'TestSkDeletable Created': 1});
       ref.collect();
       expect(Instrumentation.instance.debugCounters, <String, int>{
         'TestSkDeletable Created': 1,
@@ -138,13 +154,15 @@ void testMain() {
       expect(owner.ref.refCount, 0);
       expect(
         reason: 'Cannot access object that was disposed',
-        () => owner.ref.nativeObject, throwsA(isA<AssertionError>()),
+        () => owner.ref.nativeObject,
+        throwsA(isA<AssertionError>()),
       );
       expect(TestSkDeletableMock.deleteCount, 1);
 
       expect(
         reason: 'Cannot dispose object more than once',
-        () => owner.dispose(), throwsA(isA<AssertionError>()),
+        () => owner.dispose(),
+        throwsA(isA<AssertionError>()),
       );
     });
 
@@ -168,9 +186,11 @@ void testMain() {
       expect(owner2.ref.nativeObject, nativeObject);
       expect(TestSkDeletableMock.deleteCount, 0);
       expect(
-        reason: 'Second owner does not add more native object owners. '
-                'The underlying shared UniqueRef is the only one.',
-        mockFinalizationRegistry.registeredPairs, hasLength(1),
+        reason:
+            'Second owner does not add more native object owners. '
+            'The underlying shared UniqueRef is the only one.',
+        mockFinalizationRegistry.registeredPairs,
+        hasLength(1),
       );
 
       owner1.dispose();
@@ -180,8 +200,10 @@ void testMain() {
       expect(owner2.ref.nativeObject, nativeObject);
       expect(TestSkDeletableMock.deleteCount, 0);
       expect(
-        reason: 'The same owner cannot dispose its CountedRef more than once, even when CountedRef is still alive.',
-        () => owner1.dispose(), throwsA(isA<AssertionError>()),
+        reason:
+            'The same owner cannot dispose its CountedRef more than once, even when CountedRef is still alive.',
+        () => owner1.dispose(),
+        throwsA(isA<AssertionError>()),
       );
 
       owner2.dispose();
@@ -189,20 +211,23 @@ void testMain() {
       expect(owner2.ref.refCount, 0);
       expect(
         reason: 'Cannot access object that was disposed',
-        () => owner2.ref.nativeObject, throwsA(isA<AssertionError>()),
+        () => owner2.ref.nativeObject,
+        throwsA(isA<AssertionError>()),
       );
       expect(TestSkDeletableMock.deleteCount, 1);
 
       expect(
         reason: 'The same owner cannot dispose its CountedRef more than once.',
-        () => owner2.dispose(), throwsA(isA<AssertionError>()),
+        () => owner2.dispose(),
+        throwsA(isA<AssertionError>()),
       );
 
       // Simulate a GC
       mockFinalizationRegistry.registeredPairs.single.ref.collect();
       expect(
         reason: 'Manually disposed object should not be deleted again by GC.',
-        TestSkDeletableMock.deleteCount, 1,
+        TestSkDeletableMock.deleteCount,
+        1,
       );
     });
   });
@@ -215,9 +240,11 @@ class TestSkDeletableMock {
   bool _isDeleted = false;
 
   void delete() {
-    expect(_isDeleted, isFalse,
-        reason:
-            'CanvasKit does not allow deleting the same object more than once.');
+    expect(
+      _isDeleted,
+      isFalse,
+      reason: 'CanvasKit does not allow deleting the same object more than once.',
+    );
     _isDeleted = true;
     deleteCount++;
   }
@@ -232,15 +259,23 @@ class TestSkDeletable implements SkDeletable {
   factory TestSkDeletable() {
     final TestSkDeletableMock mock = TestSkDeletableMock();
     return TestSkDeletable._(
-        isDeleted: () { return mock.isDeleted(); }.toJS,
-        delete: () { return mock.delete(); }.toJS,
-        constructor: mock.constructor);
+      isDeleted:
+          () {
+            return mock.isDeleted();
+          }.toJS,
+      delete:
+          () {
+            return mock.delete();
+          }.toJS,
+      constructor: mock.constructor,
+    );
   }
 
   external factory TestSkDeletable._({
     JSFunction isDeleted,
     JSFunction delete,
-    JsConstructor constructor});
+    JsConstructor constructor,
+  });
 }
 
 @JS()
@@ -257,7 +292,10 @@ class TestCountedRefOwner implements StackTraceDebugger {
       return true;
     }());
     ref = CountedRef<TestCountedRefOwner, TestSkDeletable>(
-        nativeObject, this, 'TestCountedRefOwner');
+      nativeObject,
+      this,
+      'TestCountedRefOwner',
+    );
   }
 
   TestCountedRefOwner.cloneOf(this.ref) {

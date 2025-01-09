@@ -9,10 +9,7 @@ import 'package:flutter_api_samples/material/selectable_region/selectable_region
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  Future<void> sendKeyCombination(
-    WidgetTester tester,
-    LogicalKeyboardKey key,
-  ) async {
+  Future<void> sendKeyCombination(WidgetTester tester, LogicalKeyboardKey key) async {
     final LogicalKeyboardKey modifier = switch (defaultTargetPlatform) {
       TargetPlatform.iOS || TargetPlatform.macOS => LogicalKeyboardKey.meta,
       _ => LogicalKeyboardKey.control,
@@ -26,27 +23,30 @@ void main() {
 
   testWidgets('The icon can be selected with the text', (WidgetTester tester) async {
     String? clipboard;
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (MethodCall methodCall) async {
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (
+      MethodCall methodCall,
+    ) async {
       if (methodCall.method == 'Clipboard.setData') {
         clipboard = (methodCall.arguments as Map<String, dynamic>)['text'] as String;
       }
       return null;
     });
     addTearDown(() {
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, null);
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      );
     });
 
-    await tester.pumpWidget(
-      const example.SelectableRegionExampleApp(),
-    );
+    await tester.pumpWidget(const example.SelectableRegionExampleApp());
 
     await tester.tap(find.byIcon(Icons.key)); // Focus the application.
     await tester.pump();
 
     // Keyboard select all.
-    await sendKeyCombination(tester,LogicalKeyboardKey.keyA);
+    await sendKeyCombination(tester, LogicalKeyboardKey.keyA);
     // Keyboard copy.
-    await sendKeyCombination(tester,LogicalKeyboardKey.keyC);
+    await sendKeyCombination(tester, LogicalKeyboardKey.keyC);
 
     expect(clipboard, 'SelectableRegion SampleSelect this iconCustom Text');
   }, variant: TargetPlatformVariant.all());

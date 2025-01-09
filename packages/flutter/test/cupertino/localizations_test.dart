@@ -6,7 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('English translations exist for all CupertinoLocalization properties', (WidgetTester tester) async {
+  testWidgets('English translations exist for all CupertinoLocalization properties', (
+    WidgetTester tester,
+  ) async {
     const CupertinoLocalizations localizations = DefaultCupertinoLocalizations();
 
     expect(localizations.datePickerYear(2018), isNotNull);
@@ -44,20 +46,24 @@ void main() {
     await tester.pumpWidget(
       Container(
         key: noLocalizationsAvailable,
-        child: CupertinoApp(
-          home: Container(
-            key: localizationsAvailable,
-          ),
+        child: CupertinoApp(home: Container(key: localizationsAvailable)),
+      ),
+    );
+
+    expect(
+      () => CupertinoLocalizations.of(noLocalizationsAvailable.currentContext!),
+      throwsA(
+        isAssertionError.having(
+          (AssertionError e) => e.message,
+          'message',
+          contains('No CupertinoLocalizations found'),
         ),
       ),
     );
 
-    expect(() => CupertinoLocalizations.of(noLocalizationsAvailable.currentContext!), throwsA(isAssertionError.having(
-      (AssertionError e) => e.message,
-      'message',
-      contains('No CupertinoLocalizations found'),
-    )));
-
-    expect(CupertinoLocalizations.of(localizationsAvailable.currentContext!), isA<CupertinoLocalizations>());
+    expect(
+      CupertinoLocalizations.of(localizationsAvailable.currentContext!),
+      isA<CupertinoLocalizations>(),
+    );
   });
 }

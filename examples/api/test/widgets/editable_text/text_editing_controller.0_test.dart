@@ -9,9 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Forces text to be lower case', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.TextEditingControllerExampleApp(),
-    );
+    await tester.pumpWidget(const example.TextEditingControllerExampleApp());
 
     const String input = 'Almost Everything Is a WIDGET! 💙';
 
@@ -26,9 +24,7 @@ void main() {
   });
 
   testWidgets('Keeps the caret at the end of the input', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.TextEditingControllerExampleApp(),
-    );
+    await tester.pumpWidget(const example.TextEditingControllerExampleApp());
 
     const String input = 'flutter';
 
@@ -41,17 +37,12 @@ void main() {
     final TextEditingController controller = textField.controller!;
 
     // Verify that the caret positioned at the end of the input.
-    expect(
-      controller.selection,
-      const TextSelection.collapsed(offset: input.length),
-    );
+    expect(controller.selection, const TextSelection.collapsed(offset: input.length));
 
     final RenderBox box = tester.renderObject(find.byType(TextFormField));
 
     // Calculate the center-left point of the field.
-    final Offset centerLeftPoint = box.localToGlobal(
-      Offset(0, box.size.height / 2),
-    );
+    final Offset centerLeftPoint = box.localToGlobal(Offset(0, box.size.height / 2));
 
     // Tap on the center-left point of the field to try to change the caret
     // position.
@@ -59,9 +50,6 @@ void main() {
     await tester.pump();
 
     // Verify that the caret position remains unchanged.
-    expect(
-      controller.selection,
-      const TextSelection.collapsed(offset: input.length),
-    );
+    expect(controller.selection, const TextSelection.collapsed(offset: input.length));
   });
 }

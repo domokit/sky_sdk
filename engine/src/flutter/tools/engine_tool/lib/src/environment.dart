@@ -59,12 +59,7 @@ final class Environment {
   ///
   /// **Note**: This calls does synchronous I/O.
   bool hasRbeConfigInTree() {
-    final String rbeConfigPath = p.join(
-      engine.srcDir.path,
-      'flutter',
-      'build',
-      'rbe',
-    );
+    final String rbeConfigPath = p.join(engine.srcDir.path, 'flutter', 'build', 'rbe');
     return io.Directory(rbeConfigPath).existsSync();
   }
 }

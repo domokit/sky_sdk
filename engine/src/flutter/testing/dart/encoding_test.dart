@@ -43,15 +43,14 @@ void main() {
     }
 
     final Completer<Image> completer = Completer<Image>();
-    decodeImageFromPixels(
-        Uint8List.view(pixels.buffer), width, height, PixelFormat.rgbaFloat32,
-        (Image result) {
+    decodeImageFromPixels(Uint8List.view(pixels.buffer), width, height, PixelFormat.rgbaFloat32, (
+      Image result,
+    ) {
       completer.complete(result);
     });
 
     final Image image = await completer.future;
-    final ByteData data =
-        (await image.toByteData(format: ImageByteFormat.rawStraightRgba))!;
+    final ByteData data = (await image.toByteData(format: ImageByteFormat.rawStraightRgba))!;
     final Uint32List readPixels = Uint32List.view(data.buffer);
     expect(width * height, readPixels.length);
     expect(readPixels[0], 0xff0000ff);
@@ -144,26 +143,25 @@ class Square4x4Image {
     final double innerWidth = (_kWidth - 2 * _kRadius).toDouble();
 
     final PictureRecorder recorder = PictureRecorder();
-    final Canvas canvas =
-        Canvas(recorder, Rect.fromLTWH(0.0, 0.0, width, width));
+    final Canvas canvas = Canvas(recorder, Rect.fromLTWH(0.0, 0.0, width, width));
 
-    final Paint black = Paint()
-      ..strokeWidth = 1.0
-      ..color = _kBlack;
-    final Paint green = Paint()
-      ..strokeWidth = 1.0
-      ..color = _kGreen;
+    final Paint black =
+        Paint()
+          ..strokeWidth = 1.0
+          ..color = _kBlack;
+    final Paint green =
+        Paint()
+          ..strokeWidth = 1.0
+          ..color = _kGreen;
 
     canvas.drawRect(Rect.fromLTWH(0.0, 0.0, width, width), black);
-    canvas.drawRect(
-        Rect.fromLTWH(radius, radius, innerWidth, innerWidth), green);
+    canvas.drawRect(Rect.fromLTWH(radius, radius, innerWidth, innerWidth), green);
     return recorder.endRecording().toImage(_kWidth, _kWidth);
   }
 
   static List<int> get bytes {
     const int bytesPerChannel = 4;
-    final List<int> result = List<int>.filled(
-        _kWidth * _kWidth * bytesPerChannel, 0);
+    final List<int> result = List<int>.filled(_kWidth * _kWidth * bytesPerChannel, 0);
 
     void fillWithColor(Color color, int min, int max) {
       for (int i = min; i < max; i++) {
@@ -195,19 +193,14 @@ class GrayscaleImage {
   }
 
   static List<int> get bytesAsRgba {
-    return <int>[
-      255, 255, 255, 255,
-      127, 127, 127, 255,
-      127, 127, 127, 255,
-      0, 0, 0, 255,
-    ];
+    return <int>[255, 255, 255, 255, 127, 127, 127, 255, 127, 127, 127, 255, 0, 0, 0, 255];
   }
 
   static List<int> get bytesUnmodified => <int>[255, 127, 127, 0];
 }
 
 class TransparentImage {
-    TransparentImage._();
+  TransparentImage._();
 
   static Future<Image> load() async {
     final Uint8List bytes = await readFile('transparent_image.png');
@@ -219,56 +212,50 @@ class TransparentImage {
   static List<int> get bytesAsPremultipliedRgba {
     return <int>[
       //First raw, solid colors
-      255, 0, 0, 255,     // red
-      0, 255, 0, 255,     // green
-      0, 0, 255, 255,     // blue
+      255, 0, 0, 255, // red
+      0, 255, 0, 255, // green
+      0, 0, 255, 255, // blue
       136, 136, 136, 255, // grey
-
       //Second raw, 50% transparent
-      127, 0, 0, 127,     // red
-      0, 127, 0, 127,     // green
-      0, 0, 127, 127,     // blue
-      67, 67, 67, 127,    // grey
-
+      127, 0, 0, 127, // red
+      0, 127, 0, 127, // green
+      0, 0, 127, 127, // blue
+      67, 67, 67, 127, // grey
       //Third raw, 25% transparent
-      63, 0, 0, 63,       // red
-      0, 63, 0, 63,       // green
-      0, 0, 63, 63,       // blue
-      33, 33, 33, 63,     // grey
-
+      63, 0, 0, 63, // red
+      0, 63, 0, 63, // green
+      0, 0, 63, 63, // blue
+      33, 33, 33, 63, // grey
       //Fourth raw, transparent
-      0, 0, 0, 0,         // red
-      0, 0, 0, 0,         // green
-      0, 0, 0, 0,         // blue
-      0, 0, 0, 0,         // grey
+      0, 0, 0, 0, // red
+      0, 0, 0, 0, // green
+      0, 0, 0, 0, // blue
+      0, 0, 0, 0, // grey
     ];
   }
 
   static List<int> get bytesAsStraightRgba {
     return <int>[
       //First raw, solid colors
-      255, 0, 0, 255,     // red
-      0, 255, 0, 255,     // green
-      0, 0, 255, 255,     // blue
+      255, 0, 0, 255, // red
+      0, 255, 0, 255, // green
+      0, 0, 255, 255, // blue
       136, 136, 136, 255, // grey
-
       //Second raw, 50% transparent
-      255, 0, 0, 127,     // red
-      0, 255, 0, 127,     // green
-      0, 0, 255, 127,     // blue
+      255, 0, 0, 127, // red
+      0, 255, 0, 127, // green
+      0, 0, 255, 127, // blue
       135, 135, 135, 127, // grey
-
       //Third raw, 25% transparent
-      255, 0, 0, 63,      // red
-      0, 255, 0, 63,      // green
-      0, 0, 255, 63,      // blue
-      134, 134, 134, 63,  // grey
-
+      255, 0, 0, 63, // red
+      0, 255, 0, 63, // green
+      0, 0, 255, 63, // blue
+      134, 134, 134, 63, // grey
       //Fourth raw, transparent
-      0, 0, 0, 0,         // red
-      0, 0, 0, 0,         // green
-      0, 0, 0, 0,         // blue
-      0, 0, 0, 0,         // grey
+      0, 0, 0, 0, // red
+      0, 0, 0, 0, // green
+      0, 0, 0, 0, // blue
+      0, 0, 0, 0, // grey
     ];
   }
 }

@@ -28,8 +28,8 @@ const double _kToolbarContentDistance = 8.0;
   'Use `MaterialTextSelectionControls`. '
   'This feature was deprecated after v3.3.0-0.5.pre.',
 )
-class MaterialTextSelectionHandleControls extends MaterialTextSelectionControls with TextSelectionHandleControls {
-}
+class MaterialTextSelectionHandleControls extends MaterialTextSelectionControls
+    with TextSelectionHandleControls {}
 
 /// Android Material styled text selection controls.
 ///
@@ -72,20 +72,21 @@ class MaterialTextSelectionControls extends TextSelectionControls {
 
   /// Builder for material-style text selection handles.
   @override
-  Widget buildHandle(BuildContext context, TextSelectionHandleType type, double textHeight, [VoidCallback? onTap]) {
+  Widget buildHandle(
+    BuildContext context,
+    TextSelectionHandleType type,
+    double textHeight, [
+    VoidCallback? onTap,
+  ]) {
     final ThemeData theme = Theme.of(context);
-    final Color handleColor = TextSelectionTheme.of(context).selectionHandleColor ?? theme.colorScheme.primary;
+    final Color handleColor =
+        TextSelectionTheme.of(context).selectionHandleColor ?? theme.colorScheme.primary;
     final Widget handle = SizedBox(
       width: _kHandleSize,
       height: _kHandleSize,
       child: CustomPaint(
-        painter: _TextSelectionHandlePainter(
-          color: handleColor,
-        ),
-        child: GestureDetector(
-          onTap: onTap,
-          behavior: HitTestBehavior.translucent,
-        ),
+        painter: _TextSelectionHandlePainter(color: handleColor),
+        child: GestureDetector(onTap: onTap, behavior: HitTestBehavior.translucent),
       ),
     );
 
@@ -93,9 +94,15 @@ class MaterialTextSelectionControls extends TextSelectionControls {
     // circle (an onion pointing to 10:30). We rotate [handle] to point
     // straight up or up-right depending on the handle type.
     return switch (type) {
-      TextSelectionHandleType.left => Transform.rotate(angle: math.pi / 2.0, child: handle), // points up-right
+      TextSelectionHandleType.left => Transform.rotate(
+        angle: math.pi / 2.0,
+        child: handle,
+      ), // points up-right
       TextSelectionHandleType.right => handle, // points up-left
-      TextSelectionHandleType.collapsed => Transform.rotate(angle: math.pi / 4.0, child: handle), // points up
+      TextSelectionHandleType.collapsed => Transform.rotate(
+        angle: math.pi / 4.0,
+        child: handle,
+      ), // points up
     };
   }
 
@@ -106,8 +113,8 @@ class MaterialTextSelectionControls extends TextSelectionControls {
   Offset getHandleAnchor(TextSelectionHandleType type, double textLineHeight) {
     return switch (type) {
       TextSelectionHandleType.collapsed => const Offset(_kHandleSize / 2, -4),
-      TextSelectionHandleType.left      => const Offset(_kHandleSize, 0),
-      TextSelectionHandleType.right     => Offset.zero,
+      TextSelectionHandleType.left => const Offset(_kHandleSize, 0),
+      TextSelectionHandleType.right => Offset.zero,
     };
   }
 
@@ -121,17 +128,14 @@ class MaterialTextSelectionControls extends TextSelectionControls {
     // everything has already been selected.
     final TextEditingValue value = delegate.textEditingValue;
     return delegate.selectAllEnabled &&
-           value.text.isNotEmpty &&
-           !(value.selection.start == 0 && value.selection.end == value.text.length);
+        value.text.isNotEmpty &&
+        !(value.selection.start == 0 && value.selection.end == value.text.length);
   }
 }
 
 // The label and callback for the available default text selection menu buttons.
 class _TextSelectionToolbarItemData {
-  const _TextSelectionToolbarItemData({
-    required this.label,
-    required this.onPressed,
-  });
+  const _TextSelectionToolbarItemData({required this.label, required this.onPressed});
 
   final String label;
   final VoidCallback onPressed;
@@ -167,7 +171,8 @@ class _TextSelectionControlsToolbar extends StatefulWidget {
   _TextSelectionControlsToolbarState createState() => _TextSelectionControlsToolbarState();
 }
 
-class _TextSelectionControlsToolbarState extends State<_TextSelectionControlsToolbar> with TickerProviderStateMixin {
+class _TextSelectionControlsToolbarState extends State<_TextSelectionControlsToolbar>
+    with TickerProviderStateMixin {
   void _onChangedClipboardStatus() {
     setState(() {
       // Inform the widget that the value of clipboardStatus has changed.
@@ -198,25 +203,29 @@ class _TextSelectionControlsToolbarState extends State<_TextSelectionControlsToo
   @override
   Widget build(BuildContext context) {
     // If there are no buttons to be shown, don't render anything.
-    if (widget.handleCut == null && widget.handleCopy == null
-        && widget.handlePaste == null && widget.handleSelectAll == null) {
+    if (widget.handleCut == null &&
+        widget.handleCopy == null &&
+        widget.handlePaste == null &&
+        widget.handleSelectAll == null) {
       return const SizedBox.shrink();
     }
     // If the paste button is desired, don't render anything until the state of
     // the clipboard is known, since it's used to determine if paste is shown.
-    if (widget.handlePaste != null
-        && widget.clipboardStatus?.value == ClipboardStatus.unknown) {
+    if (widget.handlePaste != null && widget.clipboardStatus?.value == ClipboardStatus.unknown) {
       return const SizedBox.shrink();
     }
 
     // Calculate the positioning of the menu. It is placed above the selection
     // if there is enough room, or otherwise below.
     final TextSelectionPoint startTextSelectionPoint = widget.endpoints[0];
-    final TextSelectionPoint endTextSelectionPoint = widget.endpoints.length > 1
-      ? widget.endpoints[1]
-      : widget.endpoints[0];
-    final double topAmountInEditableRegion = startTextSelectionPoint.point.dy - widget.textLineHeight;
-    final double anchorTop = math.max(topAmountInEditableRegion, 0) + widget.globalEditableRegion.top - _kToolbarContentDistance;
+    final TextSelectionPoint endTextSelectionPoint =
+        widget.endpoints.length > 1 ? widget.endpoints[1] : widget.endpoints[0];
+    final double topAmountInEditableRegion =
+        startTextSelectionPoint.point.dy - widget.textLineHeight;
+    final double anchorTop =
+        math.max(topAmountInEditableRegion, 0) +
+        widget.globalEditableRegion.top -
+        _kToolbarContentDistance;
 
     final Offset anchorAbove = Offset(
       widget.globalEditableRegion.left + widget.selectionMidpoint.dx,
@@ -224,7 +233,9 @@ class _TextSelectionControlsToolbarState extends State<_TextSelectionControlsToo
     );
     final Offset anchorBelow = Offset(
       widget.globalEditableRegion.left + widget.selectionMidpoint.dx,
-      widget.globalEditableRegion.top + endTextSelectionPoint.point.dy + _kToolbarContentDistanceBelow,
+      widget.globalEditableRegion.top +
+          endTextSelectionPoint.point.dy +
+          _kToolbarContentDistanceBelow,
     );
 
     // Determine which buttons will appear so that the order and total number is
@@ -243,8 +254,7 @@ class _TextSelectionControlsToolbarState extends State<_TextSelectionControlsToo
           label: localizations.copyButtonLabel,
           onPressed: widget.handleCopy!,
         ),
-      if (widget.handlePaste != null
-          && widget.clipboardStatus?.value == ClipboardStatus.pasteable)
+      if (widget.handlePaste != null && widget.clipboardStatus?.value == ClipboardStatus.pasteable)
         _TextSelectionToolbarItemData(
           label: localizations.pasteButtonLabel,
           onPressed: widget.handlePaste!,
@@ -264,31 +274,35 @@ class _TextSelectionControlsToolbarState extends State<_TextSelectionControlsToo
     return TextSelectionToolbar(
       anchorAbove: anchorAbove,
       anchorBelow: anchorBelow,
-      children: itemDatas.asMap().entries.map((MapEntry<int, _TextSelectionToolbarItemData> entry) {
-        return TextSelectionToolbarTextButton(
-          padding: TextSelectionToolbarTextButton.getPadding(entry.key, itemDatas.length),
-          alignment: AlignmentDirectional.centerStart,
-          onPressed: entry.value.onPressed,
-          child: Text(entry.value.label),
-        );
-      }).toList(),
+      children:
+          itemDatas.asMap().entries.map((MapEntry<int, _TextSelectionToolbarItemData> entry) {
+            return TextSelectionToolbarTextButton(
+              padding: TextSelectionToolbarTextButton.getPadding(entry.key, itemDatas.length),
+              alignment: AlignmentDirectional.centerStart,
+              onPressed: entry.value.onPressed,
+              child: Text(entry.value.label),
+            );
+          }).toList(),
     );
   }
 }
 
 /// Draws a single text selection handle which points up and to the left.
 class _TextSelectionHandlePainter extends CustomPainter {
-  _TextSelectionHandlePainter({ required this.color });
+  _TextSelectionHandlePainter({required this.color});
 
   final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()..color = color;
-    final double radius = size.width/2.0;
+    final double radius = size.width / 2.0;
     final Rect circle = Rect.fromCircle(center: Offset(radius, radius), radius: radius);
     final Rect point = Rect.fromLTWH(0.0, 0.0, radius, radius);
-    final Path path = Path()..addOval(circle)..addRect(point);
+    final Path path =
+        Path()
+          ..addOval(circle)
+          ..addRect(point);
     canvas.drawPath(path, paint);
   }
 
@@ -302,7 +316,8 @@ class _TextSelectionHandlePainter extends CustomPainter {
 // deleted, when users should migrate back to materialTextSelectionControls.
 // See https://github.com/flutter/flutter/pull/124262
 /// Text selection handle controls that follow the Material Design specification.
-final TextSelectionControls materialTextSelectionHandleControls = MaterialTextSelectionHandleControls();
+final TextSelectionControls materialTextSelectionHandleControls =
+    MaterialTextSelectionHandleControls();
 
 /// Text selection controls that follow the Material Design specification.
 final TextSelectionControls materialTextSelectionControls = MaterialTextSelectionControls();

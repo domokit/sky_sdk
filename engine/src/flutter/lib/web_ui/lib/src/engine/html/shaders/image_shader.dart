@@ -15,10 +15,14 @@ import '../render_vertices.dart';
 import 'vertex_shaders.dart';
 
 class EngineImageShader implements ui.ImageShader {
-  EngineImageShader(ui.Image image, this.tileModeX, this.tileModeY,
-      Float64List matrix4, this.filterQuality)
-      : image = image as HtmlImage,
-        matrix4 = Float32List.fromList(matrix4);
+  EngineImageShader(
+    ui.Image image,
+    this.tileModeX,
+    this.tileModeY,
+    Float64List matrix4,
+    this.filterQuality,
+  ) : image = image as HtmlImage,
+      matrix4 = Float32List.fromList(matrix4);
 
   final ui.TileMode tileModeX;
   final ui.TileMode tileModeY;
@@ -29,15 +33,19 @@ class EngineImageShader implements ui.ImageShader {
   /// Whether fill pattern requires transform to shift tiling offset.
   bool requiresTileOffset = false;
 
-  Object createPaintStyle(DomCanvasRenderingContext2D context,
-      ui.Rect? shaderBounds, double density) {
+  Object createPaintStyle(
+    DomCanvasRenderingContext2D context,
+    ui.Rect? shaderBounds,
+    double density,
+  ) {
     /// Creates a canvas rendering context pattern based on image and tile modes.
     final ui.TileMode tileX = tileModeX;
     final ui.TileMode tileY = tileModeY;
     if (tileX != ui.TileMode.clamp && tileY != ui.TileMode.clamp) {
       return context.createPattern(
-          _resolveTiledImageSource(image, tileX, tileY)!,
-          _tileModeToHtmlRepeatAttribute(tileX, tileY))!;
+        _resolveTiledImageSource(image, tileX, tileY)!,
+        _tileModeToHtmlRepeatAttribute(tileX, tileY),
+      )!;
     } else {
       initWebGl();
       return _createGlShader(context, shaderBounds!, density);
@@ -50,15 +58,10 @@ class EngineImageShader implements ui.ImageShader {
   /// For mirroring we create a new image with mirror builtin so both
   /// repeated and mirrored modes can be supported when applied to
   /// html element background-image or used by createPattern api.
-  String _tileModeToHtmlRepeatAttribute(
-      ui.TileMode tileModeX, ui.TileMode tileModeY) {
-    final bool repeatX =
-        tileModeX == ui.TileMode.repeated || tileModeX == ui.TileMode.mirror;
-    final bool repeatY =
-        tileModeY == ui.TileMode.repeated || tileModeY == ui.TileMode.mirror;
-    return repeatX
-        ? (repeatY ? 'repeat' : 'repeat-x')
-        : (repeatY ? 'repeat-y' : 'no-repeat');
+  String _tileModeToHtmlRepeatAttribute(ui.TileMode tileModeX, ui.TileMode tileModeY) {
+    final bool repeatX = tileModeX == ui.TileMode.repeated || tileModeX == ui.TileMode.mirror;
+    final bool repeatY = tileModeY == ui.TileMode.repeated || tileModeY == ui.TileMode.mirror;
+    return repeatX ? (repeatY ? 'repeat' : 'repeat-x') : (repeatY ? 'repeat-y' : 'no-repeat');
   }
 
   /// Tiles the image and returns an image or canvas element to be used as
@@ -68,8 +71,7 @@ class EngineImageShader implements ui.ImageShader {
   /// tile in the shader, but that will generate a much larger image footprint
   /// when the pattern is small. So we opt here for mirroring by
   /// redrawing the image 2 or 4 times into a new bitmap.
-  Object? _resolveTiledImageSource(
-      HtmlImage image, ui.TileMode tileX, ui.TileMode tileY) {
+  Object? _resolveTiledImageSource(HtmlImage image, ui.TileMode tileX, ui.TileMode tileY) {
     final int mirrorX = tileX == ui.TileMode.mirror ? 2 : 1;
     final int mirrorY = tileY == ui.TileMode.mirror ? 2 : 1;
 
@@ -83,8 +85,7 @@ class EngineImageShader implements ui.ImageShader {
     final int imageHeight = image.height;
     final int newWidth = imageWidth * mirrorX;
     final int newHeight = imageHeight * mirrorY;
-    final OffScreenCanvas offscreenCanvas =
-        OffScreenCanvas(newWidth, newHeight);
+    final OffScreenCanvas offscreenCanvas = OffScreenCanvas(newWidth, newHeight);
     final Object renderContext = offscreenCanvas.getContext2d()!;
     for (int y = 0; y < mirrorY; y++) {
       for (int x = 0; x < mirrorX; x++) {
@@ -111,12 +112,10 @@ class EngineImageShader implements ui.ImageShader {
     // When using OffscreenCanvas and transferToImageBitmap is supported by
     // browser create ImageBitmap otherwise use more expensive canvas
     // allocation.
-    if (OffScreenCanvas.supported &&
-        offscreenCanvas.transferToImageBitmapSupported) {
+    if (OffScreenCanvas.supported && offscreenCanvas.transferToImageBitmapSupported) {
       return offscreenCanvas.transferToImageBitmap();
     } else {
-      final DomCanvasElement canvas =
-          createDomCanvasElement(width: newWidth, height: newHeight);
+      final DomCanvasElement canvas = createDomCanvasElement(width: newWidth, height: newHeight);
       final DomCanvasRenderingContext2D ctx = canvas.context2D;
       offscreenCanvas.transferImage(ctx);
       return canvas;
@@ -124,8 +123,11 @@ class EngineImageShader implements ui.ImageShader {
   }
 
   /// Creates an image with tiled/transformed images.
-  DomCanvasPattern _createGlShader(DomCanvasRenderingContext2D? context,
-      ui.Rect shaderBounds, double density) {
+  DomCanvasPattern _createGlShader(
+    DomCanvasRenderingContext2D? context,
+    ui.Rect shaderBounds,
+    double density,
+  ) {
     final Matrix4 transform = Matrix4.fromFloat32List(matrix4);
     final double dpr = ui.window.devicePixelRatio;
 
@@ -139,11 +141,13 @@ class EngineImageShader implements ui.ImageShader {
 
     final String vertexShader = VertexShaders.writeTextureVertexShader();
     final String fragmentShader = FragmentShaders.writeTextureFragmentShader(
-        isWebGl2, tileModeX, tileModeY);
+      isWebGl2,
+      tileModeX,
+      tileModeY,
+    );
 
     /// Render gradient into a bitmap and create a canvas pattern.
-    final OffScreenCanvas offScreenCanvas =
-        OffScreenCanvas(widthInPixels, heightInPixels);
+    final OffScreenCanvas offScreenCanvas = OffScreenCanvas(widthInPixels, heightInPixels);
     final GlContext gl = GlContext(offScreenCanvas);
     gl.setViewportSize(widthInPixels, heightInPixels);
 
@@ -152,8 +156,7 @@ class EngineImageShader implements ui.ImageShader {
 
     const int vertexCount = 6;
     final Float32List vertices = Float32List(vertexCount * 2);
-    final ui.Rect vRect =
-        shaderBounds.translate(-shaderBounds.left, -shaderBounds.top);
+    final ui.Rect vRect = shaderBounds.translate(-shaderBounds.left, -shaderBounds.top);
     vertices[0] = vRect.left;
     vertices[1] = vRect.top;
     vertices[2] = vRect.right;
@@ -167,18 +170,30 @@ class EngineImageShader implements ui.ImageShader {
     vertices[10] = vRect.left;
     vertices[11] = vRect.top;
 
-    final Object positionAttributeLocation =
-        gl.getAttributeLocation(glProgram.program, 'position');
+    final Object positionAttributeLocation = gl.getAttributeLocation(glProgram.program, 'position');
 
-    setupVertexTransforms(gl, glProgram, 0, 0, widthInPixels.toDouble(),
-        heightInPixels.toDouble(), transform);
+    setupVertexTransforms(
+      gl,
+      glProgram,
+      0,
+      0,
+      widthInPixels.toDouble(),
+      heightInPixels.toDouble(),
+      transform,
+    );
 
     requiresTileOffset = shaderBounds.left != 0 || shaderBounds.top != 0;
 
     /// To map from vertex position to texture coordinate in 0..1 range,
     /// we setup scalar to be used in vertex shader.
-    setupTextureTransform(gl, glProgram, shaderBounds.left, shaderBounds.top,
-        1.0 / image.width.toDouble(), 1.0 / image.height.toDouble());
+    setupTextureTransform(
+      gl,
+      glProgram,
+      shaderBounds.left,
+      shaderBounds.top,
+      1.0 / image.width.toDouble(),
+      1.0 / image.height.toDouble(),
+    );
 
     /// Setup geometry.
     ///
@@ -224,17 +239,14 @@ class EngineImageShader implements ui.ImageShader {
     gl.activeTexture(gl.kTexture0);
     gl.bindTexture(gl.kTexture2D, texture);
 
-    gl.texImage2D(gl.kTexture2D, 0, gl.kRGBA, gl.kRGBA, gl.kUnsignedByte,
-        image.imgElement);
+    gl.texImage2D(gl.kTexture2D, 0, gl.kRGBA, gl.kRGBA, gl.kUnsignedByte, image.imgElement);
 
     if (isWebGl2) {
       /// Texture REPEAT and MIRROR is only supported in WebGL 2, for
       /// WebGL 1.0 we let shader compute correct uv coordinates.
-      gl.texParameteri(
-          gl.kTexture2D, gl.kTextureWrapS, tileModeToGlWrapping(gl, tileModeX));
+      gl.texParameteri(gl.kTexture2D, gl.kTextureWrapS, tileModeToGlWrapping(gl, tileModeX));
 
-      gl.texParameteri(
-          gl.kTexture2D, gl.kTextureWrapT, tileModeToGlWrapping(gl, tileModeY));
+      gl.texParameteri(gl.kTexture2D, gl.kTextureWrapT, tileModeToGlWrapping(gl, tileModeY));
 
       /// Mipmapping saves your texture in different resolutions
       /// so the graphics card can choose which resolution is optimal

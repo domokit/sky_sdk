@@ -18,6 +18,7 @@ abstract final class DartPluginRegistrant {
       _ensureInitialized();
     }
   }
+
   @Native<Void Function()>(symbol: 'DartPluginRegistrant_EnsureInitialized')
   external static void _ensureInitialized();
 }
@@ -53,9 +54,9 @@ Future<developer.ServiceExtensionResponse> _scheduleFrame(
   // Schedule the frame.
   PlatformDispatcher.instance.scheduleFrame();
   // Always succeed.
-  return developer.ServiceExtensionResponse.result(json.encode(<String, String>{
-    'type': 'Success',
-  }));
+  return developer.ServiceExtensionResponse.result(
+    json.encode(<String, String>{'type': 'Success'}),
+  );
 }
 
 Future<developer.ServiceExtensionResponse> _reinitializeShader(
@@ -68,19 +69,18 @@ Future<developer.ServiceExtensionResponse> _reinitializeShader(
   }
 
   // Always succeed.
-  return developer.ServiceExtensionResponse.result(json.encode(<String, String>{
-    'type': 'Success',
-  }));
+  return developer.ServiceExtensionResponse.result(
+    json.encode(<String, String>{'type': 'Success'}),
+  );
 }
 
 Future<developer.ServiceExtensionResponse> _getImpellerEnabled(
   String method,
   Map<String, String> parameters,
 ) async {
-  return developer.ServiceExtensionResponse.result(json.encode(<String, Object>{
-    'type': 'Success',
-    'enabled': _impellerEnabled,
-  }));
+  return developer.ServiceExtensionResponse.result(
+    json.encode(<String, Object>{'type': 'Success', 'enabled': _impellerEnabled}),
+  );
 }
 
 const bool _kReleaseMode = bool.fromEnvironment('dart.vm.product');

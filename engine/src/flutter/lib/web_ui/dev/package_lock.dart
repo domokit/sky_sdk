@@ -23,11 +23,11 @@ class PackageLock {
     return PackageLock._fromYaml(yaml);
   }
 
-  PackageLock._fromYaml(YamlMap yaml) :
-    chromeLock = ChromeLock._fromYaml(yaml['chrome'] as YamlMap),
-    firefoxLock = FirefoxLock._fromYaml(yaml['firefox'] as YamlMap),
-    edgeLock = EdgeLock._fromYaml(yaml['edge'] as YamlMap),
-    esbuildLock = EsbuildLock._fromYaml(yaml['esbuild'] as YamlMap);
+  PackageLock._fromYaml(YamlMap yaml)
+    : chromeLock = ChromeLock._fromYaml(yaml['chrome'] as YamlMap),
+      firefoxLock = FirefoxLock._fromYaml(yaml['firefox'] as YamlMap),
+      edgeLock = EdgeLock._fromYaml(yaml['edge'] as YamlMap),
+      esbuildLock = EsbuildLock._fromYaml(yaml['esbuild'] as YamlMap);
 
   final ChromeLock chromeLock;
   final FirefoxLock firefoxLock;
@@ -36,30 +36,26 @@ class PackageLock {
 }
 
 class ChromeLock {
-  ChromeLock._fromYaml(YamlMap yaml) :
-    version = yaml['version'] as String;
+  ChromeLock._fromYaml(YamlMap yaml) : version = yaml['version'] as String;
 
   /// The full version of Chromium represented by this lock. E.g: '119.0.6045.9'
   final String version;
 }
 
 class FirefoxLock {
-  FirefoxLock._fromYaml(YamlMap yaml) :
-    version = yaml['version'] as String;
+  FirefoxLock._fromYaml(YamlMap yaml) : version = yaml['version'] as String;
 
   final String version;
 }
 
 class EdgeLock {
-  EdgeLock._fromYaml(YamlMap yaml) :
-      launcherVersion = yaml['launcher_version'] as String;
+  EdgeLock._fromYaml(YamlMap yaml) : launcherVersion = yaml['launcher_version'] as String;
 
   final String launcherVersion;
 }
 
 class EsbuildLock {
-  EsbuildLock._fromYaml(YamlMap yaml) :
-    version = yaml['version'] as String;
+  EsbuildLock._fromYaml(YamlMap yaml) : version = yaml['version'] as String;
 
   final String version;
 }

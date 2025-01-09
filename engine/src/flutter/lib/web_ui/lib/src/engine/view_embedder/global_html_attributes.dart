@@ -40,9 +40,7 @@ class GlobalHtmlAttributes {
     rootElement.setAttribute(flutterViewIdAttributeName, viewId);
 
     // How was the current renderer selected?
-    final String rendererSelection = autoDetectRenderer
-        ? 'auto-selected'
-        : 'requested explicitly';
+    final String rendererSelection = autoDetectRenderer ? 'auto-selected' : 'requested explicitly';
 
     hostElement.setAttribute('flt-renderer', '$rendererTag ($rendererSelection)');
     hostElement.setAttribute('flt-build-mode', buildMode);

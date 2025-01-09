@@ -23,9 +23,7 @@ Future<void> testMain() async {
   const Color redAccentColor = Color(0xFFFF1744);
   const double kDashLength = 5.0;
 
-  setUpUnitTests(
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(setUpTestViewDimensions: false);
 
   test('Should calculate tangent on line', () async {
     final Path path = Path();
@@ -74,17 +72,18 @@ Future<void> testMain() async {
 
   // Test for extractPath to draw 5 pixel length dashed line using quad curve.
   test('Should draw dashed line on quadratic curve.', () async {
-    final RecordingCanvas rc =
-        RecordingCanvas(const Rect.fromLTRB(0, 0, 500, 500));
+    final RecordingCanvas rc = RecordingCanvas(const Rect.fromLTRB(0, 0, 500, 500));
 
-    final SurfacePaint paint = SurfacePaint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3
-      ..color = black12Color;
-    final SurfacePaint redPaint = SurfacePaint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1
-      ..color = redAccentColor;
+    final SurfacePaint paint =
+        SurfacePaint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3
+          ..color = black12Color;
+    final SurfacePaint redPaint =
+        SurfacePaint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1
+          ..color = redAccentColor;
 
     final SurfacePath path = SurfacePath();
     path.moveTo(50, 130);
@@ -112,9 +111,7 @@ Future<void> testMain() async {
       while (distance < measurePath.length * t1) {
         const double length = kDashLength;
         if (draw) {
-          dashedPath.addPath(
-              measurePath.extractPath(distance, distance + length),
-              Offset.zero);
+          dashedPath.addPath(measurePath.extractPath(distance, distance + length), Offset.zero);
         }
         distance += length;
         draw = !draw;
@@ -126,17 +123,18 @@ Future<void> testMain() async {
 
   // Test for extractPath to draw 5 pixel length dashed line using cubic curve.
   test('Should draw dashed line on cubic curve.', () async {
-    final RecordingCanvas rc =
-        RecordingCanvas(const Rect.fromLTRB(0, 0, 500, 500));
+    final RecordingCanvas rc = RecordingCanvas(const Rect.fromLTRB(0, 0, 500, 500));
 
-    final SurfacePaint paint = SurfacePaint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3
-      ..color = black12Color;
-    final SurfacePaint redPaint = SurfacePaint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1
-      ..color = redAccentColor;
+    final SurfacePaint paint =
+        SurfacePaint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3
+          ..color = black12Color;
+    final SurfacePaint redPaint =
+        SurfacePaint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1
+          ..color = redAccentColor;
 
     final Path path = Path();
     path.moveTo(50, 130);
@@ -166,9 +164,7 @@ Future<void> testMain() async {
       while (distance < measurePath.length * t1) {
         const double length = kDashLength;
         if (draw) {
-          dashedPath.addPath(
-              measurePath.extractPath(distance, distance + length),
-              Offset.zero);
+          dashedPath.addPath(measurePath.extractPath(distance, distance + length), Offset.zero);
         }
         distance += length;
         draw = !draw;

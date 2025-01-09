@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Can open search view', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SearchBarApp(),
-    );
+    await tester.pumpWidget(const example.SearchBarApp());
 
     final Finder searchBarFinder = find.byType(SearchBar);
     final SearchBar searchBar = tester.widget<SearchBar>(searchBarFinder);

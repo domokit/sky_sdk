@@ -22,8 +22,7 @@ import 'vertices.dart';
 class CanvasKitCanvas implements ui.Canvas {
   factory CanvasKitCanvas(ui.PictureRecorder recorder, [ui.Rect? cullRect]) {
     if (recorder.isRecording) {
-      throw ArgumentError(
-          '"recorder" must not already be associated with another Canvas.');
+      throw ArgumentError('"recorder" must not already be associated with another Canvas.');
     }
     cullRect ??= ui.Rect.largest;
     final CkPictureRecorder ckRecorder = recorder as CkPictureRecorder;
@@ -112,8 +111,7 @@ class CanvasKitCanvas implements ui.Canvas {
   }
 
   @override
-  void clipRect(ui.Rect rect,
-      {ui.ClipOp clipOp = ui.ClipOp.intersect, bool doAntiAlias = true}) {
+  void clipRect(ui.Rect rect, {ui.ClipOp clipOp = ui.ClipOp.intersect, bool doAntiAlias = true}) {
     assert(rectIsValid(rect));
     _clipRect(rect, clipOp, doAntiAlias);
   }
@@ -233,14 +231,18 @@ class CanvasKitCanvas implements ui.Canvas {
   }
 
   @override
-  void drawArc(ui.Rect rect, double startAngle, double sweepAngle,
-      bool useCenter, ui.Paint paint) {
+  void drawArc(ui.Rect rect, double startAngle, double sweepAngle, bool useCenter, ui.Paint paint) {
     assert(rectIsValid(rect));
     _drawArc(rect, startAngle, sweepAngle, useCenter, paint);
   }
 
-  void _drawArc(ui.Rect rect, double startAngle, double sweepAngle,
-      bool useCenter, ui.Paint paint) {
+  void _drawArc(
+    ui.Rect rect,
+    double startAngle,
+    double sweepAngle,
+    bool useCenter,
+    ui.Paint paint,
+  ) {
     _canvas.drawArc(rect, startAngle, sweepAngle, useCenter, paint as CkPaint);
   }
 
@@ -263,8 +265,7 @@ class CanvasKitCanvas implements ui.Canvas {
   }
 
   @override
-  void drawImageNine(
-      ui.Image image, ui.Rect center, ui.Rect dst, ui.Paint paint) {
+  void drawImageNine(ui.Image image, ui.Rect center, ui.Rect dst, ui.Paint paint) {
     assert(rectIsValid(center));
     assert(rectIsValid(dst));
     _canvas.drawImageNine(image as CkImage, center, dst, paint as CkPaint);
@@ -286,45 +287,35 @@ class CanvasKitCanvas implements ui.Canvas {
   }
 
   @override
-  void drawPoints(
-      ui.PointMode pointMode, List<ui.Offset> points, ui.Paint paint) {
+  void drawPoints(ui.PointMode pointMode, List<ui.Offset> points, ui.Paint paint) {
     final SkFloat32List skPoints = toMallocedSkPoints(points);
-    _canvas.drawPoints(
-      paint as CkPaint,
-      pointMode,
-      skPoints.toTypedArray(),
-    );
+    _canvas.drawPoints(paint as CkPaint, pointMode, skPoints.toTypedArray());
     free(skPoints);
   }
 
   @override
-  void drawRawPoints(
-      ui.PointMode pointMode, Float32List points, ui.Paint paint) {
+  void drawRawPoints(ui.PointMode pointMode, Float32List points, ui.Paint paint) {
     if (points.length % 2 != 0) {
       throw ArgumentError('"points" must have an even number of values.');
     }
-    _canvas.drawPoints(
-      paint as CkPaint,
-      pointMode,
-      points,
-    );
+    _canvas.drawPoints(paint as CkPaint, pointMode, points);
   }
 
   @override
-  void drawVertices(
-      ui.Vertices vertices, ui.BlendMode blendMode, ui.Paint paint) {
+  void drawVertices(ui.Vertices vertices, ui.BlendMode blendMode, ui.Paint paint) {
     _canvas.drawVertices(vertices as CkVertices, blendMode, paint as CkPaint);
   }
 
   @override
   void drawAtlas(
-      ui.Image atlas,
-      List<ui.RSTransform> transforms,
-      List<ui.Rect> rects,
-      List<ui.Color>? colors,
-      ui.BlendMode? blendMode,
-      ui.Rect? cullRect,
-      ui.Paint paint) {
+    ui.Image atlas,
+    List<ui.RSTransform> transforms,
+    List<ui.Rect> rects,
+    List<ui.Color>? colors,
+    ui.BlendMode? blendMode,
+    ui.Rect? cullRect,
+    ui.Paint paint,
+  ) {
     assert(colors == null || colors.isEmpty || blendMode != null);
 
     final int rectCount = rects.length;
@@ -333,7 +324,8 @@ class CanvasKitCanvas implements ui.Canvas {
     }
     if (colors != null && colors.isNotEmpty && colors.length != rectCount) {
       throw ArgumentError(
-          'If non-null, "colors" length must match that of "transforms" and "rects".');
+        'If non-null, "colors" length must match that of "transforms" and "rects".',
+      );
     }
 
     final Float32List rstTransformBuffer = Float32List(rectCount * 4);
@@ -360,19 +352,26 @@ class CanvasKitCanvas implements ui.Canvas {
     final Uint32List? colorBuffer =
         (colors == null || colors.isEmpty) ? null : toFlatColors(colors);
 
-    _drawAtlas(paint, atlas, rstTransformBuffer, rectBuffer, colorBuffer,
-        blendMode ?? ui.BlendMode.src);
+    _drawAtlas(
+      paint,
+      atlas,
+      rstTransformBuffer,
+      rectBuffer,
+      colorBuffer,
+      blendMode ?? ui.BlendMode.src,
+    );
   }
 
   @override
   void drawRawAtlas(
-      ui.Image atlas,
-      Float32List rstTransforms,
-      Float32List rects,
-      Int32List? colors,
-      ui.BlendMode? blendMode,
-      ui.Rect? cullRect,
-      ui.Paint paint) {
+    ui.Image atlas,
+    Float32List rstTransforms,
+    Float32List rects,
+    Int32List? colors,
+    ui.BlendMode? blendMode,
+    ui.Rect? cullRect,
+    ui.Paint paint,
+  ) {
     assert(colors == null || blendMode != null);
 
     final int rectCount = rects.length;
@@ -380,12 +379,12 @@ class CanvasKitCanvas implements ui.Canvas {
       throw ArgumentError('"rstTransforms" and "rects" lengths must match.');
     }
     if (rectCount % 4 != 0) {
-      throw ArgumentError(
-          '"rstTransforms" and "rects" lengths must be a multiple of four.');
+      throw ArgumentError('"rstTransforms" and "rects" lengths must be a multiple of four.');
     }
     if (colors != null && colors.length * 4 != rectCount) {
       throw ArgumentError(
-          'If non-null, "colors" length must be one fourth the length of "rstTransforms" and "rects".');
+        'If non-null, "colors" length must be one fourth the length of "rstTransforms" and "rects".',
+      );
     }
 
     Uint32List? unsignedColors;
@@ -393,8 +392,7 @@ class CanvasKitCanvas implements ui.Canvas {
       unsignedColors = colors.buffer.asUint32List(colors.offsetInBytes, colors.length);
     }
 
-    _drawAtlas(paint, atlas, rstTransforms, rects,
-        unsignedColors, blendMode ?? ui.BlendMode.src);
+    _drawAtlas(paint, atlas, rstTransforms, rects, unsignedColors, blendMode ?? ui.BlendMode.src);
   }
 
   // TODO(hterkelsen): Pass a cull_rect once CanvasKit supports that.
@@ -417,13 +415,11 @@ class CanvasKitCanvas implements ui.Canvas {
   }
 
   @override
-  void drawShadow(ui.Path path, ui.Color color, double elevation,
-      bool transparentOccluder) {
+  void drawShadow(ui.Path path, ui.Color color, double elevation, bool transparentOccluder) {
     _drawShadow(path, color, elevation, transparentOccluder);
   }
 
-  void _drawShadow(ui.Path path, ui.Color color, double elevation,
-      bool transparentOccluder) {
+  void _drawShadow(ui.Path path, ui.Color color, double elevation, bool transparentOccluder) {
     _canvas.drawShadow(path as CkPath, color, elevation, transparentOccluder);
   }
 }

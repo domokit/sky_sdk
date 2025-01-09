@@ -12,8 +12,7 @@ import 'windows.dart';
 
 void drawHelloWorld(ui.FlutterView view) {
   final ui.ParagraphStyle style = ui.ParagraphStyle();
-  final ui.ParagraphBuilder paragraphBuilder = ui.ParagraphBuilder(style)
-    ..addText('Hello world');
+  final ui.ParagraphBuilder paragraphBuilder = ui.ParagraphBuilder(style)..addText('Hello world');
   final ui.Paragraph paragraph = paragraphBuilder.build();
 
   paragraph.layout(const ui.ParagraphConstraints(width: 100.0));
@@ -24,9 +23,10 @@ void drawHelloWorld(ui.FlutterView view) {
   canvas.drawParagraph(paragraph, ui.Offset.zero);
 
   final ui.Picture picture = recorder.endRecording();
-  final ui.SceneBuilder sceneBuilder = ui.SceneBuilder()
-    ..addPicture(ui.Offset.zero, picture)
-    ..pop();
+  final ui.SceneBuilder sceneBuilder =
+      ui.SceneBuilder()
+        ..addPicture(ui.Offset.zero, picture)
+        ..pop();
 
   view.render(sceneBuilder.build());
 }
@@ -58,31 +58,33 @@ void main() async {
   // Create a completer to send the window visibility result back to the
   // integration test.
   final Completer<String> visibilityCompleter = Completer<String>();
-  enableFlutterDriverExtension(handler: (String? message) async {
-    if (message == 'verifyWindowVisibility') {
-      return visibilityCompleter.future;
-    } else if (message == 'verifyTheme') {
-      final bool app = await isAppDarkModeEnabled();
-      final bool system = await isSystemDarkModeEnabled();
+  enableFlutterDriverExtension(
+    handler: (String? message) async {
+      if (message == 'verifyWindowVisibility') {
+        return visibilityCompleter.future;
+      } else if (message == 'verifyTheme') {
+        final bool app = await isAppDarkModeEnabled();
+        final bool system = await isSystemDarkModeEnabled();
 
-      return (app == system)
-        ? 'success'
-        : 'error: app dark mode ($app) does not match system dark mode ($system)';
-    } else if (message == 'verifyStringConversion') {
-      // Use a test string that contains code points that fit in both 8 and 16 bits.
-      // The code points are passed a list of integers through the method channel,
-      // which will use the UTF16 to UTF8 utility function to convert them to a
-      // std::string, which should equate to the original expected string.
-      const String expected = 'ABCℵ';
-      final Int32List codePoints = Int32List.fromList(expected.codeUnits);
-      final String converted = await testStringConversion(codePoints);
-      return (converted == expected)
-        ? 'success'
-        : 'error: conversion of UTF16 string to UTF8 failed, expected "${expected.codeUnits}" but got "${converted.codeUnits}"';
-    }
+        return (app == system)
+            ? 'success'
+            : 'error: app dark mode ($app) does not match system dark mode ($system)';
+      } else if (message == 'verifyStringConversion') {
+        // Use a test string that contains code points that fit in both 8 and 16 bits.
+        // The code points are passed a list of integers through the method channel,
+        // which will use the UTF16 to UTF8 utility function to convert them to a
+        // std::string, which should equate to the original expected string.
+        const String expected = 'ABCℵ';
+        final Int32List codePoints = Int32List.fromList(expected.codeUnits);
+        final String converted = await testStringConversion(codePoints);
+        return (converted == expected)
+            ? 'success'
+            : 'error: conversion of UTF16 string to UTF8 failed, expected "${expected.codeUnits}" but got "${converted.codeUnits}"';
+      }
 
-    throw 'Unrecognized message: $message';
-  });
+      throw 'Unrecognized message: $message';
+    },
+  );
 
   try {
     if (await isWindowVisible()) {

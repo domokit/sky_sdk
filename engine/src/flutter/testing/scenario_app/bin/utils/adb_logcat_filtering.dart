@@ -56,7 +56,9 @@ extension type const AdbLogLine._(Match _match) {
   // 6. The actual log message.
   //
   // This regex is simple versus being more precise. Feel free to improve it.
-  static final RegExp _pattern = RegExp(r'(\d+-\d+\s[\d|:]+\.\d+)\s+(\d+)\s+(\d+)\s(\w)\s(\S+)\s*:\s*(.*)');
+  static final RegExp _pattern = RegExp(
+    r'(\d+-\d+\s[\d|:]+\.\d+)\s+(\d+)\s+(\d+)\s(\w)\s(\S+)\s*:\s*(.*)',
+  );
 
   /// Parses the given [adbLogCatLine] into a structured form.
   ///
@@ -70,7 +72,9 @@ extension type const AdbLogLine._(Match _match) {
   String? tryParseProcess() {
     if (name == activityManagerTag && message.startsWith('Start proc')) {
       // ActivityManager: Start proc 4475:dev.flutter.scenarios/u0a190 for added application ...
-      final RegExpMatch? match = RegExp('Start proc (\\d+):$flutterProcessName').firstMatch(message);
+      final RegExpMatch? match = RegExp(
+        'Start proc (\\d+):$flutterProcessName',
+      ).firstMatch(message);
       return match?.group(1);
     }
     return null;
@@ -100,15 +104,10 @@ extension type const AdbLogLine._(Match _match) {
   };
 
   @visibleForTesting
-  static const Set<String> knownUsefulTags = <String>{
-    activityManagerTag
-  };
+  static const Set<String> knownUsefulTags = <String>{activityManagerTag};
 
   @visibleForTesting
-  static const Set<String> knownUsefulErrorTags = <String>{
-    'androidemu',
-    'THREAD_STATE',
-  };
+  static const Set<String> knownUsefulErrorTags = <String>{'androidemu', 'THREAD_STATE'};
 
   /// Returns `true` if the log line is verbose.
   bool isVerbose({String? filterProcessId}) => !_isRelevant(filterProcessId: filterProcessId);
@@ -138,8 +137,7 @@ extension type const AdbLogLine._(Match _match) {
     // If a process ID is specified, exclude logs _not_ from that process.
     if (filterProcessId == null) {
       // YOLO, let's keep it anyway.
-      return name.toLowerCase().contains('flutter') ||
-          message.toLowerCase().contains('flutter');
+      return name.toLowerCase().contains('flutter') || message.toLowerCase().contains('flutter');
     }
 
     return process == filterProcessId;

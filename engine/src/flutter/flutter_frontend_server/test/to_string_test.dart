@@ -15,15 +15,8 @@ void main() {
   if (buildDir == null) {
     fail('No build directory found. Set FLUTTER_BUILD_DIRECTORY');
   }
-  final frontendServer = path.join(
-    buildDir,
-    'gen',
-    'frontend_server_aot.dart.snapshot',
-  );
-  final sdkRoot = path.join(
-    buildDir,
-    'flutter_patched_sdk',
-  );
+  final frontendServer = path.join(buildDir, 'gen', 'frontend_server_aot.dart.snapshot');
+  final sdkRoot = path.join(buildDir, 'flutter_patched_sdk');
 
   final String dart = io.Platform.resolvedExecutable;
   final String dartaotruntime = path.join(
@@ -35,11 +28,7 @@ void main() {
   final basePath = path.join(engineDir, 'flutter_frontend_server');
   final fixtures = path.join(basePath, 'test', 'fixtures');
   final mainDart = path.join(fixtures, 'lib', 'main.dart');
-  final packageConfig = path.join(
-    fixtures,
-    '.dart_tool',
-    'package_config.json',
-  );
+  final packageConfig = path.join(fixtures, '.dart_tool', 'package_config.json');
   final regularDill = path.join(fixtures, 'toString.dill');
   final transformedDill = path.join(fixtures, 'toStringTransformed.dill');
 
@@ -50,23 +39,26 @@ void main() {
   }
 
   test('Without flag', () {
-    checkProcessResult(io.Process.runSync(dartaotruntime, <String>[
-      frontendServer,
-      '--sdk-root=$sdkRoot',
-      '--target=flutter',
-      '--packages=$packageConfig',
-      '--output-dill=$regularDill',
-      mainDart,
-    ]));
+    checkProcessResult(
+      io.Process.runSync(dartaotruntime, <String>[
+        frontendServer,
+        '--sdk-root=$sdkRoot',
+        '--target=flutter',
+        '--packages=$packageConfig',
+        '--output-dill=$regularDill',
+        mainDart,
+      ]),
+    );
     final runResult = io.Process.runSync(dart, <String>[regularDill]);
     checkProcessResult(runResult);
     var paintString =
-      '"Paint.toString":"Paint(Color(alpha: 1.0000, red: 1.0000, green: 1.0000, blue: 1.0000, colorSpace: ColorSpace.sRGB))"';
+        '"Paint.toString":"Paint(Color(alpha: 1.0000, red: 1.0000, green: 1.0000, blue: 1.0000, colorSpace: ColorSpace.sRGB))"';
     if (buildDir.contains('release')) {
       paintString = '"Paint.toString":"Instance of \'Paint\'"';
     }
 
-    final String expectedStdout = '{$paintString,'
+    final String expectedStdout =
+        '{$paintString,'
         '"Brightness.toString":"Brightness.dark",'
         '"Foo.toString":"I am a Foo",'
         '"Keep.toString":"I am a Keep"}';
@@ -75,22 +67,25 @@ void main() {
   });
 
   test('With flag', () {
-    checkProcessResult(io.Process.runSync(dartaotruntime, <String>[
-      frontendServer,
-      '--sdk-root=$sdkRoot',
-      '--target=flutter',
-      '--packages=$packageConfig',
-      '--output-dill=$transformedDill',
-      '--delete-tostring-package-uri',
-      'dart:ui',
-      '--delete-tostring-package-uri',
-      'package:flutter_frontend_fixtures',
-      mainDart,
-    ]));
+    checkProcessResult(
+      io.Process.runSync(dartaotruntime, <String>[
+        frontendServer,
+        '--sdk-root=$sdkRoot',
+        '--target=flutter',
+        '--packages=$packageConfig',
+        '--output-dill=$transformedDill',
+        '--delete-tostring-package-uri',
+        'dart:ui',
+        '--delete-tostring-package-uri',
+        'package:flutter_frontend_fixtures',
+        mainDart,
+      ]),
+    );
     final runResult = io.Process.runSync(dart, <String>[transformedDill]);
     checkProcessResult(runResult);
 
-    const expectedStdout = '{"Paint.toString":"Instance of \'Paint\'",'
+    const expectedStdout =
+        '{"Paint.toString":"Instance of \'Paint\'",'
         '"Brightness.toString":"Brightness.dark",'
         '"Foo.toString":"Instance of \'Foo\'",'
         '"Keep.toString":"I am a Keep"}';

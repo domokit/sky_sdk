@@ -100,7 +100,7 @@ There is an automatic exception for PRs that:
 If a reviewer says a PR should have a test, then it needs a test regardless of the exemptions above.
 
 Feel free to update the bot's logic to catch more cases that should be
-automatically exempt ([in the cocoon repo](https://github.com/reidbaker/cocoon/blob/main/app_dart/lib/src/request_handlers/github/webhook_subscription.dart)).
+automatically exempt ([in the cocoon repo](https://github.com/flutter/cocoon/blob/main/app_dart/lib/src/request_handlers/github/webhook_subscription.dart)).
 
 > [!NOTE]
 > PRs adding data-driven fixes require tests that fall under the test_fixes

@@ -7,10 +7,10 @@ import 'package:flutter_api_samples/material/scaffold/scaffold.end_drawer.0.dart
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('The page should contain an end drawer than can be opened and closed', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.EndDrawerExampleApp(),
-    );
+  testWidgets('The page should contain an end drawer than can be opened and closed', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.EndDrawerExampleApp());
 
     expect(find.byType(Drawer), findsNothing);
 
@@ -19,8 +19,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(Drawer), findsOne);
-    expect(tester.getCenter(
-      find.byType(Drawer)).dx,
+    expect(
+      tester.getCenter(find.byType(Drawer)).dx,
       greaterThan(400),
       reason: 'The drawer should be on the right side of the screen',
     );
@@ -33,8 +33,8 @@ void main() {
     expect(find.byType(Drawer), findsNothing);
 
     // Open the drawer by tapping the drawer button in the app bar.
-    expect(tester.getCenter(
-      find.byType(EndDrawerButton)).dx,
+    expect(
+      tester.getCenter(find.byType(EndDrawerButton)).dx,
       greaterThan(400),
       reason: 'The drawer button should be on the right side of the app bar',
     );

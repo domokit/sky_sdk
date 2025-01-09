@@ -7,7 +7,6 @@
 
 #include <cstdint>
 #include <memory>
-#include <variant>
 
 #include "impeller/geometry/size.h"
 #include "impeller/renderer/backend/vulkan/swapchain/swapchain_transients_vk.h"
@@ -62,6 +61,8 @@ class KHRSwapchainImplVK final
   std::pair<vk::UniqueSurfaceKHR, vk::UniqueSwapchainKHR> DestroySwapchain();
 
   const ISize& GetSize() const;
+
+  void AddFinalCommandBuffer(std::shared_ptr<CommandBuffer> cmd_buffer);
 
  private:
   std::weak_ptr<Context> context_;

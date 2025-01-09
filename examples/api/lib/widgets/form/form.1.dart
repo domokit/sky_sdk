@@ -11,20 +11,14 @@ import 'package:flutter/services.dart';
 void main() => runApp(const FormApp());
 
 class FormApp extends StatelessWidget {
-  const FormApp({
-    super.key,
-  });
+  const FormApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Confirmation Dialog Example'),
-        ),
-        body: Center(
-          child: _SaveableForm(),
-        ),
+        appBar: AppBar(title: const Text('Confirmation Dialog Example')),
+        body: Center(child: _SaveableForm()),
       ),
     );
   }
@@ -141,10 +135,7 @@ class _SaveableFormState extends State<_SaveableForm> {
                   child: Row(
                     children: <Widget>[
                       const Text('Save'),
-                      if (_controller.text.isNotEmpty)
-                        Icon(
-                          _isDirty ? Icons.warning : Icons.check,
-                        ),
+                      if (_controller.text.isNotEmpty) Icon(_isDirty ? Icons.warning : Icons.check),
                     ],
                   ),
                 ),

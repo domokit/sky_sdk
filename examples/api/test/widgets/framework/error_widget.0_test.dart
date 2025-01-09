@@ -10,7 +10,7 @@ void main() {
   testWidgets('ErrorWidget is displayed in debug mode', (WidgetTester tester) async {
     final ErrorWidgetBuilder oldBuilder = ErrorWidget.builder;
     ErrorWidget.builder = (FlutterErrorDetails details) {
-       return ErrorWidget(details.exception);
+      return ErrorWidget(details.exception);
     };
     await tester.pumpWidget(const example.ErrorWidgetExampleApp());
 

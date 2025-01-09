@@ -49,9 +49,7 @@ class EditableChipFieldExampleState extends State<EditableChipFieldExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Editable Chip Field Sample'),
-      ),
+      appBar: AppBar(title: const Text('Editable Chip Field Sample')),
       body: Column(
         children: <Widget>[
           Padding(
@@ -74,10 +72,7 @@ class EditableChipFieldExampleState extends State<EditableChipFieldExample> {
               child: ListView.builder(
                 itemCount: _suggestions.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return ToppingSuggestion(
-                    _suggestions[index],
-                    onTap: _selectSuggestion,
-                  );
+                  return ToppingSuggestion(_suggestions[index], onTap: _selectSuggestion);
                 },
               ),
             ),
@@ -89,18 +84,12 @@ class EditableChipFieldExampleState extends State<EditableChipFieldExample> {
   Future<void> _onSearchChanged(String value) async {
     final List<String> results = await _suggestionCallback(value);
     setState(() {
-      _suggestions = results
-          .where((String topping) => !_toppings.contains(topping))
-          .toList();
+      _suggestions = results.where((String topping) => !_toppings.contains(topping)).toList();
     });
   }
 
   Widget _chipBuilder(BuildContext context, String topping) {
-    return ToppingInputChip(
-      topping: topping,
-      onDeleted: _onChipDeleted,
-      onSelected: _onChipTapped,
-    );
+    return ToppingInputChip(topping: topping, onDeleted: _onChipDeleted, onSelected: _onChipTapped);
   }
 
   void _selectSuggestion(String topping) {
@@ -189,10 +178,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>> {
   void initState() {
     super.initState();
 
-    controller = ChipsInputEditingController<T>(
-      <T>[...widget.values],
-      widget.chipBuilder,
-    );
+    controller = ChipsInputEditingController<T>(<T>[...widget.values], widget.chipBuilder);
     controller.addListener(_textListener);
   }
 
@@ -240,8 +226,8 @@ class ChipsInputState<T> extends State<ChipsInput<T>> {
 
   static int countReplacements(String text) {
     return text.codeUnits
-      .where((int u) => u == ChipsInputEditingController.kObjectReplacementChar)
-      .length;
+        .where((int u) => u == ChipsInputEditingController.kObjectReplacementChar)
+        .length;
   }
 
   @override
@@ -255,19 +241,15 @@ class ChipsInputState<T> extends State<ChipsInput<T>> {
       style: widget.style,
       strutStyle: widget.strutStyle,
       controller: controller,
-      onChanged: (String value) =>
-          widget.onTextChanged?.call(controller.textWithoutReplacements),
-      onSubmitted: (String value) =>
-          widget.onSubmitted?.call(controller.textWithoutReplacements),
+      onChanged: (String value) => widget.onTextChanged?.call(controller.textWithoutReplacements),
+      onSubmitted: (String value) => widget.onSubmitted?.call(controller.textWithoutReplacements),
     );
   }
 }
 
 class ChipsInputEditingController<T> extends TextEditingController {
   ChipsInputEditingController(this.values, this.chipBuilder)
-      : super(
-          text: String.fromCharCode(kObjectReplacementChar) * values.length,
-        );
+    : super(text: String.fromCharCode(kObjectReplacementChar) * values.length);
 
   // This constant character acts as a placeholder in the TextField text value.
   // There will be one character for each of the InputChip displayed.
@@ -299,18 +281,20 @@ class ChipsInputEditingController<T> extends TextEditingController {
   String get textWithReplacements => text;
 
   @override
-  TextSpan buildTextSpan(
-      {required BuildContext context, TextStyle? style, required bool withComposing}) {
-
-    final Iterable<WidgetSpan> chipWidgets =
-        values.map((T v) => WidgetSpan(child: chipBuilder(context, v)));
+  TextSpan buildTextSpan({
+    required BuildContext context,
+    TextStyle? style,
+    required bool withComposing,
+  }) {
+    final Iterable<WidgetSpan> chipWidgets = values.map(
+      (T v) => WidgetSpan(child: chipBuilder(context, v)),
+    );
 
     return TextSpan(
       style: style,
       children: <InlineSpan>[
         ...chipWidgets,
-        if (textWithoutReplacements.isNotEmpty)
-          TextSpan(text: textWithoutReplacements)
+        if (textWithoutReplacements.isNotEmpty) TextSpan(text: textWithoutReplacements),
       ],
     );
   }
@@ -326,11 +310,7 @@ class ToppingSuggestion extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       key: ObjectKey(topping),
-      leading: CircleAvatar(
-        child: Text(
-          topping[0].toUpperCase(),
-        ),
-      ),
+      leading: CircleAvatar(child: Text(topping[0].toUpperCase())),
       title: Text(topping),
       onTap: () => onTap?.call(topping),
     );
@@ -356,9 +336,7 @@ class ToppingInputChip extends StatelessWidget {
       child: InputChip(
         key: ObjectKey(topping),
         label: Text(topping),
-        avatar: CircleAvatar(
-          child: Text(topping[0].toUpperCase()),
-        ),
+        avatar: CircleAvatar(child: Text(topping[0].toUpperCase())),
         onDeleted: () => onDeleted(topping),
         onSelected: (bool value) => onSelected(topping),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

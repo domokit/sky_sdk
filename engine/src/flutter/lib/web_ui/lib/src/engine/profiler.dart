@@ -69,9 +69,7 @@ class Profiler {
     _checkBenchmarkMode();
   }
 
-  static bool isBenchmarkMode = const bool.fromEnvironment(
-    'FLUTTER_WEB_ENABLE_PROFILING',
-  );
+  static bool isBenchmarkMode = const bool.fromEnvironment('FLUTTER_WEB_ENABLE_PROFILING');
 
   static Profiler ensureInitialized() {
     _checkBenchmarkMode();
@@ -149,9 +147,8 @@ class Instrumentation {
 
     _enabled = value;
   }
-  static bool _enabled = const bool.fromEnvironment(
-    'FLUTTER_WEB_ENABLE_INSTRUMENTATION',
-  );
+
+  static bool _enabled = const bool.fromEnvironment('FLUTTER_WEB_ENABLE_INSTRUMENTATION');
 
   /// Returns the singleton that provides instrumentation API.
   static Instrumentation get instance {
@@ -184,24 +181,21 @@ class Instrumentation {
     _checkInstrumentationEnabled();
     final int currentCount = _counters[event] ?? 0;
     _counters[event] = currentCount + 1;
-    _printTimer ??= Timer(
-      const Duration(seconds: 2),
-      () {
-        if (_printTimer == null || !_enabled) {
-          return;
-        }
-        final StringBuffer message = StringBuffer('Engine counters:\n');
-        // Entries are sorted for readability and testability.
-        final List<MapEntry<String, int>> entries = _counters.entries.toList()
-          ..sort((MapEntry<String, int> a, MapEntry<String, int> b) {
+    _printTimer ??= Timer(const Duration(seconds: 2), () {
+      if (_printTimer == null || !_enabled) {
+        return;
+      }
+      final StringBuffer message = StringBuffer('Engine counters:\n');
+      // Entries are sorted for readability and testability.
+      final List<MapEntry<String, int>> entries =
+          _counters.entries.toList()..sort((MapEntry<String, int> a, MapEntry<String, int> b) {
             return a.key.compareTo(b.key);
           });
-        for (final MapEntry<String, int> entry in entries) {
-          message.writeln('  ${entry.key}: ${entry.value}');
-        }
-        print(message);
-        _printTimer = null;
-      },
-    );
+      for (final MapEntry<String, int> entry in entries) {
+        message.writeln('  ${entry.key}: ${entry.value}');
+      }
+      print(message);
+      _printTimer = null;
+    });
   }
 }

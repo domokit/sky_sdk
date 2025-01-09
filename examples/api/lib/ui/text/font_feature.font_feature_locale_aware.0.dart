@@ -30,9 +30,7 @@ class ExampleWidget extends StatelessWidget {
     return const Text(
       '次 化 刃 直 入 令',
       locale: Locale('zh', 'CN'), // or Locale('ja'), Locale('ko'), Locale('zh', 'TW'), etc
-      style: TextStyle(
-        fontFamily: 'Noto Sans',
-      ),
+      style: TextStyle(fontFamily: 'Noto Sans'),
     );
   }
 }

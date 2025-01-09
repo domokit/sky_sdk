@@ -28,29 +28,34 @@ class BuildCommand extends Command<bool> with ArgUtils<bool> {
     argParser.addFlag(
       'watch',
       abbr: 'w',
-      help: 'Run the build in watch mode so it rebuilds whenever a change is '
+      help:
+          'Run the build in watch mode so it rebuilds whenever a change is '
           'made. Disabled by default.',
     );
     argParser.addFlag(
       'host',
-      help: 'Build the host build instead of the wasm build, which is '
-          'currently needed for `flutter run --local-engine` to work.'
+      help:
+          'Build the host build instead of the wasm build, which is '
+          'currently needed for `flutter run --local-engine` to work.',
     );
     argParser.addFlag(
       'profile',
-      help: 'Build in profile mode instead of release mode. In this mode, the '
+      help:
+          'Build in profile mode instead of release mode. In this mode, the '
           'output will be located at "out/wasm_profile".\nThis only applies to '
           'the wasm build. The host build is always built in release mode.',
     );
     argParser.addFlag(
       'debug',
-      help: 'Build in debug mode instead of release mode. In this mode, the '
+      help:
+          'Build in debug mode instead of release mode. In this mode, the '
           'output will be located at "out/wasm_debug".\nThis only applies to '
           'the wasm build. The host build is always built in release mode.',
     );
     argParser.addFlag(
       'dwarf',
-      help: 'Embed DWARF debugging info into the output wasm modules. This is '
+      help:
+          'Embed DWARF debugging info into the output wasm modules. This is '
           'only valid in debug mode.',
     );
   }
@@ -68,6 +73,21 @@ class BuildCommand extends Command<bool> with ArgUtils<bool> {
   List<String> get targets => argResults?.rest ?? <String>[];
   bool get embedDwarf => boolArg('dwarf');
 
+  RuntimeMode get runtimeMode {
+    final bool isProfile = boolArg('profile');
+    final bool isDebug = boolArg('debug');
+    if (isProfile && isDebug) {
+      throw ToolExit('Cannot specify both --profile and --debug at the same time.');
+    }
+    if (isProfile) {
+      return RuntimeMode.profile;
+    } else if (isDebug) {
+      return RuntimeMode.debug;
+    } else {
+      return RuntimeMode.release;
+    }
+  }
+
   @override
   FutureOr<bool> run() async {
     if (embedDwarf && runtimeMode != RuntimeMode.debug) {
@@ -75,11 +95,7 @@ class BuildCommand extends Command<bool> with ArgUtils<bool> {
     }
     final FilePath libPath = FilePath.fromWebUi('lib');
     final List<PipelineStep> steps = <PipelineStep>[
-      GnPipelineStep(
-        host: host,
-        runtimeMode: runtimeMode,
-        embedDwarf: embedDwarf,
-      ),
+      GnPipelineStep(host: host, runtimeMode: runtimeMode, embedDwarf: embedDwarf),
       NinjaPipelineStep(
         host: host,
         runtimeMode: runtimeMode,
@@ -108,11 +124,7 @@ class BuildCommand extends Command<bool> with ArgUtils<bool> {
 /// Not safe to interrupt as it may leave the `out/` directory in a corrupted
 /// state. GN is pretty quick though, so it's OK to not support interruption.
 class GnPipelineStep extends ProcessStep {
-  GnPipelineStep({
-    required this.host,
-    required this.runtimeMode,
-    required this.embedDwarf,
-  });
+  GnPipelineStep({required this.host, required this.runtimeMode, required this.embedDwarf});
 
   final bool host;
   final RuntimeMode runtimeMode;
@@ -126,18 +138,13 @@ class GnPipelineStep extends ProcessStep {
 
   List<String> get _gnArgs {
     if (host) {
-      return <String>[
-        '--unoptimized',
-        '--full-dart-sdk',
-      ];
+      return <String>['--unoptimized', '--full-dart-sdk'];
     } else {
       return <String>[
         '--web',
         '--runtime-mode=${runtimeMode.name}',
-        if (runtimeMode == RuntimeMode.debug)
-          '--unoptimized',
-        if (embedDwarf)
-          '--wasm-use-dwarf',
+        if (runtimeMode == RuntimeMode.debug) '--unoptimized',
+        if (embedDwarf) '--wasm-use-dwarf',
       ];
     }
   }
@@ -145,10 +152,7 @@ class GnPipelineStep extends ProcessStep {
   @override
   Future<ProcessManager> createProcess() {
     print('Running gn...');
-    return startProcess(
-      path.join(environment.flutterDirectory.path, 'tools', 'gn'),
-      _gnArgs,
-    );
+    return startProcess(path.join(environment.flutterDirectory.path, 'tools', 'gn'), _gnArgs);
   }
 }
 
@@ -156,11 +160,7 @@ class GnPipelineStep extends ProcessStep {
 ///
 /// Can be safely interrupted.
 class NinjaPipelineStep extends ProcessStep {
-  NinjaPipelineStep({
-    required this.host,
-    required this.runtimeMode,
-    required this.targets,
-  });
+  NinjaPipelineStep({required this.host, required this.runtimeMode, required this.targets});
 
   @override
   String get description => 'ninja';
@@ -182,13 +182,6 @@ class NinjaPipelineStep extends ProcessStep {
   @override
   Future<ProcessManager> createProcess() {
     print('Running autoninja...');
-    return startProcess(
-      'autoninja',
-      <String>[
-        '-C',
-        buildDirectory,
-        ...targets,
-      ],
-    );
+    return startProcess('autoninja', <String>['-C', buildDirectory, ...targets]);
   }
 }

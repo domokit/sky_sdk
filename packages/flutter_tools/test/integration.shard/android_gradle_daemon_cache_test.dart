@@ -20,94 +20,87 @@ void main() {
   });
 
   testWithoutContext(
-      'gradle task succeeds when adding plugins with gradle daemon enabled',
-      () async {
-    final Directory appDir = tempDir.childDirectory('testapp');
-    final Directory androidDir = appDir.childDirectory('android');
+    'gradle task succeeds when adding plugins with gradle daemon enabled',
+    () async {
+      final Directory appDir = tempDir.childDirectory('testapp');
+      final Directory androidDir = appDir.childDirectory('android');
 
-    // Create dummy plugins
-    processManager.runSync(<String>[
-      flutterBin,
-      ...getLocalEngineArguments(),
-      'create',
-      '--template=plugin',
-      '--platforms=android',
-      'test_plugin_one',
-    ], workingDirectory: tempDir.path);
-    processManager.runSync(<String>[
-      flutterBin,
-      ...getLocalEngineArguments(),
-      'create',
-      '--template=plugin',
-      '--platforms=android',
-      'test_plugin_two',
-    ], workingDirectory: tempDir.path);
+      // Create dummy plugins
+      processManager.runSync(<String>[
+        flutterBin,
+        ...getLocalEngineArguments(),
+        'create',
+        '--template=plugin',
+        '--platforms=android',
+        'test_plugin_one',
+      ], workingDirectory: tempDir.path);
+      processManager.runSync(<String>[
+        flutterBin,
+        ...getLocalEngineArguments(),
+        'create',
+        '--template=plugin',
+        '--platforms=android',
+        'test_plugin_two',
+      ], workingDirectory: tempDir.path);
 
-    // Create a new flutter project.
-    ProcessResult result = await processManager.run(<String>[
-      flutterBin,
-      'create',
-      appDir.path,
-      '--project-name=testapp',
-    ], workingDirectory: tempDir.path);
-    expect(result, const ProcessResultMatcher());
+      // Create a new flutter project.
+      ProcessResult result = await processManager.run(<String>[
+        flutterBin,
+        'create',
+        appDir.path,
+        '--project-name=testapp',
+      ], workingDirectory: tempDir.path);
+      expect(result, const ProcessResultMatcher());
 
-    // Enable gradle daemon for this project
-    final File gradleProperties = androidDir.childFile('gradle.properties');
-    gradleProperties.writeAsStringSync(r'''
+      // Enable gradle daemon for this project
+      final File gradleProperties = androidDir.childFile('gradle.properties');
+      gradleProperties.writeAsStringSync(r'''
 org.gradle.daemon=true
 ''', mode: FileMode.append);
 
-    // TODO(gustl22): Override with in 'gradle.properties' has no effect, set GRADLE_OPTS instead,
-    //  see https://github.com/gradle/gradle/issues/19501
-    final Map<String, String> envVars = <String, String>{
-      'GRADLE_OPTS': '-Dorg.gradle.daemon=true'
-    };
+      // TODO(gustl22): Override with in 'gradle.properties' has no effect, set GRADLE_OPTS instead,
+      //  see https://github.com/gradle/gradle/issues/19501
+      final Map<String, String> envVars = <String, String>{
+        'GRADLE_OPTS': '-Dorg.gradle.daemon=true',
+      };
 
-    // Stop gradle daemon
-    result = await processManager.run(<String>[
-      androidDir.childFile('gradlew').path,
-      '--stop',
-    ], workingDirectory: androidDir.path);
-    expect(result, const ProcessResultMatcher());
+      // Stop gradle daemon
+      result = await processManager.run(<String>[
+        androidDir.childFile('gradlew').path,
+        '--stop',
+      ], workingDirectory: androidDir.path);
+      expect(result, const ProcessResultMatcher());
 
-    result = await processManager.run(<String>[
-      flutterBin,
-      'pub',
-      'add',
-      'test_plugin_one',
-      '--path',
-      '../test_plugin_one',
-    ], workingDirectory: appDir.path, environment: envVars);
-    expect(result, const ProcessResultMatcher());
+      result = await processManager.run(
+        <String>[flutterBin, 'pub', 'add', 'test_plugin_one', '--path', '../test_plugin_one'],
+        workingDirectory: appDir.path,
+        environment: envVars,
+      );
+      expect(result, const ProcessResultMatcher());
 
-    // Build with gradle daemon
-    result = await processManager.run(<String>[
-      flutterBin,
-      'build',
-      'apk',
-      '--debug',
-    ], workingDirectory: appDir.path, environment: envVars);
-    expect(result, const ProcessResultMatcher());
+      // Build with gradle daemon
+      result = await processManager.run(
+        <String>[flutterBin, 'build', 'apk', '--debug'],
+        workingDirectory: appDir.path,
+        environment: envVars,
+      );
+      expect(result, const ProcessResultMatcher());
 
-    // Add second plugin
-    result = await processManager.run(<String>[
-      flutterBin,
-      'pub',
-      'add',
-      'test_plugin_two',
-      '--path',
-      '../test_plugin_two',
-    ], workingDirectory: appDir.path, environment: envVars);
-    expect(result, const ProcessResultMatcher());
+      // Add second plugin
+      result = await processManager.run(
+        <String>[flutterBin, 'pub', 'add', 'test_plugin_two', '--path', '../test_plugin_two'],
+        workingDirectory: appDir.path,
+        environment: envVars,
+      );
+      expect(result, const ProcessResultMatcher());
 
-    // Build again with cached plugin through daemon
-    result = await processManager.run(<String>[
-      flutterBin,
-      'build',
-      'apk',
-      '--debug',
-    ], workingDirectory: appDir.path, environment: envVars);
-    expect(result, const ProcessResultMatcher());
-  });
+      // Build again with cached plugin through daemon
+      result = await processManager.run(
+        <String>[flutterBin, 'build', 'apk', '--debug'],
+        workingDirectory: appDir.path,
+        environment: envVars,
+      );
+      expect(result, const ProcessResultMatcher());
+    },
+  );
 }

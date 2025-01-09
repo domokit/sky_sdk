@@ -113,15 +113,8 @@ class BottomAppBarTheme with Diagnosticable {
   }
 
   @override
-  int get hashCode => Object.hash(
-    color,
-    elevation,
-    shape,
-    height,
-    surfaceTintColor,
-    shadowColor,
-    padding,
-  );
+  int get hashCode =>
+      Object.hash(color, elevation, shape, height, surfaceTintColor, shadowColor, padding);
 
   @override
   bool operator ==(Object other) {
@@ -131,14 +124,14 @@ class BottomAppBarTheme with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is BottomAppBarTheme
-        && other.color == color
-        && other.elevation == elevation
-        && other.shape == shape
-        && other.height == height
-        && other.surfaceTintColor == surfaceTintColor
-        && other.shadowColor == shadowColor
-        && other.padding == padding;
+    return other is BottomAppBarTheme &&
+        other.color == color &&
+        other.elevation == elevation &&
+        other.shape == shape &&
+        other.height == height &&
+        other.surfaceTintColor == surfaceTintColor &&
+        other.shadowColor == shadowColor &&
+        other.padding == padding;
   }
 
   @override

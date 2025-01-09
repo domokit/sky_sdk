@@ -12,10 +12,7 @@ const double _kBackAppBarHeight = 56.0; // back layer (options) appbar height
 
 // The size of the front layer heading's left and right beveled corners.
 final Animatable<BorderRadius?> _kFrontHeadingBevelRadius = BorderRadiusTween(
-  begin: const BorderRadius.only(
-    topLeft: Radius.circular(12.0),
-    topRight: Radius.circular(12.0),
-  ),
+  begin: const BorderRadius.only(topLeft: Radius.circular(12.0), topRight: Radius.circular(12.0)),
   end: const BorderRadius.only(
     topLeft: Radius.circular(_kFrontHeadingHeight),
     topRight: Radius.circular(_kFrontHeadingHeight),
@@ -23,11 +20,7 @@ final Animatable<BorderRadius?> _kFrontHeadingBevelRadius = BorderRadiusTween(
 );
 
 class _TappableWhileStatusIs extends StatefulWidget {
-  const _TappableWhileStatusIs(
-    this.status, {
-    this.controller,
-    this.child,
-  });
+  const _TappableWhileStatusIs(this.status, {this.controller, this.child});
 
   final AnimationController? controller;
   final AnimationStatus status;
@@ -64,10 +57,7 @@ class _TappableWhileStatusIsState extends State<_TappableWhileStatusIs> {
 
   @override
   Widget build(BuildContext context) {
-    Widget child = AbsorbPointer(
-      absorbing: !_active!,
-      child: widget.child,
-    );
+    Widget child = AbsorbPointer(absorbing: !_active!, child: widget.child);
 
     if (!_active!) {
       child = FocusScope(
@@ -96,34 +86,22 @@ class _CrossFadeTransition extends AnimatedWidget {
   Widget build(BuildContext context) {
     final Animation<double> progress = listenable as Animation<double>;
 
-    final double opacity1 = CurvedAnimation(
-      parent: ReverseAnimation(progress),
-      curve: const Interval(0.5, 1.0),
-    ).value;
+    final double opacity1 =
+        CurvedAnimation(parent: ReverseAnimation(progress), curve: const Interval(0.5, 1.0)).value;
 
-    final double opacity2 = CurvedAnimation(
-      parent: progress,
-      curve: const Interval(0.5, 1.0),
-    ).value;
+    final double opacity2 =
+        CurvedAnimation(parent: progress, curve: const Interval(0.5, 1.0)).value;
 
     return Stack(
       alignment: alignment,
       children: <Widget>[
         Opacity(
           opacity: opacity1,
-          child: Semantics(
-            scopesRoute: true,
-            explicitChildNodes: true,
-            child: child1,
-          ),
+          child: Semantics(scopesRoute: true, explicitChildNodes: true, child: child1),
         ),
         Opacity(
           opacity: opacity2,
-          child: Semantics(
-            scopesRoute: true,
-            explicitChildNodes: true,
-            child: child0,
-          ),
+          child: Semantics(scopesRoute: true, explicitChildNodes: true, child: child0),
         ),
       ],
     );
@@ -152,20 +130,10 @@ class _BackAppBar extends StatelessWidget {
           height: _kBackAppBarHeight,
           child: Row(
             children: <Widget>[
-              Container(
-                alignment: Alignment.center,
-                width: 56.0,
-                child: leading,
-              ),
-              Expanded(
-                child: title,
-              ),
+              Container(alignment: Alignment.center, width: 56.0, child: leading),
+              Expanded(child: title),
               if (trailing != null)
-                Container(
-                  alignment: Alignment.center,
-                  width: 56.0,
-                  child: trailing,
-                ),
+                Container(alignment: Alignment.center, width: 56.0, child: trailing),
             ],
           ),
         ),
@@ -201,8 +169,10 @@ class _BackdropState extends State<Backdrop> with SingleTickerProviderStateMixin
   AnimationController? _controller;
   late Animation<double> _frontOpacity;
 
-  static final Animatable<double> _frontOpacityTween = Tween<double>(begin: 0.2, end: 1.0)
-    .chain(CurveTween(curve: const Interval(0.0, 0.4, curve: Curves.easeInOut)));
+  static final Animatable<double> _frontOpacityTween = Tween<double>(
+    begin: 0.2,
+    end: 1.0,
+  ).chain(CurveTween(curve: const Interval(0.0, 0.4, curve: Curves.easeInOut)));
 
   @override
   void initState() {
@@ -246,11 +216,13 @@ class _BackdropState extends State<Backdrop> with SingleTickerProviderStateMixin
     }
 
     final double flingVelocity = details.velocity.pixelsPerSecond.dy / _backdropHeight;
-    _controller!.fling(velocity: switch (flingVelocity) {
-      < 0.0 => math.max(2.0, -flingVelocity),
-      > 0.0 => math.min(-2.0, -flingVelocity),
-      _ => _controller!.value < 0.5 ? -2.0 : 2.0,
-    });
+    _controller!.fling(
+      velocity: switch (flingVelocity) {
+        < 0.0 => math.max(2.0, -flingVelocity),
+        > 0.0 => math.min(-2.0, -flingVelocity),
+        _ => _controller!.value < 0.5 ? -2.0 : 2.0,
+      },
+    );
   }
 
   void _toggleFrontLayer() {
@@ -258,10 +230,17 @@ class _BackdropState extends State<Backdrop> with SingleTickerProviderStateMixin
   }
 
   Widget _buildStack(BuildContext context, BoxConstraints constraints) {
-    final Animation<RelativeRect> frontRelativeRect = _controller!.drive(RelativeRectTween(
-      begin: RelativeRect.fromLTRB(0.0, constraints.biggest.height - _kFrontClosedHeight, 0.0, 0.0),
-      end: const RelativeRect.fromLTRB(0.0, _kBackAppBarHeight, 0.0, 0.0),
-    ));
+    final Animation<RelativeRect> frontRelativeRect = _controller!.drive(
+      RelativeRectTween(
+        begin: RelativeRect.fromLTRB(
+          0.0,
+          constraints.biggest.height - _kFrontClosedHeight,
+          0.0,
+          0.0,
+        ),
+        end: const RelativeRect.fromLTRB(0.0, _kBackAppBarHeight, 0.0, 0.0),
+      ),
+    );
     return Stack(
       key: _backdropKey,
       children: <Widget>[
@@ -280,10 +259,7 @@ class _BackdropState extends State<Backdrop> with SingleTickerProviderStateMixin
               trailing: IconButton(
                 onPressed: _toggleFrontLayer,
                 tooltip: 'Toggle options page',
-                icon: AnimatedIcon(
-                  icon: AnimatedIcons.close_menu,
-                  progress: _controller!,
-                ),
+                icon: AnimatedIcon(icon: AnimatedIcons.close_menu, progress: _controller!),
               ),
             ),
             Expanded(
@@ -320,10 +296,7 @@ class _BackdropState extends State<Backdrop> with SingleTickerProviderStateMixin
             child: _TappableWhileStatusIs(
               AnimationStatus.completed,
               controller: _controller,
-              child: FadeTransition(
-                opacity: _frontOpacity,
-                child: widget.frontLayer,
-              ),
+              child: FadeTransition(opacity: _frontOpacity, child: widget.frontLayer),
             ),
           ),
         ),

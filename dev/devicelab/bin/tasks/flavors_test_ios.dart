@@ -21,63 +21,61 @@ Future<void> main() async {
     await createIntegrationTestFlavorsTest().call();
     // test install and uninstall of flavors app
     final String projectDir = '${flutterDirectory.path}/dev/integration_tests/flavors';
-    final TaskResult installTestsResult = await inDirectory(
-      projectDir,
-      () async {
-        final List<TaskResult> testResults = <TaskResult>[
-            await _testInstallDebugPaidFlavor(projectDir),
-            await _testInstallBogusFlavor(),
-        ];
+    final TaskResult installTestsResult = await inDirectory(projectDir, () async {
+      final List<TaskResult> testResults = <TaskResult>[
+        await _testInstallDebugPaidFlavor(projectDir),
+        await _testInstallBogusFlavor(),
+      ];
 
-        final TaskResult? firstInstallFailure = testResults
-          .firstWhereOrNull((TaskResult element) => element.failed);
+      final TaskResult? firstInstallFailure = testResults.firstWhereOrNull(
+        (TaskResult element) => element.failed,
+      );
 
-        return firstInstallFailure ?? TaskResult.success(null);
-      },
-    );
+      return firstInstallFailure ?? TaskResult.success(null);
+    });
 
     return installTestsResult;
   });
 }
 
 Future<TaskResult> _testInstallDebugPaidFlavor(String projectDir) async {
-  await evalFlutter(
-    'install',
-    options: <String>['--flavor', 'paid'],
-  );
-  final Uint8List assetManifestFileData = File(
-    path.join(
-      projectDir,
-      'build',
-      'ios',
-      'iphoneos',
-      'Paid App.app',
-      'Frameworks',
-      'App.framework',
-      'flutter_assets',
-      'AssetManifest.bin',
-    ),
-  ).readAsBytesSync();
+  await evalFlutter('install', options: <String>['--flavor', 'paid']);
+  final Uint8List assetManifestFileData =
+      File(
+        path.join(
+          projectDir,
+          'build',
+          'ios',
+          'iphoneos',
+          'Paid App.app',
+          'Frameworks',
+          'App.framework',
+          'flutter_assets',
+          'AssetManifest.bin',
+        ),
+      ).readAsBytesSync();
 
-  final Map<Object?, Object?> assetManifest = const StandardMessageCodec()
-    .decodeMessage(ByteData.sublistView(assetManifestFileData)) as Map<Object?, Object?>;
+  final Map<Object?, Object?> assetManifest =
+      const StandardMessageCodec().decodeMessage(ByteData.sublistView(assetManifestFileData))
+          as Map<Object?, Object?>;
 
   if (assetManifest.containsKey('assets/free/free.txt')) {
-    return TaskResult.failure('Expected the asset "assets/free/free.txt", which '
+    return TaskResult.failure(
+      'Expected the asset "assets/free/free.txt", which '
       ' was declared with a flavor of "free" to not be included in the asset bundle '
-      ' because the --flavor was set to "paid".');
+      ' because the --flavor was set to "paid".',
+    );
   }
 
   if (!assetManifest.containsKey('assets/paid/paid.txt')) {
-    return TaskResult.failure('Expected the asset "assets/paid/paid.txt", which '
+    return TaskResult.failure(
+      'Expected the asset "assets/paid/paid.txt", which '
       ' was declared with a flavor of "paid" to be included in the asset bundle '
-      ' because the --flavor was set to "paid".');
+      ' because the --flavor was set to "paid".',
+    );
   }
 
-  await flutter(
-    'install',
-    options: <String>['--flavor', 'paid', '--uninstall-only'],
-  );
+  await flutter('install', options: <String>['--flavor', 'paid', '--uninstall-only']);
 
   return TaskResult.success(null);
 }

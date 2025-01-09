@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'icon.dart';
+/// @docImport 'image_icon.dart';
+library;
+
 import 'basic.dart';
 import 'framework.dart';
 import 'icon_theme.dart';
@@ -70,10 +74,7 @@ class FlutterLogo extends StatelessWidget {
       height: iconSize,
       duration: duration,
       curve: curve,
-      decoration: FlutterLogoDecoration(
-        style: style,
-        textColor: textColor,
-      ),
+      decoration: FlutterLogoDecoration(style: style, textColor: textColor),
     );
   }
 }

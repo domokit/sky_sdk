@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 import 'package:test/bootstrap/browser.dart';
 import 'package:test/test.dart';
 import 'package:ui/src/engine.dart';
@@ -113,7 +112,15 @@ Future<void> testMain() async {
     expect(paragraph.minIntrinsicWidth, 50.0); // "Lorem" or "ipsum"
     expect(paragraph.width, 80.0);
     expectLines(paragraph, <TestLine>[
-      l('Lorem      ', 0, 11, hardBreak: false, width: 50.0, widthWithTrailingSpaces: 110.0, left: 0.0),
+      l(
+        'Lorem      ',
+        0,
+        11,
+        hardBreak: false,
+        width: 50.0,
+        widthWithTrailingSpaces: 110.0,
+        left: 0.0,
+      ),
       l('ipsum', 11, 16, hardBreak: true, width: 50.0, left: 0.0),
     ]);
   });
@@ -149,7 +156,12 @@ Future<void> testMain() async {
       textAlign: ui.TextAlign.center,
     );
     final CanvasParagraph paragraph = rich(paragraphStyle, (CanvasParagraphBuilder builder) {
-      builder.addPlaceholder(300.0, 50.0, ui.PlaceholderAlignment.baseline, baseline: ui.TextBaseline.alphabetic);
+      builder.addPlaceholder(
+        300.0,
+        50.0,
+        ui.PlaceholderAlignment.baseline,
+        baseline: ui.TextBaseline.alphabetic,
+      );
     })..layout(constrain(500.0));
 
     expect(paragraph.maxIntrinsicWidth, 300.0);

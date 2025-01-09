@@ -20,18 +20,18 @@ void main() {
     expect(border1.verticalInside, const BorderSide());
     expect(border1.dimensions, const EdgeInsets.symmetric(horizontal: 1.0));
     expect(border1.isUniform, isFalse);
-    expect(border1.scale(2.0), const TableBorder(
-      left: BorderSide(width: 2.0),
-      right: BorderSide(width: 2.0, color: Color(0xFF00FF00)),
-      verticalInside: BorderSide(width: 2.0),
-    ));
+    expect(
+      border1.scale(2.0),
+      const TableBorder(
+        left: BorderSide(width: 2.0),
+        right: BorderSide(width: 2.0, color: Color(0xFF00FF00)),
+        verticalInside: BorderSide(width: 2.0),
+      ),
+    );
   });
 
   test('TableBorder.all constructor', () {
-    final TableBorder border2 = TableBorder.all(
-      width: 2.0,
-      color: const Color(0xFF00FFFF),
-    );
+    final TableBorder border2 = TableBorder.all(width: 2.0, color: const Color(0xFF00FFFF));
     expect(border2.top, const BorderSide(width: 2.0, color: Color(0xFF00FFFF)));
     expect(border2.right, const BorderSide(width: 2.0, color: Color(0xFF00FFFF)));
     expect(border2.bottom, const BorderSide(width: 2.0, color: Color(0xFF00FFFF)));
@@ -56,9 +56,12 @@ void main() {
     expect(border3.verticalInside, const BorderSide(width: 3.0));
     expect(border3.dimensions, const EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0));
     expect(border3.isUniform, isFalse);
-    expect(border3.scale(0.0), const TableBorder.symmetric(
-      outside: BorderSide(width: 0.0, color: Color(0xFFFF0000), style: BorderStyle.none),
-    ));
+    expect(
+      border3.scale(0.0),
+      const TableBorder.symmetric(
+        outside: BorderSide(width: 0.0, color: Color(0xFFFF0000), style: BorderStyle.none),
+      ),
+    );
   });
 
   test('TableBorder.lerp', () {
@@ -124,18 +127,25 @@ void main() {
 
   test('TableBorder Object API', () {
     expect(const TableBorder(), isNot(1.0));
-    expect(const TableBorder().hashCode, isNot(const TableBorder(top: BorderSide(width: 0.0)).hashCode));
+    expect(
+      const TableBorder().hashCode,
+      isNot(const TableBorder(top: BorderSide(width: 0.0)).hashCode),
+    );
   });
 
   test('TableBorder Object API', () {
     final String none = BorderSide.none.toString();
     final String zeroRadius = BorderRadius.zero.toString();
-    expect(const TableBorder().toString(), 'TableBorder($none, $none, $none, $none, $none, $none, $zeroRadius)');
+    expect(
+      const TableBorder().toString(),
+      'TableBorder($none, $none, $none, $none, $none, $none, $zeroRadius)',
+    );
   });
 
   test('TableBorder.all with a borderRadius', () {
-    final TableBorder tableA = TableBorder.all(borderRadius: const BorderRadius.all(Radius.circular(8.0)));
+    final TableBorder tableA = TableBorder.all(
+      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+    );
     expect(tableA.borderRadius, const BorderRadius.all(Radius.circular(8.0)));
   });
-
 }

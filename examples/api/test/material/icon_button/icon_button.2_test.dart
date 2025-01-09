@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('IconButton Types', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.IconButtonApp(),
-    );
+    await tester.pumpWidget(const example.IconButtonApp());
     expect(find.widgetWithIcon(IconButton, Icons.filter_drama), findsNWidgets(8));
     final Finder iconButtons = find.widgetWithIcon(IconButton, Icons.filter_drama);
     for (int i = 0; i <= 3; i++) {

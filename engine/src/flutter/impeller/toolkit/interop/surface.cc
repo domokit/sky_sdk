@@ -62,8 +62,8 @@ bool Surface::DrawDisplayList(const DisplayList& dl) const {
   auto skia_cull_rect =
       SkIRect::MakeWH(cull_rect.GetWidth(), cull_rect.GetHeight());
 
-  auto result = RenderToOnscreen(content_context, render_target, display_list,
-                                 skia_cull_rect, /*reset_host_buffer=*/true);
+  auto result = RenderToTarget(content_context, render_target, display_list,
+                               skia_cull_rect, /*reset_host_buffer=*/true);
   context_->GetContext()->ResetThreadLocalState();
   return result;
 }

@@ -46,9 +46,7 @@ class CiConfig {
       return CiConfig._error(error);
     }
     if (targetsNode is! y.YamlList) {
-      final String error = targetsNode.span.message(
-        'Expected "$_targetsField" to be a list.',
-      );
+      final String error = targetsNode.span.message('Expected "$_targetsField" to be a list.');
       return CiConfig._error(error);
     }
     final y.YamlList targetsList = targetsNode;
@@ -65,13 +63,9 @@ class CiConfig {
     return CiConfig._(ciTargets: result);
   }
 
-  CiConfig._({
-    required this.ciTargets,
-  }) : error = null;
+  CiConfig._({required this.ciTargets}) : error = null;
 
-  CiConfig._error(
-    this.error,
-  ) : ciTargets = <String, CiTarget>{};
+  CiConfig._error(this.error) : ciTargets = <String, CiTarget>{};
 
   /// Information about CI builder configurations, which .ci.yaml calls
   /// "targets".
@@ -121,29 +115,18 @@ class CiTarget {
       );
       return CiTarget._error(error);
     }
-    final CiTargetProperties properties = CiTargetProperties.fromYaml(
-      propertiesNode,
-    );
+    final CiTargetProperties properties = CiTargetProperties.fromYaml(propertiesNode);
     if (!properties.valid) {
       return CiTarget._error(properties.error);
     }
 
-    return CiTarget._(
-      name: name,
-      recipe: recipe,
-      properties: properties,
-    );
+    return CiTarget._(name: name, recipe: recipe, properties: properties);
   }
 
-  CiTarget._({
-    required this.name,
-    required this.recipe,
-    required this.properties,
-  }) : error = null;
+  CiTarget._({required this.name, required this.recipe, required this.properties}) : error = null;
 
-  CiTarget._error(
-    this.error,
-  ) : name = '',
+  CiTarget._error(this.error)
+    : name = '',
       recipe = '',
       properties = CiTargetProperties._error('Invalid');
 
@@ -172,27 +155,17 @@ class CiTargetProperties {
   /// other fields contain information about the target properties.
   factory CiTargetProperties.fromYaml(y.YamlNode yaml) {
     if (yaml is! y.YamlMap) {
-      final String error = yaml.span.message(
-        'Expected "$_propertiesField" to be a map.',
-      );
+      final String error = yaml.span.message('Expected "$_propertiesField" to be a map.');
       return CiTargetProperties._error(error);
     }
     final y.YamlMap propertiesMap = yaml;
-    final String? configName = _stringOfNode(
-      propertiesMap.nodes[_configNameField],
-    );
-    return CiTargetProperties._(
-      configName: configName ?? '',
-    );
+    final String? configName = _stringOfNode(propertiesMap.nodes[_configNameField]);
+    return CiTargetProperties._(configName: configName ?? '');
   }
 
-  CiTargetProperties._({
-    required this.configName,
-  }) : error = null;
+  CiTargetProperties._({required this.configName}) : error = null;
 
-  CiTargetProperties._error(
-    this.error,
-  ) : configName = '';
+  CiTargetProperties._error(this.error) : configName = '';
 
   /// The name of the build configuration. If the containing [CiTarget] instance
   /// is using the engine_v2 recipes, then this name is the same as the name

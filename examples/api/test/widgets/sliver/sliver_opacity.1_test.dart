@@ -3,15 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/sliver/sliver_opacity.1.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/sliver/sliver_opacity.1.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('SliverOpacity example', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SliverOpacityExampleApp(),
-    );
+    await tester.pumpWidget(const example.SliverOpacityExampleApp());
 
     final Finder button = find.byType(FloatingActionButton);
     final Finder opacity = find.byType(SliverOpacity);

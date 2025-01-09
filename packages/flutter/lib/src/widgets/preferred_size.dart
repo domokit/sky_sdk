@@ -65,11 +65,7 @@ abstract class PreferredSizeWidget implements Widget {
 ///  * [AppBar] and [TabBar], which implement PreferredSizeWidget.
 class PreferredSize extends StatelessWidget implements PreferredSizeWidget {
   /// Creates a widget that has a preferred size that the parent can query.
-  const PreferredSize({
-    super.key,
-    required this.preferredSize,
-    required this.child,
-  });
+  const PreferredSize({super.key, required this.preferredSize, required this.child});
 
   /// The widget below this widget in the tree.
   ///

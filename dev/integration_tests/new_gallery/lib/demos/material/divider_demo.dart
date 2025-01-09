@@ -17,16 +17,14 @@ class DividerDemo extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(
-          switch (type) {
-            DividerDemoType.horizontal => localizations.demoDividerTitle,
-            DividerDemoType.vertical   => localizations.demoVerticalDividerTitle,
-          },
-        ),
+        title: Text(switch (type) {
+          DividerDemoType.horizontal => localizations.demoDividerTitle,
+          DividerDemoType.vertical => localizations.demoVerticalDividerTitle,
+        }),
       ),
       body: switch (type) {
         DividerDemoType.horizontal => _HorizontalDividerDemo(),
-        DividerDemoType.vertical   => _VerticalDividerDemo(),
+        DividerDemoType.vertical => _VerticalDividerDemo(),
       },
     );
   }
@@ -49,13 +47,7 @@ class _HorizontalDividerDemo extends StatelessWidget {
               ),
             ),
           ),
-          const Divider(
-            color: Colors.grey,
-            height: 20,
-            thickness: 1,
-            indent: 20,
-            endIndent: 0,
-          ),
+          const Divider(color: Colors.grey, height: 20, thickness: 1, indent: 20, endIndent: 0),
           Expanded(
             child: Container(
               decoration: BoxDecoration(

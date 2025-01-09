@@ -22,7 +22,6 @@ import '../../src/context.dart';
 import '../../src/test_flutter_command_runner.dart';
 
 void main() {
-
   testUsingContext('Android analyze command should run pub', () async {
     final FileSystem fileSystem = MemoryFileSystem.test();
     final Platform platform = FakePlatform();
@@ -91,19 +90,23 @@ void main() {
       builder.variants = <String>['debug', 'release'];
       await runner.run(<String>['analyze', '--android', '--list-build-variants', tempDir.path]);
       expect(logger.statusText, contains('["debug","release"]'));
-    }, overrides: <Type, Generator>{
-      AndroidBuilder: () => builder,
-    });
+    }, overrides: <Type, Generator>{AndroidBuilder: () => builder});
 
     testUsingContext('throw if provide multiple path', () async {
       final Directory anotherTempDir = fileSystem.systemTempDirectory.createTempSync('another');
       await expectLater(
-        runner.run(<String>['analyze', '--android', '--list-build-variants', tempDir.path, anotherTempDir.path]),
+        runner.run(<String>[
+          'analyze',
+          '--android',
+          '--list-build-variants',
+          tempDir.path,
+          anotherTempDir.path,
+        ]),
         throwsA(
           isA<Exception>().having(
             (Exception e) => e.toString(),
-          'description',
-          contains('The Android analyze can process only one directory path'),
+            'description',
+            contains('The Android analyze can process only one directory path'),
           ),
         ),
       );
@@ -111,12 +114,16 @@ void main() {
 
     testUsingContext('can output app link settings', () async {
       const String buildVariant = 'release';
-      await runner.run(<String>['analyze', '--android', '--output-app-link-settings', '--build-variant=$buildVariant', tempDir.path]);
+      await runner.run(<String>[
+        'analyze',
+        '--android',
+        '--output-app-link-settings',
+        '--build-variant=$buildVariant',
+        tempDir.path,
+      ]);
       expect(builder.outputVariant, buildVariant);
       expect(logger.statusText, contains(builder.outputPath));
-    }, overrides: <Type, Generator>{
-      AndroidBuilder: () => builder,
-    });
+    }, overrides: <Type, Generator>{AndroidBuilder: () => builder});
 
     testUsingContext('output app link settings throws if no build variant', () async {
       await expectLater(
@@ -144,7 +151,10 @@ class FakeAndroidBuilder extends Fake implements AndroidBuilder {
   }
 
   @override
-  Future<String> outputsAppLinkSettings(String buildVariant, {required FlutterProject project}) async {
+  Future<String> outputsAppLinkSettings(
+    String buildVariant, {
+    required FlutterProject project,
+  }) async {
     outputVariant = buildVariant;
     return outputPath;
   }

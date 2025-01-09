@@ -30,8 +30,7 @@ Future<void> testMain() async {
     final RecordingCanvas recordingCanvas = RecordingCanvas(screenRect);
 
     Offset offset = Offset.zero;
-    for (final PlaceholderAlignment placeholderAlignment
-        in PlaceholderAlignment.values) {
+    for (final PlaceholderAlignment placeholderAlignment in PlaceholderAlignment.values) {
       _paintTextWithPlaceholder(
         recordingCanvas,
         offset,
@@ -101,10 +100,7 @@ void _paintTextWithPlaceholder(
 
   // Then fill the placeholders.
   final TextBox placeholderBox = paragraph.getBoxesForPlaceholders().single;
-  canvas.drawRect(
-    placeholderBox.toRect().shift(offset),
-    SurfacePaint()..color = red,
-  );
+  canvas.drawRect(placeholderBox.toRect().shift(offset), SurfacePaint()..color = red);
 }
 
 Paragraph _createParagraphWithPlaceholder(
@@ -113,10 +109,8 @@ Paragraph _createParagraphWithPlaceholder(
   PlaceholderAlignment placeholderAlignment,
   TextAlign textAlignment,
 ) {
-  final ParagraphBuilder builder =
-      ParagraphBuilder(ParagraphStyle(textAlign: textAlignment));
-  builder
-      .pushStyle(TextStyle(color: black, fontFamily: 'Roboto', fontSize: 14));
+  final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(textAlign: textAlignment));
+  builder.pushStyle(TextStyle(color: black, fontFamily: 'Roboto', fontSize: 14));
   builder.addText(before);
   builder.addPlaceholder(
     placeholderSize.width,

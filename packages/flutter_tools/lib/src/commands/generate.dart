@@ -24,7 +24,7 @@ class GenerateCommand extends FlutterCommand {
       '"flutter generate" is deprecated, use "dart pub run build_runner" instead. '
       'The following dependencies must be added to dev_dependencies in pubspec.yaml:\n'
       'build_runner: ^1.10.0\n'
-      'including all dependencies under the "builders" key'
+      'including all dependencies under the "builders" key',
     );
     return FlutterCommandResult.fail();
   }

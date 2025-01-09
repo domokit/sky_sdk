@@ -30,9 +30,10 @@ Future<void> testMain() async {
     const double fontSize = 22.0;
     const double width = 126.0;
     const double padding = 20.0;
-    final SurfacePaintData borderPaint = SurfacePaintData()
-      ..color = black.value
-      ..style = PaintingStyle.stroke;
+    final SurfacePaintData borderPaint =
+        SurfacePaintData()
+          ..color = black.value
+          ..style = PaintingStyle.stroke;
 
     paragraph = rich(
       EngineParagraphStyle(fontFamily: 'Roboto', fontSize: fontSize, ellipsis: '...'),

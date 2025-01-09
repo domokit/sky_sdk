@@ -62,7 +62,9 @@ void main(List<String> args) {
   print('');
   print('Stats:');
   print('  packages/flutter            : ${getStatsFor(Directory("packages/flutter"))}');
-  print('  dev/integration_tests/flutter_gallery    : ${getStatsFor(Directory("dev/integration_tests/flutter_gallery"))}');
+  print(
+    '  dev/integration_tests/flutter_gallery    : ${getStatsFor(Directory("dev/integration_tests/flutter_gallery"))}',
+  );
 
   final Directory lib = _dir(out, 'lib');
   if (lib.existsSync()) {
@@ -86,15 +88,13 @@ void main(List<String> args) {
   _file(out, 'pubspec.yaml').writeAsStringSync(pubspec);
 
   // Replace the (flutter_gallery specific) analysis_options.yaml file with a default one.
-  _file(out, 'analysis_options.yaml').writeAsStringSync(
-    '''
+  _file(out, 'analysis_options.yaml').writeAsStringSync('''
 analyzer:
   errors:
     # See analysis_options.yaml in the flutter root for context.
     deprecated_member_use: ignore
     deprecated_member_use_from_same_package: ignore
-'''
-  );
+''');
 
   _file(out, '.dartignore').writeAsStringSync('');
 

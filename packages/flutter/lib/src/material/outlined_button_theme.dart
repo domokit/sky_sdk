@@ -39,7 +39,7 @@ class OutlinedButtonThemeData with Diagnosticable {
   /// Creates a [OutlinedButtonThemeData].
   ///
   /// The [style] may be null.
-  const OutlinedButtonThemeData({ this.style });
+  const OutlinedButtonThemeData({this.style});
 
   /// Overrides for [OutlinedButton]'s default style.
   ///
@@ -51,13 +51,15 @@ class OutlinedButtonThemeData with Diagnosticable {
   final ButtonStyle? style;
 
   /// Linearly interpolate between two outlined button themes.
-  static OutlinedButtonThemeData? lerp(OutlinedButtonThemeData? a, OutlinedButtonThemeData? b, double t) {
+  static OutlinedButtonThemeData? lerp(
+    OutlinedButtonThemeData? a,
+    OutlinedButtonThemeData? b,
+    double t,
+  ) {
     if (identical(a, b)) {
       return a;
     }
-    return OutlinedButtonThemeData(
-      style: ButtonStyle.lerp(a?.style, b?.style, t),
-    );
+    return OutlinedButtonThemeData(style: ButtonStyle.lerp(a?.style, b?.style, t));
   }
 
   @override
@@ -94,11 +96,7 @@ class OutlinedButtonThemeData with Diagnosticable {
 ///    [ButtonStyle] for [OutlinedButton]s below the overall [Theme].
 class OutlinedButtonTheme extends InheritedTheme {
   /// Create a [OutlinedButtonTheme].
-  const OutlinedButtonTheme({
-    super.key,
-    required this.data,
-    required super.child,
-  });
+  const OutlinedButtonTheme({super.key, required this.data, required super.child});
 
   /// The configuration of this theme.
   final OutlinedButtonThemeData data;
@@ -114,7 +112,8 @@ class OutlinedButtonTheme extends InheritedTheme {
   /// OutlinedButtonThemeData theme = OutlinedButtonTheme.of(context);
   /// ```
   static OutlinedButtonThemeData of(BuildContext context) {
-    final OutlinedButtonTheme? buttonTheme = context.dependOnInheritedWidgetOfExactType<OutlinedButtonTheme>();
+    final OutlinedButtonTheme? buttonTheme =
+        context.dependOnInheritedWidgetOfExactType<OutlinedButtonTheme>();
     return buttonTheme?.data ?? Theme.of(context).outlinedButtonTheme;
   }
 

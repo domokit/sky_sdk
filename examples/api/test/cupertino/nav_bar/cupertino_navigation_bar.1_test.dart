@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('CupertinoNavigationBar with bottom widget', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NavBarApp(),
-    );
+    await tester.pumpWidget(const example.NavBarApp());
 
     final Finder navBarFinder = find.byType(CupertinoNavigationBar);
     final Finder searchFieldFinder = find.byType(CupertinoSearchTextField);

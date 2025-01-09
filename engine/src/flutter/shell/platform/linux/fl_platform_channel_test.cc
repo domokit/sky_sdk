@@ -15,8 +15,8 @@ TEST(FlPlatformChannelTest, ExitResponse) {
   g_autoptr(FlMockBinaryMessenger) messenger = fl_mock_binary_messenger_new();
   fl_mock_binary_messenger_set_json_method_channel(
       messenger, "flutter/platform",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         EXPECT_STREQ(name, "System.requestAppExit");
         g_autoptr(FlValue) return_value = fl_value_new_map();
         fl_value_set_string_take(return_value, "response",

@@ -27,8 +27,7 @@ class SnippetConfiguration {
   /// Gets the skeleton file to use for the given [SampleType] and DartPad
   /// preference.
   File getHtmlSkeletonFile(String type) {
-    final String filename =
-        type == 'dartpad' ? 'dartpad-sample.html' : '$type.html';
+    final String filename = type == 'dartpad' ? 'dartpad-sample.html' : '$type.html';
     return filesystem.file(path.join(skeletonsDirectory.path, filename));
   }
 }
@@ -37,17 +36,22 @@ class SnippetConfiguration {
 /// locations based in the current location of the snippets main.dart.
 class FlutterRepoSnippetConfiguration extends SnippetConfiguration {
   FlutterRepoSnippetConfiguration({required this.flutterRoot, super.filesystem})
-      : super(
-          configDirectory: _underRoot(filesystem, flutterRoot,
-              const <String>['dev', 'snippets', 'config']),
-          skeletonsDirectory: _underRoot(filesystem, flutterRoot,
-              const <String>['dev', 'snippets', 'config', 'skeletons']),
-        );
+    : super(
+        configDirectory: _underRoot(filesystem, flutterRoot, const <String>[
+          'dev',
+          'snippets',
+          'config',
+        ]),
+        skeletonsDirectory: _underRoot(filesystem, flutterRoot, const <String>[
+          'dev',
+          'snippets',
+          'config',
+          'skeletons',
+        ]),
+      );
 
   final Directory flutterRoot;
 
-  static Directory _underRoot(
-          FileSystem fs, Directory flutterRoot, List<String> dirs) =>
-      fs.directory(path.canonicalize(
-          path.joinAll(<String>[flutterRoot.absolute.path, ...dirs])));
+  static Directory _underRoot(FileSystem fs, Directory flutterRoot, List<String> dirs) =>
+      fs.directory(path.canonicalize(path.joinAll(<String>[flutterRoot.absolute.path, ...dirs])));
 }

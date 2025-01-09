@@ -68,10 +68,9 @@ TEST(FlViewTest, SecondaryView) {
   FlView* implicit_view = fl_view_new(project);
 
   FlEngine* engine = fl_view_get_engine(implicit_view);
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
 
   FlutterViewId view_id = -1;
-  embedder_api->AddView = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->AddView = MOCK_ENGINE_PROC(
       AddView, ([&view_id](auto engine, const FlutterAddViewInfo* info) {
         view_id = info->view_id;
         FlutterAddViewResult result = {
@@ -97,10 +96,9 @@ TEST(FlViewTest, SecondaryViewError) {
   FlView* implicit_view = fl_view_new(project);
 
   FlEngine* engine = fl_view_get_engine(implicit_view);
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
 
   FlutterViewId view_id = -1;
-  embedder_api->AddView = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->AddView = MOCK_ENGINE_PROC(
       AddView, ([&view_id](auto engine, const FlutterAddViewInfo* info) {
         view_id = info->view_id;
         return kInvalidArguments;
@@ -121,10 +119,9 @@ TEST(FlViewTest, ViewDestroy) {
   FlView* implicit_view = fl_view_new(project);
 
   FlEngine* engine = fl_view_get_engine(implicit_view);
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
 
   g_autoptr(GPtrArray) removed_views = g_ptr_array_new();
-  embedder_api->RemoveView = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->RemoveView = MOCK_ENGINE_PROC(
       RemoveView,
       ([removed_views](auto engine, const FlutterRemoveViewInfo* info) {
         g_ptr_array_add(removed_views, GINT_TO_POINTER(info->view_id));
@@ -157,9 +154,8 @@ TEST(FlViewTest, ViewDestroyError) {
   FlView* implicit_view = fl_view_new(project);
 
   FlEngine* engine = fl_view_get_engine(implicit_view);
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
 
-  embedder_api->RemoveView = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->RemoveView = MOCK_ENGINE_PROC(
       RemoveView, ([](auto engine, const FlutterRemoveViewInfo* info) {
         return kInvalidArguments;
       }));

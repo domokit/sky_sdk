@@ -7,9 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Can off/on stage Flutter logo widget', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.OffstageApp(),
-    );
+    await tester.pumpWidget(const example.OffstageApp());
 
     // The Flutter logo is off stage and not visible.
     expect(find.text('Flutter logo is offstage: true'), findsOneWidget);

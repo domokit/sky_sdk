@@ -20,39 +20,31 @@ void main() {
     );
   }
 
-  testWidgets(
-    'FilterChip displays the correct border when selected',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const example.MaterialStateOutlinedBorderExampleApp(),
-      );
+  testWidgets('FilterChip displays the correct border when selected', (WidgetTester tester) async {
+    await tester.pumpWidget(const example.MaterialStateOutlinedBorderExampleApp());
 
-      expect(
-        findBorderShape(const RoundedRectangleBorder(
-          side: BorderSide(color: Colors.transparent),
-        )),
-        findsOne,
-      );
-    },
-  );
+    expect(
+      findBorderShape(const RoundedRectangleBorder(side: BorderSide(color: Colors.transparent))),
+      findsOne,
+    );
+  });
 
-  testWidgets(
-    'FilterChip displays the correct border when not selected',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const example.MaterialStateOutlinedBorderExampleApp(),
-      );
+  testWidgets('FilterChip displays the correct border when not selected', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.MaterialStateOutlinedBorderExampleApp());
 
-      await tester.tap(find.byType(FilterChip));
-      await tester.pumpAndSettle();
+    await tester.tap(find.byType(FilterChip));
+    await tester.pumpAndSettle();
 
-      expect(
-        findBorderShape(RoundedRectangleBorder(
+    expect(
+      findBorderShape(
+        RoundedRectangleBorder(
           side: const BorderSide(color: Color(0xFFCAC4D0)),
           borderRadius: BorderRadius.circular(8),
-        )),
-        findsOne,
-      );
-    },
-  );
+        ),
+      ),
+      findsOne,
+    );
+  });
 }

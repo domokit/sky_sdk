@@ -10,7 +10,7 @@ import 'semantics.dart';
 /// level (h1 ... h6).
 class SemanticHeading extends SemanticRole {
   SemanticHeading(SemanticsObject semanticsObject)
-      : super.blank(SemanticRoleKind.heading, semanticsObject) {
+    : super.blank(SemanticRoleKind.heading, semanticsObject) {
     addFocusManagement();
     addLiveRegion();
     addRouteName();
@@ -27,7 +27,6 @@ class SemanticHeading extends SemanticRole {
       // by semanticsObject.rect, the extra margins/paddings must be zeroed out.
       ..margin = '0'
       ..padding = '0'
-
       // The 10px size was picked empirically. By default the browser will scale
       // the font size based on the heading level. Font size should not be
       // important in semantics since rendering is done via the render tree.

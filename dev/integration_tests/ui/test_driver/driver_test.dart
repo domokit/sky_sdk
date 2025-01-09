@@ -28,21 +28,25 @@ void main() {
     test('waitForAbsent should time out waiting for text "present" to disappear', () async {
       await expectLater(
         () => driver.waitForAbsent(presentText, timeout: const Duration(seconds: 1)),
-        throwsA(isA<DriverError>().having(
-          (DriverError error) => error.message,
-          'message',
-          contains('Timeout while executing waitForAbsent'),
-        )),
+        throwsA(
+          isA<DriverError>().having(
+            (DriverError error) => error.message,
+            'message',
+            contains('Timeout while executing waitForAbsent'),
+          ),
+        ),
       );
     }, timeout: Timeout.none);
 
     test('waitForAbsent should resolve when text "present" disappears', () async {
       // Begin waiting for it to disappear
       final Completer<void> whenWaitForAbsentResolves = Completer<void>();
-      driver.waitForAbsent(presentText).then(
-        whenWaitForAbsentResolves.complete,
-        onError: whenWaitForAbsentResolves.completeError,
-      );
+      driver
+          .waitForAbsent(presentText)
+          .then(
+            whenWaitForAbsentResolves.complete,
+            onError: whenWaitForAbsentResolves.completeError,
+          );
 
       // Wait 1 second then make it disappear
       await Future<void>.delayed(const Duration(seconds: 1));
@@ -55,21 +59,22 @@ void main() {
     test('waitFor times out waiting for "present" to reappear', () async {
       await expectLater(
         () => driver.waitFor(presentText, timeout: const Duration(seconds: 1)),
-        throwsA(isA<DriverError>().having(
-          (DriverError error) => error.message,
-          'message',
-          contains('Timeout while executing waitFor'),
-        )),
+        throwsA(
+          isA<DriverError>().having(
+            (DriverError error) => error.message,
+            'message',
+            contains('Timeout while executing waitFor'),
+          ),
+        ),
       );
     }, timeout: Timeout.none);
 
     test('waitFor should resolve when text "present" reappears', () async {
       // Begin waiting for it to reappear
       final Completer<void> whenWaitForResolves = Completer<void>();
-      driver.waitFor(presentText).then(
-        whenWaitForResolves.complete,
-        onError: whenWaitForResolves.completeError,
-      );
+      driver
+          .waitFor(presentText)
+          .then(whenWaitForResolves.complete, onError: whenWaitForResolves.completeError);
 
       // Wait 1 second then make it appear
       await Future<void>.delayed(const Duration(seconds: 1));

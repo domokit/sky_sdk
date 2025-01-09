@@ -30,8 +30,7 @@ double _measureBorderRadius(double x, double y) => x * x + y * y;
 ///
 /// See [Canvas] for docs for these methods.
 class RecordingCanvas {
-  RecordingCanvas(ui.Rect? bounds)
-      : _paintBounds = _PaintBounds(bounds ?? ui.Rect.largest);
+  RecordingCanvas(ui.Rect? bounds) : _paintBounds = _PaintBounds(bounds ?? ui.Rect.largest);
 
   /// Computes [_pictureBounds].
   final _PaintBounds _paintBounds;
@@ -134,9 +133,10 @@ class RecordingCanvas {
       final StringBuffer debugBuf = StringBuffer();
       int skips = 0;
       debugBuf.writeln(
-          '--- Applying RecordingCanvas to ${engineCanvas.runtimeType} '
-          'with bounds $_paintBounds and clip $clipRect (w = ${clipRect.width},'
-          ' h = ${clipRect.height})');
+        '--- Applying RecordingCanvas to ${engineCanvas.runtimeType} '
+        'with bounds $_paintBounds and clip $clipRect (w = ${clipRect.width},'
+        ' h = ${clipRect.height})',
+      );
       for (int i = 0; i < _commands.length; i++) {
         final PaintCommand command = _commands[i];
         if (command is DrawCommand) {
@@ -314,8 +314,7 @@ class RecordingCanvas {
     _commands.add(command);
   }
 
-  ui.Rect? getDestinationClipBounds() =>
-      _paintBounds.getDestinationClipBounds();
+  ui.Rect? getDestinationClipBounds() => _paintBounds.getDestinationClipBounds();
 
   void drawColor(ui.Color color, ui.BlendMode blendMode) {
     assert(!_recordingEnded);
@@ -326,8 +325,10 @@ class RecordingCanvas {
 
   void drawLine(ui.Offset p1, ui.Offset p2, SurfacePaint paint) {
     assert(!_recordingEnded);
-    assert(paint.shader == null || paint.shader is! EngineImageShader,
-        'ImageShader not supported yet');
+    assert(
+      paint.shader == null || paint.shader is! EngineImageShader,
+      'ImageShader not supported yet',
+    );
     final double paintSpread = math.max(_getPaintSpread(paint), 1.0);
     final PaintDrawLine command = PaintDrawLine(p1, p2, paint.paintData);
     // TODO(yjbanov): This can be optimized. Currently we create a box around
@@ -351,8 +352,10 @@ class RecordingCanvas {
 
   void drawPaint(SurfacePaint paint) {
     assert(!_recordingEnded);
-    assert(paint.shader == null || paint.shader is! EngineImageShader,
-        'ImageShader not supported yet');
+    assert(
+      paint.shader == null || paint.shader is! EngineImageShader,
+      'ImageShader not supported yet',
+    );
     renderStrategy.hasArbitraryPaint = true;
     _didDraw = true;
     final PaintDrawPaint command = PaintDrawPaint(paint.paintData);
@@ -406,36 +409,24 @@ class RecordingCanvas {
     final ui.RRect scaledOuter = outer.scaleRadii();
     final ui.RRect scaledInner = inner.scaleRadii();
 
-    final double outerTl =
-        _measureBorderRadius(scaledOuter.tlRadiusX, scaledOuter.tlRadiusY);
-    final double outerTr =
-        _measureBorderRadius(scaledOuter.trRadiusX, scaledOuter.trRadiusY);
-    final double outerBl =
-        _measureBorderRadius(scaledOuter.blRadiusX, scaledOuter.blRadiusY);
-    final double outerBr =
-        _measureBorderRadius(scaledOuter.brRadiusX, scaledOuter.brRadiusY);
+    final double outerTl = _measureBorderRadius(scaledOuter.tlRadiusX, scaledOuter.tlRadiusY);
+    final double outerTr = _measureBorderRadius(scaledOuter.trRadiusX, scaledOuter.trRadiusY);
+    final double outerBl = _measureBorderRadius(scaledOuter.blRadiusX, scaledOuter.blRadiusY);
+    final double outerBr = _measureBorderRadius(scaledOuter.brRadiusX, scaledOuter.brRadiusY);
 
-    final double innerTl =
-        _measureBorderRadius(scaledInner.tlRadiusX, scaledInner.tlRadiusY);
-    final double innerTr =
-        _measureBorderRadius(scaledInner.trRadiusX, scaledInner.trRadiusY);
-    final double innerBl =
-        _measureBorderRadius(scaledInner.blRadiusX, scaledInner.blRadiusY);
-    final double innerBr =
-        _measureBorderRadius(scaledInner.brRadiusX, scaledInner.brRadiusY);
+    final double innerTl = _measureBorderRadius(scaledInner.tlRadiusX, scaledInner.tlRadiusY);
+    final double innerTr = _measureBorderRadius(scaledInner.trRadiusX, scaledInner.trRadiusY);
+    final double innerBl = _measureBorderRadius(scaledInner.blRadiusX, scaledInner.blRadiusY);
+    final double innerBr = _measureBorderRadius(scaledInner.brRadiusX, scaledInner.brRadiusY);
 
-    if (innerTl > outerTl ||
-        innerTr > outerTr ||
-        innerBl > outerBl ||
-        innerBr > outerBr) {
+    if (innerTl > outerTl || innerTr > outerTr || innerBl > outerBl || innerBr > outerBr) {
       return; // Some inner radius is overlapping some outer radius
     }
 
     renderStrategy.hasArbitraryPaint = true;
     _didDraw = true;
     final double paintSpread = _getPaintSpread(paint);
-    final PaintDrawDRRect command =
-        PaintDrawDRRect(outer, inner, paint.paintData);
+    final PaintDrawDRRect command = PaintDrawDRRect(outer, inner, paint.paintData);
     final double left = math.min(outer.left, outer.right);
     final double right = math.max(outer.left, outer.right);
     final double top = math.min(outer.top, outer.bottom);
@@ -523,8 +514,7 @@ class RecordingCanvas {
       }
       // Clone path so it can be reused for subsequent draw calls.
       final ui.Path clone = SurfacePath.shallowCopy(path);
-      final PaintDrawPath command =
-          PaintDrawPath(clone as SurfacePath, paint.paintData);
+      final PaintDrawPath command = PaintDrawPath(clone as SurfacePath, paint.paintData);
       _paintBounds.grow(pathBounds, command);
       clone.fillType = sPath.fillType;
       _commands.add(command);
@@ -533,17 +523,17 @@ class RecordingCanvas {
 
   void drawImage(ui.Image image, ui.Offset offset, SurfacePaint paint) {
     assert(!_recordingEnded);
-    assert(paint.shader == null || paint.shader is! EngineImageShader,
-        'ImageShader not supported yet');
+    assert(
+      paint.shader == null || paint.shader is! EngineImageShader,
+      'ImageShader not supported yet',
+    );
     renderStrategy.hasArbitraryPaint = true;
     renderStrategy.hasImageElements = true;
     _didDraw = true;
     final double left = offset.dx;
     final double top = offset.dy;
-    final PaintDrawImage command =
-        PaintDrawImage(image, offset, paint.paintData);
-    _paintBounds.growLTRB(
-        left, top, left + image.width, top + image.height, command);
+    final PaintDrawImage command = PaintDrawImage(image, offset, paint.paintData);
+    _paintBounds.growLTRB(left, top, left + image.width, top + image.height, command);
     _commands.add(command);
   }
 
@@ -569,16 +559,16 @@ class RecordingCanvas {
     }
   }
 
-  void drawImageRect(
-      ui.Image image, ui.Rect src, ui.Rect dst, SurfacePaint paint) {
+  void drawImageRect(ui.Image image, ui.Rect src, ui.Rect dst, SurfacePaint paint) {
     assert(!_recordingEnded);
-    assert(paint.shader == null || paint.shader is! EngineImageShader,
-        'ImageShader not supported yet');
+    assert(
+      paint.shader == null || paint.shader is! EngineImageShader,
+      'ImageShader not supported yet',
+    );
     renderStrategy.hasArbitraryPaint = true;
     renderStrategy.hasImageElements = true;
     _didDraw = true;
-    final PaintDrawImageRect command =
-        PaintDrawImageRect(image, src, dst, paint.paintData);
+    final PaintDrawImageRect command = PaintDrawImageRect(image, src, dst, paint.paintData);
     _paintBounds.grow(dst, command);
     _commands.add(command);
   }
@@ -596,8 +586,7 @@ class RecordingCanvas {
       renderStrategy.hasArbitraryPaint = true;
     }
     renderStrategy.hasParagraphs = true;
-    final PaintDrawParagraph command =
-        PaintDrawParagraph(engineParagraph, offset);
+    final PaintDrawParagraph command = PaintDrawParagraph(engineParagraph, offset);
 
     final ui.Rect paragraphBounds = engineParagraph.paintBounds;
     _paintBounds.growLTRB(
@@ -611,43 +600,45 @@ class RecordingCanvas {
     _commands.add(command);
   }
 
-  void drawShadow(ui.Path path, ui.Color color, double elevation,
-      bool transparentOccluder) {
+  void drawShadow(ui.Path path, ui.Color color, double elevation, bool transparentOccluder) {
     assert(!_recordingEnded);
     renderStrategy.hasArbitraryPaint = true;
     _didDraw = true;
-    final ui.Rect shadowRect =
-        computePenumbraBounds(path.getBounds(), elevation);
+    final ui.Rect shadowRect = computePenumbraBounds(path.getBounds(), elevation);
     final PaintDrawShadow command = PaintDrawShadow(
-        path as SurfacePath, color, elevation, transparentOccluder);
+      path as SurfacePath,
+      color,
+      elevation,
+      transparentOccluder,
+    );
     _paintBounds.grow(shadowRect, command);
     _commands.add(command);
   }
 
-  void drawVertices(
-      SurfaceVertices vertices, ui.BlendMode blendMode, SurfacePaint paint) {
+  void drawVertices(SurfaceVertices vertices, ui.BlendMode blendMode, SurfacePaint paint) {
     assert(!_recordingEnded);
     renderStrategy.hasArbitraryPaint = true;
     _didDraw = true;
-    final PaintDrawVertices command =
-        PaintDrawVertices(vertices, blendMode, paint.paintData);
+    final PaintDrawVertices command = PaintDrawVertices(vertices, blendMode, paint.paintData);
     _growPaintBoundsByPoints(vertices.positions, 0, paint, command);
     _commands.add(command);
   }
 
-  void drawRawPoints(
-      ui.PointMode pointMode, Float32List points, SurfacePaint paint) {
+  void drawRawPoints(ui.PointMode pointMode, Float32List points, SurfacePaint paint) {
     assert(!_recordingEnded);
     renderStrategy.hasArbitraryPaint = true;
     _didDraw = true;
-    final PaintDrawPoints command =
-        PaintDrawPoints(pointMode, points, paint.paintData);
+    final PaintDrawPoints command = PaintDrawPoints(pointMode, points, paint.paintData);
     _growPaintBoundsByPoints(points, paint.strokeWidth, paint, command);
     _commands.add(command);
   }
 
-  void _growPaintBoundsByPoints(Float32List points, double thickness,
-      SurfacePaint paint, DrawCommand command) {
+  void _growPaintBoundsByPoints(
+    Float32List points,
+    double thickness,
+    SurfacePaint paint,
+    DrawCommand command,
+  ) {
     double minValueX, maxValueX, minValueY, maxValueY;
     minValueX = maxValueX = points[0];
     minValueY = maxValueY = points[1];
@@ -1099,11 +1090,12 @@ class PaintDrawRRect extends DrawCommand {
 
 class PaintDrawDRRect extends DrawCommand {
   PaintDrawDRRect(this.outer, this.inner, this.paint) {
-    path = ui.Path()
-      ..fillType = ui.PathFillType.evenOdd
-      ..addRRect(outer)
-      ..addRRect(inner)
-      ..close();
+    path =
+        ui.Path()
+          ..fillType = ui.PathFillType.evenOdd
+          ..addRRect(outer)
+          ..addRRect(inner)
+          ..close();
   }
 
   final ui.RRect outer;
@@ -1196,8 +1188,7 @@ class PaintDrawPath extends DrawCommand {
 }
 
 class PaintDrawShadow extends DrawCommand {
-  PaintDrawShadow(
-      this.path, this.color, this.elevation, this.transparentOccluder);
+  PaintDrawShadow(this.path, this.color, this.elevation, this.transparentOccluder);
 
   final SurfacePath path;
   final ui.Color color;
@@ -1300,9 +1291,10 @@ class Subpath {
   final List<PathCommand> commands;
 
   Subpath shift(ui.Offset offset) {
-    final Subpath result = Subpath(startX + offset.dx, startY + offset.dy)
-      ..currentX = currentX + offset.dx
-      ..currentY = currentY + offset.dy;
+    final Subpath result =
+        Subpath(startX + offset.dx, startY + offset.dy)
+          ..currentX = currentX + offset.dx
+          ..currentY = currentY + offset.dy;
 
     for (final PathCommand command in commands) {
       result.commands.add(command.shifted(offset));
@@ -1331,9 +1323,10 @@ abstract class PathCommand {
   void transform(Float32List matrix4, SurfacePath targetPath);
 
   /// Helper method for implementing transforms.
-  static ui.Offset _transformOffset(double x, double y, Float32List matrix4) =>
-      ui.Offset((matrix4[0] * x) + (matrix4[4] * y) + matrix4[12],
-          (matrix4[1] * x) + (matrix4[5] * y) + matrix4[13]);
+  static ui.Offset _transformOffset(double x, double y, Float32List matrix4) => ui.Offset(
+    (matrix4[0] * x) + (matrix4[4] * y) + matrix4[12],
+    (matrix4[1] * x) + (matrix4[5] * y) + matrix4[13],
+  );
 }
 
 class MoveTo extends PathCommand {
@@ -1393,8 +1386,16 @@ class LineTo extends PathCommand {
 }
 
 class Ellipse extends PathCommand {
-  const Ellipse(this.x, this.y, this.radiusX, this.radiusY, this.rotation,
-      this.startAngle, this.endAngle, this.anticlockwise);
+  const Ellipse(
+    this.x,
+    this.y,
+    this.radiusX,
+    this.radiusY,
+    this.rotation,
+    this.startAngle,
+    this.endAngle,
+    this.anticlockwise,
+  );
 
   final double x;
   final double y;
@@ -1407,37 +1408,46 @@ class Ellipse extends PathCommand {
 
   @override
   Ellipse shifted(ui.Offset offset) {
-    return Ellipse(x + offset.dx, y + offset.dy, radiusX, radiusY, rotation,
-        startAngle, endAngle, anticlockwise);
+    return Ellipse(
+      x + offset.dx,
+      y + offset.dy,
+      radiusX,
+      radiusY,
+      rotation,
+      startAngle,
+      endAngle,
+      anticlockwise,
+    );
   }
 
   @override
   void transform(Float32List matrix4, SurfacePath targetPath) {
     final ui.Path bezierPath = ui.Path();
     _drawArcWithBezier(
-        x,
-        y,
-        radiusX,
-        radiusY,
-        rotation,
-        startAngle,
-        anticlockwise ? startAngle - endAngle : endAngle - startAngle,
-        matrix4,
-        bezierPath);
-    targetPath.addPathWithMode(
-        bezierPath, 0, 0, matrix4, SPathAddPathMode.kAppend);
+      x,
+      y,
+      radiusX,
+      radiusY,
+      rotation,
+      startAngle,
+      anticlockwise ? startAngle - endAngle : endAngle - startAngle,
+      matrix4,
+      bezierPath,
+    );
+    targetPath.addPathWithMode(bezierPath, 0, 0, matrix4, SPathAddPathMode.kAppend);
   }
 
   void _drawArcWithBezier(
-      double centerX,
-      double centerY,
-      double radiusX,
-      double radiusY,
-      double rotation,
-      double startAngle,
-      double sweep,
-      Float32List matrix4,
-      ui.Path targetPath) {
+    double centerX,
+    double centerY,
+    double radiusX,
+    double radiusY,
+    double rotation,
+    double startAngle,
+    double sweep,
+    Float32List matrix4,
+    ui.Path targetPath,
+  ) {
     double ratio = sweep.abs() / (math.pi / 2.0);
     if ((1.0 - ratio).abs() < 0.0000001) {
       ratio = 1.0;
@@ -1446,23 +1456,34 @@ class Ellipse extends PathCommand {
     final double anglePerSegment = sweep / segments;
     double angle = startAngle;
     for (int segment = 0; segment < segments; segment++) {
-      _drawArcSegment(targetPath, centerX, centerY, radiusX, radiusY, rotation,
-          angle, anglePerSegment, segment == 0, matrix4);
+      _drawArcSegment(
+        targetPath,
+        centerX,
+        centerY,
+        radiusX,
+        radiusY,
+        rotation,
+        angle,
+        anglePerSegment,
+        segment == 0,
+        matrix4,
+      );
       angle += anglePerSegment;
     }
   }
 
   void _drawArcSegment(
-      ui.Path path,
-      double centerX,
-      double centerY,
-      double radiusX,
-      double radiusY,
-      double rotation,
-      double startAngle,
-      double sweep,
-      bool startPath,
-      Float32List matrix4) {
+    ui.Path path,
+    double centerX,
+    double centerY,
+    double radiusX,
+    double radiusY,
+    double rotation,
+    double startAngle,
+    double sweep,
+    bool startPath,
+    Float32List matrix4,
+  ) {
     final double s = 4 / 3 * math.tan(sweep / 4);
 
     // Rotate unit vector to startAngle and endAngle to use for computing start
@@ -1497,21 +1518,24 @@ class Ellipse extends PathCommand {
       }
     }
     if (rotation == 0.0) {
-      path.cubicTo(centerX + cpx1, centerY + cpy1, centerX + cpx2,
-          centerY + cpy2, endPointX, endPointY);
+      path.cubicTo(
+        centerX + cpx1,
+        centerY + cpy1,
+        centerX + cpx2,
+        centerY + cpy2,
+        endPointX,
+        endPointY,
+      );
     } else {
       final double rotatedCpx1 = centerX + (cpx1 * cosR) + (cpy1 * sinR);
       final double rotatedCpy1 = centerY + (cpy1 * cosR) - (cpx1 * sinR);
       final double rotatedCpx2 = centerX + (cpx2 * cosR) + (cpy2 * sinR);
       final double rotatedCpy2 = centerY + (cpy2 * cosR) - (cpx2 * sinR);
-      final double rotatedEndX = centerX +
-          ((endPointX - centerX) * cosR) +
-          ((endPointY - centerY) * sinR);
-      final double rotatedEndY = centerY +
-          ((endPointY - centerY) * cosR) -
-          ((endPointX - centerX) * sinR);
-      path.cubicTo(rotatedCpx1, rotatedCpy1, rotatedCpx2, rotatedCpy2,
-          rotatedEndX, rotatedEndY);
+      final double rotatedEndX =
+          centerX + ((endPointX - centerX) * cosR) + ((endPointY - centerY) * sinR);
+      final double rotatedEndY =
+          centerY + ((endPointY - centerY) * cosR) - ((endPointX - centerX) * sinR);
+      path.cubicTo(rotatedCpx1, rotatedCpy1, rotatedCpx2, rotatedCpy2, rotatedEndX, rotatedEndY);
     }
   }
 
@@ -1536,8 +1560,7 @@ class QuadraticCurveTo extends PathCommand {
 
   @override
   QuadraticCurveTo shifted(ui.Offset offset) {
-    return QuadraticCurveTo(
-        x1 + offset.dx, y1 + offset.dy, x2 + offset.dx, y2 + offset.dy);
+    return QuadraticCurveTo(x1 + offset.dx, y1 + offset.dy, x2 + offset.dx, y2 + offset.dy);
   }
 
   @override
@@ -1552,8 +1575,7 @@ class QuadraticCurveTo extends PathCommand {
     final double transformedY1 = (m1 * x1) + (m5 * y1) + m13;
     final double transformedX2 = (m0 * x2) + (m4 * y2) + m12;
     final double transformedY2 = (m1 * x2) + (m5 * y2) + m13;
-    targetPath.quadraticBezierTo(
-        transformedX1, transformedY1, transformedX2, transformedY2);
+    targetPath.quadraticBezierTo(transformedX1, transformedY1, transformedX2, transformedY2);
   }
 
   @override
@@ -1579,8 +1601,14 @@ class BezierCurveTo extends PathCommand {
 
   @override
   BezierCurveTo shifted(ui.Offset offset) {
-    return BezierCurveTo(x1 + offset.dx, y1 + offset.dy, x2 + offset.dx,
-        y2 + offset.dy, x3 + offset.dx, y3 + offset.dy);
+    return BezierCurveTo(
+      x1 + offset.dx,
+      y1 + offset.dy,
+      x2 + offset.dx,
+      y2 + offset.dy,
+      x3 + offset.dx,
+      y3 + offset.dy,
+    );
   }
 
   @override
@@ -1597,8 +1625,14 @@ class BezierCurveTo extends PathCommand {
     final double transformedY2 = (s1 * x2) + (s5 * y2) + s13;
     final double transformedX3 = (s0 * x3) + (s4 * y3) + s12;
     final double transformedY3 = (s1 * x3) + (s5 * y3) + s13;
-    targetPath.cubicTo(transformedX1, transformedY1, transformedX2,
-        transformedY2, transformedX3, transformedY3);
+    targetPath.cubicTo(
+      transformedX1,
+      transformedY1,
+      transformedX2,
+      transformedY2,
+      transformedX3,
+      transformedY3,
+    );
   }
 
   @override
@@ -1648,8 +1682,9 @@ class RectCommand extends PathCommand {
         transformedX1 == transformedX4 &&
         transformedX2 == transformedX3) {
       // It is still a rectangle.
-      targetPath.addRect(ui.Rect.fromLTRB(
-          transformedX1, transformedY1, transformedX3, transformedY3));
+      targetPath.addRect(
+        ui.Rect.fromLTRB(transformedX1, transformedY1, transformedX3, transformedY3),
+      );
     } else {
       targetPath.moveTo(transformedX1, transformedY1);
       targetPath.lineTo(transformedX2, transformedY2);
@@ -1684,8 +1719,7 @@ class RRectCommand extends PathCommand {
   void transform(Float32List matrix4, SurfacePath targetPath) {
     final ui.Path roundRectPath = ui.Path();
     RRectToPathRenderer(roundRectPath).render(rrect);
-    targetPath.addPathWithMode(
-        roundRectPath, 0, 0, matrix4, SPathAddPathMode.kAppend);
+    targetPath.addPathWithMode(roundRectPath, 0, 0, matrix4, SPathAddPathMode.kAppend);
   }
 
   @override
@@ -1830,8 +1864,7 @@ class _PaintBounds {
         _currentClipBottom = bottom;
       }
     }
-    if (_currentClipLeft >= _currentClipRight ||
-        _currentClipTop >= _currentClipBottom) {
+    if (_currentClipLeft >= _currentClipRight || _currentClipTop >= _currentClipBottom) {
       command.isClippedOut = true;
     } else {
       command.leftBound = _currentClipLeft;
@@ -1861,8 +1894,7 @@ class _PaintBounds {
 
   /// Grow painted area to include given rectangle and precompute
   /// clipped out state for command.
-  void growLTRB(double left, double top, double right, double bottom,
-      DrawCommand command) {
+  void growLTRB(double left, double top, double right, double bottom, DrawCommand command) {
     if (left == right || top == bottom) {
       command.isClippedOut = true;
       return;
@@ -1923,14 +1955,10 @@ class _PaintBounds {
     command.bottomBound = transformedPointBottom;
 
     if (_didPaintInsideClipArea) {
-      _left = math.min(
-          math.min(_left, transformedPointLeft), transformedPointRight);
-      _right = math.max(
-          math.max(_right, transformedPointLeft), transformedPointRight);
-      _top =
-          math.min(math.min(_top, transformedPointTop), transformedPointBottom);
-      _bottom = math.max(
-          math.max(_bottom, transformedPointTop), transformedPointBottom);
+      _left = math.min(math.min(_left, transformedPointLeft), transformedPointRight);
+      _right = math.max(math.max(_right, transformedPointLeft), transformedPointRight);
+      _top = math.min(math.min(_top, transformedPointTop), transformedPointBottom);
+      _bottom = math.max(math.max(_bottom, transformedPointTop), transformedPointBottom);
     } else {
       _left = math.min(transformedPointLeft, transformedPointRight);
       _right = math.max(transformedPointLeft, transformedPointRight);
@@ -1969,14 +1997,10 @@ class _PaintBounds {
     }
 
     if (_didPaintInsideClipArea) {
-      _left = math.min(
-          math.min(_left, transformedPointLeft), transformedPointRight);
-      _right = math.max(
-          math.max(_right, transformedPointLeft), transformedPointRight);
-      _top =
-          math.min(math.min(_top, transformedPointTop), transformedPointBottom);
-      _bottom = math.max(
-          math.max(_bottom, transformedPointTop), transformedPointBottom);
+      _left = math.min(math.min(_left, transformedPointLeft), transformedPointRight);
+      _right = math.max(math.max(_right, transformedPointLeft), transformedPointRight);
+      _top = math.min(math.min(_top, transformedPointTop), transformedPointBottom);
+      _bottom = math.max(math.max(_bottom, transformedPointTop), transformedPointBottom);
     } else {
       _left = math.min(transformedPointLeft, transformedPointRight);
       _right = math.max(transformedPointLeft, transformedPointRight);
@@ -1988,10 +2012,16 @@ class _PaintBounds {
 
   void saveTransformsAndClip() {
     _transforms.add(_currentMatrix.clone());
-    _clipStack.add(_clipRectInitialized
-        ? ui.Rect.fromLTRB(_currentClipLeft, _currentClipTop, _currentClipRight,
-            _currentClipBottom)
-        : null);
+    _clipStack.add(
+      _clipRectInitialized
+          ? ui.Rect.fromLTRB(
+            _currentClipLeft,
+            _currentClipTop,
+            _currentClipRight,
+            _currentClipBottom,
+          )
+          : null,
+    );
   }
 
   void restoreTransformsAndClip() {
@@ -2015,15 +2045,11 @@ class _PaintBounds {
 
     // The framework may send us NaNs in the case when it attempts to invert an
     // infinitely size rect.
-    final double maxLeft = maxPaintBounds.left.isNaN
-        ? double.negativeInfinity
-        : maxPaintBounds.left;
-    final double maxRight =
-        maxPaintBounds.right.isNaN ? double.infinity : maxPaintBounds.right;
-    final double maxTop =
-        maxPaintBounds.top.isNaN ? double.negativeInfinity : maxPaintBounds.top;
-    final double maxBottom =
-        maxPaintBounds.bottom.isNaN ? double.infinity : maxPaintBounds.bottom;
+    final double maxLeft =
+        maxPaintBounds.left.isNaN ? double.negativeInfinity : maxPaintBounds.left;
+    final double maxRight = maxPaintBounds.right.isNaN ? double.infinity : maxPaintBounds.right;
+    final double maxTop = maxPaintBounds.top.isNaN ? double.negativeInfinity : maxPaintBounds.top;
+    final double maxBottom = maxPaintBounds.bottom.isNaN ? double.infinity : maxPaintBounds.bottom;
 
     final double left = math.min(_left, _right);
     final double right = math.max(_left, _right);

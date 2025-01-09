@@ -6,10 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Future<void> sendKeyCombination(
-  WidgetTester tester,
-  SingleActivator activator,
-) async {
+Future<void> sendKeyCombination(WidgetTester tester, SingleActivator activator) async {
   final List<LogicalKeyboardKey> modifiers = <LogicalKeyboardKey>[
     if (activator.control) LogicalKeyboardKey.control,
     if (activator.shift) LogicalKeyboardKey.shift,

@@ -502,7 +502,7 @@ abstract class StandardFabLocation extends FloatingActionButtonLocation {
 
   /// A function returning whether this [StandardFabLocation] is optimized for
   /// mini [FloatingActionButton]s.
-  bool isMini () => false;
+  bool isMini() => false;
 
   @override
   Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {
@@ -515,21 +515,17 @@ abstract class StandardFabLocation extends FloatingActionButtonLocation {
 
   /// Calculates x-offset for left-aligned [FloatingActionButtonLocation]s.
   static double _leftOffsetX(ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
-    return kFloatingActionButtonMargin
-        + scaffoldGeometry.minInsets.left
-        - adjustment;
+    return kFloatingActionButtonMargin + scaffoldGeometry.minInsets.left - adjustment;
   }
 
   /// Calculates x-offset for right-aligned [FloatingActionButtonLocation]s.
   static double _rightOffsetX(ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
-    return scaffoldGeometry.scaffoldSize.width
-        - kFloatingActionButtonMargin
-        - scaffoldGeometry.minInsets.right
-        - scaffoldGeometry.floatingActionButtonSize.width
-        + adjustment;
+    return scaffoldGeometry.scaffoldSize.width -
+        kFloatingActionButtonMargin -
+        scaffoldGeometry.minInsets.right -
+        scaffoldGeometry.floatingActionButtonSize.width +
+        adjustment;
   }
-
-
 }
 
 /// Mixin for a "top" floating action button location, such as
@@ -573,7 +569,10 @@ mixin FabFloatOffsetY on StandardFabLocation {
 
     double fabY = contentBottom - fabHeight - safeMargin;
     if (snackBarHeight > 0.0) {
-      fabY = math.min(fabY, contentBottom - snackBarHeight - fabHeight - kFloatingActionButtonMargin);
+      fabY = math.min(
+        fabY,
+        contentBottom - snackBarHeight - fabHeight - kFloatingActionButtonMargin,
+      );
     }
     if (bottomSheetHeight > 0.0) {
       fabY = math.min(fabY, contentBottom - bottomSheetHeight - fabHeight / 2.0);
@@ -616,7 +615,10 @@ mixin FabDockedOffsetY on StandardFabLocation {
     double fabY = contentBottom - fabHeight / 2.0 - safeMargin;
     // The FAB should sit with a margin between it and the snack bar.
     if (snackBarHeight > 0.0) {
-      fabY = math.min(fabY, contentBottom - snackBarHeight - fabHeight - kFloatingActionButtonMargin);
+      fabY = math.min(
+        fabY,
+        contentBottom - snackBarHeight - fabHeight - kFloatingActionButtonMargin,
+      );
     }
     // The FAB should sit with its center in front of the top of the bottom sheet.
     if (bottomSheetHeight > 0.0) {
@@ -676,7 +678,8 @@ mixin FabCenterOffsetX on StandardFabLocation {
   /// Calculates x-offset for center-aligned [FloatingActionButtonLocation]s.
   @override
   double getOffsetX(ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
-    return (scaffoldGeometry.scaffoldSize.width - scaffoldGeometry.floatingActionButtonSize.width) / 2.0;
+    return (scaffoldGeometry.scaffoldSize.width - scaffoldGeometry.floatingActionButtonSize.width) /
+        2.0;
   }
 }
 
@@ -695,11 +698,10 @@ mixin FabEndOffsetX on StandardFabLocation {
 /// Mixin for a "mini" floating action button location, such as [FloatingActionButtonLocation.miniStartTop].
 mixin FabMiniOffsetAdjustment on StandardFabLocation {
   @override
-  bool isMini () => true;
+  bool isMini() => true;
 }
 
-class _StartTopFabLocation extends StandardFabLocation
-    with FabStartOffsetX, FabTopOffsetY {
+class _StartTopFabLocation extends StandardFabLocation with FabStartOffsetX, FabTopOffsetY {
   const _StartTopFabLocation();
 
   @override
@@ -714,8 +716,7 @@ class _MiniStartTopFabLocation extends StandardFabLocation
   String toString() => 'FloatingActionButtonLocation.miniStartTop';
 }
 
-class _CenterTopFabLocation extends StandardFabLocation
-    with FabCenterOffsetX, FabTopOffsetY {
+class _CenterTopFabLocation extends StandardFabLocation with FabCenterOffsetX, FabTopOffsetY {
   const _CenterTopFabLocation();
 
   @override
@@ -730,8 +731,7 @@ class _MiniCenterTopFabLocation extends StandardFabLocation
   String toString() => 'FloatingActionButtonLocation.miniCenterTop';
 }
 
-class _EndTopFabLocation extends StandardFabLocation
-    with FabEndOffsetX, FabTopOffsetY {
+class _EndTopFabLocation extends StandardFabLocation with FabEndOffsetX, FabTopOffsetY {
   const _EndTopFabLocation();
 
   @override
@@ -746,8 +746,7 @@ class _MiniEndTopFabLocation extends StandardFabLocation
   String toString() => 'FloatingActionButtonLocation.miniEndTop';
 }
 
-class _StartFloatFabLocation extends StandardFabLocation
-    with FabStartOffsetX, FabFloatOffsetY {
+class _StartFloatFabLocation extends StandardFabLocation with FabStartOffsetX, FabFloatOffsetY {
   const _StartFloatFabLocation();
 
   @override
@@ -762,8 +761,7 @@ class _MiniStartFloatFabLocation extends StandardFabLocation
   String toString() => 'FloatingActionButtonLocation.miniStartFloat';
 }
 
-class _CenterFloatFabLocation extends StandardFabLocation
-    with FabCenterOffsetX, FabFloatOffsetY {
+class _CenterFloatFabLocation extends StandardFabLocation with FabCenterOffsetX, FabFloatOffsetY {
   const _CenterFloatFabLocation();
 
   @override
@@ -778,8 +776,7 @@ class _MiniCenterFloatFabLocation extends StandardFabLocation
   String toString() => 'FloatingActionButtonLocation.miniCenterFloat';
 }
 
-class _EndFloatFabLocation extends StandardFabLocation
-    with FabEndOffsetX, FabFloatOffsetY {
+class _EndFloatFabLocation extends StandardFabLocation with FabEndOffsetX, FabFloatOffsetY {
   const _EndFloatFabLocation();
 
   @override
@@ -794,8 +791,7 @@ class _MiniEndFloatFabLocation extends StandardFabLocation
   String toString() => 'FloatingActionButtonLocation.miniEndFloat';
 }
 
-class _StartDockedFabLocation extends StandardFabLocation
-    with FabStartOffsetX, FabDockedOffsetY {
+class _StartDockedFabLocation extends StandardFabLocation with FabStartOffsetX, FabDockedOffsetY {
   const _StartDockedFabLocation();
 
   @override
@@ -810,8 +806,7 @@ class _MiniStartDockedFabLocation extends StandardFabLocation
   String toString() => 'FloatingActionButtonLocation.miniStartDocked';
 }
 
-class _CenterDockedFabLocation extends StandardFabLocation
-    with FabCenterOffsetX, FabDockedOffsetY {
+class _CenterDockedFabLocation extends StandardFabLocation with FabCenterOffsetX, FabDockedOffsetY {
   const _CenterDockedFabLocation();
 
   @override
@@ -826,8 +821,7 @@ class _MiniCenterDockedFabLocation extends StandardFabLocation
   String toString() => 'FloatingActionButtonLocation.miniCenterDocked';
 }
 
-class _EndDockedFabLocation extends StandardFabLocation
-    with FabEndOffsetX, FabDockedOffsetY {
+class _EndDockedFabLocation extends StandardFabLocation with FabEndOffsetX, FabDockedOffsetY {
   const _EndDockedFabLocation();
 
   @override
@@ -842,8 +836,7 @@ class _MiniEndDockedFabLocation extends StandardFabLocation
   String toString() => 'FloatingActionButtonLocation.miniEndDocked';
 }
 
-class _EndContainedFabLocation extends StandardFabLocation
-    with FabEndOffsetX, FabContainedOffsetY {
+class _EndContainedFabLocation extends StandardFabLocation with FabEndOffsetX, FabContainedOffsetY {
   const _EndContainedFabLocation();
 
   @override
@@ -892,7 +885,7 @@ abstract class FloatingActionButtonAnimator {
   /// [progress] is the current progress of the transition animation.
   /// When [progress] is 0.0, the returned [Offset] should be equal to [begin].
   /// when [progress] is 1.0, the returned [Offset] should be equal to [end].
-  Offset getOffset({ required Offset begin, required Offset end, required double progress });
+  Offset getOffset({required Offset begin, required Offset end, required double progress});
 
   /// Animates the scale of the [FloatingActionButton].
   ///
@@ -911,7 +904,7 @@ abstract class FloatingActionButtonAnimator {
   ///     );
   ///   }
   /// ```
-  Animation<double> getScaleAnimation({ required Animation<double> parent });
+  Animation<double> getScaleAnimation({required Animation<double> parent});
 
   /// Animates the rotation of [Scaffold.floatingActionButton].
   ///
@@ -929,7 +922,7 @@ abstract class FloatingActionButtonAnimator {
   ///   return Tween<double>(begin: 0.0, end: 1.0).animate(parent);
   /// }
   /// ```
-  Animation<double> getRotationAnimation({ required Animation<double> parent });
+  Animation<double> getRotationAnimation({required Animation<double> parent});
 
   /// Gets the progress value to restart a motion animation from when the animation is interrupted.
   ///
@@ -965,7 +958,7 @@ class _ScalingFabMotionAnimator extends FloatingActionButtonAnimator {
   const _ScalingFabMotionAnimator();
 
   @override
-  Offset getOffset({ required Offset begin, required Offset end, required double progress }) {
+  Offset getOffset({required Offset begin, required Offset end, required double progress}) {
     if (progress < 0.5) {
       return begin;
     } else {
@@ -974,7 +967,7 @@ class _ScalingFabMotionAnimator extends FloatingActionButtonAnimator {
   }
 
   @override
-  Animation<double> getScaleAnimation({ required Animation<double> parent }) {
+  Animation<double> getScaleAnimation({required Animation<double> parent}) {
     // Animate the scale down from 1 to 0 in the first half of the animation
     // then from 0 back to 1 in the second half.
     const Curve curve = Interval(0.5, 1.0, curve: Curves.ease);
@@ -996,7 +989,7 @@ class _ScalingFabMotionAnimator extends FloatingActionButtonAnimator {
   static final Animatable<double> _thresholdCenterTween = CurveTween(curve: const Threshold(0.5));
 
   @override
-  Animation<double> getRotationAnimation({ required Animation<double> parent }) {
+  Animation<double> getRotationAnimation({required Animation<double> parent}) {
     // This rotation will turn on the way in, but not on the way out.
     return _AnimationSwap<double>(
       parent.drive(_rotationTween),
@@ -1041,7 +1034,8 @@ class _AnimationSwap<T> extends CompoundAnimation<T> {
   ///
   /// Either argument can be an [_AnimationSwap] itself to combine multiple
   /// animations.
-  _AnimationSwap(Animation<T> first, Animation<T> next, this.parent, this.swapThreshold) : super(first: first, next: next);
+  _AnimationSwap(Animation<T> first, Animation<T> next, this.parent, this.swapThreshold)
+    : super(first: first, next: next);
 
   final Animation<double> parent;
   final double swapThreshold;

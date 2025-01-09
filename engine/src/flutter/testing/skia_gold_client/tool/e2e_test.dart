@@ -48,9 +48,7 @@ void main() async {
   }
 
   // Create a client.
-  final SkiaGoldClient skiaGoldClient = SkiaGoldClient(
-    engine.flutterDir,
-  );
+  final SkiaGoldClient skiaGoldClient = SkiaGoldClient(engine.flutterDir);
 
   // Authenticate the client.
   await skiaGoldClient.auth();
@@ -79,13 +77,9 @@ void main() async {
   for (final _Digest digest in digests) {
     final String digestPath = digest.source;
     final String digestName = digest.name;
-    final File digestFile = File(path.join(
-      engine.flutterDir.path,
-      'testing',
-      'skia_gold_client',
-      'tool',
-      digestPath,
-    ));
+    final File digestFile = File(
+      path.join(engine.flutterDir.path, 'testing', 'skia_gold_client', 'tool', digestPath),
+    );
     if (!digestFile.existsSync()) {
       stderr.writeln('The digest file "$digestPath" does not exist.');
       exitCode = 1;
@@ -95,11 +89,7 @@ void main() async {
     print('Uploading digest: $digestName ($digestPath): ${digest.pixelCount} pixels...');
 
     try {
-      await skiaGoldClient.addImg(
-        digestName,
-        digestFile,
-        screenshotSize: 0,
-      );
+      await skiaGoldClient.addImg(digestName, digestFile, screenshotSize: 0);
       stderr.writeln('Comparison success: $digestName');
     } on Exception catch (e) {
       stderr.writeln('Comparison failure: $digestName: $e');
@@ -118,11 +108,7 @@ void main() async {
 }
 
 final class _Digest {
-  const _Digest({
-    required this.name,
-    required this.source,
-    required this.pixelCount,
-  });
+  const _Digest({required this.name, required this.source, required this.pixelCount});
 
   /// The name of the digest/test.
   final String name;

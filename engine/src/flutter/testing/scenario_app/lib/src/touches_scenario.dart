@@ -26,13 +26,13 @@ class TouchesScenario extends Scenario {
   @override
   void onPointerDataPacket(PointerDataPacket packet) {
     for (final PointerData datum in packet.data) {
-      final int deviceId =
-          _knownDevices.putIfAbsent(datum.device, () => _knownDevices.length);
+      final int deviceId = _knownDevices.putIfAbsent(datum.device, () => _knownDevices.length);
       sendJsonMessage(
         dispatcher: view.platformDispatcher,
         channel: 'display_data',
         json: <String, dynamic>{
-          'data': '$_sequenceNo,${datum.change},device=$deviceId,buttons=${datum.buttons},signalKind=${datum.signalKind}',
+          'data':
+              '$_sequenceNo,${datum.change},device=$deviceId,buttons=${datum.buttons},signalKind=${datum.signalKind}',
         },
       );
       _sequenceNo++;

@@ -11,22 +11,18 @@ import 'package:path/path.dart' as p;
 
 void main(List<String> args) {
   final Engine? engine = Engine.tryFindWithin();
-  final ArgParser parser = ArgParser()
-    ..addFlag(
-      'help',
-      abbr: 'h',
-      help: 'Print this usage information.',
-      negatable: false,
-    )
-    ..addOption(
-      'clangd',
-      help: 'Path to clangd. Defaults to deriving the path from compile_commands.json.',
-    )
-    ..addOption(
-      'compile-commands-dir',
-      help: 'Path to a directory containing compile_commands.json.',
-      defaultsTo: engine?.latestOutput()?.compileCommandsJson.parent.path,
-    );
+  final ArgParser parser =
+      ArgParser()
+        ..addFlag('help', abbr: 'h', help: 'Print this usage information.', negatable: false)
+        ..addOption(
+          'clangd',
+          help: 'Path to clangd. Defaults to deriving the path from compile_commands.json.',
+        )
+        ..addOption(
+          'compile-commands-dir',
+          help: 'Path to a directory containing compile_commands.json.',
+          defaultsTo: engine?.latestOutput()?.compileCommandsJson.parent.path,
+        );
   final ArgResults results = parser.parse(args);
   if (results['help'] as bool) {
     io.stdout.writeln(parser.usage);
@@ -46,7 +42,8 @@ void main(List<String> args) {
     return;
   }
 
-  final List<Object?> compileCommands = json.decode(compileCommandsFile.readAsStringSync()) as List<Object?>;
+  final List<Object?> compileCommands =
+      json.decode(compileCommandsFile.readAsStringSync()) as List<Object?>;
   if (compileCommands.isEmpty) {
     io.stderr.writeln('Unexpected: compile_commands.json is empty');
     io.exitCode = 1;
@@ -75,14 +72,10 @@ void main(List<String> args) {
       // Find the canonical path to the command (i.e. resolve "../" and ".")
       //
       // This now looks like "/path/to/engine/src/flutter/buildtools/{platform}/{...}"
-      final String path = p.canonicalize(
-        p.join(compileCommandsDir, commandPath),
-      );
+      final String path = p.canonicalize(p.join(compileCommandsDir, commandPath));
 
       // Extract which platform we're building for (e.g. linux-x64, mac-arm64, mac-x64).
-      final String platform = RegExp(
-        r'buildtools/([^/]+)/',
-      ).firstMatch(path)!.group(1)!;
+      final String platform = RegExp(r'buildtools/([^/]+)/').firstMatch(path)!.group(1)!;
 
       // Find the engine root and derive the clangd path from there.
       final Engine compileCommandsEngineRoot = Engine.findWithin(path);
@@ -117,7 +110,7 @@ void main(List<String> args) {
     clangdConfig.writeAsStringSync(
       'CompileFlags:\n'
       '  Add: -Wno-unknown-warning-option\n'
-      '  Remove: [-m*, -f*]\n'
+      '  Remove: [-m*, -f*]\n',
     );
 
     // Run clangd.
@@ -128,7 +121,9 @@ void main(List<String> args) {
     ]);
     io.stdout.write(result.stdout);
     io.stderr.write(result.stderr);
-    if ((result.stderr as String).contains('Path specified by --compile-commands-dir does not exist')) {
+    if ((result.stderr as String).contains(
+      'Path specified by --compile-commands-dir does not exist',
+    )) {
       io.stdout.writeln('clangd_check failed: --compile-commands-dir does not exist');
       io.exitCode = 1;
     } else if ((result.stderr as String).contains('Failed to resolve path')) {

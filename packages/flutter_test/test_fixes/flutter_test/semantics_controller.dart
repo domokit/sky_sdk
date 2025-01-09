@@ -14,6 +14,9 @@ void main() {
     tester.semantics.simulatedAccessibilityTraversal();
     tester.semantics.simulatedAccessibilityTraversal(start: theStart);
     tester.semantics.simulatedAccessibilityTraversal(end: theEnd);
-    tester.semantics.simulatedAccessibilityTraversal(start: theStart, end: theEnd);
+    tester.semantics.simulatedAccessibilityTraversal(
+      start: theStart,
+      end: theEnd,
+    );
   });
 }

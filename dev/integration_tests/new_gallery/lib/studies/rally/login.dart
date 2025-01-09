@@ -21,10 +21,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> with RestorationMixin {
-  final RestorableTextEditingController _usernameController =
-      RestorableTextEditingController();
-  final RestorableTextEditingController _passwordController =
-      RestorableTextEditingController();
+  final RestorableTextEditingController _usernameController = RestorableTextEditingController();
+  final RestorableTextEditingController _passwordController = RestorableTextEditingController();
 
   @override
   String get restorationId => 'login_page';
@@ -58,10 +56,7 @@ class _LoginPageState extends State<LoginPage> with RestorationMixin {
 }
 
 class _MainView extends StatelessWidget {
-  const _MainView({
-    this.usernameController,
-    this.passwordController,
-  });
+  const _MainView({this.usernameController, this.passwordController});
 
   final TextEditingController? usernameController;
   final TextEditingController? passwordController;
@@ -78,15 +73,9 @@ class _MainView extends StatelessWidget {
     if (isDesktop) {
       final double desktopMaxWidth = 400.0 + 100.0 * (cappedTextScale(context) - 1);
       listViewChildren = <Widget>[
-        _UsernameInput(
-          maxWidth: desktopMaxWidth,
-          usernameController: usernameController,
-        ),
+        _UsernameInput(maxWidth: desktopMaxWidth, usernameController: usernameController),
         const SizedBox(height: 12),
-        _PasswordInput(
-          maxWidth: desktopMaxWidth,
-          passwordController: passwordController,
-        ),
+        _PasswordInput(maxWidth: desktopMaxWidth, passwordController: passwordController),
         _LoginButton(
           maxWidth: desktopMaxWidth,
           onTap: () {
@@ -97,13 +86,9 @@ class _MainView extends StatelessWidget {
     } else {
       listViewChildren = <Widget>[
         const _SmallLogo(),
-        _UsernameInput(
-          usernameController: usernameController,
-        ),
+        _UsernameInput(usernameController: usernameController),
         const SizedBox(height: 12),
-        _PasswordInput(
-          passwordController: passwordController,
-        ),
+        _PasswordInput(passwordController: passwordController),
         _ThumbButton(
           onTap: () {
             _login(context);
@@ -152,14 +137,15 @@ class _TopBar extends StatelessWidget {
                 child: SizedBox(
                   height: 80,
                   child: FadeInImagePlaceholder(
-                    image:
-                        const AssetImage('logo.png', package: 'rally_assets'),
-                    placeholder: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-                      return SizedBox(
-                        width: constraints.maxHeight,
-                        height: constraints.maxHeight,
-                      );
-                    }),
+                    image: const AssetImage('logo.png', package: 'rally_assets'),
+                    placeholder: LayoutBuilder(
+                      builder: (BuildContext context, BoxConstraints constraints) {
+                        return SizedBox(
+                          width: constraints.maxHeight,
+                          height: constraints.maxHeight,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -167,9 +153,9 @@ class _TopBar extends StatelessWidget {
               Text(
                 localizations.rallyLoginLoginToRally,
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontSize: 35 / reducedTextScale(context),
-                      fontWeight: FontWeight.w600,
-                    ),
+                  fontSize: 35 / reducedTextScale(context),
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
@@ -181,9 +167,7 @@ class _TopBar extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               spacing,
-              _BorderButton(
-                text: localizations.rallyLoginSignUp,
-              ),
+              _BorderButton(text: localizations.rallyLoginSignUp),
             ],
           ),
         ],
@@ -213,10 +197,7 @@ class _SmallLogo extends StatelessWidget {
 }
 
 class _UsernameInput extends StatelessWidget {
-  const _UsernameInput({
-    this.maxWidth,
-    this.usernameController,
-  });
+  const _UsernameInput({this.maxWidth, this.usernameController});
 
   final double? maxWidth;
   final TextEditingController? usernameController;
@@ -240,10 +221,7 @@ class _UsernameInput extends StatelessWidget {
 }
 
 class _PasswordInput extends StatelessWidget {
-  const _PasswordInput({
-    this.maxWidth,
-    this.passwordController,
-  });
+  const _PasswordInput({this.maxWidth, this.passwordController});
 
   final double? maxWidth;
   final TextEditingController? passwordController;
@@ -266,9 +244,7 @@ class _PasswordInput extends StatelessWidget {
 }
 
 class _ThumbButton extends StatefulWidget {
-  const _ThumbButton({
-    required this.onTap,
-  });
+  const _ThumbButton({required this.onTap});
 
   final VoidCallback onTap;
 
@@ -304,10 +280,7 @@ class _ThumbButtonState extends State<_ThumbButton> {
               if (hasFocus) {
                 setState(() {
                   borderDecoration = BoxDecoration(
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.5),
-                      width: 2,
-                    ),
+                    border: Border.all(color: Colors.white.withOpacity(0.5), width: 2),
                   );
                 });
               } else {
@@ -319,12 +292,7 @@ class _ThumbButtonState extends State<_ThumbButton> {
             child: Container(
               decoration: borderDecoration,
               height: 120,
-              child: ExcludeSemantics(
-                child: Image.asset(
-                  'thumb.png',
-                  package: 'rally_assets',
-                ),
-              ),
+              child: ExcludeSemantics(child: Image.asset('thumb.png', package: 'rally_assets')),
             ),
           ),
         ),
@@ -334,10 +302,7 @@ class _ThumbButtonState extends State<_ThumbButton> {
 }
 
 class _LoginButton extends StatelessWidget {
-  const _LoginButton({
-    required this.onTap,
-    this.maxWidth,
-  });
+  const _LoginButton({required this.onTap, this.maxWidth});
 
   final double? maxWidth;
   final VoidCallback onTap;
@@ -350,8 +315,7 @@ class _LoginButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 30),
         child: Row(
           children: <Widget>[
-            const Icon(Icons.check_circle_outline,
-                color: RallyColors.buttonColor),
+            const Icon(Icons.check_circle_outline, color: RallyColors.buttonColor),
             const SizedBox(width: 12),
             Text(GalleryLocalizations.of(context)!.rallyLoginRememberMe),
             const Expanded(child: SizedBox.shrink()),
@@ -378,9 +342,7 @@ class _BorderButton extends StatelessWidget {
         foregroundColor: Colors.white,
         side: const BorderSide(color: RallyColors.buttonColor),
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       onPressed: () {
         Navigator.of(context).restorablePushNamed(RallyApp.homeRoute);
@@ -403,18 +365,10 @@ class _FilledButton extends StatelessWidget {
         foregroundColor: Colors.black,
         backgroundColor: RallyColors.buttonColor,
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       onPressed: onTap,
-      child: Row(
-        children: <Widget>[
-          const Icon(Icons.lock),
-          const SizedBox(width: 6),
-          Text(text),
-        ],
-      ),
+      child: Row(children: <Widget>[const Icon(Icons.lock), const SizedBox(width: 6), Text(text)]),
     );
   }
 }

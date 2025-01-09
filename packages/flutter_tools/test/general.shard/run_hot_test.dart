@@ -22,8 +22,7 @@ import '../src/context.dart';
 import 'hot_shared.dart';
 
 void main() {
-  testWithoutContext(
-      'defaultReloadSourcesHelper() handles empty DeviceReloadReports)', () {
+  testWithoutContext('defaultReloadSourcesHelper() handles empty DeviceReloadReports)', () {
     defaultReloadSourcesHelper(
       _FakeHotRunner(),
       <FlutterDevice?>[_FakeFlutterDevice()],
@@ -51,9 +50,7 @@ void main() {
       'kills the test device',
       () async {
         final HotRunner runner = HotRunner(
-          <FlutterDevice>[
-            flutterDevice,
-          ],
+          <FlutterDevice>[flutterDevice],
           target: 'main.dart',
           debuggingOptions: DebuggingOptions.disabled(BuildInfo.debug),
           analytics: _FakeAnalytics(),
@@ -76,9 +73,7 @@ void main() {
       'kill with a detach keeps the test device running',
       () async {
         final HotRunner runner = HotRunner(
-          <FlutterDevice>[
-            flutterDevice,
-          ],
+          <FlutterDevice>[flutterDevice],
           target: 'main.dart',
           debuggingOptions: DebuggingOptions.disabled(BuildInfo.debug),
           analytics: _FakeAnalytics(),
@@ -99,9 +94,7 @@ void main() {
       'kill on an attached device keeps the test device running',
       () async {
         final HotRunner runner = HotRunner(
-          <FlutterDevice>[
-            flutterDevice,
-          ],
+          <FlutterDevice>[flutterDevice],
           target: 'main.dart',
           debuggingOptions: DebuggingOptions.disabled(BuildInfo.debug),
           analytics: _FakeAnalytics(),
@@ -166,9 +159,7 @@ class _FakeHotCompatibleFlutterDevice extends Fake implements FlutterDevice {
   Future<void> stopEchoingDeviceLog() async {}
 
   @override
-  Future<void> exitApps({
-    Duration timeoutDelay = const Duration(seconds: 10),
-  }) async {
+  Future<void> exitApps({Duration timeoutDelay = const Duration(seconds: 10)}) async {
     wasExited = true;
   }
 

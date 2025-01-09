@@ -98,8 +98,7 @@ mixin CreateBase on FlutterCommand {
       ..addFlag(
         'pub',
         defaultsTo: true,
-        help:
-            'Whether to run "flutter pub get" after the project has been created.',
+        help: 'Whether to run "flutter pub get" after the project has been created.',
       )
       ..addFlag(
         'offline',
@@ -115,15 +114,12 @@ mixin CreateBase on FlutterCommand {
   /// The help message of the argument is replaced with `customHelp` if `customHelp` is not null.
   @protected
   void addPlatformsOptions({String? customHelp}) {
-    argParser.addMultiOption('platforms',
+    argParser.addMultiOption(
+      'platforms',
       help: customHelp ?? _kDefaultPlatformArgumentHelp,
-      aliases: <String>[ 'platform' ],
-      defaultsTo: <String>[
-        ..._kAvailablePlatforms,
-      ],
-      allowed: <String>[
-        ..._kAvailablePlatforms,
-      ],
+      aliases: <String>['platform'],
+      defaultsTo: <String>[..._kAvailablePlatforms],
+      allowed: <String>[..._kAvailablePlatforms],
     );
   }
 
@@ -132,10 +128,7 @@ mixin CreateBase on FlutterCommand {
   void validateOutputDirectoryArg() {
     final List<String>? rest = argResults?.rest;
     if (rest == null || rest.isEmpty) {
-      throwToolExit(
-        'No option specified for the output directory.\n$usage',
-        exitCode: 2,
-      );
+      throwToolExit('No option specified for the output directory.\n$usage', exitCode: 2);
     }
 
     if (rest.length > 1) {
@@ -165,21 +158,23 @@ mixin CreateBase on FlutterCommand {
   /// Throws assertion if [projectDir] does not exist or empty.
   /// Returns null if no project type can be determined.
   @protected
-  FlutterProjectType? determineTemplateType() {
+  FlutterTemplateType? determineTemplateType() {
     assert(projectDir.existsSync() && projectDir.listSync().isNotEmpty);
-    final File metadataFile = globals.fs
-        .file(globals.fs.path.join(projectDir.absolute.path, '.metadata'));
-    final FlutterProjectMetadata projectMetadata =
-        FlutterProjectMetadata(metadataFile, globals.logger);
-    final FlutterProjectType? projectType = projectMetadata.projectType;
+    final File metadataFile = globals.fs.file(
+      globals.fs.path.join(projectDir.absolute.path, '.metadata'),
+    );
+    final FlutterProjectMetadata projectMetadata = FlutterProjectMetadata(
+      metadataFile,
+      globals.logger,
+    );
+    final FlutterTemplateType? projectType = projectMetadata.projectType;
     if (projectType != null) {
       return projectType;
     }
 
     bool exists(List<String> path) {
       return globals.fs
-          .directory(globals.fs.path
-              .joinAll(<String>[projectDir.absolute.path, ...path]))
+          .directory(globals.fs.path.joinAll(<String>[projectDir.absolute.path, ...path]))
           .existsSync();
     }
 
@@ -189,7 +184,7 @@ mixin CreateBase on FlutterCommand {
     if (exists(<String>['android', 'app']) ||
         exists(<String>['ios', 'Runner']) ||
         exists(<String>['ios', 'Flutter'])) {
-      return FlutterProjectType.app;
+      return FlutterTemplateType.app;
     }
     // Since we can't really be definitive on nearly-empty directories, err on
     // the side of prudence and just say we don't know.
@@ -210,8 +205,9 @@ mixin CreateBase on FlutterCommand {
         organization = existingOrganizations.first;
       } else if (existingOrganizations.length > 1) {
         throwToolExit(
-            'Ambiguous organization in existing files: $existingOrganizations. '
-            'The --org command line argument must be specified to recreate project.');
+          'Ambiguous organization in existing files: $existingOrganizations. '
+          'The --org command line argument must be specified to recreate project.',
+        );
       }
     }
     if (organization == null) {
@@ -230,9 +226,10 @@ mixin CreateBase on FlutterCommand {
       if (!globals.fs.path.isWithin(examplesDirectory, projectDirPath) &&
           !globals.fs.path.isWithin(devDirectory, projectDirPath)) {
         throwToolExit(
-            'Cannot create a project within the Flutter SDK. '
-                "Target directory '$projectDirPath' is within the Flutter SDK at '$flutterRoot'.",
-            exitCode: 2);
+          'Cannot create a project within the Flutter SDK. '
+          "Target directory '$projectDirPath' is within the Flutter SDK at '$flutterRoot'.",
+          exitCode: 2,
+        );
       }
     }
 
@@ -242,10 +239,9 @@ mixin CreateBase on FlutterCommand {
       final String message =
           "Invalid project name: '$projectDirPath' - refers to an existing file.";
       throwToolExit(
-          overwrite
-              ? '$message Refusing to overwrite a file with a directory.'
-              : message,
-          exitCode: 2);
+        overwrite ? '$message Refusing to overwrite a file with a directory.' : message,
+        exitCode: 2,
+      );
     }
 
     if (overwrite) {
@@ -258,12 +254,10 @@ mixin CreateBase on FlutterCommand {
     switch (type) {
       case FileSystemEntityType.file:
         // Do not overwrite files.
-        throwToolExit("Invalid project name: '$projectDirPath' - file exists.",
-            exitCode: 2);
+        throwToolExit("Invalid project name: '$projectDirPath' - file exists.", exitCode: 2);
       case FileSystemEntityType.link:
         // Do not overwrite links.
-        throwToolExit("Invalid project name: '$projectDirPath' - refers to a link.",
-            exitCode: 2);
+        throwToolExit("Invalid project name: '$projectDirPath' - refers to a link.", exitCode: 2);
       case FileSystemEntityType.directory:
       case FileSystemEntityType.notFound:
         break;
@@ -282,9 +276,7 @@ mixin CreateBase on FlutterCommand {
     String? projectName = stringArg('project-name');
 
     if (projectName == null) {
-      final File pubspec = globals.fs
-        .directory(projectDirPath)
-        .childFile('pubspec.yaml');
+      final File pubspec = globals.fs.directory(projectDirPath).childFile('pubspec.yaml');
 
       if (pubspec.existsSync()) {
         final String pubspecContents = pubspec.readAsStringSync();
@@ -347,20 +339,15 @@ mixin CreateBase on FlutterCommand {
     bool implementationTests = false,
   }) {
     final String pluginDartClass = _createPluginClassName(projectName);
-    final String pluginClass = pluginDartClass.endsWith('Plugin')
-        ? pluginDartClass
-        : '${pluginDartClass}Plugin';
+    final String pluginClass =
+        pluginDartClass.endsWith('Plugin') ? pluginDartClass : '${pluginDartClass}Plugin';
     final String pluginClassSnakeCase = snakeCase(pluginClass);
-    final String pluginClassCapitalSnakeCase =
-        pluginClassSnakeCase.toUpperCase();
+    final String pluginClassCapitalSnakeCase = pluginClassSnakeCase.toUpperCase();
     final String pluginClassLowerCamelCase =
         pluginClass[0].toLowerCase() + pluginClass.substring(1);
-    final String appleIdentifier =
-        createUTIIdentifier(organization, projectName);
-    final String androidIdentifier =
-        createAndroidIdentifier(organization, projectName);
-    final String windowsIdentifier =
-        createWindowsIdentifier(organization, projectName);
+    final String appleIdentifier = createUTIIdentifier(organization, projectName);
+    final String androidIdentifier = createAndroidIdentifier(organization, projectName);
+    final String windowsIdentifier = createWindowsIdentifier(organization, projectName);
     // Linux uses the same scheme as the Android identifier.
     // https://developer.gnome.org/gio/stable/GApplication.html#g-application-id-is-valid
     final String linuxIdentifier = androidIdentifier;
@@ -485,11 +472,11 @@ mixin CreateBase on FlutterCommand {
     bool pluginExampleApp = false,
     bool printStatusWhenWriting = true,
     bool generateMetadata = true,
-    FlutterProjectType? projectType,
+    FlutterTemplateType? projectType,
   }) async {
     int generatedCount = 0;
     generatedCount += await renderMerged(
-      <String>[...templateNames, 'app_shared'],
+      <String>[...templateNames],
       directory,
       templateContext,
       overwrite: overwrite,
@@ -533,7 +520,9 @@ mixin CreateBase on FlutterCommand {
         buildTargets: globals.buildTargets,
       );
     }
-    final List<SupportedPlatform> platformsForMigrateConfig = <SupportedPlatform>[SupportedPlatform.root];
+    final List<SupportedPlatform> platformsForMigrateConfig = <SupportedPlatform>[
+      SupportedPlatform.root,
+    ];
     if (androidPlatform) {
       gradle.updateLocalProperties(project: project, requireAndroidSdk: false);
       platformsForMigrateConfig.add(SupportedPlatform.android);
@@ -557,8 +546,9 @@ mixin CreateBase on FlutterCommand {
       platformsForMigrateConfig.add(SupportedPlatform.fuchsia);
     }
     if (generateMetadata) {
-      final File metadataFile = globals.fs
-          .file(globals.fs.path.join(projectDir.absolute.path, '.metadata'));
+      final File metadataFile = globals.fs.file(
+        globals.fs.path.join(projectDir.absolute.path, '.metadata'),
+      );
       final FlutterProjectMetadata metadata = FlutterProjectMetadata.explicit(
         file: metadataFile,
         versionRevision: globals.flutterVersion.frameworkRevision,
@@ -571,7 +561,8 @@ mixin CreateBase on FlutterCommand {
         platforms: platformsForMigrateConfig,
         projectDirectory: directory,
         update: false,
-        currentRevision: stringArg('initial-create-revision') ?? globals.flutterVersion.frameworkRevision,
+        currentRevision:
+            stringArg('initial-create-revision') ?? globals.flutterVersion.frameworkRevision,
         createRevision: globals.flutterVersion.frameworkRevision,
         logger: globals.logger,
       );
@@ -591,22 +582,21 @@ mixin CreateBase on FlutterCommand {
     tmpIdentifier = tmpIdentifier.replaceAll(disallowed, '');
 
     // It must have at least two segments (one or more dots).
-    final List<String> segments = tmpIdentifier
-        .split('.')
-        .where((String segment) => segment.isNotEmpty)
-        .toList();
+    final List<String> segments =
+        tmpIdentifier.split('.').where((String segment) => segment.isNotEmpty).toList();
     while (segments.length < 2) {
       segments.add('untitled');
     }
 
     // Each segment must start with a letter.
     final RegExp segmentPatternRegex = RegExp(r'^[a-zA-Z][\w]*$');
-    final List<String> prefixedSegments = segments.map((String segment) {
-      if (!segmentPatternRegex.hasMatch(segment)) {
-        return 'u$segment';
-      }
-      return segment;
-    }).toList();
+    final List<String> prefixedSegments =
+        segments.map((String segment) {
+          if (!segmentPatternRegex.hasMatch(segment)) {
+            return 'u$segment';
+          }
+          return segment;
+        }).toList();
     return prefixedSegments.join('.');
   }
 
@@ -630,10 +620,8 @@ mixin CreateBase on FlutterCommand {
     tmpIdentifier = tmpIdentifier.replaceAll(disallowed, '');
 
     // It must have at least two segments (one or more dots).
-    final List<String> segments = tmpIdentifier
-        .split('.')
-        .where((String segment) => segment.isNotEmpty)
-        .toList();
+    final List<String> segments =
+        tmpIdentifier.split('.').where((String segment) => segment.isNotEmpty).toList();
     while (segments.length < 2) {
       segments.add('untitled');
     }
@@ -663,13 +651,11 @@ mixin CreateBase on FlutterCommand {
         'Exception details: $e',
       );
     }
-    final Map<String, Object?> manifest = json.decode(
-      manifestFileContents,
-    ) as Map<String, Object?>;
+    final Map<String, Object?> manifest = json.decode(manifestFileContents) as Map<String, Object?>;
     return Set<Uri>.from(
       (manifest['files']! as List<Object?>).cast<String>().map<Uri>(
-          (String path) =>
-              Uri.file(globals.fs.path.join(flutterToolsAbsolutePath, path))),
+        (String path) => Uri.file(globals.fs.path.join(flutterToolsAbsolutePath, path)),
+      ),
     );
   }
 
@@ -769,27 +755,20 @@ const Set<String> _keywords = <String>{
   'yield',
 };
 
-const Set<String> _packageDependencies = <String>{
-  'collection',
-  'flutter',
-  'flutter_test',
-  'meta',
-};
+const Set<String> _packageDependencies = <String>{'collection', 'flutter', 'flutter_test', 'meta'};
 
 /// Whether [name] is a valid Pub package.
 @visibleForTesting
 bool isValidPackageName(String name) {
   final Match? match = _identifierRegExp.matchAsPrefix(name);
-  return match != null &&
-      match.end == name.length &&
-      !_keywords.contains(name);
+  return match != null && match.end == name.length && !_keywords.contains(name);
 }
 
 /// Returns a potential valid name from the given [name].
 ///
 /// If a valid name cannot be found, returns `null`.
 @visibleForTesting
-String? potentialValidPackageName(String name){
+String? potentialValidPackageName(String name) {
   String newName = name.toLowerCase();
   if (newName.startsWith(RegExp(r'[0-9]'))) {
     newName = '_$newName';
@@ -808,14 +787,14 @@ String? _validateProjectName(String projectName) {
   if (!isValidPackageName(projectName)) {
     final String? potentialValidName = potentialValidPackageName(projectName);
     return '"$projectName" is not a valid Dart package name.'
-           '${ potentialValidName != null ? ' Try "$potentialValidName" instead.' : '' }\n'
-           '\n'
-           'The name should consist of lowercase words separated by underscores, "like_this". '
-           'Use only basic Latin letters and Arabic digits: [a-z0-9_], and '
-           'ensure the name is a valid Dart identifier '
-           '(i.e. it does not start with a digit and is not a reserved word).\n'
-           '\n'
-           'See https://dart.dev/tools/pub/pubspec#name for more information.';
+        '${potentialValidName != null ? ' Try "$potentialValidName" instead.' : ''}\n'
+        '\n'
+        'The name should consist of lowercase words separated by underscores, "like_this". '
+        'Use only basic Latin letters and Arabic digits: [a-z0-9_], and '
+        'ensure the name is a valid Dart identifier '
+        '(i.e. it does not start with a digit and is not a reserved word).\n'
+        '\n'
+        'See https://dart.dev/tools/pub/pubspec#name for more information.';
   }
   if (_packageDependencies.contains(projectName)) {
     return "Invalid project name: '$projectName' - this will conflict with Flutter "

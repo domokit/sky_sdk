@@ -16,9 +16,7 @@ class ScaffoldMessengerExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('ScaffoldMessenger Sample')),
-        body: const Center(
-          child: ScaffoldMessengerExample(),
-        ),
+        body: const Center(child: ScaffoldMessengerExample()),
       ),
     );
   }
@@ -31,11 +29,9 @@ class ScaffoldMessengerExample extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton(
       onPressed: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('A SnackBar has been shown.'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('A SnackBar has been shown.')));
       },
       child: const Text('Show SnackBar'),
     );

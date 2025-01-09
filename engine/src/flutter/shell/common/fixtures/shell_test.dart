@@ -87,8 +87,7 @@ void reportTimingsMain() {
       }
     }
     nativeReportTimingsCallback(timestamps);
-    PlatformDispatcher.instance.onReportTimings =
-        (List<FrameTiming> timings) {};
+    PlatformDispatcher.instance.onReportTimings = (List<FrameTiming> timings) {};
   };
 }
 
@@ -117,17 +116,12 @@ void emptyMain() {}
 @pragma('vm:entry-point')
 void reportMetrics() {
   window.onMetricsChanged = () {
-    _reportMetrics(
-      window.devicePixelRatio,
-      window.physicalSize.width,
-      window.physicalSize.height,
-    );
+    _reportMetrics(window.devicePixelRatio, window.physicalSize.width, window.physicalSize.height);
   };
 }
 
 @pragma('vm:external-name', 'ReportMetrics')
-external void _reportMetrics(
-    double devicePixelRatio, double width, double height);
+external void _reportMetrics(double devicePixelRatio, double width, double height);
 
 @pragma('vm:entry-point')
 void dummyReportTimingsMain() {
@@ -197,42 +191,28 @@ external void notifyWidthHeight(int width, int height);
 void canCreateImageFromDecompressedData() {
   const int imageWidth = 10;
   const int imageHeight = 10;
-  final Uint8List pixels = Uint8List.fromList(List<int>.generate(
-    imageWidth * imageHeight * 4,
-    (int i) => i % 4 < 2 ? 0x00 : 0xFF,
-  ));
-
-  decodeImageFromPixels(
-    pixels,
-    imageWidth,
-    imageHeight,
-    PixelFormat.rgba8888,
-    (Image image) {
-      notifyWidthHeight(image.width, image.height);
-    },
+  final Uint8List pixels = Uint8List.fromList(
+    List<int>.generate(imageWidth * imageHeight * 4, (int i) => i % 4 < 2 ? 0x00 : 0xFF),
   );
+
+  decodeImageFromPixels(pixels, imageWidth, imageHeight, PixelFormat.rgba8888, (Image image) {
+    notifyWidthHeight(image.width, image.height);
+  });
 }
 
 @pragma('vm:entry-point')
 void canAccessIsolateLaunchData() {
   notifyMessage(
-    utf8.decode(
-      PlatformDispatcher.instance
-          .getPersistentIsolateData()!
-          .buffer
-          .asUint8List(),
-    ),
+    utf8.decode(PlatformDispatcher.instance.getPersistentIsolateData()!.buffer.asUint8List()),
   );
 }
 
 @pragma('vm:entry-point')
 void performanceModeImpactsNotifyIdle() {
   notifyNativeBool(false);
-  PlatformDispatcher.instance
-      .requestDartPerformanceMode(DartPerformanceMode.latency);
+  PlatformDispatcher.instance.requestDartPerformanceMode(DartPerformanceMode.latency);
   notifyNativeBool(true);
-  PlatformDispatcher.instance
-      .requestDartPerformanceMode(DartPerformanceMode.balanced);
+  PlatformDispatcher.instance.requestDartPerformanceMode(DartPerformanceMode.balanced);
 }
 
 @pragma('vm:entry-point')
@@ -309,14 +289,12 @@ external void notifyNativeWhenEngineSpawn(bool success);
 
 @pragma('vm:entry-point')
 void canReceiveArgumentsWhenEngineRun(List<String> args) {
-  notifyNativeWhenEngineRun(
-      args.length == 2 && args[0] == 'foo' && args[1] == 'bar');
+  notifyNativeWhenEngineRun(args.length == 2 && args[0] == 'foo' && args[1] == 'bar');
 }
 
 @pragma('vm:entry-point')
 void canReceiveArgumentsWhenEngineSpawn(List<String> args) {
-  notifyNativeWhenEngineSpawn(
-      args.length == 2 && args[0] == 'arg1' && args[1] == 'arg2');
+  notifyNativeWhenEngineSpawn(args.length == 2 && args[0] == 'arg1' && args[1] == 'arg2');
 }
 
 @pragma('vm:entry-point')
@@ -328,8 +306,7 @@ void onBeginFrameWithNotifyNativeMain() {
 }
 
 @pragma('vm:entry-point')
-void frameCallback(
-    Object? image, int durationMilliseconds, String decodeError) {
+void frameCallback(Object? image, int durationMilliseconds, String decodeError) {
   if (image == null) {
     throw Exception('Expeccted image in frame callback to be non-null');
   }
@@ -391,8 +368,7 @@ class IsolateParam {
 Future<void> runCallback(IsolateParam param) async {
   try {
     final Future<dynamic> Function() func =
-        PluginUtilities.getCallbackFromHandle(
-                CallbackHandle.fromRawHandle(param.rawHandle))!
+        PluginUtilities.getCallbackFromHandle(CallbackHandle.fromRawHandle(param.rawHandle))!
             as Future<dynamic> Function();
     await func.call();
     param.sendPort.send(true);
@@ -411,10 +387,10 @@ external void notifyDestroyed();
 Future<void> testPluginUtilitiesCallbackHandle() async {
   ReceivePort port = ReceivePort();
   await Isolate.spawn(
-      runCallback,
-      IsolateParam(port.sendPort,
-          PluginUtilities.getCallbackHandle(included)!.toRawHandle()),
-      onError: port.sendPort);
+    runCallback,
+    IsolateParam(port.sendPort, PluginUtilities.getCallbackHandle(included)!.toRawHandle()),
+    onError: port.sendPort,
+  );
   final dynamic result1 = await port.first;
   if (result1 != true) {
     print('Expected $result1 to == true');
@@ -425,10 +401,10 @@ Future<void> testPluginUtilitiesCallbackHandle() async {
   if (const bool.fromEnvironment('dart.vm.product')) {
     port = ReceivePort();
     await Isolate.spawn(
-        runCallback,
-        IsolateParam(port.sendPort,
-            PluginUtilities.getCallbackHandle(excluded)!.toRawHandle()),
-        onError: port.sendPort);
+      runCallback,
+      IsolateParam(port.sendPort, PluginUtilities.getCallbackHandle(excluded)!.toRawHandle()),
+      onError: port.sendPort,
+    );
     final dynamic result2 = await port.first;
     if (result2 != false) {
       print('Expected $result2 to == false');
@@ -444,21 +420,19 @@ Future<void> testPluginUtilitiesCallbackHandle() async {
 Future<void> testThatAssetLoadingHappensOnWorkerThread() async {
   try {
     await ImmutableBuffer.fromAsset('DoesNotExist');
-  } catch (err) {/* Do nothing */}
+  } catch (err) {
+    /* Do nothing */
+  }
   notifyNative();
 }
 
 @pragma('vm:external-name', 'NativeReportViewIdsCallback')
-external void nativeReportViewIdsCallback(
-    bool hasImplicitView, List<int> viewIds);
+external void nativeReportViewIdsCallback(bool hasImplicitView, List<int> viewIds);
 
 List<int> getCurrentViewIds() {
-  final List<int> result = PlatformDispatcher.instance.views
-      .map((FlutterView view) => view.viewId)
-      .toList()
-    ..sort();
-  assert(result.toSet().length == result.length,
-      'Unexpected duplicate view ID found: $result');
+  final List<int> result =
+      PlatformDispatcher.instance.views.map((FlutterView view) => view.viewId).toList()..sort();
+  assert(result.toSet().length == result.length, 'Unexpected duplicate view ID found: $result');
   return result;
 }
 
@@ -480,14 +454,12 @@ bool listEquals<T>(List<T> a, List<T> b) {
 @pragma('vm:entry-point')
 void testReportViewIds() {
   List<int> viewIds = getCurrentViewIds();
-  nativeReportViewIdsCallback(
-      PlatformDispatcher.instance.implicitView != null, viewIds);
+  nativeReportViewIdsCallback(PlatformDispatcher.instance.implicitView != null, viewIds);
   PlatformDispatcher.instance.onMetricsChanged = () {
     final List<int> newViewIds = getCurrentViewIds();
     if (!listEquals(viewIds, newViewIds)) {
       viewIds = newViewIds;
-      nativeReportViewIdsCallback(
-          PlatformDispatcher.instance.implicitView != null, viewIds);
+      nativeReportViewIdsCallback(PlatformDispatcher.instance.implicitView != null, viewIds);
     }
   };
 }
@@ -619,16 +591,19 @@ void renderWarmUpImplicitView() {
 void renderWarmUpView1and2() {
   bool beginFrameCalled = false;
 
-  PlatformDispatcher.instance.scheduleWarmUpFrame(beginFrame: () {
-    expect(beginFrameCalled, false);
-    beginFrameCalled = true;
-  }, drawFrame: () {
-    expect(beginFrameCalled, true);
+  PlatformDispatcher.instance.scheduleWarmUpFrame(
+    beginFrame: () {
+      expect(beginFrameCalled, false);
+      beginFrameCalled = true;
+    },
+    drawFrame: () {
+      expect(beginFrameCalled, true);
 
-    for (final int viewId in <int>[1, 2]) {
-      renderDummyToView(PlatformDispatcher.instance.view(id: viewId)!);
-    }
-  });
+      for (final int viewId in <int>[1, 2]) {
+        renderDummyToView(PlatformDispatcher.instance.view(id: viewId)!);
+      }
+    },
+  );
 }
 
 @pragma('vm:entry-point')

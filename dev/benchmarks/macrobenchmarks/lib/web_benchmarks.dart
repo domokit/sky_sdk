@@ -68,7 +68,8 @@ final Map<String, RecorderFactory> benchmarks = <String, RecorderFactory>{
   BenchMouseRegionMixedGridHover.benchmarkName: () => BenchMouseRegionMixedGridHover(),
   BenchWrapBoxScroll.benchmarkName: () => BenchWrapBoxScroll(),
   BenchPlatformViewInfiniteScroll.benchmarkName: () => BenchPlatformViewInfiniteScroll.forward(),
-  BenchPlatformViewInfiniteScroll.benchmarkNameBackward: () => BenchPlatformViewInfiniteScroll.backward(),
+  BenchPlatformViewInfiniteScroll.benchmarkNameBackward:
+      () => BenchPlatformViewInfiniteScroll.backward(),
   BenchMaterial3Components.benchmarkName: () => BenchMaterial3Components(),
   BenchMaterial3Semantics.benchmarkName: () => BenchMaterial3Semantics(),
   BenchMaterial3ScrollSemantics.benchmarkName: () => BenchMaterial3ScrollSemantics(),
@@ -106,13 +107,14 @@ Future<void> _runBenchmark(String benchmarkName) async {
   await runZoned<Future<void>>(
     () async {
       final Recorder recorder = recorderFactory();
-      final Runner runner = recorder.isTracingEnabled && !_client.isInManualMode
-          ? Runner(
-              recorder: recorder,
-              setUpAllDidRun: () => _client.startPerformanceTracing(benchmarkName),
-              tearDownAllWillRun: _client.stopPerformanceTracing,
-            )
-          : Runner(recorder: recorder);
+      final Runner runner =
+          recorder.isTracingEnabled && !_client.isInManualMode
+              ? Runner(
+                recorder: recorder,
+                setUpAllDidRun: () => _client.startPerformanceTracing(benchmarkName),
+                tearDownAllWillRun: _client.stopPerformanceTracing,
+              )
+              : Runner(recorder: recorder);
 
       final Profile profile = await runner.run();
       if (!_client.isInManualMode) {
@@ -133,7 +135,8 @@ Future<void> _runBenchmark(String benchmarkName) async {
       handleUncaughtError: (
         Zone self,
         ZoneDelegate parent,
-        Zone zone, Object error,
+        Zone zone,
+        Object error,
         StackTrace stackTrace,
       ) async {
         if (_client.isInManualMode) {
@@ -149,8 +152,7 @@ Future<void> _runBenchmark(String benchmarkName) async {
 
 extension WebHTMLElementExtension on web.HTMLElement {
   void appendHtml(String html) {
-    final web.HTMLDivElement div = web.document.createElement('div') as
-        web.HTMLDivElement;
+    final web.HTMLDivElement div = web.document.createElement('div') as web.HTMLDivElement;
     div.innerHTML = html.toJS;
     final web.DocumentFragment fragment = web.document.createDocumentFragment();
     fragment.append(div as JSAny);
@@ -168,23 +170,21 @@ void _fallbackToManual(String error) {
 
       <!-- Absolutely position it so it receives the clicks and not the glasspane -->
       <ul style="position: absolute">
-        ${
-          benchmarks.keys
-            .map((String name) => '<li><button id="$name">$name</button></li>')
-            .join('\n')
-        }
+        ${benchmarks.keys.map((String name) => '<li><button id="$name">$name</button></li>').join('\n')}
       </ul>
     </div>
   ''');
 
   for (final String benchmarkName in benchmarks.keys) {
     final web.Element button = web.document.querySelector('#$benchmarkName')!;
-    button.addEventListener('click', (JSObject _) {
-      final web.Element? manualPanel =
-          web.document.querySelector('#manual-panel');
-      manualPanel?.remove();
-      _runBenchmark(benchmarkName);
-    }.toJS);
+    button.addEventListener(
+      'click',
+      (JSObject _) {
+        final web.Element? manualPanel = web.document.querySelector('#manual-panel');
+        manualPanel?.remove();
+        _runBenchmark(benchmarkName);
+      }.toJS,
+    );
   }
 }
 
@@ -211,17 +211,19 @@ class TimeseriesVisualization {
     _canvas.height = (_kCanvasHeight * web.window.devicePixelRatio).round();
     _canvas.style
       ..setProperty('width', '100%')
-      ..setProperty('height',  '${_kCanvasHeight}px')
+      ..setProperty('height', '${_kCanvasHeight}px')
       ..setProperty('outline', '1px solid green');
     _ctx = _canvas.getContext('2d')! as web.CanvasRenderingContext2D;
 
     // The amount of vertical space available on the chart. Because some
     // outliers can be huge they can dwarf all the useful values. So we
     // limit it to 1.5 x the biggest non-outlier.
-    _maxValueChartRange = 1.5 * _stats.samples
-      .where((AnnotatedSample sample) => !sample.isOutlier)
-      .map<double>((AnnotatedSample sample) => sample.magnitude)
-      .fold<double>(0, math.max);
+    _maxValueChartRange =
+        1.5 *
+        _stats.samples
+            .where((AnnotatedSample sample) => !sample.isOutlier)
+            .map<double>((AnnotatedSample sample) => sample.magnitude)
+            .fold<double>(0, math.max);
   }
 
   static const double _kCanvasHeight = 200;
@@ -365,11 +367,7 @@ class LocalBenchmarkServerClient {
   /// Stops the performance tracing session started by [startPerformanceTracing].
   Future<void> stopPerformanceTracing() async {
     _checkNotManualMode();
-    await _requestXhr(
-      '/stop-performance-tracing',
-      method: 'POST',
-      mimeType: 'application/json',
-    );
+    await _requestXhr('/stop-performance-tracing', method: 'POST', mimeType: 'application/json');
   }
 
   /// Sends the profile data collected by the benchmark to the local benchmark
@@ -385,7 +383,7 @@ class LocalBenchmarkServerClient {
     if (request.status != 200) {
       throw Exception(
         'Failed to report profile data to benchmark server. '
-        'The server responded with status code ${request.status}.'
+        'The server responded with status code ${request.status}.',
       );
     }
   }
@@ -399,10 +397,7 @@ class LocalBenchmarkServerClient {
       '/on-error',
       method: 'POST',
       mimeType: 'application/json',
-      sendData: json.encode(<String, dynamic>{
-        'error': '$error',
-        'stackTrace': '$stackTrace',
-      }),
+      sendData: json.encode(<String, dynamic>{'error': '$error', 'stackTrace': '$stackTrace'}),
     );
   }
 
@@ -452,13 +447,19 @@ class LocalBenchmarkServerClient {
       });
     }
 
-    xhr.addEventListener('load', (web.ProgressEvent e) {
-      completer.complete(xhr);
-    }.toJS);
+    xhr.addEventListener(
+      'load',
+      (web.ProgressEvent e) {
+        completer.complete(xhr);
+      }.toJS,
+    );
 
-    xhr.addEventListener('error', (JSObject error) {
+    xhr.addEventListener(
+      'error',
+      (JSObject error) {
         return completer.completeError(error);
-    }.toJS);
+      }.toJS,
+    );
 
     if (sendData != null) {
       xhr.send((sendData as Object?).jsify());

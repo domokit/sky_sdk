@@ -39,10 +39,7 @@ class LayerTree {
   /// tree. This paint pass is just used to measure the bounds for each picture
   /// so we can optimize the total number of canvases required.
   void measure(Frame frame, BitmapSize size, {bool ignoreRasterCache = false}) {
-    final MeasureVisitor measureVisitor = MeasureVisitor(
-      size,
-      frame.viewEmbedder!,
-    );
+    final MeasureVisitor measureVisitor = MeasureVisitor(size, frame.viewEmbedder!);
     if (rootLayer.needsPainting) {
       rootLayer.accept(measureVisitor);
     }
@@ -55,13 +52,9 @@ class LayerTree {
   /// not be used.
   void paint(Frame frame, {bool ignoreRasterCache = false}) {
     final CkNWayCanvas internalNodesCanvas = CkNWayCanvas();
-    final Iterable<CkCanvas> overlayCanvases =
-        frame.viewEmbedder!.getOptimizedCanvases();
+    final Iterable<CkCanvas> overlayCanvases = frame.viewEmbedder!.getOptimizedCanvases();
     overlayCanvases.forEach(internalNodesCanvas.addCanvas);
-    final PaintVisitor paintVisitor = PaintVisitor(
-      internalNodesCanvas,
-      frame.viewEmbedder!,
-    );
+    final PaintVisitor paintVisitor = PaintVisitor(internalNodesCanvas, frame.viewEmbedder!);
     if (rootLayer.needsPainting) {
       rootLayer.accept(paintVisitor);
     }
@@ -78,8 +71,7 @@ class LayerTree {
 
     final CkNWayCanvas internalNodesCanvas = CkNWayCanvas();
     internalNodesCanvas.addCanvas(canvas);
-    final PaintVisitor paintVisitor =
-        PaintVisitor.forToImage(internalNodesCanvas, canvas);
+    final PaintVisitor paintVisitor = PaintVisitor.forToImage(internalNodesCanvas, canvas);
     if (rootLayer.needsPainting) {
       rootLayer.accept(paintVisitor);
     }
@@ -98,8 +90,7 @@ class Frame {
   final HtmlViewEmbedder? viewEmbedder;
 
   /// Rasterize the given layer tree into this frame.
-  bool raster(LayerTree layerTree, BitmapSize size,
-      {bool ignoreRasterCache = false}) {
+  bool raster(LayerTree layerTree, BitmapSize size, {bool ignoreRasterCache = false}) {
     timeAction<void>(kProfilePrerollFrame, () {
       layerTree.preroll(this, ignoreRasterCache: ignoreRasterCache);
       layerTree.measure(this, size, ignoreRasterCache: ignoreRasterCache);

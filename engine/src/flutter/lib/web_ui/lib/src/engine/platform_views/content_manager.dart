@@ -25,10 +25,7 @@ import 'slots.dart';
 class PlatformViewManager {
   PlatformViewManager() {
     // Register some default factories.
-    registerFactory(
-      ui_web.PlatformViewRegistry.defaultVisibleViewType,
-      _defaultFactory,
-    );
+    registerFactory(ui_web.PlatformViewRegistry.defaultVisibleViewType, _defaultFactory);
     registerFactory(
       ui_web.PlatformViewRegistry.defaultInvisibleViewType,
       _defaultFactory,
@@ -95,8 +92,7 @@ class PlatformViewManager {
   /// it's been set.
   ///
   /// `factoryFunction` needs to be a [PlatformViewFactory].
-  bool registerFactory(String viewType, Function factoryFunction,
-      {bool isVisible = true}) {
+  bool registerFactory(String viewType, Function factoryFunction, {bool isVisible = true}) {
     assert(
       factoryFunction is ui_web.PlatformViewFactory ||
           factoryFunction is ui_web.ParameterizedPlatformViewFactory,
@@ -135,20 +131,18 @@ class PlatformViewManager {
   /// a place where to attach the `slot` property, that will tell the browser
   /// what `slot` tag will reveal this `contents`, **without modifying the returned
   /// html from the `factory` function**.
-  DomElement renderContent(
-    String viewType,
-    int viewId,
-    Object? params,
-  ) {
-    assert(knowsViewType(viewType),
-        'Attempted to render contents of unregistered viewType: $viewType');
+  DomElement renderContent(String viewType, int viewId, Object? params) {
+    assert(
+      knowsViewType(viewType),
+      'Attempted to render contents of unregistered viewType: $viewType',
+    );
 
     final String slotName = getPlatformViewSlotName(viewId);
     _viewIdToType[viewId] = viewType;
 
     return _contents.putIfAbsent(viewId, () {
-      final DomElement wrapper = domDocument
-          .createElement('flt-platform-view')
+      final DomElement wrapper =
+          domDocument.createElement('flt-platform-view')
             ..id = getPlatformViewDomId(viewId)
             ..setAttribute('slot', slotName);
 
@@ -186,17 +180,21 @@ class PlatformViewManager {
     // Note there's also no getContent(viewId) function anymore, to prevent
     // from later modifications too.
     if (content.style.height.isEmpty) {
-      printWarning('Height of Platform View type: [$viewType] may not be set.'
-          ' Defaulting to `height: 100%`.\n'
-          'Set `style.height` to any appropriate value to stop this message.');
+      printWarning(
+        'Height of Platform View type: [$viewType] may not be set.'
+        ' Defaulting to `height: 100%`.\n'
+        'Set `style.height` to any appropriate value to stop this message.',
+      );
 
       content.style.height = '100%';
     }
 
     if (content.style.width.isEmpty) {
-      printWarning('Width of Platform View type: [$viewType] may not be set.'
-          ' Defaulting to `width: 100%`.\n'
-          'Set `style.width` to any appropriate value to stop this message.');
+      printWarning(
+        'Width of Platform View type: [$viewType] may not be set.'
+        ' Defaulting to `width: 100%`.\n'
+        'Set `style.width` to any appropriate value to stop this message.',
+      );
 
       content.style.width = '100%';
     }
@@ -222,10 +220,7 @@ class PlatformViewManager {
   }
 }
 
-DomElement _defaultFactory(
-  int viewId, {
-  Object? params,
-}) {
+DomElement _defaultFactory(int viewId, {Object? params}) {
   params!;
   params as Map<Object?, Object?>;
   return domDocument.createElement(params.readString('tagName'))

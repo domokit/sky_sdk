@@ -13,11 +13,11 @@ class NewGalleryPerfTest extends PerfTest {
     super.timeoutSeconds,
     super.forceOpenGLES,
   }) : super(
-    '${flutterDirectory.path}/dev/integration_tests/new_gallery',
-    'test_driver/transitions_perf.dart',
-    timelineFileName,
-    dartDefine: dartDefine,
-    createPlatforms: <String>['android', 'ios', 'web'],
-    enableMergedPlatformThread: true,
-  );
+         '${flutterDirectory.path}/dev/integration_tests/new_gallery',
+         'test_driver/transitions_perf.dart',
+         timelineFileName,
+         dartDefine: dartDefine,
+         createPlatforms: <String>['android', 'ios', 'web'],
+         enableMergedPlatformThread: true,
+       );
 }

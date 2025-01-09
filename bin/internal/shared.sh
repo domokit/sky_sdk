@@ -113,6 +113,9 @@ function _wait_for_lock () {
 function upgrade_flutter () (
   mkdir -p "$FLUTTER_ROOT/bin/cache"
 
+  # Ensure the engine.version is populated
+  "$FLUTTER_ROOT/bin/internal/update_engine_version.sh"
+
   local revision="$(cd "$FLUTTER_ROOT"; git rev-parse HEAD)"
   local compilekey="$revision:$FLUTTER_TOOL_ARGS"
 

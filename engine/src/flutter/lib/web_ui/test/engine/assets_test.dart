@@ -56,10 +56,7 @@ void testMain() {
         assetBase: 'https://www.gstatic.com/my-app/',
       );
 
-      expect(
-        assets.getAssetUrl('asset.txt'),
-        'https://www.gstatic.com/my-app/assets/asset.txt',
-      );
+      expect(assets.getAssetUrl('asset.txt'), 'https://www.gstatic.com/my-app/assets/asset.txt');
     });
 
     test('assetBase in conjunction with assetsDir, fully custom paths', () {
@@ -106,10 +103,7 @@ void testMain() {
 
     test('reads value from DOM (only once!)', () {
       final ui_web.AssetManager firstManager = ui_web.AssetManager();
-      expect(
-        firstManager.getAssetUrl('asset.txt'),
-        '/dom/base/assets/asset.txt',
-      );
+      expect(firstManager.getAssetUrl('asset.txt'), '/dom/base/assets/asset.txt');
 
       removeAssetBaseMeta();
       final ui_web.AssetManager anotherManager = ui_web.AssetManager();
@@ -126,18 +120,17 @@ void testMain() {
 
 /// Removes all meta-tags with name=assetBase.
 void removeAssetBaseMeta() {
-  domWindow.document
-      .querySelectorAll('meta[name=assetBase]')
-      .forEach((DomElement element) {
+  domWindow.document.querySelectorAll('meta[name=assetBase]').forEach((DomElement element) {
     element.remove();
   });
 }
 
 /// Adds a meta-tag with name=assetBase and the passed-in [value].
 void addAssetBaseMeta(String value) {
-  final DomHTMLMetaElement meta = createDomHTMLMetaElement()
-    ..name = 'assetBase'
-    ..content = value;
+  final DomHTMLMetaElement meta =
+      createDomHTMLMetaElement()
+        ..name = 'assetBase'
+        ..content = value;
 
   domDocument.head!.append(meta);
 }

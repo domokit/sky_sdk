@@ -17,15 +17,18 @@ void main() {
   test('reentrant paint error', () {
     late FlutterErrorDetails errorDetails;
     final RenderBox root = TestReentrantPaintingErrorRenderBox();
-    layout(root, onErrors: () {
-      errorDetails = TestRenderingFlutterBinding.instance.takeFlutterErrorDetails()!;
-    });
+    layout(
+      root,
+      onErrors: () {
+        errorDetails = TestRenderingFlutterBinding.instance.takeFlutterErrorDetails()!;
+      },
+    );
     pumpFrame(phase: EnginePhase.paint);
 
     expect(errorDetails, isNotNull);
     expect(errorDetails.stack, isNotNull);
     // Check the ErrorDetails without the stack trace
-    final List<String> lines =  errorDetails.toString().split('\n');
+    final List<String> lines = errorDetails.toString().split('\n');
     // The lines in the middle of the error message contain the stack trace
     // which will change depending on where the test is run.
     expect(lines.length, greaterThan(12));
@@ -97,7 +100,9 @@ void main() {
       ),
     );
     expect(
-      flutterError.diagnostics.singleWhere((DiagnosticsNode node) => node.level == DiagnosticLevel.hint).toString(),
+      flutterError.diagnostics
+          .singleWhere((DiagnosticsNode node) => node.level == DiagnosticLevel.hint)
+          .toString(),
       'This usually indicates an error in the Flutter framework itself.',
     );
   });

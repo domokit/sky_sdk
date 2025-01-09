@@ -8,7 +8,5 @@ import 'package:flutter_driver/driver_extension.dart';
 void main() {
   enableFlutterDriverExtension();
 
-  runApp(Container(
-    color: const Color(0xFFFF0000),
-  ));
+  runApp(Container(color: const Color(0xFFFF0000)));
 }

@@ -8,8 +8,7 @@ import 'dart:io';
 import 'package:process/process.dart';
 
 class FakeProcessManager extends LocalProcessManager {
-  FakeProcessManager(
-      {this.stdout = '', this.stderr = '', this.exitCode = 0, this.pid = 1});
+  FakeProcessManager({this.stdout = '', this.stderr = '', this.exitCode = 0, this.pid = 1});
 
   int runs = 0;
   String stdout;

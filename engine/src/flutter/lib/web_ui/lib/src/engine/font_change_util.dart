@@ -9,9 +9,9 @@ import 'dom.dart';
 import 'platform_dispatcher.dart';
 import 'services.dart';
 
-final ByteData? _fontChangeMessage =
-    const JSONMessageCodec().encodeMessage(
-        <String, dynamic>{'type': 'fontsChange'});
+final ByteData? _fontChangeMessage = const JSONMessageCodec().encodeMessage(<String, dynamic>{
+  'type': 'fontsChange',
+});
 
 // Font load callbacks will typically arrive in sequence, we want to prevent
 // sendFontChangeMessage of causing multiple synchronous rebuilds.

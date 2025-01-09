@@ -122,7 +122,7 @@ abstract class InheritedModel<T> extends InheritedWidget {
   /// Creates an inherited widget that supports dependencies qualified by
   /// "aspects", i.e. a descendant widget can indicate that it should
   /// only be rebuilt if a specific aspect of the model changes.
-  const InheritedModel({ super.key, required super.child });
+  const InheritedModel({super.key, required super.child});
 
   @override
   InheritedModelElement<T> createElement() => InheritedModelElement<T>(this);
@@ -144,7 +144,11 @@ abstract class InheritedModel<T> extends InheritedWidget {
 
   // The [result] will be a list of all of context's type T ancestors concluding
   // with the one that supports the specified model [aspect].
-  static void _findModels<T extends InheritedModel<Object>>(BuildContext context, Object aspect, List<InheritedElement> results) {
+  static void _findModels<T extends InheritedModel<Object>>(
+    BuildContext context,
+    Object aspect,
+    List<InheritedElement> results,
+  ) {
     final InheritedElement? model = context.getElementForInheritedWidgetOfExactType<T>();
     if (model == null) {
       return;
@@ -185,7 +189,7 @@ abstract class InheritedModel<T> extends InheritedWidget {
   /// `context.dependOnInheritedWidgetOfExactType<T>()`.
   ///
   /// If no ancestor of type T exists, null is returned.
-  static T? inheritFrom<T extends InheritedModel<Object>>(BuildContext context, { Object? aspect }) {
+  static T? inheritFrom<T extends InheritedModel<Object>>(BuildContext context, {Object? aspect}) {
     if (aspect == null) {
       return context.dependOnInheritedWidgetOfExactType<T>();
     }
@@ -237,7 +241,8 @@ class InheritedModelElement<T> extends InheritedElement {
     if (dependencies == null) {
       return;
     }
-    if (dependencies.isEmpty || (widget as InheritedModel<T>).updateShouldNotifyDependent(oldWidget, dependencies)) {
+    if (dependencies.isEmpty ||
+        (widget as InheritedModel<T>).updateShouldNotifyDependent(oldWidget, dependencies)) {
       dependent.didChangeDependencies();
     }
   }

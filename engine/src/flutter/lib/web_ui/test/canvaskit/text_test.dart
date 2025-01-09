@@ -22,29 +22,16 @@ void testMain() {
       final ui.TextStyle textStyleWithShadows = ui.TextStyle(
         fontSize: 16,
         shadows: <ui.Shadow>[
-          const ui.Shadow(
-            blurRadius: 3.0,
-            offset: ui.Offset(3.0, 3.0),
-          ),
-          const ui.Shadow(
-            blurRadius: 3.0,
-            offset: ui.Offset(-3.0, 3.0),
-          ),
-          const ui.Shadow(
-            blurRadius: 3.0,
-            offset: ui.Offset(3.0, -3.0),
-          ),
-          const ui.Shadow(
-            blurRadius: 3.0,
-            offset: ui.Offset(-3.0, -3.0),
-          ),
+          const ui.Shadow(blurRadius: 3.0, offset: ui.Offset(3.0, 3.0)),
+          const ui.Shadow(blurRadius: 3.0, offset: ui.Offset(-3.0, 3.0)),
+          const ui.Shadow(blurRadius: 3.0, offset: ui.Offset(3.0, -3.0)),
+          const ui.Shadow(blurRadius: 3.0, offset: ui.Offset(-3.0, -3.0)),
         ],
         fontFamily: 'Roboto',
       );
 
       for (int i = 0; i < 10; i++) {
-        final ui.ParagraphBuilder builder =
-            ui.ParagraphBuilder(ui.ParagraphStyle(fontSize: 16));
+        final ui.ParagraphBuilder builder = ui.ParagraphBuilder(ui.ParagraphStyle(fontSize: 16));
         builder.pushStyle(textStyleWithShadows);
         builder.addText('test');
         final ui.Paragraph paragraph = builder.build();
@@ -56,7 +43,8 @@ void testMain() {
     test('getBoxesForRange works for LTR text in an RTL paragraph', () {
       // Create builder for an RTL paragraph.
       final ui.ParagraphBuilder builder = ui.ParagraphBuilder(
-          ui.ParagraphStyle(fontSize: 16, textDirection: ui.TextDirection.rtl));
+        ui.ParagraphStyle(fontSize: 16, textDirection: ui.TextDirection.rtl),
+      );
       builder.addText('hello');
       final ui.Paragraph paragraph = builder.build();
       paragraph.layout(const ui.ParagraphConstraints(width: 100));
@@ -105,9 +93,18 @@ void testMain() {
       test('The default test font is used when a non-test fontFamily is specified', () {
         final String defaultTestFontFamily = testFonts.first;
 
-        expect(CkTextStyle(fontFamily: 'BogusFontFamily').effectiveFontFamily, defaultTestFontFamily);
-        expect(CkParagraphStyle(fontFamily: 'BogusFontFamily').getTextStyle().effectiveFontFamily, defaultTestFontFamily);
-        expect(CkStrutStyle(fontFamily: 'BogusFontFamily'), CkStrutStyle(fontFamily: defaultTestFontFamily));
+        expect(
+          CkTextStyle(fontFamily: 'BogusFontFamily').effectiveFontFamily,
+          defaultTestFontFamily,
+        );
+        expect(
+          CkParagraphStyle(fontFamily: 'BogusFontFamily').getTextStyle().effectiveFontFamily,
+          defaultTestFontFamily,
+        );
+        expect(
+          CkStrutStyle(fontFamily: 'BogusFontFamily'),
+          CkStrutStyle(fontFamily: defaultTestFontFamily),
+        );
       });
 
       test('The default test font is used when fontFamily is unspecified', () {
@@ -121,7 +118,10 @@ void testMain() {
       test('Can specify test fontFamily to use', () {
         for (final String testFont in testFonts) {
           expect(CkTextStyle(fontFamily: testFont).effectiveFontFamily, testFont);
-          expect(CkParagraphStyle(fontFamily: testFont).getTextStyle().effectiveFontFamily, testFont);
+          expect(
+            CkParagraphStyle(fontFamily: testFont).getTextStyle().effectiveFontFamily,
+            testFont,
+          );
         }
       });
     });

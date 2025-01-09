@@ -8,11 +8,9 @@ import '../xcode_project.dart';
 
 /// Migrate the Xcode project for Xcode compatibility to avoid an "Update to recommended settings" Xcode warning.
 class XcodeProjectObjectVersionMigration extends ProjectMigrator {
-  XcodeProjectObjectVersionMigration(
-    XcodeBasedProject project,
-    super.logger,
-  )   : _xcodeProjectInfoFile = project.xcodeProjectInfoFile,
-        _xcodeProjectSchemeFile = project.xcodeProjectSchemeFile();
+  XcodeProjectObjectVersionMigration(XcodeBasedProject project, super.logger)
+    : _xcodeProjectInfoFile = project.xcodeProjectInfoFile,
+      _xcodeProjectSchemeFile = project.xcodeProjectSchemeFile();
 
   final File _xcodeProjectInfoFile;
   final File _xcodeProjectSchemeFile;

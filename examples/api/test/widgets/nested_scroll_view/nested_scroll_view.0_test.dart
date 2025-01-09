@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/nested_scroll_view/nested_scroll_view.0.dart' as example;
+import 'package:flutter_api_samples/widgets/nested_scroll_view/nested_scroll_view.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -36,9 +37,6 @@ void main() {
     await tester.pump();
     expect(find.text('Item 1'), findsNothing);
 
-    expect(
-      tester.getTopLeft(find.byType(TabBarView)).dy,
-      lessThan(initialAppBarHeight),
-    );
+    expect(tester.getTopLeft(find.byType(TabBarView)).dy, lessThan(initialAppBarHeight));
   });
 }

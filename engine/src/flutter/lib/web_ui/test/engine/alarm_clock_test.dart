@@ -30,8 +30,7 @@ void _alarmClockTests() {
     callCount = 0;
   });
 
-  testAsync('AlarmClock calls the callback in the future',
-      (FakeAsync fakeAsync) {
+  testAsync('AlarmClock calls the callback in the future', (FakeAsync fakeAsync) {
     final Clock clock = fakeAsync.getClock(DateTime(2019, 1, 24));
     final AlarmClock alarm = AlarmClock(clock.now);
     alarm.callback = testCallback;
@@ -66,8 +65,7 @@ void _alarmClockTests() {
     expect(callCount, 2);
   });
 
-  testAsync('AlarmClock does nothing when new datetime is the same',
-      (FakeAsync fakeAsync) {
+  testAsync('AlarmClock does nothing when new datetime is the same', (FakeAsync fakeAsync) {
     final Clock clock = fakeAsync.getClock(DateTime(2019, 1, 24));
     final AlarmClock alarm = AlarmClock(clock.now);
     alarm.callback = testCallback;
@@ -91,8 +89,7 @@ void _alarmClockTests() {
     expect(callCount, 1);
   });
 
-  testAsync('AlarmClock does not call the callback in the past',
-      (FakeAsync fakeAsync) {
+  testAsync('AlarmClock does not call the callback in the past', (FakeAsync fakeAsync) {
     final Clock clock = fakeAsync.getClock(DateTime(2019, 1, 24));
     final AlarmClock alarm = AlarmClock(clock.now);
     alarm.callback = testCallback;
@@ -148,8 +145,7 @@ void _alarmClockTests() {
     expect(fakeAsync.nonPeriodicTimerCount, 0);
   });
 
-  testAsync('AlarmClock cancels the timer when datetime is null',
-      (FakeAsync fakeAsync) {
+  testAsync('AlarmClock cancels the timer when datetime is null', (FakeAsync fakeAsync) {
     final Clock clock = fakeAsync.getClock(DateTime(2019, 1, 24));
     final AlarmClock alarm = AlarmClock(clock.now);
     alarm.callback = testCallback;
@@ -168,8 +164,7 @@ void _alarmClockTests() {
     expect(fakeAsync.nonPeriodicTimerCount, 0);
   });
 
-  testAsync('AlarmClock cancels the timer when datetime is in the past',
-      (FakeAsync fakeAsync) {
+  testAsync('AlarmClock cancels the timer when datetime is in the past', (FakeAsync fakeAsync) {
     final Clock clock = fakeAsync.getClock(DateTime(2019, 1, 24));
     final AlarmClock alarm = AlarmClock(clock.now);
     alarm.callback = testCallback;

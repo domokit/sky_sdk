@@ -9,9 +9,11 @@ import 'dart:convert';
 import 'dart:ffi';
 
 final class RawSkString extends Opaque {}
+
 typedef SkStringHandle = Pointer<RawSkString>;
 
 final class RawSkString16 extends Opaque {}
+
 typedef SkString16Handle = Pointer<RawSkString16>;
 
 @Native<SkStringHandle Function(Size)>(symbol: 'skString_allocate', isLeaf: true)

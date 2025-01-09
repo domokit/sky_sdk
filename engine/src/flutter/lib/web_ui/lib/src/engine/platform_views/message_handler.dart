@@ -40,9 +40,8 @@ typedef PlatformViewContentHandler = void Function(DomElement);
 /// some extra cleanup of its internal state, but it can do it automatically. See
 /// [HtmlViewEmbedder.disposeViews].
 class PlatformViewMessageHandler {
-  PlatformViewMessageHandler({
-    required PlatformViewManager contentManager,
-  }) : _contentManager = contentManager;
+  PlatformViewMessageHandler({required PlatformViewManager contentManager})
+    : _contentManager = contentManager;
 
   static const String channelName = 'flutter/platform_views';
 
@@ -77,30 +76,32 @@ class PlatformViewMessageHandler {
     required Object? params,
   }) {
     if (!_contentManager.knowsViewType(platformViewType)) {
-      callback(_codec.encodeErrorEnvelope(
-        code: 'unregistered_view_type',
-        message: 'A HtmlElementView widget is trying to create a platform view '
-            'with an unregistered type: <$platformViewType>.',
-        details: 'If you are the author of the PlatformView, make sure '
-            '`registerViewFactory` is invoked.',
-      ));
+      callback(
+        _codec.encodeErrorEnvelope(
+          code: 'unregistered_view_type',
+          message:
+              'A HtmlElementView widget is trying to create a platform view '
+              'with an unregistered type: <$platformViewType>.',
+          details:
+              'If you are the author of the PlatformView, make sure '
+              '`registerViewFactory` is invoked.',
+        ),
+      );
       return;
     }
 
     if (_contentManager.knowsViewId(platformViewId)) {
-      callback(_codec.encodeErrorEnvelope(
-        code: 'recreating_view',
-        message: 'trying to create an already created view',
-        details: 'view id: $platformViewId',
-      ));
+      callback(
+        _codec.encodeErrorEnvelope(
+          code: 'recreating_view',
+          message: 'trying to create an already created view',
+          details: 'view id: $platformViewId',
+        ),
+      );
       return;
     }
 
-    _contentManager.renderContent(
-      platformViewType,
-      platformViewId,
-      params,
-    );
+    _contentManager.renderContent(platformViewType, platformViewId, params);
 
     callback(_codec.encodeSuccessEnvelope(null));
   }

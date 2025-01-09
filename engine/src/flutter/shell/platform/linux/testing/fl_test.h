@@ -22,13 +22,6 @@ GBytes* hex_string_to_bytes(const gchar* hex_string);
 // Helper function to convert GBytes into a hexadecimal string (e.g. "01feab")
 gchar* bytes_to_hex_string(GBytes* bytes);
 
-// Creates a mock engine that responds to platform messages.
-FlEngine* make_mock_engine();
-
-// Creates a mock engine using a specified FlDartProject that responds to
-// platform messages.
-FlEngine* make_mock_engine_with_project(FlDartProject* project);
-
 // GTest printer for FlValue.
 void PrintTo(FlValue* v, std::ostream* os);
 

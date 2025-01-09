@@ -31,7 +31,18 @@ void main() {
         final AndroidDevice androidDevice = device as AndroidDevice;
         expect(await androidDevice.isArm64(), isTrue);
         expectLog(<CommandArgs>[
-          cmd(command: 'getprop', arguments: <String>['ro.bootimage.build.fingerprint', ';', 'getprop', 'ro.build.version.release', ';', 'getprop', 'ro.build.version.sdk']),
+          cmd(
+            command: 'getprop',
+            arguments: <String>[
+              'ro.bootimage.build.fingerprint',
+              ';',
+              'getprop',
+              'ro.build.version.release',
+              ';',
+              'getprop',
+              'ro.build.version.sdk',
+            ],
+          ),
           cmd(command: 'getprop', arguments: <String>['ro.product.cpu.abi']),
         ]);
       });
@@ -61,7 +72,18 @@ void main() {
       test('sends power event', () async {
         await device.togglePower();
         expectLog(<CommandArgs>[
-          cmd(command: 'getprop', arguments: <String>['ro.bootimage.build.fingerprint', ';', 'getprop', 'ro.build.version.release', ';', 'getprop', 'ro.build.version.sdk']),
+          cmd(
+            command: 'getprop',
+            arguments: <String>[
+              'ro.bootimage.build.fingerprint',
+              ';',
+              'getprop',
+              'ro.build.version.release',
+              ';',
+              'getprop',
+              'ro.build.version.sdk',
+            ],
+          ),
           cmd(command: 'input', arguments: <String>['keyevent', '26']),
         ]);
       });
@@ -72,7 +94,18 @@ void main() {
         FakeDevice.pretendAwake();
         await device.wakeUp();
         expectLog(<CommandArgs>[
-          cmd(command: 'getprop', arguments: <String>['ro.bootimage.build.fingerprint', ';', 'getprop', 'ro.build.version.release', ';', 'getprop', 'ro.build.version.sdk']),
+          cmd(
+            command: 'getprop',
+            arguments: <String>[
+              'ro.bootimage.build.fingerprint',
+              ';',
+              'getprop',
+              'ro.build.version.release',
+              ';',
+              'getprop',
+              'ro.build.version.sdk',
+            ],
+          ),
           cmd(command: 'dumpsys', arguments: <String>['power']),
         ]);
       });
@@ -81,7 +114,18 @@ void main() {
         FakeDevice.pretendAsleep();
         await device.wakeUp();
         expectLog(<CommandArgs>[
-          cmd(command: 'getprop', arguments: <String>['ro.bootimage.build.fingerprint', ';', 'getprop', 'ro.build.version.release', ';', 'getprop', 'ro.build.version.sdk']),
+          cmd(
+            command: 'getprop',
+            arguments: <String>[
+              'ro.bootimage.build.fingerprint',
+              ';',
+              'getprop',
+              'ro.build.version.release',
+              ';',
+              'getprop',
+              'ro.build.version.sdk',
+            ],
+          ),
           cmd(command: 'dumpsys', arguments: <String>['power']),
           cmd(command: 'input', arguments: <String>['keyevent', '26']),
         ]);
@@ -93,7 +137,18 @@ void main() {
         FakeDevice.pretendAsleep();
         await device.sendToSleep();
         expectLog(<CommandArgs>[
-          cmd(command: 'getprop', arguments: <String>['ro.bootimage.build.fingerprint', ';', 'getprop', 'ro.build.version.release', ';', 'getprop', 'ro.build.version.sdk']),
+          cmd(
+            command: 'getprop',
+            arguments: <String>[
+              'ro.bootimage.build.fingerprint',
+              ';',
+              'getprop',
+              'ro.build.version.release',
+              ';',
+              'getprop',
+              'ro.build.version.sdk',
+            ],
+          ),
           cmd(command: 'dumpsys', arguments: <String>['power']),
         ]);
       });
@@ -102,7 +157,18 @@ void main() {
         FakeDevice.pretendAwake();
         await device.sendToSleep();
         expectLog(<CommandArgs>[
-          cmd(command: 'getprop', arguments: <String>['ro.bootimage.build.fingerprint', ';', 'getprop', 'ro.build.version.release', ';', 'getprop', 'ro.build.version.sdk']),
+          cmd(
+            command: 'getprop',
+            arguments: <String>[
+              'ro.bootimage.build.fingerprint',
+              ';',
+              'getprop',
+              'ro.build.version.release',
+              ';',
+              'getprop',
+              'ro.build.version.sdk',
+            ],
+          ),
           cmd(command: 'dumpsys', arguments: <String>['power']),
           cmd(command: 'input', arguments: <String>['keyevent', '26']),
         ]);
@@ -114,7 +180,18 @@ void main() {
         FakeDevice.pretendAwake();
         await device.unlock();
         expectLog(<CommandArgs>[
-          cmd(command: 'getprop', arguments: <String>['ro.bootimage.build.fingerprint', ';', 'getprop', 'ro.build.version.release', ';', 'getprop', 'ro.build.version.sdk']),
+          cmd(
+            command: 'getprop',
+            arguments: <String>[
+              'ro.bootimage.build.fingerprint',
+              ';',
+              'getprop',
+              'ro.build.version.release',
+              ';',
+              'getprop',
+              'ro.build.version.sdk',
+            ],
+          ),
           cmd(command: 'dumpsys', arguments: <String>['power']),
           cmd(command: 'input', arguments: <String>['keyevent', '82']),
         ]);
@@ -136,21 +213,16 @@ void main() {
         FakeDevice.output = '1';
         await device.awaitDevice();
         expectLog(<CommandArgs>[
-          cmd(command: 'adb', environment: <String, String>{
-            FakeDevice.canFailKey: 'false'
-          }, arguments: <String>[
-            '-s',
-            device.deviceId,
-            'wait-for-device',
-          ]),
-          cmd(command: 'adb', environment: <String, String>{
-            FakeDevice.canFailKey: 'false',
-          }, arguments: <String>[
-            '-s',
-            device.deviceId,
-            'shell',
-            'getprop sys.boot_completed',
-          ])
+          cmd(
+            command: 'adb',
+            environment: <String, String>{FakeDevice.canFailKey: 'false'},
+            arguments: <String>['-s', device.deviceId, 'wait-for-device'],
+          ),
+          cmd(
+            command: 'adb',
+            environment: <String, String>{FakeDevice.canFailKey: 'false'},
+            arguments: <String>['-s', device.deviceId, 'shell', 'getprop sys.boot_completed'],
+          ),
         ]);
       });
 
@@ -158,13 +230,11 @@ void main() {
         FakeDevice.resetLog();
         await device.reboot();
         expectLog(<CommandArgs>[
-          cmd(command: 'adb', environment: <String, String>{
-            FakeDevice.canFailKey: 'false'
-          }, arguments: <String>[
-            '-s',
-            device.deviceId,
-            'reboot',
-          ]),
+          cmd(
+            command: 'adb',
+            environment: <String, String>{FakeDevice.canFailKey: 'false'},
+            arguments: <String>['-s', device.deviceId, 'reboot'],
+          ),
         ]);
       });
 
@@ -172,14 +242,11 @@ void main() {
         FakeDevice.resetLog();
         await device.clearLogs();
         expectLog(<CommandArgs>[
-          cmd(command: 'adb', environment: <String, String>{
-            FakeDevice.canFailKey: 'true'
-          }, arguments: <String>[
-            '-s',
-            device.deviceId,
-            'logcat',
-            '-c',
-          ]),
+          cmd(
+            command: 'adb',
+            environment: <String, String>{FakeDevice.canFailKey: 'true'},
+            arguments: <String>['-s', device.deviceId, 'logcat', '-c'],
+          ),
         ]);
       });
 
@@ -187,14 +254,11 @@ void main() {
         FakeDevice.resetLog();
         await device.startLoggingToSink(IOSink(_MemoryIOSink()));
         expectLog(<CommandArgs>[
-          cmd(command: 'adb', environment: <String, String>{
-            FakeDevice.canFailKey: 'true'
-          }, arguments: <String>[
-            '-s',
-            device.deviceId,
-            'logcat',
-            '--clear',
-          ]),
+          cmd(
+            command: 'adb',
+            environment: <String, String>{FakeDevice.canFailKey: 'true'},
+            arguments: <String>['-s', device.deviceId, 'logcat', '--clear'],
+          ),
         ]);
       });
     });
@@ -210,33 +274,30 @@ CommandArgs cmd({
   List<String>? arguments,
   Map<String, String>? environment,
 }) {
-  return CommandArgs(
-    command: command,
-    arguments: arguments,
-    environment: environment,
-  );
+  return CommandArgs(command: command, arguments: arguments, environment: environment);
 }
 
 @immutable
 class CommandArgs {
-  const CommandArgs({ required this.command, this.arguments, this.environment });
+  const CommandArgs({required this.command, this.arguments, this.environment});
 
   final String command;
   final List<String>? arguments;
   final Map<String, String>? environment;
 
   @override
-  String toString() => 'CommandArgs(command: $command, arguments: $arguments, environment: $environment)';
+  String toString() =>
+      'CommandArgs(command: $command, arguments: $arguments, environment: $environment)';
 
   @override
-  bool operator==(Object other) {
+  bool operator ==(Object other) {
     if (other.runtimeType != CommandArgs) {
       return false;
     }
-    return other is CommandArgs
-        && other.command == command
-        && const ListEquality<String>().equals(other.arguments, arguments)
-        && const MapEquality<String, String>().equals(other.environment, environment);
+    return other is CommandArgs &&
+        other.command == command &&
+        const ListEquality<String>().equals(other.arguments, arguments) &&
+        const MapEquality<String, String>().equals(other.environment, environment);
   }
 
   @override
@@ -288,37 +349,43 @@ class FakeDevice extends AndroidDevice {
   }
 
   @override
-  Future<String> adb(List<String> arguments,
-      {Map<String, String>? environment,
-      bool silent = false,
-      bool canFail = false}) async {
-      environment ??= <String, String>{};
-    commandLog.add(CommandArgs(
-      command: 'adb',
-      // ignore: prefer_spread_collections
-      arguments: <String>['-s', deviceId]..addAll(arguments),
-      environment: environment..putIfAbsent('canFail', () => '$canFail'),
-    ));
+  Future<String> adb(
+    List<String> arguments, {
+    Map<String, String>? environment,
+    bool silent = false,
+    bool canFail = false,
+  }) async {
+    environment ??= <String, String>{};
+    commandLog.add(
+      CommandArgs(
+        command: 'adb',
+        // ignore: prefer_spread_collections
+        arguments: <String>['-s', deviceId]..addAll(arguments),
+        environment: environment..putIfAbsent('canFail', () => '$canFail'),
+      ),
+    );
     return output;
   }
 
   @override
-  Future<String> shellEval(String command, List<String> arguments, { Map<String, String>? environment, bool silent = false }) async {
-    commandLog.add(CommandArgs(
-      command: command,
-      arguments: arguments,
-      environment: environment,
-    ));
+  Future<String> shellEval(
+    String command,
+    List<String> arguments, {
+    Map<String, String>? environment,
+    bool silent = false,
+  }) async {
+    commandLog.add(CommandArgs(command: command, arguments: arguments, environment: environment));
     return output;
   }
 
   @override
-  Future<void> shellExec(String command, List<String> arguments, { Map<String, String>? environment, bool silent = false }) async {
-    commandLog.add(CommandArgs(
-      command: command,
-      arguments: arguments,
-      environment: environment,
-    ));
+  Future<void> shellExec(
+    String command,
+    List<String> arguments, {
+    Map<String, String>? environment,
+    bool silent = false,
+  }) async {
+    commandLog.add(CommandArgs(command: command, arguments: arguments, environment: environment));
   }
 }
 

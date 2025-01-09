@@ -54,7 +54,7 @@ ui.Picture paint(ui.Rect paintBounds) {
 
   // Shifts the coordinate space of and rotates the current transform.
   canvas.translate(mid.dx, mid.dy);
-  canvas.rotate(math.pi/4);
+  canvas.rotate(math.pi / 4);
 
   final ui.Gradient yellowBlue = ui.Gradient.linear(
     ui.Offset(-radius, -radius),
@@ -73,10 +73,22 @@ ui.Picture paint(ui.Rect paintBounds) {
 
   // Scale x and y by 0.5.
   final Float64List scaleMatrix = Float64List.fromList(<double>[
-      0.5, 0.0, 0.0, 0.0,
-      0.0, 0.5, 0.0, 0.0,
-      0.0, 0.0, 1.0, 0.0,
-      0.0, 0.0, 0.0, 1.0,
+    0.5,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.5,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
   ]);
   canvas.transform(scaleMatrix);
 
@@ -105,15 +117,17 @@ ui.Picture paint(ui.Rect paintBounds) {
 
 ui.Scene composite(ui.Picture picture, ui.Rect paintBounds) {
   final double devicePixelRatio = view.devicePixelRatio;
-  final Float64List deviceTransform = Float64List(16)
-    ..[0] = devicePixelRatio
-    ..[5] = devicePixelRatio
-    ..[10] = 1.0
-    ..[15] = 1.0;
-  final ui.SceneBuilder sceneBuilder = ui.SceneBuilder()
-    ..pushTransform(deviceTransform)
-    ..addPicture(ui.Offset.zero, picture)
-    ..pop();
+  final Float64List deviceTransform =
+      Float64List(16)
+        ..[0] = devicePixelRatio
+        ..[5] = devicePixelRatio
+        ..[10] = 1.0
+        ..[15] = 1.0;
+  final ui.SceneBuilder sceneBuilder =
+      ui.SceneBuilder()
+        ..pushTransform(deviceTransform)
+        ..addPicture(ui.Offset.zero, picture)
+        ..pop();
   return sceneBuilder.build();
 }
 

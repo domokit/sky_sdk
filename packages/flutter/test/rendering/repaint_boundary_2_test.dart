@@ -43,16 +43,8 @@ class RelayoutBoundariesCrashState extends State<RelayoutBoundariesCrash> {
             final double dimension = !_mode ? 10.0 : 20.0;
             return Column(
               children: <Widget>[
-                SizedBox(
-                  width: dimension,
-                  height: dimension,
-                  child: const Placeholder(),
-                ),
-                SizedBox(
-                  width: dimension,
-                  height: dimension,
-                  child: const Placeholder(),
-                ),
+                SizedBox(width: dimension, height: dimension, child: const Placeholder()),
+                SizedBox(width: dimension, height: dimension, child: const Placeholder()),
               ],
             );
           },

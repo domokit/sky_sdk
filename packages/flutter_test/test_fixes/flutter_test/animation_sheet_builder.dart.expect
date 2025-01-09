@@ -7,8 +7,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('test', (WidgetTester tester) async {
-    final AnimationSheetBuilder animationSheet =
-        AnimationSheetBuilder(frameSize: const Size(48, 24));
+    final AnimationSheetBuilder animationSheet = AnimationSheetBuilder(
+      frameSize: const Size(48, 24),
+    );
 
     // This line will remain unchanged as there is no replacement for the
     // `sheetSize` API.

@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class Inside extends StatefulWidget {
-  const Inside({ super.key });
+  const Inside({super.key});
   @override
   InsideState createState() => InsideState();
 }
@@ -21,15 +21,12 @@ class InsideState extends State<Inside> {
   }
 
   void _handlePointerDown(PointerDownEvent event) {
-    setState(() { });
+    setState(() {});
   }
 }
 
 class Middle extends StatefulWidget {
-  const Middle({
-    super.key,
-    this.child,
-  });
+  const Middle({super.key, this.child});
 
   final Inside? child;
 
@@ -40,19 +37,16 @@ class Middle extends StatefulWidget {
 class MiddleState extends State<Middle> {
   @override
   Widget build(BuildContext context) {
-    return Listener(
-      onPointerDown: _handlePointerDown,
-      child: widget.child,
-    );
+    return Listener(onPointerDown: _handlePointerDown, child: widget.child);
   }
 
   void _handlePointerDown(PointerDownEvent event) {
-    setState(() { });
+    setState(() {});
   }
 }
 
 class Outside extends StatefulWidget {
-  const Outside({ super.key });
+  const Outside({super.key});
   @override
   OutsideState createState() => OutsideState();
 }

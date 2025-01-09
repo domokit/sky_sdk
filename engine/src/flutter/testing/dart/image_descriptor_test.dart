@@ -84,9 +84,8 @@ void main() {
   }, skip: !(Platform.isAndroid || Platform.isIOS || Platform.isMacOS || Platform.isWindows));
 }
 
-Future<Uint8List> readFile(String fileName, ) async {
-  final File file =
-      File(path.join('flutter', 'testing', 'resources', fileName));
+Future<Uint8List> readFile(String fileName) async {
+  final File file = File(path.join('flutter', 'testing', 'resources', fileName));
   return file.readAsBytes();
 }
 
@@ -98,7 +97,12 @@ File _getSkiaResource(String fileName) {
   // This is fragile and should be changed once the Platform.script issue is
   // resolved.
   final String assetPath = path.join(
-    'flutter', 'third_party', 'skia', 'resources', 'images', fileName,
+    'flutter',
+    'third_party',
+    'skia',
+    'resources',
+    'images',
+    fileName,
   );
   return File(assetPath);
 }

@@ -60,11 +60,17 @@ abstract class SimpleCkShader implements CkShader {
 }
 
 class CkGradientSweep extends SimpleCkShader implements ui.Gradient {
-  CkGradientSweep(this.center, this.colors, this.colorStops, this.tileMode,
-      this.startAngle, this.endAngle, this.matrix4)
-      : assert(offsetIsValid(center)),
-        assert(startAngle < endAngle),
-        assert(matrix4 == null || matrix4IsValid(matrix4)) {
+  CkGradientSweep(
+    this.center,
+    this.colors,
+    this.colorStops,
+    this.tileMode,
+    this.startAngle,
+    this.endAngle,
+    this.matrix4,
+  ) : assert(offsetIsValid(center)),
+      assert(startAngle < endAngle),
+      assert(matrix4 == null || matrix4IsValid(matrix4)) {
     validateColorStops(colors, colorStops);
   }
 
@@ -104,9 +110,9 @@ class CkGradientLinear extends SimpleCkShader implements ui.Gradient {
     this.colorStops,
     this.tileMode,
     Float32List? matrix,
-  )   : assert(offsetIsValid(from)),
-        assert(offsetIsValid(to)),
-        matrix4 = matrix {
+  ) : assert(offsetIsValid(from)),
+      assert(offsetIsValid(to)),
+      matrix4 = matrix {
     assert(matrix4 == null || matrix4IsValid(matrix4!));
     // ignore: prefer_asserts_in_initializer_lists
     assert(() {
@@ -142,8 +148,14 @@ class CkGradientLinear extends SimpleCkShader implements ui.Gradient {
 }
 
 class CkGradientRadial extends SimpleCkShader implements ui.Gradient {
-  CkGradientRadial(this.center, this.radius, this.colors, this.colorStops,
-      this.tileMode, this.matrix4);
+  CkGradientRadial(
+    this.center,
+    this.radius,
+    this.colors,
+    this.colorStops,
+    this.tileMode,
+    this.matrix4,
+  );
 
   final ui.Offset center;
   final double radius;
@@ -173,8 +185,16 @@ class CkGradientRadial extends SimpleCkShader implements ui.Gradient {
 }
 
 class CkGradientConical extends SimpleCkShader implements ui.Gradient {
-  CkGradientConical(this.focal, this.focalRadius, this.center, this.radius,
-      this.colors, this.colorStops, this.tileMode, this.matrix4);
+  CkGradientConical(
+    this.focal,
+    this.focalRadius,
+    this.center,
+    this.radius,
+    this.colors,
+    this.colorStops,
+    this.tileMode,
+    this.matrix4,
+  );
 
   final ui.Offset focal;
   final double focalRadius;
@@ -216,9 +236,8 @@ class CkGradientConical extends SimpleCkShader implements ui.Gradient {
 /// generated depending on the _usage_ of this object in [ui.Paint] and other
 /// scenarios that want a shader at different filter quality levels.
 class CkImageShader implements ui.ImageShader, CkShader {
-  CkImageShader(ui.Image image, this.tileModeX, this.tileModeY, this.matrix4,
-      this.filterQuality)
-      : _image = image as CkImage {
+  CkImageShader(ui.Image image, this.tileModeX, this.tileModeY, this.matrix4, this.filterQuality)
+    : _image = image as CkImage {
     _initializeSkImageShader(filterQuality ?? ui.FilterQuality.none);
   }
 

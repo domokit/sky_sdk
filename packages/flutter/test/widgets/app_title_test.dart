@@ -8,19 +8,20 @@ import 'package:flutter_test/flutter_test.dart';
 const Color kTitleColor = Color(0xFF333333);
 const String kTitleString = 'Hello World';
 
-Future<void> pumpApp(WidgetTester tester, { GenerateAppTitle? onGenerateTitle, Color? color }) async {
+Future<void> pumpApp(WidgetTester tester, {GenerateAppTitle? onGenerateTitle, Color? color}) async {
   await tester.pumpWidget(
     WidgetsApp(
-      supportedLocales: const <Locale>[
-        Locale('en', 'US'),
-        Locale('en', 'GB'),
-      ],
+      supportedLocales: const <Locale>[Locale('en', 'US'), Locale('en', 'GB')],
       title: kTitleString,
       color: color ?? kTitleColor,
       onGenerateTitle: onGenerateTitle,
       onGenerateRoute: (RouteSettings settings) {
         return PageRouteBuilder<void>(
-          pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) {
             return Container();
           },
         );
@@ -65,5 +66,4 @@ void main() {
     expect(tester.widget<Title>(find.byType(Title)).title, 'en_US');
     expect(tester.widget<Title>(find.byType(Title)).color, kTitleColor);
   });
-
 }

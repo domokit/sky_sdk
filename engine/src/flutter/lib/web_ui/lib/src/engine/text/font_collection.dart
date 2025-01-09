@@ -19,13 +19,14 @@ class HtmlFontCollection implements FlutterFontCollection {
   /// fonts declared within.
   @override
   Future<AssetFontsResult> loadAssetFonts(FontManifest manifest) async {
-    final List<Future<(String, FontLoadError?)>> pendingFonts = <Future<(String, FontLoadError?)>>[];
+    final List<Future<(String, FontLoadError?)>> pendingFonts =
+        <Future<(String, FontLoadError?)>>[];
     for (final FontFamily family in manifest.families) {
       for (final FontAsset fontAsset in family.fontAssets) {
         pendingFonts.add(() async {
           return (
             fontAsset.asset,
-            await _loadFontAsset(family.name, fontAsset.asset, fontAsset.descriptors)
+            await _loadFontAsset(family.name, fontAsset.asset, fontAsset.descriptors),
           );
         }());
       }
@@ -64,8 +65,7 @@ class HtmlFontCollection implements FlutterFontCollection {
   // Regular expression to detect a string with no punctuations.
   // For example font family 'Ahem!' does not fall into this category
   // so the family name will be wrapped in quotes.
-  static final RegExp notPunctuation =
-      RegExp(r'[a-z0-9\s]+', caseSensitive: false);
+  static final RegExp notPunctuation = RegExp(r'[a-z0-9\s]+', caseSensitive: false);
   // Regular expression to detect tokens starting with a digit.
   // For example font family 'Goudy Bookletter 1911' falls into this
   // category.
@@ -110,8 +110,7 @@ class HtmlFontCollection implements FlutterFontCollection {
     final List<DomFontFace> fontFaces = <DomFontFace>[];
     final List<FontLoadError> errors = <FontLoadError>[];
     try {
-      if (startWithDigit.hasMatch(family) ||
-          notPunctuation.stringMatch(family) != family) {
+      if (startWithDigit.hasMatch(family) || notPunctuation.stringMatch(family) != family) {
         // Load a font family name with special characters once here wrapped in
         // quotes.
         fontFaces.add(await _loadFontFace("'$family'", asset, descriptors));
@@ -120,7 +119,7 @@ class HtmlFontCollection implements FlutterFontCollection {
       errors.add(error);
     }
     try {
-          // Load all fonts, without quoted family names.
+      // Load all fonts, without quoted family names.
       fontFaces.add(await _loadFontFace(family, asset, descriptors));
     } on FontLoadError catch (error) {
       errors.add(error);
@@ -150,7 +149,11 @@ class HtmlFontCollection implements FlutterFontCollection {
   ) async {
     // try/catch because `new FontFace` can crash with an improper font family.
     try {
-      final DomFontFace fontFace = createDomFontFace(family, 'url(${ui_web.assetManager.getAssetUrl(asset)})', descriptors);
+      final DomFontFace fontFace = createDomFontFace(
+        family,
+        'url(${ui_web.assetManager.getAssetUrl(asset)})',
+        descriptors,
+      );
       return await fontFace.load();
     } catch (e) {
       printWarning('Error while loading font family "$family":\n$e');
@@ -182,6 +185,5 @@ class HtmlFontCollection implements FlutterFontCollection {
   }
 
   @override
-  void debugResetFallbackFonts() {
-  }
+  void debugResetFallbackFonts() {}
 }

@@ -18,7 +18,7 @@ const String kEventsFileName = 'touchEvents';
 
 class MotionEventsPage extends PageWidget {
   const MotionEventsPage({Key? key})
-      : super('Motion Event Tests', const ValueKey<String>('MotionEventsListTile'), key: key);
+    : super('Motion Event Tests', const ValueKey<String>('MotionEventsListTile'), key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -57,10 +57,7 @@ class MotionEventsBodyState extends State<MotionEventsBody> {
           ),
         ),
         Expanded(
-          child: ListView.builder(
-            itemBuilder: buildEventTile,
-            itemCount: flutterViewEvents.length,
-          ),
+          child: ListView.builder(itemBuilder: buildEventTile, itemCount: flutterViewEvents.length),
         ),
         Row(
           children: <Widget>[
@@ -86,8 +83,7 @@ class MotionEventsBodyState extends State<MotionEventsBody> {
                 child: const Text('SAVE'),
                 onPressed: () {
                   const StandardMessageCodec codec = StandardMessageCodec();
-                  saveRecordedEvents(
-                    codec.encodeMessage(flutterViewEvents)!, context);
+                  saveRecordedEvents(codec.encodeMessage(flutterViewEvents)!, context);
                 },
               ),
             ),
@@ -95,14 +91,18 @@ class MotionEventsBodyState extends State<MotionEventsBody> {
               child: ElevatedButton(
                 key: const ValueKey<String>('play'),
                 child: const Text('PLAY FILE'),
-                onPressed: () { playEventsFile(); },
+                onPressed: () {
+                  playEventsFile();
+                },
               ),
             ),
             Expanded(
               child: ElevatedButton(
                 key: const ValueKey<String>('back'),
                 child: const Text('BACK'),
-                onPressed: () { Navigator.pop(context); },
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
             ),
           ],
@@ -114,12 +114,15 @@ class MotionEventsBodyState extends State<MotionEventsBody> {
   Future<String> playEventsFile() async {
     const StandardMessageCodec codec = StandardMessageCodec();
     try {
-      final ByteData data = await rootBundle.load('packages/assets_for_android_views/assets/touchEvents');
+      final ByteData data = await rootBundle.load(
+        'packages/assets_for_android_views/assets/touchEvents',
+      );
       final List<dynamic> unTypedRecordedEvents = codec.decodeMessage(data) as List<dynamic>;
-      final List<Map<String, dynamic>> recordedEvents = unTypedRecordedEvents
-          .cast<Map<dynamic, dynamic>>()
-          .map<Map<String, dynamic>>((Map<dynamic, dynamic> e) =>e.cast<String, dynamic>())
-          .toList();
+      final List<Map<String, dynamic>> recordedEvents =
+          unTypedRecordedEvents
+              .cast<Map<dynamic, dynamic>>()
+              .map<Map<String, dynamic>>((Map<dynamic, dynamic> e) => e.cast<String, dynamic>())
+              .toList();
       await viewChannel!.invokeMethod<void>('pipeTouchEvents');
       print('replaying ${recordedEvents.length} motion events');
       for (final Map<String, dynamic> event in recordedEvents.reversed) {
@@ -180,15 +183,13 @@ class MotionEventsBodyState extends State<MotionEventsBody> {
   }
 
   void showMessage(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-      duration: const Duration(seconds: 3),
-    ));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message), duration: const Duration(seconds: 3)));
   }
 
   void onPlatformViewCreated(int id) {
-    viewChannel = MethodChannel('simple_view/$id')
-        ..setMethodCallHandler(onViewMethodChannelCall);
+    viewChannel = MethodChannel('simple_view/$id')..setMethodCallHandler(onViewMethodChannelCall);
     driverDataHandler.registerHandler('run test').complete(playEventsFile);
   }
 
@@ -227,11 +228,9 @@ class MotionEventsBodyState extends State<MotionEventsBody> {
 
   Widget buildEventTile(BuildContext context, int index) {
     if (embeddedViewEvents.length > index) {
-      return TouchEventDiff(
-          flutterViewEvents[index], embeddedViewEvents[index]);
+      return TouchEventDiff(flutterViewEvents[index], embeddedViewEvents[index]);
     }
-    return Text(
-        'Unmatched event, action: ${flutterViewEvents[index]['action']}');
+    return Text('Unmatched event, action: ${flutterViewEvents[index]['action']}');
   }
 }
 
@@ -243,7 +242,6 @@ class TouchEventDiff extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     Color color;
     final String diff = diffMotionEvents(originalEvent, synthesizedEvent);
     String msg;
@@ -263,11 +261,7 @@ class TouchEventDiff extends StatelessWidget {
         print('\nactual:');
         prettyPrintEvent(synthesizedEvent);
       },
-      child: Container(
-        color: color,
-        margin: const EdgeInsets.only(bottom: 2.0),
-        child: Text(msg),
-      ),
+      child: Container(color: color, margin: const EdgeInsets.only(bottom: 2.0), child: Text(msg)),
     );
   }
 
@@ -279,12 +273,15 @@ class TouchEventDiff extends StatelessWidget {
 
     buffer.write('$actionName ');
     if (maskedAction == 5 || maskedAction == 6) {
-     buffer.write('pointer: ${getPointerIdx(action)} ');
+      buffer.write('pointer: ${getPointerIdx(action)} ');
     }
 
-    final List<Map<dynamic, dynamic>> coords = (event['pointerCoords'] as List<dynamic>).cast<Map<dynamic, dynamic>>();
+    final List<Map<dynamic, dynamic>> coords =
+        (event['pointerCoords'] as List<dynamic>).cast<Map<dynamic, dynamic>>();
     for (int i = 0; i < coords.length; i++) {
-      buffer.write('p$i x: ${coords[i]['x']} y: ${coords[i]['y']}, pressure: ${coords[i]['pressure']} ');
+      buffer.write(
+        'p$i x: ${coords[i]['x']} y: ${coords[i]['y']}, pressure: ${coords[i]['pressure']} ',
+      );
     }
     print(buffer);
   }

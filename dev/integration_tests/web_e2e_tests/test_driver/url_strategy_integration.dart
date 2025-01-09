@@ -52,8 +52,8 @@ class TestUrlStrategy extends UrlStrategy {
   /// Creates an instance of [TestUrlStrategy] and populates it with a list
   /// that has [initialEntry] as the only item.
   TestUrlStrategy.fromEntry(TestHistoryEntry initialEntry)
-      : _currentEntryIndex = 0,
-        history = <TestHistoryEntry>[initialEntry];
+    : _currentEntryIndex = 0,
+      history = <TestHistoryEntry>[initialEntry];
 
   @override
   String getPath() => currentEntry.url;

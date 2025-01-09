@@ -18,9 +18,10 @@ void main() {
     expect(editableText, findsExactly(5));
 
     List<bool> getFocuses() {
-      return editableText.evaluate()
-        .map((Element finderResult) => (finderResult.widget as EditableText).focusNode.hasFocus)
-        .toList();
+      return editableText
+          .evaluate()
+          .map((Element finderResult) => (finderResult.widget as EditableText).focusNode.hasFocus)
+          .toList();
     }
 
     expect(getFocuses(), const <bool>[false, false, false, false, false]);

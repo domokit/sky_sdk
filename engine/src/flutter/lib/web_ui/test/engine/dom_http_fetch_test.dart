@@ -27,10 +27,7 @@ Future<void> testMain() async {
   await _testNetworkErrors();
 
   test('window.fetch is banned', () async {
-    expect(
-      () => domWindow.fetch('/'),
-      throwsA(isA<UnsupportedError>()),
-    );
+    expect(() => domWindow.fetch('/'), throwsA(isA<UnsupportedError>()));
   });
 }
 
@@ -58,10 +55,16 @@ Future<void> _testSuccessfulPayloads() async {
     expect(response.hasPayload, isTrue);
     expect(response.payload, isNotNull);
     expect(response.url, '/test_images/1x1.png');
-    expect(
-      (await response.asByteBuffer()).asUint8List().sublist(0, 8),
-      <int>[0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
-    );
+    expect((await response.asByteBuffer()).asUint8List().sublist(0, 8), <int>[
+      0x89,
+      0x50,
+      0x4E,
+      0x47,
+      0x0D,
+      0x0A,
+      0x1A,
+      0x0A,
+    ]);
   });
 
   test('httpFetch fetches a binary file as Uint8List', () async {
@@ -71,10 +74,16 @@ Future<void> _testSuccessfulPayloads() async {
     expect(response.hasPayload, isTrue);
     expect(response.payload, isNotNull);
     expect(response.url, '/test_images/1x1.png');
-    expect(
-      (await response.asUint8List()).sublist(0, 8),
-      <int>[0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
-    );
+    expect((await response.asUint8List()).sublist(0, 8), <int>[
+      0x89,
+      0x50,
+      0x4E,
+      0x47,
+      0x0D,
+      0x0A,
+      0x1A,
+      0x0A,
+    ]);
   });
 
   test('httpFetch fetches json', () async {
@@ -84,10 +93,7 @@ Future<void> _testSuccessfulPayloads() async {
     expect(response.hasPayload, isTrue);
     expect(response.payload, isNotNull);
     expect(response.url, '/test_images/');
-    expect(
-      await response.json(),
-      isA<List<Object?>>(),
-    );
+    expect(await response.json(), isA<List<Object?>>());
   });
 
   test('httpFetch reads data in chunks', () async {
@@ -113,12 +119,11 @@ Future<void> _testSuccessfulPayloads() async {
       expect(response.url, url);
 
       final List<int> result = <int>[];
-      await response.payload.read<JSUint8Array>((JSUint8Array chunk) => result.addAll(chunk.toDart));
-      expect(result, hasLength(length));
-      expect(
-        result,
-        List<int>.generate(length, (int i) => i & 0xFF),
+      await response.payload.read<JSUint8Array>(
+        (JSUint8Array chunk) => result.addAll(chunk.toDart),
       );
+      expect(result, hasLength(length));
+      expect(result, List<int>.generate(length, (int i) => i & 0xFF));
     }
   });
 
@@ -135,10 +140,16 @@ Future<void> _testSuccessfulPayloads() async {
 
   test('httpFetchByteBuffer fetches a binary file as ByteBuffer', () async {
     final ByteBuffer response = await httpFetchByteBuffer('/test_images/1x1.png');
-    expect(
-      response.asUint8List().sublist(0, 8),
-      <int>[0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
-    );
+    expect(response.asUint8List().sublist(0, 8), <int>[
+      0x89,
+      0x50,
+      0x4E,
+      0x47,
+      0x0D,
+      0x0A,
+      0x1A,
+      0x0A,
+    ]);
   });
 
   test('httpFetchJson fetches json', () async {
@@ -159,7 +170,7 @@ Future<void> _testHttpErrorCodes() async {
       // HttpFetchNoPayloadError thrown.
       response.payload;
       fail('Expected HttpFetchNoPayloadError');
-    } on HttpFetchNoPayloadError catch(error) {
+    } on HttpFetchNoPayloadError catch (error) {
       expect(error.status, 404);
       expect(error.url, '/file_not_found');
       expect(
@@ -181,7 +192,7 @@ Future<void> _testHttpErrorCodes() async {
       try {
         await testFunction();
         fail('Expected HttpFetchNoPayloadError');
-      } on HttpFetchNoPayloadError catch(error) {
+      } on HttpFetchNoPayloadError catch (error) {
         expect(error.status, 404);
         expect(error.url, '/file_not_found');
         expect(
@@ -210,7 +221,7 @@ Future<void> _testNetworkErrors() async {
       try {
         await testFunction();
         fail('Expected HttpFetchError');
-      } on HttpFetchError catch(error) {
+      } on HttpFetchError catch (error) {
         expect(error.url, badUrl);
         expect(
           error.toString(),
@@ -219,7 +230,7 @@ Future<void> _testNetworkErrors() async {
           // not the entire error message.
           startsWith(
             'Flutter Web engine failed to complete HTTP request to fetch '
-            '"https://user:password@example.com/": TypeError: '
+            '"https://user:password@example.com/": TypeError: ',
           ),
         );
       }

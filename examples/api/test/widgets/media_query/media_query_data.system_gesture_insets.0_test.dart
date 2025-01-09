@@ -8,11 +8,11 @@ import 'package:flutter_api_samples/widgets/media_query/media_query_data.system_
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('The slider should be padded with the system gesture insets', (WidgetTester tester) async {
+  testWidgets('The slider should be padded with the system gesture insets', (
+    WidgetTester tester,
+  ) async {
     tester.view.systemGestureInsets = const FakeViewPadding(left: 60, right: 60);
-    await tester.pumpWidget(
-      const example.SystemGestureInsetsExampleApp(),
-    );
+    await tester.pumpWidget(const example.SystemGestureInsetsExampleApp());
 
     expect(find.widgetWithText(AppBar, 'Pad Slider to avoid systemGestureInsets'), findsOne);
 

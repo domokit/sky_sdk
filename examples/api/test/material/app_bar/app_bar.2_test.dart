@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Appbar and actions', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.AppBarApp(),
-    );
+    await tester.pumpWidget(const example.AppBarApp());
 
     expect(find.byType(AppBar), findsOneWidget);
     expect(find.widgetWithText(TextButton, 'Action 1'), findsOneWidget);

@@ -7,13 +7,10 @@ import 'package:flutter_api_samples/material/text_button/text_button.1.dart' as 
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-
   testWidgets('SelectableButton', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(
-          colorScheme: const ColorScheme.light(),
-        ),
+        theme: ThemeData(colorScheme: const ColorScheme.light()),
         home: const example.Home(),
       ),
     );
@@ -22,17 +19,17 @@ void main() {
 
     example.SelectableButton buttonWidget() => tester.widget<example.SelectableButton>(button);
 
-    Material buttonMaterial()  {
+    Material buttonMaterial() {
       return tester.widget<Material>(
-        find.descendant(
-          of: find.byType(example.SelectableButton),
-          matching: find.byType(Material),
-        ),
+        find.descendant(of: find.byType(example.SelectableButton), matching: find.byType(Material)),
       );
     }
 
     expect(buttonWidget().selected, false);
-    expect(buttonMaterial().textStyle!.color, const ColorScheme.light().primary); // default button foreground color
+    expect(
+      buttonMaterial().textStyle!.color,
+      const ColorScheme.light().primary,
+    ); // default button foreground color
     expect(buttonMaterial().color, Colors.transparent); // default button background color
 
     await tester.tap(button); // Toggles the button's selected property.
@@ -40,7 +37,6 @@ void main() {
     expect(buttonWidget().selected, true);
     expect(buttonMaterial().textStyle!.color, Colors.white);
     expect(buttonMaterial().color, Colors.indigo);
-
 
     await tester.tap(button); // Toggles the button's selected property.
     await tester.pumpAndSettle();

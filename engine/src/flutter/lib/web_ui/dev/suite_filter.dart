@@ -20,7 +20,7 @@ abstract class SuiteFilter {
 }
 
 abstract class AllowListSuiteFilter<T> implements SuiteFilter {
-  AllowListSuiteFilter({ required this.allowList });
+  AllowListSuiteFilter({required this.allowList});
 
   final Set<T> allowList;
 
@@ -76,10 +76,12 @@ class CompilerFilter extends SuiteFilter {
   final Set<Compiler> allowList;
 
   @override
-  SuiteFilterResult filterSuite(TestSuite suite) => suite.testBundle.compileConfigs.any(
-    (CompileConfiguration config) => allowList.contains(config.compiler)
-  ) ? SuiteFilterResult.accepted()
-    : SuiteFilterResult.rejected('Selected compilers not used in suite.');
+  SuiteFilterResult filterSuite(TestSuite suite) =>
+      suite.testBundle.compileConfigs.any(
+            (CompileConfiguration config) => allowList.contains(config.compiler),
+          )
+          ? SuiteFilterResult.accepted()
+          : SuiteFilterResult.rejected('Selected compilers not used in suite.');
 }
 
 class RendererFilter extends SuiteFilter {
@@ -88,10 +90,12 @@ class RendererFilter extends SuiteFilter {
   final Set<Renderer> allowList;
 
   @override
-  SuiteFilterResult filterSuite(TestSuite suite) => suite.testBundle.compileConfigs.any(
-    (CompileConfiguration config) => allowList.contains(config.renderer)
-  ) ? SuiteFilterResult.accepted()
-    : SuiteFilterResult.rejected('Selected renderers not used in suite.');
+  SuiteFilterResult filterSuite(TestSuite suite) =>
+      suite.testBundle.compileConfigs.any(
+            (CompileConfiguration config) => allowList.contains(config.renderer),
+          )
+          ? SuiteFilterResult.accepted()
+          : SuiteFilterResult.rejected('Selected renderers not used in suite.');
 }
 
 class CanvasKitVariantFilter extends AllowListSuiteFilter<CanvasKitVariant> {
@@ -99,26 +103,17 @@ class CanvasKitVariantFilter extends AllowListSuiteFilter<CanvasKitVariant> {
 
   @override
   // TODO(jackson): Is this the right default?
-  CanvasKitVariant getAttributeForSuite(TestSuite suite) => suite.runConfig.variant ?? CanvasKitVariant.full;
+  CanvasKitVariant getAttributeForSuite(TestSuite suite) =>
+      suite.runConfig.variant ?? CanvasKitVariant.full;
 }
 
 Set<BrowserName> get _supportedPlatformBrowsers {
   if (io.Platform.isLinux) {
-    return <BrowserName>{
-      BrowserName.chrome,
-      BrowserName.firefox
-    };
+    return <BrowserName>{BrowserName.chrome, BrowserName.firefox};
   } else if (io.Platform.isMacOS) {
-    return <BrowserName>{
-      BrowserName.chrome,
-      BrowserName.firefox,
-      BrowserName.safari,
-    };
+    return <BrowserName>{BrowserName.chrome, BrowserName.firefox, BrowserName.safari};
   } else if (io.Platform.isWindows) {
-    return <BrowserName>{
-      BrowserName.chrome,
-      BrowserName.edge,
-    };
+    return <BrowserName>{BrowserName.chrome, BrowserName.edge};
   } else {
     throw AssertionError('Unsupported OS: ${io.Platform.operatingSystem}');
   }
@@ -129,5 +124,5 @@ class PlatformBrowserFilter extends BrowserSuiteFilter {
 
   @override
   String rejectReason(TestSuite suite) =>
-    'Current platform (${io.Platform.operatingSystem}) does not support browser ${suite.runConfig.browser}';
+      'Current platform (${io.Platform.operatingSystem}) does not support browser ${suite.runConfig.browser}';
 }

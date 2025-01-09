@@ -293,7 +293,7 @@ TEST(DisplayListComplexity, DrawArc) {
 TEST(DisplayListComplexity, DrawVertices) {
   auto points = GetTestPoints();
   auto vertices = DlVertices::Make(DlVertexMode::kTriangles, points.size(),
-                                   points.data(), nullptr, nullptr);
+                                   ToDlPoints(points.data()), nullptr, nullptr);
   DisplayListBuilder builder;
   builder.DrawVertices(vertices, DlBlendMode::kSrc, DlPaint());
   auto display_list = builder.Build();

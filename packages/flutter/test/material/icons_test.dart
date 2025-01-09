@@ -26,7 +26,9 @@ void main() {
     expect(Icons.search.fontFamily, 'MaterialIcons');
   });
 
-  testWidgets('Certain icons (and their variants) match text direction', (WidgetTester tester) async {
+  testWidgets('Certain icons (and their variants) match text direction', (
+    WidgetTester tester,
+  ) async {
     expect(Icons.arrow_back.matchTextDirection, true);
     expect(Icons.arrow_back_rounded.matchTextDirection, true);
     expect(Icons.arrow_back_outlined.matchTextDirection, true);
@@ -38,7 +40,9 @@ void main() {
     expect(Icons.access_time_sharp.matchTextDirection, false);
   });
 
-  testWidgets('Adaptive icons are correct on cupertino platforms', (WidgetTester tester) async {
+  testWidgets(
+    'Adaptive icons are correct on cupertino platforms',
+    (WidgetTester tester) async {
       expect(Icons.adaptive.arrow_back, Icons.arrow_back_ios);
       expect(Icons.adaptive.arrow_back_outlined, Icons.arrow_back_ios_outlined);
     },
@@ -48,7 +52,9 @@ void main() {
     }),
   );
 
-  testWidgets('Adaptive icons are correct on non-cupertino platforms', (WidgetTester tester) async {
+  testWidgets(
+    'Adaptive icons are correct on non-cupertino platforms',
+    (WidgetTester tester) async {
       expect(Icons.adaptive.arrow_back, Icons.arrow_back);
       expect(Icons.adaptive.arrow_back_outlined, Icons.arrow_back_outlined);
     },
@@ -63,22 +69,24 @@ void main() {
   testWidgets('A sample of icons look as expected', (WidgetTester tester) async {
     await _loadIconFont();
 
-    await tester.pumpWidget(const MaterialApp(
-      home: IconTheme(
-        data: IconThemeData(size: 200),
-        child: Wrap(
-          children: <Icon>[
-            Icon(Icons.ten_k),
-            Icon(Icons.ac_unit),
-            Icon(Icons.local_taxi),
-            Icon(Icons.local_taxi_outlined),
-            Icon(Icons.local_taxi_rounded),
-            Icon(Icons.local_taxi_sharp),
-            Icon(Icons.zoom_out_sharp),
-          ],
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: IconTheme(
+          data: IconThemeData(size: 200),
+          child: Wrap(
+            children: <Icon>[
+              Icon(Icons.ten_k),
+              Icon(Icons.ac_unit),
+              Icon(Icons.local_taxi),
+              Icon(Icons.local_taxi_outlined),
+              Icon(Icons.local_taxi_rounded),
+              Icon(Icons.local_taxi_sharp),
+              Icon(Icons.zoom_out_sharp),
+            ],
+          ),
         ),
       ),
-    ));
+    );
 
     await expectLater(find.byType(Wrap), matchesGoldenFile('test.icons.sample.png'));
   }, skip: isBrowser); // https://github.com/flutter/flutter/issues/39998
@@ -87,19 +95,21 @@ void main() {
   testWidgets('Another sample of icons look as expected', (WidgetTester tester) async {
     await _loadIconFont();
 
-    await tester.pumpWidget(const MaterialApp(
-      home: IconTheme(
-        data: IconThemeData(size: 200),
-        child: Wrap(
-          children: <Icon>[
-            Icon(Icons.water_drop),
-            Icon(Icons.water_drop_outlined),
-            Icon(Icons.water_drop_rounded),
-            Icon(Icons.water_drop_sharp),
-          ],
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: IconTheme(
+          data: IconThemeData(size: 200),
+          child: Wrap(
+            children: <Icon>[
+              Icon(Icons.water_drop),
+              Icon(Icons.water_drop_outlined),
+              Icon(Icons.water_drop_rounded),
+              Icon(Icons.water_drop_sharp),
+            ],
+          ),
         ),
       ),
-    ));
+    );
 
     await expectLater(find.byType(Wrap), matchesGoldenFile('test.icons.sample2.png'));
   }, skip: isBrowser); // https://github.com/flutter/flutter/issues/39998
@@ -107,19 +117,21 @@ void main() {
   testWidgets('Another sample of icons look as expected', (WidgetTester tester) async {
     await _loadIconFont();
 
-    await tester.pumpWidget(const MaterialApp(
-      home: IconTheme(
-        data: IconThemeData(size: 200),
-        child: Wrap(
-          children: <Icon>[
-            Icon(Icons.electric_bolt),
-            Icon(Icons.electric_bolt_outlined),
-            Icon(Icons.electric_bolt_rounded),
-            Icon(Icons.electric_bolt_sharp),
-          ],
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: IconTheme(
+          data: IconThemeData(size: 200),
+          child: Wrap(
+            children: <Icon>[
+              Icon(Icons.electric_bolt),
+              Icon(Icons.electric_bolt_outlined),
+              Icon(Icons.electric_bolt_rounded),
+              Icon(Icons.electric_bolt_sharp),
+            ],
+          ),
         ),
       ),
-    ));
+    );
 
     await expectLater(find.byType(Wrap), matchesGoldenFile('test.icons.sample3.png'));
   }, skip: isBrowser); // https://github.com/flutter/flutter/issues/39998
@@ -128,19 +140,21 @@ void main() {
   testWidgets('Another sample of icons look as expected', (WidgetTester tester) async {
     await _loadIconFont();
 
-    await tester.pumpWidget(const MaterialApp(
-      home: IconTheme(
-        data: IconThemeData(size: 200),
-        child: Wrap(
-          children: <Icon>[
-            Icon(Icons.repeat_on),
-            Icon(Icons.repeat_on_outlined),
-            Icon(Icons.repeat_on_rounded),
-            Icon(Icons.repeat_on_sharp),
-          ],
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: IconTheme(
+          data: IconThemeData(size: 200),
+          child: Wrap(
+            children: <Icon>[
+              Icon(Icons.repeat_on),
+              Icon(Icons.repeat_on_outlined),
+              Icon(Icons.repeat_on_rounded),
+              Icon(Icons.repeat_on_sharp),
+            ],
+          ),
         ),
       ),
-    ));
+    );
 
     await expectLater(find.byType(Wrap), matchesGoldenFile('test.icons.sample4.png'));
   }, skip: isBrowser); // https://github.com/flutter/flutter/issues/39998
@@ -155,17 +169,11 @@ Future<void> _loadIconFont() async {
   final Directory flutterRoot = fs.directory(platform.environment['FLUTTER_ROOT']);
 
   final File iconFont = flutterRoot.childFile(
-    fs.path.join(
-      'bin',
-      'cache',
-      'artifacts',
-      'material_fonts',
-      'MaterialIcons-Regular.otf',
-    ),
+    fs.path.join('bin', 'cache', 'artifacts', 'material_fonts', 'MaterialIcons-Regular.otf'),
   );
 
   final Future<ByteData> bytes = Future<ByteData>.value(
-      iconFont.readAsBytesSync().buffer.asByteData(),
+    iconFont.readAsBytesSync().buffer.asByteData(),
   );
 
   await (FontLoader('MaterialIcons')..addFont(bytes)).load();

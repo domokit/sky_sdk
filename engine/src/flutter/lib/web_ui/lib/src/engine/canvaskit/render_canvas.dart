@@ -54,16 +54,14 @@ class RenderCanvas extends DisplayCanvas {
   late final DomCanvasRenderingContextBitmapRenderer renderContext =
       canvasElement.contextBitmapRenderer;
 
-  late final DomCanvasRenderingContext2D renderContext2d =
-      canvasElement.context2D;
+  late final DomCanvasRenderingContext2D renderContext2d = canvasElement.context2D;
 
   double _currentDevicePixelRatio = -1;
 
   /// Sets the CSS size of the canvas so that canvas pixels are 1:1 with device
   /// pixels.
   void _updateLogicalHtmlCanvasSize() {
-    final double devicePixelRatio =
-        EngineFlutterDisplay.instance.devicePixelRatio;
+    final double devicePixelRatio = EngineFlutterDisplay.instance.devicePixelRatio;
     final double logicalWidth = _pixelWidth / devicePixelRatio;
     final double logicalHeight = _pixelHeight / devicePixelRatio;
     final DomCSSStyleDeclaration style = canvasElement.style;
@@ -107,8 +105,7 @@ class RenderCanvas extends DisplayCanvas {
     if (size.width == _pixelWidth && size.height == _pixelHeight) {
       // The existing canvas doesn't need to be resized (unless the device pixel
       // ratio changed).
-      if (EngineFlutterDisplay.instance.devicePixelRatio !=
-          _currentDevicePixelRatio) {
+      if (EngineFlutterDisplay.instance.devicePixelRatio != _currentDevicePixelRatio) {
         _updateLogicalHtmlCanvasSize();
       }
       return;

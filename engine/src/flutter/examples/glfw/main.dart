@@ -4,8 +4,7 @@
 
 import 'package:flutter_gpu/gpu.dart' as gpu;
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'
-    show debugDefaultTargetPlatformOverride;
+import 'package:flutter/foundation.dart' show debugDefaultTargetPlatformOverride;
 
 void main() {
   // Ensure Flutter GPU symbols are available by forcing the GPU context to instantiate.
@@ -14,8 +13,9 @@ void main() {
     gpu.gpuContext; // Force the context to instantiate.
   } catch (e) {
     // If impeller is not enabled, make sure the exception isn't about symbols missing.
-    assert(e.toString().contains(
-        'Flutter GPU requires the Impeller rendering backend to be enabled.'));
+    assert(
+      e.toString().contains('Flutter GPU requires the Impeller rendering backend to be enabled.'),
+    );
   }
 
   // This is a hack to make Flutter think you are running on Google Fuchsia,
@@ -113,13 +113,8 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            Text('You have pushed the button this many times:'),
+            Text('$_counter', style: Theme.of(context).textTheme.headlineMedium),
           ],
         ),
       ),

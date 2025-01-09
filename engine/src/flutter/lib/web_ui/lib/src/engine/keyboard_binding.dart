@@ -9,7 +9,7 @@ import 'package:ui/ui.dart' as ui;
 import 'package:ui/ui_web/src/ui_web.dart' as ui_web;
 import 'package:web_locale_keymap/web_locale_keymap.dart' as locale_keymap;
 
-import '../engine.dart'  show registerHotRestartListener;
+import '../engine.dart' show registerHotRestartListener;
 import 'dom.dart';
 import 'key_map.g.dart';
 import 'platform_dispatcher.dart';
@@ -137,10 +137,7 @@ class KeyboardBinding {
   }
 
   KeyboardConverter get converter => _converter;
-  late final KeyboardConverter _converter = KeyboardConverter(
-    _onKeyData,
-    localPlatform,
-  );
+  late final KeyboardConverter _converter = KeyboardConverter(_onKeyData, localPlatform);
   final Map<String, DomEventListener> _listeners = <String, DomEventListener>{};
 
   void _addEventListener(String eventName, DartDomEventListener handler) {
@@ -166,12 +163,14 @@ class KeyboardBinding {
     });
     _listeners.clear();
   }
+
   bool _onKeyData(ui.KeyData data) {
     bool? result;
     // This callback is designed to be invoked synchronously. This is enforced
     // by `result`, which starts null and is asserted non-null when returned.
-    EnginePlatformDispatcher.instance.invokeOnKeyData(data,
-      (bool handled) { result = handled; });
+    EnginePlatformDispatcher.instance.invokeOnKeyData(data, (bool handled) {
+      result = handled;
+    });
     return result!;
   }
 
@@ -182,10 +181,7 @@ class KeyboardBinding {
 }
 
 class AsyncKeyboardDispatching {
-  AsyncKeyboardDispatching({
-    required this.keyData,
-    this.callback,
-  });
+  AsyncKeyboardDispatching({required this.keyData, this.callback});
 
   final ui.KeyData keyData;
   final _VoidCallback? callback;
@@ -228,9 +224,11 @@ class KeyboardConverter {
       _mapping = _mappingFromPlatform(platform);
 
   final DispatchKeyData performDispatchKeyData;
+
   /// Whether the current platform is macOS or iOS, which affects how certain key
   /// events are comprehended, including CapsLock and key guarding.
   final bool onDarwin;
+
   /// Maps logical keys from key event properties.
   final locale_keymap.LocaleKeymap _mapping;
 
@@ -304,9 +302,9 @@ class KeyboardConverter {
     final bool shiftDown = event.shiftKey;
     final bool metaDown = event.metaKey;
     return (altDown ? _kDeadKeyAlt : 0) +
-           (ctrlDown ? _kDeadKeyCtrl : 0) +
-           (shiftDown ? _kDeadKeyShift : 0) +
-           (metaDown ? _kDeadKeyMeta : 0);
+        (ctrlDown ? _kDeadKeyCtrl : 0) +
+        (shiftDown ? _kDeadKeyShift : 0) +
+        (metaDown ? _kDeadKeyMeta : 0);
   }
 
   // Whether `event.key` is a key name, such as "Shift", or otherwise a
@@ -339,7 +337,11 @@ class KeyboardConverter {
   //
   // Returns a callback that cancels the schedule. Disposal of
   // `KeyBoardConverter` also cancels the shedule automatically.
-  _VoidCallback _scheduleAsyncEvent(Duration duration, ValueGetter<ui.KeyData> getData, _VoidCallback callback) {
+  _VoidCallback _scheduleAsyncEvent(
+    Duration duration,
+    ValueGetter<ui.KeyData> getData,
+    _VoidCallback callback,
+  ) {
     bool canceled = false;
     Future<void>.delayed(duration).then<void>((_) {
       if (!canceled && !_disposed) {
@@ -349,7 +351,9 @@ class KeyboardConverter {
         performDispatchKeyData(getData());
       }
     });
-    return () { canceled = true; };
+    return () {
+      canceled = true;
+    };
   }
 
   final Map<int, _VoidCallback> _keyGuards = <int, _VoidCallback>{};
@@ -370,11 +374,12 @@ class KeyboardConverter {
       ),
       () {
         _pressingRecords.remove(physicalKey);
-      }
+      },
     );
     _keyGuards.remove(physicalKey)?.call();
     _keyGuards[physicalKey] = cancelingCallback;
   }
+
   // Call this method on an up event of a non-modifier key.
   void _stopGuardingKey(int physicalKey) {
     _keyGuards.remove(physicalKey)?.call();
@@ -418,10 +423,11 @@ class KeyboardConverter {
     });
 
     assert(event.type == 'keydown' || event.type == 'keyup');
-    final bool isPhysicalDown = event.type == 'keydown' ||
-      // On macOS, both keydown and keyup events of CapsLock should be considered keydown,
-      // followed by an immediate cancel event.
-      (_shouldSynthesizeCapsLockUp() && event.code! == _kPhysicalCapsLock);
+    final bool isPhysicalDown =
+        event.type == 'keydown' ||
+        // On macOS, both keydown and keyup events of CapsLock should be considered keydown,
+        // followed by an immediate cancel event.
+        (_shouldSynthesizeCapsLockUp() && event.code! == _kPhysicalCapsLock);
 
     final ui.KeyEventType type;
 
@@ -443,10 +449,9 @@ class KeyboardConverter {
         ),
         () {
           _pressingRecords.remove(physicalKey);
-        }
+        },
       );
       type = ui.KeyEventType.down;
-
     } else if (isPhysicalDown) {
       // Case 2: Handle key down of normal keys
       if (_pressingRecords[physicalKey] != null) {
@@ -468,14 +473,16 @@ class KeyboardConverter {
           // latter event must be dispatched as down events for the framework to
           // correctly recognize and choose to not to handle. Therefore, an up
           // event is synthesized before it.
-          _dispatchKeyData!(ui.KeyData(
-            timeStamp: timeStamp,
-            type: ui.KeyEventType.up,
-            physical: physicalKey,
-            logical: _pressingRecords[physicalKey]!,
-            character: null,
-            synthesized: true,
-          ));
+          _dispatchKeyData!(
+            ui.KeyData(
+              timeStamp: timeStamp,
+              type: ui.KeyEventType.up,
+              physical: physicalKey,
+              logical: _pressingRecords[physicalKey]!,
+              character: null,
+              synthesized: true,
+            ),
+          );
           _pressingRecords.remove(physicalKey);
           type = ui.KeyEventType.down;
         }
@@ -484,8 +491,8 @@ class KeyboardConverter {
         // normal down event, whether the system event is a repeat or not.
         type = ui.KeyEventType.down;
       }
-
-    } else { // isPhysicalDown is false and not CapsLock
+    } else {
+      // isPhysicalDown is false and not CapsLock
       // Case 2: Handle key up of normal keys
       if (_pressingRecords[physicalKey] == null) {
         // The physical key has been released before. It indicates multiple
@@ -536,14 +543,16 @@ class KeyboardConverter {
             return false;
           }
 
-          _dispatchKeyData!(ui.KeyData(
-            timeStamp: timeStamp,
-            type: ui.KeyEventType.up,
-            physical: physicalKey,
-            logical: testeeLogicalKey,
-            character: null,
-            synthesized: true,
-          ));
+          _dispatchKeyData!(
+            ui.KeyData(
+              timeStamp: timeStamp,
+              type: ui.KeyEventType.up,
+              physical: physicalKey,
+              logical: testeeLogicalKey,
+              character: null,
+              synthesized: true,
+            ),
+          );
 
           return true;
         });
@@ -677,27 +686,31 @@ class KeyboardConverter {
   }
 
   void _synthesizeKeyDownEvent(num domTimestamp, int physical, int logical) {
-    performDispatchKeyData(ui.KeyData(
-      timeStamp: _eventTimeStampToDuration(domTimestamp),
-      type: ui.KeyEventType.down,
-      physical: physical,
-      logical: logical,
-      character: null,
-      synthesized: true,
-    ));
+    performDispatchKeyData(
+      ui.KeyData(
+        timeStamp: _eventTimeStampToDuration(domTimestamp),
+        type: ui.KeyEventType.down,
+        physical: physical,
+        logical: logical,
+        character: null,
+        synthesized: true,
+      ),
+    );
     // Update pressing state
     _pressingRecords[physical] = logical;
   }
 
   void _synthesizeKeyUpEvent(num domTimestamp, int physical, int logical) {
-    performDispatchKeyData(ui.KeyData(
-      timeStamp: _eventTimeStampToDuration(domTimestamp),
-      type: ui.KeyEventType.up,
-      physical: physical,
-      logical: logical,
-      character: null,
-      synthesized: true,
-    ));
+    performDispatchKeyData(
+      ui.KeyData(
+        timeStamp: _eventTimeStampToDuration(domTimestamp),
+        type: ui.KeyEventType.up,
+        physical: physical,
+        logical: logical,
+        character: null,
+        synthesized: true,
+      ),
+    );
     // Update pressing states
     _pressingRecords.remove(physical);
   }

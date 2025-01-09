@@ -21,9 +21,7 @@ void testMain() {
   test('$LruCache adds up to a maximum number of items in most recently used first order', () {
     final LruCache<String, int> cache = LruCache<String, int>(3);
     cache.cache('a', 1);
-    expect(cache.debugItemQueue.toList(), <TestCacheEntry>[
-      (key: 'a', value: 1),
-    ]);
+    expect(cache.debugItemQueue.toList(), <TestCacheEntry>[(key: 'a', value: 1)]);
     expect(cache['a'], 1);
     expect(cache['b'], isNull);
 

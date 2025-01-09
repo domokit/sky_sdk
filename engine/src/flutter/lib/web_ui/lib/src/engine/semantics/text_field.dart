@@ -27,8 +27,7 @@ class SemanticsTextEditingStrategy extends DefaultTextEditingStrategy {
   /// Initializes the [SemanticsTextEditingStrategy] singleton.
   ///
   /// This method must be called prior to accessing [instance].
-  static SemanticsTextEditingStrategy ensureInitialized(
-      HybridTextEditing owner) {
+  static SemanticsTextEditingStrategy ensureInitialized(HybridTextEditing owner) {
     if (_instance != null && _instance?.owner == owner) {
       return _instance!;
     }
@@ -123,25 +122,22 @@ class SemanticsTextEditingStrategy extends DefaultTextEditingStrategy {
   @override
   void addEventHandlers() {
     if (inputConfiguration.autofillGroup != null) {
-      subscriptions
-          .addAll(inputConfiguration.autofillGroup!.addInputEventListeners());
+      subscriptions.addAll(inputConfiguration.autofillGroup!.addInputEventListeners());
     }
 
     // Subscribe to text and selection changes.
-    subscriptions.add(
-        DomSubscription(activeDomElement, 'input', handleChange));
-    subscriptions.add(
-        DomSubscription(activeDomElement, 'keydown',
-            maybeSendAction));
-    subscriptions.add(
-        DomSubscription(domDocument, 'selectionchange',
-            handleChange));
+    subscriptions.add(DomSubscription(activeDomElement, 'input', handleChange));
+    subscriptions.add(DomSubscription(activeDomElement, 'keydown', maybeSendAction));
+    subscriptions.add(DomSubscription(domDocument, 'selectionchange', handleChange));
     preventDefaultForMouseEvents();
   }
 
   @override
-  void initializeTextEditing(InputConfiguration inputConfig,
-      {OnChangeCallback? onChange, OnActionCallback? onAction}) {
+  void initializeTextEditing(
+    InputConfiguration inputConfig, {
+    OnChangeCallback? onChange,
+    OnActionCallback? onAction,
+  }) {
     isEnabled = true;
     inputConfiguration = inputConfig;
     applyConfiguration(inputConfig);
@@ -162,8 +158,7 @@ class SemanticsTextEditingStrategy extends DefaultTextEditingStrategy {
   }
 
   @override
-  void placeForm() {
-  }
+  void placeForm() {}
 
   @override
   void updateElementPlacement(EditableTextGeometry textGeometry) {
@@ -200,7 +195,8 @@ class SemanticsTextEditingStrategy extends DefaultTextEditingStrategy {
 /// used to detect text box invocation. This is because Safari issues touch
 /// events even when VoiceOver is enabled.
 class SemanticTextField extends SemanticRole {
-  SemanticTextField(SemanticsObject semanticsObject) : super.blank(SemanticRoleKind.textField, semanticsObject) {
+  SemanticTextField(SemanticsObject semanticsObject)
+    : super.blank(SemanticRoleKind.textField, semanticsObject) {
     _initializeEditableElement();
   }
 
@@ -219,9 +215,7 @@ class SemanticTextField extends SemanticRole {
 
   DomHTMLInputElement _createSingleLineField() {
     return createDomHTMLInputElement()
-        ..type = semanticsObject.hasFlag(ui.SemanticsFlag.isObscured)
-          ? 'password'
-          : 'text';
+      ..type = semanticsObject.hasFlag(ui.SemanticsFlag.isObscured) ? 'password' : 'text';
   }
 
   DomHTMLTextAreaElement _createMultiLineField() {
@@ -241,9 +235,10 @@ class SemanticTextField extends SemanticRole {
   }
 
   void _initializeEditableElement() {
-    editableElement = semanticsObject.hasFlag(ui.SemanticsFlag.isMultiline)
-        ? _createMultiLineField()
-        : _createSingleLineField();
+    editableElement =
+        semanticsObject.hasFlag(ui.SemanticsFlag.isMultiline)
+            ? _createMultiLineField()
+            : _createSingleLineField();
     _updateEnabledState();
 
     // On iOS, even though the semantic text field is transparent, the cursor
@@ -274,18 +269,31 @@ class SemanticTextField extends SemanticRole {
       ..height = '${semanticsObject.rect!.height}px';
     append(editableElement);
 
-    editableElement.addEventListener('focus', createDomEventListener((DomEvent event) {
-      // IMPORTANT: because this event listener can be triggered by either or
-      // both a "focus" and a "click" DOM events, this code must be idempotent.
-      EnginePlatformDispatcher.instance.invokeOnSemanticsAction(
-          viewId, semanticsObject.id, ui.SemanticsAction.focus, null);
-    }));
-    editableElement.addEventListener('click', createDomEventListener((DomEvent event) {
-      editableElement.focusWithoutScroll();
-    }));
-    editableElement.addEventListener('blur', createDomEventListener((DomEvent event) {
-      SemanticsTextEditingStrategy._instance?.deactivate(this);
-    }));
+    editableElement.addEventListener(
+      'focus',
+      createDomEventListener((DomEvent event) {
+        // IMPORTANT: because this event listener can be triggered by either or
+        // both a "focus" and a "click" DOM events, this code must be idempotent.
+        EnginePlatformDispatcher.instance.invokeOnSemanticsAction(
+          viewId,
+          semanticsObject.id,
+          ui.SemanticsAction.focus,
+          null,
+        );
+      }),
+    );
+    editableElement.addEventListener(
+      'click',
+      createDomEventListener((DomEvent event) {
+        editableElement.focusWithoutScroll();
+      }),
+    );
+    editableElement.addEventListener(
+      'blur',
+      createDomEventListener((DomEvent event) {
+        SemanticsTextEditingStrategy._instance?.deactivate(this);
+      }),
+    );
   }
 
   @override

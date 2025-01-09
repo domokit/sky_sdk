@@ -24,10 +24,7 @@ class Scrim extends StatelessWidget {
             case AnimationStatus.completed:
               return MouseRegion(
                 cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: controller.reverse,
-                  child: scrimRectangle,
-                ),
+                child: GestureDetector(onTap: controller.reverse, child: scrimRectangle),
               );
             case AnimationStatus.dismissed:
               return IgnorePointer(child: scrimRectangle);

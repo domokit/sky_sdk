@@ -34,15 +34,11 @@ Widget buildSliverAppBarApp({
               toolbarHeight: toolbarHeight,
               snap: snap,
               bottom: TabBar(
-                tabs: <String>['A','B','C'].map<Widget>((String t) => Tab(text: 'TAB $t')).toList(),
+                tabs:
+                    <String>['A', 'B', 'C'].map<Widget>((String t) => Tab(text: 'TAB $t')).toList(),
               ),
             ),
-            SliverToBoxAdapter(
-              child: Container(
-                height: 1200.0,
-                color: Colors.orange[400],
-              ),
-            ),
+            SliverToBoxAdapter(child: Container(height: 1200.0, color: Colors.orange[400])),
           ],
         ),
       ),
@@ -55,66 +51,63 @@ void main() {
     debugResetSemanticsIdCounter();
   });
 
-  testWidgets(
-    'SliverAppBar large & medium title respects automaticallyImplyLeading',
-    (WidgetTester tester) async {
-      // This is a regression test for https://github.com/flutter/flutter/issues/121511
-      const String title = 'AppBar Title';
-      const double titleSpacing = 16.0;
+  testWidgets('SliverAppBar large & medium title respects automaticallyImplyLeading', (
+    WidgetTester tester,
+  ) async {
+    // This is a regression test for https://github.com/flutter/flutter/issues/121511
+    const String title = 'AppBar Title';
+    const double titleSpacing = 16.0;
 
-      Widget buildWidget() {
-        return MaterialApp(
-          home: Scaffold(
-            body: Builder(
-              builder: (BuildContext context) {
-                return Center(
-                  child: FilledButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute<void>(
+    Widget buildWidget() {
+      return MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              return Center(
+                child: FilledButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
                         builder: (BuildContext context) {
                           return Scaffold(
                             body: CustomScrollView(
                               primary: true,
                               slivers: <Widget>[
-                                const SliverAppBar.large(
-                                  title: Text(title),
-                                ),
+                                const SliverAppBar.large(title: Text(title)),
                                 SliverToBoxAdapter(
-                                  child: Container(
-                                    height: 1200,
-                                    color: Colors.orange[400],
-                                  ),
+                                  child: Container(height: 1200, color: Colors.orange[400]),
                                 ),
                               ],
                             ),
                           );
                         },
-                      ));
-                    },
-                    child: const Text('Go to page'),
-                  ),
-                );
-              }
-            ),
+                      ),
+                    );
+                  },
+                  child: const Text('Go to page'),
+                ),
+              );
+            },
           ),
-        );
-      }
+        ),
+      );
+    }
 
-      await tester.pumpWidget(buildWidget());
+    await tester.pumpWidget(buildWidget());
 
-      expect(find.byType(BackButton), findsNothing);
+    expect(find.byType(BackButton), findsNothing);
 
-      await tester.tap(find.byType(FilledButton));
-      await tester.pumpAndSettle();
+    await tester.tap(find.byType(FilledButton));
+    await tester.pumpAndSettle();
 
-      final Finder collapsedTitle = find.text(title).last;
-      // Get the offset of the Center widget that wraps the IconButton.
-      final Offset backButtonOffset = tester.getTopRight(find.ancestor(
-        of: find.byType(IconButton),
-        matching: find.byType(Center),
-      ));
-      final Offset titleOffset = tester.getTopLeft(collapsedTitle);
-      expect(titleOffset.dx, backButtonOffset.dx + titleSpacing);
+    final Finder collapsedTitle = find.text(title).last;
+    // Get the offset of the Center widget that wraps the IconButton.
+    final Offset backButtonOffset = tester.getTopRight(
+      find.ancestor(of: find.byType(IconButton), matching: find.byType(Center)),
+    );
+    final Offset titleOffset = tester.getTopLeft(collapsedTitle);
+    expect(titleOffset.dx, backButtonOffset.dx + titleSpacing);
   });
 
   testWidgets('SliverAppBar.medium with bottom widget', (WidgetTester tester) async {
@@ -133,25 +126,13 @@ void main() {
               primary: true,
               slivers: <Widget>[
                 SliverAppBar.medium(
-                  leading: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.menu),
-                  ),
+                  leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu)),
                   title: const Text(title),
                   bottom: const TabBar(
-                    tabs: <Widget>[
-                      Tab(text: 'Tab 1'),
-                      Tab(text: 'Tab 2'),
-                      Tab(text: 'Tab 3'),
-                    ],
+                    tabs: <Widget>[Tab(text: 'Tab 1'), Tab(text: 'Tab 2'), Tab(text: 'Tab 3')],
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    height: 1200,
-                    color: Colors.orange[400],
-                  ),
-                ),
+                SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
               ],
             ),
           ),
@@ -193,25 +174,13 @@ void main() {
               primary: true,
               slivers: <Widget>[
                 SliverAppBar.large(
-                  leading: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.menu),
-                  ),
+                  leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu)),
                   title: const Text(title),
                   bottom: const TabBar(
-                    tabs: <Widget>[
-                      Tab(text: 'Tab 1'),
-                      Tab(text: 'Tab 2'),
-                      Tab(text: 'Tab 3'),
-                    ],
+                    tabs: <Widget>[Tab(text: 'Tab 1'), Tab(text: 'Tab 2'), Tab(text: 'Tab 3')],
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    height: 1200,
-                    color: Colors.orange[400],
-                  ),
-                ),
+                SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
               ],
             ),
           ),
@@ -237,7 +206,9 @@ void main() {
     expect(appBarHeight(tester), collapsedAppBarHeight + bottomHeight);
   });
 
-  testWidgets('SliverAppBar.medium expanded title has upper limit on text scaling', (WidgetTester tester) async {
+  testWidgets('SliverAppBar.medium expanded title has upper limit on text scaling', (
+    WidgetTester tester,
+  ) async {
     const String title = 'Medium AppBar';
     Widget buildAppBar({double textScaleFactor = 1.0}) {
       return MaterialApp(
@@ -248,15 +219,8 @@ void main() {
           child: Material(
             child: CustomScrollView(
               slivers: <Widget>[
-                const SliverAppBar.medium(
-                  title: Text(title),
-                ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    height: 1200,
-                    color: Colors.orange[400],
-                  ),
-                ),
+                const SliverAppBar.medium(title: Text(title)),
+                SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
               ],
             ),
           ),
@@ -279,7 +243,9 @@ void main() {
     verifyTextNotClipped(expandedTitle, tester);
   }, skip: kIsWeb && !isSkiaWeb); // https://github.com/flutter/flutter/issues/99933
 
-  testWidgets('SliverAppBar.large expanded title has upper limit on text scaling', (WidgetTester tester) async {
+  testWidgets('SliverAppBar.large expanded title has upper limit on text scaling', (
+    WidgetTester tester,
+  ) async {
     const String title = 'Large AppBar';
     Widget buildAppBar({double textScaleFactor = 1.0}) {
       return MaterialApp(
@@ -290,15 +256,8 @@ void main() {
           child: Material(
             child: CustomScrollView(
               slivers: <Widget>[
-                const SliverAppBar.large(
-                  title: Text(title, maxLines: 1),
-                ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    height: 1200,
-                    color: Colors.orange[400],
-                  ),
-                ),
+                const SliverAppBar.large(title: Text(title, maxLines: 1)),
+                SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
               ],
             ),
           ),
@@ -318,49 +277,48 @@ void main() {
     expect(tester.getRect(expandedTitle).height, closeTo(48.0, 0.1));
   }, skip: kIsWeb && !isSkiaWeb); // https://github.com/flutter/flutter/issues/99933
 
-  testWidgets('SliverAppBar.medium expanded title position is adjusted with textScaleFactor', (WidgetTester tester) async {
-    const String title = 'Medium AppBar';
-    Widget buildAppBar({double textScaleFactor = 1.0}) {
-      return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
-        home: MediaQuery.withClampedTextScaling(
-          minScaleFactor: textScaleFactor,
-          maxScaleFactor: textScaleFactor,
-          child: Material(
-            child: CustomScrollView(
-              slivers: <Widget>[
-                const SliverAppBar.medium(
-                  title: Text(title, maxLines: 1),
-                ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    height: 1200,
-                    color: Colors.orange[400],
-                  ),
-                ),
-              ],
+  testWidgets(
+    'SliverAppBar.medium expanded title position is adjusted with textScaleFactor',
+    (WidgetTester tester) async {
+      const String title = 'Medium AppBar';
+      Widget buildAppBar({double textScaleFactor = 1.0}) {
+        return MaterialApp(
+          theme: ThemeData(useMaterial3: true),
+          home: MediaQuery.withClampedTextScaling(
+            minScaleFactor: textScaleFactor,
+            maxScaleFactor: textScaleFactor,
+            child: Material(
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  const SliverAppBar.medium(title: Text(title, maxLines: 1)),
+                  SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    }
+        );
+      }
 
-    await tester.pumpWidget(buildAppBar());
+      await tester.pumpWidget(buildAppBar());
 
-    final Finder expandedTitle = find.text(title).first;
-    expect(tester.getBottomLeft(expandedTitle).dy, 96.0);
-    verifyTextNotClipped(expandedTitle, tester);
+      final Finder expandedTitle = find.text(title).first;
+      expect(tester.getBottomLeft(expandedTitle).dy, 96.0);
+      verifyTextNotClipped(expandedTitle, tester);
 
-    await tester.pumpWidget(buildAppBar(textScaleFactor: 2.0));
-    expect(tester.getBottomLeft(expandedTitle).dy, 107.0);
-    verifyTextNotClipped(expandedTitle, tester);
+      await tester.pumpWidget(buildAppBar(textScaleFactor: 2.0));
+      expect(tester.getBottomLeft(expandedTitle).dy, 107.0);
+      verifyTextNotClipped(expandedTitle, tester);
 
-    await tester.pumpWidget(buildAppBar(textScaleFactor: 3.0));
-    expect(tester.getBottomLeft(expandedTitle).dy, 107.0);
-    verifyTextNotClipped(expandedTitle, tester);
-  }, skip: kIsWeb && !isSkiaWeb); // https://github.com/flutter/flutter/issues/99933
+      await tester.pumpWidget(buildAppBar(textScaleFactor: 3.0));
+      expect(tester.getBottomLeft(expandedTitle).dy, 107.0);
+      verifyTextNotClipped(expandedTitle, tester);
+    },
+    skip: kIsWeb && !isSkiaWeb, // https://github.com/flutter/flutter/issues/99933
+  );
 
-  testWidgets('SliverAppBar.large expanded title position is adjusted with textScaleFactor', (WidgetTester tester) async {
+  testWidgets('SliverAppBar.large expanded title position is adjusted with textScaleFactor', (
+    WidgetTester tester,
+  ) async {
     const String title = 'Large AppBar';
     Widget buildAppBar({double textScaleFactor = 1.0}) {
       return MaterialApp(
@@ -371,15 +329,8 @@ void main() {
           child: Material(
             child: CustomScrollView(
               slivers: <Widget>[
-                const SliverAppBar.large(
-                  title: Text(title, maxLines: 1),
-                ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    height: 1200,
-                    color: Colors.orange[400],
-                  ),
-                ),
+                const SliverAppBar.large(title: Text(title, maxLines: 1)),
+                SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
               ],
             ),
           ),
@@ -412,11 +363,12 @@ void main() {
     verifyTextNotClipped(expandedTitle, tester);
   });
 
-  testWidgets(
-    'SliverAppBar.medium collapsed title does not overlap with leading/actions widgets',
-    (WidgetTester tester) async {
-      const String title = 'Medium SliverAppBar Very Long Title';
-      await tester.pumpWidget(MaterialApp(
+  testWidgets('SliverAppBar.medium collapsed title does not overlap with leading/actions widgets', (
+    WidgetTester tester,
+  ) async {
+    const String title = 'Medium SliverAppBar Very Long Title';
+    await tester.pumpWidget(
+      MaterialApp(
         home: Scaffold(
           body: CustomScrollView(
             primary: true,
@@ -424,10 +376,7 @@ void main() {
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 200),
                 sliver: SliverAppBar.medium(
-                  leading: IconButton(
-                    icon: const Icon(Icons.menu),
-                    onPressed: () {},
-                  ),
+                  leading: IconButton(icon: const Icon(Icons.menu), onPressed: () {}),
                   title: const Text(title, maxLines: 1),
                   centerTitle: true,
                   actions: const <Widget>[
@@ -437,38 +386,35 @@ void main() {
                   ],
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Container(
-                  height: 1200,
-                  color: Colors.orange[400],
-                ),
-              ),
+              SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
             ],
           ),
         ),
-      ));
+      ),
+    );
 
-      // Scroll to collapse the SliverAppBar.
-      final ScrollController controller = primaryScrollController(tester);
-      controller.jumpTo(45);
-      await tester.pumpAndSettle();
+    // Scroll to collapse the SliverAppBar.
+    final ScrollController controller = primaryScrollController(tester);
+    controller.jumpTo(45);
+    await tester.pumpAndSettle();
 
-      final Offset leadingOffset = tester.getTopRight(find.byIcon(Icons.menu));
-      Offset titleOffset = tester.getTopLeft(find.text(title).last);
-      // The title widget should be to the right of the leading widget.
-      expect(titleOffset.dx, greaterThan(leadingOffset.dx));
+    final Offset leadingOffset = tester.getTopRight(find.byIcon(Icons.menu));
+    Offset titleOffset = tester.getTopLeft(find.text(title).last);
+    // The title widget should be to the right of the leading widget.
+    expect(titleOffset.dx, greaterThan(leadingOffset.dx));
 
-      titleOffset = tester.getTopRight(find.text(title).last);
-      final Offset searchOffset = tester.getTopLeft(find.byIcon(Icons.search));
-      // The title widget should be to the left of the search icon.
-      expect(titleOffset.dx, lessThan(searchOffset.dx));
+    titleOffset = tester.getTopRight(find.text(title).last);
+    final Offset searchOffset = tester.getTopLeft(find.byIcon(Icons.search));
+    // The title widget should be to the left of the search icon.
+    expect(titleOffset.dx, lessThan(searchOffset.dx));
   });
 
-  testWidgets(
-    'SliverAppBar.large collapsed title does not overlap with leading/actions widgets',
-    (WidgetTester tester) async {
-      const String title = 'Large SliverAppBar Very Long Title';
-      await tester.pumpWidget(MaterialApp(
+  testWidgets('SliverAppBar.large collapsed title does not overlap with leading/actions widgets', (
+    WidgetTester tester,
+  ) async {
+    const String title = 'Large SliverAppBar Very Long Title';
+    await tester.pumpWidget(
+      MaterialApp(
         home: Scaffold(
           body: CustomScrollView(
             primary: true,
@@ -476,10 +422,7 @@ void main() {
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 200),
                 sliver: SliverAppBar.large(
-                  leading: IconButton(
-                    icon: const Icon(Icons.menu),
-                    onPressed: () {},
-                  ),
+                  leading: IconButton(icon: const Icon(Icons.menu), onPressed: () {}),
                   title: const Text(title, maxLines: 1),
                   centerTitle: true,
                   actions: const <Widget>[
@@ -489,31 +432,27 @@ void main() {
                   ],
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Container(
-                  height: 1200,
-                  color: Colors.orange[400],
-                ),
-              ),
+              SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
             ],
           ),
         ),
-      ));
+      ),
+    );
 
-      // Scroll to collapse the SliverAppBar.
-      final ScrollController controller = primaryScrollController(tester);
-      controller.jumpTo(45);
-      await tester.pumpAndSettle();
+    // Scroll to collapse the SliverAppBar.
+    final ScrollController controller = primaryScrollController(tester);
+    controller.jumpTo(45);
+    await tester.pumpAndSettle();
 
-      final Offset leadingOffset = tester.getTopRight(find.byIcon(Icons.menu));
-      Offset titleOffset = tester.getTopLeft(find.text(title).last);
-      // The title widget should be to the right of the leading widget.
-      expect(titleOffset.dx, greaterThan(leadingOffset.dx));
+    final Offset leadingOffset = tester.getTopRight(find.byIcon(Icons.menu));
+    Offset titleOffset = tester.getTopLeft(find.text(title).last);
+    // The title widget should be to the right of the leading widget.
+    expect(titleOffset.dx, greaterThan(leadingOffset.dx));
 
-      titleOffset = tester.getTopRight(find.text(title).last);
-      final Offset searchOffset = tester.getTopLeft(find.byIcon(Icons.search));
-      // The title widget should be to the left of the search icon.
-      expect(titleOffset.dx, lessThan(searchOffset.dx));
+    titleOffset = tester.getTopRight(find.text(title).last);
+    final Offset searchOffset = tester.getTopLeft(find.byIcon(Icons.search));
+    // The title widget should be to the left of the search icon.
+    expect(titleOffset.dx, lessThan(searchOffset.dx));
   });
 
   testWidgets('SliverAppBar.medium respects title spacing', (WidgetTester tester) async {
@@ -529,10 +468,7 @@ void main() {
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 200),
                 sliver: SliverAppBar.medium(
-                  leading: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.menu),
-                  ),
+                  leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu)),
                   title: const Text(title, maxLines: 1),
                   centerTitle: centerTitle,
                   titleSpacing: titleSpacing,
@@ -542,12 +478,7 @@ void main() {
                   ],
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Container(
-                  height: 1200,
-                  color: Colors.orange[400],
-                ),
-              ),
+              SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
             ],
           ),
         ),
@@ -566,7 +497,12 @@ void main() {
     // By default, title widget should be to the right of the
     // leading widget and title spacing should be respected.
     Offset titleOffset = tester.getTopLeft(collapsedTitle);
-    Offset iconButtonOffset = tester.getTopRight(find.ancestor(of: find.widgetWithIcon(IconButton, Icons.menu), matching: find.byType(ConstrainedBox)));
+    Offset iconButtonOffset = tester.getTopRight(
+      find.ancestor(
+        of: find.widgetWithIcon(IconButton, Icons.menu),
+        matching: find.byType(ConstrainedBox),
+      ),
+    );
     expect(titleOffset.dx, iconButtonOffset.dx + titleSpacing);
 
     await tester.pumpWidget(buildWidget(centerTitle: true));
@@ -591,7 +527,12 @@ void main() {
     // The title widget should be to the right of the leading
     // widget with no spacing.
     titleOffset = tester.getTopLeft(collapsedTitle);
-    iconButtonOffset = tester.getTopRight(find.ancestor(of: find.widgetWithIcon(IconButton, Icons.menu), matching: find.byType(ConstrainedBox)));
+    iconButtonOffset = tester.getTopRight(
+      find.ancestor(
+        of: find.widgetWithIcon(IconButton, Icons.menu),
+        matching: find.byType(ConstrainedBox),
+      ),
+    );
     expect(titleOffset.dx, iconButtonOffset.dx);
 
     // Set centerTitle to true so the end of the title can reach
@@ -622,10 +563,7 @@ void main() {
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 200),
                 sliver: SliverAppBar.large(
-                  leading: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.menu),
-                  ),
+                  leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu)),
                   title: const Text(title, maxLines: 1),
                   centerTitle: centerTitle,
                   titleSpacing: titleSpacing,
@@ -635,12 +573,7 @@ void main() {
                   ],
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Container(
-                  height: 1200,
-                  color: Colors.orange[400],
-                ),
-              ),
+              SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
             ],
           ),
         ),
@@ -659,7 +592,12 @@ void main() {
     // By default, title widget should be to the right of the leading
     // widget and title spacing should be respected.
     Offset titleOffset = tester.getTopLeft(collapsedTitle);
-    Offset iconButtonOffset = tester.getTopRight(find.ancestor(of: find.widgetWithIcon(IconButton, Icons.menu), matching: find.byType(ConstrainedBox)));
+    Offset iconButtonOffset = tester.getTopRight(
+      find.ancestor(
+        of: find.widgetWithIcon(IconButton, Icons.menu),
+        matching: find.byType(ConstrainedBox),
+      ),
+    );
     expect(titleOffset.dx, iconButtonOffset.dx + titleSpacing);
 
     await tester.pumpWidget(buildWidget(centerTitle: true));
@@ -683,7 +621,12 @@ void main() {
     // The title widget should be to the right of the leading
     // widget with no spacing.
     titleOffset = tester.getTopLeft(collapsedTitle);
-    iconButtonOffset = tester.getTopRight(find.ancestor(of: find.widgetWithIcon(IconButton, Icons.menu), matching: find.byType(ConstrainedBox)));
+    iconButtonOffset = tester.getTopRight(
+      find.ancestor(
+        of: find.widgetWithIcon(IconButton, Icons.menu),
+        matching: find.byType(ConstrainedBox),
+      ),
+    );
     expect(titleOffset.dx, iconButtonOffset.dx);
 
     // Set centerTitle to true so the end of the title can reach
@@ -701,128 +644,110 @@ void main() {
     expect(titleOffset.dx, iconButtonOffset.dx);
   });
 
-  testWidgets(
-    'SliverAppBar.medium without the leading widget updates collapsed title padding',
-    (WidgetTester tester) async {
-      const String title = 'Medium SliverAppBar Title';
-      const double leadingPadding = 56.0;
-      const double titleSpacing = 16.0;
+  testWidgets('SliverAppBar.medium without the leading widget updates collapsed title padding', (
+    WidgetTester tester,
+  ) async {
+    const String title = 'Medium SliverAppBar Title';
+    const double leadingPadding = 56.0;
+    const double titleSpacing = 16.0;
 
-      Widget buildWidget({ bool showLeading = true }) {
-        return MaterialApp(
-          home: Scaffold(
-            body: CustomScrollView(
-              primary: true,
-              slivers: <Widget>[
-                SliverAppBar.medium(
-                  automaticallyImplyLeading: false,
-                  leading: showLeading
-                    ? IconButton(
-                        icon: const Icon(Icons.menu),
-                        onPressed: () {},
-                      )
-                    : null,
-                  title: const Text(title),
-                ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    height: 1200,
-                    color: Colors.orange[400],
-                  ),
-                ),
-              ],
-            ),
+    Widget buildWidget({bool showLeading = true}) {
+      return MaterialApp(
+        home: Scaffold(
+          body: CustomScrollView(
+            primary: true,
+            slivers: <Widget>[
+              SliverAppBar.medium(
+                automaticallyImplyLeading: false,
+                leading:
+                    showLeading ? IconButton(icon: const Icon(Icons.menu), onPressed: () {}) : null,
+                title: const Text(title),
+              ),
+              SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
+            ],
           ),
-        );
-      }
+        ),
+      );
+    }
 
-      await tester.pumpWidget(buildWidget());
+    await tester.pumpWidget(buildWidget());
 
-      final Finder collapsedTitle = find.text(title).last;
+    final Finder collapsedTitle = find.text(title).last;
 
-      // Scroll to collapse the SliverAppBar.
-      ScrollController controller = primaryScrollController(tester);
-      controller.jumpTo(45);
-      await tester.pumpAndSettle();
+    // Scroll to collapse the SliverAppBar.
+    ScrollController controller = primaryScrollController(tester);
+    controller.jumpTo(45);
+    await tester.pumpAndSettle();
 
-      // If the leading widget is present, the title widget should be to the
-      // right of the leading widget and title spacing should be respected.
-      Offset titleOffset = tester.getTopLeft(collapsedTitle);
-      expect(titleOffset.dx, leadingPadding + titleSpacing);
+    // If the leading widget is present, the title widget should be to the
+    // right of the leading widget and title spacing should be respected.
+    Offset titleOffset = tester.getTopLeft(collapsedTitle);
+    expect(titleOffset.dx, leadingPadding + titleSpacing);
 
-      // Hide the leading widget.
-      await tester.pumpWidget(buildWidget(showLeading: false));
-      // Scroll to collapse the SliverAppBar.
-      controller = primaryScrollController(tester);
-      controller.jumpTo(45);
-      await tester.pumpAndSettle();
+    // Hide the leading widget.
+    await tester.pumpWidget(buildWidget(showLeading: false));
+    // Scroll to collapse the SliverAppBar.
+    controller = primaryScrollController(tester);
+    controller.jumpTo(45);
+    await tester.pumpAndSettle();
 
-      // If the leading widget is not present, the title widget will
-      // only have the default title spacing.
-      titleOffset = tester.getTopLeft(collapsedTitle);
-      expect(titleOffset.dx, titleSpacing);
+    // If the leading widget is not present, the title widget will
+    // only have the default title spacing.
+    titleOffset = tester.getTopLeft(collapsedTitle);
+    expect(titleOffset.dx, titleSpacing);
   });
 
-  testWidgets(
-    'SliverAppBar.large without the leading widget updates collapsed title padding',
-    (WidgetTester tester) async {
-      const String title = 'Large SliverAppBar Title';
-      const double leadingPadding = 56.0;
-      const double titleSpacing = 16.0;
+  testWidgets('SliverAppBar.large without the leading widget updates collapsed title padding', (
+    WidgetTester tester,
+  ) async {
+    const String title = 'Large SliverAppBar Title';
+    const double leadingPadding = 56.0;
+    const double titleSpacing = 16.0;
 
-      Widget buildWidget({ bool showLeading = true }) {
-        return MaterialApp(
-          home: Scaffold(
-            body: CustomScrollView(
-              primary: true,
-              slivers: <Widget>[
-                SliverAppBar.large(
-                  automaticallyImplyLeading: false,
-                  leading: showLeading
-                    ? IconButton(
-                        icon: const Icon(Icons.menu),
-                        onPressed: () {},
-                      )
-                    : null,
-                  title: const Text(title),
-                ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    height: 1200,
-                    color: Colors.orange[400],
-                  ),
-                ),
-              ],
-            ),
+    Widget buildWidget({bool showLeading = true}) {
+      return MaterialApp(
+        home: Scaffold(
+          body: CustomScrollView(
+            primary: true,
+            slivers: <Widget>[
+              SliverAppBar.large(
+                automaticallyImplyLeading: false,
+                leading:
+                    showLeading ? IconButton(icon: const Icon(Icons.menu), onPressed: () {}) : null,
+                title: const Text(title),
+              ),
+              SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
+            ],
           ),
-        );
-      }
+        ),
+      );
+    }
 
-      await tester.pumpWidget(buildWidget());
+    await tester.pumpWidget(buildWidget());
 
-      final Finder collapsedTitle = find.text(title).last;
+    final Finder collapsedTitle = find.text(title).last;
 
-      // Scroll CustomScrollView to collapse SliverAppBar.
-      ScrollController controller = primaryScrollController(tester);
-      controller.jumpTo(45);
-      await tester.pumpAndSettle();
+    // Scroll CustomScrollView to collapse SliverAppBar.
+    ScrollController controller = primaryScrollController(tester);
+    controller.jumpTo(45);
+    await tester.pumpAndSettle();
 
-      // If the leading widget is present, the title widget should be to the
-      // right of the leading widget and title spacing should be respected.
-      Offset titleOffset = tester.getTopLeft(collapsedTitle);
-      expect(titleOffset.dx, leadingPadding + titleSpacing);
+    // If the leading widget is present, the title widget should be to the
+    // right of the leading widget and title spacing should be respected.
+    Offset titleOffset = tester.getTopLeft(collapsedTitle);
+    expect(titleOffset.dx, leadingPadding + titleSpacing);
 
-      // Hide the leading widget.
-      await tester.pumpWidget(buildWidget(showLeading: false));
-      // Scroll to collapse the SliverAppBar.
-      controller = primaryScrollController(tester);
-      controller.jumpTo(45);
-      await tester.pumpAndSettle();
+    // Hide the leading widget.
+    await tester.pumpWidget(buildWidget(showLeading: false));
+    // Scroll to collapse the SliverAppBar.
+    controller = primaryScrollController(tester);
+    controller.jumpTo(45);
+    await tester.pumpAndSettle();
 
-      // If the leading widget is not present, the title widget will
-      // only have the default title spacing.
-      titleOffset = tester.getTopLeft(collapsedTitle);
-      expect(titleOffset.dx, titleSpacing);
+    // If the leading widget is not present, the title widget will
+    // only have the default title spacing.
+    titleOffset = tester.getTopLeft(collapsedTitle);
+    expect(titleOffset.dx, titleSpacing);
   });
 
   group('MaterialStateColor scrolledUnder', () {
@@ -831,188 +756,175 @@ void main() {
     const Color scrolledColor = Color(0xff00ff00);
     const Color defaultColor = Color(0xff0000ff);
 
-      Widget buildSliverApp({
-        required double contentHeight,
-        bool reverse = false,
-        bool includeFlexibleSpace = false,
-      }) {
-        return MaterialApp(
-          home: Scaffold(
-            body: CustomScrollView(
-              reverse: reverse,
-              slivers: <Widget>[
-                SliverAppBar(
-                  elevation: 0,
-                  backgroundColor: MaterialStateColor.resolveWith((Set<MaterialState> states) {
-                    return states.contains(MaterialState.scrolledUnder)
+    Widget buildSliverApp({
+      required double contentHeight,
+      bool reverse = false,
+      bool includeFlexibleSpace = false,
+    }) {
+      return MaterialApp(
+        home: Scaffold(
+          body: CustomScrollView(
+            reverse: reverse,
+            slivers: <Widget>[
+              SliverAppBar(
+                elevation: 0,
+                backgroundColor: MaterialStateColor.resolveWith((Set<MaterialState> states) {
+                  return states.contains(MaterialState.scrolledUnder)
                       ? scrolledColor
                       : defaultColor;
-                  }),
-                  expandedHeight: expandedHeight,
-                  pinned: true,
-                  flexibleSpace: includeFlexibleSpace
-                      ? const FlexibleSpaceBar(title: Text('SliverAppBar'))
-                      : null,
-                ),
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    <Widget>[
-                      Container(height: contentHeight, color: Colors.teal),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+                }),
+                expandedHeight: expandedHeight,
+                pinned: true,
+                flexibleSpace:
+                    includeFlexibleSpace
+                        ? const FlexibleSpaceBar(title: Text('SliverAppBar'))
+                        : null,
+              ),
+              SliverList(
+                delegate: SliverChildListDelegate(<Widget>[
+                  Container(height: contentHeight, color: Colors.teal),
+                ]),
+              ),
+            ],
           ),
-        );
-      }
+        ),
+      );
+    }
 
-      testWidgets('backgroundColor', (WidgetTester tester) async {
-        await tester.pumpWidget(
-          buildSliverApp(contentHeight: 1200.0)
-        );
+    testWidgets('backgroundColor', (WidgetTester tester) async {
+      await tester.pumpWidget(buildSliverApp(contentHeight: 1200.0));
 
-        expect(getAppBarBackgroundColor(tester), defaultColor);
-        expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
+      expect(getAppBarBackgroundColor(tester), defaultColor);
+      expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
 
-        TestGesture gesture = await tester.startGesture(const Offset(50.0, 400.0));
-        await gesture.moveBy(const Offset(0.0, -expandedHeight));
-        await gesture.up();
-        await tester.pumpAndSettle();
+      TestGesture gesture = await tester.startGesture(const Offset(50.0, 400.0));
+      await gesture.moveBy(const Offset(0.0, -expandedHeight));
+      await gesture.up();
+      await tester.pumpAndSettle();
 
-        expect(getAppBarBackgroundColor(tester), scrolledColor);
-        expect(tester.getSize(findAppBarMaterial()).height, collapsedHeight);
+      expect(getAppBarBackgroundColor(tester), scrolledColor);
+      expect(tester.getSize(findAppBarMaterial()).height, collapsedHeight);
 
-        gesture = await tester.startGesture(const Offset(50.0, 300.0));
-        await gesture.moveBy(const Offset(0.0, expandedHeight));
-        await gesture.up();
-        await tester.pumpAndSettle();
+      gesture = await tester.startGesture(const Offset(50.0, 300.0));
+      await gesture.moveBy(const Offset(0.0, expandedHeight));
+      await gesture.up();
+      await tester.pumpAndSettle();
 
-        expect(getAppBarBackgroundColor(tester), defaultColor);
-        expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
-      });
-
-      testWidgets('backgroundColor with FlexibleSpace', (WidgetTester tester) async {
-        await tester.pumpWidget(
-          buildSliverApp(contentHeight: 1200.0, includeFlexibleSpace: true)
-        );
-
-        expect(getAppBarBackgroundColor(tester), defaultColor);
-        expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
-
-        TestGesture gesture = await tester.startGesture(const Offset(50.0, 400.0));
-        await gesture.moveBy(const Offset(0.0, -expandedHeight));
-        await gesture.up();
-        await tester.pumpAndSettle();
-
-        expect(getAppBarBackgroundColor(tester), scrolledColor);
-        expect(tester.getSize(findAppBarMaterial()).height, collapsedHeight);
-
-        gesture = await tester.startGesture(const Offset(50.0, 300.0));
-        await gesture.moveBy(const Offset(0.0, expandedHeight));
-        await gesture.up();
-        await tester.pumpAndSettle();
-
-        expect(getAppBarBackgroundColor(tester), defaultColor);
-        expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
-      });
-
-      testWidgets('backgroundColor - reverse', (WidgetTester tester) async {
-        await tester.pumpWidget(
-          buildSliverApp(contentHeight: 1200.0, reverse: true)
-        );
-
-        expect(getAppBarBackgroundColor(tester), defaultColor);
-        expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
-
-        TestGesture gesture = await tester.startGesture(const Offset(50.0, 400.0));
-        await gesture.moveBy(const Offset(0.0, expandedHeight));
-        await gesture.up();
-        await tester.pumpAndSettle();
-
-        expect(getAppBarBackgroundColor(tester), scrolledColor);
-        expect(tester.getSize(findAppBarMaterial()).height, collapsedHeight);
-
-        gesture = await tester.startGesture(const Offset(50.0, 300.0));
-        await gesture.moveBy(const Offset(0.0, -expandedHeight));
-        await gesture.up();
-        await tester.pumpAndSettle();
-
-        expect(getAppBarBackgroundColor(tester), defaultColor);
-        expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
-      });
-
-      testWidgets('backgroundColor with FlexibleSpace - reverse', (WidgetTester tester) async {
-        await tester.pumpWidget(
-          buildSliverApp(
-            contentHeight: 1200.0,
-            reverse: true,
-            includeFlexibleSpace: true,
-          )
-        );
-
-        expect(getAppBarBackgroundColor(tester), defaultColor);
-        expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
-
-        TestGesture gesture = await tester.startGesture(const Offset(50.0, 400.0));
-        await gesture.moveBy(const Offset(0.0, expandedHeight));
-        await gesture.up();
-        await tester.pumpAndSettle();
-
-        expect(getAppBarBackgroundColor(tester), scrolledColor);
-        expect(tester.getSize(findAppBarMaterial()).height, collapsedHeight);
-
-        gesture = await tester.startGesture(const Offset(50.0, 300.0));
-        await gesture.moveBy(const Offset(0.0, -expandedHeight));
-        await gesture.up();
-        await tester.pumpAndSettle();
-
-        expect(getAppBarBackgroundColor(tester), defaultColor);
-        expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
-      });
-
-      testWidgets('backgroundColor - not triggered in reverse for short content', (WidgetTester tester) async {
-        await tester.pumpWidget(
-          buildSliverApp(contentHeight: 200, reverse: true)
-        );
-
-        // In reverse, the content here is not long enough to scroll under the app
-        // bar.
-        expect(getAppBarBackgroundColor(tester), defaultColor);
-        expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
-
-        final TestGesture gesture = await tester.startGesture(const Offset(50.0, 400.0));
-        await gesture.moveBy(const Offset(0.0, expandedHeight));
-        await gesture.up();
-        await tester.pumpAndSettle();
-
-        expect(getAppBarBackgroundColor(tester), defaultColor);
-        expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
-      });
-
-      testWidgets('backgroundColor with FlexibleSpace - not triggered in reverse for short content', (WidgetTester tester) async {
-        await tester.pumpWidget(
-          buildSliverApp(
-            contentHeight: 200,
-            reverse: true,
-            includeFlexibleSpace: true,
-          )
-        );
-
-        // In reverse, the content here is not long enough to scroll under the app
-        // bar.
-        expect(getAppBarBackgroundColor(tester), defaultColor);
-        expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
-
-        final TestGesture gesture = await tester.startGesture(const Offset(50.0, 400.0));
-        await gesture.moveBy(const Offset(0.0, expandedHeight));
-        await gesture.up();
-        await tester.pumpAndSettle();
-
-        expect(getAppBarBackgroundColor(tester), defaultColor);
-        expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
-      });
+      expect(getAppBarBackgroundColor(tester), defaultColor);
+      expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
     });
+
+    testWidgets('backgroundColor with FlexibleSpace', (WidgetTester tester) async {
+      await tester.pumpWidget(buildSliverApp(contentHeight: 1200.0, includeFlexibleSpace: true));
+
+      expect(getAppBarBackgroundColor(tester), defaultColor);
+      expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
+
+      TestGesture gesture = await tester.startGesture(const Offset(50.0, 400.0));
+      await gesture.moveBy(const Offset(0.0, -expandedHeight));
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(getAppBarBackgroundColor(tester), scrolledColor);
+      expect(tester.getSize(findAppBarMaterial()).height, collapsedHeight);
+
+      gesture = await tester.startGesture(const Offset(50.0, 300.0));
+      await gesture.moveBy(const Offset(0.0, expandedHeight));
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(getAppBarBackgroundColor(tester), defaultColor);
+      expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
+    });
+
+    testWidgets('backgroundColor - reverse', (WidgetTester tester) async {
+      await tester.pumpWidget(buildSliverApp(contentHeight: 1200.0, reverse: true));
+
+      expect(getAppBarBackgroundColor(tester), defaultColor);
+      expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
+
+      TestGesture gesture = await tester.startGesture(const Offset(50.0, 400.0));
+      await gesture.moveBy(const Offset(0.0, expandedHeight));
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(getAppBarBackgroundColor(tester), scrolledColor);
+      expect(tester.getSize(findAppBarMaterial()).height, collapsedHeight);
+
+      gesture = await tester.startGesture(const Offset(50.0, 300.0));
+      await gesture.moveBy(const Offset(0.0, -expandedHeight));
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(getAppBarBackgroundColor(tester), defaultColor);
+      expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
+    });
+
+    testWidgets('backgroundColor with FlexibleSpace - reverse', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildSliverApp(contentHeight: 1200.0, reverse: true, includeFlexibleSpace: true),
+      );
+
+      expect(getAppBarBackgroundColor(tester), defaultColor);
+      expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
+
+      TestGesture gesture = await tester.startGesture(const Offset(50.0, 400.0));
+      await gesture.moveBy(const Offset(0.0, expandedHeight));
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(getAppBarBackgroundColor(tester), scrolledColor);
+      expect(tester.getSize(findAppBarMaterial()).height, collapsedHeight);
+
+      gesture = await tester.startGesture(const Offset(50.0, 300.0));
+      await gesture.moveBy(const Offset(0.0, -expandedHeight));
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(getAppBarBackgroundColor(tester), defaultColor);
+      expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
+    });
+
+    testWidgets('backgroundColor - not triggered in reverse for short content', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(buildSliverApp(contentHeight: 200, reverse: true));
+
+      // In reverse, the content here is not long enough to scroll under the app
+      // bar.
+      expect(getAppBarBackgroundColor(tester), defaultColor);
+      expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
+
+      final TestGesture gesture = await tester.startGesture(const Offset(50.0, 400.0));
+      await gesture.moveBy(const Offset(0.0, expandedHeight));
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(getAppBarBackgroundColor(tester), defaultColor);
+      expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
+    });
+
+    testWidgets('backgroundColor with FlexibleSpace - not triggered in reverse for short content', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildSliverApp(contentHeight: 200, reverse: true, includeFlexibleSpace: true),
+      );
+
+      // In reverse, the content here is not long enough to scroll under the app
+      // bar.
+      expect(getAppBarBackgroundColor(tester), defaultColor);
+      expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
+
+      final TestGesture gesture = await tester.startGesture(const Offset(50.0, 400.0));
+      await gesture.moveBy(const Offset(0.0, expandedHeight));
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(getAppBarBackgroundColor(tester), defaultColor);
+      expect(tester.getSize(findAppBarMaterial()).height, expandedHeight);
+    });
+  });
 
   testWidgets('SliverAppBar default configuration', (WidgetTester tester) async {
     await tester.pumpWidget(buildSliverAppBarApp());
@@ -1047,10 +959,7 @@ void main() {
   });
 
   testWidgets('SliverAppBar expandedHeight, pinned', (WidgetTester tester) async {
-    await tester.pumpWidget(buildSliverAppBarApp(
-      pinned: true,
-      expandedHeight: 128.0,
-    ));
+    await tester.pumpWidget(buildSliverAppBarApp(pinned: true, expandedHeight: 128.0));
 
     final ScrollController controller = primaryScrollController(tester);
     expect(controller.offset, 0.0);
@@ -1078,11 +987,9 @@ void main() {
   });
 
   testWidgets('SliverAppBar expandedHeight, pinned and floating', (WidgetTester tester) async {
-    await tester.pumpWidget(buildSliverAppBarApp(
-      floating: true,
-      pinned: true,
-      expandedHeight: 128.0,
-    ));
+    await tester.pumpWidget(
+      buildSliverAppBarApp(floating: true, pinned: true, expandedHeight: 128.0),
+    );
 
     final ScrollController controller = primaryScrollController(tester);
     expect(controller.offset, 0.0);
@@ -1110,11 +1017,9 @@ void main() {
   });
 
   testWidgets('SliverAppBar expandedHeight, floating with snap:true', (WidgetTester tester) async {
-    await tester.pumpWidget(buildSliverAppBarApp(
-      floating: true,
-      snap: true,
-      expandedHeight: 128.0,
-    ));
+    await tester.pumpWidget(
+      buildSliverAppBarApp(floating: true, snap: true, expandedHeight: 128.0),
+    );
     expect(find.byType(SliverAppBar), findsOneWidget);
     expect(appBarTop(tester), 0.0);
     expect(appBarHeight(tester), 128.0);
@@ -1189,13 +1094,12 @@ void main() {
     expect(appBarBottom(tester), lessThanOrEqualTo(0.0));
   });
 
-  testWidgets('SliverAppBar expandedHeight, floating and pinned with snap:true', (WidgetTester tester) async {
-    await tester.pumpWidget(buildSliverAppBarApp(
-      floating: true,
-      pinned: true,
-      snap: true,
-      expandedHeight: 128.0,
-    ));
+  testWidgets('SliverAppBar expandedHeight, floating and pinned with snap:true', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      buildSliverAppBarApp(floating: true, pinned: true, snap: true, expandedHeight: 128.0),
+    );
     expect(find.byType(SliverAppBar), findsOneWidget);
     expect(appBarTop(tester), 0.0);
     expect(appBarHeight(tester), 128.0);
@@ -1279,10 +1183,12 @@ void main() {
     const double expandedAppBarHeight = 400.0;
     const double collapsedAppBarHeight = 200.0;
 
-    await tester.pumpWidget(buildSliverAppBarApp(
-      collapsedHeight: collapsedAppBarHeight,
-      expandedHeight: expandedAppBarHeight,
-    ));
+    await tester.pumpWidget(
+      buildSliverAppBarApp(
+        collapsedHeight: collapsedAppBarHeight,
+        expandedHeight: expandedAppBarHeight,
+      ),
+    );
 
     final ScrollController controller = primaryScrollController(tester);
     expect(controller.offset, 0.0);
@@ -1318,25 +1224,20 @@ void main() {
     const double collapsedAppBarHeight = 64;
     const double expandedAppBarHeight = 112;
 
-    await tester.pumpWidget(MaterialApp(
-      theme: theme,
-      home: Scaffold(
-        body: CustomScrollView(
-          primary: true,
-          slivers: <Widget>[
-            const SliverAppBar.medium(
-              title: Text('AppBar Title'),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                height: 1200,
-                color: Colors.orange[400],
-              ),
-            ),
-          ],
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: theme,
+        home: Scaffold(
+          body: CustomScrollView(
+            primary: true,
+            slivers: <Widget>[
+              const SliverAppBar.medium(title: Text('AppBar Title')),
+              SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
+            ],
+          ),
         ),
       ),
-    ));
+    );
 
     final ScrollController controller = primaryScrollController(tester);
     // There are two widgets for the title. The first title is a larger version
@@ -1345,10 +1246,8 @@ void main() {
     // faded in. The last is the title on the mainrow with the icons. It is
     // transparent when the app bar is expanded, and opaque when it is collapsed.
     final Finder expandedTitle = find.text('AppBar Title').first;
-    final Finder expandedTitleClip = find.ancestor(
-      of: expandedTitle,
-      matching: find.byType(ClipRect),
-    ).first;
+    final Finder expandedTitleClip =
+        find.ancestor(of: expandedTitle, matching: find.byType(ClipRect)).first;
     final Finder collapsedTitle = find.text('AppBar Title').last;
     final Finder collapsedTitleOpacity = find.ancestor(
       of: collapsedTitle,
@@ -1383,7 +1282,10 @@ void main() {
     expect(find.byType(SliverAppBar), findsOneWidget);
     expect(appBarHeight(tester), expandedAppBarHeight - 45);
     expect(tester.widget<AnimatedOpacity>(collapsedTitleOpacity).opacity, 0);
-    expect(tester.getSize(expandedTitleClip).height, expandedAppBarHeight - collapsedAppBarHeight - 45);
+    expect(
+      tester.getSize(expandedTitleClip).height,
+      expandedAppBarHeight - collapsedAppBarHeight - 45,
+    );
 
     // Scroll so that it is completely collapsed.
     controller.jumpTo(600);
@@ -1407,25 +1309,20 @@ void main() {
     const double collapsedAppBarHeight = 64;
     const double expandedAppBarHeight = 152;
 
-    await tester.pumpWidget(MaterialApp(
-      theme: theme,
-      home: Scaffold(
-        body: CustomScrollView(
-          primary: true,
-          slivers: <Widget>[
-            const SliverAppBar.large(
-              title: Text('AppBar Title'),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                height: 1200,
-                color: Colors.orange[400],
-              ),
-            ),
-          ],
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: theme,
+        home: Scaffold(
+          body: CustomScrollView(
+            primary: true,
+            slivers: <Widget>[
+              const SliverAppBar.large(title: Text('AppBar Title')),
+              SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
+            ],
+          ),
         ),
       ),
-    ));
+    );
 
     final ScrollController controller = primaryScrollController(tester);
     // There are two widgets for the title. The first title is a larger version
@@ -1434,10 +1331,8 @@ void main() {
     // faded in. The last is the title on the mainrow with the icons. It is
     // transparent when the app bar is expanded, and opaque when it is collapsed.
     final Finder expandedTitle = find.text('AppBar Title').first;
-    final Finder expandedTitleClip = find.ancestor(
-      of: expandedTitle,
-      matching: find.byType(ClipRect),
-    ).first;
+    final Finder expandedTitleClip =
+        find.ancestor(of: expandedTitle, matching: find.byType(ClipRect)).first;
     final Finder collapsedTitle = find.text('AppBar Title').last;
     final Finder collapsedTitleOpacity = find.ancestor(
       of: collapsedTitle,
@@ -1469,14 +1364,16 @@ void main() {
       theme.colorScheme.onSurface,
     );
 
-
     // Scroll the expanded app bar partially out of view.
     controller.jumpTo(45);
     await tester.pump();
     expect(find.byType(SliverAppBar), findsOneWidget);
     expect(appBarHeight(tester), expandedAppBarHeight - 45);
     expect(tester.widget<AnimatedOpacity>(collapsedTitleOpacity).opacity, 0);
-    expect(tester.getSize(expandedTitleClip).height, expandedAppBarHeight - collapsedAppBarHeight - 45);
+    expect(
+      tester.getSize(expandedTitleClip).height,
+      expandedAppBarHeight - collapsedAppBarHeight - 45,
+    );
 
     // Scroll so that it is completely collapsed.
     controller.jumpTo(600);
@@ -1557,9 +1454,9 @@ void main() {
 
   group('SliverAppBar.forceMaterialTransparency', () {
     Material getSliverAppBarMaterial(WidgetTester tester) {
-      return tester.widget<Material>(find
-          .descendant(of: find.byType(SliverAppBar), matching: find.byType(Material))
-          .first);
+      return tester.widget<Material>(
+        find.descendant(of: find.byType(SliverAppBar), matching: find.byType(Material)).first,
+      );
     }
 
     // Generates a MaterialApp with a SliverAppBar in a CustomScrollView.
@@ -1567,16 +1464,16 @@ void main() {
     // initially scrolled so that it is beneath the SliverAppBar.
     (ScrollController, Widget) buildWidget({
       required bool forceMaterialTransparency,
-      required VoidCallback onPressed
+      required VoidCallback onPressed,
     }) {
       const double appBarHeight = 120;
       final ScrollController controller = ScrollController(initialScrollOffset: appBarHeight);
 
       return (
-      controller,
-      MaterialApp(
-        home: Scaffold(
-          body: CustomScrollView(
+        controller,
+        MaterialApp(
+          home: Scaffold(
+            body: CustomScrollView(
               controller: controller,
               slivers: <Widget>[
                 SliverAppBar(
@@ -1592,28 +1489,32 @@ void main() {
                   delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
                     return SizedBox(
                       height: appBarHeight,
-                      child: index == 0
-                          ? Align(
-                          alignment: Alignment.topCenter,
-                          child: TextButton(onPressed: onPressed, child: const Text('press')))
-                          : const SizedBox(),
+                      child:
+                          index == 0
+                              ? Align(
+                                alignment: Alignment.topCenter,
+                                child: TextButton(onPressed: onPressed, child: const Text('press')),
+                              )
+                              : const SizedBox(),
                     );
-                  },
-                    childCount: 20,
-                  ),
+                  }, childCount: 20),
                 ),
-              ]),
+              ],
+            ),
+          ),
         ),
-      ),
       );
     }
 
-    testWidgets(
-        'forceMaterialTransparency == true allows gestures beneath the app bar', (WidgetTester tester) async {
+    testWidgets('forceMaterialTransparency == true allows gestures beneath the app bar', (
+      WidgetTester tester,
+    ) async {
       bool buttonWasPressed = false;
       final (ScrollController controller, Widget widget) = buildWidget(
-        forceMaterialTransparency:true,
-        onPressed:() { buttonWasPressed = true; },
+        forceMaterialTransparency: true,
+        onPressed: () {
+          buttonWasPressed = true;
+        },
       );
       await tester.pumpWidget(widget);
 
@@ -1628,16 +1529,19 @@ void main() {
       controller.dispose();
     });
 
-    testWidgets(
-        'forceMaterialTransparency == false does not allow gestures beneath the app bar', (WidgetTester tester) async {
+    testWidgets('forceMaterialTransparency == false does not allow gestures beneath the app bar', (
+      WidgetTester tester,
+    ) async {
       // Set this, and tester.tap(warnIfMissed:false), to suppress
       // errors/warning that the button is not hittable (which is expected).
       WidgetController.hitTestWarningShouldBeFatal = false;
 
       bool buttonWasPressed = false;
       final (ScrollController controller, Widget widget) = buildWidget(
-        forceMaterialTransparency:false,
-        onPressed:() { buttonWasPressed = true; },
+        forceMaterialTransparency: false,
+        onPressed: () {
+          buttonWasPressed = true;
+        },
       );
       await tester.pumpWidget(widget);
 
@@ -1645,7 +1549,7 @@ void main() {
       expect(material.type, MaterialType.canvas);
 
       final Finder buttonFinder = find.byType(TextButton);
-      await tester.tap(buttonFinder, warnIfMissed:false);
+      await tester.tap(buttonFinder, warnIfMissed: false);
       await tester.pump();
       expect(buttonWasPressed, isFalse);
 
@@ -1653,7 +1557,9 @@ void main() {
     });
   });
 
-  testWidgets('SliverAppBar positioning of leading and trailing widgets with top padding', (WidgetTester tester) async {
+  testWidgets('SliverAppBar positioning of leading and trailing widgets with top padding', (
+    WidgetTester tester,
+  ) async {
     const MediaQueryData topPadding100 = MediaQueryData(padding: EdgeInsets.only(top: 100.0));
     final Key leadingKey = UniqueKey();
     final Key titleKey = UniqueKey();
@@ -1676,7 +1582,7 @@ void main() {
                 SliverAppBar(
                   leading: Placeholder(key: leadingKey),
                   title: Placeholder(key: titleKey, fallbackHeight: kToolbarHeight),
-                  actions: <Widget>[ Placeholder(key: trailingKey) ],
+                  actions: <Widget>[Placeholder(key: trailingKey)],
                 ),
               ],
             ),
@@ -1690,8 +1596,12 @@ void main() {
     expect(tester.getTopLeft(find.byKey(trailingKey)), const Offset(0.0, 100.0));
   });
 
-  testWidgets('SliverAppBar positioning of leading and trailing widgets with bottom padding', (WidgetTester tester) async {
-    const MediaQueryData topPadding100 = MediaQueryData(padding: EdgeInsets.only(top: 100.0, bottom: 50.0));
+  testWidgets('SliverAppBar positioning of leading and trailing widgets with bottom padding', (
+    WidgetTester tester,
+  ) async {
+    const MediaQueryData topPadding100 = MediaQueryData(
+      padding: EdgeInsets.only(top: 100.0, bottom: 50.0),
+    );
     final Key leadingKey = UniqueKey();
     final Key titleKey = UniqueKey();
     final Key trailingKey = UniqueKey();
@@ -1713,7 +1623,7 @@ void main() {
                 SliverAppBar(
                   leading: Placeholder(key: leadingKey),
                   title: Placeholder(key: titleKey),
-                  actions: <Widget>[ Placeholder(key: trailingKey) ],
+                  actions: <Widget>[Placeholder(key: trailingKey)],
                 ),
               ],
             ),
@@ -1721,9 +1631,18 @@ void main() {
         ),
       ),
     );
-    expect(tester.getRect(find.byType(AppBar)), const Rect.fromLTRB(0.0, 0.0, 800.00, 100.0 + 56.0));
-    expect(tester.getRect(find.byKey(leadingKey)), const Rect.fromLTRB(800.0 - 56.0, 100.0, 800.0, 100.0 + 56.0));
-    expect(tester.getRect(find.byKey(trailingKey)), const Rect.fromLTRB(0.0, 100.0, 400.0, 100.0 + 56.0));
+    expect(
+      tester.getRect(find.byType(AppBar)),
+      const Rect.fromLTRB(0.0, 0.0, 800.00, 100.0 + 56.0),
+    );
+    expect(
+      tester.getRect(find.byKey(leadingKey)),
+      const Rect.fromLTRB(800.0 - 56.0, 100.0, 800.0, 100.0 + 56.0),
+    );
+    expect(
+      tester.getRect(find.byKey(trailingKey)),
+      const Rect.fromLTRB(0.0, 100.0, 400.0, 100.0 + 56.0),
+    );
   });
 
   testWidgets('SliverAppBar provides correct semantics in LTR', (WidgetTester tester) async {
@@ -1735,11 +1654,7 @@ void main() {
           child: AppBar(
             leading: const Text('Leading'),
             title: const Text('Title'),
-            actions: const <Widget>[
-              Text('Action 1'),
-              Text('Action 2'),
-              Text('Action 3'),
-            ],
+            actions: const <Widget>[Text('Action 1'), Text('Action 2'), Text('Action 3')],
             bottom: const PreferredSize(
               preferredSize: Size(0.0, kToolbarHeight),
               child: Text('Bottom'),
@@ -1749,60 +1664,48 @@ void main() {
       ),
     );
 
-    expect(semantics, hasSemantics(
-      TestSemantics.root(
-        children: <TestSemantics>[
-          TestSemantics(
-            children: <TestSemantics>[
-              TestSemantics(
-                children: <TestSemantics> [
-                  TestSemantics(
-                    flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                    children: <TestSemantics>[
-                      TestSemantics(
-                        children: <TestSemantics>[
-                          TestSemantics(
-                            label: 'Leading',
-                            textDirection: TextDirection.ltr,
-                          ),
-                          TestSemantics(
-                            flags: <SemanticsFlag>[
-                              SemanticsFlag.namesRoute,
-                              SemanticsFlag.isHeader,
-                            ],
-                            label: 'Title',
-                            textDirection: TextDirection.ltr,
-                          ),
-                          TestSemantics(
-                            label: 'Action 1',
-                            textDirection: TextDirection.ltr,
-                          ),
-                          TestSemantics(
-                            label: 'Action 2',
-                            textDirection: TextDirection.ltr,
-                          ),
-                          TestSemantics(
-                            label: 'Action 3',
-                            textDirection: TextDirection.ltr,
-                          ),
-                          TestSemantics(
-                            label: 'Bottom',
-                            textDirection: TextDirection.ltr,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
+    expect(
+      semantics,
+      hasSemantics(
+        TestSemantics.root(
+          children: <TestSemantics>[
+            TestSemantics(
+              children: <TestSemantics>[
+                TestSemantics(
+                  children: <TestSemantics>[
+                    TestSemantics(
+                      flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
+                      children: <TestSemantics>[
+                        TestSemantics(
+                          children: <TestSemantics>[
+                            TestSemantics(label: 'Leading', textDirection: TextDirection.ltr),
+                            TestSemantics(
+                              flags: <SemanticsFlag>[
+                                SemanticsFlag.namesRoute,
+                                SemanticsFlag.isHeader,
+                              ],
+                              label: 'Title',
+                              textDirection: TextDirection.ltr,
+                            ),
+                            TestSemantics(label: 'Action 1', textDirection: TextDirection.ltr),
+                            TestSemantics(label: 'Action 2', textDirection: TextDirection.ltr),
+                            TestSemantics(label: 'Action 3', textDirection: TextDirection.ltr),
+                            TestSemantics(label: 'Bottom', textDirection: TextDirection.ltr),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+        ignoreRect: true,
+        ignoreTransform: true,
+        ignoreId: true,
       ),
-      ignoreRect: true,
-      ignoreTransform: true,
-      ignoreId: true,
-    ));
+    );
 
     semantics.dispose();
   });
@@ -1820,11 +1723,7 @@ void main() {
               child: AppBar(
                 leading: const Text('Leading'),
                 title: const Text('Title'),
-                actions: const <Widget>[
-                  Text('Action 1'),
-                  Text('Action 2'),
-                  Text('Action 3'),
-                ],
+                actions: const <Widget>[Text('Action 1'), Text('Action 2'), Text('Action 3')],
                 bottom: const PreferredSize(
                   preferredSize: Size(0.0, kToolbarHeight),
                   child: Text('Bottom'),
@@ -1836,65 +1735,53 @@ void main() {
       ),
     );
 
-    expect(semantics, hasSemantics(
-      TestSemantics.root(
-        children: <TestSemantics>[
-          TestSemantics(
-            children: <TestSemantics>[
-              TestSemantics(
-                children: <TestSemantics>[
-                  TestSemantics(
-                    flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                    children: <TestSemantics>[
-                      TestSemantics(
-                        textDirection: TextDirection.rtl,
-                        children: <TestSemantics>[
-                          TestSemantics(
-                            children: <TestSemantics>[
-                              TestSemantics(
-                                label: 'Leading',
-                                textDirection: TextDirection.rtl,
-                              ),
-                              TestSemantics(
-                                flags: <SemanticsFlag>[
-                                  SemanticsFlag.namesRoute,
-                                  SemanticsFlag.isHeader,
-                                ],
-                                label: 'Title',
-                                textDirection: TextDirection.rtl,
-                              ),
-                              TestSemantics(
-                                label: 'Action 1',
-                                textDirection: TextDirection.rtl,
-                              ),
-                              TestSemantics(
-                                label: 'Action 2',
-                                textDirection: TextDirection.rtl,
-                              ),
-                              TestSemantics(
-                                label: 'Action 3',
-                                textDirection: TextDirection.rtl,
-                              ),
-                              TestSemantics(
-                                label: 'Bottom',
-                                textDirection: TextDirection.rtl,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
+    expect(
+      semantics,
+      hasSemantics(
+        TestSemantics.root(
+          children: <TestSemantics>[
+            TestSemantics(
+              children: <TestSemantics>[
+                TestSemantics(
+                  children: <TestSemantics>[
+                    TestSemantics(
+                      flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
+                      children: <TestSemantics>[
+                        TestSemantics(
+                          textDirection: TextDirection.rtl,
+                          children: <TestSemantics>[
+                            TestSemantics(
+                              children: <TestSemantics>[
+                                TestSemantics(label: 'Leading', textDirection: TextDirection.rtl),
+                                TestSemantics(
+                                  flags: <SemanticsFlag>[
+                                    SemanticsFlag.namesRoute,
+                                    SemanticsFlag.isHeader,
+                                  ],
+                                  label: 'Title',
+                                  textDirection: TextDirection.rtl,
+                                ),
+                                TestSemantics(label: 'Action 1', textDirection: TextDirection.rtl),
+                                TestSemantics(label: 'Action 2', textDirection: TextDirection.rtl),
+                                TestSemantics(label: 'Action 3', textDirection: TextDirection.rtl),
+                                TestSemantics(label: 'Bottom', textDirection: TextDirection.rtl),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+        ignoreRect: true,
+        ignoreTransform: true,
+        ignoreId: true,
       ),
-      ignoreRect: true,
-      ignoreTransform: true,
-      ignoreId: true,
-    ));
+    );
 
     semantics.dispose();
   });
@@ -1917,58 +1804,63 @@ void main() {
       ),
     );
 
-    expect(semantics, hasSemantics(
-      TestSemantics.root(
-        children: <TestSemantics>[
-          TestSemantics(
-            textDirection: TextDirection.ltr,
-            children: <TestSemantics>[
-              TestSemantics(
-                children: <TestSemantics>[
-                  TestSemantics(
-                    flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                    children: <TestSemantics>[
-                      TestSemantics(
-                        children: <TestSemantics>[
-                          TestSemantics(
-                            children: <TestSemantics>[
-                              TestSemantics(
-                                children: <TestSemantics>[
-                                  TestSemantics(
-                                    label: 'Leading',
-                                    textDirection: TextDirection.ltr,
-                                  ),
-                                  TestSemantics(
-                                    label: 'Action 1',
-                                    textDirection: TextDirection.ltr,
-                                  ),
-                                ],
-                              ),
-                              TestSemantics(),
-                            ],
-                          ),
-                          TestSemantics(
-                            flags: <SemanticsFlag>[SemanticsFlag.hasImplicitScrolling],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
+    expect(
+      semantics,
+      hasSemantics(
+        TestSemantics.root(
+          children: <TestSemantics>[
+            TestSemantics(
+              textDirection: TextDirection.ltr,
+              children: <TestSemantics>[
+                TestSemantics(
+                  children: <TestSemantics>[
+                    TestSemantics(
+                      flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
+                      children: <TestSemantics>[
+                        TestSemantics(
+                          children: <TestSemantics>[
+                            TestSemantics(
+                              children: <TestSemantics>[
+                                TestSemantics(
+                                  children: <TestSemantics>[
+                                    TestSemantics(
+                                      label: 'Leading',
+                                      textDirection: TextDirection.ltr,
+                                    ),
+                                    TestSemantics(
+                                      label: 'Action 1',
+                                      textDirection: TextDirection.ltr,
+                                    ),
+                                  ],
+                                ),
+                                TestSemantics(),
+                              ],
+                            ),
+                            TestSemantics(
+                              flags: <SemanticsFlag>[SemanticsFlag.hasImplicitScrolling],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+        ignoreRect: true,
+        ignoreTransform: true,
+        ignoreId: true,
       ),
-      ignoreRect: true,
-      ignoreTransform: true,
-      ignoreId: true,
-    ));
+    );
 
     semantics.dispose();
   });
 
-  testWidgets('SliverAppBar with flexible space has correct semantics order', (WidgetTester tester) async {
+  testWidgets('SliverAppBar with flexible space has correct semantics order', (
+    WidgetTester tester,
+  ) async {
     // Regression test for https://github.com/flutter/flutter/issues/64922.
     final SemanticsTester semantics = SemanticsTester(tester);
 
@@ -1986,61 +1878,64 @@ void main() {
       ),
     );
 
-    expect(semantics, hasSemantics(
-      TestSemantics.root(
-        children: <TestSemantics>[
-          TestSemantics(
-            textDirection: TextDirection.ltr,
-            children: <TestSemantics>[
-              TestSemantics(
-                children: <TestSemantics>[
-                  TestSemantics(
-                    flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                    children: <TestSemantics>[
-                      TestSemantics(
-                        children: <TestSemantics>[
-                          TestSemantics(
-                            children: <TestSemantics>[
-                              TestSemantics(
-                                children: <TestSemantics>[
-                                  TestSemantics(
-                                    label: 'Leading',
-                                    textDirection: TextDirection.ltr,
-                                  ),
-                                  TestSemantics(
-                                    label: 'Action 1',
-                                    textDirection: TextDirection.ltr,
-                                  ),
-                                ],
-                              ),
-                              TestSemantics(
-                                children: <TestSemantics>[
-                                  TestSemantics(
-                                    flags: <SemanticsFlag>[SemanticsFlag.isHeader],
-                                    label: 'Flexible space',
-                                    textDirection: TextDirection.ltr,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          TestSemantics(
-                            flags: <SemanticsFlag>[SemanticsFlag.hasImplicitScrolling],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
+    expect(
+      semantics,
+      hasSemantics(
+        TestSemantics.root(
+          children: <TestSemantics>[
+            TestSemantics(
+              textDirection: TextDirection.ltr,
+              children: <TestSemantics>[
+                TestSemantics(
+                  children: <TestSemantics>[
+                    TestSemantics(
+                      flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
+                      children: <TestSemantics>[
+                        TestSemantics(
+                          children: <TestSemantics>[
+                            TestSemantics(
+                              children: <TestSemantics>[
+                                TestSemantics(
+                                  children: <TestSemantics>[
+                                    TestSemantics(
+                                      label: 'Leading',
+                                      textDirection: TextDirection.ltr,
+                                    ),
+                                    TestSemantics(
+                                      label: 'Action 1',
+                                      textDirection: TextDirection.ltr,
+                                    ),
+                                  ],
+                                ),
+                                TestSemantics(
+                                  children: <TestSemantics>[
+                                    TestSemantics(
+                                      flags: <SemanticsFlag>[SemanticsFlag.isHeader],
+                                      label: 'Flexible space',
+                                      textDirection: TextDirection.ltr,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            TestSemantics(
+                              flags: <SemanticsFlag>[SemanticsFlag.hasImplicitScrolling],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+        ignoreRect: true,
+        ignoreTransform: true,
+        ignoreId: true,
       ),
-      ignoreRect: true,
-      ignoreTransform: true,
-      ignoreId: true,
-    ));
+    );
 
     semantics.dispose();
   });
@@ -2072,18 +1967,13 @@ void main() {
                       ),
                     ],
                     flexibleSpace: FlexibleSpaceBar(
-                      background: Container(
-                        height: appBarHeight,
-                        color: Colors.orange,
-                      ),
+                      background: Container(height: appBarHeight, color: Colors.orange),
                     ),
                   ),
                   SliverList(
-                    delegate: SliverChildListDelegate(
-                      <Widget>[
-                        Container(height: 1200.0, color: Colors.teal),
-                      ],
-                    ),
+                    delegate: SliverChildListDelegate(<Widget>[
+                      Container(height: 1200.0, color: Colors.teal),
+                    ]),
                   ),
                 ],
               ),
@@ -2159,7 +2049,11 @@ void main() {
   });
 
   testWidgets('SliverAppBar configures the delegate properly', (WidgetTester tester) async {
-    Future<void> buildAndVerifyDelegate({ required bool pinned, required bool floating, required bool snap }) async {
+    Future<void> buildAndVerifyDelegate({
+      required bool pinned,
+      required bool floating,
+      required bool snap,
+    }) async {
       await tester.pumpWidget(
         MaterialApp(
           home: CustomScrollView(
@@ -2175,12 +2069,12 @@ void main() {
         ),
       );
 
-      final SliverPersistentHeaderDelegate delegate = tester
-        .widget<SliverPersistentHeader>(find.byType(SliverPersistentHeader))
-        .delegate;
+      final SliverPersistentHeaderDelegate delegate =
+          tester.widget<SliverPersistentHeader>(find.byType(SliverPersistentHeader)).delegate;
 
       // Ensure we have a non-null vsync when it's needed.
-      if (!floating || (delegate.snapConfiguration == null && delegate.showOnScreenConfiguration == null)) {
+      if (!floating ||
+          (delegate.snapConfiguration == null && delegate.showOnScreenConfiguration == null)) {
         expect(delegate.vsync, isNotNull);
       }
 
@@ -2194,12 +2088,12 @@ void main() {
     await buildAndVerifyDelegate(pinned: true, floating: true, snap: true);
   });
 
-  testWidgets('SliverAppBar default collapsedHeight with respect to toolbarHeight', (WidgetTester tester) async {
+  testWidgets('SliverAppBar default collapsedHeight with respect to toolbarHeight', (
+    WidgetTester tester,
+  ) async {
     const double toolbarHeight = 100.0;
 
-    await tester.pumpWidget(buildSliverAppBarApp(
-      toolbarHeight: toolbarHeight,
-    ));
+    await tester.pumpWidget(buildSliverAppBarApp(toolbarHeight: toolbarHeight));
 
     final ScrollController controller = primaryScrollController(tester);
     final double initialTabBarHeight = tabBarHeight(tester);
@@ -2217,10 +2111,9 @@ void main() {
     const double toolbarHeight = 100.0;
     const double collapsedHeight = 150.0;
 
-    await tester.pumpWidget(buildSliverAppBarApp(
-      toolbarHeight: toolbarHeight,
-      collapsedHeight: collapsedHeight,
-    ));
+    await tester.pumpWidget(
+      buildSliverAppBarApp(toolbarHeight: toolbarHeight, collapsedHeight: collapsedHeight),
+    );
 
     final ScrollController controller = primaryScrollController(tester);
     final double initialTabBarHeight = tabBarHeight(tester);
@@ -2235,9 +2128,7 @@ void main() {
   testWidgets('SliverAppBar collapsedHeight', (WidgetTester tester) async {
     const double collapsedHeight = 56.0;
 
-    await tester.pumpWidget(buildSliverAppBarApp(
-      collapsedHeight: collapsedHeight,
-    ));
+    await tester.pumpWidget(buildSliverAppBarApp(collapsedHeight: collapsedHeight));
 
     final ScrollController controller = primaryScrollController(tester);
     final double initialTabBarHeight = tabBarHeight(tester);
@@ -2251,23 +2142,23 @@ void main() {
 
   testWidgets('SliverAppBar respects leadingWidth', (WidgetTester tester) async {
     const Key key = Key('leading');
-    await tester.pumpWidget(const MaterialApp(
-      home: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            leading: Placeholder(key: key),
-            leadingWidth: 100,
-            title: Text('Title'),
-          ),
-        ],
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(leading: Placeholder(key: key), leadingWidth: 100, title: Text('Title')),
+          ],
+        ),
       ),
-    ));
+    );
 
     // By default toolbarHeight is 56.0.
     expect(tester.getRect(find.byKey(key)), const Rect.fromLTRB(0, 0, 100, 56));
   });
 
-  testWidgets('SliverAppBar.titleSpacing defaults to NavigationToolbar.kMiddleSpacing', (WidgetTester tester) async {
+  testWidgets('SliverAppBar.titleSpacing defaults to NavigationToolbar.kMiddleSpacing', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(buildSliverAppBarApp());
 
     final NavigationToolbar navToolBar = tester.widget(find.byType(NavigationToolbar));
@@ -2331,25 +2222,20 @@ void main() {
       const double collapsedAppBarHeight = 64;
       const double expandedAppBarHeight = 112;
 
-      await tester.pumpWidget(MaterialApp(
-        theme: theme,
-        home: Scaffold(
-          body: CustomScrollView(
-            primary: true,
-            slivers: <Widget>[
-              const SliverAppBar.medium(
-                title: Text('AppBar Title'),
-              ),
-              SliverToBoxAdapter(
-                child: Container(
-                  height: 1200,
-                  color: Colors.orange[400],
-                ),
-              ),
-            ],
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: Scaffold(
+            body: CustomScrollView(
+              primary: true,
+              slivers: <Widget>[
+                const SliverAppBar.medium(title: Text('AppBar Title')),
+                SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
+              ],
+            ),
           ),
         ),
-      ));
+      );
 
       final ScrollController controller = primaryScrollController(tester);
       // There are two widgets for the title. The first title is a larger version
@@ -2373,7 +2259,10 @@ void main() {
       expect(find.byType(SliverAppBar), findsOneWidget);
       expect(appBarHeight(tester), expandedAppBarHeight);
       expect(tester.widget<AnimatedOpacity>(collapsedTitleOpacity).opacity, 0);
-      expect(tester.getSize(expandedTitleClip).height, expandedAppBarHeight - collapsedAppBarHeight);
+      expect(
+        tester.getSize(expandedTitleClip).height,
+        expandedAppBarHeight - collapsedAppBarHeight,
+      );
 
       // Test the expanded title is positioned correctly.
       final Offset titleOffset = tester.getBottomLeft(expandedTitle);
@@ -2391,7 +2280,10 @@ void main() {
       expect(find.byType(SliverAppBar), findsOneWidget);
       expect(appBarHeight(tester), expandedAppBarHeight - 45);
       expect(tester.widget<AnimatedOpacity>(collapsedTitleOpacity).opacity, 0);
-      expect(tester.getSize(expandedTitleClip).height, expandedAppBarHeight - collapsedAppBarHeight - 45);
+      expect(
+        tester.getSize(expandedTitleClip).height,
+        expandedAppBarHeight - collapsedAppBarHeight - 45,
+      );
 
       // Scroll so that it is completely collapsed.
       controller.jumpTo(600);
@@ -2407,7 +2299,10 @@ void main() {
       expect(find.byType(SliverAppBar), findsOneWidget);
       expect(appBarHeight(tester), expandedAppBarHeight);
       expect(tester.widget<AnimatedOpacity>(collapsedTitleOpacity).opacity, 0);
-      expect(tester.getSize(expandedTitleClip).height, expandedAppBarHeight - collapsedAppBarHeight);
+      expect(
+        tester.getSize(expandedTitleClip).height,
+        expandedAppBarHeight - collapsedAppBarHeight,
+      );
     });
 
     testWidgets('Material2 - SliverAppBar.large defaults', (WidgetTester tester) async {
@@ -2415,25 +2310,20 @@ void main() {
       const double collapsedAppBarHeight = 64;
       const double expandedAppBarHeight = 152;
 
-      await tester.pumpWidget(MaterialApp(
-        theme: theme,
-        home: Scaffold(
-          body: CustomScrollView(
-            primary: true,
-            slivers: <Widget>[
-              const SliverAppBar.large(
-                title: Text('AppBar Title'),
-              ),
-              SliverToBoxAdapter(
-                child: Container(
-                  height: 1200,
-                  color: Colors.orange[400],
-                ),
-              ),
-            ],
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: Scaffold(
+            body: CustomScrollView(
+              primary: true,
+              slivers: <Widget>[
+                const SliverAppBar.large(title: Text('AppBar Title')),
+                SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
+              ],
+            ),
           ),
         ),
-      ));
+      );
 
       final ScrollController controller = primaryScrollController(tester);
       // There are two widgets for the title. The first title is a larger version
@@ -2457,7 +2347,10 @@ void main() {
       expect(find.byType(SliverAppBar), findsOneWidget);
       expect(appBarHeight(tester), expandedAppBarHeight);
       expect(tester.widget<AnimatedOpacity>(collapsedTitleOpacity).opacity, 0);
-      expect(tester.getSize(expandedTitleClip).height, expandedAppBarHeight - collapsedAppBarHeight);
+      expect(
+        tester.getSize(expandedTitleClip).height,
+        expandedAppBarHeight - collapsedAppBarHeight,
+      );
 
       // Test the expanded title is positioned correctly.
       final Offset titleOffset = tester.getBottomLeft(expandedTitle);
@@ -2475,7 +2368,10 @@ void main() {
       expect(find.byType(SliverAppBar), findsOneWidget);
       expect(appBarHeight(tester), expandedAppBarHeight - 45);
       expect(tester.widget<AnimatedOpacity>(collapsedTitleOpacity).opacity, 0);
-      expect(tester.getSize(expandedTitleClip).height, expandedAppBarHeight - collapsedAppBarHeight - 45);
+      expect(
+        tester.getSize(expandedTitleClip).height,
+        expandedAppBarHeight - collapsedAppBarHeight - 45,
+      );
 
       // Scroll so that it is completely collapsed.
       controller.jumpTo(600);
@@ -2491,7 +2387,10 @@ void main() {
       expect(find.byType(SliverAppBar), findsOneWidget);
       expect(appBarHeight(tester), expandedAppBarHeight);
       expect(tester.widget<AnimatedOpacity>(collapsedTitleOpacity).opacity, 0);
-      expect(tester.getSize(expandedTitleClip).height, expandedAppBarHeight - collapsedAppBarHeight);
+      expect(
+        tester.getSize(expandedTitleClip).height,
+        expandedAppBarHeight - collapsedAppBarHeight,
+      );
     });
   });
 }

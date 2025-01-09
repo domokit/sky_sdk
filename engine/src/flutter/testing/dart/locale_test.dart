@@ -33,21 +33,42 @@ void main() {
     expect(const Locale.fromSubtags(countryCode: 'US').toString(), 'und_US');
     expect(const Locale.fromSubtags(countryCode: 'US').countryCode, 'US');
 
-    expect(const Locale.fromSubtags(languageCode: 'es', countryCode: '419').toLanguageTag(), 'es-419');
+    expect(
+      const Locale.fromSubtags(languageCode: 'es', countryCode: '419').toLanguageTag(),
+      'es-419',
+    );
     expect(const Locale.fromSubtags(languageCode: 'es', countryCode: '419').toString(), 'es_419');
     expect(const Locale.fromSubtags(languageCode: 'es', countryCode: '419').languageCode, 'es');
     expect(const Locale.fromSubtags(languageCode: 'es', countryCode: '419').scriptCode, null);
     expect(const Locale.fromSubtags(languageCode: 'es', countryCode: '419').countryCode, '419');
 
-    expect(const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans', countryCode: 'CN').toLanguageTag(), 'zh-Hans-CN');
-    expect(const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans', countryCode: 'CN').toString(), 'zh_Hans_CN');
+    expect(
+      const Locale.fromSubtags(
+        languageCode: 'zh',
+        scriptCode: 'Hans',
+        countryCode: 'CN',
+      ).toLanguageTag(),
+      'zh-Hans-CN',
+    );
+    expect(
+      const Locale.fromSubtags(
+        languageCode: 'zh',
+        scriptCode: 'Hans',
+        countryCode: 'CN',
+      ).toString(),
+      'zh_Hans_CN',
+    );
   });
 
   test('Locale equality', () {
-    expect(const Locale.fromSubtags(languageCode: 'en'),
-           isNot(const Locale.fromSubtags(languageCode: 'en', scriptCode: 'Latn')));
-    expect(const Locale.fromSubtags(languageCode: 'en').hashCode,
-           isNot(const Locale.fromSubtags(languageCode: 'en', scriptCode: 'Latn').hashCode));
+    expect(
+      const Locale.fromSubtags(languageCode: 'en'),
+      isNot(const Locale.fromSubtags(languageCode: 'en', scriptCode: 'Latn')),
+    );
+    expect(
+      const Locale.fromSubtags(languageCode: 'en').hashCode,
+      isNot(const Locale.fromSubtags(languageCode: 'en', scriptCode: 'Latn').hashCode),
+    );
 
     expect(const Locale('en', ''), const Locale('en'));
     expect(const Locale('en'), const Locale('en', ''));

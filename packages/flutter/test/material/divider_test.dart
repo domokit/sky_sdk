@@ -8,10 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('Material3 - Divider control test', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(useMaterial3: true),
-        home: const Center(child: Divider()),
-      ),
+      MaterialApp(theme: ThemeData(useMaterial3: true), home: const Center(child: Divider())),
     );
     final RenderBox box = tester.firstRenderObject(find.byType(Divider));
     expect(box.size.height, 16.0);
@@ -22,10 +19,7 @@ void main() {
 
   testWidgets('Material2 - Divider control test', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(useMaterial3: false),
-        home: const Center(child: Divider()),
-      ),
+      MaterialApp(theme: ThemeData(useMaterial3: false), home: const Center(child: Divider())),
     );
     final RenderBox box = tester.firstRenderObject(find.byType(Divider));
     expect(box.size.height, 16.0);
@@ -77,12 +71,7 @@ void main() {
     await tester.pumpWidget(
       const Directionality(
         textDirection: TextDirection.ltr,
-        child: Center(
-          child: Divider(
-            indent: customIndent,
-            endIndent: customIndent,
-          ),
-        ),
+        child: Center(child: Divider(indent: customIndent, endIndent: customIndent)),
       ),
     );
     dividerRect = tester.getRect(find.byType(Divider));
@@ -141,12 +130,7 @@ void main() {
         home: const Material(
           child: SizedBox(
             height: 24.0,
-            child: Row(
-              children: <Widget>[
-                Text('Hey.'),
-                VerticalDivider(),
-              ],
-            ),
+            child: Row(children: <Widget>[Text('Hey.'), VerticalDivider()]),
           ),
         ),
       ),
@@ -190,12 +174,7 @@ void main() {
     await tester.pumpWidget(
       const Directionality(
         textDirection: TextDirection.ltr,
-        child: Center(
-          child: VerticalDivider(
-            indent: customIndent,
-            endIndent: customIndent,
-          ),
-        ),
+        child: Center(child: VerticalDivider(indent: customIndent, endIndent: customIndent)),
       ),
     );
     dividerRect = tester.getRect(find.byType(VerticalDivider));
@@ -205,7 +184,9 @@ void main() {
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/39533
-  testWidgets('createBorderSide does not throw exception with null context', (WidgetTester tester) async {
+  testWidgets('createBorderSide does not throw exception with null context', (
+    WidgetTester tester,
+  ) async {
     // Passing a null context used to throw an exception but no longer does.
     expect(() => Divider.createBorderSide(null), isNot(throwsAssertionError));
     expect(() => Divider.createBorderSide(null), isNot(throwsNoSuchMethodError));

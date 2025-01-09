@@ -56,18 +56,13 @@ class _HighlightFocusState extends State<HighlightFocus> {
 
   @override
   Widget build(BuildContext context) {
-    final Color highlightColor = widget.highlightColor ??
-        Theme.of(context).colorScheme.primary.withOpacity(0.5);
-    final Color borderColor =
-        widget.borderColor ?? Theme.of(context).colorScheme.onPrimary;
+    final Color highlightColor =
+        widget.highlightColor ?? Theme.of(context).colorScheme.primary.withOpacity(0.5);
+    final Color borderColor = widget.borderColor ?? Theme.of(context).colorScheme.onPrimary;
 
     final BoxDecoration highlightedDecoration = BoxDecoration(
       color: highlightColor,
-      border: Border.all(
-        color: borderColor,
-        width: 2,
-        strokeAlign: BorderSide.strokeAlignOutside,
-      ),
+      border: Border.all(color: borderColor, width: 2, strokeAlign: BorderSide.strokeAlignOutside),
     );
 
     return Focus(

@@ -13,8 +13,7 @@ class RasterCacheUseMemory extends StatefulWidget {
   State<RasterCacheUseMemory> createState() => _RasterCacheUseMemoryState();
 }
 
-class _RasterCacheUseMemoryState extends State<RasterCacheUseMemory>
-    with TickerProviderStateMixin {
+class _RasterCacheUseMemoryState extends State<RasterCacheUseMemory> with TickerProviderStateMixin {
   final ScrollController _controller = ScrollController();
 
   @override
@@ -22,16 +21,13 @@ class _RasterCacheUseMemoryState extends State<RasterCacheUseMemory>
     super.initState();
     _controller.addListener(() {
       if (_controller.offset < 5) {
-        _controller.animateTo(20,
-            duration: const Duration(milliseconds: 1000), curve: Curves.ease);
+        _controller.animateTo(20, duration: const Duration(milliseconds: 1000), curve: Curves.ease);
       } else if (_controller.offset >= 19) {
-        _controller.animateTo(0,
-            duration: const Duration(milliseconds: 1000), curve: Curves.ease);
+        _controller.animateTo(0, duration: const Duration(milliseconds: 1000), curve: Curves.ease);
       }
     });
     Timer(const Duration(milliseconds: 1000), () {
-      _controller.animateTo(150,
-          duration: const Duration(milliseconds: 1000), curve: Curves.ease);
+      _controller.animateTo(150, duration: const Duration(milliseconds: 1000), curve: Curves.ease);
     });
   }
 
@@ -44,17 +40,8 @@ class _RasterCacheUseMemoryState extends State<RasterCacheUseMemory>
         children: <Widget>[
           RepaintBoundary(
             child: ImageFiltered(
-              imageFilter: ImageFilter.blur(
-                sigmaX: 4,
-                sigmaY: 4,
-              ),
-              child: RepaintBoundary(
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  color: Colors.red,
-                ),
-              ),
+              imageFilter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+              child: RepaintBoundary(child: Container(width: 50, height: 50, color: Colors.red)),
             ),
           ),
           ShaderMask(
@@ -72,50 +59,32 @@ class _RasterCacheUseMemoryState extends State<RasterCacheUseMemory>
               child: Column(
                 children: <Widget>[
                   ImageFiltered(
-                    imageFilter: ImageFilter.blur(
-                      sigmaX: 4,
-                      sigmaY: 4,
-                    ),
+                    imageFilter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                     child: Row(
                       children: <Widget>[
                         ImageFiltered(
-                          imageFilter: ImageFilter.blur(
-                            sigmaX: 4,
-                            sigmaY: 4,
-                          ),
+                          imageFilter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                           child: RepaintBoundary(
                             child: Container(
                               margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                               decoration: BoxDecoration(
                                 color: Colors.white70,
-                                boxShadow: const <BoxShadow>[
-                                  BoxShadow(
-                                    blurRadius: 5.0,
-                                  ),
-                                ],
+                                boxShadow: const <BoxShadow>[BoxShadow(blurRadius: 5.0)],
                                 borderRadius: BorderRadius.circular(5.0),
                               ),
-                              child: const FlutterLogo(
-                                size: 50,
-                              ),
+                              child: const FlutterLogo(size: 50),
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
           ),
-          const RepaintBoundary(
-            child: FlutterLogo(
-              size: 50,
-            ),
-          ),
-          Container(
-            height: 800,
-          ),
+          const RepaintBoundary(child: FlutterLogo(size: 50)),
+          Container(height: 800),
         ],
       ),
     );

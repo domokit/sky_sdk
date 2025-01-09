@@ -27,9 +27,9 @@ class HttpHostValidator extends DoctorValidator {
     required FeatureFlags featureFlags,
     required HttpClient httpClient,
   }) : _platform = platform,
-      _featureFlags = featureFlags,
-      _httpClient = httpClient,
-      super('Network resources');
+       _featureFlags = featureFlags,
+       _httpClient = httpClient,
+       super('Network resources');
 
   final Platform _platform;
   final FeatureFlags _featureFlags;
@@ -60,8 +60,8 @@ class HttpHostValidator extends DoctorValidator {
       return 'An HTTP error occurred while checking "$host": ${error.message}';
     } on HandshakeException catch (error) {
       return 'A cryptographic error occurred while checking "$host": ${error.message}\n'
-             'You may be experiencing a man-in-the-middle attack, your network may be '
-             'compromised, or you may have malware installed on your computer.';
+          'You may be experiencing a man-in-the-middle attack, your network may be '
+          'compromised, or you may have malware installed on your computer.';
     } on OSError catch (error) {
       return 'An error occurred while checking "$host": ${error.message}';
     } finally {
@@ -71,7 +71,11 @@ class HttpHostValidator extends DoctorValidator {
 
   static Uri? _parseUrl(String value) {
     final Uri? url = Uri.tryParse(value);
-    if (url == null || !url.hasScheme || !url.hasAuthority || (!url.hasEmptyPath && !url.hasAbsolutePath) || url.hasFragment) {
+    if (url == null ||
+        !url.hasScheme ||
+        !url.hasAuthority ||
+        (!url.hasEmptyPath && !url.hasAbsolutePath) ||
+        url.hasFragment) {
       return null;
     }
     return url;
@@ -87,7 +91,7 @@ class HttpHostValidator extends DoctorValidator {
       if (url == null) {
         availabilityResults.add(
           'Environment variable $kPubDevOverride does not specify a valid URL: "${_platform.environment[kPubDevOverride]}"\n'
-          'Please see https://flutter.dev/to/use-mirror-site for an example of how to use it.'
+          'Please see https://flutter.dev/to/use-mirror-site for an example of how to use it.',
         );
       } else {
         requiredHosts.add(url);
@@ -100,7 +104,7 @@ class HttpHostValidator extends DoctorValidator {
       if (url == null) {
         availabilityResults.add(
           'Environment variable $kFlutterStorageBaseUrl does not specify a valid URL: "${_platform.environment[kFlutterStorageBaseUrl]}"\n'
-          'Please see https://flutter.dev/to/use-mirror-site for an example of how to use it.'
+          'Please see https://flutter.dev/to/use-mirror-site for an example of how to use it.',
         );
       } else {
         requiredHosts.add(url);
@@ -118,7 +122,9 @@ class HttpHostValidator extends DoctorValidator {
     requiredHosts.add(Uri.parse(kGitHub));
 
     // Check all the hosts simultaneously.
-    availabilityResults.addAll(await Future.wait<String?>(requiredHosts.map(_checkHostAvailability)));
+    availabilityResults.addAll(
+      await Future.wait<String?>(requiredHosts.map(_checkHostAvailability)),
+    );
 
     int failures = 0;
     int successes = 0;
@@ -135,10 +141,9 @@ class HttpHostValidator extends DoctorValidator {
     if (failures == 0) {
       assert(successes > 0);
       assert(messages.isEmpty);
-      return const ValidationResult(
-        ValidationType.success,
-        <ValidationMessage>[ValidationMessage('All expected network resources are available.')],
-      );
+      return const ValidationResult(ValidationType.success, <ValidationMessage>[
+        ValidationMessage('All expected network resources are available.'),
+      ]);
     }
     assert(messages.isNotEmpty);
     return ValidationResult(

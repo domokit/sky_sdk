@@ -16,9 +16,7 @@ class ActionListenerExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('ActionListener Sample')),
-        body: const Center(
-          child: ActionListenerExample(),
-        ),
+        body: const Center(child: ActionListenerExample()),
       ),
     );
   }
@@ -54,10 +52,7 @@ class _ActionListenerExampleState extends State<ActionListenerExample> {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: OutlinedButton(
-            onPressed: _toggleState,
-            child: Text(_on ? 'Disable' : 'Enable'),
-          ),
+          child: OutlinedButton(onPressed: _toggleState, child: Text(_on ? 'Disable' : 'Enable')),
         ),
         if (_on)
           Padding(
@@ -65,9 +60,9 @@ class _ActionListenerExampleState extends State<ActionListenerExample> {
             child: ActionListener(
               listener: (Action<Intent> action) {
                 if (action.intentType == MyIntent) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Action Listener Called'),
-                  ));
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('Action Listener Called')));
                 }
               },
               action: _myAction,

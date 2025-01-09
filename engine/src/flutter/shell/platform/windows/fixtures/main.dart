@@ -32,12 +32,12 @@ void main() {}
 
 @pragma('vm:entry-point')
 void hiPlatformChannels() {
-  ui.channelBuffers.setListener('hi',
-      (ByteData? data, ui.PlatformMessageResponseCallback callback) async {
-    ui.PlatformDispatcher.instance.sendPlatformMessage('hi', data,
-        (ByteData? reply) {
-      ui.PlatformDispatcher.instance
-          .sendPlatformMessage('hi', reply, (ByteData? reply) {});
+  ui.channelBuffers.setListener('hi', (
+    ByteData? data,
+    ui.PlatformMessageResponseCallback callback,
+  ) async {
+    ui.PlatformDispatcher.instance.sendPlatformMessage('hi', data, (ByteData? reply) {
+      ui.PlatformDispatcher.instance.sendPlatformMessage('hi', reply, (ByteData? reply) {});
     });
     callback(data);
   });
@@ -47,8 +47,7 @@ void hiPlatformChannels() {
 /// `PlatformDispatcher.instance.onSemanticsEnabledChanged` fires.
 Future<void> get semanticsChanged {
   final Completer<void> semanticsChanged = Completer<void>();
-  ui.PlatformDispatcher.instance.onSemanticsEnabledChanged =
-      semanticsChanged.complete;
+  ui.PlatformDispatcher.instance.onSemanticsEnabledChanged = semanticsChanged.complete;
   return semanticsChanged.future;
 }
 
@@ -131,10 +130,12 @@ Future<void> sendAccessibilityTooltipEvent() async {
 @pragma('vm:entry-point')
 Future<void> exitTestExit() async {
   final Completer<ByteData?> closed = Completer<ByteData?>();
-  ui.channelBuffers.setListener('flutter/platform',
-      (ByteData? data, ui.PlatformMessageResponseCallback callback) async {
+  ui.channelBuffers.setListener('flutter/platform', (
+    ByteData? data,
+    ui.PlatformMessageResponseCallback callback,
+  ) async {
     final String jsonString = json.encode(<Map<String, String>>[
-      {'response': 'exit'}
+      {'response': 'exit'},
     ]);
     final ByteData responseData = ByteData.sublistView(utf8.encode(jsonString));
     callback(responseData);
@@ -146,10 +147,12 @@ Future<void> exitTestExit() async {
 @pragma('vm:entry-point')
 Future<void> exitTestCancel() async {
   final Completer<ByteData?> closed = Completer<ByteData?>();
-  ui.channelBuffers.setListener('flutter/platform',
-      (ByteData? data, ui.PlatformMessageResponseCallback callback) async {
+  ui.channelBuffers.setListener('flutter/platform', (
+    ByteData? data,
+    ui.PlatformMessageResponseCallback callback,
+  ) async {
     final String jsonString = json.encode(<Map<String, String>>[
-      {'response': 'cancel'}
+      {'response': 'cancel'},
     ]);
     final ByteData responseData = ByteData.sublistView(utf8.encode(jsonString));
     callback(responseData);
@@ -161,24 +164,29 @@ Future<void> exitTestCancel() async {
   final Completer<ByteData?> exited = Completer<ByteData?>();
   final String jsonString = json.encode(<String, dynamic>{
     'method': 'System.exitApplication',
-    'args': <String, dynamic>{'type': 'required', 'exitCode': 0}
+    'args': <String, dynamic>{'type': 'required', 'exitCode': 0},
   });
   ui.PlatformDispatcher.instance.sendPlatformMessage(
-      'flutter/platform', ByteData.sublistView(utf8.encode(jsonString)),
-      (ByteData? reply) {
-    exited.complete(reply);
-  });
+    'flutter/platform',
+    ByteData.sublistView(utf8.encode(jsonString)),
+    (ByteData? reply) {
+      exited.complete(reply);
+    },
+  );
   await exited.future;
 }
 
 @pragma('vm:entry-point')
 Future<void> enableLifecycleTest() async {
   final Completer<ByteData?> finished = Completer<ByteData?>();
-  ui.channelBuffers.setListener('flutter/lifecycle',
-      (ByteData? data, ui.PlatformMessageResponseCallback callback) async {
+  ui.channelBuffers.setListener('flutter/lifecycle', (
+    ByteData? data,
+    ui.PlatformMessageResponseCallback callback,
+  ) async {
     if (data != null) {
-      ui.PlatformDispatcher.instance
-          .sendPlatformMessage('flutter/unittest', data, (ByteData? reply) {
+      ui.PlatformDispatcher.instance.sendPlatformMessage('flutter/unittest', data, (
+        ByteData? reply,
+      ) {
         finished.complete();
       });
     }
@@ -188,21 +196,26 @@ Future<void> enableLifecycleTest() async {
 
 @pragma('vm:entry-point')
 Future<void> enableLifecycleToFrom() async {
-  ui.channelBuffers.setListener('flutter/lifecycle',
-      (ByteData? data, ui.PlatformMessageResponseCallback callback) async {
+  ui.channelBuffers.setListener('flutter/lifecycle', (
+    ByteData? data,
+    ui.PlatformMessageResponseCallback callback,
+  ) async {
     if (data != null) {
-      ui.PlatformDispatcher.instance
-          .sendPlatformMessage('flutter/unittest', data, (ByteData? reply) {});
+      ui.PlatformDispatcher.instance.sendPlatformMessage(
+        'flutter/unittest',
+        data,
+        (ByteData? reply) {},
+      );
     }
   });
   final Completer<ByteData?> enabledLifecycle = Completer<ByteData?>();
   ui.PlatformDispatcher.instance.sendPlatformMessage(
-      'flutter/platform',
-      ByteData.sublistView(
-          utf8.encode('{"method":"System.initializationComplete"}')),
-      (ByteData? data) {
-    enabledLifecycle.complete(data);
-  });
+    'flutter/platform',
+    ByteData.sublistView(utf8.encode('{"method":"System.initializationComplete"}')),
+    (ByteData? data) {
+      enabledLifecycle.complete(data);
+    },
+  );
 }
 
 @pragma('vm:entry-point')
@@ -230,8 +243,9 @@ Future<void> sendCreatePlatformViewMethod() async {
 
   final Completer<ByteData?> completed = Completer<ByteData?>();
   final ByteData bytes = ByteData.sublistView(Uint8List.fromList(data));
-  ui.PlatformDispatcher.instance.sendPlatformMessage(
-      'flutter/platform_views', bytes, (ByteData? response) {
+  ui.PlatformDispatcher.instance.sendPlatformMessage('flutter/platform_views', bytes, (
+    ByteData? response,
+  ) {
     completed.complete(response);
   });
   await completed.future;
@@ -256,8 +270,9 @@ Future<void> sendGetKeyboardState() async {
 
   final Completer<void> completer = Completer<void>();
   final ByteData bytes = ByteData.sublistView(Uint8List.fromList(data));
-  ui.PlatformDispatcher.instance.sendPlatformMessage('flutter/keyboard', bytes,
-      (ByteData? response) {
+  ui.PlatformDispatcher.instance.sendPlatformMessage('flutter/keyboard', bytes, (
+    ByteData? response,
+  ) {
     // For magic numbers for decoding a reply envelope, see:
     // https://github.com/flutter/flutter/blob/67271f69f7f88a4edba6d8023099e3bd27a072d2/packages/flutter/lib/src/services/message_codecs.dart#L577-L587
     const int replyEnvelopeSuccess = 0;
@@ -266,14 +281,11 @@ Future<void> sendGetKeyboardState() async {
     if (response == null) {
       signalStringValue('Unexpected null response');
     } else if (response.lengthInBytes < 2) {
-      signalStringValue(
-          'Unexpected response length of ${response.lengthInBytes} bytes');
+      signalStringValue('Unexpected response length of ${response.lengthInBytes} bytes');
     } else if (response.getUint8(0) != replyEnvelopeSuccess) {
-      signalStringValue(
-          'Unexpected response envelope status: ${response.getUint8(0)}');
+      signalStringValue('Unexpected response envelope status: ${response.getUint8(0)}');
     } else if (response.getUint8(1) != valueMap) {
-      signalStringValue(
-          'Unexpected response value magic number: ${response.getUint8(1)}');
+      signalStringValue('Unexpected response value magic number: ${response.getUint8(1)}');
     } else {
       signalStringValue('Success');
     }
@@ -309,8 +321,8 @@ void readPlatformExecutable() {
 @pragma('vm:entry-point')
 void drawHelloWorld() {
   ui.PlatformDispatcher.instance.onBeginFrame = (Duration duration) {
-    final ui.ParagraphBuilder paragraphBuilder =
-        ui.ParagraphBuilder(ui.ParagraphStyle())..addText('Hello world');
+    final ui.ParagraphBuilder paragraphBuilder = ui.ParagraphBuilder(ui.ParagraphStyle())
+      ..addText('Hello world');
     final ui.Paragraph paragraph = paragraphBuilder.build();
 
     paragraph.layout(const ui.ParagraphConstraints(width: 800.0));
@@ -321,9 +333,10 @@ void drawHelloWorld() {
     canvas.drawParagraph(paragraph, ui.Offset.zero);
 
     final ui.Picture picture = recorder.endRecording();
-    final ui.SceneBuilder sceneBuilder = ui.SceneBuilder()
-      ..addPicture(ui.Offset.zero, picture)
-      ..pop();
+    final ui.SceneBuilder sceneBuilder =
+        ui.SceneBuilder()
+          ..addPicture(ui.Offset.zero, picture)
+          ..pop();
 
     ui.PlatformDispatcher.instance.implicitView?.render(sceneBuilder.build());
   };
@@ -363,8 +376,7 @@ void renderImplicitView() {
 @pragma('vm:entry-point')
 void signalViewIds() {
   final Iterable<ui.FlutterView> views = ui.PlatformDispatcher.instance.views;
-  final List<int> viewIds =
-      views.map((ui.FlutterView view) => view.viewId).toList();
+  final List<int> viewIds = views.map((ui.FlutterView view) => view.viewId).toList();
 
   viewIds.sort();
 

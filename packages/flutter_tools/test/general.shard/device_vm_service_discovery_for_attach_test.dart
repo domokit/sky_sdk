@@ -14,11 +14,12 @@ void main() {
   group('LogScanningVMServiceDiscoveryForAttach', () {
     testWithoutContext('can discover the port', () async {
       final FakeDeviceLogReader logReader = FakeDeviceLogReader();
-      final LogScanningVMServiceDiscoveryForAttach discovery = LogScanningVMServiceDiscoveryForAttach(
-        Future<FakeDeviceLogReader>.value(logReader),
-        ipv6: false,
-        logger: BufferLogger.test(),
-      );
+      final LogScanningVMServiceDiscoveryForAttach discovery =
+          LogScanningVMServiceDiscoveryForAttach(
+            Future<FakeDeviceLogReader>.value(logReader),
+            ipv6: false,
+            logger: BufferLogger.test(),
+          );
 
       logReader.addLine('The Dart VM service is listening on http://127.0.0.1:9999');
 
@@ -27,12 +28,13 @@ void main() {
 
     testWithoutContext('ignores the port that does not match devicePort', () async {
       final FakeDeviceLogReader logReader = FakeDeviceLogReader();
-      final LogScanningVMServiceDiscoveryForAttach discovery = LogScanningVMServiceDiscoveryForAttach(
-        Future<FakeDeviceLogReader>.value(logReader),
-        devicePort: 9998,
-        ipv6: false,
-        logger: BufferLogger.test(),
-      );
+      final LogScanningVMServiceDiscoveryForAttach discovery =
+          LogScanningVMServiceDiscoveryForAttach(
+            Future<FakeDeviceLogReader>.value(logReader),
+            devicePort: 9998,
+            ipv6: false,
+            logger: BufferLogger.test(),
+          );
 
       logReader.addLine('The Dart VM service is listening on http://127.0.0.1:9999');
       logReader.addLine('The Dart VM service is listening on http://127.0.0.1:9998');
@@ -43,12 +45,13 @@ void main() {
     testWithoutContext('forwards the port if given a port forwarder', () async {
       final FakeDeviceLogReader logReader = FakeDeviceLogReader();
       final FakePortForwarder portForwarder = FakePortForwarder(9900);
-      final LogScanningVMServiceDiscoveryForAttach discovery = LogScanningVMServiceDiscoveryForAttach(
-        Future<FakeDeviceLogReader>.value(logReader),
-        portForwarder: portForwarder,
-        ipv6: false,
-        logger: BufferLogger.test(),
-      );
+      final LogScanningVMServiceDiscoveryForAttach discovery =
+          LogScanningVMServiceDiscoveryForAttach(
+            Future<FakeDeviceLogReader>.value(logReader),
+            portForwarder: portForwarder,
+            ipv6: false,
+            logger: BufferLogger.test(),
+          );
 
       logReader.addLine('The Dart VM service is listening on http://127.0.0.1:9999');
 
@@ -60,13 +63,14 @@ void main() {
     testWithoutContext('uses the host port if given', () async {
       final FakeDeviceLogReader logReader = FakeDeviceLogReader();
       final FakePortForwarder portForwarder = FakePortForwarder(9900);
-      final LogScanningVMServiceDiscoveryForAttach discovery = LogScanningVMServiceDiscoveryForAttach(
-        Future<FakeDeviceLogReader>.value(logReader),
-        portForwarder: portForwarder,
-        hostPort: 9901,
-        ipv6: false,
-        logger: BufferLogger.test(),
-      );
+      final LogScanningVMServiceDiscoveryForAttach discovery =
+          LogScanningVMServiceDiscoveryForAttach(
+            Future<FakeDeviceLogReader>.value(logReader),
+            portForwarder: portForwarder,
+            hostPort: 9901,
+            ipv6: false,
+            logger: BufferLogger.test(),
+          );
 
       logReader.addLine('The Dart VM service is listening on http://127.0.0.1:9999');
 
@@ -88,7 +92,10 @@ void main() {
       uris2 = <Uri>[];
       fakeDiscovery1 = FakeVmServiceDiscoveryForAttach(uris1);
       fakeDiscovery2 = FakeVmServiceDiscoveryForAttach(uris2);
-      delegateDiscovery = DelegateVMServiceDiscoveryForAttach(<VMServiceDiscoveryForAttach>[fakeDiscovery1, fakeDiscovery2]);
+      delegateDiscovery = DelegateVMServiceDiscoveryForAttach(<VMServiceDiscoveryForAttach>[
+        fakeDiscovery1,
+        fakeDiscovery2,
+      ]);
     });
 
     testWithoutContext('uris returns from both delegates', () async {
@@ -97,12 +104,15 @@ void main() {
       uris2.add(Uri.parse('http://127.0.0.3:3'));
       uris2.add(Uri.parse('http://127.0.0.4:4'));
 
-      expect(await delegateDiscovery.uris.toList(), unorderedEquals(<Uri>[
-        Uri.parse('http://127.0.0.1:1'),
-        Uri.parse('http://127.0.0.2:2'),
-        Uri.parse('http://127.0.0.3:3'),
-        Uri.parse('http://127.0.0.4:4'),
-      ]));
+      expect(
+        await delegateDiscovery.uris.toList(),
+        unorderedEquals(<Uri>[
+          Uri.parse('http://127.0.0.1:1'),
+          Uri.parse('http://127.0.0.2:2'),
+          Uri.parse('http://127.0.0.3:3'),
+          Uri.parse('http://127.0.0.4:4'),
+        ]),
+      );
     });
   });
 }
@@ -115,7 +125,7 @@ class FakePortForwarder extends Fake implements DevicePortForwarder {
   final int forwardReturnValue;
 
   @override
-  Future<int> forward(int devicePort, { int? hostPort }) async {
+  Future<int> forward(int devicePort, {int? hostPort}) async {
     forwardDevicePort = devicePort;
     forwardHostPort = hostPort;
     return forwardReturnValue;

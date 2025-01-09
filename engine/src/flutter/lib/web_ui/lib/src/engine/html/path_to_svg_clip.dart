@@ -17,20 +17,23 @@ int _clipIdCounter = 0;
 ///
 /// Position needs to be absolute since these svgs are sandwiched between
 /// canvas elements and can cause layout shifts otherwise.
-final SVGSVGElement kSvgResourceHeader = createSVGSVGElement()
-  ..setAttribute('width', 0)
-  ..setAttribute('height', 0)
-  ..style.position = 'absolute';
+final SVGSVGElement kSvgResourceHeader =
+    createSVGSVGElement()
+      ..setAttribute('width', 0)
+      ..setAttribute('height', 0)
+      ..style.position = 'absolute';
 
 /// Converts Path to svg element that contains a clip-path definition.
 ///
 /// Calling this method updates [_clipIdCounter]. The HTML id of the generated
 /// clip is set to "svgClip${_clipIdCounter}", e.g. "svgClip123".
-SVGSVGElement pathToSvgClipPath(ui.Path path,
-    {double offsetX = 0,
-    double offsetY = 0,
-    double scaleX = 1.0,
-    double scaleY = 1.0}) {
+SVGSVGElement pathToSvgClipPath(
+  ui.Path path, {
+  double offsetX = 0,
+  double offsetY = 0,
+  double scaleX = 1.0,
+  double scaleY = 1.0,
+}) {
   _clipIdCounter += 1;
   final SVGSVGElement root = kSvgResourceHeader.cloneNode(false) as SVGSVGElement;
   final SVGDefsElement defs = createSVGDefsElement();
@@ -56,7 +59,10 @@ SVGSVGElement pathToSvgClipPath(ui.Path path,
   } else {
     svgPath.setAttribute('clip-rule', 'nonzero');
   }
-  svgPath.setAttribute('d', pathToSvg((path as SurfacePath).pathRef, offsetX: offsetX, offsetY: offsetY));
+  svgPath.setAttribute(
+    'd',
+    pathToSvg((path as SurfacePath).pathRef, offsetX: offsetX, offsetY: offsetY),
+  );
   return root;
 }
 

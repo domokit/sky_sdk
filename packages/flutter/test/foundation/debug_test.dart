@@ -14,7 +14,7 @@ void main() {
       debugInstrumentationEnabled = true;
       printBuffer = StringBuffer();
       originalDebugPrintCallback = debugPrint;
-      debugPrint = (String? message, { int? wrapWidth }) {
+      debugPrint = (String? message, {int? wrapWidth}) {
         printBuffer.writeln(message);
       };
     });

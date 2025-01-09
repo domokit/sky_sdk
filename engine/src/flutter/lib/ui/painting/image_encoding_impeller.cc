@@ -170,7 +170,7 @@ void ImageEncodingImpeller::ConvertDlImageToSkImage(
   auto pass = command_buffer->CreateBlitPass();
   pass->SetLabel("BlitTextureToBuffer Blit Pass");
   pass->AddCopy(texture, buffer);
-  pass->EncodeCommands(impeller_context->GetResourceAllocator());
+  pass->EncodeCommands();
   auto completion = [buffer, color_type = color_type.value(), dimensions,
                      encode_task = std::move(encode_task)](
                         impeller::CommandBuffer::Status status) {

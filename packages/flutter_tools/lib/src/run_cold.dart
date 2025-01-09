@@ -13,6 +13,7 @@ import 'tracing.dart';
 import 'vmservice.dart';
 
 const String kFlutterTestOutputsDirEnvName = 'FLUTTER_TEST_OUTPUTS_DIR';
+
 class ColdRunner extends ResidentRunner {
   ColdRunner(
     super.flutterDevices, {
@@ -24,9 +25,7 @@ class ColdRunner extends ResidentRunner {
     super.stayResident,
     super.machine,
     super.devtoolsHandler,
-  }) : super(
-          hotMode: false,
-        );
+  }) : super(hotMode: false);
 
   final bool traceStartup;
   final bool awaitFirstFrameWhenTracing;
@@ -50,10 +49,7 @@ class ColdRunner extends ResidentRunner {
   }) async {
     try {
       for (final FlutterDevice? device in flutterDevices) {
-        final int result = await device!.runCold(
-          coldRunner: this,
-          route: route,
-        );
+        final int result = await device!.runCold(coldRunner: this, route: route);
         if (result != 0) {
           appFailedToStart();
           return result;
@@ -83,19 +79,23 @@ class ColdRunner extends ResidentRunner {
     // TODO(bkonyi): remove when ready to serve DevTools from DDS.
     if (debuggingEnabled && debuggingOptions.enableDevTools) {
       // The method below is guaranteed never to return a failing future.
-      unawaited(residentDevtoolsHandler!.serveAndAnnounceDevTools(
-        devToolsServerAddress: debuggingOptions.devToolsServerAddress,
-        flutterDevices: flutterDevices,
-        isStartPaused: debuggingOptions.startPaused,
-      ));
+      unawaited(
+        residentDevtoolsHandler!.serveAndAnnounceDevTools(
+          devToolsServerAddress: debuggingOptions.devToolsServerAddress,
+          flutterDevices: flutterDevices,
+          isStartPaused: debuggingOptions.startPaused,
+        ),
+      );
     }
 
     if (flutterDevices.first.vmServiceUris != null) {
       // For now, only support one debugger connection.
-      connectionInfoCompleter?.complete(DebugConnectionInfo(
-        httpUri: flutterDevices.first.vmService!.httpAddress,
-        wsUri: flutterDevices.first.vmService!.wsAddress,
-      ));
+      connectionInfoCompleter?.complete(
+        DebugConnectionInfo(
+          httpUri: flutterDevices.first.vmService!.httpAddress,
+          wsUri: flutterDevices.first.vmService!.wsAddress,
+        ),
+      );
     }
 
     globals.printTrace('Application running.');
@@ -112,7 +112,8 @@ class ColdRunner extends ResidentRunner {
       final FlutterDevice device = flutterDevices.first;
       if (device.vmService != null) {
         globals.printStatus('Tracing startup on ${device.device!.name}.');
-        final String outputPath = globals.platform.environment[kFlutterTestOutputsDirEnvName] ?? getBuildDirectory();
+        final String outputPath =
+            globals.platform.environment[kFlutterTestOutputsDirEnvName] ?? getBuildDirectory();
         await downloadStartupTrace(
           device.vmService!,
           awaitFirstFrame: awaitFirstFrameWhenTracing,

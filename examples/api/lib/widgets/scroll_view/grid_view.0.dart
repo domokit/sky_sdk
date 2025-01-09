@@ -35,11 +35,9 @@ class GridViewExampleApp extends StatelessWidget {
                 child: Container(
                   margin: const EdgeInsets.all(12.0),
                   decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
                     gradient: const RadialGradient(
-                      colors: <Color>[ Color(0x0F88EEFF), Color(0x2F0099BB) ],
+                      colors: <Color>[Color(0x0F88EEFF), Color(0x2F0099BB)],
                     ),
                   ),
                   child: FlutterLogo(
@@ -56,7 +54,7 @@ class GridViewExampleApp extends StatelessWidget {
 }
 
 class CustomGridDelegate extends SliverGridDelegate {
-  CustomGridDelegate({ required this.dimension });
+  CustomGridDelegate({required this.dimension});
 
   // This is the desired height of each row (and width of each square).
   // When there is not enough room, we shrink this to the width of the scroll view.
@@ -112,8 +110,8 @@ class CustomGridLayout extends SliverGridLayout {
     if (childCount == 0 || dimension == 0) {
       return 0;
     }
-    return (childCount ~/ loopLength) * loopHeight
-         + ((childCount % loopLength) ~/ crossAxisCount) * dimension;
+    return (childCount ~/ loopLength) * loopHeight +
+        ((childCount % loopLength) ~/ crossAxisCount) * dimension;
   }
 
   @override

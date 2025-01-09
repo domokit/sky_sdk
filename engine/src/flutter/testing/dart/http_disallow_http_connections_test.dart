@@ -25,12 +25,15 @@ Future<void> asyncExpectThrows<T>(FutureFunction callback) async {
 
 Future<String> getLocalHostIP() async {
   final List<NetworkInterface> interfaces = await NetworkInterface.list(
-      type: InternetAddressType.IPv4);
+    type: InternetAddressType.IPv4,
+  );
   return interfaces.first.addresses.first.address;
 }
 
-Future<void> bindServerAndTest(String serverHost,
-    Future<void> Function(HttpClient client, Uri uri) testCode) async {
+Future<void> bindServerAndTest(
+  String serverHost,
+  Future<void> Function(HttpClient client, Uri uri) testCode,
+) async {
   final HttpClient httpClient = HttpClient();
   final HttpServer server = await HttpServer.bind(serverHost, 0);
   final Uri uri = Uri(scheme: 'http', host: serverHost, port: server.port);
@@ -56,39 +59,53 @@ Future<bool> _supportsIPv6() async {
 void main() {
   test('testWithLocalIP', () async {
     await bindServerAndTest(await getLocalHostIP(), (HttpClient httpClient, Uri httpUri) async {
+      asyncExpectThrows<UnsupportedError>(() async => httpClient.getUrl(httpUri));
       asyncExpectThrows<UnsupportedError>(
-          () async =>  httpClient.getUrl(httpUri));
+        () async => runZoned(
+          () => httpClient.getUrl(httpUri),
+          zoneValues: <dynamic, dynamic>{#flutter.io.allow_http: 'foo'},
+        ),
+      );
       asyncExpectThrows<UnsupportedError>(
-          () async => runZoned(() => httpClient.getUrl(httpUri),
-            zoneValues: <dynamic, dynamic>{#flutter.io.allow_http: 'foo'}));
-      asyncExpectThrows<UnsupportedError>(
-          () async => runZoned(() => httpClient.getUrl(httpUri),
-            zoneValues: <dynamic, dynamic>{#flutter.io.allow_http: false}));
-      await runZoned(() => httpClient.getUrl(httpUri),
-        zoneValues: <dynamic, dynamic>{#flutter.io.allow_http: true});
+        () async => runZoned(
+          () => httpClient.getUrl(httpUri),
+          zoneValues: <dynamic, dynamic>{#flutter.io.allow_http: false},
+        ),
+      );
+      await runZoned(
+        () => httpClient.getUrl(httpUri),
+        zoneValues: <dynamic, dynamic>{#flutter.io.allow_http: true},
+      );
     });
   });
 
   test('testWithHostname', () async {
     await bindServerAndTest(Platform.localHostname, (HttpClient httpClient, Uri httpUri) async {
-      asyncExpectThrows<UnsupportedError>(
-          () async =>  httpClient.getUrl(httpUri));
+      asyncExpectThrows<UnsupportedError>(() async => httpClient.getUrl(httpUri));
 
       final _MockZoneValue mockFoo = _MockZoneValue('foo');
       asyncExpectThrows<UnsupportedError>(
-          () async => runZoned(() => httpClient.getUrl(httpUri),
-            zoneValues: <dynamic, dynamic>{#flutter.io.allow_http: mockFoo}));
+        () async => runZoned(
+          () => httpClient.getUrl(httpUri),
+          zoneValues: <dynamic, dynamic>{#flutter.io.allow_http: mockFoo},
+        ),
+      );
       expect(mockFoo.checked, isTrue);
 
       final _MockZoneValue mockFalse = _MockZoneValue(false);
       asyncExpectThrows<UnsupportedError>(
-          () async => runZoned(() => httpClient.getUrl(httpUri),
-            zoneValues: <dynamic, dynamic>{#flutter.io.allow_http: mockFalse}));
+        () async => runZoned(
+          () => httpClient.getUrl(httpUri),
+          zoneValues: <dynamic, dynamic>{#flutter.io.allow_http: mockFalse},
+        ),
+      );
       expect(mockFalse.checked, isTrue);
 
       final _MockZoneValue mockTrue = _MockZoneValue(true);
-      await runZoned(() => httpClient.getUrl(httpUri),
-        zoneValues: <dynamic, dynamic>{#flutter.io.allow_http: mockTrue});
+      await runZoned(
+        () => httpClient.getUrl(httpUri),
+        zoneValues: <dynamic, dynamic>{#flutter.io.allow_http: mockTrue},
+      );
       expect(mockFalse.checked, isTrue);
     });
   }, skip: Platform.isMacOS); // https://github.com/flutter/flutter/issues/141149
@@ -118,10 +135,10 @@ class _MockZoneValue {
 
   @override
   bool operator ==(Object o) {
-    if(o == true) {
+    if (o == true) {
       _trueChecked = true;
     }
-    if(o == false) {
+    if (o == false) {
       _falseChecked = true;
     }
     return _value == o;

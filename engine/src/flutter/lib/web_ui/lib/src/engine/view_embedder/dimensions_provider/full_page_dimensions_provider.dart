@@ -26,15 +26,10 @@ class FullPageDimensionsProvider extends DimensionsProvider {
     // Determine what 'resize' event we'll be listening to.
     // This is needed for older browsers (Firefox < 91, Safari < 13)
     // TODO(dit): Clean this up, https://github.com/flutter/flutter/issues/117105
-    final DomEventTarget resizeEventTarget =
-        domWindow.visualViewport ?? domWindow;
+    final DomEventTarget resizeEventTarget = domWindow.visualViewport ?? domWindow;
 
     // Subscribe to the 'resize' event, and convert it to a ui.Size stream.
-    _domResizeSubscription = DomSubscription(
-      resizeEventTarget,
-      'resize',
-      _onVisualViewportResize,
-    );
+    _domResizeSubscription = DomSubscription(resizeEventTarget, 'resize', _onVisualViewportResize);
   }
 
   late DomSubscription _domResizeSubscription;
@@ -92,25 +87,18 @@ class FullPageDimensionsProvider extends DimensionsProvider {
       windowInnerWidth = domWindow.innerWidth! * devicePixelRatio;
       windowInnerHeight = domWindow.innerHeight! * devicePixelRatio;
     }
-    return ui.Size(
-      windowInnerWidth,
-      windowInnerHeight,
-    );
+    return ui.Size(windowInnerWidth, windowInnerHeight);
   }
 
   @override
-  ViewPadding computeKeyboardInsets(
-    double physicalHeight,
-    bool isEditingOnMobile,
-  ) {
+  ViewPadding computeKeyboardInsets(double physicalHeight, bool isEditingOnMobile) {
     final double devicePixelRatio = EngineFlutterDisplay.instance.devicePixelRatio;
     final DomVisualViewport? viewport = domWindow.visualViewport;
     late double windowInnerHeight;
 
     if (viewport != null) {
       if (ui_web.browser.operatingSystem == ui_web.OperatingSystem.iOs && !isEditingOnMobile) {
-        windowInnerHeight =
-            domDocument.documentElement!.clientHeight * devicePixelRatio;
+        windowInnerHeight = domDocument.documentElement!.clientHeight * devicePixelRatio;
       } else {
         windowInnerHeight = viewport.height! * devicePixelRatio;
       }

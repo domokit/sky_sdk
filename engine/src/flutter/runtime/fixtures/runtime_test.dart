@@ -33,13 +33,16 @@ Future<void>? splitLoadFuture;
 @pragma('vm:entry-point')
 void canCallDeferredLibrary() {
   print('In function canCallDeferredLibrary');
-  splitLoadFuture = splitlib.loadLibrary().then((_) {
-    print('Deferred load complete');
-    notifySuccess(splitlib.splitAdd(10, 23) == 33);
-  }).catchError((_) {
-    print('Deferred load error');
-    notifySuccess(false);
-  });
+  splitLoadFuture = splitlib
+      .loadLibrary()
+      .then((_) {
+        print('Deferred load complete');
+        notifySuccess(splitlib.splitAdd(10, 23) == 33);
+      })
+      .catchError((_) {
+        print('Deferred load error');
+        notifySuccess(false);
+      });
   notifyNative();
 }
 
@@ -65,8 +68,7 @@ void testCanLaunchSecondaryIsolate() {
   final onExit = RawReceivePort((_) {
     notifyNative();
   });
-  Isolate.spawn(secondaryIsolateMain, 'Hello from root isolate.',
-      onExit: onExit.sendPort);
+  Isolate.spawn(secondaryIsolateMain, 'Hello from root isolate.', onExit: onExit.sendPort);
 }
 
 @pragma('vm:entry-point')
@@ -80,8 +82,10 @@ Future<void> testIsolateStartupFailure() async {
       final exits = StreamIterator<dynamic>(onExit);
 
       await Isolate.spawn(
-          (SendPort port) => port.send('good'), onMessage.sendPort,
-          onExit: onExit.sendPort);
+        (SendPort port) => port.send('good'),
+        onMessage.sendPort,
+        onExit: onExit.sendPort,
+      );
       if (!await messages.moveNext()) {
         throw AssertionError('Failed to receive message');
       }
@@ -141,29 +145,25 @@ void testCanConvertEmptyList(List<int> args) {
 
 @pragma('vm:entry-point')
 void testCanConvertListOfStrings(List<String> args) {
-  notifySuccess(args.length == 4 &&
-      args[0] == 'tinker' &&
-      args[1] == 'tailor' &&
-      args[2] == 'soldier' &&
-      args[3] == 'sailor');
+  notifySuccess(
+    args.length == 4 &&
+        args[0] == 'tinker' &&
+        args[1] == 'tailor' &&
+        args[2] == 'soldier' &&
+        args[3] == 'sailor',
+  );
 }
 
 @pragma('vm:entry-point')
 void testCanConvertListOfDoubles(List<double> args) {
-  notifySuccess(args.length == 4 &&
-      args[0] == 1.0 &&
-      args[1] == 2.0 &&
-      args[2] == 3.0 &&
-      args[3] == 4.0);
+  notifySuccess(
+    args.length == 4 && args[0] == 1.0 && args[1] == 2.0 && args[2] == 3.0 && args[3] == 4.0,
+  );
 }
 
 @pragma('vm:entry-point')
 void testCanConvertListOfInts(List<int> args) {
-  notifySuccess(args.length == 4 &&
-      args[0] == 1 &&
-      args[1] == 2 &&
-      args[2] == 3 &&
-      args[3] == 4);
+  notifySuccess(args.length == 4 && args[0] == 1 && args[1] == 2 && args[2] == 3 && args[3] == 4);
 }
 
 bool didCallRegistrantBeforeEntrypoint = false;

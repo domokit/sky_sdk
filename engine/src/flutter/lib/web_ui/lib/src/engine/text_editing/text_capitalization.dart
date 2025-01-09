@@ -34,17 +34,17 @@ enum TextCapitalization {
 /// https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocapitalize
 class TextCapitalizationConfig {
   const TextCapitalizationConfig.defaultCapitalization()
-      : textCapitalization = TextCapitalization.none;
+    : textCapitalization = TextCapitalization.none;
 
   const TextCapitalizationConfig.fromInputConfiguration(String inputConfiguration)
-      : textCapitalization =
-            inputConfiguration == 'TextCapitalization.words'
-                ? TextCapitalization.words
-                : inputConfiguration == 'TextCapitalization.characters'
-                    ? TextCapitalization.characters
-                    : inputConfiguration == 'TextCapitalization.sentences'
-                        ? TextCapitalization.sentences
-                        : TextCapitalization.none;
+    : textCapitalization =
+          inputConfiguration == 'TextCapitalization.words'
+              ? TextCapitalization.words
+              : inputConfiguration == 'TextCapitalization.characters'
+              ? TextCapitalization.characters
+              : inputConfiguration == 'TextCapitalization.sentences'
+              ? TextCapitalization.sentences
+              : TextCapitalization.none;
 
   final TextCapitalization textCapitalization;
 
@@ -81,8 +81,7 @@ class TextCapitalizationConfig {
       final DomHTMLInputElement element = domElement as DomHTMLInputElement;
       element.setAttribute('autocapitalize', autocapitalize);
     } else if (domInstanceOfString(domElement, 'HTMLTextAreaElement')) {
-      final DomHTMLTextAreaElement element = domElement as
-          DomHTMLTextAreaElement;
+      final DomHTMLTextAreaElement element = domElement as DomHTMLTextAreaElement;
       element.setAttribute('autocapitalize', autocapitalize);
     }
   }

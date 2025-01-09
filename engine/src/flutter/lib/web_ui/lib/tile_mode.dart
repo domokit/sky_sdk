@@ -5,9 +5,4 @@
 part of ui;
 
 // These enum values must be kept in sync with SkShader::TileMode.
-enum TileMode {
-  clamp,
-  repeated,
-  mirror,
-  decal,
-}
+enum TileMode { clamp, repeated, mirror, decal }

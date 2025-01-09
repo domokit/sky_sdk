@@ -7,16 +7,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('PinnedHeaderSliver basics', (WidgetTester tester) async {
-    Widget buildFrame({ required Axis axis, required bool reverse }) {
+    Widget buildFrame({required Axis axis, required bool reverse}) {
       return MaterialApp(
         home: Scaffold(
           body: CustomScrollView(
             scrollDirection: axis,
             reverse: reverse,
             slivers: <Widget>[
-              const PinnedHeaderSliver(
-                child: Text('PinnedHeaderSliver'),
-              ),
+              const PinnedHeaderSliver(child: Text('PinnedHeaderSliver')),
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) => Text('Item $index'),
@@ -36,7 +34,8 @@ void main() {
     {
       await tester.pumpWidget(buildFrame(axis: Axis.vertical, reverse: false));
       await tester.pumpAndSettle();
-      final ScrollPosition position = tester.state<ScrollableState>(find.byType(Scrollable)).position;
+      final ScrollPosition position =
+          tester.state<ScrollableState>(find.byType(Scrollable)).position;
 
       // The test viewport is 800 x 600 (width x height).
       // The header's child is at the top of the scroll view and all items are the same height.
@@ -63,7 +62,8 @@ void main() {
     // axis: Axis.horizontal, reverse: false
     {
       await tester.pumpWidget(buildFrame(axis: Axis.horizontal, reverse: false));
-      final ScrollPosition position = tester.state<ScrollableState>(find.byType(Scrollable)).position;
+      final ScrollPosition position =
+          tester.state<ScrollableState>(find.byType(Scrollable)).position;
       await tester.pumpAndSettle();
 
       expect(getHeaderRect().topLeft, Offset.zero);
@@ -90,7 +90,8 @@ void main() {
     {
       await tester.pumpWidget(buildFrame(axis: Axis.vertical, reverse: true));
       await tester.pumpAndSettle();
-      final ScrollPosition position = tester.state<ScrollableState>(find.byType(Scrollable)).position;
+      final ScrollPosition position =
+          tester.state<ScrollableState>(find.byType(Scrollable)).position;
 
       expect(getHeaderRect().bottomLeft, const Offset(0, 600));
       expect(getHeaderRect().width, 800);
@@ -115,7 +116,8 @@ void main() {
     // axis: Axis.horizontal, reverse: true
     {
       await tester.pumpWidget(buildFrame(axis: Axis.horizontal, reverse: true));
-      final ScrollPosition position = tester.state<ScrollableState>(find.byType(Scrollable)).position;
+      final ScrollPosition position =
+          tester.state<ScrollableState>(find.byType(Scrollable)).position;
       await tester.pumpAndSettle();
 
       expect(getHeaderRect().topRight, const Offset(800, 0));
@@ -139,21 +141,17 @@ void main() {
     }
   });
 
-  testWidgets('PinnedHeaderSliver: multiple headers layout one after the other', (WidgetTester tester) async {
+  testWidgets('PinnedHeaderSliver: multiple headers layout one after the other', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: CustomScrollView(
             slivers: <Widget>[
-              const PinnedHeaderSliver(
-                child: Text('PinnedHeaderSliver 0'),
-              ),
-              const PinnedHeaderSliver(
-                child: Text('PinnedHeaderSliver 1'),
-              ),
-              const PinnedHeaderSliver(
-                child: Text('PinnedHeaderSliver 2'),
-              ),
+              const PinnedHeaderSliver(child: Text('PinnedHeaderSliver 0')),
+              const PinnedHeaderSliver(child: Text('PinnedHeaderSliver 1')),
+              const PinnedHeaderSliver(child: Text('PinnedHeaderSliver 2')),
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) => Text('Item $index'),
@@ -179,7 +177,9 @@ void main() {
     expect(rect2.width, 800);
   });
 
-  testWidgets('PinnedHeaderSliver: headers that do not start at the top', (WidgetTester tester) async {
+  testWidgets('PinnedHeaderSliver: headers that do not start at the top', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -191,27 +191,21 @@ void main() {
                   childCount: 2,
                 ),
               ),
-              const PinnedHeaderSliver(
-                child: Text('PinnedHeaderSliver 0'),
-              ),
+              const PinnedHeaderSliver(child: Text('PinnedHeaderSliver 0')),
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) => Text('Item 1.$index'),
                   childCount: 2,
                 ),
               ),
-              const PinnedHeaderSliver(
-                child: Text('PinnedHeaderSliver 1'),
-              ),
+              const PinnedHeaderSliver(child: Text('PinnedHeaderSliver 1')),
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) => Text('Item 2.$index'),
                   childCount: 2,
                 ),
               ),
-              const PinnedHeaderSliver(
-                child: Text('PinnedHeaderSliver 2'),
-              ),
+              const PinnedHeaderSliver(child: Text('PinnedHeaderSliver 2')),
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) => Text('Item $index'),

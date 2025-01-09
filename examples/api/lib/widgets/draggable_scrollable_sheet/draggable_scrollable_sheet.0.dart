@@ -15,13 +15,9 @@ class DraggableScrollableSheetExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue.shade100),
-      ),
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue.shade100)),
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('DraggableScrollableSheet Sample'),
-        ),
+        appBar: AppBar(title: const Text('DraggableScrollableSheet Sample')),
         body: const DraggableScrollableSheetExample(),
       ),
     );
@@ -70,10 +66,7 @@ class _DraggableScrollableSheetExampleState extends State<DraggableScrollableShe
                   itemCount: 25,
                   itemBuilder: (BuildContext context, int index) {
                     return ListTile(
-                      title: Text(
-                        'Item $index',
-                        style: TextStyle(color: colorScheme.surface),
-                      ),
+                      title: Text('Item $index', style: TextStyle(color: colorScheme.surface)),
                     );
                   },
                 ),
@@ -85,20 +78,18 @@ class _DraggableScrollableSheetExampleState extends State<DraggableScrollableShe
     );
   }
 
-  bool get _isOnDesktopAndWeb => kIsWeb || switch (defaultTargetPlatform) {
-    TargetPlatform.macOS || TargetPlatform.linux || TargetPlatform.windows => true,
-    TargetPlatform.android || TargetPlatform.iOS || TargetPlatform.fuchsia => false,
-  };
+  bool get _isOnDesktopAndWeb =>
+      kIsWeb ||
+      switch (defaultTargetPlatform) {
+        TargetPlatform.macOS || TargetPlatform.linux || TargetPlatform.windows => true,
+        TargetPlatform.android || TargetPlatform.iOS || TargetPlatform.fuchsia => false,
+      };
 }
 
 /// A draggable widget that accepts vertical drag gestures
 /// and this is only visible on desktop and web platforms.
 class Grabber extends StatelessWidget {
-  const Grabber({
-    super.key,
-    required this.onVerticalDragUpdate,
-    required this.isOnDesktopAndWeb,
-  });
+  const Grabber({super.key, required this.onVerticalDragUpdate, required this.isOnDesktopAndWeb});
 
   final ValueChanged<DragUpdateDetails> onVerticalDragUpdate;
   final bool isOnDesktopAndWeb;

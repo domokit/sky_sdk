@@ -43,7 +43,8 @@ class FakeAndroidBuilder implements AndroidBuilder {
   }) async {}
 
   @override
-  Future<List<String>> getBuildVariants({required FlutterProject project}) async => const <String>[];
+  Future<List<String>> getBuildVariants({required FlutterProject project}) async =>
+      const <String>[];
 
   @override
   Future<String> outputsAppLinkSettings(
@@ -55,11 +56,8 @@ class FakeAndroidBuilder implements AndroidBuilder {
 /// Creates a [FlutterProject] in a directory named [flutter_project]
 /// within [directoryOverride].
 class FakeFlutterProjectFactory extends FlutterProjectFactory {
-  FakeFlutterProjectFactory(this.directoryOverride) :
-    super(
-      fileSystem: globals.fs,
-      logger: globals.logger,
-    );
+  FakeFlutterProjectFactory(this.directoryOverride)
+    : super(fileSystem: globals.fs, logger: globals.logger);
 
   final file_system.Directory directoryOverride;
 
@@ -120,7 +118,6 @@ const String gradleReplacementString = 'GRADLE_REPLACE_ME';
 const String flutterCompileSdkString = 'flutter.compileSdkVersion';
 
 class VersionTuple {
-
   VersionTuple({
     required this.agpVersion,
     required this.gradleVersion,
@@ -145,7 +142,8 @@ class VersionTuple {
 /// ProcessResult.
 Future<ProcessResult> buildFlutterApkWithSpecifiedDependencyVersions({
   required VersionTuple versions,
-  required Directory tempDir,}) async {
+  required Directory tempDir,
+}) async {
   // Create a new flutter project.
   final String flutterBin = fileSystem.path.join(getFlutterRoot(), 'bin', 'flutter');
   ProcessResult result = await processManager.run(<String>[
@@ -159,29 +157,31 @@ Future<ProcessResult> buildFlutterApkWithSpecifiedDependencyVersions({
   final Directory app = Directory(fileSystem.path.join(tempDir.path, 'dependency_checker_app'));
 
   if (versions.compileSdkVersion != null) {
-    final File appGradleBuild = File(fileSystem.path.join(
-        app.path, 'android', 'app', 'build.gradle.kts'));
-    final String appBuildContent = appGradleBuild.readAsStringSync()
-        .replaceFirst(flutterCompileSdkString, versions.compileSdkVersion!);
+    final File appGradleBuild = File(
+      fileSystem.path.join(app.path, 'android', 'app', 'build.gradle.kts'),
+    );
+    final String appBuildContent = appGradleBuild.readAsStringSync().replaceFirst(
+      flutterCompileSdkString,
+      versions.compileSdkVersion!,
+    );
     appGradleBuild.writeAsStringSync(appBuildContent);
   }
 
   // Modify gradle version to passed in version.
-  final File gradleWrapperProperties = File(fileSystem.path.join(
-      app.path, 'android', 'gradle', 'wrapper', 'gradle-wrapper.properties'));
+  final File gradleWrapperProperties = File(
+    fileSystem.path.join(app.path, 'android', 'gradle', 'wrapper', 'gradle-wrapper.properties'),
+  );
   final String propertyContent = gradleWrapperPropertiesFileContent.replaceFirst(
     gradleReplacementString,
     versions.gradleVersion,
   );
   await gradleWrapperProperties.writeAsString(propertyContent, flush: true);
 
-  final File gradleSettings = File(fileSystem.path.join(
-      app.path, 'android', 'settings.gradle'));
+  final File gradleSettings = File(fileSystem.path.join(app.path, 'android', 'settings.gradle'));
   final String settingsContent = gradleSettingsFileContent
       .replaceFirst(agpReplacementString, versions.agpVersion)
       .replaceFirst(kgpReplacementString, versions.kotlinVersion);
   await gradleSettings.writeAsString(settingsContent, flush: true);
-
 
   // Ensure that gradle files exists from templates.
   result = await processManager.run(<String>[

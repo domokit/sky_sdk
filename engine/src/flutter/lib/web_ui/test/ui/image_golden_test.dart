@@ -61,18 +61,12 @@ void main() {
 }
 
 Future<void> testMain() async {
-  setUpUnitTests(
-    withImplicitView: true,
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(withImplicitView: true, setUpTestViewDimensions: false);
 
   late FakeAssetScope assetScope;
   setUp(() {
     assetScope = fakeAssetManager.pushAssetScope();
-    assetScope.setAsset(
-      'glitch_shader',
-      ByteData.sublistView(utf8.encode(kGlitchShaderSksl))
-    );
+    assetScope.setAsset('glitch_shader', ByteData.sublistView(utf8.encode(kGlitchShaderSksl)));
   });
 
   tearDown(() {
@@ -107,9 +101,21 @@ Future<void> testMain() async {
         final ui.PictureRecorder recorder = ui.PictureRecorder();
         final ui.Canvas canvas = ui.Canvas(recorder, drawRegion);
         canvas.drawImage(image, ui.Offset.zero, ui.Paint()..filterQuality = ui.FilterQuality.none);
-        canvas.drawImage(image, const ui.Offset(150, 0), ui.Paint()..filterQuality = ui.FilterQuality.low);
-        canvas.drawImage(image, const ui.Offset(0, 150), ui.Paint()..filterQuality = ui.FilterQuality.medium);
-        canvas.drawImage(image, const ui.Offset(150, 150), ui.Paint()..filterQuality = ui.FilterQuality.high);
+        canvas.drawImage(
+          image,
+          const ui.Offset(150, 0),
+          ui.Paint()..filterQuality = ui.FilterQuality.low,
+        );
+        canvas.drawImage(
+          image,
+          const ui.Offset(0, 150),
+          ui.Paint()..filterQuality = ui.FilterQuality.medium,
+        );
+        canvas.drawImage(
+          image,
+          const ui.Offset(150, 150),
+          ui.Paint()..filterQuality = ui.FilterQuality.high,
+        );
 
         await drawPictureUsingCurrentRenderer(recorder.endRecording());
 
@@ -126,25 +132,25 @@ Future<void> testMain() async {
           image,
           srcRect,
           const ui.Rect.fromLTRB(0, 0, 150, 150),
-          ui.Paint()..filterQuality = ui.FilterQuality.none
+          ui.Paint()..filterQuality = ui.FilterQuality.none,
         );
         canvas.drawImageRect(
           image,
           srcRect,
           const ui.Rect.fromLTRB(150, 0, 300, 150),
-          ui.Paint()..filterQuality = ui.FilterQuality.low
+          ui.Paint()..filterQuality = ui.FilterQuality.low,
         );
         canvas.drawImageRect(
           image,
           srcRect,
           const ui.Rect.fromLTRB(0, 150, 150, 300),
-          ui.Paint()..filterQuality = ui.FilterQuality.medium
+          ui.Paint()..filterQuality = ui.FilterQuality.medium,
         );
         canvas.drawImageRect(
           image,
           srcRect,
           const ui.Rect.fromLTRB(150, 150, 300, 300),
-          ui.Paint()..filterQuality = ui.FilterQuality.high
+          ui.Paint()..filterQuality = ui.FilterQuality.high,
         );
 
         await drawPictureUsingCurrentRenderer(recorder.endRecording());
@@ -161,7 +167,7 @@ Future<void> testMain() async {
           image,
           const ui.Rect.fromLTRB(50, 50, 100, 100),
           drawRegion,
-          ui.Paint()
+          ui.Paint(),
         );
 
         await drawPictureUsingCurrentRenderer(recorder.endRecording());
@@ -182,10 +188,7 @@ Future<void> testMain() async {
             matrix,
             filterQuality: quality,
           );
-          canvas.drawOval(
-            rect,
-            ui.Paint()..shader = shader
-          );
+          canvas.drawOval(rect, ui.Paint()..shader = shader);
         }
 
         // Draw image shader with all four qualities.
@@ -303,26 +306,22 @@ Future<void> testMain() async {
         final ui.Offset center = ui.Offset(x * 10 + 5, y * 10 + 5);
         final ui.Color color = ui.Color.fromRGBO(
           (center.dx * 256 / 150).round(),
-          (center.dy * 256 / 150).round(), 0, 1);
+          (center.dy * 256 / 150).round(),
+          0,
+          1,
+        );
         canvas.drawCircle(center, 5, ui.Paint()..color = color);
       }
     }
     return recorder.endRecording().toImage(150, 150);
   });
 
-  Uint8List generatePixelData(
-    int width,
-    int height,
-    ui.Color Function(double, double) generator
-  ) {
+  Uint8List generatePixelData(int width, int height, ui.Color Function(double, double) generator) {
     final Uint8List data = Uint8List(width * height * 4);
     int outputIndex = 0;
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
-        final ui.Color pixelColor = generator(
-          (2.0 * x / width) - 1.0,
-          (2.0 * y / height) - 1.0,
-        );
+        final ui.Color pixelColor = generator((2.0 * x / width) - 1.0, (2.0 * y / height) - 1.0);
         data[outputIndex++] = pixelColor.red;
         data[outputIndex++] = pixelColor.green;
         data[outputIndex++] = pixelColor.blue;
@@ -377,7 +376,7 @@ Future<void> testMain() async {
 
   emitImageTests('codec_uri', () async {
     final ui.Codec codec = await renderer.instantiateImageCodecFromUrl(
-      Uri(path: '/test_images/mandrill_128.png')
+      Uri(path: '/test_images/mandrill_128.png'),
     );
     expect(codec.frameCount, 1);
 
@@ -389,7 +388,7 @@ Future<void> testMain() async {
     // This image (from skia's test images) has a rotated orientation in its exif data.
     // This should result in a 3024x4032 image, not 4032x3024 image.
     final ui.Codec codec = await renderer.instantiateImageCodecFromUrl(
-      Uri(path: '/test_images/iphone_15.jpeg')
+      Uri(path: '/test_images/iphone_15.jpeg'),
     );
     expect(codec.frameCount, 1);
 
@@ -402,13 +401,16 @@ Future<void> testMain() async {
   // See https://github.com/flutter/flutter/issues/109265
   if (!isFirefox) {
     emitImageTests('svg_image_bitmap', () async {
-      final DomBlob svgBlob = createDomBlob(<String>[
-  '''
+      final DomBlob svgBlob = createDomBlob(
+        <String>[
+          '''
   <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150">
     <path d="M25,75  A50,50 0 1,0 125 75 L75,25 Z" stroke="blue" stroke-width="10" fill="red"></path>
   </svg>
-  '''
-      ], <String, String>{'type': 'image/svg+xml'});
+  ''',
+        ],
+        <String, String>{'type': 'image/svg+xml'},
+      );
       final String url = domWindow.URL.createObjectURL(svgBlob);
       final DomHTMLImageElement image = createDomHTMLImageElement();
       final Completer<void> completer = Completer<void>();
@@ -441,15 +443,16 @@ Future<void> testMain() async {
   // See https://github.com/flutter/flutter/issues/109265
   if (!isFirefox && !isHtml) {
     emitImageTests('svg_image_bitmap_texture_source', () async {
-      final DomBlob svgBlob = createDomBlob(<String>[
-        '''
+      final DomBlob svgBlob = createDomBlob(
+        <String>[
+          '''
   <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150">
     <path d="M25,75  A50,50 0 1,0 125 75 L75,25 Z" stroke="blue" stroke-width="10" fill="red"></path>
   </svg>
-  '''
-      ], <String, String>{
-        'type': 'image/svg+xml'
-      });
+  ''',
+        ],
+        <String, String>{'type': 'image/svg+xml'},
+      );
       final String url = domWindow.URL.createObjectURL(svgBlob);
       final DomHTMLImageElement image = createDomHTMLImageElement();
       final Completer<void> completer = Completer<void>();
@@ -462,8 +465,12 @@ Future<void> testMain() async {
       image.src = url;
       await completer.future;
 
-      final ui.Image uiImage =
-          await renderer.createImageFromTextureSource(image.toJSAnyShallow, width: 150, height: 150, transferOwnership: false);
+      final ui.Image uiImage = await renderer.createImageFromTextureSource(
+        image.toJSAnyShallow,
+        width: 150,
+        height: 150,
+        transferOwnership: false,
+      );
       return uiImage;
     });
   }

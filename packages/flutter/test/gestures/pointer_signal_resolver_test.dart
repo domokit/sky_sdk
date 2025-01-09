@@ -51,8 +51,11 @@ void main() {
       },
     );
     tester.resolver.resolve(tester.event);
-    expect(allowedPlatformDefault, isTrue,
-      reason: 'Should have called respond with allowPlatformDefault: true');
+    expect(
+      allowedPlatformDefault,
+      isTrue,
+      reason: 'Should have called respond with allowPlatformDefault: true',
+    );
   });
 
   test('First entry should always win', () {
@@ -83,10 +86,12 @@ void main() {
   test('works with transformed events', () {
     final PointerSignalResolver resolver = PointerSignalResolver();
     const PointerScrollEvent originalEvent = PointerScrollEvent();
-    final PointerSignalEvent transformedEvent = originalEvent
-        .transformed(Matrix4.translationValues(10.0, 20.0, 0.0));
-    final PointerSignalEvent anotherTransformedEvent = originalEvent
-        .transformed(Matrix4.translationValues(30.0, 50.0, 0.0));
+    final PointerSignalEvent transformedEvent = originalEvent.transformed(
+      Matrix4.translationValues(10.0, 20.0, 0.0),
+    );
+    final PointerSignalEvent anotherTransformedEvent = originalEvent.transformed(
+      Matrix4.translationValues(30.0, 50.0, 0.0),
+    );
 
     expect(originalEvent, isNot(same(transformedEvent)));
     expect(transformedEvent.original, same(originalEvent));

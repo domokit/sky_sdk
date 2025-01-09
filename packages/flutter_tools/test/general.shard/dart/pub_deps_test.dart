@@ -40,12 +40,8 @@ void main() {
     );
 
     await expectLater(
-      () => pub.deps(
-        FlutterProject.fromDirectoryTest(fileSystem.currentDirectory),
-      ),
-      throwsToolExit(
-        message: 'Your Flutter SDK download may be corrupt',
-      ),
+      () => pub.deps(FlutterProject.fromDirectoryTest(fileSystem.currentDirectory)),
+      throwsToolExit(message: 'Your Flutter SDK download may be corrupt'),
     );
   });
 
@@ -69,9 +65,7 @@ void main() {
     );
 
     await expectLater(
-      () => pub.deps(
-        FlutterProject.fromDirectoryTest(fileSystem.currentDirectory),
-      ),
+      () => pub.deps(FlutterProject.fromDirectoryTest(fileSystem.currentDirectory)),
       throwsA(
         isA<StateError>().having(
           (StateError e) => e.message,
@@ -101,16 +95,12 @@ void main() {
     );
 
     await expectLater(
-      () => pub.deps(
-        FlutterProject.fromDirectoryTest(fileSystem.currentDirectory),
-      ),
+      () => pub.deps(FlutterProject.fromDirectoryTest(fileSystem.currentDirectory)),
       throwsA(
         isA<StateError>().having(
           (StateError e) => e.message,
           'message',
-          contains(
-            'dart pub --suppress-analytics deps --json had unexpected output',
-          ),
+          contains('dart pub --suppress-analytics deps --json had unexpected output'),
         ),
       ),
     );
@@ -135,35 +125,22 @@ void main() {
     );
 
     await expectLater(
-      () => pub.deps(
-        FlutterProject.fromDirectoryTest(fileSystem.currentDirectory),
-      ),
+      () => pub.deps(FlutterProject.fromDirectoryTest(fileSystem.currentDirectory)),
       throwsA(
         isA<StateError>().having(
           (StateError e) => e.message,
           'message',
-          contains(
-            'Not a JSON object',
-          ),
+          contains('Not a JSON object'),
         ),
       ),
     );
   });
 }
 
-ProcessManager _dartPubDepsReturns(
-  String dartPubDepsOutput, {
-  required FlutterProject project,
-}) {
+ProcessManager _dartPubDepsReturns(String dartPubDepsOutput, {required FlutterProject project}) {
   return FakeProcessManager.list(<FakeCommand>[
     FakeCommand(
-      command: const <String>[
-        _dartBin,
-        'pub',
-        '--suppress-analytics',
-        'deps',
-        '--json',
-      ],
+      command: const <String>[_dartBin, 'pub', '--suppress-analytics', 'deps', '--json'],
       stdout: dartPubDepsOutput,
       workingDirectory: project.directory.path,
     ),
@@ -177,13 +154,7 @@ ProcessManager _dartPubDepsFails(
 }) {
   return FakeProcessManager.list(<FakeCommand>[
     FakeCommand(
-      command: const <String>[
-        _dartBin,
-        'pub',
-        '--suppress-analytics',
-        'deps',
-        '--json'
-      ],
+      command: const <String>[_dartBin, 'pub', '--suppress-analytics', 'deps', '--json'],
       exitCode: exitCode,
       stderr: dartPubDepsError,
       workingDirectory: project.directory.path,

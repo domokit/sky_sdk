@@ -12,7 +12,12 @@ abstract class ClipContext {
   /// The canvas on which to paint.
   Canvas get canvas;
 
-  void _clipAndPaint(void Function(bool doAntiAlias) canvasClipCall, Clip clipBehavior, Rect bounds, VoidCallback painter) {
+  void _clipAndPaint(
+    void Function(bool doAntiAlias) canvasClipCall,
+    Clip clipBehavior,
+    Rect bounds,
+    VoidCallback painter,
+  ) {
     canvas.save();
     switch (clipBehavior) {
       case Clip.none:
@@ -37,7 +42,12 @@ abstract class ClipContext {
   ///
   /// `bounds` is the saveLayer bounds used for [Clip.antiAliasWithSaveLayer].
   void clipPathAndPaint(Path path, Clip clipBehavior, Rect bounds, VoidCallback painter) {
-    _clipAndPaint((bool doAntiAlias) => canvas.clipPath(path, doAntiAlias: doAntiAlias), clipBehavior, bounds, painter);
+    _clipAndPaint(
+      (bool doAntiAlias) => canvas.clipPath(path, doAntiAlias: doAntiAlias),
+      clipBehavior,
+      bounds,
+      painter,
+    );
   }
 
   /// Clip [canvas] with [Path] according to `rrect` and then paint. [canvas] is
@@ -45,7 +55,12 @@ abstract class ClipContext {
   ///
   /// `bounds` is the saveLayer bounds used for [Clip.antiAliasWithSaveLayer].
   void clipRRectAndPaint(RRect rrect, Clip clipBehavior, Rect bounds, VoidCallback painter) {
-    _clipAndPaint((bool doAntiAlias) => canvas.clipRRect(rrect, doAntiAlias: doAntiAlias), clipBehavior, bounds, painter);
+    _clipAndPaint(
+      (bool doAntiAlias) => canvas.clipRRect(rrect, doAntiAlias: doAntiAlias),
+      clipBehavior,
+      bounds,
+      painter,
+    );
   }
 
   /// Clip [canvas] with [Path] according to `rect` and then paint. [canvas] is
@@ -53,6 +68,11 @@ abstract class ClipContext {
   ///
   /// `bounds` is the saveLayer bounds used for [Clip.antiAliasWithSaveLayer].
   void clipRectAndPaint(Rect rect, Clip clipBehavior, Rect bounds, VoidCallback painter) {
-    _clipAndPaint((bool doAntiAlias) => canvas.clipRect(rect, doAntiAlias: doAntiAlias), clipBehavior, bounds, painter);
+    _clipAndPaint(
+      (bool doAntiAlias) => canvas.clipRect(rect, doAntiAlias: doAntiAlias),
+      clipBehavior,
+      bounds,
+      painter,
+    );
   }
 }

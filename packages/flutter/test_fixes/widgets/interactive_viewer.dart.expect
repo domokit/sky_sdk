@@ -12,9 +12,9 @@ void main() {
   InteractiveViewer(panAxis: PanAxis.aligned);
   InteractiveViewer.builder(panAxis: PanAxis.aligned);
 
-  InteractiveViewer(panAxis: PanAxis.aligned,);
-  InteractiveViewer.builder(panAxis: PanAxis.aligned,);
+  InteractiveViewer(panAxis: PanAxis.aligned);
+  InteractiveViewer.builder(panAxis: PanAxis.aligned);
 
-  InteractiveViewer(panAxis: PanAxis.aligned,);
-  InteractiveViewer.builder(panAxis: PanAxis.aligned,);
+  InteractiveViewer(panAxis: PanAxis.aligned);
+  InteractiveViewer.builder(panAxis: PanAxis.aligned);
 }

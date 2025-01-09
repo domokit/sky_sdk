@@ -30,7 +30,9 @@ void main() {
     );
     expect(
       annotation3.toString(),
-      equals('MouseTrackerAnnotation#${shortHash(annotation3)}(callbacks: [enter], cursor: SystemMouseCursor(grab))'),
+      equals(
+        'MouseTrackerAnnotation#${shortHash(annotation3)}(callbacks: [enter], cursor: SystemMouseCursor(grab))',
+      ),
     );
   });
 }

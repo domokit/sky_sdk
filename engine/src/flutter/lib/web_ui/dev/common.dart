@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:path/path.dart' as path;
@@ -10,6 +11,7 @@ import 'browser.dart';
 import 'chrome.dart';
 import 'edge.dart';
 import 'environment.dart';
+import 'exceptions.dart';
 import 'felt_config.dart';
 import 'firefox.dart';
 import 'safari_macos.dart';
@@ -103,8 +105,7 @@ class LinuxPlatformBinding extends PlatformBinding {
   String get chromePlatformString => 'linux64';
 
   @override
-  String getChromeExecutablePath(io.Directory versionDir) =>
-      path.join(versionDir.path, 'chrome');
+  String getChromeExecutablePath(io.Directory versionDir) => path.join(versionDir.path, 'chrome');
 
   @override
   String getFirefoxDownloadUrl(String version) =>
@@ -112,8 +113,7 @@ class LinuxPlatformBinding extends PlatformBinding {
       '${getFirefoxDownloadFilename(version)}';
 
   @override
-  String getFirefoxDownloadFilename(String version) =>
-      'firefox-$version.tar.bz2';
+  String getFirefoxDownloadFilename(String version) => 'firefox-$version.tar.bz2';
 
   @override
   String getFirefoxExecutablePath(io.Directory versionDir) =>
@@ -124,12 +124,10 @@ class LinuxPlatformBinding extends PlatformBinding {
       'https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US';
 
   @override
-  String getMacApplicationLauncher() =>
-      throw UnsupportedError('Safari is not supported on Linux');
+  String getMacApplicationLauncher() => throw UnsupportedError('Safari is not supported on Linux');
 
   @override
-  String getCommandToRunEdge() =>
-      throw UnsupportedError('Edge is not supported on Linux');
+  String getCommandToRunEdge() => throw UnsupportedError('Edge is not supported on Linux');
 
   @override
   String get esbuildPlatformName => 'linux-x64';
@@ -138,12 +136,12 @@ class LinuxPlatformBinding extends PlatformBinding {
 abstract class MacPlatformBinding extends PlatformBinding {
   @override
   String getChromeExecutablePath(io.Directory versionDir) => path.join(
-        versionDir.path,
-        'Google Chrome for Testing.app',
-        'Contents',
-        'MacOS',
-        'Google Chrome for Testing',
-      );
+    versionDir.path,
+    'Google Chrome for Testing.app',
+    'Contents',
+    'MacOS',
+    'Google Chrome for Testing',
+  );
 
   @override
   String getFirefoxDownloadUrl(String version) =>
@@ -186,10 +184,7 @@ class Macx64PlatformBinding extends MacPlatformBinding {
 }
 
 class BrowserInstallation {
-  const BrowserInstallation({
-    required this.version,
-    required this.executable,
-  });
+  const BrowserInstallation({required this.version, required this.executable});
 
   /// Browser version.
   final String version;
@@ -213,6 +208,33 @@ class DevNull implements StringSink {
   void writeln([Object? obj = '']) {}
 }
 
+enum LuciRealm { Prod, Staging, Try, Unknown }
+
+class LuciConfig {
+  LuciConfig(this.realm);
+
+  factory LuciConfig.fromJson(String contextJson) {
+    final json = jsonDecode(contextJson) as Map<String, Object?>;
+    final LuciRealm realm = switch ((json['realm'] as Map<String, Object?>?)?['name']) {
+      'flutter:prod' => LuciRealm.Prod,
+      'flutter:staging' => LuciRealm.Staging,
+      'flutter:try' => LuciRealm.Try,
+      _ => LuciRealm.Unknown,
+    };
+    return LuciConfig(realm);
+  }
+
+  final LuciRealm realm;
+}
+
+final LuciConfig? luciConfig = () {
+  final String? contextPath = io.Platform.environment['LUCI_CONTEXT'];
+  if (contextPath == null) {
+    return null;
+  }
+  return LuciConfig.fromJson(io.File(contextPath).readAsStringSync());
+}();
+
 /// Whether the felt command is running on LUCI.
 bool get isLuci => io.Platform.environment['LUCI_CONTEXT'] != null;
 
@@ -220,25 +242,33 @@ bool get isLuci => io.Platform.environment['LUCI_CONTEXT'] != null;
 /// environements.
 bool get isCi => isLuci;
 
+final String gitRevision = () {
+  final result = io.Process.runSync(
+    'git',
+    <String>['rev-parse', 'HEAD'],
+    workingDirectory: path.join(environment.engineSrcDir.path, 'flutter'),
+    stderrEncoding: utf8,
+    stdoutEncoding: utf8,
+  );
+  if (result.exitCode != 0) {
+    throw ToolExit(
+      'Failed to get git revision. Exit code: ${result.exitCode} Error: ${result.stderr}',
+    );
+  }
+  return (result.stdout as String).trim();
+}();
+
 const String kChrome = 'chrome';
 const String kEdge = 'edge';
 const String kFirefox = 'firefox';
 const String kSafari = 'safari';
 
-const List<String> kAllBrowserNames = <String>[
-  kChrome,
-  kEdge,
-  kFirefox,
-  kSafari,
-];
+const List<String> kAllBrowserNames = <String>[kChrome, kEdge, kFirefox, kSafari];
 
 /// Creates an environment for a browser.
 ///
 /// The [browserName] matches the browser name passed as the `--browser` option.
-BrowserEnvironment getBrowserEnvironment(
-  BrowserName browserName, {
-  required bool useDwarf,
-}) {
+BrowserEnvironment getBrowserEnvironment(BrowserName browserName, {required bool useDwarf}) {
   switch (browserName) {
     case BrowserName.chrome:
       return ChromeEnvironment(useDwarf: useDwarf);

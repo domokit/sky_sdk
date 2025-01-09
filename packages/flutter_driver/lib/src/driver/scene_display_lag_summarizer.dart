@@ -59,8 +59,7 @@ class SceneDisplayLagSummarizer {
       return 0;
     }
 
-    final List<double> doubles =
-        sceneDisplayLagEvents.map(_getVsyncTransitionsMissed).toList();
+    final List<double> doubles = sceneDisplayLagEvents.map(_getVsyncTransitionsMissed).toList();
     return findPercentile(doubles, percentile);
   }
 

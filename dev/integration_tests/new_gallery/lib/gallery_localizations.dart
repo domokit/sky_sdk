@@ -71,7 +71,8 @@ abstract class GalleryLocalizations {
     return Localizations.of<GalleryLocalizations>(context, GalleryLocalizations);
   }
 
-  static const LocalizationsDelegate<GalleryLocalizations> delegate = _GalleryLocalizationsDelegate();
+  static const LocalizationsDelegate<GalleryLocalizations> delegate =
+      _GalleryLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -83,18 +84,16 @@ abstract class GalleryLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[
-    Locale('en'),
-    Locale('en', 'IS')
-  ];
+  static const List<Locale> supportedLocales = <Locale>[Locale('en'), Locale('en', 'IS')];
 
   /// Represents a link to a GitHub repository.
   ///
@@ -670,7 +669,12 @@ abstract class GalleryLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{budgetName} budget with {amountUsed} used of {amountTotal}, {amountLeft} left'**
-  String rallyBudgetAmount(Object budgetName, Object amountUsed, Object amountTotal, Object amountLeft);
+  String rallyBudgetAmount(
+    Object budgetName,
+    Object amountUsed,
+    Object amountTotal,
+    Object amountLeft,
+  );
 
   /// Study description for Crane.
   ///
@@ -4925,26 +4929,28 @@ class _GalleryLocalizationsDelegate extends LocalizationsDelegate<GalleryLocaliz
 }
 
 GalleryLocalizations lookupGalleryLocalizations(Locale locale) {
-
   // Lookup logic when language+country codes are specified.
   switch (locale.languageCode) {
-    case 'en': {
-  switch (locale.countryCode) {
-    case 'IS': return GalleryLocalizationsEnIs();
-   }
-  break;
-   }
+    case 'en':
+      {
+        switch (locale.countryCode) {
+          case 'IS':
+            return GalleryLocalizationsEnIs();
+        }
+        break;
+      }
   }
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en': return GalleryLocalizationsEn();
+    case 'en':
+      return GalleryLocalizationsEn();
   }
 
   throw FlutterError(
     'GalleryLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }

@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   // Regression test for https://github.com/flutter/flutter/issues/100451
-  testWidgets('SliverAnimatedList.builder respects findChildIndexCallback', (WidgetTester tester) async {
+  testWidgets('SliverAnimatedList.builder respects findChildIndexCallback', (
+    WidgetTester tester,
+  ) async {
     bool finderCalled = false;
     int itemCount = 7;
     late StateSetter stateSetter;
@@ -23,10 +25,9 @@ void main() {
               slivers: <Widget>[
                 SliverAnimatedList(
                   initialItemCount: itemCount,
-                  itemBuilder: (BuildContext context, int index, Animation<double> animation) => Container(
-                    key: Key('$index'),
-                    height: 2000.0,
-                  ),
+                  itemBuilder:
+                      (BuildContext context, int index, Animation<double> animation) =>
+                          Container(key: Key('$index'), height: 2000.0),
                   findChildIndexCallback: (Key key) {
                     finderCalled = true;
                     return null;
@@ -36,7 +37,7 @@ void main() {
             );
           },
         ),
-      )
+      ),
     );
     expect(finderCalled, false);
 
@@ -49,46 +50,34 @@ void main() {
 
   testWidgets('AnimatedList', (WidgetTester tester) async {
     Widget builder(BuildContext context, int index, Animation<double> animation) {
-      return SizedBox(
-        height: 100.0,
-        child: Center(
-          child: Text('item $index'),
-        ),
-      );
+      return SizedBox(height: 100.0, child: Center(child: Text('item $index')));
     }
+
     final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
 
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: AnimatedList(
-          key: listKey,
-          initialItemCount: 2,
-          itemBuilder: builder,
-        ),
+        child: AnimatedList(key: listKey, initialItemCount: 2, itemBuilder: builder),
       ),
     );
 
-    expect(find.byWidgetPredicate((Widget widget) {
-      return widget is SliverAnimatedList
-         && widget.initialItemCount == 2
-         && widget.itemBuilder == builder;
-    }), findsOneWidget);
+    expect(
+      find.byWidgetPredicate((Widget widget) {
+        return widget is SliverAnimatedList &&
+            widget.initialItemCount == 2 &&
+            widget.itemBuilder == builder;
+      }),
+      findsOneWidget,
+    );
 
     listKey.currentState!.insertItem(0);
     await tester.pump();
     expect(find.text('item 2'), findsOneWidget);
 
-    listKey.currentState!.removeItem(
-      2,
-      (BuildContext context, Animation<double> animation) {
-        return const SizedBox(
-          height: 100.0,
-          child: Center(child: Text('removing item')),
-        );
-      },
-      duration: const Duration(milliseconds: 100),
-    );
+    listKey.currentState!.removeItem(2, (BuildContext context, Animation<double> animation) {
+      return const SizedBox(height: 100.0, child: Center(child: Text('removing item')));
+    }, duration: const Duration(milliseconds: 100));
 
     await tester.pump();
     expect(find.text('removing item'), findsOneWidget);
@@ -104,15 +93,9 @@ void main() {
     expect(find.text('item 3'), findsOneWidget);
 
     // Test for removeAllItems
-    listKey.currentState!.removeAllItems(
-      (BuildContext context, Animation<double> animation) {
-        return const SizedBox(
-          height: 100.0,
-          child: Center(child: Text('removing item')),
-        );
-      },
-      duration: const Duration(milliseconds: 100),
-    );
+    listKey.currentState!.removeAllItems((BuildContext context, Animation<double> animation) {
+      return const SizedBox(height: 100.0, child: Center(child: Text('removing item')));
+    }, duration: const Duration(milliseconds: 100));
 
     await tester.pump();
     expect(find.text('removing item'), findsWidgets);
@@ -138,12 +121,7 @@ void main() {
                 initialItemCount: 2,
                 itemBuilder: (BuildContext context, int index, Animation<double> animation) {
                   animations[index] = animation;
-                  return SizedBox(
-                    height: 100.0,
-                    child: Center(
-                      child: Text('item $index'),
-                    ),
-                  );
+                  return SizedBox(height: 100.0, child: Center(child: Text('item $index')));
                 },
               ),
             ],
@@ -173,10 +151,7 @@ void main() {
                   return SizeTransition(
                     key: ValueKey<int>(index),
                     sizeFactor: animation,
-                    child: SizedBox(
-                      height: 100.0,
-                      child: Center(child: Text('item $index')),
-                    ),
+                    child: SizedBox(height: 100.0, child: Center(child: Text('item $index'))),
                   );
                 },
               ),
@@ -185,14 +160,14 @@ void main() {
         ),
       );
 
-      double itemHeight(int index) => tester.getSize(find.byKey(ValueKey<int>(index), skipOffstage: false)).height;
-      double itemTop(int index) => tester.getTopLeft(find.byKey(ValueKey<int>(index), skipOffstage: false)).dy;
-      double itemBottom(int index) => tester.getBottomLeft(find.byKey(ValueKey<int>(index), skipOffstage: false)).dy;
+      double itemHeight(int index) =>
+          tester.getSize(find.byKey(ValueKey<int>(index), skipOffstage: false)).height;
+      double itemTop(int index) =>
+          tester.getTopLeft(find.byKey(ValueKey<int>(index), skipOffstage: false)).dy;
+      double itemBottom(int index) =>
+          tester.getBottomLeft(find.byKey(ValueKey<int>(index), skipOffstage: false)).dy;
 
-      listKey.currentState!.insertItem(
-        0,
-        duration: const Duration(milliseconds: 100),
-      );
+      listKey.currentState!.insertItem(0, duration: const Duration(milliseconds: 100));
       await tester.pump();
 
       // Newly inserted item 0's height should animate from 0 to 100
@@ -207,14 +182,8 @@ void main() {
       expect(itemTop(0), 0.0);
       expect(itemBottom(0), 100.0);
 
-      listKey.currentState!.insertItem(
-        0,
-        duration: const Duration(milliseconds: 100),
-      );
-      listKey.currentState!.insertItem(
-        0,
-        duration: const Duration(milliseconds: 100),
-      );
+      listKey.currentState!.insertItem(0, duration: const Duration(milliseconds: 100));
+      listKey.currentState!.insertItem(0, duration: const Duration(milliseconds: 100));
       await tester.pump();
 
       // The height of the newly inserted items at index 0 and 1 should animate
@@ -259,10 +228,7 @@ void main() {
                   return SizeTransition(
                     key: ValueKey<int>(index),
                     sizeFactor: animation,
-                    child: SizedBox(
-                      height: 100.0,
-                      child: Center(child: Text('item $index')),
-                    ),
+                    child: SizedBox(height: 100.0, child: Center(child: Text('item $index'))),
                   );
                 },
               ),
@@ -271,15 +237,14 @@ void main() {
         ),
       );
 
-      double itemHeight(int index) => tester.getSize(find.byKey(ValueKey<int>(index), skipOffstage: false)).height;
-      double itemTop(int index) => tester.getTopLeft(find.byKey(ValueKey<int>(index), skipOffstage: false)).dy;
-      double itemBottom(int index) => tester.getBottomLeft(find.byKey(ValueKey<int>(index), skipOffstage: false)).dy;
+      double itemHeight(int index) =>
+          tester.getSize(find.byKey(ValueKey<int>(index), skipOffstage: false)).height;
+      double itemTop(int index) =>
+          tester.getTopLeft(find.byKey(ValueKey<int>(index), skipOffstage: false)).dy;
+      double itemBottom(int index) =>
+          tester.getBottomLeft(find.byKey(ValueKey<int>(index), skipOffstage: false)).dy;
 
-      listKey.currentState!.insertAllItems(
-        0,
-        2,
-        duration: const Duration(milliseconds: 100),
-      );
+      listKey.currentState!.insertAllItems(0, 2, duration: const Duration(milliseconds: 100));
       await tester.pump();
 
       // Newly inserted item 0 & 1's height should animate from 0 to 100
@@ -312,9 +277,7 @@ void main() {
           sizeFactor: animation,
           child: SizedBox(
             height: 100.0,
-            child: Center(
-              child: Text('item $item', textDirection: TextDirection.ltr),
-            ),
+            child: Center(child: Text('item $item', textDirection: TextDirection.ltr)),
           ),
         );
       }
@@ -389,9 +352,7 @@ void main() {
           sizeFactor: animation,
           child: SizedBox(
             height: 100.0,
-            child: Center(
-              child: Text('item $item', textDirection: TextDirection.ltr),
-            ),
+            child: Center(child: Text('item $item', textDirection: TextDirection.ltr)),
           ),
         );
       }
@@ -418,7 +379,8 @@ void main() {
       expect(find.text('item 2'), findsOneWidget);
 
       items.clear();
-      listKey.currentState!.removeAllItems((BuildContext context, Animation<double> animation) => buildItem(context, 0, animation),
+      listKey.currentState!.removeAllItems(
+        (BuildContext context, Animation<double> animation) => buildItem(context, 0, animation),
         duration: const Duration(milliseconds: 100),
       );
 
@@ -447,10 +409,7 @@ void main() {
                 key: listKey,
                 initialItemCount: 3,
                 itemBuilder: (BuildContext context, int index, Animation<double> animation) {
-                  return SizedBox(
-                    height: 100,
-                    child: Text('item $index'),
-                  );
+                  return SizedBox(height: 100, child: Text('item $index'));
                 },
               ),
             ],
@@ -465,28 +424,19 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.getTopLeft(find.text('item 3')).dy, 500);
 
-      listKey.currentState!.removeItem(0,
-        (BuildContext context, Animation<double> animation) {
-          return SizeTransition(
-            sizeFactor: animation,
-            key: const ObjectKey('removing'),
-            child: const SizedBox(
-              height: 100,
-              child: Text('removing'),
-            ),
-          );
-        },
-        duration: const Duration(seconds: 1),
-      );
+      listKey.currentState!.removeItem(0, (BuildContext context, Animation<double> animation) {
+        return SizeTransition(
+          sizeFactor: animation,
+          key: const ObjectKey('removing'),
+          child: const SizedBox(height: 100, child: Text('removing')),
+        );
+      }, duration: const Duration(seconds: 1));
 
       await tester.pump();
       expect(find.text('item 3'), findsNothing);
 
       await tester.pump(const Duration(milliseconds: 500));
-      expect(
-        tester.getSize(find.byKey(const ObjectKey('removing'))).height,
-        50,
-      );
+      expect(tester.getSize(find.byKey(const ObjectKey('removing'))).height, 50);
       expect(tester.getTopLeft(find.text('item 0')).dy, 250);
 
       await tester.pumpAndSettle();
@@ -494,66 +444,67 @@ void main() {
       expect(tester.getTopLeft(find.text('item 0')).dy, 200);
     });
 
-    testWidgets('passes correctly derived index of findChildIndexCallback to the inner SliverChildBuilderDelegate', (WidgetTester tester) async {
-      final List<int> items = <int>[0, 1, 2, 3];
-      final GlobalKey<SliverAnimatedListState> listKey = GlobalKey<SliverAnimatedListState>();
+    testWidgets(
+      'passes correctly derived index of findChildIndexCallback to the inner SliverChildBuilderDelegate',
+      (WidgetTester tester) async {
+        final List<int> items = <int>[0, 1, 2, 3];
+        final GlobalKey<SliverAnimatedListState> listKey = GlobalKey<SliverAnimatedListState>();
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverAnimatedList(
-                key: listKey,
-                initialItemCount: items.length,
-                itemBuilder: (BuildContext context, int index, Animation<double> animation) {
-                  return _StatefulListItem(
-                    key: ValueKey<int>(items[index]),
-                    index: index,
-                  );
-                },
-                findChildIndexCallback: (Key key) {
-                  final int index = items.indexOf((key as ValueKey<int>).value);
-                  return index == -1 ? null : index;
-                },
-              ),
-            ],
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: CustomScrollView(
+              slivers: <Widget>[
+                SliverAnimatedList(
+                  key: listKey,
+                  initialItemCount: items.length,
+                  itemBuilder: (BuildContext context, int index, Animation<double> animation) {
+                    return _StatefulListItem(key: ValueKey<int>(items[index]), index: index);
+                  },
+                  findChildIndexCallback: (Key key) {
+                    final int index = items.indexOf((key as ValueKey<int>).value);
+                    return index == -1 ? null : index;
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-      );
+        );
 
-      // get all list entries in order
-      final List<Text> listEntries = find.byType(Text).evaluate().map((Element e) => e.widget as Text).toList();
+        // get all list entries in order
+        final List<Text> listEntries =
+            find.byType(Text).evaluate().map((Element e) => e.widget as Text).toList();
 
-      // check that the list is rendered in the correct order
-      expect(listEntries[0].data, equals('item 0'));
-      expect(listEntries[1].data, equals('item 1'));
-      expect(listEntries[2].data, equals('item 2'));
-      expect(listEntries[3].data, equals('item 3'));
+        // check that the list is rendered in the correct order
+        expect(listEntries[0].data, equals('item 0'));
+        expect(listEntries[1].data, equals('item 1'));
+        expect(listEntries[2].data, equals('item 2'));
+        expect(listEntries[3].data, equals('item 3'));
 
+        // delete one item
+        listKey.currentState?.removeItem(0, (BuildContext context, Animation<double> animation) {
+          return Container();
+        });
 
-      // delete one item
-      listKey.currentState?.removeItem(0, (BuildContext context, Animation<double> animation) {
-        return Container();
-      });
+        // delete from list
+        items.removeAt(0);
 
-      // delete from list
-      items.removeAt(0);
+        // reorder list
+        items.insert(0, items.removeLast());
 
-      // reorder list
-      items.insert(0, items.removeLast());
+        // render with new list order
+        await tester.pumpAndSettle();
 
-      // render with new list order
-      await tester.pumpAndSettle();
+        // get all list entries in order
+        final List<Text> reorderedListEntries =
+            find.byType(Text).evaluate().map((Element e) => e.widget as Text).toList();
 
-      // get all list entries in order
-      final List<Text> reorderedListEntries = find.byType(Text).evaluate().map((Element e) => e.widget as Text).toList();
-
-      // check that the stateful items of the list are rendered in the order provided by findChildIndexCallback
-      expect(reorderedListEntries[0].data, equals('item 3'));
-      expect(reorderedListEntries[1].data, equals('item 1'));
-      expect(reorderedListEntries[2].data, equals('item 2'));
-    });
+        // check that the stateful items of the list are rendered in the order provided by findChildIndexCallback
+        expect(reorderedListEntries[0].data, equals('item 3'));
+        expect(reorderedListEntries[1].data, equals('item 1'));
+        expect(reorderedListEntries[2].data, equals('item 2'));
+      },
+    );
   });
 
   testWidgets(
@@ -601,7 +552,9 @@ void main() {
     },
   );
 
-  testWidgets('AnimatedList.clipBehavior is forwarded to its inner CustomScrollView', (WidgetTester tester) async {
+  testWidgets('AnimatedList.clipBehavior is forwarded to its inner CustomScrollView', (
+    WidgetTester tester,
+  ) async {
     const Clip clipBehavior = Clip.none;
 
     await tester.pumpWidget(
@@ -611,21 +564,21 @@ void main() {
           initialItemCount: 2,
           clipBehavior: clipBehavior,
           itemBuilder: (BuildContext context, int index, Animation<double> _) {
-            return SizedBox(
-              height: 100.0,
-              child: Center(
-                child: Text('item $index'),
-              ),
-            );
+            return SizedBox(height: 100.0, child: Center(child: Text('item $index')));
           },
         ),
       ),
     );
 
-    expect(tester.widget<CustomScrollView>(find.byType(CustomScrollView)).clipBehavior, clipBehavior);
+    expect(
+      tester.widget<CustomScrollView>(find.byType(CustomScrollView)).clipBehavior,
+      clipBehavior,
+    );
   });
 
-  testWidgets('AnimatedList.shrinkwrap is forwarded to its inner CustomScrollView', (WidgetTester tester) async {
+  testWidgets('AnimatedList.shrinkwrap is forwarded to its inner CustomScrollView', (
+    WidgetTester tester,
+  ) async {
     // Regression test for https://github.com/flutter/flutter/issues/115040
     final ScrollController controller = ScrollController();
 
@@ -639,12 +592,7 @@ void main() {
           initialItemCount: 2,
           shrinkWrap: true,
           itemBuilder: (BuildContext context, int index, Animation<double> _) {
-            return SizedBox(
-              height: 100.0,
-              child: Center(
-                child: Text('Item $index'),
-              ),
-            );
+            return SizedBox(height: 100.0, child: Center(child: Text('Item $index')));
           },
         ),
       ),
@@ -660,9 +608,7 @@ void main() {
       Directionality(
         textDirection: TextDirection.ltr,
         child: MediaQuery(
-          data: const MediaQueryData(
-            padding: EdgeInsets.all(30.0),
-          ),
+          data: const MediaQueryData(padding: EdgeInsets.all(30.0)),
           child: AnimatedList(
             initialItemCount: 3,
             itemBuilder: (BuildContext context, int index, Animation<double> animation) {
@@ -695,28 +641,16 @@ void main() {
     addTearDown(tester.view.reset);
 
     Widget builder(BuildContext context, int index, Animation<double> animation) {
-      return SizedBox(
-        height: 100.0,
-        child: Center(
-          child: Text('item $index'),
-        ),
-      );
+      return SizedBox(height: 100.0, child: Center(child: Text('item $index')));
     }
+
     Widget separatorBuilder(BuildContext context, int index, Animation<double> animation) {
-      return SizedBox(
-        height: 100.0,
-        child: Center(
-          child: Text('separator after item $index'),
-        ),
-      );
+      return SizedBox(height: 100.0, child: Center(child: Text('separator after item $index')));
     }
 
     Widget itemRemovalBuilder(BuildContext context, int? index, Animation<double> animation) {
       final String text = index != null ? 'removing item $index' : 'removing item';
-      return  SizedBox(
-        height: 100.0,
-        child: Center(child: Text(text)),
-      );
+      return SizedBox(height: 100.0, child: Center(child: Text(text)));
     }
 
     // Helper function to wrap itemRemovalBuilder with index
@@ -735,9 +669,11 @@ void main() {
       );
     }
 
-
     List<Text> getItemsSeparatorsTexts(WidgetTester tester) {
-      final Finder itemsSeparators = find.descendant(of: find.byType(SliverAnimatedList), matching: find.byType(Text));
+      final Finder itemsSeparators = find.descendant(
+        of: find.byType(SliverAnimatedList),
+        matching: find.byType(Text),
+      );
       return itemsSeparators.allCandidates.map((Element e) => e.widget).whereType<Text>().toList();
     }
 
@@ -758,7 +694,10 @@ void main() {
 
     final Finder sliverAnimatedList = find.byType(SliverAnimatedList);
     expect(sliverAnimatedList, findsOneWidget);
-    expect((sliverAnimatedList.evaluate().first.widget as SliverAnimatedList).initialItemCount, 3); // 2 items + 1 separator
+    expect(
+      (sliverAnimatedList.evaluate().first.widget as SliverAnimatedList).initialItemCount,
+      3,
+    ); // 2 items + 1 separator
 
     List<Text> itemsSeparatorsTexts;
 
@@ -917,7 +856,7 @@ void main() {
     expect(
       () => listKey.currentState!.removeItem(
         -1,
-      itemRemovalBuilderWrapper(index: -1),
+        itemRemovalBuilderWrapper(index: -1),
         duration: const Duration(milliseconds: 100),
       ),
       throwsAssertionError,
@@ -927,7 +866,7 @@ void main() {
     expect(
       () => listKey.currentState!.removeItem(
         42,
-      itemRemovalBuilderWrapper(index: 42),
+        itemRemovalBuilderWrapper(index: 42),
         duration: const Duration(milliseconds: 100),
       ),
       throwsAssertionError,
@@ -1154,12 +1093,8 @@ void main() {
   });
 }
 
-
 class _StatefulListItem extends StatefulWidget {
-  const _StatefulListItem({
-    super.key,
-    required this.index,
-  });
+  const _StatefulListItem({super.key, required this.index});
 
   final int index;
 

@@ -13,10 +13,7 @@ void main() {
     expect(span.codeUnitAt(1), isNull);
     expect(span.codeUnitAt(2), isNull);
 
-    const InlineSpan nestedSpan = TextSpan(
-      text: 'AAA',
-      children: <InlineSpan>[span, span],
-    );
+    const InlineSpan nestedSpan = TextSpan(text: 'AAA', children: <InlineSpan>[span, span]);
     expect(nestedSpan.codeUnitAt(-1), isNull);
     expect(nestedSpan.codeUnitAt(0), 65);
     expect(nestedSpan.codeUnitAt(1), 65);
@@ -34,37 +31,40 @@ void main() {
 
     const TextSpan span = TextSpan(
       children: <InlineSpan>[
-        a,      // fontSize = 0.
+        a, // fontSize = 0.
         TextSpan(
           children: <InlineSpan>[
-            b,  // fontSize = 10.
-            c,  // fontSize = 20.
+            b, // fontSize = 10.
+            c, // fontSize = 20.
           ],
           style: TextStyle(fontSize: 20),
         ),
-        d,      // fontSize = 14.
-      ]
+        d, // fontSize = 14.
+      ],
     );
 
     double effectiveTextScaleFactorFromWidget(Widget widget) {
       final Semantics child = (widget as ProxyWidget).child as Semantics;
       final dynamic grandChild = child.child;
-      final double textScaleFactor = grandChild.textScaleFactor as double; // ignore: avoid_dynamic_calls
+      final double textScaleFactor =
+          grandChild.textScaleFactor as double; // ignore: avoid_dynamic_calls
       return textScaleFactor;
     }
 
-    final List<double> textScaleFactors = WidgetSpan.extractFromInlineSpan(span, const _QuadraticScaler())
-      .map(effectiveTextScaleFactorFromWidget).toList();
+    final List<double> textScaleFactors =
+        WidgetSpan.extractFromInlineSpan(
+          span,
+          const _QuadraticScaler(),
+        ).map(effectiveTextScaleFactorFromWidget).toList();
 
     expect(textScaleFactors, <double>[
-      0,  // a
+      0, // a
       10, // b
       20, // c
       14, // d
     ]);
   });
 }
-
 
 class _QuadraticScaler extends TextScaler {
   const _QuadraticScaler();

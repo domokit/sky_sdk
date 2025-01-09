@@ -12,14 +12,12 @@ int counter = 0;
 
 void main() {
   test('PlatformIsolate isRunningOnPlatformThread, false cases', () async {
-    final bool isPlatThread =
-        await Isolate.run(() => isRunningOnPlatformThread);
+    final bool isPlatThread = await Isolate.run(() => isRunningOnPlatformThread);
     expect(isPlatThread, isFalse);
   });
 
   test('PlatformIsolate runOnPlatformThread', () async {
-    final bool isPlatThread =
-        await runOnPlatformThread(() => isRunningOnPlatformThread);
+    final bool isPlatThread = await runOnPlatformThread(() => isRunningOnPlatformThread);
     expect(isPlatThread, isTrue);
   });
 
@@ -133,8 +131,7 @@ void main() {
     expect(throws, true);
   });
 
-  test('PlatformIsolate runOnPlatformThread, disabled on helper isolates',
-      () async {
+  test('PlatformIsolate runOnPlatformThread, disabled on helper isolates', () async {
     await expectLater(() async {
       await Isolate.run(() {
         return runOnPlatformThread(() => print('Unreachable'));
@@ -143,8 +140,9 @@ void main() {
   });
 
   test('PlatformIsolate runOnPlatformThread, on platform isolate', () async {
-    final int result = await runOnPlatformThread(() => runOnPlatformThread(
-        () => runOnPlatformThread(() => runOnPlatformThread(() => 123))));
+    final int result = await runOnPlatformThread(
+      () => runOnPlatformThread(() => runOnPlatformThread(() => runOnPlatformThread(() => 123))),
+    );
     expect(result, 123);
   });
 
@@ -162,8 +160,7 @@ void main() {
     expect(throws, true);
   });
 
-  test('PlatformIsolate runOnPlatformThread, unsendable object async',
-      () async {
+  test('PlatformIsolate runOnPlatformThread, unsendable object async', () async {
     bool throws = false;
     try {
       await runOnPlatformThread(() async {
@@ -186,8 +183,7 @@ void main() {
     expect(throws, true);
   });
 
-  test('PlatformIsolate runOnPlatformThread, throws unsendable async',
-      () async {
+  test('PlatformIsolate runOnPlatformThread, throws unsendable async', () async {
     bool throws = false;
     try {
       await runOnPlatformThread(() async {

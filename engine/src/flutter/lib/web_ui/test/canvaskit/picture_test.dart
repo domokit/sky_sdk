@@ -45,10 +45,13 @@ void testMain() {
 
         // TODO(yjbanov): cannot test precise message due to https://github.com/flutter/flutter/issues/96298
         expect(
-            '$actualError',
-            startsWith('Bad state: Test.\n'
-                'The picture has been disposed. '
-                'When the picture was disposed the stack trace was:\n'));
+          '$actualError',
+          startsWith(
+            'Bad state: Test.\n'
+            'The picture has been disposed. '
+            'When the picture was disposed the stack trace was:\n',
+          ),
+        );
       });
     });
 
@@ -80,15 +83,8 @@ void testMain() {
         ui.RRect.fromRectXY(const ui.Rect.fromLTRB(20, 20, 150, 300), 15, 15),
         ui.Paint()..color = red,
       );
-      canvas.drawCircle(
-        const ui.Offset(200, 200),
-        100,
-        ui.Paint()..color = green,
-      );
-      canvas.drawOval(
-        const ui.Rect.fromLTRB(210, 40, 268, 199),
-        ui.Paint()..color = blue,
-      );
+      canvas.drawCircle(const ui.Offset(200, 200), 100, ui.Paint()..color = green);
+      canvas.drawOval(const ui.Rect.fromLTRB(210, 40, 268, 199), ui.Paint()..color = blue);
 
       final CkPicture picture = recorder.endRecording() as CkPicture;
       final ui.Rect bounds = picture.cullRect;
@@ -123,15 +119,8 @@ void testMain() {
         ui.RRect.fromRectXY(const ui.Rect.fromLTRB(20, 20, 150, 300), 15, 15),
         ui.Paint()..color = red,
       );
-      canvas.drawCircle(
-        const ui.Offset(200, 200),
-        100,
-        ui.Paint()..color = green,
-      );
-      canvas.drawOval(
-        const ui.Rect.fromLTRB(210, 40, 268, 199),
-        ui.Paint()..color = blue,
-      );
+      canvas.drawCircle(const ui.Offset(200, 200), 100, ui.Paint()..color = green);
+      canvas.drawOval(const ui.Rect.fromLTRB(210, 40, 268, 199), ui.Paint()..color = blue);
 
       final CkPicture picture = recorder.endRecording() as CkPicture;
       final int bytesUsed = picture.approximateBytesUsed;

@@ -3,10 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'
-    show debugDefaultTargetPlatformOverride;
+import 'package:flutter/foundation.dart' show debugDefaultTargetPlatformOverride;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
 
 void main() {
   // This is a hack to make Flutter think you are running on Google Fuchsia,
@@ -71,9 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: RepaintBoundary(
-          child: SpinKitRotatingCircle(color: Colors.blue, size: 50.0),
-        ),
+        child: RepaintBoundary(child: SpinKitRotatingCircle(color: Colors.blue, size: 50.0)),
       ),
     );
   }

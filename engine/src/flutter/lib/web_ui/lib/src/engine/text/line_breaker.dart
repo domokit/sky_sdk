@@ -77,7 +77,11 @@ class V8LineBreakFragmenter extends TextFragmenter implements LineBreakFragmente
   }
 }
 
-List<LineBreakFragment> breakLinesUsingV8BreakIterator(String text, JSString jsText, DomV8BreakIterator iterator) {
+List<LineBreakFragment> breakLinesUsingV8BreakIterator(
+  String text,
+  JSString jsText,
+  DomV8BreakIterator iterator,
+) {
   final List<LineBreakFragment> breaks = <LineBreakFragment>[];
   int fragmentStart = 0;
 
@@ -99,13 +103,15 @@ List<LineBreakFragment> breakLinesUsingV8BreakIterator(String text, JSString jsT
       } else {
         // Always break after a sequence of spaces.
         if (trailingSpaces > 0) {
-          breaks.add(LineBreakFragment(
-            fragmentStart,
-            i,
-            LineBreakType.opportunity,
-            trailingNewlines: trailingNewlines,
-            trailingSpaces: trailingSpaces,
-          ));
+          breaks.add(
+            LineBreakFragment(
+              fragmentStart,
+              i,
+              LineBreakType.opportunity,
+              trailingNewlines: trailingNewlines,
+              trailingSpaces: trailingSpaces,
+            ),
+          );
           fragmentStart = i;
           trailingNewlines = 0;
           trailingSpaces = 0;
@@ -122,25 +128,38 @@ List<LineBreakFragment> breakLinesUsingV8BreakIterator(String text, JSString jsT
       type = LineBreakType.opportunity;
     }
 
-    breaks.add(LineBreakFragment(
-      fragmentStart,
-      fragmentEnd,
-      type,
-      trailingNewlines: trailingNewlines,
-      trailingSpaces: trailingSpaces,
-    ));
+    breaks.add(
+      LineBreakFragment(
+        fragmentStart,
+        fragmentEnd,
+        type,
+        trailingNewlines: trailingNewlines,
+        trailingSpaces: trailingSpaces,
+      ),
+    );
     fragmentStart = fragmentEnd;
   }
 
   if (breaks.isEmpty || breaks.last.type == LineBreakType.mandatory) {
-    breaks.add(LineBreakFragment(text.length, text.length, LineBreakType.endOfText, trailingNewlines: 0, trailingSpaces: 0));
+    breaks.add(
+      LineBreakFragment(
+        text.length,
+        text.length,
+        LineBreakType.endOfText,
+        trailingNewlines: 0,
+        trailingSpaces: 0,
+      ),
+    );
   }
 
   return breaks;
 }
 
 class LineBreakFragment extends TextFragment {
-  const LineBreakFragment(super.start, super.end, this.type, {
+  const LineBreakFragment(
+    super.start,
+    super.end,
+    this.type, {
     required this.trailingNewlines,
     required this.trailingSpaces,
   });
@@ -243,8 +262,7 @@ List<LineBreakFragment> _computeLineBreakFragments(String text) {
   int fragmentStart = 0;
 
   void setBreak(LineBreakType type, int debugRuleNumber) {
-    final int fragmentEnd =
-        type == LineBreakType.endOfText ? text.length : index;
+    final int fragmentEnd = type == LineBreakType.endOfText ? text.length : index;
     assert(fragmentEnd >= fragmentStart);
 
     // Uncomment the following line to help debug line breaking.
@@ -262,13 +280,15 @@ List<LineBreakFragment> _computeLineBreakFragments(String text) {
       return;
     }
 
-    fragments.add(LineBreakFragment(
-      fragmentStart,
-      fragmentEnd,
-      type,
-      trailingNewlines: trailingNewlines,
-      trailingSpaces: trailingSpaces,
-    ));
+    fragments.add(
+      LineBreakFragment(
+        fragmentStart,
+        fragmentEnd,
+        type,
+        trailingNewlines: trailingNewlines,
+        trailingSpaces: trailingSpaces,
+      ),
+    );
 
     fragmentStart = index;
 
@@ -594,14 +614,12 @@ List<LineBreakFragment> _computeLineBreakFragments(String text) {
     // Do not break between numeric prefix/postfix and letters, or between
     // letters and prefix/postfix.
     // LB24: (PR | PO) × (AL | HL)
-    if ((prev1 == LineCharProperty.PR || prev1 == LineCharProperty.PO) &&
-        _isALorHL(curr)) {
+    if ((prev1 == LineCharProperty.PR || prev1 == LineCharProperty.PO) && _isALorHL(curr)) {
       setBreak(LineBreakType.prohibited, 24);
       continue;
     }
     // LB24: (AL | HL) × (PR | PO)
-    if (_isALorHL(prev1) &&
-        (curr == LineCharProperty.PR || curr == LineCharProperty.PO)) {
+    if (_isALorHL(prev1) && (curr == LineCharProperty.PR || curr == LineCharProperty.PO)) {
       setBreak(LineBreakType.prohibited, 24);
       continue;
     }

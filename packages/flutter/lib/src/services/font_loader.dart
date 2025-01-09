@@ -19,9 +19,7 @@ class FontLoader {
   ///
   /// The font family will not be available for use until [load] has been
   /// called.
-  FontLoader(this.family)
-    : _loaded = false,
-      _fontFutures = <Future<Uint8List>>[];
+  FontLoader(this.family) : _loaded = false, _fontFutures = <Future<Uint8List>>[];
 
   /// The font family being loaded.
   ///
@@ -38,9 +36,11 @@ class FontLoader {
       throw StateError('FontLoader is already loaded');
     }
 
-    _fontFutures.add(bytes.then(
+    _fontFutures.add(
+      bytes.then(
         (ByteData data) => Uint8List.view(data.buffer, data.offsetInBytes, data.lengthInBytes),
-    ));
+      ),
+    );
   }
 
   /// Loads this font loader's font [family] and all of its associated assets
@@ -60,9 +60,7 @@ class FontLoader {
     _loaded = true;
 
     final Iterable<Future<void>> loadFutures = _fontFutures.map(
-        (Future<Uint8List> f) => f.then<void>(
-            (Uint8List list) => loadFont(list, family),
-        ),
+      (Future<Uint8List> f) => f.then<void>((Uint8List list) => loadFont(list, family)),
     );
     await Future.wait(loadFutures.toList());
   }

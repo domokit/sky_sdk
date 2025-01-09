@@ -9,12 +9,8 @@ import 'package:web/web.dart' as web;
 // Attempt to load a file that is hosted in the applications's `web/` directory.
 Future<void> main() async {
   try {
-    final web.Response response = await web.window.fetch(
-      '/example'.toJS,
-      web.RequestInit(
-        method: 'GET',
-      ),
-    ).toDart;
+    final web.Response response =
+        await web.window.fetch('/example'.toJS, web.RequestInit(method: 'GET')).toDart;
     final String body = (await response.text().toDart).toDart;
     if (body == 'This is an Example') {
       print('--- TEST SUCCEEDED ---');

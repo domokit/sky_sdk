@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 /// @docImport 'app.dart';
 library;
 
@@ -77,7 +76,7 @@ class SharedAppData extends StatefulWidget {
   /// rebuilds with [SharedAppData.setValue].
   ///
   /// This widget is automatically created by the [WidgetsApp].
-  const SharedAppData({ super.key, required this.child });
+  const SharedAppData({super.key, required this.child});
 
   /// The widget below this widget in the tree.
   ///
@@ -102,8 +101,15 @@ class SharedAppData extends StatefulWidget {
   ///
   /// The type parameter `K` is the type of the keyword and `V`
   /// is the type of the value.
-  static V getValue<K extends Object, V>(BuildContext context, K key, SharedAppDataInitCallback<V> init) {
-    final _SharedAppModel? model = InheritedModel.inheritFrom<_SharedAppModel>(context, aspect: key);
+  static V getValue<K extends Object, V>(
+    BuildContext context,
+    K key,
+    SharedAppDataInitCallback<V> init,
+  ) {
+    final _SharedAppModel? model = InheritedModel.inheritFrom<_SharedAppModel>(
+      context,
+      aspect: key,
+    );
     assert(_debugHasSharedAppData(model, context, 'getValue'));
     return model!.sharedAppDataState.getValue<K, V>(key, init);
   }
@@ -129,23 +135,29 @@ class SharedAppData extends StatefulWidget {
     model!.sharedAppDataState.setValue<K, V>(key, value);
   }
 
-  static bool _debugHasSharedAppData(_SharedAppModel? model, BuildContext context, String methodName) {
+  static bool _debugHasSharedAppData(
+    _SharedAppModel? model,
+    BuildContext context,
+    String methodName,
+  ) {
     assert(() {
       if (model == null) {
-        throw FlutterError.fromParts(
-          <DiagnosticsNode>[
-            ErrorSummary('No SharedAppData widget found.'),
-            ErrorDescription('SharedAppData.$methodName requires an SharedAppData widget ancestor.\n'),
-            context.describeWidget('The specific widget that could not find an SharedAppData ancestor was'),
-            context.describeOwnershipChain('The ownership chain for the affected widget is'),
-            ErrorHint(
-              'Typically, the SharedAppData widget is introduced by the MaterialApp '
-              'or WidgetsApp widget at the top of your application widget tree. It '
-              'provides a key/value map of data that is shared with the entire '
-              'application.',
-            ),
-          ],
-        );
+        throw FlutterError.fromParts(<DiagnosticsNode>[
+          ErrorSummary('No SharedAppData widget found.'),
+          ErrorDescription(
+            'SharedAppData.$methodName requires an SharedAppData widget ancestor.\n',
+          ),
+          context.describeWidget(
+            'The specific widget that could not find an SharedAppData ancestor was',
+          ),
+          context.describeOwnershipChain('The ownership chain for the affected widget is'),
+          ErrorHint(
+            'Typically, the SharedAppData widget is introduced by the MaterialApp '
+            'or WidgetsApp widget at the top of your application widget tree. It '
+            'provides a key/value map of data that is shared with the entire '
+            'application.',
+          ),
+        ]);
       }
       return true;
     }());
@@ -177,10 +189,8 @@ class _SharedAppDataState extends State<SharedAppData> {
 }
 
 class _SharedAppModel extends InheritedModel<Object> {
-  _SharedAppModel({
-    required this.sharedAppDataState,
-    required super.child
-  }) : data = sharedAppDataState.data;
+  _SharedAppModel({required this.sharedAppDataState, required super.child})
+    : data = sharedAppDataState.data;
 
   final _SharedAppDataState sharedAppDataState;
   final Map<Object, Object?> data;

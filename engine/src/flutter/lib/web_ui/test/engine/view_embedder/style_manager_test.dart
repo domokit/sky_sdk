@@ -25,19 +25,17 @@ void doTests() {
         styleNonce: 'testing',
         cssSelectorPrefix: DomManager.flutterViewTagName,
       );
-      final String expected = ui_web.browser.browserEngine == ui_web.BrowserEngine.firefox
-        ? 'rgb(0, 0, 0) 0px'
-        : 'rgb(0, 0, 0) none 0px';
-      final String got  = domWindow.getComputedStyle(flutterViewElement, 'focus').outline;
+      final String expected =
+          ui_web.browser.browserEngine == ui_web.BrowserEngine.firefox
+              ? 'rgb(0, 0, 0) 0px'
+              : 'rgb(0, 0, 0) none 0px';
+      final String got = domWindow.getComputedStyle(flutterViewElement, 'focus').outline;
 
       expect(got, expected);
     });
 
     test('styleSceneHost', () {
-      expect(
-        () => StyleManager.styleSceneHost(createDomHTMLDivElement()),
-        throwsAssertionError,
-      );
+      expect(() => StyleManager.styleSceneHost(createDomHTMLDivElement()), throwsAssertionError);
 
       final DomElement sceneHost = createDomElement('flt-scene-host');
       StyleManager.styleSceneHost(sceneHost);
@@ -54,7 +52,7 @@ void doTests() {
       expect(
         () => StyleManager.styleSemanticsHost(createDomHTMLDivElement(), 1.0),
         throwsAssertionError,
-        reason: 'Only accepts a <flt-semantics-host> element.'
+        reason: 'Only accepts a <flt-semantics-host> element.',
       );
 
       final DomElement semanticsHost = createDomElement('flt-semantics-host');
@@ -68,7 +66,7 @@ void doTests() {
       expect(
         () => StyleManager.scaleSemanticsHost(createDomHTMLDivElement(), 1.0),
         throwsAssertionError,
-        reason: 'Only accepts a <flt-semantics-host> element.'
+        reason: 'Only accepts a <flt-semantics-host> element.',
       );
 
       final DomElement semanticsHost = createDomElement('flt-semantics-host');

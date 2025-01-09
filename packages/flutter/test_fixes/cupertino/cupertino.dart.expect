@@ -12,7 +12,9 @@ void main() {
   Object object;
 
   // Change made in https://github.com/flutter/flutter/pull/41859
-  CupertinoTextThemeData themeData = CupertinoTextThemeData();
+  CupertinoTextThemeData themeData = CupertinoTextThemeData(
+
+  );
   themeData.copyWith();
   themeData = CupertinoTextThemeData(error: '');
   themeData.copyWith(error: '');
@@ -155,9 +157,12 @@ void main() {
   textField.maxLengthEnforcement;
 
   // Changes made in https://github.com/flutter/flutter/pull/59127
-  const BottomNavigationBarItem bottomNavigationBarItem = BottomNavigationBarItem(label: myTitle);
-  const BottomNavigationBarItem bottomNavigationBarItem = BottomNavigationBarItem();
-  const BottomNavigationBarItem bottomNavigationBarItem = BottomNavigationBarItem(error: '');
+  const BottomNavigationBarItem bottomNavigationBarItem =
+      BottomNavigationBarItem(label: myTitle);
+  const BottomNavigationBarItem bottomNavigationBarItem =
+      BottomNavigationBarItem();
+  const BottomNavigationBarItem bottomNavigationBarItem =
+      BottomNavigationBarItem(error: '');
   bottomNavigationBarItem.label;
 
   // Changes made in https://github.com/flutter/flutter/pull/79160
@@ -183,19 +188,23 @@ void main() {
   listWheelElement.insertRenderObjectChild(renderObject, object);
   listWheelElement.moveRenderObjectChild(renderObject, object);
   listWheelElement.removeRenderObjectChild(renderObject);
-  final MultiChildRenderObjectElement multiChildRenderObjectElement = MultiChildRenderObjectElement();
+  final MultiChildRenderObjectElement multiChildRenderObjectElement =
+      MultiChildRenderObjectElement();
   multiChildRenderObjectElement.insertRenderObjectChild(renderObject, object);
   multiChildRenderObjectElement.moveRenderObjectChild(renderObject, object);
   multiChildRenderObjectElement.removeRenderObjectChild(renderObject);
-  final SingleChildRenderObjectElement singleChildRenderObjectElement = SingleChildRenderObjectElement();
+  final SingleChildRenderObjectElement singleChildRenderObjectElement =
+      SingleChildRenderObjectElement();
   singleChildRenderObjectElement.insertRenderObjectChild(renderObject, object);
   singleChildRenderObjectElement.moveRenderObjectChild(renderObject, object);
   singleChildRenderObjectElement.removeRenderObjectChild(renderObject);
-  final SliverMultiBoxAdaptorElement sliverMultiBoxAdaptorElement = SliverMultiBoxAdaptorElement();
+  final SliverMultiBoxAdaptorElement sliverMultiBoxAdaptorElement =
+      SliverMultiBoxAdaptorElement();
   sliverMultiBoxAdaptorElement.insertRenderObjectChild(renderObject, object);
   sliverMultiBoxAdaptorElement.moveRenderObjectChild(renderObject, object);
   sliverMultiBoxAdaptorElement.removeRenderObjectChild(renderObject);
-  final RenderObjectToWidgetElement renderObjectToWidgetElement = RenderObjectToWidgetElement(widget);
+  final RenderObjectToWidgetElement renderObjectToWidgetElement =
+      RenderObjectToWidgetElement(widget);
   renderObjectToWidgetElement.insertRenderObjectChild(renderObject, object);
   renderObjectToWidgetElement.moveRenderObjectChild(renderObject, object);
   renderObjectToWidgetElement.removeRenderObjectChild(renderObject);
@@ -217,7 +226,8 @@ void main() {
   listWheelViewport.clipBehavior;
 
   // Changes made in https://github.com/flutter/flutter/pull/87839
-  OverscrollIndicatorNotification notification = OverscrollIndicatorNotification(leading: true);
+  OverscrollIndicatorNotification notification =
+      OverscrollIndicatorNotification(leading: true);
   notification = OverscrollIndicatorNotification(error: '');
   notification.disallowIndicator();
 
@@ -233,7 +243,8 @@ void main() {
   // Changes made in https://github.com/flutter/flutter/pull/78588
   final ScrollBehavior scrollBehavior = ScrollBehavior();
   scrollBehavior.buildOverscrollIndicator(context, child, axisDirection);
-  final CupertinoScrollBehavior cupertinoScrollBehavior = CupertinoScrollBehavior();
+  final CupertinoScrollBehavior cupertinoScrollBehavior =
+      CupertinoScrollBehavior();
   cupertinoScrollBehavior.buildOverscrollIndicator(context, child, axisDirection);
 
   // Changes made in https://github.com/flutter/flutter/pull/114459
@@ -246,46 +257,51 @@ void main() {
   );
   final Clip clip = details.decorationClipBehavior;
 
-  final PlatformMenuBar platformMenuBar = PlatformMenuBar(menus: <PlatformMenuItem>[], child: const SizedBox());
+  final PlatformMenuBar platformMenuBar = PlatformMenuBar(
+    menus: <PlatformMenuItem>[],
+    child: const SizedBox(),
+  );
   final Widget bodyValue = platformMenuBar.child;
 
   // Changes made in https://github.com/flutter/flutter/pull/151367
-  final cupertinoSwitch =  CupertinoSwitch(
+  final cupertinoSwitch = CupertinoSwitch(
     value: value,
     onChanged: onChanged,
     activeTrackColor: Colors.red,
   );
-  Color? activeTrackColor =  cupertinoSwitch.activeTrackColor;
+  Color? activeTrackColor = cupertinoSwitch.activeTrackColor;
 
   // Changes made in https://github.com/flutter/flutter/pull/151367
-  final cupertinoSwitch =  CupertinoSwitch(
+  final cupertinoSwitch = CupertinoSwitch(
     value: value,
     onChanged: onChanged,
     inactiveTrackColor: Colors.red,
   );
-  Color? inactiveTrackColor =  cupertinoSwitch.inactiveTrackColor;
+  Color? inactiveTrackColor = cupertinoSwitch.inactiveTrackColor;
 
   // https://github.com/flutter/flutter/pull/152981
   CupertinoCheckbox(fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return CupertinoColors.white.withOpacity(0.5);
-    }
-    if (states.contains(WidgetState.selected)) {
-      return CupertinoDynamicColor.resolve(CupertinoDynamicColor.withBrightness(
-        color: CupertinoColors.activeBlue,
-        darkColor: Color.fromARGB(255, 50, 100, 215),
-      ), context);
-    }
-    return Colors.red;
-  }));
+ if (states.contains(WidgetState.disabled)) {
+ return CupertinoColors.white.withOpacity(0.5);
+ }
+ if (states.contains(WidgetState.selected)) {
+ return CupertinoDynamicColor.resolve(CupertinoDynamicColor.withBrightness(
+ color: CupertinoColors.activeBlue,
+ darkColor: Color.fromARGB(255, 50, 100, 215),
+ ), context);
+ }
+ return Colors.red;
+ }));
   CupertinoCheckbox(activeColor: Colors.white, fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return CupertinoColors.white.withOpacity(0.5);
-    }
-    if (states.contains(WidgetState.selected)) {
-      return Colors.white;
-    }
-    return Colors.red;
-  }));
-  CupertinoCheckbox(fillColor: WidgetStatePropertyAll(CupertinoColors.white));
+ if (states.contains(WidgetState.disabled)) {
+ return CupertinoColors.white.withOpacity(0.5);
+ }
+ if (states.contains(WidgetState.selected)) {
+ return Colors.white;
+ }
+ return Colors.red;
+ }));
+  CupertinoCheckbox(
+    fillColor: WidgetStatePropertyAll(CupertinoColors.white),
+  );
 }

@@ -18,10 +18,7 @@ void main() {
   test('Does not collect when collection not enabled', () {
     FlutterTimeline.startSync('TEST');
     FlutterTimeline.finishSync();
-    expect(
-      () => FlutterTimeline.debugCollect(),
-      throwsStateError,
-    );
+    expect(() => FlutterTimeline.debugCollect(), throwsStateError);
   });
 
   test('Collects when collection is enabled', () {

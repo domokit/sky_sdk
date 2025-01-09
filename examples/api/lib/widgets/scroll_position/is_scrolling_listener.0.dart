@@ -11,18 +11,16 @@ void main() {
 }
 
 class IsScrollingListenerApp extends StatelessWidget {
-  const IsScrollingListenerApp({ super.key });
+  const IsScrollingListenerApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: IsScrollingListenerExample(),
-    );
+    return const MaterialApp(home: IsScrollingListenerExample());
   }
 }
 
 class IsScrollingListenerExample extends StatefulWidget {
-  const IsScrollingListenerExample({ super.key });
+  const IsScrollingListenerExample({super.key});
 
   @override
   State<IsScrollingListenerExample> createState() => _IsScrollingListenerExampleState();
@@ -72,7 +70,10 @@ class _IsScrollingListenerExampleState extends State<IsScrollingListenerExample>
     } else {
       // scroll-end
       final ScrollPosition p = scrollController.position;
-      final int lastIndex = ((p.extentBefore + p.extentInside) ~/ itemExtent).clamp(0, itemCount - 1);
+      final int lastIndex = ((p.extentBefore + p.extentInside) ~/ itemExtent).clamp(
+        0,
+        itemCount - 1,
+      );
       final double alignedScrollOffset = itemExtent * (lastIndex + 1) - p.extentInside;
       final double scrollOffset = scrollController.position.pixels;
       if (scrollOffset > 0 && (scrollOffset - lastScrollOffset).abs() > itemExtent) {
@@ -101,15 +102,12 @@ class _IsScrollingListenerExampleState extends State<IsScrollingListenerExample>
               slivers: <Widget>[
                 SliverFixedExtentList(
                   itemExtent: itemExtent,
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      return Item(
-                        title: 'Item $index',
-                        color: Color.lerp(Colors.red, Colors.blue, index / itemCount)!
-                      );
-                    },
-                    childCount: itemCount,
-                  ),
+                  delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                    return Item(
+                      title: 'Item $index',
+                      color: Color.lerp(Colors.red, Colors.blue, index / itemCount)!,
+                    );
+                  }, childCount: itemCount),
                 ),
               ],
             ),
@@ -121,19 +119,13 @@ class _IsScrollingListenerExampleState extends State<IsScrollingListenerExample>
 }
 
 class Item extends StatelessWidget {
-  const Item({ super.key, required this.title, required this.color });
+  const Item({super.key, required this.title, required this.color});
 
   final String title;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: color,
-      child: ListTile(
-        textColor: Colors.white,
-        title: Text(title),
-      ),
-    );
+    return Card(color: color, child: ListTile(textColor: Colors.white, title: Text(title)));
   }
 }

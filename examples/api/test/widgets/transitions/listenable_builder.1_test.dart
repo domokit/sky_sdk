@@ -10,7 +10,15 @@ void main() {
   testWidgets('Tapping FAB increments counter', (WidgetTester tester) async {
     await tester.pumpWidget(const example.ListenableBuilderExample());
 
-    String getCount() => (tester.widget(find.descendant(of: find.byType(ListenableBuilder).last, matching: find.byType(Text))) as Text).data!;
+    String getCount() =>
+        (tester.widget(
+                  find.descendant(
+                    of: find.byType(ListenableBuilder).last,
+                    matching: find.byType(Text),
+                  ),
+                )
+                as Text)
+            .data!;
 
     expect(find.text('Current counter value:'), findsOneWidget);
     expect(find.text('0'), findsOneWidget);

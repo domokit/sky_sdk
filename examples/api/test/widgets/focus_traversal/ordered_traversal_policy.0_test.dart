@@ -4,7 +4,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_api_samples/widgets/focus_traversal/ordered_traversal_policy.0.dart' as example;
+import 'package:flutter_api_samples/widgets/focus_traversal/ordered_traversal_policy.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -12,21 +13,14 @@ void main() {
     return Focus.of(tester.element(find.text(text))).hasPrimaryFocus;
   }
 
-  testWidgets('The focus updates should follow the focus traversal groups policy', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.OrderedTraversalPolicyExampleApp(),
-    );
+  testWidgets('The focus updates should follow the focus traversal groups policy', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.OrderedTraversalPolicyExampleApp());
 
     expect(hasFocus(tester, 'One'), isTrue);
 
-    const List<String> focusOrder = <String>[
-      'Two',
-      'Three',
-      'Four',
-      'Five',
-      'Six',
-      'One',
-    ];
+    const List<String> focusOrder = <String>['Two', 'Three', 'Four', 'Five', 'Six', 'One'];
 
     for (final String text in focusOrder) {
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);

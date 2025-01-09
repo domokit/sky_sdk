@@ -15,9 +15,7 @@ void main() {
   }
 
   testWidgets('Initial content is visible', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.StarBorderApp(),
-    );
+    await tester.pumpWidget(const example.StarBorderApp());
 
     expect(find.widgetWithText(AppBar, 'StarBorder Example'), findsOne);
     expect(find.text('Star'), findsOne);
@@ -37,19 +35,19 @@ void main() {
   });
 
   testWidgets('StartBorder uses the values from the sliders', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.StarBorderApp(),
-    );
+    await tester.pumpWidget(const example.StarBorderApp());
 
     expect(find.text('0.00'), findsExactly(4));
     expect(find.text('5.0'), findsOne);
     expect(find.text('0.40'), findsOne);
     expect(
-      getStartBorderFinder(const StarBorder(
-        side: BorderSide(),
-        // The default values of the example are the same as the default
-        // values of the constructor.
-      )),
+      getStartBorderFinder(
+        const StarBorder(
+          side: BorderSide(),
+          // The default values of the example are the same as the default
+          // values of the constructor.
+        ),
+      ),
       findsOne,
     );
     expect(
@@ -65,8 +63,7 @@ Container(
       squash: 0.00,
     ),
   ),
-);'''
-      ),
+);'''),
       findsOne,
     );
 
@@ -80,15 +77,17 @@ Container(
     expect(find.text('11.5'), findsOne);
     expect(find.text('180.00'), findsOne);
     expect(
-      getStartBorderFinder(const StarBorder(
-        side: BorderSide(),
-        points: 11.5,
-        innerRadiusRatio: 0.5,
-        pointRounding: 0.5,
-        valleyRounding: 0.5,
-        rotation: 180,
-        squash: 0.5,
-      )),
+      getStartBorderFinder(
+        const StarBorder(
+          side: BorderSide(),
+          points: 11.5,
+          innerRadiusRatio: 0.5,
+          pointRounding: 0.5,
+          valleyRounding: 0.5,
+          rotation: 180,
+          squash: 0.5,
+        ),
+      ),
       findsOne,
     );
     expect(
@@ -104,26 +103,18 @@ Container(
       squash: 0.50,
     ),
   ),
-);'''
-      ),
+);'''),
       findsOne,
     );
   });
 
   testWidgets('StartBorder.polygon uses the values from the sliders', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.StarBorderApp(),
-    );
+    await tester.pumpWidget(const example.StarBorderApp());
 
     expect(find.text('0.00'), findsExactly(4));
     expect(find.text('5.0'), findsOne);
     expect(find.text('0.40'), findsOne);
-    expect(
-      getStartBorderFinder(const StarBorder(
-        side: BorderSide(),
-      )),
-      findsOne,
-    );
+    expect(getStartBorderFinder(const StarBorder(side: BorderSide())), findsOne);
     expect(
       find.text('''
 Container(
@@ -137,8 +128,7 @@ Container(
       squash: 0.00,
     ),
   ),
-);'''
-      ),
+);'''),
       findsOne,
     );
 
@@ -152,15 +142,17 @@ Container(
     expect(find.text('11.5'), findsOne);
     expect(find.text('180.00'), findsOne);
     expect(
-      getStartBorderFinder(const StarBorder(
-        side: BorderSide(),
-        points: 11.5,
-        innerRadiusRatio: 0.5,
-        pointRounding: 0.5,
-        valleyRounding: 0.5,
-        rotation: 180,
-        squash: 0.5,
-      )),
+      getStartBorderFinder(
+        const StarBorder(
+          side: BorderSide(),
+          points: 11.5,
+          innerRadiusRatio: 0.5,
+          pointRounding: 0.5,
+          valleyRounding: 0.5,
+          rotation: 180,
+          squash: 0.5,
+        ),
+      ),
       findsOne,
     );
     expect(
@@ -176,16 +168,13 @@ Container(
       squash: 0.50,
     ),
   ),
-);'''
-      ),
+);'''),
       findsOne,
     );
   });
 
   testWidgets('The "Nearest" button rounds the number of points', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.StarBorderApp(),
-    );
+    await tester.pumpWidget(const example.StarBorderApp());
 
     expect(find.text('5.0'), findsOne);
 
@@ -201,10 +190,10 @@ Container(
     expect(find.text('12.0'), findsOne);
   });
 
-  testWidgets('The "Reset" button resets the parameters to the default values', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.StarBorderApp(),
-    );
+  testWidgets('The "Reset" button resets the parameters to the default values', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.StarBorderApp());
 
     expect(find.text('0.00'), findsExactly(4));
     expect(find.text('5.0'), findsOne);

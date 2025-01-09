@@ -13,10 +13,9 @@ import '../src/common.dart';
 import 'test_utils.dart';
 
 void main() {
-
   late Directory tempDir;
 
-  setUp(()  {
+  setUp(() {
     Cache.flutterRoot = getFlutterRoot();
     tempDir = createResolvedTempDirectorySync('android_plugin_new_output_dir_test.');
   });
@@ -32,19 +31,16 @@ void main() {
       ...getLocalEngineArguments(),
       'create',
       '--template=module',
-      'flutter_project'
+      'flutter_project',
     ], workingDirectory: tempDir.path);
 
     final String projectPath = fileSystem.path.join(tempDir.path, 'flutter_project');
 
     final File modulePubspec = fileSystem.file(fileSystem.path.join(projectPath, 'pubspec.yaml'));
     String pubspecContent = modulePubspec.readAsStringSync();
-    pubspecContent = pubspecContent.replaceFirst(
-      'dependencies:',
-      '''
+    pubspecContent = pubspecContent.replaceFirst('dependencies:', '''
 dependencies:
-  image_picker: 0.8.5+3''',
-    );
+  image_picker: 0.8.5+3''');
     modulePubspec.writeAsStringSync(pubspecContent);
 
     // Run flutter build apk to build module example project
@@ -59,10 +55,9 @@ dependencies:
     log(result.exitCode);
 
     // Check outputDir existed
-    final Directory outputDir = fileSystem.directory(fileSystem.path.join(
-        projectPath, '.android', 'plugins_build_output', 'image_picker_android'
-    ));
+    final Directory outputDir = fileSystem.directory(
+      fileSystem.path.join(projectPath, '.android', 'plugins_build_output', 'image_picker_android'),
+    );
     expect(outputDir, exists);
-
   });
 }

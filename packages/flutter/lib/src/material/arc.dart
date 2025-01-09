@@ -37,10 +37,7 @@ class MaterialPointArcTween extends Tween<Offset> {
   /// The [begin] and [end] properties must be non-null before the tween is
   /// first used, but the arguments can be null if the values are going to be
   /// filled in later.
-  MaterialPointArcTween({
-    super.begin,
-    super.end,
-  });
+  MaterialPointArcTween({super.begin, super.end});
 
   bool _dirty = true;
 
@@ -102,6 +99,7 @@ class MaterialPointArcTween extends Tween<Offset> {
     }
     return _center;
   }
+
   Offset? _center;
 
   /// The radius of the circular arc, null if [begin] and [end] are horizontally or
@@ -115,6 +113,7 @@ class MaterialPointArcTween extends Tween<Offset> {
     }
     return _radius;
   }
+
   double? _radius;
 
   /// The beginning of the arc's sweep in radians, measured from the positive x
@@ -131,6 +130,7 @@ class MaterialPointArcTween extends Tween<Offset> {
     }
     return _beginAngle;
   }
+
   double? _beginAngle;
 
   /// The end of the arc's sweep in radians, measured from the positive x axis.
@@ -147,6 +147,7 @@ class MaterialPointArcTween extends Tween<Offset> {
     }
     return _beginAngle;
   }
+
   double? _endAngle;
 
   @override
@@ -191,12 +192,7 @@ class MaterialPointArcTween extends Tween<Offset> {
   }
 }
 
-enum _CornerId {
-  topLeft,
-  topRight,
-  bottomLeft,
-  bottomRight
-}
+enum _CornerId { topLeft, topRight, bottomLeft, bottomRight }
 
 class _Diagonal {
   const _Diagonal(this.beginId, this.endId);
@@ -252,10 +248,7 @@ class MaterialRectArcTween extends RectTween {
   /// The [begin] and [end] properties must be non-null before the tween is
   /// first used, but the arguments can be null if the values are going to be
   /// filled in later.
-  MaterialRectArcTween({
-    super.begin,
-    super.end,
-  });
+  MaterialRectArcTween({super.begin, super.end});
 
   bool _dirty = true;
 
@@ -263,7 +256,10 @@ class MaterialRectArcTween extends RectTween {
     assert(begin != null);
     assert(end != null);
     final Offset centersVector = end!.center - begin!.center;
-    final _Diagonal diagonal = _maxBy<_Diagonal>(_allDiagonals, (_Diagonal d) => _diagonalSupport(centersVector, d));
+    final _Diagonal diagonal = _maxBy<_Diagonal>(
+      _allDiagonals,
+      (_Diagonal d) => _diagonalSupport(centersVector, d),
+    );
     _beginArc = MaterialPointArcTween(
       begin: _cornerFor(begin!, diagonal.beginId),
       end: _cornerFor(end!, diagonal.beginId),
@@ -283,9 +279,9 @@ class MaterialRectArcTween extends RectTween {
 
   Offset _cornerFor(Rect rect, _CornerId id) {
     return switch (id) {
-      _CornerId.topLeft     => rect.topLeft,
-      _CornerId.topRight    => rect.topRight,
-      _CornerId.bottomLeft  => rect.bottomLeft,
+      _CornerId.topLeft => rect.topLeft,
+      _CornerId.topRight => rect.topRight,
+      _CornerId.bottomLeft => rect.bottomLeft,
       _CornerId.bottomRight => rect.bottomRight,
     };
   }
@@ -301,6 +297,7 @@ class MaterialRectArcTween extends RectTween {
     }
     return _beginArc;
   }
+
   late MaterialPointArcTween _beginArc;
 
   /// The path of the corresponding [begin], [end] rectangle corners that trail
@@ -314,6 +311,7 @@ class MaterialRectArcTween extends RectTween {
     }
     return _endArc;
   }
+
   late MaterialPointArcTween _endArc;
 
   @override
@@ -374,20 +372,14 @@ class MaterialRectCenterArcTween extends RectTween {
   /// The [begin] and [end] properties must be non-null before the tween is
   /// first used, but the arguments can be null if the values are going to be
   /// filled in later.
-  MaterialRectCenterArcTween({
-    super.begin,
-    super.end,
-  });
+  MaterialRectCenterArcTween({super.begin, super.end});
 
   bool _dirty = true;
 
   void _initialize() {
     assert(begin != null);
     assert(end != null);
-    _centerArc = MaterialPointArcTween(
-      begin: begin!.center,
-      end: end!.center,
-    );
+    _centerArc = MaterialPointArcTween(begin: begin!.center, end: end!.center);
     _dirty = false;
   }
 
@@ -402,6 +394,7 @@ class MaterialRectCenterArcTween extends RectTween {
     }
     return _centerArc;
   }
+
   late MaterialPointArcTween _centerArc;
 
   @override

@@ -16,10 +16,7 @@ class _CustomEndDrawerIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MaterialLocalizations localization = MaterialLocalizations.of(context);
-    return Icon(
-      Icons.more_horiz,
-      semanticLabel: localization.openAppDrawerTooltip,
-    );
+    return Icon(Icons.more_horiz, semanticLabel: localization.openAppDrawerTooltip);
   }
 }
 
@@ -29,10 +26,7 @@ class _CustomDrawerIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MaterialLocalizations localization = MaterialLocalizations.of(context);
-    return Icon(
-      Icons.segment,
-      semanticLabel: localization.openAppDrawerTooltip,
-    );
+    return Icon(Icons.segment, semanticLabel: localization.openAppDrawerTooltip);
   }
 }
 
@@ -70,19 +64,13 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
+      appBar: AppBar(title: Text(title)),
       drawer: Drawer(
         child: Column(
-          children: <Widget>[
-            TextButton(child: const Text('Drawer Item'), onPressed: () {}),
-          ],
+          children: <Widget>[TextButton(child: const Text('Drawer Item'), onPressed: () {})],
         ),
       ),
-      body: const Center(
-        child: NextPageButton(),
-      ),
+      body: const Center(child: NextPageButton()),
     );
   }
 }
@@ -95,9 +83,11 @@ class NextPageButton extends StatelessWidget {
     return ElevatedButton.icon(
       onPressed: () {
         Navigator.of(context).push(
-          MaterialPageRoute<MySecondPage>(builder: (BuildContext context) {
-            return const MySecondPage();
-          }),
+          MaterialPageRoute<MySecondPage>(
+            builder: (BuildContext context) {
+              return const MySecondPage();
+            },
+          ),
         );
       },
       icon: const Icon(Icons.arrow_forward),
@@ -111,11 +101,6 @@ class MySecondPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Second page'),
-      ),
-      endDrawer: const Drawer(),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('Second page')), endDrawer: const Drawer());
   }
 }

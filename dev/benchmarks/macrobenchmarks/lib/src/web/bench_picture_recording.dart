@@ -36,10 +36,9 @@ class BenchPictureRecording extends RawRecorder {
   @override
   Future<void> setUpAll() async {
     paint = Paint();
-    paragraph = (ParagraphBuilder(ParagraphStyle())
-        ..addText('abcd edfh ijkl mnop qrst uvwx yz'))
-      .build()
-        ..layout(const ParagraphConstraints(width: 50));
+    paragraph =
+        (ParagraphBuilder(ParagraphStyle())..addText('abcd edfh ijkl mnop qrst uvwx yz')).build()
+          ..layout(const ParagraphConstraints(width: 50));
   }
 
   @override
@@ -62,7 +61,10 @@ class BenchPictureRecording extends RawRecorder {
         for (int j = 0; j < 10; j++) {
           canvas.translate(1, 1);
           canvas.clipRect(Rect.fromLTWH(20, 20, 40 / i, 40));
-          canvas.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(10, 10, 10, 10), const Radius.circular(2)), paint);
+          canvas.drawRRect(
+            RRect.fromRectAndRadius(const Rect.fromLTWH(10, 10, 10, 10), const Radius.circular(2)),
+            paint,
+          );
           canvas.drawParagraph(paragraph, Offset.zero);
         }
         canvas.restore();

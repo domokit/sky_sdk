@@ -29,16 +29,13 @@ Future<void> testMain() async {
   const String platformViewType = 'test-platform-view';
 
   setUp(() {
-    ui_web.platformViewRegistry.registerViewFactory(
-      platformViewType,
-      (int viewId) {
-        final DomElement element = createDomHTMLDivElement();
-        element.style.backgroundColor = 'blue';
-        element.style.width = '100%';
-        element.style.height = '100%';
-        return element;
-      }
-    );
+    ui_web.platformViewRegistry.registerViewFactory(platformViewType, (int viewId) {
+      final DomElement element = createDomHTMLDivElement();
+      element.style.backgroundColor = 'blue';
+      element.style.width = '100%';
+      element.style.height = '100%';
+      return element;
+    });
   });
 
   tearDown(() {
@@ -55,19 +52,14 @@ Future<void> testMain() async {
       50,
       ui.Paint()
         ..style = ui.PaintingStyle.fill
-        ..color = const ui.Color(0xFFFF0000)
+        ..color = const ui.Color(0xFFFF0000),
     );
 
     final ui.SceneBuilder sb = ui.SceneBuilder();
     sb.pushOffset(0, 0);
     sb.addPicture(const ui.Offset(100, 100), recorder.endRecording());
 
-    sb.addPlatformView(
-      1,
-      offset: const ui.Offset(125, 125),
-      width: 50,
-      height: 50,
-    );
+    sb.addPlatformView(1, offset: const ui.Offset(125, 125), width: 50, height: 50);
     await renderScene(sb.build());
 
     await matchGoldenFile('picture_platformview_overlap.png', region: region);
@@ -83,7 +75,7 @@ Future<void> testMain() async {
       50,
       ui.Paint()
         ..style = ui.PaintingStyle.fill
-        ..color = const ui.Color(0xFF00FF00)
+        ..color = const ui.Color(0xFF00FF00),
     );
 
     final ui.Picture picture = recorder.endRecording();
@@ -92,12 +84,7 @@ Future<void> testMain() async {
     sb.pushOffset(0, 0);
     sb.addPicture(const ui.Offset(75, 75), picture);
 
-    sb.addPlatformView(
-      1,
-      offset: const ui.Offset(100, 100),
-      width: 100,
-      height: 100,
-    );
+    sb.addPlatformView(1, offset: const ui.Offset(100, 100), width: 100, height: 100);
 
     sb.addPicture(const ui.Offset(125, 125), picture);
     await renderScene(sb.build());
@@ -115,7 +102,7 @@ Future<void> testMain() async {
       50,
       ui.Paint()
         ..style = ui.PaintingStyle.fill
-        ..color = const ui.Color(0xFFFF0000)
+        ..color = const ui.Color(0xFFFF0000),
     );
 
     final ui.SceneBuilder sb = ui.SceneBuilder();
@@ -123,12 +110,7 @@ Future<void> testMain() async {
     sb.addPicture(const ui.Offset(100, 100), recorder.endRecording());
 
     sb.pushTransform(Matrix4.rotationZ(0.1).toFloat64());
-    sb.addPlatformView(
-      1,
-      offset: const ui.Offset(125, 125),
-      width: 50,
-      height: 50,
-    );
+    sb.addPlatformView(1, offset: const ui.Offset(125, 125), width: 50, height: 50);
     await renderScene(sb.build());
 
     await matchGoldenFile('platformview_transformed.png', region: region);
@@ -144,7 +126,7 @@ Future<void> testMain() async {
       50,
       ui.Paint()
         ..style = ui.PaintingStyle.fill
-        ..color = const ui.Color(0xFFFF0000)
+        ..color = const ui.Color(0xFFFF0000),
     );
 
     final ui.SceneBuilder sb = ui.SceneBuilder();
@@ -156,12 +138,7 @@ Future<void> testMain() async {
     sb.pushOffset(50, 50);
     sb.pushTransform(Matrix4.rotationZ(0.1).toFloat64());
     sb.pushOffset(25, 25);
-    sb.addPlatformView(
-      1,
-      offset: const ui.Offset(50, 50),
-      width: 50,
-      height: 50,
-    );
+    sb.addPlatformView(1, offset: const ui.Offset(50, 50), width: 50, height: 50);
     await renderScene(sb.build());
 
     await matchGoldenFile('platformview_transformed_offset.png', region: region);
@@ -177,7 +154,7 @@ Future<void> testMain() async {
       50,
       ui.Paint()
         ..style = ui.PaintingStyle.fill
-        ..color = const ui.Color(0xFFFF0000)
+        ..color = const ui.Color(0xFFFF0000),
     );
 
     final ui.Picture picture = recorder.endRecording();
@@ -187,12 +164,7 @@ Future<void> testMain() async {
     sb.addPicture(const ui.Offset(100, 100), picture);
 
     final ui.EngineLayer retainedPlatformView = sb.pushOffset(50, 50);
-    sb.addPlatformView(
-      1,
-      offset: const ui.Offset(125, 125),
-      width: 50,
-      height: 50,
-    );
+    sb.addPlatformView(1, offset: const ui.Offset(125, 125), width: 50, height: 50);
     await renderScene(sb.build());
 
     await matchGoldenFile('platformview_offset.png', region: region);
@@ -207,7 +179,6 @@ Future<void> testMain() async {
     await matchGoldenFile('platformview_offset_moved.png', region: region);
   });
 
-
   test('platformview with opacity', () async {
     await _createPlatformView(1, platformViewType);
 
@@ -218,7 +189,7 @@ Future<void> testMain() async {
       50,
       ui.Paint()
         ..style = ui.PaintingStyle.fill
-        ..color = const ui.Color(0xFFFF0000)
+        ..color = const ui.Color(0xFFFF0000),
     );
 
     final ui.SceneBuilder sb = ui.SceneBuilder();
@@ -226,12 +197,7 @@ Future<void> testMain() async {
     sb.addPicture(const ui.Offset(100, 100), recorder.endRecording());
 
     sb.pushOpacity(127, offset: const ui.Offset(50, 50));
-    sb.addPlatformView(
-      1,
-      offset: const ui.Offset(125, 125),
-      width: 50,
-      height: 50,
-    );
+    sb.addPlatformView(1, offset: const ui.Offset(125, 125), width: 50, height: 50);
     await renderScene(sb.build());
 
     await matchGoldenFile('platformview_opacity.png', region: region);
@@ -247,7 +213,7 @@ Future<void> testMain() async {
       50,
       ui.Paint()
         ..style = ui.PaintingStyle.fill
-        ..color = const ui.Color(0xFFFF0000)
+        ..color = const ui.Color(0xFFFF0000),
     );
 
     final ui.SceneBuilder sb = ui.SceneBuilder();
@@ -255,12 +221,7 @@ Future<void> testMain() async {
     sb.pushClipRect(const ui.Rect.fromLTRB(60, 60, 100, 100));
 
     sb.addPicture(const ui.Offset(50, 50), recorder.endRecording());
-    sb.addPlatformView(
-      1,
-      offset: const ui.Offset(75, 75),
-      width: 50,
-      height: 50,
-    );
+    sb.addPlatformView(1, offset: const ui.Offset(75, 75), width: 50, height: 50);
     await renderScene(sb.build());
 
     await matchGoldenFile('platformview_cliprect.png', region: region);
@@ -276,23 +237,18 @@ Future<void> testMain() async {
       50,
       ui.Paint()
         ..style = ui.PaintingStyle.fill
-        ..color = const ui.Color(0xFFFF0000)
+        ..color = const ui.Color(0xFFFF0000),
     );
 
     final ui.SceneBuilder sb = ui.SceneBuilder();
     sb.pushOffset(50, 50);
     sb.pushClipRRect(
       const ui.RRect.fromLTRBXY(60, 60, 100, 100, 5, 10),
-      clipBehavior: ui.Clip.antiAlias
+      clipBehavior: ui.Clip.antiAlias,
     );
 
     sb.addPicture(const ui.Offset(50, 50), recorder.endRecording());
-    sb.addPlatformView(
-      1,
-      offset: const ui.Offset(75, 75),
-      width: 50,
-      height: 50,
-    );
+    sb.addPlatformView(1, offset: const ui.Offset(75, 75), width: 50, height: 50);
     await renderScene(sb.build());
 
     await matchGoldenFile('platformview_cliprrect.png', region: region);
@@ -308,7 +264,7 @@ Future<void> testMain() async {
       50,
       ui.Paint()
         ..style = ui.PaintingStyle.fill
-        ..color = const ui.Color(0xFFFF0000)
+        ..color = const ui.Color(0xFFFF0000),
     );
 
     final ui.SceneBuilder sb = ui.SceneBuilder();
@@ -317,17 +273,12 @@ Future<void> testMain() async {
     // The rrect should completely cover the rect for this test case.
     sb.pushClipRRect(
       const ui.RRect.fromLTRBXY(50, 50, 110, 110, 5, 10),
-      clipBehavior: ui.Clip.antiAlias
+      clipBehavior: ui.Clip.antiAlias,
     );
     sb.pushClipRect(const ui.Rect.fromLTRB(60, 60, 100, 100));
 
     sb.addPicture(const ui.Offset(50, 50), recorder.endRecording());
-    sb.addPlatformView(
-      1,
-      offset: const ui.Offset(75, 75),
-      width: 50,
-      height: 50,
-    );
+    sb.addPlatformView(1, offset: const ui.Offset(75, 75), width: 50, height: 50);
     await renderScene(sb.build());
 
     await matchGoldenFile('platformview_covered_clip.png', region: region);
@@ -343,7 +294,7 @@ Future<void> testMain() async {
       50,
       ui.Paint()
         ..style = ui.PaintingStyle.fill
-        ..color = const ui.Color(0xFFFF0000)
+        ..color = const ui.Color(0xFFFF0000),
     );
 
     final ui.SceneBuilder sb = ui.SceneBuilder();
@@ -358,12 +309,7 @@ Future<void> testMain() async {
     sb.pushClipPath(path);
 
     sb.addPicture(const ui.Offset(50, 50), recorder.endRecording());
-    sb.addPlatformView(
-      1,
-      offset: const ui.Offset(75, 75),
-      width: 50,
-      height: 50,
-    );
+    sb.addPlatformView(1, offset: const ui.Offset(75, 75), width: 50, height: 50);
     await renderScene(sb.build());
 
     await matchGoldenFile('platformview_clippath.png', region: region);
@@ -376,13 +322,7 @@ Future<void> _createPlatformView(int id, String viewType) {
   const MethodCodec codec = StandardMethodCodec();
   ui.PlatformDispatcher.instance.sendPlatformMessage(
     'flutter/platform_views',
-    codec.encodeMethodCall(MethodCall(
-      'create',
-      <String, dynamic>{
-        'id': id,
-        'viewType': viewType,
-      },
-    )),
+    codec.encodeMethodCall(MethodCall('create', <String, dynamic>{'id': id, 'viewType': viewType})),
     (dynamic _) => completer.complete(),
   );
   return completer.future;

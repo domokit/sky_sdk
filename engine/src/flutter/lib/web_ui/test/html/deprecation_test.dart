@@ -29,8 +29,9 @@ void testMain() {
     final Renderer chosenRenderer = renderer;
 
     expect(chosenRenderer, isA<HtmlRenderer>());
-    expect(warnings, contains(
-      contains('See: https://docs.flutter.dev/to/web-html-renderer-deprecation')
-    ));
+    expect(
+      warnings,
+      contains(contains('See: https://docs.flutter.dev/to/web-html-renderer-deprecation')),
+    );
   });
 }

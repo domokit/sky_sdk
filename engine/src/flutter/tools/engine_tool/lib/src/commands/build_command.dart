@@ -19,12 +19,7 @@ final class BuildCommand extends CommandBase {
     super.help = false,
     super.usageLineLength,
   }) {
-    builds = BuildPlan.configureArgParser(
-      argParser,
-      environment,
-      configs: configs,
-      help: help,
-    );
+    builds = BuildPlan.configureArgParser(argParser, environment, configs: configs, help: help);
   }
 
   /// List of compatible builds.
@@ -43,19 +38,11 @@ et build //flutter/fml:fml_benchmarks  # Build a specific target in `//flutter/f
 
   @override
   Future<int> run() async {
-    final plan = BuildPlan.fromArgResults(
-      argResults!,
-      environment,
-      builds: builds,
-    );
+    final plan = BuildPlan.fromArgResults(argResults!, environment, builds: builds);
 
     final commandLineTargets = argResults!.rest;
     if (commandLineTargets.isNotEmpty &&
-        !await ensureBuildDir(
-          environment,
-          plan.build,
-          enableRbe: plan.useRbe,
-        )) {
+        !await ensureBuildDir(environment, plan.build, enableRbe: plan.useRbe)) {
       return 1;
     }
 
@@ -65,10 +52,7 @@ et build //flutter/fml:fml_benchmarks  # Build a specific target in `//flutter/f
     final allTargets = <Label>{};
     for (final pattern in commandLineTargets) {
       final target = TargetPattern.parse(pattern);
-      final targets = await gn.desc(
-        'out/${plan.build.ninja.config}',
-        target,
-      );
+      final targets = await gn.desc('out/${plan.build.ninja.config}', target);
       allTargets.addAll(targets.map((target) => target.label));
     }
 

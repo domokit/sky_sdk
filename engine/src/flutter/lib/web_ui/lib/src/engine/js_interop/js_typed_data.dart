@@ -17,21 +17,14 @@ extension TypedArrayExtension on JSTypedArray {
 @staticInterop
 class JSUint8Array1 {
   external factory JSUint8Array1._create1(JSAny bufferOrLength);
-  external factory JSUint8Array1._create3(
-    JSArrayBuffer buffer,
-    JSNumber start,
-    JSNumber length,
-  );
+  external factory JSUint8Array1._create3(JSArrayBuffer buffer, JSNumber start, JSNumber length);
 }
 
-JSUint8Array createUint8ArrayFromBuffer(JSArrayBuffer buffer)
-  => JSUint8Array1._create1(buffer) as JSUint8Array;
+JSUint8Array createUint8ArrayFromBuffer(JSArrayBuffer buffer) =>
+    JSUint8Array1._create1(buffer) as JSUint8Array;
 
-JSUint8Array createUint8ArrayFromSubBuffer(
-  JSArrayBuffer buffer,
-  int start,
-  int length,
-) => JSUint8Array1._create3(buffer, start.toJS, length.toJS) as JSUint8Array;
+JSUint8Array createUint8ArrayFromSubBuffer(JSArrayBuffer buffer, int start, int length) =>
+    JSUint8Array1._create3(buffer, start.toJS, length.toJS) as JSUint8Array;
 
-JSUint8Array createUint8ArrayFromLength(int length)
-  => JSUint8Array1._create1(length.toJS) as JSUint8Array;
+JSUint8Array createUint8ArrayFromLength(int length) =>
+    JSUint8Array1._create1(length.toJS) as JSUint8Array;

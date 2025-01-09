@@ -82,17 +82,9 @@ enum BlendFactor {
   oneMinusBlendAlpha,
 }
 
-enum BlendOperation {
-  add,
-  subtract,
-  reverseSubtract,
-}
+enum BlendOperation { add, subtract, reverseSubtract }
 
-enum LoadAction {
-  dontCare,
-  load,
-  clear,
-}
+enum LoadAction { dontCare, load, clear }
 
 enum StoreAction {
   dontCare,
@@ -101,55 +93,23 @@ enum StoreAction {
   storeAndMultisampleResolve,
 }
 
-enum ShaderStage {
-  vertex,
-  fragment,
-}
+enum ShaderStage { vertex, fragment }
 
-enum MinMagFilter {
-  nearest,
-  linear,
-}
+enum MinMagFilter { nearest, linear }
 
-enum MipFilter {
-  nearest,
-  linear,
-}
+enum MipFilter { nearest, linear }
 
-enum SamplerAddressMode {
-  clampToEdge,
-  repeat,
-  mirror,
-}
+enum SamplerAddressMode { clampToEdge, repeat, mirror }
 
-enum IndexType {
-  int16,
-  int32,
-}
+enum IndexType { int16, int32 }
 
-enum PrimitiveType {
-  triangle,
-  triangleStrip,
-  line,
-  lineStrip,
-  point,
-}
+enum PrimitiveType { triangle, triangleStrip, line, lineStrip, point }
 
-enum CullMode {
-  none,
-  frontFace,
-  backFace,
-}
+enum CullMode { none, frontFace, backFace }
 
-enum WindingOrder {
-  clockwise,
-  counterClockwise,
-}
+enum WindingOrder { clockwise, counterClockwise }
 
-enum PolygonMode {
-  fill,
-  line
-}
+enum PolygonMode { fill, line }
 
 enum CompareFunction {
   /// Comparison test never passes.

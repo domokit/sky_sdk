@@ -88,7 +88,7 @@ abstract class AssetBundle {
   /// [Utf8Codec] will be used for decoding the string. If the string is
   /// larger than 50 KB, the decoding process is delegated to an
   /// isolate to avoid jank on the main thread.
-  Future<String> loadString(String key, { bool cache = true }) async {
+  Future<String> loadString(String key, {bool cache = true}) async {
     final ByteData data = await load(key);
     // 50 KB of data should take 2-3 ms to parse on a Moto G4, and about 400 μs
     // on a Pixel 4. On the web we can't bail to isolates, though...
@@ -120,17 +120,20 @@ abstract class AssetBundle {
   /// The result is not cached by the default implementation; the parser is run
   /// each time the resource is fetched. However, some subclasses may implement
   /// caching (notably, subclasses of [CachingAssetBundle]).
-  Future<T> loadStructuredBinaryData<T>(String key, FutureOr<T> Function(ByteData data) parser) async {
+  Future<T> loadStructuredBinaryData<T>(
+    String key,
+    FutureOr<T> Function(ByteData data) parser,
+  ) async {
     return parser(await load(key));
   }
 
   /// If this is a caching asset bundle, and the given key describes a cached
   /// asset, then evict the asset from the cache so that the next time it is
   /// loaded, the cache will be reread from the asset bundle.
-  void evict(String key) { }
+  void evict(String key) {}
 
   /// If this is a caching asset bundle, clear all cached data.
-  void clear() { }
+  void clear() {}
 
   @override
   String toString() => '${describeIdentity(this)}()';
@@ -143,9 +146,7 @@ abstract class AssetBundle {
 class NetworkAssetBundle extends AssetBundle {
   /// Creates a network asset bundle that resolves asset keys as URLs relative
   /// to the given base URL.
-  NetworkAssetBundle(Uri baseUrl)
-    : _baseUrl = baseUrl,
-      _httpClient = HttpClient();
+  NetworkAssetBundle(Uri baseUrl) : _baseUrl = baseUrl, _httpClient = HttpClient();
 
   final Uri _baseUrl;
   final HttpClient _httpClient;
@@ -188,7 +189,7 @@ abstract class CachingAssetBundle extends AssetBundle {
   final Map<String, Future<dynamic>> _structuredBinaryDataCache = <String, Future<dynamic>>{};
 
   @override
-  Future<String> loadString(String key, { bool cache = true }) {
+  Future<String> loadString(String key, {bool cache = true}) {
     if (cache) {
       return _stringCache.putIfAbsent(key, () => super.loadString(key));
     }
@@ -216,21 +217,26 @@ abstract class CachingAssetBundle extends AssetBundle {
     // flutter_test framework. So, we need to support both async and sync flows.
     Completer<T>? completer; // For async flow.
     Future<T>? synchronousResult; // For sync flow.
-    loadString(key, cache: false).then<T>(parser).then<void>((T value) {
-      synchronousResult = SynchronousFuture<T>(value);
-      _structuredDataCache[key] = synchronousResult!;
-      // We already returned from the loadStructuredData function, which means
-      // we are in the asynchronous mode. Pass the value to the completer. The
-      // completer's future is what we returned.
-      completer?.complete(value);
-    }, onError: (Object error, StackTrace stack) {
-      assert(completer != null, 'unexpected synchronous failure');
-      // Either loading or parsing failed. We must report the error back to the
-      // caller and anyone waiting on this call. We clear the cache for this
-      // key, however, because we want future attempts to try again.
-      _structuredDataCache.remove(key);
-      completer!.completeError(error, stack);
-    });
+    loadString(key, cache: false)
+        .then<T>(parser)
+        .then<void>(
+          (T value) {
+            synchronousResult = SynchronousFuture<T>(value);
+            _structuredDataCache[key] = synchronousResult!;
+            // We already returned from the loadStructuredData function, which means
+            // we are in the asynchronous mode. Pass the value to the completer. The
+            // completer's future is what we returned.
+            completer?.complete(value);
+          },
+          onError: (Object error, StackTrace stack) {
+            assert(completer != null, 'unexpected synchronous failure');
+            // Either loading or parsing failed. We must report the error back to the
+            // caller and anyone waiting on this call. We clear the cache for this
+            // key, however, because we want future attempts to try again.
+            _structuredDataCache.remove(key);
+            completer!.completeError(error, stack);
+          },
+        );
     if (synchronousResult != null) {
       // The above code ran synchronously. We can synchronously return the result.
       return synchronousResult!;
@@ -262,21 +268,26 @@ abstract class CachingAssetBundle extends AssetBundle {
     // flutter_test framework. So, we need to support both async and sync flows.
     Completer<T>? completer; // For async flow.
     Future<T>? synchronousResult; // For sync flow.
-    load(key).then<T>(parser).then<void>((T value) {
-      synchronousResult = SynchronousFuture<T>(value);
-      _structuredBinaryDataCache[key] = synchronousResult!;
-      // The load and parse operation ran asynchronously. We already returned
-      // from the loadStructuredBinaryData function and therefore the caller
-      // was given the future of the completer.
-      completer?.complete(value);
-    }, onError: (Object error, StackTrace stack) {
-      assert(completer != null, 'unexpected synchronous failure');
-      // Either loading or parsing failed. We must report the error back to the
-      // caller and anyone waiting on this call. We clear the cache for this
-      // key, however, because we want future attempts to try again.
-      _structuredBinaryDataCache.remove(key);
-      completer!.completeError(error, stack);
-    });
+    load(key)
+        .then<T>(parser)
+        .then<void>(
+          (T value) {
+            synchronousResult = SynchronousFuture<T>(value);
+            _structuredBinaryDataCache[key] = synchronousResult!;
+            // The load and parse operation ran asynchronously. We already returned
+            // from the loadStructuredBinaryData function and therefore the caller
+            // was given the future of the completer.
+            completer?.complete(value);
+          },
+          onError: (Object error, StackTrace stack) {
+            assert(completer != null, 'unexpected synchronous failure');
+            // Either loading or parsing failed. We must report the error back to the
+            // caller and anyone waiting on this call. We clear the cache for this
+            // key, however, because we want future attempts to try again.
+            _structuredBinaryDataCache.remove(key);
+            completer!.completeError(error, stack);
+          },
+        );
     if (synchronousResult != null) {
       // The above code ran synchronously. We can synchronously return the result.
       return synchronousResult!;
@@ -315,18 +326,17 @@ class PlatformAssetBundle extends CachingAssetBundle {
   @override
   Future<ByteData> load(String key) {
     final Uint8List encoded = utf8.encode(Uri(path: Uri.encodeFull(key)).path);
-    final Future<ByteData>? future = ServicesBinding.instance.defaultBinaryMessenger.send(
-      'flutter/assets',
-      ByteData.sublistView(encoded),
-    )?.then((ByteData? asset) {
-      if (asset == null) {
-        throw FlutterError.fromParts(<DiagnosticsNode>[
-          _errorSummaryWithKey(key),
-          ErrorDescription('The asset does not exist or has empty data.'),
-        ]);
-      }
-      return asset;
-    });
+    final Future<ByteData>? future = ServicesBinding.instance.defaultBinaryMessenger
+        .send('flutter/assets', ByteData.sublistView(encoded))
+        ?.then((ByteData? asset) {
+          if (asset == null) {
+            throw FlutterError.fromParts(<DiagnosticsNode>[
+              _errorSummaryWithKey(key),
+              ErrorDescription('The asset does not exist or has empty data.'),
+            ]);
+          }
+          return asset;
+        });
     if (future == null) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
         _errorSummaryWithKey(key),

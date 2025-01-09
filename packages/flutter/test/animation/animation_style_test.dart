@@ -61,9 +61,11 @@ void main() {
 
     AnimationStyle().debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-      .map((DiagnosticsNode node) => node.toString()).toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>[]);
   });
@@ -78,15 +80,17 @@ void main() {
       reverseDuration: const Duration(seconds: 2),
     ).debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-      .map((DiagnosticsNode node) => node.toString()).toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>[
       'curve: Cubic(0.42, 0.00, 0.58, 1.00)',
       'duration: 0:00:01.000000',
       'reverseCurve: _BounceInOutCurve',
-      'reverseDuration: 0:00:02.000000'
+      'reverseDuration: 0:00:02.000000',
     ]);
   });
 }

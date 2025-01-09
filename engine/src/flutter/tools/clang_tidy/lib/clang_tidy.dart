@@ -32,10 +32,7 @@ class _ComputeJobsResult {
   final bool sawMalformed;
 }
 
-enum _SetStatus {
-  Intersection,
-  Difference,
-}
+enum _SetStatus { Intersection, Difference }
 
 class _SetStatusCommand {
   _SetStatusCommand(this.setStatus, this.command);
@@ -85,18 +82,17 @@ class ClangTidy {
     StringSink? outSink,
     StringSink? errSink,
     ProcessManager processManager = const LocalProcessManager(),
-  }) :
-    options = Options(
-      buildCommandsPath: buildCommandsPath,
-      checksArg: checksArg,
-      lintTarget: lintTarget,
-      fix: fix,
-      errSink: errSink,
-    ),
-    _outSink = outSink ?? io.stdout,
-    _errSink = errSink ?? io.stderr,
-    _processManager = processManager,
-    _engine = null;
+  }) : options = Options(
+         buildCommandsPath: buildCommandsPath,
+         checksArg: checksArg,
+         lintTarget: lintTarget,
+         fix: fix,
+         errSink: errSink,
+       ),
+       _outSink = outSink ?? io.stdout,
+       _errSink = errSink ?? io.stderr,
+       _processManager = processManager,
+       _engine = null;
 
   /// Builds an instance of [ClangTidy] from a command line.
   ClangTidy.fromCommandLine(
@@ -105,12 +101,11 @@ class ClangTidy {
     StringSink? outSink,
     StringSink? errSink,
     ProcessManager processManager = const LocalProcessManager(),
-  }) :
-    options = Options.fromCommandLine(args, errSink: errSink, engine: engine),
-    _outSink = outSink ?? io.stdout,
-    _errSink = errSink ?? io.stderr,
-    _processManager = processManager,
-    _engine = engine;
+  }) : options = Options.fromCommandLine(args, errSink: errSink, engine: engine),
+       _outSink = outSink ?? io.stdout,
+       _errSink = errSink ?? io.stderr,
+       _processManager = processManager,
+       _engine = engine;
 
   /// The [Options] that specify how this [ClangTidy] operates.
   final Options options;
@@ -159,20 +154,16 @@ class ClangTidy {
             'HEAD.',
           );
         case LintRegex(:final String regex):
-          _outSink.writeln(
-            'Checking $changedFilesCount files that match the regex "$regex".',
-          );
+          _outSink.writeln('Checking $changedFilesCount files that match the regex "$regex".');
       }
     }
 
-    final List<Object?> buildCommandsData = jsonDecode(
-      options.buildCommandsPath.readAsStringSync(),
-    ) as List<Object?>;
-    final List<List<Object?>> shardBuildCommandsData = options
-        .shardCommandsPaths
-        .map((io.File file) =>
-            jsonDecode(file.readAsStringSync()) as List<Object?>)
-        .toList();
+    final List<Object?> buildCommandsData =
+        jsonDecode(options.buildCommandsPath.readAsStringSync()) as List<Object?>;
+    final List<List<Object?>> shardBuildCommandsData =
+        options.shardCommandsPaths
+            .map((io.File file) => jsonDecode(file.readAsStringSync()) as List<Object?>)
+            .toList();
     final List<Command> changedFileBuildCommands = await getLintCommandsForFiles(
       buildCommandsData,
       filesOfInterest,
@@ -220,17 +211,14 @@ class ClangTidy {
   Future<List<io.File>> computeFilesOfInterest() async {
     switch (options.lintTarget) {
       case LintAll():
-        return options.repoPath
-          .listSync(recursive: true)
-          .whereType<io.File>()
-          .toList();
+        return options.repoPath.listSync(recursive: true).whereType<io.File>().toList();
       case LintRegex(:final String regex):
         final RegExp pattern = RegExp(regex);
         return options.repoPath
-          .listSync(recursive: true)
-          .whereType<io.File>()
-          .where((io.File file) => pattern.hasMatch(file.path))
-          .toList();
+            .listSync(recursive: true)
+            .whereType<io.File>()
+            .where((io.File file) => pattern.hasMatch(file.path))
+            .toList();
       case LintChanged():
         final GitRepo repo = GitRepo.fromRoot(
           options.repoPath,
@@ -263,7 +251,9 @@ class ClangTidy {
   /// `Intersection` if the Command shows up in [items] and its filePath in all
   /// [filePathSets], otherwise `Difference`.
   Iterable<_SetStatusCommand> _calcIntersection(
-      Iterable<Command> items, Iterable<Set<String>> filePathSets) sync* {
+    Iterable<Command> items,
+    Iterable<Set<String>> filePathSets,
+  ) sync* {
     bool allSetsContain(Command command) {
       for (final Set<String> filePathSet in filePathSets) {
         if (!filePathSet.contains(command.filePath)) {
@@ -272,6 +262,7 @@ class ClangTidy {
       }
       return true;
     }
+
     for (final Command command in items) {
       if (allSetsContain(command)) {
         yield _SetStatusCommand(_SetStatus.Intersection, command);
@@ -297,17 +288,19 @@ class ClangTidy {
     if (sharedBuildCommandsData.isNotEmpty) {
       final List<Command> buildCommands = <Command>[
         for (final Object? data in buildCommandsData)
-          Command.fromMap((data as Map<String, Object?>?)!)
+          Command.fromMap((data as Map<String, Object?>?)!),
       ];
       final List<Set<String>> shardFilePaths = <Set<String>>[
         for (final List<Object?> list in sharedBuildCommandsData)
           <String>{
             for (final Object? data in list)
-              Command.fromMap((data as Map<String, Object?>?)!).filePath
-          }
+              Command.fromMap((data as Map<String, Object?>?)!).filePath,
+          },
       ];
-      final Iterable<_SetStatusCommand> intersectionResults =
-          _calcIntersection(buildCommands, shardFilePaths);
+      final Iterable<_SetStatusCommand> intersectionResults = _calcIntersection(
+        buildCommands,
+        shardFilePaths,
+      );
       for (final _SetStatusCommand result in intersectionResults) {
         if (result.setStatus == _SetStatus.Difference) {
           totalCommands.add(result.command);
@@ -315,18 +308,16 @@ class ClangTidy {
       }
       final List<Command> intersection = <Command>[
         for (final _SetStatusCommand result in intersectionResults)
-          if (result.setStatus == _SetStatus.Intersection) result.command
+          if (result.setStatus == _SetStatus.Intersection) result.command,
       ];
       // Make sure to sort results so the sharding scheme is guaranteed to work
       // since we are not sure if there is a defined order in the json file.
-      intersection
-          .sort((Command x, Command y) => x.filePath.compareTo(y.filePath));
-      totalCommands.addAll(
-          _takeShard(intersection, shardId!, 1 + sharedBuildCommandsData.length));
+      intersection.sort((Command x, Command y) => x.filePath.compareTo(y.filePath));
+      totalCommands.addAll(_takeShard(intersection, shardId!, 1 + sharedBuildCommandsData.length));
     } else {
       totalCommands.addAll(<Command>[
         for (final Object? data in buildCommandsData)
-          Command.fromMap((data as Map<String, Object?>?)!)
+          Command.fromMap((data as Map<String, Object?>?)!),
       ]);
     }
     return () async {
@@ -334,8 +325,7 @@ class ClangTidy {
       for (final Command command in totalCommands) {
         final LintAction lintAction = await command.lintAction;
         // Short-circuit the expensive containsAny call for the many third_party files.
-        if (lintAction != LintAction.skipThirdParty &&
-            command.containsAny(files)) {
+        if (lintAction != LintAction.skipThirdParty && command.containsAny(files)) {
           result.add(command);
         }
       }
@@ -343,10 +333,7 @@ class ClangTidy {
     }();
   }
 
-  Future<_ComputeJobsResult> _computeJobs(
-    List<Command> commands,
-    Options options,
-  ) async {
+  Future<_ComputeJobsResult> _computeJobs(List<Command> commands, Options options) async {
     bool sawMalformed = false;
     final List<WorkerJob> jobs = <WorkerJob>[];
     for (final Command command in commands) {
@@ -360,9 +347,7 @@ class ClangTidy {
           _outSink.writeln('🔷 ignoring $relativePath (FLUTTER_NOLINT)');
         case LintAction.failMalformedNoLint:
           _errSink.writeln('❌ malformed opt-out $relativePath');
-          _errSink.writeln(
-            '   Required format: // FLUTTER_NOLINT: $issueUrlPrefix/ISSUE_ID',
-          );
+          _errSink.writeln('   Required format: // FLUTTER_NOLINT: $issueUrlPrefix/ISSUE_ID');
           sawMalformed = true;
         case LintAction.lint:
           _outSink.writeln('🔶 linting $relativePath');
@@ -385,7 +370,7 @@ class ClangTidy {
         isPrintingError = true;
         yield line;
       } else if (line == ':') {
-          isPrintingError = false;
+        isPrintingError = false;
       } else if (isPrintingError) {
         yield line;
       }
@@ -403,8 +388,15 @@ class ClangTidy {
     final Set<String> pendingJobs = <String>{for (final WorkerJob job in jobs) job.name};
 
     void reporter(int totalJobs, int completed, int inProgress, int pending, int failed) {
-      return _logWithTimestamp(ProcessPool.defaultReportToString(
-        totalJobs, completed, inProgress, pending, failed - ignoredFailures));
+      return _logWithTimestamp(
+        ProcessPool.defaultReportToString(
+          totalJobs,
+          completed,
+          inProgress,
+          pending,
+          failed - ignoredFailures,
+        ),
+      );
     }
 
     final ProcessPool pool = ProcessPool(

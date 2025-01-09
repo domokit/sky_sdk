@@ -25,10 +25,7 @@ part of ui;
 
 // TODO(mdebbar): Deprecate this and remove it.
 // https://github.com/flutter/flutter/issues/127395
-Future<void> webOnlyWarmupEngine({
-  VoidCallback? registerPlugins,
-  VoidCallback? runApp,
-}) {
+Future<void> webOnlyWarmupEngine({VoidCallback? registerPlugins, VoidCallback? runApp}) {
   assert(() {
     engine.printWarning(
       'The webOnlyWarmupEngine API is deprecated and will be removed in a '
@@ -36,10 +33,7 @@ Future<void> webOnlyWarmupEngine({
     );
     return true;
   }());
-  return ui_web.bootstrapEngine(
-    registerPlugins: registerPlugins,
-    runApp: runApp,
-  );
+  return ui_web.bootstrapEngine(registerPlugins: registerPlugins, runApp: runApp);
 }
 
 // TODO(mdebbar): Deprecate this and remove it.

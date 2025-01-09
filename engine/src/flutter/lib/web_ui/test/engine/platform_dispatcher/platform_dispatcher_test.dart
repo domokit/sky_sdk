@@ -38,12 +38,10 @@ void testMain() {
     });
 
     test('high contrast in accessibilityFeatures has the correct value', () {
-      final MockHighContrastSupport mockHighContrast =
-          MockHighContrastSupport();
+      final MockHighContrastSupport mockHighContrast = MockHighContrastSupport();
       HighContrastSupport.instance = mockHighContrast;
 
-      final EnginePlatformDispatcher dispatcher =
-          EnginePlatformDispatcher();
+      final EnginePlatformDispatcher dispatcher = EnginePlatformDispatcher();
 
       expect(dispatcher.accessibilityFeatures.highContrast, isTrue);
       mockHighContrast.isEnabled = false;
@@ -59,72 +57,64 @@ void testMain() {
         states.add(state);
       }
 
-      final MockAppLifecycleState mockAppLifecycleState =
-          MockAppLifecycleState();
+      final MockAppLifecycleState mockAppLifecycleState = MockAppLifecycleState();
 
-      expect(mockAppLifecycleState.appLifecycleState,
-          ui.AppLifecycleState.resumed);
+      expect(mockAppLifecycleState.appLifecycleState, ui.AppLifecycleState.resumed);
 
       mockAppLifecycleState.addListener(listener);
       expect(mockAppLifecycleState.activeCallCount, 1);
 
-      expect(
-          states, equals(<ui.AppLifecycleState>[ui.AppLifecycleState.resumed]));
+      expect(states, equals(<ui.AppLifecycleState>[ui.AppLifecycleState.resumed]));
 
       mockAppLifecycleState.inactive();
-      expect(mockAppLifecycleState.appLifecycleState,
-          ui.AppLifecycleState.inactive);
+      expect(mockAppLifecycleState.appLifecycleState, ui.AppLifecycleState.inactive);
       expect(
-          states,
-          equals(<ui.AppLifecycleState>[
-            ui.AppLifecycleState.resumed,
-            ui.AppLifecycleState.inactive
-          ]));
+        states,
+        equals(<ui.AppLifecycleState>[ui.AppLifecycleState.resumed, ui.AppLifecycleState.inactive]),
+      );
 
       // consecutive same states are skipped
       mockAppLifecycleState.inactive();
       expect(
-          states,
-          equals(<ui.AppLifecycleState>[
-            ui.AppLifecycleState.resumed,
-            ui.AppLifecycleState.inactive
-          ]));
+        states,
+        equals(<ui.AppLifecycleState>[ui.AppLifecycleState.resumed, ui.AppLifecycleState.inactive]),
+      );
 
       mockAppLifecycleState.hidden();
+      expect(mockAppLifecycleState.appLifecycleState, ui.AppLifecycleState.hidden);
       expect(
-          mockAppLifecycleState.appLifecycleState, ui.AppLifecycleState.hidden);
-      expect(
-          states,
-          equals(<ui.AppLifecycleState>[
-            ui.AppLifecycleState.resumed,
-            ui.AppLifecycleState.inactive,
-            ui.AppLifecycleState.hidden
-          ]));
+        states,
+        equals(<ui.AppLifecycleState>[
+          ui.AppLifecycleState.resumed,
+          ui.AppLifecycleState.inactive,
+          ui.AppLifecycleState.hidden,
+        ]),
+      );
 
       mockAppLifecycleState.resume();
-      expect(mockAppLifecycleState.appLifecycleState,
-          ui.AppLifecycleState.resumed);
+      expect(mockAppLifecycleState.appLifecycleState, ui.AppLifecycleState.resumed);
       expect(
-          states,
-          equals(<ui.AppLifecycleState>[
-            ui.AppLifecycleState.resumed,
-            ui.AppLifecycleState.inactive,
-            ui.AppLifecycleState.hidden,
-            ui.AppLifecycleState.resumed
-          ]));
+        states,
+        equals(<ui.AppLifecycleState>[
+          ui.AppLifecycleState.resumed,
+          ui.AppLifecycleState.inactive,
+          ui.AppLifecycleState.hidden,
+          ui.AppLifecycleState.resumed,
+        ]),
+      );
 
       mockAppLifecycleState.detach();
-      expect(mockAppLifecycleState.appLifecycleState,
-          ui.AppLifecycleState.detached);
+      expect(mockAppLifecycleState.appLifecycleState, ui.AppLifecycleState.detached);
       expect(
-          states,
-          equals(<ui.AppLifecycleState>[
-            ui.AppLifecycleState.resumed,
-            ui.AppLifecycleState.inactive,
-            ui.AppLifecycleState.hidden,
-            ui.AppLifecycleState.resumed,
-            ui.AppLifecycleState.detached
-          ]));
+        states,
+        equals(<ui.AppLifecycleState>[
+          ui.AppLifecycleState.resumed,
+          ui.AppLifecycleState.inactive,
+          ui.AppLifecycleState.hidden,
+          ui.AppLifecycleState.resumed,
+          ui.AppLifecycleState.detached,
+        ]),
+      );
 
       mockAppLifecycleState.removeListener(listener);
       expect(mockAppLifecycleState.deactivateCallCount, 1);
@@ -132,14 +122,15 @@ void testMain() {
       // No more states should be recorded after the listener is removed.
       mockAppLifecycleState.resume();
       expect(
-          states,
-          equals(<ui.AppLifecycleState>[
-            ui.AppLifecycleState.resumed,
-            ui.AppLifecycleState.inactive,
-            ui.AppLifecycleState.hidden,
-            ui.AppLifecycleState.resumed,
-            ui.AppLifecycleState.detached
-          ]));
+        states,
+        equals(<ui.AppLifecycleState>[
+          ui.AppLifecycleState.resumed,
+          ui.AppLifecycleState.inactive,
+          ui.AppLifecycleState.hidden,
+          ui.AppLifecycleState.resumed,
+          ui.AppLifecycleState.detached,
+        ]),
+      );
     });
 
     test('responds to flutter/skia Skia.setResourceCacheMaxBytes', () async {
@@ -147,19 +138,15 @@ void testMain() {
       final Completer<ByteData?> completer = Completer<ByteData?>();
       ui.PlatformDispatcher.instance.sendPlatformMessage(
         'flutter/skia',
-        codec.encodeMethodCall(const MethodCall(
-          'Skia.setResourceCacheMaxBytes',
-          512 * 1000 * 1000,
-        )),
+        codec.encodeMethodCall(
+          const MethodCall('Skia.setResourceCacheMaxBytes', 512 * 1000 * 1000),
+        ),
         completer.complete,
       );
 
       final ByteData? response = await completer.future;
       expect(response, isNotNull);
-      expect(
-        codec.decodeEnvelope(response!),
-        <bool>[true],
-      );
+      expect(codec.decodeEnvelope(response!), <bool>[true]);
     });
 
     test('responds to flutter/platform HapticFeedback.vibrate', () async {
@@ -167,39 +154,29 @@ void testMain() {
       final Completer<ByteData?> completer = Completer<ByteData?>();
       ui.PlatformDispatcher.instance.sendPlatformMessage(
         'flutter/platform',
-        codec.encodeMethodCall(const MethodCall(
-          'HapticFeedback.vibrate',
-        )),
+        codec.encodeMethodCall(const MethodCall('HapticFeedback.vibrate')),
         completer.complete,
       );
 
       final ByteData? response = await completer.future;
       expect(response, isNotNull);
-      expect(
-        codec.decodeEnvelope(response!),
-        true,
-      );
+      expect(codec.decodeEnvelope(response!), true);
     });
 
-    test('responds to flutter/platform SystemChrome.setSystemUIOverlayStyle',
-        () async {
+    test('responds to flutter/platform SystemChrome.setSystemUIOverlayStyle', () async {
       const MethodCodec codec = JSONMethodCodec();
       final Completer<ByteData?> completer = Completer<ByteData?>();
       ui.PlatformDispatcher.instance.sendPlatformMessage(
         'flutter/platform',
-        codec.encodeMethodCall(const MethodCall(
-          'SystemChrome.setSystemUIOverlayStyle',
-          <String, dynamic>{},
-        )),
+        codec.encodeMethodCall(
+          const MethodCall('SystemChrome.setSystemUIOverlayStyle', <String, dynamic>{}),
+        ),
         completer.complete,
       );
 
       final ByteData? response = await completer.future;
       expect(response, isNotNull);
-      expect(
-        codec.decodeEnvelope(response!),
-        true,
-      );
+      expect(codec.decodeEnvelope(response!), true);
     });
 
     test('responds to flutter/contextmenu enable', () async {
@@ -207,18 +184,13 @@ void testMain() {
       final Completer<ByteData?> completer = Completer<ByteData?>();
       ui.PlatformDispatcher.instance.sendPlatformMessage(
         'flutter/contextmenu',
-        codec.encodeMethodCall(const MethodCall(
-          'enableContextMenu',
-        )),
+        codec.encodeMethodCall(const MethodCall('enableContextMenu')),
         completer.complete,
       );
 
       final ByteData? response = await completer.future;
       expect(response, isNotNull);
-      expect(
-        codec.decodeEnvelope(response!),
-        true,
-      );
+      expect(codec.decodeEnvelope(response!), true);
     });
 
     test('responds to flutter/contextmenu disable', () async {
@@ -226,18 +198,13 @@ void testMain() {
       final Completer<ByteData?> completer = Completer<ByteData?>();
       ui.PlatformDispatcher.instance.sendPlatformMessage(
         'flutter/contextmenu',
-        codec.encodeMethodCall(const MethodCall(
-          'disableContextMenu',
-        )),
+        codec.encodeMethodCall(const MethodCall('disableContextMenu')),
         completer.complete,
       );
 
       final ByteData? response = await completer.future;
       expect(response, isNotNull);
-      expect(
-        codec.decodeEnvelope(response!),
-        true,
-      );
+      expect(codec.decodeEnvelope(response!), true);
     });
 
     test('can find text scale factor', () async {
@@ -269,13 +236,10 @@ void testMain() {
       expect(findBrowserTextScaleFactor(), 1.0);
     });
 
-    test(
-        "calls onTextScaleFactorChanged when the <html> element's font-size changes",
-        () async {
+    test("calls onTextScaleFactorChanged when the <html> element's font-size changes", () async {
       final DomElement root = domDocument.documentElement!;
       final String oldFontSize = root.style.fontSize;
-      final ui.VoidCallback? oldCallback =
-          ui.PlatformDispatcher.instance.onTextScaleFactorChanged;
+      final ui.VoidCallback? oldCallback = ui.PlatformDispatcher.instance.onTextScaleFactorChanged;
 
       addTearDown(() {
         root.style.fontSize = oldFontSize;
@@ -293,8 +257,7 @@ void testMain() {
       await Future<void>.delayed(Duration.zero);
       expect(root.style.fontSize, '20px');
       expect(isCalled, isTrue);
-      expect(ui.PlatformDispatcher.instance.textScaleFactor,
-          findBrowserTextScaleFactor());
+      expect(ui.PlatformDispatcher.instance.textScaleFactor, findBrowserTextScaleFactor());
 
       isCalled = false;
 
@@ -302,17 +265,13 @@ void testMain() {
       await Future<void>.delayed(Duration.zero);
       expect(root.style.fontSize, '16px');
       expect(isCalled, isTrue);
-      expect(ui.PlatformDispatcher.instance.textScaleFactor,
-          findBrowserTextScaleFactor());
+      expect(ui.PlatformDispatcher.instance.textScaleFactor, findBrowserTextScaleFactor());
     });
 
     test('disposes all its views', () {
-      final EngineFlutterView view1 =
-          EngineFlutterView(dispatcher, createDomHTMLDivElement());
-      final EngineFlutterView view2 =
-          EngineFlutterView(dispatcher, createDomHTMLDivElement());
-      final EngineFlutterView view3 =
-          EngineFlutterView(dispatcher, createDomHTMLDivElement());
+      final EngineFlutterView view1 = EngineFlutterView(dispatcher, createDomHTMLDivElement());
+      final EngineFlutterView view2 = EngineFlutterView(dispatcher, createDomHTMLDivElement());
+      final EngineFlutterView view3 = EngineFlutterView(dispatcher, createDomHTMLDivElement());
 
       dispatcher.viewManager
         ..registerView(view1)
@@ -330,10 +289,8 @@ void testMain() {
     });
 
     test('connects view disposal to metrics changed event', () {
-      final EngineFlutterView view1 =
-          EngineFlutterView(dispatcher, createDomHTMLDivElement());
-      final EngineFlutterView view2 =
-          EngineFlutterView(dispatcher, createDomHTMLDivElement());
+      final EngineFlutterView view1 = EngineFlutterView(dispatcher, createDomHTMLDivElement());
+      final EngineFlutterView view2 = EngineFlutterView(dispatcher, createDomHTMLDivElement());
 
       dispatcher.viewManager
         ..registerView(view1)
@@ -357,8 +314,7 @@ void testMain() {
     });
 
     test('disconnects view disposal event on dispose', () {
-      final EngineFlutterView view1 =
-          EngineFlutterView(dispatcher, createDomHTMLDivElement());
+      final EngineFlutterView view1 = EngineFlutterView(dispatcher, createDomHTMLDivElement());
 
       dispatcher.viewManager.registerView(view1);
 
@@ -423,15 +379,18 @@ void testMain() {
     test('scheduleWarmupFrame should call both callbacks', () async {
       bool beginFrameCalled = false;
       final Completer<void> drawFrameCalled = Completer<void>();
-      dispatcher.scheduleWarmUpFrame(beginFrame: () {
-        expect(drawFrameCalled.isCompleted, false);
-        expect(beginFrameCalled, false);
-        beginFrameCalled = true;
-      }, drawFrame: () {
-        expect(beginFrameCalled, true);
-        expect(drawFrameCalled.isCompleted, false);
-        drawFrameCalled.complete();
-      });
+      dispatcher.scheduleWarmUpFrame(
+        beginFrame: () {
+          expect(drawFrameCalled.isCompleted, false);
+          expect(beginFrameCalled, false);
+          beginFrameCalled = true;
+        },
+        drawFrame: () {
+          expect(beginFrameCalled, true);
+          expect(drawFrameCalled.isCompleted, false);
+          drawFrameCalled.complete();
+        },
+      );
       await drawFrameCalled.future;
       expect(beginFrameCalled, true);
       expect(drawFrameCalled.isCompleted, true);

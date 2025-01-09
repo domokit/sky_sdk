@@ -14,31 +14,22 @@ import 'src/pre_rebase_command.dart';
 
 /// Runs the githooks
 Future<int> run(List<String> args) async {
-  final CommandRunner<bool> runner = CommandRunner<bool> (
-    'githooks',
-    'Githooks implementation for the flutter/engine repo.',
-  )
-  ..addCommand(PostCheckoutCommand())
-  ..addCommand(PostMergeCommand())
-  ..addCommand(PrePushCommand())
-  ..addCommand(PreRebaseCommand());
+  final CommandRunner<bool> runner =
+      CommandRunner<bool>('githooks', 'Githooks implementation for the flutter/engine repo.')
+        ..addCommand(PostCheckoutCommand())
+        ..addCommand(PostMergeCommand())
+        ..addCommand(PrePushCommand())
+        ..addCommand(PreRebaseCommand());
 
   // Add top-level arguments.
   runner.argParser
-    ..addFlag(
-      'enable-clang-tidy',
-      help: 'Enable running clang-tidy on changed files.',
-    )
+    ..addFlag('enable-clang-tidy', help: 'Enable running clang-tidy on changed files.')
     ..addOption(
       'flutter',
       abbr: 'f',
       help: 'The absolute path to the root of the flutter/engine checkout.',
     )
-    ..addFlag(
-      'verbose',
-      abbr: 'v',
-      help: 'Runs with verbose logging',
-    );
+    ..addFlag('verbose', abbr: 'v', help: 'Runs with verbose logging');
 
   if (args.isEmpty) {
     // The tool was invoked with no arguments. Print usage.

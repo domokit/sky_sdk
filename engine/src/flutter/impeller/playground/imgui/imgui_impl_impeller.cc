@@ -100,7 +100,7 @@ bool ImGui_ImplImpeller_Init(
 
     blit_pass->AddCopy(impeller::DeviceBuffer::AsBufferView(device_buffer),
                        bd->font_texture);
-    blit_pass->EncodeCommands(context->GetResourceAllocator());
+    blit_pass->EncodeCommands();
 
     [[maybe_unused]] bool uploaded =
         context->GetCommandQueue()->Submit({command_buffer}).ok();

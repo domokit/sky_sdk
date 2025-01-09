@@ -86,9 +86,11 @@ Future<void> testMain() async {
     test('provides image loading progress', () async {
       final StringBuffer buffer = StringBuffer();
       final HtmlImageElementCodec codec = createImageElementCodec(
-          'sample_image1.png', chunkCallback: (int loaded, int total) {
-        buffer.write('$loaded/$total,');
-      });
+        'sample_image1.png',
+        chunkCallback: (int loaded, int total) {
+          buffer.write('$loaded/$total,');
+        },
+      );
       await codec.getNextFrame();
       expect(buffer.toString(), '0/100,100/100,');
     });
@@ -97,16 +99,17 @@ Future<void> testMain() async {
     /// https://github.com/flutter/flutter/issues/66412
     test('Returns nonzero natural width/height', () async {
       final HtmlImageElementCodec codec = createImageElementCodec(
-          'data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9I'
-          'jAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dG'
-          'l0bGU+QWJzdHJhY3QgaWNvbjwvdGl0bGU+PHBhdGggZD0iTTEyIDBjOS42MDEgMCAx'
-          'MiAyLjM5OSAxMiAxMiAwIDkuNjAxLTIuMzk5IDEyLTEyIDEyLTkuNjAxIDAtMTItMi'
-          '4zOTktMTItMTJDMCAyLjM5OSAyLjM5OSAwIDEyIDB6bS0xLjk2OSAxOC41NjRjMi41'
-          'MjQuMDAzIDQuNjA0LTIuMDcgNC42MDktNC41OTUgMC0yLjUyMS0yLjA3NC00LjU5NS'
-          '00LjU5NS00LjU5NVM1LjQ1IDExLjQ0OSA1LjQ1IDEzLjk2OWMwIDIuNTE2IDIuMDY1'
-          'IDQuNTg4IDQuNTgxIDQuNTk1em04LjM0NC0uMTg5VjUuNjI1SDUuNjI1djIuMjQ3aD'
-          'EwLjQ5OHYxMC41MDNoMi4yNTJ6bS04LjM0NC02Ljc0OGEyLjM0MyAyLjM0MyAwIDEx'
-          'LS4wMDIgNC42ODYgMi4zNDMgMi4zNDMgMCAwMS4wMDItNC42ODZ6Ii8+PC9zdmc+');
+        'data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9I'
+        'jAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dG'
+        'l0bGU+QWJzdHJhY3QgaWNvbjwvdGl0bGU+PHBhdGggZD0iTTEyIDBjOS42MDEgMCAx'
+        'MiAyLjM5OSAxMiAxMiAwIDkuNjAxLTIuMzk5IDEyLTEyIDEyLTkuNjAxIDAtMTItMi'
+        '4zOTktMTItMTJDMCAyLjM5OSAyLjM5OSAwIDEyIDB6bS0xLjk2OSAxOC41NjRjMi41'
+        'MjQuMDAzIDQuNjA0LTIuMDcgNC42MDktNC41OTUgMC0yLjUyMS0yLjA3NC00LjU5NS'
+        '00LjU5NS00LjU5NVM1LjQ1IDExLjQ0OSA1LjQ1IDEzLjk2OWMwIDIuNTE2IDIuMDY1'
+        'IDQuNTg4IDQuNTgxIDQuNTk1em04LjM0NC0uMTg5VjUuNjI1SDUuNjI1djIuMjQ3aD'
+        'EwLjQ5OHYxMC41MDNoMi4yNTJ6bS04LjM0NC02Ljc0OGEyLjM0MyAyLjM0MyAwIDEx'
+        'LS4wMDIgNC42ODYgMi4zNDMgMi4zNDMgMCAwMS4wMDItNC42ODZ6Ii8+PC9zdmc+',
+      );
       final ui.FrameInfo frameInfo = await codec.getNextFrame();
       expect(frameInfo.image.width, isNot(0));
     });
@@ -130,10 +133,14 @@ Future<void> testMain() async {
     test('provides image loading progress from web', () async {
       final Uri uri = Uri.base.resolve('sample_image1.png');
       final StringBuffer buffer = StringBuffer();
-      final HtmlImageElementCodec codec = await ui_web
-          .createImageCodecFromUrl(uri, chunkCallback: (int loaded, int total) {
-        buffer.write('$loaded/$total,');
-      }) as HtmlImageElementCodec;
+      final HtmlImageElementCodec codec =
+          await ui_web.createImageCodecFromUrl(
+                uri,
+                chunkCallback: (int loaded, int total) {
+                  buffer.write('$loaded/$total,');
+                },
+              )
+              as HtmlImageElementCodec;
       await codec.getNextFrame();
       expect(buffer.toString(), '0/100,100/100,');
     });

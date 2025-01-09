@@ -8,13 +8,17 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Uses Text Cursor', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.MouseCursorExampleApp(),
-    );
+    await tester.pumpWidget(const example.MouseCursorExampleApp());
 
     expect(find.byType(MouseRegion), findsNWidgets(2)); // There's one in the MaterialApp
-    final Finder mouseRegionFinder = find.ancestor(of: find.byType(Container), matching: find.byType(MouseRegion));
+    final Finder mouseRegionFinder = find.ancestor(
+      of: find.byType(Container),
+      matching: find.byType(MouseRegion),
+    );
     expect(mouseRegionFinder, findsOneWidget);
-    expect((tester.widget(mouseRegionFinder) as MouseRegion).cursor, equals(SystemMouseCursors.text));
+    expect(
+      (tester.widget(mouseRegionFinder) as MouseRegion).cursor,
+      equals(SystemMouseCursors.text),
+    );
   });
 }

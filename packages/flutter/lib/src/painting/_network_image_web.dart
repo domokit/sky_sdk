@@ -60,8 +60,7 @@ void debugRestoreImgElementFactory() {
 ///
 /// NetworkImage on the web does not support decoding to a specified size.
 @immutable
-class NetworkImage
-    extends image_provider.ImageProvider<image_provider.NetworkImage>
+class NetworkImage extends image_provider.ImageProvider<image_provider.NetworkImage>
     implements image_provider.NetworkImage {
   /// Creates an object that fetches the image at the given URL.
   const NetworkImage(this.url, {this.scale = 1.0, this.headers});
@@ -81,37 +80,34 @@ class NetworkImage
   }
 
   @override
-  ImageStreamCompleter loadBuffer(image_provider.NetworkImage key, image_provider.DecoderBufferCallback decode) {
-    // Ownership of this controller is handed off to [_loadAsync]; it is that
-    // method's responsibility to close the controller's stream when the image
-    // has been loaded or an error is thrown.
-    final StreamController<ImageChunkEvent> chunkEvents =
-        StreamController<ImageChunkEvent>();
-
-    return _ForwardingImageStreamCompleter(
-      _loadAsync(
-        key as NetworkImage,
-        decode,
-        chunkEvents,
-      ),
-      informationCollector: _imageStreamInformationCollector(key),
-      debugLabel: key.url,
-    );
-  }
-
-  @override
-  ImageStreamCompleter loadImage(image_provider.NetworkImage key, image_provider.ImageDecoderCallback decode) {
+  ImageStreamCompleter loadBuffer(
+    image_provider.NetworkImage key,
+    image_provider.DecoderBufferCallback decode,
+  ) {
     // Ownership of this controller is handed off to [_loadAsync]; it is that
     // method's responsibility to close the controller's stream when the image
     // has been loaded or an error is thrown.
     final StreamController<ImageChunkEvent> chunkEvents = StreamController<ImageChunkEvent>();
 
     return _ForwardingImageStreamCompleter(
-      _loadAsync(
-        key as NetworkImage,
-        decode,
-        chunkEvents,
-      ),
+      _loadAsync(key as NetworkImage, decode, chunkEvents),
+      informationCollector: _imageStreamInformationCollector(key),
+      debugLabel: key.url,
+    );
+  }
+
+  @override
+  ImageStreamCompleter loadImage(
+    image_provider.NetworkImage key,
+    image_provider.ImageDecoderCallback decode,
+  ) {
+    // Ownership of this controller is handed off to [_loadAsync]; it is that
+    // method's responsibility to close the controller's stream when the image
+    // has been loaded or an error is thrown.
+    final StreamController<ImageChunkEvent> chunkEvents = StreamController<ImageChunkEvent>();
+
+    return _ForwardingImageStreamCompleter(
+      _loadAsync(key as NetworkImage, decode, chunkEvents),
       informationCollector: _imageStreamInformationCollector(key),
       debugLabel: key.url,
     );
@@ -120,10 +116,11 @@ class NetworkImage
   InformationCollector? _imageStreamInformationCollector(image_provider.NetworkImage key) {
     InformationCollector? collector;
     assert(() {
-      collector = () => <DiagnosticsNode>[
-        DiagnosticsProperty<image_provider.ImageProvider>('Image provider', this),
-        DiagnosticsProperty<NetworkImage>('Image key', key as NetworkImage),
-      ];
+      collector =
+          () => <DiagnosticsNode>[
+            DiagnosticsProperty<image_provider.ImageProvider>('Image provider', this),
+            DiagnosticsProperty<NetworkImage>('Image key', key as NetworkImage),
+          ];
       return true;
     }());
     return collector;
@@ -187,12 +184,7 @@ class NetworkImage
         // to avoid double reporting the error.
         await imageElement.decode().toDart;
         return OneFrameImageStreamCompleter(
-          Future<ImageInfo>.value(
-            WebImageInfo(
-              imageElement,
-              debugLabel: key.url,
-            ),
-          ),
+          Future<ImageInfo>.value(WebImageInfo(imageElement, debugLabel: key.url)),
           informationCollector: _imageStreamInformationCollector(key),
         )..debugLabel = key.url;
       }
@@ -207,12 +199,11 @@ class NetworkImage
       // twice (once from the MultiFrameImageStreamCompleter) and again
       // from the wrapping [ForwardingImageStreamCompleter].
       final ui.Codec codec = await ui_web.createImageCodecFromUrl(
-          resolved,
-          chunkCallback: (int bytes, int total) {
-            chunkEvents.add(ImageChunkEvent(
-                cumulativeBytesLoaded: bytes, expectedTotalBytes: total));
-          },
-        );
+        resolved,
+        chunkCallback: (int bytes, int total) {
+          chunkEvents.add(ImageChunkEvent(cumulativeBytesLoaded: bytes, expectedTotalBytes: total));
+        },
+      );
       return MultiFrameImageStreamCompleter(
         chunkEvents: chunkEvents.stream,
         codec: Future<ui.Codec>.value(codec),
@@ -223,15 +214,12 @@ class NetworkImage
     }
   }
 
-  Future<ui.Codec> _fetchImageBytes(
-    _SimpleDecoderCallback decode,
-  ) async {
+  Future<ui.Codec> _fetchImageBytes(_SimpleDecoderCallback decode) async {
     final Uri resolved = Uri.base.resolve(url);
 
     final bool containsNetworkImageHeaders = headers?.isNotEmpty ?? false;
 
-    final Completer<web.XMLHttpRequest> completer =
-        Completer<web.XMLHttpRequest>();
+    final Completer<web.XMLHttpRequest> completer = Completer<web.XMLHttpRequest>();
     final web.XMLHttpRequest request = httpRequestFactory();
 
     request.open('GET', url, true);
@@ -242,30 +230,32 @@ class NetworkImage
       });
     }
 
-    request.addEventListener('load', (web.Event e) {
-      final int status = request.status;
-      final bool accepted = status >= 200 && status < 300;
-      final bool fileUri = status == 0; // file:// URIs have status of 0.
-      final bool notModified = status == 304;
-      final bool unknownRedirect = status > 307 && status < 400;
-      final bool success =
-          accepted || fileUri || notModified || unknownRedirect;
+    request.addEventListener(
+      'load',
+      (web.Event e) {
+        final int status = request.status;
+        final bool accepted = status >= 200 && status < 300;
+        final bool fileUri = status == 0; // file:// URIs have status of 0.
+        final bool notModified = status == 304;
+        final bool unknownRedirect = status > 307 && status < 400;
+        final bool success = accepted || fileUri || notModified || unknownRedirect;
 
-      if (success) {
-        completer.complete(request);
-      } else {
-        completer.completeError(image_provider.NetworkImageLoadException(
-            statusCode: status, uri: resolved));
-      }
-    }.toJS);
+        if (success) {
+          completer.complete(request);
+        } else {
+          completer.completeError(
+            image_provider.NetworkImageLoadException(statusCode: status, uri: resolved),
+          );
+        }
+      }.toJS,
+    );
 
     request.addEventListener(
       'error',
-      ((JSObject e) =>
-          completer.completeError(image_provider.NetworkImageLoadException(
-            statusCode: request.status,
-            uri: resolved,
-          ))).toJS,
+      ((JSObject e) => completer.completeError(
+            image_provider.NetworkImageLoadException(statusCode: request.status, uri: resolved),
+          ))
+          .toJS,
     );
 
     request.send();
@@ -275,8 +265,7 @@ class NetworkImage
     final Uint8List bytes = (request.response! as JSArrayBuffer).toDart.asUint8List();
 
     if (bytes.lengthInBytes == 0) {
-      throw image_provider.NetworkImageLoadException(
-          statusCode: request.status, uri: resolved);
+      throw image_provider.NetworkImageLoadException(statusCode: request.status, uri: resolved);
     }
 
     return decode(await ui.ImmutableBuffer.fromUint8List(bytes));
@@ -294,7 +283,8 @@ class NetworkImage
   int get hashCode => Object.hash(url, scale);
 
   @override
-  String toString() => '${objectRuntimeType(this, 'NetworkImage')}("$url", scale: ${scale.toStringAsFixed(1)})';
+  String toString() =>
+      '${objectRuntimeType(this, 'NetworkImage')}("$url", scale: ${scale.toStringAsFixed(1)})';
 }
 
 /// An [ImageStreamCompleter] that delegates to another [ImageStreamCompleter]
@@ -302,40 +292,48 @@ class NetworkImage
 ///
 /// This completer keeps its child completer alive until this completer is disposed.
 class _ForwardingImageStreamCompleter extends ImageStreamCompleter {
-  _ForwardingImageStreamCompleter(this.task,
-      {InformationCollector? informationCollector, String? debugLabel}) {
+  _ForwardingImageStreamCompleter(
+    this.task, {
+    InformationCollector? informationCollector,
+    String? debugLabel,
+  }) {
     this.debugLabel = debugLabel;
-    task.then((ImageStreamCompleter value) {
-      resolved = true;
-      if (_disposed) {
-        // Add a listener since the delegate completer won't dispose if it never
-        // had a listener.
-        value.addListener(ImageStreamListener((_, __) {}));
-        value.maybeDispose();
-        return;
-      }
-      completer = value;
-      handle = completer.keepAlive();
-      completer.addListener(ImageStreamListener(
-        (ImageInfo image, bool synchronousCall) {
-          setImage(image);
-        },
-        onChunk: (ImageChunkEvent event) {
-          reportImageChunkEvent(event);
-        },
-        onError:(Object exception, StackTrace? stackTrace) {
-          reportError(exception: exception, stack: stackTrace);
-        },
-      ));
-    }, onError: (Object error, StackTrace stack) {
-      reportError(
-        context: ErrorDescription('resolving an image stream completer'),
-        exception: error,
-        stack: stack,
-        informationCollector: informationCollector,
-        silent: true,
-      );
-    });
+    task.then(
+      (ImageStreamCompleter value) {
+        resolved = true;
+        if (_disposed) {
+          // Add a listener since the delegate completer won't dispose if it never
+          // had a listener.
+          value.addListener(ImageStreamListener((_, __) {}));
+          value.maybeDispose();
+          return;
+        }
+        completer = value;
+        handle = completer.keepAlive();
+        completer.addListener(
+          ImageStreamListener(
+            (ImageInfo image, bool synchronousCall) {
+              setImage(image);
+            },
+            onChunk: (ImageChunkEvent event) {
+              reportImageChunkEvent(event);
+            },
+            onError: (Object exception, StackTrace? stackTrace) {
+              reportError(exception: exception, stack: stackTrace);
+            },
+          ),
+        );
+      },
+      onError: (Object error, StackTrace stack) {
+        reportError(
+          context: ErrorDescription('resolving an image stream completer'),
+          exception: error,
+          stack: stack,
+          informationCollector: informationCollector,
+          silent: true,
+        );
+      },
+    );
   }
 
   final Future<ImageStreamCompleter> task;

@@ -25,15 +25,13 @@ import 'package:ui/ui.dart' as ui;
 /// `flutter.js` does it:
 ///
 /// * https://github.com/flutter/flutter/blob/95be76ab7e3dca2def54454313e97f94f4ac4582/packages/flutter_tools/lib/src/web/file_generators/js/flutter.js
-Future<void> bootstrapEngine({
-  ui.VoidCallback? registerPlugins,
-  ui.VoidCallback? runApp,
-}) async {
+Future<void> bootstrapEngine({ui.VoidCallback? registerPlugins, ui.VoidCallback? runApp}) async {
   // Create the object that knows how to bootstrap an app from JS and Dart.
   final AppBootstrap bootstrap = AppBootstrap(
     initializeEngine: ([JsFlutterConfiguration? configuration]) async {
       await initializeEngineServices(jsConfiguration: configuration);
-    }, runApp: () async {
+    },
+    runApp: () async {
       if (registerPlugins != null) {
         registerPlugins();
       }

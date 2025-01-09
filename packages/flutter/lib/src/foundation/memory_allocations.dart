@@ -27,11 +27,9 @@ class _FieldNames {
 }
 
 /// A lifecycle event of an object.
-abstract class ObjectEvent{
+abstract class ObjectEvent {
   /// Creates an instance of [ObjectEvent].
-  ObjectEvent({
-    required this.object,
-  });
+  ObjectEvent({required this.object});
 
   /// Reference to the object.
   ///
@@ -57,11 +55,7 @@ typedef ObjectEventListener = void Function(ObjectEvent event);
 /// An event that describes creation of an object.
 class ObjectCreated extends ObjectEvent {
   /// Creates an instance of [ObjectCreated].
-  ObjectCreated({
-    required this.library,
-    required this.className,
-    required super.object,
-  });
+  ObjectCreated({required this.library, required this.className, required super.object});
 
   /// Name of the instrumented library.
   ///
@@ -74,26 +68,26 @@ class ObjectCreated extends ObjectEvent {
 
   @override
   Map<Object, Map<String, Object>> toMap() {
-    return <Object, Map<String, Object>>{object: <String, Object>{
-      _FieldNames.libraryName: library,
-      _FieldNames.className: className,
-      _FieldNames.eventType: 'created',
-    }};
+    return <Object, Map<String, Object>>{
+      object: <String, Object>{
+        _FieldNames.libraryName: library,
+        _FieldNames.className: className,
+        _FieldNames.eventType: 'created',
+      },
+    };
   }
 }
 
 /// An event that describes disposal of an object.
 class ObjectDisposed extends ObjectEvent {
   /// Creates an instance of [ObjectDisposed].
-  ObjectDisposed({
-    required super.object,
-  });
+  ObjectDisposed({required super.object});
 
   @override
   Map<Object, Map<String, Object>> toMap() {
-    return <Object, Map<String, Object>>{object: <String, Object>{
-      _FieldNames.eventType: 'disposed',
-    }};
+    return <Object, Map<String, Object>>{
+      object: <String, Object>{_FieldNames.eventType: 'disposed'},
+    };
   }
 }
 
@@ -101,7 +95,7 @@ class ObjectDisposed extends ObjectEvent {
 @Deprecated(
   'Use `FlutterMemoryAllocations` instead. '
   'The class `MemoryAllocations` will be introduced in a pure Dart library. '
-  'This feature was deprecated after v3.18.0-18.0.pre.'
+  'This feature was deprecated after v3.18.0-18.0.pre.',
 )
 typedef MemoryAllocations = FlutterMemoryAllocations;
 
@@ -139,7 +133,7 @@ class FlutterMemoryAllocations {
   /// Listeners can be removed with [removeListener].
   ///
   /// Only call this when [kFlutterMemoryAllocationsEnabled] is true.
-  void addListener(ObjectEventListener listener){
+  void addListener(ObjectEventListener listener) {
     if (!kFlutterMemoryAllocationsEnabled) {
       return;
     }
@@ -165,7 +159,7 @@ class FlutterMemoryAllocations {
   /// Listeners can be added with [addListener].
   ///
   /// Only call this when [kFlutterMemoryAllocationsEnabled] is true.
-  void removeListener(ObjectEventListener listener){
+  void removeListener(ObjectEventListener listener) {
     if (!kFlutterMemoryAllocationsEnabled) {
       return;
     }
@@ -249,20 +243,25 @@ class FlutterMemoryAllocations {
         listeners[i]?.call(event);
       } catch (exception, stack) {
         final String type = event.object.runtimeType.toString();
-        FlutterError.reportError(FlutterErrorDetails(
-          exception: exception,
-          stack: stack,
-          library: 'foundation library',
-          context: ErrorDescription('MemoryAllocations while '
-          'dispatching notifications for $type'),
-          informationCollector: () => <DiagnosticsNode>[
-            DiagnosticsProperty<Object>(
-              'The $type sending notification was',
-              event.object,
-              style: DiagnosticsTreeStyle.errorProperty,
+        FlutterError.reportError(
+          FlutterErrorDetails(
+            exception: exception,
+            stack: stack,
+            library: 'foundation library',
+            context: ErrorDescription(
+              'MemoryAllocations while '
+              'dispatching notifications for $type',
             ),
-          ],
-        ));
+            informationCollector:
+                () => <DiagnosticsNode>[
+                  DiagnosticsProperty<Object>(
+                    'The $type sending notification was',
+                    event.object,
+                    style: DiagnosticsTreeStyle.errorProperty,
+                  ),
+                ],
+          ),
+        );
       }
     }
     _activeDispatchLoops--;
@@ -280,11 +279,7 @@ class FlutterMemoryAllocations {
     if (!hasListeners) {
       return;
     }
-    dispatchObjectEvent(ObjectCreated(
-      library: library,
-      className: className,
-      object: object,
-    ));
+    dispatchObjectEvent(ObjectCreated(library: library, className: className, object: object));
   }
 
   /// Create [ObjectDisposed] and invoke [dispatchObjectEvent] if there are listeners.
@@ -320,30 +315,22 @@ class FlutterMemoryAllocations {
   }
 
   void _imageOnCreate(ui.Image image) {
-    dispatchObjectEvent(ObjectCreated(
-      library: _dartUiLibrary,
-      className: '${ui.Image}',
-      object: image,
-    ));
+    dispatchObjectEvent(
+      ObjectCreated(library: _dartUiLibrary, className: '${ui.Image}', object: image),
+    );
   }
 
   void _pictureOnCreate(ui.Picture picture) {
-    dispatchObjectEvent(ObjectCreated(
-      library: _dartUiLibrary,
-      className: '${ui.Picture}',
-      object: picture,
-    ));
+    dispatchObjectEvent(
+      ObjectCreated(library: _dartUiLibrary, className: '${ui.Picture}', object: picture),
+    );
   }
 
   void _imageOnDispose(ui.Image image) {
-    dispatchObjectEvent(ObjectDisposed(
-      object: image,
-    ));
+    dispatchObjectEvent(ObjectDisposed(object: image));
   }
 
   void _pictureOnDispose(ui.Picture picture) {
-    dispatchObjectEvent(ObjectDisposed(
-      object: picture,
-    ));
+    dispatchObjectEvent(ObjectDisposed(object: picture));
   }
 }

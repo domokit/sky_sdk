@@ -22,14 +22,18 @@ void main() {
       disposedImage = image;
     };
 
-    final Image image1 = await _createImage()..dispose();
+    final Image image1 =
+        await _createImage()
+          ..dispose();
 
     expect(onCreateInvokedCount, 1);
     expect(createdImage, image1);
     expect(onDisposeInvokedCount, 1);
     expect(disposedImage, image1);
 
-    final Image image2 = await _createImage()..dispose();
+    final Image image2 =
+        await _createImage()
+          ..dispose();
 
     expect(onCreateInvokedCount, 2);
     expect(createdImage, image2);

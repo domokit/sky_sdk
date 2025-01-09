@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('ClipRRect fits to its child', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ClipRRectApp(),
-    );
+    await tester.pumpWidget(const example.ClipRRectApp());
 
     final Finder clipRRectFinder = find.byType(ClipRRect);
     final Finder logoFinder = find.byType(FlutterLogo);

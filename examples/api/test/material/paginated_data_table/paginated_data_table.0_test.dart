@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter_api_samples/material/paginated_data_table/paginated_data_table.0.dart' as example;
+import 'package:flutter_api_samples/material/paginated_data_table/paginated_data_table.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

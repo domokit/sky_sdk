@@ -29,8 +29,7 @@ void SurfaceTextureExternalTextureGLImpeller::ProcessFrame(
     desc.type = impeller::TextureType::kTextureExternalOES;
     desc.storage_mode = impeller::StorageMode::kDevicePrivate;
     desc.format = impeller::PixelFormat::kR8G8B8A8UNormInt;
-    desc.size = {static_cast<int>(bounds.width()),
-                 static_cast<int>(bounds.height())};
+    desc.size = {1, 1};
     desc.mip_count = 1;
     texture_ = std::make_shared<impeller::TextureGLES>(
         impeller_context_->GetReactor(), desc);

@@ -80,7 +80,7 @@ class SpellCheckResults {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) {
-        return true;
+      return true;
     }
 
     return other is SpellCheckResults &&
@@ -107,9 +107,7 @@ abstract class SpellCheckService {
   /// A return value that resolves to null indicates that fetching the spell
   /// check suggestions was unsuccessful. If fetching the suggestions succeeded
   /// but none were found, the [Future] should resolve to an empty list.
-  Future<List<SuggestionSpan>?> fetchSpellCheckSuggestions(
-    Locale locale, String text
-  );
+  Future<List<SuggestionSpan>?> fetchSpellCheckSuggestions(Locale locale, String text);
 }
 
 /// The service used by default to fetch spell check results for text input.
@@ -146,7 +144,9 @@ class DefaultSpellCheckService implements SpellCheckService {
   /// Assumes that the lists provided as parameters are sorted by range start
   /// and that both list of [SuggestionSpan]s apply to the same text.
   static List<SuggestionSpan> mergeResults(
-      List<SuggestionSpan> oldResults, List<SuggestionSpan> newResults) {
+    List<SuggestionSpan> oldResults,
+    List<SuggestionSpan> newResults,
+  ) {
     final List<SuggestionSpan> mergedResults = <SuggestionSpan>[];
 
     SuggestionSpan oldSpan;
@@ -154,8 +154,7 @@ class DefaultSpellCheckService implements SpellCheckService {
     int oldSpanPointer = 0;
     int newSpanPointer = 0;
 
-    while (oldSpanPointer < oldResults.length &&
-        newSpanPointer < newResults.length) {
+    while (oldSpanPointer < oldResults.length && newSpanPointer < newResults.length) {
       oldSpan = oldResults[oldSpanPointer];
       newSpan = newResults[newSpanPointer];
 
@@ -181,17 +180,17 @@ class DefaultSpellCheckService implements SpellCheckService {
   }
 
   @override
-  Future<List<SuggestionSpan>?> fetchSpellCheckSuggestions(
-      Locale locale, String text) async {
-
+  Future<List<SuggestionSpan>?> fetchSpellCheckSuggestions(Locale locale, String text) async {
     final List<dynamic> rawResults;
     final String languageTag = locale.toLanguageTag();
 
     try {
-      rawResults = await spellCheckChannel.invokeMethod(
-        'SpellCheck.initiateSpellCheck',
-        <String>[languageTag, text],
-      ) as List<dynamic>;
+      rawResults =
+          await spellCheckChannel.invokeMethod('SpellCheck.initiateSpellCheck', <String>[
+                languageTag,
+                text,
+              ])
+              as List<dynamic>;
     } catch (e) {
       // Spell check request canceled due to pending request.
       return null;
@@ -209,8 +208,7 @@ class DefaultSpellCheckService implements SpellCheckService {
       // Merge current and previous spell check results if between requests,
       // the text has not changed but the spell check results have.
       final bool textHasNotChanged = lastSavedResults!.spellCheckedText == text;
-      final bool spansHaveChanged =
-          listEquals(lastSavedResults!.suggestionSpans, suggestionSpans);
+      final bool spansHaveChanged = listEquals(lastSavedResults!.suggestionSpans, suggestionSpans);
 
       if (textHasNotChanged && spansHaveChanged) {
         suggestionSpans = mergeResults(lastSavedResults!.suggestionSpans, suggestionSpans);

@@ -46,7 +46,15 @@ void main() {
     canvas.drawImageRect(handle1, rect, rect, Paint());
     canvas.drawImageNine(handle1, rect, rect, Paint());
     canvas.drawAtlas(handle1, <RSTransform>[], <Rect>[], <Color>[], BlendMode.src, rect, Paint());
-    canvas.drawRawAtlas(handle1, Float32List(0), Float32List(0), Int32List(0), BlendMode.src, rect, Paint());
+    canvas.drawRawAtlas(
+      handle1,
+      Float32List(0),
+      Float32List(0),
+      Int32List(0),
+      BlendMode.src,
+      rect,
+      Paint(),
+    );
 
     final Picture picture = recorder.endRecording();
 
@@ -121,11 +129,6 @@ void main() {
 }
 
 Future<Uint8List> _readFile(String fileName) async {
-  final File file = File(path.join(
-    'flutter',
-    'testing',
-    'resources',
-    fileName,
-  ));
+  final File file = File(path.join('flutter', 'testing', 'resources', fileName));
   return file.readAsBytes();
 }

@@ -6,8 +6,7 @@ import 'package:native_assets_builder/native_assets_builder.dart';
 import 'package:native_assets_cli/code_assets_builder.dart';
 
 import '../../../base/file_system.dart';
-import '../../../build_info.dart' hide BuildMode;
-import '../../../build_info.dart' as build_info;
+import '../../../build_info.dart';
 import '../macos/native_assets_host.dart';
 
 // TODO(dcharkes): Fetch minimum iOS version from somewhere. https://github.com/flutter/flutter/issues/145104
@@ -15,7 +14,7 @@ const int targetIOSVersion = 12;
 
 IOSSdk getIOSSdk(EnvironmentType environmentType) {
   return switch (environmentType) {
-    EnvironmentType.physical  => IOSSdk.iPhoneOS,
+    EnvironmentType.physical => IOSSdk.iPhoneOS,
     EnvironmentType.simulator => IOSSdk.iPhoneSimulator,
   };
 }
@@ -23,25 +22,20 @@ IOSSdk getIOSSdk(EnvironmentType environmentType) {
 /// Extract the [Architecture] from a [DarwinArch].
 Architecture getNativeIOSArchitecture(DarwinArch darwinArch) {
   return switch (darwinArch) {
-    DarwinArch.armv7  => Architecture.arm,
-    DarwinArch.arm64  => Architecture.arm64,
+    DarwinArch.armv7 => Architecture.arm,
+    DarwinArch.arm64 => Architecture.arm64,
     DarwinArch.x86_64 => Architecture.x64,
   };
 }
 
-Map<KernelAssetPath, List<CodeAsset>> fatAssetTargetLocationsIOS(
-    List<CodeAsset> nativeAssets) {
+Map<KernelAssetPath, List<CodeAsset>> fatAssetTargetLocationsIOS(List<CodeAsset> nativeAssets) {
   final Set<String> alreadyTakenNames = <String>{};
-  final Map<KernelAssetPath, List<CodeAsset>> result =
-      <KernelAssetPath, List<CodeAsset>>{};
+  final Map<KernelAssetPath, List<CodeAsset>> result = <KernelAssetPath, List<CodeAsset>>{};
   final Map<String, KernelAssetPath> idToPath = <String, KernelAssetPath>{};
   for (final CodeAsset asset in nativeAssets) {
     // Use same target path for all assets with the same id.
-    final KernelAssetPath path = idToPath[asset.id] ??
-        _targetLocationIOS(
-          asset,
-          alreadyTakenNames,
-        ).path;
+    final KernelAssetPath path =
+        idToPath[asset.id] ?? _targetLocationIOS(asset, alreadyTakenNames).path;
     idToPath[asset.id] = path;
     result[path] ??= <CodeAsset>[];
     result[path]!.add(asset);
@@ -49,8 +43,7 @@ Map<KernelAssetPath, List<CodeAsset>> fatAssetTargetLocationsIOS(
   return result;
 }
 
-Map<CodeAsset, KernelAsset> assetTargetLocationsIOS(
-    List<CodeAsset> nativeAssets) {
+Map<CodeAsset, KernelAsset> assetTargetLocationsIOS(List<CodeAsset> nativeAssets) {
   final Set<String> alreadyTakenNames = <String>{};
   final Map<String, KernelAssetPath> idToPath = <String, KernelAssetPath>{};
   final Map<CodeAsset, KernelAsset> result = <CodeAsset, KernelAsset>{};
@@ -79,14 +72,9 @@ KernelAsset _targetLocationIOS(CodeAsset asset, Set<String> alreadyTakenNames) {
       kernelAssetPath = KernelAssetInProcess();
     case DynamicLoadingBundled _:
       final String fileName = asset.file!.pathSegments.last;
-      kernelAssetPath = KernelAssetAbsolutePath(frameworkUri(
-        fileName,
-        alreadyTakenNames,
-      ));
+      kernelAssetPath = KernelAssetAbsolutePath(frameworkUri(fileName, alreadyTakenNames));
     default:
-      throw Exception(
-        'Unsupported asset link mode $linkMode in asset $asset',
-      );
+      throw Exception('Unsupported asset link mode $linkMode in asset $asset');
   }
   return KernelAsset(
     id: asset.id,
@@ -111,7 +99,7 @@ Future<void> copyNativeCodeAssetsIOS(
   Uri buildUri,
   Map<KernelAssetPath, List<CodeAsset>> assetTargetLocations,
   String? codesignIdentity,
-  build_info.BuildMode buildMode,
+  BuildMode buildMode,
   FileSystem fileSystem,
 ) async {
   assert(assetTargetLocations.isNotEmpty);
@@ -122,8 +110,7 @@ Future<void> copyNativeCodeAssetsIOS(
       in assetTargetLocations.entries) {
     final Uri target = (assetMapping.key as KernelAssetAbsolutePath).uri;
     final List<File> sources = <File>[
-      for (final CodeAsset source in assetMapping.value)
-        fileSystem.file(source.file)
+      for (final CodeAsset source in assetMapping.value) fileSystem.file(source.file),
     ];
     final Uri targetUri = buildUri.resolveUri(target);
     final File dylibFile = fileSystem.file(targetUri);
@@ -134,8 +121,7 @@ Future<void> copyNativeCodeAssetsIOS(
     await lipoDylibs(dylibFile, sources);
 
     final String dylibFileName = dylibFile.basename;
-    final String newInstallName =
-        '@rpath/$dylibFileName.framework/$dylibFileName';
+    final String newInstallName = '@rpath/$dylibFileName.framework/$dylibFileName';
     final Set<String> oldInstallNames = await getInstallNamesDylib(dylibFile);
     for (final String oldInstallName in oldInstallNames) {
       oldToNewInstallNames[oldInstallName] = newInstallName;

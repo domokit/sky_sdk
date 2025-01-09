@@ -3,14 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_api_samples/cupertino/search_field/cupertino_search_field.1.dart' as example;
+import 'package:flutter_api_samples/cupertino/search_field/cupertino_search_field.1.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Value changed callback updates entered text', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SearchTextFieldApp(),
-    );
+    await tester.pumpWidget(const example.SearchTextFieldApp());
 
     expect(find.byType(CupertinoSearchTextField), findsOneWidget);
 

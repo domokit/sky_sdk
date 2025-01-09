@@ -24,10 +24,7 @@ class ProtocolDiscovery {
     required Logger logger,
   }) : _logger = logger,
        _ipv6 = ipv6 {
-    _deviceLogSubscription = logReader.logLines.listen(
-      _handleLine,
-      onDone: _stopScrapingLogs,
-    );
+    _deviceLogSubscription = logReader.logLines.listen(_handleLine, onDone: _stopScrapingLogs);
   }
 
   factory ProtocolDiscovery.vmService(
@@ -89,10 +86,9 @@ class ProtocolDiscovery {
   /// Port forwarding is only attempted when this is invoked,
   /// for each VM Service URL in the stream.
   Stream<Uri> get uris {
-    final Stream<Uri> uriStream = _uriStreamController.stream
-      .transform(_throttle<Uri>(
-        waitDuration: throttleDuration,
-      ));
+    final Stream<Uri> uriStream = _uriStreamController.stream.transform(
+      _throttle<Uri>(waitDuration: throttleDuration),
+    );
     return uriStream.asyncMap<Uri>(_forwardPort);
   }
 
@@ -141,7 +137,9 @@ class ProtocolDiscovery {
     if (forwarder != null) {
       final int actualDevicePort = deviceUri.port;
       final int actualHostPort = await forwarder.forward(actualDevicePort, hostPort: hostPort);
-      _logger.printTrace('Forwarded host port $actualHostPort to device port $actualDevicePort for $serviceName');
+      _logger.printTrace(
+        'Forwarded host port $actualHostPort to device port $actualDevicePort for $serviceName',
+      );
       hostUri = deviceUri.replace(port: actualHostPort);
     }
 
@@ -165,7 +163,7 @@ class _BufferedStreamController<T> {
 
   late final StreamController<T> _streamController = () {
     final StreamController<T> streamControllerInstance = StreamController<T>.broadcast();
-      streamControllerInstance.onListen = () {
+    streamControllerInstance.onListen = () {
       for (final dynamic event in _events) {
         if (event is T) {
           streamControllerInstance.add(event);
@@ -213,43 +211,40 @@ class _BufferedStreamController<T> {
 /// For example, consider a `waitDuration` of `10ms`, and list of event names
 /// and arrival times: `a (0ms), b (5ms), c (11ms), d (21ms)`.
 /// The events `a`, `c`, and `d` will be produced as a result.
-StreamTransformer<S, S> _throttle<S>({
-  required Duration waitDuration,
-}) {
-
+StreamTransformer<S, S> _throttle<S>({required Duration waitDuration}) {
   S latestLine;
   int? lastExecution;
   Future<void>? throttleFuture;
   bool done = false;
 
-  return StreamTransformer<S, S>
-    .fromHandlers(
-      handleData: (S value, EventSink<S> sink) {
-        latestLine = value;
+  return StreamTransformer<S, S>.fromHandlers(
+    handleData: (S value, EventSink<S> sink) {
+      latestLine = value;
 
-        final bool isFirstMessage = lastExecution == null;
-        final int currentTime = DateTime.now().millisecondsSinceEpoch;
-        lastExecution ??= currentTime;
-        final int remainingTime = currentTime - lastExecution!;
+      final bool isFirstMessage = lastExecution == null;
+      final int currentTime = DateTime.now().millisecondsSinceEpoch;
+      lastExecution ??= currentTime;
+      final int remainingTime = currentTime - lastExecution!;
 
-        // Always send the first event immediately.
-        final int nextExecutionTime = isFirstMessage || remainingTime > waitDuration.inMilliseconds
-          ? 0
-          : waitDuration.inMilliseconds - remainingTime;
-        throttleFuture ??= Future<void>
-          .delayed(Duration(milliseconds: nextExecutionTime))
-          .whenComplete(() {
-            if (done) {
-              return;
-            }
-            sink.add(latestLine);
-            throttleFuture = null;
-            lastExecution = DateTime.now().millisecondsSinceEpoch;
-          });
-      },
-      handleDone: (EventSink<S> sink) {
-        done = true;
-        sink.close();
-      }
-    );
+      // Always send the first event immediately.
+      final int nextExecutionTime =
+          isFirstMessage || remainingTime > waitDuration.inMilliseconds
+              ? 0
+              : waitDuration.inMilliseconds - remainingTime;
+      throttleFuture ??= Future<void>.delayed(
+        Duration(milliseconds: nextExecutionTime),
+      ).whenComplete(() {
+        if (done) {
+          return;
+        }
+        sink.add(latestLine);
+        throttleFuture = null;
+        lastExecution = DateTime.now().millisecondsSinceEpoch;
+      });
+    },
+    handleDone: (EventSink<S> sink) {
+      done = true;
+      sink.close();
+    },
+  );
 }

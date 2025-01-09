@@ -61,7 +61,9 @@ abstract class ProjectMigrator {
     }
 
     final String projectContentsWithMigratedLines = newProjectContents.toString();
-    final String projectContentsWithMigratedContents = migrateFileContents(projectContentsWithMigratedLines);
+    final String projectContentsWithMigratedContents = migrateFileContents(
+      projectContentsWithMigratedLines,
+    );
     if (projectContentsWithMigratedLines != projectContentsWithMigratedContents) {
       logger.printTrace('Migrating $basename contents');
       _migrationRequired = true;

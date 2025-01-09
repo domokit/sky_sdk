@@ -35,11 +35,7 @@ import 'package:path/path.dart' as p;
 /// If you have a path to a directory within the `$ENGINE/src` directory, or
 /// want to use the current working directory, use [Engine.findWithin].
 final class Engine {
-  const Engine._({
-    required this.srcDir,
-    required this.flutterDir,
-    required this.outDir,
-  });
+  const Engine._({required this.srcDir, required this.flutterDir, required this.outDir});
 
   /// Creates an [Engine] from a path such as `/Users/.../flutter/engine/src`.
   ///
@@ -72,11 +68,7 @@ final class Engine {
     // don't want to fail if it doesn't exist.
     final io.Directory outDir = io.Directory(p.join(srcPath, 'out'));
 
-    return Engine._(
-      srcDir: srcDir,
-      flutterDir: flutterDir,
-      outDir: outDir,
-    );
+    return Engine._(srcDir: srcDir, flutterDir: flutterDir, outDir: outDir);
   }
 
   /// Creates an [Engine] by looking for a `src/` directory in the given path.
@@ -116,9 +108,7 @@ final class Engine {
     io.Directory maybeSrcDir = io.Directory(path);
 
     if (!maybeSrcDir.existsSync()) {
-      throw StateError(
-        'The path "$path" does not exist or is not a directory.'
-      );
+      throw StateError('The path "$path" does not exist or is not a directory.');
     }
 
     do {
@@ -128,7 +118,7 @@ final class Engine {
         // Ignore, we'll keep searching.
       }
       maybeSrcDir = maybeSrcDir.parent;
-    } while (maybeSrcDir.parent.path != maybeSrcDir.path /* at root */);
+    } while (maybeSrcDir.parent.path != maybeSrcDir.path /* at root */ );
 
     return null;
   }
@@ -146,11 +136,7 @@ final class Engine {
 
   /// Returns a list of all output targets in [outDir].
   List<Output> outputs() {
-    return outDir
-      .listSync()
-      .whereType<io.Directory>()
-      .map<Output>(Output._)
-      .toList();
+    return outDir.listSync().whereType<io.Directory>().map<Output>(Output._).toList();
   }
 
   /// Returns the most recently modified output target in [outDir].
@@ -180,7 +166,8 @@ final class TestEngine extends Engine {
     required super.flutterDir,
     required super.outDir,
     List<TestOutput> outputs = const <TestOutput>[],
-  }) : _outputs = outputs, super._() {
+  }) : _outputs = outputs,
+       super._() {
     if (!srcDir.existsSync()) {
       throw ArgumentError.value(srcDir, 'srcDir', 'does not exist');
     }

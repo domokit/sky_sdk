@@ -7,11 +7,12 @@ import 'package:ui/ui.dart' as ui;
 
 /// Sets the "button" ARIA role.
 class SemanticButton extends SemanticRole {
-  SemanticButton(SemanticsObject semanticsObject) : super.withBasics(
-    SemanticRoleKind.button,
-    semanticsObject,
-    preferredLabelRepresentation: LabelRepresentation.domText,
-  ) {
+  SemanticButton(SemanticsObject semanticsObject)
+    : super.withBasics(
+        SemanticRoleKind.button,
+        semanticsObject,
+        preferredLabelRepresentation: LabelRepresentation.domText,
+      ) {
     addTappable();
     setAriaRole('button');
   }
@@ -44,12 +45,7 @@ class SemanticButton extends SemanticRole {
 class Tappable extends SemanticBehavior {
   Tappable(super.semanticsObject, super.owner) {
     _clickListener = createDomEventListener((DomEvent click) {
-      PointerBinding.clickDebouncer.onClick(
-        click,
-        viewId,
-        semanticsObject.id,
-        _isListening,
-      );
+      PointerBinding.clickDebouncer.onClick(click, viewId, semanticsObject.id, _isListening);
     });
     owner.element.addEventListener('click', _clickListener);
   }
@@ -63,7 +59,8 @@ class Tappable extends SemanticBehavior {
   @override
   void update() {
     final bool wasListening = _isListening;
-    _isListening = semanticsObject.enabledState() != EnabledState.disabled && semanticsObject.isTappable;
+    _isListening =
+        semanticsObject.enabledState() != EnabledState.disabled && semanticsObject.isTappable;
     if (wasListening != _isListening) {
       _updateAttribute();
     }

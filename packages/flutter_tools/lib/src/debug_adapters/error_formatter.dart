@@ -4,7 +4,13 @@
 
 import 'dart:math' as math;
 
-typedef _OutputSender = void Function(String category, String message, {bool? parseStackFrames, int? variablesReference});
+typedef _OutputSender =
+    void Function(
+      String category,
+      String message, {
+      bool? parseStackFrames,
+      int? variablesReference,
+    });
 
 /// A formatter for improving the display of Flutter structured errors over DAP.
 ///
@@ -29,7 +35,12 @@ class FlutterErrorFormatter {
     const int assumedTerminalSize = 80;
     const String barChar = '═';
     final String headerPrefix = barChar * 8;
-    final String headerSuffix = barChar * math.max( assumedTerminalSize - (data.description?.length ?? 0) - 2 - headerPrefix.length, 0);
+    final String headerSuffix =
+        barChar *
+        math.max(
+          assumedTerminalSize - (data.description?.length ?? 0) - 2 - headerPrefix.length,
+          0,
+        );
     final String header = '$headerPrefix ${data.description} $headerSuffix';
     _write('');
     _write(header, isError: true);
@@ -60,18 +71,15 @@ class FlutterErrorFormatter {
   /// If the last item in the batch has the same settings as this item, it will
   /// be appended to the same item, otherwise a new item will be added to the
   /// batch.
-  void _write(
-    String? text, {
-    int indent = 0,
-    bool isError = false,
-    bool parseStackFrames = false,
-  }) {
+  void _write(String? text, {int indent = 0, bool isError = false, bool parseStackFrames = false}) {
     if (text != null) {
       final String indentString = '    ' * indent;
       final String message = '$indentString${text.trim()}';
 
       _BatchedOutput? output = batchedOutput.lastOrNull;
-      if (output == null || output.isError != isError || output.parseStackFrames != parseStackFrames) {
+      if (output == null ||
+          output.isError != isError ||
+          output.parseStackFrames != parseStackFrames) {
         batchedOutput.add(output = _BatchedOutput(isError, parseStackFrames: parseStackFrames));
       }
       output.writeln(message);
@@ -84,7 +92,8 @@ class FlutterErrorFormatter {
     // Errors, summaries and lines starting "Exception:" are marked as errors so
     // they go to stderr instead of stdout (this may cause the client to colour
     // them like errors).
-    final bool showAsError = node.level == _DiagnosticsNodeLevel.error ||
+    final bool showAsError =
+        node.level == _DiagnosticsNodeLevel.error ||
         node.level == _DiagnosticsNodeLevel.summary ||
         (node.description?.startsWith('Exception: ') ?? false);
 
@@ -115,14 +124,18 @@ class FlutterErrorFormatter {
 
   /// Writes a simple summary of [node] to the output.
   void _writeSummary(_ErrorNode node) {
-    final bool allChildrenAreLeaf = node.children.isNotEmpty &&
+    final bool allChildrenAreLeaf =
+        node.children.isNotEmpty &&
         !node.children.any((_ErrorNode child) => child.children.isNotEmpty);
     if (node.level == _DiagnosticsNodeLevel.summary || allChildrenAreLeaf) {
       // DiagnosticsBlock is a container, so recurse into its children if
       // there's only a single level. The container may be
       // "The relevant error-causing widget was" and the child may be
       // the specific widget details.
-      _writeNode(node, recursive: node.type == _DiagnosticsNodeType.DiagnosticsBlock && allChildrenAreLeaf);
+      _writeNode(
+        node,
+        recursive: node.type == _DiagnosticsNodeType.DiagnosticsBlock && allChildrenAreLeaf,
+      );
     }
   }
 }
@@ -143,18 +156,11 @@ class _BatchedOutput {
   void writeln(String output) => _buffer.writeln(output);
 }
 
-enum _DiagnosticsNodeLevel {
-  error,
-  summary,
-}
+enum _DiagnosticsNodeLevel { error, summary }
 
-enum _DiagnosticsNodeStyle {
-  flat,
-}
+enum _DiagnosticsNodeStyle { flat }
 
-enum _DiagnosticsNodeType {
-  DiagnosticsBlock,
-}
+enum _DiagnosticsNodeType { DiagnosticsBlock }
 
 class _ErrorData extends _ErrorNode {
   _ErrorData(super.data);
@@ -190,7 +196,7 @@ class _ErrorNode {
   List<T> asList<T>(String field, T Function(Map<Object, Object?>) constructor) {
     final Object? objects = data[field];
     return objects is List && objects.every((Object? element) => element is Map<String, Object?>)
-      ? objects.cast<Map<Object, Object?>>().map(constructor).toList()
-      : <T>[];
+        ? objects.cast<Map<Object, Object?>>().map(constructor).toList()
+        : <T>[];
   }
 }

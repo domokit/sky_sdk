@@ -67,15 +67,7 @@ data:
     '${path.basenameWithoutExtension(configFile.path)}.json',
     '--log-level',
     logLevel,
-    if (!isDryRun) ...<String>[
-      '--tag',
-      'version:$version',
-      '--ref',
-      version,
-    ],
-    if (isDryRun) ...<String>[
-      '--out',
-      '${path.basenameWithoutExtension(configFile.path)}.zip',
-    ],
+    if (!isDryRun) ...<String>['--tag', 'version:$version', '--ref', version],
+    if (isDryRun) ...<String>['--out', '${path.basenameWithoutExtension(configFile.path)}.zip'],
   ], workingDirectory: directory.path);
 }

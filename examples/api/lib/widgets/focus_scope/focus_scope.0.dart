@@ -13,9 +13,7 @@ class FocusScopeExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: FocusScopeExample(),
-    );
+    return const MaterialApp(home: FocusScopeExample());
   }
 }
 
@@ -45,9 +43,7 @@ class Pane extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          Center(
-            child: child,
-          ),
+          Center(child: child),
           Align(
             alignment: Alignment.topLeft,
             child: IconButton(

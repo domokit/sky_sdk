@@ -45,8 +45,10 @@ void main() {
       // within the source code.
       final int expectedLine = project.lineForStep(i);
 
-      expect(actualLine, equals(expectedLine),
-        reason: 'After $i steps, debugger should stop at $expectedLine but stopped at $actualLine'
+      expect(
+        actualLine,
+        equals(expectedLine),
+        reason: 'After $i steps, debugger should stop at $expectedLine but stopped at $actualLine',
       );
     }
 

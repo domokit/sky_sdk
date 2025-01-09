@@ -25,8 +25,10 @@ File? findTestConfigFile(File testFile, Logger logger) {
       break;
     }
     if (directory.childFile(_kProjectRootSentinel).existsSync()) {
-      logger.printTrace('Stopping scan for $_kTestConfigFileName; '
-          'found project root at ${directory.path}');
+      logger.printTrace(
+        'Stopping scan for $_kTestConfigFileName; '
+        'found project root at ${directory.path}',
+      );
       break;
     }
     directory = directory.parent;

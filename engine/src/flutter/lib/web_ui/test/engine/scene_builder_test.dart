@@ -55,7 +55,7 @@ void testMain() {
     });
 
     test('picture + platform view (overlapping)', () {
-            final EngineSceneBuilder sceneBuilder = EngineSceneBuilder();
+      final EngineSceneBuilder sceneBuilder = EngineSceneBuilder();
 
       const ui.Rect pictureRect = ui.Rect.fromLTRB(100, 100, 200, 200);
       const ui.Rect platformViewRect = ui.Rect.fromLTRB(150, 150, 250, 250);
@@ -64,17 +64,21 @@ void testMain() {
         1,
         offset: platformViewRect.topLeft,
         width: platformViewRect.width,
-        height: platformViewRect.height
+        height: platformViewRect.height,
       );
 
       final EngineScene scene = sceneBuilder.build() as EngineScene;
       final List<LayerSlice?> slices = scene.rootLayer.slices;
       expect(slices.length, 1);
-      expect(slices[0], layerSlice(
-        withPictureRect: pictureRect,
-        withPlatformViews: <PlatformView>[
-        PlatformView(1, platformViewRect, const PlatformViewStyling())
-      ]));
+      expect(
+        slices[0],
+        layerSlice(
+          withPictureRect: pictureRect,
+          withPlatformViews: <PlatformView>[
+            PlatformView(1, platformViewRect, const PlatformViewStyling()),
+          ],
+        ),
+      );
     });
 
     test('platform view + picture (overlapping)', () {
@@ -86,16 +90,21 @@ void testMain() {
         1,
         offset: platformViewRect.topLeft,
         width: platformViewRect.width,
-        height: platformViewRect.height
+        height: platformViewRect.height,
       );
       sceneBuilder.addPicture(ui.Offset.zero, StubPicture(pictureRect));
 
       final EngineScene scene = sceneBuilder.build() as EngineScene;
       final List<LayerSlice?> slices = scene.rootLayer.slices;
       expect(slices.length, 2);
-      expect(slices[0], layerSlice(withPlatformViews: <PlatformView>[
-        PlatformView(1, platformViewRect, const PlatformViewStyling())
-      ]));
+      expect(
+        slices[0],
+        layerSlice(
+          withPlatformViews: <PlatformView>[
+            PlatformView(1, platformViewRect, const PlatformViewStyling()),
+          ],
+        ),
+      );
       expect(slices[1], layerSlice(withPictureRect: pictureRect));
     });
 
@@ -110,18 +119,22 @@ void testMain() {
         1,
         offset: platformViewRect.topLeft,
         width: platformViewRect.width,
-        height: platformViewRect.height
+        height: platformViewRect.height,
       );
       sceneBuilder.addPicture(ui.Offset.zero, StubPicture(pictureRect2));
 
       final EngineScene scene = sceneBuilder.build() as EngineScene;
       final List<LayerSlice?> slices = scene.rootLayer.slices;
       expect(slices.length, 2);
-      expect(slices[0], layerSlice(
-        withPictureRect: pictureRect1,
-        withPlatformViews: <PlatformView>[
-        PlatformView(1, platformViewRect, const PlatformViewStyling())
-      ]));
+      expect(
+        slices[0],
+        layerSlice(
+          withPictureRect: pictureRect1,
+          withPlatformViews: <PlatformView>[
+            PlatformView(1, platformViewRect, const PlatformViewStyling()),
+          ],
+        ),
+      );
       expect(slices[1], layerSlice(withPictureRect: pictureRect2));
     });
 
@@ -136,7 +149,7 @@ void testMain() {
         1,
         offset: platformViewRect.topLeft,
         width: platformViewRect.width,
-        height: platformViewRect.height
+        height: platformViewRect.height,
       );
       sceneBuilder.addPicture(ui.Offset.zero, StubPicture(pictureRect2));
 
@@ -147,11 +160,15 @@ void testMain() {
       // be grouped into the slice below it to reduce the number of canvases we
       // need.
       expect(slices.length, 1);
-      expect(slices[0], layerSlice(
-        withPictureRect: const ui.Rect.fromLTRB(50, 50, 200, 200),
-        withPlatformViews: <PlatformView>[
-        PlatformView(1, platformViewRect, const PlatformViewStyling())
-      ]));
+      expect(
+        slices[0],
+        layerSlice(
+          withPictureRect: const ui.Rect.fromLTRB(50, 50, 200, 200),
+          withPlatformViews: <PlatformView>[
+            PlatformView(1, platformViewRect, const PlatformViewStyling()),
+          ],
+        ),
+      );
     });
 
     test('platform view sandwich (overlapping) with offset layers', () {
@@ -166,7 +183,7 @@ void testMain() {
         1,
         offset: platformViewRect.topLeft,
         width: platformViewRect.width,
-        height: platformViewRect.height
+        height: platformViewRect.height,
       );
       sceneBuilder.pushOffset(50, 50);
       sceneBuilder.addPicture(ui.Offset.zero, StubPicture(const ui.Rect.fromLTRB(0, 0, 100, 100)));
@@ -174,11 +191,19 @@ void testMain() {
       final EngineScene scene = sceneBuilder.build() as EngineScene;
       final List<LayerSlice?> slices = scene.rootLayer.slices;
       expect(slices.length, 2);
-      expect(slices[0], layerSlice(
-        withPictureRect: pictureRect1,
-        withPlatformViews: <PlatformView>[
-        PlatformView(1, platformViewRect, const PlatformViewStyling(position: PlatformViewPosition.offset(ui.Offset(150, 150))))
-      ]));
+      expect(
+        slices[0],
+        layerSlice(
+          withPictureRect: pictureRect1,
+          withPlatformViews: <PlatformView>[
+            PlatformView(
+              1,
+              platformViewRect,
+              const PlatformViewStyling(position: PlatformViewPosition.offset(ui.Offset(150, 150))),
+            ),
+          ],
+        ),
+      );
       expect(slices[1], layerSlice(withPictureRect: const ui.Rect.fromLTRB(200, 200, 300, 300)));
     });
 
@@ -201,7 +226,7 @@ void testMain() {
           sceneBuilder.pushOffset(offset.dx, offset.dy);
           sceneBuilder.addPicture(
             ui.Offset.zero,
-            StubPicture(const ui.Rect.fromLTWH(0, 0, tileSize, tileSize))
+            StubPicture(const ui.Rect.fromLTWH(0, 0, tileSize, tileSize)),
           );
           sceneBuilder.addPlatformView(
             1,
@@ -214,11 +239,13 @@ void testMain() {
             StubPicture(const ui.Rect.fromLTWH(0, 0, tileSize - 20, tileSize - 20)),
           );
           sceneBuilder.pop();
-          expectedPlatformViews.add(PlatformView(
-            1,
-            const ui.Rect.fromLTRB(5.0, 5.0, tileSize - 5.0, tileSize - 5.0),
-            PlatformViewStyling(position: PlatformViewPosition.offset(offset))
-          ));
+          expectedPlatformViews.add(
+            PlatformView(
+              1,
+              const ui.Rect.fromLTRB(5.0, 5.0, tileSize - 5.0, tileSize - 5.0),
+              PlatformViewStyling(position: PlatformViewPosition.offset(offset)),
+            ),
+          );
         }
       }
 
@@ -228,21 +255,29 @@ void testMain() {
       // It is important that the optimizations of the scene builder result in
       // there only being two scene slices.
       expect(slices.length, 2);
-      expect(slices[0], layerSlice(
-        withPictureRect: const ui.Rect.fromLTRB(
-          padding,
-          padding,
-          10 * (padding + tileSize),
-          10 * (padding + tileSize)
+      expect(
+        slices[0],
+        layerSlice(
+          withPictureRect: const ui.Rect.fromLTRB(
+            padding,
+            padding,
+            10 * (padding + tileSize),
+            10 * (padding + tileSize),
+          ),
+          withPlatformViews: expectedPlatformViews,
         ),
-        withPlatformViews: expectedPlatformViews,
-      ));
-      expect(slices[1], layerSlice(withPictureRect: const ui.Rect.fromLTRB(
-        padding + 10,
-        padding + 10,
-        10 * (padding + tileSize) - 10,
-        10 * (padding + tileSize) - 10,
-      )));
+      );
+      expect(
+        slices[1],
+        layerSlice(
+          withPictureRect: const ui.Rect.fromLTRB(
+            padding + 10,
+            padding + 10,
+            10 * (padding + tileSize) - 10,
+            10 * (padding + tileSize) - 10,
+          ),
+        ),
+      );
     });
   });
 }
@@ -251,6 +286,7 @@ LayerSliceMatcher layerSlice({
   ui.Rect withPictureRect = ui.Rect.zero,
   List<PlatformView> withPlatformViews = const <PlatformView>[],
 }) => LayerSliceMatcher(withPictureRect, withPlatformViews);
+
 class LayerSliceMatcher extends Matcher {
   LayerSliceMatcher(this.expectedPictureRect, this.expectedPlatformViews);
 
@@ -259,7 +295,9 @@ class LayerSliceMatcher extends Matcher {
 
   @override
   Description describe(Description description) {
-    return description.add('<picture slice with cullRect: $expectedPictureRect and platform views: $expectedPlatformViews>');
+    return description.add(
+      '<picture slice with cullRect: $expectedPictureRect and platform views: $expectedPlatformViews>',
+    );
   }
 
   @override

@@ -25,11 +25,7 @@ Future<void> main() async {
     throw Exception('ValueKey string does not contain the value');
   }
 
-  runApp(
-    const Center(
-      child: text,
-    ),
-  );
+  runApp(const Center(child: text));
 }
 
 List<int> _utf8Encode(String data) {

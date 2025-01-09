@@ -6,11 +6,11 @@
 #include "gtest/gtest.h"
 
 #include "flutter/shell/platform/linux/fl_accessible_node.h"
-#include "flutter/shell/platform/linux/testing/fl_test.h"
 
 // Checks can build a tree of nodes.
 TEST(FlAccessibleNodeTest, BuildTree) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   g_autoptr(FlAccessibleNode) root = fl_accessible_node_new(engine, 0);
   g_autoptr(FlAccessibleNode) child1 = fl_accessible_node_new(engine, 1);
@@ -44,7 +44,8 @@ TEST(FlAccessibleNodeTest, BuildTree) {
 
 // Checks node name is exposed to ATK.
 TEST(FlAccessibleNodeTest, SetName) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   g_autoptr(FlAccessibleNode) node = fl_accessible_node_new(engine, 0);
   fl_accessible_node_set_name(node, "test");
@@ -53,7 +54,8 @@ TEST(FlAccessibleNodeTest, SetName) {
 
 // Checks node extents are exposed to ATK.
 TEST(FlAccessibleNodeTest, SetExtents) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   g_autoptr(FlAccessibleNode) node = fl_accessible_node_new(engine, 0);
   fl_accessible_node_set_extents(node, 1, 2, 3, 4);
@@ -68,7 +70,8 @@ TEST(FlAccessibleNodeTest, SetExtents) {
 
 // Checks Flutter flags are mapped to appropriate ATK state.
 TEST(FlAccessibleNodeTest, SetFlags) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   g_autoptr(FlAccessibleNode) node = fl_accessible_node_new(engine, 0);
   fl_accessible_node_set_flags(
@@ -87,7 +90,8 @@ TEST(FlAccessibleNodeTest, SetFlags) {
 
 // Checks Flutter flags are mapped to appropriate ATK roles.
 TEST(FlAccessibleNodeTest, GetRole) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   g_autoptr(FlAccessibleNode) node = fl_accessible_node_new(engine, 0);
 
@@ -120,7 +124,8 @@ TEST(FlAccessibleNodeTest, GetRole) {
 
 // Checks Flutter actions are mapped to the appropriate ATK actions.
 TEST(FlAccessibleNodeTest, SetActions) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   g_autoptr(FlAccessibleNode) node = fl_accessible_node_new(engine, 0);
   fl_accessible_node_set_actions(

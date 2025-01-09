@@ -42,20 +42,14 @@ const String kVoronoiShaderSksl = r'''
 ''';
 
 Future<void> testMain() async {
-  setUpUnitTests(
-    withImplicitView: true,
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(withImplicitView: true, setUpTestViewDimensions: false);
 
   const ui.Rect region = ui.Rect.fromLTWH(0, 0, 300, 300);
 
   late FakeAssetScope assetScope;
   setUp(() {
     assetScope = fakeAssetManager.pushAssetScope();
-    assetScope.setAsset(
-      'voronoi_shader',
-      ByteData.sublistView(utf8.encode(kVoronoiShaderSksl))
-    );
+    assetScope.setAsset('voronoi_shader', ByteData.sublistView(utf8.encode(kVoronoiShaderSksl)));
   });
 
   tearDown(() {

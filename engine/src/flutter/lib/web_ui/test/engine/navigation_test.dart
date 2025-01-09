@@ -14,8 +14,7 @@ import '../common/test_initialization.dart';
 
 const MethodCodec codec = JSONMethodCodec();
 
-EngineFlutterWindow get implicitView =>
-    EnginePlatformDispatcher.instance.implicitView!;
+EngineFlutterWindow get implicitView => EnginePlatformDispatcher.instance.implicitView!;
 
 void main() {
   internalBootstrapBrowserTest(() => testMain);
@@ -29,10 +28,9 @@ void testMain() {
       final Completer<ByteData?> completer = Completer<ByteData?>();
       ui.PlatformDispatcher.instance.sendPlatformMessage(
         'flutter/navigation',
-        codec.encodeMethodCall(const MethodCall(
-          'routeUpdated',
-          <String, dynamic>{'routeName': '/foo'},
-        )),
+        codec.encodeMethodCall(
+          const MethodCall('routeUpdated', <String, dynamic>{'routeName': '/foo'}),
+        ),
         (ByteData? response) => completer.complete(response),
       );
       final ByteData? response = await completer.future;
@@ -54,10 +52,9 @@ void testMain() {
       final Completer<void> completer = Completer<void>();
       ui.PlatformDispatcher.instance.sendPlatformMessage(
         'flutter/navigation',
-        codec.encodeMethodCall(const MethodCall(
-          'routeUpdated',
-          <String, dynamic>{'routeName': '/foo'},
-        )),
+        codec.encodeMethodCall(
+          const MethodCall('routeUpdated', <String, dynamic>{'routeName': '/foo'}),
+        ),
         (_) => completer.complete(),
       );
       await completer.future;

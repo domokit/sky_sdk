@@ -27,12 +27,13 @@ import '../../browser_detection.dart';
 ///  method.addStatement('${u1.name} = vec4(1.0, 1.0, 1.0, 0.0);');
 ///  source = builder.build();
 class ShaderBuilder {
-  ShaderBuilder(this.version) : isWebGl2 = version == WebGLVersion.webgl2,
-        _isFragmentShader = false;
+  ShaderBuilder(this.version)
+    : isWebGl2 = version == WebGLVersion.webgl2,
+      _isFragmentShader = false;
 
-  ShaderBuilder.fragment(this.version) :
-        isWebGl2 = version == WebGLVersion.webgl2,
-        _isFragmentShader = true;
+  ShaderBuilder.fragment(this.version)
+    : isWebGl2 = version == WebGLVersion.webgl2,
+      _isFragmentShader = true;
 
   /// WebGL version.
   final int version;
@@ -70,9 +71,10 @@ class ShaderBuilder {
   /// This is hard coded for webgl1 as gl_FragColor.
   ShaderDeclaration get fragmentColor {
     _fragmentColorDeclaration ??= ShaderDeclaration(
-        isWebGl2 ? 'gFragColor' : 'gl_FragColor',
-        ShaderType.kVec4,
-        ShaderStorageQualifier.kVarying);
+      isWebGl2 ? 'gFragColor' : 'gl_FragColor',
+      ShaderType.kVec4,
+      ShaderStorageQualifier.kVarying,
+    );
     return _fragmentColorDeclaration!;
   }
 
@@ -83,9 +85,10 @@ class ShaderBuilder {
   /// in the vertex shader.
   ShaderDeclaration addIn(int dataType, {String? name}) {
     final ShaderDeclaration attrib = ShaderDeclaration(
-        name ?? 'attr_${_attribCounter++}',
-        dataType,
-        ShaderStorageQualifier.kAttribute);
+      name ?? 'attr_${_attribCounter++}',
+      dataType,
+      ShaderStorageQualifier.kAttribute,
+    );
     declarations.add(attrib);
     return attrib;
   }
@@ -93,7 +96,10 @@ class ShaderBuilder {
   /// Adds a constant.
   ShaderDeclaration addConst(int dataType, String value, {String? name}) {
     final ShaderDeclaration declaration = ShaderDeclaration.constant(
-        name ?? 'c_${_constCounter++}', dataType, value);
+      name ?? 'c_${_constCounter++}',
+      dataType,
+      value,
+    );
     declarations.add(declaration);
     return declaration;
   }
@@ -105,9 +111,10 @@ class ShaderBuilder {
   ///
   ShaderDeclaration addUniform(int dataType, {String? name}) {
     final ShaderDeclaration uniform = ShaderDeclaration(
-        name ?? 'uni_${_uniformCounter++}',
-        dataType,
-        ShaderStorageQualifier.kUniform);
+      name ?? 'uni_${_uniformCounter++}',
+      dataType,
+      ShaderStorageQualifier.kUniform,
+    );
     declarations.add(uniform);
     return uniform;
   }
@@ -120,9 +127,10 @@ class ShaderBuilder {
   /// It can be used in a fragment shader, but not changed.
   ShaderDeclaration addOut(int dataType, {String? name}) {
     final ShaderDeclaration varying = ShaderDeclaration(
-        name ?? 'output_${_varyingCounter++}',
-        dataType,
-        ShaderStorageQualifier.kVarying);
+      name ?? 'output_${_varyingCounter++}',
+      dataType,
+      ShaderStorageQualifier.kVarying,
+    );
     declarations.add(varying);
     return varying;
   }
@@ -132,8 +140,13 @@ class ShaderBuilder {
       case ShaderStorageQualifier.kConst:
         _buffer.write('const ');
       case ShaderStorageQualifier.kAttribute:
-        _buffer.write(isWebGl2 ? 'in '
-            : _isFragmentShader ? 'varying ' : 'attribute ');
+        _buffer.write(
+          isWebGl2
+              ? 'in '
+              : _isFragmentShader
+              ? 'varying '
+              : 'attribute ',
+        );
       case ShaderStorageQualifier.kUniform:
         _buffer.write('uniform ');
       case ShaderStorageQualifier.kVarying:
@@ -205,12 +218,10 @@ class ShaderBuilder {
     }
     // Write optional precision.
     if (integerPrecision != null) {
-      _buffer
-          .writeln('precision ${_precisionToString(integerPrecision!)} int;');
+      _buffer.writeln('precision ${_precisionToString(integerPrecision!)} int;');
     }
     if (floatPrecision != null) {
-      _buffer
-          .writeln('precision ${_precisionToString(floatPrecision!)} float;');
+      _buffer.writeln('precision ${_precisionToString(floatPrecision!)} float;');
     }
     if (isWebGl2 && _fragmentColorDeclaration != null) {
       _writeVariableDeclaration(_buffer, _fragmentColorDeclaration!);
@@ -224,9 +235,12 @@ class ShaderBuilder {
     return _buffer.toString();
   }
 
-  String _precisionToString(int precision) => precision == ShaderPrecision.kLow
-      ? 'lowp'
-      : precision == ShaderPrecision.kMedium ? 'mediump' : 'highp';
+  String _precisionToString(int precision) =>
+      precision == ShaderPrecision.kLow
+          ? 'lowp'
+          : precision == ShaderPrecision.kMedium
+          ? 'mediump'
+          : 'highp';
 
   String get texture2DFunction => isWebGl2 ? 'texture' : 'texture2D';
 }
@@ -268,16 +282,16 @@ class ShaderMethod {
   /// from floor.
   ///   float destination = 1.0 - source;
   ///   destination = abs((destination - 2.0 * floor(destination * 0.5)) - 1.0);
-  void addTileStatements(String source, String destination,
-      ui.TileMode tileMode) {
-    switch(tileMode) {
+  void addTileStatements(String source, String destination, ui.TileMode tileMode) {
+    switch (tileMode) {
       case ui.TileMode.repeated:
         addStatement('float $destination = fract($source);');
       case ui.TileMode.mirror:
         addStatement('float $destination = ($source - 1.0);');
         addStatement(
-            '$destination = '
-            'abs(($destination - 2.0 * floor($destination * 0.5)) - 1.0);');
+          '$destination = '
+          'abs(($destination - 2.0 * floor($destination * 0.5)) - 1.0);',
+        );
       case ui.TileMode.clamp:
       case ui.TileMode.decal:
         addStatement('float $destination = $source;');
@@ -339,12 +353,12 @@ abstract class ShaderStorageQualifier {
 /// Shader variable and constant declaration.
 class ShaderDeclaration {
   ShaderDeclaration(this.name, this.dataType, this.storage)
-      : assert(!_isGLSLReservedWord(name)),
-        constValue = '';
+    : assert(!_isGLSLReservedWord(name)),
+      constValue = '';
 
   /// Constructs a constant.
   ShaderDeclaration.constant(this.name, this.dataType, this.constValue)
-      : storage = ShaderStorageQualifier.kConst;
+    : storage = ShaderStorageQualifier.kConst;
 
   final String name;
   final int dataType;

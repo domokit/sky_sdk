@@ -19,14 +19,9 @@ void main() {
   }
 
   testWidgets('Scrolling on the boxes changes their color', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.PointerSignalResolverExampleApp(),
-    );
+    await tester.pumpWidget(const example.PointerSignalResolverExampleApp());
 
-    expect(
-      getColors(tester),
-      (outer: const Color(0x3300ff00), inner: const Color(0xffffff00)),
-    );
+    expect(getColors(tester), (outer: const Color(0x3300ff00), inner: const Color(0xffffff00)));
 
     // Scroll on the outer box.
     final TestPointer pointer = TestPointer(1, PointerDeviceKind.mouse);
@@ -69,10 +64,7 @@ void main() {
 
     // The inner box changes color.
     colors = getColors(tester);
-    expect(
-      colors.outer,
-      const Color(0x3300ff26),
-    );
+    expect(colors.outer, const Color(0x3300ff26));
     expect(colors.inner, const Color(0xffe5ff00));
   });
 }

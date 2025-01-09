@@ -192,13 +192,11 @@ void _fillTypeTests() {
 
 void _pathOpTests() {
   test('path op mapping is correct', () {
-    expect(
-        canvasKit.PathOp.Difference.value, ui.PathOperation.difference.index);
+    expect(canvasKit.PathOp.Difference.value, ui.PathOperation.difference.index);
     expect(canvasKit.PathOp.Intersect.value, ui.PathOperation.intersect.index);
     expect(canvasKit.PathOp.Union.value, ui.PathOperation.union.index);
     expect(canvasKit.PathOp.XOR.value, ui.PathOperation.xor.index);
-    expect(canvasKit.PathOp.ReverseDifference.value,
-        ui.PathOperation.reverseDifference.index);
+    expect(canvasKit.PathOp.ReverseDifference.value, ui.PathOperation.reverseDifference.index);
   });
 
   test('ui.PathOperation converts to SkPathOp', () {
@@ -260,10 +258,8 @@ void _pointModeTests() {
 void _vertexModeTests() {
   test('vertex mode mapping is correct', () {
     expect(canvasKit.VertexMode.Triangles.value, ui.VertexMode.triangles.index);
-    expect(canvasKit.VertexMode.TrianglesStrip.value,
-        ui.VertexMode.triangleStrip.index);
-    expect(canvasKit.VertexMode.TriangleFan.value,
-        ui.VertexMode.triangleFan.index);
+    expect(canvasKit.VertexMode.TrianglesStrip.value, ui.VertexMode.triangleStrip.index);
+    expect(canvasKit.VertexMode.TriangleFan.value, ui.VertexMode.triangleFan.index);
   });
 
   test('ui.VertexMode converts to SkVertexMode', () {
@@ -275,8 +271,7 @@ void _vertexModeTests() {
 
 void _imageTests() {
   test('MakeAnimatedImageFromEncoded makes a non-animated image', () {
-    final SkAnimatedImage nonAnimated =
-        canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!;
+    final SkAnimatedImage nonAnimated = canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!;
     expect(nonAnimated.getFrameCount(), 1);
     expect(nonAnimated.getRepetitionCount(), 0);
     expect(nonAnimated.width(), 1);
@@ -300,8 +295,7 @@ void _imageTests() {
   });
 
   test('MakeAnimatedImageFromEncoded makes an animated image', () {
-    final SkAnimatedImage animated =
-        canvasKit.MakeAnimatedImageFromEncoded(kAnimatedGif)!;
+    final SkAnimatedImage animated = canvasKit.MakeAnimatedImageFromEncoded(kAnimatedGif)!;
     expect(animated.getFrameCount(), 3);
     expect(animated.getRepetitionCount(), -1); // animates forever
     expect(animated.width(), 1);
@@ -322,32 +316,34 @@ void _shaderTests() {
 
   test('MakeRadialGradient', () {
     expect(
-        canvasKit.Shader.MakeRadialGradient(
-          Float32List.fromList(<double>[1, 1]),
-          10.0,
-          Uint32List.fromList(<int>[0xff000000, 0xffffffff]),
-          Float32List.fromList(<double>[0, 1]),
-          canvasKit.TileMode.Repeat,
-          toSkMatrixFromFloat32(Matrix4.identity().storage),
-          0,
-        ),
-        isNotNull);
+      canvasKit.Shader.MakeRadialGradient(
+        Float32List.fromList(<double>[1, 1]),
+        10.0,
+        Uint32List.fromList(<int>[0xff000000, 0xffffffff]),
+        Float32List.fromList(<double>[0, 1]),
+        canvasKit.TileMode.Repeat,
+        toSkMatrixFromFloat32(Matrix4.identity().storage),
+        0,
+      ),
+      isNotNull,
+    );
   });
 
   test('MakeTwoPointConicalGradient', () {
     expect(
-        canvasKit.Shader.MakeTwoPointConicalGradient(
-          Float32List.fromList(<double>[1, 1]),
-          10.0,
-          Float32List.fromList(<double>[1, 1]),
-          10.0,
-          Uint32List.fromList(<int>[0xff000000, 0xffffffff]),
-          Float32List.fromList(<double>[0, 1]),
-          canvasKit.TileMode.Repeat,
-          toSkMatrixFromFloat32(Matrix4.identity().storage),
-          0,
-        ),
-        isNotNull);
+      canvasKit.Shader.MakeTwoPointConicalGradient(
+        Float32List.fromList(<double>[1, 1]),
+        10.0,
+        Float32List.fromList(<double>[1, 1]),
+        10.0,
+        Uint32List.fromList(<int>[0xff000000, 0xffffffff]),
+        Float32List.fromList(<double>[0, 1]),
+        canvasKit.TileMode.Repeat,
+        toSkMatrixFromFloat32(Matrix4.identity().storage),
+        0,
+      ),
+      isNotNull,
+    );
   });
 
   test('RuntimeEffect', () {
@@ -392,8 +388,9 @@ return u_color;
     uniformData[2] = 0.0;
     uniformData[3] = 1.0;
 
-    final SkShader? shaderWithUniform = MakeRuntimeEffect(kSkSlProgramWithUniforms)
-      !.makeShader(uniforms);
+    final SkShader? shaderWithUniform = MakeRuntimeEffect(
+      kSkSlProgramWithUniforms,
+    )!.makeShader(uniforms);
 
     expect(shaderWithUniform, isNotNull);
   });
@@ -421,42 +418,22 @@ void _paintTests() {
     paint.setAntiAlias(true);
     paint.setColorInt(0x00FFCCAA);
     paint.setShader(_makeTestShader());
-    paint.setMaskFilter(canvasKit.MaskFilter.MakeBlur(
-      canvasKit.BlurStyle.Outer,
-      2.0,
-      true,
-    ));
+    paint.setMaskFilter(canvasKit.MaskFilter.MakeBlur(canvasKit.BlurStyle.Outer, 2.0, true));
     paint.setColorFilter(canvasKit.ColorFilter.MakeLinearToSRGBGamma());
     paint.setStrokeMiter(1.4);
-    paint.setImageFilter(canvasKit.ImageFilter.MakeBlur(
-      1,
-      2,
-      canvasKit.TileMode.Repeat,
-      null,
-    ));
+    paint.setImageFilter(canvasKit.ImageFilter.MakeBlur(1, 2, canvasKit.TileMode.Repeat, null));
   });
 }
 
 void _maskFilterTests() {
   test('MaskFilter.MakeBlur', () {
-    expect(
-        canvasKit.MaskFilter.MakeBlur(
-          canvasKit.BlurStyle.Outer,
-          5.0,
-          false,
-        ),
-        isNotNull);
+    expect(canvasKit.MaskFilter.MakeBlur(canvasKit.BlurStyle.Outer, 5.0, false), isNotNull);
   });
   test('MaskFilter.MakeBlur with 0 sigma returns null', () {
-    expect(
-        canvasKit.MaskFilter.MakeBlur(canvasKit.BlurStyle.Normal, 0.0, false),
-        isNull);
+    expect(canvasKit.MaskFilter.MakeBlur(canvasKit.BlurStyle.Normal, 0.0, false), isNull);
   });
   test('MaskFilter.MakeBlur with NaN sigma returns null', () {
-    expect(
-        canvasKit.MaskFilter.MakeBlur(
-            canvasKit.BlurStyle.Normal, double.nan, false),
-        isNull);
+    expect(canvasKit.MaskFilter.MakeBlur(canvasKit.BlurStyle.Normal, double.nan, false), isNull);
   });
 }
 
@@ -472,35 +449,21 @@ void _colorFilterTests() {
   });
 
   test('MakeMatrix', () {
-    expect(
-      canvasKit.ColorFilter.MakeMatrix(
-        Float32List(20),
-      ),
-      isNotNull,
-    );
+    expect(canvasKit.ColorFilter.MakeMatrix(Float32List(20)), isNotNull);
   });
 
   test('MakeSRGBToLinearGamma', () {
-    expect(
-      canvasKit.ColorFilter.MakeSRGBToLinearGamma(),
-      isNotNull,
-    );
+    expect(canvasKit.ColorFilter.MakeSRGBToLinearGamma(), isNotNull);
   });
 
   test('MakeLinearToSRGBGamma', () {
-    expect(
-      canvasKit.ColorFilter.MakeLinearToSRGBGamma(),
-      isNotNull,
-    );
+    expect(canvasKit.ColorFilter.MakeLinearToSRGBGamma(), isNotNull);
   });
 }
 
 void _imageFilterTests() {
   test('MakeBlur', () {
-    expect(
-      canvasKit.ImageFilter.MakeBlur(1, 2, canvasKit.TileMode.Repeat, null),
-      isNotNull,
-    );
+    expect(canvasKit.ImageFilter.MakeBlur(1, 2, canvasKit.TileMode.Repeat, null), isNotNull);
   });
 
   test('toSkFilterOptions', () {
@@ -522,10 +485,7 @@ void _imageFilterTests() {
 
   test('MakeColorFilter', () {
     expect(
-      canvasKit.ImageFilter.MakeColorFilter(
-        canvasKit.ColorFilter.MakeLinearToSRGBGamma(),
-        null,
-      ),
+      canvasKit.ImageFilter.MakeColorFilter(canvasKit.ColorFilter.MakeLinearToSRGBGamma(), null),
       isNotNull,
     );
   });
@@ -541,17 +501,11 @@ void _imageFilterTests() {
   });
 
   test('MakeDilate', () {
-    expect(
-      canvasKit.ImageFilter.MakeDilate(1, 2, null),
-      isNotNull,
-    );
+    expect(canvasKit.ImageFilter.MakeDilate(1, 2, null), isNotNull);
   });
 
   test('MakeErode', () {
-    expect(
-      canvasKit.ImageFilter.MakeErode(1, 2, null),
-      isNotNull,
-    );
+    expect(canvasKit.ImageFilter.MakeErode(1, 2, null), isNotNull);
   });
 }
 
@@ -662,50 +616,54 @@ void _toSkColorStopsTests() {
 
 void _toSkMatrixFromFloat32Tests() {
   test('toSkMatrixFromFloat32', () {
-    final Matrix4 matrix = Matrix4.identity()
-      ..translate(1, 2, 3)
-      ..rotateZ(4);
+    final Matrix4 matrix =
+        Matrix4.identity()
+          ..translate(1, 2, 3)
+          ..rotateZ(4);
     expect(
-        toSkMatrixFromFloat32(matrix.storage),
-        Float32List.fromList(<double>[
-          -0.6536436080932617,
-          0.756802499294281,
-          1,
-          -0.756802499294281,
-          -0.6536436080932617,
-          2,
-          -0.0,
-          0,
-          1,
-        ]));
+      toSkMatrixFromFloat32(matrix.storage),
+      Float32List.fromList(<double>[
+        -0.6536436080932617,
+        0.756802499294281,
+        1,
+        -0.756802499294281,
+        -0.6536436080932617,
+        2,
+        -0.0,
+        0,
+        1,
+      ]),
+    );
   });
 }
 
 void _toSkM44FromFloat32Tests() {
   test('toSkM44FromFloat32', () {
-    final Matrix4 matrix = Matrix4.identity()
-      ..translate(1, 2, 3)
-      ..rotateZ(4);
+    final Matrix4 matrix =
+        Matrix4.identity()
+          ..translate(1, 2, 3)
+          ..rotateZ(4);
     expect(
-        toSkM44FromFloat32(matrix.storage),
-        Float32List.fromList(<double>[
-          -0.6536436080932617,
-          0.756802499294281,
-          0,
-          1,
-          -0.756802499294281,
-          -0.6536436080932617,
-          0,
-          2,
-          0,
-          0,
-          1,
-          3,
-          0,
-          0,
-          0,
-          1,
-        ]));
+      toSkM44FromFloat32(matrix.storage),
+      Float32List.fromList(<double>[
+        -0.6536436080932617,
+        0.756802499294281,
+        0,
+        1,
+        -0.756802499294281,
+        -0.6536436080932617,
+        0,
+        2,
+        0,
+        0,
+        1,
+        3,
+        0,
+        0,
+        0,
+        1,
+      ]),
+    );
   });
 }
 
@@ -714,7 +672,9 @@ typedef CanvasCallback = void Function(ui.Canvas canvas);
 Future<ui.Image> toImage(CanvasCallback callback, int width, int height) {
   final ui.PictureRecorder recorder = ui.PictureRecorder();
   final ui.Canvas canvas = ui.Canvas(
-      recorder, ui.Rect.fromLTRB(0, 0, width.toDouble(), height.toDouble()));
+    recorder,
+    ui.Rect.fromLTRB(0, 0, width.toDouble(), height.toDouble()),
+  );
   callback(canvas);
   final ui.Picture picture = recorder.endRecording();
   return picture.toImage(width, height);
@@ -726,8 +686,7 @@ Future<bool> fuzzyCompareImages(ui.Image golden, ui.Image img) async {
   if (golden.width != img.width || golden.height != img.height) {
     return false;
   }
-  int getPixel(ByteData data, int x, int y) =>
-      data.getUint32((x + y * golden.width) * 4);
+  int getPixel(ByteData data, int x, int y) => data.getUint32((x + y * golden.width) * 4);
   final ByteData goldenData = (await golden.toByteData())!;
   final ByteData imgData = (await img.toByteData())!;
   for (int y = 0; y < golden.height; y++) {
@@ -754,39 +713,50 @@ void _matrix4x4CompositionTests() {
       const double width3 = width / 3.0;
       const double width5 = width / 5.0;
       const double width10 = width / 10.0;
-      canvas.drawRect(const ui.Rect.fromLTRB(-width3, -width3, width3, width3),
-          ui.Paint()..color = green);
       canvas.drawRect(
-          const ui.Rect.fromLTRB(-width5, -width5, -width10, width5),
-          ui.Paint()..color = black);
+        const ui.Rect.fromLTRB(-width3, -width3, width3, width3),
+        ui.Paint()..color = green,
+      );
       canvas.drawRect(
-          const ui.Rect.fromLTRB(-width5, -width5, width5, -width10),
-          ui.Paint()..color = black);
+        const ui.Rect.fromLTRB(-width5, -width5, -width10, width5),
+        ui.Paint()..color = black,
+      );
+      canvas.drawRect(
+        const ui.Rect.fromLTRB(-width5, -width5, width5, -width10),
+        ui.Paint()..color = black,
+      );
     }
 
-    final ui.Image incrementalMatrixImage = await toImage((ui.Canvas canvas) {
-      paint(canvas, (ui.Canvas canvas) {
-        final Matrix4 matrix = Matrix4.identity();
-        matrix.setEntry(3, 2, 0.001);
-        canvas.transform(matrix.toFloat64());
-        matrix.setRotationX(rotateAroundX);
-        canvas.transform(matrix.toFloat64());
-        matrix.setRotationY(rotateAroundY);
-        canvas.transform(matrix.toFloat64());
-      });
-    }, width, height);
-    final ui.Image combinedMatrixImage = await toImage((ui.Canvas canvas) {
-      paint(canvas, (ui.Canvas canvas) {
-        final Matrix4 matrix = Matrix4.identity();
-        matrix.setEntry(3, 2, 0.001);
-        matrix.rotate(kUnitX, rotateAroundX);
-        matrix.rotate(kUnitY, rotateAroundY);
-        canvas.transform(matrix.toFloat64());
-      });
-    }, width, height);
+    final ui.Image incrementalMatrixImage = await toImage(
+      (ui.Canvas canvas) {
+        paint(canvas, (ui.Canvas canvas) {
+          final Matrix4 matrix = Matrix4.identity();
+          matrix.setEntry(3, 2, 0.001);
+          canvas.transform(matrix.toFloat64());
+          matrix.setRotationX(rotateAroundX);
+          canvas.transform(matrix.toFloat64());
+          matrix.setRotationY(rotateAroundY);
+          canvas.transform(matrix.toFloat64());
+        });
+      },
+      width,
+      height,
+    );
+    final ui.Image combinedMatrixImage = await toImage(
+      (ui.Canvas canvas) {
+        paint(canvas, (ui.Canvas canvas) {
+          final Matrix4 matrix = Matrix4.identity();
+          matrix.setEntry(3, 2, 0.001);
+          matrix.rotate(kUnitX, rotateAroundX);
+          matrix.rotate(kUnitY, rotateAroundY);
+          canvas.transform(matrix.toFloat64());
+        });
+      },
+      width,
+      height,
+    );
 
-    final bool areEqual =
-        await fuzzyCompareImages(incrementalMatrixImage, combinedMatrixImage);
+    final bool areEqual = await fuzzyCompareImages(incrementalMatrixImage, combinedMatrixImage);
     expect(areEqual, true);
   });
 }
@@ -797,22 +767,26 @@ void _toSkRectTests() {
   });
 
   test('fromSkRect', () {
-    expect(fromSkRect(Float32List.fromList(<double>[1, 2, 3, 4])),
-        const ui.Rect.fromLTRB(1, 2, 3, 4));
+    expect(
+      fromSkRect(Float32List.fromList(<double>[1, 2, 3, 4])),
+      const ui.Rect.fromLTRB(1, 2, 3, 4),
+    );
   });
 
   test('toSkRRect', () {
     expect(
-      toSkRRect(ui.RRect.fromLTRBAndCorners(
-        1,
-        2,
-        3,
-        4,
-        topLeft: const ui.Radius.elliptical(5, 6),
-        topRight: const ui.Radius.elliptical(7, 8),
-        bottomRight: const ui.Radius.elliptical(9, 10),
-        bottomLeft: const ui.Radius.elliptical(11, 12),
-      )),
+      toSkRRect(
+        ui.RRect.fromLTRBAndCorners(
+          1,
+          2,
+          3,
+          4,
+          topLeft: const ui.Radius.elliptical(5, 6),
+          topRight: const ui.Radius.elliptical(7, 8),
+          bottomRight: const ui.Radius.elliptical(9, 10),
+          bottomLeft: const ui.Radius.elliptical(11, 12),
+        ),
+      ),
       <double>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     );
   });
@@ -839,19 +813,11 @@ void _pathTests() {
   });
 
   test('addArc', () {
-    path.addArc(
-      toSkRect(const ui.Rect.fromLTRB(10, 20, 30, 40)),
-      1,
-      5,
-    );
+    path.addArc(toSkRect(const ui.Rect.fromLTRB(10, 20, 30, 40)), 1, 5);
   });
 
   test('addOval', () {
-    path.addOval(
-      toSkRect(const ui.Rect.fromLTRB(10, 20, 30, 40)),
-      false,
-      1,
-    );
+    path.addOval(toSkRect(const ui.Rect.fromLTRB(10, 20, 30, 40)), false, 1);
   });
 
   test('addPath', () {
@@ -872,10 +838,7 @@ void _pathTests() {
       const ui.Rect.fromLTRB(10, 10, 20, 20),
       const ui.Radius.circular(3),
     );
-    path.addRRect(
-      toSkRRect(rrect),
-      false,
-    );
+    path.addRRect(toSkRRect(rrect), false);
   });
 
   test('addRect', () {
@@ -883,24 +846,11 @@ void _pathTests() {
   });
 
   test('arcTo', () {
-    path.arcToOval(
-      toSkRect(const ui.Rect.fromLTRB(1, 2, 3, 4)),
-      5,
-      40,
-      false,
-    );
+    path.arcToOval(toSkRect(const ui.Rect.fromLTRB(1, 2, 3, 4)), 5, 40, false);
   });
 
   test('overloaded arcTo (used for arcToPoint)', () {
-    path.arcToRotated(
-      1,
-      2,
-      3,
-      false,
-      true,
-      4,
-      5,
-    );
+    path.arcToRotated(1, 2, 3, false, true, 4, 5);
   });
 
   test('close', () {
@@ -940,15 +890,7 @@ void _pathTests() {
   });
 
   test('rArcTo', () {
-    path.rArcTo(
-      10,
-      20,
-      30,
-      false,
-      true,
-      40,
-      50,
-    );
+    path.rArcTo(10, 20, 30, false, true, 40, 50);
   });
 
   test('rConicTo', () {
@@ -973,15 +915,13 @@ void _pathTests() {
 
   test('reset', () {
     final SkPath testPath = _testClosedSkPath();
-    expect(fromSkRect(testPath.getBounds()),
-        const ui.Rect.fromLTRB(10, 10, 20, 20));
+    expect(fromSkRect(testPath.getBounds()), const ui.Rect.fromLTRB(10, 10, 20, 20));
     testPath.reset();
     expect(fromSkRect(testPath.getBounds()), ui.Rect.zero);
   });
 
   test('toSVGString', () {
-    expect(
-        _testClosedSkPath().toSVGString(), 'M10 10L20 10L20 20L10 20L10 10Z');
+    expect(_testClosedSkPath().toSVGString(), 'M10 10L20 10L20 20L10 20L10 10Z');
   });
 
   test('isEmpty', () {
@@ -1003,13 +943,11 @@ void _pathTests() {
   });
 
   test('SkContourMeasureIter/SkContourMeasure', () {
-    final SkContourMeasureIter iter =
-        SkContourMeasureIter(_testClosedSkPath(), false, 1.0);
+    final SkContourMeasureIter iter = SkContourMeasureIter(_testClosedSkPath(), false, 1.0);
     final SkContourMeasure measure1 = iter.next()!;
     expect(measure1.length(), 40);
     expect(measure1.getPosTan(5), Float32List.fromList(<double>[15, 10, 1, 0]));
-    expect(
-        measure1.getPosTan(15), Float32List.fromList(<double>[20, 15, 0, 1]));
+    expect(measure1.getPosTan(15), Float32List.fromList(<double>[20, 15, 0, 1]));
     expect(measure1.isClosed(), isTrue);
 
     // Starting with a box path:
@@ -1034,8 +972,7 @@ void _pathTests() {
     //    |           |
     // 20 +-----------+
     final SkPath segment = measure1.getSegment(5, 15, true);
-    expect(fromSkRect(segment.getBounds()),
-        const ui.Rect.fromLTRB(15, 10, 20, 15));
+    expect(fromSkRect(segment.getBounds()), const ui.Rect.fromLTRB(15, 10, 20, 15));
 
     final SkContourMeasure? measure2 = iter.next();
     expect(measure2, isNull);
@@ -1080,13 +1017,14 @@ void _pictureTests() {
   setUp(() {
     final SkPictureRecorder recorder = SkPictureRecorder();
     final SkCanvas canvas = recorder.beginRecording(toSkRect(ui.Rect.largest));
-    canvas.drawRect(toSkRect(const ui.Rect.fromLTRB(20, 30, 40, 50)),
-        SkPaint()..setColorInt(0xffff00ff));
+    canvas.drawRect(
+      toSkRect(const ui.Rect.fromLTRB(20, 30, 40, 50)),
+      SkPaint()..setColorInt(0xffff00ff),
+    );
     picture = recorder.finishRecordingAsPicture();
   });
   test('cullRect', () {
-    expect(
-        fromSkRect(picture.cullRect()), const ui.Rect.fromLTRB(20, 30, 40, 50));
+    expect(fromSkRect(picture.cullRect()), const ui.Rect.fromLTRB(20, 30, 40, 50));
   });
 
   test('approximateBytesUsed', () {
@@ -1100,8 +1038,7 @@ void _canvasTests() {
 
   setUp(() {
     recorder = SkPictureRecorder();
-    canvas = recorder
-        .beginRecording(toSkRect(const ui.Rect.fromLTRB(0, 0, 100, 100)));
+    canvas = recorder.beginRecording(toSkRect(const ui.Rect.fromLTRB(0, 0, 100, 100)));
   });
 
   tearDown(() {
@@ -1180,18 +1117,11 @@ void _canvasTests() {
   });
 
   test('drawArc', () {
-    canvas.drawArc(
-      Float32List.fromList(<double>[0, 0, 100, 50]),
-      0,
-      100,
-      true,
-      SkPaint(),
-    );
+    canvas.drawArc(Float32List.fromList(<double>[0, 0, 100, 50]), 0, 100, true, SkPaint());
   });
 
   test('drawAtlas', () {
-    final SkAnimatedImage image =
-        canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!;
+    final SkAnimatedImage image = canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!;
     canvas.drawAtlas(
       image.makeImageAtCurrentFrame(),
       Float32List.fromList(<double>[0, 0, 1, 1]),
@@ -1219,8 +1149,7 @@ void _canvasTests() {
   });
 
   test('drawImageOptions', () {
-    final SkAnimatedImage image =
-        canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!;
+    final SkAnimatedImage image = canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!;
     canvas.drawImageOptions(
       image.makeImageAtCurrentFrame(),
       10,
@@ -1232,21 +1161,12 @@ void _canvasTests() {
   });
 
   test('drawImageCubic', () {
-    final SkAnimatedImage image =
-        canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!;
-    canvas.drawImageCubic(
-      image.makeImageAtCurrentFrame(),
-      10,
-      20,
-      0.3,
-      0.3,
-      SkPaint(),
-    );
+    final SkAnimatedImage image = canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!;
+    canvas.drawImageCubic(image.makeImageAtCurrentFrame(), 10, 20, 0.3, 0.3, SkPaint());
   });
 
   test('drawImageRectOptions', () {
-    final SkAnimatedImage image =
-        canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!;
+    final SkAnimatedImage image = canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!;
     canvas.drawImageRectOptions(
       image.makeImageAtCurrentFrame(),
       Float32List.fromList(<double>[0, 0, 1, 1]),
@@ -1258,8 +1178,7 @@ void _canvasTests() {
   });
 
   test('drawImageRectCubic', () {
-    final SkAnimatedImage image =
-        canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!;
+    final SkAnimatedImage image = canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!;
     canvas.drawImageRectCubic(
       image.makeImageAtCurrentFrame(),
       Float32List.fromList(<double>[0, 0, 1, 1]),
@@ -1271,8 +1190,7 @@ void _canvasTests() {
   });
 
   test('drawImageNine', () {
-    final SkAnimatedImage image =
-        canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!;
+    final SkAnimatedImage image = canvasKit.MakeAnimatedImageFromEncoded(kTransparentImage)!;
     canvas.drawImageNine(
       image.makeImageAtCurrentFrame(),
       Float32List.fromList(<double>[0, 0, 1, 1]),
@@ -1295,10 +1213,7 @@ void _canvasTests() {
   });
 
   test('drawPath', () {
-    canvas.drawPath(
-      _testClosedSkPath(),
-      SkPaint(),
-    );
+    canvas.drawPath(_testClosedSkPath(), SkPaint());
   });
 
   test('drawPoints', () {
@@ -1317,10 +1232,7 @@ void _canvasTests() {
   });
 
   test('drawRect', () {
-    canvas.drawRect(
-      Float32List.fromList(<double>[0, 0, 100, 100]),
-      SkPaint(),
-    );
+    canvas.drawRect(Float32List.fromList(<double>[0, 0, 100, 100]), SkPaint());
   });
 
   test('drawShadow', () {
@@ -1336,18 +1248,15 @@ void _canvasTests() {
       final double shadowY = bounds.top - 600.0;
 
       const ui.Color color = ui.Color(0xAABBCCDD);
-      final ui.Color inAmbient =
-          color.withAlpha((color.alpha * ambientAlpha).round());
-      final ui.Color inSpot =
-          color.withAlpha((color.alpha * spotAlpha).round());
+      final ui.Color inAmbient = color.withAlpha((color.alpha * ambientAlpha).round());
+      final ui.Color inSpot = color.withAlpha((color.alpha * spotAlpha).round());
 
       final SkTonalColors inTonalColors = SkTonalColors(
         ambient: makeFreshSkColor(inAmbient),
         spot: makeFreshSkColor(inSpot),
       );
 
-      final SkTonalColors tonalColors =
-          canvasKit.computeTonalColors(inTonalColors);
+      final SkTonalColors tonalColors = canvasKit.computeTonalColors(inTonalColors);
 
       canvas.drawShadow(
         path,
@@ -1365,18 +1274,14 @@ void _canvasTests() {
   });
 
   test('drawVertices', () {
-    canvas.drawVertices(
-      _testVertices(),
-      canvasKit.BlendMode.SrcOver,
-      SkPaint(),
-    );
+    canvas.drawVertices(_testVertices(), canvasKit.BlendMode.SrcOver, SkPaint());
   });
 
   test('rotate', () {
     canvas.rotate(90, 10, 20);
     expect(canvas.getLocalToDevice(), <double>[
       0, -1, 0, 30, // tx = 10 - (-20) == 30
-      1, 0, 0, 10,  // ty = 20 - 10 == 10
+      1, 0, 0, 10, // ty = 20 - 10 == 10
       0, 0, 1, 0,
       0, 0, 0, 1,
     ]);
@@ -1384,54 +1289,60 @@ void _canvasTests() {
 
   test('scale', () {
     canvas.scale(2, 3);
-    expect(canvas.getLocalToDevice(), <double>[
-      2, 0, 0, 0,
-      0, 3, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1,
-    ]);
+    expect(canvas.getLocalToDevice(), <double>[2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
   });
 
   test('skew', () {
     canvas.skew(4, 5);
-    expect(canvas.getLocalToDevice(), <double>[
-      1, 4, 0, 0,
-      5, 1, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1,
-    ]);
+    expect(canvas.getLocalToDevice(), <double>[1, 4, 0, 0, 5, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
   });
 
   test('concat', () {
     canvas.concat(toSkM44FromFloat32(Matrix4.identity().storage));
+    expect(canvas.getLocalToDevice(), <double>[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+    canvas.concat(
+      Float32List.fromList(<double>[
+        11,
+        12,
+        13,
+        14,
+        21,
+        22,
+        23,
+        24,
+        31,
+        32,
+        33,
+        34,
+        41,
+        42,
+        43,
+        44,
+      ]),
+    );
     expect(canvas.getLocalToDevice(), <double>[
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1,
-    ]);
-    canvas.concat(Float32List.fromList(<double>[
-      11, 12, 13, 14,
-      21, 22, 23, 24,
-      31, 32, 33, 34,
-      41, 42, 43, 44,
-    ]));
-    expect(canvas.getLocalToDevice(), <double>[
-      11, 12, 13, 14,
-      21, 22, 23, 24,
-      31, 32, 33, 34,
-      41, 42, 43, 44,
+      11,
+      12,
+      13,
+      14,
+      21,
+      22,
+      23,
+      24,
+      31,
+      32,
+      33,
+      34,
+      41,
+      42,
+      43,
+      44,
     ]);
   });
 
   test('translate', () {
     canvas.translate(4, 5);
-    expect(canvas.getLocalToDevice(), <double>[
-      1, 0, 0, 4,
-      0, 1, 0, 5,
-      0, 0, 1, 0,
-      0, 0, 0, 1,
-    ]);
+    expect(canvas.getLocalToDevice(), <double>[1, 0, 0, 4, 0, 1, 0, 5, 0, 0, 1, 0, 0, 0, 0, 1]);
   });
 
   test('quickReject', () {
@@ -1442,47 +1353,36 @@ void _canvasTests() {
       canvasKit.ClipOp.Intersect,
       false,
     );
-    expect(
-      canvas.quickReject(toSkRect(const ui.Rect.fromLTRB(5, 5, 15, 15))),
-      isFalse,
-    );
-    expect(
-      canvas.quickReject(toSkRect(const ui.Rect.fromLTRB(25, 25, 35, 35))),
-      isTrue,
-    );
+    expect(canvas.quickReject(toSkRect(const ui.Rect.fromLTRB(5, 5, 15, 15))), isFalse);
+    expect(canvas.quickReject(toSkRect(const ui.Rect.fromLTRB(25, 25, 35, 35))), isTrue);
     canvas.restore();
   });
 
   test('drawPicture', () {
     final SkPictureRecorder otherRecorder = SkPictureRecorder();
-    final SkCanvas otherCanvas = otherRecorder
-        .beginRecording(Float32List.fromList(<double>[0, 0, 100, 100]));
+    final SkCanvas otherCanvas = otherRecorder.beginRecording(
+      Float32List.fromList(<double>[0, 0, 100, 100]),
+    );
     otherCanvas.drawLine(0, 0, 10, 10, SkPaint());
     canvas.drawPicture(otherRecorder.finishRecordingAsPicture());
   });
 
   test('drawParagraph', () {
-    final CkParagraphBuilder builder = CkParagraphBuilder(
-      CkParagraphStyle(),
-    );
+    final CkParagraphBuilder builder = CkParagraphBuilder(CkParagraphStyle());
     builder.addText('Hello');
     final CkParagraph paragraph = builder.build();
     paragraph.layout(const ui.ParagraphConstraints(width: 100));
-    canvas.drawParagraph(
-      paragraph.skiaObject,
-      10,
-      20,
-    );
+    canvas.drawParagraph(paragraph.skiaObject, 10, 20);
   });
 
   test('Paragraph converts caret position to charactor position', () {
-    final CkParagraphBuilder builder = CkParagraphBuilder(
-      CkParagraphStyle(),
-    );
+    final CkParagraphBuilder builder = CkParagraphBuilder(CkParagraphStyle());
     builder.addText('Hello there');
     final CkParagraph paragraph = builder.build();
     paragraph.layout(const ui.ParagraphConstraints(width: 100));
-    ui.TextRange range = paragraph.getWordBoundary(const ui.TextPosition(offset: 5, affinity: ui.TextAffinity.upstream));
+    ui.TextRange range = paragraph.getWordBoundary(
+      const ui.TextPosition(offset: 5, affinity: ui.TextAffinity.upstream),
+    );
     expect(range.start, 0);
     expect(range.end, 5);
 
@@ -1492,9 +1392,7 @@ void _canvasTests() {
   });
 
   test('Paragraph dispose', () {
-    final CkParagraphBuilder builder = CkParagraphBuilder(
-      CkParagraphStyle(),
-    );
+    final CkParagraphBuilder builder = CkParagraphBuilder(CkParagraphStyle());
     builder.addText('Hello');
     final CkParagraph paragraph = builder.build();
 
@@ -1504,62 +1402,46 @@ void _canvasTests() {
 
   test('toImage.toByteData', () async {
     final SkPictureRecorder otherRecorder = SkPictureRecorder();
-    final SkCanvas otherCanvas = otherRecorder
-        .beginRecording(Float32List.fromList(<double>[0, 0, 1, 1]));
+    final SkCanvas otherCanvas = otherRecorder.beginRecording(
+      Float32List.fromList(<double>[0, 0, 1, 1]),
+    );
     otherCanvas.drawRect(
       Float32List.fromList(<double>[0, 0, 1, 1]),
       SkPaint()..setColorInt(0xAAFFFFFF),
     );
-    final CkPicture picture =
-        CkPicture(otherRecorder.finishRecordingAsPicture());
+    final CkPicture picture = CkPicture(otherRecorder.finishRecordingAsPicture());
     final CkImage image = await picture.toImage(1, 1) as CkImage;
-    final ByteData rawData =
-        await image.toByteData();
+    final ByteData rawData = await image.toByteData();
     expect(rawData.lengthInBytes, greaterThan(0));
-    expect(
-      rawData.buffer.asUint32List(),
-      <int>[0xAAAAAAAA],
+    expect(rawData.buffer.asUint32List(), <int>[0xAAAAAAAA]);
+    final ByteData rawStraightData = await image.toByteData(
+      format: ui.ImageByteFormat.rawStraightRgba,
     );
-    final ByteData rawStraightData =
-        await image.toByteData(format: ui.ImageByteFormat.rawStraightRgba);
     expect(rawStraightData.lengthInBytes, greaterThan(0));
-    expect(
-      rawStraightData.buffer.asUint32List(),
-      <int>[0xAAFFFFFF],
-    );
-    final ByteData pngData =
-        await image.toByteData(format: ui.ImageByteFormat.png);
+    expect(rawStraightData.buffer.asUint32List(), <int>[0xAAFFFFFF]);
+    final ByteData pngData = await image.toByteData(format: ui.ImageByteFormat.png);
     expect(pngData.lengthInBytes, greaterThan(0));
   });
 }
 
 void _textStyleTests() {
   test('SkTextDecorationStyle mapping is correct', () {
-    expect(canvasKit.DecorationStyle.Solid.value,
-        ui.TextDecorationStyle.solid.index);
-    expect(canvasKit.DecorationStyle.Double.value,
-        ui.TextDecorationStyle.double.index);
-    expect(canvasKit.DecorationStyle.Dotted.value,
-        ui.TextDecorationStyle.dotted.index);
-    expect(canvasKit.DecorationStyle.Dashed.value,
-        ui.TextDecorationStyle.dashed.index);
-    expect(canvasKit.DecorationStyle.Wavy.value,
-        ui.TextDecorationStyle.wavy.index);
+    expect(canvasKit.DecorationStyle.Solid.value, ui.TextDecorationStyle.solid.index);
+    expect(canvasKit.DecorationStyle.Double.value, ui.TextDecorationStyle.double.index);
+    expect(canvasKit.DecorationStyle.Dotted.value, ui.TextDecorationStyle.dotted.index);
+    expect(canvasKit.DecorationStyle.Dashed.value, ui.TextDecorationStyle.dashed.index);
+    expect(canvasKit.DecorationStyle.Wavy.value, ui.TextDecorationStyle.wavy.index);
   });
 
   test('ui.TextDecorationStyle converts to SkTextDecorationStyle', () {
-    for (final ui.TextDecorationStyle decorationStyle
-        in ui.TextDecorationStyle.values) {
-      expect(toSkTextDecorationStyle(decorationStyle).value,
-          decorationStyle.index);
+    for (final ui.TextDecorationStyle decorationStyle in ui.TextDecorationStyle.values) {
+      expect(toSkTextDecorationStyle(decorationStyle).value, decorationStyle.index);
     }
   });
 
   test('SkTextBaseline mapping is correct', () {
-    expect(canvasKit.TextBaseline.Alphabetic.value,
-        ui.TextBaseline.alphabetic.index);
-    expect(canvasKit.TextBaseline.Ideographic.value,
-        ui.TextBaseline.ideographic.index);
+    expect(canvasKit.TextBaseline.Alphabetic.value, ui.TextBaseline.alphabetic.index);
+    expect(canvasKit.TextBaseline.Ideographic.value, ui.TextBaseline.ideographic.index);
   });
 
   test('ui.TextBaseline converts to SkTextBaseline', () {
@@ -1569,25 +1451,23 @@ void _textStyleTests() {
   });
 
   test('SkPlaceholderAlignment mapping is correct', () {
-    expect(canvasKit.PlaceholderAlignment.Baseline.value,
-        ui.PlaceholderAlignment.baseline.index);
-    expect(canvasKit.PlaceholderAlignment.AboveBaseline.value,
-        ui.PlaceholderAlignment.aboveBaseline.index);
-    expect(canvasKit.PlaceholderAlignment.BelowBaseline.value,
-        ui.PlaceholderAlignment.belowBaseline.index);
-    expect(canvasKit.PlaceholderAlignment.Top.value,
-        ui.PlaceholderAlignment.top.index);
-    expect(canvasKit.PlaceholderAlignment.Bottom.value,
-        ui.PlaceholderAlignment.bottom.index);
-    expect(canvasKit.PlaceholderAlignment.Middle.value,
-        ui.PlaceholderAlignment.middle.index);
+    expect(canvasKit.PlaceholderAlignment.Baseline.value, ui.PlaceholderAlignment.baseline.index);
+    expect(
+      canvasKit.PlaceholderAlignment.AboveBaseline.value,
+      ui.PlaceholderAlignment.aboveBaseline.index,
+    );
+    expect(
+      canvasKit.PlaceholderAlignment.BelowBaseline.value,
+      ui.PlaceholderAlignment.belowBaseline.index,
+    );
+    expect(canvasKit.PlaceholderAlignment.Top.value, ui.PlaceholderAlignment.top.index);
+    expect(canvasKit.PlaceholderAlignment.Bottom.value, ui.PlaceholderAlignment.bottom.index);
+    expect(canvasKit.PlaceholderAlignment.Middle.value, ui.PlaceholderAlignment.middle.index);
   });
 
   test('ui.PlaceholderAlignment converts to SkPlaceholderAlignment', () {
-    for (final ui.PlaceholderAlignment placeholderAlignment
-        in ui.PlaceholderAlignment.values) {
-      expect(toSkPlaceholderAlignment(placeholderAlignment).value,
-          placeholderAlignment.index);
+    for (final ui.PlaceholderAlignment placeholderAlignment in ui.PlaceholderAlignment.values) {
+      expect(toSkPlaceholderAlignment(placeholderAlignment).value, placeholderAlignment.index);
     }
   });
 }
@@ -1605,46 +1485,49 @@ void _paragraphTests() {
     props.textHeightBehavior = canvasKit.TextHeightBehavior.All;
     props.maxLines = 4;
     props.ellipsis = '___';
-    props.textStyle = SkTextStyleProperties()
-      ..backgroundColor = Float32List.fromList(<double>[0.2, 0, 0, 0.5])
-      ..color = Float32List.fromList(<double>[0, 1, 0, 1])
-      ..foregroundColor = Float32List.fromList(<double>[1, 0, 1, 1])
-      ..decoration = 0x2
-      ..decorationThickness = 2.0
-      ..decorationColor = Float32List.fromList(<double>[13, 14, 15, 16])
-      ..decorationStyle = canvasKit.DecorationStyle.Dotted
-      ..textBaseline = canvasKit.TextBaseline.Ideographic
-      ..fontSize = 48
-      ..letterSpacing = 5
-      ..wordSpacing = 10
-      ..heightMultiplier = 1.3
-      ..halfLeading = true
-      ..locale = 'en_CA'
-      ..fontFamilies = <String>['Roboto', 'serif']
-      ..fontStyle = (SkFontStyle()
-        ..slant = canvasKit.FontSlant.Upright
-        ..weight = canvasKit.FontWeight.Normal)
-      ..shadows = <SkTextShadow>[]
-      ..fontFeatures = <SkFontFeature>[
-        SkFontFeature()
-          ..name = 'pnum'
-          ..value = 1,
-        SkFontFeature()
-          ..name = 'tnum'
-          ..value = 1,
-      ]
-    ;
-    props.strutStyle = SkStrutStyleProperties()
-      ..fontFamilies = <String>['Roboto', 'Noto']
-      ..fontStyle = (SkFontStyle()
-        ..slant = canvasKit.FontSlant.Italic
-        ..weight = canvasKit.FontWeight.Bold)
-      ..fontSize = 72
-      ..heightMultiplier = 1.5
-      ..halfLeading = true
-      ..leading = 0
-      ..strutEnabled = true
-      ..forceStrutHeight = false;
+    props.textStyle =
+        SkTextStyleProperties()
+          ..backgroundColor = Float32List.fromList(<double>[0.2, 0, 0, 0.5])
+          ..color = Float32List.fromList(<double>[0, 1, 0, 1])
+          ..foregroundColor = Float32List.fromList(<double>[1, 0, 1, 1])
+          ..decoration = 0x2
+          ..decorationThickness = 2.0
+          ..decorationColor = Float32List.fromList(<double>[13, 14, 15, 16])
+          ..decorationStyle = canvasKit.DecorationStyle.Dotted
+          ..textBaseline = canvasKit.TextBaseline.Ideographic
+          ..fontSize = 48
+          ..letterSpacing = 5
+          ..wordSpacing = 10
+          ..heightMultiplier = 1.3
+          ..halfLeading = true
+          ..locale = 'en_CA'
+          ..fontFamilies = <String>['Roboto', 'serif']
+          ..fontStyle =
+              (SkFontStyle()
+                ..slant = canvasKit.FontSlant.Upright
+                ..weight = canvasKit.FontWeight.Normal)
+          ..shadows = <SkTextShadow>[]
+          ..fontFeatures = <SkFontFeature>[
+            SkFontFeature()
+              ..name = 'pnum'
+              ..value = 1,
+            SkFontFeature()
+              ..name = 'tnum'
+              ..value = 1,
+          ];
+    props.strutStyle =
+        SkStrutStyleProperties()
+          ..fontFamilies = <String>['Roboto', 'Noto']
+          ..fontStyle =
+              (SkFontStyle()
+                ..slant = canvasKit.FontSlant.Italic
+                ..weight = canvasKit.FontWeight.Bold)
+          ..fontSize = 72
+          ..heightMultiplier = 1.5
+          ..halfLeading = true
+          ..leading = 0
+          ..strutEnabled = true
+          ..forceStrutHeight = false;
 
     final SkParagraphStyle paragraphStyle = canvasKit.ParagraphStyle(props);
     final SkParagraphBuilder builder = canvasKit.ParagraphBuilder.MakeFromFontCollection(
@@ -1660,26 +1543,29 @@ void _paragraphTests() {
       canvasKit.TextBaseline.Ideographic,
       4.0,
     );
-    builder.pushStyle(canvasKit.TextStyle(SkTextStyleProperties()
-      ..color = Float32List.fromList(<double>[1, 0, 0, 1])
-      ..fontSize = 24
-      ..fontFamilies = <String>['Roboto', 'serif']
-    ));
+    builder.pushStyle(
+      canvasKit.TextStyle(
+        SkTextStyleProperties()
+          ..color = Float32List.fromList(<double>[1, 0, 0, 1])
+          ..fontSize = 24
+          ..fontFamilies = <String>['Roboto', 'serif'],
+      ),
+    );
     builder.addText('World');
     builder.pop();
     builder.pushPaintStyle(
-      canvasKit.TextStyle(SkTextStyleProperties()
-        ..color = Float32List.fromList(<double>[1, 0, 0, 1])
-        ..fontSize = 60
-        ..fontFamilies = <String>['Roboto', 'serif']
+      canvasKit.TextStyle(
+        SkTextStyleProperties()
+          ..color = Float32List.fromList(<double>[1, 0, 0, 1])
+          ..fontSize = 60
+          ..fontFamilies = <String>['Roboto', 'serif'],
       ),
       SkPaint()..setColorInt(0xFF0000FF),
       SkPaint()..setColorInt(0xFFFF0000),
     );
     builder.addText('!');
     builder.pop();
-    builder.pushStyle(
-        canvasKit.TextStyle(SkTextStyleProperties()..halfLeading = true));
+    builder.pushStyle(canvasKit.TextStyle(SkTextStyleProperties()..halfLeading = true));
     builder.pop();
     if (canvasKit.ParagraphBuilder.RequiresClientICU()) {
       injectClientICU(builder);
@@ -1687,10 +1573,7 @@ void _paragraphTests() {
     final SkParagraph paragraph = builder.build();
     paragraph.layout(500);
 
-    final DomCanvasElement canvas = createDomCanvasElement(
-      width: 400,
-      height: 160,
-    );
+    final DomCanvasElement canvas = createDomCanvasElement(width: 400, height: 160);
     domDocument.body!.append(canvas);
 
     // TODO(yjbanov): WebGL screenshot tests do not work on Firefox - https://github.com/flutter/flutter/issues/109265
@@ -1700,7 +1583,12 @@ void _paragraphTests() {
       skCanvas.drawColorInt(0xFFCCCCCC, toSkBlendMode(ui.BlendMode.srcOver));
       skCanvas.drawParagraph(paragraph, 20, 20);
       skCanvas.drawRect(
-        Float32List.fromList(<double>[20, 20, 20 + paragraph.getMaxIntrinsicWidth(), 20 + paragraph.getHeight()]),
+        Float32List.fromList(<double>[
+          20,
+          20,
+          20 + paragraph.getMaxIntrinsicWidth(),
+          20 + paragraph.getHeight(),
+        ]),
         SkPaint()
           ..setStyle(toSkPaintStyle(ui.PaintingStyle.stroke))
           ..setStrokeWidth(1)
@@ -1727,20 +1615,14 @@ void _paragraphTests() {
     expectAlmost(paragraph.getMinIntrinsicWidth(), 135);
     expectAlmost(paragraph.getMaxWidth(), 500);
     final SkRectWithDirection rectWithDirection =
-      paragraph.getRectsForRange(
-        1,
-        3,
-        canvasKit.RectHeightStyle.Tight,
-        canvasKit.RectWidthStyle.Max).single;
-    expect(
-      rectWithDirection.rect,
-      hasLength(4),
-    );
+        paragraph
+            .getRectsForRange(1, 3, canvasKit.RectHeightStyle.Tight, canvasKit.RectWidthStyle.Max)
+            .single;
+    expect(rectWithDirection.rect, hasLength(4));
     expect(paragraph.getRectsForPlaceholders(), hasLength(1));
     expect(paragraph.getLineMetrics(), hasLength(1));
 
-    final SkLineMetrics lineMetrics =
-        paragraph.getLineMetrics().single;
+    final SkLineMetrics lineMetrics = paragraph.getLineMetrics().single;
     expectAlmost(lineMetrics.ascent, 55.6);
     expectAlmost(lineMetrics.descent, 14.8);
     expect(lineMetrics.isHardBreak, isTrue);
@@ -1750,10 +1632,7 @@ void _paragraphTests() {
     expectAlmost(lineMetrics.width, 263);
     expect(lineMetrics.lineNumber, 0);
 
-    expect(
-      paragraph.getGlyphPositionAtCoordinate(5, 5).affinity,
-      canvasKit.Affinity.Upstream,
-    );
+    expect(paragraph.getGlyphPositionAtCoordinate(5, 5).affinity, canvasKit.Affinity.Upstream);
 
     // "Hello"
     for (int i = 0; i < 5; i++) {
@@ -1780,20 +1659,21 @@ void _paragraphTests() {
     props.heightMultiplier = 3;
     props.textAlign = canvasKit.TextAlign.Start;
     props.textDirection = canvasKit.TextDirection.LTR;
-    props.textStyle = SkTextStyleProperties()
-      ..fontSize = 25
-      ..fontFamilies = <String>['Roboto']
-      ..fontStyle = (SkFontStyle()..weight = canvasKit.FontWeight.Normal);
-    props.strutStyle = SkStrutStyleProperties()
-      ..strutEnabled = true
-      ..forceStrutHeight = true
-      ..fontSize = 25
-      ..fontFamilies = <String>['Roboto']
-      ..heightMultiplier = 3
-      ..fontStyle = (SkFontStyle()..weight = canvasKit.FontWeight.Normal);
+    props.textStyle =
+        SkTextStyleProperties()
+          ..fontSize = 25
+          ..fontFamilies = <String>['Roboto']
+          ..fontStyle = (SkFontStyle()..weight = canvasKit.FontWeight.Normal);
+    props.strutStyle =
+        SkStrutStyleProperties()
+          ..strutEnabled = true
+          ..forceStrutHeight = true
+          ..fontSize = 25
+          ..fontFamilies = <String>['Roboto']
+          ..heightMultiplier = 3
+          ..fontStyle = (SkFontStyle()..weight = canvasKit.FontWeight.Normal);
     final SkParagraphStyle paragraphStyle = canvasKit.ParagraphStyle(props);
-    final SkParagraphBuilder builder =
-        canvasKit.ParagraphBuilder.MakeFromFontCollection(
+    final SkParagraphBuilder builder = canvasKit.ParagraphBuilder.MakeFromFontCollection(
       paragraphStyle,
       CanvasKitRenderer.instance.fontCollection.skFontCollection,
     );
@@ -1818,78 +1698,70 @@ void _paragraphTests() {
   });
 
   test('TextHeightBehavior', () {
+    expect(toSkTextHeightBehavior(const ui.TextHeightBehavior()), canvasKit.TextHeightBehavior.All);
     expect(
-      toSkTextHeightBehavior(const ui.TextHeightBehavior()),
-      canvasKit.TextHeightBehavior.All,
-    );
-    expect(
-      toSkTextHeightBehavior(const ui.TextHeightBehavior(
-        applyHeightToFirstAscent: false,
-      )),
+      toSkTextHeightBehavior(const ui.TextHeightBehavior(applyHeightToFirstAscent: false)),
       canvasKit.TextHeightBehavior.DisableFirstAscent,
     );
     expect(
-      toSkTextHeightBehavior(const ui.TextHeightBehavior(
-        applyHeightToLastDescent: false,
-      )),
+      toSkTextHeightBehavior(const ui.TextHeightBehavior(applyHeightToLastDescent: false)),
       canvasKit.TextHeightBehavior.DisableLastDescent,
     );
     expect(
-      toSkTextHeightBehavior(const ui.TextHeightBehavior(
-        applyHeightToFirstAscent: false,
-        applyHeightToLastDescent: false,
-      )),
+      toSkTextHeightBehavior(
+        const ui.TextHeightBehavior(
+          applyHeightToFirstAscent: false,
+          applyHeightToLastDescent: false,
+        ),
+      ),
       canvasKit.TextHeightBehavior.DisableAll,
     );
   });
 
-  test('MakeOnScreenGLSurface test', () {
-    final DomCanvasElement canvas = createDomCanvasElement(
-      width: 100,
-      height: 100,
-    );
-    final WebGLContext gl = canvas.getGlContext(webGLVersion);
-    final int sampleCount = gl.getParameter(gl.samples);
-    final int stencilBits = gl.getParameter(gl.stencilBits);
+  test(
+    'MakeOnScreenGLSurface test',
+    () {
+      final DomCanvasElement canvas = createDomCanvasElement(width: 100, height: 100);
+      final WebGLContext gl = canvas.getGlContext(webGLVersion);
+      final int sampleCount = gl.getParameter(gl.samples);
+      final int stencilBits = gl.getParameter(gl.stencilBits);
 
-    final double glContext = canvasKit.GetWebGLContext(
-      canvas,
-      SkWebGLContextOptions(
-        antialias: 0,
-        majorVersion: webGLVersion.toDouble(),
-      ),
-    );
-    final SkGrContext grContext =  canvasKit.MakeGrContext(glContext);
-    final SkSurface? skSurface = canvasKit.MakeOnScreenGLSurface(
-      grContext,
-      100,
-      100,
-      SkColorSpaceSRGB,
-      sampleCount,
-      stencilBits
-    );
+      final double glContext = canvasKit.GetWebGLContext(
+        canvas,
+        SkWebGLContextOptions(antialias: 0, majorVersion: webGLVersion.toDouble()),
+      );
+      final SkGrContext grContext = canvasKit.MakeGrContext(glContext);
+      final SkSurface? skSurface = canvasKit.MakeOnScreenGLSurface(
+        grContext,
+        100,
+        100,
+        SkColorSpaceSRGB,
+        sampleCount,
+        stencilBits,
+      );
 
-    expect(skSurface, isNotNull);
-  }, skip: isFirefox); // Intended: Headless firefox has no webgl support https://github.com/flutter/flutter/issues/109265
+      expect(skSurface, isNotNull);
+    },
+    skip: isFirefox,
+  ); // Intended: Headless firefox has no webgl support https://github.com/flutter/flutter/issues/109265
 
-  test('MakeRenderTarget test', () {
-    final DomCanvasElement canvas = createDomCanvasElement(
-      width: 100,
-      height: 100,
-    );
+  test(
+    'MakeRenderTarget test',
+    () {
+      final DomCanvasElement canvas = createDomCanvasElement(width: 100, height: 100);
 
-    final int glContext = canvasKit.GetWebGLContext(
-      canvas,
-      SkWebGLContextOptions(
-        antialias: 0,
-        majorVersion: webGLVersion.toDouble(),
-      ),
-    ).toInt();
-    final SkGrContext grContext =  canvasKit.MakeGrContext(glContext.toDouble());
-    final SkSurface? surface = canvasKit.MakeRenderTarget(grContext, 1, 1);
+      final int glContext =
+          canvasKit.GetWebGLContext(
+            canvas,
+            SkWebGLContextOptions(antialias: 0, majorVersion: webGLVersion.toDouble()),
+          ).toInt();
+      final SkGrContext grContext = canvasKit.MakeGrContext(glContext.toDouble());
+      final SkSurface? surface = canvasKit.MakeRenderTarget(grContext, 1, 1);
 
-    expect(surface, isNotNull);
-  }, skip: isFirefox); // Intended: Headless firefox has no webgl support https://github.com/flutter/flutter/issues/109265
+      expect(surface, isNotNull);
+    },
+    skip: isFirefox,
+  ); // Intended: Headless firefox has no webgl support https://github.com/flutter/flutter/issues/109265
 
   group('getCanvasKitJsFileNames', () {
     JSAny? oldV8BreakIterator = v8BreakIterator;
@@ -1943,7 +1815,10 @@ void _paragraphTests() {
       // https://github.com/flutter/flutter/issues/122331
       expect(getCanvasKitJsFileNames(CanvasKitVariant.full), <String>['canvaskit.js']);
       expect(getCanvasKitJsFileNames(CanvasKitVariant.chromium), <String>['chromium/canvaskit.js']);
-      expect(getCanvasKitJsFileNames(CanvasKitVariant.auto), <String>['chromium/canvaskit.js', 'canvaskit.js']);
+      expect(getCanvasKitJsFileNames(CanvasKitVariant.auto), <String>[
+        'chromium/canvaskit.js',
+        'canvaskit.js',
+      ]);
 
       v8BreakIterator = null;
       browserSupportsImageDecoder = false;
@@ -1977,7 +1852,6 @@ void _paragraphTests() {
     registry.register(Object().toExternalReference, Object().toExternalReference);
   });
 }
-
 
 @JS('window.Intl.v8BreakIterator')
 external JSAny? get v8BreakIterator;

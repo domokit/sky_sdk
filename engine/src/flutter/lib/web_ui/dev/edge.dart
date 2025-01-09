@@ -49,26 +49,28 @@ class Edge extends Browser {
   /// Starts a new instance of Safari open to the given [url], which may be a
   /// [Uri] or a [String].
   factory Edge(Uri url) {
-    return Edge._(BrowserProcess(() async {
-      final BrowserInstallation installation = await getEdgeInstallation(
-        packageLock.edgeLock.launcherVersion,
-        infoLog: DevNull(),
-      );
+    return Edge._(
+      BrowserProcess(() async {
+        final BrowserInstallation installation = await getEdgeInstallation(
+          packageLock.edgeLock.launcherVersion,
+          infoLog: DevNull(),
+        );
 
-      // Debug is not a valid option for Edge. Remove it.
-      String pathToOpen = url.toString();
-      if(pathToOpen.contains('debug')) {
-        final int index = pathToOpen.indexOf('debug');
-        pathToOpen = pathToOpen.substring(0, index-1);
-      }
+        // Debug is not a valid option for Edge. Remove it.
+        String pathToOpen = url.toString();
+        if (pathToOpen.contains('debug')) {
+          final int index = pathToOpen.indexOf('debug');
+          pathToOpen = pathToOpen.substring(0, index - 1);
+        }
 
-      final Process process = await Process.start(
-        installation.executable,
-        <String>[pathToOpen,'-k'],
-      );
+        final Process process = await Process.start(installation.executable, <String>[
+          pathToOpen,
+          '-k',
+        ]);
 
-      return process;
-    }));
+        return process;
+      }),
+    );
   }
 
   Edge._(this._process);
@@ -79,5 +81,5 @@ class Edge extends Browser {
   Future<void> get onExit => _process.onExit;
 
   @override
-  Future<void> close()  => _process.close();
+  Future<void> close() => _process.close();
 }

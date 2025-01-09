@@ -8,14 +8,15 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('SelectionArea SelectionListener Example Smoke Test', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SelectionAreaSelectionListenerExampleApp(),
-    );
+    await tester.pumpWidget(const example.SelectionAreaSelectionListenerExampleApp());
     expect(find.byType(Column), findsNWidgets(2));
     expect(find.textContaining('Selection StartOffset:'), findsOneWidget);
     expect(find.textContaining('Selection EndOffset:'), findsOneWidget);
     expect(find.textContaining('Selection Status:'), findsOneWidget);
     expect(find.textContaining('Selectable Region Status:'), findsOneWidget);
-    expect(find.textContaining('This is some text under a SelectionArea that can be selected.'), findsOneWidget);
+    expect(
+      find.textContaining('This is some text under a SelectionArea that can be selected.'),
+      findsOneWidget,
+    );
   });
 }

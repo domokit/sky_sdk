@@ -4,14 +4,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_api_samples/services/system_chrome/system_chrome.set_system_u_i_overlay_style.1.dart' as example;
+import 'package:flutter_api_samples/services/system_chrome/system_chrome.set_system_u_i_overlay_style.1.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('AnnotatedRegion can change system overlays style.', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SystemOverlayStyleApp(),
-    );
+    await tester.pumpWidget(const example.SystemOverlayStyleApp());
 
     final SystemUiOverlayStyle? firstStyle = SystemChrome.latestStyle;
 

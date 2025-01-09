@@ -16,32 +16,22 @@ class NavDrawerDemo extends StatelessWidget {
   Widget build(BuildContext context) {
     final GalleryLocalizations localization = GalleryLocalizations.of(context)!;
     final UserAccountsDrawerHeader drawerHeader = UserAccountsDrawerHeader(
-      accountName: Text(
-        localization.demoNavigationDrawerUserName,
-      ),
-      accountEmail: Text(
-        localization.demoNavigationDrawerUserEmail,
-      ),
-      currentAccountPicture: const CircleAvatar(
-        child: FlutterLogo(size: 42.0),
-      ),
+      accountName: Text(localization.demoNavigationDrawerUserName),
+      accountEmail: Text(localization.demoNavigationDrawerUserEmail),
+      currentAccountPicture: const CircleAvatar(child: FlutterLogo(size: 42.0)),
     );
     final ListView drawerItems = ListView(
       children: <Widget>[
         drawerHeader,
         ListTile(
-          title: Text(
-            localization.demoNavigationDrawerToPageOne,
-          ),
+          title: Text(localization.demoNavigationDrawerToPageOne),
           leading: const Icon(Icons.favorite),
           onTap: () {
             Navigator.pop(context);
           },
         ),
         ListTile(
-          title: Text(
-            localization.demoNavigationDrawerToPageTwo,
-          ),
+          title: Text(localization.demoNavigationDrawerToPageTwo),
           leading: const Icon(Icons.comment),
           onTap: () {
             Navigator.pop(context);
@@ -50,25 +40,17 @@ class NavDrawerDemo extends StatelessWidget {
       ],
     );
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          localization.demoNavigationDrawerTitle,
-        ),
-      ),
+      appBar: AppBar(title: Text(localization.demoNavigationDrawerTitle)),
       body: Semantics(
         container: true,
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(50.0),
-            child: Text(
-              localization.demoNavigationDrawerText,
-            ),
+            child: Text(localization.demoNavigationDrawerText),
           ),
         ),
       ),
-      drawer: Drawer(
-        child: drawerItems,
-      ),
+      drawer: Drawer(child: drawerItems),
     );
   }
 }

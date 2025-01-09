@@ -62,13 +62,13 @@ class SwiftPackage {
     required List<SwiftPackagePackageDependency> dependencies,
     required List<SwiftPackageTarget> targets,
     required TemplateRenderer templateRenderer,
-  })  : _manifest = manifest,
-        _name = name,
-        _platforms = platforms,
-        _products = products,
-        _dependencies = dependencies,
-        _targets = targets,
-        _templateRenderer = templateRenderer;
+  }) : _manifest = manifest,
+       _name = name,
+       _platforms = platforms,
+       _products = products,
+       _dependencies = dependencies,
+       _targets = targets,
+       _templateRenderer = templateRenderer;
 
   /// [File] for Package.swift.
   final File _manifest;
@@ -114,9 +114,7 @@ class SwiftPackage {
           .childDirectory('Sources')
           .childDirectory(target.name);
       if (!targetDirectory.existsSync() || targetDirectory.listSync().isEmpty) {
-        final File requiredSwiftFile = targetDirectory.childFile(
-          '${target.name}.swift',
-        );
+        final File requiredSwiftFile = targetDirectory.childFile('${target.name}.swift');
         requiredSwiftFile.createSync(recursive: true);
         requiredSwiftFile.writeAsStringSync(_swiftPackageSourceTemplate);
       }
@@ -134,9 +132,8 @@ class SwiftPackage {
     if (_platforms.isEmpty) {
       return null;
     }
-    final List<String> platformStrings = _platforms
-        .map((SwiftPackageSupportedPlatform platform) => platform.format())
-        .toList();
+    final List<String> platformStrings =
+        _platforms.map((SwiftPackageSupportedPlatform platform) => platform.format()).toList();
     return platformStrings.join(',\n$_doubleIndent');
   }
 
@@ -144,9 +141,8 @@ class SwiftPackage {
     if (_products.isEmpty) {
       return '';
     }
-    final List<String> libraries = _products
-        .map((SwiftPackageProduct product) => product.format())
-        .toList();
+    final List<String> libraries =
+        _products.map((SwiftPackageProduct product) => product.format()).toList();
     return libraries.join(',\n$_doubleIndent');
   }
 
@@ -154,9 +150,10 @@ class SwiftPackage {
     if (_dependencies.isEmpty) {
       return '';
     }
-    final List<String> packages = _dependencies
-        .map((SwiftPackagePackageDependency dependency) => dependency.format())
-        .toList();
+    final List<String> packages =
+        _dependencies
+            .map((SwiftPackagePackageDependency dependency) => dependency.format())
+            .toList();
     return packages.join(',\n$_doubleIndent');
   }
 
@@ -186,10 +183,7 @@ enum SwiftPackagePlatform {
 /// Representation of SupportedPlatform from
 /// https://developer.apple.com/documentation/packagedescription/supportedplatform.
 class SwiftPackageSupportedPlatform {
-  SwiftPackageSupportedPlatform({
-    required this.platform,
-    required this.version,
-  });
+  SwiftPackageSupportedPlatform({required this.platform, required this.version});
 
   final SwiftPackagePlatform platform;
   final Version version;
@@ -222,11 +216,7 @@ enum SwiftPackageLibraryType {
 /// Representation of Product from
 /// https://developer.apple.com/documentation/packagedescription/product.
 class SwiftPackageProduct {
-  SwiftPackageProduct({
-    required this.name,
-    required this.targets,
-    this.libraryType,
-  });
+  SwiftPackageProduct({required this.name, required this.targets, this.libraryType});
 
   final String name;
   final SwiftPackageLibraryType? libraryType;
@@ -239,8 +229,7 @@ class SwiftPackageProduct {
     // ],
     String targetsString = '';
     if (targets.isNotEmpty) {
-      final List<String> quotedTargets =
-          targets.map((String target) => '"$target"').toList();
+      final List<String> quotedTargets = targets.map((String target) => '"$target"').toList();
       targetsString = ', targets: [${quotedTargets.join(', ')}]';
     }
     String libraryTypeString = '';
@@ -256,10 +245,7 @@ class SwiftPackageProduct {
 /// Representation of Package.Dependency from
 /// https://developer.apple.com/documentation/packagedescription/package/dependency.
 class SwiftPackagePackageDependency {
-  SwiftPackagePackageDependency({
-    required this.name,
-    required this.path,
-  });
+  SwiftPackagePackageDependency({required this.name, required this.path});
 
   final String name;
   final String path;
@@ -291,18 +277,14 @@ enum SwiftPackageTargetType {
 /// Representation of Target from
 /// https://developer.apple.com/documentation/packagedescription/target.
 class SwiftPackageTarget {
-  SwiftPackageTarget.defaultTarget({
-    required this.name,
-    this.dependencies,
-  })  : path = null,
-        targetType = SwiftPackageTargetType.target;
+  SwiftPackageTarget.defaultTarget({required this.name, this.dependencies})
+    : path = null,
+      targetType = SwiftPackageTargetType.target;
 
-  SwiftPackageTarget.binaryTarget({
-    required this.name,
-    required String relativePath,
-  })  : path = relativePath,
-        dependencies = null,
-        targetType = SwiftPackageTargetType.binaryTarget;
+  SwiftPackageTarget.binaryTarget({required this.name, required String relativePath})
+    : path = relativePath,
+      dependencies = null,
+      targetType = SwiftPackageTargetType.binaryTarget;
 
   final String name;
   final String? path;
@@ -337,9 +319,10 @@ class SwiftPackageTarget {
     }
 
     if (dependencies != null && dependencies!.isNotEmpty) {
-      final List<String> targetDependencies = dependencies!
-          .map((SwiftPackageTargetDependency dependency) => dependency.format())
-          .toList();
+      final List<String> targetDependencies =
+          dependencies!
+              .map((SwiftPackageTargetDependency dependency) => dependency.format())
+              .toList();
       final String dependenciesString = '''
 dependencies: [
 ${targetDependencies.join(",\n")}
@@ -373,16 +356,13 @@ enum SwiftPackageTargetDependencyType {
 /// Representation of Target.Dependency from
 /// https://developer.apple.com/documentation/packagedescription/target/dependency.
 class SwiftPackageTargetDependency {
-  SwiftPackageTargetDependency.product({
-    required this.name,
-    required String packageName,
-  })  : package = packageName,
-        dependencyType = SwiftPackageTargetDependencyType.product;
+  SwiftPackageTargetDependency.product({required this.name, required String packageName})
+    : package = packageName,
+      dependencyType = SwiftPackageTargetDependencyType.product;
 
-  SwiftPackageTargetDependency.target({
-    required this.name,
-  })  : package = null,
-        dependencyType = SwiftPackageTargetDependencyType.target;
+  SwiftPackageTargetDependency.target({required this.name})
+    : package = null,
+      dependencyType = SwiftPackageTargetDependencyType.target;
 
   final String name;
   final String? package;

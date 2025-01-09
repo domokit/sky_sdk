@@ -15,25 +15,21 @@ class InheritedModelApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: InheritedModelExample(),
-    );
+    return const MaterialApp(home: InheritedModelExample());
   }
 }
 
 class LogoModel extends InheritedModel<LogoAspect> {
-  const LogoModel({
-    super.key,
-    this.backgroundColor,
-    this.large,
-    required super.child,
-  });
+  const LogoModel({super.key, this.backgroundColor, this.large, required super.child});
 
   final Color? backgroundColor;
   final bool? large;
 
   static Color? backgroundColorOf(BuildContext context) {
-    return InheritedModel.inheritFrom<LogoModel>(context, aspect: LogoAspect.backgroundColor)?.backgroundColor;
+    return InheritedModel.inheritFrom<LogoModel>(
+      context,
+      aspect: LogoAspect.backgroundColor,
+    )?.backgroundColor;
   }
 
   static bool sizeOf(BuildContext context) {
@@ -47,7 +43,8 @@ class LogoModel extends InheritedModel<LogoAspect> {
 
   @override
   bool updateShouldNotifyDependent(LogoModel oldWidget, Set<LogoAspect> dependencies) {
-    if (backgroundColor != oldWidget.backgroundColor && dependencies.contains(LogoAspect.backgroundColor)) {
+    if (backgroundColor != oldWidget.backgroundColor &&
+        dependencies.contains(LogoAspect.backgroundColor)) {
       return true;
     }
     if (large != oldWidget.large && dependencies.contains(LogoAspect.large)) {
@@ -79,9 +76,7 @@ class _InheritedModelExampleState extends State<InheritedModelExample> {
             child: LogoModel(
               backgroundColor: color,
               large: large,
-              child: const BackgroundWidget(
-                child: LogoWidget(),
-              ),
+              child: const BackgroundWidget(child: LogoWidget()),
             ),
           ),
           Row(
@@ -120,7 +115,7 @@ class _InheritedModelExampleState extends State<InheritedModelExample> {
                 child: const Text('Resize Logo'),
               ),
             ],
-          )
+          ),
         ],
       ),
     );

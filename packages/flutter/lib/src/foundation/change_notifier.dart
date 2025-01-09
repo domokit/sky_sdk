@@ -282,8 +282,10 @@ mixin class ChangeNotifier implements Listenable {
       if (_count == 0) {
         _listeners = List<VoidCallback?>.filled(1, null);
       } else {
-        final List<VoidCallback?> newListeners =
-            List<VoidCallback?>.filled(_listeners.length * 2, null);
+        final List<VoidCallback?> newListeners = List<VoidCallback?>.filled(
+          _listeners.length * 2,
+          null,
+        );
         for (int i = 0; i < _count; i++) {
           newListeners[i] = _listeners[i];
         }
@@ -436,19 +438,22 @@ mixin class ChangeNotifier implements Listenable {
       try {
         _listeners[i]?.call();
       } catch (exception, stack) {
-        FlutterError.reportError(FlutterErrorDetails(
-          exception: exception,
-          stack: stack,
-          library: 'foundation library',
-          context: ErrorDescription('while dispatching notifications for $runtimeType'),
-          informationCollector: () => <DiagnosticsNode>[
-            DiagnosticsProperty<ChangeNotifier>(
-              'The $runtimeType sending notification was',
-              this,
-              style: DiagnosticsTreeStyle.errorProperty,
-            ),
-          ],
-        ));
+        FlutterError.reportError(
+          FlutterErrorDetails(
+            exception: exception,
+            stack: stack,
+            library: 'foundation library',
+            context: ErrorDescription('while dispatching notifications for $runtimeType'),
+            informationCollector:
+                () => <DiagnosticsNode>[
+                  DiagnosticsProperty<ChangeNotifier>(
+                    'The $runtimeType sending notification was',
+                    this,
+                    style: DiagnosticsTreeStyle.errorProperty,
+                  ),
+                ],
+          ),
+        );
       }
     }
 

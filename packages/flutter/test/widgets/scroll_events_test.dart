@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Widget _buildScroller({ required List<String> log }) {
+Widget _buildScroller({required List<String> log}) {
   return NotificationListener<ScrollNotification>(
     onNotification: (ScrollNotification notification) {
       if (notification is ScrollStartNotification) {
@@ -19,17 +19,21 @@ Widget _buildScroller({ required List<String> log }) {
       }
       return false;
     },
-    child: const SingleChildScrollView(
-      child: SizedBox(width: 1000.0, height: 1000.0),
-    ),
+    child: const SingleChildScrollView(child: SizedBox(width: 1000.0, height: 1000.0)),
   );
 }
 
 void main() {
-  Completer<void> animateTo(WidgetTester tester, double newScrollOffset, { required Duration duration }) {
+  Completer<void> animateTo(
+    WidgetTester tester,
+    double newScrollOffset, {
+    required Duration duration,
+  }) {
     final Completer<void> completer = Completer<void>();
     final ScrollableState scrollable = tester.state(find.byType(Scrollable));
-    scrollable.position.animateTo(newScrollOffset, duration: duration, curve: Curves.linear).whenComplete(completer.complete);
+    scrollable.position
+        .animateTo(newScrollOffset, duration: duration, curve: Curves.linear)
+        .whenComplete(completer.complete);
     return completer;
   }
 
@@ -62,7 +66,11 @@ void main() {
     await tester.pumpWidget(_buildScroller(log: log));
 
     expect(log, equals(<String>[]));
-    final Completer<void> completer = animateTo(tester, 100.0, duration: const Duration(seconds: 1));
+    final Completer<void> completer = animateTo(
+      tester,
+      100.0,
+      duration: const Duration(seconds: 1),
+    );
     expect(completer.isCompleted, isFalse);
     expect(log, equals(<String>['scroll-start']));
     await tester.pump(const Duration(milliseconds: 100));
@@ -90,7 +98,11 @@ void main() {
     await tester.pumpWidget(_buildScroller(log: log));
 
     expect(log, equals(<String>[]));
-    final Completer<void> completer = animateTo(tester, 100.0, duration: const Duration(seconds: 1));
+    final Completer<void> completer = animateTo(
+      tester,
+      100.0,
+      duration: const Duration(seconds: 1),
+    );
     expect(completer.isCompleted, isFalse);
     expect(log, equals(<String>['scroll-start']));
     await tester.pump(const Duration(milliseconds: 100));
@@ -101,12 +113,42 @@ void main() {
 
     jumpTo(tester, 100.0);
     expect(completer.isCompleted, isFalse);
-    expect(log, equals(<String>['scroll-start', 'scroll-update', 'scroll-end', 'scroll-start', 'scroll-update', 'scroll-end']));
+    expect(
+      log,
+      equals(<String>[
+        'scroll-start',
+        'scroll-update',
+        'scroll-end',
+        'scroll-start',
+        'scroll-update',
+        'scroll-end',
+      ]),
+    );
     await tester.pump(const Duration(milliseconds: 100));
-    expect(log, equals(<String>['scroll-start', 'scroll-update', 'scroll-end', 'scroll-start', 'scroll-update', 'scroll-end']));
+    expect(
+      log,
+      equals(<String>[
+        'scroll-start',
+        'scroll-update',
+        'scroll-end',
+        'scroll-start',
+        'scroll-update',
+        'scroll-end',
+      ]),
+    );
     expect(completer.isCompleted, isTrue);
     await tester.pump(const Duration(milliseconds: 1500));
-    expect(log, equals(<String>['scroll-start', 'scroll-update', 'scroll-end', 'scroll-start', 'scroll-update', 'scroll-end']));
+    expect(
+      log,
+      equals(<String>[
+        'scroll-start',
+        'scroll-update',
+        'scroll-end',
+        'scroll-start',
+        'scroll-update',
+        'scroll-end',
+      ]),
+    );
     expect(completer.isCompleted, isTrue);
   });
 

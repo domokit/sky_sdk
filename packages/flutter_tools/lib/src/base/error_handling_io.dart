@@ -3,7 +3,18 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:io' as io show Directory, File, Link, Process, ProcessException, ProcessResult, ProcessSignal, ProcessStartMode, systemEncoding;
+import 'dart:io'
+    as io
+    show
+        Directory,
+        File,
+        Link,
+        Process,
+        ProcessException,
+        ProcessResult,
+        ProcessSignal,
+        ProcessStartMode,
+        systemEncoding;
 import 'dart:typed_data';
 
 import 'package:file/file.dart';
@@ -39,11 +50,8 @@ const int kSystemCodePathNotFound = 3;
 /// example, the tool should generally be able to continue executing even if it
 /// fails to delete a file.
 class ErrorHandlingFileSystem extends ForwardingFileSystem {
-  ErrorHandlingFileSystem({
-    required FileSystem delegate,
-    required Platform platform,
-  }) :
-      _platform = platform,
+  ErrorHandlingFileSystem({required FileSystem delegate, required Platform platform})
+    : _platform = platform,
       super(delegate);
 
   FileSystem get fileSystem => delegate;
@@ -86,7 +94,8 @@ class ErrorHandlingFileSystem extends ForwardingFileSystem {
       // if it still exists, the file likely exists on a read-only volume.
       // This check will falsely match "3/ESRCH: No such process" on Linux/macOS,
       // but this should be fine since this code should never come up here.
-      final bool codeCorrespondsToPathOrFileNotFound = err.osError?.errorCode == kSystemCodeCannotFindFile ||
+      final bool codeCorrespondsToPathOrFileNotFound =
+          err.osError?.errorCode == kSystemCodeCannotFindFile ||
           err.osError?.errorCode == kSystemCodePathNotFound;
       if (!codeCorrespondsToPathOrFileNotFound || _noExitOnFailure) {
         rethrow;
@@ -107,13 +116,13 @@ class ErrorHandlingFileSystem extends ForwardingFileSystem {
   @override
   Directory get currentDirectory {
     try {
-      return _runSync(() =>  directory(delegate.currentDirectory), platform: _platform);
+      return _runSync(() => directory(delegate.currentDirectory), platform: _platform);
     } on FileSystemException catch (err) {
       // Special handling for OS error 2 for current directory only.
       if (err.osError?.errorCode == kSystemCodeCannotFindFile) {
         throwToolExit(
           'Unable to read current working directory. This can happen if the directory the '
-          'Flutter tool was run from was moved or deleted.'
+          'Flutter tool was run from was moved or deleted.',
         );
       }
       rethrow;
@@ -126,11 +135,8 @@ class ErrorHandlingFileSystem extends ForwardingFileSystem {
   }
 
   @override
-  File file(dynamic path) => ErrorHandlingFile(
-    platform: _platform,
-    fileSystem: this,
-    delegate: delegate.file(path),
-  );
+  File file(dynamic path) =>
+      ErrorHandlingFile(platform: _platform, fileSystem: this, delegate: delegate.file(path));
 
   @override
   Directory directory(dynamic path) => ErrorHandlingDirectory(
@@ -140,11 +146,8 @@ class ErrorHandlingFileSystem extends ForwardingFileSystem {
   );
 
   @override
-  Link link(dynamic path) => ErrorHandlingLink(
-    platform: _platform,
-    fileSystem: this,
-    delegate: delegate.link(path),
-  );
+  Link link(dynamic path) =>
+      ErrorHandlingLink(platform: _platform, fileSystem: this, delegate: delegate.link(path));
 
   // Caching the path context here and clearing when the currentDirectory setter
   // is updated works since the flutter tool restricts usage of dart:io directly
@@ -165,15 +168,9 @@ class ErrorHandlingFileSystem extends ForwardingFileSystem {
   String toString() => delegate.toString();
 }
 
-class ErrorHandlingFile
-    extends ForwardingFileSystemEntity<File, io.File>
-    with ForwardingFile {
-  ErrorHandlingFile({
-    required Platform platform,
-    required this.fileSystem,
-    required this.delegate,
-  }) :
-    _platform = platform;
+class ErrorHandlingFile extends ForwardingFileSystemEntity<File, io.File> with ForwardingFile {
+  ErrorHandlingFile({required Platform platform, required this.fileSystem, required this.delegate})
+    : _platform = platform;
 
   @override
   final io.File delegate;
@@ -184,25 +181,16 @@ class ErrorHandlingFile
   final Platform _platform;
 
   @override
-  File wrapFile(io.File delegate) => ErrorHandlingFile(
-    platform: _platform,
-    fileSystem: fileSystem,
-    delegate: delegate,
-  );
+  File wrapFile(io.File delegate) =>
+      ErrorHandlingFile(platform: _platform, fileSystem: fileSystem, delegate: delegate);
 
   @override
-  Directory wrapDirectory(io.Directory delegate) => ErrorHandlingDirectory(
-    platform: _platform,
-    fileSystem: fileSystem,
-    delegate: delegate,
-  );
+  Directory wrapDirectory(io.Directory delegate) =>
+      ErrorHandlingDirectory(platform: _platform, fileSystem: fileSystem, delegate: delegate);
 
   @override
-  Link wrapLink(io.Link delegate) => ErrorHandlingLink(
-    platform: _platform,
-    fileSystem: fileSystem,
-    delegate: delegate,
-  );
+  Link wrapLink(io.Link delegate) =>
+      ErrorHandlingLink(platform: _platform, fileSystem: fileSystem, delegate: delegate);
 
   @override
   Future<File> writeAsBytes(
@@ -211,11 +199,7 @@ class ErrorHandlingFile
     bool flush = false,
   }) async {
     return _run<File>(
-      () async => wrap(await delegate.writeAsBytes(
-        bytes,
-        mode: mode,
-        flush: flush,
-      )),
+      () async => wrap(await delegate.writeAsBytes(bytes, mode: mode, flush: flush)),
       platform: _platform,
       failureMessage: 'Flutter failed to write to a file at "${delegate.path}"',
       posixPermissionSuggestion: _posixPermissionSuggestion(<String>[delegate.path]),
@@ -233,11 +217,7 @@ class ErrorHandlingFile
   }
 
   @override
-  void writeAsBytesSync(
-    List<int> bytes, {
-    FileMode mode = FileMode.write,
-    bool flush = false,
-  }) {
+  void writeAsBytesSync(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) {
     _runSync<void>(
       () => delegate.writeAsBytesSync(bytes, mode: mode, flush: flush),
       platform: _platform,
@@ -254,12 +234,9 @@ class ErrorHandlingFile
     bool flush = false,
   }) async {
     return _run<File>(
-      () async => wrap(await delegate.writeAsString(
-        contents,
-        mode: mode,
-        encoding: encoding,
-        flush: flush,
-      )),
+      () async => wrap(
+        await delegate.writeAsString(contents, mode: mode, encoding: encoding, flush: flush),
+      ),
       platform: _platform,
       failureMessage: 'Flutter failed to write to a file at "${delegate.path}"',
       posixPermissionSuggestion: _posixPermissionSuggestion(<String>[delegate.path]),
@@ -274,12 +251,7 @@ class ErrorHandlingFile
     bool flush = false,
   }) {
     _runSync<void>(
-      () => delegate.writeAsStringSync(
-        contents,
-        mode: mode,
-        encoding: encoding,
-        flush: flush,
-      ),
+      () => delegate.writeAsStringSync(contents, mode: mode, encoding: encoding, flush: flush),
       platform: _platform,
       failureMessage: 'Flutter failed to write to a file at "${delegate.path}"',
       posixPermissionSuggestion: _posixPermissionSuggestion(<String>[delegate.path]),
@@ -290,21 +262,18 @@ class ErrorHandlingFile
   @override
   void createSync({bool recursive = false, bool exclusive = false}) {
     _runSync<void>(
-      () => delegate.createSync(
-        recursive: recursive,
-      ),
+      () => delegate.createSync(recursive: recursive),
       platform: _platform,
       failureMessage: 'Flutter failed to create file at "${delegate.path}"',
-      posixPermissionSuggestion: recursive ? null : _posixPermissionSuggestion(<String>[delegate.parent.path]),
+      posixPermissionSuggestion:
+          recursive ? null : _posixPermissionSuggestion(<String>[delegate.parent.path]),
     );
   }
 
   @override
   RandomAccessFile openSync({FileMode mode = FileMode.read}) {
     return _runSync<RandomAccessFile>(
-      () => delegate.openSync(
-        mode: mode,
-      ),
+      () => delegate.openSync(mode: mode),
       platform: _platform,
       failureMessage: 'Flutter failed to open a file at "${delegate.path}"',
       posixPermissionSuggestion: _posixPermissionSuggestion(<String>[delegate.path]),
@@ -329,7 +298,7 @@ class ErrorHandlingFile
     _runSync<void>(
       () => resultFile.createSync(recursive: true),
       platform: _platform,
-      failureMessage: 'Flutter failed to copy $path to $newPath due to destination location error'
+      failureMessage: 'Flutter failed to copy $path to $newPath due to destination location error',
     );
     // If both of the above checks passed, attempt to copy the file and catch
     // any thrown errors.
@@ -340,29 +309,32 @@ class ErrorHandlingFile
     }
     // If the copy failed but both of the above checks passed, copy the bytes
     // directly.
-    _runSync(() {
-      RandomAccessFile? source;
-      RandomAccessFile? sink;
-      try {
-        source = delegate.openSync();
-        sink = resultFile.openSync(mode: FileMode.writeOnly);
-        // 64k is the same sized buffer used by dart:io for `File.openRead`.
-        final Uint8List buffer = Uint8List(64 * 1024);
-        final int totalBytes = source.lengthSync();
-        int bytes = 0;
-        while (bytes < totalBytes) {
-          final int chunkLength = source.readIntoSync(buffer);
-          sink.writeFromSync(buffer, 0, chunkLength);
-          bytes += chunkLength;
+    _runSync(
+      () {
+        RandomAccessFile? source;
+        RandomAccessFile? sink;
+        try {
+          source = delegate.openSync();
+          sink = resultFile.openSync(mode: FileMode.writeOnly);
+          // 64k is the same sized buffer used by dart:io for `File.openRead`.
+          final Uint8List buffer = Uint8List(64 * 1024);
+          final int totalBytes = source.lengthSync();
+          int bytes = 0;
+          while (bytes < totalBytes) {
+            final int chunkLength = source.readIntoSync(buffer);
+            sink.writeFromSync(buffer, 0, chunkLength);
+            bytes += chunkLength;
+          }
+        } catch (err) {
+          // ignore: avoid_catches_without_on_clauses, rethrows
+          ErrorHandlingFileSystem.deleteIfExists(resultFile, recursive: true);
+          rethrow;
+        } finally {
+          source?.closeSync();
+          sink?.closeSync();
         }
-      } catch (err) { // ignore: avoid_catches_without_on_clauses, rethrows
-        ErrorHandlingFileSystem.deleteIfExists(resultFile, recursive: true);
-        rethrow;
-      } finally {
-        source?.closeSync();
-        sink?.closeSync();
-      }
-    }, platform: _platform,
+      },
+      platform: _platform,
       failureMessage: 'Flutter failed to copy $path to $newPath due to unknown error',
       posixPermissionSuggestion: _posixPermissionSuggestion(<String>[path, resultFile.parent.path]),
     );
@@ -370,22 +342,21 @@ class ErrorHandlingFile
     return wrapFile(resultFile);
   }
 
-  String _posixPermissionSuggestion(List<String> paths) => 'Try running:\n'
+  String _posixPermissionSuggestion(List<String> paths) =>
+      'Try running:\n'
       '  sudo chown -R \$(whoami) ${paths.map(fileSystem.path.absolute).join(' ')}';
 
   @override
   String toString() => delegate.toString();
 }
 
-class ErrorHandlingDirectory
-    extends ForwardingFileSystemEntity<Directory, io.Directory>
+class ErrorHandlingDirectory extends ForwardingFileSystemEntity<Directory, io.Directory>
     with ForwardingDirectory<Directory> {
   ErrorHandlingDirectory({
     required Platform platform,
     required this.fileSystem,
     required this.delegate,
-  }) :
-    _platform = platform;
+  }) : _platform = platform;
 
   @override
   final io.Directory delegate;
@@ -396,25 +367,16 @@ class ErrorHandlingDirectory
   final Platform _platform;
 
   @override
-  File wrapFile(io.File delegate) => ErrorHandlingFile(
-    platform: _platform,
-    fileSystem: fileSystem,
-    delegate: delegate,
-  );
+  File wrapFile(io.File delegate) =>
+      ErrorHandlingFile(platform: _platform, fileSystem: fileSystem, delegate: delegate);
 
   @override
-  Directory wrapDirectory(io.Directory delegate) => ErrorHandlingDirectory(
-    platform: _platform,
-    fileSystem: fileSystem,
-    delegate: delegate,
-  );
+  Directory wrapDirectory(io.Directory delegate) =>
+      ErrorHandlingDirectory(platform: _platform, fileSystem: fileSystem, delegate: delegate);
 
   @override
-  Link wrapLink(io.Link delegate) => ErrorHandlingLink(
-    platform: _platform,
-    fileSystem: fileSystem,
-    delegate: delegate,
-  );
+  Link wrapLink(io.Link delegate) =>
+      ErrorHandlingLink(platform: _platform, fileSystem: fileSystem, delegate: delegate);
 
   @override
   Directory childDirectory(String basename) {
@@ -436,9 +398,9 @@ class ErrorHandlingDirectory
     return _runSync<void>(
       () => delegate.createSync(recursive: recursive),
       platform: _platform,
-      failureMessage:
-        'Flutter failed to create a directory at "${delegate.path}"',
-      posixPermissionSuggestion: recursive ? null : _posixPermissionSuggestion(delegate.parent.path),
+      failureMessage: 'Flutter failed to create a directory at "${delegate.path}"',
+      posixPermissionSuggestion:
+          recursive ? null : _posixPermissionSuggestion(delegate.parent.path),
     );
   }
 
@@ -447,8 +409,7 @@ class ErrorHandlingDirectory
     return _run<Directory>(
       () async => wrap(await delegate.createTemp(prefix)),
       platform: _platform,
-      failureMessage:
-        'Flutter failed to create a temporary directory with prefix "$prefix"',
+      failureMessage: 'Flutter failed to create a temporary directory with prefix "$prefix"',
     );
   }
 
@@ -457,8 +418,7 @@ class ErrorHandlingDirectory
     return _runSync<Directory>(
       () => wrap(delegate.createTempSync(prefix)),
       platform: _platform,
-      failureMessage:
-        'Flutter failed to create a temporary directory with prefix "$prefix"',
+      failureMessage: 'Flutter failed to create a temporary directory with prefix "$prefix"',
     );
   }
 
@@ -467,9 +427,9 @@ class ErrorHandlingDirectory
     return _run<Directory>(
       () async => wrap(await delegate.create(recursive: recursive)),
       platform: _platform,
-      failureMessage:
-        'Flutter failed to create a directory at "${delegate.path}"',
-      posixPermissionSuggestion: recursive ? null : _posixPermissionSuggestion(delegate.parent.path),
+      failureMessage: 'Flutter failed to create a directory at "${delegate.path}"',
+      posixPermissionSuggestion:
+          recursive ? null : _posixPermissionSuggestion(delegate.parent.path),
     );
   }
 
@@ -478,8 +438,7 @@ class ErrorHandlingDirectory
     return _run<Directory>(
       () async => wrap(fileSystem.directory((await delegate.delete(recursive: recursive)).path)),
       platform: _platform,
-      failureMessage:
-        'Flutter failed to delete a directory at "${delegate.path}"',
+      failureMessage: 'Flutter failed to delete a directory at "${delegate.path}"',
       posixPermissionSuggestion: recursive ? null : _posixPermissionSuggestion(delegate.path),
     );
   }
@@ -489,8 +448,7 @@ class ErrorHandlingDirectory
     return _runSync<void>(
       () => delegate.deleteSync(recursive: recursive),
       platform: _platform,
-      failureMessage:
-        'Flutter failed to delete a directory at "${delegate.path}"',
+      failureMessage: 'Flutter failed to delete a directory at "${delegate.path}"',
       posixPermissionSuggestion: recursive ? null : _posixPermissionSuggestion(delegate.path),
     );
   }
@@ -500,28 +458,22 @@ class ErrorHandlingDirectory
     return _runSync<bool>(
       () => delegate.existsSync(),
       platform: _platform,
-      failureMessage:
-        'Flutter failed to check for directory existence at "${delegate.path}"',
+      failureMessage: 'Flutter failed to check for directory existence at "${delegate.path}"',
       posixPermissionSuggestion: _posixPermissionSuggestion(delegate.parent.path),
     );
   }
 
-  String _posixPermissionSuggestion(String path) => 'Try running:\n'
+  String _posixPermissionSuggestion(String path) =>
+      'Try running:\n'
       '  sudo chown -R \$(whoami) ${fileSystem.path.absolute(path)}';
 
   @override
   String toString() => delegate.toString();
 }
 
-class ErrorHandlingLink
-    extends ForwardingFileSystemEntity<Link, io.Link>
-    with ForwardingLink {
-  ErrorHandlingLink({
-    required Platform platform,
-    required this.fileSystem,
-    required this.delegate,
-  }) :
-    _platform = platform;
+class ErrorHandlingLink extends ForwardingFileSystemEntity<Link, io.Link> with ForwardingLink {
+  ErrorHandlingLink({required Platform platform, required this.fileSystem, required this.delegate})
+    : _platform = platform;
 
   @override
   final io.Link delegate;
@@ -532,33 +484,26 @@ class ErrorHandlingLink
   final Platform _platform;
 
   @override
-  File wrapFile(io.File delegate) => ErrorHandlingFile(
-    platform: _platform,
-    fileSystem: fileSystem,
-    delegate: delegate,
-  );
+  File wrapFile(io.File delegate) =>
+      ErrorHandlingFile(platform: _platform, fileSystem: fileSystem, delegate: delegate);
 
   @override
-  Directory wrapDirectory(io.Directory delegate) => ErrorHandlingDirectory(
-    platform: _platform,
-    fileSystem: fileSystem,
-    delegate: delegate,
-  );
+  Directory wrapDirectory(io.Directory delegate) =>
+      ErrorHandlingDirectory(platform: _platform, fileSystem: fileSystem, delegate: delegate);
 
   @override
-  Link wrapLink(io.Link delegate) => ErrorHandlingLink(
-    platform: _platform,
-    fileSystem: fileSystem,
-    delegate: delegate,
-  );
+  Link wrapLink(io.Link delegate) =>
+      ErrorHandlingLink(platform: _platform, fileSystem: fileSystem, delegate: delegate);
 
   @override
   String toString() => delegate.toString();
 }
 
-const String _kNoExecutableFound = 'The Flutter tool could not locate an executable with suitable permissions';
+const String _kNoExecutableFound =
+    'The Flutter tool could not locate an executable with suitable permissions';
 
-Future<T> _run<T>(Future<T> Function() op, {
+Future<T> _run<T>(
+  Future<T> Function() op, {
   required Platform platform,
   String? failureMessage,
   String? posixPermissionSuggestion,
@@ -574,7 +519,12 @@ Future<T> _run<T>(Future<T> Function() op, {
     if (platform.isWindows) {
       _handleWindowsException(e, failureMessage, e.osError?.errorCode ?? 0);
     } else if (platform.isLinux || platform.isMacOS) {
-      _handlePosixException(e, failureMessage, e.osError?.errorCode ?? 0, posixPermissionSuggestion);
+      _handlePosixException(
+        e,
+        failureMessage,
+        e.osError?.errorCode ?? 0,
+        posixPermissionSuggestion,
+      );
     }
     rethrow;
   } on io.ProcessException catch (e) {
@@ -582,14 +532,16 @@ Future<T> _run<T>(Future<T> Function() op, {
       _handleWindowsException(e, failureMessage, e.errorCode);
     } else if (platform.isLinux) {
       _handlePosixException(e, failureMessage, e.errorCode, posixPermissionSuggestion);
-    } if (platform.isMacOS) {
+    }
+    if (platform.isMacOS) {
       _handleMacOSException(e, failureMessage, e.errorCode, posixPermissionSuggestion);
     }
     rethrow;
   }
 }
 
-T _runSync<T>(T Function() op, {
+T _runSync<T>(
+  T Function() op, {
   required Platform platform,
   String? failureMessage,
   String? posixPermissionSuggestion,
@@ -605,7 +557,12 @@ T _runSync<T>(T Function() op, {
     if (platform.isWindows) {
       _handleWindowsException(e, failureMessage, e.osError?.errorCode ?? 0);
     } else if (platform.isLinux || platform.isMacOS) {
-      _handlePosixException(e, failureMessage, e.osError?.errorCode ?? 0, posixPermissionSuggestion);
+      _handlePosixException(
+        e,
+        failureMessage,
+        e.osError?.errorCode ?? 0,
+        posixPermissionSuggestion,
+      );
     }
     rethrow;
   } on io.ProcessException catch (e) {
@@ -613,13 +570,13 @@ T _runSync<T>(T Function() op, {
       _handleWindowsException(e, failureMessage, e.errorCode);
     } else if (platform.isLinux) {
       _handlePosixException(e, failureMessage, e.errorCode, posixPermissionSuggestion);
-    } if (platform.isMacOS) {
+    }
+    if (platform.isMacOS) {
       _handleMacOSException(e, failureMessage, e.errorCode, posixPermissionSuggestion);
     }
     rethrow;
   }
 }
-
 
 /// A [ProcessManager] that throws a [ToolExit] on certain errors.
 ///
@@ -630,11 +587,9 @@ T _runSync<T>(T Function() op, {
 /// See also:
 ///   * [ErrorHandlingFileSystem], for a similar file system strategy.
 class ErrorHandlingProcessManager extends ProcessManager {
-  ErrorHandlingProcessManager({
-    required ProcessManager delegate,
-    required Platform platform,
-  }) : _delegate = delegate,
-       _platform = platform;
+  ErrorHandlingProcessManager({required ProcessManager delegate, required Platform platform})
+    : _delegate = delegate,
+      _platform = platform;
 
   final ProcessManager _delegate;
   final Platform _platform;
@@ -645,17 +600,15 @@ class ErrorHandlingProcessManager extends ProcessManager {
       () => _delegate.canRun(executable, workingDirectory: workingDirectory),
       platform: _platform,
       failureMessage: 'Flutter failed to run "$executable"',
-      posixPermissionSuggestion: 'Try running:\n'
+      posixPermissionSuggestion:
+          'Try running:\n'
           '  sudo chown -R \$(whoami) $executable && chmod u+rx $executable',
     );
   }
 
   @override
   bool killPid(int pid, [io.ProcessSignal signal = io.ProcessSignal.sigterm]) {
-    return _runSync(
-      () => _delegate.killPid(pid, signal),
-      platform: _platform,
-    );
+    return _runSync(() => _delegate.killPid(pid, signal), platform: _platform);
   }
 
   @override
@@ -668,17 +621,18 @@ class ErrorHandlingProcessManager extends ProcessManager {
     Encoding? stdoutEncoding = io.systemEncoding,
     Encoding? stderrEncoding = io.systemEncoding,
   }) {
-    return _run(() {
-      return _delegate.run(
-        command,
-        workingDirectory: workingDirectory,
-        environment: environment,
-        includeParentEnvironment: includeParentEnvironment,
-        runInShell: runInShell,
-        stdoutEncoding: stdoutEncoding,
-        stderrEncoding: stderrEncoding,
-      );
-    },
+    return _run(
+      () {
+        return _delegate.run(
+          command,
+          workingDirectory: workingDirectory,
+          environment: environment,
+          includeParentEnvironment: includeParentEnvironment,
+          runInShell: runInShell,
+          stdoutEncoding: stdoutEncoding,
+          stderrEncoding: stderrEncoding,
+        );
+      },
       platform: _platform,
       failureMessage: 'Flutter failed to run "${command.join(' ')}"',
     );
@@ -693,16 +647,17 @@ class ErrorHandlingProcessManager extends ProcessManager {
     bool runInShell = false,
     io.ProcessStartMode mode = io.ProcessStartMode.normal,
   }) {
-    return _run(() {
-      return _delegate.start(
-        command,
-        workingDirectory: workingDirectory,
-        environment: environment,
-        includeParentEnvironment: includeParentEnvironment,
-        runInShell: runInShell,
-        mode: mode,
-      );
-    },
+    return _run(
+      () {
+        return _delegate.start(
+          command,
+          workingDirectory: workingDirectory,
+          environment: environment,
+          includeParentEnvironment: includeParentEnvironment,
+          runInShell: runInShell,
+          mode: mode,
+        );
+      },
       platform: _platform,
       failureMessage: 'Flutter failed to run "${command.join(' ')}"',
     );
@@ -718,24 +673,30 @@ class ErrorHandlingProcessManager extends ProcessManager {
     Encoding? stdoutEncoding = io.systemEncoding,
     Encoding? stderrEncoding = io.systemEncoding,
   }) {
-    return _runSync(() {
-      return _delegate.runSync(
-        command,
-        workingDirectory: workingDirectory,
-        environment: environment,
-        includeParentEnvironment: includeParentEnvironment,
-        runInShell: runInShell,
-        stdoutEncoding: stdoutEncoding,
-        stderrEncoding: stderrEncoding,
-      );
-    },
+    return _runSync(
+      () {
+        return _delegate.runSync(
+          command,
+          workingDirectory: workingDirectory,
+          environment: environment,
+          includeParentEnvironment: includeParentEnvironment,
+          runInShell: runInShell,
+          stdoutEncoding: stdoutEncoding,
+          stderrEncoding: stderrEncoding,
+        );
+      },
       platform: _platform,
       failureMessage: 'Flutter failed to run "${command.join(' ')}"',
     );
   }
 }
 
-void _handlePosixException(Exception e, String? message, int errorCode, String? posixPermissionSuggestion) {
+void _handlePosixException(
+  Exception e,
+  String? message,
+  int errorCode,
+  String? posixPermissionSuggestion,
+) {
   // From:
   // https://github.com/torvalds/linux/blob/master/include/uapi/asm-generic/errno.h
   // https://github.com/torvalds/linux/blob/master/include/uapi/asm-generic/errno-base.h
@@ -748,9 +709,9 @@ void _handlePosixException(Exception e, String? message, int errorCode, String? 
   switch (errorCode) {
     case enospc:
       errorMessage =
-        '$message. The target device is full.'
-        '\n$e\n'
-        'Free up space and try again.';
+          '$message. The target device is full.'
+          '\n$e\n'
+          'Free up space and try again.';
     case eperm:
     case eacces:
       final StringBuffer errorBuffer = StringBuffer();
@@ -759,8 +720,10 @@ void _handlePosixException(Exception e, String? message, int errorCode, String? 
       } else {
         errorBuffer.writeln('The flutter tool cannot access the file or directory.');
       }
-      errorBuffer.writeln('Please ensure that the SDK and/or project is installed in a location '
-          'that has read/write permissions for the current user.');
+      errorBuffer.writeln(
+        'Please ensure that the SDK and/or project is installed in a location '
+        'that has read/write permissions for the current user.',
+      );
       if (posixPermissionSuggestion != null && posixPermissionSuggestion.isNotEmpty) {
         errorBuffer.writeln(posixPermissionSuggestion);
       }
@@ -772,7 +735,12 @@ void _handlePosixException(Exception e, String? message, int errorCode, String? 
   _throwFileSystemException(errorMessage);
 }
 
-void _handleMacOSException(Exception e, String? message, int errorCode, String? posixPermissionSuggestion) {
+void _handleMacOSException(
+  Exception e,
+  String? message,
+  int errorCode,
+  String? posixPermissionSuggestion,
+) {
   // https://github.com/apple/darwin-xnu/blob/main/bsd/dev/dtrace/scripts/errno.d
   const int ebadarch = 86;
   const int eagain = 35;
@@ -781,8 +749,12 @@ void _handleMacOSException(Exception e, String? message, int errorCode, String? 
     if (message != null) {
       errorBuffer.writeln('$message.');
     }
-    errorBuffer.writeln('The binary was built with the incorrect architecture to run on this machine.');
-    errorBuffer.writeln('If you are on an ARM Apple Silicon Mac, Flutter requires the Rosetta translation environment. Try running:');
+    errorBuffer.writeln(
+      'The binary was built with the incorrect architecture to run on this machine.',
+    );
+    errorBuffer.writeln(
+      'If you are on an ARM Apple Silicon Mac, Flutter requires the Rosetta translation environment. Try running:',
+    );
     errorBuffer.writeln('  sudo softwareupdate --install-rosetta --agree-to-license');
     _throwFileSystemException(errorBuffer.toString());
   }
@@ -814,29 +786,29 @@ void _handleWindowsException(Exception e, String? message, int errorCode) {
   switch (errorCode) {
     case kAccessDenied:
       errorMessage =
-        '$message. The flutter tool cannot access the file or directory.\n'
-        'Please ensure that the SDK and/or project is installed in a location '
-        'that has read/write permissions for the current user.';
+          '$message. The flutter tool cannot access the file or directory.\n'
+          'Please ensure that the SDK and/or project is installed in a location '
+          'that has read/write permissions for the current user.';
     case kDeviceFull:
       errorMessage =
-        '$message. The target device is full.'
-        '\n$e\n'
-        'Free up space and try again.';
+          '$message. The target device is full.'
+          '\n$e\n'
+          'Free up space and try again.';
     case kUserMappedSectionOpened:
       errorMessage =
-        '$message. The file is being used by another program.'
-        '\n$e\n'
-        'Do you have an antivirus program running? '
-        'Try disabling your antivirus program and try again.';
+          '$message. The file is being used by another program.'
+          '\n$e\n'
+          'Do you have an antivirus program running? '
+          'Try disabling your antivirus program and try again.';
     case kFatalDeviceHardwareError:
       errorMessage =
-        '$message. There is a problem with the device driver '
-        'that this file or directory is stored on.';
+          '$message. There is a problem with the device driver '
+          'that this file or directory is stored on.';
     case kDeviceDoesNotExist:
       errorMessage =
-        '$message. The device was not found.'
-        '\n$e\n'
-        'Verify the device is mounted and try again.';
+          '$message. The device was not found.'
+          '\n$e\n'
+          'Verify the device is mounted and try again.';
     default:
       // Caller must rethrow the exception.
       break;

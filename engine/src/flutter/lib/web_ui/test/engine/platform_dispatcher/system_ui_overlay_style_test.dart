@@ -18,12 +18,11 @@ void testMain() {
   void sendSetSystemUIOverlayStyle({ui.Color? statusBarColor}) {
     ui.PlatformDispatcher.instance.sendPlatformMessage(
       'flutter/platform',
-      codec.encodeMethodCall(MethodCall(
-        'SystemChrome.setSystemUIOverlayStyle',
-        <String, dynamic>{
+      codec.encodeMethodCall(
+        MethodCall('SystemChrome.setSystemUIOverlayStyle', <String, dynamic>{
           'statusBarColor': statusBarColor?.value,
-        },
-      )),
+        }),
+      ),
       null,
     );
   }

@@ -12,11 +12,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      key: Key('mainapp'),
-      title: 'Platform Test',
-      home: MyHomePage(),
-    );
+    return const MaterialApp(key: Key('mainapp'), title: 'Platform Test', home: MyHomePage());
   }
 }
 
@@ -31,20 +27,11 @@ class MyHomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             if (defaultTargetPlatform == TargetPlatform.macOS)
-              const Text(
-                'I am running on MacOS',
-                key: Key('macOSKey'),
-              ),
+              const Text('I am running on MacOS', key: Key('macOSKey')),
             if (defaultTargetPlatform == TargetPlatform.iOS)
-              const Text(
-                'I am running on MacOS',
-                key: Key('iOSKey'),
-              ),
+              const Text('I am running on MacOS', key: Key('iOSKey')),
             if (defaultTargetPlatform == TargetPlatform.android)
-              const Text(
-                'I am running on Android',
-                key: Key('androidKey'),
-              ),
+              const Text('I am running on Android', key: Key('androidKey')),
           ],
         ),
       ),

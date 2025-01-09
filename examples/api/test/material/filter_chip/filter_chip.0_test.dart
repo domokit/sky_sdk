@@ -10,9 +10,7 @@ void main() {
   testWidgets('Filter exercises using FilterChip', (WidgetTester tester) async {
     const String baseText = 'Looking for: ';
 
-    await tester.pumpWidget(
-      const example.ChipApp(),
-    );
+    await tester.pumpWidget(const example.ChipApp());
 
     expect(find.text(baseText), findsOneWidget);
 

@@ -33,7 +33,6 @@ import 'theme.dart';
 ///    application.
 @immutable
 class MaterialBannerThemeData with Diagnosticable {
-
   /// Creates a theme that can be used for [MaterialBannerTheme] or
   /// [ThemeData.bannerTheme].
   const MaterialBannerThemeData({
@@ -101,7 +100,11 @@ class MaterialBannerThemeData with Diagnosticable {
   /// Linearly interpolate between two Banner themes.
   ///
   /// {@macro dart.ui.shadow.lerp}
-  static MaterialBannerThemeData lerp(MaterialBannerThemeData? a, MaterialBannerThemeData? b, double t) {
+  static MaterialBannerThemeData lerp(
+    MaterialBannerThemeData? a,
+    MaterialBannerThemeData? b,
+    double t,
+  ) {
     return MaterialBannerThemeData(
       backgroundColor: Color.lerp(a?.backgroundColor, b?.backgroundColor, t),
       surfaceTintColor: Color.lerp(a?.surfaceTintColor, b?.surfaceTintColor, t),
@@ -134,15 +137,15 @@ class MaterialBannerThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is MaterialBannerThemeData
-      && other.backgroundColor == backgroundColor
-      && other.surfaceTintColor == surfaceTintColor
-      && other.shadowColor == shadowColor
-      && other.dividerColor == dividerColor
-      && other.contentTextStyle == contentTextStyle
-      && other.elevation == elevation
-      && other.padding == padding
-      && other.leadingPadding == leadingPadding;
+    return other is MaterialBannerThemeData &&
+        other.backgroundColor == backgroundColor &&
+        other.surfaceTintColor == surfaceTintColor &&
+        other.shadowColor == shadowColor &&
+        other.dividerColor == dividerColor &&
+        other.contentTextStyle == contentTextStyle &&
+        other.elevation == elevation &&
+        other.padding == padding &&
+        other.leadingPadding == leadingPadding;
   }
 
   @override
@@ -152,10 +155,14 @@ class MaterialBannerThemeData with Diagnosticable {
     properties.add(ColorProperty('surfaceTintColor', surfaceTintColor, defaultValue: null));
     properties.add(ColorProperty('shadowColor', shadowColor, defaultValue: null));
     properties.add(ColorProperty('dividerColor', dividerColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<TextStyle>('contentTextStyle', contentTextStyle, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<TextStyle>('contentTextStyle', contentTextStyle, defaultValue: null),
+    );
     properties.add(DoubleProperty('elevation', elevation, defaultValue: null));
     properties.add(DiagnosticsProperty<EdgeInsetsGeometry>('padding', padding, defaultValue: null));
-    properties.add(DiagnosticsProperty<EdgeInsetsGeometry>('leadingPadding', leadingPadding, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<EdgeInsetsGeometry>('leadingPadding', leadingPadding, defaultValue: null),
+    );
   }
 }
 
@@ -167,11 +174,7 @@ class MaterialBannerThemeData with Diagnosticable {
 class MaterialBannerTheme extends InheritedTheme {
   /// Creates a banner theme that controls the configurations for
   /// [MaterialBanner]s in its widget subtree.
-  const MaterialBannerTheme({
-    super.key,
-    this.data,
-    required super.child,
-  });
+  const MaterialBannerTheme({super.key, this.data, required super.child});
 
   /// The properties for descendant [MaterialBanner] widgets.
   final MaterialBannerThemeData? data;
@@ -188,7 +191,8 @@ class MaterialBannerTheme extends InheritedTheme {
   /// MaterialBannerThemeData theme = MaterialBannerTheme.of(context);
   /// ```
   static MaterialBannerThemeData of(BuildContext context) {
-    final MaterialBannerTheme? bannerTheme = context.dependOnInheritedWidgetOfExactType<MaterialBannerTheme>();
+    final MaterialBannerTheme? bannerTheme =
+        context.dependOnInheritedWidgetOfExactType<MaterialBannerTheme>();
     return bannerTheme?.data ?? Theme.of(context).bannerTheme;
   }
 

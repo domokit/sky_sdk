@@ -37,11 +37,7 @@ void main() {
   final String constraint = _getPackageFfiTemplatePubspecVersion();
 
   setUpAll(() {
-    processManager.runSync(<String>[
-      flutterBin,
-      'config',
-      '--enable-native-assets',
-    ]);
+    processManager.runSync(<String>[flutterBin, 'config', '--enable-native-assets']);
   });
 
   // Test building a host, iOS, and APK (Android) target where possible.
@@ -70,49 +66,39 @@ void _testBuildCommand({
   required ProcessManager processManager,
   required bool codeSign,
 }) {
-  testWithoutContext(
-    'flutter build "$buildCommand" succeeds without libraries',
-    () async {
-      await inTempDir((Directory tempDirectory) async {
-        const String packageName = 'uses_package_native_assets_cli';
+  testWithoutContext('flutter build "$buildCommand" succeeds without libraries', () async {
+    await inTempDir((Directory tempDirectory) async {
+      const String packageName = 'uses_package_native_assets_cli';
 
-        // Create a new (plain Dart SDK) project.
-        await expectLater(
-          processManager.run(
-            <String>[
-              flutterBin,
-              'create',
-              '--no-pub',
-              packageName,
-            ],
-            workingDirectory: tempDirectory.path,
-          ),
-          completion(const ProcessResultMatcher()),
-        );
-
-        final Directory packageDirectory = tempDirectory.childDirectory(
+      // Create a new (plain Dart SDK) project.
+      await expectLater(
+        processManager.run(<String>[
+          flutterBin,
+          'create',
+          '--no-pub',
           packageName,
-        );
+        ], workingDirectory: tempDirectory.path),
+        completion(const ProcessResultMatcher()),
+      );
 
-        // Add native_assets_cli and resolve implicitly (pub add does pub get).
-        // See https://dart.dev/tools/pub/cmd/pub-add#version-constraint.
-        await expectLater(
-          processManager.run(
-            <String>[
-              flutterBin,
-              'packages',
-              'add',
-              'native_assets_cli:$nativeAssetsCliVersionConstraint',
-            ],
-            workingDirectory: packageDirectory.path,
-          ),
-          completion(const ProcessResultMatcher()),
-        );
+      final Directory packageDirectory = tempDirectory.childDirectory(packageName);
 
-        // Add a build hook that does nothing to the package.
-        packageDirectory.childDirectory('hook').childFile('build.dart')
-          ..createSync(recursive: true)
-          ..writeAsStringSync('''
+      // Add native_assets_cli and resolve implicitly (pub add does pub get).
+      // See https://dart.dev/tools/pub/cmd/pub-add#version-constraint.
+      await expectLater(
+        processManager.run(<String>[
+          flutterBin,
+          'packages',
+          'add',
+          'native_assets_cli:$nativeAssetsCliVersionConstraint',
+        ], workingDirectory: packageDirectory.path),
+        completion(const ProcessResultMatcher()),
+      );
+
+      // Add a build hook that does nothing to the package.
+      packageDirectory.childDirectory('hook').childFile('build.dart')
+        ..createSync(recursive: true)
+        ..writeAsStringSync('''
 import 'package:native_assets_cli/native_assets_cli.dart';
 
 void main(List<String> args) async {
@@ -120,27 +106,25 @@ void main(List<String> args) async {
 }
 ''');
 
-        // Try building.
-        //
-        // TODO(matanlurey): Stream the app so that we can see partial output.
-        final List<String> args = <String>[
-          flutterBin,
-          'build',
-          buildCommand,
-          '--debug',
-          if (!codeSign) '--no-codesign',
-        ];
-        io.stderr.writeln('Running $args...');
-        final io.Process process = await processManager.start(
-          args,
-          workingDirectory: packageDirectory.path,
-          mode: ProcessStartMode.inheritStdio,
-        );
-        expect(await process.exitCode, 0);
-      },);
-    },
-    tags: <String>['flutter-build-apk'],
-  );
+      // Try building.
+      //
+      // TODO(matanlurey): Stream the app so that we can see partial output.
+      final List<String> args = <String>[
+        flutterBin,
+        'build',
+        buildCommand,
+        '--debug',
+        if (!codeSign) '--no-codesign',
+      ];
+      io.stderr.writeln('Running $args...');
+      final io.Process process = await processManager.start(
+        args,
+        workingDirectory: packageDirectory.path,
+        mode: ProcessStartMode.inheritStdio,
+      );
+      expect(await process.exitCode, 0);
+    });
+  }, tags: <String>['flutter-build-apk']);
 }
 
 /// Reads `templates/package_ffi/pubspec.yaml.tmpl` to use the package version.

@@ -24,13 +24,11 @@ void main() {
     const Platform platform = LocalPlatform();
     final ProcessRunner runner = ProcessRunner();
     final String exe = platform.isWindows ? '.bat' : '';
-    final String entrypointPath = path.join(
-      engine.flutterDir.path, 'bin', 'et$exe',
-    );
-    final ProcessRunnerResult processResult = await runner.runProcess(
-      <String>[entrypointPath, 'help'],
-      failOk: true,
-    );
+    final String entrypointPath = path.join(engine.flutterDir.path, 'bin', 'et$exe');
+    final ProcessRunnerResult processResult = await runner.runProcess(<String>[
+      entrypointPath,
+      'help',
+    ], failOk: true);
     if (processResult.exitCode != 0) {
       io.stdout.writeln(processResult.stdout);
       io.stderr.writeln(processResult.stderr);

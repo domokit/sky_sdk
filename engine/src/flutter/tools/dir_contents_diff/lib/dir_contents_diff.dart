@@ -12,15 +12,11 @@ String _basename(String path) {
 String _generateDirListing(String dirPath) {
   final Directory dir = Directory(dirPath);
   final List<FileSystemEntity> entities = dir.listSync();
-  entities.sort(
-      (FileSystemEntity a, FileSystemEntity b) => a.path.compareTo(b.path));
-  return entities
-      .map((FileSystemEntity entity) => _basename(entity.path))
-      .join('\n');
+  entities.sort((FileSystemEntity a, FileSystemEntity b) => a.path.compareTo(b.path));
+  return entities.map((FileSystemEntity entity) => _basename(entity.path)).join('\n');
 }
 
-String _strReplaceRange(
-    String inputStr, int start, int end, String replacement) {
+String _strReplaceRange(String inputStr, int start, int end, String replacement) {
   return inputStr.substring(0, start) + replacement + inputStr.substring(end);
 }
 
@@ -85,8 +81,7 @@ int dirContentsDiff(String goldenPath, String dirPath) {
       stdoutEncoding: utf8,
     );
     if (diffResult.exitCode != 0) {
-      print(
-          'Unexpected diff in $goldenPath, use `git apply` with the following patch.\n');
+      print('Unexpected diff in $goldenPath, use `git apply` with the following patch.\n');
       print(_redirectPatch(diffResult.stdout as String));
       result = 1;
     }

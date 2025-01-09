@@ -12,10 +12,7 @@ import 'base/file_system.dart';
 const String kBaseHrefPlaceholder = r'$FLUTTER_BASE_HREF';
 
 class WebTemplateWarning {
-  WebTemplateWarning(
-    this.warningText,
-    this.lineNumber,
-  );
+  WebTemplateWarning(this.warningText, this.lineNumber);
   final String warningText;
   final int lineNumber;
 }
@@ -42,9 +39,8 @@ class WebTemplate {
   /// Parses the base href from the index.html file.
   String getBaseHref() {
     final Element? baseElement = _getDocument().querySelector('base');
-    final String? baseHref = baseElement?.attributes == null
-        ? null
-        : baseElement!.attributes['href'];
+    final String? baseHref =
+        baseElement?.attributes == null ? null : baseElement!.attributes['href'];
 
     if (baseHref == null || baseHref == kBaseHrefPlaceholder) {
       return '';
@@ -88,12 +84,13 @@ class WebTemplate {
   List<WebTemplateWarning> _getWarningsForPattern(Pattern pattern, String warningText) {
     return <WebTemplateWarning>[
       for (final Match match in pattern.allMatches(_content))
-        _getWarningForMatch(match, warningText)
+        _getWarningForMatch(match, warningText),
     ];
   }
 
   WebTemplateWarning _getWarningForMatch(Match match, String warningText) {
-    final int lineCount = RegExp(r'(\r\n|\r|\n)').allMatches(_content.substring(0, match.start)).length;
+    final int lineCount =
+        RegExp(r'(\r\n|\r|\n)').allMatches(_content.substring(0, match.start)).length;
     return WebTemplateWarning(warningText, lineCount + 1);
   }
 
@@ -128,24 +125,15 @@ class WebTemplate {
       serviceWorkerVersion != null ? '"$serviceWorkerVersion"' : 'null',
     );
     if (buildConfig != null) {
-      _content = _content.replaceAll(
-        '{{flutter_build_config}}',
-        buildConfig,
-      );
+      _content = _content.replaceAll('{{flutter_build_config}}', buildConfig);
     }
 
     if (_content.contains('{{flutter_js}}')) {
-      _content = _content.replaceAll(
-        '{{flutter_js}}',
-        flutterJsFile.readAsStringSync(),
-      );
+      _content = _content.replaceAll('{{flutter_js}}', flutterJsFile.readAsStringSync());
     }
 
     if (flutterBootstrapJs != null) {
-      _content = _content.replaceAll(
-        '{{flutter_bootstrap_js}}',
-        flutterBootstrapJs,
-      );
+      _content = _content.replaceAll('{{flutter_bootstrap_js}}', flutterBootstrapJs);
     }
   }
 }

@@ -39,7 +39,7 @@ std::unique_ptr<Screenshot> ReadTexture(
   bool success = blit_pass->AddCopy(texture, device_buffer);
   FML_CHECK(success);
 
-  success = blit_pass->EncodeCommands(surface_context->GetResourceAllocator());
+  success = blit_pass->EncodeCommands();
   FML_CHECK(success);
 
   fml::AutoResetWaitableEvent latch;

@@ -52,45 +52,52 @@ Color _scaleAlpha(Color x, double factor) {
   return x.withValues(alpha: clampDouble(x.a * factor, 0, 1));
 }
 
-/// An immutable 32 bit color value in ARGB format.
+/// An immutable color value in ARGB format.
 ///
-/// Consider the light teal of the Flutter logo. It is fully opaque, with a red
-/// channel value of 0x42 (66), a green channel value of 0xA5 (165), and a blue
-/// channel value of 0xF5 (245). In the common "hash syntax" for color values,
-/// it would be described as `#42A5F5`.
+/// Consider the light teal of the [Flutter logo](https://flutter.dev/brand). It
+/// is fully opaque, with a red [r] channel value of `0.2588` (or `0x42` or `66`
+/// as an 8-bit value), a green [g] channel value of `0.6471` (or `0xA5` or
+/// `165` as an 8-bit value), and a blue [b] channel value of `0.9608` (or
+/// `0xF5` or `245` as an 8-bit value). In a common [CSS hex color syntax](https://developer.mozilla.org/en-US/docs/Web/CSS/hex-color)
+/// for RGB color values, it would be described as `#42A5F5`.
 ///
 /// Here are some ways it could be constructed:
 ///
 /// ```dart
-/// Color c1 = const Color(0xFF42A5F5);
-/// Color c2 = const Color.fromARGB(0xFF, 0x42, 0xA5, 0xF5);
-/// Color c3 = const Color.fromARGB(255, 66, 165, 245);
-/// Color c4 = const Color.fromRGBO(66, 165, 245, 1.0);
+/// const Color c1 = Color.from(alpha: 1.0, red: 0.2588, green: 0.6471, blue: 0.9608);
+/// const Color c2 = Color(0xFF42A5F5);
+/// const Color c3 = Color.fromARGB(0xFF, 0x42, 0xA5, 0xF5);
+/// const Color c4 = Color.fromARGB(255, 66, 165, 245);
+/// const Color c5 = Color.fromRGBO(66, 165, 245, 1.0);
 /// ```
 ///
-/// If you are having a problem with `Color` wherein it seems your color is just
-/// not painting, check to make sure you are specifying the full 8 hexadecimal
-/// digits. If you only specify six, then the leading two digits are assumed to
-/// be zero, which means fully-transparent:
+/// If you are having a problem with [Color.new] wherein it seems your color is
+/// just not painting, check to make sure you are specifying the full 8
+/// hexadecimal digits. If you only specify six, then the leading two digits are
+/// assumed to be zero, which means fully-transparent:
 ///
 /// ```dart
-/// Color c1 = const Color(0xFFFFFF); // fully transparent white (invisible)
-/// Color c2 = const Color(0xFFFFFFFF); // fully opaque white (visible)
+/// const Color c1 = Color(0xFFFFFF); // fully transparent white (invisible)
+/// const Color c2 = Color(0xFFFFFFFF); // fully opaque white (visible)
+///
+/// // Or use double-based channel values:
+/// const Color c3 = Color.from(alpha: 1.0, red: 1.0, green: 1.0, blue: 1.0);
 /// ```
 ///
 /// [Color]'s color components are stored as floating-point values. Care should
 /// be taken if one does not want the literal equality provided by `operator==`.
-/// To test equality inside of Flutter tests consider using `package:test`'s
-/// `isSameColorAs`.
+/// To test equality inside of Flutter tests consider using [`isSameColorAs`][].
 ///
 /// See also:
 ///
 ///  * [Colors](https://api.flutter.dev/flutter/material/Colors-class.html),
 ///    which defines the colors found in the Material Design specification.
-///  * [`isSameColorAs`](https://api.flutter.dev/flutter/flutter_test/isSameColorAs.html),
+///  * [`isSameColorAs`][],
 ///    a Matcher to handle floating-point deltas when checking [Color] equality.
+///
+/// [`isSameColorAs`]: https://api.flutter.dev/flutter/flutter_test/isSameColorAs.html
 class Color {
-  /// Construct an sRGB color from the lower 32 bits of an [int].
+  /// Construct an [ColorSpace.sRGB] color from the lower 32 bits of an [int].
   ///
   /// The bits are interpreted as follows:
   ///
@@ -101,30 +108,49 @@ class Color {
   ///
   /// In other words, if AA is the alpha value in hex, RR the red value in hex,
   /// GG the green value in hex, and BB the blue value in hex, a color can be
-  /// expressed as `const Color(0xAARRGGBB)`.
+  /// expressed as `Color(0xAARRGGBB)`.
   ///
   /// For example, to get a fully opaque orange, you would use `const
   /// Color(0xFFFF9000)` (`FF` for the alpha, `FF` for the red, `90` for the
   /// green, and `00` for the blue).
-  const Color(int value)
-      : this._fromARGBC(
-            value >> 24, value >> 16, value >> 8, value, ColorSpace.sRGB);
-
-  /// Construct a color with normalized color components.
   ///
-  /// Normalized color components allows arbitrary bit depths for color
-  /// components to be be supported. The values will be normalized relative to
-  /// the [ColorSpace] argument.
-  const Color.from(
-      {required double alpha,
-      required double red,
-      required double green,
-      required double blue,
-      this.colorSpace = ColorSpace.sRGB})
-      : a = alpha,
-        r = red,
-        g = green,
-        b = blue;
+  /// {@template dart.ui.Color.componentsStoredAsFloatingPoint}
+  /// > [!NOTE]
+  /// > Each color is stored as floating-point color components, where the final
+  /// > value of each component is approximated by storing `c / 255`, where `c`
+  /// is one of the four components (alpha, red, green, blue).
+  /// {@endtemplate}
+  const Color(int value)
+    : this._fromARGBC(value >> 24, value >> 16, value >> 8, value, ColorSpace.sRGB);
+
+  /// Construct a color with floating-point color components.
+  ///
+  /// Color components allows arbitrary bit depths for color components to be be
+  /// supported. The values are interpreted relative to the [ColorSpace]
+  /// argument.
+  ///
+  /// ## Example
+  ///
+  /// ```dart
+  /// // Fully opaque maximum red color
+  /// const Color c1 = Color.from(alpha: 1.0, red: 1.0, green: 0.0, blue: 0.0);
+  ///
+  /// // Partially transparent moderately blue and green color
+  /// const Color c2 = Color.from(alpha: 0.5, red: 0.0, green: 0.5, blue: 0.5);
+  ///
+  /// // Fully transparent color
+  /// const Color c3 = Color.from(alpha: 0.0, red: 0.0, green: 0.0, blue: 0.0);
+  /// ```
+  const Color.from({
+    required double alpha,
+    required double red,
+    required double green,
+    required double blue,
+    this.colorSpace = ColorSpace.sRGB,
+  }) : a = alpha,
+       r = red,
+       g = green,
+       b = blue;
 
   /// Construct an sRGB color from the lower 8 bits of four integers.
   ///
@@ -138,13 +164,12 @@ class Color {
   ///
   /// See also [fromRGBO], which takes the alpha value as a floating point
   /// value.
-  const Color.fromARGB(int a, int r, int g, int b)
-      : this._fromARGBC(a, r, g, b, ColorSpace.sRGB);
+  ///
+  /// {@macro dart.ui.Color.componentsStoredAsFloatingPoint}
+  const Color.fromARGB(int a, int r, int g, int b) : this._fromARGBC(a, r, g, b, ColorSpace.sRGB);
 
-  const Color._fromARGBC(
-      int alpha, int red, int green, int blue, ColorSpace colorSpace)
-      : this._fromRGBOC(
-            red, green, blue, (alpha & 0xff) / 255, colorSpace);
+  const Color._fromARGBC(int alpha, int red, int green, int blue, ColorSpace colorSpace)
+    : this._fromRGBOC(red, green, blue, (alpha & 0xff) / 255, colorSpace);
 
   /// Create an sRGB color from red, green, blue, and opacity, similar to
   /// `rgba()` in CSS.
@@ -158,19 +183,18 @@ class Color {
   /// Out of range values are brought into range using modulo 255.
   ///
   /// See also [fromARGB], which takes the opacity as an integer value.
+  ///
+  /// {@macro dart.ui.Color.componentsStoredAsFloatingPoint}
   const Color.fromRGBO(int r, int g, int b, double opacity)
-      : this._fromRGBOC(r, g, b, opacity, ColorSpace.sRGB);
+    : this._fromRGBOC(r, g, b, opacity, ColorSpace.sRGB);
 
   const Color._fromRGBOC(int r, int g, int b, double opacity, this.colorSpace)
-      : a = opacity,
-        r = (r & 0xff) / 255,
-        g = (g & 0xff) / 255,
-        b = (b & 0xff) / 255;
+    : a = opacity,
+      r = (r & 0xff) / 255,
+      g = (g & 0xff) / 255,
+      b = (b & 0xff) / 255;
 
   /// The alpha channel of this color.
-  ///
-  /// A value of 0.0 means this color is fully transparent. A value of 1.0 means
-  /// this color is fully opaque.
   final double a;
 
   /// The red channel of this color.
@@ -191,16 +215,16 @@ class Color {
 
   /// A 32 bit value representing this color.
   ///
-  /// The bits are assigned as follows:
-  ///
-  /// * Bits 24-31 are the alpha value.
-  /// * Bits 16-23 are the red value.
-  /// * Bits 8-15 are the green value.
-  /// * Bits 0-7 are the blue value.
+  /// This getter is a _stub_. It is recommended instead to use the explicit
+  /// [toARGB32] method.
   @Deprecated('Use component accessors like .r or .g, or toARGB32 for an explicit conversion')
   int get value => toARGB32();
 
   /// Returns a 32-bit value representing this color.
+  ///
+  /// The returned value is compatible with the default constructor
+  /// ([Color.new]) but does _not_ guarantee to result in the same color due to
+  /// [imprecisions in numeric conversions](https://en.wikipedia.org/wiki/Floating-point_error_mitigation).
   ///
   /// Unlike accessing the floating point equivalent channels individually
   /// ([a], [r], [g], [b]), this method is intentionally _lossy_, and scales
@@ -216,6 +240,13 @@ class Color {
   /// * Bits 16-23 represents the [r] channel as an 8-bit unsigned integer.
   /// * Bits 8-15 represents the [g] channel as an 8-bit unsigned integer.
   /// * Bits 0-7 represents the [b] channel as an 8-bit unsigned integer.
+  ///
+  /// > [!WARNING]
+  /// > The value returned by this getter implicitly converts floating-point
+  /// > component values (such as `0.5`) into their 8-bit equivalent by using
+  /// > the [toARGB32] method; the returned value is not guaranteed to be stable
+  /// > across different platforms or executions due to the complexity of
+  /// > floating-point math.
   int toARGB32() {
     return _floatToInt8(a) << 24 |
         _floatToInt8(r) << 16 |
@@ -249,29 +280,33 @@ class Color {
   @Deprecated('Use .b.')
   int get blue => (0x000000ff & value) >> 0;
 
-  /// Returns a new color that matches this color with the passed in components
-  /// changed.
+  /// Returns a new color with the provided components updated.
   ///
-  /// Changes to color components will be applied before applying changes to the
-  /// color space.
-  Color withValues(
-      {double? alpha,
-      double? red,
-      double? green,
-      double? blue,
-      ColorSpace? colorSpace}) {
+  /// Each component ([alpha], [red], [green], [blue]) represents a
+  /// floating-point value; see [Color.from] for details and examples.
+  ///
+  /// If [colorSpace] is provided, and is different than the current color
+  /// space, the component values are updated before transforming them to the
+  /// provided [ColorSpace].
+  Color withValues({
+    double? alpha,
+    double? red,
+    double? green,
+    double? blue,
+    ColorSpace? colorSpace,
+  }) {
     Color? updatedComponents;
     if (alpha != null || red != null || green != null || blue != null) {
       updatedComponents = Color.from(
-          alpha: alpha ?? a,
-          red: red ?? r,
-          green: green ?? g,
-          blue: blue ?? b,
-          colorSpace: this.colorSpace);
+        alpha: alpha ?? a,
+        red: red ?? r,
+        green: green ?? g,
+        blue: blue ?? b,
+        colorSpace: this.colorSpace,
+      );
     }
     if (colorSpace != null && colorSpace != this.colorSpace) {
-      final _ColorTransform transform =
-          _getColorTransform(this.colorSpace, colorSpace);
+      final _ColorTransform transform = _getColorTransform(this.colorSpace, colorSpace);
       return transform.transform(updatedComponents ?? this, colorSpace);
     } else {
       return updatedComponents ?? this;
@@ -402,12 +437,14 @@ class Color {
     assert(foreground.colorSpace == background.colorSpace);
     assert(foreground.colorSpace != ColorSpace.extendedSRGB);
     final double alpha = foreground.a;
-    if (alpha == 0) { // Foreground completely transparent.
+    if (alpha == 0) {
+      // Foreground completely transparent.
       return background;
     }
     final double invAlpha = 1 - alpha;
     double backAlpha = background.a;
-    if (backAlpha == 1) { // Opaque background case
+    if (backAlpha == 1) {
+      // Opaque background case
       return Color.from(
         alpha: 1,
         red: alpha * foreground.r + invAlpha * background.r,
@@ -415,7 +452,8 @@ class Color {
         blue: alpha * foreground.b + invAlpha * background.b,
         colorSpace: foreground.colorSpace,
       );
-    } else { // General case
+    } else {
+      // General case
       backAlpha = backAlpha * invAlpha;
       final double outAlpha = alpha + backAlpha;
       assert(outAlpha != 0);
@@ -729,8 +767,7 @@ enum BlendMode {
   ///    destination image.
   ///  * [hardLight], which combines [modulate] and [screen] to favor the
   ///    source image.
-  screen,  // The last coeff mode.
-
+  screen, // The last coeff mode.
   /// Multiply the components of the source and destination images after
   /// adjusting them to favor the destination.
   ///
@@ -864,8 +901,7 @@ enum BlendMode {
   /// channel, consider [modulate].
   ///
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/dart-ui/blend_mode_multiply.png)
-  multiply,  // The last separable mode.
-
+  multiply, // The last separable mode.
   /// Take the hue of the source image, and the saturation and luminosity of the
   /// destination image.
   ///
@@ -1320,6 +1356,7 @@ final class Paint {
   bool get isAntiAlias {
     return _data.getInt32(_kIsAntiAliasOffset, _kFakeHostEndian) == 0;
   }
+
   set isAntiAlias(bool value) {
     // We encode true as zero and false as one because the default value, which
     // we always encode as zero, is true.
@@ -1346,16 +1383,11 @@ final class Paint {
     final double red = _data.getFloat32(_kColorRedOffset, _kFakeHostEndian);
     final double green = _data.getFloat32(_kColorGreenOffset, _kFakeHostEndian);
     final double blue = _data.getFloat32(_kColorBlueOffset, _kFakeHostEndian);
-    final double alpha =
-        1.0 - _data.getFloat32(_kColorAlphaOffset, _kFakeHostEndian);
+    final double alpha = 1.0 - _data.getFloat32(_kColorAlphaOffset, _kFakeHostEndian);
     final ColorSpace colorSpace = _indexToColorSpace(
-        _data.getInt32(_kColorSpaceOffset, _kFakeHostEndian));
-    return Color.from(
-        alpha: alpha,
-        red: red,
-        green: green,
-        blue: blue,
-        colorSpace: colorSpace);
+      _data.getInt32(_kColorSpaceOffset, _kFakeHostEndian),
+    );
+    return Color.from(alpha: alpha, red: red, green: green, blue: blue, colorSpace: colorSpace);
   }
 
   set color(Color value) {
@@ -1363,8 +1395,7 @@ final class Paint {
     _data.setFloat32(_kColorGreenOffset, value.g, _kFakeHostEndian);
     _data.setFloat32(_kColorBlueOffset, value.b, _kFakeHostEndian);
     _data.setFloat32(_kColorAlphaOffset, 1.0 - value.a, _kFakeHostEndian);
-    _data.setInt32(_kColorSpaceOffset, _colorSpaceToIndex(value.colorSpace),
-        _kFakeHostEndian);
+    _data.setInt32(_kColorSpaceOffset, _colorSpaceToIndex(value.colorSpace), _kFakeHostEndian);
   }
 
   // Must be kept in sync with the default in paint.cc.
@@ -1392,6 +1423,7 @@ final class Paint {
     final int encoded = _data.getInt32(_kBlendModeOffset, _kFakeHostEndian);
     return BlendMode.values[encoded ^ _kBlendModeDefault];
   }
+
   set blendMode(BlendMode value) {
     final int encoded = value.index ^ _kBlendModeDefault;
     _data.setInt32(_kBlendModeOffset, encoded, _kFakeHostEndian);
@@ -1403,6 +1435,7 @@ final class Paint {
   PaintingStyle get style {
     return PaintingStyle.values[_data.getInt32(_kStyleOffset, _kFakeHostEndian)];
   }
+
   set style(PaintingStyle value) {
     final int encoded = value.index;
     _data.setInt32(_kStyleOffset, encoded, _kFakeHostEndian);
@@ -1416,6 +1449,7 @@ final class Paint {
   double get strokeWidth {
     return _data.getFloat32(_kStrokeWidthOffset, _kFakeHostEndian);
   }
+
   set strokeWidth(double value) {
     final double encoded = value;
     _data.setFloat32(_kStrokeWidthOffset, encoded, _kFakeHostEndian);
@@ -1428,6 +1462,7 @@ final class Paint {
   StrokeCap get strokeCap {
     return StrokeCap.values[_data.getInt32(_kStrokeCapOffset, _kFakeHostEndian)];
   }
+
   set strokeCap(StrokeCap value) {
     final int encoded = value.index;
     _data.setInt32(_kStrokeCapOffset, encoded, _kFakeHostEndian);
@@ -1461,6 +1496,7 @@ final class Paint {
   StrokeJoin get strokeJoin {
     return StrokeJoin.values[_data.getInt32(_kStrokeJoinOffset, _kFakeHostEndian)];
   }
+
   set strokeJoin(StrokeJoin value) {
     final int encoded = value.index;
     _data.setInt32(_kStrokeJoinOffset, encoded, _kFakeHostEndian);
@@ -1498,6 +1534,7 @@ final class Paint {
   double get strokeMiterLimit {
     return _data.getFloat32(_kStrokeMiterLimitOffset, _kFakeHostEndian);
   }
+
   set strokeMiterLimit(double value) {
     final double encoded = value - _kStrokeMiterLimitDefault;
     _data.setFloat32(_kStrokeMiterLimitOffset, encoded, _kFakeHostEndian);
@@ -1519,6 +1556,7 @@ final class Paint {
     }
     return null;
   }
+
   set maskFilter(MaskFilter? value) {
     if (value == null) {
       _data.setInt32(_kMaskFilterOffset, MaskFilter._TypeNone, _kFakeHostEndian);
@@ -1542,6 +1580,7 @@ final class Paint {
   FilterQuality get filterQuality {
     return FilterQuality.values[_data.getInt32(_kFilterQualityOffset, _kFakeHostEndian)];
   }
+
   set filterQuality(FilterQuality value) {
     final int encoded = value.index;
     _data.setInt32(_kFilterQualityOffset, encoded, _kFakeHostEndian);
@@ -1560,12 +1599,10 @@ final class Paint {
   Shader? get shader {
     return _objects?[_kShaderIndex] as Shader?;
   }
+
   set shader(Shader? value) {
     assert(() {
-      assert(
-        value == null || !value.debugDisposed,
-        'Attempted to set a disposed shader to $this',
-      );
+      assert(value == null || !value.debugDisposed, 'Attempted to set a disposed shader to $this');
       return true;
     }());
     assert(() {
@@ -1589,6 +1626,7 @@ final class Paint {
     final _ColorFilter? nativeFilter = _objects?[_kColorFilterIndex] as _ColorFilter?;
     return nativeFilter?.creator;
   }
+
   set colorFilter(ColorFilter? value) {
     final _ColorFilter? nativeFilter = value?._toNativeColorFilter();
     if (nativeFilter == null) {
@@ -1622,6 +1660,7 @@ final class Paint {
     final _ImageFilter? nativeFilter = _objects?[_kImageFilterIndex] as _ImageFilter?;
     return nativeFilter?.creator;
   }
+
   set imageFilter(ImageFilter? value) {
     if (value == null) {
       if (_objects != null) {
@@ -1644,6 +1683,7 @@ final class Paint {
   bool get invertColors {
     return _data.getInt32(_kInvertColorOffset, _kFakeHostEndian) == 1;
   }
+
   set invertColors(bool value) {
     _data.setInt32(_kInvertColorOffset, value ? 1 : 0, _kFakeHostEndian);
   }
@@ -1733,11 +1773,13 @@ enum ColorSpace {
   ///
   /// See also: https://en.wikipedia.org/wiki/SRGB
   sRGB,
+
   /// A color space that is backwards compatible with sRGB but can represent
   /// colors outside of that gamut with values outside of [0..1]. In order to
   /// see the extended values an [ImageByteFormat] like
   /// [ImageByteFormat.rawExtendedRgba128] must be used.
   extendedSRGB,
+
   /// The Display P3 color space.
   ///
   /// This is a wide gamut color space that has broad hardware support. It's
@@ -1760,7 +1802,7 @@ int _colorSpaceToIndex(ColorSpace colorSpace) {
 }
 
 ColorSpace _indexToColorSpace(int index) {
-  switch(index) {
+  switch (index) {
     case 0:
       return ColorSpace.sRGB;
     case 1:
@@ -1921,6 +1963,7 @@ class Image {
   final int height;
 
   bool _disposed = false;
+
   /// Release this handle's claim on the underlying Image. This handle is no
   /// longer usable after this method is called.
   ///
@@ -1953,7 +1996,8 @@ class Image {
       disposed = _disposed;
       return true;
     }());
-    return disposed ?? (throw StateError('Image.debugDisposed is only available when asserts are enabled.'));
+    return disposed ??
+        (throw StateError('Image.debugDisposed is only available when asserts are enabled.'));
   }
 
   /// Converts the [Image] object into a byte array.
@@ -2094,7 +2138,7 @@ class Image {
         'Cannot clone a disposed image.\n'
         'The clone() method of a previously-disposed Image was called. Once an '
         'Image object has been disposed, it can no longer be used to create '
-        'handles, as the underlying data may have been released.'
+        'handles, as the underlying data may have been released.',
       );
     }
     assert(!_image._disposed);
@@ -2311,17 +2355,23 @@ base class _NativeCodec extends NativeFieldWrapperClass1 implements Codec {
   @override
   Future<FrameInfo> getNextFrame() async {
     final Completer<FrameInfo> completer = Completer<FrameInfo>.sync();
-    final String? error = _getNextFrame((_Image? image, int durationMilliseconds, String decodeError) {
+    final String? error = _getNextFrame((
+      _Image? image,
+      int durationMilliseconds,
+      String decodeError,
+    ) {
       if (image == null) {
         if (decodeError.isEmpty) {
           decodeError = 'Codec failed to produce an image, possibly due to invalid image data.';
         }
         completer.completeError(Exception(decodeError));
       } else {
-        completer.complete(FrameInfo._(
-          image: Image._(image, image.width, image.height),
-          duration: Duration(milliseconds: durationMilliseconds),
-        ));
+        completer.complete(
+          FrameInfo._(
+            image: Image._(image, image.width, image.height),
+            duration: Duration(milliseconds: durationMilliseconds),
+          ),
+        );
       }
     });
     if (error != null) {
@@ -2518,10 +2568,7 @@ TargetImageSize _getDefaultImageSize(int intrinsicWidth, int intrinsicHeight) {
 ///
 ///  * [instantiateImageCodecWithSize], which used this signature for its
 ///    `getTargetSize` argument.
-typedef TargetImageSizeCallback = TargetImageSize Function(
-  int intrinsicWidth,
-  int intrinsicHeight,
-);
+typedef TargetImageSizeCallback = TargetImageSize Function(int intrinsicWidth, int intrinsicHeight);
 
 /// A specification of the size to which an image should be decoded.
 ///
@@ -2536,8 +2583,8 @@ class TargetImageSize {
   /// The `width` and `height` may both be null, but if they're non-null, they
   /// must be positive.
   const TargetImageSize({this.width, this.height})
-      : assert(width == null || width > 0),
-        assert(height == null || height > 0);
+    : assert(width == null || width > 0),
+      assert(height == null || height > 0);
 
   /// The width into which to load the image.
   ///
@@ -2622,30 +2669,26 @@ void decodeImageFromPixels(
     assert(allowUpscaling || targetHeight <= height);
   }
 
-  ImmutableBuffer.fromUint8List(pixels)
-    .then((ImmutableBuffer buffer) {
-      final ImageDescriptor descriptor = ImageDescriptor.raw(
-        buffer,
-        width: width,
-        height: height,
-        rowBytes: rowBytes,
-        pixelFormat: format,
-      );
+  ImmutableBuffer.fromUint8List(pixels).then((ImmutableBuffer buffer) {
+    final ImageDescriptor descriptor = ImageDescriptor.raw(
+      buffer,
+      width: width,
+      height: height,
+      rowBytes: rowBytes,
+      pixelFormat: format,
+    );
 
-      if (!allowUpscaling) {
-        if (targetWidth != null && targetWidth! > descriptor.width) {
-          targetWidth = descriptor.width;
-        }
-        if (targetHeight != null && targetHeight! > descriptor.height) {
-          targetHeight = descriptor.height;
-        }
+    if (!allowUpscaling) {
+      if (targetWidth != null && targetWidth! > descriptor.width) {
+        targetWidth = descriptor.width;
       }
+      if (targetHeight != null && targetHeight! > descriptor.height) {
+        targetHeight = descriptor.height;
+      }
+    }
 
-      descriptor
-        .instantiateCodec(
-          targetWidth: targetWidth,
-          targetHeight: targetHeight,
-        )
+    descriptor
+        .instantiateCodec(targetWidth: targetWidth, targetHeight: targetHeight)
         .then((Codec codec) {
           final Future<FrameInfo> frameInfo = codec.getNextFrame();
           codec.dispose();
@@ -2702,6 +2745,7 @@ enum PathOperation {
   ///  * [reverseDifference], which is the same but subtracting the first path
   ///    from the second.
   difference,
+
   /// Create a new path that is the intersection of the two paths, leaving the
   /// overlapping pieces of the path.
   ///
@@ -2712,12 +2756,14 @@ enum PathOperation {
   /// See also:
   ///  * [xor], which is the inverse of this operation
   intersect,
+
   /// Create a new path that is the union (inclusive-or) of the two paths.
   ///
   /// For example, if the two paths are overlapping circles of equal diameter
   /// but differing centers, the result would be a figure-eight like shape
   /// matching the outer boundaries of both circles.
   union,
+
   /// Create a new path that is the exclusive-or of the two paths, leaving
   /// everything but the overlapping pieces of the path.
   ///
@@ -2727,6 +2773,7 @@ enum PathOperation {
   /// See also:
   ///  * [intersect], which is the inverse of this operation
   xor,
+
   /// Subtract the first path from the second path.
   ///
   /// For example, if the two paths are overlapping circles of equal diameter
@@ -2898,7 +2945,8 @@ abstract class Path {
   /// point in the path is `arcEnd`. The radii are scaled to fit the last path
   /// point if both are greater than zero but too small to describe an arc.
   ///
-  void arcToPoint(Offset arcEnd, {
+  void arcToPoint(
+    Offset arcEnd, {
     Radius radius = Radius.zero,
     double rotation = 0.0,
     bool largeArc = false,
@@ -3038,7 +3086,9 @@ abstract class Path {
     if (path._op(path1 as _NativePath, path2 as _NativePath, operation.index)) {
       return path;
     }
-    throw StateError('Path.combine() failed.  This may be due an invalid path; in particular, check for NaN values.');
+    throw StateError(
+      'Path.combine() failed.  This may be due an invalid path; in particular, check for NaN values.',
+    );
   }
 
   /// Creates a [PathMetrics] object for this path, which can describe various
@@ -3077,7 +3127,9 @@ abstract class Path {
 
 base class _NativePath extends NativeFieldWrapperClass1 implements Path {
   /// Create a new empty [Path] object.
-  _NativePath() { _constructor(); }
+  _NativePath() {
+    _constructor();
+  }
 
   /// Avoids creating a new native backing for the path for methods that will
   /// create it later, such as [Path.from], [shift] and [transform].
@@ -3105,7 +3157,10 @@ base class _NativePath extends NativeFieldWrapperClass1 implements Path {
   external void moveTo(double x, double y);
 
   @override
-  @Native<Void Function(Pointer<Void>, Double, Double)>(symbol: 'Path::relativeMoveTo', isLeaf: true)
+  @Native<Void Function(Pointer<Void>, Double, Double)>(
+    symbol: 'Path::relativeMoveTo',
+    isLeaf: true,
+  )
   external void relativeMoveTo(double dx, double dy);
 
   @override
@@ -3113,32 +3168,52 @@ base class _NativePath extends NativeFieldWrapperClass1 implements Path {
   external void lineTo(double x, double y);
 
   @override
-  @Native<Void Function(Pointer<Void>, Double, Double)>(symbol: 'Path::relativeLineTo', isLeaf: true)
+  @Native<Void Function(Pointer<Void>, Double, Double)>(
+    symbol: 'Path::relativeLineTo',
+    isLeaf: true,
+  )
   external void relativeLineTo(double dx, double dy);
 
   @override
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double)>(symbol: 'Path::quadraticBezierTo', isLeaf: true)
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double)>(
+    symbol: 'Path::quadraticBezierTo',
+    isLeaf: true,
+  )
   external void quadraticBezierTo(double x1, double y1, double x2, double y2);
 
   @override
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double)>(symbol: 'Path::relativeQuadraticBezierTo', isLeaf: true)
-  external void relativeQuadraticBezierTo(
-      double x1, double y1, double x2, double y2);
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double)>(
+    symbol: 'Path::relativeQuadraticBezierTo',
+    isLeaf: true,
+  )
+  external void relativeQuadraticBezierTo(double x1, double y1, double x2, double y2);
 
   @override
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double, Double)>(symbol: 'Path::cubicTo', isLeaf: true)
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double, Double)>(
+    symbol: 'Path::cubicTo',
+    isLeaf: true,
+  )
   external void cubicTo(double x1, double y1, double x2, double y2, double x3, double y3);
 
   @override
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double, Double)>(symbol: 'Path::relativeCubicTo', isLeaf: true)
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double, Double)>(
+    symbol: 'Path::relativeCubicTo',
+    isLeaf: true,
+  )
   external void relativeCubicTo(double x1, double y1, double x2, double y2, double x3, double y3);
 
   @override
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double)>(symbol: 'Path::conicTo', isLeaf: true)
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double)>(
+    symbol: 'Path::conicTo',
+    isLeaf: true,
+  )
   external void conicTo(double x1, double y1, double x2, double y2, double w);
 
   @override
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double)>(symbol: 'Path::relativeConicTo', isLeaf: true)
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double)>(
+    symbol: 'Path::relativeConicTo',
+    isLeaf: true,
+  )
   external void relativeConicTo(double x1, double y1, double x2, double y2, double w);
 
   @override
@@ -3147,11 +3222,23 @@ base class _NativePath extends NativeFieldWrapperClass1 implements Path {
     _arcTo(rect.left, rect.top, rect.right, rect.bottom, startAngle, sweepAngle, forceMoveTo);
   }
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double, Double, Bool)>(symbol: 'Path::arcTo', isLeaf: true)
-  external void _arcTo(double left, double top, double right, double bottom, double startAngle, double sweepAngle, bool forceMoveTo);
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double, Double, Bool)>(
+    symbol: 'Path::arcTo',
+    isLeaf: true,
+  )
+  external void _arcTo(
+    double left,
+    double top,
+    double right,
+    double bottom,
+    double startAngle,
+    double sweepAngle,
+    bool forceMoveTo,
+  );
 
   @override
-  void arcToPoint(Offset arcEnd, {
+  void arcToPoint(
+    Offset arcEnd, {
     Radius radius = Radius.zero,
     double rotation = 0.0,
     bool largeArc = false,
@@ -3162,8 +3249,19 @@ base class _NativePath extends NativeFieldWrapperClass1 implements Path {
     _arcToPoint(arcEnd.dx, arcEnd.dy, radius.x, radius.y, rotation, largeArc, clockwise);
   }
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double, Bool, Bool)>(symbol: 'Path::arcToPoint', isLeaf: true)
-  external void _arcToPoint(double arcEndX, double arcEndY, double radiusX, double radiusY, double rotation, bool largeArc, bool clockwise);
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double, Bool, Bool)>(
+    symbol: 'Path::arcToPoint',
+    isLeaf: true,
+  )
+  external void _arcToPoint(
+    double arcEndX,
+    double arcEndY,
+    double radiusX,
+    double radiusY,
+    double rotation,
+    bool largeArc,
+    bool clockwise,
+  );
 
   @override
   void relativeArcToPoint(
@@ -3175,18 +3273,30 @@ base class _NativePath extends NativeFieldWrapperClass1 implements Path {
   }) {
     assert(_offsetIsValid(arcEndDelta));
     assert(_radiusIsValid(radius));
-    _relativeArcToPoint(arcEndDelta.dx, arcEndDelta.dy, radius.x, radius.y, rotation, largeArc, clockwise);
+    _relativeArcToPoint(
+      arcEndDelta.dx,
+      arcEndDelta.dy,
+      radius.x,
+      radius.y,
+      rotation,
+      largeArc,
+      clockwise,
+    );
   }
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double, Bool, Bool)>(symbol: 'Path::relativeArcToPoint', isLeaf: true)
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double, Bool, Bool)>(
+    symbol: 'Path::relativeArcToPoint',
+    isLeaf: true,
+  )
   external void _relativeArcToPoint(
-      double arcEndX,
-      double arcEndY,
-      double radiusX,
-      double radiusY,
-      double rotation,
-      bool largeArc,
-      bool clockwise);
+    double arcEndX,
+    double arcEndY,
+    double radiusX,
+    double radiusY,
+    double rotation,
+    bool largeArc,
+    bool clockwise,
+  );
 
   @override
   void addRect(Rect rect) {
@@ -3194,7 +3304,10 @@ base class _NativePath extends NativeFieldWrapperClass1 implements Path {
     _addRect(rect.left, rect.top, rect.right, rect.bottom);
   }
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double)>(symbol: 'Path::addRect', isLeaf: true)
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double)>(
+    symbol: 'Path::addRect',
+    isLeaf: true,
+  )
   external void _addRect(double left, double top, double right, double bottom);
 
   @override
@@ -3203,7 +3316,10 @@ base class _NativePath extends NativeFieldWrapperClass1 implements Path {
     _addOval(oval.left, oval.top, oval.right, oval.bottom);
   }
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double)>(symbol: 'Path::addOval', isLeaf: true)
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double)>(
+    symbol: 'Path::addOval',
+    isLeaf: true,
+  )
   external void _addOval(double left, double top, double right, double bottom);
 
   @override
@@ -3212,8 +3328,18 @@ base class _NativePath extends NativeFieldWrapperClass1 implements Path {
     _addArc(oval.left, oval.top, oval.right, oval.bottom, startAngle, sweepAngle);
   }
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double, Double)>(symbol: 'Path::addArc', isLeaf: true)
-  external void _addArc(double left, double top, double right, double bottom, double startAngle, double sweepAngle);
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double, Double)>(
+    symbol: 'Path::addArc',
+    isLeaf: true,
+  )
+  external void _addArc(
+    double left,
+    double top,
+    double right,
+    double bottom,
+    double startAngle,
+    double sweepAngle,
+  );
 
   @override
   void addPolygon(List<Offset> points, bool close) {
@@ -3246,7 +3372,9 @@ base class _NativePath extends NativeFieldWrapperClass1 implements Path {
   @Native<Void Function(Pointer<Void>, Pointer<Void>, Double, Double)>(symbol: 'Path::addPath')
   external void _addPath(_NativePath path, double dx, double dy);
 
-  @Native<Void Function(Pointer<Void>, Pointer<Void>, Double, Double, Handle)>(symbol: 'Path::addPathWithMatrix')
+  @Native<Void Function(Pointer<Void>, Pointer<Void>, Double, Double, Handle)>(
+    symbol: 'Path::addPathWithMatrix',
+  )
   external void _addPathWithMatrix(_NativePath path, double dx, double dy, Float64List matrix);
 
   @override
@@ -3260,11 +3388,20 @@ base class _NativePath extends NativeFieldWrapperClass1 implements Path {
     }
   }
 
-  @Native<Void Function(Pointer<Void>, Pointer<Void>, Double, Double)>(symbol: 'Path::extendWithPath')
+  @Native<Void Function(Pointer<Void>, Pointer<Void>, Double, Double)>(
+    symbol: 'Path::extendWithPath',
+  )
   external void _extendWithPath(_NativePath path, double dx, double dy);
 
-  @Native<Void Function(Pointer<Void>, Pointer<Void>, Double, Double, Handle)>(symbol: 'Path::extendWithPathAndMatrix')
-  external void _extendWithPathAndMatrix(_NativePath path, double dx, double dy, Float64List matrix);
+  @Native<Void Function(Pointer<Void>, Pointer<Void>, Double, Double, Handle)>(
+    symbol: 'Path::extendWithPathAndMatrix',
+  )
+  external void _extendWithPathAndMatrix(
+    _NativePath path,
+    double dx,
+    double dy,
+    Float64List matrix,
+  );
 
   @override
   @Native<Void Function(Pointer<Void>)>(symbol: 'Path::close', isLeaf: true)
@@ -3388,8 +3525,8 @@ class Tangent {
 /// multiple times, or who need to randomly access elements of the list, should
 /// use [toList] on this object.
 class PathMetrics extends collection.IterableBase<PathMetric> {
-  PathMetrics._(Path path, bool forceClosed) :
-    _iterator = PathMetricIterator._(_PathMeasure(path as _NativePath, forceClosed));
+  PathMetrics._(Path path, bool forceClosed)
+    : _iterator = PathMetricIterator._(_PathMeasure(path as _NativePath, forceClosed));
 
   final Iterator<PathMetric> _iterator;
 
@@ -3412,7 +3549,7 @@ class PathMetricIterator implements Iterator<PathMetric> {
       throw RangeError(
         'PathMetricIterator is not pointing to a PathMetric. This can happen in two situations:\n'
         '- The iteration has not started yet. If so, call "moveNext" to start iteration.\n'
-        '- The iterator ran out of elements. If so, check that "moveNext" returns true prior to calling "current".'
+        '- The iterator ran out of elements. If so, check that "moveNext" returns true prior to calling "current".',
       );
     }
     return currentMetric;
@@ -3502,7 +3639,8 @@ class PathMetric {
   }
 
   @override
-  String toString() => 'PathMetric(length: $length, isClosed: $isClosed, contourIndex: $contourIndex)';
+  String toString() =>
+      'PathMetric(length: $length, isClosed: $isClosed, contourIndex: $contourIndex)';
 }
 
 base class _PathMeasure extends NativeFieldWrapperClass1 {
@@ -3514,7 +3652,10 @@ base class _PathMeasure extends NativeFieldWrapperClass1 {
   external void _constructor(_NativePath path, bool forceClosed);
 
   double length(int contourIndex) {
-    assert(contourIndex <= currentContourIndex, 'Iterator must be advanced before index $contourIndex can be used.');
+    assert(
+      contourIndex <= currentContourIndex,
+      'Iterator must be advanced before index $contourIndex can be used.',
+    );
     return _length(contourIndex);
   }
 
@@ -3522,36 +3663,48 @@ base class _PathMeasure extends NativeFieldWrapperClass1 {
   external double _length(int contourIndex);
 
   Tangent? getTangentForOffset(int contourIndex, double distance) {
-    assert(contourIndex <= currentContourIndex,
-        'Iterator must be advanced before index $contourIndex can be used.');
+    assert(
+      contourIndex <= currentContourIndex,
+      'Iterator must be advanced before index $contourIndex can be used.',
+    );
     final Float32List posTan = _getPosTan(contourIndex, distance);
     // first entry == 0 indicates that Skia returned false
     if (posTan[0] == 0.0) {
       return null;
     } else {
-      return Tangent(
-        Offset(posTan[1], posTan[2]),
-        Offset(posTan[3], posTan[4])
-      );
+      return Tangent(Offset(posTan[1], posTan[2]), Offset(posTan[3], posTan[4]));
     }
   }
 
   @Native<Handle Function(Pointer<Void>, Int32, Double)>(symbol: 'PathMeasure::getPosTan')
   external Float32List _getPosTan(int contourIndex, double distance);
 
-  Path extractPath(int contourIndex, double start, double end,
-      {bool startWithMoveTo = true}) {
-    assert(contourIndex <= currentContourIndex, 'Iterator must be advanced before index $contourIndex can be used.');
+  Path extractPath(int contourIndex, double start, double end, {bool startWithMoveTo = true}) {
+    assert(
+      contourIndex <= currentContourIndex,
+      'Iterator must be advanced before index $contourIndex can be used.',
+    );
     final _NativePath path = _NativePath._();
     _extractPath(path, contourIndex, start, end, startWithMoveTo);
     return path;
   }
 
-  @Native<Void Function(Pointer<Void>, Handle, Int32, Double, Double, Bool)>(symbol: 'PathMeasure::getSegment')
-  external void _extractPath(Path outPath, int contourIndex, double start, double end, bool startWithMoveTo);
+  @Native<Void Function(Pointer<Void>, Handle, Int32, Double, Double, Bool)>(
+    symbol: 'PathMeasure::getSegment',
+  )
+  external void _extractPath(
+    Path outPath,
+    int contourIndex,
+    double start,
+    double end,
+    bool startWithMoveTo,
+  );
 
   bool isClosed(int contourIndex) {
-    assert(contourIndex <= currentContourIndex, 'Iterator must be advanced before index $contourIndex can be used.');
+    assert(
+      contourIndex <= currentContourIndex,
+      'Iterator must be advanced before index $contourIndex can be used.',
+    );
     return _isClosed(contourIndex);
   }
 
@@ -3627,10 +3780,7 @@ class MaskFilter {
   /// See also:
   ///
   ///  * [Canvas.drawShadow], which is a more efficient way to draw shadows.
-  const MaskFilter.blur(
-    this._style,
-    this._sigma,
-  );
+  const MaskFilter.blur(this._style, this._sigma);
 
   final BlurStyle _style;
   final double _sigma;
@@ -3642,9 +3792,7 @@ class MaskFilter {
 
   @override
   bool operator ==(Object other) {
-    return other is MaskFilter
-        && other._style == _style
-        && other._sigma == _sigma;
+    return other is MaskFilter && other._style == _style && other._sigma == _sigma;
   }
 
   @override
@@ -3674,7 +3822,8 @@ class _ClampTransform implements _ColorTransform {
       red: clampDouble(color.r, 0, 1),
       green: clampDouble(color.g, 0, 1),
       blue: clampDouble(color.b, 0, 1),
-      colorSpace: resultColorSpace);
+      colorSpace: resultColorSpace,
+    );
   }
 }
 
@@ -3687,20 +3836,12 @@ class _MatrixColorTransform implements _ColorTransform {
   @override
   Color transform(Color color, ColorSpace resultColorSpace) {
     return Color.from(
-        alpha: color.a,
-        red: values[0] * color.r +
-            values[1] * color.g +
-            values[2] * color.b +
-            values[3],
-        green: values[4] * color.r +
-            values[5] * color.g +
-            values[6] * color.b +
-            values[7],
-        blue: values[8] * color.r +
-            values[9] * color.g +
-            values[10] * color.b +
-            values[11],
-        colorSpace: resultColorSpace);
+      alpha: color.a,
+      red: values[0] * color.r + values[1] * color.g + values[2] * color.b + values[3],
+      green: values[4] * color.r + values[5] * color.g + values[6] * color.b + values[7],
+      blue: values[8] * color.r + values[9] * color.g + values[10] * color.b + values[11],
+      colorSpace: resultColorSpace,
+    );
   }
 }
 
@@ -3729,14 +3870,14 @@ _ColorTransform _getColorTransform(ColorSpace source, ColorSpace destination) {
     0.145738111193222, //
     0.096480880462996, 0.916386732581291, -0.086093928394828,
     0.089490172325882, //
-    -0.127099563510240, -0.068983484963878, 0.735426667591299, 0.233655661600230
+    -0.127099563510240, -0.068983484963878, 0.735426667591299, 0.233655661600230,
   ]);
   const _ColorTransform p3ToSrgb = _MatrixColorTransform(<double>[
     1.306671048092539, -0.298061942172353, 0.213228303487995,
     -0.213580156254466, //
     -0.117390025596251, 1.127722006101976, 0.109727644608938,
     -0.109450321455370, //
-    0.214813187718391, 0.054268702864647, 1.406898424029350, -0.364892765879631
+    0.214813187718391, 0.054268702864647, 1.406898424029350, -0.364892765879631,
   ]);
   switch (source) {
     case ColorSpace.sRGB:
@@ -3786,10 +3927,10 @@ class ColorFilter implements ImageFilter {
   /// to the [Paint.blendMode], using the output of this filter as the source
   /// and the background as the destination.
   const ColorFilter.mode(Color color, BlendMode blendMode)
-      : _color = color,
-        _blendMode = blendMode,
-        _matrix = null,
-        _type = _kTypeMode;
+    : _color = color,
+      _blendMode = blendMode,
+      _matrix = null,
+      _type = _kTypeMode;
 
   /// Construct a color filter from a 4x5 row-major matrix. The matrix is
   /// interpreted as a 5x5 matrix, where the fifth row is the identity
@@ -3851,26 +3992,26 @@ class ColorFilter implements ImageFilter {
   /// ]);
   /// ```
   const ColorFilter.matrix(List<double> matrix)
-      : _color = null,
-        _blendMode = null,
-        _matrix = matrix,
-        _type = _kTypeMatrix;
+    : _color = null,
+      _blendMode = null,
+      _matrix = matrix,
+      _type = _kTypeMatrix;
 
   /// Construct a color filter that applies the sRGB gamma curve to the RGB
   /// channels.
   const ColorFilter.linearToSrgbGamma()
-      : _color = null,
-        _blendMode = null,
-        _matrix = null,
-        _type = _kTypeLinearToSrgbGamma;
+    : _color = null,
+      _blendMode = null,
+      _matrix = null,
+      _type = _kTypeLinearToSrgbGamma;
 
   /// Creates a color filter that applies the inverse of the sRGB gamma curve
   /// to the RGB channels.
   const ColorFilter.srgbToLinearGamma()
-      : _color = null,
-        _blendMode = null,
-        _matrix = null,
-        _type = _kTypeSrgbToLinearGamma;
+    : _color = null,
+      _blendMode = null,
+      _matrix = null,
+      _type = _kTypeSrgbToLinearGamma;
 
   final Color? _color;
   final BlendMode? _blendMode;
@@ -3915,11 +4056,11 @@ class ColorFilter implements ImageFilter {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ColorFilter
-        && other._type == _type
-        && _listEquals<double>(other._matrix, _matrix)
-        && other._color == _color
-        && other._blendMode == _blendMode;
+    return other is ColorFilter &&
+        other._type == _type &&
+        _listEquals<double>(other._matrix, _matrix) &&
+        other._color == _color &&
+        other._blendMode == _blendMode;
   }
 
   @override
@@ -3968,14 +4109,12 @@ class ColorFilter implements ImageFilter {
 /// efficiently comparable, so that widgets can check for ColorFilter equality to
 /// avoid repainting.
 base class _ColorFilter extends NativeFieldWrapperClass1 {
-  _ColorFilter.mode(this.creator)
-    : assert(creator._type == ColorFilter._kTypeMode) {
+  _ColorFilter.mode(this.creator) : assert(creator._type == ColorFilter._kTypeMode) {
     _constructor();
     _initMode(creator._color!.value, creator._blendMode!.index);
   }
 
-  _ColorFilter.matrix(this.creator)
-    : assert(creator._type == ColorFilter._kTypeMatrix) {
+  _ColorFilter.matrix(this.creator) : assert(creator._type == ColorFilter._kTypeMatrix) {
     _constructor();
     _initMatrix(Float32List.fromList(creator._matrix!));
   }
@@ -4026,19 +4165,19 @@ abstract class ImageFilter {
   ImageFilter._(); // ignore: unused_element
 
   /// Creates an image filter that applies a Gaussian blur.
-  factory ImageFilter.blur({ double sigmaX = 0.0, double sigmaY = 0.0, TileMode? tileMode }) {
+  factory ImageFilter.blur({double sigmaX = 0.0, double sigmaY = 0.0, TileMode? tileMode}) {
     return _GaussianBlurImageFilter(sigmaX: sigmaX, sigmaY: sigmaY, tileMode: tileMode);
   }
 
   /// Creates an image filter that dilates each input pixel's channel values
   /// to the max value within the given radii along the x and y axes.
-  factory ImageFilter.dilate({ double radiusX = 0.0, double radiusY = 0.0 }) {
+  factory ImageFilter.dilate({double radiusX = 0.0, double radiusY = 0.0}) {
     return _DilateImageFilter(radiusX: radiusX, radiusY: radiusY);
   }
 
   /// Create a filter that erodes each input pixel's channel values
   /// to the minimum channel value within the given radii along the x and y axes.
-  factory ImageFilter.erode({ double radiusX = 0.0, double radiusY = 0.0 }) {
+  factory ImageFilter.erode({double radiusX = 0.0, double radiusY = 0.0}) {
     return _ErodeImageFilter(radiusX: radiusX, radiusY: radiusY);
   }
 
@@ -4046,8 +4185,10 @@ abstract class ImageFilter {
   ///
   /// For example, applying a positive scale matrix (see [Matrix4.diagonal3])
   /// when used with [BackdropFilter] would magnify the background image.
-  factory ImageFilter.matrix(Float64List matrix4,
-                     { FilterQuality filterQuality = FilterQuality.medium }) {
+  factory ImageFilter.matrix(
+    Float64List matrix4, {
+    FilterQuality filterQuality = FilterQuality.medium,
+  }) {
     if (matrix4.length != 16) {
       throw ArgumentError('"matrix4" must have 16 entries.');
     }
@@ -4059,7 +4200,7 @@ abstract class ImageFilter {
   /// Creates a single [ImageFilter] that when applied, has the same effect as
   /// subsequently applying `inner` and `outer`, i.e.,
   /// result = outer(inner(source)).
-  factory ImageFilter.compose({ required ImageFilter outer, required ImageFilter inner }) {
+  factory ImageFilter.compose({required ImageFilter outer, required ImageFilter inner}) {
     return _ComposeImageFilter(innerFilter: inner, outerFilter: outer);
   }
 
@@ -4104,7 +4245,8 @@ abstract class ImageFilter {
     if (invalidFloats || invalidSampler) {
       final StringBuffer buffer = StringBuffer(
         'ImageFilter.shader requires that the first uniform is a vec2 and at '
-        'least one sampler uniform is present.\n');
+        'least one sampler uniform is present.\n',
+      );
       if (invalidFloats) {
         buffer.write('The shader has fewer than two float uniforms.\n');
       }
@@ -4128,7 +4270,7 @@ abstract class ImageFilter {
 }
 
 class _MatrixImageFilter implements ImageFilter {
-  _MatrixImageFilter({ required this.data, required this.filterQuality });
+  _MatrixImageFilter({required this.data, required this.filterQuality});
 
   final Float64List data;
   final FilterQuality filterQuality;
@@ -4149,9 +4291,9 @@ class _MatrixImageFilter implements ImageFilter {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is _MatrixImageFilter
-        && other.filterQuality == filterQuality
-        && _listEquals<double>(other.data, data);
+    return other is _MatrixImageFilter &&
+        other.filterQuality == filterQuality &&
+        _listEquals<double>(other.data, data);
   }
 
   @override
@@ -4159,7 +4301,7 @@ class _MatrixImageFilter implements ImageFilter {
 }
 
 class _GaussianBlurImageFilter implements ImageFilter {
-  _GaussianBlurImageFilter({ required this.sigmaX, required this.sigmaY, required this.tileMode });
+  _GaussianBlurImageFilter({required this.sigmaX, required this.sigmaY, required this.tileMode});
 
   final double sigmaX;
   final double sigmaY;
@@ -4172,11 +4314,16 @@ class _GaussianBlurImageFilter implements ImageFilter {
 
   String get _modeString {
     switch (tileMode) {
-      case TileMode.clamp: return 'clamp';
-      case TileMode.mirror: return 'mirror';
-      case TileMode.repeated: return 'repeated';
-      case TileMode.decal: return 'decal';
-      case null: return 'unspecified';
+      case TileMode.clamp:
+        return 'clamp';
+      case TileMode.mirror:
+        return 'mirror';
+      case TileMode.repeated:
+        return 'repeated';
+      case TileMode.decal:
+        return 'decal';
+      case null:
+        return 'unspecified';
     }
   }
 
@@ -4191,10 +4338,10 @@ class _GaussianBlurImageFilter implements ImageFilter {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is _GaussianBlurImageFilter
-        && other.sigmaX == sigmaX
-        && other.sigmaY == sigmaY
-        && other.tileMode == tileMode;
+    return other is _GaussianBlurImageFilter &&
+        other.sigmaX == sigmaX &&
+        other.sigmaY == sigmaY &&
+        other.tileMode == tileMode;
   }
 
   @override
@@ -4202,7 +4349,7 @@ class _GaussianBlurImageFilter implements ImageFilter {
 }
 
 class _DilateImageFilter implements ImageFilter {
-  _DilateImageFilter({ required this.radiusX, required this.radiusY });
+  _DilateImageFilter({required this.radiusX, required this.radiusY});
 
   final double radiusX;
   final double radiusY;
@@ -4222,9 +4369,7 @@ class _DilateImageFilter implements ImageFilter {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is _DilateImageFilter
-        && other.radiusX == radiusX
-        && other.radiusY == radiusY;
+    return other is _DilateImageFilter && other.radiusX == radiusX && other.radiusY == radiusY;
   }
 
   @override
@@ -4232,7 +4377,7 @@ class _DilateImageFilter implements ImageFilter {
 }
 
 class _ErodeImageFilter implements ImageFilter {
-  _ErodeImageFilter({ required this.radiusX, required this.radiusY });
+  _ErodeImageFilter({required this.radiusX, required this.radiusY});
 
   final double radiusX;
   final double radiusY;
@@ -4252,9 +4397,7 @@ class _ErodeImageFilter implements ImageFilter {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is _ErodeImageFilter
-        && other.radiusX == radiusX
-        && other.radiusY == radiusY;
+    return other is _ErodeImageFilter && other.radiusX == radiusX && other.radiusY == radiusY;
   }
 
   @override
@@ -4262,7 +4405,7 @@ class _ErodeImageFilter implements ImageFilter {
 }
 
 class _ComposeImageFilter implements ImageFilter {
-  _ComposeImageFilter({ required this.innerFilter, required this.outerFilter });
+  _ComposeImageFilter({required this.innerFilter, required this.outerFilter});
 
   final ImageFilter innerFilter;
   final ImageFilter outerFilter;
@@ -4273,7 +4416,8 @@ class _ComposeImageFilter implements ImageFilter {
   _ImageFilter _toNativeImageFilter() => nativeFilter;
 
   @override
-  String get _shortDescription => '${innerFilter._shortDescription} -> ${outerFilter._shortDescription}';
+  String get _shortDescription =>
+      '${innerFilter._shortDescription} -> ${outerFilter._shortDescription}';
 
   @override
   String toString() => 'ImageFilter.compose(source -> $_shortDescription -> result)';
@@ -4283,9 +4427,9 @@ class _ComposeImageFilter implements ImageFilter {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is _ComposeImageFilter
-        && other.innerFilter == innerFilter
-        && other.outerFilter == outerFilter;
+    return other is _ComposeImageFilter &&
+        other.innerFilter == innerFilter &&
+        other.outerFilter == outerFilter;
   }
 
   @override
@@ -4313,8 +4457,7 @@ class _FragmentShaderImageFilter implements ImageFilter {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is _FragmentShaderImageFilter
-        && other.shader == shader;
+    return other is _FragmentShaderImageFilter && other.shader == shader;
   }
 
   @override
@@ -4328,24 +4471,21 @@ class _FragmentShaderImageFilter implements ImageFilter {
 /// widgets can check for ImageFilter equality to avoid repainting.
 base class _ImageFilter extends NativeFieldWrapperClass1 {
   /// Creates an image filter that applies a Gaussian blur.
-  _ImageFilter.blur(_GaussianBlurImageFilter filter)
-    : creator = filter {
+  _ImageFilter.blur(_GaussianBlurImageFilter filter) : creator = filter {
     _constructor();
     _initBlur(filter.sigmaX, filter.sigmaY, filter.tileMode?.index ?? -1);
   }
 
   /// Creates an image filter that dilates each input pixel's channel values
   /// to the max value within the given radii along the x and y axes.
-  _ImageFilter.dilate(_DilateImageFilter filter)
-    : creator = filter {
+  _ImageFilter.dilate(_DilateImageFilter filter) : creator = filter {
     _constructor();
     _initDilate(filter.radiusX, filter.radiusY);
   }
 
   /// Create a filter that erodes each input pixel's channel values
   /// to the minimum channel value within the given radii along the x and y axes.
-  _ImageFilter.erode(_ErodeImageFilter filter)
-    : creator = filter {
+  _ImageFilter.erode(_ErodeImageFilter filter) : creator = filter {
     _constructor();
     _initErode(filter.radiusX, filter.radiusY);
   }
@@ -4354,8 +4494,7 @@ base class _ImageFilter extends NativeFieldWrapperClass1 {
   ///
   /// For example, applying a positive scale matrix (see [Matrix4.diagonal3])
   /// when used with [BackdropFilter] would magnify the background image.
-  _ImageFilter.matrix(_MatrixImageFilter filter)
-    : creator = filter {
+  _ImageFilter.matrix(_MatrixImageFilter filter) : creator = filter {
     if (filter.data.length != 16) {
       throw ArgumentError('"matrix4" must have 16 entries.');
     }
@@ -4364,38 +4503,44 @@ base class _ImageFilter extends NativeFieldWrapperClass1 {
   }
 
   /// Converts a color filter to an image filter.
-  _ImageFilter.fromColorFilter(ColorFilter filter)
-    : creator = filter {
+  _ImageFilter.fromColorFilter(ColorFilter filter) : creator = filter {
     _constructor();
     final _ColorFilter? nativeFilter = filter._toNativeColorFilter();
     _initColorFilter(nativeFilter);
   }
 
   /// Composes `_innerFilter` with `_outerFilter`.
-  _ImageFilter.composed(_ComposeImageFilter filter)
-    : creator = filter {
+  _ImageFilter.composed(_ComposeImageFilter filter) : creator = filter {
     _constructor();
     final _ImageFilter nativeFilterInner = filter.innerFilter._toNativeImageFilter();
     final _ImageFilter nativeFilterOuter = filter.outerFilter._toNativeImageFilter();
     _initComposed(nativeFilterOuter, nativeFilterInner);
   }
 
-  _ImageFilter.shader(_FragmentShaderImageFilter filter)
-    : creator = filter {
-      _constructor();
-      _initShader(filter.shader);
-    }
+  _ImageFilter.shader(_FragmentShaderImageFilter filter) : creator = filter {
+    _constructor();
+    _initShader(filter.shader);
+  }
 
   @Native<Void Function(Handle)>(symbol: 'ImageFilter::Create')
   external void _constructor();
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Int32)>(symbol: 'ImageFilter::initBlur', isLeaf: true)
+  @Native<Void Function(Pointer<Void>, Double, Double, Int32)>(
+    symbol: 'ImageFilter::initBlur',
+    isLeaf: true,
+  )
   external void _initBlur(double sigmaX, double sigmaY, int tileMode);
 
-  @Native<Void Function(Pointer<Void>, Double, Double)>(symbol: 'ImageFilter::initDilate', isLeaf: true)
+  @Native<Void Function(Pointer<Void>, Double, Double)>(
+    symbol: 'ImageFilter::initDilate',
+    isLeaf: true,
+  )
   external void _initDilate(double radiusX, double radiusY);
 
-  @Native<Void Function(Pointer<Void>, Double, Double)>(symbol: 'ImageFilter::initErode', isLeaf: true)
+  @Native<Void Function(Pointer<Void>, Double, Double)>(
+    symbol: 'ImageFilter::initErode',
+    isLeaf: true,
+  )
   external void _initErode(double radiusX, double radiusY);
 
   @Native<Void Function(Pointer<Void>, Handle, Int32)>(symbol: 'ImageFilter::initMatrix')
@@ -4404,7 +4549,9 @@ base class _ImageFilter extends NativeFieldWrapperClass1 {
   @Native<Void Function(Pointer<Void>, Pointer<Void>)>(symbol: 'ImageFilter::initColorFilter')
   external void _initColorFilter(_ColorFilter? colorFilter);
 
-  @Native<Void Function(Pointer<Void>, Pointer<Void>, Pointer<Void>)>(symbol: 'ImageFilter::initComposeFilter')
+  @Native<Void Function(Pointer<Void>, Pointer<Void>, Pointer<Void>)>(
+    symbol: 'ImageFilter::initComposeFilter',
+  )
   external void _initComposed(_ImageFilter outerFilter, _ImageFilter innerFilter);
 
   @Native<Void Function(Pointer<Void>, Pointer<Void>)>(symbol: 'ImageFilter::initShader')
@@ -4549,16 +4696,14 @@ Float32List _encodeWideColorList(List<Color> colors) {
   final int colorCount = colors.length;
   final Float32List result = Float32List(colorCount * 4);
   for (int i = 0; i < colorCount; i++) {
-    final Color colorXr =
-        colors[i].withValues(colorSpace: ColorSpace.extendedSRGB);
-    result[i*4+0] = colorXr.a;
-    result[i*4+1] = colorXr.r;
-    result[i*4+2] = colorXr.g;
-    result[i*4+3] = colorXr.b;
+    final Color colorXr = colors[i].withValues(colorSpace: ColorSpace.extendedSRGB);
+    result[i * 4 + 0] = colorXr.a;
+    result[i * 4 + 1] = colorXr.r;
+    result[i * 4 + 2] = colorXr.g;
+    result[i * 4 + 3] = colorXr.b;
   }
   return result;
 }
-
 
 Int32List _encodeColorList(List<Color> colors) {
   final int colorCount = colors.length;
@@ -4644,7 +4789,8 @@ base class Gradient extends Shader {
     _validateColorStops(colors, colorStops);
     final Float32List endPointsBuffer = _encodeTwoPoints(from, to);
     final Float32List colorsBuffer = _encodeWideColorList(colors);
-    final Float32List? colorStopsBuffer = colorStops == null ? null : Float32List.fromList(colorStops);
+    final Float32List? colorStopsBuffer =
+        colorStops == null ? null : Float32List.fromList(colorStops);
     _constructor();
     _initLinear(endPointsBuffer, colorsBuffer, colorStopsBuffer, tileMode.index, matrix4);
   }
@@ -4691,23 +4837,45 @@ base class Gradient extends Shader {
     TileMode tileMode = TileMode.clamp,
     Float64List? matrix4,
     Offset? focal,
-    double focalRadius = 0.0
+    double focalRadius = 0.0,
   ]) : assert(_offsetIsValid(center)),
        assert(matrix4 == null || _matrix4IsValid(matrix4)),
        super._() {
     _validateColorStops(colors, colorStops);
-    final Float32List? colorStopsBuffer = colorStops == null ? null : Float32List.fromList(colorStops);
+    final Float32List? colorStopsBuffer =
+        colorStops == null ? null : Float32List.fromList(colorStops);
     final Float32List colorsBuffer = _encodeWideColorList(colors);
 
     // If focal is null or focal radius is null, this should be treated as a regular radial gradient
     // If focal == center and the focal radius is 0.0, it's still a regular radial gradient
     if (focal == null || (focal == center && focalRadius == 0.0)) {
       _constructor();
-      _initRadial(center.dx, center.dy, radius, colorsBuffer, colorStopsBuffer, tileMode.index, matrix4);
+      _initRadial(
+        center.dx,
+        center.dy,
+        radius,
+        colorsBuffer,
+        colorStopsBuffer,
+        tileMode.index,
+        matrix4,
+      );
     } else {
-      assert(center != Offset.zero || focal != Offset.zero); // will result in exception(s) in Skia side
+      assert(
+        center != Offset.zero || focal != Offset.zero,
+      ); // will result in exception(s) in Skia side
       _constructor();
-      _initConical(focal.dx, focal.dy, focalRadius, center.dx, center.dy, radius, colorsBuffer, colorStopsBuffer, tileMode.index, matrix4);
+      _initConical(
+        focal.dx,
+        focal.dy,
+        focalRadius,
+        center.dx,
+        center.dy,
+        radius,
+        colorsBuffer,
+        colorStopsBuffer,
+        tileMode.index,
+        matrix4,
+      );
     }
   }
 
@@ -4756,53 +4924,91 @@ base class Gradient extends Shader {
        super._() {
     _validateColorStops(colors, colorStops);
     final Float32List colorsBuffer = _encodeWideColorList(colors);
-    final Float32List? colorStopsBuffer = colorStops == null ? null : Float32List.fromList(colorStops);
+    final Float32List? colorStopsBuffer =
+        colorStops == null ? null : Float32List.fromList(colorStops);
     _constructor();
-    _initSweep(center.dx, center.dy, colorsBuffer, colorStopsBuffer, tileMode.index, startAngle, endAngle, matrix4);
+    _initSweep(
+      center.dx,
+      center.dy,
+      colorsBuffer,
+      colorStopsBuffer,
+      tileMode.index,
+      startAngle,
+      endAngle,
+      matrix4,
+    );
   }
 
   @Native<Void Function(Handle)>(symbol: 'Gradient::Create')
   external void _constructor();
 
-  @Native<Void Function(Pointer<Void>, Handle, Handle, Handle, Int32, Handle)>(symbol: 'Gradient::initLinear')
-  external void _initLinear(Float32List endPoints, Float32List colors, Float32List? colorStops, int tileMode, Float64List? matrix4);
+  @Native<Void Function(Pointer<Void>, Handle, Handle, Handle, Int32, Handle)>(
+    symbol: 'Gradient::initLinear',
+  )
+  external void _initLinear(
+    Float32List endPoints,
+    Float32List colors,
+    Float32List? colorStops,
+    int tileMode,
+    Float64List? matrix4,
+  );
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Handle, Handle, Int32, Handle)>(symbol: 'Gradient::initRadial')
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Handle, Handle, Int32, Handle)>(
+    symbol: 'Gradient::initRadial',
+  )
   external void _initRadial(
-      double centerX,
-      double centerY,
-      double radius,
-      Float32List colors,
-      Float32List? colorStops,
-      int tileMode,
-      Float64List? matrix4);
+    double centerX,
+    double centerY,
+    double radius,
+    Float32List colors,
+    Float32List? colorStops,
+    int tileMode,
+    Float64List? matrix4,
+  );
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double, Double, Handle, Handle, Int32, Handle)>(symbol: 'Gradient::initTwoPointConical')
+  @Native<
+    Void Function(
+      Pointer<Void>,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Handle,
+      Handle,
+      Int32,
+      Handle,
+    )
+  >(symbol: 'Gradient::initTwoPointConical')
   external void _initConical(
-      double startX,
-      double startY,
-      double startRadius,
-      double endX,
-      double endY,
-      double endRadius,
-      Float32List colors,
-      Float32List? colorStops,
-      int tileMode,
-      Float64List? matrix4);
+    double startX,
+    double startY,
+    double startRadius,
+    double endX,
+    double endY,
+    double endRadius,
+    Float32List colors,
+    Float32List? colorStops,
+    int tileMode,
+    Float64List? matrix4,
+  );
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Handle, Handle, Int32, Double, Double, Handle)>(symbol: 'Gradient::initSweep')
+  @Native<
+    Void Function(Pointer<Void>, Double, Double, Handle, Handle, Int32, Double, Double, Handle)
+  >(symbol: 'Gradient::initSweep')
   external void _initSweep(
-      double centerX,
-      double centerY,
-      Float32List colors,
-      Float32List? colorStops,
-      int tileMode,
-      double startAngle,
-      double endAngle,
-      Float64List? matrix);
+    double centerX,
+    double centerY,
+    Float32List colors,
+    Float32List? colorStops,
+    int tileMode,
+    double startAngle,
+    double endAngle,
+    Float64List? matrix,
+  );
 
-  static void _validateColorStops(
-      List<Color> colors, List<double>? colorStops) {
+  static void _validateColorStops(List<Color> colors, List<double>? colorStops) {
     if (colorStops == null) {
       if (colors.length != 2) {
         throw ArgumentError('"colors" must have length 2 if "colorStops" is omitted.');
@@ -4837,16 +5043,25 @@ base class ImageShader extends Shader {
   /// it will be deduced from the environment where it is used, such as from
   /// [Paint.filterQuality].
   @pragma('vm:entry-point')
-  ImageShader(Image image, TileMode tmx, TileMode tmy, Float64List matrix4, {
+  ImageShader(
+    Image image,
+    TileMode tmx,
+    TileMode tmy,
+    Float64List matrix4, {
     FilterQuality? filterQuality,
-  }) :
-    assert(!image.debugDisposed),
-    super._() {
+  }) : assert(!image.debugDisposed),
+       super._() {
     if (matrix4.length != 16) {
       throw ArgumentError('"matrix4" must have 16 entries.');
     }
     _constructor();
-    final String? error = _initWithImage(image._image, tmx.index, tmy.index, filterQuality?.index ?? -1, matrix4);
+    final String? error = _initWithImage(
+      image._image,
+      tmx.index,
+      tmy.index,
+      filterQuality?.index ?? -1,
+      matrix4,
+    );
     if (error != null) {
       throw Exception(error);
     }
@@ -4861,8 +5076,16 @@ base class ImageShader extends Shader {
   @Native<Void Function(Handle)>(symbol: 'ImageShader::Create')
   external void _constructor();
 
-  @Native<Handle Function(Pointer<Void>, Pointer<Void>, Int32, Int32, Int32, Handle)>(symbol: 'ImageShader::initWithImage')
-  external String? _initWithImage(_Image image, int tmx, int tmy, int filterQualityIndex, Float64List matrix4);
+  @Native<Handle Function(Pointer<Void>, Pointer<Void>, Int32, Int32, Int32, Handle)>(
+    symbol: 'ImageShader::initWithImage',
+  )
+  external String? _initWithImage(
+    _Image image,
+    int tmx,
+    int tmy,
+    int filterQualityIndex,
+    Float64List matrix4,
+  );
 
   /// This can't be a leaf call because the native function calls Dart API
   /// (Dart_SetNativeInstanceField).
@@ -4920,8 +5143,7 @@ base class FragmentProgram extends NativeFieldWrapperClass1 {
   // program (PSO variants) until shutdown, so maintaining a strong reference
   // here ensures we do not perform extra work if the dart object is continually
   // re-initialized.
-  static final Map<String, FragmentProgram> _shaderRegistry =
-      <String, FragmentProgram>{};
+  static final Map<String, FragmentProgram> _shaderRegistry = <String, FragmentProgram>{};
 
   static void _reinitializeShader(String assetKey) {
     // If a shader for the asset isn't already registered, then there's no
@@ -4968,12 +5190,10 @@ base class FragmentProgram extends NativeFieldWrapperClass1 {
 /// are required to exist simultaneously, they must be obtained from two
 /// different calls to [FragmentProgram.fragmentShader].
 base class FragmentShader extends Shader {
-  FragmentShader._(FragmentProgram program, { String? debugName }) : _debugName = debugName, super._() {
-    _floats = _constructor(
-      program,
-      program._uniformFloatCount,
-      program._samplerCount,
-    );
+  FragmentShader._(FragmentProgram program, {String? debugName})
+    : _debugName = debugName,
+      super._() {
+    _floats = _constructor(program, program._uniformFloatCount, program._samplerCount);
   }
 
   final String? _debugName;
@@ -5054,9 +5274,15 @@ base class FragmentShader extends Shader {
   }
 
   @Native<Handle Function(Handle, Handle, Handle, Handle)>(symbol: 'ReusableFragmentShader::Create')
-  external Float32List _constructor(FragmentProgram program, int floatUniforms, int samplerUniforms);
+  external Float32List _constructor(
+    FragmentProgram program,
+    int floatUniforms,
+    int samplerUniforms,
+  );
 
-  @Native<Void Function(Pointer<Void>, Handle, Handle)>(symbol: 'ReusableFragmentShader::SetImageSampler')
+  @Native<Void Function(Pointer<Void>, Handle, Handle)>(
+    symbol: 'ReusableFragmentShader::SetImageSampler',
+  )
   external void _setImageSampler(int index, _Image sampler);
 
   @Native<Bool Function(Pointer<Void>)>(symbol: 'ReusableFragmentShader::ValidateSamplers')
@@ -5196,17 +5422,19 @@ base class Vertices extends NativeFieldWrapperClass1 {
       return true;
     }());
     final Float32List encodedPositions = _encodePointList(positions);
-    final Float32List? encodedTextureCoordinates = (textureCoordinates != null)
-      ? _encodePointList(textureCoordinates)
-      : null;
-    final Int32List? encodedColors = colors != null
-      ? _encodeColorList(colors)
-      : null;
-    final Uint16List? encodedIndices = indices != null
-      ? Uint16List.fromList(indices)
-      : null;
+    final Float32List? encodedTextureCoordinates =
+        (textureCoordinates != null) ? _encodePointList(textureCoordinates) : null;
+    final Int32List? encodedColors = colors != null ? _encodeColorList(colors) : null;
+    final Uint16List? encodedIndices = indices != null ? Uint16List.fromList(indices) : null;
 
-    if (!_init(this, mode.index, encodedPositions, encodedTextureCoordinates, encodedColors, encodedIndices)) {
+    if (!_init(
+      this,
+      mode.index,
+      encodedPositions,
+      encodedTextureCoordinates,
+      encodedColors,
+      encodedIndices,
+    )) {
       throw ArgumentError('Invalid configuration for vertices.');
     }
   }
@@ -5263,7 +5491,9 @@ base class Vertices extends NativeFieldWrapperClass1 {
     Uint16List? indices,
   }) {
     if (positions.length % 2 != 0) {
-      throw ArgumentError('"positions" must have an even number of entries (each coordinate is an x,y pair).');
+      throw ArgumentError(
+        '"positions" must have an even number of entries (each coordinate is an x,y pair).',
+      );
     }
     if (colors != null && colors.length * 2 != positions.length) {
       throw ArgumentError('"positions" and "colors" lengths must match.');
@@ -5291,12 +5521,14 @@ base class Vertices extends NativeFieldWrapperClass1 {
   }
 
   @Native<Bool Function(Handle, Int32, Handle, Handle, Handle, Handle)>(symbol: 'Vertices::init')
-  external static bool _init(Vertices outVertices,
-                             int mode,
-                             Float32List positions,
-                             Float32List? textureCoordinates,
-                             Int32List? colors,
-                             Uint16List? indices);
+  external static bool _init(
+    Vertices outVertices,
+    int mode,
+    Float32List positions,
+    Float32List? textureCoordinates,
+    Int32List? colors,
+    Uint16List? indices,
+  );
 
   /// Release the resources used by this object. The object is no longer usable
   /// after this method is called.
@@ -5315,6 +5547,7 @@ base class Vertices extends NativeFieldWrapperClass1 {
   external void _dispose();
 
   bool _disposed = false;
+
   /// Whether this reference to the underlying vertex data is [dispose]d.
   ///
   /// This only returns a valid value if asserts are enabled, and must not be
@@ -5325,7 +5558,8 @@ base class Vertices extends NativeFieldWrapperClass1 {
       disposed = _disposed;
       return true;
     }());
-    return disposed ?? (throw StateError('Vertices.debugDisposed is only available when asserts are enabled.'));
+    return disposed ??
+        (throw StateError('Vertices.debugDisposed is only available when asserts are enabled.'));
   }
 }
 
@@ -5414,7 +5648,7 @@ abstract class Canvas {
   ///
   /// To end the recording, call [PictureRecorder.endRecording] on the
   /// given recorder.
-  factory Canvas(PictureRecorder recorder, [ Rect? cullRect ]) = _NativeCanvas;
+  factory Canvas(PictureRecorder recorder, [Rect? cullRect]) = _NativeCanvas;
 
   /// Saves a copy of the current transform and clip on the save stack.
   ///
@@ -5613,7 +5847,7 @@ abstract class Canvas {
   ///
   /// Use [ClipOp.difference] to subtract the provided rectangle from the
   /// current clip.
-  void clipRect(Rect rect, { ClipOp clipOp = ClipOp.intersect, bool doAntiAlias = true });
+  void clipRect(Rect rect, {ClipOp clipOp = ClipOp.intersect, bool doAntiAlias = true});
 
   /// Reduces the clip region to the intersection of the current clip and the
   /// given rounded rectangle.
@@ -6034,13 +6268,15 @@ abstract class Canvas {
   ///
   ///  * [drawRawAtlas], which takes its arguments as typed data lists rather
   ///    than objects.
-  void drawAtlas(Image atlas,
-                 List<RSTransform> transforms,
-                 List<Rect> rects,
-                 List<Color>? colors,
-                 BlendMode? blendMode,
-                 Rect? cullRect,
-                 Paint paint);
+  void drawAtlas(
+    Image atlas,
+    List<RSTransform> transforms,
+    List<Rect> rects,
+    List<Color>? colors,
+    BlendMode? blendMode,
+    Rect? cullRect,
+    Paint paint,
+  );
 
   /// Draws many parts of an image - the [atlas] - onto the canvas.
   ///
@@ -6189,13 +6425,15 @@ abstract class Canvas {
   ///
   ///  * [drawAtlas], which takes its arguments as objects rather than typed
   ///    data lists.
-  void drawRawAtlas(Image atlas,
-                    Float32List rstTransforms,
-                    Float32List rects,
-                    Int32List? colors,
-                    BlendMode? blendMode,
-                    Rect? cullRect,
-                    Paint paint);
+  void drawRawAtlas(
+    Image atlas,
+    Float32List rstTransforms,
+    Float32List rects,
+    Int32List? colors,
+    BlendMode? blendMode,
+    Rect? cullRect,
+    Paint paint,
+  );
 
   /// Draws a shadow for a [Path] representing the given material elevation.
   ///
@@ -6207,7 +6445,7 @@ abstract class Canvas {
 }
 
 base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
-  _NativeCanvas(PictureRecorder recorder, [ Rect? cullRect ])  {
+  _NativeCanvas(PictureRecorder recorder, [Rect? cullRect]) {
     if (recorder.isRecording) {
       throw ArgumentError('"recorder" must not already be associated with another Canvas.');
     }
@@ -6217,8 +6455,16 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
     _constructor(_recorder!, cullRect.left, cullRect.top, cullRect.right, cullRect.bottom);
   }
 
-  @Native<Void Function(Handle, Pointer<Void>, Double, Double, Double, Double)>(symbol: 'Canvas::Create')
-  external void _constructor(_NativePictureRecorder recorder, double left, double top, double right, double bottom);
+  @Native<Void Function(Handle, Pointer<Void>, Double, Double, Double, Double)>(
+    symbol: 'Canvas::Create',
+  )
+  external void _constructor(
+    _NativePictureRecorder recorder,
+    double left,
+    double top,
+    double right,
+    double bottom,
+  );
 
   // The underlying DlCanvas is owned by the DisplayListBuilder used to create this Canvas.
   // The Canvas holds a reference to the PictureRecorder to prevent the recorder from being
@@ -6254,8 +6500,17 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
   @Native<Void Function(Pointer<Void>, Handle, Handle)>(symbol: 'Canvas::saveLayerWithoutBounds')
   external void _saveLayerWithoutBounds(List<Object?>? paintObjects, ByteData paintData);
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Handle, Handle)>(symbol: 'Canvas::saveLayer')
-  external void _saveLayer(double left, double top, double right, double bottom, List<Object?>? paintObjects, ByteData paintData);
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Handle, Handle)>(
+    symbol: 'Canvas::saveLayer',
+  )
+  external void _saveLayer(
+    double left,
+    double top,
+    double right,
+    double bottom,
+    List<Object?>? paintObjects,
+    ByteData paintData,
+  );
 
   @override
   @Native<Void Function(Pointer<Void>)>(symbol: 'Canvas::restore', isLeaf: true)
@@ -6309,7 +6564,7 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
   external void _getTransform(Float64List matrix4);
 
   @override
-  void clipRect(Rect rect, { ClipOp clipOp = ClipOp.intersect, bool doAntiAlias = true }) {
+  void clipRect(Rect rect, {ClipOp clipOp = ClipOp.intersect, bool doAntiAlias = true}) {
     assert(_rectIsValid(rect));
     rect = _sorted(rect);
     // Even if rect is still empty - which implies it has a zero dimension -
@@ -6318,8 +6573,18 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
     _clipRect(rect.left, rect.top, rect.right, rect.bottom, clipOp.index, doAntiAlias);
   }
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Int32, Bool)>(symbol: 'Canvas::clipRect', isLeaf: true)
-  external void _clipRect(double left, double top, double right, double bottom, int clipOp, bool doAntiAlias);
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Int32, Bool)>(
+    symbol: 'Canvas::clipRect',
+    isLeaf: true,
+  )
+  external void _clipRect(
+    double left,
+    double top,
+    double right,
+    double bottom,
+    int clipOp,
+    bool doAntiAlias,
+  );
 
   @override
   void clipRRect(RRect rrect, {bool doAntiAlias = true}) {
@@ -6373,8 +6638,17 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
     _drawLine(p1.dx, p1.dy, p2.dx, p2.dy, paint._objects, paint._data);
   }
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Handle, Handle)>(symbol: 'Canvas::drawLine')
-  external void _drawLine(double x1, double y1, double x2, double y2, List<Object?>? paintObjects, ByteData paintData);
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Handle, Handle)>(
+    symbol: 'Canvas::drawLine',
+  )
+  external void _drawLine(
+    double x1,
+    double y1,
+    double x2,
+    double y2,
+    List<Object?>? paintObjects,
+    ByteData paintData,
+  );
 
   @override
   void drawPaint(Paint paint) {
@@ -6393,8 +6667,17 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
     }
   }
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Handle, Handle)>(symbol: 'Canvas::drawRect')
-  external void _drawRect(double left, double top, double right, double bottom, List<Object?>? paintObjects, ByteData paintData);
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Handle, Handle)>(
+    symbol: 'Canvas::drawRect',
+  )
+  external void _drawRect(
+    double left,
+    double top,
+    double right,
+    double bottom,
+    List<Object?>? paintObjects,
+    ByteData paintData,
+  );
 
   @override
   void drawRRect(RRect rrect, Paint paint) {
@@ -6412,8 +6695,15 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
     _drawDRRect(outer._getValue32(), inner._getValue32(), paint._objects, paint._data);
   }
 
-  @Native<Void Function(Pointer<Void>, Handle, Handle, Handle, Handle)>(symbol: 'Canvas::drawDRRect')
-  external void _drawDRRect(Float32List outer, Float32List inner, List<Object?>? paintObjects, ByteData paintData);
+  @Native<Void Function(Pointer<Void>, Handle, Handle, Handle, Handle)>(
+    symbol: 'Canvas::drawDRRect',
+  )
+  external void _drawDRRect(
+    Float32List outer,
+    Float32List inner,
+    List<Object?>? paintObjects,
+    ByteData paintData,
+  );
 
   @override
   void drawOval(Rect rect, Paint paint) {
@@ -6424,8 +6714,17 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
     }
   }
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Handle, Handle)>(symbol: 'Canvas::drawOval')
-  external void _drawOval(double left, double top, double right, double bottom, List<Object?>? paintObjects, ByteData paintData);
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Handle, Handle)>(
+    symbol: 'Canvas::drawOval',
+  )
+  external void _drawOval(
+    double left,
+    double top,
+    double right,
+    double bottom,
+    List<Object?>? paintObjects,
+    ByteData paintData,
+  );
 
   @override
   void drawCircle(Offset c, double radius, Paint paint) {
@@ -6433,26 +6732,58 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
     _drawCircle(c.dx, c.dy, radius, paint._objects, paint._data);
   }
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Handle, Handle)>(symbol: 'Canvas::drawCircle')
-  external void _drawCircle(double x, double y, double radius, List<Object?>? paintObjects, ByteData paintData);
+  @Native<Void Function(Pointer<Void>, Double, Double, Double, Handle, Handle)>(
+    symbol: 'Canvas::drawCircle',
+  )
+  external void _drawCircle(
+    double x,
+    double y,
+    double radius,
+    List<Object?>? paintObjects,
+    ByteData paintData,
+  );
 
   @override
   void drawArc(Rect rect, double startAngle, double sweepAngle, bool useCenter, Paint paint) {
     assert(_rectIsValid(rect));
-    _drawArc(rect.left, rect.top, rect.right, rect.bottom, startAngle, sweepAngle, useCenter, paint._objects, paint._data);
+    _drawArc(
+      rect.left,
+      rect.top,
+      rect.right,
+      rect.bottom,
+      startAngle,
+      sweepAngle,
+      useCenter,
+      paint._objects,
+      paint._data,
+    );
   }
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Double, Double, Double, Double, Bool, Handle, Handle)>(symbol: 'Canvas::drawArc')
+  @Native<
+    Void Function(
+      Pointer<Void>,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Bool,
+      Handle,
+      Handle,
+    )
+  >(symbol: 'Canvas::drawArc')
   external void _drawArc(
-      double left,
-      double top,
-      double right,
-      double bottom,
-      double startAngle,
-      double sweepAngle,
-      bool useCenter,
-      List<Object?>? paintObjects,
-      ByteData paintData);
+    double left,
+    double top,
+    double right,
+    double bottom,
+    double startAngle,
+    double sweepAngle,
+    bool useCenter,
+    List<Object?>? paintObjects,
+    ByteData paintData,
+  );
 
   @override
   void drawPath(Path path, Paint paint) {
@@ -6466,88 +6797,142 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
   void drawImage(Image image, Offset offset, Paint paint) {
     assert(!image.debugDisposed);
     assert(_offsetIsValid(offset));
-    final String? error = _drawImage(image._image, offset.dx, offset.dy, paint._objects, paint._data, paint.filterQuality.index);
+    final String? error = _drawImage(
+      image._image,
+      offset.dx,
+      offset.dy,
+      paint._objects,
+      paint._data,
+      paint.filterQuality.index,
+    );
     if (error != null) {
       throw PictureRasterizationException._(error, stack: image._debugStack);
     }
   }
 
-  @Native<Handle Function(Pointer<Void>, Pointer<Void>, Double, Double, Handle, Handle, Int32)>(symbol: 'Canvas::drawImage')
-  external String? _drawImage(_Image image, double x, double y, List<Object?>? paintObjects, ByteData paintData, int filterQualityIndex);
+  @Native<Handle Function(Pointer<Void>, Pointer<Void>, Double, Double, Handle, Handle, Int32)>(
+    symbol: 'Canvas::drawImage',
+  )
+  external String? _drawImage(
+    _Image image,
+    double x,
+    double y,
+    List<Object?>? paintObjects,
+    ByteData paintData,
+    int filterQualityIndex,
+  );
 
   @override
   void drawImageRect(Image image, Rect src, Rect dst, Paint paint) {
     assert(!image.debugDisposed);
     assert(_rectIsValid(src));
     assert(_rectIsValid(dst));
-    final String? error = _drawImageRect(image._image,
-                                         src.left,
-                                         src.top,
-                                         src.right,
-                                         src.bottom,
-                                         dst.left,
-                                         dst.top,
-                                         dst.right,
-                                         dst.bottom,
-                                         paint._objects,
-                                         paint._data,
-                                         paint.filterQuality.index);
+    final String? error = _drawImageRect(
+      image._image,
+      src.left,
+      src.top,
+      src.right,
+      src.bottom,
+      dst.left,
+      dst.top,
+      dst.right,
+      dst.bottom,
+      paint._objects,
+      paint._data,
+      paint.filterQuality.index,
+    );
     if (error != null) {
       throw PictureRasterizationException._(error, stack: image._debugStack);
     }
   }
 
-  @Native<Handle Function(Pointer<Void>, Pointer<Void>, Double, Double, Double, Double, Double, Double, Double, Double, Handle, Handle, Int32)>(symbol: 'Canvas::drawImageRect')
+  @Native<
+    Handle Function(
+      Pointer<Void>,
+      Pointer<Void>,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Handle,
+      Handle,
+      Int32,
+    )
+  >(symbol: 'Canvas::drawImageRect')
   external String? _drawImageRect(
-      _Image image,
-      double srcLeft,
-      double srcTop,
-      double srcRight,
-      double srcBottom,
-      double dstLeft,
-      double dstTop,
-      double dstRight,
-      double dstBottom,
-      List<Object?>? paintObjects,
-      ByteData paintData,
-      int filterQualityIndex);
+    _Image image,
+    double srcLeft,
+    double srcTop,
+    double srcRight,
+    double srcBottom,
+    double dstLeft,
+    double dstTop,
+    double dstRight,
+    double dstBottom,
+    List<Object?>? paintObjects,
+    ByteData paintData,
+    int filterQualityIndex,
+  );
 
   @override
   void drawImageNine(Image image, Rect center, Rect dst, Paint paint) {
     assert(!image.debugDisposed);
     assert(_rectIsValid(center));
     assert(_rectIsValid(dst));
-    final String? error = _drawImageNine(image._image,
-                                         center.left,
-                                         center.top,
-                                         center.right,
-                                         center.bottom,
-                                         dst.left,
-                                         dst.top,
-                                         dst.right,
-                                         dst.bottom,
-                                         paint._objects,
-                                         paint._data,
-                                         paint.filterQuality.index);
+    final String? error = _drawImageNine(
+      image._image,
+      center.left,
+      center.top,
+      center.right,
+      center.bottom,
+      dst.left,
+      dst.top,
+      dst.right,
+      dst.bottom,
+      paint._objects,
+      paint._data,
+      paint.filterQuality.index,
+    );
     if (error != null) {
       throw PictureRasterizationException._(error, stack: image._debugStack);
     }
   }
 
-  @Native<Handle Function(Pointer<Void>, Pointer<Void>, Double, Double, Double, Double, Double, Double, Double, Double, Handle, Handle, Int32)>(symbol: 'Canvas::drawImageNine')
+  @Native<
+    Handle Function(
+      Pointer<Void>,
+      Pointer<Void>,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Handle,
+      Handle,
+      Int32,
+    )
+  >(symbol: 'Canvas::drawImageNine')
   external String? _drawImageNine(
-      _Image image,
-      double centerLeft,
-      double centerTop,
-      double centerRight,
-      double centerBottom,
-      double dstLeft,
-      double dstTop,
-      double dstRight,
-      double dstBottom,
-      List<Object?>? paintObjects,
-      ByteData paintData,
-      int filterQualityIndex);
+    _Image image,
+    double centerLeft,
+    double centerTop,
+    double centerRight,
+    double centerBottom,
+    double dstLeft,
+    double dstTop,
+    double dstRight,
+    double dstBottom,
+    List<Object?>? paintObjects,
+    ByteData paintData,
+    int filterQualityIndex,
+  );
 
   @override
   void drawPicture(Picture picture) {
@@ -6581,7 +6966,12 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
   }
 
   @Native<Void Function(Pointer<Void>, Handle, Handle, Int32, Handle)>(symbol: 'Canvas::drawPoints')
-  external void _drawPoints(List<Object?>? paintObjects, ByteData paintData, int pointMode, Float32List points);
+  external void _drawPoints(
+    List<Object?>? paintObjects,
+    ByteData paintData,
+    int pointMode,
+    Float32List points,
+  );
 
   @override
   void drawVertices(Vertices vertices, BlendMode blendMode, Paint paint) {
@@ -6589,17 +6979,26 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
     _drawVertices(vertices, blendMode.index, paint._objects, paint._data);
   }
 
-  @Native<Void Function(Pointer<Void>, Pointer<Void>, Int32, Handle, Handle)>(symbol: 'Canvas::drawVertices')
-  external void _drawVertices(Vertices vertices, int blendMode, List<Object?>? paintObjects, ByteData paintData);
+  @Native<Void Function(Pointer<Void>, Pointer<Void>, Int32, Handle, Handle)>(
+    symbol: 'Canvas::drawVertices',
+  )
+  external void _drawVertices(
+    Vertices vertices,
+    int blendMode,
+    List<Object?>? paintObjects,
+    ByteData paintData,
+  );
 
   @override
-  void drawAtlas(Image atlas,
-                 List<RSTransform> transforms,
-                 List<Rect> rects,
-                 List<Color>? colors,
-                 BlendMode? blendMode,
-                 Rect? cullRect,
-                 Paint paint) {
+  void drawAtlas(
+    Image atlas,
+    List<RSTransform> transforms,
+    List<Rect> rects,
+    List<Color>? colors,
+    BlendMode? blendMode,
+    Rect? cullRect,
+    Paint paint,
+  ) {
     assert(!atlas.debugDisposed);
     assert(colors == null || colors.isEmpty || blendMode != null);
 
@@ -6608,7 +7007,9 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
       throw ArgumentError('"transforms" and "rects" lengths must match.');
     }
     if (colors != null && colors.isNotEmpty && colors.length != rectCount) {
-      throw ArgumentError('If non-null, "colors" length must match that of "transforms" and "rects".');
+      throw ArgumentError(
+        'If non-null, "colors" length must match that of "transforms" and "rects".',
+      );
     }
 
     final Float32List rstTransformBuffer = Float32List(rectCount * 4);
@@ -6632,13 +7033,21 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
       rectBuffer[index3] = rect.bottom;
     }
 
-    final Int32List? colorBuffer = (colors == null || colors.isEmpty) ? null : _encodeColorList(colors);
+    final Int32List? colorBuffer =
+        (colors == null || colors.isEmpty) ? null : _encodeColorList(colors);
     final Float32List? cullRectBuffer = cullRect?._getValue32();
     final int qualityIndex = paint.filterQuality.index;
 
     final String? error = _drawAtlas(
-      paint._objects, paint._data, qualityIndex, atlas._image, rstTransformBuffer, rectBuffer,
-      colorBuffer, (blendMode ?? BlendMode.src).index, cullRectBuffer
+      paint._objects,
+      paint._data,
+      qualityIndex,
+      atlas._image,
+      rstTransformBuffer,
+      rectBuffer,
+      colorBuffer,
+      (blendMode ?? BlendMode.src).index,
+      cullRectBuffer,
     );
 
     if (error != null) {
@@ -6647,13 +7056,15 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
   }
 
   @override
-  void drawRawAtlas(Image atlas,
-                    Float32List rstTransforms,
-                    Float32List rects,
-                    Int32List? colors,
-                    BlendMode? blendMode,
-                    Rect? cullRect,
-                    Paint paint) {
+  void drawRawAtlas(
+    Image atlas,
+    Float32List rstTransforms,
+    Float32List rects,
+    Int32List? colors,
+    BlendMode? blendMode,
+    Rect? cullRect,
+    Paint paint,
+  ) {
     assert(colors == null || blendMode != null);
 
     final int rectCount = rects.length;
@@ -6664,13 +7075,22 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
       throw ArgumentError('"rstTransforms" and "rects" lengths must be a multiple of four.');
     }
     if (colors != null && colors.length * 4 != rectCount) {
-      throw ArgumentError('If non-null, "colors" length must be one fourth the length of "rstTransforms" and "rects".');
+      throw ArgumentError(
+        'If non-null, "colors" length must be one fourth the length of "rstTransforms" and "rects".',
+      );
     }
     final int qualityIndex = paint.filterQuality.index;
 
     final String? error = _drawAtlas(
-      paint._objects, paint._data, qualityIndex, atlas._image, rstTransforms, rects,
-      colors, (blendMode ?? BlendMode.src).index, cullRect?._getValue32()
+      paint._objects,
+      paint._data,
+      qualityIndex,
+      atlas._image,
+      rstTransforms,
+      rects,
+      colors,
+      (blendMode ?? BlendMode.src).index,
+      cullRect?._getValue32(),
     );
 
     if (error != null) {
@@ -6678,25 +7098,46 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
     }
   }
 
-  @Native<Handle Function(Pointer<Void>, Handle, Handle, Int32, Pointer<Void>, Handle, Handle, Handle, Int32, Handle)>(symbol: 'Canvas::drawAtlas')
+  @Native<
+    Handle Function(
+      Pointer<Void>,
+      Handle,
+      Handle,
+      Int32,
+      Pointer<Void>,
+      Handle,
+      Handle,
+      Handle,
+      Int32,
+      Handle,
+    )
+  >(symbol: 'Canvas::drawAtlas')
   external String? _drawAtlas(
-      List<Object?>? paintObjects,
-      ByteData paintData,
-      int filterQualityIndex,
-      _Image atlas,
-      Float32List rstTransforms,
-      Float32List rects,
-      Int32List? colors,
-      int blendMode,
-      Float32List? cullRect);
+    List<Object?>? paintObjects,
+    ByteData paintData,
+    int filterQualityIndex,
+    _Image atlas,
+    Float32List rstTransforms,
+    Float32List rects,
+    Int32List? colors,
+    int blendMode,
+    Float32List? cullRect,
+  );
 
   @override
   void drawShadow(Path path, Color color, double elevation, bool transparentOccluder) {
     _drawShadow(path as _NativePath, color.value, elevation, transparentOccluder);
   }
 
-  @Native<Void Function(Pointer<Void>, Pointer<Void>, Uint32, Double, Bool)>(symbol: 'Canvas::drawShadow')
-  external void _drawShadow(_NativePath path, int color, double elevation, bool transparentOccluder);
+  @Native<Void Function(Pointer<Void>, Pointer<Void>, Uint32, Double, Bool)>(
+    symbol: 'Canvas::drawShadow',
+  )
+  external void _drawShadow(
+    _NativePath path,
+    int color,
+    double elevation,
+    bool transparentOccluder,
+  );
 
   @override
   String toString() => 'Canvas(recording: ${_recorder != null})';
@@ -6837,7 +7278,8 @@ base class _NativePicture extends NativeFieldWrapperClass1 implements Picture {
       disposed = _disposed;
       return true;
     }());
-    return disposed ?? (throw StateError('Picture.debugDisposed is only available when asserts are enabled.'));
+    return disposed ??
+        (throw StateError('Picture.debugDisposed is only available when asserts are enabled.'));
   }
 
   @override
@@ -6889,7 +7331,9 @@ abstract class PictureRecorder {
 }
 
 base class _NativePictureRecorder extends NativeFieldWrapperClass1 implements PictureRecorder {
-  _NativePictureRecorder() { _constructor(); }
+  _NativePictureRecorder() {
+    _constructor();
+  }
 
   @Native<Void Function(Handle)>(symbol: 'PictureRecorder::Create')
   external void _constructor();
@@ -6999,11 +7443,7 @@ class Shadow {
   /// Returns a new shadow with its [offset] and [blurRadius] scaled by the given
   /// factor.
   Shadow scale(double factor) {
-    return Shadow(
-      color: color,
-      offset: offset * factor,
-      blurRadius: blurRadius * factor,
-    );
+    return Shadow(color: color, offset: offset * factor, blurRadius: blurRadius * factor);
   }
 
   /// Linearly interpolate between two shadows.
@@ -7075,10 +7515,10 @@ class Shadow {
     if (identical(this, other)) {
       return true;
     }
-    return other is Shadow
-        && other.color == color
-        && other.offset == offset
-        && other.blurRadius == blurRadius;
+    return other is Shadow &&
+        other.color == color &&
+        other.offset == offset &&
+        other.blurRadius == blurRadius;
   }
 
   @override
@@ -7100,18 +7540,18 @@ class Shadow {
       final Shadow shadow = shadows[shadowIndex];
       shadowOffset = shadowIndex * _kBytesPerShadow;
 
-      shadowsData.setInt32(_kColorOffset + shadowOffset,
-        shadow.color.value ^ Shadow._kColorDefault, _kFakeHostEndian);
+      shadowsData.setInt32(
+        _kColorOffset + shadowOffset,
+        shadow.color.value ^ Shadow._kColorDefault,
+        _kFakeHostEndian,
+      );
 
-      shadowsData.setFloat32(_kXOffset + shadowOffset,
-        shadow.offset.dx, _kFakeHostEndian);
+      shadowsData.setFloat32(_kXOffset + shadowOffset, shadow.offset.dx, _kFakeHostEndian);
 
-      shadowsData.setFloat32(_kYOffset + shadowOffset,
-        shadow.offset.dy, _kFakeHostEndian);
+      shadowsData.setFloat32(_kYOffset + shadowOffset, shadow.offset.dy, _kFakeHostEndian);
 
       final double blurSigma = Shadow.convertRadiusToSigma(shadow.blurRadius);
-      shadowsData.setFloat32(_kBlurOffset + shadowOffset,
-        blurSigma, _kFakeHostEndian);
+      shadowsData.setFloat32(_kBlurOffset + shadowOffset, blurSigma, _kFakeHostEndian);
     }
 
     return shadowsData;
@@ -7318,8 +7758,17 @@ base class _NativeImageDescriptor extends NativeFieldWrapperClass1 implements Im
   @Native<Handle Function(Handle, Pointer<Void>, Handle)>(symbol: 'ImageDescriptor::initEncoded')
   external String? _initEncoded(ImmutableBuffer buffer, _Callback<void> callback);
 
-  @Native<Void Function(Handle, Handle, Int32, Int32, Int32, Int32)>(symbol: 'ImageDescriptor::initRaw')
-  external static void _initRaw(ImageDescriptor outDescriptor, ImmutableBuffer buffer, int width, int height, int rowBytes, int pixelFormat);
+  @Native<Void Function(Handle, Handle, Int32, Int32, Int32, Int32)>(
+    symbol: 'ImageDescriptor::initRaw',
+  )
+  external static void _initRaw(
+    ImageDescriptor outDescriptor,
+    ImmutableBuffer buffer,
+    int width,
+    int height,
+    int rowBytes,
+    int pixelFormat,
+  );
 
   int? _width;
 
@@ -7374,11 +7823,14 @@ base class _NativeImageDescriptor extends NativeFieldWrapperClass1 implements Im
     return codec;
   }
 
-  @Native<Void Function(Pointer<Void>, Handle, Int32, Int32)>(symbol: 'ImageDescriptor::instantiateCodec')
+  @Native<Void Function(Pointer<Void>, Handle, Int32, Int32)>(
+    symbol: 'ImageDescriptor::instantiateCodec',
+  )
   external void _instantiateCodec(Codec outCodec, int targetWidth, int targetHeight);
 
   @override
-  String toString() => 'ImageDescriptor(width: ${_width ?? '?'}, height: ${_height ?? '?'}, bytes per pixel: ${_bytesPerPixel ?? '?'})';
+  String toString() =>
+      'ImageDescriptor(width: ${_width ?? '?'}, height: ${_height ?? '?'}, bytes per pixel: ${_bytesPerPixel ?? '?'})';
 }
 
 /// Generic callback signature, used by [_futurize].

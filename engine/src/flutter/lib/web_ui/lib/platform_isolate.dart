@@ -27,8 +27,7 @@ part of ui;
 /// This method can only be invoked from the main isolate.
 ///
 /// This API is currently experimental.
-Future<R> runOnPlatformThread<R>(FutureOr<R> Function() computation) =>
-    Future<R>(computation);
+Future<R> runOnPlatformThread<R>(FutureOr<R> Function() computation) => Future<R>(computation);
 
 /// Returns whether the current isolate is running on the platform thread.
 bool isRunningOnPlatformThread = true;

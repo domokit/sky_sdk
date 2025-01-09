@@ -10,9 +10,7 @@ import '../navigator_utils.dart';
 
 void main() {
   testWidgets('Flexible Transitions App is able to build', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      FlexibleRouteTransitionsApp(),
-    );
+    await tester.pumpWidget(FlexibleRouteTransitionsApp());
 
     expect(find.text('Zoom Transition'), findsOneWidget);
     expect(find.text('Crazy Vertical Transition'), findsOneWidget);
@@ -20,9 +18,7 @@ void main() {
   });
 
   testWidgets('on Pop the correct page shows', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      FlexibleRouteTransitionsApp(),
-    );
+    await tester.pumpWidget(FlexibleRouteTransitionsApp());
 
     await tester.pumpAndSettle();
 

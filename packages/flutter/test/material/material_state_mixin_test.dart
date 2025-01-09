@@ -28,16 +28,13 @@ class _InnerWidgetState extends State<_InnerWidget> {
     super.initState();
     widget.controller.stream.listen((bool val) => widget.onValueChanged(val));
   }
+
   @override
   Widget build(BuildContext context) => Container();
 }
 
 class _MyWidget extends StatefulWidget {
-  const _MyWidget({
-    required this.controller,
-    required this.evaluator,
-    required this.materialState,
-  });
+  const _MyWidget({required this.controller, required this.evaluator, required this.materialState});
 
   /// Wrapper around `MaterialStateMixin.isPressed/isHovered/isFocused/etc`.
   final bool Function(_MyWidgetState state) evaluator;
@@ -55,7 +52,6 @@ class _MyWidget extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<_MyWidget> with MaterialStateMixin {
-
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
@@ -70,7 +66,7 @@ class _MyWidgetState extends State<_MyWidget> with MaterialStateMixin {
 }
 
 void main() {
-  Future<void> verify(WidgetTester tester, Widget widget, StreamController<bool> controller,) async {
+  Future<void> verify(WidgetTester tester, Widget widget, StreamController<bool> controller) async {
     await tester.pumpWidget(MaterialApp(home: Scaffold(body: widget)));
     // Set the value to True
     controller.sink.add(true);

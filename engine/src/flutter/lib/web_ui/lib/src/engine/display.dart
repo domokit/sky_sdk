@@ -9,11 +9,7 @@ import 'package:ui/ui.dart' as ui;
 import '../engine.dart';
 
 class EngineFlutterDisplay extends ui.Display {
-  EngineFlutterDisplay({
-    required this.id,
-    required this.size,
-    required this.refreshRate,
-  });
+  EngineFlutterDisplay({required this.id, required this.size, required this.refreshRate});
 
   /// The single [EngineFlutterDisplay] that the web page is rendered on.
   static EngineFlutterDisplay get instance => _instance;
@@ -38,8 +34,7 @@ class EngineFlutterDisplay extends ui.Display {
   final double refreshRate;
 
   @override
-  double get devicePixelRatio =>
-      _debugDevicePixelRatioOverride ?? browserDevicePixelRatio;
+  double get devicePixelRatio => _debugDevicePixelRatioOverride ?? browserDevicePixelRatio;
 
   /// The real device pixel ratio of the browser.
   ///
@@ -97,8 +92,7 @@ class ScreenOrientation {
           screenOrientation.unlock();
           return true;
         } else {
-          final String? lockType =
-              _deviceOrientationToLockType(orientations.first as String?);
+          final String? lockType = _deviceOrientationToLockType(orientations.first as String?);
           if (lockType != null) {
             try {
               await screenOrientation.lock(lockType);

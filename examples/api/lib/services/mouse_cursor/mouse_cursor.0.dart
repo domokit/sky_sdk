@@ -33,10 +33,7 @@ class MouseCursorExample extends StatelessWidget {
         child: Container(
           width: 200,
           height: 100,
-          decoration: BoxDecoration(
-            color: Colors.blue,
-            border: Border.all(color: Colors.yellow),
-          ),
+          decoration: BoxDecoration(color: Colors.blue, border: Border.all(color: Colors.yellow)),
         ),
       ),
     );

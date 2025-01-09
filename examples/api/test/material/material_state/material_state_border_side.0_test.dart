@@ -21,28 +21,20 @@ void main() {
     });
   }
 
-  testWidgets(
-    'FilterChip displays the correct border when selected',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const example.MaterialStateBorderSideExampleApp(),
-      );
+  testWidgets('FilterChip displays the correct border when selected', (WidgetTester tester) async {
+    await tester.pumpWidget(const example.MaterialStateBorderSideExampleApp());
 
-      expect(findBorderColor(Colors.red), findsOne);
-    },
-  );
+    expect(findBorderColor(Colors.red), findsOne);
+  });
 
-  testWidgets(
-    'FilterChip displays the correct border when not selected',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const example.MaterialStateBorderSideExampleApp(),
-      );
+  testWidgets('FilterChip displays the correct border when not selected', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.MaterialStateBorderSideExampleApp());
 
-      await tester.tap(find.byType(FilterChip));
-      await tester.pumpAndSettle();
+    await tester.tap(find.byType(FilterChip));
+    await tester.pumpAndSettle();
 
-      expect(findBorderColor(const Color(0xffcac4d0)), findsOne);
-    },
-  );
+    expect(findBorderColor(const Color(0xffcac4d0)), findsOne);
+  });
 }

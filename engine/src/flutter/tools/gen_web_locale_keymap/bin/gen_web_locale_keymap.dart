@@ -52,9 +52,7 @@ String _readSharedSegment(String path) {
 
 typedef _ForEachAction<V> = void Function(String key, V value);
 void _sortedForEach<V>(Map<String, V> map, _ForEachAction<V> action) {
-  map
-    .entries
-    .toList()
+  map.entries.toList()
     ..sort((MapEntry<String, V> a, MapEntry<String, V> b) => a.key.compareTo(b.key))
     ..forEach((MapEntry<String, V> entry) {
       action(entry.key, entry.value);
@@ -73,9 +71,9 @@ String _escapeStringToDart(String origin) {
       // If there are both kinds of quotes, we have to use non-raw string
       // and escape necessary characters.
       final String beforeQuote = origin
-        .replaceAll(r'\', r'\\')
-        .replaceAll(r'$', r'\$')
-        .replaceAll("'", r"\'");
+          .replaceAll(r'\', r'\\')
+          .replaceAll(r'$', r'\$')
+          .replaceAll("'", r"\'");
       return "'$beforeQuote'";
     }
   }
@@ -107,8 +105,8 @@ String _buildMapString(Iterable<Layout> layouts) {
   final Map<String, Map<String, int>> uncompressed = unmarshallMappingData(compressed.join());
   assert(_verifyMap(originalMap, uncompressed));
   return '  return unmarshallMappingData(\n'
-         '${compressed.map((String line) => '    ${_escapeStringToDart(line)}\n').join()}'
-         '  ); // ${compressed.join().length} characters';
+      '${compressed.map((String line) => '    ${_escapeStringToDart(line)}\n').join()}'
+      '  ); // ${compressed.join().length} characters';
 }
 
 String _buildTestCasesString(List<Layout> layouts) {
@@ -117,9 +115,11 @@ String _buildTestCasesString(List<Layout> layouts) {
     final List<String> layoutEntries = <String>[];
     _sortedForEach(planLayout(layout.entries), (String eventCode, int logicalKey) {
       final LayoutEntry entry = layout.entries[eventCode]!;
-      layoutEntries.add("    verifyEntry(mapping, '$eventCode', <String>["
-          '${entry.printables.map(_escapeStringToDart).join(', ')}'
-          "], '${String.fromCharCode(logicalKey)}');");
+      layoutEntries.add(
+        "    verifyEntry(mapping, '$eventCode', <String>["
+        '${entry.printables.map(_escapeStringToDart).join(', ')}'
+        "], '${String.fromCharCode(logicalKey)}');",
+      );
     });
     layoutsString.add('''
   group('${layout.language}', () {
@@ -139,12 +139,7 @@ Future<void> main(List<String> rawArguments) async {
     negatable: false,
     help: 'Make a new request to GitHub even if a cache is detected',
   );
-  argParser.addFlag(
-    'help',
-    abbr: 'h',
-    negatable: false,
-    help: 'Print help for this command.',
-  );
+  argParser.addFlag('help', abbr: 'h', negatable: false, help: 'Print help for this command.');
 
   final ArgResults parsedArguments = argParser.parse(rawArguments);
 
@@ -159,17 +154,20 @@ Future<void> main(List<String> rawArguments) async {
     return true;
   }());
   if (!enabledAssert) {
-    print('Error: This script must be run with assert enabled. Please rerun with --enable-asserts.');
+    print(
+      'Error: This script must be run with assert enabled. Please rerun with --enable-asserts.',
+    );
     exit(1);
   }
 
   final String? envGithubToken = env[kEnvGithubToken];
   if (envGithubToken == null) {
-    print('Error: Environment variable $kEnvGithubToken not found.\n\n'
-          'Set the environment variable $kEnvGithubToken as a GitHub personal access\n'
-          'token for authentication. This token is only used for quota controlling\n'
-          'and does not need any scopes. Create one at\n'
-          'https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token.',
+    print(
+      'Error: Environment variable $kEnvGithubToken not found.\n\n'
+      'Set the environment variable $kEnvGithubToken as a GitHub personal access\n'
+      'token for authentication. This token is only used for quota controlling\n'
+      'and does not need any scopes. Create one at\n'
+      'https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token.',
     );
     exit(1);
   }
@@ -180,8 +178,11 @@ Future<void> main(List<String> rawArguments) async {
 
   // The root of the output package. The folder that is called
   // 'web_locale_keymap' and contains 'pubspec.yaml'.
-  final String outputRoot = path.join(packageRoot.parent.parent.path,
-        'third_party', 'web_locale_keymap');
+  final String outputRoot = path.join(
+    packageRoot.parent.parent.path,
+    'third_party',
+    'web_locale_keymap',
+  );
 
   final GithubResult githubResult = await fetchFromGithub(
     githubToken: envGithubToken,
@@ -189,12 +190,16 @@ Future<void> main(List<String> rawArguments) async {
     cacheRoot: path.join(packageRoot.path, '.cache'),
   );
 
-  final List<Layout> winLayouts = githubResult.layouts.where((Layout layout) =>
-            layout.platform == LayoutPlatform.win).toList();
-  final List<Layout> linuxLayouts = githubResult.layouts.where((Layout layout) =>
-            layout.platform == LayoutPlatform.linux).toList();
-  final List<Layout> darwinLayouts = githubResult.layouts.where((Layout layout) =>
-            layout.platform == LayoutPlatform.darwin).toList();
+  final List<Layout> winLayouts =
+      githubResult.layouts.where((Layout layout) => layout.platform == LayoutPlatform.win).toList();
+  final List<Layout> linuxLayouts =
+      githubResult.layouts
+          .where((Layout layout) => layout.platform == LayoutPlatform.linux)
+          .toList();
+  final List<Layout> darwinLayouts =
+      githubResult.layouts
+          .where((Layout layout) => layout.platform == LayoutPlatform.darwin)
+          .toList();
 
   // Generate the definition file.
   _writeFileTo(

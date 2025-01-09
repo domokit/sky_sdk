@@ -8,10 +8,10 @@ import 'package:flutter_api_samples/widgets/single_child_scroll_view/single_chil
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('The flexible child should fill the space if the screen is big enough', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SingleChildScrollViewExampleApp(),
-    );
+  testWidgets('The flexible child should fill the space if the screen is big enough', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.SingleChildScrollViewExampleApp());
 
     final Finder fixedHeightFinder = find.widgetWithText(Container, 'Fixed Height Content');
     final Finder flexibleHeightFinder = find.widgetWithText(Container, 'Flexible Content');
@@ -29,14 +29,14 @@ void main() {
     expect(tester.getSize(flexibleHeightFinder), const Size(800, 480));
   });
 
-  testWidgets('The view should be scrollable when the screen is not big enough', (WidgetTester tester) async {
+  testWidgets('The view should be scrollable when the screen is not big enough', (
+    WidgetTester tester,
+  ) async {
     tester.view
       ..physicalSize = const Size(400, 200)
       ..devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    await tester.pumpWidget(
-      const example.SingleChildScrollViewExampleApp(),
-    );
+    await tester.pumpWidget(const example.SingleChildScrollViewExampleApp());
 
     final Finder fixedHeightFinder = find.widgetWithText(Container, 'Fixed Height Content');
     final Finder flexibleHeightFinder = find.widgetWithText(Container, 'Flexible Content');

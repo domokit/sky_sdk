@@ -86,8 +86,7 @@ Future<void> execute() async {
     watch.start();
     for (int i = 0; i < 10; i += 1) {
       await Future.wait(<Future<ui.ImmutableBuffer>>[
-        for (final String asset in assets)
-          rootBundle.loadBuffer(asset)
+        for (final String asset in assets) rootBundle.loadBuffer(asset),
       ]);
     }
     watch.stop();

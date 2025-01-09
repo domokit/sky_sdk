@@ -18,7 +18,11 @@ void main() {
         child: CustomScrollView(
           slivers: <Widget>[
             SliverFillViewport(
-              delegate: SliverChildListDelegate(children, addAutomaticKeepAlives: false, addSemanticIndexes: false),
+              delegate: SliverChildListDelegate(
+                children,
+                addAutomaticKeepAlives: false,
+                addSemanticIndexes: false,
+              ),
             ),
           ],
         ),
@@ -60,7 +64,9 @@ void main() {
     expect(find.text('2'), findsNothing);
     expect(find.text('3'), findsNothing);
 
-    final RenderObject viewport = tester.renderObject<RenderObject>(find.byType(SliverFillViewport).first);
+    final RenderObject viewport = tester.renderObject<RenderObject>(
+      find.byType(SliverFillViewport).first,
+    );
     expect(viewport, hasAGoodToStringDeep);
     expect(
       viewport.toStringDeep(minLevel: DiagnosticLevel.info),
@@ -160,9 +166,7 @@ void main() {
 
   testWidgets('SliverFillViewport padding test', (WidgetTester tester) async {
     final SliverChildListDelegate delegate = SliverChildListDelegate(
-      <Widget>[
-        const Text('0'),
-      ],
+      <Widget>[const Text('0')],
       addAutomaticKeepAlives: false,
       addSemanticIndexes: false,
     );
@@ -171,17 +175,14 @@ void main() {
       Directionality(
         textDirection: TextDirection.ltr,
         child: CustomScrollView(
-          slivers: <Widget>[
-            SliverFillViewport(
-              viewportFraction: 0.5,
-              delegate: delegate,
-            ),
-          ],
+          slivers: <Widget>[SliverFillViewport(viewportFraction: 0.5, delegate: delegate)],
         ),
       ),
     );
 
-    final RenderSliver boxWithPadding = tester.renderObject<RenderSliver>(find.byType(SliverFillViewport));
+    final RenderSliver boxWithPadding = tester.renderObject<RenderSliver>(
+      find.byType(SliverFillViewport),
+    );
     expect(boxWithPadding.geometry!.paintExtent, equals(600.0));
 
     await tester.pumpWidget(
@@ -189,17 +190,15 @@ void main() {
         textDirection: TextDirection.ltr,
         child: CustomScrollView(
           slivers: <Widget>[
-            SliverFillViewport(
-              padEnds: false,
-              viewportFraction: 0.5,
-              delegate: delegate,
-            ),
+            SliverFillViewport(padEnds: false, viewportFraction: 0.5, delegate: delegate),
           ],
         ),
       ),
     );
 
-    final RenderSliver boxWithoutPadding = tester.renderObject<RenderSliver>(find.byType(SliverFillViewport));
+    final RenderSliver boxWithoutPadding = tester.renderObject<RenderSliver>(
+      find.byType(SliverFillViewport),
+    );
     expect(boxWithoutPadding.geometry!.paintExtent, equals(300.0));
   });
 }

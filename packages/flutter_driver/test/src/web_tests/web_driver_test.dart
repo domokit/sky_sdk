@@ -39,7 +39,7 @@ void main() {
         () => driver.sendCommand(const GetHealth()),
         _throwsDriverErrorWithMessage(
           'FlutterDriver command GetHealth failed due to a remote error.\n'
-          'Command sent: {"command":"get_health"}'
+          'Command sent: {"command":"get_health"}',
         ),
       );
     });
@@ -69,9 +69,7 @@ void main() {
 ''';
       expect(
         () => driver.sendCommand(const GetHealth()),
-        _throwsDriverErrorWithMessage(
-          'Error in Flutter application: test error message'
-        ),
+        _throwsDriverErrorWithMessage('Error in Flutter application: test error message'),
       );
     });
 
@@ -94,20 +92,22 @@ void main() {
 }
 
 Matcher _throwsDriverErrorWithMessage(String expectedMessage) {
-  return throwsA(allOf(
-    isA<DriverError>(),
-    predicate<DriverError>((DriverError error) {
-      final String actualMessage = error.message;
-      return actualMessage == expectedMessage;
-    }, 'contains message: $expectedMessage'),
-  ));
+  return throwsA(
+    allOf(
+      isA<DriverError>(),
+      predicate<DriverError>((DriverError error) {
+        final String actualMessage = error.message;
+        return actualMessage == expectedMessage;
+      }, 'contains message: $expectedMessage'),
+    ),
+  );
 }
 
 Matcher _throwsDriverErrorWithDataString(String dataType, String dataString) {
   return _throwsDriverErrorWithMessage(
     'Received malformed response from the FlutterDriver extension.\n'
     'Expected a JSON map containing a "response" field and, optionally, an '
-    '"isError" field, but got $dataType: $dataString'
+    '"isError" field, but got $dataType: $dataString',
   );
 }
 

@@ -36,8 +36,7 @@ class LiveRegion extends SemanticBehavior {
   }
 
   AccessibilityAnnouncements get _accessibilityAnnouncements =>
-      _accessibilityAnnouncementsOverride ??
-      EngineSemantics.instance.accessibilityAnnouncements;
+      _accessibilityAnnouncementsOverride ?? EngineSemantics.instance.accessibilityAnnouncements;
 
   @override
   void update() {
@@ -49,10 +48,7 @@ class LiveRegion extends SemanticBehavior {
     if (_lastAnnouncement != semanticsObject.label) {
       _lastAnnouncement = semanticsObject.label;
       if (semanticsObject.hasLabel) {
-        _accessibilityAnnouncements.announce(
-          _lastAnnouncement!,
-          Assertiveness.polite,
-        );
+        _accessibilityAnnouncements.announce(_lastAnnouncement!, Assertiveness.polite);
       }
     }
   }

@@ -62,15 +62,9 @@ class _PageViewExampleState extends State<PageViewExample> with TickerProviderSt
           controller: _pageViewController,
           onPageChanged: _handlePageViewChanged,
           children: <Widget>[
-            Center(
-              child: Text('First Page', style: textTheme.titleLarge),
-            ),
-            Center(
-              child: Text('Second Page', style: textTheme.titleLarge),
-            ),
-            Center(
-              child: Text('Third Page', style: textTheme.titleLarge),
-            ),
+            Center(child: Text('First Page', style: textTheme.titleLarge)),
+            Center(child: Text('Second Page', style: textTheme.titleLarge)),
+            Center(child: Text('Third Page', style: textTheme.titleLarge)),
           ],
         ),
         PageIndicator(
@@ -102,10 +96,12 @@ class _PageViewExampleState extends State<PageViewExample> with TickerProviderSt
     );
   }
 
-  bool get _isOnDesktopAndWeb => kIsWeb || switch (defaultTargetPlatform) {
-    TargetPlatform.macOS || TargetPlatform.linux || TargetPlatform.windows => true,
-    TargetPlatform.android || TargetPlatform.iOS || TargetPlatform.fuchsia => false,
-  };
+  bool get _isOnDesktopAndWeb =>
+      kIsWeb ||
+      switch (defaultTargetPlatform) {
+        TargetPlatform.macOS || TargetPlatform.linux || TargetPlatform.windows => true,
+        TargetPlatform.android || TargetPlatform.iOS || TargetPlatform.fuchsia => false,
+      };
 }
 
 /// Page indicator for desktop and web platforms.
@@ -151,10 +147,7 @@ class PageIndicator extends StatelessWidget {
               }
               onUpdateCurrentPageIndex(currentPageIndex - 1);
             },
-            icon: const Icon(
-              Icons.arrow_left_rounded,
-              size: 32.0,
-            ),
+            icon: const Icon(Icons.arrow_left_rounded, size: 32.0),
           ),
           TabPageSelector(
             controller: tabController,
@@ -170,10 +163,7 @@ class PageIndicator extends StatelessWidget {
               }
               onUpdateCurrentPageIndex(currentPageIndex + 1);
             },
-            icon: const Icon(
-              Icons.arrow_right_rounded,
-              size: 32.0,
-            ),
+            icon: const Icon(Icons.arrow_right_rounded, size: 32.0),
           ),
         ],
       ),

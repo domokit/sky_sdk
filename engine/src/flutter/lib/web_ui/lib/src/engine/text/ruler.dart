@@ -114,16 +114,15 @@ class TextDimensions {
     _invalidateBoundsCache();
   }
 
-  DomRect _readAndCacheMetrics() =>
-      _cachedBoundingClientRect ??= _element.getBoundingClientRect();
+  DomRect _readAndCacheMetrics() => _cachedBoundingClientRect ??= _element.getBoundingClientRect();
 
   /// The height of the paragraph being measured.
   double get height {
     double cachedHeight = _readAndCacheMetrics().height;
     if (ui_web.browser.browserEngine == ui_web.BrowserEngine.firefox &&
-      // In the flutter tester environment, we use a predictable-size for font
-      // measurement tests.
-      !ui_web.debugEmulateFlutterTesterEnvironment) {
+        // In the flutter tester environment, we use a predictable-size for font
+        // measurement tests.
+        !ui_web.debugEmulateFlutterTesterEnvironment) {
       // See subpixel rounding bug :
       // https://bugzilla.mozilla.org/show_bug.cgi?id=442139
       // This causes bottom of letters such as 'y' to be cutoff and

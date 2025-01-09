@@ -67,12 +67,7 @@ const String dataDir = 'dev/tools/gen_defaults/data';
 Future<void> main(List<String> args) async {
   // Parse arguments
   final ArgParser parser = ArgParser();
-  parser.addFlag(
-    'verbose',
-    abbr: 'v',
-    help: 'Enable verbose output',
-    negatable: false,
-  );
+  parser.addFlag('verbose', abbr: 'v', help: 'Enable verbose output', negatable: false);
   final ArgResults argResults = parser.parse(args);
   final bool verbose = argResults['verbose'] as bool;
 
@@ -96,6 +91,8 @@ Future<void> main(List<String> args) async {
   final Map<String, dynamic> colorLightTokens = _readTokenFile(File('$dataDir/color_light.json'));
   final Map<String, dynamic> colorDarkTokens = _readTokenFile(File('$dataDir/color_dark.json'));
 
+  // The verifyTokenTemplatesUpdateCorrectFiles check in dev/bots/analyze.dart depends on the exact formatting of the next few lines.
+  // dart format off
   // Generate tokens files.
   ChipTemplate('Chip', '$materialLib/chip.dart', tokens).updateFile();
   ActionChipTemplate('ActionChip', '$materialLib/action_chip.dart', tokens).updateFile();
@@ -150,6 +147,7 @@ Future<void> main(List<String> args) async {
   TextFieldTemplate('TextField', '$materialLib/text_field.dart', tokens).updateFile();
   TabsTemplate('Tabs', '$materialLib/tabs.dart', tokens).updateFile();
   TypographyTemplate('Typography', '$materialLib/typography.dart', tokens).updateFile();
+  // dart format on
 
   tokenLogger.printVersionUsage(verbose: verbose);
   tokenLogger.printTokensUsage(verbose: verbose);

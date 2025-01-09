@@ -17,10 +17,10 @@ class RunningProcessInfo {
 
   @override
   bool operator ==(Object other) {
-    return other is RunningProcessInfo
-        && other.pid == pid
-        && other.commandLine == commandLine
-        && other.creationDate == creationDate;
+    return other is RunningProcessInfo &&
+        other.pid == pid &&
+        other.commandLine == commandLine &&
+        other.creationDate == creationDate;
   }
 
   Future<bool> terminate({required ProcessManager processManager}) async {
@@ -30,7 +30,7 @@ class RunningProcessInfo {
       // TODO(ianh): Move Windows to killPid once we can.
       //  - killPid on Windows has not-useful return code: https://github.com/dart-lang/sdk/issues/47675
       final ProcessResult result = await processManager.run(<String>[
-          'taskkill.exe',
+        'taskkill.exe',
         '/pid',
         '$pid',
         '/f',
@@ -66,15 +66,13 @@ Future<Set<RunningProcessInfo>> windowsRunningProcesses(
 ) async {
   // PowerShell script to get the command line arguments and create time of a process.
   // See: https://docs.microsoft.com/en-us/windows/desktop/cimwin32prov/win32-process
-  final String script = processName != null
-      ? '"Get-CimInstance Win32_Process -Filter \\"name=\'$processName\'\\" | Select-Object ProcessId,CreationDate,CommandLine | Format-Table -AutoSize | Out-String -Width 4096"'
-      : '"Get-CimInstance Win32_Process | Select-Object ProcessId,CreationDate,CommandLine | Format-Table -AutoSize | Out-String -Width 4096"';
+  final String script =
+      processName != null
+          ? '"Get-CimInstance Win32_Process -Filter \\"name=\'$processName\'\\" | Select-Object ProcessId,CreationDate,CommandLine | Format-Table -AutoSize | Out-String -Width 4096"'
+          : '"Get-CimInstance Win32_Process | Select-Object ProcessId,CreationDate,CommandLine | Format-Table -AutoSize | Out-String -Width 4096"';
   // TODO(ianh): Unfortunately, there doesn't seem to be a good way to get
   // ProcessManager to run this.
-  final ProcessResult result = await Process.run(
-    'powershell -command $script',
-    <String>[],
-  );
+  final ProcessResult result = await Process.run('powershell -command $script', <String>[]);
   if (result.exitCode != 0) {
     print('Could not list processes!');
     print(result.stderr);
@@ -115,10 +113,7 @@ Iterable<RunningProcessInfo> processPowershellOutput(String output) sync* {
 
     // 3/11/2019 11:01:54 AM
     // 12/11/2019 11:01:54 AM
-    String rawTime = line.substring(
-      creationDateHeaderStart,
-      creationDateHeaderEnd,
-    ).trim();
+    String rawTime = line.substring(creationDateHeaderStart, creationDateHeaderEnd).trim();
 
     if (rawTime[1] == '/') {
       rawTime = '0$rawTime';
@@ -177,10 +172,7 @@ Future<Set<RunningProcessInfo>> posixRunningProcesses(
 /// Sat Mar  9 20:12:47 2019         1 /sbin/launchd
 /// Sat Mar  9 20:13:00 2019        49 /usr/sbin/syslogd
 @visibleForTesting
-Iterable<RunningProcessInfo> processPsOutput(
-  String output,
-  String? processName,
-) sync* {
+Iterable<RunningProcessInfo> processPsOutput(String output, String? processName) sync* {
   bool inTableBody = false;
   for (String line in output.split('\n')) {
     if (line.trim().startsWith('STARTED')) {

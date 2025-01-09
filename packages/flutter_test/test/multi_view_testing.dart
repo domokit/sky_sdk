@@ -7,11 +7,12 @@ import 'dart:ui';
 import 'package:flutter_test/flutter_test.dart';
 
 class FakeView extends TestFlutterView {
-  FakeView(FlutterView view, { this.viewId = 100 }) : super(
-    view: view,
-    platformDispatcher: view.platformDispatcher as TestPlatformDispatcher,
-    display: view.display as TestDisplay,
-  );
+  FakeView(FlutterView view, {this.viewId = 100})
+    : super(
+        view: view,
+        platformDispatcher: view.platformDispatcher as TestPlatformDispatcher,
+        display: view.display as TestDisplay,
+      );
 
   @override
   final int viewId;

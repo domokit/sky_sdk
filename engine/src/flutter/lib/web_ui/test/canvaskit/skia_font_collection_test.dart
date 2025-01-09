@@ -55,7 +55,8 @@ void testMain() {
 
     test('logs a warning if one of the registered fonts is invalid', () async {
       mockHttpFetchResponseFactory = (String url) async {
-        final ByteBuffer bogusData = Uint8List.fromList('this is not valid font data'.codeUnits).buffer;
+        final ByteBuffer bogusData =
+            Uint8List.fromList('this is not valid font data'.codeUnits).buffer;
         return MockHttpFetchResponse(
           status: 200,
           url: url,
@@ -64,7 +65,9 @@ void testMain() {
         );
       };
       final SkiaFontCollection fontCollection = SkiaFontCollection();
-      testAssetScope.setAsset('FontManifest.json', stringAsUtf8Data('''
+      testAssetScope.setAsset(
+        'FontManifest.json',
+        stringAsUtf8Data('''
 [
    {
       "family":"Roboto",
@@ -75,23 +78,26 @@ void testMain() {
       "fonts":[{"asset":"packages/bogus/BrokenFont.ttf"}]
    }
   ]
-      '''));
+      '''),
+      );
       // It should complete without error, but emit a warning about BrokenFont.
       await fontCollection.loadAssetFonts(await fetchFontManifest(fakeAssetManager));
       expect(
         warnings,
-        containsAllInOrder(
-          <String>[
-            'Failed to load font BrokenFont at packages/bogus/BrokenFont.ttf',
-            'Verify that packages/bogus/BrokenFont.ttf contains a valid font.',
-          ],
-        ),
+        containsAllInOrder(<String>[
+          'Failed to load font BrokenFont at packages/bogus/BrokenFont.ttf',
+          'Verify that packages/bogus/BrokenFont.ttf contains a valid font.',
+        ]),
       );
     });
 
-    test('logs an HTTP warning if one of the registered fonts is missing (404 file not found)', () async {
-      final SkiaFontCollection fontCollection = SkiaFontCollection();
-      testAssetScope.setAsset('FontManifest.json', stringAsUtf8Data('''
+    test(
+      'logs an HTTP warning if one of the registered fonts is missing (404 file not found)',
+      () async {
+        final SkiaFontCollection fontCollection = SkiaFontCollection();
+        testAssetScope.setAsset(
+          'FontManifest.json',
+          stringAsUtf8Data('''
 [
    {
       "family":"Roboto",
@@ -102,21 +108,26 @@ void testMain() {
       "fonts":[{"asset":"packages/bogus/ThisFontDoesNotExist.ttf"}]
    }
   ]
-      '''));
+      '''),
+        );
 
-      // It should complete without error, but emit a warning about ThisFontDoesNotExist.
-      await fontCollection.loadAssetFonts(await fetchFontManifest(fakeAssetManager));
-      expect(
-        warnings,
-        containsAllInOrder(<String>[
-          'Font family ThisFontDoesNotExist not found (404) at packages/bogus/ThisFontDoesNotExist.ttf'
-        ]),
-      );
-    });
+        // It should complete without error, but emit a warning about ThisFontDoesNotExist.
+        await fontCollection.loadAssetFonts(await fetchFontManifest(fakeAssetManager));
+        expect(
+          warnings,
+          containsAllInOrder(<String>[
+            'Font family ThisFontDoesNotExist not found (404) at packages/bogus/ThisFontDoesNotExist.ttf',
+          ]),
+        );
+      },
+    );
 
     test('prioritizes Ahem loaded via FontManifest.json', () async {
       final SkiaFontCollection fontCollection = SkiaFontCollection();
-      testAssetScope.setAsset('FontManifest.json', stringAsUtf8Data('''
+      testAssetScope.setAsset(
+        'FontManifest.json',
+        stringAsUtf8Data(
+          '''
         [
           {
             "family":"Roboto",
@@ -127,7 +138,9 @@ void testMain() {
             "fonts":[{"asset":"/assets/fonts/Roboto-Regular.ttf"}]
           }
         ]
-      '''.trim()));
+      '''.trim(),
+        ),
+      );
 
       final ByteBuffer robotoData = await httpFetchByteBuffer('/assets/fonts/Roboto-Regular.ttf');
 
@@ -135,8 +148,9 @@ void testMain() {
       expect(warnings, isEmpty);
 
       // Use `singleWhere` to make sure only one version of 'Ahem' is loaded.
-      final RegisteredFont ahem = fontCollection.debugRegisteredFonts!
-        .singleWhere((RegisteredFont font) => font.family == 'Ahem');
+      final RegisteredFont ahem = fontCollection.debugRegisteredFonts!.singleWhere(
+        (RegisteredFont font) => font.family == 'Ahem',
+      );
 
       // Check that the contents of 'Ahem' is actually Roboto, because that's
       // what's specified in the manifest, and the manifest takes precedence.
@@ -149,8 +163,9 @@ void testMain() {
       final ByteBuffer ahemData = await httpFetchByteBuffer('/assets/fonts/ahem.ttf');
 
       // Use `singleWhere` to make sure only one version of 'Ahem' is loaded.
-      final RegisteredFont ahem = fontCollection.debugRegisteredFonts!
-        .singleWhere((RegisteredFont font) => font.family == 'Ahem');
+      final RegisteredFont ahem = fontCollection.debugRegisteredFonts!.singleWhere(
+        (RegisteredFont font) => font.family == 'Ahem',
+      );
 
       // Check that the contents of 'Ahem' is actually Roboto, because that's
       // what's specified in the manifest, and the manifest takes precedence.

@@ -175,36 +175,50 @@ class SearchViewThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is SearchViewThemeData
-      && other.backgroundColor == backgroundColor
-      && other.elevation == elevation
-      && other.surfaceTintColor == surfaceTintColor
-      && other.side == side
-      && other.shape == shape
-      && other.headerHeight == headerHeight
-      && other.headerTextStyle == headerTextStyle
-      && other.headerHintStyle == headerHintStyle
-      && other.constraints == constraints
-      && other.padding == padding
-      && other.barPadding == barPadding
-      && other.shrinkWrap == shrinkWrap
-      && other.dividerColor == dividerColor;
+    return other is SearchViewThemeData &&
+        other.backgroundColor == backgroundColor &&
+        other.elevation == elevation &&
+        other.surfaceTintColor == surfaceTintColor &&
+        other.side == side &&
+        other.shape == shape &&
+        other.headerHeight == headerHeight &&
+        other.headerTextStyle == headerTextStyle &&
+        other.headerHintStyle == headerHintStyle &&
+        other.constraints == constraints &&
+        other.padding == padding &&
+        other.barPadding == barPadding &&
+        other.shrinkWrap == shrinkWrap &&
+        other.dividerColor == dividerColor;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<Color?>('backgroundColor', backgroundColor, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<Color?>('backgroundColor', backgroundColor, defaultValue: null),
+    );
     properties.add(DiagnosticsProperty<double?>('elevation', elevation, defaultValue: null));
-    properties.add(DiagnosticsProperty<Color?>('surfaceTintColor', surfaceTintColor, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<Color?>('surfaceTintColor', surfaceTintColor, defaultValue: null),
+    );
     properties.add(DiagnosticsProperty<BorderSide?>('side', side, defaultValue: null));
     properties.add(DiagnosticsProperty<OutlinedBorder?>('shape', shape, defaultValue: null));
     properties.add(DiagnosticsProperty<double?>('headerHeight', headerHeight, defaultValue: null));
-    properties.add(DiagnosticsProperty<TextStyle?>('headerTextStyle', headerTextStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<TextStyle?>('headerHintStyle', headerHintStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<BoxConstraints>('constraints', constraints, defaultValue: null));
-    properties.add(DiagnosticsProperty<EdgeInsetsGeometry?>('padding', padding, defaultValue: null));
-    properties.add(DiagnosticsProperty<EdgeInsetsGeometry?>('barPadding', barPadding, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<TextStyle?>('headerTextStyle', headerTextStyle, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<TextStyle?>('headerHintStyle', headerHintStyle, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<BoxConstraints>('constraints', constraints, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<EdgeInsetsGeometry?>('padding', padding, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<EdgeInsetsGeometry?>('barPadding', barPadding, defaultValue: null),
+    );
     properties.add(DiagnosticsProperty<bool?>('shrinkWrap', shrinkWrap, defaultValue: null));
     properties.add(DiagnosticsProperty<Color?>('dividerColor', dividerColor, defaultValue: null));
   }
@@ -234,11 +248,7 @@ class SearchViewThemeData with Diagnosticable {
 class SearchViewTheme extends InheritedTheme {
   /// Creates a const theme that controls the configurations for the search view
   /// created by the [SearchAnchor] widget.
-  const SearchViewTheme({
-    super.key,
-    required this.data,
-    required super.child,
-  });
+  const SearchViewTheme({super.key, required this.data, required super.child});
 
   /// The properties used for all descendant [SearchAnchor] widgets.
   final SearchViewThemeData data;
@@ -252,7 +262,8 @@ class SearchViewTheme extends InheritedTheme {
   /// SearchViewThemeData theme = SearchViewTheme.of(context);
   /// ```
   static SearchViewThemeData of(BuildContext context) {
-    final SearchViewTheme? searchViewTheme = context.dependOnInheritedWidgetOfExactType<SearchViewTheme>();
+    final SearchViewTheme? searchViewTheme =
+        context.dependOnInheritedWidgetOfExactType<SearchViewTheme>();
     return searchViewTheme?.data ?? Theme.of(context).searchViewTheme;
   }
 

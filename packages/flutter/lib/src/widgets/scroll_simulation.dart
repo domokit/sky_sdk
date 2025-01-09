@@ -49,7 +49,12 @@ class BouncingScrollSimulation extends Simulation {
     } else {
       // Taken from UIScrollView.decelerationRate (.normal = 0.998)
       // 0.998^1000 = ~0.135
-      _frictionSimulation = FrictionSimulation(0.135, position, velocity, constantDeceleration: constantDeceleration);
+      _frictionSimulation = FrictionSimulation(
+        0.135,
+        position,
+        velocity,
+        constantDeceleration: constantDeceleration,
+      );
       final double finalX = _frictionSimulation.finalX;
       if (velocity > 0.0 && finalX > trailingExtent) {
         _springTime = _frictionSimulation.timeAtX(trailingExtent);
@@ -202,9 +207,12 @@ class ClampingScrollSimulation extends Simulation {
   // expressed in units of logical pixels per second^2.
   static const double _physicalCoeff =
       9.80665 // g, in meters per second^2
-        * 39.37 // 1 meter / 1 inch
-        * 160.0 // 1 inch / 1 logical pixel
-        * 0.84; // "look and feel tuning"
+      *
+      39.37 // 1 meter / 1 inch
+      *
+      160.0 // 1 inch / 1 logical pixel
+      *
+      0.84; // "look and feel tuning"
 
   // See getSplineFlingDuration().
   double _flingDuration() {
@@ -214,8 +222,7 @@ class ClampingScrollSimulation extends Simulation {
 
     // This is the value getSplineFlingDuration() would return, but in seconds.
     final double androidDuration =
-        math.pow(velocity.abs() / referenceVelocity,
-                 1 / (_kDecelerationRate - 1.0)) as double;
+        math.pow(velocity.abs() / referenceVelocity, 1 / (_kDecelerationRate - 1.0)) as double;
 
     // We finish a bit sooner than Android, in order to travel the
     // same total distance.
@@ -232,8 +239,9 @@ class ClampingScrollSimulation extends Simulation {
       final double referenceVelocity = friction * _physicalCoeff / _kInflexion;
       final double logVelocity = math.log(velocity.abs() / referenceVelocity);
       final double distanceAgain =
-          friction * _physicalCoeff
-            * math.exp(logVelocity * _kDecelerationRate / (_kDecelerationRate - 1.0));
+          friction *
+          _physicalCoeff *
+          math.exp(logVelocity * _kDecelerationRate / (_kDecelerationRate - 1.0));
       return (distance.abs() - distanceAgain).abs() < tolerance.distance;
     }());
     return distance;

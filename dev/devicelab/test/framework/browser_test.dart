@@ -10,14 +10,11 @@ import 'browser_test_json_samples.dart';
 void main() {
   group('BlinkTraceEvent works with Chrome 89+', () {
     // Used to test 'false' results
-    final BlinkTraceEvent unrelatedPhX =
-        BlinkTraceEvent.fromJson(unrelatedPhXJson);
-    final BlinkTraceEvent anotherUnrelated =
-        BlinkTraceEvent.fromJson(anotherUnrelatedJson);
+    final BlinkTraceEvent unrelatedPhX = BlinkTraceEvent.fromJson(unrelatedPhXJson);
+    final BlinkTraceEvent anotherUnrelated = BlinkTraceEvent.fromJson(anotherUnrelatedJson);
 
     test('isBeginFrame', () {
-      final BlinkTraceEvent event =
-          BlinkTraceEvent.fromJson(beginMainFrameJson_89plus);
+      final BlinkTraceEvent event = BlinkTraceEvent.fromJson(beginMainFrameJson_89plus);
 
       expect(event.isBeginFrame, isTrue);
       expect(unrelatedPhX.isBeginFrame, isFalse);
@@ -25,8 +22,7 @@ void main() {
     });
 
     test('isUpdateAllLifecyclePhases', () {
-      final BlinkTraceEvent event =
-          BlinkTraceEvent.fromJson(updateLifecycleJson_89plus);
+      final BlinkTraceEvent event = BlinkTraceEvent.fromJson(updateLifecycleJson_89plus);
 
       expect(event.isUpdateAllLifecyclePhases, isTrue);
       expect(unrelatedPhX.isUpdateAllLifecyclePhases, isFalse);
@@ -34,8 +30,7 @@ void main() {
     });
 
     test('isBeginMeasuredFrame', () {
-      final BlinkTraceEvent event =
-          BlinkTraceEvent.fromJson(beginMeasuredFrameJson_89plus);
+      final BlinkTraceEvent event = BlinkTraceEvent.fromJson(beginMeasuredFrameJson_89plus);
 
       expect(event.isBeginMeasuredFrame, isTrue);
       expect(unrelatedPhX.isBeginMeasuredFrame, isFalse);
@@ -43,8 +38,7 @@ void main() {
     });
 
     test('isEndMeasuredFrame', () {
-      final BlinkTraceEvent event =
-          BlinkTraceEvent.fromJson(endMeasuredFrameJson_89plus);
+      final BlinkTraceEvent event = BlinkTraceEvent.fromJson(endMeasuredFrameJson_89plus);
 
       expect(event.isEndMeasuredFrame, isTrue);
       expect(unrelatedPhX.isEndMeasuredFrame, isFalse);

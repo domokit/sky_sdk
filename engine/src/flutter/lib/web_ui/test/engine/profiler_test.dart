@@ -85,9 +85,10 @@ void _profilerTests() {
   group('[JS API]', () {
     test('can listen to benchmarks', () {
       final List<BenchmarkDatapoint> data = <BenchmarkDatapoint>[];
-      jsBenchmarkValueCallback = (String name, double value) {
-        data.add((name, value));
-      }.toJS;
+      jsBenchmarkValueCallback =
+          (String name, double value) {
+            data.add((name, value));
+          }.toJS;
 
       Profiler.instance.benchmark('foo', 123);
       expect(warnings, hasLength(1));
@@ -114,9 +115,10 @@ void _profilerTests() {
       final List<BenchmarkDatapoint> data = <BenchmarkDatapoint>[];
 
       // Wrong callback signature.
-      jsBenchmarkValueCallback = (double value) {
-        data.add(('bad', value));
-      }.toJS;
+      jsBenchmarkValueCallback =
+          (double value) {
+            data.add(('bad', value));
+          }.toJS;
       expect(
         () => Profiler.instance.benchmark('foo', 123),
 
@@ -143,9 +145,10 @@ void _profilerTests() {
       ui_web.benchmarkValueCallback = (String name, double value) {
         uiWebData.add((name, value));
       };
-      jsBenchmarkValueCallback = (String name, double value) {
-        jsData.add((name, value));
-      }.toJS;
+      jsBenchmarkValueCallback =
+          (String name, double value) {
+            jsData.add((name, value));
+          }.toJS;
 
       Profiler.instance.benchmark('foo', 123);
       expect(warnings, hasLength(1));

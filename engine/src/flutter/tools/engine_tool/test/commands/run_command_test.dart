@@ -49,10 +49,7 @@ void main() {
       engine: testEngine,
       logger: Logger.test((_) {}),
       platform: _fakePlatform(Platform.linux),
-      processRunner: ProcessRunner(
-        defaultWorkingDirectory: tempRoot,
-        processManager: failsCanRun,
-      ),
+      processRunner: ProcessRunner(defaultWorkingDirectory: tempRoot, processManager: failsCanRun),
     );
 
     final et = _engineTool(
@@ -76,9 +73,7 @@ void main() {
   });
 
   group('configuration failures', () {
-    final unusedProcessManager = FakeProcessManager(
-      canRun: (_, {workingDirectory}) => true,
-    );
+    final unusedProcessManager = FakeProcessManager(canRun: (_, {workingDirectory}) => true);
 
     late List<LogRecord> testLogs;
     late Environment testEnvironment;
@@ -107,15 +102,15 @@ void main() {
         targetDir: 'android_debug_arm64',
       );
 
-      final et = _engineTool(RunCommand(
-        environment: testEnvironment,
-        configs: {
-          'linux_test_config': builders.buildConfig(
-            path: 'ci/builders/linux_test_config.json',
-          ),
-        },
-        flutterTool: flutterTool,
-      ));
+      final et = _engineTool(
+        RunCommand(
+          environment: testEnvironment,
+          configs: {
+            'linux_test_config': builders.buildConfig(path: 'ci/builders/linux_test_config.json'),
+          },
+          flutterTool: flutterTool,
+        ),
+      );
 
       expect(
         () => et.run(['run', '--config=android_debug_arm64']),
@@ -182,12 +177,7 @@ void main() {
       );
 
       // Create an RBE directory by default.
-      rbeDir = io.Directory(p.join(
-        testEngine.srcDir.path,
-        'flutter',
-        'build',
-        'rbe',
-      ));
+      rbeDir = io.Directory(p.join(testEngine.srcDir.path, 'flutter', 'build', 'rbe'));
       rbeDir.createSync(recursive: true);
 
       // Set up the environment for the test.
@@ -205,14 +195,14 @@ void main() {
       );
 
       // Set up the Flutter tool for the test.
-      et = _engineTool(RunCommand(
-        environment: testEnvironment,
-        configs: {
-          'linux_test_config': builders.buildConfig(
-            path: 'ci/builders/linux_test_config.json',
-          ),
-        },
-      ));
+      et = _engineTool(
+        RunCommand(
+          environment: testEnvironment,
+          configs: {
+            'linux_test_config': builders.buildConfig(path: 'ci/builders/linux_test_config.json'),
+          },
+        ),
+      );
 
       // Reset logs.
       commandsRun = [];
@@ -227,57 +217,37 @@ void main() {
     });
 
     test('build includes RBE flags when enabled implicitly', () async {
-      await et.run([
-        'run',
-        '--config=android_debug_arm64',
-      ]);
+      await et.run(['run', '--config=android_debug_arm64']);
 
       expect(
         commandsRun,
         containsAllInOrder([
           // ./tools/gn --rbe
-          containsAllInOrder([
-            endsWith('tools/gn'),
-            contains('--rbe'),
-          ]),
+          containsAllInOrder([endsWith('tools/gn'), contains('--rbe')]),
 
           // ./reclient/bootstrap
-          containsAllInOrder([
-            endsWith('reclient/bootstrap'),
-          ]),
+          containsAllInOrder([endsWith('reclient/bootstrap')]),
         ]),
       );
     });
 
     test('build excludes RBE flags when disabled', () async {
-      await et.run([
-        'run',
-        '--config=android_debug_arm64',
-        '--no-rbe',
-      ]);
+      await et.run(['run', '--config=android_debug_arm64', '--no-rbe']);
 
       expect(
         commandsRun,
         containsAllInOrder([
           // ./tools/gn --no-rbe
-          containsAllInOrder([
-            endsWith('tools/gn'),
-            contains('--no-rbe'),
-          ]),
+          containsAllInOrder([endsWith('tools/gn'), contains('--no-rbe')]),
 
           // ./reclient/bootstrap
-          isNot(containsAllInOrder([
-            endsWith('reclient/bootstrap'),
-          ])),
+          isNot(containsAllInOrder([endsWith('reclient/bootstrap')])),
         ]),
       );
     });
 
     test('picks a default concurrency for RBE builds', () async {
-      await et.run([
-        'run',
-        '--config=android_debug_arm64',
-      ]);
+      await et.run(['run', '--config=android_debug_arm64']);
 
       expect(
         commandsRun,
@@ -293,39 +263,23 @@ void main() {
     });
 
     test('does not define a default concurrency for non-RBE builds', () async {
-      await et.run([
-        'run',
-        '--no-rbe',
-        '--config=android_debug_arm64',
-      ]);
+      await et.run(['run', '--no-rbe', '--config=android_debug_arm64']);
 
       expect(
         commandsRun,
         containsAllInOrder([
-          containsAllInOrder([
-            endsWith('ninja/ninja'),
-            isNot(contains('-j')),
-          ]),
+          containsAllInOrder([endsWith('ninja/ninja'), isNot(contains('-j'))]),
         ]),
       );
     });
 
     test('define a user-specified concurrency for non-RBE builds', () async {
-      await et.run([
-        'run',
-        '--concurrency=42',
-        '--no-rbe',
-        '--config=android_debug_arm64',
-      ]);
+      await et.run(['run', '--concurrency=42', '--no-rbe', '--config=android_debug_arm64']);
 
       expect(
         commandsRun,
         containsAllInOrder([
-          containsAllInOrder([
-            endsWith('ninja/ninja'),
-            contains('-j'),
-            '42',
-          ]),
+          containsAllInOrder([endsWith('ninja/ninja'), contains('-j'), '42']),
         ]),
       );
     });
@@ -343,10 +297,7 @@ void main() {
       ));
 
       expect(
-        () => et.run([
-          'run',
-          '--config=android_debug_arm64',
-        ]),
+        () => et.run(['run', '--config=android_debug_arm64']),
         throwsA(
           isA<FatalError>().having(
             (a) => a.toString(),
@@ -369,10 +320,7 @@ void main() {
       ));
 
       expect(
-        () => et.run([
-          'run',
-          '--config=android_debug_arm64',
-        ]),
+        () => et.run(['run', '--config=android_debug_arm64']),
         throwsA(
           isA<FatalError>().having(
             (a) => a.toString(),
@@ -384,47 +332,25 @@ void main() {
     });
 
     test('builds only once if the target and host are the same', () async {
-      await et.run([
-        'run',
-        '--config=host_debug',
-      ]);
+      await et.run(['run', '--config=host_debug']);
 
-      expect(
-        commandsRun,
-        containsOnce(
-          containsAllInOrder([
-            endsWith('ninja'),
-          ]),
-        ),
-      );
+      expect(commandsRun, containsOnce(containsAllInOrder([endsWith('ninja')])));
     });
 
     test('builds both the target and host if they are different', () async {
-      await et.run([
-        'run',
-        '--config=android_debug_arm64',
-      ]);
+      await et.run(['run', '--config=android_debug_arm64']);
 
       expect(
         commandsRun,
         containsAllInOrder([
-          containsAllInOrder([
-            endsWith('ninja'),
-            contains('host_debug'),
-          ]),
-          containsAllInOrder([
-            endsWith('ninja'),
-            contains('android_debug_arm64'),
-          ]),
+          containsAllInOrder([endsWith('ninja'), contains('host_debug')]),
+          containsAllInOrder([endsWith('ninja'), contains('android_debug_arm64')]),
         ]),
       );
     });
 
     test('delegates to `flutter run` with --local-engine flags', () async {
-      await et.run([
-        'run',
-        '--config=android_debug_arm64',
-      ]);
+      await et.run(['run', '--config=android_debug_arm64']);
 
       expect(
         commandsRun,
@@ -446,21 +372,12 @@ void main() {
     group('delegates to `flutter run` in mode', () {
       for (final mode in const ['debug', 'profile', 'release']) {
         test('$mode mode', () async {
-          await et.run([
-            'run',
-            '--config=android_debug_arm64',
-            '--',
-            '--$mode',
-          ]);
+          await et.run(['run', '--config=android_debug_arm64', '--', '--$mode']);
 
           expect(
             commandsRun,
             containsAllInOrder([
-              containsAllInOrder([
-                endsWith('flutter'),
-                contains('run'),
-                contains('--$mode'),
-              ]),
+              containsAllInOrder([endsWith('flutter'), contains('run'), contains('--$mode')]),
             ]),
           );
         });
@@ -474,17 +391,11 @@ void main() {
 }
 
 CommandRunner<int> _engineTool(RunCommand runCommand) {
-  return CommandRunner<int>(
-    'et',
-    'Fake tool with a single instrumented command.',
-  )..addCommand(runCommand);
+  return CommandRunner<int>('et', 'Fake tool with a single instrumented command.')
+    ..addCommand(runCommand);
 }
 
-Platform _fakePlatform(
-  String os, {
-  int numberOfProcessors = 32,
-  String pathSeparator = '/',
-}) {
+Platform _fakePlatform(String os, {int numberOfProcessors = 32, String pathSeparator = '/'}) {
   return FakePlatform(
     operatingSystem: os,
     resolvedExecutable: io.Platform.resolvedExecutable,

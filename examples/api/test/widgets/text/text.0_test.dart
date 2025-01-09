@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('WidgetsApp test', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.DefaultTextStyleApp(),
-    );
+    await tester.pumpWidget(const example.DefaultTextStyleApp());
 
     expect(find.text('Flutter'), findsOneWidget);
 

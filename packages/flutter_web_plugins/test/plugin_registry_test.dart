@@ -44,8 +44,7 @@ void main() {
     test('can register a plugin', () {
       TestPlugin.calledMethods.clear();
 
-      const MethodChannel frameworkChannel =
-          MethodChannel('test_plugin');
+      const MethodChannel frameworkChannel = MethodChannel('test_plugin');
       frameworkChannel.invokeMethod<void>('test1');
 
       expect(TestPlugin.calledMethods, equals(<String>['test1']));
@@ -55,22 +54,20 @@ void main() {
       const StandardMessageCodec codec = StandardMessageCodec();
 
       final List<String> loggedMessages = <String>[];
-      ServicesBinding.instance.defaultBinaryMessenger
-          .setMessageHandler('test_send', (ByteData? data) {
+      ServicesBinding.instance.defaultBinaryMessenger.setMessageHandler('test_send', (
+        ByteData? data,
+      ) {
         loggedMessages.add(codec.decodeMessage(data)! as String);
         return Future<ByteData?>.value();
       });
 
-      await pluginBinaryMessenger.send(
-          'test_send', codec.encodeMessage('hello'));
+      await pluginBinaryMessenger.send('test_send', codec.encodeMessage('hello'));
       expect(loggedMessages, equals(<String>['hello']));
 
-      await pluginBinaryMessenger.send(
-          'test_send', codec.encodeMessage('world'));
+      await pluginBinaryMessenger.send('test_send', codec.encodeMessage('world'));
       expect(loggedMessages, equals(<String>['hello', 'world']));
 
-      ServicesBinding.instance.defaultBinaryMessenger
-          .setMessageHandler('test_send', null);
+      ServicesBinding.instance.defaultBinaryMessenger.setMessageHandler('test_send', null);
     });
   });
 }

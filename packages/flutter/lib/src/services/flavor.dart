@@ -6,5 +6,7 @@
 ///
 /// This is equivalent to the value argued to the `--flavor` option at build time.
 /// This will be `null` if the `--flavor` option was not provided.
-const String? appFlavor = String.fromEnvironment('FLUTTER_APP_FLAVOR') != '' ?
-  String.fromEnvironment('FLUTTER_APP_FLAVOR') : null;
+const String? appFlavor =
+    String.fromEnvironment('FLUTTER_APP_FLAVOR') != ''
+        ? String.fromEnvironment('FLUTTER_APP_FLAVOR')
+        : null;

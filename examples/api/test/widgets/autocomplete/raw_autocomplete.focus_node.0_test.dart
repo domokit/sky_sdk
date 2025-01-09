@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/autocomplete/raw_autocomplete.focus_node.0.dart' as example;
+import 'package:flutter_api_samples/widgets/autocomplete/raw_autocomplete.focus_node.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -13,10 +14,7 @@ void main() {
     expect(find.byType(AppBar), findsOneWidget);
     expect(find.byType(TextFormField), findsOneWidget);
     expect(
-      find.descendant(
-        of: find.byType(AppBar),
-        matching: find.byType(TextFormField)
-      ),
+      find.descendant(of: find.byType(AppBar), matching: find.byType(TextFormField)),
       findsOneWidget,
     );
 
@@ -25,10 +23,7 @@ void main() {
     expect(find.text('bobcat'), findsNothing);
     expect(find.text('chameleon'), findsNothing);
     expect(
-      find.ancestor(
-        matching: find.byType(AppBar),
-        of: find.byType(RawAutocomplete)
-      ),
+      find.ancestor(matching: find.byType(AppBar), of: find.byType(RawAutocomplete)),
       findsNothing,
     );
   });
@@ -56,10 +51,7 @@ void main() {
 
     expect(find.byType(ListTile), findsNothing);
     expect(
-      find.descendant(
-        of: find.byType(TextFormField),
-        matching: find.text('bobcat'),
-      ),
+      find.descendant(of: find.byType(TextFormField), matching: find.text('bobcat')),
       findsOneWidget,
     );
   });

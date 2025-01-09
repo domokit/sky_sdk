@@ -98,7 +98,15 @@ class FontWeight {
 
   /// A list of all the font weights.
   static const List<FontWeight> values = <FontWeight>[
-    w100, w200, w300, w400, w500, w600, w700, w800, w900
+    w100,
+    w200,
+    w300,
+    w400,
+    w500,
+    w600,
+    w700,
+    w800,
+    w900,
   ];
 
   /// Linearly interpolates between two font weights.
@@ -184,10 +192,8 @@ class FontFeature {
   /// flags whose value can be 1 (when enabled) or 0 (when disabled).
   ///
   /// See <https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags>
-  const FontFeature(
-    this.feature,
-    [ this.value = 1 ]
-  ) : assert(feature.length == 4, 'Feature tag must be exactly four characters long.'),
+  const FontFeature(this.feature, [this.value = 1])
+    : assert(feature.length == 4, 'Feature tag must be exactly four characters long.'),
       assert(value >= 0, 'Feature value must be zero or a positive integer.');
 
   /// Create a [FontFeature] object that enables the feature with the given tag.
@@ -547,7 +553,7 @@ class FontFeature {
   ///  * <https://docs.microsoft.com/en-us/typography/opentype/spec/features_ko#locl>
   ///  * <https://en.wikipedia.org/wiki/Han_unification>
   ///  * <https://en.wikipedia.org/wiki/Cyrillic_script>
-  const FontFeature.localeAware({ bool enable = true }) : feature = 'locl', value = enable ? 1 : 0;
+  const FontFeature.localeAware({bool enable = true}) : feature = 'locl', value = enable ? 1 : 0;
 
   /// Display alternative glyphs for numerals (alternate annotation forms). (`nalt`)
   ///
@@ -968,9 +974,7 @@ class FontFeature {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is FontFeature
-        && other.feature == feature
-        && other.value == value;
+    return other is FontFeature && other.feature == feature && other.value == value;
   }
 
   @override
@@ -1012,11 +1016,12 @@ class FontVariation {
   ///
   /// `value` is the value that the axis will be set to. The behavior
   /// depends on how the font implements the axis.
-  const FontVariation(
-    this.axis,
-    this.value,
-  ) : assert(axis.length == 4, 'Axis tag must be exactly four characters long.'),
-      assert(value >= -32768.0 && value < 32768.0, 'Value must be representable as a signed 16.16 fixed-point number, i.e. it must be in this range: -32768.0 ≤ value < 32768.0');
+  const FontVariation(this.axis, this.value)
+    : assert(axis.length == 4, 'Axis tag must be exactly four characters long.'),
+      assert(
+        value >= -32768.0 && value < 32768.0,
+        'Value must be representable as a signed 16.16 fixed-point number, i.e. it must be in this range: -32768.0 ≤ value < 32768.0',
+      );
 
   // Constructors below should be alphabetic by axis tag. This makes it easier
   // to determine when an axis is missing so that we avoid adding duplicates.
@@ -1038,7 +1043,10 @@ class FontVariation {
   /// See also:
   ///
   ///  * <https://learn.microsoft.com/en-us/typography/opentype/spec/dvaraxistag_ital>
-  const FontVariation.italic(this.value) : assert(value >= 0.0), assert(value <= 1.0), axis = 'ital';
+  const FontVariation.italic(this.value)
+    : assert(value >= 0.0),
+      assert(value <= 1.0),
+      axis = 'ital';
 
   /// Optical size optimization. (`opzs`)
   ///
@@ -1082,7 +1090,10 @@ class FontVariation {
   /// See also:
   ///
   ///  * <https://learn.microsoft.com/en-us/typography/opentype/spec/dvaraxistag_slnt>
-  const FontVariation.slant(this.value) : assert(value > -90.0), assert(value < 90.0), axis = 'slnt';
+  const FontVariation.slant(this.value)
+    : assert(value > -90.0),
+      assert(value < 90.0),
+      axis = 'slnt';
 
   /// Variable font width. (`wdth`)
   ///
@@ -1154,9 +1165,7 @@ class FontVariation {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is FontVariation
-        && other.axis == axis
-        && other.value == value;
+    return other is FontVariation && other.axis == axis && other.value == value;
   }
 
   @override
@@ -1189,7 +1198,7 @@ class FontVariation {
     }
     return FontVariation(
       a!.axis,
-      clampDouble(lerpDouble(a.value, b!.value, t)!, -32768.0, 32768.0 - 1.0/65536.0),
+      clampDouble(lerpDouble(a.value, b!.value, t)!, -32768.0, 32768.0 - 1.0 / 65536.0),
     );
   }
 
@@ -1208,10 +1217,21 @@ class FontVariation {
 ///    the glyph(s) onscreen that's closest to the given [Offset].
 final class GlyphInfo {
   /// Creates a [GlyphInfo] with the specified values.
-  GlyphInfo(this.graphemeClusterLayoutBounds, this.graphemeClusterCodeUnitRange, this.writingDirection);
+  GlyphInfo(
+    this.graphemeClusterLayoutBounds,
+    this.graphemeClusterCodeUnitRange,
+    this.writingDirection,
+  );
 
-  GlyphInfo._(double left, double top, double right, double bottom, int graphemeStart, int graphemeEnd, bool isLTR)
-    : graphemeClusterLayoutBounds = Rect.fromLTRB(left, top, right, bottom),
+  GlyphInfo._(
+    double left,
+    double top,
+    double right,
+    double bottom,
+    int graphemeStart,
+    int graphemeEnd,
+    bool isLTR,
+  ) : graphemeClusterLayoutBounds = Rect.fromLTRB(left, top, right, bottom),
       graphemeClusterCodeUnitRange = TextRange(start: graphemeStart, end: graphemeEnd),
       writingDirection = isLTR ? TextDirection.ltr : TextDirection.rtl;
 
@@ -1235,17 +1255,19 @@ final class GlyphInfo {
     if (identical(this, other)) {
       return true;
     }
-    return other is GlyphInfo
-        && graphemeClusterLayoutBounds == other.graphemeClusterLayoutBounds
-        && graphemeClusterCodeUnitRange == other.graphemeClusterCodeUnitRange
-        && writingDirection == other.writingDirection;
+    return other is GlyphInfo &&
+        graphemeClusterLayoutBounds == other.graphemeClusterLayoutBounds &&
+        graphemeClusterCodeUnitRange == other.graphemeClusterCodeUnitRange &&
+        writingDirection == other.writingDirection;
   }
 
   @override
-  int get hashCode => Object.hash(graphemeClusterLayoutBounds, graphemeClusterCodeUnitRange, writingDirection);
+  int get hashCode =>
+      Object.hash(graphemeClusterLayoutBounds, graphemeClusterCodeUnitRange, writingDirection);
 
   @override
-  String toString() => 'Glyph($graphemeClusterLayoutBounds, textRange: $graphemeClusterCodeUnitRange, direction: $writingDirection)';
+  String toString() =>
+      'Glyph($graphemeClusterLayoutBounds, textRange: $graphemeClusterCodeUnitRange, direction: $writingDirection)';
 }
 
 /// Whether and how to align text horizontally.
@@ -1324,8 +1346,7 @@ class TextDecoration {
 
   @override
   bool operator ==(Object other) {
-    return other is TextDecoration
-        && other._mask == _mask;
+    return other is TextDecoration && other._mask == _mask;
   }
 
   @override
@@ -1368,7 +1389,7 @@ enum TextDecorationStyle {
   dashed,
 
   /// Draw a sinusoidal line
-  wavy
+  wavy,
 }
 
 /// {@macro dart.ui.textLeadingDistribution}
@@ -1415,7 +1436,6 @@ enum TextLeadingDistribution {
 ///
 /// {@endtemplate}
 class TextHeightBehavior {
-
   /// Creates a new TextHeightBehavior object.
   ///
   ///  * applyHeightToFirstAscent: When true, the [TextStyle.height] modifier
@@ -1480,8 +1500,7 @@ class TextHeightBehavior {
   /// Returns an encoded int representation of this object (excluding
   /// [leadingDistribution]).
   int _encode() {
-    return (applyHeightToFirstAscent ? 0 : 1 << 0)
-         | (applyHeightToLastDescent ? 0 : 1 << 1);
+    return (applyHeightToFirstAscent ? 0 : 1 << 0) | (applyHeightToLastDescent ? 0 : 1 << 1);
   }
 
   @override
@@ -1489,10 +1508,10 @@ class TextHeightBehavior {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is TextHeightBehavior
-        && other.applyHeightToFirstAscent == applyHeightToFirstAscent
-        && other.applyHeightToLastDescent == applyHeightToLastDescent
-        && other.leadingDistribution == leadingDistribution;
+    return other is TextHeightBehavior &&
+        other.applyHeightToFirstAscent == applyHeightToFirstAscent &&
+        other.applyHeightToLastDescent == applyHeightToLastDescent &&
+        other.leadingDistribution == leadingDistribution;
   }
 
   @override
@@ -1507,10 +1526,10 @@ class TextHeightBehavior {
   @override
   String toString() {
     return 'TextHeightBehavior('
-             'applyHeightToFirstAscent: $applyHeightToFirstAscent, '
-             'applyHeightToLastDescent: $applyHeightToLastDescent, '
-             'leadingDistribution: $leadingDistribution'
-           ')';
+        'applyHeightToFirstAscent: $applyHeightToFirstAscent, '
+        'applyHeightToLastDescent: $applyHeightToLastDescent, '
+        'leadingDistribution: $leadingDistribution'
+        ')';
   }
 }
 
@@ -1724,9 +1743,10 @@ class TextStyle {
     List<Shadow>? shadows,
     List<FontFeature>? fontFeatures,
     List<FontVariation>? fontVariations,
-  }) : assert(color == null || foreground == null,
+  }) : assert(
+         color == null || foreground == null,
          'Cannot provide both a color and a foreground\n'
-         'The color argument is just a shorthand for "foreground: Paint()..color = color".'
+         'The color argument is just a shorthand for "foreground: Paint()..color = color".',
        ),
        _encoded = _encodeTextStyle(
          color,
@@ -1786,22 +1806,22 @@ class TextStyle {
     if (identical(this, other)) {
       return true;
     }
-    return other is TextStyle
-        && other._leadingDistribution == _leadingDistribution
-        && other._fontFamily == _fontFamily
-        && other._fontSize == _fontSize
-        && other._letterSpacing == _letterSpacing
-        && other._wordSpacing == _wordSpacing
-        && other._height == _height
-        && other._decorationThickness == _decorationThickness
-        && other._locale == _locale
-        && other._background == _background
-        && other._foreground == _foreground
-        && _listEquals<int>(other._encoded, _encoded)
-        && _listEquals<Shadow>(other._shadows, _shadows)
-        && _listEquals<String>(other._fontFamilyFallback, _fontFamilyFallback)
-        && _listEquals<FontFeature>(other._fontFeatures, _fontFeatures)
-        && _listEquals<FontVariation>(other._fontVariations, _fontVariations);
+    return other is TextStyle &&
+        other._leadingDistribution == _leadingDistribution &&
+        other._fontFamily == _fontFamily &&
+        other._fontSize == _fontSize &&
+        other._letterSpacing == _letterSpacing &&
+        other._wordSpacing == _wordSpacing &&
+        other._height == _height &&
+        other._decorationThickness == _decorationThickness &&
+        other._locale == _locale &&
+        other._background == _background &&
+        other._foreground == _foreground &&
+        _listEquals<int>(other._encoded, _encoded) &&
+        _listEquals<Shadow>(other._shadows, _shadows) &&
+        _listEquals<String>(other._fontFamilyFallback, _fontFamilyFallback) &&
+        _listEquals<FontFeature>(other._fontFeatures, _fontFeatures) &&
+        _listEquals<FontVariation>(other._fontVariations, _fontVariations);
   }
 
   @override
@@ -1831,34 +1851,34 @@ class TextStyle {
   @override
   String toString() {
     final List<String>? fontFamilyFallback = _fontFamilyFallback;
-    final String heightText = _encoded[0] & 0x02000 == 0x02000  ? (_height == kTextHeightNone ? 'kTextHeightNone' : '${_height}x') : 'unspecified';
+    final String heightText =
+        _encoded[0] & 0x02000 == 0x02000
+            ? (_height == kTextHeightNone ? 'kTextHeightNone' : '${_height}x')
+            : 'unspecified';
     return 'TextStyle('
-             'color: ${              _encoded[0] & 0x00002 == 0x00002  ? Color(_encoded[1])                           : "unspecified"}, '
-             'decoration: ${         _encoded[0] & 0x00004 == 0x00004  ? TextDecoration._(_encoded[2])                : "unspecified"}, '
-             'decorationColor: ${    _encoded[0] & 0x00008 == 0x00008  ? Color(_encoded[3])                           : "unspecified"}, '
-             'decorationStyle: ${    _encoded[0] & 0x00010 == 0x00010  ? TextDecorationStyle.values[_encoded[4]]      : "unspecified"}, '
-             // The decorationThickness is not in encoded order in order to keep it near the other decoration properties.
-             'decorationThickness: ${_encoded[0] & 0x00100 == 0x00100  ? _decorationThickness                         : "unspecified"}, '
-             'fontWeight: ${         _encoded[0] & 0x00020 == 0x00020  ? FontWeight.values[_encoded[5]]               : "unspecified"}, '
-             'fontStyle: ${          _encoded[0] & 0x00040 == 0x00040  ? FontStyle.values[_encoded[6]]                : "unspecified"}, '
-             'textBaseline: ${       _encoded[0] & 0x00080 == 0x00080  ? TextBaseline.values[_encoded[7]]             : "unspecified"}, '
-             'fontFamily: ${         _encoded[0] & 0x00200 == 0x00200
-                                     && _fontFamily != ''              ? _fontFamily                                  : "unspecified"}, '
-             'fontFamilyFallback: ${ _encoded[0] & 0x00200 == 0x00200
-                                     && fontFamilyFallback != null
-                                     && fontFamilyFallback.isNotEmpty ? fontFamilyFallback                            : "unspecified"}, '
-             'fontSize: ${           _encoded[0] & 0x00400 == 0x00400  ? _fontSize                                    : "unspecified"}, '
-             'letterSpacing: ${      _encoded[0] & 0x00800 == 0x00800  ? "${_letterSpacing}x"                         : "unspecified"}, '
-             'wordSpacing: ${        _encoded[0] & 0x01000 == 0x01000  ? "${_wordSpacing}x"                           : "unspecified"}, '
-             'height: $heightText, '
-             'leadingDistribution: ${_leadingDistribution ?? "unspecified"}, '
-             'locale: ${             _encoded[0] & 0x04000 == 0x04000  ? _locale                                      : "unspecified"}, '
-             'background: ${         _encoded[0] & 0x08000 == 0x08000  ? _background                                  : "unspecified"}, '
-             'foreground: ${         _encoded[0] & 0x10000 == 0x10000  ? _foreground                                  : "unspecified"}, '
-             'shadows: ${            _encoded[0] & 0x20000 == 0x20000  ? _shadows                                     : "unspecified"}, '
-             'fontFeatures: ${       _encoded[0] & 0x40000 == 0x40000  ? _fontFeatures                                : "unspecified"}, '
-             'fontVariations: ${     _encoded[0] & 0x80000 == 0x80000  ? _fontVariations                              : "unspecified"}'
-           ')';
+        'color: ${_encoded[0] & 0x00002 == 0x00002 ? Color(_encoded[1]) : "unspecified"}, '
+        'decoration: ${_encoded[0] & 0x00004 == 0x00004 ? TextDecoration._(_encoded[2]) : "unspecified"}, '
+        'decorationColor: ${_encoded[0] & 0x00008 == 0x00008 ? Color(_encoded[3]) : "unspecified"}, '
+        'decorationStyle: ${_encoded[0] & 0x00010 == 0x00010 ? TextDecorationStyle.values[_encoded[4]] : "unspecified"}, '
+        // The decorationThickness is not in encoded order in order to keep it near the other decoration properties.
+        'decorationThickness: ${_encoded[0] & 0x00100 == 0x00100 ? _decorationThickness : "unspecified"}, '
+        'fontWeight: ${_encoded[0] & 0x00020 == 0x00020 ? FontWeight.values[_encoded[5]] : "unspecified"}, '
+        'fontStyle: ${_encoded[0] & 0x00040 == 0x00040 ? FontStyle.values[_encoded[6]] : "unspecified"}, '
+        'textBaseline: ${_encoded[0] & 0x00080 == 0x00080 ? TextBaseline.values[_encoded[7]] : "unspecified"}, '
+        'fontFamily: ${_encoded[0] & 0x00200 == 0x00200 && _fontFamily != '' ? _fontFamily : "unspecified"}, '
+        'fontFamilyFallback: ${_encoded[0] & 0x00200 == 0x00200 && fontFamilyFallback != null && fontFamilyFallback.isNotEmpty ? fontFamilyFallback : "unspecified"}, '
+        'fontSize: ${_encoded[0] & 0x00400 == 0x00400 ? _fontSize : "unspecified"}, '
+        'letterSpacing: ${_encoded[0] & 0x00800 == 0x00800 ? "${_letterSpacing}x" : "unspecified"}, '
+        'wordSpacing: ${_encoded[0] & 0x01000 == 0x01000 ? "${_wordSpacing}x" : "unspecified"}, '
+        'height: $heightText, '
+        'leadingDistribution: ${_leadingDistribution ?? "unspecified"}, '
+        'locale: ${_encoded[0] & 0x04000 == 0x04000 ? _locale : "unspecified"}, '
+        'background: ${_encoded[0] & 0x08000 == 0x08000 ? _background : "unspecified"}, '
+        'foreground: ${_encoded[0] & 0x10000 == 0x10000 ? _foreground : "unspecified"}, '
+        'shadows: ${_encoded[0] & 0x20000 == 0x20000 ? _shadows : "unspecified"}, '
+        'fontFeatures: ${_encoded[0] & 0x40000 == 0x40000 ? _fontFeatures : "unspecified"}, '
+        'fontVariations: ${_encoded[0] & 0x80000 == 0x80000 ? _fontVariations : "unspecified"}'
+        ')';
   }
 }
 
@@ -2047,7 +2067,8 @@ class ParagraphStyle {
        _strutStyle = strutStyle,
        _ellipsis = ellipsis,
        _locale = locale,
-       _leadingDistribution = textHeightBehavior?.leadingDistribution ?? TextLeadingDistribution.proportional;
+       _leadingDistribution =
+           textHeightBehavior?.leadingDistribution ?? TextLeadingDistribution.proportional;
 
   final Int32List _encoded;
   final String? _fontFamily;
@@ -2066,38 +2087,44 @@ class ParagraphStyle {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ParagraphStyle
-        && other._fontFamily == _fontFamily
-        && other._fontSize == _fontSize
-        && other._height == _height
-        && other._strutStyle == _strutStyle
-        && other._ellipsis == _ellipsis
-        && other._locale == _locale
-        && other._leadingDistribution == _leadingDistribution
-        && _listEquals<int>(other._encoded, _encoded);
+    return other is ParagraphStyle &&
+        other._fontFamily == _fontFamily &&
+        other._fontSize == _fontSize &&
+        other._height == _height &&
+        other._strutStyle == _strutStyle &&
+        other._ellipsis == _ellipsis &&
+        other._locale == _locale &&
+        other._leadingDistribution == _leadingDistribution &&
+        _listEquals<int>(other._encoded, _encoded);
   }
 
   @override
-  int get hashCode => Object.hash(Object.hashAll(_encoded), _fontFamily, _fontSize, _height, _ellipsis, _locale, _leadingDistribution);
+  int get hashCode => Object.hash(
+    Object.hashAll(_encoded),
+    _fontFamily,
+    _fontSize,
+    _height,
+    _ellipsis,
+    _locale,
+    _leadingDistribution,
+  );
 
   @override
   String toString() {
     return 'ParagraphStyle('
-             'textAlign: ${     _encoded[0] & 0x002 == 0x002 ? TextAlign.values[_encoded[1]]     : "unspecified"}, '
-             'textDirection: ${ _encoded[0] & 0x004 == 0x004 ? TextDirection.values[_encoded[2]] : "unspecified"}, '
-             'fontWeight: ${    _encoded[0] & 0x008 == 0x008 ? FontWeight.values[_encoded[3]]    : "unspecified"}, '
-             'fontStyle: ${     _encoded[0] & 0x010 == 0x010 ? FontStyle.values[_encoded[4]]     : "unspecified"}, '
-             'maxLines: ${      _encoded[0] & 0x020 == 0x020 ? _encoded[5]                       : "unspecified"}, '
-             'textHeightBehavior: ${
-                                _encoded[0] & 0x040 == 0x040 ?
-                                          TextHeightBehavior._fromEncoded(_encoded[6], _leadingDistribution).toString() : "unspecified"}, '
-             'fontFamily: ${    _encoded[0] & 0x080 == 0x080 ? _fontFamily                       : "unspecified"}, '
-             'fontSize: ${      _encoded[0] & 0x100 == 0x100 ? _fontSize                         : "unspecified"}, '
-             'height: ${        _encoded[0] & 0x200 == 0x200 ? "${_height}x"                     : "unspecified"}, '
-             'strutStyle: ${    _encoded[0] & 0x400 == 0x400 ? _strutStyle                       : "unspecified"}, '
-             'ellipsis: ${      _encoded[0] & 0x800 == 0x800 ? '"$_ellipsis"'                    : "unspecified"}, '
-             'locale: ${        _encoded[0] & 0x1000 == 0x1000 ? _locale                         : "unspecified"}'
-           ')';
+        'textAlign: ${_encoded[0] & 0x002 == 0x002 ? TextAlign.values[_encoded[1]] : "unspecified"}, '
+        'textDirection: ${_encoded[0] & 0x004 == 0x004 ? TextDirection.values[_encoded[2]] : "unspecified"}, '
+        'fontWeight: ${_encoded[0] & 0x008 == 0x008 ? FontWeight.values[_encoded[3]] : "unspecified"}, '
+        'fontStyle: ${_encoded[0] & 0x010 == 0x010 ? FontStyle.values[_encoded[4]] : "unspecified"}, '
+        'maxLines: ${_encoded[0] & 0x020 == 0x020 ? _encoded[5] : "unspecified"}, '
+        'textHeightBehavior: ${_encoded[0] & 0x040 == 0x040 ? TextHeightBehavior._fromEncoded(_encoded[6], _leadingDistribution).toString() : "unspecified"}, '
+        'fontFamily: ${_encoded[0] & 0x080 == 0x080 ? _fontFamily : "unspecified"}, '
+        'fontSize: ${_encoded[0] & 0x100 == 0x100 ? _fontSize : "unspecified"}, '
+        'height: ${_encoded[0] & 0x200 == 0x200 ? "${_height}x" : "unspecified"}, '
+        'strutStyle: ${_encoded[0] & 0x400 == 0x400 ? _strutStyle : "unspecified"}, '
+        'ellipsis: ${_encoded[0] & 0x800 == 0x800 ? '"$_ellipsis"' : "unspecified"}, '
+        'locale: ${_encoded[0] & 0x1000 == 0x1000 ? _locale : "unspecified"}'
+        ')';
   }
 }
 
@@ -2119,18 +2146,19 @@ ByteData _encodeStrut(
   double? leading,
   FontWeight? fontWeight,
   FontStyle? fontStyle,
-  bool? forceStrutHeight) {
+  bool? forceStrutHeight,
+) {
   // Strut styles are unique in a paragraph, there is no inheriting so
   // height == null and height == kTextHeightNone are semantically equivalent.
   final bool hasHeightOverride = height != null && height != kTextHeightNone;
   if (fontFamily == null &&
-    fontSize == null &&
-    !hasHeightOverride &&
-    leadingDistribution == null &&
-    leading == null &&
-    fontWeight == null &&
-    fontStyle == null &&
-    forceStrutHeight == null) {
+      fontSize == null &&
+      !hasHeightOverride &&
+      leadingDistribution == null &&
+      leading == null &&
+      fontWeight == null &&
+      fontStyle == null &&
+      forceStrutHeight == null) {
     return ByteData(0);
   }
 
@@ -2271,16 +2299,16 @@ class StrutStyle {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is StrutStyle
-        && other._fontFamily == _fontFamily
-        && other._leadingDistribution == _leadingDistribution
-        && _listEquals<String>(other._fontFamilyFallback, _fontFamilyFallback)
-        && _listEquals<int>(other._encoded.buffer.asInt8List(), _encoded.buffer.asInt8List());
+    return other is StrutStyle &&
+        other._fontFamily == _fontFamily &&
+        other._leadingDistribution == _leadingDistribution &&
+        _listEquals<String>(other._fontFamilyFallback, _fontFamilyFallback) &&
+        _listEquals<int>(other._encoded.buffer.asInt8List(), _encoded.buffer.asInt8List());
   }
 
   @override
-  int get hashCode => Object.hash(Object.hashAll(_encoded.buffer.asInt8List()), _fontFamily, _leadingDistribution);
-
+  int get hashCode =>
+      Object.hash(Object.hashAll(_encoded.buffer.asInt8List()), _fontFamily, _leadingDistribution);
 }
 
 /// A direction in which text flows.
@@ -2381,13 +2409,7 @@ enum TextDirection {
 /// This is similar to [Rect] but includes an inherent [TextDirection].
 class TextBox {
   /// Creates an object that describes a box containing text.
-  const TextBox.fromLTRBD(
-    this.left,
-    this.top,
-    this.right,
-    this.bottom,
-    this.direction,
-  );
+  const TextBox.fromLTRBD(this.left, this.top, this.right, this.bottom, this.direction);
 
   /// The left edge of the text box, irrespective of direction.
   ///
@@ -2437,19 +2459,20 @@ class TextBox {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is TextBox
-        && other.left == left
-        && other.top == top
-        && other.right == right
-        && other.bottom == bottom
-        && other.direction == direction;
+    return other is TextBox &&
+        other.left == left &&
+        other.top == top &&
+        other.right == right &&
+        other.bottom == bottom &&
+        other.direction == direction;
   }
 
   @override
   int get hashCode => Object.hash(left, top, right, bottom, direction);
 
   @override
-  String toString() => 'TextBox.fromLTRBD(${left.toStringAsFixed(1)}, ${top.toStringAsFixed(1)}, ${right.toStringAsFixed(1)}, ${bottom.toStringAsFixed(1)}, $direction)';
+  String toString() =>
+      'TextBox.fromLTRBD(${left.toStringAsFixed(1)}, ${top.toStringAsFixed(1)}, ${right.toStringAsFixed(1)}, ${bottom.toStringAsFixed(1)}, $direction)';
 }
 
 /// A way to disambiguate a [TextPosition] when its offset could match two
@@ -2519,10 +2542,7 @@ class TextPosition {
   /// Creates an object representing a particular position in a string.
   ///
   /// The arguments must not be null (so the [offset] argument is required).
-  const TextPosition({
-    required this.offset,
-    this.affinity = TextAffinity.downstream,
-  });
+  const TextPosition({required this.offset, this.affinity = TextAffinity.downstream});
 
   /// The index of the character that immediately follows the position in the
   /// string representation of the text.
@@ -2546,9 +2566,7 @@ class TextPosition {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is TextPosition
-        && other.offset == offset
-        && other.affinity == affinity;
+    return other is TextPosition && other.offset == offset && other.affinity == affinity;
   }
 
   @override
@@ -2572,19 +2590,14 @@ class TextRange {
   ///
   /// Instead of creating an empty text range, consider using the [empty]
   /// constant.
-  const TextRange({
-    required this.start,
-    required this.end,
-  }) : assert(start >= -1),
-       assert(end >= -1);
+  const TextRange({required this.start, required this.end})
+    : assert(start >= -1),
+      assert(end >= -1);
 
   /// A text range that starts and ends at offset.
   ///
   /// The [offset] argument must be non-null and greater than or equal to -1.
-  const TextRange.collapsed(int offset)
-      : assert(offset >= -1),
-        start = offset,
-        end = offset;
+  const TextRange.collapsed(int offset) : assert(offset >= -1), start = offset, end = offset;
 
   /// A text range that contains nothing and is not in the text.
   static const TextRange empty = TextRange(start: -1, end: -1);
@@ -2631,16 +2644,11 @@ class TextRange {
     if (identical(this, other)) {
       return true;
     }
-    return other is TextRange
-        && other.start == start
-        && other.end == end;
+    return other is TextRange && other.start == start && other.end == end;
   }
 
   @override
-  int get hashCode => Object.hash(
-    start.hashCode,
-    end.hashCode,
-  );
+  int get hashCode => Object.hash(start.hashCode, end.hashCode);
 
   @override
   String toString() => 'TextRange(start: $start, end: $end)';
@@ -2656,9 +2664,7 @@ class ParagraphConstraints {
   /// Creates constraints for laying out a paragraph.
   ///
   /// The [width] argument must not be null.
-  const ParagraphConstraints({
-    required this.width,
-  });
+  const ParagraphConstraints({required this.width});
 
   /// The width the paragraph should use whey computing the positions of glyphs.
   ///
@@ -2684,8 +2690,7 @@ class ParagraphConstraints {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ParagraphConstraints
-        && other.width == width;
+    return other is ParagraphConstraints && other.width == width;
   }
 
   @override
@@ -2920,32 +2925,42 @@ class LineMetrics {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is LineMetrics
-        && other.hardBreak == hardBreak
-        && other.ascent == ascent
-        && other.descent == descent
-        && other.unscaledAscent == unscaledAscent
-        && other.height == height
-        && other.width == width
-        && other.left == left
-        && other.baseline == baseline
-        && other.lineNumber == lineNumber;
+    return other is LineMetrics &&
+        other.hardBreak == hardBreak &&
+        other.ascent == ascent &&
+        other.descent == descent &&
+        other.unscaledAscent == unscaledAscent &&
+        other.height == height &&
+        other.width == width &&
+        other.left == left &&
+        other.baseline == baseline &&
+        other.lineNumber == lineNumber;
   }
 
   @override
-  int get hashCode => Object.hash(hardBreak, ascent, descent, unscaledAscent, height, width, left, baseline, lineNumber);
+  int get hashCode => Object.hash(
+    hardBreak,
+    ascent,
+    descent,
+    unscaledAscent,
+    height,
+    width,
+    left,
+    baseline,
+    lineNumber,
+  );
 
   @override
   String toString() {
     return 'LineMetrics(hardBreak: $hardBreak, '
-                       'ascent: $ascent, '
-                       'descent: $descent, '
-                       'unscaledAscent: $unscaledAscent, '
-                       'height: $height, '
-                       'width: $width, '
-                       'left: $left, '
-                       'baseline: $baseline, '
-                       'lineNumber: $lineNumber)';
+        'ascent: $ascent, '
+        'descent: $descent, '
+        'unscaledAscent: $unscaledAscent, '
+        'height: $height, '
+        'width: $width, '
+        'left: $left, '
+        'baseline: $baseline, '
+        'lineNumber: $lineNumber)';
   }
 }
 
@@ -3022,7 +3037,12 @@ abstract class Paragraph {
   /// The [boxHeightStyle] and [boxWidthStyle] parameters must not be null.
   ///
   /// See [BoxHeightStyle] and [BoxWidthStyle] for full descriptions of each option.
-  List<TextBox> getBoxesForRange(int start, int end, {BoxHeightStyle boxHeightStyle = BoxHeightStyle.tight, BoxWidthStyle boxWidthStyle = BoxWidthStyle.tight});
+  List<TextBox> getBoxesForRange(
+    int start,
+    int end, {
+    BoxHeightStyle boxHeightStyle = BoxHeightStyle.tight,
+    BoxWidthStyle boxWidthStyle = BoxWidthStyle.tight,
+  });
 
   /// Returns a list of text boxes that enclose all placeholders in the paragraph.
   ///
@@ -3178,6 +3198,7 @@ base class _NativeParagraph extends NativeFieldWrapperClass1 implements Paragrap
       return true;
     }());
   }
+
   @Native<Void Function(Pointer<Void>, Double)>(symbol: 'Paragraph::layout', isLeaf: true)
   external void _layout(double width);
 
@@ -3186,24 +3207,35 @@ base class _NativeParagraph extends NativeFieldWrapperClass1 implements Paragrap
     final List<TextBox> boxes = <TextBox>[];
     int position = 0;
     for (int index = 0; index < count; index += 1) {
-      boxes.add(TextBox.fromLTRBD(
-        encoded[position++],
-        encoded[position++],
-        encoded[position++],
-        encoded[position++],
-        TextDirection.values[encoded[position++].toInt()],
-      ));
+      boxes.add(
+        TextBox.fromLTRBD(
+          encoded[position++],
+          encoded[position++],
+          encoded[position++],
+          encoded[position++],
+          TextDirection.values[encoded[position++].toInt()],
+        ),
+      );
     }
     return boxes;
   }
 
   @override
-  List<TextBox> getBoxesForRange(int start, int end, {BoxHeightStyle boxHeightStyle = BoxHeightStyle.tight, BoxWidthStyle boxWidthStyle = BoxWidthStyle.tight}) {
-    return _decodeTextBoxes(_getBoxesForRange(start, end, boxHeightStyle.index, boxWidthStyle.index));
+  List<TextBox> getBoxesForRange(
+    int start,
+    int end, {
+    BoxHeightStyle boxHeightStyle = BoxHeightStyle.tight,
+    BoxWidthStyle boxWidthStyle = BoxWidthStyle.tight,
+  }) {
+    return _decodeTextBoxes(
+      _getBoxesForRange(start, end, boxHeightStyle.index, boxWidthStyle.index),
+    );
   }
 
   // See paragraph.cc for the layout of this return value.
-  @Native<Handle Function(Pointer<Void>, Uint32, Uint32, Uint32, Uint32)>(symbol: 'Paragraph::getRectsForRange')
+  @Native<Handle Function(Pointer<Void>, Uint32, Uint32, Uint32, Uint32)>(
+    symbol: 'Paragraph::getRectsForRange',
+  )
   external Float32List _getBoxesForRange(int start, int end, int boxHeightStyle, int boxWidthStyle);
 
   @override
@@ -3229,8 +3261,11 @@ base class _NativeParagraph extends NativeFieldWrapperClass1 implements Paragrap
   external GlyphInfo? _getGlyphInfoAt(int codeUnitOffset, Function constructor);
 
   @override
-  GlyphInfo? getClosestGlyphInfoForOffset(Offset offset) => _getClosestGlyphInfoForOffset(offset.dx, offset.dy, GlyphInfo._);
-  @Native<Handle Function(Pointer<Void>, Double, Double, Handle)>(symbol: 'Paragraph::getClosestGlyphInfo')
+  GlyphInfo? getClosestGlyphInfoForOffset(Offset offset) =>
+      _getClosestGlyphInfoForOffset(offset.dx, offset.dy, GlyphInfo._);
+  @Native<Handle Function(Pointer<Void>, Double, Double, Handle)>(
+    symbol: 'Paragraph::getClosestGlyphInfo',
+  )
   external GlyphInfo? _getClosestGlyphInfoForOffset(double dx, double dy, Function constructor);
 
   @override
@@ -3264,8 +3299,10 @@ base class _NativeParagraph extends NativeFieldWrapperClass1 implements Paragrap
     // _getLineBoundary only considers the offset and assumes that the
     // TextAffinity is upstream. In the case that TextPosition is just after a
     // word wrap (downstream), we need to return the line for the next offset.
-    if (position.affinity == TextAffinity.downstream && line != nextLine
-        && position.offset == line.end && line.end == nextLine.start) {
+    if (position.affinity == TextAffinity.downstream &&
+        line != nextLine &&
+        position.offset == line.end &&
+        line.end == nextLine.start) {
       return TextRange(start: nextBoundary[0], end: nextBoundary[1]);
     }
     return line;
@@ -3288,16 +3325,16 @@ base class _NativeParagraph extends NativeFieldWrapperClass1 implements Paragrap
     final List<LineMetrics> metrics = <LineMetrics>[
       for (int index = 0; index < count; index += 1)
         LineMetrics(
-          hardBreak:      encoded[position++] != 0,
-          ascent:         encoded[position++],
-          descent:        encoded[position++],
+          hardBreak: encoded[position++] != 0,
+          ascent: encoded[position++],
+          descent: encoded[position++],
           unscaledAscent: encoded[position++],
-          height:         encoded[position++],
-          width:          encoded[position++],
-          left:           encoded[position++],
-          baseline:       encoded[position++],
-          lineNumber:     encoded[position++].toInt(),
-        )
+          height: encoded[position++],
+          width: encoded[position++],
+          left: encoded[position++],
+          baseline: encoded[position++],
+          lineNumber: encoded[position++].toInt(),
+        ),
     ];
     return metrics;
   }
@@ -3319,6 +3356,7 @@ base class _NativeParagraph extends NativeFieldWrapperClass1 implements Paragrap
     final int lineNumber = _getLineNumber(codeUnitOffset);
     return lineNumber < 0 ? null : lineNumber;
   }
+
   @Native<Int32 Function(Pointer<Void>, Uint32)>(symbol: 'Paragraph::getLineNumberAt')
   external int _getLineNumber(int codeUnitOffset);
 
@@ -3346,7 +3384,10 @@ base class _NativeParagraph extends NativeFieldWrapperClass1 implements Paragrap
       disposed = _disposed;
       return true;
     }());
-    return disposed ?? (throw StateError('$runtimeType.debugDisposed is only available when asserts are enabled.'));
+    return disposed ??
+        (throw StateError(
+          '$runtimeType.debugDisposed is only available when asserts are enabled.',
+        ));
   }
 
   @override
@@ -3461,7 +3502,10 @@ abstract class ParagraphBuilder {
   /// The `scale` parameter will scale the `width` and `height` by the specified amount,
   /// and keep track of the scale. The scales of placeholders added can be accessed
   /// through [placeholderScales]. This is primarily used for accessibility scaling.
-  void addPlaceholder(double width, double height, PlaceholderAlignment alignment, {
+  void addPlaceholder(
+    double width,
+    double height,
+    PlaceholderAlignment alignment, {
     double scale = 1.0,
     double? baselineOffset,
     TextBaseline? baseline,
@@ -3478,48 +3522,50 @@ abstract class ParagraphBuilder {
 base class _NativeParagraphBuilder extends NativeFieldWrapperClass1 implements ParagraphBuilder {
   _NativeParagraphBuilder(ParagraphStyle style)
     : _defaultLeadingDistribution = style._leadingDistribution {
-      List<String>? strutFontFamilies;
-      final StrutStyle? strutStyle = style._strutStyle;
-      final ByteData? encodedStrutStyle;
-      if (strutStyle != null && strutStyle._enabled) {
-        final String? fontFamily = strutStyle._fontFamily;
-        strutFontFamilies = <String>[
-          if (fontFamily != null) fontFamily,
-          ...?strutStyle._fontFamilyFallback,
-        ];
+    List<String>? strutFontFamilies;
+    final StrutStyle? strutStyle = style._strutStyle;
+    final ByteData? encodedStrutStyle;
+    if (strutStyle != null && strutStyle._enabled) {
+      final String? fontFamily = strutStyle._fontFamily;
+      strutFontFamilies = <String>[
+        if (fontFamily != null) fontFamily,
+        ...?strutStyle._fontFamilyFallback,
+      ];
 
-        assert(TextLeadingDistribution.values.length <= 2);
-        final TextLeadingDistribution leadingDistribution = strutStyle._leadingDistribution
-          ?? style._leadingDistribution;
-        encodedStrutStyle = strutStyle._encoded;
-        int bitmask = encodedStrutStyle.getInt8(0);
-        bitmask |= (leadingDistribution.index) << 3;
-        encodedStrutStyle.setInt8(0, bitmask);
-      } else {
-        encodedStrutStyle = null;
-      }
-      _constructor(
-        style._encoded,
-        encodedStrutStyle,
-        style._fontFamily ?? '',
-        strutFontFamilies,
-        style._fontSize ?? 0,
-        style._height ?? 0,
-        style._ellipsis ?? '',
-        _encodeLocale(style._locale),
-      );
+      assert(TextLeadingDistribution.values.length <= 2);
+      final TextLeadingDistribution leadingDistribution =
+          strutStyle._leadingDistribution ?? style._leadingDistribution;
+      encodedStrutStyle = strutStyle._encoded;
+      int bitmask = encodedStrutStyle.getInt8(0);
+      bitmask |= (leadingDistribution.index) << 3;
+      encodedStrutStyle.setInt8(0, bitmask);
+    } else {
+      encodedStrutStyle = null;
+    }
+    _constructor(
+      style._encoded,
+      encodedStrutStyle,
+      style._fontFamily ?? '',
+      strutFontFamilies,
+      style._fontSize ?? 0,
+      style._height ?? 0,
+      style._ellipsis ?? '',
+      _encodeLocale(style._locale),
+    );
   }
 
-  @Native<Void Function(Handle, Handle, Handle, Handle, Handle, Double, Double, Handle, Handle)>(symbol: 'ParagraphBuilder::Create')
+  @Native<Void Function(Handle, Handle, Handle, Handle, Handle, Double, Double, Handle, Handle)>(
+    symbol: 'ParagraphBuilder::Create',
+  )
   external void _constructor(
-      Int32List encoded,
-      ByteData? strutData,
-      String fontFamily,
-      List<Object?>? strutFontFamily,
-      double fontSize,
-      double height,
-      String ellipsis,
-      String locale,
+    Int32List encoded,
+    ByteData? strutData,
+    String fontFamily,
+    List<Object?>? strutFontFamily,
+    double fontSize,
+    double height,
+    String ellipsis,
+    String locale,
   );
 
   @override
@@ -3542,7 +3588,8 @@ base class _NativeParagraphBuilder extends NativeFieldWrapperClass1 implements P
     }
 
     final Int32List encoded = style._encoded;
-    final TextLeadingDistribution finalLeadingDistribution = style._leadingDistribution ?? _defaultLeadingDistribution;
+    final TextLeadingDistribution finalLeadingDistribution =
+        style._leadingDistribution ?? _defaultLeadingDistribution;
     // ensure the enum can be represented using 1 bit.
     assert(TextLeadingDistribution.values.length <= 2);
 
@@ -3556,7 +3603,9 @@ base class _NativeParagraphBuilder extends NativeFieldWrapperClass1 implements P
       encodedFontFeatures = ByteData(fontFeatures.length * FontFeature._kEncodedSize);
       int byteOffset = 0;
       for (final FontFeature feature in fontFeatures) {
-        feature._encode(ByteData.view(encodedFontFeatures.buffer, byteOffset, FontFeature._kEncodedSize));
+        feature._encode(
+          ByteData.view(encodedFontFeatures.buffer, byteOffset, FontFeature._kEncodedSize),
+        );
         byteOffset += FontFeature._kEncodedSize;
       }
     }
@@ -3567,7 +3616,9 @@ base class _NativeParagraphBuilder extends NativeFieldWrapperClass1 implements P
       encodedFontVariations = ByteData(fontVariations.length * FontVariation._kEncodedSize);
       int byteOffset = 0;
       for (final FontVariation variation in fontVariations) {
-        variation._encode(ByteData.view(encodedFontVariations.buffer, byteOffset, FontVariation._kEncodedSize));
+        variation._encode(
+          ByteData.view(encodedFontVariations.buffer, byteOffset, FontVariation._kEncodedSize),
+        );
         byteOffset += FontVariation._kEncodedSize;
       }
     }
@@ -3592,23 +3643,25 @@ base class _NativeParagraphBuilder extends NativeFieldWrapperClass1 implements P
   }
 
   @Native<
-      Void Function(
-          Pointer<Void>,
-          Handle,
-          Handle,
-          Double,
-          Double,
-          Double,
-          Double,
-          Double,
-          Handle,
-          Handle,
-          Handle,
-          Handle,
-          Handle,
-          Handle,
-          Handle,
-          Handle)>(symbol: 'ParagraphBuilder::pushStyle')
+    Void Function(
+      Pointer<Void>,
+      Handle,
+      Handle,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+    )
+  >(symbol: 'ParagraphBuilder::pushStyle')
   external void _pushStyle(
     Int32List encoded,
     List<Object?> fontFamilies,
@@ -3645,25 +3698,45 @@ base class _NativeParagraphBuilder extends NativeFieldWrapperClass1 implements P
   external String? _addText(String text);
 
   @override
-  void addPlaceholder(double width, double height, PlaceholderAlignment alignment, {
+  void addPlaceholder(
+    double width,
+    double height,
+    PlaceholderAlignment alignment, {
     double scale = 1.0,
     double? baselineOffset,
     TextBaseline? baseline,
   }) {
     // Require a baseline to be specified if using a baseline-based alignment.
-    assert(!(alignment == PlaceholderAlignment.aboveBaseline ||
-            alignment == PlaceholderAlignment.belowBaseline ||
-            alignment == PlaceholderAlignment.baseline) || baseline != null);
+    assert(
+      !(alignment == PlaceholderAlignment.aboveBaseline ||
+              alignment == PlaceholderAlignment.belowBaseline ||
+              alignment == PlaceholderAlignment.baseline) ||
+          baseline != null,
+    );
     // Default the baselineOffset to height if null. This will place the placeholder
     // fully above the baseline, similar to [PlaceholderAlignment.aboveBaseline].
     baselineOffset = baselineOffset ?? height;
-    _addPlaceholder(width * scale, height * scale, alignment.index, baselineOffset * scale, (baseline ?? TextBaseline.alphabetic).index);
+    _addPlaceholder(
+      width * scale,
+      height * scale,
+      alignment.index,
+      baselineOffset * scale,
+      (baseline ?? TextBaseline.alphabetic).index,
+    );
     _placeholderCount++;
     _placeholderScales.add(scale);
   }
 
-  @Native<Void Function(Pointer<Void>, Double, Double, Uint32, Double, Uint32)>(symbol: 'ParagraphBuilder::addPlaceholder')
-  external void _addPlaceholder(double width, double height, int alignment, double baselineOffset, int baseline);
+  @Native<Void Function(Pointer<Void>, Double, Double, Uint32, Double, Uint32)>(
+    symbol: 'ParagraphBuilder::addPlaceholder',
+  )
+  external void _addPlaceholder(
+    double width,
+    double height,
+    int alignment,
+    double baselineOffset,
+    int baseline,
+  );
 
   @override
   Paragraph build() {
@@ -3685,17 +3758,14 @@ base class _NativeParagraphBuilder extends NativeFieldWrapperClass1 implements P
 /// * `fontFamily`: The family name used to identify the font in text styles.
 ///  If this is not provided, then the family name will be extracted from the font file.
 Future<void> loadFontFromList(Uint8List list, {String? fontFamily}) {
-  return _futurize(
-    (_Callback<void> callback) {
-      _loadFontFromList(list, callback, fontFamily ?? '');
-      return null;
-    }
-  ).then((_) => _sendFontChangeMessage());
+  return _futurize((_Callback<void> callback) {
+    _loadFontFromList(list, callback, fontFamily ?? '');
+    return null;
+  }).then((_) => _sendFontChangeMessage());
 }
 
-final ByteData _fontChangeMessage = utf8.encode(
-  json.encode(<String, Object?>{'type': 'fontsChange'})
-).buffer.asByteData();
+final ByteData _fontChangeMessage =
+    utf8.encode(json.encode(<String, Object?>{'type': 'fontsChange'})).buffer.asByteData();
 
 FutureOr<void> _sendFontChangeMessage() async {
   const String kSystemChannelName = 'flutter/system';
@@ -3705,10 +3775,10 @@ FutureOr<void> _sendFontChangeMessage() async {
       PlatformDispatcher.instance._onPlatformMessageZone,
       kSystemChannelName,
       _fontChangeMessage,
-      (ByteData? responseData) { },
+      (ByteData? responseData) {},
     );
   } else {
-    channelBuffers.push(kSystemChannelName, _fontChangeMessage, (ByteData? responseData) { });
+    channelBuffers.push(kSystemChannelName, _fontChangeMessage, (ByteData? responseData) {});
   }
 }
 

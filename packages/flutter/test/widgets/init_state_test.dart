@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 List<String> ancestors = <String>[];
 
 class TestWidget extends StatefulWidget {
-  const TestWidget({ super.key });
+  const TestWidget({super.key});
   @override
   TestWidgetState createState() => TestWidgetState();
 }
@@ -35,7 +35,7 @@ void main() {
 }
 
 class Parent extends StatelessWidget {
-  const Parent({ super.key, required this.child });
+  const Parent({super.key, required this.child});
 
   final Widget child;
 

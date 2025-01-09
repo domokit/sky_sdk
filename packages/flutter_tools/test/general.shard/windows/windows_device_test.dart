@@ -22,7 +22,10 @@ void main() {
   testWithoutContext('WindowsDevice defaults', () async {
     final WindowsDevice windowsDevice = setUpWindowsDevice();
     final File dummyFile = MemoryFileSystem.test().file('dummy');
-    final PrebuiltWindowsApp windowsApp = PrebuiltWindowsApp(executable: 'foo', applicationPackage: dummyFile);
+    final PrebuiltWindowsApp windowsApp = PrebuiltWindowsApp(
+      executable: 'foo',
+      applicationPackage: dummyFile,
+    );
 
     expect(await windowsDevice.targetPlatform, TargetPlatform.windows_x64);
     expect(windowsDevice.name, 'Windows');
@@ -38,30 +41,39 @@ void main() {
     expect(windowsDevice.supportsRuntimeMode(BuildMode.jitRelease), false);
   });
 
-  testWithoutContext('WindowsDevices does not list devices if the workflow is unsupported', () async {
-    expect(await WindowsDevices(
-      windowsWorkflow: WindowsWorkflow(
-        featureFlags: TestFeatureFlags(),
-        platform: FakePlatform(operatingSystem: 'windows'),
-      ),
-      operatingSystemUtils: FakeOperatingSystemUtils(),
-      logger: BufferLogger.test(),
-      processManager: FakeProcessManager.any(),
-      fileSystem: MemoryFileSystem.test(),
-    ).devices(), <Device>[]);
-  });
+  testWithoutContext(
+    'WindowsDevices does not list devices if the workflow is unsupported',
+    () async {
+      expect(
+        await WindowsDevices(
+          windowsWorkflow: WindowsWorkflow(
+            featureFlags: TestFeatureFlags(),
+            platform: FakePlatform(operatingSystem: 'windows'),
+          ),
+          operatingSystemUtils: FakeOperatingSystemUtils(),
+          logger: BufferLogger.test(),
+          processManager: FakeProcessManager.any(),
+          fileSystem: MemoryFileSystem.test(),
+        ).devices(),
+        <Device>[],
+      );
+    },
+  );
 
   testWithoutContext('WindowsDevices lists a devices if the workflow is supported', () async {
-    expect(await WindowsDevices(
-      windowsWorkflow: WindowsWorkflow(
-        featureFlags: TestFeatureFlags(isWindowsEnabled: true),
-        platform: FakePlatform(operatingSystem: 'windows')
-      ),
-      operatingSystemUtils: FakeOperatingSystemUtils(),
-      logger: BufferLogger.test(),
-      processManager: FakeProcessManager.any(),
-      fileSystem: MemoryFileSystem.test(),
-    ).devices(), hasLength(1));
+    expect(
+      await WindowsDevices(
+        windowsWorkflow: WindowsWorkflow(
+          featureFlags: TestFeatureFlags(isWindowsEnabled: true),
+          platform: FakePlatform(operatingSystem: 'windows'),
+        ),
+        operatingSystemUtils: FakeOperatingSystemUtils(),
+        logger: BufferLogger.test(),
+        processManager: FakeProcessManager.any(),
+        fileSystem: MemoryFileSystem.test(),
+      ).devices(),
+      hasLength(1),
+    );
   });
 
   testWithoutContext('isSupportedForProject is true with editable host app', () async {
@@ -127,5 +139,6 @@ WindowsDevice setUpWindowsDevice({
 
 class FakeWindowsApp extends Fake implements WindowsApp {
   @override
-  String executable(BuildMode buildMode, TargetPlatform targetPlatform) => '${buildMode.cliName}/executable';
+  String executable(BuildMode buildMode, TargetPlatform targetPlatform) =>
+      '${buildMode.cliName}/executable';
 }

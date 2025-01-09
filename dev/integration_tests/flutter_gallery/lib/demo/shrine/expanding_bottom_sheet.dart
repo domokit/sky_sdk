@@ -32,12 +32,14 @@ class ExpandingBottomSheet extends StatefulWidget {
   ExpandingBottomSheetState createState() => ExpandingBottomSheetState();
 
   static ExpandingBottomSheetState? of(BuildContext context, {bool isNullOk = false}) {
-    final ExpandingBottomSheetState? result = context.findAncestorStateOfType<ExpandingBottomSheetState>();
+    final ExpandingBottomSheetState? result =
+        context.findAncestorStateOfType<ExpandingBottomSheetState>();
     if (isNullOk || result != null) {
       return result;
     }
     throw FlutterError(
-      'ExpandingBottomSheet.of() called with a context that does not contain a ExpandingBottomSheet.\n');
+      'ExpandingBottomSheet.of() called with a context that does not contain a ExpandingBottomSheet.\n',
+    );
   }
 }
 
@@ -70,24 +72,16 @@ Animation<T> _getEmphasizedEasingAnimation<T>({
     secondWeight = _kPeakVelocityTime;
   }
 
-  return TweenSequence<T>(
-    <TweenSequenceItem<T>>[
-      TweenSequenceItem<T>(
-        weight: firstWeight,
-        tween: Tween<T>(
-          begin: begin,
-          end: peak,
-        ).chain(CurveTween(curve: firstCurve)),
-      ),
-      TweenSequenceItem<T>(
-        weight: secondWeight,
-        tween: Tween<T>(
-          begin: peak,
-          end: end,
-        ).chain(CurveTween(curve: secondCurve)),
-      ),
-    ],
-  ).animate(parent);
+  return TweenSequence<T>(<TweenSequenceItem<T>>[
+    TweenSequenceItem<T>(
+      weight: firstWeight,
+      tween: Tween<T>(begin: begin, end: peak).chain(CurveTween(curve: firstCurve)),
+    ),
+    TweenSequenceItem<T>(
+      weight: secondWeight,
+      tween: Tween<T>(begin: peak, end: end).chain(CurveTween(curve: secondCurve)),
+    ),
+  ]).animate(parent);
 }
 
 // Calculates the value where two double Animations should be joined. Used by
@@ -118,10 +112,7 @@ class ExpandingBottomSheetState extends State<ExpandingBottomSheet> with TickerP
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
+    _controller = AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
   }
 
   @override
@@ -164,10 +155,7 @@ class ExpandingBottomSheetState extends State<ExpandingBottomSheet> with TickerP
       );
     } else {
       // Closing animation
-      return Tween<double>(
-        begin: _kCartHeight,
-        end: screenHeight,
-      ).animate(
+      return Tween<double>(begin: _kCartHeight, end: screenHeight).animate(
         CurvedAnimation(
           parent: _controller.view,
           curve: const Interval(0.434, 1.0), // not used
@@ -202,9 +190,10 @@ class ExpandingBottomSheetState extends State<ExpandingBottomSheet> with TickerP
     return Tween<double>(begin: 1.0, end: 0.0).animate(
       CurvedAnimation(
         parent: _controller.view,
-        curve: _controller.status == AnimationStatus.forward
-          ? const Interval(0.0, 0.3)
-          : const Interval(0.532, 0.766),
+        curve:
+            _controller.status == AnimationStatus.forward
+                ? const Interval(0.0, 0.3)
+                : const Interval(0.532, 0.766),
       ),
     );
   }
@@ -212,9 +201,10 @@ class ExpandingBottomSheetState extends State<ExpandingBottomSheet> with TickerP
   Animation<double> _getCartOpacityAnimation() {
     return CurvedAnimation(
       parent: _controller.view,
-      curve: _controller.status == AnimationStatus.forward
-        ? const Interval(0.3, 0.6)
-        : const Interval(0.766, 1.0),
+      curve:
+          _controller.status == AnimationStatus.forward
+              ? const Interval(0.3, 0.6)
+              : const Interval(0.766, 1.0),
     );
   }
 
@@ -252,8 +242,8 @@ class ExpandingBottomSheetState extends State<ExpandingBottomSheet> with TickerP
   // products.)
   EdgeInsetsDirectional _cartPaddingFor(int numProducts) {
     return (numProducts == 0)
-      ? const EdgeInsetsDirectional.only(start: 20.0, end: 8.0)
-      : const EdgeInsetsDirectional.only(start: 32.0, end: 8.0);
+        ? const EdgeInsetsDirectional.only(start: 20.0, end: 8.0)
+        : const EdgeInsetsDirectional.only(start: 32.0, end: 8.0);
   }
 
   bool get _cartIsVisible => _thumbnailOpacityAnimation.value == 0.0;
@@ -288,10 +278,7 @@ class ExpandingBottomSheetState extends State<ExpandingBottomSheet> with TickerP
   }
 
   Widget _buildShoppingCartPage() {
-    return Opacity(
-      opacity: _cartOpacityAnimation.value,
-      child: const ShoppingCartPage(),
-    );
+    return Opacity(opacity: _cartOpacityAnimation.value, child: const ShoppingCartPage());
   }
 
   Widget _buildCart(BuildContext context, Widget? child) {
@@ -320,15 +307,11 @@ class ExpandingBottomSheetState extends State<ExpandingBottomSheet> with TickerP
         child: Material(
           animationDuration: Duration.zero,
           shape: BeveledRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(_shapeAnimation.value),
-            ),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(_shapeAnimation.value)),
           ),
           elevation: 4.0,
           color: kShrinePink50,
-          child: _cartIsVisible
-            ? _buildShoppingCartPage()
-            : _buildThumbnails(numProducts),
+          child: _cartIsVisible ? _buildShoppingCartPage() : _buildThumbnails(numProducts),
         ),
       ),
     );
@@ -344,10 +327,7 @@ class ExpandingBottomSheetState extends State<ExpandingBottomSheet> with TickerP
       parent: widget.hideController,
     );
 
-    return SlideTransition(
-      position: _slideAnimation,
-      child: child,
-    );
+    return SlideTransition(position: _slideAnimation, child: child);
   }
 
   // Closes the cart if the cart is open, otherwise exits the app (this should
@@ -378,10 +358,7 @@ class ExpandingBottomSheetState extends State<ExpandingBottomSheet> with TickerP
             onTap: open,
             child: ScopedModelDescendant<AppStateModel>(
               builder: (BuildContext context, Widget? child, AppStateModel model) {
-                return AnimatedBuilder(
-                  builder: _buildCart,
-                  animation: _controller,
-                );
+                return AnimatedBuilder(builder: _buildCart, animation: _controller);
               },
             ),
           ),
@@ -431,10 +408,7 @@ class _ProductThumbnailRowState extends State<ProductThumbnailRow> {
 
   Widget _buildThumbnail(BuildContext context, int index, Animation<double> animation) {
     final Animation<double> thumbnailSize = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(
-        curve: const Interval(0.33, 1.0, curve: Curves.easeIn),
-        parent: animation,
-      ),
+      CurvedAnimation(curve: const Interval(0.33, 1.0, curve: Curves.easeIn), parent: animation),
     );
 
     final Animation<double> opacity = CurvedAnimation(
@@ -539,7 +513,9 @@ class ExtraProductsNumber extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<AppStateModel>(
-      builder: (BuildContext builder, Widget? child, AppStateModel model) => _buildOverflow(model, context),
+      builder:
+          (BuildContext builder, Widget? child, AppStateModel model) =>
+              _buildOverflow(model, context),
     );
   }
 }
@@ -579,14 +555,12 @@ class ProductThumbnail extends StatelessWidget {
 
 // _ListModel manipulates an internal list and an AnimatedList
 class _ListModel {
-  _ListModel({
-    required this.listKey,
-    required this.removedItemBuilder,
-    Iterable<int>? initialItems,
-  }) : _items = initialItems?.toList() ?? <int>[];
+  _ListModel({required this.listKey, required this.removedItemBuilder, Iterable<int>? initialItems})
+    : _items = initialItems?.toList() ?? <int>[];
 
   final GlobalKey<AnimatedListState> listKey;
-  final Widget Function(int item, BuildContext context, Animation<double> animation) removedItemBuilder;
+  final Widget Function(int item, BuildContext context, Animation<double> animation)
+  removedItemBuilder;
   final List<int> _items;
 
   AnimatedListState? get _animatedList => listKey.currentState;

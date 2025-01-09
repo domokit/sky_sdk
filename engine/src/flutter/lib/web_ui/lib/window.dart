@@ -99,11 +99,7 @@ abstract class SingletonFlutterWindow extends FlutterView {
   VoidCallback? get onAccessibilityFeaturesChanged;
   set onAccessibilityFeaturesChanged(VoidCallback? callback);
 
-  void sendPlatformMessage(
-    String name,
-    ByteData? data,
-    PlatformMessageResponseCallback? callback,
-  );
+  void sendPlatformMessage(String name, ByteData? data, PlatformMessageResponseCallback? callback);
 
   PlatformMessageCallback? get onPlatformMessage;
   set onPlatformMessage(PlatformMessageCallback? callback);
@@ -121,10 +117,7 @@ abstract class AccessibilityFeatures {
   bool get onOffSwitchLabels;
 }
 
-enum Brightness {
-  dark,
-  light,
-}
+enum Brightness { dark, light }
 
 // Unimplemented classes.
 // TODO(dit): see https://github.com/flutter/flutter/issues/33614.
@@ -177,19 +170,13 @@ class FrameData {
 }
 
 class GestureSettings {
-  const GestureSettings({
-    this.physicalTouchSlop,
-    this.physicalDoubleTapSlop,
-  });
+  const GestureSettings({this.physicalTouchSlop, this.physicalDoubleTapSlop});
 
   final double? physicalTouchSlop;
 
   final double? physicalDoubleTapSlop;
 
-  GestureSettings copyWith({
-    double? physicalTouchSlop,
-    double? physicalDoubleTapSlop,
-  }) {
+  GestureSettings copyWith({double? physicalTouchSlop, double? physicalDoubleTapSlop}) {
     return GestureSettings(
       physicalTouchSlop: physicalTouchSlop ?? this.physicalTouchSlop,
       physicalDoubleTapSlop: physicalDoubleTapSlop ?? this.physicalDoubleTapSlop,
@@ -202,13 +189,14 @@ class GestureSettings {
       return false;
     }
     return other is GestureSettings &&
-      other.physicalTouchSlop == physicalTouchSlop &&
-      other.physicalDoubleTapSlop == physicalDoubleTapSlop;
+        other.physicalTouchSlop == physicalTouchSlop &&
+        other.physicalDoubleTapSlop == physicalDoubleTapSlop;
   }
 
   @override
   int get hashCode => Object.hash(physicalTouchSlop, physicalDoubleTapSlop);
 
   @override
-  String toString() => 'GestureSettings(physicalTouchSlop: $physicalTouchSlop, physicalDoubleTapSlop: $physicalDoubleTapSlop)';
+  String toString() =>
+      'GestureSettings(physicalTouchSlop: $physicalTouchSlop, physicalDoubleTapSlop: $physicalDoubleTapSlop)';
 }

@@ -9,7 +9,7 @@ String _green = _supportsAnsi ? '\u001b[1;32m' : '';
 String _red = _supportsAnsi ? '\u001b[31m' : '';
 String _yellow = _supportsAnsi ? '\u001b[33m' : '';
 String _gray = _supportsAnsi ? '\u001b[90m' : '';
-String _reset = _supportsAnsi? '\u001B[0m' : '';
+String _reset = _supportsAnsi ? '\u001B[0m' : '';
 
 Future<void> step(String msg, Future<void> Function() fn) async {
   stdout.writeln('-> $_green$msg$_reset');

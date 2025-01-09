@@ -13,7 +13,6 @@ import 'package:path/path.dart' as path;
 /// Tests that iOS and macOS .xcframeworks can be built.
 Future<void> main() async {
   await task(() async {
-
     section('Create module project');
 
     final Directory tempDir = Directory.systemTemp.createTempSync('flutter_module_test.');
@@ -21,8 +20,7 @@ Future<void> main() async {
       await inDirectory(tempDir, () async {
         section('Test iOS module template');
 
-        final Directory moduleProjectDir =
-            Directory(path.join(tempDir.path, 'hello_module'));
+        final Directory moduleProjectDir = Directory(path.join(tempDir.path, 'hello_module'));
         await flutter(
           'create',
           options: <String>[
@@ -39,8 +37,7 @@ Future<void> main() async {
 
         section('Test app template');
 
-        final Directory projectDir =
-            Directory(path.join(tempDir.path, 'hello_project'));
+        final Directory projectDir = Directory(path.join(tempDir.path, 'hello_project'));
         await flutter(
           'create',
           options: <String>['--org', 'io.flutter.devicelab', 'hello_project'],
@@ -73,14 +70,11 @@ Future<void> _addPlugin(Directory projectDir) async {
   );
   pubspec.writeAsStringSync(content, flush: true);
   await inDirectory(projectDir, () async {
-    await flutter(
-      'packages',
-      options: <String>['get'],
-    );
+    await flutter('packages', options: <String>['get']);
   });
 }
 
-Future<void> _testBuildIosFramework(Directory projectDir, { bool isModule = false}) async {
+Future<void> _testBuildIosFramework(Directory projectDir, {bool isModule = false}) async {
   // This builds all build modes' frameworks by default
   section('Build iOS app');
 
@@ -101,14 +95,16 @@ Future<void> _testBuildIosFramework(Directory projectDir, { bool isModule = fals
 
   final String outputPath = path.join(projectDir.path, outputDirectoryName);
 
-  checkFileExists(path.join(
-    outputPath,
-    'Debug',
-    'Flutter.xcframework',
-    'ios-arm64',
-    'Flutter.framework',
-    'Flutter',
-  ));
+  checkFileExists(
+    path.join(
+      outputPath,
+      'Debug',
+      'Flutter.xcframework',
+      'ios-arm64',
+      'Flutter.framework',
+      'Flutter',
+    ),
+  );
 
   final String debugAppFrameworkPath = path.join(
     outputPath,
@@ -120,41 +116,33 @@ Future<void> _testBuildIosFramework(Directory projectDir, { bool isModule = fals
   );
   checkFileExists(debugAppFrameworkPath);
 
-  checkFileExists(path.join(
-    outputPath,
-    'Debug',
-    'App.xcframework',
-    'ios-arm64',
-    'App.framework',
-    'Info.plist',
-  ));
+  checkFileExists(
+    path.join(outputPath, 'Debug', 'App.xcframework', 'ios-arm64', 'App.framework', 'Info.plist'),
+  );
 
   section('Check debug build has Dart snapshot as asset');
 
-  checkFileExists(path.join(
-    outputPath,
-    'Debug',
-    'App.xcframework',
-    'ios-arm64_x86_64-simulator',
-    'App.framework',
-    'flutter_assets',
-    'vm_snapshot_data',
-  ));
+  checkFileExists(
+    path.join(
+      outputPath,
+      'Debug',
+      'App.xcframework',
+      'ios-arm64_x86_64-simulator',
+      'App.framework',
+      'flutter_assets',
+      'vm_snapshot_data',
+    ),
+  );
 
   section('Check obfuscation symbols');
 
-  checkFileExists(path.join(
-    projectDir.path,
-    'symbols',
-    'app.ios-arm64.symbols',
-  ));
+  checkFileExists(path.join(projectDir.path, 'symbols', 'app.ios-arm64.symbols'));
 
   section('Check debug build has no Dart AOT');
 
   final String aotSymbols = await dumpSymbolTable(debugAppFrameworkPath);
 
-  if (aotSymbols.contains('architecture') ||
-      aotSymbols.contains('_kDartVmSnapshot')) {
+  if (aotSymbols.contains('architecture') || aotSymbols.contains('_kDartVmSnapshot')) {
     throw TaskResult.failure('Debug App.framework contains AOT');
   }
 
@@ -178,92 +166,89 @@ Future<void> _testBuildIosFramework(Directory projectDir, { bool isModule = fals
       throw TaskResult.failure('$mode App.framework missing Dart AOT');
     }
 
-    checkFileNotExists(path.join(
-      outputPath,
-      mode,
-      'App.xcframework',
-      'ios-arm64',
-      'App.framework',
-      'flutter_assets',
-      'vm_snapshot_data',
-    ));
-
-    final String dsymPath = path.join(
+    checkFileNotExists(
+      path.join(
         outputPath,
         mode,
         'App.xcframework',
         'ios-arm64',
-        'dSYMs'
+        'App.framework',
+        'flutter_assets',
+        'vm_snapshot_data',
+      ),
     );
+
+    final String dsymPath = path.join(outputPath, mode, 'App.xcframework', 'ios-arm64', 'dSYMs');
     checkDirectoryExists(dsymPath);
 
-    final String appFrameworkDsymPath = path.join(
-        dsymPath,
-        'App.framework.dSYM'
-    );
+    final String appFrameworkDsymPath = path.join(dsymPath, 'App.framework.dSYM');
     checkDirectoryExists(appFrameworkDsymPath);
 
     if (Directory(dsymPath).listSync().whereType<Directory>().length != 1) {
       throw TaskResult.failure('App.framework/dSYMs should ONLY contain App.xcframework.dSYM');
     }
 
-    await _checkDsym(path.join(
-      appFrameworkDsymPath,
-      'Contents',
-      'Resources',
-      'DWARF',
-      'App',
-    ));
+    await _checkDsym(path.join(appFrameworkDsymPath, 'Contents', 'Resources', 'DWARF', 'App'));
 
-    checkFileExists(path.join(
-      outputPath,
-      mode,
-      'App.xcframework',
-      'ios-arm64_x86_64-simulator',
-      'App.framework',
-      'App',
-    ));
+    checkFileExists(
+      path.join(
+        outputPath,
+        mode,
+        'App.xcframework',
+        'ios-arm64_x86_64-simulator',
+        'App.framework',
+        'App',
+      ),
+    );
 
-    checkFileExists(path.join(
-      outputPath,
-      mode,
-      'App.xcframework',
-      'ios-arm64_x86_64-simulator',
-      'App.framework',
-      'Info.plist',
-    ));
+    checkFileExists(
+      path.join(
+        outputPath,
+        mode,
+        'App.xcframework',
+        'ios-arm64_x86_64-simulator',
+        'App.framework',
+        'Info.plist',
+      ),
+    );
   }
 
   section("Check all modes' engine dylib");
 
   for (final String mode in <String>['Debug', 'Profile', 'Release']) {
-    checkFileExists(path.join(
-      outputPath,
-      mode,
-      'Flutter.xcframework',
-      'ios-arm64',
-      'Flutter.framework',
-      'Flutter',
-    ));
+    checkFileExists(
+      path.join(
+        outputPath,
+        mode,
+        'Flutter.xcframework',
+        'ios-arm64',
+        'Flutter.framework',
+        'Flutter',
+      ),
+    );
 
-    checkFileExists(path.join(
-      outputPath,
-      mode,
-      'Flutter.xcframework',
-      'ios-arm64_x86_64-simulator',
-      'Flutter.framework',
-      'Flutter',
-    ));
+    checkFileExists(
+      path.join(
+        outputPath,
+        mode,
+        'Flutter.xcframework',
+        'ios-arm64_x86_64-simulator',
+        'Flutter.framework',
+        'Flutter',
+      ),
+    );
 
-    checkFileExists(path.join(
-      outputPath,
-      mode,
-      'Flutter.xcframework',
-      'ios-arm64_x86_64-simulator',
-      'Flutter.framework',
-      'Headers',
-      'Flutter.h',
-    ));
+    checkFileExists(
+      path.join(
+        outputPath,
+        mode,
+        'Flutter.xcframework',
+        'ios-arm64_x86_64-simulator',
+        'Flutter.framework',
+        'Headers',
+        'Flutter.h',
+      ),
+    );
   }
 
   section('Check all modes have plugins');
@@ -298,28 +283,33 @@ Future<void> _testBuildIosFramework(Directory projectDir, { bool isModule = fals
 
     if (await _linksOnFlutter(transitiveDependencyFrameworkPath)) {
       throw TaskResult.failure(
-          'Transitive dependency $transitiveDependencyFrameworkPath unexpectedly links on Flutter');
+        'Transitive dependency $transitiveDependencyFrameworkPath unexpectedly links on Flutter',
+      );
     }
 
-    checkFileExists(path.join(
-      outputPath,
-      mode,
-      'connectivity.xcframework',
-      'ios-arm64',
-      'connectivity.framework',
-      'Headers',
-      'FLTConnectivityPlugin.h',
-    ));
-
-    if (mode != 'Debug') {
-      checkDirectoryExists(path.join(
+    checkFileExists(
+      path.join(
         outputPath,
         mode,
         'connectivity.xcframework',
         'ios-arm64',
-        'dSYMs',
-        'connectivity.framework.dSYM',
-      ));
+        'connectivity.framework',
+        'Headers',
+        'FLTConnectivityPlugin.h',
+      ),
+    );
+
+    if (mode != 'Debug') {
+      checkDirectoryExists(
+        path.join(
+          outputPath,
+          mode,
+          'connectivity.xcframework',
+          'ios-arm64',
+          'dSYMs',
+          'connectivity.framework.dSYM',
+        ),
+      );
     }
 
     final String simulatorFrameworkPath = path.join(
@@ -361,15 +351,17 @@ Future<void> _testBuildIosFramework(Directory projectDir, { bool isModule = fals
     );
     await _checkStatic(registrantFrameworkPath);
 
-    checkFileExists(path.join(
-      outputPath,
-      mode,
-      'FlutterPluginRegistrant.xcframework',
-      'ios-arm64',
-      'FlutterPluginRegistrant.framework',
-      'Headers',
-      'GeneratedPluginRegistrant.h',
-    ));
+    checkFileExists(
+      path.join(
+        outputPath,
+        mode,
+        'FlutterPluginRegistrant.xcframework',
+        'ios-arm64',
+        'FlutterPluginRegistrant.framework',
+        'Headers',
+        'GeneratedPluginRegistrant.h',
+      ),
+    );
     final String simulatorHeaderPath = path.join(
       outputPath,
       mode,
@@ -402,19 +394,10 @@ Future<void> _testBuildIosFramework(Directory projectDir, { bool isModule = fals
 
   final String cocoapodsOutputPath = path.join(projectDir.path, cocoapodsOutputDirectoryName);
   for (final String mode in <String>['Debug', 'Profile', 'Release']) {
-    checkFileExists(path.join(
-      cocoapodsOutputPath,
-      mode,
-      'Flutter.podspec',
-    ));
-    await _checkDylib(path.join(
-      cocoapodsOutputPath,
-      mode,
-      'App.xcframework',
-      'ios-arm64',
-      'App.framework',
-      'App',
-    ));
+    checkFileExists(path.join(cocoapodsOutputPath, mode, 'Flutter.podspec'));
+    await _checkDylib(
+      path.join(cocoapodsOutputPath, mode, 'App.xcframework', 'ios-arm64', 'App.framework', 'App'),
+    );
 
     if (mode != 'Debug') {
       final String appFrameworkDsymPath = path.join(
@@ -423,66 +406,49 @@ Future<void> _testBuildIosFramework(Directory projectDir, { bool isModule = fals
         'App.xcframework',
         'ios-arm64',
         'dSYMs',
-        'App.framework.dSYM'
+        'App.framework.dSYM',
       );
       checkDirectoryExists(appFrameworkDsymPath);
-      await _checkDsym(path.join(
-        appFrameworkDsymPath,
-        'Contents',
-        'Resources',
-        'DWARF',
-        'App',
-      ));
+      await _checkDsym(path.join(appFrameworkDsymPath, 'Contents', 'Resources', 'DWARF', 'App'));
     }
 
-    if (Directory(path.join(
-          cocoapodsOutputPath,
-          mode,
-          'FlutterPluginRegistrant.xcframework',
-        )).existsSync() !=
+    if (Directory(
+          path.join(cocoapodsOutputPath, mode, 'FlutterPluginRegistrant.xcframework'),
+        ).existsSync() !=
         isModule) {
-      throw TaskResult.failure(
-          'Unexpected FlutterPluginRegistrant.xcframework.');
+      throw TaskResult.failure('Unexpected FlutterPluginRegistrant.xcframework.');
     }
 
-    await _checkStatic(path.join(
-      cocoapodsOutputPath,
-      mode,
-      'package_info.xcframework',
-      'ios-arm64',
-      'package_info.framework',
-      'package_info',
-    ));
+    await _checkStatic(
+      path.join(
+        cocoapodsOutputPath,
+        mode,
+        'package_info.xcframework',
+        'ios-arm64',
+        'package_info.framework',
+        'package_info',
+      ),
+    );
 
-    await _checkStatic(path.join(
-      cocoapodsOutputPath,
-      mode,
-      'connectivity.xcframework',
-      'ios-arm64',
-      'connectivity.framework',
-      'connectivity',
-    ));
+    await _checkStatic(
+      path.join(
+        cocoapodsOutputPath,
+        mode,
+        'connectivity.xcframework',
+        'ios-arm64',
+        'connectivity.framework',
+        'connectivity',
+      ),
+    );
 
-    checkDirectoryExists(path.join(
-      cocoapodsOutputPath,
-      mode,
-      'Reachability.xcframework',
-    ));
+    checkDirectoryExists(path.join(cocoapodsOutputPath, mode, 'Reachability.xcframework'));
   }
 
-  if (File(path.join(
-        outputPath,
-        'GeneratedPluginRegistrant.h',
-      )).existsSync() ==
-      isModule) {
+  if (File(path.join(outputPath, 'GeneratedPluginRegistrant.h')).existsSync() == isModule) {
     throw TaskResult.failure('Unexpected GeneratedPluginRegistrant.h.');
   }
 
-  if (File(path.join(
-        outputPath,
-        'GeneratedPluginRegistrant.m',
-      )).existsSync() ==
-      isModule) {
+  if (File(path.join(outputPath, 'GeneratedPluginRegistrant.m')).existsSync() == isModule) {
     throw TaskResult.failure('Unexpected GeneratedPluginRegistrant.m.');
   }
 
@@ -492,7 +458,6 @@ Future<void> _testBuildIosFramework(Directory projectDir, { bool isModule = fals
   section('check --static cannot be used with the --no-plugins flag');
   await _testStaticAndNoPlugins(projectDir);
 }
-
 
 Future<void> _testBuildMacOSFramework(Directory projectDir) async {
   // This builds all build modes' frameworks by default
@@ -533,49 +498,44 @@ Future<void> _testBuildMacOSFramework(Directory projectDir) async {
   );
   checkSymlinkExists(debugAppFrameworkPath);
 
-  checkFileExists(path.join(
-    outputPath,
-    'Debug',
-    'App.xcframework',
-    'macos-arm64_x86_64',
-    'App.framework',
-    'Resources',
-    'Info.plist',
-  ));
+  checkFileExists(
+    path.join(
+      outputPath,
+      'Debug',
+      'App.xcframework',
+      'macos-arm64_x86_64',
+      'App.framework',
+      'Resources',
+      'Info.plist',
+    ),
+  );
 
   section('Check debug build has Dart snapshot as asset');
 
-  checkFileExists(path.join(
-    outputPath,
-    'Debug',
-    'App.xcframework',
-    'macos-arm64_x86_64',
-    'App.framework',
-    'Resources',
-    'flutter_assets',
-    'vm_snapshot_data',
-  ));
+  checkFileExists(
+    path.join(
+      outputPath,
+      'Debug',
+      'App.xcframework',
+      'macos-arm64_x86_64',
+      'App.framework',
+      'Resources',
+      'flutter_assets',
+      'vm_snapshot_data',
+    ),
+  );
 
   section('Check obfuscation symbols');
 
-  checkFileExists(path.join(
-    projectDir.path,
-    'symbols',
-    'app.darwin-arm64.symbols',
-  ));
+  checkFileExists(path.join(projectDir.path, 'symbols', 'app.darwin-arm64.symbols'));
 
-  checkFileExists(path.join(
-    projectDir.path,
-    'symbols',
-    'app.darwin-x86_64.symbols',
-  ));
+  checkFileExists(path.join(projectDir.path, 'symbols', 'app.darwin-x86_64.symbols'));
 
   section('Check debug build has no Dart AOT');
 
   final String aotSymbols = await dumpSymbolTable(debugAppFrameworkPath);
 
-  if (aotSymbols.contains('architecture') ||
-      aotSymbols.contains('_kDartVmSnapshot')) {
+  if (aotSymbols.contains('architecture') || aotSymbols.contains('_kDartVmSnapshot')) {
     throw TaskResult.failure('Debug App.framework contains AOT');
   }
 
@@ -599,26 +559,30 @@ Future<void> _testBuildMacOSFramework(Directory projectDir) async {
       throw TaskResult.failure('$mode App.framework missing Dart AOT');
     }
 
-    checkFileNotExists(path.join(
-      outputPath,
-      mode,
-      'App.xcframework',
-      'macos-arm64_x86_64',
-      'App.framework',
-      'Resources',
-      'flutter_assets',
-      'vm_snapshot_data',
-    ));
+    checkFileNotExists(
+      path.join(
+        outputPath,
+        mode,
+        'App.xcframework',
+        'macos-arm64_x86_64',
+        'App.framework',
+        'Resources',
+        'flutter_assets',
+        'vm_snapshot_data',
+      ),
+    );
 
-    checkFileExists(path.join(
-      outputPath,
-      mode,
-      'App.xcframework',
-      'macos-arm64_x86_64',
-      'App.framework',
-      'Resources',
-      'Info.plist',
-    ));
+    checkFileExists(
+      path.join(
+        outputPath,
+        mode,
+        'App.xcframework',
+        'macos-arm64_x86_64',
+        'App.framework',
+        'Resources',
+        'Info.plist',
+      ),
+    );
 
     final String appFrameworkDsymPath = path.join(
       outputPath,
@@ -626,16 +590,10 @@ Future<void> _testBuildMacOSFramework(Directory projectDir) async {
       'App.xcframework',
       'macos-arm64_x86_64',
       'dSYMs',
-      'App.framework.dSYM'
+      'App.framework.dSYM',
     );
     checkDirectoryExists(appFrameworkDsymPath);
-    await _checkDsym(path.join(
-      appFrameworkDsymPath,
-      'Contents',
-      'Resources',
-      'DWARF',
-      'App',
-    ));
+    await _checkDsym(path.join(appFrameworkDsymPath, 'Contents', 'Resources', 'DWARF', 'App'));
   }
 
   section("Check all modes' engine dylib");
@@ -651,15 +609,17 @@ Future<void> _testBuildMacOSFramework(Directory projectDir) async {
     );
     checkSymlinkExists(engineBinary);
 
-    checkFileExists(path.join(
-      outputPath,
-      mode,
-      'FlutterMacOS.xcframework',
-      'macos-arm64_x86_64',
-      'FlutterMacOS.framework',
-      'Headers',
-      'FlutterMacOS.h',
-    ));
+    checkFileExists(
+      path.join(
+        outputPath,
+        mode,
+        'FlutterMacOS.xcframework',
+        'macos-arm64_x86_64',
+        'FlutterMacOS.framework',
+        'Headers',
+        'FlutterMacOS.h',
+      ),
+    );
   }
 
   section('Check all modes have plugins');
@@ -688,48 +648,58 @@ Future<void> _testBuildMacOSFramework(Directory projectDir) async {
       'Reachability',
     );
     if (await _linksOnFlutterMacOS(transitiveDependencyFrameworkPath)) {
-      throw TaskResult.failure('Transitive dependency $transitiveDependencyFrameworkPath unexpectedly links on Flutter');
+      throw TaskResult.failure(
+        'Transitive dependency $transitiveDependencyFrameworkPath unexpectedly links on Flutter',
+      );
     }
 
-    checkFileExists(path.join(
-      outputPath,
-      mode,
-      'connectivity_macos.xcframework',
-      'macos-arm64_x86_64',
-      'connectivity_macos.framework',
-      'Headers',
-      'connectivity_macos-Swift.h',
-    ));
-
-    checkDirectoryExists(path.join(
-      outputPath,
-      mode,
-      'connectivity_macos.xcframework',
-      'macos-arm64_x86_64',
-      'connectivity_macos.framework',
-      'Modules',
-      'connectivity_macos.swiftmodule',
-    ));
-
-    if (mode != 'Debug') {
-      checkDirectoryExists(path.join(
+    checkFileExists(
+      path.join(
         outputPath,
         mode,
         'connectivity_macos.xcframework',
         'macos-arm64_x86_64',
-        'dSYMs',
-        'connectivity_macos.framework.dSYM',
-      ));
+        'connectivity_macos.framework',
+        'Headers',
+        'connectivity_macos-Swift.h',
+      ),
+    );
+
+    checkDirectoryExists(
+      path.join(
+        outputPath,
+        mode,
+        'connectivity_macos.xcframework',
+        'macos-arm64_x86_64',
+        'connectivity_macos.framework',
+        'Modules',
+        'connectivity_macos.swiftmodule',
+      ),
+    );
+
+    if (mode != 'Debug') {
+      checkDirectoryExists(
+        path.join(
+          outputPath,
+          mode,
+          'connectivity_macos.xcframework',
+          'macos-arm64_x86_64',
+          'dSYMs',
+          'connectivity_macos.framework.dSYM',
+        ),
+      );
     }
 
-    checkSymlinkExists(path.join(
-      outputPath,
-      mode,
-      'connectivity_macos.xcframework',
-      'macos-arm64_x86_64',
-      'connectivity_macos.framework',
-      'connectivity_macos',
-    ));
+    checkSymlinkExists(
+      path.join(
+        outputPath,
+        mode,
+        'connectivity_macos.xcframework',
+        'macos-arm64_x86_64',
+        'connectivity_macos.framework',
+        'connectivity_macos',
+      ),
+    );
   }
 
   // This builds all build modes' frameworks by default
@@ -752,19 +722,17 @@ Future<void> _testBuildMacOSFramework(Directory projectDir) async {
 
   final String cocoapodsOutputPath = path.join(projectDir.path, cocoapodsOutputDirectoryName);
   for (final String mode in <String>['Debug', 'Profile', 'Release']) {
-    checkFileExists(path.join(
-      cocoapodsOutputPath,
-      mode,
-      'FlutterMacOS.podspec',
-    ));
-    await _checkDylib(path.join(
-      cocoapodsOutputPath,
-      mode,
-      'App.xcframework',
-      'macos-arm64_x86_64',
-      'App.framework',
-      'App',
-    ));
+    checkFileExists(path.join(cocoapodsOutputPath, mode, 'FlutterMacOS.podspec'));
+    await _checkDylib(
+      path.join(
+        cocoapodsOutputPath,
+        mode,
+        'App.xcframework',
+        'macos-arm64_x86_64',
+        'App.framework',
+        'App',
+      ),
+    );
 
     if (mode != 'Debug') {
       final String appFrameworkDsymPath = path.join(
@@ -773,59 +741,44 @@ Future<void> _testBuildMacOSFramework(Directory projectDir) async {
         'App.xcframework',
         'macos-arm64_x86_64',
         'dSYMs',
-        'App.framework.dSYM'
+        'App.framework.dSYM',
       );
       checkDirectoryExists(appFrameworkDsymPath);
-      await _checkDsym(path.join(
-        appFrameworkDsymPath,
-        'Contents',
-        'Resources',
-        'DWARF',
-        'App',
-      ));
+      await _checkDsym(path.join(appFrameworkDsymPath, 'Contents', 'Resources', 'DWARF', 'App'));
     }
 
-    await _checkStatic(path.join(
-      cocoapodsOutputPath,
-      mode,
-      'package_info.xcframework',
-      'macos-arm64_x86_64',
-      'package_info.framework',
-      'package_info',
-    ));
+    await _checkStatic(
+      path.join(
+        cocoapodsOutputPath,
+        mode,
+        'package_info.xcframework',
+        'macos-arm64_x86_64',
+        'package_info.framework',
+        'package_info',
+      ),
+    );
 
-    await _checkStatic(path.join(
-      cocoapodsOutputPath,
-      mode,
-      'connectivity_macos.xcframework',
-      'macos-arm64_x86_64',
-      'connectivity_macos.framework',
-      'connectivity_macos',
-    ));
+    await _checkStatic(
+      path.join(
+        cocoapodsOutputPath,
+        mode,
+        'connectivity_macos.xcframework',
+        'macos-arm64_x86_64',
+        'connectivity_macos.framework',
+        'connectivity_macos',
+      ),
+    );
 
-    checkDirectoryExists(path.join(
-      cocoapodsOutputPath,
-      mode,
-      'Reachability.xcframework',
-    ));
+    checkDirectoryExists(path.join(cocoapodsOutputPath, mode, 'Reachability.xcframework'));
   }
 
-  checkFileExists(path.join(
-    outputPath,
-    'GeneratedPluginRegistrant.swift',
-  ));
+  checkFileExists(path.join(outputPath, 'GeneratedPluginRegistrant.swift'));
 
   section('Validate embed FlutterMacOS.framework with CocoaPods');
 
-  final File podspec = File(path.join(
-    cocoapodsOutputPath,
-    'Debug',
-    'FlutterMacOS.podspec',
-  ));
+  final File podspec = File(path.join(cocoapodsOutputPath, 'Debug', 'FlutterMacOS.podspec'));
 
-  podspec.writeAsStringSync(
-    podspec.readAsStringSync().replaceFirst('null.null.0', '0.0.0'),
-  );
+  podspec.writeAsStringSync(podspec.readAsStringSync().replaceFirst('null.null.0', '0.0.0'));
 
   final Directory macosDirectory = Directory(path.join(projectDir.path, 'macos'));
   final File podfile = File(path.join(macosDirectory.path, 'Podfile'));
@@ -854,7 +807,10 @@ end
   await _testBuildFrameworksWithoutPlugins(projectDir, platform: 'macos');
 }
 
-Future<void> _testBuildFrameworksWithoutPlugins(Directory projectDir, { required String platform}) async {
+Future<void> _testBuildFrameworksWithoutPlugins(
+  Directory projectDir, {
+  required String platform,
+}) async {
   const String noPluginsOutputDir = 'flutter-frameworks-no-plugins';
 
   await inDirectory(projectDir, () async {
@@ -872,34 +828,16 @@ Future<void> _testBuildFrameworksWithoutPlugins(Directory projectDir, { required
 
   final String noPluginsOutputPath = path.join(projectDir.path, noPluginsOutputDir);
   for (final String mode in <String>['Debug', 'Profile', 'Release']) {
-    checkFileExists(path.join(
-      noPluginsOutputPath,
-      mode,
-      'Flutter${platform == 'macos' ? 'MacOS' : ''}.podspec',
-    ));
-    checkDirectoryExists(path.join(
-      noPluginsOutputPath,
-      mode,
-      'App.xcframework',
-    ));
+    checkFileExists(
+      path.join(noPluginsOutputPath, mode, 'Flutter${platform == 'macos' ? 'MacOS' : ''}.podspec'),
+    );
+    checkDirectoryExists(path.join(noPluginsOutputPath, mode, 'App.xcframework'));
 
-    checkDirectoryNotExists(path.join(
-      noPluginsOutputPath,
-      mode,
-      'package_info.xcframework',
-    ));
+    checkDirectoryNotExists(path.join(noPluginsOutputPath, mode, 'package_info.xcframework'));
 
-    checkDirectoryNotExists(path.join(
-      noPluginsOutputPath,
-      mode,
-      'connectivity.xcframework',
-    ));
+    checkDirectoryNotExists(path.join(noPluginsOutputPath, mode, 'connectivity.xcframework'));
 
-    checkDirectoryNotExists(path.join(
-      noPluginsOutputPath,
-      mode,
-      'Reachability.xcframework',
-    ));
+    checkDirectoryNotExists(path.join(noPluginsOutputPath, mode, 'Reachability.xcframework'));
   }
 }
 
@@ -907,16 +845,16 @@ Future<void> _testStaticAndNoPlugins(Directory projectDir) async {
   const String noPluginsOutputDir = 'flutter-frameworks-no-plugins-static';
   final ProcessResult result = await inDirectory(projectDir, () async {
     return executeFlutter(
-        'build',
-        options: <String>[
-          'ios-framework',
-          '--cocoapods',
-          '--force', // Allow podspec creation on master.
-          '--output=$noPluginsOutputDir',
-          '--no-plugins',
-          '--static'
-        ],
-        canFail: true
+      'build',
+      options: <String>[
+        'ios-framework',
+        '--cocoapods',
+        '--force', // Allow podspec creation on master.
+        '--output=$noPluginsOutputDir',
+        '--no-plugins',
+        '--static',
+      ],
+      canFail: true,
     );
   });
   if (result.exitCode == 0) {
@@ -950,21 +888,11 @@ Future<void> _checkStatic(String pathToLibrary) async {
 }
 
 Future<bool> _linksOnFlutter(String pathToBinary) async {
-  final String loadCommands = await eval('otool', <String>[
-    '-l',
-    '-arch',
-    'arm64',
-    pathToBinary,
-  ]);
+  final String loadCommands = await eval('otool', <String>['-l', '-arch', 'arm64', pathToBinary]);
   return loadCommands.contains('Flutter.framework');
 }
 
 Future<bool> _linksOnFlutterMacOS(String pathToBinary) async {
-  final String loadCommands = await eval('otool', <String>[
-    '-l',
-    '-arch',
-    'arm64',
-    pathToBinary,
-  ]);
+  final String loadCommands = await eval('otool', <String>['-l', '-arch', 'arm64', pathToBinary]);
   return loadCommands.contains('FlutterMacOS.framework');
 }

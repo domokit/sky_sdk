@@ -28,13 +28,10 @@ class SlidersDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(_title(context)),
-      ),
+      appBar: AppBar(automaticallyImplyLeading: false, title: Text(_title(context))),
       body: switch (type) {
-        SlidersDemoType.sliders       => _Sliders(),
-        SlidersDemoType.rangeSliders  => _RangeSliders(),
+        SlidersDemoType.sliders => _Sliders(),
+        SlidersDemoType.rangeSliders => _RangeSliders(),
         SlidersDemoType.customSliders => _CustomSliders(),
       },
     );
@@ -87,11 +84,9 @@ class _SlidersState extends State<_Sliders> with RestorationMixin {
                     textAlign: TextAlign.center,
                     onSubmitted: (String value) {
                       final double? newValue = double.tryParse(value);
-                      if (newValue != null &&
-                          newValue != _continuousValue.value) {
+                      if (newValue != null && newValue != _continuousValue.value) {
                         setState(() {
-                          _continuousValue.value =
-                              newValue.clamp(0, 100) as double;
+                          _continuousValue.value = newValue.clamp(0, 100) as double;
                         });
                       }
                     },
@@ -112,13 +107,8 @@ class _SlidersState extends State<_Sliders> with RestorationMixin {
                 },
               ),
               // Disabled slider
-              Slider(
-                value: _continuousValue.value,
-                max: 100,
-                onChanged: null,
-              ),
-              Text(localizations
-                  .demoSlidersContinuousWithEditableNumericalValue),
+              Slider(value: _continuousValue.value, max: 100, onChanged: null),
+              Text(localizations.demoSlidersContinuousWithEditableNumericalValue),
             ],
           ),
           const SizedBox(height: 80),
@@ -218,11 +208,7 @@ class _RangeSlidersState extends State<_RangeSliders> with RestorationMixin {
                 },
               ),
               // Disabled range slider
-              RangeSlider(
-                values: continuousValues,
-                max: 100,
-                onChanged: null,
-              ),
+              RangeSlider(values: continuousValues, max: 100, onChanged: null),
               Text(GalleryLocalizations.of(context)!.demoSlidersContinuous),
             ],
           ),
@@ -275,11 +261,9 @@ Path _downTriangle(double size, Offset thumbCenter, {bool invert = false}) {
   final double centerHeight = size * height / 3;
   final double halfSize = size / 2;
   final int sign = invert ? -1 : 1;
-  thumbPath.moveTo(
-      thumbCenter.dx - halfSize, thumbCenter.dy + sign * centerHeight);
+  thumbPath.moveTo(thumbCenter.dx - halfSize, thumbCenter.dy + sign * centerHeight);
   thumbPath.lineTo(thumbCenter.dx, thumbCenter.dy - 2 * sign * centerHeight);
-  thumbPath.lineTo(
-      thumbCenter.dx + halfSize, thumbCenter.dy + sign * centerHeight);
+  thumbPath.lineTo(thumbCenter.dx + halfSize, thumbCenter.dy + sign * centerHeight);
   thumbPath.close();
   return thumbPath;
 }
@@ -295,8 +279,7 @@ Path _rightTriangle(double size, Offset thumbCenter, {bool invert = false}) {
   return thumbPath;
 }
 
-Path _upTriangle(double size, Offset thumbCenter) =>
-    _downTriangle(size, thumbCenter, invert: true);
+Path _upTriangle(double size, Offset thumbCenter) => _downTriangle(size, thumbCenter, invert: true);
 
 Path _leftTriangle(double size, Offset thumbCenter) =>
     _rightTriangle(size, thumbCenter, invert: true);
@@ -340,15 +323,12 @@ class _CustomRangeThumbShape extends RangeSliderThumbShape {
     );
 
     final double size = _thumbSize * sizeTween.evaluate(enableAnimation);
-    canvas.drawPath(
-      switch ((textDirection!, thumb!)) {
-        (TextDirection.rtl, Thumb.start) => _rightTriangle(size, center),
-        (TextDirection.rtl, Thumb.end)   => _leftTriangle(size, center),
-        (TextDirection.ltr, Thumb.start) => _leftTriangle(size, center),
-        (TextDirection.ltr, Thumb.end)   => _rightTriangle(size, center),
-      },
-      Paint()..color = colorTween.evaluate(enableAnimation)!,
-    );
+    canvas.drawPath(switch ((textDirection!, thumb!)) {
+      (TextDirection.rtl, Thumb.start) => _rightTriangle(size, center),
+      (TextDirection.rtl, Thumb.end) => _leftTriangle(size, center),
+      (TextDirection.ltr, Thumb.start) => _leftTriangle(size, center),
+      (TextDirection.ltr, Thumb.end) => _rightTriangle(size, center),
+    }, Paint()..color = colorTween.evaluate(enableAnimation)!);
   }
 }
 
@@ -392,10 +372,7 @@ class _CustomThumbShape extends SliderComponentShape {
     );
     final double size = _thumbSize * sizeTween.evaluate(enableAnimation);
     final Path thumbPath = _downTriangle(size, thumbCenter);
-    canvas.drawPath(
-      thumbPath,
-      Paint()..color = colorTween.evaluate(enableAnimation)!,
-    );
+    canvas.drawPath(thumbPath, Paint()..color = colorTween.evaluate(enableAnimation)!);
   }
 }
 
@@ -436,33 +413,25 @@ class _CustomValueIndicatorShape extends SliderComponentShape {
       begin: sliderTheme.disabledThumbColor,
       end: sliderTheme.valueIndicatorColor,
     );
-    final Tween<double> slideUpTween = Tween<double>(
-      begin: 0,
-      end: _slideUpHeight,
-    );
+    final Tween<double> slideUpTween = Tween<double>(begin: 0, end: _slideUpHeight);
     final double size = _indicatorSize * sizeTween.evaluate(enableAnimation);
-    final Offset slideUpOffset =
-        Offset(0, -slideUpTween.evaluate(activationAnimation));
+    final Offset slideUpOffset = Offset(0, -slideUpTween.evaluate(activationAnimation));
     final Path thumbPath = _upTriangle(size, thumbCenter + slideUpOffset);
     final Color paintColor = enableColor
         .evaluate(enableAnimation)!
         .withAlpha((255 * activationAnimation.value).round());
-    canvas.drawPath(
-      thumbPath,
-      Paint()..color = paintColor,
-    );
+    canvas.drawPath(thumbPath, Paint()..color = paintColor);
     canvas.drawLine(
-        thumbCenter,
-        thumbCenter + slideUpOffset,
-        Paint()
-          ..color = paintColor
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2);
+      thumbCenter,
+      thumbCenter + slideUpOffset,
+      Paint()
+        ..color = paintColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
     labelPainter.paint(
       canvas,
-      thumbCenter +
-          slideUpOffset +
-          Offset(-labelPainter.width / 2, -labelPainter.height - 4),
+      thumbCenter + slideUpOffset + Offset(-labelPainter.width / 2, -labelPainter.height - 4),
     );
   }
 }
@@ -482,10 +451,8 @@ class _CustomSlidersState extends State<_CustomSliders> with RestorationMixin {
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    registerForRestoration(
-        _continuousStartCustomValue, 'continuous_start_custom_value');
-    registerForRestoration(
-        _continuousEndCustomValue, 'continuous_end_custom_value');
+    registerForRestoration(_continuousStartCustomValue, 'continuous_start_custom_value');
+    registerForRestoration(_continuousEndCustomValue, 'continuous_end_custom_value');
     registerForRestoration(_discreteCustomValue, 'discrete_custom_value');
   }
 
@@ -517,26 +484,23 @@ class _CustomSlidersState extends State<_CustomSliders> with RestorationMixin {
                 data: theme.sliderTheme.copyWith(
                   trackHeight: 2,
                   activeTrackColor: Colors.deepPurple,
-                  inactiveTrackColor:
-                      theme.colorScheme.onSurface.withOpacity(0.5),
-                  activeTickMarkColor:
-                      theme.colorScheme.onSurface.withOpacity(0.7),
-                  inactiveTickMarkColor:
-                      theme.colorScheme.surface.withOpacity(0.7),
+                  inactiveTrackColor: theme.colorScheme.onSurface.withOpacity(0.5),
+                  activeTickMarkColor: theme.colorScheme.onSurface.withOpacity(0.7),
+                  inactiveTickMarkColor: theme.colorScheme.surface.withOpacity(0.7),
                   overlayColor: theme.colorScheme.onSurface.withOpacity(0.12),
                   thumbColor: Colors.deepPurple,
                   valueIndicatorColor: Colors.deepPurpleAccent,
                   thumbShape: const _CustomThumbShape(),
                   valueIndicatorShape: const _CustomValueIndicatorShape(),
-                  valueIndicatorTextStyle: theme.textTheme.bodyLarge!
-                      .copyWith(color: theme.colorScheme.onSurface),
+                  valueIndicatorTextStyle: theme.textTheme.bodyLarge!.copyWith(
+                    color: theme.colorScheme.onSurface,
+                  ),
                 ),
                 child: Slider(
                   value: _discreteCustomValue.value,
                   max: 200,
                   divisions: 5,
-                  semanticFormatterCallback: (double value) =>
-                      value.round().toString(),
+                  semanticFormatterCallback: (double value) => value.round().toString(),
                   label: '${_discreteCustomValue.value.round()}',
                   onChanged: (double value) {
                     setState(() {
@@ -575,8 +539,7 @@ class _CustomSlidersState extends State<_CustomSliders> with RestorationMixin {
                   },
                 ),
               ),
-              Text(localizations
-                  .demoSlidersContinuousRangeSliderWithCustomTheme),
+              Text(localizations.demoSlidersContinuousRangeSliderWithCustomTheme),
             ],
           ),
         ],

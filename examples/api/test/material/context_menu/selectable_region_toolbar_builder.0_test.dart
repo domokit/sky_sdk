@@ -6,14 +6,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_api_samples/material/context_menu/selectable_region_toolbar_builder.0.dart' as example;
+import 'package:flutter_api_samples/material/context_menu/selectable_region_toolbar_builder.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('showing and hiding the custom context menu on SelectionArea', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SelectableRegionToolbarBuilderExampleApp(),
-    );
+  testWidgets('showing and hiding the custom context menu on SelectionArea', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.SelectableRegionToolbarBuilderExampleApp());
 
     expect(BrowserContextMenu.enabled, !kIsWeb);
 

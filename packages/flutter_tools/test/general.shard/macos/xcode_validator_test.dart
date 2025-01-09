@@ -20,7 +20,10 @@ void main() {
       final ProcessManager processManager = FakeProcessManager.any();
       final Xcode xcode = Xcode.test(
         processManager: processManager,
-        xcodeProjectInterpreter: XcodeProjectInterpreter.test(processManager: processManager, version: null),
+        xcodeProjectInterpreter: XcodeProjectInterpreter.test(
+          processManager: processManager,
+          version: null,
+        ),
       );
       final XcodeValidator validator = XcodeValidator(
         xcode: xcode,
@@ -42,8 +45,11 @@ void main() {
         ),
       ]);
       final Xcode xcode = Xcode.test(
-      processManager: processManager,
-        xcodeProjectInterpreter: XcodeProjectInterpreter.test(processManager: processManager, version: null),
+        processManager: processManager,
+        xcodeProjectInterpreter: XcodeProjectInterpreter.test(
+          processManager: processManager,
+          version: null,
+        ),
       );
       final XcodeValidator validator = XcodeValidator(
         xcode: xcode,
@@ -60,7 +66,10 @@ void main() {
       final ProcessManager processManager = FakeProcessManager.any();
       final Xcode xcode = Xcode.test(
         processManager: processManager,
-        xcodeProjectInterpreter: XcodeProjectInterpreter.test(processManager: processManager, version: Version(7, 0, 1)),
+        xcodeProjectInterpreter: XcodeProjectInterpreter.test(
+          processManager: processManager,
+          version: Version(7, 0, 1),
+        ),
       );
       final XcodeValidator validator = XcodeValidator(
         xcode: xcode,
@@ -77,7 +86,10 @@ void main() {
       final ProcessManager processManager = FakeProcessManager.any();
       final Xcode xcode = Xcode.test(
         processManager: processManager,
-        xcodeProjectInterpreter: XcodeProjectInterpreter.test(processManager: processManager, version: Version(14, 4, null)),
+        xcodeProjectInterpreter: XcodeProjectInterpreter.test(
+          processManager: processManager,
+          version: Version(14, 4, null),
+        ),
       );
       final XcodeValidator validator = XcodeValidator(
         xcode: xcode,
@@ -87,7 +99,10 @@ void main() {
       final ValidationResult result = await validator.validate();
       expect(result.type, ValidationType.partial);
       expect(result.messages.last.type, ValidationMessageType.hint);
-      expect(result.messages.last.message, contains('Flutter recommends a minimum Xcode version of 15'));
+      expect(
+        result.messages.last.message,
+        contains('Flutter recommends a minimum Xcode version of 15'),
+      );
     }, skip: false); // [intended] Skip this test when minimum and required check versions converge.
 
     testWithoutContext('Emits partial status when Xcode EULA not signed', () async {
@@ -96,28 +111,14 @@ void main() {
           command: <String>['/usr/bin/xcode-select', '--print-path'],
           stdout: '/Library/Developer/CommandLineTools',
         ),
-        const FakeCommand(
-          command: <String>[
-            'which',
-            'sysctl',
-          ],
-        ),
-        const FakeCommand(
-          command: <String>[
-            'sysctl',
-            'hw.optional.arm64',
-          ],
-          exitCode: 1,
-        ),
+        const FakeCommand(command: <String>['which', 'sysctl']),
+        const FakeCommand(command: <String>['sysctl', 'hw.optional.arm64'], exitCode: 1),
         const FakeCommand(
           command: <String>['xcrun', 'clang'],
           exitCode: 1,
-          stderr:
-          'Xcode EULA has not been accepted.\nLaunch Xcode and accept the license.',
+          stderr: 'Xcode EULA has not been accepted.\nLaunch Xcode and accept the license.',
         ),
-        const FakeCommand(
-          command: <String>['xcrun', 'simctl', 'list', 'devices', 'booted'],
-        ),
+        const FakeCommand(command: <String>['xcrun', 'simctl', 'list', 'devices', 'booted']),
       ]);
       final Xcode xcode = Xcode.test(
         processManager: processManager,
@@ -141,22 +142,9 @@ void main() {
           command: <String>['/usr/bin/xcode-select', '--print-path'],
           stdout: '/Library/Developer/CommandLineTools',
         ),
-        const FakeCommand(
-          command: <String>[
-            'which',
-            'sysctl',
-          ],
-        ),
-        const FakeCommand(
-          command: <String>[
-            'sysctl',
-            'hw.optional.arm64',
-          ],
-          exitCode: 1,
-        ),
-        const FakeCommand(
-          command: <String>['xcrun', 'clang'],
-        ),
+        const FakeCommand(command: <String>['which', 'sysctl']),
+        const FakeCommand(command: <String>['sysctl', 'hw.optional.arm64'], exitCode: 1),
+        const FakeCommand(command: <String>['xcrun', 'clang']),
         const FakeCommand(
           command: <String>['xcrun', 'simctl', 'list', 'devices', 'booted'],
           exitCode: 1,
@@ -184,25 +172,10 @@ void main() {
           command: <String>['/usr/bin/xcode-select', '--print-path'],
           stdout: '/Library/Developer/CommandLineTools',
         ),
-        const FakeCommand(
-          command: <String>[
-            'which',
-            'sysctl',
-          ],
-        ),
-        const FakeCommand(
-          command: <String>[
-            'sysctl',
-            'hw.optional.arm64',
-          ],
-          exitCode: 1,
-        ),
-        const FakeCommand(
-          command: <String>['xcrun', 'clang'],
-        ),
-        const FakeCommand(
-          command: <String>['xcrun', 'simctl', 'list', 'devices', 'booted'],
-        ),
+        const FakeCommand(command: <String>['which', 'sysctl']),
+        const FakeCommand(command: <String>['sysctl', 'hw.optional.arm64'], exitCode: 1),
+        const FakeCommand(command: <String>['xcrun', 'clang']),
+        const FakeCommand(command: <String>['xcrun', 'simctl', 'list', 'devices', 'booted']),
         const FakeCommand(
           command: <String>['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-platform-version'],
         ),
@@ -229,28 +202,13 @@ void main() {
           command: <String>['/usr/bin/xcode-select', '--print-path'],
           stdout: '/Library/Developer/CommandLineTools',
         ),
-        const FakeCommand(
-          command: <String>[
-            'which',
-            'sysctl',
-          ],
-        ),
-        const FakeCommand(
-          command: <String>[
-            'sysctl',
-            'hw.optional.arm64',
-          ],
-          exitCode: 1,
-        ),
-        const FakeCommand(
-          command: <String>['xcrun', 'clang'],
-        ),
-        const FakeCommand(
-          command: <String>['xcrun', 'simctl', 'list', 'devices', 'booted'],
-        ),
+        const FakeCommand(command: <String>['which', 'sysctl']),
+        const FakeCommand(command: <String>['sysctl', 'hw.optional.arm64'], exitCode: 1),
+        const FakeCommand(command: <String>['xcrun', 'clang']),
+        const FakeCommand(command: <String>['xcrun', 'simctl', 'list', 'devices', 'booted']),
         const FakeCommand(
           command: <String>['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-platform-version'],
-          stdout: '17.0'
+          stdout: '17.0',
         ),
       ]);
       final Xcode xcode = Xcode.test(
@@ -265,58 +223,51 @@ void main() {
       final ValidationResult result = await validator.validate();
       expect(result.type, ValidationType.partial);
       expect(result.messages.last.type, ValidationMessageType.error);
-      expect(result.messages.last.message, contains('Unable to get list of installed Simulator runtimes'));
+      expect(
+        result.messages.last.message,
+        contains('Unable to get list of installed Simulator runtimes'),
+      );
       expect(processManager, hasNoRemainingExpectations);
     });
 
-    testWithoutContext('Emits partial status with hint when simulator runtimes do not match SDK', () async {
-      final ProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
-        const FakeCommand(
-          command: <String>['/usr/bin/xcode-select', '--print-path'],
-          stdout: '/Library/Developer/CommandLineTools',
-        ),
-        const FakeCommand(
-          command: <String>[
-            'which',
-            'sysctl',
+    testWithoutContext(
+      'Emits partial status with hint when simulator runtimes do not match SDK',
+      () async {
+        final ProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
+          const FakeCommand(
+            command: <String>['/usr/bin/xcode-select', '--print-path'],
+            stdout: '/Library/Developer/CommandLineTools',
+          ),
+          const FakeCommand(command: <String>['which', 'sysctl']),
+          const FakeCommand(command: <String>['sysctl', 'hw.optional.arm64'], exitCode: 1),
+          const FakeCommand(command: <String>['xcrun', 'clang']),
+          const FakeCommand(command: <String>['xcrun', 'simctl', 'list', 'devices', 'booted']),
+          const FakeCommand(
+            command: <String>['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-platform-version'],
+            stdout: '17.0',
+          ),
+        ]);
+        final Xcode xcode = Xcode.test(
+          processManager: processManager,
+          xcodeProjectInterpreter: XcodeProjectInterpreter.test(processManager: processManager),
+        );
+        final FakeIOSSimulatorUtils simulatorUtils = FakeIOSSimulatorUtils(
+          runtimes: <IOSSimulatorRuntime>[
+            IOSSimulatorRuntime.fromJson(<String, String>{'version': '16.0'}),
           ],
-        ),
-        const FakeCommand(
-          command: <String>[
-            'sysctl',
-            'hw.optional.arm64',
-          ],
-          exitCode: 1,
-        ),
-        const FakeCommand(
-          command: <String>['xcrun', 'clang'],
-        ),
-        const FakeCommand(
-          command: <String>['xcrun', 'simctl', 'list', 'devices', 'booted'],
-        ),
-        const FakeCommand(
-          command: <String>['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-platform-version'],
-          stdout: '17.0'
-        ),
-      ]);
-      final Xcode xcode = Xcode.test(
-        processManager: processManager,
-        xcodeProjectInterpreter: XcodeProjectInterpreter.test(processManager: processManager),
-      );
-      final FakeIOSSimulatorUtils simulatorUtils = FakeIOSSimulatorUtils(runtimes: <IOSSimulatorRuntime>[
-        IOSSimulatorRuntime.fromJson(<String, String>{'version': '16.0'}),
-      ]);
-      final XcodeValidator validator = XcodeValidator(
-        xcode: xcode,
-        userMessages: UserMessages(),
-        iosSimulatorUtils: simulatorUtils,
-      );
-      final ValidationResult result = await validator.validate();
-      expect(result.type, ValidationType.partial);
-      expect(result.messages.last.type, ValidationMessageType.hint);
-      expect(result.messages.last.message, contains('iOS 17.0 Simulator not installed'));
-      expect(processManager, hasNoRemainingExpectations);
-    });
+        );
+        final XcodeValidator validator = XcodeValidator(
+          xcode: xcode,
+          userMessages: UserMessages(),
+          iosSimulatorUtils: simulatorUtils,
+        );
+        final ValidationResult result = await validator.validate();
+        expect(result.type, ValidationType.partial);
+        expect(result.messages.last.type, ValidationMessageType.hint);
+        expect(result.messages.last.message, contains('iOS 17.0 Simulator not installed'));
+        expect(processManager, hasNoRemainingExpectations);
+      },
+    );
 
     testWithoutContext('Succeeds when all checks pass', () async {
       final ProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
@@ -324,37 +275,24 @@ void main() {
           command: <String>['/usr/bin/xcode-select', '--print-path'],
           stdout: '/Library/Developer/CommandLineTools',
         ),
-        const FakeCommand(
-          command: <String>[
-            'which',
-            'sysctl',
-          ],
-        ),
-        const FakeCommand(
-          command: <String>[
-            'sysctl',
-            'hw.optional.arm64',
-          ],
-          exitCode: 1,
-        ),
-        const FakeCommand(
-          command: <String>['xcrun', 'clang'],
-        ),
-        const FakeCommand(
-          command: <String>['xcrun', 'simctl', 'list', 'devices', 'booted'],
-        ),
+        const FakeCommand(command: <String>['which', 'sysctl']),
+        const FakeCommand(command: <String>['sysctl', 'hw.optional.arm64'], exitCode: 1),
+        const FakeCommand(command: <String>['xcrun', 'clang']),
+        const FakeCommand(command: <String>['xcrun', 'simctl', 'list', 'devices', 'booted']),
         const FakeCommand(
           command: <String>['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-platform-version'],
-          stdout: '17.0'
+          stdout: '17.0',
         ),
       ]);
       final Xcode xcode = Xcode.test(
         processManager: processManager,
         xcodeProjectInterpreter: XcodeProjectInterpreter.test(processManager: processManager),
       );
-      final FakeIOSSimulatorUtils simulatorUtils = FakeIOSSimulatorUtils(runtimes: <IOSSimulatorRuntime>[
-        IOSSimulatorRuntime.fromJson(<String, String>{'version': '17.0'}),
-      ]);
+      final FakeIOSSimulatorUtils simulatorUtils = FakeIOSSimulatorUtils(
+        runtimes: <IOSSimulatorRuntime>[
+          IOSSimulatorRuntime.fromJson(<String, String>{'version': '17.0'}),
+        ],
+      );
       final XcodeValidator validator = XcodeValidator(
         xcode: xcode,
         userMessages: UserMessages(),
@@ -374,9 +312,7 @@ void main() {
 }
 
 class FakeIOSSimulatorUtils extends Fake implements IOSSimulatorUtils {
-  FakeIOSSimulatorUtils({
-    this.runtimes,
-  });
+  FakeIOSSimulatorUtils({this.runtimes});
 
   List<IOSSimulatorRuntime>? runtimes;
 

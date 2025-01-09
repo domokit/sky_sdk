@@ -17,10 +17,7 @@ import 'history_test.dart';
 EngineFlutterWindow get myWindow => EnginePlatformDispatcher.instance.implicitView!;
 
 Map<String, dynamic> _tagStateWithSerialCount(dynamic state, int serialCount) {
-  return <String, dynamic> {
-    'serialCount': serialCount,
-    'state': state,
-  };
+  return <String, dynamic>{'serialCount': serialCount, 'state': state};
 }
 
 void main() {
@@ -63,13 +60,15 @@ void testMain() {
   // window.defaultRouteName is now permanently decoupled from the history,
   // even in subsequent tests, because the PlatformDispatcher caches it.
 
-  test('window.defaultRouteName should reset after navigation platform message',
-      () async {
-    await myWindow.debugInitializeHistory(TestUrlStrategy.fromEntry(
-      // The URL here does not set the PlatformDispatcher's defaultRouteName,
-      // since it got cached as soon as we read it above.
-      const TestHistoryEntry('initial state', null, '/not-really-inital/THIS_IS_IGNORED'),
-    ), useSingle: true);
+  test('window.defaultRouteName should reset after navigation platform message', () async {
+    await myWindow.debugInitializeHistory(
+      TestUrlStrategy.fromEntry(
+        // The URL here does not set the PlatformDispatcher's defaultRouteName,
+        // since it got cached as soon as we read it above.
+        const TestHistoryEntry('initial state', null, '/not-really-inital/THIS_IS_IGNORED'),
+      ),
+      useSingle: true,
+    );
     // Reading it multiple times should return the same value.
     expect(myWindow.defaultRouteName, '/initial');
     expect(myWindow.defaultRouteName, '/initial');
@@ -77,11 +76,12 @@ void testMain() {
     final Completer<void> callback = Completer<void>();
     myWindow.sendPlatformMessage(
       'flutter/navigation',
-      const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'routeUpdated',
-        <String, dynamic>{'routeName': '/bar'},
-      )),
-      (_) { callback.complete(); },
+      const JSONMethodCodec().encodeMethodCall(
+        const MethodCall('routeUpdated', <String, dynamic>{'routeName': '/bar'}),
+      ),
+      (_) {
+        callback.complete();
+      },
     );
     await callback.future;
     // After a navigation platform message, the PlatformDispatcher's
@@ -93,9 +93,10 @@ void testMain() {
 
   test('can switch history mode', () async {
     Completer<void> callback;
-    await myWindow.debugInitializeHistory(TestUrlStrategy.fromEntry(
-      const TestHistoryEntry('initial state', null, '/initial'),
-    ), useSingle: false);
+    await myWindow.debugInitializeHistory(
+      TestUrlStrategy.fromEntry(const TestHistoryEntry('initial state', null, '/initial')),
+      useSingle: false,
+    );
     expect(myWindow.browserHistory, isA<MultiEntriesBrowserHistory>());
 
     Future<void> check<T>(String method, Object? arguments) async {
@@ -103,7 +104,9 @@ void testMain() {
       myWindow.sendPlatformMessage(
         'flutter/navigation',
         const JSONMethodCodec().encodeMethodCall(MethodCall(method, arguments)),
-        (_) { callback.complete(); },
+        (_) {
+          callback.complete();
+        },
       );
       await callback.future;
       expect(myWindow.browserHistory, isA<T>());
@@ -113,72 +116,87 @@ void testMain() {
     // See https://github.com/flutter/flutter/issues/83158#issuecomment-847483010
     await check<SingleEntryBrowserHistory>('selectSingleEntryHistory', null); // -> single
     await check<MultiEntriesBrowserHistory>('selectMultiEntryHistory', null); // -> multi
-    await check<SingleEntryBrowserHistory>('selectSingleEntryHistory', <String, dynamic>{}); // -> single
-    await check<MultiEntriesBrowserHistory>('selectMultiEntryHistory', <String, dynamic>{}); // -> multi
-    await check<SingleEntryBrowserHistory>('routeUpdated', <String, dynamic>{'routeName': '/bar'}); // -> single
-    await check<SingleEntryBrowserHistory>('routeInformationUpdated', <String, dynamic>{'location': '/bar'}); // does not change mode
-    await check<MultiEntriesBrowserHistory>('selectMultiEntryHistory', <String, dynamic>{}); // -> multi
-    await check<MultiEntriesBrowserHistory>('routeInformationUpdated', <String, dynamic>{'location': '/bar'}); // does not change mode
+    await check<SingleEntryBrowserHistory>(
+      'selectSingleEntryHistory',
+      <String, dynamic>{},
+    ); // -> single
+    await check<MultiEntriesBrowserHistory>(
+      'selectMultiEntryHistory',
+      <String, dynamic>{},
+    ); // -> multi
+    await check<SingleEntryBrowserHistory>('routeUpdated', <String, dynamic>{
+      'routeName': '/bar',
+    }); // -> single
+    await check<SingleEntryBrowserHistory>('routeInformationUpdated', <String, dynamic>{
+      'location': '/bar',
+    }); // does not change mode
+    await check<MultiEntriesBrowserHistory>(
+      'selectMultiEntryHistory',
+      <String, dynamic>{},
+    ); // -> multi
+    await check<MultiEntriesBrowserHistory>('routeInformationUpdated', <String, dynamic>{
+      'location': '/bar',
+    }); // does not change mode
   });
 
-  test('handleNavigationMessage throws for route update methods called with null arguments',
-      () async {
-    expect(() async {
-      await myWindow.handleNavigationMessage(
-        const JSONMethodCodec().encodeMethodCall(const MethodCall(
-          'routeUpdated',
-        ))
-      );
-    }, throwsAssertionError);
+  test(
+    'handleNavigationMessage throws for route update methods called with null arguments',
+    () async {
+      expect(() async {
+        await myWindow.handleNavigationMessage(
+          const JSONMethodCodec().encodeMethodCall(const MethodCall('routeUpdated')),
+        );
+      }, throwsAssertionError);
 
-    expect(() async {
-      await myWindow.handleNavigationMessage(
-        const JSONMethodCodec().encodeMethodCall(const MethodCall(
-          'routeInformationUpdated',
-        ))
-      );
-    }, throwsAssertionError);
-  });
+      expect(() async {
+        await myWindow.handleNavigationMessage(
+          const JSONMethodCodec().encodeMethodCall(const MethodCall('routeInformationUpdated')),
+        );
+      }, throwsAssertionError);
+    },
+  );
 
   test('handleNavigationMessage execute request in order.', () async {
     // Start with multi entries.
-    await myWindow.debugInitializeHistory(TestUrlStrategy.fromEntry(
-      const TestHistoryEntry('initial state', null, '/initial'),
-    ), useSingle: false);
+    await myWindow.debugInitializeHistory(
+      TestUrlStrategy.fromEntry(const TestHistoryEntry('initial state', null, '/initial')),
+      useSingle: false,
+    );
     expect(myWindow.browserHistory, isA<MultiEntriesBrowserHistory>());
     final List<String> executionOrder = <String>[];
-    await myWindow.handleNavigationMessage(
-      const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'selectSingleEntryHistory',
-      ))
-    ).then<void>((bool data) {
-      executionOrder.add('1');
-    });
-    await myWindow.handleNavigationMessage(
-      const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'selectMultiEntryHistory',
-      ))
-    ).then<void>((bool data) {
-      executionOrder.add('2');
-    });
-    await myWindow.handleNavigationMessage(
-        const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'selectSingleEntryHistory',
-      ))
-    ).then<void>((bool data) {
-      executionOrder.add('3');
-    });
-    await myWindow.handleNavigationMessage(
-        const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'routeInformationUpdated',
-        <String, dynamic>{
-          'location': '/baz',
-          'state': null,
-        }, // boom
-      ))
-    ).then<void>((bool data) {
-      executionOrder.add('4');
-    });
+    await myWindow
+        .handleNavigationMessage(
+          const JSONMethodCodec().encodeMethodCall(const MethodCall('selectSingleEntryHistory')),
+        )
+        .then<void>((bool data) {
+          executionOrder.add('1');
+        });
+    await myWindow
+        .handleNavigationMessage(
+          const JSONMethodCodec().encodeMethodCall(const MethodCall('selectMultiEntryHistory')),
+        )
+        .then<void>((bool data) {
+          executionOrder.add('2');
+        });
+    await myWindow
+        .handleNavigationMessage(
+          const JSONMethodCodec().encodeMethodCall(const MethodCall('selectSingleEntryHistory')),
+        )
+        .then<void>((bool data) {
+          executionOrder.add('3');
+        });
+    await myWindow
+        .handleNavigationMessage(
+          const JSONMethodCodec().encodeMethodCall(
+            const MethodCall(
+              'routeInformationUpdated',
+              <String, dynamic>{'location': '/baz', 'state': null}, // boom
+            ),
+          ),
+        )
+        .then<void>((bool data) {
+          executionOrder.add('4');
+        });
     // The routeInformationUpdated should finish after the browser history
     // has been set to single entry.
     expect(executionOrder.length, 4);
@@ -188,22 +206,23 @@ void testMain() {
     expect(executionOrder[3], '4');
   });
 
-  test('should not throw when using nav1 and nav2 together',
-      () async {
-    await myWindow.debugInitializeHistory(TestUrlStrategy.fromEntry(
-      const TestHistoryEntry('initial state', null, '/initial'),
-    ), useSingle: false);
+  test('should not throw when using nav1 and nav2 together', () async {
+    await myWindow.debugInitializeHistory(
+      TestUrlStrategy.fromEntry(const TestHistoryEntry('initial state', null, '/initial')),
+      useSingle: false,
+    );
     expect(myWindow.browserHistory, isA<MultiEntriesBrowserHistory>());
 
     // routeUpdated resets the history type
     Completer<void> callback = Completer<void>();
     myWindow.sendPlatformMessage(
       'flutter/navigation',
-      const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'routeUpdated',
-        <String, dynamic>{'routeName': '/bar'},
-      )),
-      (_) { callback.complete(); },
+      const JSONMethodCodec().encodeMethodCall(
+        const MethodCall('routeUpdated', <String, dynamic>{'routeName': '/bar'}),
+      ),
+      (_) {
+        callback.complete();
+      },
     );
     await callback.future;
     expect(myWindow.browserHistory, isA<SingleEntryBrowserHistory>());
@@ -213,14 +232,15 @@ void testMain() {
     callback = Completer<void>();
     myWindow.sendPlatformMessage(
       'flutter/navigation',
-      const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'routeInformationUpdated',
-        <String, dynamic>{
+      const JSONMethodCodec().encodeMethodCall(
+        const MethodCall('routeInformationUpdated', <String, dynamic>{
           'location': '/baz',
           'state': null,
-        },
-      )),
-      (_) { callback.complete(); },
+        }),
+      ),
+      (_) {
+        callback.complete();
+      },
     );
     await callback.future;
     expect(myWindow.browserHistory, isA<SingleEntryBrowserHistory>());
@@ -228,43 +248,40 @@ void testMain() {
 
     // they can be interleaved safely
     await myWindow.handleNavigationMessage(
-        const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'routeUpdated',
-        <String, dynamic>{'routeName': '/foo'},
-      ))
+      const JSONMethodCodec().encodeMethodCall(
+        const MethodCall('routeUpdated', <String, dynamic>{'routeName': '/foo'}),
+      ),
     );
     expect(myWindow.browserHistory, isA<SingleEntryBrowserHistory>());
     expect(myWindow.browserHistory.urlStrategy!.getPath(), '/foo');
   });
 
-  test('should not throw when state is complex json object',
-      () async {
+  test('should not throw when state is complex json object', () async {
     // Regression test https://github.com/flutter/flutter/issues/87823.
-    await myWindow.debugInitializeHistory(TestUrlStrategy.fromEntry(
-      const TestHistoryEntry('initial state', null, '/initial'),
-    ), useSingle: false);
+    await myWindow.debugInitializeHistory(
+      TestUrlStrategy.fromEntry(const TestHistoryEntry('initial state', null, '/initial')),
+      useSingle: false,
+    );
     expect(myWindow.browserHistory, isA<MultiEntriesBrowserHistory>());
 
     // routeInformationUpdated does not
     final Completer<void> callback = Completer<void>();
     myWindow.sendPlatformMessage(
       'flutter/navigation',
-      const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'routeInformationUpdated',
-        <String, dynamic>{
+      const JSONMethodCodec().encodeMethodCall(
+        const MethodCall('routeInformationUpdated', <String, dynamic>{
           'location': '/baz',
           'state': <String, dynamic>{
             'state1': true,
             'state2': 1,
             'state3': 'string',
-            'state4': <String, dynamic> {
-              'substate1': 1.0,
-              'substate2': 'string2',
-            }
+            'state4': <String, dynamic>{'substate1': 1.0, 'substate2': 'string2'},
           },
-        },
-      )),
-      (_) { callback.complete(); },
+        }),
+      ),
+      (_) {
+        callback.complete();
+      },
     );
     await callback.future;
     expect(myWindow.browserHistory, isA<MultiEntriesBrowserHistory>());
@@ -280,48 +297,50 @@ void testMain() {
     expect(state4['substate2'], 'string2');
   });
 
-  test('routeInformationUpdated can handle uri',
-      () async {
-    await myWindow.debugInitializeHistory(TestUrlStrategy.fromEntry(
-      const TestHistoryEntry('initial state', null, '/initial'),
-    ), useSingle: false);
+  test('routeInformationUpdated can handle uri', () async {
+    await myWindow.debugInitializeHistory(
+      TestUrlStrategy.fromEntry(const TestHistoryEntry('initial state', null, '/initial')),
+      useSingle: false,
+    );
     expect(myWindow.browserHistory, isA<MultiEntriesBrowserHistory>());
 
     // routeInformationUpdated does not
     final Completer<void> callback = Completer<void>();
     myWindow.sendPlatformMessage(
       'flutter/navigation',
-      const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'routeInformationUpdated',
-        <String, dynamic>{
+      const JSONMethodCodec().encodeMethodCall(
+        const MethodCall('routeInformationUpdated', <String, dynamic>{
           'uri': 'http://myhostname.com/baz?abc=def#fragment',
-        },
-      )),
-      (_) { callback.complete(); },
+        }),
+      ),
+      (_) {
+        callback.complete();
+      },
     );
     await callback.future;
     expect(myWindow.browserHistory, isA<MultiEntriesBrowserHistory>());
     expect(myWindow.browserHistory.urlStrategy!.getPath(), '/baz?abc=def#fragment');
   });
 
-  test('can replace in MultiEntriesBrowserHistory',
-      () async {
-    await myWindow.debugInitializeHistory(TestUrlStrategy.fromEntry(
-      const TestHistoryEntry('initial state', null, '/initial'),
-    ), useSingle: false);
+  test('can replace in MultiEntriesBrowserHistory', () async {
+    await myWindow.debugInitializeHistory(
+      TestUrlStrategy.fromEntry(const TestHistoryEntry('initial state', null, '/initial')),
+      useSingle: false,
+    );
     expect(myWindow.browserHistory, isA<MultiEntriesBrowserHistory>());
 
     Completer<void> callback = Completer<void>();
     myWindow.sendPlatformMessage(
       'flutter/navigation',
-      const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'routeInformationUpdated',
-        <String, dynamic>{
+      const JSONMethodCodec().encodeMethodCall(
+        const MethodCall('routeInformationUpdated', <String, dynamic>{
           'location': '/baz',
           'state': '/state',
-        },
-      )),
-      (_) { callback.complete(); },
+        }),
+      ),
+      (_) {
+        callback.complete();
+      },
     );
     await callback.future;
     expect(myWindow.browserHistory.urlStrategy!.getPath(), '/baz');
@@ -330,15 +349,16 @@ void testMain() {
     callback = Completer<void>();
     myWindow.sendPlatformMessage(
       'flutter/navigation',
-      const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'routeInformationUpdated',
-        <String, dynamic>{
+      const JSONMethodCodec().encodeMethodCall(
+        const MethodCall('routeInformationUpdated', <String, dynamic>{
           'location': '/baz',
           'state': '/state1',
-          'replace': true
-        },
-      )),
-      (_) { callback.complete(); },
+          'replace': true,
+        }),
+      ),
+      (_) {
+        callback.complete();
+      },
     );
     await callback.future;
     expect(myWindow.browserHistory.urlStrategy!.getPath(), '/baz');
@@ -347,18 +367,22 @@ void testMain() {
     callback = Completer<void>();
     myWindow.sendPlatformMessage(
       'flutter/navigation',
-      const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'routeInformationUpdated',
-        <String, dynamic>{
+      const JSONMethodCodec().encodeMethodCall(
+        const MethodCall('routeInformationUpdated', <String, dynamic>{
           'location': '/foo',
           'state': '/foostate1',
-        },
-      )),
-      (_) { callback.complete(); },
+        }),
+      ),
+      (_) {
+        callback.complete();
+      },
     );
     await callback.future;
     expect(myWindow.browserHistory.urlStrategy!.getPath(), '/foo');
-    expect(myWindow.browserHistory.urlStrategy!.getState(), _tagStateWithSerialCount('/foostate1', 2));
+    expect(
+      myWindow.browserHistory.urlStrategy!.getState(),
+      _tagStateWithSerialCount('/foostate1', 2),
+    );
 
     await myWindow.browserHistory.back();
     expect(myWindow.browserHistory.urlStrategy!.getPath(), '/baz');
@@ -376,11 +400,12 @@ void testMain() {
     final Completer<void> callback = Completer<void>();
     myWindow.sendPlatformMessage(
       'flutter/navigation',
-      const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'routeUpdated',
-        <String, dynamic>{'routeName': '/bar'},
-      )),
-      (_) { callback.complete(); },
+      const JSONMethodCodec().encodeMethodCall(
+        const MethodCall('routeUpdated', <String, dynamic>{'routeName': '/bar'}),
+      ),
+      (_) {
+        callback.complete();
+      },
     );
     await callback.future;
     expect(myWindow.browserHistory, isA<SingleEntryBrowserHistory>());
@@ -401,14 +426,15 @@ void testMain() {
     final Completer<void> callback = Completer<void>();
     myWindow.sendPlatformMessage(
       'flutter/navigation',
-      const JSONMethodCodec().encodeMethodCall(const MethodCall(
-        'routeInformationUpdated',
-        <String, dynamic>{
+      const JSONMethodCodec().encodeMethodCall(
+        const MethodCall('routeInformationUpdated', <String, dynamic>{
           'location': '/baz',
           'state': null,
-        },
-      )),
-      (_) { callback.complete(); },
+        }),
+      ),
+      (_) {
+        callback.complete();
+      },
     );
     await callback.future;
     expect(myWindow.browserHistory, isA<MultiEntriesBrowserHistory>());
@@ -420,12 +446,9 @@ void testMain() {
 
   test('can disable location strategy', () async {
     // Disable URL strategy.
-    expect(
-      () {
-        ui_web.urlStrategy = null;
-      },
-      returnsNormally,
-    );
+    expect(() {
+      ui_web.urlStrategy = null;
+    }, returnsNormally);
     // History should be initialized.
     expect(myWindow.browserHistory, isNotNull);
     // But without a URL strategy.
@@ -445,29 +468,20 @@ void testMain() {
     );
     await myWindow.debugInitializeHistory(testStrategy, useSingle: true);
 
-    expect(
-      () {
-        ui_web.urlStrategy = null;
-      },
-      throwsA(isAssertionError),
-    );
+    expect(() {
+      ui_web.urlStrategy = null;
+    }, throwsA(isAssertionError));
   });
 
   test('cannot set url strategy more than once', () async {
     // First time is okay.
-    expect(
-      () {
-        ui_web.urlStrategy = null;
-      },
-      returnsNormally,
-    );
+    expect(() {
+      ui_web.urlStrategy = null;
+    }, returnsNormally);
     // Second time is not allowed.
-    expect(
-      () {
-        ui_web.urlStrategy = null;
-      },
-      throwsA(isAssertionError),
-    );
+    expect(() {
+      ui_web.urlStrategy = null;
+    }, throwsA(isAssertionError));
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/77817

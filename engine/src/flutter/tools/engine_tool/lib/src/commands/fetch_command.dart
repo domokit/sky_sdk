@@ -8,10 +8,7 @@ import 'command.dart';
 /// The root 'fetch' command.
 final class FetchCommand extends CommandBase {
   /// Constructs the 'fetch' command.
-  FetchCommand({
-    required super.environment,
-    super.usageLineLength,
-  });
+  FetchCommand({required super.environment, super.usageLineLength});
 
   @override
   String get name => 'fetch';

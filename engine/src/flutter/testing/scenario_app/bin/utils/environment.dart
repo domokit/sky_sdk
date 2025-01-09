@@ -8,11 +8,7 @@ import 'package:meta/meta.dart';
 @immutable
 final class Environment {
   /// Creates a new environment from the given values.
-  const Environment({
-    required this.isCi,
-    required this.showVerbose,
-    required this.logsDir,
-  });
+  const Environment({required this.isCi, required this.showVerbose, required this.logsDir});
 
   /// Whether the current program is running on a CI environment.
   ///

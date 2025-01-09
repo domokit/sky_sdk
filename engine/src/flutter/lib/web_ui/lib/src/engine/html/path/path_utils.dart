@@ -37,10 +37,8 @@ abstract final class SPath {
 
   static const int kLineSegmentMask = SPathSegmentMask.kLine_SkPathSegmentMask;
   static const int kQuadSegmentMask = SPathSegmentMask.kQuad_SkPathSegmentMask;
-  static const int kConicSegmentMask =
-      SPathSegmentMask.kConic_SkPathSegmentMask;
-  static const int kCubicSegmentMask =
-      SPathSegmentMask.kCubic_SkPathSegmentMask;
+  static const int kConicSegmentMask = SPathSegmentMask.kConic_SkPathSegmentMask;
+  static const int kCubicSegmentMask = SPathSegmentMask.kCubic_SkPathSegmentMask;
 
   static const double scalarNearlyZero = 1.0 / (1 << 12);
 
@@ -117,9 +115,8 @@ class QuadRoots {
   double? root1;
 
   /// Returns roots as list.
-  List<double> get roots => (root0 == null)
-      ? <double>[]
-      : (root1 == null ? <double>[root0!] : <double>[root0!, root1!]);
+  List<double> get roots =>
+      (root0 == null) ? <double>[] : (root1 == null ? <double>[root0!] : <double>[root0!, root1!]);
 
   int findRoots(double a, double b, double c) {
     int rootCount = 0;
@@ -205,8 +202,7 @@ bool isRRectOval(ui.RRect rrect) {
 double polyEval(double A, double B, double C, double t) => (A * t + B) * t + C;
 
 /// Evaluates degree 3 polynomial (cubic).
-double polyEval4(double A, double B, double C, double D, double t) =>
-    ((A * t + B) * t + C) * t + D;
+double polyEval4(double A, double B, double C, double D, double t) => ((A * t + B) * t + C) * t + D;
 
 // Interpolate between two doubles (Not using lerpDouble here since it null
 // checks and treats values as 0).
@@ -304,14 +300,13 @@ class Convexicator {
     // Detect straight and backwards direction change.
     // Instead of comparing absolute crossproduct size, compare
     // largest component double+crossproduct.
-    final double smallest =
-        math.min(curVecX, math.min(curVecY, math.min(lastX, lastY)));
+    final double smallest = math.min(curVecX, math.min(curVecY, math.min(lastX, lastY)));
     final double largest = math.max(
-        math.max(curVecX, math.max(curVecY, math.max(lastX, lastY))),
-        -smallest);
+      math.max(curVecX, math.max(curVecY, math.max(lastX, lastY))),
+      -smallest,
+    );
     if (SPath.nearlyEqual(largest, largest + cross)) {
-      const double nearlyZeroSquared =
-          SPath.scalarNearlyZero * SPath.scalarNearlyZero;
+      const double nearlyZeroSquared = SPath.scalarNearlyZero * SPath.scalarNearlyZero;
       if (SPath.nearlyEqual(lengthSquared(lastX, lastY), nearlyZeroSquared) ||
           SPath.nearlyEqual(lengthSquared(curVecX, curVecY), nearlyZeroSquared)) {
         // Length of either vector is smaller than tolerance to be able
@@ -334,8 +329,7 @@ class Convexicator {
       if (_expectedDirection == DirChange.kInvalid) {
         // First valid direction. From this point on expect always left.
         _expectedDirection = dir;
-        _firstDirection =
-            isDirectionRight ? SPathDirection.kCW : SPathDirection.kCCW;
+        _firstDirection = isDirectionRight ? SPathDirection.kCW : SPathDirection.kCCW;
       } else if (dir != _expectedDirection) {
         _firstDirection = SPathDirection.kUnknown;
         return false;
@@ -375,10 +369,8 @@ class Convexicator {
     int lastSy = kValueNeverReturnedBySign;
     for (int outerLoop = 0; outerLoop < 2; ++outerLoop) {
       while (pointIndex != lastPointIndex) {
-        final double vecX = pathRef.pointXAt(pointIndex) -
-            pathRef.pointXAt(currentPoint);
-        final double vecY = pathRef.pointYAt(pointIndex) -
-            pathRef.pointYAt(currentPoint);
+        final double vecX = pathRef.pointXAt(pointIndex) - pathRef.pointXAt(currentPoint);
+        final double vecY = pathRef.pointYAt(pointIndex) - pathRef.pointYAt(currentPoint);
         if (!(vecX == 0 && vecY == 0)) {
           // Give up if vector construction failed.
           // give up if vector construction failed
@@ -412,7 +404,7 @@ enum DirChange {
   kRight,
   kStraight,
   kBackwards, // if double back, allow simple lines to be convex
-  kInvalid
+  kInvalid,
 }
 
 double lengthSquaredOffset(ui.Offset offset) {
@@ -425,14 +417,13 @@ double lengthSquared(double dx, double dy) => dx * dx + dy * dy;
 
 /// Evaluates A * t^2 + B * t + C = 0 for quadratic curve.
 class SkQuadCoefficients {
-  SkQuadCoefficients(
-      double x0, double y0, double x1, double y1, double x2, double y2)
-      : cx = x0,
-        cy = y0,
-        bx = 2 * (x1 - x0),
-        by = 2 * (y1 - y0),
-        ax = x2 - (2 * x1) + x0,
-        ay = y2 - (2 * y1) + y0;
+  SkQuadCoefficients(double x0, double y0, double x1, double y1, double x2, double y2)
+    : cx = x0,
+      cy = y0,
+      bx = 2 * (x1 - x0),
+      by = 2 * (y1 - y0),
+      ax = x2 - (2 * x1) + x0,
+      ay = y2 - (2 * y1) + y0;
   final double ax, ay, bx, by, cx, cy;
 
   double evalX(double t) => (ax * t + bx) * t + cx;

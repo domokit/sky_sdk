@@ -63,8 +63,7 @@ void main() {
 
   test('upscale image varying width and height', () async {
     final Uint8List bytes = await readFile('2x2.png');
-    final Codec codec =
-        await instantiateImageCodec(bytes, targetWidth: 10, targetHeight: 1);
+    final Codec codec = await instantiateImageCodec(bytes, targetWidth: 10, targetHeight: 1);
     final FrameInfo frame = await codec.getNextFrame();
     final int codecHeight = frame.image.height;
     final int codecWidth = frame.image.width;
@@ -74,8 +73,12 @@ void main() {
 
   test('upscale image varying width and height - no upscaling', () async {
     final Uint8List bytes = await readFile('2x2.png');
-    final Codec codec =
-        await instantiateImageCodec(bytes, targetWidth: 10, targetHeight: 1, allowUpscaling: false);
+    final Codec codec = await instantiateImageCodec(
+      bytes,
+      targetWidth: 10,
+      targetHeight: 1,
+      allowUpscaling: false,
+    );
     final FrameInfo frame = await codec.getNextFrame();
     final int codecHeight = frame.image.height;
     final int codecWidth = frame.image.width;
@@ -128,8 +131,11 @@ void main() {
 
   test('pixels: upscale image varying width and height', () async {
     final BlackSquare blackSquare = BlackSquare.create();
-    final Image resized =
-        await blackSquare.resize(targetHeight: 1, targetWidth: 10, allowUpscaling: true);
+    final Image resized = await blackSquare.resize(
+      targetHeight: 1,
+      targetWidth: 10,
+      allowUpscaling: true,
+    );
     expect(resized.height, 1);
     expect(resized.width, 10);
   });
@@ -162,8 +168,7 @@ class BlackSquare {
   BlackSquare._(this.width, this.height, this.pixels);
 
   factory BlackSquare.create({int width = 2, int height = 2}) {
-    final Uint8List pixels =
-        Uint8List.fromList(List<int>.filled(width * height * 4, 0));
+    final Uint8List pixels = Uint8List.fromList(List<int>.filled(width * height * 4, 0));
     return BlackSquare._(width, height, pixels);
   }
 
@@ -188,7 +193,6 @@ class BlackSquare {
 }
 
 Future<Uint8List> readFile(String fileName) async {
-  final File file =
-      File(path.join('flutter', 'testing', 'resources', fileName));
+  final File file = File(path.join('flutter', 'testing', 'resources', fileName));
   return file.readAsBytes();
 }

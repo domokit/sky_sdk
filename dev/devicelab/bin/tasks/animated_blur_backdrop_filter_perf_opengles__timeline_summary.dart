@@ -10,6 +10,5 @@ import 'package:flutter_devicelab/tasks/perf_tests.dart';
 
 Future<void> main() async {
   deviceOperatingSystem = DeviceOperatingSystem.android;
-  await task(createAnimatedBlurBackropFilterPerfTest(
-      enableImpeller: true, forceOpenGLES: true));
+  await task(createAnimatedBlurBackropFilterPerfTest(enableImpeller: true, forceOpenGLES: true));
 }

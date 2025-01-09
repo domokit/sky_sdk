@@ -9,9 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Smoke Test', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ExampleApp(),
-    );
+    await tester.pumpWidget(const example.ExampleApp());
     expect(find.byType(example.Home), findsOneWidget);
 
     // Scroll the interpolation example into view
@@ -31,7 +29,9 @@ void main() {
     await tester.tap(find.byIcon(Icons.play_arrow));
     await tester.pumpAndSettle();
 
-    final TestGesture gesture = await tester.startGesture(tester.getCenter(find.text('Interpolation')));
+    final TestGesture gesture = await tester.startGesture(
+      tester.getCenter(find.text('Interpolation')),
+    );
     await gesture.moveTo(tester.getCenter(find.text('Hover')));
     await tester.pumpAndSettle();
     await gesture.moveTo(tester.getCenter(find.text('Interpolation')));

@@ -23,12 +23,7 @@ class GridTile extends StatelessWidget {
   /// Creates a grid tile.
   ///
   /// Must have a child. Does not typically have both a header and a footer.
-  const GridTile({
-    super.key,
-    this.header,
-    this.footer,
-    required this.child,
-  });
+  const GridTile({super.key, this.header, this.footer, required this.child});
 
   /// The widget to show over the top of this grid tile.
   ///
@@ -53,23 +48,9 @@ class GridTile extends StatelessWidget {
 
     return Stack(
       children: <Widget>[
-        Positioned.fill(
-          child: child,
-        ),
-        if (header != null)
-          Positioned(
-            top: 0.0,
-            left: 0.0,
-            right: 0.0,
-            child: header!,
-          ),
-        if (footer != null)
-          Positioned(
-            left: 0.0,
-            bottom: 0.0,
-            right: 0.0,
-            child: footer!,
-          ),
+        Positioned.fill(child: child),
+        if (header != null) Positioned(top: 0.0, left: 0.0, right: 0.0, child: header!),
+        if (footer != null) Positioned(left: 0.0, bottom: 0.0, right: 0.0, child: footer!),
       ],
     );
   }

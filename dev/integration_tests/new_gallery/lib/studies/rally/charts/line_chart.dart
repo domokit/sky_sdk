@@ -14,10 +14,7 @@ import '../data.dart';
 import '../formatters.dart';
 
 class RallyLineChart extends StatelessWidget {
-  const RallyLineChart({
-    super.key,
-    this.events = const <DetailedEventData>[],
-  });
+  const RallyLineChart({super.key, this.events = const <DetailedEventData>[]});
 
   final List<DetailedEventData> events;
 
@@ -31,9 +28,8 @@ class RallyLineChart extends StatelessWidget {
         labelStyle: Theme.of(context).textTheme.bodyMedium!,
         textDirection: GalleryOptions.of(context).resolvedTextDirection(),
         textScaleFactor: reducedTextScale(context),
-        padding: isDisplayDesktop(context)
-            ? const EdgeInsets.symmetric(vertical: 22)
-            : EdgeInsets.zero,
+        padding:
+            isDisplayDesktop(context) ? const EdgeInsets.symmetric(vertical: 22) : EdgeInsets.zero,
       ),
     );
   }
@@ -103,18 +99,9 @@ class RallyLineChartPainter extends CustomPainter {
     final double ticksHeight = 3 * space;
     final double ticksTop = size.height - labelHeight - ticksHeight - space;
     final double labelsTop = size.height - labelHeight;
-    _drawLine(
-      canvas,
-      Rect.fromLTWH(0, 0, size.width, size.height - labelHeight - ticksHeight),
-    );
-    _drawXAxisTicks(
-      canvas,
-      Rect.fromLTWH(0, ticksTop, size.width, ticksHeight),
-    );
-    _drawXAxisLabels(
-      canvas,
-      Rect.fromLTWH(0, labelsTop, size.width, labelHeight),
-    );
+    _drawLine(canvas, Rect.fromLTWH(0, 0, size.width, size.height - labelHeight - ticksHeight));
+    _drawXAxisTicks(canvas, Rect.fromLTWH(0, ticksTop, size.width, ticksHeight));
+    _drawXAxisLabels(canvas, Rect.fromLTWH(0, labelsTop, size.width, labelHeight));
   }
 
   // Since we're only using fixed dummy data, we can set this to false. In a
@@ -134,24 +121,20 @@ class RallyLineChartPainter extends CustomPainter {
       final int numItemsPerGroup = amounts.length ~/ numGroups;
 
       // For each group we calculate the median value.
-      final List<double> medians = List<double>.generate(
-        numGroups,
-        (int i) {
-          final int middleIndex = i * numItemsPerGroup + numItemsPerGroup ~/ 2;
-          if (numItemsPerGroup.isEven) {
-            return (amounts[middleIndex] + amounts[middleIndex + 1]) / 2;
-          } else {
-            return amounts[middleIndex];
-          }
-        },
-      );
+      final List<double> medians = List<double>.generate(numGroups, (int i) {
+        final int middleIndex = i * numItemsPerGroup + numItemsPerGroup ~/ 2;
+        if (numItemsPerGroup.isEven) {
+          return (amounts[middleIndex] + amounts[middleIndex + 1]) / 2;
+        } else {
+          return amounts[middleIndex];
+        }
+      });
 
       // Return a list of [CustomPainterSemantics] with the length of
       // [numGroups], all have the same width with the median amount as label.
       return List<CustomPainterSemantics>.generate(numGroups, (int i) {
         return CustomPainterSemantics(
-          rect: Offset((i / numGroups) * size.width, 0) &
-              Size(size.width / numGroups, size.height),
+          rect: Offset((i / numGroups) * size.width, 0) & Size(size.width / numGroups, size.height),
           properties: SemanticsProperties(
             label: numberFormat.format(medians[i]),
             textDirection: textDirection,
@@ -174,12 +157,11 @@ class RallyLineChartPainter extends CustomPainter {
     final List<double> amounts = <double>[];
     for (int i = 0; i < numDays; i++) {
       final int endMillis = startMillis + millisInDay * 1;
-      final List<DetailedEventData> filteredEvents = events.where(
-        (DetailedEventData e) {
-          return startMillis <= e.date.millisecondsSinceEpoch &&
-              e.date.millisecondsSinceEpoch < endMillis;
-        },
-      ).toList();
+      final List<DetailedEventData> filteredEvents =
+          events.where((DetailedEventData e) {
+            return startMillis <= e.date.millisecondsSinceEpoch &&
+                e.date.millisecondsSinceEpoch < endMillis;
+          }).toList();
       lastAmount += sumOf<DetailedEventData>(filteredEvents, (DetailedEventData e) => e.amount);
       amounts.add(lastAmount);
       startMillis = endMillis;
@@ -188,10 +170,11 @@ class RallyLineChartPainter extends CustomPainter {
   }
 
   void _drawLine(Canvas canvas, Rect rect) {
-    final Paint linePaint = Paint()
-      ..color = RallyColors.accountColor(2)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+    final Paint linePaint =
+        Paint()
+          ..color = RallyColors.accountColor(2)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2;
 
     // Try changing this value between 1, 7, 15, etc.
     const int smoothing = 1;
@@ -205,12 +188,7 @@ class RallyLineChartPainter extends CustomPainter {
     }
 
     // Add last point of the graph to make sure we take up the full width.
-    points.add(
-      Offset(
-        rect.width,
-        (maxAmount - amounts[numDays - 1]) / maxAmount * rect.height,
-      ),
-    );
+    points.add(Offset(rect.width, (maxAmount - amounts[numDays - 1]) / maxAmount * rect.height));
 
     final Path path = Path();
     path.moveTo(points[0].dx, points[0].dy);
@@ -256,21 +234,15 @@ class RallyLineChartPainter extends CustomPainter {
     // We use toUpperCase to format the dates. This function uses the language
     // independent Unicode mapping and thus only works in some languages.
     final TextPainter leftLabel = TextPainter(
-      text: TextSpan(
-        text: dateFormat.format(startDate).toUpperCase(),
-        style: unselectedLabelStyle,
-      ),
+      text: TextSpan(text: dateFormat.format(startDate).toUpperCase(), style: unselectedLabelStyle),
       textDirection: textDirection,
     );
     leftLabel.layout();
-    leftLabel.paint(canvas,
-        Offset(rect.left + space / 2 + padding.vertical, rect.topCenter.dy));
+    leftLabel.paint(canvas, Offset(rect.left + space / 2 + padding.vertical, rect.topCenter.dy));
 
     final TextPainter centerLabel = TextPainter(
       text: TextSpan(
-        text: dateFormat
-            .format(DateTime(startDate.year, startDate.month + 1))
-            .toUpperCase(),
+        text: dateFormat.format(DateTime(startDate.year, startDate.month + 1)).toUpperCase(),
         style: selectedLabelStyle,
       ),
       textDirection: textDirection,
@@ -282,9 +254,7 @@ class RallyLineChartPainter extends CustomPainter {
 
     final TextPainter rightLabel = TextPainter(
       text: TextSpan(
-        text: dateFormat
-            .format(DateTime(startDate.year, startDate.month + 2))
-            .toUpperCase(),
+        text: dateFormat.format(DateTime(startDate.year, startDate.month + 2)).toUpperCase(),
         style: unselectedLabelStyle,
       ),
       textDirection: textDirection,
@@ -292,8 +262,7 @@ class RallyLineChartPainter extends CustomPainter {
     rightLabel.layout();
     rightLabel.paint(
       canvas,
-      Offset(rect.right - centerLabel.width - space / 2 - padding.vertical,
-          rect.topCenter.dy),
+      Offset(rect.right - centerLabel.width - space / 2 - padding.vertical, rect.topCenter.dy),
     );
   }
 }

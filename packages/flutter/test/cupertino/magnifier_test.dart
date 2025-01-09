@@ -10,8 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  final Offset basicOffset = Offset(CupertinoMagnifier.kDefaultSize.width / 2,
-       CupertinoMagnifier.kDefaultSize.height - CupertinoMagnifier.kMagnifierAboveFocalPoint);
+  final Offset basicOffset = Offset(
+    CupertinoMagnifier.kDefaultSize.width / 2,
+    CupertinoMagnifier.kDefaultSize.height - CupertinoMagnifier.kMagnifierAboveFocalPoint,
+  );
   const Rect reasonableTextField = Rect.fromLTRB(0, 100, 200, 200);
   final MagnifierController magnifierController = MagnifierController();
 
@@ -24,10 +26,9 @@ void main() {
   ) async {
     final Future<void> magnifierShown = magnifierController.show(
       context: context,
-      builder: (BuildContext context) => CupertinoTextMagnifier(
-        controller: magnifierController,
-        magnifierInfo: magnifierInfo,
-      ),
+      builder:
+          (BuildContext context) =>
+              CupertinoTextMagnifier(controller: magnifierController, magnifierInfo: magnifierInfo),
     );
     await tester.pump();
     await tester.pump(const Duration(seconds: 2));
@@ -35,11 +36,13 @@ void main() {
   }
 
   tearDown(() async {
-      magnifierController.removeFromOverlay();
+    magnifierController.removeFromOverlay();
   });
 
   group('CupertinoTextEditingMagnifier', () {
-    testWidgets('Magnifier border color inherits from parent CupertinoTheme', (WidgetTester tester) async {
+    testWidgets('Magnifier border color inherits from parent CupertinoTheme', (
+      WidgetTester tester,
+    ) async {
       final Key fakeTextFieldKey = UniqueKey();
 
       await tester.pumpWidget(
@@ -66,8 +69,7 @@ void main() {
       final Rect fakeTextFieldRect =
           tapPointRenderBox.localToGlobal(Offset.zero) & tapPointRenderBox.size;
 
-      final ValueNotifier<MagnifierInfo> magnifier =
-          ValueNotifier<MagnifierInfo>(
+      final ValueNotifier<MagnifierInfo> magnifier = ValueNotifier<MagnifierInfo>(
         MagnifierInfo(
           currentLineBoundaries: fakeTextFieldRect,
           fieldBounds: fakeTextFieldRect,
@@ -81,19 +83,22 @@ void main() {
       await showCupertinoMagnifier(context, tester, magnifier);
 
       // Magnifier border color should inherit from CupertinoTheme.of(context).primaryColor.
-      final Color magnifierBorderColor = tester.widget<CupertinoMagnifier>(find.byType(CupertinoMagnifier)).borderSide.color;
+      final Color magnifierBorderColor =
+          tester.widget<CupertinoMagnifier>(find.byType(CupertinoMagnifier)).borderSide.color;
       expect(magnifierBorderColor, equals(Colors.green));
     });
 
     group('position', () {
       Offset getMagnifierPosition(WidgetTester tester) {
-        final AnimatedPositioned animatedPositioned =
-            tester.firstWidget(find.byType(AnimatedPositioned));
-        return Offset(
-            animatedPositioned.left ?? 0, animatedPositioned.top ?? 0);
+        final AnimatedPositioned animatedPositioned = tester.firstWidget(
+          find.byType(AnimatedPositioned),
+        );
+        return Offset(animatedPositioned.left ?? 0, animatedPositioned.top ?? 0);
       }
 
-      testWidgets('should be at gesture position if does not violate any positioning rules', (WidgetTester tester) async {
+      testWidgets('should be at gesture position if does not violate any positioning rules', (
+        WidgetTester tester,
+      ) async {
         final Key fakeTextFieldKey = UniqueKey();
         final Key outerKey = UniqueKey();
 
@@ -122,8 +127,7 @@ void main() {
         final Rect fakeTextFieldRect =
             tapPointRenderBox.localToGlobal(Offset.zero) & tapPointRenderBox.size;
 
-        final ValueNotifier<MagnifierInfo> magnifier =
-            ValueNotifier<MagnifierInfo>(
+        final ValueNotifier<MagnifierInfo> magnifier = ValueNotifier<MagnifierInfo>(
           MagnifierInfo(
             currentLineBoundaries: fakeTextFieldRect,
             fieldBounds: fakeTextFieldRect,
@@ -144,12 +148,11 @@ void main() {
         );
       });
 
-      testWidgets('should never horizontally be outside of Screen Padding', (WidgetTester tester) async {
+      testWidgets('should never horizontally be outside of Screen Padding', (
+        WidgetTester tester,
+      ) async {
         await tester.pumpWidget(
-          const MaterialApp(
-            color: Color.fromARGB(7, 0, 129, 90),
-            home: Placeholder(),
-          ),
+          const MaterialApp(color: Color.fromARGB(7, 0, 129, 90), home: Placeholder()),
         );
 
         final BuildContext context = tester.firstElement(find.byType(Placeholder));
@@ -160,83 +163,72 @@ void main() {
             fieldBounds: reasonableTextField,
             caretRect: reasonableTextField,
             // The tap position is far out of the right side of the app.
-            globalGesturePosition:
-            Offset(MediaQuery.sizeOf(context).width + 100, 0),
+            globalGesturePosition: Offset(MediaQuery.sizeOf(context).width + 100, 0),
           ),
         );
         addTearDown(magnifierInfo.dispose);
-        await showCupertinoMagnifier(
-          context,
-          tester,
-          magnifierInfo,
-        );
+        await showCupertinoMagnifier(context, tester, magnifierInfo);
 
         // Should be less than the right edge, since we have padding.
-        expect(getMagnifierPosition(tester).dx,
-            lessThan(MediaQuery.sizeOf(context).width));
+        expect(getMagnifierPosition(tester).dx, lessThan(MediaQuery.sizeOf(context).width));
       });
 
       testWidgets('should have some vertical drag', (WidgetTester tester) async {
         final double dragPositionBelowTextField = reasonableTextField.center.dy + 30;
 
         await tester.pumpWidget(
-          const MaterialApp(
-            color: Color.fromARGB(7, 0, 129, 90),
-            home: Placeholder(),
-          ),
+          const MaterialApp(color: Color.fromARGB(7, 0, 129, 90), home: Placeholder()),
         );
 
-        final BuildContext context =
-            tester.firstElement(find.byType(Placeholder));
+        final BuildContext context = tester.firstElement(find.byType(Placeholder));
 
-        final ValueNotifier<MagnifierInfo> magnifierInfo =
-            ValueNotifier<MagnifierInfo>(
+        final ValueNotifier<MagnifierInfo> magnifierInfo = ValueNotifier<MagnifierInfo>(
           MagnifierInfo(
             currentLineBoundaries: reasonableTextField,
             fieldBounds: reasonableTextField,
             caretRect: reasonableTextField,
             // The tap position is dragBelow units below the text field.
             globalGesturePosition: Offset(
-                MediaQuery.sizeOf(context).width / 2,
-                dragPositionBelowTextField),
+              MediaQuery.sizeOf(context).width / 2,
+              dragPositionBelowTextField,
+            ),
           ),
         );
         addTearDown(magnifierInfo.dispose);
-        await showCupertinoMagnifier(
-          context,
-          tester,
-          magnifierInfo,
-        );
+        await showCupertinoMagnifier(context, tester, magnifierInfo);
 
         // The magnifier Y should be greater than the text field, since we "dragged" it down.
-        expect(getMagnifierPosition(tester).dy + basicOffset.dy,
-            greaterThan(reasonableTextField.center.dy));
-        expect(getMagnifierPosition(tester).dy + basicOffset.dy,
-            lessThan(dragPositionBelowTextField));
+        expect(
+          getMagnifierPosition(tester).dy + basicOffset.dy,
+          greaterThan(reasonableTextField.center.dy),
+        );
+        expect(
+          getMagnifierPosition(tester).dy + basicOffset.dy,
+          lessThan(dragPositionBelowTextField),
+        );
       });
     });
 
     group('status', () {
-      testWidgets('should hide if gesture is far below the text field', (WidgetTester tester) async {
+      testWidgets('should hide if gesture is far below the text field', (
+        WidgetTester tester,
+      ) async {
         await tester.pumpWidget(
-          const MaterialApp(
-            color: Color.fromARGB(7, 0, 129, 90),
-            home: Placeholder(),
-          ),
+          const MaterialApp(color: Color.fromARGB(7, 0, 129, 90), home: Placeholder()),
         );
 
-        final BuildContext context =
-            tester.firstElement(find.byType(Placeholder));
+        final BuildContext context = tester.firstElement(find.byType(Placeholder));
 
-        final ValueNotifier<MagnifierInfo> magnifierInfo =
-            ValueNotifier<MagnifierInfo>(
+        final ValueNotifier<MagnifierInfo> magnifierInfo = ValueNotifier<MagnifierInfo>(
           MagnifierInfo(
             currentLineBoundaries: reasonableTextField,
             fieldBounds: reasonableTextField,
             caretRect: reasonableTextField,
             // The tap position is dragBelow units below the text field.
             globalGesturePosition: Offset(
-                MediaQuery.sizeOf(context).width / 2, reasonableTextField.top),
+              MediaQuery.sizeOf(context).width / 2,
+              reasonableTextField.top,
+            ),
           ),
         );
         addTearDown(magnifierInfo.dispose);
@@ -246,10 +238,10 @@ void main() {
 
         // Move the gesture to one that should hide it.
         magnifierInfo.value = MagnifierInfo(
-            currentLineBoundaries: reasonableTextField,
-            fieldBounds: reasonableTextField,
-            caretRect: reasonableTextField,
-            globalGesturePosition: magnifierInfo.value.globalGesturePosition + const Offset(0, 100),
+          currentLineBoundaries: reasonableTextField,
+          fieldBounds: reasonableTextField,
+          caretRect: reasonableTextField,
+          globalGesturePosition: magnifierInfo.value.globalGesturePosition + const Offset(0, 100),
         );
         await tester.pumpAndSettle();
 
@@ -257,26 +249,23 @@ void main() {
         expect(magnifierController.overlayEntry, isNotNull);
       });
 
-      testWidgets('should re-show if gesture moves back up',
-          (WidgetTester tester) async {
+      testWidgets('should re-show if gesture moves back up', (WidgetTester tester) async {
         await tester.pumpWidget(
-          const MaterialApp(
-            color: Color.fromARGB(7, 0, 129, 90),
-            home: Placeholder(),
-          ),
+          const MaterialApp(color: Color.fromARGB(7, 0, 129, 90), home: Placeholder()),
         );
 
-        final BuildContext context =
-            tester.firstElement(find.byType(Placeholder));
+        final BuildContext context = tester.firstElement(find.byType(Placeholder));
 
-        final ValueNotifier<MagnifierInfo> magnifierInfo =
-            ValueNotifier<MagnifierInfo>(
+        final ValueNotifier<MagnifierInfo> magnifierInfo = ValueNotifier<MagnifierInfo>(
           MagnifierInfo(
             currentLineBoundaries: reasonableTextField,
             fieldBounds: reasonableTextField,
             caretRect: reasonableTextField,
             // The tap position is dragBelow units below the text field.
-            globalGesturePosition: Offset(MediaQuery.sizeOf(context).width / 2, reasonableTextField.top),
+            globalGesturePosition: Offset(
+              MediaQuery.sizeOf(context).width / 2,
+              reasonableTextField.top,
+            ),
           ),
         );
         addTearDown(magnifierInfo.dispose);
@@ -286,11 +275,11 @@ void main() {
 
         // Move the gesture to one that should hide it.
         magnifierInfo.value = MagnifierInfo(
-            currentLineBoundaries: reasonableTextField,
-            fieldBounds: reasonableTextField,
-            caretRect: reasonableTextField,
-            globalGesturePosition:
-                magnifierInfo.value.globalGesturePosition + const Offset(0, 100));
+          currentLineBoundaries: reasonableTextField,
+          fieldBounds: reasonableTextField,
+          caretRect: reasonableTextField,
+          globalGesturePosition: magnifierInfo.value.globalGesturePosition + const Offset(0, 100),
+        );
         await tester.pumpAndSettle();
 
         expect(magnifierController.shown, false);
@@ -298,11 +287,14 @@ void main() {
 
         // Return the gesture to one that shows it.
         magnifierInfo.value = MagnifierInfo(
-            currentLineBoundaries: reasonableTextField,
-            fieldBounds: reasonableTextField,
-            caretRect: reasonableTextField,
-            globalGesturePosition: Offset(MediaQuery.sizeOf(context).width / 2,
-                reasonableTextField.top));
+          currentLineBoundaries: reasonableTextField,
+          fieldBounds: reasonableTextField,
+          caretRect: reasonableTextField,
+          globalGesturePosition: Offset(
+            MediaQuery.sizeOf(context).width / 2,
+            reasonableTextField.top,
+          ),
+        );
         await tester.pumpAndSettle();
 
         expect(magnifierController.shown, true);
@@ -311,32 +303,28 @@ void main() {
     });
 
     group('magnificationScale', () {
-      testWidgets('Throws assertion error when magnificationScale is zero', (WidgetTester tester) async {
-        expect(() => MaterialApp(
-          home: Scaffold(
-            body: CupertinoMagnifier(
-              magnificationScale: 0,
-            ),
-          ),
-        ), throwsAssertionError);
-      });
-
-      testWidgets('Throws assertion error when magnificationScale is negative', (WidgetTester tester) async {
-        expect(() => MaterialApp(
-          home: Scaffold(
-            body: CupertinoMagnifier(
-              magnificationScale: -1,
-            ),
-          ),
-        ), throwsAssertionError);
-      });
-
-      testWidgets('CupertinoMagnifier magnification scale defaults to 1', (WidgetTester tester) async {
-        await tester.pumpWidget(
-          const MaterialApp(
-            home: Scaffold(body: CupertinoMagnifier()),
-          ),
+      testWidgets('Throws assertion error when magnificationScale is zero', (
+        WidgetTester tester,
+      ) async {
+        expect(
+          () => MaterialApp(home: Scaffold(body: CupertinoMagnifier(magnificationScale: 0))),
+          throwsAssertionError,
         );
+      });
+
+      testWidgets('Throws assertion error when magnificationScale is negative', (
+        WidgetTester tester,
+      ) async {
+        expect(
+          () => MaterialApp(home: Scaffold(body: CupertinoMagnifier(magnificationScale: -1))),
+          throwsAssertionError,
+        );
+      });
+
+      testWidgets('CupertinoMagnifier magnification scale defaults to 1', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(const MaterialApp(home: Scaffold(body: CupertinoMagnifier())));
 
         expect(
           tester.widget(find.byType(RawMagnifier)),
@@ -348,15 +336,11 @@ void main() {
         );
       });
 
-      testWidgets('Magnification scale argument is passed to the RawMagnifier', (WidgetTester tester) async {
+      testWidgets('Magnification scale argument is passed to the RawMagnifier', (
+        WidgetTester tester,
+      ) async {
         await tester.pumpWidget(
-          const MaterialApp(
-            home: Scaffold(
-              body: CupertinoMagnifier(
-                magnificationScale: 2,
-              ),
-            ),
-          ),
+          const MaterialApp(home: Scaffold(body: CupertinoMagnifier(magnificationScale: 2))),
         );
 
         expect(

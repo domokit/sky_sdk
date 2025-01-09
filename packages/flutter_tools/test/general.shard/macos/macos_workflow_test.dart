@@ -8,9 +8,7 @@ import 'package:flutter_tools/src/macos/macos_workflow.dart';
 import '../../src/common.dart';
 import '../../src/fakes.dart';
 
-final FakePlatform macOS = FakePlatform(
-  operatingSystem: 'macos',
-);
+final FakePlatform macOS = FakePlatform(operatingSystem: 'macos');
 
 final FakePlatform linux = FakePlatform();
 

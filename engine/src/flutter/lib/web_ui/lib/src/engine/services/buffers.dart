@@ -6,9 +6,7 @@ import 'dart:collection';
 import 'dart:typed_data';
 
 abstract class _TypedDataBuffer<E> extends ListBase<E> {
-  _TypedDataBuffer(List<E> buffer)
-      : _buffer = buffer,
-        _length = buffer.length;
+  _TypedDataBuffer(List<E> buffer) : _buffer = buffer, _length = buffer.length;
 
   static const int _initialLength = 8;
 
@@ -220,8 +218,7 @@ abstract class _TypedDataBuffer<E> extends ListBase<E> {
     final int newLength = _length + valuesLength;
     _ensureCapacity(newLength);
 
-    _buffer.setRange(
-        index + valuesLength, _length + valuesLength, _buffer, index);
+    _buffer.setRange(index + valuesLength, _length + valuesLength, _buffer, index);
     _buffer.setRange(index, index + valuesLength, values, start);
     _length = newLength;
   }

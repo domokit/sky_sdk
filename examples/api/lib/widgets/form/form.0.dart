@@ -14,10 +14,7 @@ class FormExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Form Sample')),
-        body: const FormExample(),
-      ),
+      home: Scaffold(appBar: AppBar(title: const Text('Form Sample')), body: const FormExample()),
     );
   }
 }
@@ -40,9 +37,7 @@ class _FormExampleState extends State<FormExample> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           TextFormField(
-            decoration: const InputDecoration(
-              hintText: 'Enter your email',
-            ),
+            decoration: const InputDecoration(hintText: 'Enter your email'),
             validator: (String? value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter some text';

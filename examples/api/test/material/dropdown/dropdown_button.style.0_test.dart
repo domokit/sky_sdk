@@ -7,9 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Select an item from DropdownButton', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.DropdownButtonApp(),
-    );
+    await tester.pumpWidget(const example.DropdownButtonApp());
 
     expect(find.text('One'), findsOneWidget);
     expect(find.text('One', skipOffstage: false), findsNWidgets(4));

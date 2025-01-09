@@ -11,11 +11,7 @@ void main() {
   test('Invalid isolate URI', () async {
     bool threw = false;
     try {
-      await Isolate.spawnUri(
-        Uri.parse('http://127.0.0.1/foo.dart'),
-        <String>[],
-        null,
-      );
+      await Isolate.spawnUri(Uri.parse('http://127.0.0.1/foo.dart'), <String>[], null);
     } on IsolateSpawnException {
       threw = true;
     }
@@ -26,6 +22,7 @@ void main() {
     void callUiApi(void message) {
       PlatformDispatcher.instance.onReportTimings = (_) {};
     }
+
     final ReceivePort errorPort = ReceivePort();
     await Isolate.spawn<void>(callUiApi, null, onError: errorPort.sendPort);
     final List<dynamic> isolateError = await errorPort.first as List<dynamic>;

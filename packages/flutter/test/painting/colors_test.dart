@@ -22,7 +22,8 @@ void main() {
 
     expect(color.toColor(), const Color(0xb399816b));
 
-    final HSVColor result = HSVColor.lerp(color, const HSVColor.fromAHSV(0.3, 128.0, 0.7, 0.2), 0.25)!;
+    final HSVColor result =
+        HSVColor.lerp(color, const HSVColor.fromAHSV(0.3, 128.0, 0.7, 0.2), 0.25)!;
     expect(result.alpha, moreOrLessEquals(0.6));
     expect(result.hue, moreOrLessEquals(53.0));
     expect(result.saturation, greaterThan(0.3999));
@@ -224,7 +225,8 @@ void main() {
 
     expect(color.toColor(), const Color(0xb3b8977a));
 
-    final HSLColor result = HSLColor.lerp(color, const HSLColor.fromAHSL(0.3, 128.0, 0.7, 0.2), 0.25)!;
+    final HSLColor result =
+        HSLColor.lerp(color, const HSLColor.fromAHSL(0.3, 128.0, 0.7, 0.2), 0.25)!;
     expect(result.alpha, moreOrLessEquals(0.6));
     expect(result.hue, moreOrLessEquals(53.0));
     expect(result.saturation, greaterThan(0.3999));
@@ -414,24 +416,18 @@ void main() {
 
   test('ColorSwatch test', () {
     final int color = nonconst(0xFF027223);
-    final ColorSwatch<String> greens1 = ColorSwatch<String>(
-      color,
-      const <String, Color>{
-        '2259 C': Color(0xFF027223),
-        '2273 C': Color(0xFF257226),
-        '2426 XGC': Color(0xFF00932F),
-        '7732 XGC': Color(0xFF007940),
-      },
-    );
-    final ColorSwatch<String> greens2 = ColorSwatch<String>(
-      color,
-      const <String, Color>{
-        '2259 C': Color(0xFF027223),
-        '2273 C': Color(0xFF257226),
-        '2426 XGC': Color(0xFF00932F),
-        '7732 XGC': Color(0xFF007940),
-      },
-    );
+    final ColorSwatch<String> greens1 = ColorSwatch<String>(color, const <String, Color>{
+      '2259 C': Color(0xFF027223),
+      '2273 C': Color(0xFF257226),
+      '2426 XGC': Color(0xFF00932F),
+      '7732 XGC': Color(0xFF007940),
+    });
+    final ColorSwatch<String> greens2 = ColorSwatch<String>(color, const <String, Color>{
+      '2259 C': Color(0xFF027223),
+      '2273 C': Color(0xFF257226),
+      '2426 XGC': Color(0xFF00932F),
+      '7732 XGC': Color(0xFF007940),
+    });
     expect(greens1, greens2);
     expect(greens1.hashCode, greens2.hashCode);
     expect(greens1['2259 C'], const Color(0xFF027223));
@@ -440,8 +436,12 @@ void main() {
   });
 
   test('ColorSwatch.lerp', () {
-    const ColorSwatch<int> swatchA = ColorSwatch<int>(0x00000000, <int, Color>{1: Color(0x00000000)});
-    const ColorSwatch<int> swatchB = ColorSwatch<int>(0xFFFFFFFF, <int, Color>{1: Color(0xFFFFFFFF)});
+    const ColorSwatch<int> swatchA = ColorSwatch<int>(0x00000000, <int, Color>{
+      1: Color(0x00000000),
+    });
+    const ColorSwatch<int> swatchB = ColorSwatch<int>(0xFFFFFFFF, <int, Color>{
+      1: Color(0xFFFFFFFF),
+    });
     expect(
       ColorSwatch.lerp(swatchA, swatchB, 0.0),
       isSameColorAs(const ColorSwatch<int>(0x00000000, <int, Color>{1: Color(0x00000000)})),
@@ -472,7 +472,9 @@ void main() {
 
   test('ColorDiagnosticsProperty includes valueProperties in JSON', () {
     ColorProperty property = ColorProperty('foo', const Color.fromARGB(10, 20, 30, 40));
-    final Map<String, Object> valueProperties = property.toJsonMap(const DiagnosticsSerializationDelegate())['valueProperties']! as Map<String, Object>;
+    final Map<String, Object> valueProperties =
+        property.toJsonMap(const DiagnosticsSerializationDelegate())['valueProperties']!
+            as Map<String, Object>;
     expect(valueProperties['alpha'], 10);
     expect(valueProperties['red'], 20);
     expect(valueProperties['green'], 30);

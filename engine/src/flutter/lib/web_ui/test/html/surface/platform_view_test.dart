@@ -44,7 +44,8 @@ Future<void> testMain() async {
 
     group('update', () {
       test('throws assertion error if called with different viewIds', () {
-        final PersistedPlatformView differentView = PersistedPlatformView(1, 1, 1, 100, 100)..build();
+        final PersistedPlatformView differentView = PersistedPlatformView(1, 1, 1, 100, 100)
+          ..build();
         expect(() {
           view.update(differentView);
         }, throwsAssertionError);
@@ -58,7 +59,8 @@ Future<void> testMain() async {
       });
 
       test('returns false when viewId is different', () {
-        final PersistedPlatformView differentView = PersistedPlatformView(1, 1, 1, 100, 100)..build();
+        final PersistedPlatformView differentView = PersistedPlatformView(1, 1, 1, 100, 100)
+          ..build();
         expect(view.canUpdateAsMatch(differentView), isFalse);
       });
 
@@ -84,13 +86,7 @@ Future<void> _createPlatformView(int id, String viewType) {
   final Completer<void> completer = Completer<void>();
   ui.PlatformDispatcher.instance.sendPlatformMessage(
     'flutter/platform_views',
-    codec.encodeMethodCall(MethodCall(
-      'create',
-      <String, dynamic>{
-        'id': id,
-        'viewType': viewType,
-      },
-    )),
+    codec.encodeMethodCall(MethodCall('create', <String, dynamic>{'id': id, 'viewType': viewType})),
     (dynamic _) => completer.complete(),
   );
   return completer.future;

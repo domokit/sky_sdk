@@ -21,10 +21,7 @@ void main() {
       final device = _device(TargetPlatform.androidArm64);
 
       final target = RunTarget.detectAndSelect([device]);
-      expect(
-        target,
-        isA<RunTarget>().having((t) => t.device, 'device', device),
-      );
+      expect(target, isA<RunTarget>().having((t) => t.device, 'device', device));
     });
 
     test('returns the first target if multiple are available', () {
@@ -32,48 +29,30 @@ void main() {
       final device2 = _device(TargetPlatform.androidX64);
 
       final target = RunTarget.detectAndSelect([device1, device2]);
-      expect(
-        target,
-        isA<RunTarget>().having((t) => t.device, 'device', device1),
-      );
+      expect(target, isA<RunTarget>().having((t) => t.device, 'device', device1));
     });
 
     test('returns the android target', () {
       final device1 = _device(TargetPlatform.darwinArm64);
       final device2 = _device(TargetPlatform.androidArm64);
 
-      final target = RunTarget.detectAndSelect(
-        [device1, device2],
-        idPrefix: 'android',
-      );
-      expect(
-        target,
-        isA<RunTarget>().having((t) => t.device, 'device', device2),
-      );
+      final target = RunTarget.detectAndSelect([device1, device2], idPrefix: 'android');
+      expect(target, isA<RunTarget>().having((t) => t.device, 'device', device2));
     });
 
     test('returns the first android target', () {
       final device1 = _device(TargetPlatform.androidArm64);
       final device2 = _device(TargetPlatform.androidX64);
 
-      final target = RunTarget.detectAndSelect(
-        [device1, device2],
-        idPrefix: 'android',
-      );
-      expect(
-        target,
-        isA<RunTarget>().having((t) => t.device, 'device', device1),
-      );
+      final target = RunTarget.detectAndSelect([device1, device2], idPrefix: 'android');
+      expect(target, isA<RunTarget>().having((t) => t.device, 'device', device1));
     });
 
     test('returns null if no android targets are available', () {
       final device1 = _device(TargetPlatform.darwinArm64);
       final device2 = _device(TargetPlatform.darwinX64);
 
-      final target = RunTarget.detectAndSelect(
-        [device1, device2],
-        idPrefix: 'android',
-      );
+      final target = RunTarget.detectAndSelect([device1, device2], idPrefix: 'android');
       expect(target, isNull);
     });
   });
@@ -100,10 +79,7 @@ void main() {
           final device = _device(platform);
           final target = RunTarget.fromDevice(device);
 
-          expect(
-            target.buildConfigFor('debug'),
-            expectedDebugTargets[platform],
-          );
+          expect(target.buildConfigFor('debug'), expectedDebugTargets[platform]);
         });
       } else {
         test('${platform.identifier} => FatalError', () {
@@ -119,50 +95,36 @@ void main() {
   group('buildTargetsForShell', () {
     final expectedShellTargets = {
       TargetPlatform.androidUnspecified: [
-        Label.parseGn('//flutter/shell/platform/android:android_jar')
+        Label.parseGn('//flutter/shell/platform/android:android_jar'),
       ],
-      TargetPlatform.androidX86: [
-        Label.parseGn('//flutter/shell/platform/android:android_jar')
-      ],
-      TargetPlatform.androidX64: [
-        Label.parseGn('//flutter/shell/platform/android:android_jar')
-      ],
-      TargetPlatform.androidArm64: [
-        Label.parseGn('//flutter/shell/platform/android:android_jar')
-      ],
+      TargetPlatform.androidX86: [Label.parseGn('//flutter/shell/platform/android:android_jar')],
+      TargetPlatform.androidX64: [Label.parseGn('//flutter/shell/platform/android:android_jar')],
+      TargetPlatform.androidArm64: [Label.parseGn('//flutter/shell/platform/android:android_jar')],
       TargetPlatform.iOSUnspecified: [
-        Label.parseGn('//flutter/shell/platform/darwin/ios:flutter_framework')
+        Label.parseGn('//flutter/shell/platform/darwin/ios:flutter_framework'),
       ],
       TargetPlatform.iOSX64: [
-        Label.parseGn('//flutter/shell/platform/darwin/ios:flutter_framework')
+        Label.parseGn('//flutter/shell/platform/darwin/ios:flutter_framework'),
       ],
       TargetPlatform.iOSArm64: [
-        Label.parseGn('//flutter/shell/platform/darwin/ios:flutter_framework')
+        Label.parseGn('//flutter/shell/platform/darwin/ios:flutter_framework'),
       ],
       TargetPlatform.darwinUnspecified: [
-        Label.parseGn('//flutter/shell/platform/darwin/macos:flutter_framework')
+        Label.parseGn('//flutter/shell/platform/darwin/macos:flutter_framework'),
       ],
       TargetPlatform.darwinX64: [
-        Label.parseGn('//flutter/shell/platform/darwin/macos:flutter_framework')
+        Label.parseGn('//flutter/shell/platform/darwin/macos:flutter_framework'),
       ],
       TargetPlatform.darwinArm64: [
-        Label.parseGn('//flutter/shell/platform/darwin/macos:flutter_framework')
+        Label.parseGn('//flutter/shell/platform/darwin/macos:flutter_framework'),
       ],
-      TargetPlatform.linuxX64: [
-        Label.parseGn('//flutter/shell/platform/linux:flutter_linux_gtk')
-      ],
+      TargetPlatform.linuxX64: [Label.parseGn('//flutter/shell/platform/linux:flutter_linux_gtk')],
       TargetPlatform.linuxArm64: [
-        Label.parseGn('//flutter/shell/platform/linux:flutter_linux_gtk')
+        Label.parseGn('//flutter/shell/platform/linux:flutter_linux_gtk'),
       ],
-      TargetPlatform.windowsX64: [
-        Label.parseGn('//flutter/shell/platform/windows')
-      ],
-      TargetPlatform.windowsArm64: [
-        Label.parseGn('//flutter/shell/platform/windows')
-      ],
-      TargetPlatform.webJavascript: [
-        Label.parseGn('//flutter/web_sdk:flutter_web_sdk_archive')
-      ],
+      TargetPlatform.windowsX64: [Label.parseGn('//flutter/shell/platform/windows')],
+      TargetPlatform.windowsArm64: [Label.parseGn('//flutter/shell/platform/windows')],
+      TargetPlatform.webJavascript: [Label.parseGn('//flutter/web_sdk:flutter_web_sdk_archive')],
     };
 
     for (final platform in TargetPlatform.knownPlatforms) {
@@ -171,10 +133,7 @@ void main() {
           final device = _device(platform);
           final target = RunTarget.fromDevice(device);
 
-          expect(
-            target.buildTargetsForShell,
-            expectedShellTargets[platform],
-          );
+          expect(target.buildTargetsForShell, expectedShellTargets[platform]);
         });
       } else {
         test('${platform.identifier} => FatalError', () {

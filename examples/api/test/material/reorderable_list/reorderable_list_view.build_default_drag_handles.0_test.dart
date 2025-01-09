@@ -17,9 +17,7 @@ void main() {
   }
 
   testWidgets('Reorder list item', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ReorderableApp(),
-    );
+    await tester.pumpWidget(const example.ReorderableApp());
 
     expect(tester.getCenter(find.text('Item 3')).dy, 280.0);
     await longPressDrag(

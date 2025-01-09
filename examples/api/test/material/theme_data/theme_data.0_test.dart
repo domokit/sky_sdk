@@ -7,13 +7,10 @@ import 'package:flutter_api_samples/material/theme_data/theme_data.0.dart' as ex
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-
   testWidgets('ThemeData basics', (WidgetTester tester) async {
     await tester.pumpWidget(const example.ThemeDataExampleApp());
 
-    final ColorScheme colorScheme = ColorScheme.fromSeed(
-      seedColor: Colors.indigo,
-    );
+    final ColorScheme colorScheme = ColorScheme.fromSeed(seedColor: Colors.indigo);
 
     final Material fabMaterial = tester.widget<Material>(
       find.descendant(of: find.byType(FloatingActionButton), matching: find.byType(Material)),

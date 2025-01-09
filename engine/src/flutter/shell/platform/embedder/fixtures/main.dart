@@ -102,8 +102,7 @@ external void ffiSignalNativeTest();
 /// `PlatformDispatcher.instance.onSemanticsEnabledChanged` fires.
 Future<void> get semanticsChanged {
   final Completer<void> semanticsChanged = Completer<void>();
-  PlatformDispatcher.instance.onSemanticsEnabledChanged =
-      semanticsChanged.complete;
+  PlatformDispatcher.instance.onSemanticsEnabledChanged = semanticsChanged.complete;
   return semanticsChanged.future;
 }
 
@@ -111,16 +110,13 @@ Future<void> get semanticsChanged {
 /// `PlatformDispatcher.instance.onAccessibilityFeaturesChanged` fires.
 Future<void> get accessibilityFeaturesChanged {
   final Completer<void> featuresChanged = Completer<void>();
-  PlatformDispatcher.instance.onAccessibilityFeaturesChanged =
-      featuresChanged.complete;
+  PlatformDispatcher.instance.onAccessibilityFeaturesChanged = featuresChanged.complete;
   return featuresChanged.future;
 }
 
 Future<SemanticsActionEvent> get semanticsActionEvent {
-  final Completer<SemanticsActionEvent> actionReceived =
-      Completer<SemanticsActionEvent>();
-  PlatformDispatcher.instance.onSemanticsActionEvent =
-      (SemanticsActionEvent action) {
+  final Completer<SemanticsActionEvent> actionReceived = Completer<SemanticsActionEvent>();
+  PlatformDispatcher.instance.onSemanticsActionEvent = (SemanticsActionEvent action) {
     actionReceived.complete(action);
   };
   return actionReceived.future;
@@ -137,161 +133,156 @@ Future<void> a11y_main() async {
   notifySemanticsEnabled(PlatformDispatcher.instance.semanticsEnabled);
 
   // 3: Return initial state of accessibility features.
-  notifyAccessibilityFeatures(
-      PlatformDispatcher.instance.accessibilityFeatures.reduceMotion);
+  notifyAccessibilityFeatures(PlatformDispatcher.instance.accessibilityFeatures.reduceMotion);
 
   // 4: Await accessibility features changed from embedder.
   await accessibilityFeaturesChanged;
-  notifyAccessibilityFeatures(
-      PlatformDispatcher.instance.accessibilityFeatures.reduceMotion);
+  notifyAccessibilityFeatures(PlatformDispatcher.instance.accessibilityFeatures.reduceMotion);
 
   // 5: Fire semantics update.
-  final SemanticsUpdateBuilder builder = SemanticsUpdateBuilder()
-    ..updateNode(
-      id: 42,
-      identifier: '',
-      label: 'A: root',
-      labelAttributes: <StringAttribute>[],
-      rect: const Rect.fromLTRB(0.0, 0.0, 10.0, 10.0),
-      transform: kTestTransform,
-      childrenInTraversalOrder: Int32List.fromList(<int>[84, 96]),
-      childrenInHitTestOrder: Int32List.fromList(<int>[96, 84]),
-      actions: 0,
-      flags: 0,
-      maxValueLength: 0,
-      currentValueLength: 0,
-      textSelectionBase: 0,
-      textSelectionExtent: 0,
-      platformViewId: 0,
-      scrollChildren: 0,
-      scrollIndex: 0,
-      scrollPosition: 0.0,
-      scrollExtentMax: 0.0,
-      scrollExtentMin: 0.0,
-      elevation: 0.0,
-      thickness: 0.0,
-      hint: '',
-      hintAttributes: <StringAttribute>[],
-      value: '',
-      valueAttributes: <StringAttribute>[],
-      increasedValue: '',
-      increasedValueAttributes: <StringAttribute>[],
-      decreasedValue: '',
-      decreasedValueAttributes: <StringAttribute>[],
-      tooltip: 'tooltip',
-      textDirection: TextDirection.ltr,
-      additionalActions: Int32List(0),
-    )
-    ..updateNode(
-      id: 84,
-      identifier: '',
-      label: 'B: leaf',
-      labelAttributes: <StringAttribute>[],
-      rect: const Rect.fromLTRB(40.0, 40.0, 80.0, 80.0),
-      transform: kTestTransform,
-      actions: 0,
-      flags: 0,
-      maxValueLength: 0,
-      currentValueLength: 0,
-      textSelectionBase: 0,
-      textSelectionExtent: 0,
-      platformViewId: 0,
-      scrollChildren: 0,
-      scrollIndex: 0,
-      scrollPosition: 0.0,
-      scrollExtentMax: 0.0,
-      scrollExtentMin: 0.0,
-      elevation: 0.0,
-      thickness: 0.0,
-      hint: '',
-      hintAttributes: <StringAttribute>[],
-      value: '',
-      valueAttributes: <StringAttribute>[],
-      increasedValue: '',
-      increasedValueAttributes: <StringAttribute>[],
-      decreasedValue: '',
-      decreasedValueAttributes: <StringAttribute>[],
-      tooltip: 'tooltip',
-      textDirection: TextDirection.ltr,
-      additionalActions: Int32List(0),
-      childrenInHitTestOrder: Int32List(0),
-      childrenInTraversalOrder: Int32List(0),
-    )
-    ..updateNode(
-      id: 96,
-      identifier: '',
-      label: 'C: branch',
-      labelAttributes: <StringAttribute>[],
-      rect: const Rect.fromLTRB(40.0, 40.0, 80.0, 80.0),
-      transform: kTestTransform,
-      childrenInTraversalOrder: Int32List.fromList(<int>[128]),
-      childrenInHitTestOrder: Int32List.fromList(<int>[128]),
-      actions: 0,
-      flags: 0,
-      maxValueLength: 0,
-      currentValueLength: 0,
-      textSelectionBase: 0,
-      textSelectionExtent: 0,
-      platformViewId: 0,
-      scrollChildren: 0,
-      scrollIndex: 0,
-      scrollPosition: 0.0,
-      scrollExtentMax: 0.0,
-      scrollExtentMin: 0.0,
-      elevation: 0.0,
-      thickness: 0.0,
-      hint: '',
-      hintAttributes: <StringAttribute>[],
-      value: '',
-      valueAttributes: <StringAttribute>[],
-      increasedValue: '',
-      increasedValueAttributes: <StringAttribute>[],
-      decreasedValue: '',
-      decreasedValueAttributes: <StringAttribute>[],
-      tooltip: 'tooltip',
-      textDirection: TextDirection.ltr,
-      additionalActions: Int32List(0),
-    )
-    ..updateNode(
-      id: 128,
-      identifier: '',
-      label: 'D: leaf',
-      labelAttributes: <StringAttribute>[],
-      rect: const Rect.fromLTRB(40.0, 40.0, 80.0, 80.0),
-      transform: kTestTransform,
-      additionalActions: Int32List.fromList(<int>[21]),
-      platformViewId: 0x3f3,
-      actions: 0,
-      flags: 0,
-      maxValueLength: 0,
-      currentValueLength: 0,
-      textSelectionBase: 0,
-      textSelectionExtent: 0,
-      scrollChildren: 0,
-      scrollIndex: 0,
-      scrollPosition: 0.0,
-      scrollExtentMax: 0.0,
-      scrollExtentMin: 0.0,
-      elevation: 0.0,
-      thickness: 0.0,
-      hint: '',
-      hintAttributes: <StringAttribute>[],
-      value: '',
-      valueAttributes: <StringAttribute>[],
-      increasedValue: '',
-      increasedValueAttributes: <StringAttribute>[],
-      decreasedValue: '',
-      decreasedValueAttributes: <StringAttribute>[],
-      tooltip: 'tooltip',
-      textDirection: TextDirection.ltr,
-      childrenInHitTestOrder: Int32List(0),
-      childrenInTraversalOrder: Int32List(0),
-    )
-    ..updateCustomAction(
-      id: 21,
-      label: 'Archive',
-      hint: 'archive message',
-    );
+  final SemanticsUpdateBuilder builder =
+      SemanticsUpdateBuilder()
+        ..updateNode(
+          id: 42,
+          identifier: '',
+          label: 'A: root',
+          labelAttributes: <StringAttribute>[],
+          rect: const Rect.fromLTRB(0.0, 0.0, 10.0, 10.0),
+          transform: kTestTransform,
+          childrenInTraversalOrder: Int32List.fromList(<int>[84, 96]),
+          childrenInHitTestOrder: Int32List.fromList(<int>[96, 84]),
+          actions: 0,
+          flags: 0,
+          maxValueLength: 0,
+          currentValueLength: 0,
+          textSelectionBase: 0,
+          textSelectionExtent: 0,
+          platformViewId: 0,
+          scrollChildren: 0,
+          scrollIndex: 0,
+          scrollPosition: 0.0,
+          scrollExtentMax: 0.0,
+          scrollExtentMin: 0.0,
+          elevation: 0.0,
+          thickness: 0.0,
+          hint: '',
+          hintAttributes: <StringAttribute>[],
+          value: '',
+          valueAttributes: <StringAttribute>[],
+          increasedValue: '',
+          increasedValueAttributes: <StringAttribute>[],
+          decreasedValue: '',
+          decreasedValueAttributes: <StringAttribute>[],
+          tooltip: 'tooltip',
+          textDirection: TextDirection.ltr,
+          additionalActions: Int32List(0),
+        )
+        ..updateNode(
+          id: 84,
+          identifier: '',
+          label: 'B: leaf',
+          labelAttributes: <StringAttribute>[],
+          rect: const Rect.fromLTRB(40.0, 40.0, 80.0, 80.0),
+          transform: kTestTransform,
+          actions: 0,
+          flags: 0,
+          maxValueLength: 0,
+          currentValueLength: 0,
+          textSelectionBase: 0,
+          textSelectionExtent: 0,
+          platformViewId: 0,
+          scrollChildren: 0,
+          scrollIndex: 0,
+          scrollPosition: 0.0,
+          scrollExtentMax: 0.0,
+          scrollExtentMin: 0.0,
+          elevation: 0.0,
+          thickness: 0.0,
+          hint: '',
+          hintAttributes: <StringAttribute>[],
+          value: '',
+          valueAttributes: <StringAttribute>[],
+          increasedValue: '',
+          increasedValueAttributes: <StringAttribute>[],
+          decreasedValue: '',
+          decreasedValueAttributes: <StringAttribute>[],
+          tooltip: 'tooltip',
+          textDirection: TextDirection.ltr,
+          additionalActions: Int32List(0),
+          childrenInHitTestOrder: Int32List(0),
+          childrenInTraversalOrder: Int32List(0),
+        )
+        ..updateNode(
+          id: 96,
+          identifier: '',
+          label: 'C: branch',
+          labelAttributes: <StringAttribute>[],
+          rect: const Rect.fromLTRB(40.0, 40.0, 80.0, 80.0),
+          transform: kTestTransform,
+          childrenInTraversalOrder: Int32List.fromList(<int>[128]),
+          childrenInHitTestOrder: Int32List.fromList(<int>[128]),
+          actions: 0,
+          flags: 0,
+          maxValueLength: 0,
+          currentValueLength: 0,
+          textSelectionBase: 0,
+          textSelectionExtent: 0,
+          platformViewId: 0,
+          scrollChildren: 0,
+          scrollIndex: 0,
+          scrollPosition: 0.0,
+          scrollExtentMax: 0.0,
+          scrollExtentMin: 0.0,
+          elevation: 0.0,
+          thickness: 0.0,
+          hint: '',
+          hintAttributes: <StringAttribute>[],
+          value: '',
+          valueAttributes: <StringAttribute>[],
+          increasedValue: '',
+          increasedValueAttributes: <StringAttribute>[],
+          decreasedValue: '',
+          decreasedValueAttributes: <StringAttribute>[],
+          tooltip: 'tooltip',
+          textDirection: TextDirection.ltr,
+          additionalActions: Int32List(0),
+        )
+        ..updateNode(
+          id: 128,
+          identifier: '',
+          label: 'D: leaf',
+          labelAttributes: <StringAttribute>[],
+          rect: const Rect.fromLTRB(40.0, 40.0, 80.0, 80.0),
+          transform: kTestTransform,
+          additionalActions: Int32List.fromList(<int>[21]),
+          platformViewId: 0x3f3,
+          actions: 0,
+          flags: 0,
+          maxValueLength: 0,
+          currentValueLength: 0,
+          textSelectionBase: 0,
+          textSelectionExtent: 0,
+          scrollChildren: 0,
+          scrollIndex: 0,
+          scrollPosition: 0.0,
+          scrollExtentMax: 0.0,
+          scrollExtentMin: 0.0,
+          elevation: 0.0,
+          thickness: 0.0,
+          hint: '',
+          hintAttributes: <StringAttribute>[],
+          value: '',
+          valueAttributes: <StringAttribute>[],
+          increasedValue: '',
+          increasedValueAttributes: <StringAttribute>[],
+          decreasedValue: '',
+          decreasedValueAttributes: <StringAttribute>[],
+          tooltip: 'tooltip',
+          textDirection: TextDirection.ltr,
+          childrenInHitTestOrder: Int32List(0),
+          childrenInTraversalOrder: Int32List(0),
+        )
+        ..updateCustomAction(id: 21, label: 'Archive', hint: 'archive message');
 
   PlatformDispatcher.instance.views.first.updateSemantics(builder.build());
 
@@ -301,7 +292,7 @@ Future<void> a11y_main() async {
   final SemanticsActionEvent data = await semanticsActionEvent;
   final List<int> actionArgs = <int>[
     (data.arguments! as ByteData).getInt8(0),
-    (data.arguments! as ByteData).getInt8(1)
+    (data.arguments! as ByteData).getInt8(1),
   ];
   notifySemanticsAction(data.nodeId, data.type.index, actionArgs);
 
@@ -319,72 +310,65 @@ Future<void> a11y_string_attributes() async {
   }
 
   // 2: Update semantics with string attributes.
-  final SemanticsUpdateBuilder builder = SemanticsUpdateBuilder()
-    ..updateNode(
-      id: 42,
-      identifier: 'identifier',
-      label: 'What is the meaning of life?',
-      labelAttributes: <StringAttribute>[
-        LocaleStringAttribute(
-          range: const TextRange(
-              start: 0, end: 'What is the meaning of life?'.length),
-          locale: const Locale('en'),
-        ),
-        SpellOutStringAttribute(
-          range: const TextRange(start: 0, end: 1),
-        ),
-      ],
-      rect: const Rect.fromLTRB(0.0, 0.0, 10.0, 10.0),
-      transform: kTestTransform,
-      childrenInTraversalOrder: Int32List.fromList(<int>[84, 96]),
-      childrenInHitTestOrder: Int32List.fromList(<int>[96, 84]),
-      actions: 0,
-      flags: 0,
-      maxValueLength: 0,
-      currentValueLength: 0,
-      textSelectionBase: 0,
-      textSelectionExtent: 0,
-      platformViewId: 0,
-      scrollChildren: 0,
-      scrollIndex: 0,
-      scrollPosition: 0.0,
-      scrollExtentMax: 0.0,
-      scrollExtentMin: 0.0,
-      elevation: 0.0,
-      thickness: 0.0,
-      hint: "It's a number",
-      hintAttributes: <StringAttribute>[
-        LocaleStringAttribute(
-          range: const TextRange(start: 0, end: 1),
-          locale: const Locale('en'),
-        ),
-        LocaleStringAttribute(
-          range: const TextRange(start: 2, end: 3),
-          locale: const Locale('fr'),
-        ),
-      ],
-      value: '42',
-      valueAttributes: <StringAttribute>[
-        LocaleStringAttribute(
-          range: const TextRange(start: 0, end: '42'.length),
-          locale: const Locale('en', 'US'),
-        ),
-      ],
-      increasedValue: '43',
-      increasedValueAttributes: <StringAttribute>[
-        SpellOutStringAttribute(
-          range: const TextRange(start: 0, end: 1),
-        ),
-        SpellOutStringAttribute(
-          range: const TextRange(start: 1, end: 2),
-        ),
-      ],
-      decreasedValue: '41',
-      decreasedValueAttributes: <StringAttribute>[],
-      tooltip: 'tooltip',
-      textDirection: TextDirection.ltr,
-      additionalActions: Int32List(0),
-    );
+  final SemanticsUpdateBuilder builder =
+      SemanticsUpdateBuilder()..updateNode(
+        id: 42,
+        identifier: 'identifier',
+        label: 'What is the meaning of life?',
+        labelAttributes: <StringAttribute>[
+          LocaleStringAttribute(
+            range: const TextRange(start: 0, end: 'What is the meaning of life?'.length),
+            locale: const Locale('en'),
+          ),
+          SpellOutStringAttribute(range: const TextRange(start: 0, end: 1)),
+        ],
+        rect: const Rect.fromLTRB(0.0, 0.0, 10.0, 10.0),
+        transform: kTestTransform,
+        childrenInTraversalOrder: Int32List.fromList(<int>[84, 96]),
+        childrenInHitTestOrder: Int32List.fromList(<int>[96, 84]),
+        actions: 0,
+        flags: 0,
+        maxValueLength: 0,
+        currentValueLength: 0,
+        textSelectionBase: 0,
+        textSelectionExtent: 0,
+        platformViewId: 0,
+        scrollChildren: 0,
+        scrollIndex: 0,
+        scrollPosition: 0.0,
+        scrollExtentMax: 0.0,
+        scrollExtentMin: 0.0,
+        elevation: 0.0,
+        thickness: 0.0,
+        hint: "It's a number",
+        hintAttributes: <StringAttribute>[
+          LocaleStringAttribute(
+            range: const TextRange(start: 0, end: 1),
+            locale: const Locale('en'),
+          ),
+          LocaleStringAttribute(
+            range: const TextRange(start: 2, end: 3),
+            locale: const Locale('fr'),
+          ),
+        ],
+        value: '42',
+        valueAttributes: <StringAttribute>[
+          LocaleStringAttribute(
+            range: const TextRange(start: 0, end: '42'.length),
+            locale: const Locale('en', 'US'),
+          ),
+        ],
+        increasedValue: '43',
+        increasedValueAttributes: <StringAttribute>[
+          SpellOutStringAttribute(range: const TextRange(start: 0, end: 1)),
+          SpellOutStringAttribute(range: const TextRange(start: 1, end: 2)),
+        ],
+        decreasedValue: '41',
+        decreasedValueAttributes: <StringAttribute>[],
+        tooltip: 'tooltip',
+        textDirection: TextDirection.ltr,
+        additionalActions: Int32List(0),
+      );
 
   PlatformDispatcher.instance.views.first.updateSemantics(builder.build());
   signalNativeTest();
@@ -393,8 +377,11 @@ Future<void> a11y_string_attributes() async {
 @pragma('vm:entry-point')
 // ignore: non_constant_identifier_names
 void platform_messages_response() {
-  PlatformDispatcher.instance.onPlatformMessage =
-      (String name, ByteData? data, PlatformMessageResponseCallback? callback) {
+  PlatformDispatcher.instance.onPlatformMessage = (
+    String name,
+    ByteData? data,
+    PlatformMessageResponseCallback? callback,
+  ) {
     callback!(data);
   };
   signalNativeTest();
@@ -403,10 +390,12 @@ void platform_messages_response() {
 @pragma('vm:entry-point')
 // ignore: non_constant_identifier_names
 void platform_messages_no_response() {
-  PlatformDispatcher.instance.onPlatformMessage =
-      (String name, ByteData? data, PlatformMessageResponseCallback? callback) {
-    final Uint8List list =
-        data!.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+  PlatformDispatcher.instance.onPlatformMessage = (
+    String name,
+    ByteData? data,
+    PlatformMessageResponseCallback? callback,
+  ) {
+    final Uint8List list = data!.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
     signalNativeMessage(utf8.decode(list));
     // This does nothing because no one is listening on the other side. But complete the loop anyway
     // to make sure all null checking on response handles in the engine is in place.
@@ -418,8 +407,11 @@ void platform_messages_no_response() {
 @pragma('vm:entry-point')
 // ignore: non_constant_identifier_names
 void null_platform_messages() {
-  PlatformDispatcher.instance.onPlatformMessage =
-      (String name, ByteData? data, PlatformMessageResponseCallback? callback) {
+  PlatformDispatcher.instance.onPlatformMessage = (
+    String name,
+    ByteData? data,
+    PlatformMessageResponseCallback? callback,
+  ) {
     // This checks if the platform_message null data is converted to Flutter null.
     signalNativeMessage((null == data).toString());
     callback!(data);
@@ -429,8 +421,7 @@ void null_platform_messages() {
 
 Picture createSimplePicture() {
   final Paint blackPaint = Paint();
-  final Paint whitePaint = Paint()
-    ..color = const Color.fromARGB(255, 255, 255, 255);
+  final Paint whitePaint = Paint()..color = const Color.fromARGB(255, 255, 255, 255);
   final PictureRecorder baseRecorder = PictureRecorder();
   final Canvas canvas = Canvas(baseRecorder);
   canvas.drawRect(const Rect.fromLTRB(0.0, 0.0, 1000.0, 1000.0), blackPaint);
@@ -524,28 +515,23 @@ void can_composite_platform_views_with_known_scene() {
     builder.pushOffset(0.0, 0.0);
 
     // 10 (Index 0)
-    builder.addPicture(
-        const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
+    builder.addPicture(const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
 
     builder.pushOffset(20.0, 20.0);
     // 20 (Index 1)
-    builder.addPlatformView(1,
-        width: size.width, height: size.height); // green - platform
+    builder.addPlatformView(1, width: size.width, height: size.height); // green - platform
     builder.pop();
 
     // 30 (Index 2)
-    builder.addPicture(const Offset(30.0, 30.0),
-        createColoredBox(blue, size)); // blue - flutter
+    builder.addPicture(const Offset(30.0, 30.0), createColoredBox(blue, size)); // blue - flutter
 
     builder.pushOffset(40.0, 40.0);
     // 40 (Index 3)
-    builder.addPlatformView(2,
-        width: size.width, height: size.height); // magenta - platform
+    builder.addPlatformView(2, width: size.width, height: size.height); // magenta - platform
     builder.pop();
 
     // 50  (Index 4)
-    builder.addPicture(const Offset(50.0, 50.0),
-        createColoredBox(gray, size)); // gray - flutter
+    builder.addPicture(const Offset(50.0, 50.0), createColoredBox(gray, size)); // gray - flutter
 
     builder.pop();
 
@@ -570,20 +556,18 @@ void can_composite_platform_views_transparent_overlay() {
     builder.pushOffset(0.0, 0.0);
 
     // 10 (Index 0)
-    builder.addPicture(
-        const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
+    builder.addPicture(const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
 
     builder.pushOffset(20.0, 20.0);
     // 20 (Index 1)
-    builder.addPlatformView(1,
-        width: size.width, height: size.height); // green - platform
+    builder.addPlatformView(1, width: size.width, height: size.height); // green - platform
     builder.pop();
 
     // 30 (Index 2)
     builder.addPicture(
-        const Offset(30.0, 30.0),
-        createColoredBox(transparent,
-            size)); // transparent picture, no layer should be created.
+      const Offset(30.0, 30.0),
+      createColoredBox(transparent, size),
+    ); // transparent picture, no layer should be created.
 
     builder.pop();
 
@@ -606,13 +590,11 @@ void can_composite_platform_views_no_overlay() {
     builder.pushOffset(0.0, 0.0);
 
     // 10 (Index 0)
-    builder.addPicture(
-        const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
+    builder.addPicture(const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
 
     builder.pushOffset(20.0, 20.0);
     // 20 (Index 1)
-    builder.addPlatformView(1,
-        width: size.width, height: size.height); // green - platform
+    builder.addPlatformView(1, width: size.width, height: size.height); // green - platform
     builder.pop();
     builder.pop();
 
@@ -635,8 +617,7 @@ void can_composite_platform_views_with_root_layer_only() {
     builder.pushOffset(0.0, 0.0);
 
     // 10 (Index 0)
-    builder.addPicture(
-        const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
+    builder.addPicture(const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
     builder.pop();
 
     PlatformDispatcher.instance.views.first.render(builder.build());
@@ -658,13 +639,11 @@ void can_composite_platform_views_with_platform_layer_on_bottom() {
     builder.pushOffset(0.0, 0.0);
 
     // 10 (Index 0)
-    builder.addPicture(
-        const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
+    builder.addPicture(const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
 
     builder.pushOffset(20.0, 20.0);
     // 20 (Index 1)
-    builder.addPlatformView(1,
-        width: size.width, height: size.height); // green - platform
+    builder.addPlatformView(1, width: size.width, height: size.height); // green - platform
     builder.pop();
     builder.pop();
 
@@ -682,15 +661,14 @@ external void signalBeginFrame();
 
 @pragma('vm:entry-point')
 Future<void>
-    // ignore: non_constant_identifier_names
-    texture_destruction_callback_called_without_custom_compositor() async {
+// ignore: non_constant_identifier_names
+texture_destruction_callback_called_without_custom_compositor() async {
   PlatformDispatcher.instance.onBeginFrame = (Duration duration) {
     const Color red = Color.fromARGB(127, 255, 0, 0);
     const Size size = Size(50.0, 150.0);
     final SceneBuilder builder = SceneBuilder();
     builder.pushOffset(0.0, 0.0);
-    builder.addPicture(
-        const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
+    builder.addPicture(const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
     builder.pop();
     PlatformDispatcher.instance.views.first.render(builder.build());
   };
@@ -713,20 +691,18 @@ void can_render_scene_without_custom_compositor() {
 
     builder.pushOffset(0.0, 0.0);
 
+    builder.addPicture(const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
+
+    builder.addPicture(const Offset(20.0, 20.0), createColoredBox(green, size)); // green - flutter
+
+    builder.addPicture(const Offset(30.0, 30.0), createColoredBox(blue, size)); // blue - flutter
+
     builder.addPicture(
-        const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
+      const Offset(40.0, 40.0),
+      createColoredBox(magenta, size),
+    ); // magenta - flutter
 
-    builder.addPicture(const Offset(20.0, 20.0),
-        createColoredBox(green, size)); // green - flutter
-
-    builder.addPicture(const Offset(30.0, 30.0),
-        createColoredBox(blue, size)); // blue - flutter
-
-    builder.addPicture(const Offset(40.0, 40.0),
-        createColoredBox(magenta, size)); // magenta - flutter
-
-    builder.addPicture(const Offset(50.0, 50.0),
-        createColoredBox(gray, size)); // gray - flutter
+    builder.addPicture(const Offset(50.0, 50.0), createColoredBox(gray, size)); // gray - flutter
 
     builder.pop();
 
@@ -755,8 +731,7 @@ Picture createGradientBox(Size size) {
     (6.0 / 7.0),
     (7.0 / 7.0),
   ];
-  paint.shader = Gradient.linear(
-      Offset.zero, Offset(size.width, size.height), rainbow, stops);
+  paint.shader = Gradient.linear(Offset.zero, Offset(size.width, size.height), rainbow, stops);
   final PictureRecorder baseRecorder = PictureRecorder();
   final Canvas canvas = Canvas(baseRecorder);
   canvas.drawRect(Rect.fromLTRB(0.0, 0.0, size.width, size.height), paint);
@@ -764,8 +739,15 @@ Picture createGradientBox(Size size) {
 }
 
 @pragma('vm:external-name', 'EchoKeyEvent')
-external void _echoKeyEvent(int change, int timestamp, int physical,
-    int logical, int charCode, bool synthesized, int deviceType);
+external void _echoKeyEvent(
+  int change,
+  int timestamp,
+  int physical,
+  int logical,
+  int charCode,
+  bool synthesized,
+  int deviceType,
+);
 
 // Convert `kind` in enum form to its integer form.
 //
@@ -825,8 +807,10 @@ Future<void> key_data_echo() async {
 @pragma('vm:entry-point')
 // ignore: non_constant_identifier_names
 Future<void> key_data_late_echo() async {
-  channelBuffers.setListener('test/starts_echo',
-      (ByteData? data, PlatformMessageResponseCallback callback) {
+  channelBuffers.setListener('test/starts_echo', (
+    ByteData? data,
+    PlatformMessageResponseCallback callback,
+  ) {
     PlatformDispatcher.instance.onKeyData = (KeyData data) {
       _echoKeyEvent(
         _serializeKeyEventType(data.type),
@@ -896,8 +880,7 @@ void render_gradient() {
 
     builder.pushOffset(0.0, 0.0);
 
-    builder.addPicture(
-        Offset.zero, createGradientBox(size)); // gradient - flutter
+    builder.addPicture(Offset.zero, createGradientBox(size)); // gradient - flutter
 
     builder.pop();
 
@@ -937,13 +920,11 @@ void render_gradient_on_non_root_backing_store() {
     builder.pushOffset(0.0, 0.0);
 
     // Even though this is occluded, add something so it is not elided.
-    builder.addPicture(
-        const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
+    builder.addPicture(const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
 
     builder.addPlatformView(1, width: 100, height: 200); // undefined - platform
 
-    builder.addPicture(
-        Offset.zero, createGradientBox(size)); // gradient - flutter
+    builder.addPicture(Offset.zero, createGradientBox(size)); // gradient - flutter
 
     builder.pop();
 
@@ -965,13 +946,12 @@ void verify_b141980393() {
     final SceneBuilder builder = SceneBuilder();
 
     builder.pushOffset(
-        0.0, // x
-        topMargin // y
-        );
+      0.0, // x
+      topMargin, // y
+    );
 
     // The web view in example.
-    builder.addPlatformView(1337,
-        width: platformViewSize.width, height: platformViewSize.height);
+    builder.addPlatformView(1337, width: platformViewSize.width, height: platformViewSize.height);
 
     builder.pop();
 
@@ -985,33 +965,34 @@ void verify_b141980393() {
 void can_display_platform_view_with_pixel_ratio() {
   PlatformDispatcher.instance.onBeginFrame = (Duration duration) {
     final SceneBuilder builder = SceneBuilder();
-    builder.pushTransform(Float64List.fromList(<double>[
-      2.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      2.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-    ])); // base
-    builder.addPicture(
-        Offset.zero, createGradientBox(const Size(400.0, 300.0)));
+    builder.pushTransform(
+      Float64List.fromList(<double>[
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+      ]),
+    ); // base
+    builder.addPicture(Offset.zero, createGradientBox(const Size(400.0, 300.0)));
     builder.pushOffset(0.0, 20.0); // offset
     builder.addPlatformView(42, width: 400.0, height: 280.0);
     builder.pop(); // offset
     builder.addPicture(
-        Offset.zero,
-        createColoredBox(
-            const Color.fromARGB(128, 255, 0, 0), const Size(400.0, 300.0)));
+      Offset.zero,
+      createColoredBox(const Color.fromARGB(128, 255, 0, 0), const Size(400.0, 300.0)),
+    );
     builder.pop(); // base
     PlatformDispatcher.instance.views.first.render(builder.build());
   };
@@ -1037,15 +1018,15 @@ void verify_b143464703() {
 
     // Background
     builder.addPicture(
-        Offset.zero,
-        createColoredBox(const Color.fromARGB(255, 128, 128, 128),
-            const Size(1024.0, 600.0)));
+      Offset.zero,
+      createColoredBox(const Color.fromARGB(255, 128, 128, 128), const Size(1024.0, 600.0)),
+    );
 
     builder.pushOpacity(128);
     builder.addPicture(
-        const Offset(10.0, 10.0),
-        createColoredBox(
-            const Color.fromARGB(255, 0, 0, 255), const Size(25.0, 25.0)));
+      const Offset(10.0, 10.0),
+      createColoredBox(const Color.fromARGB(255, 0, 0, 255), const Size(25.0, 25.0)),
+    );
     builder.pop(); // opacity 128
 
     // The top bar and the platform view are pushed to the side.
@@ -1058,8 +1039,7 @@ void verify_b143464703() {
     builder.pop(); // 2
 
     // Top bar
-    builder.addPicture(
-        Offset.zero, createGradientBox(const Size(1024.0, 60.0)));
+    builder.addPicture(Offset.zero, createGradientBox(const Size(1024.0, 60.0)));
 
     builder.pop(); // opacity
     builder.pop(); // 1
@@ -1077,9 +1057,9 @@ void push_frames_over_and_over() {
     final SceneBuilder builder = SceneBuilder();
     builder.pushOffset(0.0, 0.0);
     builder.addPicture(
-        Offset.zero,
-        createColoredBox(const Color.fromARGB(255, 128, 128, 128),
-            const Size(1024.0, 600.0)));
+      Offset.zero,
+      createColoredBox(const Color.fromARGB(255, 128, 128, 128), const Size(1024.0, 600.0)),
+    );
     builder.pushOpacity(128);
     builder.addPlatformView(42, width: 1024.0, height: 540.0);
     builder.pop();
@@ -1097,14 +1077,13 @@ void platform_view_mutators() {
   PlatformDispatcher.instance.onBeginFrame = (Duration duration) {
     final SceneBuilder builder = SceneBuilder();
     builder.pushOffset(0.0, 0.0); // base
-    builder.addPicture(
-        Offset.zero, createGradientBox(const Size(800.0, 600.0)));
+    builder.addPicture(Offset.zero, createGradientBox(const Size(800.0, 600.0)));
 
     builder.pushOpacity(128);
-    builder.pushClipRect(
-        const Rect.fromLTWH(10.0, 10.0, 800.0 - 20.0, 600.0 - 20.0));
-    builder.pushClipRRect(RRect.fromLTRBR(
-        10.0, 10.0, 800.0 - 10.0, 600.0 - 10.0, const Radius.circular(14.0)));
+    builder.pushClipRect(const Rect.fromLTWH(10.0, 10.0, 800.0 - 20.0, 600.0 - 20.0));
+    builder.pushClipRRect(
+      RRect.fromLTRBR(10.0, 10.0, 800.0 - 10.0, 600.0 - 10.0, const Radius.circular(14.0)),
+    );
     builder.addPlatformView(42, width: 800.0, height: 600.0);
     builder.pop(); // clip rrect
     builder.pop(); // clip rect
@@ -1122,14 +1101,13 @@ void platform_view_mutators_with_pixel_ratio() {
   PlatformDispatcher.instance.onBeginFrame = (Duration duration) {
     final SceneBuilder builder = SceneBuilder();
     builder.pushOffset(0.0, 0.0); // base
-    builder.addPicture(
-        Offset.zero, createGradientBox(const Size(400.0, 300.0)));
+    builder.addPicture(Offset.zero, createGradientBox(const Size(400.0, 300.0)));
 
     builder.pushOpacity(128);
-    builder.pushClipRect(
-        const Rect.fromLTWH(5.0, 5.0, 400.0 - 10.0, 300.0 - 10.0));
-    builder.pushClipRRect(RRect.fromLTRBR(
-        5.0, 5.0, 400.0 - 5.0, 300.0 - 5.0, const Radius.circular(7.0)));
+    builder.pushClipRect(const Rect.fromLTWH(5.0, 5.0, 400.0 - 10.0, 300.0 - 10.0));
+    builder.pushClipRRect(
+      RRect.fromLTRBR(5.0, 5.0, 400.0 - 5.0, 300.0 - 5.0, const Radius.circular(7.0)),
+    );
     builder.addPlatformView(42, width: 400.0, height: 300.0);
     builder.pop(); // clip rrect
     builder.pop(); // clip rect
@@ -1156,8 +1134,7 @@ void empty_scene() {
 void scene_with_no_container() {
   PlatformDispatcher.instance.onBeginFrame = (Duration duration) {
     final SceneBuilder builder = SceneBuilder();
-    builder.addPicture(
-        Offset.zero, createGradientBox(const Size(400.0, 300.0)));
+    builder.addPicture(Offset.zero, createGradientBox(const Size(400.0, 300.0)));
     PlatformDispatcher.instance.views.first.render(builder.build());
     signalNativeTest();
   };
@@ -1168,15 +1145,15 @@ Picture createArcEndCapsPicture() {
   final PictureRecorder baseRecorder = PictureRecorder();
   final Canvas canvas = Canvas(baseRecorder);
 
-  final style = Paint()
-    ..strokeWidth = 12.0
-    ..style = PaintingStyle.stroke
-    ..strokeCap = StrokeCap.round
-    ..strokeJoin = StrokeJoin.miter;
+  final style =
+      Paint()
+        ..strokeWidth = 12.0
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.miter;
 
   style.color = const Color.fromARGB(255, 255, 0, 0);
-  canvas.drawArc(
-      const Rect.fromLTRB(0.0, 0.0, 500.0, 500.0), 1.57, 1.0, false, style);
+  canvas.drawArc(const Rect.fromLTRB(0.0, 0.0, 500.0, 500.0), 1.57, 1.0, false, style);
 
   return baseRecorder.endRecording();
 }
@@ -1199,8 +1176,7 @@ void scene_builder_with_clips() {
     final SceneBuilder builder = SceneBuilder();
     builder.pushClipRect(const Rect.fromLTRB(10.0, 10.0, 390.0, 290.0));
     builder.addPlatformView(42, width: 400.0, height: 300.0);
-    builder.addPicture(
-        Offset.zero, createGradientBox(const Size(400.0, 300.0)));
+    builder.addPicture(Offset.zero, createGradientBox(const Size(400.0, 300.0)));
     PlatformDispatcher.instance.views.first.render(builder.build());
   };
   PlatformDispatcher.instance.scheduleFrame();
@@ -1219,8 +1195,7 @@ void scene_builder_with_complex_clips() {
     builder.pushClipRect(const Rect.fromLTRB(0.0, 0.0, 1024.0, 600.0));
     builder.addPlatformView(42, width: 1024.0, height: 600.0);
 
-    builder.addPicture(
-        Offset.zero, createGradientBox(const Size(1024.0, 600.0)));
+    builder.addPicture(Offset.zero, createGradientBox(const Size(1024.0, 600.0)));
     PlatformDispatcher.instance.views.first.render(builder.build());
   };
   PlatformDispatcher.instance.scheduleFrame();
@@ -1270,8 +1245,7 @@ void render_targets_are_recycled() {
   PlatformDispatcher.instance.onBeginFrame = (Duration duration) {
     final SceneBuilder builder = SceneBuilder();
     for (int i = 0; i < 10; i++) {
-      builder.addPicture(
-          Offset.zero, createGradientBox(const Size(30.0, 20.0)));
+      builder.addPicture(Offset.zero, createGradientBox(const Size(30.0, 20.0)));
       builder.addPlatformView(42 + i, width: 30.0, height: 20.0);
     }
     PlatformDispatcher.instance.views.first.render(builder.build());
@@ -1292,8 +1266,7 @@ void render_targets_are_in_stable_order() {
   PlatformDispatcher.instance.onBeginFrame = (Duration duration) {
     final SceneBuilder builder = SceneBuilder();
     for (int i = 0; i < 10; i++) {
-      builder.addPicture(
-          Offset.zero, createGradientBox(const Size(30.0, 20.0)));
+      builder.addPicture(Offset.zero, createGradientBox(const Size(30.0, 20.0)));
       builder.addPlatformView(42 + i, width: 30.0, height: 20.0);
     }
     PlatformDispatcher.instance.views.first.render(builder.build());
@@ -1350,18 +1323,12 @@ Future<void> snapshot_large_scene(int maxSize) async {
   const smallHeight = 64.0;
   recorder = PictureRecorder();
   {
-    final Canvas canvas = Canvas(
-      recorder,
-      const Rect.fromLTWH(0, 0, smallWidth, smallHeight),
-    );
+    final Canvas canvas = Canvas(recorder, const Rect.fromLTWH(0, 0, smallWidth, smallHeight));
     canvas.scale(smallWidth / bigImage.width);
     canvas.drawImage(bigImage, Offset.zero, Paint());
   }
   picture = recorder.endRecording();
-  final Image smallImage = await picture.toImage(
-    smallWidth.toInt(),
-    smallHeight.toInt(),
-  );
+  final Image smallImage = await picture.toImage(smallWidth.toInt(), smallHeight.toInt());
 
   snapshotsCallback(bigImage, smallImage);
 }
@@ -1374,8 +1341,7 @@ void invalid_backingstore() {
     const Size size = Size(50.0, 150.0);
     final SceneBuilder builder = SceneBuilder();
     builder.pushOffset(0.0, 0.0);
-    builder.addPicture(
-        const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
+    builder.addPicture(const Offset(10.0, 10.0), createColoredBox(red, size)); // red - flutter
     builder.pop();
     PlatformDispatcher.instance.views.first.render(builder.build());
   };
@@ -1412,9 +1378,9 @@ void drawSolidColor(Color c) {
     final SceneBuilder builder = SceneBuilder();
     builder.pushOffset(0.0, 0.0);
     builder.addPicture(
-        Offset.zero,
-        createColoredBox(
-            c, PlatformDispatcher.instance.views.first.physicalSize));
+      Offset.zero,
+      createColoredBox(c, PlatformDispatcher.instance.views.first.physicalSize),
+    );
     builder.pop();
     PlatformDispatcher.instance.views.first.render(builder.build());
   };
@@ -1508,8 +1474,7 @@ void window_metrics_event_view_id() {
 // ignore: non_constant_identifier_names
 void window_metrics_event_all_view_ids() {
   PlatformDispatcher.instance.onMetricsChanged = () {
-    final List<int> viewIds =
-        PlatformDispatcher.instance.views.map((view) => view.viewId).toList();
+    final List<int> viewIds = PlatformDispatcher.instance.views.map((view) => view.viewId).toList();
 
     viewIds.sort();
 
@@ -1522,8 +1487,10 @@ void window_metrics_event_all_view_ids() {
 @pragma('vm:entry-point')
 // ignore: non_constant_identifier_names
 Future<void> channel_listener_response() async {
-  channelBuffers.setListener('test/listen',
-      (ByteData? data, PlatformMessageResponseCallback callback) {
+  channelBuffers.setListener('test/listen', (
+    ByteData? data,
+    PlatformMessageResponseCallback callback,
+  ) {
     callback(null);
   });
   signalNativeTest();
@@ -1581,12 +1548,11 @@ void render_impeller_text_test() {
     final PictureRecorder baseRecorder = PictureRecorder();
     final Canvas canvas = Canvas(baseRecorder);
 
-    final ParagraphBuilder paragraphBuilder = ParagraphBuilder(ParagraphStyle(
-      fontFamily: 'sans-serif'
-    ))
-      ..addText('Flutter is the best!');
-    final Paragraph paragraph = paragraphBuilder.build()
-      ..layout(const ParagraphConstraints(width: 400));
+    final ParagraphBuilder paragraphBuilder = ParagraphBuilder(
+      ParagraphStyle(fontFamily: 'sans-serif'),
+    )..addText('Flutter is the best!');
+    final Paragraph paragraph =
+        paragraphBuilder.build()..layout(const ParagraphConstraints(width: 400));
     canvas.drawParagraph(paragraph, const Offset(20, 20));
 
     builder.addPicture(Offset.zero, baseRecorder.endRecording());

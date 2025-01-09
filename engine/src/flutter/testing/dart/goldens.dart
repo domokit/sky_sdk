@@ -18,23 +18,16 @@ const String _kSkiaGoldWorkDirectoryKey = 'kSkiaGoldWorkDirectory';
 /// Contains utilities for comparing two images in memory that are expected to
 /// be identical, or for adding images to Skia gold for comparison.
 class ImageComparer {
-  ImageComparer._({
-    required SkiaGoldClient client,
-  }) : _client = client;
+  ImageComparer._({required SkiaGoldClient client}) : _client = client;
 
   // Avoid talking to Skia gold for the force-multithreading variants.
-  static bool get _useSkiaGold =>
-      !Platform.executableArguments.contains('--force-multithreading');
+  static bool get _useSkiaGold => !Platform.executableArguments.contains('--force-multithreading');
 
   /// Creates an image comparer and authorizes.
-  static Future<ImageComparer> create({
-    bool verbose = false,
-  }) async {
-    const String workDirectoryPath =
-        String.fromEnvironment(_kSkiaGoldWorkDirectoryKey);
+  static Future<ImageComparer> create({bool verbose = false}) async {
+    const String workDirectoryPath = String.fromEnvironment(_kSkiaGoldWorkDirectoryKey);
     if (workDirectoryPath.isEmpty) {
-      throw UnsupportedError(
-          'Using ImageComparer requries defining kSkiaGoldWorkDirectoryKey.');
+      throw UnsupportedError('Using ImageComparer requries defining kSkiaGoldWorkDirectoryKey.');
     }
 
     final Directory workDirectory = Directory(
@@ -43,10 +36,10 @@ class ImageComparer {
     final Map<String, String> dimensions = <String, String>{
       'impeller_enabled': impellerEnabled.toString(),
     };
-    final SkiaGoldClient client = SkiaGoldClient.isAvailable() && _useSkiaGold
-        ? SkiaGoldClient(workDirectory,
-            dimensions: dimensions, verbose: verbose)
-        : _FakeSkiaGoldClient(workDirectory, dimensions, verbose: verbose);
+    final SkiaGoldClient client =
+        SkiaGoldClient.isAvailable() && _useSkiaGold
+            ? SkiaGoldClient(workDirectory, dimensions: dimensions, verbose: verbose)
+            : _FakeSkiaGoldClient(workDirectory, dimensions, verbose: verbose);
 
     await client.auth();
     return ImageComparer._(client: client);
@@ -58,16 +51,13 @@ class ImageComparer {
   ///
   /// The [fileName] must be unique.
   Future<void> addGoldenImage(Image image, String fileName) async {
-    final ByteData data =
-        (await image.toByteData(format: ImageByteFormat.png))!;
+    final ByteData data = (await image.toByteData(format: ImageByteFormat.png))!;
 
     final File file = File(path.join(_client.workDirectory.path, fileName))
       ..writeAsBytesSync(data.buffer.asUint8List());
-    await _client.addImg(
-      fileName,
-      file,
-      screenshotSize: image.width * image.height,
-    ).catchError((dynamic error) {
+    await _client.addImg(fileName, file, screenshotSize: image.width * image.height).catchError((
+      dynamic error,
+    ) {
       print('Skia gold comparison failed: $error');
       throw Exception('Failed comparison: $fileName');
     });
@@ -77,8 +67,7 @@ class ImageComparer {
     if (golden.width != testImage.width || golden.height != testImage.height) {
       return false;
     }
-    int getPixel(ByteData data, int x, int y) =>
-        data.getUint32((x + y * golden.width) * 4);
+    int getPixel(ByteData data, int x, int y) => data.getUint32((x + y * golden.width) * 4);
     final ByteData goldenData = (await golden.toByteData())!;
     final ByteData testImageData = (await testImage.toByteData())!;
     for (int y = 0; y < golden.height; y++) {
@@ -95,11 +84,7 @@ class ImageComparer {
 // TODO(dnfield): add local comparison against baseline,
 // https://github.com/flutter/flutter/issues/136831
 class _FakeSkiaGoldClient implements SkiaGoldClient {
-  _FakeSkiaGoldClient(
-    this.workDirectory,
-    this.dimensions, {
-    this.verbose = false,
-  });
+  _FakeSkiaGoldClient(this.workDirectory, this.dimensions, {this.verbose = false});
 
   @override
   final Directory workDirectory;

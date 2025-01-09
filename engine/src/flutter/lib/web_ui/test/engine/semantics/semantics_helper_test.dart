@@ -26,8 +26,7 @@ void testMain() {
     });
 
     tearDown(() {
-      expect(placeholder, isNotNull,
-          reason: 'Expected the test to create a placeholder');
+      expect(placeholder, isNotNull, reason: 'Expected the test to create a placeholder');
       placeholder!.remove();
       EngineSemantics.instance.semanticsEnabled = false;
     });
@@ -39,8 +38,7 @@ void testMain() {
 
       domDocument.body!.append(placeholder!);
 
-      expect(domDocument.getElementsByTagName('flt-semantics-placeholder'),
-          isNotEmpty);
+      expect(domDocument.getElementsByTagName('flt-semantics-placeholder'), isNotEmpty);
 
       expect(placeholder!.getBoundingClientRect().height, 1);
       expect(placeholder!.getBoundingClientRect().width, 1);
@@ -53,32 +51,30 @@ void testMain() {
       domDocument.body!.append(placeholder!);
 
       DomEvent event = createDomEvent('Event', 'mousemove');
-      bool shouldForwardToFramework =
-          desktopSemanticsEnabler.tryEnableSemantics(event);
+      bool shouldForwardToFramework = desktopSemanticsEnabler.tryEnableSemantics(event);
 
       expect(shouldForwardToFramework, isTrue);
 
       // Pointer events are not defined in webkit.
       if (ui_web.browser.browserEngine != ui_web.BrowserEngine.webkit) {
         event = createDomEvent('Event', 'pointermove');
-        shouldForwardToFramework =
-            desktopSemanticsEnabler.tryEnableSemantics(event);
+        shouldForwardToFramework = desktopSemanticsEnabler.tryEnableSemantics(event);
 
         expect(shouldForwardToFramework, isTrue);
       }
     });
 
     test(
-        'Relevant events targeting placeholder should not be forwarded to the framework',
-        () async {
-      final DomEvent event = createDomEvent('Event', 'mousedown');
-      placeholder!.dispatchEvent(event);
+      'Relevant events targeting placeholder should not be forwarded to the framework',
+      () async {
+        final DomEvent event = createDomEvent('Event', 'mousedown');
+        placeholder!.dispatchEvent(event);
 
-      final bool shouldForwardToFramework =
-          desktopSemanticsEnabler.tryEnableSemantics(event);
+        final bool shouldForwardToFramework = desktopSemanticsEnabler.tryEnableSemantics(event);
 
-      expect(shouldForwardToFramework, isFalse);
-    });
+        expect(shouldForwardToFramework, isFalse);
+      },
+    );
 
     test('disposes of the placeholder', () {
       domDocument.body!.append(placeholder!);
@@ -118,12 +114,10 @@ void testMain() {
         expect(placeholder!.getBoundingClientRect().width, bodyWidth);
       });
 
-      test('Non-relevant events should be forwarded to the framework',
-          () async {
+      test('Non-relevant events should be forwarded to the framework', () async {
         final DomEvent event = createDomPointerEvent('pointermove');
 
-        final bool shouldForwardToFramework =
-            mobileSemanticsEnabler.tryEnableSemantics(event);
+        final bool shouldForwardToFramework = mobileSemanticsEnabler.tryEnableSemantics(event);
 
         expect(shouldForwardToFramework, isTrue);
       });
@@ -132,31 +126,24 @@ void testMain() {
         expect(mobileSemanticsEnabler.semanticsActivationTimer, isNull);
 
         // Send a click off center
-        placeholder!.dispatchEvent(createDomMouseEvent(
-          'click',
-          <Object?, Object?>{
-            'clientX': 0,
-            'clientY': 0,
-          }
-        ));
+        placeholder!.dispatchEvent(
+          createDomMouseEvent('click', <Object?, Object?>{'clientX': 0, 'clientY': 0}),
+        );
         expect(mobileSemanticsEnabler.semanticsActivationTimer, isNull);
 
         // Send a click at center
-        final DomRect activatingElementRect =
-            placeholder!.getBoundingClientRect();
-        final int midX = (activatingElementRect.left +
-                (activatingElementRect.right - activatingElementRect.left) / 2)
-            .toInt();
-        final int midY = (activatingElementRect.top +
-                (activatingElementRect.bottom - activatingElementRect.top) / 2)
-            .toInt();
-        placeholder!.dispatchEvent(createDomMouseEvent(
-          'click',
-          <Object?, Object?>{
-            'clientX': midX,
-            'clientY': midY,
-          }
-        ));
+        final DomRect activatingElementRect = placeholder!.getBoundingClientRect();
+        final int midX =
+            (activatingElementRect.left +
+                    (activatingElementRect.right - activatingElementRect.left) / 2)
+                .toInt();
+        final int midY =
+            (activatingElementRect.top +
+                    (activatingElementRect.bottom - activatingElementRect.top) / 2)
+                .toInt();
+        placeholder!.dispatchEvent(
+          createDomMouseEvent('click', <Object?, Object?>{'clientX': midX, 'clientY': midY}),
+        );
         expect(mobileSemanticsEnabler.semanticsActivationTimer, isNotNull);
       });
     },

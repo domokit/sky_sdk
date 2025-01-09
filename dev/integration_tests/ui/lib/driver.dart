@@ -27,22 +27,15 @@ class DriverTestAppState extends State<DriverTestApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('FlutterDriver test'),
-        ),
+        appBar: AppBar(title: const Text('FlutterDriver test')),
         body: ListView(
           padding: const EdgeInsets.all(5.0),
           children: <Widget>[
             Row(
               children: <Widget>[
-                Expanded(
-                  child: Text(present ? 'present' : 'absent'),
-                ),
+                Expanded(child: Text(present ? 'present' : 'absent')),
                 ElevatedButton(
-                  child: const Text(
-                    'toggle',
-                    key: ValueKey<String>('togglePresent'),
-                  ),
+                  child: const Text('toggle', key: ValueKey<String>('togglePresent')),
                   onPressed: () {
                     setState(() {
                       present = !present;
@@ -53,9 +46,7 @@ class DriverTestAppState extends State<DriverTestApp> {
             ),
             Row(
               children: <Widget>[
-                const Expanded(
-                  child: Text('hit testability'),
-                ),
+                const Expanded(child: Text('hit testability')),
                 DropdownButton<Letter>(
                   key: const ValueKey<String>('dropdown'),
                   value: _selectedValue,
@@ -81,9 +72,7 @@ class DriverTestAppState extends State<DriverTestApp> {
                 ),
               ],
             ),
-            const TextField(
-              key: ValueKey<String>('enter-text-field'),
-            ),
+            const TextField(key: ValueKey<String>('enter-text-field')),
           ],
         ),
       ),

@@ -340,11 +340,17 @@ class _RenderCupertinoSlider extends RenderConstrainedBox implements MouseTracke
        _trackColor = trackColor,
        _onChanged = onChanged,
        _textDirection = textDirection,
-       super(additionalConstraints: const BoxConstraints.tightFor(width: _kSliderWidth, height: _kSliderHeight)) {
-    _drag = HorizontalDragGestureRecognizer()
-      ..onStart = _handleDragStart
-      ..onUpdate = _handleDragUpdate
-      ..onEnd = _handleDragEnd;
+       super(
+         additionalConstraints: const BoxConstraints.tightFor(
+           width: _kSliderWidth,
+           height: _kSliderHeight,
+         ),
+       ) {
+    _drag =
+        HorizontalDragGestureRecognizer()
+          ..onStart = _handleDragStart
+          ..onUpdate = _handleDragUpdate
+          ..onEnd = _handleDragEnd;
     _position = AnimationController(
       value: value,
       duration: _kDiscreteTransitionDuration,
@@ -454,7 +460,11 @@ class _RenderCupertinoSlider extends RenderConstrainedBox implements MouseTracke
       TextDirection.rtl => 1.0 - _value,
       TextDirection.ltr => _value,
     };
-    return lerpDouble(_trackLeft + CupertinoThumbPainter.radius, _trackRight - CupertinoThumbPainter.radius, visualPosition)!;
+    return lerpDouble(
+      _trackLeft + CupertinoThumbPainter.radius,
+      _trackRight - CupertinoThumbPainter.radius,
+      visualPosition,
+    )!;
   }
 
   bool get isInteractive => onChanged != null;
@@ -463,11 +473,14 @@ class _RenderCupertinoSlider extends RenderConstrainedBox implements MouseTracke
 
   void _handleDragUpdate(DragUpdateDetails details) {
     if (isInteractive) {
-      final double extent = math.max(_kPadding, size.width - 2.0 * (_kPadding + CupertinoThumbPainter.radius));
+      final double extent = math.max(
+        _kPadding,
+        size.width - 2.0 * (_kPadding + CupertinoThumbPainter.radius),
+      );
       final double valueDelta = details.primaryDelta! / extent;
       _currentDragValue += switch (textDirection) {
         TextDirection.rtl => -valueDelta,
-        TextDirection.ltr =>  valueDelta,
+        TextDirection.ltr => valueDelta,
       };
       onChanged!(_discretizedCurrentDragValue);
     }
@@ -519,16 +532,24 @@ class _RenderCupertinoSlider extends RenderConstrainedBox implements MouseTracke
 
     if (visualPosition > 0.0) {
       final Paint paint = Paint()..color = rightColor;
-      canvas.drawRRect(RRect.fromLTRBXY(trackLeft, trackTop, trackActive, trackBottom, 1.0, 1.0), paint);
+      canvas.drawRRect(
+        RRect.fromLTRBXY(trackLeft, trackTop, trackActive, trackBottom, 1.0, 1.0),
+        paint,
+      );
     }
 
     if (visualPosition < 1.0) {
       final Paint paint = Paint()..color = leftColor;
-      canvas.drawRRect(RRect.fromLTRBXY(trackActive, trackTop, trackRight, trackBottom, 1.0, 1.0), paint);
+      canvas.drawRRect(
+        RRect.fromLTRBXY(trackActive, trackTop, trackRight, trackBottom, 1.0, 1.0),
+        paint,
+      );
     }
 
     final Offset thumbCenter = Offset(trackActive, trackCenter);
-    CupertinoThumbPainter(color: thumbColor).paint(canvas, Rect.fromCircle(center: thumbCenter, radius: CupertinoThumbPainter.radius));
+    CupertinoThumbPainter(
+      color: thumbColor,
+    ).paint(canvas, Rect.fromCircle(center: thumbCenter, radius: CupertinoThumbPainter.radius));
   }
 
   @override
@@ -542,8 +563,10 @@ class _RenderCupertinoSlider extends RenderConstrainedBox implements MouseTracke
       config.onIncrease = _increaseAction;
       config.onDecrease = _decreaseAction;
       config.value = '${(value * 100).round()}%';
-      config.increasedValue = '${(clampDouble(value + _semanticActionUnit, 0.0, 1.0) * 100).round()}%';
-      config.decreasedValue = '${(clampDouble(value - _semanticActionUnit, 0.0, 1.0) * 100).round()}%';
+      config.increasedValue =
+          '${(clampDouble(value + _semanticActionUnit, 0.0, 1.0) * 100).round()}%';
+      config.decreasedValue =
+          '${(clampDouble(value - _semanticActionUnit, 0.0, 1.0) * 100).round()}%';
     }
   }
 

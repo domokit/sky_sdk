@@ -23,25 +23,21 @@ class LicensesCommand extends Command<bool> {
   }
 
   void _checkLicenseHeaders() {
-    final List<io.File> allSourceFiles =
-        _flatListSourceFiles(environment.webUiRootDir);
-    _expect(allSourceFiles.isNotEmpty,
-        'Dart source listing of ${environment.webUiRootDir.path} must not be empty.');
+    final List<io.File> allSourceFiles = _flatListSourceFiles(environment.webUiRootDir);
+    _expect(
+      allSourceFiles.isNotEmpty,
+      'Dart source listing of ${environment.webUiRootDir.path} must not be empty.',
+    );
 
-    final List<String> allDartPaths =
-        allSourceFiles.map((io.File f) => f.path).toList();
+    final List<String> allDartPaths = allSourceFiles.map((io.File f) => f.path).toList();
 
-    for (final String expectedDirectory in const <String>[
-      'lib',
-      'test',
-      'dev',
-    ]) {
-      final String expectedAbsoluteDirectory =
-          path.join(environment.webUiRootDir.path, expectedDirectory);
+    for (final String expectedDirectory in const <String>['lib', 'test', 'dev']) {
+      final String expectedAbsoluteDirectory = path.join(
+        environment.webUiRootDir.path,
+        expectedDirectory,
+      );
       _expect(
-        allDartPaths
-            .where((String p) => p.startsWith(expectedAbsoluteDirectory))
-            .isNotEmpty,
+        allDartPaths.where((String p) => p.startsWith(expectedAbsoluteDirectory)).isNotEmpty,
         'Must include the $expectedDirectory/ directory',
       );
     }
@@ -50,8 +46,9 @@ class LicensesCommand extends Command<bool> {
     print('License headers OK!');
   }
 
-  final RegExp _copyRegex =
-      RegExp(r'// Copyright 2013 The Flutter Authors\. All rights reserved\.');
+  final RegExp _copyRegex = RegExp(
+    r'// Copyright 2013 The Flutter Authors\. All rights reserved\.',
+  );
 
   void _expectLicenseHeader(io.File file) {
     final List<String> head = file.readAsStringSync().split('\n').take(3).toList();
@@ -62,8 +59,7 @@ class LicensesCommand extends Command<bool> {
       'Invalid first line of license header in file ${file.path}',
     );
     _expect(
-      head[1] ==
-          '// Use of this source code is governed by a BSD-style license that can be',
+      head[1] == '// Use of this source code is governed by a BSD-style license that can be',
       'Invalid second line of license header in file ${file.path}',
     );
     _expect(

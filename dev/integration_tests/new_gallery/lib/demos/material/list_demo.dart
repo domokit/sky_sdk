@@ -18,10 +18,7 @@ class ListDemo extends StatelessWidget {
   Widget build(BuildContext context) {
     final GalleryLocalizations localizations = GalleryLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(localizations.demoListsTitle),
-      ),
+      appBar: AppBar(automaticallyImplyLeading: false, title: Text(localizations.demoListsTitle)),
       body: Scrollbar(
         child: ListView(
           restorationId: 'list_demo_list_view',
@@ -29,15 +26,10 @@ class ListDemo extends StatelessWidget {
           children: <Widget>[
             for (int index = 1; index < 21; index++)
               ListTile(
-                leading: ExcludeSemantics(
-                  child: CircleAvatar(child: Text('$index')),
-                ),
-                title: Text(
-                  localizations.demoBottomSheetItem(index),
-                ),
-                subtitle: type == ListDemoType.twoLine
-                    ? Text(localizations.demoListsSecondary)
-                    : null,
+                leading: ExcludeSemantics(child: CircleAvatar(child: Text('$index'))),
+                title: Text(localizations.demoBottomSheetItem(index)),
+                subtitle:
+                    type == ListDemoType.twoLine ? Text(localizations.demoListsSecondary) : null,
               ),
           ],
         ),

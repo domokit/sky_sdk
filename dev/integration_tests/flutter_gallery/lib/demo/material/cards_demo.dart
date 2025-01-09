@@ -8,11 +8,7 @@ import '../../gallery/demo.dart';
 
 const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
 
-enum CardDemoType {
-  standard,
-  tappable,
-  selectable,
-}
+enum CardDemoType { standard, tappable, selectable }
 
 class TravelDestination {
   const TravelDestination({
@@ -64,7 +60,7 @@ const List<TravelDestination> destinations = <TravelDestination>[
 ];
 
 class TravelDestinationItem extends StatelessWidget {
-  const TravelDestinationItem({ super.key, required this.destination, this.shape });
+  const TravelDestinationItem({super.key, required this.destination, this.shape});
 
   // This height will allow for all the Card's content to fit comfortably within the card.
   static const double height = 338.0;
@@ -98,7 +94,7 @@ class TravelDestinationItem extends StatelessWidget {
 }
 
 class TappableTravelDestinationItem extends StatelessWidget {
-  const TappableTravelDestinationItem({ super.key, required this.destination, this.shape });
+  const TappableTravelDestinationItem({super.key, required this.destination, this.shape});
 
   // This height will allow for all the Card's content to fit comfortably within the card.
   static const double height = 298.0;
@@ -141,7 +137,7 @@ class TappableTravelDestinationItem extends StatelessWidget {
 }
 
 class SelectableTravelDestinationItem extends StatefulWidget {
-  const SelectableTravelDestinationItem({ super.key, required this.destination, this.shape });
+  const SelectableTravelDestinationItem({super.key, required this.destination, this.shape});
 
   final TravelDestination destination;
   final ShapeBorder? shape;
@@ -151,7 +147,6 @@ class SelectableTravelDestinationItem extends StatefulWidget {
 }
 
 class _SelectableTravelDestinationItemState extends State<SelectableTravelDestinationItem> {
-
   // This height will allow for all the Card's content to fit comfortably within the card.
   static const double height = 298.0;
   bool _isSelected = false;
@@ -188,11 +183,12 @@ class _SelectableTravelDestinationItemState extends State<SelectableTravelDestin
                   child: Stack(
                     children: <Widget>[
                       Container(
-                        color: _isSelected
-                          // Generally, material cards use primary with 8% opacity for the selected state.
-                          // See: https://material.io/design/interaction/states.html#anatomy
-                          ? colorScheme.primary.withOpacity(0.08)
-                          : Colors.transparent,
+                        color:
+                            _isSelected
+                                // Generally, material cards use primary with 8% opacity for the selected state.
+                                // See: https://material.io/design/interaction/states.html#anatomy
+                                ? colorScheme.primary.withOpacity(0.08)
+                                : Colors.transparent,
                       ),
                       TravelDestinationContent(destination: widget.destination),
                       Align(
@@ -218,10 +214,7 @@ class _SelectableTravelDestinationItemState extends State<SelectableTravelDestin
 }
 
 class SectionTitle extends StatelessWidget {
-  const SectionTitle({
-    super.key,
-    this.title,
-  });
+  const SectionTitle({super.key, this.title});
 
   final String? title;
 
@@ -238,7 +231,7 @@ class SectionTitle extends StatelessWidget {
 }
 
 class TravelDestinationContent extends StatelessWidget {
-  const TravelDestinationContent({ super.key, required this.destination });
+  const TravelDestinationContent({super.key, required this.destination});
 
   final TravelDestination destination;
 
@@ -247,7 +240,9 @@ class TravelDestinationContent extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     final TextStyle titleStyle = theme.textTheme.headlineSmall!.copyWith(color: Colors.white);
     final TextStyle descriptionStyle = theme.textTheme.titleMedium!;
-    final ButtonStyle textButtonStyle = TextButton.styleFrom(foregroundColor: Colors.amber.shade500);
+    final ButtonStyle textButtonStyle = TextButton.styleFrom(
+      foregroundColor: Colors.amber.shade500,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,10 +270,7 @@ class TravelDestinationContent extends StatelessWidget {
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
-                  child: Text(
-                    destination.title,
-                    style: titleStyle,
-                  ),
+                  child: Text(destination.title, style: titleStyle),
                 ),
               ),
             ],
@@ -318,12 +310,16 @@ class TravelDestinationContent extends StatelessWidget {
               children: <Widget>[
                 TextButton(
                   style: textButtonStyle,
-                  onPressed: () { print('pressed'); },
+                  onPressed: () {
+                    print('pressed');
+                  },
                   child: Text('SHARE', semanticsLabel: 'Share ${destination.title}'),
                 ),
                 TextButton(
                   style: textButtonStyle,
-                  onPressed: () { print('pressed'); },
+                  onPressed: () {
+                    print('pressed');
+                  },
                   child: Text('EXPLORE', semanticsLabel: 'Explore ${destination.title}'),
                 ),
               ],
@@ -354,20 +350,20 @@ class _CardsDemoState extends State<CardsDemo> {
         actions: <Widget>[
           MaterialDemoDocumentationButton(CardsDemo.routeName),
           IconButton(
-            icon: const Icon(
-              Icons.sentiment_very_satisfied,
-              semanticLabel: 'update shape',
-            ),
+            icon: const Icon(Icons.sentiment_very_satisfied, semanticLabel: 'update shape'),
             onPressed: () {
               setState(() {
-                _shape = _shape != null ? null : const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(16.0),
-                    bottomLeft: Radius.circular(2.0),
-                    bottomRight: Radius.circular(2.0),
-                  ),
-                );
+                _shape =
+                    _shape != null
+                        ? null
+                        : const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(16.0),
+                            topRight: Radius.circular(16.0),
+                            bottomLeft: Radius.circular(2.0),
+                            bottomRight: Radius.circular(2.0),
+                          ),
+                        );
               });
             },
           ),
@@ -382,9 +378,18 @@ class _CardsDemoState extends State<CardsDemo> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: switch (destination.type) {
-                  CardDemoType.standard   => TravelDestinationItem(destination: destination, shape: _shape),
-                  CardDemoType.tappable   => TappableTravelDestinationItem(destination: destination, shape: _shape),
-                  CardDemoType.selectable => SelectableTravelDestinationItem(destination: destination, shape: _shape),
+                  CardDemoType.standard => TravelDestinationItem(
+                    destination: destination,
+                    shape: _shape,
+                  ),
+                  CardDemoType.tappable => TappableTravelDestinationItem(
+                    destination: destination,
+                    shape: _shape,
+                  ),
+                  CardDemoType.selectable => SelectableTravelDestinationItem(
+                    destination: destination,
+                    shape: _shape,
+                  ),
                 },
               ),
           ],

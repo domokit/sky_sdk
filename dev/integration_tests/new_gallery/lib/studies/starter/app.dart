@@ -46,10 +46,7 @@ class StarterApp extends StatelessWidget {
           onSurface: Colors.black,
           brightness: Brightness.light,
         ),
-        dividerTheme: const DividerThemeData(
-          thickness: 1,
-          color: Color(0xFFE5E5E5),
-        ),
+        dividerTheme: const DividerThemeData(thickness: 1, color: Color(0xFFE5E5E5)),
         platform: GalleryOptions.of(context).platform,
       ),
     );
@@ -61,8 +58,6 @@ class _Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ApplyTextOptions(
-      child: HomePage(),
-    );
+    return const ApplyTextOptions(child: HomePage());
   }
 }

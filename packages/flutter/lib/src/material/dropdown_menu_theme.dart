@@ -32,11 +32,7 @@ import 'theme.dart';
 class DropdownMenuThemeData with Diagnosticable {
   /// Creates a [DropdownMenuThemeData] that can be used to override default properties
   /// in a [DropdownMenuTheme] widget.
-  const DropdownMenuThemeData({
-    this.textStyle,
-    this.inputDecorationTheme,
-    this.menuStyle,
-  });
+  const DropdownMenuThemeData({this.textStyle, this.inputDecorationTheme, this.menuStyle});
 
   /// Overrides the default value for [DropdownMenu.textStyle].
   final TextStyle? textStyle;
@@ -79,11 +75,7 @@ class DropdownMenuThemeData with Diagnosticable {
   }
 
   @override
-  int get hashCode => Object.hash(
-    textStyle,
-    inputDecorationTheme,
-    menuStyle,
-  );
+  int get hashCode => Object.hash(textStyle, inputDecorationTheme, menuStyle);
 
   @override
   bool operator ==(Object other) {
@@ -93,17 +85,23 @@ class DropdownMenuThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is DropdownMenuThemeData
-        && other.textStyle == textStyle
-        && other.inputDecorationTheme == inputDecorationTheme
-        && other.menuStyle == menuStyle;
+    return other is DropdownMenuThemeData &&
+        other.textStyle == textStyle &&
+        other.inputDecorationTheme == inputDecorationTheme &&
+        other.menuStyle == menuStyle;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<TextStyle>('textStyle', textStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<InputDecorationTheme>('inputDecorationTheme', inputDecorationTheme, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<InputDecorationTheme>(
+        'inputDecorationTheme',
+        inputDecorationTheme,
+        defaultValue: null,
+      ),
+    );
     properties.add(DiagnosticsProperty<MenuStyle>('menuStyle', menuStyle, defaultValue: null));
   }
 }
@@ -115,11 +113,7 @@ class DropdownMenuThemeData with Diagnosticable {
 class DropdownMenuTheme extends InheritedTheme {
   /// Creates a [DropdownMenuTheme] that controls visual parameters for
   /// descendant [DropdownMenu]s.
-  const DropdownMenuTheme({
-    super.key,
-    required this.data,
-    required super.child,
-  });
+  const DropdownMenuTheme({super.key, required this.data, required super.child});
 
   /// Specifies the visual properties used by descendant [DropdownMenu]
   /// widgets.

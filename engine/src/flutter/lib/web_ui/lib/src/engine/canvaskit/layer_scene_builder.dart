@@ -22,19 +22,13 @@ class LayerScene implements ui.Scene {
 
   @override
   Future<ui.Image> toImage(int width, int height) {
-    final ui.Picture picture = layerTree.flatten(ui.Size(
-      width.toDouble(),
-      height.toDouble(),
-    ));
+    final ui.Picture picture = layerTree.flatten(ui.Size(width.toDouble(), height.toDouble()));
     return picture.toImage(width, height);
   }
 
   @override
   ui.Image toImageSync(int width, int height) {
-    final ui.Picture picture = layerTree.flatten(ui.Size(
-      width.toDouble(),
-      height.toDouble(),
-    ));
+    final ui.Picture picture = layerTree.flatten(ui.Size(width.toDouble(), height.toDouble()));
     return picture.toImageSync(width, height);
   }
 }
@@ -60,8 +54,7 @@ class LayerSceneBuilder implements ui.SceneBuilder {
     bool isComplexHint = false,
     bool willChangeHint = false,
   }) {
-    currentLayer.add(PictureLayer(
-        picture as CkPicture, offset, isComplexHint, willChangeHint));
+    currentLayer.add(PictureLayer(picture as CkPicture, offset, isComplexHint, willChangeHint));
   }
 
   @override
@@ -112,10 +105,7 @@ class LayerSceneBuilder implements ui.SceneBuilder {
     ui.EngineLayer? oldLayer,
     int? backdropId,
   }) {
-    return pushLayer<BackdropFilterEngineLayer>(BackdropFilterEngineLayer(
-      filter,
-      blendMode,
-    ));
+    return pushLayer<BackdropFilterEngineLayer>(BackdropFilterEngineLayer(filter, blendMode));
   }
 
   @override
@@ -124,8 +114,7 @@ class LayerSceneBuilder implements ui.SceneBuilder {
     ui.Clip clipBehavior = ui.Clip.antiAlias,
     ui.EngineLayer? oldLayer,
   }) {
-    return pushLayer<ClipPathEngineLayer>(
-        ClipPathEngineLayer(path as CkPath, clipBehavior));
+    return pushLayer<ClipPathEngineLayer>(ClipPathEngineLayer(path as CkPath, clipBehavior));
   }
 
   @override
@@ -134,8 +123,7 @@ class LayerSceneBuilder implements ui.SceneBuilder {
     ui.Clip? clipBehavior,
     ui.EngineLayer? oldLayer,
   }) {
-    return pushLayer<ClipRRectEngineLayer>(
-        ClipRRectEngineLayer(rrect, clipBehavior));
+    return pushLayer<ClipRRectEngineLayer>(ClipRRectEngineLayer(rrect, clipBehavior));
   }
 
   @override
@@ -144,8 +132,7 @@ class LayerSceneBuilder implements ui.SceneBuilder {
     ui.Clip clipBehavior = ui.Clip.antiAlias,
     ui.EngineLayer? oldLayer,
   }) {
-    return pushLayer<ClipRectEngineLayer>(
-        ClipRectEngineLayer(rect, clipBehavior));
+    return pushLayer<ClipRectEngineLayer>(ClipRectEngineLayer(rect, clipBehavior));
   }
 
   @override
@@ -166,11 +153,7 @@ class LayerSceneBuilder implements ui.SceneBuilder {
   }
 
   @override
-  OffsetEngineLayer pushOffset(
-    double dx,
-    double dy, {
-    ui.EngineLayer? oldLayer,
-  }) {
+  OffsetEngineLayer pushOffset(double dx, double dy, {ui.EngineLayer? oldLayer}) {
     return pushLayer<OffsetEngineLayer>(OffsetEngineLayer(dx, dy));
   }
 
@@ -192,14 +175,12 @@ class LayerSceneBuilder implements ui.SceneBuilder {
     ui.FilterQuality filterQuality = ui.FilterQuality.low,
   }) {
     return pushLayer<ShaderMaskEngineLayer>(
-        ShaderMaskEngineLayer(shader, maskRect, blendMode, filterQuality));
+      ShaderMaskEngineLayer(shader, maskRect, blendMode, filterQuality),
+    );
   }
 
   @override
-  TransformEngineLayer pushTransform(
-    Float64List matrix4, {
-    ui.EngineLayer? oldLayer,
-  }) {
+  TransformEngineLayer pushTransform(Float64List matrix4, {ui.EngineLayer? oldLayer}) {
     final Matrix4 matrix = Matrix4.fromFloat32List(toMatrix32(matrix4));
     return pushLayer<TransformEngineLayer>(TransformEngineLayer(matrix));
   }

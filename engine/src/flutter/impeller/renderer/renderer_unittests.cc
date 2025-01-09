@@ -587,7 +587,7 @@ TEST_P(RendererTest, CanBlitTextureToTexture) {
       // Blit `bridge` to the top left corner of the texture.
       pass->AddCopy(bridge, texture);
 
-      if (!pass->EncodeCommands(context->GetResourceAllocator())) {
+      if (!pass->EncodeCommands()) {
         return false;
       }
     }
@@ -701,7 +701,7 @@ TEST_P(RendererTest, CanBlitTextureToBuffer) {
 
       // Blit `bridge` to the top left corner of the texture.
       pass->AddCopy(bridge, device_buffer);
-      pass->EncodeCommands(context->GetResourceAllocator());
+      pass->EncodeCommands();
 
       if (!context->GetCommandQueue()->Submit({buffer}).ok()) {
         return false;
@@ -836,7 +836,7 @@ TEST_P(RendererTest, CanGenerateMipmaps) {
 
       pass->GenerateMipmap(boston, "Boston Mipmap");
 
-      pass->EncodeCommands(context->GetResourceAllocator());
+      pass->EncodeCommands();
     }
 
     first_frame = false;

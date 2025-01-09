@@ -9,11 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
 class TestImageInfo extends ImageInfo {
-  TestImageInfo(this.value, {
-    required super.image,
-    super.scale,
-    super.debugLabel,
-  });
+  TestImageInfo(this.value, {required super.image, super.scale, super.debugLabel});
 
   final int value;
 
@@ -33,16 +29,16 @@ class TestImageInfo extends ImageInfo {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is TestImageInfo
-        && other.value == value
-        && other.image.isCloneOf(image)
-        && other.scale == scale
-        && other.debugLabel == debugLabel;
+    return other is TestImageInfo &&
+        other.value == value &&
+        other.image.isCloneOf(image) &&
+        other.scale == scale &&
+        other.debugLabel == debugLabel;
   }
 }
 
 class TestImageProvider extends ImageProvider<int> {
-  const TestImageProvider(this.key, this.imageValue, { required this.image });
+  const TestImageProvider(this.key, this.imageValue, {required this.image});
 
   final int key;
   final int imageValue;
@@ -65,11 +61,13 @@ class TestImageProvider extends ImageProvider<int> {
 }
 
 class FailingTestImageProvider extends TestImageProvider {
-  const FailingTestImageProvider(super.key, super.imageValue, { required super.image });
+  const FailingTestImageProvider(super.key, super.imageValue, {required super.image});
 
   @override
   ImageStreamCompleter loadImage(int key, ImageDecoderCallback decode) {
-    return OneFrameImageStreamCompleter(Future<ImageInfo>.sync(() => Future<ImageInfo>.error('loading failed!')));
+    return OneFrameImageStreamCompleter(
+      Future<ImageInfo>.sync(() => Future<ImageInfo>.error('loading failed!')),
+    );
   }
 }
 

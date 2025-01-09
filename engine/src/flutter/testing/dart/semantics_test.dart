@@ -33,10 +33,19 @@ void main() {
   });
 
   test('SpellOutStringAttribute.toString', () async {
-    expect(SpellOutStringAttribute(range: const TextRange(start: 2, end: 5)).toString(), 'SpellOutStringAttribute(TextRange(start: 2, end: 5))');
+    expect(
+      SpellOutStringAttribute(range: const TextRange(start: 2, end: 5)).toString(),
+      'SpellOutStringAttribute(TextRange(start: 2, end: 5))',
+    );
   });
 
   test('LocaleStringAttribute.toString', () async {
-    expect(LocaleStringAttribute(range: const TextRange(start: 2, end: 5), locale: const Locale('test')).toString(), 'LocaleStringAttribute(TextRange(start: 2, end: 5), test)');
+    expect(
+      LocaleStringAttribute(
+        range: const TextRange(start: 2, end: 5),
+        locale: const Locale('test'),
+      ).toString(),
+      'LocaleStringAttribute(TextRange(start: 2, end: 5), test)',
+    );
   });
 }

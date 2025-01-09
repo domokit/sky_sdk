@@ -15,10 +15,9 @@ import './version.dart';
 const String kRemote = 'remote';
 
 class CandidatesCommand extends Command<void> {
-  CandidatesCommand({
-    required this.flutterRoot,
-    required this.checkouts,
-  }) : git = Git(checkouts.processManager), stdio = checkouts.stdio {
+  CandidatesCommand({required this.flutterRoot, required this.checkouts})
+    : git = Git(checkouts.processManager),
+      stdio = checkouts.stdio {
     argParser.addOption(
       kRemote,
       help: 'Which remote name to query for branches.',
@@ -56,13 +55,7 @@ class CandidatesCommand extends Command<void> {
     stdio.printStatus('currentVersion = $currentVersion');
 
     final List<String> branches = (await git.getOutput(
-      <String>[
-        'branch',
-        '--no-color',
-        '--remotes',
-        '--list',
-        '${results[kRemote]}/*',
-      ],
+      <String>['branch', '--no-color', '--remotes', '--list', '${results[kRemote]}/*'],
       'List all remote branches',
       workingDirectory: flutterRoot.path,
     )).split('\n');

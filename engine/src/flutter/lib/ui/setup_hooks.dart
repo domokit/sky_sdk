@@ -11,19 +11,13 @@ void _setupHooks() {
     developer.registerExtension('ext.ui.window.scheduleFrame', _scheduleFrame);
 
     // In debug mode, allow shaders to be reinitialized.
-    developer.registerExtension(
-      'ext.ui.window.reinitializeShader',
-      _reinitializeShader,
-    );
+    developer.registerExtension('ext.ui.window.reinitializeShader', _reinitializeShader);
 
     return true;
   }());
 
   // In debug and profile mode, allow tools to display the current rendering backend.
   if (!_kReleaseMode) {
-    developer.registerExtension(
-      'ext.ui.window.impellerEnabled',
-      _getImpellerEnabled,
-    );
+    developer.registerExtension('ext.ui.window.impellerEnabled', _getImpellerEnabled);
   }
 }

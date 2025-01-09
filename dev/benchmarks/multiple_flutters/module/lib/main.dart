@@ -23,9 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: color as MaterialColor,
-      ),
+      theme: ThemeData(primarySwatch: color as MaterialColor),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -49,10 +47,7 @@ class Sky extends CustomPainter {
       colors: <Color>[Color(0xFFFFFF00), Color(0xFF0099FF)],
       stops: <double>[0.4, 1.0],
     );
-    canvas.drawRect(
-      rect,
-      Paint()..shader = gradient.createShader(rect),
-    );
+    canvas.drawRect(rect, Paint()..shader = gradient.createShader(rect));
   }
 
   @override
@@ -68,10 +63,7 @@ class Sky extends CustomPainter {
       return <CustomPainterSemantics>[
         CustomPainterSemantics(
           rect: rect,
-          properties: const SemanticsProperties(
-            label: 'Sun',
-            textDirection: TextDirection.ltr,
-          ),
+          properties: const SemanticsProperties(label: 'Sun', textDirection: TextDirection.ltr),
         ),
       ];
     };
@@ -92,30 +84,16 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title ?? ''),
-      ),
+      appBar: AppBar(title: Text(widget.title ?? '')),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
-                'You have pushed the button this many times:',
-                style: GoogleFonts.lato(),
-              ),
-              Text(
-                '0',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text('Add'),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text('Next'),
-              ),
+              Text('You have pushed the button this many times:', style: GoogleFonts.lato()),
+              Text('0', style: Theme.of(context).textTheme.headlineMedium),
+              TextButton(onPressed: () {}, child: const Text('Add')),
+              TextButton(onPressed: () {}, child: const Text('Next')),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
@@ -125,54 +103,26 @@ class _MyHomePageState extends State<MyHomePage> {
                     size: 24.0,
                     semanticLabel: 'Text to announce in accessibility modes',
                   ),
-                  const Icon(
-                    Icons.audiotrack,
-                    color: Colors.green,
-                    size: 30.0,
-                  ),
-                  const Icon(
-                    Icons.beach_access,
-                    color: Colors.blue,
-                    size: 36.0,
-                  ),
-                  const Icon(
-                    Icons.zoom_out,
-                    color: Colors.amber,
-                    size: 36.0,
-                  ),
-                  const Icon(
-                    Icons.money,
-                    color: Colors.lightGreen,
-                    size: 36.0,
-                  ),
-                  const Icon(
-                    Icons.bug_report,
-                    color: Colors.teal,
-                    size: 36.0,
-                  ),
+                  const Icon(Icons.audiotrack, color: Colors.green, size: 30.0),
+                  const Icon(Icons.beach_access, color: Colors.blue, size: 36.0),
+                  const Icon(Icons.zoom_out, color: Colors.amber, size: 36.0),
+                  const Icon(Icons.money, color: Colors.lightGreen, size: 36.0),
+                  const Icon(Icons.bug_report, color: Colors.teal, size: 36.0),
                   Container(
                     width: 36.0,
                     height: 36.0,
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
-                        end: Alignment(0.8,
-                            0.0), // 10% of the width, so there are ten blinds.
-                        colors: <Color>[
-                          Color(0xffee0000),
-                          Color(0xffeeee00),
-                        ], // red to yellow
-                        tileMode: TileMode
-                            .repeated, // repeats the gradient over the canvas
+                        end: Alignment(0.8, 0.0), // 10% of the width, so there are ten blinds.
+                        colors: <Color>[Color(0xffee0000), Color(0xffeeee00)], // red to yellow
+                        tileMode: TileMode.repeated, // repeats the gradient over the canvas
                       ),
                     ),
                   ),
                 ],
               ),
-              CustomPaint(
-                painter: Sky(),
-                size: const Size(200.0, 36.0),
-              ),
+              CustomPaint(painter: Sky(), size: const Size(200.0, 36.0)),
             ],
           ),
         ),

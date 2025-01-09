@@ -26,10 +26,7 @@ class TabWithSidebar extends StatelessWidget {
           Flexible(
             flex: 2,
             child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
-                child: mainView,
-              ),
+              child: Padding(padding: const EdgeInsets.symmetric(vertical: 24), child: mainView),
             ),
           ),
           Expanded(
@@ -38,29 +35,19 @@ class TabWithSidebar extends StatelessWidget {
               padding: const EdgeInsetsDirectional.only(start: 24),
               height: double.infinity,
               alignment: AlignmentDirectional.centerStart,
-              child: ListView(
-                shrinkWrap: true,
-                children: sidebarItems,
-              ),
+              child: ListView(shrinkWrap: true, children: sidebarItems),
             ),
           ),
         ],
       );
     } else {
-      return SingleChildScrollView(
-        restorationId: restorationId,
-        child: mainView,
-      );
+      return SingleChildScrollView(restorationId: restorationId, child: mainView);
     }
   }
 }
 
 class SidebarItem extends StatelessWidget {
-  const SidebarItem({
-    super.key,
-    required this.value,
-    required this.title,
-  });
+  const SidebarItem({super.key, required this.value, required this.title});
 
   final String value;
   final String title;
@@ -74,21 +61,12 @@ class SidebarItem extends StatelessWidget {
         const SizedBox(height: 8),
         SelectableText(
           title,
-          style: textTheme.bodyMedium!.copyWith(
-            fontSize: 16,
-            color: RallyColors.gray60,
-          ),
+          style: textTheme.bodyMedium!.copyWith(fontSize: 16, color: RallyColors.gray60),
         ),
         const SizedBox(height: 8),
-        SelectableText(
-          value,
-          style: textTheme.bodyLarge!.copyWith(fontSize: 20),
-        ),
+        SelectableText(value, style: textTheme.bodyLarge!.copyWith(fontSize: 20)),
         const SizedBox(height: 8),
-        Container(
-          color: RallyColors.primaryBackground,
-          height: 1,
-        ),
+        Container(color: RallyColors.primaryBackground, height: 1),
       ],
     );
   }

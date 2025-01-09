@@ -31,7 +31,6 @@ import 'theme.dart';
 ///  * [ThemeData], which describes the overall theme information for the
 ///    application.
 class CardTheme extends InheritedWidget with Diagnosticable {
-
   /// Creates a theme that can be used for [ThemeData.cardTheme].
   ///
   /// The [elevation] must be null or non-negative.
@@ -47,24 +46,26 @@ class CardTheme extends InheritedWidget with Diagnosticable {
     CardThemeData? data,
     Widget? child,
   }) : assert(
-        data == null ||
-        (clipBehavior ??
-        color ??
-        surfaceTintColor ??
-        shadowColor ??
-        elevation ??
-        margin ??
-        shape) == null),
-      assert(elevation == null || elevation >= 0.0),
-      _data = data,
-      _clipBehavior = clipBehavior,
-      _color = color,
-      _surfaceTintColor = surfaceTintColor,
-      _shadowColor = shadowColor,
-      _elevation = elevation,
-      _margin = margin,
-      _shape = shape,
-      super(child: child ?? const SizedBox());
+         data == null ||
+             (clipBehavior ??
+                     color ??
+                     surfaceTintColor ??
+                     shadowColor ??
+                     elevation ??
+                     margin ??
+                     shape) ==
+                 null,
+       ),
+       assert(elevation == null || elevation >= 0.0),
+       _data = data,
+       _clipBehavior = clipBehavior,
+       _color = color,
+       _surfaceTintColor = surfaceTintColor,
+       _shadowColor = shadowColor,
+       _elevation = elevation,
+       _margin = margin,
+       _shape = shape,
+       super(child: child ?? const SizedBox());
 
   final CardThemeData? _data;
   final Clip? _clipBehavior;
@@ -119,15 +120,16 @@ class CardTheme extends InheritedWidget with Diagnosticable {
 
   /// The properties used for all descendant [Card] widgets.
   CardThemeData get data {
-    return _data ?? CardThemeData(
-      clipBehavior: _clipBehavior,
-      color: _color,
-      surfaceTintColor: _surfaceTintColor,
-      shadowColor: _shadowColor,
-      elevation: _elevation,
-      margin: _margin,
-      shape: _shape,
-    );
+    return _data ??
+        CardThemeData(
+          clipBehavior: _clipBehavior,
+          color: _color,
+          surfaceTintColor: _surfaceTintColor,
+          shadowColor: _shadowColor,
+          elevation: _elevation,
+          margin: _margin,
+          shape: _shape,
+        );
   }
 
   /// Creates a copy of this object with the given fields replaced with the
@@ -292,15 +294,8 @@ class CardThemeData with Diagnosticable {
   }
 
   @override
-  int get hashCode => Object.hash(
-    clipBehavior,
-    color,
-    shadowColor,
-    surfaceTintColor,
-    elevation,
-    margin,
-    shape,
-  );
+  int get hashCode =>
+      Object.hash(clipBehavior, color, shadowColor, surfaceTintColor, elevation, margin, shape);
 
   @override
   bool operator ==(Object other) {
@@ -310,14 +305,14 @@ class CardThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is CardThemeData
-      && other.clipBehavior == clipBehavior
-      && other.color == color
-      && other.shadowColor == shadowColor
-      && other.surfaceTintColor == surfaceTintColor
-      && other.elevation == elevation
-      && other.margin == margin
-      && other.shape == shape;
+    return other is CardThemeData &&
+        other.clipBehavior == clipBehavior &&
+        other.color == color &&
+        other.shadowColor == shadowColor &&
+        other.surfaceTintColor == surfaceTintColor &&
+        other.elevation == elevation &&
+        other.margin == margin &&
+        other.shape == shape;
   }
 
   @override

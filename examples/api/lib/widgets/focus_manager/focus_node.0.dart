@@ -58,15 +58,21 @@ class _ColorfulButtonState extends State<ColorfulButton> {
       switch (event.logicalKey) {
         case LogicalKeyboardKey.keyR:
           debugPrint('Changing color to red.');
-          setState(() { _color = Colors.red; });
+          setState(() {
+            _color = Colors.red;
+          });
           return KeyEventResult.handled;
         case LogicalKeyboardKey.keyG:
           debugPrint('Changing color to green.');
-          setState(() { _color = Colors.green; });
+          setState(() {
+            _color = Colors.green;
+          });
           return KeyEventResult.handled;
         case LogicalKeyboardKey.keyB:
           debugPrint('Changing color to blue.');
-          setState(() { _color = Colors.blue; });
+          setState(() {
+            _color = Colors.blue;
+          });
           return KeyEventResult.handled;
       }
     }
@@ -111,9 +117,6 @@ class FocusNodeExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return DefaultTextStyle(
-      style: textTheme.headlineMedium!,
-      child: const ColorfulButton(),
-    );
+    return DefaultTextStyle(style: textTheme.headlineMedium!, child: const ColorfulButton());
   }
 }

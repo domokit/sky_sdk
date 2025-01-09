@@ -25,11 +25,7 @@ void main() async {
 }
 
 class GalleryApp extends StatelessWidget {
-  const GalleryApp({
-    super.key,
-    this.initialRoute,
-    this.isTestMode = false,
-  });
+  const GalleryApp({super.key, this.initialRoute, this.isTestMode = false});
 
   final String? initialRoute;
   final bool isTestMode;
@@ -54,25 +50,24 @@ class GalleryApp extends StatelessWidget {
             title: 'Flutter Gallery',
             debugShowCheckedModeBanner: false,
             themeMode: options.themeMode,
-            theme: GalleryThemeData.lightThemeData.copyWith(
-              platform: options.platform,
-            ),
-            darkTheme: GalleryThemeData.darkThemeData.copyWith(
-              platform: options.platform,
-            ),
+            theme: GalleryThemeData.lightThemeData.copyWith(platform: options.platform),
+            darkTheme: GalleryThemeData.darkThemeData.copyWith(platform: options.platform),
             localizationsDelegates: const <LocalizationsDelegate<Object?>>[
               ...GalleryLocalizations.localizationsDelegates,
-              LocaleNamesLocalizationsDelegate()
+              LocaleNamesLocalizationsDelegate(),
             ],
             initialRoute: initialRoute,
             supportedLocales: GalleryLocalizations.supportedLocales,
             locale: options.locale,
-            localeListResolutionCallback: (List<Locale>? locales, Iterable<Locale> supportedLocales) {
+            localeListResolutionCallback: (
+              List<Locale>? locales,
+              Iterable<Locale> supportedLocales,
+            ) {
               deviceLocale = locales?.first;
               return basicLocaleListResolution(locales, supportedLocales);
             },
-            onGenerateRoute: (RouteSettings settings) =>
-                RouteConfiguration.onGenerateRoute(settings),
+            onGenerateRoute:
+                (RouteSettings settings) => RouteConfiguration.onGenerateRoute(settings),
           );
         },
       ),
@@ -83,18 +78,12 @@ class GalleryApp extends StatelessWidget {
 // ignore: unreachable_from_main
 class RootPage extends StatelessWidget {
   // ignore: unreachable_from_main
-  const RootPage({
-    super.key,
-  });
+  const RootPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ApplyTextOptions(
-      child: SplashPage(
-        child: Backdrop(
-          isDesktop: isDisplayDesktop(context),
-        ),
-      ),
+      child: SplashPage(child: Backdrop(isDesktop: isDisplayDesktop(context))),
     );
   }
 }

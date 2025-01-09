@@ -49,20 +49,22 @@ ui.Scene composite(ui.Picture picture, ui.Rect paintBounds) {
   final double devicePixelRatio = view.devicePixelRatio;
 
   // This transform scales the x and y coordinates by the devicePixelRatio.
-  final Float64List deviceTransform = Float64List(16)
-    ..[0] = devicePixelRatio
-    ..[5] = devicePixelRatio
-    ..[10] = 1.0
-    ..[15] = 1.0;
+  final Float64List deviceTransform =
+      Float64List(16)
+        ..[0] = devicePixelRatio
+        ..[5] = devicePixelRatio
+        ..[10] = 1.0
+        ..[15] = 1.0;
 
   // We build a very simple scene graph with two nodes. The root node is a
   // transform that scale its children by the device pixel ratio. This transform
   // lets us paint in "logical" pixels which are converted to device pixels by
   // this scaling operation.
-  final ui.SceneBuilder sceneBuilder = ui.SceneBuilder()
-    ..pushTransform(deviceTransform)
-    ..addPicture(ui.Offset.zero, picture)
-    ..pop();
+  final ui.SceneBuilder sceneBuilder =
+      ui.SceneBuilder()
+        ..pushTransform(deviceTransform)
+        ..addPicture(ui.Offset.zero, picture)
+        ..pop();
 
   // When we're done recording the scene, we call build() to obtain an immutable
   // record of the scene we've recorded.

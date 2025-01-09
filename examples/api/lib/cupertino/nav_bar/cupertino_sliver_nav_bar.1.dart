@@ -59,9 +59,7 @@ class SliverNavBarExample extends StatelessWidget {
                         context,
                         CupertinoPageRoute<Widget>(
                           builder: (BuildContext context) {
-                            return const NextPage(
-                              bottomMode: NavigationBarBottomMode.always,
-                            );
+                            return const NextPage(bottomMode: NavigationBarBottomMode.always);
                           },
                         ),
                       );
@@ -93,9 +91,8 @@ class NextPage extends StatelessWidget {
             backgroundColor: CupertinoColors.systemYellow,
             border: Border(
               bottom: BorderSide(
-                color: brightness == Brightness.light
-                    ? CupertinoColors.black
-                    : CupertinoColors.white,
+                color:
+                    brightness == Brightness.light ? CupertinoColors.black : CupertinoColors.white,
               ),
             ),
             middle: const Text('Contacts Group'),
@@ -107,8 +104,7 @@ class NextPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Text('Drag me up', textAlign: TextAlign.center),
-                Text('Tap on the leading button to navigate back',
-                    textAlign: TextAlign.center),
+                Text('Tap on the leading button to navigate back', textAlign: TextAlign.center),
               ],
             ),
           ),

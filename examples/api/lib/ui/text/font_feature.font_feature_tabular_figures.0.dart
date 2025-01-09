@@ -31,9 +31,7 @@ class ExampleWidget extends StatelessWidget {
       'Call 311-555-2368 now!',
       style: TextStyle(
         fontFamily: 'Piazzolla',
-        fontFeatures: <FontFeature>[
-          FontFeature.tabularFigures(),
-        ],
+        fontFeatures: <FontFeature>[FontFeature.tabularFigures()],
       ),
     );
   }

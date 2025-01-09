@@ -31,14 +31,12 @@ Future<void> testMain() async {
   });
 
   test('draws lines with varying strokeWidth', () async {
-
     paintLines(canvas);
 
     domDocument.body!.append(canvas.rootElement);
     await matchGoldenFile('canvas_lines_thickness.png', region: region);
   });
   test('draws lines with varying strokeWidth with dom canvas', () async {
-
     paintLines(domCanvas);
 
     domDocument.body!.append(domCanvas.rootElement);
@@ -46,26 +44,34 @@ Future<void> testMain() async {
   });
   test('draws lines with negative Offset values with dom canvas', () async {
     // test rendering lines correctly with negative offset when using DOM
-    final SurfacePaintData paintWithStyle = SurfacePaintData()
-    ..color = 0xFFE91E63 // Colors.pink
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 16
-    ..strokeCap = StrokeCap.round;
+    final SurfacePaintData paintWithStyle =
+        SurfacePaintData()
+          ..color =
+              0xFFE91E63 // Colors.pink
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 16
+          ..strokeCap = StrokeCap.round;
 
     // canvas.drawLine ignores paint.style (defaults to fill) according to api docs.
     // expect lines are rendered the same regardless of the set paint.style
-    final SurfacePaintData paintWithoutStyle = SurfacePaintData()
-    ..color = 0xFF4CAF50 // Colors.green
-    ..strokeWidth = 16
-    ..strokeCap = StrokeCap.round;
+    final SurfacePaintData paintWithoutStyle =
+        SurfacePaintData()
+          ..color =
+              0xFF4CAF50 // Colors.green
+          ..strokeWidth = 16
+          ..strokeCap = StrokeCap.round;
 
     // test vertical, horizontal, and diagonal lines
     final List<Offset> points = <Offset>[
-      const Offset(-25, 50), const Offset(45, 50),
-      const Offset(100, -25), const Offset(100, 200),
-      const Offset(-150, -145), const Offset(100, 200),
+      const Offset(-25, 50),
+      const Offset(45, 50),
+      const Offset(100, -25),
+      const Offset(100, 200),
+      const Offset(-150, -145),
+      const Offset(100, 200),
     ];
-    final List<Offset> shiftedPoints = points.map((Offset point) => point.translate(20, 20)).toList();
+    final List<Offset> shiftedPoints =
+        points.map((Offset point) => point.translate(20, 20)).toList();
 
     paintLinesFromPoints(domCanvas, paintWithStyle, points);
     paintLinesFromPoints(domCanvas, paintWithoutStyle, shiftedPoints);
@@ -75,29 +81,40 @@ Future<void> testMain() async {
   });
 
   test('drawLines method respects strokeCap with dom canvas', () async {
-    final SurfacePaintData paintStrokeCapRound = SurfacePaintData()
-    ..color = 0xFFE91E63 // Colors.pink
-    ..strokeWidth = 16
-    ..strokeCap = StrokeCap.round;
+    final SurfacePaintData paintStrokeCapRound =
+        SurfacePaintData()
+          ..color =
+              0xFFE91E63 // Colors.pink
+          ..strokeWidth = 16
+          ..strokeCap = StrokeCap.round;
 
-    final SurfacePaintData paintStrokeCapSquare = SurfacePaintData()
-    ..color = 0xFF4CAF50 // Colors.green
-    ..strokeWidth = 16
-    ..strokeCap = StrokeCap.square;
+    final SurfacePaintData paintStrokeCapSquare =
+        SurfacePaintData()
+          ..color =
+              0xFF4CAF50 // Colors.green
+          ..strokeWidth = 16
+          ..strokeCap = StrokeCap.square;
 
-    final SurfacePaintData paintStrokeCapButt = SurfacePaintData()
-    ..color = 0xFFFF9800 // Colors.orange
-    ..strokeWidth = 16
-    ..strokeCap = StrokeCap.butt;
+    final SurfacePaintData paintStrokeCapButt =
+        SurfacePaintData()
+          ..color =
+              0xFFFF9800 // Colors.orange
+          ..strokeWidth = 16
+          ..strokeCap = StrokeCap.butt;
 
     // test vertical, horizontal, and diagonal lines
     final List<Offset> points = <Offset>[
-      const Offset(5, 50), const Offset(45, 50),
-      const Offset(100, 5), const Offset(100, 200),
-      const Offset(5, 10), const Offset(100, 200),
+      const Offset(5, 50),
+      const Offset(45, 50),
+      const Offset(100, 5),
+      const Offset(100, 200),
+      const Offset(5, 10),
+      const Offset(100, 200),
     ];
-    final List<Offset> shiftedPoints = points.map((Offset point) => point.translate(50, 50)).toList();
-    final List<Offset> twiceShiftedPoints = shiftedPoints.map((Offset point) => point.translate(50, 50)).toList();
+    final List<Offset> shiftedPoints =
+        points.map((Offset point) => point.translate(50, 50)).toList();
+    final List<Offset> twiceShiftedPoints =
+        shiftedPoints.map((Offset point) => point.translate(50, 50)).toList();
 
     paintLinesFromPoints(domCanvas, paintStrokeCapRound, points);
     paintLinesFromPoints(domCanvas, paintStrokeCapSquare, shiftedPoints);
@@ -109,21 +126,27 @@ Future<void> testMain() async {
 }
 
 void paintLines(BitmapCanvas canvas) {
-  final SurfacePaintData nullPaint = SurfacePaintData()
-    ..strokeWidth = 1.0
-    ..style = PaintingStyle.stroke;
-  final SurfacePaintData paint1 = SurfacePaintData()
-      ..color = 0xFF9E9E9E // Colors.grey
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
-  final SurfacePaintData paint2 = SurfacePaintData()
-      ..color = 0x7fff0000
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
-  final SurfacePaintData paint3 = SurfacePaintData()
-      ..color = 0xFF4CAF50 //Colors.green
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
+  final SurfacePaintData nullPaint =
+      SurfacePaintData()
+        ..strokeWidth = 1.0
+        ..style = PaintingStyle.stroke;
+  final SurfacePaintData paint1 =
+      SurfacePaintData()
+        ..color =
+            0xFF9E9E9E // Colors.grey
+        ..strokeWidth = 1.0
+        ..style = PaintingStyle.stroke;
+  final SurfacePaintData paint2 =
+      SurfacePaintData()
+        ..color = 0x7fff0000
+        ..strokeWidth = 1.0
+        ..style = PaintingStyle.stroke;
+  final SurfacePaintData paint3 =
+      SurfacePaintData()
+        ..color =
+            0xFF4CAF50 //Colors.green
+        ..strokeWidth = 1.0
+        ..style = PaintingStyle.stroke;
   // Draw markers around 100x100 box
   canvas.drawLine(const Offset(50, 40), const Offset(148, 40), nullPaint);
   canvas.drawLine(const Offset(50, 50), const Offset(52, 50), paint1);

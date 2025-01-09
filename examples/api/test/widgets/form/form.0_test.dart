@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Form Smoke Test', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.FormExampleApp(),
-    );
+    await tester.pumpWidget(const example.FormExampleApp());
     expect(find.widgetWithText(AppBar, 'Form Sample'), findsOneWidget);
 
     final Finder textField = find.byType(TextField);

@@ -21,12 +21,13 @@ Future<bool> testFetchResources() async {
     return false;
   }
   try {
-    final web.Response response = await web.window.fetch(
-      'https://www.gstatic.com/flutter-canvaskit/$engineVersion/canvaskit.js'.toJS,
-      web.RequestInit(
-        method: 'GET',
-      ),
-    ).toDart;
+    final web.Response response =
+        await web.window
+            .fetch(
+              'https://www.gstatic.com/flutter-canvaskit/$engineVersion/canvaskit.js'.toJS,
+              web.RequestInit(method: 'GET'),
+            )
+            .toDart;
     if (!response.ok) {
       return false;
     }
@@ -35,12 +36,13 @@ Future<bool> testFetchResources() async {
     return false;
   }
   try {
-    final web.Response response = await web.window.fetch(
-      'https://www.gstatic.com/flutter-canvaskit/$engineVersion/canvaskit.wasm'.toJS,
-      web.RequestInit(
-        method: 'GET',
-      )
-    ).toDart;
+    final web.Response response =
+        await web.window
+            .fetch(
+              'https://www.gstatic.com/flutter-canvaskit/$engineVersion/canvaskit.wasm'.toJS,
+              web.RequestInit(method: 'GET'),
+            )
+            .toDart;
     if (!response.ok) {
       return false;
     }

@@ -22,11 +22,7 @@ class SelectionContainerExampleApp extends StatelessWidget {
             child: SelectionAllOrNoneContainer(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('Row 1'),
-                  Text('Row 2'),
-                  Text('Row 3'),
-                ],
+                children: <Widget>[Text('Row 1'), Text('Row 2'), Text('Row 3')],
               ),
             ),
           ),
@@ -56,10 +52,7 @@ class _SelectionAllOrNoneContainerState extends State<SelectionAllOrNoneContaine
 
   @override
   Widget build(BuildContext context) {
-    return SelectionContainer(
-      delegate: delegate,
-      child: widget.child,
-    );
+    return SelectionContainer(delegate: delegate, child: widget.child);
   }
 }
 

@@ -28,13 +28,9 @@ void main() {
             width: 300.0,
             child: CupertinoPicker(
               itemExtent: 50.0,
-              onSelectedItemChanged: (_) { },
+              onSelectedItemChanged: (_) {},
               children: List<Widget>.generate(3, (int index) {
-                return SizedBox(
-                  height: 50.0,
-                  width: 300.0,
-                  child: Text(index.toString()),
-                );
+                return SizedBox(height: 50.0, width: 300.0, child: Text(index.toString()));
               }),
             ),
           ),
@@ -45,14 +41,17 @@ void main() {
     final RenderParagraph paragraph = tester.renderObject(find.text('1'));
 
     expect(paragraph.text.style!.color, isSameColorAs(CupertinoColors.black));
-    expect(paragraph.text.style!.copyWith(color: CupertinoColors.black), const TextStyle(
-      inherit: false,
-      fontFamily: 'CupertinoSystemDisplay',
-      fontSize: 21.0,
-      fontWeight: FontWeight.w400,
-      letterSpacing: -0.6,
-      color: CupertinoColors.black,
-    ));
+    expect(
+      paragraph.text.style!.copyWith(color: CupertinoColors.black),
+      const TextStyle(
+        inherit: false,
+        fontFamily: 'CupertinoSystemDisplay',
+        fontSize: 21.0,
+        fontWeight: FontWeight.w400,
+        letterSpacing: -0.6,
+        color: CupertinoColors.black,
+      ),
+    );
   });
 
   group('layout', () {
@@ -63,7 +62,7 @@ void main() {
           textDirection: TextDirection.ltr,
           child: CupertinoPicker.builder(
             itemExtent: 50.0,
-            onSelectedItemChanged: (_) { },
+            onSelectedItemChanged: (_) {},
             itemBuilder: (BuildContext context, int index) {
               return Text('$index');
             },
@@ -94,13 +93,9 @@ void main() {
               child: CupertinoPicker(
                 scrollController: controller,
                 itemExtent: 50.0,
-                onSelectedItemChanged: (_) { },
+                onSelectedItemChanged: (_) {},
                 children: List<Widget>.generate(3, (int index) {
-                  return SizedBox(
-                    height: 50.0,
-                    width: 300.0,
-                    child: Text(index.toString()),
-                  );
+                  return SizedBox(height: 50.0, width: 300.0, child: Text(index.toString()));
                 }),
               ),
             ),
@@ -108,10 +103,7 @@ void main() {
         ),
       );
 
-      expect(
-        tester.getTopLeft(find.widgetWithText(SizedBox, '1').first),
-        const Offset(0.0, 125.0),
-      );
+      expect(tester.getTopLeft(find.widgetWithText(SizedBox, '1').first), const Offset(0.0, 125.0));
 
       controller.jumpToItem(0);
       await tester.pump();
@@ -120,10 +112,7 @@ void main() {
         tester.getTopLeft(find.widgetWithText(SizedBox, '1').first),
         offsetMoreOrLessEquals(const Offset(0.0, 170.0), epsilon: 0.5),
       );
-      expect(
-        tester.getTopLeft(find.widgetWithText(SizedBox, '0').first),
-        const Offset(0.0, 125.0),
-      );
+      expect(tester.getTopLeft(find.widgetWithText(SizedBox, '0').first), const Offset(0.0, 125.0));
     });
   });
 
@@ -138,19 +127,24 @@ void main() {
             width: 300.0,
             child: CupertinoPicker(
               backgroundColor: const CupertinoDynamicColor.withBrightness(
-                color: Color(0xFF123456), // Set alpha channel to FF to disable under magnifier painting.
+                color: Color(
+                  0xFF123456,
+                ), // Set alpha channel to FF to disable under magnifier painting.
                 darkColor: Color(0xFF654321),
               ),
               itemExtent: 15.0,
               children: const <Widget>[Text('1'), Text('1')],
-              onSelectedItemChanged: (int i) { },
+              onSelectedItemChanged: (int i) {},
             ),
           ),
         ),
       ),
     );
 
-    expect(find.byType(CupertinoPicker), paints..rrect(color: const Color.fromARGB(30, 118, 118, 128)));
+    expect(
+      find.byType(CupertinoPicker),
+      paints..rrect(color: const Color.fromARGB(30, 118, 118, 128)),
+    );
     expect(find.byType(CupertinoPicker), paints..rect(color: const Color(0xFF123456)));
 
     await tester.pumpWidget(
@@ -168,14 +162,17 @@ void main() {
               ),
               itemExtent: 15.0,
               children: const <Widget>[Text('1'), Text('1')],
-              onSelectedItemChanged: (int i) { },
+              onSelectedItemChanged: (int i) {},
             ),
           ),
         ),
       ),
     );
 
-    expect(find.byType(CupertinoPicker), paints..rrect(color: const Color.fromARGB(61,118, 118, 128)));
+    expect(
+      find.byType(CupertinoPicker),
+      paints..rrect(color: const Color.fromARGB(61, 118, 118, 128)),
+    );
     expect(find.byType(CupertinoPicker), paints..rect(color: const Color(0xFF654321)));
   });
 
@@ -191,7 +188,9 @@ void main() {
             child: CupertinoPicker(
               itemExtent: 15.0,
               onSelectedItemChanged: (int i) {},
-              selectionOverlay: const CupertinoPickerDefaultSelectionOverlay(background: Color(0x12345678)),
+              selectionOverlay: const CupertinoPickerDefaultSelectionOverlay(
+                background: Color(0x12345678),
+              ),
               children: const <Widget>[Text('1'), Text('1')],
             ),
           ),
@@ -232,7 +231,9 @@ void main() {
         final List<int> selectedItems = <int>[];
         final List<MethodCall> systemCalls = <MethodCall>[];
 
-        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (MethodCall methodCall) async {
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (
+          MethodCall methodCall,
+        ) async {
           systemCalls.add(methodCall);
           return null;
         });
@@ -242,39 +243,39 @@ void main() {
             textDirection: TextDirection.ltr,
             child: CupertinoPicker(
               itemExtent: 100.0,
-              onSelectedItemChanged: (int index) { selectedItems.add(index); },
+              onSelectedItemChanged: (int index) {
+                selectedItems.add(index);
+              },
               children: List<Widget>.generate(100, (int index) {
                 return Center(
-                  child: SizedBox(
-                    width: 400.0,
-                    height: 100.0,
-                    child: Text(index.toString()),
-                  ),
+                  child: SizedBox(width: 400.0, height: 100.0, child: Text(index.toString())),
                 );
               }),
             ),
           ),
         );
 
-        await tester.drag(find.text('0'), const Offset(0.0, -100.0), warnIfMissed: false); // has an IgnorePointer
+        await tester.drag(
+          find.text('0'),
+          const Offset(0.0, -100.0),
+          warnIfMissed: false,
+        ); // has an IgnorePointer
         expect(selectedItems, <int>[1]);
         expect(
           systemCalls.single,
-          isMethodCall(
-            'HapticFeedback.vibrate',
-            arguments: 'HapticFeedbackType.selectionClick',
-          ),
+          isMethodCall('HapticFeedback.vibrate', arguments: 'HapticFeedbackType.selectionClick'),
         );
 
-        await tester.drag(find.text('0'), const Offset(0.0, 100.0), warnIfMissed: false); // has an IgnorePointer
+        await tester.drag(
+          find.text('0'),
+          const Offset(0.0, 100.0),
+          warnIfMissed: false,
+        ); // has an IgnorePointer
         expect(selectedItems, <int>[1, 0]);
         expect(systemCalls, hasLength(2));
         expect(
           systemCalls.last,
-          isMethodCall(
-            'HapticFeedback.vibrate',
-            arguments: 'HapticFeedbackType.selectionClick',
-          ),
+          isMethodCall('HapticFeedback.vibrate', arguments: 'HapticFeedbackType.selectionClick'),
         );
       },
       variant: TargetPlatformVariant.only(TargetPlatform.iOS),
@@ -286,7 +287,9 @@ void main() {
         final List<int> selectedItems = <int>[];
         final List<MethodCall> systemCalls = <MethodCall>[];
 
-        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (MethodCall methodCall) async {
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (
+          MethodCall methodCall,
+        ) async {
           systemCalls.add(methodCall);
           return null;
         });
@@ -296,143 +299,167 @@ void main() {
             textDirection: TextDirection.ltr,
             child: CupertinoPicker(
               itemExtent: 100.0,
-              onSelectedItemChanged: (int index) { selectedItems.add(index); },
+              onSelectedItemChanged: (int index) {
+                selectedItems.add(index);
+              },
               children: List<Widget>.generate(100, (int index) {
                 return Center(
-                  child: SizedBox(
-                    width: 400.0,
-                    height: 100.0,
-                    child: Text(index.toString()),
-                  ),
+                  child: SizedBox(width: 400.0, height: 100.0, child: Text(index.toString())),
                 );
               }),
             ),
           ),
         );
 
-        await tester.drag(find.text('0'), const Offset(0.0, -100.0), warnIfMissed: false); // has an IgnorePointer
+        await tester.drag(
+          find.text('0'),
+          const Offset(0.0, -100.0),
+          warnIfMissed: false,
+        ); // has an IgnorePointer
         expect(selectedItems, <int>[1]);
         expect(systemCalls, isEmpty);
       },
-      variant: TargetPlatformVariant(TargetPlatform.values.where((TargetPlatform platform) => platform != TargetPlatform.iOS).toSet()),
+      variant: TargetPlatformVariant(
+        TargetPlatform.values
+            .where((TargetPlatform platform) => platform != TargetPlatform.iOS)
+            .toSet(),
+      ),
     );
 
-    testWidgets('a drag in between items settles back', (WidgetTester tester) async {
-      final FixedExtentScrollController controller = FixedExtentScrollController(initialItem: 10);
-      addTearDown(controller.dispose);
-      final List<int> selectedItems = <int>[];
+    testWidgets(
+      'a drag in between items settles back',
+      (WidgetTester tester) async {
+        final FixedExtentScrollController controller = FixedExtentScrollController(initialItem: 10);
+        addTearDown(controller.dispose);
+        final List<int> selectedItems = <int>[];
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: CupertinoPicker(
-            scrollController: controller,
-            itemExtent: 100.0,
-            onSelectedItemChanged: (int index) { selectedItems.add(index); },
-            children: List<Widget>.generate(100, (int index) {
-              return Center(
-                child: SizedBox(
-                  width: 400.0,
-                  height: 100.0,
-                  child: Text(index.toString()),
-                ),
-              );
-            }),
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: CupertinoPicker(
+              scrollController: controller,
+              itemExtent: 100.0,
+              onSelectedItemChanged: (int index) {
+                selectedItems.add(index);
+              },
+              children: List<Widget>.generate(100, (int index) {
+                return Center(
+                  child: SizedBox(width: 400.0, height: 100.0, child: Text(index.toString())),
+                );
+              }),
+            ),
           ),
-        ),
-      );
+        );
 
-      // Drag it by a bit but not enough to move to the next item.
-      await tester.drag(find.text('10'), const Offset(0.0, 30.0), pointer: 1, touchSlopY: 0.0, warnIfMissed: false); // has an IgnorePointer
+        // Drag it by a bit but not enough to move to the next item.
+        await tester.drag(
+          find.text('10'),
+          const Offset(0.0, 30.0),
+          pointer: 1,
+          touchSlopY: 0.0,
+          warnIfMissed: false,
+        ); // has an IgnorePointer
 
-      // The item that was in the center now moved a bit.
-      expect(
-        tester.getTopLeft(find.widgetWithText(SizedBox, '10')),
-        const Offset(200.0, 250.0),
-      );
+        // The item that was in the center now moved a bit.
+        expect(tester.getTopLeft(find.widgetWithText(SizedBox, '10')), const Offset(200.0, 250.0));
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      expect(
-        tester.getTopLeft(find.widgetWithText(SizedBox, '10')).dy,
-        moreOrLessEquals(250.0, epsilon: 0.5),
-      );
-      expect(selectedItems.isEmpty, true);
+        expect(
+          tester.getTopLeft(find.widgetWithText(SizedBox, '10')).dy,
+          moreOrLessEquals(250.0, epsilon: 0.5),
+        );
+        expect(selectedItems.isEmpty, true);
 
-      // Drag it by enough to move to the next item.
-      await tester.drag(find.text('10'), const Offset(0.0, 70.0), pointer: 1, touchSlopY: 0.0, warnIfMissed: false); // has an IgnorePointer
+        // Drag it by enough to move to the next item.
+        await tester.drag(
+          find.text('10'),
+          const Offset(0.0, 70.0),
+          pointer: 1,
+          touchSlopY: 0.0,
+          warnIfMissed: false,
+        ); // has an IgnorePointer
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      expect(
-        tester.getTopLeft(find.widgetWithText(SizedBox, '10')).dy,
-        // It's down by 100.0 now.
-        moreOrLessEquals(340.0, epsilon: 0.5),
-      );
-      expect(selectedItems, <int>[9]);
-    }, variant: const TargetPlatformVariant(<TargetPlatform>{ TargetPlatform.iOS,  TargetPlatform.macOS }));
+        expect(
+          tester.getTopLeft(find.widgetWithText(SizedBox, '10')).dy,
+          // It's down by 100.0 now.
+          moreOrLessEquals(340.0, epsilon: 0.5),
+        );
+        expect(selectedItems, <int>[9]);
+      },
+      variant: const TargetPlatformVariant(<TargetPlatform>{
+        TargetPlatform.iOS,
+        TargetPlatform.macOS,
+      }),
+    );
 
-    testWidgets('a big fling that overscrolls springs back', (WidgetTester tester) async {
-      final FixedExtentScrollController controller =
-          FixedExtentScrollController(initialItem: 10);
-      addTearDown(controller.dispose);
-      final List<int> selectedItems = <int>[];
+    testWidgets(
+      'a big fling that overscrolls springs back',
+      (WidgetTester tester) async {
+        final FixedExtentScrollController controller = FixedExtentScrollController(initialItem: 10);
+        addTearDown(controller.dispose);
+        final List<int> selectedItems = <int>[];
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: CupertinoPicker(
-            scrollController: controller,
-            itemExtent: 100.0,
-            onSelectedItemChanged: (int index) { selectedItems.add(index); },
-            children: List<Widget>.generate(100, (int index) {
-              return Center(
-                child: SizedBox(
-                  width: 400.0,
-                  height: 100.0,
-                  child: Text(index.toString()),
-                ),
-              );
-            }),
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: CupertinoPicker(
+              scrollController: controller,
+              itemExtent: 100.0,
+              onSelectedItemChanged: (int index) {
+                selectedItems.add(index);
+              },
+              children: List<Widget>.generate(100, (int index) {
+                return Center(
+                  child: SizedBox(width: 400.0, height: 100.0, child: Text(index.toString())),
+                );
+              }),
+            ),
           ),
-        ),
-      );
+        );
 
-      // A wild throw appears.
-      await tester.fling(
-        find.text('10'),
-        const Offset(0.0, 10000.0),
-        1000.0,
-        warnIfMissed: false, // has an IgnorePointer
-      );
+        // A wild throw appears.
+        await tester.fling(
+          find.text('10'),
+          const Offset(0.0, 10000.0),
+          1000.0,
+          warnIfMissed: false, // has an IgnorePointer
+        );
 
-      if (debugDefaultTargetPlatformOverride == TargetPlatform.iOS) {
-        // Should have been flung far enough that even the first item goes off
-        // screen and gets removed.
-        expect(find.widgetWithText(SizedBox, '0').evaluate().isEmpty, true);
-      }
+        if (debugDefaultTargetPlatformOverride == TargetPlatform.iOS) {
+          // Should have been flung far enough that even the first item goes off
+          // screen and gets removed.
+          expect(find.widgetWithText(SizedBox, '0').evaluate().isEmpty, true);
+        }
 
-      expect(
-        selectedItems,
-        // This specific throw was fast enough that each scroll update landed
-        // on every second item.
-        <int>[8, 6, 4, 2, 0],
-      );
+        expect(
+          selectedItems,
+          // This specific throw was fast enough that each scroll update landed
+          // on every second item.
+          <int>[8, 6, 4, 2, 0],
+        );
 
-      // Let it spring back.
-      await tester.pumpAndSettle();
+        // Let it spring back.
+        await tester.pumpAndSettle();
 
-      expect(
-        tester.getTopLeft(find.widgetWithText(SizedBox, '0')).dy,
-        // Should have sprung back to the middle now.
-        moreOrLessEquals(250.0),
-      );
-      expect(
-        selectedItems,
-        // Falling back to 0 shouldn't produce more callbacks.
-        <int>[8, 6, 4, 2, 0],
-      );
-    }, variant: const TargetPlatformVariant(<TargetPlatform>{ TargetPlatform.iOS, TargetPlatform.macOS }));
+        expect(
+          tester.getTopLeft(find.widgetWithText(SizedBox, '0')).dy,
+          // Should have sprung back to the middle now.
+          moreOrLessEquals(250.0),
+        );
+        expect(
+          selectedItems,
+          // Falling back to 0 shouldn't produce more callbacks.
+          <int>[8, 6, 4, 2, 0],
+        );
+      },
+      variant: const TargetPlatformVariant(<TargetPlatform>{
+        TargetPlatform.iOS,
+        TargetPlatform.macOS,
+      }),
+    );
   });
 
   testWidgets('Picker adapts to MaterialApp dark mode', (WidgetTester tester) async {
@@ -446,13 +473,9 @@ void main() {
             width: 300.0,
             child: CupertinoPicker(
               itemExtent: 50.0,
-              onSelectedItemChanged: (_) { },
+              onSelectedItemChanged: (_) {},
               children: List<Widget>.generate(3, (int index) {
-                return SizedBox(
-                  height: 50.0,
-                  width: 300.0,
-                  child: Text(index.toString()),
-                );
+                return SizedBox(height: 50.0, width: 300.0, child: Text(index.toString()));
               }),
             ),
           ),
@@ -483,7 +506,9 @@ void main() {
           home: CupertinoPicker(
             itemExtent: 15.0,
             onSelectedItemChanged: (int i) {},
-            selectionOverlay: const CupertinoPickerDefaultSelectionOverlay(background: Color(0x12345678)),
+            selectionOverlay: const CupertinoPickerDefaultSelectionOverlay(
+              background: Color(0x12345678),
+            ),
             children: const <Widget>[Text('1'), Text('1')],
           ),
         ),
@@ -492,7 +517,8 @@ void main() {
       final Finder selectionContainer = find.byType(Container);
       final Container container = tester.firstWidget<Container>(selectionContainer);
       final EdgeInsetsGeometry? margin = container.margin;
-      final BorderRadiusGeometry? borderRadius = (container.decoration as BoxDecoration?)?.borderRadius;
+      final BorderRadiusGeometry? borderRadius =
+          (container.decoration as BoxDecoration?)?.borderRadius;
 
       expect(margin, isA<EdgeInsetsDirectional>());
       expect(borderRadius, isA<BorderRadiusDirectional>());
@@ -505,24 +531,23 @@ void main() {
     expect(controller.hasListeners, false);
     expect(controller.positions.length, 0);
 
-    await tester.pumpWidget(CupertinoApp(
-      home: Align(
-        alignment: Alignment.topLeft,
-        child: Center(
-          child: CupertinoPicker(
-            scrollController: controller,
-            itemExtent: 50.0,
-            onSelectedItemChanged: (_) { },
-            children: List<Widget>.generate(3, (int index) {
-              return SizedBox(
-                width: 300.0,
-                child: Text(index.toString()),
-              );
-            }),
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: Align(
+          alignment: Alignment.topLeft,
+          child: Center(
+            child: CupertinoPicker(
+              scrollController: controller,
+              itemExtent: 50.0,
+              onSelectedItemChanged: (_) {},
+              children: List<Widget>.generate(3, (int index) {
+                return SizedBox(width: 300.0, child: Text(index.toString()));
+              }),
+            ),
           ),
         ),
       ),
-    ));
+    );
     expect(controller.hasListeners, true);
     expect(controller.positions.length, 1);
 
@@ -531,48 +556,54 @@ void main() {
     expect(controller.positions.length, 0);
   });
 
-  testWidgets(
-      'Registers taps and does not crash with certain diameterRatio', (WidgetTester tester) async {
+  testWidgets('Registers taps and does not crash with certain diameterRatio', (
+    WidgetTester tester,
+  ) async {
     // Regression test for https://github.com/flutter/flutter/issues/126491
 
     final List<int> children = List<int>.generate(100, (int index) => index);
     final List<int> paintedChildren = <int>[];
     final Set<int> tappedChildren = <int>{};
 
-    await tester.pumpWidget(CupertinoApp(
-      home: Align(
-        alignment: Alignment.topLeft,
-        child: Center(
-          child: SizedBox(
-            height: 120,
-            child: CupertinoPicker(
-              itemExtent: 55,
-              diameterRatio: 0.9,
-              onSelectedItemChanged: (int index) {},
-              children: children
-                .map<Widget>((int index) =>
-                  GestureDetector(
-                    key: ValueKey<int>(index),
-                    onTap: () {
-                      tappedChildren.add(index);
-                    },
-                    child: SizedBox(
-                      width: 55,
-                      height: 55,
-                      child: CustomPaint(
-                        painter: TestCallbackPainter(onPaint: () {
-                          paintedChildren.add(index);
-                        }),
-                      ),
-                    ),
-                  ),
-                )
-                .toList(),
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: Align(
+          alignment: Alignment.topLeft,
+          child: Center(
+            child: SizedBox(
+              height: 120,
+              child: CupertinoPicker(
+                itemExtent: 55,
+                diameterRatio: 0.9,
+                onSelectedItemChanged: (int index) {},
+                children:
+                    children
+                        .map<Widget>(
+                          (int index) => GestureDetector(
+                            key: ValueKey<int>(index),
+                            onTap: () {
+                              tappedChildren.add(index);
+                            },
+                            child: SizedBox(
+                              width: 55,
+                              height: 55,
+                              child: CustomPaint(
+                                painter: TestCallbackPainter(
+                                  onPaint: () {
+                                    paintedChildren.add(index);
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+              ),
             ),
           ),
         ),
       ),
-    ));
+    );
 
     // Children are painted two times for whatever reason
     expect(paintedChildren, <int>[0, 1, 0, 1]);
@@ -589,7 +620,9 @@ void main() {
     expect(tappedChildren, const <int>[0, 1]);
   });
 
-  testWidgets('Tapping on child in a CupertinoPicker selects that child', (WidgetTester tester) async {
+  testWidgets('Tapping on child in a CupertinoPicker selects that child', (
+    WidgetTester tester,
+  ) async {
     int selectedItem = 0;
     const Duration tapScrollDuration = Duration(milliseconds: 300);
     // The tap animation is set to 300ms, but add an extra 1µs to complete the scroll animation.
@@ -602,12 +635,7 @@ void main() {
           onSelectedItemChanged: (int i) {
             selectedItem = i;
           },
-          children: const <Widget>[
-             Text('0'),
-             Text('1'),
-             Text('2'),
-             Text('3'),
-          ],
+          children: const <Widget>[Text('0'), Text('1'), Text('2'), Text('3')],
         ),
       ),
     );

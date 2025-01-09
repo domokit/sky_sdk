@@ -34,25 +34,20 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
     final DateTime now = DateTime.now();
     final DateTime firstDayOfWeek = now.subtract(Duration(days: now.weekday - 1));
     return List<int>.generate(7, (int index) => index)
-        .map((int value) => DateFormat(DateFormat.WEEKDAY, locale)
-            .format(firstDayOfWeek.add(Duration(days: value))))
+        .map(
+          (int value) => DateFormat(
+            DateFormat.WEEKDAY,
+            locale,
+          ).format(firstDayOfWeek.add(Duration(days: value))),
+        )
         .toList();
   }
 
-  void _showDemoPicker({
-    required BuildContext context,
-    required Widget child,
-  }) {
+  void _showDemoPicker({required BuildContext context, required Widget child}) {
     final CupertinoThemeData themeData = CupertinoTheme.of(context);
-    final CupertinoTheme dialogBody = CupertinoTheme(
-      data: themeData,
-      child: child,
-    );
+    final CupertinoTheme dialogBody = CupertinoTheme(data: themeData, child: child);
 
-    showCupertinoModalPopup<void>(
-      context: context,
-      builder: (BuildContext context) => dialogBody,
-    );
+    showCupertinoModalPopup<void>(context: context, builder: (BuildContext context) => dialogBody);
   }
 
   Widget _buildDatePicker(BuildContext context) {
@@ -64,8 +59,7 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
             context: context,
             child: _BottomPicker(
               child: CupertinoDatePicker(
-                backgroundColor:
-                    CupertinoColors.systemBackground.resolveFrom(context),
+                backgroundColor: CupertinoColors.systemBackground.resolveFrom(context),
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: date,
                 onDateTimeChanged: (DateTime newDateTime) {
@@ -97,8 +91,7 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
             context: context,
             child: _BottomPicker(
               child: CupertinoDatePicker(
-                backgroundColor:
-                    CupertinoColors.systemBackground.resolveFrom(context),
+                backgroundColor: CupertinoColors.systemBackground.resolveFrom(context),
                 mode: CupertinoDatePickerMode.time,
                 initialDateTime: time,
                 onDateTimeChanged: (DateTime newDateTime) {
@@ -130,8 +123,7 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
             context: context,
             child: _BottomPicker(
               child: CupertinoDatePicker(
-                backgroundColor:
-                    CupertinoColors.systemBackground.resolveFrom(context),
+                backgroundColor: CupertinoColors.systemBackground.resolveFrom(context),
                 initialDateTime: dateTime,
                 onDateTimeChanged: (DateTime newDateTime) {
                   setState(() => dateTime = newDateTime);
@@ -164,8 +156,7 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
             context: context,
             child: _BottomPicker(
               child: CupertinoTimerPicker(
-                backgroundColor:
-                    CupertinoColors.systemBackground.resolveFrom(context),
+                backgroundColor: CupertinoColors.systemBackground.resolveFrom(context),
                 initialTimerDuration: timer,
                 onTimerDurationChanged: (Duration newTimer) {
                   setState(() => timer = newTimer);
@@ -200,8 +191,7 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
             context: context,
             child: _BottomPicker(
               child: CupertinoPicker(
-                backgroundColor:
-                    CupertinoColors.systemBackground.resolveFrom(context),
+                backgroundColor: CupertinoColors.systemBackground.resolveFrom(context),
                 itemExtent: 32.0,
                 magnification: 1.22,
                 squeeze: 1.2,
@@ -213,11 +203,7 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
                   });
                 },
                 children: List<Widget>.generate(daysOfWeek.length, (int index) {
-                  return Center(
-                    child: Text(
-                      daysOfWeek[index],
-                    ),
-                  );
+                  return Center(child: Text(daysOfWeek[index]));
                 }),
               ),
             ),
@@ -241,8 +227,7 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         automaticallyImplyLeading: false,
-        middle:
-            Text(GalleryLocalizations.of(context)!.demoCupertinoPickerTitle),
+        middle: Text(GalleryLocalizations.of(context)!.demoCupertinoPickerTitle),
       ),
       child: DefaultTextStyle(
         style: CupertinoTheme.of(context).textTheme.textStyle,
@@ -271,22 +256,14 @@ class _BottomPicker extends StatelessWidget {
     return Container(
       height: 216,
       padding: const EdgeInsets.only(top: 6),
-      margin: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
+      margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       color: CupertinoColors.systemBackground.resolveFrom(context),
       child: DefaultTextStyle(
-        style: TextStyle(
-          color: CupertinoColors.label.resolveFrom(context),
-          fontSize: 22,
-        ),
+        style: TextStyle(color: CupertinoColors.label.resolveFrom(context), fontSize: 22),
         child: GestureDetector(
           // Blocks taps from propagating to the modal sheet and popping.
           onTap: () {},
-          child: SafeArea(
-            top: false,
-            child: child,
-          ),
+          child: SafeArea(top: false, child: child),
         ),
       ),
     );
@@ -310,10 +287,7 @@ class _Menu extends StatelessWidget {
       height: 44,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: children,
-        ),
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: children),
       ),
     );
   }

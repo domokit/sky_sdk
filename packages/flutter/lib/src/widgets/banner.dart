@@ -19,10 +19,7 @@ const double _kOffset = 40.0; // distance to bottom of banner, at a 45 degree an
 const double _kHeight = 12.0; // height of banner
 const double _kBottomOffset = _kOffset + math.sqrt1_2 * _kHeight;
 const Rect _kRect = Rect.fromLTWH(-_kOffset, _kOffset - _kHeight, _kOffset * 2.0, _kHeight);
-const BoxShadow _kShadow = BoxShadow(
-    color: Color(0x7F000000),
-    blurRadius: 6.0,
-  );
+const BoxShadow _kShadow = BoxShadow(color: Color(0x7F000000), blurRadius: 6.0);
 
 const Color _kColor = Color(0xA0B71C1C);
 const TextStyle _kTextStyle = TextStyle(
@@ -152,8 +149,7 @@ class BannerPainter extends CustomPainter {
 
   void _prepare() {
     _paintShadow = shadow.toPaint();
-    _paintBanner = Paint()
-      ..color = color;
+    _paintBanner = Paint()..color = color;
     _textPainter?.dispose();
     _textPainter = TextPainter(
       text: TextSpan(style: textStyle, text: message),
@@ -175,15 +171,18 @@ class BannerPainter extends CustomPainter {
       ..drawRect(_kRect, _paintBanner);
     const double width = _kOffset * 2.0;
     _textPainter!.layout(minWidth: width, maxWidth: width);
-    _textPainter!.paint(canvas, _kRect.topLeft + Offset(0.0, (_kRect.height - _textPainter!.height) / 2.0));
+    _textPainter!.paint(
+      canvas,
+      _kRect.topLeft + Offset(0.0, (_kRect.height - _textPainter!.height) / 2.0),
+    );
   }
 
   @override
   bool shouldRepaint(BannerPainter oldDelegate) {
-    return message != oldDelegate.message
-        || location != oldDelegate.location
-        || color != oldDelegate.color
-        || textStyle != oldDelegate.textStyle;
+    return message != oldDelegate.message ||
+        location != oldDelegate.location ||
+        color != oldDelegate.color ||
+        textStyle != oldDelegate.textStyle;
   }
 
   @override
@@ -191,31 +190,33 @@ class BannerPainter extends CustomPainter {
 
   double _translationX(double width) {
     return switch ((layoutDirection, location)) {
-      (TextDirection.rtl, BannerLocation.topStart)    => width,
-      (TextDirection.ltr, BannerLocation.topStart)    => 0.0,
-      (TextDirection.rtl, BannerLocation.topEnd)      => 0.0,
-      (TextDirection.ltr, BannerLocation.topEnd)      => width,
+      (TextDirection.rtl, BannerLocation.topStart) => width,
+      (TextDirection.ltr, BannerLocation.topStart) => 0.0,
+      (TextDirection.rtl, BannerLocation.topEnd) => 0.0,
+      (TextDirection.ltr, BannerLocation.topEnd) => width,
       (TextDirection.rtl, BannerLocation.bottomStart) => width - _kBottomOffset,
       (TextDirection.ltr, BannerLocation.bottomStart) => _kBottomOffset,
-      (TextDirection.rtl, BannerLocation.bottomEnd)   => _kBottomOffset,
-      (TextDirection.ltr, BannerLocation.bottomEnd)   => width - _kBottomOffset,
+      (TextDirection.rtl, BannerLocation.bottomEnd) => _kBottomOffset,
+      (TextDirection.ltr, BannerLocation.bottomEnd) => width - _kBottomOffset,
     };
   }
 
   double _translationY(double height) {
     return switch (location) {
       BannerLocation.bottomStart || BannerLocation.bottomEnd => height - _kBottomOffset,
-      BannerLocation.topStart    || BannerLocation.topEnd    => 0.0,
+      BannerLocation.topStart || BannerLocation.topEnd => 0.0,
     };
   }
 
   double get _rotation {
-    return math.pi / 4.0 * switch ((layoutDirection, location)) {
-      (TextDirection.rtl, BannerLocation.topStart || BannerLocation.bottomEnd) => 1,
-      (TextDirection.ltr, BannerLocation.topStart || BannerLocation.bottomEnd) => -1,
-      (TextDirection.rtl, BannerLocation.bottomStart || BannerLocation.topEnd) => -1,
-      (TextDirection.ltr, BannerLocation.bottomStart || BannerLocation.topEnd) => 1,
-    };
+    return math.pi /
+        4.0 *
+        switch ((layoutDirection, location)) {
+          (TextDirection.rtl, BannerLocation.topStart || BannerLocation.bottomEnd) => 1,
+          (TextDirection.ltr, BannerLocation.topStart || BannerLocation.bottomEnd) => -1,
+          (TextDirection.rtl, BannerLocation.bottomStart || BannerLocation.topEnd) => -1,
+          (TextDirection.ltr, BannerLocation.bottomStart || BannerLocation.topEnd) => 1,
+        };
   }
 }
 
@@ -308,7 +309,10 @@ class _BannerState extends State<Banner> {
 
   @override
   Widget build(BuildContext context) {
-    assert((widget.textDirection != null && widget.layoutDirection != null) || debugCheckHasDirectionality(context));
+    assert(
+      (widget.textDirection != null && widget.layoutDirection != null) ||
+          debugCheckHasDirectionality(context),
+    );
 
     _painter?.dispose();
     _painter = BannerPainter(
@@ -321,19 +325,20 @@ class _BannerState extends State<Banner> {
       shadow: widget.shadow,
     );
 
-    return CustomPaint(
-      foregroundPainter: _painter,
-      child: widget.child,
-    );
+    return CustomPaint(foregroundPainter: _painter, child: widget.child);
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(StringProperty('message', widget.message, showName: false));
-    properties.add(EnumProperty<TextDirection>('textDirection', widget.textDirection, defaultValue: null));
+    properties.add(
+      EnumProperty<TextDirection>('textDirection', widget.textDirection, defaultValue: null),
+    );
     properties.add(EnumProperty<BannerLocation>('location', widget.location));
-    properties.add(EnumProperty<TextDirection>('layoutDirection', widget.layoutDirection, defaultValue: null));
+    properties.add(
+      EnumProperty<TextDirection>('layoutDirection', widget.layoutDirection, defaultValue: null),
+    );
     properties.add(ColorProperty('color', widget.color, showName: false));
     widget.textStyle.debugFillProperties(properties, prefix: 'text ');
   }
@@ -345,10 +350,7 @@ class _BannerState extends State<Banner> {
 /// Does nothing in release mode.
 class CheckedModeBanner extends StatelessWidget {
   /// Creates a const debug mode banner.
-  const CheckedModeBanner({
-    super.key,
-    required this.child,
-  });
+  const CheckedModeBanner({super.key, required this.child});
 
   /// The widget to show behind the banner.
   ///

@@ -139,7 +139,7 @@
                         },
                         {
                             "dependency": "avd_cipd_version",
-                            "version": "build_id:8735216702926189361"
+                            "version": "build_id:8733065022087935185"
                         }
                     ],
                     "contexts": [

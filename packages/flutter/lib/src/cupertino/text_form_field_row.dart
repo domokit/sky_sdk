@@ -159,88 +159,87 @@ class CupertinoTextFormFieldRow extends FormField<String> {
     EditableTextContextMenuBuilder? contextMenuBuilder = _defaultContextMenuBuilder,
     SpellCheckConfiguration? spellCheckConfiguration,
     super.restorationId,
-  })  : assert(initialValue == null || controller == null),
-        assert(obscuringCharacter.length == 1),
-        assert(maxLines == null || maxLines > 0),
-        assert(minLines == null || minLines > 0),
-        assert(
-          (maxLines == null) || (minLines == null) || (maxLines >= minLines),
-          "minLines can't be greater than maxLines",
-        ),
-        assert(
-          !expands || (maxLines == null && minLines == null),
-          'minLines and maxLines must be null when expands is true.',
-        ),
-        assert(!obscureText || maxLines == 1, 'Obscured fields cannot be multiline.'),
-        assert(maxLength == null || maxLength > 0),
-        super(
-          initialValue: controller?.text ?? initialValue ?? '',
-          builder: (FormFieldState<String> field) {
-            final _CupertinoTextFormFieldRowState state =
-                field as _CupertinoTextFormFieldRowState;
+  }) : assert(initialValue == null || controller == null),
+       assert(obscuringCharacter.length == 1),
+       assert(maxLines == null || maxLines > 0),
+       assert(minLines == null || minLines > 0),
+       assert(
+         (maxLines == null) || (minLines == null) || (maxLines >= minLines),
+         "minLines can't be greater than maxLines",
+       ),
+       assert(
+         !expands || (maxLines == null && minLines == null),
+         'minLines and maxLines must be null when expands is true.',
+       ),
+       assert(!obscureText || maxLines == 1, 'Obscured fields cannot be multiline.'),
+       assert(maxLength == null || maxLength > 0),
+       super(
+         initialValue: controller?.text ?? initialValue ?? '',
+         builder: (FormFieldState<String> field) {
+           final _CupertinoTextFormFieldRowState state = field as _CupertinoTextFormFieldRowState;
 
-            void onChangedHandler(String value) {
-              field.didChange(value);
-              onChanged?.call(value);
-            }
+           void onChangedHandler(String value) {
+             field.didChange(value);
+             onChanged?.call(value);
+           }
 
-            return CupertinoFormRow(
-              prefix: prefix,
-              padding: padding,
-              error: (field.errorText == null) ? null : Text(field.errorText!),
-              child: UnmanagedRestorationScope(
-                bucket: field.bucket,
-                child: CupertinoTextField.borderless(
-                  restorationId: restorationId,
-                  controller: state._effectiveController,
-                  focusNode: focusNode,
-                  keyboardType: keyboardType,
-                  decoration: decoration,
-                  textInputAction: textInputAction,
-                  style: style,
-                  strutStyle: strutStyle,
-                  textAlign: textAlign,
-                  textAlignVertical: textAlignVertical,
-                  textCapitalization: textCapitalization,
-                  textDirection: textDirection,
-                  autofocus: autofocus,
-                  toolbarOptions: toolbarOptions,
-                  readOnly: readOnly,
-                  showCursor: showCursor,
-                  obscuringCharacter: obscuringCharacter,
-                  obscureText: obscureText,
-                  autocorrect: autocorrect,
-                  smartDashesType: smartDashesType,
-                  smartQuotesType: smartQuotesType,
-                  enableSuggestions: enableSuggestions,
-                  maxLines: maxLines,
-                  minLines: minLines,
-                  expands: expands,
-                  maxLength: maxLength,
-                  onChanged: onChangedHandler,
-                  onTap: onTap,
-                  onEditingComplete: onEditingComplete,
-                  onSubmitted: onFieldSubmitted,
-                  inputFormatters: inputFormatters,
-                  enabled: enabled ?? true,
-                  cursorWidth: cursorWidth,
-                  cursorHeight: cursorHeight,
-                  cursorColor: cursorColor,
-                  scrollPadding: scrollPadding,
-                  scrollPhysics: scrollPhysics,
-                  keyboardAppearance: keyboardAppearance,
-                  enableInteractiveSelection: enableInteractiveSelection,
-                  selectionControls: selectionControls,
-                  autofillHints: autofillHints,
-                  placeholder: placeholder,
-                  placeholderStyle: placeholderStyle,
-                  contextMenuBuilder: contextMenuBuilder,
-                  spellCheckConfiguration: spellCheckConfiguration
-                ),
-              ),
-            );
-          },
-        );
+           return CupertinoFormRow(
+             prefix: prefix,
+             padding: padding,
+             error: (field.errorText == null) ? null : Text(field.errorText!),
+             child: UnmanagedRestorationScope(
+               bucket: field.bucket,
+               child: CupertinoTextField.borderless(
+                 restorationId: restorationId,
+                 controller: state._effectiveController,
+                 focusNode: focusNode,
+                 keyboardType: keyboardType,
+                 decoration: decoration,
+                 textInputAction: textInputAction,
+                 style: style,
+                 strutStyle: strutStyle,
+                 textAlign: textAlign,
+                 textAlignVertical: textAlignVertical,
+                 textCapitalization: textCapitalization,
+                 textDirection: textDirection,
+                 autofocus: autofocus,
+                 toolbarOptions: toolbarOptions,
+                 readOnly: readOnly,
+                 showCursor: showCursor,
+                 obscuringCharacter: obscuringCharacter,
+                 obscureText: obscureText,
+                 autocorrect: autocorrect,
+                 smartDashesType: smartDashesType,
+                 smartQuotesType: smartQuotesType,
+                 enableSuggestions: enableSuggestions,
+                 maxLines: maxLines,
+                 minLines: minLines,
+                 expands: expands,
+                 maxLength: maxLength,
+                 onChanged: onChangedHandler,
+                 onTap: onTap,
+                 onEditingComplete: onEditingComplete,
+                 onSubmitted: onFieldSubmitted,
+                 inputFormatters: inputFormatters,
+                 enabled: enabled ?? true,
+                 cursorWidth: cursorWidth,
+                 cursorHeight: cursorHeight,
+                 cursorColor: cursorColor,
+                 scrollPadding: scrollPadding,
+                 scrollPhysics: scrollPhysics,
+                 keyboardAppearance: keyboardAppearance,
+                 enableInteractiveSelection: enableInteractiveSelection,
+                 selectionControls: selectionControls,
+                 autofillHints: autofillHints,
+                 placeholder: placeholder,
+                 placeholderStyle: placeholderStyle,
+                 contextMenuBuilder: contextMenuBuilder,
+                 spellCheckConfiguration: spellCheckConfiguration,
+               ),
+             ),
+           );
+         },
+       );
 
   /// A widget that is displayed at the start of the row.
   ///
@@ -268,10 +267,11 @@ class CupertinoTextFormFieldRow extends FormField<String> {
   /// {@macro flutter.material.TextFormField.onChanged}
   final ValueChanged<String>? onChanged;
 
-  static Widget _defaultContextMenuBuilder(BuildContext context, EditableTextState editableTextState) {
-    return CupertinoAdaptiveTextSelectionToolbar.editableText(
-      editableTextState: editableTextState,
-    );
+  static Widget _defaultContextMenuBuilder(
+    BuildContext context,
+    EditableTextState editableTextState,
+  ) {
+    return CupertinoAdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState);
   }
 
   @override
@@ -305,9 +305,10 @@ class _CupertinoTextFormFieldRowState extends FormFieldState<String> {
 
   void _createLocalController([TextEditingValue? value]) {
     assert(_controller == null);
-    _controller = value == null
-        ? RestorableTextEditingController()
-        : RestorableTextEditingController.fromValue(value);
+    _controller =
+        value == null
+            ? RestorableTextEditingController()
+            : RestorableTextEditingController.fromValue(value);
     if (!restorePending) {
       _registerController();
     }
@@ -317,7 +318,9 @@ class _CupertinoTextFormFieldRowState extends FormFieldState<String> {
   void initState() {
     super.initState();
     if (_cupertinoTextFormFieldRow.controller == null) {
-      _createLocalController(widget.initialValue != null ? TextEditingValue(text: widget.initialValue!) : null);
+      _createLocalController(
+        widget.initialValue != null ? TextEditingValue(text: widget.initialValue!) : null,
+      );
     } else {
       _cupertinoTextFormFieldRow.controller!.addListener(_handleControllerChanged);
     }

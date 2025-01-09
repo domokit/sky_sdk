@@ -34,7 +34,7 @@ class MainWidgetState extends State<MainWidget> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Semantics(headingLevel:1, child: Text('$pageTitle Demo')),
+        title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo')),
       ),
       body: Center(
         child: Column(
@@ -45,10 +45,7 @@ class MainWidgetState extends State<MainWidget> {
               label: const Text('Action'),
               onPressed: () {},
             ),
-            const ActionChip(
-              avatar: Icon(Icons.favorite),
-              label: Text('Action'),
-            ),
+            const ActionChip(avatar: Icon(Icons.favorite), label: Text('Action')),
           ],
         ),
       ),

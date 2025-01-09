@@ -12,10 +12,6 @@ class DynamicTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Title(
-      title: title,
-      color: Theme.of(context).colorScheme.primary,
-      child: child,
-    );
+    return Title(title: title, color: Theme.of(context).colorScheme.primary, child: child);
   }
 }

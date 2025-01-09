@@ -133,7 +133,8 @@ TransformKind transformKindOf(List<double> matrix) {
 
   // If matrix contains scaling, rotation, z translation or
   // perspective transform, it is not considered simple.
-  final bool isSimple2dTransform = m[15] ==
+  final bool isSimple2dTransform =
+      m[15] ==
           1.0 && // start reading from the last element to eliminate range checks in subsequent reads.
       m[14] == 0.0 && // z translation is NOT simple
       // m[13] - y translation is simple
@@ -158,12 +159,8 @@ TransformKind transformKindOf(List<double> matrix) {
   // From this point on we're sure the transform is 2D, but we don't know if
   // it's identity or not. To check, we need to look at the remaining elements
   // that were not checked above.
-  final bool isIdentityTransform = m[0] == 1.0 &&
-      m[1] == 0.0 &&
-      m[4] == 0.0 &&
-      m[5] == 1.0 &&
-      m[12] == 0.0 &&
-      m[13] == 0.0;
+  final bool isIdentityTransform =
+      m[0] == 1.0 && m[1] == 0.0 && m[4] == 0.0 && m[5] == 1.0 && m[12] == 0.0 && m[13] == 0.0;
 
   if (isIdentityTransform) {
     return TransformKind.identity;
@@ -231,12 +228,7 @@ ui.Rect transformRectWithMatrix(Matrix4 transform, ui.Rect rect) {
   _tempRectData[2] = rect.right;
   _tempRectData[3] = rect.bottom;
   transformLTRB(transform, _tempRectData);
-  return ui.Rect.fromLTRB(
-    _tempRectData[0],
-    _tempRectData[1],
-    _tempRectData[2],
-    _tempRectData[3],
-  );
+  return ui.Rect.fromLTRB(_tempRectData[0], _tempRectData[1], _tempRectData[2], _tempRectData[3]);
 }
 
 /// Temporary storage for intermediate data used by [transformLTRB].
@@ -300,25 +292,29 @@ void transformLTRB(Matrix4 transform, Float32List ltrb) {
     w = 1.0;
   }
 
-  ltrb[0] = math.min(
-          math.min(math.min(_tempPointData[0], _tempPointData[1]),
-              _tempPointData[2]),
-          _tempPointData[3]) /
+  ltrb[0] =
+      math.min(
+        math.min(math.min(_tempPointData[0], _tempPointData[1]), _tempPointData[2]),
+        _tempPointData[3],
+      ) /
       w;
-  ltrb[1] = math.min(
-          math.min(math.min(_tempPointData[4], _tempPointData[5]),
-              _tempPointData[6]),
-          _tempPointData[7]) /
+  ltrb[1] =
+      math.min(
+        math.min(math.min(_tempPointData[4], _tempPointData[5]), _tempPointData[6]),
+        _tempPointData[7],
+      ) /
       w;
-  ltrb[2] = math.max(
-          math.max(math.max(_tempPointData[0], _tempPointData[1]),
-              _tempPointData[2]),
-          _tempPointData[3]) /
+  ltrb[2] =
+      math.max(
+        math.max(math.max(_tempPointData[0], _tempPointData[1]), _tempPointData[2]),
+        _tempPointData[3],
+      ) /
       w;
-  ltrb[3] = math.max(
-          math.max(math.max(_tempPointData[4], _tempPointData[5]),
-              _tempPointData[6]),
-          _tempPointData[7]) /
+  ltrb[3] =
+      math.max(
+        math.max(math.max(_tempPointData[4], _tempPointData[5]), _tempPointData[6]),
+        _tempPointData[7],
+      ) /
       w;
 }
 
@@ -673,9 +669,7 @@ int? tryViewId(Object? arguments) {
 ///     Input: [0, 1, 2, 3]
 ///     Output: 0x00 0x01 0x02 0x03
 String bytesToHexString(List<int> data) {
-  return data
-      .map((int byte) => '0x${byte.toRadixString(16).padLeft(2, '0')}')
-      .join(' ');
+  return data.map((int byte) => '0x${byte.toRadixString(16).padLeft(2, '0')}').join(' ');
 }
 
 /// Sets a style property on [element].
@@ -706,14 +700,14 @@ void setClipPath(DomElement element, String? value) {
 }
 
 void setThemeColor(ui.Color? color) {
-  DomHTMLMetaElement? theme =
-      domDocument.querySelector('#flutterweb-theme') as DomHTMLMetaElement?;
+  DomHTMLMetaElement? theme = domDocument.querySelector('#flutterweb-theme') as DomHTMLMetaElement?;
 
   if (color != null) {
     if (theme == null) {
-      theme = createDomHTMLMetaElement()
-        ..id = 'flutterweb-theme'
-        ..name = 'theme-color';
+      theme =
+          createDomHTMLMetaElement()
+            ..id = 'flutterweb-theme'
+            ..name = 'theme-color';
       domDocument.head!.append(theme);
     }
     theme.content = color.toCssString();
@@ -724,13 +718,13 @@ void setThemeColor(ui.Color? color) {
 
 /// Ensure a "meta" tag with [name] and [content] is set on the page.
 void ensureMetaTag(String name, String content) {
-  final DomElement? existingTag =
-    domDocument.querySelector('meta[name=$name][content=$content]');
+  final DomElement? existingTag = domDocument.querySelector('meta[name=$name][content=$content]');
 
   if (existingTag == null) {
-    final DomHTMLMetaElement meta = createDomHTMLMetaElement()
-        ..name = name
-        ..content = content;
+    final DomHTMLMetaElement meta =
+        createDomHTMLMetaElement()
+          ..name = name
+          ..content = content;
     domDocument.head!.append(meta);
   }
 }
@@ -739,20 +733,28 @@ bool? _ellipseFeatureDetected;
 
 /// Draws CanvasElement ellipse with fallback.
 void drawEllipse(
-    DomCanvasRenderingContext2D context,
-    double centerX,
-    double centerY,
-    double radiusX,
-    double radiusY,
-    double rotation,
-    double startAngle,
-    double endAngle,
-    bool antiClockwise) {
-  _ellipseFeatureDetected ??=
-      getJsProperty<Object?>(context, 'ellipse') != null;
+  DomCanvasRenderingContext2D context,
+  double centerX,
+  double centerY,
+  double radiusX,
+  double radiusY,
+  double rotation,
+  double startAngle,
+  double endAngle,
+  bool antiClockwise,
+) {
+  _ellipseFeatureDetected ??= getJsProperty<Object?>(context, 'ellipse') != null;
   if (_ellipseFeatureDetected!) {
-    context.ellipse(centerX, centerY, radiusX, radiusY, rotation, startAngle,
-        endAngle, antiClockwise);
+    context.ellipse(
+      centerX,
+      centerY,
+      radiusX,
+      radiusY,
+      rotation,
+      startAngle,
+      endAngle,
+      antiClockwise,
+    );
   } else {
     context.save();
     context.translate(centerX, centerY);
@@ -908,18 +910,14 @@ class BitmapSize {
 
   /// Returns a [BitmapSize] by rounding the width and height of a [ui.Size] to
   /// the nearest integer.
-  BitmapSize.fromSize(ui.Size size)
-      : width = size.width.round(),
-        height = size.height.round();
+  BitmapSize.fromSize(ui.Size size) : width = size.width.round(), height = size.height.round();
 
   final int width;
   final int height;
 
   @override
   bool operator ==(Object other) {
-    return other is BitmapSize &&
-        other.width == width &&
-        other.height == height;
+    return other is BitmapSize && other.width == width && other.height == height;
   }
 
   @override

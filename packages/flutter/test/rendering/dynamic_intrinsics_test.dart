@@ -31,7 +31,7 @@ class RenderFixedSize extends RenderBox {
 }
 
 class RenderParentSize extends RenderProxyBox {
-  RenderParentSize({ required RenderBox child }) : super(child);
+  RenderParentSize({required RenderBox child}) : super(child);
 
   @override
   bool get sizedByParent => true;
@@ -48,7 +48,7 @@ class RenderParentSize extends RenderProxyBox {
 }
 
 class RenderIntrinsicSize extends RenderProxyBox {
-  RenderIntrinsicSize({ required RenderBox child }) : super(child);
+  RenderIntrinsicSize({required RenderBox child}) : super(child);
 
   @override
   void performLayout() {
@@ -82,15 +82,8 @@ void main() {
     RenderBox root;
     RenderFixedSize inner;
     layout(
-      root = RenderIntrinsicSize(
-        child: RenderParentSize(
-          child: inner = RenderFixedSize(),
-        ),
-      ),
-      constraints: const BoxConstraints(
-        maxWidth: 1000.0,
-        maxHeight: 1000.0,
-      ),
+      root = RenderIntrinsicSize(child: RenderParentSize(child: inner = RenderFixedSize())),
+      constraints: const BoxConstraints(maxWidth: 1000.0, maxHeight: 1000.0),
     );
     expect(root.size, equals(inner.size));
 
@@ -104,15 +97,8 @@ void main() {
     RenderFixedSize inner;
 
     layout(
-      RenderIntrinsicSize(
-        child: parent = RenderParentSize(
-          child: inner = RenderFixedSize(),
-        ),
-      ),
-      constraints: const BoxConstraints(
-        maxWidth: 1000.0,
-        maxHeight: 1000.0,
-      ),
+      RenderIntrinsicSize(child: parent = RenderParentSize(child: inner = RenderFixedSize())),
+      constraints: const BoxConstraints(maxWidth: 1000.0, maxHeight: 1000.0),
     );
 
     _expectIntrinsicDimensions(parent, 100);
@@ -127,10 +113,7 @@ void main() {
     final List<FlutterErrorDetails> errorDetails = <FlutterErrorDetails>[];
     layout(
       RenderInvalidIntrinsics(),
-      constraints: const BoxConstraints(
-        maxWidth: 1000.0,
-        maxHeight: 1000.0,
-      ),
+      constraints: const BoxConstraints(maxWidth: 1000.0, maxHeight: 1000.0),
       onErrors: () {
         errorDetails.addAll(TestRenderingFlutterBinding.instance.takeAllFlutterErrorDetails());
       },

@@ -37,10 +37,7 @@ import 'theme.dart';
 @immutable
 class MenuThemeData with Diagnosticable {
   /// Creates a const set of properties used to configure [MenuTheme].
-  const MenuThemeData({
-    this.style,
-    this.submenuIcon,
-  });
+  const MenuThemeData({this.style, this.submenuIcon});
 
   /// The [MenuStyle] of a [SubmenuButton] menu.
   ///
@@ -68,10 +65,7 @@ class MenuThemeData with Diagnosticable {
   }
 
   @override
-  int get hashCode => Object.hash(
-    style,
-    submenuIcon,
-  );
+  int get hashCode => Object.hash(style, submenuIcon);
 
   @override
   bool operator ==(Object other) {
@@ -81,16 +75,20 @@ class MenuThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is MenuThemeData
-        && other.style == style
-        && other.submenuIcon == submenuIcon;
+    return other is MenuThemeData && other.style == style && other.submenuIcon == submenuIcon;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<MenuStyle>('style', style, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Widget?>>('submenuIcon', submenuIcon, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Widget?>>(
+        'submenuIcon',
+        submenuIcon,
+        defaultValue: null,
+      ),
+    );
   }
 }
 
@@ -114,11 +112,7 @@ class MenuThemeData with Diagnosticable {
 class MenuTheme extends InheritedTheme {
   /// Creates a const theme that controls the configurations for the menus
   /// created by the [SubmenuButton] or [MenuAnchor] widgets.
-  const MenuTheme({
-    super.key,
-    required this.data,
-    required super.child,
-  });
+  const MenuTheme({super.key, required this.data, required super.child});
 
   /// The properties for [MenuBar] and [MenuItemButton] in this widget's
   /// descendants.

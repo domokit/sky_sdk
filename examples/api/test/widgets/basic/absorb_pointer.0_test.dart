@@ -10,20 +10,27 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('AbsorbPointer prevents hit testing on its child', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.AbsorbPointerApp(),
-    );
+    await tester.pumpWidget(const example.AbsorbPointerApp());
 
     // Get the center of the stack.
     final Offset center = tester.getCenter(find.byType(Stack).first);
 
-    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse, pointer: 1);
+    final TestGesture gesture = await tester.createGesture(
+      kind: PointerDeviceKind.mouse,
+      pointer: 1,
+    );
     // Add the point to the center of the stack where the AbsorbPointer is.
     await gesture.addPointer(location: center);
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.basic);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.basic,
+    );
 
     // Move the pointer to the left of the stack where the AbsorbPointer is not.
     await gesture.moveTo(center + const Offset(-100, 0));
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.click);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.click,
+    );
   });
 }

@@ -19,25 +19,24 @@ class SkwasmVertices extends SkwasmObjectWrapper<RawVertices> implements ui.Vert
     List<int>? indices,
   }) => withStackScope((StackScope scope) {
     final RawPointArray rawPositions = scope.convertPointArrayToNative(positions);
-    final RawPointArray rawTextureCoordinates = textureCoordinates != null
-      ? scope.convertPointArrayToNative(textureCoordinates)
-      : nullptr;
-    final RawColorArray rawColors = colors != null
-      ? scope.convertColorArrayToNative(colors)
-      : nullptr;
-    final Pointer<Uint16> rawIndices = indices != null
-      ? scope.convertIntsToUint16Native(indices)
-      : nullptr;
+    final RawPointArray rawTextureCoordinates =
+        textureCoordinates != null ? scope.convertPointArrayToNative(textureCoordinates) : nullptr;
+    final RawColorArray rawColors =
+        colors != null ? scope.convertColorArrayToNative(colors) : nullptr;
+    final Pointer<Uint16> rawIndices =
+        indices != null ? scope.convertIntsToUint16Native(indices) : nullptr;
     final int indexCount = indices != null ? indices.length : 0;
-    return SkwasmVertices._(verticesCreate(
-      mode.index,
-      positions.length,
-      rawPositions,
-      rawTextureCoordinates,
-      rawColors,
-      indexCount,
-      rawIndices,
-    ));
+    return SkwasmVertices._(
+      verticesCreate(
+        mode.index,
+        positions.length,
+        rawPositions,
+        rawTextureCoordinates,
+        rawColors,
+        indexCount,
+        rawIndices,
+      ),
+    );
   });
 
   factory SkwasmVertices.raw(
@@ -48,29 +47,28 @@ class SkwasmVertices extends SkwasmObjectWrapper<RawVertices> implements ui.Vert
     Uint16List? indices,
   }) => withStackScope((StackScope scope) {
     final RawPointArray rawPositions = scope.convertDoublesToNative(positions);
-    final RawPointArray rawTextureCoordinates = textureCoordinates != null
-      ? scope.convertDoublesToNative(textureCoordinates)
-      : nullptr;
-    final RawColorArray rawColors = colors != null
-      ? scope.convertIntsToUint32Native(colors)
-      : nullptr;
-    final Pointer<Uint16> rawIndices = indices != null
-      ? scope.convertIntsToUint16Native(indices)
-      : nullptr;
+    final RawPointArray rawTextureCoordinates =
+        textureCoordinates != null ? scope.convertDoublesToNative(textureCoordinates) : nullptr;
+    final RawColorArray rawColors =
+        colors != null ? scope.convertIntsToUint32Native(colors) : nullptr;
+    final Pointer<Uint16> rawIndices =
+        indices != null ? scope.convertIntsToUint16Native(indices) : nullptr;
     final int indexCount = indices != null ? indices.length : 0;
-    return SkwasmVertices._(verticesCreate(
-      mode.index,
-      positions.length ~/ 2,
-      rawPositions,
-      rawTextureCoordinates,
-      rawColors,
-      indexCount,
-      rawIndices,
-    ));
+    return SkwasmVertices._(
+      verticesCreate(
+        mode.index,
+        positions.length ~/ 2,
+        rawPositions,
+        rawTextureCoordinates,
+        rawColors,
+        indexCount,
+        rawIndices,
+      ),
+    );
   });
 
   SkwasmVertices._(VerticesHandle handle) : super(handle, _registry);
 
   static final SkwasmFinalizationRegistry<RawVertices> _registry =
-    SkwasmFinalizationRegistry<RawVertices>(verticesDispose);
+      SkwasmFinalizationRegistry<RawVertices>(verticesDispose);
 }

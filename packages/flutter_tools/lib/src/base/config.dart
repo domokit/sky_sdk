@@ -32,14 +32,9 @@ class Config {
     String name, {
     required FileSystem fileSystem,
     required Logger logger,
-    required Platform platform
+    required Platform platform,
   }) {
-    return Config._common(
-      name,
-      fileSystem: fileSystem,
-      logger: logger,
-      platform: platform
-    );
+    return Config._common(name, fileSystem: fileSystem, logger: logger, platform: platform);
   }
 
   /// Similar to the default config constructor, but with some different
@@ -53,14 +48,14 @@ class Config {
     String name, {
     required FileSystem fileSystem,
     required Logger logger,
-    required Platform platform
+    required Platform platform,
   }) {
     return Config._common(
       name,
       fileSystem: fileSystem,
       logger: logger,
       platform: platform,
-      managed: true
+      managed: true,
     );
   }
 
@@ -69,7 +64,7 @@ class Config {
     required FileSystem fileSystem,
     required Logger logger,
     required Platform platform,
-    bool managed = false
+    bool managed = false,
   }) {
     final String filePath = _configPath(platform, fileSystem, name);
     final File file = fileSystem.file(filePath);
@@ -85,19 +80,21 @@ class Config {
     String name = 'test',
     Directory? directory,
     Logger? logger,
-    bool managed = false
+    bool managed = false,
   }) {
     directory ??= MemoryFileSystem.test().directory('/');
     return Config.createForTesting(
       directory.childFile('.${kConfigDir}_$name'),
       logger ?? BufferLogger.test(),
-      managed: managed
+      managed: managed,
     );
   }
 
   /// Test only access to the Config constructor.
   @visibleForTesting
-  Config.createForTesting(File file, Logger logger, {bool managed = false}) : _file = file, _logger = logger {
+  Config.createForTesting(File file, Logger logger, {bool managed = false})
+    : _file = file,
+      _logger = logger {
     if (!_file.existsSync()) {
       return;
     }
@@ -195,15 +192,17 @@ class Config {
     return platform.environment[envKey] ?? '.';
   }
 
-  static String _configPath(
-      Platform platform, FileSystem fileSystem, String name) {
-    final String homeDirFile =
-        fileSystem.path.join(_userHomePath(platform), '.${kConfigDir}_$name');
+  static String _configPath(Platform platform, FileSystem fileSystem, String name) {
+    final String homeDirFile = fileSystem.path.join(
+      _userHomePath(platform),
+      '.${kConfigDir}_$name',
+    );
     if (platform.isLinux || platform.isMacOS) {
       if (fileSystem.isFileSync(homeDirFile)) {
         return homeDirFile;
       }
-      final String configDir = platform.environment[kXdgConfigHome] ??
+      final String configDir =
+          platform.environment[kXdgConfigHome] ??
           fileSystem.path.join(_userHomePath(platform), '.config', kConfigDir);
       return fileSystem.path.join(configDir, name);
     }

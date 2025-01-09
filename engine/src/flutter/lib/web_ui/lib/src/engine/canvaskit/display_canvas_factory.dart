@@ -93,9 +93,10 @@ class DisplayCanvasFactory<T extends DisplayCanvas> {
   void releaseCanvas(T canvas) {
     assert(canvas != baseCanvas, 'Attempting to release the base canvas');
     assert(
-        _liveCanvases.contains(canvas),
-        'Attempting to release a Canvas which '
-        'was not created by this factory');
+      _liveCanvases.contains(canvas),
+      'Attempting to release a Canvas which '
+      'was not created by this factory',
+    );
     canvas.hostElement.remove();
     _liveCanvases.remove(canvas);
     _cache.add(canvas);

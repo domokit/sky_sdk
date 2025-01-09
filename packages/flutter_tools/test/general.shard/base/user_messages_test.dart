@@ -18,16 +18,27 @@ void main() {
     expect(message(macPlatform), contains('https://flutter.dev/to/macos-android-setup'));
     expect(message(linuxPlatform), contains('https://flutter.dev/to/linux-android-setup'));
     expect(message(windowsPlatform), contains('https://flutter.dev/to/windows-android-setup'));
-    expect(message(FakePlatform(operatingSystem: '')), contains('https://flutter.dev/to/android-setup'));
+    expect(
+      message(FakePlatform(operatingSystem: '')),
+      contains('https://flutter.dev/to/android-setup'),
+    );
   }
 
   testWithoutContext('Android installation instructions', () {
     final UserMessages userMessages = UserMessages();
-    checkInstallationURL((Platform platform) => userMessages.androidMissingSdkInstructions(platform));
+    checkInstallationURL(
+      (Platform platform) => userMessages.androidMissingSdkInstructions(platform),
+    );
     checkInstallationURL((Platform platform) => userMessages.androidSdkInstallHelp(platform));
-    checkInstallationURL((Platform platform) => userMessages.androidMissingSdkManager('/', platform));
-    checkInstallationURL((Platform platform) => userMessages.androidCannotRunSdkManager('/', '', platform));
-    checkInstallationURL((Platform platform) => userMessages.androidSdkBuildToolsOutdated(0, '', platform));
+    checkInstallationURL(
+      (Platform platform) => userMessages.androidMissingSdkManager('/', platform),
+    );
+    checkInstallationURL(
+      (Platform platform) => userMessages.androidCannotRunSdkManager('/', '', platform),
+    );
+    checkInstallationURL(
+      (Platform platform) => userMessages.androidSdkBuildToolsOutdated(0, '', platform),
+    );
     checkInstallationURL((Platform platform) => userMessages.androidStudioInstallation(platform));
   });
 

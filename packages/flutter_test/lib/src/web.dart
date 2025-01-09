@@ -28,10 +28,7 @@ import 'dart:js_interop';
 external Window get window;
 
 extension type Window._(JSObject _) implements JSObject {
-  external JSPromise<Response> fetch(
-    JSAny input, [
-    RequestInit init,
-  ]);
+  external JSPromise<Response> fetch(JSAny input, [RequestInit init]);
   external Location get location;
   external Window? get parent;
   external void postMessage(JSAny message, JSString targetOrigin, JSArray<JSAny> transfers);
@@ -44,10 +41,7 @@ extension type Response._(JSObject _) implements JSObject {
 }
 
 extension type RequestInit._(JSObject _) implements JSObject {
-  external factory RequestInit({
-    String method,
-    JSAny? body,
-  });
+  external factory RequestInit({String method, JSAny? body});
 }
 
 extension type Location._(JSObject _) implements JSObject {

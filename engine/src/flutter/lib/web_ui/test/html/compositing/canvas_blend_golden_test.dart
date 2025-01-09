@@ -17,78 +17,85 @@ void main() {
 }
 
 Future<void> testMain() async {
-  setUpUnitTests(
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(setUpTestViewDimensions: false);
 
   test('Blend circles with difference and color', () async {
-    final RecordingCanvas rc =
-        RecordingCanvas(const Rect.fromLTRB(0, 0, 400, 300));
+    final RecordingCanvas rc = RecordingCanvas(const Rect.fromLTRB(0, 0, 400, 300));
     rc.save();
     rc.drawRect(
-        const Rect.fromLTRB(0, 0, 400, 400),
-        SurfacePaint()
-          ..style = PaintingStyle.fill
-          ..color = const Color.fromARGB(255, 255, 255, 255));
+      const Rect.fromLTRB(0, 0, 400, 400),
+      SurfacePaint()
+        ..style = PaintingStyle.fill
+        ..color = const Color.fromARGB(255, 255, 255, 255),
+    );
     rc.drawCircle(
-        const Offset(100, 100),
-        80.0,
-        SurfacePaint()
-          ..style = PaintingStyle.fill
-          ..color = const Color.fromARGB(128, 255, 0, 0)
-          ..blendMode = BlendMode.difference);
+      const Offset(100, 100),
+      80.0,
+      SurfacePaint()
+        ..style = PaintingStyle.fill
+        ..color = const Color.fromARGB(128, 255, 0, 0)
+        ..blendMode = BlendMode.difference,
+    );
 
     rc.drawCircle(
-        const Offset(170, 100),
-        80.0,
-        SurfacePaint()
-          ..style = PaintingStyle.fill
-          ..blendMode = BlendMode.color
-          ..color = const Color.fromARGB(128, 0, 255, 0));
+      const Offset(170, 100),
+      80.0,
+      SurfacePaint()
+        ..style = PaintingStyle.fill
+        ..blendMode = BlendMode.color
+        ..color = const Color.fromARGB(128, 0, 255, 0),
+    );
 
     rc.drawCircle(
-        const Offset(135, 170),
-        80.0,
-        SurfacePaint()
-          ..style = PaintingStyle.fill
-          ..color = const Color.fromARGB(128, 255, 0, 0));
+      const Offset(135, 170),
+      80.0,
+      SurfacePaint()
+        ..style = PaintingStyle.fill
+        ..color = const Color.fromARGB(128, 255, 0, 0),
+    );
     rc.restore();
 
     await canvasScreenshot(rc, 'canvas_blend_circle_diff_color');
   });
 
   test('Blend circle and text with multiply', () async {
-    final RecordingCanvas rc =
-        RecordingCanvas(const Rect.fromLTRB(0, 0, 400, 300));
+    final RecordingCanvas rc = RecordingCanvas(const Rect.fromLTRB(0, 0, 400, 300));
     rc.save();
     rc.drawRect(
-        const Rect.fromLTRB(0, 0, 400, 400),
-        SurfacePaint()
-          ..style = PaintingStyle.fill
-          ..color = const Color.fromARGB(255, 255, 255, 255));
+      const Rect.fromLTRB(0, 0, 400, 400),
+      SurfacePaint()
+        ..style = PaintingStyle.fill
+        ..color = const Color.fromARGB(255, 255, 255, 255),
+    );
     rc.drawCircle(
-        const Offset(100, 100),
-        80.0,
-        SurfacePaint()
-          ..style = PaintingStyle.fill
-          ..color = const Color.fromARGB(128, 255, 0, 0)
-          ..blendMode = BlendMode.difference);
+      const Offset(100, 100),
+      80.0,
+      SurfacePaint()
+        ..style = PaintingStyle.fill
+        ..color = const Color.fromARGB(128, 255, 0, 0)
+        ..blendMode = BlendMode.difference,
+    );
     rc.drawCircle(
-        const Offset(170, 100),
-        80.0,
-        SurfacePaint()
-          ..style = PaintingStyle.fill
-          ..blendMode = BlendMode.color
-          ..color = const Color.fromARGB(128, 0, 255, 0));
+      const Offset(170, 100),
+      80.0,
+      SurfacePaint()
+        ..style = PaintingStyle.fill
+        ..blendMode = BlendMode.color
+        ..color = const Color.fromARGB(128, 0, 255, 0),
+    );
 
     rc.drawCircle(
-        const Offset(135, 170),
-        80.0,
-        SurfacePaint()
-          ..style = PaintingStyle.fill
-          ..color = const Color.fromARGB(128, 255, 0, 0));
-    rc.drawImage(createTestImage(), const Offset(135.0, 130.0),
-        SurfacePaint()..blendMode = BlendMode.multiply);
+      const Offset(135, 170),
+      80.0,
+      SurfacePaint()
+        ..style = PaintingStyle.fill
+        ..color = const Color.fromARGB(128, 255, 0, 0),
+    );
+    rc.drawImage(
+      createTestImage(),
+      const Offset(135.0, 130.0),
+      SurfacePaint()..blendMode = BlendMode.multiply,
+    );
     rc.restore();
     await canvasScreenshot(rc, 'canvas_blend_image_multiply');
   });
@@ -97,8 +104,7 @@ Future<void> testMain() async {
 HtmlImage createTestImage() {
   const int width = 100;
   const int height = 50;
-  final DomCanvasElement canvas =
-      createDomCanvasElement(width: width, height: height);
+  final DomCanvasElement canvas = createDomCanvasElement(width: width, height: height);
   final DomCanvasRenderingContext2D ctx = canvas.context2D;
   ctx.fillStyle = '#E04040';
   ctx.fillRect(0, 0, 33, 50);

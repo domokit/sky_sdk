@@ -6,11 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class TestStatusTransitionWidget extends StatusTransitionWidget {
-  const TestStatusTransitionWidget({
-    super.key,
-    required this.builder,
-    required super.animation,
-  });
+  const TestStatusTransitionWidget({super.key, required this.builder, required super.animation});
 
   final WidgetBuilder builder;
 
@@ -27,14 +23,16 @@ void main() {
     );
     addTearDown(controller.dispose);
 
-    await tester.pumpWidget(TestStatusTransitionWidget(
-      animation: controller,
-      builder: (BuildContext context) {
-        expect(didBuild, isFalse);
-        didBuild = true;
-        return Container();
-      },
-    ));
+    await tester.pumpWidget(
+      TestStatusTransitionWidget(
+        animation: controller,
+        builder: (BuildContext context) {
+          expect(didBuild, isFalse);
+          didBuild = true;
+          return Container();
+        },
+      ),
+    );
 
     expect(didBuild, isTrue);
     didBuild = false;
@@ -65,14 +63,16 @@ void main() {
     );
     addTearDown(anotherController.dispose);
 
-    await tester.pumpWidget(TestStatusTransitionWidget(
-      animation: anotherController,
-      builder: (BuildContext context) {
-        expect(didBuild, isFalse);
-        didBuild = true;
-        return Container();
-      },
-    ));
+    await tester.pumpWidget(
+      TestStatusTransitionWidget(
+        animation: anotherController,
+        builder: (BuildContext context) {
+          expect(didBuild, isFalse);
+          didBuild = true;
+          return Container();
+        },
+      ),
+    );
 
     expect(didBuild, isTrue);
     didBuild = false;

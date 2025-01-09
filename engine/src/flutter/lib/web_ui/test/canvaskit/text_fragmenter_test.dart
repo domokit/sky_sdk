@@ -24,10 +24,7 @@ void testMain() {
         'Hello world 你好世界',
         IntlSegmenterGranularity.word,
       );
-      expect(
-        breaks,
-        orderedEquals(<int>[0, 5, 6, 11, 12, 14, 16]),
-      );
+      expect(breaks, orderedEquals(<int>[0, 5, 6, 11, 12, 14, 16]));
     });
 
     test('fragments multi-line text into words', () {
@@ -84,9 +81,7 @@ void testMain() {
     const int kHard = 1;
 
     test('fragments text into soft and hard line breaks', () {
-      final Uint32List breaks = fragmentUsingV8LineBreaker(
-        'Lorem-ipsum 你好🙂\nDolor sit',
-      );
+      final Uint32List breaks = fragmentUsingV8LineBreaker('Lorem-ipsum 你好🙂\nDolor sit');
       expect(
         breaks,
         orderedEquals(<int>[
@@ -115,18 +110,12 @@ void testMain() {
     test('segments correctly', () {
       const String text = 'Lorem-ipsum 你好🙂\nDolor sit';
       final SegmentationResult segmentation = segmentText(text);
-      expect(
-        segmentation.words,
-        fragmentUsingIntlSegmenter(text, IntlSegmenterGranularity.word),
-      );
+      expect(segmentation.words, fragmentUsingIntlSegmenter(text, IntlSegmenterGranularity.word));
       expect(
         segmentation.graphemes,
         fragmentUsingIntlSegmenter(text, IntlSegmenterGranularity.grapheme),
       );
-      expect(
-        segmentation.breaks,
-        fragmentUsingV8LineBreaker(text),
-      );
+      expect(segmentation.breaks, fragmentUsingV8LineBreaker(text));
     });
 
     test('caches segmentation results in LRU fashion', () {
@@ -187,10 +176,7 @@ void testMain() {
   }, skip: !browserSupportsCanvaskitChromium);
 }
 
-void testCacheCapacity(
-  LruCache<String, SegmentationResult> cache,
-  SegmentationCacheSpec spec,
-) {
+void testCacheCapacity(LruCache<String, SegmentationResult> cache, SegmentationCacheSpec spec) {
   // 1. Fill the cache.
   for (int i = 0; i < spec.cacheSize; i++) {
     final String text = _randomString(spec.maxTextLength);
@@ -218,7 +204,8 @@ void testCacheCapacity(
 
 int _seed = 0;
 String _randomString(int length) {
-  const String allChars = ' 1234567890'
+  const String allChars =
+      ' 1234567890'
       'abcdefghijklmnopqrstuvwxyz'
       'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 

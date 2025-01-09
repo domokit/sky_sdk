@@ -9,10 +9,10 @@ import 'package:integration_ui/overflow.dart' as app;
 void main() {
   group('Integration Test', () {
     testWidgets('smoke test', (WidgetTester tester) async {
-        app.main();
-        await tester.pumpAndSettle();
+      app.main();
+      await tester.pumpAndSettle();
 
-        expect(find.byType(SizedBox), findsOneWidget);
-      });
+      expect(find.byType(SizedBox), findsOneWidget);
+    });
   });
 }

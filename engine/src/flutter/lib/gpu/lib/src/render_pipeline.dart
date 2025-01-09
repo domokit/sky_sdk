@@ -9,9 +9,11 @@ part of flutter_gpu;
 base class RenderPipeline extends NativeFieldWrapperClass1 {
   /// Creates a new RenderPipeline.
   RenderPipeline._(
-      GpuContext gpuContext, Shader vertexShader, Shader fragmentShader)
-      : vertexShader = vertexShader,
-        fragmentShader = fragmentShader {
+    GpuContext gpuContext,
+    Shader vertexShader,
+    Shader fragmentShader,
+  ) : vertexShader = vertexShader,
+      fragmentShader = fragmentShader {
     String? error = _initialize(gpuContext, vertexShader, fragmentShader);
     if (error != null) {
       throw Exception(error);
@@ -23,7 +25,11 @@ base class RenderPipeline extends NativeFieldWrapperClass1 {
 
   /// Wrap with native counterpart.
   @Native<Handle Function(Handle, Pointer<Void>, Pointer<Void>, Pointer<Void>)>(
-      symbol: 'InternalFlutterGpu_RenderPipeline_Initialize')
+    symbol: 'InternalFlutterGpu_RenderPipeline_Initialize',
+  )
   external String? _initialize(
-      GpuContext gpuContext, Shader vertexShader, Shader fragmentShader);
+    GpuContext gpuContext,
+    Shader vertexShader,
+    Shader fragmentShader,
+  );
 }

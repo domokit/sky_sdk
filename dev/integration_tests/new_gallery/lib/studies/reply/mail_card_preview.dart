@@ -45,9 +45,7 @@ class MailPreviewCard extends StatelessWidget {
         return MailViewPage(id: id, email: email);
       },
       openColor: theme.cardColor,
-      closedShape: const RoundedRectangleBorder(
-
-      ),
+      closedShape: const RoundedRectangleBorder(),
       closedElevation: 0,
       closedColor: theme.cardColor,
       closedBuilder: (BuildContext context, void Function() openContainer) {
@@ -106,12 +104,8 @@ class MailPreviewCard extends StatelessWidget {
             },
             secondaryBackground: _DismissibleContainer(
               icon: 'twotone_star',
-              backgroundColor: isStarred
-                  ? colorScheme.secondary
-                  : theme.scaffoldBackgroundColor,
-              iconColor: isStarred
-                  ? colorScheme.onSecondary
-                  : colorScheme.onBackground,
+              backgroundColor: isStarred ? colorScheme.secondary : theme.scaffoldBackgroundColor,
+              iconColor: isStarred ? colorScheme.onSecondary : colorScheme.onBackground,
               alignment: Alignment.centerRight,
               padding: const EdgeInsetsDirectional.only(end: 20),
             ),
@@ -149,10 +143,7 @@ class _DismissibleContainer extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: ImageIcon(
-          AssetImage(
-            'reply/icons/$icon.png',
-            package: 'flutter_gallery_assets',
-          ),
+          AssetImage('reply/icons/$icon.png', package: 'flutter_gallery_assets'),
           size: 36,
           color: iconColor,
         ),
@@ -179,17 +170,11 @@ class _MailPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final EmailStore emailStore = Provider.of<EmailStore>(
-      context,
-      listen: false,
-    );
+    final EmailStore emailStore = Provider.of<EmailStore>(context, listen: false);
 
     return InkWell(
       onTap: () {
-        Provider.of<EmailStore>(
-          context,
-          listen: false,
-        ).selectedEmailId = id;
+        Provider.of<EmailStore>(context, listen: false).selectedEmailId = id;
         onTap();
       },
       child: LayoutBuilder(
@@ -210,10 +195,7 @@ class _MailPreview extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
-                            Text(
-                              '${email.sender} - ${email.time}',
-                              style: textTheme.bodySmall,
-                            ),
+                            Text('${email.sender} - ${email.time}', style: textTheme.bodySmall),
                             const SizedBox(height: 4),
                             Text(email.subject, style: textTheme.headlineSmall),
                             const SizedBox(height: 16),
@@ -229,9 +211,7 @@ class _MailPreview extends StatelessWidget {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsetsDirectional.only(
-                      end: 20,
-                    ),
+                    padding: const EdgeInsetsDirectional.only(end: 20),
                     child: Text(
                       email.message,
                       overflow: TextOverflow.ellipsis,
@@ -241,12 +221,7 @@ class _MailPreview extends StatelessWidget {
                   ),
                   if (email.containsPictures) ...<Widget>[
                     const Flexible(
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(height: 20),
-                          _PicturePreview(),
-                        ],
-                      ),
+                      child: Column(children: <Widget>[SizedBox(height: 20), _PicturePreview()]),
                     ),
                   ],
                 ],
@@ -316,39 +291,26 @@ class _MailPreviewActionBar extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final Color color = isDark ? ReplyColors.white50 : ReplyColors.blue600;
     final bool isDesktop = isDisplayDesktop(context);
-    final Color starredIconColor =
-        isStarred ? Theme.of(context).colorScheme.secondary : color;
+    final Color starredIconColor = isStarred ? Theme.of(context).colorScheme.secondary : color;
 
     return Row(
       children: <Widget>[
         if (isDesktop) ...<Widget>[
           IconButton(
             icon: ImageIcon(
-              const AssetImage(
-                '$_iconAssetLocation/twotone_star.png',
-                package: _assetsPackage,
-              ),
+              const AssetImage('$_iconAssetLocation/twotone_star.png', package: _assetsPackage),
               color: starredIconColor,
             ),
             onPressed: onStar,
           ),
           IconButton(
             icon: ImageIcon(
-              const AssetImage(
-                '$_iconAssetLocation/twotone_delete.png',
-                package: _assetsPackage,
-              ),
+              const AssetImage('$_iconAssetLocation/twotone_delete.png', package: _assetsPackage),
               color: color,
             ),
             onPressed: onDelete,
           ),
-          IconButton(
-            icon: Icon(
-              Icons.more_vert,
-              color: color,
-            ),
-            onPressed: () {},
-          ),
+          IconButton(icon: Icon(Icons.more_vert, color: color), onPressed: () {}),
           const SizedBox(width: 12),
         ],
         ProfileAvatar(avatar: avatar),

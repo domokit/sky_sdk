@@ -16,7 +16,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class LinkedScrollController extends ScrollController {
-  LinkedScrollController({ this.before, this.after });
+  LinkedScrollController({this.before, this.after});
 
   LinkedScrollController? before;
   LinkedScrollController? after;
@@ -35,9 +35,15 @@ class LinkedScrollController extends ScrollController {
 
   @override
   void attach(ScrollPosition position) {
-    assert(position is LinkedScrollPosition, 'A LinkedScrollController must only be used with LinkedScrollPositions.');
+    assert(
+      position is LinkedScrollPosition,
+      'A LinkedScrollController must only be used with LinkedScrollPositions.',
+    );
     final LinkedScrollPosition linkedPosition = position as LinkedScrollPosition;
-    assert(linkedPosition.owner == this, 'A LinkedScrollPosition cannot change controllers once created.');
+    assert(
+      linkedPosition.owner == this,
+      'A LinkedScrollPosition cannot change controllers once created.',
+    );
     super.attach(position);
     _parent?.attach(position);
   }
@@ -57,7 +63,11 @@ class LinkedScrollController extends ScrollController {
   }
 
   @override
-  LinkedScrollPosition createScrollPosition(ScrollPhysics physics, ScrollContext context, ScrollPosition? oldPosition) {
+  LinkedScrollPosition createScrollPosition(
+    ScrollPhysics physics,
+    ScrollContext context,
+    ScrollPosition? oldPosition,
+  ) {
     return LinkedScrollPosition(
       this,
       physics: physics,
@@ -93,9 +103,9 @@ class LinkedScrollController extends ScrollController {
     super.debugFillDescription(description);
     final String linkSymbol = switch ((before, after)) {
       (null, null) => 'none',
-      (null, _)    => '➡',
-      (_, null)    => '⬅',
-      (_, _)       => '⬌',
+      (null, _) => '➡',
+      (_, null) => '⬅',
+      (_, _) => '⬌',
     };
     description.add('links: $linkSymbol');
   }
@@ -168,10 +178,12 @@ class LinkedScrollPosition extends ScrollPositionWithSingleContext {
 
     assert(beforeOverscroll == 0.0 || afterOverscroll == 0.0);
 
-    final double localOverscroll = setPixels(value.clamp(
-      owner.canLinkWithBefore ? minScrollExtent : -double.infinity,
-      owner.canLinkWithAfter ? maxScrollExtent : double.infinity,
-    ));
+    final double localOverscroll = setPixels(
+      value.clamp(
+        owner.canLinkWithBefore ? minScrollExtent : -double.infinity,
+        owner.canLinkWithAfter ? maxScrollExtent : double.infinity,
+      ),
+    );
 
     assert(localOverscroll == 0.0 || (beforeOverscroll == 0.0 && afterOverscroll == 0.0));
   }
@@ -202,9 +214,7 @@ class LinkedScrollPosition extends ScrollPositionWithSingleContext {
 }
 
 class LinkedScrollActivity extends ScrollActivity {
-  LinkedScrollActivity(
-    LinkedScrollPosition super.delegate,
-  );
+  LinkedScrollActivity(LinkedScrollPosition super.delegate);
 
   @override
   LinkedScrollPosition get delegate => super.delegate as LinkedScrollPosition;
@@ -259,7 +269,7 @@ class LinkedScrollActivity extends ScrollActivity {
 }
 
 class Test extends StatefulWidget {
-  const Test({ super.key });
+  const Test({super.key});
   @override
   State<Test> createState() => _TestState();
 }

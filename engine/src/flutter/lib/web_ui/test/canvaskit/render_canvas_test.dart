@@ -22,8 +22,7 @@ void testMain() {
     });
 
     Future<DomImageBitmap> newBitmap(int width, int height) async {
-      return createImageBitmap(
-          createBlankDomImageData(width, height) as JSAny, (
+      return createImageBitmap(createBlankDomImageData(width, height) as JSAny, (
         x: 0,
         y: 0,
         width: width,
@@ -32,8 +31,7 @@ void testMain() {
     }
 
     // Regression test for https://github.com/flutter/flutter/issues/75286
-    test('updates canvas logical size when device-pixel ratio changes',
-        () async {
+    test('updates canvas logical size when device-pixel ratio changes', () async {
       final RenderCanvas canvas = RenderCanvas();
       canvas.render(await newBitmap(10, 16));
 
@@ -62,10 +60,8 @@ void testMain() {
     });
 
     test('rounds physical size to nearest integer size', () async {
-      final EngineFlutterWindow implicitView =
-          EnginePlatformDispatcher.instance.implicitView!;
-      implicitView.debugPhysicalSizeOverride =
-          const ui.Size(199.999999, 200.000001);
+      final EngineFlutterWindow implicitView = EnginePlatformDispatcher.instance.implicitView!;
+      implicitView.debugPhysicalSizeOverride = const ui.Size(199.999999, 200.000001);
 
       final ui.SceneBuilder sceneBuilder = LayerSceneBuilder();
       final CkPictureRecorder recorder = CkPictureRecorder();
@@ -78,9 +74,7 @@ void testMain() {
       await renderScene(scene);
 
       expect(
-        CanvasKitRenderer.instance
-            .debugGetRasterizerForView(implicitView)!
-            .currentFrameSize,
+        CanvasKitRenderer.instance.debugGetRasterizerForView(implicitView)!.currentFrameSize,
         const BitmapSize(200, 200),
       );
 

@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/nested_scroll_view/nested_scroll_view.1.dart' as example;
+import 'package:flutter_api_samples/widgets/nested_scroll_view/nested_scroll_view.1.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

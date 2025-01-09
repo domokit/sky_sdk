@@ -15,11 +15,12 @@ void main() {
     RenderSizedBox child;
     final RenderBox root = RenderPositionedBox(
       alignment: Alignment.topLeft,
-      child: parent = RenderBaseline(
-        baseline: 0.0,
-        baselineType: TextBaseline.alphabetic,
-        child: child = RenderSizedBox(const Size(100.0, 100.0)),
-      ),
+      child:
+          parent = RenderBaseline(
+            baseline: 0.0,
+            baselineType: TextBaseline.alphabetic,
+            child: child = RenderSizedBox(const Size(100.0, 100.0)),
+          ),
     );
     final BoxParentData childParentData = child.parentData! as BoxParentData;
 
@@ -54,10 +55,11 @@ void main() {
   });
 
   test('RenderBaseline different baseline types', () {
-    final _RenderBaselineTester child = _RenderBaselineTester()
-     ..boxSize = const Size.square(100)
-     ..alphabeticBaselineOffset = 50
-     ..ideographicBaselineOffset = 60;
+    final _RenderBaselineTester child =
+        _RenderBaselineTester()
+          ..boxSize = const Size.square(100)
+          ..alphabeticBaselineOffset = 50
+          ..ideographicBaselineOffset = 60;
     final RenderBaseline renderBaseline = RenderBaseline(
       baseline: 1.0,
       baselineType: TextBaseline.alphabetic,
@@ -69,9 +71,9 @@ void main() {
     expect(renderBaseline.getDryBaseline(const BoxConstraints(), TextBaseline.ideographic), 11.0);
 
     child
-     ..alphabeticBaselineOffset = null
-     ..ideographicBaselineOffset = null
-     ..markNeedsLayout(); // Clears baseline cache.
+      ..alphabeticBaselineOffset = null
+      ..ideographicBaselineOffset = null
+      ..markNeedsLayout(); // Clears baseline cache.
 
     renderBaseline.markNeedsLayout();
 
@@ -88,11 +90,17 @@ void main() {
       textDirection: TextDirection.ltr,
       children: <RenderBox>[
         a = RenderParagraph(
-          const TextSpan(text: 'a', style: TextStyle(fontSize: 128.0, fontFamily: 'FlutterTest')), // places baseline at y=96
+          const TextSpan(
+            text: 'a',
+            style: TextStyle(fontSize: 128.0, fontFamily: 'FlutterTest'),
+          ), // places baseline at y=96
           textDirection: TextDirection.ltr,
         ),
         b = RenderParagraph(
-          const TextSpan(text: 'b', style: TextStyle(fontSize: 32.0, fontFamily: 'FlutterTest')), // 24 above baseline, 8 below baseline
+          const TextSpan(
+            text: 'b',
+            style: TextStyle(fontSize: 32.0, fontFamily: 'FlutterTest'),
+          ), // 24 above baseline, 8 below baseline
           textDirection: TextDirection.ltr,
         ),
       ],
@@ -113,10 +121,14 @@ void main() {
       textDirection: TextDirection.ltr,
       children: <RenderBox>[
         RenderIgnoreBaseline(
-          child: a = RenderParagraph(
-            const TextSpan(text: 'a', style: TextStyle(fontSize: 128.0, fontFamily: 'FlutterTest')),
-            textDirection: TextDirection.ltr,
-          ),
+          child:
+              a = RenderParagraph(
+                const TextSpan(
+                  text: 'a',
+                  style: TextStyle(fontSize: 128.0, fontFamily: 'FlutterTest'),
+                ),
+                textDirection: TextDirection.ltr,
+              ),
         ),
         b = RenderParagraph(
           const TextSpan(text: 'b', style: TextStyle(fontSize: 32.0, fontFamily: 'FlutterTest')),

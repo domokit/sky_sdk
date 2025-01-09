@@ -17,19 +17,10 @@ import 'about.dart' as about;
 import 'home.dart';
 import 'settings_list_item.dart';
 
-enum _ExpandableSetting {
-  textScale,
-  textDirection,
-  locale,
-  platform,
-  theme,
-}
+enum _ExpandableSetting { textScale, textDirection, locale, platform, theme }
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({
-    super.key,
-    required this.animationController,
-  });
+  const SettingsPage({super.key, required this.animationController});
 
   final AnimationController animationController;
 
@@ -68,11 +59,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     _staggerSettingsItemsAnimation = CurvedAnimation(
       parent: widget.animationController,
-      curve: const Interval(
-        0.4,
-        1.0,
-        curve: Curves.ease,
-      ),
+      curve: const Interval(0.4, 1.0, curve: Curves.ease),
     );
   }
 
@@ -104,10 +91,7 @@ class _SettingsPageState extends State<SettingsPage> {
         case 'fil':
           return DisplayOption('Filipino', subtitle: 'Filipino');
         case 'es_419':
-          return DisplayOption(
-            'español (Latinoamérica)',
-            subtitle: 'Spanish (Latin America)',
-          );
+          return DisplayOption('español (Latinoamérica)', subtitle: 'Spanish (Latin America)');
       }
     }
 
@@ -117,24 +101,27 @@ class _SettingsPageState extends State<SettingsPage> {
   /// Create a sorted — by native name – map of supported locales to their
   /// intended display string, with a system option as the first element.
   LinkedHashMap<Locale, DisplayOption> _getLocaleOptions() {
-    final LinkedHashMap<Locale, DisplayOption> localeOptions = LinkedHashMap<Locale, DisplayOption>.of(<Locale, DisplayOption>{
-      systemLocaleOption: DisplayOption(
-        GalleryLocalizations.of(context)!.settingsSystemDefault +
-            (deviceLocale != null
-                ? ' - ${_getLocaleDisplayOption(context, deviceLocale).title}'
-                : ''),
-      ),
-    });
-    final List<Locale> supportedLocales =
-        List<Locale>.from(GalleryLocalizations.supportedLocales);
+    final LinkedHashMap<Locale, DisplayOption> localeOptions =
+        LinkedHashMap<Locale, DisplayOption>.of(<Locale, DisplayOption>{
+          systemLocaleOption: DisplayOption(
+            GalleryLocalizations.of(context)!.settingsSystemDefault +
+                (deviceLocale != null
+                    ? ' - ${_getLocaleDisplayOption(context, deviceLocale).title}'
+                    : ''),
+          ),
+        });
+    final List<Locale> supportedLocales = List<Locale>.from(GalleryLocalizations.supportedLocales);
     supportedLocales.removeWhere((Locale locale) => locale == deviceLocale);
 
-    final List<MapEntry<Locale, DisplayOption>> displayLocales = Map<Locale, DisplayOption>.fromIterable(
-      supportedLocales,
-      value: (dynamic locale) =>
-          _getLocaleDisplayOption(context, locale as Locale?),
-    ).entries.toList()
-      ..sort((MapEntry<Locale, DisplayOption> l1, MapEntry<Locale, DisplayOption> l2) => compareAsciiUpperCase(l1.value.title, l2.value.title));
+    final List<MapEntry<Locale, DisplayOption>> displayLocales =
+        Map<Locale, DisplayOption>.fromIterable(
+            supportedLocales,
+            value: (dynamic locale) => _getLocaleDisplayOption(context, locale as Locale?),
+          ).entries.toList()
+          ..sort(
+            (MapEntry<Locale, DisplayOption> l1, MapEntry<Locale, DisplayOption> l2) =>
+                compareAsciiUpperCase(l1.value.title, l2.value.title),
+          );
 
     localeOptions.addAll(LinkedHashMap<Locale, DisplayOption>.fromEntries(displayLocales));
     return localeOptions;
@@ -150,69 +137,49 @@ class _SettingsPageState extends State<SettingsPage> {
     final List<Widget> settingsListItems = <Widget>[
       SettingsListItem<double?>(
         title: localizations.settingsTextScaling,
-        selectedOption: options.textScaleFactor(
-          context,
-          useSentinel: true,
-        ),
+        selectedOption: options.textScaleFactor(context, useSentinel: true),
         optionsMap: LinkedHashMap<double?, DisplayOption>.of(<double?, DisplayOption>{
-          systemTextScaleFactorOption: DisplayOption(
-            localizations.settingsSystemDefault,
-          ),
-          0.8: DisplayOption(
-            localizations.settingsTextScalingSmall,
-          ),
-          1.0: DisplayOption(
-            localizations.settingsTextScalingNormal,
-          ),
-          2.0: DisplayOption(
-            localizations.settingsTextScalingLarge,
-          ),
-          3.0: DisplayOption(
-            localizations.settingsTextScalingHuge,
-          ),
+          systemTextScaleFactorOption: DisplayOption(localizations.settingsSystemDefault),
+          0.8: DisplayOption(localizations.settingsTextScalingSmall),
+          1.0: DisplayOption(localizations.settingsTextScalingNormal),
+          2.0: DisplayOption(localizations.settingsTextScalingLarge),
+          3.0: DisplayOption(localizations.settingsTextScalingHuge),
         }),
-        onOptionChanged: (double? newTextScale) => GalleryOptions.update(
-          context,
-          options.copyWith(textScaleFactor: newTextScale),
-        ),
+        onOptionChanged:
+            (double? newTextScale) =>
+                GalleryOptions.update(context, options.copyWith(textScaleFactor: newTextScale)),
         onTapSetting: () => onTapSetting(_ExpandableSetting.textScale),
         isExpanded: _expandedSettingId == _ExpandableSetting.textScale,
       ),
       SettingsListItem<CustomTextDirection?>(
         title: localizations.settingsTextDirection,
         selectedOption: options.customTextDirection,
-        optionsMap: LinkedHashMap<CustomTextDirection?, DisplayOption>.of(<CustomTextDirection?, DisplayOption>{
-          CustomTextDirection.localeBased: DisplayOption(
-            localizations.settingsTextDirectionLocaleBased,
-          ),
-          CustomTextDirection.ltr: DisplayOption(
-            localizations.settingsTextDirectionLTR,
-          ),
-          CustomTextDirection.rtl: DisplayOption(
-            localizations.settingsTextDirectionRTL,
-          ),
-        }),
-        onOptionChanged: (CustomTextDirection? newTextDirection) => GalleryOptions.update(
-          context,
-          options.copyWith(customTextDirection: newTextDirection),
+        optionsMap: LinkedHashMap<CustomTextDirection?, DisplayOption>.of(
+          <CustomTextDirection?, DisplayOption>{
+            CustomTextDirection.localeBased: DisplayOption(
+              localizations.settingsTextDirectionLocaleBased,
+            ),
+            CustomTextDirection.ltr: DisplayOption(localizations.settingsTextDirectionLTR),
+            CustomTextDirection.rtl: DisplayOption(localizations.settingsTextDirectionRTL),
+          },
         ),
+        onOptionChanged:
+            (CustomTextDirection? newTextDirection) => GalleryOptions.update(
+              context,
+              options.copyWith(customTextDirection: newTextDirection),
+            ),
         onTapSetting: () => onTapSetting(_ExpandableSetting.textDirection),
         isExpanded: _expandedSettingId == _ExpandableSetting.textDirection,
       ),
       SettingsListItem<Locale?>(
         title: localizations.settingsLocale,
-        selectedOption: options.locale == deviceLocale
-            ? systemLocaleOption
-            : options.locale,
+        selectedOption: options.locale == deviceLocale ? systemLocaleOption : options.locale,
         optionsMap: _getLocaleOptions(),
         onOptionChanged: (Locale? newLocale) {
           if (newLocale == systemLocaleOption) {
             newLocale = deviceLocale;
           }
-          GalleryOptions.update(
-            context,
-            options.copyWith(locale: newLocale),
-          );
+          GalleryOptions.update(context, options.copyWith(locale: newLocale));
         },
         onTapSetting: () => onTapSetting(_ExpandableSetting.locale),
         isExpanded: _expandedSettingId == _ExpandableSetting.locale,
@@ -220,17 +187,17 @@ class _SettingsPageState extends State<SettingsPage> {
       SettingsListItem<TargetPlatform?>(
         title: localizations.settingsPlatformMechanics,
         selectedOption: options.platform,
-        optionsMap: LinkedHashMap<TargetPlatform?, DisplayOption>.of(<TargetPlatform?, DisplayOption>{
-          TargetPlatform.android: DisplayOption('Android'),
-          TargetPlatform.iOS: DisplayOption('iOS'),
-          TargetPlatform.macOS: DisplayOption('macOS'),
-          TargetPlatform.linux: DisplayOption('Linux'),
-          TargetPlatform.windows: DisplayOption('Windows'),
-        }),
-        onOptionChanged: (TargetPlatform? newPlatform) => GalleryOptions.update(
-          context,
-          options.copyWith(platform: newPlatform),
-        ),
+        optionsMap:
+            LinkedHashMap<TargetPlatform?, DisplayOption>.of(<TargetPlatform?, DisplayOption>{
+              TargetPlatform.android: DisplayOption('Android'),
+              TargetPlatform.iOS: DisplayOption('iOS'),
+              TargetPlatform.macOS: DisplayOption('macOS'),
+              TargetPlatform.linux: DisplayOption('Linux'),
+              TargetPlatform.windows: DisplayOption('Windows'),
+            }),
+        onOptionChanged:
+            (TargetPlatform? newPlatform) =>
+                GalleryOptions.update(context, options.copyWith(platform: newPlatform)),
         onTapSetting: () => onTapSetting(_ExpandableSetting.platform),
         isExpanded: _expandedSettingId == _ExpandableSetting.platform,
       ),
@@ -238,49 +205,36 @@ class _SettingsPageState extends State<SettingsPage> {
         title: localizations.settingsTheme,
         selectedOption: options.themeMode,
         optionsMap: LinkedHashMap<ThemeMode?, DisplayOption>.of(<ThemeMode?, DisplayOption>{
-          ThemeMode.system: DisplayOption(
-            localizations.settingsSystemDefault,
-          ),
-          ThemeMode.dark: DisplayOption(
-            localizations.settingsDarkTheme,
-          ),
-          ThemeMode.light: DisplayOption(
-            localizations.settingsLightTheme,
-          ),
+          ThemeMode.system: DisplayOption(localizations.settingsSystemDefault),
+          ThemeMode.dark: DisplayOption(localizations.settingsDarkTheme),
+          ThemeMode.light: DisplayOption(localizations.settingsLightTheme),
         }),
-        onOptionChanged: (ThemeMode? newThemeMode) => GalleryOptions.update(
-          context,
-          options.copyWith(themeMode: newThemeMode),
-        ),
+        onOptionChanged:
+            (ThemeMode? newThemeMode) =>
+                GalleryOptions.update(context, options.copyWith(themeMode: newThemeMode)),
         onTapSetting: () => onTapSetting(_ExpandableSetting.theme),
         isExpanded: _expandedSettingId == _ExpandableSetting.theme,
       ),
       ToggleSetting(
         text: GalleryLocalizations.of(context)!.settingsSlowMotion,
         value: options.timeDilation != 1.0,
-        onChanged: (bool isOn) => GalleryOptions.update(
-          context,
-          options.copyWith(timeDilation: isOn ? 5.0 : 1.0),
-        ),
+        onChanged:
+            (bool isOn) =>
+                GalleryOptions.update(context, options.copyWith(timeDilation: isOn ? 5.0 : 1.0)),
       ),
     ];
 
     return Material(
       color: colorScheme.secondaryContainer,
       child: Padding(
-        padding: isDesktop
-            ? EdgeInsets.zero
-            : const EdgeInsets.only(
-                bottom: galleryHeaderHeight,
-              ),
+        padding: isDesktop ? EdgeInsets.zero : const EdgeInsets.only(bottom: galleryHeaderHeight),
         // Remove ListView top padding as it is already accounted for.
         child: MediaQuery.removePadding(
           removeTop: isDesktop,
           context: context,
           child: ListView(
             children: <Widget>[
-              if (isDesktop)
-                const SizedBox(height: firstHeaderDesktopTopPadding),
+              if (isDesktop) const SizedBox(height: firstHeaderDesktopTopPadding),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ExcludeSemantics(
@@ -338,8 +292,7 @@ class SettingsFeedback extends StatelessWidget {
       title: GalleryLocalizations.of(context)!.settingsFeedback,
       icon: Icons.feedback,
       onTap: () async {
-        final Uri url =
-            Uri.parse('https://github.com/flutter/gallery/issues/new/choose/');
+        final Uri url = Uri.parse('https://github.com/flutter/gallery/issues/new/choose/');
         if (await canLaunchUrl(url)) {
           await launchUrl(url);
         }
@@ -366,9 +319,9 @@ class SettingsAttribution extends StatelessWidget {
         child: SelectableText(
           GalleryLocalizations.of(context)!.settingsAttribution,
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                fontSize: 12,
-                color: Theme.of(context).colorScheme.onSecondary,
-              ),
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
           textAlign: isDesktop ? TextAlign.end : TextAlign.start,
         ),
       ),
@@ -377,12 +330,7 @@ class SettingsAttribution extends StatelessWidget {
 }
 
 class _SettingsLink extends StatelessWidget {
-
-  const _SettingsLink({
-    required this.title,
-    this.icon,
-    this.onTap,
-  });
+  const _SettingsLink({required this.title, this.icon, this.onTap});
   final String title;
   final IconData? icon;
   final GestureTapCallback? onTap;
@@ -396,29 +344,17 @@ class _SettingsLink extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: isDesktop ? 24 : 32,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: isDesktop ? 24 : 32),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Icon(
-              icon,
-              color: colorScheme.onSecondary.withOpacity(0.5),
-              size: 24,
-            ),
+            Icon(icon, color: colorScheme.onSecondary.withOpacity(0.5), size: 24),
             Flexible(
               child: Padding(
-                padding: const EdgeInsetsDirectional.only(
-                  start: 16,
-                  top: 12,
-                  bottom: 12,
-                ),
+                padding: const EdgeInsetsDirectional.only(start: 16, top: 12, bottom: 12),
                 child: Text(
                   title,
-                  style: textTheme.titleSmall!.apply(
-                    color: colorScheme.onSecondary,
-                  ),
+                  style: textTheme.titleSmall!.apply(color: colorScheme.onSecondary),
                   textAlign: isDesktop ? TextAlign.end : TextAlign.start,
                 ),
               ),
@@ -432,10 +368,7 @@ class _SettingsLink extends StatelessWidget {
 
 /// Animate the settings list items to stagger in from above.
 class _AnimateSettingsListItems extends StatelessWidget {
-  const _AnimateSettingsListItems({
-    required this.animation,
-    required this.children,
-  });
+  const _AnimateSettingsListItems({required this.animation, required this.children});
 
   final Animation<double> animation;
   final List<Widget> children;
@@ -443,10 +376,7 @@ class _AnimateSettingsListItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double dividingPadding = 4.0;
-    final Tween<double> dividerTween = Tween<double>(
-      begin: 0,
-      end: dividingPadding,
-    );
+    final Tween<double> dividerTween = Tween<double>(begin: 0, end: dividingPadding);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -457,9 +387,7 @@ class _AnimateSettingsListItems extends StatelessWidget {
               animation: animation,
               builder: (BuildContext context, Widget? child) {
                 return Padding(
-                  padding: EdgeInsets.only(
-                    top: dividerTween.animate(animation).value,
-                  ),
+                  padding: EdgeInsets.only(top: dividerTween.animate(animation).value),
                   child: child,
                 );
               },

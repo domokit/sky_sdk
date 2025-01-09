@@ -27,12 +27,13 @@ class CustomDevicesConfig {
   }) : _platform = platform,
        _fileSystem = fileSystem,
        _logger = logger,
-       _configLoader = (() => Config.managed(
-         _kCustomDevicesConfigName,
-         fileSystem: fileSystem,
-         logger: logger,
-         platform: platform,
-       ));
+       _configLoader =
+           (() => Config.managed(
+             _kCustomDevicesConfigName,
+             fileSystem: fileSystem,
+             logger: logger,
+             platform: platform,
+           ));
 
   @visibleForTesting
   CustomDevicesConfig.test({
@@ -43,12 +44,13 @@ class CustomDevicesConfig {
   }) : _platform = platform ?? FakePlatform(),
        _fileSystem = fileSystem,
        _logger = logger,
-       _configLoader = (() => Config.test(
-         name: _kCustomDevicesConfigName,
-         directory: directory,
-         logger: logger,
-         managed: true
-       ));
+       _configLoader =
+           (() => Config.test(
+             name: _kCustomDevicesConfigName,
+             directory: directory,
+             logger: logger,
+             managed: true,
+           ));
 
   static const String _kCustomDevicesConfigName = 'custom_devices.json';
   static const String _kCustomDevicesConfigKey = 'custom-devices';
@@ -79,13 +81,14 @@ class CustomDevicesConfig {
   }
 
   String get _defaultSchema {
-    final Uri uri = _fileSystem
-      .directory(Cache.flutterRoot)
-      .childDirectory('packages')
-      .childDirectory('flutter_tools')
-      .childDirectory('static')
-      .childFile('custom-devices.schema.json')
-      .uri;
+    final Uri uri =
+        _fileSystem
+            .directory(Cache.flutterRoot)
+            .childDirectory('packages')
+            .childDirectory('flutter_tools')
+            .childDirectory('static')
+            .childFile('custom-devices.schema.json')
+            .uri;
 
     // otherwise it won't contain the Uri schema, so the file:// at the start
     // will be missing
@@ -114,7 +117,8 @@ class CustomDevicesConfig {
     if (json == null) {
       return null;
     } else if (json is! List) {
-      const String msg = "Could not load custom devices config. config['$_kCustomDevicesConfigKey'] is not a JSON array.";
+      const String msg =
+          "Could not load custom devices config. config['$_kCustomDevicesConfigKey'] is not a JSON array.";
       _logger.printError(msg);
       throw const CustomDeviceRevivalException(msg);
     }
@@ -170,7 +174,7 @@ class CustomDevicesConfig {
   set devices(List<CustomDeviceConfig> configs) {
     _config.setValue(
       _kCustomDevicesConfigKey,
-      configs.map<dynamic>((CustomDeviceConfig c) => c.toJson()).toList()
+      configs.map<dynamic>((CustomDeviceConfig c) => c.toJson()).toList(),
     );
   }
 
@@ -182,13 +186,10 @@ class CustomDevicesConfig {
   /// May throw a [CustomDeviceRevivalException] if `config['custom-devices']`
   /// is not a list.
   void add(CustomDeviceConfig config) {
-    _config.setValue(
-      _kCustomDevicesConfigKey,
-      <dynamic>[
-        ...?_getDevicesJsonValue(),
-        config.toJson(),
-      ]
-    );
+    _config.setValue(_kCustomDevicesConfigKey, <dynamic>[
+      ...?_getDevicesJsonValue(),
+      config.toJson(),
+    ]);
   }
 
   /// Returns true if the config file contains a device with id [deviceId].
@@ -205,10 +206,9 @@ class CustomDevicesConfig {
 
     // we use this instead of filtering so we can detect if we actually removed
     // anything.
-    final CustomDeviceConfig? device = modifiedDevices
-      .cast<CustomDeviceConfig?>()
-      .firstWhere((CustomDeviceConfig? d) => d!.id == deviceId,
-      orElse: () => null
+    final CustomDeviceConfig? device = modifiedDevices.cast<CustomDeviceConfig?>().firstWhere(
+      (CustomDeviceConfig? d) => d!.id == deviceId,
+      orElse: () => null,
     );
 
     if (device == null) {

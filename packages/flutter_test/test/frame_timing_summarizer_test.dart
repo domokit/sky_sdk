@@ -9,15 +9,9 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group(FrameTimingSummarizer, () {
     test('calculates all fields', () {
-      List<int> vsyncTimes = <int>[
-        for (int i = 0; i < 100; i += 1) 100 * (i + 1),
-      ];
-      List<int> buildTimes = <int>[
-        for (int i = 0; i < 100; i += 1) vsyncTimes[i] + 1000 * (i + 1),
-      ];
-      List<int> rasterTimes = <int>[
-        for (int i = 0; i < 100; i += 1) 1000 * (i + 1) + 1000,
-      ];
+      List<int> vsyncTimes = <int>[for (int i = 0; i < 100; i += 1) 100 * (i + 1)];
+      List<int> buildTimes = <int>[for (int i = 0; i < 100; i += 1) vsyncTimes[i] + 1000 * (i + 1)];
+      List<int> rasterTimes = <int>[for (int i = 0; i < 100; i += 1) 1000 * (i + 1) + 1000];
       // reversed to make sure sort is working.
       buildTimes = buildTimes.reversed.toList();
       rasterTimes = rasterTimes.reversed.toList();

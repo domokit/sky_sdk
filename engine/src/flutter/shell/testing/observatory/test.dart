@@ -37,8 +37,7 @@ Future<void> testHttpProtocolRequest(Uri uri) async {
   final HttpClientRequest request = await client.getUrl(uri);
   final HttpClientResponse response = await request.close();
   Expect.equals(response.statusCode, 200);
-  final responseAsMap =
-      json.decode(await readResponse(response)) as Map<String, Object?>;
+  final responseAsMap = json.decode(await readResponse(response)) as Map<String, Object?>;
   Expect.equals(responseAsMap['jsonrpc'], '2.0');
   client.close();
 }
@@ -75,7 +74,7 @@ typedef TestFunction = Future<void> Function(Uri uri);
 final List<TestFunction> basicTests = <TestFunction>[
   testHttpProtocolRequest,
   testWebSocketProtocolRequest,
-  testHttpAssetRequest
+  testHttpAssetRequest,
 ];
 
 Future<bool> runTests(ShellLauncher launcher, List<TestFunction> tests) async {
@@ -99,17 +98,17 @@ Future<bool> runTests(ShellLauncher launcher, List<TestFunction> tests) async {
 
 Future<void> main(List<String> args) async {
   if (args.length < 2) {
-    print('Usage: dart ${Platform.script} '
-        '<sky_shell_executable> <main_dart> ...');
+    print(
+      'Usage: dart ${Platform.script} '
+      '<sky_shell_executable> <main_dart> ...',
+    );
     return;
   }
   final String shellExecutablePath = args[0];
   final String mainDartPath = args[1];
-  final List<String> extraArgs =
-      args.length <= 2 ? <String>[] : args.sublist(2);
+  final List<String> extraArgs = args.length <= 2 ? <String>[] : args.sublist(2);
 
-  final ShellLauncher launcher =
-      ShellLauncher(shellExecutablePath, mainDartPath, false, extraArgs);
+  final ShellLauncher launcher = ShellLauncher(shellExecutablePath, mainDartPath, false, extraArgs);
 
   await runTests(launcher, basicTests);
 }

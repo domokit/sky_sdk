@@ -91,10 +91,7 @@ ui.Rect computePenumbraBounds(ui.Rect shape, double elevation) {
 /// Information needed to render a shadow using CSS or canvas.
 @immutable
 class SurfaceShadowData {
-  const SurfaceShadowData({
-    required this.blurWidth,
-    required this.offset,
-  });
+  const SurfaceShadowData({required this.blurWidth, required this.offset});
 
   /// The length in pixels of the shadow.
   ///
@@ -122,10 +119,8 @@ SurfaceShadowData? computeShadow(ui.Rect shape, double elevation) {
     return null;
   }
 
-  final double penumbraTangentX =
-      (kLightRadius + shape.width * 0.5) / kLightHeight;
-  final double penumbraTangentY =
-      (kLightRadius + shape.height * 0.5) / kLightHeight;
+  final double penumbraTangentX = (kLightRadius + shape.width * 0.5) / kLightHeight;
+  final double penumbraTangentY = (kLightRadius + shape.height * 0.5) / kLightHeight;
   final double penumbraWidth = elevation * penumbraTangentX;
   final double penumbraHeight = elevation * penumbraTangentY;
   return SurfaceShadowData(
@@ -138,14 +133,14 @@ SurfaceShadowData? computeShadow(ui.Rect shape, double elevation) {
 }
 
 /// Applies a CSS shadow to the [shape].
-void applyCssShadow(
-    DomElement? element, ui.Rect shape, double elevation, ui.Color color) {
+void applyCssShadow(DomElement? element, ui.Rect shape, double elevation, ui.Color color) {
   final SurfaceShadowData? shadow = computeShadow(shape, elevation);
   if (shadow == null) {
     element!.style.boxShadow = 'none';
   } else {
     color = toShadowColor(color);
-    element!.style.boxShadow = '${shadow.offset.dx}px ${shadow.offset.dy}px '
+    element!.style.boxShadow =
+        '${shadow.offset.dx}px ${shadow.offset.dy}px '
         '${shadow.blurWidth}px 0px rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha / 255})';
   }
 }

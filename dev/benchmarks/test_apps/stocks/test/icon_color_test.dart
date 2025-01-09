@@ -14,6 +14,7 @@ Element? findElementOfExactWidgetTypeGoingDown(Element node, Type targetType) {
     }
     child.visitChildElements(walker);
   }
+
   try {
     walker(node);
   } on Element catch (result) {
@@ -31,12 +32,14 @@ Element? findElementOfExactWidgetTypeGoingUp(Element node, Type targetType) {
     }
     return true;
   }
+
   node.visitAncestorElements(walker);
   return result;
 }
 
 void checkIconColor(WidgetTester tester, String label, Color color) {
-  final Element listTile = findElementOfExactWidgetTypeGoingUp(tester.element(find.text(label)), ListTile)!;
+  final Element listTile =
+      findElementOfExactWidgetTypeGoingUp(tester.element(find.text(label)), ListTile)!;
   final Element asset = findElementOfExactWidgetTypeGoingDown(listTile, RichText)!;
   final RichText richText = asset.widget as RichText;
   expect(richText.text.style!.color, equals(color));
@@ -58,8 +61,14 @@ void main() {
     expect(find.text('Account Balance'), findsNothing);
 
     // drag the drawer out
-    final Offset left = Offset(0.0, (tester.view.physicalSize / tester.view.devicePixelRatio).height / 2.0);
-    final Offset right = Offset((tester.view.physicalSize / tester.view.devicePixelRatio).width, left.dy);
+    final Offset left = Offset(
+      0.0,
+      (tester.view.physicalSize / tester.view.devicePixelRatio).height / 2.0,
+    );
+    final Offset right = Offset(
+      (tester.view.physicalSize / tester.view.devicePixelRatio).width,
+      left.dy,
+    );
     final TestGesture gesture = await tester.startGesture(left);
     await tester.pump();
     await gesture.moveTo(right);

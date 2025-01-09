@@ -18,38 +18,22 @@ void main() {
     final testEnv = TestEnvironment.withTestEngine(now: () => fakeNow);
     addTearDown(testEnv.cleanup);
 
-    final targetDir = Directory(p.join(
-      testEnv.environment.engine.outDir.path,
-      'host_old',
-    ));
+    final targetDir = Directory(p.join(testEnv.environment.engine.outDir.path, 'host_old'));
     await targetDir.create(recursive: true);
 
-    final runner = ToolCommandRunner(
-      environment: testEnv.environment,
-      configs: {},
-    );
+    final runner = ToolCommandRunner(environment: testEnv.environment, configs: {});
 
     final result = await runner.run(['cleanup', '--dry-run']);
     expect(result, 0);
 
-    expect(
-      targetDir.existsSync(),
-      true,
-      reason: '--dry-run should not delete directories',
-    );
+    expect(targetDir.existsSync(), true, reason: '--dry-run should not delete directories');
 
     expect(
       testEnv.testLogs,
       containsAllInOrder([
-        logRecord(
-          contains('Checking ${testEnv.environment.engine.outDir.path}'),
-        ),
-        logRecord(
-          contains('The following directories were accessed later than'),
-        ),
-        logRecord(
-          contains('host_old'),
-        ),
+        logRecord(contains('Checking ${testEnv.environment.engine.outDir.path}')),
+        logRecord(contains('The following directories were accessed later than')),
+        logRecord(contains('host_old')),
       ]),
     );
   });
@@ -59,35 +43,21 @@ void main() {
     final testEnv = TestEnvironment.withTestEngine(now: () => fakeNow);
     addTearDown(testEnv.cleanup);
 
-    final targetDir = Directory(p.join(
-      testEnv.environment.engine.outDir.path,
-      'host_old',
-    ));
+    final targetDir = Directory(p.join(testEnv.environment.engine.outDir.path, 'host_old'));
     await targetDir.create(recursive: true);
 
-    final runner = ToolCommandRunner(
-      environment: testEnv.environment,
-      configs: {},
-    );
+    final runner = ToolCommandRunner(environment: testEnv.environment, configs: {});
 
     final result = await runner.run(['cleanup']);
     expect(result, 0);
 
-    expect(
-      targetDir.existsSync(),
-      false,
-      reason: 'Should be > 30 days since accessed',
-    );
+    expect(targetDir.existsSync(), false, reason: 'Should be > 30 days since accessed');
 
     expect(
       testEnv.testLogs,
       containsAllInOrder([
-        logRecord(
-          contains('Checking ${testEnv.environment.engine.outDir.path}'),
-        ),
-        logRecord(
-          contains('Deleted 1 output directories'),
-        ),
+        logRecord(contains('Checking ${testEnv.environment.engine.outDir.path}')),
+        logRecord(contains('Deleted 1 output directories')),
       ]),
     );
   });
@@ -97,21 +67,12 @@ void main() {
     final testEnv = TestEnvironment.withTestEngine(now: () => fakeNow);
     addTearDown(testEnv.cleanup);
 
-    final targetDir = Directory(p.join(
-      testEnv.environment.engine.outDir.path,
-      'host_old',
-    ));
+    final targetDir = Directory(p.join(testEnv.environment.engine.outDir.path, 'host_old'));
     await targetDir.create(recursive: true);
 
-    final runner = ToolCommandRunner(
-      environment: testEnv.environment,
-      configs: {},
-    );
+    final runner = ToolCommandRunner(environment: testEnv.environment, configs: {});
 
-    final result = await runner.run([
-      'cleanup',
-      '--untouched-since=${fakeNow.year + 1}-01-01',
-    ]);
+    final result = await runner.run(['cleanup', '--untouched-since=${fakeNow.year + 1}-01-01']);
     expect(result, 0);
 
     expect(
@@ -123,12 +84,8 @@ void main() {
     expect(
       testEnv.testLogs,
       containsAllInOrder([
-        logRecord(
-          contains('Checking ${testEnv.environment.engine.outDir.path}'),
-        ),
-        logRecord(
-          contains('Deleted 1 output directories'),
-        ),
+        logRecord(contains('Checking ${testEnv.environment.engine.outDir.path}')),
+        logRecord(contains('Deleted 1 output directories')),
       ]),
     );
   });
@@ -137,17 +94,8 @@ void main() {
     final testEnv = TestEnvironment.withTestEngine();
     addTearDown(testEnv.cleanup);
 
-    final runner = ToolCommandRunner(
-      environment: testEnv.environment,
-      configs: {},
-    );
+    final runner = ToolCommandRunner(environment: testEnv.environment, configs: {});
 
-    expect(
-      runner.run([
-        'cleanup',
-        '--untouched-since=02-14-2024',
-      ]),
-      throwsA(isA<FatalError>()),
-    );
+    expect(runner.run(['cleanup', '--untouched-since=02-14-2024']), throwsA(isA<FatalError>()));
   });
 }

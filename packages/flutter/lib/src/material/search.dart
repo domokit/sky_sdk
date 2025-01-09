@@ -76,10 +76,10 @@ Future<T?> showSearch<T>({
 }) {
   delegate.query = query ?? delegate.query;
   delegate._currentBody = _SearchBody.suggestions;
-  return Navigator.of(context, rootNavigator: useRootNavigator).push(_SearchPageRoute<T>(
-    delegate: delegate,
-    maintainState: maintainState
-  ));
+  return Navigator.of(
+    context,
+    rootNavigator: useRootNavigator,
+  ).push(_SearchPageRoute<T>(delegate: delegate, maintainState: maintainState));
 }
 
 /// Delegate for [showSearch] to define the content of the search page.
@@ -261,15 +261,18 @@ abstract class SearchDelegate<T> {
     final ColorScheme colorScheme = theme.colorScheme;
     return theme.copyWith(
       appBarTheme: AppBarTheme(
-        systemOverlayStyle: colorScheme.brightness == Brightness.dark
-          ? SystemUiOverlayStyle.light
-          : SystemUiOverlayStyle.dark,
-        backgroundColor: colorScheme.brightness == Brightness.dark ? Colors.grey[900] : Colors.white,
+        systemOverlayStyle:
+            colorScheme.brightness == Brightness.dark
+                ? SystemUiOverlayStyle.light
+                : SystemUiOverlayStyle.dark,
+        backgroundColor:
+            colorScheme.brightness == Brightness.dark ? Colors.grey[900] : Colors.white,
         iconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
         titleTextStyle: theme.textTheme.titleLarge,
         toolbarTextStyle: theme.textTheme.bodyMedium,
       ),
-      inputDecorationTheme: searchFieldDecorationTheme ??
+      inputDecorationTheme:
+          searchFieldDecorationTheme ??
           InputDecorationTheme(
             hintStyle: searchFieldStyle ?? theme.inputDecorationTheme.hintStyle,
             border: InputBorder.none,
@@ -291,7 +294,9 @@ abstract class SearchDelegate<T> {
   set query(String value) {
     _queryTextController.text = value;
     if (_queryTextController.text.isNotEmpty) {
-      _queryTextController.selection = TextSelection.fromPosition(TextPosition(offset: _queryTextController.text.length));
+      _queryTextController.selection = TextSelection.fromPosition(
+        TextPosition(offset: _queryTextController.text.length),
+      );
     }
   }
 
@@ -429,10 +434,7 @@ enum _SearchBody {
 }
 
 class _SearchPageRoute<T> extends PageRoute<T> {
-  _SearchPageRoute({
-    required this.delegate,
-    required this.maintainState,
-  }) {
+  _SearchPageRoute({required this.delegate, required this.maintainState}) {
     assert(
       delegate._route == null,
       'The ${delegate.runtimeType} instance is currently used by another active '
@@ -463,10 +465,7 @@ class _SearchPageRoute<T> extends PageRoute<T> {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    return FadeTransition(
-      opacity: animation,
-      child: child,
-    );
+    return FadeTransition(opacity: animation, child: child);
   }
 
   @override
@@ -482,10 +481,7 @@ class _SearchPageRoute<T> extends PageRoute<T> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    return _SearchPage<T>(
-      delegate: delegate,
-      animation: animation,
-    );
+    return _SearchPage<T>(delegate: delegate, animation: animation);
   }
 
   @override
@@ -498,10 +494,7 @@ class _SearchPageRoute<T> extends PageRoute<T> {
 }
 
 class _SearchPage<T> extends StatefulWidget {
-  const _SearchPage({
-    required this.delegate,
-    required this.animation,
-  });
+  const _SearchPage({required this.delegate, required this.animation});
 
   final SearchDelegate<T> delegate;
   final Animation<double> animation;
@@ -580,8 +573,8 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterialLocalizations(context));
     final ThemeData theme = widget.delegate.appBarTheme(context);
-    final String searchFieldLabel = widget.delegate.searchFieldLabel
-      ?? MaterialLocalizations.of(context).searchFieldLabel;
+    final String searchFieldLabel =
+        widget.delegate.searchFieldLabel ?? MaterialLocalizations.of(context).searchFieldLabel;
     Widget? body;
     switch (widget.delegate._currentBody) {
       case _SearchBody.suggestions:
@@ -637,10 +630,7 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
             actions: widget.delegate.buildActions(context),
             bottom: widget.delegate.buildBottom(context),
           ),
-          body: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: body,
-          ),
+          body: AnimatedSwitcher(duration: const Duration(milliseconds: 300), child: body),
         ),
       ),
     );

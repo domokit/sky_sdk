@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('The state of the counter can be restored', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.RestorationExampleApp(),
-    );
+    await tester.pumpWidget(const example.RestorationExampleApp());
 
     expect(find.widgetWithText(AppBar, 'Restorable Counter'), findsOne);
     expect(find.text('You have pushed the button this many times:'), findsOne);

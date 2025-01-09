@@ -8,10 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Drawer header does not scroll', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      theme: ThemeData(platform: TargetPlatform.iOS),
-      home: const DrawerDemo(),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: ThemeData(platform: TargetPlatform.iOS), home: const DrawerDemo()),
+    );
 
     await tester.tap(find.text('Tap here to open the drawer'));
     await tester.pump();
@@ -26,6 +25,9 @@ void main() {
 
     expect(tester.getTopLeft(find.byType(UserAccountsDrawerHeader)).dy, 0.0);
     expect(tester.getTopLeft(find.text('Drawer item A')).dy, greaterThan(initialTopItemSaneY));
-    expect(tester.getTopLeft(find.text('Drawer item A')).dy, lessThanOrEqualTo(initialTopItemSaneY + 400.0));
+    expect(
+      tester.getTopLeft(find.text('Drawer item A')).dy,
+      lessThanOrEqualTo(initialTopItemSaneY + 400.0),
+    );
   });
 }

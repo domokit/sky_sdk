@@ -20,7 +20,8 @@ typedef ChildLayouter = Size Function(RenderBox child, BoxConstraints constraint
 ///
 /// [ChildLayoutHelper.getDryBaseline] and [ChildLayoutHelper.getBaseline] adhere
 /// to this signature.
-typedef ChildBaselineGetter = double? Function(RenderBox child, BoxConstraints constraints, TextBaseline baseline);
+typedef ChildBaselineGetter =
+    double? Function(RenderBox child, BoxConstraints constraints, TextBaseline baseline);
 
 /// A collection of static functions to layout a [RenderBox] child with the
 /// given set of [BoxConstraints].
@@ -63,7 +64,11 @@ abstract final class ChildLayoutHelper {
   }
 
   /// Convenience function that calls [RenderBox.getDryBaseline].
-  static double? getDryBaseline(RenderBox child, BoxConstraints constraints, TextBaseline baseline) {
+  static double? getDryBaseline(
+    RenderBox child,
+    BoxConstraints constraints,
+    TextBaseline baseline,
+  ) {
     return child.getDryBaseline(constraints, baseline);
   }
 

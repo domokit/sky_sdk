@@ -63,10 +63,7 @@ final class FakeAdbLogcat {
   /// simple default is used (sequential numbers starting from 1000).
   FakeAdbProcess process({int? processId}) {
     processId ??= 1000 + _processById.length;
-    return _processById.putIfAbsent(
-      processId,
-      () => _createProcess(processId: processId!),
-    );
+    return _processById.putIfAbsent(processId, () => _createProcess(processId: processId!));
   }
 
   FakeAdbProcess _createProcess({required int processId}) {
@@ -78,10 +75,7 @@ final class FakeAdbLogcat {
 ///
 /// See [FakeAdbLogcat.process] for how to create this fixture.
 final class FakeAdbProcess {
-  const FakeAdbProcess._(
-    this._logcat, {
-    required this.processId,
-  });
+  const FakeAdbProcess._(this._logcat, {required this.processId});
 
   final FakeAdbLogcat _logcat;
 

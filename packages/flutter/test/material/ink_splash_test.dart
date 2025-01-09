@@ -7,11 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class Page extends StatefulWidget {
-  const Page({
-    super.key,
-    required this.title,
-    required this.onDispose,
-  });
+  const Page({super.key, required this.title, required this.onDispose});
 
   final String title;
 
@@ -30,47 +26,37 @@ class _PageState extends State<Page> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: FilledButton(
-        onPressed: () {},
-        child: Text(widget.title),
-      ),
-    );
+    return Center(child: FilledButton(onPressed: () {}, child: Text(widget.title)));
   }
 }
 
 void main() {
   // Regression test for https://github.com/flutter/flutter/issues/21506.
   testWidgets('InkSplash receives textDirection', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Button Border Test')),
-        body: Center(
-          child: ElevatedButton(
-            child: const Text('Test'),
-            onPressed: () { },
-          ),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(title: const Text('Button Border Test')),
+          body: Center(child: ElevatedButton(child: const Text('Test'), onPressed: () {})),
         ),
       ),
-    ));
+    );
     await tester.tap(find.text('Test'));
     // start ink animation which asserts for a textDirection.
     await tester.pumpAndSettle(const Duration(milliseconds: 30));
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Material2 - InkWell with NoSplash splashFactory paints nothing', (WidgetTester tester) async {
-    Widget buildFrame({ InteractiveInkFeatureFactory? splashFactory }) {
+  testWidgets('Material2 - InkWell with NoSplash splashFactory paints nothing', (
+    WidgetTester tester,
+  ) async {
+    Widget buildFrame({InteractiveInkFeatureFactory? splashFactory}) {
       return MaterialApp(
         theme: ThemeData(useMaterial3: false),
         home: Scaffold(
           body: Center(
             child: Material(
-              child: InkWell(
-                splashFactory: splashFactory,
-                onTap: () { },
-                child: const Text('test'),
-              ),
+              child: InkWell(splashFactory: splashFactory, onTap: () {}, child: const Text('test')),
             ),
           ),
         ),
@@ -100,17 +86,15 @@ void main() {
     }
   });
 
-  testWidgets('Material3 - InkWell with NoSplash splashFactory paints nothing', (WidgetTester tester) async {
-    Widget buildFrame({ InteractiveInkFeatureFactory? splashFactory }) {
+  testWidgets('Material3 - InkWell with NoSplash splashFactory paints nothing', (
+    WidgetTester tester,
+  ) async {
+    Widget buildFrame({InteractiveInkFeatureFactory? splashFactory}) {
       return MaterialApp(
         home: Scaffold(
           body: Center(
             child: Material(
-              child: InkWell(
-                splashFactory: splashFactory,
-                onTap: () { },
-                child: const Text('test'),
-              ),
+              child: InkWell(splashFactory: splashFactory, onTap: () {}, child: const Text('test')),
             ),
           ),
         ),
@@ -141,26 +125,30 @@ void main() {
   }, skip: kIsWeb && !isSkiaWeb); // https://github.com/flutter/flutter/issues/99933
 
   // Regression test for https://github.com/flutter/flutter/issues/136441.
-  testWidgets('PageView item can dispose when widget with NoSplash.splashFactory is tapped', (WidgetTester tester) async {
+  testWidgets('PageView item can dispose when widget with NoSplash.splashFactory is tapped', (
+    WidgetTester tester,
+  ) async {
     final PageController controller = PageController();
     final List<int> disposedPageIndexes = <int>[];
-    await tester.pumpWidget(MaterialApp(
-      theme: ThemeData(splashFactory: NoSplash.splashFactory),
-      home: Scaffold(
-        body: PageView.builder(
-          controller: controller,
-          itemBuilder: (BuildContext context, int index) {
-            return Page(
-              title: 'Page $index',
-              onDispose: () {
-                disposedPageIndexes.add(index);
-              },
-            );
-          },
-          itemCount: 3,
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(splashFactory: NoSplash.splashFactory),
+        home: Scaffold(
+          body: PageView.builder(
+            controller: controller,
+            itemBuilder: (BuildContext context, int index) {
+              return Page(
+                title: 'Page $index',
+                onDispose: () {
+                  disposedPageIndexes.add(index);
+                },
+              );
+            },
+            itemCount: 3,
+          ),
         ),
       ),
-    ));
+    );
     controller.jumpToPage(1);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Page 1'));

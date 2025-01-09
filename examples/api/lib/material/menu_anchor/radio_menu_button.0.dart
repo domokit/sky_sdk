@@ -21,9 +21,18 @@ class _MyRadioMenuState extends State<MyRadioMenu> {
   Color _backgroundColor = Colors.red;
   late ShortcutRegistryEntry _entry;
 
-  static const SingleActivator _redShortcut = SingleActivator(LogicalKeyboardKey.keyR, control: true);
-  static const SingleActivator _greenShortcut = SingleActivator(LogicalKeyboardKey.keyG, control: true);
-  static const SingleActivator _blueShortcut = SingleActivator(LogicalKeyboardKey.keyB, control: true);
+  static const SingleActivator _redShortcut = SingleActivator(
+    LogicalKeyboardKey.keyR,
+    control: true,
+  );
+  static const SingleActivator _greenShortcut = SingleActivator(
+    LogicalKeyboardKey.keyG,
+    control: true,
+  );
+  static const SingleActivator _blueShortcut = SingleActivator(
+    LogicalKeyboardKey.keyB,
+    control: true,
+  );
 
   @override
   void didChangeDependencies() {
@@ -92,11 +101,7 @@ class _MyRadioMenuState extends State<MyRadioMenu> {
             );
           },
         ),
-        Expanded(
-          child: Container(
-            color: _backgroundColor,
-          ),
-        ),
+        Expanded(child: Container(color: _backgroundColor)),
       ],
     );
   }

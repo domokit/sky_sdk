@@ -19,9 +19,7 @@ class DropdownMenuApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('DropdownMenu Sample')),
-        body: const Center(
-          child: DropdownMenuExample(),
-        ),
+        body: const Center(child: DropdownMenuExample()),
       ),
     );
   }
@@ -52,10 +50,7 @@ class _DropdownMenuExampleState extends State<DropdownMenuExample> {
           tileColor: colorScheme.primaryContainer,
           title: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('enabled: true'),
-              Text('requestFocusOnTap: true'),
-            ],
+            children: <Widget>[Text('enabled: true'), Text('requestFocusOnTap: true')],
           ),
           subtitle: Column(
             children: <Widget>[
@@ -79,10 +74,7 @@ class _DropdownMenuExampleState extends State<DropdownMenuExample> {
           tileColor: colorScheme.primaryContainer,
           title: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('enabled: true'),
-              Text('requestFocusOnTap: false'),
-            ],
+            children: <Widget>[Text('enabled: true'), Text('requestFocusOnTap: false')],
           ),
           subtitle: Column(
             children: <Widget>[
@@ -106,10 +98,7 @@ class _DropdownMenuExampleState extends State<DropdownMenuExample> {
           tileColor: colorScheme.onInverseSurface,
           title: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('enabled: false'),
-              Text('requestFocusOnTap: true'),
-            ],
+            children: <Widget>[Text('enabled: false'), Text('requestFocusOnTap: true')],
           ),
           subtitle: Column(
             children: <Widget>[
@@ -134,10 +123,7 @@ class _DropdownMenuExampleState extends State<DropdownMenuExample> {
           tileColor: colorScheme.onInverseSurface,
           title: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('enabled: false'),
-              Text('requestFocusOnTap: false'),
-            ],
+            children: <Widget>[Text('enabled: false'), Text('requestFocusOnTap: false')],
           ),
           subtitle: Column(
             children: <Widget>[

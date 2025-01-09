@@ -3,14 +3,15 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/expansion_panel/expansion_panel_list.expansion_panel_list_radio.0.dart' as example;
+import 'package:flutter_api_samples/material/expansion_panel/expansion_panel_list.expansion_panel_list_radio.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('ExpansionPanelList.radio can expand one item at the time', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ExpansionPanelListRadioExampleApp(),
-    );
+  testWidgets('ExpansionPanelList.radio can expand one item at the time', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.ExpansionPanelListRadioExampleApp());
 
     expect(find.widgetWithText(AppBar, 'ExpansionPanelList.radio Sample'), findsOne);
     expect(find.byType(ExpansionPanelList), findsOne);

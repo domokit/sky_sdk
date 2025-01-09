@@ -46,11 +46,11 @@ class FlexibleRouteTransitionsApp extends StatelessWidget {
 class _MyRouteInformationParser extends RouteInformationParser<MyPageConfiguration> {
   @override
   SynchronousFuture<MyPageConfiguration> parseRouteInformation(RouteInformation routeInformation) {
-    return SynchronousFuture<MyPageConfiguration>(MyPageConfiguration.values.firstWhere((MyPageConfiguration pageConfiguration) {
-      return pageConfiguration.uriString == routeInformation.uri.toString();
-    },
-      orElse: () => MyPageConfiguration.unknown,
-    ));
+    return SynchronousFuture<MyPageConfiguration>(
+      MyPageConfiguration.values.firstWhere((MyPageConfiguration pageConfiguration) {
+        return pageConfiguration.uriString == routeInformation.uri.toString();
+      }, orElse: () => MyPageConfiguration.unknown),
+    );
   }
 
   @override
@@ -124,37 +124,42 @@ class MyRouterDelegate extends RouterDelegate<MyPageConfiguration> {
       onDidRemovePage: (Page<dynamic> page) {
         _pages.remove(MyPageConfiguration.fromName(page.name!));
       },
-      pages: _pages.map((MyPageConfiguration page) => switch (page) {
-        MyPageConfiguration.unknown => _MyUnknownPage<void>(),
-        MyPageConfiguration.home => _MyHomePage<void>(routerDelegate: this),
-        MyPageConfiguration.zoom => _ZoomPage<void>(routerDelegate: this),
-        MyPageConfiguration.iOS => _IOSPage<void>(routerDelegate: this),
-        MyPageConfiguration.vertical => _VerticalPage<void>(routerDelegate: this),
-      }).toList(),
+      pages:
+          _pages
+              .map(
+                (MyPageConfiguration page) => switch (page) {
+                  MyPageConfiguration.unknown => _MyUnknownPage<void>(),
+                  MyPageConfiguration.home => _MyHomePage<void>(routerDelegate: this),
+                  MyPageConfiguration.zoom => _ZoomPage<void>(routerDelegate: this),
+                  MyPageConfiguration.iOS => _IOSPage<void>(routerDelegate: this),
+                  MyPageConfiguration.vertical => _VerticalPage<void>(routerDelegate: this),
+                },
+              )
+              .toList(),
     );
   }
 }
 
 class _MyUnknownPage<T> extends MaterialPage<T> {
-  _MyUnknownPage() : super(
-    restorationId: 'unknown-page',
-    child: Scaffold(
-      appBar: AppBar(title: const Text('404')),
-      body: const Center(
-        child: Text('404'),
-      ),
-    ),
-  );
+  _MyUnknownPage()
+    : super(
+        restorationId: 'unknown-page',
+        child: Scaffold(
+          appBar: AppBar(title: const Text('404')),
+          body: const Center(child: Text('404')),
+        ),
+      );
 
   @override
   String get name => MyPageConfiguration.unknown.name;
 }
 
 class _MyHomePage<T> extends MaterialPage<T> {
-  _MyHomePage({required this.routerDelegate}) : super(
-    restorationId: 'home-page',
-    child: _MyPageScaffold(title: 'Home', routerDelegate: routerDelegate),
-  );
+  _MyHomePage({required this.routerDelegate})
+    : super(
+        restorationId: 'home-page',
+        child: _MyPageScaffold(title: 'Home', routerDelegate: routerDelegate),
+      );
 
   final MyRouterDelegate routerDelegate;
 
@@ -163,10 +168,11 @@ class _MyHomePage<T> extends MaterialPage<T> {
 }
 
 class _ZoomPage<T> extends MaterialPage<T> {
-  _ZoomPage({required this.routerDelegate}) : super(
-    restorationId: 'zoom-page',
-    child: _MyPageScaffold(title: 'Zoom Route', routerDelegate: routerDelegate),
-  );
+  _ZoomPage({required this.routerDelegate})
+    : super(
+        restorationId: 'zoom-page',
+        child: _MyPageScaffold(title: 'Zoom Route', routerDelegate: routerDelegate),
+      );
 
   final MyRouterDelegate routerDelegate;
 
@@ -175,10 +181,11 @@ class _ZoomPage<T> extends MaterialPage<T> {
 }
 
 class _IOSPage<T> extends CupertinoPage<T> {
-  _IOSPage({required this.routerDelegate}) : super(
-    restorationId: 'ios-page',
-    child: _MyPageScaffold(title: 'Cupertino Route', routerDelegate: routerDelegate),
-  );
+  _IOSPage({required this.routerDelegate})
+    : super(
+        restorationId: 'ios-page',
+        child: _MyPageScaffold(title: 'Cupertino Route', routerDelegate: routerDelegate),
+      );
 
   final MyRouterDelegate routerDelegate;
 
@@ -187,10 +194,11 @@ class _IOSPage<T> extends CupertinoPage<T> {
 }
 
 class _VerticalPage<T> extends _VerticalTransitionPage<T> {
-  _VerticalPage({required this.routerDelegate}) : super(
-    restorationId: 'vertical-page',
-    child: _MyPageScaffold(title: 'Vertical Route', routerDelegate: routerDelegate),
-  );
+  _VerticalPage({required this.routerDelegate})
+    : super(
+        restorationId: 'vertical-page',
+        child: _MyPageScaffold(title: 'Vertical Route', routerDelegate: routerDelegate),
+      );
 
   final MyRouterDelegate routerDelegate;
 
@@ -208,42 +216,41 @@ class _MyPageScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(title),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(title),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextButton(
+              onPressed: () {
+                routerDelegate.onNavigateToVertical();
+              },
+              child: const Text('Crazy Vertical Transition'),
+            ),
+            TextButton(
+              onPressed: () {
+                routerDelegate.onNavigateToZoom();
+              },
+              child: const Text('Zoom Transition'),
+            ),
+            TextButton(
+              onPressed: () {
+                routerDelegate.onNavigateToIOS();
+              },
+              child: const Text('Cupertino Transition'),
+            ),
+          ],
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextButton(
-                onPressed: () {
-                  routerDelegate.onNavigateToVertical();
-                },
-                child: const Text('Crazy Vertical Transition'),
-              ),
-              TextButton(
-                onPressed: () {
-                  routerDelegate.onNavigateToZoom();
-                },
-                child: const Text('Zoom Transition'),
-              ),
-              TextButton(
-                onPressed: () {
-                  routerDelegate.onNavigateToIOS();
-                },
-                child: const Text('Cupertino Transition'),
-              ),
-            ],
-          ),
-        ),
+      ),
     );
   }
 }
 
 // A Page that applies a _VerticalPageTransition.
 class _VerticalTransitionPage<T> extends Page<T> {
-
   const _VerticalTransitionPage({
     required this.child,
     this.maintainState = true,
@@ -272,10 +279,8 @@ class _VerticalTransitionPage<T> extends Page<T> {
 }
 
 class _PageBasedVerticalPageRoute<T> extends PageRoute<T> {
-  _PageBasedVerticalPageRoute({
-    required _VerticalTransitionPage<T> page,
-    super.allowSnapshotting,
-  }) : super(settings: page);
+  _PageBasedVerticalPageRoute({required _VerticalTransitionPage<T> page, super.allowSnapshotting})
+    : super(settings: page);
 
   _VerticalTransitionPage<T> get _page => settings as _VerticalTransitionPage<T>;
 
@@ -289,7 +294,8 @@ class _PageBasedVerticalPageRoute<T> extends PageRoute<T> {
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 
   @override
-  DelegatedTransitionBuilder? get delegatedTransition => _VerticalPageTransition._delegatedTransitionBuilder;
+  DelegatedTransitionBuilder? get delegatedTransition =>
+      _VerticalPageTransition._delegatedTransitionBuilder;
 
   @override
   Color? get barrierColor => const Color(0x00000000);
@@ -307,12 +313,21 @@ class _PageBasedVerticalPageRoute<T> extends PageRoute<T> {
   Duration get transitionDuration => const Duration(milliseconds: 2000);
 
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
     return _page.child;
   }
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return _VerticalPageTransition(
       primaryRouteAnimation: animation,
       secondaryRouteAnimation: secondaryAnimation,
@@ -328,19 +343,16 @@ class _VerticalPageTransition extends StatelessWidget {
     required Animation<double> primaryRouteAnimation,
     required this.secondaryRouteAnimation,
     required this.child,
-  }) : _primaryPositionAnimation =
-        CurvedAnimation(
-              parent: primaryRouteAnimation,
-              curve: _curve,
-              reverseCurve: _curve,
-            ).drive(_kBottomUpTween),
-      _secondaryPositionAnimation =
-        CurvedAnimation(
-              parent: secondaryRouteAnimation,
-              curve: _curve,
-              reverseCurve: _curve,
-            )
-        .drive(_kTopDownTween);
+  }) : _primaryPositionAnimation = CurvedAnimation(
+         parent: primaryRouteAnimation,
+         curve: _curve,
+         reverseCurve: _curve,
+       ).drive(_kBottomUpTween),
+       _secondaryPositionAnimation = CurvedAnimation(
+         parent: secondaryRouteAnimation,
+         curve: _curve,
+         reverseCurve: _curve,
+       ).drive(_kTopDownTween);
 
   final Animation<Offset> _primaryPositionAnimation;
 
@@ -370,17 +382,14 @@ class _VerticalPageTransition extends StatelessWidget {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
     bool allowSnapshotting,
-    Widget? child
+    Widget? child,
   ) {
     final Animatable<Offset> tween = Tween<Offset>(
       begin: Offset.zero,
       end: const Offset(0.0, -1.0),
     ).chain(CurveTween(curve: _curve));
 
-    return SlideTransition(
-      position: secondaryAnimation.drive(tween),
-      child: child,
-    );
+    return SlideTransition(position: secondaryAnimation.drive(tween), child: child);
   }
 
   @override
@@ -391,13 +400,13 @@ class _VerticalPageTransition extends StatelessWidget {
       position: _secondaryPositionAnimation,
       textDirection: textDirection,
       transformHitTests: false,
-      child:  SlideTransition(
+      child: SlideTransition(
         position: _primaryPositionAnimation,
         textDirection: textDirection,
         child: ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
           child: child,
-        )
+        ),
       ),
     );
   }
@@ -410,9 +419,7 @@ enum MyPageConfiguration {
   vertical(uriString: '/vertical'),
   unknown(uriString: '/404');
 
-  const MyPageConfiguration({
-    required this.uriString,
-  });
+  const MyPageConfiguration({required this.uriString});
 
   final String uriString;
 

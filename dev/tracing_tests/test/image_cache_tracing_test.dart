@@ -16,66 +16,42 @@ void main() {
   test('Image cache tracing', () async {
     final TestImageStreamCompleter completer1 = TestImageStreamCompleter();
     final TestImageStreamCompleter completer2 = TestImageStreamCompleter();
-    PaintingBinding.instance.imageCache.putIfAbsent(
-      'Test',
-      () => completer1,
-    );
+    PaintingBinding.instance.imageCache.putIfAbsent('Test', () => completer1);
     PaintingBinding.instance.imageCache.clear();
 
     completer2.testSetImage(ImageInfo(image: await createTestImage()));
-    PaintingBinding.instance.imageCache.putIfAbsent(
-      'Test2',
-      () => completer2,
-    );
+    PaintingBinding.instance.imageCache.putIfAbsent('Test2', () => completer2);
     PaintingBinding.instance.imageCache.evict('Test2');
 
-    _expectTimelineEvents(
-      await fetchTimelineEvents(),
-      <Map<String, dynamic>>[
-        <String, dynamic>{
-          'name': 'ImageCache.putIfAbsent',
-          'args': <String, dynamic>{
-            'key': 'Test',
-            'isolateId': isolateId,
-            'parentId': null,
-          },
+    _expectTimelineEvents(await fetchTimelineEvents(), <Map<String, dynamic>>[
+      <String, dynamic>{
+        'name': 'ImageCache.putIfAbsent',
+        'args': <String, dynamic>{'key': 'Test', 'isolateId': isolateId, 'parentId': null},
+      },
+      <String, dynamic>{
+        'name': 'listener',
+        'args': <String, dynamic>{'isolateId': isolateId, 'parentId': null},
+      },
+      <String, dynamic>{
+        'name': 'ImageCache.clear',
+        'args': <String, dynamic>{
+          'pendingImages': 1,
+          'keepAliveImages': 0,
+          'liveImages': 1,
+          'currentSizeInBytes': 0,
+          'isolateId': isolateId,
+          'parentId': null,
         },
-        <String, dynamic>{
-          'name': 'listener',
-          'args': <String, dynamic>{
-            'isolateId': isolateId,
-            'parentId': null,
-          },
-        },
-        <String, dynamic>{
-          'name': 'ImageCache.clear',
-          'args': <String, dynamic>{
-            'pendingImages': 1,
-            'keepAliveImages': 0,
-            'liveImages': 1,
-            'currentSizeInBytes': 0,
-            'isolateId': isolateId,
-            'parentId': null,
-          },
-        },
-        <String, dynamic>{
-          'name': 'ImageCache.putIfAbsent',
-          'args': <String, dynamic>{
-            'key': 'Test2',
-            'isolateId': isolateId,
-            'parentId': null,
-          },
-        },
-        <String, dynamic>{
-          'name': 'ImageCache.evict',
-          'args': <String, dynamic>{
-            'sizeInBytes': 4,
-            'isolateId': isolateId,
-            'parentId': null,
-          },
-        },
-      ],
-    );
+      },
+      <String, dynamic>{
+        'name': 'ImageCache.putIfAbsent',
+        'args': <String, dynamic>{'key': 'Test2', 'isolateId': isolateId, 'parentId': null},
+      },
+      <String, dynamic>{
+        'name': 'ImageCache.evict',
+        'args': <String, dynamic>{'sizeInBytes': 4, 'isolateId': isolateId, 'parentId': null},
+      },
+    ]);
   }, skip: isBrowser); // [intended] uses dart:isolate and io.
 }
 

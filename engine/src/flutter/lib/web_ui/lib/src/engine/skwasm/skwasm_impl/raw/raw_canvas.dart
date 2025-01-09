@@ -16,13 +16,10 @@ typedef CanvasHandle = Pointer<RawCanvas>;
 @Native<Void Function(CanvasHandle)>(symbol: 'canvas_save', isLeaf: true)
 external void canvasSave(CanvasHandle canvas);
 
-@Native<Void Function(
-  CanvasHandle,
-  RawRect,
-  PaintHandle,
-  ImageFilterHandle,
-  Int
-)>(symbol: 'canvas_saveLayer', isLeaf: true)
+@Native<Void Function(CanvasHandle, RawRect, PaintHandle, ImageFilterHandle, Int)>(
+  symbol: 'canvas_saveLayer',
+  isLeaf: true,
+)
 external void canvasSaveLayer(
   CanvasHandle canvas,
   RawRect rect,
@@ -34,113 +31,116 @@ external void canvasSaveLayer(
 @Native<Void Function(CanvasHandle)>(symbol: 'canvas_restore', isLeaf: true)
 external void canvasRestore(CanvasHandle canvas);
 
-@Native<Void Function(CanvasHandle, Int)>(
-    symbol: 'canvas_restoreToCount', isLeaf: true)
+@Native<Void Function(CanvasHandle, Int)>(symbol: 'canvas_restoreToCount', isLeaf: true)
 external void canvasRestoreToCount(CanvasHandle canvas, int count);
 
 @Native<Int Function(CanvasHandle)>(symbol: 'canvas_getSaveCount', isLeaf: true)
 external int canvasGetSaveCount(CanvasHandle canvas);
 
-@Native<Void Function(CanvasHandle, Float, Float)>(
-    symbol: 'canvas_translate', isLeaf: true)
+@Native<Void Function(CanvasHandle, Float, Float)>(symbol: 'canvas_translate', isLeaf: true)
 external void canvasTranslate(CanvasHandle canvas, double dx, double dy);
 
-@Native<Void Function(CanvasHandle, Float, Float)>(
-    symbol: 'canvas_scale', isLeaf: true)
+@Native<Void Function(CanvasHandle, Float, Float)>(symbol: 'canvas_scale', isLeaf: true)
 external void canvasScale(CanvasHandle canvas, double sx, double sy);
 
-@Native<Void Function(CanvasHandle, Float)>(
-    symbol: 'canvas_rotate', isLeaf: true)
+@Native<Void Function(CanvasHandle, Float)>(symbol: 'canvas_rotate', isLeaf: true)
 external void canvasRotate(CanvasHandle canvas, double degrees);
 
-@Native<Void Function(CanvasHandle, Float, Float)>(
-    symbol: 'canvas_skew', isLeaf: true)
+@Native<Void Function(CanvasHandle, Float, Float)>(symbol: 'canvas_skew', isLeaf: true)
 external void canvasSkew(CanvasHandle canvas, double sx, double sy);
 
-@Native<Void Function(CanvasHandle, RawMatrix44)>(
-    symbol: 'canvas_transform', isLeaf: true)
+@Native<Void Function(CanvasHandle, RawMatrix44)>(symbol: 'canvas_transform', isLeaf: true)
 external void canvasTransform(CanvasHandle canvas, RawMatrix44 matrix);
 
-@Native<Void Function(CanvasHandle, RawRect, Int, Bool)>(
-    symbol: 'canvas_clipRect', isLeaf: true)
-external void canvasClipRect(
-    CanvasHandle canvas, RawRect rect, int op, bool antialias);
+@Native<Void Function(CanvasHandle, RawRect, Int, Bool)>(symbol: 'canvas_clipRect', isLeaf: true)
+external void canvasClipRect(CanvasHandle canvas, RawRect rect, int op, bool antialias);
 
-@Native<Void Function(CanvasHandle, RawRRect, Bool)>(
-    symbol: 'canvas_clipRRect', isLeaf: true)
-external void canvasClipRRect(
-    CanvasHandle canvas, RawRRect rrect, bool antialias);
+@Native<Void Function(CanvasHandle, RawRRect, Bool)>(symbol: 'canvas_clipRRect', isLeaf: true)
+external void canvasClipRRect(CanvasHandle canvas, RawRRect rrect, bool antialias);
 
-@Native<Void Function(CanvasHandle, PathHandle, Bool)>(
-    symbol: 'canvas_clipPath', isLeaf: true)
-external void canvasClipPath(
-    CanvasHandle canvas, PathHandle path, bool antialias);
+@Native<Void Function(CanvasHandle, PathHandle, Bool)>(symbol: 'canvas_clipPath', isLeaf: true)
+external void canvasClipPath(CanvasHandle canvas, PathHandle path, bool antialias);
 
-@Native<Void Function(CanvasHandle, Int32, Int)>(
-    symbol: 'canvas_drawColor', isLeaf: true)
+@Native<Void Function(CanvasHandle, Int32, Int)>(symbol: 'canvas_drawColor', isLeaf: true)
 external void canvasDrawColor(CanvasHandle canvas, int color, int blendMode);
 
 @Native<Void Function(CanvasHandle, Float, Float, Float, Float, PaintHandle)>(
-    symbol: 'canvas_drawLine', isLeaf: true)
-external void canvasDrawLine(CanvasHandle canvas, double x1, double y1,
-    double x2, double y2, PaintHandle paint);
+  symbol: 'canvas_drawLine',
+  isLeaf: true,
+)
+external void canvasDrawLine(
+  CanvasHandle canvas,
+  double x1,
+  double y1,
+  double x2,
+  double y2,
+  PaintHandle paint,
+);
 
-@Native<Void Function(CanvasHandle, PaintHandle)>(
-    symbol: 'canvas_drawPaint', isLeaf: true)
+@Native<Void Function(CanvasHandle, PaintHandle)>(symbol: 'canvas_drawPaint', isLeaf: true)
 external void canvasDrawPaint(CanvasHandle canvas, PaintHandle paint);
 
-@Native<Void Function(CanvasHandle, RawRect, PaintHandle)>(
-    symbol: 'canvas_drawRect', isLeaf: true)
-external void canvasDrawRect(
-    CanvasHandle canvas, RawRect rect, PaintHandle paint);
+@Native<Void Function(CanvasHandle, RawRect, PaintHandle)>(symbol: 'canvas_drawRect', isLeaf: true)
+external void canvasDrawRect(CanvasHandle canvas, RawRect rect, PaintHandle paint);
 
 @Native<Void Function(CanvasHandle, RawRRect, PaintHandle)>(
-    symbol: 'canvas_drawRRect', isLeaf: true)
-external void canvasDrawRRect(
-    CanvasHandle canvas, RawRRect rrect, PaintHandle paint);
+  symbol: 'canvas_drawRRect',
+  isLeaf: true,
+)
+external void canvasDrawRRect(CanvasHandle canvas, RawRRect rrect, PaintHandle paint);
 
 @Native<Void Function(CanvasHandle, RawRRect, RawRRect, PaintHandle)>(
-    symbol: 'canvas_drawDRRect', isLeaf: true)
+  symbol: 'canvas_drawDRRect',
+  isLeaf: true,
+)
 external void canvasDrawDRRect(
-    CanvasHandle canvas, RawRRect outer, RawRRect inner, PaintHandle paint);
+  CanvasHandle canvas,
+  RawRRect outer,
+  RawRRect inner,
+  PaintHandle paint,
+);
 
-@Native<Void Function(CanvasHandle, RawRect, PaintHandle)>(
-    symbol: 'canvas_drawOval', isLeaf: true)
-external void canvasDrawOval(
-    CanvasHandle canvas, RawRect oval, PaintHandle paint);
+@Native<Void Function(CanvasHandle, RawRect, PaintHandle)>(symbol: 'canvas_drawOval', isLeaf: true)
+external void canvasDrawOval(CanvasHandle canvas, RawRect oval, PaintHandle paint);
 
 @Native<Void Function(CanvasHandle, Float, Float, Float, PaintHandle)>(
-    symbol: 'canvas_drawCircle', isLeaf: true)
+  symbol: 'canvas_drawCircle',
+  isLeaf: true,
+)
 external void canvasDrawCircle(
-    CanvasHandle canvas, double x, double y, double radius, PaintHandle paint);
+  CanvasHandle canvas,
+  double x,
+  double y,
+  double radius,
+  PaintHandle paint,
+);
 
 @Native<Void Function(CanvasHandle, RawRect, Float, Float, Bool, PaintHandle)>(
-    symbol: 'canvas_drawArc', isLeaf: true)
+  symbol: 'canvas_drawArc',
+  isLeaf: true,
+)
 external void canvasDrawArc(
-    CanvasHandle canvas,
-    RawRect rect,
-    double startAngleDegrees,
-    double sweepAngleDegrees,
-    bool useCenter,
-    PaintHandle paint);
+  CanvasHandle canvas,
+  RawRect rect,
+  double startAngleDegrees,
+  double sweepAngleDegrees,
+  bool useCenter,
+  PaintHandle paint,
+);
 
 @Native<Void Function(CanvasHandle, PathHandle, PaintHandle)>(
-    symbol: 'canvas_drawPath', isLeaf: true)
-external void canvasDrawPath(
-    CanvasHandle canvas, PathHandle path, PaintHandle paint);
+  symbol: 'canvas_drawPath',
+  isLeaf: true,
+)
+external void canvasDrawPath(CanvasHandle canvas, PathHandle path, PaintHandle paint);
 
-@Native<Void Function(CanvasHandle, PictureHandle)>(
-    symbol: 'canvas_drawPicture', isLeaf: true)
+@Native<Void Function(CanvasHandle, PictureHandle)>(symbol: 'canvas_drawPicture', isLeaf: true)
 external void canvasDrawPicture(CanvasHandle canvas, PictureHandle picture);
 
-@Native<Void Function(
-  CanvasHandle,
-  ImageHandle,
-  Float,
-  Float,
-  PaintHandle,
-  Int
-)>(symbol: 'canvas_drawImage', isLeaf: true)
+@Native<Void Function(CanvasHandle, ImageHandle, Float, Float, PaintHandle, Int)>(
+  symbol: 'canvas_drawImage',
+  isLeaf: true,
+)
 external void canvasDrawImage(
   CanvasHandle handle,
   ImageHandle image,
@@ -150,14 +150,10 @@ external void canvasDrawImage(
   int filterQuality,
 );
 
-@Native<Void Function(
-  CanvasHandle,
-  ImageHandle,
-  Pointer<Float>,
-  Pointer<Float>,
-  PaintHandle,
-  Int,
-)>(symbol: 'canvas_drawImageRect', isLeaf: true)
+@Native<Void Function(CanvasHandle, ImageHandle, Pointer<Float>, Pointer<Float>, PaintHandle, Int)>(
+  symbol: 'canvas_drawImageRect',
+  isLeaf: true,
+)
 external void canvasDrawImageRect(
   CanvasHandle handle,
   ImageHandle image,
@@ -167,14 +163,10 @@ external void canvasDrawImageRect(
   int filterQuality,
 );
 
-@Native<Void Function(
-  CanvasHandle,
-  ImageHandle,
-  Pointer<Int32>,
-  Pointer<Float>,
-  PaintHandle,
-  Int,
-)>(symbol: 'canvas_drawImageNine', isLeaf: true)
+@Native<Void Function(CanvasHandle, ImageHandle, Pointer<Int32>, Pointer<Float>, PaintHandle, Int)>(
+  symbol: 'canvas_drawImageNine',
+  isLeaf: true,
+)
 external void canvasDrawImageNine(
   CanvasHandle handle,
   ImageHandle image,
@@ -185,7 +177,9 @@ external void canvasDrawImageNine(
 );
 
 @Native<Void Function(CanvasHandle, PathHandle, Float, Float, Int32, Bool)>(
-    symbol: 'canvas_drawShadow', isLeaf: true)
+  symbol: 'canvas_drawShadow',
+  isLeaf: true,
+)
 external void canvasDrawShadow(
   CanvasHandle canvas,
   PathHandle path,
@@ -195,12 +189,10 @@ external void canvasDrawShadow(
   bool transparentOccluder,
 );
 
-@Native<Void Function(
-  CanvasHandle,
-  ParagraphHandle,
-  Float,
-  Float,
-)>(symbol: 'canvas_drawParagraph', isLeaf: true)
+@Native<Void Function(CanvasHandle, ParagraphHandle, Float, Float)>(
+  symbol: 'canvas_drawParagraph',
+  isLeaf: true,
+)
 external void canvasDrawParagraph(
   CanvasHandle handle,
   ParagraphHandle paragraphHandle,
@@ -208,12 +200,10 @@ external void canvasDrawParagraph(
   double y,
 );
 
-@Native<Void Function(
-  CanvasHandle,
-  VerticesHandle,
-  Int,
-  PaintHandle,
-)>(symbol: 'canvas_drawVertices', isLeaf: true)
+@Native<Void Function(CanvasHandle, VerticesHandle, Int, PaintHandle)>(
+  symbol: 'canvas_drawVertices',
+  isLeaf: true,
+)
 external void canvasDrawVertices(
   CanvasHandle handle,
   VerticesHandle vertices,
@@ -221,13 +211,10 @@ external void canvasDrawVertices(
   PaintHandle paint,
 );
 
-@Native<Void Function(
-  CanvasHandle,
-  Int,
-  RawPointArray,
-  Int,
-  PaintHandle,
-)>(symbol: 'canvas_drawPoints', isLeaf: true)
+@Native<Void Function(CanvasHandle, Int, RawPointArray, Int, PaintHandle)>(
+  symbol: 'canvas_drawPoints',
+  isLeaf: true,
+)
 external void canvasDrawPoints(
   CanvasHandle handle,
   int pointMode,
@@ -236,17 +223,19 @@ external void canvasDrawPoints(
   PaintHandle paint,
 );
 
-@Native<Void Function(
-  CanvasHandle,
-  ImageHandle,
-  RawRSTransformArray,
-  RawRect,
-  RawColorArray,
-  Int,
-  Int,
-  RawRect,
-  PaintHandle,
-)>(symbol: 'canvas_drawAtlas', isLeaf: true)
+@Native<
+  Void Function(
+    CanvasHandle,
+    ImageHandle,
+    RawRSTransformArray,
+    RawRect,
+    RawColorArray,
+    Int,
+    Int,
+    RawRect,
+    PaintHandle,
+  )
+>(symbol: 'canvas_drawAtlas', isLeaf: true)
 external void canvasDrawAtlas(
   CanvasHandle handle,
   ImageHandle atlas,
@@ -259,14 +248,11 @@ external void canvasDrawAtlas(
   PaintHandle paint,
 );
 
-@Native<Void Function(CanvasHandle, RawMatrix44)>(
-    symbol: 'canvas_getTransform', isLeaf: true)
+@Native<Void Function(CanvasHandle, RawMatrix44)>(symbol: 'canvas_getTransform', isLeaf: true)
 external void canvasGetTransform(CanvasHandle canvas, RawMatrix44 outMatrix);
 
-@Native<Void Function(CanvasHandle, RawRect)>(
-    symbol: 'canvas_getLocalClipBounds', isLeaf: true)
+@Native<Void Function(CanvasHandle, RawRect)>(symbol: 'canvas_getLocalClipBounds', isLeaf: true)
 external void canvasGetLocalClipBounds(CanvasHandle canvas, RawRect outRect);
 
-@Native<Void Function(CanvasHandle, RawIRect)>(
-    symbol: 'canvas_getDeviceClipBounds', isLeaf: true)
+@Native<Void Function(CanvasHandle, RawIRect)>(symbol: 'canvas_getDeviceClipBounds', isLeaf: true)
 external void canvasGetDeviceClipBounds(CanvasHandle canvas, RawIRect outRect);

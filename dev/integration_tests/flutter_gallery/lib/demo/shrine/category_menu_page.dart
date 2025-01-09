@@ -10,10 +10,7 @@ import 'model/app_state_model.dart';
 import 'model/product.dart';
 
 class CategoryMenuPage extends StatelessWidget {
-  const CategoryMenuPage({
-    super.key,
-    this.onCategoryTap,
-  });
+  const CategoryMenuPage({super.key, this.onCategoryTap});
 
   final VoidCallback? onCategoryTap;
 
@@ -21,39 +18,36 @@ class CategoryMenuPage extends StatelessWidget {
     final String categoryString = category.toString().replaceAll('Category.', '').toUpperCase();
     final ThemeData theme = Theme.of(context);
     return ScopedModelDescendant<AppStateModel>(
-      builder: (BuildContext context, Widget? child, AppStateModel model) =>
-          GestureDetector(
+      builder:
+          (BuildContext context, Widget? child, AppStateModel model) => GestureDetector(
             onTap: () {
               model.setCategory(category);
               onCategoryTap?.call();
             },
-            child: model.selectedCategory == category
-              ? Column(
-                  children: <Widget>[
-                    const SizedBox(height: 16.0),
-                    Text(
-                      categoryString,
-                      style: theme.textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
+            child:
+                model.selectedCategory == category
+                    ? Column(
+                      children: <Widget>[
+                        const SizedBox(height: 16.0),
+                        Text(
+                          categoryString,
+                          style: theme.textTheme.bodyLarge,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 14.0),
+                        Container(width: 70.0, height: 2.0, color: kShrinePink400),
+                      ],
+                    )
+                    : Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: Text(
+                        categoryString,
+                        style: theme.textTheme.bodyLarge!.copyWith(
+                          color: kShrineBrown900.withAlpha(153),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                    const SizedBox(height: 14.0),
-                    Container(
-                      width: 70.0,
-                      height: 2.0,
-                      color: kShrinePink400,
-                    ),
-                  ],
-                )
-              : Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Text(
-                    categoryString,
-                    style: theme.textTheme.bodyLarge!.copyWith(
-                      color: kShrineBrown900.withAlpha(153)
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
           ),
     );
   }

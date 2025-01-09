@@ -65,17 +65,23 @@ void testMain() {
     group('registerFactory', () {
       test('does NOT re-register factories', () async {
         contentManager.registerFactory(
-            viewType, (int id) => createDomHTMLDivElement()..id = 'pass');
+          viewType,
+          (int id) => createDomHTMLDivElement()..id = 'pass',
+        );
         // this should be rejected
         contentManager.registerFactory(
-            viewType, (int id) => createDomHTMLSpanElement()..id = 'fail');
+          viewType,
+          (int id) => createDomHTMLSpanElement()..id = 'fail',
+        );
 
-        final DomElement contents =
-            contentManager.renderContent(viewType, viewId, null);
+        final DomElement contents = contentManager.renderContent(viewType, viewId, null);
 
         expect(contents.querySelector('#pass'), isNotNull);
-        expect(contents.querySelector('#fail'), isNull,
-            reason: 'Factories cannot be overridden once registered');
+        expect(
+          contents.querySelector('#fail'),
+          isNull,
+          reason: 'Factories cannot be overridden once registered',
+        );
       });
     });
 
@@ -99,17 +105,18 @@ void testMain() {
       test('refuse to render views for unregistered factories', () async {
         expect(
           () => contentManager.renderContent(unregisteredViewType, viewId, null),
-          throwsA(const TypeMatcher<AssertionError>().having(
-            (AssertionError error) => error.message,
-            'assertion message',
-            contains(unregisteredViewType),
-          )),
+          throwsA(
+            const TypeMatcher<AssertionError>().having(
+              (AssertionError error) => error.message,
+              'assertion message',
+              contains(unregisteredViewType),
+            ),
+          ),
         );
       });
 
       test('rendered markup contains required attributes', () async {
-        final DomElement content =
-            contentManager.renderContent(viewType, viewId, null);
+        final DomElement content = contentManager.renderContent(viewType, viewId, null);
         expect(content.getAttribute('slot'), getPlatformViewSlotName(viewId));
         expect(content.getAttribute('id'), getPlatformViewDomId(viewId));
 
@@ -119,30 +126,31 @@ void testMain() {
       });
 
       test('slot property has the same value as createPlatformViewSlot', () async {
-        final DomElement content =
-            contentManager.renderContent(viewType, viewId, null);
+        final DomElement content = contentManager.renderContent(viewType, viewId, null);
         final DomElement slot = createPlatformViewSlot(viewId);
         final DomElement innerSlot = slot.querySelector('slot')!;
 
-        expect(content.getAttribute('slot'), innerSlot.getAttribute('name'),
-            reason:
-                'The slot attribute of the rendered content must match the name attribute of the SLOT of a given viewId');
+        expect(
+          content.getAttribute('slot'),
+          innerSlot.getAttribute('name'),
+          reason:
+              'The slot attribute of the rendered content must match the name attribute of the SLOT of a given viewId',
+        );
       });
 
-      test('do not modify style.height / style.width if passed by the user (anotherViewType)',
-          () async {
-        final DomElement content =
-            contentManager.renderContent(anotherViewType, viewId, null);
-        final DomElement userContent = content.querySelector('div')!;
-        expect(userContent.style.height, 'auto');
-        expect(userContent.style.width, '55%');
-      });
+      test(
+        'do not modify style.height / style.width if passed by the user (anotherViewType)',
+        () async {
+          final DomElement content = contentManager.renderContent(anotherViewType, viewId, null);
+          final DomElement userContent = content.querySelector('div')!;
+          expect(userContent.style.height, 'auto');
+          expect(userContent.style.width, '55%');
+        },
+      );
 
       test('returns cached instances of already-rendered content', () async {
-        final DomElement firstRender =
-            contentManager.renderContent(viewType, viewId, null);
-        final DomElement anotherRender =
-            contentManager.renderContent(viewType, viewId, null);
+        final DomElement firstRender = contentManager.renderContent(viewType, viewId, null);
+        final DomElement anotherRender = contentManager.renderContent(viewType, viewId, null);
 
         expect(firstRender, same(anotherRender));
       });
@@ -212,10 +220,7 @@ void testMain() {
         viewId,
         <dynamic, dynamic>{'tagName': 'table'},
       );
-      expect(
-        contentManager.getViewById(viewId),
-        content0.querySelector('table'),
-      );
+      expect(contentManager.getViewById(viewId), content0.querySelector('table'));
       expect(contentManager.isVisible(viewId), isTrue);
       expect(contentManager.isInvisible(viewId), isFalse);
 
@@ -224,10 +229,7 @@ void testMain() {
         viewId + 1,
         <dynamic, dynamic>{'tagName': 'script'},
       );
-      expect(
-        contentManager.getViewById(viewId + 1),
-        content1.querySelector('script'),
-      );
+      expect(contentManager.getViewById(viewId + 1), content1.querySelector('script'));
       expect(contentManager.isVisible(viewId + 1), isFalse);
       expect(contentManager.isInvisible(viewId + 1), isTrue);
 
@@ -236,10 +238,7 @@ void testMain() {
         viewId + 2,
         <dynamic, dynamic>{'tagName': 'p'},
       );
-      expect(
-        contentManager.getViewById(viewId + 2),
-        content2.querySelector('p'),
-      );
+      expect(contentManager.getViewById(viewId + 2), content2.querySelector('p'));
       expect(contentManager.isVisible(viewId + 2), isTrue);
       expect(contentManager.isInvisible(viewId + 2), isFalse);
     });

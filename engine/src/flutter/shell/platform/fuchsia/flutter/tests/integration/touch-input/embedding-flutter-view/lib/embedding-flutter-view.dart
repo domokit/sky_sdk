@@ -18,9 +18,10 @@ void main(List<String> args) async {
   print('Launching embedding-flutter-view');
 
   args = args + _GetArgsFromConfigFile();
-  final parser = ArgParser()
-    ..addFlag('showOverlay', defaultsTo: false)
-    ..addFlag('focusable', defaultsTo: true);
+  final parser =
+      ArgParser()
+        ..addFlag('showOverlay', defaultsTo: false)
+        ..addFlag('focusable', defaultsTo: true);
 
   final arguments = parser.parse(args);
   for (final option in arguments.options) {
@@ -46,29 +47,25 @@ class TestApp {
 
   Color _backgroundColor = _blue;
 
-  TestApp(
-    this.childView,
-    {this.showOverlay = false,
-    this.focusable = true}) {
-  }
+  TestApp(this.childView, {this.showOverlay = false, this.focusable = true}) {}
 
   void run() {
     childView.create(focusable, (ByteData? reply) {
-        // Set up window callbacks.
-        window.onPointerDataPacket = (PointerDataPacket packet) {
-          this.pointerDataPacket(packet);
-        };
-        window.onMetricsChanged = () {
-          window.scheduleFrame();
-        };
-        window.onBeginFrame = (Duration duration) {
-          this.beginFrame(duration);
-        };
-
-        // The child view should be attached to Scenic now.
-        // Ready to build the scene.
+      // Set up window callbacks.
+      window.onPointerDataPacket = (PointerDataPacket packet) {
+        this.pointerDataPacket(packet);
+      };
+      window.onMetricsChanged = () {
         window.scheduleFrame();
-      });
+      };
+      window.onBeginFrame = (Duration duration) {
+        this.beginFrame(duration);
+      };
+
+      // The child view should be attached to Scenic now.
+      // Ready to build the scene.
+      window.scheduleFrame();
+    });
   }
 
   void beginFrame(Duration duration) {
@@ -86,9 +83,10 @@ class TestApp {
     canvas.drawRect(windowBounds, paint);
     final picture = recorder.endRecording();
     // Build the scene
-    final sceneBuilder = SceneBuilder()
-      ..pushClipRect(physicalBounds)
-      ..addPicture(Offset.zero, picture);
+    final sceneBuilder =
+        SceneBuilder()
+          ..pushClipRect(physicalBounds)
+          ..addPicture(Offset.zero, picture);
 
     final childPhysicalSize = window.physicalSize * 0.25;
     // Alignment.center
@@ -98,12 +96,17 @@ class TestApp {
 
     sceneBuilder
       ..pushTransform(
-        vector_math_64.Matrix4.translationValues(childPhysicalOffset.dx,
-                                                 childPhysicalOffset.dy,
-                                                 0.0).storage)
-      ..addPlatformView(childView.viewId,
-                        width: childPhysicalSize.width,
-                        height: childPhysicalSize.height)
+        vector_math_64.Matrix4.translationValues(
+          childPhysicalOffset.dx,
+          childPhysicalOffset.dy,
+          0.0,
+        ).storage,
+      )
+      ..addPlatformView(
+        childView.viewId,
+        width: childPhysicalSize.width,
+        height: childPhysicalSize.height,
+      )
       ..pop();
 
     if (showOverlay) {
@@ -115,7 +118,8 @@ class TestApp {
       // Alignment.topRight
       final overlayOffset = Offset(
         containerOffset.dx + containerSize.width - overlaySize.width,
-        containerOffset.dy);
+        containerOffset.dy,
+      );
       final overlayPhysicalSize = overlaySize * pixelRatio;
       final overlayPhysicalOffset = overlayOffset * pixelRatio;
       final overlayPhysicalBounds = overlayPhysicalOffset & overlayPhysicalSize;
@@ -150,26 +154,32 @@ class TestApp {
       }
 
       if (data.change == PointerChange.down || data.change == PointerChange.move) {
-        _reportTouchInput(
-          localX: data.physicalX,
-          localY: data.physicalY,
-          timeReceived: nowNanos,
-        );
+        _reportTouchInput(localX: data.physicalX, localY: data.physicalY, timeReceived: nowNanos);
       }
     }
 
     window.scheduleFrame();
   }
 
-  void _reportTouchInput({required double localX, required double localY, required int timeReceived}) {
+  void _reportTouchInput({
+    required double localX,
+    required double localY,
+    required int timeReceived,
+  }) {
     print('embedding-flutter-view reporting touch input to TouchInputListener');
-    final message = utf8.encode(json.encode({
-      'method': 'TouchInputListener.ReportTouchInput',
-      'local_x': localX,
-      'local_y': localY,
-      'time_received': timeReceived,
-      'component_name': 'embedding-flutter-view',
-    })).buffer.asByteData();
+    final message =
+        utf8
+            .encode(
+              json.encode({
+                'method': 'TouchInputListener.ReportTouchInput',
+                'local_x': localX,
+                'local_y': localY,
+                'time_received': timeReceived,
+                'component_name': 'embedding-flutter-view',
+              }),
+            )
+            .buffer
+            .asByteData();
     PlatformDispatcher.instance.sendPlatformMessage('fuchsia/input_test', message, null);
   }
 }
@@ -179,9 +189,7 @@ class ChildView {
 
   ChildView(this.viewId);
 
-  void create(
-    bool focusable,
-    PlatformMessageResponseCallback callback) {
+  void create(bool focusable, PlatformMessageResponseCallback callback) {
     // Construct the dart:ui platform message to create the view, and when the
     // return callback is invoked, build the scene. At that point, it is safe
     // to embed the child view in the scene.
@@ -195,23 +203,23 @@ class ChildView {
         viewOcclusionHint.left,
         viewOcclusionHint.top,
         viewOcclusionHint.right,
-        viewOcclusionHint.bottom
+        viewOcclusionHint.bottom,
       ],
     };
 
-    final ByteData createViewMessage = utf8.encode(
-      json.encode(<String, Object>{
-        'method': 'View.create',
-        'args': args,
-      })
-    ).buffer.asByteData();
+    final ByteData createViewMessage =
+        utf8
+            .encode(json.encode(<String, Object>{'method': 'View.create', 'args': args}))
+            .buffer
+            .asByteData();
 
     final platformViewsChannel = 'flutter/platform_views';
 
     PlatformDispatcher.instance.sendPlatformMessage(
       platformViewsChannel,
       createViewMessage,
-      callback);
+      callback,
+    );
   }
 }
 
@@ -219,14 +227,15 @@ Future<int> _launchChildView() async {
   final message = Int8List.fromList([0x31]);
   final completer = new Completer<ByteData>();
   PlatformDispatcher.instance.sendPlatformMessage(
-      'fuchsia/child_view', ByteData.sublistView(message), (ByteData? reply) {
-    completer.complete(reply!);
-  });
+    'fuchsia/child_view',
+    ByteData.sublistView(message),
+    (ByteData? reply) {
+      completer.complete(reply!);
+    },
+  );
 
-  return int.parse(
-      ascii.decode(((await completer.future).buffer.asUint8List())));
+  return int.parse(ascii.decode(((await completer.future).buffer.asUint8List())));
 }
-
 
 List<String> _GetArgsFromConfigFile() {
   List<String> args;

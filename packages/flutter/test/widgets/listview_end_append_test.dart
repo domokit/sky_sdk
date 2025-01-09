@@ -7,7 +7,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('ListView.builder() fixed itemExtent, scroll to end, append, scroll', (WidgetTester tester) async {
+  testWidgets('ListView.builder() fixed itemExtent, scroll to end, append, scroll', (
+    WidgetTester tester,
+  ) async {
     // Regression test for https://github.com/flutter/flutter/issues/9506
 
     Widget buildFrame(int itemCount) {
@@ -35,7 +37,9 @@ void main() {
     expect(find.text('item 3'), findsOneWidget);
   });
 
-  testWidgets('ListView.builder() fixed itemExtent, scroll to end, append, scroll', (WidgetTester tester) async {
+  testWidgets('ListView.builder() fixed itemExtent, scroll to end, append, scroll', (
+    WidgetTester tester,
+  ) async {
     // Regression test for https://github.com/flutter/flutter/issues/9506
 
     Widget buildFrame(int itemCount) {
@@ -45,10 +49,7 @@ void main() {
           dragStartBehavior: DragStartBehavior.down,
           itemCount: itemCount,
           itemBuilder: (BuildContext context, int index) {
-            return SizedBox(
-              height: 200.0,
-              child: Text('item $index'),
-            );
+            return SizedBox(height: 200.0, child: Text('item $index'));
           },
         ),
       );

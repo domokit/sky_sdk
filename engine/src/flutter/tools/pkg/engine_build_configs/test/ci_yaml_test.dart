@@ -28,9 +28,7 @@ void main() {
   final String realCiYaml = io.File(ciYamlPath).readAsStringSync();
 
   test('Can load the real .ci.yaml file', () {
-    final y.YamlNode yamlNode = y.loadYamlNode(
-      realCiYaml, sourceUrl: Uri.file(ciYamlPath),
-    );
+    final y.YamlNode yamlNode = y.loadYamlNode(realCiYaml, sourceUrl: Uri.file(ciYamlPath));
     final CiConfig config = CiConfig.fromYaml(yamlNode);
     if (!config.valid) {
       io.stderr.writeln(config.error);
@@ -46,9 +44,7 @@ targets:
     properties:
       config_name: linux_build
 ''';
-    final y.YamlNode yamlNode = y.loadYamlNode(
-      yamlData, sourceUrl: Uri.file(ciYamlPath),
-    );
+    final y.YamlNode yamlNode = y.loadYamlNode(yamlData, sourceUrl: Uri.file(ciYamlPath));
     final CiConfig config = CiConfig.fromYaml(yamlNode);
     if (!config.valid) {
       io.stderr.writeln(config.error);
@@ -67,9 +63,7 @@ targets:
     const String yamlData = '''
 targets: 4
 ''';
-    final y.YamlNode yamlNode = y.loadYamlNode(
-      yamlData, sourceUrl: Uri.file(ciYamlPath),
-    );
+    final y.YamlNode yamlNode = y.loadYamlNode(yamlData, sourceUrl: Uri.file(ciYamlPath));
     final CiConfig config = CiConfig.fromYaml(yamlNode);
     expect(config.valid, isFalse);
     expect(config.error, contains('Expected "targets" to be a list.'));
@@ -83,9 +77,7 @@ targets:
     properties:
       config_name: linux_build
 ''';
-    final y.YamlNode yamlNode = y.loadYamlNode(
-      yamlData, sourceUrl: Uri.file(ciYamlPath),
-    );
+    final y.YamlNode yamlNode = y.loadYamlNode(yamlData, sourceUrl: Uri.file(ciYamlPath));
     final CiConfig config = CiConfig.fromYaml(yamlNode);
     expect(config.valid, isFalse);
     expect(config.error, contains('Expected map to contain a string value for key "name".'));
@@ -99,9 +91,7 @@ targets:
     properties:
       config_name: linux_build
 ''';
-    final y.YamlNode yamlNode = y.loadYamlNode(
-      yamlData, sourceUrl: Uri.file(ciYamlPath),
-    );
+    final y.YamlNode yamlNode = y.loadYamlNode(yamlData, sourceUrl: Uri.file(ciYamlPath));
     final CiConfig config = CiConfig.fromYaml(yamlNode);
     expect(config.valid, isFalse);
     expect(config.error, contains('Expected map to contain a string value for key "recipe".'));
@@ -114,9 +104,7 @@ targets:
     recipe: engine_v2/engine_v2
     properties: 4
 ''';
-    final y.YamlNode yamlNode = y.loadYamlNode(
-      yamlData, sourceUrl: Uri.file(ciYamlPath),
-    );
+    final y.YamlNode yamlNode = y.loadYamlNode(yamlData, sourceUrl: Uri.file(ciYamlPath));
     final CiConfig config = CiConfig.fromYaml(yamlNode);
     expect(config.valid, isFalse);
     expect(config.error, contains('Expected "properties" to be a map.'));
@@ -130,9 +118,7 @@ targets:
     properties:
       field: value
 ''';
-    final y.YamlNode yamlNode = y.loadYamlNode(
-      yamlData, sourceUrl: Uri.file(ciYamlPath),
-    );
+    final y.YamlNode yamlNode = y.loadYamlNode(yamlData, sourceUrl: Uri.file(ciYamlPath));
     final CiConfig config = CiConfig.fromYaml(yamlNode);
     expect(config.valid, isTrue);
   });
@@ -150,9 +136,7 @@ targets:
     properties:
       config_name: linux_build
 ''';
-    final y.YamlNode yamlNode = y.loadYamlNode(
-      yamlData, sourceUrl: Uri.file(ciYamlPath),
-    );
+    final y.YamlNode yamlNode = y.loadYamlNode(yamlData, sourceUrl: Uri.file(ciYamlPath));
     final CiConfig config = CiConfig.fromYaml(yamlNode);
     expect(config.valid, isFalse);
     expect(config.error, contains('Expected map to contain a string value for key "name".'));

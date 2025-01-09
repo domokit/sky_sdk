@@ -35,9 +35,7 @@ class _ActionChoiceExampleState extends State<ActionChoiceExample> {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('ActionChoice Sample'),
-      ),
+      appBar: AppBar(title: const Text('ActionChoice Sample')),
       body: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,20 +45,18 @@ class _ActionChoiceExampleState extends State<ActionChoiceExample> {
             const SizedBox(height: 10.0),
             Wrap(
               spacing: 5.0,
-              children: List<Widget>.generate(
-                3,
-                (int index) {
-                  return ChoiceChip(
-                    label: Text('Item $index'),
-                    selected: _value == index,
-                    onSelected: (bool selected) {
-                      setState(() {
-                        _value = selected ? index : null;
-                      });
-                    },
-                  );
-                },
-              ).toList(),
+              children:
+                  List<Widget>.generate(3, (int index) {
+                    return ChoiceChip(
+                      label: Text('Item $index'),
+                      selected: _value == index,
+                      onSelected: (bool selected) {
+                        setState(() {
+                          _value = selected ? index : null;
+                        });
+                      },
+                    );
+                  }).toList(),
             ),
           ],
         ),

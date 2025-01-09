@@ -10,11 +10,8 @@ import '../environment.dart';
 /// The base class that all commands and subcommands should inherit from.
 abstract base class CommandBase extends Command<int> {
   /// Constructs the base command.
-  CommandBase({
-    required this.environment,
-    this.help = false,
-    int? usageLineLength,
-  }) : argParser = ArgParser(usageLineLength: usageLineLength);
+  CommandBase({required this.environment, this.help = false, int? usageLineLength})
+    : argParser = ArgParser(usageLineLength: usageLineLength);
 
   /// The host system environment.
   final Environment environment;

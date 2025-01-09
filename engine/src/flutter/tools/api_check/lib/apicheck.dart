@@ -17,12 +17,11 @@ import 'package:analyzer/dart/ast/ast.dart';
 ///
 /// Field names are expected to be of the form `kFooBarIndex`; prefixed with a
 /// `k` and terminated in `Index`.
-List<String> getDartClassFields({
-  required String sourcePath,
-  required String className,
-}) {
+List<String> getDartClassFields({required String sourcePath, required String className}) {
   final List<String> includedPaths = <String>[sourcePath];
-  final AnalysisContextCollection collection = AnalysisContextCollection(includedPaths: includedPaths);
+  final AnalysisContextCollection collection = AnalysisContextCollection(
+    includedPaths: includedPaths,
+  );
   final AnalysisContext context = collection.contextFor(sourcePath);
   final AnalysisSession session = context.currentSession;
 
@@ -56,10 +55,7 @@ List<String> getDartClassFields({
 ///
 /// Enum values are expected to be of the form `kEnumNameFooBar`; prefixed with
 /// `kEnumName`.
-List<String> getCppEnumValues({
-  required String sourcePath,
-  required String enumName,
-}) {
+List<String> getCppEnumValues({required String sourcePath, required String enumName}) {
   final List<String> lines = File(sourcePath).readAsLinesSync();
   final int enumEnd = lines.indexOf('} $enumName;');
   if (enumEnd < 0) {
@@ -70,19 +66,13 @@ List<String> getCppEnumValues({
     return <String>[];
   }
   final RegExp valueExp = RegExp('^\\s*k$enumName(\\w*)');
-  return _extractMatchingExpression(
-    lines: lines.sublist(enumStart + 1, enumEnd),
-    regexp: valueExp,
-  );
+  return _extractMatchingExpression(lines: lines.sublist(enumStart + 1, enumEnd), regexp: valueExp);
 }
 
 /// Returns all values in [enumName].
 ///
 /// Enum values are expected to be of the form `kFooBar`; prefixed with `k`.
-List<String> getCppEnumClassValues({
-  required String sourcePath,
-  required String enumName,
-}) {
+List<String> getCppEnumClassValues({required String sourcePath, required String enumName}) {
   final List<String> lines = _getBlockStartingWith(
     source: File(sourcePath).readAsStringSync(),
     startExp: RegExp('enum class $enumName .* {'),
@@ -95,10 +85,7 @@ List<String> getCppEnumClassValues({
 ///
 /// Enum value declarations are expected to be of the form `FOO_BAR(1 << N)`;
 /// in all caps.
-List<String> getJavaEnumValues({
-  required String sourcePath,
-  required String enumName,
-}) {
+List<String> getJavaEnumValues({required String sourcePath, required String enumName}) {
   final List<String> lines = _getBlockStartingWith(
     source: File(sourcePath).readAsStringSync(),
     startExp: RegExp('enum $enumName {'),
@@ -111,10 +98,7 @@ List<String> getJavaEnumValues({
 ///
 /// The contents of the first match group in [regexp] is returned; therefore
 /// it must contain a match group.
-List<String> _extractMatchingExpression({
-  required Iterable<String> lines,
-  required RegExp regexp,
-}) {
+List<String> _extractMatchingExpression({required Iterable<String> lines, required RegExp regexp}) {
   final List<String> values = <String>[];
   for (final String line in lines) {
     final RegExpMatch? match = regexp.firstMatch(line);
@@ -128,10 +112,7 @@ List<String> _extractMatchingExpression({
 /// Returns all lines of the block starting with [startString].
 ///
 /// [startString] MUST end with '{'.
-List<String> _getBlockStartingWith({
-  required String source,
-  required RegExp startExp,
-}) {
+List<String> _getBlockStartingWith({required String source, required RegExp startExp}) {
   assert(startExp.pattern.endsWith('{'));
 
   final int blockStart = source.indexOf(startExp);
@@ -163,10 +144,16 @@ List<String> _getBlockStartingWith({
 void visitUIUnits(String flutterRoot, AstVisitor<void> visitor) {
   final String uiRoot = '$flutterRoot/lib/ui';
   final FeatureSet analyzerFeatures = FeatureSet.latestLanguageVersion();
-  final ParseStringResult uiResult = parseFile(path: '$uiRoot/ui.dart', featureSet: analyzerFeatures);
+  final ParseStringResult uiResult = parseFile(
+    path: '$uiRoot/ui.dart',
+    featureSet: analyzerFeatures,
+  );
   for (final PartDirective part in uiResult.unit.directives.whereType<PartDirective>()) {
     final String partPath = part.uri.stringValue!;
-    final ParseStringResult partResult = parseFile(path: '$uiRoot/$partPath', featureSet: analyzerFeatures);
+    final ParseStringResult partResult = parseFile(
+      path: '$uiRoot/$partPath',
+      featureSet: analyzerFeatures,
+    );
 
     for (final CompilationUnitMember unitMember in partResult.unit.declarations) {
       unitMember.accept(visitor);

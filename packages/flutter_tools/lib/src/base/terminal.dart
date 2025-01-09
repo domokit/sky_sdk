@@ -9,32 +9,24 @@ import 'logger.dart';
 import 'platform.dart';
 import 'process.dart';
 
-enum TerminalColor {
-  red,
-  green,
-  blue,
-  cyan,
-  yellow,
-  magenta,
-  grey,
-}
+enum TerminalColor { red, green, blue, cyan, yellow, magenta, grey }
 
 /// A class that contains the context settings for command text output to the
 /// console.
 class OutputPreferences {
-  OutputPreferences({
-    bool? wrapText,
-    int? wrapColumn,
-    bool? showColor,
-    io.Stdio? stdio,
-  }) : _stdio = stdio,
-       wrapText = wrapText ?? stdio?.hasTerminal ?? false,
-       _overrideWrapColumn = wrapColumn,
-       showColor = showColor ?? false;
+  OutputPreferences({bool? wrapText, int? wrapColumn, bool? showColor, io.Stdio? stdio})
+    : _stdio = stdio,
+      wrapText = wrapText ?? stdio?.hasTerminal ?? false,
+      _overrideWrapColumn = wrapColumn,
+      showColor = showColor ?? false;
 
   /// A version of this class for use in tests.
-  OutputPreferences.test({this.wrapText = false, int wrapColumn = kDefaultTerminalColumns, this.showColor = false})
-    : _overrideWrapColumn = wrapColumn, _stdio = null;
+  OutputPreferences.test({
+    this.wrapText = false,
+    int wrapColumn = kDefaultTerminalColumns,
+    this.showColor = false,
+  }) : _overrideWrapColumn = wrapColumn,
+       _stdio = null;
 
   final io.Stdio? _stdio;
 
@@ -166,12 +158,13 @@ class AnsiTerminal implements Terminal {
     DateTime? now, // Time used to determine preferredStyle. Defaults to 0001-01-01 00:00.
     bool defaultCliAnimationEnabled = true,
     ShutdownHooks? shutdownHooks,
-  })
-    : _stdio = stdio,
-      _platform = platform,
-      _now = now ?? DateTime(1),
-      _isCliAnimationEnabled = defaultCliAnimationEnabled {
-    shutdownHooks?.addShutdownHook(() { singleCharMode = false; });
+  }) : _stdio = stdio,
+       _platform = platform,
+       _now = now ?? DateTime(1),
+       _isCliAnimationEnabled = defaultCliAnimationEnabled {
+    shutdownHooks?.addShutdownHook(() {
+      singleCharMode = false;
+    });
   }
 
   final io.Stdio _stdio;
@@ -231,8 +224,7 @@ class AnsiTerminal implements Terminal {
   // which sets the WT_SESSION environment variable. See:
   // https://learn.microsoft.com/en-us/windows/terminal/tips-and-tricks
   @override
-  bool get supportsEmoji => !_platform.isWindows
-    || _platform.environment.containsKey('WT_SESSION');
+  bool get supportsEmoji => !_platform.isWindows || _platform.environment.containsKey('WT_SESSION');
 
   @override
   int get preferredStyle {
@@ -243,9 +235,7 @@ class AnsiTerminal implements Terminal {
     return _now.hour + workdays;
   }
 
-  final RegExp _boldControls = RegExp(
-    '(${RegExp.escape(resetBold)}|${RegExp.escape(bold)})',
-  );
+  final RegExp _boldControls = RegExp('(${RegExp.escape(resetBold)}|${RegExp.escape(bold)})');
 
   @override
   bool usesTerminalUi = false;
@@ -325,6 +315,7 @@ class AnsiTerminal implements Terminal {
     final io.Stdin stdin = _stdio.stdin as io.Stdin;
     return !stdin.lineMode && !stdin.echoMode;
   }
+
   @override
   set singleCharMode(bool value) {
     if (!_stdio.stdinHasTerminal) {
@@ -354,7 +345,8 @@ class AnsiTerminal implements Terminal {
 
   @override
   Stream<String> get keystrokes {
-    return _broadcastStdInString ??= _stdio.stdin.transform<String>(const AsciiDecoder(allowInvalid: true)).asBroadcastStream();
+    return _broadcastStdInString ??=
+        _stdio.stdin.transform<String>(const AsciiDecoder(allowInvalid: true)).asBroadcastStream();
   }
 
   @override
@@ -418,7 +410,8 @@ class _TestTerminal implements Terminal {
   Stream<String> get keystrokes => const Stream<String>.empty();
 
   @override
-  Future<String> promptForCharInput(List<String> acceptedCharacters, {
+  Future<String> promptForCharInput(
+    List<String> acceptedCharacters, {
     required Logger logger,
     String? prompt,
     int? defaultChoiceIndex,
@@ -430,7 +423,7 @@ class _TestTerminal implements Terminal {
   @override
   bool get singleCharMode => false;
   @override
-  set singleCharMode(bool value) { }
+  set singleCharMode(bool value) {}
 
   @override
   final bool supportsColor;

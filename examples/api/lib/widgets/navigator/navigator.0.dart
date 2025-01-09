@@ -64,10 +64,7 @@ class CollectPersonalInfoPage extends StatelessWidget {
 }
 
 class ChooseCredentialsPage extends StatelessWidget {
-  const ChooseCredentialsPage({
-    super.key,
-    required this.onSignupComplete,
-  });
+  const ChooseCredentialsPage({super.key, required this.onSignupComplete});
 
   final VoidCallback onSignupComplete;
 
@@ -106,7 +103,8 @@ class SignUpPage extends StatelessWidget {
           case 'signup/choose_credentials':
             // Assume ChooseCredentialsPage collects new credentials and then
             // invokes 'onSignupComplete()'.
-            builder = (BuildContext _) => ChooseCredentialsPage(
+            builder =
+                (BuildContext _) => ChooseCredentialsPage(
                   onSignupComplete: () {
                     // Referencing Navigator.of(context) from here refers to the
                     // top level Navigator because SignUpPage is above the

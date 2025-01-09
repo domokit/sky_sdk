@@ -28,13 +28,29 @@ const List<double> greyscaleColorMatrix = <double>[
   0.2126, 0.7152, 0.0722, 0, 0, //
   0.2126, 0.7152, 0.0722, 0, 0, //
   0.2126, 0.7152, 0.0722, 0, 0, //
-  0,      0,      0,      1, 0, //
+  0, 0, 0, 1, 0, //
 ];
 const List<double> identityColorMatrix = <double>[
-  1, 0, 0, 0, 0,
-  0, 1, 0, 0, 0,
-  0, 0, 1, 0, 0,
-  0, 0, 0, 1, 0,
+  1,
+  0,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
 ];
 
 void main() {
@@ -51,9 +67,10 @@ void main() {
   }
 
   test('ColorFilter - mode', () async {
-    final Paint paint = Paint()
-      ..color = green
-      ..colorFilter = const ColorFilter.mode(red, BlendMode.color);
+    final Paint paint =
+        Paint()
+          ..color = green
+          ..colorFilter = const ColorFilter.mode(red, BlendMode.color);
 
     Uint32List bytes = await getBytesForPaint(paint);
     expect(bytes[0], greenRedColorBlend);
@@ -71,9 +88,10 @@ void main() {
   test('ColorFilter - NOP mode does not crash', () async {
     final PictureRecorder recorder = PictureRecorder();
     final Canvas canvas = Canvas(recorder);
-    final Paint paint = Paint()
-      ..color = green
-      ..colorFilter = const ColorFilter.mode(transparent, BlendMode.srcOver);
+    final Paint paint =
+        Paint()
+          ..color = green
+          ..colorFilter = const ColorFilter.mode(transparent, BlendMode.srcOver);
     canvas.saveLayer(const Rect.fromLTRB(-100, -100, 200, 200), paint);
     canvas.drawRect(const Rect.fromLTRB(0, 0, 100, 100), Paint());
     canvas.restore();
@@ -87,9 +105,10 @@ void main() {
   });
 
   test('ColorFilter - matrix', () async {
-    final Paint paint = Paint()
-      ..color = green
-      ..colorFilter = const ColorFilter.matrix(greyscaleColorMatrix);
+    final Paint paint =
+        Paint()
+          ..color = green
+          ..colorFilter = const ColorFilter.matrix(greyscaleColorMatrix);
 
     Uint32List bytes = await getBytesForPaint(paint);
     expect(bytes[0], greenGreyscaled);
@@ -107,9 +126,10 @@ void main() {
   test('ColorFilter - NOP matrix does not crash', () async {
     final PictureRecorder recorder = PictureRecorder();
     final Canvas canvas = Canvas(recorder);
-    final Paint paint = Paint()
-      ..color = const Color(0xff00AA00)
-      ..colorFilter = const ColorFilter.matrix(identityColorMatrix);
+    final Paint paint =
+        Paint()
+          ..color = const Color(0xff00AA00)
+          ..colorFilter = const ColorFilter.matrix(identityColorMatrix);
     canvas.saveLayer(const Rect.fromLTRB(-100, -100, 200, 200), paint);
     canvas.drawRect(const Rect.fromLTRB(0, 0, 100, 100), Paint());
     canvas.restore();
@@ -123,9 +143,10 @@ void main() {
   });
 
   test('ColorFilter - linearToSrgbGamma', () async {
-    final Paint paint = Paint()
-      ..color = green
-      ..colorFilter = const ColorFilter.linearToSrgbGamma();
+    final Paint paint =
+        Paint()
+          ..color = green
+          ..colorFilter = const ColorFilter.linearToSrgbGamma();
 
     Uint32List bytes = await getBytesForPaint(paint);
     expect(bytes[0], greenLinearToSrgbGamma);
@@ -140,9 +161,10 @@ void main() {
   });
 
   test('ColorFilter - srgbToLinearGamma', () async {
-    final Paint paint = Paint()
-      ..color = green
-      ..colorFilter = const ColorFilter.srgbToLinearGamma();
+    final Paint paint =
+        Paint()
+          ..color = green
+          ..colorFilter = const ColorFilter.srgbToLinearGamma();
 
     Uint32List bytes = await getBytesForPaint(paint);
     expect(bytes[0], greenSrgbToLinearGamma);
@@ -156,5 +178,4 @@ void main() {
     bytes = await getBytesForPaint(paint);
     expect(bytes[0], greenSrgbToLinearGammaInverted);
   });
-
 }

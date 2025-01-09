@@ -32,7 +32,6 @@ void testMain() {
     test('The view is focusable and reachable by keyboard when registered', () async {
       final EngineFlutterView view = createAndRegisterView(dispatcher);
 
-
       // The root element should have a tabindex="0" to make the flutter view
       // focusable and reachable by the keyboard.
       expect(view.dom.rootElement.getAttribute('tabindex'), '0');
@@ -292,13 +291,7 @@ extension on DomElement {
     dispatchKeyboardEvent(type: 'keyup', key: 'Tab', shiftKey: shift);
   }
 
-  void dispatchKeyboardEvent({
-    required String type,
-    required String key,
-    bool shiftKey = false,
-  }) {
-    dispatchEvent(
-      createDomKeyboardEvent(type, <String, Object>{'key': key, 'shiftKey': shiftKey}),
-    );
+  void dispatchKeyboardEvent({required String type, required String key, bool shiftKey = false}) {
+    dispatchEvent(createDomKeyboardEvent(type, <String, Object>{'key': key, 'shiftKey': shiftKey}));
   }
 }

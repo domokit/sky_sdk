@@ -10,16 +10,8 @@ import 'package:test/test.dart';
 
 void main() {
   // Find a path to `dir_contents_diff.dart` from the working directory.
-  final String pkgPath = p.join(
-    Engine.findWithin().flutterDir.path,
-    'tools',
-    'dir_contents_diff',
-  );
-  final String binPath = p.join(
-    pkgPath,
-    'bin',
-    'dir_contents_diff.dart',
-  );
+  final String pkgPath = p.join(Engine.findWithin().flutterDir.path, 'tools', 'dir_contents_diff');
+  final String binPath = p.join(pkgPath, 'bin', 'dir_contents_diff.dart');
 
   // As a sanity check, ensure that the file exists.
   if (!io.File(binPath).existsSync()) {
@@ -30,10 +22,11 @@ void main() {
 
   // Runs `../bin/dir_contents_diff.dart` with the given arguments.
   (int, String) runSync(String goldenPath, String dirPath) {
-    final io.ProcessResult result = io.Process.runSync(
-      io.Platform.resolvedExecutable,
-      <String>[binPath, goldenPath, dirPath],
-    );
+    final io.ProcessResult result = io.Process.runSync(io.Platform.resolvedExecutable, <String>[
+      binPath,
+      goldenPath,
+      dirPath,
+    ]);
     return (result.exitCode, result.stdout ?? result.stderr);
   }
 
@@ -49,8 +42,7 @@ void main() {
   });
 
   test('lists files and diffs successfully, even with an EOF newline', () {
-    final String goldenPath =
-        p.join(pkgPath, 'test', 'file_ok_eof_newline.txt');
+    final String goldenPath = p.join(pkgPath, 'test', 'file_ok_eof_newline.txt');
     final String dirPath = p.join(pkgPath, 'test', 'fixtures');
     final (int exitCode, String output) = runSync(goldenPath, dirPath);
     if (exitCode != 0) {
@@ -73,8 +65,7 @@ void main() {
   });
 
   test('diff fails when an unexpected file is present', () {
-    final String goldenPath =
-        p.join(pkgPath, 'test', 'file_bad_unexpected.txt');
+    final String goldenPath = p.join(pkgPath, 'test', 'file_bad_unexpected.txt');
     final String dirPath = p.join(pkgPath, 'test', 'fixtures');
     final (int exitCode, String output) = runSync(goldenPath, dirPath);
     if (exitCode == 0) {

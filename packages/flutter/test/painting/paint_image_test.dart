@@ -52,7 +52,12 @@ void main() {
 
   test('debugInvertOversizedImages', () async {
     debugInvertOversizedImages = true;
-    expect(PaintingBinding.instance.platformDispatcher.views.any((ui. FlutterView view) => view.devicePixelRatio > 1.0), isTrue);
+    expect(
+      PaintingBinding.instance.platformDispatcher.views.any(
+        (ui.FlutterView view) => view.devicePixelRatio > 1.0,
+      ),
+      isTrue,
+    );
     final FlutterExceptionHandler? oldFlutterError = FlutterError.onError;
 
     final List<String> messages = <String>[];
@@ -71,20 +76,37 @@ void main() {
       fit: BoxFit.fill,
     );
 
-    final List<Invocation> commands = canvas.invocations
-      .skipWhile((Invocation invocation) => invocation.memberName != #saveLayer)
-      .take(4)
-      .toList();
+    final List<Invocation> commands =
+        canvas.invocations
+            .skipWhile((Invocation invocation) => invocation.memberName != #saveLayer)
+            .take(4)
+            .toList();
 
     expect(commands[0].positionalArguments[0], rect);
     final Paint paint = commands[0].positionalArguments[1] as Paint;
     expect(
       paint.colorFilter,
       const ColorFilter.matrix(<double>[
-        -1,  0,  0, 0, 255,
-         0, -1,  0, 0, 255,
-         0,  0, -1, 0, 255,
-         0,  0,  0, 1,   0,
+        -1,
+        0,
+        0,
+        0,
+        255,
+        0,
+        -1,
+        0,
+        0,
+        255,
+        0,
+        0,
+        -1,
+        0,
+        255,
+        0,
+        0,
+        0,
+        1,
+        0,
       ]),
     );
     expect(commands[1].memberName, #translate);
@@ -94,7 +116,6 @@ void main() {
     expect(commands[2].memberName, #scale);
     expect(commands[2].positionalArguments[0], 1.0);
     expect(commands[2].positionalArguments[1], -1.0);
-
 
     expect(commands[3].memberName, #translate);
     expect(commands[3].positionalArguments[0], 0.0);

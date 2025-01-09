@@ -11,11 +11,7 @@ import 'model/email_store.dart';
 import 'profile_avatar.dart';
 
 class MailViewPage extends StatelessWidget {
-  const MailViewPage({
-    super.key,
-    required this.id,
-    required this.email,
-  });
+  const MailViewPage({super.key, required this.id, required this.email});
 
   final int id;
   final Email email;
@@ -30,11 +26,7 @@ class MailViewPage extends StatelessWidget {
           child: Material(
             color: Theme.of(context).cardColor,
             child: SingleChildScrollView(
-              padding: const EdgeInsetsDirectional.only(
-                top: 42,
-                start: 20,
-                end: 20,
-              ),
+              padding: const EdgeInsetsDirectional.only(top: 42, start: 20, end: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -80,10 +72,7 @@ class _MailViewHeader extends StatelessWidget {
               key: const ValueKey<String>('ReplyExit'),
               icon: const Icon(Icons.keyboard_arrow_down),
               onPressed: () {
-                Provider.of<EmailStore>(
-                  context,
-                  listen: false,
-                ).selectedEmailId = -1;
+                Provider.of<EmailStore>(context, listen: false).selectedEmailId = -1;
                 Navigator.pop(context);
               },
               splashRadius: 20,
@@ -104,10 +93,7 @@ class _MailViewHeader extends StatelessWidget {
                 SelectableText(
                   'To ${email.recipients},',
                   style: textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context)
-                        .navigationRailTheme
-                        .unselectedLabelTextStyle!
-                        .color,
+                    color: Theme.of(context).navigationRailTheme.unselectedLabelTextStyle!.color,
                   ),
                 ),
               ],

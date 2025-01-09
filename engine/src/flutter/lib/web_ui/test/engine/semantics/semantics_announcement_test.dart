@@ -44,17 +44,20 @@ void testMain() {
     }
 
     void sendAnnouncementMessage({required String message, int? assertiveness}) {
-      accessibilityAnnouncements.handleMessage(codec, codec.encodeMessage(<dynamic, dynamic>{
-        'data': <dynamic, dynamic>{
-          'message': message,
-          'assertiveness': assertiveness,
-        },
-      }));
+      accessibilityAnnouncements.handleMessage(
+        codec,
+        codec.encodeMessage(<dynamic, dynamic>{
+          'data': <dynamic, dynamic>{'message': message, 'assertiveness': assertiveness},
+        }),
+      );
     }
 
     void expectMessages({String polite = '', String assertive = ''}) {
       expect(accessibilityAnnouncements.ariaLiveElementFor(Assertiveness.polite).text, polite);
-      expect(accessibilityAnnouncements.ariaLiveElementFor(Assertiveness.assertive).text, assertive);
+      expect(
+        accessibilityAnnouncements.ariaLiveElementFor(Assertiveness.assertive).text,
+        assertive,
+      );
     }
 
     void expectNoMessages() => expectMessages();

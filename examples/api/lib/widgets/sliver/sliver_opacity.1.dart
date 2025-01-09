@@ -13,9 +13,7 @@ class SliverOpacityExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: SliverOpacityExample(),
-    );
+    return const MaterialApp(home: SliverOpacityExample());
   }
 }
 
@@ -37,26 +35,18 @@ class _SliverOpacityExampleState extends State<SliverOpacityExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('SliverOpacity demo'),
-      ),
+      appBar: AppBar(title: const Text('SliverOpacity demo')),
       body: CustomScrollView(
         slivers: <Widget>[
           const SliverToBoxAdapter(
             child: ListTile(title: Text('Press on the button to toggle the list visibility.')),
           ),
-          const SliverToBoxAdapter(
-            child: ListTile(title: Text('Before the list...')),
-          ),
+          const SliverToBoxAdapter(child: ListTile(title: Text('Before the list...'))),
           SliverOpacity(
             opacity: _visible ? 1.0 : 0.0,
-            sliver: SliverList(
-              delegate: SliverChildListDelegate(_listItems),
-            ),
+            sliver: SliverList(delegate: SliverChildListDelegate(_listItems)),
           ),
-          const SliverToBoxAdapter(
-            child: ListTile(title: Text('Before the list...')),
-          ),
+          const SliverToBoxAdapter(child: ListTile(title: Text('Before the list...'))),
         ],
       ),
       floatingActionButton: FloatingActionButton(

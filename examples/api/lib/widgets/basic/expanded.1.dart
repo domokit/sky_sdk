@@ -15,9 +15,7 @@ class ExpandedApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Expanded Row Sample'),
-        ),
+        appBar: AppBar(title: const Text('Expanded Row Sample')),
         body: const ExpandedExample(),
       ),
     );
@@ -32,24 +30,9 @@ class ExpandedExample extends StatelessWidget {
     return Center(
       child: Row(
         children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: Container(
-              color: Colors.amber,
-              height: 100,
-            ),
-          ),
-          Container(
-            color: Colors.blue,
-            height: 100,
-            width: 50,
-          ),
-          Expanded(
-            child: Container(
-              color: Colors.amber,
-              height: 100,
-            ),
-          ),
+          Expanded(flex: 2, child: Container(color: Colors.amber, height: 100)),
+          Container(color: Colors.blue, height: 100, width: 50),
+          Expanded(child: Container(color: Colors.amber, height: 100)),
         ],
       ),
     );

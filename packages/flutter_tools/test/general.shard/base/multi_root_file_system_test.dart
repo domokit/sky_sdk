@@ -66,10 +66,7 @@ void runTest(FileSystemStyle style) {
     fs = MultiRootFileSystem(
       delegate: memory,
       scheme: 'scheme',
-      roots: <String>[
-        '${root}foo$sep',
-        '${root}bar',
-      ],
+      roots: <String>['${root}foo$sep', '${root}bar'],
     );
   });
 
@@ -89,8 +86,7 @@ void runTest(FileSystemStyle style) {
 
   testWithoutContext('file outside root', () {
     final File file = fs.file('${root}other${sep}directory${sep}file');
-    expect(file.readAsStringSync(),
-        'Content: ${root}other${sep}directory${sep}file');
+    expect(file.readAsStringSync(), 'Content: ${root}other${sep}directory${sep}file');
     expect(file.path, '${root}other${sep}directory${sep}file');
     expect(file.uri, Uri.parse('file:///${rootUri}other/directory/file'));
   });
@@ -132,16 +128,14 @@ void runTest(FileSystemStyle style) {
 
   testWithoutContext('file with scheme in subdirectory', () {
     final File file = fs.file(Uri.parse('scheme:///subdir/in_subdir'));
-    expect(file.readAsStringSync(),
-        'Content: ${root}foo${sep}subdir${sep}in_subdir');
+    expect(file.readAsStringSync(), 'Content: ${root}foo${sep}subdir${sep}in_subdir');
     expect(file.path, '${root}foo${sep}subdir${sep}in_subdir');
     expect(file.uri, Uri.parse('scheme:///subdir/in_subdir'));
   });
 
   testWithoutContext('file in second root with scheme in subdirectory', () {
     final File file = fs.file(Uri.parse('scheme:///bar_subdir/in_subdir'));
-    expect(file.readAsStringSync(),
-        'Content: ${root}bar${sep}bar_subdir${sep}in_subdir');
+    expect(file.readAsStringSync(), 'Content: ${root}bar${sep}bar_subdir${sep}in_subdir');
     expect(file.path, '${root}bar${sep}bar_subdir${sep}in_subdir');
     expect(file.uri, Uri.parse('scheme:///bar_subdir/in_subdir'));
   });

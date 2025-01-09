@@ -4,23 +4,17 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/tab_controller/tab_controller.1.dart'
-    as example;
+import 'package:flutter_api_samples/material/tab_controller/tab_controller.1.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Verify first tab is selected by default', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.TabControllerExampleApp(),
-    );
+    await tester.pumpWidget(const example.TabControllerExampleApp());
 
     final Tab firstTab = example.TabControllerExampleApp.tabs.first;
 
     expect(
-      find.descendant(
-        of: find.byType(TabBarView),
-        matching: find.text('${firstTab.text} Tab'),
-      ),
+      find.descendant(of: find.byType(TabBarView), matching: find.text('${firstTab.text} Tab')),
       findsOneWidget,
     );
   });
@@ -33,9 +27,7 @@ void main() {
       log.add(message);
     };
 
-    await tester.pumpWidget(
-      const example.TabControllerExampleApp(),
-    );
+    await tester.pumpWidget(const example.TabControllerExampleApp());
 
     const List<Tab> tabs = example.TabControllerExampleApp.tabs;
     final List<Tab> tabsTraversalOrder = <Tab>[];
@@ -47,17 +39,11 @@ void main() {
 
     for (final Tab tab in tabsTraversalOrder) {
       // Tap on the TabBar's tab to select it.
-      await tester.tap(find.descendant(
-        of: find.byType(TabBar),
-        matching: find.text(tab.text!),
-      ));
+      await tester.tap(find.descendant(of: find.byType(TabBar), matching: find.text(tab.text!)));
       await tester.pumpAndSettle();
 
       expect(
-        find.descendant(
-          of: find.byType(TabBarView),
-          matching: find.text('${tab.text} Tab'),
-        ),
+        find.descendant(of: find.byType(TabBarView), matching: find.text('${tab.text} Tab')),
         findsOneWidget,
       );
 
@@ -70,12 +56,11 @@ void main() {
     debugPrint = originalDebugPrint;
   });
 
-  testWidgets('DefaultTabControllerListener throws when no DefaultTabController above', (WidgetTester tester) async {
+  testWidgets('DefaultTabControllerListener throws when no DefaultTabController above', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
-      example.DefaultTabControllerListener(
-        onTabChanged: (_) {},
-        child: const SizedBox.shrink(),
-      ),
+      example.DefaultTabControllerListener(onTabChanged: (_) {}, child: const SizedBox.shrink()),
     );
 
     final dynamic exception = tester.takeException();

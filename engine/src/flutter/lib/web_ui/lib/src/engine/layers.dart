@@ -43,9 +43,7 @@ class NoopOperation implements LayerOperation {
   String toString() => 'NoopOperation()';
 }
 
-class BackdropFilterLayer
-  with PictureEngineLayer
-  implements ui.BackdropFilterEngineLayer {
+class BackdropFilterLayer with PictureEngineLayer implements ui.BackdropFilterEngineLayer {
   BackdropFilterLayer(this.operation);
 
   @override
@@ -54,6 +52,7 @@ class BackdropFilterLayer
   @override
   BackdropFilterLayer emptyClone() => BackdropFilterLayer(operation);
 }
+
 class BackdropFilterOperation implements LayerOperation {
   BackdropFilterOperation(this.filter, this.mode);
 
@@ -83,9 +82,7 @@ class BackdropFilterOperation implements LayerOperation {
   String toString() => 'BackdropFilterOperation(filter: $filter, mode: $mode)';
 }
 
-class ClipPathLayer
-  with PictureEngineLayer
-  implements ui.ClipPathEngineLayer {
+class ClipPathLayer with PictureEngineLayer implements ui.ClipPathEngineLayer {
   ClipPathLayer(this.operation);
 
   @override
@@ -94,6 +91,7 @@ class ClipPathLayer
   @override
   ClipPathLayer emptyClone() => ClipPathLayer(operation);
 }
+
 class ClipPathOperation implements LayerOperation {
   ClipPathOperation(this.path, this.clip);
 
@@ -132,9 +130,7 @@ class ClipPathOperation implements LayerOperation {
   String toString() => 'ClipPathOperation(path: $path, clip: $clip)';
 }
 
-class ClipRectLayer
-  with PictureEngineLayer
-  implements ui.ClipRectEngineLayer {
+class ClipRectLayer with PictureEngineLayer implements ui.ClipRectEngineLayer {
   ClipRectLayer(this.operation);
 
   @override
@@ -143,6 +139,7 @@ class ClipRectLayer
   @override
   ClipRectLayer emptyClone() => ClipRectLayer(operation);
 }
+
 class ClipRectOperation implements LayerOperation {
   const ClipRectOperation(this.rect, this.clip);
 
@@ -181,9 +178,7 @@ class ClipRectOperation implements LayerOperation {
   String toString() => 'ClipRectOperation(rect: $rect, clip: $clip)';
 }
 
-class ClipRRectLayer
-  with PictureEngineLayer
-  implements ui.ClipRRectEngineLayer {
+class ClipRRectLayer with PictureEngineLayer implements ui.ClipRRectEngineLayer {
   ClipRRectLayer(this.operation);
 
   @override
@@ -192,6 +187,7 @@ class ClipRRectLayer
   @override
   ClipRRectLayer emptyClone() => ClipRRectLayer(operation);
 }
+
 class ClipRRectOperation implements LayerOperation {
   const ClipRRectOperation(this.rrect, this.clip);
 
@@ -230,9 +226,7 @@ class ClipRRectOperation implements LayerOperation {
   String toString() => 'ClipRRectOperation(rrect: $rrect, clip: $clip)';
 }
 
-class ColorFilterLayer
-  with PictureEngineLayer
-  implements ui.ColorFilterEngineLayer {
+class ColorFilterLayer with PictureEngineLayer implements ui.ColorFilterEngineLayer {
   ColorFilterLayer(this.operation);
 
   @override
@@ -241,6 +235,7 @@ class ColorFilterLayer
   @override
   ColorFilterLayer emptyClone() => ColorFilterLayer(operation);
 }
+
 class ColorFilterOperation implements LayerOperation {
   ColorFilterOperation(this.filter);
 
@@ -269,9 +264,7 @@ class ColorFilterOperation implements LayerOperation {
   String toString() => 'ColorFilterOperation(filter: $filter)';
 }
 
-class ImageFilterLayer
-  with PictureEngineLayer
-  implements ui.ImageFilterEngineLayer {
+class ImageFilterLayer with PictureEngineLayer implements ui.ImageFilterEngineLayer {
   ImageFilterLayer(this.operation);
 
   @override
@@ -280,6 +273,7 @@ class ImageFilterLayer
   @override
   ImageFilterLayer emptyClone() => ImageFilterLayer(operation);
 }
+
 class ImageFilterOperation implements LayerOperation {
   ImageFilterOperation(this.filter, this.offset);
 
@@ -310,17 +304,13 @@ class ImageFilterOperation implements LayerOperation {
   PlatformViewStyling createPlatformViewStyling() {
     PlatformViewStyling styling = const PlatformViewStyling();
     if (offset != ui.Offset.zero) {
-      styling = PlatformViewStyling(
-        position: PlatformViewPosition.offset(offset)
-      );
+      styling = PlatformViewStyling(position: PlatformViewPosition.offset(offset));
     }
     final Matrix4? transform = filter.transform;
     if (transform != null) {
       styling = PlatformViewStyling.combine(
         styling,
-        PlatformViewStyling(
-          position: PlatformViewPosition.transform(transform),
-        ),
+        PlatformViewStyling(position: PlatformViewPosition.transform(transform)),
       );
     }
     return const PlatformViewStyling();
@@ -333,9 +323,7 @@ class ImageFilterOperation implements LayerOperation {
   String toString() => 'ImageFilterOperation(filter: $filter)';
 }
 
-class OffsetLayer
-  with PictureEngineLayer
-  implements ui.OffsetEngineLayer {
+class OffsetLayer with PictureEngineLayer implements ui.OffsetEngineLayer {
   OffsetLayer(this.operation);
 
   @override
@@ -344,6 +332,7 @@ class OffsetLayer
   @override
   OffsetLayer emptyClone() => OffsetLayer(operation);
 }
+
 class OffsetOperation implements LayerOperation {
   OffsetOperation(this.dx, this.dy);
 
@@ -365,9 +354,8 @@ class OffsetOperation implements LayerOperation {
   }
 
   @override
-  PlatformViewStyling createPlatformViewStyling() => PlatformViewStyling(
-    position: PlatformViewPosition.offset(ui.Offset(dx, dy))
-  );
+  PlatformViewStyling createPlatformViewStyling() =>
+      PlatformViewStyling(position: PlatformViewPosition.offset(ui.Offset(dx, dy)));
 
   @override
   bool get affectsBackdrop => false;
@@ -376,9 +364,7 @@ class OffsetOperation implements LayerOperation {
   String toString() => 'OffsetOperation(dx: $dx, dy: $dy)';
 }
 
-class OpacityLayer
-  with PictureEngineLayer
-  implements ui.OpacityEngineLayer {
+class OpacityLayer with PictureEngineLayer implements ui.OpacityEngineLayer {
   OpacityLayer(this.operation);
 
   @override
@@ -387,6 +373,7 @@ class OpacityLayer
   @override
   OpacityLayer emptyClone() => OpacityLayer(operation);
 }
+
 class OpacityOperation implements LayerOperation {
   OpacityOperation(this.alpha, this.offset);
 
@@ -402,10 +389,7 @@ class OpacityOperation implements LayerOperation {
       canvas.save();
       canvas.translate(offset.dx, offset.dy);
     }
-    canvas.saveLayer(
-      ui.Rect.largest,
-      ui.Paint()..color = ui.Color.fromARGB(alpha, 0, 0, 0)
-    );
+    canvas.saveLayer(ui.Rect.largest, ui.Paint()..color = ui.Color.fromARGB(alpha, 0, 0, 0));
   }
 
   @override
@@ -418,7 +402,10 @@ class OpacityOperation implements LayerOperation {
 
   @override
   PlatformViewStyling createPlatformViewStyling() => PlatformViewStyling(
-    position: offset != ui.Offset.zero ? PlatformViewPosition.offset(offset) : const PlatformViewPosition.zero(),
+    position:
+        offset != ui.Offset.zero
+            ? PlatformViewPosition.offset(offset)
+            : const PlatformViewPosition.zero(),
     opacity: alpha.toDouble() / 255.0,
   );
 
@@ -429,9 +416,7 @@ class OpacityOperation implements LayerOperation {
   String toString() => 'OpacityOperation(offset: $offset, alpha: $alpha)';
 }
 
-class TransformLayer
-  with PictureEngineLayer
-  implements ui.TransformEngineLayer {
+class TransformLayer with PictureEngineLayer implements ui.TransformEngineLayer {
   TransformLayer(this.operation);
 
   @override
@@ -440,13 +425,15 @@ class TransformLayer
   @override
   TransformLayer emptyClone() => TransformLayer(operation);
 }
+
 class TransformOperation implements LayerOperation {
   TransformOperation(this.transform);
 
   final Float64List transform;
 
   Matrix4? _memoizedMatrix;
-  Matrix4 get matrix => _memoizedMatrix ?? (_memoizedMatrix = Matrix4.fromFloat32List(toMatrix32(transform)));
+  Matrix4 get matrix =>
+      _memoizedMatrix ?? (_memoizedMatrix = Matrix4.fromFloat32List(toMatrix32(transform)));
 
   @override
   ui.Rect mapRect(ui.Rect contentRect) => matrix.transformRect(contentRect);
@@ -463,9 +450,8 @@ class TransformOperation implements LayerOperation {
   }
 
   @override
-  PlatformViewStyling createPlatformViewStyling() => PlatformViewStyling(
-    position: PlatformViewPosition.transform(matrix),
-  );
+  PlatformViewStyling createPlatformViewStyling() =>
+      PlatformViewStyling(position: PlatformViewPosition.transform(matrix));
 
   @override
   bool get affectsBackdrop => false;
@@ -474,9 +460,7 @@ class TransformOperation implements LayerOperation {
   String toString() => 'TransformOperation(matrix: $matrix)';
 }
 
-class ShaderMaskLayer
-  with PictureEngineLayer
-  implements ui.ShaderMaskEngineLayer {
+class ShaderMaskLayer with PictureEngineLayer implements ui.ShaderMaskEngineLayer {
   ShaderMaskLayer(this.operation);
 
   @override
@@ -485,6 +469,7 @@ class ShaderMaskLayer
   @override
   ShaderMaskLayer emptyClone() => ShaderMaskLayer(operation);
 }
+
 class ShaderMaskOperation implements LayerOperation {
   ShaderMaskOperation(this.shader, this.maskRect, this.blendMode);
 
@@ -497,10 +482,7 @@ class ShaderMaskOperation implements LayerOperation {
 
   @override
   void pre(SceneCanvas canvas) {
-    canvas.saveLayer(
-      ui.Rect.largest,
-      ui.Paint(),
-    );
+    canvas.saveLayer(ui.Rect.largest, ui.Paint());
   }
 
   @override
@@ -511,7 +493,7 @@ class ShaderMaskOperation implements LayerOperation {
       ui.Rect.fromLTWH(0, 0, maskRect.width, maskRect.height),
       ui.Paint()
         ..blendMode = blendMode
-        ..shader = shader
+        ..shader = shader,
     );
     canvas.restore();
     canvas.restore();
@@ -524,7 +506,8 @@ class ShaderMaskOperation implements LayerOperation {
   bool get affectsBackdrop => false;
 
   @override
-  String toString() => 'ShaderMaskOperation(shader: $shader, maskRect: $maskRect, blendMode: $blendMode)';
+  String toString() =>
+      'ShaderMaskOperation(shader: $shader, maskRect: $maskRect, blendMode: $blendMode)';
 }
 
 class PlatformView {
@@ -612,8 +595,7 @@ abstract class LayerOperation {
   bool get affectsBackdrop;
 }
 
-sealed class LayerDrawCommand {
-}
+sealed class LayerDrawCommand {}
 
 class PictureDrawCommand extends LayerDrawCommand {
   PictureDrawCommand(this.offset, this.picture, this.sliceIndex);
@@ -735,7 +717,7 @@ class PlatformViewStyling {
   const PlatformViewStyling({
     this.position = const PlatformViewPosition.zero(),
     this.clip = const PlatformViewNoClip(),
-    this.opacity = 1.0
+    this.opacity = 1.0,
   });
 
   bool get isDefault => position.isZero && (opacity == 1.0) && clip is PlatformViewNoClip;
@@ -800,9 +782,9 @@ sealed class PlatformViewClip {
 
   static bool rectCovers(ui.Rect covering, ui.Rect covered) {
     return covering.left <= covered.left &&
-      covering.right >= covered.right &&
-      covering.top <= covered.top &&
-      covering.bottom >= covered.bottom;
+        covering.right >= covered.right &&
+        covering.top <= covered.top &&
+        covering.bottom >= covered.bottom;
   }
 
   static PlatformViewClip combine(PlatformViewClip outer, PlatformViewClip inner) {
@@ -822,7 +804,7 @@ sealed class PlatformViewClip {
     }
 
     return PlatformViewPathClip(
-      ui.Path.combine(ui.PathOperation.intersect, outer.toPath, inner.toPath) as ScenePath
+      ui.Path.combine(ui.PathOperation.intersect, outer.toPath, inner.toPath) as ScenePath,
     );
   }
 }
@@ -988,7 +970,7 @@ class LayerSliceBuilder {
   }
 
   (ui.PictureRecorder, SceneCanvas) createRecorder(ui.Rect rect) =>
-    debugRecorderFactory != null ? debugRecorderFactory!(rect) : defaultRecorderFactory(rect);
+      debugRecorderFactory != null ? debugRecorderFactory!(rect) : defaultRecorderFactory(rect);
 
   LayerSlice buildWithOperation(LayerOperation operation, ui.Rect? backdropRect) {
     final ui.Rect effectiveRect;
@@ -1031,9 +1013,7 @@ class LayerBuilder {
     return LayerBuilder._(parent, layer);
   }
 
-  LayerBuilder._(
-    this.parent,
-    this.layer);
+  LayerBuilder._(this.parent, this.layer);
 
   final LayerBuilder? parent;
   final PictureEngineLayer layer;
@@ -1074,7 +1054,10 @@ class LayerBuilder {
       return _memoizedGlobalPlatformViewStyling!;
     }
     if (parent != null) {
-      return _memoizedGlobalPlatformViewStyling ??= PlatformViewStyling.combine(parent!.globalPlatformViewStyling, platformViewStyling);
+      return _memoizedGlobalPlatformViewStyling ??= PlatformViewStyling.combine(
+        parent!.globalPlatformViewStyling,
+        platformViewStyling,
+      );
     }
     return _memoizedGlobalPlatformViewStyling ??= platformViewStyling;
   }
@@ -1092,21 +1075,13 @@ class LayerBuilder {
     return newSliceBuilder;
   }
 
-  void addPicture(
-    ui.Offset offset,
-    ui.Picture picture, {
-      required int sliceIndex,
-  }) {
+  void addPicture(ui.Offset offset, ui.Picture picture, {required int sliceIndex}) {
     final LayerSliceBuilder sliceBuilder = getOrCreateSliceBuilderAtIndex(sliceIndex);
     sliceBuilder.addPicture(offset, picture as ScenePicture);
     drawCommands.add(PictureDrawCommand(offset, picture, sliceIndex));
   }
 
-  void addPlatformView(
-    int viewId, {
-    required ui.Rect bounds,
-    required int sliceIndex,
-  }) {
+  void addPlatformView(int viewId, {required ui.Rect bounds, required int sliceIndex}) {
     final LayerSliceBuilder sliceBuilder = getOrCreateSliceBuilderAtIndex(sliceIndex);
     sliceBuilder.platformViews.add(PlatformView(viewId, bounds, platformViewStyling));
     drawCommands.add(PlatformViewDrawCommand(viewId, bounds, sliceIndex));
@@ -1118,16 +1093,23 @@ class LayerBuilder {
       if (slice != null) {
         final LayerSliceBuilder sliceBuilder = getOrCreateSliceBuilderAtIndex(i);
         sliceBuilder.addPicture(ui.Offset.zero, slice.picture);
-        sliceBuilder.platformViews.addAll(slice.platformViews.map((PlatformView view) {
-          return PlatformView(view.viewId, view.bounds, PlatformViewStyling.combine(platformViewStyling, view.styling));
-        }));
+        sliceBuilder.platformViews.addAll(
+          slice.platformViews.map((PlatformView view) {
+            return PlatformView(
+              view.viewId,
+              view.bounds,
+              PlatformViewStyling.combine(platformViewStyling, view.styling),
+            );
+          }),
+        );
       }
     }
     drawCommands.add(RetainedLayerDrawCommand(layer));
   }
 
   PictureEngineLayer sliceUp() {
-    final int sliceCount = layer.operation.affectsBackdrop ? getCurrentSliceCount() : sliceBuilders.length;
+    final int sliceCount =
+        layer.operation.affectsBackdrop ? getCurrentSliceCount() : sliceBuilders.length;
     final slices = <LayerSlice?>[];
     for (int i = 0; i < sliceCount; i++) {
       final ui.Rect? backdropRect;

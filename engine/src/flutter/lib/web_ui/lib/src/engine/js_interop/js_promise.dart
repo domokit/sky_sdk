@@ -15,21 +15,25 @@ extension CustomFutureOfJSAnyToJSPromise<T extends JSAny?> on Future<T> {
   /// [Future] or rejects with an object that contains its error.
   JSPromise<T> get toPromise {
     // TODO(ditman): Move to js_interop's .toJS, https://github.com/dart-lang/sdk/issues/56898
-    return JSPromise<T>((JSFunction resolve, JSFunction reject) {
-      then((JSAny? value) {
-        resolve.callAsFunction(resolve, value);
-      }, onError: (Object error, StackTrace stackTrace) {
-        final errorConstructor = globalContext['Error']! as JSFunction;
-        var userError = '$error\n';
-        // Only append the stack trace string if it looks like a DDC one...
-        final stackTraceString = stackTrace.toString();
-        if (!stackTraceString.startsWith('\n')) {
-          userError += '\nDart stack trace:\n$stackTraceString';
-        }
-        final wrapper =
-            errorConstructor.callAsConstructor<JSObject>(userError.toJS);
-        reject.callAsFunction(reject, wrapper);
-      });
-    }.toJS);
+    return JSPromise<T>(
+      (JSFunction resolve, JSFunction reject) {
+        then(
+          (JSAny? value) {
+            resolve.callAsFunction(resolve, value);
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            final errorConstructor = globalContext['Error']! as JSFunction;
+            var userError = '$error\n';
+            // Only append the stack trace string if it looks like a DDC one...
+            final stackTraceString = stackTrace.toString();
+            if (!stackTraceString.startsWith('\n')) {
+              userError += '\nDart stack trace:\n$stackTraceString';
+            }
+            final wrapper = errorConstructor.callAsConstructor<JSObject>(userError.toJS);
+            reject.callAsFunction(reject, wrapper);
+          },
+        );
+      }.toJS,
+    );
   }
 }

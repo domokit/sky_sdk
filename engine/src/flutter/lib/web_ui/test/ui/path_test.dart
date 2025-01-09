@@ -36,7 +36,11 @@ Future<void> testMain() async {
     final Path difference = Path.combine(PathOperation.difference, pathCircle1, pathCircle2);
     expect(difference.getBounds(), equals(c1));
 
-    final Path reverseDifference = Path.combine(PathOperation.reverseDifference, pathCircle1, pathCircle2);
+    final Path reverseDifference = Path.combine(
+      PathOperation.reverseDifference,
+      pathCircle1,
+      pathCircle2,
+    );
     expect(reverseDifference.getBounds(), equals(c2));
 
     final Path union = Path.combine(PathOperation.union, pathCircle1, pathCircle2);
@@ -48,7 +52,7 @@ Future<void> testMain() async {
     // the bounds on this will be the same as union - but would draw a missing inside piece.
     final Path xor = Path.combine(PathOperation.xor, pathCircle1, pathCircle2);
     expect(xor.getBounds(), equals(c1UnionC2));
-  // TODO(hterkelsen): Implement Path.combine in the HTML renderer, https://github.com/flutter/flutter/issues/44572
+    // TODO(hterkelsen): Implement Path.combine in the HTML renderer, https://github.com/flutter/flutter/issues/44572
   }, skip: isHtml);
 
   test('path combine oval', () {
@@ -63,7 +67,11 @@ Future<void> testMain() async {
 
     expect(difference.getBounds().top, closeTo(0.88, 0.01));
 
-    final Path reverseDifference = Path.combine(PathOperation.reverseDifference, pathCircle1, pathCircle2);
+    final Path reverseDifference = Path.combine(
+      PathOperation.reverseDifference,
+      pathCircle1,
+      pathCircle2,
+    );
     expect(reverseDifference.getBounds().right, closeTo(14.11, 0.01));
 
     final Path union = Path.combine(PathOperation.union, pathCircle1, pathCircle2);
@@ -75,7 +83,7 @@ Future<void> testMain() async {
     // the bounds on this will be the same as union - but would draw a missing inside piece.
     final Path xor = Path.combine(PathOperation.xor, pathCircle1, pathCircle2);
     expect(xor.getBounds(), equals(c1UnionC2));
-  // TODO(hterkelsen): Implement Path.combine in the HTML renderer, https://github.com/flutter/flutter/issues/44572
+    // TODO(hterkelsen): Implement Path.combine in the HTML renderer, https://github.com/flutter/flutter/issues/44572
   }, skip: isHtml);
 
   test('path clone', () {
@@ -109,8 +117,7 @@ Future<void> testMain() async {
     expect(p.getBounds(), equals(bounds));
     final Path pTransformed = p.transform(scaleMatrix);
 
-    expect(pTransformed.getBounds(),
-        equals(const Rect.fromLTRB(0.0, 0.0, 10 * 2.5, 10 * 0.5)));
+    expect(pTransformed.getBounds(), equals(const Rect.fromLTRB(0.0, 0.0, 10 * 2.5, 10 * 0.5)));
 
     final Path p2 = Path()..lineTo(10.0, 10.0);
 
@@ -118,8 +125,7 @@ Future<void> testMain() async {
     expect(p.getBounds(), equals(const Rect.fromLTRB(0.0, 0.0, 20.0, 20.0)));
 
     p.addPath(p2, const Offset(20.0, 20.0), matrix4: scaleMatrix);
-    expect(p.getBounds(),
-        equals(const Rect.fromLTRB(0.0, 0.0, 20 + (10 * 2.5), 20 + (10 * .5))));
+    expect(p.getBounds(), equals(const Rect.fromLTRB(0.0, 0.0, 20 + (10 * 2.5), 20 + (10 * .5))));
 
     p.extendWithPath(p2, Offset.zero);
     expect(p.getBounds(), equals(const Rect.fromLTRB(0.0, 0.0, 45.0, 25.0)));
@@ -160,24 +166,28 @@ Future<void> testMain() async {
 
     // test getTangentForOffset with vertical line
     final Path simpleVerticalLine = Path()..lineTo(0.0, 10.0);
-    final PathMetrics simpleMetricsVertical = simpleVerticalLine.computeMetrics()..iterator.moveNext();
+    final PathMetrics simpleMetricsVertical =
+        simpleVerticalLine.computeMetrics()..iterator.moveNext();
     final Tangent posTanVertical = simpleMetricsVertical.iterator.current.getTangentForOffset(5.0)!;
     expect(posTanVertical.position, equals(const Offset(0.0, 5.0)));
     expect(posTanVertical.angle, closeTo(-1.5708, .0001)); // 90 degrees
 
     // test getTangentForOffset with diagonal line
     final Path simpleDiagonalLine = Path()..lineTo(10.0, 10.0);
-    final PathMetrics simpleMetricsDiagonal = simpleDiagonalLine.computeMetrics()..iterator.moveNext();
+    final PathMetrics simpleMetricsDiagonal =
+        simpleDiagonalLine.computeMetrics()..iterator.moveNext();
     final double midPoint = simpleMetricsDiagonal.iterator.current.length / 2;
-    final Tangent posTanDiagonal = simpleMetricsDiagonal.iterator.current.getTangentForOffset(midPoint)!;
+    final Tangent posTanDiagonal =
+        simpleMetricsDiagonal.iterator.current.getTangentForOffset(midPoint)!;
     expect(posTanDiagonal.position, equals(const Offset(5.0, 5.0)));
     expect(posTanDiagonal.angle, closeTo(-0.7853981633974483, .00001)); // ~45 degrees
 
     // test a multi-contour path
-    final Path multiContour = Path()
-      ..lineTo(0.0, 10.0)
-      ..moveTo(10.0, 10.0)
-      ..lineTo(10.0, 15.0);
+    final Path multiContour =
+        Path()
+          ..lineTo(0.0, 10.0)
+          ..moveTo(10.0, 10.0)
+          ..lineTo(10.0, 15.0);
 
     final PathMetrics multiContourMetric = multiContour.computeMetrics();
     expect(() => multiContourMetric.iterator.current, throwsRangeError);
@@ -189,14 +199,16 @@ Future<void> testMain() async {
     expect(multiContourMetric.iterator.current.length, equals(5.0));
     expect(multiContourMetric.iterator.moveNext(), isFalse);
     expect(() => multiContourMetric.iterator.current, throwsRangeError);
-  // TODO(hterkelsen): forceClosed in computeMetrics is ignored in the HTML renderer, https://github.com/flutter/flutter/issues/114446
+    // TODO(hterkelsen): forceClosed in computeMetrics is ignored in the HTML renderer, https://github.com/flutter/flutter/issues/114446
   }, skip: isHtml);
 
   test('PathMetrics can remember lengths and isClosed', () {
-    final Path path = Path()..lineTo(0, 10)
-                            ..close()
-                            ..moveTo(0, 15)
-                            ..lineTo(10, 15);
+    final Path path =
+        Path()
+          ..lineTo(0, 10)
+          ..close()
+          ..moveTo(0, 15)
+          ..lineTo(10, 15);
     final List<PathMetric> metrics = path.computeMetrics().toList();
     expect(metrics.length, 2);
     expect(metrics[0].length, 20);
@@ -207,7 +219,7 @@ Future<void> testMain() async {
     expect(metrics[1].isClosed, false);
     expect(metrics[1].getTangentForOffset(4.0)!.vector, const Offset(1.0, 0.0));
     expect(metrics[1].extractPath(4.0, 6.0).computeMetrics().first.length, 2.0);
-  // TODO(hterkelsen): isClosed always returns false in the HTML renderer, https://github.com/flutter/flutter/issues/114446
+    // TODO(hterkelsen): isClosed always returns false in the HTML renderer, https://github.com/flutter/flutter/issues/114446
   }, skip: isHtml);
 
   test('PathMetrics on a mutated path', () {
@@ -221,7 +233,10 @@ Future<void> testMain() async {
     expect(firstMetric.getTangentForOffset(4.0)!.vector, const Offset(0.0, 1.0));
     expect(firstMetric.extractPath(4.0, 10.0).computeMetrics().first.length, 6.0);
 
-    path..lineTo(10, 10)..lineTo(10, 0)..close();
+    path
+      ..lineTo(10, 10)
+      ..lineTo(10, 0)
+      ..close();
     // mutating the path shouldn't have added anything to the iterator.
     expect(metrics, isEmpty);
     expect(firstMetric.length, 10);
@@ -237,7 +252,7 @@ Future<void> testMain() async {
     expect(newFirstMetric.isClosed, true);
     expect(newFirstMetric.getTangentForOffset(4.0)!.vector, const Offset(0.0, 1.0));
     expect(newFirstMetric.extractPath(4.0, 10.0).computeMetrics().first.length, 6.0);
-  // TODO(hterkelsen): isClosed always returns false in the HTML renderer, https://github.com/flutter/flutter/issues/114446
+    // TODO(hterkelsen): isClosed always returns false in the HTML renderer, https://github.com/flutter/flutter/issues/114446
   }, skip: isHtml);
 
   test('path relativeLineTo', () {

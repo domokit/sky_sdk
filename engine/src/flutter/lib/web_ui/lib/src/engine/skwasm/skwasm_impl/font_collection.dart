@@ -24,7 +24,7 @@ class SkwasmTypeface extends SkwasmObjectWrapper<RawTypeface> {
   SkwasmTypeface(SkDataHandle data) : super(typefaceCreate(data), _registry);
 
   static final SkwasmFinalizationRegistry<RawTypeface> _registry =
-    SkwasmFinalizationRegistry<RawTypeface>(typefaceDispose);
+      SkwasmFinalizationRegistry<RawTypeface>(typefaceDispose);
 }
 
 class SkwasmFontCollection implements FlutterFontCollection {
@@ -43,7 +43,7 @@ class SkwasmFontCollection implements FlutterFontCollection {
 
   void setDefaultFontFamilies(List<String> families) => withStackScope((StackScope scope) {
     final Pointer<SkStringHandle> familyPointers =
-      scope.allocPointerArray(families.length).cast<SkStringHandle>();
+        scope.allocPointerArray(families.length).cast<SkStringHandle>();
     for (int i = 0; i < families.length; i++) {
       familyPointers[i] = skStringFromDartString(families[i]);
     }
@@ -55,8 +55,7 @@ class SkwasmFontCollection implements FlutterFontCollection {
   });
 
   @override
-  late FontFallbackManager fontFallbackManager =
-    FontFallbackManager(SkwasmFallbackRegistry(this));
+  late FontFallbackManager fontFallbackManager = FontFallbackManager(SkwasmFallbackRegistry(this));
 
   @override
   void clear() {
@@ -74,7 +73,7 @@ class SkwasmFontCollection implements FlutterFontCollection {
     /// match Android.
     if (!manifest.families.any((FontFamily family) => family.name == 'Roboto')) {
       manifest.families.add(
-        FontFamily('Roboto', <FontAsset>[FontAsset(_robotoUrl, <String, String>{})])
+        FontFamily('Roboto', <FontAsset>[FontAsset(_robotoUrl, <String, String>{})]),
       );
     }
 
@@ -198,35 +197,40 @@ class SkwasmFallbackRegistry implements FallbackFontRegistry {
   final SkwasmFontCollection fontCollection;
 
   @override
-  List<int> getMissingCodePoints(List<int> codePoints, List<String> fontFamilies)
-    => withStackScope((StackScope scope) {
-    final List<SkwasmTypeface> typefaces = fontFamilies
-      .map((String family) => fontCollection.registeredTypefaces[family])
-      .fold(const Iterable<SkwasmTypeface>.empty(),
-        (Iterable<SkwasmTypeface> accumulated, List<SkwasmTypeface>? typefaces) =>
-          typefaces == null ? accumulated : accumulated.followedBy(typefaces)).toList();
-    final Pointer<TypefaceHandle> typefaceBuffer = scope.allocPointerArray(typefaces.length).cast<TypefaceHandle>();
-    for (int i = 0; i < typefaces.length; i++) {
-      typefaceBuffer[i] = typefaces[i].handle;
-    }
-    final Pointer<Int32> codePointBuffer = scope.allocInt32Array(codePoints.length);
-    for (int i = 0; i < codePoints.length; i++) {
-      codePointBuffer[i] = codePoints[i];
-    }
-    final int missingCodePointCount = typefacesFilterCoveredCodePoints(
-      typefaceBuffer,
-      typefaces.length,
-      codePointBuffer,
-      codePoints.length
-    );
-    return List<int>.generate(missingCodePointCount, (int index) => codePointBuffer[index]);
-  });
+  List<int> getMissingCodePoints(List<int> codePoints, List<String> fontFamilies) =>
+      withStackScope((StackScope scope) {
+        final List<SkwasmTypeface> typefaces =
+            fontFamilies
+                .map((String family) => fontCollection.registeredTypefaces[family])
+                .fold(
+                  const Iterable<SkwasmTypeface>.empty(),
+                  (Iterable<SkwasmTypeface> accumulated, List<SkwasmTypeface>? typefaces) =>
+                      typefaces == null ? accumulated : accumulated.followedBy(typefaces),
+                )
+                .toList();
+        final Pointer<TypefaceHandle> typefaceBuffer =
+            scope.allocPointerArray(typefaces.length).cast<TypefaceHandle>();
+        for (int i = 0; i < typefaces.length; i++) {
+          typefaceBuffer[i] = typefaces[i].handle;
+        }
+        final Pointer<Int32> codePointBuffer = scope.allocInt32Array(codePoints.length);
+        for (int i = 0; i < codePoints.length; i++) {
+          codePointBuffer[i] = codePoints[i];
+        }
+        final int missingCodePointCount = typefacesFilterCoveredCodePoints(
+          typefaceBuffer,
+          typefaces.length,
+          codePointBuffer,
+          codePoints.length,
+        );
+        return List<int>.generate(missingCodePointCount, (int index) => codePointBuffer[index]);
+      });
 
   @override
   Future<void> loadFallbackFont(String familyName, String url) =>
-    fontCollection.loadFontFromUrl(familyName, url);
+      fontCollection.loadFontFromUrl(familyName, url);
 
   @override
   void updateFallbackFontFamilies(List<String> families) =>
-    fontCollection.setDefaultFontFamilies(families);
+      fontCollection.setDefaultFontFamilies(families);
 }

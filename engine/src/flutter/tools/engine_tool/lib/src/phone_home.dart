@@ -4,9 +4,7 @@
 
 /// Returns true if et successfully phoned home.
 bool phoneHome(List<String> args) {
-  if (args.length != 2 ||
-      args[0].toLowerCase() != 'phone' ||
-      args[1].toLowerCase() != 'home') {
+  if (args.length != 2 || args[0].toLowerCase() != 'phone' || args[1].toLowerCase() != 'home') {
     return false;
   }
 

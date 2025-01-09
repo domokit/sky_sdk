@@ -53,13 +53,14 @@ class _PopupControlsPageState extends State<PopupControlsPage> {
               DropdownButton<String>(
                 key: const ValueKey<String>(dropdownButtonKeyValue),
                 value: dropdownValue,
-                items: popupItems.map<DropdownMenuItem<String>>((String item) {
-                  return DropdownMenuItem<String>(
-                    key: ValueKey<String>('$dropdownKeyValue.$item'),
-                    value: item,
-                    child: Text(item),
-                  );
-                }).toList(),
+                items:
+                    popupItems.map<DropdownMenuItem<String>>((String item) {
+                      return DropdownMenuItem<String>(
+                        key: ValueKey<String>('$dropdownKeyValue.$item'),
+                        value: item,
+                        child: Text(item),
+                      );
+                    }).toList(),
                 onChanged: (String? value) {
                   setState(() {
                     dropdownValue = value!;
@@ -76,12 +77,21 @@ class _PopupControlsPageState extends State<PopupControlsPage> {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         key: const ValueKey<String>(alertKeyValue),
-                        title: const Text('Title text', key: ValueKey<String>('$alertKeyValue.Title')),
+                        title: const Text(
+                          'Title text',
+                          key: ValueKey<String>('$alertKeyValue.Title'),
+                        ),
                         content: const SingleChildScrollView(
                           child: ListBody(
                             children: <Widget>[
-                              Text('Body text line 1.', key: ValueKey<String>('$alertKeyValue.Body1')),
-                              Text('Body text line 2.', key: ValueKey<String>('$alertKeyValue.Body2')),
+                              Text(
+                                'Body text line 1.',
+                                key: ValueKey<String>('$alertKeyValue.Body1'),
+                              ),
+                              Text(
+                                'Body text line 2.',
+                                key: ValueKey<String>('$alertKeyValue.Body2'),
+                              ),
                             ],
                           ),
                         ),

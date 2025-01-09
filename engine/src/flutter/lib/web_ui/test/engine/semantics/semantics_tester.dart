@@ -354,21 +354,16 @@ class SemanticsTester {
 
 /// Verifies the HTML structure of the current semantics tree.
 void expectSemanticsTree(EngineSemanticsOwner owner, String semanticsHtml) {
-  expect(
-    owner.semanticsHost.children.single,
-    hasHtml(semanticsHtml),
-  );
+  expect(owner.semanticsHost.children.single, hasHtml(semanticsHtml));
 }
 
 /// Finds the first HTML element in the semantics tree used for scrolling.
 DomElement findScrollable(EngineSemanticsOwner owner) {
-  return owner.semanticsHost.querySelectorAll('flt-semantics').singleWhere(
-    (DomElement? element) {
-      return element!.style.overflow == 'hidden' ||
+  return owner.semanticsHost.querySelectorAll('flt-semantics').singleWhere((DomElement? element) {
+    return element!.style.overflow == 'hidden' ||
         element.style.overflowY == 'scroll' ||
         element.style.overflowX == 'scroll';
-    },
-  );
+  });
 }
 
 /// Logs semantics actions dispatched to [ui.PlatformDispatcher].
@@ -384,8 +379,7 @@ class SemanticsActionLogger {
     // fired.
     final Zone testZone = Zone.current;
 
-    ui.PlatformDispatcher.instance.onSemanticsActionEvent =
-        (ui.SemanticsActionEvent event) {
+    ui.PlatformDispatcher.instance.onSemanticsActionEvent = (ui.SemanticsActionEvent event) {
       _idLogController.add(event.nodeId);
       _actionLogController.add(event.type);
       testZone.run(() {
@@ -408,5 +402,6 @@ class SemanticsActionLogger {
 
 extension SemanticRoleExtension on SemanticRole {
   /// Types of semantics behaviors used by this role.
-  List<Type> get debugSemanticBehaviorTypes => behaviors?.map((behavior) => behavior.runtimeType).toList() ?? const <Type>[];
+  List<Type> get debugSemanticBehaviorTypes =>
+      behaviors?.map((behavior) => behavior.runtimeType).toList() ?? const <Type>[];
 }

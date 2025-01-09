@@ -9,12 +9,7 @@ import 'dart:convert';
 import 'dart:io';
 
 class ServiceClient {
-  ServiceClient(
-    this.client, {
-    this.isolateStartedId,
-    this.isolatePausedId,
-    this.isolateResumeId,
-  }) {
+  ServiceClient(this.client, {this.isolateStartedId, this.isolatePausedId, this.isolateResumeId}) {
     client.listen(_onData, onError: _onError, cancelOnError: true);
   }
 
@@ -22,10 +17,7 @@ class ServiceClient {
   Completer<Object?>? isolatePausedId;
   Completer<Object?>? isolateResumeId;
 
-  Future<Map<String, Object?>> invokeRPC(
-    String method, [
-    Map<String, Object?>? params,
-  ]) async {
+  Future<Map<String, Object?>> invokeRPC(String method, [Map<String, Object?>? params]) async {
     final String key = _createKey();
     final String request = json.encode({
       'jsonrpc': '2.0',

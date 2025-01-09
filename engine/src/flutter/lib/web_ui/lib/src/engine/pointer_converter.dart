@@ -45,10 +45,7 @@ class _GlobalPointerState {
   int activeButtons = 0;
 
   _PointerDeviceState ensurePointerDeviceState(int device, double x, double y) {
-    return pointers.putIfAbsent(
-      device,
-      () => _PointerDeviceState(x, y),
-    );
+    return pointers.putIfAbsent(device, () => _PointerDeviceState(x, y));
   }
 
   /// Resets all pointer states.
@@ -271,8 +268,7 @@ class PointerDataConverter {
       print('>> view=$viewId device=$device change=$change buttons=$buttons');
     }
     final bool isDown = buttons != 0;
-    if (signalKind == null ||
-      signalKind == ui.PointerSignalKind.none) {
+    if (signalKind == null || signalKind == ui.PointerSignalKind.none) {
       switch (change) {
         case ui.PointerChange.add:
           assert(!globalPointerState.pointers.containsKey(device));
@@ -306,7 +302,7 @@ class PointerDataConverter {
               scrollDeltaX: scrollDeltaX,
               scrollDeltaY: scrollDeltaY,
               scale: scale,
-            )
+            ),
           );
         case ui.PointerChange.hover:
           final bool alreadyAdded = globalPointerState.pointers.containsKey(device);
@@ -341,7 +337,7 @@ class PointerDataConverter {
                 scrollDeltaX: scrollDeltaX,
                 scrollDeltaY: scrollDeltaY,
                 scale: scale,
-              )
+              ),
             );
           }
           result.add(
@@ -372,13 +368,16 @@ class PointerDataConverter {
               scrollDeltaX: scrollDeltaX,
               scrollDeltaY: scrollDeltaY,
               scale: scale,
-            )
+            ),
           );
           globalPointerState.activeButtons = buttons;
         case ui.PointerChange.down:
           final bool alreadyAdded = globalPointerState.pointers.containsKey(device);
           final _PointerDeviceState state = globalPointerState.ensurePointerDeviceState(
-              device, physicalX, physicalY);
+            device,
+            physicalX,
+            physicalY,
+          );
           assert(isDown);
           state.startNewPointer();
           if (!alreadyAdded) {
@@ -410,7 +409,7 @@ class PointerDataConverter {
                 scrollDeltaX: scrollDeltaX,
                 scrollDeltaY: scrollDeltaY,
                 scale: scale,
-              )
+              ),
             );
           }
           if (_locationHasChanged(device, physicalX, physicalY)) {
@@ -444,7 +443,7 @@ class PointerDataConverter {
                 scrollDeltaX: scrollDeltaX,
                 scrollDeltaY: scrollDeltaY,
                 scale: scale,
-              )
+              ),
             );
           }
           result.add(
@@ -475,7 +474,7 @@ class PointerDataConverter {
               scrollDeltaX: scrollDeltaX,
               scrollDeltaY: scrollDeltaY,
               scale: scale,
-            )
+            ),
           );
           globalPointerState.activeButtons = buttons;
         case ui.PointerChange.move:
@@ -509,7 +508,7 @@ class PointerDataConverter {
               scrollDeltaX: scrollDeltaX,
               scrollDeltaY: scrollDeltaY,
               scale: scale,
-            )
+            ),
           );
           globalPointerState.activeButtons = buttons;
         case ui.PointerChange.up:
@@ -556,7 +555,7 @@ class PointerDataConverter {
                 scrollDeltaX: scrollDeltaX,
                 scrollDeltaY: scrollDeltaY,
                 scale: scale,
-              )
+              ),
             );
           }
           result.add(
@@ -587,7 +586,7 @@ class PointerDataConverter {
               scrollDeltaX: scrollDeltaX,
               scrollDeltaY: scrollDeltaY,
               scale: scale,
-            )
+            ),
           );
           if (kind == ui.PointerDeviceKind.touch) {
             // The browser sends a new device ID for each touch gesture. To
@@ -620,7 +619,7 @@ class PointerDataConverter {
                 scrollDeltaX: scrollDeltaX,
                 scrollDeltaY: scrollDeltaY,
                 scale: scale,
-              )
+              ),
             );
             globalPointerState.pointers.remove(device);
           }
@@ -656,7 +655,7 @@ class PointerDataConverter {
               scrollDeltaX: scrollDeltaX,
               scrollDeltaY: scrollDeltaY,
               scale: scale,
-            )
+            ),
           );
           globalPointerState.pointers.remove(device);
         case ui.PointerChange.panZoomStart:
@@ -701,7 +700,7 @@ class PointerDataConverter {
                 scrollDeltaX: scrollDeltaX,
                 scrollDeltaY: scrollDeltaY,
                 scale: scale,
-              )
+              ),
             );
           }
           if (_locationHasChanged(device, physicalX, physicalY)) {
@@ -737,7 +736,7 @@ class PointerDataConverter {
                   scrollDeltaX: scrollDeltaX,
                   scrollDeltaY: scrollDeltaY,
                   scale: scale,
-                )
+                ),
               );
             } else {
               result.add(
@@ -767,7 +766,7 @@ class PointerDataConverter {
                   scrollDeltaX: scrollDeltaX,
                   scrollDeltaY: scrollDeltaY,
                   scale: scale,
-                )
+                ),
               );
             }
           }
@@ -800,12 +799,12 @@ class PointerDataConverter {
               scrollDeltaY: scrollDeltaY,
               scale: scale,
               onRespond: onRespond,
-            )
+            ),
           );
         case ui.PointerSignalKind.none:
           assert(false); // This branch should already have 'none' filtered out.
         case ui.PointerSignalKind.unknown:
-        // Ignore unknown signals.
+          // Ignore unknown signals.
           break;
       }
     }

@@ -8,11 +8,9 @@ import '../../xcode_project.dart';
 
 /// Update the minimum macOS deployment version to the minimum allowed by Xcode without causing a warning.
 class MacOSDeploymentTargetMigration extends ProjectMigrator {
-  MacOSDeploymentTargetMigration(
-    MacOSProject project,
-    super.logger,
-  )   : _xcodeProjectInfoFile = project.xcodeProjectInfoFile,
-        _podfile = project.podfile;
+  MacOSDeploymentTargetMigration(MacOSProject project, super.logger)
+    : _xcodeProjectInfoFile = project.xcodeProjectInfoFile,
+      _podfile = project.podfile;
 
   final File _xcodeProjectInfoFile;
   final File _podfile;
@@ -22,7 +20,9 @@ class MacOSDeploymentTargetMigration extends ProjectMigrator {
     if (_xcodeProjectInfoFile.existsSync()) {
       processFileLines(_xcodeProjectInfoFile);
     } else {
-      logger.printTrace('Xcode project not found, skipping macOS deployment target version migration.');
+      logger.printTrace(
+        'Xcode project not found, skipping macOS deployment target version migration.',
+      );
     }
 
     if (_podfile.existsSync()) {
@@ -42,10 +42,10 @@ class MacOSDeploymentTargetMigration extends ProjectMigrator {
     const String podfilePlatformVersionOriginal1011 = "platform :osx, '10.11'";
     const String podfilePlatformVersionOriginal1013 = "platform :osx, '10.13'";
 
-    if (line.contains(deploymentTargetOriginal1011)
-        || line.contains(deploymentTargetOriginal1013)
-        || line.contains(podfilePlatformVersionOriginal1011)
-        || line.contains(podfilePlatformVersionOriginal1013)) {
+    if (line.contains(deploymentTargetOriginal1011) ||
+        line.contains(deploymentTargetOriginal1013) ||
+        line.contains(podfilePlatformVersionOriginal1011) ||
+        line.contains(podfilePlatformVersionOriginal1013)) {
       if (!migrationRequired) {
         // Only print for the first discovered change found.
         logger.printStatus('Updating minimum macOS deployment target to 10.14.');

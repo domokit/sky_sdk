@@ -11,8 +11,9 @@ void main() {
     await tester.pumpWidget(const example.AlignTransitionExampleApp());
     expect(find.byType(ColoredBox), findsOneWidget);
     expect(
-      find.byWidgetPredicate((Widget padding) => padding is Padding
-        && padding.padding == const EdgeInsets.all(8.0)),
+      find.byWidgetPredicate(
+        (Widget padding) => padding is Padding && padding.padding == const EdgeInsets.all(8.0),
+      ),
       findsOneWidget,
     );
     expect(find.byType(FlutterLogo), findsOneWidget);
@@ -22,28 +23,19 @@ void main() {
   testWidgets('Animates repeatedly every 2 seconds', (WidgetTester tester) async {
     await tester.pumpWidget(const example.AlignTransitionExampleApp());
     final Finder paddingFinder = find.byWidgetPredicate(
-      (Widget padding) => padding is Padding
-        && padding.padding == const EdgeInsets.all(8.0));
-
-    expect(
-      tester.getBottomLeft(paddingFinder),
-      tester.getBottomLeft(find.byType(AlignTransition)),
+      (Widget padding) => padding is Padding && padding.padding == const EdgeInsets.all(8.0),
     );
+
+    expect(tester.getBottomLeft(paddingFinder), tester.getBottomLeft(find.byType(AlignTransition)));
 
     await tester.pump(const Duration(seconds: 2));
     await tester.pump();
 
-    expect(
-      tester.getCenter(paddingFinder),
-      tester.getCenter(find.byType(AlignTransition)),
-    );
+    expect(tester.getCenter(paddingFinder), tester.getCenter(find.byType(AlignTransition)));
 
     await tester.pump(const Duration(seconds: 2));
     await tester.pump();
 
-    expect(
-      tester.getBottomLeft(paddingFinder),
-      tester.getBottomLeft(find.byType(AlignTransition)),
-    );
+    expect(tester.getBottomLeft(paddingFinder), tester.getBottomLeft(find.byType(AlignTransition)));
   });
 }

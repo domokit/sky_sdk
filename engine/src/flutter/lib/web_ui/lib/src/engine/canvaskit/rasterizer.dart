@@ -63,11 +63,7 @@ abstract class ViewRasterizer {
     viewEmbedder.frameSize = currentFrameSize;
     final Frame compositorFrame = context.acquireFrame(viewEmbedder);
 
-    compositorFrame.raster(
-      layerTree,
-      currentFrameSize,
-      ignoreRasterCache: true,
-    );
+    compositorFrame.raster(layerTree, currentFrameSize, ignoreRasterCache: true);
 
     await viewEmbedder.submitFrame();
   }
@@ -79,8 +75,7 @@ abstract class ViewRasterizer {
   void prepareToDraw();
 
   /// Rasterize the [pictures] to the given [canvas].
-  Future<void> rasterizeToCanvas(
-      DisplayCanvas canvas, List<CkPicture> pictures);
+  Future<void> rasterizeToCanvas(DisplayCanvas canvas, List<CkPicture> pictures);
 
   /// Get a [DisplayCanvas] to use as an overlay.
   DisplayCanvas getOverlay() {
@@ -137,11 +132,8 @@ abstract class DisplayCanvas {
 
 /// Encapsulates a request to render a [ui.Scene]. Contains the scene to render
 /// and a [Completer] which completes when the scene has been rendered.
-typedef RenderRequest = ({
-  ui.Scene scene,
-  Completer<void> completer,
-  FrameTimingRecorder? recorder,
-});
+typedef RenderRequest =
+    ({ui.Scene scene, Completer<void> completer, FrameTimingRecorder? recorder});
 
 /// A per-view queue of render requests. Only contains the current render
 /// request and the next render request. If a new render request is made before

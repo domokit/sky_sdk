@@ -65,12 +65,7 @@ class SliverFloatingHeader extends StatefulWidget {
   /// Create a floating header sliver that animates into view when the user
   /// scrolls forward, and disappears the user starts scrolling in the
   /// opposite direction.
-  const SliverFloatingHeader({
-    super.key,
-    this.animationStyle,
-    this.snapMode,
-    required this.child
-  });
+  const SliverFloatingHeader({super.key, this.animationStyle, this.snapMode, required this.child});
 
   /// Non null properties override the default durations (300ms) and
   /// curves (Curves.easeInOut) for subsequent header animations.
@@ -92,7 +87,8 @@ class SliverFloatingHeader extends StatefulWidget {
   State<SliverFloatingHeader> createState() => _SliverFloatingHeaderState();
 }
 
-class _SliverFloatingHeaderState extends State<SliverFloatingHeader> with SingleTickerProviderStateMixin {
+class _SliverFloatingHeaderState extends State<SliverFloatingHeader>
+    with SingleTickerProviderStateMixin {
   ScrollPosition? position;
 
   @override
@@ -141,7 +137,8 @@ class _SnapTriggerState extends State<_SnapTrigger> {
   // Called when the sliver starts or ends scrolling.
   void isScrollingListener() {
     assert(position != null);
-    final _RenderSliverFloatingHeader? renderer = context.findAncestorRenderObjectOfType<_RenderSliverFloatingHeader>();
+    final _RenderSliverFloatingHeader? renderer =
+        context.findAncestorRenderObjectOfType<_RenderSliverFloatingHeader>();
     renderer?.isScrollingUpdate(position!);
   }
 
@@ -150,12 +147,7 @@ class _SnapTriggerState extends State<_SnapTrigger> {
 }
 
 class _SliverFloatingHeader extends SingleChildRenderObjectWidget {
-  const _SliverFloatingHeader({
-    this.vsync,
-    this.animationStyle,
-    this.snapMode,
-    super.child,
-  });
+  const _SliverFloatingHeader({this.vsync, this.animationStyle, this.snapMode, super.child});
 
   final TickerProvider? vsync;
   final AnimationStyle? animationStyle;
@@ -180,11 +172,8 @@ class _SliverFloatingHeader extends SingleChildRenderObjectWidget {
 }
 
 class _RenderSliverFloatingHeader extends RenderSliverSingleBoxAdapter {
-  _RenderSliverFloatingHeader({
-    TickerProvider? vsync,
-    this.animationStyle,
-    this.snapMode,
-  }) : _vsync = vsync;
+  _RenderSliverFloatingHeader({TickerProvider? vsync, this.animationStyle, this.snapMode})
+    : _vsync = vsync;
 
   late Animation<double> snapAnimation;
   AnimationController? snapController;
@@ -228,13 +217,12 @@ class _RenderSliverFloatingHeader extends RenderSliverSingleBoxAdapter {
         _ => true,
       };
       if (headerIsPartiallyVisible) {
-        snapController ??= AnimationController(vsync: vsync!)
-          ..addListener(() {
-            if (effectiveScrollOffset != snapAnimation.value) {
-              effectiveScrollOffset = snapAnimation.value;
-              markNeedsLayout();
-            }
-          });
+        snapController ??= AnimationController(vsync: vsync!)..addListener(() {
+          if (effectiveScrollOffset != snapAnimation.value) {
+            effectiveScrollOffset = snapAnimation.value;
+            markNeedsLayout();
+          }
+        });
         snapController!.duration = switch (direction) {
           ScrollDirection.forward => animationStyle?.duration ?? const Duration(milliseconds: 300),
           _ => animationStyle?.reverseDuration ?? const Duration(milliseconds: 300),
@@ -251,7 +239,7 @@ class _RenderSliverFloatingHeader extends RenderSliverSingleBoxAdapter {
               curve: switch (direction) {
                 ScrollDirection.forward => animationStyle?.curve ?? Curves.easeInOut,
                 _ => animationStyle?.reverseCurve ?? Curves.easeInOut,
-              }
+              },
             ),
           ),
         );
@@ -285,7 +273,7 @@ class _RenderSliverFloatingHeader extends RenderSliverSingleBoxAdapter {
   // header to be shown.
   bool get floatingHeaderNeedsToBeUpdated {
     return lastScrollOffset != null &&
-      (constraints.scrollOffset < lastScrollOffset! || effectiveScrollOffset < childExtent);
+        (constraints.scrollOffset < lastScrollOffset! || effectiveScrollOffset < childExtent);
   }
 
   @override
@@ -296,13 +284,18 @@ class _RenderSliverFloatingHeader extends RenderSliverSingleBoxAdapter {
       double delta = lastScrollOffset! - constraints.scrollOffset; // > 0 when the header is growing
       if (constraints.userScrollDirection == ScrollDirection.forward) {
         if (effectiveScrollOffset > childExtent) {
-          effectiveScrollOffset = childExtent; // The header is now just above the start edge of viewport.
+          effectiveScrollOffset =
+              childExtent; // The header is now just above the start edge of viewport.
         }
       } else {
         // delta > 0 and scrolling forward is a contradiction. Assume that it's noise (set delta to 0).
         delta = clampDouble(delta, -double.infinity, 0);
       }
-      effectiveScrollOffset = clampDouble(effectiveScrollOffset - delta, 0.0, constraints.scrollOffset);
+      effectiveScrollOffset = clampDouble(
+        effectiveScrollOffset - delta,
+        0.0,
+        constraints.scrollOffset,
+      );
     }
 
     child?.layout(constraints.asBoxConstraints(), parentUsesSize: true);
@@ -337,11 +330,20 @@ class _RenderSliverFloatingHeader extends RenderSliverSingleBoxAdapter {
   @override
   void paint(PaintingContext context, Offset offset) {
     if (child != null && geometry!.visible) {
-      offset += switch (applyGrowthDirectionToAxisDirection(constraints.axisDirection, constraints.growthDirection)) {
-        AxisDirection.up    => Offset(0.0, geometry!.paintExtent - childMainAxisPosition(child!) - childExtent),
-        AxisDirection.left  => Offset(geometry!.paintExtent - childMainAxisPosition(child!) - childExtent, 0.0),
+      offset += switch (applyGrowthDirectionToAxisDirection(
+        constraints.axisDirection,
+        constraints.growthDirection,
+      )) {
+        AxisDirection.up => Offset(
+          0.0,
+          geometry!.paintExtent - childMainAxisPosition(child!) - childExtent,
+        ),
+        AxisDirection.left => Offset(
+          geometry!.paintExtent - childMainAxisPosition(child!) - childExtent,
+          0.0,
+        ),
         AxisDirection.right => Offset(childMainAxisPosition(child!), 0.0),
-        AxisDirection.down  => Offset(0.0, childMainAxisPosition(child!)),
+        AxisDirection.down => Offset(0.0, childMainAxisPosition(child!)),
       };
       context.paintChild(child!, offset);
     }

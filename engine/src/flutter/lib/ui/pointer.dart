@@ -116,7 +116,7 @@ enum PointerDeviceKind {
   trackpad,
 
   /// An unknown pointer device.
-  unknown
+  unknown,
 }
 
 /// The kind of pointer signal event.
@@ -134,7 +134,7 @@ enum PointerSignalKind {
   scale,
 
   /// An unknown pointer signal kind.
-  unknown
+  unknown,
 }
 
 /// A function that implements the [PointerData.respond] method.
@@ -420,49 +420,49 @@ class PointerData {
   /// Returns a complete textual description of the information in this object.
   String toStringFull() {
     return '$runtimeType('
-             'embedderId: $embedderId, '
-             'timeStamp: $timeStamp, '
-             'change: $change, '
-             'kind: $kind, '
-             'signalKind: $signalKind, '
-             'device: $device, '
-             'pointerIdentifier: $pointerIdentifier, '
-             'physicalX: $physicalX, '
-             'physicalY: $physicalY, '
-             'physicalDeltaX: $physicalDeltaX, '
-             'physicalDeltaY: $physicalDeltaY, '
-             'buttons: $buttons, '
-             'synthesized: $synthesized, '
-             'pressure: $pressure, '
-             'pressureMin: $pressureMin, '
-             'pressureMax: $pressureMax, '
-             'distance: $distance, '
-             'distanceMax: $distanceMax, '
-             'size: $size, '
-             'radiusMajor: $radiusMajor, '
-             'radiusMinor: $radiusMinor, '
-             'radiusMin: $radiusMin, '
-             'radiusMax: $radiusMax, '
-             'orientation: $orientation, '
-             'tilt: $tilt, '
-             'platformData: $platformData, '
-             'scrollDeltaX: $scrollDeltaX, '
-             'scrollDeltaY: $scrollDeltaY, '
-             'panX: $panX, '
-             'panY: $panY, '
-             'panDeltaX: $panDeltaX, '
-             'panDeltaY: $panDeltaY, '
-             'scale: $scale, '
-             'rotation: $rotation, '
-             'viewId: $viewId'
-           ')';
+        'embedderId: $embedderId, '
+        'timeStamp: $timeStamp, '
+        'change: $change, '
+        'kind: $kind, '
+        'signalKind: $signalKind, '
+        'device: $device, '
+        'pointerIdentifier: $pointerIdentifier, '
+        'physicalX: $physicalX, '
+        'physicalY: $physicalY, '
+        'physicalDeltaX: $physicalDeltaX, '
+        'physicalDeltaY: $physicalDeltaY, '
+        'buttons: $buttons, '
+        'synthesized: $synthesized, '
+        'pressure: $pressure, '
+        'pressureMin: $pressureMin, '
+        'pressureMax: $pressureMax, '
+        'distance: $distance, '
+        'distanceMax: $distanceMax, '
+        'size: $size, '
+        'radiusMajor: $radiusMajor, '
+        'radiusMinor: $radiusMinor, '
+        'radiusMin: $radiusMin, '
+        'radiusMax: $radiusMax, '
+        'orientation: $orientation, '
+        'tilt: $tilt, '
+        'platformData: $platformData, '
+        'scrollDeltaX: $scrollDeltaX, '
+        'scrollDeltaY: $scrollDeltaY, '
+        'panX: $panX, '
+        'panY: $panY, '
+        'panDeltaX: $panDeltaX, '
+        'panDeltaY: $panDeltaY, '
+        'scale: $scale, '
+        'rotation: $rotation, '
+        'viewId: $viewId'
+        ')';
   }
 }
 
 /// A sequence of reports about the state of pointers.
 class PointerDataPacket {
   /// Creates a packet of pointer data reports.
-  const PointerDataPacket({ this.data = const <PointerData>[] });
+  const PointerDataPacket({this.data = const <PointerData>[]});
 
   /// Data about the individual pointers in this packet.
   ///

@@ -133,33 +133,34 @@ class KeyData {
     // JavaScript only support 32-bit bitwise operations and needs to use
     // division instead.
     final int planeNum = (logical / 0x100000000).floor();
-    final String planeDescription = (() {
-      switch (planeNum) {
-        case 0x000:
-          return ' (Unicode)';
-        case 0x001:
-          return ' (Unprintable)';
-        case 0x002:
-          return ' (Flutter)';
-        case 0x011:
-          return ' (Android)';
-        case 0x012:
-          return ' (Fuchsia)';
-        case 0x013:
-          return ' (iOS)';
-        case 0x014:
-          return ' (macOS)';
-        case 0x015:
-          return ' (GTK)';
-        case 0x016:
-          return ' (Windows)';
-        case 0x017:
-          return ' (Web)';
-        case 0x018:
-          return ' (GLFW)';
-      }
-      return '';
-    })();
+    final String planeDescription =
+        (() {
+          switch (planeNum) {
+            case 0x000:
+              return ' (Unicode)';
+            case 0x001:
+              return ' (Unprintable)';
+            case 0x002:
+              return ' (Flutter)';
+            case 0x011:
+              return ' (Android)';
+            case 0x012:
+              return ' (Fuchsia)';
+            case 0x013:
+              return ' (iOS)';
+            case 0x014:
+              return ' (macOS)';
+            case 0x015:
+              return ' (GTK)';
+            case 0x016:
+              return ' (Windows)';
+            case 0x017:
+              return ' (Web)';
+            case 0x018:
+              return ' (GLFW)';
+          }
+          return '';
+        })();
     return '$result$planeDescription';
   }
 
@@ -187,30 +188,31 @@ class KeyData {
     if (character == null) {
       return '';
     }
-    final Iterable<String> hexChars = character!.codeUnits
-        .map((int code) => code.toRadixString(16).padLeft(2, '0'));
+    final Iterable<String> hexChars = character!.codeUnits.map(
+      (int code) => code.toRadixString(16).padLeft(2, '0'),
+    );
     return ' (0x${hexChars.join(' ')})';
   }
 
   @override
   String toString() {
     return 'KeyData(${type.label}, '
-           'physical: 0x${physical.toRadixString(16)}, '
-           'logical: ${_logicalToString()}, '
-           'character: ${_escapeCharacter()}${_quotedCharCode()}'
-           '${synthesized ? ', synthesized' : ''})';
+        'physical: 0x${physical.toRadixString(16)}, '
+        'logical: ${_logicalToString()}, '
+        'character: ${_escapeCharacter()}${_quotedCharCode()}'
+        '${synthesized ? ', synthesized' : ''})';
   }
 
   /// Returns a complete textual description of the information in this object.
   String toStringFull() {
     return '$runtimeType('
-           'type: ${type.label}, '
-           'deviceType: ${deviceType.label}, '
-           'timeStamp: $timeStamp, '
-           'physical: 0x${physical.toRadixString(16)}, '
-           'logical: 0x${logical.toRadixString(16)}, '
-           'character: ${_escapeCharacter()}, '
-           'synthesized: $synthesized'
-           ')';
+        'type: ${type.label}, '
+        'deviceType: ${deviceType.label}, '
+        'timeStamp: $timeStamp, '
+        'physical: 0x${physical.toRadixString(16)}, '
+        'logical: 0x${logical.toRadixString(16)}, '
+        'character: ${_escapeCharacter()}, '
+        'synthesized: $synthesized'
+        ')';
   }
 }

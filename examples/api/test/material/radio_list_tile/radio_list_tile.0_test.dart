@@ -8,15 +8,15 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Can update RadioListTile group value', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.RadioListTileApp(),
-    );
+    await tester.pumpWidget(const example.RadioListTileApp());
 
     // Find the number of RadioListTiles.
     expect(find.byType(RadioListTile<example.SingingCharacter>), findsNWidgets(2));
 
     // The initial group value is lafayette for the first RadioListTile.
-    RadioListTile<example.SingingCharacter> radioListTile = tester.widget(find.byType(RadioListTile<example.SingingCharacter>).first);
+    RadioListTile<example.SingingCharacter> radioListTile = tester.widget(
+      find.byType(RadioListTile<example.SingingCharacter>).first,
+    );
     expect(radioListTile.groupValue, example.SingingCharacter.lafayette);
 
     // The initial group value is lafayette for the last RadioListTile.

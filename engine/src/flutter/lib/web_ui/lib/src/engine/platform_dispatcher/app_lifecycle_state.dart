@@ -21,8 +21,7 @@ abstract class AppLifecycleState {
   ui.AppLifecycleState get appLifecycleState => _appLifecycleState;
   ui.AppLifecycleState _appLifecycleState = ui.AppLifecycleState.resumed;
 
-  final List<AppLifecycleStateListener> _listeners =
-      <AppLifecycleStateListener>[];
+  final List<AppLifecycleStateListener> _listeners = <AppLifecycleStateListener>[];
 
   void addListener(AppLifecycleStateListener listener) {
     if (_listeners.isEmpty) {
@@ -82,28 +81,22 @@ class _BrowserAppLifecycleState extends AppLifecycleState {
   void deactivate() {
     domWindow.removeEventListener('focus', _focusListener);
     domWindow.removeEventListener('blur', _blurListener);
-    domDocument.removeEventListener(
-      'visibilitychange',
-      _visibilityChangeListener,
-    );
+    domDocument.removeEventListener('visibilitychange', _visibilityChangeListener);
     for (final StreamSubscription<void> subscription in _subscriptions) {
       subscription.cancel();
     }
     _subscriptions.clear();
   }
 
-  late final DomEventListener _focusListener =
-      createDomEventListener((DomEvent event) {
+  late final DomEventListener _focusListener = createDomEventListener((DomEvent event) {
     onAppLifecycleStateChange(ui.AppLifecycleState.resumed);
   });
 
-  late final DomEventListener _blurListener =
-      createDomEventListener((DomEvent event) {
+  late final DomEventListener _blurListener = createDomEventListener((DomEvent event) {
     onAppLifecycleStateChange(ui.AppLifecycleState.inactive);
   });
 
-  late final DomEventListener _visibilityChangeListener =
-      createDomEventListener((DomEvent event) {
+  late final DomEventListener _visibilityChangeListener = createDomEventListener((DomEvent event) {
     if (domDocument.visibilityState == 'visible') {
       onAppLifecycleStateChange(ui.AppLifecycleState.resumed);
     } else if (domDocument.visibilityState == 'hidden') {

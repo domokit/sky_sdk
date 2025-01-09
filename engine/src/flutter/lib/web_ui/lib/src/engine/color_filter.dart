@@ -5,12 +5,7 @@
 import 'package:ui/src/engine.dart';
 import 'package:ui/ui.dart' as ui;
 
-enum ColorFilterType {
-  mode,
-  matrix,
-  linearToSrgbGamma,
-  srgbToLinearGamma,
-}
+enum ColorFilterType { mode, matrix, linearToSrgbGamma, srgbToLinearGamma }
 
 /// A description of a color filter to apply when drawing a shape or compositing
 /// a layer with a particular [Paint]. A color filter is a function that takes
@@ -93,25 +88,25 @@ class EngineColorFilter implements SceneImageFilter, ui.ColorFilter {
   /// ]);
   /// ```
   const EngineColorFilter.matrix(List<double> this.matrix)
-      : color = null,
-        blendMode = null,
-        type = ColorFilterType.matrix;
+    : color = null,
+      blendMode = null,
+      type = ColorFilterType.matrix;
 
   /// Construct a color filter that applies the sRGB gamma curve to the RGB
   /// channels.
   const EngineColorFilter.linearToSrgbGamma()
-      : color = null,
-        blendMode = null,
-        matrix = null,
-        type = ColorFilterType.linearToSrgbGamma;
+    : color = null,
+      blendMode = null,
+      matrix = null,
+      type = ColorFilterType.linearToSrgbGamma;
 
   /// Creates a color filter that applies the inverse of the sRGB gamma curve
   /// to the RGB channels.
   const EngineColorFilter.srgbToLinearGamma()
-      : color = null,
-        blendMode = null,
-        matrix = null,
-        type = ColorFilterType.srgbToLinearGamma;
+    : color = null,
+      blendMode = null,
+      matrix = null,
+      type = ColorFilterType.srgbToLinearGamma;
 
   final ui.Color? color;
   final ui.BlendMode? blendMode;

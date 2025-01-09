@@ -23,7 +23,8 @@ class FileStorage {
       throw Exception('File storage format invalid');
     }
     final int version = json['version'] as int;
-    final List<Map<String, dynamic>> rawCachedFiles = (json['files'] as List<dynamic>).cast<Map<String, dynamic>>();
+    final List<Map<String, dynamic>> rawCachedFiles =
+        (json['files'] as List<dynamic>).cast<Map<String, dynamic>>();
     final List<FileHash> cachedFiles = <FileHash>[
       for (final Map<String, dynamic> rawFile in rawCachedFiles) FileHash._fromJson(rawFile),
     ];
@@ -36,9 +37,7 @@ class FileStorage {
   List<int> toBuffer() {
     final Map<String, Object> json = <String, Object>{
       'version': version,
-      'files': <Object>[
-        for (final FileHash file in files) file.toJson(),
-      ],
+      'files': <Object>[for (final FileHash file in files) file.toJson()],
     };
     return utf8.encode(jsonEncode(json));
   }
@@ -59,10 +58,7 @@ class FileHash {
   final String hash;
 
   Object toJson() {
-    return <String, Object>{
-      'path': path,
-      'hash': hash,
-    };
+    return <String, Object>{'path': path, 'hash': hash};
   }
 }
 
@@ -158,10 +154,7 @@ class FileStore {
     for (final MapEntry<String, String> entry in currentAssetKeys.entries) {
       fileHashes.add(FileHash(entry.key, entry.value));
     }
-    final FileStorage fileStorage = FileStorage(
-      _kVersion,
-      fileHashes,
-    );
+    final FileStorage fileStorage = FileStorage(_kVersion, fileHashes);
     final List<int> buffer = fileStorage.toBuffer();
     try {
       _cacheFile.writeAsBytesSync(buffer);

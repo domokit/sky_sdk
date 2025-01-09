@@ -11,10 +11,9 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('Can open menu', (WidgetTester tester) async {
     Finder findMenu() {
-      return find.ancestor(
-        of: find.text(example.MenuEntry.about.label),
-        matching: find.byType(FocusScope),
-      ).first;
+      return find
+          .ancestor(of: find.text(example.MenuEntry.about.label), matching: find.byType(FocusScope))
+          .first;
     }
 
     await tester.pumpWidget(const example.ContextMenuApp());
@@ -78,9 +77,7 @@ void main() {
   });
 
   testWidgets('Shortcuts work', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ContextMenuApp(),
-    );
+    await tester.pumpWidget(const example.ContextMenuApp());
 
     // Open the menu so we can look for state changes reflected in the menu.
     await tester.tapAt(const Offset(100, 200), buttons: kSecondaryButton);

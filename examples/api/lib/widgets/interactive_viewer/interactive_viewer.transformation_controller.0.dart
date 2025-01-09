@@ -13,9 +13,7 @@ class TransformationControllerExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: TransformationControllerExample(),
-    );
+    return const MaterialApp(home: TransformationControllerExample());
   }
 }
 
@@ -53,7 +51,7 @@ class _TransformationControllerExampleState extends State<TransformationControll
     _controllerReset.forward();
   }
 
-// Stop a running reset to home transform animation.
+  // Stop a running reset to home transform animation.
   void _animateResetStop() {
     _controllerReset.stop();
     _animationReset?.removeListener(_onAnimateReset);
@@ -89,10 +87,7 @@ class _TransformationControllerExampleState extends State<TransformationControll
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Controller demo'),
-      ),
+      appBar: AppBar(automaticallyImplyLeading: false, title: const Text('Controller demo')),
       body: Center(
         child: InteractiveViewer(
           boundaryMargin: const EdgeInsets.all(double.infinity),

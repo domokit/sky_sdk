@@ -14,15 +14,27 @@ void main() {
     expect(find.text('Bottom Pinned Button!'), findsOneWidget);
     expect(find.byType(CustomScrollView), findsOneWidget);
     final CustomScrollView scroll = tester.widget(find.byType(CustomScrollView));
-    expect(scroll.physics, isA<BouncingScrollPhysics>().
-    having((BouncingScrollPhysics bsp) => bsp.parent, 'parent', isA<AlwaysScrollableScrollPhysics>()));
+    expect(
+      scroll.physics,
+      isA<BouncingScrollPhysics>().having(
+        (BouncingScrollPhysics bsp) => bsp.parent,
+        'parent',
+        isA<AlwaysScrollableScrollPhysics>(),
+      ),
+    );
 
-    expect(find.byWidgetPredicate((Widget widget) => (widget is Container)
-      && widget.color == Colors.tealAccent[700],
-    ), findsOneWidget);
-    expect(find.byWidgetPredicate((Widget widget) => (widget is Container)
-      && widget.color == Colors.teal[100]
-    ), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (Widget widget) => (widget is Container) && widget.color == Colors.tealAccent[700],
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.byWidgetPredicate(
+        (Widget widget) => (widget is Container) && widget.color == Colors.teal[100],
+      ),
+      findsOneWidget,
+    );
     expect(find.byType(Container), findsNWidgets(2));
 
     expect(find.byType(SliverFillRemaining), findsOneWidget);

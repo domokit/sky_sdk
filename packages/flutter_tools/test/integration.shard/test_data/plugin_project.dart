@@ -9,8 +9,7 @@ import 'deferred_components_project.dart';
 /// Project which can load native plugins
 class PluginProject extends BasicProject {
   @override
-  final DeferredComponentsConfig? deferredComponents =
-      PluginDeferredComponentsConfig();
+  final DeferredComponentsConfig? deferredComponents = PluginDeferredComponentsConfig();
 }
 
 class PluginDeferredComponentsConfig extends BasicDeferredComponentsConfig {

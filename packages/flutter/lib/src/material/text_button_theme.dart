@@ -39,7 +39,7 @@ class TextButtonThemeData with Diagnosticable {
   /// Creates a [TextButtonThemeData].
   ///
   /// The [style] may be null.
-  const TextButtonThemeData({ this.style });
+  const TextButtonThemeData({this.style});
 
   /// Overrides for [TextButton]'s default style.
   ///
@@ -55,9 +55,7 @@ class TextButtonThemeData with Diagnosticable {
     if (identical(a, b)) {
       return a;
     }
-    return TextButtonThemeData(
-      style: ButtonStyle.lerp(a?.style, b?.style, t),
-    );
+    return TextButtonThemeData(style: ButtonStyle.lerp(a?.style, b?.style, t));
   }
 
   @override
@@ -94,11 +92,7 @@ class TextButtonThemeData with Diagnosticable {
 ///    [ButtonStyle] for [TextButton]s below the overall [Theme].
 class TextButtonTheme extends InheritedTheme {
   /// Create a [TextButtonTheme].
-  const TextButtonTheme({
-    super.key,
-    required this.data,
-    required super.child,
-  });
+  const TextButtonTheme({super.key, required this.data, required super.child});
 
   /// The configuration of this theme.
   final TextButtonThemeData data;
@@ -114,7 +108,8 @@ class TextButtonTheme extends InheritedTheme {
   /// TextButtonThemeData theme = TextButtonTheme.of(context);
   /// ```
   static TextButtonThemeData of(BuildContext context) {
-    final TextButtonTheme? buttonTheme = context.dependOnInheritedWidgetOfExactType<TextButtonTheme>();
+    final TextButtonTheme? buttonTheme =
+        context.dependOnInheritedWidgetOfExactType<TextButtonTheme>();
     return buttonTheme?.data ?? Theme.of(context).textButtonTheme;
   }
 

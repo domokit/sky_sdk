@@ -82,11 +82,18 @@ ui.Offset _computeOffsetForInputs(
 ) {
   final DomElement targetElement = eventTarget as DomElement;
   final DomHTMLElement domElement = textEditing.strategy.activeDomElement;
-  assert(targetElement == domElement, 'The targeted input element must be the active input element');
+  assert(
+    targetElement == domElement,
+    'The targeted input element must be the active input element',
+  );
   final Float32List transformValues = inputGeometry.globalTransform;
   assert(transformValues.length == 16);
   final Matrix4 transform = Matrix4.fromFloat32List(transformValues);
-  final Vector3 transformedPoint = transform.perspectiveTransform(x: event.offsetX, y: event.offsetY, z: 0);
+  final Vector3 transformedPoint = transform.perspectiveTransform(
+    x: event.offsetX,
+    y: event.offsetY,
+    z: 0,
+  );
 
   return ui.Offset(transformedPoint.x, transformedPoint.y);
 }
@@ -129,7 +136,7 @@ ui.Offset _computeOffsetForTalkbackEvent(DomMouseEvent event, DomElement actualT
   double offsetY = event.clientY;
   // Compute the scroll offset of actualTarget
   DomHTMLElement parent = actualTarget as DomHTMLElement;
-  while(parent.offsetParent != null){
+  while (parent.offsetParent != null) {
     offsetX -= parent.offsetLeft - parent.scrollLeft;
     offsetY -= parent.offsetTop - parent.scrollTop;
     parent = parent.offsetParent!;

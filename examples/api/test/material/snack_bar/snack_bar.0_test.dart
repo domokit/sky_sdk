@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Clicking on Button shows a SnackBar', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SnackBarExampleApp(),
-    );
+    await tester.pumpWidget(const example.SnackBarExampleApp());
 
     expect(find.widgetWithText(AppBar, 'SnackBar Sample'), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, 'Show Snackbar'), findsOneWidget);

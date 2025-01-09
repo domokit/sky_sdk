@@ -22,12 +22,12 @@ class DarwinDependencyManagement {
     required SwiftPackageManager swiftPackageManager,
     required FileSystem fileSystem,
     required Logger logger,
-  })  : _project = project,
-        _plugins = plugins,
-        _cocoapods = cocoapods,
-        _swiftPackageManager = swiftPackageManager,
-        _fileSystem = fileSystem,
-        _logger = logger;
+  }) : _project = project,
+       _plugins = plugins,
+       _cocoapods = cocoapods,
+       _swiftPackageManager = swiftPackageManager,
+       _fileSystem = fileSystem,
+       _logger = logger;
 
   final FlutterProject _project;
   final List<Plugin> _plugins;
@@ -48,34 +48,22 @@ class DarwinDependencyManagement {
   /// Swift Package Manager requires a generated Package.swift and certain
   /// settings in the Xcode project's project.pbxproj and xcscheme (done later
   /// before build).
-  Future<void> setUp({
-    required SupportedPlatform platform,
-  }) async {
-    if (platform != SupportedPlatform.ios &&
-        platform != SupportedPlatform.macos) {
+  Future<void> setUp({required SupportedPlatform platform}) async {
+    if (platform != SupportedPlatform.ios && platform != SupportedPlatform.macos) {
       throwToolExit(
         'The platform ${platform.name} is incompatible with Darwin Dependency Managers. Only iOS and macOS are allowed.',
       );
     }
-    final XcodeBasedProject xcodeProject = platform == SupportedPlatform.ios
-        ? _project.ios
-        : _project.macos;
+    final XcodeBasedProject xcodeProject =
+        platform == SupportedPlatform.ios ? _project.ios : _project.macos;
     if (xcodeProject.usesSwiftPackageManager) {
-      await _swiftPackageManager.generatePluginsSwiftPackage(
-        _plugins,
-        platform,
-        xcodeProject,
-      );
+      await _swiftPackageManager.generatePluginsSwiftPackage(_plugins, platform, xcodeProject);
     } else if (xcodeProject.flutterPluginSwiftPackageInProjectSettings) {
       // If Swift Package Manager is not enabled but the project is already
       // integrated for Swift Package Manager, pass no plugins to the generator.
       // This will still generate the required Package.swift, but it will have
       // no dependencies.
-      await _swiftPackageManager.generatePluginsSwiftPackage(
-        <Plugin>[],
-        platform,
-        xcodeProject,
-      );
+      await _swiftPackageManager.generatePluginsSwiftPackage(<Plugin>[], platform, xcodeProject);
     }
 
     // Skip updating Podfile if project is a module, since it will use a
@@ -83,10 +71,11 @@ class DarwinDependencyManagement {
     if (_project.isModule) {
       return;
     }
-    final (:int totalCount, :int swiftPackageCount, :int podCount) = await _evaluatePluginsAndPrintWarnings(
-      platform: platform,
-      xcodeProject: xcodeProject,
-    );
+    final (
+      :int totalCount,
+      :int swiftPackageCount,
+      :int podCount,
+    ) = await _evaluatePluginsAndPrintWarnings(platform: platform, xcodeProject: xcodeProject);
 
     final bool useCocoapods;
     if (xcodeProject.usesSwiftPackageManager) {
@@ -132,13 +121,10 @@ class DarwinDependencyManagement {
         _fileSystem,
         platform.name,
       );
-      final bool swiftPackageManagerCompatible = swiftPackagePath != null &&
-          _fileSystem.file(swiftPackagePath).existsSync();
+      final bool swiftPackageManagerCompatible =
+          swiftPackagePath != null && _fileSystem.file(swiftPackagePath).existsSync();
 
-      final String? podspecPath = plugin.pluginPodspecPath(
-        _fileSystem,
-        platform.name,
-      );
+      final String? podspecPath = plugin.pluginPodspecPath(_fileSystem, platform.name);
       final bool cocoaPodsCompatible =
           podspecPath != null && _fileSystem.file(podspecPath).existsSync();
 
@@ -165,10 +151,11 @@ class DarwinDependencyManagement {
           !cocoaPodsCompatible &&
           swiftPackageManagerCompatible) {
         throwToolExit(
-            'Plugin ${plugin.name} is only Swift Package Manager compatible. Try '
-            'enabling Swift Package Manager by running '
-            '"flutter config --enable-swift-package-manager" or remove the '
-            'plugin as a dependency.');
+          'Plugin ${plugin.name} is only Swift Package Manager compatible. Try '
+          'enabling Swift Package Manager by running '
+          '"flutter config --enable-swift-package-manager" or remove the '
+          'plugin as a dependency.',
+        );
       }
     }
 
@@ -188,42 +175,40 @@ class DarwinDependencyManagement {
           xcodeProject.xcodeProject,
         );
 
-        final String configWarning = '${_podIncludeInConfigWarning(xcodeProject, 'Debug')}'
-              '${_podIncludeInConfigWarning(xcodeProject, 'Release')}';
+        final String configWarning =
+            '${_podIncludeInConfigWarning(xcodeProject, 'Debug')}'
+            '${_podIncludeInConfigWarning(xcodeProject, 'Release')}';
 
-        if (xcodeProject.podfile.readAsStringSync() ==
-            podfileTemplate.readAsStringSync()) {
+        if (xcodeProject.podfile.readAsStringSync() == podfileTemplate.readAsStringSync()) {
           _logger.printWarning(
-              'All plugins found for ${platform.name} are Swift Packages, but your '
-              'project still has CocoaPods integration. To remove CocoaPods '
-              'integration, complete the following steps:\n'
-              '  * In the ${platform.name}/ directory run "pod deintegrate"\n'
-              '  * Also in the ${platform.name}/ directory, delete the Podfile\n'
-              '$configWarning\n'
-              "Removing CocoaPods integration will improve the project's build time.");
+            'All plugins found for ${platform.name} are Swift Packages, but your '
+            'project still has CocoaPods integration. To remove CocoaPods '
+            'integration, complete the following steps:\n'
+            '  * In the ${platform.name}/ directory run "pod deintegrate"\n'
+            '  * Also in the ${platform.name}/ directory, delete the Podfile\n'
+            '$configWarning\n'
+            "Removing CocoaPods integration will improve the project's build time.",
+          );
         } else {
           // If all plugins are Swift Packages, but the Podfile has custom logic,
           // recommend migrating manually.
           _logger.printWarning(
-              'All plugins found for ${platform.name} are Swift Packages, but your '
-              'project still has CocoaPods integration. Your project uses a '
-              'non-standard Podfile and will need to be migrated to Swift Package '
-              'Manager manually. Some steps you may need to complete include:\n'
-              '  * In the ${platform.name}/ directory run "pod deintegrate"\n'
-              '  * Transition any Pod dependencies to Swift Package equivalents. '
-              'See https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app\n'
-              '  * Transition any custom logic\n'
-              '$configWarning\n'
-              "Removing CocoaPods integration will improve the project's build time.");
+            'All plugins found for ${platform.name} are Swift Packages, but your '
+            'project still has CocoaPods integration. Your project uses a '
+            'non-standard Podfile and will need to be migrated to Swift Package '
+            'Manager manually. Some steps you may need to complete include:\n'
+            '  * In the ${platform.name}/ directory run "pod deintegrate"\n'
+            '  * Transition any Pod dependencies to Swift Package equivalents. '
+            'See https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app\n'
+            '  * Transition any custom logic\n'
+            '$configWarning\n'
+            "Removing CocoaPods integration will improve the project's build time.",
+          );
         }
       }
     }
 
-    return (
-      totalCount: pluginCount,
-      swiftPackageCount: swiftPackageCount,
-      podCount: cocoapodCount,
-    );
+    return (totalCount: pluginCount, swiftPackageCount: swiftPackageCount, podCount: cocoapodCount);
   }
 
   String _podIncludeInConfigWarning(XcodeBasedProject xcodeProject, String mode) {

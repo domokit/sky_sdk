@@ -6,8 +6,11 @@ import 'template.dart';
 
 class SnackbarTemplate extends TokenTemplate {
   const SnackbarTemplate(
-      this.tokenGroup, super.blockName, super.fileName, super.tokens, {
-        super.colorSchemePrefix = '_colors.'
+    this.tokenGroup,
+    super.blockName,
+    super.fileName,
+    super.tokens, {
+    super.colorSchemePrefix = '_colors.',
   });
 
   final String tokenGroup;

@@ -349,7 +349,10 @@ class StrutStyle with Diagnosticable {
   }) : assert(fontSize == null || fontSize > 0),
        assert(leading == null || leading >= 0),
        assert(package == null || fontFamily != null || fontFamilyFallback != null),
-       fontFamily = fontFamily != null ? (package == null ? fontFamily : 'packages/$package/$fontFamily') : textStyle.fontFamily,
+       fontFamily =
+           fontFamily != null
+               ? (package == null ? fontFamily : 'packages/$package/$fontFamily')
+               : textStyle.fontFamily,
        _fontFamilyFallback = fontFamilyFallback ?? textStyle.fontFamilyFallback,
        height = height ?? textStyle.height,
        leadingDistribution = leadingDistribution ?? textStyle.leadingDistribution,
@@ -358,16 +361,13 @@ class StrutStyle with Diagnosticable {
        fontStyle = fontStyle ?? textStyle.fontStyle,
        debugLabel = debugLabel ?? textStyle.debugLabel,
        _package = package; // the textStyle._package data is embedded in the
-                           // fontFamily names, so we no longer need it.
+  // fontFamily names, so we no longer need it.
 
   /// A [StrutStyle] that will have no impact on the text layout.
   ///
   /// Equivalent to having no strut at all. All lines will be laid out according to
   /// the properties defined in [TextStyle].
-  static const StrutStyle disabled = StrutStyle(
-    height: 0.0,
-    leading: 0.0,
-  );
+  static const StrutStyle disabled = StrutStyle(height: 0.0, leading: 0.0);
 
   /// The name of the font to use when calculating the strut (e.g., Roboto). If
   /// the font is defined in a package, this will be prefixed with
@@ -408,6 +408,7 @@ class StrutStyle with Diagnosticable {
     }
     return _fontFamilyFallback;
   }
+
   final List<String>? _fontFamilyFallback;
 
   // This is stored in order to prefix the fontFamilies in _fontFamilyFallback
@@ -568,33 +569,26 @@ class StrutStyle with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is StrutStyle
-        && other.fontFamily == fontFamily
-        && other.fontSize == fontSize
-        && other.fontWeight == fontWeight
-        && other.fontStyle == fontStyle
-        && other.height == height
-        && other.leading == leading
-        && other.forceStrutHeight == forceStrutHeight;
+    return other is StrutStyle &&
+        other.fontFamily == fontFamily &&
+        other.fontSize == fontSize &&
+        other.fontWeight == fontWeight &&
+        other.fontStyle == fontStyle &&
+        other.height == height &&
+        other.leading == leading &&
+        other.forceStrutHeight == forceStrutHeight;
   }
 
   @override
-  int get hashCode => Object.hash(
-    fontFamily,
-    fontSize,
-    fontWeight,
-    fontStyle,
-    height,
-    leading,
-    forceStrutHeight,
-  );
+  int get hashCode =>
+      Object.hash(fontFamily, fontSize, fontWeight, fontStyle, height, leading, forceStrutHeight);
 
   @override
   String toStringShort() => objectRuntimeType(this, 'StrutStyle');
 
   /// Adds all properties prefixing property names with the optional `prefix`.
   @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties, { String prefix = '' }) {
+  void debugFillProperties(DiagnosticPropertiesBuilder properties, {String prefix = ''}) {
     super.debugFillProperties(properties);
     if (debugLabel != null) {
       properties.add(MessageProperty('${prefix}debugLabel', debugLabel!));
@@ -611,21 +605,39 @@ class StrutStyle with Diagnosticable {
     // TODO(jacobr): switch this to use enumProperty which will either cause the
     // weight description to change to w600 from 600 or require existing
     // enumProperty to handle this special case.
-    styles.add(DiagnosticsProperty<FontWeight>(
-      '${prefix}weight',
-      fontWeight,
-      description: weightDescription,
-      defaultValue: null,
-    ));
+    styles.add(
+      DiagnosticsProperty<FontWeight>(
+        '${prefix}weight',
+        fontWeight,
+        description: weightDescription,
+        defaultValue: null,
+      ),
+    );
     styles.add(EnumProperty<FontStyle>('${prefix}style', fontStyle, defaultValue: null));
     styles.add(DoubleProperty('${prefix}height', height, unit: 'x', defaultValue: null));
-    styles.add(FlagProperty('${prefix}forceStrutHeight', value: forceStrutHeight, ifTrue: '$prefix<strut height forced>', ifFalse: '$prefix<strut height normal>'));
+    styles.add(
+      FlagProperty(
+        '${prefix}forceStrutHeight',
+        value: forceStrutHeight,
+        ifTrue: '$prefix<strut height forced>',
+        ifFalse: '$prefix<strut height normal>',
+      ),
+    );
 
-    final bool styleSpecified = styles.any((DiagnosticsNode n) => !n.isFiltered(DiagnosticLevel.info));
+    final bool styleSpecified = styles.any(
+      (DiagnosticsNode n) => !n.isFiltered(DiagnosticLevel.info),
+    );
     styles.forEach(properties.add);
 
     if (!styleSpecified) {
-      properties.add(FlagProperty('forceStrutHeight', value: forceStrutHeight, ifTrue: '$prefix<strut height forced>', ifFalse: '$prefix<strut height normal>'));
+      properties.add(
+        FlagProperty(
+          'forceStrutHeight',
+          value: forceStrutHeight,
+          ifTrue: '$prefix<strut height forced>',
+          ifFalse: '$prefix<strut height normal>',
+        ),
+      );
     }
   }
 }

@@ -27,12 +27,7 @@ final class RunCommand extends CommandBase {
     super.usageLineLength,
     @visibleForTesting FlutterTool? flutterTool,
   }) {
-    builds = BuildPlan.configureArgParser(
-      argParser,
-      environment,
-      configs: configs,
-      help: help,
-    );
+    builds = BuildPlan.configureArgParser(argParser, environment, configs: configs, help: help);
     _flutterTool = flutterTool ?? FlutterTool.fromEnvironment(environment);
   }
 
@@ -69,8 +64,7 @@ See `flutter run --help` for a listing
     }
     // TODO(johnmccutchan): This is brittle, it would be better if we encoded
     // the host config name in the target config.
-    final String ci =
-        mangledName.startsWith('ci') ? mangledName.substring(0, 3) : '';
+    final String ci = mangledName.startsWith('ci') ? mangledName.substring(0, 3) : '';
     if (mangledName.contains('_debug')) {
       return _findTargetBuild('${ci}host_debug');
     } else if (mangledName.contains('_profile')) {
@@ -108,10 +102,11 @@ See `flutter run --help` for a listing
     return mode;
   }
 
-  late final Future<RunTarget?> _runTarget = (() async {
-    final devices = await _flutterTool.devices();
-    return RunTarget.detectAndSelect(devices, idPrefix: _getDeviceId());
-  })();
+  late final Future<RunTarget?> _runTarget =
+      (() async {
+        final devices = await _flutterTool.devices();
+        return RunTarget.detectAndSelect(devices, idPrefix: _getDeviceId());
+      })();
 
   @override
   Future<int> run() async {
@@ -174,7 +169,7 @@ See `flutter run --help` for a listing
       mangledBuildName,
       '--local-engine-host',
       mangledHostBuildName,
-      ...argResults!.rest
+      ...argResults!.rest,
     ];
 
     // TODO(johnmccutchan): Be smart and if the user requested a profile
@@ -209,10 +204,7 @@ final class RunTarget {
   /// prefix will be considered, otherwise the first device is selected. If no
   /// devices are available, or none match the prefix, `null` is returned.
   @visibleForTesting
-  static RunTarget? detectAndSelect(
-    Iterable<Device> devices, {
-    String idPrefix = '',
-  }) {
+  static RunTarget? detectAndSelect(Iterable<Device> devices, {String idPrefix = ''}) {
     if (devices.isEmpty) {
       return null;
     }
@@ -251,9 +243,7 @@ final class RunTarget {
       TargetPlatform.linuxX64 ||
       TargetPlatform.windowsX64 =>
         'host_$mode',
-      TargetPlatform.darwinArm64 ||
-      TargetPlatform.linuxArm64 ||
-      TargetPlatform.windowsArm64 =>
+      TargetPlatform.darwinArm64 || TargetPlatform.linuxArm64 || TargetPlatform.windowsArm64 =>
         'host_${mode}_arm64',
 
       // WEB
@@ -263,9 +253,7 @@ final class RunTarget {
       // -----------------------------------------------------------------------
       // iOS.
       // TODO(matanlurey): https://github.com/flutter/flutter/issues/155960
-      TargetPlatform.iOSUnspecified ||
-      TargetPlatform.iOSX64 ||
-      TargetPlatform.iOSArm64 =>
+      TargetPlatform.iOSUnspecified || TargetPlatform.iOSX64 || TargetPlatform.iOSArm64 =>
         throw FatalError(
           'iOS targets are currently unsupported.\n\nIf you are an '
           'iOS engine developer, and have a need for this, please either +1 or '
@@ -273,22 +261,22 @@ final class RunTarget {
         ),
 
       // LEGACY ANDROID
-      TargetPlatform.androidArm => throw FatalError(
+      TargetPlatform.androidArm =>
+        throw FatalError(
           'Legacy Android targets are not supported. '
           'Please use android-arm64 or android-x64.',
         ),
 
       // FUCHSIA
-      TargetPlatform.fuchsiaArm64 ||
-      TargetPlatform.fuchsiaX64 =>
+      TargetPlatform.fuchsiaArm64 || TargetPlatform.fuchsiaX64 =>
         throw FatalError('Fuchsia is not supported.'),
 
       // TESTER
-      TargetPlatform.tester =>
-        throw FatalError('flutter_tester is not supported.'),
+      TargetPlatform.tester => throw FatalError('flutter_tester is not supported.'),
 
       // Platforms that maybe could be supported, but we don't know about.
-      _ => throw FatalError(
+      _ =>
+        throw FatalError(
           'Unknown target platform: ${device.targetPlatform.identifier}.\n\nIf '
           'this is a new platform that should be supported, please file a bug: '
           'https://github.com/flutter/flutter/issues/new?labels=e:%20engine-tool.',
@@ -309,47 +297,31 @@ final class RunTarget {
         [Label.parseGn('//flutter/shell/platform/android:android_jar')],
 
       // iOS.
-      TargetPlatform.iOSUnspecified ||
-      TargetPlatform.iOSX64 ||
-      TargetPlatform.iOSArm64 =>
-        [
-          Label.parseGn('//flutter/shell/platform/darwin/ios:flutter_framework')
-        ],
+      TargetPlatform.iOSUnspecified || TargetPlatform.iOSX64 || TargetPlatform.iOSArm64 => [
+        Label.parseGn('//flutter/shell/platform/darwin/ios:flutter_framework'),
+      ],
 
       // Desktop (MacOS).
-      TargetPlatform.darwinUnspecified ||
-      TargetPlatform.darwinX64 ||
-      TargetPlatform.darwinArm64 =>
-        [
-          Label.parseGn(
-            '//flutter/shell/platform/darwin/macos:flutter_framework',
-          )
-        ],
+      TargetPlatform.darwinUnspecified || TargetPlatform.darwinX64 || TargetPlatform.darwinArm64 =>
+        [Label.parseGn('//flutter/shell/platform/darwin/macos:flutter_framework')],
 
       // Desktop (Linux).
       TargetPlatform.linuxX64 || TargetPlatform.linuxArm64 => [
-          Label.parseGn(
-            '//flutter/shell/platform/linux:flutter_linux_gtk',
-          )
-        ],
+        Label.parseGn('//flutter/shell/platform/linux:flutter_linux_gtk'),
+      ],
 
       // Desktop (Windows).
       TargetPlatform.windowsX64 || TargetPlatform.windowsArm64 => [
-          Label.parseGn(
-            '//flutter/shell/platform/windows',
-          )
-        ],
+        Label.parseGn('//flutter/shell/platform/windows'),
+      ],
 
       // Web.
-      TargetPlatform.webJavascript => [
-          Label.parseGn(
-            '//flutter/web_sdk:flutter_web_sdk_archive',
-          )
-        ],
+      TargetPlatform.webJavascript => [Label.parseGn('//flutter/web_sdk:flutter_web_sdk_archive')],
 
       // Unsupported platforms.
       // -----------------------------------------------------------------------
-      _ => throw FatalError(
+      _ =>
+        throw FatalError(
           'Unknown target platform: ${device.targetPlatform.identifier}.\n\nIf '
           'this is a new platform that should be supported, please file a bug: '
           'https://github.com/flutter/flutter/issues/new?labels=e:%20engine-tool.',

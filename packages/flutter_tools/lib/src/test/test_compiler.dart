@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
-
 import 'dart:async';
 
 import 'package:meta/meta.dart';
@@ -19,11 +17,72 @@ import '../project.dart';
 import 'test_time_recorder.dart';
 
 /// A request to the [TestCompiler] for recompilation.
-class CompilationRequest {
-  CompilationRequest(this.mainUri, this.result);
+final class _CompilationRequest {
+  _CompilationRequest(this.mainUri);
 
-  Uri mainUri;
-  Completer<String?> result;
+  /// The entrypoint (containing `main()`) to the Dart program being compiled.
+  final Uri mainUri;
+
+  /// Invoked when compilation is completed with the compilation output path.
+  Future<TestCompilerResult> get result => _result.future;
+  final Completer<TestCompilerResult> _result = Completer<TestCompilerResult>();
+}
+
+/// The result of [TestCompiler.compile].
+@immutable
+sealed class TestCompilerResult {
+  const TestCompilerResult({required this.mainUri});
+
+  /// The program that was or was attempted to be compiled.
+  final Uri mainUri;
+}
+
+/// A successful run of [TestCompiler.compile].
+final class TestCompilerComplete extends TestCompilerResult {
+  const TestCompilerComplete({required this.outputPath, required super.mainUri});
+
+  /// Output path of the compiled program.
+  final String outputPath;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! TestCompilerComplete) {
+      return false;
+    }
+    return mainUri == other.mainUri && outputPath == other.outputPath;
+  }
+
+  @override
+  int get hashCode => Object.hash(mainUri, outputPath);
+
+  @override
+  String toString() {
+    return 'TestCompilerComplete(mainUri: $mainUri, outputPath: $outputPath)';
+  }
+}
+
+/// A failed run of [TestCompiler.compile].
+final class TestCompilerFailure extends TestCompilerResult {
+  const TestCompilerFailure({required this.error, required super.mainUri});
+
+  /// Error message that occurred failing compilation.
+  final String error;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! TestCompilerFailure) {
+      return false;
+    }
+    return mainUri == other.mainUri && error == other.error;
+  }
+
+  @override
+  int get hashCode => Object.hash(mainUri, error);
+
+  @override
+  String toString() {
+    return 'TestCompilerComplete(mainUri: $mainUri, error: $error)';
+  }
 }
 
 /// A frontend_server wrapper for the flutter test runner.
@@ -48,31 +107,42 @@ class TestCompiler {
     this.flutterProject, {
     String? precompiledDillPath,
     this.testTimeRecorder,
-  }) : testFilePath = precompiledDillPath ?? globals.fs.path.join(
-        flutterProject!.directory.path,
-        getBuildDirectory(),
-        'test_cache',
-        getDefaultCachedKernelPath(
-          trackWidgetCreation: buildInfo.trackWidgetCreation,
-          dartDefines: buildInfo.dartDefines,
-          extraFrontEndOptions: buildInfo.extraFrontEndOptions,
-        )),
-        shouldCopyDillFile = precompiledDillPath == null {
+  }) : testFilePath =
+           precompiledDillPath ??
+           globals.fs.path.join(
+             flutterProject!.directory.path,
+             getBuildDirectory(),
+             'test_cache',
+             getDefaultCachedKernelPath(
+               trackWidgetCreation: buildInfo.trackWidgetCreation,
+               dartDefines: buildInfo.dartDefines,
+               extraFrontEndOptions: buildInfo.extraFrontEndOptions,
+             ),
+           ),
+       shouldCopyDillFile = precompiledDillPath == null {
     // Compiler maintains and updates single incremental dill file.
     // Incremental compilation requests done for each test copy that file away
     // for independent execution.
-    final Directory outputDillDirectory = globals.fs.systemTempDirectory.createTempSync('flutter_test_compiler.');
+    final Directory outputDillDirectory = globals.fs.systemTempDirectory.createTempSync(
+      'flutter_test_compiler.',
+    );
     outputDill = outputDillDirectory.childFile('output.dill');
-    globals.printTrace('Compiler will use the following file as its incremental dill file: ${outputDill.path}');
+    globals.printTrace(
+      'Compiler will use the following file as its incremental dill file: ${outputDill.path}',
+    );
     globals.printTrace('Listening to compiler controller...');
-    compilerController.stream.listen(_onCompilationRequest, onDone: () {
-      globals.printTrace('Deleting ${outputDillDirectory.path}...');
-      outputDillDirectory.deleteSync(recursive: true);
-    });
+    compilerController.stream.listen(
+      _onCompilationRequest,
+      onDone: () {
+        globals.printTrace('Deleting ${outputDillDirectory.path}...');
+        outputDillDirectory.deleteSync(recursive: true);
+      },
+    );
   }
 
-  final StreamController<CompilationRequest> compilerController = StreamController<CompilationRequest>();
-  final List<CompilationRequest> compilationQueue = <CompilationRequest>[];
+  final StreamController<_CompilationRequest> compilerController =
+      StreamController<_CompilationRequest>();
+  final List<_CompilationRequest> compilationQueue = <_CompilationRequest>[];
   final FlutterProject? flutterProject;
   final BuildInfo buildInfo;
   final String testFilePath;
@@ -82,13 +152,14 @@ class TestCompiler {
   ResidentCompiler? compiler;
   late File outputDill;
 
-  Future<String?> compile(Uri mainDart) {
-    final Completer<String?> completer = Completer<String?>();
+  /// Compiles the Dart program (an entrypoint containing `main()`).
+  Future<TestCompilerResult> compile(Uri dartEntrypointPath) {
     if (compilerController.isClosed) {
-      return Future<String?>.value();
+      throw StateError('TestCompiler is already disposed.');
     }
-    compilerController.add(CompilationRequest(mainDart, completer));
-    return completer.future;
+    final _CompilationRequest request = _CompilationRequest(dartEntrypointPath);
+    compilerController.add(request);
+    return request.result;
   }
 
   Future<void> _shutdown() async {
@@ -130,7 +201,7 @@ class TestCompiler {
   }
 
   // Handle a compilation request.
-  Future<void> _onCompilationRequest(CompilationRequest request) async {
+  Future<void> _onCompilationRequest(_CompilationRequest request) async {
     final bool isEmpty = compilationQueue.isEmpty;
     compilationQueue.add(request);
     // Only trigger processing if queue was empty - i.e. no other requests
@@ -140,7 +211,7 @@ class TestCompiler {
       return;
     }
     while (compilationQueue.isNotEmpty) {
-      final CompilationRequest request = compilationQueue.first;
+      final _CompilationRequest request = compilationQueue.first;
       globals.printTrace('Compiling ${request.mainUri}');
       final Stopwatch compilerTime = Stopwatch()..start();
       final Stopwatch? testTimeRecorderStopwatch = testTimeRecorder?.start(TestTimePhases.Compile);
@@ -153,8 +224,9 @@ class TestCompiler {
       final List<Uri> invalidatedRegistrantFiles = <Uri>[];
       if (flutterProject != null) {
         // Update the generated registrant to use the test target's main.
-        final String mainUriString = buildInfo.packageConfig.toPackageUri(request.mainUri)?.toString()
-          ?? request.mainUri.toString();
+        final String mainUriString =
+            buildInfo.packageConfig.toPackageUri(request.mainUri)?.toString() ??
+            request.mainUri.toString();
         await generateMainDartWithPluginRegistrant(
           flutterProject!,
           buildInfo.packageConfig,
@@ -180,7 +252,12 @@ class TestCompiler {
       // compiler to avoid reusing compiler that might have gotten into
       // a weird state.
       if (outputPath == null || compilerOutput!.errorCount > 0) {
-        request.result.complete();
+        request._result.complete(
+          TestCompilerFailure(
+            error: compilerOutput!.errorMessage ?? 'Unknown Error',
+            mainUri: request.mainUri,
+          ),
+        );
         await _shutdown();
       } else {
         if (shouldCopyDillFile) {
@@ -188,7 +265,9 @@ class TestCompiler {
           final File outputFile = globals.fs.file(outputPath);
           final File kernelReadyToRun = await outputFile.copy('$path.dill');
           final File testCache = globals.fs.file(testFilePath);
-          if (firstCompile || !testCache.existsSync() || (testCache.lengthSync() < outputFile.lengthSync())) {
+          if (firstCompile ||
+              !testCache.existsSync() ||
+              (testCache.lengthSync() < outputFile.lengthSync())) {
             // The idea is to keep the cache file up-to-date and include as
             // much as possible in an effort to re-use as many packages as
             // possible.
@@ -197,9 +276,13 @@ class TestCompiler {
             }
             await outputFile.copy(testFilePath);
           }
-          request.result.complete(kernelReadyToRun.path);
+          request._result.complete(
+            TestCompilerComplete(outputPath: kernelReadyToRun.path, mainUri: request.mainUri),
+          );
         } else {
-          request.result.complete(outputPath);
+          request._result.complete(
+            TestCompilerComplete(outputPath: outputPath, mainUri: request.mainUri),
+          );
         }
         compiler!.accept();
         compiler!.reset();

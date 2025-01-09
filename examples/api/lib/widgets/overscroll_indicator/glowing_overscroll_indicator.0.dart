@@ -36,11 +36,7 @@ class AlwaysGlow extends MaterialScrollBehavior {
   Set<PointerDeviceKind> get dragDevices => allPointers;
 
   @override
-  Widget buildOverscrollIndicator(
-    BuildContext context,
-    Widget child,
-    ScrollableDetails details,
-  ) {
+  Widget buildOverscrollIndicator(BuildContext context, Widget child, ScrollableDetails details) {
     return GlowingOverscrollIndicator(
       axisDirection: details.direction,
       color: Colors.amberAccent,
@@ -83,13 +79,7 @@ class GlowingOverscrollIndicatorExample extends StatelessWidget {
               ),
             ),
           ),
-          SliverFillRemaining(
-            child: Icon(
-              Icons.sunny,
-              color: Colors.amberAccent,
-              size: 128,
-            ),
-          ),
+          SliverFillRemaining(child: Icon(Icons.sunny, color: Colors.amberAccent, size: 128)),
         ],
       ),
     );

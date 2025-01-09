@@ -25,7 +25,6 @@ class _MainWidget extends StatefulWidget {
 }
 
 class _MainWidgetState extends State<_MainWidget> {
-
   String pageTitle = getUseCaseName(DatePickerUseCase());
 
   @override
@@ -37,13 +36,14 @@ class _MainWidgetState extends State<_MainWidget> {
       ),
       body: Center(
         child: TextButton(
-          onPressed: () => showDatePicker(
-            context: context,
-            initialEntryMode: DatePickerEntryMode.calendarOnly,
-            initialDate: DateTime.now(),
-            firstDate: DateTime.now().subtract(const Duration(days: 365)),
-            lastDate: DateTime.now().add(const Duration(days: 365)),
-          ),
+          onPressed:
+              () => showDatePicker(
+                context: context,
+                initialEntryMode: DatePickerEntryMode.calendarOnly,
+                initialDate: DateTime.now(),
+                firstDate: DateTime.now().subtract(const Duration(days: 365)),
+                lastDate: DateTime.now().add(const Duration(days: 365)),
+              ),
           child: const Text('Show Date Picker'),
         ),
       ),

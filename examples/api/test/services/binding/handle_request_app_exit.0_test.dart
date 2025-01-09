@@ -7,9 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Application Exit example', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ApplicationExitExample(),
-    );
+    await tester.pumpWidget(const example.ApplicationExitExample());
 
     expect(find.text('No exit requested yet'), findsOneWidget);
     expect(find.text('Do Not Allow Exit'), findsOneWidget);

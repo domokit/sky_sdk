@@ -58,10 +58,7 @@ import 'package:meta/meta.dart';
 /// ```
 ///
 /// ... prints "[--no-foo, --bar, --baz]".
-List<String> mergeGnArgs({
-  required List<String> buildArgs,
-  required List<String> extraArgs,
-}) {
+List<String> mergeGnArgs({required List<String> buildArgs, required List<String> extraArgs}) {
   // Make a copy of buildArgs so replacements can be made.
   final newBuildArgs = List.of(buildArgs);
 

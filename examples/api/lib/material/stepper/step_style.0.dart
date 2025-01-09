@@ -9,27 +9,24 @@ import 'package:flutter/material.dart';
 void main() => runApp(const StepStyleExampleApp());
 
 class StepStyleExampleApp extends StatelessWidget {
+  const StepStyleExampleApp({super.key});
 
-  const StepStyleExampleApp({ super.key });
-
-   @override
-   Widget build(BuildContext context) {
-      return MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(title: const Text('Step Style Example')),
-          body: const Center(
-            child: StepStyleExample(),
-          ),
-        ),
-      );
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Step Style Example')),
+        body: const Center(child: StepStyleExample()),
+      ),
+    );
   }
 }
 
 class StepStyleExample extends StatefulWidget {
-  const StepStyleExample({ super.key });
+  const StepStyleExample({super.key});
 
-   @override
-   State<StepStyleExample> createState() => _StepStyleExampleState();
+  @override
+  State<StepStyleExample> createState() => _StepStyleExampleState();
 }
 
 class _StepStyleExampleState extends State<StepStyleExample> {
@@ -37,18 +34,13 @@ class _StepStyleExampleState extends State<StepStyleExample> {
     connectorThickness: 10,
     color: Colors.white,
     connectorColor: Colors.red,
-    indexStyle: const TextStyle(
-      color: Colors.black,
-      fontSize: 20,
-    ),
-    border: Border.all(
-      width: 2,
-    ),
+    indexStyle: const TextStyle(color: Colors.black, fontSize: 20),
+    border: Border.all(width: 2),
   );
 
-   @override
-   Widget build(BuildContext context) {
-      return Stepper(
+  @override
+  Widget build(BuildContext context) {
+    return Stepper(
       type: StepperType.horizontal,
       stepIconHeight: 48,
       stepIconWidth: 48,
@@ -66,21 +58,14 @@ class _StepStyleExampleState extends State<StepStyleExample> {
           isActive: true,
           stepStyle: _stepStyle.copyWith(
             connectorColor: Colors.orange,
-            gradient: const LinearGradient(
-              colors: <Color>[
-                Colors.white,
-                Colors.black,
-              ],
-            ),
+            gradient: const LinearGradient(colors: <Color>[Colors.white, Colors.black]),
           ),
         ),
         Step(
           title: const SizedBox.shrink(),
           content: const SizedBox.shrink(),
           isActive: true,
-          stepStyle: _stepStyle.copyWith(
-            connectorColor: Colors.blue,
-          ),
+          stepStyle: _stepStyle.copyWith(connectorColor: Colors.blue),
         ),
         Step(
           title: const SizedBox.shrink(),
@@ -89,13 +74,8 @@ class _StepStyleExampleState extends State<StepStyleExample> {
           stepStyle: _stepStyle.merge(
             StepStyle(
               color: Colors.white,
-              indexStyle: const TextStyle(
-                color: Colors.black,
-                fontSize: 20,
-              ),
-              border: Border.all(
-                width: 2,
-              ),
+              indexStyle: const TextStyle(color: Colors.black, fontSize: 20),
+              border: Border.all(width: 2),
             ),
           ),
         ),

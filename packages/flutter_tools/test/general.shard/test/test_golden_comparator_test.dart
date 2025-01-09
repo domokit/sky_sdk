@@ -31,25 +31,38 @@ void main() {
     logger = BufferLogger.test();
   });
 
+  FakeCommand fakeFluterTester(
+    String pathToBinTool, {
+    required String stdout,
+    required Uri mainUri,
+    Map<String, String>? environment,
+    Completer<void>? waitUntil,
+  }) {
+    return FakeCommand(
+      command: <String>[
+        pathToBinTool,
+        '--disable-vm-service',
+        '--non-interactive',
+        'path_to_compiler_output.dill',
+      ],
+      stdout: stdout,
+      environment: environment,
+      completer: waitUntil,
+    );
+  }
+
   testWithoutContext('should succeed when a golden-file comparison matched', () async {
     final TestGoldenComparator comparator = TestGoldenComparator(
       compilerFactory: _FakeTestCompiler.new,
       flutterTesterBinPath: 'flutter_tester',
       processManager: FakeProcessManager.list(<FakeCommand>[
-        _fakeFluterTester(
-          'flutter_tester',
-          stdout: _encodeStdout(success: true),
-        )
+        fakeFluterTester('flutter_tester', stdout: _encodeStdout(success: true), mainUri: testUri1),
       ]),
       fileSystem: fileSystem,
       logger: logger,
     );
 
-    final TestGoldenComparison result = await comparator.compare(
-      testUri1,
-      imageBytes,
-      goldenKey1,
-    );
+    final TestGoldenComparison result = await comparator.compare(testUri1, imageBytes, goldenKey1);
     expect(result, const TestGoldenComparisonDone(matched: true));
   });
 
@@ -58,20 +71,17 @@ void main() {
       compilerFactory: _FakeTestCompiler.new,
       flutterTesterBinPath: 'flutter_tester',
       processManager: FakeProcessManager.list(<FakeCommand>[
-        _fakeFluterTester(
+        fakeFluterTester(
           'flutter_tester',
           stdout: _encodeStdout(success: false),
-        )
+          mainUri: testUri1,
+        ),
       ]),
       fileSystem: fileSystem,
       logger: logger,
     );
 
-    final TestGoldenComparison result = await comparator.compare(
-      testUri1,
-      imageBytes,
-      goldenKey1,
-    );
+    final TestGoldenComparison result = await comparator.compare(testUri1, imageBytes, goldenKey1);
     expect(result, const TestGoldenComparisonDone(matched: false));
   });
 
@@ -80,20 +90,17 @@ void main() {
       compilerFactory: _FakeTestCompiler.new,
       flutterTesterBinPath: 'flutter_tester',
       processManager: FakeProcessManager.list(<FakeCommand>[
-        _fakeFluterTester(
+        fakeFluterTester(
           'flutter_tester',
           stdout: _encodeStdout(success: false, message: 'Did a bad'),
-        )
+          mainUri: testUri1,
+        ),
       ]),
       fileSystem: fileSystem,
       logger: logger,
     );
 
-    final TestGoldenComparison result = await comparator.compare(
-      testUri1,
-      imageBytes,
-      goldenKey1,
-    );
+    final TestGoldenComparison result = await comparator.compare(testUri1, imageBytes, goldenKey1);
     expect(result, const TestGoldenComparisonError(error: 'Did a bad'));
   });
 
@@ -102,20 +109,13 @@ void main() {
       compilerFactory: _FakeTestCompiler.new,
       flutterTesterBinPath: 'flutter_tester',
       processManager: FakeProcessManager.list(<FakeCommand>[
-        _fakeFluterTester(
-          'flutter_tester',
-          stdout: _encodeStdout(success: true),
-        )
+        fakeFluterTester('flutter_tester', stdout: _encodeStdout(success: true), mainUri: testUri1),
       ]),
       fileSystem: fileSystem,
       logger: logger,
     );
 
-    final TestGoldenUpdate result = await comparator.update(
-      testUri1,
-      imageBytes,
-      goldenKey1,
-    );
+    final TestGoldenUpdate result = await comparator.update(testUri1, imageBytes, goldenKey1);
     expect(result, const TestGoldenUpdateDone());
   });
 
@@ -124,20 +124,17 @@ void main() {
       compilerFactory: _FakeTestCompiler.new,
       flutterTesterBinPath: 'flutter_tester',
       processManager: FakeProcessManager.list(<FakeCommand>[
-        _fakeFluterTester(
+        fakeFluterTester(
           'flutter_tester',
           stdout: _encodeStdout(success: false, message: 'Did a bad'),
-        )
+          mainUri: testUri1,
+        ),
       ]),
       fileSystem: fileSystem,
       logger: logger,
     );
 
-    final TestGoldenUpdate result = await comparator.update(
-      testUri1,
-      imageBytes,
-      goldenKey1,
-    );
+    final TestGoldenUpdate result = await comparator.update(testUri1, imageBytes, goldenKey1);
     expect(result, const TestGoldenUpdateError(error: 'Did a bad'));
   });
 
@@ -146,26 +143,19 @@ void main() {
       compilerFactory: _FakeTestCompiler.new,
       flutterTesterBinPath: 'flutter_tester',
       processManager: FakeProcessManager.list(<FakeCommand>[
-        _fakeFluterTester(
+        fakeFluterTester(
           'flutter_tester',
           stdout: _encodeStdout(success: true),
-          environment: <String, String>{
-            'THE_ANSWER': '42',
-          }
-        )
+          environment: <String, String>{'THE_ANSWER': '42'},
+          mainUri: testUri1,
+        ),
       ]),
       fileSystem: fileSystem,
       logger: logger,
-      environment: <String, String>{
-        'THE_ANSWER': '42',
-      },
+      environment: <String, String>{'THE_ANSWER': '42'},
     );
 
-    final TestGoldenUpdate result = await comparator.update(
-      testUri1,
-      imageBytes,
-      goldenKey1,
-    );
+    final TestGoldenUpdate result = await comparator.update(testUri1, imageBytes, goldenKey1);
     expect(result, const TestGoldenUpdateDone());
   });
 
@@ -174,13 +164,14 @@ void main() {
       compilerFactory: _FakeTestCompiler.new,
       flutterTesterBinPath: 'flutter_tester',
       processManager: FakeProcessManager.list(<FakeCommand>[
-        _fakeFluterTester(
+        fakeFluterTester(
           'flutter_tester',
           stdout: <String>[
             _encodeStdout(success: false, message: '1 Did a bad'),
             _encodeStdout(success: false, message: '2 Did a bad'),
           ].join('\n'),
-        )
+          mainUri: testUri1,
+        ),
       ]),
       fileSystem: fileSystem,
       logger: logger,
@@ -198,14 +189,16 @@ void main() {
       compilerFactory: _FakeTestCompiler.new,
       flutterTesterBinPath: 'flutter_tester',
       processManager: FakeProcessManager.list(<FakeCommand>[
-        _fakeFluterTester(
+        fakeFluterTester(
           'flutter_tester',
           stdout: _encodeStdout(success: false, message: '1 Did a bad'),
+          mainUri: testUri1,
         ),
-        _fakeFluterTester(
+        fakeFluterTester(
           'flutter_tester',
           stdout: _encodeStdout(success: false, message: '2 Did a bad'),
-        )
+          mainUri: testUri2,
+        ),
       ]),
       fileSystem: fileSystem,
       logger: logger,
@@ -248,39 +241,16 @@ void main() {
   });
 }
 
-FakeCommand _fakeFluterTester(String pathToBinTool, {
-  required String stdout,
-  Map<String, String>? environment,
-  Completer<void>? waitUntil,
-}) {
-  return FakeCommand(
-    command: <String>[
-      pathToBinTool,
-      '--disable-vm-service',
-      '--non-interactive',
-      '--packages=.dart_tool/package_config.json',
-      'compiler_output',
-    ],
-    stdout: stdout,
-    environment: environment,
-    completer: waitUntil,
-  );
-}
-
 String _encodeStdout({required bool success, String? message}) {
-  return jsonEncode(<String, Object?>{
-    'success': success,
-    if (message != null)
-      'message': message,
-  });
+  return jsonEncode(<String, Object?>{'success': success, if (message != null) 'message': message});
 }
 
 final class _FakeTestCompiler extends Fake implements TestCompiler {
   bool disposed = false;
 
   @override
-  Future<String> compile(Uri mainDart) {
-    return Future<String>.value('compiler_output');
+  Future<TestCompilerResult> compile(Uri mainDart) async {
+    return TestCompilerComplete(outputPath: 'path_to_compiler_output.dill', mainUri: mainDart);
   }
 
   @override

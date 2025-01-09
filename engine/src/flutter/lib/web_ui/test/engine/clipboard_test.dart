@@ -21,19 +21,15 @@ Future<void> testMain() async {
     const String testText = 'test text';
 
     late ClipboardMessageHandler clipboardMessageHandler;
-    MockClipboardAPICopyStrategy clipboardAPICopyStrategy =
-        MockClipboardAPICopyStrategy();
-    MockClipboardAPIPasteStrategy clipboardAPIPasteStrategy =
-        MockClipboardAPIPasteStrategy();
+    MockClipboardAPICopyStrategy clipboardAPICopyStrategy = MockClipboardAPICopyStrategy();
+    MockClipboardAPIPasteStrategy clipboardAPIPasteStrategy = MockClipboardAPIPasteStrategy();
 
     setUp(() {
       clipboardMessageHandler = ClipboardMessageHandler();
       clipboardAPICopyStrategy = MockClipboardAPICopyStrategy();
       clipboardAPIPasteStrategy = MockClipboardAPIPasteStrategy();
-      clipboardMessageHandler.copyToClipboardStrategy =
-          clipboardAPICopyStrategy;
-      clipboardMessageHandler.pasteFromClipboardStrategy =
-          clipboardAPIPasteStrategy;
+      clipboardMessageHandler.copyToClipboardStrategy = clipboardAPICopyStrategy;
+      clipboardMessageHandler.pasteFromClipboardStrategy = clipboardAPIPasteStrategy;
     });
 
     test('set data successful', () async {
@@ -45,10 +41,9 @@ Future<void> testMain() async {
       }
 
       clipboardMessageHandler.setDataMethodCall(
-          const MethodCall('Clipboard.setData', <String, dynamic>{
-            'text': testText,
-          }),
-          callback);
+        const MethodCall('Clipboard.setData', <String, dynamic>{'text': testText}),
+        callback,
+      );
 
       expect(await completer.future, isTrue);
     });
@@ -62,16 +57,21 @@ Future<void> testMain() async {
       }
 
       clipboardMessageHandler.setDataMethodCall(
-          const MethodCall('Clipboard.setData', <String, dynamic>{
-            'text': testText,
-          }),
-          callback);
+        const MethodCall('Clipboard.setData', <String, dynamic>{'text': testText}),
+        callback,
+      );
 
       final ByteData result = await completer.future;
       expect(
-        () =>codec.decodeEnvelope(result),
-        throwsA(const TypeMatcher<PlatformException>()
-          .having((PlatformException e) => e.code, 'code', equals('copy_fail'))));
+        () => codec.decodeEnvelope(result),
+        throwsA(
+          const TypeMatcher<PlatformException>().having(
+            (PlatformException e) => e.code,
+            'code',
+            equals('copy_fail'),
+          ),
+        ),
+      );
     });
 
     test('get data successful', () async {

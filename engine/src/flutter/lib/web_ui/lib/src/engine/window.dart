@@ -52,9 +52,8 @@ class EngineFlutterView implements ui.FlutterView {
   factory EngineFlutterView(
     EnginePlatformDispatcher platformDispatcher,
     DomElement hostElement, {
-      JsViewConstraints? viewConstraints,
-    }
-  ) = _EngineFlutterViewImpl;
+    JsViewConstraints? viewConstraints,
+  }) = _EngineFlutterViewImpl;
 
   EngineFlutterView._(
     this.viewId,
@@ -63,11 +62,10 @@ class EngineFlutterView implements ui.FlutterView {
     // multi-view mode, the host element is required for each view (as reflected
     // by the public `EngineFlutterView` constructor).
     DomElement? hostElement, {
-      JsViewConstraints? viewConstraints,
-    }
-  )   : _jsViewConstraints = viewConstraints,
-        embeddingStrategy = EmbeddingStrategy.create(hostElement: hostElement),
-        dimensionsProvider = DimensionsProvider.create(hostElement: hostElement) {
+    JsViewConstraints? viewConstraints,
+  }) : _jsViewConstraints = viewConstraints,
+       embeddingStrategy = EmbeddingStrategy.create(hostElement: hostElement),
+       dimensionsProvider = DimensionsProvider.create(hostElement: hostElement) {
     // The embeddingStrategy will take care of cleaning up the rootElement on
     // hot restart.
     embeddingStrategy.attachViewRoot(dom.rootElement);
@@ -310,11 +308,14 @@ class EngineFlutterView implements ui.FlutterView {
     // Return false if the previous dimensions are not set.
     if (_physicalSize != null) {
       // First confirm both height and width are effected.
-      if (_physicalSize!.height != newPhysicalSize.height && _physicalSize!.width != newPhysicalSize.width) {
+      if (_physicalSize!.height != newPhysicalSize.height &&
+          _physicalSize!.width != newPhysicalSize.width) {
         // If prior to rotation height is bigger than width it should be the
         // opposite after the rotation and vice versa.
-        if ((_physicalSize!.height > _physicalSize!.width && newPhysicalSize.height < newPhysicalSize.width) ||
-            (_physicalSize!.width > _physicalSize!.height && newPhysicalSize.width < newPhysicalSize.height)) {
+        if ((_physicalSize!.height > _physicalSize!.width &&
+                newPhysicalSize.height < newPhysicalSize.width) ||
+            (_physicalSize!.width > _physicalSize!.height &&
+                newPhysicalSize.width < newPhysicalSize.height)) {
           // Rotation detected
           return true;
         }
@@ -335,17 +336,14 @@ final class _EngineFlutterViewImpl extends EngineFlutterView {
   _EngineFlutterViewImpl(
     EnginePlatformDispatcher platformDispatcher,
     DomElement hostElement, {
-      JsViewConstraints? viewConstraints,
-    }
-  ) : super._(_nextViewId++, platformDispatcher, hostElement, viewConstraints: viewConstraints);
+    JsViewConstraints? viewConstraints,
+  }) : super._(_nextViewId++, platformDispatcher, hostElement, viewConstraints: viewConstraints);
 }
 
 /// The Web implementation of [ui.SingletonFlutterWindow].
 final class EngineFlutterWindow extends EngineFlutterView implements ui.SingletonFlutterWindow {
-  EngineFlutterWindow._(
-    EnginePlatformDispatcher platformDispatcher,
-    DomElement? hostElement,
-  ) : super._(kImplicitViewId, platformDispatcher, hostElement) {
+  EngineFlutterWindow._(EnginePlatformDispatcher platformDispatcher, DomElement? hostElement)
+    : super._(kImplicitViewId, platformDispatcher, hostElement) {
     if (ui_web.isCustomUrlStrategySet) {
       _browserHistory = createHistoryForExistingState(ui_web.urlStrategy);
     }
@@ -410,7 +408,8 @@ final class EngineFlutterWindow extends EngineFlutterView implements ui.Singleto
   ui.Brightness get platformBrightness => platformDispatcher.platformBrightness;
 
   @override
-  ui.VoidCallback? get onPlatformBrightnessChanged => platformDispatcher.onPlatformBrightnessChanged;
+  ui.VoidCallback? get onPlatformBrightnessChanged =>
+      platformDispatcher.onPlatformBrightnessChanged;
   @override
   set onPlatformBrightnessChanged(ui.VoidCallback? callback) {
     platformDispatcher.onPlatformBrightnessChanged = callback;
@@ -518,8 +517,7 @@ final class EngineFlutterWindow extends EngineFlutterView implements ui.Singleto
   /// Handles the browser history integration to allow users to use the back
   /// button, etc.
   BrowserHistory get browserHistory {
-    return _browserHistory ??=
-        createHistoryForExistingState(_urlStrategyForInitialization);
+    return _browserHistory ??= createHistoryForExistingState(_urlStrategyForInitialization);
   }
 
   ui_web.UrlStrategy? get _urlStrategyForInitialization {
@@ -529,7 +527,7 @@ final class EngineFlutterWindow extends EngineFlutterView implements ui.Singleto
   }
 
   BrowserHistory?
-      _browserHistory; // Must be either SingleEntryBrowserHistory or MultiEntriesBrowserHistory.
+  _browserHistory; // Must be either SingleEntryBrowserHistory or MultiEntriesBrowserHistory.
 
   Future<void> _useSingleEntryBrowserHistory() async {
     // Recreate the browser history mode that's appropriate for the existing
@@ -541,8 +539,7 @@ final class EngineFlutterWindow extends EngineFlutterView implements ui.Singleto
     // with a single-entry history.
     //
     // See: https://github.com/flutter/flutter/issues/79241
-    _browserHistory ??=
-        createHistoryForExistingState(_urlStrategyForInitialization);
+    _browserHistory ??= createHistoryForExistingState(_urlStrategyForInitialization);
 
     if (_browserHistory is SingleEntryBrowserHistory) {
       return;
@@ -565,8 +562,7 @@ final class EngineFlutterWindow extends EngineFlutterView implements ui.Singleto
     // with a multi-entry history.
     //
     // See: https://github.com/flutter/flutter/issues/79241
-    _browserHistory ??=
-        createHistoryForExistingState(_urlStrategyForInitialization);
+    _browserHistory ??= createHistoryForExistingState(_urlStrategyForInitialization);
 
     if (_browserHistory is MultiEntriesBrowserHistory) {
       return;
@@ -719,18 +715,14 @@ EngineFlutterWindow get window {
   );
   return _window!;
 }
+
 EngineFlutterWindow? _window;
 
 /// Initializes the [window] (aka the implicit view), if it's not already
 /// initialized.
-EngineFlutterWindow ensureImplicitViewInitialized({
-  DomElement? hostElement,
-}) {
+EngineFlutterWindow ensureImplicitViewInitialized({DomElement? hostElement}) {
   if (_window == null) {
-    _window = EngineFlutterView.implicit(
-      EnginePlatformDispatcher.instance,
-      hostElement,
-    );
+    _window = EngineFlutterView.implicit(EnginePlatformDispatcher.instance, hostElement);
     EnginePlatformDispatcher.instance.viewManager.registerView(_window!);
   }
   return _window!;
@@ -777,8 +769,7 @@ class ViewConstraints implements ui.ViewConstraints {
   /// The resulting ViewConstraints object will be multiplied by devicePixelRatio
   /// later to compute the physicalViewConstraints, which is what the framework
   /// uses.
-  factory ViewConstraints.fromJs(
-    JsViewConstraints? constraints, ui.Size currentLogicalSize) {
+  factory ViewConstraints.fromJs(JsViewConstraints? constraints, ui.Size currentLogicalSize) {
     if (constraints == null) {
       return ViewConstraints.tight(currentLogicalSize);
     }
@@ -801,14 +792,16 @@ class ViewConstraints implements ui.ViewConstraints {
 
   @override
   bool isSatisfiedBy(ui.Size size) {
-    return (minWidth <= size.width) && (size.width <= maxWidth) &&
-           (minHeight <= size.height) && (size.height <= maxHeight);
+    return (minWidth <= size.width) &&
+        (size.width <= maxWidth) &&
+        (minHeight <= size.height) &&
+        (size.height <= maxHeight);
   }
 
   @override
   bool get isTight => minWidth >= maxWidth && minHeight >= maxHeight;
 
-  ViewConstraints operator*(double factor) {
+  ViewConstraints operator *(double factor) {
     return ViewConstraints(
       minWidth: minWidth * factor,
       maxWidth: maxWidth * factor,
@@ -818,7 +811,7 @@ class ViewConstraints implements ui.ViewConstraints {
   }
 
   @override
-  ViewConstraints operator/(double factor) {
+  ViewConstraints operator /(double factor) {
     return ViewConstraints(
       minWidth: minWidth / factor,
       maxWidth: maxWidth / factor,
@@ -835,11 +828,11 @@ class ViewConstraints implements ui.ViewConstraints {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ViewConstraints
-        && other.minWidth == minWidth
-        && other.maxWidth == maxWidth
-        && other.minHeight == minHeight
-        && other.maxHeight == maxHeight;
+    return other is ViewConstraints &&
+        other.minWidth == minWidth &&
+        other.maxWidth == maxWidth &&
+        other.minHeight == minHeight &&
+        other.maxHeight == maxHeight;
   }
 
   @override
@@ -850,8 +843,10 @@ class ViewConstraints implements ui.ViewConstraints {
     if (minWidth == double.infinity && minHeight == double.infinity) {
       return 'ViewConstraints(biggest)';
     }
-    if (minWidth == 0 && maxWidth == double.infinity &&
-        minHeight == 0 && maxHeight == double.infinity) {
+    if (minWidth == 0 &&
+        maxWidth == double.infinity &&
+        minHeight == 0 &&
+        maxHeight == double.infinity) {
       return 'ViewConstraints(unconstrained)';
     }
     String describe(double min, double max, String dim) {
@@ -860,6 +855,7 @@ class ViewConstraints implements ui.ViewConstraints {
       }
       return '${min.toStringAsFixed(1)}<=$dim<=${max.toStringAsFixed(1)}';
     }
+
     final String width = describe(minWidth, maxWidth, 'w');
     final String height = describe(minHeight, maxHeight, 'h');
     return 'ViewConstraints($width, $height)';

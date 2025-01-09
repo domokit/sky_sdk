@@ -74,8 +74,8 @@ class AppLifecycleListener with WidgetsBindingObserver, Diagnosticable {
     this.onDetach,
     this.onExitRequested,
     this.onStateChange,
-  })  : binding = binding ?? WidgetsBinding.instance,
-        _lifecycleState = (binding ?? WidgetsBinding.instance).lifecycleState {
+  }) : binding = binding ?? WidgetsBinding.instance,
+       _lifecycleState = (binding ?? WidgetsBinding.instance).lifecycleState {
     // TODO(polina-c): stop duplicating code across disposables
     // https://github.com/flutter/flutter/issues/137435
     if (kFlutterMemoryAllocationsEnabled) {
@@ -233,29 +233,50 @@ class AppLifecycleListener with WidgetsBindingObserver, Diagnosticable {
     _lifecycleState = state;
     switch (state) {
       case AppLifecycleState.resumed:
-        assert(previousState == null || previousState == AppLifecycleState.inactive || previousState == AppLifecycleState.detached, 'Invalid state transition from $previousState to $state');
+        assert(
+          previousState == null ||
+              previousState == AppLifecycleState.inactive ||
+              previousState == AppLifecycleState.detached,
+          'Invalid state transition from $previousState to $state',
+        );
         onResume?.call();
       case AppLifecycleState.inactive:
-        assert(previousState == null || previousState == AppLifecycleState.hidden || previousState == AppLifecycleState.resumed, 'Invalid state transition from $previousState to $state');
+        assert(
+          previousState == null ||
+              previousState == AppLifecycleState.hidden ||
+              previousState == AppLifecycleState.resumed,
+          'Invalid state transition from $previousState to $state',
+        );
         if (previousState == AppLifecycleState.hidden) {
           onShow?.call();
         } else if (previousState == null || previousState == AppLifecycleState.resumed) {
           onInactive?.call();
         }
       case AppLifecycleState.hidden:
-        assert(previousState == null || previousState == AppLifecycleState.paused || previousState == AppLifecycleState.inactive, 'Invalid state transition from $previousState to $state');
+        assert(
+          previousState == null ||
+              previousState == AppLifecycleState.paused ||
+              previousState == AppLifecycleState.inactive,
+          'Invalid state transition from $previousState to $state',
+        );
         if (previousState == AppLifecycleState.paused) {
           onRestart?.call();
         } else if (previousState == null || previousState == AppLifecycleState.inactive) {
           onHide?.call();
         }
       case AppLifecycleState.paused:
-        assert(previousState == null || previousState == AppLifecycleState.hidden, 'Invalid state transition from $previousState to $state');
+        assert(
+          previousState == null || previousState == AppLifecycleState.hidden,
+          'Invalid state transition from $previousState to $state',
+        );
         if (previousState == null || previousState == AppLifecycleState.hidden) {
           onPause?.call();
         }
       case AppLifecycleState.detached:
-        assert(previousState == null || previousState == AppLifecycleState.paused, 'Invalid state transition from $previousState to $state');
+        assert(
+          previousState == null || previousState == AppLifecycleState.paused,
+          'Invalid state transition from $previousState to $state',
+        );
         onDetach?.call();
     }
     // At this point, it can't be null anymore.
@@ -266,14 +287,18 @@ class AppLifecycleListener with WidgetsBindingObserver, Diagnosticable {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<WidgetsBinding>('binding', binding));
-    properties.add(FlagProperty('onStateChange', value: onStateChange != null, ifTrue: 'onStateChange'));
+    properties.add(
+      FlagProperty('onStateChange', value: onStateChange != null, ifTrue: 'onStateChange'),
+    );
     properties.add(FlagProperty('onInactive', value: onInactive != null, ifTrue: 'onInactive'));
     properties.add(FlagProperty('onResume', value: onResume != null, ifTrue: 'onResume'));
     properties.add(FlagProperty('onHide', value: onHide != null, ifTrue: 'onHide'));
     properties.add(FlagProperty('onShow', value: onShow != null, ifTrue: 'onShow'));
     properties.add(FlagProperty('onPause', value: onPause != null, ifTrue: 'onPause'));
     properties.add(FlagProperty('onRestart', value: onRestart != null, ifTrue: 'onRestart'));
-    properties.add(FlagProperty('onExitRequested', value: onExitRequested != null, ifTrue: 'onExitRequested'));
+    properties.add(
+      FlagProperty('onExitRequested', value: onExitRequested != null, ifTrue: 'onExitRequested'),
+    );
     properties.add(FlagProperty('onDetach', value: onDetach != null, ifTrue: 'onDetach'));
   }
 }

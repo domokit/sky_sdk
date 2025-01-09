@@ -23,22 +23,24 @@ void main() {
     tryToDelete(tempDir);
   });
 
-  test('should build Android app with commented-out ".flutter-plugins" in settings.gradle', () async {
-    // Create Android app project instead of plugin
-    processManager.runSync(<String>[
-      flutterBin,
-      ...getLocalEngineArguments(),
-      'create',
-      '--template=app',
-      'test_android_app',
-    ], workingDirectory: tempDir.path);
+  test(
+    'should build Android app with commented-out ".flutter-plugins" in settings.gradle',
+    () async {
+      // Create Android app project instead of plugin
+      processManager.runSync(<String>[
+        flutterBin,
+        ...getLocalEngineArguments(),
+        'create',
+        '--template=app',
+        'test_android_app',
+      ], workingDirectory: tempDir.path);
 
-    final Directory appDir = tempDir.childDirectory('test_android_app');
-    final Directory androidDir = appDir.childDirectory('android');
+      final Directory appDir = tempDir.childDirectory('test_android_app');
+      final Directory androidDir = appDir.childDirectory('android');
 
-    // Create settings.gradle with commented .flutter-plugins
-    final File settingsGradle = androidDir.childFile('settings.gradle');
-    settingsGradle.writeAsStringSync(r'''
+      // Create settings.gradle with commented .flutter-plugins
+      final File settingsGradle = androidDir.childFile('settings.gradle');
+      settingsGradle.writeAsStringSync(r'''
 // The following block uses '.flutter-plugins' but is commented out.
 /*
 def plugins = new Properties()
@@ -75,18 +77,18 @@ plugins {
 include ":app"
 ''');
 
-    // Run flutter build apk with release mode
-    final ProcessResult buildApkResult = await processManager.run(<String>[
-      flutterBin,
-      ...getLocalEngineArguments(),
-      'build',
-      'apk',
-      '--release',
-    ], workingDirectory: appDir.path);
+      // Run flutter build apk with release mode
+      final ProcessResult buildApkResult = await processManager.run(<String>[
+        flutterBin,
+        ...getLocalEngineArguments(),
+        'build',
+        'apk',
+        '--release',
+      ], workingDirectory: appDir.path);
 
-    // Build should succeed and not throw any errors about settings.gradle
-    expect(buildApkResult.stderr.toString(),
-        isNot(contains('Please fix your settings.gradle')));
-    expect(buildApkResult, const ProcessResultMatcher());
-  });
+      // Build should succeed and not throw any errors about settings.gradle
+      expect(buildApkResult.stderr.toString(), isNot(contains('Please fix your settings.gradle')));
+      expect(buildApkResult, const ProcessResultMatcher());
+    },
+  );
 }

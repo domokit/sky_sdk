@@ -15,11 +15,7 @@ import 'target_platform.dart';
 @immutable
 final class Device {
   /// Creates a device with the given [name], [id], and [targetPlatform].
-  const Device({
-    required this.name,
-    required this.id,
-    required this.targetPlatform,
-  });
+  const Device({required this.name, required this.id, required this.targetPlatform});
 
   /// Parses a device from the given [json].
   factory Device.fromJson(Map<String, Object?> json) {
@@ -55,11 +51,7 @@ final class Device {
   /// Converts this device to a JSON object, for use within tests.
   @visibleForTesting
   JsonObject toJson() {
-    return JsonObject({
-      'name': name,
-      'id': id,
-      'targetPlatform': targetPlatform.identifier,
-    });
+    return JsonObject({'name': name, 'id': id, 'targetPlatform': targetPlatform.identifier});
   }
 
   @override

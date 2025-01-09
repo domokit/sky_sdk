@@ -95,11 +95,7 @@ class SliverResizingHeader extends StatelessWidget {
   }
 }
 
-enum _Slot {
-  minExtent,
-  maxExtent,
-  child,
-}
+enum _Slot { minExtent, maxExtent, child }
 
 class _SliverResizingHeader extends SlottedMultiChildRenderObjectWidget<_Slot, RenderBox> {
   const _SliverResizingHeader({
@@ -130,7 +126,8 @@ class _SliverResizingHeader extends SlottedMultiChildRenderObjectWidget<_Slot, R
   }
 }
 
-class _RenderSliverResizingHeader extends RenderSliver with SlottedContainerRenderObjectMixin<_Slot, RenderBox>, RenderSliverHelpers {
+class _RenderSliverResizingHeader extends RenderSliver
+    with SlottedContainerRenderObjectMixin<_Slot, RenderBox>, RenderSliverHelpers {
   RenderBox? get minExtentPrototype => childForSlot(_Slot.minExtent);
   RenderBox? get maxExtentPrototype => childForSlot(_Slot.maxExtent);
   RenderBox? get child => childForSlot(_Slot.child);
@@ -160,14 +157,27 @@ class _RenderSliverResizingHeader extends RenderSliver with SlottedContainerRend
   }
 
   @protected
-  void setChildParentData(RenderObject child, SliverConstraints constraints, SliverGeometry geometry) {
+  void setChildParentData(
+    RenderObject child,
+    SliverConstraints constraints,
+    SliverGeometry geometry,
+  ) {
     final SliverPhysicalParentData childParentData = child.parentData! as SliverPhysicalParentData;
-    final AxisDirection direction = applyGrowthDirectionToAxisDirection(constraints.axisDirection, constraints.growthDirection);
+    final AxisDirection direction = applyGrowthDirectionToAxisDirection(
+      constraints.axisDirection,
+      constraints.growthDirection,
+    );
     childParentData.paintOffset = switch (direction) {
-      AxisDirection.up => Offset(0.0, -(geometry.scrollExtent - (geometry.paintExtent + constraints.scrollOffset))),
+      AxisDirection.up => Offset(
+        0.0,
+        -(geometry.scrollExtent - (geometry.paintExtent + constraints.scrollOffset)),
+      ),
       AxisDirection.right => Offset(-constraints.scrollOffset, 0.0),
       AxisDirection.down => Offset(0.0, -constraints.scrollOffset),
-      AxisDirection.left => Offset(-(geometry.scrollExtent - (geometry.paintExtent + constraints.scrollOffset)), 0.0),
+      AxisDirection.left => Offset(
+        -(geometry.scrollExtent - (geometry.paintExtent + constraints.scrollOffset)),
+        0.0,
+      ),
     };
   }
 
@@ -228,16 +238,26 @@ class _RenderSliverResizingHeader extends RenderSliver with SlottedContainerRend
   @override
   void paint(PaintingContext context, Offset offset) {
     if (child != null && geometry!.visible) {
-      final SliverPhysicalParentData childParentData = child!.parentData! as SliverPhysicalParentData;
+      final SliverPhysicalParentData childParentData =
+          child!.parentData! as SliverPhysicalParentData;
       context.paintChild(child!, offset + childParentData.paintOffset);
     }
   }
 
   @override
-  bool hitTestChildren(SliverHitTestResult result, { required double mainAxisPosition, required double crossAxisPosition }) {
+  bool hitTestChildren(
+    SliverHitTestResult result, {
+    required double mainAxisPosition,
+    required double crossAxisPosition,
+  }) {
     assert(geometry!.hitTestExtent > 0.0);
     if (child != null) {
-      return hitTestBoxChild(BoxHitTestResult.wrap(result), child!, mainAxisPosition: mainAxisPosition, crossAxisPosition: crossAxisPosition);
+      return hitTestBoxChild(
+        BoxHitTestResult.wrap(result),
+        child!,
+        mainAxisPosition: mainAxisPosition,
+        crossAxisPosition: crossAxisPosition,
+      );
     }
     return false;
   }

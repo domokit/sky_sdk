@@ -14,7 +14,8 @@ import 'package:ui/ui_web/src/ui_web.dart' as ui_web;
 
 class SkwasmRenderer implements Renderer {
   late SkwasmSurface surface;
-  final Map<EngineFlutterView, EngineSceneView> _sceneViews = <EngineFlutterView, EngineSceneView>{};
+  final Map<EngineFlutterView, EngineSceneView> _sceneViews =
+      <EngineFlutterView, EngineSceneView>{};
 
   bool get isMultiThreaded => skwasmIsMultiThreaded();
 
@@ -45,50 +46,37 @@ class SkwasmRenderer implements Renderer {
     List<ui.Color> colors, [
     List<double>? colorStops,
     ui.TileMode tileMode = ui.TileMode.clamp,
-    Float32List? matrix]) => SkwasmGradient.conical(
-      focal: focal,
-      focalRadius: focalRadius,
-      center: center,
-      centerRadius: radius,
-      colors: colors,
-      colorStops: colorStops,
-      tileMode: tileMode,
-      matrix4: matrix,
-    );
+    Float32List? matrix,
+  ]) => SkwasmGradient.conical(
+    focal: focal,
+    focalRadius: focalRadius,
+    center: center,
+    centerRadius: radius,
+    colors: colors,
+    colorStops: colorStops,
+    tileMode: tileMode,
+    matrix4: matrix,
+  );
 
   @override
   ui.ImageFilter createBlurImageFilter({
     double sigmaX = 0.0,
     double sigmaY = 0.0,
     ui.TileMode? tileMode,
-  }) => SkwasmImageFilter.blur(
-    sigmaX: sigmaX,
-    sigmaY: sigmaY,
-    tileMode: tileMode
-  );
+  }) => SkwasmImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY, tileMode: tileMode);
 
   @override
-  ui.ImageFilter createDilateImageFilter({
-    double radiusX = 0.0,
-    double radiusY = 0.0
-  }) => SkwasmImageFilter.dilate(
-    radiusX: radiusX,
-    radiusY: radiusY,
-  );
+  ui.ImageFilter createDilateImageFilter({double radiusX = 0.0, double radiusY = 0.0}) =>
+      SkwasmImageFilter.dilate(radiusX: radiusX, radiusY: radiusY);
 
   @override
-  ui.ImageFilter createErodeImageFilter({
-    double radiusX = 0.0,
-    double radiusY = 0.0
-  }) => SkwasmImageFilter.erode(
-    radiusX: radiusX,
-    radiusY: radiusY,
-  );
+  ui.ImageFilter createErodeImageFilter({double radiusX = 0.0, double radiusY = 0.0}) =>
+      SkwasmImageFilter.erode(radiusX: radiusX, radiusY: radiusY);
 
   @override
   ui.ImageFilter composeImageFilters({
     required ui.ImageFilter outer,
-    required ui.ImageFilter inner
+    required ui.ImageFilter inner,
   }) => SkwasmImageFilter.compose(
     SkwasmImageFilter.fromUiFilter(outer),
     SkwasmImageFilter.fromUiFilter(inner),
@@ -97,11 +85,8 @@ class SkwasmRenderer implements Renderer {
   @override
   ui.ImageFilter createMatrixImageFilter(
     Float64List matrix4, {
-    ui.FilterQuality filterQuality = ui.FilterQuality.low
-  }) => SkwasmImageFilter.matrix(
-    matrix4,
-    filterQuality: filterQuality
-  );
+    ui.FilterQuality filterQuality = ui.FilterQuality.low,
+  }) => SkwasmImageFilter.matrix(matrix4, filterQuality: filterQuality);
 
   @override
   ui.ImageShader createImageShader(
@@ -109,14 +94,8 @@ class SkwasmRenderer implements Renderer {
     ui.TileMode tmx,
     ui.TileMode tmy,
     Float64List matrix4,
-    ui.FilterQuality? filterQuality
-  ) => SkwasmImageShader.imageShader(
-    image as SkwasmImage,
-    tmx,
-    tmy,
-    matrix4,
-    filterQuality
-  );
+    ui.FilterQuality? filterQuality,
+  ) => SkwasmImageShader.imageShader(image as SkwasmImage, tmx, tmy, matrix4, filterQuality);
 
   @override
   ui.Gradient createLinearGradient(
@@ -125,7 +104,7 @@ class SkwasmRenderer implements Renderer {
     List<ui.Color> colors, [
     List<double>? colorStops,
     ui.TileMode tileMode = ui.TileMode.clamp,
-    Float32List? matrix4
+    Float32List? matrix4,
   ]) => SkwasmGradient.linear(
     from: from,
     to: to,
@@ -135,19 +114,19 @@ class SkwasmRenderer implements Renderer {
     matrix4: matrix4,
   );
 
-
   @override
   ui.Paint createPaint() => SkwasmPaint();
 
   @override
   ui.ParagraphBuilder createParagraphBuilder(ui.ParagraphStyle style) =>
-    SkwasmParagraphBuilder(style as SkwasmParagraphStyle, fontCollection);
+      SkwasmParagraphBuilder(style as SkwasmParagraphStyle, fontCollection);
 
   @override
   ui.ParagraphStyle createParagraphStyle({
     ui.TextAlign? textAlign,
     ui.TextDirection? textDirection,
-    int? maxLines, String? fontFamily,
+    int? maxLines,
+    String? fontFamily,
     double? fontSize,
     double? height,
     ui.TextHeightBehavior? textHeightBehavior,
@@ -155,7 +134,7 @@ class SkwasmRenderer implements Renderer {
     ui.FontStyle? fontStyle,
     ui.StrutStyle? strutStyle,
     String? ellipsis,
-    ui.Locale? locale
+    ui.Locale? locale,
   }) => SkwasmParagraphStyle(
     textAlign: textAlign,
     textDirection: textDirection,
@@ -184,14 +163,14 @@ class SkwasmRenderer implements Renderer {
     List<ui.Color> colors, [
     List<double>? colorStops,
     ui.TileMode tileMode = ui.TileMode.clamp,
-    Float32List? matrix4
+    Float32List? matrix4,
   ]) => SkwasmGradient.radial(
     center: center,
     radius: radius,
     colors: colors,
     colorStops: colorStops,
     tileMode: tileMode,
-    matrix4: matrix4
+    matrix4: matrix4,
   );
 
   @override
@@ -207,7 +186,7 @@ class SkwasmRenderer implements Renderer {
     double? leading,
     ui.FontWeight? fontWeight,
     ui.FontStyle? fontStyle,
-    bool? forceStrutHeight
+    bool? forceStrutHeight,
   }) => SkwasmStrutStyle(
     fontFamily: fontFamily,
     fontFamilyFallback: fontFamilyFallback,
@@ -228,7 +207,7 @@ class SkwasmRenderer implements Renderer {
     ui.TileMode tileMode = ui.TileMode.clamp,
     double startAngle = 0.0,
     double endAngle = math.pi * 2,
-    Float32List? matrix4
+    Float32List? matrix4,
   ]) => SkwasmGradient.sweep(
     center: center,
     colors: colors,
@@ -236,7 +215,7 @@ class SkwasmRenderer implements Renderer {
     tileMode: tileMode,
     startAngle: startAngle,
     endAngle: endAngle,
-    matrix4: matrix4
+    matrix4: matrix4,
   );
 
   @override
@@ -261,7 +240,7 @@ class SkwasmRenderer implements Renderer {
     ui.Paint? foreground,
     List<ui.Shadow>? shadows,
     List<ui.FontFeature>? fontFeatures,
-    List<ui.FontVariation>? fontVariations
+    List<ui.FontVariation>? fontVariations,
   }) => SkwasmTextStyle(
     color: color,
     decoration: decoration,
@@ -289,36 +268,32 @@ class SkwasmRenderer implements Renderer {
   @override
   ui.Vertices createVertices(
     ui.VertexMode mode,
-    List<ui.Offset> positions,
-    {
-      List<ui.Offset>? textureCoordinates,
-      List<ui.Color>? colors,
-      List<int>? indices
-    }) =>
-    SkwasmVertices(
-      mode,
-      positions,
-      textureCoordinates: textureCoordinates,
-      colors: colors,
-      indices: indices
-    );
+    List<ui.Offset> positions, {
+    List<ui.Offset>? textureCoordinates,
+    List<ui.Color>? colors,
+    List<int>? indices,
+  }) => SkwasmVertices(
+    mode,
+    positions,
+    textureCoordinates: textureCoordinates,
+    colors: colors,
+    indices: indices,
+  );
 
   @override
   ui.Vertices createVerticesRaw(
     ui.VertexMode mode,
-    Float32List positions,
-    {
-      Float32List? textureCoordinates,
-      Int32List? colors,
-      Uint16List? indices
-    }) =>
-    SkwasmVertices.raw(
-      mode,
-      positions,
-      textureCoordinates: textureCoordinates,
-      colors: colors,
-      indices: indices
-    );
+    Float32List positions, {
+    Float32List? textureCoordinates,
+    Int32List? colors,
+    Uint16List? indices,
+  }) => SkwasmVertices.raw(
+    mode,
+    positions,
+    textureCoordinates: textureCoordinates,
+    colors: colors,
+    indices: indices,
+  );
 
   @override
   void decodeImageFromPixels(
@@ -330,14 +305,9 @@ class SkwasmRenderer implements Renderer {
     int? rowBytes,
     int? targetWidth,
     int? targetHeight,
-    bool allowUpscaling = true
+    bool allowUpscaling = true,
   }) {
-    final SkwasmImage pixelImage = SkwasmImage.fromPixels(
-      pixels,
-      width,
-      height,
-      format
-    );
+    final SkwasmImage pixelImage = SkwasmImage.fromPixels(pixels, width, height, format);
     final ui.Image scaledImage = scaleImageIfNeeded(
       pixelImage,
       targetWidth: targetWidth,
@@ -357,7 +327,7 @@ class SkwasmRenderer implements Renderer {
     Uint8List list, {
     int? targetWidth,
     int? targetHeight,
-    bool allowUpscaling = true
+    bool allowUpscaling = true,
   }) async {
     final ImageType? contentType = detectImageType(list);
     if (contentType == null) {
@@ -376,14 +346,14 @@ class SkwasmRenderer implements Renderer {
       baseDecoder,
       targetWidth: targetWidth,
       targetHeight: targetHeight,
-      allowUpscaling: allowUpscaling
+      allowUpscaling: allowUpscaling,
     );
   }
 
   @override
   Future<ui.Codec> instantiateImageCodecFromUrl(
     Uri uri, {
-    ui_web.ImageCodecChunkCallback? chunkCallback
+    ui_web.ImageCodecChunkCallback? chunkCallback,
   }) async {
     final DomResponse response = await rawHttpGet(uri.toString());
     final String? contentType = response.headers.get('Content-Type');
@@ -401,7 +371,8 @@ class SkwasmRenderer implements Renderer {
 
   @override
   Future<void> renderScene(ui.Scene scene, EngineFlutterView view) {
-    final FrameTimingRecorder? recorder = FrameTimingRecorder.frameTimingsEnabled ? FrameTimingRecorder() : null;
+    final FrameTimingRecorder? recorder =
+        FrameTimingRecorder.frameTimingsEnabled ? FrameTimingRecorder() : null;
     recorder?.recordBuildFinish();
 
     final EngineSceneView sceneView = _getSceneViewForView(view);
@@ -419,7 +390,8 @@ class SkwasmRenderer implements Renderer {
   @override
   String get rendererTag => 'skwasm';
 
-  static final Map<String, Future<ui.FragmentProgram>> _programs = <String, Future<ui.FragmentProgram>>{};
+  static final Map<String, Future<ui.FragmentProgram>> _programs =
+      <String, Future<ui.FragmentProgram>>{};
 
   @override
   void clearFragmentProgramCache() {
@@ -446,7 +418,7 @@ class SkwasmRenderer implements Renderer {
     required double width,
     required double left,
     required double baseline,
-    required int lineNumber
+    required int lineNumber,
   }) => SkwasmLineMetrics(
     hardBreak: hardBreak,
     ascent: ascent,
@@ -456,30 +428,40 @@ class SkwasmRenderer implements Renderer {
     width: width,
     left: left,
     baseline: baseline,
-    lineNumber: lineNumber
+    lineNumber: lineNumber,
   );
 
   @override
   ui.Image createImageFromImageBitmap(DomImageBitmap imageSource) {
-    return SkwasmImage(imageCreateFromTextureSource(
-      imageSource as JSObject,
-      imageSource.width.toDartInt,
-      imageSource.height.toDartInt,
-      surface.handle,
-    ));
+    return SkwasmImage(
+      imageCreateFromTextureSource(
+        imageSource as JSObject,
+        imageSource.width.toDartInt,
+        imageSource.height.toDartInt,
+        surface.handle,
+      ),
+    );
   }
 
   @override
-  FutureOr<ui.Image> createImageFromTextureSource(JSAny textureSource, { required int width, required int height, required bool transferOwnership }) async {
+  FutureOr<ui.Image> createImageFromTextureSource(
+    JSAny textureSource, {
+    required int width,
+    required int height,
+    required bool transferOwnership,
+  }) async {
     if (!transferOwnership) {
-      textureSource = (await createImageBitmap(textureSource, (x: 0, y: 0, width: width, height: height))).toJSAnyShallow;
+      textureSource =
+          (await createImageBitmap(textureSource, (
+            x: 0,
+            y: 0,
+            width: width,
+            height: height,
+          ))).toJSAnyShallow;
     }
-    return SkwasmImage(imageCreateFromTextureSource(
-      textureSource as JSObject,
-      width,
-      height,
-      surface.handle,
-    ));
+    return SkwasmImage(
+      imageCreateFromTextureSource(textureSource as JSObject, width, height, surface.handle),
+    );
   }
 }
 
@@ -490,7 +472,7 @@ class SkwasmPictureRenderer implements PictureRenderer {
 
   @override
   FutureOr<RenderResult> renderPictures(List<ScenePicture> pictures) =>
-    surface.renderPictures(pictures.cast<SkwasmPicture>());
+      surface.renderPictures(pictures.cast<SkwasmPicture>());
 
   @override
   ScenePicture clipPicture(ScenePicture picture, ui.Rect clip) {

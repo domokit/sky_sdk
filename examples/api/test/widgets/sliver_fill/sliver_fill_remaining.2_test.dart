@@ -13,14 +13,20 @@ void main() {
     expect(find.byType(CustomScrollView), findsOneWidget);
     expect(find.byType(SliverFixedExtentList), findsOneWidget);
 
-    expect(find.byWidgetPredicate((Widget widget) => (widget is Container)
-      && widget.color == Colors.indigo[200],
-      skipOffstage: false,
-    ), findsNWidgets(3));
-    expect(find.byWidgetPredicate((Widget widget) => (widget is Container)
-      && widget.color == Colors.orange[200]
-    ), findsNWidgets(2));
-    expect(find.byType(Container, skipOffstage: false,), findsNWidgets(5));
+    expect(
+      find.byWidgetPredicate(
+        (Widget widget) => (widget is Container) && widget.color == Colors.indigo[200],
+        skipOffstage: false,
+      ),
+      findsNWidgets(3),
+    );
+    expect(
+      find.byWidgetPredicate(
+        (Widget widget) => (widget is Container) && widget.color == Colors.orange[200],
+      ),
+      findsNWidgets(2),
+    );
+    expect(find.byType(Container, skipOffstage: false), findsNWidgets(5));
 
     expect(find.byType(SliverFillRemaining), findsNothing);
     await tester.scrollUntilVisible(find.byType(SliverFillRemaining), 20);

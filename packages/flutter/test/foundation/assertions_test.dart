@@ -58,12 +58,12 @@ void main() {
           yield ErrorDescription('INFO');
         },
       ).toString(),
-        '══╡ EXCEPTION CAUGHT BY LIBRARY ╞════════════════════════════════\n'
-        'The following message was thrown CONTEXTING:\n'
-        'MESSAGE\n'
-        '\n'
-        'INFO\n'
-        '═════════════════════════════════════════════════════════════════\n',
+      '══╡ EXCEPTION CAUGHT BY LIBRARY ╞════════════════════════════════\n'
+      'The following message was thrown CONTEXTING:\n'
+      'MESSAGE\n'
+      '\n'
+      'INFO\n'
+      '═════════════════════════════════════════════════════════════════\n',
     );
     expect(
       FlutterErrorDetails(
@@ -73,12 +73,12 @@ void main() {
           yield ErrorDescription('INFO');
         },
       ).toString(),
-        '══╡ EXCEPTION CAUGHT BY FLUTTER FRAMEWORK ╞══════════════════════\n'
-        'The following message was thrown CONTEXTING:\n'
-        'MESSAGE\n'
-        '\n'
-        'INFO\n'
-        '═════════════════════════════════════════════════════════════════\n',
+      '══╡ EXCEPTION CAUGHT BY FLUTTER FRAMEWORK ╞══════════════════════\n'
+      'The following message was thrown CONTEXTING:\n'
+      'MESSAGE\n'
+      '\n'
+      'INFO\n'
+      '═════════════════════════════════════════════════════════════════\n',
     );
     expect(
       FlutterErrorDetails(
@@ -96,9 +96,7 @@ void main() {
       '═════════════════════════════════════════════════════════════════\n',
     );
     expect(
-      const FlutterErrorDetails(
-        exception: 'MESSAGE',
-      ).toString(),
+      const FlutterErrorDetails(exception: 'MESSAGE').toString(),
       '══╡ EXCEPTION CAUGHT BY FLUTTER FRAMEWORK ╞══════════════════════\n'
       'The following message was thrown:\n'
       'MESSAGE\n'
@@ -108,15 +106,15 @@ void main() {
 
   test('FlutterErrorDetails.toStringShort', () {
     expect(
-        FlutterErrorDetails(
-          exception: 'MESSAGE',
-          library: 'library',
-          context: ErrorDescription('CONTEXTING'),
-          informationCollector: () sync* {
-            yield ErrorDescription('INFO');
-          },
-        ).toStringShort(),
-        'Exception caught by library',
+      FlutterErrorDetails(
+        exception: 'MESSAGE',
+        library: 'library',
+        context: ErrorDescription('CONTEXTING'),
+        informationCollector: () sync* {
+          yield ErrorDescription('INFO');
+        },
+      ).toStringShort(),
+      'Exception caught by library',
     );
   });
 
@@ -419,20 +417,49 @@ void main() {
   test('RepetitiveStackFrameFilter does not go out of range', () {
     const RepetitiveStackFrameFilter filter = RepetitiveStackFrameFilter(
       frames: <PartialStackFrame>[
-        PartialStackFrame(className: 'TestClass', method: 'test1', package: 'package:test/blah.dart'),
-        PartialStackFrame(className: 'TestClass', method: 'test2', package: 'package:test/blah.dart'),
-        PartialStackFrame(className: 'TestClass', method: 'test3', package: 'package:test/blah.dart'),
+        PartialStackFrame(
+          className: 'TestClass',
+          method: 'test1',
+          package: 'package:test/blah.dart',
+        ),
+        PartialStackFrame(
+          className: 'TestClass',
+          method: 'test2',
+          package: 'package:test/blah.dart',
+        ),
+        PartialStackFrame(
+          className: 'TestClass',
+          method: 'test3',
+          package: 'package:test/blah.dart',
+        ),
       ],
       replacement: 'test',
     );
     final List<String?> reasons = List<String?>.filled(2, null);
-    filter.filter(
-      const <StackFrame>[
-        StackFrame(className: 'TestClass', method: 'test1', packageScheme: 'package', package: 'test', packagePath: 'blah.dart', line: 1, column: 1, number: 0, source: ''),
-        StackFrame(className: 'TestClass', method: 'test2', packageScheme: 'package', package: 'test', packagePath: 'blah.dart', line: 1, column: 1, number: 0, source: ''),
-      ],
-      reasons,
-    );
+    filter.filter(const <StackFrame>[
+      StackFrame(
+        className: 'TestClass',
+        method: 'test1',
+        packageScheme: 'package',
+        package: 'test',
+        packagePath: 'blah.dart',
+        line: 1,
+        column: 1,
+        number: 0,
+        source: '',
+      ),
+      StackFrame(
+        className: 'TestClass',
+        method: 'test2',
+        packageScheme: 'package',
+        package: 'test',
+        packagePath: 'blah.dart',
+        line: 1,
+        column: 1,
+        number: 0,
+        source: '',
+      ),
+    ], reasons);
     expect(reasons, List<String?>.filled(2, null));
   });
 }

@@ -19,16 +19,13 @@ void main() {
 }
 
 Future<void> testMain() async {
-  setUpUnitTests(
-    withImplicitView: true,
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(withImplicitView: true, setUpTestViewDimensions: false);
 
   const ui.Rect region = ui.Rect.fromLTWH(0, 0, 128, 128);
 
   Future<void> drawTestImageWithPaint(ui.Paint paint) async {
     final ui.Codec codec = await renderer.instantiateImageCodecFromUrl(
-      Uri(path: '/test_images/mandrill_128.png')
+      Uri(path: '/test_images/mandrill_128.png'),
     );
     expect(codec.frameCount, 1);
 
@@ -38,55 +35,52 @@ Future<void> testMain() async {
     expect(image.height, 128);
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     final ui.Canvas canvas = ui.Canvas(recorder, region);
-    canvas.drawImage(
-      image,
-      ui.Offset.zero,
-      paint,
-    );
+    canvas.drawImage(image, ui.Offset.zero, paint);
 
     await drawPictureUsingCurrentRenderer(recorder.endRecording());
   }
 
   test('blur filter', () async {
-    await drawTestImageWithPaint(ui.Paint()..imageFilter = ui.ImageFilter.blur(
-        sigmaX: 5.0,
-        sigmaY: 5.0,
-    ));
+    await drawTestImageWithPaint(
+      ui.Paint()..imageFilter = ui.ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+    );
     await matchGoldenFile('ui_filter_blur_imagefilter.png', region: region);
   });
 
   test('dilate filter', () async {
-    await drawTestImageWithPaint(ui.Paint()..imageFilter = ui.ImageFilter.dilate(
-        radiusX: 5.0,
-        radiusY: 5.0,
-    ));
+    await drawTestImageWithPaint(
+      ui.Paint()..imageFilter = ui.ImageFilter.dilate(radiusX: 5.0, radiusY: 5.0),
+    );
     await matchGoldenFile('ui_filter_dilate_imagefilter.png', region: region);
   }, skip: isHtml); // HTML renderer does not support the dilate filter
 
   test('erode filter', () async {
-    await drawTestImageWithPaint(ui.Paint()..imageFilter = ui.ImageFilter.erode(
-        radiusX: 5.0,
-        radiusY: 5.0,
-    ));
+    await drawTestImageWithPaint(
+      ui.Paint()..imageFilter = ui.ImageFilter.erode(radiusX: 5.0, radiusY: 5.0),
+    );
     await matchGoldenFile('ui_filter_erode_imagefilter.png', region: region);
   }, skip: isHtml); // HTML renderer does not support the erode filter
 
   test('matrix filter', () async {
-    await drawTestImageWithPaint(ui.Paint()..imageFilter = ui.ImageFilter.matrix(
-      Matrix4.rotationZ(math.pi / 6).toFloat64(),
-      filterQuality: ui.FilterQuality.high,
-    ));
+    await drawTestImageWithPaint(
+      ui.Paint()
+        ..imageFilter = ui.ImageFilter.matrix(
+          Matrix4.rotationZ(math.pi / 6).toFloat64(),
+          filterQuality: ui.FilterQuality.high,
+        ),
+    );
     await matchGoldenFile('ui_filter_matrix_imagefilter.png', region: region);
   });
 
   test('resizing matrix filter', () async {
-    await drawTestImageWithPaint(ui.Paint()
-      ..imageFilter = ui.ImageFilter.matrix(
-        Matrix4.diagonal3Values(0.5, 0.5, 1).toFloat64(),
-        filterQuality: ui.FilterQuality.high,
-      ));
-    await matchGoldenFile('ui_filter_matrix_imagefilter_scaled.png',
-        region: region);
+    await drawTestImageWithPaint(
+      ui.Paint()
+        ..imageFilter = ui.ImageFilter.matrix(
+          Matrix4.diagonal3Values(0.5, 0.5, 1).toFloat64(),
+          filterQuality: ui.FilterQuality.high,
+        ),
+    );
+    await matchGoldenFile('ui_filter_matrix_imagefilter_scaled.png', region: region);
   });
 
   test('composed filters', () async {
@@ -95,10 +89,7 @@ Future<void> testMain() async {
         Matrix4.rotationZ(math.pi / 6).toFloat64(),
         filterQuality: ui.FilterQuality.high,
       ),
-      inner: ui.ImageFilter.blur(
-        sigmaX: 5.0,
-        sigmaY: 5.0,
-      )
+      inner: ui.ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
     );
     await drawTestImageWithPaint(ui.Paint()..imageFilter = filter);
     await matchGoldenFile('ui_filter_composed_imagefilters.png', region: region);
@@ -106,14 +97,8 @@ Future<void> testMain() async {
 
   test('compose with colorfilter', () async {
     final ui.ImageFilter filter = ui.ImageFilter.compose(
-      outer: const ui.ColorFilter.mode(
-        ui.Color.fromRGBO(0, 0, 255, 128),
-        ui.BlendMode.srcOver,
-      ),
-      inner: ui.ImageFilter.blur(
-        sigmaX: 5.0,
-        sigmaY: 5.0,
-      )
+      outer: const ui.ColorFilter.mode(ui.Color.fromRGBO(0, 0, 255, 128), ui.BlendMode.srcOver),
+      inner: ui.ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
     );
     await drawTestImageWithPaint(ui.Paint()..imageFilter = filter);
     await matchGoldenFile('ui_filter_composed_colorfilter.png', region: region);
@@ -126,7 +111,10 @@ Future<void> testMain() async {
     );
     await drawTestImageWithPaint(ui.Paint()..imageFilter = colorFilter);
     await matchGoldenFile('ui_filter_colorfilter_as_imagefilter.png', region: region);
-    expect(colorFilter.toString(), 'ColorFilter.mode(${const ui.Color(0x800000ff)}, BlendMode.srcOver)');
+    expect(
+      colorFilter.toString(),
+      'ColorFilter.mode(${const ui.Color(0x800000ff)}, BlendMode.srcOver)',
+    );
   });
 
   test('mode color filter', () async {
@@ -136,7 +124,10 @@ Future<void> testMain() async {
     );
     await drawTestImageWithPaint(ui.Paint()..colorFilter = colorFilter);
     await matchGoldenFile('ui_filter_mode_colorfilter.png', region: region);
-    expect(colorFilter.toString(), 'ColorFilter.mode(${const ui.Color(0x800000ff)}, BlendMode.srcOver)');
+    expect(
+      colorFilter.toString(),
+      'ColorFilter.mode(${const ui.Color(0x800000ff)}, BlendMode.srcOver)',
+    );
   });
 
   test('linearToSRGBGamma color filter', () async {
@@ -155,13 +146,25 @@ Future<void> testMain() async {
 
   test('matrix color filter', () async {
     const ui.ColorFilter sepia = ui.ColorFilter.matrix(<double>[
-      0.393, 0.769, 0.189, 0, 0,
-      0.349, 0.686, 0.168, 0, 0,
-      0.272, 0.534, 0.131, 0, 0,
-      0,     0,     0,     1, 0,
+      0.393, 0.769, 0.189, 0, 0, // row
+      0.349, 0.686, 0.168, 0, 0, // row
+      0.272, 0.534, 0.131, 0, 0, // row
+      0, 0, 0, 1, 0, // row
     ]);
     await drawTestImageWithPaint(ui.Paint()..colorFilter = sepia);
     await matchGoldenFile('ui_filter_matrix_colorfilter.png', region: region);
+    expect(sepia.toString(), startsWith('ColorFilter.matrix([0.393, 0.769, 0.189, '));
+  });
+
+  test('matrix color filter with 0..255 translation values', () async {
+    const ui.ColorFilter sepia = ui.ColorFilter.matrix(<double>[
+      0.393, 0.769, 0.189, 0, 50.0, // row
+      0.349, 0.686, 0.168, 0, 50.0, // row
+      0.272, 0.534, 0.131, 0, 50.0, // row
+      0, 0, 0, 1, 0, // row
+    ]);
+    await drawTestImageWithPaint(ui.Paint()..colorFilter = sepia);
+    await matchGoldenFile('ui_filter_matrix_colorfilter_with_translation.png', region: region);
     expect(sepia.toString(), startsWith('ColorFilter.matrix([0.393, 0.769, 0.189, '));
   });
 
@@ -172,15 +175,17 @@ Future<void> testMain() async {
 
   test('invert colors with color filter', () async {
     const ui.ColorFilter sepia = ui.ColorFilter.matrix(<double>[
-      0.393, 0.769, 0.189, 0, 0,
-      0.349, 0.686, 0.168, 0, 0,
-      0.272, 0.534, 0.131, 0, 0,
-      0,     0,     0,     1, 0,
+      0.393, 0.769, 0.189, 0, 0, // row
+      0.349, 0.686, 0.168, 0, 0, // row
+      0.272, 0.534, 0.131, 0, 0, // row
+      0, 0, 0, 1, 0, // row
     ]);
 
-    await drawTestImageWithPaint(ui.Paint()
-      ..invertColors = true
-      ..colorFilter = sepia);
+    await drawTestImageWithPaint(
+      ui.Paint()
+        ..invertColors = true
+        ..colorFilter = sepia,
+    );
     await matchGoldenFile('ui_filter_invert_colors_with_colorfilter.png', region: region);
   });
 
@@ -202,14 +207,22 @@ Future<void> testMain() async {
     final double centerY = height * 0.5;
     final double bottom = height.toDouble();
 
-    canvas.drawRect(ui.Rect.fromLTRB(left, top, centerX, centerY),
-        ui.Paint()..color = const ui.Color.fromARGB(255, 0, 255, 0));
-    canvas.drawRect(ui.Rect.fromLTRB(centerX, top, right, centerY),
-        ui.Paint()..color = const ui.Color.fromARGB(255, 255, 255, 0));
-    canvas.drawRect(ui.Rect.fromLTRB(left, centerY, centerX, bottom),
-        ui.Paint()..color = const ui.Color.fromARGB(255, 0, 0, 255));
-    canvas.drawRect(ui.Rect.fromLTRB(centerX, centerY, right, bottom),
-        ui.Paint()..color = const ui.Color.fromARGB(255, 255, 0, 0));
+    canvas.drawRect(
+      ui.Rect.fromLTRB(left, top, centerX, centerY),
+      ui.Paint()..color = const ui.Color.fromARGB(255, 0, 255, 0),
+    );
+    canvas.drawRect(
+      ui.Rect.fromLTRB(centerX, top, right, centerY),
+      ui.Paint()..color = const ui.Color.fromARGB(255, 255, 255, 0),
+    );
+    canvas.drawRect(
+      ui.Rect.fromLTRB(left, centerY, centerX, bottom),
+      ui.Paint()..color = const ui.Color.fromARGB(255, 0, 0, 255),
+    );
+    canvas.drawRect(
+      ui.Rect.fromLTRB(centerX, centerY, right, bottom),
+      ui.Paint()..color = const ui.Color.fromARGB(255, 255, 0, 0),
+    );
 
     final picture = recorder.endRecording();
     return picture.toImageSync(width, height);
@@ -227,25 +240,21 @@ Future<void> testMain() async {
     final gradient = ui.Gradient.linear(
       zone.topLeft,
       zone.bottomRight,
-      <ui.Color>[
-        const ui.Color.fromARGB(255, 0, 255, 0),
-        const ui.Color.fromARGB(255, 0, 0, 255),
-      ],
+      <ui.Color>[const ui.Color.fromARGB(255, 0, 255, 0), const ui.Color.fromARGB(255, 0, 0, 255)],
       <double>[0, 1],
     );
     final filter = ui.ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0, tileMode: tileMode);
     final ui.Paint white = ui.Paint()..color = const ui.Color.fromARGB(255, 255, 255, 255);
     final ui.Paint grey = ui.Paint()..color = const ui.Color.fromARGB(255, 127, 127, 127);
     final ui.Paint unblurredFill = ui.Paint()..shader = gradient;
-    final ui.Paint blurredFill = ui.Paint.from(unblurredFill)
-      ..imageFilter = filter;
-    final ui.Paint unblurredStroke = ui.Paint.from(unblurredFill)
-      ..style = ui.PaintingStyle.stroke
-      ..strokeCap = ui.StrokeCap.round
-      ..strokeJoin = ui.StrokeJoin.round
-      ..strokeWidth = 10;
-    final ui.Paint blurredStroke = ui.Paint.from(unblurredStroke)
-      ..imageFilter = filter;
+    final ui.Paint blurredFill = ui.Paint.from(unblurredFill)..imageFilter = filter;
+    final ui.Paint unblurredStroke =
+        ui.Paint.from(unblurredFill)
+          ..style = ui.PaintingStyle.stroke
+          ..strokeCap = ui.StrokeCap.round
+          ..strokeJoin = ui.StrokeJoin.round
+          ..strokeWidth = 10;
+    final ui.Paint blurredStroke = ui.Paint.from(unblurredStroke)..imageFilter = filter;
     final ui.Image image = makeCheckerBoard(20, 20);
     const ui.Rect imageBounds = ui.Rect.fromLTRB(0, 0, 20, 20);
     const ui.Rect imageCenter = ui.Rect.fromLTRB(5, 5, 9, 9);
@@ -262,7 +271,7 @@ Future<void> testMain() async {
     ];
     final vertices = ui.Vertices(
       ui.VertexMode.triangles,
-      <ui.Offset> [
+      <ui.Offset>[
         zone.topLeft,
         zone.bottomRight,
         zone.topRight,
@@ -332,39 +341,46 @@ Future<void> testMain() async {
     const double pad = 10;
     final double offset = arena.width + pad;
     const int columns = 5;
-    final ui.Rect pairArena = ui.Rect.fromLTRB(arena.left - 3, arena.top - 3,
-                                               arena.right + 3, arena.bottom + offset + 3);
+    final ui.Rect pairArena = ui.Rect.fromLTRB(
+      arena.left - 3,
+      arena.top - 3,
+      arena.right + 3,
+      arena.bottom + offset + 3,
+    );
 
     final List<void Function(ui.Canvas canvas, ui.Paint fill, ui.Paint stroke)> renderers = [
-          (canvas, fill, stroke) {
+      (canvas, fill, stroke) {
         canvas.saveLayer(zone.inflate(5), fill);
         canvas.drawLine(zone.topLeft, zone.bottomRight, unblurredStroke);
         canvas.drawLine(zone.topRight, zone.bottomLeft, unblurredStroke);
         canvas.restore();
       },
-          (canvas, fill, stroke) => canvas.drawLine(zone.topLeft, zone.bottomRight, stroke),
-          (canvas, fill, stroke) => canvas.drawRect(zone, fill),
-          (canvas, fill, stroke) => canvas.drawOval(ovalZone, fill),
-          (canvas, fill, stroke) => canvas.drawCircle(zone.center, zone.width * 0.5, fill),
-          (canvas, fill, stroke) => canvas.drawRRect(ui.RRect.fromRectXY(zone, 4.0, 4.0), fill),
-          (canvas, fill, stroke) => canvas.drawDRRect(
-              ui.RRect.fromRectXY(zone, 4.0, 4.0),
-              ui.RRect.fromRectXY(zone.deflate(4), 4.0, 4.0),
-              fill),
-          (canvas, fill, stroke) => canvas.drawArc(zone, math.pi / 4, math.pi * 3 / 2, true, fill),
-          (canvas, fill, stroke) => canvas.drawPath(ui.Path()
-            ..moveTo(zone.left, zone.top)
-            ..lineTo(zone.right, zone.top)
-            ..lineTo(zone.left, zone.bottom)
-            ..lineTo(zone.right, zone.bottom),
-              stroke),
-          (canvas, fill, stroke) => canvas.drawImage(image, zone.topLeft, fill),
-          (canvas, fill, stroke) => canvas.drawImageRect(image, imageBounds, zone.inflate(2), fill),
-          (canvas, fill, stroke) => canvas.drawImageNine(image, imageCenter, zone.inflate(2), fill),
-          (canvas, fill, stroke) => canvas.drawPoints(ui.PointMode.points, points, stroke),
-          (canvas, fill, stroke) => canvas.drawVertices(vertices, ui.BlendMode.dstOver, fill),
-          (canvas, fill, stroke) => canvas.drawAtlas(image, atlasXforms, atlasRects,
-                                                     null, null, null, fill),
+      (canvas, fill, stroke) => canvas.drawLine(zone.topLeft, zone.bottomRight, stroke),
+      (canvas, fill, stroke) => canvas.drawRect(zone, fill),
+      (canvas, fill, stroke) => canvas.drawOval(ovalZone, fill),
+      (canvas, fill, stroke) => canvas.drawCircle(zone.center, zone.width * 0.5, fill),
+      (canvas, fill, stroke) => canvas.drawRRect(ui.RRect.fromRectXY(zone, 4.0, 4.0), fill),
+      (canvas, fill, stroke) => canvas.drawDRRect(
+        ui.RRect.fromRectXY(zone, 4.0, 4.0),
+        ui.RRect.fromRectXY(zone.deflate(4), 4.0, 4.0),
+        fill,
+      ),
+      (canvas, fill, stroke) => canvas.drawArc(zone, math.pi / 4, math.pi * 3 / 2, true, fill),
+      (canvas, fill, stroke) => canvas.drawPath(
+        ui.Path()
+          ..moveTo(zone.left, zone.top)
+          ..lineTo(zone.right, zone.top)
+          ..lineTo(zone.left, zone.bottom)
+          ..lineTo(zone.right, zone.bottom),
+        stroke,
+      ),
+      (canvas, fill, stroke) => canvas.drawImage(image, zone.topLeft, fill),
+      (canvas, fill, stroke) => canvas.drawImageRect(image, imageBounds, zone.inflate(2), fill),
+      (canvas, fill, stroke) => canvas.drawImageNine(image, imageCenter, zone.inflate(2), fill),
+      (canvas, fill, stroke) => canvas.drawPoints(ui.PointMode.points, points, stroke),
+      (canvas, fill, stroke) => canvas.drawVertices(vertices, ui.BlendMode.dstOver, fill),
+      (canvas, fill, stroke) =>
+          canvas.drawAtlas(image, atlasXforms, atlasRects, null, null, null, fill),
     ];
 
     canvas.save();
@@ -395,38 +411,62 @@ Future<void> testMain() async {
     return ui.Rect.fromLTWH(0, 0, offset * columns + pad, offset * rows + pad);
   }
 
-  test('Rendering ops with ImageFilter blur with default tile mode', () async {
-    final region = await renderingOpsWithTileMode(null);
-    await matchGoldenFile('ui_filter_blurred_rendering_with_default_tile_mode.png', region: region);
-  },
-      // HTML renderer doesn't have tile modes
-      skip: isHtml);
+  test(
+    'Rendering ops with ImageFilter blur with default tile mode',
+    () async {
+      final region = await renderingOpsWithTileMode(null);
+      await matchGoldenFile(
+        'ui_filter_blurred_rendering_with_default_tile_mode.png',
+        region: region,
+      );
+    },
+    // HTML renderer doesn't have tile modes
+    skip: isHtml,
+  );
 
-  test('Rendering ops with ImageFilter blur with clamp tile mode', () async {
-    final region = await renderingOpsWithTileMode(ui.TileMode.clamp);
-    await matchGoldenFile('ui_filter_blurred_rendering_with_clamp_tile_mode.png', region: region);
-  },
-      // HTML renderer doesn't have tile modes
-      skip: isHtml);
+  test(
+    'Rendering ops with ImageFilter blur with clamp tile mode',
+    () async {
+      final region = await renderingOpsWithTileMode(ui.TileMode.clamp);
+      await matchGoldenFile('ui_filter_blurred_rendering_with_clamp_tile_mode.png', region: region);
+    },
+    // HTML renderer doesn't have tile modes
+    skip: isHtml,
+  );
 
-  test('Rendering ops with ImageFilter blur with decal tile mode', () async {
-    final region = await renderingOpsWithTileMode(ui.TileMode.decal);
-    await matchGoldenFile('ui_filter_blurred_rendering_with_decal_tile_mode.png', region: region);
-  },
-      // HTML renderer doesn't have tile modes
-      skip: isHtml);
+  test(
+    'Rendering ops with ImageFilter blur with decal tile mode',
+    () async {
+      final region = await renderingOpsWithTileMode(ui.TileMode.decal);
+      await matchGoldenFile('ui_filter_blurred_rendering_with_decal_tile_mode.png', region: region);
+    },
+    // HTML renderer doesn't have tile modes
+    skip: isHtml,
+  );
 
-  test('Rendering ops with ImageFilter blur with mirror tile mode', () async {
-    final region = await renderingOpsWithTileMode(ui.TileMode.mirror);
-    await matchGoldenFile('ui_filter_blurred_rendering_with_mirror_tile_mode.png', region: region);
-  },
-      // HTML renderer doesn't have tile modes
-      skip: isHtml);
+  test(
+    'Rendering ops with ImageFilter blur with mirror tile mode',
+    () async {
+      final region = await renderingOpsWithTileMode(ui.TileMode.mirror);
+      await matchGoldenFile(
+        'ui_filter_blurred_rendering_with_mirror_tile_mode.png',
+        region: region,
+      );
+    },
+    // HTML renderer doesn't have tile modes
+    skip: isHtml,
+  );
 
-  test('Rendering ops with ImageFilter blur with repeated tile mode', () async {
-    final region = await renderingOpsWithTileMode(ui.TileMode.repeated);
-    await matchGoldenFile('ui_filter_blurred_rendering_with_repeated_tile_mode.png', region: region);
-  },
-      // HTML renderer doesn't have tile modes
-      skip: isHtml);
+  test(
+    'Rendering ops with ImageFilter blur with repeated tile mode',
+    () async {
+      final region = await renderingOpsWithTileMode(ui.TileMode.repeated);
+      await matchGoldenFile(
+        'ui_filter_blurred_rendering_with_repeated_tile_mode.png',
+        region: region,
+      );
+    },
+    // HTML renderer doesn't have tile modes
+    skip: isHtml,
+  );
 }

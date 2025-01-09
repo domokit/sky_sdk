@@ -17,14 +17,10 @@ import './stdio.dart';
 import './version.dart';
 
 /// Allowed git remote names.
-enum RemoteName {
-  upstream,
-  mirror,
-}
+enum RemoteName { upstream, mirror }
 
 class Remote {
-  const Remote({required RemoteName name, required this.url})
-      : _name = name, assert(url != '');
+  const Remote({required RemoteName name, required this.url}) : _name = name, assert(url != '');
 
   const Remote.mirror(String url) : this(name: RemoteName.mirror, url: url);
   const Remote.upstream(String url) : this(name: RemoteName.upstream, url: url);
@@ -34,7 +30,7 @@ class Remote {
   /// The name of the remote.
   String get name => switch (_name) {
     RemoteName.upstream => 'upstream',
-    RemoteName.mirror   => 'mirror',
+    RemoteName.mirror => 'mirror',
   };
 
   /// The URL of the remote.
@@ -89,8 +85,8 @@ abstract class Repository {
     this.localUpstream = false,
     this.previousCheckoutLocation,
     this.mirrorRemote,
-  })  : git = Git(processManager),
-        assert(upstreamRemote.url.isNotEmpty);
+  }) : git = Git(processManager),
+       assert(upstreamRemote.url.isNotEmpty);
 
   final String name;
   final Remote upstreamRemote;
@@ -135,7 +131,8 @@ abstract class Repository {
       _checkoutDirectory = fileSystem.directory(previousCheckoutLocation);
       if (!_checkoutDirectory!.existsSync()) {
         throw ConductorException(
-            'Provided previousCheckoutLocation $previousCheckoutLocation does not exist on disk!');
+          'Provided previousCheckoutLocation $previousCheckoutLocation does not exist on disk!',
+        );
       }
       if (initialRef != null) {
         assert(initialRef != '');
@@ -183,8 +180,7 @@ abstract class Repository {
 
     return <String>[
       for (final String line in output.split('\n'))
-        if (_lsRemotePattern.firstMatch(line) case final RegExpMatch match)
-          match.group(1)!,
+        if (_lsRemotePattern.firstMatch(line) case final RegExpMatch match) match.group(1)!,
     ];
   }
 
@@ -195,9 +191,7 @@ abstract class Repository {
       checkoutDirectory.deleteSync(recursive: true);
     }
 
-    stdio.printTrace(
-      'Cloning $name from ${upstreamRemote.url} to ${checkoutDirectory.path}...',
-    );
+    stdio.printTrace('Cloning $name from ${upstreamRemote.url} to ${checkoutDirectory.path}...');
     await git.run(
       <String>[
         'clone',
@@ -242,9 +236,7 @@ abstract class Repository {
       );
     }
     final String revision = await reverseParse('HEAD');
-    stdio.printTrace(
-      'Repository $name is checked out at revision "$revision".',
-    );
+    stdio.printTrace('Repository $name is checked out at revision "$revision".');
   }
 
   /// The URL of the remote named [remoteName].
@@ -312,24 +304,13 @@ abstract class Repository {
   }
 
   /// Obtain the version tag at the tip of a release branch.
-  Future<String> getFullTag(
-    String remoteName,
-    String branchName, {
-    bool exact = true,
-  }) async {
+  Future<String> getFullTag(String remoteName, String branchName, {bool exact = true}) async {
     // includes both stable (e.g. 1.2.3) and dev tags (e.g. 1.2.3-4.5.pre)
     const String glob = '*.*.*';
     // describe the latest dev release
     final String ref = 'refs/remotes/$remoteName/$branchName';
     return git.getOutput(
-      <String>[
-        'describe',
-        '--match',
-        glob,
-        if (exact) '--exact-match',
-        '--tags',
-        ref,
-      ],
+      <String>['describe', '--match', glob, if (exact) '--exact-match', '--tags', ref],
       'obtain last released version number',
       workingDirectory: (await checkoutDirectory).path,
     );
@@ -358,11 +339,11 @@ abstract class Repository {
 
   /// List commits in reverse chronological order.
   Future<List<String>> revList(List<String> args) async {
-    return (await git.getOutput(<String>['rev-list', ...args],
-            'rev-list with args ${args.join(' ')}',
-            workingDirectory: (await checkoutDirectory).path))
-        .trim()
-        .split('\n');
+    return (await git.getOutput(
+      <String>['rev-list', ...args],
+      'rev-list with args ${args.join(' ')}',
+      workingDirectory: (await checkoutDirectory).path,
+    )).trim().split('\n');
   }
 
   /// Look up the commit for [ref].
@@ -379,12 +360,7 @@ abstract class Repository {
   /// Determines if one ref is an ancestor for another.
   Future<bool> isAncestor(String possibleAncestor, String possibleDescendant) async {
     final io.ProcessResult result = await git.run(
-      <String>[
-        'merge-base',
-        '--is-ancestor',
-        possibleDescendant,
-        possibleAncestor,
-      ],
+      <String>['merge-base', '--is-ancestor', possibleDescendant, possibleAncestor],
       'verify $possibleAncestor is a direct ancestor of $possibleDescendant.',
       allowNonZeroExitCode: true,
       workingDirectory: (await checkoutDirectory).path,
@@ -420,16 +396,8 @@ abstract class Repository {
     bool force = false,
     bool dryRun = false,
   }) async {
-    final List<String> args = <String>[
-      'push',
-      if (force) '--force',
-      remote,
-      '$fromRef:$toRef',
-    ];
-    final String command = <String>[
-      'git',
-      ...args,
-    ].join(' ');
+    final List<String> args = <String>['push', if (force) '--force', remote, '$fromRef:$toRef'];
+    final String command = <String>['git', ...args].join(' ');
     if (dryRun) {
       stdio.printStatus('About to execute command: `$command`');
     } else {
@@ -442,19 +410,15 @@ abstract class Repository {
     }
   }
 
-  Future<String> commit(
-    String message, {
-    bool addFirst = false,
-    String? author,
-  }) async {
-    final bool hasChanges = (await git.getOutput(
-      <String>['status', '--porcelain'],
-      'check for uncommitted changes',
-      workingDirectory: (await checkoutDirectory).path,
-    )).trim().isNotEmpty;
+  Future<String> commit(String message, {bool addFirst = false, String? author}) async {
+    final bool hasChanges =
+        (await git.getOutput(
+          <String>['status', '--porcelain'],
+          'check for uncommitted changes',
+          workingDirectory: (await checkoutDirectory).path,
+        )).trim().isNotEmpty;
     if (!hasChanges) {
-      throw ConductorException(
-          'Tried to commit with message $message but no changes were present');
+      throw ConductorException('Tried to commit with message $message but no changes were present');
     }
     if (addFirst) {
       await git.run(
@@ -466,15 +430,11 @@ abstract class Repository {
     String? authorArg;
     if (author != null) {
       if (author.contains('"')) {
-        throw FormatException(
-          'Commit author cannot contain character \'"\', received $author',
-        );
+        throw FormatException('Commit author cannot contain character \'"\', received $author');
       }
       // verify [author] matches git author convention, e.g. "Jane Doe <jane.doe@email.com>"
       if (!RegExp(r'.+<.*>').hasMatch(author)) {
-        throw FormatException(
-          'Commit author appears malformed: "$author"',
-        );
+        throw FormatException('Commit author appears malformed: "$author"');
       }
       authorArg = '--author="$author"';
     }
@@ -543,16 +503,13 @@ class FrameworkRepository extends Repository {
     super.mirrorRemote,
     List<String>? additionalRequiredLocalBranches,
   }) : super(
-          fileSystem: checkouts.fileSystem,
-          parentDirectory: checkouts.directory,
-          platform: checkouts.platform,
-          processManager: checkouts.processManager,
-          stdio: checkouts.stdio,
-          requiredLocalBranches: <String>[
-            ...?additionalRequiredLocalBranches,
-            ...kReleaseChannels,
-          ],
-        );
+         fileSystem: checkouts.fileSystem,
+         parentDirectory: checkouts.directory,
+         platform: checkouts.platform,
+         processManager: checkouts.processManager,
+         stdio: checkouts.stdio,
+         requiredLocalBranches: <String>[...?additionalRequiredLocalBranches, ...kReleaseChannels],
+       );
 
   /// A [FrameworkRepository] with the host conductor's repo set as upstream.
   ///
@@ -579,11 +536,7 @@ class FrameworkRepository extends Repository {
   static const String defaultBranch = 'master';
 
   Future<String> get cacheDirectory async {
-    return fileSystem.path.join(
-      (await checkoutDirectory).path,
-      'bin',
-      'cache',
-    );
+    return fileSystem.path.join((await checkoutDirectory).path, 'bin', 'cache');
   }
 
   @override
@@ -620,28 +573,19 @@ class FrameworkRepository extends Repository {
   Future<io.ProcessResult> runFlutter(List<String> args) async {
     await _ensureToolReady();
     final String workingDirectory = (await checkoutDirectory).path;
-    return processManager.run(
-      <String>[
-        fileSystem.path.join(workingDirectory, 'bin', 'flutter'),
-        ...args,
-      ],
-      workingDirectory: workingDirectory,
-    );
+    return processManager.run(<String>[
+      fileSystem.path.join(workingDirectory, 'bin', 'flutter'),
+      ...args,
+    ], workingDirectory: workingDirectory);
   }
 
-  Future<void> streamDart(
-    List<String> args, {
-    String? workingDirectory,
-  }) async {
+  Future<void> streamDart(List<String> args, {String? workingDirectory}) async {
     final String repoWorkingDirectory = (await checkoutDirectory).path;
 
-    await _streamProcess(
-      <String>[
-        fileSystem.path.join(repoWorkingDirectory, 'bin', 'dart'),
-        ...args,
-      ],
-      workingDirectory: workingDirectory ?? repoWorkingDirectory,
-    );
+    await _streamProcess(<String>[
+      fileSystem.path.join(repoWorkingDirectory, 'bin', 'dart'),
+      ...args,
+    ], workingDirectory: workingDirectory ?? repoWorkingDirectory);
   }
 
   Future<io.Process> streamFlutter(
@@ -651,13 +595,10 @@ class FrameworkRepository extends Repository {
   }) async {
     final String workingDirectory = (await checkoutDirectory).path;
 
-    return _streamProcess(
-      <String>[
-        fileSystem.path.join(workingDirectory, 'bin', 'flutter'),
-        ...args,
-      ],
-      workingDirectory: workingDirectory,
-    );
+    return _streamProcess(<String>[
+      fileSystem.path.join(workingDirectory, 'bin', 'flutter'),
+      ...args,
+    ], workingDirectory: workingDirectory);
   }
 
   Future<io.Process> _streamProcess(
@@ -667,35 +608,22 @@ class FrameworkRepository extends Repository {
     String? workingDirectory,
   }) async {
     stdio.printTrace('Executing $cmd...');
-    final io.Process process = await processManager.start(
-      cmd,
-      workingDirectory: workingDirectory,
-    );
-    final StreamSubscription<String> stdoutSub = process
-        .stdout
+    final io.Process process = await processManager.start(cmd, workingDirectory: workingDirectory);
+    final StreamSubscription<String> stdoutSub = process.stdout
         .transform(utf8.decoder)
         .transform(const LineSplitter())
         .listen(stdoutCallback ?? stdio.printTrace);
-    final StreamSubscription<String> stderrSub = process
-        .stderr
+    final StreamSubscription<String> stderrSub = process.stderr
         .transform(utf8.decoder)
         .transform(const LineSplitter())
         .listen(stderrCallback ?? stdio.printError);
-    await Future.wait<void>(<Future<void>>[
-      stdoutSub.asFuture<void>(),
-      stderrSub.asFuture<void>(),
-    ]);
+    await Future.wait<void>(<Future<void>>[stdoutSub.asFuture<void>(), stderrSub.asFuture<void>()]);
     unawaited(stdoutSub.cancel());
     unawaited(stderrSub.cancel());
 
     final int exitCode = await process.exitCode;
     if (exitCode != 0) {
-      throw io.ProcessException(
-        cmd.first,
-        cmd.sublist(1),
-        'Process failed',
-        exitCode,
-      );
+      throw io.ProcessException(cmd.first, cmd.sublist(1), 'Process failed', exitCode);
     }
     return process;
   }
@@ -716,11 +644,9 @@ class FrameworkRepository extends Repository {
 
   Future<Version> flutterVersion() async {
     // Check version
-    final io.ProcessResult result =
-        await runFlutter(<String>['--version', '--machine']);
-    final Map<String, dynamic> versionJson = jsonDecode(
-      stdoutToString(result.stdout),
-    ) as Map<String, dynamic>;
+    final io.ProcessResult result = await runFlutter(<String>['--version', '--machine']);
+    final Map<String, dynamic> versionJson =
+        jsonDecode(stdoutToString(result.stdout)) as Map<String, dynamic>;
     return Version.fromString(versionJson['frameworkVersion'] as String);
   }
 
@@ -797,11 +723,11 @@ class HostFrameworkRepository extends FrameworkRepository {
     String name = 'host-framework',
     required String upstreamPath,
   }) : super(
-          checkouts,
-          name: name,
-          upstreamRemote: Remote.upstream('file://$upstreamPath/'),
-          localUpstream: false,
-        ) {
+         checkouts,
+         name: name,
+         upstreamRemote: Remote.upstream('file://$upstreamPath/'),
+         localUpstream: false,
+       ) {
     _checkoutDirectory = checkouts.fileSystem.directory(upstreamPath);
   }
 
@@ -810,14 +736,12 @@ class HostFrameworkRepository extends FrameworkRepository {
 
   @override
   Future<void> newBranch(String branchName) async {
-    throw ConductorException(
-        'newBranch not implemented for the host repository');
+    throw ConductorException('newBranch not implemented for the host repository');
   }
 
   @override
   Future<void> checkout(String ref) async {
-    throw ConductorException(
-        'checkout not implemented for the host repository');
+    throw ConductorException('checkout not implemented for the host repository');
   }
 
   @override
@@ -837,15 +761,12 @@ class HostFrameworkRepository extends FrameworkRepository {
     bool force = false,
     bool dryRun = false,
   }) {
-    throw ConductorException(
-        'updateChannel not implemented for the host repository');
+    throw ConductorException('updateChannel not implemented for the host repository');
   }
 
   @override
   Future<String> authorEmptyCommit([String message = 'An empty commit']) async {
-    throw ConductorException(
-      'authorEmptyCommit not implemented for the host repository',
-    );
+    throw ConductorException('authorEmptyCommit not implemented for the host repository');
   }
 }
 
@@ -860,13 +781,13 @@ class EngineRepository extends Repository {
     super.mirrorRemote,
     List<String>? additionalRequiredLocalBranches,
   }) : super(
-          fileSystem: checkouts.fileSystem,
-          parentDirectory: checkouts.directory,
-          platform: checkouts.platform,
-          processManager: checkouts.processManager,
-          stdio: checkouts.stdio,
-          requiredLocalBranches: additionalRequiredLocalBranches ?? const <String>[],
-        );
+         fileSystem: checkouts.fileSystem,
+         parentDirectory: checkouts.directory,
+         platform: checkouts.platform,
+         processManager: checkouts.processManager,
+         stdio: checkouts.stdio,
+         requiredLocalBranches: additionalRequiredLocalBranches ?? const <String>[],
+       );
 
   final Checkouts checkouts;
 
@@ -874,21 +795,18 @@ class EngineRepository extends Repository {
   static const String defaultBranch = 'main';
 
   /// Update the `dart_revision` entry in the DEPS file.
-  Future<void> updateDartRevision(
-    String newRevision, {
-    @visibleForTesting File? depsFile,
-  }) async {
+  Future<void> updateDartRevision(String newRevision, {@visibleForTesting File? depsFile}) async {
     assert(newRevision.length == 40);
     depsFile ??= (await checkoutDirectory).childFile('DEPS');
     final String fileContent = depsFile.readAsStringSync();
     final RegExp dartPattern = RegExp("[ ]+'dart_revision': '([a-z0-9]{40})',");
-    final Iterable<RegExpMatch> allMatches =
-        dartPattern.allMatches(fileContent);
+    final Iterable<RegExpMatch> allMatches = dartPattern.allMatches(fileContent);
     if (allMatches.length != 1) {
       throw ConductorException(
-          'Unexpected content in the DEPS file at ${depsFile.path}\n'
-          'Expected to find pattern ${dartPattern.pattern} 1 times, but got '
-          '${allMatches.length}.');
+        'Unexpected content in the DEPS file at ${depsFile.path}\n'
+        'Expected to find pattern ${dartPattern.pattern} 1 times, but got '
+        '${allMatches.length}.',
+      );
     }
     final String updatedFileContent = fileContent.replaceFirst(
       dartPattern,
@@ -911,10 +829,7 @@ class EngineRepository extends Repository {
 }
 
 /// An enum of all the repositories that the Conductor supports.
-enum RepositoryType {
-  framework,
-  engine,
-}
+enum RepositoryType { framework, engine }
 
 class Checkouts {
   Checkouts({

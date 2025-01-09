@@ -8,7 +8,6 @@
 
 #include <cstring>
 
-#include "flutter/common/constants.h"
 #include "flutter/shell/platform/common/engine_switches.h"
 #include "flutter/shell/platform/embedder/embedder.h"
 #include "flutter/shell/platform/linux/fl_binary_messenger_private.h"
@@ -493,7 +492,9 @@ static void fl_engine_init(FlEngine* self) {
   self->thread = g_thread_self();
 
   self->embedder_api.struct_size = sizeof(FlutterEngineProcTable);
-  FlutterEngineGetProcAddresses(&self->embedder_api);
+  if (FlutterEngineGetProcAddresses(&self->embedder_api) != kSuccess) {
+    g_warning("Failed get get engine function pointers");
+  }
 
   // Implicit view is 0, so start at 1.
   self->next_view_id = 1;

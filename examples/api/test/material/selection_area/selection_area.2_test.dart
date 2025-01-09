@@ -10,9 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('SelectionArea Color Text Red Example Smoke Test', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SelectionAreaColorTextRedExampleApp(),
-    );
+    await tester.pumpWidget(const example.SelectionAreaColorTextRedExampleApp());
     expect(find.widgetWithIcon(FloatingActionButton, Icons.undo), findsOneWidget);
     expect(find.byType(Column), findsNWidgets(2));
     expect(find.textContaining('This is some bulleted list:\n'), findsOneWidget);
@@ -24,20 +22,39 @@ void main() {
     expect(find.textContaining('This is some text in another text widget.'), findsOneWidget);
   });
 
-  testWidgets('SelectionArea Color Text Red Example - colors selected range red', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SelectionAreaColorTextRedExampleApp(),
-    );
+  testWidgets('SelectionArea Color Text Red Example - colors selected range red', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.SelectionAreaColorTextRedExampleApp());
     await tester.pumpAndSettle();
-    final Finder paragraph1Finder = find.descendant(of: find.textContaining('This is some bulleted list').first, matching: find.byType(RichText).first);
-    final Finder paragraph3Finder = find.descendant(of: find.textContaining('This is some text in another text widget.'), matching: find.byType(RichText));
+    final Finder paragraph1Finder = find.descendant(
+      of: find.textContaining('This is some bulleted list').first,
+      matching: find.byType(RichText).first,
+    );
+    final Finder paragraph3Finder = find.descendant(
+      of: find.textContaining('This is some text in another text widget.'),
+      matching: find.byType(RichText),
+    );
     final RenderParagraph paragraph1 = tester.renderObject<RenderParagraph>(paragraph1Finder);
-    final List<RenderParagraph> bullets = tester.renderObjectList<RenderParagraph>(find.descendant(of: find.textContaining('• Bullet'), matching: find.byType(RichText))).toList();
+    final List<RenderParagraph> bullets =
+        tester
+            .renderObjectList<RenderParagraph>(
+              find.descendant(of: find.textContaining('• Bullet'), matching: find.byType(RichText)),
+            )
+            .toList();
     expect(bullets.length, 7);
-    final RenderParagraph paragraph2 = tester.renderObject<RenderParagraph>(find.descendant(of: find.textContaining('This is some text in a text widget.'), matching: find.byType(RichText)));
+    final RenderParagraph paragraph2 = tester.renderObject<RenderParagraph>(
+      find.descendant(
+        of: find.textContaining('This is some text in a text widget.'),
+        matching: find.byType(RichText),
+      ),
+    );
     final RenderParagraph paragraph3 = tester.renderObject<RenderParagraph>(paragraph3Finder);
     // Drag to select from paragraph 1 position 4 to paragraph 3 position 25.
-    final TestGesture gesture = await tester.startGesture(tester.getRect(paragraph1Finder).topLeft + const Offset(50.0, 10.0), kind: PointerDeviceKind.mouse);
+    final TestGesture gesture = await tester.startGesture(
+      tester.getRect(paragraph1Finder).topLeft + const Offset(50.0, 10.0),
+      kind: PointerDeviceKind.mouse,
+    );
     addTearDown(gesture.removePointer);
     await tester.pump();
     await gesture.moveTo(tester.getRect(paragraph3Finder).centerLeft + const Offset(360.0, 0.0));
@@ -77,11 +94,20 @@ void main() {
     expect((paragraph1ResultingSpan.children![0] as TextSpan).children!.length, 3);
     expect((paragraph1ResultingSpan.children![0] as TextSpan).children![0].style, isNull);
     expect((paragraph1ResultingSpan.children![0] as TextSpan).children![1], isA<TextSpan>());
-    expect(((paragraph1ResultingSpan.children![0] as TextSpan).children![1] as TextSpan).text, isNotNull);
-    expect(((paragraph1ResultingSpan.children![0] as TextSpan).children![1] as TextSpan).text, ' is some bulleted list:\n');
+    expect(
+      ((paragraph1ResultingSpan.children![0] as TextSpan).children![1] as TextSpan).text,
+      isNotNull,
+    );
+    expect(
+      ((paragraph1ResultingSpan.children![0] as TextSpan).children![1] as TextSpan).text,
+      ' is some bulleted list:\n',
+    );
     expect((paragraph1ResultingSpan.children![0] as TextSpan).children![1].style, isNotNull);
     expect((paragraph1ResultingSpan.children![0] as TextSpan).children![1].style!.color, isNotNull);
-    expect((paragraph1ResultingSpan.children![0] as TextSpan).children![1].style!.color, Colors.red);
+    expect(
+      (paragraph1ResultingSpan.children![0] as TextSpan).children![1].style!.color,
+      Colors.red,
+    );
     expect((paragraph1ResultingSpan.children![0] as TextSpan).children![2], isA<WidgetSpan>());
     // Bullets are red.
     for (final RenderParagraph paragraphBullet in bullets) {
@@ -92,9 +118,18 @@ void main() {
       expect((resultingBulletSpan.children![0] as TextSpan).children, isNotNull);
       expect((resultingBulletSpan.children![0] as TextSpan).children!.length, 1);
       expect((resultingBulletSpan.children![0] as TextSpan).children![0], isA<TextSpan>());
-      expect(((resultingBulletSpan.children![0] as TextSpan).children![0] as TextSpan).style, isNotNull);
-      expect(((resultingBulletSpan.children![0] as TextSpan).children![0] as TextSpan).style!.color, isNotNull);
-      expect(((resultingBulletSpan.children![0] as TextSpan).children![0] as TextSpan).style!.color, Colors.red);
+      expect(
+        ((resultingBulletSpan.children![0] as TextSpan).children![0] as TextSpan).style,
+        isNotNull,
+      );
+      expect(
+        ((resultingBulletSpan.children![0] as TextSpan).children![0] as TextSpan).style!.color,
+        isNotNull,
+      );
+      expect(
+        ((resultingBulletSpan.children![0] as TextSpan).children![0] as TextSpan).style!.color,
+        Colors.red,
+      );
     }
     // Second text widget is red.
     expect(paragraph2ResultingSpan.children, isNotNull);
@@ -115,11 +150,20 @@ void main() {
     expect((paragraph3ResultingSpan.children![0] as TextSpan).children, isNotNull);
     expect((paragraph3ResultingSpan.children![0] as TextSpan).children!.length, 2);
     expect((paragraph3ResultingSpan.children![0] as TextSpan).children![0], isA<TextSpan>());
-    expect(((paragraph3ResultingSpan.children![0] as TextSpan).children![0] as TextSpan).text, isNotNull);
-    expect(((paragraph3ResultingSpan.children![0] as TextSpan).children![0] as TextSpan).text, 'This is some text in ano');
+    expect(
+      ((paragraph3ResultingSpan.children![0] as TextSpan).children![0] as TextSpan).text,
+      isNotNull,
+    );
+    expect(
+      ((paragraph3ResultingSpan.children![0] as TextSpan).children![0] as TextSpan).text,
+      'This is some text in ano',
+    );
     expect((paragraph3ResultingSpan.children![0] as TextSpan).children![0].style, isNotNull);
     expect((paragraph3ResultingSpan.children![0] as TextSpan).children![0].style!.color, isNotNull);
-    expect((paragraph3ResultingSpan.children![0] as TextSpan).children![0].style!.color, Colors.red);
+    expect(
+      (paragraph3ResultingSpan.children![0] as TextSpan).children![0].style!.color,
+      Colors.red,
+    );
     expect((paragraph3ResultingSpan.children![0] as TextSpan).children![1].style, isNull);
   });
 }

@@ -22,7 +22,7 @@ import '../../src/common.dart';
 import '../../src/fake_process_manager.dart';
 import '../../src/fakes.dart';
 
-void main () {
+void main() {
   late Artifacts artifacts;
   late String iosDeployPath;
   late FileSystem fileSystem;
@@ -41,51 +41,53 @@ void main () {
   });
 
   group('IOSDeploy.prepareDebuggerForLaunch', () {
-    testWithoutContext('calls ios-deploy with correct arguments and returns when debugger attaches', () async {
-      final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
-        FakeCommand(
-          command: <String>[
-            'script',
-            '-t',
-            '0',
-            '/dev/null',
-            iosDeployPath,
-            '--id',
-            '123',
-            '--bundle',
-            '/',
-            '--app_deltas',
-            'app-delta',
-            '--uninstall',
-            '--debug',
-            '--args',
-            <String>[
-              '--enable-dart-profiling',
-            ].join(' '),
-          ], environment: const <String, String>{
-            'PATH': '/usr/bin:/usr/local/bin:/usr/bin',
-            'DYLD_LIBRARY_PATH': '/path/to/libraries',
-          },
-          stdout: '(lldb)     run\nsuccess\nDid finish launching.',
-        ),
-      ]);
-      final Directory appDeltaDirectory = fileSystem.directory('app-delta');
-      final IOSDeploy iosDeploy = setUpIOSDeploy(processManager, artifacts: artifacts);
-      final IOSDeployDebugger iosDeployDebugger = iosDeploy.prepareDebuggerForLaunch(
-        deviceId: '123',
-        bundlePath: '/',
-        appDeltaDirectory: appDeltaDirectory,
-        launchArguments: <String>['--enable-dart-profiling'],
-        interfaceType: DeviceConnectionInterface.wireless,
-        uninstallFirst: true,
-      );
+    testWithoutContext(
+      'calls ios-deploy with correct arguments and returns when debugger attaches',
+      () async {
+        final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
+          FakeCommand(
+            command: <String>[
+              'script',
+              '-t',
+              '0',
+              '/dev/null',
+              iosDeployPath,
+              '--id',
+              '123',
+              '--bundle',
+              '/',
+              '--app_deltas',
+              'app-delta',
+              '--uninstall',
+              '--debug',
+              '--args',
+              <String>['--enable-dart-profiling'].join(' '),
+            ],
+            environment: const <String, String>{
+              'PATH': '/usr/bin:/usr/local/bin:/usr/bin',
+              'DYLD_LIBRARY_PATH': '/path/to/libraries',
+            },
+            stdout: '(lldb)     run\nsuccess\nDid finish launching.',
+          ),
+        ]);
+        final Directory appDeltaDirectory = fileSystem.directory('app-delta');
+        final IOSDeploy iosDeploy = setUpIOSDeploy(processManager, artifacts: artifacts);
+        final IOSDeployDebugger iosDeployDebugger = iosDeploy.prepareDebuggerForLaunch(
+          deviceId: '123',
+          bundlePath: '/',
+          appDeltaDirectory: appDeltaDirectory,
+          launchArguments: <String>['--enable-dart-profiling'],
+          interfaceType: DeviceConnectionInterface.wireless,
+          uninstallFirst: true,
+        );
 
-      expect(iosDeployDebugger.logLines, emits('Did finish launching.'));
-      expect(await iosDeployDebugger.launchAndAttach(), isTrue);
-      await iosDeployDebugger.logLines.drain<Object?>();
-      expect(processManager, hasNoRemainingExpectations);
-      expect(appDeltaDirectory, exists);
-    });
+        expect(iosDeployDebugger.logLines, emits('Did finish launching.'));
+        expect(await iosDeployDebugger.launchAndAttach(), isTrue);
+        await iosDeployDebugger.logLines.drain<Object?>();
+        expect(processManager, hasNoRemainingExpectations);
+        expect(appDeltaDirectory, exists);
+      },
+    );
   });
 
   group('IOSDeployDebugger', () {
@@ -101,7 +103,8 @@ void main () {
         final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
           FakeCommand(
             command: const <String>['ios-deploy'],
-            stdout: "(mylldb)    platform select remote-'ios' --sysroot\r\n(mylldb)     run\r\nsuccess\r\n",
+            stdout:
+                "(mylldb)    platform select remote-'ios' --sysroot\r\n(mylldb)     run\r\nsuccess\r\n",
             stdin: IOSink(stdin.sink),
           ),
         ]);
@@ -117,7 +120,8 @@ void main () {
         final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
           FakeCommand(
             command: const <String>['ios-deploy'],
-            stdout: "(lldb)     run\r\nsuccess\r\nsuccess\r\nLog on attach1\r\n\r\nLog on attach2\r\n\r\n\r\n\r\nPROCESS_STOPPED\r\nLog after process stop\r\nthread backtrace all\r\n* thread #1, queue = 'com.apple.main-thread', stop reason = signal SIGSTOP",
+            stdout:
+                "(lldb)     run\r\nsuccess\r\nsuccess\r\nLog on attach1\r\n\r\nLog on attach2\r\n\r\n\r\n\r\nPROCESS_STOPPED\r\nLog after process stop\r\nthread backtrace all\r\n* thread #1, queue = 'com.apple.main-thread', stop reason = signal SIGSTOP",
             stdin: IOSink(stdin.sink),
           ),
         ]);
@@ -126,21 +130,23 @@ void main () {
           logger: logger,
         );
         final List<String> receivedLogLines = <String>[];
-        final Stream<String> logLines = iosDeployDebugger.logLines
-          ..listen(receivedLogLines.add);
+        final Stream<String> logLines = iosDeployDebugger.logLines..listen(receivedLogLines.add);
 
-        expect(iosDeployDebugger.logLines, emitsInOrder(<String>[
-          'success', // ignore first "success" from lldb, but log subsequent ones from real logging.
-          'Log on attach1',
-          'Log on attach2',
-          '',
-          '',
-          'Log after process stop',
-        ]));
-        expect(_decodeLines(stdin.stream), emitsInOrder(<String>[
-          'thread backtrace all',
-          'process detach',
-        ]));
+        expect(
+          iosDeployDebugger.logLines,
+          emitsInOrder(<String>[
+            'success', // ignore first "success" from lldb, but log subsequent ones from real logging.
+            'Log on attach1',
+            'Log on attach2',
+            '',
+            '',
+            'Log after process stop',
+          ]),
+        );
+        expect(
+          _decodeLines(stdin.stream),
+          emitsInOrder(<String>['thread backtrace all', 'process detach']),
+        );
         expect(await iosDeployDebugger.launchAndAttach(), isTrue);
         await logLines.drain<Object?>();
 
@@ -154,7 +160,8 @@ void main () {
         final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
           FakeCommand(
             command: const <String>['ios-deploy'],
-            stdout: '(lldb)     run\r\nsuccess\r\nsuccess\r\nprocess signal SIGSTOP\r\n\r\nerror: Failed to send signal 17: failed to send signal 17',
+            stdout:
+                '(lldb)     run\r\nsuccess\r\nsuccess\r\nprocess signal SIGSTOP\r\n\r\nerror: Failed to send signal 17: failed to send signal 17',
             stdin: IOSink(stdin.sink),
           ),
         ]);
@@ -163,9 +170,7 @@ void main () {
           logger: logger,
         );
 
-        expect(iosDeployDebugger.logLines, emitsInOrder(<String>[
-          'success',
-        ]));
+        expect(iosDeployDebugger.logLines, emitsInOrder(<String>['success']));
 
         expect(await iosDeployDebugger.launchAndAttach(), isTrue);
         await iosDeployDebugger.exitCompleter.future;
@@ -197,17 +202,18 @@ void main () {
         final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
           const FakeCommand(
             command: <String>['ios-deploy'],
-            stdout: '(lldb)     run\r\nsuccess\r\nLog on attach\r\nProcess 100 exited with status = 0\r\nLog after process exit',
+            stdout:
+                '(lldb)     run\r\nsuccess\r\nLog on attach\r\nProcess 100 exited with status = 0\r\nLog after process exit',
           ),
         ]);
         final IOSDeployDebugger iosDeployDebugger = IOSDeployDebugger.test(
           processManager: processManager,
           logger: logger,
         );
-        expect(iosDeployDebugger.logLines, emitsInOrder(<String>[
-          'Log on attach',
-          'Log after process exit',
-        ]));
+        expect(
+          iosDeployDebugger.logLines,
+          emitsInOrder(<String>['Log on attach', 'Log after process exit']),
+        );
 
         expect(await iosDeployDebugger.launchAndAttach(), isTrue);
         await iosDeployDebugger.logLines.drain<Object?>();
@@ -228,15 +234,15 @@ void main () {
           logger: logger,
         );
 
-        expect(iosDeployDebugger.logLines, emitsInOrder(<String>[
-          'Log on attach',
-          '* thread #1, stop reason = Assertion failed:',
-        ]));
+        expect(
+          iosDeployDebugger.logLines,
+          emitsInOrder(<String>['Log on attach', '* thread #1, stop reason = Assertion failed:']),
+        );
 
-        expect(_decodeLines(stdin.stream), emitsInOrder(<String>[
-          'thread backtrace all',
-          'process detach',
-        ]));
+        expect(
+          _decodeLines(stdin.stream),
+          emitsInOrder(<String>['thread backtrace all', 'process detach']),
+        );
 
         expect(await iosDeployDebugger.launchAndAttach(), isTrue);
         await iosDeployDebugger.logLines.drain<Object?>();
@@ -268,10 +274,7 @@ void main () {
 
       testWithoutContext('no provisioning profile 1, stdout', () async {
         final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
-          const FakeCommand(
-            command: <String>['ios-deploy'],
-            stdout: 'Error 0xe8008015',
-          ),
+          const FakeCommand(command: <String>['ios-deploy'], stdout: 'Error 0xe8008015'),
         ]);
         final IOSDeployDebugger iosDeployDebugger = IOSDeployDebugger.test(
           processManager: processManager,
@@ -284,10 +287,7 @@ void main () {
 
       testWithoutContext('no provisioning profile 2, stderr', () async {
         final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
-          const FakeCommand(
-            command: <String>['ios-deploy'],
-            stderr: 'Error 0xe8000067',
-          ),
+          const FakeCommand(command: <String>['ios-deploy'], stderr: 'Error 0xe8000067'),
         ]);
         final IOSDeployDebugger iosDeployDebugger = IOSDeployDebugger.test(
           processManager: processManager,
@@ -299,10 +299,7 @@ void main () {
 
       testWithoutContext('device locked code', () async {
         final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
-          const FakeCommand(
-            command: <String>['ios-deploy'],
-            stdout: 'e80000e2',
-          ),
+          const FakeCommand(command: <String>['ios-deploy'], stdout: 'e80000e2'),
         ]);
         final IOSDeployDebugger iosDeployDebugger = IOSDeployDebugger.test(
           processManager: processManager,
@@ -316,7 +313,8 @@ void main () {
         final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
           const FakeCommand(
             command: <String>['ios-deploy'],
-            stdout: '[  +95 ms] error: The operation couldn’t be completed. Unable to launch io.flutter.examples.gallery because the device was not, or could not be, unlocked.',
+            stdout:
+                '[  +95 ms] error: The operation couldn’t be completed. Unable to launch io.flutter.examples.gallery because the device was not, or could not be, unlocked.',
           ),
         ]);
         final IOSDeployDebugger iosDeployDebugger = IOSDeployDebugger.test(
@@ -329,10 +327,7 @@ void main () {
 
       testWithoutContext('unknown app launch error', () async {
         final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
-          const FakeCommand(
-            command: <String>['ios-deploy'],
-            stdout: 'Error 0xe8000022',
-          ),
+          const FakeCommand(command: <String>['ios-deploy'], stdout: 'Error 0xe8000022'),
         ]);
         final IOSDeployDebugger iosDeployDebugger = IOSDeployDebugger.test(
           processManager: processManager,
@@ -356,17 +351,19 @@ void main () {
           logger: logger,
         );
         final List<String> receivedLogLines = <String>[];
-        final Stream<String> logLines = iosDeployDebugger.logLines
-          ..listen(receivedLogLines.add);
+        final Stream<String> logLines = iosDeployDebugger.logLines..listen(receivedLogLines.add);
 
-        expect(iosDeployDebugger.logLines, emitsInOrder(<String>[
-          'Log on attach1',
-          'Log on attach2',
-        ]));
+        expect(
+          iosDeployDebugger.logLines,
+          emitsInOrder(<String>['Log on attach1', 'Log on attach2']),
+        );
         expect(await iosDeployDebugger.launchAndAttach(), isTrue);
         await logLines.drain<Object?>();
 
-        expect(LineSplitter.split(logger.traceText), containsOnce('Received logs from ios-deploy.'));
+        expect(
+          LineSplitter.split(logger.traceText),
+          containsOnce('Received logs from ios-deploy.'),
+        );
       });
     });
 
@@ -374,9 +371,7 @@ void main () {
       final StreamController<List<int>> stdin = StreamController<List<int>>();
       final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
         FakeCommand(
-          command: const <String>[
-            'ios-deploy',
-          ],
+          command: const <String>['ios-deploy'],
           stdout: '(lldb)     run\nsuccess',
           stdin: IOSink(stdin.sink),
         ),
@@ -413,11 +408,9 @@ void main () {
       final Stream<String> stdinStream = _decodeLines(stdin.stream);
       final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
         FakeCommand(
-          command: const <String>[
-            'ios-deploy',
-          ],
+          command: const <String>['ios-deploy'],
           stdout:
-          '(lldb)     run\nsuccess\nLog on attach\n(lldb) Process 6156 stopped\n* thread #1, stop reason = Assertion failed:\n(lldb) Process 6156 detached',
+              '(lldb)     run\nsuccess\nLog on attach\n(lldb) Process 6156 stopped\n* thread #1, stop reason = Assertion failed:\n(lldb) Process 6156 detached',
           stdin: IOSink(stdin),
         ),
       ]);
@@ -430,9 +423,7 @@ void main () {
       // These two futures will deadlock if await-ed sequentially
       await Future.wait(<Future<void>>[
         iosDeployDebugger.stopAndDumpBacktrace(),
-        stdinStream.take(3).toList().then<void>(
-          (List<String> lines) => stdinLines = lines,
-        ),
+        stdinStream.take(3).toList().then<void>((List<String> lines) => stdinLines = lines),
       ]);
       expect(stdinLines, const <String>[
         'thread backtrace all',
@@ -479,9 +470,7 @@ process continue
       final BufferLogger logger = BufferLogger.test();
       final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
         FakeCommand(
-          command: const <String>[
-            'ios-deploy',
-          ],
+          command: const <String>['ios-deploy'],
           stdout: stdout,
           stdin: IOSink(stdin.sink),
         ),
@@ -510,18 +499,13 @@ process continue
 
       setUp(() {
         fileSystem = MemoryFileSystem.test();
-        symbolsDirectoryPath = '/Users/swarming/Library/Developer/Xcode/iOS DeviceSupport/16.2 (20C65) arm64e/Symbols';
+        symbolsDirectoryPath =
+            '/Users/swarming/Library/Developer/Xcode/iOS DeviceSupport/16.2 (20C65) arm64e/Symbols';
       });
 
       testWithoutContext('and no path provided', () async {
         final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
-          const FakeCommand(
-            command: <String>[
-              'ios-deploy',
-            ],
-            stdout:
-            '(lldb) Process 6156 stopped',
-          ),
+          const FakeCommand(command: <String>['ios-deploy'], stdout: '(lldb) Process 6156 stopped'),
         ]);
         final BufferLogger logger = BufferLogger.test();
         final IOSDeployDebugger iosDeployDebugger = IOSDeployDebugger.test(
@@ -537,13 +521,11 @@ process continue
       testWithoutContext('and unable to find directory', () async {
         final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
           FakeCommand(
-            command: const <String>[
-              'ios-deploy',
-            ],
+            command: const <String>['ios-deploy'],
             stdout:
-            '[ 95%] Developer disk image mounted successfully\n'
-            'Symbol Path: $symbolsDirectoryPath\n'
-            '[100%] Connecting to remote debug server',
+                '[ 95%] Developer disk image mounted successfully\n'
+                'Symbol Path: $symbolsDirectoryPath\n'
+                '[100%] Connecting to remote debug server',
           ),
         ]);
         final BufferLogger logger = BufferLogger.test();
@@ -560,13 +542,11 @@ process continue
       testWithoutContext('and find status', () async {
         final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
           FakeCommand(
-            command: const <String>[
-              'ios-deploy',
-            ],
+            command: const <String>['ios-deploy'],
             stdout:
-            '[ 95%] Developer disk image mounted successfully\n'
-            'Symbol Path: $symbolsDirectoryPath\n'
-            '[100%] Connecting to remote debug server',
+                '[ 95%] Developer disk image mounted successfully\n'
+                'Symbol Path: $symbolsDirectoryPath\n'
+                '[100%] Connecting to remote debug server',
           ),
         ]);
         final BufferLogger logger = BufferLogger.test();
@@ -594,47 +574,49 @@ process continue
   });
 
   group('IOSDeploy.uninstallApp', () {
-    testWithoutContext('calls ios-deploy with correct arguments and returns 0 on success', () async {
-      const String deviceId = '123';
-      const String bundleId = 'com.example.app';
-      final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
-        FakeCommand(command: <String>[
-          iosDeployPath,
-          '--id',
-          deviceId,
-          '--uninstall_only',
-          '--bundle_id',
-          bundleId,
-        ]),
-      ]);
-      final IOSDeploy iosDeploy = setUpIOSDeploy(processManager, artifacts: artifacts);
-      final int exitCode = await iosDeploy.uninstallApp(
-        deviceId: deviceId,
-        bundleId: bundleId,
-      );
+    testWithoutContext(
+      'calls ios-deploy with correct arguments and returns 0 on success',
+      () async {
+        const String deviceId = '123';
+        const String bundleId = 'com.example.app';
+        final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
+          FakeCommand(
+            command: <String>[
+              iosDeployPath,
+              '--id',
+              deviceId,
+              '--uninstall_only',
+              '--bundle_id',
+              bundleId,
+            ],
+          ),
+        ]);
+        final IOSDeploy iosDeploy = setUpIOSDeploy(processManager, artifacts: artifacts);
+        final int exitCode = await iosDeploy.uninstallApp(deviceId: deviceId, bundleId: bundleId);
 
-      expect(exitCode, 0);
-      expect(processManager, hasNoRemainingExpectations);
-    });
+        expect(exitCode, 0);
+        expect(processManager, hasNoRemainingExpectations);
+      },
+    );
 
     testWithoutContext('returns non-zero exit code when ios-deploy does the same', () async {
       const String deviceId = '123';
       const String bundleId = 'com.example.app';
       final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
-        FakeCommand(command: <String>[
-          iosDeployPath,
-          '--id',
-          deviceId,
-          '--uninstall_only',
-          '--bundle_id',
-          bundleId,
-        ], exitCode: 1),
+        FakeCommand(
+          command: <String>[
+            iosDeployPath,
+            '--id',
+            deviceId,
+            '--uninstall_only',
+            '--bundle_id',
+            bundleId,
+          ],
+          exitCode: 1,
+        ),
       ]);
       final IOSDeploy iosDeploy = setUpIOSDeploy(processManager, artifacts: artifacts);
-      final int exitCode = await iosDeploy.uninstallApp(
-        deviceId: deviceId,
-        bundleId: bundleId,
-      );
+      final int exitCode = await iosDeploy.uninstallApp(deviceId: deviceId, bundleId: bundleId);
 
       expect(exitCode, 1);
       expect(processManager, hasNoRemainingExpectations);
@@ -644,23 +626,18 @@ process continue
 
 class _ClosedStdinController extends Fake implements StreamSink<List<int>> {
   @override
-  Future<Object?> addStream(Stream<List<int>> stream) async => throw const SocketException('Bad pipe');
+  Future<Object?> addStream(Stream<List<int>> stream) async =>
+      throw const SocketException('Bad pipe');
 }
 
-IOSDeploy setUpIOSDeploy(ProcessManager processManager, {
-    Artifacts? artifacts,
-  }) {
+IOSDeploy setUpIOSDeploy(ProcessManager processManager, {Artifacts? artifacts}) {
   final FakePlatform macPlatform = FakePlatform(
     operatingSystem: 'macos',
-    environment: <String, String>{
-      'PATH': '/usr/local/bin:/usr/bin',
-    }
+    environment: <String, String>{'PATH': '/usr/local/bin:/usr/bin'},
   );
   final Cache cache = Cache.test(
     platform: macPlatform,
-    artifacts: <ArtifactSet>[
-      FakeDyldEnvironmentArtifact(),
-    ],
+    artifacts: <ArtifactSet>[FakeDyldEnvironmentArtifact()],
     processManager: FakeProcessManager.any(),
   );
 
@@ -678,7 +655,7 @@ class IOSDeployDebuggerWaitForExit extends IOSDeployDebugger {
     required super.logger,
     required super.processUtils,
     required super.launchCommand,
-    required super.iosDeployEnv
+    required super.iosDeployEnv,
   });
 
   /// Create a [IOSDeployDebugger] for testing.
@@ -707,5 +684,5 @@ class IOSDeployDebuggerWaitForExit extends IOSDeployDebugger {
   }
 }
 
-Stream<String> _decodeLines(Stream<List<int>> bytes)
-    => bytes.transform(const Utf8Decoder()).transform(const LineSplitter());
+Stream<String> _decodeLines(Stream<List<int>> bytes) =>
+    bytes.transform(const Utf8Decoder()).transform(const LineSplitter());

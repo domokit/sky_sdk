@@ -9,10 +9,9 @@ import '../../project.dart';
 
 /// Remove lib/generated_plugin_registrant.dart if it exists.
 class ScrubGeneratedPluginRegistrant extends ProjectMigrator {
-  ScrubGeneratedPluginRegistrant(
-    WebProject project,
-    super.logger,
-  ) : _project = project, _logger = logger;
+  ScrubGeneratedPluginRegistrant(WebProject project, super.logger)
+    : _project = project,
+      _logger = logger;
 
   final WebProject _project;
   final Logger _logger;

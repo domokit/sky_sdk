@@ -50,13 +50,15 @@ class PlistParser {
       throw const FileNotFoundException(_plutilExecutable);
     }
     final List<String> args = <String>[
-      _plutilExecutable, '-convert', 'xml1', '-o', '-', plistFilePath,
+      _plutilExecutable,
+      '-convert',
+      'xml1',
+      '-o',
+      '-',
+      plistFilePath,
     ];
     try {
-      final String xmlContent = _processUtils.runSync(
-        args,
-        throwOnError: true,
-      ).stdout.trim();
+      final String xmlContent = _processUtils.runSync(args, throwOnError: true).stdout.trim();
       return xmlContent;
     } on ProcessException catch (error) {
       _logger.printError('$error');
@@ -73,19 +75,9 @@ class PlistParser {
     if (!_fileSystem.isFileSync(_plutilExecutable)) {
       throw const FileNotFoundException(_plutilExecutable);
     }
-    final List<String> args = <String>[
-      _plutilExecutable,
-      '-convert',
-      'json',
-      '-o',
-      '-',
-      filePath,
-    ];
+    final List<String> args = <String>[_plutilExecutable, '-convert', 'json', '-o', '-', filePath];
     try {
-      final String jsonContent = _processUtils.runSync(
-        args,
-        throwOnError: true,
-      ).stdout.trim();
+      final String jsonContent = _processUtils.runSync(args, throwOnError: true).stdout.trim();
       return jsonContent;
     } on ProcessException catch (error) {
       _logger.printError('$error');
@@ -98,25 +90,18 @@ class PlistParser {
   /// If the value is null, then the key will be removed.
   ///
   /// Returns true if successful.
-  bool replaceKey(String plistFilePath, {required String key, String? value }) {
+  bool replaceKey(String plistFilePath, {required String key, String? value}) {
     if (!_fileSystem.isFileSync(_plutilExecutable)) {
       throw const FileNotFoundException(_plutilExecutable);
     }
     final List<String> args;
     if (value == null) {
-      args = <String>[
-        _plutilExecutable, '-remove', key, plistFilePath,
-      ];
+      args = <String>[_plutilExecutable, '-remove', key, plistFilePath];
     } else {
-      args = <String>[
-        _plutilExecutable, '-replace', key, '-string', value, plistFilePath,
-      ];
+      args = <String>[_plutilExecutable, '-replace', key, '-string', value, plistFilePath];
     }
     try {
-      _processUtils.runSync(
-        args,
-        throwOnError: true,
-      );
+      _processUtils.runSync(args, throwOnError: true);
     } on ProcessException catch (error) {
       _logger.printError('$error');
       return false;
@@ -173,16 +158,21 @@ class PlistParser {
 
   Object? _parseXmlNode(XmlElement node) {
     return switch (node.name.local) {
-      'string'  => node.innerText,
-      'real'    => double.parse(node.innerText),
+      'string' => node.innerText,
+      'real' => double.parse(node.innerText),
       'integer' => int.parse(node.innerText),
-      'true'    => true,
-      'false'   => false,
-      'date'    => DateTime.parse(node.innerText),
-      'data'    => base64.decode(node.innerText.replaceAll(_nonBase64Pattern, '')),
-      'array'   => node.children.whereType<XmlElement>().map<Object?>(_parseXmlNode).whereType<Object>().toList(),
-      'dict'    => _parseXmlDict(node),
-      _         => null,
+      'true' => true,
+      'false' => false,
+      'date' => DateTime.parse(node.innerText),
+      'data' => base64.decode(node.innerText.replaceAll(_nonBase64Pattern, '')),
+      'array' =>
+        node.children
+            .whereType<XmlElement>()
+            .map<Object?>(_parseXmlNode)
+            .whereType<Object>()
+            .toList(),
+      'dict' => _parseXmlDict(node),
+      _ => null,
     };
   }
 

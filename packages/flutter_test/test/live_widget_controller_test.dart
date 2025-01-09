@@ -21,7 +21,9 @@ class TestBinding extends WidgetsFlutterBinding {
   }
 
   @override
-  bool debugCheckZone(String entryPoint) { return true; }
+  bool debugCheckZone(String entryPoint) {
+    return true;
+  }
 
   static TestBinding get instance => BindingBase.checkInstance(_instance);
   static TestBinding? _instance;
@@ -63,17 +65,13 @@ class AnimateSample extends StatefulWidget {
   State<AnimateSample> createState() => _AnimateSampleState();
 }
 
-class _AnimateSampleState extends State<AnimateSample>
-    with SingleTickerProviderStateMixin {
+class _AnimateSampleState extends State<AnimateSample> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )..forward();
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 1))..forward();
   }
 
   @override
@@ -98,8 +96,7 @@ void main() {
     runApp(const MaterialApp(home: Center(child: CountButton())));
 
     await SchedulerBinding.instance.endOfFrame;
-    final WidgetController controller =
-        LiveWidgetController(WidgetsBinding.instance);
+    final WidgetController controller = LiveWidgetController(WidgetsBinding.instance);
     await controller.tap(find.text('Counter 0'));
     expect(find.text('Counter 0'), findsOneWidget);
     expect(find.text('Counter 1'), findsNothing);
@@ -111,8 +108,7 @@ void main() {
   test('Test pumpAndSettle on LiveWidgetController', () async {
     runApp(const MaterialApp(home: Center(child: AnimateSample())));
     await SchedulerBinding.instance.endOfFrame;
-    final WidgetController controller =
-        LiveWidgetController(WidgetsBinding.instance);
+    final WidgetController controller = LiveWidgetController(WidgetsBinding.instance);
     expect(find.text('Value: 1.0'), findsNothing);
     await controller.pumpAndSettle();
     expect(find.text('Value: 1.0'), findsOneWidget);
@@ -131,27 +127,22 @@ void main() {
       ),
     );
     await SchedulerBinding.instance.endOfFrame;
-    final WidgetController controller =
-        LiveWidgetController(WidgetsBinding.instance);
+    final WidgetController controller = LiveWidgetController(WidgetsBinding.instance);
 
     final Offset location = controller.getCenter(find.text('test'));
     final List<PointerEventRecord> records = <PointerEventRecord>[
       PointerEventRecord(Duration.zero, <PointerEvent>[
         // Typically PointerAddedEvent is not used in testers, but for records
         // captured on a device it is usually what starts a gesture.
-        PointerAddedEvent(
-          position: location,
-        ),
-        PointerDownEvent(
-          position: location,
-          buttons: kSecondaryMouseButton,
-          pointer: 1,
-        ),
+        PointerAddedEvent(position: location),
+        PointerDownEvent(position: location, buttons: kSecondaryMouseButton, pointer: 1),
       ]),
       ...<PointerEventRecord>[
-        for (Duration t = const Duration(milliseconds: 5);
-             t < const Duration(milliseconds: 80);
-             t += const Duration(milliseconds: 16))
+        for (
+          Duration t = const Duration(milliseconds: 5);
+          t < const Duration(milliseconds: 80);
+          t += const Duration(milliseconds: 16)
+        )
           PointerEventRecord(t, <PointerEvent>[
             PointerMoveEvent(
               timeStamp: t - const Duration(milliseconds: 1),
@@ -170,8 +161,7 @@ void main() {
         ),
       ]),
     ];
-    final List<Duration> timeDiffs =
-        await controller.handlePointerEventRecord(records);
+    final List<Duration> timeDiffs = await controller.handlePointerEventRecord(records);
 
     expect(timeDiffs.length, records.length);
     for (final Duration diff in timeDiffs) {
@@ -179,7 +169,10 @@ void main() {
       // TODO(pdblasi-google): The expected wiggle room should be -1, but occasional
       // results were reaching -6. This assert has been adjusted to reduce flakiness,
       // but the root cause is still unknown. (https://github.com/flutter/flutter/issues/109638)
-      assert(diff.inMilliseconds > -7, 'timeDiffs were: $timeDiffs (offending time was ${diff.inMilliseconds}ms)');
+      assert(
+        diff.inMilliseconds > -7,
+        'timeDiffs were: $timeDiffs (offending time was ${diff.inMilliseconds}ms)',
+      );
     }
 
     const String b = '$kSecondaryMouseButton';

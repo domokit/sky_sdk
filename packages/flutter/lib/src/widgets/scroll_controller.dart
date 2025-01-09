@@ -207,14 +207,11 @@ class ScrollController extends ChangeNotifier {
   /// When calling [animateTo] in widget tests, `await`ing the returned
   /// [Future] may cause the test to hang and timeout. Instead, use
   /// [WidgetTester.pumpAndSettle].
-  Future<void> animateTo(
-    double offset, {
-    required Duration duration,
-    required Curve curve,
-  }) async {
+  Future<void> animateTo(double offset, {required Duration duration, required Curve curve}) async {
     assert(_positions.isNotEmpty, 'ScrollController not attached to any scroll views.');
     await Future.wait<void>(<Future<void>>[
-      for (int i = 0; i < _positions.length; i += 1) _positions[i].animateTo(offset, duration: duration, curve: curve),
+      for (int i = 0; i < _positions.length; i += 1)
+        _positions[i].animateTo(offset, duration: duration, curve: curve),
     ]);
   }
 

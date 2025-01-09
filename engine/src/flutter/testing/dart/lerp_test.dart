@@ -108,10 +108,13 @@ void main() {
     expect(() => lerpDouble(0.0, 10.0, double.nan), throwsA(isA<AssertionError>()));
   });
 
-  test('lerpDouble should throw AssertionError if interpolation value is +/- infinity and a != b', () {
-    expect(() => lerpDouble(0.0, 10.0, double.infinity), throwsA(isA<AssertionError>()));
-    expect(() => lerpDouble(0.0, 10.0, -double.infinity), throwsA(isA<AssertionError>()));
-  });
+  test(
+    'lerpDouble should throw AssertionError if interpolation value is +/- infinity and a != b',
+    () {
+      expect(() => lerpDouble(0.0, 10.0, double.infinity), throwsA(isA<AssertionError>()));
+      expect(() => lerpDouble(0.0, 10.0, -double.infinity), throwsA(isA<AssertionError>()));
+    },
+  );
 
   test('lerpDouble should throw AssertionError if either start or end are NaN', () {
     expect(() => lerpDouble(double.nan, 10.0, 5.0), throwsA(isA<AssertionError>()));

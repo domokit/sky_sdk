@@ -36,8 +36,10 @@ class IOSCodeGenerator extends PlatformCodeGenerator {
     final OutputLines<int> lines = OutputLines<int>('iOS scancode map');
     for (final PhysicalKeyEntry entry in keyData.entries) {
       if (entry.iOSScanCode != null) {
-        lines.add(entry.iOSScanCode!,
-            '    {${toHex(entry.iOSScanCode)}, ${toHex(entry.usbHidCode)}},  // ${entry.constantName}');
+        lines.add(
+          entry.iOSScanCode!,
+          '    {${toHex(entry.iOSScanCode)}, ${toHex(entry.usbHidCode)}},  // ${entry.constantName}',
+        );
       }
     }
     return lines.sortedJoin().trimRight();
@@ -62,7 +64,10 @@ class IOSCodeGenerator extends PlatformCodeGenerator {
     final OutputLines<int> lines = OutputLines<int>('iOS keycode map');
     for (final LogicalKeyEntry entry in logicalData.entries) {
       zipStrict(entry.iOSKeyCodeValues, entry.iOSKeyCodeNames, (int iOSValue, String iOSName) {
-        lines.add(iOSValue, '    {${toHex(iOSValue)}, ${toHex(entry.value, digits: 11)}},  // $iOSName');
+        lines.add(
+          iOSValue,
+          '    {${toHex(iOSValue)}, ${toHex(entry.value, digits: 11)}},  // $iOSName',
+        );
       });
     }
     return lines.sortedJoin().trimRight();
@@ -71,16 +76,14 @@ class IOSCodeGenerator extends PlatformCodeGenerator {
   /// This generates the mask values for the part of a key code that defines its plane.
   String get _maskConstants {
     final StringBuffer buffer = StringBuffer();
-    const List<MaskConstant> maskConstants = <MaskConstant>[
-      kValueMask,
-      kUnicodePlane,
-      kIosPlane,
-    ];
+    const List<MaskConstant> maskConstants = <MaskConstant>[kValueMask, kUnicodePlane, kIosPlane];
     for (final MaskConstant constant in maskConstants) {
       buffer.writeln('/**');
       buffer.write(wrapString(constant.description, prefix: ' * '));
       buffer.writeln(' */');
-      buffer.writeln('const uint64_t k${constant.upperCamelName} = ${toHex(constant.value, digits: 11)};');
+      buffer.writeln(
+        'const uint64_t k${constant.upperCamelName} = ${toHex(constant.value, digits: 11)};',
+      );
       buffer.writeln();
     }
     return buffer.toString().trimRight();
@@ -90,7 +93,8 @@ class IOSCodeGenerator extends PlatformCodeGenerator {
   String get _keyToModifierFlagMap {
     final StringBuffer modifierKeyMap = StringBuffer();
     for (final String name in kModifiersOfInterest) {
-      final String line = '{${toHex(logicalData.entryByName(name).iOSKeyCodeValues[0])}, kModifierFlag${lowerCamelToUpperCamel(name)}},';
+      final String line =
+          '{${toHex(logicalData.entryByName(name).iOSKeyCodeValues[0])}, kModifierFlag${lowerCamelToUpperCamel(name)}},';
       modifierKeyMap.writeln('    ${line.padRight(42)}// $name');
     }
     return modifierKeyMap.toString().trimRight();
@@ -100,7 +104,8 @@ class IOSCodeGenerator extends PlatformCodeGenerator {
   String get _modifierFlagToKeyMap {
     final StringBuffer modifierKeyMap = StringBuffer();
     for (final String name in kModifiersOfInterest) {
-      final String line = '{kModifierFlag${lowerCamelToUpperCamel(name)}, ${toHex(logicalData.entryByName(name).iOSKeyCodeValues[0])}},';
+      final String line =
+          '{kModifierFlag${lowerCamelToUpperCamel(name)}, ${toHex(logicalData.entryByName(name).iOSKeyCodeValues[0])}},';
       modifierKeyMap.writeln('    ${line.padRight(42)}// $name');
     }
     return modifierKeyMap.toString().trimRight();
@@ -119,10 +124,14 @@ class IOSCodeGenerator extends PlatformCodeGenerator {
   String get _specialKeyConstants {
     final StringBuffer specialKeyConstants = StringBuffer();
     for (final String keyName in kSpecialPhysicalKeys) {
-      specialKeyConstants.writeln('const uint64_t k${keyName}PhysicalKey = ${toHex(keyData.entryByName(keyName).usbHidCode)};');
+      specialKeyConstants.writeln(
+        'const uint64_t k${keyName}PhysicalKey = ${toHex(keyData.entryByName(keyName).usbHidCode)};',
+      );
     }
     for (final String keyName in kSpecialLogicalKeys) {
-      specialKeyConstants.writeln('const uint64_t k${lowerCamelToUpperCamel(keyName)}LogicalKey = ${toHex(logicalData.entryByName(keyName).value)};');
+      specialKeyConstants.writeln(
+        'const uint64_t k${lowerCamelToUpperCamel(keyName)}LogicalKey = ${toHex(logicalData.entryByName(keyName).value)};',
+      );
     }
     return specialKeyConstants.toString().trimRight();
   }
@@ -131,8 +140,16 @@ class IOSCodeGenerator extends PlatformCodeGenerator {
   String get templatePath => path.join(dataRoot, 'ios_key_code_map_mm.tmpl');
 
   @override
-  String outputPath(String platform) => path.join(PlatformCodeGenerator.engineRoot,
-      'shell', 'platform', 'darwin', 'ios', 'framework', 'Source', 'KeyCodeMap.g.mm');
+  String outputPath(String platform) => path.join(
+    PlatformCodeGenerator.engineRoot,
+    'shell',
+    'platform',
+    'darwin',
+    'ios',
+    'framework',
+    'Source',
+    'KeyCodeMap.g.mm',
+  );
 
   @override
   Map<String, String> mappings() {

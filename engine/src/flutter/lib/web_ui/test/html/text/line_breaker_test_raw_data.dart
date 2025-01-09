@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 /// The list of test cases from:
 /// - https://www.unicode.org/Public/13.0.0/ucd/auxiliary/LineBreakTest.txt
 const String rawLineBreakTestData = '''

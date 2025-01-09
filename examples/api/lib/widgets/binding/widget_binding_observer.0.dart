@@ -29,7 +29,8 @@ class WidgetBindingsObserverSample extends StatefulWidget {
   State<WidgetBindingsObserverSample> createState() => _WidgetBindingsObserverSampleState();
 }
 
-class _WidgetBindingsObserverSampleState extends State<WidgetBindingsObserverSample> with WidgetsBindingObserver {
+class _WidgetBindingsObserverSampleState extends State<WidgetBindingsObserverSample>
+    with WidgetsBindingObserver {
   final List<AppLifecycleState> _stateHistoryList = <AppLifecycleState>[];
 
   @override

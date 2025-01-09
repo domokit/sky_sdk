@@ -9,16 +9,17 @@
 /// framework.
 library foundation;
 
-export 'package:meta/meta.dart' show
-  factory,
-  immutable,
-  mustCallSuper,
-  nonVirtual,
-  optionalTypeArgs,
-  protected,
-  required,
-  visibleForOverriding,
-  visibleForTesting;
+export 'package:meta/meta.dart'
+    show
+        factory,
+        immutable,
+        mustCallSuper,
+        nonVirtual,
+        optionalTypeArgs,
+        protected,
+        required,
+        visibleForOverriding,
+        visibleForTesting;
 
 export 'src/foundation/annotations.dart';
 export 'src/foundation/assertions.dart';

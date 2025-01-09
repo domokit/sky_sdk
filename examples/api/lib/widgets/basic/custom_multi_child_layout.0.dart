@@ -18,9 +18,7 @@ class CustomMultiChildLayoutApp extends StatelessWidget {
         // TRY THIS: Try changing the direction here and hot-reloading to
         // see the layout change.
         textDirection: TextDirection.ltr,
-        child: Scaffold(
-          body: CustomMultiChildLayoutExample(),
-        ),
+        child: Scaffold(body: CustomMultiChildLayoutExample()),
       ),
     );
   }

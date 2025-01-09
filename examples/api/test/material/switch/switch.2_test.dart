@@ -8,25 +8,17 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Switch thumb icon supports material states', (WidgetTester tester) async {
-    const Set<MaterialState> selected = <MaterialState>{ MaterialState.selected };
+    const Set<MaterialState> selected = <MaterialState>{MaterialState.selected};
     const Set<MaterialState> unselected = <MaterialState>{};
 
-    await tester.pumpWidget(
-      const example.SwitchApp(),
-    );
+    await tester.pumpWidget(const example.SwitchApp());
 
     Switch materialSwitch = tester.widget<Switch>(find.byType(Switch).first);
     expect(materialSwitch.thumbIcon, null);
 
     materialSwitch = tester.widget<Switch>(find.byType(Switch).last);
     expect(materialSwitch.thumbIcon, isNotNull);
-    expect(
-      materialSwitch.thumbIcon!.resolve(selected)!.icon,
-      Icons.check,
-    );
-    expect(
-      materialSwitch.thumbIcon!.resolve(unselected)!.icon,
-      Icons.close,
-    );
+    expect(materialSwitch.thumbIcon!.resolve(selected)!.icon, Icons.check);
+    expect(materialSwitch.thumbIcon!.resolve(unselected)!.icon, Icons.close);
   });
 }

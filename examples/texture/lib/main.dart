@@ -15,10 +15,8 @@ class TexturePage extends StatefulWidget {
 class _TexturePageState extends State<TexturePage> {
   static const int textureWidth = 300;
   static const int textureHeight = 300;
-  static const MethodChannel channel =
-      MethodChannel('samples.flutter.io/texture');
-  final Future<int?> textureId =
-      channel.invokeMethod('create', <int>[textureWidth, textureHeight]);
+  static const MethodChannel channel = MethodChannel('samples.flutter.io/texture');
+  final Future<int?> textureId = channel.invokeMethod('create', <int>[textureWidth, textureHeight]);
 
   // Set the color of the texture.
   Future<void> setColor(int r, int g, int b) async {
@@ -67,10 +65,7 @@ class _TexturePageState extends State<TexturePage> {
               child: const Text('Flutter Sky'),
               onPressed: () => setColor(0x02, 0x7d, 0xfd),
             ),
-            OutlinedButton(
-              child: const Text('Red'),
-              onPressed: () => setColor(0xf2, 0x5d, 0x50),
-            ),
+            OutlinedButton(child: const Text('Red'), onPressed: () => setColor(0xf2, 0x5d, 0x50)),
             OutlinedButton(
               child: const Text('Yellow'),
               onPressed: () => setColor(0xff, 0xf2, 0x75),
@@ -79,10 +74,7 @@ class _TexturePageState extends State<TexturePage> {
               child: const Text('Purple'),
               onPressed: () => setColor(0x62, 0x00, 0xee),
             ),
-            OutlinedButton(
-              child: const Text('Green'),
-              onPressed: () => setColor(0x1c, 0xda, 0xc5),
-            ),
+            OutlinedButton(child: const Text('Green'), onPressed: () => setColor(0x1c, 0xda, 0xc5)),
           ],
         ),
       ),

@@ -207,17 +207,17 @@ class ColorScheme with Diagnosticable {
     Color? surfaceTint,
     @Deprecated(
       'Use surface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? background,
     @Deprecated(
       'Use onSurface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? onBackground,
     @Deprecated(
       'Use surfaceContainerHighest instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? surfaceVariant,
   }) : _primaryContainer = primaryContainer,
@@ -359,65 +359,97 @@ class ColorScheme with Diagnosticable {
     Color? surfaceTint,
     @Deprecated(
       'Use surface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? background,
     @Deprecated(
       'Use onSurface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? onBackground,
     @Deprecated(
       'Use surfaceContainerHighest instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? surfaceVariant,
   }) {
-    final DynamicScheme scheme = _buildDynamicScheme(brightness, seedColor, dynamicSchemeVariant, contrastLevel);
+    final DynamicScheme scheme = _buildDynamicScheme(
+      brightness,
+      seedColor,
+      dynamicSchemeVariant,
+      contrastLevel,
+    );
 
     return ColorScheme(
       primary: primary ?? Color(MaterialDynamicColors.primary.getArgb(scheme)),
       onPrimary: onPrimary ?? Color(MaterialDynamicColors.onPrimary.getArgb(scheme)),
-      primaryContainer: primaryContainer ?? Color(MaterialDynamicColors.primaryContainer.getArgb(scheme)),
-      onPrimaryContainer: onPrimaryContainer ?? Color(MaterialDynamicColors.onPrimaryContainer.getArgb(scheme)),
+      primaryContainer:
+          primaryContainer ?? Color(MaterialDynamicColors.primaryContainer.getArgb(scheme)),
+      onPrimaryContainer:
+          onPrimaryContainer ?? Color(MaterialDynamicColors.onPrimaryContainer.getArgb(scheme)),
       primaryFixed: primaryFixed ?? Color(MaterialDynamicColors.primaryFixed.getArgb(scheme)),
-      primaryFixedDim: primaryFixedDim ?? Color(MaterialDynamicColors.primaryFixedDim.getArgb(scheme)),
+      primaryFixedDim:
+          primaryFixedDim ?? Color(MaterialDynamicColors.primaryFixedDim.getArgb(scheme)),
       onPrimaryFixed: onPrimaryFixed ?? Color(MaterialDynamicColors.onPrimaryFixed.getArgb(scheme)),
-      onPrimaryFixedVariant: onPrimaryFixedVariant ?? Color(MaterialDynamicColors.onPrimaryFixedVariant.getArgb(scheme)),
+      onPrimaryFixedVariant:
+          onPrimaryFixedVariant ??
+          Color(MaterialDynamicColors.onPrimaryFixedVariant.getArgb(scheme)),
       secondary: secondary ?? Color(MaterialDynamicColors.secondary.getArgb(scheme)),
       onSecondary: onSecondary ?? Color(MaterialDynamicColors.onSecondary.getArgb(scheme)),
-      secondaryContainer: secondaryContainer ?? Color(MaterialDynamicColors.secondaryContainer.getArgb(scheme)),
-      onSecondaryContainer: onSecondaryContainer ?? Color(MaterialDynamicColors.onSecondaryContainer.getArgb(scheme)),
+      secondaryContainer:
+          secondaryContainer ?? Color(MaterialDynamicColors.secondaryContainer.getArgb(scheme)),
+      onSecondaryContainer:
+          onSecondaryContainer ?? Color(MaterialDynamicColors.onSecondaryContainer.getArgb(scheme)),
       secondaryFixed: secondaryFixed ?? Color(MaterialDynamicColors.secondaryFixed.getArgb(scheme)),
-      secondaryFixedDim: secondaryFixedDim ?? Color(MaterialDynamicColors.secondaryFixedDim.getArgb(scheme)),
-      onSecondaryFixed: onSecondaryFixed ?? Color(MaterialDynamicColors.onSecondaryFixed.getArgb(scheme)),
-      onSecondaryFixedVariant: onSecondaryFixedVariant ?? Color(MaterialDynamicColors.onSecondaryFixedVariant.getArgb(scheme)),
+      secondaryFixedDim:
+          secondaryFixedDim ?? Color(MaterialDynamicColors.secondaryFixedDim.getArgb(scheme)),
+      onSecondaryFixed:
+          onSecondaryFixed ?? Color(MaterialDynamicColors.onSecondaryFixed.getArgb(scheme)),
+      onSecondaryFixedVariant:
+          onSecondaryFixedVariant ??
+          Color(MaterialDynamicColors.onSecondaryFixedVariant.getArgb(scheme)),
       tertiary: tertiary ?? Color(MaterialDynamicColors.tertiary.getArgb(scheme)),
       onTertiary: onTertiary ?? Color(MaterialDynamicColors.onTertiary.getArgb(scheme)),
-      tertiaryContainer: tertiaryContainer ?? Color(MaterialDynamicColors.tertiaryContainer.getArgb(scheme)),
-      onTertiaryContainer: onTertiaryContainer ?? Color(MaterialDynamicColors.onTertiaryContainer.getArgb(scheme)),
+      tertiaryContainer:
+          tertiaryContainer ?? Color(MaterialDynamicColors.tertiaryContainer.getArgb(scheme)),
+      onTertiaryContainer:
+          onTertiaryContainer ?? Color(MaterialDynamicColors.onTertiaryContainer.getArgb(scheme)),
       tertiaryFixed: tertiaryFixed ?? Color(MaterialDynamicColors.tertiaryFixed.getArgb(scheme)),
-      tertiaryFixedDim: tertiaryFixedDim ?? Color(MaterialDynamicColors.tertiaryFixedDim.getArgb(scheme)),
-      onTertiaryFixed: onTertiaryFixed ?? Color(MaterialDynamicColors.onTertiaryFixed.getArgb(scheme)),
-      onTertiaryFixedVariant: onTertiaryFixedVariant ?? Color(MaterialDynamicColors.onTertiaryFixedVariant.getArgb(scheme)),
+      tertiaryFixedDim:
+          tertiaryFixedDim ?? Color(MaterialDynamicColors.tertiaryFixedDim.getArgb(scheme)),
+      onTertiaryFixed:
+          onTertiaryFixed ?? Color(MaterialDynamicColors.onTertiaryFixed.getArgb(scheme)),
+      onTertiaryFixedVariant:
+          onTertiaryFixedVariant ??
+          Color(MaterialDynamicColors.onTertiaryFixedVariant.getArgb(scheme)),
       error: error ?? Color(MaterialDynamicColors.error.getArgb(scheme)),
       onError: onError ?? Color(MaterialDynamicColors.onError.getArgb(scheme)),
       errorContainer: errorContainer ?? Color(MaterialDynamicColors.errorContainer.getArgb(scheme)),
-      onErrorContainer: onErrorContainer ?? Color(MaterialDynamicColors.onErrorContainer.getArgb(scheme)),
+      onErrorContainer:
+          onErrorContainer ?? Color(MaterialDynamicColors.onErrorContainer.getArgb(scheme)),
       outline: outline ?? Color(MaterialDynamicColors.outline.getArgb(scheme)),
       outlineVariant: outlineVariant ?? Color(MaterialDynamicColors.outlineVariant.getArgb(scheme)),
       surface: surface ?? Color(MaterialDynamicColors.surface.getArgb(scheme)),
       surfaceDim: surfaceDim ?? Color(MaterialDynamicColors.surfaceDim.getArgb(scheme)),
       surfaceBright: surfaceBright ?? Color(MaterialDynamicColors.surfaceBright.getArgb(scheme)),
-      surfaceContainerLowest: surfaceContainerLowest ?? Color(MaterialDynamicColors.surfaceContainerLowest.getArgb(scheme)),
-      surfaceContainerLow: surfaceContainerLow ?? Color(MaterialDynamicColors.surfaceContainerLow.getArgb(scheme)),
-      surfaceContainer: surfaceContainer ?? Color(MaterialDynamicColors.surfaceContainer.getArgb(scheme)),
-      surfaceContainerHigh: surfaceContainerHigh ?? Color(MaterialDynamicColors.surfaceContainerHigh.getArgb(scheme)),
-      surfaceContainerHighest: surfaceContainerHighest ?? Color(MaterialDynamicColors.surfaceContainerHighest.getArgb(scheme)),
+      surfaceContainerLowest:
+          surfaceContainerLowest ??
+          Color(MaterialDynamicColors.surfaceContainerLowest.getArgb(scheme)),
+      surfaceContainerLow:
+          surfaceContainerLow ?? Color(MaterialDynamicColors.surfaceContainerLow.getArgb(scheme)),
+      surfaceContainer:
+          surfaceContainer ?? Color(MaterialDynamicColors.surfaceContainer.getArgb(scheme)),
+      surfaceContainerHigh:
+          surfaceContainerHigh ?? Color(MaterialDynamicColors.surfaceContainerHigh.getArgb(scheme)),
+      surfaceContainerHighest:
+          surfaceContainerHighest ??
+          Color(MaterialDynamicColors.surfaceContainerHighest.getArgb(scheme)),
       onSurface: onSurface ?? Color(MaterialDynamicColors.onSurface.getArgb(scheme)),
-      onSurfaceVariant: onSurfaceVariant ?? Color(MaterialDynamicColors.onSurfaceVariant.getArgb(scheme)),
+      onSurfaceVariant:
+          onSurfaceVariant ?? Color(MaterialDynamicColors.onSurfaceVariant.getArgb(scheme)),
       inverseSurface: inverseSurface ?? Color(MaterialDynamicColors.inverseSurface.getArgb(scheme)),
-      onInverseSurface: onInverseSurface ?? Color(MaterialDynamicColors.inverseOnSurface.getArgb(scheme)),
+      onInverseSurface:
+          onInverseSurface ?? Color(MaterialDynamicColors.inverseOnSurface.getArgb(scheme)),
       inversePrimary: inversePrimary ?? Color(MaterialDynamicColors.inversePrimary.getArgb(scheme)),
       shadow: shadow ?? Color(MaterialDynamicColors.shadow.getArgb(scheme)),
       scrim: scrim ?? Color(MaterialDynamicColors.scrim.getArgb(scheme)),
@@ -503,19 +535,19 @@ class ColorScheme with Diagnosticable {
     Color? surfaceTint,
     @Deprecated(
       'Use surface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? background = Colors.white,
     @Deprecated(
       'Use onSurface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? onBackground = Colors.black,
     @Deprecated(
       'Use surfaceContainerHighest instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
-    Color? surfaceVariant
+    Color? surfaceVariant,
   }) : _primaryContainer = primaryContainer,
        _onPrimaryContainer = onPrimaryContainer,
        _primaryFixed = primaryFixed,
@@ -637,17 +669,17 @@ class ColorScheme with Diagnosticable {
     Color? surfaceTint,
     @Deprecated(
       'Use surface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? background = const Color(0xff121212),
     @Deprecated(
       'Use onSurface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? onBackground = Colors.white,
     @Deprecated(
       'Use surfaceContainerHighest instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? surfaceVariant,
   }) : _primaryContainer = primaryContainer,
@@ -688,10 +720,10 @@ class ColorScheme with Diagnosticable {
        _onInverseSurface = onInverseSurface,
        _inversePrimary = inversePrimary,
        _surfaceTint = surfaceTint,
-      // DEPRECATED (newest deprecations at the bottom)
-      _background = background,
-      _onBackground = onBackground,
-      _surfaceVariant = surfaceVariant;
+       // DEPRECATED (newest deprecations at the bottom)
+       _background = background,
+       _onBackground = onBackground,
+       _surfaceVariant = surfaceVariant;
 
   /// Create a high contrast ColorScheme based on a purple primary color that
   /// matches the [baseline Material 2 color scheme](https://material.io/design/color/the-color-system.html#color-theme-creation).
@@ -767,17 +799,17 @@ class ColorScheme with Diagnosticable {
     Color? surfaceTint,
     @Deprecated(
       'Use surface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? background = Colors.white,
     @Deprecated(
       'Use onSurface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? onBackground = Colors.black,
     @Deprecated(
       'Use surfaceContainerHighest instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? surfaceVariant,
   }) : _primaryContainer = primaryContainer,
@@ -902,17 +934,17 @@ class ColorScheme with Diagnosticable {
     Color? surfaceTint,
     @Deprecated(
       'Use surface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? background = const Color(0xff121212),
     @Deprecated(
       'Use onSurface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? onBackground = Colors.white,
     @Deprecated(
       'Use surfaceContainerHighest instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? surfaceVariant,
   }) : _primaryContainer = primaryContainer,
@@ -1013,10 +1045,12 @@ class ColorScheme with Diagnosticable {
   final Color onPrimary;
 
   final Color? _primaryContainer;
+
   /// A color used for elements needing less emphasis than [primary].
   Color get primaryContainer => _primaryContainer ?? primary;
 
   final Color? _onPrimaryContainer;
+
   /// A color that's clearly legible when drawn on [primaryContainer].
   ///
   /// To ensure that an app is accessible, a contrast ratio between
@@ -1026,20 +1060,24 @@ class ColorScheme with Diagnosticable {
   Color get onPrimaryContainer => _onPrimaryContainer ?? onPrimary;
 
   final Color? _primaryFixed;
+
   /// A substitute for [primaryContainer] that's the same color for the dark
   /// and light themes.
   Color get primaryFixed => _primaryFixed ?? primary;
 
   final Color? _primaryFixedDim;
+
   /// A color used for elements needing more emphasis than [primaryFixed].
   Color get primaryFixedDim => _primaryFixedDim ?? primary;
 
   final Color? _onPrimaryFixed;
+
   /// A color that is used for text and icons that exist on top of elements having
   /// [primaryFixed] color.
   Color get onPrimaryFixed => _onPrimaryFixed ?? onPrimary;
 
   final Color? _onPrimaryFixedVariant;
+
   /// A color that provides a lower-emphasis option for text and icons than
   /// [onPrimaryFixed].
   Color get onPrimaryFixedVariant => _onPrimaryFixedVariant ?? onPrimary;
@@ -1056,10 +1094,12 @@ class ColorScheme with Diagnosticable {
   final Color onSecondary;
 
   final Color? _secondaryContainer;
+
   /// A color used for elements needing less emphasis than [secondary].
   Color get secondaryContainer => _secondaryContainer ?? secondary;
 
   final Color? _onSecondaryContainer;
+
   /// A color that's clearly legible when drawn on [secondaryContainer].
   ///
   /// To ensure that an app is accessible, a contrast ratio between
@@ -1069,31 +1109,37 @@ class ColorScheme with Diagnosticable {
   Color get onSecondaryContainer => _onSecondaryContainer ?? onSecondary;
 
   final Color? _secondaryFixed;
+
   /// A substitute for [secondaryContainer] that's the same color for the dark
   /// and light themes.
   Color get secondaryFixed => _secondaryFixed ?? secondary;
 
   final Color? _secondaryFixedDim;
+
   /// A color used for elements needing more emphasis than [secondaryFixed].
   Color get secondaryFixedDim => _secondaryFixedDim ?? secondary;
 
   final Color? _onSecondaryFixed;
+
   /// A color that is used for text and icons that exist on top of elements having
   /// [secondaryFixed] color.
   Color get onSecondaryFixed => _onSecondaryFixed ?? onSecondary;
 
   final Color? _onSecondaryFixedVariant;
+
   /// A color that provides a lower-emphasis option for text and icons than
   /// [onSecondaryFixed].
   Color get onSecondaryFixedVariant => _onSecondaryFixedVariant ?? onSecondary;
 
   final Color? _tertiary;
+
   /// A color used as a contrasting accent that can balance [primary]
   /// and [secondary] colors or bring heightened attention to an element,
   /// such as an input field.
   Color get tertiary => _tertiary ?? secondary;
 
   final Color? _onTertiary;
+
   /// A color that's clearly legible when drawn on [tertiary].
   ///
   /// To ensure that an app is accessible, a contrast ratio between
@@ -1102,10 +1148,12 @@ class ColorScheme with Diagnosticable {
   Color get onTertiary => _onTertiary ?? onSecondary;
 
   final Color? _tertiaryContainer;
+
   /// A color used for elements needing less emphasis than [tertiary].
   Color get tertiaryContainer => _tertiaryContainer ?? tertiary;
 
   final Color? _onTertiaryContainer;
+
   /// A color that's clearly legible when drawn on [tertiaryContainer].
   ///
   /// To ensure that an app is accessible, a contrast ratio between
@@ -1115,20 +1163,24 @@ class ColorScheme with Diagnosticable {
   Color get onTertiaryContainer => _onTertiaryContainer ?? onTertiary;
 
   final Color? _tertiaryFixed;
+
   /// A substitute for [tertiaryContainer] that's the same color for dark
   /// and light themes.
   Color get tertiaryFixed => _tertiaryFixed ?? tertiary;
 
   final Color? _tertiaryFixedDim;
+
   /// A color used for elements needing more emphasis than [tertiaryFixed].
   Color get tertiaryFixedDim => _tertiaryFixedDim ?? tertiary;
 
   final Color? _onTertiaryFixed;
+
   /// A color that is used for text and icons that exist on top of elements having
   /// [tertiaryFixed] color.
   Color get onTertiaryFixed => _onTertiaryFixed ?? onTertiary;
 
   final Color? _onTertiaryFixedVariant;
+
   /// A color that provides a lower-emphasis option for text and icons than
   /// [onTertiaryFixed].
   Color get onTertiaryFixedVariant => _onTertiaryFixedVariant ?? onTertiary;
@@ -1145,10 +1197,12 @@ class ColorScheme with Diagnosticable {
   final Color onError;
 
   final Color? _errorContainer;
+
   /// A color used for error elements needing less emphasis than [error].
   Color get errorContainer => _errorContainer ?? error;
 
   final Color? _onErrorContainer;
+
   /// A color that's clearly legible when drawn on [errorContainer].
   ///
   /// To ensure that an app is accessible, a contrast ratio between
@@ -1168,33 +1222,39 @@ class ColorScheme with Diagnosticable {
   final Color onSurface;
 
   final Color? _surfaceVariant;
+
   /// A color variant of [surface] that can be used for differentiation against
   /// a component using [surface].
   @Deprecated(
     'Use surfaceContainerHighest instead. '
-    'This feature was deprecated after v3.18.0-0.1.pre.'
+    'This feature was deprecated after v3.18.0-0.1.pre.',
   )
   Color get surfaceVariant => _surfaceVariant ?? surface;
 
   final Color? _surfaceDim;
+
   /// A color that's always darkest in the dark or light theme.
   Color get surfaceDim => _surfaceDim ?? surface;
 
   final Color? _surfaceBright;
+
   /// A color that's always the lightest in the dark or light theme.
   Color get surfaceBright => _surfaceBright ?? surface;
 
   final Color? _surfaceContainerLowest;
+
   /// A surface container color with the lightest tone and the least emphasis
   /// relative to the surface.
   Color get surfaceContainerLowest => _surfaceContainerLowest ?? surface;
 
   final Color? _surfaceContainerLow;
+
   /// A surface container color with a lighter tone that creates less emphasis
   /// than [surfaceContainer] but more emphasis than [surfaceContainerLowest].
   Color get surfaceContainerLow => _surfaceContainerLow ?? surface;
 
   final Color? _surfaceContainer;
+
   /// A recommended color role for a distinct area within the surface.
   ///
   /// Surface container color roles are independent of elevation. They replace the old
@@ -1206,16 +1266,19 @@ class ColorScheme with Diagnosticable {
   Color get surfaceContainer => _surfaceContainer ?? surface;
 
   final Color? _surfaceContainerHigh;
+
   /// A surface container color with a darker tone. It is used to create more
   /// emphasis than [surfaceContainer] but less emphasis than [surfaceContainerHighest].
   Color get surfaceContainerHigh => _surfaceContainerHigh ?? surface;
 
   final Color? _surfaceContainerHighest;
+
   /// A surface container color with the darkest tone. It is used to create the
   /// most emphasis against the surface.
   Color get surfaceContainerHighest => _surfaceContainerHighest ?? surface;
 
   final Color? _onSurfaceVariant;
+
   /// A color that's clearly legible when drawn on [surfaceVariant].
   ///
   /// To ensure that an app is accessible, a contrast ratio between
@@ -1225,29 +1288,35 @@ class ColorScheme with Diagnosticable {
   Color get onSurfaceVariant => _onSurfaceVariant ?? onSurface;
 
   final Color? _outline;
+
   /// A utility color that creates boundaries and emphasis to improve usability.
   Color get outline => _outline ?? onBackground;
 
   final Color? _outlineVariant;
+
   /// A utility color that creates boundaries for decorative elements when a
   /// 3:1 contrast isn’t required, such as for dividers or decorative elements.
   Color get outlineVariant => _outlineVariant ?? onBackground;
 
   final Color? _shadow;
+
   /// A color use to paint the drop shadows of elevated components.
   Color get shadow => _shadow ?? const Color(0xff000000);
 
   final Color? _scrim;
+
   /// A color use to paint the scrim around of modal components.
   Color get scrim => _scrim ?? const Color(0xff000000);
 
   final Color? _inverseSurface;
+
   /// A surface color used for displaying the reverse of what’s seen in the
   /// surrounding UI, for example in a SnackBar to bring attention to
   /// an alert.
   Color get inverseSurface => _inverseSurface ?? onSurface;
 
   final Color? _onInverseSurface;
+
   /// A color that's clearly legible when drawn on [inverseSurface].
   ///
   /// To ensure that an app is accessible, a contrast ratio between
@@ -1257,24 +1326,28 @@ class ColorScheme with Diagnosticable {
   Color get onInverseSurface => _onInverseSurface ?? surface;
 
   final Color? _inversePrimary;
+
   /// An accent color used for displaying a highlight color on [inverseSurface]
   /// backgrounds, like button text in a SnackBar.
   Color get inversePrimary => _inversePrimary ?? onPrimary;
 
   final Color? _surfaceTint;
+
   /// A color used as an overlay on a surface color to indicate a component's
   /// elevation.
   Color get surfaceTint => _surfaceTint ?? primary;
 
   final Color? _background;
+
   /// A color that typically appears behind scrollable content.
   @Deprecated(
     'Use surface instead. '
-    'This feature was deprecated after v3.18.0-0.1.pre.'
+    'This feature was deprecated after v3.18.0-0.1.pre.',
   )
   Color get background => _background ?? surface;
 
   final Color? _onBackground;
+
   /// A color that's clearly legible when drawn on [background].
   ///
   /// To ensure that an app is accessible, a contrast ratio between
@@ -1282,7 +1355,7 @@ class ColorScheme with Diagnosticable {
   /// <https://www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast-contrast.html>.
   @Deprecated(
     'Use onSurface instead. '
-    'This feature was deprecated after v3.18.0-0.1.pre.'
+    'This feature was deprecated after v3.18.0-0.1.pre.',
   )
   Color get onBackground => _onBackground ?? onSurface;
 
@@ -1338,72 +1411,72 @@ class ColorScheme with Diagnosticable {
     Color? surfaceTint,
     @Deprecated(
       'Use surface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? background,
     @Deprecated(
       'Use onSurface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? onBackground,
     @Deprecated(
       'Use surfaceContainerHighest instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? surfaceVariant,
   }) {
     return ColorScheme(
       brightness: brightness ?? this.brightness,
-      primary : primary ?? this.primary,
-      onPrimary : onPrimary ?? this.onPrimary,
-      primaryContainer : primaryContainer ?? this.primaryContainer,
-      onPrimaryContainer : onPrimaryContainer ?? this.onPrimaryContainer,
+      primary: primary ?? this.primary,
+      onPrimary: onPrimary ?? this.onPrimary,
+      primaryContainer: primaryContainer ?? this.primaryContainer,
+      onPrimaryContainer: onPrimaryContainer ?? this.onPrimaryContainer,
       primaryFixed: primaryFixed ?? this.primaryFixed,
       primaryFixedDim: primaryFixedDim ?? this.primaryFixedDim,
       onPrimaryFixed: onPrimaryFixed ?? this.onPrimaryFixed,
       onPrimaryFixedVariant: onPrimaryFixedVariant ?? this.onPrimaryFixedVariant,
-      secondary : secondary ?? this.secondary,
-      onSecondary : onSecondary ?? this.onSecondary,
-      secondaryContainer : secondaryContainer ?? this.secondaryContainer,
-      onSecondaryContainer : onSecondaryContainer ?? this.onSecondaryContainer,
+      secondary: secondary ?? this.secondary,
+      onSecondary: onSecondary ?? this.onSecondary,
+      secondaryContainer: secondaryContainer ?? this.secondaryContainer,
+      onSecondaryContainer: onSecondaryContainer ?? this.onSecondaryContainer,
       secondaryFixed: secondaryFixed ?? this.secondaryFixed,
       secondaryFixedDim: secondaryFixedDim ?? this.secondaryFixedDim,
       onSecondaryFixed: onSecondaryFixed ?? this.onSecondaryFixed,
       onSecondaryFixedVariant: onSecondaryFixedVariant ?? this.onSecondaryFixedVariant,
-      tertiary : tertiary ?? this.tertiary,
-      onTertiary : onTertiary ?? this.onTertiary,
-      tertiaryContainer : tertiaryContainer ?? this.tertiaryContainer,
-      onTertiaryContainer : onTertiaryContainer ?? this.onTertiaryContainer,
+      tertiary: tertiary ?? this.tertiary,
+      onTertiary: onTertiary ?? this.onTertiary,
+      tertiaryContainer: tertiaryContainer ?? this.tertiaryContainer,
+      onTertiaryContainer: onTertiaryContainer ?? this.onTertiaryContainer,
       tertiaryFixed: tertiaryFixed ?? this.tertiaryFixed,
       tertiaryFixedDim: tertiaryFixedDim ?? this.tertiaryFixedDim,
       onTertiaryFixed: onTertiaryFixed ?? this.onTertiaryFixed,
       onTertiaryFixedVariant: onTertiaryFixedVariant ?? this.onTertiaryFixedVariant,
-      error : error ?? this.error,
-      onError : onError ?? this.onError,
-      errorContainer : errorContainer ?? this.errorContainer,
-      onErrorContainer : onErrorContainer ?? this.onErrorContainer,
-      surface : surface ?? this.surface,
-      onSurface : onSurface ?? this.onSurface,
-      surfaceDim : surfaceDim ?? this.surfaceDim,
-      surfaceBright : surfaceBright ?? this.surfaceBright,
-      surfaceContainerLowest : surfaceContainerLowest ?? this.surfaceContainerLowest,
-      surfaceContainerLow : surfaceContainerLow ?? this.surfaceContainerLow,
-      surfaceContainer : surfaceContainer ?? this.surfaceContainer,
-      surfaceContainerHigh : surfaceContainerHigh ?? this.surfaceContainerHigh,
-      surfaceContainerHighest : surfaceContainerHighest ?? this.surfaceContainerHighest,
-      onSurfaceVariant : onSurfaceVariant ?? this.onSurfaceVariant,
-      outline : outline ?? this.outline,
-      outlineVariant : outlineVariant ?? this.outlineVariant,
-      shadow : shadow ?? this.shadow,
-      scrim : scrim ?? this.scrim,
-      inverseSurface : inverseSurface ?? this.inverseSurface,
-      onInverseSurface : onInverseSurface ?? this.onInverseSurface,
-      inversePrimary : inversePrimary ?? this.inversePrimary,
+      error: error ?? this.error,
+      onError: onError ?? this.onError,
+      errorContainer: errorContainer ?? this.errorContainer,
+      onErrorContainer: onErrorContainer ?? this.onErrorContainer,
+      surface: surface ?? this.surface,
+      onSurface: onSurface ?? this.onSurface,
+      surfaceDim: surfaceDim ?? this.surfaceDim,
+      surfaceBright: surfaceBright ?? this.surfaceBright,
+      surfaceContainerLowest: surfaceContainerLowest ?? this.surfaceContainerLowest,
+      surfaceContainerLow: surfaceContainerLow ?? this.surfaceContainerLow,
+      surfaceContainer: surfaceContainer ?? this.surfaceContainer,
+      surfaceContainerHigh: surfaceContainerHigh ?? this.surfaceContainerHigh,
+      surfaceContainerHighest: surfaceContainerHighest ?? this.surfaceContainerHighest,
+      onSurfaceVariant: onSurfaceVariant ?? this.onSurfaceVariant,
+      outline: outline ?? this.outline,
+      outlineVariant: outlineVariant ?? this.outlineVariant,
+      shadow: shadow ?? this.shadow,
+      scrim: scrim ?? this.scrim,
+      inverseSurface: inverseSurface ?? this.inverseSurface,
+      onInverseSurface: onInverseSurface ?? this.onInverseSurface,
+      inversePrimary: inversePrimary ?? this.inversePrimary,
       surfaceTint: surfaceTint ?? this.surfaceTint,
       // DEPRECATED (newest deprecations at the bottom)
-      background : background ?? this.background,
-      onBackground : onBackground ?? this.onBackground,
-      surfaceVariant : surfaceVariant ?? this.surfaceVariant,
+      background: background ?? this.background,
+      onBackground: onBackground ?? this.onBackground,
+      surfaceVariant: surfaceVariant ?? this.surfaceVariant,
     );
   }
 
@@ -1477,58 +1550,59 @@ class ColorScheme with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ColorScheme
-      && other.brightness == brightness
-      && other.primary == primary
-      && other.onPrimary == onPrimary
-      && other.primaryContainer == primaryContainer
-      && other.onPrimaryContainer == onPrimaryContainer
-      && other.primaryFixed == primaryFixed
-      && other.primaryFixedDim == primaryFixedDim
-      && other.onPrimaryFixed == onPrimaryFixed
-      && other.onPrimaryFixedVariant == onPrimaryFixedVariant
-      && other.secondary == secondary
-      && other.onSecondary == onSecondary
-      && other.secondaryContainer == secondaryContainer
-      && other.onSecondaryContainer == onSecondaryContainer
-      && other.secondaryFixed == secondaryFixed
-      && other.secondaryFixedDim == secondaryFixedDim
-      && other.onSecondaryFixed == onSecondaryFixed
-      && other.onSecondaryFixedVariant == onSecondaryFixedVariant
-      && other.tertiary == tertiary
-      && other.onTertiary == onTertiary
-      && other.tertiaryContainer == tertiaryContainer
-      && other.onTertiaryContainer == onTertiaryContainer
-      && other.tertiaryFixed == tertiaryFixed
-      && other.tertiaryFixedDim == tertiaryFixedDim
-      && other.onTertiaryFixed == onTertiaryFixed
-      && other.onTertiaryFixedVariant == onTertiaryFixedVariant
-      && other.error == error
-      && other.onError == onError
-      && other.errorContainer == errorContainer
-      && other.onErrorContainer == onErrorContainer
-      && other.surface == surface
-      && other.onSurface == onSurface
-      && other.surfaceDim == surfaceDim
-      && other.surfaceBright == surfaceBright
-      && other.surfaceContainerLowest == surfaceContainerLowest
-      && other.surfaceContainerLow == surfaceContainerLow
-      && other.surfaceContainer == surfaceContainer
-      && other.surfaceContainerHigh == surfaceContainerHigh
-      && other.surfaceContainerHighest == surfaceContainerHighest
-      && other.onSurfaceVariant == onSurfaceVariant
-      && other.outline == outline
-      && other.outlineVariant == outlineVariant
-      && other.shadow == shadow
-      && other.scrim == scrim
-      && other.inverseSurface == inverseSurface
-      && other.onInverseSurface == onInverseSurface
-      && other.inversePrimary == inversePrimary
-      && other.surfaceTint == surfaceTint
-      // DEPRECATED (newest deprecations at the bottom)
-      && other.background == background
-      && other.onBackground == onBackground
-      && other.surfaceVariant == surfaceVariant;
+    return other is ColorScheme &&
+        other.brightness == brightness &&
+        other.primary == primary &&
+        other.onPrimary == onPrimary &&
+        other.primaryContainer == primaryContainer &&
+        other.onPrimaryContainer == onPrimaryContainer &&
+        other.primaryFixed == primaryFixed &&
+        other.primaryFixedDim == primaryFixedDim &&
+        other.onPrimaryFixed == onPrimaryFixed &&
+        other.onPrimaryFixedVariant == onPrimaryFixedVariant &&
+        other.secondary == secondary &&
+        other.onSecondary == onSecondary &&
+        other.secondaryContainer == secondaryContainer &&
+        other.onSecondaryContainer == onSecondaryContainer &&
+        other.secondaryFixed == secondaryFixed &&
+        other.secondaryFixedDim == secondaryFixedDim &&
+        other.onSecondaryFixed == onSecondaryFixed &&
+        other.onSecondaryFixedVariant == onSecondaryFixedVariant &&
+        other.tertiary == tertiary &&
+        other.onTertiary == onTertiary &&
+        other.tertiaryContainer == tertiaryContainer &&
+        other.onTertiaryContainer == onTertiaryContainer &&
+        other.tertiaryFixed == tertiaryFixed &&
+        other.tertiaryFixedDim == tertiaryFixedDim &&
+        other.onTertiaryFixed == onTertiaryFixed &&
+        other.onTertiaryFixedVariant == onTertiaryFixedVariant &&
+        other.error == error &&
+        other.onError == onError &&
+        other.errorContainer == errorContainer &&
+        other.onErrorContainer == onErrorContainer &&
+        other.surface == surface &&
+        other.onSurface == onSurface &&
+        other.surfaceDim == surfaceDim &&
+        other.surfaceBright == surfaceBright &&
+        other.surfaceContainerLowest == surfaceContainerLowest &&
+        other.surfaceContainerLow == surfaceContainerLow &&
+        other.surfaceContainer == surfaceContainer &&
+        other.surfaceContainerHigh == surfaceContainerHigh &&
+        other.surfaceContainerHighest == surfaceContainerHighest &&
+        other.onSurfaceVariant == onSurfaceVariant &&
+        other.outline == outline &&
+        other.outlineVariant == outlineVariant &&
+        other.shadow == shadow &&
+        other.scrim == scrim &&
+        other.inverseSurface == inverseSurface &&
+        other.onInverseSurface == onInverseSurface &&
+        other.inversePrimary == inversePrimary &&
+        other.surfaceTint == surfaceTint
+        // DEPRECATED (newest deprecations at the bottom)
+        &&
+        other.background == background &&
+        other.onBackground == onBackground &&
+        other.surfaceVariant == surfaceVariant;
   }
 
   @override
@@ -1586,7 +1660,7 @@ class ColorScheme with Diagnosticable {
         background,
         onBackground,
         surfaceVariant,
-      )
+      ),
     ),
   );
 
@@ -1594,57 +1668,221 @@ class ColorScheme with Diagnosticable {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     const ColorScheme defaultScheme = ColorScheme.light();
-    properties.add(DiagnosticsProperty<Brightness>('brightness', brightness, defaultValue: defaultScheme.brightness));
+    properties.add(
+      DiagnosticsProperty<Brightness>(
+        'brightness',
+        brightness,
+        defaultValue: defaultScheme.brightness,
+      ),
+    );
     properties.add(ColorProperty('primary', primary, defaultValue: defaultScheme.primary));
     properties.add(ColorProperty('onPrimary', onPrimary, defaultValue: defaultScheme.onPrimary));
-    properties.add(ColorProperty('primaryContainer', primaryContainer, defaultValue: defaultScheme.primaryContainer));
-    properties.add(ColorProperty('onPrimaryContainer', onPrimaryContainer, defaultValue: defaultScheme.onPrimaryContainer));
-    properties.add(ColorProperty('primaryFixed', primaryFixed, defaultValue: defaultScheme.primaryFixed));
-    properties.add(ColorProperty('primaryFixedDim', primaryFixedDim, defaultValue: defaultScheme.primaryFixedDim));
-    properties.add(ColorProperty('onPrimaryFixed', onPrimaryFixed, defaultValue: defaultScheme.onPrimaryFixed));
-    properties.add(ColorProperty('onPrimaryFixedVariant', onPrimaryFixedVariant, defaultValue: defaultScheme.onPrimaryFixedVariant));
+    properties.add(
+      ColorProperty(
+        'primaryContainer',
+        primaryContainer,
+        defaultValue: defaultScheme.primaryContainer,
+      ),
+    );
+    properties.add(
+      ColorProperty(
+        'onPrimaryContainer',
+        onPrimaryContainer,
+        defaultValue: defaultScheme.onPrimaryContainer,
+      ),
+    );
+    properties.add(
+      ColorProperty('primaryFixed', primaryFixed, defaultValue: defaultScheme.primaryFixed),
+    );
+    properties.add(
+      ColorProperty(
+        'primaryFixedDim',
+        primaryFixedDim,
+        defaultValue: defaultScheme.primaryFixedDim,
+      ),
+    );
+    properties.add(
+      ColorProperty('onPrimaryFixed', onPrimaryFixed, defaultValue: defaultScheme.onPrimaryFixed),
+    );
+    properties.add(
+      ColorProperty(
+        'onPrimaryFixedVariant',
+        onPrimaryFixedVariant,
+        defaultValue: defaultScheme.onPrimaryFixedVariant,
+      ),
+    );
     properties.add(ColorProperty('secondary', secondary, defaultValue: defaultScheme.secondary));
-    properties.add(ColorProperty('onSecondary', onSecondary, defaultValue: defaultScheme.onSecondary));
-    properties.add(ColorProperty('secondaryContainer', secondaryContainer, defaultValue: defaultScheme.secondaryContainer));
-    properties.add(ColorProperty('onSecondaryContainer', onSecondaryContainer, defaultValue: defaultScheme.onSecondaryContainer));
-    properties.add(ColorProperty('secondaryFixed', secondaryFixed, defaultValue: defaultScheme.secondaryFixed));
-    properties.add(ColorProperty('secondaryFixedDim', secondaryFixedDim, defaultValue: defaultScheme.secondaryFixedDim));
-    properties.add(ColorProperty('onSecondaryFixed', onSecondaryFixed, defaultValue: defaultScheme.onSecondaryFixed));
-    properties.add(ColorProperty('onSecondaryFixedVariant', onSecondaryFixedVariant, defaultValue: defaultScheme.onSecondaryFixedVariant));
+    properties.add(
+      ColorProperty('onSecondary', onSecondary, defaultValue: defaultScheme.onSecondary),
+    );
+    properties.add(
+      ColorProperty(
+        'secondaryContainer',
+        secondaryContainer,
+        defaultValue: defaultScheme.secondaryContainer,
+      ),
+    );
+    properties.add(
+      ColorProperty(
+        'onSecondaryContainer',
+        onSecondaryContainer,
+        defaultValue: defaultScheme.onSecondaryContainer,
+      ),
+    );
+    properties.add(
+      ColorProperty('secondaryFixed', secondaryFixed, defaultValue: defaultScheme.secondaryFixed),
+    );
+    properties.add(
+      ColorProperty(
+        'secondaryFixedDim',
+        secondaryFixedDim,
+        defaultValue: defaultScheme.secondaryFixedDim,
+      ),
+    );
+    properties.add(
+      ColorProperty(
+        'onSecondaryFixed',
+        onSecondaryFixed,
+        defaultValue: defaultScheme.onSecondaryFixed,
+      ),
+    );
+    properties.add(
+      ColorProperty(
+        'onSecondaryFixedVariant',
+        onSecondaryFixedVariant,
+        defaultValue: defaultScheme.onSecondaryFixedVariant,
+      ),
+    );
     properties.add(ColorProperty('tertiary', tertiary, defaultValue: defaultScheme.tertiary));
     properties.add(ColorProperty('onTertiary', onTertiary, defaultValue: defaultScheme.onTertiary));
-    properties.add(ColorProperty('tertiaryContainer', tertiaryContainer, defaultValue: defaultScheme.tertiaryContainer));
-    properties.add(ColorProperty('onTertiaryContainer', onTertiaryContainer, defaultValue: defaultScheme.onTertiaryContainer));
-    properties.add(ColorProperty('tertiaryFixed', tertiaryFixed, defaultValue: defaultScheme.tertiaryFixed));
-    properties.add(ColorProperty('tertiaryFixedDim', tertiaryFixedDim, defaultValue: defaultScheme.tertiaryFixedDim));
-    properties.add(ColorProperty('onTertiaryFixed', onTertiaryFixed, defaultValue: defaultScheme.onTertiaryFixed));
-    properties.add(ColorProperty('onTertiaryFixedVariant', onTertiaryFixedVariant, defaultValue: defaultScheme.onTertiaryFixedVariant));
+    properties.add(
+      ColorProperty(
+        'tertiaryContainer',
+        tertiaryContainer,
+        defaultValue: defaultScheme.tertiaryContainer,
+      ),
+    );
+    properties.add(
+      ColorProperty(
+        'onTertiaryContainer',
+        onTertiaryContainer,
+        defaultValue: defaultScheme.onTertiaryContainer,
+      ),
+    );
+    properties.add(
+      ColorProperty('tertiaryFixed', tertiaryFixed, defaultValue: defaultScheme.tertiaryFixed),
+    );
+    properties.add(
+      ColorProperty(
+        'tertiaryFixedDim',
+        tertiaryFixedDim,
+        defaultValue: defaultScheme.tertiaryFixedDim,
+      ),
+    );
+    properties.add(
+      ColorProperty(
+        'onTertiaryFixed',
+        onTertiaryFixed,
+        defaultValue: defaultScheme.onTertiaryFixed,
+      ),
+    );
+    properties.add(
+      ColorProperty(
+        'onTertiaryFixedVariant',
+        onTertiaryFixedVariant,
+        defaultValue: defaultScheme.onTertiaryFixedVariant,
+      ),
+    );
     properties.add(ColorProperty('error', error, defaultValue: defaultScheme.error));
     properties.add(ColorProperty('onError', onError, defaultValue: defaultScheme.onError));
-    properties.add(ColorProperty('errorContainer', errorContainer, defaultValue: defaultScheme.errorContainer));
-    properties.add(ColorProperty('onErrorContainer', onErrorContainer, defaultValue: defaultScheme.onErrorContainer));
+    properties.add(
+      ColorProperty('errorContainer', errorContainer, defaultValue: defaultScheme.errorContainer),
+    );
+    properties.add(
+      ColorProperty(
+        'onErrorContainer',
+        onErrorContainer,
+        defaultValue: defaultScheme.onErrorContainer,
+      ),
+    );
     properties.add(ColorProperty('surface', surface, defaultValue: defaultScheme.surface));
     properties.add(ColorProperty('onSurface', onSurface, defaultValue: defaultScheme.onSurface));
     properties.add(ColorProperty('surfaceDim', surfaceDim, defaultValue: defaultScheme.surfaceDim));
-    properties.add(ColorProperty('surfaceBright', surfaceBright, defaultValue: defaultScheme.surfaceBright));
-    properties.add(ColorProperty('surfaceContainerLowest', surfaceContainerLowest, defaultValue: defaultScheme.surfaceContainerLowest));
-    properties.add(ColorProperty('surfaceContainerLow', surfaceContainerLow, defaultValue: defaultScheme.surfaceContainerLow));
-    properties.add(ColorProperty('surfaceContainer', surfaceContainer, defaultValue: defaultScheme.surfaceContainer));
-    properties.add(ColorProperty('surfaceContainerHigh', surfaceContainerHigh, defaultValue: defaultScheme.surfaceContainerHigh));
-    properties.add(ColorProperty('surfaceContainerHighest', surfaceContainerHighest, defaultValue: defaultScheme.surfaceContainerHighest));
-    properties.add(ColorProperty('onSurfaceVariant', onSurfaceVariant, defaultValue: defaultScheme.onSurfaceVariant));
+    properties.add(
+      ColorProperty('surfaceBright', surfaceBright, defaultValue: defaultScheme.surfaceBright),
+    );
+    properties.add(
+      ColorProperty(
+        'surfaceContainerLowest',
+        surfaceContainerLowest,
+        defaultValue: defaultScheme.surfaceContainerLowest,
+      ),
+    );
+    properties.add(
+      ColorProperty(
+        'surfaceContainerLow',
+        surfaceContainerLow,
+        defaultValue: defaultScheme.surfaceContainerLow,
+      ),
+    );
+    properties.add(
+      ColorProperty(
+        'surfaceContainer',
+        surfaceContainer,
+        defaultValue: defaultScheme.surfaceContainer,
+      ),
+    );
+    properties.add(
+      ColorProperty(
+        'surfaceContainerHigh',
+        surfaceContainerHigh,
+        defaultValue: defaultScheme.surfaceContainerHigh,
+      ),
+    );
+    properties.add(
+      ColorProperty(
+        'surfaceContainerHighest',
+        surfaceContainerHighest,
+        defaultValue: defaultScheme.surfaceContainerHighest,
+      ),
+    );
+    properties.add(
+      ColorProperty(
+        'onSurfaceVariant',
+        onSurfaceVariant,
+        defaultValue: defaultScheme.onSurfaceVariant,
+      ),
+    );
     properties.add(ColorProperty('outline', outline, defaultValue: defaultScheme.outline));
-    properties.add(ColorProperty('outlineVariant', outlineVariant, defaultValue: defaultScheme.outlineVariant));
+    properties.add(
+      ColorProperty('outlineVariant', outlineVariant, defaultValue: defaultScheme.outlineVariant),
+    );
     properties.add(ColorProperty('shadow', shadow, defaultValue: defaultScheme.shadow));
     properties.add(ColorProperty('scrim', scrim, defaultValue: defaultScheme.scrim));
-    properties.add(ColorProperty('inverseSurface', inverseSurface, defaultValue: defaultScheme.inverseSurface));
-    properties.add(ColorProperty('onInverseSurface', onInverseSurface, defaultValue: defaultScheme.onInverseSurface));
-    properties.add(ColorProperty('inversePrimary', inversePrimary, defaultValue: defaultScheme.inversePrimary));
-    properties.add(ColorProperty('surfaceTint', surfaceTint, defaultValue: defaultScheme.surfaceTint));
+    properties.add(
+      ColorProperty('inverseSurface', inverseSurface, defaultValue: defaultScheme.inverseSurface),
+    );
+    properties.add(
+      ColorProperty(
+        'onInverseSurface',
+        onInverseSurface,
+        defaultValue: defaultScheme.onInverseSurface,
+      ),
+    );
+    properties.add(
+      ColorProperty('inversePrimary', inversePrimary, defaultValue: defaultScheme.inversePrimary),
+    );
+    properties.add(
+      ColorProperty('surfaceTint', surfaceTint, defaultValue: defaultScheme.surfaceTint),
+    );
     // DEPRECATED (newest deprecations at the bottom)
     properties.add(ColorProperty('background', background, defaultValue: defaultScheme.background));
-    properties.add(ColorProperty('onBackground', onBackground, defaultValue: defaultScheme.onBackground));
-    properties.add(ColorProperty('surfaceVariant', surfaceVariant, defaultValue: defaultScheme.surfaceVariant));
+    properties.add(
+      ColorProperty('onBackground', onBackground, defaultValue: defaultScheme.onBackground),
+    );
+    properties.add(
+      ColorProperty('surfaceVariant', surfaceVariant, defaultValue: defaultScheme.surfaceVariant),
+    );
   }
 
   /// Generate a [ColorScheme] derived from the given `imageProvider`.
@@ -1734,23 +1972,22 @@ class ColorScheme with Diagnosticable {
     Color? surfaceTint,
     @Deprecated(
       'Use surface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? background,
     @Deprecated(
       'Use onSurface instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? onBackground,
     @Deprecated(
       'Use surfaceContainerHighest instead. '
-      'This feature was deprecated after v3.18.0-0.1.pre.'
+      'This feature was deprecated after v3.18.0-0.1.pre.',
     )
     Color? surfaceVariant,
   }) async {
     // Extract dominant colors from image.
-    final QuantizerResult quantizerResult =
-        await _extractColorsFromImageProvider(provider);
+    final QuantizerResult quantizerResult = await _extractColorsFromImageProvider(provider);
     final Map<int, int> colorToCount = quantizerResult.colorToCount.map(
       (int key, int value) => MapEntry<int, int>(_getArgbFromAbgr(key), value),
     );
@@ -1759,51 +1996,83 @@ class ColorScheme with Diagnosticable {
     final List<int> scoredResults = Score.score(colorToCount, desired: 1);
     final ui.Color baseColor = Color(scoredResults.first);
 
-    final DynamicScheme scheme = _buildDynamicScheme(brightness, baseColor, dynamicSchemeVariant, contrastLevel);
+    final DynamicScheme scheme = _buildDynamicScheme(
+      brightness,
+      baseColor,
+      dynamicSchemeVariant,
+      contrastLevel,
+    );
 
     return ColorScheme(
       primary: primary ?? Color(MaterialDynamicColors.primary.getArgb(scheme)),
       onPrimary: onPrimary ?? Color(MaterialDynamicColors.onPrimary.getArgb(scheme)),
-      primaryContainer: primaryContainer ?? Color(MaterialDynamicColors.primaryContainer.getArgb(scheme)),
-      onPrimaryContainer: onPrimaryContainer ?? Color(MaterialDynamicColors.onPrimaryContainer.getArgb(scheme)),
+      primaryContainer:
+          primaryContainer ?? Color(MaterialDynamicColors.primaryContainer.getArgb(scheme)),
+      onPrimaryContainer:
+          onPrimaryContainer ?? Color(MaterialDynamicColors.onPrimaryContainer.getArgb(scheme)),
       primaryFixed: primaryFixed ?? Color(MaterialDynamicColors.primaryFixed.getArgb(scheme)),
-      primaryFixedDim: primaryFixedDim ?? Color(MaterialDynamicColors.primaryFixedDim.getArgb(scheme)),
+      primaryFixedDim:
+          primaryFixedDim ?? Color(MaterialDynamicColors.primaryFixedDim.getArgb(scheme)),
       onPrimaryFixed: onPrimaryFixed ?? Color(MaterialDynamicColors.onPrimaryFixed.getArgb(scheme)),
-      onPrimaryFixedVariant: onPrimaryFixedVariant ?? Color(MaterialDynamicColors.onPrimaryFixedVariant.getArgb(scheme)),
+      onPrimaryFixedVariant:
+          onPrimaryFixedVariant ??
+          Color(MaterialDynamicColors.onPrimaryFixedVariant.getArgb(scheme)),
       secondary: secondary ?? Color(MaterialDynamicColors.secondary.getArgb(scheme)),
       onSecondary: onSecondary ?? Color(MaterialDynamicColors.onSecondary.getArgb(scheme)),
-      secondaryContainer: secondaryContainer ?? Color(MaterialDynamicColors.secondaryContainer.getArgb(scheme)),
-      onSecondaryContainer: onSecondaryContainer ?? Color(MaterialDynamicColors.onSecondaryContainer.getArgb(scheme)),
+      secondaryContainer:
+          secondaryContainer ?? Color(MaterialDynamicColors.secondaryContainer.getArgb(scheme)),
+      onSecondaryContainer:
+          onSecondaryContainer ?? Color(MaterialDynamicColors.onSecondaryContainer.getArgb(scheme)),
       secondaryFixed: secondaryFixed ?? Color(MaterialDynamicColors.secondaryFixed.getArgb(scheme)),
-      secondaryFixedDim: secondaryFixedDim ?? Color(MaterialDynamicColors.secondaryFixedDim.getArgb(scheme)),
-      onSecondaryFixed: onSecondaryFixed ?? Color(MaterialDynamicColors.onSecondaryFixed.getArgb(scheme)),
-      onSecondaryFixedVariant: onSecondaryFixedVariant ?? Color(MaterialDynamicColors.onSecondaryFixedVariant.getArgb(scheme)),
+      secondaryFixedDim:
+          secondaryFixedDim ?? Color(MaterialDynamicColors.secondaryFixedDim.getArgb(scheme)),
+      onSecondaryFixed:
+          onSecondaryFixed ?? Color(MaterialDynamicColors.onSecondaryFixed.getArgb(scheme)),
+      onSecondaryFixedVariant:
+          onSecondaryFixedVariant ??
+          Color(MaterialDynamicColors.onSecondaryFixedVariant.getArgb(scheme)),
       tertiary: tertiary ?? Color(MaterialDynamicColors.tertiary.getArgb(scheme)),
       onTertiary: onTertiary ?? Color(MaterialDynamicColors.onTertiary.getArgb(scheme)),
-      tertiaryContainer: tertiaryContainer ?? Color(MaterialDynamicColors.tertiaryContainer.getArgb(scheme)),
-      onTertiaryContainer: onTertiaryContainer ?? Color(MaterialDynamicColors.onTertiaryContainer.getArgb(scheme)),
+      tertiaryContainer:
+          tertiaryContainer ?? Color(MaterialDynamicColors.tertiaryContainer.getArgb(scheme)),
+      onTertiaryContainer:
+          onTertiaryContainer ?? Color(MaterialDynamicColors.onTertiaryContainer.getArgb(scheme)),
       tertiaryFixed: tertiaryFixed ?? Color(MaterialDynamicColors.tertiaryFixed.getArgb(scheme)),
-      tertiaryFixedDim: tertiaryFixedDim ?? Color(MaterialDynamicColors.tertiaryFixedDim.getArgb(scheme)),
-      onTertiaryFixed: onTertiaryFixed ?? Color(MaterialDynamicColors.onTertiaryFixed.getArgb(scheme)),
-      onTertiaryFixedVariant: onTertiaryFixedVariant ?? Color(MaterialDynamicColors.onTertiaryFixedVariant.getArgb(scheme)),
+      tertiaryFixedDim:
+          tertiaryFixedDim ?? Color(MaterialDynamicColors.tertiaryFixedDim.getArgb(scheme)),
+      onTertiaryFixed:
+          onTertiaryFixed ?? Color(MaterialDynamicColors.onTertiaryFixed.getArgb(scheme)),
+      onTertiaryFixedVariant:
+          onTertiaryFixedVariant ??
+          Color(MaterialDynamicColors.onTertiaryFixedVariant.getArgb(scheme)),
       error: error ?? Color(MaterialDynamicColors.error.getArgb(scheme)),
       onError: onError ?? Color(MaterialDynamicColors.onError.getArgb(scheme)),
       errorContainer: errorContainer ?? Color(MaterialDynamicColors.errorContainer.getArgb(scheme)),
-      onErrorContainer: onErrorContainer ?? Color(MaterialDynamicColors.onErrorContainer.getArgb(scheme)),
+      onErrorContainer:
+          onErrorContainer ?? Color(MaterialDynamicColors.onErrorContainer.getArgb(scheme)),
       outline: outline ?? Color(MaterialDynamicColors.outline.getArgb(scheme)),
       outlineVariant: outlineVariant ?? Color(MaterialDynamicColors.outlineVariant.getArgb(scheme)),
       surface: surface ?? Color(MaterialDynamicColors.surface.getArgb(scheme)),
       surfaceDim: surfaceDim ?? Color(MaterialDynamicColors.surfaceDim.getArgb(scheme)),
       surfaceBright: surfaceBright ?? Color(MaterialDynamicColors.surfaceBright.getArgb(scheme)),
-      surfaceContainerLowest: surfaceContainerLowest ?? Color(MaterialDynamicColors.surfaceContainerLowest.getArgb(scheme)),
-      surfaceContainerLow: surfaceContainerLow ?? Color(MaterialDynamicColors.surfaceContainerLow.getArgb(scheme)),
-      surfaceContainer: surfaceContainer ?? Color(MaterialDynamicColors.surfaceContainer.getArgb(scheme)),
-      surfaceContainerHigh: surfaceContainerHigh ?? Color(MaterialDynamicColors.surfaceContainerHigh.getArgb(scheme)),
-      surfaceContainerHighest: surfaceContainerHighest ?? Color(MaterialDynamicColors.surfaceContainerHighest.getArgb(scheme)),
+      surfaceContainerLowest:
+          surfaceContainerLowest ??
+          Color(MaterialDynamicColors.surfaceContainerLowest.getArgb(scheme)),
+      surfaceContainerLow:
+          surfaceContainerLow ?? Color(MaterialDynamicColors.surfaceContainerLow.getArgb(scheme)),
+      surfaceContainer:
+          surfaceContainer ?? Color(MaterialDynamicColors.surfaceContainer.getArgb(scheme)),
+      surfaceContainerHigh:
+          surfaceContainerHigh ?? Color(MaterialDynamicColors.surfaceContainerHigh.getArgb(scheme)),
+      surfaceContainerHighest:
+          surfaceContainerHighest ??
+          Color(MaterialDynamicColors.surfaceContainerHighest.getArgb(scheme)),
       onSurface: onSurface ?? Color(MaterialDynamicColors.onSurface.getArgb(scheme)),
-      onSurfaceVariant: onSurfaceVariant ?? Color(MaterialDynamicColors.onSurfaceVariant.getArgb(scheme)),
+      onSurfaceVariant:
+          onSurfaceVariant ?? Color(MaterialDynamicColors.onSurfaceVariant.getArgb(scheme)),
       inverseSurface: inverseSurface ?? Color(MaterialDynamicColors.inverseSurface.getArgb(scheme)),
-      onInverseSurface: onInverseSurface ?? Color(MaterialDynamicColors.inverseOnSurface.getArgb(scheme)),
+      onInverseSurface:
+          onInverseSurface ?? Color(MaterialDynamicColors.inverseOnSurface.getArgb(scheme)),
       inversePrimary: inversePrimary ?? Color(MaterialDynamicColors.inversePrimary.getArgb(scheme)),
       shadow: shadow ?? Color(MaterialDynamicColors.shadow.getArgb(scheme)),
       scrim: scrim ?? Color(MaterialDynamicColors.scrim.getArgb(scheme)),
@@ -1820,7 +2089,9 @@ class ColorScheme with Diagnosticable {
 
   // Extracts bytes from an [ImageProvider] and returns a [QuantizerResult]
   // containing the most dominant colors.
-  static Future<QuantizerResult> _extractColorsFromImageProvider(ImageProvider imageProvider) async {
+  static Future<QuantizerResult> _extractColorsFromImageProvider(
+    ImageProvider imageProvider,
+  ) async {
     final ui.Image scaledImage = await _imageProviderToScaled(imageProvider);
     final ByteData? imageBytes = await scaledImage.toByteData();
 
@@ -1836,48 +2107,51 @@ class ColorScheme with Diagnosticable {
   static Future<ui.Image> _imageProviderToScaled(ImageProvider imageProvider) async {
     const double maxDimension = 112.0;
     final ImageStream stream = imageProvider.resolve(
-        const ImageConfiguration(size: Size(maxDimension, maxDimension)));
+      const ImageConfiguration(size: Size(maxDimension, maxDimension)),
+    );
     final Completer<ui.Image> imageCompleter = Completer<ui.Image>();
     late ImageStreamListener listener;
     late ui.Image scaledImage;
     Timer? loadFailureTimeout;
 
-    listener = ImageStreamListener((ImageInfo info, bool sync) async {
-      loadFailureTimeout?.cancel();
-      stream.removeListener(listener);
-      final ui.Image image = info.image;
-      final int width = image.width;
-      final int height = image.height;
-      double paintWidth = width.toDouble();
-      double paintHeight = height.toDouble();
-      assert(width > 0 && height > 0);
+    listener = ImageStreamListener(
+      (ImageInfo info, bool sync) async {
+        loadFailureTimeout?.cancel();
+        stream.removeListener(listener);
+        final ui.Image image = info.image;
+        final int width = image.width;
+        final int height = image.height;
+        double paintWidth = width.toDouble();
+        double paintHeight = height.toDouble();
+        assert(width > 0 && height > 0);
 
-      final bool rescale = width > maxDimension || height > maxDimension;
-      if (rescale) {
-        paintWidth = (width > height) ? maxDimension : (maxDimension / height) * width;
-        paintHeight = (height > width) ? maxDimension : (maxDimension / width) * height;
-      }
-      final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
-      final Canvas canvas = Canvas(pictureRecorder);
-      paintImage(
-        canvas: canvas,
-        rect: Rect.fromLTRB(0, 0, paintWidth, paintHeight),
-        image: image,
-        filterQuality: FilterQuality.none,
-      );
+        final bool rescale = width > maxDimension || height > maxDimension;
+        if (rescale) {
+          paintWidth = (width > height) ? maxDimension : (maxDimension / height) * width;
+          paintHeight = (height > width) ? maxDimension : (maxDimension / width) * height;
+        }
+        final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+        final Canvas canvas = Canvas(pictureRecorder);
+        paintImage(
+          canvas: canvas,
+          rect: Rect.fromLTRB(0, 0, paintWidth, paintHeight),
+          image: image,
+          filterQuality: FilterQuality.none,
+        );
 
-      final ui.Picture picture = pictureRecorder.endRecording();
-      scaledImage = await picture.toImage(paintWidth.toInt(), paintHeight.toInt());
-      imageCompleter.complete(info.image);
-    }, onError: (Object exception, StackTrace? stackTrace) {
-      stream.removeListener(listener);
-      throw Exception('Failed to render image: $exception');
-    });
+        final ui.Picture picture = pictureRecorder.endRecording();
+        scaledImage = await picture.toImage(paintWidth.toInt(), paintHeight.toInt());
+        imageCompleter.complete(info.image);
+      },
+      onError: (Object exception, StackTrace? stackTrace) {
+        stream.removeListener(listener);
+        throw Exception('Failed to render image: $exception');
+      },
+    );
 
     loadFailureTimeout = Timer(const Duration(seconds: 5), () {
       stream.removeListener(listener);
-      imageCompleter.completeError(
-        TimeoutException('Timeout occurred trying to load image'));
+      imageCompleter.completeError(TimeoutException('Timeout occurred trying to load image'));
     });
 
     stream.addListener(listener);
@@ -1907,17 +2181,53 @@ class ColorScheme with Diagnosticable {
       'contrastLevel must be between -1.0 and 1.0 inclusive.',
     );
     final bool isDark = brightness == Brightness.dark;
-    final Hct sourceColor =  Hct.fromInt(seedColor.value);
+    final Hct sourceColor = Hct.fromInt(seedColor.value);
     return switch (schemeVariant) {
-      DynamicSchemeVariant.tonalSpot => SchemeTonalSpot(sourceColorHct: sourceColor, isDark: isDark, contrastLevel: contrastLevel),
-      DynamicSchemeVariant.fidelity => SchemeFidelity(sourceColorHct: sourceColor, isDark: isDark, contrastLevel: contrastLevel),
-      DynamicSchemeVariant.content => SchemeContent(sourceColorHct: sourceColor, isDark: isDark, contrastLevel: contrastLevel),
-      DynamicSchemeVariant.monochrome => SchemeMonochrome(sourceColorHct: sourceColor, isDark: isDark, contrastLevel: contrastLevel),
-      DynamicSchemeVariant.neutral => SchemeNeutral(sourceColorHct: sourceColor, isDark: isDark, contrastLevel: contrastLevel),
-      DynamicSchemeVariant.vibrant => SchemeVibrant(sourceColorHct: sourceColor, isDark: isDark, contrastLevel: contrastLevel),
-      DynamicSchemeVariant.expressive => SchemeExpressive(sourceColorHct: sourceColor, isDark: isDark, contrastLevel: contrastLevel),
-      DynamicSchemeVariant.rainbow => SchemeRainbow(sourceColorHct: sourceColor, isDark: isDark, contrastLevel: contrastLevel),
-      DynamicSchemeVariant.fruitSalad => SchemeFruitSalad(sourceColorHct: sourceColor, isDark: isDark, contrastLevel: contrastLevel),
+      DynamicSchemeVariant.tonalSpot => SchemeTonalSpot(
+        sourceColorHct: sourceColor,
+        isDark: isDark,
+        contrastLevel: contrastLevel,
+      ),
+      DynamicSchemeVariant.fidelity => SchemeFidelity(
+        sourceColorHct: sourceColor,
+        isDark: isDark,
+        contrastLevel: contrastLevel,
+      ),
+      DynamicSchemeVariant.content => SchemeContent(
+        sourceColorHct: sourceColor,
+        isDark: isDark,
+        contrastLevel: contrastLevel,
+      ),
+      DynamicSchemeVariant.monochrome => SchemeMonochrome(
+        sourceColorHct: sourceColor,
+        isDark: isDark,
+        contrastLevel: contrastLevel,
+      ),
+      DynamicSchemeVariant.neutral => SchemeNeutral(
+        sourceColorHct: sourceColor,
+        isDark: isDark,
+        contrastLevel: contrastLevel,
+      ),
+      DynamicSchemeVariant.vibrant => SchemeVibrant(
+        sourceColorHct: sourceColor,
+        isDark: isDark,
+        contrastLevel: contrastLevel,
+      ),
+      DynamicSchemeVariant.expressive => SchemeExpressive(
+        sourceColorHct: sourceColor,
+        isDark: isDark,
+        contrastLevel: contrastLevel,
+      ),
+      DynamicSchemeVariant.rainbow => SchemeRainbow(
+        sourceColorHct: sourceColor,
+        isDark: isDark,
+        contrastLevel: contrastLevel,
+      ),
+      DynamicSchemeVariant.fruitSalad => SchemeFruitSalad(
+        sourceColorHct: sourceColor,
+        isDark: isDark,
+        contrastLevel: contrastLevel,
+      ),
     };
   }
 

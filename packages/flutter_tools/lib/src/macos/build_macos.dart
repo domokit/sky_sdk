@@ -58,8 +58,8 @@ final RegExp _filteredOutput = RegExp(
   r'Function\: createItemModels|'
   r'Thread\:   <_NSMainThread\:|'
   r'Please file a bug at https\://feedbackassistant\.apple\.'
-  r').)*$'
-  );
+  r').)*$',
+);
 
 /// Builds the macOS project through xcodebuild.
 // TODO(zanderso): refactor to share code with the existing iOS code.
@@ -74,9 +74,11 @@ Future<void> buildMacOS({
 }) async {
   final Directory? xcodeWorkspace = flutterProject.macos.xcodeWorkspace;
   if (xcodeWorkspace == null) {
-    throwToolExit('No macOS desktop project configured. '
+    throwToolExit(
+      'No macOS desktop project configured. '
       'See https://flutter.dev/to/add-desktop-support '
-      'to learn about adding macOS support to a project.');
+      'to learn about adding macOS support to a project.',
+    );
   }
 
   final List<ProjectMigrator> migrators = <ProjectMigrator>[
@@ -134,11 +136,13 @@ Future<void> buildMacOS({
     throwToolExit('Unable to find expected configuration in Xcode project.');
   }
 
-  final Map<String, String> buildSettings = await flutterProject.macos.buildSettingsForBuildInfo(
-    buildInfo,
-    scheme: scheme,
-    configuration: configuration,
-  ) ?? <String, String>{};
+  final Map<String, String> buildSettings =
+      await flutterProject.macos.buildSettingsForBuildInfo(
+        buildInfo,
+        scheme: scheme,
+        configuration: configuration,
+      ) ??
+      <String, String>{};
 
   // Write configuration to an xconfig file in a standard location.
   await updateGeneratedXcodeProperties(
@@ -173,9 +177,7 @@ Future<void> buildMacOS({
 
   // Run the Xcode build.
   final Stopwatch sw = Stopwatch()..start();
-  final Status status = globals.logger.startProgress(
-    'Building macOS application...',
-  );
+  final Status status = globals.logger.startProgress('Building macOS application...');
   int result;
 
   File? disabledSandboxEntitlementFile;
@@ -185,36 +187,39 @@ Future<void> buildMacOS({
       configuration,
     );
     if (disabledSandboxEntitlementFile != null) {
-      globals.logger.printStatus(
-        'Detected macOS app running in CI, turning off sandboxing.');
+      globals.logger.printStatus('Detected macOS app running in CI, turning off sandboxing.');
     }
   }
 
   try {
-    result = await globals.processUtils.stream(<String>[
-      '/usr/bin/env',
-      'xcrun',
-      'xcodebuild',
-      '-workspace', xcodeWorkspace.path,
-      '-configuration', configuration,
-      '-scheme', scheme,
-      '-derivedDataPath', flutterBuildDir.absolute.path,
-      '-destination', 'platform=macOS',
-      'OBJROOT=${globals.fs.path.join(flutterBuildDir.absolute.path, 'Build', 'Intermediates.noindex')}',
-      'SYMROOT=${globals.fs.path.join(flutterBuildDir.absolute.path, 'Build', 'Products')}',
-      if (verboseLogging)
-        'VERBOSE_SCRIPT_LOGGING=YES'
-      else
-        '-quiet',
-      'COMPILER_INDEX_STORE_ENABLE=NO',
-      if (disabledSandboxEntitlementFile != null)
-        'CODE_SIGN_ENTITLEMENTS=${disabledSandboxEntitlementFile.path}',
-      ...environmentVariablesAsXcodeBuildSettings(globals.platform),
-    ],
-    trace: true,
-    stdoutErrorMatcher: verboseLogging ? null : _filteredOutput,
-    mapFunction: verboseLogging ? null : (String line) => _filteredOutput.hasMatch(line) ? line : null,
-  );
+    result = await globals.processUtils.stream(
+      <String>[
+        '/usr/bin/env',
+        'xcrun',
+        'xcodebuild',
+        '-workspace',
+        xcodeWorkspace.path,
+        '-configuration',
+        configuration,
+        '-scheme',
+        scheme,
+        '-derivedDataPath',
+        flutterBuildDir.absolute.path,
+        '-destination',
+        'platform=macOS',
+        'OBJROOT=${globals.fs.path.join(flutterBuildDir.absolute.path, 'Build', 'Intermediates.noindex')}',
+        'SYMROOT=${globals.fs.path.join(flutterBuildDir.absolute.path, 'Build', 'Products')}',
+        if (verboseLogging) 'VERBOSE_SCRIPT_LOGGING=YES' else '-quiet',
+        'COMPILER_INDEX_STORE_ENABLE=NO',
+        if (disabledSandboxEntitlementFile != null)
+          'CODE_SIGN_ENTITLEMENTS=${disabledSandboxEntitlementFile.path}',
+        ...environmentVariablesAsXcodeBuildSettings(globals.platform),
+      ],
+      trace: true,
+      stdoutErrorMatcher: verboseLogging ? null : _filteredOutput,
+      mapFunction:
+          verboseLogging ? null : (String line) => _filteredOutput.hasMatch(line) ? line : null,
+    );
   } finally {
     status.cancel();
   }
@@ -222,14 +227,17 @@ Future<void> buildMacOS({
   if (result != 0) {
     throwToolExit('Build process failed');
   }
-  final String? applicationBundle = MacOSApp.fromMacOSProject(flutterProject.macos).applicationBundle(buildInfo);
+  final String? applicationBundle = MacOSApp.fromMacOSProject(
+    flutterProject.macos,
+  ).applicationBundle(buildInfo);
   if (applicationBundle != null) {
     final Directory outputDirectory = globals.fs.directory(applicationBundle);
     // This output directory is the .app folder itself.
     final int? directorySize = globals.os.getDirectorySize(outputDirectory);
-    final String appSize = (buildInfo.mode == BuildMode.debug || directorySize == null)
-        ? '' // Don't display the size when building a debug variant.
-        : ' (${getSizeAsPlatformMB(directorySize)})';
+    final String appSize =
+        (buildInfo.mode == BuildMode.debug || directorySize == null)
+            ? '' // Don't display the size when building a debug variant.
+            : ' (${getSizeAsPlatformMB(directorySize)})';
     globals.printStatus(
       '${globals.terminal.successMark} '
       'Built ${globals.fs.path.relative(outputDirectory.path)}$appSize',
@@ -239,11 +247,13 @@ Future<void> buildMacOS({
   await _writeCodeSizeAnalysis(buildInfo, sizeAnalyzer);
   final Duration elapsedDuration = sw.elapsed;
   globals.flutterUsage.sendTiming('build', 'xcode-macos', elapsedDuration);
-  globals.analytics.send(Event.timing(
-    workflow: 'build',
-    variableName: 'xcode-macos',
-    elapsedMilliseconds: elapsedDuration.inMilliseconds,
-  ));
+  globals.analytics.send(
+    Event.timing(
+      workflow: 'build',
+      variableName: 'xcode-macos',
+      elapsedMilliseconds: elapsedDuration.inMilliseconds,
+    ),
+  );
 }
 
 /// Performs a size analysis of the AOT snapshot and writes to an analysis file, if configured.
@@ -256,24 +266,30 @@ Future<void> _writeCodeSizeAnalysis(BuildInfo buildInfo, SizeAnalyzer? sizeAnaly
   if (buildInfo.codeSizeDirectory == null || sizeAnalyzer == null) {
     return;
   }
-  final File? aotSnapshot = DarwinArch.values.map<File?>((DarwinArch arch) {
-    return globals.fs.directory(buildInfo.codeSizeDirectory).childFile('snapshot.${arch.name}.json');
-    // Pick the first if there are multiple for simplicity
-  }).firstWhere(
-    (File? file) => file!.existsSync(),
-    orElse: () => null,
-  );
+  final File? aotSnapshot = DarwinArch.values
+      .map<File?>((DarwinArch arch) {
+        return globals.fs
+            .directory(buildInfo.codeSizeDirectory)
+            .childFile('snapshot.${arch.name}.json');
+        // Pick the first if there are multiple for simplicity
+      })
+      .firstWhere((File? file) => file!.existsSync(), orElse: () => null);
   if (aotSnapshot == null) {
-    throw StateError('No code size snapshot file (snapshot.<ARCH>.json) found in ${buildInfo.codeSizeDirectory}');
+    throw StateError(
+      'No code size snapshot file (snapshot.<ARCH>.json) found in ${buildInfo.codeSizeDirectory}',
+    );
   }
-  final File? precompilerTrace = DarwinArch.values.map<File?>((DarwinArch arch) {
-    return globals.fs.directory(buildInfo.codeSizeDirectory).childFile('trace.${arch.name}.json');
-  }).firstWhere(
-    (File? file) => file!.existsSync(),
-    orElse: () => null,
-  );
+  final File? precompilerTrace = DarwinArch.values
+      .map<File?>((DarwinArch arch) {
+        return globals.fs
+            .directory(buildInfo.codeSizeDirectory)
+            .childFile('trace.${arch.name}.json');
+      })
+      .firstWhere((File? file) => file!.existsSync(), orElse: () => null);
   if (precompilerTrace == null) {
-    throw StateError('No precompiler trace file (trace.<ARCH>.json) found in ${buildInfo.codeSizeDirectory}');
+    throw StateError(
+      'No precompiler trace file (trace.<ARCH>.json) found in ${buildInfo.codeSizeDirectory}',
+    );
   }
 
   // This analysis is only supported for release builds.
@@ -281,9 +297,9 @@ Future<void> _writeCodeSizeAnalysis(BuildInfo buildInfo, SizeAnalyzer? sizeAnaly
   final Directory candidateDirectory = globals.fs.directory(
     globals.fs.path.join(getMacOSBuildDirectory(), 'Build', 'Products', 'Release'),
   );
-  final Directory appDirectory = candidateDirectory.listSync()
-    .whereType<Directory>()
-    .firstWhere((Directory directory) {
+  final Directory appDirectory = candidateDirectory.listSync().whereType<Directory>().firstWhere((
+    Directory directory,
+  ) {
     return globals.fs.path.extension(directory.path) == '.app';
   });
   final Map<String, Object?> output = await sizeAnalyzer.analyzeAotSnapshot(
@@ -294,9 +310,9 @@ Future<void> _writeCodeSizeAnalysis(BuildInfo buildInfo, SizeAnalyzer? sizeAnaly
     excludePath: 'Versions', // Avoid double counting caused by symlinks
   );
   final File outputFile = globals.fsUtils.getUniqueFile(
-    globals.fs
-      .directory(globals.fsUtils.homeDirPath)
-      .childDirectory('.flutter-devtools'), 'macos-code-size-analysis', 'json',
+    globals.fs.directory(globals.fsUtils.homeDirPath).childDirectory('.flutter-devtools'),
+    'macos-code-size-analysis',
+    'json',
   )..writeAsStringSync(jsonEncode(output));
   // This message is used as a sentinel in analyze_apk_size_test.dart
   globals.printStatus(
@@ -305,7 +321,7 @@ Future<void> _writeCodeSizeAnalysis(BuildInfo buildInfo, SizeAnalyzer? sizeAnaly
 
   globals.printStatus(
     '\nTo analyze your app size in Dart DevTools, run the following command:\n'
-    'dart devtools --appSizeBase=${outputFile.path}'
+    'dart devtools --appSizeBase=${outputFile.path}',
   );
 }
 
@@ -316,10 +332,7 @@ Future<void> _writeCodeSizeAnalysis(BuildInfo buildInfo, SizeAnalyzer? sizeAnaly
 /// access to the app. To workaround this in CI, we create and use a entitlements
 /// file with sandboxing disabled. See
 /// https://developer.apple.com/documentation/security/app_sandbox/accessing_files_from_the_macos_app_sandbox.
-File? _createDisabledSandboxEntitlementFile(
-  MacOSProject macos,
-  String configuration,
-) {
+File? _createDisabledSandboxEntitlementFile(MacOSProject macos, String configuration) {
   String entitlementDefaultFileName;
   if (configuration == 'Release') {
     entitlementDefaultFileName = 'Release';
@@ -335,17 +348,14 @@ File? _createDisabledSandboxEntitlementFile(
       .childFile('$entitlementDefaultFileName.entitlements');
 
   if (!entitlementFile.existsSync()) {
-    globals.logger.printTrace(
-        'Unable to find entitlements file at ${entitlementFile.path}');
+    globals.logger.printTrace('Unable to find entitlements file at ${entitlementFile.path}');
     return null;
   }
 
   final String entitlementFileContents = entitlementFile.readAsStringSync();
   final File disabledSandboxEntitlementFile = globals.fs.systemTempDirectory
       .createTempSync('flutter_disable_sandbox_entitlement.')
-      .childFile(
-        '${entitlementDefaultFileName}WithDisabledSandboxing.entitlements',
-      );
+      .childFile('${entitlementDefaultFileName}WithDisabledSandboxing.entitlements');
   disabledSandboxEntitlementFile.createSync(recursive: true);
   disabledSandboxEntitlementFile.writeAsStringSync(
     entitlementFileContents.replaceAll(

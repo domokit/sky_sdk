@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('List view displays CupertinoScrollbar', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ScrollbarApp(),
-    );
+    await tester.pumpWidget(const example.ScrollbarApp());
 
     expect(find.text('Item 0'), findsOneWidget);
     final TestGesture gesture = await tester.startGesture(tester.getCenter(find.byType(ListView)));

@@ -17,3 +17,6 @@ updates:
       - "team"
       - "team-infra"
       - "autosubmit"
+    ignore:
+      - dependency-name: "codecov/codecov-action"
+        update-types: ["version-update:semver-patch"]

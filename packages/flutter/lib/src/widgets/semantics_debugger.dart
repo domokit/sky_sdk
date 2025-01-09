@@ -25,11 +25,7 @@ class SemanticsDebugger extends StatefulWidget {
   const SemanticsDebugger({
     super.key,
     required this.child,
-    this.labelStyle = const TextStyle(
-      color: Color(0xFF000000),
-      fontSize: 10.0,
-      height: 0.8,
-    ),
+    this.labelStyle = const TextStyle(color: Color(0xFF000000), fontSize: 10.0, height: 0.8),
   });
 
   /// The widget below this widget in the tree.
@@ -170,13 +166,12 @@ class _SemanticsDebuggerState extends State<SemanticsDebugger> with WidgetsBindi
         onTap: _handleTap,
         onLongPress: _handleLongPress,
         onPanEnd: _handlePanEnd,
-        excludeFromSemantics: true, // otherwise if you don't hit anything, we end up receiving it, which causes an infinite loop...
+        excludeFromSemantics:
+            true, // otherwise if you don't hit anything, we end up receiving it, which causes an infinite loop...
         child: Listener(
           onPointerDown: _handlePointerDown,
           behavior: HitTestBehavior.opaque,
-          child: _IgnorePointerWithSemantics(
-            child: widget.child,
-          ),
+          child: _IgnorePointerWithSemantics(child: widget.child),
         ),
       ),
     );
@@ -184,7 +179,13 @@ class _SemanticsDebuggerState extends State<SemanticsDebugger> with WidgetsBindi
 }
 
 class _SemanticsDebuggerPainter extends CustomPainter {
-  const _SemanticsDebuggerPainter(this.owner, this.generation, this.pointerPosition, this.devicePixelRatio, this.labelStyle);
+  const _SemanticsDebuggerPainter(
+    this.owner,
+    this.generation,
+    this.pointerPosition,
+    this.devicePixelRatio,
+    this.labelStyle,
+  );
 
   final PipelineOwner owner;
   final int generation;
@@ -214,9 +215,9 @@ class _SemanticsDebuggerPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_SemanticsDebuggerPainter oldDelegate) {
-    return owner != oldDelegate.owner
-        || generation != oldDelegate.generation
-        || pointerPosition != oldDelegate.pointerPosition;
+    return owner != oldDelegate.owner ||
+        generation != oldDelegate.generation ||
+        pointerPosition != oldDelegate.pointerPosition;
   }
 
   @visibleForTesting
@@ -248,13 +249,14 @@ class _SemanticsDebuggerPainter extends CustomPainter {
       annotations.add('long-pressable');
     }
 
-    final bool isScrollable = data.hasAction(SemanticsAction.scrollLeft)
-        || data.hasAction(SemanticsAction.scrollRight)
-        || data.hasAction(SemanticsAction.scrollUp)
-        || data.hasAction(SemanticsAction.scrollDown);
+    final bool isScrollable =
+        data.hasAction(SemanticsAction.scrollLeft) ||
+        data.hasAction(SemanticsAction.scrollRight) ||
+        data.hasAction(SemanticsAction.scrollUp) ||
+        data.hasAction(SemanticsAction.scrollDown);
 
-    final bool isAdjustable = data.hasAction(SemanticsAction.increase)
-        || data.hasAction(SemanticsAction.decrease);
+    final bool isAdjustable =
+        data.hasAction(SemanticsAction.increase) || data.hasAction(SemanticsAction.decrease);
 
     if (isScrollable) {
       annotations.add('scrollable');
@@ -268,10 +270,11 @@ class _SemanticsDebuggerPainter extends CustomPainter {
     // Android will avoid pronouncing duplicating tooltip and label.
     // Therefore, having two identical strings is the same as having a single
     // string.
-    final bool shouldIgnoreDuplicatedLabel = defaultTargetPlatform == TargetPlatform.android && data.attributedLabel.string == data.tooltip;
+    final bool shouldIgnoreDuplicatedLabel =
+        defaultTargetPlatform == TargetPlatform.android &&
+        data.attributedLabel.string == data.tooltip;
     final String tooltipAndLabel = <String>[
-      if (data.tooltip.isNotEmpty)
-        data.tooltip,
+      if (data.tooltip.isNotEmpty) data.tooltip,
       if (data.attributedLabel.string.isNotEmpty && !shouldIgnoreDuplicatedLabel)
         data.attributedLabel.string,
     ].join('\n');
@@ -306,14 +309,14 @@ class _SemanticsDebuggerPainter extends CustomPainter {
     final Rect rect = node.rect;
     canvas.save();
     canvas.clipRect(rect);
-    final TextPainter textPainter = TextPainter()
-      ..text = TextSpan(
-        style: labelStyle,
-        text: message,
-      )
-      ..textDirection = TextDirection.ltr // _getMessage always returns LTR text, even if node.label is RTL
-      ..textAlign = TextAlign.center
-      ..layout(maxWidth: rect.width);
+    final TextPainter textPainter =
+        TextPainter()
+          ..text = TextSpan(style: labelStyle, text: message)
+          ..textDirection =
+              TextDirection
+                  .ltr // _getMessage always returns LTR text, even if node.label is RTL
+          ..textAlign = TextAlign.center
+          ..layout(maxWidth: rect.width);
 
     textPainter.paint(canvas, Alignment.center.inscribe(textPainter.size, rect).topLeft);
     textPainter.dispose();
@@ -342,19 +345,22 @@ class _SemanticsDebuggerPainter extends CustomPainter {
       final Color lineColor = _colorForNode(indexInParent, level);
       final Rect innerRect = rect.deflate(rank * 1.0);
       if (innerRect.isEmpty) {
-        final Paint fill = Paint()
-          ..color = lineColor
-          ..style = PaintingStyle.fill;
+        final Paint fill =
+            Paint()
+              ..color = lineColor
+              ..style = PaintingStyle.fill;
         canvas.drawRect(rect, fill);
       } else {
-        final Paint fill = Paint()
-          ..color = const Color(0xFFFFFFFF)
-          ..style = PaintingStyle.fill;
+        final Paint fill =
+            Paint()
+              ..color = const Color(0xFFFFFFFF)
+              ..style = PaintingStyle.fill;
         canvas.drawRect(rect, fill);
-        final Paint line = Paint()
-          ..strokeWidth = rank * 2.0
-          ..color = lineColor
-          ..style = PaintingStyle.stroke;
+        final Paint line =
+            Paint()
+              ..strokeWidth = rank * 2.0
+              ..color = lineColor
+              ..style = PaintingStyle.stroke;
         canvas.drawRect(innerRect, line);
       }
       _paintMessage(canvas, node);
@@ -390,9 +396,7 @@ class _SemanticsDebuggerPainter extends CustomPainter {
 
 /// A widget ignores pointer event but still keeps semantics actions.
 class _IgnorePointerWithSemantics extends SingleChildRenderObjectWidget {
-  const _IgnorePointerWithSemantics({
-    super.child,
-  });
+  const _IgnorePointerWithSemantics({super.child});
 
   @override
   _RenderIgnorePointerWithSemantics createRenderObject(BuildContext context) {
@@ -404,5 +408,5 @@ class _RenderIgnorePointerWithSemantics extends RenderProxyBox {
   _RenderIgnorePointerWithSemantics();
 
   @override
-  bool hitTest(BoxHitTestResult result, { required Offset position }) => false;
+  bool hitTest(BoxHitTestResult result, {required Offset position}) => false;
 }

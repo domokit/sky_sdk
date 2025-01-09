@@ -5,7 +5,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class MyNotification extends Notification { }
+class MyNotification extends Notification {}
 
 void main() {
   testWidgets('Notification basics - toString', (WidgetTester tester) async {
@@ -15,65 +15,77 @@ void main() {
   testWidgets('Notification basics - dispatch', (WidgetTester tester) async {
     final List<dynamic> log = <dynamic>[];
     final GlobalKey key = GlobalKey();
-    await tester.pumpWidget(NotificationListener<MyNotification>(
-      onNotification: (MyNotification value) {
-        log.add('a');
-        log.add(value);
-        return true;
-      },
-      child: NotificationListener<MyNotification>(
+    await tester.pumpWidget(
+      NotificationListener<MyNotification>(
         onNotification: (MyNotification value) {
-          log.add('b');
+          log.add('a');
           log.add(value);
-          return false;
+          return true;
         },
-        child: Container(key: key),
+        child: NotificationListener<MyNotification>(
+          onNotification: (MyNotification value) {
+            log.add('b');
+            log.add(value);
+            return false;
+          },
+          child: Container(key: key),
+        ),
       ),
-    ));
+    );
     expect(log, isEmpty);
     final Notification notification = MyNotification();
-    expect(() { notification.dispatch(key.currentContext); }, isNot(throwsException));
+    expect(() {
+      notification.dispatch(key.currentContext);
+    }, isNot(throwsException));
     expect(log, <dynamic>['b', notification, 'a', notification]);
   });
 
   testWidgets('Notification basics - cancel', (WidgetTester tester) async {
     final List<dynamic> log = <dynamic>[];
     final GlobalKey key = GlobalKey();
-    await tester.pumpWidget(NotificationListener<MyNotification>(
-      onNotification: (MyNotification value) {
-        log.add('a - error');
-        log.add(value);
-        return true;
-      },
-      child: NotificationListener<MyNotification>(
+    await tester.pumpWidget(
+      NotificationListener<MyNotification>(
         onNotification: (MyNotification value) {
-          log.add('b');
+          log.add('a - error');
           log.add(value);
           return true;
         },
-        child: Container(key: key),
+        child: NotificationListener<MyNotification>(
+          onNotification: (MyNotification value) {
+            log.add('b');
+            log.add(value);
+            return true;
+          },
+          child: Container(key: key),
+        ),
       ),
-    ));
+    );
     expect(log, isEmpty);
     final Notification notification = MyNotification();
-    expect(() { notification.dispatch(key.currentContext); }, isNot(throwsException));
+    expect(() {
+      notification.dispatch(key.currentContext);
+    }, isNot(throwsException));
     expect(log, <dynamic>['b', notification]);
   });
 
   testWidgets('Notification basics - listener null return value', (WidgetTester tester) async {
     final List<Type> log = <Type>[];
     final GlobalKey key = GlobalKey();
-    await tester.pumpWidget(NotificationListener<MyNotification>(
-      onNotification: (MyNotification value) {
-        log.add(value.runtimeType);
-        return false;
-      },
-      child: NotificationListener<MyNotification>(
-        onNotification: (MyNotification value) => false,
-        child: Container(key: key),
+    await tester.pumpWidget(
+      NotificationListener<MyNotification>(
+        onNotification: (MyNotification value) {
+          log.add(value.runtimeType);
+          return false;
+        },
+        child: NotificationListener<MyNotification>(
+          onNotification: (MyNotification value) => false,
+          child: Container(key: key),
+        ),
       ),
-    ));
-    expect(() { MyNotification().dispatch(key.currentContext); }, isNot(throwsException));
+    );
+    expect(() {
+      MyNotification().dispatch(key.currentContext);
+    }, isNot(throwsException));
     expect(log, <Type>[MyNotification]);
   });
 

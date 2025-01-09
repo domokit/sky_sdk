@@ -20,8 +20,8 @@ const String _kGoldctlKey = 'GOLDCTL';
 const String _kPresubmitEnvName = 'GOLD_TRYJOB';
 const String _kLuciEnvName = 'LUCI_CONTEXT';
 
-const String _skiaGoldHost = 'https://flutter-engine-gold.skia.org';
-const String _instance = 'flutter-engine';
+const String _skiaGoldHost = 'https://flutter-gold.skia.org';
+const String _instance = 'flutter';
 
 /// Uploads images and makes baseline requests to Skia Gold.
 ///
@@ -47,6 +47,7 @@ interface class SkiaGoldClient {
   /// spammy for regular use.
   factory SkiaGoldClient(
     io.Directory workDirectory, {
+    String prefix = 'engine.',
     Map<String, String>? dimensions,
     bool verbose = false,
   }) {
@@ -54,6 +55,7 @@ interface class SkiaGoldClient {
       workDirectory,
       dimensions: dimensions,
       verbose: verbose,
+      prefix: prefix,
     );
   }
 
@@ -77,6 +79,7 @@ interface class SkiaGoldClient {
     this.workDirectory, {
     this.dimensions,
     this.verbose = false,
+    String? prefix,
     io.HttpClient? httpClient,
     ProcessManager? processManager,
     StringSink? stderr,
@@ -84,14 +87,20 @@ interface class SkiaGoldClient {
     Engine? engineRoot,
   }) : httpClient = httpClient ?? io.HttpClient(),
        process = processManager ?? const LocalProcessManager(),
+       _prefix = prefix,
        _stderr = stderr ?? io.stderr,
        _environment = environment ?? io.Platform.environment,
        _engineRoot = engineRoot ?? Engine.findWithin() {
     // Lookup the release version from the engine repository.
-    final io.File releaseVersionFile = io.File(path.join(
-      _engineRoot.flutterDir.path,
-      '.engine-release.version',
-    ));
+    final io.File releaseVersionFile = io.File(
+      path.join(_engineRoot.flutterDir.path, '.engine-release.version'),
+    );
+
+    if (!_isMainBranch) {
+      _stderr.writeln(
+        'Current git branch (${_environment['GIT_BRANCH']}) is not "main" or "master", so golden files are not checked.',
+      );
+    }
 
     // If the file is not found or cannot be read, we are in an invalid state.
     try {
@@ -108,32 +117,34 @@ interface class SkiaGoldClient {
   ReleaseVersion? _releaseVersion;
 
   /// Whether the client is available and can be used in this environment.
-  static bool isAvailable({
-    Map<String, String>? environment,
-  }) {
+  static bool isAvailable({Map<String, String>? environment}) {
     final String? result = (environment ?? io.Platform.environment)[_kGoldctlKey];
     return result != null && result.isNotEmpty;
   }
 
   /// Returns true if the current environment is a LUCI builder.
-  static bool isLuciEnv({
-    Map<String, String>? environment,
-  }) {
+  static bool isLuciEnv({Map<String, String>? environment}) {
     return (environment ?? io.Platform.environment).containsKey(_kLuciEnvName);
+  }
+
+  /// Whether the client is currently running on the main branch.
+  bool get _isMainBranch {
+    return switch (_environment['GIT_BRANCH']) {
+      'main' || 'master' => true,
+      _ => false,
+    };
   }
 
   /// Whether the current environment is a presubmit job.
   bool get _isPresubmit {
-    return
-        isLuciEnv(environment: _environment) &&
+    return isLuciEnv(environment: _environment) &&
         isAvailable(environment: _environment) &&
         _environment.containsKey(_kPresubmitEnvName);
   }
 
   /// Whether the current environment is a postsubmit job.
   bool get _isPostsubmit {
-    return
-        isLuciEnv(environment: _environment) &&
+    return isLuciEnv(environment: _environment) &&
         isAvailable(environment: _environment) &&
         !_environment.containsKey(_kPresubmitEnvName);
   }
@@ -162,6 +173,9 @@ interface class SkiaGoldClient {
   /// The local [Directory] for the current test context. In this directory, the
   /// client will create image and JSON files for the `goldctl` tool to use.
   final io.Directory workDirectory;
+
+  /// Prefix to add to all test names, if any.
+  final String? _prefix;
 
   String get _tempPath => path.join(workDirectory.path, 'temp');
   String get _keysPath => path.join(workDirectory.path, 'keys.json');
@@ -208,18 +222,22 @@ interface class SkiaGoldClient {
       _goldctl,
       'auth',
       if (verbose) '--verbose',
-      '--work-dir', _tempPath,
+      '--work-dir',
+      _tempPath,
       '--luci',
     ];
 
     final io.ProcessResult result = await _runCommand(authCommand);
 
     if (result.exitCode != 0) {
-      final StringBuffer buf = StringBuffer()
-        ..writeln('Skia Gold authorization failed.')
-        ..writeln('Luci environments authenticate using the file provided '
-          'by LUCI_CONTEXT. There may be an error with this file or Gold '
-          'authentication.');
+      final StringBuffer buf =
+          StringBuffer()
+            ..writeln('Skia Gold authorization failed.')
+            ..writeln(
+              'Luci environments authenticate using the file provided '
+              'by LUCI_CONTEXT. There may be an error with this file or Gold '
+              'authentication.',
+            );
       throw SkiaGoldProcessError(
         command: authCommand,
         stdout: result.stdout.toString(),
@@ -250,23 +268,30 @@ interface class SkiaGoldClient {
 
     final List<String> imgtestInitCommand = <String>[
       _goldctl,
-      'imgtest', 'init',
+      'imgtest',
+      'init',
       if (verbose) '--verbose',
-      '--instance', _instance,
-      '--work-dir', _tempPath,
-      '--commit', commitHash,
-      '--keys-file', keys.path,
-      '--failure-file', failures.path,
+      '--instance',
+      _instance,
+      '--work-dir',
+      _tempPath,
+      '--commit',
+      commitHash,
+      '--keys-file',
+      keys.path,
+      '--failure-file',
+      failures.path,
       '--passfail',
     ];
 
     final io.ProcessResult result = await _runCommand(imgtestInitCommand);
 
     if (result.exitCode != 0) {
-      final StringBuffer buf = StringBuffer()
-        ..writeln('Skia Gold imgtest init failed.')
-        ..writeln('An error occurred when initializing golden file test with ')
-        ..writeln('goldctl.');
+      final StringBuffer buf =
+          StringBuffer()
+            ..writeln('Skia Gold imgtest init failed.')
+            ..writeln('An error occurred when initializing golden file test with ')
+            ..writeln('goldctl.');
       throw SkiaGoldProcessError(
         command: imgtestInitCommand,
         stdout: result.stdout.toString(),
@@ -277,7 +302,6 @@ interface class SkiaGoldClient {
       _stderr.writeln('stdout:\n${result.stdout}');
       _stderr.writeln('stderr:\n${result.stderr}');
     }
-
   }
 
   /// Executes the `imgtest add` command in the `goldctl` tool.
@@ -320,10 +344,22 @@ interface class SkiaGoldClient {
     int pixelColorDelta = 0,
     required int screenshotSize,
   }) async {
+    if (!_isMainBranch) {
+      if (verbose) {
+        _stderr.writeln('Skipping $testName (not on git main branch)');
+      }
+      return;
+    }
+
     assert(_isPresubmit || _isPostsubmit);
 
     // Clean the test name to remove the file extension.
     testName = path.basenameWithoutExtension(testName);
+
+    // Add a prefix to avoid repo-wide conflicts.
+    if (_prefix != null) {
+      testName = '$_prefix$testName';
+    }
 
     // In release branches, we add a unique test suffix to the test name.
     // For example "testName" -> "testName_Release_3_21".
@@ -362,8 +398,7 @@ interface class SkiaGoldClient {
       _goldctl,
       'imgtest',
       'add',
-      if (verbose)
-      '--verbose',
+      if (verbose) '--verbose',
       '--work-dir',
       _tempPath,
       '--test-name',
@@ -372,21 +407,29 @@ interface class SkiaGoldClient {
       goldenFile.path,
       // Otherwise post submit will not fail.
       '--passfail',
-      ..._getMatchingArguments(testName, screenshotSize, pixelDeltaThreshold, maxDifferentPixelsRate),
+      ..._getMatchingArguments(
+        testName,
+        screenshotSize,
+        pixelDeltaThreshold,
+        maxDifferentPixelsRate,
+      ),
     ];
 
     final io.ProcessResult result = await _runCommand(imgtestCommand);
 
     if (result.exitCode != 0) {
-      final StringBuffer buf = StringBuffer()
-        ..writeln('Skia Gold received an unapproved image in post-submit ')
-        ..writeln('testing. Golden file images in flutter/engine are triaged ')
-        ..writeln('in pre-submit during code review for the given PR.')
-        ..writeln()
-        ..writeln('Visit https://flutter-engine-gold.skia.org/ to view and approve ')
-        ..writeln('the image(s), or revert the associated change. For more ')
-        ..writeln('information, visit the wiki: ')
-        ..writeln('https://github.com/flutter/flutter/wiki/Writing-a-golden-file-test-for-package:flutter');
+      final StringBuffer buf =
+          StringBuffer()
+            ..writeln('Skia Gold received an unapproved image in post-submit ')
+            ..writeln('testing. Golden file images in flutter/engine are triaged ')
+            ..writeln('in pre-submit during code review for the given PR.')
+            ..writeln()
+            ..writeln('Visit https://flutter-gold.skia.org/ to view and approve ')
+            ..writeln('the image(s), or revert the associated change. For more ')
+            ..writeln('information, visit the wiki: ')
+            ..writeln(
+              'https://github.com/flutter/flutter/wiki/Writing-a-golden-file-test-for-package:flutter',
+            );
       throw SkiaGoldProcessError(
         command: imgtestCommand,
         stdout: result.stdout.toString(),
@@ -413,26 +456,35 @@ interface class SkiaGoldClient {
 
     final List<String> tryjobInitCommand = <String>[
       _goldctl,
-      'imgtest', 'init',
+      'imgtest',
+      'init',
       if (verbose) '--verbose',
-      '--instance', _instance,
-      '--work-dir', _tempPath,
-      '--commit', commitHash,
-      '--keys-file', keys.path,
-      '--failure-file', failures.path,
+      '--instance',
+      _instance,
+      '--work-dir',
+      _tempPath,
+      '--commit',
+      commitHash,
+      '--keys-file',
+      keys.path,
+      '--failure-file',
+      failures.path,
       '--passfail',
-      '--crs', 'github',
-      '--patchset_id', commitHash,
+      '--crs',
+      'github',
+      '--patchset_id',
+      commitHash,
       ..._getCIArguments(),
     ];
 
     final io.ProcessResult result = await _runCommand(tryjobInitCommand);
 
     if (result.exitCode != 0) {
-      final StringBuffer buf = StringBuffer()
-        ..writeln('Skia Gold tryjobInit failure.')
-        ..writeln('An error occurred when initializing golden file tryjob with ')
-        ..writeln('goldctl.');
+      final StringBuffer buf =
+          StringBuffer()
+            ..writeln('Skia Gold tryjobInit failure.')
+            ..writeln('An error occurred when initializing golden file tryjob with ')
+            ..writeln('goldctl.');
       throw SkiaGoldProcessError(
         command: tryjobInitCommand,
         stdout: result.stdout.toString(),
@@ -490,10 +542,11 @@ interface class SkiaGoldClient {
       final bool isUntriaged = resultStdout.contains('Untriaged');
       final bool isNegative = resultStdout.contains('negative image');
       if (!isUntriaged && !isNegative) {
-        final StringBuffer buf = StringBuffer()
-          ..writeln('Unexpected Gold tryjobAdd failure.')
-          ..writeln('Tryjob execution for golden file test $testName failed for')
-          ..writeln('a reason unrelated to pixel comparison.');
+        final StringBuffer buf =
+            StringBuffer()
+              ..writeln('Unexpected Gold tryjobAdd failure.')
+              ..writeln('Tryjob execution for golden file test $testName failed for')
+              ..writeln('a reason unrelated to pixel comparison.');
         throw SkiaGoldProcessError(
           command: tryjobCommand,
           stdout: resultStdout,
@@ -531,9 +584,12 @@ interface class SkiaGoldClient {
     // `pixelDeltaThreshold` below.
     final int maxDifferentPixels = (screenshotSize * differentPixelsRate).toInt();
     return <String>[
-      '--add-test-optional-key', 'image_matching_algorithm:$algorithm',
-      '--add-test-optional-key', 'fuzzy_max_different_pixels:$maxDifferentPixels',
-      '--add-test-optional-key', 'fuzzy_pixel_delta_threshold:$pixelDeltaThreshold',
+      '--add-test-optional-key',
+      'image_matching_algorithm:$algorithm',
+      '--add-test-optional-key',
+      'fuzzy_max_different_pixels:$maxDifferentPixels',
+      '--add-test-optional-key',
+      'fuzzy_pixel_delta_threshold:$pixelDeltaThreshold',
     ];
   }
 
@@ -543,7 +599,7 @@ interface class SkiaGoldClient {
     late String? expectation;
     final String traceID = getTraceID(testName);
     final Uri requestForExpectations = Uri.parse(
-      '$_skiaGoldHost/json/v2/latestpositivedigest/$traceID'
+      '$_skiaGoldHost/json/v2/latestpositivedigest/$traceID',
     );
     late String rawResponse;
     try {
@@ -560,7 +616,7 @@ interface class SkiaGoldClient {
         'Formatting error detected requesting expectations from Flutter Gold.\n'
         'error: $error\n'
         'url: $requestForExpectations\n'
-        'response: $rawResponse'
+        'response: $rawResponse',
       );
       rethrow;
     }
@@ -570,10 +626,11 @@ interface class SkiaGoldClient {
   /// Returns the current commit hash of the engine repository.
   Future<String> _getCurrentCommit() async {
     final String engineCheckout = _engineRoot.flutterDir.path;
-    final io.ProcessResult revParse = await process.run(
-      <String>['git', 'rev-parse', 'HEAD'],
-      workingDirectory: engineCheckout,
-    );
+    final io.ProcessResult revParse = await process.run(<String>[
+      'git',
+      'rev-parse',
+      'HEAD',
+    ], workingDirectory: engineCheckout);
     if (revParse.exitCode != 0) {
       throw StateError('Current commit of the engine can not be found from path $engineCheckout.');
     }
@@ -608,11 +665,7 @@ interface class SkiaGoldClient {
     final List<String> refs = _environment['GOLD_TRYJOB']!.split('/');
     final String pullRequest = refs[refs.length - 2];
 
-    return <String>[
-      '--changelist', pullRequest,
-      '--cis', 'buildbucket',
-      '--jobid', jobId,
-    ];
+    return <String>['--changelist', pullRequest, '--cis', 'buildbucket', '--jobid', jobId];
   }
 
   /// Returns a trace id based on the current testing environment to lookup

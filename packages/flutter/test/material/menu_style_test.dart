@@ -50,19 +50,13 @@ void main() {
               children: <Widget>[
                 MenuBarTheme(
                   data: const MenuBarThemeData(
-                    style: MenuStyle(
-                      fixedSize: MaterialStatePropertyAll<Size>(Size(600, 60)),
-                    ),
+                    style: MenuStyle(fixedSize: MaterialStatePropertyAll<Size>(Size(600, 60))),
                   ),
                   child: MenuTheme(
                     data: const MenuThemeData(
-                      style: MenuStyle(
-                        fixedSize: MaterialStatePropertyAll<Size>(Size(100, 100)),
-                      ),
+                      style: MenuStyle(fixedSize: MaterialStatePropertyAll<Size>(Size(100, 100))),
                     ),
-                    child: MenuBar(
-                      children: createTestMenus(onPressed: (TestMenu menu) {}),
-                    ),
+                    child: MenuBar(children: createTestMenus(onPressed: (TestMenu menu) {})),
                   ),
                 ),
                 const Expanded(child: Placeholder()),
@@ -77,12 +71,19 @@ void main() {
       await tester.pump();
 
       // MenuBarTheme affects MenuBar.
-      expect(tester.getRect(findMenuPanels().first), equals(const Rect.fromLTRB(100.0, 0.0, 700.0, 60.0)));
+      expect(
+        tester.getRect(findMenuPanels().first),
+        equals(const Rect.fromLTRB(100.0, 0.0, 700.0, 60.0)),
+      );
       expect(tester.getRect(findMenuPanels().first).size, equals(const Size(600.0, 60.0)));
 
       // MenuTheme affects menus.
-      if (!kIsWeb || isSkiaWeb) { // https://github.com/flutter/flutter/issues/99933
-        expect(tester.getRect(findMenuPanels().at(1)), equals(const Rect.fromLTRB(104.0, 54.0, 204.0, 154.0)));
+      if (!kIsWeb || isSkiaWeb) {
+        // https://github.com/flutter/flutter/issues/99933
+        expect(
+          tester.getRect(findMenuPanels().at(1)),
+          equals(const Rect.fromLTRB(104.0, 54.0, 204.0, 154.0)),
+        );
         expect(tester.getRect(findMenuPanels().at(1)).size, equals(const Size(100.0, 100.0)));
       }
     });
@@ -95,19 +96,13 @@ void main() {
               children: <Widget>[
                 MenuBarTheme(
                   data: const MenuBarThemeData(
-                    style: MenuStyle(
-                      maximumSize: MaterialStatePropertyAll<Size>(Size(250, 40)),
-                    ),
+                    style: MenuStyle(maximumSize: MaterialStatePropertyAll<Size>(Size(250, 40))),
                   ),
                   child: MenuTheme(
                     data: const MenuThemeData(
-                      style: MenuStyle(
-                        maximumSize: MaterialStatePropertyAll<Size>(Size(100, 100)),
-                      ),
+                      style: MenuStyle(maximumSize: MaterialStatePropertyAll<Size>(Size(100, 100))),
                     ),
-                    child: MenuBar(
-                      children: createTestMenus(onPressed: (TestMenu menu) {}),
-                    ),
+                    child: MenuBar(children: createTestMenus(onPressed: (TestMenu menu) {})),
                   ),
                 ),
                 const Expanded(child: Placeholder()),
@@ -122,11 +117,17 @@ void main() {
       await tester.pump();
 
       // MenuBarTheme affects MenuBar.
-      expect(tester.getRect(findMenuPanels().first), equals(const Rect.fromLTRB(275.0, 0.0, 525.0, 40.0)));
+      expect(
+        tester.getRect(findMenuPanels().first),
+        equals(const Rect.fromLTRB(275.0, 0.0, 525.0, 40.0)),
+      );
       expect(tester.getRect(findMenuPanels().first).size, equals(const Size(250.0, 40.0)));
 
       // MenuTheme affects menus.
-      expect(tester.getRect(findMenuPanels().at(1)), equals(const Rect.fromLTRB(279.0, 44.0, 379.0, 144.0)));
+      expect(
+        tester.getRect(findMenuPanels().at(1)),
+        equals(const Rect.fromLTRB(279.0, 44.0, 379.0, 144.0)),
+      );
       expect(tester.getRect(findMenuPanels().at(1)).size, equals(const Size(100.0, 100.0)));
     });
 
@@ -138,19 +139,13 @@ void main() {
               children: <Widget>[
                 MenuBarTheme(
                   data: const MenuBarThemeData(
-                    style: MenuStyle(
-                      minimumSize: MaterialStatePropertyAll<Size>(Size(400, 60)),
-                    ),
+                    style: MenuStyle(minimumSize: MaterialStatePropertyAll<Size>(Size(400, 60))),
                   ),
                   child: MenuTheme(
                     data: const MenuThemeData(
-                      style: MenuStyle(
-                        minimumSize: MaterialStatePropertyAll<Size>(Size(300, 300)),
-                      ),
+                      style: MenuStyle(minimumSize: MaterialStatePropertyAll<Size>(Size(300, 300))),
                     ),
-                    child: MenuBar(
-                      children: createTestMenus(onPressed: (TestMenu menu) {}),
-                    ),
+                    child: MenuBar(children: createTestMenus(onPressed: (TestMenu menu) {})),
                   ),
                 ),
                 const Expanded(child: Placeholder()),
@@ -165,11 +160,17 @@ void main() {
       await tester.pump();
 
       // MenuBarTheme affects MenuBar.
-      expect(tester.getRect(findMenuPanels().first), equals(const Rect.fromLTRB(200.0, 0.0, 600.0, 60.0)));
+      expect(
+        tester.getRect(findMenuPanels().first),
+        equals(const Rect.fromLTRB(200.0, 0.0, 600.0, 60.0)),
+      );
       expect(tester.getRect(findMenuPanels().first).size, equals(const Size(400.0, 60.0)));
 
       // MenuTheme affects menus.
-      expect(tester.getRect(findMenuPanels().at(1)), equals(const Rect.fromLTRB(204.0, 54.0, 504.0, 354.0)));
+      expect(
+        tester.getRect(findMenuPanels().at(1)),
+        equals(const Rect.fromLTRB(204.0, 54.0, 504.0, 354.0)),
+      );
       expect(tester.getRect(findMenuPanels().at(1)).size, equals(const Size(300.0, 300.0)));
     });
 
@@ -187,7 +188,9 @@ void main() {
                       surfaceTintColor: MaterialStatePropertyAll<Color>(Colors.blue),
                       padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.all(10)),
                       elevation: MaterialStatePropertyAll<double>(10),
-                      side: MaterialStatePropertyAll<BorderSide>(BorderSide(color: Colors.redAccent)),
+                      side: MaterialStatePropertyAll<BorderSide>(
+                        BorderSide(color: Colors.redAccent),
+                      ),
                       shape: MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder()),
                     ),
                   ),
@@ -199,13 +202,13 @@ void main() {
                         surfaceTintColor: MaterialStatePropertyAll<Color>(Colors.yellow),
                         padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.all(20)),
                         elevation: MaterialStatePropertyAll<double>(20),
-                        side: MaterialStatePropertyAll<BorderSide>(BorderSide(color: Colors.cyanAccent)),
+                        side: MaterialStatePropertyAll<BorderSide>(
+                          BorderSide(color: Colors.cyanAccent),
+                        ),
                         shape: MaterialStatePropertyAll<OutlinedBorder>(StarBorder()),
                       ),
                     ),
-                    child: MenuBar(
-                      children: createTestMenus(onPressed: (TestMenu menu) {}),
-                    ),
+                    child: MenuBar(children: createTestMenus(onPressed: (TestMenu menu) {})),
                   ),
                 ),
                 const Expanded(child: Placeholder()),
@@ -228,14 +231,20 @@ void main() {
       expect(menuBarMaterial.color, equals(Colors.red));
       expect(menuBarMaterial.shadowColor, equals(Colors.green));
       expect(menuBarMaterial.surfaceTintColor, equals(Colors.blue));
-      expect(menuBarMaterial.shape, equals(const StadiumBorder(side: BorderSide(color: Colors.redAccent))));
+      expect(
+        menuBarMaterial.shape,
+        equals(const StadiumBorder(side: BorderSide(color: Colors.redAccent))),
+      );
       expect(menuBarPadding.padding, equals(const EdgeInsets.all(10)));
 
       // MenuBarTheme affects menus.
       expect(panelMaterial.color, equals(Colors.cyan));
       expect(panelMaterial.shadowColor, equals(Colors.purple));
       expect(panelMaterial.surfaceTintColor, equals(Colors.yellow));
-      expect(panelMaterial.shape, equals(const StarBorder(side: BorderSide(color: Colors.cyanAccent))));
+      expect(
+        panelMaterial.shape,
+        equals(const StarBorder(side: BorderSide(color: Colors.cyanAccent))),
+      );
       expect(panelPadding.padding, equals(const EdgeInsets.all(20)));
     });
 
@@ -248,9 +257,7 @@ void main() {
               children: <Widget>[
                 MenuBarTheme(
                   data: const MenuBarThemeData(
-                    style: MenuStyle(
-                      visualDensity: VisualDensity(horizontal: 1.5, vertical: -1.5),
-                    ),
+                    style: MenuStyle(visualDensity: VisualDensity(horizontal: 1.5, vertical: -1.5)),
                   ),
                   child: MenuTheme(
                     data: const MenuThemeData(
@@ -258,9 +265,7 @@ void main() {
                         visualDensity: VisualDensity(horizontal: 0.5, vertical: -0.5),
                       ),
                     ),
-                    child: MenuBar(
-                      children: createTestMenus(onPressed: (TestMenu menu) {}),
-                    ),
+                    child: MenuBar(children: createTestMenus(onPressed: (TestMenu menu) {})),
                   ),
                 ),
                 const Expanded(child: Placeholder()),
@@ -271,19 +276,29 @@ void main() {
       );
       await tester.pump();
 
-      expect(tester.getRect(find.byType(MenuBar)), equals(const Rect.fromLTRB(228.0, 0.0, 572.0, 48.0)));
+      expect(
+        tester.getRect(find.byType(MenuBar)),
+        equals(const Rect.fromLTRB(228.0, 0.0, 572.0, 48.0)),
+      );
 
       // Open and make sure things are the right size.
       await tester.tap(find.text(TestMenu.mainMenu1.label));
       await tester.pump();
 
-      expect(tester.getRect(find.byType(MenuBar)), equals(const Rect.fromLTRB(228.0, 0.0, 572.0, 48.0)));
+      expect(
+        tester.getRect(find.byType(MenuBar)),
+        equals(const Rect.fromLTRB(228.0, 0.0, 572.0, 48.0)),
+      );
       expect(
         tester.getRect(find.text(TestMenu.subMenu10.label)),
         equals(const Rect.fromLTRB(372.0, 68.0, 565.0, 82.0)),
       );
       expect(
-        tester.getRect(find.ancestor(of: find.text(TestMenu.subMenu10.label), matching: find.byType(Material)).at(1)),
+        tester.getRect(
+          find
+              .ancestor(of: find.text(TestMenu.subMenu10.label), matching: find.byType(Material))
+              .at(1),
+        ),
         equals(const Rect.fromLTRB(352.0, 48.0, 585.0, 186.0)),
       );
     });

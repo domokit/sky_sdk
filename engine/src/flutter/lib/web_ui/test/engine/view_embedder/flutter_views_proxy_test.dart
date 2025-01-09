@@ -17,20 +17,16 @@ void main() {
 
 Future<void> doTests() async {
   group('FlutterViewManagerProxy', () {
-    final EnginePlatformDispatcher platformDispatcher =
-        EnginePlatformDispatcher.instance;
-    final FlutterViewManager viewManager =
-        FlutterViewManager(platformDispatcher);
-    final FlutterViewManagerProxy views =
-        FlutterViewManagerProxy(viewManager: viewManager);
+    final EnginePlatformDispatcher platformDispatcher = EnginePlatformDispatcher.instance;
+    final FlutterViewManager viewManager = FlutterViewManager(platformDispatcher);
+    final FlutterViewManagerProxy views = FlutterViewManagerProxy(viewManager: viewManager);
 
     late EngineFlutterView view;
     late int viewId;
     late DomElement hostElement;
 
     int registerViewWithOptions(Map<String, Object?> options) {
-      final JsFlutterViewOptions jsOptions =
-          options.toJSAnyDeep as JsFlutterViewOptions;
+      final JsFlutterViewOptions jsOptions = options.toJSAnyDeep as JsFlutterViewOptions;
       viewManager.registerView(view, jsViewOptions: jsOptions);
       return viewId;
     }
@@ -52,9 +48,7 @@ Future<void> doTests() async {
       });
 
       test('can retrieve hostElement for a known view', () {
-        final int viewId = registerViewWithOptions(<String, Object?>{
-          'hostElement': hostElement,
-        });
+        final int viewId = registerViewWithOptions(<String, Object?>{'hostElement': hostElement});
 
         final JSAny? element = views.getHostElement(viewId);
 
@@ -100,8 +94,7 @@ Future<void> doTests() async {
           },
         });
 
-        final InitialData? element =
-            views.getInitialData(viewId) as InitialData?;
+        final InitialData? element = views.getInitialData(viewId) as InitialData?;
 
         expect(element, isNotNull);
         expect(element!.someInt, 42);
@@ -124,6 +117,5 @@ extension InitialDataExtension on InitialData {
 
   @JS('decimals')
   external JSArray<JSNumber> get _decimals;
-  List<double> get decimals =>
-      _decimals.toDart.map((JSNumber e) => e.toDartDouble).toList();
+  List<double> get decimals => _decimals.toDart.map((JSNumber e) => e.toDartDouble).toList();
 }

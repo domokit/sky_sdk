@@ -40,8 +40,7 @@ class NormalizedGradient {
     }
     final Float32List bias = Float32List(normalizedCount * 4);
     final Float32List scale = Float32List(normalizedCount * 4);
-    final Float32List thresholds =
-        Float32List(4 * ((normalizedCount - 1) ~/ 4 + 1));
+    final Float32List thresholds = Float32List(4 * ((normalizedCount - 1) ~/ 4 + 1));
     int targetIndex = 0;
     int thresholdIndex = 0;
     if (addFirst) {
@@ -74,8 +73,8 @@ class NormalizedGradient {
     final int lastColorIndex = 4 * (normalizedCount - 1);
     for (int i = 0; i < lastColorIndex; i++) {
       final int thresholdIndex = i >> 2;
-      scale[i] = (bias[i + 4] - bias[i]) /
-          (thresholds[thresholdIndex + 1] - thresholds[thresholdIndex]);
+      scale[i] =
+          (bias[i + 4] - bias[i]) / (thresholds[thresholdIndex + 1] - thresholds[thresholdIndex]);
     }
     scale[lastColorIndex] = 0.0;
     scale[lastColorIndex + 1] = 0.0;
@@ -94,7 +93,12 @@ class NormalizedGradient {
   }
 
   NormalizedGradient._(
-      this.thresholdCount, this._thresholds, this._scale, this._bias, this.isOpaque);
+    this.thresholdCount,
+    this._thresholds,
+    this._scale,
+    this._bias,
+    this.isOpaque,
+  );
 
   final Float32List _thresholds;
   final Float32List _bias;
@@ -106,17 +110,25 @@ class NormalizedGradient {
   void setupUniforms(GlContext gl, GlProgram glProgram) {
     for (int i = 0; i < thresholdCount; i++) {
       final Object biasId = gl.getUniformLocation(glProgram.program, 'bias_$i');
-      gl.setUniform4f(biasId, _bias[i * 4], _bias[i * 4 + 1], _bias[i * 4 + 2],
-          _bias[i * 4 + 3]);
+      gl.setUniform4f(biasId, _bias[i * 4], _bias[i * 4 + 1], _bias[i * 4 + 2], _bias[i * 4 + 3]);
       final Object scaleId = gl.getUniformLocation(glProgram.program, 'scale_$i');
-      gl.setUniform4f(scaleId, _scale[i * 4], _scale[i * 4 + 1],
-          _scale[i * 4 + 2], _scale[i * 4 + 3]);
+      gl.setUniform4f(
+        scaleId,
+        _scale[i * 4],
+        _scale[i * 4 + 1],
+        _scale[i * 4 + 2],
+        _scale[i * 4 + 3],
+      );
     }
     for (int i = 0; i < _thresholds.length; i += 4) {
-      final Object thresId =
-          gl.getUniformLocation(glProgram.program, 'threshold_${i ~/ 4}');
-      gl.setUniform4f(thresId, _thresholds[i], _thresholds[i + 1],
-          _thresholds[i + 2], _thresholds[i + 3]);
+      final Object thresId = gl.getUniformLocation(glProgram.program, 'threshold_${i ~/ 4}');
+      gl.setUniform4f(
+        thresId,
+        _thresholds[i],
+        _thresholds[i + 1],
+        _thresholds[i + 2],
+        _thresholds[i + 3],
+      );
     }
   }
 
@@ -137,11 +149,15 @@ class NormalizedGradient {
 /// uniforms.
 ///
 /// Bias and scale data are vec4 uniforms that hold color data.
-void writeUnrolledBinarySearch(ShaderMethod method, int start, int end,
-    {required String probe,
-    required String sourcePrefix,
-    required String biasName,
-    required String scaleName}) {
+void writeUnrolledBinarySearch(
+  ShaderMethod method,
+  int start,
+  int end, {
+  required String probe,
+  required String sourcePrefix,
+  required String biasName,
+  required String scaleName,
+}) {
   if (start == end) {
     final String biasSource = '${biasName}_$start';
     method.addStatement('$biasName = $biasSource;');
@@ -154,19 +170,27 @@ void writeUnrolledBinarySearch(ShaderMethod method, int start, int end,
     thresholdAtMid += '.${vectorComponentIndexToName((mid + 1) % 4)}';
     method.addStatement('if ($probe < $thresholdAtMid) {');
     method.indent();
-    writeUnrolledBinarySearch(method, start, mid,
-        probe: probe,
-        sourcePrefix: sourcePrefix,
-        biasName: biasName,
-        scaleName: scaleName);
+    writeUnrolledBinarySearch(
+      method,
+      start,
+      mid,
+      probe: probe,
+      sourcePrefix: sourcePrefix,
+      biasName: biasName,
+      scaleName: scaleName,
+    );
     method.unindent();
     method.addStatement('} else {');
     method.indent();
-    writeUnrolledBinarySearch(method, mid + 1, end,
-        probe: probe,
-        sourcePrefix: sourcePrefix,
-        biasName: biasName,
-        scaleName: scaleName);
+    writeUnrolledBinarySearch(
+      method,
+      mid + 1,
+      end,
+      probe: probe,
+      sourcePrefix: sourcePrefix,
+      biasName: biasName,
+      scaleName: scaleName,
+    );
     method.unindent();
     method.addStatement('}');
   }

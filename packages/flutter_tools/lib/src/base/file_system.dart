@@ -29,11 +29,9 @@ class FileNotFoundException implements IOException {
 
 /// Various convenience file system methods.
 class FileSystemUtils {
-  FileSystemUtils({
-    required FileSystem fileSystem,
-    required Platform platform,
-  }) : _fileSystem = fileSystem,
-       _platform = platform;
+  FileSystemUtils({required FileSystem fileSystem, required Platform platform})
+    : _fileSystem = fileSystem,
+      _platform = platform;
 
   final FileSystem _fileSystem;
 
@@ -73,22 +71,18 @@ class FileSystemUtils {
   /// Returns true, if [entity] does not exist.
   ///
   /// Returns false, if [entity] exists, but [referenceFile] does not.
-  bool isOlderThanReference({
-    required FileSystemEntity entity,
-    required File referenceFile,
-  }) {
+  bool isOlderThanReference({required FileSystemEntity entity, required File referenceFile}) {
     if (!entity.existsSync()) {
       return true;
     }
-    return referenceFile.existsSync()
-        && referenceFile.statSync().modified.isAfter(entity.statSync().modified);
+    return referenceFile.existsSync() &&
+        referenceFile.statSync().modified.isAfter(entity.statSync().modified);
   }
 
   /// Return the absolute path of the user's home directory.
   String? get homeDirPath {
-    String? path = _platform.isWindows
-      ? _platform.environment['USERPROFILE']
-      : _platform.environment['HOME'];
+    String? path =
+        _platform.isWindows ? _platform.environment['USERPROFILE'] : _platform.environment['HOME'];
     if (path != null) {
       path = _fileSystem.path.absolute(path);
     }
@@ -235,8 +229,9 @@ class LocalFileSystem extends local_fs.LocalFileSystem {
   Directory get systemTempDirectory {
     if (_systemTemp == null) {
       if (!superSystemTempDirectory.existsSync()) {
-        throwToolExit('Your system temp directory (${superSystemTempDirectory.path}) does not exist. '
-          'Did you set an invalid override in your environment? See issue https://github.com/flutter/flutter/issues/74042 for more context.'
+        throwToolExit(
+          'Your system temp directory (${superSystemTempDirectory.path}) does not exist. '
+          'Did you set an invalid override in your environment? See issue https://github.com/flutter/flutter/issues/74042 for more context.',
         );
       }
       _systemTemp = superSystemTempDirectory.createTempSync('flutter_tools.')
@@ -244,19 +239,14 @@ class LocalFileSystem extends local_fs.LocalFileSystem {
       // Make sure that the temporary directory is cleaned up if the tool is
       // killed by a signal.
       for (final ProcessSignal signal in _fatalSignals) {
-        final Object token = _signals.addHandler(
-          signal,
-          (ProcessSignal _) {
-            _tryToDeleteTemp();
-          },
-        );
+        final Object token = _signals.addHandler(signal, (ProcessSignal _) {
+          _tryToDeleteTemp();
+        });
         _signalTokens[signal] = token;
       }
       // Make sure that the temporary directory is cleaned up when the tool
       // exits normally.
-      shutdownHooks.addShutdownHook(
-        _tryToDeleteTemp,
-      );
+      shutdownHooks.addShutdownHook(_tryToDeleteTemp);
     }
     return _systemTemp!;
   }

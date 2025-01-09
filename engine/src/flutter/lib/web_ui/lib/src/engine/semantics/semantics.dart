@@ -9,7 +9,7 @@ import 'package:meta/meta.dart';
 import 'package:ui/ui.dart' as ui;
 import 'package:ui/ui_web/src/ui_web.dart' as ui_web;
 
-import '../../engine.dart'  show registerHotRestartListener;
+import '../../engine.dart' show registerHotRestartListener;
 import '../alarm_clock.dart';
 import '../browser_detection.dart';
 import '../configuration.dart';
@@ -103,14 +103,14 @@ class EngineAccessibilityFeatures implements ui.AccessibilityFeatures {
   int get hashCode => _index.hashCode;
 
   EngineAccessibilityFeatures copyWith({
-      bool? accessibleNavigation,
-      bool? invertColors,
-      bool? disableAnimations,
-      bool? boldText,
-      bool? reduceMotion,
-      bool? highContrast,
-      bool? onOffSwitchLabels})
-  {
+    bool? accessibleNavigation,
+    bool? invertColors,
+    bool? disableAnimations,
+    bool? boldText,
+    bool? reduceMotion,
+    bool? highContrast,
+    bool? onOffSwitchLabels,
+  }) {
     final EngineAccessibilityFeaturesBuilder builder = EngineAccessibilityFeaturesBuilder(0);
 
     builder.accessibleNavigation = accessibleNavigation ?? this.accessibleNavigation;
@@ -140,37 +140,37 @@ class EngineAccessibilityFeaturesBuilder {
 
   set accessibleNavigation(bool value) {
     const int accessibleNavigation = EngineAccessibilityFeatures._kAccessibleNavigation;
-    _index = value? _index | accessibleNavigation : _index & ~accessibleNavigation;
+    _index = value ? _index | accessibleNavigation : _index & ~accessibleNavigation;
   }
 
   set invertColors(bool value) {
     const int invertColors = EngineAccessibilityFeatures._kInvertColorsIndex;
-    _index = value? _index | invertColors : _index & ~invertColors;
+    _index = value ? _index | invertColors : _index & ~invertColors;
   }
 
   set disableAnimations(bool value) {
     const int disableAnimations = EngineAccessibilityFeatures._kDisableAnimationsIndex;
-    _index = value? _index | disableAnimations : _index & ~disableAnimations;
+    _index = value ? _index | disableAnimations : _index & ~disableAnimations;
   }
 
   set boldText(bool value) {
     const int boldText = EngineAccessibilityFeatures._kBoldTextIndex;
-    _index = value? _index | boldText : _index & ~boldText;
+    _index = value ? _index | boldText : _index & ~boldText;
   }
 
   set reduceMotion(bool value) {
     const int reduceMotion = EngineAccessibilityFeatures._kReduceMotionIndex;
-    _index = value? _index | reduceMotion : _index & ~reduceMotion;
+    _index = value ? _index | reduceMotion : _index & ~reduceMotion;
   }
 
   set highContrast(bool value) {
     const int highContrast = EngineAccessibilityFeatures._kHighContrastIndex;
-    _index = value? _index | highContrast : _index & ~highContrast;
+    _index = value ? _index | highContrast : _index & ~highContrast;
   }
 
   set onOffSwitchLabels(bool value) {
     const int onOffSwitchLabels = EngineAccessibilityFeatures._kOnOffSwitchLabelsIndex;
-    _index = value? _index | onOffSwitchLabels : _index & ~onOffSwitchLabels;
+    _index = value ? _index | onOffSwitchLabels : _index & ~onOffSwitchLabels;
   }
 
   /// Creates and returns an instance of EngineAccessibilityFeatures based on the value of _index
@@ -184,8 +184,7 @@ class EngineAccessibilityFeaturesBuilder {
 /// This class provides private engine-side API that's not available in the
 /// `dart:ui` [ui.SemanticsUpdate].
 class SemanticsUpdate implements ui.SemanticsUpdate {
-  SemanticsUpdate({List<SemanticsNodeUpdate>? nodeUpdates})
-      : _nodeUpdates = nodeUpdates;
+  SemanticsUpdate({List<SemanticsNodeUpdate>? nodeUpdates}) : _nodeUpdates = nodeUpdates;
 
   /// Updates for individual nodes.
   final List<SemanticsNodeUpdate>? _nodeUpdates;
@@ -418,7 +417,11 @@ abstract class SemanticRole {
   ///
   /// If `labelRepresentation` is true, configures the [LabelAndValue] role with
   /// [LabelAndValue.labelRepresentation] set to true.
-  SemanticRole.withBasics(this.kind, this.semanticsObject, { required LabelRepresentation preferredLabelRepresentation }) {
+  SemanticRole.withBasics(
+    this.kind,
+    this.semanticsObject, {
+    required LabelRepresentation preferredLabelRepresentation,
+  }) {
     element = _initElement(createElement(), semanticsObject);
     addFocusManagement();
     addLiveRegion();
@@ -536,9 +539,11 @@ abstract class SemanticRole {
 
   void removeAttribute(String name) => element.removeAttribute(name);
 
-  void addEventListener(String type, DomEventListener? listener, [bool? useCapture]) => element.addEventListener(type, listener, useCapture);
+  void addEventListener(String type, DomEventListener? listener, [bool? useCapture]) =>
+      element.addEventListener(type, listener, useCapture);
 
-  void removeEventListener(String type, DomEventListener? listener, [bool? useCapture]) => element.removeEventListener(type, listener, useCapture);
+  void removeEventListener(String type, DomEventListener? listener, [bool? useCapture]) =>
+      element.removeEventListener(type, listener, useCapture);
 
   /// Convenience getter for the [Focusable] behavior, if any.
   Focusable? get focusable => _focusable;
@@ -564,8 +569,14 @@ abstract class SemanticRole {
   LabelAndValue? _labelAndValue;
 
   /// Adds generic label features.
-  void addLabelAndValue({ required LabelRepresentation preferredRepresentation }) {
-    addSemanticBehavior(_labelAndValue = LabelAndValue(semanticsObject, this, preferredRepresentation: preferredRepresentation));
+  void addLabelAndValue({required LabelRepresentation preferredRepresentation}) {
+    addSemanticBehavior(
+      _labelAndValue = LabelAndValue(
+        semanticsObject,
+        this,
+        preferredRepresentation: preferredRepresentation,
+      ),
+    );
   }
 
   /// Adds generic functionality for handling taps and clicks.
@@ -665,14 +676,15 @@ abstract class SemanticRole {
 
 /// A role used when a more specific role couldn't be assigned to the node.
 final class GenericRole extends SemanticRole {
-  GenericRole(SemanticsObject semanticsObject) : super.withBasics(
-    SemanticRoleKind.generic,
-    semanticsObject,
-    // Prefer sized span because if this is a leaf it is frequently a Text widget.
-    // But if it turns out to be a container, then LabelAndValue will automatically
-    // switch to `aria-label`.
-    preferredLabelRepresentation: LabelRepresentation.sizedSpan,
-  ) {
+  GenericRole(SemanticsObject semanticsObject)
+    : super.withBasics(
+        SemanticRoleKind.generic,
+        semanticsObject,
+        // Prefer sized span because if this is a leaf it is frequently a Text widget.
+        // But if it turns out to be a container, then LabelAndValue will automatically
+        // switch to `aria-label`.
+        preferredLabelRepresentation: LabelRepresentation.sizedSpan,
+      ) {
     // Typically a tappable widget would have a more specific role, such as
     // "link", "button", "checkbox", etc. However, there are situations when a
     // tappable is not a leaf node, but contains other nodes, which can also be
@@ -1063,8 +1075,7 @@ class SemanticsObject {
 
   /// Whether the [childrenInTraversalOrder] field has been updated but has not
   /// been applied to the DOM yet.
-  bool get isChildrenInTraversalOrderDirty =>
-      _isDirty(_childrenInTraversalOrderIndex);
+  bool get isChildrenInTraversalOrderDirty => _isDirty(_childrenInTraversalOrderIndex);
   void _markChildrenInTraversalOrderDirty() {
     _dirtyFields |= _childrenInTraversalOrderIndex;
   }
@@ -1077,8 +1088,7 @@ class SemanticsObject {
 
   /// Whether the [childrenInHitTestOrder] field has been updated but has not
   /// been applied to the DOM yet.
-  bool get isChildrenInHitTestOrderDirty =>
-      _isDirty(_childrenInHitTestOrderIndex);
+  bool get isChildrenInHitTestOrderDirty => _isDirty(_childrenInHitTestOrderIndex);
   void _markChildrenInHitTestOrderDirty() {
     _dirtyFields |= _childrenInHitTestOrderIndex;
   }
@@ -1274,6 +1284,7 @@ class SemanticsObject {
     assert(owner.phase == SemanticsUpdatePhase.postUpdate);
     return _parent;
   }
+
   SemanticsObject? _parent;
 
   /// Whether this node currently has a given [SemanticsFlag].
@@ -1302,13 +1313,11 @@ class SemanticsObject {
 
   /// Whether this object represents a vertically scrollable area.
   bool get isVerticalScrollContainer =>
-      hasAction(ui.SemanticsAction.scrollDown) ||
-      hasAction(ui.SemanticsAction.scrollUp);
+      hasAction(ui.SemanticsAction.scrollDown) || hasAction(ui.SemanticsAction.scrollUp);
 
   /// Whether this object represents a horizontally scrollable area.
   bool get isHorizontalScrollContainer =>
-      hasAction(ui.SemanticsAction.scrollLeft) ||
-      hasAction(ui.SemanticsAction.scrollRight);
+      hasAction(ui.SemanticsAction.scrollLeft) || hasAction(ui.SemanticsAction.scrollRight);
 
   /// Whether this object represents a scrollable area in any direction.
   bool get isScrollContainer => isVerticalScrollContainer || isHorizontalScrollContainer;
@@ -1325,14 +1334,10 @@ class SemanticsObject {
 
   /// Whether this object needs screen readers attention right away.
   bool get isLiveRegion =>
-      hasFlag(ui.SemanticsFlag.isLiveRegion) &&
-      !hasFlag(ui.SemanticsFlag.isHidden);
+      hasFlag(ui.SemanticsFlag.isLiveRegion) && !hasFlag(ui.SemanticsFlag.isHidden);
 
   /// Whether this object represents an image with no tappable functionality.
-  bool get isVisualOnly =>
-      hasFlag(ui.SemanticsFlag.isImage) &&
-      !isTappable &&
-      !isButton;
+  bool get isVisualOnly => hasFlag(ui.SemanticsFlag.isImage) && !isTappable && !isButton;
 
   /// Whether this node defines a scope for a route.
   bool get scopesRoute => hasFlag(ui.SemanticsFlag.scopesRoute);
@@ -1547,10 +1552,8 @@ class SemanticsObject {
   ///   z-index CSS style attribute.
   void updateChildren() {
     // Trivial case: remove all children.
-    if (_childrenInHitTestOrder == null ||
-        _childrenInHitTestOrder!.isEmpty) {
-      if (_currentChildrenInRenderOrder == null ||
-          _currentChildrenInRenderOrder!.isEmpty) {
+    if (_childrenInHitTestOrder == null || _childrenInHitTestOrder!.isEmpty) {
+      if (_currentChildrenInRenderOrder == null || _currentChildrenInRenderOrder!.isEmpty) {
         // A container element must not have been created when child list is empty.
         assert(_childContainerElement == null);
         _currentChildrenInRenderOrder = null;
@@ -1605,8 +1608,7 @@ class SemanticsObject {
     }
 
     // Trivial case: previous list was empty => just populate the container.
-    if (_currentChildrenInRenderOrder == null ||
-        _currentChildrenInRenderOrder!.isEmpty) {
+    if (_currentChildrenInRenderOrder == null || _currentChildrenInRenderOrder!.isEmpty) {
       for (final SemanticsObject child in childrenInRenderOrder) {
         containerElement!.append(child.element);
         owner._attachObject(parent: this, child: child);
@@ -1646,8 +1648,7 @@ class SemanticsObject {
 
     // Scan forward until first discrepancy.
     while (newIndex < minLength &&
-        previousChildrenInRenderOrder[newIndex] ==
-            childrenInRenderOrder[newIndex]) {
+        previousChildrenInRenderOrder[newIndex] == childrenInRenderOrder[newIndex]) {
       intersectionIndicesOld.add(newIndex);
       newIndex += 1;
     }
@@ -1661,8 +1662,7 @@ class SemanticsObject {
     // between the two lists.
     while (newIndex < childCount) {
       for (int oldIndex = 0; oldIndex < previousCount; oldIndex += 1) {
-        if (previousChildrenInRenderOrder[oldIndex] ==
-            childrenInRenderOrder[newIndex]) {
+        if (previousChildrenInRenderOrder[oldIndex] == childrenInRenderOrder[newIndex]) {
           intersectionIndicesOld.add(oldIndex);
           break;
         }
@@ -1676,7 +1676,7 @@ class SemanticsObject {
     final List<int> stationaryIds = <int>[];
     for (int i = 0; i < longestSequence.length; i += 1) {
       stationaryIds.add(
-        previousChildrenInRenderOrder[intersectionIndicesOld[longestSequence[i]!]].id
+        previousChildrenInRenderOrder[intersectionIndicesOld[longestSequence[i]!]].id,
       );
     }
 
@@ -1815,8 +1815,7 @@ class SemanticsObject {
   ///
   /// Such objects are expressed in HTML using `<input type="range">`.
   bool get isIncrementable =>
-      hasAction(ui.SemanticsAction.increase) ||
-      hasAction(ui.SemanticsAction.decrease);
+      hasAction(ui.SemanticsAction.increase) || hasAction(ui.SemanticsAction.decrease);
 
   /// Whether the object represents a button.
   bool get isButton => hasFlag(ui.SemanticsFlag.isButton);
@@ -1832,8 +1831,7 @@ class SemanticsObject {
   /// elements, they are managed by the [SemanticCheckable] role, and they do
   /// not use the [Selectable] behavior.
   bool get isCheckable =>
-      hasFlag(ui.SemanticsFlag.hasCheckedState) ||
-      hasFlag(ui.SemanticsFlag.hasToggledState);
+      hasFlag(ui.SemanticsFlag.hasCheckedState) || hasFlag(ui.SemanticsFlag.hasToggledState);
 
   /// If true, this node represents something that can be annotated as
   /// "selected", such as a tab, or an item in a list.
@@ -1878,8 +1876,7 @@ class SemanticsObject {
       ..width = '${_rect!.width}px'
       ..height = '${_rect!.height}px';
 
-    final DomElement? containerElement =
-        hasChildren ? getOrCreateChildContainer() : null;
+    final DomElement? containerElement = hasChildren ? getOrCreateChildContainer() : null;
 
     final bool hasZeroRectOffset = _rect!.top == 0.0 && _rect!.left == 0.0;
     final Float32List? transform = _transform;
@@ -1907,8 +1904,8 @@ class SemanticsObject {
         effectiveTransformIsIdentity = left == 0.0 && top == 0.0;
       } else {
         // Clone to avoid mutating _transform.
-        effectiveTransform = Matrix4.fromFloat32List(transform).clone()
-          ..translate(_rect!.left, _rect!.top);
+        effectiveTransform =
+            Matrix4.fromFloat32List(transform).clone()..translate(_rect!.left, _rect!.top);
         effectiveTransformIsIdentity = effectiveTransform.isIdentity();
       }
     } else if (!hasIdentityTransform) {
@@ -2023,10 +2020,10 @@ class SemanticsObject {
   String toString() {
     String result = super.toString();
     assert(() {
-      final String children = _childrenInTraversalOrder != null &&
-              _childrenInTraversalOrder!.isNotEmpty
-          ? '[${_childrenInTraversalOrder!.join(', ')}]'
-          : '<empty>';
+      final String children =
+          _childrenInTraversalOrder != null && _childrenInTraversalOrder!.isNotEmpty
+              ? '[${_childrenInTraversalOrder!.join(', ')}]'
+              : '<empty>';
       result = '$runtimeType(#$id, children: $children)';
       return true;
     }());
@@ -2118,8 +2115,9 @@ class EngineSemantics {
   static const String announcementsHostTagName = 'flt-announcement-host';
 
   /// Implements verbal accessibility announcements.
-  final AccessibilityAnnouncements accessibilityAnnouncements =
-      AccessibilityAnnouncements(hostElement: _initializeAccessibilityAnnouncementHost());
+  final AccessibilityAnnouncements accessibilityAnnouncements = AccessibilityAnnouncements(
+    hostElement: _initializeAccessibilityAnnouncementHost(),
+  );
 
   static DomElement _initializeAccessibilityAnnouncementHost() {
     final DomElement host = createDomElement(announcementsHostTagName);
@@ -2156,11 +2154,9 @@ class EngineSemantics {
     }
     final EngineAccessibilityFeatures original =
         EnginePlatformDispatcher.instance.configuration.accessibilityFeatures
-        as EngineAccessibilityFeatures;
-    final PlatformConfiguration newConfiguration =
-        EnginePlatformDispatcher.instance.configuration.copyWith(
-            accessibilityFeatures:
-                original.copyWith(accessibleNavigation: value));
+            as EngineAccessibilityFeatures;
+    final PlatformConfiguration newConfiguration = EnginePlatformDispatcher.instance.configuration
+        .copyWith(accessibilityFeatures: original.copyWith(accessibleNavigation: value));
     EnginePlatformDispatcher.instance.configuration = newConfiguration;
 
     _semanticsEnabled = value;
@@ -2372,10 +2368,7 @@ class EngineSemantics {
       return semanticsEnabled;
     }
 
-    const List<String> pointerDebouncedGestures = <String>[
-      'click',
-      'scroll',
-    ];
+    const List<String> pointerDebouncedGestures = <String>['click', 'scroll'];
 
     if (pointerDebouncedGestures.contains(eventType)) {
       return _gestureMode == GestureMode.browserGestures;
@@ -2548,7 +2541,8 @@ class EngineSemanticsOwner {
     }
 
     final bool isConsistent = _semanticsTree.keys.every(liveIds.keys.contains);
-    final String heading = 'The semantics node map is ${isConsistent ? 'consistent' : 'inconsistent'}';
+    final String heading =
+        'The semantics node map is ${isConsistent ? 'consistent' : 'inconsistent'}';
     final StringBuffer message = StringBuffer('$heading:\n');
     message.writeln('  Nodes in tree:');
     for (final MapEntry<int, List<int>> entry in liveIds.entries) {
@@ -2639,13 +2633,15 @@ AFTER: $description
             }
             if (child._parent == null) {
               throw AssertionError(
-                  'Child #$childId of parent #${object.id} has null parent '
-                  'reference.');
+                'Child #$childId of parent #${object.id} has null parent '
+                'reference.',
+              );
             }
             if (!identical(child._parent, object)) {
               throw AssertionError(
-                  'Parent #${object.id} has child #$childId. However, the '
-                  'child is attached to #${child._parent!.id}.');
+                'Parent #${object.id} has child #$childId. However, the '
+                'child is attached to #${child._parent!.id}.',
+              );
             }
           }
         }

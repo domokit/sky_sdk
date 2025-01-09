@@ -16,6 +16,7 @@ abstract class ProjectValidator {
   String get title;
   bool get machineOutput => false;
   bool supportsProject(FlutterProject project);
+
   /// Can return more than one result in case a file/command have a lot of info to share to the user
   Future<List<ProjectValidatorResult>> start(FlutterProject project);
 }
@@ -52,43 +53,40 @@ class VariableDumpMachineProjectValidator extends MachineProjectValidator {
 
   @override
   Future<List<ProjectValidatorResult>> start(FlutterProject project) async {
-    final FlutterVersion version = FlutterVersion(
-      flutterRoot: Cache.flutterRoot!,
-      fs: fileSystem,
-    );
+    final FlutterVersion version = FlutterVersion(flutterRoot: Cache.flutterRoot!, fs: fileSystem);
     final Map<String, Object?> result = <String, Object?>{
-      'FlutterProject.directory':         project.directory.absolute.path,
-      'FlutterProject.metadataFile':      project.metadataFile.absolute.path,
-      'FlutterProject.android.exists':    project.android.existsSync(),
-      'FlutterProject.ios.exists':        project.ios.exists,
-      'FlutterProject.web.exists':        project.web.existsSync(),
-      'FlutterProject.macos.exists':      project.macos.existsSync(),
-      'FlutterProject.linux.exists':      project.linux.existsSync(),
-      'FlutterProject.windows.exists':    project.windows.existsSync(),
-      'FlutterProject.fuchsia.exists':    project.fuchsia.existsSync(),
+      'FlutterProject.directory': project.directory.absolute.path,
+      'FlutterProject.metadataFile': project.metadataFile.absolute.path,
+      'FlutterProject.android.exists': project.android.existsSync(),
+      'FlutterProject.ios.exists': project.ios.exists,
+      'FlutterProject.web.exists': project.web.existsSync(),
+      'FlutterProject.macos.exists': project.macos.existsSync(),
+      'FlutterProject.linux.exists': project.linux.existsSync(),
+      'FlutterProject.windows.exists': project.windows.existsSync(),
+      'FlutterProject.fuchsia.exists': project.fuchsia.existsSync(),
 
-      'FlutterProject.android.isKotlin':  project.android.isKotlin,
-      'FlutterProject.ios.isSwift':       project.ios.isSwift,
+      'FlutterProject.android.isKotlin': project.android.isKotlin,
+      'FlutterProject.ios.isSwift': project.ios.isSwift,
 
-      'FlutterProject.isModule':          project.isModule,
-      'FlutterProject.isPlugin':          project.isPlugin,
+      'FlutterProject.isModule': project.isModule,
+      'FlutterProject.isPlugin': project.isPlugin,
 
-      'FlutterProject.manifest.appname':  project.manifest.appName,
+      'FlutterProject.manifest.appname': project.manifest.appName,
 
       // FlutterVersion
       'FlutterVersion.frameworkRevision': version.frameworkRevision,
 
       // Platform
-      'Platform.operatingSystem':         platform.operatingSystem,
-      'Platform.isAndroid':               platform.isAndroid,
-      'Platform.isIOS':                   platform.isIOS,
-      'Platform.isWindows':               platform.isWindows,
-      'Platform.isMacOS':                 platform.isMacOS,
-      'Platform.isFuchsia':               platform.isFuchsia,
-      'Platform.pathSeparator':           platform.pathSeparator,
+      'Platform.operatingSystem': platform.operatingSystem,
+      'Platform.isAndroid': platform.isAndroid,
+      'Platform.isIOS': platform.isIOS,
+      'Platform.isWindows': platform.isWindows,
+      'Platform.isMacOS': platform.isMacOS,
+      'Platform.isFuchsia': platform.isFuchsia,
+      'Platform.pathSeparator': platform.pathSeparator,
 
       // Cache
-      'Cache.flutterRoot':                Cache.flutterRoot,
+      'Cache.flutterRoot': Cache.flutterRoot,
     };
 
     return <ProjectValidatorResult>[
@@ -126,11 +124,13 @@ class GeneralInfoProjectValidator extends ProjectValidator {
       return result;
     }
     final ProjectValidatorResult supportedPlatformsResult = ProjectValidatorResult(
-        name: 'Supported Platforms',
-        value: supportedPlatforms,
-        status: StatusProjectValidator.success
+      name: 'Supported Platforms',
+      value: supportedPlatforms,
+      status: StatusProjectValidator.success,
     );
-    final ProjectValidatorResult isFlutterPackage = _isFlutterPackageValidatorResult(flutterManifest);
+    final ProjectValidatorResult isFlutterPackage = _isFlutterPackageValidatorResult(
+      flutterManifest,
+    );
     result.addAll(<ProjectValidatorResult>[supportedPlatformsResult, isFlutterPackage]);
     if (flutterManifest.flutterDescriptor.isNotEmpty) {
       result.add(_materialDesignResult(flutterManifest));
@@ -145,15 +145,15 @@ class GeneralInfoProjectValidator extends ProjectValidator {
     const String name = 'App Name';
     if (appName.isEmpty) {
       return const ProjectValidatorResult(
-          name: name,
-          value: 'name not found',
-          status: StatusProjectValidator.error
+        name: name,
+        value: 'name not found',
+        status: StatusProjectValidator.error,
       );
     }
     return ProjectValidatorResult(
-        name: name,
-        value: appName,
-        status: StatusProjectValidator.success
+      name: name,
+      value: appName,
+      status: StatusProjectValidator.success,
     );
   }
 
@@ -168,30 +168,29 @@ class GeneralInfoProjectValidator extends ProjectValidator {
       status = StatusProjectValidator.warning;
     }
 
-    return ProjectValidatorResult(
-        name: 'Is Flutter Package',
-        value: value,
-        status: status
-    );
+    return ProjectValidatorResult(name: 'Is Flutter Package', value: value, status: status);
   }
 
   ProjectValidatorResult _materialDesignResult(FlutterManifest flutterManifest) {
     return ProjectValidatorResult(
       name: 'Uses Material Design',
-      value: flutterManifest.usesMaterialDesign? 'yes' : 'no',
-      status: StatusProjectValidator.success
+      value: flutterManifest.usesMaterialDesign ? 'yes' : 'no',
+      status: StatusProjectValidator.success,
     );
   }
 
   String _getSupportedPlatforms(FlutterProject project) {
-    return project.getSupportedPlatforms().map((SupportedPlatform platform) => platform.name).join(', ');
+    return project
+        .getSupportedPlatforms()
+        .map((SupportedPlatform platform) => platform.name)
+        .join(', ');
   }
 
   ProjectValidatorResult _pluginValidatorResult(FlutterManifest flutterManifest) {
     return ProjectValidatorResult(
       name: 'Is Plugin',
-      value: flutterManifest.isPlugin? 'yes' : 'no',
-      status: StatusProjectValidator.success
+      value: flutterManifest.isPlugin ? 'yes' : 'no',
+      status: StatusProjectValidator.success,
     );
   }
 

@@ -14,20 +14,15 @@ class DisplayTexture extends Scenario {
   DisplayTexture(super.view);
 
   int get _textureId => scenarioParams['texture_id'] as int;
-  double get _textureWidth =>
-      (scenarioParams['texture_width'] as num).toDouble();
-  double get _textureHeight =>
-      (scenarioParams['texture_height'] as num).toDouble();
+  double get _textureWidth => (scenarioParams['texture_width'] as num).toDouble();
+  double get _textureHeight => (scenarioParams['texture_height'] as num).toDouble();
 
   @override
   void onBeginFrame(Duration duration) {
     final SceneBuilder builder = SceneBuilder();
     builder.addTexture(
       _textureId,
-      offset: Offset(
-        (view.physicalSize.width / 2.0) - (_textureWidth / 2.0),
-        0.0,
-      ),
+      offset: Offset((view.physicalSize.width / 2.0) - (_textureWidth / 2.0), 0.0),
       width: _textureWidth,
       height: _textureHeight,
     );
@@ -38,9 +33,7 @@ class DisplayTexture extends Scenario {
     sendJsonMessage(
       dispatcher: view.platformDispatcher,
       channel: 'display_data',
-      json: <String, dynamic>{
-        'data': 'ready',
-      },
+      json: <String, dynamic>{'data': 'ready'},
     );
   }
 }

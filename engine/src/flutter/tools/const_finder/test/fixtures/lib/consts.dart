@@ -59,7 +59,6 @@ class StaticConstInitializer {
     Target('104', 104, Target('105', 105, null)),
   };
 
-
   static const Map<int, Target> targetMap = <int, Target>{
     0: Target('106', 106, null),
     1: Target('107', 107, Target('108', 108, null)),

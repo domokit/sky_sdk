@@ -16,9 +16,7 @@ void main() {
 Future<void> testMain() async {
   group('$BidiFragmenter', () {
     test('empty string', () {
-      expect(split(''), <_Bidi>[
-        _Bidi('', null, ffPrevious),
-      ]);
+      expect(split(''), <_Bidi>[_Bidi('', null, ffPrevious)]);
     });
 
     test('basic cases', () {
@@ -73,9 +71,7 @@ Future<void> testMain() async {
     });
 
     test('spaces', () {
-      expect(split('    '), <_Bidi>[
-        _Bidi('    ', null, ffSandwich),
-      ]);
+      expect(split('    '), <_Bidi>[_Bidi('    ', null, ffSandwich)]);
     });
 
     test('symbols', () {
@@ -193,6 +189,6 @@ class _Bidi {
 List<_Bidi> split(String text) {
   return <_Bidi>[
     for (final BidiFragment bidiFragment in BidiFragmenter(text).fragment())
-      _Bidi.fromBidiFragment(text, bidiFragment)
+      _Bidi.fromBidiFragment(text, bidiFragment),
   ];
 }

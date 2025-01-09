@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 import 'dart:js_util' as js_util;
 import 'dart:typed_data';
 import 'package:test/bootstrap/browser.dart';
@@ -110,8 +109,7 @@ void testMain() {
       expect(path.toRect(), null);
     });
 
-    test('Should detect non rectangular path if there are multiple subpaths',
-        () {
+    test('Should detect non rectangular path if there are multiple subpaths', () {
       final SurfacePath path = SurfacePath();
       path.addRect(const Rect.fromLTWH(1.0, 2.0, 3.0, 4.0));
       path.addRect(const Rect.fromLTWH(5.0, 6.0, 7.0, 8.0));
@@ -120,13 +118,19 @@ void testMain() {
 
     test('Should detect rounded rectangular path', () {
       final SurfacePath path = SurfacePath();
-      path.addRRect(RRect.fromRectAndRadius(
+      path.addRRect(
+        RRect.fromRectAndRadius(
           const Rect.fromLTRB(1.0, 2.0, 30.0, 40.0),
-          const Radius.circular(2.0)));
+          const Radius.circular(2.0),
+        ),
+      );
       expect(
-          path.toRoundedRect(),
-          RRect.fromRectAndRadius(const Rect.fromLTRB(1.0, 2.0, 30.0, 40.0),
-              const Radius.circular(2.0)));
+        path.toRoundedRect(),
+        RRect.fromRectAndRadius(
+          const Rect.fromLTRB(1.0, 2.0, 30.0, 40.0),
+          const Radius.circular(2.0),
+        ),
+      );
     });
 
     test('Should detect non rounded rectangular path if empty', () {
@@ -140,14 +144,21 @@ void testMain() {
       expect(path.toRoundedRect(), null);
     });
 
-    test(
-        'Should detect non rounded  rectangular path if there are '
+    test('Should detect non rounded  rectangular path if there are '
         'multiple subpaths', () {
       final SurfacePath path = SurfacePath();
-      path.addRRect(RRect.fromRectAndRadius(
-          const Rect.fromLTWH(1.0, 2.0, 3.0, 4.0), const Radius.circular(2.0)));
-      path.addRRect(RRect.fromRectAndRadius(
-          const Rect.fromLTWH(1.0, 2.0, 3.0, 4.0), const Radius.circular(2.0)));
+      path.addRRect(
+        RRect.fromRectAndRadius(
+          const Rect.fromLTWH(1.0, 2.0, 3.0, 4.0),
+          const Radius.circular(2.0),
+        ),
+      );
+      path.addRRect(
+        RRect.fromRectAndRadius(
+          const Rect.fromLTWH(1.0, 2.0, 3.0, 4.0),
+          const Radius.circular(2.0),
+        ),
+      );
       expect(path.toRoundedRect(), null);
     });
 
@@ -173,52 +184,64 @@ void testMain() {
     test('Should compute bounds for addRRect', () {
       SurfacePath path = SurfacePath();
       const Rect bounds = Rect.fromLTRB(30, 40, 400, 300);
-      RRect rrect = RRect.fromRectAndCorners(bounds,
-          topLeft: const Radius.elliptical(1, 2),
-          topRight: const Radius.elliptical(3, 4),
-          bottomLeft: const Radius.elliptical(5, 6),
-          bottomRight: const Radius.elliptical(7, 8));
+      RRect rrect = RRect.fromRectAndCorners(
+        bounds,
+        topLeft: const Radius.elliptical(1, 2),
+        topRight: const Radius.elliptical(3, 4),
+        bottomLeft: const Radius.elliptical(5, 6),
+        bottomRight: const Radius.elliptical(7, 8),
+      );
       path.addRRect(rrect);
       expect(path.getBounds(), bounds);
       expect(path.toRoundedRect(), rrect);
       path = SurfacePath();
-      rrect = RRect.fromRectAndCorners(bounds,
-          topLeft: const Radius.elliptical(0, 2),
-          topRight: const Radius.elliptical(3, 4),
-          bottomLeft: const Radius.elliptical(5, 6),
-          bottomRight: const Radius.elliptical(7, 8));
+      rrect = RRect.fromRectAndCorners(
+        bounds,
+        topLeft: const Radius.elliptical(0, 2),
+        topRight: const Radius.elliptical(3, 4),
+        bottomLeft: const Radius.elliptical(5, 6),
+        bottomRight: const Radius.elliptical(7, 8),
+      );
       path.addRRect(rrect);
       expect(path.getBounds(), bounds);
       expect(path.toRoundedRect(), rrect);
       path = SurfacePath();
-      rrect = RRect.fromRectAndCorners(bounds,
-          topRight: const Radius.elliptical(3, 4),
-          bottomLeft: const Radius.elliptical(5, 6),
-          bottomRight: const Radius.elliptical(7, 8));
+      rrect = RRect.fromRectAndCorners(
+        bounds,
+        topRight: const Radius.elliptical(3, 4),
+        bottomLeft: const Radius.elliptical(5, 6),
+        bottomRight: const Radius.elliptical(7, 8),
+      );
       path.addRRect(rrect);
       expect(path.getBounds(), bounds);
       expect(path.toRoundedRect(), rrect);
       path = SurfacePath();
-      rrect = RRect.fromRectAndCorners(bounds,
-          topLeft: const Radius.elliptical(1, 2),
-          bottomLeft: const Radius.elliptical(5, 6),
-          bottomRight: const Radius.elliptical(7, 8));
+      rrect = RRect.fromRectAndCorners(
+        bounds,
+        topLeft: const Radius.elliptical(1, 2),
+        bottomLeft: const Radius.elliptical(5, 6),
+        bottomRight: const Radius.elliptical(7, 8),
+      );
       path.addRRect(rrect);
       expect(path.getBounds(), bounds);
       expect(path.toRoundedRect(), rrect);
       path = SurfacePath();
-      rrect = RRect.fromRectAndCorners(bounds,
-          topLeft: const Radius.elliptical(1, 2),
-          topRight: const Radius.elliptical(3, 4),
-          bottomRight: const Radius.elliptical(7, 8));
+      rrect = RRect.fromRectAndCorners(
+        bounds,
+        topLeft: const Radius.elliptical(1, 2),
+        topRight: const Radius.elliptical(3, 4),
+        bottomRight: const Radius.elliptical(7, 8),
+      );
       path.addRRect(rrect);
       expect(path.getBounds(), bounds);
       expect(path.toRoundedRect(), rrect);
       path = SurfacePath();
-      rrect = RRect.fromRectAndCorners(bounds,
-          topLeft: const Radius.elliptical(1, 2),
-          topRight: const Radius.elliptical(3, 4),
-          bottomLeft: const Radius.elliptical(5, 6));
+      rrect = RRect.fromRectAndCorners(
+        bounds,
+        topLeft: const Radius.elliptical(1, 2),
+        topRight: const Radius.elliptical(3, 4),
+        bottomLeft: const Radius.elliptical(5, 6),
+      );
       path.addRRect(rrect);
       expect(path.getBounds(), bounds);
       expect(path.toRoundedRect(), rrect);
@@ -243,7 +266,7 @@ void testMain() {
         Offset(250, 100),
         Offset(152, 180),
         Offset(159, 200),
-        Offset(151, 190)
+        Offset(151, 190),
       ], true);
       expect(path.getBounds(), const Rect.fromLTRB(50, 100, 250, 200));
     });
@@ -253,30 +276,27 @@ void testMain() {
       path1.moveTo(285.2, 682.1);
       path1.quadraticBezierTo(432.0, 431.4, 594.9, 681.2);
       expect(
-          path1.getBounds(),
-          within<Rect>(
-              distance: 0.1,
-              from: const Rect.fromLTRB(285.2, 556.5, 594.9, 682.1)));
+        path1.getBounds(),
+        within<Rect>(distance: 0.1, from: const Rect.fromLTRB(285.2, 556.5, 594.9, 682.1)),
+      );
 
       // Control point below start , end.
       final SurfacePath path2 = SurfacePath();
       path2.moveTo(285.2, 682.1);
       path2.quadraticBezierTo(447.4, 946.8, 594.9, 681.2);
       expect(
-          path2.getBounds(),
-          within<Rect>(
-              distance: 0.1,
-              from: const Rect.fromLTRB(285.2, 681.2, 594.9, 814.2)));
+        path2.getBounds(),
+        within<Rect>(distance: 0.1, from: const Rect.fromLTRB(285.2, 681.2, 594.9, 814.2)),
+      );
 
       // Control point to the right of end point.
       final SurfacePath path3 = SurfacePath();
       path3.moveTo(468.3, 685.6);
       path3.quadraticBezierTo(644.7, 555.2, 594.9, 681.2);
       expect(
-          path3.getBounds(),
-          within<Rect>(
-              distance: 0.1,
-              from: const Rect.fromLTRB(468.3, 619.3, 605.9, 685.6)));
+        path3.getBounds(),
+        within<Rect>(distance: 0.1, from: const Rect.fromLTRB(468.3, 619.3, 605.9, 685.6)),
+      );
     });
 
     test('Should compute bounds for cubicTo', () {
@@ -284,70 +304,63 @@ void testMain() {
       path1.moveTo(220, 300);
       path1.cubicTo(230, 120, 400, 125, 410, 280);
       expect(
-          path1.getBounds(),
-          within<Rect>(
-              distance: 0.1,
-              from: const Rect.fromLTRB(220.0, 164.3, 410.0, 300.0)));
+        path1.getBounds(),
+        within<Rect>(distance: 0.1, from: const Rect.fromLTRB(220.0, 164.3, 410.0, 300.0)),
+      );
 
       // control point 1 to the right of control point 2
       final SurfacePath path2 = SurfacePath();
       path2.moveTo(220, 300);
       path2.cubicTo(564.2, 13.7, 400.0, 125.0, 410.0, 280.0);
       expect(
-          path2.getBounds(),
-          within<Rect>(
-              distance: 0.1,
-              from: const Rect.fromLTRB(220.0, 122.8, 440.5, 300.0)));
+        path2.getBounds(),
+        within<Rect>(distance: 0.1, from: const Rect.fromLTRB(220.0, 122.8, 440.5, 300.0)),
+      );
 
       // control point 1 to the right of control point 2 inflection
       final SurfacePath path3 = SurfacePath();
       path3.moveTo(220, 300);
       path3.cubicTo(839.8, 67.9, 400.0, 125.0, 410.0, 280.0);
       expect(
-          path3.getBounds(),
-          within<Rect>(
-              distance: 0.1,
-              from: const Rect.fromLTRB(220.0, 144.5, 552.1, 300.0)));
+        path3.getBounds(),
+        within<Rect>(distance: 0.1, from: const Rect.fromLTRB(220.0, 144.5, 552.1, 300.0)),
+      );
 
       // control point 1 below and between start and end points
       final SurfacePath path4 = SurfacePath();
       path4.moveTo(220.0, 300.0);
       path4.cubicTo(354.8, 388.3, 400.0, 125.0, 410.0, 280.0);
       expect(
-          path4.getBounds(),
-          within<Rect>(
-              distance: 0.1,
-              from: const Rect.fromLTRB(220.0, 230.0, 410.0, 318.6)));
+        path4.getBounds(),
+        within<Rect>(distance: 0.1, from: const Rect.fromLTRB(220.0, 230.0, 410.0, 318.6)),
+      );
 
       // control points inverted below
       final SurfacePath path5 = SurfacePath();
       path5.moveTo(220.0, 300.0);
       path5.cubicTo(366.5, 487.3, 256.4, 489.9, 410.0, 280.0);
       expect(
-          path5.getBounds(),
-          within<Rect>(
-              distance: 0.1,
-              from: const Rect.fromLTRB(220.0, 280.0, 410.0, 439.0)));
+        path5.getBounds(),
+        within<Rect>(distance: 0.1, from: const Rect.fromLTRB(220.0, 280.0, 410.0, 439.0)),
+      );
 
       // control points inverted below wide
       final SurfacePath path6 = SurfacePath();
       path6.moveTo(220.0, 300.0);
       path6.cubicTo(496.1, 485.5, 121.4, 491.6, 410.0, 280.0);
       expect(
-          path6.getBounds(),
-          within<Rect>(
-              distance: 0.1,
-              from: const Rect.fromLTRB(220.0, 280.0, 410.0, 439.0)));
+        path6.getBounds(),
+        within<Rect>(distance: 0.1, from: const Rect.fromLTRB(220.0, 280.0, 410.0, 439.0)),
+      );
 
       // control point 2 and end point swapped
       final SurfacePath path7 = SurfacePath();
       path7.moveTo(220.0, 300.0);
       path7.cubicTo(230.0, 120.0, 394.5, 296.1, 382.3, 124.1);
       expect(
-          path7.getBounds(),
-          within<Rect>(
-              distance: 0.1,
-              from: const Rect.fromLTRB(220.0, 124.1, 382.9, 300.0)));
+        path7.getBounds(),
+        within<Rect>(distance: 0.1, from: const Rect.fromLTRB(220.0, 124.1, 382.9, 300.0)),
+      );
     });
 
     // Regression test for https://github.com/flutter/flutter/issues/46813.
@@ -394,34 +407,39 @@ void testMain() {
     test('Computes contains for cubic curves', () {
       final Path path = Path();
       path.moveTo(10, 25);
-      path.cubicTo(10, 20, 10, 20,  20, 15);
+      path.cubicTo(10, 20, 10, 20, 20, 15);
       path.lineTo(25, 20);
-      path.cubicTo(30, 20, 30, 20,  30, 25);
+      path.cubicTo(30, 20, 30, 20, 30, 25);
       path.lineTo(30, 35);
-      path.cubicTo(30, 40, 30, 40,  25, 40);
+      path.cubicTo(30, 40, 30, 40, 25, 40);
       path.lineTo(15, 40);
-      path.cubicTo(10, 40, 10,  40, 10, 35);
+      path.cubicTo(10, 40, 10, 40, 10, 35);
       path.close();
       expect(path.contains(const Offset(10, 20)), isFalse);
       expect(path.contains(const Offset(30, 40)), isFalse);
     });
 
     // Regression test for https://github.com/flutter/flutter/issues/44470
-    test('Should handle contains for devicepixelratio != 1.0', () {
-      js_util.setProperty(domWindow, 'devicePixelRatio', 4.0);
-      EngineFlutterDisplay.instance.debugOverrideDevicePixelRatio(4.0);
-      final Path path = Path()
-        ..moveTo(50, 0)
-        ..lineTo(100, 100)
-        ..lineTo(0, 100)
-        ..lineTo(50, 0)
-        ..close();
-      expect(path.contains(const Offset(50, 50)), isTrue);
-      js_util.setProperty(domWindow, 'devicePixelRatio', 1.0);
-      EngineFlutterDisplay.instance.debugOverrideDevicePixelRatio(1.0);
-      // TODO(ferhat): Investigate failure on CI. Locally this passes.
-      // [Exception... "Failure"  nsresult: "0x80004005 (NS_ERROR_FAILURE)"
-    }, skip: ui_web.browser.browserEngine == ui_web.BrowserEngine.firefox);
+    test(
+      'Should handle contains for devicepixelratio != 1.0',
+      () {
+        js_util.setProperty(domWindow, 'devicePixelRatio', 4.0);
+        EngineFlutterDisplay.instance.debugOverrideDevicePixelRatio(4.0);
+        final Path path =
+            Path()
+              ..moveTo(50, 0)
+              ..lineTo(100, 100)
+              ..lineTo(0, 100)
+              ..lineTo(50, 0)
+              ..close();
+        expect(path.contains(const Offset(50, 50)), isTrue);
+        js_util.setProperty(domWindow, 'devicePixelRatio', 1.0);
+        EngineFlutterDisplay.instance.debugOverrideDevicePixelRatio(1.0);
+        // TODO(ferhat): Investigate failure on CI. Locally this passes.
+        // [Exception... "Failure"  nsresult: "0x80004005 (NS_ERROR_FAILURE)"
+      },
+      skip: ui_web.browser.browserEngine == ui_web.BrowserEngine.firefox,
+    );
 
     // Path contains should handle case where invalid RRect with large
     // corner radius is used for hit test. Use case is a RenderPhysicalShape
@@ -431,8 +449,8 @@ void testMain() {
     // Regression test for https://github.com/flutter/flutter/issues/48887
     test('Should hit test correctly for malformed rrect', () {
       // Correctly formed rrect.
-      final Path path1 = Path()
-        ..addRRect(RRect.fromLTRBR(50, 50, 100, 100, const Radius.circular(20)));
+      final Path path1 =
+          Path()..addRRect(RRect.fromLTRBR(50, 50, 100, 100, const Radius.circular(20)));
       expect(path1.contains(const Offset(75, 75)), isTrue);
       expect(path1.contains(const Offset(52, 75)), isTrue);
       expect(path1.contains(const Offset(50, 50)), isFalse);
@@ -440,8 +458,8 @@ void testMain() {
       expect(path1.contains(const Offset(100, 100)), isFalse);
       expect(path1.contains(const Offset(50, 100)), isFalse);
 
-      final Path path2 = Path()
-        ..addRRect(RRect.fromLTRBR(50, 50, 100, 100, const Radius.circular(100)));
+      final Path path2 =
+          Path()..addRRect(RRect.fromLTRBR(50, 50, 100, 100, const Radius.circular(100)));
       expect(path2.contains(const Offset(75, 75)), isTrue);
       expect(path2.contains(const Offset(52, 75)), isTrue);
       expect(path2.contains(const Offset(50, 50)), isFalse);
@@ -459,13 +477,19 @@ void testMain() {
       expect(path.pathRef.segmentMasks, 0);
       path.lineTo(200, 40);
       path.pathRef.computeSegmentMask();
-      expect(
-          path.pathRef.segmentMasks, SPathSegmentMask.kLine_SkPathSegmentMask);
+      expect(path.pathRef.segmentMasks, SPathSegmentMask.kLine_SkPathSegmentMask);
     });
 
     test('Should convert conic to quad when approximation error is small', () {
-      final Conic conic = Conic(120.0, 20.0, 160.99470420829266, 20.0,
-          190.19301120261332, 34.38770865870253, 0.9252691032413082);
+      final Conic conic = Conic(
+        120.0,
+        20.0,
+        160.99470420829266,
+        20.0,
+        190.19301120261332,
+        34.38770865870253,
+        0.9252691032413082,
+      );
       expect(conic.toQuads().length, 3);
     });
 
@@ -555,15 +579,17 @@ void testMain() {
 
     /// Regression test for https://github.com/flutter/flutter/issues/68702.
     test('Path should return correct bounds after transform', () {
-      final Path path1 = Path()
-        ..moveTo(100, 100)
-        ..lineTo(200, 100)
-        ..lineTo(150, 200)
-        ..close();
+      final Path path1 =
+          Path()
+            ..moveTo(100, 100)
+            ..lineTo(200, 100)
+            ..lineTo(150, 200)
+            ..close();
       final SurfacePath path2 = Path.from(path1) as SurfacePath;
       final Rect bounds = path2.pathRef.getBounds();
       final SurfacePath transformedPath = path2.transform(
-          Matrix4.identity().scaled(0.5, 0.5).toFloat64());
+        Matrix4.identity().scaled(0.5, 0.5).toFloat64(),
+      );
       expect(transformedPath.pathRef.getBounds(), isNot(bounds));
     });
   });

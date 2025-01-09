@@ -31,9 +31,7 @@ class ExampleWidget extends StatelessWidget {
       'C8H10N4O2',
       style: TextStyle(
         fontFamily: 'Piazzolla',
-        fontFeatures: <FontFeature>[
-          FontFeature.scientificInferiors(),
-        ],
+        fontFeatures: <FontFeature>[FontFeature.scientificInferiors()],
       ),
     );
   }

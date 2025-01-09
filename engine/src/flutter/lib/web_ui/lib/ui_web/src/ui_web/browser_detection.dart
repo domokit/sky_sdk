@@ -14,8 +14,10 @@ enum BrowserEngine {
   /// Blink is assumed in case when a more precise browser engine wasn't
   /// detected.
   blink,
+
   /// The engine that powers Safari.
   webkit,
+
   /// The engine that powers Firefox.
   firefox,
 }
@@ -27,14 +29,19 @@ enum BrowserEngine {
 enum OperatingSystem {
   /// iOS: <http://www.apple.com/ios/>
   iOs,
+
   /// Android: <https://www.android.com/>
   android,
+
   /// Linux: <https://www.linux.org/>
   linux,
+
   /// Windows: <https://www.microsoft.com/windows/>
   windows,
+
   /// MacOs: <https://www.apple.com/macos/>
   macOs,
+
   /// We were unable to detect the current operating system.
   unknown,
 }
@@ -114,7 +121,8 @@ class BrowserDetection {
 
     // Assume Blink otherwise, but issue a warning.
     print(
-        'WARNING: failed to detect current browser engine. Assuming this is a Chromium-compatible browser.');
+      'WARNING: failed to detect current browser engine. Assuming this is a Chromium-compatible browser.',
+    );
     return BrowserEngine.blink;
   }
 
@@ -139,18 +147,14 @@ class BrowserDetection {
 
   /// Detects operating system using platform and UA used for unit testing.
   @visibleForTesting
-  OperatingSystem detectOperatingSystem({
-    String? overridePlatform,
-    int? overrideMaxTouchPoints,
-  }) {
+  OperatingSystem detectOperatingSystem({String? overridePlatform, int? overrideMaxTouchPoints}) {
     final String platform = overridePlatform ?? domWindow.navigator.platform!;
 
     if (platform.startsWith('Mac')) {
       // iDevices requesting a "desktop site" spoof their UA so it looks like a Mac.
       // This checks if we're in a touch device, or on a real mac.
-      final int maxTouchPoints = overrideMaxTouchPoints ??
-          domWindow.navigator.maxTouchPoints?.toInt() ??
-          0;
+      final int maxTouchPoints =
+          overrideMaxTouchPoints ?? domWindow.navigator.maxTouchPoints?.toInt() ?? 0;
       if (maxTouchPoints > 2) {
         return OperatingSystem.iOs;
       }

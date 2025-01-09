@@ -11,10 +11,11 @@ const String kPackageName = 'com.example.macrobenchmarks';
 
 class FastScrollLargeImagesMemoryTest extends MemoryTest {
   FastScrollLargeImagesMemoryTest()
-      : super(
-          '${flutterDirectory.path}/dev/benchmarks/macrobenchmarks',
-          'test_memory/large_images.dart', kPackageName,
-        );
+    : super(
+        '${flutterDirectory.path}/dev/benchmarks/macrobenchmarks',
+        'test_memory/large_images.dart',
+        kPackageName,
+      );
 
   @override
   AndroidDevice? get device => super.device as AndroidDevice?;

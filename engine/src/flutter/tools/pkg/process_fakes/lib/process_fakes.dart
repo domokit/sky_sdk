@@ -17,7 +17,9 @@ final class FakeProcessManager implements ProcessManager {
     io.ProcessResult Function(List<String> command) onRun = unhandledRun,
     io.Process Function(List<String> command) onStart = unhandledStart,
     bool Function(Object?, {String? workingDirectory}) canRun = unhandledCanRun,
-  }) : _onRun = onRun, _onStart = onStart, _canRun = canRun;
+  }) : _onRun = onRun,
+       _onStart = onStart,
+       _canRun = canRun;
 
   /// A default implementation of [onRun] that throws an [UnsupportedError].
   static io.ProcessResult unhandledRun(List<String> command) {
@@ -96,14 +98,11 @@ final class FakeProcessManager implements ProcessManager {
 /// An incomplete fake of [io.Process] that allows control for testing.
 final class FakeProcess implements io.Process {
   /// Creates a fake process that returns the given [exitCode] and out/err.
-  FakeProcess({
-    int exitCode = 0,
-    String stdout = '',
-    String stderr = '',
-  })  : _exitCode = exitCode,
-        _stdout = stdout,
-        _stderr = stderr,
-        _stdin = io.IOSink(StreamController<List<int>>.broadcast().sink);
+  FakeProcess({int exitCode = 0, String stdout = '', String stderr = ''})
+    : _exitCode = exitCode,
+      _stdout = stdout,
+      _stderr = stderr,
+      _stdin = io.IOSink(StreamController<List<int>>.broadcast().sink);
 
   final int _exitCode;
   final String _stdout;

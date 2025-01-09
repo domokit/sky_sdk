@@ -19,10 +19,8 @@ const String _appDelegateFileAfter = r'''
 /// See:
 /// https://github.com/apple/swift-evolution/blob/main/proposals/0383-deprecate-uiapplicationmain-and-nsapplicationmain.md
 class UIApplicationMainDeprecationMigration extends ProjectMigrator {
-  UIApplicationMainDeprecationMigration(
-    IosProject project,
-    super.logger,
-  ) : _appDelegateSwift = project.appDelegateSwift;
+  UIApplicationMainDeprecationMigration(IosProject project, super.logger)
+    : _appDelegateSwift = project.appDelegateSwift;
 
   final File _appDelegateSwift;
 
@@ -30,9 +28,7 @@ class UIApplicationMainDeprecationMigration extends ProjectMigrator {
   Future<void> migrate() async {
     // Skip this migration if the project uses Objective-C.
     if (!_appDelegateSwift.existsSync()) {
-      logger.printTrace(
-        'ios/Runner/AppDelegate.swift not found, skipping @main migration.',
-      );
+      logger.printTrace('ios/Runner/AppDelegate.swift not found, skipping @main migration.');
       return;
     }
 

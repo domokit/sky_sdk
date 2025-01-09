@@ -20,9 +20,10 @@ final path.Context urlContext = path.url;
 String camelCase(String str) {
   int index = str.indexOf('_');
   while (index != -1 && index < str.length - 2) {
-    str = str.substring(0, index) +
-      str.substring(index + 1, index + 2).toUpperCase() +
-      str.substring(index + 2);
+    str =
+        str.substring(0, index) +
+        str.substring(index + 1, index + 2).toUpperCase() +
+        str.substring(index + 2);
     index = str.indexOf('_');
   }
   return str;
@@ -42,8 +43,10 @@ String snakeCase(String str) {
 
 /// Convert `fooBar` to `foo[sep]bar`.
 String _reCase(String str, String sep) {
-  return str.replaceAllMapped(_upperRegex,
-      (Match m) => '${m.start == 0 ? '' : sep}${m[0]!.toLowerCase()}');
+  return str.replaceAllMapped(
+    _upperRegex,
+    (Match m) => '${m.start == 0 ? '' : sep}${m[0]!.toLowerCase()}',
+  );
 }
 
 abstract interface class CliEnum implements Enum {
@@ -52,9 +55,7 @@ abstract interface class CliEnum implements Enum {
 
   static Map<String, String> allowedHelp<T extends CliEnum>(List<T> values) =>
       Map<String, String>.fromEntries(
-        values.map(
-          (T e) => MapEntry<String, String>(e.cliName, e.helpText),
-        ),
+        values.map((T e) => MapEntry<String, String>(e.cliName, e.helpText)),
       );
 }
 
@@ -96,9 +97,10 @@ String getElapsedAsMilliseconds(Duration duration) {
 }
 
 /// Return a platform-appropriate [String] representing the size of the given number of bytes.
-String getSizeAsPlatformMB(int bytesLength, {
-    @visibleForTesting Platform platform = const LocalPlatform()
-  }) {
+String getSizeAsPlatformMB(
+  int bytesLength, {
+  @visibleForTesting Platform platform = const LocalPlatform(),
+}) {
   // Because Windows displays 'MB' but actually reports MiB, we calculate MiB
   // accordingly on Windows.
   final int bytesInPlatformMB = platform.isWindows ? 1024 * 1024 : 1000 * 1000;
@@ -109,7 +111,7 @@ String getSizeAsPlatformMB(int bytesLength, {
 /// removed, and calculate a diff of changes when a new list of items is
 /// available.
 class ItemListNotifier<T> {
-  ItemListNotifier(): _items = <T>{}, _isPopulated = false;
+  ItemListNotifier() : _items = <T>{}, _isPopulated = false;
 
   ItemListNotifier.from(List<T> items) : _items = Set<T>.of(items), _isPopulated = true;
 
@@ -176,9 +178,13 @@ class SettingsFile {
 
   void writeContents(File file) {
     file.parent.createSync(recursive: true);
-    file.writeAsStringSync(values.keys.map<String>((String key) {
-      return '$key=${values[key]}';
-    }).join('\n'));
+    file.writeAsStringSync(
+      values.keys
+          .map<String>((String key) {
+            return '$key=${values[key]}';
+          })
+          .join('\n'),
+    );
   }
 }
 
@@ -227,7 +233,8 @@ const int kMinColumnWidth = 10;
 /// If the amount of indentation (from the text, [indent], and [hangingIndent])
 /// is such that less than [kMinColumnWidth] characters can fit in the
 /// [columnWidth], then the indent is truncated to allow the text to fit.
-String wrapText(String text, {
+String wrapText(
+  String text, {
   required int columnWidth,
   required bool shouldWrap,
   int? hangingIndent,
@@ -257,11 +264,13 @@ String wrapText(String text, {
       notIndented = <String>[firstLineWrap.removeAt(0)];
       trimmedText = trimmedText.substring(notIndented[0].length).trimLeft();
       if (trimmedText.isNotEmpty) {
-        notIndented.addAll(_wrapTextAsLines(
-          trimmedText,
-          columnWidth: columnWidth - leadingWhitespace.length - indent - hangingIndent,
-          shouldWrap: shouldWrap,
-        ));
+        notIndented.addAll(
+          _wrapTextAsLines(
+            trimmedText,
+            columnWidth: columnWidth - leadingWhitespace.length - indent - hangingIndent,
+            shouldWrap: shouldWrap,
+          ),
+        );
       }
     } else {
       notIndented = _wrapTextAsLines(
@@ -272,21 +281,24 @@ String wrapText(String text, {
     }
     String? hangingIndentString;
     final String indentString = ' ' * indent;
-    result.addAll(notIndented.map<String>(
-      (String line) {
+    result.addAll(
+      notIndented.map<String>((String line) {
         // Don't return any lines with just whitespace on them.
         if (line.isEmpty) {
           return '';
         }
         String truncatedIndent = '$indentString${hangingIndentString ?? ''}$leadingWhitespace';
         if (truncatedIndent.length > columnWidth - kMinColumnWidth) {
-          truncatedIndent = truncatedIndent.substring(0, math.max(columnWidth - kMinColumnWidth, 0));
+          truncatedIndent = truncatedIndent.substring(
+            0,
+            math.max(columnWidth - kMinColumnWidth, 0),
+          );
         }
         final String result = '$truncatedIndent$line';
         hangingIndentString ??= ' ' * hangingIndent!;
         return result;
-      },
-    ));
+      }),
+    );
   }
   return result.join('\n');
 }
@@ -317,7 +329,8 @@ class _AnsiRun {
 /// If [outputPreferences.wrapText] is false, then the text will be returned
 /// split at the newlines, but not wrapped. If [shouldWrap] is specified,
 /// then it overrides the [outputPreferences.wrapText] setting.
-List<String> _wrapTextAsLines(String text, {
+List<String> _wrapTextAsLines(
+  String text, {
   int start = 0,
   required int columnWidth,
   required bool shouldWrap,
@@ -358,7 +371,7 @@ List<String> _wrapTextAsLines(String text, {
     return result;
   }
 
-  String joinRun(List<_AnsiRun> list, int start, [ int? end ]) {
+  String joinRun(List<_AnsiRun> list, int start, [int? end]) {
     return list.sublist(start, end).map<String>((_AnsiRun run) => run.original).join().trim();
   }
 
@@ -476,7 +489,10 @@ String interpolateString(String toInterpolate, Map<String, String> replacementVa
 /// final interpolated2 = _interpolateString(['ping', '-n', '1', r'${_host}'], {'host': 'raspberrypi'});
 /// print(interpolated2); // will print '[ping, -n, 1, ]'
 /// ```
-List<String> interpolateStringList(List<String> toInterpolate, Map<String, String> replacementValues) {
+List<String> interpolateStringList(
+  List<String> toInterpolate,
+  Map<String, String> replacementValues,
+) {
   return toInterpolate.map((String s) => interpolateString(s, replacementValues)).toList();
 }
 

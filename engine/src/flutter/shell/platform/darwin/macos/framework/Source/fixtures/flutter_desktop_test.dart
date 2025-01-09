@@ -83,6 +83,5 @@ void backgroundTest() {
 
 @pragma('vm:entry-point')
 void sendFooMessage() {
-  PlatformDispatcher.instance
-      .sendPlatformMessage('foo', null, (ByteData? result) {});
+  PlatformDispatcher.instance.sendPlatformMessage('foo', null, (ByteData? result) {});
 }

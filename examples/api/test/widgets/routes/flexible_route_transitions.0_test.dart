@@ -7,9 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Flexible Transitions App is able to build', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.FlexibleRouteTransitionsApp(),
-    );
+    await tester.pumpWidget(const example.FlexibleRouteTransitionsApp());
 
     expect(find.text('Zoom Page'), findsOneWidget);
     expect(find.text('Zoom Transition'), findsOneWidget);
@@ -24,10 +22,10 @@ void main() {
     expect(find.text('Cupertino Page'), findsOneWidget);
   });
 
-  testWidgets('A vertical slide animation is passed to the previous route', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.FlexibleRouteTransitionsApp(),
-    );
+  testWidgets('A vertical slide animation is passed to the previous route', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.FlexibleRouteTransitionsApp());
 
     expect(find.text('Zoom Page'), findsOneWidget);
 

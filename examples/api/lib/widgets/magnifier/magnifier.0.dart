@@ -30,16 +30,14 @@ class _MagnifierExampleAppState extends State<MagnifierExampleApp> {
                 child: Stack(
                   children: <Widget>[
                     GestureDetector(
-                      onPanUpdate: (DragUpdateDetails details) => setState(
-                        () {
-                          dragGesturePosition = details.localPosition;
-                        },
-                      ),
-                      onPanDown: (DragDownDetails details) => setState(
-                        () {
-                          dragGesturePosition = details.localPosition;
-                        },
-                      ),
+                      onPanUpdate:
+                          (DragUpdateDetails details) => setState(() {
+                            dragGesturePosition = details.localPosition;
+                          }),
+                      onPanDown:
+                          (DragDownDetails details) => setState(() {
+                            dragGesturePosition = details.localPosition;
+                          }),
                       child: const FlutterLogo(size: 200),
                     ),
                     Positioned(
@@ -47,14 +45,12 @@ class _MagnifierExampleAppState extends State<MagnifierExampleApp> {
                       top: dragGesturePosition.dy - magnifierRadius,
                       child: const RawMagnifier(
                         decoration: MagnifierDecoration(
-                          shape: CircleBorder(
-                            side: BorderSide(color: Colors.pink, width: 3),
-                          ),
+                          shape: CircleBorder(side: BorderSide(color: Colors.pink, width: 3)),
                         ),
                         size: Size(magnifierRadius * 2, magnifierRadius * 2),
                         magnificationScale: 2,
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),

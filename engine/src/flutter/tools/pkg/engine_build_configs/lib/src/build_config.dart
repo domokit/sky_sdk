@@ -49,19 +49,11 @@ final class BuilderConfig extends BuildConfigBase {
   ///
   /// [path] should be the file system path to the file that the JSON data comes
   /// from. [map] must be the JSON data returned by e.g. `JsonDecoder.convert`.
-  factory BuilderConfig.fromJson({
-    required String path,
-    required Map<String, Object?> map,
-  }) {
+  factory BuilderConfig.fromJson({required String path, required Map<String, Object?> map}) {
     final List<String> errors = <String>[];
 
     // Parse the "builds" field.
-    final List<Build>? builds = objListOfJson<Build>(
-      map,
-      'builds',
-      errors,
-      Build.fromJson,
-    );
+    final List<Build>? builds = objListOfJson<Build>(map, 'builds', errors, Build.fromJson);
 
     // Parse the "tests" field.
     final List<GlobalTest>? tests = objListOfJson<GlobalTest>(
@@ -95,28 +87,19 @@ final class BuilderConfig extends BuildConfigBase {
       GlobalArchive.fromJson,
     );
 
-    if (builds == null ||
-        tests == null ||
-        generators == null ||
-        archives == null) {
+    if (builds == null || tests == null || generators == null || archives == null) {
       return BuilderConfig._invalid(path, errors);
     }
     return BuilderConfig._(path, builds, tests, generators, archives);
   }
 
-  BuilderConfig._(
-    this.path,
-    this.builds,
-    this.tests,
-    this.generators,
-    this.archives,
-  ) : super(null);
+  BuilderConfig._(this.path, this.builds, this.tests, this.generators, this.archives) : super(null);
 
   BuilderConfig._invalid(this.path, super.errors)
-      : builds = <Build>[],
-        tests = <GlobalTest>[],
-        generators = <TestTask>[],
-        archives = <GlobalArchive>[];
+    : builds = <Build>[],
+      tests = <GlobalTest>[],
+      generators = <TestTask>[],
+      archives = <GlobalArchive>[];
 
   /// The path to the JSON file.
   final String path;
@@ -191,23 +174,14 @@ final class Build extends BuildConfigBase {
     final String? name = stringOfJson(map, 'name', errors);
     final String? description = stringOfJson(map, 'description', errors);
     final List<String>? gn = stringListOfJson(map, 'gn', errors);
-    final List<BuildTest>? tests = objListOfJson(
-      map,
-      'tests',
-      errors,
-      BuildTest.fromJson,
-    );
+    final List<BuildTest>? tests = objListOfJson(map, 'tests', errors, BuildTest.fromJson);
     final List<BuildArchive>? archives = objListOfJson(
       map,
       'archives',
       errors,
       BuildArchive.fromJson,
     );
-    final List<String>? droneDimensions = stringListOfJson(
-      map,
-      'drone_dimensions',
-      errors,
-    );
+    final List<String>? droneDimensions = stringListOfJson(map, 'drone_dimensions', errors);
 
     final BuildNinja? ninja;
     if (map['ninja'] == null) {
@@ -285,15 +259,15 @@ final class Build extends BuildConfigBase {
   ) : super(null);
 
   Build._invalid(super.errors)
-      : name = '',
-        description = '',
-        gn = <String>[],
-        ninja = BuildNinja.nop(),
-        tests = <BuildTest>[],
-        generators = <BuildTask>[],
-        archives = <BuildArchive>[],
-        droneDimensions = <String>[],
-        gclientVariables = <String, Object?>{};
+    : name = '',
+      description = '',
+      gn = <String>[],
+      ninja = BuildNinja.nop(),
+      tests = <BuildTest>[],
+      generators = <BuildTask>[],
+      archives = <BuildArchive>[],
+      droneDimensions = <String>[],
+      gclientVariables = <String, Object?>{};
 
   /// The name of the build which may also be used to reference it as a
   /// depdendency of a global test.
@@ -369,14 +343,9 @@ final class BuildNinja extends BuildConfigBase {
 
   BuildNinja._(this.config, this.targets) : super(null);
 
-  BuildNinja._invalid(super.errors)
-      : config = '',
-        targets = <String>[];
+  BuildNinja._invalid(super.errors) : config = '', targets = <String>[];
 
-  BuildNinja.nop()
-      : config = '',
-        targets = <String>[],
-        super(null);
+  BuildNinja.nop() : config = '', targets = <String>[], super(null);
 
   /// The name of the configuration created by gn.
   ///
@@ -402,16 +371,8 @@ final class BuildTest extends BuildConfigBase {
     final String? name = stringOfJson(map, 'name', errors);
     final String? language = stringOfJson(map, 'language', errors);
     final String? script = stringOfJson(map, 'script', errors);
-    final List<String>? parameters = stringListOfJson(
-      map,
-      'parameters',
-      errors,
-    );
-    final List<String>? contexts = stringListOfJson(
-      map,
-      'contexts',
-      errors,
-    );
+    final List<String>? parameters = stringListOfJson(map, 'parameters', errors);
+    final List<String>? contexts = stringListOfJson(map, 'contexts', errors);
     if (name == null ||
         language == null ||
         script == null ||
@@ -422,20 +383,14 @@ final class BuildTest extends BuildConfigBase {
     return BuildTest._(name, language, script, parameters, contexts);
   }
 
-  BuildTest._(
-    this.name,
-    this.language,
-    this.script,
-    this.parameters,
-    this.contexts,
-  ) : super(null);
+  BuildTest._(this.name, this.language, this.script, this.parameters, this.contexts) : super(null);
 
   BuildTest._invalid(super.errors)
-      : name = '',
-        language = '',
-        script = '',
-        parameters = <String>[],
-        contexts = <String>[];
+    : name = '',
+      language = '',
+      script = '',
+      parameters = <String>[],
+      contexts = <String>[];
 
   /// The human readable description of the test.
   final String name;
@@ -479,28 +434,20 @@ final class BuildTask extends BuildConfigBase {
     final String? name = stringOfJson(map, 'name', errors);
     final String? language = stringOfJson(map, 'language', errors);
     final List<String>? scripts = stringListOfJson(map, 'scripts', errors);
-    final List<String>? parameters = stringListOfJson(
-      map,
-      'parameters',
-      errors,
-    );
-    if (name == null ||
-        language == null ||
-        scripts == null ||
-        parameters == null) {
+    final List<String>? parameters = stringListOfJson(map, 'parameters', errors);
+    if (name == null || language == null || scripts == null || parameters == null) {
       return BuildTask._invalid(errors);
     }
     return BuildTask._(name, language, scripts, parameters);
   }
 
   BuildTask._invalid(super.errors)
-      : name = '',
-        language = '',
-        scripts = <String>[],
-        parameters = <String>[];
+    : name = '',
+      language = '',
+      scripts = <String>[],
+      parameters = <String>[];
 
-  BuildTask._(this.name, this.language, this.scripts, this.parameters)
-      : super(null);
+  BuildTask._(this.name, this.language, this.scripts, this.parameters) : super(null);
 
   /// The human readable name of the step running the script.
   final String name;
@@ -533,35 +480,21 @@ final class BuildArchive extends BuildConfigBase {
     final String? type = stringOfJson(map, 'type', errors);
     final String? basePath = stringOfJson(map, 'base_path', errors);
     final String? realm = stringOfJson(map, 'realm', errors);
-    final List<String>? includePaths = stringListOfJson(
-      map,
-      'include_paths',
-      errors,
-    );
-    if (name == null ||
-        type == null ||
-        basePath == null ||
-        realm == null ||
-        includePaths == null) {
+    final List<String>? includePaths = stringListOfJson(map, 'include_paths', errors);
+    if (name == null || type == null || basePath == null || realm == null || includePaths == null) {
       return BuildArchive._invalid(errors);
     }
     return BuildArchive._(name, type, basePath, realm, includePaths);
   }
 
   BuildArchive._invalid(super.error)
-      : name = '',
-        type = '',
-        basePath = '',
-        realm = '',
-        includePaths = <String>[];
+    : name = '',
+      type = '',
+      basePath = '',
+      realm = '',
+      includePaths = <String>[];
 
-  BuildArchive._(
-    this.name,
-    this.type,
-    this.basePath,
-    this.realm,
-    this.includePaths,
-  ) : super(null);
+  BuildArchive._(this.name, this.type, this.basePath, this.realm, this.includePaths) : super(null);
 
   /// The name which may be referenced later as a dependency of global tests.
   final String name;
@@ -592,28 +525,15 @@ final class GlobalTest extends BuildConfigBase {
     final List<String> errors = <String>[];
     final String? name = stringOfJson(map, 'name', errors);
     final String? recipe = stringOfJson(map, 'recipe', errors);
-    final List<String>? droneDimensions = stringListOfJson(
-      map,
-      'drone_dimensions',
-      errors,
-    );
-    final List<String>? dependencies = stringListOfJson(
-      map,
-      'dependencies',
-      errors,
-    );
+    final List<String>? droneDimensions = stringListOfJson(map, 'drone_dimensions', errors);
+    final List<String>? dependencies = stringListOfJson(map, 'dependencies', errors);
     final List<TestDependency>? testDependencies = objListOfJson(
       map,
       'test_dependencies',
       errors,
       TestDependency.fromJson,
     );
-    final List<TestTask>? tasks = objListOfJson(
-      map,
-      'tasks',
-      errors,
-      TestTask.fromJson,
-    );
+    final List<TestTask>? tasks = objListOfJson(map, 'tasks', errors, TestTask.fromJson);
     if (name == null ||
         recipe == null ||
         droneDimensions == null ||
@@ -622,17 +542,16 @@ final class GlobalTest extends BuildConfigBase {
         tasks == null) {
       return GlobalTest._invalid(errors);
     }
-    return GlobalTest._(
-        name, recipe, droneDimensions, dependencies, testDependencies, tasks);
+    return GlobalTest._(name, recipe, droneDimensions, dependencies, testDependencies, tasks);
   }
 
   GlobalTest._invalid(super.errors)
-      : name = '',
-        recipe = '',
-        droneDimensions = <String>[],
-        dependencies = <String>[],
-        testDependencies = <TestDependency>[],
-        tasks = <TestTask>[];
+    : name = '',
+      recipe = '',
+      droneDimensions = <String>[],
+      dependencies = <String>[],
+      testDependencies = <TestDependency>[],
+      tasks = <TestTask>[];
 
   GlobalTest._(
     this.name,
@@ -698,9 +617,7 @@ final class TestDependency extends BuildConfigBase {
     return TestDependency._(dependency, version);
   }
 
-  TestDependency._invalid(super.error)
-      : dependency = '',
-        version = '';
+  TestDependency._invalid(super.error) : dependency = '', version = '';
 
   TestDependency._(this.dependency, this.version) : super(null);
 
@@ -725,13 +642,8 @@ final class TestTask extends BuildConfigBase {
     final String? name = stringOfJson(map, 'name', errors);
     final String? language = stringOfJson(map, 'language', errors);
     final String? script = stringOfJson(map, 'script', errors);
-    final int? maxAttempts =
-        intOfJson(map, 'max_attempts', fallback: 1, errors);
-    final List<String>? parameters = stringListOfJson(
-      map,
-      'parameters',
-      errors,
-    );
+    final int? maxAttempts = intOfJson(map, 'max_attempts', fallback: 1, errors);
+    final List<String>? parameters = stringListOfJson(map, 'parameters', errors);
     if (name == null ||
         language == null ||
         script == null ||
@@ -743,19 +655,14 @@ final class TestTask extends BuildConfigBase {
   }
 
   TestTask._invalid(super.error)
-      : name = '',
-        language = '',
-        script = '',
-        maxAttempts = 0,
-        parameters = <String>[];
+    : name = '',
+      language = '',
+      script = '',
+      maxAttempts = 0,
+      parameters = <String>[];
 
-  TestTask._(
-    this.name,
-    this.language,
-    this.script,
-    this.maxAttempts,
-    this.parameters,
-  ) : super(null);
+  TestTask._(this.name, this.language, this.script, this.maxAttempts, this.parameters)
+    : super(null);
 
   /// The human readable name of the step running the script.
   final String name;
@@ -793,10 +700,7 @@ final class GlobalArchive extends BuildConfigBase {
     return GlobalArchive._(source, destination, realm);
   }
 
-  GlobalArchive._invalid(super.error)
-      : source = '',
-        destination = '',
-        realm = '';
+  GlobalArchive._invalid(super.error) : source = '', destination = '', realm = '';
 
   GlobalArchive._(this.source, this.destination, this.realm) : super(null);
 
@@ -816,8 +720,7 @@ bool _canRunOn(List<String> droneDimensions, Platform platform) {
   for (final String dimension in droneDimensions) {
     os ??= switch (dimension.split('=')) {
       ['os', 'Linux'] => Platform.linux,
-      ['os', final String win] when win.startsWith('Windows') =>
-        Platform.windows,
+      ['os', final String win] when win.startsWith('Windows') => Platform.windows,
       ['os', final String mac] when mac.startsWith('Mac') => Platform.macOS,
       _ => null,
     };
@@ -834,9 +737,7 @@ void appendTypeError(
 }) {
   if (element == null) {
     final Type actual = map[field]!.runtimeType;
-    errors.add(
-      'For field "$field", expected type: $expected, actual type: $actual.',
-    );
+    errors.add('For field "$field", expected type: $expected, actual type: $actual.');
   } else {
     final Type actual = element.runtimeType;
     errors.add(
@@ -865,17 +766,10 @@ List<T>? objListOfJson<T>(
       return null;
     }
   }
-  return (map[field]! as List<Object?>)
-      .cast<Map<String, Object?>>()
-      .map<T>(fn)
-      .toList();
+  return (map[field]! as List<Object?>).cast<Map<String, Object?>>().map<T>(fn).toList();
 }
 
-List<String>? stringListOfJson(
-  Map<String, Object?> map,
-  String field,
-  List<String> errors,
-) {
+List<String>? stringListOfJson(Map<String, Object?> map, String field, List<String> errors) {
   if (map[field] == null) {
     return <String>[];
   }
@@ -892,11 +786,7 @@ List<String>? stringListOfJson(
   return (map[field]! as List<Object?>).cast<String>();
 }
 
-String? stringOfJson(
-  Map<String, Object?> map,
-  String field,
-  List<String> errors,
-) {
+String? stringOfJson(Map<String, Object?> map, String field, List<String> errors) {
   if (map[field] == null) {
     return '<undef>';
   }
@@ -907,12 +797,7 @@ String? stringOfJson(
   return map[field]! as String;
 }
 
-int? intOfJson(
-  Map<String, Object?> map,
-  String field,
-  List<String> errors, {
-  int fallback = 0,
-}) {
+int? intOfJson(Map<String, Object?> map, String field, List<String> errors, {int fallback = 0}) {
   if (map[field] == null) {
     return fallback;
   }

@@ -14,14 +14,12 @@ abstract class PreRunValidator {
 }
 
 class _DefaultPreRunValidator implements PreRunValidator {
-  _DefaultPreRunValidator({
-    required this.fileSystem,
-  });
+  _DefaultPreRunValidator({required this.fileSystem});
 
   final FileSystem fileSystem;
 
   late final Directory _toolsDir = fileSystem.directory(
-      fileSystem.path.join(Cache.flutterRoot!, 'packages', 'flutter_tools'),
+    fileSystem.path.join(Cache.flutterRoot!, 'packages', 'flutter_tools'),
   );
 
   @override

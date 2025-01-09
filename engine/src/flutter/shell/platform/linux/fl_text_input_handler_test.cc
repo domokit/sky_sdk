@@ -300,8 +300,8 @@ TEST(FlTextInputHandlerTest, PerformAction) {
   int call_count = 0;
   fl_mock_binary_messenger_set_json_method_channel(
       messenger, "flutter/textinput",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         int* call_count = static_cast<int*>(user_data);
 
         if (strcmp(name, "TextInputClient.updateEditingState") == 0) {
@@ -365,8 +365,8 @@ TEST(FlTextInputHandlerTest, MultilineWithSendAction) {
   int call_count = 0;
   fl_mock_binary_messenger_set_json_method_channel(
       messenger, "flutter/textinput",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         int* call_count = static_cast<int*>(user_data);
 
         EXPECT_STREQ(name, "TextInputClient.performAction");
@@ -415,8 +415,8 @@ TEST(FlTextInputHandlerTest, MoveCursor) {
   int call_count = 0;
   fl_mock_binary_messenger_set_json_method_channel(
       messenger, "flutter/textinput",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         int* call_count = static_cast<int*>(user_data);
 
         EXPECT_STREQ(name, "TextInputClient.updateEditingState");
@@ -481,8 +481,8 @@ TEST(FlTextInputHandlerTest, Select) {
   int call_count = 0;
   fl_mock_binary_messenger_set_json_method_channel(
       messenger, "flutter/textinput",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         int* call_count = static_cast<int*>(user_data);
 
         EXPECT_STREQ(name, "TextInputClient.updateEditingState");
@@ -549,8 +549,8 @@ TEST(FlTextInputHandlerTest, Composing) {
   int call_count = 0;
   fl_mock_binary_messenger_set_json_method_channel(
       messenger, "flutter/textinput",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         int* call_count = static_cast<int*>(user_data);
 
         EXPECT_STREQ(name, "TextInputClient.updateEditingState");
@@ -638,8 +638,8 @@ TEST(FlTextInputHandlerTest, SurroundingText) {
   int call_count = 0;
   fl_mock_binary_messenger_set_json_method_channel(
       messenger, "flutter/textinput",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         int* call_count = static_cast<int*>(user_data);
 
         EXPECT_STREQ(name, "TextInputClient.updateEditingState");
@@ -836,8 +836,8 @@ TEST(FlTextInputHandlerTest, TextEditingDelta) {
   int call_count = 0;
   fl_mock_binary_messenger_set_json_method_channel(
       messenger, "flutter/textinput",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         int* call_count = static_cast<int*>(user_data);
 
         EXPECT_STREQ(name, "TextInputClient.updateEditingStateWithDeltas");
@@ -907,8 +907,8 @@ TEST(FlTextInputHandlerTest, ComposingDelta) {
   int call_count = 0;
   fl_mock_binary_messenger_set_json_method_channel(
       messenger, "flutter/textinput",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         int* call_count = static_cast<int*>(user_data);
 
         EXPECT_STREQ(name, "TextInputClient.updateEditingStateWithDeltas");
@@ -1008,8 +1008,8 @@ TEST(FlTextInputHandlerTest, NonComposingDelta) {
   int call_count = 0;
   fl_mock_binary_messenger_set_json_method_channel(
       messenger, "flutter/textinput",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         int* call_count = static_cast<int*>(user_data);
 
         EXPECT_STREQ(name, "TextInputClient.updateEditingStateWithDeltas");

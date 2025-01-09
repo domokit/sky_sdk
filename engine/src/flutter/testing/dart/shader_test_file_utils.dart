@@ -18,9 +18,11 @@ const String _testPath = 'gen/flutter/lib/ui/fixtures/shaders';
 ///
 /// `folderName` is a leaf folder within the generated directory.
 Directory shaderDirectory(String leafFolderName) {
-  return Directory(path.joinAll(<String>[
-    ...path.split(_flutterBuildDirectoryPath()),
-    ...path.split(_testPath),
-    leafFolderName,
-  ]));
+  return Directory(
+    path.joinAll(<String>[
+      ...path.split(_flutterBuildDirectoryPath()),
+      ...path.split(_testPath),
+      leafFolderName,
+    ]),
+  );
 }

@@ -20,17 +20,19 @@ void main() {
 
   /// Simulating what a presubmit environment would look like.
   const Map<String, String> presubmitEnv = <String, String>{
+    'GIT_BRANCH': 'master',
     'GOLDCTL': 'python tools/goldctl.py',
-    'GOLD_TRYJOB': 'flutter/engine/1234567890',
+    'GOLD_TRYJOB': 'flutter/flutter/1234567890',
     'LOGDOG_STREAM_PREFIX': 'buildbucket/cr-buildbucket.appspot.com/1234567890/+/logdog',
     'LUCI_CONTEXT': '{}',
   };
 
   /// Simulating what a postsubmit environment would look like.
   const Map<String, String> postsubmitEnv = <String, String>{
+    'GIT_BRANCH': 'master',
     'GOLDCTL': 'python tools/goldctl.py',
     'LOGDOG_STREAM_PREFIX': 'buildbucket/cr-buildbucket.appspot.com/1234567890/+/logdog',
-    'LUCI_CONTEXT': '{}'
+    'LUCI_CONTEXT': '{}',
   };
 
   /// Simulating what a local environment would look like.
@@ -48,6 +50,7 @@ void main() {
     required Map<String, String> environment,
     ReleaseVersion? engineVersion,
     Map<String, String>? dimensions,
+    String? prefix,
     bool verbose = false,
     io.ProcessResult Function(List<String> command) onRun = _runUnhandled,
   }) {
@@ -56,12 +59,11 @@ void main() {
       dimensions: dimensions,
       engineRoot: Engine.fromSrcPath(fixture.engineSrcDir.path),
       httpClient: fixture.httpClient,
-      processManager: FakeProcessManager(
-        onRun: onRun,
-      ),
+      processManager: FakeProcessManager(onRun: onRun),
       verbose: verbose,
       stderr: fixture.outputSink,
       environment: environment,
+      prefix: prefix,
     );
   }
 
@@ -77,16 +79,81 @@ void main() {
   test('fails if GOLDCTL is not set', () async {
     final _TestFixture fixture = _TestFixture();
     try {
-      final SkiaGoldClient client = createClient(
-        fixture,
-        environment: localEnv,
-      );
+      final SkiaGoldClient client = createClient(fixture, environment: localEnv);
       try {
         await client.auth();
         fail('auth should fail if GOLDCTL is not set');
       } on StateError catch (error) {
         expect('$error', contains('GOLDCTL is not set'));
       }
+    } finally {
+      fixture.dispose();
+    }
+  });
+
+  test('prints a warning and skips when the git branch is not master or main', () async {
+    final _TestFixture fixture = _TestFixture();
+    try {
+      final SkiaGoldClient client = createClient(
+        fixture,
+        environment: {...presubmitEnv, 'GIT_BRANCH': 'merge-queue-foo'},
+        onRun: (List<String> command) {
+          expect(command, <String>[
+            'python tools/goldctl.py',
+            'auth',
+            '--work-dir',
+            p.join(fixture.workDirectory.path, 'temp'),
+            '--luci',
+          ]);
+          createAuthOptDotJson(fixture.workDirectory.path);
+          return io.ProcessResult(0, 0, '', '');
+        },
+      );
+
+      // In case we change our mind, auth is still expected to work.
+      await client.auth();
+
+      expect(
+        fixture.outputSink.toString(),
+        stringContainsInOrder([
+          'Current git branch',
+          'merge-queue-foo',
+          'is not "main" or "master"',
+        ]),
+      );
+    } finally {
+      fixture.dispose();
+    }
+  });
+
+  test('always a success when the git branch is not master or main', () async {
+    final _TestFixture fixture = _TestFixture();
+    try {
+      final SkiaGoldClient client = createClient(
+        fixture,
+        environment: {...presubmitEnv, 'GIT_BRANCH': 'merge-queue-foo'},
+        onRun: (List<String> command) {
+          expect(command, <String>[
+            'python tools/goldctl.py',
+            'auth',
+            '--work-dir',
+            p.join(fixture.workDirectory.path, 'temp'),
+            '--luci',
+          ]);
+          createAuthOptDotJson(fixture.workDirectory.path);
+          return io.ProcessResult(0, 0, '', '');
+        },
+      );
+
+      // In case we change our mind, auth is still expected to work.
+      await client.auth();
+
+      // Always completes OK.
+      await client.addImg(
+        'test-name.foo',
+        io.File(p.join(fixture.workDirectory.path, 'temp', 'golden.png')),
+        screenshotSize: 1000,
+      );
     } finally {
       fixture.dispose();
     }
@@ -241,14 +308,56 @@ void main() {
     }
   });
 
+  test('addImg uses prefix, if specified', () async {
+    final _TestFixture fixture = _TestFixture();
+    try {
+      final SkiaGoldClient client = createClient(
+        fixture,
+        environment: presubmitEnv,
+        prefix: 'engine.',
+        onRun: (List<String> command) {
+          if (command case ['git', ...]) {
+            return io.ProcessResult(0, 0, mockCommitHash, '');
+          }
+          if (command case ['python tools/goldctl.py', 'imgtest', 'init', ...]) {
+            return io.ProcessResult(0, 0, '', '');
+          }
+          expect(command, <String>[
+            'python tools/goldctl.py',
+            'imgtest',
+            'add',
+            '--work-dir',
+            p.join(fixture.workDirectory.path, 'temp'),
+            '--test-name',
+            'engine.test-name',
+            '--png-file',
+            p.join(fixture.workDirectory.path, 'temp', 'golden.png'),
+            '--add-test-optional-key',
+            'image_matching_algorithm:fuzzy',
+            '--add-test-optional-key',
+            'fuzzy_max_different_pixels:10',
+            '--add-test-optional-key',
+            'fuzzy_pixel_delta_threshold:0',
+          ]);
+          return io.ProcessResult(0, 0, '', '');
+        },
+      );
+
+      await client.addImg(
+        'test-name.foo',
+        io.File(p.join(fixture.workDirectory.path, 'temp', 'golden.png')),
+        screenshotSize: 1000,
+      );
+    } finally {
+      fixture.dispose();
+    }
+  });
+
   test('addImg [pre-submit] executes successfully with a release version', () async {
     // Adds a suffix of "_Release_3_21" to the test name.
     final _TestFixture fixture = _TestFixture(
       // Creates a file called "engine/src/fluter/.engine-release.version" with the contents "3.21".
-      engineVersion: ReleaseVersion(
-        major: 3,
-        minor: 21,
-      ),
+      engineVersion: ReleaseVersion(major: 3, minor: 21),
     );
     try {
       final SkiaGoldClient client = createClient(
@@ -577,10 +686,8 @@ void main() {
 
       final String hash = client.getTraceID('test-name');
       fixture.httpClient.setJsonResponse(
-        Uri.parse('https://flutter-engine-gold.skia.org/json/v2/latestpositivedigest/$hash'),
-        <String, Object?>{
-          'digest': 'digest',
-        },
+        Uri.parse('https://flutter-gold.skia.org/json/v2/latestpositivedigest/$hash'),
+        <String, Object?>{'digest': 'digest'},
       );
 
       final String? digest = await client.getExpectationForTest('test-name');
@@ -592,9 +699,7 @@ void main() {
 }
 
 final class _TestFixture {
-  _TestFixture({
-    ReleaseVersion? engineVersion,
-  }) {
+  _TestFixture({ReleaseVersion? engineVersion}) {
     workDirectory = rootDirectory.createTempSync('working');
 
     // Create the engine/src directory.
@@ -609,7 +714,9 @@ final class _TestFixture {
     io.File(p.join(flutterDir.path, '.engine-release.version')).writeAsStringSync(version);
   }
 
-  final io.Directory rootDirectory = io.Directory.systemTemp.createTempSync('skia_gold_client_test');
+  final io.Directory rootDirectory = io.Directory.systemTemp.createTempSync(
+    'skia_gold_client_test',
+  );
   late final io.Directory workDirectory;
   late final io.Directory engineSrcDir;
 
@@ -676,8 +783,7 @@ final class _FakeHttpClientRequest implements io.HttpClientRequest {
   }
 }
 
-final class _FakeHttpClientResponse extends Stream<List<int>>
-    implements io.HttpClientResponse {
+final class _FakeHttpClientResponse extends Stream<List<int>> implements io.HttpClientResponse {
   _FakeHttpClientResponse(this._bytes);
 
   final Uint8List _bytes;
@@ -689,12 +795,9 @@ final class _FakeHttpClientResponse extends Stream<List<int>>
     void Function()? onDone,
     bool? cancelOnError,
   }) {
-    return Stream<List<int>>.fromIterable(<List<int>>[_bytes]).listen(
-      onData,
-      onError: onError,
-      onDone: onDone,
-      cancelOnError: cancelOnError,
-    );
+    return Stream<List<int>>.fromIterable(<List<int>>[
+      _bytes,
+    ]).listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 
   @override

@@ -40,15 +40,11 @@ Future<void> testMain() async {
     final Picture backgroundPicture = _drawBackground(region);
     builder.addPicture(Offset.zero, backgroundPicture);
 
-    builder.pushClipRect(
-      const Rect.fromLTRB(10, 10, 180, 120),
-    );
+    builder.pushClipRect(const Rect.fromLTRB(10, 10, 180, 120));
     final Picture circles1 = _drawTestPictureWithCircles(region, 30, 30);
     builder.addPicture(Offset.zero, circles1);
 
-    builder.pushClipRect(
-      const Rect.fromLTRB(60, 10, 180, 120),
-    );
+    builder.pushClipRect(const Rect.fromLTRB(60, 10, 180, 120));
     builder.pushBackdropFilter(ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0));
     final Picture circles2 = _drawTestPictureWithCircles(region, 90, 30);
     builder.addPicture(Offset.zero, circles2);
@@ -56,9 +52,7 @@ Future<void> testMain() async {
     builder.pop();
     builder.pop();
 
-    domDocument.body!.append(builder
-        .build()
-        .webOnlyRootElement!);
+    domDocument.body!.append(builder.build().webOnlyRootElement!);
 
     await matchGoldenFile('backdrop_filter_clip.png', region: region);
   });
@@ -77,8 +71,9 @@ Future<void> testMain() async {
     final ClipRectEngineLayer clipEngineLayer2 = builder.pushClipRect(
       const Rect.fromLTRB(60, 10, 180, 120),
     );
-    final BackdropFilterEngineLayer oldBackdropFilterLayer =
-        builder.pushBackdropFilter(ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0));
+    final BackdropFilterEngineLayer oldBackdropFilterLayer = builder.pushBackdropFilter(
+      ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+    );
     final Picture circles2 = _drawTestPictureWithCircles(region, 90, 30);
     builder.addPicture(Offset.zero, circles2);
     builder.pop();
@@ -89,25 +84,19 @@ Future<void> testMain() async {
     // Now reparent filter layer in next scene.
     final SurfaceSceneBuilder builder2 = SurfaceSceneBuilder();
     builder2.addPicture(Offset.zero, backgroundPicture);
-    builder2.pushClipRect(
-      const Rect.fromLTRB(10, 10, 180, 120),
-      oldLayer: clipEngineLayer
-    );
+    builder2.pushClipRect(const Rect.fromLTRB(10, 10, 180, 120), oldLayer: clipEngineLayer);
     builder2.addPicture(Offset.zero, circles1);
-    builder2.pushClipRect(
-      const Rect.fromLTRB(10, 75, 180, 120),
-      oldLayer: clipEngineLayer2
+    builder2.pushClipRect(const Rect.fromLTRB(10, 75, 180, 120), oldLayer: clipEngineLayer2);
+    builder2.pushBackdropFilter(
+      ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+      oldLayer: oldBackdropFilterLayer,
     );
-    builder2.pushBackdropFilter(ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-        oldLayer: oldBackdropFilterLayer);
     builder2.addPicture(Offset.zero, circles2);
     builder2.pop();
     builder2.pop();
     builder2.pop();
 
-    domDocument.body!.append(builder2
-        .build()
-        .webOnlyRootElement!);
+    domDocument.body!.append(builder2.build().webOnlyRootElement!);
 
     await matchGoldenFile('backdrop_filter_clip_moved.png', region: region);
   });
@@ -121,26 +110,19 @@ Future<void> testMain() async {
     final Picture backgroundPicture = _drawBackground(region);
     builder.addPicture(Offset.zero, backgroundPicture);
 
-    builder.pushClipRect(
-      const Rect.fromLTRB(10, 10, 180, 120),
-    );
+    builder.pushClipRect(const Rect.fromLTRB(10, 10, 180, 120));
     final Picture circles1 = _drawTestPictureWithCircles(region, 30, 30);
     builder.addPicture(Offset.zero, circles1);
 
-    builder.pushClipRect(
-      const Rect.fromLTRB(60, 10, 180, 120),
-    );
+    builder.pushClipRect(const Rect.fromLTRB(60, 10, 180, 120));
     builder.pushBackdropFilter(ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0));
     builder.pop();
     builder.pop();
     builder.pop();
 
-    domDocument.body!.append(builder
-        .build()
-        .webOnlyRootElement!);
+    domDocument.body!.append(builder.build().webOnlyRootElement!);
 
-    await matchGoldenFile('backdrop_filter_no_child_rendering.png',
-        region: region);
+    await matchGoldenFile('backdrop_filter_no_child_rendering.png', region: region);
   });
   test('colorFilter as imageFilter', () async {
     const Rect region = Rect.fromLTWH(0, 0, 190, 130);
@@ -149,65 +131,61 @@ Future<void> testMain() async {
     final Picture backgroundPicture = _drawBackground(region);
     builder.addPicture(Offset.zero, backgroundPicture);
 
-    builder.pushClipRect(
-      const Rect.fromLTRB(10, 10, 180, 120),
-    );
+    builder.pushClipRect(const Rect.fromLTRB(10, 10, 180, 120));
     final Picture circles1 = _drawTestPictureWithCircles(region, 30, 30);
 
     // current background color is light green, apply a light yellow colorFilter
-    const ColorFilter colorFilter = ColorFilter.mode(
-      Color(0xFFFFFFB1),
-      BlendMode.modulate
-    );
+    const ColorFilter colorFilter = ColorFilter.mode(Color(0xFFFFFFB1), BlendMode.modulate);
     builder.pushBackdropFilter(colorFilter);
     builder.addPicture(Offset.zero, circles1);
     builder.pop();
 
-    domDocument.body!.append(builder
-        .build()
-        .webOnlyRootElement!);
+    domDocument.body!.append(builder.build().webOnlyRootElement!);
 
-   await matchGoldenFile('backdrop_filter_colorFilter_as_imageFilter.png',
-       region: region);
+    await matchGoldenFile('backdrop_filter_colorFilter_as_imageFilter.png', region: region);
   });
 }
 
 Picture _drawTestPictureWithCircles(Rect region, double offsetX, double offsetY) {
   final EnginePictureRecorder recorder = PictureRecorder() as EnginePictureRecorder;
-  final RecordingCanvas canvas =
-  recorder.beginRecording(region);
+  final RecordingCanvas canvas = recorder.beginRecording(region);
   canvas.drawCircle(
-      Offset(offsetX + 10, offsetY + 10), 10, SurfacePaint()..style = PaintingStyle.fill);
+    Offset(offsetX + 10, offsetY + 10),
+    10,
+    SurfacePaint()..style = PaintingStyle.fill,
+  );
   canvas.drawCircle(
-      Offset(offsetX + 60, offsetY + 10),
-      10,
-      SurfacePaint()
-        ..style = PaintingStyle.fill
-        ..color = const Color.fromRGBO(255, 0, 0, 1));
+    Offset(offsetX + 60, offsetY + 10),
+    10,
+    SurfacePaint()
+      ..style = PaintingStyle.fill
+      ..color = const Color.fromRGBO(255, 0, 0, 1),
+  );
   canvas.drawCircle(
-      Offset(offsetX + 10, offsetY + 60),
-      10,
-      SurfacePaint()
-        ..style = PaintingStyle.fill
-        ..color = const Color.fromRGBO(0, 255, 0, 1));
+    Offset(offsetX + 10, offsetY + 60),
+    10,
+    SurfacePaint()
+      ..style = PaintingStyle.fill
+      ..color = const Color.fromRGBO(0, 255, 0, 1),
+  );
   canvas.drawCircle(
-      Offset(offsetX + 60, offsetY + 60),
-      10,
-      SurfacePaint()
-        ..style = PaintingStyle.fill
-        ..color = const Color.fromRGBO(0, 0, 255, 1));
+    Offset(offsetX + 60, offsetY + 60),
+    10,
+    SurfacePaint()
+      ..style = PaintingStyle.fill
+      ..color = const Color.fromRGBO(0, 0, 255, 1),
+  );
   return recorder.endRecording();
 }
 
 Picture _drawBackground(Rect region) {
   final EnginePictureRecorder recorder = PictureRecorder() as EnginePictureRecorder;
-  final RecordingCanvas canvas =
-  recorder.beginRecording(region);
+  final RecordingCanvas canvas = recorder.beginRecording(region);
   canvas.drawRect(
-      region.deflate(8.0),
-      SurfacePaint()
-        ..style = PaintingStyle.fill
-        ..color = const Color(0xFFE0FFE0)
-      );
+    region.deflate(8.0),
+    SurfacePaint()
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFFE0FFE0),
+  );
   return recorder.endRecording();
 }

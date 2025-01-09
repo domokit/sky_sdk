@@ -54,7 +54,7 @@ Future<JsFlutterConfiguration?> bootstrapAndExtractConfig() {
   final Completer<JsFlutterConfiguration?> configCompleter = Completer<JsFlutterConfiguration?>();
   final AppBootstrap bootstrap = AppBootstrap(
     initializeEngine: ([JsFlutterConfiguration? config]) async => configCompleter.complete(config),
-    runApp: () async {}
+    runApp: () async {},
   );
   flutter!.loader!.didCreateEngineInitializer(bootstrap.prepareEngineInitializer());
 

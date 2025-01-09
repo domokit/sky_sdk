@@ -11,8 +11,7 @@ import 'cubic.dart';
 import 'path_utils.dart';
 
 /// Computes tangent at point x,y on a line.
-void tangentLine(
-    Float32List pts, double x, double y, List<ui.Offset> tangents) {
+void tangentLine(Float32List pts, double x, double y, List<ui.Offset> tangents) {
   final double y0 = pts[1];
   final double y1 = pts[3];
   if (!SPath.between(y0, y, y1)) {
@@ -32,8 +31,7 @@ void tangentLine(
 }
 
 /// Computes tangent at point x,y on a quadratic curve.
-void tangentQuad(
-    Float32List pts, double x, double y, List<ui.Offset> tangents) {
+void tangentQuad(Float32List pts, double x, double y, List<ui.Offset> tangents) {
   final double y0 = pts[1];
   final double y1 = pts[3];
   final double y2 = pts[5];
@@ -61,8 +59,15 @@ void tangentQuad(
   }
 }
 
-ui.Offset _evalQuadTangentAt(double x0, double y0, double x1, double y1,
-    double x2, double y2, double t) {
+ui.Offset _evalQuadTangentAt(
+  double x0,
+  double y0,
+  double x1,
+  double y1,
+  double x2,
+  double y2,
+  double t,
+) {
   // The derivative of a quad equation is 2(b - a +(a - 2b +c)t).
   // This returns a zero tangent vector when t is 0 or 1, and the control
   // point is equal to the end point. In this case, use the quad end points to
@@ -83,8 +88,7 @@ ui.Offset _evalQuadTangentAt(double x0, double y0, double x1, double y1,
 }
 
 /// Computes tangent at point x,y on a conic curve.
-void tangentConic(Float32List pts, double x, double y, double weight,
-    List<ui.Offset> tangents) {
+void tangentConic(Float32List pts, double x, double y, double weight, List<ui.Offset> tangents) {
   final double y0 = pts[1];
   final double y1 = pts[3];
   final double y2 = pts[5];
@@ -110,8 +114,7 @@ void tangentConic(Float32List pts, double x, double y, double weight,
   final int n = quadRoots.findRoots(A, 2 * B, C);
   for (int index = 0; index < n; ++index) {
     final double t = index == 0 ? quadRoots.root0! : quadRoots.root1!;
-    final double xt = Conic.evalNumerator(x0, x1, x2, weight, t) /
-        Conic.evalDenominator(weight, t);
+    final double xt = Conic.evalNumerator(x0, x1, x2, weight, t) / Conic.evalDenominator(weight, t);
     if (!SPath.nearlyEqual(x, xt)) {
       continue;
     }
@@ -121,24 +124,19 @@ void tangentConic(Float32List pts, double x, double y, double weight,
 }
 
 /// Computes tangent at point x,y on a cubic curve.
-void tangentCubic(
-    Float32List pts, double x, double y, List<ui.Offset> tangents) {
+void tangentCubic(Float32List pts, double x, double y, List<ui.Offset> tangents) {
   final double y3 = pts[7];
   final double y0 = pts[1];
   final double y1 = pts[3];
   final double y2 = pts[5];
-  if (!SPath.between(y0, y, y1) &&
-      !SPath.between(y1, y, y2) &&
-      !SPath.between(y2, y, y3)) {
+  if (!SPath.between(y0, y, y1) && !SPath.between(y1, y, y2) && !SPath.between(y2, y, y3)) {
     return;
   }
   final double x0 = pts[0];
   final double x1 = pts[2];
   final double x2 = pts[4];
   final double x3 = pts[6];
-  if (!SPath.between(x0, x, x1) &&
-      !SPath.between(x1, x, x2) &&
-      !SPath.between(x2, x, x3)) {
+  if (!SPath.between(x0, x, x1) && !SPath.between(x1, x, x2) && !SPath.between(x2, x, x3)) {
     return;
   }
   final Float32List dst = Float32List(20);
@@ -149,8 +147,13 @@ void tangentCubic(
     if (t == null) {
       continue;
     }
-    final double xt = evalCubicPts(dst[bufferPos], dst[bufferPos + 2],
-        dst[bufferPos + 4], dst[bufferPos + 6], t);
+    final double xt = evalCubicPts(
+      dst[bufferPos],
+      dst[bufferPos + 2],
+      dst[bufferPos + 4],
+      dst[bufferPos + 6],
+      t,
+    );
     if (!SPath.nearlyEqual(x, xt)) {
       continue;
     }
@@ -190,8 +193,17 @@ ui.Offset _evalCubicTangentAt(Float32List points, int bufferPos, double t) {
   }
 }
 
-ui.Offset _evalCubicDerivative(double x0, double y0, double x1, double y1,
-    double x2, double y2, double x3, double y3, double t) {
+ui.Offset _evalCubicDerivative(
+  double x0,
+  double y0,
+  double x1,
+  double y1,
+  double x2,
+  double y2,
+  double x3,
+  double y3,
+  double t,
+) {
   final SkQuadCoefficients coeff = SkQuadCoefficients(
     x3 + 3 * (x1 - x2) - x0,
     y3 + 3 * (y1 - y2) - y0,

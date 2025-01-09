@@ -15,6 +15,9 @@ void main() {
     expect(oldCounter, 1);
 
     binding.reset();
-    expect(oldRestorationManager.notifyListeners, throwsA((Object e) => e.toString().contains('disposed')));
+    expect(
+      oldRestorationManager.notifyListeners,
+      throwsA((Object e) => e.toString().contains('disposed')),
+    );
   });
 }

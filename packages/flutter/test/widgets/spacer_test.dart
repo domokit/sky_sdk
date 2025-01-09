@@ -7,13 +7,15 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Spacer takes up space.', (WidgetTester tester) async {
-    await tester.pumpWidget(const Column(
-      children: <Widget>[
-        SizedBox(width: 10.0, height: 10.0),
-        Spacer(),
-        SizedBox(width: 10.0, height: 10.0),
-      ],
-    ));
+    await tester.pumpWidget(
+      const Column(
+        children: <Widget>[
+          SizedBox(width: 10.0, height: 10.0),
+          Spacer(),
+          SizedBox(width: 10.0, height: 10.0),
+        ],
+      ),
+    );
     final Rect spacerRect = tester.getRect(find.byType(Spacer));
     expect(spacerRect.size, const Size(0.0, 580.0));
     expect(spacerRect.topLeft, const Offset(400.0, 10.0));
@@ -24,20 +26,22 @@ void main() {
     const Spacer spacer2 = Spacer();
     const Spacer spacer3 = Spacer(flex: 2);
     const Spacer spacer4 = Spacer(flex: 4);
-    await tester.pumpWidget(const Row(
-      textDirection: TextDirection.rtl,
-      children: <Widget>[
-        SizedBox(width: 10.0, height: 10.0),
-        spacer1,
-        SizedBox(width: 10.0, height: 10.0),
-        spacer2,
-        SizedBox(width: 10.0, height: 10.0),
-        spacer3,
-        SizedBox(width: 10.0, height: 10.0),
-        spacer4,
-        SizedBox(width: 10.0, height: 10.0),
-      ],
-    ));
+    await tester.pumpWidget(
+      const Row(
+        textDirection: TextDirection.rtl,
+        children: <Widget>[
+          SizedBox(width: 10.0, height: 10.0),
+          spacer1,
+          SizedBox(width: 10.0, height: 10.0),
+          spacer2,
+          SizedBox(width: 10.0, height: 10.0),
+          spacer3,
+          SizedBox(width: 10.0, height: 10.0),
+          spacer4,
+          SizedBox(width: 10.0, height: 10.0),
+        ],
+      ),
+    );
     final Rect spacer1Rect = tester.getRect(find.byType(Spacer).at(0));
     final Rect spacer2Rect = tester.getRect(find.byType(Spacer).at(1));
     final Rect spacer3Rect = tester.getRect(find.byType(Spacer).at(2));
@@ -54,16 +58,18 @@ void main() {
   });
 
   testWidgets('Spacer takes up space.', (WidgetTester tester) async {
-    await tester.pumpWidget(const UnconstrainedBox(
-      constrainedAxis: Axis.vertical,
-      child: Column(
-        children: <Widget>[
-          SizedBox(width: 20.0, height: 10.0),
-          Spacer(),
-          SizedBox(width: 10.0, height: 10.0),
-        ],
+    await tester.pumpWidget(
+      const UnconstrainedBox(
+        constrainedAxis: Axis.vertical,
+        child: Column(
+          children: <Widget>[
+            SizedBox(width: 20.0, height: 10.0),
+            Spacer(),
+            SizedBox(width: 10.0, height: 10.0),
+          ],
+        ),
       ),
-    ));
+    );
     final Rect spacerRect = tester.getRect(find.byType(Spacer));
     final Rect flexRect = tester.getRect(find.byType(Column));
     expect(spacerRect.size, const Size(0.0, 580.0));

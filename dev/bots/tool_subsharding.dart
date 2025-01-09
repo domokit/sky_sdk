@@ -6,11 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 
 class TestSpecs {
-
-  TestSpecs({
-    required this.path,
-    required this.startTime,
-  });
+  TestSpecs({required this.path, required this.startTime});
 
   final String path;
   int startTime;
@@ -25,9 +21,7 @@ class TestSpecs {
   int get endTime => _endTime ?? 0;
 
   String toJson() {
-    return json.encode(
-      <String, String>{'path': path, 'runtime': milliseconds.toString()}
-    );
+    return json.encode(<String, String>{'path': path, 'runtime': milliseconds.toString()});
   }
 }
 
@@ -65,26 +59,27 @@ class TestFileReporterResults {
         final int suiteID = group['suiteID']! as int;
         addMetricDone(suiteID, entry['time']! as int, testSpecs);
       } else if (entry.containsKey('error')) {
-        final String stackTrace = entry.containsKey('stackTrace') ? entry['stackTrace']! as String : '';
+        final String stackTrace =
+            entry.containsKey('stackTrace') ? entry['stackTrace']! as String : '';
         errors.add('${entry['error']}\n $stackTrace');
       } else if (entry.containsKey('success') && entry['success'] == true) {
         hasFailedTests = false;
       }
     }
 
-    return TestFileReporterResults._(allTestSpecs: testSpecs, hasFailedTests: hasFailedTests, errors: errors);
+    return TestFileReporterResults._(
+      allTestSpecs: testSpecs,
+      hasFailedTests: hasFailedTests,
+      errors: errors,
+    );
   }
 
   final Map<int, TestSpecs> allTestSpecs;
   final bool hasFailedTests;
   final List<String> errors;
 
-
   static void addTestSpec(Map<String, Object?> suite, int time, Map<int, TestSpecs> allTestSpecs) {
-    allTestSpecs[suite['id']! as int] = TestSpecs(
-      path: suite['path']! as String,
-      startTime: time,
-    );
+    allTestSpecs[suite['id']! as int] = TestSpecs(path: suite['path']! as String, startTime: time);
   }
 
   static void addMetricDone(int suiteID, int time, Map<int, TestSpecs> allTestSpecs) {

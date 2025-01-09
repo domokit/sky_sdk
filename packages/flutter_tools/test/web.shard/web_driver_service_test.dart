@@ -12,31 +12,31 @@ import '../src/common.dart';
 import '../src/fake_process_manager.dart';
 
 void main() {
-  testWithoutContext('WebDriverService catches SocketExceptions cleanly and includes link to documentation', () async {
-    final BufferLogger logger = BufferLogger.test();
-    final WebDriverService service = WebDriverService(
-      logger: logger,
-      processUtils: ProcessUtils(
+  testWithoutContext(
+    'WebDriverService catches SocketExceptions cleanly and includes link to documentation',
+    () async {
+      final BufferLogger logger = BufferLogger.test();
+      final WebDriverService service = WebDriverService(
         logger: logger,
-        processManager: FakeProcessManager.empty(),
-      ),
-      dartSdkPath: 'dart',
-    );
-    const String link = 'https://flutter.dev/to/integration-test-on-web';
-    try {
-      await service.startTest(
-        'foo.test',
-        <String>[],
-        <String, String>{},
-        PackageConfig(<Package>[Package('test', Uri.base)]),
-        driverPort: 1,
-        headless: true,
-        browserName: 'chrome',
+        processUtils: ProcessUtils(logger: logger, processManager: FakeProcessManager.empty()),
+        dartSdkPath: 'dart',
       );
-      fail('WebDriverService did not throw as expected.');
-    } on ToolExit catch (error) {
-      expect(error.message, isNot(contains('SocketException')));
-      expect(error.message, contains(link));
-    }
-  });
+      const String link = 'https://flutter.dev/to/integration-test-on-web';
+      try {
+        await service.startTest(
+          'foo.test',
+          <String>[],
+          <String, String>{},
+          PackageConfig(<Package>[Package('test', Uri.base)]),
+          driverPort: 1,
+          headless: true,
+          browserName: 'chrome',
+        );
+        fail('WebDriverService did not throw as expected.');
+      } on ToolExit catch (error) {
+        expect(error.message, isNot(contains('SocketException')));
+        expect(error.message, contains(link));
+      }
+    },
+  );
 }

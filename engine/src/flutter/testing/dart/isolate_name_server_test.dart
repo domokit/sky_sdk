@@ -69,8 +69,7 @@ void main() {
       // Check we can't register the same name twice.
       final ReceivePort receivePort2 = ReceivePort();
       final SendPort sendPort2 = receivePort2.sendPort;
-      expect(
-          IsolateNameServer.registerPortWithName(sendPort2, portName), isFalse);
+      expect(IsolateNameServer.registerPortWithName(sendPort2, portName), isFalse);
       expect(IsolateNameServer.lookupPortByName(portName), sendPort);
 
       // Remove the mapping.
@@ -78,8 +77,7 @@ void main() {
       expect(IsolateNameServer.lookupPortByName(portName), isNull);
 
       // Ensure registering a new port with the old name returns the new port.
-      expect(
-          IsolateNameServer.registerPortWithName(sendPort2, portName), isTrue);
+      expect(IsolateNameServer.registerPortWithName(sendPort2, portName), isTrue);
       expect(IsolateNameServer.lookupPortByName(portName), sendPort2);
 
       // Close so the test runner doesn't hang.
@@ -101,31 +99,37 @@ void main() {
       // Test driver.
       final ReceivePort testReceivePort = ReceivePort();
       final Completer<void> testPortCompleter = Completer<void>();
-      testReceivePort.listen(expectAsync1<void, dynamic>((dynamic response) {
-        final List<dynamic> typedResponse = response as List<dynamic>;
-        final int code = typedResponse[0] as int;
-        final String message = typedResponse[1] as String;
-        switch (code) {
-          case kStartCode:
-            break;
-          case kCloseCode:
-            receivePort.close();
-          case kDeletedCode:
-            expect(IsolateNameServer.lookupPortByName(portName), isNull);
-            // Test is done, close the last ReceivePort.
-            testReceivePort.close();
-          case kErrorCode:
-            throw message;
-          default:
-            throw 'UNREACHABLE';
-        }
-      }, count: 3), onDone: testPortCompleter.complete);
+      testReceivePort.listen(
+        expectAsync1<void, dynamic>((dynamic response) {
+          final List<dynamic> typedResponse = response as List<dynamic>;
+          final int code = typedResponse[0] as int;
+          final String message = typedResponse[1] as String;
+          switch (code) {
+            case kStartCode:
+              break;
+            case kCloseCode:
+              receivePort.close();
+            case kDeletedCode:
+              expect(IsolateNameServer.lookupPortByName(portName), isNull);
+              // Test is done, close the last ReceivePort.
+              testReceivePort.close();
+            case kErrorCode:
+              throw message;
+            default:
+              throw 'UNREACHABLE';
+          }
+        }, count: 3),
+        onDone: testPortCompleter.complete,
+      );
 
       final Completer<void> portCompleter = Completer<void>();
-      receivePort.listen(expectAsync1<void, dynamic>((dynamic message) {
-        // If we don't get this message, we timeout and fail.
-        expect(message, portName);
-      }), onDone: portCompleter.complete);
+      receivePort.listen(
+        expectAsync1<void, dynamic>((dynamic message) {
+          // If we don't get this message, we timeout and fail.
+          expect(message, portName);
+        }),
+        onDone: portCompleter.complete,
+      );
 
       // Run the test.
       await Isolate.spawn(

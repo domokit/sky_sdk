@@ -29,20 +29,18 @@ String? _getStandardStateLocation() {
     return env['ANALYZER_STATE_LOCATION_OVERRIDE'];
   }
 
-  final String? home =
-      io.Platform.isWindows ? env['LOCALAPPDATA'] : env['HOME'];
-  return home != null && io.FileSystemEntity.isDirectorySync(home)
-      ? join(home, _SERVER_DIR)
-      : null;
+  final String? home = io.Platform.isWindows ? env['LOCALAPPDATA'] : env['HOME'];
+  return home != null && io.FileSystemEntity.isDirectorySync(home) ? join(home, _SERVER_DIR) : null;
 }
 
 /// A `dart:io` based implementation of [ResourceProvider].
 class FileSystemResourceProvider implements ResourceProvider {
   FileSystemResourceProvider(this.filesystem, {String? stateLocation})
-      : _stateLocation = stateLocation ?? _getStandardStateLocation();
+    : _stateLocation = stateLocation ?? _getStandardStateLocation();
 
-  static final FileSystemResourceProvider instance =
-      FileSystemResourceProvider(const file.LocalFileSystem());
+  static final FileSystemResourceProvider instance = FileSystemResourceProvider(
+    const file.LocalFileSystem(),
+  );
 
   /// The path to the base folder where state is stored.
   final String? _stateLocation;
@@ -77,8 +75,7 @@ class FileSystemResourceProvider implements ResourceProvider {
   @override
   Folder? getStateLocation(String pluginId) {
     if (_stateLocation != null) {
-      final file.Directory directory =
-          filesystem.directory(join(_stateLocation, pluginId));
+      final file.Directory directory = filesystem.directory(join(_stateLocation, pluginId));
       directory.createSync(recursive: true);
       return _PhysicalFolder(directory);
     }
@@ -221,14 +218,15 @@ class _PhysicalFolder extends _PhysicalResource implements Folder {
   const _PhysicalFolder(io.Directory super.directory);
 
   @override
-  Stream<WatchEvent> get changes =>
-      DirectoryWatcher(_entry.path).events.handleError((Object error) {},
-          test: (dynamic error) =>
-              error is io.FileSystemException &&
-              // Don't suppress "Directory watcher closed," so the outer
-              // listener can see the interruption & act on it.
-              !error.message
-                  .startsWith('Directory watcher closed unexpectedly'));
+  Stream<WatchEvent> get changes => DirectoryWatcher(_entry.path).events.handleError(
+    (Object error) {},
+    test:
+        (dynamic error) =>
+            error is io.FileSystemException &&
+            // Don't suppress "Directory watcher closed," so the outer
+            // listener can see the interruption & act on it.
+            !error.message.startsWith('Directory watcher closed unexpectedly'),
+  );
 
   @override
   bool get isRoot {
@@ -317,8 +315,7 @@ class _PhysicalFolder extends _PhysicalResource implements Folder {
   @override
   Folder resolveSymbolicLinksSync() {
     try {
-      return _PhysicalFolder(
-          io.Directory(_directory.resolveSymbolicLinksSync()));
+      return _PhysicalFolder(io.Directory(_directory.resolveSymbolicLinksSync()));
     } on io.FileSystemException catch (exception) {
       throw _wrapException(exception);
     }
@@ -416,8 +413,7 @@ abstract class _PhysicalResource implements Resource {
           shortName == r'COM2' ||
           shortName == r'COM3' ||
           shortName == r'COM4') {
-        throw FileSystemException(
-            path, 'Windows device drivers cannot be read.');
+        throw FileSystemException(path, 'Windows device drivers cannot be read.');
       }
     }
   }

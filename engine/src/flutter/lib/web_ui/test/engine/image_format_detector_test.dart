@@ -21,8 +21,7 @@ Future<void> testMain() async {
 
   Future<List<String>> createTestFiles() async {
     final HttpFetchResponse listingResponse = await httpFetch('/test_images/');
-    final List<String> testFiles =
-        (await listingResponse.json() as List<dynamic>).cast<String>();
+    final List<String> testFiles = (await listingResponse.json() as List<dynamic>).cast<String>();
 
     // Sanity-check the test file list. If suddenly test files are moved or
     // deleted, and the test server returns an empty list, or is missing some
@@ -41,8 +40,7 @@ Future<void> testMain() async {
 
   for (final String testFile in testFiles!) {
     test('can detect image type of $testFile', () async {
-      final HttpFetchResponse response =
-          await httpFetch('/test_images/$testFile');
+      final HttpFetchResponse response = await httpFetch('/test_images/$testFile');
 
       if (!response.hasPayload) {
         throw Exception('Unable to fetch() image test file "$testFile"');
@@ -71,17 +69,12 @@ Future<void> testMain() async {
         'xOffsetTooBig.gif',
       ];
 
-      final String testFileExtension =
-          testFile.substring(testFile.lastIndexOf('.') + 1);
+      final String testFileExtension = testFile.substring(testFile.lastIndexOf('.') + 1);
       final ImageType? expectedImageType = switch (testFileExtension) {
         'jpg' => ImageType.jpeg,
         'jpeg' => ImageType.jpeg,
-        'gif' => animatedGifFiles.contains(testFile)
-            ? ImageType.animatedGif
-            : ImageType.gif,
-        'webp' => animatedWebpFiles.contains(testFile)
-            ? ImageType.animatedWebp
-            : ImageType.webp,
+        'gif' => animatedGifFiles.contains(testFile) ? ImageType.animatedGif : ImageType.gif,
+        'webp' => animatedWebpFiles.contains(testFile) ? ImageType.animatedWebp : ImageType.webp,
         'avif' => ImageType.avif,
         'bmp' => ImageType.bmp,
         'png' => ImageType.png,

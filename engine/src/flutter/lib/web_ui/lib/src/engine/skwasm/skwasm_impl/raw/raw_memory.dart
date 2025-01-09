@@ -12,6 +12,7 @@ import 'dart:typed_data';
 import 'package:ui/ui.dart' as ui;
 
 final class Stack extends Opaque {}
+
 typedef StackPointer = Pointer<Stack>;
 
 /// Generic linear memory allocation
@@ -97,12 +98,7 @@ class StackScope {
   }
 
   ui.Rect convertRectFromNative(Pointer<Float> buffer) {
-    return ui.Rect.fromLTRB(
-      buffer[0],
-      buffer[1],
-      buffer[2],
-      buffer[3],
-    );
+    return ui.Rect.fromLTRB(buffer[0], buffer[1], buffer[2], buffer[3]);
   }
 
   Pointer<Int32> convertIRectToNative(ui.Rect rect) {

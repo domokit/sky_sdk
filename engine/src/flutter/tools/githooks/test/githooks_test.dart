@@ -41,11 +41,7 @@ void main() {
   test('Fails gracefully when --flutter is not an absolute path', () async {
     int? result;
     try {
-      result = await run(<String>[
-        'pre-push',
-        '--flutter',
-        'non/absolute',
-      ]);
+      result = await run(<String>['pre-push', '--flutter', 'non/absolute']);
     } catch (e, st) {
       fail('Unexpected exception: $e\n$st');
     }
@@ -58,8 +54,7 @@ void main() {
       result = await run(<String>[
         'pre-push',
         '--flutter',
-        if (io.Platform.isWindows) r'C:\does\not\exist'
-        else '/does/not/exist',
+        if (io.Platform.isWindows) r'C:\does\not\exist' else '/does/not/exist',
       ]);
     } catch (e, st) {
       fail('Unexpected exception: $e\n$st');
@@ -70,13 +65,8 @@ void main() {
   test('post-merge runs successfully', () async {
     int? result;
     try {
-      final io.Directory flutterPath = io.File(io.Platform.script.path)
-        .parent.parent.parent;
-      result = await run(<String>[
-        'post-merge',
-        '--flutter',
-        flutterPath.path,
-      ]);
+      final io.Directory flutterPath = io.File(io.Platform.script.path).parent.parent.parent;
+      result = await run(<String>['post-merge', '--flutter', flutterPath.path]);
     } catch (e, st) {
       fail('Unexpected exception: $e\n$st');
     }
@@ -86,13 +76,8 @@ void main() {
   test('pre-rebase runs successfully', () async {
     int? result;
     try {
-      final io.Directory flutterPath = io.File(io.Platform.script.path)
-        .parent.parent.parent;
-      result = await run(<String>[
-        'pre-rebase',
-        '--flutter',
-        flutterPath.path,
-      ]);
+      final io.Directory flutterPath = io.File(io.Platform.script.path).parent.parent.parent;
+      result = await run(<String>['pre-rebase', '--flutter', flutterPath.path]);
     } catch (e, st) {
       fail('Unexpected exception: $e\n$st');
     }
@@ -102,13 +87,8 @@ void main() {
   test('post-checkout runs successfully', () async {
     int? result;
     try {
-      final io.Directory flutterPath = io.File(io.Platform.script.path)
-        .parent.parent.parent;
-      result = await run(<String>[
-        'post-checkout',
-        '--flutter',
-        flutterPath.path,
-      ]);
+      final io.Directory flutterPath = io.File(io.Platform.script.path).parent.parent.parent;
+      result = await run(<String>['post-checkout', '--flutter', flutterPath.path]);
     } catch (e, st) {
       fail('Unexpected exception: $e\n$st');
     }

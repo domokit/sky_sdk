@@ -30,8 +30,10 @@ import "package:path/path.dart" as path;
 Future<void> main(List<String> args) async {
   final parser = new ArgParser();
   parser.addOption("nm", help: "Path to `nm` tool");
-  parser.addOption("binary",
-      help: "Path to the ELF file to extract symbols from");
+  parser.addOption(
+    "binary",
+    help: "Path to the ELF file to extract symbols from",
+  );
   parser.addOption("output", help: "Path to output symbol table");
   final usage = """
 Usage: dart_profiler_symbols.dart [options]
@@ -84,8 +86,13 @@ class Symbol {
   Symbol({required this.offset, required this.size, required this.name});
 }
 
-Future<void> run(String? buildIdDir, String? buildIdScript, String nm,
-  String binary, String output) async {
+Future<void> run(
+  String? buildIdDir,
+  String? buildIdScript,
+  String nm,
+  String binary,
+  String output,
+) async {
   final unstrippedFile = binary;
   final args = ["--demangle", "--numeric-sort", "--print-size", unstrippedFile];
   final result = await Process.run(nm, args);
@@ -105,9 +112,11 @@ Future<void> run(String? buildIdDir, String? buildIdScript, String nm,
     }
 
     // Note that capture groups start at 1.
-    final symbol = new Symbol(offset: int.parse(match[1]!, radix: 16),
-                              size: int.parse(match[2]!, radix: 16),
-                              name: match[4]!.split("(")[0]);
+    final symbol = new Symbol(
+      offset: int.parse(match[1]!, radix: 16),
+      size: int.parse(match[2]!, radix: 16),
+      name: match[4]!.split("(")[0],
+    );
 
     if (symbol.name.startsWith("\$")) {
       continue; // Ignore compiler/assembler temps.

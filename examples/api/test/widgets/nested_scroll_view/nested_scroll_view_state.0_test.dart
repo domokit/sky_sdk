@@ -4,22 +4,22 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/nested_scroll_view/nested_scroll_view_state.0.dart' as example;
+import 'package:flutter_api_samples/widgets/nested_scroll_view/nested_scroll_view_state.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Access the outer and inner controllers', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NestedScrollViewStateExampleApp(),
-    );
+    await tester.pumpWidget(const example.NestedScrollViewStateExampleApp());
 
     expect(find.byType(NestedScrollView), findsOne);
     expect(find.widgetWithText(SliverAppBar, 'NestedScrollViewState Demo!'), findsOne);
     expect(find.byType(CustomScrollView), findsOne);
 
-    final example.NestedScrollViewStateExample widget = tester.widget<example.NestedScrollViewStateExample>(
-      find.byType(example.NestedScrollViewStateExample),
-    );
+    final example.NestedScrollViewStateExample widget = tester
+        .widget<example.NestedScrollViewStateExample>(
+          find.byType(example.NestedScrollViewStateExample),
+        );
 
     final ScrollController outerController = widget.outerController;
     final ScrollController innerController = widget.innerController;

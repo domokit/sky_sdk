@@ -93,7 +93,7 @@ void main() {
         '.buildlog/\n'
         '.history\n'
         '.svn/\n'
-        'migrate_working_dir/\n'
+        'migrate_working_dir/\n',
       );
 
       final SwiftPackageManagerGitignoreMigration migration = SwiftPackageManagerGitignoreMigration(
@@ -111,7 +111,7 @@ void main() {
         '.history\n'
         '.svn/\n'
         '.swiftpm/\n'
-        'migrate_working_dir/\n'
+        'migrate_working_dir/\n',
       );
 
       expect(
@@ -123,9 +123,8 @@ void main() {
 }
 
 class FakeFlutterProject extends Fake implements FlutterProject {
-  FakeFlutterProject({
-    required MemoryFileSystem fileSystem,
-  }) : gitignoreFile = fileSystem.file('.gitignore');
+  FakeFlutterProject({required MemoryFileSystem fileSystem})
+    : gitignoreFile = fileSystem.file('.gitignore');
 
   @override
   File gitignoreFile;

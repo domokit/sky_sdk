@@ -34,21 +34,16 @@ final class TestBuilderConfig {
   }) {
     _builds.add({
       'archives': [],
-      'drone_dimensions': [
-        dimension._dimension,
-      ],
+      'drone_dimensions': [dimension._dimension],
       'gclient_variables': <String, Object?>{},
-      'gn': [
-        if (enableRbe) '--rbe',
-        if (enableLto == false) '--no-lto',
-      ],
+      'gn': [if (enableRbe) '--rbe', if (enableLto == false) '--no-lto'],
       'name': name,
       'description': description,
       'ninja': <String, Object?>{
         if (targetDir case final targetDir?) ...{
           'config': targetDir,
           'targets': ['ninja_target'],
-        }
+        },
       },
       'tests': _testTask(testTask),
       'generators': _generatorTask(generatorTask),
@@ -102,9 +97,7 @@ final class TestBuilderConfig {
   /// After creation, the builder state remains, and changes can be made to the
   /// builder to create a new configuration without affecting the previous one
   /// created.
-  BuilderConfig buildConfig({
-    required String path,
-  }) {
+  BuilderConfig buildConfig({required String path}) {
     final config = BuilderConfig.fromJson(map: buildJson(), path: path);
     if (config.check(path) case final errors when errors.isNotEmpty) {
       throw StateError('Invalid configuration:\n${errors.join('\n')}');
@@ -118,9 +111,7 @@ final class TestBuilderConfig {
   ///
   /// It is undefined behavior to mutate the returned map.
   Map<String, Object?> buildJson() {
-    return {
-      'builds': _builds,
-    };
+    return {'builds': _builds};
   }
 }
 

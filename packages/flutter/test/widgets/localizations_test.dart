@@ -10,16 +10,17 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   final TestAutomatedTestWidgetsFlutterBinding binding = TestAutomatedTestWidgetsFlutterBinding();
 
-  testWidgets('Locale is available when Localizations widget stops deferring frames', (WidgetTester tester) async {
+  testWidgets('Locale is available when Localizations widget stops deferring frames', (
+    WidgetTester tester,
+  ) async {
     final FakeLocalizationsDelegate delegate = FakeLocalizationsDelegate();
-    await tester.pumpWidget(Localizations(
-      locale: const Locale('fo'),
-      delegates: <LocalizationsDelegate<dynamic>>[
-        WidgetsLocalizationsDelegate(),
-        delegate,
-      ],
-      child: const Text('loaded'),
-    ));
+    await tester.pumpWidget(
+      Localizations(
+        locale: const Locale('fo'),
+        delegates: <LocalizationsDelegate<dynamic>>[WidgetsLocalizationsDelegate(), delegate],
+        child: const Text('loaded'),
+      ),
+    );
     final dynamic state = tester.state(find.byType(Localizations));
     // ignore: avoid_dynamic_calls
     expect(state!.locale, isNull);
@@ -37,18 +38,27 @@ void main() {
     expect(find.text('loaded'), findsOneWidget);
   });
 
-  testWidgets('Localizations.localeOf throws when no localizations exist', (WidgetTester tester) async {
+  testWidgets('Localizations.localeOf throws when no localizations exist', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey contextKey = GlobalKey(debugLabel: 'Test Key');
     await tester.pumpWidget(Container(key: contextKey));
 
-    expect(() => Localizations.localeOf(contextKey.currentContext!), throwsA(isAssertionError.having(
+    expect(
+      () => Localizations.localeOf(contextKey.currentContext!),
+      throwsA(
+        isAssertionError.having(
           (AssertionError e) => e.message,
-      'message',
-      contains('does not include a Localizations ancestor'),
-    )));
+          'message',
+          contains('does not include a Localizations ancestor'),
+        ),
+      ),
+    );
   });
 
-  testWidgets('Localizations.maybeLocaleOf returns null when no localizations exist', (WidgetTester tester) async {
+  testWidgets('Localizations.maybeLocaleOf returns null when no localizations exist', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey contextKey = GlobalKey(debugLabel: 'Test Key');
     await tester.pumpWidget(Container(key: contextKey));
 
@@ -70,7 +80,6 @@ class FakeLocalizationsDelegate extends LocalizationsDelegate<String> {
 }
 
 class TestAutomatedTestWidgetsFlutterBinding extends AutomatedTestWidgetsFlutterBinding {
-
   VoidCallback? onAllowFrame;
 
   @override

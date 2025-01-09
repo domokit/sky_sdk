@@ -6,14 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 void main() {
-  runApp(
-    const MaterialApp(
-      title: 'Menu Tester',
-      home: Material(
-        child: Home(),
-      ),
-    ),
-  );
+  runApp(const MaterialApp(title: 'Menu Tester', home: Material(child: Home())));
 }
 
 class Home extends StatefulWidget {
@@ -43,17 +36,11 @@ class _HomeState extends State<Home> {
       menuTheme = const MenuThemeData(
         style: MenuStyle(
           shape: MaterialStatePropertyAll<OutlinedBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
-              ),
-            ),
+            RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
           ),
           backgroundColor: MaterialStatePropertyAll<Color?>(Colors.blue),
           elevation: MaterialStatePropertyAll<double?>(10),
-          padding: MaterialStatePropertyAll<EdgeInsetsDirectional>(
-            EdgeInsetsDirectional.all(20),
-          ),
+          padding: MaterialStatePropertyAll<EdgeInsetsDirectional>(EdgeInsetsDirectional.all(20)),
         ),
       );
       menuButtonTheme = const MenuButtonThemeData(
@@ -68,9 +55,7 @@ class _HomeState extends State<Home> {
           shape: MaterialStatePropertyAll<OutlinedBorder>(RoundedRectangleBorder()),
           backgroundColor: MaterialStatePropertyAll<Color?>(Colors.blue),
           elevation: MaterialStatePropertyAll<double?>(10),
-          padding: MaterialStatePropertyAll<EdgeInsetsDirectional>(
-            EdgeInsetsDirectional.all(20),
-          ),
+          padding: MaterialStatePropertyAll<EdgeInsetsDirectional>(EdgeInsetsDirectional.all(20)),
         ),
       );
     }
@@ -82,16 +67,17 @@ class _HomeState extends State<Home> {
           child: Theme(
             data: theme.copyWith(
               visualDensity: _density,
-              menuTheme: _transparent
-                  ? MenuThemeData(
-                      style: MenuStyle(
-                        backgroundColor: MaterialStatePropertyAll<Color>(
-                          Colors.blue.withOpacity(0.12),
+              menuTheme:
+                  _transparent
+                      ? MenuThemeData(
+                        style: MenuStyle(
+                          backgroundColor: MaterialStatePropertyAll<Color>(
+                            Colors.blue.withOpacity(0.12),
+                          ),
+                          elevation: const MaterialStatePropertyAll<double>(0),
                         ),
-                        elevation: const MaterialStatePropertyAll<double>(0),
-                      ),
-                    )
-                  : menuTheme,
+                      )
+                      : menuTheme,
               menuBarTheme: menuBarTheme,
               menuButtonTheme: menuButtonTheme,
             ),
@@ -273,10 +259,7 @@ class _ControlsState extends State<_Controls> {
                     divisions: 12,
                     onChanged: (double value) {
                       widget.onDensityChanged(
-                        VisualDensity(
-                          horizontal: value,
-                          vertical: widget.density.vertical,
-                        ),
+                        VisualDensity(horizontal: value, vertical: widget.density.vertical),
                       );
                     },
                   ),
@@ -288,10 +271,7 @@ class _ControlsState extends State<_Controls> {
                     divisions: 12,
                     onChanged: (double value) {
                       widget.onDensityChanged(
-                        VisualDensity(
-                          horizontal: widget.density.horizontal,
-                          vertical: value,
-                        ),
+                        VisualDensity(horizontal: widget.density.horizontal, vertical: value),
                       );
                     },
                   ),
@@ -314,7 +294,7 @@ class _ControlsState extends State<_Controls> {
                         }
                       },
                     ),
-                    const Text('RTL Text')
+                    const Text('RTL Text'),
                   ],
                 ),
                 Row(
@@ -330,7 +310,7 @@ class _ControlsState extends State<_Controls> {
                         }
                       },
                     ),
-                    const Text('Add Item')
+                    const Text('Add Item'),
                   ],
                 ),
                 Row(
@@ -346,7 +326,7 @@ class _ControlsState extends State<_Controls> {
                         }
                       },
                     ),
-                    const Text('Enable Accelerators')
+                    const Text('Enable Accelerators'),
                   ],
                 ),
                 Row(
@@ -362,7 +342,7 @@ class _ControlsState extends State<_Controls> {
                         }
                       },
                     ),
-                    const Text('Transparent')
+                    const Text('Transparent'),
                   ],
                 ),
                 Row(
@@ -378,7 +358,7 @@ class _ControlsState extends State<_Controls> {
                         }
                       },
                     ),
-                    const Text('Funky Theme')
+                    const Text('Funky Theme'),
                   ],
                 ),
               ],
@@ -436,11 +416,7 @@ class _ControlSlider extends StatelessWidget {
 }
 
 class _TestMenus extends StatefulWidget {
-  const _TestMenus({
-    required this.menuController,
-    this.addItem = false,
-    this.accelerators = false,
-  });
+  const _TestMenus({required this.menuController, this.addItem = false, this.accelerators = false});
 
   final MenuController menuController;
   final bool addItem;
@@ -480,8 +456,8 @@ class _TestMenusState extends State<_TestMenus> {
     setState(() {
       checkboxState = switch (checkboxState) {
         false => true,
-        true  => null,
-        null  => false,
+        true => null,
+        null => false,
       };
     });
   }
@@ -575,10 +551,7 @@ List<Widget> createTestMenus({
   bool includeExtraGroups = false,
   bool accelerators = false,
 }) {
-  Widget submenuButton(
-    TestMenu menu, {
-    required List<Widget> menuChildren,
-  }) {
+  Widget submenuButton(TestMenu menu, {required List<Widget> menuChildren}) {
     return SubmenuButton(
       onOpen: onOpen != null ? () => onOpen(menu) : null,
       onClose: onClose != null ? () => onClose(menu) : null,
@@ -616,7 +589,10 @@ List<Widget> createTestMenus({
       key: key,
       value: checkboxValue,
       tristate: tristate,
-      onChanged: enabled && onCheckboxChanged != null ? (bool? value) => onCheckboxChanged(menu, value) : null,
+      onChanged:
+          enabled && onCheckboxChanged != null
+              ? (bool? value) => onCheckboxChanged(menu, value)
+              : null,
       shortcut: menu.shortcut,
       trailingIcon: trailingIcon,
       child: accelerators ? MenuAcceleratorLabel(menu.acceleratorLabel) : Text(menu.label),
@@ -678,22 +654,25 @@ List<Widget> createTestMenus({
       TestMenu.mainMenu2,
       menuChildren: <Widget>[
         MenuAcceleratorCallbackBinding(
-          onInvoke: onPressed != null
-              ? () {
-                  onPressed.call(TestMenu.testButton);
-                  menuController?.close();
-                }
-              : null,
-          child: TextButton(
-            onPressed: onPressed != null
-                ? () {
+          onInvoke:
+              onPressed != null
+                  ? () {
                     onPressed.call(TestMenu.testButton);
                     menuController?.close();
                   }
-                : null,
-            child: accelerators
-                ? MenuAcceleratorLabel(TestMenu.testButton.acceleratorLabel)
-                : Text(TestMenu.testButton.label),
+                  : null,
+          child: TextButton(
+            onPressed:
+                onPressed != null
+                    ? () {
+                      onPressed.call(TestMenu.testButton);
+                      menuController?.close();
+                    }
+                    : null,
+            child:
+                accelerators
+                    ? MenuAcceleratorLabel(TestMenu.testButton.acceleratorLabel)
+                    : Text(TestMenu.testButton.label),
           ),
         ),
         menuItemButton(TestMenu.subMenu3),
@@ -708,7 +687,7 @@ List<Widget> createTestMenus({
             debugPrint('Focused Item: $primaryFocus');
           },
           child: const Text('Print Focused Item'),
-        )
+        ),
       ],
     ),
     submenuButton(
@@ -737,11 +716,8 @@ List<Widget> createTestMenus({
               submenuButton(
                 TestMenu.subSubMenu3,
                 menuChildren: <Widget>[
-                  for (int i=0; i < 100; ++i)
-                    MenuItemButton(
-                      onPressed: () {},
-                      child: Text('Menu Item $i'),
-                    ),
+                  for (int i = 0; i < 100; ++i)
+                    MenuItemButton(onPressed: () {}, child: Text('Menu Item $i')),
                 ],
               ),
           ],

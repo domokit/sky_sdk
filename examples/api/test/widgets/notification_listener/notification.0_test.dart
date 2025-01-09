@@ -12,9 +12,7 @@ void main() {
   testWidgets('Shows all elements', (WidgetTester tester) async {
     final DebugPrintCallback originalDebugPrint = debugPrint;
     debugPrint = (String? message, {int? wrapWidth}) {};
-    await tester.pumpWidget(
-      const example.NotificationExampleApp(),
-    );
+    await tester.pumpWidget(const example.NotificationExampleApp());
 
     expect(find.byType(NestedScrollView), findsOne);
     expect(find.widgetWithText(SliverAppBar, 'Notification Sample'), findsOne);
@@ -41,9 +39,7 @@ void main() {
     debugPrint = (String? message, {int? wrapWidth}) {
       logs.add(message!);
     };
-    await tester.pumpWidget(
-      const example.NotificationExampleApp(),
-    );
+    await tester.pumpWidget(const example.NotificationExampleApp());
 
     final TestPointer testPointer = TestPointer(1, PointerDeviceKind.mouse);
     testPointer.hover(tester.getCenter(find.byType(NestedScrollView)));
@@ -66,9 +62,7 @@ void main() {
     debugPrint = (String? message, {int? wrapWidth}) {
       logs.add(message!);
     };
-    await tester.pumpWidget(
-      const example.NotificationExampleApp(),
-    );
+    await tester.pumpWidget(const example.NotificationExampleApp());
 
     final TestPointer testPointer = TestPointer(1, PointerDeviceKind.mouse);
     testPointer.hover(tester.getCenter(find.byType(NestedScrollView)));

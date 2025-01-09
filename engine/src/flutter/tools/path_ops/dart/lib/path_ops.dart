@@ -78,8 +78,7 @@ abstract class PathProxy {
 
   /// Creates a cubic Bezier curve from the current point to point x3,y3 using
   /// x1,y1 as the first control point and x2,y2 as the second.
-  void cubicTo(
-      double x1, double y1, double x2, double y2, double x3, double y3);
+  void cubicTo(double x1, double y1, double x2, double y2, double x3, double y3);
 
   /// Draws a straight line from the current point to the last [moveTo] point.
   void close();
@@ -103,8 +102,7 @@ class SvgPathProxy implements PathProxy {
   }
 
   @override
-  void cubicTo(
-      double x1, double y1, double x2, double y2, double x3, double y3) {
+  void cubicTo(double x1, double y1, double x2, double y2, double x3, double y3) {
     _buffer.write('C$x1,$y1 $x2,$y2 $x3,$y3');
   }
 
@@ -131,8 +129,7 @@ class SvgPathProxy implements PathProxy {
 /// [dispose] has been called, this class must not be used again.
 class Path implements PathProxy {
   /// Creates an empty path object with the specified fill type.
-  Path([FillType fillType = FillType.nonZero])
-      : _path = _createPathFn(fillType.index);
+  Path([FillType fillType = FillType.nonZero]) : _path = _createPathFn(fillType.index);
 
   /// Creates a copy of this path.
   factory Path.from(Path other) {
@@ -243,14 +240,7 @@ class Path implements PathProxy {
   }
 
   @override
-  void cubicTo(
-    double x1,
-    double y1,
-    double x2,
-    double y2,
-    double x3,
-    double y3,
-  ) {
+  void cubicTo(double x1, double y1, double x2, double y2, double x3, double y3) {
     assert(_path != null);
     _resetPathData();
     _cubicToFn(_path!, x1, y1, x2, y2, x3, y3);
@@ -320,74 +310,69 @@ final class _PathData extends ffi.Struct {
 typedef _CreatePathType = ffi.Pointer<_SkPath> Function(int);
 typedef _create_path_type = ffi.Pointer<_SkPath> Function(ffi.Int);
 
-final _CreatePathType _createPathFn =
-    _dylib.lookupFunction<_create_path_type, _CreatePathType>(
+final _CreatePathType _createPathFn = _dylib.lookupFunction<_create_path_type, _CreatePathType>(
   'CreatePath',
 );
 
 typedef _MoveToType = void Function(ffi.Pointer<_SkPath>, double, double);
-typedef _move_to_type = ffi.Void Function(
-    ffi.Pointer<_SkPath>, ffi.Float, ffi.Float);
+typedef _move_to_type = ffi.Void Function(ffi.Pointer<_SkPath>, ffi.Float, ffi.Float);
 
-final _MoveToType _moveToFn = _dylib.lookupFunction<_move_to_type, _MoveToType>(
-  'MoveTo',
-);
+final _MoveToType _moveToFn = _dylib.lookupFunction<_move_to_type, _MoveToType>('MoveTo');
 
 typedef _LineToType = void Function(ffi.Pointer<_SkPath>, double, double);
-typedef _line_to_type = ffi.Void Function(
-    ffi.Pointer<_SkPath>, ffi.Float, ffi.Float);
+typedef _line_to_type = ffi.Void Function(ffi.Pointer<_SkPath>, ffi.Float, ffi.Float);
 
-final _LineToType _lineToFn = _dylib.lookupFunction<_line_to_type, _LineToType>(
-  'LineTo',
-);
+final _LineToType _lineToFn = _dylib.lookupFunction<_line_to_type, _LineToType>('LineTo');
 
-typedef _CubicToType = void Function(
-    ffi.Pointer<_SkPath>, double, double, double, double, double, double);
-typedef _cubic_to_type = ffi.Void Function(ffi.Pointer<_SkPath>, ffi.Float,
-    ffi.Float, ffi.Float, ffi.Float, ffi.Float, ffi.Float);
+typedef _CubicToType =
+    void Function(ffi.Pointer<_SkPath>, double, double, double, double, double, double);
+typedef _cubic_to_type =
+    ffi.Void Function(
+      ffi.Pointer<_SkPath>,
+      ffi.Float,
+      ffi.Float,
+      ffi.Float,
+      ffi.Float,
+      ffi.Float,
+      ffi.Float,
+    );
 
-final _CubicToType _cubicToFn =
-    _dylib.lookupFunction<_cubic_to_type, _CubicToType>('CubicTo');
+final _CubicToType _cubicToFn = _dylib.lookupFunction<_cubic_to_type, _CubicToType>('CubicTo');
 
 typedef _CloseType = void Function(ffi.Pointer<_SkPath>, bool);
 typedef _close_type = ffi.Void Function(ffi.Pointer<_SkPath>, ffi.Bool);
 
-final _CloseType _closeFn =
-    _dylib.lookupFunction<_close_type, _CloseType>('Close');
+final _CloseType _closeFn = _dylib.lookupFunction<_close_type, _CloseType>('Close');
 
 typedef _ResetType = void Function(ffi.Pointer<_SkPath>);
 typedef _reset_type = ffi.Void Function(ffi.Pointer<_SkPath>);
 
-final _ResetType _resetFn =
-    _dylib.lookupFunction<_reset_type, _ResetType>('Reset');
+final _ResetType _resetFn = _dylib.lookupFunction<_reset_type, _ResetType>('Reset');
 
 typedef _DestroyType = void Function(ffi.Pointer<_SkPath>);
 typedef _destroy_type = ffi.Void Function(ffi.Pointer<_SkPath>);
 
-final _DestroyType _destroyFn =
-    _dylib.lookupFunction<_destroy_type, _DestroyType>('DestroyPath');
+final _DestroyType _destroyFn = _dylib.lookupFunction<_destroy_type, _DestroyType>('DestroyPath');
 
-typedef _OpType = void Function(
-    ffi.Pointer<_SkPath>, ffi.Pointer<_SkPath>, int);
-typedef _op_type = ffi.Void Function(
-    ffi.Pointer<_SkPath>, ffi.Pointer<_SkPath>, ffi.Int);
+typedef _OpType = void Function(ffi.Pointer<_SkPath>, ffi.Pointer<_SkPath>, int);
+typedef _op_type = ffi.Void Function(ffi.Pointer<_SkPath>, ffi.Pointer<_SkPath>, ffi.Int);
 
 final _OpType _opFn = _dylib.lookupFunction<_op_type, _OpType>('Op');
 
 typedef _PathDataType = ffi.Pointer<_PathData> Function(ffi.Pointer<_SkPath>);
 typedef _path_data_type = ffi.Pointer<_PathData> Function(ffi.Pointer<_SkPath>);
 
-final _PathDataType _dataFn =
-    _dylib.lookupFunction<_path_data_type, _PathDataType>('Data');
+final _PathDataType _dataFn = _dylib.lookupFunction<_path_data_type, _PathDataType>('Data');
 
 typedef _DestroyDataType = void Function(ffi.Pointer<_PathData>);
 typedef _destroy_data_type = ffi.Void Function(ffi.Pointer<_PathData>);
 
-final _DestroyDataType _destroyDataFn =
-    _dylib.lookupFunction<_destroy_data_type, _DestroyDataType>('DestroyData');
+final _DestroyDataType _destroyDataFn = _dylib.lookupFunction<_destroy_data_type, _DestroyDataType>(
+  'DestroyData',
+);
 
 typedef _GetFillTypeType = int Function(ffi.Pointer<_SkPath>);
 typedef _get_fill_type_type = ffi.Int32 Function(ffi.Pointer<_SkPath>);
 
-final _GetFillTypeType _getFillTypeFn =
-    _dylib.lookupFunction<_get_fill_type_type, _GetFillTypeType>('GetFillType');
+final _GetFillTypeType _getFillTypeFn = _dylib
+    .lookupFunction<_get_fill_type_type, _GetFillTypeType>('GetFillType');

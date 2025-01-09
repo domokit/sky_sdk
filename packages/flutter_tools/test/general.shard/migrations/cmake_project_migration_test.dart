@@ -13,7 +13,7 @@ import 'package:test/fake.dart';
 
 import '../../src/common.dart';
 
-void main () {
+void main() {
   group('CMake project migration', () {
     group('migrate add_custom_command() to use VERBATIM', () {
       late MemoryFileSystem memoryFileSystem;
@@ -41,7 +41,10 @@ void main () {
         await cmakeProjectMigration.migrate();
         expect(managedCmakeFile.existsSync(), isFalse);
 
-        expect(testLogger.traceText, contains('CMake project not found, skipping add_custom_command() VERBATIM migration'));
+        expect(
+          testLogger.traceText,
+          contains('CMake project not found, skipping add_custom_command() VERBATIM migration'),
+        );
         expect(testLogger.statusText, isEmpty);
       });
 
@@ -119,7 +122,10 @@ add_custom_command(
 )
 ''');
 
-        expect(testLogger.statusText, contains('add_custom_command() missing VERBATIM or FLUTTER_TARGET_PLATFORM, updating.'));
+        expect(
+          testLogger.statusText,
+          contains('add_custom_command() missing VERBATIM or FLUTTER_TARGET_PLATFORM, updating.'),
+        );
       });
 
       testWithoutContext('is migrated to use FLUTTER_TARGET_PLATFORM', () async {
@@ -153,7 +159,10 @@ add_custom_command(
 )
 ''');
 
-        expect(testLogger.statusText, contains('add_custom_command() missing VERBATIM or FLUTTER_TARGET_PLATFORM, updating.'));
+        expect(
+          testLogger.statusText,
+          contains('add_custom_command() missing VERBATIM or FLUTTER_TARGET_PLATFORM, updating.'),
+        );
       });
     });
 
@@ -184,7 +193,10 @@ add_custom_command(
         await cmakeProjectMigration.migrate();
         expect(managedCmakeFile.existsSync(), isFalse);
 
-        expect(testLogger.traceText, contains('CMake project not found, skipping install() NATIVE_ASSETS_DIR migration.'));
+        expect(
+          testLogger.traceText,
+          contains('CMake project not found, skipping install() NATIVE_ASSETS_DIR migration.'),
+        );
         expect(testLogger.statusText, isEmpty);
       });
 
@@ -279,8 +291,10 @@ install(DIRECTORY "\${PROJECT_BUILD_DIR}/\${FLUTTER_ASSET_DIR_NAME}"
   DESTINATION "\${INSTALL_BUNDLE_DATA_DIR}" COMPONENT Runtime)
 ''');
 
-          expect(testLogger.statusText,
-              contains('CMake missing install() NATIVE_ASSETS_DIR command, updating.'));
+          expect(
+            testLogger.statusText,
+            contains('CMake missing install() NATIVE_ASSETS_DIR command, updating.'),
+          );
         });
       }
     });

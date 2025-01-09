@@ -8,10 +8,10 @@ import 'package:flutter_api_samples/material/progress_indicator/circular_progres
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Determinate CircularProgressIndicator uses the provided value', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ProgressIndicatorExampleApp(),
-    );
+  testWidgets('Determinate CircularProgressIndicator uses the provided value', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.ProgressIndicatorExampleApp());
     await tester.pump(const Duration(milliseconds: 2500));
 
     final Finder indicatorFinder = find.byType(CircularProgressIndicator).first;
@@ -19,10 +19,10 @@ void main() {
     expect(progressIndicator.value, equals(0.5));
   });
 
-  testWidgets('Indeterminate CircularProgressIndicator does not have a value', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ProgressIndicatorExampleApp(),
-    );
+  testWidgets('Indeterminate CircularProgressIndicator does not have a value', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.ProgressIndicatorExampleApp());
     await tester.pump(const Duration(milliseconds: 2500));
 
     final Finder indicatorFinder = find.byType(CircularProgressIndicator).last;
@@ -31,9 +31,7 @@ void main() {
   });
 
   testWidgets('Progress indicators year2023 flag can be toggled', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ProgressIndicatorExampleApp(),
-    );
+    await tester.pumpWidget(const example.ProgressIndicatorExampleApp());
 
     CircularProgressIndicator determinateIndicator = tester.widget<CircularProgressIndicator>(
       find.byType(CircularProgressIndicator).first,

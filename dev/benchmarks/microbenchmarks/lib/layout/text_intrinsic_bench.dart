@@ -13,11 +13,7 @@ const Duration kBenchmarkTime = Duration(seconds: 15);
 // Use an Align to loosen the constraints.
 final Widget intrinsicTextHeight = Directionality(
   textDirection: TextDirection.ltr,
-  child: Align(
-    child: IntrinsicHeight(
-      child: Text('A' * 100),
-    ),
-  ),
+  child: Align(child: IntrinsicHeight(child: Text('A' * 100))),
 );
 
 Future<void> execute() async {
@@ -25,7 +21,8 @@ Future<void> execute() async {
 
   // We control the framePolicy below to prevent us from scheduling frames in
   // the engine, so that the engine does not interfere with our timings.
-  final LiveTestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized() as LiveTestWidgetsFlutterBinding;
+  final LiveTestWidgetsFlutterBinding binding =
+      TestWidgetsFlutterBinding.ensureInitialized() as LiveTestWidgetsFlutterBinding;
 
   final Stopwatch watch = Stopwatch();
   int iterations = 0;
@@ -54,7 +51,6 @@ Future<void> execute() async {
     }
     watch.stop();
   });
-
 
   final BenchmarkResultPrinter printer = BenchmarkResultPrinter();
   printer.addResult(

@@ -13,16 +13,15 @@ class IndicatorAnimationExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: IndicatorAnimationExample(),
-    );
+    return const MaterialApp(home: IndicatorAnimationExample());
   }
 }
 
-const List<(TabIndicatorAnimation, String)> indicatorAnimationSegments = <(TabIndicatorAnimation, String)>[
-  (TabIndicatorAnimation.linear, 'Linear'),
-  (TabIndicatorAnimation.elastic, 'Elastic'),
-];
+const List<(TabIndicatorAnimation, String)> indicatorAnimationSegments =
+    <(TabIndicatorAnimation, String)>[
+      (TabIndicatorAnimation.linear, 'Linear'),
+      (TabIndicatorAnimation.elastic, 'Elastic'),
+    ];
 
 class IndicatorAnimationExample extends StatefulWidget {
   const IndicatorAnimationExample({super.key});
@@ -32,7 +31,9 @@ class IndicatorAnimationExample extends StatefulWidget {
 }
 
 class _IndicatorAnimationExampleState extends State<IndicatorAnimationExample> {
-  Set<TabIndicatorAnimation> _animationStyleSelection = <TabIndicatorAnimation>{TabIndicatorAnimation.linear};
+  Set<TabIndicatorAnimation> _animationStyleSelection = <TabIndicatorAnimation>{
+    TabIndicatorAnimation.linear,
+  };
   TabIndicatorAnimation _tabIndicatorAnimation = TabIndicatorAnimation.linear;
 
   @override
@@ -67,34 +68,26 @@ class _IndicatorAnimationExampleState extends State<IndicatorAnimationExample> {
                   _tabIndicatorAnimation = styles.first;
                 });
               },
-             segments: indicatorAnimationSegments
-               .map<ButtonSegment<TabIndicatorAnimation>>(((TabIndicatorAnimation, String) shirt) {
-                 return ButtonSegment<TabIndicatorAnimation>(value: shirt.$1, label: Text(shirt.$2));
-               })
-               .toList(),
+              segments:
+                  indicatorAnimationSegments.map<ButtonSegment<TabIndicatorAnimation>>((
+                    (TabIndicatorAnimation, String) shirt,
+                  ) {
+                    return ButtonSegment<TabIndicatorAnimation>(
+                      value: shirt.$1,
+                      label: Text(shirt.$2),
+                    );
+                  }).toList(),
             ),
             const SizedBox(height: 16),
             const Expanded(
               child: TabBarView(
                 children: <Widget>[
-                  Center(
-                    child: Text('Short Tab Page'),
-                  ),
-                  Center(
-                    child: Text('Very Very Very Long Tab Page'),
-                  ),
-                  Center(
-                    child: Text('Short Tab Page'),
-                  ),
-                  Center(
-                    child: Text('Very Very Very Long Tab Page'),
-                  ),
-                  Center(
-                    child: Text('Short Tab Page'),
-                  ),
-                  Center(
-                    child: Text('Very Very Very Long Tab Page'),
-                  ),
+                  Center(child: Text('Short Tab Page')),
+                  Center(child: Text('Very Very Very Long Tab Page')),
+                  Center(child: Text('Short Tab Page')),
+                  Center(child: Text('Very Very Very Long Tab Page')),
+                  Center(child: Text('Short Tab Page')),
+                  Center(child: Text('Very Very Very Long Tab Page')),
                 ],
               ),
             ),

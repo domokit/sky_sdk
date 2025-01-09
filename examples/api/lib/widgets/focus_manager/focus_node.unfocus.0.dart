@@ -13,9 +13,7 @@ class UnfocusExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: UnfocusExample(),
-    );
+    return const MaterialApp(home: UnfocusExample());
   }
 }
 
@@ -43,9 +41,7 @@ class _UnfocusExampleState extends State<UnfocusExample> {
                   width: 200,
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: TextField(
-                      decoration: InputDecoration(border: OutlineInputBorder()),
-                    ),
+                    child: TextField(decoration: InputDecoration(border: OutlineInputBorder())),
                   ),
                 );
               }),

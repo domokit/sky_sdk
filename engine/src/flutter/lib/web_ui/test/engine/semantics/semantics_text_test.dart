@@ -43,8 +43,7 @@ Future<void> testMain() async {
       tester.apply();
 
       expectSemanticsTree(owner(), '''
-        <sem><span>Hello</span></sem>'''
-      );
+        <sem><span>Hello</span></sem>''');
 
       final SemanticsObject node = owner().debugSemanticsTree![0]!;
       expect(node.semanticRole?.kind, SemanticRoleKind.generic);
@@ -67,8 +66,7 @@ Future<void> testMain() async {
       tester.apply();
 
       expectSemanticsTree(owner(), '''
-        <sem><span>World</span></sem>'''
-      );
+        <sem><span>World</span></sem>''');
     }
 
     // Empty the label - expect the <span> to be removed.
@@ -115,8 +113,7 @@ Future<void> testMain() async {
         <sem-c>
           <sem><span>I am a child</span></sem>
         </sem-c>
-      </sem>'''
-    );
+      </sem>''');
 
     semantics().semanticsEnabled = false;
   });
@@ -138,8 +135,7 @@ Future<void> testMain() async {
       tester.apply();
 
       expectSemanticsTree(owner(), '''
-        <sem><span>I am a leaf</span></sem>'''
-      );
+        <sem><span>I am a leaf</span></sem>''');
     }
 
     // Add a child - expect <span> to be removed from the parent.
@@ -166,8 +162,7 @@ Future<void> testMain() async {
           <sem-c>
             <sem><span>I am a child</span></sem>
           </sem-c>
-        </sem>'''
-      );
+        </sem>''');
     }
 
     // Remove the child - expect the <span> to be readded to the former parent.
@@ -182,8 +177,7 @@ Future<void> testMain() async {
       tester.apply();
 
       expectSemanticsTree(owner(), '''
-        <sem><span>I am a leaf again</span></sem>'''
-      );
+        <sem><span>I am a leaf again</span></sem>''');
     }
 
     semantics().semanticsEnabled = false;
@@ -204,8 +198,7 @@ Future<void> testMain() async {
     tester.apply();
 
     expectSemanticsTree(owner(), '''
-      <sem><span>Hello</span></sem>'''
-    );
+      <sem><span>Hello</span></sem>''');
 
     final SemanticsObject node = owner().debugSemanticsTree![0]!;
     final DomElement span = node.element.querySelector('span')!;
@@ -240,8 +233,7 @@ Future<void> testMain() async {
     lav.update();
 
     expectSemanticsTree(owner(), '''
-      <sem>Hello</sem>'''
-    );
+      <sem>Hello</sem>''');
 
     expect(node.element.getAttribute('tabindex'), isNull);
     node.semanticRole!.focusAsRouteDefault();
@@ -273,8 +265,7 @@ Future<void> testMain() async {
     lav.update();
 
     expectSemanticsTree(owner(), '''
-      <sem aria-label="Hello"></sem>'''
-    );
+      <sem aria-label="Hello"></sem>''');
 
     expect(node.element.getAttribute('tabindex'), isNull);
     node.semanticRole!.focusAsRouteDefault();
@@ -301,8 +292,7 @@ Future<void> testMain() async {
     expectSemanticsTree(owner(), '''
       <sem>
         <span style="pointer-events: none">Ignore pointer events</span>
-      </sem>'''
-    );
+      </sem>''');
 
     semantics().semanticsEnabled = false;
   });

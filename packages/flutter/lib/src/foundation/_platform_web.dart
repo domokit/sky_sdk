@@ -13,9 +13,7 @@ platform.TargetPlatform get defaultTargetPlatform {
   // To get a better guess at the targetPlatform we need to be able to reference
   // the window, but that won't be available until we fix the platforms
   // configuration for Flutter.
-  return platform.debugDefaultTargetPlatformOverride ??
-      _testPlatform ??
-      _browserPlatform;
+  return platform.debugDefaultTargetPlatformOverride ?? _testPlatform ?? _browserPlatform;
 }
 
 // The TargetPlatform used on Web tests, unless overridden.
@@ -27,8 +25,7 @@ platform.TargetPlatform? get _testPlatform {
     if (ui_web.debugEmulateFlutterTesterEnvironment) {
       // Return the overridden operatingSystem in tests, if any...
       if (ui_web.browser.debugOperatingSystemOverride != null) {
-        testPlatform =
-          _operatingSystemToTargetPlatform(ui_web.browser.operatingSystem);
+        testPlatform = _operatingSystemToTargetPlatform(ui_web.browser.operatingSystem);
       } else {
         // Fall back to `android` for tests.
         testPlatform = platform.TargetPlatform.android;
@@ -45,8 +42,9 @@ platform.TargetPlatform? get _testPlatform {
 // this getter may be called dozens of times per frame.
 //
 // _browserPlatform is lazily initialized, and cached forever.
-final platform.TargetPlatform _browserPlatform =
-  _operatingSystemToTargetPlatform(ui_web.browser.operatingSystem);
+final platform.TargetPlatform _browserPlatform = _operatingSystemToTargetPlatform(
+  ui_web.browser.operatingSystem,
+);
 
 // Converts an ui_web.OperatingSystem enum into a platform.TargetPlatform.
 platform.TargetPlatform _operatingSystemToTargetPlatform(ui_web.OperatingSystem os) {

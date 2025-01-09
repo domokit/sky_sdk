@@ -20,7 +20,12 @@ class ActionIconThemeData with Diagnosticable {
   ///
   /// The builders [backButtonIconBuilder], [closeButtonIconBuilder],
   /// [drawerButtonIconBuilder], [endDrawerButtonIconBuilder] may be null.
-  const ActionIconThemeData({ this.backButtonIconBuilder, this.closeButtonIconBuilder, this.drawerButtonIconBuilder, this.endDrawerButtonIconBuilder });
+  const ActionIconThemeData({
+    this.backButtonIconBuilder,
+    this.closeButtonIconBuilder,
+    this.drawerButtonIconBuilder,
+    this.endDrawerButtonIconBuilder,
+  });
 
   /// Overrides [BackButtonIcon]'s icon.
   ///
@@ -71,7 +76,8 @@ class ActionIconThemeData with Diagnosticable {
       backButtonIconBuilder: t < 0.5 ? a?.backButtonIconBuilder : b?.backButtonIconBuilder,
       closeButtonIconBuilder: t < 0.5 ? a?.closeButtonIconBuilder : b?.closeButtonIconBuilder,
       drawerButtonIconBuilder: t < 0.5 ? a?.drawerButtonIconBuilder : b?.drawerButtonIconBuilder,
-      endDrawerButtonIconBuilder: t < 0.5 ? a?.endDrawerButtonIconBuilder : b?.endDrawerButtonIconBuilder,
+      endDrawerButtonIconBuilder:
+          t < 0.5 ? a?.endDrawerButtonIconBuilder : b?.endDrawerButtonIconBuilder,
     );
   }
 
@@ -94,20 +100,44 @@ class ActionIconThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ActionIconThemeData
-        && other.backButtonIconBuilder == backButtonIconBuilder
-        && other.closeButtonIconBuilder == closeButtonIconBuilder
-        && other.drawerButtonIconBuilder == drawerButtonIconBuilder
-        && other.endDrawerButtonIconBuilder == endDrawerButtonIconBuilder;
+    return other is ActionIconThemeData &&
+        other.backButtonIconBuilder == backButtonIconBuilder &&
+        other.closeButtonIconBuilder == closeButtonIconBuilder &&
+        other.drawerButtonIconBuilder == drawerButtonIconBuilder &&
+        other.endDrawerButtonIconBuilder == endDrawerButtonIconBuilder;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<WidgetBuilder>('backButtonIconBuilder', backButtonIconBuilder, defaultValue: null));
-    properties.add(DiagnosticsProperty<WidgetBuilder>('closeButtonIconBuilder', closeButtonIconBuilder, defaultValue: null));
-    properties.add(DiagnosticsProperty<WidgetBuilder>('drawerButtonIconBuilder', drawerButtonIconBuilder, defaultValue: null));
-    properties.add(DiagnosticsProperty<WidgetBuilder>('endDrawerButtonIconBuilder', endDrawerButtonIconBuilder, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<WidgetBuilder>(
+        'backButtonIconBuilder',
+        backButtonIconBuilder,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<WidgetBuilder>(
+        'closeButtonIconBuilder',
+        closeButtonIconBuilder,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<WidgetBuilder>(
+        'drawerButtonIconBuilder',
+        drawerButtonIconBuilder,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<WidgetBuilder>(
+        'endDrawerButtonIconBuilder',
+        endDrawerButtonIconBuilder,
+        defaultValue: null,
+      ),
+    );
   }
 }
 
@@ -125,11 +155,7 @@ class ActionIconTheme extends InheritedTheme {
   /// Creates a theme that overrides the default icon of [BackButtonIcon],
   /// [CloseButtonIcon], [DrawerButtonIcon], and [EndDrawerButtonIcon] in this
   /// widget's subtree.
-  const ActionIconTheme({
-    super.key,
-    required this.data,
-    required super.child,
-  });
+  const ActionIconTheme({super.key, required this.data, required super.child});
 
   /// Specifies the default icon overrides for descendant [BackButtonIcon],
   /// [CloseButtonIcon], [DrawerButtonIcon], and [EndDrawerButtonIcon] widgets.
@@ -146,7 +172,8 @@ class ActionIconTheme extends InheritedTheme {
   /// ActionIconThemeData? theme = ActionIconTheme.of(context);
   /// ```
   static ActionIconThemeData? of(BuildContext context) {
-    final ActionIconTheme? actionIconTheme = context.dependOnInheritedWidgetOfExactType<ActionIconTheme>();
+    final ActionIconTheme? actionIconTheme =
+        context.dependOnInheritedWidgetOfExactType<ActionIconTheme>();
     return actionIconTheme?.data ?? Theme.of(context).actionIconTheme;
   }
 

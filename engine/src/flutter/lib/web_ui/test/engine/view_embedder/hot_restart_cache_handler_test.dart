@@ -37,11 +37,7 @@ void doTests() {
       registerElementForCleanup(other);
       registerElementForCleanup(another);
 
-      expect(_jsHotRestartStore!.toDart, <DomElement>[
-        toBeCached,
-        other,
-        another,
-      ]);
+      expect(_jsHotRestartStore!.toDart, <DomElement>[toBeCached, other, another]);
     });
   });
 
@@ -77,8 +73,7 @@ void doTests() {
       expect(_jsHotRestartStore!.toDart, <DomElement>[element]);
     });
 
-    test('Clears registered elements from the DOM and the cache upon restart',
-        () async {
+    test('Clears registered elements from the DOM and the cache upon restart', () async {
       final DomElement element = createDomElement('for-test');
       final DomElement element2 = createDomElement('for-test-two');
       domDocument.body!.append(element);

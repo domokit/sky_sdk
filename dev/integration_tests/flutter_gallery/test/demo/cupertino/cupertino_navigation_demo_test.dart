@@ -13,15 +13,12 @@ void main() {
     // dependency against in the flutter/cupertino package directly.
 
     final Future<ByteData> font = rootBundle.load(
-      'packages/cupertino_icons/assets/CupertinoIcons.ttf'
+      'packages/cupertino_icons/assets/CupertinoIcons.ttf',
     );
 
-    await (FontLoader('packages/cupertino_icons/CupertinoIcons')..addFont(font))
-      .load();
+    await (FontLoader('packages/cupertino_icons/CupertinoIcons')..addFont(font)).load();
 
-    await tester.pumpWidget(CupertinoApp(
-      home: CupertinoNavigationDemo(randomSeed: 123456),
-    ));
+    await tester.pumpWidget(CupertinoApp(home: CupertinoNavigationDemo(randomSeed: 123456)));
 
     await expectLater(
       find.byType(CupertinoNavigationDemo),

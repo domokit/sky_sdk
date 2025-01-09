@@ -15,13 +15,16 @@ Future<void> main() async {
       await runProjectTest((FlutterProject flutterProject) async {
         section('APK content for task assembleRelease with --obfuscate');
         await inDirectory(flutterProject.rootPath, () async {
-          await flutter('build', options: <String>[
-            'apk',
-            '--target-platform=android-arm',
-            '--obfuscate',
-            '--split-debug-info=foo/',
-            '--verbose',
-          ]);
+          await flutter(
+            'build',
+            options: <String>[
+              'apk',
+              '--target-platform=android-arm',
+              '--obfuscate',
+              '--split-debug-info=foo/',
+              '--verbose',
+            ],
+          );
         });
         final String outputApkDirectory = path.join(
           flutterProject.rootPath,
@@ -40,11 +43,10 @@ Future<void> main() async {
         await inDirectory(flutterProject.rootPath, () async {
           await exec('unzip', <String>[outputApkDirectory]);
           checkFileExists(path.join(flutterProject.rootPath, 'lib/armeabi-v7a/libapp.so'));
-          final String response = await eval(
-            'grep',
-            <String>[flutterProject.name, 'lib/armeabi-v7a/libapp.so'],
-            canFail: true,
-          );
+          final String response = await eval('grep', <String>[
+            flutterProject.name,
+            'lib/armeabi-v7a/libapp.so',
+          ], canFail: true);
           if (response.trim().contains('matches')) {
             foundApkProjectName = true;
           }
@@ -56,15 +58,18 @@ Future<void> main() async {
         section('AAR content with --obfuscate');
 
         await inDirectory(flutterProject.rootPath, () async {
-          await flutter('build', options: <String>[
-            'aar',
-            '--target-platform=android-arm',
-            '--obfuscate',
-            '--split-debug-info=foo/',
-            '--no-debug',
-            '--no-profile',
-            '--verbose',
-          ]);
+          await flutter(
+            'build',
+            options: <String>[
+              'aar',
+              '--target-platform=android-arm',
+              '--obfuscate',
+              '--split-debug-info=foo/',
+              '--no-debug',
+              '--no-profile',
+              '--verbose',
+            ],
+          );
         });
 
         final String outputAarDirectory = path.join(
@@ -83,11 +88,10 @@ Future<void> main() async {
         await inDirectory(flutterProject.rootPath, () async {
           await exec('unzip', <String>[outputAarDirectory]);
           checkFileExists(path.join(flutterProject.rootPath, 'jni/armeabi-v7a/libapp.so'));
-          final String response = await eval(
-            'grep',
-            <String>[flutterProject.name, 'jni/armeabi-v7a/libapp.so'],
-            canFail: true,
-          );
+          final String response = await eval('grep', <String>[
+            flutterProject.name,
+            'jni/armeabi-v7a/libapp.so',
+          ], canFail: true);
           if (response.trim().contains('matches')) {
             foundAarProjectName = true;
           }

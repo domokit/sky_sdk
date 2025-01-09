@@ -3,14 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/scroll_end_notification/scroll_end_notification.1.dart' as example;
+import 'package:flutter_api_samples/widgets/scroll_end_notification/scroll_end_notification.1.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('SliverAutoScroll example', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SliverAutoScrollExampleApp(),
-    );
+    await tester.pumpWidget(const example.SliverAutoScrollExampleApp());
 
     final double itemHeight = tester.getSize(find.widgetWithText(Card, 'Item 0.15')).height;
 
@@ -33,7 +32,7 @@ void main() {
 
     // Scroll up a little and the "AlignedItem" does not auto-scroll, because
     // it's fully visible.
-    await tester.drag(find.byType(CustomScrollView), Offset(0, - 2 * itemHeight));
+    await tester.drag(find.byType(CustomScrollView), Offset(0, -2 * itemHeight));
     await tester.pumpAndSettle();
     expect(tester.getRect(alignedItem).bottom, 600 - itemHeight);
 

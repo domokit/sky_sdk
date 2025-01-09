@@ -43,154 +43,181 @@ void main() {
       tryToDelete(tempDir);
     });
 
-    testUsingContext('indicate the default target platforms', () async {
-      final String projectPath = await createProject(tempDir,
-          arguments: <String>['--no-pub', '--template=app']);
+    testUsingContext(
+      'indicate the default target platforms',
+      () async {
+        final String projectPath = await createProject(
+          tempDir,
+          arguments: <String>['--no-pub', '--template=app'],
+        );
 
-      await runBuildAppBundleCommand(projectPath);
+        await runBuildAppBundleCommand(projectPath);
 
-      expect(
-        fakeAnalytics.sentEvents,
-        contains(Event.commandUsageValues(
-          workflow: 'appbundle',
-          commandHasTerminal: false,
-          buildAppBundleTargetPlatform: 'android-arm,android-arm64,android-x64',
-          buildAppBundleBuildMode: 'release',
-        )),
-      );
-    }, overrides: <Type, Generator>{
-      AndroidBuilder: () => FakeAndroidBuilder(),
-      Analytics: () => fakeAnalytics,
-    });
+        expect(
+          fakeAnalytics.sentEvents,
+          contains(
+            Event.commandUsageValues(
+              workflow: 'appbundle',
+              commandHasTerminal: false,
+              buildAppBundleTargetPlatform: 'android-arm,android-arm64,android-x64',
+              buildAppBundleBuildMode: 'release',
+            ),
+          ),
+        );
+      },
+      overrides: <Type, Generator>{
+        AndroidBuilder: () => FakeAndroidBuilder(),
+        Analytics: () => fakeAnalytics,
+      },
+    );
 
     testUsingContext('alias aab', () async {
-      final BuildAppBundleCommand command =
-          BuildAppBundleCommand(logger: BufferLogger.test());
+      final BuildAppBundleCommand command = BuildAppBundleCommand(logger: BufferLogger.test());
       expect(command.aliases, contains('aab'));
     });
 
-    testUsingContext('build type', () async {
-      final String projectPath = await createProject(tempDir,
-          arguments: <String>['--no-pub', '--template=app']);
+    testUsingContext(
+      'build type',
+      () async {
+        final String projectPath = await createProject(
+          tempDir,
+          arguments: <String>['--no-pub', '--template=app'],
+        );
 
-      await runBuildAppBundleCommand(projectPath);
-      expect(
-        fakeAnalytics.sentEvents,
-        contains(Event.commandUsageValues(
-          workflow: 'appbundle',
-          commandHasTerminal: false,
-          buildAppBundleTargetPlatform: 'android-arm,android-arm64,android-x64',
-          buildAppBundleBuildMode: 'release',
-        )),
-      );
-
-      fakeAnalytics.sentEvents.clear();
-      await runBuildAppBundleCommand(projectPath, arguments: <String>['--release']);
-      expect(
-        fakeAnalytics.sentEvents,
-        contains(Event.commandUsageValues(
-          workflow: 'appbundle',
-          commandHasTerminal: false,
-          buildAppBundleTargetPlatform: 'android-arm,android-arm64,android-x64',
-          buildAppBundleBuildMode: 'release',
-        )),
-      );
-
-      fakeAnalytics.sentEvents.clear();
-      await runBuildAppBundleCommand(projectPath, arguments: <String>['--debug']);
-      expect(
-        fakeAnalytics.sentEvents,
-        contains(Event.commandUsageValues(
-          workflow: 'appbundle',
-          commandHasTerminal: false,
-          buildAppBundleTargetPlatform: 'android-arm,android-arm64,android-x64',
-          buildAppBundleBuildMode: 'debug',
-        )),
-      );
-
-      fakeAnalytics.sentEvents.clear();
-      await runBuildAppBundleCommand(projectPath, arguments: <String>['--profile']);
-
-      expect(
-        fakeAnalytics.sentEvents,
-        contains(Event.commandUsageValues(
-          workflow: 'appbundle',
-          commandHasTerminal: false,
-          buildAppBundleTargetPlatform: 'android-arm,android-arm64,android-x64',
-          buildAppBundleBuildMode: 'profile',
-        )),
-      );
-    }, overrides: <Type, Generator>{
-      AndroidBuilder: () => FakeAndroidBuilder(),
-      Analytics: () => fakeAnalytics,
-    });
-
-    testUsingContext('logs success', () async {
-      final String projectPath = await createProject(tempDir,
-          arguments: <String>['--no-pub', '--template=app']);
-
-      await runBuildAppBundleCommand(projectPath);
-
-      expect(
-        fakeAnalytics.sentEvents,
-        contains(
-          Event.flutterCommandResult(
-            commandPath: 'create',
-            result: 'success',
-            commandHasTerminal: false,
-            maxRss: processInfo.maxRss,
-          ),
-        ),
-      );
-    },
-    overrides: <Type, Generator>{
-      AndroidBuilder: () => FakeAndroidBuilder(),
-      Analytics: () => fakeAnalytics,
-      ProcessInfo: () => processInfo,
-    });
-
-    testUsingContext('use of the deferred components feature sends a build info event indicating so', () async {
-      final String projectPath = await createProject(
-        tempDir,
-        arguments: <String>[
-          '--empty',
-          '--no-pub',
-          '--template=app',
-        ],
-      );
-
-      // Add deferred manifest.
-      final File pubspec = globals.localFileSystem
-        .directory(projectPath)
-        .childFile('pubspec.yaml');
-      final String modifiedContents = pubspec
-        .readAsStringSync()
-        .replaceAll('flutter:', 'flutter:\n  deferred-components:');
-      pubspec.writeAsStringSync(modifiedContents);
-      printOnFailure(pubspec.readAsStringSync());
-
-      final Directory oldCwd = globals.localFileSystem.currentDirectory;
-      try {
-        globals.localFileSystem.currentDirectory = globals.localFileSystem.directory(projectPath);
         await runBuildAppBundleCommand(projectPath);
-      } finally {
-        globals.localFileSystem.currentDirectory = oldCwd;
-      }
-
-      expect(
-        fakeAnalytics.sentEvents,
-        contains(
-          Event.flutterBuildInfo(
-            label: 'build-appbundle-deferred-components',
-            buildType: 'android',
+        expect(
+          fakeAnalytics.sentEvents,
+          contains(
+            Event.commandUsageValues(
+              workflow: 'appbundle',
+              commandHasTerminal: false,
+              buildAppBundleTargetPlatform: 'android-arm,android-arm64,android-x64',
+              buildAppBundleBuildMode: 'release',
+            ),
           ),
-        ),
-      );
-    }, overrides: <Type, Generator>{
-      AndroidBuilder: () => FakeAndroidBuilder(),
-      Analytics: () => fakeAnalytics,
-      ProcessInfo: () => processInfo,
-    });
+        );
+
+        fakeAnalytics.sentEvents.clear();
+        await runBuildAppBundleCommand(projectPath, arguments: <String>['--release']);
+        expect(
+          fakeAnalytics.sentEvents,
+          contains(
+            Event.commandUsageValues(
+              workflow: 'appbundle',
+              commandHasTerminal: false,
+              buildAppBundleTargetPlatform: 'android-arm,android-arm64,android-x64',
+              buildAppBundleBuildMode: 'release',
+            ),
+          ),
+        );
+
+        fakeAnalytics.sentEvents.clear();
+        await runBuildAppBundleCommand(projectPath, arguments: <String>['--debug']);
+        expect(
+          fakeAnalytics.sentEvents,
+          contains(
+            Event.commandUsageValues(
+              workflow: 'appbundle',
+              commandHasTerminal: false,
+              buildAppBundleTargetPlatform: 'android-arm,android-arm64,android-x64',
+              buildAppBundleBuildMode: 'debug',
+            ),
+          ),
+        );
+
+        fakeAnalytics.sentEvents.clear();
+        await runBuildAppBundleCommand(projectPath, arguments: <String>['--profile']);
+
+        expect(
+          fakeAnalytics.sentEvents,
+          contains(
+            Event.commandUsageValues(
+              workflow: 'appbundle',
+              commandHasTerminal: false,
+              buildAppBundleTargetPlatform: 'android-arm,android-arm64,android-x64',
+              buildAppBundleBuildMode: 'profile',
+            ),
+          ),
+        );
+      },
+      overrides: <Type, Generator>{
+        AndroidBuilder: () => FakeAndroidBuilder(),
+        Analytics: () => fakeAnalytics,
+      },
+    );
+
+    testUsingContext(
+      'logs success',
+      () async {
+        final String projectPath = await createProject(
+          tempDir,
+          arguments: <String>['--no-pub', '--template=app'],
+        );
+
+        await runBuildAppBundleCommand(projectPath);
+
+        expect(
+          fakeAnalytics.sentEvents,
+          contains(
+            Event.flutterCommandResult(
+              commandPath: 'create',
+              result: 'success',
+              commandHasTerminal: false,
+              maxRss: processInfo.maxRss,
+            ),
+          ),
+        );
+      },
+      overrides: <Type, Generator>{
+        AndroidBuilder: () => FakeAndroidBuilder(),
+        Analytics: () => fakeAnalytics,
+        ProcessInfo: () => processInfo,
+      },
+    );
+
+    testUsingContext(
+      'use of the deferred components feature sends a build info event indicating so',
+      () async {
+        final String projectPath = await createProject(
+          tempDir,
+          arguments: <String>['--empty', '--no-pub', '--template=app'],
+        );
+
+        // Add deferred manifest.
+        final File pubspec = globals.localFileSystem
+            .directory(projectPath)
+            .childFile('pubspec.yaml');
+        final String modifiedContents = pubspec.readAsStringSync().replaceAll(
+          'flutter:',
+          'flutter:\n  deferred-components:',
+        );
+        pubspec.writeAsStringSync(modifiedContents);
+        printOnFailure(pubspec.readAsStringSync());
+
+        final Directory oldCwd = globals.localFileSystem.currentDirectory;
+        try {
+          globals.localFileSystem.currentDirectory = globals.localFileSystem.directory(projectPath);
+          await runBuildAppBundleCommand(projectPath);
+        } finally {
+          globals.localFileSystem.currentDirectory = oldCwd;
+        }
+
+        expect(
+          fakeAnalytics.sentEvents,
+          contains(
+            Event.flutterBuildInfo(
+              label: 'build-appbundle-deferred-components',
+              buildType: 'android',
+            ),
+          ),
+        );
+      },
+      overrides: <Type, Generator>{
+        AndroidBuilder: () => FakeAndroidBuilder(),
+        Analytics: () => fakeAnalytics,
+        ProcessInfo: () => processInfo,
+      },
+    );
   });
 
   group('Gradle', () {
@@ -214,106 +241,111 @@ void main() {
     });
 
     group('AndroidSdk', () {
-      testUsingContext('throws throwsToolExit if AndroidSdk is null', () async {
-        final String projectPath = await createProject(tempDir,
-            arguments: <String>['--no-pub', '--template=app']);
-
-        await expectLater(() async {
-          await runBuildAppBundleCommand(
-            projectPath,
-            arguments: <String>['--no-pub'],
+      testUsingContext(
+        'throws throwsToolExit if AndroidSdk is null',
+        () async {
+          final String projectPath = await createProject(
+            tempDir,
+            arguments: <String>['--no-pub', '--template=app'],
           );
-        }, throwsToolExit(
-          message: 'No Android SDK found. Try setting the ANDROID_HOME environment variable',
-        ));
-      },
-      overrides: <Type, Generator>{
-        AndroidSdk: () => null,
-        FlutterProjectFactory: () => FakeFlutterProjectFactory(tempDir),
-        ProcessManager: () => processManager,
-      });
+
+          await expectLater(
+            () async {
+              await runBuildAppBundleCommand(projectPath, arguments: <String>['--no-pub']);
+            },
+            throwsToolExit(
+              message: 'No Android SDK found. Try setting the ANDROID_HOME environment variable',
+            ),
+          );
+        },
+        overrides: <Type, Generator>{
+          AndroidSdk: () => null,
+          FlutterProjectFactory: () => FakeFlutterProjectFactory(tempDir),
+          ProcessManager: () => processManager,
+        },
+      );
     });
 
-    testUsingContext("reports when the app isn't using AndroidX", () async {
-      final String projectPath = await createProject(tempDir,
-          arguments: <String>['--no-pub', '--template=app']);
-      // Simulate a non-androidx project.
-      tempDir
-        .childDirectory('flutter_project')
-        .childDirectory('android')
-        .childFile('gradle.properties')
-        .writeAsStringSync('android.useAndroidX=false');
-
-      // The command throws a [ToolExit] because it expects an AAB in the file system.
-      await expectLater(() async {
-        await runBuildAppBundleCommand(
-          projectPath,
+    testUsingContext(
+      "reports when the app isn't using AndroidX",
+      () async {
+        final String projectPath = await createProject(
+          tempDir,
+          arguments: <String>['--no-pub', '--template=app'],
         );
-      }, throwsToolExit());
+        // Simulate a non-androidx project.
+        tempDir
+            .childDirectory('flutter_project')
+            .childDirectory('android')
+            .childFile('gradle.properties')
+            .writeAsStringSync('android.useAndroidX=false');
 
-      expect(
-        testLogger.statusText,
-        containsIgnoringWhitespace("Your app isn't using AndroidX"),
-      );
-      expect(
-        testLogger.statusText,
-        containsIgnoringWhitespace(
-        'To avoid potential build failures, you can quickly migrate your app by '
-        'following the steps on https://goo.gl/CP92wY'
-        ),
-      );
+        // The command throws a [ToolExit] because it expects an AAB in the file system.
+        await expectLater(() async {
+          await runBuildAppBundleCommand(projectPath);
+        }, throwsToolExit());
 
-      expect(analytics.sentEvents, contains(
-        Event.flutterBuildInfo(
-          label: 'app-not-using-android-x',
-          buildType: 'gradle',
-        ),
-      ));
-    },
-    overrides: <Type, Generator>{
-      AndroidSdk: () => androidSdk,
-      FlutterProjectFactory: () => FakeFlutterProjectFactory(tempDir),
-      ProcessManager: () => processManager,
-      Analytics: () => analytics,
-    });
-
-    testUsingContext('reports when the app is using AndroidX', () async {
-      final String projectPath = await createProject(tempDir,
-          arguments: <String>['--no-pub', '--template=app']);
-
-      // The command throws a [ToolExit] because it expects an AAB in the file system.
-      await expectLater(() async {
-        await runBuildAppBundleCommand(
-          projectPath,
-        );
-      }, throwsToolExit());
-
-      expect(
-        testLogger.statusText,
-        isNot(containsIgnoringWhitespace("Your app isn't using AndroidX")),
-      );
-      expect(
-        testLogger.statusText,
-        isNot(
+        expect(testLogger.statusText, containsIgnoringWhitespace("Your app isn't using AndroidX"));
+        expect(
+          testLogger.statusText,
           containsIgnoringWhitespace(
             'To avoid potential build failures, you can quickly migrate your app by '
-            'following the steps on https://goo.gl/CP92wY'),
-        )
-      );
+            'following the steps on https://goo.gl/CP92wY',
+          ),
+        );
 
-      expect(analytics.sentEvents, contains(
-        Event.flutterBuildInfo(
-          label: 'app-using-android-x',
-          buildType: 'gradle',
-        ),
-      ));
-    },
-    overrides: <Type, Generator>{
-      AndroidSdk: () => androidSdk,
-      FlutterProjectFactory: () => FakeFlutterProjectFactory(tempDir),
-      ProcessManager: () => processManager,
-      Analytics: () => analytics,
-    });
+        expect(
+          analytics.sentEvents,
+          contains(Event.flutterBuildInfo(label: 'app-not-using-android-x', buildType: 'gradle')),
+        );
+      },
+      overrides: <Type, Generator>{
+        AndroidSdk: () => androidSdk,
+        FlutterProjectFactory: () => FakeFlutterProjectFactory(tempDir),
+        ProcessManager: () => processManager,
+        Analytics: () => analytics,
+      },
+    );
+
+    testUsingContext(
+      'reports when the app is using AndroidX',
+      () async {
+        final String projectPath = await createProject(
+          tempDir,
+          arguments: <String>['--no-pub', '--template=app'],
+        );
+
+        // The command throws a [ToolExit] because it expects an AAB in the file system.
+        await expectLater(() async {
+          await runBuildAppBundleCommand(projectPath);
+        }, throwsToolExit());
+
+        expect(
+          testLogger.statusText,
+          isNot(containsIgnoringWhitespace("Your app isn't using AndroidX")),
+        );
+        expect(
+          testLogger.statusText,
+          isNot(
+            containsIgnoringWhitespace(
+              'To avoid potential build failures, you can quickly migrate your app by '
+              'following the steps on https://goo.gl/CP92wY',
+            ),
+          ),
+        );
+
+        expect(
+          analytics.sentEvents,
+          contains(Event.flutterBuildInfo(label: 'app-using-android-x', buildType: 'gradle')),
+        );
+      },
+      overrides: <Type, Generator>{
+        AndroidSdk: () => androidSdk,
+        FlutterProjectFactory: () => FakeFlutterProjectFactory(tempDir),
+        ProcessManager: () => processManager,
+        Analytics: () => analytics,
+      },
+    );
   });
 }
 

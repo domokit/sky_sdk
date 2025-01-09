@@ -23,9 +23,7 @@ class OnTapPage extends StatelessWidget {
       body: GestureDetector(
         onTap: onTap,
         behavior: HitTestBehavior.opaque,
-        child: Center(
-          child: Text(id, style: Theme.of(context).textTheme.displaySmall),
-        ),
+        child: Center(child: Text(id, style: Theme.of(context).textTheme.displaySmall)),
       ),
     );
   }
@@ -34,39 +32,38 @@ class OnTapPage extends StatelessWidget {
 void main() {
   testWidgets('Push and Pop should send platform messages', (WidgetTester tester) async {
     final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
-      '/': (BuildContext context) => OnTapPage(
-          id: '/',
-          onTap: () {
-            Navigator.pushNamed(context, '/A');
-          },
-        ),
-      '/A': (BuildContext context) => OnTapPage(
-          id: 'A',
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
+      '/':
+          (BuildContext context) => OnTapPage(
+            id: '/',
+            onTap: () {
+              Navigator.pushNamed(context, '/A');
+            },
+          ),
+      '/A':
+          (BuildContext context) => OnTapPage(
+            id: 'A',
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
     };
 
     final List<MethodCall> log = <MethodCall>[];
 
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.navigation, (MethodCall methodCall) async {
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.navigation, (
+      MethodCall methodCall,
+    ) async {
       log.add(methodCall);
       return null;
     });
 
-    await tester.pumpWidget(MaterialApp(
-      routes: routes,
-    ));
+    await tester.pumpWidget(MaterialApp(routes: routes));
 
     expect(log, <Object>[
       isMethodCall('selectSingleEntryHistory', arguments: null),
-      isMethodCall('routeInformationUpdated',
-        arguments: <String, dynamic>{
-          'uri': '/',
-          'state': null,
-          'replace': false,
-        },
+      isMethodCall(
+        'routeInformationUpdated',
+        arguments: <String, dynamic>{'uri': '/', 'state': null, 'replace': false},
       ),
     ]);
     log.clear();
@@ -80,11 +77,7 @@ void main() {
       log.last,
       isMethodCall(
         'routeInformationUpdated',
-        arguments: <String, dynamic>{
-          'uri': '/A',
-          'state': null,
-          'replace': false,
-        },
+        arguments: <String, dynamic>{'uri': '/A', 'state': null, 'replace': false},
       ),
     );
     log.clear();
@@ -98,44 +91,41 @@ void main() {
       log.last,
       isMethodCall(
         'routeInformationUpdated',
-        arguments: <String, dynamic>{
-          'uri': '/',
-          'state': null,
-          'replace': false,
-        },
+        arguments: <String, dynamic>{'uri': '/', 'state': null, 'replace': false},
       ),
     );
   });
 
   testWidgets('Navigator does not report route name by default', (WidgetTester tester) async {
     final List<MethodCall> log = <MethodCall>[];
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.navigation, (MethodCall methodCall) async {
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.navigation, (
+      MethodCall methodCall,
+    ) async {
       log.add(methodCall);
       return null;
     });
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: Navigator(
-        pages: const <Page<void>>[
-          TestPage(name: '/'),
-        ],
-        onPopPage: (Route<void> route, void result) => false,
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: Navigator(
+          pages: const <Page<void>>[TestPage(name: '/')],
+          onPopPage: (Route<void> route, void result) => false,
+        ),
       ),
-    ));
+    );
 
     expect(log, hasLength(0));
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: Navigator(
-        pages: const <Page<void>>[
-          TestPage(name: '/'),
-          TestPage(name: '/abc'),
-        ],
-        onPopPage: (Route<void> route, void result) => false,
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: Navigator(
+          pages: const <Page<void>>[TestPage(name: '/'), TestPage(name: '/abc')],
+          onPopPage: (Route<void> route, void result) => false,
+        ),
       ),
-    ));
+    );
 
     await tester.pumpAndSettle();
     expect(log, hasLength(0));
@@ -143,40 +133,39 @@ void main() {
 
   testWidgets('Replace should send platform messages', (WidgetTester tester) async {
     final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
-      '/': (BuildContext context) => OnTapPage(
-          id: '/',
-          onTap: () {
-            Navigator.pushNamed(context, '/A');
-          },
-        ),
-      '/A': (BuildContext context) => OnTapPage(
-          id: 'A',
-          onTap: () {
-            Navigator.pushReplacementNamed(context, '/B');
-          },
-        ),
+      '/':
+          (BuildContext context) => OnTapPage(
+            id: '/',
+            onTap: () {
+              Navigator.pushNamed(context, '/A');
+            },
+          ),
+      '/A':
+          (BuildContext context) => OnTapPage(
+            id: 'A',
+            onTap: () {
+              Navigator.pushReplacementNamed(context, '/B');
+            },
+          ),
       '/B': (BuildContext context) => OnTapPage(id: 'B', onTap: () {}),
     };
 
     final List<MethodCall> log = <MethodCall>[];
 
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.navigation, (MethodCall methodCall) async {
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.navigation, (
+      MethodCall methodCall,
+    ) async {
       log.add(methodCall);
       return null;
     });
 
-    await tester.pumpWidget(MaterialApp(
-      routes: routes,
-    ));
+    await tester.pumpWidget(MaterialApp(routes: routes));
 
     expect(log, <Object>[
       isMethodCall('selectSingleEntryHistory', arguments: null),
-      isMethodCall('routeInformationUpdated',
-        arguments: <String, dynamic>{
-          'uri': '/',
-          'state': null,
-          'replace': false,
-        },
+      isMethodCall(
+        'routeInformationUpdated',
+        arguments: <String, dynamic>{'uri': '/', 'state': null, 'replace': false},
       ),
     ]);
     log.clear();
@@ -190,11 +179,7 @@ void main() {
       log.last,
       isMethodCall(
         'routeInformationUpdated',
-        arguments: <String, dynamic>{
-          'uri': '/A',
-          'state': null,
-          'replace': false,
-        },
+        arguments: <String, dynamic>{'uri': '/A', 'state': null, 'replace': false},
       ),
     );
     log.clear();
@@ -208,48 +193,45 @@ void main() {
       log.last,
       isMethodCall(
         'routeInformationUpdated',
-        arguments: <String, dynamic>{
-          'uri': '/B',
-          'state': null,
-          'replace': false,
-        },
+        arguments: <String, dynamic>{'uri': '/B', 'state': null, 'replace': false},
       ),
     );
   });
 
   testWidgets('Nameless routes should send platform messages', (WidgetTester tester) async {
     final List<MethodCall> log = <MethodCall>[];
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.navigation, (MethodCall methodCall) async {
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.navigation, (
+      MethodCall methodCall,
+    ) async {
       log.add(methodCall);
       return null;
     });
 
-    await tester.pumpWidget(MaterialApp(
-      initialRoute: '/home',
-      routes: <String, WidgetBuilder>{
-        '/home': (BuildContext context) {
-          return OnTapPage(
-            id: 'Home',
-            onTap: () {
-              // Create a route with no name.
-              final Route<void> route = MaterialPageRoute<void>(
-                builder: (BuildContext context) => const Text('Nameless Route'),
-              );
-              Navigator.push<void>(context, route);
-            },
-          );
+    await tester.pumpWidget(
+      MaterialApp(
+        initialRoute: '/home',
+        routes: <String, WidgetBuilder>{
+          '/home': (BuildContext context) {
+            return OnTapPage(
+              id: 'Home',
+              onTap: () {
+                // Create a route with no name.
+                final Route<void> route = MaterialPageRoute<void>(
+                  builder: (BuildContext context) => const Text('Nameless Route'),
+                );
+                Navigator.push<void>(context, route);
+              },
+            );
+          },
         },
-      },
-    ));
+      ),
+    );
 
     expect(log, <Object>[
       isMethodCall('selectSingleEntryHistory', arguments: null),
-      isMethodCall('routeInformationUpdated',
-        arguments: <String, dynamic>{
-          'uri': '/home',
-          'state': null,
-          'replace': false,
-        },
+      isMethodCall(
+        'routeInformationUpdated',
+        arguments: <String, dynamic>{'uri': '/home', 'state': null, 'replace': false},
       ),
     ]);
     log.clear();
@@ -263,15 +245,15 @@ void main() {
 
   testWidgets('PlatformRouteInformationProvider reports URL', (WidgetTester tester) async {
     final List<MethodCall> log = <MethodCall>[];
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.navigation, (MethodCall methodCall) async {
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.navigation, (
+      MethodCall methodCall,
+    ) async {
       log.add(methodCall);
       return null;
     });
 
     final PlatformRouteInformationProvider provider = PlatformRouteInformationProvider(
-      initialRouteInformation: RouteInformation(
-        uri: Uri.parse('initial'),
-      ),
+      initialRouteInformation: RouteInformation(uri: Uri.parse('initial')),
     );
     addTearDown(provider.dispose);
     final SimpleRouterDelegate delegate = SimpleRouterDelegate(
@@ -282,43 +264,41 @@ void main() {
     );
     addTearDown(delegate.dispose);
 
-    await tester.pumpWidget(MaterialApp.router(
-      routeInformationProvider: provider,
-      routeInformationParser: SimpleRouteInformationParser(),
-      routerDelegate: delegate,
-    ));
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routeInformationProvider: provider,
+        routeInformationParser: SimpleRouteInformationParser(),
+        routerDelegate: delegate,
+      ),
+    );
     expect(find.text('initial'), findsOneWidget);
     expect(log, <Object>[
       isMethodCall('selectMultiEntryHistory', arguments: null),
-      isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
-        'uri': 'initial',
-        'state': null,
-        'replace': false,
-      }),
+      isMethodCall(
+        'routeInformationUpdated',
+        arguments: <String, dynamic>{'uri': 'initial', 'state': null, 'replace': false},
+      ),
     ]);
     log.clear();
 
     // Triggers a router rebuild and verify the route information is reported
     // to the web engine.
-    delegate.routeInformation = RouteInformation(
-      uri: Uri.parse('update'),
-      state: 'state',
-    );
+    delegate.routeInformation = RouteInformation(uri: Uri.parse('update'), state: 'state');
     await tester.pump();
     expect(find.text('update'), findsOneWidget);
 
     expect(log, <Object>[
       isMethodCall('selectMultiEntryHistory', arguments: null),
-      isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
-        'uri': 'update',
-        'state': 'state',
-        'replace': false,
-      }),
+      isMethodCall(
+        'routeInformationUpdated',
+        arguments: <String, dynamic>{'uri': 'update', 'state': 'state', 'replace': false},
+      ),
     ]);
   });
 }
 
-typedef SimpleRouterDelegateBuilder = Widget Function(BuildContext context, RouteInformation information);
+typedef SimpleRouterDelegateBuilder =
+    Widget Function(BuildContext context, RouteInformation information);
 typedef SimpleRouterDelegatePopRoute = Future<bool> Function();
 
 class SimpleRouteInformationParser extends RouteInformationParser<RouteInformation> {
@@ -336,11 +316,7 @@ class SimpleRouteInformationParser extends RouteInformationParser<RouteInformati
 }
 
 class SimpleRouterDelegate extends RouterDelegate<RouteInformation> with ChangeNotifier {
-  SimpleRouterDelegate({
-    required this.builder,
-    this.onPopRoute,
-    this.reportConfiguration = false,
-  }) {
+  SimpleRouterDelegate({required this.builder, this.onPopRoute, this.reportConfiguration = false}) {
     if (kFlutterMemoryAllocationsEnabled) {
       ChangeNotifier.maybeDispatchObjectCreation(this);
     }
@@ -385,7 +361,12 @@ class TestPage extends Page<void> {
   Route<void> createRoute(BuildContext context) {
     return PageRouteBuilder<void>(
       settings: this,
-      pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) => const Placeholder(),
+      pageBuilder:
+          (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) => const Placeholder(),
     );
   }
 }

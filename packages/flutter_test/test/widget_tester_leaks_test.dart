@@ -9,8 +9,7 @@ import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
 import 'utils/memory_leak_tests.dart';
 
 class _TestExecution {
-  _TestExecution(
-      {required this.settings, required this.settingName, required this.test});
+  _TestExecution({required this.settings, required this.settingName, required this.test});
 
   final String settingName;
   final LeakTesting settings;
@@ -29,15 +28,12 @@ void main() {
       .withTrackedAll()
       .withTracked(allNotDisposed: true, experimentalAllNotGCed: true)
       .withIgnored(
-    createdByTestHelpers: true,
-    testHelperExceptions: <RegExp>[
-      RegExp(RegExp.escape(memoryLeakTestsFilePath()))
-    ],
-  );
+        createdByTestHelpers: true,
+        testHelperExceptions: <RegExp>[RegExp(RegExp.escape(memoryLeakTestsFilePath()))],
+      );
 
   for (final LeakTestCase test in memoryLeakTests) {
-    for (final MapEntry<String,
-            LeakTesting Function(LeakTesting settings)> settingsCase
+    for (final MapEntry<String, LeakTesting Function(LeakTesting settings)> settingsCase
         in leakTestingSettingsCases.entries) {
       final LeakTesting settings = settingsCase.value(LeakTesting.settings);
       if (settings.leakDiagnosticConfig.collectRetainingPathForNotGCed) {
@@ -45,11 +41,16 @@ void main() {
         continue;
       }
       final _TestExecution execution = _TestExecution(
-          settingName: settingsCase.key, test: test, settings: settings);
+        settingName: settingsCase.key,
+        test: test,
+        settings: settings,
+      );
       _testExecutions.add(execution);
-      testWidgets(execution.name, experimentalLeakTesting: settings,
-          (WidgetTester tester) async {
-        await test.body((Widget widget, [Duration? duration]) => tester.pumpWidget(widget, duration: duration), tester.runAsync);
+      testWidgets(execution.name, experimentalLeakTesting: settings, (WidgetTester tester) async {
+        await test.body(
+          (Widget widget, [Duration? duration]) => tester.pumpWidget(widget, duration: duration),
+          tester.runAsync,
+        );
       });
     }
   }
@@ -58,7 +59,6 @@ void main() {
 void _verifyLeaks(Leaks leaks) {
   for (final _TestExecution execution in _testExecutions) {
     final Leaks testLeaks = leaks.byPhase[execution.name] ?? Leaks.empty();
-    execution.test.verifyLeaks(testLeaks, execution.settings,
-        testDescription: execution.name);
+    execution.test.verifyLeaks(testLeaks, execution.settings, testDescription: execution.name);
   }
 }

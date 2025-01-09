@@ -12,6 +12,7 @@ class JsonContext<T> {
 
   /// The content of the subtree.
   final T current;
+
   /// The path from the root.
   final List<String> path;
 
@@ -27,7 +28,12 @@ typedef JsonObject = Map<String, dynamic>;
 /// A JSON array.
 typedef JsonArray = List<dynamic>;
 
-String _jsonTypeErrorMessage(List<String> currentPath, String nextKey, Type expectedType, Type actualType) {
+String _jsonTypeErrorMessage(
+  List<String> currentPath,
+  String nextKey,
+  Type expectedType,
+  Type actualType,
+) {
   return 'Unexpected value at path ${currentPath.join('.')}.$nextKey: '
       'Expects $expectedType but got $actualType.';
 }
@@ -83,6 +89,7 @@ JsonContext<T> jsonGetPath<T>(JsonContext<dynamic> context, String path) {
       assert(false);
     }
   }
+
   void jsonGetKeyOrIndexForNext(dynamic key, dynamic nextKey, int depth) {
     assert(nextKey is String || nextKey is int, 'Key at ${depth + 1} is a ${key.runtimeType}.');
     if (nextKey is String) {

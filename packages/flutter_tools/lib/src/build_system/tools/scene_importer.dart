@@ -77,10 +77,10 @@ class SceneImporter {
     required Logger logger,
     required FileSystem fileSystem,
     required Artifacts artifacts,
-  })  : _processManager = processManager,
-        _logger = logger,
-        _fs = fileSystem,
-        _artifacts = artifacts;
+  }) : _processManager = processManager,
+       _logger = logger,
+       _fs = fileSystem,
+       _artifacts = artifacts;
 
   final ProcessManager _processManager;
   final Logger _logger;
@@ -92,7 +92,8 @@ class SceneImporter {
   /// See [Target.inputs].
   static const List<Source> inputs = <Source>[
     Source.pattern(
-        '{FLUTTER_ROOT}/packages/flutter_tools/lib/src/build_system/tools/scene_importer.dart'),
+      '{FLUTTER_ROOT}/packages/flutter_tools/lib/src/build_system/tools/scene_importer.dart',
+    ),
     Source.hostArtifact(HostArtifact.scenec),
   ];
 
@@ -109,9 +110,7 @@ class SceneImporter {
     required String outputPath,
     bool fatal = true,
   }) async {
-    final File scenec = _fs.file(
-      _artifacts.getHostArtifact(HostArtifact.scenec),
-    );
+    final File scenec = _fs.file(_artifacts.getHostArtifact(HostArtifact.scenec));
     if (!scenec.existsSync()) {
       throw SceneImporterException._(
         'The scenec utility is missing at "${scenec.path}". '
@@ -119,11 +118,7 @@ class SceneImporter {
       );
     }
 
-    final List<String> cmd = <String>[
-      scenec.path,
-      '--input=${input.path}',
-      '--output=$outputPath',
-    ];
+    final List<String> cmd = <String>[scenec.path, '--input=${input.path}', '--output=$outputPath'];
     _logger.printTrace('scenec command: $cmd');
     final Process scenecProcess = await _processManager.start(cmd);
     final int code = await scenecProcess.exitCode;

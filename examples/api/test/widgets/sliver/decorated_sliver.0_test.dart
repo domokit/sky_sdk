@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Verify the texts are displayed', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SliverDecorationExampleApp(),
-    );
+    await tester.pumpWidget(const example.SliverDecorationExampleApp());
 
     final Finder moonText = find.text('A moon on a night sky');
     expect(moonText, findsOneWidget);
@@ -19,10 +17,10 @@ void main() {
     expect(blueSkyText, findsOneWidget);
   });
 
-  testWidgets('Verify the sliver with key `radial-gradient` has a RadialGradient', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SliverDecorationExampleApp(),
-    );
+  testWidgets('Verify the sliver with key `radial-gradient` has a RadialGradient', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.SliverDecorationExampleApp());
 
     final DecoratedSliver radialDecoratedSliver = tester.widget<DecoratedSliver>(
       find.byKey(const ValueKey<String>('radial-gradient')),
@@ -33,20 +31,17 @@ void main() {
         gradient: RadialGradient(
           center: Alignment(-0.5, -0.6),
           radius: 0.15,
-          colors: <Color>[
-            Color(0xFFEEEEEE),
-            Color(0xFF111133),
-          ],
+          colors: <Color>[Color(0xFFEEEEEE), Color(0xFF111133)],
           stops: <double>[0.4, 0.8],
         ),
       ),
     );
   });
 
-  testWidgets('Verify that the sliver with key `linear-gradient` has a LinearGradient', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SliverDecorationExampleApp(),
-    );
+  testWidgets('Verify that the sliver with key `linear-gradient` has a LinearGradient', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.SliverDecorationExampleApp());
 
     final DecoratedSliver linearDecoratedSliver = tester.widget<DecoratedSliver>(
       find.byKey(const ValueKey<String>('linear-gradient')),

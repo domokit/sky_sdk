@@ -13,10 +13,7 @@ void main() {
 }
 
 Future<void> testMain() async {
-  setUpUnitTests(
-    emulateTesterEnvironment: false,
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(emulateTesterEnvironment: false, setUpTestViewDimensions: false);
 
   test('default field values are as documented on api.flutter.dev', () {
     final paint = ui.Paint();
@@ -49,10 +46,7 @@ Future<void> testMain() async {
     paint.shader = ui.Gradient.linear(
       const ui.Offset(0.1, 0.2),
       const ui.Offset(1.5, 1.6),
-      const <ui.Color>[
-        ui.Color(0xaabbccdd),
-        ui.Color(0xbbccddee),
-      ],
+      const <ui.Color>[ui.Color(0xaabbccdd), ui.Color(0xbbccddee)],
       <double>[0.3, 0.4],
       ui.TileMode.decal,
     );
@@ -60,11 +54,7 @@ Future<void> testMain() async {
     paint.filterQuality = ui.FilterQuality.high;
     paint.colorFilter = const ui.ColorFilter.linearToSrgbGamma();
     paint.strokeMiterLimit = 1.8;
-    paint.imageFilter = ui.ImageFilter.blur(
-      sigmaX: 1.9,
-      sigmaY: 2.1,
-      tileMode: ui.TileMode.mirror,
-    );
+    paint.imageFilter = ui.ImageFilter.blur(sigmaX: 1.9, sigmaY: 2.1, tileMode: ui.TileMode.mirror);
 
     expect(
       paint.toString(),
@@ -94,10 +84,7 @@ Future<void> testMain() async {
     paint.shader = ui.Gradient.linear(
       const ui.Offset(0.1, 0.2),
       const ui.Offset(1.5, 1.6),
-      const <ui.Color>[
-        ui.Color(0xaabbccdd),
-        ui.Color(0xbbccddee),
-      ],
+      const <ui.Color>[ui.Color(0xaabbccdd), ui.Color(0xbbccddee)],
       <double>[0.3, 0.4],
       ui.TileMode.decal,
     );
@@ -105,11 +92,7 @@ Future<void> testMain() async {
     paint.filterQuality = ui.FilterQuality.high;
     paint.colorFilter = const ui.ColorFilter.linearToSrgbGamma();
     paint.strokeMiterLimit = 1.8;
-    paint.imageFilter = ui.ImageFilter.blur(
-      sigmaX: 1.9,
-      sigmaY: 2.1,
-      tileMode: ui.TileMode.mirror,
-    );
+    paint.imageFilter = ui.ImageFilter.blur(sigmaX: 1.9, sigmaY: 2.1, tileMode: ui.TileMode.mirror);
 
     final ui.Paint copy = ui.Paint.from(paint);
 

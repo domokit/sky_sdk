@@ -15,8 +15,16 @@ void main() {
 
     // Ensure that accessing the binary messenger before initialization reports
     // a helpful error message.
-    expect(() => methodChannel.binaryMessenger, throwsA(isA<AssertionError>()
-        .having((AssertionError e) => e.message, 'message', contains('WidgetsFlutterBinding.ensureInitialized()'))));
+    expect(
+      () => methodChannel.binaryMessenger,
+      throwsA(
+        isA<AssertionError>().having(
+          (AssertionError e) => e.message,
+          'message',
+          contains('WidgetsFlutterBinding.ensureInitialized()'),
+        ),
+      ),
+    );
 
     TestWidgetsFlutterBinding.ensureInitialized();
     expect(() => methodChannel.binaryMessenger, returnsNormally);

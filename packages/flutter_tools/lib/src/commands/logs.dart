@@ -12,11 +12,9 @@ import '../globals.dart' as globals;
 import '../runner/flutter_command.dart';
 
 class LogsCommand extends FlutterCommand {
-  LogsCommand({
-    required this.sigint,
-    required this.sigterm,
-  }) {
-    argParser.addFlag('clear',
+  LogsCommand({required this.sigint, required this.sigterm}) {
+    argParser.addFlag(
+      'clear',
       negatable: false,
       abbr: 'c',
       help: 'Clear log history before reading from logs.',

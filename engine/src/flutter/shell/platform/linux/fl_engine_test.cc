@@ -10,18 +10,21 @@
 #include "flutter/shell/platform/linux/public/flutter_linux/fl_engine.h"
 #include "flutter/shell/platform/linux/public/flutter_linux/fl_json_message_codec.h"
 #include "flutter/shell/platform/linux/public/flutter_linux/fl_string_codec.h"
-#include "flutter/shell/platform/linux/testing/fl_test.h"
 
 // MOCK_ENGINE_PROC is leaky by design
 // NOLINTBEGIN(clang-analyzer-core.StackAddressEscape)
 
 // Checks sending window metrics events works.
 TEST(FlEngineTest, WindowMetrics) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
 
   bool called = false;
-  embedder_api->SendWindowMetricsEvent = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->SendWindowMetricsEvent = MOCK_ENGINE_PROC(
       SendWindowMetricsEvent,
       ([&called](auto engine, const FlutterWindowMetricsEvent* event) {
         called = true;
@@ -33,9 +36,6 @@ TEST(FlEngineTest, WindowMetrics) {
         return kSuccess;
       }));
 
-  g_autoptr(GError) error = nullptr;
-  EXPECT_TRUE(fl_engine_start(engine, &error));
-  EXPECT_EQ(error, nullptr);
   fl_engine_send_window_metrics_event(engine, 1, 3840, 2160, 2.0);
 
   EXPECT_TRUE(called);
@@ -43,11 +43,11 @@ TEST(FlEngineTest, WindowMetrics) {
 
 // Checks sending mouse pointer events works.
 TEST(FlEngineTest, MousePointer) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   bool called = false;
-  embedder_api->SendPointerEvent = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
       SendPointerEvent,
       ([&called](auto engine, const FlutterPointerEvent* events,
                  size_t events_count) {
@@ -80,11 +80,11 @@ TEST(FlEngineTest, MousePointer) {
 
 // Checks sending pan/zoom events works.
 TEST(FlEngineTest, PointerPanZoom) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   bool called = false;
-  embedder_api->SendPointerEvent = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
       SendPointerEvent,
       ([&called](auto engine, const FlutterPointerEvent* events,
                  size_t events_count) {
@@ -118,25 +118,26 @@ TEST(FlEngineTest, PointerPanZoom) {
 
 // Checks dispatching a semantics action works.
 TEST(FlEngineTest, DispatchSemanticsAction) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   bool called = false;
-  embedder_api->DispatchSemanticsAction = MOCK_ENGINE_PROC(
-      DispatchSemanticsAction,
-      ([&called](auto engine, uint64_t id, FlutterSemanticsAction action,
-                 const uint8_t* data, size_t data_length) {
-        EXPECT_EQ(id, static_cast<uint64_t>(42));
-        EXPECT_EQ(action, kFlutterSemanticsActionTap);
-        EXPECT_EQ(data_length, static_cast<size_t>(4));
-        EXPECT_EQ(data[0], 't');
-        EXPECT_EQ(data[1], 'e');
-        EXPECT_EQ(data[2], 's');
-        EXPECT_EQ(data[3], 't');
-        called = true;
+  fl_engine_get_embedder_api(engine)->DispatchSemanticsAction =
+      MOCK_ENGINE_PROC(
+          DispatchSemanticsAction,
+          ([&called](auto engine, uint64_t id, FlutterSemanticsAction action,
+                     const uint8_t* data, size_t data_length) {
+            EXPECT_EQ(id, static_cast<uint64_t>(42));
+            EXPECT_EQ(action, kFlutterSemanticsActionTap);
+            EXPECT_EQ(data_length, static_cast<size_t>(4));
+            EXPECT_EQ(data[0], 't');
+            EXPECT_EQ(data[1], 'e');
+            EXPECT_EQ(data[2], 's');
+            EXPECT_EQ(data[3], 't');
+            called = true;
 
-        return kSuccess;
-      }));
+            return kSuccess;
+          }));
 
   g_autoptr(GError) error = nullptr;
   EXPECT_TRUE(fl_engine_start(engine, &error));
@@ -150,13 +151,13 @@ TEST(FlEngineTest, DispatchSemanticsAction) {
 
 // Checks sending platform messages works.
 TEST(FlEngineTest, PlatformMessage) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   bool called = false;
   FlutterEngineSendPlatformMessageFnPtr old_handler =
-      embedder_api->SendPlatformMessage;
-  embedder_api->SendPlatformMessage = MOCK_ENGINE_PROC(
+      fl_engine_get_embedder_api(engine)->SendPlatformMessage;
+  fl_engine_get_embedder_api(engine)->SendPlatformMessage = MOCK_ENGINE_PROC(
       SendPlatformMessage,
       ([&called, old_handler](auto engine,
                               const FlutterPlatformMessage* message) {
@@ -187,28 +188,30 @@ TEST(FlEngineTest, PlatformMessage) {
 
 // Checks sending platform message responses works.
 TEST(FlEngineTest, PlatformMessageResponse) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   bool called = false;
-  embedder_api->SendPlatformMessageResponse = MOCK_ENGINE_PROC(
-      SendPlatformMessageResponse,
-      ([&called](auto engine,
-                 const FlutterPlatformMessageResponseHandle* handle,
-                 const uint8_t* data, size_t data_length) {
-        called = true;
+  fl_engine_get_embedder_api(engine)->SendPlatformMessageResponse =
+      MOCK_ENGINE_PROC(
+          SendPlatformMessageResponse,
+          ([&called](auto engine,
+                     const FlutterPlatformMessageResponseHandle* handle,
+                     const uint8_t* data, size_t data_length) {
+            called = true;
 
-        EXPECT_EQ(
-            handle,
-            reinterpret_cast<const FlutterPlatformMessageResponseHandle*>(42));
-        EXPECT_EQ(data_length, static_cast<size_t>(4));
-        EXPECT_EQ(data[0], 't');
-        EXPECT_EQ(data[1], 'e');
-        EXPECT_EQ(data[2], 's');
-        EXPECT_EQ(data[3], 't');
+            EXPECT_EQ(
+                handle,
+                reinterpret_cast<const FlutterPlatformMessageResponseHandle*>(
+                    42));
+            EXPECT_EQ(data_length, static_cast<size_t>(4));
+            EXPECT_EQ(data[0], 't');
+            EXPECT_EQ(data[1], 'e');
+            EXPECT_EQ(data[2], 's');
+            EXPECT_EQ(data[3], 't');
 
-        return kSuccess;
-      }));
+            return kSuccess;
+          }));
 
   g_autoptr(GError) error = nullptr;
   EXPECT_TRUE(fl_engine_start(engine, &error));
@@ -224,11 +227,11 @@ TEST(FlEngineTest, PlatformMessageResponse) {
 
 // Checks settings handler sends settings on startup.
 TEST(FlEngineTest, SettingsHandler) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   bool called = false;
-  embedder_api->SendPlatformMessage = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->SendPlatformMessage = MOCK_ENGINE_PROC(
       SendPlatformMessage,
       ([&called](auto engine, const FlutterPlatformMessage* message) {
         called = true;
@@ -277,14 +280,14 @@ void on_pre_engine_restart_cb(FlEngine* engine, gpointer user_data) {
 
 // Checks restarting the engine invokes the correct callback.
 TEST(FlEngineTest, OnPreEngineRestart) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   OnPreEngineRestartCallback callback;
   void* callback_user_data;
 
   bool called = false;
-  embedder_api->Initialize = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->Initialize = MOCK_ENGINE_PROC(
       Initialize, ([&callback, &callback_user_data, &called](
                        size_t version, const FlutterRendererConfig* config,
                        const FlutterProjectArgs* args, void* user_data,
@@ -295,6 +298,8 @@ TEST(FlEngineTest, OnPreEngineRestart) {
 
         return kSuccess;
       }));
+  fl_engine_get_embedder_api(engine)->RunInitialized =
+      MOCK_ENGINE_PROC(RunInitialized, ([](auto engine) { return kSuccess; }));
 
   g_autoptr(GError) error = nullptr;
   EXPECT_TRUE(fl_engine_start(engine, &error));
@@ -320,8 +325,6 @@ TEST(FlEngineTest, OnPreEngineRestart) {
 }
 
 TEST(FlEngineTest, DartEntrypointArgs) {
-  g_autoptr(FlDartProject) project = fl_dart_project_new();
-
   GPtrArray* args_array = g_ptr_array_new();
   g_ptr_array_add(args_array, const_cast<char*>("arg_one"));
   g_ptr_array_add(args_array, const_cast<char*>("arg_two"));
@@ -329,13 +332,12 @@ TEST(FlEngineTest, DartEntrypointArgs) {
   g_ptr_array_add(args_array, nullptr);
   gchar** args = reinterpret_cast<gchar**>(g_ptr_array_free(args_array, false));
 
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
   fl_dart_project_set_dart_entrypoint_arguments(project, args);
-
-  g_autoptr(FlEngine) engine = make_mock_engine_with_project(project);
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   bool called = false;
-  embedder_api->Initialize = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->Initialize = MOCK_ENGINE_PROC(
       Initialize, ([&called, &set_args = args](
                        size_t version, const FlutterRendererConfig* config,
                        const FlutterProjectArgs* args, void* user_data,
@@ -346,6 +348,8 @@ TEST(FlEngineTest, DartEntrypointArgs) {
 
         return kSuccess;
       }));
+  fl_engine_get_embedder_api(engine)->RunInitialized =
+      MOCK_ENGINE_PROC(RunInitialized, ([](auto engine) { return kSuccess; }));
 
   g_autoptr(GError) error = nullptr;
   EXPECT_TRUE(fl_engine_start(engine, &error));
@@ -359,11 +363,10 @@ TEST(FlEngineTest, Locales) {
   g_setenv("LANGUAGE", "de:en_US", TRUE);
   g_autoptr(FlDartProject) project = fl_dart_project_new();
 
-  g_autoptr(FlEngine) engine = make_mock_engine_with_project(project);
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   bool called = false;
-  embedder_api->UpdateLocales = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->UpdateLocales = MOCK_ENGINE_PROC(
       UpdateLocales, ([&called](auto engine, const FlutterLocale** locales,
                                 size_t locales_count) {
         called = true;
@@ -411,11 +414,10 @@ TEST(FlEngineTest, CLocale) {
   g_setenv("LANGUAGE", "C", TRUE);
   g_autoptr(FlDartProject) project = fl_dart_project_new();
 
-  g_autoptr(FlEngine) engine = make_mock_engine_with_project(project);
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   bool called = false;
-  embedder_api->UpdateLocales = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->UpdateLocales = MOCK_ENGINE_PROC(
       UpdateLocales, ([&called](auto engine, const FlutterLocale** locales,
                                 size_t locales_count) {
         called = true;
@@ -448,11 +450,10 @@ TEST(FlEngineTest, DuplicateLocale) {
   g_setenv("LANGUAGE", "en:en", TRUE);
   g_autoptr(FlDartProject) project = fl_dart_project_new();
 
-  g_autoptr(FlEngine) engine = make_mock_engine_with_project(project);
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   bool called = false;
-  embedder_api->UpdateLocales = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->UpdateLocales = MOCK_ENGINE_PROC(
       UpdateLocales, ([&called](auto engine, const FlutterLocale** locales,
                                 size_t locales_count) {
         called = true;
@@ -490,11 +491,10 @@ TEST(FlEngineTest, EmptyLocales) {
   g_setenv("LANGUAGE", "de:: :en_US", TRUE);
   g_autoptr(FlDartProject) project = fl_dart_project_new();
 
-  g_autoptr(FlEngine) engine = make_mock_engine_with_project(project);
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   bool called = false;
-  embedder_api->UpdateLocales = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->UpdateLocales = MOCK_ENGINE_PROC(
       UpdateLocales, ([&called](auto engine, const FlutterLocale** locales,
                                 size_t locales_count) {
         called = true;
@@ -551,11 +551,11 @@ static void add_view_cb(GObject* object,
 TEST(FlEngineTest, AddView) {
   g_autoptr(GMainLoop) loop = g_main_loop_new(nullptr, 0);
 
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   bool called = false;
-  embedder_api->AddView = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->AddView = MOCK_ENGINE_PROC(
       AddView, ([&called](auto engine, const FlutterAddViewInfo* info) {
         called = true;
         EXPECT_EQ(info->view_metrics->width, 123u);
@@ -594,10 +594,10 @@ static void add_view_error_cb(GObject* object,
 TEST(FlEngineTest, AddViewError) {
   g_autoptr(GMainLoop) loop = g_main_loop_new(nullptr, 0);
 
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
-  embedder_api->AddView = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->AddView = MOCK_ENGINE_PROC(
       AddView, ([](auto engine, const FlutterAddViewInfo* info) {
         FlutterAddViewResult result;
         result.struct_size = sizeof(FlutterAddViewResult);
@@ -630,10 +630,10 @@ static void add_view_engine_error_cb(GObject* object,
 TEST(FlEngineTest, AddViewEngineError) {
   g_autoptr(GMainLoop) loop = g_main_loop_new(nullptr, 0);
 
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
-  embedder_api->AddView = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->AddView = MOCK_ENGINE_PROC(
       AddView, ([](auto engine, const FlutterAddViewInfo* info) {
         return kInvalidArguments;
       }));
@@ -660,11 +660,11 @@ static void remove_view_cb(GObject* object,
 TEST(FlEngineTest, RemoveView) {
   g_autoptr(GMainLoop) loop = g_main_loop_new(nullptr, 0);
 
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
   bool called = false;
-  embedder_api->RemoveView = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->RemoveView = MOCK_ENGINE_PROC(
       RemoveView, ([&called](auto engine, const FlutterRemoveViewInfo* info) {
         called = true;
         EXPECT_EQ(info->view_id, 123);
@@ -699,10 +699,10 @@ static void remove_view_error_cb(GObject* object,
 TEST(FlEngineTest, RemoveViewError) {
   g_autoptr(GMainLoop) loop = g_main_loop_new(nullptr, 0);
 
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
-  embedder_api->RemoveView = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->RemoveView = MOCK_ENGINE_PROC(
       RemoveView, ([](auto engine, const FlutterRemoveViewInfo* info) {
         FlutterRemoveViewResult result;
         result.struct_size = sizeof(FlutterRemoveViewResult);
@@ -733,10 +733,10 @@ static void remove_view_engine_error_cb(GObject* object,
 TEST(FlEngineTest, RemoveViewEngineError) {
   g_autoptr(GMainLoop) loop = g_main_loop_new(nullptr, 0);
 
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
 
-  embedder_api->RemoveView = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->RemoveView = MOCK_ENGINE_PROC(
       RemoveView, ([](auto engine, const FlutterRemoveViewInfo* info) {
         return kInvalidArguments;
       }));
@@ -751,11 +751,15 @@ TEST(FlEngineTest, RemoveViewEngineError) {
 TEST(FlEngineTest, SendKeyEvent) {
   g_autoptr(GMainLoop) loop = g_main_loop_new(nullptr, 0);
 
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
 
   bool called;
-  embedder_api->SendKeyEvent = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->SendKeyEvent = MOCK_ENGINE_PROC(
       SendKeyEvent,
       ([&called](auto engine, const FlutterKeyEvent* event,
                  FlutterKeyEventCallback callback, void* user_data) {
@@ -798,11 +802,15 @@ TEST(FlEngineTest, SendKeyEvent) {
 TEST(FlEngineTest, SendKeyEventNotHandled) {
   g_autoptr(GMainLoop) loop = g_main_loop_new(nullptr, 0);
 
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
 
   bool called;
-  embedder_api->SendKeyEvent = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->SendKeyEvent = MOCK_ENGINE_PROC(
       SendKeyEvent,
       ([&called](auto engine, const FlutterKeyEvent* event,
                  FlutterKeyEventCallback callback, void* user_data) {
@@ -839,11 +847,15 @@ TEST(FlEngineTest, SendKeyEventNotHandled) {
 TEST(FlEngineTest, SendKeyEventError) {
   g_autoptr(GMainLoop) loop = g_main_loop_new(nullptr, 0);
 
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
 
   bool called;
-  embedder_api->SendKeyEvent = MOCK_ENGINE_PROC(
+  fl_engine_get_embedder_api(engine)->SendKeyEvent = MOCK_ENGINE_PROC(
       SendKeyEvent,
       ([&called](auto engine, const FlutterKeyEvent* event,
                  FlutterKeyEventCallback callback, void* user_data) {

@@ -7,10 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class Wrapper extends StatelessWidget {
-  const Wrapper({
-    super.key,
-    required this.child,
-  });
+  const Wrapper({super.key, required this.child});
 
   final Widget child;
 
@@ -19,10 +16,7 @@ class Wrapper extends StatelessWidget {
 }
 
 class StatefulWrapper extends StatefulWidget {
-  const StatefulWrapper({
-    super.key,
-    required this.child,
-  });
+  const StatefulWrapper({super.key, required this.child});
 
   final Widget child;
 
@@ -31,9 +25,10 @@ class StatefulWrapper extends StatefulWidget {
 }
 
 class StatefulWrapperState extends State<StatefulWrapper> {
-
   void trigger() {
-    setState(() { /* for test purposes */ });
+    setState(() {
+      /* for test purposes */
+    });
   }
 
   @override
@@ -44,17 +39,19 @@ void main() {
   testWidgets('Moving global key inside a LayoutBuilder', (WidgetTester tester) async {
     final GlobalKey<StatefulWrapperState> key = GlobalKey<StatefulWrapperState>();
     await tester.pumpWidget(
-      LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-        return Wrapper(
-          child: StatefulWrapper(key: key, child: Container(height: 100.0)),
-        );
-      }),
+      LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Wrapper(child: StatefulWrapper(key: key, child: Container(height: 100.0)));
+        },
+      ),
     );
     await tester.pumpWidget(
-      LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-        key.currentState!.trigger();
-        return StatefulWrapper(key: key, child: Container(height: 100.0));
-      }),
+      LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          key.currentState!.trigger();
+          return StatefulWrapper(key: key, child: Container(height: 100.0));
+        },
+      ),
     );
 
     expect(tester.takeException(), null);
@@ -63,10 +60,12 @@ void main() {
   testWidgets('Moving GlobalKeys out of LayoutBuilder', (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/146379.
     final GlobalKey widgetKey = GlobalKey(debugLabel: 'widget key');
-    final Widget widgetWithKey = Builder(builder: (BuildContext context) {
-      Directionality.of(context);
-      return SizedBox(key: widgetKey);
-    });
+    final Widget widgetWithKey = Builder(
+      builder: (BuildContext context) {
+        Directionality.of(context);
+        return SizedBox(key: widgetKey);
+      },
+    );
 
     await tester.pumpWidget(
       Directionality(

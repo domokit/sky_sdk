@@ -66,18 +66,10 @@ abstract class Stdio {
 
 /// A logger that will print out trace messages.
 class VerboseStdio extends Stdio {
-  VerboseStdio({
-    required this.stdout,
-    required this.stderr,
-    required this.stdin,
-    this.filter,
-  });
+  VerboseStdio({required this.stdout, required this.stderr, required this.stdin, this.filter});
 
-  factory VerboseStdio.local() => VerboseStdio(
-        stdout: io.stdout,
-        stderr: io.stderr,
-        stdin: io.stdin,
-      );
+  factory VerboseStdio.local() =>
+      VerboseStdio(stdout: io.stdout, stderr: io.stderr, stdin: io.stdin);
 
   final io.Stdout stdout;
   final io.Stdout stderr;

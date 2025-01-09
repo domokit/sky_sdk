@@ -21,7 +21,7 @@ class ViewRenderingFlutterBinding extends RenderingFlutterBinding {
   ///
   /// This binding does not automatically schedule any frames. Callers are
   /// responsible for deciding when to first call [scheduleFrame].
-  ViewRenderingFlutterBinding({ RenderBox? root }) : _root = root;
+  ViewRenderingFlutterBinding({RenderBox? root}) : _root = root;
 
   @override
   void initInstances() {

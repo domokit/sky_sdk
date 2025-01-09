@@ -33,13 +33,8 @@ class DefaultTextStyleExample extends StatelessWidget {
       appBar: AppBar(title: const Text('DefaultTextStyle.merge Sample')),
       // Inherit MaterialApp text theme and override font size and font weight.
       body: DefaultTextStyle.merge(
-        style: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
-        child: const Center(
-          child: Text('Flutter'),
-        ),
+        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        child: const Center(child: Text('Flutter')),
       ),
     );
   }

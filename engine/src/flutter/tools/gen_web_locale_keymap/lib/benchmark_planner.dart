@@ -10,10 +10,9 @@ import 'layout_types.dart';
 // Mandatory goals are all the alnum keys. These keys must be assigned at the
 // end of layout planning.
 final Map<String, String> _kMandatoryGoalsByChar = Map<String, String>.fromEntries(
-  kLayoutGoals
-    .entries
-    .where((MapEntry<String, String> entry) => isLetter(entry.value.codeUnitAt(0)))
-    .map((MapEntry<String, String?> entry) => MapEntry<String, String>(entry.value!, entry.key))
+  kLayoutGoals.entries
+      .where((MapEntry<String, String> entry) => isLetter(entry.value.codeUnitAt(0)))
+      .map((MapEntry<String, String?> entry) => MapEntry<String, String>(entry.value!, entry.key)),
 );
 
 /// Plan a layout into a map from eventCode to logical key.
@@ -85,7 +84,10 @@ Map<String, Map<String, int>> combineLayouts(Iterable<Layout> layouts) {
         // keyCode.
         if (codeMap.containsKey(eventKey) && codeMap[eventKey] != logicalKey) {
           assert(isLetterChar(logicalKey));
-          assert(_isLetterOrMappedToKeyCode(codeMap[eventKey]!), '$eventCode, $eventKey, ${codeMap[eventKey]!}');
+          assert(
+            _isLetterOrMappedToKeyCode(codeMap[eventKey]!),
+            '$eventCode, $eventKey, ${codeMap[eventKey]!}',
+          );
           codeMap[eventKey] = kUseKeyCode;
         } else {
           codeMap[eventKey] = logicalKey;
@@ -95,8 +97,8 @@ Map<String, Map<String, int>> combineLayouts(Iterable<Layout> layouts) {
   }
   // Remove mapping results that can be derived using heuristics.
   result.removeWhere((String eventCode, Map<String, int> codeMap) {
-    codeMap.removeWhere((String eventKey, int logicalKey) =>
-      heuristicMapper(eventCode, eventKey) == logicalKey,
+    codeMap.removeWhere(
+      (String eventKey, int logicalKey) => heuristicMapper(eventCode, eventKey) == logicalKey,
     );
     return codeMap.isEmpty;
   });

@@ -26,9 +26,17 @@ const double _kMinHeightWithSubtitle = _kLeadingSize + 2 * 10.0;
 const double _kNotchedMinHeight = _kNotchedLeadingSize + 2 * 12.0;
 const double _kNotchedMinHeightWithoutLeading = _kNotchedLeadingSize + 2 * 10.0;
 const EdgeInsetsDirectional _kPadding = EdgeInsetsDirectional.only(start: 20.0, end: 14.0);
-const EdgeInsetsDirectional _kPaddingWithSubtitle = EdgeInsetsDirectional.only(start: 20.0, end: 14.0);
+const EdgeInsetsDirectional _kPaddingWithSubtitle = EdgeInsetsDirectional.only(
+  start: 20.0,
+  end: 14.0,
+);
 const EdgeInsets _kNotchedPadding = EdgeInsets.symmetric(horizontal: 14.0);
-const EdgeInsetsDirectional _kNotchedPaddingWithoutLeading = EdgeInsetsDirectional.fromSTEB(28.0, 10.0, 14.0, 10.0);
+const EdgeInsetsDirectional _kNotchedPaddingWithoutLeading = EdgeInsetsDirectional.fromSTEB(
+  28.0,
+  10.0,
+  14.0,
+  10.0,
+);
 const double _kLeadingToTitle = 16.0;
 const double _kNotchedLeadingToTitle = 12.0;
 const double _kNotchedTitleToSubtitle = 3.0;
@@ -271,25 +279,30 @@ class _CupertinoListTileState extends State<CupertinoListTile> {
     );
 
     final bool baseType = switch (widget._type) {
-      _CupertinoListTileType.base    => true,
+      _CupertinoListTileType.base => true,
       _CupertinoListTileType.notched => false,
     };
     final Widget title = DefaultTextStyle(
-      style: baseType || widget.subtitle == null ? textStyle : textStyle.copyWith(
-        fontWeight: FontWeight.w600,
-        fontSize: widget.leading == null ? _kNotchedTitleWithSubtitleFontSize : null,
-      ),
+      style:
+          baseType || widget.subtitle == null
+              ? textStyle
+              : textStyle.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: widget.leading == null ? _kNotchedTitleWithSubtitleFontSize : null,
+              ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       child: widget.title,
     );
 
-    final EdgeInsetsGeometry padding = widget.padding ?? switch (widget._type) {
-      _CupertinoListTileType.base when widget.subtitle != null => _kPaddingWithSubtitle,
-      _CupertinoListTileType.notched when widget.leading != null => _kNotchedPadding,
-      _CupertinoListTileType.base => _kPadding,
-      _CupertinoListTileType.notched => _kNotchedPaddingWithoutLeading,
-    };
+    final EdgeInsetsGeometry padding =
+        widget.padding ??
+        switch (widget._type) {
+          _CupertinoListTileType.base when widget.subtitle != null => _kPaddingWithSubtitle,
+          _CupertinoListTileType.notched when widget.leading != null => _kNotchedPadding,
+          _CupertinoListTileType.base => _kPadding,
+          _CupertinoListTileType.notched => _kNotchedPaddingWithoutLeading,
+        };
 
     // The color for default state tile is set to either what user provided or
     // null and it will resolve to the correct color provided by context. But if
@@ -297,7 +310,8 @@ class _CupertinoListTileState extends State<CupertinoListTile> {
     // default color that matched the iOS-style.
     Color? backgroundColor = widget.backgroundColor;
     if (_tapped) {
-      backgroundColor = widget.backgroundColorActivated ?? CupertinoColors.systemGrey4.resolveFrom(context);
+      backgroundColor =
+          widget.backgroundColorActivated ?? CupertinoColors.systemGrey4.resolveFrom(context);
     }
 
     final double minHeight = switch (widget._type) {
@@ -315,10 +329,7 @@ class _CupertinoListTileState extends State<CupertinoListTile> {
         child: Row(
           children: <Widget>[
             if (widget.leading case final Widget leading) ...<Widget>[
-              SizedBox.square(
-                dimension: widget.leadingSize,
-                child: Center(child: leading),
-              ),
+              SizedBox.square(dimension: widget.leadingSize, child: Center(child: leading)),
               SizedBox(width: widget.leadingToTitle),
             ] else
               SizedBox(height: widget.leadingSize),
@@ -332,9 +343,7 @@ class _CupertinoListTileState extends State<CupertinoListTile> {
                     const SizedBox(height: _kNotchedTitleToSubtitle),
                     DefaultTextStyle(
                       style: coloredStyle.copyWith(
-                        fontSize: baseType
-                            ? _kSubtitleFontSize
-                            : _kNotchedSubtitleFontSize,
+                        fontSize: baseType ? _kSubtitleFontSize : _kNotchedSubtitleFontSize,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -345,15 +354,10 @@ class _CupertinoListTileState extends State<CupertinoListTile> {
               ),
             ),
             if (widget.additionalInfo case final Widget additionalInfo) ...<Widget>[
-              DefaultTextStyle(
-                style: coloredStyle,
-                maxLines: 1,
-                child: additionalInfo,
-              ),
-              if (widget.trailing != null)
-                const SizedBox(width: _kAdditionalInfoToTrailing),
+              DefaultTextStyle(style: coloredStyle, maxLines: 1, child: additionalInfo),
+              if (widget.trailing != null) const SizedBox(width: _kAdditionalInfoToTrailing),
             ],
-            if (widget.trailing != null) widget.trailing!
+            if (widget.trailing != null) widget.trailing!,
           ],
         ),
       ),
@@ -364,12 +368,20 @@ class _CupertinoListTileState extends State<CupertinoListTile> {
     }
 
     return GestureDetector(
-      onTapDown: (_) => setState(() { _tapped = true; }),
-      onTapCancel: () => setState(() { _tapped = false; }),
+      onTapDown:
+          (_) => setState(() {
+            _tapped = true;
+          }),
+      onTapCancel:
+          () => setState(() {
+            _tapped = false;
+          }),
       onTap: () async {
         await widget.onTap!();
         if (mounted) {
-          setState(() { _tapped = false; });
+          setState(() {
+            _tapped = false;
+          });
         }
       },
       behavior: HitTestBehavior.opaque,

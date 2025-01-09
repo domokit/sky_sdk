@@ -10,19 +10,14 @@ void main() {
   testWidgets('ListTiles wrapped in Card widgets', (WidgetTester tester) async {
     const int totalTiles = 7;
 
-    await tester.pumpWidget(
-      const example.ListTileApp(),
-    );
+    await tester.pumpWidget(const example.ListTileApp());
 
     expect(find.byType(ListTile), findsNWidgets(totalTiles));
 
     // The ListTile widget is wrapped in a Card widget.
     for (int i = 0; i < totalTiles; i++) {
       expect(
-        find.ancestor(
-          of: find.byType(ListTile).at(i),
-          matching: find.byType(Card).at(i),
-        ),
+        find.ancestor(of: find.byType(ListTile).at(i), matching: find.byType(Card).at(i)),
         findsOneWidget,
       );
     }

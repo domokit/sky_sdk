@@ -30,11 +30,7 @@ class TextPaintService {
     }
   }
 
-  void _paintBackground(
-    BitmapCanvas canvas,
-    ui.Offset offset,
-    LayoutFragment fragment,
-  ) {
+  void _paintBackground(BitmapCanvas canvas, ui.Offset offset, LayoutFragment fragment) {
     if (fragment.isPlaceholder) {
       return;
     }
@@ -67,9 +63,8 @@ class TextPaintService {
     }
 
     _prepareCanvasForFragment(canvas, fragment);
-    final double fragmentX = fragment.textDirection! == ui.TextDirection.ltr
-        ? fragment.left
-        : fragment.right;
+    final double fragmentX =
+        fragment.textDirection! == ui.TextDirection.ltr ? fragment.left : fragment.right;
 
     final double x = offset.dx + line.left + fragmentX;
     final double y = offset.dy + line.baseline;

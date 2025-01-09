@@ -38,7 +38,8 @@ class CustomNetworkImage extends ImageProvider<Uri> {
       }
       return true;
     }());
-    return client ?? HttpClient()..autoUncompress = false;
+    return client ?? HttpClient()
+      ..autoUncompress = false;
   }
 
   @override
@@ -46,35 +47,36 @@ class CustomNetworkImage extends ImageProvider<Uri> {
     final StreamController<ImageChunkEvent> chunkEvents = StreamController<ImageChunkEvent>();
     debugPrint('Fetching "$key"...');
     return MultiFrameImageStreamCompleter(
-      codec: _httpClient.getUrl(key)
+      codec: _httpClient
+          .getUrl(key)
           .then<HttpClientResponse>((HttpClientRequest request) => request.close())
           .then<Uint8List>((HttpClientResponse response) {
             return consolidateHttpClientResponseBytes(
               response,
               onBytesReceived: (int cumulative, int? total) {
-                chunkEvents.add(ImageChunkEvent(
-                  cumulativeBytesLoaded: cumulative,
-                  expectedTotalBytes: total,
-                ));
+                chunkEvents.add(
+                  ImageChunkEvent(cumulativeBytesLoaded: cumulative, expectedTotalBytes: total),
+                );
               },
             );
           })
           .catchError((Object e, StackTrace stack) {
-             scheduleMicrotask(() {
-               PaintingBinding.instance.imageCache.evict(key);
-             });
-             return Future<Uint8List>.error(e, stack);
-           })
+            scheduleMicrotask(() {
+              PaintingBinding.instance.imageCache.evict(key);
+            });
+            return Future<Uint8List>.error(e, stack);
+          })
           .whenComplete(chunkEvents.close)
           .then<ui.ImmutableBuffer>(ui.ImmutableBuffer.fromUint8List)
           .then<ui.Codec>(decode),
       chunkEvents: chunkEvents.stream,
       scale: 1.0,
       debugLabel: '"key"',
-      informationCollector: () => <DiagnosticsNode>[
-        DiagnosticsProperty<ImageProvider>('Image provider', this),
-        DiagnosticsProperty<Uri>('URL', key),
-      ],
+      informationCollector:
+          () => <DiagnosticsNode>[
+            DiagnosticsProperty<ImageProvider>('Image provider', this),
+            DiagnosticsProperty<Uri>('URL', key),
+          ],
     );
   }
 
@@ -93,7 +95,9 @@ class ExampleApp extends StatelessWidget {
       home: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           return Image(
-            image: const CustomNetworkImage('https://flutter.github.io/assets-for-api-docs/assets/widgets/flamingos.jpg'),
+            image: const CustomNetworkImage(
+              'https://flutter.github.io/assets-for-api-docs/assets/widgets/flamingos.jpg',
+            ),
             width: constraints.hasBoundedWidth ? constraints.maxWidth : null,
             height: constraints.hasBoundedHeight ? constraints.maxHeight : null,
           );

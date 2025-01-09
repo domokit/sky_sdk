@@ -96,7 +96,10 @@ class SemanticsAction {
   ///
   /// This action is used by iOS Full Keyboard Access to reveal contents that
   /// are currently not visible in the viewport.
-  static const SemanticsAction scrollToOffset = SemanticsAction._(_kScrollToOffsetIndex, 'scrollToOffset');
+  static const SemanticsAction scrollToOffset = SemanticsAction._(
+    _kScrollToOffsetIndex,
+    'scrollToOffset',
+  );
 
   /// A request to increase the value represented by the semantics node.
   ///
@@ -112,7 +115,10 @@ class SemanticsAction {
   ///
   /// For example, this action might be send to a node in a scrollable list that
   /// is partially off screen to bring it on screen.
-  static const SemanticsAction showOnScreen = SemanticsAction._(_kShowOnScreenIndex, 'showOnScreen');
+  static const SemanticsAction showOnScreen = SemanticsAction._(
+    _kShowOnScreenIndex,
+    'showOnScreen',
+  );
 
   /// Move the cursor forward by one character.
   ///
@@ -120,7 +126,10 @@ class SemanticsAction {
   ///
   /// The action includes a boolean argument, which indicates whether the cursor
   /// movement should extend (or start) a selection.
-  static const SemanticsAction moveCursorForwardByCharacter = SemanticsAction._(_kMoveCursorForwardByCharacterIndex, 'moveCursorForwardByCharacter');
+  static const SemanticsAction moveCursorForwardByCharacter = SemanticsAction._(
+    _kMoveCursorForwardByCharacterIndex,
+    'moveCursorForwardByCharacter',
+  );
 
   /// Move the cursor backward by one character.
   ///
@@ -128,7 +137,10 @@ class SemanticsAction {
   ///
   /// The action includes a boolean argument, which indicates whether the cursor
   /// movement should extend (or start) a selection.
-  static const SemanticsAction moveCursorBackwardByCharacter = SemanticsAction._(_kMoveCursorBackwardByCharacterIndex, 'moveCursorBackwardByCharacter');
+  static const SemanticsAction moveCursorBackwardByCharacter = SemanticsAction._(
+    _kMoveCursorBackwardByCharacterIndex,
+    'moveCursorBackwardByCharacter',
+  );
 
   /// Replaces the current text in the text field.
   ///
@@ -147,7 +159,10 @@ class SemanticsAction {
   ///
   /// Setting `base` and `extent` to the same value will move the cursor to
   /// that position (without selecting anything).
-  static const SemanticsAction setSelection = SemanticsAction._(_kSetSelectionIndex, 'setSelection');
+  static const SemanticsAction setSelection = SemanticsAction._(
+    _kSetSelectionIndex,
+    'setSelection',
+  );
 
   /// Copy the current selection to the clipboard.
   static const SemanticsAction copy = SemanticsAction._(_kCopyIndex, 'copy');
@@ -173,7 +188,10 @@ class SemanticsAction {
   /// See also:
   ///
   ///    * [focus], which controls the input focus.
-  static const SemanticsAction didGainAccessibilityFocus = SemanticsAction._(_kDidGainAccessibilityFocusIndex, 'didGainAccessibilityFocus');
+  static const SemanticsAction didGainAccessibilityFocus = SemanticsAction._(
+    _kDidGainAccessibilityFocusIndex,
+    'didGainAccessibilityFocus',
+  );
 
   /// Indicates that the node has lost accessibility focus.
   ///
@@ -186,13 +204,19 @@ class SemanticsAction {
   /// The accessibility focus is different from the input focus. The input focus
   /// is usually held by the element that currently responds to keyboard inputs.
   /// Accessibility focus and input focus can be held by two different nodes!
-  static const SemanticsAction didLoseAccessibilityFocus = SemanticsAction._(_kDidLoseAccessibilityFocusIndex, 'didLoseAccessibilityFocus');
+  static const SemanticsAction didLoseAccessibilityFocus = SemanticsAction._(
+    _kDidLoseAccessibilityFocusIndex,
+    'didLoseAccessibilityFocus',
+  );
 
   /// Indicates that the user has invoked a custom accessibility action.
   ///
   /// This handler is added automatically whenever a custom accessibility
   /// action is added to a semantics node.
-  static const SemanticsAction customAction = SemanticsAction._(_kCustomActionIndex, 'customAction');
+  static const SemanticsAction customAction = SemanticsAction._(
+    _kCustomActionIndex,
+    'customAction',
+  );
 
   /// A request that the node should be dismissed.
   ///
@@ -209,7 +233,10 @@ class SemanticsAction {
   ///
   /// The action includes a boolean argument, which indicates whether the cursor
   /// movement should extend (or start) a selection.
-  static const SemanticsAction moveCursorForwardByWord = SemanticsAction._(_kMoveCursorForwardByWordIndex, 'moveCursorForwardByWord');
+  static const SemanticsAction moveCursorForwardByWord = SemanticsAction._(
+    _kMoveCursorForwardByWordIndex,
+    'moveCursorForwardByWord',
+  );
 
   /// Move the cursor backward by one word.
   ///
@@ -217,7 +244,10 @@ class SemanticsAction {
   ///
   /// The action includes a boolean argument, which indicates whether the cursor
   /// movement should extend (or start) a selection.
-  static const SemanticsAction moveCursorBackwardByWord = SemanticsAction._(_kMoveCursorBackwardByWordIndex, 'moveCursorBackwardByWord');
+  static const SemanticsAction moveCursorBackwardByWord = SemanticsAction._(
+    _kMoveCursorBackwardByWordIndex,
+    'moveCursorBackwardByWord',
+  );
 
   /// Move the input focus to the respective widget.
   ///
@@ -386,7 +416,10 @@ class SemanticsFlag {
   /// See also:
   ///
   ///   * [SemanticsFlag.isChecked], which controls whether the node is "checked" or "unchecked".
-  static const SemanticsFlag hasCheckedState = SemanticsFlag._(_kHasCheckedStateIndex, 'hasCheckedState');
+  static const SemanticsFlag hasCheckedState = SemanticsFlag._(
+    _kHasCheckedStateIndex,
+    'hasCheckedState',
+  );
 
   /// Whether a semantics node that [hasCheckedState] is checked.
   ///
@@ -409,7 +442,10 @@ class SemanticsFlag {
   /// can have checked,  unchecked, or mixed state.
   ///
   /// Must be false when the checkbox is either checked or unchecked.
-  static const SemanticsFlag isCheckStateMixed = SemanticsFlag._(_kIsCheckStateMixedIndex, 'isCheckStateMixed');
+  static const SemanticsFlag isCheckStateMixed = SemanticsFlag._(
+    _kIsCheckStateMixedIndex,
+    'isCheckStateMixed',
+  );
 
   /// The semantics node has the quality of either being "selected" or "unselected".
   ///
@@ -419,7 +455,10 @@ class SemanticsFlag {
   /// When this flag is not set, the corresponding widget cannot be selected by
   /// the user, and the presence or the lack of [isSelected] does not carry any
   /// meaning.
-  static const SemanticsFlag hasSelectedState = SemanticsFlag._(_kHasSelectedStateIndex, 'hasSelectedState');
+  static const SemanticsFlag hasSelectedState = SemanticsFlag._(
+    _kHasSelectedStateIndex,
+    'hasSelectedState',
+  );
 
   /// Whether a semantics node is selected.
   ///
@@ -478,7 +517,10 @@ class SemanticsFlag {
   /// For example, a button can be enabled or disabled and therefore has an
   /// "enabled" state. Static text is usually neither enabled nor disabled and
   /// therefore does not have an "enabled" state.
-  static const SemanticsFlag hasEnabledState = SemanticsFlag._(_kHasEnabledStateIndex, 'hasEnabledState');
+  static const SemanticsFlag hasEnabledState = SemanticsFlag._(
+    _kHasEnabledStateIndex,
+    'hasEnabledState',
+  );
 
   /// Whether a semantic node that [hasEnabledState] is currently enabled.
   ///
@@ -491,7 +533,10 @@ class SemanticsFlag {
   ///
   /// For example, a radio button is in a mutually exclusive group because
   /// only one radio button in that group can be marked as [isChecked].
-  static const SemanticsFlag isInMutuallyExclusiveGroup = SemanticsFlag._(_kIsInMutuallyExclusiveGroupIndex, 'isInMutuallyExclusiveGroup');
+  static const SemanticsFlag isInMutuallyExclusiveGroup = SemanticsFlag._(
+    _kIsInMutuallyExclusiveGroupIndex,
+    'isInMutuallyExclusiveGroup',
+  );
 
   /// Whether a semantic node is a header that divides content into sections.
   ///
@@ -602,7 +647,10 @@ class SemanticsFlag {
   /// See also:
   ///
   ///    * [SemanticsFlag.isToggled], which controls whether the node is "on" or "off".
-  static const SemanticsFlag hasToggledState = SemanticsFlag._(_kHasToggledStateIndex, 'hasToggledState');
+  static const SemanticsFlag hasToggledState = SemanticsFlag._(
+    _kHasToggledStateIndex,
+    'hasToggledState',
+  );
 
   /// If true, the semantics node is "on". If false, the semantics node is
   /// "off".
@@ -621,7 +669,10 @@ class SemanticsFlag {
   /// easily move the accessibility focus to the next set of children. A
   /// [PageView] widget does not have implicit scrolling, so that users don't
   /// navigate to the next page when reaching the end of the current one.
-  static const SemanticsFlag hasImplicitScrolling = SemanticsFlag._(_kHasImplicitScrollingIndex, 'hasImplicitScrolling');
+  static const SemanticsFlag hasImplicitScrolling = SemanticsFlag._(
+    _kHasImplicitScrollingIndex,
+    'hasImplicitScrolling',
+  );
 
   /// The semantics node has the quality of either being "expanded" or "collapsed".
   ///
@@ -630,7 +681,10 @@ class SemanticsFlag {
   /// See also:
   ///
   ///   * [SemanticsFlag.isExpanded], which controls whether the node is "expanded" or "collapsed".
-  static const SemanticsFlag hasExpandedState = SemanticsFlag._(_kHasExpandedStateIndex, 'hasExpandedState');
+  static const SemanticsFlag hasExpandedState = SemanticsFlag._(
+    _kHasExpandedStateIndex,
+    'hasExpandedState',
+  );
 
   /// Whether a semantics node is expanded.
   ///
@@ -710,9 +764,7 @@ class SemanticsFlag {
 ///  * [LocaleStringAttribute], which causes the assistive technologies to
 ///    treat the string in the specific language.
 abstract base class StringAttribute extends NativeFieldWrapperClass1 {
-  StringAttribute._({
-    required this.range,
-  });
+  StringAttribute._({required this.range});
 
   /// The range of the text to which this attribute applies.
   final TextRange range;
@@ -738,14 +790,18 @@ abstract base class StringAttribute extends NativeFieldWrapperClass1 {
 base class SpellOutStringAttribute extends StringAttribute {
   /// Creates a string attribute that denotes the text in [range] must be
   /// spell out when the assistive technologies announce the string.
-  SpellOutStringAttribute({
-    required TextRange range,
-  }) : super._(range: range) {
+  SpellOutStringAttribute({required TextRange range}) : super._(range: range) {
     _initSpellOutStringAttribute(this, range.start, range.end);
   }
 
-  @Native<Void Function(Handle, Int32, Int32)>(symbol: 'NativeStringAttribute::initSpellOutStringAttribute')
-  external static void _initSpellOutStringAttribute(SpellOutStringAttribute instance, int start, int end);
+  @Native<Void Function(Handle, Int32, Int32)>(
+    symbol: 'NativeStringAttribute::initSpellOutStringAttribute',
+  )
+  external static void _initSpellOutStringAttribute(
+    SpellOutStringAttribute instance,
+    int start,
+    int end,
+  );
 
   @override
   StringAttribute copy({required TextRange range}) {
@@ -770,18 +826,22 @@ base class LocaleStringAttribute extends StringAttribute {
   /// Creates a string attribute that denotes the text in [range] must be
   /// treated as the language specified by the [locale] when the assistive
   /// technologies announce the string.
-  LocaleStringAttribute({
-    required TextRange range,
-    required this.locale,
-  }) : super._(range: range) {
+  LocaleStringAttribute({required TextRange range, required this.locale}) : super._(range: range) {
     _initLocaleStringAttribute(this, range.start, range.end, locale.toLanguageTag());
   }
 
   /// The language of this attribute.
   final Locale locale;
 
-  @Native<Void Function(Handle, Int32, Int32, Handle)>(symbol: 'NativeStringAttribute::initLocaleStringAttribute')
-  external static void _initLocaleStringAttribute(LocaleStringAttribute instance, int start, int end, String locale);
+  @Native<Void Function(Handle, Int32, Int32, Handle)>(
+    symbol: 'NativeStringAttribute::initLocaleStringAttribute',
+  )
+  external static void _initLocaleStringAttribute(
+    LocaleStringAttribute instance,
+    int start,
+    int end,
+    String locale,
+  );
 
   @override
   StringAttribute copy({required TextRange range}) {
@@ -969,8 +1029,11 @@ abstract class SemanticsUpdateBuilder {
   SemanticsUpdate build();
 }
 
-base class _NativeSemanticsUpdateBuilder extends NativeFieldWrapperClass1 implements SemanticsUpdateBuilder {
-  _NativeSemanticsUpdateBuilder() { _constructor(); }
+base class _NativeSemanticsUpdateBuilder extends NativeFieldWrapperClass1
+    implements SemanticsUpdateBuilder {
+  _NativeSemanticsUpdateBuilder() {
+    _constructor();
+  }
 
   @Native<Void Function(Handle)>(symbol: 'SemanticsUpdateBuilder::Create')
   external void _constructor();
@@ -1014,9 +1077,9 @@ base class _NativeSemanticsUpdateBuilder extends NativeFieldWrapperClass1 implem
     String linkUrl = '',
   }) {
     assert(_matrix4IsValid(transform));
-    assert (
+    assert(
       headingLevel >= 0 && headingLevel <= 6,
-      'Heading level must be between 1 and 6, or 0 to indicate that this node is not a heading.'
+      'Heading level must be between 1 and 6, or 0 to indicate that this node is not a heading.',
     );
     _updateNode(
       id,
@@ -1059,92 +1122,99 @@ base class _NativeSemanticsUpdateBuilder extends NativeFieldWrapperClass1 implem
       linkUrl,
     );
   }
+
   @Native<
-      Void Function(
-          Pointer<Void>,
-          Int32,
-          Int32,
-          Int32,
-          Int32,
-          Int32,
-          Int32,
-          Int32,
-          Int32,
-          Int32,
-          Int32,
-          Double,
-          Double,
-          Double,
-          Double,
-          Double,
-          Double,
-          Double,
-          Double,
-          Double,
-          Handle,
-          Handle,
-          Handle,
-          Handle,
-          Handle,
-          Handle,
-          Handle,
-          Handle,
-          Handle,
-          Handle,
-          Handle,
-          Handle,
-          Int32,
-          Handle,
-          Handle,
-          Handle,
-          Handle,
-          Int32,
-          Handle)>(symbol: 'SemanticsUpdateBuilder::updateNode')
+    Void Function(
+      Pointer<Void>,
+      Int32,
+      Int32,
+      Int32,
+      Int32,
+      Int32,
+      Int32,
+      Int32,
+      Int32,
+      Int32,
+      Int32,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Double,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+      Int32,
+      Handle,
+      Handle,
+      Handle,
+      Handle,
+      Int32,
+      Handle,
+    )
+  >(symbol: 'SemanticsUpdateBuilder::updateNode')
   external void _updateNode(
-      int id,
-      int flags,
-      int actions,
-      int maxValueLength,
-      int currentValueLength,
-      int textSelectionBase,
-      int textSelectionExtent,
-      int platformViewId,
-      int scrollChildren,
-      int scrollIndex,
-      double scrollPosition,
-      double scrollExtentMax,
-      double scrollExtentMin,
-      double left,
-      double top,
-      double right,
-      double bottom,
-      double elevation,
-      double thickness,
-      String? identifier,
-      String label,
-      List<StringAttribute> labelAttributes,
-      String value,
-      List<StringAttribute> valueAttributes,
-      String increasedValue,
-      List<StringAttribute> increasedValueAttributes,
-      String decreasedValue,
-      List<StringAttribute> decreasedValueAttributes,
-      String hint,
-      List<StringAttribute> hintAttributes,
-      String tooltip,
-      int textDirection,
-      Float64List transform,
-      Int32List childrenInTraversalOrder,
-      Int32List childrenInHitTestOrder,
-      Int32List additionalActions,
-      int headingLevel,
-      String linkUrl);
+    int id,
+    int flags,
+    int actions,
+    int maxValueLength,
+    int currentValueLength,
+    int textSelectionBase,
+    int textSelectionExtent,
+    int platformViewId,
+    int scrollChildren,
+    int scrollIndex,
+    double scrollPosition,
+    double scrollExtentMax,
+    double scrollExtentMin,
+    double left,
+    double top,
+    double right,
+    double bottom,
+    double elevation,
+    double thickness,
+    String? identifier,
+    String label,
+    List<StringAttribute> labelAttributes,
+    String value,
+    List<StringAttribute> valueAttributes,
+    String increasedValue,
+    List<StringAttribute> increasedValueAttributes,
+    String decreasedValue,
+    List<StringAttribute> decreasedValueAttributes,
+    String hint,
+    List<StringAttribute> hintAttributes,
+    String tooltip,
+    int textDirection,
+    Float64List transform,
+    Int32List childrenInTraversalOrder,
+    Int32List childrenInHitTestOrder,
+    Int32List additionalActions,
+    int headingLevel,
+    String linkUrl,
+  );
 
   @override
   void updateCustomAction({required int id, String? label, String? hint, int overrideId = -1}) {
     _updateCustomAction(id, label ?? '', hint ?? '', overrideId);
   }
-  @Native<Void Function(Pointer<Void>, Int32, Handle, Handle, Int32)>(symbol: 'SemanticsUpdateBuilder::updateCustomAction')
+
+  @Native<Void Function(Pointer<Void>, Int32, Handle, Handle, Int32)>(
+    symbol: 'SemanticsUpdateBuilder::updateCustomAction',
+  )
   external void _updateCustomAction(int id, String label, String hint, int overrideId);
 
   @override
@@ -1153,6 +1223,7 @@ base class _NativeSemanticsUpdateBuilder extends NativeFieldWrapperClass1 implem
     _build(semanticsUpdate);
     return semanticsUpdate;
   }
+
   @Native<Void Function(Pointer<Void>, Handle)>(symbol: 'SemanticsUpdateBuilder::build')
   external void _build(_NativeSemanticsUpdate outSemanticsUpdate);
 

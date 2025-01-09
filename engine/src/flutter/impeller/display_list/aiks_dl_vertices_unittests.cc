@@ -23,9 +23,9 @@ using namespace flutter;
 namespace {
 std::shared_ptr<DlVertices> MakeVertices(
     DlVertexMode mode,
-    std::vector<SkPoint> vertices,
+    std::vector<DlPoint> vertices,
     std::vector<uint16_t> indices,
-    std::vector<SkPoint> texture_coordinates,
+    std::vector<DlPoint> texture_coordinates,
     std::vector<DlColor> colors) {
   DlVertices::Builder::Flags flags(
       {{texture_coordinates.size() > 0, colors.size() > 0}});
@@ -55,9 +55,11 @@ TEST_P(AiksTest, VerticesGeometryUVPositionData) {
   paint.setColorSource(
       DlColorSource::MakeImage(image, DlTileMode::kClamp, DlTileMode::kClamp));
 
-  std::vector<SkPoint> vertex_coordinates = {SkPoint::Make(0, 0),
-                                             SkPoint::Make(size.width, 0),
-                                             SkPoint::Make(0, size.height)};
+  std::vector<DlPoint> vertex_coordinates = {
+      DlPoint(0, 0),
+      DlPoint(size.width, 0),
+      DlPoint(0, size.height),
+  };
   auto vertices = MakeVertices(DlVertexMode::kTriangleStrip, vertex_coordinates,
                                {0, 1, 2}, {}, {});
 
@@ -78,9 +80,11 @@ TEST_P(AiksTest, VerticesGeometryUVPositionDataWithTranslate) {
       DlColorSource::MakeImage(image, DlTileMode::kClamp, DlTileMode::kClamp,
                                DlImageSampling::kLinear, &matrix));
 
-  std::vector<SkPoint> positions = {SkPoint::Make(0, 0),
-                                    SkPoint::Make(size.width, 0),
-                                    SkPoint::Make(0, size.height)};
+  std::vector<DlPoint> positions = {
+      DlPoint(0, 0),
+      DlPoint(size.width, 0),
+      DlPoint(0, size.height),
+  };
   auto vertices =
       MakeVertices(DlVertexMode::kTriangleStrip, positions, {0, 1, 2}, {}, {});
 
@@ -99,10 +103,10 @@ TEST_P(AiksTest, VerticesGeometryColorUVPositionData) {
   paint.setColorSource(
       DlColorSource::MakeImage(image, DlTileMode::kClamp, DlTileMode::kClamp));
 
-  std::vector<SkPoint> positions = {
-      SkPoint::Make(0, 0),           SkPoint::Make(size.width, 0),
-      SkPoint::Make(0, size.height), SkPoint::Make(size.width, 0),
-      SkPoint::Make(0, 0),           SkPoint::Make(size.width, size.height),
+  std::vector<DlPoint> positions = {
+      DlPoint(0, 0),           DlPoint(size.width, 0),
+      DlPoint(0, size.height), DlPoint(size.width, 0),
+      DlPoint(0, 0),           DlPoint(size.width, size.height),
   };
   std::vector<DlColor> colors = {
       DlColor::kRed().withAlpha(128),   DlColor::kBlue().withAlpha(128),
@@ -127,10 +131,10 @@ TEST_P(AiksTest, VerticesGeometryColorUVPositionDataAdvancedBlend) {
   paint.setColorSource(
       DlColorSource::MakeImage(image, DlTileMode::kClamp, DlTileMode::kClamp));
 
-  std::vector<SkPoint> positions = {
-      SkPoint::Make(0, 0),           SkPoint::Make(size.width, 0),
-      SkPoint::Make(0, size.height), SkPoint::Make(size.width, 0),
-      SkPoint::Make(0, 0),           SkPoint::Make(size.width, size.height),
+  std::vector<DlPoint> positions = {
+      DlPoint(0, 0),           DlPoint(size.width, 0),
+      DlPoint(0, size.height), DlPoint(size.width, 0),
+      DlPoint(0, 0),           DlPoint(size.width, size.height),
   };
   std::vector<DlColor> colors = {
       DlColor::kRed().modulateOpacity(0.5),
@@ -155,16 +159,16 @@ TEST_P(AiksTest, CanConvertTriangleFanToTriangles) {
   auto center_to_flat = 1.73 / 2 * hexagon_radius;
 
   // clang-format off
-  std::vector<SkPoint> vertices = {
-    SkPoint::Make(hex_start.x, hex_start.y),
-    SkPoint::Make(hex_start.x + center_to_flat, hex_start.y + 0.5 * hexagon_radius),
-    SkPoint::Make(hex_start.x + center_to_flat, hex_start.y + 1.5 * hexagon_radius),
-    SkPoint::Make(hex_start.x + center_to_flat, hex_start.y + 1.5 * hexagon_radius),
-    SkPoint::Make(hex_start.x, hex_start.y + 2 * hexagon_radius),
-    SkPoint::Make(hex_start.x, hex_start.y + 2 * hexagon_radius),
-    SkPoint::Make(hex_start.x - center_to_flat, hex_start.y + 1.5 * hexagon_radius),
-    SkPoint::Make(hex_start.x - center_to_flat, hex_start.y + 1.5 * hexagon_radius),
-    SkPoint::Make(hex_start.x - center_to_flat, hex_start.y + 0.5 * hexagon_radius)
+  std::vector<DlPoint> vertices = {
+    DlPoint(hex_start.x, hex_start.y),
+    DlPoint(hex_start.x + center_to_flat, hex_start.y + 0.5 * hexagon_radius),
+    DlPoint(hex_start.x + center_to_flat, hex_start.y + 1.5 * hexagon_radius),
+    DlPoint(hex_start.x + center_to_flat, hex_start.y + 1.5 * hexagon_radius),
+    DlPoint(hex_start.x, hex_start.y + 2 * hexagon_radius),
+    DlPoint(hex_start.x, hex_start.y + 2 * hexagon_radius),
+    DlPoint(hex_start.x - center_to_flat, hex_start.y + 1.5 * hexagon_radius),
+    DlPoint(hex_start.x - center_to_flat, hex_start.y + 1.5 * hexagon_radius),
+    DlPoint(hex_start.x - center_to_flat, hex_start.y + 0.5 * hexagon_radius)
   };
   // clang-format on
   auto paint = flutter::DlPaint(flutter::DlColor::kDarkGrey());
@@ -179,9 +183,11 @@ TEST_P(AiksTest, CanConvertTriangleFanToTriangles) {
 TEST_P(AiksTest, DrawVerticesSolidColorTrianglesWithoutIndices) {
   // Use negative coordinates and then scale the transform by -1, -1 to make
   // sure coverage is taking the transform into account.
-  std::vector<SkPoint> positions = {SkPoint::Make(-100, -300),
-                                    SkPoint::Make(-200, -100),
-                                    SkPoint::Make(-300, -300)};
+  std::vector<DlPoint> positions = {
+      DlPoint(-100, -300),
+      DlPoint(-200, -100),
+      DlPoint(-300, -300),
+  };
   std::vector<flutter::DlColor> colors = {flutter::DlColor::kWhite(),
                                           flutter::DlColor::kGreen(),
                                           flutter::DlColor::kWhite()};
@@ -201,9 +207,11 @@ TEST_P(AiksTest, DrawVerticesSolidColorTrianglesWithoutIndices) {
 }
 
 TEST_P(AiksTest, DrawVerticesLinearGradientWithoutIndices) {
-  std::vector<SkPoint> positions = {SkPoint::Make(100, 300),
-                                    SkPoint::Make(200, 100),
-                                    SkPoint::Make(300, 300)};
+  std::vector<DlPoint> positions = {
+      DlPoint(100, 300),
+      DlPoint(200, 100),
+      DlPoint(300, 300),
+  };
 
   auto vertices = flutter::DlVertices::Make(
       flutter::DlVertexMode::kTriangles, 3, positions.data(),
@@ -227,12 +235,16 @@ TEST_P(AiksTest, DrawVerticesLinearGradientWithoutIndices) {
 }
 
 TEST_P(AiksTest, DrawVerticesLinearGradientWithTextureCoordinates) {
-  std::vector<SkPoint> positions = {SkPoint::Make(100, 300),
-                                    SkPoint::Make(200, 100),
-                                    SkPoint::Make(300, 300)};
-  std::vector<SkPoint> texture_coordinates = {SkPoint::Make(300, 100),
-                                              SkPoint::Make(100, 200),
-                                              SkPoint::Make(300, 300)};
+  std::vector<DlPoint> positions = {
+      DlPoint(100, 300),
+      DlPoint(200, 100),
+      DlPoint(300, 300),
+  };
+  std::vector<DlPoint> texture_coordinates = {
+      DlPoint(300, 100),
+      DlPoint(100, 200),
+      DlPoint(300, 300),
+  };
 
   auto vertices = flutter::DlVertices::Make(
       flutter::DlVertexMode::kTriangles, 3, positions.data(),
@@ -258,11 +270,16 @@ TEST_P(AiksTest, DrawVerticesLinearGradientWithTextureCoordinates) {
 TEST_P(AiksTest, DrawVerticesImageSourceWithTextureCoordinates) {
   auto texture = CreateTextureForFixture("embarcadero.jpg");
   auto dl_image = DlImageImpeller::Make(texture);
-  std::vector<SkPoint> positions = {SkPoint::Make(100, 300),
-                                    SkPoint::Make(200, 100),
-                                    SkPoint::Make(300, 300)};
-  std::vector<SkPoint> texture_coordinates = {
-      SkPoint::Make(0, 0), SkPoint::Make(100, 200), SkPoint::Make(200, 100)};
+  std::vector<DlPoint> positions = {
+      DlPoint(100, 300),
+      DlPoint(200, 100),
+      DlPoint(300, 300),
+  };
+  std::vector<DlPoint> texture_coordinates = {
+      DlPoint(0, 0),
+      DlPoint(100, 200),
+      DlPoint(200, 100),
+  };
 
   auto vertices = flutter::DlVertices::Make(
       flutter::DlVertexMode::kTriangles, 3, positions.data(),
@@ -284,14 +301,19 @@ TEST_P(AiksTest,
        DrawVerticesImageSourceWithTextureCoordinatesAndColorBlending) {
   auto texture = CreateTextureForFixture("embarcadero.jpg");
   auto dl_image = DlImageImpeller::Make(texture);
-  std::vector<SkPoint> positions = {SkPoint::Make(100, 300),
-                                    SkPoint::Make(200, 100),
-                                    SkPoint::Make(300, 300)};
+  std::vector<DlPoint> positions = {
+      DlPoint(100, 300),
+      DlPoint(200, 100),
+      DlPoint(300, 300),
+  };
   std::vector<flutter::DlColor> colors = {flutter::DlColor::kWhite(),
                                           flutter::DlColor::kGreen(),
                                           flutter::DlColor::kWhite()};
-  std::vector<SkPoint> texture_coordinates = {
-      SkPoint::Make(0, 0), SkPoint::Make(100, 200), SkPoint::Make(200, 100)};
+  std::vector<DlPoint> texture_coordinates = {
+      DlPoint(0, 0),
+      DlPoint(100, 200),
+      DlPoint(200, 100),
+  };
 
   auto vertices = flutter::DlVertices::Make(
       flutter::DlVertexMode::kTriangles, 3, positions.data(),
@@ -310,9 +332,12 @@ TEST_P(AiksTest,
 }
 
 TEST_P(AiksTest, DrawVerticesSolidColorTrianglesWithIndices) {
-  std::vector<SkPoint> positions = {
-      SkPoint::Make(100, 300), SkPoint::Make(200, 100), SkPoint::Make(300, 300),
-      SkPoint::Make(200, 500)};
+  std::vector<DlPoint> positions = {
+      DlPoint(100, 300),
+      DlPoint(200, 100),
+      DlPoint(300, 300),
+      DlPoint(200, 500),
+  };
   std::vector<uint16_t> indices = {0, 1, 2, 0, 2, 3};
 
   auto vertices = flutter::DlVertices::Make(
@@ -330,9 +355,12 @@ TEST_P(AiksTest, DrawVerticesSolidColorTrianglesWithIndices) {
 }
 
 TEST_P(AiksTest, DrawVerticesPremultipliesColors) {
-  std::vector<SkPoint> positions = {
-      SkPoint::Make(100, 300), SkPoint::Make(200, 100), SkPoint::Make(300, 300),
-      SkPoint::Make(200, 500)};
+  std::vector<DlPoint> positions = {
+      DlPoint(100, 300),
+      DlPoint(200, 100),
+      DlPoint(300, 300),
+      DlPoint(200, 500),
+  };
   auto color = flutter::DlColor::kBlue().withAlpha(0x99);
   std::vector<uint16_t> indices = {0, 1, 2, 0, 2, 3};
   std::vector<flutter::DlColor> colors = {color, color, color, color};
@@ -347,16 +375,19 @@ TEST_P(AiksTest, DrawVerticesPremultipliesColors) {
   paint.setBlendMode(flutter::DlBlendMode::kSrcOver);
   paint.setColor(flutter::DlColor::kRed());
 
-  builder.DrawRect(SkRect::MakeLTRB(0, 0, 400, 400), paint);
+  builder.DrawRect(DlRect::MakeLTRB(0, 0, 400, 400), paint);
   builder.DrawVertices(vertices, flutter::DlBlendMode::kDst, paint);
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
 
 TEST_P(AiksTest, DrawVerticesWithInvalidIndices) {
-  std::vector<SkPoint> positions = {
-      SkPoint::Make(100, 300), SkPoint::Make(200, 100), SkPoint::Make(300, 300),
-      SkPoint::Make(200, 500)};
+  std::vector<DlPoint> positions = {
+      DlPoint(100, 300),
+      DlPoint(200, 100),
+      DlPoint(300, 300),
+      DlPoint(200, 500),
+  };
   std::vector<uint16_t> indices = {0, 1, 2, 0, 2, 3, 99, 100, 101};
 
   auto vertices = flutter::DlVertices::Make(
@@ -364,14 +395,14 @@ TEST_P(AiksTest, DrawVerticesWithInvalidIndices) {
       /*texture_coordinates=*/nullptr, /*colors=*/nullptr, indices.size(),
       indices.data());
 
-  EXPECT_EQ(vertices->bounds(), SkRect::MakeLTRB(100, 100, 300, 500));
+  EXPECT_EQ(vertices->GetBounds(), DlRect::MakeLTRB(100, 100, 300, 500));
 
   flutter::DisplayListBuilder builder;
   flutter::DlPaint paint;
   paint.setBlendMode(flutter::DlBlendMode::kSrcOver);
   paint.setColor(flutter::DlColor::kRed());
 
-  builder.DrawRect(SkRect::MakeLTRB(0, 0, 400, 400), paint);
+  builder.DrawRect(DlRect::MakeLTRB(0, 0, 400, 400), paint);
   builder.DrawVertices(vertices, flutter::DlBlendMode::kSrc, paint);
 
   AiksContext renderer(GetContext(), nullptr);
@@ -383,11 +414,11 @@ TEST_P(AiksTest, DrawVerticesWithInvalidIndices) {
 // All four vertices should form a solid red rectangle with no gaps.
 // The blue rectangle drawn under them should not be visible.
 TEST_P(AiksTest, DrawVerticesTextureCoordinatesWithFragmentShader) {
-  std::vector<SkPoint> positions_lt = {
-      SkPoint::Make(0, 0),    //
-      SkPoint::Make(50, 0),   //
-      SkPoint::Make(0, 50),   //
-      SkPoint::Make(50, 50),  //
+  std::vector<DlPoint> positions_lt = {
+      DlPoint(0, 0),    //
+      DlPoint(50, 0),   //
+      DlPoint(0, 50),   //
+      DlPoint(50, 50),  //
   };
 
   auto vertices_lt = flutter::DlVertices::Make(
@@ -397,11 +428,11 @@ TEST_P(AiksTest, DrawVerticesTextureCoordinatesWithFragmentShader) {
       /*index_count=*/0,
       /*indices=*/nullptr);
 
-  std::vector<SkPoint> positions_rt = {
-      SkPoint::Make(50, 0),    //
-      SkPoint::Make(100, 0),   //
-      SkPoint::Make(50, 50),   //
-      SkPoint::Make(100, 50),  //
+  std::vector<DlPoint> positions_rt = {
+      DlPoint(50, 0),    //
+      DlPoint(100, 0),   //
+      DlPoint(50, 50),   //
+      DlPoint(100, 50),  //
   };
 
   auto vertices_rt = flutter::DlVertices::Make(
@@ -411,11 +442,11 @@ TEST_P(AiksTest, DrawVerticesTextureCoordinatesWithFragmentShader) {
       /*index_count=*/0,
       /*indices=*/nullptr);
 
-  std::vector<SkPoint> positions_lb = {
-      SkPoint::Make(0, 50),    //
-      SkPoint::Make(50, 50),   //
-      SkPoint::Make(0, 100),   //
-      SkPoint::Make(50, 100),  //
+  std::vector<DlPoint> positions_lb = {
+      DlPoint(0, 50),    //
+      DlPoint(50, 50),   //
+      DlPoint(0, 100),   //
+      DlPoint(50, 100),  //
   };
 
   auto vertices_lb = flutter::DlVertices::Make(
@@ -425,11 +456,11 @@ TEST_P(AiksTest, DrawVerticesTextureCoordinatesWithFragmentShader) {
       /*index_count=*/0,
       /*indices=*/nullptr);
 
-  std::vector<SkPoint> positions_rb = {
-      SkPoint::Make(50, 50),    //
-      SkPoint::Make(100, 50),   //
-      SkPoint::Make(50, 100),   //
-      SkPoint::Make(100, 100),  //
+  std::vector<DlPoint> positions_rb = {
+      DlPoint(50, 50),    //
+      DlPoint(100, 50),   //
+      DlPoint(50, 100),   //
+      DlPoint(100, 100),  //
   };
 
   auto vertices_rb = flutter::DlVertices::Make(
@@ -460,7 +491,7 @@ TEST_P(AiksTest, DrawVerticesTextureCoordinatesWithFragmentShader) {
 
   builder.Scale(GetContentScale().x, GetContentScale().y);
   builder.Save();
-  builder.DrawRect(SkRect::MakeLTRB(0, 0, 100, 100), rect_paint);
+  builder.DrawRect(DlRect::MakeLTRB(0, 0, 100, 100), rect_paint);
   builder.DrawVertices(vertices_lt, flutter::DlBlendMode::kSrcOver, paint);
   builder.DrawVertices(vertices_rt, flutter::DlBlendMode::kSrcOver, paint);
   builder.DrawVertices(vertices_lb, flutter::DlBlendMode::kSrcOver, paint);
@@ -474,11 +505,11 @@ TEST_P(AiksTest, DrawVerticesTextureCoordinatesWithFragmentShader) {
 // The blue rectangle drawn under them should not be visible.
 TEST_P(AiksTest,
        DrawVerticesTextureCoordinatesWithFragmentShaderNonZeroOrigin) {
-  std::vector<SkPoint> positions_lt = {
-      SkPoint::Make(200, 200),  //
-      SkPoint::Make(250, 200),  //
-      SkPoint::Make(200, 250),  //
-      SkPoint::Make(250, 250),  //
+  std::vector<DlPoint> positions_lt = {
+      DlPoint(200, 200),  //
+      DlPoint(250, 200),  //
+      DlPoint(200, 250),  //
+      DlPoint(250, 250),  //
   };
 
   auto vertices = flutter::DlVertices::Make(
@@ -513,7 +544,7 @@ TEST_P(AiksTest,
   paint.setColorSource(color_source);
 
   builder.Scale(GetContentScale().x, GetContentScale().y);
-  builder.DrawRect(SkRect::MakeLTRB(200, 200, 250, 250), rect_paint);
+  builder.DrawRect(DlRect::MakeLTRB(200, 200, 250, 250), rect_paint);
   builder.DrawVertices(vertices, flutter::DlBlendMode::kSrcOver, paint);
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));

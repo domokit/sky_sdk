@@ -21,11 +21,11 @@ import 'package:ui/src/engine.dart';
 /// 5. The finalizer function is called with the SkPaint as the sole argument.
 /// 6. We call `delete` on SkPaint.
 DomFinalizationRegistry _finalizationRegistry = DomFinalizationRegistry(
-  ((ExternalDartReference<UniqueRef<Object>> boxedUniq) =>
-    boxedUniq.toDartObject.collect()
-  ).toJS);
+  ((ExternalDartReference<UniqueRef<Object>> boxedUniq) => boxedUniq.toDartObject.collect()).toJS,
+);
 
-NativeMemoryFinalizationRegistry nativeMemoryFinalizationRegistry = NativeMemoryFinalizationRegistry();
+NativeMemoryFinalizationRegistry nativeMemoryFinalizationRegistry =
+    NativeMemoryFinalizationRegistry();
 
 /// An indirection to [DomFinalizationRegistry] to enable tests provide a
 /// mock implementation of a finalization registry.
@@ -181,9 +181,7 @@ class CountedRef<R extends StackTraceDebugger, T extends Object> {
   List<StackTrace> debugGetStackTraces() {
     List<StackTrace>? result;
     assert(() {
-      result = debugReferrers
-          .map<StackTrace>((R referrer) => referrer.debugStackTrace)
-          .toList();
+      result = debugReferrers.map<StackTrace>((R referrer) => referrer.debugStackTrace).toList();
       return true;
     }());
 
@@ -197,10 +195,7 @@ class CountedRef<R extends StackTraceDebugger, T extends Object> {
   /// Increases the reference count of this box because a new object began
   /// sharing ownership of the underlying [nativeObject].
   void ref(R debugReferrer) {
-    assert(
-      !_ref.isDisposed,
-      'Cannot increment ref count on a deleted handle.',
-    );
+    assert(!_ref.isDisposed, 'Cannot increment ref count on a deleted handle.');
     assert(_refCount > 0);
     assert(
       debugReferrers.add(debugReferrer),
@@ -217,10 +212,7 @@ class CountedRef<R extends StackTraceDebugger, T extends Object> {
   /// If this causes the reference count to drop to zero, deletes the
   /// [nativeObject].
   void unref(R debugReferrer) {
-    assert(
-      !_ref.isDisposed,
-      'Attempted to unref an already deleted native object.',
-    );
+    assert(!_ref.isDisposed, 'Attempted to unref an already deleted native object.');
     assert(
       debugReferrers.remove(debugReferrer),
       'Attempted to decrement ref count by the same referrer more than once.',

@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 /// @docImport 'notification_listener.dart';
 /// @docImport 'scroll_view.dart';
 /// @docImport 'sliver_floating_header.dart';
@@ -57,10 +56,7 @@ import 'framework.dart';
 class PinnedHeaderSliver extends SingleChildRenderObjectWidget {
   /// Creates a sliver whose [Widget] child appears at the top of a
   /// [CustomScrollView].
-  const PinnedHeaderSliver({
-    super.key,
-    super.child,
-  });
+  const PinnedHeaderSliver({super.key, super.child});
 
   @override
   RenderObject createRenderObject(BuildContext context) {
@@ -90,8 +86,15 @@ class _RenderPinnedHeaderSliver extends RenderSliverSingleBoxAdapter {
     final SliverConstraints constraints = this.constraints;
     child?.layout(constraints.asBoxConstraints(), parentUsesSize: true);
 
-    final double layoutExtent = clampDouble(childExtent - constraints.scrollOffset, 0, constraints.remainingPaintExtent);
-    final double paintExtent = math.min(childExtent, constraints.remainingPaintExtent - constraints.overlap);
+    final double layoutExtent = clampDouble(
+      childExtent - constraints.scrollOffset,
+      0,
+      constraints.remainingPaintExtent,
+    );
+    final double paintExtent = math.min(
+      childExtent,
+      constraints.remainingPaintExtent - constraints.overlap,
+    );
     geometry = SliverGeometry(
       scrollExtent: childExtent,
       paintOrigin: constraints.overlap,

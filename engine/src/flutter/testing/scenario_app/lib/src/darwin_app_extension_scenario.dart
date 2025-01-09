@@ -32,11 +32,7 @@ class DarwinAppExtensionScenario extends Scenario {
     canvas.drawParagraph(paragraph, const Offset(50, 80));
     final Picture picture = recorder.endRecording();
 
-    builder.addPicture(
-      Offset.zero,
-      picture,
-      willChangeHint: true,
-    );
+    builder.addPicture(Offset.zero, picture, willChangeHint: true);
     final Scene scene = builder.build();
     view.render(scene);
     scene.dispose();

@@ -29,11 +29,7 @@ Future<void> testMain() async {
       path.moveTo(50, 150);
       path.cubicTo(100, 50, 200, 250, 250, 150);
 
-      canvas.drawShadow(
-        path,
-        const ui.Color(0xFF000000),
-        5,
-        false);
+      canvas.drawShadow(path, const ui.Color(0xFF000000), 5, false);
       canvas.drawPath(path, ui.Paint()..color = const ui.Color(0xFFFF00FF));
     });
     await drawPictureUsingCurrentRenderer(picture);
@@ -46,11 +42,7 @@ Future<void> testMain() async {
       path.moveTo(50, 150);
       path.cubicTo(100, 250, 200, 50, 250, 150);
 
-      canvas.drawShadow(
-        path,
-        const ui.Color(0xFF000000),
-        5,
-        true);
+      canvas.drawShadow(path, const ui.Color(0xFF000000), 5, true);
       canvas.drawPath(path, ui.Paint()..color = const ui.Color(0x8F00FFFF));
     });
     await drawPictureUsingCurrentRenderer(picture);

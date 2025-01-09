@@ -54,29 +54,32 @@ void main(List<String> args) async {
 
   // Run the actual script.
   final completer = Completer<void>();
-  runZonedGuarded(() async {
-    await _run(
-      cleanup,
-      engine,
-      iosEngineVariant: iosEngineVariant,
-      deviceName: results.option('device-name')!,
-      deviceIdentifier: results.option('device-identifier')!,
-      osRuntime: results.option('os-runtime')!,
-      osVersion: results.option('os-version')!,
-      withImpeller: results.flag('with-impeller'),
-      dumpXcresultOnFailure: dumpXcresultOnFailurePath,
-    );
-    completer.complete();
-  }, (e, s) {
-    if (e is _ToolFailure) {
-      io.stderr.writeln(e);
-      io.exitCode = 1;
-    } else {
-      io.stderr.writeln('Uncaught exception: $e\n$s');
-      io.exitCode = 255;
-    }
-    completer.complete();
-  });
+  runZonedGuarded(
+    () async {
+      await _run(
+        cleanup,
+        engine,
+        iosEngineVariant: iosEngineVariant,
+        deviceName: results.option('device-name')!,
+        deviceIdentifier: results.option('device-identifier')!,
+        osRuntime: results.option('os-runtime')!,
+        osVersion: results.option('os-version')!,
+        withImpeller: results.flag('with-impeller'),
+        dumpXcresultOnFailure: dumpXcresultOnFailurePath,
+      );
+      completer.complete();
+    },
+    (e, s) {
+      if (e is _ToolFailure) {
+        io.stderr.writeln(e);
+        io.exitCode = 1;
+      } else {
+        io.stderr.writeln('Uncaught exception: $e\n$s');
+        io.exitCode = 255;
+      }
+      completer.complete();
+    },
+  );
 
   // We can't await the result of runZonedGuarded becauase async errors in futures never cross different errorZone boundaries.
   await completer.future;
@@ -120,11 +123,7 @@ Future<void> _run(
 
   _ensureSimulatorsRotateAutomaticallyForPlatformViewRotationTest();
   _deleteAnyExistingDevices(deviceName: deviceName);
-  _createDevice(
-    deviceName: deviceName,
-    deviceIdentifier: deviceIdentifier,
-    osRuntime: osRuntime,
-  );
+  _createDevice(deviceName: deviceName, deviceIdentifier: deviceIdentifier, osRuntime: osRuntime);
 
   final (scenarioPath, resultBundle) = _buildResultBundlePath(
     engine: engine,
@@ -176,75 +175,61 @@ final class _ToolFailure implements Exception {
   String toString() => message;
 }
 
-final _args = ArgParser()
-  ..addFlag(
-    'help',
-    abbr: 'h',
-    help: 'Prints usage information.',
-    negatable: false,
-  )
-  ..addOption(
-    'device-name',
-    help: 'The name of the iOS simulator device to use.',
-    defaultsTo: 'iPhone SE (3rd generation)',
-  )
-  ..addOption(
-    'device-identifier',
-    help: 'The identifier of the iOS simulator device to use.',
-    defaultsTo:
-        'com.apple.CoreSimulator.SimDeviceType.iPhone-SE-3rd-generation',
-  )
-  ..addOption(
-    'os-runtime',
-    help: 'The OS runtime of the iOS simulator device to use.',
-    defaultsTo: 'com.apple.CoreSimulator.SimRuntime.iOS-17-0',
-  )
-  ..addOption(
-    'os-version',
-    help: 'The OS version of the iOS simulator device to use.',
-    defaultsTo: '17.0',
-  )
-  ..addFlag(
-    'with-impeller',
-    help: 'Whether to use the Impeller backend to run the tests.',
-    defaultsTo: true,
-  )
-  ..addOption(
-    'dump-xcresult-on-failure',
-    help: 'The path to dump the xcresult bundle to if the test fails.\n\n'
-        'Defaults to the environment variable FLUTTER_TEST_OUTPUTS_DIR, '
-        'otherwise to a randomly generated temporary directory.',
-    defaultsTo: io.Platform.environment['FLUTTER_TEST_OUTPUTS_DIR'],
-  );
+final _args =
+    ArgParser()
+      ..addFlag('help', abbr: 'h', help: 'Prints usage information.', negatable: false)
+      ..addOption(
+        'device-name',
+        help: 'The name of the iOS simulator device to use.',
+        defaultsTo: 'iPhone SE (3rd generation)',
+      )
+      ..addOption(
+        'device-identifier',
+        help: 'The identifier of the iOS simulator device to use.',
+        defaultsTo: 'com.apple.CoreSimulator.SimDeviceType.iPhone-SE-3rd-generation',
+      )
+      ..addOption(
+        'os-runtime',
+        help: 'The OS runtime of the iOS simulator device to use.',
+        defaultsTo: 'com.apple.CoreSimulator.SimRuntime.iOS-17-0',
+      )
+      ..addOption(
+        'os-version',
+        help: 'The OS version of the iOS simulator device to use.',
+        defaultsTo: '17.0',
+      )
+      ..addFlag(
+        'with-impeller',
+        help: 'Whether to use the Impeller backend to run the tests.',
+        defaultsTo: true,
+      )
+      ..addOption(
+        'dump-xcresult-on-failure',
+        help:
+            'The path to dump the xcresult bundle to if the test fails.\n\n'
+            'Defaults to the environment variable FLUTTER_TEST_OUTPUTS_DIR, '
+            'otherwise to a randomly generated temporary directory.',
+        defaultsTo: io.Platform.environment['FLUTTER_TEST_OUTPUTS_DIR'],
+      );
 
 void _ensureSimulatorsRotateAutomaticallyForPlatformViewRotationTest() {
   // Can also be set via Simulator Device > Rotate Device Automatically.
-  final result = io.Process.runSync(
-    'defaults',
-    const [
-      'write',
-      'com.apple.iphonesimulator',
-      'RotateWindowWhenSignaledByGuest',
-      '-int 1',
-    ],
-  );
+  final result = io.Process.runSync('defaults', const [
+    'write',
+    'com.apple.iphonesimulator',
+    'RotateWindowWhenSignaledByGuest',
+    '-int 1',
+  ]);
   if (result.exitCode != 0) {
-    throw Exception(
-      'Failed to enable automatic rotation for iOS simulator: ${result.stderr}',
-    );
+    throw Exception('Failed to enable automatic rotation for iOS simulator: ${result.stderr}');
   }
 }
 
 void _deleteAnyExistingDevices({required String deviceName}) {
-  io.stderr.writeln(
-    'Deleting any existing simulator devices named $deviceName...',
-  );
+  io.stderr.writeln('Deleting any existing simulator devices named $deviceName...');
 
   bool deleteSimulator() {
-    final result = io.Process.runSync(
-      'xcrun',
-      ['simctl', 'delete', deviceName],
-    );
+    final result = io.Process.runSync('xcrun', ['simctl', 'delete', deviceName]);
     if (result.exitCode == 0) {
       io.stderr.writeln('Deleted $deviceName');
       return true;
@@ -262,16 +247,13 @@ void _createDevice({
   required String osRuntime,
 }) {
   io.stderr.writeln('Creating $deviceName $deviceIdentifier $osRuntime...');
-  final result = io.Process.runSync(
-    'xcrun',
-    [
-      'simctl',
-      'create',
-      deviceName,
-      deviceIdentifier,
-      osRuntime,
-    ],
-  );
+  final result = io.Process.runSync('xcrun', [
+    'simctl',
+    'create',
+    deviceName,
+    deviceIdentifier,
+    osRuntime,
+  ]);
   if (result.exitCode != 0) {
     throw Exception('Failed to create simulator device: ${result.stderr}');
   }
@@ -282,17 +264,12 @@ void _createDevice({
   required Engine engine,
   required String iosEngineVariant,
 }) {
-  final scenarioPath = path.normalize(path.join(
-    engine.outDir.path,
-    iosEngineVariant,
-    'scenario_app',
-    'Scenarios',
-  ));
+  final scenarioPath = path.normalize(
+    path.join(engine.outDir.path, iosEngineVariant, 'scenario_app', 'Scenarios'),
+  );
 
   // Create a temporary directory to store the test results.
-  final result = io.Directory(scenarioPath).createTempSync(
-    'ios_scenario_xcresult',
-  );
+  final result = io.Directory(scenarioPath).createTempSync('ios_scenario_xcresult');
   return (scenarioPath, result);
 }
 
@@ -305,26 +282,22 @@ Future<io.Process> _runTests({
   required String iosEngineVariant,
   List<String> xcodeBuildExtraArgs = const [],
 }) async {
-  return io.Process.start(
-    'xcodebuild',
-    [
-      '-project',
-      path.join(outScenariosPath, 'Scenarios.xcodeproj'),
-      '-sdk',
-      'iphonesimulator',
-      '-scheme',
-      'Scenarios',
-      '-resultBundlePath',
-      path.join(resultBundlePath, 'ios_scenario.xcresult'),
-      '-destination',
-      'platform=iOS Simulator,OS=$osVersion,name=$deviceName',
-      'clean',
-      'test',
-      'FLUTTER_ENGINE=$iosEngineVariant',
-      ...xcodeBuildExtraArgs,
-    ],
-    mode: io.ProcessStartMode.inheritStdio,
-  );
+  return io.Process.start('xcodebuild', [
+    '-project',
+    path.join(outScenariosPath, 'Scenarios.xcodeproj'),
+    '-sdk',
+    'iphonesimulator',
+    '-scheme',
+    'Scenarios',
+    '-resultBundlePath',
+    path.join(resultBundlePath, 'ios_scenario.xcresult'),
+    '-destination',
+    'platform=iOS Simulator,OS=$osVersion,name=$deviceName',
+    'clean',
+    'test',
+    'FLUTTER_ENGINE=$iosEngineVariant',
+    ...xcodeBuildExtraArgs,
+  ], mode: io.ProcessStartMode.inheritStdio);
 }
 
 @useResult
@@ -334,15 +307,7 @@ String _zipAndStoreFailedTestResults({
   required String storePath,
 }) {
   final outputPath = path.join(storePath, '${iosEngineVariant.replaceAll('/', '_')}.zip');
-  final result = io.Process.runSync(
-    'zip',
-    [
-      '-q',
-      '-r',
-      outputPath,
-      resultBundle.path,
-    ],
-  );
+  final result = io.Process.runSync('zip', ['-q', '-r', outputPath, resultBundle.path]);
   if (result.exitCode != 0) {
     throw Exception(
       'Failed to zip the test results (exit code = ${result.exitCode}).\n\n'

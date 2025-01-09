@@ -20,6 +20,9 @@ import '../material_localizations.dart';
 // bottom of this file, and used by the [_MaterialLocalizationsDelegate.load]
 // method defined in `flutter_localizations/lib/src/material_localizations.dart`.
 
+// TODO(goderbauer): Extend the generator to properly format the output.
+// dart format off
+
 /// The translations for Afrikaans (`af`).
 class MaterialLocalizationAf extends GlobalMaterialLocalizations {
   /// Create an instance of the translation bundle for Afrikaans.

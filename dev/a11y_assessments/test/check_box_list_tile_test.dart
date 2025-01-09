@@ -8,8 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_utils.dart';
 
 void main() {
-  testWidgets('check box list tile use-case renders check boxes',
-      (WidgetTester tester) async {
+  testWidgets('check box list tile use-case renders check boxes', (WidgetTester tester) async {
     await pumpsUseCase(tester, CheckBoxListTile());
     expect(find.text('a check box list title'), findsOneWidget);
     expect(find.text('a disabled check box list title'), findsOneWidget);

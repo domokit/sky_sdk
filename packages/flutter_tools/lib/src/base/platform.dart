@@ -199,22 +199,21 @@ class FakePlatform extends Platform {
   /// Creates a new [FakePlatform] with properties whose initial values mirror
   /// the specified [platform].
   FakePlatform.fromPlatform(Platform platform)
-      : numberOfProcessors = platform.numberOfProcessors,
-        pathSeparator = platform.pathSeparator,
-        operatingSystem = platform.operatingSystem,
-        operatingSystemVersion = platform.operatingSystemVersion,
-        localHostname = platform.localHostname,
-        environment = Map<String, String>.from(platform.environment),
-        executable = platform.executable,
-        resolvedExecutable = platform.resolvedExecutable,
-        script = platform.script,
-        executableArguments =
-            List<String>.from(platform.executableArguments),
-        packageConfig = platform.packageConfig,
-        version = platform.version,
-        stdinSupportsAnsi = platform.stdinSupportsAnsi,
-        stdoutSupportsAnsi = platform.stdoutSupportsAnsi,
-        localeName = platform.localeName;
+    : numberOfProcessors = platform.numberOfProcessors,
+      pathSeparator = platform.pathSeparator,
+      operatingSystem = platform.operatingSystem,
+      operatingSystemVersion = platform.operatingSystemVersion,
+      localHostname = platform.localHostname,
+      environment = Map<String, String>.from(platform.environment),
+      executable = platform.executable,
+      resolvedExecutable = platform.resolvedExecutable,
+      script = platform.script,
+      executableArguments = List<String>.from(platform.executableArguments),
+      packageConfig = platform.packageConfig,
+      version = platform.version,
+      stdinSupportsAnsi = platform.stdinSupportsAnsi,
+      stdoutSupportsAnsi = platform.stdoutSupportsAnsi,
+      localeName = platform.localeName;
 
   @override
   int numberOfProcessors;

@@ -375,7 +375,7 @@ ImageDecoderImpeller::UnsafeUploadTextureToPrivate(
 
     result_texture = std::move(resize_texture);
   }
-  blit_pass->EncodeCommands(context->GetResourceAllocator());
+  blit_pass->EncodeCommands();
 
   if (!context->GetCommandQueue()->Submit({command_buffer}).ok()) {
     std::string decode_error("Failed to submit image decoding command buffer.");

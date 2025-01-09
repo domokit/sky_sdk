@@ -270,10 +270,7 @@ class Tween<T extends Object?> extends Animatable<T> {
   /// The [begin] and [end] properties must be non-null before the tween is
   /// first used, but the arguments can be null if the values are going to be
   /// filled in later.
-  Tween({
-    this.begin,
-    this.end,
-  });
+  Tween({this.begin, this.end});
 
   /// The value this variable has at the beginning of the animation.
   ///
@@ -379,8 +376,7 @@ class Tween<T extends Object?> extends Animatable<T> {
 /// A [Tween] that evaluates its [parent] in reverse.
 class ReverseTween<T extends Object?> extends Tween<T> {
   /// Construct a [Tween] that evaluates its [parent] in reverse.
-  ReverseTween(this.parent)
-    : super(begin: parent.end, end: parent.begin);
+  ReverseTween(this.parent) : super(begin: parent.end, end: parent.begin);
 
   /// This tween's value is the same as the parent's value evaluated in reverse.
   ///
@@ -412,7 +408,7 @@ class ColorTween extends Tween<Color?> {
   /// or [end] if you want the effect of fading in or out of transparent.
   /// Instead prefer null. [Colors.transparent] refers to black transparent and
   /// thus will fade out of or into black which is likely unwanted.
-  ColorTween({ super.begin, super.end });
+  ColorTween({super.begin, super.end});
 
   /// Returns the value this variable has at the given animation clock value.
   @override
@@ -432,7 +428,7 @@ class SizeTween extends Tween<Size?> {
   ///
   /// The [begin] and [end] properties may be null; the null value
   /// is treated as an empty size.
-  SizeTween({ super.begin, super.end });
+  SizeTween({super.begin, super.end});
 
   /// Returns the value this variable has at the given animation clock value.
   @override
@@ -453,7 +449,7 @@ class RectTween extends Tween<Rect?> {
   ///
   /// The [begin] and [end] properties may be null; the null value
   /// is treated as an empty rect at the top left corner.
-  RectTween({ super.begin, super.end });
+  RectTween({super.begin, super.end});
 
   /// Returns the value this variable has at the given animation clock value.
   @override
@@ -480,7 +476,7 @@ class IntTween extends Tween<int> {
   /// The [begin] and [end] properties must be non-null before the tween is
   /// first used, but the arguments can be null if the values are going to be
   /// filled in later.
-  IntTween({ super.begin, super.end });
+  IntTween({super.begin, super.end});
 
   // The inherited lerp() function doesn't work with ints because it multiplies
   // the begin and end types by a double, and int * double returns a double.
@@ -508,7 +504,7 @@ class StepTween extends Tween<int> {
   /// The [begin] and [end] properties must be non-null before the tween is
   /// first used, but the arguments can be null if the values are going to be
   /// filled in later.
-  StepTween({ super.begin, super.end });
+  StepTween({super.begin, super.end});
 
   // The inherited lerp() function doesn't work with ints because it multiplies
   // the begin and end types by a double, and int * double returns a double.
@@ -557,7 +553,7 @@ class ConstantTween<T> extends Tween<T> {
 ///    [AnimationController].
 class CurveTween extends Animatable<double> {
   /// Creates a curve tween.
-  CurveTween({ required this.curve });
+  CurveTween({required this.curve});
 
   /// The curve to use when transforming the value of the animation.
   Curve curve;

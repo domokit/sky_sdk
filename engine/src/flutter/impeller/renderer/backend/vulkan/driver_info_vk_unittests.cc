@@ -82,7 +82,8 @@ bool CanBatchSubmitTest(std::string_view driver_name, bool qc = true) {
                 prop->deviceType = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
               })
           .Build();
-  return context->GetDriverInfo()->CanBatchSubmitCommandBuffers();
+  return !GetWorkaroundsFromDriverInfo(*context->GetDriverInfo())
+              .batch_submit_command_buffer_timeout;
 }
 
 TEST(DriverInfoVKTest, CanBatchSubmitCommandBuffers) {
@@ -91,6 +92,63 @@ TEST(DriverInfoVKTest, CanBatchSubmitCommandBuffers) {
 
   EXPECT_TRUE(CanBatchSubmitTest("Mali-G51", false));
   EXPECT_TRUE(CanBatchSubmitTest("Adreno (TM) 750", true));
+}
+
+bool CanUsePrimitiveRestartSubmitTest(std::string_view driver_name,
+                                      bool qc = true) {
+  auto const context =
+      MockVulkanContextBuilder()
+          .SetPhysicalPropertiesCallback(
+              [&driver_name, qc](VkPhysicalDevice device,
+                                 VkPhysicalDeviceProperties* prop) {
+                if (qc) {
+                  prop->vendorID = 0x168C;  // Qualcomm
+                } else {
+                  prop->vendorID = 0x13B5;  // ARM
+                }
+                driver_name.copy(prop->deviceName, driver_name.size());
+                prop->deviceType = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
+              })
+          .Build();
+  return !GetWorkaroundsFromDriverInfo(*context->GetDriverInfo())
+              .slow_primitive_restart_performance;
+}
+
+TEST(DriverInfoVKTest, CanUsePrimitiveRestart) {
+  // Adreno no primitive restart
+  EXPECT_FALSE(CanUsePrimitiveRestartSubmitTest("Adreno (TM) 540", true));
+  EXPECT_FALSE(CanUsePrimitiveRestartSubmitTest("Adreno (TM) 750", true));
+
+  // Mali A-OK
+  EXPECT_TRUE(CanUsePrimitiveRestartSubmitTest("Mali-G51", false));
+}
+
+bool CanUseMipgeneration(std::string_view driver_name, bool qc = true) {
+  auto const context =
+      MockVulkanContextBuilder()
+          .SetPhysicalPropertiesCallback(
+              [&driver_name, qc](VkPhysicalDevice device,
+                                 VkPhysicalDeviceProperties* prop) {
+                if (qc) {
+                  prop->vendorID = 0x168C;  // Qualcomm
+                } else {
+                  prop->vendorID = 0x13B5;  // ARM
+                }
+                driver_name.copy(prop->deviceName, driver_name.size());
+                prop->deviceType = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
+              })
+          .Build();
+  return !GetWorkaroundsFromDriverInfo(*context->GetDriverInfo())
+              .broken_mipmap_generation;
+}
+
+TEST(DriverInfoVKTest, CanGenerateMipMaps) {
+  // Adreno no mips
+  EXPECT_FALSE(CanUseMipgeneration("Adreno (TM) 540", true));
+  EXPECT_FALSE(CanUseMipgeneration("Adreno (TM) 750", true));
+
+  // Mali A-OK
+  EXPECT_TRUE(CanUseMipgeneration("Mali-G51", false));
 }
 
 TEST(DriverInfoVKTest, DriverParsingMali) {
@@ -105,7 +163,6 @@ TEST(DriverInfoVKTest, DriverParsingAdreno) {
 }
 
 TEST(DriverInfoVKTest, DisabledDevices) {
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 630"));
   EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 620"));
   EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 610"));
   EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 530"));
@@ -116,6 +173,7 @@ TEST(DriverInfoVKTest, DisabledDevices) {
   EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 505"));
   EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 504"));
 
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 630"));
   EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 640"));
   EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 650"));
 }
@@ -134,6 +192,35 @@ TEST(DriverInfoVKTest, EnabledDevicesAdreno) {
   EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 720"));
   EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 710"));
   EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 702"));
+}
+
+bool CanUseFramebufferFetch(std::string_view driver_name, bool qc = true) {
+  auto const context =
+      MockVulkanContextBuilder()
+          .SetPhysicalPropertiesCallback(
+              [&driver_name, qc](VkPhysicalDevice device,
+                                 VkPhysicalDeviceProperties* prop) {
+                if (qc) {
+                  prop->vendorID = 0x168C;  // Qualcomm
+                } else {
+                  prop->vendorID = 0x13B5;  // ARM
+                }
+                driver_name.copy(prop->deviceName, driver_name.size());
+                prop->deviceType = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
+              })
+          .Build();
+  return !GetWorkaroundsFromDriverInfo(*context->GetDriverInfo())
+              .input_attachment_self_dependency_broken;
+}
+
+TEST(DriverInfoVKTest, CanUseFramebufferFetch) {
+  // Adreno no primitive restart on models as or older than 630.
+  EXPECT_FALSE(CanUseFramebufferFetch("Adreno (TM) 540", true));
+  EXPECT_FALSE(CanUseFramebufferFetch("Adreno (TM) 630", true));
+
+  EXPECT_TRUE(CanUseFramebufferFetch("Adreno (TM) 640", true));
+  EXPECT_TRUE(CanUseFramebufferFetch("Adreno (TM) 750", true));
+  EXPECT_TRUE(CanUseFramebufferFetch("Mali-G51", false));
 }
 
 }  // namespace impeller::testing

@@ -5,15 +5,19 @@
 #include "flutter/shell/platform/linux/fl_pointer_manager.h"
 #include "flutter/shell/platform/embedder/test_utils/proc_table_replacement.h"
 #include "flutter/shell/platform/linux/fl_engine_private.h"
-#include "flutter/shell/platform/linux/testing/fl_test.h"
 
 #include "gtest/gtest.h"
 
-static void log_pointer_events(
-    FlEngine* engine,
-    std::vector<FlutterPointerEvent>& pointer_events) {
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
-  embedder_api->SendPointerEvent = MOCK_ENGINE_PROC(
+TEST(FlPointerManagerTest, EnterLeave) {
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
+  std::vector<FlutterPointerEvent> pointer_events;
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
       SendPointerEvent,
       ([&pointer_events](auto engine, const FlutterPointerEvent* events,
                          size_t events_count) {
@@ -23,12 +27,6 @@ static void log_pointer_events(
 
         return kSuccess;
       }));
-}
-
-TEST(FlPointerManagerTest, EnterLeave) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
-  std::vector<FlutterPointerEvent> pointer_events;
-  log_pointer_events(engine, pointer_events);
 
   g_autoptr(FlPointerManager) manager = fl_pointer_manager_new(42, engine);
   fl_pointer_manager_handle_enter(manager, 1234, kFlutterPointerDeviceKindMouse,
@@ -54,9 +52,24 @@ TEST(FlPointerManagerTest, EnterLeave) {
 }
 
 TEST(FlPointerManagerTest, EnterEnter) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
   std::vector<FlutterPointerEvent> pointer_events;
-  log_pointer_events(engine, pointer_events);
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
+      SendPointerEvent,
+      ([&pointer_events](auto engine, const FlutterPointerEvent* events,
+                         size_t events_count) {
+        for (size_t i = 0; i < events_count; i++) {
+          pointer_events.push_back(events[i]);
+        }
+
+        return kSuccess;
+      }));
 
   g_autoptr(FlPointerManager) manager = fl_pointer_manager_new(42, engine);
   fl_pointer_manager_handle_enter(manager, 1234, kFlutterPointerDeviceKindMouse,
@@ -76,9 +89,24 @@ TEST(FlPointerManagerTest, EnterEnter) {
 }
 
 TEST(FlPointerManagerTest, EnterLeaveLeave) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
   std::vector<FlutterPointerEvent> pointer_events;
-  log_pointer_events(engine, pointer_events);
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
+      SendPointerEvent,
+      ([&pointer_events](auto engine, const FlutterPointerEvent* events,
+                         size_t events_count) {
+        for (size_t i = 0; i < events_count; i++) {
+          pointer_events.push_back(events[i]);
+        }
+
+        return kSuccess;
+      }));
 
   g_autoptr(FlPointerManager) manager = fl_pointer_manager_new(42, engine);
   fl_pointer_manager_handle_enter(manager, 1234, kFlutterPointerDeviceKindMouse,
@@ -107,9 +135,24 @@ TEST(FlPointerManagerTest, EnterLeaveLeave) {
 }
 
 TEST(FlPointerManagerTest, EnterButtonPress) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
   std::vector<FlutterPointerEvent> pointer_events;
-  log_pointer_events(engine, pointer_events);
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
+      SendPointerEvent,
+      ([&pointer_events](auto engine, const FlutterPointerEvent* events,
+                         size_t events_count) {
+        for (size_t i = 0; i < events_count; i++) {
+          pointer_events.push_back(events[i]);
+        }
+
+        return kSuccess;
+      }));
 
   g_autoptr(FlPointerManager) manager = fl_pointer_manager_new(42, engine);
   fl_pointer_manager_handle_enter(manager, 1234, kFlutterPointerDeviceKindMouse,
@@ -136,9 +179,24 @@ TEST(FlPointerManagerTest, EnterButtonPress) {
 }
 
 TEST(FlPointerManagerTest, NoEnterButtonPress) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
   std::vector<FlutterPointerEvent> pointer_events;
-  log_pointer_events(engine, pointer_events);
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
+      SendPointerEvent,
+      ([&pointer_events](auto engine, const FlutterPointerEvent* events,
+                         size_t events_count) {
+        for (size_t i = 0; i < events_count; i++) {
+          pointer_events.push_back(events[i]);
+        }
+
+        return kSuccess;
+      }));
 
   g_autoptr(FlPointerManager) manager = fl_pointer_manager_new(42, engine);
   fl_pointer_manager_handle_button_press(
@@ -164,9 +222,24 @@ TEST(FlPointerManagerTest, NoEnterButtonPress) {
 }
 
 TEST(FlPointerManagerTest, ButtonPressButtonRelease) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
   std::vector<FlutterPointerEvent> pointer_events;
-  log_pointer_events(engine, pointer_events);
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
+      SendPointerEvent,
+      ([&pointer_events](auto engine, const FlutterPointerEvent* events,
+                         size_t events_count) {
+        for (size_t i = 0; i < events_count; i++) {
+          pointer_events.push_back(events[i]);
+        }
+
+        return kSuccess;
+      }));
 
   g_autoptr(FlPointerManager) manager = fl_pointer_manager_new(42, engine);
   fl_pointer_manager_handle_button_press(
@@ -194,9 +267,24 @@ TEST(FlPointerManagerTest, ButtonPressButtonRelease) {
 }
 
 TEST(FlPointerManagerTest, ButtonPressButtonReleaseThreeButtons) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
   std::vector<FlutterPointerEvent> pointer_events;
-  log_pointer_events(engine, pointer_events);
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
+      SendPointerEvent,
+      ([&pointer_events](auto engine, const FlutterPointerEvent* events,
+                         size_t events_count) {
+        for (size_t i = 0; i < events_count; i++) {
+          pointer_events.push_back(events[i]);
+        }
+
+        return kSuccess;
+      }));
 
   g_autoptr(FlPointerManager) manager = fl_pointer_manager_new(42, engine);
   // Press buttons 1-2-3, release 3-2-1
@@ -253,9 +341,24 @@ TEST(FlPointerManagerTest, ButtonPressButtonReleaseThreeButtons) {
 }
 
 TEST(FlPointerManagerTest, ButtonPressButtonPressButtonRelease) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
   std::vector<FlutterPointerEvent> pointer_events;
-  log_pointer_events(engine, pointer_events);
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
+      SendPointerEvent,
+      ([&pointer_events](auto engine, const FlutterPointerEvent* events,
+                         size_t events_count) {
+        for (size_t i = 0; i < events_count; i++) {
+          pointer_events.push_back(events[i]);
+        }
+
+        return kSuccess;
+      }));
 
   g_autoptr(FlPointerManager) manager = fl_pointer_manager_new(42, engine);
   fl_pointer_manager_handle_button_press(
@@ -287,9 +390,24 @@ TEST(FlPointerManagerTest, ButtonPressButtonPressButtonRelease) {
 }
 
 TEST(FlPointerManagerTest, ButtonPressButtonReleaseButtonRelease) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
   std::vector<FlutterPointerEvent> pointer_events;
-  log_pointer_events(engine, pointer_events);
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
+      SendPointerEvent,
+      ([&pointer_events](auto engine, const FlutterPointerEvent* events,
+                         size_t events_count) {
+        for (size_t i = 0; i < events_count; i++) {
+          pointer_events.push_back(events[i]);
+        }
+
+        return kSuccess;
+      }));
 
   g_autoptr(FlPointerManager) manager = fl_pointer_manager_new(42, engine);
   fl_pointer_manager_handle_button_press(
@@ -321,9 +439,24 @@ TEST(FlPointerManagerTest, ButtonPressButtonReleaseButtonRelease) {
 }
 
 TEST(FlPointerManagerTest, NoButtonPressButtonRelease) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
   std::vector<FlutterPointerEvent> pointer_events;
-  log_pointer_events(engine, pointer_events);
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
+      SendPointerEvent,
+      ([&pointer_events](auto engine, const FlutterPointerEvent* events,
+                         size_t events_count) {
+        for (size_t i = 0; i < events_count; i++) {
+          pointer_events.push_back(events[i]);
+        }
+
+        return kSuccess;
+      }));
 
   g_autoptr(FlPointerManager) manager = fl_pointer_manager_new(42, engine);
   // Release without associated press, will be ignored
@@ -335,9 +468,24 @@ TEST(FlPointerManagerTest, NoButtonPressButtonRelease) {
 }
 
 TEST(FlPointerManagerTest, Motion) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
   std::vector<FlutterPointerEvent> pointer_events;
-  log_pointer_events(engine, pointer_events);
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
+      SendPointerEvent,
+      ([&pointer_events](auto engine, const FlutterPointerEvent* events,
+                         size_t events_count) {
+        for (size_t i = 0; i < events_count; i++) {
+          pointer_events.push_back(events[i]);
+        }
+
+        return kSuccess;
+      }));
 
   g_autoptr(FlPointerManager) manager = fl_pointer_manager_new(42, engine);
   fl_pointer_manager_handle_motion(manager, 1234,
@@ -371,9 +519,24 @@ TEST(FlPointerManagerTest, Motion) {
 }
 
 TEST(FlPointerManagerTest, Drag) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
   std::vector<FlutterPointerEvent> pointer_events;
-  log_pointer_events(engine, pointer_events);
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
+      SendPointerEvent,
+      ([&pointer_events](auto engine, const FlutterPointerEvent* events,
+                         size_t events_count) {
+        for (size_t i = 0; i < events_count; i++) {
+          pointer_events.push_back(events[i]);
+        }
+
+        return kSuccess;
+      }));
 
   g_autoptr(FlPointerManager) manager = fl_pointer_manager_new(42, engine);
   fl_pointer_manager_handle_motion(manager, 1234,
@@ -420,9 +583,24 @@ TEST(FlPointerManagerTest, Drag) {
 }
 
 TEST(FlPointerManagerTest, DeviceKind) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
   std::vector<FlutterPointerEvent> pointer_events;
-  log_pointer_events(engine, pointer_events);
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
+      SendPointerEvent,
+      ([&pointer_events](auto engine, const FlutterPointerEvent* events,
+                         size_t events_count) {
+        for (size_t i = 0; i < events_count; i++) {
+          pointer_events.push_back(events[i]);
+        }
+
+        return kSuccess;
+      }));
 
   g_autoptr(FlPointerManager) manager = fl_pointer_manager_new(42, engine);
   fl_pointer_manager_handle_enter(manager, 1234,

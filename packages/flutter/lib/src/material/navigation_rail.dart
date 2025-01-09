@@ -1218,6 +1218,7 @@ class _NavigationRailDefaultsM2 extends NavigationRailThemeData {
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 class _NavigationRailDefaultsM3 extends NavigationRailThemeData {
   _NavigationRailDefaultsM3(this.context)
     : super(
@@ -1262,5 +1263,6 @@ class _NavigationRailDefaultsM3 extends NavigationRailThemeData {
   @override
   ShapeBorder? get indicatorShape => const StadiumBorder();
 }
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - NavigationRail

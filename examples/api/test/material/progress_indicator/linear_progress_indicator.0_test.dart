@@ -8,10 +8,10 @@ import 'package:flutter_api_samples/material/progress_indicator/linear_progress_
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Determinate LinearProgressIndicator uses the provided value', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ProgressIndicatorExampleApp(),
-    );
+  testWidgets('Determinate LinearProgressIndicator uses the provided value', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.ProgressIndicatorExampleApp());
     await tester.pump(const Duration(milliseconds: 2500));
 
     final Finder indicatorFinder = find.byType(LinearProgressIndicator).first;
@@ -19,10 +19,10 @@ void main() {
     expect(progressIndicator.value, equals(0.5));
   });
 
-  testWidgets('Indeterminate LinearProgressIndicator does not have a value', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ProgressIndicatorExampleApp(),
-    );
+  testWidgets('Indeterminate LinearProgressIndicator does not have a value', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.ProgressIndicatorExampleApp());
     await tester.pump(const Duration(milliseconds: 2500));
 
     final Finder indicatorFinder = find.byType(LinearProgressIndicator).last;
@@ -31,9 +31,7 @@ void main() {
   });
 
   testWidgets('Progress indicators year2023 flag can be toggled', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ProgressIndicatorExampleApp(),
-    );
+    await tester.pumpWidget(const example.ProgressIndicatorExampleApp());
 
     LinearProgressIndicator determinateIndicator = tester.widget<LinearProgressIndicator>(
       find.byType(LinearProgressIndicator).first,

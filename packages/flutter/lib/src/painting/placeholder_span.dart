@@ -64,7 +64,11 @@ abstract class PlaceholderSpan extends InlineSpan {
   /// [PlaceholderSpan]s are flattened to a `0xFFFC` object replacement character in the
   /// plain text representation when `includePlaceholders` is true.
   @override
-  void computeToPlainText(StringBuffer buffer, {bool includeSemanticsLabels = true, bool includePlaceholders = true}) {
+  void computeToPlainText(
+    StringBuffer buffer, {
+    bool includeSemanticsLabels = true,
+    bool includePlaceholders = true,
+  }) {
     if (includePlaceholders) {
       buffer.writeCharCode(placeholderCodeUnit);
     }
@@ -79,7 +83,9 @@ abstract class PlaceholderSpan extends InlineSpan {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
 
-    properties.add(EnumProperty<ui.PlaceholderAlignment>('alignment', alignment, defaultValue: null));
+    properties.add(
+      EnumProperty<ui.PlaceholderAlignment>('alignment', alignment, defaultValue: null),
+    );
     properties.add(EnumProperty<TextBaseline>('baseline', baseline, defaultValue: null));
   }
 

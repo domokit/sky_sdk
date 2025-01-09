@@ -106,8 +106,7 @@ class Conic {
       if (!SPath.between(startY, midY, endY)) {
         // The computed midpoint is outside end points, move it to
         // closer one.
-        final double closerY =
-            (midY - startY).abs() < (midY - endY).abs() ? startY : endY;
+        final double closerY = (midY - startY).abs() < (midY - endY).abs() ? startY : endY;
         conic0.p2y = conic1.p0y = closerY;
       }
       if (!SPath.between(startY, conic0.p1y, conic0.p2y)) {
@@ -139,18 +138,17 @@ class Conic {
     final double scale = 1.0 / (1.0 + fW);
     final double newW = _subdivideWeightValue(fW);
     final ui.Offset wp1 = ui.Offset(fW * p1x, fW * p1y);
-    ui.Offset m = ui.Offset((p0x + (2 * wp1.dx) + p2x) * scale * 0.5,
-        (p0y + 2 * wp1.dy + p2y) * scale * 0.5);
+    ui.Offset m = ui.Offset(
+      (p0x + (2 * wp1.dx) + p2x) * scale * 0.5,
+      (p0y + 2 * wp1.dy + p2y) * scale * 0.5,
+    );
     if (m.dx.isNaN || m.dy.isNaN) {
       final double w2 = fW * 2;
       final double scaleHalf = 1.0 / (1 + fW) * 0.5;
-      m = ui.Offset((p0x + (w2 * p1x) + p2x) * scaleHalf,
-          (p0y + (w2 * p1y) + p2y) * scaleHalf);
+      m = ui.Offset((p0x + (w2 * p1x) + p2x) * scaleHalf, (p0y + (w2 * p1y) + p2y) * scaleHalf);
     }
-    pair.first = Conic(p0x, p0y, (p0x + wp1.dx) * scale, (p0y + wp1.dy) * scale,
-        m.dx, m.dy, newW);
-    pair.second = Conic(m.dx, m.dy, (p2x + wp1.dx) * scale,
-        (p2y + wp1.dy) * scale, p2x, p2y, newW);
+    pair.first = Conic(p0x, p0y, (p0x + wp1.dx) * scale, (p0y + wp1.dy) * scale, m.dx, m.dy, newW);
+    pair.second = Conic(m.dx, m.dy, (p2x + wp1.dx) * scale, (p2y + wp1.dy) * scale, p2x, p2y, newW);
   }
 
   void chopAtYExtrema(List<Conic> dst) {
@@ -256,10 +254,8 @@ class Conic {
       cp1y = chopPointY;
     }
 
-    final Conic conic0 =
-        Conic(p0x, p0y, dx0 / dz0, cp0y, chopPointX, chopPointY, w0);
-    final Conic conic1 =
-        Conic(chopPointX, chopPointY, dx2 / dz2, cp1y, p2x, p2y, w2);
+    final Conic conic0 = Conic(p0x, p0y, dx0 / dz0, cp0y, chopPointX, chopPointY, w0);
+    final Conic conic1 = Conic(chopPointX, chopPointY, dx2 / dz2, cp1y, p2x, p2y, w2);
     dst.add(conic0);
     dst.add(conic1);
     return true;
@@ -272,12 +268,9 @@ class Conic {
   int _computeSubdivisionCount(double tolerance) {
     assert(tolerance.isFinite);
     // Expecting finite coordinates.
-    assert(p0x.isFinite &&
-        p1x.isFinite &&
-        p2x.isFinite &&
-        p0y.isFinite &&
-        p1y.isFinite &&
-        p2y.isFinite);
+    assert(
+      p0x.isFinite && p1x.isFinite && p2x.isFinite && p0y.isFinite && p1y.isFinite && p2y.isFinite,
+    );
     if (tolerance < 0) {
       return 0;
     }
@@ -304,8 +297,7 @@ class Conic {
     // The derivative equation returns a zero tangent vector when t is 0 or 1,
     // and the control point is equal to the end point.
     // In this case, use the conic endpoints to compute the tangent.
-    if ((t == 0 && p0x == p1x && p0y == p1y) ||
-        (t == 1 && p1x == p2x && p1y == p2y)) {
+    if ((t == 0 && p0x == p1x && p0y == p1y) || (t == 1 && p1x == p2x && p1y == p2y)) {
       return ui.Offset(p2x - p0x, p2y - p0y);
     }
     final double p20x = p2x - p0x;
@@ -323,8 +315,7 @@ class Conic {
     return ui.Offset(quadC.evalX(t), quadC.evalY(t));
   }
 
-  static double evalNumerator(
-      double p0, double p1, double p2, double w, double t) {
+  static double evalNumerator(double p0, double p1, double p2, double w, double t) {
     assert(t >= 0 && t <= 1);
     final double src2w = p1 * w;
     final double C = p0;
@@ -371,10 +362,8 @@ class QuadBounds {
       if ((t1 >= 0) && (t1 <= 1.0)) {
         // Solve (x,y) for curve at t = tx to find extrema
         final double tprime = 1.0 - t1;
-        final double extremaX =
-            (tprime * tprime * x1) + (2 * t1 * tprime * cpX) + (t1 * t1 * x2);
-        final double extremaY =
-            (tprime * tprime * y1) + (2 * t1 * tprime * cpY) + (t1 * t1 * y2);
+        final double extremaX = (tprime * tprime * x1) + (2 * t1 * tprime * cpX) + (t1 * t1 * x2);
+        final double extremaY = (tprime * tprime * y1) + (2 * t1 * tprime * cpY) + (t1 * t1 * y2);
         // Expand bounds.
         minX = math.min(minX, extremaX);
         maxX = math.max(maxX, extremaX);
@@ -388,12 +377,10 @@ class QuadBounds {
       final double t2 = (y1 - cpY) / denom;
       if ((t2 >= 0) && (t2 <= 1.0)) {
         final double tprime2 = 1.0 - t2;
-        final double extrema2X = (tprime2 * tprime2 * x1) +
-            (2 * t2 * tprime2 * cpX) +
-            (t2 * t2 * x2);
-        final double extrema2Y = (tprime2 * tprime2 * y1) +
-            (2 * t2 * tprime2 * cpY) +
-            (t2 * t2 * y2);
+        final double extrema2X =
+            (tprime2 * tprime2 * x1) + (2 * t2 * tprime2 * cpX) + (t2 * t2 * x2);
+        final double extrema2Y =
+            (tprime2 * tprime2 * y1) + (2 * t2 * tprime2 * cpY) + (t2 * t2 * y2);
         // Expand bounds.
         minX = math.min(minX, extrema2X);
         maxX = math.max(maxX, extrema2X);

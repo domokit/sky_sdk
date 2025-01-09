@@ -15,9 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Spellcheck Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const MyHomePage(title: 'Spellcheck Demo'),
     );
   }
@@ -36,9 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: Center(
         child: EditableText(
           controller: TextEditingController(),
@@ -46,11 +42,10 @@ class _MyHomePageState extends State<MyHomePage> {
           focusNode: FocusNode(),
           style: const TextStyle(),
           cursorColor: Colors.red,
-          spellCheckConfiguration:
-            const SpellCheckConfiguration(
-              misspelledTextStyle: TextField.materialMisspelledTextStyle,
-            )
-        )
+          spellCheckConfiguration: const SpellCheckConfiguration(
+            misspelledTextStyle: TextField.materialMisspelledTextStyle,
+          ),
+        ),
       ),
     );
   }

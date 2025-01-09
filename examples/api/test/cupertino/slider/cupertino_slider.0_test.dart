@@ -15,9 +15,7 @@ void main() {
   }
 
   testWidgets('Can change value using CupertinoSlider', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.CupertinoSliderApp(),
-    );
+    await tester.pumpWidget(const example.CupertinoSliderApp());
 
     // Check for the initial slider value.
     expect(find.text('0.0'), findsOneWidget);

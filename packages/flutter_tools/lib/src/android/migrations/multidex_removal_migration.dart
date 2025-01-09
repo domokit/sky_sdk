@@ -10,9 +10,7 @@ import '../../project.dart';
 /// Multidex, which is no longer needed and causes builds to fail if not
 /// deleted.
 class MultidexRemovalMigration extends ProjectMigrator {
-
-  MultidexRemovalMigration(AndroidProject project, super.logger)
-      : _project = project;
+  MultidexRemovalMigration(AndroidProject project, super.logger) : _project = project;
 
   final AndroidProject _project;
 

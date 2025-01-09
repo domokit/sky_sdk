@@ -149,7 +149,7 @@ std::shared_ptr<DlVertices> DlVertexPainter::IntoVertices(
   return DlVertices::Make(
       /*mode=*/DlVertexMode::kTriangles,
       /*vertex_count=*/vertices_.size(),
-      /*vertices=*/reinterpret_cast<SkPoint*>(vertices_.data()),
+      /*vertices=*/vertices_.data(),
       /*texture_coordinates=*/nullptr,
       /*colors=*/colors_.data(),
       /*index_count=*/0,

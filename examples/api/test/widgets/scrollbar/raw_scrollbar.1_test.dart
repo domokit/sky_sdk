@@ -8,10 +8,10 @@ import 'package:flutter_api_samples/widgets/scrollbar/raw_scrollbar.1.dart' as e
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('When thumbVisibility is true, the scrollbar thumb remains visible', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.RawScrollbarExampleApp(),
-    );
+  testWidgets('When thumbVisibility is true, the scrollbar thumb remains visible', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.RawScrollbarExampleApp());
 
     expect(find.widgetWithText(AppBar, 'RawScrollbar Sample'), findsOne);
     expect(find.byType(RawScrollbar), findsOne);

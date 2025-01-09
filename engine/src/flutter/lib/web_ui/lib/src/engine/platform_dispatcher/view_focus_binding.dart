@@ -11,7 +11,6 @@ import 'package:ui/ui.dart' as ui;
 final class ViewFocusBinding {
   ViewFocusBinding(this._viewManager, this._onViewFocusChange);
 
-
   /// Whether [FlutterView] focus changes will be reported and performed.
   ///
   /// DO NOT rely on this bit as it will go away soon. You're warned :)!
@@ -72,7 +71,8 @@ final class ViewFocusBinding {
     // We leverage this behavior to ignore focusout events where the document has focus but activeElement is not <body />.
     //
     // Refer to https://github.com/flutter/engine/pull/54965 for more info.
-    final bool wasFocusInvoked = domDocument.hasFocus() && domDocument.activeElement != domDocument.body;
+    final bool wasFocusInvoked =
+        domDocument.hasFocus() && domDocument.activeElement != domDocument.body;
     if (wasFocusInvoked) {
       return;
     }
@@ -140,10 +140,7 @@ final class ViewFocusBinding {
 
   // Controls whether the Flutter view identified by [viewId] is reachable by
   // keyboard.
-  void _updateViewKeyboardReachability(
-    int? viewId, {
-    required bool reachable,
-  }) {
+  void _updateViewKeyboardReachability(int? viewId, {required bool reachable}) {
     if (viewId == null) {
       return;
     }

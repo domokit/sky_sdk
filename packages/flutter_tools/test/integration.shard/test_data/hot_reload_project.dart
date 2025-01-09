@@ -33,13 +33,13 @@ class HotReloadProject extends Project {
     WidgetsFlutterBinding.ensureInitialized();
     final ByteData message = const StringCodec().encodeMessage('AppLifecycleState.resumed')!;
     await ServicesBinding.instance!.defaultBinaryMessenger.handlePlatformMessage('flutter/lifecycle', message, (_) { });
-    runApp(${constApp ? 'const ': ''}MyApp());
+    runApp(${constApp ? 'const ' : ''}MyApp());
   }
 
   int count = 1;
 
   class MyApp extends StatelessWidget {
-    ${constApp ? 'const MyApp({super.key});': ''}
+    ${constApp ? 'const MyApp({super.key});' : ''}
 
     @override
     Widget build(BuildContext context) {

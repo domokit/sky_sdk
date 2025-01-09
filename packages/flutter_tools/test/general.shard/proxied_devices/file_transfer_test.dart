@@ -133,17 +133,14 @@ void main() {
     test('calculateBlockHashesOfFile works normally', () async {
       final File file = fileSystem.file('test')..writeAsStringSync(content1);
 
-      final BlockHashes hashes = await const FileTransfer().calculateBlockHashesOfFile(file, blockSize: 4);
+      final BlockHashes hashes = await const FileTransfer().calculateBlockHashesOfFile(
+        file,
+        blockSize: 4,
+      );
       expect(hashes.blockSize, 4);
       expect(hashes.totalSize, content1.length);
       expect(hashes.adler32, hasLength(5));
-      expect(hashes.adler32, <int>[
-        0x029c00ec,
-        0x02a000ed,
-        0x02a400ee,
-        0x02a800ef,
-        0x00fa0094,
-      ]);
+      expect(hashes.adler32, <int>[0x029c00ec, 0x02a000ed, 0x02a400ee, 0x02a800ef, 0x00fa0094]);
       expect(hashes.md5, hasLength(5));
       expect(hashes.md5, <String>[
         'zB0S8R/fGt05GcI5v8AjIQ==',
@@ -159,7 +156,10 @@ void main() {
       final File file1 = fileSystem.file('file1')..writeAsStringSync(content1);
       final File file2 = fileSystem.file('file1')..writeAsStringSync(content1);
 
-      final BlockHashes hashes = await const FileTransfer().calculateBlockHashesOfFile(file1, blockSize: 4);
+      final BlockHashes hashes = await const FileTransfer().calculateBlockHashesOfFile(
+        file1,
+        blockSize: 4,
+      );
       final List<FileDeltaBlock> delta = await const FileTransfer().computeDelta(file2, hashes);
 
       expect(delta, isEmpty);
@@ -169,7 +169,10 @@ void main() {
       final File file1 = fileSystem.file('file1')..writeAsStringSync(content1);
       final File file2 = fileSystem.file('file2')..writeAsStringSync(content2);
 
-      final BlockHashes hashes = await const FileTransfer().calculateBlockHashesOfFile(file1, blockSize: 4);
+      final BlockHashes hashes = await const FileTransfer().calculateBlockHashesOfFile(
+        file1,
+        blockSize: 4,
+      );
       final List<FileDeltaBlock> delta = await const FileTransfer().computeDelta(file2, hashes);
 
       expect(delta, expectedDelta);
@@ -177,13 +180,20 @@ void main() {
 
     test('binaryForRebuilding returns the correct binary', () async {
       final File file = fileSystem.file('file')..writeAsStringSync(content2);
-      final List<int> binaryForRebuilding = await const FileTransfer().binaryForRebuilding(file, expectedDelta);
+      final List<int> binaryForRebuilding = await const FileTransfer().binaryForRebuilding(
+        file,
+        expectedDelta,
+      );
       expect(binaryForRebuilding, utf8.encode(expectedBinaryForRebuilding));
     });
 
     test('rebuildFile can rebuild the correct file', () async {
       final File file = fileSystem.file('file')..writeAsStringSync(content1);
-      await const FileTransfer().rebuildFile(file, expectedDelta, Stream<List<int>>.fromIterable(<List<int>>[utf8.encode(expectedBinaryForRebuilding)]));
+      await const FileTransfer().rebuildFile(
+        file,
+        expectedDelta,
+        Stream<List<int>>.fromIterable(<List<int>>[utf8.encode(expectedBinaryForRebuilding)]),
+      );
       expect(file.readAsStringSync(), content2);
     });
   });

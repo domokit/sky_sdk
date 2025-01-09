@@ -88,7 +88,7 @@ abstract class BoxBorder extends ShapeBorder {
   // We override this to tighten the return value, so that callers can assume
   // that we'll return a [BoxBorder].
   @override
-  BoxBorder? add(ShapeBorder other, { bool reversed = false }) => null;
+  BoxBorder? add(ShapeBorder other, {bool reversed = false}) => null;
 
   /// Linearly interpolate between two borders.
   ///
@@ -167,26 +167,32 @@ abstract class BoxBorder extends ShapeBorder {
         '  $b\n'
         'However, only Border and BorderDirectional classes are supported by this method.',
       ),
-      ErrorHint('For a more general interpolation method, consider using ShapeBorder.lerp instead.'),
+      ErrorHint(
+        'For a more general interpolation method, consider using ShapeBorder.lerp instead.',
+      ),
     ]);
   }
 
   @override
-  Path getInnerPath(Rect rect, { TextDirection? textDirection }) {
-    assert(textDirection != null, 'The textDirection argument to $runtimeType.getInnerPath must not be null.');
-    return Path()
-      ..addRect(dimensions.resolve(textDirection).deflateRect(rect));
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) {
+    assert(
+      textDirection != null,
+      'The textDirection argument to $runtimeType.getInnerPath must not be null.',
+    );
+    return Path()..addRect(dimensions.resolve(textDirection).deflateRect(rect));
   }
 
   @override
-  Path getOuterPath(Rect rect, { TextDirection? textDirection }) {
-    assert(textDirection != null, 'The textDirection argument to $runtimeType.getOuterPath must not be null.');
-    return Path()
-      ..addRect(rect);
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
+    assert(
+      textDirection != null,
+      'The textDirection argument to $runtimeType.getOuterPath must not be null.',
+    );
+    return Path()..addRect(rect);
   }
 
   @override
-  void paintInterior(Canvas canvas, Rect rect, Paint paint, { TextDirection? textDirection }) {
+  void paintInterior(Canvas canvas, Rect rect, Paint paint, {TextDirection? textDirection}) {
     // For `ShapeDecoration(shape: Border.all())`, a rectangle with sharp edges
     // is always painted. There is no borderRadius parameter for
     // ShapeDecoration or Border, only for BoxDecoration, which doesn't call
@@ -227,10 +233,14 @@ abstract class BoxBorder extends ShapeBorder {
     BorderRadius? borderRadius,
   });
 
-  static void _paintUniformBorderWithRadius(Canvas canvas, Rect rect, BorderSide side, BorderRadius borderRadius) {
+  static void _paintUniformBorderWithRadius(
+    Canvas canvas,
+    Rect rect,
+    BorderSide side,
+    BorderRadius borderRadius,
+  ) {
     assert(side.style != BorderStyle.none);
-    final Paint paint = Paint()
-      ..color = side.color;
+    final Paint paint = Paint()..color = side.color;
     final double width = side.width;
     if (width == 0.0) {
       paint
@@ -267,19 +277,31 @@ abstract class BoxBorder extends ShapeBorder {
     final RRect borderRect;
     switch (shape) {
       case BoxShape.rectangle:
-        borderRect = (borderRadius ?? BorderRadius.zero)
-            .resolve(textDirection)
-            .toRRect(rect);
+        borderRect = (borderRadius ?? BorderRadius.zero).resolve(textDirection).toRRect(rect);
       case BoxShape.circle:
-        assert(borderRadius == null, 'A borderRadius cannot be given when shape is a BoxShape.circle.');
+        assert(
+          borderRadius == null,
+          'A borderRadius cannot be given when shape is a BoxShape.circle.',
+        );
         borderRect = RRect.fromRectAndRadius(
           Rect.fromCircle(center: rect.center, radius: rect.shortestSide / 2.0),
           Radius.circular(rect.width),
         );
     }
     final Paint paint = Paint()..color = color;
-    final RRect inner = _deflateRRect(borderRect, EdgeInsets.fromLTRB(left.strokeInset, top.strokeInset, right.strokeInset, bottom.strokeInset));
-    final RRect outer = _inflateRRect(borderRect, EdgeInsets.fromLTRB(left.strokeOutset, top.strokeOutset, right.strokeOutset, bottom.strokeOutset));
+    final RRect inner = _deflateRRect(
+      borderRect,
+      EdgeInsets.fromLTRB(left.strokeInset, top.strokeInset, right.strokeInset, bottom.strokeInset),
+    );
+    final RRect outer = _inflateRRect(
+      borderRect,
+      EdgeInsets.fromLTRB(
+        left.strokeOutset,
+        top.strokeOutset,
+        right.strokeOutset,
+        bottom.strokeOutset,
+      ),
+    );
     canvas.drawDRRect(outer, inner, paint);
   }
 
@@ -289,10 +311,18 @@ abstract class BoxBorder extends ShapeBorder {
       rect.top - insets.top,
       rect.right + insets.right,
       rect.bottom + insets.bottom,
-      topLeft: (rect.tlRadius + Radius.elliptical(insets.left, insets.top)).clamp(minimum: Radius.zero),
-      topRight: (rect.trRadius + Radius.elliptical(insets.right, insets.top)).clamp(minimum: Radius.zero),
-      bottomRight: (rect.brRadius + Radius.elliptical(insets.right, insets.bottom)).clamp(minimum: Radius.zero),
-      bottomLeft: (rect.blRadius + Radius.elliptical(insets.left, insets.bottom)).clamp(minimum: Radius.zero),
+      topLeft: (rect.tlRadius + Radius.elliptical(insets.left, insets.top)).clamp(
+        minimum: Radius.zero,
+      ),
+      topRight: (rect.trRadius + Radius.elliptical(insets.right, insets.top)).clamp(
+        minimum: Radius.zero,
+      ),
+      bottomRight: (rect.brRadius + Radius.elliptical(insets.right, insets.bottom)).clamp(
+        minimum: Radius.zero,
+      ),
+      bottomLeft: (rect.blRadius + Radius.elliptical(insets.left, insets.bottom)).clamp(
+        minimum: Radius.zero,
+      ),
     );
   }
 
@@ -302,10 +332,18 @@ abstract class BoxBorder extends ShapeBorder {
       rect.top + insets.top,
       rect.right - insets.right,
       rect.bottom - insets.bottom,
-      topLeft: (rect.tlRadius - Radius.elliptical(insets.left, insets.top)).clamp(minimum: Radius.zero),
-      topRight: (rect.trRadius - Radius.elliptical(insets.right, insets.top)).clamp(minimum: Radius.zero),
-      bottomRight: (rect.brRadius - Radius.elliptical(insets.right, insets.bottom)).clamp(minimum: Radius.zero),
-      bottomLeft:(rect.blRadius - Radius.elliptical(insets.left, insets.bottom)).clamp(minimum: Radius.zero),
+      topLeft: (rect.tlRadius - Radius.elliptical(insets.left, insets.top)).clamp(
+        minimum: Radius.zero,
+      ),
+      topRight: (rect.trRadius - Radius.elliptical(insets.right, insets.top)).clamp(
+        minimum: Radius.zero,
+      ),
+      bottomRight: (rect.brRadius - Radius.elliptical(insets.right, insets.bottom)).clamp(
+        minimum: Radius.zero,
+      ),
+      bottomLeft: (rect.blRadius - Radius.elliptical(insets.left, insets.bottom)).clamp(
+        minimum: Radius.zero,
+      ),
     );
   }
 
@@ -399,10 +437,10 @@ class Border extends BoxBorder {
 
   /// Creates a border whose sides are all the same.
   const Border.fromBorderSide(BorderSide side)
-      : top = side,
-        right = side,
-        bottom = side,
-        left = side;
+    : top = side,
+      right = side,
+      bottom = side,
+      left = side;
 
   /// Creates a border with symmetrical vertical and horizontal sides.
   ///
@@ -427,7 +465,12 @@ class Border extends BoxBorder {
     BorderStyle style = BorderStyle.solid,
     double strokeAlign = BorderSide.strokeAlignInside,
   }) {
-    final BorderSide side = BorderSide(color: color, width: width, style: style, strokeAlign: strokeAlign);
+    final BorderSide side = BorderSide(
+      color: color,
+      width: width,
+      style: style,
+      strokeAlign: strokeAlign,
+    );
     return Border.fromBorderSide(side);
   }
 
@@ -463,11 +506,17 @@ class Border extends BoxBorder {
 
   @override
   EdgeInsetsGeometry get dimensions {
-    return EdgeInsets.fromLTRB(left.strokeInset, top.strokeInset, right.strokeInset, bottom.strokeInset);
+    return EdgeInsets.fromLTRB(
+      left.strokeInset,
+      top.strokeInset,
+      right.strokeInset,
+      bottom.strokeInset,
+    );
   }
 
   @override
-  bool get isUniform => _colorIsUniform && _widthIsUniform && _styleIsUniform && _strokeAlignIsUniform;
+  bool get isUniform =>
+      _colorIsUniform && _widthIsUniform && _styleIsUniform && _strokeAlignIsUniform;
 
   bool get _colorIsUniform {
     final Color topColor = top.color;
@@ -486,9 +535,9 @@ class Border extends BoxBorder {
 
   bool get _strokeAlignIsUniform {
     final double topStrokeAlign = top.strokeAlign;
-    return left.strokeAlign == topStrokeAlign
-        && bottom.strokeAlign == topStrokeAlign
-        && right.strokeAlign == topStrokeAlign;
+    return left.strokeAlign == topStrokeAlign &&
+        bottom.strokeAlign == topStrokeAlign &&
+        right.strokeAlign == topStrokeAlign;
   }
 
   Set<Color> _distinctVisibleColors() {
@@ -510,7 +559,7 @@ class Border extends BoxBorder {
       (left.style == BorderStyle.solid && left.width == 0.0);
 
   @override
-  Border? add(ShapeBorder other, { bool reversed = false }) {
+  Border? add(ShapeBorder other, {bool reversed = false}) {
     if (other is Border &&
         BorderSide.canMerge(top, other.top) &&
         BorderSide.canMerge(right, other.right) &&
@@ -610,7 +659,10 @@ class Border extends BoxBorder {
         case BorderStyle.solid:
           switch (shape) {
             case BoxShape.circle:
-              assert(borderRadius == null, 'A borderRadius cannot be given when shape is a BoxShape.circle.');
+              assert(
+                borderRadius == null,
+                'A borderRadius cannot be given when shape is a BoxShape.circle.',
+              );
               BoxBorder._paintUniformBorderWithCircle(canvas, rect, top);
             case BoxShape.rectangle:
               if (borderRadius != null && borderRadius != BorderRadius.zero) {
@@ -634,24 +686,28 @@ class Border extends BoxBorder {
     // and (borderRadius is present) or (border is visible and width != 0.0).
     if (visibleColors.length == 1 &&
         !hasHairlineBorder &&
-        (shape == BoxShape.circle ||
-            (borderRadius != null && borderRadius != BorderRadius.zero))) {
-      BoxBorder.paintNonUniformBorder(canvas, rect,
-          shape: shape,
-          borderRadius: borderRadius,
-          textDirection: textDirection,
-          top: top.style == BorderStyle.none ? BorderSide.none : top,
-          right: right.style == BorderStyle.none ? BorderSide.none : right,
-          bottom: bottom.style == BorderStyle.none ? BorderSide.none : bottom,
-          left: left.style == BorderStyle.none ? BorderSide.none : left,
-          color: visibleColors.first);
+        (shape == BoxShape.circle || (borderRadius != null && borderRadius != BorderRadius.zero))) {
+      BoxBorder.paintNonUniformBorder(
+        canvas,
+        rect,
+        shape: shape,
+        borderRadius: borderRadius,
+        textDirection: textDirection,
+        top: top.style == BorderStyle.none ? BorderSide.none : top,
+        right: right.style == BorderStyle.none ? BorderSide.none : right,
+        bottom: bottom.style == BorderStyle.none ? BorderSide.none : bottom,
+        left: left.style == BorderStyle.none ? BorderSide.none : left,
+        color: visibleColors.first,
+      );
       return;
     }
 
-     assert(() {
+    assert(() {
       if (hasHairlineBorder) {
-        assert(borderRadius == null || borderRadius == BorderRadius.zero,
-            'A hairline border like `BorderSide(width: 0.0, style: BorderStyle.solid)` can only be drawn when BorderRadius is zero or null.');
+        assert(
+          borderRadius == null || borderRadius == BorderRadius.zero,
+          'A hairline border like `BorderSide(width: 0.0, style: BorderStyle.solid)` can only be drawn when BorderRadius is zero or null.',
+        );
       }
       if (borderRadius != null && borderRadius != BorderRadius.zero) {
         throw FlutterError.fromParts(<DiagnosticsNode>[
@@ -675,7 +731,9 @@ class Border extends BoxBorder {
     assert(() {
       if (!_strokeAlignIsUniform || top.strokeAlign != BorderSide.strokeAlignInside) {
         throw FlutterError.fromParts(<DiagnosticsNode>[
-          ErrorSummary('A Border can only draw strokeAlign different than BorderSide.strokeAlignInside on borders with uniform colors.'),
+          ErrorSummary(
+            'A Border can only draw strokeAlign different than BorderSide.strokeAlignInside on borders with uniform colors.',
+          ),
         ]);
       }
       return true;
@@ -692,11 +750,11 @@ class Border extends BoxBorder {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is Border
-        && other.top == top
-        && other.right == right
-        && other.bottom == bottom
-        && other.left == left;
+    return other is Border &&
+        other.top == top &&
+        other.right == right &&
+        other.bottom == bottom &&
+        other.left == left;
   }
 
   @override
@@ -800,11 +858,17 @@ class BorderDirectional extends BoxBorder {
 
   @override
   EdgeInsetsGeometry get dimensions {
-    return EdgeInsetsDirectional.fromSTEB(start.strokeInset, top.strokeInset, end.strokeInset, bottom.strokeInset);
+    return EdgeInsetsDirectional.fromSTEB(
+      start.strokeInset,
+      top.strokeInset,
+      end.strokeInset,
+      bottom.strokeInset,
+    );
   }
 
   @override
-  bool get isUniform => _colorIsUniform && _widthIsUniform && _styleIsUniform && _strokeAlignIsUniform;
+  bool get isUniform =>
+      _colorIsUniform && _widthIsUniform && _styleIsUniform && _strokeAlignIsUniform;
 
   bool get _colorIsUniform {
     final Color topColor = top.color;
@@ -823,9 +887,9 @@ class BorderDirectional extends BoxBorder {
 
   bool get _strokeAlignIsUniform {
     final double topStrokeAlign = top.strokeAlign;
-    return start.strokeAlign == topStrokeAlign
-        && bottom.strokeAlign == topStrokeAlign
-        && end.strokeAlign == topStrokeAlign;
+    return start.strokeAlign == topStrokeAlign &&
+        bottom.strokeAlign == topStrokeAlign &&
+        end.strokeAlign == topStrokeAlign;
   }
 
   Set<Color> _distinctVisibleColors() {
@@ -837,7 +901,6 @@ class BorderDirectional extends BoxBorder {
     };
   }
 
-
   bool get _hasHairlineBorder =>
       (top.style == BorderStyle.solid && top.width == 0.0) ||
       (end.style == BorderStyle.solid && end.width == 0.0) ||
@@ -845,7 +908,7 @@ class BorderDirectional extends BoxBorder {
       (start.style == BorderStyle.solid && start.width == 0.0);
 
   @override
-  BoxBorder? add(ShapeBorder other, { bool reversed = false }) {
+  BoxBorder? add(ShapeBorder other, {bool reversed = false}) {
     if (other is BorderDirectional) {
       final BorderDirectional typedOther = other;
       if (BorderSide.canMerge(top, typedOther.top) &&
@@ -862,10 +925,8 @@ class BorderDirectional extends BoxBorder {
           !BorderSide.canMerge(typedOther.bottom, bottom)) {
         return null;
       }
-      if (start != BorderSide.none ||
-          end != BorderSide.none) {
-        if (typedOther.left != BorderSide.none ||
-            typedOther.right != BorderSide.none) {
+      if (start != BorderSide.none || end != BorderSide.none) {
+        if (typedOther.left != BorderSide.none || typedOther.right != BorderSide.none) {
           return null;
         }
         assert(typedOther.left == BorderSide.none);
@@ -976,7 +1037,10 @@ class BorderDirectional extends BoxBorder {
         case BorderStyle.solid:
           switch (shape) {
             case BoxShape.circle:
-              assert(borderRadius == null, 'A borderRadius cannot be given when shape is a BoxShape.circle.');
+              assert(
+                borderRadius == null,
+                'A borderRadius cannot be given when shape is a BoxShape.circle.',
+              );
               BoxBorder._paintUniformBorderWithCircle(canvas, rect, top);
             case BoxShape.rectangle:
               if (borderRadius != null && borderRadius != BorderRadius.zero) {
@@ -993,7 +1057,10 @@ class BorderDirectional extends BoxBorder {
       return;
     }
 
-    assert(textDirection != null, 'Non-uniform BorderDirectional objects require a TextDirection when painting.');
+    assert(
+      textDirection != null,
+      'Non-uniform BorderDirectional objects require a TextDirection when painting.',
+    );
     final (BorderSide left, BorderSide right) = switch (textDirection!) {
       TextDirection.rtl => (end, start),
       TextDirection.ltr => (start, end),
@@ -1004,26 +1071,40 @@ class BorderDirectional extends BoxBorder {
     final bool hasHairlineBorder = _hasHairlineBorder;
     if (visibleColors.length == 1 &&
         !hasHairlineBorder &&
-        (shape == BoxShape.circle ||
-            (borderRadius != null && borderRadius != BorderRadius.zero))) {
-      BoxBorder.paintNonUniformBorder(canvas, rect,
-          shape: shape,
-          borderRadius: borderRadius,
-          textDirection: textDirection,
-          top: top.style == BorderStyle.none ? BorderSide.none : top,
-          right: right.style == BorderStyle.none ? BorderSide.none : right,
-          bottom: bottom.style == BorderStyle.none ? BorderSide.none : bottom,
-          left: left.style == BorderStyle.none ? BorderSide.none : left,
-          color: visibleColors.first);
+        (shape == BoxShape.circle || (borderRadius != null && borderRadius != BorderRadius.zero))) {
+      BoxBorder.paintNonUniformBorder(
+        canvas,
+        rect,
+        shape: shape,
+        borderRadius: borderRadius,
+        textDirection: textDirection,
+        top: top.style == BorderStyle.none ? BorderSide.none : top,
+        right: right.style == BorderStyle.none ? BorderSide.none : right,
+        bottom: bottom.style == BorderStyle.none ? BorderSide.none : bottom,
+        left: left.style == BorderStyle.none ? BorderSide.none : left,
+        color: visibleColors.first,
+      );
       return;
     }
 
     if (hasHairlineBorder) {
-      assert(borderRadius == null || borderRadius == BorderRadius.zero, 'A side like `BorderSide(width: 0.0, style: BorderStyle.solid)` can only be drawn when BorderRadius is zero or null.');
+      assert(
+        borderRadius == null || borderRadius == BorderRadius.zero,
+        'A side like `BorderSide(width: 0.0, style: BorderStyle.solid)` can only be drawn when BorderRadius is zero or null.',
+      );
     }
-    assert(borderRadius == null, 'A borderRadius can only be given for borders with uniform colors.');
-    assert(shape == BoxShape.rectangle, 'A Border can only be drawn as a circle on borders with uniform colors.');
-    assert(_strokeAlignIsUniform && top.strokeAlign == BorderSide.strokeAlignInside, 'A Border can only draw strokeAlign different than strokeAlignInside on borders with uniform colors.');
+    assert(
+      borderRadius == null,
+      'A borderRadius can only be given for borders with uniform colors.',
+    );
+    assert(
+      shape == BoxShape.rectangle,
+      'A Border can only be drawn as a circle on borders with uniform colors.',
+    );
+    assert(
+      _strokeAlignIsUniform && top.strokeAlign == BorderSide.strokeAlignInside,
+      'A Border can only draw strokeAlign different than strokeAlignInside on borders with uniform colors.',
+    );
 
     paintBorder(canvas, rect, top: top, left: left, bottom: bottom, right: right);
   }
@@ -1036,11 +1117,11 @@ class BorderDirectional extends BoxBorder {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is BorderDirectional
-        && other.top == top
-        && other.start == start
-        && other.end == end
-        && other.bottom == bottom;
+    return other is BorderDirectional &&
+        other.top == top &&
+        other.start == start &&
+        other.end == end &&
+        other.bottom == bottom;
   }
 
   @override

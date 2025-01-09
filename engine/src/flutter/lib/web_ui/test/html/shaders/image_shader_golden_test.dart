@@ -25,9 +25,7 @@ Future<void> testMain() async {
   const Rect screenRect = Rect.fromLTWH(0, 0, screenWidth, screenHeight);
   final HtmlImage testImage = createTestImage();
 
-  setUpUnitTests(
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(setUpTestViewDimensions: false);
 
   void drawShapes(RecordingCanvas rc, SurfacePaint paint, Rect shaderRect) {
     /// Rect.
@@ -39,15 +37,19 @@ Future<void> testMain() async {
     shaderRect = shaderRect.translate(110, 0);
 
     /// Oval.
-    rc.drawOval(Rect.fromLTWH(shaderRect.left, shaderRect.top, shaderRect.width, shaderRect.height / 2), paint);
+    rc.drawOval(
+      Rect.fromLTWH(shaderRect.left, shaderRect.top, shaderRect.width, shaderRect.height / 2),
+      paint,
+    );
     shaderRect = shaderRect.translate(-210, 120);
 
     /// Path.
-    final Path path = Path()
-      ..moveTo(shaderRect.center.dx, shaderRect.top)
-      ..lineTo(shaderRect.right, shaderRect.bottom)
-      ..lineTo(shaderRect.left, shaderRect.bottom)
-      ..close();
+    final Path path =
+        Path()
+          ..moveTo(shaderRect.center.dx, shaderRect.top)
+          ..lineTo(shaderRect.right, shaderRect.bottom)
+          ..lineTo(shaderRect.left, shaderRect.bottom)
+          ..close();
     rc.drawPath(path, paint);
     shaderRect = shaderRect.translate(100, 0);
 
@@ -56,63 +58,61 @@ Future<void> testMain() async {
     shaderRect = shaderRect.translate(110, 0);
 
     /// DRRect.
-    rc.drawDRRect(RRect.fromRectXY(shaderRect, 20, 30),
-        RRect.fromRectXY(shaderRect.deflate(24), 16, 24),
-        paint);
+    rc.drawDRRect(
+      RRect.fromRectXY(shaderRect, 20, 30),
+      RRect.fromRectXY(shaderRect.deflate(24), 16, 24),
+      paint,
+    );
     shaderRect = shaderRect.translate(-200, 120);
   }
 
-  Future<void> testImageShader(
-      TileMode tmx, TileMode tmy, String fileName) async {
-    final RecordingCanvas rc =
-        RecordingCanvas(const Rect.fromLTRB(0, 0, screenWidth, screenHeight));
+  Future<void> testImageShader(TileMode tmx, TileMode tmy, String fileName) async {
+    final RecordingCanvas rc = RecordingCanvas(
+      const Rect.fromLTRB(0, 0, screenWidth, screenHeight),
+    );
     //Rect shaderRect = const Rect.fromLTRB(20, 20, 100, 100);
     const Rect shaderRect = Rect.fromLTRB(0, 0, 100, 100);
     final SurfacePaint paint = Paint() as SurfacePaint;
-    paint.shader =
-        ImageShader(testImage, tmx, tmy, Matrix4.identity().toFloat64()
-            , filterQuality: FilterQuality.high);
+    paint.shader = ImageShader(
+      testImage,
+      tmx,
+      tmy,
+      Matrix4.identity().toFloat64(),
+      filterQuality: FilterQuality.high,
+    );
 
     drawShapes(rc, paint, shaderRect);
 
     expect(rc.renderStrategy.hasArbitraryPaint, isTrue);
-    await canvasScreenshot(rc, fileName,
-        region: screenRect);
+    await canvasScreenshot(rc, fileName, region: screenRect);
   }
 
   test('Should draw with tiled imageshader.', () async {
-    await testImageShader(
-        TileMode.repeated, TileMode.repeated, 'image_shader_tiled');
+    await testImageShader(TileMode.repeated, TileMode.repeated, 'image_shader_tiled');
   });
 
   test('Should draw with horizontally mirrored imageshader.', () async {
-    await testImageShader(
-        TileMode.mirror, TileMode.repeated, 'image_shader_horiz_mirror');
+    await testImageShader(TileMode.mirror, TileMode.repeated, 'image_shader_horiz_mirror');
   });
 
   test('Should draw with vertically mirrored imageshader.', () async {
-    await testImageShader(
-        TileMode.repeated, TileMode.mirror, 'image_shader_vert_mirror');
+    await testImageShader(TileMode.repeated, TileMode.mirror, 'image_shader_vert_mirror');
   });
 
   test('Should draw with mirrored imageshader.', () async {
-    await testImageShader(
-        TileMode.mirror, TileMode.mirror, 'image_shader_mirror');
+    await testImageShader(TileMode.mirror, TileMode.mirror, 'image_shader_mirror');
   });
 
   test('Should draw with horizontal clamp imageshader.', () async {
-    await testImageShader(
-        TileMode.clamp, TileMode.repeated, 'image_shader_clamp_horiz');
+    await testImageShader(TileMode.clamp, TileMode.repeated, 'image_shader_clamp_horiz');
   }, skip: isFirefox);
 
   test('Should draw with vertical clamp imageshader.', () async {
-    await testImageShader(
-        TileMode.repeated, TileMode.clamp, 'image_shader_clamp_vertical');
+    await testImageShader(TileMode.repeated, TileMode.clamp, 'image_shader_clamp_vertical');
   }, skip: isFirefox);
 
   test('Should draw with clamp imageshader.', () async {
-    await testImageShader(
-        TileMode.clamp, TileMode.clamp, 'image_shader_clamp');
+    await testImageShader(TileMode.clamp, TileMode.clamp, 'image_shader_clamp');
   }, skip: isFirefox);
 }
 
@@ -120,8 +120,7 @@ HtmlImage createTestImage() {
   const int width = 16;
   const int width2 = width ~/ 2;
   const int height = 16;
-  final DomCanvasElement canvas =
-      createDomCanvasElement(width: width, height: height);
+  final DomCanvasElement canvas = createDomCanvasElement(width: width, height: height);
   final DomCanvasRenderingContext2D ctx = canvas.context2D;
   ctx.fillStyle = '#E04040';
   ctx.fillRect(0, 0, width2, width2);

@@ -25,8 +25,7 @@ class CallbackHandle {
     if (runtimeType != other.runtimeType) {
       return false;
     }
-    return other is CallbackHandle
-        && other._handle == _handle;
+    return other is CallbackHandle && other._handle == _handle;
   }
 
   @override
@@ -40,10 +39,8 @@ class CallbackHandle {
 ///  * [IsolateNameServer], which provides utilities for dealing with
 ///    [Isolate]s.
 abstract final class PluginUtilities {
-  static final Map<Function, CallbackHandle?> _forwardCache =
-      <Function, CallbackHandle?>{};
-  static final Map<CallbackHandle, Function?> _backwardCache =
-      <CallbackHandle, Function?>{};
+  static final Map<Function, CallbackHandle?> _forwardCache = <Function, CallbackHandle?>{};
+  static final Map<CallbackHandle, Function?> _backwardCache = <CallbackHandle, Function?>{};
 
   /// Get a handle to a named top-level or static callback function which can
   /// be easily passed between isolates.
@@ -70,7 +67,6 @@ abstract final class PluginUtilities {
   /// [PluginUtilities.getCallbackHandle], null is returned. Otherwise, a
   /// tear-off of the callback associated with `handle` is returned.
   static Function? getCallbackFromHandle(CallbackHandle handle) {
-    return _backwardCache.putIfAbsent(
-        handle, () => _getCallbackFromHandle(handle.toRawHandle()));
+    return _backwardCache.putIfAbsent(handle, () => _getCallbackFromHandle(handle.toRawHandle()));
   }
 }

@@ -19,12 +19,14 @@ void main() {
     final MemoryImage memoryImage = MemoryImage(bytes);
     final ImageStream stream = memoryImage.resolve(ImageConfiguration.empty);
     final Completer<void> completer = Completer<void>();
-    FlutterError.onError = (FlutterErrorDetails error) { completer.completeError(error.exception, error.stack); };
-    stream.addListener(ImageStreamListener(
-      (ImageInfo image, bool synchronousCall) {
+    FlutterError.onError = (FlutterErrorDetails error) {
+      completer.completeError(error.exception, error.stack);
+    };
+    stream.addListener(
+      ImageStreamListener((ImageInfo image, bool synchronousCall) {
         completer.complete();
-      },
-    ));
+      }),
+    );
     imageCache.clearLiveImages();
     await completer.future;
   });

@@ -12,26 +12,19 @@ import 'dart:js_interop';
 import 'package:ui/src/engine/skwasm/skwasm_impl.dart';
 
 final class RawImage extends Opaque {}
+
 typedef ImageHandle = Pointer<RawImage>;
 
-@Native<ImageHandle Function(
-  PictureHandle,
-  Int32,
-  Int32,
-)>(symbol: 'image_createFromPicture', isLeaf: true)
-external ImageHandle imageCreateFromPicture(
-  PictureHandle handle,
-  int width,
-  int height,
-);
+@Native<ImageHandle Function(PictureHandle, Int32, Int32)>(
+  symbol: 'image_createFromPicture',
+  isLeaf: true,
+)
+external ImageHandle imageCreateFromPicture(PictureHandle handle, int width, int height);
 
-@Native<ImageHandle Function(
-  SkDataHandle,
-  Int,
-  Int,
-  Int,
-  Size
-)>(symbol: 'image_createFromPixels', isLeaf: true)
+@Native<ImageHandle Function(SkDataHandle, Int, Int, Int, Size)>(
+  symbol: 'image_createFromPixels',
+  isLeaf: true,
+)
 external ImageHandle imageCreateFromPixels(
   SkDataHandle pixelData,
   int width,
@@ -46,14 +39,14 @@ ImageHandle imageCreateFromTextureSource(
   JSAny frame,
   int width,
   int height,
-  SurfaceHandle handle
+  SurfaceHandle handle,
 ) => ImageHandle.fromAddress(
   imageCreateFromTextureSourceImpl(
     externRefForJSAny(frame),
     width.toWasmI32(),
     height.toWasmI32(),
     handle.address.toWasmI32(),
-  ).toIntUnsigned()
+  ).toIntUnsigned(),
 );
 @pragma('wasm:import', 'skwasm.image_createFromTextureSource')
 external WasmI32 imageCreateFromTextureSourceImpl(
@@ -63,7 +56,7 @@ external WasmI32 imageCreateFromTextureSourceImpl(
   WasmI32 surfaceHandle,
 );
 
-@Native<Void Function(ImageHandle)>(symbol:'image_ref', isLeaf: true)
+@Native<Void Function(ImageHandle)>(symbol: 'image_ref', isLeaf: true)
 external void imageRef(ImageHandle handle);
 
 @Native<Void Function(ImageHandle)>(symbol: 'image_dispose', isLeaf: true)

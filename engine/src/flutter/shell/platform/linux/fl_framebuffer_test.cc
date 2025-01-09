@@ -4,8 +4,6 @@
 
 #include "gtest/gtest.h"
 
-#include "flutter/common/constants.h"
-#include "flutter/fml/logging.h"
 #include "flutter/shell/platform/linux/fl_framebuffer.h"
 #include "flutter/shell/platform/linux/testing/mock_epoxy.h"
 

@@ -36,23 +36,18 @@ Future<void> testMain() async {
     paragraph = rich(EngineParagraphStyle(fontFamily: 'Roboto'), (CanvasParagraphBuilder builder) {
       builder.pushStyle(EngineTextStyle.only(color: blue));
       builder.addText('Lorem ');
-      builder.pushStyle(EngineTextStyle.only(
-        color: green,
-        background: Paint()..color = red,
-      ));
+      builder.pushStyle(EngineTextStyle.only(color: green, background: Paint()..color = red));
       builder.addText('ipsum ');
       builder.pop();
       builder.addText('.');
-    })
-      ..layout(constrain(double.infinity));
+    })..layout(constrain(double.infinity));
     canvas.drawParagraph(paragraph, offset);
     offset = offset.translate(0, paragraph.height + 10);
 
     // Multi-line single-span.
     paragraph = rich(EngineParagraphStyle(fontFamily: 'Roboto'), (CanvasParagraphBuilder builder) {
       builder.addText('Lorem ipsum dolor sit');
-    })
-      ..layout(constrain(90.0));
+    })..layout(constrain(90.0));
     canvas.drawParagraph(paragraph, offset);
     offset = offset.translate(0, paragraph.height + 10);
 
@@ -65,8 +60,7 @@ Future<void> testMain() async {
       builder.addText('dolor ');
       builder.pop();
       builder.addText('sit');
-    })
-      ..layout(constrain(90.0));
+    })..layout(constrain(90.0));
     canvas.drawParagraph(paragraph, offset);
     offset = offset.translate(0, paragraph.height + 10);
 
@@ -90,24 +84,18 @@ Future<void> testMain() async {
       builder.addText('sit');
     }
 
-    paragraph = rich(
-      EngineParagraphStyle(fontFamily: 'Roboto', textAlign: TextAlign.left),
-      build,
-    )..layout(constrain(100.0));
+    paragraph = rich(EngineParagraphStyle(fontFamily: 'Roboto', textAlign: TextAlign.left), build)
+      ..layout(constrain(100.0));
     canvas.drawParagraph(paragraph, offset);
     offset = offset.translate(0, paragraph.height + 10);
 
-    paragraph = rich(
-      EngineParagraphStyle(fontFamily: 'Roboto', textAlign: TextAlign.center),
-      build,
-    )..layout(constrain(100.0));
+    paragraph = rich(EngineParagraphStyle(fontFamily: 'Roboto', textAlign: TextAlign.center), build)
+      ..layout(constrain(100.0));
     canvas.drawParagraph(paragraph, offset);
     offset = offset.translate(0, paragraph.height + 10);
 
-    paragraph = rich(
-      EngineParagraphStyle(fontFamily: 'Roboto', textAlign: TextAlign.right),
-      build,
-    )..layout(constrain(100.0));
+    paragraph = rich(EngineParagraphStyle(fontFamily: 'Roboto', textAlign: TextAlign.right), build)
+      ..layout(constrain(100.0));
     canvas.drawParagraph(paragraph, offset);
     offset = offset.translate(0, paragraph.height + 10);
 
@@ -131,24 +119,18 @@ Future<void> testMain() async {
       builder.addText('sit');
     }
 
-    paragraph = rich(
-      EngineParagraphStyle(fontFamily: 'Roboto', textAlign: TextAlign.left),
-      build,
-    )..layout(constrain(100.0));
+    paragraph = rich(EngineParagraphStyle(fontFamily: 'Roboto', textAlign: TextAlign.left), build)
+      ..layout(constrain(100.0));
     canvas.drawParagraph(paragraph, offset);
     offset = offset.translate(0, paragraph.height + 10);
 
-    paragraph = rich(
-      EngineParagraphStyle(fontFamily: 'Roboto', textAlign: TextAlign.center),
-      build,
-    )..layout(constrain(100.0));
+    paragraph = rich(EngineParagraphStyle(fontFamily: 'Roboto', textAlign: TextAlign.center), build)
+      ..layout(constrain(100.0));
     canvas.drawParagraph(paragraph, offset);
     offset = offset.translate(0, paragraph.height + 10);
 
-    paragraph = rich(
-      EngineParagraphStyle(fontFamily: 'Roboto', textAlign: TextAlign.right),
-      build,
-    )..layout(constrain(100.0));
+    paragraph = rich(EngineParagraphStyle(fontFamily: 'Roboto', textAlign: TextAlign.right), build)
+      ..layout(constrain(100.0));
     canvas.drawParagraph(paragraph, offset);
     offset = offset.translate(0, paragraph.height + 10);
 
@@ -237,16 +219,20 @@ Future<void> testMain() async {
     final DomCanvas canvas = DomCanvas(domDocument.createElement('flt-picture'));
     Offset offset = const Offset(10.0, 10.0);
 
-    final CanvasParagraph paragraph = rich(
-      EngineParagraphStyle(fontFamily: 'Roboto'),
-      (CanvasParagraphBuilder builder) {
-        builder.pushStyle(EngineTextStyle.only(color: yellow, fontSize: 24.0));
-        builder.addText('Lorem ');
-        builder.pushStyle(EngineTextStyle.only(color: red, fontSize: 48.0));
-        builder.addText('ipsum');
-      },
-    )..layout(constrain(double.infinity));
-    final Rect rect = Rect.fromLTWH(offset.dx, offset.dy, paragraph.maxIntrinsicWidth, paragraph.height);
+    final CanvasParagraph paragraph = rich(EngineParagraphStyle(fontFamily: 'Roboto'), (
+      CanvasParagraphBuilder builder,
+    ) {
+      builder.pushStyle(EngineTextStyle.only(color: yellow, fontSize: 24.0));
+      builder.addText('Lorem ');
+      builder.pushStyle(EngineTextStyle.only(color: red, fontSize: 48.0));
+      builder.addText('ipsum');
+    })..layout(constrain(double.infinity));
+    final Rect rect = Rect.fromLTWH(
+      offset.dx,
+      offset.dy,
+      paragraph.maxIntrinsicWidth,
+      paragraph.height,
+    );
     canvas.drawRect(rect, SurfacePaintData()..color = black.value);
     canvas.drawParagraph(paragraph, offset);
     offset = offset.translate(paragraph.maxIntrinsicWidth, 0.0);
@@ -259,13 +245,22 @@ Future<void> testMain() async {
     final double placeholderHeight = paragraph.height;
     final double placeholderWidth = paragraph.height * 2;
 
-    final CanvasParagraph paragraph2 = rich(
-      EngineParagraphStyle(),
-      (CanvasParagraphBuilder builder) {
-        builder.addPlaceholder(placeholderWidth, placeholderHeight, PlaceholderAlignment.baseline, baseline: TextBaseline.alphabetic);
-      },
-    )..layout(constrain(double.infinity));
-    final Rect rect2 = Rect.fromLTWH(offset.dx, offset.dy, paragraph2.maxIntrinsicWidth, paragraph2.height);
+    final CanvasParagraph paragraph2 = rich(EngineParagraphStyle(), (
+      CanvasParagraphBuilder builder,
+    ) {
+      builder.addPlaceholder(
+        placeholderWidth,
+        placeholderHeight,
+        PlaceholderAlignment.baseline,
+        baseline: TextBaseline.alphabetic,
+      );
+    })..layout(constrain(double.infinity));
+    final Rect rect2 = Rect.fromLTWH(
+      offset.dx,
+      offset.dy,
+      paragraph2.maxIntrinsicWidth,
+      paragraph2.height,
+    );
     canvas.drawRect(rect2, SurfacePaintData()..color = black.value);
     canvas.drawParagraph(paragraph2, offset);
     // Draw a rect in the placeholder.
@@ -287,33 +282,24 @@ Future<void> testMain() async {
   test('paints spans with varying heights/baselines', () {
     final BitmapCanvas canvas = BitmapCanvas(bounds, RenderStrategy());
 
-    final CanvasParagraph paragraph = rich(
-      EngineParagraphStyle(fontFamily: 'Roboto'),
-      (CanvasParagraphBuilder builder) {
-        builder.pushStyle(EngineTextStyle.only(fontSize: 20.0));
-        builder.addText('Lorem ');
-        builder.pushStyle(EngineTextStyle.only(
-          fontSize: 40.0,
-          background: Paint()..color = green,
-        ));
-        builder.addText('ipsum ');
-        builder.pushStyle(EngineTextStyle.only(
-          fontSize: 10.0,
-          color: white,
-          background: Paint()..color = black,
-        ));
-        builder.addText('dolor ');
-        builder.pushStyle(EngineTextStyle.only(fontSize: 30.0));
-        builder.addText('sit ');
-        builder.pop();
-        builder.pop();
-        builder.pushStyle(EngineTextStyle.only(
-          fontSize: 20.0,
-          background: Paint()..color = blue,
-        ));
-        builder.addText('amet');
-      },
-    )..layout(constrain(220.0));
+    final CanvasParagraph paragraph = rich(EngineParagraphStyle(fontFamily: 'Roboto'), (
+      CanvasParagraphBuilder builder,
+    ) {
+      builder.pushStyle(EngineTextStyle.only(fontSize: 20.0));
+      builder.addText('Lorem ');
+      builder.pushStyle(EngineTextStyle.only(fontSize: 40.0, background: Paint()..color = green));
+      builder.addText('ipsum ');
+      builder.pushStyle(
+        EngineTextStyle.only(fontSize: 10.0, color: white, background: Paint()..color = black),
+      );
+      builder.addText('dolor ');
+      builder.pushStyle(EngineTextStyle.only(fontSize: 30.0));
+      builder.addText('sit ');
+      builder.pop();
+      builder.pop();
+      builder.pushStyle(EngineTextStyle.only(fontSize: 20.0, background: Paint()..color = blue));
+      builder.addText('amet');
+    })..layout(constrain(220.0));
     canvas.drawParagraph(paragraph, Offset.zero);
 
     return takeScreenshot(canvas, bounds, 'canvas_paragraph_varying_heights');
@@ -322,17 +308,16 @@ Future<void> testMain() async {
   test('respects letter-spacing', () {
     final BitmapCanvas canvas = BitmapCanvas(bounds, RenderStrategy());
 
-    final CanvasParagraph paragraph = rich(
-      EngineParagraphStyle(fontFamily: 'Roboto'),
-      (CanvasParagraphBuilder builder) {
-        builder.pushStyle(EngineTextStyle.only(color: blue));
-        builder.addText('Lorem ');
-        builder.pushStyle(EngineTextStyle.only(color: green, letterSpacing: 1));
-        builder.addText('Lorem ');
-        builder.pushStyle(EngineTextStyle.only(color: red, letterSpacing: 3));
-        builder.addText('Lorem');
-      },
-    )..layout(constrain(double.infinity));
+    final CanvasParagraph paragraph = rich(EngineParagraphStyle(fontFamily: 'Roboto'), (
+      CanvasParagraphBuilder builder,
+    ) {
+      builder.pushStyle(EngineTextStyle.only(color: blue));
+      builder.addText('Lorem ');
+      builder.pushStyle(EngineTextStyle.only(color: green, letterSpacing: 1));
+      builder.addText('Lorem ');
+      builder.pushStyle(EngineTextStyle.only(color: red, letterSpacing: 3));
+      builder.addText('Lorem');
+    })..layout(constrain(double.infinity));
     canvas.drawParagraph(paragraph, Offset.zero);
 
     return takeScreenshot(canvas, bounds, 'canvas_paragraph_letter_spacing');
@@ -370,24 +355,25 @@ Future<void> testMain() async {
       TextDecorationStyle.wavy,
     ];
 
-    final CanvasParagraph paragraph = rich(
-      EngineParagraphStyle(fontFamily: 'Roboto'),
-      (CanvasParagraphBuilder builder) {
-        for (final TextDecorationStyle decorationStyle in decorationStyles) {
-          builder.pushStyle(EngineTextStyle.only(
+    final CanvasParagraph paragraph = rich(EngineParagraphStyle(fontFamily: 'Roboto'), (
+      CanvasParagraphBuilder builder,
+    ) {
+      for (final TextDecorationStyle decorationStyle in decorationStyles) {
+        builder.pushStyle(
+          EngineTextStyle.only(
             color: const Color.fromRGBO(50, 50, 255, 1.0),
             decoration: TextDecoration.underline,
             decorationStyle: decorationStyle,
             decorationColor: red,
             fontFamily: 'Roboto',
             fontSize: 30,
-          ));
-          builder.addText('Hello World');
-          builder.pop();
-          builder.addText(' ');
-        }
-      },
-    )..layout(constrain(double.infinity));
+          ),
+        );
+        builder.addText('Hello World');
+        builder.pop();
+        builder.addText(' ');
+      }
+    })..layout(constrain(double.infinity));
 
     canvas.drawParagraph(paragraph, Offset.zero);
     return takeScreenshot(canvas, bounds, 'canvas_paragraph_decoration');
@@ -403,76 +389,57 @@ Future<void> testMain() async {
 
     const FontFeature disableLigatures = FontFeature('liga', 0);
 
-    final CanvasParagraph paragraph = rich(
-      EngineParagraphStyle(fontFamily: 'Roboto'),
-      (CanvasParagraphBuilder builder) {
-        // Small Caps
-        builder.pushStyle(EngineTextStyle.only(
-          height: 1.5,
-          color: black,
-          fontSize: 32.0,
-        ));
-        builder.pushStyle(EngineTextStyle.only(
-          color: blue,
-          fontFeatures: <FontFeature>[enableSmallCaps],
-        ));
-        builder.addText(text);
-        // Make sure disabling a font feature also works.
-        builder.pushStyle(EngineTextStyle.only(
-          color: black,
-          fontFeatures: <FontFeature>[disableSmallCaps],
-        ));
-        builder.addText(' (smcp)\n');
-        builder.pop(); // disableSmallCaps
-        builder.pop(); // enableSmallCaps
+    final CanvasParagraph paragraph = rich(EngineParagraphStyle(fontFamily: 'Roboto'), (
+      CanvasParagraphBuilder builder,
+    ) {
+      // Small Caps
+      builder.pushStyle(EngineTextStyle.only(height: 1.5, color: black, fontSize: 32.0));
+      builder.pushStyle(
+        EngineTextStyle.only(color: blue, fontFeatures: <FontFeature>[enableSmallCaps]),
+      );
+      builder.addText(text);
+      // Make sure disabling a font feature also works.
+      builder.pushStyle(
+        EngineTextStyle.only(color: black, fontFeatures: <FontFeature>[disableSmallCaps]),
+      );
+      builder.addText(' (smcp)\n');
+      builder.pop(); // disableSmallCaps
+      builder.pop(); // enableSmallCaps
 
-        // No ligatures
-        builder.pushStyle(EngineTextStyle.only(
-          color: blue,
-          fontFeatures: <FontFeature>[disableLigatures],
-        ));
-        builder.addText(text);
-        builder.pop(); // disableLigatures
-        builder.addText(' (no liga)\n');
+      // No ligatures
+      builder.pushStyle(
+        EngineTextStyle.only(color: blue, fontFeatures: <FontFeature>[disableLigatures]),
+      );
+      builder.addText(text);
+      builder.pop(); // disableLigatures
+      builder.addText(' (no liga)\n');
 
-        // No font features
-        builder.pushStyle(EngineTextStyle.only(
-          color: blue,
-        ));
-        builder.addText(text);
-        builder.pop(); // color: blue
-        builder.addText(' (none)\n');
+      // No font features
+      builder.pushStyle(EngineTextStyle.only(color: blue));
+      builder.addText(text);
+      builder.pop(); // color: blue
+      builder.addText(' (none)\n');
 
-        // Onum
-        builder.pushStyle(EngineTextStyle.only(
-          color: blue,
-          fontFeatures: <FontFeature>[enableOnum],
-        ));
-        builder.addText(numeric);
-        builder.pop(); // enableOnum
-        builder.addText(' (onum)\n');
+      // Onum
+      builder.pushStyle(EngineTextStyle.only(color: blue, fontFeatures: <FontFeature>[enableOnum]));
+      builder.addText(numeric);
+      builder.pop(); // enableOnum
+      builder.addText(' (onum)\n');
 
-        // No font features
-        builder.pushStyle(EngineTextStyle.only(
-          color: blue,
-        ));
-        builder.addText(numeric);
-        builder.pop(); // color: blue
-        builder.addText(' (none)\n\n');
+      // No font features
+      builder.pushStyle(EngineTextStyle.only(color: blue));
+      builder.addText(numeric);
+      builder.pop(); // color: blue
+      builder.addText(' (none)\n\n');
 
-        // Multiple font features
-        builder.addText('Combined (smcp, onum):\n');
-        builder.pushStyle(EngineTextStyle.only(
-          color: blue,
-          fontFeatures: <FontFeature>[
-            enableSmallCaps,
-            enableOnum,
-          ],
-        ));
-        builder.addText('$text  $numeric');
-        builder.pop(); // enableSmallCaps, enableOnum
-      },
-    )..layout(constrain(double.infinity));
+      // Multiple font features
+      builder.addText('Combined (smcp, onum):\n');
+      builder.pushStyle(
+        EngineTextStyle.only(color: blue, fontFeatures: <FontFeature>[enableSmallCaps, enableOnum]),
+      );
+      builder.addText('$text  $numeric');
+      builder.pop(); // enableSmallCaps, enableOnum
+    })..layout(constrain(double.infinity));
     canvas.drawParagraph(paragraph, Offset.zero);
   }
 
@@ -494,28 +461,23 @@ Future<void> testMain() async {
     const String text = 'ABCDE 12345\n';
     FontVariation weight(double w) => FontVariation('wght', w);
 
-    final CanvasParagraph paragraph = rich(
-      EngineParagraphStyle(fontFamily: 'RobotoVariable'),
-      (CanvasParagraphBuilder builder) {
-        builder.pushStyle(EngineTextStyle.only(
-          fontSize: 48.0,
-        ));
-        builder.addText(text);
-        builder.pushStyle(EngineTextStyle.only(
-          fontSize: 48.0,
-          fontVariations: <FontVariation>[weight(900)],
-        ));
-        builder.addText(text);
-        builder.pushStyle(EngineTextStyle.only(
-          fontSize: 48.0,
-          fontVariations: <FontVariation>[weight(200)],
-        ));
-        builder.addText(text);
-        builder.pop();
-        builder.pop();
-        builder.pop();
-      },
-    )..layout(constrain(double.infinity));
+    final CanvasParagraph paragraph = rich(EngineParagraphStyle(fontFamily: 'RobotoVariable'), (
+      CanvasParagraphBuilder builder,
+    ) {
+      builder.pushStyle(EngineTextStyle.only(fontSize: 48.0));
+      builder.addText(text);
+      builder.pushStyle(
+        EngineTextStyle.only(fontSize: 48.0, fontVariations: <FontVariation>[weight(900)]),
+      );
+      builder.addText(text);
+      builder.pushStyle(
+        EngineTextStyle.only(fontSize: 48.0, fontVariations: <FontVariation>[weight(200)]),
+      );
+      builder.addText(text);
+      builder.pop();
+      builder.pop();
+      builder.pop();
+    })..layout(constrain(double.infinity));
     canvas.drawParagraph(paragraph, Offset.zero);
   }
 
@@ -576,16 +538,47 @@ Future<void> testMain() async {
         builder.pushStyle(EngineTextStyle.only(color: blue));
         builder.addText('Lorem');
         builder.pop();
-        builder.pushStyle(EngineTextStyle.only(foreground: Paint()..color = red..style = PaintingStyle.stroke));
+        builder.pushStyle(
+          EngineTextStyle.only(
+            foreground:
+                Paint()
+                  ..color = red
+                  ..style = PaintingStyle.stroke,
+          ),
+        );
         builder.addText('ipsum\n');
         builder.pop();
-        builder.pushStyle(EngineTextStyle.only(foreground: Paint()..color = blue..style = PaintingStyle.stroke..strokeWidth = 0.0));
+        builder.pushStyle(
+          EngineTextStyle.only(
+            foreground:
+                Paint()
+                  ..color = blue
+                  ..style = PaintingStyle.stroke
+                  ..strokeWidth = 0.0,
+          ),
+        );
         builder.addText('dolor');
         builder.pop();
-        builder.pushStyle(EngineTextStyle.only(foreground: Paint()..color = green..style = PaintingStyle.stroke..strokeWidth = 2.0));
+        builder.pushStyle(
+          EngineTextStyle.only(
+            foreground:
+                Paint()
+                  ..color = green
+                  ..style = PaintingStyle.stroke
+                  ..strokeWidth = 2.0,
+          ),
+        );
         builder.addText('sit\n');
         builder.pop();
-        builder.pushStyle(EngineTextStyle.only(foreground: Paint()..color = yellow..style = PaintingStyle.stroke..strokeWidth = 4.0));
+        builder.pushStyle(
+          EngineTextStyle.only(
+            foreground:
+                Paint()
+                  ..color = yellow
+                  ..style = PaintingStyle.stroke
+                  ..strokeWidth = 4.0,
+          ),
+        );
         builder.addText('amet');
       },
     );
@@ -610,11 +603,9 @@ Future<void> testMain() async {
   test('paragraph bounds hug the text inside the paragraph', () async {
     const Rect bounds = Rect.fromLTWH(0, 0, 150, 100);
 
-    final CanvasParagraphBuilder builder = CanvasParagraphBuilder(EngineParagraphStyle(
-      fontFamily: 'Ahem',
-      fontSize: 20,
-      textAlign: TextAlign.center,
-    ));
+    final CanvasParagraphBuilder builder = CanvasParagraphBuilder(
+      EngineParagraphStyle(fontFamily: 'Ahem', fontSize: 20, textAlign: TextAlign.center),
+    );
 
     // Expected layout with center-alignment is something like this:
     //
@@ -642,12 +633,7 @@ Future<void> testMain() async {
     canvas.translate(20, 20);
     canvas.drawParagraph(paragraph, Offset.zero);
     canvas.drawRect(
-      Rect.fromLTRB(
-        0,
-        0,
-        paragraph.width,
-        paragraph.height,
-      ),
+      Rect.fromLTRB(0, 0, paragraph.width, paragraph.height),
       SurfacePaintData()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1,

@@ -15,9 +15,7 @@ void testMain() {
     const int viewId = 6;
 
     group('createPlatformViewSlot', () {
-      test(
-          'can render slot, even for views that might have never been rendered before',
-          () async {
+      test('can render slot, even for views that might have never been rendered before', () async {
         final DomElement slot = createPlatformViewSlot(viewId);
         expect(slot, isNotNull);
         expect(slot.querySelector('slot'), isNotNull);
@@ -25,13 +23,17 @@ void testMain() {
 
       test('rendered markup contains required attributes', () async {
         final DomElement slot = createPlatformViewSlot(viewId);
-        expect(slot.style.pointerEvents, 'auto',
-            reason:
-                'Should re-enable pointer events for the contents of the view.');
+        expect(
+          slot.style.pointerEvents,
+          'auto',
+          reason: 'Should re-enable pointer events for the contents of the view.',
+        );
         final DomElement innerSlot = slot.querySelector('slot')!;
-        expect(innerSlot.getAttribute('name'), contains('$viewId'),
-            reason:
-                'The name attribute of the inner SLOT tag must refer to the viewId.');
+        expect(
+          innerSlot.getAttribute('name'),
+          contains('$viewId'),
+          reason: 'The name attribute of the inner SLOT tag must refer to the viewId.',
+        );
       });
     });
   });

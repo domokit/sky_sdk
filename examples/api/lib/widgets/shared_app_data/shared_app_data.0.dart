@@ -15,9 +15,7 @@ class SharedAppDataExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: SharedAppDataExample(),
-    );
+    return const MaterialApp(home: SharedAppDataExample());
   }
 }
 
@@ -38,9 +36,7 @@ class _SharedAppDataExampleState extends State<SharedAppDataExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('SharedAppData Sample'),
-      ),
+      appBar: AppBar(title: const Text('SharedAppData Sample')),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

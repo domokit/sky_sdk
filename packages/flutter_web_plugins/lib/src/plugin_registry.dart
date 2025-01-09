@@ -54,7 +54,7 @@ class Registrar extends BinaryMessenger {
   Registrar([
     @Deprecated(
       'This argument is ignored. '
-      'This feature was deprecated after v1.24.0-7.0.pre.'
+      'This feature was deprecated after v1.24.0-7.0.pre.',
     )
     BinaryMessenger? binaryMessenger,
   ]);
@@ -81,7 +81,7 @@ class Registrar extends BinaryMessenger {
   /// This method has been replaced with the more clearly-named [handleFrameworkMessage].
   @Deprecated(
     'Use handleFrameworkMessage instead. '
-    'This feature was deprecated after v1.24.0-7.0.pre.'
+    'This feature was deprecated after v1.24.0-7.0.pre.',
   )
   @override
   Future<void> handlePlatformMessage(
@@ -125,12 +125,14 @@ class Registrar extends BinaryMessenger {
         response = await handler(data);
       }
     } catch (exception, stack) {
-      FlutterError.reportError(FlutterErrorDetails(
-        exception: exception,
-        stack: stack,
-        library: 'flutter web plugins',
-        context: ErrorDescription('during a framework-to-plugin message'),
-      ));
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: exception,
+          stack: stack,
+          library: 'flutter web plugins',
+          context: ErrorDescription('during a framework-to-plugin message'),
+        ),
+      );
     } finally {
       if (callback != null) {
         callback(response);
@@ -141,7 +143,7 @@ class Registrar extends BinaryMessenger {
   /// Returns `this`.
   @Deprecated(
     'This property is redundant. It returns the object on which it is called. '
-    'This feature was deprecated after v1.24.0-7.0.pre.'
+    'This feature was deprecated after v1.24.0-7.0.pre.',
   )
   BinaryMessenger get messenger => this;
 
@@ -155,12 +157,14 @@ class Registrar extends BinaryMessenger {
       try {
         completer.complete(reply);
       } catch (exception, stack) {
-        FlutterError.reportError(FlutterErrorDetails(
-          exception: exception,
-          stack: stack,
-          library: 'flutter web plugins',
-          context: ErrorDescription('during a plugin-to-framework message'),
-        ));
+        FlutterError.reportError(
+          FlutterErrorDetails(
+            exception: exception,
+            stack: stack,
+            library: 'flutter web plugins',
+            context: ErrorDescription('during a plugin-to-framework message'),
+          ),
+        );
       }
     });
     return completer.future;
@@ -180,7 +184,7 @@ class Registrar extends BinaryMessenger {
 /// as part of a simplification of the web plugins API.
 @Deprecated(
   'Use Registrar instead. '
-  'This feature was deprecated after v1.26.0-18.0.pre.'
+  'This feature was deprecated after v1.26.0-18.0.pre.',
 )
 class PluginRegistry extends Registrar {
   /// Creates a [Registrar].
@@ -188,12 +192,12 @@ class PluginRegistry extends Registrar {
   /// The argument is ignored.
   @Deprecated(
     'Use Registrar instead. '
-    'This feature was deprecated after v1.26.0-18.0.pre.'
+    'This feature was deprecated after v1.26.0-18.0.pre.',
   )
   PluginRegistry([
     @Deprecated(
       'This argument is ignored. '
-      'This feature was deprecated after v1.26.0-18.0.pre.'
+      'This feature was deprecated after v1.26.0-18.0.pre.',
     )
     BinaryMessenger? binaryMessenger,
   ]) : super();
@@ -201,7 +205,7 @@ class PluginRegistry extends Registrar {
   /// Returns `this`. The argument is ignored.
   @Deprecated(
     'This method is redundant. It returns the object on which it is called. '
-    'This feature was deprecated after v1.26.0-18.0.pre.'
+    'This feature was deprecated after v1.26.0-18.0.pre.',
   )
   Registrar registrarFor(Type key) => this;
 }
@@ -212,13 +216,13 @@ final Registrar webPluginRegistrar = PluginRegistry();
 /// A deprecated alias for [webPluginRegistrar].
 @Deprecated(
   'Use webPluginRegistrar instead. '
-  'This feature was deprecated after v1.24.0-7.0.pre.'
+  'This feature was deprecated after v1.24.0-7.0.pre.',
 )
 PluginRegistry get webPluginRegistry => webPluginRegistrar as PluginRegistry;
 
 /// A deprecated alias for [webPluginRegistrar].
 @Deprecated(
   'Use webPluginRegistrar instead. '
-  'This feature was deprecated after v1.24.0-7.0.pre.'
+  'This feature was deprecated after v1.24.0-7.0.pre.',
 )
 BinaryMessenger get pluginBinaryMessenger => webPluginRegistrar;

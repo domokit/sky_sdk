@@ -11,36 +11,35 @@ void main() {
     await tester.pumpWidget(const example.DecoratedBoxTransitionExampleApp());
     expect(find.byType(FlutterLogo), findsOneWidget);
     expect(find.byType(Center), findsOneWidget);
-    expect(find.descendant(
-      of: find.byType(Center),
-      matching: find.byType(FlutterLogo)
-    ), findsOneWidget);
-    expect(find.ancestor(
-      of: find.byType(FlutterLogo),
-      matching: find.byType(Container)
-    ), findsAtLeast(1));
+    expect(
+      find.descendant(of: find.byType(Center), matching: find.byType(FlutterLogo)),
+      findsOneWidget,
+    );
+    expect(
+      find.ancestor(of: find.byType(FlutterLogo), matching: find.byType(Container)),
+      findsAtLeast(1),
+    );
     expect(find.byType(DecoratedBoxTransition), findsOneWidget);
 
     expect(
       tester.widget(find.byType(DecoratedBoxTransition)),
-      isA<DecoratedBoxTransition>()
-        .having(
-          (DecoratedBoxTransition transition) => transition.decoration.value,
-          'decoration',
-          BoxDecoration(
-            color: const Color(0xFFFFFFFF),
-            border: Border.all(style: BorderStyle.none),
-            borderRadius: BorderRadius.circular(60.0),
-            boxShadow: const <BoxShadow>[
-              BoxShadow(
-                color: Color(0x66666666),
-                blurRadius: 10.0,
-                spreadRadius: 3.0,
-                offset: Offset(0, 6.0),
-              ),
-            ],
-          ),
+      isA<DecoratedBoxTransition>().having(
+        (DecoratedBoxTransition transition) => transition.decoration.value,
+        'decoration',
+        BoxDecoration(
+          color: const Color(0xFFFFFFFF),
+          border: Border.all(style: BorderStyle.none),
+          borderRadius: BorderRadius.circular(60.0),
+          boxShadow: const <BoxShadow>[
+            BoxShadow(
+              color: Color(0x66666666),
+              blurRadius: 10.0,
+              spreadRadius: 3.0,
+              offset: Offset(0, 6.0),
+            ),
+          ],
         ),
+      ),
     );
 
     await tester.pump(const Duration(seconds: 3));
@@ -48,19 +47,16 @@ void main() {
 
     expect(
       tester.widget(find.byType(DecoratedBoxTransition)),
-      isA<DecoratedBoxTransition>()
-        .having(
-          (DecoratedBoxTransition transition) => transition.decoration.value,
-          'decoration',
-          BoxDecoration(
-            color: const Color(0xFFFFFFFF),
-            border: Border.all(
-              style: BorderStyle.none,
-            ),
-            borderRadius: BorderRadius.zero,
-            // No shadow.
-          ),
+      isA<DecoratedBoxTransition>().having(
+        (DecoratedBoxTransition transition) => transition.decoration.value,
+        'decoration',
+        BoxDecoration(
+          color: const Color(0xFFFFFFFF),
+          border: Border.all(style: BorderStyle.none),
+          borderRadius: BorderRadius.zero,
+          // No shadow.
         ),
+      ),
     );
   });
 }

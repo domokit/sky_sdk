@@ -63,7 +63,7 @@ import 'input_border.dart';
 @Deprecated(
   'Use WidgetState instead. '
   'Moved to the Widgets layer to make code available outside of Material. '
-  'This feature was deprecated after v3.19.0-0.3.pre.'
+  'This feature was deprecated after v3.19.0-0.3.pre.',
 )
 typedef MaterialState = WidgetState;
 
@@ -77,7 +77,7 @@ typedef MaterialState = WidgetState;
 @Deprecated(
   'Use WidgetPropertyResolver instead. '
   'Moved to the Widgets layer to make code available outside of Material. '
-  'This feature was deprecated after v3.19.0-0.3.pre.'
+  'This feature was deprecated after v3.19.0-0.3.pre.',
 )
 typedef MaterialPropertyResolver<T> = WidgetPropertyResolver<T>;
 
@@ -136,7 +136,7 @@ typedef MaterialPropertyResolver<T> = WidgetPropertyResolver<T>;
 @Deprecated(
   'Use WidgetStateColor instead. '
   'Moved to the Widgets layer to make code available outside of Material. '
-  'This feature was deprecated after v3.19.0-0.3.pre.'
+  'This feature was deprecated after v3.19.0-0.3.pre.',
 )
 typedef MaterialStateColor = WidgetStateColor;
 
@@ -174,7 +174,7 @@ typedef MaterialStateColor = WidgetStateColor;
 @Deprecated(
   'Use WidgetStateMouseCursor instead. '
   'Moved to the Widgets layer to make code available outside of Material. '
-  'This feature was deprecated after v3.19.0-0.3.pre.'
+  'This feature was deprecated after v3.19.0-0.3.pre.',
 )
 typedef MaterialStateMouseCursor = WidgetStateMouseCursor;
 
@@ -206,7 +206,7 @@ typedef MaterialStateMouseCursor = WidgetStateMouseCursor;
 @Deprecated(
   'Use WidgetStateBorderSide instead. '
   'Moved to the Widgets layer to make code available outside of Material. '
-  'This feature was deprecated after v3.19.0-0.3.pre.'
+  'This feature was deprecated after v3.19.0-0.3.pre.',
 )
 typedef MaterialStateBorderSide = WidgetStateBorderSide;
 
@@ -236,7 +236,7 @@ typedef MaterialStateBorderSide = WidgetStateBorderSide;
 @Deprecated(
   'Use WidgetStateOutlinedBorder instead. '
   'Moved to the Widgets layer to make code available outside of Material. '
-  'This feature was deprecated after v3.19.0-0.3.pre.'
+  'This feature was deprecated after v3.19.0-0.3.pre.',
 )
 typedef MaterialStateOutlinedBorder = WidgetStateOutlinedBorder;
 
@@ -273,7 +273,7 @@ typedef MaterialStateOutlinedBorder = WidgetStateOutlinedBorder;
 @Deprecated(
   'Use WidgetStateTextStyle instead. '
   'Moved to the Widgets layer to make code available outside of Material. '
-  'This feature was deprecated after v3.19.0-0.3.pre.'
+  'This feature was deprecated after v3.19.0-0.3.pre.',
 )
 typedef MaterialStateTextStyle = WidgetStateTextStyle;
 
@@ -305,15 +305,16 @@ typedef MaterialStateTextStyle = WidgetStateTextStyle;
 @Deprecated(
   'Use WidgetStateInputBorder instead. '
   'Renamed to match other WidgetStateProperty objects. '
-  'This feature was deprecated after v3.26.0-0.1.pre.'
+  'This feature was deprecated after v3.26.0-0.1.pre.',
 )
-abstract class MaterialStateOutlineInputBorder extends OutlineInputBorder implements MaterialStateProperty<InputBorder> {
+abstract class MaterialStateOutlineInputBorder extends OutlineInputBorder
+    implements MaterialStateProperty<InputBorder> {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
   @Deprecated(
     'Use WidgetStateInputBorder instead. '
     'Renamed to match other WidgetStateProperty objects. '
-    'This feature was deprecated after v3.26.0-0.1.pre.'
+    'This feature was deprecated after v3.26.0-0.1.pre.',
   )
   const MaterialStateOutlineInputBorder();
 
@@ -328,9 +329,11 @@ abstract class MaterialStateOutlineInputBorder extends OutlineInputBorder implem
   @Deprecated(
     'Use WidgetStateInputBorder.resolveWith() instead. '
     'Renamed to match other WidgetStateProperty objects. '
-    'This feature was deprecated after v3.26.0-0.1.pre.'
+    'This feature was deprecated after v3.26.0-0.1.pre.',
   )
-  const factory MaterialStateOutlineInputBorder.resolveWith(MaterialPropertyResolver<InputBorder> callback) = _MaterialStateOutlineInputBorder;
+  const factory MaterialStateOutlineInputBorder.resolveWith(
+    MaterialPropertyResolver<InputBorder> callback,
+  ) = _MaterialStateOutlineInputBorder;
 
   /// Returns a [InputBorder] that's to be used when a Material component is in the
   /// specified state.
@@ -382,15 +385,16 @@ class _MaterialStateOutlineInputBorder extends MaterialStateOutlineInputBorder {
 @Deprecated(
   'Use WidgetStateInputBorder instead. '
   'Renamed to match other WidgetStateProperty objects. '
-  'This feature was deprecated after v3.26.0-0.1.pre.'
+  'This feature was deprecated after v3.26.0-0.1.pre.',
 )
-abstract class MaterialStateUnderlineInputBorder extends UnderlineInputBorder implements MaterialStateProperty<InputBorder> {
+abstract class MaterialStateUnderlineInputBorder extends UnderlineInputBorder
+    implements MaterialStateProperty<InputBorder> {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
   @Deprecated(
     'Use WidgetStateInputBorder instead. '
     'Renamed to match other WidgetStateProperty objects. '
-    'This feature was deprecated after v3.26.0-0.1.pre.'
+    'This feature was deprecated after v3.26.0-0.1.pre.',
   )
   const MaterialStateUnderlineInputBorder();
 
@@ -405,9 +409,11 @@ abstract class MaterialStateUnderlineInputBorder extends UnderlineInputBorder im
   @Deprecated(
     'Use WidgetStateInputBorder.resolveWith() instead. '
     'Renamed to match other WidgetStateProperty objects. '
-    'This feature was deprecated after v3.26.0-0.1.pre.'
+    'This feature was deprecated after v3.26.0-0.1.pre.',
   )
-  const factory MaterialStateUnderlineInputBorder.resolveWith(MaterialPropertyResolver<InputBorder> callback) = _MaterialStateUnderlineInputBorder;
+  const factory MaterialStateUnderlineInputBorder.resolveWith(
+    MaterialPropertyResolver<InputBorder> callback,
+  ) = _MaterialStateUnderlineInputBorder;
 
   /// Returns a [InputBorder] that's to be used when a Material component is in the
   /// specified state.
@@ -453,7 +459,8 @@ class _MaterialStateUnderlineInputBorder extends MaterialStateUnderlineInputBord
 ///
 /// ** See code in examples/api/lib/material/widget_state_input_border/widget_state_input_border.0.dart **
 /// {@end-tool}
-abstract interface class WidgetStateInputBorder implements InputBorder, WidgetStateProperty<InputBorder> {
+abstract interface class WidgetStateInputBorder
+    implements InputBorder, WidgetStateProperty<InputBorder> {
   /// Creates a [WidgetStateInputBorder] using a [WidgetPropertyResolver]
   /// callback.
   ///
@@ -461,9 +468,8 @@ abstract interface class WidgetStateInputBorder implements InputBorder, WidgetSt
   /// [WidgetStateInputBorder], such as [InputDecoration.border]
   /// (if used as a regular [InputBorder], it acts the same as
   /// an empty `OutlineInputBorder()` constructor).
-  const factory WidgetStateInputBorder.resolveWith(
-    WidgetPropertyResolver<InputBorder> callback,
-  ) = _WidgetStateInputBorder;
+  const factory WidgetStateInputBorder.resolveWith(WidgetPropertyResolver<InputBorder> callback) =
+      _WidgetStateInputBorder;
 
   /// Creates a [WidgetStateOutlinedBorder] from a [WidgetStateMap].
   ///
@@ -473,9 +479,8 @@ abstract interface class WidgetStateInputBorder implements InputBorder, WidgetSt
   /// (throws an error if used as a regular [OutlinedBorder]).
   ///
   /// {@macro flutter.widgets.WidgetState.any}
-  const factory WidgetStateInputBorder.fromMap(
-    WidgetStateMap<InputBorder> map,
-  ) = _WidgetInputBorderMapper;
+  const factory WidgetStateInputBorder.fromMap(WidgetStateMap<InputBorder> map) =
+      _WidgetInputBorderMapper;
 }
 
 class _WidgetStateInputBorder extends OutlineInputBorder implements WidgetStateInputBorder {
@@ -487,7 +492,8 @@ class _WidgetStateInputBorder extends OutlineInputBorder implements WidgetStateI
   InputBorder resolve(Set<WidgetState> states) => _resolve(states);
 }
 
-class _WidgetInputBorderMapper extends WidgetStateMapper<InputBorder> implements WidgetStateInputBorder {
+class _WidgetInputBorderMapper extends WidgetStateMapper<InputBorder>
+    implements WidgetStateInputBorder {
   const _WidgetInputBorderMapper(super.map);
 }
 
@@ -529,7 +535,7 @@ class _WidgetInputBorderMapper extends WidgetStateMapper<InputBorder> implements
 @Deprecated(
   'Use WidgetStateProperty instead. '
   'Moved to the Widgets layer to make code available outside of Material. '
-  'This feature was deprecated after v3.19.0-0.3.pre.'
+  'This feature was deprecated after v3.19.0-0.3.pre.',
 )
 typedef MaterialStateProperty<T> = WidgetStateProperty<T>;
 
@@ -543,7 +549,7 @@ typedef MaterialStateProperty<T> = WidgetStateProperty<T>;
 @Deprecated(
   'Use WidgetStatePropertyAll instead. '
   'Moved to the Widgets layer to make code available outside of Material. '
-  'This feature was deprecated after v3.19.0-0.3.pre.'
+  'This feature was deprecated after v3.19.0-0.3.pre.',
 )
 typedef MaterialStatePropertyAll<T> = WidgetStatePropertyAll<T>;
 
@@ -582,6 +588,6 @@ typedef MaterialStatePropertyAll<T> = WidgetStatePropertyAll<T>;
 @Deprecated(
   'Use WidgetStatesController instead. '
   'Moved to the Widgets layer to make code available outside of Material. '
-  'This feature was deprecated after v3.19.0-0.3.pre.'
+  'This feature was deprecated after v3.19.0-0.3.pre.',
 )
 typedef MaterialStatesController = WidgetStatesController;

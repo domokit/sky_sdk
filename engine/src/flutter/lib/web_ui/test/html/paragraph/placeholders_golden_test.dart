@@ -62,11 +62,7 @@ Future<void> testMain() async {
   test('draws paragraphs with placeholders and text align', () {
     final BitmapCanvas canvas = BitmapCanvas(bounds, RenderStrategy());
 
-    const List<TextAlign> aligns = <TextAlign>[
-      TextAlign.left,
-      TextAlign.center,
-      TextAlign.right,
-    ];
+    const List<TextAlign> aligns = <TextAlign>[TextAlign.left, TextAlign.center, TextAlign.right];
 
     Offset offset = Offset.zero;
     for (final TextAlign align in aligns) {
@@ -96,11 +92,7 @@ Future<void> testMain() async {
   test('draws paragraphs with placeholders and text align in DOM mode', () {
     final DomCanvas canvas = DomCanvas(domDocument.createElement('flt-picture'));
 
-    const List<TextAlign> aligns = <TextAlign>[
-      TextAlign.left,
-      TextAlign.center,
-      TextAlign.right,
-    ];
+    const List<TextAlign> aligns = <TextAlign>[TextAlign.left, TextAlign.center, TextAlign.right];
 
     Offset offset = Offset.zero;
     for (final TextAlign align in aligns) {
@@ -137,7 +129,12 @@ Future<void> testMain() async {
     final CanvasParagraph paragraph1 = rich(
       EngineParagraphStyle(fontFamily: 'Roboto', fontSize: 24.0, textAlign: TextAlign.center),
       (CanvasParagraphBuilder builder) {
-        builder.addPlaceholder(80.0, 50.0, PlaceholderAlignment.baseline, baseline: TextBaseline.alphabetic);
+        builder.addPlaceholder(
+          80.0,
+          50.0,
+          PlaceholderAlignment.baseline,
+          baseline: TextBaseline.alphabetic,
+        );
         builder.pushStyle(TextStyle(color: black));
         builder.addText(' Lorem ipsum.');
       },
@@ -156,7 +153,12 @@ Future<void> testMain() async {
       (CanvasParagraphBuilder builder) {
         builder.pushStyle(TextStyle(color: black));
         builder.addText('Lorem ipsum ');
-        builder.addPlaceholder(80.0, 50.0, PlaceholderAlignment.baseline, baseline: TextBaseline.alphabetic);
+        builder.addPlaceholder(
+          80.0,
+          50.0,
+          PlaceholderAlignment.baseline,
+          baseline: TextBaseline.alphabetic,
+        );
       },
     )..layout(constrain(400.0));
 
@@ -173,7 +175,12 @@ Future<void> testMain() async {
       (CanvasParagraphBuilder builder) {
         builder.pushStyle(TextStyle(color: black));
         builder.addText('Lorem ipsum ');
-        builder.addPlaceholder(80.0, 50.0, PlaceholderAlignment.baseline, baseline: TextBaseline.alphabetic);
+        builder.addPlaceholder(
+          80.0,
+          50.0,
+          PlaceholderAlignment.baseline,
+          baseline: TextBaseline.alphabetic,
+        );
       },
     )..layout(constrain(200.0));
 
@@ -186,12 +193,11 @@ Future<void> testMain() async {
   });
 }
 
-void surroundParagraph(
-  EngineCanvas canvas,
-  Offset offset,
-  CanvasParagraph paragraph,
-) {
+void surroundParagraph(EngineCanvas canvas, Offset offset, CanvasParagraph paragraph) {
   final Rect rect = offset & Size(paragraph.width, paragraph.height);
-  final SurfacePaint paint = SurfacePaint()..color = blue..style = PaintingStyle.stroke;
+  final SurfacePaint paint =
+      SurfacePaint()
+        ..color = blue
+        ..style = PaintingStyle.stroke;
   canvas.drawRect(rect, paint.paintData);
 }

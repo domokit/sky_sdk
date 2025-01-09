@@ -65,7 +65,6 @@ abstract class EngineInputAction {
   /// Action to send
   static const SendInputAction send = SendInputAction();
 
-
   /// The HTML `enterkeyhint` attribute to be set on the DOM element.
   ///
   /// This HTML attribute helps the browser decide what kind of keyboard action

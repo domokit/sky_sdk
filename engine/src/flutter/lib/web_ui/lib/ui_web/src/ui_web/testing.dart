@@ -24,8 +24,7 @@ void debugOverrideDevicePixelRatio(double? value) {
 /// When true, the engine will emulate a specific screen size, and always
 /// use the "Ahem" font to reduce test flakiness and dependence on the test
 /// environment.
-bool get debugEmulateFlutterTesterEnvironment =>
-    _debugEmulateFlutterTesterEnvironment;
+bool get debugEmulateFlutterTesterEnvironment => _debugEmulateFlutterTesterEnvironment;
 
 /// Sets whether the Flutter engine is running in `flutter test` emulation mode.
 set debugEmulateFlutterTesterEnvironment(bool value) {

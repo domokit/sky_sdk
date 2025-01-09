@@ -35,10 +35,7 @@ Float32List makeFreshSkColor(ui.Color color) {
 ui.TextPosition fromPositionWithAffinity(SkTextPosition positionWithAffinity) {
   final ui.TextAffinity affinity =
       ui.TextAffinity.values[positionWithAffinity.affinity.value.toInt()];
-  return ui.TextPosition(
-    offset: positionWithAffinity.pos.toInt(),
-    affinity: affinity,
-  );
+  return ui.TextPosition(offset: positionWithAffinity.pos.toInt(), affinity: affinity);
 }
 
 /// Shadow flag constants derived from Skia's SkShadowFlags.h.
@@ -61,8 +58,7 @@ class SkiaShadowFlags {
   static const int kDirectionalLight_ShadowFlag = 0x04;
 
   /// Complete value for the `flags` argument for opaque occluder.
-  static const int kDefaultShadowFlags =
-      kDirectionalLight_ShadowFlag | kNone_ShadowFlag;
+  static const int kDefaultShadowFlags = kDirectionalLight_ShadowFlag | kNone_ShadowFlag;
 
   /// Complete value for the `flags` argument for transparent occluder.
   static const int kTransparentOccluderShadowFlags =
@@ -125,8 +121,7 @@ ui.Rect computeSkShadowBounds(
   left = left - 1 + (spotOffsetX - ambientBlur - spotBlur) * devicePixelRatio;
   top = top - 1 + (spotOffsetY - ambientBlur - spotBlur) * devicePixelRatio;
   right = right + 1 + (spotOffsetX + ambientBlur + spotBlur) * devicePixelRatio;
-  bottom =
-      bottom + 1 + (spotOffsetY + ambientBlur + spotBlur) * devicePixelRatio;
+  bottom = bottom + 1 + (spotOffsetY + ambientBlur + spotBlur) * devicePixelRatio;
 
   final ui.Rect shadowBounds = ui.Rect.fromLTRB(left, top, right, bottom);
 
@@ -145,12 +140,10 @@ ui.Rect computeSkShadowBounds(
 
 const double kAmbientHeightFactor = 1.0 / 128.0;
 const double kAmbientGeomFactor = 64.0;
-const double kMaxAmbientRadius =
-    300 * kAmbientHeightFactor * kAmbientGeomFactor;
+const double kMaxAmbientRadius = 300 * kAmbientHeightFactor * kAmbientGeomFactor;
 
 double ambientBlurRadius(double height) {
-  return math.min(
-      height * kAmbientHeightFactor * kAmbientGeomFactor, kMaxAmbientRadius);
+  return math.min(height * kAmbientHeightFactor * kAmbientGeomFactor, kMaxAmbientRadius);
 }
 
 void drawSkShadow(
@@ -161,15 +154,14 @@ void drawSkShadow(
   bool transparentOccluder,
   double devicePixelRatio,
 ) {
-  int flags = transparentOccluder
-      ? SkiaShadowFlags.kTransparentOccluderShadowFlags
-      : SkiaShadowFlags.kDefaultShadowFlags;
+  int flags =
+      transparentOccluder
+          ? SkiaShadowFlags.kTransparentOccluderShadowFlags
+          : SkiaShadowFlags.kDefaultShadowFlags;
   flags |= SkiaShadowFlags.kDirectionalLight_ShadowFlag;
 
-  final ui.Color inAmbient =
-      color.withAlpha((color.alpha * ckShadowAmbientAlpha).round());
-  final ui.Color inSpot =
-      color.withAlpha((color.alpha * ckShadowSpotAlpha).round());
+  final ui.Color inAmbient = color.withAlpha((color.alpha * ckShadowAmbientAlpha).round());
+  final ui.Color inSpot = color.withAlpha((color.alpha * ckShadowSpotAlpha).round());
 
   final SkTonalColors inTonalColors = SkTonalColors(
     ambient: makeFreshSkColor(inAmbient),

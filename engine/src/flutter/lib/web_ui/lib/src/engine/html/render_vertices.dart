@@ -26,18 +26,13 @@ class SurfaceVertices implements ui.Vertices {
     List<ui.Offset> positions, {
     List<ui.Color>? colors,
     List<int>? indices,
-  })  : colors = colors != null ? _int32ListFromColors(colors) : null,
-        indices = indices != null ? Uint16List.fromList(indices) : null,
-        positions = offsetListToFloat32List(positions) {
+  }) : colors = colors != null ? _int32ListFromColors(colors) : null,
+       indices = indices != null ? Uint16List.fromList(indices) : null,
+       positions = offsetListToFloat32List(positions) {
     initWebGl();
   }
 
-  SurfaceVertices.raw(
-    this.mode,
-    this.positions, {
-    this.colors,
-    this.indices,
-  }) {
+  SurfaceVertices.raw(this.mode, this.positions, {this.colors, this.indices}) {
     initWebGl();
   }
 
@@ -88,24 +83,32 @@ void initWebGl() {
 
 abstract class GlRenderer {
   void drawVertices(
-      DomCanvasRenderingContext2D? context,
-      int canvasWidthInPixels,
-      int canvasHeightInPixels,
-      Matrix4 transform,
-      SurfaceVertices vertices,
-      ui.BlendMode blendMode,
-      SurfacePaintData paint);
+    DomCanvasRenderingContext2D? context,
+    int canvasWidthInPixels,
+    int canvasHeightInPixels,
+    Matrix4 transform,
+    SurfaceVertices vertices,
+    ui.BlendMode blendMode,
+    SurfacePaintData paint,
+  );
 
-  Object? drawRect(ui.Rect targetRect, GlContext gl, GlProgram glProgram,
-      NormalizedGradient gradient, int widthInPixels, int heightInPixels);
+  Object? drawRect(
+    ui.Rect targetRect,
+    GlContext gl,
+    GlProgram glProgram,
+    NormalizedGradient gradient,
+    int widthInPixels,
+    int heightInPixels,
+  );
 
   String drawRectToImageUrl(
-      ui.Rect targetRect,
-      GlContext gl,
-      GlProgram glProgram,
-      NormalizedGradient gradient,
-      int widthInPixels,
-      int heightInPixels);
+    ui.Rect targetRect,
+    GlContext gl,
+    GlProgram glProgram,
+    NormalizedGradient gradient,
+    int widthInPixels,
+    int heightInPixels,
+  );
 
   void drawHairline(DomCanvasRenderingContext2D? ctx, Float32List positions);
 }
@@ -117,13 +120,14 @@ abstract class GlRenderer {
 class _WebGlRenderer implements GlRenderer {
   @override
   void drawVertices(
-      DomCanvasRenderingContext2D? context,
-      int canvasWidthInPixels,
-      int canvasHeightInPixels,
-      Matrix4 transform,
-      SurfaceVertices vertices,
-      ui.BlendMode blendMode,
-      SurfacePaintData paint) {
+    DomCanvasRenderingContext2D? context,
+    int canvasWidthInPixels,
+    int canvasHeightInPixels,
+    Matrix4 transform,
+    SurfaceVertices vertices,
+    ui.BlendMode blendMode,
+    SurfacePaintData paint,
+  ) {
     // Compute bounds of vertices.
     final Float32List positions = vertices.positions;
     final ui.Rect bounds = _computeVerticesBounds(positions, transform);
@@ -144,8 +148,7 @@ class _WebGlRenderer implements GlRenderer {
     }
     // If Vertices are is smaller than hosting canvas, allocate minimal
     // offscreen canvas to reduce readPixels data size.
-    if ((maxValueX - minValueX) < widthInPixels &&
-        (maxValueY - minValueY) < heightInPixels) {
+    if ((maxValueX - minValueX) < widthInPixels && (maxValueY - minValueY) < heightInPixels) {
       widthInPixels = maxValueX.ceil() - minValueX.floor();
       heightInPixels = maxValueY.ceil() - minValueY.floor();
       offsetX = minValueX.floor().toDouble();
@@ -160,36 +163,47 @@ class _WebGlRenderer implements GlRenderer {
     final EngineImageShader? imageShader =
         paint.shader == null ? null : paint.shader! as EngineImageShader;
 
-    final String vertexShader = imageShader == null
-        ? VertexShaders.writeBaseVertexShader()
-        : VertexShaders.writeTextureVertexShader();
-    final String fragmentShader = imageShader == null
-        ? _writeVerticesFragmentShader()
-        : FragmentShaders.writeTextureFragmentShader(
-            isWebGl2, imageShader.tileModeX, imageShader.tileModeY);
+    final String vertexShader =
+        imageShader == null
+            ? VertexShaders.writeBaseVertexShader()
+            : VertexShaders.writeTextureVertexShader();
+    final String fragmentShader =
+        imageShader == null
+            ? _writeVerticesFragmentShader()
+            : FragmentShaders.writeTextureFragmentShader(
+              isWebGl2,
+              imageShader.tileModeX,
+              imageShader.tileModeY,
+            );
 
-    final GlContext gl =
-        GlContextCache.createGlContext(widthInPixels, heightInPixels)!;
+    final GlContext gl = GlContextCache.createGlContext(widthInPixels, heightInPixels)!;
 
     final GlProgram glProgram = gl.cacheProgram(vertexShader, fragmentShader);
     gl.useProgram(glProgram);
 
-    final Object positionAttributeLocation =
-        gl.getAttributeLocation(glProgram.program, 'position');
+    final Object positionAttributeLocation = gl.getAttributeLocation(glProgram.program, 'position');
 
-    setupVertexTransforms(gl, glProgram, offsetX, offsetY,
-        widthInPixels.toDouble(), heightInPixels.toDouble(), transform);
+    setupVertexTransforms(
+      gl,
+      glProgram,
+      offsetX,
+      offsetY,
+      widthInPixels.toDouble(),
+      heightInPixels.toDouble(),
+      transform,
+    );
 
     if (imageShader != null) {
       /// To map from vertex position to texture coordinate in 0..1 range,
       /// we setup scalar to be used in vertex shader.
       setupTextureTransform(
-          gl,
-          glProgram,
-          0.0,
-          0.0,
-          1.0 / imageShader.image.width.toDouble(),
-          1.0 / imageShader.image.height.toDouble());
+        gl,
+        glProgram,
+        0.0,
+        0.0,
+        1.0 / imageShader.image.width.toDouble(),
+        1.0 / imageShader.image.height.toDouble(),
+      );
     }
 
     // Setup geometry.
@@ -242,15 +256,7 @@ class _WebGlRenderer implements GlRenderer {
         gl.bufferData(vertices.colors, gl.kStaticDraw);
       }
       final Object colorLoc = gl.getAttributeLocation(glProgram.program, 'color');
-      vertexAttribPointerGlContext(
-        gl.glContext,
-        colorLoc,
-        4,
-        gl.kUnsignedByte,
-        true,
-        0,
-        0,
-      );
+      vertexAttribPointerGlContext(gl.glContext, colorLoc, 4, gl.kUnsignedByte, true, 0, 0);
       gl.enableVertexAttribArray(colorLoc);
     } else {
       // Copy image it to the texture.
@@ -264,17 +270,29 @@ class _WebGlRenderer implements GlRenderer {
       gl.activeTexture(gl.kTexture0);
       gl.bindTexture(gl.kTexture2D, texture);
 
-      gl.texImage2D(gl.kTexture2D, 0, gl.kRGBA, gl.kRGBA, gl.kUnsignedByte,
-          imageShader.image.imgElement);
+      gl.texImage2D(
+        gl.kTexture2D,
+        0,
+        gl.kRGBA,
+        gl.kRGBA,
+        gl.kUnsignedByte,
+        imageShader.image.imgElement,
+      );
 
       if (isWebGl2) {
         // Texture REPEAT and MIRROR is only supported in WebGL 2, for
         // WebGL 1.0 we let shader compute correct uv coordinates.
-        gl.texParameteri(gl.kTexture2D, gl.kTextureWrapS,
-            tileModeToGlWrapping(gl, imageShader.tileModeX));
+        gl.texParameteri(
+          gl.kTexture2D,
+          gl.kTextureWrapS,
+          tileModeToGlWrapping(gl, imageShader.tileModeX),
+        );
 
-        gl.texParameteri(gl.kTexture2D, gl.kTextureWrapT,
-            tileModeToGlWrapping(gl, imageShader.tileModeY));
+        gl.texParameteri(
+          gl.kTexture2D,
+          gl.kTextureWrapT,
+          tileModeToGlWrapping(gl, imageShader.tileModeY),
+        );
 
         // Mipmapping saves your texture in different resolutions
         // so the graphics card can choose which resolution is optimal
@@ -322,10 +340,15 @@ class _WebGlRenderer implements GlRenderer {
   /// Browsers that support OffscreenCanvas and the transferToImageBitmap api
   /// will return ImageBitmap, otherwise will return CanvasElement.
   @override
-  Object? drawRect(ui.Rect targetRect, GlContext gl, GlProgram glProgram,
-      NormalizedGradient gradient, int widthInPixels, int heightInPixels) {
-    drawRectToGl(
-        targetRect, gl, glProgram, gradient, widthInPixels, heightInPixels);
+  Object? drawRect(
+    ui.Rect targetRect,
+    GlContext gl,
+    GlProgram glProgram,
+    NormalizedGradient gradient,
+    int widthInPixels,
+    int heightInPixels,
+  ) {
+    drawRectToGl(targetRect, gl, glProgram, gradient, widthInPixels, heightInPixels);
     final Object? image = gl.readPatternData(gradient.isOpaque);
     gl.bindArrayBuffer(null);
     gl.bindElementArrayBuffer(null);
@@ -336,14 +359,14 @@ class _WebGlRenderer implements GlRenderer {
   /// url.
   @override
   String drawRectToImageUrl(
-      ui.Rect targetRect,
-      GlContext gl,
-      GlProgram glProgram,
-      NormalizedGradient gradient,
-      int widthInPixels,
-      int heightInPixels) {
-    drawRectToGl(
-        targetRect, gl, glProgram, gradient, widthInPixels, heightInPixels);
+    ui.Rect targetRect,
+    GlContext gl,
+    GlProgram glProgram,
+    NormalizedGradient gradient,
+    int widthInPixels,
+    int heightInPixels,
+  ) {
+    drawRectToGl(targetRect, gl, glProgram, gradient, widthInPixels, heightInPixels);
     final String imageUrl = gl.toImageUrl();
     // Cleanup buffers.
     gl.bindArrayBuffer(null);
@@ -354,8 +377,14 @@ class _WebGlRenderer implements GlRenderer {
   /// Renders a rectangle using given program into [GlContext].
   ///
   /// Caller has to cleanup gl array and element array buffers.
-  void drawRectToGl(ui.Rect targetRect, GlContext gl, GlProgram glProgram,
-      NormalizedGradient gradient, int widthInPixels, int heightInPixels) {
+  void drawRectToGl(
+    ui.Rect targetRect,
+    GlContext gl,
+    GlProgram glProgram,
+    NormalizedGradient gradient,
+    int widthInPixels,
+    int heightInPixels,
+  ) {
     // Setup rectangle coordinates.
     final double left = targetRect.left;
     final double top = targetRect.top;
@@ -372,15 +401,19 @@ class _WebGlRenderer implements GlRenderer {
     vertices[6] = left;
     vertices[7] = bottom;
 
-    final Object transformUniform =
-        gl.getUniformLocation(glProgram.program, 'u_ctransform');
+    final Object transformUniform = gl.getUniformLocation(glProgram.program, 'u_ctransform');
     gl.setUniformMatrix4fv(transformUniform, false, Matrix4.identity().storage);
 
     // Set uniform to scale 0..width/height pixels coordinates to -1..1
     // clipspace range and flip the Y axis.
     final Object resolution = gl.getUniformLocation(glProgram.program, 'u_scale');
-    gl.setUniform4f(resolution, 2.0 / widthInPixels.toDouble(),
-        -2.0 / heightInPixels.toDouble(), 1, 1);
+    gl.setUniform4f(
+      resolution,
+      2.0 / widthInPixels.toDouble(),
+      -2.0 / heightInPixels.toDouble(),
+      1,
+      1,
+    );
     final Object shift = gl.getUniformLocation(glProgram.program, 'u_shift');
     gl.setUniform4f(shift, -1, 1, 0, 0);
 
@@ -389,15 +422,7 @@ class _WebGlRenderer implements GlRenderer {
     gl.bindArrayBuffer(positionsBuffer);
     gl.bufferData(vertices, gl.kStaticDraw);
     // Point an attribute to the currently bound vertex buffer object.
-    vertexAttribPointerGlContext(
-      gl.glContext,
-      0,
-      2,
-      gl.kFloat,
-      false,
-      0,
-      0,
-    );
+    vertexAttribPointerGlContext(gl.glContext, 0, 2, gl.kFloat, false, 0, 0);
     gl.enableVertexAttribArray(0);
 
     // Setup color buffer.
@@ -411,15 +436,7 @@ class _WebGlRenderer implements GlRenderer {
       0xFF00FFFF,
     ]);
     gl.bufferData(colors, gl.kStaticDraw);
-    vertexAttribPointerGlContext(
-      gl.glContext,
-      1,
-      4,
-      gl.kUnsignedByte,
-      true,
-      0,
-      0,
-    );
+    vertexAttribPointerGlContext(gl.glContext, 1, 4, gl.kUnsignedByte, true, 0, 0);
     gl.enableVertexAttribArray(1);
 
     final Object? indexBuffer = gl.createBuffer();
@@ -428,15 +445,13 @@ class _WebGlRenderer implements GlRenderer {
 
     if (gl.containsUniform(glProgram.program, 'u_resolution')) {
       final Object uRes = gl.getUniformLocation(glProgram.program, 'u_resolution');
-      gl.setUniform2f(
-          uRes, widthInPixels.toDouble(), heightInPixels.toDouble());
+      gl.setUniform2f(uRes, widthInPixels.toDouble(), heightInPixels.toDouble());
     }
 
     gl.clear();
     gl.viewport(0, 0, widthInPixels.toDouble(), heightInPixels.toDouble());
 
-    gl.drawElements(
-        gl.kTriangles, VertexShaders.vertexIndicesForRect.length, gl.kUnsignedShort);
+    gl.drawElements(gl.kTriangles, VertexShaders.vertexIndicesForRect.length, gl.kUnsignedShort);
   }
 
   /// This fragment shader enables Int32List of colors to be passed directly
@@ -458,16 +473,13 @@ class _WebGlRenderer implements GlRenderer {
   }
 
   @override
-  void drawHairline(
-      DomCanvasRenderingContext2D? ctx, Float32List positions) {
+  void drawHairline(DomCanvasRenderingContext2D? ctx, Float32List positions) {
     final int pointCount = positions.length ~/ 2;
     ctx!.lineWidth = 1.0;
     ctx.beginPath();
     final int len = pointCount * 2;
     for (int i = 0; i < len;) {
-      for (int triangleVertexIndex = 0;
-          triangleVertexIndex < 3;
-          triangleVertexIndex++, i += 2) {
+      for (int triangleVertexIndex = 0; triangleVertexIndex < 3; triangleVertexIndex++, i += 2) {
         final double dx = positions[i];
         final double dy = positions[i + 1];
         switch (triangleVertexIndex) {
@@ -503,12 +515,10 @@ ui.Rect _computeVerticesBounds(Float32List positions, Matrix4 transform) {
     minValueY = math.min(minValueY, y);
     maxValueY = math.max(maxValueY, y);
   }
-  return _transformBounds(
-      transform, minValueX, minValueY, maxValueX, maxValueY);
+  return _transformBounds(transform, minValueX, minValueY, maxValueX, maxValueY);
 }
 
-ui.Rect _transformBounds(
-    Matrix4 transform, double left, double top, double right, double bottom) {
+ui.Rect _transformBounds(Matrix4 transform, double left, double top, double right, double bottom) {
   final Float32List storage = transform.storage;
   final double m0 = storage[0];
   final double m1 = storage[1];
@@ -525,10 +535,11 @@ ui.Rect _transformBounds(
   final double x3 = (m0 * left) + (m4 * bottom) + m12;
   final double y3 = (m1 * left) + (m5 * bottom) + m13;
   return ui.Rect.fromLTRB(
-      math.min(x0, math.min(x1, math.min(x2, x3))),
-      math.min(y0, math.min(y1, math.min(y2, y3))),
-      math.max(x0, math.max(x1, math.max(x2, x3))),
-      math.max(y0, math.max(y1, math.max(y2, y3))));
+    math.min(x0, math.min(x1, math.min(x2, x3))),
+    math.min(y0, math.min(y1, math.min(y2, y3))),
+    math.max(x0, math.max(x1, math.max(x2, x3))),
+    math.max(y0, math.max(y1, math.max(y2, y3))),
+  );
 }
 
 /// Converts from [VertexMode] triangleFan and triangleStrip to triangles.
@@ -542,9 +553,11 @@ Float32List convertVertexPositions(ui.VertexMode mode, Float32List positions) {
     final double centerY = positions[1];
     int destIndex = 0;
     int positionIndex = 2;
-    for (int triangleIndex = 0;
-        triangleIndex < triangleCount;
-        triangleIndex++, positionIndex += 2) {
+    for (
+      int triangleIndex = 0;
+      triangleIndex < triangleCount;
+      triangleIndex++, positionIndex += 2
+    ) {
       triangleList[destIndex++] = centerX;
       triangleList[destIndex++] = centerY;
       triangleList[destIndex++] = positions[positionIndex];

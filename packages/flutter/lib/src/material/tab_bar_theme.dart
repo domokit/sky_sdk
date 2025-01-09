@@ -43,29 +43,43 @@ class TabBarTheme extends InheritedTheme with Diagnosticable {
     TabBarThemeData? data,
     Widget? child,
   }) : assert(
-    data == null ||
-    (indicator ?? indicatorColor ?? indicatorSize ?? dividerColor ?? dividerHeight
-    ?? labelColor ?? labelPadding ?? labelStyle ?? unselectedLabelColor ?? unselectedLabelStyle
-    ?? overlayColor ?? splashFactory ?? mouseCursor ?? tabAlignment ?? textScaler
-    ?? indicatorAnimation) == null),
-    _indicator = indicator,
-    _indicatorColor = indicatorColor,
-    _indicatorSize = indicatorSize,
-    _dividerColor = dividerColor,
-    _dividerHeight = dividerHeight,
-    _labelColor = labelColor,
-    _labelPadding = labelPadding,
-    _labelStyle = labelStyle,
-    _unselectedLabelColor = unselectedLabelColor,
-    _unselectedLabelStyle = unselectedLabelStyle,
-    _overlayColor = overlayColor,
-    _splashFactory = splashFactory,
-    _mouseCursor = mouseCursor,
-    _tabAlignment = tabAlignment,
-    _textScaler = textScaler,
-    _indicatorAnimation = indicatorAnimation,
-    _data = data,
-    super(child: child ?? const SizedBox());
+         data == null ||
+             (indicator ??
+                     indicatorColor ??
+                     indicatorSize ??
+                     dividerColor ??
+                     dividerHeight ??
+                     labelColor ??
+                     labelPadding ??
+                     labelStyle ??
+                     unselectedLabelColor ??
+                     unselectedLabelStyle ??
+                     overlayColor ??
+                     splashFactory ??
+                     mouseCursor ??
+                     tabAlignment ??
+                     textScaler ??
+                     indicatorAnimation) ==
+                 null,
+       ),
+       _indicator = indicator,
+       _indicatorColor = indicatorColor,
+       _indicatorSize = indicatorSize,
+       _dividerColor = dividerColor,
+       _dividerHeight = dividerHeight,
+       _labelColor = labelColor,
+       _labelPadding = labelPadding,
+       _labelStyle = labelStyle,
+       _unselectedLabelColor = unselectedLabelColor,
+       _unselectedLabelStyle = unselectedLabelStyle,
+       _overlayColor = overlayColor,
+       _splashFactory = splashFactory,
+       _mouseCursor = mouseCursor,
+       _tabAlignment = tabAlignment,
+       _textScaler = textScaler,
+       _indicatorAnimation = indicatorAnimation,
+       _data = data,
+       super(child: child ?? const SizedBox());
 
   final TabBarThemeData? _data;
   final Decoration? _indicator;
@@ -137,31 +151,36 @@ class TabBarTheme extends InheritedTheme with Diagnosticable {
   ///
   /// This property is obsolete and will be deprecated in a future release:
   /// please use the [TabBarThemeData.unselectedLabelColor] property in [data] instead.
-  Color? get unselectedLabelColor => _data != null ? _data.unselectedLabelColor : _unselectedLabelColor;
+  Color? get unselectedLabelColor =>
+      _data != null ? _data.unselectedLabelColor : _unselectedLabelColor;
 
   /// Overrides the default value for [TabBar.unselectedLabelStyle].
   ///
   /// This property is obsolete and will be deprecated in a future release:
   /// please use the [TabBarThemeData.unselectedLabelStyle] property in [data] instead.
-  TextStyle? get unselectedLabelStyle => _data != null ? _data.unselectedLabelStyle : _unselectedLabelStyle;
+  TextStyle? get unselectedLabelStyle =>
+      _data != null ? _data.unselectedLabelStyle : _unselectedLabelStyle;
 
   /// Overrides the default value for [TabBar.overlayColor].
   ///
   /// This property is obsolete and will be deprecated in a future release:
   /// please use the [TabBarThemeData.overlayColor] property in [data] instead.
-  MaterialStateProperty<Color?>? get overlayColor => _data != null ? _data.overlayColor : _overlayColor;
+  MaterialStateProperty<Color?>? get overlayColor =>
+      _data != null ? _data.overlayColor : _overlayColor;
 
   /// Overrides the default value for [TabBar.splashFactory].
   ///
   /// This property is obsolete and will be deprecated in a future release:
   /// please use the [TabBarThemeData.splashFactory] property in [data] instead.
-  InteractiveInkFeatureFactory? get splashFactory => _data != null ? _data.splashFactory : _splashFactory;
+  InteractiveInkFeatureFactory? get splashFactory =>
+      _data != null ? _data.splashFactory : _splashFactory;
 
   /// Overrides the default value of [TabBar.mouseCursor].
   ///
   /// This property is obsolete and will be deprecated in a future release:
   /// please use the [TabBarThemeData.mouseCursor] property in [data] instead.
-  MaterialStateProperty<MouseCursor?>? get mouseCursor => _data != null ? _data.mouseCursor : _mouseCursor;
+  MaterialStateProperty<MouseCursor?>? get mouseCursor =>
+      _data != null ? _data.mouseCursor : _mouseCursor;
 
   /// Overrides the default value for [TabBar.tabAlignment].
   ///
@@ -179,27 +198,30 @@ class TabBarTheme extends InheritedTheme with Diagnosticable {
   ///
   /// This property is obsolete and will be deprecated in a future release:
   /// please use the [TabBarThemeData.indicatorAnimation] property in [data] instead.
-  TabIndicatorAnimation? get indicatorAnimation => _data != null ? _data.indicatorAnimation : _indicatorAnimation;
+  TabIndicatorAnimation? get indicatorAnimation =>
+      _data != null ? _data.indicatorAnimation : _indicatorAnimation;
 
   /// The properties used for all descendant [TabBar] widgets.
-  TabBarThemeData get data => _data ?? TabBarThemeData(
-    indicator: _indicator,
-    indicatorColor: _indicatorColor,
-    indicatorSize: _indicatorSize,
-    dividerColor: _dividerColor,
-    dividerHeight: _dividerHeight,
-    labelColor: _labelColor,
-    labelPadding: _labelPadding,
-    labelStyle: _labelStyle,
-    unselectedLabelColor: _unselectedLabelColor,
-    unselectedLabelStyle: _unselectedLabelStyle,
-    overlayColor: _overlayColor,
-    splashFactory: _splashFactory,
-    mouseCursor: _mouseCursor,
-    tabAlignment: _tabAlignment,
-    textScaler: _textScaler,
-    indicatorAnimation: _indicatorAnimation,
-  );
+  TabBarThemeData get data =>
+      _data ??
+      TabBarThemeData(
+        indicator: _indicator,
+        indicatorColor: _indicatorColor,
+        indicatorSize: _indicatorSize,
+        dividerColor: _dividerColor,
+        dividerHeight: _dividerHeight,
+        labelColor: _labelColor,
+        labelPadding: _labelPadding,
+        labelStyle: _labelStyle,
+        unselectedLabelColor: _unselectedLabelColor,
+        unselectedLabelStyle: _unselectedLabelStyle,
+        overlayColor: _overlayColor,
+        splashFactory: _splashFactory,
+        mouseCursor: _mouseCursor,
+        tabAlignment: _tabAlignment,
+        textScaler: _textScaler,
+        indicatorAnimation: _indicatorAnimation,
+      );
 
   /// Creates a copy of this object but with the given fields replaced with the
   /// new values.
@@ -271,7 +293,12 @@ class TabBarTheme extends InheritedTheme with Diagnosticable {
       labelStyle: TextStyle.lerp(a.labelStyle, b.labelStyle, t),
       unselectedLabelColor: Color.lerp(a.unselectedLabelColor, b.unselectedLabelColor, t),
       unselectedLabelStyle: TextStyle.lerp(a.unselectedLabelStyle, b.unselectedLabelStyle, t),
-      overlayColor: MaterialStateProperty.lerp<Color?>(a.overlayColor, b.overlayColor, t, Color.lerp),
+      overlayColor: MaterialStateProperty.lerp<Color?>(
+        a.overlayColor,
+        b.overlayColor,
+        t,
+        Color.lerp,
+      ),
       splashFactory: t < 0.5 ? a.splashFactory : b.splashFactory,
       mouseCursor: t < 0.5 ? a.mouseCursor : b.mouseCursor,
       tabAlignment: t < 0.5 ? a.tabAlignment : b.tabAlignment,
@@ -327,7 +354,7 @@ class TabBarThemeData with Diagnosticable {
     this.tabAlignment,
     this.textScaler,
     this.indicatorAnimation,
-    this.splashBorderRadius
+    this.splashBorderRadius,
   });
 
   /// Overrides the default value for [TabBar.indicator].
@@ -453,13 +480,18 @@ class TabBarThemeData with Diagnosticable {
       labelStyle: TextStyle.lerp(a.labelStyle, b.labelStyle, t),
       unselectedLabelColor: Color.lerp(a.unselectedLabelColor, b.unselectedLabelColor, t),
       unselectedLabelStyle: TextStyle.lerp(a.unselectedLabelStyle, b.unselectedLabelStyle, t),
-      overlayColor: MaterialStateProperty.lerp<Color?>(a.overlayColor, b.overlayColor, t, Color.lerp),
+      overlayColor: MaterialStateProperty.lerp<Color?>(
+        a.overlayColor,
+        b.overlayColor,
+        t,
+        Color.lerp,
+      ),
       splashFactory: t < 0.5 ? a.splashFactory : b.splashFactory,
       mouseCursor: t < 0.5 ? a.mouseCursor : b.mouseCursor,
       tabAlignment: t < 0.5 ? a.tabAlignment : b.tabAlignment,
       textScaler: t < 0.5 ? a.textScaler : b.textScaler,
       indicatorAnimation: t < 0.5 ? a.indicatorAnimation : b.indicatorAnimation,
-      splashBorderRadius: BorderRadius.lerp(a.splashBorderRadius, a.splashBorderRadius, t)
+      splashBorderRadius: BorderRadius.lerp(a.splashBorderRadius, a.splashBorderRadius, t),
     );
   }
 
@@ -492,45 +524,93 @@ class TabBarThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is TabBarThemeData
-        && other.indicator == indicator
-        && other.indicatorColor == indicatorColor
-        && other.indicatorSize == indicatorSize
-        && other.dividerColor == dividerColor
-        && other.dividerHeight == dividerHeight
-        && other.labelColor == labelColor
-        && other.labelPadding == labelPadding
-        && other.labelStyle == labelStyle
-        && other.unselectedLabelColor == unselectedLabelColor
-        && other.unselectedLabelStyle == unselectedLabelStyle
-        && other.overlayColor == overlayColor
-        && other.splashFactory == splashFactory
-        && other.mouseCursor == mouseCursor
-        && other.tabAlignment == tabAlignment
-        && other.textScaler == textScaler
-        && other.indicatorAnimation == indicatorAnimation
-        && other.splashBorderRadius == splashBorderRadius;
+    return other is TabBarThemeData &&
+        other.indicator == indicator &&
+        other.indicatorColor == indicatorColor &&
+        other.indicatorSize == indicatorSize &&
+        other.dividerColor == dividerColor &&
+        other.dividerHeight == dividerHeight &&
+        other.labelColor == labelColor &&
+        other.labelPadding == labelPadding &&
+        other.labelStyle == labelStyle &&
+        other.unselectedLabelColor == unselectedLabelColor &&
+        other.unselectedLabelStyle == unselectedLabelStyle &&
+        other.overlayColor == overlayColor &&
+        other.splashFactory == splashFactory &&
+        other.mouseCursor == mouseCursor &&
+        other.tabAlignment == tabAlignment &&
+        other.textScaler == textScaler &&
+        other.indicatorAnimation == indicatorAnimation &&
+        other.splashBorderRadius == splashBorderRadius;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<Decoration?>('indicator', indicator, defaultValue: null));
-    properties.add(DiagnosticsProperty<Color?>('indicatorColor', indicatorColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<TabBarIndicatorSize?>('indicatorSize', indicatorSize, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<Color?>('indicatorColor', indicatorColor, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<TabBarIndicatorSize?>('indicatorSize', indicatorSize, defaultValue: null),
+    );
     properties.add(DiagnosticsProperty<Color?>('dividerColor', dividerColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<double?>('dividerHeight', dividerHeight, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<double?>('dividerHeight', dividerHeight, defaultValue: null),
+    );
     properties.add(DiagnosticsProperty<Color?>('labelColor', labelColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<EdgeInsetsGeometry?>('labelPadding', labelPadding, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<EdgeInsetsGeometry?>('labelPadding', labelPadding, defaultValue: null),
+    );
     properties.add(DiagnosticsProperty<TextStyle?>('labelStyle', labelStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<Color?>('unselectedLabelColor', unselectedLabelColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<TextStyle?>('unselectedLabelStyle', unselectedLabelStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>?>('overlayColor', overlayColor, defaultValue: null));
-    properties.add(DiagnosticsProperty<InteractiveInkFeatureFactory?>('splashFactory', splashFactory, defaultValue: null));
-    properties.add(DiagnosticsProperty<MaterialStateProperty<MouseCursor?>?>('mouseCursor', mouseCursor, defaultValue: null));
-    properties.add(DiagnosticsProperty<TabAlignment?>('tabAlignment', tabAlignment, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<Color?>('unselectedLabelColor', unselectedLabelColor, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<TextStyle?>(
+        'unselectedLabelStyle',
+        unselectedLabelStyle,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<Color?>?>(
+        'overlayColor',
+        overlayColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<InteractiveInkFeatureFactory?>(
+        'splashFactory',
+        splashFactory,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<MouseCursor?>?>(
+        'mouseCursor',
+        mouseCursor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<TabAlignment?>('tabAlignment', tabAlignment, defaultValue: null),
+    );
     properties.add(DiagnosticsProperty<TextScaler?>('textScaler', textScaler, defaultValue: null));
-    properties.add(DiagnosticsProperty<TabIndicatorAnimation?>('indicatorAnimation', indicatorAnimation, defaultValue: null));
-    properties.add(DiagnosticsProperty<BorderRadius?>('splashBorderRadius', splashBorderRadius, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<TabIndicatorAnimation?>(
+        'indicatorAnimation',
+        indicatorAnimation,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<BorderRadius?>(
+        'splashBorderRadius',
+        splashBorderRadius,
+        defaultValue: null,
+      ),
+    );
   }
 }

@@ -16,12 +16,8 @@ class CupertinoCheckboxApp extends StatelessWidget {
     return const CupertinoApp(
       theme: CupertinoThemeData(brightness: Brightness.light),
       home: CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: Text('CupertinoCheckbox Example'),
-        ),
-        child: SafeArea(
-          child: CupertinoCheckboxExample(),
-        ),
+        navigationBar: CupertinoNavigationBar(middle: Text('CupertinoCheckbox Example')),
+        child: SafeArea(child: CupertinoCheckboxExample()),
       ),
     );
   }

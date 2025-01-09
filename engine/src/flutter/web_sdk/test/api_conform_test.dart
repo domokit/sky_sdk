@@ -12,18 +12,18 @@ import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 
 // Ignore members defined on Object.
-const Set<String> _kObjectMembers = <String>{
-  '==',
-  'toString',
-  'hashCode',
-};
+const Set<String> _kObjectMembers = <String>{'==', 'toString', 'hashCode'};
 
 CompilationUnit _parseAndCheckDart(String path) {
   final FeatureSet analyzerFeatures = FeatureSet.latestLanguageVersion();
   if (!analyzerFeatures.isEnabled(Feature.non_nullable)) {
     throw Exception('non-nullable feature is disabled.');
   }
-  final ParseStringResult result = parseFile(path: path, featureSet: analyzerFeatures, throwIfDiagnostics: false);
+  final ParseStringResult result = parseFile(
+    path: path,
+    featureSet: analyzerFeatures,
+    throwIfDiagnostics: false,
+  );
   if (result.errors.isNotEmpty) {
     result.errors.forEach(stderr.writeln);
     stderr.writeln('Failure!');
@@ -68,20 +68,18 @@ void main() {
     // warning and move along.
     if (webClass == null) {
       failed = true;
-      print('Warning: lib/ui/ui.dart contained public class $className, but '
-          'this was missing from lib/web_ui/ui.dart.');
+      print(
+        'Warning: lib/ui/ui.dart contained public class $className, but '
+        'this was missing from lib/web_ui/ui.dart.',
+      );
       continue;
     }
     // Next will check that the public methods exposed in each library are
     // identical.
-    final Map<String, MethodDeclaration> uiMethods =
-        <String, MethodDeclaration>{};
-    final Map<String, MethodDeclaration> webMethods =
-        <String, MethodDeclaration>{};
-    final Map<String, ConstructorDeclaration> uiConstructors =
-        <String, ConstructorDeclaration>{};
-    final Map<String, ConstructorDeclaration> webConstructors =
-        <String, ConstructorDeclaration>{};
+    final Map<String, MethodDeclaration> uiMethods = <String, MethodDeclaration>{};
+    final Map<String, MethodDeclaration> webMethods = <String, MethodDeclaration>{};
+    final Map<String, ConstructorDeclaration> uiConstructors = <String, ConstructorDeclaration>{};
+    final Map<String, ConstructorDeclaration> webConstructors = <String, ConstructorDeclaration>{};
     _collectPublicMethods(uiClass, uiMethods);
     _collectPublicMethods(webClass, webMethods);
     _collectPublicConstructors(uiClass, uiConstructors);
@@ -92,9 +90,7 @@ void main() {
       final ConstructorDeclaration? webConstructor = webConstructors[name];
       if (webConstructor == null) {
         failed = true;
-        print(
-          'Warning: lib/ui/ui.dart $className.$name is missing from lib/web_ui/ui.dart.',
-        );
+        print('Warning: lib/ui/ui.dart $className.$name is missing from lib/web_ui/ui.dart.');
         continue;
       }
 
@@ -102,38 +98,47 @@ void main() {
           webConstructor.parameters.parameters.length) {
         failed = true;
         print(
-            'Warning: lib/ui/ui.dart $className.$name has a different parameter '
-            'length than in lib/web_ui/ui.dart.');
+          'Warning: lib/ui/ui.dart $className.$name has a different parameter '
+          'length than in lib/web_ui/ui.dart.',
+        );
       }
 
-      for (int i = 0;
-          i < uiConstructor.parameters.parameters.length &&
-              i < uiConstructor.parameters.parameters.length;
-          i++) {
+      for (
+        int i = 0;
+        i < uiConstructor.parameters.parameters.length &&
+            i < uiConstructor.parameters.parameters.length;
+        i++
+      ) {
         // Technically you could re-order named parameters and still be valid,
         // but we enforce that they are identical.
-        for (int i = 0;
-            i < uiConstructor.parameters.parameters.length &&
-                i < webConstructor.parameters.parameters.length;
-            i++) {
-          final FormalParameter uiParam =
-              uiConstructor.parameters.parameters[i];
-          final FormalParameter webParam =
-              webConstructor.parameters.parameters[i];
+        for (
+          int i = 0;
+          i < uiConstructor.parameters.parameters.length &&
+              i < webConstructor.parameters.parameters.length;
+          i++
+        ) {
+          final FormalParameter uiParam = uiConstructor.parameters.parameters[i];
+          final FormalParameter webParam = webConstructor.parameters.parameters[i];
           if (webParam.name!.lexeme != uiParam.name!.lexeme) {
             failed = true;
-            print('Warning: lib/ui/ui.dart $className.$name parameter $i'
-                ' ${uiParam.name!.lexeme} has a different name in lib/web_ui/ui.dart.');
+            print(
+              'Warning: lib/ui/ui.dart $className.$name parameter $i'
+              ' ${uiParam.name!.lexeme} has a different name in lib/web_ui/ui.dart.',
+            );
           }
           if (uiParam.isPositional != webParam.isPositional) {
             failed = true;
-            print('Warning: lib/ui/ui.dart $className.$name parameter $i'
-                '${uiParam.name!.lexeme} is positional, but not in lib/web_ui/ui.dart.');
+            print(
+              'Warning: lib/ui/ui.dart $className.$name parameter $i'
+              '${uiParam.name!.lexeme} is positional, but not in lib/web_ui/ui.dart.',
+            );
           }
           if (uiParam.isNamed != webParam.isNamed) {
             failed = true;
-            print('Warning: lib/ui/ui.dart $className.$name parameter $i'
-                '${uiParam.name!.lexeme} is named, but not in lib/web_ui/ui.dart.');
+            print(
+              'Warning: lib/ui/ui.dart $className.$name parameter $i'
+              '${uiParam.name!.lexeme} is named, but not in lib/web_ui/ui.dart.',
+            );
           }
         }
       }
@@ -147,53 +152,59 @@ void main() {
       final MethodDeclaration? webMethod = webMethods[methodName];
       if (webMethod == null) {
         failed = true;
-        print(
-          'Warning: lib/ui/ui.dart $className.$methodName is missing from lib/web_ui/ui.dart.',
-        );
+        print('Warning: lib/ui/ui.dart $className.$methodName is missing from lib/web_ui/ui.dart.');
         continue;
       }
       if (uiMethod.parameters == null || webMethod.parameters == null) {
         continue;
       }
-      if (uiMethod.parameters!.parameters.length !=
-          webMethod.parameters!.parameters.length) {
+      if (uiMethod.parameters!.parameters.length != webMethod.parameters!.parameters.length) {
         failed = true;
         print(
-            'Warning: lib/ui/ui.dart $className.$methodName has a different parameter '
-            'length than in lib/web_ui/ui.dart.');
+          'Warning: lib/ui/ui.dart $className.$methodName has a different parameter '
+          'length than in lib/web_ui/ui.dart.',
+        );
       }
       // Technically you could re-order named parameters and still be valid,
       // but we enforce that they are identical.
-      for (int i = 0;
-          i < uiMethod.parameters!.parameters.length &&
-              i < webMethod.parameters!.parameters.length;
-          i++) {
+      for (
+        int i = 0;
+        i < uiMethod.parameters!.parameters.length && i < webMethod.parameters!.parameters.length;
+        i++
+      ) {
         final FormalParameter uiParam = uiMethod.parameters!.parameters[i];
         final FormalParameter webParam = webMethod.parameters!.parameters[i];
         if (webParam.name!.lexeme != uiParam.name!.lexeme) {
           failed = true;
-          print('Warning: lib/ui/ui.dart $className.$methodName parameter $i'
-              ' ${uiParam.name!.lexeme} has a different name in lib/web_ui/ui.dart.');
+          print(
+            'Warning: lib/ui/ui.dart $className.$methodName parameter $i'
+            ' ${uiParam.name!.lexeme} has a different name in lib/web_ui/ui.dart.',
+          );
         }
         if (uiParam.isPositional != webParam.isPositional) {
           failed = true;
-          print('Warning: lib/ui/ui.dart $className.$methodName parameter $i'
-              '${uiParam.name!.lexeme} is positional, but not in lib/web_ui/ui.dart.');
+          print(
+            'Warning: lib/ui/ui.dart $className.$methodName parameter $i'
+            '${uiParam.name!.lexeme} is positional, but not in lib/web_ui/ui.dart.',
+          );
         }
         if (uiParam.isNamed != webParam.isNamed) {
           failed = true;
-          print('Warning: lib/ui/ui.dart $className.$methodName parameter $i'
-              '${uiParam.name!.lexeme} is named, but not in lib/web_ui/ui.dart.');
+          print(
+            'Warning: lib/ui/ui.dart $className.$methodName parameter $i'
+            '${uiParam.name!.lexeme} is named, but not in lib/web_ui/ui.dart.',
+          );
         }
         // check nullability
-        if (uiParam is SimpleFormalParameter &&
-            webParam is SimpleFormalParameter) {
+        if (uiParam is SimpleFormalParameter && webParam is SimpleFormalParameter) {
           final bool isUiNullable = uiParam.type?.question != null;
           final bool isWebNullable = webParam.type?.question != null;
           if (isUiNullable != isWebNullable) {
             failed = true;
-            print('Warning: lib/ui/ui.dart $className.$methodName parameter $i '
-                '${uiParam.name} has a different nullability than in lib/web_ui/ui.dart.');
+            print(
+              'Warning: lib/ui/ui.dart $className.$methodName parameter $i '
+              '${uiParam.name} has a different nullability than in lib/web_ui/ui.dart.',
+            );
           }
         }
       }
@@ -205,7 +216,8 @@ void main() {
           print(
             'Warning: $className.$methodName return type mismatch:\n'
             '  lib/ui/ui.dart     : ${uiMethod.returnType?.toSource()}\n'
-            '  lib/web_ui/ui.dart : ${webMethod.returnType?.toSource()}');
+            '  lib/web_ui/ui.dart : ${webMethod.returnType?.toSource()}',
+          );
         }
       }
     }
@@ -218,8 +230,10 @@ void main() {
     // warning and move along.
     if (webTypeDef == null) {
       failed = true;
-      print('Warning: lib/ui/ui.dart contained typedef $typeDefName, but '
-          'this was missing from lib/web_ui/ui.dart.');
+      print(
+        'Warning: lib/ui/ui.dart contained typedef $typeDefName, but '
+        'this was missing from lib/web_ui/ui.dart.',
+      );
       continue;
     }
 
@@ -231,16 +245,20 @@ void main() {
     if (uiTypeDef.functionType?.parameters.parameters.length !=
         webTypeDef.functionType?.parameters.parameters.length) {
       failed = true;
-      print('Warning: lib/ui/ui.dart $typeDefName has a different parameter '
-          'length than in lib/web_ui/ui.dart.');
+      print(
+        'Warning: lib/ui/ui.dart $typeDefName has a different parameter '
+        'length than in lib/web_ui/ui.dart.',
+      );
     }
     // Technically you could re-order named parameters and still be valid,
     // but we enforce that they are identical.
 
-    for (int i = 0;
-        i < uiTypeDef.functionType!.parameters.parameters.length &&
-            i < webTypeDef.functionType!.parameters.parameters.length;
-        i++) {
+    for (
+      int i = 0;
+      i < uiTypeDef.functionType!.parameters.parameters.length &&
+          i < webTypeDef.functionType!.parameters.parameters.length;
+      i++
+    ) {
       final FormalParameter uiFormalParam =
           (uiTypeDef.type as GenericFunctionType).parameters.parameters[i];
       final FormalParameter webFormalParam =
@@ -248,14 +266,20 @@ void main() {
 
       if (uiFormalParam.runtimeType != webFormalParam.runtimeType) {
         failed = true;
-        print('Warning: lib/ui/ui.dart $typeDefName parameter $i '
-            '${uiFormalParam.name!.lexeme}} is of type ${uiFormalParam.runtimeType}, but of ${webFormalParam.runtimeType} in lib/web_ui/ui.dart.');
+        print(
+          'Warning: lib/ui/ui.dart $typeDefName parameter $i '
+          '${uiFormalParam.name!.lexeme}} is of type ${uiFormalParam.runtimeType}, but of ${webFormalParam.runtimeType} in lib/web_ui/ui.dart.',
+        );
       }
 
       // This is not entirely true and can break, but this way we can support both positional and named params
       // (The assumption that the parameter of a DefaultFormalParameter is a SimpleFormalParameter is a stretch)
-      final SimpleFormalParameter uiParam = ((uiFormalParam is DefaultFormalParameter) ? uiFormalParam.parameter : uiFormalParam) as SimpleFormalParameter;
-      final SimpleFormalParameter webParam = ((webFormalParam is DefaultFormalParameter) ? webFormalParam.parameter : uiFormalParam) as SimpleFormalParameter;
+      final SimpleFormalParameter uiParam =
+          ((uiFormalParam is DefaultFormalParameter) ? uiFormalParam.parameter : uiFormalParam)
+              as SimpleFormalParameter;
+      final SimpleFormalParameter webParam =
+          ((webFormalParam is DefaultFormalParameter) ? webFormalParam.parameter : uiFormalParam)
+              as SimpleFormalParameter;
 
       if (webParam.name == null) {
         failed = true;
@@ -267,26 +291,34 @@ void main() {
       }
       if (webParam.name?.lexeme != uiParam.name?.lexeme) {
         failed = true;
-        print('Warning: lib/ui/ui.dart $typeDefName parameter $i '
-            '${uiParam.name!.lexeme} has a different name in lib/web_ui/ui.dart.');
+        print(
+          'Warning: lib/ui/ui.dart $typeDefName parameter $i '
+          '${uiParam.name!.lexeme} has a different name in lib/web_ui/ui.dart.',
+        );
       }
       if (uiParam.isPositional != webParam.isPositional) {
         failed = true;
-        print('Warning: lib/ui/ui.dart $typeDefName parameter $i '
-            '${uiParam.name!.lexeme} is positional, but not in lib/web_ui/ui.dart.');
+        print(
+          'Warning: lib/ui/ui.dart $typeDefName parameter $i '
+          '${uiParam.name!.lexeme} is positional, but not in lib/web_ui/ui.dart.',
+        );
       }
       if (uiParam.isNamed != webParam.isNamed) {
         failed = true;
-        print('Warning: lib/ui/ui.dart $typeDefName parameter $i '
-            '${uiParam.name!.lexeme}} is named, but not in lib/web_ui/ui.dart.');
+        print(
+          'Warning: lib/ui/ui.dart $typeDefName parameter $i '
+          '${uiParam.name!.lexeme}} is named, but not in lib/web_ui/ui.dart.',
+        );
       }
 
       final bool isUiNullable = uiParam.type?.question != null;
       final bool isWebNullable = webParam.type?.question != null;
       if (isUiNullable != isWebNullable) {
         failed = true;
-        print('Warning: lib/ui/ui.dart $typeDefName parameter $i '
-            '${uiParam.name} has a different nullability than in lib/web_ui/ui.dart.');
+        print(
+          'Warning: lib/ui/ui.dart $typeDefName parameter $i '
+          '${uiParam.name} has a different nullability than in lib/web_ui/ui.dart.',
+        );
       }
     }
 
@@ -296,9 +328,11 @@ void main() {
       // allow dynamic in web implementation.
       if (webTypeDef.functionType?.returnType?.toString() != 'dynamic') {
         failed = true;
-        print('Warning: $typeDefName return type mismatch:\n'
-            '  lib/ui/ui.dart     : ${uiTypeDef.functionType?.returnType?.toSource()}\n'
-            '  lib/web_ui/ui.dart : ${webTypeDef.functionType?.returnType?.toSource()}');
+        print(
+          'Warning: $typeDefName return type mismatch:\n'
+          '  lib/ui/ui.dart     : ${uiTypeDef.functionType?.returnType?.toSource()}\n'
+          '  lib/web_ui/ui.dart : ${webTypeDef.functionType?.returnType?.toSource()}',
+        );
       }
     }
   }
@@ -311,15 +345,20 @@ void main() {
 }
 
 // Collects all public classes defined by the part files of [unit].
-void _collectPublicClasses(CompilationUnit unit,
-    Map<String, ClassDeclaration> destination, String root) {
+void _collectPublicClasses(
+  CompilationUnit unit,
+  Map<String, ClassDeclaration> destination,
+  String root,
+) {
   for (final Directive directive in unit.directives) {
     if (directive is! PartDirective) {
       continue;
     }
     final PartDirective partDirective = directive;
     final String literalUri = partDirective.uri.toString();
-    final CompilationUnit subUnit = _parseAndCheckDart('$root${literalUri.substring(1, literalUri.length - 1)}');
+    final CompilationUnit subUnit = _parseAndCheckDart(
+      '$root${literalUri.substring(1, literalUri.length - 1)}',
+    );
     for (final CompilationUnitMember member in subUnit.declarations) {
       if (member is! ClassDeclaration) {
         continue;
@@ -333,8 +372,10 @@ void _collectPublicClasses(CompilationUnit unit,
   }
 }
 
-void _collectPublicConstructors(ClassDeclaration classDeclaration,
-    Map<String, ConstructorDeclaration> destination) {
+void _collectPublicConstructors(
+  ClassDeclaration classDeclaration,
+  Map<String, ConstructorDeclaration> destination,
+) {
   for (final ClassMember member in classDeclaration.members) {
     if (member is! ConstructorDeclaration) {
       continue;
@@ -351,8 +392,10 @@ void _collectPublicConstructors(ClassDeclaration classDeclaration,
   }
 }
 
-void _collectPublicMethods(ClassDeclaration classDeclaration,
-    Map<String, MethodDeclaration> destination) {
+void _collectPublicMethods(
+  ClassDeclaration classDeclaration,
+  Map<String, MethodDeclaration> destination,
+) {
   for (final ClassMember member in classDeclaration.members) {
     if (member is! MethodDeclaration) {
       continue;
@@ -364,8 +407,11 @@ void _collectPublicMethods(ClassDeclaration classDeclaration,
   }
 }
 
-void _collectPublicTypeDefs(CompilationUnit unit,
-    Map<String, GenericTypeAlias> destination, String root) {
+void _collectPublicTypeDefs(
+  CompilationUnit unit,
+  Map<String, GenericTypeAlias> destination,
+  String root,
+) {
   for (final Directive directive in unit.directives) {
     if (directive is! PartDirective) {
       continue;
@@ -373,7 +419,8 @@ void _collectPublicTypeDefs(CompilationUnit unit,
     final PartDirective partDirective = directive;
     final String literalUri = partDirective.uri.toString();
     final CompilationUnit subUnit = _parseAndCheckDart(
-        '$root${literalUri.substring(1, literalUri.length - 1)}');
+      '$root${literalUri.substring(1, literalUri.length - 1)}',
+    );
     for (final CompilationUnitMember member in subUnit.declarations) {
       if (member is! GenericTypeAlias) {
         continue;

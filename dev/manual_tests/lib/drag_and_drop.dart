@@ -32,10 +32,7 @@ class ExampleDragTargetState extends State<ExampleDragTarget> {
           margin: const EdgeInsets.all(10.0),
           decoration: BoxDecoration(
             color: data.isEmpty ? _color : Colors.grey.shade200,
-            border: Border.all(
-              width: 3.0,
-              color: data.isEmpty ? Colors.white : Colors.blue,
-            ),
+            border: Border.all(width: 3.0, color: data.isEmpty ? Colors.white : Colors.blue),
           ),
         );
       },
@@ -44,7 +41,7 @@ class ExampleDragTargetState extends State<ExampleDragTarget> {
 }
 
 class Dot extends StatefulWidget {
-  const Dot({ super.key, this.color, this.size, this.child, this.tappable = false });
+  const Dot({super.key, this.color, this.size, this.child, this.tappable = false});
 
   final Color? color;
   final double? size;
@@ -54,13 +51,21 @@ class Dot extends StatefulWidget {
   @override
   DotState createState() => DotState();
 }
+
 class DotState extends State<Dot> {
   int taps = 0;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.tappable ? () { setState(() { taps += 1; }); } : null,
+      onTap:
+          widget.tappable
+              ? () {
+                setState(() {
+                  taps += 1;
+                });
+              }
+              : null,
       child: Container(
         width: widget.size,
         height: widget.size,
@@ -103,24 +108,16 @@ class ExampleDragSource extends StatelessWidget {
     final Widget contents = DefaultTextStyle(
       style: Theme.of(context).textTheme.bodyMedium!,
       textAlign: TextAlign.center,
-      child: Dot(
-        color: color,
-        size: size,
-        child: Center(child: child),
-      ),
+      child: Dot(color: color, size: size, child: Center(child: child)),
     );
 
-    Widget feedback = Opacity(
-      opacity: 0.75,
-      child: contents,
-    );
+    Widget feedback = Opacity(opacity: 0.75, child: contents);
 
     Offset feedbackOffset;
     DragAnchorStrategy dragAnchorStrategy;
     if (!under) {
       feedback = Transform(
-        transform: Matrix4.identity()
-                     ..translate(-size / 2.0, -(size / 2.0 + kFingerSize)),
+        transform: Matrix4.identity()..translate(-size / 2.0, -(size / 2.0 + kFingerSize)),
         child: feedback,
       );
       feedbackOffset = const Offset(0.0, -kFingerSize);
@@ -161,10 +158,11 @@ class DashOutlineCirclePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final double radius = size.shortestSide / 2.0;
-    final Paint paint = Paint()
-      ..color = const Color(0xFF000000)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = radius / 10.0;
+    final Paint paint =
+        Paint()
+          ..color = const Color(0xFF000000)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = radius / 10.0;
     final Path path = Path();
     final Rect box = Offset.zero & size;
     for (double theta = 0.0; theta < math.pi * 2.0; theta += deltaTheta) {
@@ -203,9 +201,7 @@ class MovableBall extends StatelessWidget {
     const Widget dashedBall = SizedBox(
       width: kBallSize,
       height: kBallSize,
-      child: CustomPaint(
-        painter: DashOutlineCirclePainter()
-      ),
+      child: CustomPaint(painter: DashOutlineCirclePainter()),
     );
     if (position == ballPosition) {
       return Draggable<bool>(
@@ -217,7 +213,9 @@ class MovableBall extends StatelessWidget {
       );
     } else {
       return DragTarget<bool>(
-        onAcceptWithDetails: (DragTargetDetails<bool> data) { callback(position); },
+        onAcceptWithDetails: (DragTargetDetails<bool> data) {
+          callback(position);
+        },
         builder: (BuildContext context, List<bool?> accepted, List<dynamic> rejected) {
           return dashedBall;
         },
@@ -237,25 +235,22 @@ class DragAndDropAppState extends State<DragAndDropApp> {
   int position = 1;
 
   void moveBall(int newPosition) {
-    setState(() { position = newPosition; });
+    setState(() {
+      position = newPosition;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Drag and Drop Flutter Demo'),
-      ),
+      appBar: AppBar(title: const Text('Drag and Drop Flutter Demo')),
       body: Column(
         children: <Widget>[
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                ExampleDragSource(
-                  color: Colors.yellow.shade300,
-                  child: const Text('under'),
-                ),
+                ExampleDragSource(color: Colors.yellow.shade300, child: const Text('under')),
                 ExampleDragSource(
                   color: Colors.green.shade300,
                   under: false,
@@ -297,8 +292,5 @@ class DragAndDropAppState extends State<DragAndDropApp> {
 }
 
 void main() {
-  runApp(const MaterialApp(
-    title: 'Drag and Drop Flutter Demo',
-    home: DragAndDropApp(),
-  ));
+  runApp(const MaterialApp(title: 'Drag and Drop Flutter Demo', home: DragAndDropApp()));
 }

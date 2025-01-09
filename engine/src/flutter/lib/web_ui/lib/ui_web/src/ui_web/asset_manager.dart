@@ -18,14 +18,12 @@ AssetManager get assetManager => engineAssetManager;
 /// By default, URLs are relative to the `<base>` of the current website.
 class AssetManager {
   /// Initializes [AssetManager] with paths.
-  AssetManager({
-    this.assetsDir = _defaultAssetsDir,
-    String? assetBase,
-  })  : assert(
-          assetBase == null || assetBase.endsWith('/'),
-          '`assetBase` must end with a `/` character.',
-        ),
-        _assetBase = assetBase;
+  AssetManager({this.assetsDir = _defaultAssetsDir, String? assetBase})
+    : assert(
+        assetBase == null || assetBase.endsWith('/'),
+        '`assetBase` must end with a `/` character.',
+      ),
+      _assetBase = assetBase;
 
   static const String _defaultAssetsDir = 'assets';
 
@@ -42,16 +40,18 @@ class AssetManager {
   //
   // This warns the user and points them to the new initializeEngine style.
   String? get _deprecatedAssetBase {
-    final DomHTMLMetaElement? meta = domWindow.document
-        .querySelector('meta[name=assetBase]') as DomHTMLMetaElement?;
+    final DomHTMLMetaElement? meta =
+        domWindow.document.querySelector('meta[name=assetBase]') as DomHTMLMetaElement?;
 
     final String? fallbackBaseUrl = meta?.content;
 
     if (fallbackBaseUrl != null) {
       // Warn users that they're using a deprecated configuration style...
-      domWindow.console.warn('The `assetBase` meta tag is now deprecated.\n'
-          'Use engineInitializer.initializeEngine(config) instead.\n'
-          'See: https://docs.flutter.dev/development/platform-integration/web/initialization');
+      domWindow.console.warn(
+        'The `assetBase` meta tag is now deprecated.\n'
+        'Use engineInitializer.initializeEngine(config) instead.\n'
+        'See: https://docs.flutter.dev/development/platform-integration/web/initialization',
+      );
     }
     return fallbackBaseUrl;
   }

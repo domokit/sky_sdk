@@ -38,12 +38,14 @@ void testMain() {
       builder.addPicture(ui.Offset.zero, redCircle);
 
       // Apply a "greyscale" color filter.
-      builder.pushColorFilter(const ui.ColorFilter.matrix(<double>[
-        0.2126, 0.7152, 0.0722, 0, 0, //
-        0.2126, 0.7152, 0.0722, 0, 0, //
-        0.2126, 0.7152, 0.0722, 0, 0, //
-        0, 0, 0, 1, 0, //
-      ]));
+      builder.pushColorFilter(
+        const ui.ColorFilter.matrix(<double>[
+          0.2126, 0.7152, 0.0722, 0, 0, //
+          0.2126, 0.7152, 0.0722, 0, 0, //
+          0.2126, 0.7152, 0.0722, 0, 0, //
+          0, 0, 0, 1, 0, //
+        ]),
+      );
 
       // Draw another red circle and apply it to the scene.
       // This one should be grey since we have the color filter.
@@ -104,22 +106,30 @@ void testMain() {
       builder.pushOffset(0, 0);
 
       // Draw a red, green, and blue square with the inverted color matrix.
-      builder.pushColorFilter(const ui.ColorFilter.matrix(<double>[
-        -1, 0, 0, 0, 255, //
-        0, -1, 0, 0, 255, //
-        0, 0, -1, 0, 255, //
-        0, 0, 0, 1, 0, //
-      ]));
+      builder.pushColorFilter(
+        const ui.ColorFilter.matrix(<double>[
+          -1, 0, 0, 0, 255, //
+          0, -1, 0, 0, 255, //
+          0, 0, -1, 0, 255, //
+          0, 0, 0, 1, 0, //
+        ]),
+      );
 
       final CkPictureRecorder recorder = CkPictureRecorder();
 
       final CkCanvas canvas = recorder.beginRecording(region);
-      canvas.drawRect(const ui.Rect.fromLTWH(50, 50, 100, 100),
-          CkPaint()..color = const ui.Color.fromARGB(255, 255, 0, 0));
-      canvas.drawRect(const ui.Rect.fromLTWH(200, 50, 100, 100),
-          CkPaint()..color = const ui.Color.fromARGB(255, 0, 255, 0));
-      canvas.drawRect(const ui.Rect.fromLTWH(350, 50, 100, 100),
-          CkPaint()..color = const ui.Color.fromARGB(255, 0, 0, 255));
+      canvas.drawRect(
+        const ui.Rect.fromLTWH(50, 50, 100, 100),
+        CkPaint()..color = const ui.Color.fromARGB(255, 255, 0, 0),
+      );
+      canvas.drawRect(
+        const ui.Rect.fromLTWH(200, 50, 100, 100),
+        CkPaint()..color = const ui.Color.fromARGB(255, 0, 255, 0),
+      );
+      canvas.drawRect(
+        const ui.Rect.fromLTWH(350, 50, 100, 100),
+        CkPaint()..color = const ui.Color.fromARGB(255, 0, 0, 255),
+      );
       final CkPicture invertedSquares = recorder.endRecording();
 
       builder.addPicture(ui.Offset.zero, invertedSquares);
@@ -129,7 +139,7 @@ void testMain() {
 
     test('ColorFilter color with 0 opacity', () async {
       final LayerSceneBuilder builder = LayerSceneBuilder();
-      builder.pushOffset(0,0);
+      builder.pushOffset(0, 0);
       final CkPictureRecorder recorder = CkPictureRecorder();
       final CkCanvas canvas = recorder.beginRecording(region);
 
@@ -141,7 +151,9 @@ void testMain() {
       final CkPicture redCircle1 = recorder.endRecording();
       builder.addPicture(ui.Offset.zero, redCircle1);
 
-      builder.pushColorFilter(ui.ColorFilter.mode(const ui.Color(0x00000000).withOpacity(0), ui.BlendMode.srcOver));
+      builder.pushColorFilter(
+        ui.ColorFilter.mode(const ui.Color(0x00000000).withOpacity(0), ui.BlendMode.srcOver),
+      );
 
       // Draw another red circle and apply it to the scene.
       // This one should also be red with the color filter doing nothing
@@ -157,8 +169,10 @@ void testMain() {
       builder.addPicture(ui.Offset.zero, redCircle2);
 
       await matchSceneGolden(
-          'canvaskit_transparent_colorfilter.png', builder.build(),
-          region: region);
+        'canvaskit_transparent_colorfilter.png',
+        builder.build(),
+        region: region,
+      );
     });
 
     test('ColorFilter with dst blend mode', () async {
@@ -176,8 +190,7 @@ void testMain() {
       builder.addPicture(ui.Offset.zero, redCircle1);
 
       // Push dst color filter
-      builder.pushColorFilter(
-          const ui.ColorFilter.mode(ui.Color(0xffff0000), ui.BlendMode.dst));
+      builder.pushColorFilter(const ui.ColorFilter.mode(ui.Color(0xffff0000), ui.BlendMode.dst));
 
       // Draw another red circle and apply it to the scene.
       // This one should also be red with the color filter doing nothing
@@ -192,8 +205,7 @@ void testMain() {
 
       builder.addPicture(ui.Offset.zero, redCircle2);
 
-      await matchSceneGolden('canvaskit_dst_colorfilter.png', builder.build(),
-          region: region);
+      await matchSceneGolden('canvaskit_dst_colorfilter.png', builder.build(), region: region);
     });
 
     test('ColorFilter only applies to child bounds', () async {
@@ -215,8 +227,7 @@ void testMain() {
       builder.addPicture(ui.Offset.zero, redCircle);
 
       // Apply a green color filter.
-      builder.pushColorFilter(
-          const ui.ColorFilter.mode(ui.Color(0xff00ff00), ui.BlendMode.color));
+      builder.pushColorFilter(const ui.ColorFilter.mode(ui.Color(0xff00ff00), ui.BlendMode.color));
       // Draw another red circle and apply it to the scene.
       // This one should be green since we have the color filter.
       final CkPictureRecorder recorder2 = CkPictureRecorder();
@@ -231,11 +242,7 @@ void testMain() {
 
       builder.addPicture(ui.Offset.zero, greenCircle);
 
-      await matchSceneGolden(
-        'canvaskit_colorfilter_bounds.png',
-        builder.build(),
-        region: region,
-      );
+      await matchSceneGolden('canvaskit_colorfilter_bounds.png', builder.build(), region: region);
     });
 
     test('ColorFilter works as an ImageFilter', () async {
@@ -257,8 +264,7 @@ void testMain() {
       builder.addPicture(ui.Offset.zero, redCircle);
 
       // Apply a green color filter as an ImageFilter.
-      builder.pushImageFilter(
-          const ui.ColorFilter.mode(ui.Color(0xff00ff00), ui.BlendMode.color));
+      builder.pushImageFilter(const ui.ColorFilter.mode(ui.Color(0xff00ff00), ui.BlendMode.color));
       // Draw another red circle and apply it to the scene.
       // This one should be green since we have the color filter.
       final CkPictureRecorder recorder2 = CkPictureRecorder();

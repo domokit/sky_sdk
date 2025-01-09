@@ -11,8 +11,7 @@ import 'dom.dart';
 class SVGElement extends DomElement {}
 
 SVGElement createSVGElement(String tag) =>
-    domDocument.createElementNS('http://www.w3.org/2000/svg', tag)
-        as SVGElement;
+    domDocument.createElementNS('http://www.w3.org/2000/svg', tag) as SVGElement;
 
 @JS()
 @staticInterop
@@ -39,16 +38,14 @@ extension SVGSVGElementExtension on SVGSVGElement {
 class SVGClipPathElement extends SVGGraphicsElement {}
 
 SVGClipPathElement createSVGClipPathElement() =>
-    domDocument.createElementNS('http://www.w3.org/2000/svg', 'clipPath')
-        as SVGClipPathElement;
+    domDocument.createElementNS('http://www.w3.org/2000/svg', 'clipPath') as SVGClipPathElement;
 
 @JS()
 @staticInterop
 class SVGDefsElement extends SVGGraphicsElement {}
 
 SVGDefsElement createSVGDefsElement() =>
-    domDocument.createElementNS('http://www.w3.org/2000/svg', 'defs')
-        as SVGDefsElement;
+    domDocument.createElementNS('http://www.w3.org/2000/svg', 'defs') as SVGDefsElement;
 
 @JS()
 @staticInterop
@@ -59,8 +56,7 @@ class SVGGeometryElement extends SVGGraphicsElement {}
 class SVGPathElement extends SVGGeometryElement {}
 
 SVGPathElement createSVGPathElement() =>
-    domDocument.createElementNS('http://www.w3.org/2000/svg', 'path')
-        as SVGPathElement;
+    domDocument.createElementNS('http://www.w3.org/2000/svg', 'path') as SVGPathElement;
 
 @JS()
 @staticInterop
@@ -75,8 +71,7 @@ extension SVGFilterElementExtension on SVGFilterElement {
 }
 
 SVGFilterElement createSVGFilterElement() =>
-    domDocument.createElementNS('http://www.w3.org/2000/svg', 'filter')
-        as SVGFilterElement;
+    domDocument.createElementNS('http://www.w3.org/2000/svg', 'filter') as SVGFilterElement;
 
 @JS()
 @staticInterop
@@ -136,8 +131,7 @@ extension SVGFEFloodElementExtension on SVGFEFloodElement {
 }
 
 SVGFEFloodElement createSVGFEFloodElement() =>
-    domDocument.createElementNS('http://www.w3.org/2000/svg', 'feFlood')
-        as SVGFEFloodElement;
+    domDocument.createElementNS('http://www.w3.org/2000/svg', 'feFlood') as SVGFEFloodElement;
 
 @JS()
 @staticInterop
@@ -150,8 +144,7 @@ extension SVGFEBlendElementExtension on SVGFEBlendElement {
 }
 
 SVGFEBlendElement createSVGFEBlendElement() =>
-    domDocument.createElementNS('http://www.w3.org/2000/svg', 'feBlend')
-        as SVGFEBlendElement;
+    domDocument.createElementNS('http://www.w3.org/2000/svg', 'feBlend') as SVGFEBlendElement;
 
 @JS()
 @staticInterop
@@ -167,8 +160,7 @@ extension SVGFEImageElementExtension on SVGFEImageElement {
 }
 
 SVGFEImageElement createSVGFEImageElement() =>
-    domDocument.createElementNS('http://www.w3.org/2000/svg', 'feImage')
-        as SVGFEImageElement;
+    domDocument.createElementNS('http://www.w3.org/2000/svg', 'feImage') as SVGFEImageElement;
 
 @JS()
 @staticInterop

@@ -97,17 +97,16 @@ class _SliverFillViewportRenderObjectWidget extends SliverMultiBoxAdaptorWidget 
 }
 
 class _SliverFractionalPadding extends SingleChildRenderObjectWidget {
-  const _SliverFractionalPadding({
-    this.viewportFraction = 0,
-    Widget? sliver,
-  }) : assert(viewportFraction >= 0),
+  const _SliverFractionalPadding({this.viewportFraction = 0, Widget? sliver})
+    : assert(viewportFraction >= 0),
       assert(viewportFraction <= 0.5),
       super(child: sliver);
 
   final double viewportFraction;
 
   @override
-  RenderObject createRenderObject(BuildContext context) => _RenderSliverFractionalPadding(viewportFraction: viewportFraction);
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenderSliverFractionalPadding(viewportFraction: viewportFraction);
 
   @override
   void updateRenderObject(BuildContext context, _RenderSliverFractionalPadding renderObject) {
@@ -116,9 +115,8 @@ class _SliverFractionalPadding extends SingleChildRenderObjectWidget {
 }
 
 class _RenderSliverFractionalPadding extends RenderSliverEdgeInsetsPadding {
-  _RenderSliverFractionalPadding({
-    double viewportFraction = 0,
-  }) : assert(viewportFraction <= 0.5),
+  _RenderSliverFractionalPadding({double viewportFraction = 0})
+    : assert(viewportFraction <= 0.5),
       assert(viewportFraction >= 0),
       _viewportFraction = viewportFraction;
 
@@ -152,7 +150,7 @@ class _RenderSliverFractionalPadding extends RenderSliverEdgeInsetsPadding {
     _lastResolvedConstraints = constraints;
     _resolvedPadding = switch (constraints.axis) {
       Axis.horizontal => EdgeInsets.symmetric(horizontal: paddingValue),
-      Axis.vertical   => EdgeInsets.symmetric(vertical: paddingValue),
+      Axis.vertical => EdgeInsets.symmetric(vertical: paddingValue),
     };
 
     return;
@@ -306,12 +304,7 @@ class SliverFillRemaining extends StatelessWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-      DiagnosticsProperty<Widget>(
-        'child',
-        child,
-      ),
-    );
+    properties.add(DiagnosticsProperty<Widget>('child', child));
     final List<String> flags = <String>[
       if (hasScrollBody) 'scrollable',
       if (fillOverscroll) 'fillOverscroll',
@@ -324,28 +317,24 @@ class SliverFillRemaining extends StatelessWidget {
 }
 
 class _SliverFillRemainingWithScrollable extends SingleChildRenderObjectWidget {
-  const _SliverFillRemainingWithScrollable({
-    super.child,
-  });
+  const _SliverFillRemainingWithScrollable({super.child});
 
   @override
-  RenderSliverFillRemainingWithScrollable createRenderObject(BuildContext context) => RenderSliverFillRemainingWithScrollable();
+  RenderSliverFillRemainingWithScrollable createRenderObject(BuildContext context) =>
+      RenderSliverFillRemainingWithScrollable();
 }
 
 class _SliverFillRemainingWithoutScrollable extends SingleChildRenderObjectWidget {
-  const _SliverFillRemainingWithoutScrollable({
-    super.child,
-  });
+  const _SliverFillRemainingWithoutScrollable({super.child});
 
   @override
   RenderSliverFillRemaining createRenderObject(BuildContext context) => RenderSliverFillRemaining();
 }
 
 class _SliverFillRemainingAndOverscroll extends SingleChildRenderObjectWidget {
-  const _SliverFillRemainingAndOverscroll({
-    super.child,
-  });
+  const _SliverFillRemainingAndOverscroll({super.child});
 
   @override
-  RenderSliverFillRemainingAndOverscroll createRenderObject(BuildContext context) => RenderSliverFillRemainingAndOverscroll();
+  RenderSliverFillRemainingAndOverscroll createRenderObject(BuildContext context) =>
+      RenderSliverFillRemainingAndOverscroll();
 }

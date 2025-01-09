@@ -19,43 +19,45 @@ import 'package:test/test.dart';
 /// A test fixture for the `clang-tidy` tool.
 final class Fixture {
   /// Simulates running the tool with the given [args].
-  factory Fixture.fromCommandLine(List<String> args, {
+  factory Fixture.fromCommandLine(
+    List<String> args, {
     ProcessManager? processManager,
     Engine? engine,
   }) {
     processManager ??= FakeProcessManager();
     final StringBuffer outBuffer = StringBuffer();
     final StringBuffer errBuffer = StringBuffer();
-    return Fixture._(ClangTidy.fromCommandLine(
-      args,
-      outSink: outBuffer,
-      errSink: errBuffer,
-      processManager: processManager,
-      engine: engine,
-    ), errBuffer);
+    return Fixture._(
+      ClangTidy.fromCommandLine(
+        args,
+        outSink: outBuffer,
+        errSink: errBuffer,
+        processManager: processManager,
+        engine: engine,
+      ),
+      errBuffer,
+    );
   }
 
   /// Simulates running the tool with the given [options].
-  factory Fixture.fromOptions(Options options, {
-    ProcessManager? processManager,
-  }) {
+  factory Fixture.fromOptions(Options options, {ProcessManager? processManager}) {
     processManager ??= FakeProcessManager();
     final StringBuffer outBuffer = StringBuffer();
     final StringBuffer errBuffer = StringBuffer();
-    return Fixture._(ClangTidy(
-      buildCommandsPath: options.buildCommandsPath,
-      lintTarget: options.lintTarget,
-      fix: options.fix,
-      outSink: outBuffer,
-      errSink: errBuffer,
-      processManager: processManager,
-    ), errBuffer);
+    return Fixture._(
+      ClangTidy(
+        buildCommandsPath: options.buildCommandsPath,
+        lintTarget: options.lintTarget,
+        fix: options.fix,
+        outSink: outBuffer,
+        errSink: errBuffer,
+        processManager: processManager,
+      ),
+      errBuffer,
+    );
   }
 
-  Fixture._(
-    this.tool,
-    this.errBuffer,
-  );
+  Fixture._(this.tool, this.errBuffer);
 
   /// The `clang-tidy` tool.
   final ClangTidy tool;
@@ -129,10 +131,9 @@ void main() {
   test('--help gives help, and uses host_debug by default outside of an engine root', () async {
     final io.Directory rootDir = io.Directory.systemTemp.createTempSync('clang_tidy_test');
     try {
-      final Fixture fixture = Fixture.fromCommandLine(
-        <String>['--help'],
-        engine: TestEngine.createTemp(rootDir: rootDir)
-      );
+      final Fixture fixture = Fixture.fromCommandLine(<String>[
+        '--help',
+      ], engine: TestEngine.createTemp(rootDir: rootDir));
       final int result = await fixture.tool.run();
 
       expect(fixture.tool.options.help, isTrue);
@@ -146,75 +147,79 @@ void main() {
     }
   });
 
-  test('--help gives help, and uses the latest build by default outside in an engine root', () async {
-    final io.Directory rootDir = io.Directory.systemTemp.createTempSync('clang_tidy_test');
-    final io.Directory buildDir = io.Directory(path.join(rootDir.path, 'out', 'host_debug_unopt_arm64'))..createSync(recursive: true);
-    try {
-      final Fixture fixture = Fixture.fromCommandLine(
-        <String>['--help'],
-        engine: TestEngine.createTemp(rootDir: rootDir, outputs: <TestOutput>[
-          TestOutput(buildDir),
-        ])
-      );
-      final int result = await fixture.tool.run();
+  test(
+    '--help gives help, and uses the latest build by default outside in an engine root',
+    () async {
+      final io.Directory rootDir = io.Directory.systemTemp.createTempSync('clang_tidy_test');
+      final io.Directory buildDir = io.Directory(
+        path.join(rootDir.path, 'out', 'host_debug_unopt_arm64'),
+      )..createSync(recursive: true);
+      try {
+        final Fixture fixture = Fixture.fromCommandLine(
+          <String>['--help'],
+          engine: TestEngine.createTemp(
+            rootDir: rootDir,
+            outputs: <TestOutput>[TestOutput(buildDir)],
+          ),
+        );
+        final int result = await fixture.tool.run();
 
-      expect(fixture.tool.options.help, isTrue);
-      expect(result, equals(0));
+        expect(fixture.tool.options.help, isTrue);
+        expect(result, equals(0));
 
-      final String errors = fixture.errBuffer.toString();
-      expect(errors, contains('Usage: '));
-      expect(errors, contains('defaults to "host_debug_unopt_arm64"'));
-    } finally {
-      rootDir.deleteSync(recursive: true);
-    }
-  });
+        final String errors = fixture.errBuffer.toString();
+        expect(errors, contains('Usage: '));
+        expect(errors, contains('defaults to "host_debug_unopt_arm64"'));
+      } finally {
+        rootDir.deleteSync(recursive: true);
+      }
+    },
+  );
 
   test('trimmed clang-tidy output', () {
     expect(_tidyTrimmedOutput, equals(ClangTidy.trimOutput(_tidyOutput)));
   });
 
   test('Error when --compile-commands and --target-variant are used together', () async {
-    final Fixture fixture = Fixture.fromCommandLine(
-      <String>[
-        '--compile-commands',
-        '/unused',
-        '--target-variant',
-        'unused'
-      ],
-    );
+    final Fixture fixture = Fixture.fromCommandLine(<String>[
+      '--compile-commands',
+      '/unused',
+      '--target-variant',
+      'unused',
+    ]);
 
     final int result = await fixture.tool.run();
 
     expect(result, equals(1));
-    expect(fixture.errBuffer.toString(), contains(
-      'ERROR: --compile-commands option cannot be used with --target-variant.',
-    ));
+    expect(
+      fixture.errBuffer.toString(),
+      contains('ERROR: --compile-commands option cannot be used with --target-variant.'),
+    );
   });
 
   test('Error when --compile-commands and --src-dir are used together', () async {
-    final Fixture fixture = Fixture.fromCommandLine(
-      <String>[
-        '--compile-commands',
-        '/unused',
-        '--src-dir',
-        '/unused',
-      ],
-    );
+    final Fixture fixture = Fixture.fromCommandLine(<String>[
+      '--compile-commands',
+      '/unused',
+      '--src-dir',
+      '/unused',
+    ]);
     final int result = await fixture.tool.run();
 
     expect(result, equals(1));
-    expect(fixture.errBuffer.toString(), contains(
-      'ERROR: --compile-commands option cannot be used with --src-dir.',
-    ));
+    expect(
+      fixture.errBuffer.toString(),
+      contains('ERROR: --compile-commands option cannot be used with --src-dir.'),
+    );
   });
 
   test('shard-id valid', () async {
     _withTempFile('shard-id-valid', (String path) {
-      final Options options = Options.fromCommandLine( <String>[
-          '--compile-commands=$path',
-          '--shard-variants=variant',
-          '--shard-id=1',
-        ],);
+      final Options options = Options.fromCommandLine(<String>[
+        '--compile-commands=$path',
+        '--shard-variants=variant',
+        '--shard-id=1',
+      ]);
       expect(options.errorMessage, isNull);
       expect(options.shardId, equals(1));
     });
@@ -222,10 +227,10 @@ void main() {
 
   test('clang-tidy specified', () async {
     _withTempFile('shard-id-valid', (String path) {
-      final Options options = Options.fromCommandLine( <String>[
-          '--compile-commands=$path',
-          '--clang-tidy=foo/bar',
-        ],);
+      final Options options = Options.fromCommandLine(<String>[
+        '--compile-commands=$path',
+        '--clang-tidy=foo/bar',
+      ]);
       expect(options.clangTidyPath, isNotNull);
       expect(options.clangTidyPath!.path, equals('foo/bar'));
     });
@@ -233,7 +238,7 @@ void main() {
 
   test('clang-tidy unspecified', () async {
     _withTempFile('shard-id-valid', (String path) {
-      final Options options = Options.fromCommandLine( <String>[],);
+      final Options options = Options.fromCommandLine(<String>[]);
       expect(options.clangTidyPath, isNull);
     });
   });
@@ -253,79 +258,74 @@ void main() {
   });
 
   test('Error when --compile-commands path does not exist', () async {
-    final Fixture fixture = Fixture.fromCommandLine(
-      <String>[
-        '--compile-commands',
-        '/does/not/exist',
-      ],
-    );
+    final Fixture fixture = Fixture.fromCommandLine(<String>[
+      '--compile-commands',
+      '/does/not/exist',
+    ]);
     final int result = await fixture.tool.run();
 
     expect(result, equals(1));
-    expect(fixture.errBuffer.toString().split('\n')[0], matches(
-      r"ERROR: Build commands path .*/does/not/exist doesn't exist.",
-    ));
+    expect(
+      fixture.errBuffer.toString().split('\n')[0],
+      matches(r"ERROR: Build commands path .*/does/not/exist doesn't exist."),
+    );
   });
 
   test('Error when --src-dir path does not exist, uses target variant in path', () async {
-    final Fixture fixture = Fixture.fromCommandLine(
-      <String>[
-        '--src-dir',
-        '/does/not/exist',
-        '--target-variant',
-        'ios_debug_unopt',
-      ],
-    );
+    final Fixture fixture = Fixture.fromCommandLine(<String>[
+      '--src-dir',
+      '/does/not/exist',
+      '--target-variant',
+      'ios_debug_unopt',
+    ]);
     final int result = await fixture.tool.run();
 
     expect(result, equals(1));
-    expect(fixture.errBuffer.toString().split('\n')[0], matches(
-      r'ERROR: Build commands path .*/does/not/exist'
-      r'[/\\]out[/\\]ios_debug_unopt[/\\]compile_commands.json'
-      r" doesn't exist.",
-    ));
+    expect(
+      fixture.errBuffer.toString().split('\n')[0],
+      matches(
+        r'ERROR: Build commands path .*/does/not/exist'
+        r'[/\\]out[/\\]ios_debug_unopt[/\\]compile_commands.json'
+        r" doesn't exist.",
+      ),
+    );
   });
 
   test('Error when --lint-all and --lint-head are used together', () async {
-    final Fixture fixture = Fixture.fromCommandLine(
-      <String>[
-        '--compile-commands',
-        '/unused',
-        '--lint-all',
-        '--lint-head',
-      ],
-    );
+    final Fixture fixture = Fixture.fromCommandLine(<String>[
+      '--compile-commands',
+      '/unused',
+      '--lint-all',
+      '--lint-head',
+    ]);
     final int result = await fixture.tool.run();
 
     expect(result, equals(1));
-    expect(fixture.errBuffer.toString(), contains(
-      'ERROR: At most one of --lint-all, --lint-head, --lint-regex can be passed.',
-    ));
+    expect(
+      fixture.errBuffer.toString(),
+      contains('ERROR: At most one of --lint-all, --lint-head, --lint-regex can be passed.'),
+    );
   });
 
   test('Error when --lint-all and --lint-regex are used together', () async {
-    final Fixture fixture = Fixture.fromCommandLine(
-      <String>[
-        '--compile-commands',
-        '/unused',
-        '--lint-all',
-        '--lint-regex=".*"',
-      ],
-    );
+    final Fixture fixture = Fixture.fromCommandLine(<String>[
+      '--compile-commands',
+      '/unused',
+      '--lint-all',
+      '--lint-regex=".*"',
+    ]);
     final int result = await fixture.tool.run();
 
     expect(result, equals(1));
-    expect(fixture.errBuffer.toString(), contains(
-      'ERROR: At most one of --lint-all, --lint-head, --lint-regex can be passed.',
-    ));
+    expect(
+      fixture.errBuffer.toString(),
+      contains('ERROR: At most one of --lint-all, --lint-head, --lint-regex can be passed.'),
+    );
   });
 
   test('lintAll=true checks all files', () async {
     final Fixture fixture = Fixture.fromOptions(
-      Options(
-        buildCommandsPath: io.File(buildCommands),
-        lintTarget: const LintAll(),
-      ),
+      Options(buildCommandsPath: io.File(buildCommands), lintTarget: const LintAll()),
     );
     final List<io.File> fileList = await fixture.tool.computeFilesOfInterest();
     expect(fileList.length, greaterThan(1000));
@@ -375,10 +375,7 @@ void main() {
 
   test('Sharding', () async {
     final Fixture fixture = Fixture.fromOptions(
-      Options(
-        buildCommandsPath: io.File(buildCommands),
-        lintTarget: const LintAll(),
-      ),
+      Options(buildCommandsPath: io.File(buildCommands), lintTarget: const LintAll()),
       processManager: FakeProcessManager(
         onStart: (List<String> command) {
           if (command.first == 'git') {
@@ -399,12 +396,12 @@ void main() {
     }
 
     final List<String> filePaths = <String>[
-      for (int i = 0; i < 10; ++i) '/path/to/a/source_file_$i.cc'
+      for (int i = 0; i < 10; ++i) '/path/to/a/source_file_$i.cc',
     ];
     final List<Map<String, String>> buildCommandsData =
         filePaths.map((String e) => makeBuildCommandEntry(e)).toList();
     final List<Map<String, String>> shardBuildCommandsData =
-      filePaths.sublist(6).map((String e) => makeBuildCommandEntry(e)).toList();
+        filePaths.sublist(6).map((String e) => makeBuildCommandEntry(e)).toList();
 
     {
       final List<Command> commands = await fixture.tool.getLintCommandsForFiles(
@@ -451,10 +448,7 @@ void main() {
 
   test('No Commands are produced when no files changed', () async {
     final Fixture fixture = Fixture.fromOptions(
-      Options(
-        buildCommandsPath: io.File(buildCommands),
-        lintTarget: const LintAll(),
-      ),
+      Options(buildCommandsPath: io.File(buildCommands), lintTarget: const LintAll()),
     );
 
     const String filePath = '/path/to/a/source_file.cc';
@@ -477,10 +471,7 @@ void main() {
 
   test('A Command is produced when a file is changed', () async {
     final Fixture fixture = Fixture.fromOptions(
-      Options(
-        buildCommandsPath: io.File(buildCommands),
-        lintTarget: const LintAll(),
-      ),
+      Options(buildCommandsPath: io.File(buildCommands), lintTarget: const LintAll()),
     );
 
     // This file needs to exist, and be UTF8 line-parsable.
@@ -539,9 +530,7 @@ void main() {
   });
 
   test('Command getLintAction flags missing files', () async {
-    final LintAction lintAction = await Command.getLintAction(
-      '/does/not/exist',
-    );
+    final LintAction lintAction = await Command.getLintAction('/does/not/exist');
 
     expect(lintAction, equals(LintAction.skipMissing));
   });
@@ -594,45 +583,41 @@ void main() {
 
   test('Command filters out sed command after a compile command', () {
     final Command command = Command.fromMap(<String, String>{
-        'directory': '/unused',
-        'command':
+      'directory': '/unused',
+      'command':
           '../../buildtools/mac-x64/clang/bin/clang filename '
           "&& sed -i 's@/b/f/w@../..@g' filename",
-        'file': 'unused',
+      'file': 'unused',
     });
     expect(command.tidyArgs.trim(), 'filename');
   });
 
   test('Command filters out the -MF flag', () {
     final Command command = Command.fromMap(<String, String>{
-        'directory': '/unused',
-        'command':
-          '../../buildtools/mac-x64/clang/bin/clang -MF stuff filename ',
-        'file': 'unused',
+      'directory': '/unused',
+      'command': '../../buildtools/mac-x64/clang/bin/clang -MF stuff filename ',
+      'file': 'unused',
     });
     expect(command.tidyArgs.trim(), 'filename');
   });
 
   test('Command filters out rewrapper command before a compile command', () {
     final Command command = Command.fromMap(<String, String>{
-        'directory': '/unused',
-        'command':
+      'directory': '/unused',
+      'command':
           'flutter/engine/src/buildtools/mac-arm64/reclient/rewrapper '
           '--cfg=flutter/engine/src/flutter/build/rbe/rewrapper-mac-arm64.cfg '
           '--exec_root=flutter/engine/src/ '
           '--labels=type=compile,compiler=clang,lang=cpp '
           '../../buildtools/mac-x64/clang/bin/clang++ filename ',
-        'file': 'unused',
+      'file': 'unused',
     });
     expect(command.tidyArgs.trim(), 'filename');
   });
 
   test('Files that cause clang-tidy to segfault are skipped', () async {
     final Fixture fileListFixture = Fixture.fromOptions(
-      Options(
-        buildCommandsPath: io.File(buildCommands),
-        lintTarget: const LintAll(),
-      ),
+      Options(buildCommandsPath: io.File(buildCommands), lintTarget: const LintAll()),
     );
     final String firstFilePath = (await fileListFixture.tool.computeFilesOfInterest()).first.path;
 
@@ -653,16 +638,14 @@ void main() {
       },
     ];
 
-    final io.File commands = io.File(path.join(
-        io.Directory.systemTemp.path, 'test_compile_commands.json'));
+    final io.File commands = io.File(
+      path.join(io.Directory.systemTemp.path, 'test_compile_commands.json'),
+    );
     int result;
     try {
       commands.writeAsStringSync(jsonEncode(commandsData));
       final Fixture fixture = Fixture.fromOptions(
-        Options(
-          buildCommandsPath: commands,
-          lintTarget: const LintAll(),
-        ),
+        Options(buildCommandsPath: commands, lintTarget: const LintAll()),
         processManager: fakeProcessManager,
       );
       result = await fixture.tool.run();

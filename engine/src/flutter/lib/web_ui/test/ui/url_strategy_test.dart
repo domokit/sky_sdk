@@ -39,23 +39,17 @@ Future<void> testMain() async {
     expect(ui_web.urlStrategy, customUrlStrategy);
     expect(ui_web.isCustomUrlStrategySet, isTrue);
     // Does not allow custom URL strategy to be set again.
-    expect(
-      () {
-        ui_web.urlStrategy = customUrlStrategy;
-      },
-      throwsAssertionError,
-    );
+    expect(() {
+      ui_web.urlStrategy = customUrlStrategy;
+    }, throwsAssertionError);
   });
 
   test('custom URL strategy can be prevented manually', () {
     ui_web.preventCustomUrlStrategy();
 
     expect(ui_web.isCustomUrlStrategySet, isFalse);
-    expect(
-      () {
-        ui_web.urlStrategy = TestUrlStrategy();
-      },
-      throwsAssertionError,
-    );
+    expect(() {
+      ui_web.urlStrategy = TestUrlStrategy();
+    }, throwsAssertionError);
   });
 }

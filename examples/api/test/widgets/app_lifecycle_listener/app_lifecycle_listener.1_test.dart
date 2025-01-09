@@ -2,14 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter_api_samples/widgets/app_lifecycle_listener/app_lifecycle_listener.1.dart' as example;
+import 'package:flutter_api_samples/widgets/app_lifecycle_listener/app_lifecycle_listener.1.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('AppLifecycleListener example', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.AppLifecycleListenerExample(),
-    );
+    await tester.pumpWidget(const example.AppLifecycleListenerExample());
 
     expect(find.text('Do Not Allow Exit'), findsOneWidget);
     expect(find.text('Allow Exit'), findsOneWidget);

@@ -15,9 +15,7 @@ import '../features.dart';
 /// Can't list emulators at all.
 @immutable
 class CustomDeviceWorkflow implements Workflow {
-  const CustomDeviceWorkflow({
-    required FeatureFlags featureFlags
-  }) : _featureFlags = featureFlags;
+  const CustomDeviceWorkflow({required FeatureFlags featureFlags}) : _featureFlags = featureFlags;
 
   final FeatureFlags _featureFlags;
 

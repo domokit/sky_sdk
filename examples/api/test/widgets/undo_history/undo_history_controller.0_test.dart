@@ -7,10 +7,10 @@ import 'package:flutter_api_samples/widgets/undo_history/undo_history_controller
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('The undo history controller should undo and redo the history changes', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.UndoHistoryControllerExampleApp(),
-    );
+  testWidgets('The undo history controller should undo and redo the history changes', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.UndoHistoryControllerExampleApp());
 
     // Equals to UndoHistoryState._kThrottleDuration.
     const Duration kThrottleDuration = Duration(milliseconds: 500);

@@ -15,33 +15,53 @@ typedef CanvasCallback = void Function(Canvas canvas);
 void main() {
   test('Vertices checks', () {
     try {
-      Vertices(
-        VertexMode.triangles,
-        const <Offset>[Offset.zero, Offset.zero, Offset.zero],
-        indices: Uint16List.fromList(const <int>[0, 2, 5]),
-      );
+      Vertices(VertexMode.triangles, const <Offset>[
+        Offset.zero,
+        Offset.zero,
+        Offset.zero,
+      ], indices: Uint16List.fromList(const <int>[0, 2, 5]));
       throw 'Vertices did not throw the expected error.';
     } on ArgumentError catch (e) {
-      expect('$e', 'Invalid argument(s): "indices" values must be valid indices in the positions list (i.e. numbers in the range 0..2), but indices[2] is 5, which is too big.');
+      expect(
+        '$e',
+        'Invalid argument(s): "indices" values must be valid indices in the positions list (i.e. numbers in the range 0..2), but indices[2] is 5, which is too big.',
+      );
     }
-    Vertices( // This one does not throw.
+    Vertices(
+      // This one does not throw.
       VertexMode.triangles,
       const <Offset>[Offset.zero],
     ).dispose();
-    Vertices( // This one should not throw.
+    Vertices(
+      // This one should not throw.
       VertexMode.triangles,
       const <Offset>[Offset.zero, Offset.zero, Offset.zero],
-      indices: Uint16List.fromList(const <int>[0, 2, 1, 2, 0, 1, 2, 0]), // Uint16List implements List<int> so this is ok.
+      indices: Uint16List.fromList(const <int>[
+        0,
+        2,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+      ]), // Uint16List implements List<int> so this is ok.
     ).dispose();
   });
 
   test('Vertices.raw checks', () {
-    expect(() {
-      Vertices.raw(
-        VertexMode.triangles,
-        Float32List.fromList(const <double>[0.0]),
-      );
-    }, throwsA(isA<ArgumentError>().having((ArgumentError e) => '$e', 'message', 'Invalid argument(s): "positions" must have an even number of entries (each coordinate is an x,y pair).')));
+    expect(
+      () {
+        Vertices.raw(VertexMode.triangles, Float32List.fromList(const <double>[0.0]));
+      },
+      throwsA(
+        isA<ArgumentError>().having(
+          (ArgumentError e) => '$e',
+          'message',
+          'Invalid argument(s): "positions" must have an even number of entries (each coordinate is an x,y pair).',
+        ),
+      ),
+    );
 
     Object? indicesError;
     try {
@@ -54,13 +74,18 @@ void main() {
     } on ArgumentError catch (e) {
       indicesError = e;
     }
-    expect('$indicesError', 'Invalid argument(s): "indices" values must be valid indices in the positions list (i.e. numbers in the range 0..2), but indices[2] is 5, which is too big.');
+    expect(
+      '$indicesError',
+      'Invalid argument(s): "indices" values must be valid indices in the positions list (i.e. numbers in the range 0..2), but indices[2] is 5, which is too big.',
+    );
 
-    Vertices.raw( // This one does not throw.
+    Vertices.raw(
+      // This one does not throw.
       VertexMode.triangles,
       Float32List.fromList(const <double>[0.0, 0.0]),
     ).dispose();
-    Vertices.raw( // This one should not throw.
+    Vertices.raw(
+      // This one should not throw.
       VertexMode.triangles,
       Float32List.fromList(const <double>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
       indices: Uint16List.fromList(const <int>[0, 2, 1, 2, 0, 1, 2, 0]),
@@ -75,6 +100,7 @@ void main() {
       callback(canvas);
       return recorder.endRecording();
     }
+
     final SceneBuilder sceneBuilder = SceneBuilder();
 
     final Picture redClippedPicture = makePicture((Canvas canvas) {
@@ -99,7 +125,7 @@ void main() {
     final ByteData data = (await image.toByteData())!;
     expect(data.buffer.asUint32List().length, 20 * 20);
     // If clipping went wrong as in the linked issue, there will be red pixels.
-    for (final int color in  data.buffer.asUint32List()) {
+    for (final int color in data.buffer.asUint32List()) {
       expect(color, 0xFFFFFFFF);
     }
 
@@ -132,11 +158,12 @@ void main() {
       for (int i = 0; i < count; i++) {
         for (int j = 0; j < count; j++) {
           final bool rectOdd = (i + j) & 1 == 0;
-          final Color fg = (i < count / 2)
-            ? ((j < count / 2) ? green : blue)
-            : ((j < count / 2) ? yellow : red);
-          canvas.drawRect(Rect.fromLTWH(i * rectSize, j * rectSize, rectSize, rectSize),
-                          Paint()..color = rectOdd ? fg : white);
+          final Color fg =
+              (i < count / 2) ? ((j < count / 2) ? green : blue) : ((j < count / 2) ? yellow : red);
+          canvas.drawRect(
+            Rect.fromLTWH(i * rectSize, j * rectSize, rectSize, rectSize),
+            Paint()..color = rectOdd ? fg : white,
+          );
         }
       }
       canvas.drawRect(const Rect.fromLTWH(0, 0, imgSize, 1), Paint()..color = purple);
@@ -210,10 +237,7 @@ void main() {
 
   test('ImageFilter.matrix defaults to FilterQuality.medium', () {
     final Float64List data = Matrix4.identity().storage;
-    expect(
-      ImageFilter.matrix(data).toString(),
-      'ImageFilter.matrix($data, FilterQuality.medium)',
-    );
+    expect(ImageFilter.matrix(data).toString(), 'ImageFilter.matrix($data, FilterQuality.medium)');
   });
 
   test('Picture.toImage generates mip maps', () async {

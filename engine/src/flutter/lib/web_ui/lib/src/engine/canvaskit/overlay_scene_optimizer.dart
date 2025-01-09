@@ -43,8 +43,7 @@ class Rendering {
   }
 
   /// A list of just the canvases in the rendering.
-  List<RenderingRenderCanvas> get canvases =>
-      entities.whereType<RenderingRenderCanvas>().toList();
+  List<RenderingRenderCanvas> get canvases => entities.whereType<RenderingRenderCanvas>().toList();
 
   @override
   String toString() => entities.toString();
@@ -119,16 +118,22 @@ ui.Rect computePlatformViewBounds(EmbeddedViewParams params) {
   for (final Mutator mutator in params.mutators.reversed) {
     switch (mutator.type) {
       case MutatorType.clipRect:
-        final ui.Rect transformedClipBounds =
-            transformRectWithMatrix(currentTransform, mutator.rect!);
+        final ui.Rect transformedClipBounds = transformRectWithMatrix(
+          currentTransform,
+          mutator.rect!,
+        );
         currentClipBounds = currentClipBounds.intersect(transformedClipBounds);
       case MutatorType.clipRRect:
-        final ui.Rect transformedClipBounds =
-            transformRectWithMatrix(currentTransform, mutator.rrect!.outerRect);
+        final ui.Rect transformedClipBounds = transformRectWithMatrix(
+          currentTransform,
+          mutator.rrect!.outerRect,
+        );
         currentClipBounds = currentClipBounds.intersect(transformedClipBounds);
       case MutatorType.clipPath:
         final ui.Rect transformedClipBounds = transformRectWithMatrix(
-            currentTransform, mutator.path!.getBounds());
+          currentTransform,
+          mutator.path!.getBounds(),
+        );
         currentClipBounds.intersect(transformedClipBounds);
       case MutatorType.transform:
         currentTransform = currentTransform.multiplied(mutator.matrix!);
@@ -146,8 +151,7 @@ ui.Rect computePlatformViewBounds(EmbeddedViewParams params) {
     params.size.width,
     params.size.height,
   );
-  final ui.Rect transformedBounds =
-      transformRectWithMatrix(currentTransform, rawBounds);
+  final ui.Rect transformedBounds = transformRectWithMatrix(currentTransform, rawBounds);
   return transformedBounds.intersect(currentClipBounds);
 }
 
@@ -171,8 +175,8 @@ Rendering createOptimizedRendering(
       final int viewId = renderObject.viewId;
       final RenderingPlatformView platformView = RenderingPlatformView(viewId);
       if (PlatformViewManager.instance.isVisible(viewId)) {
-        final ui.Rect platformViewBounds = cachedComputedRects[viewId] =
-            computePlatformViewBounds(paramsForViews[viewId]!);
+        final ui.Rect platformViewBounds =
+            cachedComputedRects[viewId] = computePlatformViewBounds(paramsForViews[viewId]!);
 
         if (debugOverlayOptimizationBounds) {
           platformView.debugComputedBounds = platformViewBounds;
@@ -204,9 +208,7 @@ Rendering createOptimizedRendering(
       // when it is eventually added.
       bool addedToTentativeCanvas = false;
       for (final PictureLayer canvasPicture in tentativeCanvas.pictures) {
-        if (!canvasPicture.sceneBounds!
-            .intersect(picture.sceneBounds!)
-            .isEmpty) {
+        if (!canvasPicture.sceneBounds!.intersect(picture.sceneBounds!).isEmpty) {
           tentativeCanvas.add(picture);
           addedToTentativeCanvas = true;
           break;
@@ -221,8 +223,7 @@ Rendering createOptimizedRendering(
       for (final RenderingEntity entity in result.entities.reversed) {
         if (entity is RenderingPlatformView) {
           if (PlatformViewManager.instance.isVisible(entity.viewId)) {
-            final ui.Rect platformViewBounds =
-                cachedComputedRects[entity.viewId]!;
+            final ui.Rect platformViewBounds = cachedComputedRects[entity.viewId]!;
             if (!platformViewBounds.intersect(picture.sceneBounds!).isEmpty) {
               // The next picture intersects with a platform view already in the
               // result. Add this picture to the first render canvas which comes
@@ -240,9 +241,7 @@ Rendering createOptimizedRendering(
           lastCanvasSeen = entity;
           // Check if we intersect with any pictures in this render canvas.
           for (final PictureLayer canvasPicture in entity.pictures) {
-            if (!canvasPicture.sceneBounds!
-                .intersect(picture.sceneBounds!)
-                .isEmpty) {
+            if (!canvasPicture.sceneBounds!.intersect(picture.sceneBounds!).isEmpty) {
               lastCanvasSeen.add(picture);
               addedPictureToRendering = true;
               break;

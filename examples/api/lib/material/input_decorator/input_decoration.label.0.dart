@@ -34,17 +34,8 @@ class LabelExample extends StatelessWidget {
           label: Text.rich(
             TextSpan(
               children: <InlineSpan>[
-                WidgetSpan(
-                  child: Text(
-                    'Username',
-                  ),
-                ),
-                WidgetSpan(
-                  child: Text(
-                    '*',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ),
+                WidgetSpan(child: Text('Username')),
+                WidgetSpan(child: Text('*', style: TextStyle(color: Colors.red))),
               ],
             ),
           ),

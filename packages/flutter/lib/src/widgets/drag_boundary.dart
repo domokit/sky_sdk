@@ -32,7 +32,8 @@ class _DragBoundaryDelegateForRect extends DragBoundaryDelegate<Rect> {
     if (boundary == null) {
       return true;
     }
-    return boundary!.contains(draggedObject.topLeft) && boundary!.contains(draggedObject.bottomRight);
+    return boundary!.contains(draggedObject.topLeft) &&
+        boundary!.contains(draggedObject.bottomRight);
   }
 
   @override
@@ -84,15 +85,21 @@ class DragBoundary extends InheritedWidget {
   /// {@endtemplate}
   ///
   /// If no [DragBoundary] ancestor is found, the delegate will return a delegate that allows the drag object to move freely.
-  static DragBoundaryDelegate<Rect> forRectOf(BuildContext context, {bool useGlobalPosition = true}) {
-    return forRectMaybeOf(context, useGlobalPosition: useGlobalPosition)
-      ?? _DragBoundaryDelegateForRect(null);
+  static DragBoundaryDelegate<Rect> forRectOf(
+    BuildContext context, {
+    bool useGlobalPosition = true,
+  }) {
+    return forRectMaybeOf(context, useGlobalPosition: useGlobalPosition) ??
+        _DragBoundaryDelegateForRect(null);
   }
 
   /// {@macro flutter.widgets.DragBoundary.forRectOf}
   ///
   /// returns null if not ancestor is found.
-  static DragBoundaryDelegate<Rect>? forRectMaybeOf(BuildContext context, {bool useGlobalPosition = true}) {
+  static DragBoundaryDelegate<Rect>? forRectMaybeOf(
+    BuildContext context, {
+    bool useGlobalPosition = true,
+  }) {
     final InheritedElement? element =
         context.getElementForInheritedWidgetOfExactType<DragBoundary>();
     if (element == null) {
@@ -100,9 +107,13 @@ class DragBoundary extends InheritedWidget {
     }
     final RenderBox? rb = element.findRenderObject() as RenderBox?;
     assert(rb != null && rb.hasSize, 'DragBoundary is not available');
-    final Rect boundary = useGlobalPosition
-      ? Rect.fromPoints(rb!.localToGlobal(Offset.zero), rb.localToGlobal(rb.size.bottomRight(Offset.zero)))
-      : Offset.zero & rb!.size;
+    final Rect boundary =
+        useGlobalPosition
+            ? Rect.fromPoints(
+              rb!.localToGlobal(Offset.zero),
+              rb.localToGlobal(rb.size.bottomRight(Offset.zero)),
+            )
+            : Offset.zero & rb!.size;
     return _DragBoundaryDelegateForRect(boundary);
   }
 

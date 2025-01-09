@@ -39,9 +39,8 @@ void main(List<String> arguments) {
     final String engineCheckoutPath = Platform.environment['ENGINE_CHECKOUT_PATH']!;
     outPath = p.join(engineCheckoutPath, outPath);
   }
-  final String buildToolsPath = arguments.length == 1
-      ? p.join(p.dirname(outPath), 'flutter', 'buildtools')
-      : arguments[1];
+  final String buildToolsPath =
+      arguments.length == 1 ? p.join(p.dirname(outPath), 'flutter', 'buildtools') : arguments[1];
 
   String platform;
   if (Platform.isLinux) {
@@ -57,17 +56,19 @@ void main(List<String> arguments) {
     exit(1);
   }
 
-  final Iterable<String> releaseBuilds = Directory(outPath).listSync()
+  final Iterable<String> releaseBuilds = Directory(outPath)
+      .listSync()
       .whereType<Directory>()
       .map<String>((FileSystemEntity dir) => p.basename(dir.path))
       .where((String s) => s.contains('_release'));
 
-  final Iterable<String> iosReleaseBuilds = releaseBuilds
-      .where((String s) => s.startsWith('ios_'));
-  final Iterable<String> androidReleaseBuilds = releaseBuilds
-      .where((String s) => s.startsWith('android_'));
-  final Iterable<String> hostReleaseBuilds = releaseBuilds
-      .where((String s) => s.startsWith('host_'));
+  final Iterable<String> iosReleaseBuilds = releaseBuilds.where((String s) => s.startsWith('ios_'));
+  final Iterable<String> androidReleaseBuilds = releaseBuilds.where(
+    (String s) => s.startsWith('android_'),
+  );
+  final Iterable<String> hostReleaseBuilds = releaseBuilds.where(
+    (String s) => s.startsWith('host_'),
+  );
 
   int failures = 0;
   failures += _checkIos(outPath, nmPath, iosReleaseBuilds);
@@ -93,19 +94,27 @@ int _checkIos(String outPath, String nmPath, Iterable<String> builds) {
       failures++;
       continue;
     }
-    final Iterable<NmEntry> unexpectedEntries = NmEntry.parse(nmResult.stdout as String).where((NmEntry entry) {
-      final bool cSymbol = (entry.type == '(__DATA,__common)' || entry.type == '(__DATA,__const)')
-          && entry.name.startsWith('_Flutter');
-      final bool cInternalSymbol = entry.type == '(__TEXT,__text)' && entry.name.startsWith('_InternalFlutter');
-      final bool objcSymbol = entry.type == '(__DATA,__objc_data)'
-          && (entry.name.startsWith(r'_OBJC_METACLASS_$_Flutter') || entry.name.startsWith(r'_OBJC_CLASS_$_Flutter'));
+    final Iterable<NmEntry> unexpectedEntries = NmEntry.parse(nmResult.stdout as String).where((
+      NmEntry entry,
+    ) {
+      final bool cSymbol =
+          (entry.type == '(__DATA,__common)' || entry.type == '(__DATA,__const)') &&
+          entry.name.startsWith('_Flutter');
+      final bool cInternalSymbol =
+          entry.type == '(__TEXT,__text)' && entry.name.startsWith('_InternalFlutter');
+      final bool objcSymbol =
+          entry.type == '(__DATA,__objc_data)' &&
+          (entry.name.startsWith(r'_OBJC_METACLASS_$_Flutter') ||
+              entry.name.startsWith(r'_OBJC_CLASS_$_Flutter'));
       return !(cSymbol || cInternalSymbol || objcSymbol);
     });
     if (unexpectedEntries.isNotEmpty) {
       print('ERROR: $libFlutter exports unexpected symbols:');
-      print(unexpectedEntries.fold<String>('', (String previous, NmEntry entry) {
-        return '${previous == '' ? '' : '$previous\n'}     ${entry.type} ${entry.name}';
-      }));
+      print(
+        unexpectedEntries.fold<String>('', (String previous, NmEntry entry) {
+          return '${previous == '' ? '' : '$previous\n'}     ${entry.type} ${entry.name}';
+        }),
+      );
       failures++;
     } else {
       print('OK: $libFlutter');
@@ -130,8 +139,7 @@ int _checkAndroid(String outPath, String nmPath, Iterable<String> builds) {
     }
     final Iterable<NmEntry> entries = NmEntry.parse(nmResult.stdout as String);
     final Map<String, String> entryMap = <String, String>{
-      for (final NmEntry entry in entries)
-        entry.name: entry.type,
+      for (final NmEntry entry in entries) entry.name: entry.type,
     };
     final Map<String, String> expectedSymbols = <String, String>{
       'JNI_OnLoad': 'T',
@@ -180,11 +188,11 @@ int _checkLinux(String outPath, String nmPath, Iterable<String> builds) {
         failures++;
         break;
       }
-      if (!(entry.name.startsWith('Flutter')
-            || entry.name.startsWith('__Flutter')
-            || entry.name.startsWith('kFlutter')
-            || entry.name.startsWith('InternalFlutter')
-            || entry.name.startsWith('kInternalFlutter'))) {
+      if (!(entry.name.startsWith('Flutter') ||
+          entry.name.startsWith('__Flutter') ||
+          entry.name.startsWith('kFlutter') ||
+          entry.name.startsWith('InternalFlutter') ||
+          entry.name.startsWith('kInternalFlutter'))) {
         print('ERROR: $libFlutter exports an unexpected symbol name: ($entry)');
         print(' Library has $entries.');
         failures++;

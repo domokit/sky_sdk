@@ -3,14 +3,15 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/input_decorator/input_decoration.prefix_icon_constraints.0.dart' as example;
+import 'package:flutter_api_samples/material/input_decorator/input_decoration.prefix_icon_constraints.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Shows two TextFields decorated with prefix icon sizes matching their hint text', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.PrefixIconConstraintsExampleApp(),
-    );
+  testWidgets('Shows two TextFields decorated with prefix icon sizes matching their hint text', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.PrefixIconConstraintsExampleApp());
     expect(find.text('InputDecoration Sample'), findsOneWidget);
 
     expect(find.byType(TextField), findsNWidgets(2));
@@ -19,10 +20,7 @@ void main() {
     expect(find.text('Smaller Icon Constraints'), findsOneWidget);
 
     final Finder normalIcon = find.descendant(
-      of: find.ancestor(
-        of: find.text('Normal Icon Constraints'),
-        matching: find.byType(TextField),
-      ),
+      of: find.ancestor(of: find.text('Normal Icon Constraints'), matching: find.byType(TextField)),
       matching: find.byIcon(Icons.search),
     );
     final Finder smallerIcon = find.descendant(
@@ -40,15 +38,10 @@ void main() {
   });
 
   testWidgets('prefixIcons are placed left of hintText', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.PrefixIconConstraintsExampleApp(),
-    );
+    await tester.pumpWidget(const example.PrefixIconConstraintsExampleApp());
 
     final Finder normalIcon = find.descendant(
-      of: find.ancestor(
-        of: find.text('Normal Icon Constraints'),
-        matching: find.byType(TextField),
-      ),
+      of: find.ancestor(of: find.text('Normal Icon Constraints'), matching: find.byType(TextField)),
       matching: find.byIcon(Icons.search),
     );
     final Finder smallerIcon = find.descendant(

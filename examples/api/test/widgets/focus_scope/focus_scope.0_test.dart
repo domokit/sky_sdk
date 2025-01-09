@@ -4,23 +4,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_api_samples/widgets/focus_scope/focus_scope.0.dart'
-  as example;
+import 'package:flutter_api_samples/widgets/focus_scope/focus_scope.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   bool hasFocus(WidgetTester tester, IconData icon) =>
-    tester.widget<IconButton>(
-      find.ancestor(
-        of: find.byIcon(icon),
-        matching: find.byType(IconButton),
-      ),
-    ).focusNode!.hasFocus;
+      tester
+          .widget<IconButton>(
+            find.ancestor(of: find.byIcon(icon), matching: find.byType(IconButton)),
+          )
+          .focusNode!
+          .hasFocus;
 
   testWidgets('The focus is restricted to the foreground', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.FocusScopeExampleApp(),
-    );
+    await tester.pumpWidget(const example.FocusScopeExampleApp());
 
     expect(find.text('FOREGROUND'), findsOne);
     expect(hasFocus(tester, Icons.menu), true);
@@ -32,9 +29,7 @@ void main() {
   });
 
   testWidgets('The background can be focused', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.FocusScopeExampleApp(),
-    );
+    await tester.pumpWidget(const example.FocusScopeExampleApp());
 
     expect(find.text('FOREGROUND'), findsOne);
     expect(hasFocus(tester, Icons.menu), true);

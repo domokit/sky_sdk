@@ -15,11 +15,14 @@ class TestLayout {
         additionalConstraints: const BoxConstraints.tightFor(width: 800.0),
         child: RenderCustomPaint(
           painter: TestCallbackPainter(
-            onPaint: () { painted = true; },
+            onPaint: () {
+              painted = true;
+            },
           ),
-          child: child = RenderConstrainedBox(
-            additionalConstraints: const BoxConstraints.tightFor(height: 10.0, width: 10.0),
-          ),
+          child:
+              child = RenderConstrainedBox(
+                additionalConstraints: const BoxConstraints.tightFor(height: 10.0, width: 10.0),
+              ),
         ),
       ),
     );
@@ -44,7 +47,10 @@ void main() {
     expect(offscreen.child.hasSize, isFalse);
     expect(offscreen.painted, isFalse);
     // Attach the offscreen to a custom render view and owner
-    final RenderView renderView = RenderView(configuration: testConfiguration, view: RendererBinding.instance.platformDispatcher.views.single);
+    final RenderView renderView = RenderView(
+      configuration: testConfiguration,
+      view: RendererBinding.instance.platformDispatcher.views.single,
+    );
     final PipelineOwner pipelineOwner = PipelineOwner();
     renderView.attach(pipelineOwner);
     renderView.child = offscreen.root;
@@ -75,7 +81,10 @@ void main() {
     expect(offscreen.child.hasSize, isFalse);
     expect(offscreen.painted, isFalse);
     // Attach the offscreen to a custom render view and owner
-    final RenderView renderView = RenderView(configuration: testConfiguration, view: RendererBinding.instance.platformDispatcher.views.single);
+    final RenderView renderView = RenderView(
+      configuration: testConfiguration,
+      view: RendererBinding.instance.platformDispatcher.views.single,
+    );
     final PipelineOwner pipelineOwner = PipelineOwner();
     renderView.attach(pipelineOwner);
     renderView.child = offscreen.root;

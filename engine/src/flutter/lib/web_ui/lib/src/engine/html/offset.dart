@@ -10,8 +10,7 @@ import '../vector_math.dart';
 import 'surface.dart';
 
 /// A surface that translates its children using CSS transform and translate.
-class PersistedOffset extends PersistedContainerSurface
-    implements ui.OffsetEngineLayer {
+class PersistedOffset extends PersistedContainerSurface implements ui.OffsetEngineLayer {
   PersistedOffset(PersistedOffset? super.oldLayer, this.dx, this.dy);
 
   /// Horizontal displacement.

@@ -9,19 +9,9 @@ part of ui;
 // To change the sentinel value, search for "kTextHeightNone" in the source code.
 const double kTextHeightNone = 0.0;
 
-enum FontStyle {
-  normal,
-  italic,
-}
+enum FontStyle { normal, italic }
 
-enum PlaceholderAlignment {
-  baseline,
-  aboveBaseline,
-  belowBaseline,
-  top,
-  bottom,
-  middle,
-}
+enum PlaceholderAlignment { baseline, aboveBaseline, belowBaseline, top, bottom, middle }
 
 class FontWeight {
   const FontWeight._(this.index, this.value);
@@ -47,15 +37,14 @@ class FontWeight {
     w600,
     w700,
     w800,
-    w900
+    w900,
   ];
   static FontWeight? lerp(FontWeight? a, FontWeight? b, double t) {
     if (a == null && b == null) {
       return null;
     }
     return values[engine.clampInt(
-      lerpDouble(a?.index ?? normal.index, b?.index ?? normal.index, t)!
-          .round(),
+      lerpDouble(a?.index ?? normal.index, b?.index ?? normal.index, t)!.round(),
       0,
       8,
     )];
@@ -79,88 +68,43 @@ class FontWeight {
 
 class FontFeature {
   const FontFeature(this.feature, [this.value = 1])
-      : assert(feature.length == 4,
-            'Feature tag must be exactly four characters long.'),
-        assert(value >= 0, 'Feature value must be zero or a positive integer.');
+    : assert(feature.length == 4, 'Feature tag must be exactly four characters long.'),
+      assert(value >= 0, 'Feature value must be zero or a positive integer.');
   const FontFeature.enable(String feature) : this(feature, 1);
   const FontFeature.disable(String feature) : this(feature, 0);
   const FontFeature.alternative(this.value) : feature = 'aalt';
-  const FontFeature.alternativeFractions()
-      : feature = 'afrc',
-        value = 1;
-  const FontFeature.contextualAlternates()
-      : feature = 'calt',
-        value = 1;
-  const FontFeature.caseSensitiveForms()
-      : feature = 'case',
-        value = 1;
+  const FontFeature.alternativeFractions() : feature = 'afrc', value = 1;
+  const FontFeature.contextualAlternates() : feature = 'calt', value = 1;
+  const FontFeature.caseSensitiveForms() : feature = 'case', value = 1;
   factory FontFeature.characterVariant(int value) {
     assert(value >= 1);
     assert(value <= 20);
     return FontFeature('cv${value.toString().padLeft(2, "0")}');
   }
-  const FontFeature.denominator()
-      : feature = 'dnom',
-        value = 1;
-  const FontFeature.fractions()
-      : feature = 'frac',
-        value = 1;
-  const FontFeature.historicalForms()
-      : feature = 'hist',
-        value = 1;
-  const FontFeature.historicalLigatures()
-      : feature = 'hlig',
-        value = 1;
-  const FontFeature.liningFigures()
-      : feature = 'lnum',
-        value = 1;
-  const FontFeature.localeAware({bool enable = true})
-      : feature = 'locl',
-        value = enable ? 1 : 0;
-  const FontFeature.notationalForms([this.value = 1])
-      : feature = 'nalt',
-        assert(value >= 0);
-  const FontFeature.numerators()
-      : feature = 'numr',
-        value = 1;
-  const FontFeature.oldstyleFigures()
-      : feature = 'onum',
-        value = 1;
-  const FontFeature.ordinalForms()
-      : feature = 'ordn',
-        value = 1;
-  const FontFeature.proportionalFigures()
-      : feature = 'pnum',
-        value = 1;
-  const FontFeature.randomize()
-      : feature = 'rand',
-        value = 1;
-  const FontFeature.stylisticAlternates()
-      : feature = 'salt',
-        value = 1;
-  const FontFeature.scientificInferiors()
-      : feature = 'sinf',
-        value = 1;
+  const FontFeature.denominator() : feature = 'dnom', value = 1;
+  const FontFeature.fractions() : feature = 'frac', value = 1;
+  const FontFeature.historicalForms() : feature = 'hist', value = 1;
+  const FontFeature.historicalLigatures() : feature = 'hlig', value = 1;
+  const FontFeature.liningFigures() : feature = 'lnum', value = 1;
+  const FontFeature.localeAware({bool enable = true}) : feature = 'locl', value = enable ? 1 : 0;
+  const FontFeature.notationalForms([this.value = 1]) : feature = 'nalt', assert(value >= 0);
+  const FontFeature.numerators() : feature = 'numr', value = 1;
+  const FontFeature.oldstyleFigures() : feature = 'onum', value = 1;
+  const FontFeature.ordinalForms() : feature = 'ordn', value = 1;
+  const FontFeature.proportionalFigures() : feature = 'pnum', value = 1;
+  const FontFeature.randomize() : feature = 'rand', value = 1;
+  const FontFeature.stylisticAlternates() : feature = 'salt', value = 1;
+  const FontFeature.scientificInferiors() : feature = 'sinf', value = 1;
   factory FontFeature.stylisticSet(int value) {
     assert(value >= 1);
     assert(value <= 20);
     return FontFeature('ss${value.toString().padLeft(2, "0")}');
   }
-  const FontFeature.subscripts()
-      : feature = 'subs',
-        value = 1;
-  const FontFeature.superscripts()
-      : feature = 'sups',
-        value = 1;
-  const FontFeature.swash([this.value = 1])
-      : feature = 'swsh',
-        assert(value >= 0);
-  const FontFeature.tabularFigures()
-      : feature = 'tnum',
-        value = 1;
-  const FontFeature.slashedZero()
-      : feature = 'zero',
-        value = 1;
+  const FontFeature.subscripts() : feature = 'subs', value = 1;
+  const FontFeature.superscripts() : feature = 'sups', value = 1;
+  const FontFeature.swash([this.value = 1]) : feature = 'swsh', assert(value >= 0);
+  const FontFeature.tabularFigures() : feature = 'tnum', value = 1;
+  const FontFeature.slashedZero() : feature = 'zero', value = 1;
 
   final String feature;
   final int value;
@@ -170,9 +114,7 @@ class FontFeature {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is FontFeature &&
-        other.feature == feature &&
-        other.value == value;
+    return other is FontFeature && other.feature == feature && other.value == value;
   }
 
   @override
@@ -183,15 +125,22 @@ class FontFeature {
 }
 
 class FontVariation {
-  const FontVariation(
-    this.axis,
-    this.value,
-  ) : assert(axis.length == 4, 'Axis tag must be exactly four characters long.'),
-      assert(value >= -32768.0 && value < 32768.0, 'Value must be representable as a signed 16.16 fixed-point number, i.e. it must be in this range: -32768.0 ≤ value < 32768.0');
+  const FontVariation(this.axis, this.value)
+    : assert(axis.length == 4, 'Axis tag must be exactly four characters long.'),
+      assert(
+        value >= -32768.0 && value < 32768.0,
+        'Value must be representable as a signed 16.16 fixed-point number, i.e. it must be in this range: -32768.0 ≤ value < 32768.0',
+      );
 
-  const FontVariation.italic(this.value) : assert(value >= 0.0), assert(value <= 1.0), axis = 'ital';
+  const FontVariation.italic(this.value)
+    : assert(value >= 0.0),
+      assert(value <= 1.0),
+      axis = 'ital';
   const FontVariation.opticalSize(this.value) : assert(value > 0.0), axis = 'opsz';
-  const FontVariation.slant(this.value) : assert(value > -90.0), assert(value < 90.0), axis = 'slnt';
+  const FontVariation.slant(this.value)
+    : assert(value > -90.0),
+      assert(value < 90.0),
+      axis = 'slnt';
   const FontVariation.width(this.value) : assert(value >= 0.0), axis = 'wdth';
   const FontVariation.weight(this.value) : assert(value >= 1), assert(value <= 1000), axis = 'wght';
 
@@ -203,9 +152,7 @@ class FontVariation {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is FontVariation
-        && other.axis == axis
-        && other.value == value;
+    return other is FontVariation && other.axis == axis && other.value == value;
   }
 
   @override
@@ -217,7 +164,7 @@ class FontVariation {
     }
     return FontVariation(
       a!.axis,
-      clampDouble(lerpDouble(a.value, b!.value, t)!, -32768.0, 32768.0 - 1.0/65536.0),
+      clampDouble(lerpDouble(a.value, b!.value, t)!, -32768.0, 32768.0 - 1.0 / 65536.0),
     );
   }
 
@@ -226,7 +173,11 @@ class FontVariation {
 }
 
 final class GlyphInfo {
-  GlyphInfo(this.graphemeClusterLayoutBounds, this.graphemeClusterCodeUnitRange, this.writingDirection);
+  GlyphInfo(
+    this.graphemeClusterLayoutBounds,
+    this.graphemeClusterCodeUnitRange,
+    this.writingDirection,
+  );
 
   final Rect graphemeClusterLayoutBounds;
   final TextRange graphemeClusterCodeUnitRange;
@@ -237,33 +188,25 @@ final class GlyphInfo {
     if (identical(this, other)) {
       return true;
     }
-    return other is GlyphInfo
-        && graphemeClusterLayoutBounds == other.graphemeClusterLayoutBounds
-        && graphemeClusterCodeUnitRange == other.graphemeClusterCodeUnitRange
-        && writingDirection == other.writingDirection;
+    return other is GlyphInfo &&
+        graphemeClusterLayoutBounds == other.graphemeClusterLayoutBounds &&
+        graphemeClusterCodeUnitRange == other.graphemeClusterCodeUnitRange &&
+        writingDirection == other.writingDirection;
   }
 
   @override
-  int get hashCode => Object.hash(graphemeClusterLayoutBounds, graphemeClusterCodeUnitRange, writingDirection);
+  int get hashCode =>
+      Object.hash(graphemeClusterLayoutBounds, graphemeClusterCodeUnitRange, writingDirection);
 
   @override
-  String toString() => 'Glyph($graphemeClusterLayoutBounds, textRange: $graphemeClusterCodeUnitRange, direction: $writingDirection)';
+  String toString() =>
+      'Glyph($graphemeClusterLayoutBounds, textRange: $graphemeClusterCodeUnitRange, direction: $writingDirection)';
 }
 
 // The order of this enum must match the order of the values in RenderStyleConstants.h's ETextAlign.
-enum TextAlign {
-  left,
-  right,
-  center,
-  justify,
-  start,
-  end,
-}
+enum TextAlign { left, right, center, justify, start, end }
 
-enum TextBaseline {
-  alphabetic,
-  ideographic,
-}
+enum TextBaseline { alphabetic, ideographic }
 
 class TextDecoration {
   const TextDecoration._(this._mask);
@@ -320,10 +263,7 @@ class TextDecoration {
 
 enum TextDecorationStyle { solid, double, dotted, dashed, wavy }
 
-enum TextLeadingDistribution {
-  proportional,
-  even,
-}
+enum TextLeadingDistribution { proportional, even }
 
 class TextHeightBehavior {
   const TextHeightBehavior({
@@ -348,10 +288,7 @@ class TextHeightBehavior {
 
   @override
   int get hashCode {
-    return Object.hash(
-      applyHeightToFirstAscent,
-      applyHeightToLastDescent,
-    );
+    return Object.hash(applyHeightToFirstAscent, applyHeightToLastDescent);
   }
 
   @override
@@ -503,19 +440,10 @@ abstract class StrutStyle {
 }
 
 // The order of this enum must match the order of the values in TextDirection.h's TextDirection.
-enum TextDirection {
-  rtl,
-  ltr,
-}
+enum TextDirection { rtl, ltr }
 
 class TextBox {
-  const TextBox.fromLTRBD(
-    this.left,
-    this.top,
-    this.right,
-    this.bottom,
-    this.direction,
-  );
+  const TextBox.fromLTRBD(this.left, this.top, this.right, this.bottom, this.direction);
   final double left;
   final double top;
   final double right;
@@ -555,16 +483,10 @@ class TextBox {
   }
 }
 
-enum TextAffinity {
-  upstream,
-  downstream,
-}
+enum TextAffinity { upstream, downstream }
 
 class TextPosition {
-  const TextPosition({
-    required this.offset,
-    this.affinity = TextAffinity.downstream,
-  });
+  const TextPosition({required this.offset, this.affinity = TextAffinity.downstream});
   final int offset;
   final TextAffinity affinity;
 
@@ -573,9 +495,7 @@ class TextPosition {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is TextPosition &&
-        other.offset == offset &&
-        other.affinity == affinity;
+    return other is TextPosition && other.offset == offset && other.affinity == affinity;
   }
 
   @override
@@ -588,15 +508,10 @@ class TextPosition {
 }
 
 class TextRange {
-  const TextRange({
-    required this.start,
-    required this.end,
-  })  : assert(start >= -1),
-        assert(end >= -1);
-  const TextRange.collapsed(int offset)
-      : assert(offset >= -1),
-        start = offset,
-        end = offset;
+  const TextRange({required this.start, required this.end})
+    : assert(start >= -1),
+      assert(end >= -1);
+  const TextRange.collapsed(int offset) : assert(offset >= -1), start = offset, end = offset;
   static const TextRange empty = TextRange(start: -1, end: -1);
   final int start;
   final int end;
@@ -627,19 +542,14 @@ class TextRange {
   }
 
   @override
-  int get hashCode => Object.hash(
-        start.hashCode,
-        end.hashCode,
-      );
+  int get hashCode => Object.hash(start.hashCode, end.hashCode);
 
   @override
   String toString() => 'TextRange(start: $start, end: $end)';
 }
 
 class ParagraphConstraints {
-  const ParagraphConstraints({
-    required this.width,
-  });
+  const ParagraphConstraints({required this.width});
   final double width;
 
   @override
@@ -717,9 +627,12 @@ abstract class Paragraph {
   double get ideographicBaseline;
   bool get didExceedMaxLines;
   void layout(ParagraphConstraints constraints);
-  List<TextBox> getBoxesForRange(int start, int end,
-      {BoxHeightStyle boxHeightStyle = BoxHeightStyle.tight,
-      BoxWidthStyle boxWidthStyle = BoxWidthStyle.tight});
+  List<TextBox> getBoxesForRange(
+    int start,
+    int end, {
+    BoxHeightStyle boxHeightStyle = BoxHeightStyle.tight,
+    BoxWidthStyle boxWidthStyle = BoxWidthStyle.tight,
+  });
   TextPosition getPositionForOffset(Offset offset);
   GlyphInfo? getGlyphInfoAt(int codeUnitOffset);
   GlyphInfo? getClosestGlyphInfoForOffset(Offset offset);
@@ -735,8 +648,7 @@ abstract class Paragraph {
 }
 
 abstract class ParagraphBuilder {
-  factory ParagraphBuilder(ParagraphStyle style) =>
-    engine.renderer.createParagraphBuilder(style);
+  factory ParagraphBuilder(ParagraphStyle style) => engine.renderer.createParagraphBuilder(style);
 
   void pushStyle(TextStyle style);
   void pop();

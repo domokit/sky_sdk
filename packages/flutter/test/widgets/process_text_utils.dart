@@ -18,10 +18,7 @@ class MockProcessTextHandler {
     if (call.method == 'ProcessText.queryTextActions') {
       // Simulate that only the Android engine will return a non-null result.
       if (defaultTargetPlatform == TargetPlatform.android) {
-        return <String, String>{
-          fakeAction1Id: fakeAction1Label,
-          fakeAction2Id: fakeAction2Label,
-        };
+        return <String, String>{fakeAction1Id: fakeAction1Label, fakeAction2Id: fakeAction2Label};
       }
     }
     if (call.method == 'ProcessText.processTextAction') {

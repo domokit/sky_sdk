@@ -10,9 +10,7 @@ void main() {
   testWidgets('AspectRatio applies 16 / 9 aspect ratio on its child', (WidgetTester tester) async {
     const double height = 100.0;
 
-    await tester.pumpWidget(
-      const example.AspectRatioApp(),
-    );
+    await tester.pumpWidget(const example.AspectRatioApp());
 
     final Size parentContainer = tester.getSize(find.byType(Container).first);
     expect(parentContainer.width, 800.0);

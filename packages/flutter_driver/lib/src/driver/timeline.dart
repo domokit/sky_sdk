@@ -28,20 +28,16 @@ class Timeline {
 class TimelineEvent {
   /// Creates a timeline event given JSON-encoded event data.
   TimelineEvent(this.json)
-      : name = json['name'] as String?,
-        category = json['cat'] as String?,
-        phase = json['ph'] as String?,
-        processId = json['pid'] as int?,
-        threadId = json['tid'] as int?,
-        duration = json['dur'] != null
-            ? Duration(microseconds: json['dur'] as int)
-            : null,
-        threadDuration = json['tdur'] != null
-            ? Duration(microseconds: json['tdur'] as int)
-            : null,
-        timestampMicros = json['ts'] as int?,
-        threadTimestampMicros = json['tts'] as int?,
-        arguments = json['args'] as Map<String, dynamic>?;
+    : name = json['name'] as String?,
+      category = json['cat'] as String?,
+      phase = json['ph'] as String?,
+      processId = json['pid'] as int?,
+      threadId = json['tid'] as int?,
+      duration = json['dur'] != null ? Duration(microseconds: json['dur'] as int) : null,
+      threadDuration = json['tdur'] != null ? Duration(microseconds: json['tdur'] as int) : null,
+      timestampMicros = json['ts'] as int?,
+      threadTimestampMicros = json['tts'] as int?,
+      arguments = json['args'] as Map<String, dynamic>?;
 
   /// The original event JSON.
   final Map<String, dynamic> json;
@@ -111,17 +107,17 @@ List<TimelineEvent>? _parseEvents(Map<String, dynamic> json) {
     return null;
   }
 
-  final List<TimelineEvent> timelineEvents = jsonEvents
-      .cast<Map<String, dynamic>>()
-      .map<TimelineEvent>(
-          (Map<String, dynamic> eventJson) => TimelineEvent(eventJson))
-      .toList();
+  final List<TimelineEvent> timelineEvents =
+      jsonEvents
+          .cast<Map<String, dynamic>>()
+          .map<TimelineEvent>((Map<String, dynamic> eventJson) => TimelineEvent(eventJson))
+          .toList();
 
   timelineEvents.sort((TimelineEvent e1, TimelineEvent e2) {
     return switch ((e1.timestampMicros, e2.timestampMicros)) {
-      (null, null) =>  0,
-      (_, null)    =>  1,
-      (null, _)    => -1,
+      (null, null) => 0,
+      (_, null) => 1,
+      (null, _) => -1,
       (final int ts1, final int ts2) => ts1.compareTo(ts2),
     };
   });

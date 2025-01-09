@@ -12,6 +12,7 @@
 #include "impeller/renderer/backend/vulkan/command_queue_vk.h"
 #include "impeller/renderer/backend/vulkan/descriptor_pool_vk.h"
 #include "impeller/renderer/backend/vulkan/render_pass_builder_vk.h"
+#include "impeller/renderer/backend/vulkan/workarounds_vk.h"
 #include "impeller/renderer/render_target.h"
 
 #ifdef FML_OS_ANDROID
@@ -457,10 +458,16 @@ void ContextVK::Setup(Settings settings) {
   //----------------------------------------------------------------------------
   /// All done!
   ///
+
+  // Apply workarounds for broken drivers.
+  auto driver_info =
+      std::make_unique<DriverInfoVK>(device_holder->physical_device);
+  workarounds_ = GetWorkaroundsFromDriverInfo(*driver_info);
+  caps->ApplyWorkarounds(workarounds_);
+
   device_holder_ = std::move(device_holder);
   idle_waiter_vk_ = std::make_shared<IdleWaiterVK>(device_holder_);
-  driver_info_ =
-      std::make_unique<DriverInfoVK>(device_holder_->physical_device);
+  driver_info_ = std::move(driver_info);
   debug_report_ = std::move(debug_report);
   allocator_ = std::move(allocator);
   shader_library_ = std::move(shader_library);
@@ -476,8 +483,8 @@ void ContextVK::Setup(Settings settings) {
   descriptor_pool_recycler_ = std::move(descriptor_pool_recycler);
   device_name_ = std::string(physical_device_properties.deviceName);
   command_queue_vk_ = std::make_shared<CommandQueueVK>(weak_from_this());
-  should_disable_surface_control_ = settings.disable_surface_control;
-  should_batch_cmd_buffers_ = driver_info_->CanBatchSubmitCommandBuffers();
+  should_enable_surface_control_ = settings.enable_surface_control;
+  should_batch_cmd_buffers_ = !workarounds_.batch_submit_command_buffer_timeout;
   is_valid_ = true;
 
   // Create the GPU Tracer later because it depends on state from
@@ -650,6 +657,10 @@ bool ContextVK::EnqueueCommandBuffer(
 }
 
 bool ContextVK::FlushCommandBuffers() {
+  if (pending_command_buffers_.empty()) {
+    return true;
+  }
+
   if (should_batch_cmd_buffers_) {
     bool result = GetCommandQueue()->Submit(pending_command_buffers_).ok();
     pending_command_buffers_.clear();
@@ -718,12 +729,20 @@ const std::unique_ptr<DriverInfoVK>& ContextVK::GetDriverInfo() const {
   return driver_info_;
 }
 
-bool ContextVK::GetShouldDisableSurfaceControlSwapchain() const {
-  return should_disable_surface_control_;
+bool ContextVK::GetShouldEnableSurfaceControlSwapchain() const {
+  return should_enable_surface_control_;
 }
 
 RuntimeStageBackend ContextVK::GetRuntimeStageBackend() const {
   return RuntimeStageBackend::kVulkan;
+}
+
+bool ContextVK::SubmitOnscreen(std::shared_ptr<CommandBuffer> cmd_buffer) {
+  return EnqueueCommandBuffer(std::move(cmd_buffer));
+}
+
+const WorkaroundsVK& ContextVK::GetWorkarounds() const {
+  return workarounds_;
 }
 
 }  // namespace impeller

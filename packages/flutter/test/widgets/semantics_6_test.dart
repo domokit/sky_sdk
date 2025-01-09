@@ -9,7 +9,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'semantics_tester.dart';
 
 void main() {
-  testWidgets('can change semantics in a branch blocked by BlockSemantics', (WidgetTester tester) async {
+  testWidgets('can change semantics in a branch blocked by BlockSemantics', (
+    WidgetTester tester,
+  ) async {
     final SemanticsTester semantics = SemanticsTester(tester);
 
     final TestSemantics expectedSemantics = TestSemantics.root(
@@ -23,52 +25,32 @@ void main() {
       ],
     );
 
-    await tester.pumpWidget(buildWidget(
-      blockedText: 'one',
-    ));
+    await tester.pumpWidget(buildWidget(blockedText: 'one'));
 
     expect(semantics, hasSemantics(expectedSemantics));
 
     // The purpose of the test is to ensure that this change does not throw.
-    await tester.pumpWidget(buildWidget(
-        blockedText: 'two',
-    ));
+    await tester.pumpWidget(buildWidget(blockedText: 'two'));
 
     expect(semantics, hasSemantics(expectedSemantics));
 
     // Ensure that the previously blocked semantics end up in the tree correctly when unblocked.
-    await tester.pumpWidget(buildWidget(
-      blockedText: 'two',
-      blocking: false,
-    ));
+    await tester.pumpWidget(buildWidget(blockedText: 'two', blocking: false));
     expect(semantics, includesNodeWith(label: 'two', textDirection: TextDirection.ltr));
 
     semantics.dispose();
   });
 }
 
-Widget buildWidget({ required String blockedText, bool blocking = true }) {
+Widget buildWidget({required String blockedText, bool blocking = true}) {
   return Directionality(
     textDirection: TextDirection.ltr,
     child: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          Semantics(
-            container: true,
-            child: ListView(
-              children: <Widget>[
-                Text(blockedText),
-              ],
-            ),
-          ),
-          BlockSemantics(
-            blocking: blocking,
-            child: Semantics(
-              label: 'hello',
-              container: true,
-            ),
-          ),
-        ],
+      fit: StackFit.expand,
+      children: <Widget>[
+        Semantics(container: true, child: ListView(children: <Widget>[Text(blockedText)])),
+        BlockSemantics(blocking: blocking, child: Semantics(label: 'hello', container: true)),
+      ],
     ),
   );
 }

@@ -5,7 +5,10 @@
 import 'template.dart';
 
 class NavigationBarTemplate extends TokenTemplate {
-  const NavigationBarTemplate(super.blockName, super.fileName, super.tokens, {
+  const NavigationBarTemplate(
+    super.blockName,
+    super.fileName,
+    super.tokens, {
     super.colorSchemePrefix = '_colors.',
     super.textThemePrefix = '_textTheme.',
   });

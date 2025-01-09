@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Toggling cupertino switch updates icon', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.CupertinoSwitchApp(),
-    );
+    await tester.pumpWidget(const example.CupertinoSwitchApp());
 
     final Finder switchFinder = find.byType(CupertinoSwitch);
     CupertinoSwitch cupertinoSwitch = tester.widget<CupertinoSwitch>(switchFinder);

@@ -33,15 +33,10 @@ class FakeAssetManager implements ui_web.AssetManager {
       return MockHttpFetchResponse(
         url: asset,
         status: 200,
-        payload: MockHttpFetchPayload(
-          byteBuffer: assetData.buffer,
-        ),
+        payload: MockHttpFetchPayload(byteBuffer: assetData.buffer),
       );
     } else {
-      return MockHttpFetchResponse(
-        url: asset,
-        status: 404,
-      );
+      return MockHttpFetchResponse(url: asset, status: 404);
     }
   }
 
@@ -63,7 +58,8 @@ class FakeAssetScope {
   FakeAssetScope._(this._parent);
 
   final FakeAssetScope? _parent;
-  final Map<String, Future<ByteData> Function()> _assetFetcherMap = <String, Future<ByteData> Function()>{};
+  final Map<String, Future<ByteData> Function()> _assetFetcherMap =
+      <String, Future<ByteData> Function()>{};
 
   void setAsset(String assetKey, ByteData assetData) {
     _assetFetcherMap[assetKey] = () async => assetData;
@@ -112,7 +108,9 @@ const Map<String, String> testFontUrls = <String, String>{
 FakeAssetScope configureDebugFontsAssetScope(FakeAssetManager manager) {
   final FakeAssetScope scope = manager.pushAssetScope();
   scope.setAsset('AssetManifest.json', stringAsUtf8Data('{}'));
-  scope.setAsset('FontManifest.json', stringAsUtf8Data('''
+  scope.setAsset(
+    'FontManifest.json',
+    stringAsUtf8Data('''
   [
    {
       "family":"$robotoFontFamily",
@@ -126,7 +124,8 @@ FakeAssetScope configureDebugFontsAssetScope(FakeAssetManager manager) {
       "family":"$robotoVariableFontFamily",
       "fonts":[{"asset":"$robotoVariableFontUrl"}]
     }
-  ]'''));
+  ]'''),
+  );
   scope.setAssetPassthrough(robotoTestFontUrl);
   scope.setAssetPassthrough(ahemFontUrl);
   scope.setAssetPassthrough(robotoVariableFontUrl);

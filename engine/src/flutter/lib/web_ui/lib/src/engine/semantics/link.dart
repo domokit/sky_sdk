@@ -7,11 +7,12 @@ import '../semantics.dart';
 
 /// Provides accessibility for links.
 class SemanticLink extends SemanticRole {
-  SemanticLink(SemanticsObject semanticsObject) : super.withBasics(
-    SemanticRoleKind.link,
-    semanticsObject,
-    preferredLabelRepresentation: LabelRepresentation.domText,
-  ) {
+  SemanticLink(SemanticsObject semanticsObject)
+    : super.withBasics(
+        SemanticRoleKind.link,
+        semanticsObject,
+        preferredLabelRepresentation: LabelRepresentation.domText,
+      ) {
     addTappable();
   }
 

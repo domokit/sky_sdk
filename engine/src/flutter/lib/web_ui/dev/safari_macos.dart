@@ -30,7 +30,8 @@ class SafariMacOsEnvironment extends WebDriverBrowserEnvironment {
   static const int _maxRetryCount = 10;
 
   @override
-  Future<Process> spawnDriverProcess() => Process.start('safaridriver', <String>['-p', portNumber.toString()]);
+  Future<Process> spawnDriverProcess() =>
+      Process.start('safaridriver', <String>['-p', portNumber.toString()]);
 
   @override
   Future<void> prepare() async {
@@ -54,10 +55,9 @@ class SafariMacOsEnvironment extends WebDriverBrowserEnvironment {
 
     _driverProcess = await spawnDriverProcess();
 
-    _driverProcess.stderr
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen((String error) {
+    _driverProcess.stderr.transform(utf8.decoder).transform(const LineSplitter()).listen((
+      String error,
+    ) {
       print('[Webdriver][Error] $error');
       if (_retryCount > _maxRetryCount) {
         print('[Webdriver][Error] Failed to start after $_maxRetryCount tries.');
@@ -66,10 +66,9 @@ class SafariMacOsEnvironment extends WebDriverBrowserEnvironment {
         _startDriverProcess();
       }
     });
-    _driverProcess.stdout
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen((String log) {
+    _driverProcess.stdout.transform(utf8.decoder).transform(const LineSplitter()).listen((
+      String log,
+    ) {
       print('[Webdriver] $log');
     });
   }

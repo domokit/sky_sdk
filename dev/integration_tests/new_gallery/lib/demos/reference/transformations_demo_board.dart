@@ -20,9 +20,9 @@ class Board extends Object with IterableMixin<BoardPoint?> {
     required this.hexagonMargin,
     this.selected,
     List<BoardPoint>? boardPoints,
-  })  : assert(boardRadius > 0),
-        assert(hexagonRadius > 0),
-        assert(hexagonMargin >= 0) {
+  }) : assert(boardRadius > 0),
+       assert(hexagonRadius > 0),
+       assert(hexagonMargin >= 0) {
     // Set up the positions for the center hexagon where the entire board is
     // centered on the origin.
     // Start point of hexagon (top vertex).
@@ -125,22 +125,16 @@ class Board extends Object with IterableMixin<BoardPoint?> {
   static int getDistance(BoardPoint a, BoardPoint b) {
     final Vector3 a3 = a.cubeCoordinates;
     final Vector3 b3 = b.cubeCoordinates;
-    return ((a3.x - b3.x).abs() + (a3.y - b3.y).abs() + (a3.z - b3.z).abs()) ~/
-        2;
+    return ((a3.x - b3.x).abs() + (a3.y - b3.y).abs() + (a3.z - b3.z).abs()) ~/ 2;
   }
 
   // Return the q,r BoardPoint for a point in the scene, where the origin is in
   // the center of the board in both coordinate systems. If no BoardPoint at the
   // location, return null.
   BoardPoint? pointToBoardPoint(Offset point) {
-    final Offset pointCentered = Offset(
-      point.dx - size.width / 2,
-      point.dy - size.height / 2,
-    );
+    final Offset pointCentered = Offset(point.dx - size.width / 2, point.dy - size.height / 2);
     final BoardPoint boardPoint = BoardPoint(
-      ((sqrt(3) / 3 * pointCentered.dx - 1 / 3 * pointCentered.dy) /
-              hexagonRadius)
-          .round(),
+      ((sqrt(3) / 3 * pointCentered.dx - 1 / 3 * pointCentered.dy) / hexagonRadius).round(),
       ((2 / 3 * pointCentered.dy) / hexagonRadius).round(),
     );
 
@@ -167,9 +161,10 @@ class Board extends Object with IterableMixin<BoardPoint?> {
   Vertices getVerticesForBoardPoint(BoardPoint boardPoint, Color color) {
     final Point<double> centerOfHexZeroCenter = boardPointToPoint(boardPoint);
 
-    final List<Offset> positions = positionsForHexagonAtOrigin.map((Offset offset) {
-      return offset.translate(centerOfHexZeroCenter.x, centerOfHexZeroCenter.y);
-    }).toList();
+    final List<Offset> positions =
+        positionsForHexagonAtOrigin.map((Offset offset) {
+          return offset.translate(centerOfHexZeroCenter.x, centerOfHexZeroCenter.y);
+        }).toList();
 
     return Vertices(
       VertexMode.triangleFan,
@@ -196,8 +191,9 @@ class Board extends Object with IterableMixin<BoardPoint?> {
   // Return a new board where boardPoint has the given color.
   Board copyWithBoardPointColor(BoardPoint boardPoint, Color color) {
     final BoardPoint nextBoardPoint = boardPoint.copyWithColor(color);
-    final int boardPointIndex = _boardPoints.indexWhere((BoardPoint boardPointI) =>
-        boardPointI.q == boardPoint.q && boardPointI.r == boardPoint.r);
+    final int boardPointIndex = _boardPoints.indexWhere(
+      (BoardPoint boardPointI) => boardPointI.q == boardPoint.q && boardPointI.r == boardPoint.r,
+    );
 
     if (elementAt(boardPointIndex) == boardPoint && boardPoint.color == color) {
       return this;
@@ -205,8 +201,7 @@ class Board extends Object with IterableMixin<BoardPoint?> {
 
     final List<BoardPoint> nextBoardPoints = List<BoardPoint>.from(_boardPoints);
     nextBoardPoints[boardPointIndex] = nextBoardPoint;
-    final BoardPoint? selectedBoardPoint =
-        boardPoint == selected ? nextBoardPoint : selected;
+    final BoardPoint? selectedBoardPoint = boardPoint == selected ? nextBoardPoint : selected;
     return Board(
       boardRadius: boardRadius,
       hexagonRadius: hexagonRadius,
@@ -258,11 +253,7 @@ class _Range {
 // https://www.redblobgames.com/grids/hexagons/#coordinates-axial
 @immutable
 class BoardPoint {
-  const BoardPoint(
-    this.q,
-    this.r, {
-    this.color = const Color(0xFFCDCDCD),
-  });
+  const BoardPoint(this.q, this.r, {this.color = const Color(0xFFCDCDCD)});
 
   final int q;
   final int r;
@@ -285,16 +276,11 @@ class BoardPoint {
   @override
   int get hashCode => Object.hash(q, r);
 
-  BoardPoint copyWithColor(Color nextColor) =>
-      BoardPoint(q, r, color: nextColor);
+  BoardPoint copyWithColor(Color nextColor) => BoardPoint(q, r, color: nextColor);
 
   // Convert from q,r axial coords to x,y,z cube coords.
   Vector3 get cubeCoordinates {
-    return Vector3(
-      q.toDouble(),
-      r.toDouble(),
-      (-q - r).toDouble(),
-    );
+    return Vector3(q.toDouble(), r.toDouble(), (-q - r).toDouble());
   }
 }
 

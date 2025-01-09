@@ -7,14 +7,12 @@ import 'package:flutter_api_samples/material/toggle_buttons/toggle_buttons.0.dar
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-
   testWidgets('Single-select ToggleButtons', (WidgetTester tester) async {
     TextButton findButton(String text) {
       return tester.widget<TextButton>(find.widgetWithText(TextButton, text));
     }
-    await tester.pumpWidget(
-      const example.ToggleButtonsExampleApp(),
-    );
+
+    await tester.pumpWidget(const example.ToggleButtonsExampleApp());
 
     TextButton firstButton = findButton('Apple');
     TextButton secondButton = findButton('Banana');
@@ -46,9 +44,8 @@ void main() {
     TextButton findButton(String text) {
       return tester.widget<TextButton>(find.widgetWithText(TextButton, text));
     }
-    await tester.pumpWidget(
-      const example.ToggleButtonsExampleApp(),
-    );
+
+    await tester.pumpWidget(const example.ToggleButtonsExampleApp());
 
     TextButton firstButton = findButton('Tomatoes');
     TextButton secondButton = findButton('Potatoes');
@@ -81,17 +78,15 @@ void main() {
     TextButton findButton(IconData iconData) {
       return tester.widget<TextButton>(find.widgetWithIcon(TextButton, iconData));
     }
-    await tester.pumpWidget(
-      const example.ToggleButtonsExampleApp(),
-    );
+
+    await tester.pumpWidget(const example.ToggleButtonsExampleApp());
 
     TextButton firstButton = findButton(Icons.sunny);
     TextButton secondButton = findButton(Icons.cloud);
     TextButton thirdButton = findButton(Icons.ac_unit);
 
-    const Color selectedColor =  Color(0xff90caf9);
+    const Color selectedColor = Color(0xff90caf9);
     const Color unselectedColor = Color(0x00fef7ff);
-
 
     /// Third button is selected.
     expect(firstButton.style!.backgroundColor!.resolve(enabled), unselectedColor);
@@ -113,4 +108,4 @@ void main() {
   });
 }
 
-Set<MaterialState> enabled = <MaterialState>{ };
+Set<MaterialState> enabled = <MaterialState>{};

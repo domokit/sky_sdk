@@ -287,15 +287,10 @@ void testMain() {
     expect(program.name, 'test');
 
     {
-      final CkFragmentShader shader =
-          program.fragmentShader() as CkFragmentShader;
+      final CkFragmentShader shader = program.fragmentShader() as CkFragmentShader;
 
       shader.setFloat(0, 4);
-      expect(
-        reason: 'SkShaders are created lazily',
-        shader.ref,
-        isNull,
-      );
+      expect(reason: 'SkShaders are created lazily', shader.ref, isNull);
 
       final SkShader skShader = shader.getSkShader(ui.FilterQuality.none);
       final UniqueRef<SkShader> ref = shader.ref!;
@@ -309,8 +304,7 @@ void testMain() {
     }
 
     {
-      final CkFragmentShader shader =
-          program.fragmentShader() as CkFragmentShader;
+      final CkFragmentShader shader = program.fragmentShader() as CkFragmentShader;
       shader.setFloat(0, 5);
 
       final SkShader skShader1 = shader.getSkShader(ui.FilterQuality.none);
@@ -345,9 +339,7 @@ void testMain() {
     }
   });
 
-  test(
-      'FragmentProgram can be created from JSON IPLR bundle with arrays and matrices',
-      () {
+  test('FragmentProgram can be created from JSON IPLR bundle with arrays and matrices', () {
     final Uint8List data = utf8.encode(kJsonArrayIPLR);
     final CkFragmentProgram program = CkFragmentProgram.fromBytes('test', data);
 
@@ -355,7 +347,7 @@ void testMain() {
     expect(
       program.floatCount,
       70,
-      reason: 'Columns, rows and array elements should be accounted for'
+      reason: 'Columns, rows and array elements should be accounted for',
     );
     expect(program.textureCount, 0);
     expect(program.uniforms, hasLength(7));

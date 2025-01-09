@@ -59,8 +59,7 @@ class RootLayer extends ContainerLayer {
   }
 }
 
-class BackdropFilterEngineLayer extends ContainerLayer
-    implements ui.BackdropFilterEngineLayer {
+class BackdropFilterEngineLayer extends ContainerLayer implements ui.BackdropFilterEngineLayer {
   BackdropFilterEngineLayer(this.filter, this.blendMode);
 
   final ui.ImageFilter filter;
@@ -76,10 +75,8 @@ class BackdropFilterEngineLayer extends ContainerLayer
 }
 
 /// A layer that clips its child layers by a given [Path].
-class ClipPathEngineLayer extends ContainerLayer
-    implements ui.ClipPathEngineLayer {
-  ClipPathEngineLayer(this.clipPath, this.clipBehavior)
-      : assert(clipBehavior != ui.Clip.none);
+class ClipPathEngineLayer extends ContainerLayer implements ui.ClipPathEngineLayer {
+  ClipPathEngineLayer(this.clipPath, this.clipBehavior) : assert(clipBehavior != ui.Clip.none);
 
   /// The path used to clip child layers.
   final CkPath clipPath;
@@ -92,10 +89,8 @@ class ClipPathEngineLayer extends ContainerLayer
 }
 
 /// A layer that clips its child layers by a given [Rect].
-class ClipRectEngineLayer extends ContainerLayer
-    implements ui.ClipRectEngineLayer {
-  ClipRectEngineLayer(this.clipRect, this.clipBehavior)
-      : assert(clipBehavior != ui.Clip.none);
+class ClipRectEngineLayer extends ContainerLayer implements ui.ClipRectEngineLayer {
+  ClipRectEngineLayer(this.clipRect, this.clipBehavior) : assert(clipBehavior != ui.Clip.none);
 
   /// The rectangle used to clip child layers.
   final ui.Rect clipRect;
@@ -108,10 +103,8 @@ class ClipRectEngineLayer extends ContainerLayer
 }
 
 /// A layer that clips its child layers by a given [RRect].
-class ClipRRectEngineLayer extends ContainerLayer
-    implements ui.ClipRRectEngineLayer {
-  ClipRRectEngineLayer(this.clipRRect, this.clipBehavior)
-      : assert(clipBehavior != ui.Clip.none);
+class ClipRRectEngineLayer extends ContainerLayer implements ui.ClipRRectEngineLayer {
+  ClipRRectEngineLayer(this.clipRRect, this.clipBehavior) : assert(clipBehavior != ui.Clip.none);
 
   /// The rounded rectangle used to clip child layers.
   final ui.RRect clipRRect;
@@ -124,8 +117,7 @@ class ClipRRectEngineLayer extends ContainerLayer
 }
 
 /// A layer that paints its children with the given opacity.
-class OpacityEngineLayer extends ContainerLayer
-    implements ui.OpacityEngineLayer {
+class OpacityEngineLayer extends ContainerLayer implements ui.OpacityEngineLayer {
   OpacityEngineLayer(this.alpha, this.offset);
 
   final int alpha;
@@ -138,8 +130,7 @@ class OpacityEngineLayer extends ContainerLayer
 }
 
 /// A layer that transforms its child layers by the given transform matrix.
-class TransformEngineLayer extends ContainerLayer
-    implements ui.TransformEngineLayer {
+class TransformEngineLayer extends ContainerLayer implements ui.TransformEngineLayer {
   TransformEngineLayer(this.transform);
 
   /// The matrix with which to transform the child layers.
@@ -156,10 +147,8 @@ class TransformEngineLayer extends ContainerLayer
 /// This is a thin wrapper over [TransformEngineLayer] just so the framework
 /// gets the "OffsetEngineLayer" when calling `runtimeType.toString()`. This is
 /// better for debugging.
-class OffsetEngineLayer extends TransformEngineLayer
-    implements ui.OffsetEngineLayer {
-  OffsetEngineLayer(double dx, double dy)
-      : super(Matrix4.translationValues(dx, dy, 0.0));
+class OffsetEngineLayer extends TransformEngineLayer implements ui.OffsetEngineLayer {
+  OffsetEngineLayer(double dx, double dy) : super(Matrix4.translationValues(dx, dy, 0.0));
 
   @override
   void accept(LayerVisitor visitor) {
@@ -168,8 +157,7 @@ class OffsetEngineLayer extends TransformEngineLayer
 }
 
 /// A layer that applies an [ui.ImageFilter] to its children.
-class ImageFilterEngineLayer extends ContainerLayer
-    implements ui.ImageFilterEngineLayer {
+class ImageFilterEngineLayer extends ContainerLayer implements ui.ImageFilterEngineLayer {
   ImageFilterEngineLayer(this.filter, this.offset);
 
   final ui.Offset offset;
@@ -184,10 +172,8 @@ class ImageFilterEngineLayer extends ContainerLayer
   // https://github.com/flutter/flutter/issues/82832
 }
 
-class ShaderMaskEngineLayer extends ContainerLayer
-    implements ui.ShaderMaskEngineLayer {
-  ShaderMaskEngineLayer(
-      this.shader, this.maskRect, this.blendMode, this.filterQuality);
+class ShaderMaskEngineLayer extends ContainerLayer implements ui.ShaderMaskEngineLayer {
+  ShaderMaskEngineLayer(this.shader, this.maskRect, this.blendMode, this.filterQuality);
 
   final ui.Shader shader;
   final ui.Rect maskRect;
@@ -233,8 +219,7 @@ class PictureLayer extends Layer {
 }
 
 /// A layer which contains a [ui.ColorFilter].
-class ColorFilterEngineLayer extends ContainerLayer
-    implements ui.ColorFilterEngineLayer {
+class ColorFilterEngineLayer extends ContainerLayer implements ui.ColorFilterEngineLayer {
   ColorFilterEngineLayer(this.filter);
 
   final ui.ColorFilter filter;

@@ -22,10 +22,7 @@ Future<void> testMain() async {
 
   late SurfaceSceneBuilder builder;
 
-  setUpUnitTests(
-    emulateTesterEnvironment: false,
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(emulateTesterEnvironment: false, setUpTestViewDimensions: false);
 
   setUp(() {
     builder = SurfaceSceneBuilder();
@@ -45,8 +42,7 @@ Future<void> testMain() async {
   }
 
   void paintShadowBounds(SurfacePath path, double elevation) {
-    final Rect shadowBounds =
-        computePenumbraBounds(path.getBounds(), elevation);
+    final Rect shadowBounds = computePenumbraBounds(path.getBounds(), elevation);
     final EnginePictureRecorder recorder = EnginePictureRecorder();
     final RecordingCanvas canvas = recorder.beginRecording(Rect.largest);
     canvas.drawRect(
@@ -59,22 +55,14 @@ Future<void> testMain() async {
     builder.addPicture(Offset.zero, recorder.endRecording());
   }
 
-  void paintBitmapCanvasShadow(
-      double elevation, Offset offset, bool transparentOccluder) {
-    final SurfacePath path = SurfacePath()
-      ..addRect(const Rect.fromLTRB(0, 0, 20, 20));
+  void paintBitmapCanvasShadow(double elevation, Offset offset, bool transparentOccluder) {
+    final SurfacePath path = SurfacePath()..addRect(const Rect.fromLTRB(0, 0, 20, 20));
     builder.pushOffset(offset.dx, offset.dy);
 
     final EnginePictureRecorder recorder = EnginePictureRecorder();
     final RecordingCanvas canvas = recorder.beginRecording(Rect.largest);
-    canvas
-        .debugEnforceArbitraryPaint(); // make sure DOM canvas doesn't take over
-    canvas.drawShadow(
-      path,
-      _kShadowColor,
-      elevation,
-      transparentOccluder,
-    );
+    canvas.debugEnforceArbitraryPaint(); // make sure DOM canvas doesn't take over
+    canvas.drawShadow(path, _kShadowColor, elevation, transparentOccluder);
     builder.addPicture(Offset.zero, recorder.endRecording());
     paintShapeOutline();
     paintShadowBounds(path, elevation);
@@ -83,24 +71,19 @@ Future<void> testMain() async {
   }
 
   void paintBitmapCanvasComplexPathShadow(double elevation, Offset offset) {
-    final SurfacePath path = SurfacePath()
-      ..moveTo(10, 0)
-      ..lineTo(20, 10)
-      ..lineTo(10, 20)
-      ..lineTo(0, 10)
-      ..close();
+    final SurfacePath path =
+        SurfacePath()
+          ..moveTo(10, 0)
+          ..lineTo(20, 10)
+          ..lineTo(10, 20)
+          ..lineTo(0, 10)
+          ..close();
     builder.pushOffset(offset.dx, offset.dy);
 
     final EnginePictureRecorder recorder = EnginePictureRecorder();
     final RecordingCanvas canvas = recorder.beginRecording(Rect.largest);
-    canvas
-        .debugEnforceArbitraryPaint(); // make sure DOM canvas doesn't take over
-    canvas.drawShadow(
-      path,
-      _kShadowColor,
-      elevation,
-      false,
-    );
+    canvas.debugEnforceArbitraryPaint(); // make sure DOM canvas doesn't take over
+    canvas.drawShadow(path, _kShadowColor, elevation, false);
     canvas.drawPath(
       path,
       SurfacePaint()
@@ -114,39 +97,31 @@ Future<void> testMain() async {
     builder.pop(); // offset
   }
 
-  test(
-    'renders shadows correctly',
-    () async {
-      // Physical shape clips. We want to see that clipping in the screenshot.
-      debugShowClipLayers = false;
+  test('renders shadows correctly', () async {
+    // Physical shape clips. We want to see that clipping in the screenshot.
+    debugShowClipLayers = false;
 
-      builder.pushOffset(10, 20);
+    builder.pushOffset(10, 20);
 
-      for (int i = 0; i < 10; i++) {
-        paintBitmapCanvasShadow(i.toDouble(), Offset(50.0 * i, 60), false);
-      }
+    for (int i = 0; i < 10; i++) {
+      paintBitmapCanvasShadow(i.toDouble(), Offset(50.0 * i, 60), false);
+    }
 
-      for (int i = 0; i < 10; i++) {
-        paintBitmapCanvasShadow(i.toDouble(), Offset(50.0 * i, 120), true);
-      }
+    for (int i = 0; i < 10; i++) {
+      paintBitmapCanvasShadow(i.toDouble(), Offset(50.0 * i, 120), true);
+    }
 
-      for (int i = 0; i < 10; i++) {
-        paintBitmapCanvasComplexPathShadow(
-            i.toDouble(), Offset(50.0 * i, 180));
-      }
+    for (int i = 0; i < 10; i++) {
+      paintBitmapCanvasComplexPathShadow(i.toDouble(), Offset(50.0 * i, 180));
+    }
 
-      builder.pop();
+    builder.pop();
 
-      final DomElement sceneElement = builder.build().webOnlyRootElement!;
-      domDocument.body!.append(sceneElement);
+    final DomElement sceneElement = builder.build().webOnlyRootElement!;
+    domDocument.body!.append(sceneElement);
 
-      await matchGoldenFile(
-        'shadows.png',
-        region: region,
-      );
-    },
-    testOn: 'chrome',
-  );
+    await matchGoldenFile('shadows.png', region: region);
+  }, testOn: 'chrome');
 
   /// For dart testing having `no tests ran` in a file is considered an error
   /// and result in exit code 1.

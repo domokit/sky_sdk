@@ -9,7 +9,7 @@ void main() {
 }
 
 class Test extends StatefulWidget {
-  const Test({ super.key });
+  const Test({super.key});
 
   @override
   State<Test> createState() => _TestState();
@@ -29,14 +29,16 @@ class _TestState extends State<Test> {
     if (!_triggered) {
       return const SizedBox.shrink();
     }
-    return const Row(children: <Widget>[
-      SizedBox(width: 10000.0),
-      SizedBox(width: 10000.0),
-      SizedBox(width: 10000.0),
-      SizedBox(width: 10000.0),
-      SizedBox(width: 10000.0),
-      SizedBox(width: 10000.0),
-      SizedBox(width: 10000.0),
-    ]);
+    return const Row(
+      children: <Widget>[
+        SizedBox(width: 10000.0),
+        SizedBox(width: 10000.0),
+        SizedBox(width: 10000.0),
+        SizedBox(width: 10000.0),
+        SizedBox(width: 10000.0),
+        SizedBox(width: 10000.0),
+        SizedBox(width: 10000.0),
+      ],
+    );
   }
 }

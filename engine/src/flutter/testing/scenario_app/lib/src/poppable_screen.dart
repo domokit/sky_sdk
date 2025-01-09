@@ -28,10 +28,7 @@ class PoppableScreenScenario extends Scenario {
     canvas.drawPaint(Paint()..color = const Color.fromARGB(255, 255, 255, 255));
 
     if (_buttonRect != null) {
-      canvas.drawRect(
-        _buttonRect!,
-        Paint()..color = const Color.fromARGB(255, 255, 0, 0),
-      );
+      canvas.drawRect(_buttonRect!, Paint()..color = const Color.fromARGB(255, 255, 0, 0));
     }
     final Picture picture = recorder.endRecording();
 
@@ -62,8 +59,7 @@ class PoppableScreenScenario extends Scenario {
   void onPointerDataPacket(PointerDataPacket packet) {
     for (final PointerData data in packet.data) {
       if (data.change == PointerChange.up &&
-          (_buttonRect?.contains(Offset(data.physicalX, data.physicalY)) ?? false)
-      ) {
+          (_buttonRect?.contains(Offset(data.physicalX, data.physicalY)) ?? false)) {
         _pop();
       }
     }

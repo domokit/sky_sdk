@@ -21,25 +21,20 @@ void main() {
     const String channel = 'foo';
     final ByteData bar = makeByteData('bar');
     final Completer<void> done = Completer<void>();
-    ServicesBinding.instance.channelBuffers.push(
-      channel,
-      bar,
-      (ByteData? message) async {
-        expect(message, isNull);
-        countOutbound += 1;
-        done.complete();
-      },
-    );
+    ServicesBinding.instance.channelBuffers.push(channel, bar, (ByteData? message) async {
+      expect(message, isNull);
+      countOutbound += 1;
+      done.complete();
+    });
     expect(countInbound, equals(0));
     expect(countOutbound, equals(0));
-    ServicesBinding.instance.defaultBinaryMessenger.setMessageHandler(
-      channel,
-      (ByteData? message) async {
-        expect(message, bar);
-        countInbound += 1;
-        return null;
-      },
-    );
+    ServicesBinding.instance.defaultBinaryMessenger.setMessageHandler(channel, (
+      ByteData? message,
+    ) async {
+      expect(message, bar);
+      countInbound += 1;
+      return null;
+    });
     expect(countInbound, equals(0));
     expect(countOutbound, equals(0));
     await done.future;
@@ -49,7 +44,8 @@ void main() {
 
   test('can check the mock handler', () {
     Future<ByteData?> handler(ByteData? call) => Future<ByteData?>.value();
-    final TestDefaultBinaryMessenger messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    final TestDefaultBinaryMessenger messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
 
     expect(messenger.checkMockMessageHandler('test_channel', null), true);
     expect(messenger.checkMockMessageHandler('test_channel', handler), false);

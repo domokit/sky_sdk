@@ -25,8 +25,7 @@ void main() {
 
   setUp(() {
     loggingProcessManager = LoggingProcessManager();
-    tempDir = globals.fs.systemTempDirectory
-        .createTempSync('flutter_tools_create_test.');
+    tempDir = globals.fs.systemTempDirectory.createTempSync('flutter_tools_create_test.');
     mockStdio = FakeStdio();
   });
 
@@ -35,16 +34,11 @@ void main() {
   });
 
   Future<String> createRootProject() async {
-    return createProject(
-      tempDir,
-      arguments: <String>['--pub'],
-    );
+    return createProject(tempDir, arguments: <String>['--pub']);
   }
 
   Future<void> runWidgetPreviewCommand(List<String> arguments) async {
-    final CommandRunner<void> runner = createTestCommandRunner(
-      WidgetPreviewCommand(),
-    );
+    final CommandRunner<void> runner = createTestCommandRunner(WidgetPreviewCommand());
     await runner.run(<String>['widget-preview', ...arguments]);
   }
 
@@ -52,13 +46,11 @@ void main() {
     required String? rootProjectPath,
     List<String>? arguments,
   }) async {
-    await runWidgetPreviewCommand(
-      <String>[
-        'start',
-        ...?arguments,
-        if (rootProjectPath != null) rootProjectPath,
-      ],
-    );
+    await runWidgetPreviewCommand(<String>[
+      'start',
+      ...?arguments,
+      if (rootProjectPath != null) rootProjectPath,
+    ]);
     expect(
       globals.fs
           .directory(rootProjectPath ?? globals.fs.currentDirectory.path)
@@ -68,9 +60,7 @@ void main() {
     );
   }
 
-  Future<void> cleanWidgetPreview({
-    required String rootProjectPath,
-  }) async {
+  Future<void> cleanWidgetPreview({required String rootProjectPath}) async {
     await runWidgetPreviewCommand(<String>['clean', rootProjectPath]);
     expect(
       globals.fs
@@ -83,73 +73,32 @@ void main() {
 
   group('flutter widget-preview', () {
     group('start exits if', () {
-      testUsingContext(
-        'given an invalid directory',
-        () async {
-          try {
-            await runWidgetPreviewCommand(
-              <String>[
-                'start',
-                'foo',
-              ],
-            );
-            fail(
-              'Successfully executed with multiple project paths',
-            );
-          } on ToolExit catch (e) {
-            expect(
-              e.message,
-              contains(
-                'Could not find foo',
-              ),
-            );
-          }
-        },
-      );
+      testUsingContext('given an invalid directory', () async {
+        try {
+          await runWidgetPreviewCommand(<String>['start', 'foo']);
+          fail('Successfully executed with multiple project paths');
+        } on ToolExit catch (e) {
+          expect(e.message, contains('Could not find foo'));
+        }
+      });
 
-      testUsingContext(
-        'more than one project directory is provided',
-        () async {
-          try {
-            await runWidgetPreviewCommand(
-              <String>[
-                'start',
-                tempDir.path,
-                tempDir.path,
-              ],
-            );
-            fail(
-              'Successfully executed with multiple project paths',
-            );
-          } on ToolExit catch (e) {
-            expect(
-              e.message,
-              contains(
-                'Only one directory should be provided.',
-              ),
-            );
-          }
-        },
-      );
+      testUsingContext('more than one project directory is provided', () async {
+        try {
+          await runWidgetPreviewCommand(<String>['start', tempDir.path, tempDir.path]);
+          fail('Successfully executed with multiple project paths');
+        } on ToolExit catch (e) {
+          expect(e.message, contains('Only one directory should be provided.'));
+        }
+      });
 
-      testUsingContext(
-        'run outside of a Flutter project directory',
-        () async {
-          try {
-            await startWidgetPreview(rootProjectPath: tempDir.path);
-            fail(
-              'Successfully executed outside of a Flutter project directory',
-            );
-          } on ToolExit catch (e) {
-            expect(
-              e.message,
-              contains(
-                '${tempDir.path} is not a valid Flutter project.',
-              ),
-            );
-          }
-        },
-      );
+      testUsingContext('run outside of a Flutter project directory', () async {
+        try {
+          await startWidgetPreview(rootProjectPath: tempDir.path);
+          fail('Successfully executed outside of a Flutter project directory');
+        } on ToolExit catch (e) {
+          expect(e.message, contains('${tempDir.path} is not a valid Flutter project.'));
+        }
+      });
     });
 
     testUsingContext(
@@ -159,7 +108,8 @@ void main() {
         await startWidgetPreview(rootProjectPath: rootProjectPath);
       },
       overrides: <Type, Generator>{
-        Pub: () => Pub.test(
+        Pub:
+            () => Pub.test(
               fileSystem: globals.fs,
               logger: globals.logger,
               processManager: globals.processManager,
@@ -175,16 +125,14 @@ void main() {
       'start creates .dart_tool/widget_preview_scaffold in the CWD',
       () async {
         final String rootProjectPath = await createRootProject();
-        await io.IOOverrides.runZoned<Future<void>>(
-          () async {
-            // Try to execute using the CWD.
-            await startWidgetPreview(rootProjectPath: null);
-          },
-          getCurrentDirectory: () => globals.fs.directory(rootProjectPath),
-        );
+        await io.IOOverrides.runZoned<Future<void>>(() async {
+          // Try to execute using the CWD.
+          await startWidgetPreview(rootProjectPath: null);
+        }, getCurrentDirectory: () => globals.fs.directory(rootProjectPath));
       },
       overrides: <Type, Generator>{
-        Pub: () => Pub.test(
+        Pub:
+            () => Pub.test(
               fileSystem: globals.fs,
               logger: globals.logger,
               processManager: globals.processManager,
@@ -204,7 +152,8 @@ void main() {
         await cleanWidgetPreview(rootProjectPath: rootProjectPath);
       },
       overrides: <Type, Generator>{
-        Pub: () => Pub.test(
+        Pub:
+            () => Pub.test(
               fileSystem: globals.fs,
               logger: globals.logger,
               processManager: globals.processManager,
@@ -231,9 +180,7 @@ void main() {
           contains(
             predicate(
               (List<String> c) =>
-                  dartCommand.hasMatch(c[0]) &&
-                  c[1].contains('pub') &&
-                  !c.contains('--offline'),
+                  dartCommand.hasMatch(c[0]) && c[1].contains('pub') && !c.contains('--offline'),
             ),
           ),
         );
@@ -252,16 +199,15 @@ void main() {
           contains(
             predicate(
               (List<String> c) =>
-                  dartCommand.hasMatch(c[0]) &&
-                  c[1].contains('pub') &&
-                  c.contains('--offline'),
+                  dartCommand.hasMatch(c[0]) && c[1].contains('pub') && c.contains('--offline'),
             ),
           ),
         );
       },
       overrides: <Type, Generator>{
         ProcessManager: () => loggingProcessManager,
-        Pub: () => Pub.test(
+        Pub:
+            () => Pub.test(
               fileSystem: globals.fs,
               logger: globals.logger,
               processManager: globals.processManager,

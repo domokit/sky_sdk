@@ -21,21 +21,22 @@ class UserMessages {
   String flutterVersion(String version, String channel, String flutterRoot) =>
       'Flutter version $version on channel $channel at $flutterRoot';
   String get flutterUnknownChannel =>
-    'Currently on an unknown channel. Run `flutter channel` to switch to an official channel.\n'
-    "If that doesn't fix the issue, reinstall Flutter by following instructions at https://flutter.dev/setup.";
+      'Currently on an unknown channel. Run `flutter channel` to switch to an official channel.\n'
+      "If that doesn't fix the issue, reinstall Flutter by following instructions at https://flutter.dev/setup.";
   String get flutterUnknownVersion =>
-    'Cannot resolve current version, possibly due to local changes.\n'
-    'Reinstall Flutter by following instructions at https://flutter.dev/setup.';
+      'Cannot resolve current version, possibly due to local changes.\n'
+      'Reinstall Flutter by following instructions at https://flutter.dev/setup.';
   String flutterRevision(String revision, String age, String date) =>
-    'Framework revision $revision ($age), $date';
+      'Framework revision $revision ($age), $date';
   String flutterUpstreamRepositoryUrl(String url) => 'Upstream repository $url';
   String get flutterUpstreamRepositoryUnknown =>
-    'Unknown upstream repository.\n'
-    'Reinstall Flutter by following instructions at https://flutter.dev/setup.';
-  String flutterUpstreamRepositoryUrlEnvMismatch(String url) => 'Upstream repository $url is not the same as FLUTTER_GIT_URL';
+      'Unknown upstream repository.\n'
+      'Reinstall Flutter by following instructions at https://flutter.dev/setup.';
+  String flutterUpstreamRepositoryUrlEnvMismatch(String url) =>
+      'Upstream repository $url is not the same as FLUTTER_GIT_URL';
   String flutterUpstreamRepositoryUrlNonStandard(String url) =>
-    'Upstream repository $url is not a standard remote.\n'
-    'Set environment variable "FLUTTER_GIT_URL" to $url to dismiss this error.';
+      'Upstream repository $url is not a standard remote.\n'
+      'Set environment variable "FLUTTER_GIT_URL" to $url to dismiss this error.';
   String flutterGitUrl(String url) => 'FLUTTER_GIT_URL = $url';
   String engineRevision(String revision) => 'Engine revision $revision';
   String dartRevision(String revision) => 'Dart version $revision';
@@ -78,10 +79,12 @@ class UserMessages {
   String devicesAvailable(int devices) => '$devices available';
 
   // Messages used in AndroidValidator
-  String androidCantRunJavaBinary(String javaBinary) => 'Cannot execute $javaBinary to determine the version';
+  String androidCantRunJavaBinary(String javaBinary) =>
+      'Cannot execute $javaBinary to determine the version';
   String get androidUnknownJavaVersion => 'Could not determine java version';
   String androidJavaVersion(String javaVersion) => 'Java version $javaVersion';
-  String androidJavaMinimumVersion(String javaVersion) => 'Java version $javaVersion is older than the minimum recommended version of 1.8';
+  String androidJavaMinimumVersion(String javaVersion) =>
+      'Java version $javaVersion is older than the minimum recommended version of 1.8';
   String androidSdkLicenseOnly(String envKey) =>
       'Android SDK contains licenses only.\n'
       'Your first build of an Android application will take longer than usual, '
@@ -116,8 +119,10 @@ class UserMessages {
       'variable JAVA_HOME set and the java binary in your PATH. '
       'You can download the JDK from https://www.oracle.com/technetwork/java/javase/downloads/.';
   String get androidLicensesAll => 'All Android licenses accepted.';
-  String get androidLicensesSome => 'Some Android licenses not accepted. To resolve this, run: flutter doctor --android-licenses';
-  String get androidLicensesNone => 'Android licenses not accepted. To resolve this, run: flutter doctor --android-licenses';
+  String get androidLicensesSome =>
+      'Some Android licenses not accepted. To resolve this, run: flutter doctor --android-licenses';
+  String get androidLicensesNone =>
+      'Android licenses not accepted. To resolve this, run: flutter doctor --android-licenses';
   String androidLicensesUnknown(Platform platform) =>
       'Android license status unknown.\n'
       'Run `flutter doctor --android-licenses` to accept the SDK licenses.\n'
@@ -135,10 +140,15 @@ class UserMessages {
       'Android sdkmanager tool was found, but failed to run ($sdkManagerPath): "$error".\n'
       'Try re-installing or updating your Android SDK,\n'
       'visit ${androidSdkInstallUrl(platform)} for detailed instructions.';
-  String androidSdkBuildToolsOutdated(int sdkMinVersion, String buildToolsMinVersion, Platform platform) =>
+  String androidSdkBuildToolsOutdated(
+    int sdkMinVersion,
+    String buildToolsMinVersion,
+    Platform platform,
+  ) =>
       'Flutter requires Android SDK $sdkMinVersion and the Android BuildTools $buildToolsMinVersion\n'
       'To update the Android SDK visit ${androidSdkInstallUrl(platform)} for detailed instructions.';
-  String get androidMissingCmdTools => 'cmdline-tools component is missing\n'
+  String get androidMissingCmdTools =>
+      'cmdline-tools component is missing\n'
       'Run `path/to/sdkmanager --install "cmdline-tools;latest"`\n'
       'See https://developer.android.com/studio/command-line for more details.';
 
@@ -171,7 +181,8 @@ class UserMessages {
       'Flutter recommends a minimum Xcode version of $recommendedVersion.\n'
       'Download the latest version or update via the Mac App Store.';
 
-  String get xcodeEula => "Xcode end user license agreement not signed; open Xcode or run the command 'sudo xcodebuild -license'.";
+  String get xcodeEula =>
+      "Xcode end user license agreement not signed; open Xcode or run the command 'sudo xcodebuild -license'.";
   String get xcodeMissingSimct =>
       'Xcode requires additional components to be installed in order to run.\n'
       'Launch Xcode and install additional required components when prompted or run:\n'
@@ -197,7 +208,12 @@ class UserMessages {
       'Unknown CocoaPods version installed.\n'
       '$consequence\n'
       'To update CocoaPods, $upgradeInstructions';
-  String cocoaPodsOutdated(String currentVersion, String recVersion, String consequence, String upgradeInstructions) =>
+  String cocoaPodsOutdated(
+    String currentVersion,
+    String recVersion,
+    String consequence,
+    String upgradeInstructions,
+  ) =>
       'CocoaPods $currentVersion out of date ($recVersion is recommended).\n'
       '$consequence\n'
       'To update CocoaPods, $upgradeInstructions';
@@ -225,38 +241,48 @@ class UserMessages {
       'Visual Studio $minimumVersion or later is required.\n'
       'Download at https://visualstudio.microsoft.com/downloads/.\n'
       'Please install the "$workload" workload, including all of its default components';
-  String get visualStudioIsPrerelease => 'The current Visual Studio installation is a pre-release version. It may not be '
+  String get visualStudioIsPrerelease =>
+      'The current Visual Studio installation is a pre-release version. It may not be '
       'supported by Flutter yet.';
   String get visualStudioNotLaunchable =>
       'The current Visual Studio installation is not launchable. Please reinstall Visual Studio.';
-  String get visualStudioIsIncomplete => 'The current Visual Studio installation is incomplete.\n'
+  String get visualStudioIsIncomplete =>
+      'The current Visual Studio installation is incomplete.\n'
       'Please use Visual Studio Installer to complete the installation or reinstall Visual Studio.';
-  String get visualStudioRebootRequired => 'Visual Studio requires a reboot of your system to complete installation.';
+  String get visualStudioRebootRequired =>
+      'Visual Studio requires a reboot of your system to complete installation.';
 
   // Messages used in LinuxDoctorValidator
-  String get clangMissing => 'clang++ is required for Linux development.\n'
+  String get clangMissing =>
+      'clang++ is required for Linux development.\n'
       'It is likely available from your distribution (e.g.: apt install clang), or '
       'can be downloaded from https://releases.llvm.org/';
   String clangTooOld(String minimumVersion) => 'clang++ $minimumVersion or later is required.';
-  String get cmakeMissing => 'CMake is required for Linux development.\n'
+  String get cmakeMissing =>
+      'CMake is required for Linux development.\n'
       'It is likely available from your distribution (e.g.: apt install cmake), or '
       'can be downloaded from https://cmake.org/download/';
   String cmakeTooOld(String minimumVersion) => 'cmake $minimumVersion or later is required.';
   String ninjaVersion(String version) => 'ninja version $version';
-  String get ninjaMissing => 'ninja is required for Linux development.\n'
+  String get ninjaMissing =>
+      'ninja is required for Linux development.\n'
       'It is likely available from your distribution (e.g.: apt install ninja-build), or '
       'can be downloaded from https://github.com/ninja-build/ninja/releases';
   String ninjaTooOld(String minimumVersion) => 'ninja $minimumVersion or later is required.';
   String pkgConfigVersion(String version) => 'pkg-config version $version';
-  String get pkgConfigMissing => 'pkg-config is required for Linux development.\n'
+  String get pkgConfigMissing =>
+      'pkg-config is required for Linux development.\n'
       'It is likely available from your distribution (e.g.: apt install pkg-config), or '
       'can be downloaded from https://www.freedesktop.org/wiki/Software/pkg-config/';
-  String pkgConfigTooOld(String minimumVersion) => 'pkg-config $minimumVersion or later is required.';
-  String get gtkLibrariesMissing => 'GTK 3.0 development libraries are required for Linux development.\n'
+  String pkgConfigTooOld(String minimumVersion) =>
+      'pkg-config $minimumVersion or later is required.';
+  String get gtkLibrariesMissing =>
+      'GTK 3.0 development libraries are required for Linux development.\n'
       'They are likely available from your distribution (e.g.: apt install libgtk-3-dev)';
 
   // Messages used in FlutterCommand
-  String flutterElapsedTime(String name, String elapsedTime) => '"flutter $name" took $elapsedTime.';
+  String flutterElapsedTime(String name, String elapsedTime) =>
+      '"flutter $name" took $elapsedTime.';
   String get flutterNoDevelopmentDevice =>
       "Unable to locate a development device; please run 'flutter doctor' "
       'for information about installing additional components.';
@@ -274,8 +300,10 @@ class UserMessages {
       'This command should be run from the root of your Flutter project.';
   String flutterTargetFileMissing(String path) => 'Target file "$path" not found.';
   String get flutterBasePatchFlagsExclusive => 'Error: Only one of --baseline, --patch is allowed.';
-  String get flutterBaselineRequiresTraceFile => 'Error: --baseline requires --compilation-trace-file to be specified.';
-  String get flutterPatchRequiresTraceFile => 'Error: --patch requires --compilation-trace-file to be specified.';
+  String get flutterBaselineRequiresTraceFile =>
+      'Error: --baseline requires --compilation-trace-file to be specified.';
+  String get flutterPatchRequiresTraceFile =>
+      'Error: --patch requires --compilation-trace-file to be specified.';
 
   // Messages used in FlutterCommandRunner
   String runnerNoRoot(String error) => 'Unable to locate flutter root: $error';
@@ -305,8 +333,7 @@ class UserMessages {
       'See https://github.com/flutter/flutter/issues/132245 for details.';
   String runnerNoEngineBuild(String engineBuildPath) =>
       'No Flutter engine build found at $engineBuildPath.';
-  String runnerNoWebSdk(String webSdkPath) =>
-      'No Flutter web sdk found at $webSdkPath.';
+  String runnerNoWebSdk(String webSdkPath) => 'No Flutter web sdk found at $webSdkPath.';
   String runnerWrongFlutterInstance(String flutterRoot, String currentDir) =>
       "Warning: the 'flutter' tool you are currently running is not the one from the current directory:\n"
       '  running Flutter  : $flutterRoot\n'

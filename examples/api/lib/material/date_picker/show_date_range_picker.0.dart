@@ -40,14 +40,17 @@ class _DatePickerExampleState extends State<DatePickerExample> with RestorationM
   final RestorableDateTimeN _endDate = RestorableDateTimeN(DateTime(2021, 1, 5));
   late final RestorableRouteFuture<DateTimeRange?> _restorableDateRangePickerRouteFuture =
       RestorableRouteFuture<DateTimeRange?>(
-    onComplete: _selectDateRange,
-    onPresent: (NavigatorState navigator, Object? arguments) {
-      return navigator.restorablePush(_dateRangePickerRoute, arguments: <String, dynamic>{
-        'initialStartDate': _startDate.value?.millisecondsSinceEpoch,
-        'initialEndDate': _endDate.value?.millisecondsSinceEpoch,
-      });
-    },
-  );
+        onComplete: _selectDateRange,
+        onPresent: (NavigatorState navigator, Object? arguments) {
+          return navigator.restorablePush(
+            _dateRangePickerRoute,
+            arguments: <String, dynamic>{
+              'initialStartDate': _startDate.value?.millisecondsSinceEpoch,
+              'initialEndDate': _endDate.value?.millisecondsSinceEpoch,
+            },
+          );
+        },
+      );
 
   void _selectDateRange(DateTimeRange? newSelectedDate) {
     if (newSelectedDate != null) {
@@ -66,10 +69,7 @@ class _DatePickerExampleState extends State<DatePickerExample> with RestorationM
   }
 
   @pragma('vm:entry-point')
-  static Route<DateTimeRange?> _dateRangePickerRoute(
-    BuildContext context,
-    Object? arguments,
-  ) {
+  static Route<DateTimeRange?> _dateRangePickerRoute(BuildContext context, Object? arguments) {
     return DialogRoute<DateTimeRange?>(
       context: context,
       builder: (BuildContext context) {

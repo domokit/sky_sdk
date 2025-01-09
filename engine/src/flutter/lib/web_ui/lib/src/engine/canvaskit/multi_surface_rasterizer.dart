@@ -14,8 +14,7 @@ import 'package:ui/ui.dart' as ui;
 class MultiSurfaceRasterizer extends Rasterizer {
   @override
   MultiSurfaceViewRasterizer createViewRasterizer(EngineFlutterView view) {
-    return _viewRasterizers.putIfAbsent(
-        view, () => MultiSurfaceViewRasterizer(view, this));
+    return _viewRasterizers.putIfAbsent(view, () => MultiSurfaceViewRasterizer(view, this));
   }
 
   final Map<EngineFlutterView, MultiSurfaceViewRasterizer> _viewRasterizers =
@@ -23,8 +22,7 @@ class MultiSurfaceRasterizer extends Rasterizer {
 
   @override
   void dispose() {
-    for (final MultiSurfaceViewRasterizer viewRasterizer
-        in _viewRasterizers.values) {
+    for (final MultiSurfaceViewRasterizer viewRasterizer in _viewRasterizers.values) {
       viewRasterizer.dispose();
     }
     _viewRasterizers.clear();
@@ -32,8 +30,7 @@ class MultiSurfaceRasterizer extends Rasterizer {
 
   @override
   void setResourceCacheMaxBytes(int bytes) {
-    for (final MultiSurfaceViewRasterizer viewRasterizer
-        in _viewRasterizers.values) {
+    for (final MultiSurfaceViewRasterizer viewRasterizer in _viewRasterizers.values) {
       viewRasterizer.displayFactory.forEachCanvas((Surface surface) {
         surface.setSkiaResourceCacheMaxBytes(bytes);
       });
@@ -47,9 +44,9 @@ class MultiSurfaceViewRasterizer extends ViewRasterizer {
   final MultiSurfaceRasterizer rasterizer;
 
   @override
-  final DisplayCanvasFactory<Surface> displayFactory =
-      DisplayCanvasFactory<Surface>(
-          createCanvas: () => Surface(isDisplayCanvas: true));
+  final DisplayCanvasFactory<Surface> displayFactory = DisplayCanvasFactory<Surface>(
+    createCanvas: () => Surface(isDisplayCanvas: true),
+  );
 
   @override
   void prepareToDraw() {
@@ -57,8 +54,7 @@ class MultiSurfaceViewRasterizer extends ViewRasterizer {
   }
 
   @override
-  Future<void> rasterizeToCanvas(
-      DisplayCanvas canvas, List<CkPicture> pictures) {
+  Future<void> rasterizeToCanvas(DisplayCanvas canvas, List<CkPicture> pictures) {
     final Surface surface = canvas as Surface;
     surface.createOrUpdateSurface(currentFrameSize);
     surface.positionToShowFrame(currentFrameSize);

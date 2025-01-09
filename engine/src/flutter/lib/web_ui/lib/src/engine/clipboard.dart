@@ -14,87 +14,96 @@ class ClipboardMessageHandler {
   CopyToClipboardStrategy _copyToClipboardStrategy = CopyToClipboardStrategy();
 
   /// Helper to handle copy to clipboard functionality.
-  PasteFromClipboardStrategy _pasteFromClipboardStrategy =
-      PasteFromClipboardStrategy();
+  PasteFromClipboardStrategy _pasteFromClipboardStrategy = PasteFromClipboardStrategy();
 
   /// Handles the platform message which stores the given text to the clipboard.
-  void setDataMethodCall(
-      MethodCall methodCall, ui.PlatformMessageResponseCallback? callback) {
+  void setDataMethodCall(MethodCall methodCall, ui.PlatformMessageResponseCallback? callback) {
     const MethodCodec codec = JSONMethodCodec();
     bool errorEnvelopeEncoded = false;
     _copyToClipboardStrategy
         .setData((methodCall.arguments as Map<String, Object?>)['text'] as String?)
         .then((bool success) {
-      if (success) {
-        callback!(codec.encodeSuccessEnvelope(true));
-      } else {
-        callback!(codec.encodeErrorEnvelope(
-            code: 'copy_fail', message: 'Clipboard.setData failed'));
-        errorEnvelopeEncoded = true;
-      }
-    }).catchError((dynamic _) {
-      // Don't encode a duplicate reply if we already failed and an error
-      // was already encoded.
-      if (!errorEnvelopeEncoded) {
-        callback!(codec.encodeErrorEnvelope(
-            code: 'copy_fail', message: 'Clipboard.setData failed'));
-      }
-    });
+          if (success) {
+            callback!(codec.encodeSuccessEnvelope(true));
+          } else {
+            callback!(
+              codec.encodeErrorEnvelope(code: 'copy_fail', message: 'Clipboard.setData failed'),
+            );
+            errorEnvelopeEncoded = true;
+          }
+        })
+        .catchError((dynamic _) {
+          // Don't encode a duplicate reply if we already failed and an error
+          // was already encoded.
+          if (!errorEnvelopeEncoded) {
+            callback!(
+              codec.encodeErrorEnvelope(code: 'copy_fail', message: 'Clipboard.setData failed'),
+            );
+          }
+        });
   }
 
   /// Handles the platform message which retrieves text data from the clipboard.
   void getDataMethodCall(ui.PlatformMessageResponseCallback? callback) {
     const MethodCodec codec = JSONMethodCodec();
-    _pasteFromClipboardStrategy.getData().then((String data) {
-      final Map<String, dynamic> map = <String, dynamic>{'text': data};
-      callback!(codec.encodeSuccessEnvelope(map));
-    }).catchError((dynamic error) {
-      if (error is UnimplementedError) {
-        // Clipboard.getData not supported.
-        // Passing [null] to [callback] indicates that the platform message isn't
-        // implemented. Look at [MethodChannel.invokeMethod] to see how [null] is
-        // handled.
-        Future<void>.delayed(Duration.zero).then((_) {
-          if (callback != null) {
-            callback(null);
+    _pasteFromClipboardStrategy
+        .getData()
+        .then((String data) {
+          final Map<String, dynamic> map = <String, dynamic>{'text': data};
+          callback!(codec.encodeSuccessEnvelope(map));
+        })
+        .catchError((dynamic error) {
+          if (error is UnimplementedError) {
+            // Clipboard.getData not supported.
+            // Passing [null] to [callback] indicates that the platform message isn't
+            // implemented. Look at [MethodChannel.invokeMethod] to see how [null] is
+            // handled.
+            Future<void>.delayed(Duration.zero).then((_) {
+              if (callback != null) {
+                callback(null);
+              }
+            });
+            return;
           }
+          _reportGetDataFailure(callback, codec, error);
         });
-        return;
-      }
-      _reportGetDataFailure(callback, codec, error);
-    });
   }
 
   /// Handles the platform message which asks if the clipboard contains
   /// pasteable strings.
   void hasStringsMethodCall(ui.PlatformMessageResponseCallback? callback) {
     const MethodCodec codec = JSONMethodCodec();
-    _pasteFromClipboardStrategy.getData().then((String data) {
-      final Map<String, dynamic> map = <String, dynamic>{'value': data.isNotEmpty};
-      callback!(codec.encodeSuccessEnvelope(map));
-    }).catchError((dynamic error) {
-      if (error is UnimplementedError) {
-        // Clipboard.hasStrings not supported.
-        // Passing [null] to [callback] indicates that the platform message isn't
-        // implemented. Look at [MethodChannel.invokeMethod] to see how [null] is
-        // handled.
-        Future<void>.delayed(Duration.zero).then((_) {
-          if (callback != null) {
-            callback(null);
+    _pasteFromClipboardStrategy
+        .getData()
+        .then((String data) {
+          final Map<String, dynamic> map = <String, dynamic>{'value': data.isNotEmpty};
+          callback!(codec.encodeSuccessEnvelope(map));
+        })
+        .catchError((dynamic error) {
+          if (error is UnimplementedError) {
+            // Clipboard.hasStrings not supported.
+            // Passing [null] to [callback] indicates that the platform message isn't
+            // implemented. Look at [MethodChannel.invokeMethod] to see how [null] is
+            // handled.
+            Future<void>.delayed(Duration.zero).then((_) {
+              if (callback != null) {
+                callback(null);
+              }
+            });
+            return;
           }
+          final Map<String, dynamic> map = <String, dynamic>{'value': false};
+          callback!(codec.encodeSuccessEnvelope(map));
         });
-        return;
-      }
-      final Map<String, dynamic> map = <String, dynamic>{'value': false};
-      callback!(codec.encodeSuccessEnvelope(map));
-    });
   }
 
-  void _reportGetDataFailure(ui.PlatformMessageResponseCallback? callback,
-      MethodCodec codec, dynamic error) {
+  void _reportGetDataFailure(
+    ui.PlatformMessageResponseCallback? callback,
+    MethodCodec codec,
+    dynamic error,
+  ) {
     print('Could not get text from clipboard: $error');
-    callback!(codec.encodeErrorEnvelope(
-        code: 'paste_fail', message: 'Clipboard.getData failed'));
+    callback!(codec.encodeErrorEnvelope(code: 'paste_fail', message: 'Clipboard.getData failed'));
   }
 
   /// Methods used by tests.
@@ -227,7 +236,6 @@ class ExecCommandPasteStrategy implements PasteFromClipboardStrategy {
   @override
   Future<String> getData() {
     // TODO(mdebbar): https://github.com/flutter/flutter/issues/48581
-    return Future<String>.error(
-        UnimplementedError('Paste is not implemented for this browser.'));
+    return Future<String>.error(UnimplementedError('Paste is not implemented for this browser.'));
   }
 }

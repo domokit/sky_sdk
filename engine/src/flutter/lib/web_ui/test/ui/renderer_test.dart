@@ -42,7 +42,6 @@ Future<void> testMain() async {
     final view3 = EngineFlutterView(EnginePlatformDispatcher.instance, host3);
     EnginePlatformDispatcher.instance.viewManager.registerView(view3);
 
-
     await Future.wait([
       renderer.renderScene(paintRect(rect, red), view1),
       renderer.renderScene(paintRect(rect, green), view2),

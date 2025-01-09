@@ -10,9 +10,7 @@ class SurfaceScene implements ui.Scene {
   /// or extended directly.
   ///
   /// To create a Scene object, use a [SceneBuilder].
-  SurfaceScene(this.webOnlyRootElement, {
-    required this.timingRecorder,
-  });
+  SurfaceScene(this.webOnlyRootElement, {required this.timingRecorder});
 
   final DomElement? webOnlyRootElement;
   final FrameTimingRecorder? timingRecorder;
@@ -64,8 +62,7 @@ class PersistedScene extends PersistedContainerSurface {
   Matrix4? _localTransformInverse;
 
   @override
-  Matrix4? get localTransformInverse =>
-      _localTransformInverse ??= Matrix4.identity();
+  Matrix4? get localTransformInverse => _localTransformInverse ??= Matrix4.identity();
 
   @override
   DomElement createElement() {

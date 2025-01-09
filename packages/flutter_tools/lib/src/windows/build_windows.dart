@@ -42,8 +42,9 @@ Future<void> buildWindows(
   // In the directories. This check produces more meaningful error messages
   // on failure as pertains to https://github.com/flutter/flutter/issues/104802
   final String projectPath = windowsProject.parent.directory.absolute.path;
-  final bool badPath = _kBadCharacters.runes
-      .any((int i) => projectPath.contains(String.fromCharCode(i)));
+  final bool badPath = _kBadCharacters.runes.any(
+    (int i) => projectPath.contains(String.fromCharCode(i)),
+  );
   if (badPath) {
     throwToolExit(
       'Path $projectPath contains invalid characters in "$_kBadCharacters". '
@@ -56,13 +57,13 @@ Future<void> buildWindows(
     throwToolExit(
       'No Windows desktop project configured. See '
       'https://flutter.dev/to/add-desktop-support '
-      'to learn about adding Windows support to a project.');
+      'to learn about adding Windows support to a project.',
+    );
   }
 
-  final Directory buildDirectory = globals.fs.directory(globals.fs.path.join(
-    projectPath,
-    getWindowsBuildDirectory(targetPlatform),
-  ));
+  final Directory buildDirectory = globals.fs.directory(
+    globals.fs.path.join(projectPath, getWindowsBuildDirectory(targetPlatform)),
+  );
 
   final List<ProjectMigrator> migrators = <ProjectMigrator>[
     CmakeCustomCommandMigration(windowsProject, globals.logger),
@@ -79,24 +80,26 @@ Future<void> buildWindows(
   _writeGeneratedFlutterConfig(windowsProject, buildInfo, target);
   createPluginSymlinks(windowsProject.parent);
 
-  final VisualStudio visualStudio = visualStudioOverride ?? VisualStudio(
-    fileSystem: globals.fs,
-    platform: globals.platform,
-    logger: globals.logger,
-    processManager: globals.processManager,
-    osUtils: globals.os,
-  );
+  final VisualStudio visualStudio =
+      visualStudioOverride ??
+      VisualStudio(
+        fileSystem: globals.fs,
+        platform: globals.platform,
+        logger: globals.logger,
+        processManager: globals.processManager,
+        osUtils: globals.os,
+      );
   final String? cmakePath = visualStudio.cmakePath;
   final String? cmakeGenerator = visualStudio.cmakeGenerator;
   if (cmakePath == null || cmakeGenerator == null) {
-    throwToolExit('Unable to find suitable Visual Studio toolchain. '
-        'Please run `flutter doctor` for more details.');
+    throwToolExit(
+      'Unable to find suitable Visual Studio toolchain. '
+      'Please run `flutter doctor` for more details.',
+    );
   }
 
   final String buildModeName = buildInfo.mode.cliName;
-  final Status status = globals.logger.startProgress(
-    'Building Windows application...',
-  );
+  final Status status = globals.logger.startProgress('Building Windows application...');
   try {
     await _runCmakeGeneration(
       cmakePath: cmakePath,
@@ -115,10 +118,10 @@ Future<void> buildWindows(
 
   final String? binaryName = getCmakeExecutableName(windowsProject);
   final File binaryFile = buildDirectory
-    .childDirectory('runner')
-    .childDirectory(sentenceCase(buildModeName))
-    .childFile('$binaryName.exe');
-  final FileSystemEntity buildOutput =  binaryFile.existsSync() ? binaryFile : binaryFile.parent;
+      .childDirectory('runner')
+      .childDirectory(sentenceCase(buildModeName))
+      .childFile('$binaryName.exe');
+  final FileSystemEntity buildOutput = binaryFile.existsSync() ? binaryFile : binaryFile.parent;
   // We don't print a size because the output directory can contain
   // optional files not needed by the user and because the binary is not
   // self-contained.
@@ -130,27 +133,25 @@ Future<void> buildWindows(
 
   if (buildInfo.codeSizeDirectory != null && sizeAnalyzer != null) {
     final String arch = getNameForTargetPlatform(targetPlatform);
-    final File codeSizeFile = globals.fs.directory(buildInfo.codeSizeDirectory)
-      .childFile('snapshot.$arch.json');
-    final File precompilerTrace = globals.fs.directory(buildInfo.codeSizeDirectory)
-      .childFile('trace.$arch.json');
+    final File codeSizeFile = globals.fs
+        .directory(buildInfo.codeSizeDirectory)
+        .childFile('snapshot.$arch.json');
+    final File precompilerTrace = globals.fs
+        .directory(buildInfo.codeSizeDirectory)
+        .childFile('trace.$arch.json');
     final Map<String, Object?> output = await sizeAnalyzer.analyzeAotSnapshot(
       aotSnapshot: codeSizeFile,
       // This analysis is only supported for release builds.
       outputDirectory: globals.fs.directory(
-        globals.fs.path.join(
-          buildDirectory.path,
-          'runner',
-          'Release'
-        ),
+        globals.fs.path.join(buildDirectory.path, 'runner', 'Release'),
       ),
       precompilerTrace: precompilerTrace,
       type: 'windows',
     );
     final File outputFile = globals.fsUtils.getUniqueFile(
-      globals.fs
-        .directory(globals.fsUtils.homeDirPath)
-        .childDirectory('.flutter-devtools'), 'windows-code-size-analysis', 'json',
+      globals.fs.directory(globals.fsUtils.homeDirPath).childDirectory('.flutter-devtools'),
+      'windows-code-size-analysis',
+      'json',
     )..writeAsStringSync(jsonEncode(output));
     // This message is used as a sentinel in analyze_apk_size_test.dart
     globals.printStatus(
@@ -159,7 +160,7 @@ Future<void> buildWindows(
 
     globals.printStatus(
       '\nTo analyze your app size in Dart DevTools, run the following command:\n'
-      'dart devtools --appSizeBase=${outputFile.path}'
+      'dart devtools --appSizeBase=${outputFile.path}',
     );
   }
 }
@@ -185,21 +186,18 @@ Future<void> _runCmakeGeneration({
   int result;
 
   try {
-    result = await globals.processUtils.stream(
-      <String>[
-        cmakePath,
-        '-S',
-        sourceDir.path,
-        '-B',
-        buildDir.path,
-        '-G',
-        generator,
-        '-A',
-        getCmakeWindowsArch(targetPlatform),
-        '-DFLUTTER_TARGET_PLATFORM=${getNameForTargetPlatform(targetPlatform)}',
-      ],
-      trace: true,
-    );
+    result = await globals.processUtils.stream(<String>[
+      cmakePath,
+      '-S',
+      sourceDir.path,
+      '-B',
+      buildDir.path,
+      '-G',
+      generator,
+      '-A',
+      getCmakeWindowsArch(targetPlatform),
+      '-DFLUTTER_TARGET_PLATFORM=${getNameForTargetPlatform(targetPlatform)}',
+    ], trace: true);
   } on ArgumentError {
     throwToolExit("cmake not found. Run 'flutter doctor' for more information.");
   }
@@ -208,19 +206,21 @@ Future<void> _runCmakeGeneration({
   }
   final Duration elapsedDuration = sw.elapsed;
   globals.flutterUsage.sendTiming('build', 'windows-cmake-generation', elapsedDuration);
-  globals.analytics.send(Event.timing(
-    workflow: 'build',
-    variableName: 'windows-cmake-generation',
-    elapsedMilliseconds: elapsedDuration.inMilliseconds,
-  ));
+  globals.analytics.send(
+    Event.timing(
+      workflow: 'build',
+      variableName: 'windows-cmake-generation',
+      elapsedMilliseconds: elapsedDuration.inMilliseconds,
+    ),
+  );
 }
 
 Future<void> _runBuild(
   String cmakePath,
   Directory buildDir,
-  String buildModeName,
-  { bool install = true }
-) async {
+  String buildModeName, {
+  bool install = true,
+}) async {
   final Stopwatch sw = Stopwatch()..start();
 
   // MSBuild sends all output to stdout, including build errors. This surfaces
@@ -245,15 +245,10 @@ Future<void> _runBuild(
         buildDir.path,
         '--config',
         sentenceCase(buildModeName),
-        if (install)
-          ...<String>['--target', 'INSTALL'],
-        if (globals.logger.isVerbose)
-          '--verbose',
+        if (install) ...<String>['--target', 'INSTALL'],
+        if (globals.logger.isVerbose) '--verbose',
       ],
-      environment: <String, String>{
-        if (globals.logger.isVerbose)
-          'VERBOSE_SCRIPT_LOGGING': 'true',
-      },
+      environment: <String, String>{if (globals.logger.isVerbose) 'VERBOSE_SCRIPT_LOGGING': 'true'},
       trace: true,
       stdoutErrorMatcher: errorMatcher,
     );
@@ -265,11 +260,13 @@ Future<void> _runBuild(
   }
   final Duration elapsedDuration = sw.elapsed;
   globals.flutterUsage.sendTiming('build', 'windows-cmake-build', elapsedDuration);
-  globals.analytics.send(Event.timing(
-    workflow: 'build',
-    variableName: 'windows-cmake-build',
-    elapsedMilliseconds: elapsedDuration.inMilliseconds,
-  ));
+  globals.analytics.send(
+    Event.timing(
+      workflow: 'build',
+      variableName: 'windows-cmake-build',
+      elapsedMilliseconds: elapsedDuration.inMilliseconds,
+    ),
+  );
 }
 
 /// Writes the generated CMake file with the configuration for the given build.
@@ -282,8 +279,7 @@ void _writeGeneratedFlutterConfig(
     'FLUTTER_ROOT': Cache.flutterRoot!,
     'FLUTTER_EPHEMERAL_DIR': windowsProject.ephemeralDirectory.path,
     'PROJECT_DIR': windowsProject.parent.directory.path,
-    if (target != null)
-      'FLUTTER_TARGET': target,
+    if (target != null) 'FLUTTER_TARGET': target,
     ...buildInfo.toEnvironmentConfig(),
   };
   final LocalEngineInfo? localEngineInfo = globals.artifacts?.localEngineInfo;
@@ -294,7 +290,13 @@ void _writeGeneratedFlutterConfig(
     environment['LOCAL_ENGINE'] = localEngineInfo.localTargetName;
     environment['LOCAL_ENGINE_HOST'] = localEngineInfo.localHostName;
   }
-  writeGeneratedCmakeConfig(Cache.flutterRoot!, windowsProject, buildInfo, environment, globals.logger);
+  writeGeneratedCmakeConfig(
+    Cache.flutterRoot!,
+    windowsProject,
+    buildInfo,
+    environment,
+    globals.logger,
+  );
 }
 
 // Works around the Visual Studio 17.1.0 CMake bug described in
@@ -310,15 +312,17 @@ void _writeGeneratedFlutterConfig(
 // dropping VS 2022 support.
 void _fixBrokenCmakeGeneration(Directory buildDirectory) {
   final File assembleProject = buildDirectory
-    .childDirectory('flutter')
-    .childFile('flutter_assemble.vcxproj');
+      .childDirectory('flutter')
+      .childFile('flutter_assemble.vcxproj');
   if (assembleProject.existsSync()) {
     // E.g.: <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     final RegExp commandRegex = RegExp(
-      r'<Command Condition=.*\(Configuration\)\|\$\(Platform\).==.(Debug|Profile|Release)\|');
+      r'<Command Condition=.*\(Configuration\)\|\$\(Platform\).==.(Debug|Profile|Release)\|',
+    );
     // E.g.: [...]/flutter_tools/bin/tool_backend.bat windows-x64 Debug
     final RegExp assembleCallRegex = RegExp(
-      r'^.*/tool_backend\.bat windows[^ ]* (Debug|Profile|Release)');
+      r'^.*/tool_backend\.bat windows[^ ]* (Debug|Profile|Release)',
+    );
     String? lastCommandConditionConfig;
     final StringBuffer newProjectContents = StringBuffer();
     // vcxproj files contain a BOM, which readAsLinesSync drops; re-add it.
@@ -337,7 +341,10 @@ void _fixBrokenCmakeGeneration(Directory buildDirectory) {
             // (e.g., the project path).
             final int badConfigIndex = line.lastIndexOf(assembleCallMatch.group(1)!);
             final String correctedLine = line.replaceFirst(
-              callConfig, lastCommandConditionConfig, badConfigIndex);
+              callConfig,
+              lastCommandConditionConfig,
+              badConfigIndex,
+            );
             newProjectContents.writeln('$correctedLine\r');
             continue;
           }

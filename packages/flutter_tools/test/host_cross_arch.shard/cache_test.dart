@@ -28,14 +28,10 @@ HostPlatform _identifyMacBinaryArch(String path) {
   // Expect STDOUT like:
   //   bin/cache/dart-sdk/bin/dart: Mach-O 64-bit executable x86_64
   final RegExp pattern = RegExp(r'Mach-O 64-bit executable (\w+)');
-  final ProcessResult result = processManager.runSync(
-    <String>['file', _dartBinary.path],
-  );
+  final ProcessResult result = processManager.runSync(<String>['file', _dartBinary.path]);
   expect(
     result,
-    ProcessResultMatcher(
-      stdoutPattern: '${_dartBinary.path}: Mach-O 64-bit executable',
-    ),
+    ProcessResultMatcher(stdoutPattern: '${_dartBinary.path}: Mach-O 64-bit executable'),
   );
   final RegExpMatch? match = pattern.firstMatch(result.stdout as String);
   if (match == null) {
@@ -53,10 +49,11 @@ HostPlatform _identifyMacBinaryArch(String path) {
 
 final String _flutterRootPath = getFlutterRoot();
 final Directory _flutterRoot = fileSystem.directory(_flutterRootPath);
-final File _dartBinary = _flutterRoot
-    .childDirectory('bin')
-    .childDirectory('cache')
-    .childDirectory('dart-sdk')
-    .childDirectory('bin')
-    .childFile('dart')
-    .absolute;
+final File _dartBinary =
+    _flutterRoot
+        .childDirectory('bin')
+        .childDirectory('cache')
+        .childDirectory('dart-sdk')
+        .childDirectory('bin')
+        .childFile('dart')
+        .absolute;

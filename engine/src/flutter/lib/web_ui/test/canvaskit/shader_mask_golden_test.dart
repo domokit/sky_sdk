@@ -39,40 +39,34 @@ void testMain() {
       builder.addPicture(ui.Offset.zero, redCircle);
 
       final CkGradientSweep shader = CkGradientSweep(
-          const ui.Offset(250, 125),
-          const <ui.Color>[
-            ui.Color(0xFF4285F4),
-            ui.Color(0xFF34A853),
-            ui.Color(0xFFFBBC05),
-            ui.Color(0xFFEA4335),
-            ui.Color(0xFF4285F4),
-          ],
-          const <double>[
-            0.0,
-            0.25,
-            0.5,
-            0.75,
-            1.0,
-          ],
-          ui.TileMode.clamp,
-          -(math.pi / 2),
-          math.pi * 2 - (math.pi / 2),
-          null);
+        const ui.Offset(250, 125),
+        const <ui.Color>[
+          ui.Color(0xFF4285F4),
+          ui.Color(0xFF34A853),
+          ui.Color(0xFFFBBC05),
+          ui.Color(0xFFEA4335),
+          ui.Color(0xFF4285F4),
+        ],
+        const <double>[0.0, 0.25, 0.5, 0.75, 1.0],
+        ui.TileMode.clamp,
+        -(math.pi / 2),
+        math.pi * 2 - (math.pi / 2),
+        null,
+      );
 
-      final ui.Path clipPath = ui.Path()
-        ..addOval(const ui.Rect.fromLTWH(25, 75, 100, 100));
+      final ui.Path clipPath = ui.Path()..addOval(const ui.Rect.fromLTWH(25, 75, 100, 100));
       builder.pushClipPath(clipPath);
 
       // Apply a shader mask.
-      builder.pushShaderMask(shader, const ui.Rect.fromLTRB(0, 0, 200, 250),
-          ui.BlendMode.color);
+      builder.pushShaderMask(shader, const ui.Rect.fromLTRB(0, 0, 200, 250), ui.BlendMode.color);
 
       // Draw another red circle and apply it to the scene.
       // This one should be grey since we have the color filter.
       final CkPictureRecorder recorder2 = CkPictureRecorder();
       final CkCanvas canvas2 = recorder2.beginRecording(region);
 
-      canvas2.drawRect(const ui.Rect.fromLTWH(25, 75, 100, 100),
+      canvas2.drawRect(
+        const ui.Rect.fromLTWH(25, 75, 100, 100),
         CkPaint()..color = const ui.Color.fromARGB(255, 0, 255, 0),
       );
 
@@ -80,11 +74,7 @@ void testMain() {
 
       builder.addPicture(ui.Offset.zero, sweepCircle);
 
-      await matchSceneGolden(
-        'canvaskit_shadermask_linear.png',
-        builder.build(),
-        region: region,
-      );
+      await matchSceneGolden('canvaskit_shadermask_linear.png', builder.build(), region: region);
     });
 
     /// Regression test for https://github.com/flutter/flutter/issues/78959
@@ -107,40 +97,34 @@ void testMain() {
       builder.addPicture(ui.Offset.zero, redCircle);
 
       final CkGradientSweep shader = CkGradientSweep(
-          const ui.Offset(250, 125),
-          const <ui.Color>[
-            ui.Color(0xFF4285F4),
-            ui.Color(0xFF34A853),
-            ui.Color(0xFFFBBC05),
-            ui.Color(0xFFEA4335),
-            ui.Color(0xFF4285F4),
-          ],
-          const <double>[
-            0.0,
-            0.25,
-            0.5,
-            0.75,
-            1.0,
-          ],
-          ui.TileMode.clamp,
-          -(math.pi / 2),
-          math.pi * 2 - (math.pi / 2),
-          null);
+        const ui.Offset(250, 125),
+        const <ui.Color>[
+          ui.Color(0xFF4285F4),
+          ui.Color(0xFF34A853),
+          ui.Color(0xFFFBBC05),
+          ui.Color(0xFFEA4335),
+          ui.Color(0xFF4285F4),
+        ],
+        const <double>[0.0, 0.25, 0.5, 0.75, 1.0],
+        ui.TileMode.clamp,
+        -(math.pi / 2),
+        math.pi * 2 - (math.pi / 2),
+        null,
+      );
 
-      final ui.Path clipPath = ui.Path()
-        ..addOval(const ui.Rect.fromLTWH(25, 75, 100, 100));
+      final ui.Path clipPath = ui.Path()..addOval(const ui.Rect.fromLTWH(25, 75, 100, 100));
       builder.pushClipPath(clipPath);
 
       // Apply a shader mask.
-      builder.pushShaderMask(shader, const ui.Rect.fromLTRB(50, 50, 200, 250),
-          ui.BlendMode.color);
+      builder.pushShaderMask(shader, const ui.Rect.fromLTRB(50, 50, 200, 250), ui.BlendMode.color);
 
       // Draw another red circle and apply it to the scene.
       // This one should be grey since we have the color filter.
       final CkPictureRecorder recorder2 = CkPictureRecorder();
       final CkCanvas canvas2 = recorder2.beginRecording(region);
 
-      canvas2.drawRect(const ui.Rect.fromLTWH(25, 75, 100, 100),
+      canvas2.drawRect(
+        const ui.Rect.fromLTWH(25, 75, 100, 100),
         CkPaint()..color = const ui.Color.fromARGB(255, 0, 255, 0),
       );
 

@@ -16,11 +16,36 @@ import 'package:flutter_devicelab/framework/framework.dart';
 // - Kotlin: No methodology as of yet.
 // (*) - support range defined in packages/flutter_tools/gradle/src/main/kotlin/dependency_version_checker.gradle.kts.
 List<VersionTuple> versionTuples = <VersionTuple>[
-  VersionTuple(agpVersion: '7.0.1', gradleVersion: '7.0.2', kotlinVersion: '1.7.10', compileSdkVersion: '34'),
-  VersionTuple(agpVersion: '7.1.0', gradleVersion: '7.2',   kotlinVersion: '1.7.10', compileSdkVersion: '34'),
-  VersionTuple(agpVersion: '7.2.0', gradleVersion: '7.3.3', kotlinVersion: '1.7.10', compileSdkVersion: '34'),
-  VersionTuple(agpVersion: '7.3.0', gradleVersion: '7.4',   kotlinVersion: '1.7.10', compileSdkVersion: '34'),
-  VersionTuple(agpVersion: '7.4.0', gradleVersion: '7.5',   kotlinVersion: '1.8.10', compileSdkVersion: '34'),
+  VersionTuple(
+    agpVersion: '7.0.1',
+    gradleVersion: '7.0.2',
+    kotlinVersion: '1.7.10',
+    compileSdkVersion: '34',
+  ),
+  VersionTuple(
+    agpVersion: '7.1.0',
+    gradleVersion: '7.2',
+    kotlinVersion: '1.7.10',
+    compileSdkVersion: '34',
+  ),
+  VersionTuple(
+    agpVersion: '7.2.0',
+    gradleVersion: '7.3.3',
+    kotlinVersion: '1.7.10',
+    compileSdkVersion: '34',
+  ),
+  VersionTuple(
+    agpVersion: '7.3.0',
+    gradleVersion: '7.4',
+    kotlinVersion: '1.7.10',
+    compileSdkVersion: '34',
+  ),
+  VersionTuple(
+    agpVersion: '7.4.0',
+    gradleVersion: '7.5',
+    kotlinVersion: '1.8.10',
+    compileSdkVersion: '34',
+  ),
 ];
 
 // This test requires a Java version less than 17 due to the intentionally low
@@ -32,14 +57,14 @@ Future<void> main() async {
   /// The [FileSystem] for the integration test environment.
   const LocalFileSystem fileSystem = LocalFileSystem();
 
-  final Directory tempDir = fileSystem
-      .systemTempDirectory
-      .createTempSync('flutter_android_dependency_version_tests');
+  final Directory tempDir = fileSystem.systemTempDirectory.createTempSync(
+    'flutter_android_dependency_version_tests',
+  );
   await task(() {
     return buildFlutterApkWithSpecifiedDependencyVersions(
-        versionTuples: versionTuples,
-        tempDir: tempDir,
-        localFileSystem: fileSystem
+      versionTuples: versionTuples,
+      tempDir: tempDir,
+      localFileSystem: fileSystem,
     );
   });
 }

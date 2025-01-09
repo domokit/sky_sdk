@@ -6,7 +6,6 @@ import 'dart:io' as io;
 
 import 'package:args/command_runner.dart';
 
-import 'analyze.dart';
 import 'build.dart';
 import 'clean.dart';
 import 'exceptions.dart';
@@ -16,17 +15,14 @@ import 'roll_fallback_fonts.dart';
 import 'test_runner.dart';
 import 'utils.dart';
 
-CommandRunner<bool> runner = CommandRunner<bool>(
-  'felt',
-  'Command-line utility for building and testing Flutter web engine.',
-)
-  ..addCommand(AnalyzeCommand())
-  ..addCommand(BuildCommand())
-  ..addCommand(CleanCommand())
-  ..addCommand(RollFallbackFontsCommand())
-  ..addCommand(GenerateBuilderJsonCommand())
-  ..addCommand(LicensesCommand())
-  ..addCommand(TestCommand());
+CommandRunner<bool> runner =
+    CommandRunner<bool>('felt', 'Command-line utility for building and testing Flutter web engine.')
+      ..addCommand(BuildCommand())
+      ..addCommand(CleanCommand())
+      ..addCommand(RollFallbackFontsCommand())
+      ..addCommand(GenerateBuilderJsonCommand())
+      ..addCommand(LicensesCommand())
+      ..addCommand(TestCommand());
 
 Future<void> main(List<String> rawArgs) async {
   // Remove --clean from the list as that's processed by the wrapper script.
@@ -54,10 +50,12 @@ Future<void> main(List<String> rawArgs) async {
     io.stderr.writeln(exception.message);
     exitCode = exception.exitCode;
   } on ProcessException catch (e) {
-    io.stderr.writeln('description: ${e.description}'
-        'executable: ${e.executable} '
-        'arguments: ${e.arguments} '
-        'exit code: ${e.exitCode}');
+    io.stderr.writeln(
+      'description: ${e.description}'
+      'executable: ${e.executable} '
+      'arguments: ${e.arguments} '
+      'exit code: ${e.exitCode}',
+    );
     exitCode = e.exitCode ?? 1;
   } catch (e) {
     rethrow;

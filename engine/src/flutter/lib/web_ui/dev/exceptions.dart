@@ -14,7 +14,7 @@ class BrowserInstallerException implements Exception {
 /// Throw this exception in felt command to exit felt with a message and a
 /// non-zero exit code.
 class ToolExit implements Exception {
-  ToolExit(this.message, { this.exitCode = 1 });
+  ToolExit(this.message, {this.exitCode = 1});
 
   final String message;
   final int exitCode;

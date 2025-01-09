@@ -15,12 +15,14 @@ class GetBitmapScenario extends Scenario {
   void onBeginFrame(Duration duration) {
     final PictureRecorder recorder = PictureRecorder();
     final Canvas canvas = Canvas(recorder);
-    canvas.drawRect(Rect.fromLTWH(0, 0, view.physicalSize.width, 300),
-        Paint()..color = const Color(0xFFFF0000));
     canvas.drawRect(
-        Rect.fromLTWH(0, view.physicalSize.height - 300,
-            view.physicalSize.width, 300),
-        Paint()..color = const Color(0xFF0000FF));
+      Rect.fromLTWH(0, 0, view.physicalSize.width, 300),
+      Paint()..color = const Color(0xFFFF0000),
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(0, view.physicalSize.height - 300, view.physicalSize.width, 300),
+      Paint()..color = const Color(0xFF0000FF),
+    );
     final Picture picture = recorder.endRecording();
     final SceneBuilder builder = SceneBuilder();
     builder.addPicture(Offset.zero, picture);

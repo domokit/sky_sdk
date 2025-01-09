@@ -24,15 +24,26 @@ String pathToSvg(PathRef pathRef, {double offsetX = 0, double offsetY = 0}) {
       case SPath.kLineVerb:
         buffer.write('L ${outPts[2] + offsetX} ${outPts[3] + offsetY}');
       case SPath.kCubicVerb:
-        buffer.write('C ${outPts[2] + offsetX} ${outPts[3] + offsetY} '
-            '${outPts[4] + offsetX} ${outPts[5] + offsetY} ${outPts[6] + offsetX} ${outPts[7] + offsetY}');
+        buffer.write(
+          'C ${outPts[2] + offsetX} ${outPts[3] + offsetY} '
+          '${outPts[4] + offsetX} ${outPts[5] + offsetY} ${outPts[6] + offsetX} ${outPts[7] + offsetY}',
+        );
       case SPath.kQuadVerb:
-        buffer.write('Q ${outPts[2] + offsetX} ${outPts[3] + offsetY} '
-            '${outPts[4] + offsetX} ${outPts[5] + offsetY}');
+        buffer.write(
+          'Q ${outPts[2] + offsetX} ${outPts[3] + offsetY} '
+          '${outPts[4] + offsetX} ${outPts[5] + offsetY}',
+        );
       case SPath.kConicVerb:
         final double w = iter.conicWeight;
-        final Conic conic = Conic(outPts[0], outPts[1], outPts[2], outPts[3],
-            outPts[4], outPts[5], w);
+        final Conic conic = Conic(
+          outPts[0],
+          outPts[1],
+          outPts[2],
+          outPts[3],
+          outPts[4],
+          outPts[5],
+          w,
+        );
         final List<ui.Offset> points = conic.toQuads();
         final int len = points.length;
         for (int i = 1; i < len; i += 2) {
@@ -40,8 +51,10 @@ String pathToSvg(PathRef pathRef, {double offsetX = 0, double offsetY = 0}) {
           final double p1y = points[i].dy;
           final double p2x = points[i + 1].dx;
           final double p2y = points[i + 1].dy;
-          buffer.write('Q ${p1x + offsetX} ${p1y + offsetY} '
-              '${p2x + offsetX} ${p2y + offsetY}');
+          buffer.write(
+            'Q ${p1x + offsetX} ${p1y + offsetY} '
+            '${p2x + offsetX} ${p2y + offsetY}',
+          );
         }
       case SPath.kCloseVerb:
         buffer.write('Z');

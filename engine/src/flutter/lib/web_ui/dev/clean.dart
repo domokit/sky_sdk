@@ -45,16 +45,14 @@ class CleanCommand extends Command<bool> with ArgUtils<bool> {
       io.Directory(legacyBuildPath),
       io.File(path.join(environment.webUiRootDir.path, '.dart_tool', 'package_config.json')),
       io.File(path.join(environment.webUiRootDir.path, 'pubspec.lock')),
-      if (_alsoCleanNinja)
-        environment.outDir,
-      if(_alsoCleanFlutterRepo)
-        environment.engineDartToolDir,
+      if (_alsoCleanNinja) environment.outDir,
+      if (_alsoCleanFlutterRepo) environment.engineDartToolDir,
     ];
 
     await Future.wait(
       thingsToBeCleaned
-        .where((io.FileSystemEntity entity) => entity.existsSync())
-        .map((io.FileSystemEntity entity) => entity.delete(recursive: true))
+          .where((io.FileSystemEntity entity) => entity.existsSync())
+          .map((io.FileSystemEntity entity) => entity.delete(recursive: true)),
     );
     return true;
   }

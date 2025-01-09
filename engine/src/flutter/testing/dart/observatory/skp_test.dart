@@ -57,7 +57,6 @@ void main() {
       expect(e.toString(), contains('Cannot capture SKP screenshot with Impeller enabled.'));
     }
 
-
     await vmService.dispose();
   });
 }

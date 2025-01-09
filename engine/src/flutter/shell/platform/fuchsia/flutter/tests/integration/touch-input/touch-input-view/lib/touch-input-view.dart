@@ -51,10 +51,11 @@ class TestApp {
     canvas.drawRect(windowBounds, paint);
     // Build the scene
     final picture = recorder.endRecording();
-    final sceneBuilder = SceneBuilder()
-      ..pushClipRect(physicalBounds)
-      ..addPicture(Offset.zero, picture)
-      ..pop();
+    final sceneBuilder =
+        SceneBuilder()
+          ..pushClipRect(physicalBounds)
+          ..addPicture(Offset.zero, picture)
+          ..pop();
     window.render(sceneBuilder.build());
   }
 
@@ -69,26 +70,32 @@ class TestApp {
       }
 
       if (data.change == PointerChange.down || data.change == PointerChange.move) {
-        _reportTouchInput(
-          localX: data.physicalX,
-          localY: data.physicalY,
-          timeReceived: nowNanos,
-        );
+        _reportTouchInput(localX: data.physicalX, localY: data.physicalY, timeReceived: nowNanos);
       }
     }
 
     window.scheduleFrame();
   }
 
-  void _reportTouchInput({required double localX, required double localY, required int timeReceived}) {
+  void _reportTouchInput({
+    required double localX,
+    required double localY,
+    required int timeReceived,
+  }) {
     print('touch-input-view reporting touch input to TouchInputListener');
-    final message = utf8.encode(json.encode({
-      'method': 'TouchInputListener.ReportTouchInput',
-      'local_x': localX,
-      'local_y': localY,
-      'time_received': timeReceived,
-      'component_name': 'touch-input-view',
-    })).buffer.asByteData();
+    final message =
+        utf8
+            .encode(
+              json.encode({
+                'method': 'TouchInputListener.ReportTouchInput',
+                'local_x': localX,
+                'local_y': localY,
+                'time_received': timeReceived,
+                'component_name': 'touch-input-view',
+              }),
+            )
+            .buffer
+            .asByteData();
     PlatformDispatcher.instance.sendPlatformMessage('fuchsia/input_test', message, null);
   }
 }

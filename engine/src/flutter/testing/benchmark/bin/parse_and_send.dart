@@ -9,26 +9,20 @@ import 'package:args/args.dart';
 import 'package:metrics_center/metrics_center.dart';
 import 'package:path/path.dart' as p;
 
-Future<ProcessResult> runGit(
-  List<String> args, {
-  String? processWorkingDir,
-}) async {
-  return Process.run(
-    'git',
-    args,
-    workingDirectory: processWorkingDir,
-    runInShell: true,
-  );
+Future<ProcessResult> runGit(List<String> args, {String? processWorkingDir}) async {
+  return Process.run('git', args, workingDirectory: processWorkingDir, runInShell: true);
 }
 
 Future<List<String>> getGitLog() async {
   final String gitRoot = p.absolute('../..');
   // Somehow gitDir.currentBranch() doesn't work in Cirrus with "fatal: 'HEAD' -
   // not a valid ref". Therefore, we use "git log" to get the revision manually.
-  final ProcessResult logResult = await runGit(
-    <String>['log', '--pretty=format:%H %ct', '-n', '1'],
-    processWorkingDir: gitRoot,
-  );
+  final ProcessResult logResult = await runGit(<String>[
+    'log',
+    '--pretty=format:%H %ct',
+    '-n',
+    '1',
+  ], processWorkingDir: gitRoot);
   if (logResult.exitCode != 0) {
     throw 'Unexpected exit code ${logResult.exitCode}';
   }
@@ -46,17 +40,17 @@ Future<PointsAndDate> parse(String jsonFileName) async {
   final List<String> gitLog = await getGitLog();
   final String gitRevision = gitLog[0];
   final String gitCommitDate = gitLog[1];
-  final List<MetricPoint> rawPoints = await GoogleBenchmarkParser.parse(
-    jsonFileName,
-  );
+  final List<MetricPoint> rawPoints = await GoogleBenchmarkParser.parse(jsonFileName);
   final List<FlutterEngineMetricPoint> points = <FlutterEngineMetricPoint>[];
   for (final MetricPoint rawPoint in rawPoints) {
-    points.add(FlutterEngineMetricPoint(
-      rawPoint.tags[kNameKey]!,
-      rawPoint.value!,
-      gitRevision,
-      moreTags: rawPoint.tags,
-    ));
+    points.add(
+      FlutterEngineMetricPoint(
+        rawPoint.tags[kNameKey]!,
+        rawPoint.value!,
+        gitRevision,
+        moreTags: rawPoint.tags,
+      ),
+    );
   }
   return PointsAndDate(points, gitCommitDate);
 }
@@ -74,23 +68,15 @@ Future<FlutterDestination> connectFlutterDestination() async {
     );
   }
   return FlutterDestination.makeFromCredentialsJson(
-    jsonDecode(Platform.environment['BENCHMARK_GCP_CREDENTIALS']!)
-        as Map<String, dynamic>,
+    jsonDecode(Platform.environment['BENCHMARK_GCP_CREDENTIALS']!) as Map<String, dynamic>,
     isTesting: isTesting,
   );
 }
 
 ArgParser _serupOptions() {
   final ArgParser parser = ArgParser();
-  parser.addOption(
-    'json',
-    mandatory: true,
-    help: 'Path to the benchmarks json file.',
-  );
-  parser.addFlag(
-    'no-upload',
-    help: 'Upload the parsed benchmarks.',
-  );
+  parser.addOption('json', mandatory: true, help: 'Path to the benchmarks json file.');
+  parser.addFlag('no-upload', help: 'Upload the parsed benchmarks.');
   return parser;
 }
 
@@ -114,10 +100,7 @@ Future<void> main(List<String> args) async {
   final FlutterDestination destination = await connectFlutterDestination();
   await destination.update(
     pointsAndDate.points,
-    DateTime.fromMillisecondsSinceEpoch(
-      int.parse(pointsAndDate.date) * 1000,
-      isUtc: true,
-    ),
+    DateTime.fromMillisecondsSinceEpoch(int.parse(pointsAndDate.date) * 1000, isUtc: true),
     'flutter_engine_benchmark',
   );
 }

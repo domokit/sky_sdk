@@ -23,10 +23,13 @@ void testMain() {
 
     setUp(() {
       // Create a scene to use in tests.
-      final CkPicture picture =
-          paintPicture(const ui.Rect.fromLTRB(0, 0, 60, 60), (CkCanvas canvas) {
-        canvas.drawRect(const ui.Rect.fromLTRB(0, 0, 60, 60),
-            CkPaint()..style = ui.PaintingStyle.fill);
+      final CkPicture picture = paintPicture(const ui.Rect.fromLTRB(0, 0, 60, 60), (
+        CkCanvas canvas,
+      ) {
+        canvas.drawRect(
+          const ui.Rect.fromLTRB(0, 0, 60, 60),
+          CkPaint()..style = ui.PaintingStyle.fill,
+        );
       });
       final LayerSceneBuilder sb = LayerSceneBuilder();
       sb.addPicture(ui.Offset.zero, picture);
@@ -37,7 +40,9 @@ void testMain() {
       await CanvasKitRenderer.instance.renderScene(scene, implicitView);
 
       final EngineFlutterView anotherView = EngineFlutterView(
-          EnginePlatformDispatcher.instance, createDomElement('another-view'));
+        EnginePlatformDispatcher.instance,
+        createDomElement('another-view'),
+      );
       EnginePlatformDispatcher.instance.viewManager.registerView(anotherView);
 
       await CanvasKitRenderer.instance.renderScene(scene, anotherView);
@@ -45,8 +50,9 @@ void testMain() {
 
     test('will error if trying to render into an unregistered view', () async {
       final EngineFlutterView unregisteredView = EngineFlutterView(
-          EnginePlatformDispatcher.instance,
-          createDomElement('unregistered-view'));
+        EnginePlatformDispatcher.instance,
+        createDomElement('unregistered-view'),
+      );
       expect(
         () => CanvasKitRenderer.instance.renderScene(scene, unregisteredView),
         throwsAssertionError,
@@ -55,49 +61,42 @@ void testMain() {
 
     test('will dispose the Rasterizer for a disposed view', () async {
       final EngineFlutterView view = EngineFlutterView(
-          EnginePlatformDispatcher.instance, createDomElement('multi-view'));
+        EnginePlatformDispatcher.instance,
+        createDomElement('multi-view'),
+      );
       EnginePlatformDispatcher.instance.viewManager.registerView(view);
-      expect(
-        CanvasKitRenderer.instance.debugGetRasterizerForView(view),
-        isNotNull,
-      );
+      expect(CanvasKitRenderer.instance.debugGetRasterizerForView(view), isNotNull);
 
-      EnginePlatformDispatcher.instance.viewManager
-          .disposeAndUnregisterView(view.viewId);
-      expect(
-        CanvasKitRenderer.instance.debugGetRasterizerForView(view),
-        isNull,
-      );
+      EnginePlatformDispatcher.instance.viewManager.disposeAndUnregisterView(view.viewId);
+      expect(CanvasKitRenderer.instance.debugGetRasterizerForView(view), isNull);
     });
 
     // Issue https://github.com/flutter/flutter/issues/142094
-    test('does not reset platform view factories when disposing a view',
-        () async {
+    test('does not reset platform view factories when disposing a view', () async {
       expect(PlatformViewManager.instance.knowsViewType('self-test'), isFalse);
 
       final EngineFlutterView view = EngineFlutterView(
-          EnginePlatformDispatcher.instance, createDomElement('multi-view'));
+        EnginePlatformDispatcher.instance,
+        createDomElement('multi-view'),
+      );
       EnginePlatformDispatcher.instance.viewManager.registerView(view);
-      expect(
-        CanvasKitRenderer.instance.debugGetRasterizerForView(view),
-        isNotNull,
-      );
+      expect(CanvasKitRenderer.instance.debugGetRasterizerForView(view), isNotNull);
 
-      EnginePlatformDispatcher.instance.viewManager
-          .disposeAndUnregisterView(view.viewId);
-      expect(
-        CanvasKitRenderer.instance.debugGetRasterizerForView(view),
-        isNull,
-      );
+      EnginePlatformDispatcher.instance.viewManager.disposeAndUnregisterView(view.viewId);
+      expect(CanvasKitRenderer.instance.debugGetRasterizerForView(view), isNull);
 
       expect(
-          PlatformViewManager.instance.knowsViewType(
-              ui_web.PlatformViewRegistry.defaultVisibleViewType),
-          isTrue);
+        PlatformViewManager.instance.knowsViewType(
+          ui_web.PlatformViewRegistry.defaultVisibleViewType,
+        ),
+        isTrue,
+      );
       expect(
-          PlatformViewManager.instance.knowsViewType(
-              ui_web.PlatformViewRegistry.defaultInvisibleViewType),
-          isTrue);
+        PlatformViewManager.instance.knowsViewType(
+          ui_web.PlatformViewRegistry.defaultInvisibleViewType,
+        ),
+        isTrue,
+      );
     });
   });
 }

@@ -16,16 +16,14 @@ void main() {
 
   setUp(() {
     Cache.flutterRoot = getFlutterRoot();
-    tempDir =
-        createResolvedTempDirectorySync('flutter_gradle_source_path_test.');
+    tempDir = createResolvedTempDirectorySync('flutter_gradle_source_path_test.');
   });
 
   tearDown(() async {
     tryToDelete(tempDir);
   });
 
-  test('gradle task builds without setting a source path in app/build.gradle',
-      () async {
+  test('gradle task builds without setting a source path in app/build.gradle', () async {
     final Project project = DeferredComponentsProject(
       MissingFlutterSourcePathDeferredComponentsConfig(),
     );
@@ -46,8 +44,7 @@ void main() {
   });
 }
 
-class MissingFlutterSourcePathDeferredComponentsConfig
-    extends BasicDeferredComponentsConfig {
+class MissingFlutterSourcePathDeferredComponentsConfig extends BasicDeferredComponentsConfig {
   final String _flutterSourcePath = '''
 flutter {
     source '../..'
@@ -57,8 +54,7 @@ flutter {
   @override
   String get appBuild {
     if (!super.appBuild.contains(_flutterSourcePath)) {
-      throw Exception(
-          'Flutter source path not found in original configuration!');
+      throw Exception('Flutter source path not found in original configuration!');
     }
     return super.appBuild.replaceAll(_flutterSourcePath, '');
   }

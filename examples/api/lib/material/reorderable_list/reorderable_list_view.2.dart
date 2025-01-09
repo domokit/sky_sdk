@@ -45,12 +45,7 @@ class _ReorderableExampleState extends State<ReorderableExample> {
         Card(
           key: Key('$index'),
           color: _items[index].isOdd ? oddItemColor : evenItemColor,
-          child: SizedBox(
-            height: 80,
-            child: Center(
-              child: Text('Card ${_items[index]}'),
-            ),
-          ),
+          child: SizedBox(height: 80, child: Center(child: Text('Card ${_items[index]}'))),
         ),
     ];
 
@@ -65,11 +60,7 @@ class _ReorderableExampleState extends State<ReorderableExample> {
             scale: scale,
             // Create a Card based on the color and the content of the dragged one
             // and set its elevation to the animated value.
-            child: Card(
-              elevation: elevation,
-              color: cards[index].color,
-              child: cards[index].child,
-            ),
+            child: Card(elevation: elevation, color: cards[index].color, child: cards[index].child),
           );
         },
         child: child,

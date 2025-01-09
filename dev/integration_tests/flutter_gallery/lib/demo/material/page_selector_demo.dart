@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import '../../gallery/demo.dart';
 
 class _PageSelector extends StatelessWidget {
-  const _PageSelector({ this.icons });
+  const _PageSelector({this.icons});
 
   final List<Icon>? icons;
 
@@ -35,14 +35,18 @@ class _PageSelector extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.chevron_left),
                   color: color,
-                  onPressed: () { _handleArrowButtonPress(context, -1); },
+                  onPressed: () {
+                    _handleArrowButtonPress(context, -1);
+                  },
                   tooltip: 'Page back',
                 ),
                 TabPageSelector(controller: controller),
                 IconButton(
                   icon: const Icon(Icons.chevron_right),
                   color: color,
-                  onPressed: () { _handleArrowButtonPress(context, 1); },
+                  onPressed: () {
+                    _handleArrowButtonPress(context, 1);
+                  },
                   tooltip: 'Page forward',
                 ),
               ],
@@ -50,21 +54,15 @@ class _PageSelector extends StatelessWidget {
           ),
           Expanded(
             child: IconTheme(
-              data: IconThemeData(
-                size: 128.0,
-                color: color,
-              ),
+              data: IconThemeData(size: 128.0, color: color),
               child: TabBarView(
-                children: icons!.map<Widget>((Icon icon) {
-                  return Container(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Card(
-                      child: Center(
-                        child: icon,
-                      ),
-                    ),
-                  );
-                }).toList(),
+                children:
+                    icons!.map<Widget>((Icon icon) {
+                      return Container(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Card(child: Center(child: icon)),
+                      );
+                    }).toList(),
               ),
             ),
           ),
@@ -94,10 +92,7 @@ class PageSelectorDemo extends StatelessWidget {
         title: const Text('Page selector'),
         actions: <Widget>[MaterialDemoDocumentationButton(routeName)],
       ),
-      body: DefaultTabController(
-        length: icons.length,
-        child: _PageSelector(icons: icons),
-      ),
+      body: DefaultTabController(length: icons.length, child: _PageSelector(icons: icons)),
     );
   }
 }

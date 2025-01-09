@@ -5,28 +5,11 @@
 #include "flutter/shell/platform/linux/fl_touch_manager.h"
 #include "flutter/shell/platform/embedder/test_utils/proc_table_replacement.h"
 #include "flutter/shell/platform/linux/fl_engine_private.h"
-#include "flutter/shell/platform/linux/testing/fl_test.h"
 
 #include <cstring>
 #include <vector>
 
 #include "gtest/gtest.h"
-
-static void log_pointer_events(
-    FlEngine* engine,
-    std::vector<FlutterPointerEvent>& pointer_events) {
-  FlutterEngineProcTable* embedder_api = fl_engine_get_embedder_api(engine);
-  embedder_api->SendPointerEvent = MOCK_ENGINE_PROC(
-      SendPointerEvent,
-      ([&pointer_events](auto engine, const FlutterPointerEvent* events,
-                         size_t events_count) {
-        for (size_t i = 0; i < events_count; i++) {
-          pointer_events.push_back(events[i]);
-        }
-
-        return kSuccess;
-      }));
-}
 
 struct _FakeGdkDevice {
   GObject parent_instance;
@@ -45,9 +28,24 @@ static GdkDevice* makeFakeDevice(GdkInputSource source) {
 }
 
 TEST(FlTouchManagerTest, TouchEvents) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
   std::vector<FlutterPointerEvent> pointer_events;
-  log_pointer_events(engine, pointer_events);
+  fl_engine_get_embedder_api(engine)->SendPointerEvent = MOCK_ENGINE_PROC(
+      SendPointerEvent,
+      ([&pointer_events](auto engine, const FlutterPointerEvent* events,
+                         size_t events_count) {
+        for (size_t i = 0; i < events_count; i++) {
+          pointer_events.push_back(events[i]);
+        }
+
+        return kSuccess;
+      }));
 
   g_autoptr(FlTouchManager) manager = fl_touch_manager_new(engine, 0);
 

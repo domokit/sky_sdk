@@ -30,7 +30,10 @@ class ShaderData {
       throw const FormatException('Invalid Shader Data');
     }
 
-    final List<UniformData> uniforms = List<UniformData>.filled(rawUniforms.length, UniformData.empty);
+    final List<UniformData> uniforms = List<UniformData>.filled(
+      rawUniforms.length,
+      UniformData.empty,
+    );
 
     int textureCount = 0;
     int floatCount = 0;
@@ -58,10 +61,7 @@ class ShaderData {
         final Object? rows = rawUniformData['rows'];
         final Object? columns = rawUniformData['columns'];
 
-        if (bitWidth is! int ||
-            rows is! int ||
-            arrayElements is! int ||
-            columns is! int) {
+        if (bitWidth is! int || rows is! int || arrayElements is! int || columns is! int) {
           throw const FormatException('Invalid Shader Data');
         }
 
@@ -75,11 +75,7 @@ class ShaderData {
 
         floatCount += value;
       }
-      uniforms[i] = UniformData(
-        name: name,
-        location: location,
-        type: type,
-      );
+      uniforms[i] = UniformData(name: name, location: location, type: type);
     }
     return ShaderData(
       source: source,
@@ -96,18 +92,13 @@ class ShaderData {
 }
 
 class UniformData {
-  const UniformData({
-    required this.name,
-    required this.location,
-    required this.type,
-  });
+  const UniformData({required this.name, required this.location, required this.type});
 
   final String name;
   final UniformType type;
   final int location;
 
-  static const UniformData empty =
-      UniformData(name: '', location: -1, type: UniformType.Float);
+  static const UniformData empty = UniformData(name: '', location: -1, type: UniformType.Float);
 }
 
 enum UniformType {

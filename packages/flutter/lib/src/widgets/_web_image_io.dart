@@ -45,6 +45,8 @@ class RawWebImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    throw UnsupportedError('It is impossible to instantiate a RawWebImage when not running on the web');
+    throw UnsupportedError(
+      'It is impossible to instantiate a RawWebImage when not running on the web',
+    );
   }
 }

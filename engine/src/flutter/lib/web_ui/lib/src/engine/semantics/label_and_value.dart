@@ -172,26 +172,28 @@ final class DomTextRepresentation extends LabelRepresentationBehavior {
 }
 
 /// A span queue for a size update.
-typedef _QueuedSizeUpdate = ({
-  // The span to be sized.
-  SizedSpanRepresentation representation,
+typedef _QueuedSizeUpdate =
+    ({
+      // The span to be sized.
+      SizedSpanRepresentation representation,
 
-  // The desired size.
-  ui.Size targetSize,
-});
+      // The desired size.
+      ui.Size targetSize,
+    });
 
 /// The size of a span as measured in the DOM.
-typedef _Measurement = ({
-  // The span that was measured.
-  SizedSpanRepresentation representation,
+typedef _Measurement =
+    ({
+      // The span that was measured.
+      SizedSpanRepresentation representation,
 
-  // The measured size of the DOM element before the size adjustment.
-  ui.Size domSize,
+      // The measured size of the DOM element before the size adjustment.
+      ui.Size domSize,
 
-  // The size of the element that the screen reader should observe after the
-  // size adjustment.
-  ui.Size targetSize,
-});
+      // The size of the element that the screen reader should observe after the
+      // size adjustment.
+      ui.Size targetSize,
+    });
 
 /// Sets the label as the text of a `<span>` child element.
 ///
@@ -241,15 +243,12 @@ final class SizedSpanRepresentation extends LabelRepresentationBehavior {
       // - It supports the `transform` and `transform-origin` properties. Pure
       //   `inline` does not support them.
       ..display = 'inline-block'
-
       // Do not wrap text based on parent constraints. Instead, to fit in the
       // parent's box the text will be scaled.
       ..whiteSpace = 'nowrap'
-
       // The origin of the coordinate system is the top-left corner of the
       // parent element.
       ..transformOrigin = '0 0 0'
-
       // The node may be tappable without having a more concrete role set on it,
       // such as "button". It will just have a tap handler. This could lead to
       // sized span to be chosen as the label representation strategy. However,
@@ -320,10 +319,7 @@ final class SizedSpanRepresentation extends LabelRepresentationBehavior {
       // corresponding to the semantic node may still be detached.
       semanticsObject.owner.addOneTimePostUpdateCallback(_updateSizes);
     }
-    _resizeQueue!.add((
-      representation: this,
-      targetSize: size,
-    ));
+    _resizeQueue!.add((representation: this, targetSize: size));
   }
 
   @override
@@ -439,7 +435,7 @@ final class SizedSpanRepresentation extends LabelRepresentationBehavior {
 /// See [computeDomSemanticsLabel] for the exact logic that constructs the label
 /// of a semantic node.
 class LabelAndValue extends SemanticBehavior {
-  LabelAndValue(super.semanticsObject, super.owner, { required this.preferredRepresentation });
+  LabelAndValue(super.semanticsObject, super.owner, {required this.preferredRepresentation});
 
   /// The preferred representation of the label in the DOM.
   ///
@@ -472,9 +468,8 @@ class LabelAndValue extends SemanticBehavior {
   /// screen reader. If the are no children, use the representation preferred
   /// by the role.
   LabelRepresentationBehavior _getEffectiveRepresentation() {
-    final LabelRepresentation effectiveRepresentation = semanticsObject.hasChildren
-      ? LabelRepresentation.ariaLabel
-      : preferredRepresentation;
+    final LabelRepresentation effectiveRepresentation =
+        semanticsObject.hasChildren ? LabelRepresentation.ariaLabel : preferredRepresentation;
 
     LabelRepresentationBehavior? representation = _representation;
     if (representation == null || representation.kind != effectiveRepresentation) {
@@ -524,12 +519,7 @@ class LabelAndValue extends SemanticBehavior {
   }
 }
 
-String? computeDomSemanticsLabel({
-  String? tooltip,
-  String? label,
-  String? hint,
-  String? value,
-}) {
+String? computeDomSemanticsLabel({String? tooltip, String? label, String? hint, String? value}) {
   final String? labelHintValue = _computeLabelHintValue(label: label, hint: hint, value: value);
 
   if (tooltip == null && labelHintValue == null) {
@@ -553,14 +543,10 @@ String? computeDomSemanticsLabel({
   return combinedValue.isNotEmpty ? combinedValue.toString() : null;
 }
 
-String? _computeLabelHintValue({
-  String? label,
-  String? hint,
-  String? value,
-}) {
+String? _computeLabelHintValue({String? label, String? hint, String? value}) {
   final String combinedValue = <String?>[label, hint, value]
-    .whereType<String>() // poor man's null filter
-    .where((String element) => element.trim().isNotEmpty)
-    .join(' ');
+      .whereType<String>() // poor man's null filter
+      .where((String element) => element.trim().isNotEmpty)
+      .join(' ');
   return combinedValue.isNotEmpty ? combinedValue : null;
 }

@@ -22,33 +22,36 @@ void doTests() {
       meta
         ..id = 'my_viewport_meta_for_testing'
         ..name = 'viewport'
-        ..content = 'width=device-width, initial-scale=1.0, '
+        ..content =
+            'width=device-width, initial-scale=1.0, '
             'maximum-scale=1.0, user-scalable=no';
       domDocument.head!.append(meta);
 
-      DomElement? userMeta =
-          domDocument.querySelector('#my_viewport_meta_for_testing');
+      DomElement? userMeta = domDocument.querySelector('#my_viewport_meta_for_testing');
 
       expect(userMeta, isNotNull);
 
       // ignore: unused_local_variable
       final FullPageEmbeddingStrategy strategy = FullPageEmbeddingStrategy();
 
-      expect(target.getAttribute('flt-embedding'), 'full-page',
-          reason:
-              'Should identify itself as a specific key=value into the target element.');
+      expect(
+        target.getAttribute('flt-embedding'),
+        'full-page',
+        reason: 'Should identify itself as a specific key=value into the target element.',
+      );
 
       // Locate the viewport metas again...
       userMeta = domDocument.querySelector('#my_viewport_meta_for_testing');
 
-      final DomElement? flutterMeta =
-          domDocument.querySelector('meta[name="viewport"]');
+      final DomElement? flutterMeta = domDocument.querySelector('meta[name="viewport"]');
 
-      expect(userMeta, isNull,
-          reason: 'Should delete previously existing viewport meta tags.');
+      expect(userMeta, isNull, reason: 'Should delete previously existing viewport meta tags.');
       expect(flutterMeta, isNotNull);
-      expect(flutterMeta!.hasAttribute('flt-viewport'), isTrue,
-          reason: 'Should install flutter viewport meta tag.');
+      expect(
+        flutterMeta!.hasAttribute('flt-viewport'),
+        isTrue,
+        reason: 'Should install flutter viewport meta tag.',
+      );
     });
   });
 
@@ -60,32 +63,23 @@ void doTests() {
       final DomCSSStyleDeclaration style = glassPane.style;
 
       expect(glassPane.isConnected, isFalse);
-      expect(style.position, '',
-          reason: 'Should not have any specific position.');
-      expect(style.top, '',
-          reason:
-              'Should not have any top/right/bottom/left positioning/inset.');
+      expect(style.position, '', reason: 'Should not have any specific position.');
+      expect(style.top, '', reason: 'Should not have any top/right/bottom/left positioning/inset.');
 
       strategy.attachViewRoot(glassPane);
 
       // Assert injection into <body>
-      expect(glassPane.isConnected, isTrue,
-          reason: 'Should inject glassPane into the document.');
-      expect(glassPane.parent, domDocument.body,
-          reason: 'Should inject glassPane into the <body>');
+      expect(glassPane.isConnected, isTrue, reason: 'Should inject glassPane into the document.');
+      expect(glassPane.parent, domDocument.body, reason: 'Should inject glassPane into the <body>');
 
       final DomCSSStyleDeclaration styleAfter = glassPane.style;
 
       // Assert required styling to cover the viewport
-      expect(styleAfter.position, 'absolute',
-          reason: 'Should be absolutely positioned.');
+      expect(styleAfter.position, 'absolute', reason: 'Should be absolutely positioned.');
       expect(styleAfter.top, '0px', reason: 'Should cover the whole viewport.');
-      expect(styleAfter.right, '0px',
-          reason: 'Should cover the whole viewport.');
-      expect(styleAfter.bottom, '0px',
-          reason: 'Should cover the whole viewport.');
-      expect(styleAfter.left, '0px',
-          reason: 'Should cover the whole viewport.');
+      expect(styleAfter.right, '0px', reason: 'Should cover the whole viewport.');
+      expect(styleAfter.bottom, '0px', reason: 'Should cover the whole viewport.');
+      expect(styleAfter.left, '0px', reason: 'Should cover the whole viewport.');
     });
   });
 }

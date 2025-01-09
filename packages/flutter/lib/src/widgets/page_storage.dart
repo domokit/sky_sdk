@@ -50,8 +50,8 @@ class _StorageEntryIdentifier {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is _StorageEntryIdentifier
-        && listEquals<PageStorageKey<dynamic>>(other.keys, keys);
+    return other is _StorageEntryIdentifier &&
+        listEquals<PageStorageKey<dynamic>>(other.keys, keys);
   }
 
   @override
@@ -101,7 +101,7 @@ class PageStorageBucket {
   ///
   /// If an explicit identifier is not provided and no [PageStorageKey]s
   /// are found, then the `data` is not saved.
-  void writeState(BuildContext context, dynamic data, { Object? identifier }) {
+  void writeState(BuildContext context, dynamic data, {Object? identifier}) {
     _storage ??= <Object, dynamic>{};
     if (identifier != null) {
       _storage![identifier] = data;
@@ -121,7 +121,7 @@ class PageStorageBucket {
   ///
   /// If an explicit identifier is not provided and no [PageStorageKey]s
   /// are found, then null is returned.
-  dynamic readState(BuildContext context, { Object? identifier }) {
+  dynamic readState(BuildContext context, {Object? identifier}) {
     if (_storage == null) {
       return null;
     }
@@ -169,11 +169,7 @@ class PageStorageBucket {
 ///  * [ModalRoute], which includes this class.
 class PageStorage extends StatelessWidget {
   /// Creates a widget that provides a storage bucket for its descendants.
-  const PageStorage({
-    super.key,
-    required this.bucket,
-    required this.child,
-  });
+  const PageStorage({super.key, required this.bucket, required this.child});
 
   /// The widget below this widget in the tree.
   ///

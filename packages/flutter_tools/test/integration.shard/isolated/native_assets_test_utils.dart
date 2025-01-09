@@ -14,16 +14,13 @@ import '../test_utils.dart' show ProcessResultMatcher, fileSystem, flutterBin;
 import '../transition_test_utils.dart';
 
 Future<Directory> createTestProject(String packageName, Directory tempDirectory) async {
-  final ProcessResult result = processManager.runSync(
-    <String>[
-      flutterBin,
-      'create',
-      '--no-pub',
-      '--template=package_ffi',
-      packageName,
-    ],
-    workingDirectory: tempDirectory.path,
-  );
+  final ProcessResult result = processManager.runSync(<String>[
+    flutterBin,
+    'create',
+    '--no-pub',
+    '--template=package_ffi',
+    packageName,
+  ], workingDirectory: tempDirectory.path);
   if (result.exitCode != 0) {
     throw Exception(
       'flutter create failed: ${result.exitCode}\n${result.stderr}\n${result.stdout}',
@@ -40,20 +37,16 @@ Future<Directory> createTestProject(String packageName, Directory tempDirectory)
   expect(packageDirectory.childDirectory('windows'), isNot(exists));
 
   await pinDependencies(packageDirectory.childFile('pubspec.yaml'));
-  await pinDependencies(
-      packageDirectory.childDirectory('example').childFile('pubspec.yaml'));
+  await pinDependencies(packageDirectory.childDirectory('example').childFile('pubspec.yaml'));
 
   await addLinkHookDependency(packageName, packageDirectory);
   await addDynamicallyLinkedNativeLibrary(packageName, packageDirectory);
 
-  final ProcessResult result2 = await processManager.run(
-    <String>[
-      flutterBin,
-      'pub',
-      'get',
-    ],
-    workingDirectory: packageDirectory.path,
-  );
+  final ProcessResult result2 = await processManager.run(<String>[
+    flutterBin,
+    'pub',
+    'get',
+  ], workingDirectory: packageDirectory.path);
   expect(result2, const ProcessResultMatcher());
 
   return packageDirectory;
@@ -70,14 +63,22 @@ Future<void> addLinkHookDependency(String packageName, Directory packageDirector
   final File linkHookPubspecFile = linkHookDirectory.childFile('pubspec.yaml');
   final File thisPubspecFile = packageDirectory.childFile('pubspec.yaml');
 
-  final Map<String, Object?> linkHookPubspec = _pubspecAsMutableJson(linkHookPubspecFile.readAsStringSync());
-  final Map<String, Object?> linkHooksDependencies = linkHookPubspec['dependencies']! as Map<String, Object?>;
-  final Map<String, Object?> linkHooksDevDependencies = linkHookPubspec['dev_dependencies']! as Map<String, Object?>;
+  final Map<String, Object?> linkHookPubspec = _pubspecAsMutableJson(
+    linkHookPubspecFile.readAsStringSync(),
+  );
+  final Map<String, Object?> linkHooksDependencies =
+      linkHookPubspec['dependencies']! as Map<String, Object?>;
+  final Map<String, Object?> linkHooksDevDependencies =
+      linkHookPubspec['dev_dependencies']! as Map<String, Object?>;
 
-  final Map<String, Object?> thisPubspec = _pubspecAsMutableJson(thisPubspecFile.readAsStringSync());
+  final Map<String, Object?> thisPubspec = _pubspecAsMutableJson(
+    thisPubspecFile.readAsStringSync(),
+  );
 
-  final Map<String, Object?> thisDependencies = thisPubspec['dependencies']! as Map<String, Object?>;
-  final Map<String, Object?> thisDevDependencies = thisPubspec['dev_dependencies']! as Map<String, Object?>;
+  final Map<String, Object?> thisDependencies =
+      thisPubspec['dependencies']! as Map<String, Object?>;
+  final Map<String, Object?> thisDevDependencies =
+      thisPubspec['dev_dependencies']! as Map<String, Object?>;
 
   // Flutter CI uses pinned dependencies for all packages (including
   // dev/integration_tests/link_hook) for deterministic testing on CI.
@@ -101,14 +102,12 @@ Future<void> addLinkHookDependency(String packageName, Directory packageDirector
   // `test_core` that is compatible (and `test_core` is pinned in `link_hook`)
   _updateDependencies(thisDependencies, linkHooksDevDependencies);
   _updateDependencies(thisDevDependencies, linkHooksDevDependencies);
-  thisDependencies['link_hook'] = <String, Object?>{ 'path' : linkHookDirectory.path };
+  thisDependencies['link_hook'] = <String, Object?>{'path': linkHookDirectory.path};
 
   await thisPubspecFile.writeAsString(json.encode(thisPubspec));
 
-  final File dartFile =
-      packageDirectory.childDirectory('lib').childFile('$packageName.dart');
-  final String dartFileOld =
-      (await dartFile.readAsString()).replaceAll('\r\n', '\n');
+  final File dartFile = packageDirectory.childDirectory('lib').childFile('$packageName.dart');
+  final String dartFileOld = (await dartFile.readAsString()).replaceAll('\r\n', '\n');
   // Replace with something that results in the same resulting int, so that the
   // tests don't have to be updated.
   final String dartFileNew = dartFileOld.replaceFirst(
@@ -142,7 +141,10 @@ void _updateDependencies(Map<String, Object?> to, Map<String, Object?> from) {
 
 /// Adds a native library to be built by the builder and dynamically link it to
 /// the  main library.
-Future<void> addDynamicallyLinkedNativeLibrary(String packageName, Directory packageDirectory) async {
+Future<void> addDynamicallyLinkedNativeLibrary(
+  String packageName,
+  Directory packageDirectory,
+) async {
   // Add linked library source files.
   final Directory srcDirectory = packageDirectory.childDirectory('src');
   final File linkedLibraryHeaderFile = srcDirectory.childFile('add.h');
@@ -156,8 +158,7 @@ Future<void> addDynamicallyLinkedNativeLibrary(String packageName, Directory pac
 #endif
 
 FFI_PLUGIN_EXPORT intptr_t add(intptr_t a, intptr_t b);
-'''
-  );
+''');
   final File linkedLibrarySourceFile = srcDirectory.childFile('add.c');
   await linkedLibrarySourceFile.writeAsString('''
 #include "add.h"
@@ -170,26 +171,27 @@ FFI_PLUGIN_EXPORT intptr_t add(intptr_t a, intptr_t b) {
   // Update main library to include call to linked library.
   final File mainLibrarySourceFile = srcDirectory.childFile('$packageName.c');
   String mainLibrarySource = await mainLibrarySourceFile.readAsString();
-  mainLibrarySource = mainLibrarySource.replaceFirst(
-    '#include "$packageName.h"',
-'''
+  mainLibrarySource = mainLibrarySource.replaceFirst('#include "$packageName.h"', '''
 #include "$packageName.h"
 #include "add.h"
-''',
-  );
+''');
   mainLibrarySource = mainLibrarySource.replaceAll('a + b', 'add(a, b)');
   await mainLibrarySourceFile.writeAsString(mainLibrarySource);
 
   // Update builder to build the native library and link it into the main library.
   const String builderSource = r'''
-import 'package:native_toolchain_c/native_toolchain_c.dart';
+
 import 'package:logging/logging.dart';
-import 'package:native_assets_cli/native_assets_cli.dart';
+import 'package:native_assets_cli/code_assets.dart';
+import 'package:native_toolchain_c/native_toolchain_c.dart';
 
 void main(List<String> args) async {
   await build(args, (config, output) async {
     final packageName = config.packageName;
 
+    if (!config.buildAssetTypes.contains(CodeAsset.type)) {
+      return;
+    }
     final builders = [
       CBuilder.library(
         name: 'add',
@@ -219,7 +221,7 @@ void main(List<String> args) async {
 }
 
 extension on BuildConfig {
-  List<String> dynamicLinkingFlags(String libraryName) => switch (targetOS) {
+  List<String> dynamicLinkingFlags(String libraryName) => switch (codeConfig.targetOS) {
         OS.macOS || OS.iOS => [
             '-L${outputDirectory.toFilePath()}',
             '-l$libraryName',
@@ -232,7 +234,7 @@ extension on BuildConfig {
         OS.windows => [
             outputDirectory.resolve('$libraryName.lib').toFilePath()
           ],
-        _ => throw UnimplementedError('Unsupported OS: $targetOS'),
+        _ => throw UnimplementedError('Unsupported OS: ${codeConfig.targetOS}'),
       };
 }
 ''';
@@ -250,9 +252,10 @@ Future<void> pinDependencies(File pubspecFile) async {
   await pubspecFile.writeAsString(newPubspec);
 }
 
-
 Future<void> inTempDir(Future<void> Function(Directory tempDirectory) fun) async {
-  final Directory tempDirectory = fileSystem.directory(fileSystem.systemTempDirectory.createTempSync().resolveSymbolicLinksSync());
+  final Directory tempDirectory = fileSystem.directory(
+    fileSystem.systemTempDirectory.createTempSync().resolveSymbolicLinksSync(),
+  );
   try {
     await fun(tempDirectory);
   } finally {

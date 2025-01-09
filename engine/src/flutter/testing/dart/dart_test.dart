@@ -14,6 +14,7 @@ void main() {
     await Future<void>.value();
     greeting += ' 2';
   }
+
   test('execution of async method starts synchronously', () async {
     expect(greeting, 'hello');
     final Future<void> future = changeGreeting();

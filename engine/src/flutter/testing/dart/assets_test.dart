@@ -39,14 +39,18 @@ void main() {
   });
 
   test('returns the bytes of a file', () async {
-    final ImmutableBuffer buffer = await ImmutableBuffer.fromFilePath('flutter/lib/ui/fixtures/DashInNooglerHat.jpg');
+    final ImmutableBuffer buffer = await ImmutableBuffer.fromFilePath(
+      'flutter/lib/ui/fixtures/DashInNooglerHat.jpg',
+    );
 
     expect(buffer.length == 354679, true);
   });
 
   test('Can load an asset with a space in the key', () async {
     // This assets actual path is "fixtures/DashInNooglerHat%20WithSpace.jpg"
-    final ImmutableBuffer buffer = await ImmutableBuffer.fromAsset('DashInNooglerHat WithSpace.jpg');
+    final ImmutableBuffer buffer = await ImmutableBuffer.fromAsset(
+      'DashInNooglerHat WithSpace.jpg',
+    );
 
     expect(buffer.length == 354679, true);
   });
@@ -70,7 +74,9 @@ void main() {
     /// Manually load font asset through dart.
     final Uint8List encoded = utf8.encode(Uri(path: Uri.encodeFull('Roboto-Medium.ttf')).path);
     final Completer<Uint8List> result = Completer<Uint8List>();
-    PlatformDispatcher.instance.sendPlatformMessage('flutter/assets', encoded.buffer.asByteData(), (ByteData? data) {
+    PlatformDispatcher.instance.sendPlatformMessage('flutter/assets', encoded.buffer.asByteData(), (
+      ByteData? data,
+    ) {
       result.complete(data!.buffer.asUint8List());
     });
 
@@ -86,12 +92,14 @@ void main() {
 }
 
 Future<List<int>> _createPictureFromFont(String fontFamily) async {
-  final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
-    fontFamily: fontFamily,
-    fontStyle: FontStyle.normal,
-    fontWeight: FontWeight.normal,
-    fontSize: 20,
-  ));
+  final ParagraphBuilder builder = ParagraphBuilder(
+    ParagraphStyle(
+      fontFamily: fontFamily,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.normal,
+      fontSize: 20,
+    ),
+  );
   builder.addText('Test');
   final Paragraph paragraph = builder.build();
   paragraph.layout(const ParagraphConstraints(width: 20 * 5.0));

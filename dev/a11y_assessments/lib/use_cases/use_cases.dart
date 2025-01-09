@@ -33,10 +33,7 @@ abstract class UseCase {
   String get route;
 
   Widget buildWithTitle(BuildContext context) {
-      return DynamicTitle(
-      title: name,
-      child: build(context),
-    );
+    return DynamicTitle(title: name, child: build(context));
   }
 
   Widget build(BuildContext context);

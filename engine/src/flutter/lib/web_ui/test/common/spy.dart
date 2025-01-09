@@ -45,12 +45,8 @@ class PlatformMessagesSpy {
   /// This is typically called inside a test's `setUp` callback.
   void setUp() {
     assert(!_isActive);
-    _callback = (String channel, ByteData? data,
-        PlatformMessageResponseCallback? callback) {
-      messages.add(PlatformMessage(
-        channel,
-        const JSONMethodCodec().decodeMethodCall(data),
-      ));
+    _callback = (String channel, ByteData? data, PlatformMessageResponseCallback? callback) {
+      messages.add(PlatformMessage(channel, const JSONMethodCodec().decodeMethodCall(data)));
     };
 
     _backup = PlatformDispatcher.instance.onPlatformMessage;

@@ -25,11 +25,7 @@ abstract final class WordBreaker {
   static int prevBreakIndex(String text, int index) =>
       _findBreakIndex(_FindBreakDirection.backward, text, index);
 
-  static int _findBreakIndex(
-    _FindBreakDirection direction,
-    String text,
-    int index,
-  ) {
+  static int _findBreakIndex(_FindBreakDirection direction, String text, int index) {
     int i = index;
     while (i >= 0 && i <= text.length) {
       i += direction.step;
@@ -66,12 +62,7 @@ abstract final class WordBreaker {
 
     // Otherwise break before and after Newlines (including CR and LF)
     // WB3a: (Newline | CR | LF) ÷
-    if (_oneOf(
-      immediateLeft,
-      WordCharProperty.Newline,
-      WordCharProperty.CR,
-      WordCharProperty.LF,
-    )) {
+    if (_oneOf(immediateLeft, WordCharProperty.Newline, WordCharProperty.CR, WordCharProperty.LF)) {
       return true;
     }
 
@@ -207,8 +198,7 @@ abstract final class WordBreaker {
     // Do not break within sequences of digits, or digits adjacent to letters
     // (“3a”, or “A3”).
     // WB8: Numeric × Numeric
-    if (immediateLeft == WordCharProperty.Numeric &&
-        immediateRight == WordCharProperty.Numeric) {
+    if (immediateLeft == WordCharProperty.Numeric && immediateRight == WordCharProperty.Numeric) {
       return false;
     }
 
@@ -249,8 +239,7 @@ abstract final class WordBreaker {
 
     // Do not break between Katakana.
     // WB13: Katakana × Katakana
-    if (immediateLeft == WordCharProperty.Katakana &&
-        immediateRight == WordCharProperty.Katakana) {
+    if (immediateLeft == WordCharProperty.Katakana && immediateRight == WordCharProperty.Katakana) {
       return false;
     }
 

@@ -752,8 +752,8 @@ std::shared_ptr<DlVertices> GetTestVertices(SkPoint center,
   }
 
   final_vertex_count = vertices.size();
-  return DlVertices::Make(mode, vertices.size(), vertices.data(), nullptr,
-                          colors.data());
+  return DlVertices::Make(mode, vertices.size(), ToDlPoints(vertices.data()),
+                          nullptr, colors.data());
 }
 
 std::string VertexModeToString(DlVertexMode mode) {

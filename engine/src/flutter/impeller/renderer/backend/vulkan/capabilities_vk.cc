@@ -10,6 +10,7 @@
 #include "impeller/base/validation.h"
 #include "impeller/core/formats.h"
 #include "impeller/renderer/backend/vulkan/vk.h"
+#include "impeller/renderer/backend/vulkan/workarounds_vk.h"
 
 namespace impeller {
 
@@ -482,7 +483,7 @@ bool CapabilitiesVK::HasExtension(const std::string& ext) const {
 }
 
 bool CapabilitiesVK::SupportsPrimitiveRestart() const {
-  return true;
+  return has_primitive_restart_;
 }
 
 void CapabilitiesVK::SetOffscreenFormat(PixelFormat pixel_format) const {
@@ -626,7 +627,7 @@ bool CapabilitiesVK::SupportsTextureToTextureBlits() const {
 
 // |Capabilities|
 bool CapabilitiesVK::SupportsFramebufferFetch() const {
-  return true;
+  return has_framebuffer_fetch_;
 }
 
 // |Capabilities|
@@ -757,6 +758,11 @@ bool CapabilitiesVK::SupportsTriangleFan() const {
 
 ISize CapabilitiesVK::GetMaximumRenderPassAttachmentSize() const {
   return max_render_pass_attachment_size_;
+}
+
+void CapabilitiesVK::ApplyWorkarounds(const WorkaroundsVK& workarounds) {
+  has_primitive_restart_ = !workarounds.slow_primitive_restart_performance;
+  has_framebuffer_fetch_ = !workarounds.input_attachment_self_dependency_broken;
 }
 
 }  // namespace impeller

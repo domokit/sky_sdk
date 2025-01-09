@@ -9,15 +9,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('animated digit example', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.AnimatedDigitApp(),
-    );
+    await tester.pumpWidget(const example.AnimatedDigitApp());
 
     Finder findVisibleDigit(int digit) {
-      return find.descendant(
-        of: find.byType(SlideTransition).last,
-        matching: find.text('$digit'),
-      );
+      return find.descendant(of: find.byType(SlideTransition).last, matching: find.text('$digit'));
     }
 
     expect(findVisibleDigit(0), findsOneWidget);

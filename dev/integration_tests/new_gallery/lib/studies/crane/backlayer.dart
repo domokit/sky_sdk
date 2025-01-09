@@ -5,18 +5,12 @@
 import 'package:flutter/material.dart';
 
 abstract class BackLayerItem extends StatefulWidget {
-
   const BackLayerItem({super.key, required this.index});
   final int index;
 }
 
 class BackLayer extends StatefulWidget {
-
-  const BackLayer({
-    super.key,
-    required this.backLayerItems,
-    required this.tabController,
-  });
+  const BackLayer({super.key, required this.backLayerItems, required this.tabController});
   final List<BackLayerItem> backLayerItems;
   final TabController tabController;
 
@@ -38,10 +32,7 @@ class _BackLayerState extends State<BackLayer> {
       index: tabIndex,
       children: <Widget>[
         for (final BackLayerItem backLayerItem in widget.backLayerItems)
-          ExcludeFocus(
-            excluding: backLayerItem.index != tabIndex,
-            child: backLayerItem,
-          )
+          ExcludeFocus(excluding: backLayerItem.index != tabIndex, child: backLayerItem),
       ],
     );
   }

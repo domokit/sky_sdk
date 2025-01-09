@@ -122,6 +122,8 @@ impeller_component("vulkan") {
     "vk.h",
     "vma.cc",
     "vma.h",
+    "workarounds_vk.cc",
+    "workarounds_vk.h",
     "yuv_conversion_library_vk.cc",
     "yuv_conversion_library_vk.h",
     "yuv_conversion_vk.cc",

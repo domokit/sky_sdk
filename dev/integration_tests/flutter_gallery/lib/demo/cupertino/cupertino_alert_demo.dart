@@ -19,12 +19,13 @@ class _CupertinoAlertDemoState extends State<CupertinoAlertDemo> {
   String? lastSelectedValue;
 
   void showDemoDialog({required BuildContext context, Widget? child}) {
-    showCupertinoDialog<String>(
-      context: context,
-      builder: (BuildContext context) => child!,
-    ).then((String? value) {
+    showCupertinoDialog<String>(context: context, builder: (BuildContext context) => child!).then((
+      String? value,
+    ) {
       if (value != null) {
-        setState(() { lastSelectedValue = value; });
+        setState(() {
+          lastSelectedValue = value;
+        });
       }
     });
   }
@@ -35,7 +36,9 @@ class _CupertinoAlertDemoState extends State<CupertinoAlertDemo> {
       builder: (BuildContext context) => child!,
     ).then((String? value) {
       if (value != null) {
-        setState(() { lastSelectedValue = value; });
+        setState(() {
+          lastSelectedValue = value;
+        });
       }
     });
   }
@@ -62,8 +65,9 @@ class _CupertinoAlertDemoState extends State<CupertinoAlertDemo> {
                   child: ListView(
                     primary: true,
                     // Add more padding to the normal safe area.
-                    padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 72.0)
-                        + MediaQuery.of(context).padding,
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 24.0, horizontal: 72.0) +
+                        MediaQuery.of(context).padding,
                     children: <Widget>[
                       CupertinoButton.filled(
                         child: const Text('Alert'),
@@ -86,10 +90,7 @@ class _CupertinoAlertDemoState extends State<CupertinoAlertDemo> {
                         padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 36.0),
                         child: const Text('Alert Buttons Only'),
                         onPressed: () {
-                          showDemoDialog(
-                            context: context,
-                            child: const CupertinoDessertDialog(),
-                          );
+                          showDemoDialog(context: context, child: const CupertinoDessertDialog());
                         },
                       ),
                       const Padding(padding: EdgeInsets.all(8.0)),
@@ -102,10 +103,7 @@ class _CupertinoAlertDemoState extends State<CupertinoAlertDemo> {
                   ),
                 ),
                 if (lastSelectedValue != null)
-                  Positioned(
-                    bottom: 32.0,
-                    child: Text('You selected: $lastSelectedValue'),
-                  ),
+                  Positioned(bottom: 32.0, child: Text('You selected: $lastSelectedValue')),
               ],
             );
           },
@@ -140,8 +138,10 @@ class _CupertinoAlertDemoState extends State<CupertinoAlertDemo> {
       context: context,
       child: CupertinoAlertDialog(
         title: const Text('Allow "Maps" to access your location while you are using the app?'),
-        content: const Text('Your current location will be displayed on the map and used '
-          'for directions, nearby search results, and estimated travel times.'),
+        content: const Text(
+          'Your current location will be displayed on the map and used '
+          'for directions, nearby search results, and estimated travel times.',
+        ),
         actions: <Widget>[
           CupertinoDialogAction(
             child: const Text("Don't Allow"),
@@ -161,14 +161,16 @@ class _CupertinoAlertDemoState extends State<CupertinoAlertDemo> {
       context: context,
       child: const CupertinoDessertDialog(
         title: Text('Select Favorite Dessert'),
-        content: Text('Please select your favorite type of dessert from the '
+        content: Text(
+          'Please select your favorite type of dessert from the '
           'list below. Your selection will be used to customize the suggested '
-          'list of eateries in your area.'),
+          'list of eateries in your area.',
+        ),
       ),
     );
   }
 
-  void _onActionSheetPress(BuildContext context)  {
+  void _onActionSheetPress(BuildContext context) {
     showDemoActionSheet(
       context: context,
       child: CupertinoActionSheet(

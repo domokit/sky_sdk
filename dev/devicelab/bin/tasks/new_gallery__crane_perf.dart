@@ -10,9 +10,6 @@ Future<void> main() async {
   deviceOperatingSystem = DeviceOperatingSystem.android;
 
   await task(
-    NewGalleryPerfTest(
-      timelineFileName: 'transitions-crane',
-      dartDefine: 'onlyCrane=true',
-    ).run,
+    NewGalleryPerfTest(timelineFileName: 'transitions-crane', dartDefine: 'onlyCrane=true').run,
   );
 }

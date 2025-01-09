@@ -43,9 +43,7 @@ void main() {
   // TODO(matanlurey): Remove after `explicit-package-dependencies` is enabled by default.
   // See https://github.com/flutter/flutter/issues/160257 for details.
   FeatureFlags enableExplicitPackageDependencies() {
-    return TestFeatureFlags(
-      isExplicitPackageDependenciesEnabled: true,
-    );
+    return TestFeatureFlags(isExplicitPackageDependenciesEnabled: true);
   }
 
   group('Flutter Command', () {
@@ -94,126 +92,164 @@ void main() {
       expect(fake.usage, contains('Global options:\n'));
     });
 
-    testUsingContext('honors shouldUpdateCache false', () async {
-      final DummyFlutterCommand flutterCommand = DummyFlutterCommand();
-      await flutterCommand.run();
+    testUsingContext(
+      'honors shouldUpdateCache false',
+      () async {
+        final DummyFlutterCommand flutterCommand = DummyFlutterCommand();
+        await flutterCommand.run();
 
-      expect(cache.artifacts, isEmpty);
-      expect(flutterCommand.deprecated, isFalse);
-      expect(flutterCommand.hidden, isFalse);
-    },
-    overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-      Cache: () => cache,
-    });
+        expect(cache.artifacts, isEmpty);
+        expect(flutterCommand.deprecated, isFalse);
+        expect(flutterCommand.hidden, isFalse);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+        Cache: () => cache,
+      },
+    );
 
-    testUsingContext('honors shouldUpdateCache true', () async {
-      final DummyFlutterCommand flutterCommand = DummyFlutterCommand(shouldUpdateCache: true);
-      await flutterCommand.run();
-      // First call for universal, second for the rest
-      expect(
-        cache.artifacts,
-        <Set<DevelopmentArtifact>>[
+    testUsingContext(
+      'honors shouldUpdateCache true',
+      () async {
+        final DummyFlutterCommand flutterCommand = DummyFlutterCommand(shouldUpdateCache: true);
+        await flutterCommand.run();
+        // First call for universal, second for the rest
+        expect(cache.artifacts, <Set<DevelopmentArtifact>>[
           <DevelopmentArtifact>{DevelopmentArtifact.universal},
           <DevelopmentArtifact>{},
-        ],
-      );
-    },
-    overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-      Cache: () => cache,
-    });
+        ]);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+        Cache: () => cache,
+      },
+    );
 
-    testUsingContext("throws toolExit if flutter_tools source dir doesn't exist", () async {
-      final DummyFlutterCommand flutterCommand = DummyFlutterCommand();
-      await expectToolExitLater(
-        flutterCommand.run(),
-        contains('Flutter SDK installation appears corrupted'),
-      );
-    },
-    overrides: <Type, Generator>{
-      Cache: () => cache,
-      FileSystem: () => fileSystem,
-      PreRunValidator: () => preRunValidator,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      "throws toolExit if flutter_tools source dir doesn't exist",
+      () async {
+        final DummyFlutterCommand flutterCommand = DummyFlutterCommand();
+        await expectToolExitLater(
+          flutterCommand.run(),
+          contains('Flutter SDK installation appears corrupted'),
+        );
+      },
+      overrides: <Type, Generator>{
+        Cache: () => cache,
+        FileSystem: () => fileSystem,
+        PreRunValidator: () => preRunValidator,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('deprecated command should warn', () async {
-      final FakeDeprecatedCommand flutterCommand = FakeDeprecatedCommand();
-      final CommandRunner<void> runner = createTestCommandRunner(flutterCommand);
-      await runner.run(<String>['deprecated']);
+    testUsingContext(
+      'deprecated command should warn',
+      () async {
+        final FakeDeprecatedCommand flutterCommand = FakeDeprecatedCommand();
+        final CommandRunner<void> runner = createTestCommandRunner(flutterCommand);
+        await runner.run(<String>['deprecated']);
 
-      expect(testLogger.warningText,
-        contains('The "deprecated" command is deprecated and will be removed in '
-            'a future version of Flutter.'));
-      expect(flutterCommand.usage,
-        contains('Deprecated. This command will be removed in a future version '
-            'of Flutter.'));
-      expect(flutterCommand.deprecated, isTrue);
-      expect(flutterCommand.hidden, isTrue);
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+        expect(
+          testLogger.warningText,
+          contains(
+            'The "deprecated" command is deprecated and will be removed in '
+            'a future version of Flutter.',
+          ),
+        );
+        expect(
+          flutterCommand.usage,
+          contains(
+            'Deprecated. This command will be removed in a future version '
+            'of Flutter.',
+          ),
+        );
+        expect(flutterCommand.deprecated, isTrue);
+        expect(flutterCommand.hidden, isTrue);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('uses the error handling file system', () async {
-      final DummyFlutterCommand flutterCommand = DummyFlutterCommand(
-        commandFunction: () async {
-          expect(globals.fs, isA<ErrorHandlingFileSystem>());
-          return const FlutterCommandResult(ExitStatus.success);
-        }
-      );
-      await flutterCommand.run();
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'uses the error handling file system',
+      () async {
+        final DummyFlutterCommand flutterCommand = DummyFlutterCommand(
+          commandFunction: () async {
+            expect(globals.fs, isA<ErrorHandlingFileSystem>());
+            return const FlutterCommandResult(ExitStatus.success);
+          },
+        );
+        await flutterCommand.run();
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('finds the target file with default values', () async {
-      globals.fs.file('lib/main.dart').createSync(recursive: true);
-      final FakeTargetCommand fakeTargetCommand = FakeTargetCommand();
-      final CommandRunner<void> runner = createTestCommandRunner(fakeTargetCommand);
-      await runner.run(<String>['test']);
+    testUsingContext(
+      'finds the target file with default values',
+      () async {
+        globals.fs.file('lib/main.dart').createSync(recursive: true);
+        final FakeTargetCommand fakeTargetCommand = FakeTargetCommand();
+        final CommandRunner<void> runner = createTestCommandRunner(fakeTargetCommand);
+        await runner.run(<String>['test']);
 
-      expect(fakeTargetCommand.cachedTargetFile, 'lib/main.dart');
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+        expect(fakeTargetCommand.cachedTargetFile, 'lib/main.dart');
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('finds the target file with specified value', () async {
-      globals.fs.file('lib/foo.dart').createSync(recursive: true);
-      final FakeTargetCommand fakeTargetCommand = FakeTargetCommand();
-      final CommandRunner<void> runner = createTestCommandRunner(fakeTargetCommand);
-      await runner.run(<String>['test', '-t', 'lib/foo.dart']);
+    testUsingContext(
+      'finds the target file with specified value',
+      () async {
+        globals.fs.file('lib/foo.dart').createSync(recursive: true);
+        final FakeTargetCommand fakeTargetCommand = FakeTargetCommand();
+        final CommandRunner<void> runner = createTestCommandRunner(fakeTargetCommand);
+        await runner.run(<String>['test', '-t', 'lib/foo.dart']);
 
-      expect(fakeTargetCommand.cachedTargetFile, 'lib/foo.dart');
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+        expect(fakeTargetCommand.cachedTargetFile, 'lib/foo.dart');
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('throws tool exit if specified file does not exist', () async {
-      final FakeTargetCommand fakeTargetCommand = FakeTargetCommand();
-      final CommandRunner<void> runner = createTestCommandRunner(fakeTargetCommand);
+    testUsingContext(
+      'throws tool exit if specified file does not exist',
+      () async {
+        final FakeTargetCommand fakeTargetCommand = FakeTargetCommand();
+        final CommandRunner<void> runner = createTestCommandRunner(fakeTargetCommand);
 
-      expect(() async => runner.run(<String>['test', '-t', 'lib/foo.dart']), throwsToolExit());
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+        expect(() async => runner.run(<String>['test', '-t', 'lib/foo.dart']), throwsToolExit());
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
     void testUsingCommandContext(String testName, dynamic Function() testBody) {
-      testUsingContext(testName, testBody, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        ProcessInfo: () => processInfo,
-        ProcessManager: () => processManager,
-        SystemClock: () => clock,
-        Usage: () => usage,
-        Analytics: () => fakeAnalytics,
-      });
+      testUsingContext(
+        testName,
+        testBody,
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          ProcessInfo: () => processInfo,
+          ProcessManager: () => processManager,
+          SystemClock: () => clock,
+          Usage: () => usage,
+          Analytics: () => fakeAnalytics,
+        },
+      );
     }
 
     testUsingCommandContext('reports command that results in success', () async {
@@ -223,31 +259,25 @@ void main() {
       final DummyFlutterCommand flutterCommand = DummyFlutterCommand(
         commandFunction: () async {
           return const FlutterCommandResult(ExitStatus.success);
-        }
+        },
       );
       await flutterCommand.run();
 
       expect(usage.events, <TestUsageEvent>[
-        const TestUsageEvent(
-          'tool-command-result',
-          'dummy',
-          label: 'success',
-        ),
-        const TestUsageEvent(
-          'tool-command-max-rss',
-          'dummy',
-          label: 'success',
-          value: 10,
-        ),
+        const TestUsageEvent('tool-command-result', 'dummy', label: 'success'),
+        const TestUsageEvent('tool-command-max-rss', 'dummy', label: 'success', value: 10),
       ]);
-      expect(fakeAnalytics.sentEvents, contains(
-        Event.flutterCommandResult(
-          commandPath: 'dummy',
-          result: 'success',
-          maxRss: 10,
-          commandHasTerminal: false,
+      expect(
+        fakeAnalytics.sentEvents,
+        contains(
+          Event.flutterCommandResult(
+            commandPath: 'dummy',
+            result: 'success',
+            maxRss: 10,
+            commandHasTerminal: false,
+          ),
         ),
-      ));
+      );
     });
 
     testUsingCommandContext('reports command that results in warning', () async {
@@ -257,31 +287,25 @@ void main() {
       final DummyFlutterCommand flutterCommand = DummyFlutterCommand(
         commandFunction: () async {
           return const FlutterCommandResult(ExitStatus.warning);
-        }
+        },
       );
       await flutterCommand.run();
 
       expect(usage.events, <TestUsageEvent>[
-        const TestUsageEvent(
-          'tool-command-result',
-          'dummy',
-          label: 'warning',
-        ),
-        const TestUsageEvent(
-          'tool-command-max-rss',
-          'dummy',
-          label: 'warning',
-          value: 10,
-        ),
+        const TestUsageEvent('tool-command-result', 'dummy', label: 'warning'),
+        const TestUsageEvent('tool-command-max-rss', 'dummy', label: 'warning', value: 10),
       ]);
-      expect(fakeAnalytics.sentEvents, contains(
-        Event.flutterCommandResult(
-          commandPath: 'dummy',
-          result: 'warning',
-          maxRss: 10,
-          commandHasTerminal: false,
+      expect(
+        fakeAnalytics.sentEvents,
+        contains(
+          Event.flutterCommandResult(
+            commandPath: 'dummy',
+            result: 'warning',
+            maxRss: 10,
+            commandHasTerminal: false,
+          ),
         ),
-      ));
+      );
     });
 
     testUsingCommandContext('reports command that results in error', () async {
@@ -293,31 +317,22 @@ void main() {
           throwToolExit('fail');
         },
       );
-      await expectLater(
-        () => flutterCommand.run(),
-        throwsToolExit(),
-      );
+      await expectLater(() => flutterCommand.run(), throwsToolExit());
       expect(usage.events, <TestUsageEvent>[
-        const TestUsageEvent(
-          'tool-command-result',
-          'dummy',
-          label: 'fail',
-        ),
-        const TestUsageEvent(
-          'tool-command-max-rss',
-          'dummy',
-          label: 'fail',
-          value: 10,
-        ),
+        const TestUsageEvent('tool-command-result', 'dummy', label: 'fail'),
+        const TestUsageEvent('tool-command-max-rss', 'dummy', label: 'fail', value: 10),
       ]);
-      expect(fakeAnalytics.sentEvents, contains(
-        Event.flutterCommandResult(
-          commandPath: 'dummy',
-          result: 'fail',
-          maxRss: 10,
-          commandHasTerminal: false,
+      expect(
+        fakeAnalytics.sentEvents,
+        contains(
+          Event.flutterCommandResult(
+            commandPath: 'dummy',
+            result: 'fail',
+            maxRss: 10,
+            commandHasTerminal: false,
+          ),
         ),
-      ));
+      );
     });
 
     test('FlutterCommandResult.success()', () async {
@@ -328,53 +343,55 @@ void main() {
       expect(FlutterCommandResult.warning().exitStatus, ExitStatus.warning);
     });
 
-    testUsingContext('devToolsServerAddress returns parsed uri', () async {
-      final DummyFlutterCommand command = DummyFlutterCommand()..addDevToolsOptions(verboseHelp: false);
-      await createTestCommandRunner(command).run(<String>[
-        'dummy',
-        '--${FlutterCommand.kDevToolsServerAddress}',
-        'http://127.0.0.1:9105',
-      ]);
-      expect(command.devToolsServerAddress.toString(), equals('http://127.0.0.1:9105'));
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'devToolsServerAddress returns parsed uri',
+      () async {
+        final DummyFlutterCommand command =
+            DummyFlutterCommand()..addDevToolsOptions(verboseHelp: false);
+        await createTestCommandRunner(command).run(<String>[
+          'dummy',
+          '--${FlutterCommand.kDevToolsServerAddress}',
+          'http://127.0.0.1:9105',
+        ]);
+        expect(command.devToolsServerAddress.toString(), equals('http://127.0.0.1:9105'));
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('devToolsServerAddress returns null for bad input', () async {
-      final DummyFlutterCommand command = DummyFlutterCommand()..addDevToolsOptions(verboseHelp: false);
-      final CommandRunner<void> runner = createTestCommandRunner(command);
-      await runner.run(<String>[
-        'dummy',
-        '--${FlutterCommand.kDevToolsServerAddress}',
-        'hello-world',
-      ]);
-      expect(command.devToolsServerAddress, isNull);
+    testUsingContext(
+      'devToolsServerAddress returns null for bad input',
+      () async {
+        final DummyFlutterCommand command =
+            DummyFlutterCommand()..addDevToolsOptions(verboseHelp: false);
+        final CommandRunner<void> runner = createTestCommandRunner(command);
+        await runner.run(<String>[
+          'dummy',
+          '--${FlutterCommand.kDevToolsServerAddress}',
+          'hello-world',
+        ]);
+        expect(command.devToolsServerAddress, isNull);
 
-      await runner.run(<String>[
-        'dummy',
-        '--${FlutterCommand.kDevToolsServerAddress}',
-        '',
-      ]);
-      expect(command.devToolsServerAddress, isNull);
+        await runner.run(<String>['dummy', '--${FlutterCommand.kDevToolsServerAddress}', '']);
+        expect(command.devToolsServerAddress, isNull);
 
-      await runner.run(<String>[
-        'dummy',
-        '--${FlutterCommand.kDevToolsServerAddress}',
-        '9101',
-      ]);
-      expect(command.devToolsServerAddress, isNull);
+        await runner.run(<String>['dummy', '--${FlutterCommand.kDevToolsServerAddress}', '9101']);
+        expect(command.devToolsServerAddress, isNull);
 
-      await runner.run(<String>[
-        'dummy',
-        '--${FlutterCommand.kDevToolsServerAddress}',
-        '127.0.0.1:9101',
-      ]);
-      expect(command.devToolsServerAddress, isNull);
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+        await runner.run(<String>[
+          'dummy',
+          '--${FlutterCommand.kDevToolsServerAddress}',
+          '127.0.0.1:9101',
+        ]);
+        expect(command.devToolsServerAddress, isNull);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
     group('signals tests', () {
       late FakeIoProcessSignal mockSignal;
@@ -388,98 +405,103 @@ void main() {
         mockSignal.stream = signalController.stream;
       });
 
-      testUsingContext('reports command that is killed', () async {
-        // Crash if called a third time which is unexpected.
-        clock.times = <int>[1000, 2000];
+      testUsingContext(
+        'reports command that is killed',
+        () async {
+          // Crash if called a third time which is unexpected.
+          clock.times = <int>[1000, 2000];
 
-        final Completer<void> completer = Completer<void>();
-        setExitFunctionForTests((int exitCode) {
-          expect(exitCode, 0);
-          restoreExitFunction();
-          completer.complete();
-        });
+          final Completer<void> completer = Completer<void>();
+          setExitFunctionForTests((int exitCode) {
+            expect(exitCode, 0);
+            restoreExitFunction();
+            completer.complete();
+          });
 
-        final DummyFlutterCommand flutterCommand = DummyFlutterCommand(
-          commandFunction: () async {
-            final Completer<void> c = Completer<void>();
-            await c.future;
-            throw UnsupportedError('Unreachable');
-          }
-        );
+          final DummyFlutterCommand flutterCommand = DummyFlutterCommand(
+            commandFunction: () async {
+              final Completer<void> c = Completer<void>();
+              await c.future;
+              throw UnsupportedError('Unreachable');
+            },
+          );
 
-        unawaited(flutterCommand.run());
-        signalController.add(mockSignal);
-        await completer.future;
+          unawaited(flutterCommand.run());
+          signalController.add(mockSignal);
+          await completer.future;
 
-        expect(usage.events, <TestUsageEvent>[
-          const TestUsageEvent(
-            'tool-command-result',
-            'dummy',
-            label: 'killed',
-          ),
-          const TestUsageEvent(
-            'tool-command-max-rss',
-            'dummy',
-            label: 'killed',
-            value: 10,
-          ),
-        ]);
-      expect(fakeAnalytics.sentEvents, contains(
-        Event.flutterCommandResult(
-          commandPath: 'dummy',
-          result: 'killed',
-          maxRss: 10,
-          commandHasTerminal: false,
-        ),
-      ));
-      }, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        ProcessManager: () => processManager,
-        ProcessInfo: () => processInfo,
-        Signals: () => FakeSignals(
-          subForSigTerm: signalUnderTest,
-          exitSignals: <ProcessSignal>[signalUnderTest],
-        ),
-        SystemClock: () => clock,
-        Usage: () => usage,
-        Analytics: () => fakeAnalytics,
-      });
-
-      testUsingContext('command release lock on kill signal', () async {
-        clock.times = <int>[1000, 2000];
-        final Completer<void> completer = Completer<void>();
-        setExitFunctionForTests((int exitCode) {
-          expect(exitCode, 0);
-          restoreExitFunction();
-          completer.complete();
-        });
-        final Completer<void> checkLockCompleter = Completer<void>();
-        final DummyFlutterCommand flutterCommand =
-            DummyFlutterCommand(commandFunction: () async {
-          await globals.cache.lock();
-          checkLockCompleter.complete();
-          final Completer<void> c = Completer<void>();
-          await c.future;
-          throw UnsupportedError('Unreachable');
-        });
-
-        unawaited(flutterCommand.run());
-        await checkLockCompleter.future;
-
-        globals.cache.checkLockAcquired();
-
-        signalController.add(mockSignal);
-        await completer.future;
-      }, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        ProcessManager: () => processManager,
-        ProcessInfo: () => processInfo,
-        Signals: () => FakeSignals(
-              subForSigTerm: signalUnderTest,
-              exitSignals: <ProcessSignal>[signalUnderTest],
+          expect(usage.events, <TestUsageEvent>[
+            const TestUsageEvent('tool-command-result', 'dummy', label: 'killed'),
+            const TestUsageEvent('tool-command-max-rss', 'dummy', label: 'killed', value: 10),
+          ]);
+          expect(
+            fakeAnalytics.sentEvents,
+            contains(
+              Event.flutterCommandResult(
+                commandPath: 'dummy',
+                result: 'killed',
+                maxRss: 10,
+                commandHasTerminal: false,
+              ),
             ),
-        Usage: () => usage,
-      });
+          );
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          ProcessManager: () => processManager,
+          ProcessInfo: () => processInfo,
+          Signals:
+              () => FakeSignals(
+                subForSigTerm: signalUnderTest,
+                exitSignals: <ProcessSignal>[signalUnderTest],
+              ),
+          SystemClock: () => clock,
+          Usage: () => usage,
+          Analytics: () => fakeAnalytics,
+        },
+      );
+
+      testUsingContext(
+        'command release lock on kill signal',
+        () async {
+          clock.times = <int>[1000, 2000];
+          final Completer<void> completer = Completer<void>();
+          setExitFunctionForTests((int exitCode) {
+            expect(exitCode, 0);
+            restoreExitFunction();
+            completer.complete();
+          });
+          final Completer<void> checkLockCompleter = Completer<void>();
+          final DummyFlutterCommand flutterCommand = DummyFlutterCommand(
+            commandFunction: () async {
+              await globals.cache.lock();
+              checkLockCompleter.complete();
+              final Completer<void> c = Completer<void>();
+              await c.future;
+              throw UnsupportedError('Unreachable');
+            },
+          );
+
+          unawaited(flutterCommand.run());
+          await checkLockCompleter.future;
+
+          globals.cache.checkLockAcquired();
+
+          signalController.add(mockSignal);
+          await completer.future;
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          ProcessManager: () => processManager,
+          ProcessInfo: () => processInfo,
+          Signals:
+              () => FakeSignals(
+                subForSigTerm: signalUnderTest,
+                exitSignals: <ProcessSignal>[signalUnderTest],
+              ),
+          Usage: () => usage,
+        },
+      );
     });
 
     testUsingCommandContext('report execution timing by default', () async {
@@ -489,29 +511,30 @@ void main() {
       final DummyFlutterCommand flutterCommand = DummyFlutterCommand();
       await flutterCommand.run();
 
-      expect(usage.timings, contains(
-        const TestTimingEvent(
-          'flutter',
-          'dummy',
-          Duration(milliseconds: 1000),
-          label: 'fail',
-        )));
-      expect(fakeAnalytics.sentEvents, contains(
-        Event.timing(
+      expect(
+        usage.timings,
+        contains(
+          const TestTimingEvent('flutter', 'dummy', Duration(milliseconds: 1000), label: 'fail'),
+        ),
+      );
+      expect(
+        fakeAnalytics.sentEvents,
+        contains(
+          Event.timing(
             workflow: 'flutter',
             variableName: 'dummy',
             elapsedMilliseconds: 1000,
             label: 'fail',
-          )
-      ));
+          ),
+        ),
+      );
     });
 
     testUsingCommandContext('no timing report without usagePath', () async {
       // Crash if called a third time which is unexpected.
       clock.times = <int>[1000, 2000];
 
-      final DummyFlutterCommand flutterCommand =
-          DummyFlutterCommand(noUsagePath: true);
+      final DummyFlutterCommand flutterCommand = DummyFlutterCommand(noUsagePath: true);
       await flutterCommand.run();
 
       expect(usage.timings, isEmpty);
@@ -525,7 +548,8 @@ void main() {
       expect(
         timingEventCounts,
         0,
-        reason: 'There should not be any timing events sent, there may '
+        reason:
+            'There should not be any timing events sent, there may '
             'be other non-timing events',
       );
     });
@@ -537,30 +561,37 @@ void main() {
       final FlutterCommandResult commandResult = FlutterCommandResult(
         ExitStatus.success,
         // nulls should be cleaned up.
-        timingLabelParts: <String?> ['blah1', 'blah2', null, 'blah3'],
+        timingLabelParts: <String?>['blah1', 'blah2', null, 'blah3'],
         endTimeOverride: DateTime.fromMillisecondsSinceEpoch(1500),
       );
 
       final DummyFlutterCommand flutterCommand = DummyFlutterCommand(
-        commandFunction: () async => commandResult
+        commandFunction: () async => commandResult,
       );
       await flutterCommand.run();
 
-      expect(usage.timings, contains(
-        const TestTimingEvent(
-          'flutter',
-          'dummy',
-          Duration(milliseconds: 500),
-          label: 'success-blah1-blah2-blah3',
-        )));
-      expect(fakeAnalytics.sentEvents, contains(
-        Event.timing(
-          workflow: 'flutter',
-          variableName: 'dummy',
-          elapsedMilliseconds: 500,
-          label: 'success-blah1-blah2-blah3',
+      expect(
+        usage.timings,
+        contains(
+          const TestTimingEvent(
+            'flutter',
+            'dummy',
+            Duration(milliseconds: 500),
+            label: 'success-blah1-blah2-blah3',
+          ),
         ),
-      ));
+      );
+      expect(
+        fakeAnalytics.sentEvents,
+        contains(
+          Event.timing(
+            workflow: 'flutter',
+            variableName: 'dummy',
+            elapsedMilliseconds: 500,
+            label: 'success-blah1-blah2-blah3',
+          ),
+        ),
+      );
     });
 
     testUsingCommandContext('report failed execution timing too', () async {
@@ -573,37 +604,36 @@ void main() {
         },
       );
 
-      await expectLater(
-        () => flutterCommand.run(),
-        throwsToolExit(),
+      await expectLater(() => flutterCommand.run(), throwsToolExit());
+      expect(
+        usage.timings,
+        contains(
+          const TestTimingEvent('flutter', 'dummy', Duration(milliseconds: 1000), label: 'fail'),
+        ),
       );
-      expect(usage.timings, contains(
-        const TestTimingEvent(
-          'flutter',
-          'dummy',
-          Duration(milliseconds: 1000),
-          label: 'fail',
+      expect(
+        fakeAnalytics.sentEvents,
+        contains(
+          Event.timing(
+            workflow: 'flutter',
+            variableName: 'dummy',
+            elapsedMilliseconds: 1000,
+            label: 'fail',
+          ),
         ),
-      ));
-      expect(fakeAnalytics.sentEvents, contains(
-        Event.timing(
-          workflow: 'flutter',
-          variableName: 'dummy',
-          elapsedMilliseconds: 1000,
-          label: 'fail',
-        ),
-      ));
+      );
     });
 
-    testUsingContext('reports null safety analytics when reportNullSafety is true', () async {
-      globals.fs.file('lib/main.dart')
-        ..createSync(recursive: true)
-        ..writeAsStringSync('// @dart=2.12');
-      globals.fs.file('pubspec.yaml')
-        .writeAsStringSync('name: example\n');
-      globals.fs.file('.dart_tool/package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync(r'''
+    testUsingContext(
+      'reports null safety analytics when reportNullSafety is true',
+      () async {
+        globals.fs.file('lib/main.dart')
+          ..createSync(recursive: true)
+          ..writeAsStringSync('// @dart=2.12');
+        globals.fs.file('pubspec.yaml').writeAsStringSync('name: example\n');
+        globals.fs.file('.dart_tool/package_config.json')
+          ..createSync(recursive: true)
+          ..writeAsStringSync(r'''
 {
   "configVersion": 2,
   "packages": [
@@ -619,170 +649,248 @@ void main() {
   "generatorVersion": "2.12.0-76.0.dev"
 }
 ''');
-      final FakeReportingNullSafetyCommand command = FakeReportingNullSafetyCommand();
-      final CommandRunner<void> runner = createTestCommandRunner(command);
+        final FakeReportingNullSafetyCommand command = FakeReportingNullSafetyCommand();
+        final CommandRunner<void> runner = createTestCommandRunner(command);
 
-      await runner.run(<String>['test']);
+        await runner.run(<String>['test']);
 
-      expect(usage.events, containsAll(<TestUsageEvent>[
-        const TestUsageEvent(
-          NullSafetyAnalysisEvent.kNullSafetyCategory,
-          'runtime-mode',
-          label: 'NullSafetyMode.sound',
-        ),
-        TestUsageEvent(
-          NullSafetyAnalysisEvent.kNullSafetyCategory,
-          'stats',
-          parameters: CustomDimensions.fromMap(<String, String>{
-            'cd49': '1', 'cd50': '1',
-          }),
-        ),
-        const TestUsageEvent(
-          NullSafetyAnalysisEvent.kNullSafetyCategory,
-          'language-version',
-          label: '2.12',
-        ),
-      ]));
-    }, overrides: <Type, Generator>{
-      Pub: () => FakePub(),
-      Usage: () => usage,
-      FileSystem: () => fileSystem,
-      ProcessManager: () => FakeProcessManager.any(),
-      FeatureFlags: enableExplicitPackageDependencies,
-    });
+        expect(
+          usage.events,
+          containsAll(<TestUsageEvent>[
+            const TestUsageEvent(
+              NullSafetyAnalysisEvent.kNullSafetyCategory,
+              'runtime-mode',
+              label: 'NullSafetyMode.sound',
+            ),
+            TestUsageEvent(
+              NullSafetyAnalysisEvent.kNullSafetyCategory,
+              'stats',
+              parameters: CustomDimensions.fromMap(<String, String>{'cd49': '1', 'cd50': '1'}),
+            ),
+            const TestUsageEvent(
+              NullSafetyAnalysisEvent.kNullSafetyCategory,
+              'language-version',
+              label: '2.12',
+            ),
+          ]),
+        );
+      },
+      overrides: <Type, Generator>{
+        Pub: () => FakePub(),
+        Usage: () => usage,
+        FileSystem: () => fileSystem,
+        ProcessManager: () => FakeProcessManager.any(),
+        FeatureFlags: enableExplicitPackageDependencies,
+      },
+    );
 
-    testUsingContext('use packagesPath to generate BuildInfo', () async {
-      final DummyFlutterCommand flutterCommand = DummyFlutterCommand(packagesPath: 'foo');
-      final BuildInfo buildInfo = await flutterCommand.getBuildInfo(forcedBuildMode: BuildMode.debug);
-      expect(buildInfo.packageConfigPath, 'foo');
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'use packagesPath to generate BuildInfo',
+      () async {
+        final DummyFlutterCommand flutterCommand = DummyFlutterCommand(packagesPath: 'foo');
+        final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+          forcedBuildMode: BuildMode.debug,
+        );
+        expect(buildInfo.packageConfigPath, 'foo');
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('use fileSystemScheme to generate BuildInfo', () async {
-      final DummyFlutterCommand flutterCommand = DummyFlutterCommand(fileSystemScheme: 'foo');
-      final BuildInfo buildInfo = await flutterCommand.getBuildInfo(forcedBuildMode: BuildMode.debug);
-      expect(buildInfo.fileSystemScheme, 'foo');
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'use fileSystemScheme to generate BuildInfo',
+      () async {
+        final DummyFlutterCommand flutterCommand = DummyFlutterCommand(fileSystemScheme: 'foo');
+        final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+          forcedBuildMode: BuildMode.debug,
+        );
+        expect(buildInfo.fileSystemScheme, 'foo');
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('use fileSystemRoots to generate BuildInfo', () async {
-      final DummyFlutterCommand flutterCommand = DummyFlutterCommand(fileSystemRoots: <String>['foo', 'bar']);
-      final BuildInfo buildInfo = await flutterCommand.getBuildInfo(forcedBuildMode: BuildMode.debug);
-      expect(buildInfo.fileSystemRoots, <String>['foo', 'bar']);
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'use fileSystemRoots to generate BuildInfo',
+      () async {
+        final DummyFlutterCommand flutterCommand = DummyFlutterCommand(
+          fileSystemRoots: <String>['foo', 'bar'],
+        );
+        final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+          forcedBuildMode: BuildMode.debug,
+        );
+        expect(buildInfo.fileSystemRoots, <String>['foo', 'bar']);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('includes initializeFromDill in BuildInfo', () async {
-      final DummyFlutterCommand flutterCommand = DummyFlutterCommand()..usesInitializeFromDillOption(hide: false);
-      final CommandRunner<void> runner = createTestCommandRunner(flutterCommand);
-      await runner.run(<String>['dummy', '--initialize-from-dill=/foo/bar.dill']);
-      final BuildInfo buildInfo = await flutterCommand.getBuildInfo(forcedBuildMode: BuildMode.debug);
-      expect(buildInfo.initializeFromDill, '/foo/bar.dill');
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'includes initializeFromDill in BuildInfo',
+      () async {
+        final DummyFlutterCommand flutterCommand =
+            DummyFlutterCommand()..usesInitializeFromDillOption(hide: false);
+        final CommandRunner<void> runner = createTestCommandRunner(flutterCommand);
+        await runner.run(<String>['dummy', '--initialize-from-dill=/foo/bar.dill']);
+        final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+          forcedBuildMode: BuildMode.debug,
+        );
+        expect(buildInfo.initializeFromDill, '/foo/bar.dill');
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('includes assumeInitializeFromDillUpToDate in BuildInfo', () async {
-      final DummyFlutterCommand flutterCommand = DummyFlutterCommand()..usesInitializeFromDillOption(hide: false);
-      final CommandRunner<void> runner = createTestCommandRunner(flutterCommand);
-      await runner.run(<String>['dummy', '--assume-initialize-from-dill-up-to-date']);
-      final BuildInfo buildInfo = await flutterCommand.getBuildInfo(forcedBuildMode: BuildMode.debug);
-      expect(buildInfo.assumeInitializeFromDillUpToDate, isTrue);
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'includes assumeInitializeFromDillUpToDate in BuildInfo',
+      () async {
+        final DummyFlutterCommand flutterCommand =
+            DummyFlutterCommand()..usesInitializeFromDillOption(hide: false);
+        final CommandRunner<void> runner = createTestCommandRunner(flutterCommand);
+        await runner.run(<String>['dummy', '--assume-initialize-from-dill-up-to-date']);
+        final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+          forcedBuildMode: BuildMode.debug,
+        );
+        expect(buildInfo.assumeInitializeFromDillUpToDate, isTrue);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('unsets assumeInitializeFromDillUpToDate in BuildInfo when disabled', () async {
-      final DummyFlutterCommand flutterCommand = DummyFlutterCommand()..usesInitializeFromDillOption(hide: false);
-      final CommandRunner<void> runner = createTestCommandRunner(flutterCommand);
-      await runner.run(<String>['dummy', '--no-assume-initialize-from-dill-up-to-date']);
-      final BuildInfo buildInfo = await flutterCommand.getBuildInfo(forcedBuildMode: BuildMode.debug);
-      expect(buildInfo.assumeInitializeFromDillUpToDate, isFalse);
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'unsets assumeInitializeFromDillUpToDate in BuildInfo when disabled',
+      () async {
+        final DummyFlutterCommand flutterCommand =
+            DummyFlutterCommand()..usesInitializeFromDillOption(hide: false);
+        final CommandRunner<void> runner = createTestCommandRunner(flutterCommand);
+        await runner.run(<String>['dummy', '--no-assume-initialize-from-dill-up-to-date']);
+        final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+          forcedBuildMode: BuildMode.debug,
+        );
+        expect(buildInfo.assumeInitializeFromDillUpToDate, isFalse);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('sets useLocalCanvasKit in BuildInfo', () async {
-      final DummyFlutterCommand flutterCommand = DummyFlutterCommand();
-      final CommandRunner<void> runner = createTestCommandRunner(flutterCommand);
-      fileSystem.directory('engine/src/out/wasm_release').createSync(recursive: true);
-      await runner.run(<String>['--local-web-sdk=wasm_release', '--local-engine-src-path=engine/src', 'dummy']);
-      final BuildInfo buildInfo = await flutterCommand.getBuildInfo(forcedBuildMode: BuildMode.debug);
-      expect(buildInfo.useLocalCanvasKit, isTrue);
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'sets useLocalCanvasKit in BuildInfo',
+      () async {
+        final DummyFlutterCommand flutterCommand = DummyFlutterCommand();
+        final CommandRunner<void> runner = createTestCommandRunner(flutterCommand);
+        fileSystem.directory('engine/src/out/wasm_release').createSync(recursive: true);
+        await runner.run(<String>[
+          '--local-web-sdk=wasm_release',
+          '--local-engine-src-path=engine/src',
+          'dummy',
+        ]);
+        final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+          forcedBuildMode: BuildMode.debug,
+        );
+        expect(buildInfo.useLocalCanvasKit, isTrue);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('dds options', () async {
-      final FakeDdsCommand ddsCommand = FakeDdsCommand();
-      final CommandRunner<void> runner = createTestCommandRunner(ddsCommand);
-      await runner.run(<String>['test', '--dds-port=1']);
-      expect(ddsCommand.enableDds, isTrue);
-      expect(ddsCommand.ddsPort, 1);
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'dds options',
+      () async {
+        final FakeDdsCommand ddsCommand = FakeDdsCommand();
+        final CommandRunner<void> runner = createTestCommandRunner(ddsCommand);
+        await runner.run(<String>['test', '--dds-port=1']);
+        expect(ddsCommand.enableDds, isTrue);
+        expect(ddsCommand.ddsPort, 1);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('dds options --dds', () async {
-      final FakeDdsCommand ddsCommand = FakeDdsCommand();
-      final CommandRunner<void> runner = createTestCommandRunner(ddsCommand);
-      await runner.run(<String>['test', '--dds']);
-      expect(ddsCommand.enableDds, isTrue);
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'dds options --dds',
+      () async {
+        final FakeDdsCommand ddsCommand = FakeDdsCommand();
+        final CommandRunner<void> runner = createTestCommandRunner(ddsCommand);
+        await runner.run(<String>['test', '--dds']);
+        expect(ddsCommand.enableDds, isTrue);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('dds options --no-dds', () async {
-      final FakeDdsCommand ddsCommand = FakeDdsCommand();
-      final CommandRunner<void> runner = createTestCommandRunner(ddsCommand);
-      await runner.run(<String>['test', '--no-dds']);
-      expect(ddsCommand.enableDds, isFalse);
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'dds options --no-dds',
+      () async {
+        final FakeDdsCommand ddsCommand = FakeDdsCommand();
+        final CommandRunner<void> runner = createTestCommandRunner(ddsCommand);
+        await runner.run(<String>['test', '--no-dds']);
+        expect(ddsCommand.enableDds, isFalse);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('dds options --disable-dds', () async {
-      final FakeDdsCommand ddsCommand = FakeDdsCommand();
-      final CommandRunner<void> runner = createTestCommandRunner(ddsCommand);
-      await runner.run(<String>['test', '--disable-dds']);
-      expect(ddsCommand.enableDds, isFalse);
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'dds options --disable-dds',
+      () async {
+        final FakeDdsCommand ddsCommand = FakeDdsCommand();
+        final CommandRunner<void> runner = createTestCommandRunner(ddsCommand);
+        await runner.run(<String>['test', '--disable-dds']);
+        expect(ddsCommand.enableDds, isFalse);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('dds options --no-disable-dds', () async {
-      final FakeDdsCommand ddsCommand = FakeDdsCommand();
-      final CommandRunner<void> runner = createTestCommandRunner(ddsCommand);
-      await runner.run(<String>['test', '--no-disable-dds']);
-      expect(ddsCommand.enableDds, isTrue);
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'dds options --no-disable-dds',
+      () async {
+        final FakeDdsCommand ddsCommand = FakeDdsCommand();
+        final CommandRunner<void> runner = createTestCommandRunner(ddsCommand);
+        await runner.run(<String>['test', '--no-disable-dds']);
+        expect(ddsCommand.enableDds, isTrue);
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
-    testUsingContext('dds options --dds --disable-dds', () async {
-      final FakeDdsCommand ddsCommand = FakeDdsCommand();
-      final CommandRunner<void> runner = createTestCommandRunner(ddsCommand);
-      await runner.run(<String>['test', '--dds', '--disable-dds']);
-      expect(() => ddsCommand.enableDds, throwsToolExit());
-    }, overrides: <Type, Generator>{
-      FileSystem: () => fileSystem,
-      ProcessManager: () => processManager,
-    });
+    testUsingContext(
+      'dds options --dds --disable-dds',
+      () async {
+        final FakeDdsCommand ddsCommand = FakeDdsCommand();
+        final CommandRunner<void> runner = createTestCommandRunner(ddsCommand);
+        await runner.run(<String>['test', '--dds', '--disable-dds']);
+        expect(() => ddsCommand.enableDds, throwsToolExit());
+      },
+      overrides: <Type, Generator>{
+        FileSystem: () => fileSystem,
+        ProcessManager: () => processManager,
+      },
+    );
 
     group('findTargetDevice', () {
       final FakeDevice device1 = FakeDevice('device1', 'device1');
@@ -813,7 +921,6 @@ void main() {
     });
 
     group('--dart-define-from-file', () {
-
       late FlutterCommand dummyCommand;
       late CommandRunner<void> dummyCommandRunner;
 
@@ -822,11 +929,12 @@ void main() {
         dummyCommandRunner = createTestCommandRunner(dummyCommand);
       });
 
-      testUsingContext('parses values from JSON files and includes them in defines list', () async {
-        fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
-        fileSystem.file('pubspec.yaml').createSync();
-        await fileSystem.file('config1.json').writeAsString(
-          '''
+      testUsingContext(
+        'parses values from JSON files and includes them in defines list',
+        () async {
+          fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
+          fileSystem.file('pubspec.yaml').createSync();
+          await fileSystem.file('config1.json').writeAsString('''
             {
               "kInt": 1,
               "kDouble": 1.1,
@@ -835,74 +943,85 @@ void main() {
               "nullValue": null,
               "containEqual": "sfadsfv=432f"
             }
-          '''
-        );
-        await fileSystem.file('config2.json').writeAsString(
-            '''
+          ''');
+          await fileSystem.file('config2.json').writeAsString('''
             {
               "body": "this is body from config json file"
             }
-          '''
-        );
+          ''');
 
-        await dummyCommandRunner.run(<String>[
-          'dummy',
-          '--dart-define-from-file=config1.json',
-          '--dart-define-from-file=config2.json',
-        ]);
+          await dummyCommandRunner.run(<String>[
+            'dummy',
+            '--dart-define-from-file=config1.json',
+            '--dart-define-from-file=config2.json',
+          ]);
 
-        final BuildInfo buildInfo = await dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug);
-        expect(buildInfo.dartDefines, containsAll(const <String>[
-          'kInt=1',
-          'kDouble=1.1',
-          'name=denghaizhu',
-          'title=this is title from config json file',
-          'nullValue=null',
-          'containEqual=sfadsfv=432f',
-          'body=this is body from config json file',
-        ]));
-      }, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        Logger: () => logger,
-        FileSystemUtils: () => fileSystemUtils,
-        Platform: () => platform,
-        ProcessManager: () => processManager,
-      });
+          final BuildInfo buildInfo = await dummyCommand.getBuildInfo(
+            forcedBuildMode: BuildMode.debug,
+          );
+          expect(
+            buildInfo.dartDefines,
+            containsAll(const <String>[
+              'kInt=1',
+              'kDouble=1.1',
+              'name=denghaizhu',
+              'title=this is title from config json file',
+              'nullValue=null',
+              'containEqual=sfadsfv=432f',
+              'body=this is body from config json file',
+            ]),
+          );
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          Logger: () => logger,
+          FileSystemUtils: () => fileSystemUtils,
+          Platform: () => platform,
+          ProcessManager: () => processManager,
+        },
+      );
 
-      testUsingContext('has values with identical keys from --dart-define take precedence', () async {
-        fileSystem
-          .file(fileSystem.path.join('lib', 'main.dart'))
-          .createSync(recursive: true);
-        fileSystem.file('pubspec.yaml').createSync();
-        fileSystem.file('.env').writeAsStringSync('''
+      testUsingContext(
+        'has values with identical keys from --dart-define take precedence',
+        () async {
+          fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
+          fileSystem.file('pubspec.yaml').createSync();
+          fileSystem.file('.env').writeAsStringSync('''
             MY_VALUE=VALUE_FROM_ENV_FILE
           ''');
 
-        await dummyCommandRunner.run(<String>[
-          'dummy',
-          '--dart-define=MY_VALUE=VALUE_FROM_COMMAND',
-          '--dart-define-from-file=.env',
-        ]);
+          await dummyCommandRunner.run(<String>[
+            'dummy',
+            '--dart-define=MY_VALUE=VALUE_FROM_COMMAND',
+            '--dart-define-from-file=.env',
+          ]);
 
-        final BuildInfo buildInfo = await dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug);
-        expect(buildInfo.dartDefines, containsAll(const <String>[
-          'MY_VALUE=VALUE_FROM_ENV_FILE',
-          'MY_VALUE=VALUE_FROM_COMMAND',
-        ]));
-      }, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        Logger: () => logger,
-        FileSystemUtils: () => fileSystemUtils,
-        Platform: () => platform,
-        ProcessManager: () => processManager,
-      });
+          final BuildInfo buildInfo = await dummyCommand.getBuildInfo(
+            forcedBuildMode: BuildMode.debug,
+          );
+          expect(
+            buildInfo.dartDefines,
+            containsAll(const <String>[
+              'MY_VALUE=VALUE_FROM_ENV_FILE',
+              'MY_VALUE=VALUE_FROM_COMMAND',
+            ]),
+          );
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          Logger: () => logger,
+          FileSystemUtils: () => fileSystemUtils,
+          Platform: () => platform,
+          ProcessManager: () => processManager,
+        },
+      );
 
-      testUsingContext('correctly parses a valid env file', () async {
-        fileSystem
-            .file(fileSystem.path.join('lib', 'main.dart'))
-            .createSync(recursive: true);
-        fileSystem.file('pubspec.yaml').createSync();
-        await fileSystem.file('.env').writeAsString('''
+      testUsingContext(
+        'correctly parses a valid env file',
+        () async {
+          fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
+          fileSystem.file('pubspec.yaml').createSync();
+          await fileSystem.file('.env').writeAsString('''
             # comment
             kInt=1
             kDouble=1.1 # should be double
@@ -923,73 +1042,83 @@ void main() {
             spaceAfterEqual= value
 
           ''');
-        await fileSystem.file('.env2').writeAsString('''
+          await fileSystem.file('.env2').writeAsString('''
             # second comment
 
             body=this is body from config env file
           ''');
 
-        await dummyCommandRunner.run(<String>[
-          'dummy',
-          '--dart-define-from-file=.env',
-          '--dart-define-from-file=.env2',
-        ]);
+          await dummyCommandRunner.run(<String>[
+            'dummy',
+            '--dart-define-from-file=.env',
+            '--dart-define-from-file=.env2',
+          ]);
 
-        final BuildInfo buildInfo = await dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug);
-        expect(buildInfo.dartDefines, containsAll(const <String>[
-          'kInt=1',
-          'kDouble=1.1',
-          'name=piotrfleury',
-          'title=this is title from config env file',
-          'empty=',
-          "doubleQuotes=double quotes 'value'#=",
-          'singleQuotes=single quotes "value"#=',
-          'backQuotes=back quotes "value" \'#=',
-          'hashString=some-#-hash-string-value',
-          'spaceBeforeEqual=value',
-          'spaceAroundEqual=value',
-          'spaceAfterEqual=value',
-          'body=this is body from config env file'
-        ]));
-      }, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        Logger: () => logger,
-        FileSystemUtils: () => fileSystemUtils,
-        Platform: () => platform,
-        ProcessManager: () => processManager,
-      });
+          final BuildInfo buildInfo = await dummyCommand.getBuildInfo(
+            forcedBuildMode: BuildMode.debug,
+          );
+          expect(
+            buildInfo.dartDefines,
+            containsAll(const <String>[
+              'kInt=1',
+              'kDouble=1.1',
+              'name=piotrfleury',
+              'title=this is title from config env file',
+              'empty=',
+              "doubleQuotes=double quotes 'value'#=",
+              'singleQuotes=single quotes "value"#=',
+              'backQuotes=back quotes "value" \'#=',
+              'hashString=some-#-hash-string-value',
+              'spaceBeforeEqual=value',
+              'spaceAroundEqual=value',
+              'spaceAfterEqual=value',
+              'body=this is body from config env file',
+            ]),
+          );
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          Logger: () => logger,
+          FileSystemUtils: () => fileSystemUtils,
+          Platform: () => platform,
+          ProcessManager: () => processManager,
+        },
+      );
 
-      testUsingContext('throws a ToolExit when the provided .env file is malformed', () async {
-        fileSystem
-            .file(fileSystem.path.join('lib', 'main.dart'))
-            .createSync(recursive: true);
-        fileSystem.file('pubspec.yaml').createSync();
-        await fileSystem.file('.env').writeAsString('what is this');
+      testUsingContext(
+        'throws a ToolExit when the provided .env file is malformed',
+        () async {
+          fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
+          fileSystem.file('pubspec.yaml').createSync();
+          await fileSystem.file('.env').writeAsString('what is this');
 
-        await dummyCommandRunner.run(<String>[
-          'dummy',
-          '--dart-define-from-file=.env',
-        ]);
+          await dummyCommandRunner.run(<String>['dummy', '--dart-define-from-file=.env']);
 
-       expect(dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug),
-          throwsToolExit(message: 'Unable to parse file provided for '
-          '--${FlutterOptions.kDartDefineFromFileOption}.\n'
-          'Invalid property line: what is this'));
+          expect(
+            dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug),
+            throwsToolExit(
+              message:
+                  'Unable to parse file provided for '
+                  '--${FlutterOptions.kDartDefineFromFileOption}.\n'
+                  'Invalid property line: what is this',
+            ),
+          );
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          Logger: () => logger,
+          FileSystemUtils: () => fileSystemUtils,
+          Platform: () => platform,
+          ProcessManager: () => processManager,
+        },
+      );
 
-      }, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        Logger: () => logger,
-        FileSystemUtils: () => fileSystemUtils,
-        Platform: () => platform,
-        ProcessManager: () => processManager,
-      });
-
-      testUsingContext('throws a ToolExit when .env file contains a multiline value', () async {
-        fileSystem
-            .file(fileSystem.path.join('lib', 'main.dart'))
-            .createSync(recursive: true);
-        fileSystem.file('pubspec.yaml').createSync();
-        await fileSystem.file('.env').writeAsString('''
+      testUsingContext(
+        'throws a ToolExit when .env file contains a multiline value',
+        () async {
+          fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
+          fileSystem.file('pubspec.yaml').createSync();
+          await fileSystem.file('.env').writeAsString('''
             # single line value
             name=piotrfleury
 
@@ -1001,165 +1130,197 @@ void main() {
 
           ''');
 
-        await dummyCommandRunner.run(<String>[
-          'dummy',
-          '--dart-define-from-file=.env',
-        ]);
-        expect(dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug),
-          throwsToolExit(message: 'Multi-line value is not supported: multiline = """ Welcome to .env demo'));
-      }, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        Logger: () => logger,
-        FileSystemUtils: () => fileSystemUtils,
-        Platform: () => platform,
-        ProcessManager: () => processManager,
-      });
+          await dummyCommandRunner.run(<String>['dummy', '--dart-define-from-file=.env']);
+          expect(
+            dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug),
+            throwsToolExit(
+              message: 'Multi-line value is not supported: multiline = """ Welcome to .env demo',
+            ),
+          );
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          Logger: () => logger,
+          FileSystemUtils: () => fileSystemUtils,
+          Platform: () => platform,
+          ProcessManager: () => processManager,
+        },
+      );
 
-      testUsingContext('works with mixed file formats',
-          () async {
-        fileSystem
-            .file(fileSystem.path.join('lib', 'main.dart'))
-            .createSync(recursive: true);
-        fileSystem.file('pubspec.yaml').createSync();
-        await fileSystem.file('.env').writeAsString('''
+      testUsingContext(
+        'works with mixed file formats',
+        () async {
+          fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
+          fileSystem.file('pubspec.yaml').createSync();
+          await fileSystem.file('.env').writeAsString('''
             kInt=1
             kDouble=1.1
             name=piotrfleury
             title=this is title from config env file
           ''');
-        await fileSystem.file('config.json').writeAsString('''
+          await fileSystem.file('config.json').writeAsString('''
             {
               "body": "this is body from config json file"
             }
           ''');
 
-        await dummyCommandRunner.run(<String>[
-          'dummy',
-          '--dart-define-from-file=.env',
-          '--dart-define-from-file=config.json',
-        ]);
+          await dummyCommandRunner.run(<String>[
+            'dummy',
+            '--dart-define-from-file=.env',
+            '--dart-define-from-file=config.json',
+          ]);
 
-        final BuildInfo buildInfo = await dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug);
-        expect(buildInfo.dartDefines, containsAll(const <String>[
-          'kInt=1',
-          'kDouble=1.1',
-          'name=piotrfleury',
-          'title=this is title from config env file',
-          'body=this is body from config json file',
-        ]));
-      }, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        Logger: () => logger,
-        FileSystemUtils: () => fileSystemUtils,
-        Platform: () => platform,
-        ProcessManager: () => processManager,
-      });
+          final BuildInfo buildInfo = await dummyCommand.getBuildInfo(
+            forcedBuildMode: BuildMode.debug,
+          );
+          expect(
+            buildInfo.dartDefines,
+            containsAll(const <String>[
+              'kInt=1',
+              'kDouble=1.1',
+              'name=piotrfleury',
+              'title=this is title from config env file',
+              'body=this is body from config json file',
+            ]),
+          );
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          Logger: () => logger,
+          FileSystemUtils: () => fileSystemUtils,
+          Platform: () => platform,
+          ProcessManager: () => processManager,
+        },
+      );
 
-      testUsingContext('when files contain entries with duplicate keys, uses the value from the lattermost file', () async {
-        fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
-        fileSystem.file('pubspec.yaml').createSync();
-        await fileSystem.file('config1.json').writeAsString(
-            '''
+      testUsingContext(
+        'when files contain entries with duplicate keys, uses the value from the lattermost file',
+        () async {
+          fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
+          fileSystem.file('pubspec.yaml').createSync();
+          await fileSystem.file('config1.json').writeAsString('''
             {
               "kInt": 1,
               "kDouble": 1.1,
               "name": "denghaizhu",
               "title": "this is title from config json file"
             }
-          '''
-        );
-        await fileSystem.file('config2.json').writeAsString(
-            '''
+          ''');
+          await fileSystem.file('config2.json').writeAsString('''
             {
               "kInt": "2"
             }
-          '''
-        );
+          ''');
 
-        await dummyCommandRunner.run(<String>[
-          'dummy',
-          '--dart-define-from-file=config1.json',
-          '--dart-define-from-file=config2.json',
-        ]);
-        final BuildInfo buildInfo = await dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug);
-        expect(buildInfo.dartDefines, containsAll(const <String>[
-          'kInt=2',
-          'kDouble=1.1',
-          'name=denghaizhu',
-          'title=this is title from config json file'
-        ]));
-      }, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        Logger: () => logger,
-        FileSystemUtils: () => fileSystemUtils,
-        Platform: () => platform,
-        ProcessManager: () => processManager,
-      });
+          await dummyCommandRunner.run(<String>[
+            'dummy',
+            '--dart-define-from-file=config1.json',
+            '--dart-define-from-file=config2.json',
+          ]);
+          final BuildInfo buildInfo = await dummyCommand.getBuildInfo(
+            forcedBuildMode: BuildMode.debug,
+          );
+          expect(
+            buildInfo.dartDefines,
+            containsAll(const <String>[
+              'kInt=2',
+              'kDouble=1.1',
+              'name=denghaizhu',
+              'title=this is title from config json file',
+            ]),
+          );
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          Logger: () => logger,
+          FileSystemUtils: () => fileSystemUtils,
+          Platform: () => platform,
+          ProcessManager: () => processManager,
+        },
+      );
 
-      testUsingContext('throws a ToolExit when the argued path points to a directory', () async {
-        fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
-        fileSystem.file('pubspec.yaml').createSync();
-        fileSystem.directory('config').createSync();
+      testUsingContext(
+        'throws a ToolExit when the argued path points to a directory',
+        () async {
+          fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
+          fileSystem.file('pubspec.yaml').createSync();
+          fileSystem.directory('config').createSync();
 
-        await dummyCommandRunner.run(<String>[
-          'dummy',
-          '--dart-define-from-file=config',
-        ]);
-        expect(dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug),
-          throwsToolExit(message: 'Did not find the file passed to "--dart-define-from-file". Path: config'));
-      }, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        Logger: () => logger,
-        FileSystemUtils: () => fileSystemUtils,
-        Platform: () => platform,
-        ProcessManager: () => processManager,
-      });
+          await dummyCommandRunner.run(<String>['dummy', '--dart-define-from-file=config']);
+          expect(
+            dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug),
+            throwsToolExit(
+              message: 'Did not find the file passed to "--dart-define-from-file". Path: config',
+            ),
+          );
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          Logger: () => logger,
+          FileSystemUtils: () => fileSystemUtils,
+          Platform: () => platform,
+          ProcessManager: () => processManager,
+        },
+      );
 
-      testUsingContext('throws a ToolExit when the given JSON file is malformed', () async {
-        fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
-        fileSystem.file('pubspec.yaml').createSync();
-        await fileSystem.file('config.json').writeAsString(
-          '''
+      testUsingContext(
+        'throws a ToolExit when the given JSON file is malformed',
+        () async {
+          fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
+          fileSystem.file('pubspec.yaml').createSync();
+          await fileSystem.file('config.json').writeAsString('''
             {
               "kInt": 1Error json format
               "kDouble": 1.1,
               "name": "denghaizhu",
               "title": "this is title from config json file"
             }
-          '''
-        );
+          ''');
 
-        await dummyCommandRunner.run(<String>[
-          'dummy',
-          '--dart-define-from-file=config.json',
-        ]);
-        expect(dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug),
-          throwsToolExit(message: 'Unable to parse the file at path "config.json" due to '
-            'a formatting error. Ensure that the file contains valid JSON.\n'
-            'Error details: FormatException: Missing expected digit (at line 2, character 25)'));
-      }, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        Logger: () => logger,
-        FileSystemUtils: () => fileSystemUtils,
-        Platform: () => platform,
-        ProcessManager: () => processManager,
-      });
+          await dummyCommandRunner.run(<String>['dummy', '--dart-define-from-file=config.json']);
+          expect(
+            dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug),
+            throwsToolExit(
+              message:
+                  'Unable to parse the file at path "config.json" due to '
+                  'a formatting error. Ensure that the file contains valid JSON.\n'
+                  'Error details: FormatException: Missing expected digit (at line 2, character 25)',
+            ),
+          );
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          Logger: () => logger,
+          FileSystemUtils: () => fileSystemUtils,
+          Platform: () => platform,
+          ProcessManager: () => processManager,
+        },
+      );
 
-      testUsingContext('throws a ToolExit when the provided file does not exist', () async {
-        fileSystem.directory('config').createSync();
-        await dummyCommandRunner.run(<String>[
-          'dummy',
-          '--dart-define=k=v',
-          '--dart-define-from-file=config']);
-        expect(dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug),
-            throwsToolExit(message: 'Did not find the file passed to "--dart-define-from-file". Path: config'));
-      }, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        Logger: () => logger,
-        FileSystemUtils: () => fileSystemUtils,
-        Platform: () => platform,
-        ProcessManager: () => processManager,
-      });
+      testUsingContext(
+        'throws a ToolExit when the provided file does not exist',
+        () async {
+          fileSystem.directory('config').createSync();
+          await dummyCommandRunner.run(<String>[
+            'dummy',
+            '--dart-define=k=v',
+            '--dart-define-from-file=config',
+          ]);
+          expect(
+            dummyCommand.getBuildInfo(forcedBuildMode: BuildMode.debug),
+            throwsToolExit(
+              message: 'Did not find the file passed to "--dart-define-from-file". Path: config',
+            ),
+          );
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          Logger: () => logger,
+          FileSystemUtils: () => fileSystemUtils,
+          Platform: () => platform,
+          ProcessManager: () => processManager,
+        },
+      );
     });
 
     group('--flavor', () {
@@ -1173,101 +1334,150 @@ void main() {
         fileSystem = MemoryFileSystem.test();
       });
 
-      testUsingContext("tool exits when FLUTTER_APP_FLAVOR is already set in user's environment", () async {
-        fileSystem.file('lib/main.dart').createSync(recursive: true);
-        fileSystem.file('pubspec.yaml').createSync();
+      testUsingContext(
+        "tool exits when FLUTTER_APP_FLAVOR is already set in user's environment",
+        () async {
+          fileSystem.file('lib/main.dart').createSync(recursive: true);
+          fileSystem.file('pubspec.yaml').createSync();
 
-        final FakeDevice device = FakeDevice(
-          'name',
-          'id',
-          type: PlatformType.android,
-          supportsFlavors: true,
-        );
-        testDeviceManager.devices = <Device>[device];
-        final _TestRunCommandThatOnlyValidates command = _TestRunCommandThatOnlyValidates();
-        final CommandRunner<void> runner =  createTestCommandRunner(command);
+          final FakeDevice device = FakeDevice(
+            'name',
+            'id',
+            type: PlatformType.android,
+            supportsFlavors: true,
+          );
+          testDeviceManager.devices = <Device>[device];
+          final _TestRunCommandThatOnlyValidates command = _TestRunCommandThatOnlyValidates();
+          final CommandRunner<void> runner = createTestCommandRunner(command);
 
-        expect(runner.run(<String>['run', '--no-pub', '--no-hot', '--flavor=strawberry']),
-          throwsToolExit(message: 'FLUTTER_APP_FLAVOR is used by the framework and cannot be set in the environment.'));
+          expect(
+            runner.run(<String>['run', '--no-pub', '--no-hot', '--flavor=strawberry']),
+            throwsToolExit(
+              message:
+                  'FLUTTER_APP_FLAVOR is used by the framework and cannot be set in the environment.',
+            ),
+          );
+        },
+        overrides: <Type, Generator>{
+          DeviceManager: () => testDeviceManager,
+          Platform:
+              () => FakePlatform(
+                environment: <String, String>{'FLUTTER_APP_FLAVOR': 'I was already set'},
+              ),
+          Cache: () => Cache.test(processManager: FakeProcessManager.any()),
+          FileSystem: () => fileSystem,
+          ProcessManager: () => FakeProcessManager.any(),
+        },
+      );
 
-      }, overrides: <Type, Generator>{
-        DeviceManager: () => testDeviceManager,
-        Platform: () => FakePlatform(
-          environment: <String, String>{
-            'FLUTTER_APP_FLAVOR': 'I was already set'
-          }
-        ),
-        Cache: () => Cache.test(processManager: FakeProcessManager.any()),
-        FileSystem: () => fileSystem,
-        ProcessManager: () => FakeProcessManager.any(),
-      });
+      testUsingContext(
+        'tool exits when FLUTTER_APP_FLAVOR is set in --dart-define or --dart-define-from-file',
+        () async {
+          fileSystem.file('lib/main.dart').createSync(recursive: true);
+          fileSystem.file('pubspec.yaml').createSync();
+          fileSystem.file('config.json')
+            ..createSync()
+            ..writeAsStringSync('{"FLUTTER_APP_FLAVOR": "strawberry"}');
 
-      testUsingContext('tool exits when FLUTTER_APP_FLAVOR is set in --dart-define or --dart-define-from-file', () async {
-        fileSystem.file('lib/main.dart').createSync(recursive: true);
-        fileSystem.file('pubspec.yaml').createSync();
-        fileSystem.file('config.json')..createSync()..writeAsStringSync('{"FLUTTER_APP_FLAVOR": "strawberry"}');
+          final FakeDevice device = FakeDevice(
+            'name',
+            'id',
+            type: PlatformType.android,
+            supportsFlavors: true,
+          );
+          testDeviceManager.devices = <Device>[device];
+          final _TestRunCommandThatOnlyValidates command = _TestRunCommandThatOnlyValidates();
+          final CommandRunner<void> runner = createTestCommandRunner(command);
 
-        final FakeDevice device = FakeDevice(
-          'name',
-          'id',
-          type: PlatformType.android,
-          supportsFlavors: true,
-        );
-        testDeviceManager.devices = <Device>[device];
-        final _TestRunCommandThatOnlyValidates command = _TestRunCommandThatOnlyValidates();
-        final CommandRunner<void> runner =  createTestCommandRunner(command);
+          expect(
+            runner.run(<String>[
+              'run',
+              '--dart-define=FLUTTER_APP_FLAVOR=strawberry',
+              '--no-pub',
+              '--no-hot',
+              '--flavor=strawberry',
+            ]),
+            throwsToolExit(
+              message:
+                  'FLUTTER_APP_FLAVOR is used by the framework and cannot be set using --dart-define or --dart-define-from-file',
+            ),
+          );
 
-        expect(runner.run(<String>['run', '--dart-define=FLUTTER_APP_FLAVOR=strawberry', '--no-pub', '--no-hot', '--flavor=strawberry']),
-          throwsToolExit(message: 'FLUTTER_APP_FLAVOR is used by the framework and cannot be set using --dart-define or --dart-define-from-file'));
+          expect(
+            runner.run(<String>[
+              'run',
+              '--dart-define-from-file=config.json',
+              '--no-pub',
+              '--no-hot',
+              '--flavor=strawberry',
+            ]),
+            throwsToolExit(
+              message:
+                  'FLUTTER_APP_FLAVOR is used by the framework and cannot be set using --dart-define or --dart-define-from-file',
+            ),
+          );
+        },
+        overrides: <Type, Generator>{
+          DeviceManager: () => testDeviceManager,
+          Platform: () => FakePlatform(),
+          Cache: () => Cache.test(processManager: FakeProcessManager.any()),
+          FileSystem: () => fileSystem,
+          ProcessManager: () => FakeProcessManager.any(),
+        },
+      );
 
-        expect(runner.run(<String>['run', '--dart-define-from-file=config.json', '--no-pub', '--no-hot', '--flavor=strawberry']),
-          throwsToolExit(message: 'FLUTTER_APP_FLAVOR is used by the framework and cannot be set using --dart-define or --dart-define-from-file'));
-      }, overrides: <Type, Generator>{
-        DeviceManager: () => testDeviceManager,
-        Platform: () => FakePlatform(),
-        Cache: () => Cache.test(processManager: FakeProcessManager.any()),
-        FileSystem: () => fileSystem,
-        ProcessManager: () => FakeProcessManager.any(),
-      });
-
-      testUsingContext('CLI option overrides default flavor from manifest', () async {
-        final File pubspec = fileSystem.file('pubspec.yaml');
-        await pubspec.create();
-        await pubspec.writeAsString('''
+      testUsingContext(
+        'CLI option overrides default flavor from manifest',
+        () async {
+          final File pubspec = fileSystem.file('pubspec.yaml');
+          await pubspec.create();
+          await pubspec.writeAsString('''
 name: test
 flutter:
   default-flavor: foo
         ''');
 
-        final DummyFlutterCommand flutterCommand = DummyFlutterCommand();
-        final BuildInfo buildInfo = await flutterCommand.getBuildInfo(forcedBuildMode: BuildMode.debug);
-        expect(buildInfo.flavor, 'foo');
-      }, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        ProcessManager: () => FakeProcessManager.empty(),
-      });
+          final DummyFlutterCommand flutterCommand = DummyFlutterCommand();
+          final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+            forcedBuildMode: BuildMode.debug,
+          );
+          expect(buildInfo.flavor, 'foo');
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          ProcessManager: () => FakeProcessManager.empty(),
+        },
+      );
 
-      testUsingContext('tool loads default flavor from manifest, but cli overrides', () async {
-        final File pubspec = fileSystem.file('pubspec.yaml');
-        await pubspec.create();
-        await pubspec.writeAsString('''
+      testUsingContext(
+        'tool loads default flavor from manifest, but cli overrides',
+        () async {
+          final File pubspec = fileSystem.file('pubspec.yaml');
+          await pubspec.create();
+          await pubspec.writeAsString('''
 name: test
 flutter:
   default-flavor: foo
         ''');
 
-        final DummyFlutterCommand flutterCommand = DummyFlutterCommand(commandFunction: () async {
-          return FlutterCommandResult.success();
-        },);
-        flutterCommand.usesFlavorOption();
-        final CommandRunner<void> runner =  createTestCommandRunner(flutterCommand);
-        await runner.run(<String>['dummy', '--flavor', 'bar']);
-        final BuildInfo buildInfo = await flutterCommand.getBuildInfo(forcedBuildMode: BuildMode.debug);
-        expect(buildInfo.flavor, 'bar');
-      }, overrides: <Type, Generator>{
-        FileSystem: () => fileSystem,
-        ProcessManager: () => FakeProcessManager.empty(),
-      });
+          final DummyFlutterCommand flutterCommand = DummyFlutterCommand(
+            commandFunction: () async {
+              return FlutterCommandResult.success();
+            },
+          );
+          flutterCommand.usesFlavorOption();
+          final CommandRunner<void> runner = createTestCommandRunner(flutterCommand);
+          await runner.run(<String>['dummy', '--flavor', 'bar']);
+          final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+            forcedBuildMode: BuildMode.debug,
+          );
+          expect(buildInfo.flavor, 'bar');
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fileSystem,
+          ProcessManager: () => FakeProcessManager.empty(),
+        },
+      );
     });
   });
 }
@@ -1372,14 +1582,12 @@ class FakeCache extends Fake implements Cache {
   }
 
   @override
-  void releaseLock() { }
+  void releaseLock() {}
 }
 
 class FakeSignals implements Signals {
-  FakeSignals({
-    required this.subForSigTerm,
-    required List<ProcessSignal> exitSignals,
-  }) : delegate = Signals.test(exitSignals: exitSignals);
+  FakeSignals({required this.subForSigTerm, required List<ProcessSignal> exitSignals})
+    : delegate = Signals.test(exitSignals: exitSignals);
 
   final ProcessSignal subForSigTerm;
   final Signals delegate;
@@ -1394,7 +1602,7 @@ class FakeSignals implements Signals {
 
   @override
   Future<bool> removeHandler(ProcessSignal signal, Object token) =>
-    delegate.removeHandler(signal, token);
+      delegate.removeHandler(signal, token);
 
   @override
   Stream<Object> get errors => delegate.errors;
@@ -1420,7 +1628,7 @@ class FakePub extends Fake implements Pub {
     bool checkUpToDate = false,
     bool shouldSkipThirdPartyGenerator = true,
     PubOutputMode outputMode = PubOutputMode.all,
-  }) async { }
+  }) async {}
 
   @override
   Future<Map<String, Object?>> deps(FlutterProject project) {

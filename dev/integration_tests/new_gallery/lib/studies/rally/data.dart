@@ -17,9 +17,9 @@ double sumBillDataPrimaryAmount(List<BillData> items) =>
 
 /// Calculates the sum of the primary amounts of a list of [BillData].
 double sumBillDataPaidAmount(List<BillData> items) => sumOf<BillData>(
-      items.where((BillData item) => item.isPaid).toList(),
-      (BillData item) => item.primaryAmount,
-    );
+  items.where((BillData item) => item.isPaid).toList(),
+  (BillData item) => item.primaryAmount,
+);
 
 /// Calculates the sum of the primary amounts of a list of [BudgetData].
 double sumBudgetDataPrimaryAmount(List<BudgetData> items) =>
@@ -42,11 +42,7 @@ double sumOf<T>(List<T> list, double Function(T elt) getValue) {
 ///
 /// The [primaryAmount] is the balance of the account in USD.
 class AccountData {
-  const AccountData({
-    required this.name,
-    required this.primaryAmount,
-    required this.accountNumber,
-  });
+  const AccountData({required this.name, required this.primaryAmount, required this.accountNumber});
 
   /// The display name of this entity.
   final String name;
@@ -86,11 +82,7 @@ class BillData {
 ///
 /// The [primaryAmount] is the budget cap in USD.
 class BudgetData {
-  const BudgetData({
-    required this.name,
-    required this.primaryAmount,
-    required this.amountUsed,
-  });
+  const BudgetData({required this.name, required this.primaryAmount, required this.amountUsed});
 
   /// The display name of this entity.
   final String name;
@@ -114,11 +106,7 @@ class AlertData {
 }
 
 class DetailedEventData {
-  const DetailedEventData({
-    required this.title,
-    required this.date,
-    required this.amount,
-  });
+  const DetailedEventData({required this.title, required this.date, required this.amount});
 
   final String title;
   final DateTime date;
@@ -127,10 +115,7 @@ class DetailedEventData {
 
 /// A data model for data displayed to the user.
 class UserDetailData {
-  UserDetailData({
-    required this.title,
-    required this.value,
-  });
+  UserDetailData({required this.title, required this.value});
 
   /// The display name of this entity.
   final String title;
@@ -192,51 +177,28 @@ class DummyDataService {
         title: localizations.rallyAccountDetailDataNextStatement,
         value: shortDateFormat(context).format(DateTime.utc(2019, 12, 25)),
       ),
-      UserDetailData(
-        title: localizations.rallyAccountDetailDataAccountOwner,
-        value: 'Philip Cao',
-      ),
+      UserDetailData(title: localizations.rallyAccountDetailDataAccountOwner, value: 'Philip Cao'),
     ];
   }
 
   static List<DetailedEventData> getDetailedEventItems() {
     // The following titles are not localized as they're product/brand names.
     return <DetailedEventData>[
-      DetailedEventData(
-        title: 'Genoe',
-        date: DateTime.utc(2019, 1, 24),
-        amount: -16.54,
-      ),
+      DetailedEventData(title: 'Genoe', date: DateTime.utc(2019, 1, 24), amount: -16.54),
       DetailedEventData(
         title: 'Fortnightly Subscribe',
         date: DateTime.utc(2019, 1, 5),
         amount: -12.54,
       ),
-      DetailedEventData(
-        title: 'Circle Cash',
-        date: DateTime.utc(2019, 1, 5),
-        amount: 365.65,
-      ),
+      DetailedEventData(title: 'Circle Cash', date: DateTime.utc(2019, 1, 5), amount: 365.65),
       DetailedEventData(
         title: 'Crane Hospitality',
         date: DateTime.utc(2019, 1, 4),
         amount: -705.13,
       ),
-      DetailedEventData(
-        title: 'ABC Payroll',
-        date: DateTime.utc(2018, 12, 15),
-        amount: 1141.43,
-      ),
-      DetailedEventData(
-        title: 'Shrine',
-        date: DateTime.utc(2018, 12, 15),
-        amount: -88.88,
-      ),
-      DetailedEventData(
-        title: 'Foodmates',
-        date: DateTime.utc(2018, 12, 4),
-        amount: -11.69,
-      ),
+      DetailedEventData(title: 'ABC Payroll', date: DateTime.utc(2018, 12, 15), amount: 1141.43),
+      DetailedEventData(title: 'Shrine', date: DateTime.utc(2018, 12, 15), amount: -88.88),
+      DetailedEventData(title: 'Foodmates', date: DateTime.utc(2018, 12, 4), amount: -11.69),
     ];
   }
 
@@ -246,33 +208,32 @@ class DummyDataService {
       BillData(
         name: 'RedPay Credit',
         primaryAmount: 45.36,
-        dueDate: dateFormatAbbreviatedMonthDay(context)
-            .format(DateTime.utc(2019, 1, 29)),
+        dueDate: dateFormatAbbreviatedMonthDay(context).format(DateTime.utc(2019, 1, 29)),
       ),
       BillData(
         name: 'Rent',
         primaryAmount: 1200,
-        dueDate: dateFormatAbbreviatedMonthDay(context)
-            .format(DateTime.utc(2019, 2, 9)),
+        dueDate: dateFormatAbbreviatedMonthDay(context).format(DateTime.utc(2019, 2, 9)),
         isPaid: true,
       ),
       BillData(
         name: 'TabFine Credit',
         primaryAmount: 87.33,
-        dueDate: dateFormatAbbreviatedMonthDay(context)
-            .format(DateTime.utc(2019, 2, 22)),
+        dueDate: dateFormatAbbreviatedMonthDay(context).format(DateTime.utc(2019, 2, 22)),
       ),
       BillData(
         name: 'ABC Loans',
         primaryAmount: 400,
-        dueDate: dateFormatAbbreviatedMonthDay(context)
-            .format(DateTime.utc(2019, 2, 29)),
+        dueDate: dateFormatAbbreviatedMonthDay(context).format(DateTime.utc(2019, 2, 29)),
       ),
     ];
   }
 
-  static List<UserDetailData> getBillDetailList(BuildContext context,
-      {required double dueTotal, required double paidTotal}) {
+  static List<UserDetailData> getBillDetailList(
+    BuildContext context, {
+    required double dueTotal,
+    required double paidTotal,
+  }) {
     final GalleryLocalizations localizations = GalleryLocalizations.of(context)!;
     return <UserDetailData>[
       UserDetailData(
@@ -316,8 +277,11 @@ class DummyDataService {
     ];
   }
 
-  static List<UserDetailData> getBudgetDetailList(BuildContext context,
-      {required double capTotal, required double usedTotal}) {
+  static List<UserDetailData> getBudgetDetailList(
+    BuildContext context, {
+    required double capTotal,
+    required double usedTotal,
+  }) {
     final GalleryLocalizations localizations = GalleryLocalizations.of(context)!;
     return <UserDetailData>[
       UserDetailData(
@@ -355,22 +319,26 @@ class DummyDataService {
     return <AlertData>[
       AlertData(
         message: localizations.rallyAlertsMessageHeadsUpShopping(
-            percentFormat(context, decimalDigits: 0).format(0.9)),
+          percentFormat(context, decimalDigits: 0).format(0.9),
+        ),
         iconData: Icons.sort,
       ),
       AlertData(
         message: localizations.rallyAlertsMessageSpentOnRestaurants(
-            usdWithSignFormat(context, decimalDigits: 0).format(120)),
+          usdWithSignFormat(context, decimalDigits: 0).format(120),
+        ),
         iconData: Icons.sort,
       ),
       AlertData(
         message: localizations.rallyAlertsMessageATMFees(
-            usdWithSignFormat(context, decimalDigits: 0).format(24)),
+          usdWithSignFormat(context, decimalDigits: 0).format(24),
+        ),
         iconData: Icons.credit_card,
       ),
       AlertData(
         message: localizations.rallyAlertsMessageCheckingAccount(
-            percentFormat(context, decimalDigits: 0).format(0.04)),
+          percentFormat(context, decimalDigits: 0).format(0.04),
+        ),
         iconData: Icons.attach_money,
       ),
       AlertData(

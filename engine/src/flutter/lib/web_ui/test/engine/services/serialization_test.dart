@@ -73,8 +73,7 @@ void testMain() {
       expect(read.getInt64List(3), equals(integers));
     }, skip: !_kSupportsDartNumerics);
     test('of double list when unaligned', () {
-      final Float64List doubles =
-          Float64List.fromList(<double>[3.14, double.nan]);
+      final Float64List doubles = Float64List.fromList(<double>[3.14, double.nan]);
       final WriteBuffer write = WriteBuffer();
       write.putUint8(9);
       write.putFloat64List(doubles);

@@ -50,8 +50,14 @@ void main() {
       await linkA.create('jjj');
       linkB.createSync('lll');
 
-      expect(await memoryFileSystem.link('hhh').resolveSymbolicLinks(), await linkA.resolveSymbolicLinks());
-      expect(memoryFileSystem.link('ggg').resolveSymbolicLinksSync(), linkB.resolveSymbolicLinksSync());
+      expect(
+        await memoryFileSystem.link('hhh').resolveSymbolicLinks(),
+        await linkA.resolveSymbolicLinks(),
+      );
+      expect(
+        memoryFileSystem.link('ggg').resolveSymbolicLinksSync(),
+        linkB.resolveSymbolicLinksSync(),
+      );
     }, flutterIOOverrides);
   });
 
@@ -88,11 +94,8 @@ void main() {
 
   testWithoutContext('listNetworkInterfaces() uses overrides', () async {
     setNetworkInterfaceLister(
-      ({
-        bool? includeLoopback,
-        bool? includeLinkLocal,
-        InternetAddressType? type,
-      }) async => <NetworkInterface>[],
+      ({bool? includeLoopback, bool? includeLinkLocal, InternetAddressType? type}) async =>
+          <NetworkInterface>[],
     );
 
     expect(await listNetworkInterfaces(), isEmpty);

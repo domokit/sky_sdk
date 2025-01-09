@@ -19,19 +19,13 @@ final class Digests {
   ///
   /// In practice, [Digests.parse] is typically used to create a new instance
   /// from an existing `digest.json` file read into memory as string contents.
-  const Digests({
-    required this.dimensions,
-    required this.entries,
-  });
+  const Digests({required this.dimensions, required this.entries});
 
   /// Parses a `digest.json` file from a string.
   factory Digests.parse(String json) {
     final Object? decoded = convert.json.decode(json);
     if (decoded is! Map<String, Object?>) {
-      throw FormatException(
-        'Expected a JSON object as the root, but got $decoded',
-        json,
-      );
+      throw FormatException('Expected a JSON object as the root, but got $decoded', json);
     }
 
     final Object? dimensions = decoded['dimensions'];
@@ -61,21 +55,23 @@ final class Digests {
         }
         return MapEntry<String, String>(key, value);
       }),
-      entries: List<DigestEntry>.unmodifiable(entries.map((Object? entry) {
-        if (entry is! Map<String, Object?>) {
-          throw FormatException(
-            'Expected a JSON object for an entry, but got ${entry.runtimeType}',
-            entry,
+      entries: List<DigestEntry>.unmodifiable(
+        entries.map((Object? entry) {
+          if (entry is! Map<String, Object?>) {
+            throw FormatException(
+              'Expected a JSON object for an entry, but got ${entry.runtimeType}',
+              entry,
+            );
+          }
+          return DigestEntry(
+            filename: entry['filename']! as String,
+            width: entry['width']! as int,
+            height: entry['height']! as int,
+            maxDiffPixelsPercent: entry['maxDiffPixelsPercent']! as double,
+            maxColorDelta: entry['maxColorDelta']! as int,
           );
-        }
-        return DigestEntry(
-          filename: entry['filename']! as String,
-          width: entry['width']! as int,
-          height: entry['height']! as int,
-          maxDiffPixelsPercent: entry['maxDiffPixelsPercent']! as double,
-          maxColorDelta: entry['maxColorDelta']! as int,
-        );
-      })),
+        }),
+      ),
     );
   }
 

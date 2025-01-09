@@ -4,8 +4,7 @@
 
 import 'package:test/bootstrap/browser.dart';
 import 'package:test/test.dart';
-import 'package:ui/src/engine.dart'
-    hide BackdropFilterEngineLayer, ClipRectEngineLayer;
+import 'package:ui/src/engine.dart' hide BackdropFilterEngineLayer, ClipRectEngineLayer;
 import 'package:ui/ui.dart';
 
 import 'package:web_engine_tester/golden_tester.dart';
@@ -18,8 +17,9 @@ import '../../common/test_initialization.dart';
 const bool debugTest = false;
 
 DomElement get sceneHost =>
-    EnginePlatformDispatcher.instance.implicitView!.dom.renderingHost
-        .querySelector(DomManager.sceneHostTagName)!;
+    EnginePlatformDispatcher.instance.implicitView!.dom.renderingHost.querySelector(
+      DomManager.sceneHostTagName,
+    )!;
 
 Future<void> main() async {
   if (!debugTest) {
@@ -56,86 +56,100 @@ Future<void> testMain() async {
   /// Should render the picture unmodified.
   test('Renders shader mask with linear gradient BlendMode dst', () async {
     _renderCirclesScene(BlendMode.dst);
-    await matchGoldenFile('shadermask_linear_dst.png',
-        region: const Rect.fromLTWH(0, 0, 360, 200));
+    await matchGoldenFile('shadermask_linear_dst.png', region: const Rect.fromLTWH(0, 0, 360, 200));
   }, skip: isSafari || isFirefox);
 
   /// Should render the gradient only where circles have alpha channel.
   test('Renders shader mask with linear gradient BlendMode srcIn', () async {
     _renderCirclesScene(BlendMode.srcIn);
-    await matchGoldenFile('shadermask_linear_srcin.png',
-        region: const Rect.fromLTWH(0, 0, 360, 200));
+    await matchGoldenFile(
+      'shadermask_linear_srcin.png',
+      region: const Rect.fromLTWH(0, 0, 360, 200),
+    );
   }, skip: isSafari || isFirefox);
 
   test('Renders shader mask with linear gradient BlendMode color', () async {
     _renderCirclesScene(BlendMode.color);
-    await matchGoldenFile('shadermask_linear_color.png',
-        region: const Rect.fromLTWH(0, 0, 360, 200));
+    await matchGoldenFile(
+      'shadermask_linear_color.png',
+      region: const Rect.fromLTWH(0, 0, 360, 200),
+    );
   }, skip: isSafari || isFirefox);
 
   test('Renders shader mask with linear gradient BlendMode xor', () async {
     _renderCirclesScene(BlendMode.xor);
-    await matchGoldenFile('shadermask_linear_xor.png',
-        region: const Rect.fromLTWH(0, 0, 360, 200));
+    await matchGoldenFile('shadermask_linear_xor.png', region: const Rect.fromLTWH(0, 0, 360, 200));
   }, skip: isSafari || isFirefox);
 
   test('Renders shader mask with linear gradient BlendMode plus', () async {
     _renderCirclesScene(BlendMode.plus);
-    await matchGoldenFile('shadermask_linear_plus.png',
-        region: const Rect.fromLTWH(0, 0, 360, 200));
+    await matchGoldenFile(
+      'shadermask_linear_plus.png',
+      region: const Rect.fromLTWH(0, 0, 360, 200),
+    );
   }, skip: isSafari || isFirefox);
 
   test('Renders shader mask with linear gradient BlendMode modulate', () async {
     _renderCirclesScene(BlendMode.modulate);
-    await matchGoldenFile('shadermask_linear_modulate.png',
-        region: const Rect.fromLTWH(0, 0, 360, 200));
+    await matchGoldenFile(
+      'shadermask_linear_modulate.png',
+      region: const Rect.fromLTWH(0, 0, 360, 200),
+    );
   }, skip: isSafari || isFirefox);
 
   test('Renders shader mask with linear gradient BlendMode overlay', () async {
     _renderCirclesScene(BlendMode.overlay);
-    await matchGoldenFile('shadermask_linear_overlay.png',
-        region: const Rect.fromLTWH(0, 0, 360, 200));
+    await matchGoldenFile(
+      'shadermask_linear_overlay.png',
+      region: const Rect.fromLTWH(0, 0, 360, 200),
+    );
   }, skip: isSafari || isFirefox);
 
   /// Should render the gradient opaque on top of content.
   test('Renders shader mask with linear gradient BlendMode src', () async {
     _renderCirclesScene(BlendMode.src);
-    await matchGoldenFile('shadermask_linear_src.png',
-        region: const Rect.fromLTWH(0, 0, 360, 200));
+    await matchGoldenFile('shadermask_linear_src.png', region: const Rect.fromLTWH(0, 0, 360, 200));
   }, skip: isSafari || isFirefox);
 
   /// Should render text with gradient.
   test('Renders text with linear gradient shader mask', () async {
     _renderTextScene(BlendMode.srcIn);
-    await matchGoldenFile('shadermask_linear_text.png',
-        region: const Rect.fromLTWH(0, 0, 360, 200));
+    await matchGoldenFile(
+      'shadermask_linear_text.png',
+      region: const Rect.fromLTWH(0, 0, 360, 200),
+    );
   }, skip: isSafari || isFirefox);
 }
 
-Picture _drawTestPictureWithCircles(
-    Rect region, double offsetX, double offsetY) {
+Picture _drawTestPictureWithCircles(Rect region, double offsetX, double offsetY) {
   final EnginePictureRecorder recorder = EnginePictureRecorder();
   final RecordingCanvas canvas = recorder.beginRecording(region);
-  canvas.drawCircle(Offset(offsetX + 30, offsetY + 30), 30,
-      SurfacePaint()..style = PaintingStyle.fill);
   canvas.drawCircle(
-      Offset(offsetX + 110, offsetY + 30),
-      30,
-      SurfacePaint()
-        ..style = PaintingStyle.fill
-        ..color = const Color(0xFFFF0000));
+    Offset(offsetX + 30, offsetY + 30),
+    30,
+    SurfacePaint()..style = PaintingStyle.fill,
+  );
   canvas.drawCircle(
-      Offset(offsetX + 30, offsetY + 110),
-      30,
-      SurfacePaint()
-        ..style = PaintingStyle.fill
-        ..color = const Color(0xFF00FF00));
+    Offset(offsetX + 110, offsetY + 30),
+    30,
+    SurfacePaint()
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFFFF0000),
+  );
   canvas.drawCircle(
-      Offset(offsetX + 110, offsetY + 110),
-      30,
-      SurfacePaint()
-        ..style = PaintingStyle.fill
-        ..color = const Color(0xFF0000FF));
+    Offset(offsetX + 30, offsetY + 110),
+    30,
+    SurfacePaint()
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF00FF00),
+  );
+  canvas.drawCircle(
+    Offset(offsetX + 110, offsetY + 110),
+    30,
+    SurfacePaint()
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF0000FF),
+  );
   return recorder.endRecording();
 }
 
@@ -159,9 +173,13 @@ void _renderCirclesScene(BlendMode blendMode) {
   const Rect shaderBounds = Rect.fromLTWH(180, 10, 140, 140);
 
   final EngineGradient shader = GradientLinear(
-      Offset(200 - shaderBounds.left, 30 - shaderBounds.top),
-      Offset(320 - shaderBounds.left, 150 - shaderBounds.top),
-      colors, stops, TileMode.clamp, Matrix4.identity().storage);
+    Offset(200 - shaderBounds.left, 30 - shaderBounds.top),
+    Offset(320 - shaderBounds.left, 150 - shaderBounds.top),
+    colors,
+    stops,
+    TileMode.clamp,
+    Matrix4.identity().storage,
+  );
 
   builder.pushShaderMask(shader, shaderBounds, blendMode);
   final Picture circles2 = _drawTestPictureWithCircles(region, 180, 10);
@@ -171,8 +189,7 @@ void _renderCirclesScene(BlendMode blendMode) {
   sceneHost.append(builder.build().webOnlyRootElement!);
 }
 
-Picture _drawTestPictureWithText(
-    Rect region, double offsetX, double offsetY) {
+Picture _drawTestPictureWithText(Rect region, double offsetX, double offsetY) {
   final EnginePictureRecorder recorder = EnginePictureRecorder();
   final RecordingCanvas canvas = recorder.beginRecording(region);
   const String text = 'Shader test';
@@ -213,9 +230,13 @@ void _renderTextScene(BlendMode blendMode) {
   const Rect shaderBounds = Rect.fromLTWH(180, 10, 140, 140);
 
   final EngineGradient shader = GradientLinear(
-      Offset(200 - shaderBounds.left, 30 - shaderBounds.top),
-      Offset(320 - shaderBounds.left, 150 - shaderBounds.top),
-      colors, stops, TileMode.clamp, Matrix4.identity().storage);
+    Offset(200 - shaderBounds.left, 30 - shaderBounds.top),
+    Offset(320 - shaderBounds.left, 150 - shaderBounds.top),
+    colors,
+    stops,
+    TileMode.clamp,
+    Matrix4.identity().storage,
+  );
 
   builder.pushShaderMask(shader, shaderBounds, blendMode);
 

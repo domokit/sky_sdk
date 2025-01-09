@@ -5,70 +5,65 @@
 
 # ---------------------------------- NOTE ---------------------------------- #
 #
-# We must keep the logic in this file consistent with the logic in the
-# `engine_hash.dart` script in the same directory to ensure that Flutter
-# continues to work across all platforms!
+# This file will appear unused within the monorepo. It is used internally
+# (in google3) as part of the roll process, and care should be put before
+# making changes.
+#
+# See cl/688973229.
 #
 # -------------------------------------------------------------------------- #
 
-# TODO(codefu): Add a test that this always outputs the same hash as
-# `engine_hash.dart` when the repositories are merged
+# Needed because if it is set, cd may print the path it changed to.
+unset CDPATH
 
-STRATEGY=head
-
-HELP=$(
-    cat <<EOF
-Calculate the hash signature for the Flutter Engine\n
-\t-s|--strategy\t<head,mergeBase>\n
-\t\tthead:      hash from git HEAD\n
-\t\tmergeBase: hash from the merge-base of HEAD and upstream/master\n
-EOF
+# On Mac OS, readlink -f doesn't work, so follow_links traverses the path one
+# link at a time, and then cds into the link destination and find out where it
+# ends up.
+#
+# The returned filesystem path must be a format usable by Dart's URI parser,
+# since the Dart command line tool treats its argument as a file URI, not a
+# filename. For instance, multiple consecutive slashes should be reduced to a
+# single slash, since double-slashes indicate a URI "authority", and these are
+# supposed to be filenames. There is an edge case where this will return
+# multiple slashes: when the input resolves to the root directory. However, if
+# that were the case, we wouldn't be running this shell, so we don't do anything
+# about it.
+#
+# The function is enclosed in a subshell to avoid changing the working directory
+# of the caller.
+function follow_links() (
+  cd -P "$(dirname -- "$1")"
+  file="$PWD/$(basename -- "$1")"
+  while [[ -h "$file" ]]; do
+    cd -P "$(dirname -- "$file")"
+    file="$(readlink -- "$file")"
+    cd -P "$(dirname -- "$file")"
+    file="$PWD/$(basename -- "$file")"
+  done
+  echo "$file"
 )
 
-function print_help() {
-    if [ "${1:-0}" -eq 0 ]; then
-        echo -e $HELP
-        exit 0
-    else
-        echo >&2 -e $HELP
-        exit $1
-    fi
-}
+PROG_NAME="$(follow_links "${BASH_SOURCE[0]}")"
+BIN_DIR="$(cd "${PROG_NAME%/*}" ; pwd -P)"
+FLUTTER_ROOT="$(cd "${BIN_DIR}/../../.." ; pwd -P)"
 
-while [[ "$#" -gt 0 ]]; do
-    case $1 in
-    -s | --strategy)
-        STRATEGY="$2"
-        shift # past argument
-        shift # past value
-        ;;
-    -h | --help)
-        print_help
-        ;;
-    -* | --*)
-        echo >&2 -e "Unknown option $1\n"
-        print_help 1
-        ;;
-    esac
-done
-
-BASE=HEAD
-case $STRATEGY in
-head) ;;
-mergeBase)
-    BASE=$(git merge-base upstream/master HEAD)
-    ;;
-*)
-    echo >&2 -e "Unknown strategy $1\n"
-    print_help 1
-    ;;
-esac
-
-LSTREE=$(git ls-tree -r $BASE engine DEPS)
-if [ ${#LSTREE} -eq 0 ]; then
-    echo >&2 Error calculating engine hash: Not in a monorepo
-    exit 1
+# Allow using a mock git for testing.
+if [ -z "$GIT" ]; then
+    # By default, use git on PATH.
+    GIT_BIN="git"
 else
-    HASH=$(echo "$LSTREE" | sha1sum | head -c 40)
-    echo $HASH
+    # Use the provide GIT executable.
+    GIT_BIN="$GIT"
 fi
+
+# Test for fusion repository
+if [ -f "$FLUTTER_ROOT/DEPS" ]; then
+    ENGINE_VERSION=$($GIT_BIN -C "$FLUTTER_ROOT" merge-base HEAD origin/master)
+elif [ -f "$FLUTTER_ROOT/bin/internal/engine.version" ]; then
+    ENGINE_VERSION=$(cat "$FLUTTER_ROOT/bin/internal/engine.version")
+else
+    >&2 echo "Not a valid FLUTTER_ROOT: $FLUTTER_ROOT"
+    exit 1
+fi
+
+echo $ENGINE_VERSION

@@ -42,13 +42,11 @@ abstract class ZX {
   static const int RIGHT_WAIT = 1 << 14;
   static const int RIGHT_INSPECT = 1 << 15;
   static const int RIGHT_SAME_RIGHTS = 1 << 31;
-  static const int RIGHTS_BASIC = RIGHT_TRANSFER | RIGHT_DUPLICATE |
-                                  RIGHT_WAIT | RIGHT_INSPECT;
+  static const int RIGHTS_BASIC = RIGHT_TRANSFER | RIGHT_DUPLICATE | RIGHT_WAIT | RIGHT_INSPECT;
   static const int RIGHTS_IO = RIGHT_READ | RIGHT_WRITE;
   static const int RIGHTS_PROPERTY = RIGHT_GET_PROPERTY | RIGHT_SET_PROPERTY;
-  static const int DEFAULT_VMO_RIGHTS = RIGHTS_BASIC | RIGHTS_IO |
-                                        RIGHTS_PROPERTY | RIGHT_MAP |
-                                        RIGHT_SIGNAL;
+  static const int DEFAULT_VMO_RIGHTS =
+      RIGHTS_BASIC | RIGHTS_IO | RIGHTS_PROPERTY | RIGHT_MAP | RIGHT_SIGNAL;
   static const int OBJ_TYPE_VMO = 3;
   static const int OBJ_TYPE_CHANNEL = 4;
   static const int HANDLE_OP_MOVE = 0;
@@ -172,8 +170,7 @@ void main() {
       expect(vmo.status, equals(ZX.OK));
 
       // Replace the first handle.
-      final Handle duplicate =
-          vmo.handle.replace(ZX.RIGHTS_BASIC | ZX.RIGHT_READ);
+      final Handle duplicate = vmo.handle.replace(ZX.RIGHTS_BASIC | ZX.RIGHT_READ);
       expect(duplicate.isValid, isTrue);
 
       // Write bytes to the original handle.
@@ -230,18 +227,15 @@ void main() {
       expect(pair.first.close(), equals(0));
       expect(pair.first.isValid, isFalse);
       expect(pair.second.isValid, isTrue);
-      expect(System.channelWrite(pair.first, ByteData(1), <Handle>[]),
-          equals(ZX.ERR_BAD_HANDLE));
-      expect(System.channelWrite(pair.second, ByteData(1), <Handle>[]),
-          equals(ZX.ERR_PEER_CLOSED));
+      expect(System.channelWrite(pair.first, ByteData(1), <Handle>[]), equals(ZX.ERR_BAD_HANDLE));
+      expect(System.channelWrite(pair.second, ByteData(1), <Handle>[]), equals(ZX.ERR_PEER_CLOSED));
     });
 
     test('channel bytes', () {
       final HandlePairResult pair = System.channelCreate();
 
       // When no data is available, ZX.ERR_SHOULD_WAIT is returned.
-      expect(System.channelQueryAndRead(pair.second).status,
-          equals(ZX.ERR_SHOULD_WAIT));
+      expect(System.channelQueryAndRead(pair.second).status, equals(ZX.ERR_SHOULD_WAIT));
 
       // Write bytes.
       final ByteData data = utf8Bytes('Hello, world');
@@ -261,8 +255,7 @@ void main() {
       final HandlePairResult pair = System.channelCreate();
       final ByteData data = utf8Bytes('');
       final HandlePairResult eventPair = System.eventpairCreate();
-      final int status =
-          System.channelWrite(pair.first, data, <Handle>[eventPair.first]);
+      final int status = System.channelWrite(pair.first, data, <Handle>[eventPair.first]);
       expect(status, equals(ZX.OK));
       expect(eventPair.first.isValid, isFalse);
 
@@ -288,8 +281,7 @@ void main() {
 
       final List<int> result = await completer.future;
       expect(result[0], equals(ZX.OK)); // status
-      expect(result[1] & ZX.CHANNEL_READABLE,
-          equals(ZX.CHANNEL_READABLE)); // pending
+      expect(result[1] & ZX.CHANNEL_READABLE, equals(ZX.CHANNEL_READABLE)); // pending
     });
 
     test('async wait channel closed', () async {
@@ -314,16 +306,18 @@ void main() {
       final ByteData data = utf8Bytes('');
       final HandlePairResult transferred = System.channelCreate();
 
-      final HandleDisposition disposition = HandleDisposition(ZX.HANDLE_OP_MOVE,
-          transferred.first, ZX.OBJ_TYPE_CHANNEL, ZX.RIGHTS_IO);
-      final int status = System.channelWriteEtc(
-          pair.first, data, <HandleDisposition>[disposition]);
+      final HandleDisposition disposition = HandleDisposition(
+        ZX.HANDLE_OP_MOVE,
+        transferred.first,
+        ZX.OBJ_TYPE_CHANNEL,
+        ZX.RIGHTS_IO,
+      );
+      final int status = System.channelWriteEtc(pair.first, data, <HandleDisposition>[disposition]);
       expect(status, equals(ZX.OK));
       expect(disposition.result, equals(ZX.OK));
       expect(transferred.first.isValid, isFalse);
 
-      final ReadEtcResult readResult =
-          System.channelQueryAndReadEtc(pair.second);
+      final ReadEtcResult readResult = System.channelQueryAndReadEtc(pair.second);
       expect(readResult.status, equals(ZX.OK));
       expect(readResult.numBytes, equals(0));
       expect(readResult.bytes.lengthInBytes, equals(0));
@@ -341,18 +335,17 @@ void main() {
       final HandleResult vmo = System.vmoCreate(0);
 
       final HandleDisposition disposition = HandleDisposition(
-          ZX.HANDLE_OP_DUPLICATE,
-          vmo.handle,
-          ZX.OBJ_TYPE_VMO,
-          ZX.RIGHT_SAME_RIGHTS);
-      final int status = System.channelWriteEtc(
-          pair.first, data, <HandleDisposition>[disposition]);
+        ZX.HANDLE_OP_DUPLICATE,
+        vmo.handle,
+        ZX.OBJ_TYPE_VMO,
+        ZX.RIGHT_SAME_RIGHTS,
+      );
+      final int status = System.channelWriteEtc(pair.first, data, <HandleDisposition>[disposition]);
       expect(status, equals(ZX.OK));
       expect(disposition.result, equals(ZX.OK));
       expect(vmo.handle.isValid, isTrue);
 
-      final ReadEtcResult readResult =
-          System.channelQueryAndReadEtc(pair.second);
+      final ReadEtcResult readResult = System.channelQueryAndReadEtc(pair.second);
       expect(readResult.status, equals(ZX.OK));
       expect(readResult.numBytes, equals(0));
       expect(readResult.bytes.lengthInBytes, equals(0));
@@ -369,17 +362,19 @@ void main() {
       final ByteData data = utf8Bytes('');
       final HandlePairResult closed = System.channelCreate();
 
-      final HandleDisposition disposition = HandleDisposition(ZX.HANDLE_OP_MOVE,
-          closed.first, ZX.OBJ_TYPE_CHANNEL, ZX.RIGHT_SAME_RIGHTS);
+      final HandleDisposition disposition = HandleDisposition(
+        ZX.HANDLE_OP_MOVE,
+        closed.first,
+        ZX.OBJ_TYPE_CHANNEL,
+        ZX.RIGHT_SAME_RIGHTS,
+      );
       closed.first.close();
-      final int status = System.channelWriteEtc(
-          pair.first, data, <HandleDisposition>[disposition]);
+      final int status = System.channelWriteEtc(pair.first, data, <HandleDisposition>[disposition]);
       expect(status, equals(ZX.ERR_BAD_HANDLE));
       expect(disposition.result, equals(ZX.ERR_BAD_HANDLE));
       expect(closed.first.isValid, isFalse);
 
-      final ReadEtcResult readResult =
-          System.channelQueryAndReadEtc(pair.second);
+      final ReadEtcResult readResult = System.channelQueryAndReadEtc(pair.second);
       expect(readResult.status, equals(ZX.ERR_SHOULD_WAIT));
     });
 
@@ -390,10 +385,13 @@ void main() {
       final HandleResult vmo = System.vmoCreate(0);
 
       final List<HandleDisposition> dispositions = [
-        HandleDisposition(ZX.HANDLE_OP_MOVE, transferred.first,
-            ZX.OBJ_TYPE_CHANNEL, ZX.RIGHTS_IO),
-        HandleDisposition(ZX.HANDLE_OP_DUPLICATE, vmo.handle, ZX.OBJ_TYPE_VMO,
-            ZX.RIGHT_SAME_RIGHTS)
+        HandleDisposition(ZX.HANDLE_OP_MOVE, transferred.first, ZX.OBJ_TYPE_CHANNEL, ZX.RIGHTS_IO),
+        HandleDisposition(
+          ZX.HANDLE_OP_DUPLICATE,
+          vmo.handle,
+          ZX.OBJ_TYPE_VMO,
+          ZX.RIGHT_SAME_RIGHTS,
+        ),
       ];
       final int status = System.channelWriteEtc(pair.first, data, dispositions);
       expect(status, equals(ZX.OK));
@@ -402,8 +400,7 @@ void main() {
       expect(transferred.first.isValid, isFalse);
       expect(vmo.handle.isValid, isTrue);
 
-      final ReadEtcResult readResult =
-          System.channelQueryAndReadEtc(pair.second);
+      final ReadEtcResult readResult = System.channelQueryAndReadEtc(pair.second);
       expect(readResult.status, equals(ZX.OK));
       expect(readResult.numBytes, equals(0));
       expect(readResult.bytes.lengthInBytes, equals(0));
@@ -479,11 +476,9 @@ void main() {
       expect(pair.first.close(), equals(0));
       expect(pair.first.isValid, isFalse);
       expect(pair.second.isValid, isTrue);
-      final WriteResult firstResult =
-          System.socketWrite(pair.first, ByteData(1), 0);
+      final WriteResult firstResult = System.socketWrite(pair.first, ByteData(1), 0);
       expect(firstResult.status, equals(ZX.ERR_BAD_HANDLE));
-      final WriteResult secondResult =
-          System.socketWrite(pair.second, ByteData(1), 0);
+      final WriteResult secondResult = System.socketWrite(pair.second, ByteData(1), 0);
       expect(secondResult.status, equals(ZX.ERR_PEER_CLOSED));
     });
 
@@ -491,15 +486,13 @@ void main() {
       final HandlePairResult pair = System.socketCreate();
 
       // When no data is available, ZX.ERR_SHOULD_WAIT is returned.
-      expect(
-          System.socketRead(pair.second, 1).status, equals(ZX.ERR_SHOULD_WAIT));
+      expect(System.socketRead(pair.second, 1).status, equals(ZX.ERR_SHOULD_WAIT));
 
       final ByteData data = utf8Bytes('Hello, world');
       final WriteResult writeResult = System.socketWrite(pair.first, data, 0);
       expect(writeResult.status, equals(ZX.OK));
 
-      final ReadResult readResult =
-          System.socketRead(pair.second, data.lengthInBytes);
+      final ReadResult readResult = System.socketRead(pair.second, data.lengthInBytes);
       expect(readResult.status, equals(ZX.OK));
       expect(readResult.numBytes, equals(data.lengthInBytes));
       expect(readResult.bytes.lengthInBytes, equals(data.lengthInBytes));
@@ -513,16 +506,14 @@ void main() {
       expect(writeResult.status, equals(ZX.OK));
 
       const int shortLength = 'Hello'.length;
-      final ReadResult shortReadResult =
-          System.socketRead(pair.second, shortLength);
+      final ReadResult shortReadResult = System.socketRead(pair.second, shortLength);
       expect(shortReadResult.status, equals(ZX.OK));
       expect(shortReadResult.numBytes, equals(shortLength));
       expect(shortReadResult.bytes.lengthInBytes, equals(shortLength));
       expect(shortReadResult.bytesAsUTF8String(), equals('Hello'));
 
       final int longLength = data.lengthInBytes * 2;
-      final ReadResult longReadResult =
-          System.socketRead(pair.second, longLength);
+      final ReadResult longReadResult = System.socketRead(pair.second, longLength);
       expect(longReadResult.status, equals(ZX.OK));
       expect(longReadResult.numBytes, equals(data.lengthInBytes - shortLength));
       expect(longReadResult.bytes.lengthInBytes, equals(longLength));
@@ -531,11 +522,9 @@ void main() {
 
     test('partial write socket', () {
       final HandlePairResult pair = System.socketCreate();
-      final WriteResult writeResult1 =
-          System.socketWrite(pair.first, utf8Bytes('Hello, '), 0);
+      final WriteResult writeResult1 = System.socketWrite(pair.first, utf8Bytes('Hello, '), 0);
       expect(writeResult1.status, equals(ZX.OK));
-      final WriteResult writeResult2 =
-          System.socketWrite(pair.first, utf8Bytes('world'), 0);
+      final WriteResult writeResult2 = System.socketWrite(pair.first, utf8Bytes('world'), 0);
       expect(writeResult2.status, equals(ZX.OK));
 
       final ReadResult readResult = System.socketRead(pair.second, 100);
@@ -579,9 +568,10 @@ void main() {
   group('vmo', () {
     test('fromFile', () {
       const String fuchsia = 'Fuchsia';
-      File f = File('tmp/testdata')
-        ..createSync()
-        ..writeAsStringSync(fuchsia);
+      File f =
+          File('tmp/testdata')
+            ..createSync()
+            ..writeAsStringSync(fuchsia);
       String readFuchsia = f.readAsStringSync();
       expect(readFuchsia, equals(fuchsia));
 
@@ -599,12 +589,11 @@ void main() {
       Uint8List data = Uint8List.fromList(fuchsia.codeUnits);
       HandleResult createResult = System.vmoCreate(data.length);
       expect(createResult.status, equals(ZX.OK));
-      int writeResult = System.vmoWrite(createResult.handle, 0,
-                                        data.buffer.asByteData());
+      int writeResult = System.vmoWrite(createResult.handle, 0, data.buffer.asByteData());
       expect(writeResult, equals(ZX.OK));
-      Handle duplicate = createResult.handle.duplicate(ZX.RIGHTS_BASIC |
-                                                       ZX.RIGHT_READ |
-                                                       ZX.RIGHT_MAP);
+      Handle duplicate = createResult.handle.duplicate(
+        ZX.RIGHTS_BASIC | ZX.RIGHT_READ | ZX.RIGHT_MAP,
+      );
       expect(duplicate.isValid, isTrue);
 
       // Read from the duplicate.

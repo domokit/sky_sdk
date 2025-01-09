@@ -19,25 +19,24 @@ void main() {
     expect(kFlutterMemoryAllocationsEnabled, isFalse);
   });
 
-  testWidgets(
-    '$FlutterMemoryAllocations is noop when kFlutterMemoryAllocationsEnabled is false.',
-    (WidgetTester tester) async {
-      ObjectEvent? receivedEvent;
-      ObjectEvent listener(ObjectEvent event) => receivedEvent = event;
+  testWidgets('$FlutterMemoryAllocations is noop when kFlutterMemoryAllocationsEnabled is false.', (
+    WidgetTester tester,
+  ) async {
+    ObjectEvent? receivedEvent;
+    ObjectEvent listener(ObjectEvent event) => receivedEvent = event;
 
-      ma.addListener(listener);
-      _checkSdkHandlersNotSet();
-      expect(ma.hasListeners, isFalse);
+    ma.addListener(listener);
+    _checkSdkHandlersNotSet();
+    expect(ma.hasListeners, isFalse);
 
-      await _activateFlutterObjects(tester);
-      _checkSdkHandlersNotSet();
-      expect(receivedEvent, isNull);
-      expect(ma.hasListeners, isFalse);
+    await _activateFlutterObjects(tester);
+    _checkSdkHandlersNotSet();
+    expect(receivedEvent, isNull);
+    expect(ma.hasListeners, isFalse);
 
-      ma.removeListener(listener);
-      _checkSdkHandlersNotSet();
-    },
-  );
+    ma.removeListener(listener);
+    _checkSdkHandlersNotSet();
+  });
 }
 
 void _checkSdkHandlersNotSet() {

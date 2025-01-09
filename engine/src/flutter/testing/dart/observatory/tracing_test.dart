@@ -42,8 +42,7 @@ Future<void> _testChromeFormatTrace(vms.VmService vmService) async {
 
 Future<void> _testPerfettoFormatTrace(vms.VmService vmService) async {
   final vms.PerfettoTimeline response = await vmService.getPerfettoVMTimeline();
-  final List<TracePacket> packets =
-      Trace.fromBuffer(base64Decode(response.trace!)).packet;
+  final List<TracePacket> packets = Trace.fromBuffer(base64Decode(response.trace!)).packet;
   final Iterable<TrackEvent> events = packets
       .where((TracePacket packet) => packet.hasTrackEvent())
       .map((TracePacket packet) => packet.trackEvent);

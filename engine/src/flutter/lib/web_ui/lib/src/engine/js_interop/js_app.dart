@@ -21,7 +21,7 @@ extension JsFlutterViewOptionsExtension on JsFlutterViewOptions {
   @JS('hostElement')
   external DomElement? get _hostElement;
   DomElement get hostElement {
-    assert (_hostElement != null, '`hostElement` passed to addView cannot be null.');
+    assert(_hostElement != null, '`hostElement` passed to addView cannot be null.');
     return _hostElement!;
   }
 
@@ -65,15 +65,11 @@ abstract class FlutterApp {
   factory FlutterApp({
     required AddFlutterViewFn addView,
     required RemoveFlutterViewFn removeView,
-  }) =>
-      FlutterApp._(
-        addView: addView.toJS,
-        removeView: ((JSNumber id) => removeView(id.toDartInt)).toJS,
-      );
-  external factory FlutterApp._({
-    required JSFunction addView,
-    required JSFunction removeView,
-  });
+  }) => FlutterApp._(
+    addView: addView.toJS,
+    removeView: ((JSNumber id) => removeView(id.toDartInt)).toJS,
+  );
+  external factory FlutterApp._({required JSFunction addView, required JSFunction removeView});
 }
 
 /// Typedef for the function that adds a new view to the app.

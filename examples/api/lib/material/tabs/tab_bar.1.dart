@@ -13,10 +13,7 @@ class TabBarApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      home: const TabBarExample(),
-    );
+    return MaterialApp(theme: ThemeData(useMaterial3: true), home: const TabBarExample());
   }
 }
 
@@ -52,30 +49,18 @@ class _TabBarExampleState extends State<TabBarExample> with TickerProviderStateM
         bottom: TabBar(
           controller: _tabController,
           tabs: const <Widget>[
-            Tab(
-              icon: Icon(Icons.cloud_outlined),
-            ),
-            Tab(
-              icon: Icon(Icons.beach_access_sharp),
-            ),
-            Tab(
-              icon: Icon(Icons.brightness_5_sharp),
-            ),
+            Tab(icon: Icon(Icons.cloud_outlined)),
+            Tab(icon: Icon(Icons.beach_access_sharp)),
+            Tab(icon: Icon(Icons.brightness_5_sharp)),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: const <Widget>[
-          Center(
-            child: Text("It's cloudy here"),
-          ),
-          Center(
-            child: Text("It's rainy here"),
-          ),
-          Center(
-            child: Text("It's sunny here"),
-          ),
+          Center(child: Text("It's cloudy here")),
+          Center(child: Text("It's rainy here")),
+          Center(child: Text("It's sunny here")),
         ],
       ),
     );

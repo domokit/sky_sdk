@@ -3361,8 +3361,8 @@ TEST_F(DisplayListRendering, DrawVerticesWithColors) {
       SK_ColorRED,  SK_ColorBLUE,   SK_ColorGREEN,
       SK_ColorCYAN, SK_ColorYELLOW, SK_ColorMAGENTA,
   };
-  const std::shared_ptr<DlVertices> dl_vertices =
-      DlVertices::Make(DlVertexMode::kTriangles, 6, pts, nullptr, dl_colors);
+  const std::shared_ptr<DlVertices> dl_vertices = DlVertices::Make(
+      DlVertexMode::kTriangles, 6, ToDlPoints(pts), nullptr, dl_colors);
   const auto sk_vertices =
       SkVertices::MakeCopy(SkVertices::VertexMode::kTriangles_VertexMode, 6,
                            pts, nullptr, sk_colors);
@@ -3408,8 +3408,8 @@ TEST_F(DisplayListRendering, DrawVerticesWithImage) {
       SkPoint::Make(0, 0),
       SkPoint::Make(kRenderWidth, 0),
   };
-  const std::shared_ptr<DlVertices> dl_vertices =
-      DlVertices::Make(DlVertexMode::kTriangles, 6, pts, tex, nullptr);
+  const std::shared_ptr<DlVertices> dl_vertices = DlVertices::Make(
+      DlVertexMode::kTriangles, 6, ToDlPoints(pts), ToDlPoints(tex), nullptr);
   const auto sk_vertices = SkVertices::MakeCopy(
       SkVertices::VertexMode::kTriangles_VertexMode, 6, pts, tex, nullptr);
 

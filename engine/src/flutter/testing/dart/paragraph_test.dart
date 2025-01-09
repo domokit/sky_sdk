@@ -12,12 +12,14 @@ void main() {
 
   test('predictably lays out a single-line paragraph - Ahem', () {
     for (final double fontSize in <double>[10.0, 20.0, 30.0, 40.0]) {
-      final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
-        fontFamily: 'Ahem',
-        fontStyle: FontStyle.normal,
-        fontWeight: FontWeight.normal,
-        fontSize: fontSize,
-      ));
+      final ParagraphBuilder builder = ParagraphBuilder(
+        ParagraphStyle(
+          fontFamily: 'Ahem',
+          fontStyle: FontStyle.normal,
+          fontWeight: FontWeight.normal,
+          fontSize: fontSize,
+        ),
+      );
       builder.addText('Test');
       final Paragraph paragraph = builder.build();
       paragraph.layout(const ParagraphConstraints(width: 400.0));
@@ -36,12 +38,14 @@ void main() {
 
   test('predictably lays out a single-line paragraph - FlutterTest', () {
     for (final double fontSize in <double>[10.0, 20.0, 30.0, 40.0]) {
-      final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
-        fontFamily: 'FlutterTest',
-        fontStyle: FontStyle.normal,
-        fontWeight: FontWeight.normal,
-        fontSize: fontSize,
-      ));
+      final ParagraphBuilder builder = ParagraphBuilder(
+        ParagraphStyle(
+          fontFamily: 'FlutterTest',
+          fontStyle: FontStyle.normal,
+          fontWeight: FontWeight.normal,
+          fontSize: fontSize,
+        ),
+      );
       builder.addText('Test');
       final Paragraph paragraph = builder.build();
       paragraph.layout(const ParagraphConstraints(width: 400.0));
@@ -57,12 +61,14 @@ void main() {
 
   test('predictably lays out a multi-line paragraph', () {
     for (final double fontSize in <double>[10.0, 20.0, 30.0, 40.0]) {
-      final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
-        fontFamily: 'Ahem',
-        fontStyle: FontStyle.normal,
-        fontWeight: FontWeight.normal,
-        fontSize: fontSize,
-      ));
+      final ParagraphBuilder builder = ParagraphBuilder(
+        ParagraphStyle(
+          fontFamily: 'Ahem',
+          fontStyle: FontStyle.normal,
+          fontWeight: FontWeight.normal,
+          fontSize: fontSize,
+        ),
+      );
       builder.addText('Test Ahem');
       final Paragraph paragraph = builder.build();
       paragraph.layout(ParagraphConstraints(width: fontSize * 5.0));
@@ -83,12 +89,14 @@ void main() {
 
   test('getLineBoundary', () {
     const double fontSize = 10.0;
-    final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
-      fontFamily: 'Ahem',
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.normal,
-      fontSize: fontSize,
-    ));
+    final ParagraphBuilder builder = ParagraphBuilder(
+      ParagraphStyle(
+        fontFamily: 'Ahem',
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.normal,
+        fontSize: fontSize,
+      ),
+    );
     builder.addText('Test Ahem');
     final Paragraph paragraph = builder.build();
     paragraph.layout(const ParagraphConstraints(width: fontSize * 5.0));
@@ -96,31 +104,22 @@ void main() {
     // Wraps to two lines.
     expect(paragraph.height, closeTo(fontSize * 2.0, 0.001));
 
-    const TextPosition wrapPositionDown = TextPosition(
-      offset: 5,
-    );
+    const TextPosition wrapPositionDown = TextPosition(offset: 5);
     TextRange line = paragraph.getLineBoundary(wrapPositionDown);
     expect(line.start, 5);
     expect(line.end, 9);
 
-    const TextPosition wrapPositionUp = TextPosition(
-      offset: 5,
-      affinity: TextAffinity.upstream,
-    );
+    const TextPosition wrapPositionUp = TextPosition(offset: 5, affinity: TextAffinity.upstream);
     line = paragraph.getLineBoundary(wrapPositionUp);
     expect(line.start, 0);
     expect(line.end, 5);
 
-    const TextPosition wrapPositionStart = TextPosition(
-      offset: 0,
-    );
+    const TextPosition wrapPositionStart = TextPosition(offset: 0);
     line = paragraph.getLineBoundary(wrapPositionStart);
     expect(line.start, 0);
     expect(line.end, 5);
 
-    const TextPosition wrapPositionEnd = TextPosition(
-      offset: 9,
-    );
+    const TextPosition wrapPositionEnd = TextPosition(offset: 9);
     line = paragraph.getLineBoundary(wrapPositionEnd);
     expect(line.start, 5);
     expect(line.end, 9);
@@ -128,13 +127,15 @@ void main() {
 
   test('getLineBoundary RTL', () {
     const double fontSize = 10.0;
-    final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
-      fontFamily: 'Ahem',
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.normal,
-      fontSize: fontSize,
-      textDirection: TextDirection.rtl,
-    ));
+    final ParagraphBuilder builder = ParagraphBuilder(
+      ParagraphStyle(
+        fontFamily: 'Ahem',
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.normal,
+        fontSize: fontSize,
+        textDirection: TextDirection.rtl,
+      ),
+    );
     builder.addText('القاهرةالقاهرة');
     final Paragraph paragraph = builder.build();
     paragraph.layout(const ParagraphConstraints(width: fontSize * 5.0));
@@ -142,31 +143,22 @@ void main() {
     // Wraps to three lines.
     expect(paragraph.height, closeTo(fontSize * 3.0, 0.001));
 
-    const TextPosition wrapPositionDown = TextPosition(
-      offset: 5,
-    );
+    const TextPosition wrapPositionDown = TextPosition(offset: 5);
     TextRange line = paragraph.getLineBoundary(wrapPositionDown);
     expect(line.start, 5);
     expect(line.end, 10);
 
-    const TextPosition wrapPositionUp = TextPosition(
-      offset: 5,
-      affinity: TextAffinity.upstream,
-    );
+    const TextPosition wrapPositionUp = TextPosition(offset: 5, affinity: TextAffinity.upstream);
     line = paragraph.getLineBoundary(wrapPositionUp);
     expect(line.start, 0);
     expect(line.end, 5);
 
-    const TextPosition wrapPositionStart = TextPosition(
-      offset: 0,
-    );
+    const TextPosition wrapPositionStart = TextPosition(offset: 0);
     line = paragraph.getLineBoundary(wrapPositionStart);
     expect(line.start, 0);
     expect(line.end, 5);
 
-    const TextPosition wrapPositionEnd = TextPosition(
-      offset: 9,
-    );
+    const TextPosition wrapPositionEnd = TextPosition(offset: 9);
     line = paragraph.getLineBoundary(wrapPositionEnd);
     expect(line.start, 5);
     expect(line.end, 10);
@@ -174,13 +166,15 @@ void main() {
 
   test('getLineBoundary empty line', () {
     const double fontSize = 10.0;
-    final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
-      fontFamily: 'Ahem',
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.normal,
-      fontSize: fontSize,
-      textDirection: TextDirection.rtl,
-    ));
+    final ParagraphBuilder builder = ParagraphBuilder(
+      ParagraphStyle(
+        fontFamily: 'Ahem',
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.normal,
+        fontSize: fontSize,
+        textDirection: TextDirection.rtl,
+      ),
+    );
     builder.addText('Test\n\nAhem');
     final Paragraph paragraph = builder.build();
     paragraph.layout(const ParagraphConstraints(width: fontSize * 5.0));
@@ -188,9 +182,7 @@ void main() {
     // Three lines due to line breaks, with the middle line being empty.
     expect(paragraph.height, closeTo(fontSize * 3.0, 0.001));
 
-    const TextPosition emptyLinePosition = TextPosition(
-      offset: 5,
-    );
+    const TextPosition emptyLinePosition = TextPosition(offset: 5);
     TextRange line = paragraph.getLineBoundary(emptyLinePosition);
     expect(line.start, 5);
     expect(line.end, 5);
@@ -204,16 +196,12 @@ void main() {
     expect(line.start, 5);
     expect(line.end, 5);
 
-    const TextPosition endOfFirstLinePosition = TextPosition(
-      offset: 4,
-    );
+    const TextPosition endOfFirstLinePosition = TextPosition(offset: 4);
     line = paragraph.getLineBoundary(endOfFirstLinePosition);
     expect(line.start, 0);
     expect(line.end, 4);
 
-    const TextPosition startOfLastLinePosition = TextPosition(
-      offset: 6,
-    );
+    const TextPosition startOfLastLinePosition = TextPosition(offset: 6);
     line = paragraph.getLineBoundary(startOfLastLinePosition);
     expect(line.start, 6);
     expect(line.end, 10);
@@ -221,11 +209,9 @@ void main() {
 
   test('getLineMetricsAt', () {
     const double fontSize = 10.0;
-    final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
-      fontSize: fontSize,
-      textDirection: TextDirection.rtl,
-      height: 2.0,
-    ));
+    final ParagraphBuilder builder = ParagraphBuilder(
+      ParagraphStyle(fontSize: fontSize, textDirection: TextDirection.rtl, height: 2.0),
+    );
     builder.addText('Test\npppp');
     final Paragraph paragraph = builder.build();
     paragraph.layout(const ParagraphConstraints(width: 100.0));
@@ -254,9 +240,7 @@ void main() {
 
   test('empty paragraph', () {
     const double fontSize = 10.0;
-    final Paragraph paragraph = ParagraphBuilder(ParagraphStyle(
-      fontSize: fontSize,
-    )).build();
+    final Paragraph paragraph = ParagraphBuilder(ParagraphStyle(fontSize: fontSize)).build();
     paragraph.layout(const ParagraphConstraints(width: double.infinity));
 
     expect(paragraph.getClosestGlyphInfoForOffset(Offset.zero), isNull);
@@ -272,11 +256,9 @@ void main() {
 
   test('OOB indices as input', () {
     const double fontSize = 10.0;
-    final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
-      fontSize: fontSize,
-      maxLines: 1,
-      ellipsis: 'BBB',
-    ))..addText('A' * 100);
+    final ParagraphBuilder builder = ParagraphBuilder(
+      ParagraphStyle(fontSize: fontSize, maxLines: 1, ellipsis: 'BBB'),
+    )..addText('A' * 100);
     final Paragraph paragraph = builder.build();
     paragraph.layout(const ParagraphConstraints(width: 100));
 
@@ -293,17 +275,21 @@ void main() {
     expect(paragraph.getLineMetricsAt(7), isNull);
 
     expect(paragraph.getGlyphInfoAt(-1), isNull);
-    expect(paragraph.getGlyphInfoAt(0)?.graphemeClusterCodeUnitRange, const TextRange(start: 0, end: 1));
-    expect(paragraph.getGlyphInfoAt(6)?.graphemeClusterCodeUnitRange, const TextRange(start: 6, end: 7));
+    expect(
+      paragraph.getGlyphInfoAt(0)?.graphemeClusterCodeUnitRange,
+      const TextRange(start: 0, end: 1),
+    );
+    expect(
+      paragraph.getGlyphInfoAt(6)?.graphemeClusterCodeUnitRange,
+      const TextRange(start: 6, end: 7),
+    );
     expect(paragraph.getGlyphInfoAt(7), isNull);
     expect(paragraph.getGlyphInfoAt(200), isNull);
   });
 
   test('querying glyph info', () {
     const double fontSize = 10.0;
-    final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
-      fontSize: fontSize,
-    ));
+    final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(fontSize: fontSize));
     builder.addText('Test\nTest');
     final Paragraph paragraph = builder.build();
     paragraph.layout(const ParagraphConstraints(width: double.infinity));
@@ -325,7 +311,9 @@ void main() {
     final PictureRecorder recorder = PictureRecorder();
     final Canvas canvas = Canvas(recorder);
 
-    void callback() { canvas.drawParagraph(paragraph, Offset.zero); }
+    void callback() {
+      canvas.drawParagraph(paragraph, Offset.zero);
+    }
 
     expect(callback, throwsA(isA<AssertionError>()));
   });
@@ -337,8 +325,8 @@ void main() {
     expect((fontSize * text.length).truncate(), isNot(fontSize * text.length));
     final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(fontSize: fontSize));
     builder.addText(text);
-    final Paragraph paragraph = builder.build()
-      ..layout(const ParagraphConstraints(width: text.length * fontSize));
+    final Paragraph paragraph =
+        builder.build()..layout(const ParagraphConstraints(width: text.length * fontSize));
     expect(paragraph.maxIntrinsicWidth, text.length * fontSize);
     switch (paragraph.computeLineMetrics()) {
       case [LineMetrics(width: final double width)]:
@@ -350,32 +338,35 @@ void main() {
 
   test('kTextHeightNone unsets the height multiplier', () {
     const double fontSize = 10;
-    final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(fontSize: fontSize, height: 10));
+    final ParagraphBuilder builder = ParagraphBuilder(
+      ParagraphStyle(fontSize: fontSize, height: 10),
+    );
     builder.pushStyle(TextStyle(height: kTextHeightNone));
     builder.addText('A');
-    final Paragraph paragraph = builder.build()
-      ..layout(const ParagraphConstraints(width: 1000));
+    final Paragraph paragraph = builder.build()..layout(const ParagraphConstraints(width: 1000));
     expect(paragraph.height, fontSize);
   });
 
   test('kTextHeightNone ParagraphStyle', () {
     const double fontSize = 10;
-    final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(fontSize: fontSize, height: kTextHeightNone));
+    final ParagraphBuilder builder = ParagraphBuilder(
+      ParagraphStyle(fontSize: fontSize, height: kTextHeightNone),
+    );
     builder.addText('A');
-    final Paragraph paragraph = builder.build()
-      ..layout(const ParagraphConstraints(width: 1000));
+    final Paragraph paragraph = builder.build()..layout(const ParagraphConstraints(width: 1000));
     expect(paragraph.height, fontSize);
   });
 
   test('kTextHeightNone StrutStyle', () {
     const double fontSize = 10;
-    final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
-      fontSize: 100,
-      strutStyle: StrutStyle(forceStrutHeight: true, height: kTextHeightNone, fontSize: fontSize),
-    ));
+    final ParagraphBuilder builder = ParagraphBuilder(
+      ParagraphStyle(
+        fontSize: 100,
+        strutStyle: StrutStyle(forceStrutHeight: true, height: kTextHeightNone, fontSize: fontSize),
+      ),
+    );
     builder.addText('A');
-    final Paragraph paragraph = builder.build()
-      ..layout(const ParagraphConstraints(width: 1000));
+    final Paragraph paragraph = builder.build()..layout(const ParagraphConstraints(width: 1000));
     expect(paragraph.height, fontSize);
   });
 }

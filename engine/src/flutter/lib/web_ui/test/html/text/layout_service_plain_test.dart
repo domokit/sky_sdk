@@ -28,9 +28,7 @@ Future<void> testMain() async {
     expect(paragraph.maxIntrinsicWidth, 0);
     expect(paragraph.minIntrinsicWidth, 0);
     expect(paragraph.height, 10);
-    expectLines(paragraph, <TestLine>[
-      l('', 0, 0, width: 0.0, height: 10.0, baseline: 8.0),
-    ]);
+    expectLines(paragraph, <TestLine>[l('', 0, 0, width: 0.0, height: 10.0, baseline: 8.0)]);
   });
 
   test('preserves whitespace when measuring', () {
@@ -41,22 +39,17 @@ Future<void> testMain() async {
     expect(paragraph.maxIntrinsicWidth, 60);
     expect(paragraph.minIntrinsicWidth, 30);
     expect(paragraph.height, 10);
-    expectLines(paragraph, <TestLine>[
-      l('   abc', 0, 6, hardBreak: true, width: 60.0),
-    ]);
+    expectLines(paragraph, <TestLine>[l('   abc', 0, 6, hardBreak: true, width: 60.0)]);
 
     // trailing whitespaces
     paragraph = plain(ahemStyle, 'abc   ')..layout(constrain(double.infinity));
     expect(paragraph.maxIntrinsicWidth, 60);
     expect(paragraph.minIntrinsicWidth, 30);
     expect(paragraph.height, 10);
-    expectLines(paragraph, <TestLine>[
-      l('abc   ', 0, 6, hardBreak: true, width: 30.0),
-    ]);
+    expectLines(paragraph, <TestLine>[l('abc   ', 0, 6, hardBreak: true, width: 30.0)]);
 
     // mixed whitespaces
-    paragraph = plain(ahemStyle, '  ab   c  ')
-      ..layout(constrain(double.infinity));
+    paragraph = plain(ahemStyle, '  ab   c  ')..layout(constrain(double.infinity));
     expect(paragraph.maxIntrinsicWidth, 100);
     expect(paragraph.minIntrinsicWidth, 20);
     expect(paragraph.height, 10);
@@ -69,23 +62,18 @@ Future<void> testMain() async {
     expect(paragraph.maxIntrinsicWidth, 10);
     expect(paragraph.minIntrinsicWidth, 0);
     expect(paragraph.height, 10);
-    expectLines(paragraph, <TestLine>[
-      l(' ', 0, 1, hardBreak: true, width: 0.0, left: 0.0),
-    ]);
+    expectLines(paragraph, <TestLine>[l(' ', 0, 1, hardBreak: true, width: 0.0, left: 0.0)]);
 
     // whitespace only
     paragraph = plain(ahemStyle, '     ')..layout(constrain(double.infinity));
     expect(paragraph.maxIntrinsicWidth, 50);
     expect(paragraph.minIntrinsicWidth, 0);
     expect(paragraph.height, 10);
-    expectLines(paragraph, <TestLine>[
-      l('     ', 0, 5, hardBreak: true, width: 0.0, left: 0.0),
-    ]);
+    expectLines(paragraph, <TestLine>[l('     ', 0, 5, hardBreak: true, width: 0.0, left: 0.0)]);
   });
 
   test('uses single-line when text can fit without wrapping', () {
-    final CanvasParagraph paragraph = plain(ahemStyle, '12345')
-      ..layout(constrain(50.0));
+    final CanvasParagraph paragraph = plain(ahemStyle, '12345')..layout(constrain(50.0));
 
     // Should fit on a single line.
     expect(paragraph.alphabeticBaseline, 8);
@@ -99,8 +87,7 @@ Future<void> testMain() async {
   });
 
   test('simple multi-line text', () {
-    final CanvasParagraph paragraph = plain(ahemStyle, 'foo bar baz')
-      ..layout(constrain(70.0));
+    final CanvasParagraph paragraph = plain(ahemStyle, 'foo bar baz')..layout(constrain(70.0));
     expect(paragraph.alphabeticBaseline, 8);
     expect(paragraph.maxIntrinsicWidth, 110);
     expect(paragraph.minIntrinsicWidth, 30);
@@ -194,8 +181,7 @@ Future<void> testMain() async {
   });
 
   test('uses multi-line for text that contains new-line', () {
-    final CanvasParagraph paragraph = plain(ahemStyle, '12\n34')
-      ..layout(constrain(50.0));
+    final CanvasParagraph paragraph = plain(ahemStyle, '12\n34')..layout(constrain(50.0));
 
     // Text containing newlines should always be drawn in multi-line mode.
     expect(paragraph.maxIntrinsicWidth, 20);
@@ -245,45 +231,38 @@ Future<void> testMain() async {
     ]);
   });
 
-  test(
-    'wraps multi-line text correctly when constraint width is infinite',
-    () {
-      final CanvasParagraph paragraph = plain(ahemStyle, '123\n456 789')
-        ..layout(constrain(double.infinity));
+  test('wraps multi-line text correctly when constraint width is infinite', () {
+    final CanvasParagraph paragraph = plain(ahemStyle, '123\n456 789')
+      ..layout(constrain(double.infinity));
 
-      expect(paragraph.maxIntrinsicWidth, 70);
-      expect(paragraph.minIntrinsicWidth, 30);
-      expect(paragraph.width, double.infinity);
-      expect(paragraph.height, 20);
-      expectLines(paragraph, <TestLine>[
-        l('123', 0, 4, hardBreak: true, width: 30.0, left: 0.0),
-        l('456 789', 4, 11, hardBreak: true, width: 70.0, left: 0.0),
-      ]);
-    },
-  );
+    expect(paragraph.maxIntrinsicWidth, 70);
+    expect(paragraph.minIntrinsicWidth, 30);
+    expect(paragraph.width, double.infinity);
+    expect(paragraph.height, 20);
+    expectLines(paragraph, <TestLine>[
+      l('123', 0, 4, hardBreak: true, width: 30.0, left: 0.0),
+      l('456 789', 4, 11, hardBreak: true, width: 70.0, left: 0.0),
+    ]);
+  });
 
   test('takes letter spacing into account', () {
-    final EngineTextStyle spacedTextStyle =
-        EngineTextStyle.only(letterSpacing: 3);
-    final CanvasParagraph spacedText =
-        plain(ahemStyle, 'abc', textStyle: spacedTextStyle)
-          ..layout(constrain(100.0));
+    final EngineTextStyle spacedTextStyle = EngineTextStyle.only(letterSpacing: 3);
+    final CanvasParagraph spacedText = plain(ahemStyle, 'abc', textStyle: spacedTextStyle)
+      ..layout(constrain(100.0));
 
     expect(spacedText.minIntrinsicWidth, 39);
     expect(spacedText.maxIntrinsicWidth, 39);
   });
 
   test('takes word spacing into account', () {
-    final CanvasParagraph normalText = plain(ahemStyle, 'a b c')
-      ..layout(constrain(100.0));
-    final CanvasParagraph spacedText = plain(ahemStyle, 'a b c',
-        textStyle: EngineTextStyle.only(wordSpacing: 1.5))
-      ..layout(constrain(100.0));
+    final CanvasParagraph normalText = plain(ahemStyle, 'a b c')..layout(constrain(100.0));
+    final CanvasParagraph spacedText = plain(
+      ahemStyle,
+      'a b c',
+      textStyle: EngineTextStyle.only(wordSpacing: 1.5),
+    )..layout(constrain(100.0));
 
-    expect(
-      normalText.maxIntrinsicWidth < spacedText.maxIntrinsicWidth,
-      isTrue,
-    );
+    expect(normalText.maxIntrinsicWidth < spacedText.maxIntrinsicWidth, isTrue);
   }, skip: skipWordSpacing);
 
   test('minIntrinsicWidth', () {
@@ -404,9 +383,7 @@ Future<void> testMain() async {
     expect(longText.minIntrinsicWidth, 480);
     expect(longText.maxIntrinsicWidth, 480);
     expect(longText.height, 10);
-    expectLines(longText, <TestLine>[
-      l('AA...', 0, 2, hardBreak: true, width: 50.0, left: 0.0),
-    ]);
+    expectLines(longText, <TestLine>[l('AA...', 0, 2, hardBreak: true, width: 50.0, left: 0.0)]);
 
     // The short prefix should make the text break into two lines, but the
     // second line should remain unbroken.
@@ -424,8 +401,7 @@ Future<void> testMain() async {
 
     // Constraints only enough to fit "AA" with the ellipsis, but not the
     // trailing white space.
-    final CanvasParagraph trailingSpace = plain(overflowStyle, 'AA AAA')
-      ..layout(constrain(50.0));
+    final CanvasParagraph trailingSpace = plain(overflowStyle, 'AA AAA')..layout(constrain(50.0));
     expect(trailingSpace.minIntrinsicWidth, 30);
     expect(trailingSpace.maxIntrinsicWidth, 60);
     expect(trailingSpace.height, 10);
@@ -434,14 +410,11 @@ Future<void> testMain() async {
     ]);
 
     // Tiny constraints.
-    final CanvasParagraph paragraph = plain(overflowStyle, 'AAAA')
-      ..layout(constrain(30.0));
+    final CanvasParagraph paragraph = plain(overflowStyle, 'AAAA')..layout(constrain(30.0));
     expect(paragraph.minIntrinsicWidth, 40);
     expect(paragraph.maxIntrinsicWidth, 40);
     expect(paragraph.height, 10);
-    expectLines(paragraph, <TestLine>[
-      l('...', 0, 0, hardBreak: true, width: 30.0, left: 0.0),
-    ]);
+    expectLines(paragraph, <TestLine>[l('...', 0, 0, hardBreak: true, width: 30.0, left: 0.0)]);
 
     // Tinier constraints (not enough for the ellipsis).
     paragraph.layout(constrain(10.0));
@@ -453,9 +426,7 @@ Future<void> testMain() async {
     // expectLines(paragraph, <TestLine>[
     //   l('.', 0, 0, hardBreak: false, width: 10.0, left: 0.0),
     // ]);
-    expectLines(paragraph, <TestLine>[
-      l('...', 0, 0, hardBreak: true, width: 30.0, left: 0.0),
-    ]);
+    expectLines(paragraph, <TestLine>[l('...', 0, 0, hardBreak: true, width: 30.0, left: 0.0)]);
   });
 
   test('respects max lines', () {
@@ -469,14 +440,11 @@ Future<void> testMain() async {
     final CanvasParagraph oneline = plain(maxlinesStyle, 'One line')
       ..layout(constrain(double.infinity));
     expect(oneline.height, 10);
-    expectLines(oneline, <TestLine>[
-      l('One line', 0, 8, hardBreak: true, width: 80.0, left: 0.0),
-    ]);
+    expectLines(oneline, <TestLine>[l('One line', 0, 8, hardBreak: true, width: 80.0, left: 0.0)]);
 
     // The height should respect max lines and be limited to two lines here.
-    final CanvasParagraph threelines =
-        plain(maxlinesStyle, 'First\nSecond\nThird')
-          ..layout(constrain(double.infinity));
+    final CanvasParagraph threelines = plain(maxlinesStyle, 'First\nSecond\nThird')
+      ..layout(constrain(double.infinity));
     expect(threelines.height, 20);
     expectLines(threelines, <TestLine>[
       l('First', 0, 6, hardBreak: true, width: 50.0, left: 0.0),
@@ -495,10 +463,8 @@ Future<void> testMain() async {
     ]);
 
     // Case when last line is a long unbreakable word.
-    final CanvasParagraph veryLongLastLine = plain(
-      maxlinesStyle,
-      'AAA AAAAAAAAAAAAAAAAAAA',
-    )..layout(constrain(50.0));
+    final CanvasParagraph veryLongLastLine = plain(maxlinesStyle, 'AAA AAAAAAAAAAAAAAAAAAA')
+      ..layout(constrain(50.0));
     expect(veryLongLastLine.height, 20);
     expectLines(veryLongLastLine, <TestLine>[
       l('AAA ', 0, 4, hardBreak: false, width: 30.0, left: 0.0),
@@ -525,23 +491,17 @@ Future<void> testMain() async {
     // Simple no overflow case.
     paragraph = plain(onelineStyle, 'abcdef')..layout(constrain(60.0));
     expect(paragraph.height, 10);
-    expectLines(paragraph, <TestLine>[
-      l('abcdef', 0, 6, hardBreak: true, width: 60.0, left: 0.0),
-    ]);
+    expectLines(paragraph, <TestLine>[l('abcdef', 0, 6, hardBreak: true, width: 60.0, left: 0.0)]);
 
     // Simple overflow case.
     paragraph = plain(onelineStyle, 'abcd efg')..layout(constrain(60.0));
     expect(paragraph.height, 10);
-    expectLines(paragraph, <TestLine>[
-      l('abc...', 0, 3, hardBreak: true, width: 60.0, left: 0.0),
-    ]);
+    expectLines(paragraph, <TestLine>[l('abc...', 0, 3, hardBreak: true, width: 60.0, left: 0.0)]);
 
     // Another simple overflow case.
     paragraph = plain(onelineStyle, 'a bcde fgh')..layout(constrain(60.0));
     expect(paragraph.height, 10);
-    expectLines(paragraph, <TestLine>[
-      l('a b...', 0, 3, hardBreak: true, width: 60.0, left: 0.0),
-    ]);
+    expectLines(paragraph, <TestLine>[l('a b...', 0, 3, hardBreak: true, width: 60.0, left: 0.0)]);
 
     // The ellipsis is supposed to go on the second line, but because the
     // 2nd line doesn't overflow, no ellipsis is shown.
@@ -562,8 +522,7 @@ Future<void> testMain() async {
 
     // Even if the second line can be broken, we don't break it, we just
     // insert the ellipsis.
-    paragraph = plain(multilineStyle, 'abcde f gh ijk')
-      ..layout(constrain(60.0));
+    paragraph = plain(multilineStyle, 'abcde f gh ijk')..layout(constrain(60.0));
     expect(paragraph.height, 20);
     expectLines(paragraph, <TestLine>[
       l('abcde ', 0, 6, hardBreak: false, width: 50.0, left: 0.0),
@@ -579,8 +538,7 @@ Future<void> testMain() async {
     ]);
 
     // Both first and second lines overflow.
-    paragraph = plain(multilineStyle, 'abcdefg hijklmnop')
-      ..layout(constrain(60.0));
+    paragraph = plain(multilineStyle, 'abcdefg hijklmnop')..layout(constrain(60.0));
     expect(paragraph.height, 20);
     expectLines(paragraph, <TestLine>[
       l('abcdef', 0, 6, hardBreak: false, width: 60.0, left: 0.0),
@@ -600,40 +558,35 @@ Future<void> testMain() async {
       );
     }
 
-    paragraph = plain(createStyle(ui.TextAlign.start), 'abc\ndefghi')
-      ..layout(constrain(50.0));
+    paragraph = plain(createStyle(ui.TextAlign.start), 'abc\ndefghi')..layout(constrain(50.0));
     expectLines(paragraph, <TestLine>[
       l('abc', 0, 4, hardBreak: true, width: 30.0, left: 0.0),
       l('defgh', 4, 9, hardBreak: false, width: 50.0, left: 0.0),
       l('i', 9, 10, hardBreak: true, width: 10.0, left: 0.0),
     ]);
 
-    paragraph = plain(createStyle(ui.TextAlign.end), 'abc\ndefghi')
-      ..layout(constrain(50.0));
+    paragraph = plain(createStyle(ui.TextAlign.end), 'abc\ndefghi')..layout(constrain(50.0));
     expectLines(paragraph, <TestLine>[
       l('abc', 0, 4, hardBreak: true, width: 30.0, left: 20.0),
       l('defgh', 4, 9, hardBreak: false, width: 50.0, left: 0.0),
       l('i', 9, 10, hardBreak: true, width: 10.0, left: 40.0),
     ]);
 
-    paragraph = plain(createStyle(ui.TextAlign.center), 'abc\ndefghi')
-      ..layout(constrain(50.0));
+    paragraph = plain(createStyle(ui.TextAlign.center), 'abc\ndefghi')..layout(constrain(50.0));
     expectLines(paragraph, <TestLine>[
       l('abc', 0, 4, hardBreak: true, width: 30.0, left: 10.0),
       l('defgh', 4, 9, hardBreak: false, width: 50.0, left: 0.0),
       l('i', 9, 10, hardBreak: true, width: 10.0, left: 20.0),
     ]);
 
-    paragraph = plain(createStyle(ui.TextAlign.left), 'abc\ndefghi')
-      ..layout(constrain(50.0));
+    paragraph = plain(createStyle(ui.TextAlign.left), 'abc\ndefghi')..layout(constrain(50.0));
     expectLines(paragraph, <TestLine>[
       l('abc', 0, 4, hardBreak: true, width: 30.0, left: 0.0),
       l('defgh', 4, 9, hardBreak: false, width: 50.0, left: 0.0),
       l('i', 9, 10, hardBreak: true, width: 10.0, left: 0.0),
     ]);
 
-    paragraph = plain(createStyle(ui.TextAlign.right), 'abc\ndefghi')
-      ..layout(constrain(50.0));
+    paragraph = plain(createStyle(ui.TextAlign.right), 'abc\ndefghi')..layout(constrain(50.0));
     expectLines(paragraph, <TestLine>[
       l('abc', 0, 4, hardBreak: true, width: 30.0, left: 20.0),
       l('defgh', 4, 9, hardBreak: false, width: 50.0, left: 0.0),
@@ -653,40 +606,35 @@ Future<void> testMain() async {
       );
     }
 
-    paragraph = plain(createStyle(ui.TextAlign.start), 'abc\ndefghi')
-      ..layout(constrain(50.0));
+    paragraph = plain(createStyle(ui.TextAlign.start), 'abc\ndefghi')..layout(constrain(50.0));
     expectLines(paragraph, <TestLine>[
       l('abc', 0, 4, hardBreak: true, width: 30.0, left: 20.0),
       l('defgh', 4, 9, hardBreak: false, width: 50.0, left: 0.0),
       l('i', 9, 10, hardBreak: true, width: 10.0, left: 40.0),
     ]);
 
-    paragraph = plain(createStyle(ui.TextAlign.end), 'abc\ndefghi')
-      ..layout(constrain(50.0));
+    paragraph = plain(createStyle(ui.TextAlign.end), 'abc\ndefghi')..layout(constrain(50.0));
     expectLines(paragraph, <TestLine>[
       l('abc', 0, 4, hardBreak: true, width: 30.0, left: 0.0),
       l('defgh', 4, 9, hardBreak: false, width: 50.0, left: 0.0),
       l('i', 9, 10, hardBreak: true, width: 10.0, left: 0.0),
     ]);
 
-    paragraph = plain(createStyle(ui.TextAlign.center), 'abc\ndefghi')
-      ..layout(constrain(50.0));
+    paragraph = plain(createStyle(ui.TextAlign.center), 'abc\ndefghi')..layout(constrain(50.0));
     expectLines(paragraph, <TestLine>[
       l('abc', 0, 4, hardBreak: true, width: 30.0, left: 10.0),
       l('defgh', 4, 9, hardBreak: false, width: 50.0, left: 0.0),
       l('i', 9, 10, hardBreak: true, width: 10.0, left: 20.0),
     ]);
 
-    paragraph = plain(createStyle(ui.TextAlign.left), 'abc\ndefghi')
-      ..layout(constrain(50.0));
+    paragraph = plain(createStyle(ui.TextAlign.left), 'abc\ndefghi')..layout(constrain(50.0));
     expectLines(paragraph, <TestLine>[
       l('abc', 0, 4, hardBreak: true, width: 30.0, left: 0.0),
       l('defgh', 4, 9, hardBreak: false, width: 50.0, left: 0.0),
       l('i', 9, 10, hardBreak: true, width: 10.0, left: 0.0),
     ]);
 
-    paragraph = plain(createStyle(ui.TextAlign.right), 'abc\ndefghi')
-      ..layout(constrain(50.0));
+    paragraph = plain(createStyle(ui.TextAlign.right), 'abc\ndefghi')..layout(constrain(50.0));
     expectLines(paragraph, <TestLine>[
       l('abc', 0, 4, hardBreak: true, width: 30.0, left: 20.0),
       l('defgh', 4, 9, hardBreak: false, width: 50.0, left: 0.0),
@@ -700,7 +648,10 @@ Future<void> testMain() async {
     plain(ahemStyle, 'Lorem').layout(constrain(double.infinity));
     plain(ahemStyle, 'ipsum dolor').layout(constrain(150.0));
     // Try different styles too.
-    plain(EngineParagraphStyle(fontWeight: ui.FontWeight.bold), 'sit amet').layout(constrain(300.0));
+    plain(
+      EngineParagraphStyle(fontWeight: ui.FontWeight.bold),
+      'sit amet',
+    ).layout(constrain(300.0));
 
     expect(textContext.canvas!.width, isZero);
     expect(textContext.canvas!.height, isZero);
@@ -718,10 +669,7 @@ Future<void> testMain() async {
     ui_web.debugEmulateFlutterTesterEnvironment = false;
 
     final CanvasParagraph p1 = plain(
-      EngineParagraphStyle(
-        fontSize: 20.0,
-        fontFamily: 'FontFamily1',
-      ),
+      EngineParagraphStyle(fontSize: 20.0, fontFamily: 'FontFamily1'),
       'Lorem',
     )..layout(constrain(double.infinity));
     // After the layout, the canvas should have the above style applied.
@@ -729,10 +677,7 @@ Future<void> testMain() async {
     expect(textContext.font, contains('FontFamily1'));
 
     final CanvasParagraph p2 = plain(
-      EngineParagraphStyle(
-        fontSize: 40.0,
-        fontFamily: 'FontFamily2',
-      ),
+      EngineParagraphStyle(fontSize: 40.0, fontFamily: 'FontFamily2'),
       'ipsum dolor',
     )..layout(constrain(double.infinity));
     // After the layout, the canvas should have the above style applied.

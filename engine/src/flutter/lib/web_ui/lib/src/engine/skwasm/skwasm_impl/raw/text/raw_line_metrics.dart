@@ -8,19 +8,12 @@ library skwasm_impl;
 import 'dart:ffi';
 
 final class RawLineMetrics extends Opaque {}
+
 typedef LineMetricsHandle = Pointer<RawLineMetrics>;
 
-@Native<LineMetricsHandle Function(
-  Bool,
-  Double,
-  Double,
-  Double,
-  Double,
-  Double,
-  Double,
-  Double,
-  Size,
-)>(symbol: 'lineMetrics_create', isLeaf: true)
+@Native<
+  LineMetricsHandle Function(Bool, Double, Double, Double, Double, Double, Double, Double, Size)
+>(symbol: 'lineMetrics_create', isLeaf: true)
 external LineMetricsHandle lineMetricsCreate(
   bool hardBreak,
   double ascent,
@@ -30,7 +23,7 @@ external LineMetricsHandle lineMetricsCreate(
   double width,
   double left,
   double baseline,
-  int lineNumber
+  int lineNumber,
 );
 
 @Native<Void Function(LineMetricsHandle)>(symbol: 'lineMetrics_dispose', isLeaf: true)

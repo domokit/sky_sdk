@@ -92,23 +92,17 @@ class GridListDemo extends StatelessWidget {
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
         padding: const EdgeInsets.all(8),
-        children: _photos(context).map<Widget>((_Photo photo) {
-          return _GridDemoPhotoItem(
-            photo: photo,
-            tileStyle: type,
-          );
-        }).toList(),
+        children:
+            _photos(context).map<Widget>((_Photo photo) {
+              return _GridDemoPhotoItem(photo: photo, tileStyle: type);
+            }).toList(),
       ),
     );
   }
 }
 
 class _Photo {
-  _Photo({
-    required this.assetName,
-    required this.title,
-    required this.subtitle,
-  });
+  _Photo({required this.assetName, required this.title, required this.subtitle});
 
   final String assetName;
   final String title;
@@ -132,10 +126,7 @@ class _GridTitleText extends StatelessWidget {
 }
 
 class _GridDemoPhotoItem extends StatelessWidget {
-  const _GridDemoPhotoItem({
-    required this.photo,
-    required this.tileStyle,
-  });
+  const _GridDemoPhotoItem({required this.photo, required this.tileStyle});
 
   final _Photo photo;
   final GridListDemoType tileStyle;
@@ -147,11 +138,7 @@ class _GridDemoPhotoItem extends StatelessWidget {
       child: Material(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         clipBehavior: Clip.antiAlias,
-        child: Image.asset(
-          photo.assetName,
-          package: 'flutter_gallery_assets',
-          fit: BoxFit.cover,
-        ),
+        child: Image.asset(photo.assetName, package: 'flutter_gallery_assets', fit: BoxFit.cover),
       ),
     );
 
@@ -166,10 +153,7 @@ class _GridDemoPhotoItem extends StatelessWidget {
               borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
             ),
             clipBehavior: Clip.antiAlias,
-            child: GridTileBar(
-              title: _GridTitleText(photo.title),
-              backgroundColor: Colors.black45,
-            ),
+            child: GridTileBar(title: _GridTitleText(photo.title), backgroundColor: Colors.black45),
           ),
           child: image,
         );

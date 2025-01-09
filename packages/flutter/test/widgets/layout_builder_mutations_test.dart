@@ -13,10 +13,7 @@ import 'package:flutter/src/widgets/sliver_layout_builder.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class Wrapper extends StatelessWidget {
-  const Wrapper({
-    super.key,
-    required this.child,
-  });
+  const Wrapper({super.key, required this.child});
 
   final Widget child;
 
@@ -25,53 +22,65 @@ class Wrapper extends StatelessWidget {
 }
 
 void main() {
-  testWidgets('Moving a global key from another LayoutBuilder at layout time', (WidgetTester tester) async {
+  testWidgets('Moving a global key from another LayoutBuilder at layout time', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey victimKey = GlobalKey();
 
-    await tester.pumpWidget(Row(
-      textDirection: TextDirection.ltr,
-      children: <Widget>[
-        Wrapper(
-          child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-            return const SizedBox();
-          }),
-        ),
-        Wrapper(
-          child: Wrapper(
-            child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-              return Wrapper(
-                child: SizedBox(key: victimKey),
-              );
-            }),
+    await tester.pumpWidget(
+      Row(
+        textDirection: TextDirection.ltr,
+        children: <Widget>[
+          Wrapper(
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                return const SizedBox();
+              },
+            ),
           ),
-        ),
-      ],
-    ));
+          Wrapper(
+            child: Wrapper(
+              child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  return Wrapper(child: SizedBox(key: victimKey));
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
 
-    await tester.pumpWidget(Row(
-      textDirection: TextDirection.ltr,
-      children: <Widget>[
-        Wrapper(
-          child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-            return Wrapper(
-              child: SizedBox(key: victimKey),
-            );
-          }),
-        ),
-        Wrapper(
-          child: Wrapper(
-            child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-              return const SizedBox();
-            }),
+    await tester.pumpWidget(
+      Row(
+        textDirection: TextDirection.ltr,
+        children: <Widget>[
+          Wrapper(
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                return Wrapper(child: SizedBox(key: victimKey));
+              },
+            ),
           ),
-        ),
-      ],
-    ));
+          Wrapper(
+            child: Wrapper(
+              child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  return const SizedBox();
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
 
     expect(tester.takeException(), null);
   });
 
-  testWidgets('Moving a global key from another SliverLayoutBuilder at layout time', (WidgetTester tester) async {
+  testWidgets('Moving a global key from another SliverLayoutBuilder at layout time', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey victimKey1 = GlobalKey();
     final GlobalKey victimKey2 = GlobalKey();
 
@@ -82,12 +91,18 @@ void main() {
           slivers: <Widget>[
             SliverLayoutBuilder(
               builder: (BuildContext context, SliverConstraints constraint) {
-                return SliverPadding(key: victimKey1, padding: const EdgeInsets.fromLTRB(1, 2, 3, 4));
+                return SliverPadding(
+                  key: victimKey1,
+                  padding: const EdgeInsets.fromLTRB(1, 2, 3, 4),
+                );
               },
             ),
             SliverLayoutBuilder(
               builder: (BuildContext context, SliverConstraints constraint) {
-                return SliverPadding(key: victimKey2, padding: const EdgeInsets.fromLTRB(5, 7, 11, 13));
+                return SliverPadding(
+                  key: victimKey2,
+                  padding: const EdgeInsets.fromLTRB(5, 7, 11, 13),
+                );
               },
             ),
             SliverLayoutBuilder(
@@ -107,7 +122,10 @@ void main() {
           slivers: <Widget>[
             SliverLayoutBuilder(
               builder: (BuildContext context, SliverConstraints constraint) {
-                return SliverPadding(key: victimKey2, padding: const EdgeInsets.fromLTRB(1, 2, 3, 4));
+                return SliverPadding(
+                  key: victimKey2,
+                  padding: const EdgeInsets.fromLTRB(1, 2, 3, 4),
+                );
               },
             ),
             SliverLayoutBuilder(
@@ -117,7 +135,10 @@ void main() {
             ),
             SliverLayoutBuilder(
               builder: (BuildContext context, SliverConstraints constraint) {
-                return SliverPadding(key: victimKey1, padding: const EdgeInsets.fromLTRB(5, 7, 11, 13));
+                return SliverPadding(
+                  key: victimKey1,
+                  padding: const EdgeInsets.fromLTRB(5, 7, 11, 13),
+                );
               },
             ),
           ],
@@ -141,32 +162,32 @@ void main() {
           builder: (BuildContext context, StateSetter setter) {
             setState = setter;
             return MediaQuery(
-              data: updated
-                ? const MediaQueryData(platformBrightness: Brightness.dark)
-                : const MediaQueryData(),
+              data:
+                  updated
+                      ? const MediaQueryData(platformBrightness: Brightness.dark)
+                      : const MediaQueryData(),
               child: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
                   return Center(
                     child: SizedBox.square(
                       dimension: 20,
                       child: Center(
-                        child: SizedBox.square(
-                          dimension: updated ? 10 : 20,
-                          child: widget,
-                        ),
+                        child: SizedBox.square(dimension: updated ? 10 : 20, child: widget),
                       ),
                     ),
                   );
                 },
               ),
             );
-          }
+          },
         ),
       ),
     );
 
     assert(widget._renderObject.layoutCount == 1);
-    setState(() { updated = true; });
+    setState(() {
+      updated = true;
+    });
 
     await tester.pump();
     expect(widget._renderObject.layoutCount, 2);

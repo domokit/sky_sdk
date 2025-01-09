@@ -153,12 +153,7 @@ const int _kMergeSortLimit = 32;
 /// For small lists (less than 32 elements), [mergeSort] automatically uses an
 /// insertion sort instead, as that is more efficient for small lists. The
 /// insertion sort is also stable.
-void mergeSort<T>(
-  List<T> list, {
-  int start = 0,
-  int? end,
-  int Function(T, T)? compare,
-}) {
+void mergeSort<T>(List<T> list, {int start = 0, int? end, int Function(T, T)? compare}) {
   end ??= list.length;
   compare ??= _defaultCompare<T>();
 
@@ -211,12 +206,7 @@ Comparator<T> _defaultCompare<T>() {
 ///
 /// This insertion sort is stable: Equal elements end up in the same order as
 /// they started in.
-void _insertionSort<T>(
-  List<T> list, {
-  int Function(T, T)? compare,
-  int start = 0,
-  int? end,
-}) {
+void _insertionSort<T>(List<T> list, {int Function(T, T)? compare, int start = 0, int? end}) {
   // If the same method could have both positional and named optional
   // parameters, this should be (list, [start, end], {compare}).
   compare ??= _defaultCompare<T>();

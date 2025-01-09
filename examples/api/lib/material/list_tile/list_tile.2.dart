@@ -13,10 +13,7 @@ class ListTileApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      home: const ListTileExample(),
-    );
+    return MaterialApp(theme: ThemeData(useMaterial3: true), home: const ListTileExample());
   }
 }
 
@@ -40,7 +37,8 @@ class ListTileExample extends StatelessWidget {
             leading: CircleAvatar(child: Text('B')),
             title: Text('Headline'),
             subtitle: Text(
-                'Longer supporting text to demonstrate how the text wraps and how the leading and trailing widgets are centered vertically with the text.'),
+              'Longer supporting text to demonstrate how the text wraps and how the leading and trailing widgets are centered vertically with the text.',
+            ),
             trailing: Icon(Icons.favorite_rounded),
           ),
           Divider(height: 0),
@@ -48,7 +46,8 @@ class ListTileExample extends StatelessWidget {
             leading: CircleAvatar(child: Text('C')),
             title: Text('Headline'),
             subtitle: Text(
-                "Longer supporting text to demonstrate how the text wraps and how setting 'ListTile.isThreeLine = true' aligns leading and trailing widgets to the top vertically with the text."),
+              "Longer supporting text to demonstrate how the text wraps and how setting 'ListTile.isThreeLine = true' aligns leading and trailing widgets to the top vertically with the text.",
+            ),
             trailing: Icon(Icons.favorite_rounded),
             isThreeLine: true,
           ),

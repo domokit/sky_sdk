@@ -7,11 +7,7 @@ import '../../gallery_localizations.dart';
 
 // BEGIN bannerDemo
 
-enum BannerDemoAction {
-  reset,
-  showMultipleActions,
-  showLeading,
-}
+enum BannerDemoAction { reset, showMultipleActions, showLeading }
 
 class BannerDemo extends StatefulWidget {
   const BannerDemo({super.key});
@@ -66,12 +62,13 @@ class _BannerDemoState extends State<BannerDemo> with RestorationMixin {
     final GalleryLocalizations localizations = GalleryLocalizations.of(context)!;
     final MaterialBanner banner = MaterialBanner(
       content: Text(localizations.bannerDemoText),
-      leading: _showLeading.value
-          ? CircleAvatar(
-              backgroundColor: colorScheme.primary,
-              child: Icon(Icons.access_alarm, color: colorScheme.onPrimary),
-            )
-          : null,
+      leading:
+          _showLeading.value
+              ? CircleAvatar(
+                backgroundColor: colorScheme.primary,
+                child: Icon(Icons.access_alarm, color: colorScheme.onPrimary),
+              )
+              : null,
       actions: <Widget>[
         TextButton(
           onPressed: () {
@@ -101,23 +98,24 @@ class _BannerDemoState extends State<BannerDemo> with RestorationMixin {
         actions: <Widget>[
           PopupMenuButton<BannerDemoAction>(
             onSelected: handleDemoAction,
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<BannerDemoAction>>[
-              PopupMenuItem<BannerDemoAction>(
-                value: BannerDemoAction.reset,
-                child: Text(localizations.bannerDemoResetText),
-              ),
-              const PopupMenuDivider(),
-              CheckedPopupMenuItem<BannerDemoAction>(
-                value: BannerDemoAction.showMultipleActions,
-                checked: _showMultipleActions.value,
-                child: Text(localizations.bannerDemoMultipleText),
-              ),
-              CheckedPopupMenuItem<BannerDemoAction>(
-                value: BannerDemoAction.showLeading,
-                checked: _showLeading.value,
-                child: Text(localizations.bannerDemoLeadingText),
-              ),
-            ],
+            itemBuilder:
+                (BuildContext context) => <PopupMenuEntry<BannerDemoAction>>[
+                  PopupMenuItem<BannerDemoAction>(
+                    value: BannerDemoAction.reset,
+                    child: Text(localizations.bannerDemoResetText),
+                  ),
+                  const PopupMenuDivider(),
+                  CheckedPopupMenuItem<BannerDemoAction>(
+                    value: BannerDemoAction.showMultipleActions,
+                    checked: _showMultipleActions.value,
+                    child: Text(localizations.bannerDemoMultipleText),
+                  ),
+                  CheckedPopupMenuItem<BannerDemoAction>(
+                    value: BannerDemoAction.showLeading,
+                    checked: _showLeading.value,
+                    child: Text(localizations.bannerDemoLeadingText),
+                  ),
+                ],
           ),
         ],
       ),
@@ -130,8 +128,7 @@ class _BannerDemoState extends State<BannerDemo> with RestorationMixin {
           }
           return ListTile(
             title: Text(
-              localizations.starterAppDrawerItem(
-                  _displayBanner.value ? index : index + 1),
+              localizations.starterAppDrawerItem(_displayBanner.value ? index : index + 1),
             ),
           );
         },

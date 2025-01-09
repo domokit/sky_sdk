@@ -8,7 +8,7 @@
 # which should be kept in sync with this file:
 #
 #   - analysis_options.yaml (this file)
-#   - https://github.com/flutter/engine/blob/main/analysis_options.yaml
+#   - engine/src/flutter/analysis_options.yaml
 #   - https://github.com/flutter/packages/blob/main/analysis_options.yaml
 #
 # This file contains the analysis options used for code in the flutter/flutter
@@ -58,6 +58,7 @@ linter:
     - avoid_field_initializers_in_const_classes
     # - avoid_final_parameters # incompatible with prefer_final_parameters
     - avoid_function_literals_in_foreach_calls
+    # - avoid_futureor_void # not yet tested
     # - avoid_implementing_value_types # see https://github.com/dart-lang/linter/issues/4558
     - avoid_init_to_null
     - avoid_js_rounded_ints
@@ -146,10 +147,10 @@ linter:
     - null_closures
     # - omit_local_variable_types # opposite of always_specify_types
     # - omit_obvious_local_variable_types # not yet tested
+    # - omit_obvious_property_types # not yet tested
     # - one_member_abstracts # too many false positives
     - only_throw_errors # this does get disabled in a few places where we have legacy code that uses strings et al
     - overridden_fields
-    # - package_api_docs # Deprecated (https://github.com/dart-lang/linter/issues/5107)
     - package_names
     - package_prefixed_library_names
     # - parameter_assignments # we do this commonly
@@ -205,6 +206,8 @@ linter:
     # - sort_pub_dependencies # prevents separating pinned transitive dependencies
     - sort_unnamed_constructors_first
     # - specify_nonobvious_local_variable_types # not yet tested
+    # - specify_nonobvious_property_types # not yet tested
+    - strict_top_level_inference
     - test_types_in_equals
     - throw_in_finally
     - tighten_type_of_initializing_formals
@@ -240,6 +243,7 @@ linter:
     - unnecessary_to_list_in_spreads
     - unreachable_from_main
     - unrelated_type_equality_checks
+    # - unsafe_variance # not yet tested
     - use_build_context_synchronously
     - use_colored_box
     # - use_decorated_box # leads to bugs: DecoratedBox and Container are not equivalent (Container inserts extra padding)

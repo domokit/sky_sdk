@@ -15,8 +15,7 @@ import 'package:web_e2e_tests/text_editing_main.dart' as app;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('Focused text field creates a native input element',
-      (WidgetTester tester) async {
+  testWidgets('Focused text field creates a native input element', (WidgetTester tester) async {
     app.main();
     await tester.pumpAndSettle();
 
@@ -39,8 +38,7 @@ void main() {
     expect(input.value, 'New Value');
   }, semanticsEnabled: false);
 
-  testWidgets('Input field with no initial value works',
-      (WidgetTester tester) async {
+  testWidgets('Input field with no initial value works', (WidgetTester tester) async {
     app.main();
     await tester.pumpAndSettle();
 
@@ -63,8 +61,7 @@ void main() {
     expect(input.value, 'New Value');
   }, semanticsEnabled: false);
 
-  testWidgets('Pressing enter on the text field triggers submit',
-      (WidgetTester tester) async {
+  testWidgets('Pressing enter on the text field triggers submit', (WidgetTester tester) async {
     app.main();
     await tester.pumpAndSettle();
 
@@ -100,8 +97,7 @@ void main() {
     expect(text2.data, 'enter pressed');
   }, semanticsEnabled: false);
 
-  testWidgets('Jump between TextFormFields with tab key',
-      (WidgetTester tester) async {
+  testWidgets('Jump between TextFormFields with tab key', (WidgetTester tester) async {
     app.main();
     await tester.pumpAndSettle();
 
@@ -140,7 +136,9 @@ void main() {
     expect(input2.value, 'Text2');
   }, semanticsEnabled: false);
 
-  testWidgets('Jump between TextFormFields with tab key after CapsLock is activated', (WidgetTester tester) async {
+  testWidgets('Jump between TextFormFields with tab key after CapsLock is activated', (
+    WidgetTester tester,
+  ) async {
     app.main();
     await tester.pumpAndSettle();
 
@@ -205,12 +203,10 @@ void main() {
     expect(finder, findsOneWidget);
     final RenderBox selectable = tester.renderObject(finder);
     final Offset topLeft = selectable.localToGlobal(Offset.zero);
-    final Offset topRight =
-        selectable.localToGlobal(Offset(selectable.size.width, 0.0));
+    final Offset topRight = selectable.localToGlobal(Offset(selectable.size.width, 0.0));
 
     // Drag by mouse to select the entire selectable text.
-    TestGesture gesture =
-        await tester.startGesture(topLeft, kind: PointerDeviceKind.mouse);
+    TestGesture gesture = await tester.startGesture(topLeft, kind: PointerDeviceKind.mouse);
     await gesture.moveTo(topRight);
     await gesture.up();
 
@@ -223,16 +219,12 @@ void main() {
     expect(input.hasAttribute('readonly'), isTrue);
 
     // Make sure the entire text is selected.
-    TextRange? range =
-        TextRange(start: input.selectionStart, end: input.selectionEnd);
+    TextRange? range = TextRange(start: input.selectionStart, end: input.selectionEnd);
     expect(range.textInside(text), text);
 
     // Double tap to select the first word.
     final Offset firstWordOffset = topLeft.translate(10.0, 0.0);
-    gesture = await tester.startGesture(
-      firstWordOffset,
-      kind: PointerDeviceKind.mouse,
-    );
+    gesture = await tester.startGesture(firstWordOffset, kind: PointerDeviceKind.mouse);
     await gesture.up();
     await gesture.down(firstWordOffset);
     await gesture.up();
@@ -241,10 +233,7 @@ void main() {
 
     // Double tap to select the last word.
     final Offset lastWordOffset = topRight.translate(-10.0, 0.0);
-    gesture = await tester.startGesture(
-      lastWordOffset,
-      kind: PointerDeviceKind.mouse,
-    );
+    gesture = await tester.startGesture(lastWordOffset, kind: PointerDeviceKind.mouse);
     await gesture.up();
     await gesture.down(lastWordOffset);
     await gesture.up();
@@ -254,15 +243,15 @@ void main() {
 }
 
 web.KeyboardEvent dispatchKeyboardEvent(
-    web.EventTarget target, String type, Map<String, dynamic> args) {
+  web.EventTarget target,
+  String type,
+  Map<String, dynamic> args,
+) {
   final Object jsKeyboardEvent = js_util.getProperty(web.window, 'KeyboardEvent') as Object;
-  final List<dynamic> eventArgs = <dynamic>[
-    type,
-    args,
-  ];
-  final web.KeyboardEvent event = js_util.callConstructor(
-          jsKeyboardEvent, js_util.jsify(eventArgs) as List<dynamic>)
-      as web.KeyboardEvent;
+  final List<dynamic> eventArgs = <dynamic>[type, args];
+  final web.KeyboardEvent event =
+      js_util.callConstructor(jsKeyboardEvent, js_util.jsify(eventArgs) as List<dynamic>)
+          as web.KeyboardEvent;
   target.dispatchEvent(event);
 
   return event;

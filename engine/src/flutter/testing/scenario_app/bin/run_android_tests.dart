@@ -33,27 +33,17 @@ void main(List<String> args) async {
 
   // Show usage if requested.
   if (Options.showUsage(args)) {
-    stdout.writeln(Options.usage(
-      environment: environment,
-      localEngineDir: localEngineDir,
-    ));
+    stdout.writeln(Options.usage(environment: environment, localEngineDir: localEngineDir));
     return;
   }
 
   // Parse the command line arguments.
   final Options options;
   try {
-    options = Options.parse(
-      args,
-      environment: environment,
-      localEngine: localEngineDir,
-    );
+    options = Options.parse(args, environment: environment, localEngine: localEngineDir);
   } on FormatException catch (error) {
     stderr.writeln(error);
-    stderr.writeln(Options.usage(
-      environment: environment,
-      localEngineDir: localEngineDir,
-    ));
+    stderr.writeln(Options.usage(environment: environment, localEngineDir: localEngineDir));
     exitCode = 1;
     return;
   }
@@ -67,6 +57,7 @@ void main(List<String> args) async {
     onSigint.cancel();
     onSigterm.cancel();
   }
+
   runZonedGuarded(
     () async {
       onSigint = ProcessSignal.sigint.watch().listen((_) {
@@ -160,14 +151,14 @@ Future<void> _run({
   if (!testApk.existsSync()) {
     panic(<String>[
       'test apk does not exist: ${testApk.path}',
-      'make sure to build the selected engine variant'
+      'make sure to build the selected engine variant',
     ]);
   }
 
   if (!appApk.existsSync()) {
     panic(<String>[
       'app apk does not exist: ${appApk.path}',
-      'make sure to build the selected engine variant'
+      'make sure to build the selected engine variant',
     ]);
   }
 
@@ -190,54 +181,63 @@ Future<void> _run({
         stdout.writeln('client connected ${client.remoteAddress.address}:${client.remotePort}');
       }
       pendingConnections.add(client);
-      client.transform(const ScreenshotBlobTransformer()).listen((Screenshot screenshot) async {
-        final String fileName = screenshot.filename;
-        final String filePath = join(screenshotPath, fileName);
-        {
-          const String remotePath = '/data/local/tmp/flutter_screenshot.png';
-          ProcessResult result = await pm.run(<String>['adb', 'shell', 'screencap', '-p', remotePath]);
-          if (result.exitCode != 0) {
-            panic(<String>['Failed to capture screenshot']);
-          }
-          result = await pm.run(
-            <String>['adb', 'pull', remotePath, filePath],
-          );
-          if (result.exitCode != 0) {
-            panic(<String>['Failed to pull screenshot']);
-          }
-          result = await pm.run(<String>['adb', 'shell', 'rm', remotePath]);
-          if (result.exitCode != 0) {
-            stderr.writeln('Warning: failed to delete old screenshot on device.');
-          }
-        }
-        // Write a single byte into the socket as a signal to ScreenshotUtil.java
-        // that the screenshot was taken.
-        client.write(0x8);
+      client
+          .transform(const ScreenshotBlobTransformer())
+          .listen(
+            (Screenshot screenshot) async {
+              final String fileName = screenshot.filename;
+              final String filePath = join(screenshotPath, fileName);
+              {
+                const String remotePath = '/data/local/tmp/flutter_screenshot.png';
+                ProcessResult result = await pm.run(<String>[
+                  'adb',
+                  'shell',
+                  'screencap',
+                  '-p',
+                  remotePath,
+                ]);
+                if (result.exitCode != 0) {
+                  panic(<String>['Failed to capture screenshot']);
+                }
+                result = await pm.run(<String>['adb', 'pull', remotePath, filePath]);
+                if (result.exitCode != 0) {
+                  panic(<String>['Failed to pull screenshot']);
+                }
+                result = await pm.run(<String>['adb', 'shell', 'rm', remotePath]);
+                if (result.exitCode != 0) {
+                  stderr.writeln('Warning: failed to delete old screenshot on device.');
+                }
+              }
+              // Write a single byte into the socket as a signal to ScreenshotUtil.java
+              // that the screenshot was taken.
+              client.write(0x8);
 
-        assert(skiaGoldClient != null, 'expected Skia Gold client');
-        final File goldenFile = File(filePath);
-        if (verbose) {
-          log('wrote ${goldenFile.absolute.path}');
-        }
-        if (SkiaGoldClient.isAvailable()) {
-          final Future<void> comparison = skiaGoldClient!
-              .addImg(
-                fileName,
-                goldenFile,
-                screenshotSize: screenshot.pixelCount,
-                // Each color channel can be off by 2.
-                pixelColorDelta: 8,
-              )
-              .then((_) => logImportant('skia gold comparison succeeded: $fileName'))
-              .catchError((Object error) {
-            logWarning('skia gold comparison failed: $error');
-            comparisonsFailed++;
-          });
-          pendingComparisons.add(comparison);
-        }
-      }, onDone: () {
-        pendingConnections.remove(client);
-      });
+              assert(skiaGoldClient != null, 'expected Skia Gold client');
+              final File goldenFile = File(filePath);
+              if (verbose) {
+                log('wrote ${goldenFile.absolute.path}');
+              }
+              if (SkiaGoldClient.isAvailable()) {
+                final Future<void> comparison = skiaGoldClient!
+                    .addImg(
+                      fileName,
+                      goldenFile,
+                      screenshotSize: screenshot.pixelCount,
+                      // Each color channel can be off by 2.
+                      pixelColorDelta: 8,
+                    )
+                    .then((_) => logImportant('skia gold comparison succeeded: $fileName'))
+                    .catchError((Object error) {
+                      logWarning('skia gold comparison failed: $error');
+                      comparisonsFailed++;
+                    });
+                pendingComparisons.add(comparison);
+              }
+            },
+            onDone: () {
+              pendingConnections.remove(client);
+            },
+          );
     });
   });
 
@@ -259,54 +259,61 @@ Future<void> _run({
       }
 
       logcatProcess = await pm.start(<String>[adb.path, 'logcat', '-T', '1']);
-      final (Future<int> logcatExitCode, Stream<String> logcatOutput) = getProcessStreams(logcatProcess);
+      final (Future<int> logcatExitCode, Stream<String> logcatOutput) = getProcessStreams(
+        logcatProcess,
+      );
 
       logcatProcessExitCode = logcatExitCode;
       String? filterProcessId;
 
-      logcatOutput.listen((String line) {
-        // Always write to the full log.
-        logcat.writeln(line);
-        if (enableImpeller && actualImpellerBackend == null && line.contains('Using the Impeller rendering backend')) {
-          if (line.contains('OpenGLES')) {
-            actualImpellerBackend = _ImpellerBackend.opengles;
-          } else if (line.contains('Vulkan')) {
-            actualImpellerBackend = _ImpellerBackend.vulkan;
-          } else {
-            panic(<String>[
-              'Impeller was enabled, but $line did not contain "OpenGLES" or "Vulkan".',
-            ]);
+      logcatOutput.listen(
+        (String line) {
+          // Always write to the full log.
+          logcat.writeln(line);
+          if (enableImpeller &&
+              actualImpellerBackend == null &&
+              line.contains('Using the Impeller rendering backend')) {
+            if (line.contains('OpenGLES')) {
+              actualImpellerBackend = _ImpellerBackend.opengles;
+            } else if (line.contains('Vulkan')) {
+              actualImpellerBackend = _ImpellerBackend.vulkan;
+            } else {
+              panic(<String>[
+                'Impeller was enabled, but $line did not contain "OpenGLES" or "Vulkan".',
+              ]);
+            }
           }
-        }
 
-        // Conditionally parse and write to stderr.
-        final AdbLogLine? adbLogLine = AdbLogLine.tryParse(line);
-        if (verbose || adbLogLine == null) {
-          log(line);
-          return;
-        }
+          // Conditionally parse and write to stderr.
+          final AdbLogLine? adbLogLine = AdbLogLine.tryParse(line);
+          if (verbose || adbLogLine == null) {
+            log(line);
+            return;
+          }
 
-        // If we haven't already found a process ID, try to find one.
-        // The process ID will help us filter out logs from other processes.
-        filterProcessId ??= adbLogLine.tryParseProcess();
+          // If we haven't already found a process ID, try to find one.
+          // The process ID will help us filter out logs from other processes.
+          filterProcessId ??= adbLogLine.tryParseProcess();
 
-        // If this is a "verbose" log, possibly skip it.
-        final bool isVerbose = adbLogLine.isVerbose(filterProcessId: filterProcessId);
-        if (isVerbose || filterProcessId == null) {
-          // We've requested verbose output, so print everything.
+          // If this is a "verbose" log, possibly skip it.
+          final bool isVerbose = adbLogLine.isVerbose(filterProcessId: filterProcessId);
+          if (isVerbose || filterProcessId == null) {
+            // We've requested verbose output, so print everything.
+            if (verbose) {
+              adbLogLine.printFormatted();
+            }
+            return;
+          }
+
+          // It's a non-verbose log, so print it.
+          adbLogLine.printFormatted();
+        },
+        onError: (Object? err) {
           if (verbose) {
-            adbLogLine.printFormatted();
+            logWarning('logcat stream error: $err');
           }
-          return;
-        }
-
-        // It's a non-verbose log, so print it.
-        adbLogLine.printFormatted();
-      }, onError: (Object? err) {
-        if (verbose) {
-          logWarning('logcat stream error: $err');
-        }
-      });
+        },
+      );
     });
 
     await step('Configuring emulator...', () async {
@@ -325,7 +332,12 @@ Future<void> _run({
     });
 
     await step('Get API level of connected device...', () async {
-      final ProcessResult apiLevelProcessResult = await pm.run(<String>[adb.path, 'shell', 'getprop', 'ro.build.version.sdk']);
+      final ProcessResult apiLevelProcessResult = await pm.run(<String>[
+        adb.path,
+        'shell',
+        'getprop',
+        'ro.build.version.sdk',
+      ]);
       if (apiLevelProcessResult.exitCode != 0) {
         panic(<String>['could not get API level of the connected device']);
       }
@@ -333,13 +345,10 @@ Future<void> _run({
       final Map<String, String> dimensions = <String, String>{
         'AndroidAPILevel': connectedDeviceAPILevel,
         'GraphicsBackend': enableImpeller ? 'impeller-${impellerBackend!.name}' : 'skia',
-        'ForceSurfaceProducerSurfaceTexture': '$forceSurfaceProducerSurfaceTexture'
+        'ForceSurfaceProducerSurfaceTexture': '$forceSurfaceProducerSurfaceTexture',
       };
       log('using dimensions: ${json.encode(dimensions)}');
-      skiaGoldClient = SkiaGoldClient(
-        outDir,
-        dimensions: dimensions,
-      );
+      skiaGoldClient = SkiaGoldClient(outDir, dimensions: dimensions);
     });
 
     await step('Skia Gold auth...', () async {
@@ -356,7 +365,12 @@ Future<void> _run({
     });
 
     await step('Reverse port...', () async {
-      final int exitCode = await pm.runAndForward(<String>[adb.path, 'reverse', 'tcp:3000', 'tcp:$_tcpPort']);
+      final int exitCode = await pm.runAndForward(<String>[
+        adb.path,
+        'reverse',
+        'tcp:3000',
+        'tcp:$_tcpPort',
+      ]);
       if (exitCode != 0) {
         panic(<String>['could not forward port']);
       }
@@ -389,11 +403,7 @@ Future<void> _run({
         if (exitCode != 0) {
           panic(<String>['could not create /tmp directory on device']);
         }
-        final String screenRecordingPath = join(
-          _emulatorStoragePath,
-          'tmp',
-          'screen.mp4',
-        );
+        final String screenRecordingPath = join(_emulatorStoragePath, 'tmp', 'screen.mp4');
         screenRecordProcess = await pm.start(<String>[
           adb.path,
           'shell',
@@ -414,16 +424,10 @@ Future<void> _run({
         'instrument',
         '-w',
         '--no-window-animation',
-        if (smokeTestFullPath != null)
-          '-e class $smokeTestFullPath',
-        if (enableImpeller)
-          '-e enable-impeller true'
-        else
-          '-e enable-impeller false',
-        if (impellerBackend != null)
-          '-e impeller-backend ${impellerBackend.name}',
-        if (forceSurfaceProducerSurfaceTexture)
-          '-e force-surface-producer-surface-texture true',
+        if (smokeTestFullPath != null) '-e class $smokeTestFullPath',
+        if (enableImpeller) '-e enable-impeller true' else '-e enable-impeller false',
+        if (impellerBackend != null) '-e impeller-backend ${impellerBackend.name}',
+        if (forceSurfaceProducerSurfaceTexture) '-e force-surface-producer-surface-texture true',
         'dev.flutter.scenarios.test/dev.flutter.TestRunner',
       ]);
       if (exitCode != 0) {
@@ -439,7 +443,6 @@ Future<void> _run({
         panic(<String>['$comparisonsFailed Skia Gold comparisons failed']);
       }
     });
-
 
     if (enableImpeller) {
       await step('Validating Impeller...', () async {
@@ -488,7 +491,13 @@ Future<void> _run({
     }
 
     await step('Killing test app and test runner...', () async {
-      final int exitCode = await pm.runAndForward(<String>[adb.path, 'shell', 'am', 'force-stop', 'dev.flutter.scenarios']);
+      final int exitCode = await pm.runAndForward(<String>[
+        adb.path,
+        'shell',
+        'am',
+        'force-stop',
+        'dev.flutter.scenarios',
+      ]);
       if (exitCode != 0) {
         logError('could not kill test app');
       }
@@ -501,15 +510,8 @@ Future<void> _run({
         await screenRecordProcess!.exitCode;
 
         // Pull the screen recording from the device.
-        final String screenRecordingPath = join(
-          _emulatorStoragePath,
-          'tmp',
-          'screen.mp4',
-        );
-        final String screenRecordingLocalPath = join(
-          logsDir.path,
-          'screen.mp4',
-        );
+        final String screenRecordingPath = join(_emulatorStoragePath, 'tmp', 'screen.mp4');
+        final String screenRecordingLocalPath = join(logsDir.path, 'screen.mp4');
         final int exitCode = await pm.runAndForward(<String>[
           adb.path,
           'pull',
@@ -566,23 +568,17 @@ Future<void> _run({
         }
         prefix.write('.');
       }
-      _copyFiles(
-        source: logsDir,
-        destination: finalLogsDir,
-        prefix: prefix.toString(),
-      );
+      _copyFiles(source: logsDir, destination: finalLogsDir, prefix: prefix.toString());
     });
 
     await step('Symbolize stack traces', () async {
-      final ProcessResult result = await pm.run(
-        <String>[
-          ndkStack,
-          '-sym',
-          outDir.path,
-          '-dump',
-          logcatPath,
-        ],
-      );
+      final ProcessResult result = await pm.run(<String>[
+        ndkStack,
+        '-sym',
+        outDir.path,
+        '-dump',
+        logcatPath,
+      ]);
       if (result.exitCode != 0) {
         panic(<String>['Failed to symbolize stack traces']);
       }
@@ -654,11 +650,7 @@ int _getAndIncrementRerunNumber(String logsDir) {
 /// Copies the contents of [source] to [destination], optionally adding a [prefix] to the destination path.
 ///
 /// This function is used to copy the screenshots from the device to the logs directory.
-void _copyFiles({
-  required Directory source,
-  required Directory destination,
-  String prefix = '',
-}) {
+void _copyFiles({required Directory source, required Directory destination, String prefix = ''}) {
   for (final FileSystemEntity entity in source.listSync()) {
     if (entity is File) {
       entity.copySync(join(destination.path, prefix + basename(entity.path)));

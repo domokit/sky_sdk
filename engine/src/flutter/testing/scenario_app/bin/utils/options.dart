@@ -23,27 +23,21 @@ extension type const Options._(ArgResults _args) {
     if (results['adb'] == null) {
       throw const FormatException('The --adb option must be set.');
     } else if (!io.File(options.adb).existsSync()) {
-      throw FormatException(
-        'The adb tool does not exist at ${options.adb}.',
-      );
+      throw FormatException('The adb tool does not exist at ${options.adb}.');
     }
 
     // The 'ndk-stack' tool must exist.
     if (results['ndk-stack'] == null) {
       throw const FormatException('The --ndk-stack option must be set.');
     } else if (!io.File(options.ndkStack).existsSync()) {
-      throw FormatException(
-        'The ndk-stack tool does not exist at ${options.ndkStack}.',
-      );
+      throw FormatException('The ndk-stack tool does not exist at ${options.ndkStack}.');
     }
 
     // The 'out-dir' must exist.
     if (results['out-dir'] == null) {
       throw const FormatException('The --out-dir option must be set.');
     } else if (!io.Directory(options.outDir).existsSync()) {
-      throw FormatException(
-        'The out directory does not exist at ${options.outDir}.',
-      );
+      throw FormatException('The out directory does not exist at ${options.outDir}.');
     }
 
     return options;
@@ -66,9 +60,10 @@ extension type const Options._(ArgResults _args) {
   /// ```
   static bool showUsage(List<String> args) {
     // If any of the arguments are '--help' or -'h'.
-    return args.isNotEmpty && args.any((String arg) {
-      return arg == '--help' || arg == '-h';
-    });
+    return args.isNotEmpty &&
+        args.any((String arg) {
+          return arg == '--help' || arg == '-h';
+        });
   }
 
   /// Whether verbose logging should be enabled based on command line [args].
@@ -85,18 +80,16 @@ extension type const Options._(ArgResults _args) {
   /// ```
   static bool showVerbose(List<String> args) {
     // If any of the arguments are '--verbose' or -'v'.
-    return args.isNotEmpty && args.any((String arg) {
-      return arg == '--verbose' || arg == '-v';
-    });
+    return args.isNotEmpty &&
+        args.any((String arg) {
+          return arg == '--verbose' || arg == '-v';
+        });
   }
 
   /// Returns usage information for the `scenario_app` test runner.
   ///
   /// If [verbose] is `true`, then additional options are shown.
-  static String usage({
-    required Environment environment,
-    required Engine? localEngineDir,
-  }) {
+  static String usage({required Environment environment, required Engine? localEngineDir}) {
     return _parser(environment, localEngineDir).usage;
   }
 
@@ -106,18 +99,8 @@ extension type const Options._(ArgResults _args) {
   static ArgParser _parser(Environment environment, Engine? localEngine) {
     final bool hideUnusualOptions = !environment.showVerbose;
     return ArgParser(usageLineLength: 120)
-      ..addFlag(
-        'verbose',
-        abbr: 'v',
-        help: 'Enable verbose logging',
-        negatable: false,
-      )
-      ..addFlag(
-        'help',
-        abbr: 'h',
-        help: 'Print usage information',
-        negatable: false,
-      )
+      ..addFlag('verbose', abbr: 'v', help: 'Enable verbose logging', negatable: false)
+      ..addFlag('help', abbr: 'h', help: 'Print usage information', negatable: false)
       ..addFlag(
         'use-skia-gold',
         help:
@@ -142,7 +125,7 @@ extension type const Options._(ArgResults _args) {
             'devices that do not support ImageReader, or to explicitly test '
             'SurfaceTexture path for rendering plugins still using the older '
             'createSurfaceTexture() API.',
-        negatable: false
+        negatable: false,
       )
       ..addFlag(
         'prefix-logs-per-run',
@@ -150,13 +133,11 @@ extension type const Options._(ArgResults _args) {
         defaultsTo: environment.isCi,
         hide: hideUnusualOptions,
       )
-      ..addFlag(
-        'record-screen',
-        help: 'Whether to record the screen during the test run.',
-      )
+      ..addFlag('record-screen', help: 'Whether to record the screen during the test run.')
       ..addOption(
         'impeller-backend',
-        help: 'The graphics backend to use when --enable-impeller is true. '
+        help:
+            'The graphics backend to use when --enable-impeller is true. '
             'Unlike the similar option when launching an app, there is no '
             'fallback; that is, either Vulkan or OpenGLES must be specified. ',
         allowed: <String>['vulkan', 'opengles'],
@@ -169,21 +150,23 @@ extension type const Options._(ArgResults _args) {
       )
       ..addOption(
         'adb',
-        help: 'Path to the Android Debug Bridge (adb) executable. '
+        help:
+            'Path to the Android Debug Bridge (adb) executable. '
             'If the current working directory is within the engine repository, '
             'defaults to '
             './flutter/third_party/android_tools/sdk/platform-tools/adb.',
-        defaultsTo: localEngine != null
-            ? p.join(
-                localEngine.srcDir.path,
-                'flutter',
-                'third_party',
-                'android_tools',
-                'sdk',
-                'platform-tools',
-                'adb',
-              )
-            : null,
+        defaultsTo:
+            localEngine != null
+                ? p.join(
+                  localEngine.srcDir.path,
+                  'flutter',
+                  'third_party',
+                  'android_tools',
+                  'sdk',
+                  'platform-tools',
+                  'adb',
+                )
+                : null,
         valueHelp: 'path/to/adb',
         hide: hideUnusualOptions,
       )
@@ -194,75 +177,81 @@ extension type const Options._(ArgResults _args) {
             'flutter/third_party/android_tools if the current working '
             'directory is within the engine repository on a supported '
             'platform.',
-        defaultsTo: localEngine != null &&
-                (io.Platform.isLinux ||
-                    io.Platform.isMacOS ||
-                    io.Platform.isWindows)
-            ? p.join(
-                localEngine.srcDir.path,
-                'flutter',
-                'third_party',
-                'android_tools',
-                'ndk',
-                'prebuilt',
-                () {
-                  if (io.Platform.isLinux) {
-                    return 'linux-x86_64';
-                  } else if (io.Platform.isMacOS) {
-                    return 'darwin-x86_64';
-                  } else if (io.Platform.isWindows) {
-                    return 'windows-x86_64';
-                  } else {
-                    // Unreachable.
-                    throw UnsupportedError(
-                      'Unsupported platform: ${io.Platform.operatingSystem}',
-                    );
-                  }
-                }(),
-                'bin',
-                'ndk-stack',
-              )
-            : null,
+        defaultsTo:
+            localEngine != null &&
+                    (io.Platform.isLinux || io.Platform.isMacOS || io.Platform.isWindows)
+                ? p.join(
+                  localEngine.srcDir.path,
+                  'flutter',
+                  'third_party',
+                  'android_tools',
+                  'ndk',
+                  'prebuilt',
+                  () {
+                    if (io.Platform.isLinux) {
+                      return 'linux-x86_64';
+                    } else if (io.Platform.isMacOS) {
+                      return 'darwin-x86_64';
+                    } else if (io.Platform.isWindows) {
+                      return 'windows-x86_64';
+                    } else {
+                      // Unreachable.
+                      throw UnsupportedError(
+                        'Unsupported platform: ${io.Platform.operatingSystem}',
+                      );
+                    }
+                  }(),
+                  'bin',
+                  'ndk-stack',
+                )
+                : null,
         valueHelp: 'path/to/ndk-stack',
         hide: hideUnusualOptions,
       )
       ..addOption(
         'out-dir',
-        help: 'Path to a out/{variant} directory where the APKs are built. '
+        help:
+            'Path to a out/{variant} directory where the APKs are built. '
             'Defaults to the latest updated out/ directory that starts with '
             '"android_" if the current working directory is within the engine '
             'repository.',
-        defaultsTo: environment.isCi ? null : localEngine
-            ?.outputs()
-            .where((Output o) => p.basename(o.path.path).startsWith('android_'))
-            .firstOrNull
-            ?.path
-            .path,
+        defaultsTo:
+            environment.isCi
+                ? null
+                : localEngine
+                    ?.outputs()
+                    .where((Output o) => p.basename(o.path.path).startsWith('android_'))
+                    .firstOrNull
+                    ?.path
+                    .path,
         mandatory: environment.isCi,
         valueHelp: 'path/to/out/android_variant',
       )
       ..addOption(
         'smoke-test',
-        help: 'Fully qualified class name of a single test to run. For example '
+        help:
+            'Fully qualified class name of a single test to run. For example '
             'try "dev.flutter.scenarios.EngineLaunchE2ETest" or '
             '"dev.flutter.scenariosui.ExternalTextureTests".',
         valueHelp: 'package.ClassName',
       )
       ..addOption(
         'output-contents-golden',
-        help: 'Path to a file that contains the expected filenames of golden '
+        help:
+            'Path to a file that contains the expected filenames of golden '
             'files. If the current working directory is within the engine '
             'repository, defaults to ./testing/scenario_app/android/'
             'expected_golden_output.txt.',
-        defaultsTo: localEngine != null
-            ? p.join(
-                localEngine.flutterDir.path,
-                'testing',
-                'scenario_app',
-                'android',
-                'expected_golden_output.txt',
-              )
-            : null,
+        defaultsTo:
+            localEngine != null
+                ? p.join(
+                  localEngine.flutterDir.path,
+                  'testing',
+                  'scenario_app',
+                  'android',
+                  'expected_golden_output.txt',
+                )
+                : null,
         valueHelp: 'path/to/golden.txt',
       );
   }

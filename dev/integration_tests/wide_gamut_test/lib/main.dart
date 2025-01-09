@@ -165,9 +165,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Wide Gamut Test',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: MyHomePage(_setup, title: 'Wide Gamut Test'),
     );
   }
@@ -182,19 +180,20 @@ class _SaveLayerDrawer extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     if (_image != null) {
       final Rect imageRect = Rect.fromCenter(
-          center: Offset.zero,
-          width: _image!.width.toDouble(),
-          height: _image!.height.toDouble());
+        center: Offset.zero,
+        width: _image!.width.toDouble(),
+        height: _image!.height.toDouble(),
+      );
       canvas.saveLayer(imageRect, Paint());
       canvas.drawRect(
-          imageRect.inflate(-_image!.width.toDouble() / 4.0),
-          Paint()
-            ..style = PaintingStyle.stroke
-            ..color = const Color(0xffffffff)
-            ..strokeWidth = 3);
+        imageRect.inflate(-_image!.width.toDouble() / 4.0),
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..color = const Color(0xffffffff)
+          ..strokeWidth = 3,
+      );
       canvas.saveLayer(imageRect, Paint()..blendMode = BlendMode.dstOver);
-      canvas.drawImage(_image!,
-          Offset(-_image!.width / 2.0, -_image!.height / 2.0), Paint());
+      canvas.drawImage(_image!, Offset(-_image!.width / 2.0, -_image!.height / 2.0), Paint());
       canvas.restore();
       canvas.restore();
     }
@@ -208,43 +207,36 @@ Future<ui.Image> _drawImage() async {
   final ui.PictureRecorder recorder = ui.PictureRecorder();
   const Size markerSize = Size(120, 120);
   final double canvasSize = markerSize.height + 3;
-  final Canvas canvas = Canvas(
-    recorder,
-    Rect.fromLTWH(0, 0, canvasSize, canvasSize),
-  );
+  final Canvas canvas = Canvas(recorder, Rect.fromLTWH(0, 0, canvasSize, canvasSize));
 
   final Paint ovalPaint = Paint()..color = const Color(0xff00ff00);
-  final Path ovalPath = Path()
-    ..addOval(Rect.fromLTWH(
-      (canvasSize - markerSize.width) / 2,
-      1,
-      markerSize.width,
-      markerSize.height,
-    ));
+  final Path ovalPath =
+      Path()..addOval(
+        Rect.fromLTWH((canvasSize - markerSize.width) / 2, 1, markerSize.width, markerSize.height),
+      );
   canvas.drawPath(ovalPath, ovalPaint);
 
   final ui.Picture picture = recorder.endRecording();
-  final ui.Image image = await picture.toImage(
-    canvasSize.toInt(),
-    (canvasSize + 0).toInt(),
-  );
-  final ByteData? byteData =
-      await image.toByteData(format: ui.ImageByteFormat.rawExtendedRgba128);
+  final ui.Image image = await picture.toImage(canvasSize.toInt(), (canvasSize + 0).toInt());
+  final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.rawExtendedRgba128);
   final Completer<ui.Image> completer = Completer<ui.Image>();
-  ui.decodeImageFromPixels(Uint8List.view(byteData!.buffer),
-      canvasSize.toInt(),
-      canvasSize.toInt(),
-      ui.PixelFormat.rgbaFloat32, (ui.Image image) {
-        completer.complete(image);
-      });
+  ui.decodeImageFromPixels(
+    Uint8List.view(byteData!.buffer),
+    canvasSize.toInt(),
+    canvasSize.toInt(),
+    ui.PixelFormat.rgbaFloat32,
+    (ui.Image image) {
+      completer.complete(image);
+    },
+  );
   return completer.future;
 }
 
 Future<ui.Image> _loadImage() async {
-  final ui.ImmutableBuffer buffer =
-      await ui.ImmutableBuffer.fromUint8List(base64Decode(_displayP3Logo));
-  final ui.ImageDescriptor descriptor =
-      await ui.ImageDescriptor.encoded(buffer);
+  final ui.ImmutableBuffer buffer = await ui.ImmutableBuffer.fromUint8List(
+    base64Decode(_displayP3Logo),
+  );
+  final ui.ImageDescriptor descriptor = await ui.ImageDescriptor.encoded(buffer);
   final ui.Codec codec = await descriptor.instantiateCodec();
   return (await codec.getNextFrame()).image;
 }
@@ -266,17 +258,25 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     switch (widget.setup) {
       case Setup.canvasSaveLayer:
-        _loadImage().then((ui.Image? value) => setState(() { _image = value; }));
+        _loadImage().then(
+          (ui.Image? value) => setState(() {
+            _image = value;
+          }),
+        );
       case Setup.drawnImage:
-        _drawImage().then((ui.Image? value) => setState(() { _image = value; }));
+        _drawImage().then(
+          (ui.Image? value) => setState(() {
+            _image = value;
+          }),
+        );
       case Setup.image ||
-            Setup.blur ||
-            Setup.none ||
-            Setup.container ||
-            Setup.linearGradient ||
-            Setup.radialGradient ||
-            Setup.conicalGradient ||
-            Setup.sweepGradient:
+          Setup.blur ||
+          Setup.none ||
+          Setup.container ||
+          Setup.linearGradient ||
+          Setup.radialGradient ||
+          Setup.conicalGradient ||
+          Setup.sweepGradient:
         break;
     }
     super.initState();
@@ -297,28 +297,25 @@ class _MyHomePageState extends State<MyHomePage> {
       case Setup.blur:
         imageWidget = Stack(
           children: <Widget>[
-            const ColoredBox(
-              color: Color(0xff00ff00),
-              child: SizedBox(
-                width: 100,
-                height: 100,
-              ),
-            ),
+            const ColoredBox(color: Color(0xff00ff00), child: SizedBox(width: 100, height: 100)),
             ImageFiltered(
-                imageFilter: ui.ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-                child: Image.memory(base64Decode(_displayP3Logo))),
+              imageFilter: ui.ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+              child: Image.memory(base64Decode(_displayP3Logo)),
+            ),
           ],
         );
       case Setup.container:
         imageWidget = Container(
           width: 100,
           height: 100,
-            color: const Color.from(
-                alpha: 1,
-                red: 1,
-                green: 0,
-                blue: 0,
-                colorSpace: ui.ColorSpace.displayP3));
+          color: const Color.from(
+            alpha: 1,
+            red: 1,
+            green: 0,
+            blue: 0,
+            colorSpace: ui.ColorSpace.displayP3,
+          ),
+        );
       case Setup.linearGradient:
         imageWidget = Container(
           width: 100,
@@ -333,13 +330,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   red: 1,
                   green: 0,
                   blue: 0,
-                  colorSpace: ui.ColorSpace.displayP3),
+                  colorSpace: ui.ColorSpace.displayP3,
+                ),
                 Color.from(
                   alpha: 1,
                   red: 0,
                   green: 1,
                   blue: 0,
-                  colorSpace: ui.ColorSpace.displayP3)],
+                  colorSpace: ui.ColorSpace.displayP3,
+                ),
+              ],
             ),
           ),
         );
@@ -355,13 +355,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   red: 1,
                   green: 0,
                   blue: 0,
-                  colorSpace: ui.ColorSpace.displayP3),
+                  colorSpace: ui.ColorSpace.displayP3,
+                ),
                 Color.from(
                   alpha: 1,
                   red: 0,
                   green: 1,
                   blue: 0,
-                  colorSpace: ui.ColorSpace.displayP3)],
+                  colorSpace: ui.ColorSpace.displayP3,
+                ),
+              ],
             ),
           ),
         );
@@ -378,13 +381,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   red: 1,
                   green: 0,
                   blue: 0,
-                  colorSpace: ui.ColorSpace.displayP3),
+                  colorSpace: ui.ColorSpace.displayP3,
+                ),
                 Color.from(
                   alpha: 1,
                   red: 0,
                   green: 1,
                   blue: 0,
-                  colorSpace: ui.ColorSpace.displayP3)],
+                  colorSpace: ui.ColorSpace.displayP3,
+                ),
+              ],
             ),
           ),
         );
@@ -400,29 +406,25 @@ class _MyHomePageState extends State<MyHomePage> {
                   red: 1,
                   green: 0,
                   blue: 0,
-                  colorSpace: ui.ColorSpace.displayP3),
+                  colorSpace: ui.ColorSpace.displayP3,
+                ),
                 Color.from(
                   alpha: 1,
                   red: 0,
                   green: 1,
                   blue: 0,
-                  colorSpace: ui.ColorSpace.displayP3)],
+                  colorSpace: ui.ColorSpace.displayP3,
+                ),
+              ],
             ),
           ),
         );
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            imageWidget,
-          ],
-        ),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[imageWidget]),
       ),
     );
   }

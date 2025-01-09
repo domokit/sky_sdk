@@ -12,29 +12,22 @@ import 'package:path/path.dart' as path;
 
 import 'common.dart';
 import 'environment.dart';
-import 'exceptions.dart';
 import 'felt_config.dart';
 
-enum RuntimeMode {
-  debug,
-  profile,
-  release,
-}
+enum RuntimeMode { debug, profile, release }
 
 class FilePath {
-  FilePath.fromCwd(String relativePath)
-      : _absolutePath = path.absolute(relativePath);
+  FilePath.fromCwd(String relativePath) : _absolutePath = path.absolute(relativePath);
   FilePath.fromWebUi(String relativePath)
-      : _absolutePath = path.join(environment.webUiRootDir.path, relativePath);
+    : _absolutePath = path.join(environment.webUiRootDir.path, relativePath);
   FilePath.fromTestSet(TestSet testSet, String relativePath)
-      : _absolutePath = path.join(getTestSetDirectory(testSet).path, relativePath);
+    : _absolutePath = path.join(getTestSetDirectory(testSet).path, relativePath);
 
   final String _absolutePath;
 
   String get absolute => _absolutePath;
   String get relativeToCwd => path.relative(_absolutePath);
-  String get relativeToWebUi =>
-      path.relative(_absolutePath, from: environment.webUiRootDir.path);
+  String get relativeToWebUi => path.relative(_absolutePath, from: environment.webUiRootDir.path);
 
   @override
   bool operator ==(Object other) {
@@ -146,7 +139,8 @@ class ProcessManager {
     required this.process,
     required bool evalOutput,
     required bool failureIsSuccess,
-  }) : _evalOutput = evalOutput, _failureIsSuccess = failureIsSuccess {
+  }) : _evalOutput = evalOutput,
+       _failureIsSuccess = failureIsSuccess {
     if (_evalOutput) {
       _forwardStream(process.stdout, _stdout);
       _forwardStream(process.stderr, _stderr);
@@ -181,10 +175,7 @@ class ProcessManager {
   final StringBuffer _stderr = StringBuffer();
 
   void _forwardStream(Stream<List<int>> stream, StringSink buffer) {
-    stream
-      .transform(utf8.decoder)
-      .transform(const LineSplitter())
-      .listen(buffer.writeln);
+    stream.transform(utf8.decoder).transform(const LineSplitter()).listen(buffer.writeln);
   }
 
   /// Waits for the [process] to exit. Returns the exit code.
@@ -198,10 +189,7 @@ class ProcessManager {
   Future<int> wait() async {
     final int exitCode = await process.exitCode;
     if (!_failureIsSuccess && exitCode != 0) {
-      _throwProcessException(
-        description: 'Sub-process failed.',
-        exitCode: exitCode,
-      );
+      _throwProcessException(description: 'Sub-process failed.', exitCode: exitCode);
     }
     return exitCode;
   }
@@ -212,7 +200,8 @@ class ProcessManager {
     if (!_evalOutput) {
       kill();
       _throwProcessException(
-        description: 'Cannot eval process output. The process was launched '
+        description:
+            'Cannot eval process output. The process was launched '
             'with `evalOutput` set to false.',
       );
     }
@@ -252,11 +241,7 @@ class ProcessManager {
 
 /// Stringified standard output and standard error streams from a process.
 class ProcessOutput {
-  ProcessOutput({
-    required this.exitCode,
-    required this.stdout,
-    required this.stderr,
-  });
+  ProcessOutput({required this.exitCode, required this.stdout, required this.stderr});
 
   /// The exit code of the process.
   final int exitCode;
@@ -312,29 +297,13 @@ mixin ArgUtils<T> on Command<T> {
 
   /// Extracts a string argument from [argResults].
   String stringArg(String name) => argResults![name] as String;
-
-  RuntimeMode get runtimeMode {
-    final bool isProfile = boolArg('profile');
-    final bool isDebug = boolArg('debug');
-    if (isProfile && isDebug) {
-      throw ToolExit('Cannot specify both --profile and --debug at the same time.');
-    }
-    if (isProfile) {
-      return RuntimeMode.profile;
-    } else if (isDebug) {
-      return RuntimeMode.debug;
-    } else {
-      return RuntimeMode.release;
-    }
-  }
 }
 
-io.Directory getBuildDirectoryForRuntimeMode(RuntimeMode runtimeMode) =>
-  switch (runtimeMode) {
-    RuntimeMode.debug => environment.wasmDebugUnoptOutDir,
-    RuntimeMode.profile => environment.wasmProfileOutDir,
-    RuntimeMode.release => environment.wasmReleaseOutDir,
-  };
+io.Directory getBuildDirectoryForRuntimeMode(RuntimeMode runtimeMode) => switch (runtimeMode) {
+  RuntimeMode.debug => environment.wasmDebugUnoptOutDir,
+  RuntimeMode.profile => environment.wasmProfileOutDir,
+  RuntimeMode.release => environment.wasmReleaseOutDir,
+};
 
 /// There might be proccesses started during the tests.
 ///
@@ -378,31 +347,15 @@ Future<void> cleanup() async {
 }
 
 io.Directory getTestSetDirectory(TestSet testSet) {
-  return io.Directory(
-    path.join(
-      environment.webUiTestDir.path,
-      testSet.directory,
-    )
-  );
+  return io.Directory(path.join(environment.webUiTestDir.path, testSet.directory));
 }
 
 io.Directory getBundleBuildDirectory(TestBundle bundle) {
-  return io.Directory(
-    path.join(
-      environment.webUiBuildDir.path,
-      'test_bundles',
-      bundle.name,
-    )
-  );
+  return io.Directory(path.join(environment.webUiBuildDir.path, 'test_bundles', bundle.name));
 }
 
 io.Directory getSkiaGoldDirectoryForSuite(TestSuite suite) {
-  return io.Directory(
-    path.join(
-      environment.webUiSkiaGoldDirectory.path,
-      suite.name,
-    )
-  );
+  return io.Directory(path.join(environment.webUiSkiaGoldDirectory.path, suite.name));
 }
 
 extension AnsiColors on String {
@@ -416,8 +369,7 @@ extension AnsiColors on String {
 
   static const String _noColorCode = '\u001b[39m';
 
-  String _wrapText(String prefix, String suffix) => shouldEscape
-    ? '$prefix$this$suffix' : this;
+  String _wrapText(String prefix, String suffix) => shouldEscape ? '$prefix$this$suffix' : this;
 
   String _colorText(String colorCode) => _wrapText(colorCode, _noColorCode);
 

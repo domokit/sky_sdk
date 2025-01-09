@@ -10,19 +10,16 @@ void main() {
   group('DartDevelopmentServiceException.fromJSON', () {
     test('parses existing DDS instance error', () {
       final DartDevelopmentServiceException actual =
-          DartDevelopmentServiceException.fromJson(
-        <String, Object>{
-          'error_code':
-              DartDevelopmentServiceException.existingDdsInstanceError,
-          'message': 'Foo',
-          'uri': 'http://localhost',
-        },
-      );
+          DartDevelopmentServiceException.fromJson(<String, Object>{
+            'error_code': DartDevelopmentServiceException.existingDdsInstanceError,
+            'message': 'Foo',
+            'uri': 'http://localhost',
+          });
       final DartDevelopmentServiceException expected =
           DartDevelopmentServiceException.existingDdsInstance(
-        'Foo',
-        ddsUri: Uri.parse('http://localhost'),
-      );
+            'Foo',
+            ddsUri: Uri.parse('http://localhost'),
+          );
       expect(actual.errorCode, expected.errorCode);
       expect(actual.message, expected.message);
       expect(actual, isA<ExistingDartDevelopmentServiceException>());
@@ -33,8 +30,7 @@ void main() {
     });
 
     test('parses connection issue error', () {
-      final DartDevelopmentServiceException actual =
-          DartDevelopmentServiceException.fromJson(
+      final DartDevelopmentServiceException actual = DartDevelopmentServiceException.fromJson(
         <String, Object>{
           'error_code': DartDevelopmentServiceException.connectionError,
           'message': 'Foo',
@@ -49,8 +45,7 @@ void main() {
     test('parses failed to start error', () {
       final DartDevelopmentServiceException expected =
           DartDevelopmentServiceException.failedToStart();
-      final DartDevelopmentServiceException actual =
-          DartDevelopmentServiceException.fromJson(
+      final DartDevelopmentServiceException actual = DartDevelopmentServiceException.fromJson(
         <String, Object>{
           'error_code': DartDevelopmentServiceException.failedToStartError,
           'message': expected.message,

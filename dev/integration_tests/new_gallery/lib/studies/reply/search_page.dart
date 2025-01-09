@@ -26,23 +26,15 @@ class SearchPage extends StatelessWidget {
                     BackButton(
                       key: const ValueKey<String>('ReplyExit'),
                       onPressed: () {
-                        Provider.of<EmailStore>(
-                          context,
-                          listen: false,
-                        ).onSearchPage = false;
+                        Provider.of<EmailStore>(context, listen: false).onSearchPage = false;
                       },
                     ),
                     const Expanded(
                       child: TextField(
-                        decoration: InputDecoration.collapsed(
-                          hintText: 'Search email',
-                        ),
+                        decoration: InputDecoration.collapsed(hintText: 'Search email'),
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.mic),
-                      onPressed: () {},
-                    )
+                    IconButton(icon: const Icon(Icons.mic), onPressed: () {}),
                   ],
                 ),
               ),
@@ -53,28 +45,19 @@ class SearchPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       _SectionHeader(title: 'YESTERDAY'),
-                      _SearchHistoryTile(
-                        search: '481 Van Brunt Street',
-                        address: 'Brooklyn, NY',
-                      ),
+                      _SearchHistoryTile(search: '481 Van Brunt Street', address: 'Brooklyn, NY'),
                       _SearchHistoryTile(
                         icon: Icons.home,
                         search: 'Home',
                         address: '199 Pacific Street, Brooklyn, NY',
                       ),
                       _SectionHeader(title: 'THIS WEEK'),
-                      _SearchHistoryTile(
-                        search: 'BEP GA',
-                        address: 'Forsyth Street, New York, NY',
-                      ),
+                      _SearchHistoryTile(search: 'BEP GA', address: 'Forsyth Street, New York, NY'),
                       _SearchHistoryTile(
                         search: 'Sushi Nakazawa',
                         address: 'Commerce Street, New York, NY',
                       ),
-                      _SearchHistoryTile(
-                        search: 'IFC Center',
-                        address: '6th Avenue, New York, NY',
-                      ),
+                      _SearchHistoryTile(search: 'IFC Center', address: '6th Avenue, New York, NY'),
                     ],
                   ),
                 ),
@@ -95,15 +78,8 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsetsDirectional.only(
-        start: 16,
-        top: 16,
-        bottom: 16,
-      ),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.labelLarge,
-      ),
+      padding: const EdgeInsetsDirectional.only(start: 16, top: 16, bottom: 16),
+      child: Text(title, style: Theme.of(context).textTheme.labelLarge),
     );
   }
 }

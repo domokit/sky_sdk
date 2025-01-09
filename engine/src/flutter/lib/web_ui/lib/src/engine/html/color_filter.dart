@@ -16,8 +16,7 @@ import 'shaders/shader.dart';
 import 'surface.dart';
 
 /// A surface that applies an [ColorFilter] to its children.
-class PersistedColorFilter extends PersistedContainerSurface
-    implements ui.ColorFilterEngineLayer {
+class PersistedColorFilter extends PersistedContainerSurface implements ui.ColorFilterEngineLayer {
   PersistedColorFilter(PersistedColorFilter? super.oldLayer, this.filter);
 
   @override
@@ -114,8 +113,7 @@ class PersistedColorFilter extends PersistedContainerSurface
   }
 }
 
-SvgFilter svgFilterFromBlendMode(
-    ui.Color? filterColor, ui.BlendMode colorFilterBlendMode) {
+SvgFilter svgFilterFromBlendMode(ui.Color? filterColor, ui.BlendMode colorFilterBlendMode) {
   final SvgFilter svgFilter;
   switch (colorFilterBlendMode) {
     case ui.BlendMode.srcIn:
@@ -166,8 +164,7 @@ SvgFilter svgFilterFromBlendMode(
     case ui.BlendMode.softLight:
     case ui.BlendMode.difference:
     case ui.BlendMode.exclusion:
-      svgFilter = _blendColorFilterToSvg(
-          filterColor, blendModeToSvgEnum(colorFilterBlendMode)!);
+      svgFilter = _blendColorFilterToSvg(filterColor, blendModeToSvgEnum(colorFilterBlendMode)!);
     case ui.BlendMode.src:
     case ui.BlendMode.dst:
     case ui.BlendMode.dstIn:
@@ -175,9 +172,7 @@ SvgFilter svgFilterFromBlendMode(
     case ui.BlendMode.dstOver:
     case ui.BlendMode.clear:
     case ui.BlendMode.srcOver:
-      throw UnimplementedError(
-        'Blend mode not supported in HTML renderer: $colorFilterBlendMode',
-      );
+      throw UnimplementedError('Blend mode not supported in HTML renderer: $colorFilterBlendMode');
   }
   return svgFilter;
 }
@@ -213,15 +208,14 @@ class SvgFilterBuilder {
   static int _filterIdCounter = 0;
 
   final String id;
-  final SVGSVGElement root = kSvgResourceHeader.cloneNode(false) as
-      SVGSVGElement;
+  final SVGSVGElement root = kSvgResourceHeader.cloneNode(false) as SVGSVGElement;
   final SVGFilterElement filter = createSVGFilterElement();
 
   set colorInterpolationFilters(String filters) {
     filter.setAttribute('color-interpolation-filters', filters);
   }
 
-  void setFeColorMatrix(List<double> matrix, { required String result }) {
+  void setFeColorMatrix(List<double> matrix, {required String result}) {
     final SVGFEColorMatrixElement element = createSVGFEColorMatrixElement();
     element.type!.baseVal = kMatrixType;
     element.result!.baseVal = result;
@@ -244,11 +238,7 @@ class SvgFilterBuilder {
     filter.append(element);
   }
 
-  void setFeBlend({
-    required String in1,
-    required String in2,
-    required int mode,
-  }) {
+  void setFeBlend({required String in1, required String in2, required int mode}) {
     final SVGFEBlendElement element = createSVGFEBlendElement();
     element.in1!.baseVal = in1;
     element.in2!.baseVal = in2;
@@ -322,7 +312,18 @@ class SvgFilter {
 
 SvgFilter svgFilterFromColorMatrix(List<double> matrix) {
   final SvgFilterBuilder builder = SvgFilterBuilder();
-  builder.setFeColorMatrix(matrix, result: 'comp');
+
+  /// Flutter documentation says the translation column of the color matrix
+  /// is specified in unnormalized 0..255 space. `feColorMatrix` expects the
+  /// translation values to be normalized to 0..1 space.
+  ///
+  /// See [https://api.flutter.dev/flutter/dart-ui/ColorFilter/ColorFilter.matrix.html]
+  final normalizedMatrix = List<double>.generate(
+    matrix.length,
+    (int i) => (i % 5 == 4) ? matrix[i] / 255.0 : matrix[i],
+    growable: false,
+  );
+  builder.setFeColorMatrix(normalizedMatrix, result: 'comp');
   return builder.build();
 }
 
@@ -342,20 +343,29 @@ SvgFilter svgFilterFromColorMatrix(List<double> matrix) {
 SvgFilter _srcInColorFilterToSvg(ui.Color? color) {
   final SvgFilterBuilder builder = SvgFilterBuilder();
   builder.colorInterpolationFilters = 'sRGB';
-  builder.setFeColorMatrix(
-    const <double>[
-      0, 0, 0, 0, 1,
-      0, 0, 0, 0, 1,
-      0, 0, 0, 0, 1,
-      0, 0, 0, 1, 0,
-    ],
-    result: 'destalpha',
-  );
-  builder.setFeFlood(
-    floodColor: color?.toCssString() ?? '',
-    floodOpacity: '1',
-    result: 'flood',
-  );
+  builder.setFeColorMatrix(const <double>[
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    1,
+    0,
+  ], result: 'destalpha');
+  builder.setFeFlood(floodColor: color?.toCssString() ?? '', floodOpacity: '1', result: 'flood');
   builder.setFeComposite(
     in1: 'flood',
     in2: 'destalpha',
@@ -373,11 +383,7 @@ SvgFilter _srcInColorFilterToSvg(ui.Color? color) {
 /// replaces the destination. dst-atop	CR = CB*αB*αA+CA*αA*(1-αB)	αR=αA
 SvgFilter _dstATopColorFilterToSvg(ui.Color? color) {
   final SvgFilterBuilder builder = SvgFilterBuilder();
-  builder.setFeFlood(
-    floodColor: color?.toCssString() ?? '',
-    floodOpacity: '1',
-    result: 'flood',
-  );
+  builder.setFeFlood(floodColor: color?.toCssString() ?? '', floodOpacity: '1', result: 'flood');
   builder.setFeComposite(
     in1: 'SourceGraphic',
     in2: 'flood',
@@ -389,11 +395,7 @@ SvgFilter _dstATopColorFilterToSvg(ui.Color? color) {
 
 SvgFilter _srcOutColorFilterToSvg(ui.Color? color) {
   final SvgFilterBuilder builder = SvgFilterBuilder();
-  builder.setFeFlood(
-    floodColor: color?.toCssString() ?? '',
-    floodOpacity: '1',
-    result: 'flood',
-  );
+  builder.setFeFlood(floodColor: color?.toCssString() ?? '', floodOpacity: '1', result: 'flood');
   builder.setFeComposite(
     in1: 'flood',
     in2: 'SourceGraphic',
@@ -405,11 +407,7 @@ SvgFilter _srcOutColorFilterToSvg(ui.Color? color) {
 
 SvgFilter _xorColorFilterToSvg(ui.Color? color) {
   final SvgFilterBuilder builder = SvgFilterBuilder();
-  builder.setFeFlood(
-    floodColor: color?.toCssString() ?? '',
-    floodOpacity: '1',
-    result: 'flood',
-  );
+  builder.setFeFlood(floodColor: color?.toCssString() ?? '', floodOpacity: '1', result: 'flood');
   builder.setFeComposite(
     in1: 'flood',
     in2: 'SourceGraphic',
@@ -421,14 +419,9 @@ SvgFilter _xorColorFilterToSvg(ui.Color? color) {
 
 // The source image and color are composited using :
 // result = k1 *in*in2 + k2*in + k3*in2 + k4.
-SvgFilter _compositeColorFilterToSvg(
-    ui.Color? color, double k1, double k2, double k3, double k4) {
+SvgFilter _compositeColorFilterToSvg(ui.Color? color, double k1, double k2, double k3, double k4) {
   final SvgFilterBuilder builder = SvgFilterBuilder();
-  builder.setFeFlood(
-    floodColor: color?.toCssString() ?? '',
-    floodOpacity: '1',
-    result: 'flood',
-  );
+  builder.setFeFlood(floodColor: color?.toCssString() ?? '', floodOpacity: '1', result: 'flood');
   builder.setFeComposite(
     in1: 'flood',
     in2: 'SourceGraphic',
@@ -451,15 +444,28 @@ SvgFilter _modulateColorFilterToSvg(ui.Color color) {
   final double g = color.green / 255.0;
 
   final SvgFilterBuilder builder = SvgFilterBuilder();
-  builder.setFeColorMatrix(
-    <double>[
-      0, 0, 0, 0, r,
-      0, 0, 0, 0, g,
-      0, 0, 0, 0, b,
-      0, 0, 0, 1, 0,
-    ],
-    result: 'recolor',
-  );
+  builder.setFeColorMatrix(<double>[
+    0,
+    0,
+    0,
+    0,
+    r,
+    0,
+    0,
+    0,
+    0,
+    g,
+    0,
+    0,
+    0,
+    0,
+    b,
+    0,
+    0,
+    0,
+    1,
+    0,
+  ], result: 'recolor');
   builder.setFeComposite(
     in1: 'recolor',
     in2: 'SourceGraphic',
@@ -474,26 +480,17 @@ SvgFilter _modulateColorFilterToSvg(ui.Color color) {
 }
 
 // Uses feBlend element to blend source image with a color.
-SvgFilter _blendColorFilterToSvg(ui.Color? color, SvgBlendMode svgBlendMode,
-    {bool swapLayers = false}) {
+SvgFilter _blendColorFilterToSvg(
+  ui.Color? color,
+  SvgBlendMode svgBlendMode, {
+  bool swapLayers = false,
+}) {
   final SvgFilterBuilder builder = SvgFilterBuilder();
-  builder.setFeFlood(
-    floodColor: color?.toCssString() ?? '',
-    floodOpacity: '1',
-    result: 'flood',
-  );
+  builder.setFeFlood(floodColor: color?.toCssString() ?? '', floodOpacity: '1', result: 'flood');
   if (swapLayers) {
-    builder.setFeBlend(
-      in1: 'SourceGraphic',
-      in2: 'flood',
-      mode: svgBlendMode.blendMode,
-    );
+    builder.setFeBlend(in1: 'SourceGraphic', in2: 'flood', mode: svgBlendMode.blendMode);
   } else {
-    builder.setFeBlend(
-      in1: 'flood',
-      in2: 'SourceGraphic',
-      mode: svgBlendMode.blendMode,
-    );
+    builder.setFeBlend(in1: 'flood', in2: 'SourceGraphic', mode: svgBlendMode.blendMode);
   }
   return builder.build();
 }

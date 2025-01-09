@@ -5066,14 +5066,13 @@ TEST_F(DisplayListTest, ClipPathRRectNonCulling) {
 
 TEST_F(DisplayListTest, RecordLargeVertices) {
   constexpr size_t vertex_count = 2000000;
-  auto points = std::vector<SkPoint>();
+  auto points = std::vector<DlPoint>();
   points.reserve(vertex_count);
   auto colors = std::vector<DlColor>();
   colors.reserve(vertex_count);
   for (size_t i = 0; i < vertex_count; i++) {
     colors.emplace_back(DlColor(-i));
-    points.emplace_back(((i & 1) == 0) ? SkPoint::Make(-i, i)
-                                       : SkPoint::Make(i, i));
+    points.emplace_back(((i & 1) == 0) ? DlPoint(-i, i) : DlPoint(i, i));
   }
   ASSERT_EQ(points.size(), vertex_count);
   ASSERT_EQ(colors.size(), vertex_count);
@@ -5552,7 +5551,7 @@ TEST_F(DisplayListTest, BoundedRenderOpsDoNotReportUnbounded) {
   test_draw_points(PointMode::kPolygon);
 
   test_bounded("DrawVerticesTriangles", [](DlCanvas& builder) {
-    SkPoint points[6] = {
+    DlPoint points[6] = {
         {draw_rect.left(), draw_rect.top()},
         {draw_rect.right(), draw_rect.top()},
         {draw_rect.right(), draw_rect.bottom()},
@@ -5567,7 +5566,7 @@ TEST_F(DisplayListTest, BoundedRenderOpsDoNotReportUnbounded) {
   });
 
   test_bounded("DrawVerticesTriangleStrip", [](DlCanvas& builder) {
-    SkPoint points[6] = {
+    DlPoint points[6] = {
         {draw_rect.left(), draw_rect.top()},
         {draw_rect.right(), draw_rect.top()},
         {draw_rect.right(), draw_rect.bottom()},
@@ -5582,8 +5581,8 @@ TEST_F(DisplayListTest, BoundedRenderOpsDoNotReportUnbounded) {
   });
 
   test_bounded("DrawVerticesTriangleFan", [](DlCanvas& builder) {
-    SkPoint points[6] = {
-        draw_rect.center(),
+    DlPoint points[6] = {
+        ToDlPoint(draw_rect.center()),
         {draw_rect.left(), draw_rect.top()},
         {draw_rect.right(), draw_rect.top()},
         {draw_rect.right(), draw_rect.bottom()},

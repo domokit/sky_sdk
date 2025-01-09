@@ -14,10 +14,7 @@ class CardExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Card Sample')),
-        body: const CardExample(),
-      ),
+      home: Scaffold(appBar: AppBar(title: const Text('Card Sample')), body: const CardExample()),
     );
   }
 }
@@ -42,12 +39,16 @@ class CardExample extends StatelessWidget {
               children: <Widget>[
                 TextButton(
                   child: const Text('BUY TICKETS'),
-                  onPressed: () {/* ... */},
+                  onPressed: () {
+                    /* ... */
+                  },
                 ),
                 const SizedBox(width: 8),
                 TextButton(
                   child: const Text('LISTEN'),
-                  onPressed: () {/* ... */},
+                  onPressed: () {
+                    /* ... */
+                  },
                 ),
                 const SizedBox(width: 8),
               ],

@@ -38,9 +38,7 @@ Future<void> testMain() async {
 
   test('pushClipRect', () async {
     final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
-    builder.pushClipRect(
-      const ui.Rect.fromLTRB(10, 10, 60, 60),
-    );
+    builder.pushClipRect(const ui.Rect.fromLTRB(10, 10, 60, 60));
     _drawTestPicture(builder);
     builder.pop();
 
@@ -53,12 +51,8 @@ Future<void> testMain() async {
     final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
 
     builder.pushOffset(0, 60);
-    builder.pushTransform(
-      Matrix4.diagonal3Values(1, -1, 1).toFloat64(),
-    );
-    builder.pushClipRect(
-      const ui.Rect.fromLTRB(10, 10, 60, 60),
-    );
+    builder.pushTransform(Matrix4.diagonal3Values(1, -1, 1).toFloat64());
+    builder.pushClipRect(const ui.Rect.fromLTRB(10, 10, 60, 60));
     _drawTestPicture(builder);
     builder.pop();
     builder.pop();
@@ -66,20 +60,15 @@ Future<void> testMain() async {
 
     domDocument.body!.append(builder.build().webOnlyRootElement!);
 
-    await matchGoldenFile('compositing_clip_rect_with_offset_and_transform.png',
-        region: region);
+    await matchGoldenFile('compositing_clip_rect_with_offset_and_transform.png', region: region);
   });
 
-  test('pushClipRect with offset and transform ClipOp none should not clip',
-      () async {
+  test('pushClipRect with offset and transform ClipOp none should not clip', () async {
     final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
 
     builder.pushOffset(0, 80);
-    builder.pushTransform(
-      Matrix4.diagonal3Values(1, -1, 1).toFloat64(),
-    );
-    builder.pushClipRect(const ui.Rect.fromLTRB(10, 10, 60, 60),
-        clipBehavior: ui.Clip.none);
+    builder.pushTransform(Matrix4.diagonal3Values(1, -1, 1).toFloat64());
+    builder.pushClipRect(const ui.Rect.fromLTRB(10, 10, 60, 60), clipBehavior: ui.Clip.none);
     _drawTestPicture(builder);
     builder.pop();
     builder.pop();
@@ -87,24 +76,21 @@ Future<void> testMain() async {
 
     domDocument.body!.append(builder.build().webOnlyRootElement!);
 
-    await matchGoldenFile('compositing_clip_rect_clipop_none.png',
-        region: region);
+    await matchGoldenFile('compositing_clip_rect_clipop_none.png', region: region);
   });
 
-  test('pushClipRRect with offset and transform ClipOp none should not clip',
-      () async {
+  test('pushClipRRect with offset and transform ClipOp none should not clip', () async {
     final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
 
     builder.pushOffset(0, 80);
-    builder.pushTransform(
-      Matrix4.diagonal3Values(1, -1, 1).toFloat64(),
-    );
+    builder.pushTransform(Matrix4.diagonal3Values(1, -1, 1).toFloat64());
     builder.pushClipRRect(
-        ui.RRect.fromRectAndRadius(
-          const ui.Rect.fromLTRB(10, 10, 60, 60),
-          const ui.Radius.circular(1),
-        ),
-        clipBehavior: ui.Clip.none);
+      ui.RRect.fromRectAndRadius(
+        const ui.Rect.fromLTRB(10, 10, 60, 60),
+        const ui.Radius.circular(1),
+      ),
+      clipBehavior: ui.Clip.none,
+    );
     _drawTestPicture(builder);
     builder.pop();
     builder.pop();
@@ -112,15 +98,12 @@ Future<void> testMain() async {
 
     domDocument.body!.append(builder.build().webOnlyRootElement!);
 
-    await matchGoldenFile('compositing_clip_rrect_clipop_none.png',
-        region: region);
+    await matchGoldenFile('compositing_clip_rrect_clipop_none.png', region: region);
   });
 
   test('pushClipRRect', () async {
     final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
-    builder.pushClipRRect(
-      ui.RRect.fromLTRBR(10, 10, 60, 60, const ui.Radius.circular(5)),
-    );
+    builder.pushClipRRect(ui.RRect.fromLTRBR(10, 10, 60, 60, const ui.Radius.circular(5)));
     _drawTestPicture(builder);
     builder.pop();
 
@@ -131,9 +114,7 @@ Future<void> testMain() async {
 
   test('pushImageFilter blur', () async {
     final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
-    builder.pushImageFilter(
-      ui.ImageFilter.blur(sigmaX: 1, sigmaY: 3),
-    );
+    builder.pushImageFilter(ui.ImageFilter.blur(sigmaX: 1, sigmaY: 3));
     _drawTestPicture(builder);
     builder.pop();
 
@@ -146,12 +127,12 @@ Future<void> testMain() async {
     final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
     builder.pushImageFilter(
       ui.ImageFilter.matrix(
-          (
-              Matrix4.identity()
-                ..translate(40, 10)
-                ..rotateZ(math.pi / 6)
-                ..scale(0.75, 0.75)
-          ).toFloat64()),
+        (Matrix4.identity()
+              ..translate(40, 10)
+              ..rotateZ(math.pi / 6)
+              ..scale(0.75, 0.75))
+            .toFloat64(),
+      ),
     );
     _drawTestPicture(builder);
     builder.pop();
@@ -164,11 +145,7 @@ Future<void> testMain() async {
   test('pushImageFilter using mode ColorFilter', () async {
     final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
     // Applying the colorFilter should turn all the circles red.
-    builder.pushImageFilter(
-        const ui.ColorFilter.mode(
-          ui.Color(0xFFFF0000),
-          ui.BlendMode.srcIn,
-        ));
+    builder.pushImageFilter(const ui.ColorFilter.mode(ui.Color(0xFFFF0000), ui.BlendMode.srcIn));
     _drawTestPicture(builder);
     builder.pop();
 
@@ -204,19 +181,22 @@ Future<void> testMain() async {
 void _testCullRectComputation() {
   // Draw a picture larger that screen. Verify that cull rect is equal to screen
   // bounds.
-  test('fills screen bounds', () async {
-    final ui.SceneBuilder builder = ui.SceneBuilder();
-    drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
-      canvas.drawCircle(
-          ui.Offset.zero, 10000, SurfacePaint()..style = ui.PaintingStyle.fill);
-    });
-    builder.build();
+  test(
+    'fills screen bounds',
+    () async {
+      final ui.SceneBuilder builder = ui.SceneBuilder();
+      drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
+        canvas.drawCircle(ui.Offset.zero, 10000, SurfacePaint()..style = ui.PaintingStyle.fill);
+      });
+      builder.build();
 
-    final PersistedPicture picture = enumeratePictures().single;
-    expect(picture.optimalLocalCullRect, const ui.Rect.fromLTRB(0, 0, 500, 100));
-  }, skip: '''
+      final PersistedPicture picture = enumeratePictures().single;
+      expect(picture.optimalLocalCullRect, const ui.Rect.fromLTRB(0, 0, 500, 100));
+    },
+    skip: '''
   TODO(https://github.com/flutter/flutter/issues/40395)
-  Needs ability to set iframe to 500,100 size. Current screen seems to be 500,500''');
+  Needs ability to set iframe to 500,100 size. Current screen seems to be 500,500''',
+  );
 
   // Draw a picture that overflows the screen. Verify that cull rect is the
   // intersection of screen bounds and paint bounds.
@@ -237,7 +217,10 @@ void _testCullRectComputation() {
     final ui.SceneBuilder builder = ui.SceneBuilder();
     drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
       canvas.drawCircle(
-          const ui.Offset(-100, -100), 20, SurfacePaint()..style = ui.PaintingStyle.fill);
+        const ui.Offset(-100, -100),
+        20,
+        SurfacePaint()..style = ui.PaintingStyle.fill,
+      );
     });
     builder.build();
 
@@ -251,8 +234,7 @@ void _testCullRectComputation() {
   test('limits to paint bounds if no clip layers', () async {
     final ui.SceneBuilder builder = ui.SceneBuilder();
     drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
-      canvas.drawCircle(
-          const ui.Offset(50, 50), 10, SurfacePaint()..style = ui.PaintingStyle.fill);
+      canvas.drawCircle(const ui.Offset(50, 50), 10, SurfacePaint()..style = ui.PaintingStyle.fill);
     });
     builder.build();
 
@@ -268,8 +250,7 @@ void _testCullRectComputation() {
 
     builder.pushOffset(10, 10);
     drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
-      canvas.drawCircle(
-          const ui.Offset(50, 50), 10, SurfacePaint()..style = ui.PaintingStyle.fill);
+      canvas.drawCircle(const ui.Offset(50, 50), 10, SurfacePaint()..style = ui.PaintingStyle.fill);
     });
     builder.pop();
 
@@ -282,48 +263,45 @@ void _testCullRectComputation() {
   // Draw a picture smaller than the screen. Offset it such that the picture
   // overflows screen bounds. Verify that the cull rect is the intersection
   // between screen bounds and paint bounds.
-  test('offset overflows paint bounds', () async {
-    final ui.SceneBuilder builder = ui.SceneBuilder();
+  test(
+    'offset overflows paint bounds',
+    () async {
+      final ui.SceneBuilder builder = ui.SceneBuilder();
 
-    builder.pushOffset(0, 90);
-    drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
-      canvas.drawCircle(ui.Offset.zero, 20, SurfacePaint()..style = ui.PaintingStyle.fill);
-    });
-    builder.pop();
+      builder.pushOffset(0, 90);
+      drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
+        canvas.drawCircle(ui.Offset.zero, 20, SurfacePaint()..style = ui.PaintingStyle.fill);
+      });
+      builder.pop();
 
-    builder.build();
+      builder.build();
 
-    final PersistedPicture picture = enumeratePictures().single;
-    expect(
-        picture.debugExactGlobalCullRect, const ui.Rect.fromLTRB(0, 70, 20, 100));
-    expect(picture.optimalLocalCullRect, const ui.Rect.fromLTRB(0, -20, 20, 10));
-  }, skip: '''
+      final PersistedPicture picture = enumeratePictures().single;
+      expect(picture.debugExactGlobalCullRect, const ui.Rect.fromLTRB(0, 70, 20, 100));
+      expect(picture.optimalLocalCullRect, const ui.Rect.fromLTRB(0, -20, 20, 10));
+    },
+    skip: '''
   TODO(https://github.com/flutter/flutter/issues/40395)
-  Needs ability to set iframe to 500,100 size. Current screen seems to be 500,500''');
+  Needs ability to set iframe to 500,100 size. Current screen seems to be 500,500''',
+  );
 
   // Draw a picture inside a layer clip but fill all available space inside it.
   // Verify that the cull rect is equal to the layer clip.
   test('fills layer clip rect', () async {
     final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
-    builder.pushClipRect(
-      const ui.Rect.fromLTWH(10, 10, 60, 60),
-    );
+    builder.pushClipRect(const ui.Rect.fromLTWH(10, 10, 60, 60));
 
-    builder.pushClipRect(
-      const ui.Rect.fromLTWH(40, 40, 60, 60),
-    );
+    builder.pushClipRect(const ui.Rect.fromLTWH(40, 40, 60, 60));
 
     drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
-      canvas.drawCircle(
-          ui.Offset.zero, 10000, SurfacePaint()..style = ui.PaintingStyle.fill);
+      canvas.drawCircle(ui.Offset.zero, 10000, SurfacePaint()..style = ui.PaintingStyle.fill);
     });
 
     builder.pop(); // pushClipRect
     builder.pop(); // pushClipRect
     domDocument.body!.append(builder.build().webOnlyRootElement!);
 
-    await matchGoldenFile('compositing_cull_rect_fills_layer_clip.png',
-        region: region);
+    await matchGoldenFile('compositing_cull_rect_fills_layer_clip.png', region: region);
 
     final PersistedPicture picture = enumeratePictures().single;
     expect(picture.optimalLocalCullRect, const ui.Rect.fromLTRB(40, 40, 70, 70));
@@ -334,17 +312,12 @@ void _testCullRectComputation() {
   // intersection between the layer clip and paint bounds.
   test('intersects layer clip rect and paint bounds', () async {
     final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
-    builder.pushClipRect(
-      const ui.Rect.fromLTWH(10, 10, 60, 60),
-    );
+    builder.pushClipRect(const ui.Rect.fromLTWH(10, 10, 60, 60));
 
-    builder.pushClipRect(
-      const ui.Rect.fromLTWH(40, 40, 60, 60),
-    );
+    builder.pushClipRect(const ui.Rect.fromLTWH(40, 40, 60, 60));
 
     drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
-      canvas.drawCircle(
-          const ui.Offset(80, 55), 30, SurfacePaint()..style = ui.PaintingStyle.fill);
+      canvas.drawCircle(const ui.Offset(80, 55), 30, SurfacePaint()..style = ui.PaintingStyle.fill);
     });
 
     builder.pop(); // pushClipRect
@@ -352,8 +325,9 @@ void _testCullRectComputation() {
     domDocument.body!.append(builder.build().webOnlyRootElement!);
 
     await matchGoldenFile(
-        'compositing_cull_rect_intersects_clip_and_paint_bounds.png',
-        region: region);
+      'compositing_cull_rect_intersects_clip_and_paint_bounds.png',
+      region: region,
+    );
 
     final PersistedPicture picture = enumeratePictures().single;
     expect(picture.optimalLocalCullRect, const ui.Rect.fromLTRB(50, 40, 70, 70));
@@ -364,13 +338,9 @@ void _testCullRectComputation() {
   // layer clip and the offset paint bounds.
   test('offsets picture inside layer clip rect', () async {
     final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
-    builder.pushClipRect(
-      const ui.Rect.fromLTWH(10, 10, 60, 60),
-    );
+    builder.pushClipRect(const ui.Rect.fromLTWH(10, 10, 60, 60));
 
-    builder.pushClipRect(
-      const ui.Rect.fromLTWH(40, 40, 60, 60),
-    );
+    builder.pushClipRect(const ui.Rect.fromLTWH(40, 40, 60, 60));
 
     builder.pushOffset(55, 70);
 
@@ -383,12 +353,10 @@ void _testCullRectComputation() {
     builder.pop(); // pushClipRect
     domDocument.body!.append(builder.build().webOnlyRootElement!);
 
-    await matchGoldenFile('compositing_cull_rect_offset_inside_layer_clip.png',
-        region: region);
+    await matchGoldenFile('compositing_cull_rect_offset_inside_layer_clip.png', region: region);
 
     final PersistedPicture picture = enumeratePictures().single;
-    expect(picture.optimalLocalCullRect,
-        const ui.Rect.fromLTRB(-15.0, -20.0, 15.0, 0.0));
+    expect(picture.optimalLocalCullRect, const ui.Rect.fromLTRB(-15.0, -20.0, 15.0, 0.0));
   });
 
   // Draw a picture inside a layer clip that's positioned an offset layer such
@@ -396,13 +364,9 @@ void _testCullRectComputation() {
   // cull rect is zero.
   test('zero intersection with clip', () async {
     final ui.SceneBuilder builder = ui.SceneBuilder();
-    builder.pushClipRect(
-      const ui.Rect.fromLTWH(10, 10, 60, 60),
-    );
+    builder.pushClipRect(const ui.Rect.fromLTWH(10, 10, 60, 60));
 
-    builder.pushClipRect(
-      const ui.Rect.fromLTWH(40, 40, 60, 60),
-    );
+    builder.pushClipRect(const ui.Rect.fromLTWH(40, 40, 60, 60));
 
     builder.pushOffset(100, 50);
 
@@ -427,22 +391,18 @@ void _testCullRectComputation() {
     final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
     builder.pushOffset(80, 50);
 
-    builder.pushTransform(
-      Matrix4.rotationZ(-math.pi / 4).toFloat64(),
-    );
+    builder.pushTransform(Matrix4.rotationZ(-math.pi / 4).toFloat64());
 
-    builder.pushClipRect(
-      const ui.Rect.fromLTRB(-10, -10, 10, 10),
-    );
+    builder.pushClipRect(const ui.Rect.fromLTRB(-10, -10, 10, 10));
 
-    builder.pushTransform(
-      Matrix4.rotationZ(math.pi / 4).toFloat64(),
-    );
+    builder.pushTransform(Matrix4.rotationZ(math.pi / 4).toFloat64());
 
     drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
-      canvas.drawPaint(SurfacePaint()
-        ..color = const ui.Color.fromRGBO(0, 0, 255, 0.6)
-        ..style = ui.PaintingStyle.fill);
+      canvas.drawPaint(
+        SurfacePaint()
+          ..color = const ui.Color.fromRGBO(0, 0, 255, 0.6)
+          ..style = ui.PaintingStyle.fill,
+      );
       canvas.drawRect(
         const ui.Rect.fromLTRB(-5, -5, 5, 5),
         SurfacePaint()
@@ -462,8 +422,7 @@ void _testCullRectComputation() {
     final PersistedPicture picture = enumeratePictures().single;
     expect(
       picture.optimalLocalCullRect,
-      within(
-          distance: 0.05, from: const ui.Rect.fromLTRB(-14.1, -14.1, 14.1, 14.1)),
+      within(distance: 0.05, from: const ui.Rect.fromLTRB(-14.1, -14.1, 14.1, 14.1)),
     );
   });
 
@@ -471,9 +430,7 @@ void _testCullRectComputation() {
     final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
     final ui.Path path = ui.Path();
     path.addRect(const ui.Rect.fromLTRB(10, 10, 60, 60));
-    builder.pushClipPath(
-      path,
-    );
+    builder.pushClipPath(path);
     _drawTestPicture(builder);
     builder.pop();
 
@@ -487,40 +444,37 @@ void _testCullRectComputation() {
   test('clips correctly when using 3d transforms', () async {
     final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
 
-    builder.pushTransform(Matrix4.diagonal3Values(
-            EngineFlutterDisplay.instance.browserDevicePixelRatio,
-            EngineFlutterDisplay.instance.browserDevicePixelRatio,
-            1.0)
-        .toFloat64());
+    builder.pushTransform(
+      Matrix4.diagonal3Values(
+        EngineFlutterDisplay.instance.browserDevicePixelRatio,
+        EngineFlutterDisplay.instance.browserDevicePixelRatio,
+        1.0,
+      ).toFloat64(),
+    );
 
     // TODO(yjbanov): see the TODO below.
     // final double screenWidth = domWindow.innerWidth.toDouble();
     // final double screenHeight = domWindow.innerHeight.toDouble();
 
     final Matrix4 scaleTransform = Matrix4.identity().scaled(0.5, 0.2);
-    builder.pushTransform(
-      scaleTransform.toFloat64(),
-    );
+    builder.pushTransform(scaleTransform.toFloat64());
 
     builder.pushOffset(400, 200);
 
-    builder.pushClipRect(
-      const ui.Rect.fromLTRB(-200, -200, 200, 200),
-    );
+    builder.pushClipRect(const ui.Rect.fromLTRB(-200, -200, 200, 200));
 
-    builder
-        .pushTransform(Matrix4.rotationY(45.0 * math.pi / 180.0).toFloat64());
+    builder.pushTransform(Matrix4.rotationY(45.0 * math.pi / 180.0).toFloat64());
 
-    builder.pushClipRect(
-      const ui.Rect.fromLTRB(-140, -140, 140, 140),
-    );
+    builder.pushClipRect(const ui.Rect.fromLTRB(-140, -140, 140, 140));
 
     builder.pushTransform(Matrix4.translationValues(0, 0, -50).toFloat64());
 
     drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
-      canvas.drawPaint(SurfacePaint()
-        ..color = const ui.Color.fromRGBO(0, 0, 255, 0.6)
-        ..style = ui.PaintingStyle.fill);
+      canvas.drawPaint(
+        SurfacePaint()
+          ..color = const ui.Color.fromRGBO(0, 0, 255, 0.6)
+          ..style = ui.PaintingStyle.fill,
+      );
       // ui.Rect will be clipped.
       canvas.drawRect(
         const ui.Rect.fromLTRB(-150, -150, 150, 150),
@@ -618,117 +572,114 @@ void _testCullRectComputation() {
   // which clips using canvas.
   //
   // More details: https://github.com/flutter/flutter/issues/32274
-  test(
-    'renders clipped text with high quality',
-    () async {
-      // To reproduce blurriness we need real clipping.
-      final CanvasParagraph paragraph =
-          (ui.ParagraphBuilder(ui.ParagraphStyle(fontFamily: 'Roboto'))
-                // Use a decoration to force rendering in DOM mode.
-                ..pushStyle(ui.TextStyle(decoration: ui.TextDecoration.lineThrough, decorationColor: const ui.Color(0x00000000)))
-                ..addText('Am I blurry?'))
-              .build() as CanvasParagraph;
-      paragraph.layout(const ui.ParagraphConstraints(width: 1000));
+  test('renders clipped text with high quality', () async {
+    // To reproduce blurriness we need real clipping.
+    final CanvasParagraph paragraph =
+        (ui.ParagraphBuilder(ui.ParagraphStyle(fontFamily: 'Roboto'))
+                  // Use a decoration to force rendering in DOM mode.
+                  ..pushStyle(
+                    ui.TextStyle(
+                      decoration: ui.TextDecoration.lineThrough,
+                      decorationColor: const ui.Color(0x00000000),
+                    ),
+                  )
+                  ..addText('Am I blurry?'))
+                .build()
+            as CanvasParagraph;
+    paragraph.layout(const ui.ParagraphConstraints(width: 1000));
 
-      final ui.Rect canvasSize = ui.Rect.fromLTRB(
-        0,
-        0,
-        paragraph.maxIntrinsicWidth + 16,
-        2 * paragraph.height + 32,
-      );
-      final ui.Rect outerClip =
-          ui.Rect.fromLTRB(0.5, 0.5, canvasSize.right, canvasSize.bottom);
-      final ui.Rect innerClip = ui.Rect.fromLTRB(0.5, canvasSize.bottom / 2 + 0.5,
-          canvasSize.right, canvasSize.bottom);
-      final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
+    final ui.Rect canvasSize = ui.Rect.fromLTRB(
+      0,
+      0,
+      paragraph.maxIntrinsicWidth + 16,
+      2 * paragraph.height + 32,
+    );
+    final ui.Rect outerClip = ui.Rect.fromLTRB(0.5, 0.5, canvasSize.right, canvasSize.bottom);
+    final ui.Rect innerClip = ui.Rect.fromLTRB(
+      0.5,
+      canvasSize.bottom / 2 + 0.5,
+      canvasSize.right,
+      canvasSize.bottom,
+    );
+    final SurfaceSceneBuilder builder = SurfaceSceneBuilder();
 
-      builder.pushClipRect(outerClip);
+    builder.pushClipRect(outerClip);
 
-      {
-        final EnginePictureRecorder recorder = EnginePictureRecorder();
-        final RecordingCanvas canvas = recorder.beginRecording(outerClip);
-        canvas.drawParagraph(paragraph, const ui.Offset(8.5, 8.5));
-        final ui.Picture picture = recorder.endRecording();
-        expect(paragraph.canDrawOnCanvas, isFalse);
+    {
+      final EnginePictureRecorder recorder = EnginePictureRecorder();
+      final RecordingCanvas canvas = recorder.beginRecording(outerClip);
+      canvas.drawParagraph(paragraph, const ui.Offset(8.5, 8.5));
+      final ui.Picture picture = recorder.endRecording();
+      expect(paragraph.canDrawOnCanvas, isFalse);
 
-        builder.addPicture(
-          ui.Offset.zero,
-          picture,
-        );
-      }
+      builder.addPicture(ui.Offset.zero, picture);
+    }
 
-      builder.pushClipRect(innerClip);
-      {
-        final EnginePictureRecorder recorder = EnginePictureRecorder();
-        final RecordingCanvas canvas = recorder.beginRecording(innerClip);
-        canvas.drawParagraph(paragraph, ui.Offset(8.5, 8.5 + innerClip.top));
-        final ui.Picture picture = recorder.endRecording();
-        expect(paragraph.canDrawOnCanvas, isFalse);
+    builder.pushClipRect(innerClip);
+    {
+      final EnginePictureRecorder recorder = EnginePictureRecorder();
+      final RecordingCanvas canvas = recorder.beginRecording(innerClip);
+      canvas.drawParagraph(paragraph, ui.Offset(8.5, 8.5 + innerClip.top));
+      final ui.Picture picture = recorder.endRecording();
+      expect(paragraph.canDrawOnCanvas, isFalse);
 
-        builder.addPicture(
-          ui.Offset.zero,
-          picture,
-        );
-      }
-      builder.pop(); // inner clip
-      builder.pop(); // outer clip
+      builder.addPicture(ui.Offset.zero, picture);
+    }
+    builder.pop(); // inner clip
+    builder.pop(); // outer clip
 
-      final DomElement sceneElement = builder.build().webOnlyRootElement!;
-      expect(
-        sceneElement
-            .querySelectorAll('flt-paragraph')
-            .map<String>((DomElement e) => e.innerText)
-            .toList(),
-        <String>['Am I blurry?', 'Am I blurry?'],
-        reason: 'Expected to render text using HTML',
-      );
-      domDocument.body!.append(sceneElement);
+    final DomElement sceneElement = builder.build().webOnlyRootElement!;
+    expect(
+      sceneElement
+          .querySelectorAll('flt-paragraph')
+          .map<String>((DomElement e) => e.innerText)
+          .toList(),
+      <String>['Am I blurry?', 'Am I blurry?'],
+      reason: 'Expected to render text using HTML',
+    );
+    domDocument.body!.append(sceneElement);
 
-      await matchGoldenFile(
-        'compositing_draw_high_quality_text.png',
-        region: canvasSize,
-      );
-    },
-    testOn: 'chrome',
-  );
+    await matchGoldenFile('compositing_draw_high_quality_text.png', region: canvasSize);
+  }, testOn: 'chrome');
 }
 
 void _drawTestPicture(ui.SceneBuilder builder) {
   final EnginePictureRecorder recorder = EnginePictureRecorder();
-  final RecordingCanvas canvas =
-      recorder.beginRecording(const ui.Rect.fromLTRB(0, 0, 100, 100));
+  final RecordingCanvas canvas = recorder.beginRecording(const ui.Rect.fromLTRB(0, 0, 100, 100));
+  canvas.drawCircle(const ui.Offset(10, 10), 10, SurfacePaint()..style = ui.PaintingStyle.fill);
   canvas.drawCircle(
-      const ui.Offset(10, 10), 10, SurfacePaint()..style = ui.PaintingStyle.fill);
+    const ui.Offset(60, 10),
+    10,
+    SurfacePaint()
+      ..style = ui.PaintingStyle.fill
+      ..color = const ui.Color.fromRGBO(255, 0, 0, 1),
+  );
   canvas.drawCircle(
-      const ui.Offset(60, 10),
-      10,
-      SurfacePaint()
-        ..style = ui.PaintingStyle.fill
-        ..color = const ui.Color.fromRGBO(255, 0, 0, 1));
+    const ui.Offset(10, 60),
+    10,
+    SurfacePaint()
+      ..style = ui.PaintingStyle.fill
+      ..color = const ui.Color.fromRGBO(0, 255, 0, 1),
+  );
   canvas.drawCircle(
-      const ui.Offset(10, 60),
-      10,
-      SurfacePaint()
-        ..style = ui.PaintingStyle.fill
-        ..color = const ui.Color.fromRGBO(0, 255, 0, 1));
-  canvas.drawCircle(
-      const ui.Offset(60, 60),
-      10,
-      SurfacePaint()
-        ..style = ui.PaintingStyle.fill
-        ..color = const ui.Color.fromRGBO(0, 0, 255, 1));
+    const ui.Offset(60, 60),
+    10,
+    SurfacePaint()
+      ..style = ui.PaintingStyle.fill
+      ..color = const ui.Color.fromRGBO(0, 0, 255, 1),
+  );
   final ui.Picture picture = recorder.endRecording();
 
-  builder.addPicture(
-    ui.Offset.zero,
-    picture,
-  );
+  builder.addPicture(ui.Offset.zero, picture);
 }
 
 typedef PaintCallback = void Function(RecordingCanvas canvas);
 
-void drawWithBitmapCanvas(ui.SceneBuilder builder, PaintCallback callback,
-    {ui.Rect bounds = ui.Rect.largest}) {
+void drawWithBitmapCanvas(
+  ui.SceneBuilder builder,
+  PaintCallback callback, {
+  ui.Rect bounds = ui.Rect.largest,
+}) {
   final EnginePictureRecorder recorder = EnginePictureRecorder();
   final RecordingCanvas canvas = recorder.beginRecording(bounds);
 
@@ -736,8 +687,5 @@ void drawWithBitmapCanvas(ui.SceneBuilder builder, PaintCallback callback,
   callback(canvas);
   final ui.Picture picture = recorder.endRecording();
 
-  builder.addPicture(
-    ui.Offset.zero,
-    picture,
-  );
+  builder.addPicture(ui.Offset.zero, picture);
 }

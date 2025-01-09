@@ -15,16 +15,17 @@ import 'package:meta/meta.dart';
 import 'task_result.dart';
 import 'utils.dart';
 
-typedef ProcessRunSync = ProcessResult Function(
-  String,
-  List<String>, {
-  Map<String, String>? environment,
-  bool includeParentEnvironment,
-  bool runInShell,
-  Encoding? stderrEncoding,
-  Encoding? stdoutEncoding,
-  String? workingDirectory,
-});
+typedef ProcessRunSync =
+    ProcessResult Function(
+      String,
+      List<String>, {
+      Map<String, String>? environment,
+      bool includeParentEnvironment,
+      bool runInShell,
+      Encoding? stderrEncoding,
+      Encoding? stdoutEncoding,
+      String? workingDirectory,
+    });
 
 /// Class for test runner to interact with Flutter's infrastructure service, Cocoon.
 ///
@@ -38,7 +39,11 @@ class Cocoon {
     @visibleForTesting this.processRunSync = Process.runSync,
     @visibleForTesting this.requestRetryLimit = 5,
     @visibleForTesting this.requestTimeoutLimit = 30,
-  }) : _httpClient = AuthenticatedCocoonClient(serviceAccountTokenPath, httpClient: httpClient, filesystem: fs);
+  }) : _httpClient = AuthenticatedCocoonClient(
+         serviceAccountTokenPath,
+         httpClient: httpClient,
+         filesystem: fs,
+       );
 
   /// Client to make http requests to Cocoon.
   final AuthenticatedCocoonClient _httpClient;
@@ -105,8 +110,10 @@ class Cocoon {
     resultsJson['TestFlaky'] = isTestFlaky ?? false;
     if (_shouldUpdateCocoon(resultsJson, builderBucket ?? 'prod')) {
       await retry(
-        () async => _sendUpdateTaskRequest(resultsJson).timeout(Duration(seconds: requestTimeoutLimit)),
-        retryIf: (Exception e) => e is SocketException || e is TimeoutException || e is ClientException,
+        () async =>
+            _sendUpdateTaskRequest(resultsJson).timeout(Duration(seconds: requestTimeoutLimit)),
+        retryIf:
+            (Exception e) => e is SocketException || e is TimeoutException || e is ClientException,
         maxAttempts: requestRetryLimit,
       );
     }
@@ -191,7 +198,8 @@ class Cocoon {
     /// as version changes to the backend, datastore issues, or latency issues.
     final Response response = await retry(
       () => _httpClient.post(url, body: json.encode(jsonData)),
-      retryIf: (Exception e) => e is SocketException || e is TimeoutException || e is ClientException,
+      retryIf:
+          (Exception e) => e is SocketException || e is TimeoutException || e is ClientException,
       maxAttempts: requestRetryLimit,
     );
     return json.decode(response.body) as Map<String, dynamic>;
@@ -204,8 +212,8 @@ class AuthenticatedCocoonClient extends BaseClient {
     this._serviceAccountTokenPath, {
     @visibleForTesting Client? httpClient,
     @visibleForTesting FileSystem? filesystem,
-  })  : _delegate = httpClient ?? Client(),
-        _fs = filesystem ?? const LocalFileSystem();
+  }) : _delegate = httpClient ?? Client(),
+       _fs = filesystem ?? const LocalFileSystem();
 
   /// Authentication token to have the ability to upload and record test results.
   ///
@@ -234,12 +242,13 @@ class AuthenticatedCocoonClient extends BaseClient {
 
     if (response.statusCode != 200) {
       throw ClientException(
-          'AuthenticatedClientError:\n'
-          '  URI: ${request.url}\n'
-          '  HTTP Status: ${response.statusCode}\n'
-          '  Response body:\n'
-          '${(await Response.fromStream(response)).body}',
-          request.url);
+        'AuthenticatedClientError:\n'
+        '  URI: ${request.url}\n'
+        '  HTTP Status: ${response.statusCode}\n'
+        '  Response body:\n'
+        '${(await Response.fromStream(response)).body}',
+        request.url,
+      );
     }
     return response;
   }

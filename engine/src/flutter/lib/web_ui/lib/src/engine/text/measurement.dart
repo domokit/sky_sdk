@@ -89,17 +89,13 @@ double measureSubstring(
   double width;
 
   // TODO(mdebbar): Explore caching all widths in a map, not only the last one.
-  if (start == _lastStart &&
-      end == _lastEnd &&
-      text == _lastText &&
-      cssFont == _lastCssFont) {
+  if (start == _lastStart && end == _lastEnd && text == _lastText && cssFont == _lastCssFont) {
     // Reuse the previously calculated width if all factors that affect width
     // are unchanged. The only exception is letter-spacing. We always add
     // letter-spacing to the width later below.
     width = _lastWidth;
   } else {
-    final String sub =
-      start == 0 && end == text.length ? text : text.substring(start, end);
+    final String sub = start == 0 && end == text.length ? text : text.substring(start, end);
     width = canvasContext.measureText(sub).width!;
   }
 

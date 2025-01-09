@@ -36,7 +36,7 @@ void main() {
     expect(find.text(datePickerTitle), findsOneWidget);
     expect(find.text('Fri, Jul 30'), findsOneWidget);
 
-     // Tap OK to confirm the selection and close the date picker.
+    // Tap OK to confirm the selection and close the date picker.
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
 

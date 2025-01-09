@@ -16,9 +16,7 @@ class MaterialStateBorderSideExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('MaterialStateBorderSide Sample')),
-        body: const Center(
-          child: MaterialStateBorderSideExample(),
-        ),
+        body: const Center(child: MaterialStateBorderSideExample()),
       ),
     );
   }

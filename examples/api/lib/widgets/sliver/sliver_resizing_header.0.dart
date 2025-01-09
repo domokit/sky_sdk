@@ -9,18 +9,16 @@ void main() {
 }
 
 class SliverResizingHeaderApp extends StatelessWidget {
-  const SliverResizingHeaderApp({ super.key });
+  const SliverResizingHeaderApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: ResizingHeaderExample(),
-    );
+    return const MaterialApp(home: ResizingHeaderExample());
   }
 }
 
 class ResizingHeaderExample extends StatefulWidget {
-  const ResizingHeaderExample({ super.key });
+  const ResizingHeaderExample({super.key});
 
   @override
   State<ResizingHeaderExample> createState() => _ResizingHeaderExampleState();
@@ -44,7 +42,7 @@ class _ResizingHeaderExampleState extends State<ResizingHeaderExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     body: SafeArea(
+      body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(4),
           child: Scrollbar(
@@ -53,15 +51,9 @@ class _ResizingHeaderExampleState extends State<ResizingHeaderExample> {
               controller: scrollController,
               slivers: const <Widget>[
                 SliverResizingHeader(
-                  minExtentPrototype: ListHeader(
-                    text: 'One',
-                  ),
-                  maxExtentPrototype: ListHeader(
-                    text: 'One\nTwo\nThree'
-                  ),
-                  child: ListHeader(
-                    text: 'SliverResizingHeader\nWith Two Optional\nLines of Text',
-                  ),
+                  minExtentPrototype: ListHeader(text: 'One'),
+                  maxExtentPrototype: ListHeader(text: 'One\nTwo\nThree'),
+                  child: ListHeader(text: 'SliverResizingHeader\nWith Two Optional\nLines of Text'),
                 ),
                 ItemList(),
               ],
@@ -75,10 +67,7 @@ class _ResizingHeaderExampleState extends State<ResizingHeaderExample> {
 
 // A widget that displays its text within a thick rounded rectangle border
 class ListHeader extends StatelessWidget {
-  const ListHeader({
-    super.key,
-    required this.text,
-  });
+  const ListHeader({super.key, required this.text});
 
   final String text;
 
@@ -94,10 +83,7 @@ class ListHeader extends StatelessWidget {
         color: colorScheme.primaryContainer,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
-          side: BorderSide(
-            width: 7,
-            color: colorScheme.outline,
-          ),
+          side: BorderSide(width: 7, color: colorScheme.outline),
         ),
         child: Container(
           alignment: Alignment.center,
@@ -105,9 +91,7 @@ class ListHeader extends StatelessWidget {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: theme.textTheme.headlineMedium!.copyWith(
-              color: colorScheme.onPrimaryContainer,
-            ),
+            style: theme.textTheme.headlineMedium!.copyWith(color: colorScheme.onPrimaryContainer),
           ),
         ),
       ),
@@ -117,10 +101,7 @@ class ListHeader extends StatelessWidget {
 
 // A placeholder SliverList of 50 items.
 class ItemList extends StatelessWidget {
-  const ItemList({
-    super.key,
-    this.itemCount = 50,
-  });
+  const ItemList({super.key, this.itemCount = 50});
 
   final int itemCount;
 
@@ -128,18 +109,12 @@ class ItemList extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          return Card(
-            color: colorScheme.onSecondary,
-            child: ListTile(
-              textColor: colorScheme.secondary,
-              title: Text('Item $index'),
-            ),
-          );
-        },
-        childCount: itemCount,
-      ),
+      delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+        return Card(
+          color: colorScheme.onSecondary,
+          child: ListTile(textColor: colorScheme.secondary, title: Text('Item $index')),
+        );
+      }, childCount: itemCount),
     );
   }
 }

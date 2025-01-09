@@ -39,27 +39,18 @@ class ComposePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  _SubjectRow(
-                    subject: subject,
-                  ),
+                  _SubjectRow(subject: subject),
                   const _SectionDivider(),
-                  const _SenderAddressRow(
-                    senderEmail: senderEmail,
-                  ),
+                  const _SenderAddressRow(senderEmail: senderEmail),
                   const _SectionDivider(),
-                  _RecipientsRow(
-                    recipients: recipient,
-                    avatar: recipientAvatar,
-                  ),
+                  _RecipientsRow(recipients: recipient, avatar: recipientAvatar),
                   const _SectionDivider(),
                   Padding(
                     padding: const EdgeInsets.all(12),
                     child: TextField(
                       minLines: 6,
                       maxLines: 20,
-                      decoration: const InputDecoration.collapsed(
-                        hintText: 'New Message...',
-                      ),
+                      decoration: const InputDecoration.collapsed(hintText: 'New Message...'),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
@@ -109,10 +100,7 @@ class _SubjectRowState extends State<_SubjectRow> {
           IconButton(
             key: const ValueKey<String>('ReplyExit'),
             onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(
-              Icons.close,
-              color: colorScheme.onSurface,
-            ),
+            icon: Icon(Icons.close, color: colorScheme.onSurface),
           ),
           Expanded(
             child: TextField(
@@ -130,10 +118,7 @@ class _SubjectRowState extends State<_SubjectRow> {
             onPressed: () => Navigator.of(context).pop(),
             icon: IconButton(
               icon: ImageIcon(
-                const AssetImage(
-                  'reply/icons/twotone_send.png',
-                  package: 'flutter_gallery_assets',
-                ),
+                const AssetImage('reply/icons/twotone_send.png', package: 'flutter_gallery_assets'),
                 color: colorScheme.onSurface,
               ),
               onPressed: () => Navigator.of(context).pop(),
@@ -167,10 +152,7 @@ class __SenderAddressRowState extends State<_SenderAddressRow> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
-    final List<String> accounts = <String>[
-      'flutterfan@gmail.com',
-      'materialfan@gmail.com',
-    ];
+    final List<String> accounts = <String>['flutterfan@gmail.com', 'materialfan@gmail.com'];
 
     return PopupMenuButton<String>(
       padding: EdgeInsets.zero,
@@ -179,41 +161,23 @@ class __SenderAddressRowState extends State<_SenderAddressRow> {
           senderEmail = email;
         });
       },
-      itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
-        PopupMenuItem<String>(
-          value: accounts[0],
-          child: Text(
-            accounts[0],
-            style: textTheme.bodyMedium,
-          ),
-        ),
-        PopupMenuItem<String>(
-          value: accounts[1],
-          child: Text(
-            accounts[1],
-            style: textTheme.bodyMedium,
-          ),
-        ),
-      ],
+      itemBuilder:
+          (BuildContext context) => <PopupMenuItem<String>>[
+            PopupMenuItem<String>(
+              value: accounts[0],
+              child: Text(accounts[0], style: textTheme.bodyMedium),
+            ),
+            PopupMenuItem<String>(
+              value: accounts[1],
+              child: Text(accounts[1], style: textTheme.bodyMedium),
+            ),
+          ],
       child: Padding(
-        padding: const EdgeInsets.only(
-          left: 12,
-          top: 16,
-          right: 10,
-          bottom: 10,
-        ),
+        padding: const EdgeInsets.only(left: 12, top: 16, right: 10, bottom: 10),
         child: Row(
           children: <Widget>[
-            Expanded(
-              child: Text(
-                senderEmail,
-                style: textTheme.bodyMedium,
-              ),
-            ),
-            Icon(
-              Icons.arrow_drop_down,
-              color: theme.colorScheme.onSurface,
-            ),
+            Expanded(child: Text(senderEmail, style: textTheme.bodyMedium)),
+            Icon(Icons.arrow_drop_down, color: theme.colorScheme.onSurface),
           ],
         ),
       ),
@@ -222,10 +186,7 @@ class __SenderAddressRowState extends State<_SenderAddressRow> {
 }
 
 class _RecipientsRow extends StatelessWidget {
-  const _RecipientsRow({
-    required this.recipients,
-    required this.avatar,
-  });
+  const _RecipientsRow({required this.recipients, required this.avatar});
 
   final String recipients;
   final String avatar;
@@ -240,18 +201,12 @@ class _RecipientsRow extends StatelessWidget {
             child: Wrap(
               children: <Widget>[
                 Chip(
-                  backgroundColor:
-                      Theme.of(context).chipTheme.secondarySelectedColor,
+                  backgroundColor: Theme.of(context).chipTheme.secondarySelectedColor,
                   padding: EdgeInsets.zero,
                   avatar: CircleAvatar(
-                    backgroundImage: AssetImage(
-                      avatar,
-                      package: 'flutter_gallery_assets',
-                    ),
+                    backgroundImage: AssetImage(avatar, package: 'flutter_gallery_assets'),
                   ),
-                  label: Text(
-                    recipients,
-                  ),
+                  label: Text(recipients),
                 ),
               ],
             ),
@@ -273,10 +228,6 @@ class _SectionDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Divider(
-      thickness: 1.1,
-      indent: 10,
-      endIndent: 10,
-    );
+    return const Divider(thickness: 1.1, indent: 10, endIndent: 10);
   }
 }

@@ -46,7 +46,8 @@ const Map<String, String> coopCoepHeaders = <String, String>{
 
 /// Custom test platform that serves web engine unit tests.
 class BrowserPlatform extends PlatformPlugin {
-  BrowserPlatform._(this.suite, {
+  BrowserPlatform._(
+    this.suite, {
     required this.browserEnvironment,
     required this.server,
     required this.isDebug,
@@ -62,7 +63,6 @@ class BrowserPlatform extends PlatformPlugin {
         // reporting restuls. See [_browserManagerFor] and [BrowserManager.start]
         // for details on how the channels are established.
         .add(_webSocketHandler.handler)
-
         // Serves /packages/* requests; fetches files and sources from
         // pubspec dependencies.
         //
@@ -71,36 +71,27 @@ class BrowserPlatform extends PlatformPlugin {
         //  * Assets that are part of the engine sources, such as Ahem.ttf
         .add(_packageUrlHandler)
         .add(_canvasKitOverrideHandler)
-
         // Serves files from the bundle's output build directory
         .add(createSimpleDirectoryHandler(getBundleBuildDirectory(suite.testBundle)))
-
         // Serves files from the out/web_tests/artifacts directory at the root (/) URL path.
         .add(createSimpleDirectoryHandler(env.environment.webTestsArtifactsDir))
-
         // Serves files from the test set directory
         .add(createSimpleDirectoryHandler(getTestSetDirectory(suite.testBundle.testSet)))
         .add(_testImageListingHandler)
-
         // Serves the initial HTML for the test.
         .add(_testBootstrapHandler)
-
         // Serves source files from the engine src root for devtools debugging.
         .add(_createSourceHandler())
-
         // Serves files from the root of web_ui. Some tests download assets that are embedded
         // directly in the test folder, such as test/html/image/sample_image1.png etc
         .add(createStaticHandler(env.environment.webUiRootDir.path))
-
         // Serves absolute package URLs (i.e. not /packages/* but /Users/user/*/hosted/pub.dartlang.org/*).
         // This handler goes last, after all more specific handlers failed to handle the request.
         .add(_createAbsolutePackageUrlHandler())
         .add(_screenshotHandler)
-
         // Generates and serves a test payload of given length, split into chunks
         // of given size. Reponds to requests to /long_test_payload.
         .add(_testPayloadGenerator)
-
         // If none of the handlers above handled the request, return 404.
         .add(_fileNotFoundCatcher);
 
@@ -113,15 +104,15 @@ class BrowserPlatform extends PlatformPlugin {
   ///
   /// If [doUpdateScreenshotGoldens] is true updates screenshot golden files
   /// instead of failing the test on screenshot mismatches.
-  static Future<BrowserPlatform> start(TestSuite suite, {
+  static Future<BrowserPlatform> start(
+    TestSuite suite, {
     required BrowserEnvironment browserEnvironment,
     required bool doUpdateScreenshotGoldens,
     required SkiaGoldClient? skiaClient,
     required String? overridePathToCanvasKit,
     required bool isVerbose,
   }) async {
-    final shelf_io.IOServer server =
-        shelf_io.IOServer(await HttpMultiServer.loopback(0));
+    final shelf_io.IOServer server = shelf_io.IOServer(await HttpMultiServer.loopback(0));
     return BrowserPlatform._(
       suite,
       browserEnvironment: browserEnvironment,
@@ -178,18 +169,14 @@ class BrowserPlatform extends PlatformPlugin {
 
   /// If a path to a custom local build of CanvasKit was specified, serve from
   /// there instead of serving the default CanvasKit in the build/ directory.
-  Future<shelf.Response> _canvasKitOverrideHandler(
-      shelf.Request request) async {
+  Future<shelf.Response> _canvasKitOverrideHandler(shelf.Request request) async {
     final String? pathOverride = overridePathToCanvasKit;
 
     if (pathOverride == null || !request.url.path.startsWith('canvaskit/')) {
       return shelf.Response.notFound('Not a request for CanvasKit.');
     }
 
-    final File file = File(p.joinAll(<String>[
-      pathOverride,
-      ...p.split(request.url.path).skip(1),
-    ]));
+    final File file = File(p.joinAll(<String>[pathOverride, ...p.split(request.url.path).skip(1)]));
 
     if (!file.existsSync()) {
       return shelf.Response.notFound('File not found: ${request.url.path}');
@@ -199,17 +186,14 @@ class BrowserPlatform extends PlatformPlugin {
     final String? contentType = contentTypes[extension];
 
     if (contentType == null) {
-      final String error =
-          'Failed to determine Content-Type for "${request.url.path}".';
+      final String error = 'Failed to determine Content-Type for "${request.url.path}".';
       stderr.writeln(error);
       return shelf.Response.internalServerError(body: error);
     }
 
     return shelf.Response.ok(
       file.readAsBytesSync(),
-      headers: <String, Object>{
-        HttpHeaders.contentTypeHeader: contentType,
-      },
+      headers: <String, Object>{HttpHeaders.contentTypeHeader: contentType},
     );
   }
 
@@ -228,25 +212,21 @@ class BrowserPlatform extends PlatformPlugin {
       return shelf.Response.notFound('Not found.');
     }
 
-    final Directory testImageDirectory = Directory(p.join(
-      env.environment.webTestsArtifactsDir.path,
-      'test_images',
-    ));
+    final Directory testImageDirectory = Directory(
+      p.join(env.environment.webTestsArtifactsDir.path, 'test_images'),
+    );
 
-    final List<String> testImageFiles = testImageDirectory
-        .listSync(recursive: true)
-        .whereType<File>()
-        .map<String>(
-            (File file) => p.relative(file.path, from: testImageDirectory.path))
-        .where(
-            (String path) => supportedImageTypes.containsKey(p.extension(path)))
-        .toList();
+    final List<String> testImageFiles =
+        testImageDirectory
+            .listSync(recursive: true)
+            .whereType<File>()
+            .map<String>((File file) => p.relative(file.path, from: testImageDirectory.path))
+            .where((String path) => supportedImageTypes.containsKey(p.extension(path)))
+            .toList();
 
     return shelf.Response.ok(
       json.encode(testImageFiles),
-      headers: <String, Object>{
-        HttpHeaders.contentTypeHeader: 'application/json',
-      },
+      headers: <String, Object>{HttpHeaders.contentTypeHeader: 'application/json'},
     );
   }
 
@@ -261,11 +241,11 @@ class BrowserPlatform extends PlatformPlugin {
     final String path = p.fromUri(request.url);
     final String extension = p.extension(path);
     final bool isSource =
-      extension == '.dart' ||
-      extension == '.c' ||
-      extension == '.cc' ||
-      extension == '.cpp' ||
-      extension == '.h';
+        extension == '.dart' ||
+        extension == '.c' ||
+        extension == '.cc' ||
+        extension == '.cpp' ||
+        extension == '.h';
     if (isSource && p.isRelative(path)) {
       final String fullPath = p.join(env.environment.engineSrcDir.path, path);
       final File file = File(fullPath);
@@ -318,8 +298,7 @@ class BrowserPlatform extends PlatformPlugin {
       //
       // C:\Users\user\AppData => Users\user\AppData
       // /home/user/path.dart => home/user/path.dart
-      final String rootRelativePath =
-          p.relative(configPath, from: p.rootPrefix(configPath));
+      final String rootRelativePath = p.relative(configPath, from: p.rootPrefix(configPath));
       urlToPackage[p.toUri(rootRelativePath).path] = package;
     }
     return (shelf.Request request) async {
@@ -327,9 +306,9 @@ class BrowserPlatform extends PlatformPlugin {
       // The cast is needed because keys are non-null String, so there's no way
       // to return null for a mismatch.
       final String? packagePath = urlToPackage.keys.cast<String?>().firstWhere(
-            (String? packageUrl) => requestedPath.startsWith(packageUrl!),
-            orElse: () => null,
-          );
+        (String? packageUrl) => requestedPath.startsWith(packageUrl!),
+        orElse: () => null,
+      );
       if (packagePath == null) {
         return shelf.Response.notFound('Not a pub.dartlang.org request');
       }
@@ -354,8 +333,7 @@ class BrowserPlatform extends PlatformPlugin {
 
   Future<shelf.Response> _testPayloadGenerator(shelf.Request request) async {
     if (!request.requestedUri.path.endsWith('/long_test_payload')) {
-      return shelf.Response.notFound(
-          'This request is not handled by the test payload generator');
+      return shelf.Response.notFound('This request is not handled by the test payload generator');
     }
 
     final int payloadLength = int.parse(request.requestedUri.queryParameters['length']!);
@@ -394,13 +372,11 @@ class BrowserPlatform extends PlatformPlugin {
 
   Future<shelf.Response> _screenshotHandler(shelf.Request request) async {
     if (!request.requestedUri.path.endsWith('/screenshot')) {
-      return shelf.Response.notFound(
-          'This request is not handled by the screenshot handler');
+      return shelf.Response.notFound('This request is not handled by the screenshot handler');
     }
 
     final String payload = await request.readAsString();
-    final Map<String, dynamic> requestData =
-        json.decode(payload) as Map<String, dynamic>;
+    final Map<String, dynamic> requestData = json.decode(payload) as Map<String, dynamic>;
     final String filename = requestData['filename'] as String;
 
     if (!(await browserManager).supportsScreenshots) {
@@ -413,8 +389,7 @@ class BrowserPlatform extends PlatformPlugin {
       return shelf.Response.ok(json.encode('OK'));
     }
 
-    final Map<String, dynamic> region =
-        requestData['region'] as Map<String, dynamic>;
+    final Map<String, dynamic> region = requestData['region'] as Map<String, dynamic>;
     final bool isCanvaskitTest = requestData['isCanvaskitTest'] as bool;
     final String result = await _diffScreenshot(filename, region, isCanvaskitTest);
     return shelf.Response.ok(json.encode(result));
@@ -433,8 +408,7 @@ class BrowserPlatform extends PlatformPlugin {
     );
 
     // Take screenshot.
-    final Image screenshot =
-        await (await browserManager).captureScreenshot(regionAsRectange);
+    final Image screenshot = await (await browserManager).captureScreenshot(regionAsRectange);
 
     return compareImage(
       screenshot,
@@ -476,10 +450,7 @@ class BrowserPlatform extends PlatformPlugin {
   /// This is used for trivial use-cases, such as `favicon.ico`, host pages, etc.
   shelf.Handler createSimpleDirectoryHandler(Directory directory) {
     return (shelf.Request request) {
-      final File fileInDirectory = File(p.join(
-        directory.path,
-        request.url.path,
-      ));
+      final File fileInDirectory = File(p.join(directory.path, request.url.path));
 
       if (request.url.path.contains('//') || !fileInDirectory.existsSync()) {
         return shelf.Response.notFound('File not found: ${request.url.path}');
@@ -489,22 +460,17 @@ class BrowserPlatform extends PlatformPlugin {
       final String? contentType = contentTypes[extension];
 
       if (contentType == null) {
-        final String error =
-            'Failed to determine Content-Type for "${request.url.path}".';
+        final String error = 'Failed to determine Content-Type for "${request.url.path}".';
         stderr.writeln(error);
         return shelf.Response.internalServerError(body: error);
       }
 
-      final bool isScript =
-        extension == '.js' ||
-        extension == '.mjs' ||
-        extension == '.html';
+      final bool isScript = extension == '.js' || extension == '.mjs' || extension == '.html';
       return shelf.Response.ok(
         fileInDirectory.readAsBytesSync(),
         headers: <String, Object>{
           HttpHeaders.contentTypeHeader: contentType,
-          if (isScript && suite.runConfig.crossOriginIsolated)
-            ...coopCoepHeaders,
+          if (isScript && suite.runConfig.crossOriginIsolated) ...coopCoepHeaders,
         },
       );
     };
@@ -522,14 +488,16 @@ class BrowserPlatform extends PlatformPlugin {
   }
 
   String _makeBuildConfigString(String scriptBase, CompileConfiguration config) {
-    return config.compiler == Compiler.dart2wasm ? '''
+    return config.compiler == Compiler.dart2wasm
+        ? '''
       {
         compileTarget: "${config.compiler.name}",
         renderer: "${config.renderer.name}",
         mainWasmPath: "$scriptBase.browser_test.dart.wasm",
         jsSupportRuntimePath: "$scriptBase.browser_test.dart.mjs",
       }
-''' : '''
+'''
+        : '''
       {
         compileTarget: "${config.compiler.name}",
         renderer: "${config.renderer.name}",
@@ -546,9 +514,9 @@ class BrowserPlatform extends PlatformPlugin {
       final String test = '${p.withoutExtension(path)}.dart';
       final String scriptBase = htmlEscape.convert(p.basename(test));
 
-      final String buildConfigsString = suite.testBundle.compileConfigs.map(
-        (CompileConfiguration config) => _makeBuildConfigString(scriptBase, config)
-      ).join(',\n');
+      final String buildConfigsString = suite.testBundle.compileConfigs
+          .map((CompileConfiguration config) => _makeBuildConfigString(scriptBase, config))
+          .join(',\n');
       final String bootstrapScript = '''
 <script>
   // Define this before loading flutter.js to test PR flutter/engine#51294
@@ -576,7 +544,8 @@ class BrowserPlatform extends PlatformPlugin {
 </script>
 ''';
 
-      return shelf.Response.ok('''
+      return shelf.Response.ok(
+        '''
         <!DOCTYPE html>
         <html>
         <head>
@@ -584,11 +553,12 @@ class BrowserPlatform extends PlatformPlugin {
           $bootstrapScript
         </head>
         </html>
-      ''', headers: <String, String>{
-        'Content-Type': 'text/html',
-        if (suite.runConfig.crossOriginIsolated)
-          ...coopCoepHeaders
-      });
+      ''',
+        headers: <String, String>{
+          'Content-Type': 'text/html',
+          if (suite.runConfig.crossOriginIsolated) ...coopCoepHeaders,
+        },
+      );
     }
 
     return shelf.Response.notFound('Not found.');
@@ -605,8 +575,12 @@ class BrowserPlatform extends PlatformPlugin {
   /// This will start a browser to load the suite if one isn't already running.
   /// Throws an [ArgumentError] if `platform.platform` isn't a browser.
   @override
-  Future<RunnerSuite> load(String path, SuitePlatform platform,
-      SuiteConfiguration suiteConfig, Object message) async {
+  Future<RunnerSuite> load(
+    String path,
+    SuitePlatform platform,
+    SuiteConfiguration suiteConfig,
+    Object message,
+  ) async {
     _checkNotClosed();
     if (suiteConfig.precompiledPath == null) {
       throw Exception('This test platform only supports precompiled JS.');
@@ -624,13 +598,11 @@ class BrowserPlatform extends PlatformPlugin {
 
     final BrowserManager? browserManager = await _startBrowserManager();
     if (browserManager == null) {
-      throw StateError(
-          'Failed to initialize browser manager for ${browserEnvironment.name}');
+      throw StateError('Failed to initialize browser manager for ${browserEnvironment.name}');
     }
     _checkNotClosed();
 
-    final RunnerSuite runnerSuite =
-        await browserManager.load(path, suiteUrl, suiteConfig, message);
+    final RunnerSuite runnerSuite = await browserManager.load(path, suiteUrl, suiteConfig, message);
     _checkNotClosed();
     return runnerSuite;
   }
@@ -646,19 +618,24 @@ class BrowserPlatform extends PlatformPlugin {
       return _browserManager!;
     }
 
-    final Completer<WebSocketChannel> completer =
-        Completer<WebSocketChannel>.sync();
-    final String path =
-        _webSocketHandler.create(webSocketHandler(completer.complete));
+    final Completer<WebSocketChannel> completer = Completer<WebSocketChannel>.sync();
+    final String path = _webSocketHandler.create(
+      webSocketHandler((WebSocketChannel webSocket, _) {
+        completer.complete(webSocket);
+      }),
+    );
     final Uri webSocketUrl = url.replace(scheme: 'ws').resolve(path);
-    final Uri hostUrl = url.resolve('host/index.html').replace(
-        queryParameters: <String, dynamic>{
-          'managerUrl': webSocketUrl.toString(),
-          'debug': isDebug.toString()
-        });
+    final Uri hostUrl = url
+        .resolve('host/index.html')
+        .replace(
+          queryParameters: <String, dynamic>{
+            'managerUrl': webSocketUrl.toString(),
+            'debug': isDebug.toString(),
+          },
+        );
 
     final bool hasSourceMaps = suite.testBundle.compileConfigs.any(
-      (CompileConfiguration config) => config.compiler == Compiler.dart2js
+      (CompileConfiguration config) => config.compiler == Compiler.dart2js,
     );
     final Future<BrowserManager?> future = BrowserManager.start(
       browserEnvironment: browserEnvironment,
@@ -696,12 +673,14 @@ class BrowserPlatform extends PlatformPlugin {
   Future<void> close() {
     return _closeMemo.runOnce(() async {
       final List<Future<void>> futures = <Future<void>>[];
-      futures.add(Future<void>.microtask(() async {
-        if (_browserManager != null) {
-          final BrowserManager? result = await _browserManager;
-          await result?.close();
-        }
-      }));
+      futures.add(
+        Future<void>.microtask(() async {
+          if (_browserManager != null) {
+            final BrowserManager? result = await _browserManager;
+            await result?.close();
+          }
+        }),
+      );
       futures.add(server.close());
 
       await Future.wait(futures);
@@ -782,26 +761,26 @@ class BrowserManager {
 
     // Whenever we get a message, no matter which child channel it's for, we the
     // know browser is still running code which means the user isn't debugging.
-    _channel = MultiChannel<dynamic>(webSocket
-        .cast<String>()
-        .transform(jsonDocument)
-        .changeStream((Stream<Object?> stream) {
-      return stream.map((Object? message) {
-        if (!_closed) {
-          _timer.reset();
-        }
-        for (final RunnerSuiteController controller in _controllers) {
-          controller.setDebugging(false);
-        }
+    _channel = MultiChannel<dynamic>(
+      webSocket.cast<String>().transform(jsonDocument).changeStream((Stream<Object?> stream) {
+        return stream.map((Object? message) {
+          if (!_closed) {
+            _timer.reset();
+          }
+          for (final RunnerSuiteController controller in _controllers) {
+            controller.setDebugging(false);
+          }
 
-        return message;
-      });
-    }));
+          return message;
+        });
+      }),
+    );
 
     _environment = _loadBrowserEnvironment();
     _channel.stream.listen(
-        (dynamic message) => _onMessage(message as Map<dynamic, dynamic>),
-        onDone: close);
+      (dynamic message) => _onMessage(message as Map<dynamic, dynamic>),
+      onDone: close,
+    );
   }
 
   final PackageConfig packageConfig;
@@ -845,8 +824,7 @@ class BrowserManager {
   CancelableCompleter<void>? _pauseCompleter;
 
   /// The controller for [_BrowserEnvironment.onRestart].
-  final StreamController<dynamic> _onRestartController =
-      StreamController<dynamic>.broadcast();
+  final StreamController<dynamic> _onRestartController = StreamController<dynamic>.broadcast();
 
   /// The environment to attach to each suite.
   late final Future<_BrowserEnvironment> _environment;
@@ -882,11 +860,7 @@ class BrowserManager {
     Directory? sourceMapDirectory,
     bool debug = false,
   }) async {
-    final Browser browser = await _newBrowser(
-      url,
-      browserEnvironment,
-      debug: debug,
-    );
+    final Browser browser = await _newBrowser(url, browserEnvironment, debug: debug);
     return _startBrowserManager(
       browserEnvironment: browserEnvironment,
       url: url,
@@ -921,24 +895,28 @@ class BrowserManager {
       completer.completeError(error, stackTrace);
     });
 
-    future.then((WebSocketChannel webSocket) {
-      if (completer.isCompleted) {
-        return;
-      }
-      completer.complete(BrowserManager._(
-          packageConfig,
-          browser,
-          browserEnvironment,
-          sourceMapDirectory,
-          webSocket,
-      ));
-    }).catchError((Object error, StackTrace stackTrace) {
-      browser.close();
-      if (completer.isCompleted) {
-        return null;
-      }
-      completer.completeError(error, stackTrace);
-    });
+    future
+        .then((WebSocketChannel webSocket) {
+          if (completer.isCompleted) {
+            return;
+          }
+          completer.complete(
+            BrowserManager._(
+              packageConfig,
+              browser,
+              browserEnvironment,
+              sourceMapDirectory,
+              webSocket,
+            ),
+          );
+        })
+        .catchError((Object error, StackTrace stackTrace) {
+          browser.close();
+          if (completer.isCompleted) {
+            return null;
+          }
+          completer.completeError(error, stackTrace);
+        });
 
     return completer.future;
   }
@@ -951,10 +929,7 @@ class BrowserManager {
     BrowserEnvironment browserEnvironment, {
     bool debug = false,
   }) {
-    return browserEnvironment.launchBrowserInstance(
-      url,
-      debug: debug,
-    );
+    return browserEnvironment.launchBrowserInstance(url, debug: debug);
   }
 
   /// Loads [_BrowserEnvironment].
@@ -963,7 +938,7 @@ class BrowserManager {
       this,
       await _browser.vmServiceUrl,
       await _browser.remoteDebuggerUrl,
-      _onRestartController.stream
+      _onRestartController.stream,
     );
   }
 
@@ -972,13 +947,20 @@ class BrowserManager {
   /// [url] should be an HTML page with a reference to the JS-compiled test
   /// suite. [path] is the path of the original test suite file, which is used
   /// for reporting. [suiteConfig] is the configuration for the test suite.
-  Future<RunnerSuite> load(String path, Uri url, SuiteConfiguration suiteConfig,
-      Object message) async {
+  Future<RunnerSuite> load(
+    String path,
+    Uri url,
+    SuiteConfiguration suiteConfig,
+    Object message,
+  ) async {
     url = url.replace(
-        fragment: Uri.encodeFull(jsonEncode(<String, dynamic>{
-      'metadata': suiteConfig.metadata.serialize(),
-      'browser': _browserEnvironment.packageTestRuntime.identifier
-    })));
+      fragment: Uri.encodeFull(
+        jsonEncode(<String, dynamic>{
+          'metadata': suiteConfig.metadata.serialize(),
+          'browser': _browserEnvironment.packageTestRuntime.identifier,
+        }),
+      ),
+    );
 
     final int suiteID = _suiteID++;
     RunnerSuiteController? controller;
@@ -987,8 +969,7 @@ class BrowserManager {
         return;
       }
       _controllers.remove(controller);
-      _channel.sink
-          .add(<String, dynamic>{'command': 'closeSuite', 'id': suiteID});
+      _channel.sink.add(<String, dynamic>{'command': 'closeSuite', 'id': suiteID});
     }
 
     // The virtual channel will be closed when the suite is closed, in which
@@ -996,11 +977,13 @@ class BrowserManager {
     final VirtualChannel<dynamic> virtualChannel = _channel.virtualChannel();
     final int suiteChannelID = virtualChannel.id;
     final StreamChannel<dynamic> suiteChannel = virtualChannel.transformStream(
-        StreamTransformer<dynamic, dynamic>.fromHandlers(
-            handleDone: (EventSink<dynamic> sink) {
-      closeIframe();
-      sink.close();
-    }));
+      StreamTransformer<dynamic, dynamic>.fromHandlers(
+        handleDone: (EventSink<dynamic> sink) {
+          closeIframe();
+          sink.close();
+        },
+      ),
+    );
 
     if (Configuration.current.pauseAfterLoad) {
       print('Browser loaded. Press enter to start tests...');
@@ -1012,36 +995,31 @@ class BrowserManager {
         'command': 'loadSuite',
         'url': url.toString(),
         'id': suiteID,
-        'channel': suiteChannelID
+        'channel': suiteChannelID,
       });
 
       try {
         controller = deserializeSuite(
-            path,
-            currentPlatform(_browserEnvironment.packageTestRuntime),
-            suiteConfig,
-            await _environment,
-            suiteChannel,
-            message);
+          path,
+          currentPlatform(_browserEnvironment.packageTestRuntime),
+          suiteConfig,
+          await _environment,
+          suiteChannel,
+          message,
+        );
 
         if (_sourceMapDirectory == null) {
           // We don't have mapping for wasm yet. But we should send a message
           // to let the host page move forward.
           controller!.channel('test.browser.mapper').sink.add(null);
         } else {
-          final String sourceMapFileName =
-              '${p.basename(path)}.browser_test.dart.js.map';
+          final String sourceMapFileName = '${p.basename(path)}.browser_test.dart.js.map';
           final String pathToTest = p.dirname(path);
 
-          final String mapPath = p.join(
-            _sourceMapDirectory.path,
-            pathToTest,
-            sourceMapFileName
-          );
+          final String mapPath = p.join(_sourceMapDirectory.path, pathToTest, sourceMapFileName);
 
           final Map<String, Uri> packageMap = <String, Uri>{
-            for (final Package p in packageConfig.packages)
-              p.name: p.packageUriRoot
+            for (final Package p in packageConfig.packages) p.name: p.packageUriRoot,
           };
           final JSStackTraceMapper mapper = JSStackTraceMapper(
             await File(mapPath).readAsString(),
@@ -1055,13 +1033,13 @@ class BrowserManager {
 
         _controllers.add(controller!);
 
-        final List<Future<RunnerSuite>> futures = <Future<RunnerSuite>>[
-          controller!.suite
-        ];
+        final List<Future<RunnerSuite>> futures = <Future<RunnerSuite>>[controller!.suite];
         if (_browser.onUncaughtException != null) {
-          futures.add(_browser.onUncaughtException!.then<RunnerSuite>(
-              (String error) =>
-                  throw Exception('Exception while loading suite: $error')));
+          futures.add(
+            _browser.onUncaughtException!.then<RunnerSuite>(
+              (String error) => throw Exception('Exception while loading suite: $error'),
+            ),
+          );
         }
 
         final RunnerSuite suite = await Future.any(futures);
@@ -1080,10 +1058,12 @@ class BrowserManager {
       return pauseCompleter.operation;
     }
 
-    pauseCompleter = CancelableCompleter<void>(onCancel: () {
-      _channel.sink.add(<String, String>{'command': 'resume'});
-      _pauseCompleter = null;
-    });
+    pauseCompleter = CancelableCompleter<void>(
+      onCancel: () {
+        _channel.sink.add(<String, String>{'command': 'resume'});
+        _pauseCompleter = null;
+      },
+    );
     _pauseCompleter = pauseCompleter;
 
     pauseCompleter.operation.value.whenComplete(() {
@@ -1115,23 +1095,22 @@ class BrowserManager {
 
   bool get supportsScreenshots => _browser.supportsScreenshots;
 
-  Future<Image> captureScreenshot(Rectangle<num> region) =>
-      _browser.captureScreenshot(region);
+  Future<Image> captureScreenshot(Rectangle<num> region) => _browser.captureScreenshot(region);
 
   /// Closes the manager and releases any resources it owns, including closing
   /// the browser.
   Future<void> close() => _closeMemoizer.runOnce(() {
-        if (Configuration.current.pauseAfterLoad) {
-          print('Test run finished. Press enter to close browser...');
-          stdin.readLineSync();
-        }
-        _closed = true;
-        _timer.cancel();
-        _pauseCompleter?.complete();
-        _pauseCompleter = null;
-        _controllers.clear();
-        return _browser.close();
-      });
+    if (Configuration.current.pauseAfterLoad) {
+      print('Test run finished. Press enter to close browser...');
+      stdin.readLineSync();
+    }
+    _closed = true;
+    _timer.cancel();
+    _pauseCompleter?.complete();
+    _pauseCompleter = null;
+    _controllers.clear();
+    return _browser.close();
+  });
   final AsyncMemoizer<dynamic> _closeMemoizer = AsyncMemoizer<dynamic>();
 }
 
@@ -1139,8 +1118,7 @@ class BrowserManager {
 ///
 /// All methods forward directly to [BrowserManager].
 class _BrowserEnvironment implements Environment {
-  _BrowserEnvironment(this._manager, this.observatoryUrl,
-      this.remoteDebuggerUrl, this.onRestart);
+  _BrowserEnvironment(this._manager, this.observatoryUrl, this.remoteDebuggerUrl, this.onRestart);
 
   final BrowserManager _manager;
 

@@ -17,10 +17,7 @@ void main() {
 }
 
 Future<void> testMain() async {
-  setUpUnitTests(
-    withImplicitView: true,
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(withImplicitView: true, setUpTestViewDimensions: false);
 
   const Rect region = Rect.fromLTWH(0, 0, 300, 300);
 
@@ -35,7 +32,7 @@ Future<void> testMain() async {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 3.0
-        ..color = const Color(0xFFFF00FF)
+        ..color = const Color(0xFFFF00FF),
     );
 
     await drawPictureUsingCurrentRenderer(recorder.endRecording());
@@ -52,7 +49,7 @@ Future<void> testMain() async {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 3.0
-        ..color = const Color(0xFFFF0000)
+        ..color = const Color(0xFFFF0000),
     );
 
     await drawPictureUsingCurrentRenderer(recorder.endRecording());
@@ -68,7 +65,7 @@ Future<void> testMain() async {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 3.0
-        ..color = const Color(0xFF00FFFF)
+        ..color = const Color(0xFF00FFFF),
     );
 
     await drawPictureUsingCurrentRenderer(recorder.endRecording());

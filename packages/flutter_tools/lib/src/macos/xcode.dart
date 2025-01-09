@@ -33,9 +33,7 @@ Version get xcodeRecommendedVersion => Version(15, null, null);
 /// ...
 /// --sdk <sdk name>            find the tool for the given SDK name.
 String getSDKNameForIOSEnvironmentType(EnvironmentType environmentType) {
-  return (environmentType == EnvironmentType.simulator)
-      ? 'iphonesimulator'
-      : 'iphoneos';
+  return (environmentType == EnvironmentType.simulator) ? 'iphonesimulator' : 'iphoneos';
 }
 
 /// A utility class for interacting with Xcode command line tools.
@@ -48,14 +46,13 @@ class Xcode {
     required XcodeProjectInterpreter xcodeProjectInterpreter,
     required UserMessages userMessages,
     String? flutterRoot,
-  })  : _platform = platform,
-        _fileSystem = fileSystem,
-        _xcodeProjectInterpreter = xcodeProjectInterpreter,
-        _userMessage = userMessages,
-        _flutterRoot = flutterRoot,
-        _processUtils =
-            ProcessUtils(logger: logger, processManager: processManager),
-        _logger = logger;
+  }) : _platform = platform,
+       _fileSystem = fileSystem,
+       _xcodeProjectInterpreter = xcodeProjectInterpreter,
+       _userMessage = userMessages,
+       _flutterRoot = flutterRoot,
+       _processUtils = ProcessUtils(logger: logger, processManager: processManager),
+       _logger = logger;
 
   /// Create an [Xcode] for testing.
   ///
@@ -70,10 +67,7 @@ class Xcode {
     String? flutterRoot,
     Logger? logger,
   }) {
-    platform ??= FakePlatform(
-      operatingSystem: 'macos',
-      environment: <String, String>{},
-    );
+    platform ??= FakePlatform(operatingSystem: 'macos', environment: <String, String>{});
     logger ??= BufferLogger.test();
     return Xcode(
       platform: platform,
@@ -82,7 +76,8 @@ class Xcode {
       userMessages: UserMessages(),
       flutterRoot: flutterRoot,
       logger: logger,
-      xcodeProjectInterpreter: xcodeProjectInterpreter ?? XcodeProjectInterpreter.test(processManager: processManager),
+      xcodeProjectInterpreter:
+          xcodeProjectInterpreter ?? XcodeProjectInterpreter.test(processManager: processManager),
     );
   }
 
@@ -94,15 +89,15 @@ class Xcode {
   final String? _flutterRoot;
   final Logger _logger;
 
-  bool get isInstalledAndMeetsVersionCheck => _platform.isMacOS && isInstalled && isRequiredVersionSatisfactory;
+  bool get isInstalledAndMeetsVersionCheck =>
+      _platform.isMacOS && isInstalled && isRequiredVersionSatisfactory;
 
   String? _xcodeSelectPath;
   String? get xcodeSelectPath {
     if (_xcodeSelectPath == null) {
       try {
-        _xcodeSelectPath = _processUtils.runSync(
-          <String>['/usr/bin/xcode-select', '--print-path'],
-        ).stdout.trim();
+        _xcodeSelectPath =
+            _processUtils.runSync(<String>['/usr/bin/xcode-select', '--print-path']).stdout.trim();
       } on ProcessException {
         // Ignored, return null below.
       } on ArgumentError {
@@ -153,13 +148,12 @@ class Xcode {
   String? get versionText => _xcodeProjectInterpreter.versionText;
 
   bool? _eulaSigned;
+
   /// Has the EULA been signed?
   bool get eulaSigned {
     if (_eulaSigned == null) {
       try {
-        final RunResult result = _processUtils.runSync(
-          <String>[...xcrunCommand(), 'clang'],
-        );
+        final RunResult result = _processUtils.runSync(<String>[...xcrunCommand(), 'clang']);
         if (result.stdout.contains('license')) {
           _eulaSigned = false;
         } else if (result.stderr.contains('license')) {
@@ -182,9 +176,13 @@ class Xcode {
       try {
         // This command will error if additional components need to be installed in
         // xcode 9.2 and above.
-        final RunResult result = _processUtils.runSync(
-          <String>[...xcrunCommand(), 'simctl', 'list', 'devices', 'booted'],
-        );
+        final RunResult result = _processUtils.runSync(<String>[
+          ...xcrunCommand(),
+          'simctl',
+          'list',
+          'devices',
+          'booted',
+        ]);
         _isSimctlInstalled = result.exitCode == 0;
       } on ProcessException {
         _isSimctlInstalled = false;
@@ -204,9 +202,11 @@ class Xcode {
           _isDevicectlInstalled = false;
           return _isDevicectlInstalled!;
         }
-        final RunResult result = _processUtils.runSync(
-          <String>[...xcrunCommand(), 'devicectl', '--version'],
-        );
+        final RunResult result = _processUtils.runSync(<String>[
+          ...xcrunCommand(),
+          'devicectl',
+          '--version',
+        ]);
         _isDevicectlInstalled = result.exitCode == 0;
       } on ProcessException {
         _isDevicectlInstalled = false;
@@ -243,16 +243,16 @@ class Xcode {
   Future<RunResult> strip(List<String> args) => _run('strip', args);
 
   Future<RunResult> _run(String command, List<String> args) {
-    return _processUtils.run(
-      <String>[...xcrunCommand(), command, ...args],
-      throwOnError: true,
-    );
+    return _processUtils.run(<String>[...xcrunCommand(), command, ...args], throwOnError: true);
   }
 
   Future<String> sdkLocation(EnvironmentType environmentType) async {
-    final RunResult runResult = await _processUtils.run(
-      <String>[...xcrunCommand(), '--sdk', getSDKNameForIOSEnvironmentType(environmentType), '--show-sdk-path'],
-    );
+    final RunResult runResult = await _processUtils.run(<String>[
+      ...xcrunCommand(),
+      '--sdk',
+      getSDKNameForIOSEnvironmentType(environmentType),
+      '--show-sdk-path',
+    ]);
     if (runResult.exitCode != 0) {
       throwToolExit('Could not find SDK location: ${runResult.stderr}');
     }
@@ -270,9 +270,12 @@ class Xcode {
 
   /// Gets the version number of the platform for the selected SDK.
   Future<Version?> sdkPlatformVersion(EnvironmentType environmentType) async {
-    final RunResult runResult = await _processUtils.run(
-      <String>[...xcrunCommand(), '--sdk', getSDKNameForIOSEnvironmentType(environmentType), '--show-sdk-platform-version'],
-    );
+    final RunResult runResult = await _processUtils.run(<String>[
+      ...xcrunCommand(),
+      '--sdk',
+      getSDKNameForIOSEnvironmentType(environmentType),
+      '--show-sdk-platform-version',
+    ]);
     if (runResult.exitCode != 0) {
       _logger.printError('Could not find SDK Platform Version: ${runResult.stderr}');
       return null;

@@ -9,13 +9,14 @@ import 'transformations_demo_edit_board_point.dart';
 import 'transformations_demo_gesture_transformable.dart';
 
 class TransformationsDemo extends StatefulWidget {
-  const TransformationsDemo({ super.key });
+  const TransformationsDemo({super.key});
 
   static const String routeName = '/transformations';
 
   @override
   State<TransformationsDemo> createState() => _TransformationsDemoState();
 }
+
 class _TransformationsDemoState extends State<TransformationsDemo> {
   // The radius of a hexagon tile in pixels.
   static const double _kHexagonRadius = 32.0;
@@ -32,10 +33,8 @@ class _TransformationsDemoState extends State<TransformationsDemo> {
   );
 
   @override
-  Widget build (BuildContext context) {
-    final BoardPainter painter = BoardPainter(
-      board: _board,
-    );
+  Widget build(BuildContext context) {
+    final BoardPainter painter = BoardPainter(board: _board);
 
     // The scene is drawn by a CustomPaint, but user interaction is handled by
     // the GestureTransformable parent widget.
@@ -80,9 +79,7 @@ class _TransformationsDemoState extends State<TransformationsDemo> {
             initialTranslation: Offset(size.width / 2, size.height / 2),
             onTapUp: _onTapUp,
             size: size,
-            child: CustomPaint(
-              painter: painter,
-            ),
+            child: CustomPaint(painter: painter),
           );
         },
       ),
@@ -134,22 +131,25 @@ class _TransformationsDemoState extends State<TransformationsDemo> {
         if (_board.selected == null) {
           return;
         }
-        showModalBottomSheet<Widget>(context: context, builder: (BuildContext context) {
-          return Container(
-            width: double.infinity,
-            height: 150,
-            padding: const EdgeInsets.all(12.0),
-            child: EditBoardPoint(
-              boardPoint: _board.selected!,
-              onColorSelection: (Color color) {
-                setState(() {
-                  _board = _board.copyWithBoardPointColor(_board.selected!, color);
-                  Navigator.pop(context);
-                });
-              },
-            ),
-          );
-        });
+        showModalBottomSheet<Widget>(
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              width: double.infinity,
+              height: 150,
+              padding: const EdgeInsets.all(12.0),
+              child: EditBoardPoint(
+                boardPoint: _board.selected!,
+                onColorSelection: (Color color) {
+                  setState(() {
+                    _board = _board.copyWithBoardPointColor(_board.selected!, color);
+                    Navigator.pop(context);
+                  });
+                },
+              ),
+            );
+          },
+        );
       },
       tooltip: 'Edit Tile',
       child: const Icon(Icons.edit),
@@ -168,18 +168,14 @@ class _TransformationsDemoState extends State<TransformationsDemo> {
 // CustomPainter is what is passed to CustomPaint and actually draws the scene
 // when its `paint` method is called.
 class BoardPainter extends CustomPainter {
-  const BoardPainter({
-    this.board,
-  });
+  const BoardPainter({this.board});
 
   final Board? board;
 
   @override
   void paint(Canvas canvas, Size size) {
     void drawBoardPoint(BoardPoint? boardPoint) {
-      final Color color = boardPoint!.color.withOpacity(
-        board!.selected == boardPoint ? 0.2 : 1.0,
-      );
+      final Color color = boardPoint!.color.withOpacity(board!.selected == boardPoint ? 0.2 : 1.0);
       final Vertices vertices = board!.getVerticesForBoardPoint(boardPoint, color);
       canvas.drawVertices(vertices, BlendMode.color, Paint());
       vertices.dispose();

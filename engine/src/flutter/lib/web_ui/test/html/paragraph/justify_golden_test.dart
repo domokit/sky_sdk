@@ -32,8 +32,7 @@ Future<void> testMain() async {
       builder.pushStyle(EngineTextStyle.only(color: green));
       builder.addText('adipiscing elit, sed do eiusmod tempor incididunt ut ');
       builder.pushStyle(EngineTextStyle.only(color: red));
-      builder
-          .addText('labore et dolore magna aliqua. Ut enim ad minim veniam, ');
+      builder.addText('labore et dolore magna aliqua. Ut enim ad minim veniam, ');
       builder.pushStyle(EngineTextStyle.only(color: lightPurple));
       builder.addText('quis nostrud exercitation ullamco ');
       builder.pushStyle(EngineTextStyle.only(color: blue));
@@ -41,11 +40,7 @@ Future<void> testMain() async {
     }
 
     final CanvasParagraph paragraph = rich(
-      EngineParagraphStyle(
-        fontFamily: 'Roboto',
-        fontSize: 20.0,
-        textAlign: TextAlign.justify,
-      ),
+      EngineParagraphStyle(fontFamily: 'Roboto', fontSize: 20.0, textAlign: TextAlign.justify),
       build,
     );
     paragraph.layout(constrain(250.0));
@@ -80,11 +75,7 @@ Future<void> testMain() async {
     }
 
     final CanvasParagraph paragraph = rich(
-      EngineParagraphStyle(
-        fontFamily: 'Roboto',
-        fontSize: 20.0,
-        textAlign: TextAlign.justify,
-      ),
+      EngineParagraphStyle(fontFamily: 'Roboto', fontSize: 20.0, textAlign: TextAlign.justify),
       build,
     );
     paragraph.layout(constrain(250.0));
@@ -95,16 +86,14 @@ Future<void> testMain() async {
     const Rect bounds = Rect.fromLTWH(0, 0, 400, 400);
     final BitmapCanvas canvas = BitmapCanvas(bounds, RenderStrategy());
     testJustifyWithEmptyLine(canvas);
-    return takeScreenshot(
-        canvas, bounds, 'canvas_paragraph_justify_empty_line');
+    return takeScreenshot(canvas, bounds, 'canvas_paragraph_justify_empty_line');
   });
 
   test('TextAlign.justify with single space and empty line (DOM)', () {
     const Rect bounds = Rect.fromLTWH(0, 0, 400, 400);
     final DomCanvas canvas = DomCanvas(domDocument.createElement('flt-picture'));
     testJustifyWithEmptyLine(canvas);
-    return takeScreenshot(
-        canvas, bounds, 'canvas_paragraph_justify_empty_line_dom');
+    return takeScreenshot(canvas, bounds, 'canvas_paragraph_justify_empty_line_dom');
   });
 
   void testJustifyWithEllipsis(EngineCanvas canvas) {
@@ -115,25 +104,20 @@ Future<void> testMain() async {
       maxLines: 4,
       ellipsis: '...',
     );
-    final CanvasParagraph paragraph = rich(
-      paragraphStyle,
-      (CanvasParagraphBuilder builder) {
-        builder.pushStyle(EngineTextStyle.only(color: black));
-        builder.addText('Lorem ipsum dolor sit ');
-        builder.pushStyle(EngineTextStyle.only(color: blue));
-        builder.addText('amet, consectetur ');
-        builder.pushStyle(EngineTextStyle.only(color: green));
-        builder
-            .addText('adipiscing elit, sed do eiusmod tempor incididunt ut ');
-        builder.pushStyle(EngineTextStyle.only(color: red));
-        builder.addText(
-            'labore et dolore magna aliqua. Ut enim ad minim veniam, ');
-        builder.pushStyle(EngineTextStyle.only(color: lightPurple));
-        builder.addText('quis nostrud exercitation ullamco ');
-        builder.pushStyle(EngineTextStyle.only(color: blue));
-        builder.addText('laboris nisi ut aliquip ex ea commodo consequat.');
-      },
-    );
+    final CanvasParagraph paragraph = rich(paragraphStyle, (CanvasParagraphBuilder builder) {
+      builder.pushStyle(EngineTextStyle.only(color: black));
+      builder.addText('Lorem ipsum dolor sit ');
+      builder.pushStyle(EngineTextStyle.only(color: blue));
+      builder.addText('amet, consectetur ');
+      builder.pushStyle(EngineTextStyle.only(color: green));
+      builder.addText('adipiscing elit, sed do eiusmod tempor incididunt ut ');
+      builder.pushStyle(EngineTextStyle.only(color: red));
+      builder.addText('labore et dolore magna aliqua. Ut enim ad minim veniam, ');
+      builder.pushStyle(EngineTextStyle.only(color: lightPurple));
+      builder.addText('quis nostrud exercitation ullamco ');
+      builder.pushStyle(EngineTextStyle.only(color: blue));
+      builder.addText('laboris nisi ut aliquip ex ea commodo consequat.');
+    });
     paragraph.layout(constrain(250));
     canvas.drawParagraph(paragraph, Offset.zero);
   }
@@ -158,28 +142,23 @@ Future<void> testMain() async {
       fontSize: 20.0,
       textAlign: TextAlign.justify,
     );
-    final CanvasParagraph paragraph = rich(
-      paragraphStyle,
-      (CanvasParagraphBuilder builder) {
-        builder.pushStyle(EngineTextStyle.only(color: black));
-        builder.pushStyle(bg(blue));
-        builder.addText('Lorem ipsum dolor sit ');
-        builder.pushStyle(bg(black));
-        builder.pushStyle(EngineTextStyle.only(color: white));
-        builder.addText('amet, consectetur ');
-        builder.pop();
-        builder.pushStyle(bg(green));
-        builder
-            .addText('adipiscing elit, sed do eiusmod tempor incididunt ut ');
-        builder.pushStyle(bg(yellow));
-        builder.addText(
-            'labore et dolore magna aliqua. Ut enim ad minim veniam, ');
-        builder.pushStyle(bg(red));
-        builder.addText('quis nostrud exercitation ullamco ');
-        builder.pushStyle(bg(green));
-        builder.addText('laboris nisi ut aliquip ex ea commodo consequat.');
-      },
-    );
+    final CanvasParagraph paragraph = rich(paragraphStyle, (CanvasParagraphBuilder builder) {
+      builder.pushStyle(EngineTextStyle.only(color: black));
+      builder.pushStyle(bg(blue));
+      builder.addText('Lorem ipsum dolor sit ');
+      builder.pushStyle(bg(black));
+      builder.pushStyle(EngineTextStyle.only(color: white));
+      builder.addText('amet, consectetur ');
+      builder.pop();
+      builder.pushStyle(bg(green));
+      builder.addText('adipiscing elit, sed do eiusmod tempor incididunt ut ');
+      builder.pushStyle(bg(yellow));
+      builder.addText('labore et dolore magna aliqua. Ut enim ad minim veniam, ');
+      builder.pushStyle(bg(red));
+      builder.addText('quis nostrud exercitation ullamco ');
+      builder.pushStyle(bg(green));
+      builder.addText('laboris nisi ut aliquip ex ea commodo consequat.');
+    });
     paragraph.layout(constrain(250));
     canvas.drawParagraph(paragraph, Offset.zero);
   }
@@ -188,16 +167,14 @@ Future<void> testMain() async {
     const Rect bounds = Rect.fromLTWH(0, 0, 400, 400);
     final BitmapCanvas canvas = BitmapCanvas(bounds, RenderStrategy());
     testJustifyWithBackground(canvas);
-    return takeScreenshot(
-        canvas, bounds, 'canvas_paragraph_justify_background');
+    return takeScreenshot(canvas, bounds, 'canvas_paragraph_justify_background');
   });
 
   test('TextAlign.justify with background (DOM)', () {
     const Rect bounds = Rect.fromLTWH(0, 0, 400, 400);
     final DomCanvas canvas = DomCanvas(domDocument.createElement('flt-picture'));
     testJustifyWithBackground(canvas);
-    return takeScreenshot(
-        canvas, bounds, 'canvas_paragraph_justify_background_dom');
+    return takeScreenshot(canvas, bounds, 'canvas_paragraph_justify_background_dom');
   });
 
   void testJustifyWithPlaceholder(EngineCanvas canvas) {
@@ -215,11 +192,7 @@ Future<void> testMain() async {
     }
 
     final CanvasParagraph paragraph = rich(
-      EngineParagraphStyle(
-        fontFamily: 'Roboto',
-        fontSize: 20.0,
-        textAlign: TextAlign.justify,
-      ),
+      EngineParagraphStyle(fontFamily: 'Roboto', fontSize: 20.0, textAlign: TextAlign.justify),
       build,
     );
     paragraph.layout(constrain(250.0));
@@ -254,11 +227,7 @@ Future<void> testMain() async {
     }
 
     final CanvasParagraph paragraph = rich(
-      EngineParagraphStyle(
-        fontFamily: 'Roboto',
-        fontSize: 20.0,
-        textAlign: TextAlign.justify,
-      ),
+      EngineParagraphStyle(fontFamily: 'Roboto', fontSize: 20.0, textAlign: TextAlign.justify),
       build,
     );
     paragraph.layout(constrain(250.0));
@@ -299,11 +268,7 @@ Future<void> testMain() async {
     }
 
     final CanvasParagraph paragraph = rich(
-      EngineParagraphStyle(
-        fontFamily: 'Roboto',
-        fontSize: 20.0,
-        textAlign: TextAlign.justify,
-      ),
+      EngineParagraphStyle(fontFamily: 'Roboto', fontSize: 20.0, textAlign: TextAlign.justify),
       build,
     );
     paragraph.layout(constrain(250.0));

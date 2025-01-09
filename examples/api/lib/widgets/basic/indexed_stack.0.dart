@@ -77,7 +77,7 @@ class _IndexedStackExampleState extends State<IndexedStackExample> {
                 IndexedStack(
                   index: index,
                   children: <Widget>[for (final String name in names) PersonTracker(name: name)],
-                )
+                ),
               ],
             ),
             GestureDetector(
@@ -93,7 +93,7 @@ class _IndexedStackExampleState extends State<IndexedStackExample> {
               child: const Icon(Icons.chevron_right, key: Key('gesture2')),
             ),
           ],
-        )
+        ),
       ],
     );
   }
@@ -131,7 +131,7 @@ class _PersonTrackerState extends State<PersonTracker> {
               });
             },
             label: const Text('Increment'),
-          )
+          ),
         ],
       ),
     );

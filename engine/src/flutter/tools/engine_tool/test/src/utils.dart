@@ -18,14 +18,10 @@ import 'package:test/test.dart';
 /// process. The matcher is used to determine when to use a registered
 /// CannedProcess.
 class CannedProcess {
-  CannedProcess(
-    this.commandMatcher, {
-    int exitCode = 0,
-    String stdout = '',
-    String stderr = '',
-  })  : _exitCode = exitCode,
-        _stdout = stdout,
-        _stderr = stderr;
+  CannedProcess(this.commandMatcher, {int exitCode = 0, String stdout = '', String stderr = ''})
+    : _exitCode = exitCode,
+      _stdout = stdout,
+      _stderr = stderr;
 
   final bool Function(List<String> command) commandMatcher;
   final int _exitCode;
@@ -76,29 +72,31 @@ class TestEnvironment {
         numberOfProcessors: 32,
       ),
       processRunner: ProcessRunner(
-          processManager: FakeProcessManager(onStart: (List<String> command) {
-        final FakeProcess processResult =
-            _getCannedResult(command, cannedProcesses);
-        processResult.exitCode.then((int exitCode) {
-          processHistory.add(ExecutedProcess(command, processResult, exitCode));
-        });
-        return processResult;
-      }, onRun: (List<String> command) {
-        final io.ProcessResult result = _getCannedProcessResult(
-          command,
-          cannedProcesses,
-        );
-        processHistory.add(ExecutedProcess(
-          command,
-          FakeProcess(
-            exitCode: result.exitCode,
-            stdout: result.stdout as String,
-            stderr: result.stderr as String,
-          ),
-          result.exitCode,
-        ));
-        return result;
-      })),
+        processManager: FakeProcessManager(
+          onStart: (List<String> command) {
+            final FakeProcess processResult = _getCannedResult(command, cannedProcesses);
+            processResult.exitCode.then((int exitCode) {
+              processHistory.add(ExecutedProcess(command, processResult, exitCode));
+            });
+            return processResult;
+          },
+          onRun: (List<String> command) {
+            final io.ProcessResult result = _getCannedProcessResult(command, cannedProcesses);
+            processHistory.add(
+              ExecutedProcess(
+                command,
+                FakeProcess(
+                  exitCode: result.exitCode,
+                  stdout: result.stdout as String,
+                  stderr: result.stderr as String,
+                ),
+                result.exitCode,
+              ),
+            );
+            return result;
+          },
+        ),
+      ),
       logger: logger,
       verbose: verbose,
       now: now,
@@ -115,20 +113,14 @@ class TestEnvironment {
     final io.Directory rootDir = io.Directory.systemTemp.createTempSync('et');
     final TestEngine engine = TestEngine.createTemp(rootDir: rootDir);
     if (withRbe) {
-      io.Directory(path.join(
-        engine.srcDir.path,
-        'flutter',
-        'build',
-        'rbe',
-      )).createSync(recursive: true);
+      io.Directory(
+        path.join(engine.srcDir.path, 'flutter', 'build', 'rbe'),
+      ).createSync(recursive: true);
     }
     // When GN runs, always try to create out/host_debug.
     final CannedProcess cannedGn = CannedProcess((List<String> command) {
       if (command[0].endsWith('/gn') && !command.contains('desc')) {
-        io.Directory(path.join(
-          engine.outDir.path,
-          'host_debug',
-        )).createSync(recursive: true);
+        io.Directory(path.join(engine.outDir.path, 'host_debug')).createSync(recursive: true);
         return true;
       }
       return false;
@@ -194,8 +186,7 @@ String _pathSeparatorForAbi(ffi.Abi abi) {
   }
 }
 
-FakeProcess _getCannedResult(
-    List<String> command, List<CannedProcess> cannedProcesses) {
+FakeProcess _getCannedResult(List<String> command, List<CannedProcess> cannedProcesses) {
   for (final CannedProcess cp in cannedProcesses) {
     final bool matched = cp.commandMatcher(command);
     if (matched) {
@@ -206,7 +197,9 @@ FakeProcess _getCannedResult(
 }
 
 io.ProcessResult _getCannedProcessResult(
-    List<String> command, List<CannedProcess> cannedProcesses) {
+  List<String> command,
+  List<CannedProcess> cannedProcesses,
+) {
   for (final CannedProcess cp in cannedProcesses) {
     final bool matched = cp.commandMatcher(command);
     if (matched) {

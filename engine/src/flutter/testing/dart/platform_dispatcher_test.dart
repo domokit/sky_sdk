@@ -34,9 +34,13 @@ void main() {
     expect(defaultValues / 2, const ViewConstraints());
   });
 
-
   test('ViewConstraints', () {
-    const ViewConstraints constraints = ViewConstraints(minWidth: 100, maxWidth: 200, minHeight: 300, maxHeight: 400);
+    const ViewConstraints constraints = ViewConstraints(
+      minWidth: 100,
+      maxWidth: 200,
+      minHeight: 300,
+      maxHeight: 400,
+    );
     expect(constraints.minWidth, 100);
     expect(constraints.maxWidth, 200);
     expect(constraints.minHeight, 300);
@@ -45,30 +49,36 @@ void main() {
     expect(constraints.isTight, false);
     expect(constraints.isSatisfiedBy(const Size(200, 300)), true);
     expect(constraints.isSatisfiedBy(const Size(400, 500)), false);
-    expect(constraints / 2, const ViewConstraints(minWidth: 50, maxWidth: 100, minHeight: 150, maxHeight: 200));
+    expect(
+      constraints / 2,
+      const ViewConstraints(minWidth: 50, maxWidth: 100, minHeight: 150, maxHeight: 200),
+    );
   });
 
   test('scheduleWarmupFrame should call both callbacks and flush microtasks', () async {
     bool microtaskFlushed = false;
     bool beginFrameCalled = false;
     final Completer<void> drawFrameCalled = Completer<void>();
-    PlatformDispatcher.instance.scheduleWarmUpFrame(beginFrame: () {
-      expect(microtaskFlushed, false);
-      expect(drawFrameCalled.isCompleted, false);
-      expect(beginFrameCalled, false);
-      beginFrameCalled = true;
-      scheduleMicrotask(() {
+    PlatformDispatcher.instance.scheduleWarmUpFrame(
+      beginFrame: () {
         expect(microtaskFlushed, false);
         expect(drawFrameCalled.isCompleted, false);
-        microtaskFlushed = true;
-      });
-      expect(microtaskFlushed, false);
-    }, drawFrame: () {
-      expect(beginFrameCalled, true);
-      expect(microtaskFlushed, true);
-      expect(drawFrameCalled.isCompleted, false);
-      drawFrameCalled.complete();
-    });
+        expect(beginFrameCalled, false);
+        beginFrameCalled = true;
+        scheduleMicrotask(() {
+          expect(microtaskFlushed, false);
+          expect(drawFrameCalled.isCompleted, false);
+          microtaskFlushed = true;
+        });
+        expect(microtaskFlushed, false);
+      },
+      drawFrame: () {
+        expect(beginFrameCalled, true);
+        expect(microtaskFlushed, true);
+        expect(drawFrameCalled.isCompleted, false);
+        drawFrameCalled.complete();
+      },
+    );
     await drawFrameCalled.future;
     expect(beginFrameCalled, true);
     expect(drawFrameCalled.isCompleted, true);

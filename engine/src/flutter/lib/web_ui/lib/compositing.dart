@@ -31,18 +31,10 @@ abstract class BackdropFilterEngineLayer implements EngineLayer {}
 abstract class ShaderMaskEngineLayer implements EngineLayer {}
 
 abstract class SceneBuilder {
-  factory SceneBuilder() =>
-    engine.renderer.createSceneBuilder();
+  factory SceneBuilder() => engine.renderer.createSceneBuilder();
 
-  OffsetEngineLayer pushOffset(
-    double dx,
-    double dy, {
-    OffsetEngineLayer? oldLayer,
-  });
-  TransformEngineLayer pushTransform(
-    Float64List matrix4, {
-    TransformEngineLayer? oldLayer,
-  });
+  OffsetEngineLayer pushOffset(double dx, double dy, {OffsetEngineLayer? oldLayer});
+  TransformEngineLayer pushTransform(Float64List matrix4, {TransformEngineLayer? oldLayer});
   ClipRectEngineLayer pushClipRect(
     Rect rect, {
     Clip clipBehavior = Clip.antiAlias,
@@ -63,10 +55,7 @@ abstract class SceneBuilder {
     Offset offset = Offset.zero,
     OpacityEngineLayer? oldLayer,
   });
-  ColorFilterEngineLayer pushColorFilter(
-    ColorFilter filter, {
-    ColorFilterEngineLayer? oldLayer,
-  });
+  ColorFilterEngineLayer pushColorFilter(ColorFilter filter, {ColorFilterEngineLayer? oldLayer});
   ImageFilterEngineLayer pushImageFilter(
     ImageFilter filter, {
     Offset offset = Offset.zero,

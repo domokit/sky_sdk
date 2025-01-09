@@ -86,13 +86,7 @@ void main() {
   testWidgets('App displays without layout issues', (WidgetTester tester) async {
     // Set the app's size to to match the default DartPad demo screen.
     await tester.pumpWidget(
-      const Center(
-        child: SizedBox(
-          width: 500.0,
-          height: 480.0,
-          child: example.Insets(),
-        ),
-      ),
+      const Center(child: SizedBox(width: 500.0, height: 480.0, child: example.Insets())),
     );
 
     double appScreenHeight() => tester.getRect(find.byType(example.Insets)).height;

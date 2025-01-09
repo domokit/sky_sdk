@@ -13,17 +13,19 @@ import 'package:web_test_fonts/web_test_fonts.dart';
 
 /// The mode the app is running in.
 /// Keep these in sync with the same constants on the framework-side under foundation/constants.dart.
-const bool kReleaseMode =
-    bool.fromEnvironment('dart.vm.product');
+const bool kReleaseMode = bool.fromEnvironment('dart.vm.product');
+
 /// A constant that is true if the application was compiled in profile mode.
-const bool kProfileMode =
-    bool.fromEnvironment('dart.vm.profile');
+const bool kProfileMode = bool.fromEnvironment('dart.vm.profile');
+
 /// A constant that is true if the application was compiled in debug mode.
 const bool kDebugMode = !kReleaseMode && !kProfileMode;
+
 /// Returns mode of the app is running in as a string.
-String get buildMode => kReleaseMode
-    ? 'release'
-    : kProfileMode
+String get buildMode =>
+    kReleaseMode
+        ? 'release'
+        : kProfileMode
         ? 'profile'
         : 'debug';
 
@@ -115,14 +117,14 @@ void debugResetEngineInitializationState() {
 ///    puts UI elements on the page.
 Future<void> initializeEngineServices({
   ui_web.AssetManager? assetManager,
-  JsFlutterConfiguration? jsConfiguration
+  JsFlutterConfiguration? jsConfiguration,
 }) async {
   if (_initializationState != DebugEngineInitializationState.uninitialized) {
     assert(() {
       throw StateError(
         'Invalid engine initialization state. `initializeEngineServices` was '
         'called, but the engine has already started initialization and is '
-        'currently in state "$_initializationState".'
+        'currently in state "$_initializationState".',
       );
     }());
     return;
@@ -144,7 +146,8 @@ Future<void> initializeEngineServices({
       listener();
     }
     return Future<developer.ServiceExtensionResponse>.value(
-        developer.ServiceExtensionResponse.result('OK'));
+      developer.ServiceExtensionResponse.result('OK'),
+    );
   });
 
   if (Profiler.isBenchmarkMode) {
@@ -176,12 +179,12 @@ Future<void> initializeEngineServices({
         // milliseconds as a double value, with sub-millisecond information
         // hidden in the fraction. So we first multiply it by 1000 to uncover
         // microsecond precision, and only then convert to `int`.
-        final int highResTimeMicroseconds =
-            (1000 * highResTime.toDartDouble).toInt();
+        final int highResTimeMicroseconds = (1000 * highResTime.toDartDouble).toInt();
 
         if (EnginePlatformDispatcher.instance.onBeginFrame != null) {
           EnginePlatformDispatcher.instance.invokeOnBeginFrame(
-              Duration(microseconds: highResTimeMicroseconds));
+            Duration(microseconds: highResTimeMicroseconds),
+          );
         }
 
         if (EnginePlatformDispatcher.instance.onDrawFrame != null) {
@@ -199,7 +202,7 @@ Future<void> initializeEngineServices({
   assetManager ??= ui_web.AssetManager(assetBase: configuration.assetBase);
   _setAssetManager(assetManager);
 
-  Future<void> initializeRendererCallback () async => renderer.initialize();
+  Future<void> initializeRendererCallback() async => renderer.initialize();
   await Future.wait<void>(<Future<void>>[initializeRendererCallback(), _downloadAssetFonts()]);
   _initializationState = DebugEngineInitializationState.initializedServices;
 }
@@ -219,7 +222,7 @@ Future<void> initializeEngineUi() async {
         'called while the engine initialization state was '
         '"$_initializationState". `initializeEngineUi` can only be called '
         'when the engine is in state '
-        '"${DebugEngineInitializationState.initializedServices}".'
+        '"${DebugEngineInitializationState.initializedServices}".',
       );
     }());
     return;
@@ -233,8 +236,9 @@ Future<void> initializeEngineUi() async {
   ensureMetaTag('generator', 'Flutter');
 
   if (!configuration.multiViewEnabled) {
-    final EngineFlutterWindow implicitView =
-        ensureImplicitViewInitialized(hostElement: configuration.hostElement);
+    final EngineFlutterWindow implicitView = ensureImplicitViewInitialized(
+      hostElement: configuration.hostElement,
+    );
     if (renderer is HtmlRenderer) {
       ensureResourceManagerInitialized(implicitView);
     }
@@ -264,7 +268,7 @@ Future<void> _downloadAssetFonts() async {
     // the embedded test font is the default (first) font.
     await renderer.fontCollection.loadFontFromList(
       EmbeddedTestFont.flutterTest.data,
-      fontFamily: EmbeddedTestFont.flutterTest.fontFamily
+      fontFamily: EmbeddedTestFont.flutterTest.fontFamily,
     );
   }
 
@@ -284,4 +288,5 @@ bool get debugDisableFontFallbacks => _debugDisableFontFallbacks;
 set debugDisableFontFallbacks(bool value) {
   _debugDisableFontFallbacks = value;
 }
+
 bool _debugDisableFontFallbacks = false;

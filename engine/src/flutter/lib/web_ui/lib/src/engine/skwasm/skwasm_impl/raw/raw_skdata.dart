@@ -8,6 +8,7 @@ library skwasm_impl;
 import 'dart:ffi';
 
 final class RawSkData extends Opaque {}
+
 typedef SkDataHandle = Pointer<RawSkData>;
 
 @Native<SkDataHandle Function(Size)>(symbol: 'skData_create', isLeaf: true)

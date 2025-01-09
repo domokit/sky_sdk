@@ -18,9 +18,7 @@ class WidgetStatePropertyExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('WidgetStateProperty Sample')),
-        body: const Center(
-          child: WidgetStatePropertyExample(),
-        ),
+        body: const Center(child: WidgetStatePropertyExample()),
       ),
     );
   }
@@ -33,13 +31,11 @@ class WidgetStatePropertyExample extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       style: ButtonStyle(
-        foregroundColor: WidgetStateProperty<Color>.fromMap(
-          <WidgetStatesConstraint, Color>{
-            WidgetState.focused: Colors.blueAccent,
-            WidgetState.pressed | WidgetState.hovered: Colors.blue,
-            WidgetState.any: Colors.red,
-          },
-        ),
+        foregroundColor: WidgetStateProperty<Color>.fromMap(<WidgetStatesConstraint, Color>{
+          WidgetState.focused: Colors.blueAccent,
+          WidgetState.pressed | WidgetState.hovered: Colors.blue,
+          WidgetState.any: Colors.red,
+        }),
       ),
       onPressed: () {},
       child: const Text('TextButton'),

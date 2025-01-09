@@ -20,18 +20,16 @@ Future<void> testMain() async {
   const double screenHeight = 800.0;
   const Rect screenRect = Rect.fromLTWH(0, 0, screenWidth, screenHeight);
 
-  setUpUnitTests(
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(setUpTestViewDimensions: false);
 
   // Regression test for https://github.com/flutter/flutter/issues/49429
   // Should clip with correct transform.
   test('Clips image with oval clip path', () async {
-    final engine.RecordingCanvas rc =
-        engine.RecordingCanvas(const Rect.fromLTRB(0, 0, 400, 300));
-    final engine.SurfacePaint paint = Paint() as engine.SurfacePaint
-      ..color = const Color(0xFF00FF00)
-      ..style = PaintingStyle.fill;
+    final engine.RecordingCanvas rc = engine.RecordingCanvas(const Rect.fromLTRB(0, 0, 400, 300));
+    final engine.SurfacePaint paint =
+        Paint() as engine.SurfacePaint
+          ..color = const Color(0xFF00FF00)
+          ..style = PaintingStyle.fill;
     rc.save();
     final Path ovalPath = Path();
     ovalPath.addOval(const Rect.fromLTWH(100, 30, 200, 100));
@@ -54,14 +52,15 @@ Future<void> testMain() async {
   });
 
   test('Should restore clip path', () async {
-    final engine.RecordingCanvas rc =
-        engine.RecordingCanvas(const Rect.fromLTRB(0, 0, 400, 300));
-    final Paint goodPaint = Paint()
-      ..color = const Color(0x8000FF00)
-      ..style = PaintingStyle.fill;
-    final Paint badPaint = Paint()
-      ..color = const Color(0xFFFF0000)
-      ..style = PaintingStyle.fill;
+    final engine.RecordingCanvas rc = engine.RecordingCanvas(const Rect.fromLTRB(0, 0, 400, 300));
+    final Paint goodPaint =
+        Paint()
+          ..color = const Color(0x8000FF00)
+          ..style = PaintingStyle.fill;
+    final Paint badPaint =
+        Paint()
+          ..color = const Color(0xFFFF0000)
+          ..style = PaintingStyle.fill;
     rc.save();
     final Path ovalPath = Path();
     ovalPath.addOval(const Rect.fromLTWH(100, 30, 200, 100));

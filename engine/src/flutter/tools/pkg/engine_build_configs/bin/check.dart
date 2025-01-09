@@ -31,22 +31,16 @@ void main(List<String> args) {
   }
 
   // Find and parse the engine build configs.
-  final io.Directory buildConfigsDir = io.Directory(p.join(
-    engine.flutterDir.path,
-    'ci',
-    'builders',
-  ));
-  final BuildConfigLoader loader = BuildConfigLoader(
-    buildConfigsDir: buildConfigsDir,
+  final io.Directory buildConfigsDir = io.Directory(
+    p.join(engine.flutterDir.path, 'ci', 'builders'),
   );
+  final BuildConfigLoader loader = BuildConfigLoader(buildConfigsDir: buildConfigsDir);
 
   // Treat it as an error if no build configs were found. The caller likely
   // expected to find some.
   final Map<String, BuilderConfig> configs = loader.configs;
   if (configs.isEmpty) {
-    io.stderr.writeln(
-      'Error: No build configs found under ${buildConfigsDir.path}',
-    );
+    io.stderr.writeln('Error: No build configs found under ${buildConfigsDir.path}');
     io.exitCode = 1;
     return;
   }
@@ -115,19 +109,19 @@ List<String> checkForInvalidBuildNames(Map<String, BuilderConfig> configs) {
   final List<String> errors = <String>[];
 
   // In local_engine.json, allowed OS names are linux, macos, and windows.
-  final List<String> osNames = <String>[
-    Platform.linux, Platform.macOS, Platform.windows,
-  ].expand((String s) => <String>['$s/', '$s\\']).toList();
+  final List<String> osNames =
+      <String>[
+        Platform.linux,
+        Platform.macOS,
+        Platform.windows,
+      ].expand((String s) => <String>['$s/', '$s\\']).toList();
 
   // In all other build json files, allowed prefix names are ci and web_tests.
-  final List<String> ciNames = <String>[
-    'ci', 'web_tests'
-  ].expand((String s) => <String>['$s/', '$s\\']).toList();
+  final List<String> ciNames =
+      <String>['ci', 'web_tests'].expand((String s) => <String>['$s/', '$s\\']).toList();
 
   _forEachBuild(configs, (String name, BuilderConfig config, Build build) {
-    final List<String> goodPrefixes = name.contains('local_engine')
-      ? osNames
-      : ciNames;
+    final List<String> goodPrefixes = name.contains('local_engine') ? osNames : ciNames;
     if (!goodPrefixes.any(build.name.startsWith)) {
       errors.add(
         '${build.name} in $name must start with one of '

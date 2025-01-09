@@ -12,25 +12,41 @@ import 'util.dart';
 class Matrix4 {
   /// Constructs a new mat4.
   factory Matrix4(
-          double arg0,
-          double arg1,
-          double arg2,
-          double arg3,
-          double arg4,
-          double arg5,
-          double arg6,
-          double arg7,
-          double arg8,
-          double arg9,
-          double arg10,
-          double arg11,
-          double arg12,
-          double arg13,
-          double arg14,
-          double arg15) =>
-      Matrix4.zero()
-        ..setValues(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9,
-            arg10, arg11, arg12, arg13, arg14, arg15);
+    double arg0,
+    double arg1,
+    double arg2,
+    double arg3,
+    double arg4,
+    double arg5,
+    double arg6,
+    double arg7,
+    double arg8,
+    double arg9,
+    double arg10,
+    double arg11,
+    double arg12,
+    double arg13,
+    double arg14,
+    double arg15,
+  ) =>
+      Matrix4.zero()..setValues(
+        arg0,
+        arg1,
+        arg2,
+        arg3,
+        arg4,
+        arg5,
+        arg6,
+        arg7,
+        arg8,
+        arg9,
+        arg10,
+        arg11,
+        arg12,
+        arg13,
+        arg14,
+        arg15,
+      );
 
   /// Zero matrix.
   Matrix4.zero() : _m4storage = Float32List(16);
@@ -57,28 +73,30 @@ class Matrix4 {
   }
 
   /// Rotation of [radians_] around X.
-  factory Matrix4.rotationX(double radians) => Matrix4.zero()
-    .._m4storage[15] = 1.0
-    ..setRotationX(radians);
+  factory Matrix4.rotationX(double radians) =>
+      Matrix4.zero()
+        .._m4storage[15] = 1.0
+        ..setRotationX(radians);
 
   /// Rotation of [radians_] around Y.
-  factory Matrix4.rotationY(double radians) => Matrix4.zero()
-    .._m4storage[15] = 1.0
-    ..setRotationY(radians);
+  factory Matrix4.rotationY(double radians) =>
+      Matrix4.zero()
+        .._m4storage[15] = 1.0
+        ..setRotationY(radians);
 
   /// Rotation of [radians_] around Z.
-  factory Matrix4.rotationZ(double radians) => Matrix4.zero()
-    .._m4storage[15] = 1.0
-    ..setRotationZ(radians);
+  factory Matrix4.rotationZ(double radians) =>
+      Matrix4.zero()
+        .._m4storage[15] = 1.0
+        ..setRotationZ(radians);
 
   /// Translation matrix.
-  factory Matrix4.translation(Vector3 translation) => Matrix4.identity()
-    ..setTranslation(translation);
+  factory Matrix4.translation(Vector3 translation) =>
+      Matrix4.identity()..setTranslation(translation);
 
   /// Translation matrix.
   factory Matrix4.translationValues(double x, double y, double z) =>
-      Matrix4.identity()
-        ..setTranslationRaw(x, y, z);
+      Matrix4.identity()..setTranslationRaw(x, y, z);
 
   /// Scale matrix.
   factory Matrix4.diagonal3Values(double x, double y, double z) =>
@@ -94,7 +112,7 @@ class Matrix4 {
   /// Constructs Matrix4 with a [storage] that views given [buffer] starting at
   /// [offset]. [offset] has to be multiple of [Float32List.bytesPerElement].
   Matrix4.fromBuffer(ByteBuffer buffer, int offset)
-      : _m4storage = Float32List.view(buffer, offset, 16);
+    : _m4storage = Float32List.view(buffer, offset, 16);
 
   final Float32List _m4storage;
 
@@ -133,22 +151,23 @@ class Matrix4 {
 
   /// Sets the matrix with specified values.
   void setValues(
-      double arg0,
-      double arg1,
-      double arg2,
-      double arg3,
-      double arg4,
-      double arg5,
-      double arg6,
-      double arg7,
-      double arg8,
-      double arg9,
-      double arg10,
-      double arg11,
-      double arg12,
-      double arg13,
-      double arg14,
-      double arg15) {
+    double arg0,
+    double arg1,
+    double arg2,
+    double arg3,
+    double arg4,
+    double arg5,
+    double arg6,
+    double arg7,
+    double arg8,
+    double arg9,
+    double arg10,
+    double arg11,
+    double arg12,
+    double arg13,
+    double arg14,
+    double arg15,
+  ) {
     _m4storage[15] = arg15;
     _m4storage[14] = arg14;
     _m4storage[13] = arg13;
@@ -229,22 +248,14 @@ class Matrix4 {
   /// Translate this matrix by x, y, and z.
   void translate(double x, [double y = 0.0, double z = 0.0]) {
     const double tw = 1.0;
-    final double t1 = _m4storage[0] * x +
-        _m4storage[4] * y +
-        _m4storage[8] * z +
-        _m4storage[12] * tw;
-    final double t2 = _m4storage[1] * x +
-        _m4storage[5] * y +
-        _m4storage[9] * z +
-        _m4storage[13] * tw;
-    final double t3 = _m4storage[2] * x +
-        _m4storage[6] * y +
-        _m4storage[10] * z +
-        _m4storage[14] * tw;
-    final double t4 = _m4storage[3] * x +
-        _m4storage[7] * y +
-        _m4storage[11] * z +
-        _m4storage[15] * tw;
+    final double t1 =
+        _m4storage[0] * x + _m4storage[4] * y + _m4storage[8] * z + _m4storage[12] * tw;
+    final double t2 =
+        _m4storage[1] * x + _m4storage[5] * y + _m4storage[9] * z + _m4storage[13] * tw;
+    final double t3 =
+        _m4storage[2] * x + _m4storage[6] * y + _m4storage[10] * z + _m4storage[14] * tw;
+    final double t4 =
+        _m4storage[3] * x + _m4storage[7] * y + _m4storage[11] * z + _m4storage[15] * tw;
     _m4storage[12] = t1;
     _m4storage[13] = t2;
     _m4storage[14] = t3;
@@ -347,30 +358,16 @@ class Matrix4 {
   /// Returns the determinant of this matrix.
   double determinant() {
     final Float32List m = _m4storage;
-    final double det2_01_01 =
-        m[0] * m[5] - m[1] * m[4];
-    final double det2_01_02 =
-        m[0] * m[6] - m[2] * m[4];
-    final double det2_01_03 =
-        m[0] * m[7] - m[3] * m[4];
-    final double det2_01_12 =
-        m[1] * m[6] - m[2] * m[5];
-    final double det2_01_13 =
-        m[1] * m[7] - m[3] * m[5];
-    final double det2_01_23 =
-        m[2] * m[7] - m[3] * m[6];
-    final double det3_201_012 = m[8] * det2_01_12 -
-        m[9] * det2_01_02 +
-        m[10] * det2_01_01;
-    final double det3_201_013 = m[8] * det2_01_13 -
-        m[9] * det2_01_03 +
-        m[11] * det2_01_01;
-    final double det3_201_023 = m[8] * det2_01_23 -
-        m[10] * det2_01_03 +
-        m[11] * det2_01_02;
-    final double det3_201_123 = m[9] * det2_01_23 -
-        m[10] * det2_01_13 +
-        m[11] * det2_01_12;
+    final double det2_01_01 = m[0] * m[5] - m[1] * m[4];
+    final double det2_01_02 = m[0] * m[6] - m[2] * m[4];
+    final double det2_01_03 = m[0] * m[7] - m[3] * m[4];
+    final double det2_01_12 = m[1] * m[6] - m[2] * m[5];
+    final double det2_01_13 = m[1] * m[7] - m[3] * m[5];
+    final double det2_01_23 = m[2] * m[7] - m[3] * m[6];
+    final double det3_201_012 = m[8] * det2_01_12 - m[9] * det2_01_02 + m[10] * det2_01_01;
+    final double det3_201_013 = m[8] * det2_01_13 - m[9] * det2_01_03 + m[11] * det2_01_01;
+    final double det3_201_023 = m[8] * det2_01_23 - m[10] * det2_01_03 + m[11] * det2_01_02;
+    final double det3_201_123 = m[9] * det2_01_23 - m[10] * det2_01_13 + m[11] * det2_01_12;
     return -det3_201_123 * m[12] +
         det3_201_023 * m[13] -
         det3_201_013 * m[14] +
@@ -379,34 +376,17 @@ class Matrix4 {
 
   /// Transform [arg] of type [Vector3] using the perspective transformation
   /// defined by [this].
-  Vector3 perspectiveTransform({
-    required double x,
-    required double y,
-    required double z,
-  }) {
-    final double transformedX = (_m4storage[0] * x) +
-        (_m4storage[4] * y) +
-        (_m4storage[8] * z) +
-        _m4storage[12];
-    final double transformedY = (_m4storage[1] * x) +
-        (_m4storage[5] * y) +
-        (_m4storage[9] * z) +
-        _m4storage[13];
-    final double transformedZ = (_m4storage[2] * x) +
-        (_m4storage[6] * y) +
-        (_m4storage[10] * z) +
-        _m4storage[14];
-    final double w = 1.0 /
-        ((_m4storage[3] * x) +
-            (_m4storage[7] * y) +
-            (_m4storage[11] * z) +
-            _m4storage[15]);
+  Vector3 perspectiveTransform({required double x, required double y, required double z}) {
+    final double transformedX =
+        (_m4storage[0] * x) + (_m4storage[4] * y) + (_m4storage[8] * z) + _m4storage[12];
+    final double transformedY =
+        (_m4storage[1] * x) + (_m4storage[5] * y) + (_m4storage[9] * z) + _m4storage[13];
+    final double transformedZ =
+        (_m4storage[2] * x) + (_m4storage[6] * y) + (_m4storage[10] * z) + _m4storage[14];
+    final double w =
+        1.0 / ((_m4storage[3] * x) + (_m4storage[7] * y) + (_m4storage[11] * z) + _m4storage[15]);
 
-    return (
-      x: transformedX * w,
-      y: transformedY * w,
-      z: transformedZ * w,
-    );
+    return (x: transformedX * w, y: transformedY * w, z: transformedZ * w);
   }
 
   bool isIdentity() =>
@@ -433,25 +413,21 @@ class Matrix4 {
   bool isIdentityOrTranslation() =>
       _m4storage[15] == 1.0 &&
       _m4storage[0] == 1.0 && // col 1
-          _m4storage[1] == 0.0 &&
-          _m4storage[2] == 0.0 &&
-          _m4storage[3] == 0.0 &&
-          _m4storage[4] == 0.0 && // col 2
-          _m4storage[5] == 1.0 &&
-          _m4storage[6] == 0.0 &&
-          _m4storage[7] == 0.0 &&
-          _m4storage[8] == 0.0 && // col 3
-          _m4storage[9] == 0.0 &&
-          _m4storage[10] == 1.0 &&
-          _m4storage[11] == 0.0;
+      _m4storage[1] == 0.0 &&
+      _m4storage[2] == 0.0 &&
+      _m4storage[3] == 0.0 &&
+      _m4storage[4] == 0.0 && // col 2
+      _m4storage[5] == 1.0 &&
+      _m4storage[6] == 0.0 &&
+      _m4storage[7] == 0.0 &&
+      _m4storage[8] == 0.0 && // col 3
+      _m4storage[9] == 0.0 &&
+      _m4storage[10] == 1.0 &&
+      _m4storage[11] == 0.0;
 
   /// Returns the translation vector from this homogeneous transformation matrix.
   Vector3 getTranslation() {
-    return (
-      x: _m4storage[12],
-      y: _m4storage[13],
-      z: _m4storage[14],
-    );
+    return (x: _m4storage[12], y: _m4storage[13], z: _m4storage[14]);
   }
 
   void rotate(Vector3 axis, double angle) {
@@ -471,30 +447,18 @@ class Matrix4 {
     final double m31 = z * x * C - y * s;
     final double m32 = z * y * C + x * s;
     final double m33 = z * z * C + c;
-    final double t1 =
-        _m4storage[0] * m11 + _m4storage[4] * m21 + _m4storage[8] * m31;
-    final double t2 =
-        _m4storage[1] * m11 + _m4storage[5] * m21 + _m4storage[9] * m31;
-    final double t3 =
-        _m4storage[2] * m11 + _m4storage[6] * m21 + _m4storage[10] * m31;
-    final double t4 =
-        _m4storage[3] * m11 + _m4storage[7] * m21 + _m4storage[11] * m31;
-    final double t5 =
-        _m4storage[0] * m12 + _m4storage[4] * m22 + _m4storage[8] * m32;
-    final double t6 =
-        _m4storage[1] * m12 + _m4storage[5] * m22 + _m4storage[9] * m32;
-    final double t7 =
-        _m4storage[2] * m12 + _m4storage[6] * m22 + _m4storage[10] * m32;
-    final double t8 =
-        _m4storage[3] * m12 + _m4storage[7] * m22 + _m4storage[11] * m32;
-    final double t9 =
-        _m4storage[0] * m13 + _m4storage[4] * m23 + _m4storage[8] * m33;
-    final double t10 =
-        _m4storage[1] * m13 + _m4storage[5] * m23 + _m4storage[9] * m33;
-    final double t11 =
-        _m4storage[2] * m13 + _m4storage[6] * m23 + _m4storage[10] * m33;
-    final double t12 =
-        _m4storage[3] * m13 + _m4storage[7] * m23 + _m4storage[11] * m33;
+    final double t1 = _m4storage[0] * m11 + _m4storage[4] * m21 + _m4storage[8] * m31;
+    final double t2 = _m4storage[1] * m11 + _m4storage[5] * m21 + _m4storage[9] * m31;
+    final double t3 = _m4storage[2] * m11 + _m4storage[6] * m21 + _m4storage[10] * m31;
+    final double t4 = _m4storage[3] * m11 + _m4storage[7] * m21 + _m4storage[11] * m31;
+    final double t5 = _m4storage[0] * m12 + _m4storage[4] * m22 + _m4storage[8] * m32;
+    final double t6 = _m4storage[1] * m12 + _m4storage[5] * m22 + _m4storage[9] * m32;
+    final double t7 = _m4storage[2] * m12 + _m4storage[6] * m22 + _m4storage[10] * m32;
+    final double t8 = _m4storage[3] * m12 + _m4storage[7] * m22 + _m4storage[11] * m32;
+    final double t9 = _m4storage[0] * m13 + _m4storage[4] * m23 + _m4storage[8] * m33;
+    final double t10 = _m4storage[1] * m13 + _m4storage[5] * m23 + _m4storage[9] * m33;
+    final double t11 = _m4storage[2] * m13 + _m4storage[6] * m23 + _m4storage[10] * m33;
+    final double t12 = _m4storage[3] * m13 + _m4storage[7] * m23 + _m4storage[11] * m33;
     _m4storage[0] = t1;
     _m4storage[1] = t2;
     _m4storage[2] = t3;
@@ -601,8 +565,7 @@ class Matrix4 {
     final double b09 = a21 * a32 - a22 * a31;
     final double b10 = a21 * a33 - a23 * a31;
     final double b11 = a22 * a33 - a23 * a32;
-    final double det =
-        b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
+    final double det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
     if (det == 0.0) {
       setFrom(arg);
       return 0.0;
@@ -642,24 +605,15 @@ class Matrix4 {
     double kx;
     double ky;
     double kz;
-    ix = invDet *
-        (_m4storage[5] * _m4storage[10] - _m4storage[6] * _m4storage[9]);
-    iy = invDet *
-        (_m4storage[2] * _m4storage[9] - _m4storage[1] * _m4storage[10]);
-    iz = invDet *
-        (_m4storage[1] * _m4storage[6] - _m4storage[2] * _m4storage[5]);
-    jx = invDet *
-        (_m4storage[6] * _m4storage[8] - _m4storage[4] * _m4storage[10]);
-    jy = invDet *
-        (_m4storage[0] * _m4storage[10] - _m4storage[2] * _m4storage[8]);
-    jz = invDet *
-        (_m4storage[2] * _m4storage[4] - _m4storage[0] * _m4storage[6]);
-    kx = invDet *
-        (_m4storage[4] * _m4storage[9] - _m4storage[5] * _m4storage[8]);
-    ky = invDet *
-        (_m4storage[1] * _m4storage[8] - _m4storage[0] * _m4storage[9]);
-    kz = invDet *
-        (_m4storage[0] * _m4storage[5] - _m4storage[1] * _m4storage[4]);
+    ix = invDet * (_m4storage[5] * _m4storage[10] - _m4storage[6] * _m4storage[9]);
+    iy = invDet * (_m4storage[2] * _m4storage[9] - _m4storage[1] * _m4storage[10]);
+    iz = invDet * (_m4storage[1] * _m4storage[6] - _m4storage[2] * _m4storage[5]);
+    jx = invDet * (_m4storage[6] * _m4storage[8] - _m4storage[4] * _m4storage[10]);
+    jy = invDet * (_m4storage[0] * _m4storage[10] - _m4storage[2] * _m4storage[8]);
+    jz = invDet * (_m4storage[2] * _m4storage[4] - _m4storage[0] * _m4storage[6]);
+    kx = invDet * (_m4storage[4] * _m4storage[9] - _m4storage[5] * _m4storage[8]);
+    ky = invDet * (_m4storage[1] * _m4storage[8] - _m4storage[0] * _m4storage[9]);
+    kz = invDet * (_m4storage[0] * _m4storage[5] - _m4storage[1] * _m4storage[4]);
     _m4storage[0] = ix;
     _m4storage[1] = iy;
     _m4storage[2] = iz;
@@ -802,67 +756,83 @@ class Matrix4 {
     final double m32 = _m4storage[14];
 
     final Float32List argStorage = arg._m4storage;
-    _m4storage[0] = (m00 * argStorage[0]) +
+    _m4storage[0] =
+        (m00 * argStorage[0]) +
         (m01 * argStorage[1]) +
         (m02 * argStorage[2]) +
         (m03 * argStorage[3]);
-    _m4storage[4] = (m00 * argStorage[4]) +
+    _m4storage[4] =
+        (m00 * argStorage[4]) +
         (m01 * argStorage[5]) +
         (m02 * argStorage[6]) +
         (m03 * argStorage[7]);
-    _m4storage[8] = (m00 * argStorage[8]) +
+    _m4storage[8] =
+        (m00 * argStorage[8]) +
         (m01 * argStorage[9]) +
         (m02 * argStorage[10]) +
         (m03 * argStorage[11]);
-    _m4storage[12] = (m00 * argStorage[12]) +
+    _m4storage[12] =
+        (m00 * argStorage[12]) +
         (m01 * argStorage[13]) +
         (m02 * argStorage[14]) +
         (m03 * argStorage[15]);
-    _m4storage[1] = (m10 * argStorage[0]) +
+    _m4storage[1] =
+        (m10 * argStorage[0]) +
         (m11 * argStorage[1]) +
         (m12 * argStorage[2]) +
         (m13 * argStorage[3]);
-    _m4storage[5] = (m10 * argStorage[4]) +
+    _m4storage[5] =
+        (m10 * argStorage[4]) +
         (m11 * argStorage[5]) +
         (m12 * argStorage[6]) +
         (m13 * argStorage[7]);
-    _m4storage[9] = (m10 * argStorage[8]) +
+    _m4storage[9] =
+        (m10 * argStorage[8]) +
         (m11 * argStorage[9]) +
         (m12 * argStorage[10]) +
         (m13 * argStorage[11]);
-    _m4storage[13] = (m10 * argStorage[12]) +
+    _m4storage[13] =
+        (m10 * argStorage[12]) +
         (m11 * argStorage[13]) +
         (m12 * argStorage[14]) +
         (m13 * argStorage[15]);
-    _m4storage[2] = (m20 * argStorage[0]) +
+    _m4storage[2] =
+        (m20 * argStorage[0]) +
         (m21 * argStorage[1]) +
         (m22 * argStorage[2]) +
         (m23 * argStorage[3]);
-    _m4storage[6] = (m20 * argStorage[4]) +
+    _m4storage[6] =
+        (m20 * argStorage[4]) +
         (m21 * argStorage[5]) +
         (m22 * argStorage[6]) +
         (m23 * argStorage[7]);
-    _m4storage[10] = (m20 * argStorage[8]) +
+    _m4storage[10] =
+        (m20 * argStorage[8]) +
         (m21 * argStorage[9]) +
         (m22 * argStorage[10]) +
         (m23 * argStorage[11]);
-    _m4storage[14] = (m20 * argStorage[12]) +
+    _m4storage[14] =
+        (m20 * argStorage[12]) +
         (m21 * argStorage[13]) +
         (m22 * argStorage[14]) +
         (m23 * argStorage[15]);
-    _m4storage[3] = (m30 * argStorage[0]) +
+    _m4storage[3] =
+        (m30 * argStorage[0]) +
         (m31 * argStorage[1]) +
         (m32 * argStorage[2]) +
         (m33 * argStorage[3]);
-    _m4storage[7] = (m30 * argStorage[4]) +
+    _m4storage[7] =
+        (m30 * argStorage[4]) +
         (m31 * argStorage[5]) +
         (m32 * argStorage[6]) +
         (m33 * argStorage[7]);
-    _m4storage[11] = (m30 * argStorage[8]) +
+    _m4storage[11] =
+        (m30 * argStorage[8]) +
         (m31 * argStorage[9]) +
         (m32 * argStorage[10]) +
         (m33 * argStorage[11]);
-    _m4storage[15] = (m30 * argStorage[12]) +
+    _m4storage[15] =
+        (m30 * argStorage[12]) +
         (m31 * argStorage[13]) +
         (m32 * argStorage[14]) +
         (m33 * argStorage[15]);
@@ -887,67 +857,83 @@ class Matrix4 {
     final double m32 = _m4storage[11];
     final double m33 = _m4storage[15];
     final Float32List argStorage = arg._m4storage;
-    _m4storage[0] = (m00 * argStorage[0]) +
+    _m4storage[0] =
+        (m00 * argStorage[0]) +
         (m01 * argStorage[4]) +
         (m02 * argStorage[8]) +
         (m03 * argStorage[12]);
-    _m4storage[4] = (m00 * argStorage[1]) +
+    _m4storage[4] =
+        (m00 * argStorage[1]) +
         (m01 * argStorage[5]) +
         (m02 * argStorage[9]) +
         (m03 * argStorage[13]);
-    _m4storage[8] = (m00 * argStorage[2]) +
+    _m4storage[8] =
+        (m00 * argStorage[2]) +
         (m01 * argStorage[6]) +
         (m02 * argStorage[10]) +
         (m03 * argStorage[14]);
-    _m4storage[12] = (m00 * argStorage[3]) +
+    _m4storage[12] =
+        (m00 * argStorage[3]) +
         (m01 * argStorage[7]) +
         (m02 * argStorage[11]) +
         (m03 * argStorage[15]);
-    _m4storage[1] = (m10 * argStorage[0]) +
+    _m4storage[1] =
+        (m10 * argStorage[0]) +
         (m11 * argStorage[4]) +
         (m12 * argStorage[8]) +
         (m13 * argStorage[12]);
-    _m4storage[5] = (m10 * argStorage[1]) +
+    _m4storage[5] =
+        (m10 * argStorage[1]) +
         (m11 * argStorage[5]) +
         (m12 * argStorage[9]) +
         (m13 * argStorage[13]);
-    _m4storage[9] = (m10 * argStorage[2]) +
+    _m4storage[9] =
+        (m10 * argStorage[2]) +
         (m11 * argStorage[6]) +
         (m12 * argStorage[10]) +
         (m13 * argStorage[14]);
-    _m4storage[13] = (m10 * argStorage[3]) +
+    _m4storage[13] =
+        (m10 * argStorage[3]) +
         (m11 * argStorage[7]) +
         (m12 * argStorage[11]) +
         (m13 * argStorage[15]);
-    _m4storage[2] = (m20 * argStorage[0]) +
+    _m4storage[2] =
+        (m20 * argStorage[0]) +
         (m21 * argStorage[4]) +
         (m22 * argStorage[8]) +
         (m23 * argStorage[12]);
-    _m4storage[6] = (m20 * argStorage[1]) +
+    _m4storage[6] =
+        (m20 * argStorage[1]) +
         (m21 * argStorage[5]) +
         (m22 * argStorage[9]) +
         (m23 * argStorage[13]);
-    _m4storage[10] = (m20 * argStorage[2]) +
+    _m4storage[10] =
+        (m20 * argStorage[2]) +
         (m21 * argStorage[6]) +
         (m22 * argStorage[10]) +
         (m23 * argStorage[14]);
-    _m4storage[14] = (m20 * argStorage[3]) +
+    _m4storage[14] =
+        (m20 * argStorage[3]) +
         (m21 * argStorage[7]) +
         (m22 * argStorage[11]) +
         (m23 * argStorage[15]);
-    _m4storage[3] = (m30 * argStorage[0]) +
+    _m4storage[3] =
+        (m30 * argStorage[0]) +
         (m31 * argStorage[4]) +
         (m32 * argStorage[8]) +
         (m33 * argStorage[12]);
-    _m4storage[7] = (m30 * argStorage[1]) +
+    _m4storage[7] =
+        (m30 * argStorage[1]) +
         (m31 * argStorage[5]) +
         (m32 * argStorage[9]) +
         (m33 * argStorage[13]);
-    _m4storage[11] = (m30 * argStorage[2]) +
+    _m4storage[11] =
+        (m30 * argStorage[2]) +
         (m31 * argStorage[6]) +
         (m32 * argStorage[10]) +
         (m33 * argStorage[14]);
-    _m4storage[15] = (m30 * argStorage[3]) +
+    _m4storage[15] =
+        (m30 * argStorage[3]) +
         (m31 * argStorage[7]) +
         (m32 * argStorage[11]) +
         (m33 * argStorage[15]);
@@ -955,15 +941,18 @@ class Matrix4 {
 
   /// Transforms a 3-component vector in-place.
   void transform3(Float32List vector) {
-    final double x = (_m4storage[0] * vector[0]) +
+    final double x =
+        (_m4storage[0] * vector[0]) +
         (_m4storage[4] * vector[1]) +
         (_m4storage[8] * vector[2]) +
         _m4storage[12];
-    final double y = (_m4storage[1] * vector[0]) +
+    final double y =
+        (_m4storage[1] * vector[0]) +
         (_m4storage[5] * vector[1]) +
         (_m4storage[9] * vector[2]) +
         _m4storage[13];
-    final double z = (_m4storage[2] * vector[0]) +
+    final double z =
+        (_m4storage[2] * vector[0]) +
         (_m4storage[6] * vector[1]) +
         (_m4storage[10] * vector[2]) +
         _m4storage[14];
@@ -979,12 +968,8 @@ class Matrix4 {
   void transform2(Float32List vector) {
     final double x = vector[0];
     final double y = vector[1];
-    vector[0] = (_m4storage[0] * x) +
-        (_m4storage[4] * y) +
-        _m4storage[12];
-    vector[1] = (_m4storage[1] * x) +
-        (_m4storage[5] * y) +
-        _m4storage[13];
+    vector[0] = (_m4storage[0] * x) + (_m4storage[4] * y) + _m4storage[12];
+    vector[1] = (_m4storage[1] * x) + (_m4storage[5] * y) + _m4storage[13];
   }
 
   /// Transforms the input rect and calculates the bounding box of the rect
@@ -1053,10 +1038,11 @@ class Matrix4 {
         return storage[index].toStringAsFixed(2);
       }
 
-      result = '[${fmt(0)}, ${fmt(4)}, ${fmt(8)}, ${fmt(12)}]\n'
-               '[${fmt(1)}, ${fmt(5)}, ${fmt(9)}, ${fmt(13)}]\n'
-               '[${fmt(2)}, ${fmt(6)}, ${fmt(10)}, ${fmt(14)}]\n'
-               '[${fmt(3)}, ${fmt(7)}, ${fmt(11)}, ${fmt(15)}]';
+      result =
+          '[${fmt(0)}, ${fmt(4)}, ${fmt(8)}, ${fmt(12)}]\n'
+          '[${fmt(1)}, ${fmt(5)}, ${fmt(9)}, ${fmt(13)}]\n'
+          '[${fmt(2)}, ${fmt(6)}, ${fmt(10)}, ${fmt(14)}]\n'
+          '[${fmt(3)}, ${fmt(7)}, ${fmt(11)}, ${fmt(15)}]';
       return true;
     }());
     return result;

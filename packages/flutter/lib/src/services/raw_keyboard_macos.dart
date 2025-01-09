@@ -96,7 +96,9 @@ class RawKeyEventDataMacOs extends RawKeyEventData {
   String get keyLabel => charactersIgnoringModifiers;
 
   @override
-  PhysicalKeyboardKey get physicalKey => kMacOsToPhysicalKey[keyCode] ?? PhysicalKeyboardKey(LogicalKeyboardKey.windowsPlane + keyCode);
+  PhysicalKeyboardKey get physicalKey =>
+      kMacOsToPhysicalKey[keyCode] ??
+      PhysicalKeyboardKey(LogicalKeyboardKey.windowsPlane + keyCode);
 
   @override
   LogicalKeyboardKey get logicalKey {
@@ -137,7 +139,8 @@ class RawKeyEventDataMacOs extends RawKeyEventData {
       }
     }
     if (character != null) {
-      final int keyId = LogicalKeyboardKey.unicodePlane | (character & LogicalKeyboardKey.valueMask);
+      final int keyId =
+          LogicalKeyboardKey.unicodePlane | (character & LogicalKeyboardKey.valueMask);
       return LogicalKeyboardKey.findKeyByKeyId(keyId) ?? LogicalKeyboardKey(keyId);
     }
 
@@ -158,9 +161,9 @@ class RawKeyEventDataMacOs extends RawKeyEventData {
       return true;
     }
     return switch (side) {
-      KeyboardSide.any   => true,
-      KeyboardSide.all   => modifiers & leftMask != 0 && modifiers & rightMask != 0,
-      KeyboardSide.left  => modifiers & leftMask != 0,
+      KeyboardSide.any => true,
+      KeyboardSide.all => modifiers & leftMask != 0 && modifiers & rightMask != 0,
+      KeyboardSide.left => modifiers & leftMask != 0,
       KeyboardSide.right => modifiers & rightMask != 0,
     };
   }
@@ -171,19 +174,39 @@ class RawKeyEventDataMacOs extends RawKeyEventData {
     final bool result;
     switch (key) {
       case ModifierKey.controlModifier:
-        result = _isLeftRightModifierPressed(side, independentModifier & modifierControl, modifierLeftControl, modifierRightControl);
+        result = _isLeftRightModifierPressed(
+          side,
+          independentModifier & modifierControl,
+          modifierLeftControl,
+          modifierRightControl,
+        );
       case ModifierKey.shiftModifier:
-        result = _isLeftRightModifierPressed(side, independentModifier & modifierShift, modifierLeftShift, modifierRightShift);
+        result = _isLeftRightModifierPressed(
+          side,
+          independentModifier & modifierShift,
+          modifierLeftShift,
+          modifierRightShift,
+        );
       case ModifierKey.altModifier:
-        result = _isLeftRightModifierPressed(side, independentModifier & modifierOption, modifierLeftOption, modifierRightOption);
+        result = _isLeftRightModifierPressed(
+          side,
+          independentModifier & modifierOption,
+          modifierLeftOption,
+          modifierRightOption,
+        );
       case ModifierKey.metaModifier:
-        result = _isLeftRightModifierPressed(side, independentModifier & modifierCommand, modifierLeftCommand, modifierRightCommand);
+        result = _isLeftRightModifierPressed(
+          side,
+          independentModifier & modifierCommand,
+          modifierLeftCommand,
+          modifierRightCommand,
+        );
       case ModifierKey.capsLockModifier:
         result = independentModifier & modifierCapsLock != 0;
-    // On macOS, the function modifier bit is set for any function key, like F1,
-    // F2, etc., but the meaning of ModifierKey.modifierFunction in Flutter is
-    // that of the Fn modifier key, so there's no good way to emulate that on
-    // macOS.
+      // On macOS, the function modifier bit is set for any function key, like F1,
+      // F2, etc., but the meaning of ModifierKey.modifierFunction in Flutter is
+      // that of the Fn modifier key, so there's no good way to emulate that on
+      // macOS.
       case ModifierKey.functionModifier:
       case ModifierKey.numLockModifier:
       case ModifierKey.symbolModifier:
@@ -191,7 +214,10 @@ class RawKeyEventDataMacOs extends RawKeyEventData {
         // These modifier masks are not used in macOS keyboards.
         result = false;
     }
-    assert(!result || getModifierSide(key) != null, "$runtimeType thinks that a modifier is pressed, but can't figure out what side it's on.");
+    assert(
+      !result || getModifierSide(key) != null,
+      "$runtimeType thinks that a modifier is pressed, but can't figure out what side it's on.",
+    );
     return result;
   }
 
@@ -247,34 +273,33 @@ class RawKeyEventDataMacOs extends RawKeyEventData {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<String>('characters', characters));
-    properties.add(DiagnosticsProperty<String>('charactersIgnoringModifiers', charactersIgnoringModifiers));
+    properties.add(
+      DiagnosticsProperty<String>('charactersIgnoringModifiers', charactersIgnoringModifiers),
+    );
     properties.add(DiagnosticsProperty<int>('keyCode', keyCode));
     properties.add(DiagnosticsProperty<int>('modifiers', modifiers));
-    properties.add(DiagnosticsProperty<int?>('specifiedLogicalKey', specifiedLogicalKey, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<int?>('specifiedLogicalKey', specifiedLogicalKey, defaultValue: null),
+    );
   }
 
   @override
-  bool operator==(Object other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is RawKeyEventDataMacOs
-        && other.characters == characters
-        && other.charactersIgnoringModifiers == charactersIgnoringModifiers
-        && other.keyCode == keyCode
-        && other.modifiers == modifiers;
+    return other is RawKeyEventDataMacOs &&
+        other.characters == characters &&
+        other.charactersIgnoringModifiers == charactersIgnoringModifiers &&
+        other.keyCode == keyCode &&
+        other.modifiers == modifiers;
   }
 
   @override
-  int get hashCode => Object.hash(
-    characters,
-    charactersIgnoringModifiers,
-    keyCode,
-    modifiers,
-  );
+  int get hashCode => Object.hash(characters, charactersIgnoringModifiers, keyCode, modifiers);
 
   /// Returns true if the given label represents an unprintable key.
   ///

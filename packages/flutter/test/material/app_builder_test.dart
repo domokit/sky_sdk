@@ -17,19 +17,9 @@ void main() {
         return const Placeholder();
       },
     );
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.rtl,
-        child: app,
-      ),
-    );
+    await tester.pumpWidget(Directionality(textDirection: TextDirection.rtl, child: app));
     expect(log, <String>['build']);
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: app,
-      ),
-    );
+    await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: app));
     expect(log, <String>['build']);
   });
 
@@ -45,10 +35,7 @@ void main() {
           },
         ),
         builder: (BuildContext context, Widget? child) {
-          return Directionality(
-            textDirection: TextDirection.rtl,
-            child: child!,
-          );
+          return Directionality(textDirection: TextDirection.rtl, child: child!);
         },
       ),
     );

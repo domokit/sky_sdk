@@ -11,13 +11,12 @@ void main() {
 }
 
 Future<void> testMain() async {
-
   test('toImage succeeds', () async {
     final ui.Image image = await _createImage();
     expect(image.runtimeType.toString(), equals('HtmlImage'));
     image.dispose();
-  // TODO(polina-c): unskip the test when bug is fixed:
-  // https://github.com/flutter/flutter/issues/110599
+    // TODO(polina-c): unskip the test when bug is fixed:
+    // https://github.com/flutter/flutter/issues/110599
   }, skip: true);
 
   test('Image constructor invokes onCreate once', () async {
@@ -39,8 +38,8 @@ Future<void> testMain() async {
     expect(createdImage, image2);
 
     ui.Image.onCreate = null;
-  // TODO(polina-c): unskip the test when bug is fixed:
-  // https://github.com/flutter/flutter/issues/110599
+    // TODO(polina-c): unskip the test when bug is fixed:
+    // https://github.com/flutter/flutter/issues/110599
   }, skip: true);
 
   test('dispose() invokes onDispose once', () async {
@@ -51,19 +50,23 @@ Future<void> testMain() async {
       disposedImage = image;
     };
 
-    final ui.Image image1 = await _createImage()..dispose();
+    final ui.Image image1 =
+        await _createImage()
+          ..dispose();
 
     expect(onDisposeInvokedCount, 1);
     expect(disposedImage, image1);
 
-    final ui.Image image2 = await _createImage()..dispose();
+    final ui.Image image2 =
+        await _createImage()
+          ..dispose();
 
     expect(onDisposeInvokedCount, 2);
     expect(disposedImage, image2);
 
     ui.Image.onDispose = null;
-  // TODO(polina-c): unskip the test when bug is fixed:
-  // https://github.com/flutter/flutter/issues/110599
+    // TODO(polina-c): unskip the test when bug is fixed:
+    // https://github.com/flutter/flutter/issues/110599
   }, skip: true);
 }
 

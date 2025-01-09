@@ -19,11 +19,7 @@ void main() {
       maxWidth: double.infinity,
       minHeight: 0.0,
       maxHeight: double.infinity,
-      child: RenderLimitedBox(
-        maxWidth: 100.0,
-        maxHeight: 200.0,
-        child: child,
-      ),
+      child: RenderLimitedBox(maxWidth: 100.0, maxHeight: 200.0, child: child),
     );
     layout(parent);
     expect(child.size.width, 100.0);
@@ -69,11 +65,7 @@ void main() {
       maxWidth: double.infinity,
       minHeight: 500.0,
       maxHeight: 500.0,
-      child: RenderLimitedBox(
-        maxWidth: 100.0,
-        maxHeight: 200.0,
-        child: child,
-      ),
+      child: RenderLimitedBox(maxWidth: 100.0, maxHeight: 200.0, child: child),
     );
     layout(parent);
     expect(child.size.width, 100.0);
@@ -89,11 +81,7 @@ void main() {
       maxWidth: 500.0,
       minHeight: 0.0,
       maxHeight: double.infinity,
-      child: RenderLimitedBox(
-        maxWidth: 100.0,
-        maxHeight: 200.0,
-        child: child,
-      ),
+      child: RenderLimitedBox(maxWidth: 100.0, maxHeight: 200.0, child: child),
     );
     layout(parent);
 
@@ -108,10 +96,7 @@ void main() {
       maxWidth: 500.0,
       minHeight: 0.0,
       maxHeight: double.infinity,
-      child: box = RenderLimitedBox(
-        maxWidth: 100.0,
-        maxHeight: 200.0,
-      ),
+      child: box = RenderLimitedBox(maxWidth: 100.0, maxHeight: 200.0),
     );
     layout(parent);
     expect(box.size, const Size(10.0, 0.0));
@@ -144,11 +129,8 @@ void main() {
   test('LimitedBox: no child use parent', () {
     RenderBox box;
     final RenderBox parent = RenderConstrainedOverflowBox(
-        minWidth: 10.0,
-        child: box = RenderLimitedBox(
-          maxWidth: 100.0,
-          maxHeight: 200.0,
-        ),
+      minWidth: 10.0,
+      child: box = RenderLimitedBox(maxWidth: 100.0, maxHeight: 200.0),
     );
     layout(parent);
     expect(box.size, const Size(10.0, 600.0));

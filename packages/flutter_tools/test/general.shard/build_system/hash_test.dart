@@ -11,7 +11,6 @@ import 'package:flutter_tools/src/build_system/hash.dart';
 import '../../src/common.dart';
 
 void main() {
-
   // Examples taken from https://en.wikipedia.org/wiki/MD5
   testWithoutContext('md5 control test zero length string', () {
     final Md5Hash hash = Md5Hash();

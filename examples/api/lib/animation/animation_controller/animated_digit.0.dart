@@ -19,20 +19,17 @@ class _PlaceholderDigit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle textStyle = Theme.of(context).textTheme.displayLarge!.copyWith(
-      fontWeight: FontWeight.w500,
-    );
+    final TextStyle textStyle = Theme.of(
+      context,
+    ).textTheme.displayLarge!.copyWith(fontWeight: FontWeight.w500);
 
-    final Iterable<Widget> placeholderDigits = <int>[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map<Widget>(
-      (int n) {
-        return Text('$n', style: textStyle);
-      },
-    );
+    final Iterable<Widget> placeholderDigits = <int>[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map<Widget>((
+      int n,
+    ) {
+      return Text('$n', style: textStyle);
+    });
 
-    return Opacity(
-      opacity: 0,
-      child: Stack(children: placeholderDigits.toList()),
-    );
+    return Opacity(opacity: 0, child: Stack(children: placeholderDigits.toList()));
   }
 }
 
@@ -41,7 +38,7 @@ class _PlaceholderDigit extends StatelessWidget {
 // When the value changes the old value slides upwards and out of sight
 // at the same as the new value slides into view.
 class AnimatedDigit extends StatefulWidget {
-  const AnimatedDigit({ super.key, required this.value });
+  const AnimatedDigit({super.key, required this.value});
 
   final int value;
 
@@ -55,16 +52,14 @@ class _AnimatedDigitState extends State<AnimatedDigit> with SingleTickerProvider
   late final AnimationController controller;
   late int incomingValue;
   late int outgoingValue;
-  List<int> pendingValues = <int>[]; // widget.value updates that occurred while the animation is underway
+  List<int> pendingValues =
+      <int>[]; // widget.value updates that occurred while the animation is underway
   Duration duration = defaultDuration;
 
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-      duration: duration,
-      vsync: this,
-    );
+    controller = AnimationController(duration: duration, vsync: this);
     controller.addStatusListener(handleAnimationCompleted);
     incomingValue = widget.value;
     outgoingValue = widget.value;
@@ -133,32 +128,22 @@ class _AnimatedDigitState extends State<AnimatedDigit> with SingleTickerProvider
         children: <Widget>[
           const _PlaceholderDigit(),
           SlideTransition(
-            position: controller
-              .drive(
-                Tween<Offset>(
-                  begin: Offset.zero,
-                  end: const Offset(0, -1), // Out of view above the top.
-                ),
+            position: controller.drive(
+              Tween<Offset>(
+                begin: Offset.zero,
+                end: const Offset(0, -1), // Out of view above the top.
               ),
-            child: Text(
-              key: ValueKey<int>(outgoingValue),
-              '$outgoingValue',
-              style: textStyle,
             ),
+            child: Text(key: ValueKey<int>(outgoingValue), '$outgoingValue', style: textStyle),
           ),
           SlideTransition(
-            position: controller
-              .drive(
-                Tween<Offset>(
-                  begin: const Offset(0, 1), // Out of view below the bottom.
-                  end: Offset.zero,
-                ),
+            position: controller.drive(
+              Tween<Offset>(
+                begin: const Offset(0, 1), // Out of view below the bottom.
+                end: Offset.zero,
               ),
-            child: Text(
-              key: ValueKey<int>(incomingValue),
-              '$incomingValue',
-              style: textStyle,
             ),
+            child: Text(key: ValueKey<int>(incomingValue), '$incomingValue', style: textStyle),
           ),
         ],
       ),
@@ -167,19 +152,16 @@ class _AnimatedDigitState extends State<AnimatedDigit> with SingleTickerProvider
 }
 
 class AnimatedDigitApp extends StatelessWidget {
-  const AnimatedDigitApp({ super.key });
+  const AnimatedDigitApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'AnimatedDigit',
-      home: AnimatedDigitHome(),
-    );
+    return const MaterialApp(title: 'AnimatedDigit', home: AnimatedDigitHome());
   }
 }
 
 class AnimatedDigitHome extends StatefulWidget {
-  const AnimatedDigitHome({ super.key });
+  const AnimatedDigitHome({super.key});
 
   @override
   State<AnimatedDigitHome> createState() => _AnimatedDigitHomeState();
@@ -191,12 +173,12 @@ class _AnimatedDigitHomeState extends State<AnimatedDigitHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: AnimatedDigit(value: value % 10),
-      ),
+      body: Center(child: AnimatedDigit(value: value % 10)),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          setState(() { value += 1; });
+          setState(() {
+            value += 1;
+          });
         },
         tooltip: 'Increment Digit',
         child: const Icon(Icons.add),

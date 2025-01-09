@@ -11,17 +11,19 @@ import '../widgets/editable_text_utils.dart';
 
 Finder findCupertinoOverflowNextButton() {
   return find.byWidgetPredicate((Widget widget) {
-    return widget is CustomPaint && '${widget.painter?.runtimeType}' == '_RightCupertinoChevronPainter';
+    return widget is CustomPaint &&
+        '${widget.painter?.runtimeType}' == '_RightCupertinoChevronPainter';
   });
 }
 
 Finder findCupertinoOverflowBackButton() {
   return find.byWidgetPredicate((Widget widget) {
-    return widget is CustomPaint && '${widget.painter?.runtimeType}' == '_LeftCupertinoChevronPainter';
+    return widget is CustomPaint &&
+        '${widget.painter?.runtimeType}' == '_LeftCupertinoChevronPainter';
   });
 }
 
-Future<void> tapCupertinoOverflowNextButton(WidgetTester tester) async{
+Future<void> tapCupertinoOverflowNextButton(WidgetTester tester) async {
   await tester.tapAt(tester.getCenter(findCupertinoOverflowNextButton()));
   await tester.pumpAndSettle();
 }

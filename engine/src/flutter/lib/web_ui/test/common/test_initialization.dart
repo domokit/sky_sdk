@@ -28,9 +28,10 @@ void setUpUnitTests({
     debugFontsScope = configureDebugFontsAssetScope(fakeAssetManager);
     debugOnlyAssetManager = fakeAssetManager;
     await bootstrapAndRunApp(withImplicitView: withImplicitView);
-    engine.debugOverrideJsConfiguration(<String, Object?>{
-      'fontFallbackBaseUrl': 'assets/fallback_fonts/',
-    }.jsify() as engine.JsFlutterConfiguration?);
+    engine.debugOverrideJsConfiguration(
+      <String, Object?>{'fontFallbackBaseUrl': 'assets/fallback_fonts/'}.jsify()
+          as engine.JsFlutterConfiguration?,
+    );
 
     if (setUpTestViewDimensions) {
       // The following parameters are hard-coded in Flutter's test embedder. Since
@@ -81,8 +82,11 @@ void _disableImplicitView() {
   // TODO(mdebbar): Instead of disabling the implicit view, we should be able to
   //                initialize tests without an implicit view to begin with.
   //                https://github.com/flutter/flutter/issues/138906
-  final engine.EngineFlutterWindow? implicitView = engine.EnginePlatformDispatcher.instance.implicitView;
+  final engine.EngineFlutterWindow? implicitView =
+      engine.EnginePlatformDispatcher.instance.implicitView;
   if (implicitView != null) {
-    engine.EnginePlatformDispatcher.instance.viewManager.disposeAndUnregisterView(implicitView.viewId);
+    engine.EnginePlatformDispatcher.instance.viewManager.disposeAndUnregisterView(
+      implicitView.viewId,
+    );
   }
 }

@@ -12,6 +12,9 @@ void main() {
     entrypoint.main();
 
     expect(find.byType(FlutterLogo), findsOneWidget);
-    expect(find.text('This app is only meant to be run under the Flutter debugger'), findsOneWidget);
+    expect(
+      find.text('This app is only meant to be run under the Flutter debugger'),
+      findsOneWidget,
+    );
   });
 }

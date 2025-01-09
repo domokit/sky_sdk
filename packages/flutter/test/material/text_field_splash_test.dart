@@ -89,18 +89,8 @@ void main() {
               alignment: Alignment.topLeft,
               child: Column(
                 children: <Widget>[
-                  TextField(
-                    key: textField1,
-                    decoration: const InputDecoration(
-                      labelText: 'label',
-                    ),
-                  ),
-                  TextField(
-                    key: textField2,
-                    decoration: const InputDecoration(
-                      labelText: 'label',
-                    ),
-                  ),
+                  TextField(key: textField1, decoration: const InputDecoration(labelText: 'label')),
+                  TextField(key: textField2, decoration: const InputDecoration(labelText: 'label')),
                 ],
               ),
             ),
@@ -143,20 +133,9 @@ void main() {
           child: Material(
             child: ListView(
               children: <Widget>[
-                const TextField(
-                  decoration: InputDecoration(
-                    labelText: 'label1',
-                  ),
-                ),
-                const TextField(
-                  decoration: InputDecoration(
-                    labelText: 'label2',
-                  ),
-                ),
-                Container(
-                  height: 1000.0,
-                  color: const Color(0xFF00FF00),
-                ),
+                const TextField(decoration: InputDecoration(labelText: 'label1')),
+                const TextField(decoration: InputDecoration(labelText: 'label2')),
+                Container(height: 1000.0, color: const Color(0xFF00FF00)),
               ],
             ),
           ),

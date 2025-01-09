@@ -57,7 +57,8 @@ Future<void> main(List<String> rawArgs) async {
   final bool exitOnFirstTestFailure = (args['exit'] as bool?) ?? false;
 
   /// Whether to tell tasks to clean up after themselves.
-  final bool terminateStrayDartProcesses = (args['terminate-stray-dart-processes'] as bool?) ?? false;
+  final bool terminateStrayDartProcesses =
+      (args['terminate-stray-dart-processes'] as bool?) ?? false;
 
   /// The git branch being tested on.
   final String? gitBranch = args['git-branch'] as String?;
@@ -90,12 +91,16 @@ Future<void> main(List<String> rawArgs) async {
     final int runsPerTest = int.parse(args['ab'] as String);
     final String resultsFile = args['ab-result-file'] as String? ?? 'ABresults#.json';
     if (taskNames.length > 1) {
-      stderr.writeln('When running in A/B test mode exactly one task must be passed but got ${taskNames.join(', ')}.\n');
+      stderr.writeln(
+        'When running in A/B test mode exactly one task must be passed but got ${taskNames.join(', ')}.\n',
+      );
       stderr.writeln(argParser.usage);
       exit(1);
     }
     if (localEngine == null && localWebSdk == null) {
-      stderr.writeln('When running in A/B test mode --local-engine or --local-web-sdk is required.\n');
+      stderr.writeln(
+        'When running in A/B test mode --local-engine or --local-web-sdk is required.\n',
+      );
       stderr.writeln(argParser.usage);
       exit(1);
     }
@@ -117,7 +122,8 @@ Future<void> main(List<String> rawArgs) async {
       onlyLocalEngine: (args['ab-local-engine-only'] as bool?) ?? false,
     );
   } else {
-    await runTasks(taskNames,
+    await runTasks(
+      taskNames,
       silent: silent,
       localEngine: localEngine,
       localEngineHost: localEngineHost,
@@ -240,7 +246,8 @@ ArgParser createArgParser(List<String> taskNames) {
     ..addMultiOption(
       'task',
       abbr: 't',
-      help: 'Name of a Dart file in bin/tasks.\n'
+      help:
+          'Name of a Dart file in bin/tasks.\n'
           '   Example: complex_layout__start_up\n'
           '\n'
           'This option may be repeated to specify multiple tasks.',
@@ -251,22 +258,24 @@ ArgParser createArgParser(List<String> taskNames) {
     ..addOption(
       'device-id',
       abbr: 'd',
-      help: 'Target device id (prefixes are allowed, names are not supported).\n'
-            'The option will be ignored if the test target does not run on a\n'
-            'mobile device. This still respects the device operating system\n'
-            'settings in the test case, and will results in error if no device\n'
-            'with given ID/ID prefix is found.',
+      help:
+          'Target device id (prefixes are allowed, names are not supported).\n'
+          'The option will be ignored if the test target does not run on a\n'
+          'mobile device. This still respects the device operating system\n'
+          'settings in the test case, and will results in error if no device\n'
+          'with given ID/ID prefix is found.',
     )
     ..addOption(
       'ab',
-      help: 'Runs an A/B test comparing the default engine with the local\n'
-            'engine build for one task. This option does not support running\n'
-            'multiple tasks. The value is the number of times to run the task.\n'
-            'The task is expected to be a benchmark that reports score keys.\n'
-            'The A/B test collects the metrics collected by the test and\n'
-            'produces a report containing averages, noise, and the speed-up\n'
-            'between the two engines. --local-engine is required when running\n'
-            'an A/B test.',
+      help:
+          'Runs an A/B test comparing the default engine with the local\n'
+          'engine build for one task. This option does not support running\n'
+          'multiple tasks. The value is the number of times to run the task.\n'
+          'The task is expected to be a benchmark that reports score keys.\n'
+          'The A/B test collects the metrics collected by the test and\n'
+          'produces a report containing averages, noise, and the speed-up\n'
+          'between the two engines. --local-engine is required when running\n'
+          'an A/B test.',
       callback: (String? value) {
         if (value != null && int.tryParse(value) == null) {
           throw ArgParserException('Option --ab must be a number, but was "$value".');
@@ -275,96 +284,106 @@ ArgParser createArgParser(List<String> taskNames) {
     )
     ..addOption(
       'ab-result-file',
-      help: 'The filename in which to place the json encoded results of an A/B test.\n'
-            'The filename may contain a single # character to be replaced by a sequence\n'
-            'number if the name already exists.',
+      help:
+          'The filename in which to place the json encoded results of an A/B test.\n'
+          'The filename may contain a single # character to be replaced by a sequence\n'
+          'number if the name already exists.',
     )
     ..addFlag(
       'ab-local-engine-only',
-      help: 'When running the A/B aggregator, do not run benchmarks with the default engine (A), only the local engine (B).\n'
-            'Shows the averages and noise report for the local engine without comparison to anything else.',
+      help:
+          'When running the A/B aggregator, do not run benchmarks with the default engine (A), only the local engine (B).\n'
+          'Shows the averages and noise report for the local engine without comparison to anything else.',
     )
     ..addFlag(
       'exit',
-      help: 'Exit on the first test failure. Currently flakes are intentionally (though '
-            'incorrectly) not considered to be failures.',
+      help:
+          'Exit on the first test failure. Currently flakes are intentionally (though '
+          'incorrectly) not considered to be failures.',
     )
     ..addOption(
       'git-branch',
-      help: '[Flutter infrastructure] Git branch of the current commit. LUCI\n'
-            'checkouts run in detached HEAD state, so the branch must be passed.',
+      help:
+          '[Flutter infrastructure] Git branch of the current commit. LUCI\n'
+          'checkouts run in detached HEAD state, so the branch must be passed.',
     )
     ..addOption(
       'local-engine',
-      help: 'Name of a build output within the engine out directory, if you\n'
-            'are building Flutter locally. Use this to select a specific\n'
-            'version of the engine if you have built multiple engine targets.\n'
-            'This path is relative to --local-engine-src-path/out. This option\n'
-            'is required when running an A/B test (see the --ab option).',
+      help:
+          'Name of a build output within the engine out directory, if you\n'
+          'are building Flutter locally. Use this to select a specific\n'
+          'version of the engine if you have built multiple engine targets.\n'
+          'This path is relative to --local-engine-src-path/out. This option\n'
+          'is required when running an A/B test (see the --ab option).',
     )
     ..addOption(
       'local-engine-host',
-      help: 'Name of a build output within the engine out directory, if you\n'
-            'are building Flutter locally. Use this to select a specific\n'
-            'version of the engine to use as the host platform if you have built '
-            'multiple engine targets.\n'
-            'This path is relative to --local-engine-src-path/out. This option\n'
-            'is required when running an A/B test (see the --ab option).',
+      help:
+          'Name of a build output within the engine out directory, if you\n'
+          'are building Flutter locally. Use this to select a specific\n'
+          'version of the engine to use as the host platform if you have built '
+          'multiple engine targets.\n'
+          'This path is relative to --local-engine-src-path/out. This option\n'
+          'is required when running an A/B test (see the --ab option).',
     )
     ..addOption(
       'local-web-sdk',
-      help: 'Name of a build output within the engine out directory, if you\n'
-            'are building Flutter locally. Use this to select a specific\n'
-            'version of the engine if you have built multiple engine targets.\n'
-            'This path is relative to --local-engine-src-path/out. This option\n'
-            'is required when running an A/B test (see the --ab option).',
+      help:
+          'Name of a build output within the engine out directory, if you\n'
+          'are building Flutter locally. Use this to select a specific\n'
+          'version of the engine if you have built multiple engine targets.\n'
+          'This path is relative to --local-engine-src-path/out. This option\n'
+          'is required when running an A/B test (see the --ab option).',
     )
     ..addFlag(
       'list',
       abbr: 'l',
-      help: "Don't actually run the tasks, but list out the tasks that would\n"
-            'have been run, in the order they would have run.',
+      help:
+          "Don't actually run the tasks, but list out the tasks that would\n"
+          'have been run, in the order they would have run.',
     )
     ..addOption(
       'local-engine-src-path',
-      help: 'Path to your engine src directory, if you are building Flutter\n'
-            'locally. Defaults to \$FLUTTER_ENGINE if set, or tries to guess at\n'
-            'the location based on the value of the --flutter-root option.',
+      help:
+          'Path to your engine src directory, if you are building Flutter\n'
+          'locally. Defaults to \$FLUTTER_ENGINE if set, or tries to guess at\n'
+          'the location based on the value of the --flutter-root option.',
     )
-    ..addOption('luci-builder', help: '[Flutter infrastructure] Name of the LUCI builder being run on.')
+    ..addOption(
+      'luci-builder',
+      help: '[Flutter infrastructure] Name of the LUCI builder being run on.',
+    )
     ..addOption(
       'results-file',
-      help: '[Flutter infrastructure] File path for test results. If passed with\n'
-            'task, will write test results to the file.'
+      help:
+          '[Flutter infrastructure] File path for test results. If passed with\n'
+          'task, will write test results to the file.',
     )
     ..addOption(
       'service-account-token-file',
       help: '[Flutter infrastructure] Authentication for uploading results.',
     )
-    ..addFlag(
-      'silent',
-      help: 'Reduce verbosity slightly.',
-    )
+    ..addFlag('silent', help: 'Reduce verbosity slightly.')
     ..addFlag(
       'terminate-stray-dart-processes',
       defaultsTo: true,
-      help: 'Whether to send a SIGKILL signal to any Dart processes that are still '
-            'running when a task is completed. If any Dart processes are terminated '
-            'in this way, the test is considered to have failed.',
+      help:
+          'Whether to send a SIGKILL signal to any Dart processes that are still '
+          'running when a task is completed. If any Dart processes are terminated '
+          'in this way, the test is considered to have failed.',
     )
     ..addFlag(
       'use-emulator',
-      help: 'If this is an android test, use an emulator to run the test instead of '
-            'a physical device.'
+      help:
+          'If this is an android test, use an emulator to run the test instead of '
+          'a physical device.',
     )
     ..addMultiOption(
       'test',
       hide: true,
       callback: (List<String> value) {
         if (value.isNotEmpty) {
-          throw const FormatException(
-            'Invalid option --test. Did you mean --task (-t)?',
-          );
+          throw const FormatException('Invalid option --test. Did you mean --task (-t)?');
         }
       },
     );

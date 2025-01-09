@@ -10,8 +10,7 @@ import '../vector_math.dart';
 import 'surface.dart';
 
 /// A surface that makes its children transparent.
-class PersistedOpacity extends PersistedContainerSurface
-    implements ui.OpacityEngineLayer {
+class PersistedOpacity extends PersistedContainerSurface implements ui.OpacityEngineLayer {
   PersistedOpacity(PersistedOpacity? super.oldLayer, this.alpha, this.offset);
 
   final int alpha;
@@ -36,8 +35,8 @@ class PersistedOpacity extends PersistedContainerSurface
   Matrix4? _localTransformInverse;
 
   @override
-  Matrix4 get localTransformInverse => _localTransformInverse ??=
-      Matrix4.translationValues(-offset.dx, -offset.dy, 0);
+  Matrix4 get localTransformInverse =>
+      _localTransformInverse ??= Matrix4.translationValues(-offset.dx, -offset.dy, 0);
 
   @override
   DomElement createElement() {

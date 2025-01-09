@@ -161,8 +161,8 @@ TEST(FlPlatformHandlerTest, ExitApplication) {
   gboolean request_exit_called = FALSE;
   fl_mock_binary_messenger_set_json_method_channel(
       messenger, "flutter/platform",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         gboolean* called = static_cast<gboolean*>(user_data);
         *called = TRUE;
 

@@ -26,8 +26,7 @@ class MxStartupInfo {
   // https://github.com/flutter/flutter/issues/49439
   static Handle takeEnvironment() {
     if (_environment == null && Platform.isFuchsia) {
-      throw Exception(
-          'Attempting to call takeEnvironment more than once per process');
+      throw Exception('Attempting to call takeEnvironment more than once per process');
     }
     final handle = _environment;
     _environment = null;
@@ -38,8 +37,7 @@ class MxStartupInfo {
   // https://github.com/flutter/flutter/issues/49439
   static Handle takeOutgoingServices() {
     if (_outgoingServices == null && Platform.isFuchsia) {
-      throw Exception(
-          'Attempting to call takeOutgoingServices more than once per process');
+      throw Exception('Attempting to call takeOutgoingServices more than once per process');
     }
     final handle = _outgoingServices;
     _outgoingServices = null;
@@ -50,8 +48,7 @@ class MxStartupInfo {
   // https://github.com/flutter/flutter/issues/49439
   static Handle takeViewRef() {
     if (_viewRef == null && Platform.isFuchsia) {
-      throw Exception(
-          'Attempting to call takeViewRef more than once per process');
+      throw Exception('Attempting to call takeViewRef more than once per process');
     }
     final handle = _viewRef;
     _viewRef = null;
@@ -79,8 +76,7 @@ typedef _ListStringArgFunction(List<String> args);
 // The code does not catch any exceptions since this is handled in the dart
 // runner calling code.
 @pragma('vm:entry-point')
-void _runUserMainForDartRunner(Function userMainFunction,
-                   List<String> args) {
+void _runUserMainForDartRunner(Function userMainFunction, List<String> args) {
   if (userMainFunction is _ListStringArgFunction) {
     (userMainFunction as dynamic)(args);
   } else {

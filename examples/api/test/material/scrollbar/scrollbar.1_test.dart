@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('The scrollbar thumb should be visible at all time', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ScrollbarExampleApp(),
-    );
+    await tester.pumpWidget(const example.ScrollbarExampleApp());
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 10)); // Wait for the thumb to start appearing.
 

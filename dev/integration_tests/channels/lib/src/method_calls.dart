@@ -8,25 +8,21 @@ import 'basic_messaging.dart';
 import 'test_step.dart';
 
 Future<TestStepResult> methodCallJsonSuccessHandshake(dynamic payload) async {
-  const MethodChannel channel =
-      MethodChannel('json-method', JSONMethodCodec());
+  const MethodChannel channel = MethodChannel('json-method', JSONMethodCodec());
   return _methodCallSuccessHandshake('JSON success($payload)', channel, payload);
 }
 
 Future<TestStepResult> methodCallJsonErrorHandshake(dynamic payload) async {
-  const MethodChannel channel =
-      MethodChannel('json-method', JSONMethodCodec());
+  const MethodChannel channel = MethodChannel('json-method', JSONMethodCodec());
   return _methodCallErrorHandshake('JSON error($payload)', channel, payload);
 }
 
 Future<TestStepResult> methodCallJsonNotImplementedHandshake() async {
-  const MethodChannel channel =
-      MethodChannel('json-method', JSONMethodCodec());
+  const MethodChannel channel = MethodChannel('json-method', JSONMethodCodec());
   return _methodCallNotImplementedHandshake('JSON notImplemented()', channel);
 }
 
-Future<TestStepResult> methodCallStandardSuccessHandshake(
-    dynamic payload) async {
+Future<TestStepResult> methodCallStandardSuccessHandshake(dynamic payload) async {
   const MethodChannel channel = MethodChannel(
     'std-method',
     StandardMethodCodec(ExtendedStandardMessageCodec()),

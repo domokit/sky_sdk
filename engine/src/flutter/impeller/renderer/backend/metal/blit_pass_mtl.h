@@ -38,8 +38,7 @@ class BlitPassMTL final : public BlitPass {
   void OnSetLabel(std::string_view label) override;
 
   // |BlitPass|
-  bool EncodeCommands(
-      const std::shared_ptr<Allocator>& transients_allocator) const override;
+  bool EncodeCommands() const override;
 
   // |BlitPass|
   bool ResizeTexture(const std::shared_ptr<Texture>& source,

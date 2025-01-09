@@ -30,30 +30,34 @@ void main() {
     return Color(0xFF000003);
   }
 
-  final WidgetStateProperty<Color> backgroundColor = WidgetStateColor.resolveWith(getColor);
+  final WidgetStateProperty<Color> backgroundColor =
+      WidgetStateColor.resolveWith(getColor);
 
-  TextStyle floatingLabelStyle = WidgetStateTextStyle.resolveWith(
-    (Set<WidgetState> states) {
-      final Color color =
-          states.contains(WidgetState.error) ? Theme.of(context).colorScheme.error : Colors.orange;
-      return TextStyle(color: color, letterSpacing: 1.3);
-    },
-  );
+  TextStyle floatingLabelStyle = WidgetStateTextStyle.resolveWith((
+    Set<WidgetState> states,
+  ) {
+    final Color color =
+        states.contains(WidgetState.error)
+            ? Theme.of(context).colorScheme.error
+            : Colors.orange;
+    return TextStyle(color: color, letterSpacing: 1.3);
+  });
 
   final WidgetStateProperty<Icon?> thumbIcon =
       WidgetStateProperty.resolveWith<Icon?>((Set<WidgetState> states) {
-    if (states.contains(WidgetState.selected)) {
-      return const Icon(Icons.check);
-    }
-    return const Icon(Icons.close);
-  });
+        if (states.contains(WidgetState.selected)) {
+          return const Icon(Icons.check);
+        }
+        return const Icon(Icons.close);
+      });
 
   final Color backgroundColor = WidgetStatePropertyAll<Color>(
     Colors.blue.withOpacity(0.12),
   );
 
-  final WidgetStatesController statesController =
-    WidgetStatesController(<WidgetState>{if (widget.selected) WidgetState.selected});
+  final WidgetStatesController statesController = WidgetStatesController(
+    <WidgetState>{if (widget.selected) WidgetState.selected},
+  );
 }
 
 class _MouseCursor extends WidgetStateMouseCursor {
@@ -62,10 +66,12 @@ class _MouseCursor extends WidgetStateMouseCursor {
   final WidgetPropertyResolver<MouseCursor?> resolveCallback;
 
   @override
-  MouseCursor resolve(Set<WidgetState> states) => resolveCallback(states) ?? MouseCursor.uncontrolled;
+  MouseCursor resolve(Set<WidgetState> states) =>
+      resolveCallback(states) ?? MouseCursor.uncontrolled;
 }
 
-class SelectedBorder extends RoundedRectangleBorder implements WidgetStateOutlinedBorder {
+class SelectedBorder extends RoundedRectangleBorder
+    implements WidgetStateOutlinedBorder {
   const SelectedBorder();
 
   @override

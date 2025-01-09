@@ -11,11 +11,8 @@ import 'framework.dart';
 /// `animation` and wrapping the provided `child`.
 ///
 /// The `animation` provided to the builder always runs forward from 0.0 to 1.0.
-typedef AnimatedTransitionBuilder = Widget Function(
-  BuildContext context,
-  Animation<double> animation,
-  Widget? child,
-);
+typedef AnimatedTransitionBuilder =
+    Widget Function(BuildContext context, Animation<double> animation, Widget? child);
 
 /// A transition builder that animates its [child] based on the
 /// [AnimationStatus] of the provided [animation].
@@ -178,11 +175,7 @@ class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
     return widget.forwardBuilder(
       context,
       _forwardAnimation,
-      widget.reverseBuilder(
-        context,
-        _reverseAnimation,
-        widget.child,
-      ),
+      widget.reverseBuilder(context, _reverseAnimation, widget.child),
     );
   }
 }

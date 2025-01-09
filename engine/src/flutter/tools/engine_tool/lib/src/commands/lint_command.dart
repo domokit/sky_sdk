@@ -25,7 +25,7 @@ enum Linter {
   c,
 
   /// Python linter
-  python
+  python,
 }
 
 class _LinterDescription {
@@ -39,38 +39,28 @@ class _LinterDescription {
 /// The root 'lint' command.
 final class LintCommand extends CommandBase {
   /// Constructs the 'lint' command.
-  LintCommand({
-    required super.environment,
-    super.usageLineLength,
-  }) {
+  LintCommand({required super.environment, super.usageLineLength}) {
     final String engineFlutterPath = environment.engine.flutterDir.path;
-    _linters[Linter.dart] = _LinterDescription(
-        Linter.dart, environment.engine.flutterDir, <String>[
+    _linters[Linter.dart] = _LinterDescription(Linter.dart, environment.engine.flutterDir, <String>[
       p.join(engineFlutterPath, 'ci', 'analyze.sh'),
-      findDartBinDirectory(environment)
+      findDartBinDirectory(environment),
     ]);
-    _linters[Linter.java] =
-        _LinterDescription(Linter.java, environment.engine.flutterDir, <String>[
+    _linters[Linter.java] = _LinterDescription(Linter.java, environment.engine.flutterDir, <String>[
       findDartBinary(environment),
       p.join(engineFlutterPath, 'tools', 'android_lint', 'bin', 'main.dart'),
     ]);
-    _linters[Linter.c] = _LinterDescription(
-        Linter.c,
-        environment.engine.flutterDir,
-        <String>[p.join(engineFlutterPath, 'ci', 'clang_tidy.sh')]);
+    _linters[Linter.c] = _LinterDescription(Linter.c, environment.engine.flutterDir, <String>[
+      p.join(engineFlutterPath, 'ci', 'clang_tidy.sh'),
+    ]);
     _linters[Linter.python] = _LinterDescription(
-        Linter.python,
-        environment.engine.flutterDir,
-        <String>[p.join(engineFlutterPath, 'ci', 'pylint.sh')]);
-    argParser.addFlag(
-      quietFlag,
-      abbr: 'q',
-      help: 'Prints minimal output',
+      Linter.python,
+      environment.engine.flutterDir,
+      <String>[p.join(engineFlutterPath, 'ci', 'pylint.sh')],
     );
+    argParser.addFlag(quietFlag, abbr: 'q', help: 'Prints minimal output');
   }
 
-  final Map<Linter, _LinterDescription> _linters =
-      <Linter, _LinterDescription>{};
+  final Map<Linter, _LinterDescription> _linters = <Linter, _LinterDescription>{};
 
   @override
   String get name => 'lint';
@@ -82,16 +72,13 @@ final class LintCommand extends CommandBase {
   Future<int> run() async {
     // TODO(loic-sharma): Relax this restriction.
     if (environment.platform.isWindows) {
-      environment.logger
-          .fatal('lint command is not supported on Windows (for now).');
+      environment.logger.fatal('lint command is not supported on Windows (for now).');
     }
-    final WorkerPool wp =
-        WorkerPool(environment, ProcessTaskProgressReporter(environment));
+    final WorkerPool wp = WorkerPool(environment, ProcessTaskProgressReporter(environment));
 
     final Set<ProcessTask> tasks = <ProcessTask>{};
     for (final MapEntry<Linter, _LinterDescription> entry in _linters.entries) {
-      tasks.add(ProcessTask(
-          entry.key.name, environment, entry.value.cwd, entry.value.command));
+      tasks.add(ProcessTask(entry.key.name, environment, entry.value.cwd, entry.value.command));
     }
     final bool r = await wp.run(tasks);
 

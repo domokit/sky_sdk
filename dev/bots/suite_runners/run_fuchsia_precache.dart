@@ -8,24 +8,16 @@ import '../utils.dart';
 // Runs flutter_precache.
 Future<void> fuchsiaPrecacheRunner() async {
   printProgress('${green}Running flutter precache tests$reset');
-  await runCommand(
-    'flutter',
-    const <String>[
-      'config',
-      '--enable-fuchsia',
-    ],
-    workingDirectory: flutterRoot,
-  );
-  await runCommand(
-    'flutter',
-    const <String>[
-      'precache',
-      '--flutter_runner',
-      '--fuchsia',
-      '--no-android',
-      '--no-ios',
-      '--force',
-    ],
-    workingDirectory: flutterRoot,
-  );
+  await runCommand('flutter', const <String>[
+    'config',
+    '--enable-fuchsia',
+  ], workingDirectory: flutterRoot);
+  await runCommand('flutter', const <String>[
+    'precache',
+    '--flutter_runner',
+    '--fuchsia',
+    '--no-android',
+    '--no-ios',
+    '--force',
+  ], workingDirectory: flutterRoot);
 }

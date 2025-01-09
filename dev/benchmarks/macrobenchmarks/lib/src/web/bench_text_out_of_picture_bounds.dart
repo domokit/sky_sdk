@@ -69,8 +69,7 @@ class BenchTextOutOfPictureBounds extends SceneBuilderRecorder {
       canvas.save();
       double topOffset = 0;
       while (topOffset < viewSize.height) {
-        final Paragraph paragraph =
-            textSource[_random.nextInt(textSource.length)];
+        final Paragraph paragraph = textSource[_random.nextInt(textSource.length)];
 
         // Give it enough space to make sure it ends up being a single-line paragraph.
         paragraph.layout(ParagraphConstraints(width: viewSize.width / 2));

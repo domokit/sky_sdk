@@ -6,17 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 void main() {
-  runApp(MaterialApp(
-    title: 'Hardware Key Demo',
-    home: Scaffold(
-      appBar: AppBar(
-        title: const Text('Hardware Key Demo'),
-      ),
-      body: const Center(
-        child: HardwareKeyboardDemo(),
+  runApp(
+    MaterialApp(
+      title: 'Hardware Key Demo',
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Hardware Key Demo')),
+        body: const Center(child: HardwareKeyboardDemo()),
       ),
     ),
-  ));
+  );
 }
 
 class HardwareKeyboardDemo extends StatefulWidget {
@@ -68,7 +66,8 @@ class _HardwareKeyboardDemoState extends State<HardwareKeyboardDemo> {
 
           final List<Widget> dataText = <Widget>[
             Text('${_event.runtimeType}'),
-            if (_event?.character?.isNotEmpty ?? false) Text('character produced: "${_event?.character}"'),
+            if (_event?.character?.isNotEmpty ?? false)
+              Text('character produced: "${_event?.character}"'),
           ];
           dataText.add(Text('logical: ${_event?.logicalKey}'));
           dataText.add(Text('physical: ${_event?.physicalKey}'));
@@ -82,10 +81,7 @@ class _HardwareKeyboardDemoState extends State<HardwareKeyboardDemo> {
           dataText.add(Text(pressed.join(' ')));
           return DefaultTextStyle(
             style: textTheme.titleMedium!,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: dataText,
-            ),
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: dataText),
           );
         },
       ),

@@ -13,9 +13,7 @@ void main() {
   );
 
   testWidgets('Taps on the "And me" button toggle the red box', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.FocusableActionDetectorExampleApp(),
-    );
+    await tester.pumpWidget(const example.FocusableActionDetectorExampleApp());
 
     expect(find.widgetWithText(AppBar, 'FocusableActionDetector Example'), findsOne);
 
@@ -32,10 +30,10 @@ void main() {
     expect(redContainerFinder, findsNothing);
   });
 
-  testWidgets('Hits on the X key when "And me" is focused toggle the red box', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.FocusableActionDetectorExampleApp(),
-    );
+  testWidgets('Hits on the X key when "And me" is focused toggle the red box', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.FocusableActionDetectorExampleApp());
 
     expect(find.widgetWithText(AppBar, 'FocusableActionDetector Example'), findsOne);
 

@@ -7,8 +7,7 @@ import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 
-import '_timeline_io.dart'
-  if (dart.library.js_interop) '_timeline_web.dart' as impl;
+import '_timeline_io.dart' if (dart.library.js_interop) '_timeline_web.dart' as impl;
 import 'constants.dart';
 
 /// Measures how long blocks of code take to run.
@@ -64,7 +63,7 @@ abstract final class FlutterTimeline {
   /// [finishSync] before returning to the event queue.
   ///
   /// This is a drop-in replacement for [Timeline.startSync].
-  static void startSync(String name, { Map<String, Object?>? arguments, Flow? flow }) {
+  static void startSync(String name, {Map<String, Object?>? arguments, Flow? flow}) {
     Timeline.startSync(name, arguments: arguments, flow: flow);
     if (!kReleaseMode && _collectionEnabled) {
       _buffer.startSync(name, arguments: arguments, flow: flow);
@@ -84,7 +83,7 @@ abstract final class FlutterTimeline {
   /// Emit an instant event.
   ///
   /// This is a drop-in replacement for [Timeline.instantSync].
-  static void instantSync(String name, { Map<String, Object?>? arguments }) {
+  static void instantSync(String name, {Map<String, Object?>? arguments}) {
     Timeline.instantSync(name, arguments: arguments);
   }
 
@@ -92,8 +91,12 @@ abstract final class FlutterTimeline {
   /// `function` bracketed by calls to [startSync] and [finishSync].
   ///
   /// This is a drop-in replacement for [Timeline.timeSync].
-  static T timeSync<T>(String name, TimelineSyncFunction<T> function,
-      { Map<String, Object?>? arguments, Flow? flow }) {
+  static T timeSync<T>(
+    String name,
+    TimelineSyncFunction<T> function, {
+    Map<String, Object?>? arguments,
+    Flow? flow,
+  }) {
     startSync(name, arguments: arguments, flow: flow);
     try {
       return function();
@@ -156,11 +159,8 @@ final class TimedBlock {
   ///
   /// The [name] should be sufficiently unique and descriptive for someone to
   /// easily tell which part of code was measured.
-  const TimedBlock({
-    required this.name,
-    required this.start,
-    required this.end,
-  }) : assert(end >= start, 'The start timestamp must not be greater than the end timestamp.');
+  const TimedBlock({required this.name, required this.start, required this.end})
+    : assert(end >= start, 'The start timestamp must not be greater than the end timestamp.');
 
   /// A readable label for a block of code that was measured.
   ///
@@ -207,11 +207,9 @@ final class AggregatedTimings {
       final (double, int) previousValue = aggregate.putIfAbsent(block.name, () => (0, 0));
       aggregate[block.name] = (previousValue.$1 + block.duration, previousValue.$2 + 1);
     }
-    return aggregate.entries.map<AggregatedTimedBlock>(
-      (MapEntry<String, (double, int)> entry) {
-        return AggregatedTimedBlock(name: entry.key, duration: entry.value.$1, count: entry.value.$2);
-      }
-    ).toList();
+    return aggregate.entries.map<AggregatedTimedBlock>((MapEntry<String, (double, int)> entry) {
+      return AggregatedTimedBlock(name: entry.key, duration: entry.value.$1, count: entry.value.$2);
+    }).toList();
   }
 
   /// Returns aggregated numbers for a named block of code.
@@ -240,11 +238,8 @@ final class AggregatedTimedBlock {
   ///
   /// The [name] should be sufficiently unique and descriptive for someone to
   /// easily tell which part of code was measured.
-  const AggregatedTimedBlock({
-    required this.name,
-    required this.duration,
-    required this.count,
-  }) : assert(duration >= 0);
+  const AggregatedTimedBlock({required this.name, required this.duration, required this.count})
+    : assert(duration >= 0);
 
   /// A readable label for a block of code that was measured.
   ///
@@ -375,7 +370,7 @@ final class _BlockBuffer {
       'Invalid sequence of `startSync` and `finishSync`.\n'
       'The operation stack was not empty. The following operations are still '
       'waiting to be finished via the `finishSync` method:\n'
-      '${List<String>.generate(_stackPointer, (int i) => _nameStack[i]!).join(', ')}'
+      '${List<String>.generate(_stackPointer, (int i) => _nameStack[i]!).join(', ')}',
     );
 
     final List<TimedBlock> result = <TimedBlock>[];
@@ -389,17 +384,13 @@ final class _BlockBuffer {
     assert(names.length == length);
 
     for (int i = 0; i < length; i++) {
-      result.add(TimedBlock(
-        start: starts[i],
-        end: finishes[i],
-        name: names[i],
-      ));
+      result.add(TimedBlock(start: starts[i], end: finishes[i], name: names[i]));
     }
 
     return result;
   }
 
-  void startSync(String name, { Map<String, Object?>? arguments, Flow? flow }) {
+  void startSync(String name, {Map<String, Object?>? arguments, Flow? flow}) {
     _startStack[_stackPointer] = impl.performanceTimestamp;
     _nameStack[_stackPointer] = name;
     _stackPointer += 1;
@@ -410,7 +401,7 @@ final class _BlockBuffer {
       _stackPointer > 0,
       'Invalid sequence of `startSync` and `finishSync`.\n'
       'Attempted to finish timing a block of code, but there are no pending '
-      '`startSync` calls.'
+      '`startSync` calls.',
     );
 
     final double finishTime = impl.performanceTimestamp;

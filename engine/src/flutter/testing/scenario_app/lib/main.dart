@@ -25,10 +25,7 @@ void main() {
   // Asserting that this is greater than zero since this app runs on different
   // platforms with different sizes. If it is greater than zero, it has been
   // initialized to some meaningful value at least.
-  assert(
-    view.display.size > Offset.zero,
-    'Expected ${view.display} to be initialized.',
-  );
+  assert(view.display.size > Offset.zero, 'Expected ${view.display} to be initialized.');
 
   final ByteData data = ByteData(1);
   data.setUint8(0, 1);
@@ -39,7 +36,8 @@ void main() {
 FlutterView get _view => PlatformDispatcher.instance.implicitView!;
 
 void _handleDriverMessage(ByteData? data, PlatformMessageResponseCallback? callback) {
-  final Map<String, dynamic> call = json.decode(utf8.decode(data!.buffer.asUint8List())) as Map<String, dynamic>;
+  final Map<String, dynamic> call =
+      json.decode(utf8.decode(data!.buffer.asUint8List())) as Map<String, dynamic>;
   final String? methodName = call['method'] as String?;
   switch (methodName) {
     case 'set_scenario':

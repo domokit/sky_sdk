@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Tap on button displays cupertino dialog', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.CupertinoDialogApp(),
-    );
+    await tester.pumpWidget(const example.CupertinoDialogApp());
 
     final Finder dialogTitle = find.text('Title');
     expect(dialogTitle, findsNothing);

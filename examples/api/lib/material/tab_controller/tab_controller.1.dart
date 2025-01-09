@@ -11,25 +11,16 @@ void main() => runApp(const TabControllerExampleApp());
 class TabControllerExampleApp extends StatelessWidget {
   const TabControllerExampleApp({super.key});
 
-  static const List<Tab> tabs = <Tab>[
-    Tab(text: 'Zeroth'),
-    Tab(text: 'First'),
-    Tab(text: 'Second'),
-  ];
+  static const List<Tab> tabs = <Tab>[Tab(text: 'Zeroth'), Tab(text: 'First'), Tab(text: 'Second')];
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: TabControllerExample(tabs: tabs),
-    );
+    return const MaterialApp(home: TabControllerExample(tabs: tabs));
   }
 }
 
 class TabControllerExample extends StatelessWidget {
-  const TabControllerExample({
-    required this.tabs,
-    super.key,
-  });
+  const TabControllerExample({required this.tabs, super.key});
 
   final List<Tab> tabs;
 
@@ -42,18 +33,17 @@ class TabControllerExample extends StatelessWidget {
           debugPrint('tab changed: $index');
         },
         child: Scaffold(
-          appBar: AppBar(
-            bottom: TabBar(tabs: tabs),
-          ),
+          appBar: AppBar(bottom: TabBar(tabs: tabs)),
           body: TabBarView(
-            children: tabs.map((Tab tab) {
-              return Center(
-                child: Text(
-                  '${tab.text!} Tab',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              );
-            }).toList(),
+            children:
+                tabs.map((Tab tab) {
+                  return Center(
+                    child: Text(
+                      '${tab.text!} Tab',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                  );
+                }).toList(),
           ),
         ),
       ),
@@ -62,31 +52,24 @@ class TabControllerExample extends StatelessWidget {
 }
 
 class DefaultTabControllerListener extends StatefulWidget {
-  const DefaultTabControllerListener({
-    required this.onTabChanged,
-    required this.child,
-    super.key,
-  });
+  const DefaultTabControllerListener({required this.onTabChanged, required this.child, super.key});
 
   final ValueChanged<int> onTabChanged;
 
   final Widget child;
 
   @override
-  State<DefaultTabControllerListener> createState() =>
-      _DefaultTabControllerListenerState();
+  State<DefaultTabControllerListener> createState() => _DefaultTabControllerListenerState();
 }
 
-class _DefaultTabControllerListenerState
-    extends State<DefaultTabControllerListener> {
+class _DefaultTabControllerListenerState extends State<DefaultTabControllerListener> {
   TabController? _controller;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final TabController? defaultTabController =
-        DefaultTabController.maybeOf(context);
+    final TabController? defaultTabController = DefaultTabController.maybeOf(context);
 
     assert(() {
       if (defaultTabController == null) {

@@ -51,17 +51,20 @@ class FakeHttpClientResponse extends Fake implements HttpClientResponse {
   final FakeHttpHeaders headers = FakeHttpHeaders();
 
   @override
-  HttpClientResponseCompressionState get compressionState => HttpClientResponseCompressionState.notCompressed;
+  HttpClientResponseCompressionState get compressionState =>
+      HttpClientResponseCompressionState.notCompressed;
 
   @override
-  StreamSubscription<List<int>> listen(void Function(List<int>)? onData, {
+  StreamSubscription<List<int>> listen(
+    void Function(List<int>)? onData, {
     void Function()? onDone,
     Function? onError,
     bool? cancelOnError,
   }) {
-    return Stream<List<int>>.fromIterable(<List<int>>[kTransparentImage])
-      .listen(onData, onDone: onDone, onError: onError, cancelOnError: cancelOnError);
+    return Stream<List<int>>.fromIterable(<List<int>>[
+      kTransparentImage,
+    ]).listen(onData, onDone: onDone, onError: onError, cancelOnError: cancelOnError);
   }
 }
 
-class FakeHttpHeaders extends Fake implements HttpHeaders { }
+class FakeHttpHeaders extends Fake implements HttpHeaders {}

@@ -23,7 +23,7 @@ void main() {
 
     test('linearly interpolates between positive and negative Durations', () {
       expect(
-        lerpDuration(const Duration(seconds: -1), const Duration(seconds:2), 0.5),
+        lerpDuration(const Duration(seconds: -1), const Duration(seconds: 2), 0.5),
         const Duration(milliseconds: 500),
       );
     });

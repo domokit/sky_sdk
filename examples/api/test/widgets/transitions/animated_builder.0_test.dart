@@ -13,18 +13,28 @@ void main() {
     await tester.pumpWidget(const example.AnimatedBuilderExampleApp());
     expect(find.text('Whee!'), findsOneWidget);
     expect(find.byType(Container), findsOneWidget);
-    expect(tester.widget(find.byType(Container)), isA<Container>()
-      .having((Container container) => container.color, 'color', Colors.green));
+    expect(
+      tester.widget(find.byType(Container)),
+      isA<Container>().having((Container container) => container.color, 'color', Colors.green),
+    );
 
-    expect(find.byWidgetPredicate((Widget widget) => widget is Transform
-        && widget.transform == Transform.rotate(angle: 0.0).transform),
-      findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (Widget widget) =>
+            widget is Transform && widget.transform == Transform.rotate(angle: 0.0).transform,
+      ),
+      findsOneWidget,
+    );
 
     await tester.pump(const Duration(seconds: 5));
     await tester.pump();
 
-    expect(find.byWidgetPredicate((Widget widget) => widget is Transform
-        && widget.transform == Transform.rotate(angle: math.pi).transform),
-      findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (Widget widget) =>
+            widget is Transform && widget.transform == Transform.rotate(angle: math.pi).transform,
+      ),
+      findsOneWidget,
+    );
   });
 }

@@ -573,21 +573,41 @@ const Map<String, List<int?>> kWebLogicalLocationMap = <String, List<int?>>{
   '7': <int?>[0x00000000037, null, null, 0x00200000237], // digit7, null, null, numpad7
   '8': <int?>[0x00000000038, null, null, 0x00200000238], // digit8, null, null, numpad8
   '9': <int?>[0x00000000039, null, null, 0x00200000239], // digit9, null, null, numpad9
-  'Alt': <int?>[0x00200000104, 0x00200000104, 0x00200000105, null], // altLeft, altLeft, altRight, null
+  'Alt': <int?>[
+    0x00200000104,
+    0x00200000104,
+    0x00200000105,
+    null,
+  ], // altLeft, altLeft, altRight, null
   'AltGraph': <int?>[0x00100000103, null, 0x00100000103, null], // altGraph, null, altGraph, null
   'ArrowDown': <int?>[0x00100000301, null, null, 0x00200000232], // arrowDown, null, null, numpad2
   'ArrowLeft': <int?>[0x00100000302, null, null, 0x00200000234], // arrowLeft, null, null, numpad4
   'ArrowRight': <int?>[0x00100000303, null, null, 0x00200000236], // arrowRight, null, null, numpad6
   'ArrowUp': <int?>[0x00100000304, null, null, 0x00200000238], // arrowUp, null, null, numpad8
   'Clear': <int?>[0x00100000401, null, null, 0x00200000235], // clear, null, null, numpad5
-  'Control': <int?>[0x00200000100, 0x00200000100, 0x00200000101, null], // controlLeft, controlLeft, controlRight, null
+  'Control': <int?>[
+    0x00200000100,
+    0x00200000100,
+    0x00200000101,
+    null,
+  ], // controlLeft, controlLeft, controlRight, null
   'Delete': <int?>[0x0010000007f, null, null, 0x0020000022e], // delete, null, null, numpadDecimal
   'End': <int?>[0x00100000305, null, null, 0x00200000231], // end, null, null, numpad1
   'Enter': <int?>[0x0010000000d, null, null, 0x0020000020d], // enter, null, null, numpadEnter
   'Home': <int?>[0x00100000306, null, null, 0x00200000237], // home, null, null, numpad7
   'Insert': <int?>[0x00100000407, null, null, 0x00200000230], // insert, null, null, numpad0
-  'Meta': <int?>[0x00200000106, 0x00200000106, 0x00200000107, null], // metaLeft, metaLeft, metaRight, null
+  'Meta': <int?>[
+    0x00200000106,
+    0x00200000106,
+    0x00200000107,
+    null,
+  ], // metaLeft, metaLeft, metaRight, null
   'PageDown': <int?>[0x00100000307, null, null, 0x00200000233], // pageDown, null, null, numpad3
   'PageUp': <int?>[0x00100000308, null, null, 0x00200000239], // pageUp, null, null, numpad9
-  'Shift': <int?>[0x00200000102, 0x00200000102, 0x00200000103, null], // shiftLeft, shiftLeft, shiftRight, null
+  'Shift': <int?>[
+    0x00200000102,
+    0x00200000102,
+    0x00200000103,
+    null,
+  ], // shiftLeft, shiftLeft, shiftRight, null
 };

@@ -10,9 +10,5 @@ import 'canvaskit_api.dart';
 ///
 /// It is the responsibility of the caller to delete the returned Skia object.
 SkMaskFilter createBlurSkMaskFilter(ui.BlurStyle blurStyle, double sigma) {
-  return canvasKit.MaskFilter.MakeBlur(
-    toSkBlurStyle(blurStyle),
-    sigma,
-    true,
-  )!;
+  return canvasKit.MaskFilter.MakeBlur(toSkBlurStyle(blurStyle), sigma, true)!;
 }

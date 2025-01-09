@@ -56,4 +56,4 @@ void main() {
   });
 }
 
-class FakeDevice extends Fake implements TestDevice { }
+class FakeDevice extends Fake implements TestDevice {}

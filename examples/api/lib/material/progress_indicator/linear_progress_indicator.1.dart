@@ -13,9 +13,7 @@ class ProgressIndicatorExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: ProgressIndicatorExample(),
-    );
+    return const MaterialApp(home: ProgressIndicatorExample());
   }
 }
 
@@ -23,8 +21,7 @@ class ProgressIndicatorExample extends StatefulWidget {
   const ProgressIndicatorExample({super.key});
 
   @override
-  State<ProgressIndicatorExample> createState() =>
-      _ProgressIndicatorExampleState();
+  State<ProgressIndicatorExample> createState() => _ProgressIndicatorExampleState();
 }
 
 class _ProgressIndicatorExampleState extends State<ProgressIndicatorExample>
@@ -35,15 +32,17 @@ class _ProgressIndicatorExampleState extends State<ProgressIndicatorExample>
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-      /// [AnimationController]s can be created with `vsync: this` because of
-      /// [TickerProviderStateMixin].
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..addListener(() {
-      setState(() {});
-    })
-    ..repeat(reverse: true);
+    controller =
+        AnimationController(
+            /// [AnimationController]s can be created with `vsync: this` because of
+            /// [TickerProviderStateMixin].
+            vsync: this,
+            duration: const Duration(seconds: 2),
+          )
+          ..addListener(() {
+            setState(() {});
+          })
+          ..repeat(reverse: true);
   }
 
   @override
@@ -61,10 +60,7 @@ class _ProgressIndicatorExampleState extends State<ProgressIndicatorExample>
           spacing: 16.0,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'Linear progress indicator',
-              style: TextStyle(fontSize: 20),
-            ),
+            const Text('Linear progress indicator', style: TextStyle(fontSize: 20)),
             LinearProgressIndicator(
               value: determinate ? controller.value : null,
               semanticsLabel: 'Linear progress indicator',

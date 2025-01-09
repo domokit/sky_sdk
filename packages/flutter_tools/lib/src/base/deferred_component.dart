@@ -83,12 +83,8 @@ class DeferredComponent {
   Map<String, Object?> get descriptor {
     return <String, Object?>{
       'name': name,
-      if (libraries.isNotEmpty)
-        'libraries': libraries.toList(),
-      if (assets.isNotEmpty)
-        'assets': assets.map(
-          (AssetsEntry e) => e.descriptor,
-        ).toList(),
+      if (libraries.isNotEmpty) 'libraries': libraries.toList(),
+      if (assets.isNotEmpty) 'assets': assets.map((AssetsEntry e) => e.descriptor).toList(),
     };
   }
 
@@ -124,11 +120,7 @@ class LoadingUnit {
   ///
   /// Loading units must include an [id] and [libraries]. The [path] is only present when
   /// parsing the loading unit from a loading unit manifest produced by gen_snapshot.
-  LoadingUnit({
-    required this.id,
-    required this.libraries,
-    this.path,
-  });
+  LoadingUnit({required this.id, required this.libraries, this.path});
 
   /// The unique loading unit id that is used to identify the loading unit within dart.
   final int id;
@@ -164,7 +156,11 @@ class LoadingUnit {
   ///
   /// This will read all existing loading units for every provided abi. If no abis are
   /// provided, loading units for all abis will be parsed.
-  static List<LoadingUnit> parseGeneratedLoadingUnits(Directory outputDir, Logger logger, {List<String>? abis}) {
+  static List<LoadingUnit> parseGeneratedLoadingUnits(
+    Directory outputDir,
+    Logger logger, {
+    List<String>? abis,
+  }) {
     final List<LoadingUnit> loadingUnits = <LoadingUnit>[];
     final List<FileSystemEntity> files = outputDir.listSync(recursive: true);
     for (final FileSystemEntity fileEntity in files) {

@@ -6,8 +6,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 
-const MethodChannel _kMethodChannel =
-  MethodChannel('tests.flutter.dev/windows_startup_test');
+const MethodChannel _kMethodChannel = MethodChannel('tests.flutter.dev/windows_startup_test');
 
 /// Returns true if the application's window is visible.
 Future<bool> isWindowVisible() async {
@@ -41,7 +40,10 @@ Future<bool> isSystemDarkModeEnabled() async {
 
 /// Test conversion of a UTF16 string to UTF8 using the app template utils.
 Future<String> testStringConversion(Int32List twoByteCodes) async {
-  final String? converted = await _kMethodChannel.invokeMethod<String?>('convertString', twoByteCodes);
+  final String? converted = await _kMethodChannel.invokeMethod<String?>(
+    'convertString',
+    twoByteCodes,
+  );
   if (converted == null) {
     throw 'Method channel unavailable.';
   }

@@ -13,12 +13,7 @@ void main() {
 
     await tester.pumpWidget(
       const CupertinoApp(
-        home: Center(
-          child: CupertinoFormRow(
-            prefix: prefix,
-            child: CupertinoTextField(),
-          ),
-        ),
+        home: Center(child: CupertinoFormRow(prefix: prefix, child: CupertinoTextField())),
       ),
     );
 
@@ -29,13 +24,7 @@ void main() {
     const Widget child = CupertinoTextField();
 
     await tester.pumpWidget(
-      const CupertinoApp(
-        home: Center(
-          child: CupertinoFormRow(
-            child: child,
-          ),
-        ),
-      ),
+      const CupertinoApp(home: Center(child: CupertinoFormRow(child: child))),
     );
 
     expect(child, tester.widget(find.byType(CupertinoTextField)));
@@ -50,16 +39,17 @@ void main() {
         home: Center(
           child: Directionality(
             textDirection: TextDirection.rtl,
-            child: CupertinoFormRow(
-              prefix: prefix,
-              child: child,
-            ),
+            child: CupertinoFormRow(prefix: prefix, child: child),
           ),
         ),
       ),
     );
 
-    expect(tester.getTopLeft(find.byType(Text)).dx > tester.getTopLeft(find.byType(CupertinoTextField)).dx, true);
+    expect(
+      tester.getTopLeft(find.byType(Text)).dx >
+          tester.getTopLeft(find.byType(CupertinoTextField)).dx,
+      true,
+    );
   });
 
   testWidgets('LTR puts child after prefix', (WidgetTester tester) async {
@@ -71,16 +61,17 @@ void main() {
         home: Center(
           child: Directionality(
             textDirection: TextDirection.ltr,
-            child: CupertinoFormRow(
-              prefix: prefix,
-              child: child,
-            ),
+            child: CupertinoFormRow(prefix: prefix, child: child),
           ),
         ),
       ),
     );
 
-    expect(tester.getTopLeft(find.byType(Text)).dx > tester.getTopLeft(find.byType(CupertinoTextField)).dx, false);
+    expect(
+      tester.getTopLeft(find.byType(Text)).dx >
+          tester.getTopLeft(find.byType(CupertinoTextField)).dx,
+      false,
+    );
   });
 
   testWidgets('Shows error widget', (WidgetTester tester) async {
@@ -88,12 +79,7 @@ void main() {
 
     await tester.pumpWidget(
       const CupertinoApp(
-        home: Center(
-          child: CupertinoFormRow(
-            error: error,
-            child: CupertinoTextField(),
-          ),
-        ),
+        home: Center(child: CupertinoFormRow(error: error, child: CupertinoTextField())),
       ),
     );
 
@@ -105,12 +91,7 @@ void main() {
 
     await tester.pumpWidget(
       const CupertinoApp(
-        home: Center(
-          child: CupertinoFormRow(
-            helper: helper,
-            child: CupertinoTextField(),
-          ),
-        ),
+        home: Center(child: CupertinoFormRow(helper: helper, child: CupertinoTextField())),
       ),
     );
 
@@ -124,44 +105,37 @@ void main() {
     await tester.pumpWidget(
       const CupertinoApp(
         home: Center(
-          child: CupertinoFormRow(
-            helper: helper,
-            error: error,
-            child: CupertinoTextField(),
-          ),
+          child: CupertinoFormRow(helper: helper, error: error, child: CupertinoTextField()),
         ),
       ),
     );
 
     expect(
-      tester.getTopLeft(find.byType(CupertinoActivityIndicator)).dy > tester.getTopLeft(find.byType(Text)).dy,
+      tester.getTopLeft(find.byType(CupertinoActivityIndicator)).dy >
+          tester.getTopLeft(find.byType(Text)).dy,
       true,
     );
   });
 
-  testWidgets('Shows helper in label color and error text in red color', (WidgetTester tester) async {
+  testWidgets('Shows helper in label color and error text in red color', (
+    WidgetTester tester,
+  ) async {
     const Widget helper = Text('Helper');
     const Widget error = Text('Error');
 
     await tester.pumpWidget(
       const CupertinoApp(
         home: Center(
-          child: CupertinoFormRow(
-            helper: helper,
-            error: error,
-            child: CupertinoTextField(),
-          ),
+          child: CupertinoFormRow(helper: helper, error: error, child: CupertinoTextField()),
         ),
       ),
     );
 
-    final DefaultTextStyle helperTextStyle =
-        tester.widget(find.byType(DefaultTextStyle).first);
+    final DefaultTextStyle helperTextStyle = tester.widget(find.byType(DefaultTextStyle).first);
 
     expect(helperTextStyle.style.color, CupertinoColors.label);
 
-    final DefaultTextStyle errorTextStyle =
-        tester.widget(find.byType(DefaultTextStyle).last);
+    final DefaultTextStyle errorTextStyle = tester.widget(find.byType(DefaultTextStyle).last);
 
     expect(errorTextStyle.style.color, CupertinoColors.destructiveRed);
   });
@@ -174,11 +148,7 @@ void main() {
       return MaterialApp(
         theme: ThemeData(brightness: brightness),
         home: const Center(
-          child: CupertinoFormRow(
-            prefix: prefix,
-            helper: helper,
-            child: CupertinoTextField(),
-          ),
+          child: CupertinoFormRow(prefix: prefix, helper: helper, child: CupertinoTextField()),
         ),
       );
     }

@@ -20,68 +20,70 @@ class BrowserProcess {
     // Don't return a Future here because there's no need for the caller to wait
     // for the process to actually start. They should just wait for the HTTP
     // request instead.
-    runZonedGuarded(() async {
-      final Process process = await startBrowser();
-      _processCompleter.complete(process);
+    runZonedGuarded(
+      () async {
+        final Process process = await startBrowser();
+        _processCompleter.complete(process);
 
-      final Uint8Buffer output = Uint8Buffer();
-      void drainOutput(Stream<List<int>> stream) {
-        try {
-          _ioSubscriptions
-              .add(stream.listen(output.addAll, cancelOnError: true));
-        } on StateError catch (_) {}
-      }
-
-      // If we don't drain the stdout and stderr the process can hang.
-      drainOutput(process.stdout);
-      drainOutput(process.stderr);
-
-      final int exitCode = await process.exitCode;
-
-      // This hack dodges an otherwise intractable race condition. When the user
-      // presses Control-C, the signal is sent to the browser and the test
-      // runner at the same time. It's possible for the browser to exit before
-      // the [Browser.close] is called, which would trigger the error below.
-      //
-      // A negative exit code signals that the process exited due to a signal.
-      // However, it's possible that this signal didn't come from the user's
-      // Control-C, in which case we do want to throw the error. The only way to
-      // resolve the ambiguity is to wait a brief amount of time and see if this
-      // browser is actually closed.
-      if (!_closed && exitCode < 0) {
-        await Future<void>.delayed(const Duration(milliseconds: 200));
-      }
-
-      if (!_closed && exitCode != 0) {
-        final String outputString = utf8.decode(output);
-        String message = 'Browser process failed with exit code $exitCode.';
-        if (outputString.isNotEmpty) {
-          message += '\nStandard output:\n$outputString';
+        final Uint8Buffer output = Uint8Buffer();
+        void drainOutput(Stream<List<int>> stream) {
+          try {
+            _ioSubscriptions.add(stream.listen(output.addAll, cancelOnError: true));
+          } on StateError catch (_) {}
         }
 
-        throw Exception(message);
-      }
+        // If we don't drain the stdout and stderr the process can hang.
+        drainOutput(process.stdout);
+        drainOutput(process.stderr);
 
-      _onExitCompleter.complete();
-    }, (dynamic error, StackTrace? stackTrace) {
-      // Ignore any errors after the browser has been closed.
-      if (_closed) {
-        return;
-      }
+        final int exitCode = await process.exitCode;
 
-      // Make sure the process dies even if the error wasn't fatal.
-      _process.then((Process process) => process.kill());
+        // This hack dodges an otherwise intractable race condition. When the user
+        // presses Control-C, the signal is sent to the browser and the test
+        // runner at the same time. It's possible for the browser to exit before
+        // the [Browser.close] is called, which would trigger the error below.
+        //
+        // A negative exit code signals that the process exited due to a signal.
+        // However, it's possible that this signal didn't come from the user's
+        // Control-C, in which case we do want to throw the error. The only way to
+        // resolve the ambiguity is to wait a brief amount of time and see if this
+        // browser is actually closed.
+        if (!_closed && exitCode < 0) {
+          await Future<void>.delayed(const Duration(milliseconds: 200));
+        }
 
-      stackTrace ??= Trace.current();
+        if (!_closed && exitCode != 0) {
+          final String outputString = utf8.decode(output);
+          String message = 'Browser process failed with exit code $exitCode.';
+          if (outputString.isNotEmpty) {
+            message += '\nStandard output:\n$outputString';
+          }
 
-      if (_onExitCompleter.isCompleted) {
-        return;
-      }
-      _onExitCompleter.completeError(
-        Exception('Failed to run browser process: $error.'),
-        stackTrace,
-      );
-    });
+          throw Exception(message);
+        }
+
+        _onExitCompleter.complete();
+      },
+      (dynamic error, StackTrace? stackTrace) {
+        // Ignore any errors after the browser has been closed.
+        if (_closed) {
+          return;
+        }
+
+        // Make sure the process dies even if the error wasn't fatal.
+        _process.then((Process process) => process.kill());
+
+        stackTrace ??= Trace.current();
+
+        if (_onExitCompleter.isCompleted) {
+          return;
+        }
+        _onExitCompleter.completeError(
+          Exception('Failed to run browser process: $error.'),
+          stackTrace,
+        );
+      },
+    );
   }
 
   /// The underlying process.

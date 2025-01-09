@@ -19,10 +19,7 @@ class CardModel {
 enum MarkerType { topLeft, bottomRight, touch }
 
 class _MarkerPainter extends CustomPainter {
-  const _MarkerPainter({
-    required this.size,
-    required this.type,
-  });
+  const _MarkerPainter({required this.size, required this.type});
 
   final double size;
   final MarkerType type;
@@ -52,18 +49,12 @@ class _MarkerPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_MarkerPainter oldPainter) {
-    return oldPainter.size != size
-        || oldPainter.type != type;
+    return oldPainter.size != size || oldPainter.type != type;
   }
 }
 
 class Marker extends StatelessWidget {
-  const Marker({
-    super.key,
-    this.type = MarkerType.touch,
-    this.position,
-    this.size = 40.0,
-  });
+  const Marker({super.key, this.type = MarkerType.touch, this.position, this.size = 40.0});
 
   final Offset? position;
   final double size;
@@ -76,14 +67,7 @@ class Marker extends StatelessWidget {
       top: position!.dy - size / 2.0,
       width: size,
       height: size,
-      child: IgnorePointer(
-        child: CustomPaint(
-          painter: _MarkerPainter(
-            size: size,
-            type: type,
-          ),
-        ),
-      ),
+      child: IgnorePointer(child: CustomPaint(painter: _MarkerPainter(size: size, type: type))),
     );
   }
 }
@@ -98,13 +82,17 @@ class OverlayGeometryApp extends StatefulWidget {
 typedef CardTapCallback = void Function(GlobalKey targetKey, Offset globalPosition);
 
 class CardBuilder extends SliverChildDelegate {
-  CardBuilder({List<CardModel>? cardModels, this.onTapUp }) : cardModels = cardModels ?? <CardModel>[];
+  CardBuilder({List<CardModel>? cardModels, this.onTapUp})
+    : cardModels = cardModels ?? <CardModel>[];
 
   final List<CardModel> cardModels;
   final CardTapCallback? onTapUp;
 
-  static const TextStyle cardLabelStyle =
-    TextStyle(color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.bold);
+  static const TextStyle cardLabelStyle = TextStyle(
+    color: Colors.white,
+    fontSize: 18.0,
+    fontWeight: FontWeight.bold,
+  );
 
   @override
   Widget? build(BuildContext context, int index) {
@@ -114,7 +102,9 @@ class CardBuilder extends SliverChildDelegate {
     final CardModel cardModel = cardModels[index];
     return GestureDetector(
       key: cardModel.key,
-      onTapUp: (TapUpDetails details) { onTapUp!(cardModel.targetKey, details.globalPosition); },
+      onTapUp: (TapUpDetails details) {
+        onTapUp!(cardModel.targetKey, details.globalPosition);
+      },
       child: Card(
         key: cardModel.targetKey,
         color: cardModel.color,
@@ -145,12 +135,40 @@ class OverlayGeometryAppState extends State<OverlayGeometryApp> {
   void initState() {
     super.initState();
     final List<double> cardHeights = <double>[
-      48.0, 63.0, 82.0, 146.0, 60.0, 55.0, 84.0, 96.0, 50.0,
-      48.0, 63.0, 82.0, 146.0, 60.0, 55.0, 84.0, 96.0, 50.0,
-      48.0, 63.0, 82.0, 146.0, 60.0, 55.0, 84.0, 96.0, 50.0,
+      48.0,
+      63.0,
+      82.0,
+      146.0,
+      60.0,
+      55.0,
+      84.0,
+      96.0,
+      50.0,
+      48.0,
+      63.0,
+      82.0,
+      146.0,
+      60.0,
+      55.0,
+      84.0,
+      96.0,
+      50.0,
+      48.0,
+      63.0,
+      82.0,
+      146.0,
+      60.0,
+      55.0,
+      84.0,
+      96.0,
+      50.0,
     ];
     cardModels = List<CardModel>.generate(cardHeights.length, (int i) {
-      final Color? color = Color.lerp(Colors.red.shade300, Colors.blue.shade900, i / cardHeights.length);
+      final Color? color = Color.lerp(
+        Colors.red.shade300,
+        Colors.blue.shade900,
+        i / cardHeights.length,
+      );
       return CardModel(i, cardHeights[i], color!);
     });
   }
@@ -191,26 +209,17 @@ class OverlayGeometryAppState extends State<OverlayGeometryApp> {
             child: NotificationListener<ScrollNotification>(
               onNotification: handleScrollNotification,
               child: ListView.custom(
-                childrenDelegate: CardBuilder(
-                  cardModels: cardModels,
-                  onTapUp: handleTapUp,
-                ),
+                childrenDelegate: CardBuilder(cardModels: cardModels, onTapUp: handleTapUp),
               ),
             ),
           ),
         ),
-        for (final MarkerType type in markers.keys)
-          Marker(type: type, position: markers[type]),
+        for (final MarkerType type in markers.keys) Marker(type: type, position: markers[type]),
       ],
     );
   }
 }
 
 void main() {
-  runApp(
-    const MaterialApp(
-      title: 'Cards',
-      home: OverlayGeometryApp(),
-    ),
-  );
+  runApp(const MaterialApp(title: 'Cards', home: OverlayGeometryApp()));
 }

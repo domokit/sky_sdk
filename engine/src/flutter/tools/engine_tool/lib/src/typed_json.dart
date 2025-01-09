@@ -152,12 +152,7 @@ extension type const JsonObject(Map<String, Object?> _object) {
     if (value == null && !_object.containsKey(key)) {
       return null;
     } else if (value is! T) {
-      _error(InvalidTypeJsonReadException(
-        this,
-        key,
-        expected: T,
-        actual: value.runtimeType,
-      ));
+      _error(InvalidTypeJsonReadException(this, key, expected: T, actual: value.runtimeType));
       return null;
     } else {
       return value;
@@ -190,23 +185,13 @@ extension type const JsonObject(Map<String, Object?> _object) {
     if (value == null && !_object.containsKey(key)) {
       return null;
     } else if (value is! List<Object?>) {
-      _error(InvalidTypeJsonReadException(
-        this,
-        key,
-        expected: List<T>,
-        actual: value.runtimeType,
-      ));
+      _error(InvalidTypeJsonReadException(this, key, expected: List<T>, actual: value.runtimeType));
       return <T>[];
     } else {
       final List<T> result = <T>[];
       for (final Object? element in value) {
         if (element is! T) {
-          _error(InvalidTypeJsonReadException(
-            this,
-            key,
-            expected: T,
-            actual: element.runtimeType,
-          ));
+          _error(InvalidTypeJsonReadException(this, key, expected: T, actual: element.runtimeType));
           return <T>[];
         }
         result.add(element);
@@ -231,12 +216,14 @@ extension type const JsonObject(Map<String, Object?> _object) {
     if (value == null && !_object.containsKey(key)) {
       return null;
     } else if (value is! Map<String, Object?>) {
-      _error(InvalidTypeJsonReadException(
-        this,
-        key,
-        expected: Map<String, Object?>,
-        actual: value.runtimeType,
-      ));
+      _error(
+        InvalidTypeJsonReadException(
+          this,
+          key,
+          expected: Map<String, Object?>,
+          actual: value.runtimeType,
+        ),
+      );
       return const JsonObject({});
     } else {
       return JsonObject(value);
@@ -298,11 +285,7 @@ extension type const JsonObject(Map<String, Object?> _object) {
     // Could be replaced with a static check in the future:
     // https://github.com/dart-lang/sdk/issues/35024
     if (mapper is Future<void> Function(JsonObject)) {
-      throw ArgumentError.value(
-        mapper,
-        'mapper',
-        'must be synchronous',
-      );
+      throw ArgumentError.value(mapper, 'mapper', 'must be synchronous');
     }
 
     // Store the previous errors, if any.
@@ -356,7 +339,7 @@ final class JsonMapException extends JsonReadException {
   ///
   /// If [exceptions] is empty, a [StateError] is thrown.
   JsonMapException(super.object, Iterable<JsonReadException> exceptions)
-      : exceptions = List<JsonReadException>.unmodifiable(exceptions) {
+    : exceptions = List<JsonReadException>.unmodifiable(exceptions) {
     if (exceptions.isEmpty) {
       throw StateError('Must provide at least one exception.');
     }

@@ -31,9 +31,7 @@ class ExampleWidget extends StatelessWidget {
       'The isotope 238U decays to 206Pb',
       style: TextStyle(
         fontFamily: 'Sorts Mill Goudy',
-        fontFeatures: <FontFeature>[
-          FontFeature.superscripts(),
-        ],
+        fontFeatures: <FontFeature>[FontFeature.superscripts()],
       ),
     );
   }

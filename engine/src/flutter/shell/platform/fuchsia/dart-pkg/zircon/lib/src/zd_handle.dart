@@ -13,8 +13,7 @@ class ZDHandle {
 
   void _attachFinalizer() {
     // TODO (kaushikiska): fix external allocation size.
-    final int? ret = zirconFFIBindings?.zircon_dart_handle_attach_finalizer(
-        this, _ptr.cast(), 128);
+    final int? ret = zirconFFIBindings?.zircon_dart_handle_attach_finalizer(this, _ptr.cast(), 128);
     if (ret != 1) {
       throw Exception('Unable to attach finalizer to handle');
     }
@@ -53,16 +52,17 @@ class ZDHandle {
 @pragma('vm:entry-point')
 class ZDHandlePair {
   @pragma('vm:entry-point')
-  ZDHandlePair._(this._ptr)
-      : left = ZDHandle._(_ptr.ref.left),
-        right = ZDHandle._(_ptr.ref.right) {
+  ZDHandlePair._(this._ptr) : left = ZDHandle._(_ptr.ref.left), right = ZDHandle._(_ptr.ref.right) {
     _attachFinalizer();
   }
 
   void _attachFinalizer() {
     // TODO (kaushikiska): fix external allocation size.
-    final int? ret = zirconFFIBindings
-        ?.zircon_dart_handle_pair_attach_finalizer(this, _ptr.cast(), 128);
+    final int? ret = zirconFFIBindings?.zircon_dart_handle_pair_attach_finalizer(
+      this,
+      _ptr.cast(),
+      128,
+    );
     if (ret != 1) {
       throw Exception('Unable to attach finalizer to handle');
     }

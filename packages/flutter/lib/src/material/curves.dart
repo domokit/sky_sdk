@@ -17,7 +17,7 @@ import 'package:flutter/animation.dart';
 @Deprecated(
   'Use Easing.legacy (M2) or Easing.standard (M3) instead. '
   'This curve is updated in M3. '
-  'This feature was deprecated after v3.18.0-0.1.pre.'
+  'This feature was deprecated after v3.18.0-0.1.pre.',
 )
 const Curve standardEasing = Curves.fastOutSlowIn;
 
@@ -31,7 +31,7 @@ const Curve standardEasing = Curves.fastOutSlowIn;
 @Deprecated(
   'Use Easing.legacyAccelerate (M2) or Easing.standardAccelerate (M3) instead. '
   'This curve is updated in M3. '
-  'This feature was deprecated after v3.18.0-0.1.pre.'
+  'This feature was deprecated after v3.18.0-0.1.pre.',
 )
 const Curve accelerateEasing = Cubic(0.4, 0.0, 1.0, 1.0);
 
@@ -46,6 +46,6 @@ const Curve accelerateEasing = Cubic(0.4, 0.0, 1.0, 1.0);
 @Deprecated(
   'Use Easing.legacyDecelerate (M2) or Easing.standardDecelerate (M3) instead. '
   'This curve is updated in M3. '
-  'This feature was deprecated after v3.18.0-0.1.pre.'
+  'This feature was deprecated after v3.18.0-0.1.pre.',
 )
 const Curve decelerateEasing = Cubic(0.0, 0.0, 0.2, 1.0);

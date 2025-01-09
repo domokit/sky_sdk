@@ -4,9 +4,9 @@
 
 void main(List<String> args) {
   final String type = switch (args.first) {
-    '--material'  => 'material',
+    '--material' => 'material',
     '--cupertino' => 'cupertino',
-    _             => '',
+    _ => '',
   };
   print('''
 // Copyright 2014 The Flutter Authors. All rights reserved.

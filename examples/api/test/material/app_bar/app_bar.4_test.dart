@@ -8,21 +8,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('AppBar uses custom shape', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.AppBarExampleApp(),
-    );
+    await tester.pumpWidget(const example.AppBarExampleApp());
 
-    Material getMaterial() => tester.widget<Material>(find.descendant(
-      of: find.byType(AppBar),
-      matching: find.byType(Material),
-    ));
+    Material getMaterial() => tester.widget<Material>(
+      find.descendant(of: find.byType(AppBar), matching: find.byType(Material)),
+    );
     expect(getMaterial().shape, const example.CustomAppBarShape());
   });
 
   testWidgets('AppBar bottom contains TextField', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.AppBarExampleApp(),
-    );
+    await tester.pumpWidget(const example.AppBarExampleApp());
 
     final Finder textFieldFinder = find.descendant(
       of: find.byType(AppBar),

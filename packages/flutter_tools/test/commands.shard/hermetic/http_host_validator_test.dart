@@ -52,11 +52,31 @@ void main() {
             platform: platform,
             featureFlags: TestFeatureFlags(),
             httpClient: FakeHttpClient.list(<FakeRequest>[
-              FakeRequest(Uri.parse(kCloudHost), method: HttpMethod.head, responseError: const OSError('Name or service not known', -2)),
-              FakeRequest(Uri.parse(kCocoaPods), method: HttpMethod.head, responseError: const OSError('Name or service not known', -2)),
-              FakeRequest(Uri.parse(kGitHub), method: HttpMethod.head, responseError: const OSError('Name or service not known', -2)),
-              FakeRequest(Uri.parse(kMaven), method: HttpMethod.head, responseError: const OSError('Name or service not known', -2)),
-              FakeRequest(Uri.parse(kPubDev), method: HttpMethod.head, responseError: const OSError('Name or service not known', -2)),
+              FakeRequest(
+                Uri.parse(kCloudHost),
+                method: HttpMethod.head,
+                responseError: const OSError('Name or service not known', -2),
+              ),
+              FakeRequest(
+                Uri.parse(kCocoaPods),
+                method: HttpMethod.head,
+                responseError: const OSError('Name or service not known', -2),
+              ),
+              FakeRequest(
+                Uri.parse(kGitHub),
+                method: HttpMethod.head,
+                responseError: const OSError('Name or service not known', -2),
+              ),
+              FakeRequest(
+                Uri.parse(kMaven),
+                method: HttpMethod.head,
+                responseError: const OSError('Name or service not known', -2),
+              ),
+              FakeRequest(
+                Uri.parse(kPubDev),
+                method: HttpMethod.head,
+                responseError: const OSError('Name or service not known', -2),
+              ),
             ]),
           );
 
@@ -76,7 +96,11 @@ void main() {
             platform: platform,
             featureFlags: TestFeatureFlags(),
             httpClient: FakeHttpClient.list(<FakeRequest>[
-              FakeRequest(Uri.parse(kCloudHost), method: HttpMethod.head, responseError: const OSError('Name or service not known', -2)),
+              FakeRequest(
+                Uri.parse(kCloudHost),
+                method: HttpMethod.head,
+                responseError: const OSError('Name or service not known', -2),
+              ),
               FakeRequest(Uri.parse(kCocoaPods), method: HttpMethod.head),
               FakeRequest(Uri.parse(kGitHub), method: HttpMethod.head),
               FakeRequest(Uri.parse(kMaven), method: HttpMethod.head),
@@ -116,15 +140,34 @@ void main() {
       testWithoutContext('all http hosts are not available', () async {
         // Run the check for all operating systems one by one
         for (final String os in osTested) {
-          final Platform platform = FakePlatform(operatingSystem: os, environment: kTestEnvironment);
+          final Platform platform = FakePlatform(
+            operatingSystem: os,
+            environment: kTestEnvironment,
+          );
           final HttpHostValidator httpHostValidator = HttpHostValidator(
             platform: platform,
             featureFlags: TestFeatureFlags(),
             httpClient: FakeHttpClient.list(<FakeRequest>[
-              FakeRequest(Uri.parse(kCocoaPods), method: HttpMethod.head, responseError: const OSError('Name or service not known', -2)),
-              FakeRequest(Uri.parse(kGitHub), method: HttpMethod.head, responseError: const OSError('Name or service not known', -2)),
-              FakeRequest(Uri.parse(kTestEnvGCloudHost), method: HttpMethod.head, responseError: const OSError('Name or service not known', -2)),
-              FakeRequest(Uri.parse(kTestEnvPubHost), method: HttpMethod.head, responseError: const OSError('Name or service not known', -2)),
+              FakeRequest(
+                Uri.parse(kCocoaPods),
+                method: HttpMethod.head,
+                responseError: const OSError('Name or service not known', -2),
+              ),
+              FakeRequest(
+                Uri.parse(kGitHub),
+                method: HttpMethod.head,
+                responseError: const OSError('Name or service not known', -2),
+              ),
+              FakeRequest(
+                Uri.parse(kTestEnvGCloudHost),
+                method: HttpMethod.head,
+                responseError: const OSError('Name or service not known', -2),
+              ),
+              FakeRequest(
+                Uri.parse(kTestEnvPubHost),
+                method: HttpMethod.head,
+                responseError: const OSError('Name or service not known', -2),
+              ),
             ]),
           );
 
@@ -139,14 +182,25 @@ void main() {
       testWithoutContext('one http host is not available', () async {
         // Run the check for all operating systems one by one
         for (final String os in osTested) {
-          final Platform platform = FakePlatform(operatingSystem: os, environment: kTestEnvironment);
+          final Platform platform = FakePlatform(
+            operatingSystem: os,
+            environment: kTestEnvironment,
+          );
           final HttpHostValidator httpHostValidator = HttpHostValidator(
             platform: platform,
             featureFlags: TestFeatureFlags(),
             httpClient: FakeHttpClient.list(<FakeRequest>[
               FakeRequest(Uri.parse(kCocoaPods), method: HttpMethod.head),
-              FakeRequest(Uri.parse(kGitHub), method: HttpMethod.head, responseError: const OSError('Name or service not known', -2)),
-              FakeRequest(Uri.parse(kTestEnvGCloudHost), method: HttpMethod.head, responseError: const OSError('Name or service not known', -2)),
+              FakeRequest(
+                Uri.parse(kGitHub),
+                method: HttpMethod.head,
+                responseError: const OSError('Name or service not known', -2),
+              ),
+              FakeRequest(
+                Uri.parse(kTestEnvGCloudHost),
+                method: HttpMethod.head,
+                responseError: const OSError('Name or service not known', -2),
+              ),
               FakeRequest(Uri.parse(kTestEnvPubHost), method: HttpMethod.head),
             ]),
           );
@@ -162,7 +216,7 @@ void main() {
       testWithoutContext('does not throw on unparseable user-defined host uri', () async {
         final HttpHostValidator httpHostValidator = HttpHostValidator(
           platform: FakePlatform(
-            environment: <String,String> {
+            environment: <String, String>{
               'PUB_HOSTED_URL': '::Not A Uri::',
               'FLUTTER_STORAGE_BASE_URL': kTestEnvGCloudHost,
             },
@@ -177,17 +231,19 @@ void main() {
         expect(result.type, equals(ValidationType.partial));
         expect(
           result.messages,
-          contains(const ValidationMessage.error(
-            'Environment variable PUB_HOSTED_URL does not specify a valid URL: "::Not A Uri::"\n'
-            'Please see https://flutter.dev/to/use-mirror-site for an example of how to use it.',
-          )),
+          contains(
+            const ValidationMessage.error(
+              'Environment variable PUB_HOSTED_URL does not specify a valid URL: "::Not A Uri::"\n'
+              'Please see https://flutter.dev/to/use-mirror-site for an example of how to use it.',
+            ),
+          ),
         );
       });
 
       testWithoutContext('does not throw on invalid user-defined host', () async {
         final HttpHostValidator httpHostValidator = HttpHostValidator(
           platform: FakePlatform(
-            environment: <String,String> {
+            environment: <String, String>{
               'PUB_HOSTED_URL': kTestEnvPubHost,
               'FLUTTER_STORAGE_BASE_URL': '',
             },
@@ -202,10 +258,12 @@ void main() {
         expect(result.type, equals(ValidationType.partial));
         expect(
           result.messages,
-          contains(const ValidationMessage.error(
-            'Environment variable FLUTTER_STORAGE_BASE_URL does not specify a valid URL: ""\n'
-            'Please see https://flutter.dev/to/use-mirror-site for an example of how to use it.'
-          )),
+          contains(
+            const ValidationMessage.error(
+              'Environment variable FLUTTER_STORAGE_BASE_URL does not specify a valid URL: ""\n'
+              'Please see https://flutter.dev/to/use-mirror-site for an example of how to use it.',
+            ),
+          ),
         );
       });
     });

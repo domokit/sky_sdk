@@ -14,18 +14,14 @@ import '../common/matchers.dart';
 import '../common/spy.dart';
 import '../common/test_initialization.dart';
 
-EngineFlutterWindow get implicitView =>
-    EnginePlatformDispatcher.instance.implicitView!;
+EngineFlutterWindow get implicitView => EnginePlatformDispatcher.instance.implicitView!;
 
 Map<String, dynamic> _wrapOriginState(dynamic state) {
   return <String, dynamic>{'origin': true, 'state': state};
 }
 
 Map<String, dynamic> _tagStateWithSerialCount(dynamic state, int serialCount) {
-  return <String, dynamic> {
-    'serialCount': serialCount,
-    'state': state,
-  };
+  return <String, dynamic>{'serialCount': serialCount, 'state': state};
 }
 
 const Map<String, bool> flutterState = <String, bool>{'flutter': true};
@@ -129,7 +125,6 @@ void testMain() {
       expect(strategy.listeners, isEmpty);
 
       await implicitView.debugInitializeHistory(strategy, useSingle: true);
-
 
       // There should be one `popstate` listener and two history entries.
       expect(strategy.listeners, hasLength(1));
@@ -385,7 +380,6 @@ void testMain() {
       expect(strategy.listeners, isEmpty);
 
       await implicitView.debugInitializeHistory(strategy, useSingle: false);
-
 
       // There should be one `popstate` listener and one history entry.
       expect(strategy.listeners, hasLength(1));
@@ -658,10 +652,7 @@ void testMain() {
       expect(strategy.prepareExternalUrl(internalUrl), '/main#/menu?foo=bar');
 
       location.search = '?foo=bar';
-      expect(
-        strategy.prepareExternalUrl(internalUrl),
-        '/main?foo=bar#/menu?foo=bar',
-      );
+      expect(strategy.prepareExternalUrl(internalUrl), '/main?foo=bar#/menu?foo=bar');
     });
 
     test('removes /#/ from the home page', () {
@@ -675,10 +666,7 @@ void testMain() {
       expect(strategy.prepareExternalUrl(internalUrl), '/main');
 
       location.search = '?foo=bar';
-      expect(
-        strategy.prepareExternalUrl(internalUrl),
-        '/main?foo=bar',
-      );
+      expect(strategy.prepareExternalUrl(internalUrl), '/main?foo=bar');
     });
 
     test('addPopStateListener fn unwraps DomPopStateEvent state', () {
@@ -746,10 +734,7 @@ Future<void> routeUpdated(String routeName) {
   final Completer<void> completer = Completer<void>();
   EnginePlatformDispatcher.instance.sendPlatformMessage(
     'flutter/navigation',
-    codec.encodeMethodCall(MethodCall(
-      'routeUpdated',
-      <String, dynamic>{'routeName': routeName},
-    )),
+    codec.encodeMethodCall(MethodCall('routeUpdated', <String, dynamic>{'routeName': routeName})),
     (_) => completer.complete(),
   );
   return completer.future;
@@ -759,10 +744,12 @@ Future<void> routeInformationUpdated(String location, dynamic state) {
   final Completer<void> completer = Completer<void>();
   EnginePlatformDispatcher.instance.sendPlatformMessage(
     'flutter/navigation',
-    codec.encodeMethodCall(MethodCall(
-      'routeInformationUpdated',
-      <String, dynamic>{'location': location, 'state': state},
-    )),
+    codec.encodeMethodCall(
+      MethodCall('routeInformationUpdated', <String, dynamic>{
+        'location': location,
+        'state': state,
+      }),
+    ),
     (_) => completer.complete(),
   );
   return completer.future;
@@ -797,12 +784,9 @@ class TestPlatformLocation implements PlatformLocation {
   /// Calls all the registered `popStateListeners` with a 'popstate'
   /// event with value `state`
   void debugTriggerPopState(Object? state) {
-    final DomEvent event = createDomPopStateEvent(
-      'popstate',
-      <Object, Object>{
-        if (state != null) 'state': state,
-      },
-    );
+    final DomEvent event = createDomPopStateEvent('popstate', <Object, Object>{
+      if (state != null) 'state': state,
+    });
     for (final EventListener listener in popStateListeners) {
       listener(event);
     }

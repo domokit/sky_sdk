@@ -14,8 +14,8 @@ void main() => runApp(const WidgetStateInputBorderExampleApp());
 /// But sometimes it makes sense to use a resolveWith() callback,
 /// and these getters make those callbacks a bit more readable!
 extension WidgetStateHelpers on Set<WidgetState> {
-  bool get focused  => contains(WidgetState.focused);
-  bool get hovered  => contains(WidgetState.hovered);
+  bool get focused => contains(WidgetState.focused);
+  bool get hovered => contains(WidgetState.hovered);
   bool get disabled => contains(WidgetState.disabled);
 }
 
@@ -26,9 +26,7 @@ class WidgetStateInputBorderExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('WidgetStateInputBorder Example'),
-        ),
+        appBar: AppBar(title: const Text('WidgetStateInputBorder Example')),
         body: const Center(child: PageContent()),
       ),
     );
@@ -51,9 +49,7 @@ class _PageContentState extends State<PageContent> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         const Spacer(flex: 8),
-        Focus(
-          child: WidgetStateInputBorderExample(enabled: enabled),
-        ),
+        Focus(child: WidgetStateInputBorderExample(enabled: enabled)),
         const Spacer(),
         FilterChip(
           label: const Text('enable text field'),
@@ -82,9 +78,7 @@ class WidgetStateInputBorderExample extends StatelessWidget {
   /// such as when rebuilding a [Theme] widget.
   static UnderlineInputBorder veryCoolBorder(Set<WidgetState> states) {
     if (states.disabled) {
-      return const UnderlineInputBorder(
-        borderSide: BorderSide(color: Colors.grey),
-      );
+      return const UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey));
     }
 
     const Color dullViolet = Color(0xFF502080);

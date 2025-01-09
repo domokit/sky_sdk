@@ -37,12 +37,7 @@ class SliverFillRemainingExample extends StatelessWidget {
       // allow for the overscroll, regardless of the depth of the scrollable.
       physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       slivers: <Widget>[
-        SliverToBoxAdapter(
-          child: Container(
-            color: Colors.tealAccent[700],
-            height: 150.0,
-          ),
-        ),
+        SliverToBoxAdapter(child: Container(color: Colors.tealAccent[700], height: 150.0)),
         SliverFillRemaining(
           hasScrollBody: false,
           // Switch for different overscroll behavior in your layout. If your

@@ -28,8 +28,7 @@ abstract class RRectRenderer {
   // rounded rectangle (after the corner).
   // TODO(het): Confirm that this is the end point in Flutter for RRect
 
-  void render(ui.RRect inputRRect,
-      {bool startNewPath = true, bool reverse = false}) {
+  void render(ui.RRect inputRRect, {bool startNewPath = true, bool reverse = false}) {
     // Ensure border radius curves never overlap
     final ui.RRect rrect = inputRRect.scaleRadii();
 
@@ -177,8 +176,16 @@ abstract class RRectRenderer {
   void beginPath();
   void moveTo(double x, double y);
   void lineTo(double x, double y);
-  void ellipse(double centerX, double centerY, double radiusX, double radiusY,
-      double rotation, double startAngle, double endAngle, bool antiClockwise);
+  void ellipse(
+    double centerX,
+    double centerY,
+    double radiusX,
+    double radiusY,
+    double rotation,
+    double startAngle,
+    double endAngle,
+    bool antiClockwise,
+  );
 }
 
 /// Renders RRect to a 2d canvas.
@@ -201,10 +208,27 @@ class RRectToCanvasRenderer extends RRectRenderer {
   }
 
   @override
-  void ellipse(double centerX, double centerY, double radiusX, double radiusY,
-      double rotation, double startAngle, double endAngle, bool antiClockwise) {
-    drawEllipse(context, centerX, centerY, radiusX, radiusY, rotation, startAngle,
-        endAngle, antiClockwise);
+  void ellipse(
+    double centerX,
+    double centerY,
+    double radiusX,
+    double radiusY,
+    double rotation,
+    double startAngle,
+    double endAngle,
+    bool antiClockwise,
+  ) {
+    drawEllipse(
+      context,
+      centerX,
+      centerY,
+      radiusX,
+      radiusY,
+      rotation,
+      startAngle,
+      endAngle,
+      antiClockwise,
+    );
   }
 }
 
@@ -226,17 +250,35 @@ class RRectToPathRenderer extends RRectRenderer {
   }
 
   @override
-  void ellipse(double centerX, double centerY, double radiusX, double radiusY,
-      double rotation, double startAngle, double endAngle, bool antiClockwise) {
+  void ellipse(
+    double centerX,
+    double centerY,
+    double radiusX,
+    double radiusY,
+    double rotation,
+    double startAngle,
+    double endAngle,
+    bool antiClockwise,
+  ) {
     path.addArc(
-        ui.Rect.fromLTRB(centerX - radiusX, centerY - radiusY,
-            centerX + radiusX, centerY + radiusY),
-        startAngle,
-        antiClockwise ? startAngle - endAngle : endAngle - startAngle);
+      ui.Rect.fromLTRB(centerX - radiusX, centerY - radiusY, centerX + radiusX, centerY + radiusY),
+      startAngle,
+      antiClockwise ? startAngle - endAngle : endAngle - startAngle,
+    );
   }
 }
 
-typedef RRectRendererEllipseCallback = void Function(double centerX, double centerY, double radiusX, double radiusY, double rotation, double startAngle, double endAngle, bool antiClockwise);
+typedef RRectRendererEllipseCallback =
+    void Function(
+      double centerX,
+      double centerY,
+      double radiusX,
+      double radiusY,
+      double rotation,
+      double startAngle,
+      double endAngle,
+      bool antiClockwise,
+    );
 typedef RRectRendererCallback = void Function(double x, double y);
 
 /// Converts RRect to path primitives with callbacks.
@@ -250,8 +292,25 @@ class RRectMetricsRenderer extends RRectRenderer {
   void beginPath() {}
 
   @override
-  void ellipse(double centerX, double centerY, double radiusX, double radiusY, double rotation, double startAngle, double endAngle, bool antiClockwise) => ellipseCallback!(
-      centerX, centerY, radiusX, radiusY, rotation, startAngle, endAngle, antiClockwise);
+  void ellipse(
+    double centerX,
+    double centerY,
+    double radiusX,
+    double radiusY,
+    double rotation,
+    double startAngle,
+    double endAngle,
+    bool antiClockwise,
+  ) => ellipseCallback!(
+    centerX,
+    centerY,
+    radiusX,
+    radiusY,
+    rotation,
+    startAngle,
+    endAngle,
+    antiClockwise,
+  );
 
   @override
   void lineTo(double x, double y) => lineToCallback!(x, y);

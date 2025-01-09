@@ -8,41 +8,238 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:file/memory.dart';
-import 'package:flutter/foundation.dart' show DiagnosticLevel, DiagnosticPropertiesBuilder, DiagnosticsNode, FlutterError;
+import 'package:flutter/foundation.dart'
+    show DiagnosticLevel, DiagnosticPropertiesBuilder, DiagnosticsNode, FlutterError;
 import 'package:flutter_test/flutter_test.dart' as test_package;
 import 'package:flutter_test/flutter_test.dart' hide test;
 
 // 1x1 transparent pixel
 const List<int> _kExpectedPngBytes = <int>[
-  137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0,
-  1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 11, 73, 68, 65, 84,
-  120, 1, 99, 97, 0, 2, 0, 0, 25, 0, 5, 144, 240, 54, 245, 0, 0, 0, 0, 73, 69,
-  78, 68, 174, 66, 96, 130,
+  137,
+  80,
+  78,
+  71,
+  13,
+  10,
+  26,
+  10,
+  0,
+  0,
+  0,
+  13,
+  73,
+  72,
+  68,
+  82,
+  0,
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  1,
+  8,
+  6,
+  0,
+  0,
+  0,
+  31,
+  21,
+  196,
+  137,
+  0,
+  0,
+  0,
+  11,
+  73,
+  68,
+  65,
+  84,
+  120,
+  1,
+  99,
+  97,
+  0,
+  2,
+  0,
+  0,
+  25,
+  0,
+  5,
+  144,
+  240,
+  54,
+  245,
+  0,
+  0,
+  0,
+  0,
+  73,
+  69,
+  78,
+  68,
+  174,
+  66,
+  96,
+  130,
 ];
 
 // 1x1 colored pixel
 const List<int> _kColorFailurePngBytes = <int>[
-  137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0,
-  1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 13, 73, 68, 65, 84,
-  120, 1, 99, 249, 207, 240, 255, 63, 0, 7, 18, 3, 2, 164, 147, 160, 197, 0,
-  0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130,
+  137,
+  80,
+  78,
+  71,
+  13,
+  10,
+  26,
+  10,
+  0,
+  0,
+  0,
+  13,
+  73,
+  72,
+  68,
+  82,
+  0,
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  1,
+  8,
+  6,
+  0,
+  0,
+  0,
+  31,
+  21,
+  196,
+  137,
+  0,
+  0,
+  0,
+  13,
+  73,
+  68,
+  65,
+  84,
+  120,
+  1,
+  99,
+  249,
+  207,
+  240,
+  255,
+  63,
+  0,
+  7,
+  18,
+  3,
+  2,
+  164,
+  147,
+  160,
+  197,
+  0,
+  0,
+  0,
+  0,
+  73,
+  69,
+  78,
+  68,
+  174,
+  66,
+  96,
+  130,
 ];
 
 // 1x2 transparent pixel
 const List<int> _kSizeFailurePngBytes = <int>[
-  137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0,
-  1, 0, 0,0, 2, 8, 6, 0, 0, 0, 153, 129, 182, 39, 0, 0, 0, 14, 73, 68, 65, 84,
-  120, 1, 99, 97, 0, 2, 22, 16, 1, 0, 0, 70, 0, 9, 112, 117, 150, 160, 0, 0,
-  0, 0, 73, 69, 78, 68, 174, 66, 96, 130,
+  137,
+  80,
+  78,
+  71,
+  13,
+  10,
+  26,
+  10,
+  0,
+  0,
+  0,
+  13,
+  73,
+  72,
+  68,
+  82,
+  0,
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  2,
+  8,
+  6,
+  0,
+  0,
+  0,
+  153,
+  129,
+  182,
+  39,
+  0,
+  0,
+  0,
+  14,
+  73,
+  68,
+  65,
+  84,
+  120,
+  1,
+  99,
+  97,
+  0,
+  2,
+  22,
+  16,
+  1,
+  0,
+  0,
+  70,
+  0,
+  9,
+  112,
+  117,
+  150,
+  160,
+  0,
+  0,
+  0,
+  0,
+  73,
+  69,
+  78,
+  68,
+  174,
+  66,
+  96,
+  130,
 ];
 
 void main() {
   late MemoryFileSystem fs;
 
   setUp(() {
-    final FileSystemStyle style = io.Platform.isWindows
-        ? FileSystemStyle.windows
-        : FileSystemStyle.posix;
+    final FileSystemStyle style =
+        io.Platform.isWindows ? FileSystemStyle.windows : FileSystemStyle.posix;
     fs = MemoryFileSystem(style: style);
   });
 
@@ -71,7 +268,8 @@ void main() {
         fseIdentical: (String p1, String p2) => fs.identical(p1, p2),
         fseIdenticalSync: (String p1, String p2) => fs.identicalSync(p1, p2),
         fseGetType: (String path, bool followLinks) => fs.type(path, followLinks: followLinks),
-        fseGetTypeSync: (String path, bool followLinks) => fs.typeSync(path, followLinks: followLinks),
+        fseGetTypeSync:
+            (String path, bool followLinks) => fs.typeSync(path, followLinks: followLinks),
         fsWatch: (String a, int b, bool c) => throw UnsupportedError('unsupported'),
         fsWatchIsSupported: () => fs.isWatchSupported,
       );
@@ -100,12 +298,18 @@ void main() {
     late LocalFileComparator comparator;
 
     setUp(() {
-      comparator = LocalFileComparator(fs.file(fix('/golden_test.dart')).uri, pathStyle: fs.path.style);
+      comparator = LocalFileComparator(
+        fs.file(fix('/golden_test.dart')).uri,
+        pathStyle: fs.path.style,
+      );
     });
 
     test('calculates basedir correctly', () {
       expect(comparator.basedir, fs.file(fix('/')).uri);
-      comparator = LocalFileComparator(fs.file(fix('/foo/bar/golden_test.dart')).uri, pathStyle: fs.path.style);
+      comparator = LocalFileComparator(
+        fs.file(fix('/foo/bar/golden_test.dart')).uri,
+        pathStyle: fs.path.style,
+      );
       expect(comparator.basedir, fs.directory(fix('/foo/bar/')).uri);
     });
 
@@ -129,9 +333,11 @@ void main() {
         expectSync(lines[1], 'You must use "await" with all Future-returning test APIs.');
         expectSync(
           lines[2],
-          matches(r'^The guarded method "generateFailureOutput" from class '
+          matches(
+            r'^The guarded method "generateFailureOutput" from class '
             r'LocalComparisonOutput was called from .*goldens_test.dart on line '
-            r'[0-9]+, but never completed before its parent scope closed\.$'),
+            r'[0-9]+, but never completed before its parent scope closed\.$',
+          ),
         );
         expectSync(lines.length, 3);
         final DiagnosticPropertiesBuilder propertiesBuilder = DiagnosticPropertiesBuilder();
@@ -145,12 +351,9 @@ void main() {
     });
 
     group('compare', () {
-      Future<bool> doComparison([ String golden = 'golden.png' ]) {
+      Future<bool> doComparison([String golden = 'golden.png']) {
         final Uri uri = fs.file(fix(golden)).uri;
-        return comparator.compare(
-          Uint8List.fromList(_kExpectedPngBytes),
-          uri,
-        );
+        return comparator.compare(Uint8List.fromList(_kExpectedPngBytes), uri);
       }
 
       group('succeeds', () {
@@ -174,7 +377,10 @@ void main() {
               ..createSync(recursive: true)
               ..writeAsBytesSync(_kExpectedPngBytes);
             fs.currentDirectory = fix('/foo/bar');
-            comparator = LocalFileComparator(Uri.parse('local_test.dart'), pathStyle: fs.path.style);
+            comparator = LocalFileComparator(
+              Uri.parse('local_test.dart'),
+              pathStyle: fs.path.style,
+            );
             final bool success = await doComparison();
             expect(success, isTrue);
           });
@@ -184,7 +390,10 @@ void main() {
               ..createSync(recursive: true)
               ..writeAsBytesSync(_kExpectedPngBytes);
             fs.currentDirectory = fix('/foo/bar');
-            comparator = LocalFileComparator(Uri.parse('local_test.dart'), pathStyle: fs.path.style);
+            comparator = LocalFileComparator(
+              Uri.parse('local_test.dart'),
+              pathStyle: fs.path.style,
+            );
             final bool success = await doComparison('baz/golden.png');
             expect(success, isTrue);
           });
@@ -192,30 +401,23 @@ void main() {
       });
 
       group('fails', () {
-
         test('and generates correct output in the correct base location', () async {
           comparator = LocalFileComparator(Uri.parse('local_test.dart'), pathStyle: fs.path.style);
           await fs.file(fix('/golden.png')).writeAsBytes(_kColorFailurePngBytes);
           await expectLater(
             () => doComparison(),
-            throwsA(isFlutterError.having(
-              (FlutterError error) => error.message,
-              'message',
-              contains('100.00%, 1px diff detected'),
-            )),
+            throwsA(
+              isFlutterError.having(
+                (FlutterError error) => error.message,
+                'message',
+                contains('100.00%, 1px diff detected'),
+              ),
+            ),
           );
-          final io.File master = fs.file(
-            fix('/failures/golden_masterImage.png')
-          );
-          final io.File test = fs.file(
-            fix('/failures/golden_testImage.png')
-          );
-          final io.File isolated = fs.file(
-            fix('/failures/golden_isolatedDiff.png')
-          );
-          final io.File masked = fs.file(
-            fix('/failures/golden_maskedDiff.png')
-          );
+          final io.File master = fs.file(fix('/failures/golden_masterImage.png'));
+          final io.File test = fs.file(fix('/failures/golden_testImage.png'));
+          final io.File isolated = fs.file(fix('/failures/golden_isolatedDiff.png'));
+          final io.File masked = fs.file(fix('/failures/golden_maskedDiff.png'));
           expect(master.existsSync(), isTrue);
           expect(test.existsSync(), isTrue);
           expect(isolated.existsSync(), isTrue);
@@ -225,28 +427,22 @@ void main() {
         test('and generates correct output when files are in a subdirectory', () async {
           comparator = LocalFileComparator(Uri.parse('local_test.dart'), pathStyle: fs.path.style);
           fs.file(fix('subdir/golden.png'))
-            ..createSync(recursive:true)
+            ..createSync(recursive: true)
             ..writeAsBytesSync(_kColorFailurePngBytes);
           await expectLater(
             () => doComparison('subdir/golden.png'),
-            throwsA(isFlutterError.having(
-              (FlutterError error) => error.message,
-              'message',
-              contains('100.00%, 1px diff detected'),
-            )),
+            throwsA(
+              isFlutterError.having(
+                (FlutterError error) => error.message,
+                'message',
+                contains('100.00%, 1px diff detected'),
+              ),
+            ),
           );
-          final io.File master = fs.file(
-            fix('/failures/golden_masterImage.png')
-          );
-          final io.File test = fs.file(
-            fix('/failures/golden_testImage.png')
-          );
-          final io.File isolated = fs.file(
-            fix('/failures/golden_isolatedDiff.png')
-          );
-          final io.File masked = fs.file(
-            fix('/failures/golden_maskedDiff.png')
-          );
+          final io.File master = fs.file(fix('/failures/golden_masterImage.png'));
+          final io.File test = fs.file(fix('/failures/golden_testImage.png'));
+          final io.File isolated = fs.file(fix('/failures/golden_isolatedDiff.png'));
+          final io.File masked = fs.file(fix('/failures/golden_maskedDiff.png'));
           expect(master.existsSync(), isTrue);
           expect(test.existsSync(), isTrue);
           expect(isolated.existsSync(), isTrue);
@@ -257,24 +453,18 @@ void main() {
           await fs.file(fix('/golden.png')).writeAsBytes(_kSizeFailurePngBytes);
           await expectLater(
             () => doComparison(),
-            throwsA(isFlutterError.having(
-              (FlutterError error) => error.message,
-              'message',
-              contains('image sizes do not match'),
-            )),
+            throwsA(
+              isFlutterError.having(
+                (FlutterError error) => error.message,
+                'message',
+                contains('image sizes do not match'),
+              ),
+            ),
           );
-          final io.File master = fs.file(
-            fix('/failures/golden_masterImage.png')
-          );
-          final io.File test = fs.file(
-            fix('/failures/golden_testImage.png')
-          );
-          final io.File isolated = fs.file(
-            fix('/failures/golden_isolatedDiff.png')
-          );
-          final io.File masked = fs.file(
-            fix('/failures/golden_maskedDiff.png')
-          );
+          final io.File master = fs.file(fix('/failures/golden_masterImage.png'));
+          final io.File test = fs.file(fix('/failures/golden_testImage.png'));
+          final io.File isolated = fs.file(fix('/failures/golden_isolatedDiff.png'));
+          final io.File masked = fs.file(fix('/failures/golden_maskedDiff.png'));
           expect(master.existsSync(), isTrue);
           expect(test.existsSync(), isTrue);
           expect(isolated.existsSync(), isFalse);
@@ -284,35 +474,41 @@ void main() {
         test('when golden file does not exist', () async {
           await expectLater(
             () => doComparison(),
-            throwsA(isA<TestFailure>().having(
-              (TestFailure error) => error.message,
-              'message',
-              contains('Could not be compared against non-existent file'),
-            )),
+            throwsA(
+              isA<TestFailure>().having(
+                (TestFailure error) => error.message,
+                'message',
+                contains('Could not be compared against non-existent file'),
+              ),
+            ),
           );
         });
 
-        test('when images are not the same size', () async{
+        test('when images are not the same size', () async {
           await fs.file(fix('/golden.png')).writeAsBytes(_kSizeFailurePngBytes);
           await expectLater(
             () => doComparison(),
-            throwsA(isFlutterError.having(
-              (FlutterError error) => error.message,
-              'message',
-              contains('image sizes do not match'),
-            )),
+            throwsA(
+              isFlutterError.having(
+                (FlutterError error) => error.message,
+                'message',
+                contains('image sizes do not match'),
+              ),
+            ),
           );
         });
 
-        test('when pixels do not match', () async{
+        test('when pixels do not match', () async {
           await fs.file(fix('/golden.png')).writeAsBytes(_kColorFailurePngBytes);
           await expectLater(
             () => doComparison(),
-            throwsA(isFlutterError.having(
-              (FlutterError error) => error.message,
-              'message',
-              contains('100.00%, 1px diff detected'),
-            )),
+            throwsA(
+              isFlutterError.having(
+                (FlutterError error) => error.message,
+                'message',
+                contains('100.00%, 1px diff detected'),
+              ),
+            ),
           );
         });
 
@@ -320,11 +516,13 @@ void main() {
           await fs.file(fix('/golden.png')).writeAsBytes(<int>[]);
           await expectLater(
             () => doComparison(),
-            throwsA(isFlutterError.having(
-              (FlutterError error) => error.message,
-              'message',
-              contains('null image provided'),
-            )),
+            throwsA(
+              isFlutterError.having(
+                (FlutterError error) => error.message,
+                'message',
+                contains('null image provided'),
+              ),
+            ),
           );
         });
       });
@@ -371,11 +569,7 @@ void main() {
         final ComparisonResult result = ComparisonResult(
           passed: false,
           diffPercent: 1.0,
-          diffs: <String, ui.Image>{
-            'image1': image1,
-            'image2': image2,
-            'image3': image3,
-          }
+          diffs: <String, ui.Image>{'image1': image1, 'image2': image2, 'image3': image3},
         );
 
         expect(image1.debugDisposed, isFalse);

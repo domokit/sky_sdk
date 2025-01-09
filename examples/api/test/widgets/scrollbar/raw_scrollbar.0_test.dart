@@ -9,9 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('There are two scrollbars', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.RawScrollbarExampleApp(),
-    );
+    await tester.pumpWidget(const example.RawScrollbarExampleApp());
 
     expect(find.widgetWithText(AppBar, 'RawScrollbar Sample'), findsOne);
     expect(find.byType(Scrollbar), findsExactly(2));

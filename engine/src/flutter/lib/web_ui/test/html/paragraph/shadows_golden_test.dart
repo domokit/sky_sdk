@@ -26,30 +26,31 @@ Future<void> testMain() async {
   test('paints multiple shadows', () {
     final BitmapCanvas canvas = BitmapCanvas(bounds, RenderStrategy());
 
-    final CanvasParagraph paragraph = rich(
-      EngineParagraphStyle(fontFamily: 'Roboto'),
-      (CanvasParagraphBuilder builder) {
-        builder.pushStyle(EngineTextStyle.only(
+    final CanvasParagraph paragraph = rich(EngineParagraphStyle(fontFamily: 'Roboto'), (
+      CanvasParagraphBuilder builder,
+    ) {
+      builder.pushStyle(
+        EngineTextStyle.only(
           fontSize: 32.0,
           color: blue,
           shadows: <Shadow>[
-            const Shadow(color: red, blurRadius:2.0, offset: Offset(4.0, 2.0)),
+            const Shadow(color: red, blurRadius: 2.0, offset: Offset(4.0, 2.0)),
             const Shadow(color: green, blurRadius: 3.0),
           ],
-        ));
-        builder.addText('Lorem ');
-        builder.pushStyle(EngineTextStyle.only(
+        ),
+      );
+      builder.addText('Lorem ');
+      builder.pushStyle(
+        EngineTextStyle.only(
           color: green,
           background: Paint()..color = yellow,
-          shadows: <Shadow>[
-            const Shadow(blurRadius: 10.0),
-          ],
-        ));
-        builder.addText('ipsum');
-        builder.pop();
-        builder.addText('dolor.');
-      },
-    )..layout(constrain(double.infinity));
+          shadows: <Shadow>[const Shadow(blurRadius: 10.0)],
+        ),
+      );
+      builder.addText('ipsum');
+      builder.pop();
+      builder.addText('dolor.');
+    })..layout(constrain(double.infinity));
     canvas.drawParagraph(paragraph, Offset.zero);
 
     return takeScreenshot(canvas, bounds, 'canvas_paragraph_shadows');

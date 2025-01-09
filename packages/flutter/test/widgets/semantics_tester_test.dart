@@ -20,7 +20,7 @@ void main() {
         TextSpan(
           children: <TextSpan>[
             const TextSpan(text: 'hello'),
-            TextSpan(text: 'world', recognizer: recognizer..onTap = () { }),
+            TextSpan(text: 'world', recognizer: recognizer..onTap = () {}),
           ],
           style: textStyle,
         ),
@@ -32,16 +32,18 @@ void main() {
       children: <TestSemantics>[
         TestSemantics.rootChild(
           children: <TestSemantics>[
-            TestSemantics(
-              label: 'hello',
-              textDirection: TextDirection.ltr,
-            ),
+            TestSemantics(label: 'hello', textDirection: TextDirection.ltr),
             TestSemantics(),
           ],
         ),
       ],
     );
-    expect(semantics, isNot(hasSemantics(expectedSemantics, ignoreTransform: true, ignoreId: true, ignoreRect: true)));
+    expect(
+      semantics,
+      isNot(
+        hasSemantics(expectedSemantics, ignoreTransform: true, ignoreId: true, ignoreRect: true),
+      ),
+    );
     semantics.dispose();
   });
 }

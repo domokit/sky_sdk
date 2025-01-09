@@ -5,8 +5,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/widget_state/widget_state_property.0.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/widget_state/widget_state_property.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -18,17 +17,13 @@ void main() {
   }
 
   testWidgets('Displays red colored text by default', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.WidgetStatePropertyExampleApp(),
-    );
+    await tester.pumpWidget(const example.WidgetStatePropertyExampleApp());
 
     expect(getTextColor(tester), Colors.red);
   });
 
   testWidgets('Displays blue colored text when button is hovered', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.WidgetStatePropertyExampleApp(),
-    );
+    await tester.pumpWidget(const example.WidgetStatePropertyExampleApp());
 
     expect(getTextColor(tester), Colors.red);
 
@@ -42,9 +37,7 @@ void main() {
   });
 
   testWidgets('Displays blue colored text when button is pressed', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.WidgetStatePropertyExampleApp(),
-    );
+    await tester.pumpWidget(const example.WidgetStatePropertyExampleApp());
 
     expect(getTextColor(tester), Colors.red);
 
@@ -58,9 +51,7 @@ void main() {
   });
 
   testWidgets('Displays blue colored text when button is focused', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.WidgetStatePropertyExampleApp(),
-    );
+    await tester.pumpWidget(const example.WidgetStatePropertyExampleApp());
 
     expect(getTextColor(tester), Colors.red);
 

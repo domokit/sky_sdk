@@ -22,14 +22,14 @@ class AutocompleteExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Autocomplete - async, debouncing, and network errors'),
-        ),
+        appBar: AppBar(title: const Text('Autocomplete - async, debouncing, and network errors')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text('Type below to autocomplete the following possible results: ${_FakeAPI._kOptions}.'),
+              Text(
+                'Type below to autocomplete the following possible results: ${_FakeAPI._kOptions}.',
+              ),
               const SizedBox(height: 32.0),
               const _AsyncAutocomplete(),
             ],
@@ -44,10 +44,10 @@ class _AsyncAutocomplete extends StatefulWidget {
   const _AsyncAutocomplete();
 
   @override
-  State<_AsyncAutocomplete > createState() => _AsyncAutocompleteState();
+  State<_AsyncAutocomplete> createState() => _AsyncAutocompleteState();
 }
 
-class _AsyncAutocompleteState extends State<_AsyncAutocomplete > {
+class _AsyncAutocompleteState extends State<_AsyncAutocomplete> {
   // The query currently being searched for. If null, there is no pending
   // request.
   String? _currentQuery;
@@ -113,11 +113,14 @@ class _AsyncAutocompleteState extends State<_AsyncAutocomplete > {
             });
           },
         ),
-        const SizedBox(
-          height: 32.0,
-        ),
+        const SizedBox(height: 32.0),
         Autocomplete<String>(
-          fieldViewBuilder: (BuildContext context, TextEditingController controller, FocusNode focusNode, VoidCallback onFieldSubmitted) {
+          fieldViewBuilder: (
+            BuildContext context,
+            TextEditingController controller,
+            FocusNode focusNode,
+            VoidCallback onFieldSubmitted,
+          ) {
             return TextFormField(
               decoration: InputDecoration(
                 errorText: _networkError ? 'Network error, please try again.' : null,
@@ -151,11 +154,7 @@ class _AsyncAutocompleteState extends State<_AsyncAutocomplete > {
 
 // Mimics a remote API.
 class _FakeAPI {
-  static const List<String> _kOptions = <String>[
-    'aardvark',
-    'bobcat',
-    'chameleon',
-  ];
+  static const List<String> _kOptions = <String>['aardvark', 'bobcat', 'chameleon'];
 
   // Searches the options, but injects a fake "network" delay.
   static Future<Iterable<String>> search(String query, bool networkEnabled) async {
@@ -197,8 +196,7 @@ _Debounceable<S, T> _debounce<S, T>(_Debounceable<S?, T> function) {
 
 // A wrapper around Timer used for debouncing.
 class _DebounceTimer {
-  _DebounceTimer(
-  ) {
+  _DebounceTimer() {
     _timer = Timer(debounceDuration, _onComplete);
   }
 

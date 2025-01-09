@@ -9,9 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('FloatingActionButton', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.FloatingActionButtonExampleApp(),
-    );
+    await tester.pumpWidget(const example.FloatingActionButtonExampleApp());
 
     expect(find.byType(FloatingActionButton), findsOneWidget);
     expect(find.byIcon(Icons.navigation), findsOneWidget);

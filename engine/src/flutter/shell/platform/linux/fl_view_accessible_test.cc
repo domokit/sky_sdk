@@ -7,11 +7,11 @@
 
 #include "flutter/shell/platform/linux/fl_view_accessible.h"
 #include "flutter/shell/platform/linux/public/flutter_linux/fl_engine.h"
-#include "flutter/shell/platform/linux/testing/fl_test.h"
 #include "flutter/shell/platform/linux/testing/mock_signal_handler.h"
 
 TEST(FlViewAccessibleTest, BuildTree) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
   g_autoptr(FlViewAccessible) accessible = fl_view_accessible_new(engine);
 
   int32_t children[] = {111, 222};
@@ -47,7 +47,8 @@ TEST(FlViewAccessibleTest, BuildTree) {
 }
 
 TEST(FlViewAccessibleTest, AddRemoveChildren) {
-  g_autoptr(FlEngine) engine = make_mock_engine();
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
   g_autoptr(FlViewAccessible) accessible = fl_view_accessible_new(engine);
 
   FlutterSemanticsNode2 root_node = {

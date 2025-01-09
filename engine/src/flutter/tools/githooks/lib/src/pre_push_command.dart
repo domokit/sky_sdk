@@ -24,14 +24,15 @@ class PrePushCommand extends Command<bool> {
     final String flutterRoot = globalResults!['flutter']! as String;
 
     if (!enableClangTidy) {
-      print('The clang-tidy check is disabled. To enable set the environment '
-            'variable PRE_PUSH_CLANG_TIDY to any value.');
+      print(
+        'The clang-tidy check is disabled. To enable set the environment '
+        'variable PRE_PUSH_CLANG_TIDY to any value.',
+      );
     }
 
     final List<bool> checkResults = <bool>[
       await _runFormatter(flutterRoot, verbose),
-      if (enableClangTidy)
-        await _runClangTidy(flutterRoot, verbose),
+      if (enableClangTidy) await _runClangTidy(flutterRoot, verbose),
     ];
     sw.stop();
     io.stdout.writeln('pre-push checks finished in ${sw.elapsed}');
@@ -43,24 +44,18 @@ class PrePushCommand extends Command<bool> {
     final Stopwatch sw = Stopwatch()..start();
     // First ensure that out/host_debug/compile_commands.json exists by running
     // //flutter/tools/gn.
-    io.File compileCommands = io.File(path.join(
-      flutterRoot,
-      '..',
-      'out',
-      'host_debug',
-      'compile_commands.json',
-    ));
+    io.File compileCommands = io.File(
+      path.join(flutterRoot, '..', 'out', 'host_debug', 'compile_commands.json'),
+    );
     if (!compileCommands.existsSync()) {
-      compileCommands = io.File(path.join(
-        flutterRoot,
-        '..',
-        'out',
-        'host_debug_unopt',
-        'compile_commands.json',
-      ));
+      compileCommands = io.File(
+        path.join(flutterRoot, '..', 'out', 'host_debug_unopt', 'compile_commands.json'),
+      );
       if (!compileCommands.existsSync()) {
-        io.stderr.writeln('clang-tidy requires a fully built host_debug or '
-                          'host_debug_unopt build directory');
+        io.stderr.writeln(
+          'clang-tidy requires a fully built host_debug or '
+          'host_debug_unopt build directory',
+        );
         return false;
       }
     }

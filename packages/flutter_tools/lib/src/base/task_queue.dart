@@ -18,8 +18,7 @@ class TaskQueue<T> {
   /// Creates a task queue with a maximum number of simultaneous jobs.
   /// The [maxJobs] parameter defaults to the number of CPU cores on the
   /// system.
-  TaskQueue({int? maxJobs})
-      : maxJobs = maxJobs ?? globals.platform.numberOfProcessors;
+  TaskQueue({int? maxJobs}) : maxJobs = maxJobs ?? globals.platform.numberOfProcessors;
 
   /// The maximum number of jobs that this queue will run simultaneously.
   final int maxJobs;
@@ -89,7 +88,8 @@ class _TaskQueueItem<T> {
   Future<void> run() async {
     try {
       _completer.complete(await _closure());
-    } catch (e) { // ignore: avoid_catches_without_on_clauses, forwards to Future
+    } catch (e) {
+      // ignore: avoid_catches_without_on_clauses, forwards to Future
       _completer.completeError(e);
     } finally {
       onComplete?.call();

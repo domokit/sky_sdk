@@ -40,11 +40,15 @@ base class Shader extends NativeFieldWrapperClass1 {
   }
 
   @Native<Int Function(Pointer<Void>, Handle)>(
-      symbol: 'InternalFlutterGpu_Shader_GetUniformStructSize')
+    symbol: 'InternalFlutterGpu_Shader_GetUniformStructSize',
+  )
   external int _getUniformStructSize(String uniformStructName);
 
   @Native<Int Function(Pointer<Void>, Handle, Handle)>(
-      symbol: 'InternalFlutterGpu_Shader_GetUniformMemberOffset')
+    symbol: 'InternalFlutterGpu_Shader_GetUniformMemberOffset',
+  )
   external int _getUniformMemberOffset(
-      String uniformStructName, String memberName);
+    String uniformStructName,
+    String memberName,
+  );
 }

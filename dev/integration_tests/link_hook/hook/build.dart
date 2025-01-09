@@ -9,6 +9,10 @@ import 'package:native_toolchain_c/native_toolchain_c.dart';
 
 void main(List<String> args) async {
   await build(args, (BuildConfig config, BuildOutputBuilder output) async {
+    if (!config.buildAssetTypes.contains(CodeAsset.type)) {
+      return;
+    }
+
     final String assetName;
     if (config.linkingEnabled) {
       // The link hook will be run. So emit an asset with a name that is
@@ -25,18 +29,17 @@ void main(List<String> args) async {
     final CBuilder cbuilder = CBuilder.library(
       name: packageName,
       assetName: assetName,
-      sources: <String>[
-        'src/$packageName.c',
-      ],
+      sources: <String>['src/$packageName.c'],
       dartBuildFiles: <String>['hook/build.dart'],
     );
     final BuildOutputBuilder outputCatcher = BuildOutputBuilder();
     await cbuilder.run(
       config: config,
       output: outputCatcher,
-      logger: Logger('')
-        ..level = Level.ALL
-        ..onRecord.listen((LogRecord record) => print(record.message)),
+      logger:
+          Logger('')
+            ..level = Level.ALL
+            ..onRecord.listen((LogRecord record) => print(record.message)),
     );
     final BuildOutput catchedOutput = BuildOutput(outputCatcher.json);
     output.addDependencies(catchedOutput.dependencies);

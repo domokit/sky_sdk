@@ -37,10 +37,11 @@ void _encodeBundleTranslations(Map<String, dynamic> bundle) {
     final String translation = bundle[key] as String;
     // Rewrite the string as a series of unicode characters in JSON format.
     // Like "\u0012\u0123\u1234".
-    bundle[key] = translation.runes.map((int code) {
-      final String codeString = '00${code.toRadixString(16)}';
-      return '\\u${codeString.substring(codeString.length - 4)}';
-    }).join();
+    bundle[key] =
+        translation.runes.map((int code) {
+          final String codeString = '00${code.toRadixString(16)}';
+          return '\\u${codeString.substring(codeString.length - 4)}';
+        }).join();
   }
 }
 
@@ -49,7 +50,9 @@ void _checkEncodedTranslations(Map<String, dynamic> encodedBundle, Map<String, d
   const JsonDecoder decoder = JsonDecoder();
   for (final String key in bundle.keys) {
     if (decoder.convert('"${encodedBundle[key]}"') != bundle[key]) {
-      stderr.writeln('  encodedTranslation for $key does not match original value "${bundle[key]}"');
+      stderr.writeln(
+        '  encodedTranslation for $key does not match original value "${bundle[key]}"',
+      );
       errorFound = true;
     }
   }

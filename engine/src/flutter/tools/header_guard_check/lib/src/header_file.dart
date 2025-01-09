@@ -12,11 +12,7 @@ import 'package:source_span/source_span.dart';
 @immutable
 final class HeaderFile {
   /// Creates a new header file from the given [path].
-  const HeaderFile.from(
-    this.path, {
-    required this.guard,
-    required this.pragmaOnce,
-  });
+  const HeaderFile.from(this.path, {required this.guard, required this.pragmaOnce});
 
   /// Parses the given [path] as a header file.
   ///
@@ -36,15 +32,10 @@ final class HeaderFile {
     );
   }
 
-  static ({
-    int start,
-    int end,
-    String line,
-  }) _getLine(SourceFile sourceFile, int index) {
+  static ({int start, int end, String line}) _getLine(SourceFile sourceFile, int index) {
     final int start = sourceFile.getOffset(index);
-    int end = index == sourceFile.lines - 1
-        ? sourceFile.length
-        : sourceFile.getOffset(index + 1) - 1;
+    int end =
+        index == sourceFile.lines - 1 ? sourceFile.length : sourceFile.getOffset(index + 1) - 1;
     String line = sourceFile.getText(start, end);
 
     // On Windows, it's common for files to have CRLF line endings, and for
@@ -59,11 +50,7 @@ final class HeaderFile {
       line = line.substring(0, line.length - 1);
     }
 
-    return (
-      start: start,
-      end: end,
-      line: line,
-    );
+    return (start: start, end: end, line: line);
   }
 
   /// Parses the header guard of the given [sourceFile].
@@ -105,11 +92,7 @@ final class HeaderFile {
       }
     }
 
-    return HeaderGuardSpans(
-      ifndefSpan: ifndefSpan,
-      defineSpan: defineSpan,
-      endifSpan: endifSpan,
-    );
+    return HeaderGuardSpans(ifndefSpan: ifndefSpan, defineSpan: defineSpan, endifSpan: endifSpan);
   }
 
   /// Parses the `#pragma once` directive of the given [sourceFile].
@@ -147,7 +130,9 @@ final class HeaderFile {
   /// For example, if the file is `foo/bar/baz.h`, this will return `FLUTTER_FOO_BAR_BAZ_H_`.
   String computeExpectedName({required String engineRoot}) {
     final String relativePath = p.relative(path, from: engineRoot);
-    final String underscoredRelativePath = p.withoutExtension(relativePath).replaceAll(_nonAlphaNumeric, '_');
+    final String underscoredRelativePath = p
+        .withoutExtension(relativePath)
+        .replaceAll(_nonAlphaNumeric, '_');
     return 'FLUTTER_${underscoredRelativePath.toUpperCase()}_H_';
   }
 
@@ -180,7 +165,7 @@ final class HeaderFile {
         pragmaOnce!.start.offset,
         pragmaOnce!.end.offset,
         '#ifndef $expectedGuard\n'
-        '#define $expectedGuard'
+        '#define $expectedGuard',
       );
 
       // Write the new contents to the file.
@@ -191,26 +176,25 @@ final class HeaderFile {
     // If we're not using pragma once, replace the header guard with the
     // expected header guard.
     if (guard != null) {
-
       // Replace endif:
       String newContents = oldContents.replaceRange(
         guard!.endifSpan!.start.offset,
         guard!.endifSpan!.end.offset,
-        '#endif  // $expectedGuard'
+        '#endif  // $expectedGuard',
       );
 
       // Replace define:
       newContents = newContents.replaceRange(
         guard!.defineSpan!.start.offset,
         guard!.defineSpan!.end.offset,
-        '#define $expectedGuard'
+        '#define $expectedGuard',
       );
 
       // Replace ifndef:
       newContents = newContents.replaceRange(
         guard!.ifndefSpan!.start.offset,
         guard!.ifndefSpan!.end.offset,
-        '#ifndef $expectedGuard'
+        '#ifndef $expectedGuard',
       );
 
       // Write the new contents to the file.
@@ -226,7 +210,7 @@ final class HeaderFile {
     newContents = newContents.replaceFirst(
       RegExp(r'^(?!//)', multiLine: true),
       '\n#ifndef $expectedGuard\n'
-      '#define $expectedGuard\n'
+      '#define $expectedGuard\n',
     );
 
     // Write the new contents to the file.

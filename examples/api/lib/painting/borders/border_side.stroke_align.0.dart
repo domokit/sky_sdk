@@ -181,10 +181,7 @@ class _StrokeAlignExampleState extends State<StrokeAlignExample> with TickerProv
 }
 
 class BorderedBox extends StatelessWidget {
-  const BorderedBox({
-    super.key,
-    required this.shape,
-  });
+  const BorderedBox({super.key, required this.shape});
 
   final ShapeBorder shape;
 
@@ -193,10 +190,7 @@ class BorderedBox extends StatelessWidget {
     return Container(
       width: 100,
       height: 50,
-      decoration: ShapeDecoration(
-        color: const Color(0xff012677),
-        shape: shape,
-      ),
+      decoration: ShapeDecoration(color: const Color(0xff012677), shape: shape),
     );
   }
 }

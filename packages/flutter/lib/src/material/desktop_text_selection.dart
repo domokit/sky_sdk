@@ -14,8 +14,8 @@ import 'material_localizations.dart';
 ///
 /// Specifically does not manage the toolbar, which is left to
 /// [EditableText.contextMenuBuilder].
-class _DesktopTextSelectionHandleControls extends DesktopTextSelectionControls with TextSelectionHandleControls {
-}
+class _DesktopTextSelectionHandleControls extends DesktopTextSelectionControls
+    with TextSelectionHandleControls {}
 
 /// Desktop Material styled text selection controls.
 ///
@@ -60,7 +60,12 @@ class DesktopTextSelectionControls extends TextSelectionControls {
 
   /// Builds the text selection handles, but desktop has none.
   @override
-  Widget buildHandle(BuildContext context, TextSelectionHandleType type, double textLineHeight, [VoidCallback? onTap]) {
+  Widget buildHandle(
+    BuildContext context,
+    TextSelectionHandleType type,
+    double textLineHeight, [
+    VoidCallback? onTap,
+  ]) {
     return const SizedBox.shrink();
   }
 
@@ -80,8 +85,8 @@ class DesktopTextSelectionControls extends TextSelectionControls {
     // already been selected. Same behavior as Android.
     final TextEditingValue value = delegate.textEditingValue;
     return delegate.selectAllEnabled &&
-           value.text.isNotEmpty &&
-           !(value.selection.start == 0 && value.selection.end == value.text.length);
+        value.text.isNotEmpty &&
+        !(value.selection.start == 0 && value.selection.end == value.text.length);
   }
 
   @Deprecated(
@@ -105,8 +110,7 @@ final TextSelectionControls desktopTextSelectionHandleControls =
 
 /// Desktop text selection controls that loosely follow Material design
 /// conventions.
-final TextSelectionControls desktopTextSelectionControls =
-    DesktopTextSelectionControls();
+final TextSelectionControls desktopTextSelectionControls = DesktopTextSelectionControls();
 
 // Generates the child that's passed into DesktopTextSelectionToolbar.
 class _DesktopTextSelectionControlsToolbar extends StatefulWidget {
@@ -135,10 +139,12 @@ class _DesktopTextSelectionControlsToolbar extends StatefulWidget {
   final double textLineHeight;
 
   @override
-  _DesktopTextSelectionControlsToolbarState createState() => _DesktopTextSelectionControlsToolbarState();
+  _DesktopTextSelectionControlsToolbarState createState() =>
+      _DesktopTextSelectionControlsToolbarState();
 }
 
-class _DesktopTextSelectionControlsToolbarState extends State<_DesktopTextSelectionControlsToolbar> {
+class _DesktopTextSelectionControlsToolbarState
+    extends State<_DesktopTextSelectionControlsToolbar> {
   void _onChangedClipboardStatus() {
     setState(() {
       // Inform the widget that the value of clipboardStatus has changed.
@@ -178,7 +184,8 @@ class _DesktopTextSelectionControlsToolbarState extends State<_DesktopTextSelect
 
     final EdgeInsets mediaQueryPadding = MediaQuery.paddingOf(context);
     final Offset midpointAnchor = Offset(
-      clampDouble(widget.selectionMidpoint.dx - widget.globalEditableRegion.left,
+      clampDouble(
+        widget.selectionMidpoint.dx - widget.globalEditableRegion.left,
         mediaQueryPadding.left,
         MediaQuery.sizeOf(context).width - mediaQueryPadding.right,
       ),
@@ -188,15 +195,10 @@ class _DesktopTextSelectionControlsToolbarState extends State<_DesktopTextSelect
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
     final List<Widget> items = <Widget>[];
 
-    void addToolbarButton(
-      String text,
-      VoidCallback onPressed,
-    ) {
-      items.add(DesktopTextSelectionToolbarButton.text(
-        context: context,
-        onPressed: onPressed,
-        text: text,
-      ));
+    void addToolbarButton(String text, VoidCallback onPressed) {
+      items.add(
+        DesktopTextSelectionToolbarButton.text(context: context, onPressed: onPressed, text: text),
+      );
     }
 
     if (widget.handleCut != null) {
@@ -205,8 +207,7 @@ class _DesktopTextSelectionControlsToolbarState extends State<_DesktopTextSelect
     if (widget.handleCopy != null) {
       addToolbarButton(localizations.copyButtonLabel, widget.handleCopy!);
     }
-    if (widget.handlePaste != null
-        && widget.clipboardStatus?.value == ClipboardStatus.pasteable) {
+    if (widget.handlePaste != null && widget.clipboardStatus?.value == ClipboardStatus.pasteable) {
       addToolbarButton(localizations.pasteButtonLabel, widget.handlePaste!);
     }
     if (widget.handleSelectAll != null) {

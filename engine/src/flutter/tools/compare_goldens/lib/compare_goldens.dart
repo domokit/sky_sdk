@@ -10,7 +10,7 @@ bool _hasCommandOnPath(String name) {
 }
 
 List<String> _findPairs(Set<String> as, Set<String> bs) {
-  final List<String> result  = <String>[];
+  final List<String> result = <String>[];
   for (final String a in as) {
     if (bs.contains(a)) {
       result.add(a);
@@ -31,10 +31,11 @@ String _basename(String path) {
 }
 
 Set<String> _grabPngFilenames(Directory dir) {
-  return dir.listSync()
-    .map((FileSystemEntity e) => _basename(e.path))
-    .where((String e) => e.endsWith('.png'))
-    .toSet();
+  return dir
+      .listSync()
+      .map((FileSystemEntity e) => _basename(e.path))
+      .where((String e) => e.endsWith('.png'))
+      .toSet();
 }
 
 /// The main entry point to the tool, execute it like `main`. Returns the
@@ -72,8 +73,15 @@ int run(List<String> args) {
     final String pathB = <String>[dirB.path, name].join(Platform.pathSeparator);
     final String output = 'diff_$name';
     print('compare ($count / ${pairs.length}) $name');
-    final ProcessResult result = Process.runSync('compare',
-        <String>['-metric', 'RMSE', '-fuzz', '5%', pathA, pathB, output]);
+    final ProcessResult result = Process.runSync('compare', <String>[
+      '-metric',
+      'RMSE',
+      '-fuzz',
+      '5%',
+      pathA,
+      pathB,
+      output,
+    ]);
     if (result.exitCode != 0) {
       print('DIFF FOUND: saved to $output');
       returnCode = 1;

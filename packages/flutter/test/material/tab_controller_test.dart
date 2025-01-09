@@ -7,9 +7,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
 
 void main() {
-  testWidgets('$TabController dispatches creation in constructor.', (WidgetTester widgetTester) async {
+  testWidgets('$TabController dispatches creation in constructor.', (
+    WidgetTester widgetTester,
+  ) async {
     await expectLater(
-      await memoryEvents(() async => TabController(length: 1, vsync: const TestVSync()).dispose(), TabController),
+      await memoryEvents(
+        () async => TabController(length: 1, vsync: const TestVSync()).dispose(),
+        TabController,
+      ),
       areCreateAndDispose,
     );
   });

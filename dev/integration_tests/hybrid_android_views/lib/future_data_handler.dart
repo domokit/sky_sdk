@@ -25,7 +25,7 @@ class FutureDataHandler {
   Future<String> handleMessage(String? message) async {
     if (_handlers[message] == null) {
       return 'Unsupported driver message: $message.\n'
-             'Supported messages are: ${_handlers.keys}.';
+          'Supported messages are: ${_handlers.keys}.';
     }
     final DriverHandler handler = await _handlers[message]!.future;
     return handler();

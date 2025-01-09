@@ -14,11 +14,7 @@ const double homePeekDesktop = 210.0;
 const double homePeekMobile = 60.0;
 
 class SplashPageAnimation extends InheritedWidget {
-  const SplashPageAnimation({
-    super.key,
-    required this.isFinished,
-    required super.child,
-  });
+  const SplashPageAnimation({super.key, required this.isFinished, required super.child});
 
   final bool isFinished;
 
@@ -31,10 +27,7 @@ class SplashPageAnimation extends InheritedWidget {
 }
 
 class SplashPage extends StatefulWidget {
-  const SplashPage({
-    super.key,
-    required this.child,
-  });
+  const SplashPage({super.key, required this.child});
 
   final Widget child;
 
@@ -42,8 +35,7 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage>
-    with SingleTickerProviderStateMixin {
+class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late int _effect;
   final Random _random = Random();
@@ -77,11 +69,10 @@ class _SplashPageState extends State<SplashPage>
     // If the number of included effects changes, this number should be changed.
     _effect = _random.nextInt(_effectDurations.length) + 1;
 
-    _controller =
-        AnimationController(duration: splashPageAnimationDuration, vsync: this)
-          ..addListener(() {
-            setState(() {});
-          });
+    _controller = AnimationController(duration: splashPageAnimationDuration, vsync: this)
+      ..addListener(() {
+        setState(() {});
+      });
   }
 
   @override
@@ -90,12 +81,9 @@ class _SplashPageState extends State<SplashPage>
     super.dispose();
   }
 
-  Animation<RelativeRect> _getPanelAnimation(
-    BuildContext context,
-    BoxConstraints constraints,
-  ) {
-    final double height = constraints.biggest.height -
-        (isDisplayDesktop(context) ? homePeekDesktop : homePeekMobile);
+  Animation<RelativeRect> _getPanelAnimation(BuildContext context, BoxConstraints constraints) {
+    final double height =
+        constraints.biggest.height - (isDisplayDesktop(context) ? homePeekDesktop : homePeekMobile);
     return RelativeRectTween(
       begin: RelativeRect.fill,
       end: RelativeRect.fromLTRB(0, height, 0, 0),
@@ -135,9 +123,7 @@ class _SplashPageState extends State<SplashPage>
               frontLayer = Padding(
                 padding: const EdgeInsets.only(top: 136),
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(40),
-                  ),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
                   child: frontLayer,
                 ),
               );
@@ -150,10 +136,7 @@ class _SplashPageState extends State<SplashPage>
                   effect: _effect,
                   onTap: _controller.forward,
                 ),
-                PositionedTransition(
-                  rect: animation,
-                  child: frontLayer,
-                ),
+                PositionedTransition(rect: animation, child: frontLayer),
               ],
             );
           },
@@ -164,11 +147,7 @@ class _SplashPageState extends State<SplashPage>
 }
 
 class _SplashBackLayer extends StatelessWidget {
-  const _SplashBackLayer({
-    required this.isSplashCollapsed,
-    required this.effect,
-    this.onTap,
-  });
+  const _SplashBackLayer({required this.isSplashCollapsed, required this.effect, this.onTap});
 
   final bool isSplashCollapsed;
   final int effect;
@@ -191,10 +170,7 @@ class _SplashBackLayer extends StatelessWidget {
             alignment: Alignment.topCenter,
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
-              child: GestureDetector(
-                onTap: onTap,
-                child: flutterLogo,
-              ),
+              child: GestureDetector(onTap: onTap, child: flutterLogo),
             ),
           ),
         );
@@ -202,12 +178,7 @@ class _SplashBackLayer extends StatelessWidget {
     } else {
       child = Stack(
         children: <Widget>[
-          Center(
-            child: Image.asset(
-              effectAsset,
-              package: 'flutter_gallery_assets',
-            ),
-          ),
+          Center(child: Image.asset(effectAsset, package: 'flutter_gallery_assets')),
           Center(child: flutterLogo),
         ],
       );
@@ -219,9 +190,7 @@ class _SplashBackLayer extends StatelessWidget {
         color: const Color(0xFF030303),
         child: Padding(
           padding: EdgeInsets.only(
-            bottom: isDisplayDesktop(context)
-                ? homePeekDesktop
-                : homePeekMobile,
+            bottom: isDisplayDesktop(context) ? homePeekDesktop : homePeekMobile,
           ),
           child: child,
         ),

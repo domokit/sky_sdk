@@ -128,6 +128,46 @@ bool TiledTextureContents::Render(const ContentContext& renderer,
       Rect::MakeSize(texture_size).GetNormalizingTransform() *
       GetInverseEffectTransform();
 
+#ifdef IMPELLER_ENABLE_OPENGLES
+  using FSExternal = TiledTextureFillExternalFragmentShader;
+  if (texture_->GetTextureDescriptor().type ==
+      TextureType::kTextureExternalOES) {
+    return ColorSourceContents::DrawGeometry<VS>(
+        renderer, entity, pass,
+        [&renderer](ContentContextOptions options) {
+          return renderer.GetTiledTextureUvExternalPipeline(options);
+        },
+        frame_info,
+        [this, &renderer](RenderPass& pass) {
+          auto& host_buffer = renderer.GetTransientsBuffer();
+#ifdef IMPELLER_DEBUG
+          pass.SetCommandLabel("TextureFill External");
+#endif  // IMPELLER_DEBUG
+
+          FML_DCHECK(!color_filter_);
+          FSExternal::FragInfo frag_info;
+          frag_info.x_tile_mode =
+              static_cast<Scalar>(sampler_descriptor_.width_address_mode);
+          frag_info.y_tile_mode =
+              static_cast<Scalar>(sampler_descriptor_.height_address_mode);
+          frag_info.alpha = GetOpacityFactor();
+          FSExternal::BindFragInfo(pass, host_buffer.EmplaceUniform(frag_info));
+
+          SamplerDescriptor sampler_desc;
+          // OES_EGL_image_external states that only CLAMP_TO_EDGE is valid,
+          // so we emulate all other tile modes here by remapping the texture
+          // coordinates.
+          sampler_desc.width_address_mode = SamplerAddressMode::kClampToEdge;
+          sampler_desc.height_address_mode = SamplerAddressMode::kClampToEdge;
+          FSExternal::BindSAMPLEREXTERNALOESTextureSampler(
+              pass, texture_,
+              renderer.GetContext()->GetSamplerLibrary()->GetSampler(
+                  sampler_desc));
+          return true;
+        });
+  }
+#endif  // IMPELLER_ENABLE_OPENGLES
+
   PipelineBuilderCallback pipeline_callback =
       [&renderer](ContentContextOptions options) {
         return renderer.GetTiledTexturePipeline(options);

@@ -7,39 +7,50 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 
-final ArgParser argParser = ArgParser()
-  ..addOption('output-dir')
-  ..addOption('input-dir')
-  ..addFlag('ui')
-  ..addFlag('public')
-  ..addOption('library-name')
-  ..addOption('api-file')
-  ..addMultiOption('source-file')
-  ..addOption('stamp')
-  ..addOption('depfile')
-  ..addOption('exclude-pattern')
-  ..addOption('build-dir');
+final ArgParser argParser =
+    ArgParser()
+      ..addOption('output-dir')
+      ..addOption('input-dir')
+      ..addFlag('ui')
+      ..addFlag('public')
+      ..addOption('library-name')
+      ..addOption('api-file')
+      ..addMultiOption('source-file')
+      ..addOption('stamp')
+      ..addOption('depfile')
+      ..addOption('exclude-pattern')
+      ..addOption('build-dir');
 
 final List<Replacer> uiPatterns = <Replacer>[
   AllReplacer(RegExp(r'library\s+ui;'), 'library dart.ui;'),
   AllReplacer(RegExp(r'part\s+of\s+ui;'), 'part of dart.ui;'),
 
   // import 'src/engine.dart' as engine;
-  AllReplacer(RegExp(r'''
+  AllReplacer(
+    RegExp(r'''
 import\s*'src/engine.dart'\s*as\s+engine;
-'''), r'''
-import 'dart:_engine' as engine;
 '''),
+    r'''
+import 'dart:_engine' as engine;
+''',
+  ),
 
   // import 'ui_web/src/ui_web.dart' as ui_web;
-  AllReplacer(RegExp(r'''
+  AllReplacer(
+    RegExp(r'''
 import\s*'ui_web/src/ui_web.dart'\s*as\s+ui_web;
-'''), r'''
-import 'dart:ui_web' as ui_web;
 '''),
+    r'''
+import 'dart:ui_web' as ui_web;
+''',
+  ),
 ];
 
-List<Replacer> generateApiFilePatterns(String libraryName, bool isPublic, List<String> extraImports) {
+List<Replacer> generateApiFilePatterns(
+  String libraryName,
+  bool isPublic,
+  List<String> extraImports,
+) {
   final String libraryPrefix = isPublic ? '' : '_';
   return <Replacer>[
     AllReplacer(RegExp('library\\s+$libraryName;'), '''
@@ -58,14 +69,15 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 ${extraImports.join('\n')}
-'''
-    ),
+'''),
     // Replace exports of engine files with "part" directives.
-    MappedReplacer(RegExp('''
+    MappedReplacer(
+      RegExp('''
 export\\s*'$libraryName/(.*)';
-'''), (Match match) => '''
+'''),
+      (Match match) => '''
 part '$libraryName/${match.group(1)}';
-'''
+''',
     ),
   ];
 }
@@ -95,15 +107,11 @@ final List<Replacer> stripMetaPatterns = <Replacer>[
   AllReplacer('@visibleForTesting', ''),
 ];
 
-const Set<String> rootLibraryNames = <String>{
-  'ui_web',
-  'engine',
-  'skwasm_stub',
-  'skwasm_impl',
-};
+const Set<String> rootLibraryNames = <String>{'ui_web', 'engine', 'skwasm_stub', 'skwasm_impl'};
 
 final Map<Pattern, String> extraImportsMap = <Pattern, String>{
-  RegExp('skwasm_(stub|impl)'): "import 'dart:_skwasm_impl' if (dart.library.html) 'dart:_skwasm_stub';",
+  RegExp('skwasm_(stub|impl)'):
+      "import 'dart:_skwasm_impl' if (dart.library.html) 'dart:_skwasm_stub';",
   'ui_web': "import 'dart:ui_web' as ui_web;",
   'engine': "import 'dart:_engine';",
   'web_unicode': "import 'dart:_web_unicode';",
@@ -140,9 +148,9 @@ void main(List<String> arguments) {
   }
 
   final List<String> inputFiles = <String>[];
-  final List<FileSystemEntity> entries = Directory(inputDirectoryPath).listSync(
-    recursive: true, followLinks: false,
-  );
+  final List<FileSystemEntity> entries = Directory(
+    inputDirectoryPath,
+  ).listSync(recursive: true, followLinks: false);
   for (final File inputFile in entries.whereType<File>()) {
     if (excludePattern != null && inputFile.path.startsWith(excludePattern)) {
       continue;
@@ -165,8 +173,7 @@ void main(List<String> arguments) {
     }
 
     final String inputFilePath = results['api-file'] as String;
-    final String outputFilePath = path.join(
-        directory.path, path.basename(inputFilePath));
+    final String outputFilePath = path.join(directory.path, path.basename(inputFilePath));
 
     final List<String> extraImports = getExtraImportsForLibrary(libraryName);
     replacementPatterns = generateApiFilePatterns(libraryName, isPublic, extraImports);
@@ -175,7 +182,7 @@ void main(List<String> arguments) {
       inputFilePath,
       outputFilePath,
       (String source) => validateApiFile(inputFilePath, source, libraryName!),
-      replacementPatterns
+      replacementPatterns,
     );
   }
 
@@ -209,17 +216,24 @@ List<String> getExtraImportsForLibrary(String libraryName) {
   return extraImports;
 }
 
-void processFile(String inputFilePath, String outputFilePath, String Function(String source)? preprocessor, List<Replacer> replacementPatterns) {
+void processFile(
+  String inputFilePath,
+  String outputFilePath,
+  String Function(String source)? preprocessor,
+  List<Replacer> replacementPatterns,
+) {
   final File inputFile = File(inputFilePath);
-  final File outputFile = File(outputFilePath)
-    ..createSync(recursive: true);
-  outputFile.writeAsStringSync(processSource(
-    inputFile.readAsStringSync(),
-    preprocessor,
-    replacementPatterns));
+  final File outputFile = File(outputFilePath)..createSync(recursive: true);
+  outputFile.writeAsStringSync(
+    processSource(inputFile.readAsStringSync(), preprocessor, replacementPatterns),
+  );
 }
 
-String processSource(String source, String Function(String source)? preprocessor, List<Replacer> replacementPatterns) {
+String processSource(
+  String source,
+  String Function(String source)? preprocessor,
+  List<Replacer> replacementPatterns,
+) {
   if (preprocessor != null) {
     source = preprocessor(source);
   }
@@ -238,9 +252,7 @@ String processSource(String source, String Function(String source)? preprocessor
 // and code comments. Imports are disallowed. Instead, the required imports are
 // added by this script during the rewrite.
 String validateApiFile(String apiFilePath, String apiFileCode, String libraryName) {
-  final List<String> expectedLines = <String>[
-    'library $libraryName;',
-  ];
+  final List<String> expectedLines = <String>['library $libraryName;'];
 
   final List<String> lines = apiFileCode.split('\n');
   for (int i = 0; i < lines.length; i += 1) {
@@ -281,7 +293,7 @@ String validateApiFile(String apiFilePath, String apiFileCode, String libraryNam
     throw Exception(
       'on line $lineNumber: unexpected code in $apiFilePath. This file '
       'may only contain comments and exports. Found:\n'
-      '$line'
+      '$line',
     );
   }
   return apiFileCode;

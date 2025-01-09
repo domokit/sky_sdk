@@ -18,16 +18,8 @@ void main() {
     final Duration epoch = currentTestFrameTime();
     final ui.PointerDataPacket packet = ui.PointerDataPacket(
       data: <ui.PointerData>[
-        ui.PointerData(
-          viewId: tester.view.viewId,
-          change: ui.PointerChange.add,
-          timeStamp: epoch,
-        ),
-        ui.PointerData(
-          viewId: tester.view.viewId,
-          change: ui.PointerChange.down,
-          timeStamp: epoch,
-        ),
+        ui.PointerData(viewId: tester.view.viewId, change: ui.PointerChange.add, timeStamp: epoch),
+        ui.PointerData(viewId: tester.view.viewId, change: ui.PointerChange.down, timeStamp: epoch),
         ui.PointerData(
           viewId: tester.view.viewId,
           change: ui.PointerChange.move,
@@ -118,9 +110,7 @@ void main() {
     // A timer will be started when event's timeStamp is larger than sampleTime.
     final ui.PointerDataPacket packet = ui.PointerDataPacket(
       data: <ui.PointerData>[
-        ui.PointerData(
-          timeStamp: Duration(microseconds: DateTime.now().microsecondsSinceEpoch),
-        ),
+        ui.PointerData(timeStamp: Duration(microseconds: DateTime.now().microsecondsSinceEpoch)),
       ],
     );
     GestureBinding.instance.resamplingEnabled = true;

@@ -2,8 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:ui' show AccessibilityFeatures, Brightness, Display, FlutterView,
-  Locale, PlatformDispatcher, ViewFocusChangeCallback, VoidCallback;
+import 'dart:ui'
+    show
+        AccessibilityFeatures,
+        Brightness,
+        Display,
+        FlutterView,
+        Locale,
+        PlatformDispatcher,
+        ViewFocusChangeCallback,
+        VoidCallback;
 
 import 'package:flutter/widgets.dart' show WidgetsBinding, WidgetsBindingObserver;
 import 'package:flutter_test/flutter_test.dart';
@@ -12,7 +20,9 @@ import 'utils/fake_and_mock_utils.dart';
 
 void main() {
   test('TestPlatformDispatcher can handle new methods without breaking', () {
-    final dynamic testPlatformDispatcher = TestPlatformDispatcher(platformDispatcher: PlatformDispatcher.instance);
+    final dynamic testPlatformDispatcher = TestPlatformDispatcher(
+      platformDispatcher: PlatformDispatcher.instance,
+    );
     // ignore: avoid_dynamic_calls
     expect(testPlatformDispatcher.someNewProperty, null);
   });
@@ -99,7 +109,9 @@ void main() {
     );
   });
 
-  testWidgets('TestPlatformDispatcher can fake accessibility features', (WidgetTester tester) async {
+  testWidgets('TestPlatformDispatcher can fake accessibility features', (
+    WidgetTester tester,
+  ) async {
     verifyPropertyFaked<AccessibilityFeatures>(
       tester: tester,
       realValue: PlatformDispatcher.instance.accessibilityFeatures,
@@ -127,10 +139,13 @@ void main() {
     );
   });
 
-  testWidgets('TestPlatformDispatcher can clear out fake properties all at once', (WidgetTester tester) async {
+  testWidgets('TestPlatformDispatcher can clear out fake properties all at once', (
+    WidgetTester tester,
+  ) async {
     final Locale originalLocale = PlatformDispatcher.instance.locale;
     final double originalTextScaleFactor = PlatformDispatcher.instance.textScaleFactor;
-    final TestPlatformDispatcher testPlatformDispatcher = retrieveTestBinding(tester).platformDispatcher;
+    final TestPlatformDispatcher testPlatformDispatcher =
+        retrieveTestBinding(tester).platformDispatcher;
 
     // Set fake values for window properties.
     testPlatformDispatcher.localeTestValue = const Locale('foobar');
@@ -144,18 +159,26 @@ void main() {
     expect(WidgetsBinding.instance.platformDispatcher.textScaleFactor, originalTextScaleFactor);
   });
 
-  testWidgets('TestPlatformDispatcher sends fake locales when WidgetsBindingObserver notifiers are called', (WidgetTester tester) async {
-    final List<Locale> defaultLocales = WidgetsBinding.instance.platformDispatcher.locales;
-    final TestObserver observer = TestObserver();
-    retrieveTestBinding(tester).addObserver(observer);
-    final List<Locale> expectedValue = <Locale>[const Locale('fake_language_code')];
-    retrieveTestBinding(tester).platformDispatcher.localesTestValue = expectedValue;
-    expect(observer.locales, equals(expectedValue));
-    retrieveTestBinding(tester).platformDispatcher.localesTestValue = defaultLocales;
-  });
+  testWidgets(
+    'TestPlatformDispatcher sends fake locales when WidgetsBindingObserver notifiers are called',
+    (WidgetTester tester) async {
+      final List<Locale> defaultLocales = WidgetsBinding.instance.platformDispatcher.locales;
+      final TestObserver observer = TestObserver();
+      retrieveTestBinding(tester).addObserver(observer);
+      final List<Locale> expectedValue = <Locale>[const Locale('fake_language_code')];
+      retrieveTestBinding(tester).platformDispatcher.localesTestValue = expectedValue;
+      expect(observer.locales, equals(expectedValue));
+      retrieveTestBinding(tester).platformDispatcher.localesTestValue = defaultLocales;
+    },
+  );
 
-  testWidgets('TestPlatformDispatcher.view getter returns the implicit view', (WidgetTester tester) async {
-    expect(WidgetsBinding.instance.platformDispatcher.view(id: tester.view.viewId), same(tester.view));
+  testWidgets('TestPlatformDispatcher.view getter returns the implicit view', (
+    WidgetTester tester,
+  ) async {
+    expect(
+      WidgetsBinding.instance.platformDispatcher.view(id: tester.view.viewId),
+      same(tester.view),
+    );
   });
 
   // TODO(pdblasi-google): Removed this group of tests when the Display API is stable and supported on all platforms.
@@ -165,10 +188,8 @@ void main() {
         TestPlatformDispatcher(
           platformDispatcher: _FakePlatformDispatcher(
             displays: <Display>[],
-            views: <FlutterView>[
-              _FakeFlutterView(),
-            ],
-          )
+            views: <FlutterView>[_FakeFlutterView()],
+          ),
         );
       }, isNot(throwsA(anything)));
     });
@@ -177,13 +198,9 @@ void main() {
       expect(() {
         TestPlatformDispatcher(
           platformDispatcher: _FakePlatformDispatcher(
-            displays: <Display>[
-              _FakeDisplay(id: 2),
-            ],
-            views: <FlutterView>[
-              _FakeFlutterView(display: _FakeDisplay(id: 1)),
-            ],
-          )
+            displays: <Display>[_FakeDisplay(id: 2)],
+            views: <FlutterView>[_FakeFlutterView(display: _FakeDisplay(id: 1))],
+          ),
         );
       }, isNot(throwsA(anything)));
     });
@@ -191,9 +208,7 @@ void main() {
     testWidgets('creates test views for all views', (WidgetTester tester) async {
       final PlatformDispatcher backingDispatcher = _FakePlatformDispatcher(
         displays: <Display>[],
-        views: <FlutterView>[
-          _FakeFlutterView(),
-        ],
+        views: <FlutterView>[_FakeFlutterView()],
       );
       final TestPlatformDispatcher testDispatcher = TestPlatformDispatcher(
         platformDispatcher: backingDispatcher,
@@ -205,13 +220,11 @@ void main() {
     group('creates TestFlutterViews', () {
       testWidgets('that defaults to the correct devicePixelRatio', (WidgetTester tester) async {
         const double expectedDpr = 2.5;
-        final TestPlatformDispatcher testDispatcher =  TestPlatformDispatcher(
+        final TestPlatformDispatcher testDispatcher = TestPlatformDispatcher(
           platformDispatcher: _FakePlatformDispatcher(
             displays: <Display>[],
-            views: <FlutterView>[
-              _FakeFlutterView(devicePixelRatio: expectedDpr),
-            ],
-          )
+            views: <FlutterView>[_FakeFlutterView(devicePixelRatio: expectedDpr)],
+          ),
         );
 
         expect(testDispatcher.views.single.devicePixelRatio, expectedDpr);
@@ -220,13 +233,11 @@ void main() {
       testWidgets('with working devicePixelRatio setter', (WidgetTester tester) async {
         const double expectedDpr = 2.5;
         const double defaultDpr = 4;
-        final TestPlatformDispatcher testDispatcher =  TestPlatformDispatcher(
+        final TestPlatformDispatcher testDispatcher = TestPlatformDispatcher(
           platformDispatcher: _FakePlatformDispatcher(
             displays: <Display>[],
-            views: <FlutterView>[
-              _FakeFlutterView(devicePixelRatio: defaultDpr),
-            ],
-          )
+            views: <FlutterView>[_FakeFlutterView(devicePixelRatio: defaultDpr)],
+          ),
         );
 
         testDispatcher.views.single.devicePixelRatio = expectedDpr;
@@ -237,13 +248,11 @@ void main() {
       testWidgets('with working resetDevicePixelRatio', (WidgetTester tester) async {
         const double changedDpr = 2.5;
         const double defaultDpr = 4;
-        final TestPlatformDispatcher testDispatcher =  TestPlatformDispatcher(
+        final TestPlatformDispatcher testDispatcher = TestPlatformDispatcher(
           platformDispatcher: _FakePlatformDispatcher(
             displays: <Display>[],
-            views: <FlutterView>[
-              _FakeFlutterView(devicePixelRatio: defaultDpr),
-            ],
-          )
+            views: <FlutterView>[_FakeFlutterView(devicePixelRatio: defaultDpr)],
+          ),
         );
 
         testDispatcher.views.single.devicePixelRatio = changedDpr;
@@ -272,10 +281,7 @@ class _FakeDisplay extends Fake implements Display {
 }
 
 class _FakeFlutterView extends Fake implements FlutterView {
-  _FakeFlutterView({
-    this.devicePixelRatio = 1,
-    Display? display,
-  }) : _display = display;
+  _FakeFlutterView({this.devicePixelRatio = 1, Display? display}) : _display = display;
 
   @override
   final double devicePixelRatio;
@@ -288,6 +294,7 @@ class _FakeFlutterView extends Fake implements FlutterView {
     assert(_display != null);
     return _display!;
   }
+
   final Display? _display;
 
   @override

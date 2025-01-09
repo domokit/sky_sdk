@@ -31,51 +31,65 @@ void main() {
     fileSystem = MemoryFileSystem.test();
   });
 
-  testUsingContext('IOSDevice.isSupportedForProject is true on module project', () async {
-    fileSystem.file('pubspec.yaml')
-      ..createSync()
-      ..writeAsStringSync(r'''
+  testUsingContext(
+    'IOSDevice.isSupportedForProject is true on module project',
+    () async {
+      fileSystem.file('pubspec.yaml')
+        ..createSync()
+        ..writeAsStringSync(r'''
 name: example
 flutter:
   module: {}
   ''');
-    final FlutterProject flutterProject =
-      FlutterProject.fromDirectory(fileSystem.currentDirectory);
-    final IOSDevice device = setUpIOSDevice(fileSystem);
+      final FlutterProject flutterProject = FlutterProject.fromDirectory(
+        fileSystem.currentDirectory,
+      );
+      final IOSDevice device = setUpIOSDevice(fileSystem);
 
-    expect(device.isSupportedForProject(flutterProject), true);
-  }, overrides: <Type, Generator>{
-    FileSystem: () => fileSystem,
-    ProcessManager: () => FakeProcessManager.any(),
-  });
+      expect(device.isSupportedForProject(flutterProject), true);
+    },
+    overrides: <Type, Generator>{
+      FileSystem: () => fileSystem,
+      ProcessManager: () => FakeProcessManager.any(),
+    },
+  );
 
-  testUsingContext('IOSDevice.isSupportedForProject is true with editable host app', () async {
-    final FileSystem fileSystem = MemoryFileSystem.test();
-    fileSystem.file('pubspec.yaml').createSync();
-    fileSystem.directory('ios').createSync();
-    final FlutterProject flutterProject =
-      FlutterProject.fromDirectory(fileSystem.currentDirectory);
-    final IOSDevice device = setUpIOSDevice(fileSystem);
+  testUsingContext(
+    'IOSDevice.isSupportedForProject is true with editable host app',
+    () async {
+      final FileSystem fileSystem = MemoryFileSystem.test();
+      fileSystem.file('pubspec.yaml').createSync();
+      fileSystem.directory('ios').createSync();
+      final FlutterProject flutterProject = FlutterProject.fromDirectory(
+        fileSystem.currentDirectory,
+      );
+      final IOSDevice device = setUpIOSDevice(fileSystem);
 
-    expect(device.isSupportedForProject(flutterProject), true);
-  }, overrides: <Type, Generator>{
-    FileSystem: () => fileSystem,
-    ProcessManager: () => FakeProcessManager.any(),
-  });
+      expect(device.isSupportedForProject(flutterProject), true);
+    },
+    overrides: <Type, Generator>{
+      FileSystem: () => fileSystem,
+      ProcessManager: () => FakeProcessManager.any(),
+    },
+  );
 
+  testUsingContext(
+    'IOSDevice.isSupportedForProject is false with no host app and no module',
+    () async {
+      final FileSystem fileSystem = MemoryFileSystem.test();
+      fileSystem.file('pubspec.yaml').createSync();
+      final FlutterProject flutterProject = FlutterProject.fromDirectory(
+        fileSystem.currentDirectory,
+      );
+      final IOSDevice device = setUpIOSDevice(fileSystem);
 
-  testUsingContext('IOSDevice.isSupportedForProject is false with no host app and no module', () async {
-    final FileSystem fileSystem = MemoryFileSystem.test();
-    fileSystem.file('pubspec.yaml').createSync();
-    final FlutterProject flutterProject =
-      FlutterProject.fromDirectory(fileSystem.currentDirectory);
-    final IOSDevice device = setUpIOSDevice(fileSystem);
-
-    expect(device.isSupportedForProject(flutterProject), false);
-  }, overrides: <Type, Generator>{
-    FileSystem: () => fileSystem,
-    ProcessManager: () => FakeProcessManager.any(),
-  });
+      expect(device.isSupportedForProject(flutterProject), false);
+    },
+    overrides: <Type, Generator>{
+      FileSystem: () => fileSystem,
+      ProcessManager: () => FakeProcessManager.any(),
+    },
+  );
 }
 
 IOSDevice setUpIOSDevice(FileSystem fileSystem) {

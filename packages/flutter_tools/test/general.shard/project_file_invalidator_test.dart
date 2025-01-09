@@ -92,7 +92,7 @@ void main() {
       expect(
         (await projectFileInvalidator.findInvalidated(
           lastCompiled: inFuture,
-          urisToMonitor: <Uri>[Uri.parse('/not-there-anymore'),],
+          urisToMonitor: <Uri>[Uri.parse('/not-there-anymore')],
           packagesPath: '.dart_tool/package_config.json',
           asyncScanning: asyncScanning,
           packageConfig: PackageConfig.empty,
@@ -101,35 +101,36 @@ void main() {
       );
     });
 
-    testWithoutContext('Works with MultiRootFileSystem uris, asyncScanning: $asyncScanning', () async {
-      final FileSystem fileSystem = MemoryFileSystem.test();
-      final FileSystem multiRootFileSystem = MultiRootFileSystem(
-        delegate: fileSystem,
-        scheme: 'scheme',
-        roots: <String>[
-          '/root',
-        ],
-      );
-      final ProjectFileInvalidator projectFileInvalidator = ProjectFileInvalidator(
-        fileSystem: multiRootFileSystem,
-        platform: FakePlatform(),
-        logger: BufferLogger.test(),
-      );
+    testWithoutContext(
+      'Works with MultiRootFileSystem uris, asyncScanning: $asyncScanning',
+      () async {
+        final FileSystem fileSystem = MemoryFileSystem.test();
+        final FileSystem multiRootFileSystem = MultiRootFileSystem(
+          delegate: fileSystem,
+          scheme: 'scheme',
+          roots: <String>['/root'],
+        );
+        final ProjectFileInvalidator projectFileInvalidator = ProjectFileInvalidator(
+          fileSystem: multiRootFileSystem,
+          platform: FakePlatform(),
+          logger: BufferLogger.test(),
+        );
 
-      expect(
-        (await projectFileInvalidator.findInvalidated(
-          lastCompiled: inFuture,
-          urisToMonitor: <Uri>[
-            Uri.parse('file1'),
-            Uri.parse('file:///file2'),
-            Uri.parse('scheme:///file3'),
-          ],
-          packagesPath: '.dart_tool/package_config.json',
-          asyncScanning: asyncScanning,
-          packageConfig: PackageConfig.empty,
-        )).uris,
-        isEmpty,
-      );
-    });
+        expect(
+          (await projectFileInvalidator.findInvalidated(
+            lastCompiled: inFuture,
+            urisToMonitor: <Uri>[
+              Uri.parse('file1'),
+              Uri.parse('file:///file2'),
+              Uri.parse('scheme:///file3'),
+            ],
+            packagesPath: '.dart_tool/package_config.json',
+            asyncScanning: asyncScanning,
+            packageConfig: PackageConfig.empty,
+          )).uris,
+          isEmpty,
+        );
+      },
+    );
   }
 }

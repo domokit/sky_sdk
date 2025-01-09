@@ -115,8 +115,7 @@ const String _flutterLogoBase64 =
 
 HtmlImage createFlutterLogoTestImage() {
   return HtmlImage(
-    createDomHTMLImageElement()
-      ..src = 'data:text/plain;base64,$_flutterLogoBase64',
+    createDomHTMLImageElement()..src = 'data:text/plain;base64,$_flutterLogoBase64',
     50,
     50,
   );

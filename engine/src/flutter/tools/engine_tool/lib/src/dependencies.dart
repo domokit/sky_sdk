@@ -16,10 +16,7 @@ Future<int> fetchDependencies(Environment environment) async {
     return 1;
   }
 
-  environment.logger.status(
-    'Fetching dependencies... ',
-    newline: environment.verbose,
-  );
+  environment.logger.status('Fetching dependencies... ', newline: environment.verbose);
 
   Spinner? spinner;
   ProcessRunnerResult result;
@@ -29,15 +26,10 @@ Future<int> fetchDependencies(Environment environment) async {
     }
 
     result = await environment.processRunner.runProcess(
-      <String>[
-        'gclient',
-        'sync',
-        '-D',
-      ],
+      <String>['gclient', 'sync', '-D'],
       runInShell: true,
-      startMode: environment.verbose
-          ? io.ProcessStartMode.inheritStdio
-          : io.ProcessStartMode.normal,
+      startMode:
+          environment.verbose ? io.ProcessStartMode.inheritStdio : io.ProcessStartMode.normal,
     );
   } finally {
     spinner?.finish();

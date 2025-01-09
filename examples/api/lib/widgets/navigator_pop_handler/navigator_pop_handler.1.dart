@@ -7,11 +7,7 @@
 import 'package:flutter/material.dart';
 
 // There are three possible tabs.
-enum _Tab {
-  home,
-  one,
-  two,
-}
+enum _Tab { home, one, two }
 
 // Each tab has two possible pages.
 enum _TabPage {
@@ -42,17 +38,13 @@ class NavigatorPopHandlerApp extends StatelessWidget {
       onGenerateRoute: (RouteSettings settings) {
         return switch (settings.name) {
           '/' => MaterialPageRoute<void>(
-            settings: const RouteSettings(
-              name: '/',
-            ),
+            settings: const RouteSettings(name: '/'),
             builder: (BuildContext context) {
               return const _BottomNavPage();
             },
           ),
           _ => MaterialPageRoute<void>(
-            settings: const RouteSettings(
-              name: 'unknown_page',
-            ),
+            settings: const RouteSettings(name: 'unknown_page'),
             builder: (BuildContext context) {
               return const _UnknownPage();
             },
@@ -84,20 +76,11 @@ class _BottomNavPageState extends State<_BottomNavPage> with RestorationMixin {
   BottomNavigationBarItem _itemForPage(_Tab page) {
     switch (page) {
       case _Tab.home:
-        return const BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Go to Home',
-        );
+        return const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Go to Home');
       case _Tab.one:
-        return const BottomNavigationBarItem(
-          icon: Icon(Icons.one_k),
-          label: 'Go to One',
-        );
+        return const BottomNavigationBarItem(icon: Icon(Icons.one_k), label: 'Go to One');
       case _Tab.two:
-        return const BottomNavigationBarItem(
-          icon: Icon(Icons.two_k),
-          label: 'Go to Two',
-        );
+        return const BottomNavigationBarItem(icon: Icon(Icons.two_k), label: 'Go to Two');
     }
   }
 
@@ -175,9 +158,7 @@ class _BottomNavPageState extends State<_BottomNavPage> with RestorationMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: _getPage(_restorableTab.value),
-      ),
+      body: Center(child: _getPage(_restorableTab.value)),
       bottomNavigationBar: BottomNavigationBar(
         items: _Tab.values.map(_itemForPage).toList(),
         currentIndex: _Tab.values.indexOf(_restorableTab.value),
@@ -223,64 +204,58 @@ class _BottomNavTabState extends State<_BottomNavTab> {
           if (tabPage == null) {
             return;
           }
-          final List<_TabPage> nextPages = <_TabPage>[
-            ...widget.pages,
-          ]..remove(tabPage);
+          final List<_TabPage> nextPages = <_TabPage>[...widget.pages]..remove(tabPage);
           if (nextPages.length < widget.pages.length) {
             widget.onChangePages(nextPages);
           }
         },
-        pages: widget.pages.map((_TabPage page) {
-          switch (page) {
-            case _TabPage.home:
-              return MaterialPage<void>(
-                restorationId: _TabPage.home.toString(),
-                name: 'home',
-                child: _LinksPage(
-                  title: 'Bottom nav - tab ${widget.title} - route $page',
-                  backgroundColor: widget.color,
-                  buttons: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        assert(!widget.pages.contains(_TabPage.one));
-                        widget.onChangePages(<_TabPage>[
-                          ...widget.pages,
-                          _TabPage.one,
-                        ]);
-                      },
-                      child: const Text('Go to another route in this nested Navigator'),
+        pages:
+            widget.pages.map((_TabPage page) {
+              switch (page) {
+                case _TabPage.home:
+                  return MaterialPage<void>(
+                    restorationId: _TabPage.home.toString(),
+                    name: 'home',
+                    child: _LinksPage(
+                      title: 'Bottom nav - tab ${widget.title} - route $page',
+                      backgroundColor: widget.color,
+                      buttons: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            assert(!widget.pages.contains(_TabPage.one));
+                            widget.onChangePages(<_TabPage>[...widget.pages, _TabPage.one]);
+                          },
+                          child: const Text('Go to another route in this nested Navigator'),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            case _TabPage.one:
-              return MaterialPage<void>(
-                restorationId: _TabPage.one.toString(),
-                name: 'one',
-                child: _LinksPage(
-                  backgroundColor: widget.color,
-                  title: 'Bottom nav - tab ${widget.title} - route $page',
-                  buttons: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        widget.onChangePages(<_TabPage>[
-                          ...widget.pages,
-                        ]..removeLast());
-                      },
-                      child: const Text('Go back'),
+                  );
+                case _TabPage.one:
+                  return MaterialPage<void>(
+                    restorationId: _TabPage.one.toString(),
+                    name: 'one',
+                    child: _LinksPage(
+                      backgroundColor: widget.color,
+                      title: 'Bottom nav - tab ${widget.title} - route $page',
+                      buttons: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            widget.onChangePages(<_TabPage>[...widget.pages]..removeLast());
+                          },
+                          child: const Text('Go back'),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-          }
-        }).toList(),
+                  );
+              }
+            }).toList(),
       ),
     );
   }
 }
 
 class _LinksPage extends StatelessWidget {
-  const _LinksPage ({
+  const _LinksPage({
     required this.backgroundColor,
     this.buttons = const <Widget>[],
     required this.title,
@@ -297,10 +272,7 @@ class _LinksPage extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(title),
-            ...buttons,
-          ],
+          children: <Widget>[Text(title), ...buttons],
         ),
       ),
     );
@@ -315,12 +287,7 @@ class _UnknownPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey.withBlue(180),
       body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('404'),
-          ],
-        ),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[Text('404')]),
       ),
     );
   }
@@ -377,8 +344,6 @@ class _RestorableTabPageList extends RestorableValue<List<_TabPage>> {
 
   @override
   Object toPrimitives() {
-    return value
-        .map((_TabPage tabPage) => tabPage.name)
-        .join(',');
+    return value.map((_TabPage tabPage) => tabPage.name).join(',');
   }
 }

@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('It pushes a restorable route and pops it', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.RestorableRouteFutureExampleApp(),
-    );
+    await tester.pumpWidget(const example.RestorableRouteFutureExampleApp());
 
     expect(find.widgetWithText(AppBar, 'RestorableRouteFuture Example'), findsOne);
     expect(find.byType(BackButton), findsNothing);
@@ -36,9 +34,7 @@ void main() {
   });
 
   testWidgets('It pushes a restorable route and restores it', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.RestorableRouteFutureExampleApp(),
-    );
+    await tester.pumpWidget(const example.RestorableRouteFutureExampleApp());
 
     expect(find.widgetWithText(AppBar, 'RestorableRouteFuture Example'), findsOne);
     expect(find.byType(BackButton), findsNothing);

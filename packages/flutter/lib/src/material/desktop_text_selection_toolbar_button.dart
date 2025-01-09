@@ -17,12 +17,7 @@ const TextStyle _kToolbarButtonFontStyle = TextStyle(
   fontWeight: FontWeight.w400,
 );
 
-const EdgeInsets _kToolbarButtonPadding = EdgeInsets.fromLTRB(
-  20.0,
-  0.0,
-  20.0,
-  3.0,
-);
+const EdgeInsets _kToolbarButtonPadding = EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 3.0);
 
 /// A [TextButton] for the Material desktop text selection toolbar.
 class DesktopTextSelectionToolbarButton extends StatelessWidget {
@@ -44,9 +39,10 @@ class DesktopTextSelectionToolbarButton extends StatelessWidget {
          text,
          overflow: TextOverflow.ellipsis,
          style: _kToolbarButtonFontStyle.copyWith(
-           color: Theme.of(context).colorScheme.brightness == Brightness.dark
-               ? Colors.white
-               : Colors.black87,
+           color:
+               Theme.of(context).colorScheme.brightness == Brightness.dark
+                   ? Colors.white
+                   : Colors.black87,
          ),
        );
 

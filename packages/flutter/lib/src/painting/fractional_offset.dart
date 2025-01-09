@@ -53,18 +53,14 @@ import 'basic_types.dart';
 @immutable
 class FractionalOffset extends Alignment {
   /// Creates a fractional offset.
-  const FractionalOffset(double dx, double dy)
-    : super(dx * 2.0 - 1.0, dy * 2.0 - 1.0);
+  const FractionalOffset(double dx, double dy) : super(dx * 2.0 - 1.0, dy * 2.0 - 1.0);
 
   /// Creates a fractional offset from a specific offset and size.
   ///
   /// The returned [FractionalOffset] describes the position of the
   /// [Offset] in the [Size], as a fraction of the [Size].
   factory FractionalOffset.fromOffsetAndSize(Offset offset, Size size) {
-    return FractionalOffset(
-      offset.dx / size.width,
-      offset.dy / size.height,
-    );
+    return FractionalOffset(offset.dx / size.width, offset.dy / size.height);
   }
 
   /// Creates a fractional offset from a specific offset and rectangle.
@@ -77,10 +73,7 @@ class FractionalOffset extends Alignment {
   /// The returned [FractionalOffset] describes the position of the
   /// [Offset] in the [Rect], as a fraction of the [Rect].
   factory FractionalOffset.fromOffsetAndRect(Offset offset, Rect rect) {
-    return FractionalOffset.fromOffsetAndSize(
-      offset - rect.topLeft,
-      rect.size,
-    );
+    return FractionalOffset.fromOffsetAndSize(offset - rect.topLeft, rect.size);
   }
 
   /// The distance fraction in the horizontal direction.
@@ -189,6 +182,6 @@ class FractionalOffset extends Alignment {
   @override
   String toString() {
     return 'FractionalOffset(${dx.toStringAsFixed(1)}, '
-                            '${dy.toStringAsFixed(1)})';
+        '${dy.toStringAsFixed(1)})';
   }
 }

@@ -52,14 +52,17 @@ typedef ImmediateRunAppFn = Future<FlutterApp> Function();
 @JS()
 @anonymous
 @staticInterop
-abstract class FlutterEngineInitializer{
+abstract class FlutterEngineInitializer {
   factory FlutterEngineInitializer({
     required InitializeEngineFn initializeEngine,
     required ImmediateRunAppFn autoStart,
   }) => FlutterEngineInitializer._(
-      initializeEngine: (([JsFlutterConfiguration? config]) => (initializeEngine(config) as Future<JSObject>).toPromise).toJS,
-      autoStart: (() => (autoStart() as Future<JSObject>).toPromise).toJS,
-    );
+    initializeEngine:
+        (([JsFlutterConfiguration? config]) =>
+                (initializeEngine(config) as Future<JSObject>).toPromise)
+            .toJS,
+    autoStart: (() => (autoStart() as Future<JSObject>).toPromise).toJS,
+  );
   external factory FlutterEngineInitializer._({
     required JSFunction initializeEngine,
     required JSFunction autoStart,
@@ -74,8 +77,8 @@ abstract class FlutterEngineInitializer{
 @anonymous
 @staticInterop
 abstract class FlutterAppRunner {
-  factory FlutterAppRunner({required RunAppFn runApp,}) => FlutterAppRunner._(
-    runApp: (([RunAppFnParameters? args]) => (runApp(args) as Future<JSObject>).toPromise).toJS
+  factory FlutterAppRunner({required RunAppFn runApp}) => FlutterAppRunner._(
+    runApp: (([RunAppFnParameters? args]) => (runApp(args) as Future<JSObject>).toPromise).toJS,
   );
 
   /// Runs a flutter app
@@ -89,8 +92,7 @@ abstract class FlutterAppRunner {
 @JS()
 @anonymous
 @staticInterop
-abstract class RunAppFnParameters {
-}
+abstract class RunAppFnParameters {}
 
 /// Typedef for the function that runs the flutter app main entrypoint.
 typedef RunAppFn = Future<FlutterApp> Function([RunAppFnParameters?]);

@@ -30,9 +30,7 @@ class DragBoundaryExampleAppState extends State<DragBoundaryExampleApp> {
               builder: (BuildContext context) {
                 return Stack(
                   children: <Widget>[
-                    Container(
-                      color: Colors.green,
-                    ),
+                    Container(color: Colors.green),
                     Positioned(
                       top: _currentPosition.dy,
                       left: _currentPosition.dx,
@@ -43,9 +41,10 @@ class DragBoundaryExampleAppState extends State<DragBoundaryExampleApp> {
                         },
                         onPanUpdate: (DragUpdateDetails details) {
                           _currentPosition = details.localPosition - _initialPosition;
-                          final Rect withinBoundary = DragBoundary.forRectOf(context, useGlobalPosition: false).nearestPositionWithinBoundary(
-                            _currentPosition & _boxSize,
-                          );
+                          final Rect withinBoundary = DragBoundary.forRectOf(
+                            context,
+                            useGlobalPosition: false,
+                          ).nearestPositionWithinBoundary(_currentPosition & _boxSize);
                           setState(() {
                             _currentPosition = withinBoundary.topLeft;
                           });

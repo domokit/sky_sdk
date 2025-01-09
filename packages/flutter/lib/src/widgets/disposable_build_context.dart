@@ -30,7 +30,10 @@ class DisposableBuildContext<T extends State> {
   ///
   /// [State.mounted] must be true.
   DisposableBuildContext(T this._state)
-      : assert(_state.mounted, 'A DisposableBuildContext was given a BuildContext for an Element that is not mounted.')  {
+    : assert(
+        _state.mounted,
+        'A DisposableBuildContext was given a BuildContext for an Element that is not mounted.',
+      ) {
     // TODO(polina-c): stop duplicating code across disposables
     // https://github.com/flutter/flutter/issues/137435
     if (kFlutterMemoryAllocationsEnabled) {
@@ -68,7 +71,6 @@ class DisposableBuildContext<T extends State> {
     );
     return true;
   }
-
 
   /// Marks the [BuildContext] as disposed.
   ///

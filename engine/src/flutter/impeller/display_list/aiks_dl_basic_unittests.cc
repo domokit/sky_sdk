@@ -105,7 +105,7 @@ bool GenerateMipmap(const std::shared_ptr<Context>& context,
   }
   pass->GenerateMipmap(std::move(texture), label);
 
-  pass->EncodeCommands(context->GetResourceAllocator());
+  pass->EncodeCommands();
   return context->GetCommandQueue()->Submit({buffer}).ok();
 }
 

@@ -46,22 +46,13 @@ import 'text_selection_toolbar_anchors.dart';
 class SystemContextMenu extends StatefulWidget {
   /// Creates an instance of [SystemContextMenu] that points to the given
   /// [anchor].
-  const SystemContextMenu._({
-    super.key,
-    required this.anchor,
-    this.onSystemHide,
-  });
+  const SystemContextMenu._({super.key, required this.anchor, this.onSystemHide});
 
   /// Creates an instance of [SystemContextMenu] for the field indicated by the
   /// given [EditableTextState].
-  factory SystemContextMenu.editableText({
-    Key? key,
-    required EditableTextState editableTextState,
-  }) {
-    final (
-      startGlyphHeight: double startGlyphHeight,
-      endGlyphHeight: double endGlyphHeight,
-    ) = editableTextState.getGlyphHeights();
+  factory SystemContextMenu.editableText({Key? key, required EditableTextState editableTextState}) {
+    final (startGlyphHeight: double startGlyphHeight, endGlyphHeight: double endGlyphHeight) =
+        editableTextState.getGlyphHeights();
     return SystemContextMenu._(
       key: key,
       anchor: TextSelectionToolbarAnchors.getSelectionRect(
@@ -107,9 +98,7 @@ class _SystemContextMenuState extends State<SystemContextMenu> {
   @override
   void initState() {
     super.initState();
-    _systemContextMenuController = SystemContextMenuController(
-      onSystemHide: widget.onSystemHide,
-    );
+    _systemContextMenuController = SystemContextMenuController(onSystemHide: widget.onSystemHide);
     _systemContextMenuController.show(widget.anchor);
   }
 

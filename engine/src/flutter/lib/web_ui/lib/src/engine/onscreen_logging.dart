@@ -89,8 +89,7 @@ void debugPrintStack({String? label, int? maxFrames}) {
   if (label != null) {
     print(label);
   }
-  Iterable<String> lines =
-      StackTrace.current.toString().trimRight().split('\n');
+  Iterable<String> lines = StackTrace.current.toString().trimRight().split('\n');
   if (maxFrames != null) {
     lines = lines.take(maxFrames);
   }
@@ -105,13 +104,10 @@ void debugPrintStack({String? label, int? maxFrames}) {
 /// format but the frame numbers will not be consecutive (frames are elided)
 /// and the final line may be prose rather than a stack frame.
 Iterable<String> defaultStackFilter(Iterable<String> frames) {
-  const List<String> filteredPackages = <String>[
-    'dart:async-patch',
-    'dart:async',
-    'dart:_runtime',
-  ];
-  final RegExp stackParser =
-      RegExp(r'^#[0-9]+ +([^.]+).* \(([^/\\]*)[/\\].+:[0-9]+(?::[0-9]+)?\)$');
+  const List<String> filteredPackages = <String>['dart:async-patch', 'dart:async', 'dart:_runtime'];
+  final RegExp stackParser = RegExp(
+    r'^#[0-9]+ +([^.]+).* \(([^/\\]*)[/\\].+:[0-9]+(?::[0-9]+)?\)$',
+  );
   final RegExp packageParser = RegExp(r'^([^:]+):(.+)$');
   final List<String> result = <String>[];
   final List<String> skipped = <String>[];
@@ -122,8 +118,7 @@ Iterable<String> defaultStackFilter(Iterable<String> frames) {
       if (filteredPackages.contains(match.group(2))) {
         final Match? packageMatch = packageParser.firstMatch(match.group(2)!);
         if (packageMatch != null && packageMatch.group(1) == 'package') {
-          skipped.add(
-              'package ${packageMatch.group(2)}'); // avoid "package package:foo"
+          skipped.add('package ${packageMatch.group(2)}'); // avoid "package package:foo"
         } else {
           skipped.add('package ${match.group(2)}');
         }

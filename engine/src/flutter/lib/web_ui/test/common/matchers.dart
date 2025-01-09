@@ -82,8 +82,7 @@ typedef DistanceFunction<T> = double Function(T a, T b);
 /// first casting it to a [DistanceFunction<T>] for some concrete T.
 typedef AnyDistanceFunction = double Function(Never a, Never b);
 
-const Map<Type, AnyDistanceFunction> _kStandardDistanceFunctions =
-    <Type, AnyDistanceFunction>{
+const Map<Type, AnyDistanceFunction> _kStandardDistanceFunctions = <Type, AnyDistanceFunction>{
   Color: _maxComponentColorDistance,
   Offset: _offsetDistance,
   int: _intDistance,
@@ -104,8 +103,7 @@ double _maxComponentColorDistance(Color a, Color b) {
 }
 
 double _rectDistance(Rect a, Rect b) {
-  double delta =
-      math.max<double>((a.left - b.left).abs(), (a.top - b.top).abs());
+  double delta = math.max<double>((a.left - b.left).abs(), (a.top - b.top).abs());
   delta = math.max<double>(delta, (a.right - b.right).abs());
   delta = math.max<double>(delta, (a.bottom - b.bottom).abs());
   return delta;
@@ -146,9 +144,10 @@ Matcher within<T>({
 
   if (distanceFunction == null) {
     throw ArgumentError(
-        'The specified distanceFunction was null, and a standard distance '
-        'function was not found for type $T of the provided '
-        '`from` argument.');
+      'The specified distanceFunction was null, and a standard distance '
+      'function was not found for type $T of the provided '
+      '`from` argument.',
+    );
   }
 
   return _IsWithinDistance<T>(distanceFunction, from, distance);
@@ -173,17 +172,17 @@ class _IsWithinDistance<T> extends Matcher {
     final double distance = distanceFunction(test, value);
     if (distance < 0) {
       throw ArgumentError(
-          'Invalid distance function was used to compare a ${value.runtimeType} '
-          'to a ${object.runtimeType}. The function must return a non-negative '
-          'double value, but it returned $distance.');
+        'Invalid distance function was used to compare a ${value.runtimeType} '
+        'to a ${object.runtimeType}. The function must return a non-negative '
+        'double value, but it returned $distance.',
+      );
     }
     matchState['distance'] = distance;
     return distance <= epsilon;
   }
 
   @override
-  Description describe(Description description) =>
-      description.add('$value (±$epsilon)');
+  Description describe(Description description) => description.add('$value (±$epsilon)');
 
   @override
   Description describeMismatch(
@@ -192,8 +191,7 @@ class _IsWithinDistance<T> extends Matcher {
     Map<dynamic, dynamic> matchState,
     bool verbose,
   ) {
-    mismatchDescription
-        .add('was ${matchState['distance']} away from the desired value.');
+    mismatchDescription.add('was ${matchState['distance']} away from the desired value.');
     return mismatchDescription;
   }
 }
@@ -240,12 +238,14 @@ Matcher hasHtml(String htmlPattern) {
   if (originalDom.children.isEmpty) {
     fail(
       'Test HTML pattern is empty.\n'
-      'The pattern must contain exacly one top-level element, but was: $htmlPattern');
+      'The pattern must contain exacly one top-level element, but was: $htmlPattern',
+    );
   }
   if (originalDom.children.length > 1) {
     fail(
       'Test HTML pattern has more than one top-level element.\n'
-      'The pattern must contain exacly one top-level element, but was: $htmlPattern');
+      'The pattern must contain exacly one top-level element, but was: $htmlPattern',
+    );
   }
   return HtmlPatternMatcher(originalDom.children.single);
 }
@@ -325,12 +325,17 @@ class HtmlPatternMatcher extends Matcher {
     return aName == bName;
   }
 
-  void matchElements(_Breadcrumbs parent, List<String> mismatches, html.Element element, html.Element pattern) {
+  void matchElements(
+    _Breadcrumbs parent,
+    List<String> mismatches,
+    html.Element element,
+    html.Element pattern,
+  ) {
     final _Breadcrumbs breadcrumb = parent.element(pattern.localName!);
 
     if (!_areTagsEqual(element, pattern)) {
       mismatches.add(
-        '$breadcrumb: unexpected tag name <${element.localName}> (expected <${pattern.localName}>).'
+        '$breadcrumb: unexpected tag name <${element.localName}> (expected <${pattern.localName}>).',
       );
       // Don't bother matching anything else. If tags are different, it's likely
       // we're comparing apples to oranges at this point.
@@ -341,7 +346,12 @@ class HtmlPatternMatcher extends Matcher {
     matchChildren(breadcrumb, mismatches, element, pattern);
   }
 
-  void matchAttributes(_Breadcrumbs parent, List<String> mismatches, html.Element element, html.Element pattern) {
+  void matchAttributes(
+    _Breadcrumbs parent,
+    List<String> mismatches,
+    html.Element element,
+    html.Element pattern,
+  ) {
     for (final MapEntry<Object, String> attribute in pattern.attributes.entries) {
       final String expectedName = attribute.key as String;
       final String expectedValue = attribute.value;
@@ -358,7 +368,7 @@ class HtmlPatternMatcher extends Matcher {
           if (actualValue != expectedValue) {
             mismatches.add(
               '$breadcrumb: expected attribute value $expectedName="$expectedValue", '
-              'but found $expectedName="$actualValue".'
+              'but found $expectedName="$actualValue".',
             );
           }
         }
@@ -380,19 +390,22 @@ class HtmlPatternMatcher extends Matcher {
     return result;
   }
 
-  void matchStyle(_Breadcrumbs parent, List<String> mismatches, html.Element element, html.Element pattern) {
+  void matchStyle(
+    _Breadcrumbs parent,
+    List<String> mismatches,
+    html.Element element,
+    html.Element pattern,
+  ) {
     final Map<String, String> expected = parseStyle(pattern);
     final Map<String, String> actual = parseStyle(element);
     for (final MapEntry<String, String> entry in expected.entries) {
       final _Breadcrumbs breadcrumb = parent.styleProperty(entry.key);
       if (!actual.containsKey(entry.key)) {
-        mismatches.add(
-          '$breadcrumb: style property ${entry.key}="${entry.value}" missing.'
-        );
+        mismatches.add('$breadcrumb: style property ${entry.key}="${entry.value}" missing.');
       } else if (actual[entry.key] != entry.value) {
         mismatches.add(
           '$breadcrumb: expected style property ${entry.key}="${entry.value}", '
-          'but found ${entry.key}="${actual[entry.key]}".'
+          'but found ${entry.key}="${actual[entry.key]}".',
         );
       }
     }
@@ -432,13 +445,18 @@ class HtmlPatternMatcher extends Matcher {
     return cleanNodes;
   }
 
-  void matchChildren(_Breadcrumbs parent, List<String> mismatches, html.Element element, html.Element pattern) {
+  void matchChildren(
+    _Breadcrumbs parent,
+    List<String> mismatches,
+    html.Element element,
+    html.Element pattern,
+  ) {
     final List<html.Node> actualChildNodes = _cleanUpNodeList(element.nodes);
     final List<html.Node> expectedChildNodes = _cleanUpNodeList(pattern.nodes);
 
     if (actualChildNodes.length != expectedChildNodes.length) {
       mismatches.add(
-        '$parent: expected ${expectedChildNodes.length} child nodes, but found ${actualChildNodes.length}.'
+        '$parent: expected ${expectedChildNodes.length} child nodes, but found ${actualChildNodes.length}.',
       );
       return;
     }
@@ -452,12 +470,12 @@ class HtmlPatternMatcher extends Matcher {
       } else if (expectedChild is html.Text && actualChild is html.Text) {
         if (expectedChild.data != actualChild.data) {
           mismatches.add(
-            '$parent: expected text content "${expectedChild.data}", but found "${actualChild.data}".'
+            '$parent: expected text content "${expectedChild.data}", but found "${actualChild.data}".',
           );
         }
       } else {
         mismatches.add(
-          '$parent: expected child type ${expectedChild.runtimeType}, but found ${actualChild.runtimeType}.'
+          '$parent: expected child type ${expectedChild.runtimeType}, but found ${actualChild.runtimeType}.',
         );
       }
     }

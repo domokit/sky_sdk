@@ -41,12 +41,10 @@ String getPlatformViewDomId(int viewId) {
 DomElement createPlatformViewSlot(int viewId) {
   final String slotName = getPlatformViewSlotName(viewId);
 
-  final DomElement wrapper = domDocument
-      .createElement('flt-platform-view-slot')
-      ..style.pointerEvents = 'auto';
+  final DomElement wrapper = domDocument.createElement('flt-platform-view-slot')
+    ..style.pointerEvents = 'auto';
 
-  final DomElement slot = domDocument.createElement('slot')
-    ..setAttribute('name', slotName);
+  final DomElement slot = domDocument.createElement('slot')..setAttribute('name', slotName);
 
   return wrapper..append(slot);
 }

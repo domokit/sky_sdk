@@ -18,8 +18,9 @@ typedef AppBootstrapRunAppFn = Future<void> Function();
 /// A class that controls the coarse lifecycle of a Flutter app.
 class AppBootstrap {
   /// Construct an AppBootstrap.
-  AppBootstrap({required InitEngineFn initializeEngine, required AppBootstrapRunAppFn runApp}) :
-    _initializeEngine = initializeEngine, _runApp = runApp;
+  AppBootstrap({required InitEngineFn initializeEngine, required AppBootstrapRunAppFn runApp})
+    : _initializeEngine = initializeEngine,
+      _runApp = runApp;
 
   // A function to initialize the engine.
   final InitEngineFn _initializeEngine;
@@ -51,16 +52,18 @@ class AppBootstrap {
       initializeEngine: ([JsFlutterConfiguration? configuration]) async {
         await _initializeEngine(configuration);
         return _prepareAppRunner();
-      }
+      },
     );
   }
 
   /// Creates an appRunner that runs our encapsulated runApp function.
   FlutterAppRunner _prepareAppRunner() {
-    return FlutterAppRunner(runApp: ([RunAppFnParameters? params]) async {
-      await _runApp();
-      return _prepareFlutterApp();
-    });
+    return FlutterAppRunner(
+      runApp: ([RunAppFnParameters? params]) async {
+        await _runApp();
+        return _prepareFlutterApp();
+      },
+    );
   }
 
   FlutterViewManager get viewManager => EnginePlatformDispatcher.instance.viewManager;
@@ -75,7 +78,7 @@ class AppBootstrap {
       removeView: (int viewId) {
         assert(configuration.multiViewEnabled, 'Cannot removeView when multiView is not enabled');
         return viewManager.disposeAndUnregisterView(viewId);
-      }
+      },
     );
   }
 }

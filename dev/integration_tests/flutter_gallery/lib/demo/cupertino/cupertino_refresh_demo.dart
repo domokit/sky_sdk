@@ -28,14 +28,11 @@ class _CupertinoRefreshControlDemoState extends State<CupertinoRefreshControlDem
 
   void repopulateList() {
     final Random random = Random();
-    randomizedContacts = List<List<String>>.generate(
-      100,
-      (int index) {
-        return contacts[random.nextInt(contacts.length)]
-            // Randomly adds a telephone icon next to the contact or not.
-            ..add(random.nextBool().toString());
-      },
-    );
+    randomizedContacts = List<List<String>>.generate(100, (int index) {
+      return contacts[random.nextInt(contacts.length)]
+        // Randomly adds a telephone icon next to the contact or not.
+        ..add(random.nextBool().toString());
+    });
   }
 
   @override
@@ -65,28 +62,24 @@ class _CupertinoRefreshControlDemoState extends State<CupertinoRefreshControlDem
             ),
             CupertinoSliverRefreshControl(
               onRefresh: () {
-                return Future<void>.delayed(const Duration(seconds: 2))
-                ..then((_) {
-                    if (mounted) {
-                      setState(() => repopulateList());
-                    }
+                return Future<void>.delayed(const Duration(seconds: 2))..then((_) {
+                  if (mounted) {
+                    setState(() => repopulateList());
+                  }
                 });
               },
             ),
             SliverSafeArea(
               top: false, // Top safe area is consumed by the navigation bar.
               sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                    return _ListItem(
-                      name: randomizedContacts[index][0],
-                      place: randomizedContacts[index][1],
-                      date: randomizedContacts[index][2],
-                      called: randomizedContacts[index][3] == 'true',
-                    );
-                  },
-                  childCount: 20,
-                ),
+                delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                  return _ListItem(
+                    name: randomizedContacts[index][0],
+                    place: randomizedContacts[index][1],
+                    date: randomizedContacts[index][2],
+                    called: randomizedContacts[index][3] == 'true',
+                  );
+                }, childCount: 20),
               ),
             ),
           ],
@@ -144,12 +137,7 @@ List<List<String>> contacts = <List<String>>[
 ];
 
 class _ListItem extends StatelessWidget {
-  const _ListItem({
-    this.name,
-    this.place,
-    this.date,
-    this.called,
-  });
+  const _ListItem({this.name, this.place, this.date, this.called});
 
   final String? name;
   final String? place;
@@ -166,23 +154,22 @@ class _ListItem extends StatelessWidget {
         children: <Widget>[
           SizedBox(
             width: 38.0,
-            child: called!
-                ? Align(
-                    alignment: Alignment.topCenter,
-                    child: Icon(
-                      CupertinoIcons.phone_solid,
-                      color: CupertinoColors.inactiveGray.resolveFrom(context),
-                      size: 18.0,
-                    ),
-                  )
-                : null,
+            child:
+                called!
+                    ? Align(
+                      alignment: Alignment.topCenter,
+                      child: Icon(
+                        CupertinoIcons.phone_solid,
+                        color: CupertinoColors.inactiveGray.resolveFrom(context),
+                        size: 18.0,
+                      ),
+                    )
+                    : null,
           ),
-        Expanded(
-          child: Container(
+          Expanded(
+            child: Container(
               decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: Color(0xFFBCBBC1), width: 0.0),
-                ),
+                border: Border(bottom: BorderSide(color: Color(0xFFBCBBC1), width: 0.0)),
               ),
               padding: const EdgeInsets.only(left: 1.0, bottom: 9.0, right: 10.0),
               child: Row(
@@ -196,10 +183,7 @@ class _ListItem extends StatelessWidget {
                           name!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: -0.18,
-                          ),
+                          style: const TextStyle(fontWeight: FontWeight.w600, letterSpacing: -0.18),
                         ),
                         Text(
                           place!,

@@ -40,10 +40,8 @@ class AppDelegate: FlutterAppDelegate {
 /// See:
 /// https://developer.apple.com/documentation/foundation/nssecurecoding?language=objc
 class SecureRestorableStateMigration extends ProjectMigrator {
-  SecureRestorableStateMigration(
-    MacOSProject project,
-    super.logger,
-  ) : _appDelegateSwift = project.appDelegateSwift;
+  SecureRestorableStateMigration(MacOSProject project, super.logger)
+    : _appDelegateSwift = project.appDelegateSwift;
 
   final File _appDelegateSwift;
 
@@ -52,7 +50,7 @@ class SecureRestorableStateMigration extends ProjectMigrator {
     // Skip this migration if the project uses Objective-C.
     if (!_appDelegateSwift.existsSync()) {
       logger.printTrace(
-        'macos/Runner/AppDelegate.swift not found. Skipping applicationSupportsSecureRestorableState migration.'
+        'macos/Runner/AppDelegate.swift not found. Skipping applicationSupportsSecureRestorableState migration.',
       );
       return;
     }
@@ -81,7 +79,7 @@ override func applicationSupportsSecureRestorableState(_ app: NSApplication) -> 
     }
 
     logger.printWarning(
-      'macos/Runner/AppDelegate.swift does not override applicationSupportsSecureRestorableState. Updating.'
+      'macos/Runner/AppDelegate.swift does not override applicationSupportsSecureRestorableState. Updating.',
     );
     _appDelegateSwift.writeAsStringSync(migrated);
   }

@@ -52,9 +52,7 @@ class _OverviewViewState extends State<OverviewView> {
                   width: 400,
                   child: Semantics(
                     sortKey: const OrdinalSortKey(2, name: sortKeyName),
-                    child: FocusTraversalGroup(
-                      child: _AlertsView(alerts: alerts),
-                    ),
+                    child: FocusTraversalGroup(child: _AlertsView(alerts: alerts)),
                   ),
                 ),
               ),
@@ -92,56 +90,55 @@ class _OverviewGrid extends StatelessWidget {
     final List<BudgetData> budgetDataList = DummyDataService.getBudgetDataList(context);
     final GalleryLocalizations localizations = GalleryLocalizations.of(context)!;
 
-    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-      final double textScaleFactor =
-          GalleryOptions.of(context).textScaleFactor(context);
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final double textScaleFactor = GalleryOptions.of(context).textScaleFactor(context);
 
-      // Only display multiple columns when the constraints allow it and we
-      // have a regular text scale factor.
-      const int minWidthForTwoColumns = 600;
-      final bool hasMultipleColumns = isDisplayDesktop(context) &&
-          constraints.maxWidth > minWidthForTwoColumns &&
-          textScaleFactor <= 2;
-      final double boxWidth = hasMultipleColumns
-          ? constraints.maxWidth / 2 - spacing / 2
-          : double.infinity;
+        // Only display multiple columns when the constraints allow it and we
+        // have a regular text scale factor.
+        const int minWidthForTwoColumns = 600;
+        final bool hasMultipleColumns =
+            isDisplayDesktop(context) &&
+            constraints.maxWidth > minWidthForTwoColumns &&
+            textScaleFactor <= 2;
+        final double boxWidth =
+            hasMultipleColumns ? constraints.maxWidth / 2 - spacing / 2 : double.infinity;
 
-      return Wrap(
-        runSpacing: spacing,
-        children: <Widget>[
-          SizedBox(
-            width: boxWidth,
-            child: _FinancialView(
-              title: localizations.rallyAccounts,
-              total: sumAccountDataPrimaryAmount(accountDataList),
-              financialItemViews:
-                  buildAccountDataListViews(accountDataList, context),
-              buttonSemanticsLabel: localizations.rallySeeAllAccounts,
-              order: 1,
+        return Wrap(
+          runSpacing: spacing,
+          children: <Widget>[
+            SizedBox(
+              width: boxWidth,
+              child: _FinancialView(
+                title: localizations.rallyAccounts,
+                total: sumAccountDataPrimaryAmount(accountDataList),
+                financialItemViews: buildAccountDataListViews(accountDataList, context),
+                buttonSemanticsLabel: localizations.rallySeeAllAccounts,
+                order: 1,
+              ),
             ),
-          ),
-          if (hasMultipleColumns) SizedBox(width: spacing),
-          SizedBox(
-            width: boxWidth,
-            child: _FinancialView(
-              title: localizations.rallyBills,
-              total: sumBillDataPrimaryAmount(billDataList),
-              financialItemViews: buildBillDataListViews(billDataList, context),
-              buttonSemanticsLabel: localizations.rallySeeAllBills,
-              order: 2,
+            if (hasMultipleColumns) SizedBox(width: spacing),
+            SizedBox(
+              width: boxWidth,
+              child: _FinancialView(
+                title: localizations.rallyBills,
+                total: sumBillDataPrimaryAmount(billDataList),
+                financialItemViews: buildBillDataListViews(billDataList, context),
+                buttonSemanticsLabel: localizations.rallySeeAllBills,
+                order: 2,
+              ),
             ),
-          ),
-          _FinancialView(
-            title: localizations.rallyBudgets,
-            total: sumBudgetDataPrimaryAmount(budgetDataList),
-            financialItemViews:
-                buildBudgetDataListViews(budgetDataList, context),
-            buttonSemanticsLabel: localizations.rallySeeAllBudgets,
-            order: 3,
-          ),
-        ],
-      );
-    });
+            _FinancialView(
+              title: localizations.rallyBudgets,
+              total: sumBudgetDataPrimaryAmount(budgetDataList),
+              financialItemViews: buildBudgetDataListViews(budgetDataList, context),
+              buttonSemanticsLabel: localizations.rallySeeAllBudgets,
+              order: 3,
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -162,8 +159,7 @@ class _AlertsView extends StatelessWidget {
         children: <Widget>[
           Container(
             width: double.infinity,
-            padding:
-                isDesktop ? const EdgeInsets.symmetric(vertical: 16) : null,
+            padding: isDesktop ? const EdgeInsets.symmetric(vertical: 16) : null,
             child: MergeSemantics(
               child: Wrap(
                 alignment: WrapAlignment.spaceBetween,
@@ -172,9 +168,7 @@ class _AlertsView extends StatelessWidget {
                   Text(localizations.rallyAlerts),
                   if (!isDesktop)
                     TextButton(
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
-                      ),
+                      style: TextButton.styleFrom(foregroundColor: Colors.white),
                       onPressed: () {},
                       child: Text(localizations.rallySeeAll),
                     ),
@@ -185,7 +179,7 @@ class _AlertsView extends StatelessWidget {
           for (final AlertData alert in alerts!) ...<Widget>[
             Container(color: RallyColors.primaryBackground, height: 1),
             _Alert(alert: alert),
-          ]
+          ],
         ],
       ),
     );
@@ -201,15 +195,11 @@ class _Alert extends StatelessWidget {
   Widget build(BuildContext context) {
     return MergeSemantics(
       child: Container(
-        padding: isDisplayDesktop(context)
-            ? const EdgeInsets.symmetric(vertical: 8)
-            : null,
+        padding: isDisplayDesktop(context) ? const EdgeInsets.symmetric(vertical: 8) : null,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Expanded(
-              child: SelectableText(alert.message!),
-            ),
+            Expanded(child: SelectableText(alert.message!)),
             SizedBox(
               width: 100,
               child: Align(
@@ -257,11 +247,7 @@ class _FinancialView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.only(
-                      top: 16,
-                      left: 16,
-                      right: 16,
-                    ),
+                    padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
                     child: SelectableText(title!),
                   ),
                   Padding(
@@ -277,8 +263,7 @@ class _FinancialView extends StatelessWidget {
                 ],
               ),
             ),
-            ...financialItemViews!
-                .sublist(0, math.min(financialItemViews!.length, 3)),
+            ...financialItemViews!.sublist(0, math.min(financialItemViews!.length, 3)),
             TextButton(
               style: TextButton.styleFrom(foregroundColor: Colors.white),
               onPressed: () {},

@@ -19,8 +19,11 @@ class BufferView {
   final int lengthInBytes;
 
   /// Create a new view into a buffer on the GPU.
-  const BufferView(this.buffer,
-      {required this.offsetInBytes, required this.lengthInBytes});
+  const BufferView(
+    this.buffer, {
+    required this.offsetInBytes,
+    required this.lengthInBytes,
+  });
 }
 
 /// [DeviceBuffer] is a region of memory allocated on the device heap
@@ -33,49 +36,83 @@ base class DeviceBuffer extends NativeFieldWrapperClass1 {
 
   /// Creates a new DeviceBuffer.
   DeviceBuffer._initialize(
-      GpuContext gpuContext, StorageMode storageMode, int sizeInBytes)
-      : storageMode = storageMode,
-        sizeInBytes = sizeInBytes {
+    GpuContext gpuContext,
+    StorageMode storageMode,
+    int sizeInBytes,
+  ) : storageMode = storageMode,
+      sizeInBytes = sizeInBytes {
     _valid = _initialize(gpuContext, storageMode.index, sizeInBytes);
   }
 
   /// Creates a new host visible DeviceBuffer with data copied from the host.
   DeviceBuffer._initializeWithHostData(GpuContext gpuContext, ByteData data)
-      : storageMode = StorageMode.hostVisible,
-        sizeInBytes = data.lengthInBytes {
+    : storageMode = StorageMode.hostVisible,
+      sizeInBytes = data.lengthInBytes {
     _valid = _initializeWithHostData(gpuContext, data);
   }
 
   final StorageMode storageMode;
   final int sizeInBytes;
 
-  void _bindAsVertexBuffer(RenderPass renderPass, int offsetInBytes,
-      int lengthInBytes, int vertexCount) {
+  void _bindAsVertexBuffer(
+    RenderPass renderPass,
+    int offsetInBytes,
+    int lengthInBytes,
+    int vertexCount,
+  ) {
     renderPass._bindVertexBufferDevice(
-        this, offsetInBytes, lengthInBytes, vertexCount);
+      this,
+      offsetInBytes,
+      lengthInBytes,
+      vertexCount,
+    );
   }
 
-  void _bindAsIndexBuffer(RenderPass renderPass, int offsetInBytes,
-      int lengthInBytes, IndexType indexType, int indexCount) {
+  void _bindAsIndexBuffer(
+    RenderPass renderPass,
+    int offsetInBytes,
+    int lengthInBytes,
+    IndexType indexType,
+    int indexCount,
+  ) {
     renderPass._bindIndexBufferDevice(
-        this, offsetInBytes, lengthInBytes, indexType.index, indexCount);
+      this,
+      offsetInBytes,
+      lengthInBytes,
+      indexType.index,
+      indexCount,
+    );
   }
 
-  bool _bindAsUniform(RenderPass renderPass, UniformSlot slot,
-      int offsetInBytes, int lengthInBytes) {
+  bool _bindAsUniform(
+    RenderPass renderPass,
+    UniformSlot slot,
+    int offsetInBytes,
+    int lengthInBytes,
+  ) {
     return renderPass._bindUniformDevice(
-        slot.shader, slot.uniformName, this, offsetInBytes, lengthInBytes);
+      slot.shader,
+      slot.uniformName,
+      this,
+      offsetInBytes,
+      lengthInBytes,
+    );
   }
 
   /// Wrap with native counterpart.
   @Native<Bool Function(Handle, Pointer<Void>, Int, Int)>(
-      symbol: 'InternalFlutterGpu_DeviceBuffer_Initialize')
+    symbol: 'InternalFlutterGpu_DeviceBuffer_Initialize',
+  )
   external bool _initialize(
-      GpuContext gpuContext, int storageMode, int sizeInBytes);
+    GpuContext gpuContext,
+    int storageMode,
+    int sizeInBytes,
+  );
 
   /// Wrap with native counterpart.
   @Native<Bool Function(Handle, Pointer<Void>, Handle)>(
-      symbol: 'InternalFlutterGpu_DeviceBuffer_InitializeWithHostData')
+    symbol: 'InternalFlutterGpu_DeviceBuffer_InitializeWithHostData',
+  )
   external bool _initializeWithHostData(GpuContext gpuContext, ByteData data);
 
   /// Overwrite a range of bytes within an existing [DeviceBuffer].
@@ -97,7 +134,8 @@ base class DeviceBuffer extends NativeFieldWrapperClass1 {
   bool overwrite(ByteData sourceBytes, {int destinationOffsetInBytes = 0}) {
     if (storageMode != StorageMode.hostVisible) {
       throw Exception(
-          'DeviceBuffer.overwrite can only be used with DeviceBuffers that are host visible');
+        'DeviceBuffer.overwrite can only be used with DeviceBuffers that are host visible',
+      );
     }
     if (destinationOffsetInBytes < 0) {
       throw Exception('destinationOffsetInBytes must be positive');
@@ -106,7 +144,8 @@ base class DeviceBuffer extends NativeFieldWrapperClass1 {
   }
 
   @Native<Bool Function(Pointer<Void>, Handle, Int)>(
-      symbol: 'InternalFlutterGpu_DeviceBuffer_Overwrite')
+    symbol: 'InternalFlutterGpu_DeviceBuffer_Overwrite',
+  )
   external bool _overwrite(ByteData bytes, int destinationOffsetInBytes);
 
   /// Flush the contents of the [DeviceBuffer] to the GPU.
@@ -121,7 +160,8 @@ base class DeviceBuffer extends NativeFieldWrapperClass1 {
   void flush({int offsetInBytes = 0, int lengthInBytes = -1}) {
     if (storageMode != StorageMode.hostVisible) {
       throw Exception(
-          'DeviceBuffer.flush can only be used with DeviceBuffers that are host visible');
+        'DeviceBuffer.flush can only be used with DeviceBuffers that are host visible',
+      );
     }
     if (offsetInBytes < 0 || offsetInBytes >= sizeInBytes) {
       throw Exception('offsetInBytes must be within the bounds of the buffer');
@@ -131,13 +171,15 @@ base class DeviceBuffer extends NativeFieldWrapperClass1 {
     }
     if (lengthInBytes != -1 && offsetInBytes + lengthInBytes > sizeInBytes) {
       throw Exception(
-          'The provided range must not be too large to fit within the buffer');
+        'The provided range must not be too large to fit within the buffer',
+      );
     }
     _flush(offsetInBytes, lengthInBytes);
   }
 
   @Native<Void Function(Pointer<Void>, Int, Int)>(
-      symbol: 'InternalFlutterGpu_DeviceBuffer_Flush')
+    symbol: 'InternalFlutterGpu_DeviceBuffer_Flush',
+  )
   external void _flush(int offsetInBytes, int lengthInBytes);
 }
 
@@ -186,8 +228,10 @@ base class HostBuffer {
   final List<List<DeviceBuffer>> _buffers = [];
 
   /// Creates a new HostBuffer.
-  HostBuffer._initialize(this._gpuContext,
-      {this.blockLengthInBytes = HostBuffer.kDefaultBlockLengthInBytes}) {
+  HostBuffer._initialize(
+    this._gpuContext, {
+    this.blockLengthInBytes = HostBuffer.kDefaultBlockLengthInBytes,
+  }) {
     for (int i = 0; i < frameCount; i++) {
       List<DeviceBuffer> frame = [];
       _buffers.add(frame);
@@ -196,8 +240,10 @@ base class HostBuffer {
   }
 
   DeviceBuffer _allocateNewBlock(length) {
-    final buffer =
-        _gpuContext.createDeviceBuffer(StorageMode.hostVisible, length);
+    final buffer = _gpuContext.createDeviceBuffer(
+      StorageMode.hostVisible,
+      length,
+    );
     if (buffer == null) {
       throw Exception('Failed to allocate DeviceBuffer of length $length');
     }
@@ -208,11 +254,15 @@ base class HostBuffer {
   /// Allocates a new block if necessary.
   BufferView _allocateEmplacement(ByteData bytes) {
     if (bytes.lengthInBytes > blockLengthInBytes) {
-      return BufferView(_allocateNewBlock(bytes.lengthInBytes),
-          offsetInBytes: 0, lengthInBytes: bytes.lengthInBytes);
+      return BufferView(
+        _allocateNewBlock(bytes.lengthInBytes),
+        offsetInBytes: 0,
+        lengthInBytes: bytes.lengthInBytes,
+      );
     }
 
-    int padding = _gpuContext.minimumUniformByteAlignment -
+    int padding =
+        _gpuContext.minimumUniformByteAlignment -
         (_offsetCursor % _gpuContext.minimumUniformByteAlignment);
     // If the padding is the full alignment size, then we're already aligned.
     // So reset the padding to zero.
@@ -223,13 +273,19 @@ base class HostBuffer {
       _bufferCursor++;
       _offsetCursor = bytes.lengthInBytes;
 
-      return BufferView(buffer,
-          offsetInBytes: 0, lengthInBytes: blockLengthInBytes);
+      return BufferView(
+        buffer,
+        offsetInBytes: 0,
+        lengthInBytes: blockLengthInBytes,
+      );
     }
 
     _offsetCursor += padding;
-    final view = BufferView(_buffers[_frameCursor][_bufferCursor],
-        offsetInBytes: _offsetCursor, lengthInBytes: bytes.lengthInBytes);
+    final view = BufferView(
+      _buffers[_frameCursor][_bufferCursor],
+      offsetInBytes: _offsetCursor,
+      lengthInBytes: bytes.lengthInBytes,
+    );
     _offsetCursor += bytes.lengthInBytes;
     return view;
   }
@@ -246,11 +302,14 @@ base class HostBuffer {
   /// referencing it in a command.
   BufferView emplace(ByteData bytes) {
     BufferView view = _allocateEmplacement(bytes);
-    if (!view.buffer
-        .overwrite(bytes, destinationOffsetInBytes: view.offsetInBytes)) {
+    if (!view.buffer.overwrite(
+      bytes,
+      destinationOffsetInBytes: view.offsetInBytes,
+    )) {
       throw Exception(
-          'Failed to write range (offset=${view.offsetInBytes}, length=${view.lengthInBytes}) '
-          'to HostBuffer-managed DeviceBuffer (frame=$_frameCursor, buffer=$_bufferCursor, offset=$_offsetCursor).');
+        'Failed to write range (offset=${view.offsetInBytes}, length=${view.lengthInBytes}) '
+        'to HostBuffer-managed DeviceBuffer (frame=$_frameCursor, buffer=$_bufferCursor, offset=$_offsetCursor).',
+      );
     }
 
     return view;

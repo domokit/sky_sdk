@@ -62,8 +62,7 @@ class CkBrowserImageDecoder extends BrowserImageDecoder {
   }
 }
 
-Future<ByteData> readPixelsFromVideoFrame(
-    VideoFrame videoFrame, ui.ImageByteFormat format) async {
+Future<ByteData> readPixelsFromVideoFrame(VideoFrame videoFrame, ui.ImageByteFormat format) async {
   if (format == ui.ImageByteFormat.png) {
     final Uint8List png = await encodeDomImageSourceAsPng(
       videoFrame,
@@ -106,16 +105,11 @@ Future<ByteData> readPixelsFromDomImageSource(
   int height,
 ) async {
   if (format == ui.ImageByteFormat.png) {
-    final Uint8List png = await encodeDomImageSourceAsPng(
-      imageSource,
-      width,
-      height,
-    );
+    final Uint8List png = await encodeDomImageSourceAsPng(imageSource, width, height);
     return png.buffer.asByteData();
   }
 
-  final ByteBuffer pixels =
-      readDomImageSourcePixelsUnmodified(imageSource, width, height);
+  final ByteBuffer pixels = readDomImageSourcePixelsUnmodified(imageSource, width, height);
   return pixels.asByteData();
 }
 
@@ -166,16 +160,14 @@ void _bgrToRawRgba(ByteBuffer pixels) {
   }
 }
 
-bool _shouldReadPixelsUnmodified(
-    VideoFrame videoFrame, ui.ImageByteFormat format) {
+bool _shouldReadPixelsUnmodified(VideoFrame videoFrame, ui.ImageByteFormat format) {
   if (format == ui.ImageByteFormat.rawUnmodified) {
     return true;
   }
 
   // Do not convert if the requested format is RGBA and the video frame is
   // encoded as either RGBA or RGBX.
-  final bool isRgbFrame =
-      videoFrame.format == 'RGBA' || videoFrame.format == 'RGBX';
+  final bool isRgbFrame = videoFrame.format == 'RGBA' || videoFrame.format == 'RGBX';
   return format == ui.ImageByteFormat.rawStraightRgba && isRgbFrame;
 }
 
@@ -194,9 +186,11 @@ Future<ByteBuffer> readVideoFramePixelsUnmodified(VideoFrame videoFrame) async {
 }
 
 ByteBuffer readDomImageSourcePixelsUnmodified(
-    DomCanvasImageSource imageSource, int width, int height) {
-  final DomCanvasElement htmlCanvas =
-      createDomCanvasElement(width: width, height: height);
+  DomCanvasImageSource imageSource,
+  int width,
+  int height,
+) {
+  final DomCanvasElement htmlCanvas = createDomCanvasElement(width: width, height: height);
   final DomCanvasRenderingContext2D ctx =
       htmlCanvas.getContext('2d')! as DomCanvasRenderingContext2D;
   ctx.drawImage(imageSource, 0, 0);
@@ -209,13 +203,14 @@ ByteBuffer readDomImageSourcePixelsUnmodified(
 }
 
 Future<Uint8List> encodeDomImageSourceAsPng(
-    DomCanvasImageSource imageSource, int width, int height) async {
-  final DomCanvasElement canvas =
-      createDomCanvasElement(width: width, height: height);
+  DomCanvasImageSource imageSource,
+  int width,
+  int height,
+) async {
+  final DomCanvasElement canvas = createDomCanvasElement(width: width, height: height);
   final DomCanvasRenderingContext2D ctx = canvas.context2D;
   ctx.drawImage(imageSource, 0, 0);
-  final String pngBase64 =
-      canvas.toDataURL().substring('data:image/png;base64,'.length);
+  final String pngBase64 = canvas.toDataURL().substring('data:image/png;base64,'.length);
   // Resize the canvas to 0x0 to cause the browser to reclaim its memory
   // eagerly.
   canvas.width = 0;

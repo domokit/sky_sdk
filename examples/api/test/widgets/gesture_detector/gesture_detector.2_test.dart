@@ -3,12 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/widgets/gesture_detector/gesture_detector.2.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/gesture_detector/gesture_detector.2.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-
   void expectBorders(
     WidgetTester tester, {
     required bool expectGreenHasBorder,
@@ -30,14 +28,16 @@ void main() {
   void expectInnerGestureDetectorBehavior(WidgetTester tester, HitTestBehavior behavior) {
     // There is a third GestureDetector added by Scaffold.
     final Finder innerGestureDetectorFinder = find.byType(GestureDetector).at(1);
-    final GestureDetector innerGestureDetector = tester.firstWidget<GestureDetector>(innerGestureDetectorFinder);
+    final GestureDetector innerGestureDetector = tester.firstWidget<GestureDetector>(
+      innerGestureDetectorFinder,
+    );
     expect(innerGestureDetector.behavior, behavior);
   }
 
-  testWidgets('Only the green Container shows a red border when tapped', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NestedGestureDetectorsApp(),
-    );
+  testWidgets('Only the green Container shows a red border when tapped', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.NestedGestureDetectorsApp());
 
     final Finder greenFinder = find.byType(Container).first;
     final Offset greenTopLeftCorner = tester.getTopLeft(greenFinder);
@@ -63,10 +63,10 @@ void main() {
     expectInnerGestureDetectorBehavior(tester, HitTestBehavior.opaque);
   });
 
-  testWidgets('Only the yellow Container shows a red border when tapped', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.NestedGestureDetectorsApp(),
-    );
+  testWidgets('Only the yellow Container shows a red border when tapped', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.NestedGestureDetectorsApp());
 
     final Finder yellowFinder = find.byType(Container).last;
     final Offset yellowTopLeftCorner = tester.getTopLeft(yellowFinder);

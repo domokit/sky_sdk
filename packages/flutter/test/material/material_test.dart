@@ -15,7 +15,7 @@ import '../widgets/multi_view_testing.dart';
 import '../widgets/test_border.dart' show TestBorder;
 
 class NotifyMaterial extends StatelessWidget {
-  const NotifyMaterial({ super.key });
+  const NotifyMaterial({super.key});
   @override
   Widget build(BuildContext context) {
     const LayoutChangedNotification().dispatch(context);
@@ -89,10 +89,11 @@ void main() {
     final DiagnosticPropertiesBuilder builder = DiagnosticPropertiesBuilder();
     const Material().debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-      .map((DiagnosticsNode node) => node.toString())
-      .toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>['type: canvas']);
   });
@@ -107,10 +108,11 @@ void main() {
       borderRadius: BorderRadiusDirectional.all(Radius.circular(10)),
     ).debugFillProperties(builder);
 
-    final List<String> description = builder.properties
-      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-      .map((DiagnosticsNode node) => node.toString())
-      .toList();
+    final List<String> description =
+        builder.properties
+            .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+            .map((DiagnosticsNode node) => node.toString())
+            .toList();
 
     expect(description, <String>[
       'type: canvas',
@@ -124,11 +126,7 @@ void main() {
   });
 
   testWidgets('LayoutChangedNotification test', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const Material(
-        child: NotifyMaterial(),
-      ),
-    );
+    await tester.pumpWidget(const Material(child: NotifyMaterial()));
   });
 
   testWidgets('ListView scroll does not repaint', (WidgetTester tester) async {
@@ -139,13 +137,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: Column(
           children: <Widget>[
-            SizedBox(
-              width: 150.0,
-              height: 150.0,
-              child: CustomPaint(
-                painter: PaintRecorder(log),
-              ),
-            ),
+            SizedBox(width: 150.0, height: 150.0, child: CustomPaint(painter: PaintRecorder(log))),
             Expanded(
               child: Material(
                 child: Column(
@@ -153,19 +145,14 @@ void main() {
                     Expanded(
                       child: ListView(
                         children: <Widget>[
-                          Container(
-                            height: 2000.0,
-                            color: const Color(0xFF00FF00),
-                          ),
+                          Container(height: 2000.0, color: const Color(0xFF00FF00)),
                         ],
                       ),
                     ),
                     SizedBox(
                       width: 100.0,
                       height: 100.0,
-                      child: CustomPaint(
-                        painter: PaintRecorder(log),
-                      ),
+                      child: CustomPaint(painter: PaintRecorder(log)),
                     ),
                   ],
                 ),
@@ -178,10 +165,7 @@ void main() {
 
     // We paint twice because we have two CustomPaint widgets in the tree above
     // to test repainting both inside and outside the Material widget.
-    expect(log, equals(<Size>[
-      const Size(150.0, 150.0),
-      const Size(100.0, 100.0),
-    ]));
+    expect(log, equals(<Size>[const Size(150.0, 150.0), const Size(100.0, 100.0)]));
     log.clear();
 
     await tester.drag(find.byType(ListView), const Offset(0.0, -300.0));
@@ -196,47 +180,28 @@ void main() {
         child: SizedBox(
           height: 100.0,
           width: 100.0,
-          child: Material(
-            shadowColor: shadowColor,
-            elevation: 10,
-            shape: const CircleBorder(),
-          ),
-        )
+          child: Material(shadowColor: shadowColor, elevation: 10, shape: const CircleBorder()),
+        ),
       );
     }
 
     // Default M2 shadow color
     await tester.pumpWidget(
-        Theme(
-          data: ThemeData(
-            useMaterial3: false,
-          ),
-          child: buildWithShadow(null),
-        )
+      Theme(data: ThemeData(useMaterial3: false), child: buildWithShadow(null)),
     );
     await tester.pumpAndSettle();
     expect(getModel(tester).shadowColor, ThemeData().shadowColor);
 
     // Default M3 shadow color
     await tester.pumpWidget(
-        Theme(
-          data: ThemeData(
-            useMaterial3: true,
-          ),
-          child: buildWithShadow(null),
-        )
+      Theme(data: ThemeData(useMaterial3: true), child: buildWithShadow(null)),
     );
     await tester.pumpAndSettle();
     expect(getModel(tester).shadowColor, ThemeData().colorScheme.shadow);
 
     // Drop shadow can be turned off with a transparent color.
     await tester.pumpWidget(
-        Theme(
-          data: ThemeData(
-            useMaterial3: true,
-          ),
-          child: buildWithShadow(Colors.transparent),
-        )
+      Theme(data: ThemeData(useMaterial3: true), child: buildWithShadow(Colors.transparent)),
     );
     await tester.pumpAndSettle();
     expect(getModel(tester).shadowColor, Colors.transparent);
@@ -308,10 +273,7 @@ void main() {
               ),
               const Material(
                 type: MaterialType.transparency,
-                child: SizedBox(
-                  width: 400.0,
-                  height: 500.0,
-                ),
+                child: SizedBox(width: 400.0, height: 500.0),
               ),
             ],
           ),
@@ -323,34 +285,36 @@ void main() {
   });
 
   group('Surface Tint Overlay', () {
-    testWidgets('applyElevationOverlayColor does not effect anything with useMaterial3 set to true', (WidgetTester tester) async {
-      const Color surfaceColor = Color(0xFF121212);
-      await tester.pumpWidget(Theme(
-        data: ThemeData(
-          useMaterial3: true,
-          applyElevationOverlayColor: true,
-          colorScheme: const ColorScheme.dark().copyWith(surface: surfaceColor),
-        ),
-        child: buildMaterial(color: surfaceColor, elevation: 8.0),
-      ));
-      final RenderPhysicalShape model = getModel(tester);
-      expect(model.color, equals(surfaceColor));
-    });
+    testWidgets(
+      'applyElevationOverlayColor does not effect anything with useMaterial3 set to true',
+      (WidgetTester tester) async {
+        const Color surfaceColor = Color(0xFF121212);
+        await tester.pumpWidget(
+          Theme(
+            data: ThemeData(
+              useMaterial3: true,
+              applyElevationOverlayColor: true,
+              colorScheme: const ColorScheme.dark().copyWith(surface: surfaceColor),
+            ),
+            child: buildMaterial(color: surfaceColor, elevation: 8.0),
+          ),
+        );
+        final RenderPhysicalShape model = getModel(tester);
+        expect(model.color, equals(surfaceColor));
+      },
+    );
 
-    testWidgets('surfaceTintColor is used to as an overlay to indicate elevation', (WidgetTester tester) async {
+    testWidgets('surfaceTintColor is used to as an overlay to indicate elevation', (
+      WidgetTester tester,
+    ) async {
       const Color baseColor = Color(0xFF121212);
       const Color surfaceTintColor = Color(0xff44CCFF);
 
       // With no surfaceTintColor specified, it should not apply an overlay
       await tester.pumpWidget(
         Theme(
-          data: ThemeData(
-            useMaterial3: true,
-          ),
-          child: buildMaterial(
-            color: baseColor,
-            elevation: 12.0,
-          ),
+          data: ThemeData(useMaterial3: true),
+          child: buildMaterial(color: baseColor, elevation: 12.0),
         ),
       );
       await tester.pumpAndSettle();
@@ -360,9 +324,7 @@ void main() {
       // With transparent surfaceTintColor, it should not apply an overlay
       await tester.pumpWidget(
         Theme(
-          data: ThemeData(
-            useMaterial3: true,
-          ),
+          data: ThemeData(useMaterial3: true),
           child: buildMaterial(
             color: baseColor,
             surfaceTintColor: Colors.transparent,
@@ -378,9 +340,7 @@ void main() {
       // on the elevation.
       await tester.pumpWidget(
         Theme(
-          data: ThemeData(
-            useMaterial3: true,
-          ),
+          data: ThemeData(useMaterial3: true),
           child: buildMaterial(
             color: baseColor,
             surfaceTintColor: surfaceTintColor,
@@ -394,47 +354,52 @@ void main() {
       // Final color should be the base with a tint of 0.14 opacity or 0xff192c33
       expect(tintModel.color, isSameColorAs(const Color(0xff192c33)));
     });
-
   }); // Surface Tint Overlay group
 
   group('Elevation Overlay M2', () {
     // These tests only apply to the Material 2 overlay mechanism. This group
     // can be removed after migration to Material 3 is complete.
-    testWidgets('applyElevationOverlayColor set to false does not change surface color', (WidgetTester tester) async {
+    testWidgets('applyElevationOverlayColor set to false does not change surface color', (
+      WidgetTester tester,
+    ) async {
       const Color surfaceColor = Color(0xFF121212);
-      await tester.pumpWidget(Theme(
+      await tester.pumpWidget(
+        Theme(
           data: ThemeData(
             useMaterial3: false,
             applyElevationOverlayColor: false,
             colorScheme: const ColorScheme.dark().copyWith(surface: surfaceColor),
           ),
           child: buildMaterial(color: surfaceColor, elevation: 8.0),
-      ));
+        ),
+      );
       final RenderPhysicalShape model = getModel(tester);
       expect(model.color, equals(surfaceColor));
     });
 
-    testWidgets('applyElevationOverlayColor set to true applies a semi-transparent onSurface color to the surface color', (WidgetTester tester) async {
-      const Color surfaceColor = Color(0xFF121212);
-      const Color onSurfaceColor = Colors.greenAccent;
+    testWidgets(
+      'applyElevationOverlayColor set to true applies a semi-transparent onSurface color to the surface color',
+      (WidgetTester tester) async {
+        const Color surfaceColor = Color(0xFF121212);
+        const Color onSurfaceColor = Colors.greenAccent;
 
-      // The colors we should get with a base surface color of 0xFF121212 for
-      // and a given elevation
-      const List<ElevationColor> elevationColors = <ElevationColor>[
-        ElevationColor(0.0, Color(0xFF121212)),
-        ElevationColor(1.0, Color(0xFF161D19)),
-        ElevationColor(2.0, Color(0xFF18211D)),
-        ElevationColor(3.0, Color(0xFF19241E)),
-        ElevationColor(4.0, Color(0xFF1A2620)),
-        ElevationColor(6.0, Color(0xFF1B2922)),
-        ElevationColor(8.0, Color(0xFF1C2C24)),
-        ElevationColor(12.0, Color(0xFF1D3027)),
-        ElevationColor(16.0, Color(0xFF1E3329)),
-        ElevationColor(24.0, Color(0xFF20362B)),
-      ];
+        // The colors we should get with a base surface color of 0xFF121212 for
+        // and a given elevation
+        const List<ElevationColor> elevationColors = <ElevationColor>[
+          ElevationColor(0.0, Color(0xFF121212)),
+          ElevationColor(1.0, Color(0xFF161D19)),
+          ElevationColor(2.0, Color(0xFF18211D)),
+          ElevationColor(3.0, Color(0xFF19241E)),
+          ElevationColor(4.0, Color(0xFF1A2620)),
+          ElevationColor(6.0, Color(0xFF1B2922)),
+          ElevationColor(8.0, Color(0xFF1C2C24)),
+          ElevationColor(12.0, Color(0xFF1D3027)),
+          ElevationColor(16.0, Color(0xFF1E3329)),
+          ElevationColor(24.0, Color(0xFF20362B)),
+        ];
 
-      for (final ElevationColor test in elevationColors) {
-        await tester.pumpWidget(
+        for (final ElevationColor test in elevationColors) {
+          await tester.pumpWidget(
             Theme(
               data: ThemeData(
                 useMaterial3: false,
@@ -444,19 +409,19 @@ void main() {
                   onSurface: onSurfaceColor,
                 ),
               ),
-              child: buildMaterial(
-                color: surfaceColor,
-                elevation: test.elevation,
-              ),
+              child: buildMaterial(color: surfaceColor, elevation: test.elevation),
             ),
-        );
-        await tester.pumpAndSettle(); // wait for the elevation animation to finish
-        final RenderPhysicalShape model = getModel(tester);
-        expect(model.color, isSameColorAs(test.color));
-      }
-    });
+          );
+          await tester.pumpAndSettle(); // wait for the elevation animation to finish
+          final RenderPhysicalShape model = getModel(tester);
+          expect(model.color, isSameColorAs(test.color));
+        }
+      },
+    );
 
-    testWidgets('overlay will not apply to materials using a non-surface color', (WidgetTester tester) async {
+    testWidgets('overlay will not apply to materials using a non-surface color', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         Theme(
           data: ThemeData(
@@ -464,10 +429,7 @@ void main() {
             applyElevationOverlayColor: true,
             colorScheme: const ColorScheme.dark(),
           ),
-          child: buildMaterial(
-            color: Colors.cyan,
-            elevation: 8.0,
-          ),
+          child: buildMaterial(color: Colors.cyan, elevation: 8.0),
         ),
       );
       final RenderPhysicalShape model = getModel(tester);
@@ -475,26 +437,27 @@ void main() {
       expect(model.color, equals(Colors.cyan));
     });
 
-    testWidgets('overlay will not apply to materials using a light theme', (WidgetTester tester) async {
+    testWidgets('overlay will not apply to materials using a light theme', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
-          Theme(
-            data: ThemeData(
-              useMaterial3: false,
-              applyElevationOverlayColor: true,
-              colorScheme: const ColorScheme.light(),
-            ),
-            child: buildMaterial(
-              color: Colors.cyan,
-              elevation: 8.0,
-            ),
+        Theme(
+          data: ThemeData(
+            useMaterial3: false,
+            applyElevationOverlayColor: true,
+            colorScheme: const ColorScheme.light(),
           ),
+          child: buildMaterial(color: Colors.cyan, elevation: 8.0),
+        ),
       );
       final RenderPhysicalShape model = getModel(tester);
       // Shouldn't change, as it was under a light color scheme.
       expect(model.color, equals(Colors.cyan));
     });
 
-    testWidgets('overlay will apply to materials with a non-opaque surface color', (WidgetTester tester) async {
+    testWidgets('overlay will apply to materials with a non-opaque surface color', (
+      WidgetTester tester,
+    ) async {
       const Color surfaceColor = Color(0xFF121212);
       const Color surfaceColorWithOverlay = Color(0xC6353535);
 
@@ -505,10 +468,7 @@ void main() {
             applyElevationOverlayColor: true,
             colorScheme: const ColorScheme.dark(),
           ),
-          child: buildMaterial(
-            color: surfaceColor.withOpacity(.75),
-            elevation: 8.0,
-          ),
+          child: buildMaterial(color: surfaceColor.withOpacity(.75), elevation: 8.0),
         ),
       );
 
@@ -517,28 +477,27 @@ void main() {
       expect(model.color, isNot(isSameColorAs(surfaceColor)));
     });
 
-    testWidgets('Expected overlay color can be computed using colorWithOverlay', (WidgetTester tester) async {
+    testWidgets('Expected overlay color can be computed using colorWithOverlay', (
+      WidgetTester tester,
+    ) async {
       const Color surfaceColor = Color(0xFF123456);
       const Color onSurfaceColor = Color(0xFF654321);
       const double elevation = 8.0;
 
-      final Color surfaceColorWithOverlay =
-        ElevationOverlay.colorWithOverlay(surfaceColor, onSurfaceColor, elevation);
+      final Color surfaceColorWithOverlay = ElevationOverlay.colorWithOverlay(
+        surfaceColor,
+        onSurfaceColor,
+        elevation,
+      );
 
       await tester.pumpWidget(
         Theme(
           data: ThemeData(
             useMaterial3: false,
             applyElevationOverlayColor: true,
-            colorScheme: const ColorScheme.dark(
-              surface: surfaceColor,
-              onSurface: onSurfaceColor,
-            ),
+            colorScheme: const ColorScheme.dark(surface: surfaceColor, onSurface: onSurfaceColor),
           ),
-          child: buildMaterial(
-            color: surfaceColor,
-            elevation: elevation,
-          ),
+          child: buildMaterial(color: surfaceColor, elevation: elevation),
         ),
       );
 
@@ -546,25 +505,26 @@ void main() {
       expect(model.color, equals(surfaceColorWithOverlay));
       expect(model.color, isNot(equals(surfaceColor)));
     });
-
   }); // Elevation Overlay M2 group
 
   group('Transparency clipping', () {
     testWidgets('No clip by default', (WidgetTester tester) async {
       final GlobalKey materialKey = GlobalKey();
       await tester.pumpWidget(
-          Material(
-            key: materialKey,
-            type: MaterialType.transparency,
-            child: const SizedBox(width: 100.0, height: 100.0),
-          ),
+        Material(
+          key: materialKey,
+          type: MaterialType.transparency,
+          child: const SizedBox(width: 100.0, height: 100.0),
+        ),
       );
 
       final RenderClipPath renderClip = tester.allRenderObjects.whereType<RenderClipPath>().first;
       expect(renderClip.clipBehavior, equals(Clip.none));
     });
 
-    testWidgets('clips to bounding rect by default given Clip.antiAlias', (WidgetTester tester) async {
+    testWidgets('clips to bounding rect by default given Clip.antiAlias', (
+      WidgetTester tester,
+    ) async {
       final GlobalKey materialKey = GlobalKey();
       await tester.pumpWidget(
         Material(
@@ -578,7 +538,9 @@ void main() {
       expect(find.byKey(materialKey), clipsWithBoundingRect);
     });
 
-    testWidgets('clips to rounded rect when borderRadius provided given Clip.antiAlias', (WidgetTester tester) async {
+    testWidgets('clips to rounded rect when borderRadius provided given Clip.antiAlias', (
+      WidgetTester tester,
+    ) async {
       final GlobalKey materialKey = GlobalKey();
       await tester.pumpWidget(
         Material(
@@ -592,9 +554,7 @@ void main() {
 
       expect(
         find.byKey(materialKey),
-        clipsWithBoundingRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-        ),
+        clipsWithBoundingRRect(borderRadius: const BorderRadius.all(Radius.circular(10.0))),
       );
     });
 
@@ -610,17 +570,14 @@ void main() {
         ),
       );
 
-      expect(
-        find.byKey(materialKey),
-        clipsWithShapeBorder(
-          shape: const StadiumBorder(),
-        ),
-      );
+      expect(find.byKey(materialKey), clipsWithShapeBorder(shape: const StadiumBorder()));
     });
 
     testWidgets('supports directional clips', (WidgetTester tester) async {
       final List<String> logs = <String>[];
-      final ShapeBorder shape = TestBorder((String message) { logs.add(message); });
+      final ShapeBorder shape = TestBorder((String message) {
+        logs.add(message);
+      });
       Widget buildMaterial() {
         return Material(
           type: MaterialType.transparency,
@@ -629,6 +586,7 @@ void main() {
           child: const SizedBox(width: 100.0, height: 100.0),
         );
       }
+
       final Widget material = buildMaterial();
       // verify that a regular clip works as one would expect
       logs.add('--0');
@@ -639,30 +597,20 @@ void main() {
       await tester.pumpWidget(buildMaterial());
       // verify that Material passes the TextDirection on to its shape when it's transparent
       logs.add('--2');
-      await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.ltr,
-        child: material,
-      ));
+      await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: material));
       // verify that changing the text direction from LTR to RTL has an effect
       // even though the widget itself is identical
       logs.add('--3');
-      await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.rtl,
-        child: material,
-      ));
+      await tester.pumpWidget(Directionality(textDirection: TextDirection.rtl, child: material));
       // verify that pumping again with a text direction has no effect
       logs.add('--4');
-      await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.rtl,
-        child: buildMaterial(),
-      ));
+      await tester.pumpWidget(
+        Directionality(textDirection: TextDirection.rtl, child: buildMaterial()),
+      );
       logs.add('--5');
       // verify that changing the text direction and the widget at the same time
       // works as expected
-      await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.ltr,
-        child: material,
-      ));
+      await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: material));
       expect(logs, <String>[
         '--0',
         'getOuterPath Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) null',
@@ -686,17 +634,17 @@ void main() {
     testWidgets('canvas', (WidgetTester tester) async {
       final GlobalKey materialKey = GlobalKey();
       await tester.pumpWidget(
-        Material(
-          key: materialKey,
-          child: const SizedBox(width: 100.0, height: 100.0),
-        ),
+        Material(key: materialKey, child: const SizedBox(width: 100.0, height: 100.0)),
       );
 
-      expect(find.byKey(materialKey), rendersOnPhysicalModel(
+      expect(
+        find.byKey(materialKey),
+        rendersOnPhysicalModel(
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.zero,
           elevation: 0.0,
-      ));
+        ),
+      );
     });
 
     testWidgets('canvas with borderRadius and elevation', (WidgetTester tester) async {
@@ -710,11 +658,14 @@ void main() {
         ),
       );
 
-      expect(find.byKey(materialKey), rendersOnPhysicalModel(
+      expect(
+        find.byKey(materialKey),
+        rendersOnPhysicalModel(
           shape: BoxShape.rectangle,
           borderRadius: const BorderRadius.all(Radius.circular(5.0)),
           elevation: 1.0,
-      ));
+        ),
+      );
     });
 
     testWidgets('canvas with shape and elevation', (WidgetTester tester) async {
@@ -728,10 +679,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(materialKey), rendersOnPhysicalShape(
-          shape: const StadiumBorder(),
-          elevation: 1.0,
-      ));
+      expect(
+        find.byKey(materialKey),
+        rendersOnPhysicalShape(shape: const StadiumBorder(), elevation: 1.0),
+      );
     });
 
     testWidgets('card', (WidgetTester tester) async {
@@ -744,11 +695,14 @@ void main() {
         ),
       );
 
-      expect(find.byKey(materialKey), rendersOnPhysicalModel(
+      expect(
+        find.byKey(materialKey),
+        rendersOnPhysicalModel(
           shape: BoxShape.rectangle,
           borderRadius: const BorderRadius.all(Radius.circular(2.0)),
           elevation: 0.0,
-      ));
+        ),
+      );
     });
 
     testWidgets('card with borderRadius and elevation', (WidgetTester tester) async {
@@ -763,11 +717,14 @@ void main() {
         ),
       );
 
-      expect(find.byKey(materialKey), rendersOnPhysicalModel(
+      expect(
+        find.byKey(materialKey),
+        rendersOnPhysicalModel(
           shape: BoxShape.rectangle,
           borderRadius: const BorderRadius.all(Radius.circular(5.0)),
           elevation: 5.0,
-      ));
+        ),
+      );
     });
 
     testWidgets('card with shape and elevation', (WidgetTester tester) async {
@@ -782,10 +739,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(materialKey), rendersOnPhysicalShape(
-          shape: const StadiumBorder(),
-          elevation: 5.0,
-      ));
+      expect(
+        find.byKey(materialKey),
+        rendersOnPhysicalShape(shape: const StadiumBorder(), elevation: 5.0),
+      );
     });
 
     testWidgets('circle', (WidgetTester tester) async {
@@ -799,10 +756,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(materialKey), rendersOnPhysicalModel(
-          shape: BoxShape.circle,
-          elevation: 0.0,
-      ));
+      expect(
+        find.byKey(materialKey),
+        rendersOnPhysicalModel(shape: BoxShape.circle, elevation: 0.0),
+      );
     });
 
     testWidgets('button', (WidgetTester tester) async {
@@ -816,11 +773,14 @@ void main() {
         ),
       );
 
-      expect(find.byKey(materialKey), rendersOnPhysicalModel(
+      expect(
+        find.byKey(materialKey),
+        rendersOnPhysicalModel(
           shape: BoxShape.rectangle,
           borderRadius: const BorderRadius.all(Radius.circular(2.0)),
           elevation: 0.0,
-      ));
+        ),
+      );
     });
 
     testWidgets('button with elevation and borderRadius', (WidgetTester tester) async {
@@ -836,11 +796,14 @@ void main() {
         ),
       );
 
-      expect(find.byKey(materialKey), rendersOnPhysicalModel(
+      expect(
+        find.byKey(materialKey),
+        rendersOnPhysicalModel(
           shape: BoxShape.rectangle,
           borderRadius: const BorderRadius.all(Radius.circular(6.0)),
           elevation: 4.0,
-      ));
+        ),
+      );
     });
 
     testWidgets('button with elevation and shape', (WidgetTester tester) async {
@@ -856,10 +819,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(materialKey), rendersOnPhysicalShape(
-          shape: const StadiumBorder(),
-          elevation: 4.0,
-      ));
+      expect(
+        find.byKey(materialKey),
+        rendersOnPhysicalShape(shape: const StadiumBorder(), elevation: 4.0),
+      );
     });
   });
 
@@ -871,12 +834,7 @@ void main() {
           key: materialKey,
           type: MaterialType.button,
           color: const Color(0xFF0000FF),
-          shape: const CircleBorder(
-            side: BorderSide(
-              width: 2.0,
-              color: Color(0xFF0000FF),
-            ),
-          ),
+          shape: const CircleBorder(side: BorderSide(width: 2.0, color: Color(0xFF0000FF))),
           child: const SizedBox(width: 100.0, height: 100.0),
         ),
       );
@@ -891,12 +849,7 @@ void main() {
         Material(
           key: materialKey,
           type: MaterialType.transparency,
-          shape: const CircleBorder(
-            side: BorderSide(
-              width: 2.0,
-              color: Color(0xFF0000FF),
-            ),
-          ),
+          shape: const CircleBorder(side: BorderSide(width: 2.0, color: Color(0xFF0000FF))),
           child: const SizedBox(width: 100.0, height: 100.0),
         ),
       );
@@ -920,38 +873,35 @@ void main() {
       expect(box, isNot(paints..circle()));
     });
 
-    testWidgets('Material2 - border is painted above child by default', (WidgetTester tester) async {
+    testWidgets('Material2 - border is painted above child by default', (
+      WidgetTester tester,
+    ) async {
       final Key painterKey = UniqueKey();
 
-      await tester.pumpWidget(MaterialApp(
-        theme: ThemeData(useMaterial3: false),
-        home: Scaffold(
-          body: RepaintBoundary(
-            key: painterKey,
-            child: Card(
-              child: SizedBox(
-                width: 200,
-                height: 300,
-                child: Material(
-                  clipBehavior: Clip.hardEdge,
-                  shape: const RoundedRectangleBorder(
-                    side: BorderSide(color: Colors.grey, width: 6),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        color: Colors.green,
-                        height: 150,
-                      ),
-                    ],
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: false),
+          home: Scaffold(
+            body: RepaintBoundary(
+              key: painterKey,
+              child: Card(
+                child: SizedBox(
+                  width: 200,
+                  height: 300,
+                  child: Material(
+                    clipBehavior: Clip.hardEdge,
+                    shape: const RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.grey, width: 6),
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                    ),
+                    child: Column(children: <Widget>[Container(color: Colors.green, height: 150)]),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ));
+      );
 
       await expectLater(
         find.byKey(painterKey),
@@ -959,38 +909,35 @@ void main() {
       );
     });
 
-    testWidgets('Material3 - border is painted above child by default', (WidgetTester tester) async {
+    testWidgets('Material3 - border is painted above child by default', (
+      WidgetTester tester,
+    ) async {
       final Key painterKey = UniqueKey();
 
-      await tester.pumpWidget(MaterialApp(
-        theme: ThemeData(useMaterial3: true),
-        home: Scaffold(
-          body: RepaintBoundary(
-            key: painterKey,
-            child: Card(
-              child: SizedBox(
-                width: 200,
-                height: 300,
-                child: Material(
-                  clipBehavior: Clip.hardEdge,
-                  shape: const RoundedRectangleBorder(
-                    side: BorderSide(color: Colors.grey, width: 6),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        color: Colors.green,
-                        height: 150,
-                      ),
-                    ],
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: true),
+          home: Scaffold(
+            body: RepaintBoundary(
+              key: painterKey,
+              child: Card(
+                child: SizedBox(
+                  width: 200,
+                  height: 300,
+                  child: Material(
+                    clipBehavior: Clip.hardEdge,
+                    shape: const RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.grey, width: 6),
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                    ),
+                    child: Column(children: <Widget>[Container(color: Colors.green, height: 150)]),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ));
+      );
 
       await expectLater(
         find.byKey(painterKey),
@@ -998,39 +945,36 @@ void main() {
       );
     });
 
-    testWidgets('Material2 - border is painted below child when specified', (WidgetTester tester) async {
+    testWidgets('Material2 - border is painted below child when specified', (
+      WidgetTester tester,
+    ) async {
       final Key painterKey = UniqueKey();
 
-      await tester.pumpWidget(MaterialApp(
-        theme: ThemeData(useMaterial3: false),
-        home: Scaffold(
-          body: RepaintBoundary(
-            key: painterKey,
-            child: Card(
-              child: SizedBox(
-                width: 200,
-                height: 300,
-                child: Material(
-                  clipBehavior: Clip.hardEdge,
-                  shape: const RoundedRectangleBorder(
-                    side: BorderSide(color: Colors.grey, width: 6),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ),
-                  borderOnForeground: false,
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        color: Colors.green,
-                        height: 150,
-                      ),
-                    ],
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: false),
+          home: Scaffold(
+            body: RepaintBoundary(
+              key: painterKey,
+              child: Card(
+                child: SizedBox(
+                  width: 200,
+                  height: 300,
+                  child: Material(
+                    clipBehavior: Clip.hardEdge,
+                    shape: const RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.grey, width: 6),
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                    ),
+                    borderOnForeground: false,
+                    child: Column(children: <Widget>[Container(color: Colors.green, height: 150)]),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ));
+      );
 
       await expectLater(
         find.byKey(painterKey),
@@ -1038,39 +982,36 @@ void main() {
       );
     });
 
-    testWidgets('Material3 - border is painted below child when specified', (WidgetTester tester) async {
+    testWidgets('Material3 - border is painted below child when specified', (
+      WidgetTester tester,
+    ) async {
       final Key painterKey = UniqueKey();
 
-      await tester.pumpWidget(MaterialApp(
-        theme: ThemeData(useMaterial3: true),
-        home: Scaffold(
-          body: RepaintBoundary(
-            key: painterKey,
-            child: Card(
-              child: SizedBox(
-                width: 200,
-                height: 300,
-                child: Material(
-                  clipBehavior: Clip.hardEdge,
-                  shape: const RoundedRectangleBorder(
-                    side: BorderSide(color: Colors.grey, width: 6),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ),
-                  borderOnForeground: false,
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        color: Colors.green,
-                        height: 150,
-                      ),
-                    ],
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: true),
+          home: Scaffold(
+            body: RepaintBoundary(
+              key: painterKey,
+              child: Card(
+                child: SizedBox(
+                  width: 200,
+                  height: 300,
+                  child: Material(
+                    clipBehavior: Clip.hardEdge,
+                    shape: const RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.grey, width: 6),
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                    ),
+                    borderOnForeground: false,
+                    child: Column(children: <Widget>[Container(color: Colors.green, height: 150)]),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ));
+      );
 
       await expectLater(
         find.byKey(painterKey),
@@ -1082,12 +1023,12 @@ void main() {
   testWidgets('InkFeature skips painting if intermediate node skips', (WidgetTester tester) async {
     final GlobalKey sizedBoxKey = GlobalKey();
     final GlobalKey materialKey = GlobalKey();
-    await tester.pumpWidget(Material(
-      key: materialKey,
-      child: Offstage(
-        child: SizedBox(key: sizedBoxKey, width: 20, height: 20),
+    await tester.pumpWidget(
+      Material(
+        key: materialKey,
+        child: Offstage(child: SizedBox(key: sizedBoxKey, width: 20, height: 20)),
       ),
-    ));
+    );
     final MaterialInkController controller = Material.of(sizedBoxKey.currentContext!);
 
     final TrackPaintInkFeature tracker = TrackPaintInkFeature(
@@ -1101,16 +1042,18 @@ void main() {
     addTearDown(layer1.dispose);
 
     // Force a repaint. Since it's offstage, the ink feature should not get painted.
-    materialKey.currentContext!.findRenderObject()!.paint(PaintingContext(layer1, Rect.largest), Offset.zero);
+    materialKey.currentContext!.findRenderObject()!.paint(
+      PaintingContext(layer1, Rect.largest),
+      Offset.zero,
+    );
     expect(tracker.paintCount, 0);
 
-    await tester.pumpWidget(Material(
-      key: materialKey,
-      child: Offstage(
-        offstage: false,
-        child: SizedBox(key: sizedBoxKey, width: 20, height: 20),
+    await tester.pumpWidget(
+      Material(
+        key: materialKey,
+        child: Offstage(offstage: false, child: SizedBox(key: sizedBoxKey, width: 20, height: 20)),
       ),
-    ));
+    );
     // Gets a paint because the global keys have reused the elements and it is
     // now onstage.
     expect(tracker.paintCount, 1);
@@ -1119,18 +1062,17 @@ void main() {
     addTearDown(layer2.dispose);
 
     // Force a repaint again. This time, it gets repainted because it is onstage.
-    materialKey.currentContext!.findRenderObject()!.paint(PaintingContext(layer2, Rect.largest), Offset.zero);
+    materialKey.currentContext!.findRenderObject()!.paint(
+      PaintingContext(layer2, Rect.largest),
+      Offset.zero,
+    );
     expect(tracker.paintCount, 2);
 
     tracker.dispose();
   });
 
   testWidgets('$InkFeature dispatches memory events', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const Material(
-        child: SizedBox(width: 20, height: 20),
-      ),
-    );
+    await tester.pumpWidget(const Material(child: SizedBox(width: 20, height: 20)));
 
     final Element element = tester.element(find.byType(SizedBox));
     final MaterialInkController controller = Material.of(element);
@@ -1138,10 +1080,7 @@ void main() {
 
     await expectLater(
       await memoryEvents(
-        () => _InkFeature(
-          controller: controller,
-          referenceBox: referenceBox,
-        ).dispose(),
+        () => _InkFeature(controller: controller, referenceBox: referenceBox).dispose(),
         _InkFeature,
       ),
       areCreateAndDispose,
@@ -1196,7 +1135,7 @@ void main() {
         '   ancestor, but no such ancestor exists within the closest\n'
         '   LookupBoundary.\n'
         '   The context used was:\n'
-        '     Builder(dirty)\n'
+        '     Builder(dirty)\n',
       );
     });
 
@@ -1218,7 +1157,8 @@ void main() {
       final FlutterError error = exception! as FlutterError;
 
       expect(
-        error.toStringDeep(), startsWith(
+        error.toStringDeep(),
+        startsWith(
           'FlutterError\n'
           '   No Material widget found within the closest LookupBoundary.\n'
           '   There is an ancestor Material widget, but it is hidden by a\n'
@@ -1237,7 +1177,7 @@ void main() {
           '   The specific widget that could not find a Material ancestor was:\n'
           '     Builder\n'
           '   The ancestors of this widget were:\n'
-          '     LookupBoundary\n'
+          '     LookupBoundary\n',
         ),
       );
     });
@@ -1292,10 +1232,7 @@ class TrackPaintInkFeature extends InkFeature {
 }
 
 class _InkFeature extends InkFeature {
-  _InkFeature({
-    required super.controller,
-    required super.referenceBox,
-  }) {
+  _InkFeature({required super.controller, required super.referenceBox}) {
     controller.addInkFeature(this);
   }
 

@@ -67,18 +67,15 @@ abstract class EngineCanvas {
 
   void drawPath(ui.Path path, SurfacePaintData paint);
 
-  void drawShadow(
-      ui.Path path, ui.Color color, double elevation, bool transparentOccluder);
+  void drawShadow(ui.Path path, ui.Color color, double elevation, bool transparentOccluder);
 
   void drawImage(ui.Image image, ui.Offset p, SurfacePaintData paint);
 
-  void drawImageRect(
-      ui.Image image, ui.Rect src, ui.Rect dst, SurfacePaintData paint);
+  void drawImageRect(ui.Image image, ui.Rect src, ui.Rect dst, SurfacePaintData paint);
 
   void drawParagraph(CanvasParagraph paragraph, ui.Offset offset);
 
-  void drawVertices(
-      SurfaceVertices vertices, ui.BlendMode blendMode, SurfacePaintData paint);
+  void drawVertices(SurfaceVertices vertices, ui.BlendMode blendMode, SurfacePaintData paint);
 
   void drawPoints(ui.PointMode pointMode, Float32List points, SurfacePaintData paint);
 
@@ -104,10 +101,7 @@ Matrix4 transformWithOffset(Matrix4 transform, ui.Offset offset) {
 }
 
 class SaveStackEntry {
-  SaveStackEntry({
-    required this.transform,
-    required this.clipStack,
-  });
+  SaveStackEntry({required this.transform, required this.clipStack});
 
   final Matrix4 transform;
   final List<SaveClipEntry>? clipStack;
@@ -115,15 +109,9 @@ class SaveStackEntry {
 
 /// Tagged union of clipping parameters used for canvas.
 class SaveClipEntry {
-  SaveClipEntry.rect(this.rect, this.currentTransform)
-      : rrect = null,
-        path = null;
-  SaveClipEntry.rrect(this.rrect, this.currentTransform)
-      : rect = null,
-        path = null;
-  SaveClipEntry.path(this.path, this.currentTransform)
-      : rect = null,
-        rrect = null;
+  SaveClipEntry.rect(this.rect, this.currentTransform) : rrect = null, path = null;
+  SaveClipEntry.rrect(this.rrect, this.currentTransform) : rect = null, path = null;
+  SaveClipEntry.path(this.path, this.currentTransform) : rect = null, rrect = null;
 
   final ui.Rect? rect;
   final ui.RRect? rrect;
@@ -163,11 +151,12 @@ mixin SaveStackTracking on EngineCanvas {
   /// Classes that override this method must call `super.save()`.
   @override
   void save() {
-    _saveStack.add(SaveStackEntry(
-      transform: _currentTransform.clone(),
-      clipStack:
-          _clipStack == null ? null : List<SaveClipEntry>.from(_clipStack!),
-    ));
+    _saveStack.add(
+      SaveStackEntry(
+        transform: _currentTransform.clone(),
+        clipStack: _clipStack == null ? null : List<SaveClipEntry>.from(_clipStack!),
+      ),
+    );
   }
 
   /// Restores current clip and transform from the save stack.
@@ -255,29 +244,19 @@ mixin SaveStackTracking on EngineCanvas {
   }
 }
 
-DomElement drawParagraphElement(
-  CanvasParagraph paragraph,
-  ui.Offset offset, {
-  Matrix4? transform,
-}) {
+DomElement drawParagraphElement(CanvasParagraph paragraph, ui.Offset offset, {Matrix4? transform}) {
   assert(paragraph.isLaidOut);
 
   final DomElement paragraphElement = paragraph.toDomElement();
 
   if (transform != null) {
-    setElementTransform(
-      paragraphElement,
-      transformWithOffset(transform, offset).storage,
-    );
+    setElementTransform(paragraphElement, transformWithOffset(transform, offset).storage);
   }
   return paragraphElement;
 }
 
 class _SaveElementStackEntry {
-  _SaveElementStackEntry({
-    required this.savedElement,
-    required this.transform,
-  });
+  _SaveElementStackEntry({required this.savedElement, required this.transform});
 
   final DomElement savedElement;
   final Matrix4 transform;
@@ -290,8 +269,7 @@ mixin SaveElementStackTracking on EngineCanvas {
 
   /// The element at the top of the element stack, or [rootElement] if the stack
   /// is empty.
-  DomElement get currentElement =>
-      _elementStack.isEmpty ? rootElement : _elementStack.last;
+  DomElement get currentElement => _elementStack.isEmpty ? rootElement : _elementStack.last;
 
   /// The stack that maintains the DOM elements used to express certain paint
   /// operations, such as clips.
@@ -325,10 +303,9 @@ mixin SaveElementStackTracking on EngineCanvas {
   /// Classes that override this method must call `super.save()`.
   @override
   void save() {
-    _saveStack.add(_SaveElementStackEntry(
-      savedElement: currentElement,
-      transform: _currentTransform.clone(),
-    ));
+    _saveStack.add(
+      _SaveElementStackEntry(savedElement: currentElement, transform: _currentTransform.clone()),
+    );
   }
 
   /// Restores current clip and transform from the save stack.

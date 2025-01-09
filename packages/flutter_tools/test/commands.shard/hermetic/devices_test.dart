@@ -36,15 +36,21 @@ void main() {
         fakeLogger = FakeBufferLogger();
       });
 
-      testWithoutContext('returns DevicesCommandOutputWithExtendedWirelessDeviceDiscovery on MacOS', () async {
-        final Platform platform = FakePlatform(operatingSystem: 'macos');
-        final DevicesCommandOutput devicesCommandOutput = DevicesCommandOutput(
-          platform: platform,
-          logger: fakeLogger,
-        );
+      testWithoutContext(
+        'returns DevicesCommandOutputWithExtendedWirelessDeviceDiscovery on MacOS',
+        () async {
+          final Platform platform = FakePlatform(operatingSystem: 'macos');
+          final DevicesCommandOutput devicesCommandOutput = DevicesCommandOutput(
+            platform: platform,
+            logger: fakeLogger,
+          );
 
-        expect(devicesCommandOutput is DevicesCommandOutputWithExtendedWirelessDeviceDiscovery, true);
-      });
+          expect(
+            devicesCommandOutput is DevicesCommandOutputWithExtendedWirelessDeviceDiscovery,
+            true,
+          );
+        },
+      );
 
       testWithoutContext('returns default when not on MacOS', () async {
         final Platform platform = FakePlatform();
@@ -53,7 +59,10 @@ void main() {
           logger: fakeLogger,
         );
 
-        expect(devicesCommandOutput is DevicesCommandOutputWithExtendedWirelessDeviceDiscovery, false);
+        expect(
+          devicesCommandOutput is DevicesCommandOutputWithExtendedWirelessDeviceDiscovery,
+          false,
+        );
       });
     });
 
@@ -63,18 +72,21 @@ void main() {
         platform = FakePlatform();
       });
 
-      testUsingContext('returns 0 when called', () async {
-        final DevicesCommand command = DevicesCommand();
-        await createTestCommandRunner(command).run(<String>['devices']);
-      }, overrides: <Type, Generator>{
-        Cache: () => cache,
-        Artifacts: () => Artifacts.test(),
-      });
+      testUsingContext(
+        'returns 0 when called',
+        () async {
+          final DevicesCommand command = DevicesCommand();
+          await createTestCommandRunner(command).run(<String>['devices']);
+        },
+        overrides: <Type, Generator>{Cache: () => cache, Artifacts: () => Artifacts.test()},
+      );
 
-      testUsingContext('no error when no connected devices', () async {
-        final DevicesCommand command = DevicesCommand();
-        await createTestCommandRunner(command).run(<String>['devices']);
-        expect(
+      testUsingContext(
+        'no error when no connected devices',
+        () async {
+          final DevicesCommand command = DevicesCommand();
+          await createTestCommandRunner(command).run(<String>['devices']);
+          expect(
             testLogger.statusText,
             equals('''
 No authorized devices detected.
@@ -83,101 +95,112 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected a device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 '''),
-        );
-      }, overrides: <Type, Generator>{
-        AndroidSdk: () => null,
-        DeviceManager: () => NoDevicesManager(),
-        ProcessManager: () => FakeProcessManager.any(),
-        Cache: () => cache,
-        Artifacts: () => Artifacts.test(),
-        Platform: () => platform,
-      });
-
-      group('when includes both attached and wireless devices', () {
-        List<FakeDeviceJsonData>? deviceList;
-        setUp(() {
-          deviceList = <FakeDeviceJsonData>[
-            fakeDevices[0],
-            fakeDevices[1],
-            fakeDevices[2],
-          ];
-        });
-
-        testUsingContext("get devices' platform types", () async {
-          final List<String> platformTypes = Device.devicesPlatformTypes(
-            await globals.deviceManager!.getAllDevices(),
           );
-          expect(platformTypes, <String>['android', 'web']);
-        }, overrides: <Type, Generator>{
-          DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+        },
+        overrides: <Type, Generator>{
+          AndroidSdk: () => null,
+          DeviceManager: () => NoDevicesManager(),
           ProcessManager: () => FakeProcessManager.any(),
           Cache: () => cache,
           Artifacts: () => Artifacts.test(),
           Platform: () => platform,
+        },
+      );
+
+      group('when includes both attached and wireless devices', () {
+        List<FakeDeviceJsonData>? deviceList;
+        setUp(() {
+          deviceList = <FakeDeviceJsonData>[fakeDevices[0], fakeDevices[1], fakeDevices[2]];
         });
 
-        group('with --machine flag', () {
-          testUsingContext('Outputs parsable JSON', () async {
-            final DevicesCommand command = DevicesCommand();
-            await createTestCommandRunner(command).run(<String>['devices', '--machine']);
-            expect(
-              json.decode(testLogger.statusText),
-              <Map<String, Object>>[
-                fakeDevices[0].json,
-                fakeDevices[1].json,
-                fakeDevices[2].json,
-              ],
+        testUsingContext(
+          "get devices' platform types",
+          () async {
+            final List<String> platformTypes = Device.devicesPlatformTypes(
+              await globals.deviceManager!.getAllDevices(),
             );
-          }, overrides: <Type, Generator>{
+            expect(platformTypes, <String>['android', 'web']);
+          },
+          overrides: <Type, Generator>{
             DeviceManager: () => _FakeDeviceManager(devices: deviceList),
             ProcessManager: () => FakeProcessManager.any(),
             Cache: () => cache,
             Artifacts: () => Artifacts.test(),
             Platform: () => platform,
-          });
+          },
+        );
+
+        group('with --machine flag', () {
+          testUsingContext(
+            'Outputs parsable JSON',
+            () async {
+              final DevicesCommand command = DevicesCommand();
+              await createTestCommandRunner(command).run(<String>['devices', '--machine']);
+              expect(json.decode(testLogger.statusText), <Map<String, Object>>[
+                fakeDevices[0].json,
+                fakeDevices[1].json,
+                fakeDevices[2].json,
+              ]);
+            },
+            overrides: <Type, Generator>{
+              DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+              ProcessManager: () => FakeProcessManager.any(),
+              Cache: () => cache,
+              Artifacts: () => Artifacts.test(),
+              Platform: () => platform,
+            },
+          );
 
           group('when deviceConnectionInterface', () {
-            testUsingContext('filtered to attached', () async {
-              final DevicesCommand command = DevicesCommand();
-              await createTestCommandRunner(command).run(<String>['devices', '--machine', '--device-connection', 'attached']);
-              expect(
-                json.decode(testLogger.statusText),
-                <Map<String, Object>>[
+            testUsingContext(
+              'filtered to attached',
+              () async {
+                final DevicesCommand command = DevicesCommand();
+                await createTestCommandRunner(
+                  command,
+                ).run(<String>['devices', '--machine', '--device-connection', 'attached']);
+                expect(json.decode(testLogger.statusText), <Map<String, Object>>[
                   fakeDevices[0].json,
                   fakeDevices[1].json,
-                ],
-              );
-            }, overrides: <Type, Generator>{
-              DeviceManager: () => _FakeDeviceManager(devices: deviceList),
-              ProcessManager: () => FakeProcessManager.any(),
-              Cache: () => cache,
-              Artifacts: () => Artifacts.test(),
-              Platform: () => platform,
-            });
+                ]);
+              },
+              overrides: <Type, Generator>{
+                DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+                ProcessManager: () => FakeProcessManager.any(),
+                Cache: () => cache,
+                Artifacts: () => Artifacts.test(),
+                Platform: () => platform,
+              },
+            );
 
-            testUsingContext('filtered to wireless', () async {
-            final DevicesCommand command = DevicesCommand();
-              await createTestCommandRunner(command).run(<String>['devices', '--machine', '--device-connection', 'wireless']);
-              expect(
-                json.decode(testLogger.statusText),
-                <Map<String, Object>>[
+            testUsingContext(
+              'filtered to wireless',
+              () async {
+                final DevicesCommand command = DevicesCommand();
+                await createTestCommandRunner(
+                  command,
+                ).run(<String>['devices', '--machine', '--device-connection', 'wireless']);
+                expect(json.decode(testLogger.statusText), <Map<String, Object>>[
                   fakeDevices[2].json,
-                ],
-              );
-            }, overrides: <Type, Generator>{
-              DeviceManager: () => _FakeDeviceManager(devices: deviceList),
-              ProcessManager: () => FakeProcessManager.any(),
-              Cache: () => cache,
-              Artifacts: () => Artifacts.test(),
-              Platform: () => platform,
-            });
+                ]);
+              },
+              overrides: <Type, Generator>{
+                DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+                ProcessManager: () => FakeProcessManager.any(),
+                Cache: () => cache,
+                Artifacts: () => Artifacts.test(),
+                Platform: () => platform,
+              },
+            );
           });
         });
 
-        testUsingContext('available devices and diagnostics', () async {
-          final DevicesCommand command = DevicesCommand();
-          await createTestCommandRunner(command).run(<String>['devices']);
-          expect(testLogger.statusText, '''
+        testUsingContext(
+          'available devices and diagnostics',
+          () async {
+            final DevicesCommand command = DevicesCommand();
+            await createTestCommandRunner(command).run(<String>['devices']);
+            expect(testLogger.statusText, '''
 Found 2 connected devices:
   ephemeral (mobile) • ephemeral • android-arm    • Test SDK (1.2.3) (emulator)
   webby (mobile)     • webby     • web-javascript • Web SDK (1.2.4) (emulator)
@@ -191,17 +214,23 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-        }, overrides: <Type, Generator>{
-          DeviceManager: () => _FakeDeviceManager(devices: deviceList),
-          ProcessManager: () => FakeProcessManager.any(),
-          Platform: () => platform,
-        });
+          },
+          overrides: <Type, Generator>{
+            DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+            ProcessManager: () => FakeProcessManager.any(),
+            Platform: () => platform,
+          },
+        );
 
         group('when deviceConnectionInterface', () {
-          testUsingContext('filtered to attached', () async {
-            final DevicesCommand command = DevicesCommand();
-            await createTestCommandRunner(command).run(<String>['devices', '--device-connection', 'attached']);
-            expect(testLogger.statusText, '''
+          testUsingContext(
+            'filtered to attached',
+            () async {
+              final DevicesCommand command = DevicesCommand();
+              await createTestCommandRunner(
+                command,
+              ).run(<String>['devices', '--device-connection', 'attached']);
+              expect(testLogger.statusText, '''
 Found 2 connected devices:
   ephemeral (mobile) • ephemeral • android-arm    • Test SDK (1.2.3) (emulator)
   webby (mobile)     • webby     • web-javascript • Web SDK (1.2.4) (emulator)
@@ -212,16 +241,22 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-          }, overrides: <Type, Generator>{
-            DeviceManager: () => _FakeDeviceManager(devices: deviceList),
-            ProcessManager: () => FakeProcessManager.any(),
-            Platform: () => platform,
-          });
+            },
+            overrides: <Type, Generator>{
+              DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+              ProcessManager: () => FakeProcessManager.any(),
+              Platform: () => platform,
+            },
+          );
 
-          testUsingContext('filtered to wireless', () async {
-            final DevicesCommand command = DevicesCommand();
-            await createTestCommandRunner(command).run(<String>['devices', '--device-connection', 'wireless']);
-            expect(testLogger.statusText, '''
+          testUsingContext(
+            'filtered to wireless',
+            () async {
+              final DevicesCommand command = DevicesCommand();
+              await createTestCommandRunner(
+                command,
+              ).run(<String>['devices', '--device-connection', 'wireless']);
+              expect(testLogger.statusText, '''
 Found 1 wirelessly connected device:
   wireless android (mobile) • wireless-android • android-arm • Test SDK (1.2.3) (emulator)
 
@@ -231,27 +266,28 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-          }, overrides: <Type, Generator>{
-            DeviceManager: () => _FakeDeviceManager(devices: deviceList),
-            ProcessManager: () => FakeProcessManager.any(),
-            Platform: () => platform,
-          });
+            },
+            overrides: <Type, Generator>{
+              DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+              ProcessManager: () => FakeProcessManager.any(),
+              Platform: () => platform,
+            },
+          );
         });
       });
 
       group('when includes only attached devices', () {
         List<FakeDeviceJsonData>? deviceList;
         setUp(() {
-          deviceList = <FakeDeviceJsonData>[
-            fakeDevices[0],
-            fakeDevices[1],
-          ];
+          deviceList = <FakeDeviceJsonData>[fakeDevices[0], fakeDevices[1]];
         });
 
-        testUsingContext('available devices and diagnostics', () async {
-          final DevicesCommand command = DevicesCommand();
-          await createTestCommandRunner(command).run(<String>['devices']);
-          expect(testLogger.statusText, '''
+        testUsingContext(
+          'available devices and diagnostics',
+          () async {
+            final DevicesCommand command = DevicesCommand();
+            await createTestCommandRunner(command).run(<String>['devices']);
+            expect(testLogger.statusText, '''
 Found 2 connected devices:
   ephemeral (mobile) • ephemeral • android-arm    • Test SDK (1.2.3) (emulator)
   webby (mobile)     • webby     • web-javascript • Web SDK (1.2.4) (emulator)
@@ -262,25 +298,27 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-        }, overrides: <Type, Generator>{
-          DeviceManager: () => _FakeDeviceManager(devices: deviceList),
-          ProcessManager: () => FakeProcessManager.any(),
-          Platform: () => platform,
-        });
+          },
+          overrides: <Type, Generator>{
+            DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+            ProcessManager: () => FakeProcessManager.any(),
+            Platform: () => platform,
+          },
+        );
       });
 
       group('when includes only wireless devices', () {
         List<FakeDeviceJsonData>? deviceList;
         setUp(() {
-          deviceList = <FakeDeviceJsonData>[
-            fakeDevices[2],
-          ];
+          deviceList = <FakeDeviceJsonData>[fakeDevices[2]];
         });
 
-        testUsingContext('available devices and diagnostics', () async {
-          final DevicesCommand command = DevicesCommand();
-          await createTestCommandRunner(command).run(<String>['devices']);
-          expect(testLogger.statusText, '''
+        testUsingContext(
+          'available devices and diagnostics',
+          () async {
+            final DevicesCommand command = DevicesCommand();
+            await createTestCommandRunner(command).run(<String>['devices']);
+            expect(testLogger.statusText, '''
 Found 1 wirelessly connected device:
   wireless android (mobile) • wireless-android • android-arm • Test SDK (1.2.3) (emulator)
 
@@ -290,11 +328,13 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-        }, overrides: <Type, Generator>{
-          DeviceManager: () => _FakeDeviceManager(devices: deviceList),
-          ProcessManager: () => FakeProcessManager.any(),
-          Platform: () => platform,
-        });
+          },
+          overrides: <Type, Generator>{
+            DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+            ProcessManager: () => FakeProcessManager.any(),
+            Platform: () => platform,
+          },
+        );
       });
     });
 
@@ -304,22 +344,28 @@ If you expected another device to be detected, please run "flutter doctor" to di
         platform = FakePlatform(operatingSystem: 'macos');
       });
 
-      testUsingContext('returns 0 when called', () async {
-        final DevicesCommand command = DevicesCommand();
-        await createTestCommandRunner(command).run(<String>['devices']);
-      }, overrides: <Type, Generator>{
-        Cache: () => cache,
-        Artifacts: () => Artifacts.test(),
-        Platform: () => platform,
-      });
-
-      group('when no connected devices', () {
-        testUsingContext('no error', () async {
+      testUsingContext(
+        'returns 0 when called',
+        () async {
           final DevicesCommand command = DevicesCommand();
           await createTestCommandRunner(command).run(<String>['devices']);
-          expect(
-            testLogger.statusText,
-            equals('''
+        },
+        overrides: <Type, Generator>{
+          Cache: () => cache,
+          Artifacts: () => Artifacts.test(),
+          Platform: () => platform,
+        },
+      );
+
+      group('when no connected devices', () {
+        testUsingContext(
+          'no error',
+          () async {
+            final DevicesCommand command = DevicesCommand();
+            await createTestCommandRunner(command).run(<String>['devices']);
+            expect(
+              testLogger.statusText,
+              equals('''
 No devices found yet. Checking for wireless devices...
 
 No authorized devices detected.
@@ -328,37 +374,49 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected a device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 '''),
-          );
-        }, overrides: <Type, Generator>{
-          AndroidSdk: () => null,
-          DeviceManager: () => NoDevicesManager(),
-          ProcessManager: () => FakeProcessManager.any(),
-          Cache: () => cache,
-          Artifacts: () => Artifacts.test(),
-          Platform: () => platform,
-        });
+            );
+          },
+          overrides: <Type, Generator>{
+            AndroidSdk: () => null,
+            DeviceManager: () => NoDevicesManager(),
+            ProcessManager: () => FakeProcessManager.any(),
+            Cache: () => cache,
+            Artifacts: () => Artifacts.test(),
+            Platform: () => platform,
+          },
+        );
 
         group('when deviceConnectionInterface', () {
-          testUsingContext('filtered to attached', () async {
-            final DevicesCommand command = DevicesCommand();
-            await createTestCommandRunner(command).run(<String>['devices', '--device-connection', 'attached']);
-            expect(testLogger.statusText, '''
+          testUsingContext(
+            'filtered to attached',
+            () async {
+              final DevicesCommand command = DevicesCommand();
+              await createTestCommandRunner(
+                command,
+              ).run(<String>['devices', '--device-connection', 'attached']);
+              expect(testLogger.statusText, '''
 No authorized devices detected.
 
 Run "flutter emulators" to list and start any available device emulators.
 
 If you expected a device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-          }, overrides: <Type, Generator>{
-            DeviceManager: () => NoDevicesManager(),
-            ProcessManager: () => FakeProcessManager.any(),
-            Platform: () => platform,
-          });
+            },
+            overrides: <Type, Generator>{
+              DeviceManager: () => NoDevicesManager(),
+              ProcessManager: () => FakeProcessManager.any(),
+              Platform: () => platform,
+            },
+          );
 
-          testUsingContext('filtered to wireless', () async {
-            final DevicesCommand command = DevicesCommand();
-            await createTestCommandRunner(command).run(<String>['devices', '--device-connection', 'wireless']);
-            expect(testLogger.statusText, '''
+          testUsingContext(
+            'filtered to wireless',
+            () async {
+              final DevicesCommand command = DevicesCommand();
+              await createTestCommandRunner(
+                command,
+              ).run(<String>['devices', '--device-connection', 'wireless']);
+              expect(testLogger.statusText, '''
 Checking for wireless devices...
 
 No authorized devices detected.
@@ -367,11 +425,13 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected a device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-          }, overrides: <Type, Generator>{
-            DeviceManager: () => NoDevicesManager(),
-            ProcessManager: () => FakeProcessManager.any(),
-            Platform: () => platform,
-          });
+            },
+            overrides: <Type, Generator>{
+              DeviceManager: () => NoDevicesManager(),
+              ProcessManager: () => FakeProcessManager.any(),
+              Platform: () => platform,
+            },
+          );
         });
       });
 
@@ -386,83 +446,96 @@ If you expected a device to be detected, please run "flutter doctor" to diagnose
           ];
         });
 
-        testUsingContext("get devices' platform types", () async {
-          final List<String> platformTypes = Device.devicesPlatformTypes(
-            await globals.deviceManager!.getAllDevices(),
-          );
-          expect(platformTypes, <String>['android', 'ios', 'web']);
-        }, overrides: <Type, Generator>{
-          DeviceManager: () => _FakeDeviceManager(devices: deviceList),
-          ProcessManager: () => FakeProcessManager.any(),
-          Cache: () => cache,
-          Artifacts: () => Artifacts.test(),
-          Platform: () => platform,
-        });
-
-        group('with --machine flag', () {
-          testUsingContext('Outputs parsable JSON', () async {
-            final DevicesCommand command = DevicesCommand();
-            await createTestCommandRunner(command).run(<String>['devices', '--machine']);
-            expect(
-              json.decode(testLogger.statusText),
-              <Map<String, Object>>[
-                fakeDevices[0].json,
-                fakeDevices[1].json,
-                fakeDevices[2].json,
-                fakeDevices[3].json,
-              ],
+        testUsingContext(
+          "get devices' platform types",
+          () async {
+            final List<String> platformTypes = Device.devicesPlatformTypes(
+              await globals.deviceManager!.getAllDevices(),
             );
-          }, overrides: <Type, Generator>{
+            expect(platformTypes, <String>['android', 'ios', 'web']);
+          },
+          overrides: <Type, Generator>{
             DeviceManager: () => _FakeDeviceManager(devices: deviceList),
             ProcessManager: () => FakeProcessManager.any(),
             Cache: () => cache,
             Artifacts: () => Artifacts.test(),
             Platform: () => platform,
-          });
+          },
+        );
+
+        group('with --machine flag', () {
+          testUsingContext(
+            'Outputs parsable JSON',
+            () async {
+              final DevicesCommand command = DevicesCommand();
+              await createTestCommandRunner(command).run(<String>['devices', '--machine']);
+              expect(json.decode(testLogger.statusText), <Map<String, Object>>[
+                fakeDevices[0].json,
+                fakeDevices[1].json,
+                fakeDevices[2].json,
+                fakeDevices[3].json,
+              ]);
+            },
+            overrides: <Type, Generator>{
+              DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+              ProcessManager: () => FakeProcessManager.any(),
+              Cache: () => cache,
+              Artifacts: () => Artifacts.test(),
+              Platform: () => platform,
+            },
+          );
 
           group('when deviceConnectionInterface', () {
-            testUsingContext('filtered to attached', () async {
-              final DevicesCommand command = DevicesCommand();
-              await createTestCommandRunner(command).run(<String>['devices', '--machine', '--device-connection', 'attached']);
-              expect(
-                json.decode(testLogger.statusText),
-                <Map<String, Object>>[
+            testUsingContext(
+              'filtered to attached',
+              () async {
+                final DevicesCommand command = DevicesCommand();
+                await createTestCommandRunner(
+                  command,
+                ).run(<String>['devices', '--machine', '--device-connection', 'attached']);
+                expect(json.decode(testLogger.statusText), <Map<String, Object>>[
                   fakeDevices[0].json,
                   fakeDevices[1].json,
-                ],
-              );
-            }, overrides: <Type, Generator>{
-              DeviceManager: () => _FakeDeviceManager(devices: deviceList),
-              ProcessManager: () => FakeProcessManager.any(),
-              Cache: () => cache,
-              Artifacts: () => Artifacts.test(),
-              Platform: () => platform,
-            });
+                ]);
+              },
+              overrides: <Type, Generator>{
+                DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+                ProcessManager: () => FakeProcessManager.any(),
+                Cache: () => cache,
+                Artifacts: () => Artifacts.test(),
+                Platform: () => platform,
+              },
+            );
 
-            testUsingContext('filtered to wireless', () async {
-            final DevicesCommand command = DevicesCommand();
-              await createTestCommandRunner(command).run(<String>['devices', '--machine', '--device-connection', 'wireless']);
-              expect(
-                json.decode(testLogger.statusText),
-                <Map<String, Object>>[
+            testUsingContext(
+              'filtered to wireless',
+              () async {
+                final DevicesCommand command = DevicesCommand();
+                await createTestCommandRunner(
+                  command,
+                ).run(<String>['devices', '--machine', '--device-connection', 'wireless']);
+                expect(json.decode(testLogger.statusText), <Map<String, Object>>[
                   fakeDevices[2].json,
                   fakeDevices[3].json,
-                ],
-              );
-            }, overrides: <Type, Generator>{
-              DeviceManager: () => _FakeDeviceManager(devices: deviceList),
-              ProcessManager: () => FakeProcessManager.any(),
-              Cache: () => cache,
-              Artifacts: () => Artifacts.test(),
-              Platform: () => platform,
-            });
+                ]);
+              },
+              overrides: <Type, Generator>{
+                DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+                ProcessManager: () => FakeProcessManager.any(),
+                Cache: () => cache,
+                Artifacts: () => Artifacts.test(),
+                Platform: () => platform,
+              },
+            );
           });
         });
 
-        testUsingContext('available devices and diagnostics', () async {
-          final DevicesCommand command = DevicesCommand();
-          await createTestCommandRunner(command).run(<String>['devices']);
-          expect(testLogger.statusText, '''
+        testUsingContext(
+          'available devices and diagnostics',
+          () async {
+            final DevicesCommand command = DevicesCommand();
+            await createTestCommandRunner(command).run(<String>['devices']);
+            expect(testLogger.statusText, '''
 Found 2 connected devices:
   ephemeral (mobile) • ephemeral • android-arm    • Test SDK (1.2.3) (emulator)
   webby (mobile)     • webby     • web-javascript • Web SDK (1.2.4) (emulator)
@@ -479,11 +552,13 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-        }, overrides: <Type, Generator>{
-          DeviceManager: () => _FakeDeviceManager(devices: deviceList),
-          ProcessManager: () => FakeProcessManager.any(),
-          Platform: () => platform,
-        });
+          },
+          overrides: <Type, Generator>{
+            DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+            ProcessManager: () => FakeProcessManager.any(),
+            Platform: () => platform,
+          },
+        );
 
         group('with ansi terminal', () {
           late FakeTerminal terminal;
@@ -501,11 +576,13 @@ Checking for wireless devices...
 ''';
           });
 
-          testUsingContext('available devices and diagnostics', () async {
-            final DevicesCommand command = DevicesCommand();
-            await createTestCommandRunner(command).run(<String>['devices']);
+          testUsingContext(
+            'available devices and diagnostics',
+            () async {
+              final DevicesCommand command = DevicesCommand();
+              await createTestCommandRunner(command).run(<String>['devices']);
 
-            expect(fakeLogger.statusText, '''
+              expect(fakeLogger.statusText, '''
 Found 2 connected devices:
   ephemeral (mobile) • ephemeral • android-arm    • Test SDK (1.2.3) (emulator)
   webby (mobile)     • webby     • web-javascript • Web SDK (1.2.4) (emulator)
@@ -520,14 +597,15 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-          }, overrides: <Type, Generator>{
-            DeviceManager: () =>
-                _FakeDeviceManager(devices: deviceList, logger: fakeLogger),
-            ProcessManager: () => FakeProcessManager.any(),
-            Platform: () => platform,
-            AnsiTerminal: () => terminal,
-            Logger: () => fakeLogger,
-          });
+            },
+            overrides: <Type, Generator>{
+              DeviceManager: () => _FakeDeviceManager(devices: deviceList, logger: fakeLogger),
+              ProcessManager: () => FakeProcessManager.any(),
+              Platform: () => platform,
+              AnsiTerminal: () => terminal,
+              Logger: () => fakeLogger,
+            },
+          );
         });
 
         group('with verbose logging', () {
@@ -537,11 +615,13 @@ If you expected another device to be detected, please run "flutter doctor" to di
             fakeLogger = FakeBufferLogger(verbose: true);
           });
 
-          testUsingContext('available devices and diagnostics', () async {
-            final DevicesCommand command = DevicesCommand();
-            await createTestCommandRunner(command).run(<String>['devices']);
+          testUsingContext(
+            'available devices and diagnostics',
+            () async {
+              final DevicesCommand command = DevicesCommand();
+              await createTestCommandRunner(command).run(<String>['devices']);
 
-            expect(fakeLogger.statusText, '''
+              expect(fakeLogger.statusText, '''
 Found 2 connected devices:
   ephemeral (mobile) • ephemeral • android-arm    • Test SDK (1.2.3) (emulator)
   webby (mobile)     • webby     • web-javascript • Web SDK (1.2.4) (emulator)
@@ -562,20 +642,23 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-          }, overrides: <Type, Generator>{
-            DeviceManager: () => _FakeDeviceManager(
-              devices: deviceList,
-              logger: fakeLogger,
-            ),
-            ProcessManager: () => FakeProcessManager.any(),
-            Platform: () => platform,
-            Logger: () => fakeLogger,
-          });
+            },
+            overrides: <Type, Generator>{
+              DeviceManager: () => _FakeDeviceManager(devices: deviceList, logger: fakeLogger),
+              ProcessManager: () => FakeProcessManager.any(),
+              Platform: () => platform,
+              Logger: () => fakeLogger,
+            },
+          );
 
-          testUsingContext('when deviceConnectionInterface filtered to wireless', () async {
-            final DevicesCommand command = DevicesCommand();
-            await createTestCommandRunner(command).run(<String>['devices', '--device-connection', 'wireless']);
-            expect(testLogger.statusText, '''
+          testUsingContext(
+            'when deviceConnectionInterface filtered to wireless',
+            () async {
+              final DevicesCommand command = DevicesCommand();
+              await createTestCommandRunner(
+                command,
+              ).run(<String>['devices', '--device-connection', 'wireless']);
+              expect(testLogger.statusText, '''
 Checking for wireless devices...
 
 Found 2 wirelessly connected devices:
@@ -588,27 +671,28 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-          }, overrides: <Type, Generator>{
-            DeviceManager: () => _FakeDeviceManager(devices: deviceList),
-            ProcessManager: () => FakeProcessManager.any(),
-            Platform: () => platform,
-          });
+            },
+            overrides: <Type, Generator>{
+              DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+              ProcessManager: () => FakeProcessManager.any(),
+              Platform: () => platform,
+            },
+          );
         });
       });
 
       group('when includes only attached devices', () {
         List<FakeDeviceJsonData>? deviceList;
         setUp(() {
-          deviceList = <FakeDeviceJsonData>[
-            fakeDevices[0],
-            fakeDevices[1],
-          ];
+          deviceList = <FakeDeviceJsonData>[fakeDevices[0], fakeDevices[1]];
         });
 
-        testUsingContext('available devices and diagnostics', () async {
-          final DevicesCommand command = DevicesCommand();
-          await createTestCommandRunner(command).run(<String>['devices']);
-          expect(testLogger.statusText, '''
+        testUsingContext(
+          'available devices and diagnostics',
+          () async {
+            final DevicesCommand command = DevicesCommand();
+            await createTestCommandRunner(command).run(<String>['devices']);
+            expect(testLogger.statusText, '''
 Found 2 connected devices:
   ephemeral (mobile) • ephemeral • android-arm    • Test SDK (1.2.3) (emulator)
   webby (mobile)     • webby     • web-javascript • Web SDK (1.2.4) (emulator)
@@ -623,11 +707,13 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-        }, overrides: <Type, Generator>{
-          DeviceManager: () => _FakeDeviceManager(devices: deviceList),
-          ProcessManager: () => FakeProcessManager.any(),
-          Platform: () => platform,
-        });
+          },
+          overrides: <Type, Generator>{
+            DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+            ProcessManager: () => FakeProcessManager.any(),
+            Platform: () => platform,
+          },
+        );
 
         group('with ansi terminal', () {
           late FakeTerminal terminal;
@@ -645,11 +731,13 @@ Checking for wireless devices...
 ''';
           });
 
-          testUsingContext('available devices and diagnostics', () async {
-            final DevicesCommand command = DevicesCommand();
-            await createTestCommandRunner(command).run(<String>['devices']);
+          testUsingContext(
+            'available devices and diagnostics',
+            () async {
+              final DevicesCommand command = DevicesCommand();
+              await createTestCommandRunner(command).run(<String>['devices']);
 
-            expect(fakeLogger.statusText, '''
+              expect(fakeLogger.statusText, '''
 Found 2 connected devices:
   ephemeral (mobile) • ephemeral • android-arm    • Test SDK (1.2.3) (emulator)
   webby (mobile)     • webby     • web-javascript • Web SDK (1.2.4) (emulator)
@@ -662,16 +750,15 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-          }, overrides: <Type, Generator>{
-            DeviceManager: () => _FakeDeviceManager(
-              devices: deviceList,
-              logger: fakeLogger,
-            ),
-            ProcessManager: () => FakeProcessManager.any(),
-            Platform: () => platform,
-            AnsiTerminal: () => terminal,
-            Logger: () => fakeLogger,
-          });
+            },
+            overrides: <Type, Generator>{
+              DeviceManager: () => _FakeDeviceManager(devices: deviceList, logger: fakeLogger),
+              ProcessManager: () => FakeProcessManager.any(),
+              Platform: () => platform,
+              AnsiTerminal: () => terminal,
+              Logger: () => fakeLogger,
+            },
+          );
         });
 
         group('with verbose logging', () {
@@ -681,11 +768,13 @@ If you expected another device to be detected, please run "flutter doctor" to di
             fakeLogger = FakeBufferLogger(verbose: true);
           });
 
-          testUsingContext('available devices and diagnostics', () async {
-            final DevicesCommand command = DevicesCommand();
-            await createTestCommandRunner(command).run(<String>['devices']);
+          testUsingContext(
+            'available devices and diagnostics',
+            () async {
+              final DevicesCommand command = DevicesCommand();
+              await createTestCommandRunner(command).run(<String>['devices']);
 
-            expect(fakeLogger.statusText, '''
+              expect(fakeLogger.statusText, '''
 Found 2 connected devices:
   ephemeral (mobile) • ephemeral • android-arm    • Test SDK (1.2.3) (emulator)
   webby (mobile)     • webby     • web-javascript • Web SDK (1.2.4) (emulator)
@@ -704,31 +793,29 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-          }, overrides: <Type, Generator>{
-            DeviceManager: () => _FakeDeviceManager(
-              devices: deviceList,
-              logger: fakeLogger,
-            ),
-            ProcessManager: () => FakeProcessManager.any(),
-            Platform: () => platform,
-            Logger: () => fakeLogger,
-          });
+            },
+            overrides: <Type, Generator>{
+              DeviceManager: () => _FakeDeviceManager(devices: deviceList, logger: fakeLogger),
+              ProcessManager: () => FakeProcessManager.any(),
+              Platform: () => platform,
+              Logger: () => fakeLogger,
+            },
+          );
         });
       });
 
       group('when includes only wireless devices', () {
         List<FakeDeviceJsonData>? deviceList;
         setUp(() {
-          deviceList = <FakeDeviceJsonData>[
-            fakeDevices[2],
-            fakeDevices[3],
-          ];
+          deviceList = <FakeDeviceJsonData>[fakeDevices[2], fakeDevices[3]];
         });
 
-        testUsingContext('available devices and diagnostics', () async {
-          final DevicesCommand command = DevicesCommand();
-          await createTestCommandRunner(command).run(<String>['devices']);
-          expect(testLogger.statusText, '''
+        testUsingContext(
+          'available devices and diagnostics',
+          () async {
+            final DevicesCommand command = DevicesCommand();
+            await createTestCommandRunner(command).run(<String>['devices']);
+            expect(testLogger.statusText, '''
 No devices found yet. Checking for wireless devices...
 
 Found 2 wirelessly connected devices:
@@ -741,11 +828,13 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-        }, overrides: <Type, Generator>{
-          DeviceManager: () => _FakeDeviceManager(devices: deviceList),
-          ProcessManager: () => FakeProcessManager.any(),
-          Platform: () => platform,
-        });
+          },
+          overrides: <Type, Generator>{
+            DeviceManager: () => _FakeDeviceManager(devices: deviceList),
+            ProcessManager: () => FakeProcessManager.any(),
+            Platform: () => platform,
+          },
+        );
 
         group('with ansi terminal', () {
           late FakeTerminal terminal;
@@ -759,11 +848,13 @@ No devices found yet. Checking for wireless devices...
 ''';
           });
 
-          testUsingContext('available devices and diagnostics', () async {
-            final DevicesCommand command = DevicesCommand();
-            await createTestCommandRunner(command).run(<String>['devices']);
+          testUsingContext(
+            'available devices and diagnostics',
+            () async {
+              final DevicesCommand command = DevicesCommand();
+              await createTestCommandRunner(command).run(<String>['devices']);
 
-            expect(fakeLogger.statusText, '''
+              expect(fakeLogger.statusText, '''
 Found 2 wirelessly connected devices:
   wireless android (mobile) • wireless-android • android-arm • Test SDK (1.2.3) (emulator)
   wireless ios (mobile)     • wireless-ios     • ios         • iOS 16 (simulator)
@@ -774,16 +865,15 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-          }, overrides: <Type, Generator>{
-            DeviceManager: () => _FakeDeviceManager(
-              devices: deviceList,
-              logger: fakeLogger,
-            ),
-            ProcessManager: () => FakeProcessManager.any(),
-            Platform: () => platform,
-            AnsiTerminal: () => terminal,
-            Logger: () => fakeLogger,
-          });
+            },
+            overrides: <Type, Generator>{
+              DeviceManager: () => _FakeDeviceManager(devices: deviceList, logger: fakeLogger),
+              ProcessManager: () => FakeProcessManager.any(),
+              Platform: () => platform,
+              AnsiTerminal: () => terminal,
+              Logger: () => fakeLogger,
+            },
+          );
         });
 
         group('with verbose logging', () {
@@ -793,11 +883,13 @@ If you expected another device to be detected, please run "flutter doctor" to di
             fakeLogger = FakeBufferLogger(verbose: true);
           });
 
-          testUsingContext('available devices and diagnostics', () async {
-            final DevicesCommand command = DevicesCommand();
-            await createTestCommandRunner(command).run(<String>['devices']);
+          testUsingContext(
+            'available devices and diagnostics',
+            () async {
+              final DevicesCommand command = DevicesCommand();
+              await createTestCommandRunner(command).run(<String>['devices']);
 
-            expect(fakeLogger.statusText, '''
+              expect(fakeLogger.statusText, '''
 No devices found yet. Checking for wireless devices...
 
 Found 2 wirelessly connected devices:
@@ -810,15 +902,14 @@ Run "flutter emulators" to list and start any available device emulators.
 
 If you expected another device to be detected, please run "flutter doctor" to diagnose potential issues. You may also try increasing the time to wait for connected devices with the "--device-timeout" flag. Visit https://flutter.dev/setup/ for troubleshooting tips.
 ''');
-          }, overrides: <Type, Generator>{
-            DeviceManager: () => _FakeDeviceManager(
-              devices: deviceList,
-              logger: fakeLogger,
-            ),
-            ProcessManager: () => FakeProcessManager.any(),
-            Platform: () => platform,
-            Logger: () => fakeLogger,
-          });
+            },
+            overrides: <Type, Generator>{
+              DeviceManager: () => _FakeDeviceManager(devices: deviceList, logger: fakeLogger),
+              ProcessManager: () => FakeProcessManager.any(),
+              Platform: () => platform,
+              Logger: () => fakeLogger,
+            },
+          );
         });
       });
     });
@@ -826,11 +917,9 @@ If you expected another device to be detected, please run "flutter doctor" to di
 }
 
 class _FakeDeviceManager extends DeviceManager {
-  _FakeDeviceManager({
-    List<FakeDeviceJsonData>? devices,
-    FakeBufferLogger? logger,
-  })  : fakeDevices = devices ?? <FakeDeviceJsonData>[],
-        super(logger: logger ?? testLogger);
+  _FakeDeviceManager({List<FakeDeviceJsonData>? devices, FakeBufferLogger? logger})
+    : fakeDevices = devices ?? <FakeDeviceJsonData>[],
+      super(logger: logger ?? testLogger);
 
   List<FakeDeviceJsonData> fakeDevices = <FakeDeviceJsonData>[];
 
@@ -839,16 +928,13 @@ class _FakeDeviceManager extends DeviceManager {
     final DeviceConnectionInterface? interface = filter?.deviceConnectionInterface;
     return <Device>[
       for (final FakeDeviceJsonData deviceJson in fakeDevices)
-        if (interface == null || deviceJson.dev.connectionInterface == interface)
-          deviceJson.dev,
+        if (interface == null || deviceJson.dev.connectionInterface == interface) deviceJson.dev,
     ];
   }
 
   @override
-  Future<List<Device>> refreshAllDevices({
-    Duration? timeout,
-    DeviceDiscoveryFilter? filter,
-  }) => getAllDevices(filter: filter);
+  Future<List<Device>> refreshAllDevices({Duration? timeout, DeviceDiscoveryFilter? filter}) =>
+      getAllDevices(filter: filter);
 
   @override
   Future<List<Device>> refreshExtendedWirelessDeviceDiscoverers({
@@ -857,9 +943,8 @@ class _FakeDeviceManager extends DeviceManager {
   }) => getAllDevices(filter: filter);
 
   @override
-  Future<List<String>> getDeviceDiagnostics() => Future<List<String>>.value(
-    <String>['Cannot connect to device ABC']
-  );
+  Future<List<String>> getDeviceDiagnostics() =>
+      Future<List<String>>.value(<String>['Cannot connect to device ABC']);
 
   @override
   List<DeviceDiscovery> get deviceDiscoverers => <DeviceDiscovery>[];
@@ -873,9 +958,7 @@ class NoDevicesManager extends DeviceManager {
 }
 
 class FakeTerminal extends Fake implements AnsiTerminal {
-  FakeTerminal({
-    this.supportsColor = false,
-  });
+  FakeTerminal({this.supportsColor = false});
 
   @override
   final bool supportsColor;
@@ -893,11 +976,7 @@ class FakeTerminal extends Fake implements AnsiTerminal {
 }
 
 class FakeBufferLogger extends BufferLogger {
-  FakeBufferLogger({
-    super.terminal,
-    super.outputPreferences,
-    super.verbose,
-  }) : super.test();
+  FakeBufferLogger({super.terminal, super.outputPreferences, super.verbose}) : super.test();
 
   String originalStatusText = '';
 
@@ -913,8 +992,7 @@ class FakeBufferLogger extends BufferLogger {
   }) {
     if (message.startsWith('CLEAR_LINES_')) {
       expect(statusText, equals(originalStatusText));
-      final int numberOfLinesToRemove =
-          int.parse(message.split('CLEAR_LINES_')[1]) - 1;
+      final int numberOfLinesToRemove = int.parse(message.split('CLEAR_LINES_')[1]) - 1;
       final List<String> lines = LineSplitter.split(statusText).toList();
       // Clear string buffer and re-add lines not removed
       clear();

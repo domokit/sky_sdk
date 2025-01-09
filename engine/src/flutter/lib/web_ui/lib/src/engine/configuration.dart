@@ -108,25 +108,30 @@ class FlutterConfiguration {
     assert(() {
       if (config != null) {
         domWindow.console.warn(
-            'window.flutterConfiguration is now deprecated.\n'
-            'Use engineInitializer.initializeEngine(config) instead.\n'
-            'See: https://docs.flutter.dev/development/platform-integration/web/initialization');
+          'window.flutterConfiguration is now deprecated.\n'
+          'Use engineInitializer.initializeEngine(config) instead.\n'
+          'See: https://docs.flutter.dev/development/platform-integration/web/initialization',
+        );
       }
       if (_requestedRendererType != null) {
-        domWindow.console.warn('window.flutterWebRenderer is now deprecated.\n'
-            'Use engineInitializer.initializeEngine(config) instead.\n'
-            'See: https://docs.flutter.dev/development/platform-integration/web/initialization');
+        domWindow.console.warn(
+          'window.flutterWebRenderer is now deprecated.\n'
+          'Use engineInitializer.initializeEngine(config) instead.\n'
+          'See: https://docs.flutter.dev/development/platform-integration/web/initialization',
+        );
       }
       return true;
     }());
   }
 
   FlutterConfiguration withOverrides(JsFlutterConfiguration? overrides) {
-    final JsFlutterConfiguration newJsConfig = objectConstructor.assign(
-      <String, Object>{}.jsify(),
-      _configuration.jsify(),
-      overrides.jsify(),
-    ) as JsFlutterConfiguration;
+    final JsFlutterConfiguration newJsConfig =
+        objectConstructor.assign(
+              <String, Object>{}.jsify(),
+              _configuration.jsify(),
+              overrides.jsify(),
+            )
+            as JsFlutterConfiguration;
     final FlutterConfiguration newConfig = FlutterConfiguration();
     newConfig._configuration = newJsConfig;
     return newConfig;
@@ -146,15 +151,17 @@ class FlutterConfiguration {
   void setUserConfiguration(JsFlutterConfiguration? configuration) {
     if (configuration != null) {
       assert(
-          !_usedLegacyConfigStyle,
-          'Use engineInitializer.initializeEngine(config) only. '
-          'Using the (deprecated) window.flutterConfiguration and initializeEngine '
-          'configuration simultaneously is not supported.');
+        !_usedLegacyConfigStyle,
+        'Use engineInitializer.initializeEngine(config) only. '
+        'Using the (deprecated) window.flutterConfiguration and initializeEngine '
+        'configuration simultaneously is not supported.',
+      );
       assert(
-          _requestedRendererType == null || configuration.renderer == null,
-          'Use engineInitializer.initializeEngine(config) only. '
-          'Using the (deprecated) window.flutterWebRenderer and initializeEngine '
-          'configuration simultaneously is not supported.');
+        _requestedRendererType == null || configuration.renderer == null,
+        'Use engineInitializer.initializeEngine(config) only. '
+        'Using the (deprecated) window.flutterWebRenderer and initializeEngine '
+        'configuration simultaneously is not supported.',
+      );
       _configuration = configuration;
     }
   }
@@ -167,13 +174,11 @@ class FlutterConfiguration {
 
   /// Auto detect which rendering backend to use.
   ///
-  /// Using flutter tools option "--web-renderer=auto" or not specifying one
-  /// would set the value to true. Otherwise, it would be false.
-  static const bool flutterWebAutoDetect =
-      bool.fromEnvironment('FLUTTER_WEB_AUTO_DETECT', defaultValue: true);
+  /// Using flutter tools option "--web-renderer=auto" would set the value to
+  /// true. Otherwise, it would be false.
+  static const bool flutterWebAutoDetect = bool.fromEnvironment('FLUTTER_WEB_AUTO_DETECT');
 
-  static const bool flutterWebUseSkwasm =
-      bool.fromEnvironment('FLUTTER_WEB_USE_SKWASM');
+  static const bool flutterWebUseSkwasm = bool.fromEnvironment('FLUTTER_WEB_USE_SKWASM');
 
   /// Enable the Skia-based rendering backend.
   ///
@@ -237,8 +242,7 @@ class FlutterConfiguration {
   ///   --web-renderer=canvaskit \
   ///   --dart-define=FLUTTER_WEB_CANVASKIT_URL=https://example.com/custom-canvaskit-build/
   /// ```
-  String get canvasKitBaseUrl =>
-      _configuration?.canvasKitBaseUrl ?? _defaultCanvasKitBaseUrl;
+  String get canvasKitBaseUrl => _configuration?.canvasKitBaseUrl ?? _defaultCanvasKitBaseUrl;
   static const String _defaultCanvasKitBaseUrl = String.fromEnvironment(
     'FLUTTER_WEB_CANVASKIT_URL',
     defaultValue: 'canvaskit/',
@@ -275,8 +279,7 @@ class FlutterConfiguration {
   ///
   /// Limits the amount of overlays that can be created.
   int get canvasKitMaximumSurfaces {
-    final int maxSurfaces =
-        _configuration?.canvasKitMaximumSurfaces?.toInt() ?? 8;
+    final int maxSurfaces = _configuration?.canvasKitMaximumSurfaces?.toInt() ?? 8;
     if (maxSurfaces < 1) {
       return 1;
     }
@@ -295,8 +298,7 @@ class FlutterConfiguration {
   /// flutter run -d chrome --profile --dart-define=FLUTTER_WEB_DEBUG_SHOW_SEMANTICS=true
   /// ```
   bool get debugShowSemanticsNodes =>
-      _configuration?.debugShowSemanticsNodes ??
-      _defaultDebugShowSemanticsNodes;
+      _configuration?.debugShowSemanticsNodes ?? _defaultDebugShowSemanticsNodes;
   static const bool _defaultDebugShowSemanticsNodes = bool.fromEnvironment(
     'FLUTTER_WEB_DEBUG_SHOW_SEMANTICS',
   );
@@ -327,8 +329,7 @@ class FlutterConfiguration {
   /// `window.flutterWebRenderer`.
   ///
   /// This is used by the Renderer class to decide how to initialize the engine.
-  String? get requestedRendererType =>
-      _configuration?.renderer ?? _requestedRendererType;
+  String? get requestedRendererType => _configuration?.renderer ?? _requestedRendererType;
 
   /// Returns the base URL to load fallback fonts from. Fallback fonts are
   /// downloaded automatically when there is no font bundled with the app that
@@ -371,8 +372,7 @@ extension JsFlutterConfigurationExtension on JsFlutterConfiguration {
 
   @JS('canvasKitMaximumSurfaces')
   external JSNumber? get _canvasKitMaximumSurfaces;
-  double? get canvasKitMaximumSurfaces =>
-      _canvasKitMaximumSurfaces?.toDartDouble;
+  double? get canvasKitMaximumSurfaces => _canvasKitMaximumSurfaces?.toDartDouble;
 
   @JS('debugShowSemanticsNodes')
   external JSBoolean? get _debugShowSemanticsNodes;

@@ -24,23 +24,22 @@ import 'flags.dart';
 // and they should be unit-tested.
 final class FormatCommand extends CommandBase {
   // ignore: public_member_api_docs
-  FormatCommand({
-    required super.environment,
-    super.usageLineLength,
-  }) {
+  FormatCommand({required super.environment, super.usageLineLength}) {
     argParser
       ..addFlag(
         allFlag,
         abbr: 'a',
-        help: 'By default only dirty files are checked. This flag causes all '
-              'files to be checked. (Slow)',
+        help:
+            'By default only dirty files are checked. This flag causes all '
+            'files to be checked. (Slow)',
         negatable: false,
       )
       ..addFlag(
         dryRunFlag,
         abbr: 'd',
-        help: 'Do not fix formatting in-place. Instead, print file diffs to '
-              'the logs.',
+        help:
+            'Do not fix formatting in-place. Instead, print file diffs to '
+            'the logs.',
         negatable: false,
       )
       ..addFlag(
@@ -64,45 +63,33 @@ final class FormatCommand extends CommandBase {
     final bool quiet = argResults![quietFlag]! as bool;
     final bool verbose = globalResults![verboseFlag] as bool;
     final String formatPath = p.join(
-      environment.engine.flutterDir.path, 'ci', 'bin', 'format.dart',
+      environment.engine.flutterDir.path,
+      'ci',
+      'bin',
+      'format.dart',
     );
 
-    final io.Process process = await environment.processRunner.processManager.start(
-      <String>[
-        environment.platform.resolvedExecutable,
-        formatPath,
-        if (all) '--all-files',
-        if (!dryRun) '--fix',
-        if (verbose) '--verbose',
-      ],
-      workingDirectory: environment.engine.flutterDir.path,
-    );
+    final io.Process process = await environment.processRunner.processManager.start(<String>[
+      environment.platform.resolvedExecutable,
+      formatPath,
+      if (all) '--all-files',
+      if (!dryRun) '--fix',
+      if (verbose) '--verbose',
+    ], workingDirectory: environment.engine.flutterDir.path);
     final Completer<void> stdoutComplete = Completer<void>();
     final Completer<void> stderrComplete = Completer<void>();
 
-    final _FormatStreamer streamer = _FormatStreamer(
-      environment.logger,
-      dryRun,
-      quiet,
-    );
+    final _FormatStreamer streamer = _FormatStreamer(environment.logger, dryRun, quiet);
     process.stdout
-      .transform<String>(const Utf8Decoder())
-      .transform(const LineSplitter())
-      .listen(
-        streamer.nextStdout,
-        onDone: () async => stdoutComplete.complete(),
-      );
+        .transform<String>(const Utf8Decoder())
+        .transform(const LineSplitter())
+        .listen(streamer.nextStdout, onDone: () async => stdoutComplete.complete());
     process.stderr
-      .transform<String>(const Utf8Decoder())
-      .transform(const LineSplitter())
-      .listen(
-        streamer.nextStderr,
-        onDone: () async => stderrComplete.complete(),
-      );
+        .transform<String>(const Utf8Decoder())
+        .transform(const LineSplitter())
+        .listen(streamer.nextStderr, onDone: () async => stderrComplete.complete());
 
-    await Future.wait<void>(<Future<void>>[
-      stdoutComplete.future, stderrComplete.future,
-    ]);
+    await Future.wait<void>(<Future<void>>[stdoutComplete.future, stderrComplete.future]);
     final int exitCode = await process.exitCode;
 
     return exitCode;

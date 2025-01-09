@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Stepper Smoke Test', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.StepperExampleApp(),
-    );
+    await tester.pumpWidget(const example.StepperExampleApp());
 
     expect(find.widgetWithText(AppBar, 'Stepper Sample'), findsOneWidget);
     expect(find.text('Step 1 title').hitTestable(), findsOneWidget);

@@ -25,68 +25,67 @@ void main() {
     WidgetsBinding.instance.platformMenuDelegate = originalDelegate;
   });
 
-  testWidgets('PlatformMenuBar creates a menu', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ExampleApp(),
-    );
+  testWidgets(
+    'PlatformMenuBar creates a menu',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const example.ExampleApp());
 
-    expect(
-      find.text('This space intentionally left blank.\nShow a message here using the menu.'),
-      findsOne,
-    );
-    expect(find.byType(PlatformMenuBar), findsOne);
+      expect(
+        find.text('This space intentionally left blank.\nShow a message here using the menu.'),
+        findsOne,
+      );
+      expect(find.byType(PlatformMenuBar), findsOne);
 
-    expect(
-      fakeMenuChannel.outgoingCalls.last.method,
-      'Menu.setMenus',
-    );
-    expect(
-      fakeMenuChannel.outgoingCalls.last.arguments,
-      equals(const <String, Object?>{
-        '0': <Map<String, Object>>[
-          <String, Object>{
-            'id': 11,
-            'label': 'Flutter API Sample',
-            'enabled': true,
-            'children': <Map<String, Object>>[
-              <String, Object>{'id': 2, 'label': 'About', 'enabled': true},
-              <String, Object>{'id': 3, 'isDivider': true},
-              <String, Object>{
-                'id': 5,
-                'label': 'Show Message',
-                'enabled': true,
-                'shortcutCharacter': 'm',
-                'shortcutModifiers': 0,
-              },
-              <String, Object>{
-                'id': 8,
-                'label': 'Messages',
-                'enabled': true,
-                'children': <Map<String, Object>>[
-                  <String, Object>{
-                    'id': 6,
-                    'label': 'I am not throwing away my shot.',
-                    'enabled': true,
-                    'shortcutTrigger': 49,
-                    'shortcutModifiers': 1,
-                  },
-                  <String, Object>{
-                    'id': 7,
-                    'label': "There's a million things I haven't done, but just you wait.",
-                    'enabled': true,
-                    'shortcutTrigger': 50,
-                    'shortcutModifiers': 1,
-                  },
-                ],
-              },
-              <String, Object>{'id': 9, 'isDivider': true},
-              <String, Object>{'id': 10, 'enabled': true, 'platformProvidedMenu': 1},
-            ],
-          },
-        ],
-      }),
-    );
-  }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.macOS}));
+      expect(fakeMenuChannel.outgoingCalls.last.method, 'Menu.setMenus');
+      expect(
+        fakeMenuChannel.outgoingCalls.last.arguments,
+        equals(const <String, Object?>{
+          '0': <Map<String, Object>>[
+            <String, Object>{
+              'id': 11,
+              'label': 'Flutter API Sample',
+              'enabled': true,
+              'children': <Map<String, Object>>[
+                <String, Object>{'id': 2, 'label': 'About', 'enabled': true},
+                <String, Object>{'id': 3, 'isDivider': true},
+                <String, Object>{
+                  'id': 5,
+                  'label': 'Show Message',
+                  'enabled': true,
+                  'shortcutCharacter': 'm',
+                  'shortcutModifiers': 0,
+                },
+                <String, Object>{
+                  'id': 8,
+                  'label': 'Messages',
+                  'enabled': true,
+                  'children': <Map<String, Object>>[
+                    <String, Object>{
+                      'id': 6,
+                      'label': 'I am not throwing away my shot.',
+                      'enabled': true,
+                      'shortcutTrigger': 49,
+                      'shortcutModifiers': 1,
+                    },
+                    <String, Object>{
+                      'id': 7,
+                      'label': "There's a million things I haven't done, but just you wait.",
+                      'enabled': true,
+                      'shortcutTrigger': 50,
+                      'shortcutModifiers': 1,
+                    },
+                  ],
+                },
+                <String, Object>{'id': 9, 'isDivider': true},
+                <String, Object>{'id': 10, 'enabled': true, 'platformProvidedMenu': 1},
+              ],
+            },
+          ],
+        }),
+      );
+    },
+    variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.macOS}),
+  );
 }
 
 class _FakeMenuChannel implements MethodChannel {
@@ -104,10 +103,12 @@ class _FakeMenuChannel implements MethodChannel {
   MethodCodec get codec => const StandardMethodCodec();
 
   @override
-  Future<List<T>> invokeListMethod<T>(String method, [dynamic arguments]) => throw UnimplementedError();
+  Future<List<T>> invokeListMethod<T>(String method, [dynamic arguments]) =>
+      throw UnimplementedError();
 
   @override
-  Future<Map<K, V>> invokeMapMethod<K, V>(String method, [dynamic arguments]) => throw UnimplementedError();
+  Future<Map<K, V>> invokeMapMethod<K, V>(String method, [dynamic arguments]) =>
+      throw UnimplementedError();
 
   @override
   Future<T> invokeMethod<T>(String method, [dynamic arguments]) async {

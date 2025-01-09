@@ -29,8 +29,10 @@ class LayoutFragmenter extends TextFragmenter {
 
     int fragmentStart = 0;
 
-    final Iterator<LineBreakFragment> lineBreakFragments = LineBreakFragmenter(text).fragment().iterator..moveNext();
-    final Iterator<BidiFragment> bidiFragments = BidiFragmenter(text).fragment().iterator..moveNext();
+    final Iterator<LineBreakFragment> lineBreakFragments =
+        LineBreakFragmenter(text).fragment().iterator..moveNext();
+    final Iterator<BidiFragment> bidiFragments =
+        BidiFragmenter(text).fragment().iterator..moveNext();
     final Iterator<ParagraphSpan> spans = paragraphSpans.iterator..moveNext();
 
     LineBreakFragment currentLineBreakFragment = lineBreakFragments.current;
@@ -40,32 +42,31 @@ class LayoutFragmenter extends TextFragmenter {
     while (true) {
       final int fragmentEnd = math.min(
         currentLineBreakFragment.end,
-        math.min(
-          currentBidiFragment.end,
-          currentSpan.end,
-        ),
+        math.min(currentBidiFragment.end, currentSpan.end),
       );
 
       final int distanceFromLineBreak = currentLineBreakFragment.end - fragmentEnd;
 
-      final LineBreakType lineBreakType = distanceFromLineBreak == 0
-          ? currentLineBreakFragment.type
-          : LineBreakType.prohibited;
+      final LineBreakType lineBreakType =
+          distanceFromLineBreak == 0 ? currentLineBreakFragment.type : LineBreakType.prohibited;
 
-      final int trailingNewlines = currentLineBreakFragment.trailingNewlines - distanceFromLineBreak;
+      final int trailingNewlines =
+          currentLineBreakFragment.trailingNewlines - distanceFromLineBreak;
       final int trailingSpaces = currentLineBreakFragment.trailingSpaces - distanceFromLineBreak;
 
       final int fragmentLength = fragmentEnd - fragmentStart;
-      fragments.add(LayoutFragment(
-        fragmentStart,
-        fragmentEnd,
-        lineBreakType,
-        currentBidiFragment.textDirection,
-        currentBidiFragment.fragmentFlow,
-        currentSpan,
-        trailingNewlines: clampInt(trailingNewlines, 0, fragmentLength),
-        trailingSpaces: clampInt(trailingSpaces, 0, fragmentLength),
-      ));
+      fragments.add(
+        LayoutFragment(
+          fragmentStart,
+          fragmentEnd,
+          lineBreakType,
+          currentBidiFragment.textDirection,
+          currentBidiFragment.fragmentFlow,
+          currentSpan,
+          trailingNewlines: clampInt(trailingNewlines, 0, fragmentLength),
+          trailingSpaces: clampInt(trailingSpaces, 0, fragmentLength),
+        ),
+      );
 
       fragmentStart = fragmentEnd;
 
@@ -109,8 +110,8 @@ abstract class _CombinedFragment extends TextFragment {
     this.span, {
     required this.trailingNewlines,
     required this.trailingSpaces,
-  })  : assert(trailingNewlines >= 0),
-        assert(trailingSpaces >= trailingNewlines);
+  }) : assert(trailingNewlines >= 0),
+       assert(trailingSpaces >= trailingNewlines);
 
   final LineBreakType type;
 
@@ -151,7 +152,8 @@ abstract class _CombinedFragment extends TextFragment {
   }
 }
 
-class LayoutFragment extends _CombinedFragment with _FragmentMetrics, _FragmentPosition, _FragmentBox {
+class LayoutFragment extends _CombinedFragment
+    with _FragmentMetrics, _FragmentPosition, _FragmentBox {
   LayoutFragment(
     super.start,
     super.end,
@@ -246,7 +248,8 @@ mixin _FragmentMetrics on _CombinedFragment {
   late double _widthExcludingTrailingSpaces;
 
   /// The width of the measured text, including any trailing spaces.
-  double get widthIncludingTrailingSpaces => _widthIncludingTrailingSpaces + _extraWidthForJustification;
+  double get widthIncludingTrailingSpaces =>
+      _widthIncludingTrailingSpaces + _extraWidthForJustification;
   late double _widthIncludingTrailingSpaces;
 
   double _extraWidthForJustification = 0.0;
@@ -257,7 +260,8 @@ mixin _FragmentMetrics on _CombinedFragment {
   double get widthOfTrailingSpaces => widthIncludingTrailingSpaces - widthExcludingTrailingSpaces;
 
   /// Set measurement values for the fragment.
-  void setMetrics(Spanometer spanometer, {
+  void setMetrics(
+    Spanometer spanometer, {
     required double ascent,
     required double descent,
     required double widthExcludingTrailingSpaces,
@@ -316,21 +320,16 @@ mixin _FragmentPosition on _CombinedFragment, _FragmentMetrics {
   double get endOffset => startOffset + widthIncludingTrailingSpaces;
 
   /// The distance from the left edge of the line to the left edge of the fragment.
-  double get left => line.textDirection == ui.TextDirection.ltr
-      ? startOffset
-      : line.width - endOffset;
+  double get left =>
+      line.textDirection == ui.TextDirection.ltr ? startOffset : line.width - endOffset;
 
   /// The distance from the left edge of the line to the right edge of the fragment.
-  double get right => line.textDirection == ui.TextDirection.ltr
-      ? endOffset
-      : line.width - startOffset;
+  double get right =>
+      line.textDirection == ui.TextDirection.ltr ? endOffset : line.width - startOffset;
 
   /// Set the horizontal position of this fragment relative to the [line] that
   /// contains it.
-  void setPosition({
-    required double startOffset,
-    required ui.TextDirection textDirection,
-  }) {
+  void setPosition({required double startOffset, required ui.TextDirection textDirection}) {
     _startOffset = startOffset;
     _textDirection ??= textDirection;
   }
@@ -384,19 +383,19 @@ mixin _FragmentBox on _CombinedFragment, _FragmentMetrics, _FragmentPosition {
       // For painting, we exclude the width of trailing spaces from the box.
       return textDirection! == ui.TextDirection.ltr
           ? ui.TextBox.fromLTRBD(
-              line.left + left,
-              top,
-              line.left + right - widthOfTrailingSpaces,
-              bottom,
-              textDirection!,
-            )
+            line.left + left,
+            top,
+            line.left + right - widthOfTrailingSpaces,
+            bottom,
+            textDirection!,
+          )
           : ui.TextBox.fromLTRBD(
-              line.left + left + widthOfTrailingSpaces,
-              top,
-              line.left + right,
-              bottom,
-              textDirection!,
-            );
+            line.left + left + widthOfTrailingSpaces,
+            top,
+            line.left + right,
+            bottom,
+            textDirection!,
+          );
     }
     return _textBoxIncludingTrailingSpaces;
   }
@@ -408,10 +407,7 @@ mixin _FragmentBox on _CombinedFragment, _FragmentMetrics, _FragmentPosition {
   ///
   /// As opposed to [toPaintingTextBox], the resulting text box from this method
   /// includes trailing spaces of the fragment.
-  ui.TextBox toTextBox({
-    int? start,
-    int? end,
-  }) {
+  ui.TextBox toTextBox({int? start, int? end}) {
     start ??= this.start;
     end ??= this.end;
 
@@ -483,13 +479,7 @@ mixin _FragmentBox on _CombinedFragment, _FragmentMetrics, _FragmentPosition {
     // The fragment's left and right edges are relative to the line. In order
     // to make them relative to the paragraph, we need to add the left edge of
     // the line.
-    return ui.TextBox.fromLTRBD(
-      line.left + left,
-      top,
-      line.left + right,
-      bottom,
-      textDirection!,
-    );
+    return ui.TextBox.fromLTRBD(line.left + left, top, line.left + right, bottom, textDirection!);
   }
 
   /// Returns the text position within this fragment's range that's closest to
@@ -514,7 +504,7 @@ mixin _FragmentBox on _CombinedFragment, _FragmentMetrics, _FragmentPosition {
       final double distanceFromEnd = widthIncludingTrailingSpaces - x;
       return distanceFromStart < distanceFromEnd
           ? ui.TextPosition(offset: startIndex)
-          : ui.TextPosition(offset: endIndex, affinity: ui.TextAffinity.upstream,);
+          : ui.TextPosition(offset: endIndex, affinity: ui.TextAffinity.upstream);
     }
 
     _spanometer.currentSpan = span;
@@ -535,10 +525,7 @@ mixin _FragmentBox on _CombinedFragment, _FragmentMetrics, _FragmentPosition {
     );
 
     if (cutoff == endIndex) {
-      return ui.TextPosition(
-        offset: cutoff,
-        affinity: ui.TextAffinity.upstream,
-      );
+      return ui.TextPosition(offset: cutoff, affinity: ui.TextAffinity.upstream);
     }
 
     final double lowWidth = _spanometer.measureRange(startIndex, cutoff);
@@ -550,10 +537,7 @@ mixin _FragmentBox on _CombinedFragment, _FragmentMetrics, _FragmentPosition {
       return ui.TextPosition(offset: cutoff);
     } else {
       // The offset is closer to cutoff + 1.
-      return ui.TextPosition(
-        offset: cutoff + 1,
-        affinity: ui.TextAffinity.upstream,
-      );
+      return ui.TextPosition(offset: cutoff + 1, affinity: ui.TextAffinity.upstream);
     }
   }
 
@@ -605,13 +589,14 @@ mixin _FragmentBox on _CombinedFragment, _FragmentMetrics, _FragmentPosition {
     assert(end > start);
     assert(line.graphemeStarts.isNotEmpty);
     final int startIndex = line.graphemeStartIndexBefore(start, 0, lineGraphemeBreaks.length);
-    final int endIndex = end == start + 1
-      ? startIndex + 1
-      : line.graphemeStartIndexBefore(end - 1, startIndex, lineGraphemeBreaks.length) + 1;
+    final int endIndex =
+        end == start + 1
+            ? startIndex + 1
+            : line.graphemeStartIndexBefore(end - 1, startIndex, lineGraphemeBreaks.length) + 1;
     final int firstGraphemeStart = lineGraphemeBreaks[startIndex];
     return firstGraphemeStart > start
-      ? (endIndex == startIndex + 1 ? null : (startIndex + 1, endIndex))
-      : (startIndex, endIndex);
+        ? (endIndex == startIndex + 1 ? null : (startIndex + 1, endIndex))
+        : (startIndex, endIndex);
   }
 
   /// Whether the first codepoints of this fragment is not a valid grapheme start,
@@ -627,14 +612,18 @@ mixin _FragmentBox on _CombinedFragment, _FragmentMetrics, _FragmentPosition {
   // U+25CC or U+00A0 for showing nonspacing marks in isolation.
   bool get hasLeadingBrokenGrapheme {
     final int? graphemeStartIndexRangeStart = graphemeStartIndexRange?.$1;
-    return graphemeStartIndexRangeStart == null || line.graphemeStarts[graphemeStartIndexRangeStart] != start;
+    return graphemeStartIndexRangeStart == null ||
+        line.graphemeStarts[graphemeStartIndexRangeStart] != start;
   }
 
   /// Returns the GlyphInfo within the range [line.graphemeStarts[startIndex], line.graphemeStarts[endIndex]),
   /// that's visually closeset to the given horizontal offset `x` (in the paragraph's coordinates).
   ui.GlyphInfo _getClosestCharacterInRange(double x, int startIndex, int endIndex) {
     final List<int> graphemeStartIndices = line.graphemeStarts;
-    final ui.TextRange fullRange = ui.TextRange(start: graphemeStartIndices[startIndex], end: graphemeStartIndices[endIndex]);
+    final ui.TextRange fullRange = ui.TextRange(
+      start: graphemeStartIndices[startIndex],
+      end: graphemeStartIndices[endIndex],
+    );
     final ui.TextBox fullBox = toTextBox(start: fullRange.start, end: fullRange.end);
     if (startIndex + 1 == endIndex) {
       return ui.GlyphInfo(fullBox.toRect(), fullRange, fullBox.direction);
@@ -650,17 +639,31 @@ mixin _FragmentBox on _CombinedFragment, _FragmentMetrics, _FragmentPosition {
       final int midIndex = (startIndex + endIndex) ~/ 2;
       // endIndex >= startIndex + 2, so midIndex >= start + 1
       final ui.GlyphInfo firstHalf = _getClosestCharacterInRange(x, startIndex, midIndex);
-      if (firstHalf.graphemeClusterLayoutBounds.left < x && x < firstHalf.graphemeClusterLayoutBounds.right) {
+      if (firstHalf.graphemeClusterLayoutBounds.left < x &&
+          x < firstHalf.graphemeClusterLayoutBounds.right) {
         return firstHalf;
       }
       // startIndex <= endIndex - 2, so midIndex <= endIndex - 1
       final ui.GlyphInfo secondHalf = _getClosestCharacterInRange(x, midIndex, endIndex);
-      if (secondHalf.graphemeClusterLayoutBounds.left < x && x < secondHalf.graphemeClusterLayoutBounds.right) {
+      if (secondHalf.graphemeClusterLayoutBounds.left < x &&
+          x < secondHalf.graphemeClusterLayoutBounds.right) {
         return secondHalf;
       }
       // Neither box clips the given x. This is supposed to be rare.
-      final double distanceToFirst = (x - x.clamp(firstHalf.graphemeClusterLayoutBounds.left, firstHalf.graphemeClusterLayoutBounds.right)).abs();
-      final double distanceToSecond = (x - x.clamp(secondHalf.graphemeClusterLayoutBounds.left, secondHalf.graphemeClusterLayoutBounds.right)).abs();
+      final double distanceToFirst =
+          (x -
+                  x.clamp(
+                    firstHalf.graphemeClusterLayoutBounds.left,
+                    firstHalf.graphemeClusterLayoutBounds.right,
+                  ))
+              .abs();
+      final double distanceToSecond =
+          (x -
+                  x.clamp(
+                    secondHalf.graphemeClusterLayoutBounds.left,
+                    secondHalf.graphemeClusterLayoutBounds.right,
+                  ))
+              .abs();
       return distanceToFirst > distanceToSecond ? firstHalf : secondHalf;
     }
 
@@ -695,21 +698,19 @@ mixin _FragmentBox on _CombinedFragment, _FragmentMetrics, _FragmentPosition {
 }
 
 class EllipsisFragment extends LayoutFragment {
-  EllipsisFragment(
-    int index,
-    ParagraphSpan span,
-  ) : super(
-          index,
-          index,
-          LineBreakType.endOfText,
-          null,
-          // The ellipsis is always at the end of the line, so it can't be
-          // sandwiched. This means it'll always follow the paragraph direction.
-          FragmentFlow.sandwich,
-          span,
-          trailingNewlines: 0,
-          trailingSpaces: 0,
-        );
+  EllipsisFragment(int index, ParagraphSpan span)
+    : super(
+        index,
+        index,
+        LineBreakType.endOfText,
+        null,
+        // The ellipsis is always at the end of the line, so it can't be
+        // sandwiched. This means it'll always follow the paragraph direction.
+        FragmentFlow.sandwich,
+        span,
+        trailingNewlines: 0,
+        trailingSpaces: 0,
+      );
 
   @override
   bool get isSpaceOnly => false;

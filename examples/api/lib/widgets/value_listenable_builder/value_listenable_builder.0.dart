@@ -13,9 +13,7 @@ class ValueListenableBuilderExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: ValueListenableBuilderExample(),
-    );
+    return const MaterialApp(home: ValueListenableBuilderExample());
   }
 }
 
@@ -32,9 +30,7 @@ class _ValueListenableBuilderExampleState extends State<ValueListenableBuilderEx
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('ValueListenableBuilder Sample'),
-      ),
+      appBar: AppBar(title: const Text('ValueListenableBuilder Sample')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -47,10 +43,7 @@ class _ValueListenableBuilderExampleState extends State<ValueListenableBuilderEx
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    CountDisplay(count: value),
-                    child!,
-                  ],
+                  children: <Widget>[CountDisplay(count: value), child!],
                 );
               },
               valueListenable: _counter,
@@ -59,11 +52,7 @@ class _ValueListenableBuilderExampleState extends State<ValueListenableBuilderEx
               // the notifier.
               child: const Padding(
                 padding: EdgeInsets.all(10.0),
-                child: SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: FlutterLogo(size: 40),
-                ),
+                child: SizedBox(width: 40, height: 40, child: FlutterLogo(size: 40)),
               ),
             ),
           ],

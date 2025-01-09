@@ -9,7 +9,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class TestChannelBuffersFlutterBinding extends BindingBase with SchedulerBinding, ServicesBinding { }
+class TestChannelBuffersFlutterBinding extends BindingBase with SchedulerBinding, ServicesBinding {}
 
 void main() {
   ByteData makeByteData(String str) {
@@ -28,6 +28,7 @@ void main() {
     void callback(ByteData? responseData) {
       didCallCallback = true;
     }
+
     const String payload = 'bar';
     final ByteData data = makeByteData(payload);
     ui.channelBuffers.push(channel, data, callback);
@@ -38,7 +39,7 @@ void main() {
       return null;
     });
     // Flush the event queue.
-    await Future<void>((){});
+    await Future<void>(() {});
     expect(didDrainData, isTrue);
     expect(didCallCallback, isTrue);
   });

@@ -5,7 +5,11 @@
 import 'template.dart';
 
 class SliderTemplate extends TokenTemplate {
-  const SliderTemplate(this.tokenGroup, super.blockName, super.fileName, super.tokens, {
+  const SliderTemplate(
+    this.tokenGroup,
+    super.blockName,
+    super.fileName,
+    super.tokens, {
     super.colorSchemePrefix = '_colors.',
   });
 

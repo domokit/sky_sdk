@@ -100,10 +100,10 @@ class ContextMenuButtonItem {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ContextMenuButtonItem
-        && other.label == label
-        && other.onPressed == onPressed
-        && other.type == type;
+    return other is ContextMenuButtonItem &&
+        other.label == label &&
+        other.onPressed == onPressed &&
+        other.type == type;
   }
 
   @override

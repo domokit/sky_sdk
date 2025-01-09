@@ -17,13 +17,12 @@ UnicodePropertyLookup<LineCharProperty> get lineLookup => ensureLineLookupInitia
 /// frame is rendered will reduce jank by moving the initialization out of
 /// the frame.
 UnicodePropertyLookup<LineCharProperty> ensureLineLookupInitialized() {
-  return _lineLookup ??=
-    UnicodePropertyLookup<LineCharProperty>.fromPackedData(
-      packedLineBreakProperties,
-      singleLineBreakRangesCount,
-      LineCharProperty.values,
-      defaultLineCharProperty,
-    );
+  return _lineLookup ??= UnicodePropertyLookup<LineCharProperty>.fromPackedData(
+    packedLineBreakProperties,
+    singleLineBreakRangesCount,
+    LineCharProperty.values,
+    defaultLineCharProperty,
+  );
 }
 
 UnicodePropertyLookup<LineCharProperty>? _lineLookup;

@@ -8,11 +8,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('SliverResizingHeader example', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SliverResizingHeaderApp(),
-    );
+    await tester.pumpWidget(const example.SliverResizingHeaderApp());
 
-    final Finder headerMaterial = find.text('SliverResizingHeader\nWith Two Optional\nLines of Text');
+    final Finder headerMaterial = find.text(
+      'SliverResizingHeader\nWith Two Optional\nLines of Text',
+    );
     final double initialHeight = tester.getSize(headerMaterial).height;
 
     await tester.drag(find.byType(CustomScrollView), const Offset(0, -200));

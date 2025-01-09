@@ -8,19 +8,19 @@ import 'dart:io';
 /// A result of running a single task.
 class TaskResult {
   TaskResult.buildOnly()
-      : succeeded = true,
-        data = null,
-        detailFiles = null,
-        benchmarkScoreKeys = null,
-        message = 'No tests run';
+    : succeeded = true,
+      data = null,
+      detailFiles = null,
+      benchmarkScoreKeys = null,
+      message = 'No tests run';
 
   /// Constructs a successful result.
-  TaskResult.success(this.data, {
+  TaskResult.success(
+    this.data, {
     this.benchmarkScoreKeys = const <String>[],
     this.detailFiles = const <String>[],
     this.message = 'success',
-  })
-      : succeeded = true {
+  }) : succeeded = true {
     const JsonEncoder prettyJson = JsonEncoder.withIndent('  ');
     if (benchmarkScoreKeys != null) {
       for (final String key in benchmarkScoreKeys!) {
@@ -36,7 +36,8 @@ class TaskResult {
   }
 
   /// Constructs a successful result using JSON data stored in a file.
-  factory TaskResult.successFromFile(File file, {
+  factory TaskResult.successFromFile(
+    File file, {
     List<String> benchmarkScoreKeys = const <String>[],
     List<String> detailFiles = const <String>[],
   }) {
@@ -51,9 +52,12 @@ class TaskResult {
   factory TaskResult.fromJson(Map<String, dynamic> json) {
     final bool success = json['success'] as bool;
     if (success) {
-      final List<String> benchmarkScoreKeys = (json['benchmarkScoreKeys'] as List<dynamic>? ?? <String>[]).cast<String>();
-      final List<String> detailFiles = (json['detailFiles'] as List<dynamic>? ?? <String>[]).cast<String>();
-      return TaskResult.success(json['data'] as Map<String, dynamic>?,
+      final List<String> benchmarkScoreKeys =
+          (json['benchmarkScoreKeys'] as List<dynamic>? ?? <String>[]).cast<String>();
+      final List<String> detailFiles =
+          (json['detailFiles'] as List<dynamic>? ?? <String>[]).cast<String>();
+      return TaskResult.success(
+        json['data'] as Map<String, dynamic>?,
         benchmarkScoreKeys: benchmarkScoreKeys,
         detailFiles: detailFiles,
         message: json['reason'] as String?,
@@ -65,10 +69,10 @@ class TaskResult {
 
   /// Constructs an unsuccessful result.
   TaskResult.failure(this.message)
-      : succeeded = false,
-        data = null,
-        detailFiles = null,
-        benchmarkScoreKeys = null;
+    : succeeded = false,
+      data = null,
+      detailFiles = null,
+      benchmarkScoreKeys = null;
 
   /// Whether the task succeeded.
   final bool succeeded;
@@ -106,9 +110,7 @@ class TaskResult {
   ///       "reason": failure reason string valid only for unsuccessful results
   ///     }
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> json = <String, dynamic>{
-      'success': succeeded,
-    };
+    final Map<String, dynamic> json = <String, dynamic>{'success': succeeded};
 
     if (succeeded) {
       json['data'] = data;

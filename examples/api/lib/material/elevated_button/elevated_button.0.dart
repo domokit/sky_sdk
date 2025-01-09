@@ -38,17 +38,9 @@ class _ElevatedButtonExampleState extends State<ElevatedButtonExample> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          ElevatedButton(
-            style: style,
-            onPressed: null,
-            child: const Text('Disabled'),
-          ),
+          ElevatedButton(style: style, onPressed: null, child: const Text('Disabled')),
           const SizedBox(height: 30),
-          ElevatedButton(
-            style: style,
-            onPressed: () {},
-            child: const Text('Enabled'),
-          ),
+          ElevatedButton(style: style, onPressed: () {}, child: const Text('Enabled')),
         ],
       ),
     );

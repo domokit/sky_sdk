@@ -32,8 +32,8 @@ class BenchBuildMaterialCheckbox extends WidgetBuildRecorder {
 
   Row _buildRow() {
     _isChecked = switch (_isChecked) {
-      null  => true,
-      true  => false,
+      null => true,
+      true => false,
       false => null,
     };
 

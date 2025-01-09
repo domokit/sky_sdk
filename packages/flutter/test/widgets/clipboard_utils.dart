@@ -5,15 +5,11 @@
 import 'package:flutter/services.dart';
 
 class MockClipboard {
-  MockClipboard({
-    this.hasStringsThrows = false,
-  });
+  MockClipboard({this.hasStringsThrows = false});
 
   final bool hasStringsThrows;
 
-  dynamic clipboardData = <String, dynamic>{
-    'text': null,
-  };
+  dynamic clipboardData = <String, dynamic>{'text': null};
 
   Future<Object?> handleMethodCall(MethodCall methodCall) async {
     switch (methodCall.method) {

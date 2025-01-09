@@ -38,9 +38,7 @@ final class BuildPlan {
   }) {
     final build = () {
       final name = args.option(_flagConfig) ?? defaultBuild();
-      final config = builds.firstWhereOrNull(
-        (b) => mangleConfigName(environment, b.name) == name,
-      );
+      final config = builds.firstWhereOrNull((b) => mangleConfigName(environment, b.name) == name);
       if (config == null) {
         if (name == null) {
           throw FatalError('No build configuration specified.');
@@ -55,9 +53,7 @@ final class BuildPlan {
       useRbe: () {
         final useRbe = args.flag(_flagRbe);
         if (useRbe && !environment.hasRbeConfigInTree()) {
-          throw FatalError(
-            'RBE requested but configuration not found.\n\n$_rbeInstructions',
-          );
+          throw FatalError('RBE requested but configuration not found.\n\n$_rbeInstructions');
         }
         return useRbe;
       }(),
@@ -94,9 +90,7 @@ final class BuildPlan {
     required Iterable<String> extraGnArgs,
   }) : extraGnArgs = List.unmodifiable(extraGnArgs) {
     if (!useRbe && strategy == BuildStrategy.remote) {
-      throw FatalError(
-        'Cannot use remote builds without RBE enabled.\n\n$_rbeInstructions',
-      );
+      throw FatalError('Cannot use remote builds without RBE enabled.\n\n$_rbeInstructions');
     }
   }
 
@@ -165,17 +159,15 @@ final class BuildPlan {
     // Add --config.
     final builds = _extractBuilds(
       environment.platform,
-      runnableConfigs: _runnableBuildConfigs(
-        environment.platform,
-        configsByName: configs,
-      ),
+      runnableConfigs: _runnableBuildConfigs(environment.platform, configsByName: configs),
       hideCiSpecificBuilds: help && !environment.verbose,
     );
     debugCheckBuilds(builds);
     parser.addOption(
       _flagConfig,
       abbr: 'c',
-      help: ''
+      help:
+          ''
           'Selects a build configuration for the current platform.\n'
           '\n'
           'If omitted, et attempts '
@@ -184,25 +176,25 @@ final class BuildPlan {
           'suitable build when targeting (via "et run") a flutter app.\n'
           '\n'
           '${environment.verbose ? ''
-              'Since verbose mode was selected, both local development '
-              'configurations and configurations that are typically only '
-              'used on CI will be visible, including possible duplicates.' : ''
-              'Configurations include (use --verbose for more details):'}',
-      allowed: [
-        for (final config in builds) mangleConfigName(environment, config.name),
-      ]..sort(),
-      allowedHelp: environment.verbose
-          ? {
-              for (final config in builds)
-                mangleConfigName(environment, config.name): config.description,
-            }
-          : null,
+                  'Since verbose mode was selected, both local development '
+                  'configurations and configurations that are typically only '
+                  'used on CI will be visible, including possible duplicates.' : ''
+                  'Configurations include (use --verbose for more details):'}',
+      allowed: [for (final config in builds) mangleConfigName(environment, config.name)]..sort(),
+      allowedHelp:
+          environment.verbose
+              ? {
+                for (final config in builds)
+                  mangleConfigName(environment, config.name): config.description,
+              }
+              : null,
     );
 
     // Add --lto.
     parser.addFlag(
       _flagLto,
-      help: ''
+      help:
+          ''
           'Whether LTO should be enabled for a build.\n'
           "If omitted, defaults to the configuration's specified value, "
           'which is typically (but not always) --no-lto.',
@@ -229,24 +221,19 @@ final class BuildPlan {
       _flagStrategy,
       defaultsTo: _defaultStrategy.name,
       allowed: BuildStrategy.values.map((e) => e.name),
-      allowedHelp: {
-        for (final e in BuildStrategy.values) e.name: e._help,
-      },
+      allowedHelp: {for (final e in BuildStrategy.values) e.name: e._help},
       help: 'How to prefer remote or local builds.',
       hide: !hasRbeConfigInTree && !environment.verbose,
     );
 
     // Add --concurrency.
-    parser.addOption(
-      _flagConcurrency,
-      abbr: 'j',
-      help: 'How many jobs to run in parallel.',
-    );
+    parser.addOption(_flagConcurrency, abbr: 'j', help: 'How many jobs to run in parallel.');
 
     // Add --gn-args.
     parser.addMultiOption(
       _flagExtraGnArgs,
-      help: ''
+      help:
+          ''
           'Additional arguments to provide to "gn".\n'
           'GN arguments change the parameters of the compiler and invalidate '
           'the current build, and should be used sparingly. If there is an '
@@ -267,7 +254,8 @@ final class BuildPlan {
 
   /// Whether to configure the build plan to use RBE (remote build execution).
   final bool useRbe;
-  static const _rbeInstructions = ''
+  static const _rbeInstructions =
+      ''
       'Google employees can follow the instructions at '
       'https://flutter.dev/to/engine-rbe to enable RBE, which can '
       'parallelize builds and reduce build times on faster internet '
@@ -317,10 +305,7 @@ final class BuildPlan {
       case BuildStrategy.auto:
         return const RbeConfig();
       case BuildStrategy.local:
-        return const RbeConfig(
-          execStrategy: RbeExecStrategy.local,
-          remoteDisabled: true,
-        );
+        return const RbeConfig(execStrategy: RbeExecStrategy.local, remoteDisabled: true);
       case BuildStrategy.remote:
         return const RbeConfig(execStrategy: RbeExecStrategy.remote);
     }
@@ -328,11 +313,7 @@ final class BuildPlan {
 
   /// Converts this build plan into extra GN arguments to pass to the build.
   List<String> toGnArgs() {
-    return [
-      if (!useRbe) '--no-rbe',
-      if (useLto) '--lto' else '--no-lto',
-      ...extraGnArgs,
-    ];
+    return [if (!useRbe) '--no-rbe', if (useLto) '--lto' else '--no-lto', ...extraGnArgs];
   }
 
   @override
@@ -353,9 +334,7 @@ final class BuildPlan {
 /// User-specified strategy for executing a build.
 enum BuildStrategy {
   /// Automatically determine the best build strategy.
-  auto(
-    'Prefer remote builds and fallback silently to local builds.',
-  ),
+  auto('Prefer remote builds and fallback silently to local builds.'),
 
   /// Build locally.
   local(
@@ -399,16 +378,14 @@ List<Build> _extractBuilds(
 }) {
   return [
     for (final buildConfig in runnableConfigs)
-      ...buildConfig.value.builds.where(
-        (build) {
-          if (!build.canRunOn(platform)) {
-            return false;
-          }
-          if (!hideCiSpecificBuilds) {
-            return true;
-          }
-          return build.name.startsWith(platform.operatingSystem);
-        },
-      ),
+      ...buildConfig.value.builds.where((build) {
+        if (!build.canRunOn(platform)) {
+          return false;
+        }
+        if (!hideCiSpecificBuilds) {
+          return true;
+        }
+        return build.name.startsWith(platform.operatingSystem);
+      }),
   ];
 }

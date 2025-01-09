@@ -12,8 +12,7 @@ import '../vector_math.dart';
 import 'surface.dart';
 
 /// A surface that transforms its children using CSS transform.
-class PersistedTransform extends PersistedContainerSurface
-    implements ui.TransformEngineLayer {
+class PersistedTransform extends PersistedContainerSurface implements ui.TransformEngineLayer {
   PersistedTransform(PersistedTransform? super.oldLayer, this._matrixStorage);
 
   /// The storage representing the transform of this surface.

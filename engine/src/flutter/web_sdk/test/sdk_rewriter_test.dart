@@ -49,10 +49,8 @@ part 'engine/file3.dart';
 
     final String result = processSource(
       source,
-      (String source) => validateApiFile(
-        '/path/to/lib/web_ui/lib/src/engine.dart',
-        source,
-        'engine'),
+      (String source) =>
+          validateApiFile('/path/to/lib/web_ui/lib/src/engine.dart', source, 'engine'),
       generateApiFilePatterns('engine', false, <String>["import 'dart:extra';"]),
     );
     expect(result, expected);
@@ -84,10 +82,8 @@ import 'dart:extra';
 
     final String result = processSource(
       source,
-      (String source) => validateApiFile(
-        '/path/to/lib/web_ui/lib/src/engine.dart',
-        source,
-        'engine'),
+      (String source) =>
+          validateApiFile('/path/to/lib/web_ui/lib/src/engine.dart', source, 'engine'),
       generateApiFilePatterns('engine', true, <String>["import 'dart:extra';"]),
     );
     expect(result, expected);
@@ -106,24 +102,21 @@ export 'engine/file3.dart';
     try {
       processSource(
         source,
-        (String source) => validateApiFile(
-          '/path/to/lib/web_ui/lib/src/engine.dart',
-          source,
-          'engine'),
+        (String source) =>
+            validateApiFile('/path/to/lib/web_ui/lib/src/engine.dart', source, 'engine'),
         generateApiFilePatterns('engine', false, <String>[]),
       );
-    } catch(error) {
+    } catch (error) {
       caught = error;
     }
     expect(caught, isA<Exception>());
     expect(
       '$caught',
       'Exception: on line 3: unexpected code in /path/to/lib/web_ui/lib/src/engine.dart. '
-      'This file may only contain comments and exports. Found:\n'
-      "import 'dart:something';",
+          'This file may only contain comments and exports. Found:\n'
+          "import 'dart:something';",
     );
   });
-
 
   test('removes imports/exports from engine files', () {
     const String source = '''

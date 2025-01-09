@@ -6,8 +6,10 @@
 enum LayoutPlatform {
   /// Windows.
   win,
+
   /// Linux.
   linux,
+
   /// MacOS or iOS.
   darwin,
 }
@@ -20,8 +22,7 @@ const int _kPrintableLength = 4;
 /// platform.
 class LayoutEntry {
   /// Create a layout entry.
-  LayoutEntry(this.printables)
-    : assert(printables.length == _kPrintableLength);
+  LayoutEntry(this.printables) : assert(printables.length == _kPrintableLength);
 
   /// The printable characters that a key should be mapped to under different
   /// modifier states.
@@ -39,8 +40,7 @@ class LayoutEntry {
   final List<String> printables;
 
   /// An empty [LayoutEntry] that produces dead keys under all conditions.
-  static final LayoutEntry empty = LayoutEntry(
-    const <String>['', '', '', '']);
+  static final LayoutEntry empty = LayoutEntry(const <String>['', '', '', '']);
 
   /// The value of KeyboardEvent.key for dead keys.
   static const String kDeadKey = 'Dead';

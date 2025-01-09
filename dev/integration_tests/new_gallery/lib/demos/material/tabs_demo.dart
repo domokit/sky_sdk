@@ -14,7 +14,7 @@ class TabsDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (type) {
-      TabsDemoType.scrollable    => _TabsScrollableDemo(),
+      TabsDemoType.scrollable => _TabsScrollableDemo(),
       TabsDemoType.nonScrollable => _TabsNonScrollableDemo(),
     };
   }
@@ -44,10 +44,7 @@ class __TabsScrollableDemoState extends State<_TabsScrollableDemo>
 
   @override
   void initState() {
-    _tabController = TabController(
-      length: 12,
-      vsync: this,
-    );
+    _tabController = TabController(length: 12, vsync: this);
     _tabController!.addListener(() {
       // When the tab controller's value is updated, make sure to update the
       // tab index value, which is state restorable.
@@ -90,19 +87,12 @@ class __TabsScrollableDemoState extends State<_TabsScrollableDemo>
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
-          tabs: <Widget>[
-            for (final String tab in tabs) Tab(text: tab),
-          ],
+          tabs: <Widget>[for (final String tab in tabs) Tab(text: tab)],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: <Widget>[
-          for (final String tab in tabs)
-            Center(
-              child: Text(tab),
-            ),
-        ],
+        children: <Widget>[for (final String tab in tabs) Center(child: Text(tab))],
       ),
     );
   }
@@ -135,10 +125,7 @@ class __TabsNonScrollableDemoState extends State<_TabsNonScrollableDemo>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(
-      length: 3,
-      vsync: this,
-    );
+    _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
       // When the tab controller's value is updated, make sure to update the
       // tab index value, which is state restorable.
@@ -167,24 +154,15 @@ class __TabsNonScrollableDemoState extends State<_TabsNonScrollableDemo>
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(
-          localizations.demoTabsNonScrollingTitle,
-        ),
+        title: Text(localizations.demoTabsNonScrollingTitle),
         bottom: TabBar(
           controller: _tabController,
-          tabs: <Widget>[
-            for (final String tab in tabs) Tab(text: tab),
-          ],
+          tabs: <Widget>[for (final String tab in tabs) Tab(text: tab)],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: <Widget>[
-          for (final String tab in tabs)
-            Center(
-              child: Text(tab),
-            ),
-        ],
+        children: <Widget>[for (final String tab in tabs) Center(child: Text(tab))],
       ),
     );
   }

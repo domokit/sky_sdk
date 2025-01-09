@@ -36,34 +36,28 @@ void testMain() {
     expect(const Locale.fromSubtags(countryCode: 'US').toString(), 'und_US');
     expect(const Locale.fromSubtags(countryCode: 'US').countryCode, 'US');
 
-    expect(
-        const Locale.fromSubtags(languageCode: 'es', countryCode: '419')
-            .toString(),
-        'es_419');
-    expect(
-        const Locale.fromSubtags(languageCode: 'es', countryCode: '419')
-            .languageCode,
-        'es');
-    expect(
-        const Locale.fromSubtags(languageCode: 'es', countryCode: '419')
-            .countryCode,
-        '419');
+    expect(const Locale.fromSubtags(languageCode: 'es', countryCode: '419').toString(), 'es_419');
+    expect(const Locale.fromSubtags(languageCode: 'es', countryCode: '419').languageCode, 'es');
+    expect(const Locale.fromSubtags(languageCode: 'es', countryCode: '419').countryCode, '419');
 
     expect(
-        const Locale.fromSubtags(
-                languageCode: 'zh', scriptCode: 'Hans', countryCode: 'CN')
-            .toString(),
-        'zh_Hans_CN');
+      const Locale.fromSubtags(
+        languageCode: 'zh',
+        scriptCode: 'Hans',
+        countryCode: 'CN',
+      ).toString(),
+      'zh_Hans_CN',
+    );
   });
 
   test('Locale equality', () {
     expect(
-        const Locale.fromSubtags(languageCode: 'en'),
-        isNot(
-            const Locale.fromSubtags(languageCode: 'en', scriptCode: 'Latn')));
+      const Locale.fromSubtags(languageCode: 'en'),
+      isNot(const Locale.fromSubtags(languageCode: 'en', scriptCode: 'Latn')),
+    );
     expect(
-        const Locale.fromSubtags(languageCode: 'en').hashCode,
-        isNot(const Locale.fromSubtags(languageCode: 'en', scriptCode: 'Latn')
-            .hashCode));
+      const Locale.fromSubtags(languageCode: 'en').hashCode,
+      isNot(const Locale.fromSubtags(languageCode: 'en', scriptCode: 'Latn').hashCode),
+    );
   });
 }

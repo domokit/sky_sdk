@@ -39,10 +39,10 @@ void main() {
     await tester.pump();
 
     expect(find.byType(ListTile), findsNothing);
-    expect(find.descendant(
-      of: find.byType(TextFormField),
-      matching: find.text('Bob'),
-    ), findsOneWidget);
+    expect(
+      find.descendant(of: find.byType(TextFormField), matching: find.text('Bob')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Finds users by email address', (WidgetTester tester) async {
@@ -68,9 +68,9 @@ void main() {
     await tester.pump();
 
     expect(find.byType(ListTile), findsNothing);
-    expect(find.descendant(
-      of: find.byType(TextFormField),
-      matching: find.text('Charlie'),
-    ), findsOneWidget);
+    expect(
+      find.descendant(of: find.byType(TextFormField), matching: find.text('Charlie')),
+      findsOneWidget,
+    );
   });
 }

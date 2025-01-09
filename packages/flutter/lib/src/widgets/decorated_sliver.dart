@@ -2,7 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'package:flutter/material.dart';
+///
 /// @docImport 'container.dart';
+/// @docImport 'scroll_view.dart';
 library;
 
 import 'package:flutter/rendering.dart';
@@ -95,7 +98,9 @@ class DecoratedSliver extends SingleChildRenderObjectWidget {
       DecorationPosition.background => 'bg',
       DecorationPosition.foreground => 'fg',
     };
-    properties.add(EnumProperty<DecorationPosition>('position', position, level: DiagnosticLevel.hidden));
+    properties.add(
+      EnumProperty<DecorationPosition>('position', position, level: DiagnosticLevel.hidden),
+    );
     properties.add(DiagnosticsProperty<Decoration>(label, decoration));
   }
 }

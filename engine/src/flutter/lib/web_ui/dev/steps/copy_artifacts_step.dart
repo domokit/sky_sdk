@@ -5,19 +5,36 @@
 import 'dart:convert' show JsonEncoder;
 import 'dart:io' as io;
 
+import 'package:archive/archive_io.dart';
+import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as pathlib;
 
+import '../common.dart';
 import '../environment.dart';
 import '../exceptions.dart';
 import '../felt_config.dart';
 import '../pipeline.dart';
 import '../utils.dart';
 
+sealed class ArtifactSource {}
+
+class LocalArtifactSource implements ArtifactSource {
+  LocalArtifactSource({required this.mode});
+
+  final RuntimeMode mode;
+}
+
+class GcsArtifactSource implements ArtifactSource {
+  GcsArtifactSource({required this.realm});
+
+  final LuciRealm realm;
+}
+
 class CopyArtifactsStep implements PipelineStep {
-  CopyArtifactsStep(this.artifactDeps, { required this.runtimeMode });
+  CopyArtifactsStep(this.artifactDeps, {required this.source});
 
   final ArtifactDependencies artifactDeps;
-  final RuntimeMode runtimeMode;
+  final ArtifactSource source;
 
   @override
   String get description => 'copy_artifacts';
@@ -30,24 +47,75 @@ class CopyArtifactsStep implements PipelineStep {
     await cleanup();
   }
 
+  Future<io.Directory> _downloadArtifacts(LuciRealm realm) async {
+    final String realmComponent = switch (realm) {
+      LuciRealm.Prod || LuciRealm.Staging => '',
+      LuciRealm.Try => 'flutter_archives_v2/',
+      LuciRealm.Unknown =>
+        throw ToolExit('Could not generate artifact bucket url for unknown realm.'),
+    };
+    final Uri url = Uri.https(
+      'storage.googleapis.com',
+      '${realmComponent}flutter_infra_release/flutter/$gitRevision/flutter-web-sdk.zip',
+    );
+    final http.Response response = await http.Client().get(url);
+    if (response.statusCode != 200) {
+      throw ToolExit(
+        'Could not download flutter-web-sdk.zip from cloud bucket at URL: $url. Response status code: ${response.statusCode}',
+      );
+    }
+    final Archive archive = ZipDecoder().decodeBytes(response.bodyBytes);
+    final io.Directory tempDirectory = await io.Directory.systemTemp.createTemp();
+    await extractArchiveToDisk(archive, tempDirectory.absolute.path);
+    return tempDirectory;
+  }
+
   @override
   Future<void> run() async {
+    final String flutterJsSourceDirectory;
+    final String canvaskitSourceDirectory;
+    final String canvaskitChromiumSourceDirectory;
+    final String skwasmSourceDirectory;
+    final String skwasmStSourceDirectory;
+    switch (source) {
+      case LocalArtifactSource(:final mode):
+        final buildDirectory = getBuildDirectoryForRuntimeMode(mode).path;
+        flutterJsSourceDirectory = pathlib.join(buildDirectory, 'flutter_web_sdk', 'flutter_js');
+        canvaskitSourceDirectory = pathlib.join(buildDirectory, 'canvaskit');
+        canvaskitChromiumSourceDirectory = pathlib.join(buildDirectory, 'canvaskit_chromium');
+        skwasmSourceDirectory = pathlib.join(buildDirectory, 'skwasm');
+        skwasmStSourceDirectory = pathlib.join(buildDirectory, 'skwasm_st');
+
+      case GcsArtifactSource(:final realm):
+        final artifactsDirectory = (await _downloadArtifacts(realm)).path;
+        flutterJsSourceDirectory = pathlib.join(artifactsDirectory, 'flutter_js');
+        canvaskitSourceDirectory = pathlib.join(artifactsDirectory, 'canvaskit');
+        canvaskitChromiumSourceDirectory = pathlib.join(
+          artifactsDirectory,
+          'canvaskit',
+          'chromium',
+        );
+        skwasmSourceDirectory = pathlib.join(artifactsDirectory, 'canvaskit');
+        skwasmStSourceDirectory = pathlib.join(artifactsDirectory, 'canvaskit');
+    }
+
     await environment.webTestsArtifactsDir.create(recursive: true);
     await buildHostPage();
     await copyTestFonts();
     await copySkiaTestImages();
-    await copyFlutterJsFiles();
+    await copyFlutterJsFiles(flutterJsSourceDirectory);
     if (artifactDeps.canvasKit) {
       print('Copying CanvasKit...');
-      await copyCanvasKitFiles('canvaskit', 'canvaskit');
+      await copyWasmLibrary('canvaskit', canvaskitSourceDirectory, 'canvaskit');
     }
     if (artifactDeps.canvasKitChromium) {
       print('Copying CanvasKit (Chromium)...');
-      await copyCanvasKitFiles('canvaskit_chromium', 'canvaskit/chromium');
+      await copyWasmLibrary('canvaskit', canvaskitChromiumSourceDirectory, 'canvaskit/chromium');
     }
     if (artifactDeps.skwasm) {
       print('Copying Skwasm...');
-      await copySkwasm();
+      await copyWasmLibrary('skwasm', skwasmSourceDirectory, 'canvaskit');
+      await copyWasmLibrary('skwasm_st', skwasmStSourceDirectory, 'canvaskit');
     }
   }
 
@@ -76,49 +144,42 @@ class CopyArtifactsStep implements PipelineStep {
       fontManifest.add(<String, dynamic>{
         'family': family,
         'fonts': <dynamic>[
-          <String, String>{
-            'asset': 'fonts/$fontFile',
-          },
+          <String, String>{'asset': 'fonts/$fontFile'},
         ],
       });
 
       final io.File sourceTtf = io.File(pathlib.join(fontsPath, fontFile));
-      final io.File destinationTtf = io.File(pathlib.join(
-        environment.webTestsArtifactsDir.path,
-        'assets',
-        'fonts',
-        fontFile,
-      ));
+      final io.File destinationTtf = io.File(
+        pathlib.join(environment.webTestsArtifactsDir.path, 'assets', 'fonts', fontFile),
+      );
       await destinationTtf.create(recursive: true);
       await sourceTtf.copy(destinationTtf.path);
     }
 
-    final io.File fontManifestFile = io.File(pathlib.join(
-      environment.webTestsArtifactsDir.path,
-      'assets',
-      'FontManifest.json',
-    ));
-    await fontManifestFile.create(recursive: true);
-    await fontManifestFile.writeAsString(
-      const JsonEncoder.withIndent('  ').convert(fontManifest),
+    final io.File fontManifestFile = io.File(
+      pathlib.join(environment.webTestsArtifactsDir.path, 'assets', 'FontManifest.json'),
     );
+    await fontManifestFile.create(recursive: true);
+    await fontManifestFile.writeAsString(const JsonEncoder.withIndent('  ').convert(fontManifest));
 
-    final io.Directory fallbackFontsSource = io.Directory(pathlib.join(
-      environment.engineSrcDir.path,
-      'flutter',
-      'third_party',
-      'google_fonts_for_unit_tests',
-    ));
+    final io.Directory fallbackFontsSource = io.Directory(
+      pathlib.join(
+        environment.engineSrcDir.path,
+        'flutter',
+        'third_party',
+        'google_fonts_for_unit_tests',
+      ),
+    );
     final String fallbackFontsDestinationPath = pathlib.join(
       environment.webTestsArtifactsDir.path,
       'assets',
       'fallback_fonts',
     );
-    for (final io.File file in
-      fallbackFontsSource.listSync(recursive: true).whereType<io.File>()
-    ) {
+    for (final io.File file in fallbackFontsSource.listSync(recursive: true).whereType<io.File>()) {
       final String relativePath = pathlib.relative(file.path, from: fallbackFontsSource.path);
-      final io.File destinationFile = io.File(pathlib.join(fallbackFontsDestinationPath, relativePath));
+      final io.File destinationFile = io.File(
+        pathlib.join(fallbackFontsDestinationPath, relativePath),
+      );
       if (!destinationFile.parent.existsSync()) {
         destinationFile.parent.createSync(recursive: true);
       }
@@ -127,53 +188,48 @@ class CopyArtifactsStep implements PipelineStep {
   }
 
   Future<void> copySkiaTestImages() async {
-    final io.Directory testImagesDir = io.Directory(pathlib.join(
-      environment.engineSrcDir.path,
-      'flutter',
-      'third_party',
-      'skia',
-      'resources',
-      'images',
-    ));
+    final io.Directory testImagesDir = io.Directory(
+      pathlib.join(
+        environment.engineSrcDir.path,
+        'flutter',
+        'third_party',
+        'skia',
+        'resources',
+        'images',
+      ),
+    );
 
     for (final io.File imageFile in testImagesDir.listSync(recursive: true).whereType<io.File>()) {
       // Skip files that are used by Skia to test handling of invalid input.
       if (pathlib.basename(imageFile.path).contains('invalid')) {
         continue;
       }
-      final io.File destination = io.File(pathlib.join(
-        environment.webTestsArtifactsDir.path,
-        'test_images',
-        pathlib.relative(imageFile.path, from: testImagesDir.path),
-      ));
+      final io.File destination = io.File(
+        pathlib.join(
+          environment.webTestsArtifactsDir.path,
+          'test_images',
+          pathlib.relative(imageFile.path, from: testImagesDir.path),
+        ),
+      );
       destination.createSync(recursive: true);
       await imageFile.copy(destination.path);
     }
   }
 
-  Future<void> copyFlutterJsFiles() async {
-    final io.Directory flutterJsInputDirectory = io.Directory(pathlib.join(
-      outBuildPath,
-      'flutter_web_sdk',
-      'flutter_js',
-    ));
+  Future<void> copyFlutterJsFiles(String sourcePath) async {
+    final io.Directory flutterJsInputDirectory = io.Directory(sourcePath);
     final String targetDirectoryPath = pathlib.join(
       environment.webTestsArtifactsDir.path,
       'flutter_js',
     );
 
-    for (final io.File sourceFile in flutterJsInputDirectory
-      .listSync(recursive: true)
-      .whereType<io.File>()
-    ) {
+    for (final io.File sourceFile
+        in flutterJsInputDirectory.listSync(recursive: true).whereType<io.File>()) {
       final String relativePath = pathlib.relative(
         sourceFile.path,
-        from: flutterJsInputDirectory.path
+        from: flutterJsInputDirectory.path,
       );
-      final String targetPath = pathlib.join(
-        targetDirectoryPath,
-        relativePath,
-      );
+      final String targetPath = pathlib.join(targetDirectoryPath, relativePath);
       final io.File targetFile = io.File(targetPath);
       if (!targetFile.parent.existsSync()) {
         targetFile.parent.createSync(recursive: true);
@@ -182,37 +238,31 @@ class CopyArtifactsStep implements PipelineStep {
     }
   }
 
-  Future<void> copyCanvasKitFiles(String sourcePath, String destinationPath) async {
-    final String sourceDirectoryPath = pathlib.join(
-      outBuildPath,
-      sourcePath,
-    );
-
+  Future<void> copyWasmLibrary(
+    String libraryName,
+    String sourcePath,
+    String destinationPath,
+  ) async {
     final String targetDirectoryPath = pathlib.join(
       environment.webTestsArtifactsDir.path,
       destinationPath,
     );
 
     for (final String filename in <String>[
-      'canvaskit.js',
-      'canvaskit.wasm',
-      'canvaskit.wasm.map',
+      '$libraryName.js',
+      '$libraryName.wasm',
+      '$libraryName.wasm.map',
     ]) {
-      final io.File sourceFile = io.File(pathlib.join(
-        sourceDirectoryPath,
-        filename,
-      ));
-      final io.File targetFile = io.File(pathlib.join(
-        targetDirectoryPath,
-        filename,
-      ));
+      final io.File sourceFile = io.File(pathlib.join(sourcePath, filename));
+      final io.File targetFile = io.File(pathlib.join(targetDirectoryPath, filename));
       if (!sourceFile.existsSync()) {
         if (filename.endsWith('.map')) {
           // Sourcemaps are only generated under certain build conditions, so
           // they are optional.
           continue;
-        } {
-          throw ToolExit('Built CanvasKit artifact not found at path "$sourceFile".');
+        }
+        {
+          throw ToolExit('Built artifact not found at path "$sourceFile".');
         }
       }
       await targetFile.create(recursive: true);
@@ -220,89 +270,29 @@ class CopyArtifactsStep implements PipelineStep {
     }
   }
 
-  String get outBuildPath => getBuildDirectoryForRuntimeMode(runtimeMode).path;
-
-  Future<void> copySkwasm() async {
-    final io.Directory targetDir = io.Directory(pathlib.join(
-      environment.webTestsArtifactsDir.path,
-      'canvaskit',
-    ));
-
-    await targetDir.create(recursive: true);
-
-    for (final String fileName in <String>[
-      'skwasm.wasm',
-      'skwasm.wasm.map',
-      'skwasm.js',
-      'skwasm_st.wasm',
-      'skwasm_st.wasm.map',
-      'skwasm_st.js',
-    ]) {
-      final io.File sourceFile = io.File(pathlib.join(
-        outBuildPath,
-        'flutter_web_sdk',
-        'canvaskit',
-        fileName,
-      ));
-      if (!sourceFile.existsSync()) {
-        if (fileName.endsWith('.map')) {
-          // Sourcemaps are only generated under certain build conditions, so
-          // they are optional.
-          continue;
-        } {
-          throw ToolExit('Built Skwasm artifact not found at path "$sourceFile".');
-        }
-      }
-      final io.File targetFile = io.File(pathlib.join(
-        targetDir.path,
-        fileName,
-      ));
-      await sourceFile.copy(targetFile.path);
-    }
-  }
-
   Future<void> buildHostPage() async {
     final String hostDartPath = pathlib.join('lib', 'static', 'host.dart');
-    final io.File hostDartFile = io.File(pathlib.join(
-      environment.webEngineTesterRootDir.path,
-      hostDartPath,
-    ));
-    final String targetDirectoryPath = pathlib.join(
-      environment.webTestsArtifactsDir.path,
-      'host',
+    final io.File hostDartFile = io.File(
+      pathlib.join(environment.webEngineTesterRootDir.path, hostDartPath),
     );
+    final String targetDirectoryPath = pathlib.join(environment.webTestsArtifactsDir.path, 'host');
     io.Directory(targetDirectoryPath).createSync(recursive: true);
-    final String targetFilePath = pathlib.join(
-      targetDirectoryPath,
-      'host.dart',
-    );
+    final String targetFilePath = pathlib.join(targetDirectoryPath, 'host.dart');
 
-    const List<String> staticFiles = <String>[
-      'favicon.ico',
-      'host.css',
-      'index.html',
-    ];
+    const List<String> staticFiles = <String>['favicon.ico', 'host.css', 'index.html'];
     for (final String staticFilePath in staticFiles) {
-      final io.File source = io.File(pathlib.join(
-        environment.webEngineTesterRootDir.path,
-        'lib',
-        'static',
-        staticFilePath,
-      ));
-      final io.File destination = io.File(pathlib.join(
-        targetDirectoryPath,
-        staticFilePath,
-      ));
+      final io.File source = io.File(
+        pathlib.join(environment.webEngineTesterRootDir.path, 'lib', 'static', staticFilePath),
+      );
+      final io.File destination = io.File(pathlib.join(targetDirectoryPath, staticFilePath));
       await source.copy(destination.path);
     }
 
-    final io.File timestampFile = io.File(pathlib.join(
-      environment.webEngineTesterRootDir.path,
-      '$targetFilePath.js.timestamp',
-    ));
+    final io.File timestampFile = io.File(
+      pathlib.join(environment.webEngineTesterRootDir.path, '$targetFilePath.js.timestamp'),
+    );
 
-    final String timestamp =
-        hostDartFile.statSync().modified.millisecondsSinceEpoch.toString();
+    final String timestamp = hostDartFile.statSync().modified.millisecondsSinceEpoch.toString();
     if (timestampFile.existsSync()) {
       final String lastBuildTimestamp = timestampFile.readAsStringSync();
       if (lastBuildTimestamp == timestamp) {
@@ -316,14 +306,10 @@ class CopyArtifactsStep implements PipelineStep {
       print('Building ${hostDartFile.path}.');
     }
 
-    int exitCode = await runProcess(
-      environment.dartExecutable,
-      <String>[
-        'pub',
-        'get',
-      ],
-      workingDirectory: environment.webEngineTesterRootDir.path
-    );
+    int exitCode = await runProcess(environment.dartExecutable, <String>[
+      'pub',
+      'get',
+    ], workingDirectory: environment.webEngineTesterRootDir.path);
 
     if (exitCode != 0) {
       throw ToolExit(
@@ -332,17 +318,13 @@ class CopyArtifactsStep implements PipelineStep {
       );
     }
 
-    exitCode = await runProcess(
-      environment.dartExecutable,
-      <String>[
-        'compile',
-        'js',
-        hostDartPath,
-        '-o',
-        '$targetFilePath.js',
-      ],
-      workingDirectory: environment.webEngineTesterRootDir.path,
-    );
+    exitCode = await runProcess(environment.dartExecutable, <String>[
+      'compile',
+      'js',
+      hostDartPath,
+      '-o',
+      '$targetFilePath.js',
+    ], workingDirectory: environment.webEngineTesterRootDir.path);
 
     if (exitCode != 0) {
       throw ToolExit(

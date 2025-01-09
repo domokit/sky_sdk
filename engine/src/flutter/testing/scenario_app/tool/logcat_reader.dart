@@ -15,13 +15,14 @@ import '../bin/utils/adb_logcat_filtering.dart';
 /// `adb logcat` and explain what log tag names are most common.
 void main(List<String> args) {
   if (args case [final String path]) {
-    final List<AdbLogLine> parsed = io.File(path)
-        .readAsLinesSync()
-        .map(AdbLogLine.tryParse)
-        .whereType<AdbLogLine>()
-          // Filter out all debug logs.
-        .where((AdbLogLine line) => line.severity != 'D')
-        .toList();
+    final List<AdbLogLine> parsed =
+        io.File(path)
+            .readAsLinesSync()
+            .map(AdbLogLine.tryParse)
+            .whereType<AdbLogLine>()
+            // Filter out all debug logs.
+            .where((AdbLogLine line) => line.severity != 'D')
+            .toList();
 
     final Map<String, int> tagCounts = <String, int>{};
     for (final AdbLogLine line in parsed) {
@@ -29,8 +30,9 @@ void main(List<String> args) {
     }
 
     // Print in order of most common to least common.
-    final List<MapEntry<String, int>> sorted = tagCounts.entries.toList()
-      ..sort((MapEntry<String, int> a, MapEntry<String, int> b) => b.value.compareTo(a.value));
+    final List<MapEntry<String, int>> sorted =
+        tagCounts.entries.toList()
+          ..sort((MapEntry<String, int> a, MapEntry<String, int> b) => b.value.compareTo(a.value));
     for (final MapEntry<String, int> entry in sorted) {
       print("'${entry.key}', // ${entry.value}");
     }

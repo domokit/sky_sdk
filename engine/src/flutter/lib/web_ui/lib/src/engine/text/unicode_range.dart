@@ -12,11 +12,7 @@ const int kCharBang = 33;
 const int kMashriqi_0 = 0x660;
 const int kMashriqi_9 = kMashriqi_0 + 9;
 
-enum _ComparisonResult {
-  inside,
-  higher,
-  lower,
-}
+enum _ComparisonResult { inside, higher, lower }
 
 /// Each instance of [UnicodeRange] represents a range of unicode characters
 /// that are assigned a [CharProperty]. For example, the following snippet:
@@ -218,8 +214,7 @@ List<UnicodeRange<P>> _unpackProperties<P>(
       i += 4;
     }
     final int charCode = packedData.codeUnitAt(i);
-    final P property =
-        propertyEnumValues[_getEnumIndexFromPackedValue(charCode)];
+    final P property = propertyEnumValues[_getEnumIndexFromPackedValue(charCode)];
     i++;
 
     ranges.add(UnicodeRange<P>(rangeStart, rangeEnd, property));
@@ -231,8 +226,9 @@ int _getEnumIndexFromPackedValue(int charCode) {
   // This has to stay in sync with [EnumValue.serialized] in
   // `tool/unicode_sync_script.dart`.
 
-  assert((charCode >= kChar_A && charCode <= kChar_Z) ||
-      (charCode >= kChar_a && charCode <= kChar_z));
+  assert(
+    (charCode >= kChar_A && charCode <= kChar_Z) || (charCode >= kChar_a && charCode <= kChar_z),
+  );
 
   // Uppercase letters were assigned to the first 26 enum values.
   if (charCode <= kChar_Z) {
@@ -261,8 +257,9 @@ int _consumeInt(String packedData, int index) {
 /// Does the same thing as [int.parse(str, 36)] but takes only a single
 /// character as a [charCode] integer.
 int getIntFromCharCode(int charCode) {
-  assert((charCode >= kChar_0 && charCode <= kChar_9) ||
-      (charCode >= kChar_a && charCode <= kChar_z));
+  assert(
+    (charCode >= kChar_0 && charCode <= kChar_9) || (charCode >= kChar_a && charCode <= kChar_z),
+  );
 
   if (charCode <= kChar_9) {
     return charCode - kChar_0;

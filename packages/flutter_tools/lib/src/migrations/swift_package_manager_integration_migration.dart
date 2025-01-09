@@ -28,15 +28,15 @@ class SwiftPackageManagerIntegrationMigration extends ProjectMigrator {
     required FileSystem fileSystem,
     required PlistParser plistParser,
     required FeatureFlags features,
-  })  : _xcodeProject = project,
-        _platform = platform,
-        _buildInfo = buildInfo,
-        _xcodeProjectInfoFile = project.xcodeProjectInfoFile,
-        _xcodeProjectInterpreter = xcodeProjectInterpreter,
-        _fileSystem = fileSystem,
-        _plistParser = plistParser,
-        _features = features,
-        super(logger);
+  }) : _xcodeProject = project,
+       _platform = platform,
+       _buildInfo = buildInfo,
+       _xcodeProjectInfoFile = project.xcodeProjectInfoFile,
+       _xcodeProjectInterpreter = xcodeProjectInterpreter,
+       _fileSystem = fileSystem,
+       _plistParser = plistParser,
+       _features = features,
+       super(logger);
 
   final XcodeBasedProject _xcodeProject;
   final SupportedPlatform _platform;
@@ -51,10 +51,12 @@ class SwiftPackageManagerIntegrationMigration extends ProjectMigrator {
   static const String _flutterPluginsSwiftPackageBuildFileIdentifier = '78A318202AECB46A00862997';
 
   /// New identifier for FlutterGeneratedPluginSwiftPackage XCLocalSwiftPackageReference.
-  static const String _localFlutterPluginsSwiftPackageReferenceIdentifier = '781AD8BC2B33823900A9FFBB';
+  static const String _localFlutterPluginsSwiftPackageReferenceIdentifier =
+      '781AD8BC2B33823900A9FFBB';
 
   /// New identifier for FlutterGeneratedPluginSwiftPackage XCSwiftPackageProductDependency.
-  static const String _flutterPluginsSwiftPackageProductDependencyIdentifier = '78A3181F2AECB46A00862997';
+  static const String _flutterPluginsSwiftPackageProductDependencyIdentifier =
+      '78A3181F2AECB46A00862997';
 
   /// Existing iOS identifier for Runner PBXFrameworksBuildPhase.
   static const String _iosRunnerFrameworksBuildPhaseIdentifier = '97C146EB1CF9000F007C117D';
@@ -74,9 +76,8 @@ class SwiftPackageManagerIntegrationMigration extends ProjectMigrator {
   /// Existing macOS identifier for Runner PBXProject.
   static const String _macosProjectIdentifier = '33CC10E52044A3C60003C045';
 
-  File get backupProjectSettings => _fileSystem
-      .directory(_xcodeProjectInfoFile.parent)
-      .childFile('project.pbxproj.backup');
+  File get backupProjectSettings =>
+      _fileSystem.directory(_xcodeProjectInfoFile.parent).childFile('project.pbxproj.backup');
 
   String get _runnerFrameworksBuildPhaseIdentifier {
     return _platform == SupportedPlatform.ios
@@ -91,9 +92,7 @@ class SwiftPackageManagerIntegrationMigration extends ProjectMigrator {
   }
 
   String get _projectIdentifier {
-    return _platform == SupportedPlatform.ios
-        ? _iosProjectIdentifier
-        : _macosProjectIdentifier;
+    return _platform == SupportedPlatform.ios ? _iosProjectIdentifier : _macosProjectIdentifier;
   }
 
   void restoreFromBackup(SchemeInfo? schemeInfo) {
@@ -145,9 +144,7 @@ class SwiftPackageManagerIntegrationMigration extends ProjectMigrator {
         return;
       }
 
-      migrationStatus = logger.startProgress(
-        'Adding Swift Package Manager integration...',
-      );
+      migrationStatus = logger.startProgress('Adding Swift Package Manager integration...');
 
       if (isSchemeMigrated) {
         logger.printTrace('${schemeInfo.schemeFile.basename} already migrated. Skipping...');
@@ -173,28 +170,27 @@ class SwiftPackageManagerIntegrationMigration extends ProjectMigrator {
       }
 
       // Get the project info to make sure it compiles with xcodebuild
-      await _xcodeProjectInterpreter.getInfo(
-        _xcodeProject.hostAppRoot.path,
-      );
+      await _xcodeProjectInterpreter.getInfo(_xcodeProject.hostAppRoot.path);
     } on Exception catch (e) {
       restoreFromBackup(schemeInfo);
       // TODO(vashworth): Add link to instructions on how to manually integrate
       // once available on website.
       throwToolExit(
-          'An error occurred when adding Swift Package Manager integration:\n'
-          '  $e\n\n'
-          'Swift Package Manager is currently an experimental feature, please file a bug at\n'
-          '  https://github.com/flutter/flutter/issues/new?template=1_activation.yml \n'
-          'Consider including a copy of the following files in your bug report:\n'
-          '  ${_platform.name}/Runner.xcodeproj/project.pbxproj\n'
-          '  ${_platform.name}/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme '
-          '(or the scheme for the flavor used)\n\n'
-          'To avoid this failure, disable Flutter Swift Package Manager integration for the project\n'
-          'by adding the following in the project\'s pubspec.yaml under the "flutter" section:\n'
-          '  "disable-swift-package-manager: true"\n'
-          'Alternatively, disable Flutter Swift Package Manager integration globally with the\n'
-          'following command:\n'
-          '  "flutter config --no-enable-swift-package-manager"\n');
+        'An error occurred when adding Swift Package Manager integration:\n'
+        '  $e\n\n'
+        'Swift Package Manager is currently an experimental feature, please file a bug at\n'
+        '  https://github.com/flutter/flutter/issues/new?template=1_activation.yml \n'
+        'Consider including a copy of the following files in your bug report:\n'
+        '  ${_platform.name}/Runner.xcodeproj/project.pbxproj\n'
+        '  ${_platform.name}/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme '
+        '(or the scheme for the flavor used)\n\n'
+        'To avoid this failure, disable Flutter Swift Package Manager integration for the project\n'
+        'by adding the following in the project\'s pubspec.yaml under the "flutter" section:\n'
+        '  "disable-swift-package-manager: true"\n'
+        'Alternatively, disable Flutter Swift Package Manager integration globally with the\n'
+        'following command:\n'
+        '  "flutter config --no-enable-swift-package-manager"\n',
+      );
     } finally {
       ErrorHandlingFileSystem.deleteIfExists(backupProjectSettings);
       if (schemeInfo?.backupSchemeFile != null) {
@@ -223,11 +219,7 @@ class SwiftPackageManagerIntegrationMigration extends ProjectMigrator {
     }
 
     final String schemeContent = schemeFile.readAsStringSync();
-    return SchemeInfo(
-      schemeName: scheme,
-      schemeFile: schemeFile,
-      schemeContent: schemeContent,
-    );
+    return SchemeInfo(schemeName: scheme, schemeFile: schemeFile, schemeContent: schemeContent);
   }
 
   bool _isSchemeMigrated(SchemeInfo schemeInfo) {
@@ -254,13 +246,14 @@ class SwiftPackageManagerIntegrationMigration extends ProjectMigrator {
     //     ReferencedContainer = "container:Runner.xcodeproj">
     // </BuildableReference>
     final List<String> schemeLines = LineSplitter.split(schemeContent).toList();
-    final int index = schemeLines.indexWhere((String line) =>
-      line.contains('BlueprintIdentifier = "$_runnerNativeTargetIdentifier"'),
+    final int index = schemeLines.indexWhere(
+      (String line) => line.contains('BlueprintIdentifier = "$_runnerNativeTargetIdentifier"'),
     );
     if (index == -1 || index + 3 >= schemeLines.length) {
       throw Exception(
         'Failed to parse ${schemeFile.basename}: Could not find BuildableReference '
-        'for ${_xcodeProject.hostAppProjectName}.');
+        'for ${_xcodeProject.hostAppProjectName}.',
+      );
     }
 
     final String buildableName = schemeLines[index + 1].trim();
@@ -275,7 +268,9 @@ class SwiftPackageManagerIntegrationMigration extends ProjectMigrator {
 
     final String referencedContainer = schemeLines[index + 3].trim();
     if (!referencedContainer.contains('ReferencedContainer')) {
-      throw Exception('Failed to parse ${schemeFile.basename}: Could not find ReferencedContainer.');
+      throw Exception(
+        'Failed to parse ${schemeFile.basename}: Could not find ReferencedContainer.',
+      );
     }
 
     schemeInfo.backupSchemeFile = schemeFile.parent.childFile('${schemeFile.basename}.backup');
@@ -283,9 +278,11 @@ class SwiftPackageManagerIntegrationMigration extends ProjectMigrator {
 
     final String scriptText;
     if (_platform == SupportedPlatform.ios) {
-      scriptText = r'scriptText = "/bin/sh &quot;$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh&quot; prepare&#10;">';
+      scriptText =
+          r'scriptText = "/bin/sh &quot;$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh&quot; prepare&#10;">';
     } else {
-      scriptText = r'scriptText = "&quot;$FLUTTER_ROOT&quot;/packages/flutter_tools/bin/macos_assemble.sh prepare&#10;">';
+      scriptText =
+          r'scriptText = "&quot;$FLUTTER_ROOT&quot;/packages/flutter_tools/bin/macos_assemble.sh prepare&#10;">';
     }
 
     String newContent = '''
@@ -314,11 +311,17 @@ class SwiftPackageManagerIntegrationMigration extends ProjectMigrator {
 $newContent
       </PreActions>
 ''';
-      final String? buildActionEntries = schemeLines.where((String line) => line.contains('<BuildActionEntries>')).firstOrNull;
+      final String? buildActionEntries =
+          schemeLines.where((String line) => line.contains('<BuildActionEntries>')).firstOrNull;
       if (buildActionEntries == null) {
-        throw Exception('Failed to parse ${schemeFile.basename}: Could not find BuildActionEntries.');
+        throw Exception(
+          'Failed to parse ${schemeFile.basename}: Could not find BuildActionEntries.',
+        );
       } else {
-        newScheme = schemeContent.replaceFirst(buildActionEntries, '$newContent$buildActionEntries');
+        newScheme = schemeContent.replaceFirst(
+          buildActionEntries,
+          '$newContent$buildActionEntries',
+        );
       }
     }
 
@@ -326,16 +329,16 @@ $newContent
     try {
       XmlDocument.parse(newScheme);
     } on XmlException catch (exception) {
-      throw Exception('Failed to parse ${schemeFile.basename}: Invalid xml: $newScheme\n$exception');
+      throw Exception(
+        'Failed to parse ${schemeFile.basename}: Invalid xml: $newScheme\n$exception',
+      );
     }
   }
 
   /// Parses the project.pbxproj into [ParsedProjectInfo]. Will throw an
   /// exception if it fails to parse.
   ParsedProjectInfo _parsePbxproj() {
-    final String? results = _plistParser.plistJsonContent(
-      _xcodeProjectInfoFile.path,
-    );
+    final String? results = _plistParser.plistJsonContent(_xcodeProjectInfoFile.path);
     if (results == null) {
       throw Exception('Failed to parse project settings.');
     }
@@ -343,9 +346,7 @@ $newContent
     try {
       final Object decodeResult = json.decode(results) as Object;
       if (decodeResult is! Map<String, Object?>) {
-        throw Exception(
-          'project.pbxproj returned unexpected JSON response: $results',
-        );
+        throw Exception('project.pbxproj returned unexpected JSON response: $results');
       }
       return ParsedProjectInfo.fromJson(decodeResult);
     } on FormatException {
@@ -392,8 +393,7 @@ $newContent
   }
 
   void _migratePbxproj() {
-    final String originalProjectContents =
-        _xcodeProjectInfoFile.readAsStringSync();
+    final String originalProjectContents = _xcodeProjectInfoFile.readAsStringSync();
 
     _ensureNewIdentifiersNotUsed(originalProjectContents);
 
@@ -429,22 +429,17 @@ $newContent
     }
   }
 
-  bool _isBuildFilesMigrated(
-    ParsedProjectInfo projectInfo, {
-    bool logErrorIfNotMigrated = false,
-  }) {
-    final bool migrated = projectInfo.buildFileIdentifiers
-        .contains(_flutterPluginsSwiftPackageBuildFileIdentifier);
+  bool _isBuildFilesMigrated(ParsedProjectInfo projectInfo, {bool logErrorIfNotMigrated = false}) {
+    final bool migrated = projectInfo.buildFileIdentifiers.contains(
+      _flutterPluginsSwiftPackageBuildFileIdentifier,
+    );
     if (logErrorIfNotMigrated && !migrated) {
       logger.printError('PBXBuildFile was not migrated or was migrated incorrectly.');
     }
     return migrated;
   }
 
-  List<String> _migrateBuildFile(
-    List<String> lines,
-    ParsedProjectInfo projectInfo,
-  ) {
+  List<String> _migrateBuildFile(List<String> lines, ParsedProjectInfo projectInfo) {
     if (_isBuildFilesMigrated(projectInfo)) {
       logger.printTrace('PBXBuildFile already migrated. Skipping...');
       return lines;
@@ -463,38 +458,37 @@ $newContent
     ParsedProjectInfo projectInfo, {
     bool logErrorIfNotMigrated = false,
   }) {
-    final bool migrated = projectInfo.frameworksBuildPhases
-        .where((ParsedProjectFrameworksBuildPhase phase) =>
-            phase.identifier == _runnerFrameworksBuildPhaseIdentifier &&
-            phase.files != null &&
-            phase.files!.contains(_flutterPluginsSwiftPackageBuildFileIdentifier))
-        .toList()
-        .isNotEmpty;
+    final bool migrated =
+        projectInfo.frameworksBuildPhases
+            .where(
+              (ParsedProjectFrameworksBuildPhase phase) =>
+                  phase.identifier == _runnerFrameworksBuildPhaseIdentifier &&
+                  phase.files != null &&
+                  phase.files!.contains(_flutterPluginsSwiftPackageBuildFileIdentifier),
+            )
+            .toList()
+            .isNotEmpty;
     if (logErrorIfNotMigrated && !migrated) {
       logger.printError('PBXFrameworksBuildPhase was not migrated or was migrated incorrectly.');
     }
     return migrated;
   }
 
-  List<String> _migrateFrameworksBuildPhase(
-    List<String> lines,
-    ParsedProjectInfo projectInfo,
-  ) {
+  List<String> _migrateFrameworksBuildPhase(List<String> lines, ParsedProjectInfo projectInfo) {
     if (_isFrameworksBuildPhaseMigrated(projectInfo)) {
       logger.printTrace('PBXFrameworksBuildPhase already migrated. Skipping...');
       return lines;
     }
 
-    final (int startSectionIndex, int endSectionIndex) =  _sectionRange(
+    final (int startSectionIndex, int endSectionIndex) = _sectionRange(
       'PBXFrameworksBuildPhase',
       lines,
     );
 
     // Find index where Frameworks Build Phase for the Runner target begins.
     final int runnerFrameworksPhaseStartIndex = lines.indexWhere(
-      (String line) => line.trim().startsWith(
-        '$_runnerFrameworksBuildPhaseIdentifier /* Frameworks */ = {',
-      ),
+      (String line) =>
+          line.trim().startsWith('$_runnerFrameworksBuildPhaseIdentifier /* Frameworks */ = {'),
       startSectionIndex,
     );
     if (runnerFrameworksPhaseStartIndex == -1 ||
@@ -506,12 +500,14 @@ $newContent
 
     // Get the Frameworks Build Phase for the Runner target from the parsed
     // project info.
-    final ParsedProjectFrameworksBuildPhase? runnerFrameworksPhase = projectInfo
-        .frameworksBuildPhases
-        .where((ParsedProjectFrameworksBuildPhase phase) =>
-            phase.identifier == _runnerFrameworksBuildPhaseIdentifier)
-        .toList()
-        .firstOrNull;
+    final ParsedProjectFrameworksBuildPhase? runnerFrameworksPhase =
+        projectInfo.frameworksBuildPhases
+            .where(
+              (ParsedProjectFrameworksBuildPhase phase) =>
+                  phase.identifier == _runnerFrameworksBuildPhaseIdentifier,
+            )
+            .toList()
+            .firstOrNull;
     if (runnerFrameworksPhase == null) {
       throw Exception(
         'Unable to find parsed PBXFrameworksBuildPhase for ${_xcodeProject.hostAppProjectName} target.',
@@ -548,24 +544,25 @@ $newContent
     ParsedProjectInfo projectInfo, {
     bool logErrorIfNotMigrated = false,
   }) {
-    final bool migrated = projectInfo.nativeTargets
-        .where((ParsedNativeTarget target) =>
-            target.identifier == _runnerNativeTargetIdentifier &&
-            target.packageProductDependencies != null &&
-            target.packageProductDependencies!
-                .contains(_flutterPluginsSwiftPackageProductDependencyIdentifier))
-        .toList()
-        .isNotEmpty;
+    final bool migrated =
+        projectInfo.nativeTargets
+            .where(
+              (ParsedNativeTarget target) =>
+                  target.identifier == _runnerNativeTargetIdentifier &&
+                  target.packageProductDependencies != null &&
+                  target.packageProductDependencies!.contains(
+                    _flutterPluginsSwiftPackageProductDependencyIdentifier,
+                  ),
+            )
+            .toList()
+            .isNotEmpty;
     if (logErrorIfNotMigrated && !migrated) {
       logger.printError('PBXNativeTarget was not migrated or was migrated incorrectly.');
     }
     return migrated;
   }
 
-  List<String> _migrateNativeTarget(
-    List<String> lines,
-    ParsedProjectInfo projectInfo,
-  ) {
+  List<String> _migrateNativeTarget(List<String> lines, ParsedProjectInfo projectInfo) {
     if (_isNativeTargetMigrated(projectInfo)) {
       logger.printTrace('PBXNativeTarget already migrated. Skipping...');
       return lines;
@@ -574,24 +571,26 @@ $newContent
     final (int startSectionIndex, int endSectionIndex) = _sectionRange('PBXNativeTarget', lines);
 
     // Find index where Native Target for the Runner target begins.
-    final ParsedNativeTarget? runnerNativeTarget = projectInfo.nativeTargets
-        .where((ParsedNativeTarget target) =>
-            target.identifier == _runnerNativeTargetIdentifier)
-        .firstOrNull;
+    final ParsedNativeTarget? runnerNativeTarget =
+        projectInfo.nativeTargets
+            .where(
+              (ParsedNativeTarget target) => target.identifier == _runnerNativeTargetIdentifier,
+            )
+            .firstOrNull;
     if (runnerNativeTarget == null) {
       throw Exception(
         'Unable to find parsed PBXNativeTarget for ${_xcodeProject.hostAppProjectName} target.',
       );
     }
-    final String subsectionLineStart = runnerNativeTarget.name != null
-        ? '$_runnerNativeTargetIdentifier /* ${runnerNativeTarget.name} */ = {'
-        : _runnerNativeTargetIdentifier;
+    final String subsectionLineStart =
+        runnerNativeTarget.name != null
+            ? '$_runnerNativeTargetIdentifier /* ${runnerNativeTarget.name} */ = {'
+            : _runnerNativeTargetIdentifier;
     final int runnerNativeTargetStartIndex = lines.indexWhere(
       (String line) => line.trim().startsWith(subsectionLineStart),
       startSectionIndex,
     );
-    if (runnerNativeTargetStartIndex == -1 ||
-        runnerNativeTargetStartIndex > endSectionIndex) {
+    if (runnerNativeTargetStartIndex == -1 || runnerNativeTargetStartIndex > endSectionIndex) {
       throw Exception(
         'Unable to find PBXNativeTarget for ${_xcodeProject.hostAppProjectName} target.',
       );
@@ -611,7 +610,8 @@ $newContent
         (String line) => line.trim().contains('packageProductDependencies'),
         runnerNativeTargetStartIndex,
       );
-      if (packageProductDependenciesIndex == -1 || packageProductDependenciesIndex > endSectionIndex) {
+      if (packageProductDependenciesIndex == -1 ||
+          packageProductDependenciesIndex > endSectionIndex) {
         throw Exception(
           'Unable to find packageProductDependencies for ${_xcodeProject.hostAppProjectName} PBXNativeTarget.',
         );
@@ -627,24 +627,25 @@ $newContent
     ParsedProjectInfo projectInfo, {
     bool logErrorIfNotMigrated = false,
   }) {
-    final bool migrated = projectInfo.projects
-        .where((ParsedProject target) =>
-            target.identifier == _projectIdentifier &&
-            target.packageReferences != null &&
-            target.packageReferences!
-                .contains(_localFlutterPluginsSwiftPackageReferenceIdentifier))
-        .toList()
-        .isNotEmpty;
+    final bool migrated =
+        projectInfo.projects
+            .where(
+              (ParsedProject target) =>
+                  target.identifier == _projectIdentifier &&
+                  target.packageReferences != null &&
+                  target.packageReferences!.contains(
+                    _localFlutterPluginsSwiftPackageReferenceIdentifier,
+                  ),
+            )
+            .toList()
+            .isNotEmpty;
     if (logErrorIfNotMigrated && !migrated) {
       logger.printError('PBXProject was not migrated or was migrated incorrectly.');
     }
     return migrated;
   }
 
-  List<String> _migrateProjectObject(
-    List<String> lines,
-    ParsedProjectInfo projectInfo,
-  ) {
+  List<String> _migrateProjectObject(List<String> lines, ParsedProjectInfo projectInfo) {
     if (_isProjectObjectMigrated(projectInfo)) {
       logger.printTrace('PBXProject already migrated. Skipping...');
       return lines;
@@ -654,27 +655,21 @@ $newContent
 
     // Find index where Runner Project begins.
     final int projectStartIndex = lines.indexWhere(
-      (String line) => line
-          .trim()
-          .startsWith('$_projectIdentifier /* Project object */ = {'),
+      (String line) => line.trim().startsWith('$_projectIdentifier /* Project object */ = {'),
       startSectionIndex,
     );
     if (projectStartIndex == -1 || projectStartIndex > endSectionIndex) {
-      throw Exception(
-        'Unable to find PBXProject for ${_xcodeProject.hostAppProjectName}.',
-      );
+      throw Exception('Unable to find PBXProject for ${_xcodeProject.hostAppProjectName}.');
     }
 
     // Get the Runner project from the parsed project info.
-    final ParsedProject? projectObject = projectInfo.projects
-        .where(
-            (ParsedProject project) => project.identifier == _projectIdentifier)
-        .toList()
-        .firstOrNull;
+    final ParsedProject? projectObject =
+        projectInfo.projects
+            .where((ParsedProject project) => project.identifier == _projectIdentifier)
+            .toList()
+            .firstOrNull;
     if (projectObject == null) {
-      throw Exception(
-        'Unable to find parsed PBXProject for ${_xcodeProject.hostAppProjectName}.',
-      );
+      throw Exception('Unable to find parsed PBXProject for ${_xcodeProject.hostAppProjectName}.');
     }
 
     if (projectObject.packageReferences == null) {
@@ -707,10 +702,13 @@ $newContent
     ParsedProjectInfo projectInfo, {
     bool logErrorIfNotMigrated = false,
   }) {
-    final bool migrated = projectInfo.localSwiftPackageProductDependencies
-        .contains(_localFlutterPluginsSwiftPackageReferenceIdentifier);
+    final bool migrated = projectInfo.localSwiftPackageProductDependencies.contains(
+      _localFlutterPluginsSwiftPackageReferenceIdentifier,
+    );
     if (logErrorIfNotMigrated && !migrated) {
-      logger.printError('XCLocalSwiftPackageReference was not migrated or was migrated incorrectly.');
+      logger.printError(
+        'XCLocalSwiftPackageReference was not migrated or was migrated incorrectly.',
+      );
     }
     return migrated;
   }
@@ -741,8 +739,7 @@ $newContent
         '/* End XCLocalSwiftPackageReference section */',
       ];
 
-      final int index = lines
-          .lastIndexWhere((String line) => line.trim().startsWith('/* End'));
+      final int index = lines.lastIndexWhere((String line) => line.trim().startsWith('/* End'));
       if (index == -1) {
         throw Exception('Unable to find any sections.');
       }
@@ -767,10 +764,13 @@ $newContent
     ParsedProjectInfo projectInfo, {
     bool logErrorIfNotMigrated = false,
   }) {
-    final bool migrated = projectInfo.swiftPackageProductDependencies
-        .contains(_flutterPluginsSwiftPackageProductDependencyIdentifier);
+    final bool migrated = projectInfo.swiftPackageProductDependencies.contains(
+      _flutterPluginsSwiftPackageProductDependencyIdentifier,
+    );
     if (logErrorIfNotMigrated && !migrated) {
-      logger.printError('XCSwiftPackageProductDependency was not migrated or was migrated incorrectly.');
+      logger.printError(
+        'XCSwiftPackageProductDependency was not migrated or was migrated incorrectly.',
+      );
     }
     return migrated;
   }
@@ -801,8 +801,7 @@ $newContent
         '/* End XCSwiftPackageProductDependency section */',
       ];
 
-      final int index = lines
-          .lastIndexWhere((String line) => line.trim().startsWith('/* End'));
+      final int index = lines.lastIndexWhere((String line) => line.trim().startsWith('/* End'));
       if (index == -1) {
         throw Exception('Unable to find any sections.');
       }
@@ -823,13 +822,8 @@ $newContent
     return lines;
   }
 
-  (int, int) _sectionRange(
-    String sectionName,
-    List<String> lines, {
-    bool throwIfMissing = true,
-  }) {
-    final int startSectionIndex =
-        lines.indexOf('/* Begin $sectionName section */');
+  (int, int) _sectionRange(String sectionName, List<String> lines, {bool throwIfMissing = true}) {
+    final int startSectionIndex = lines.indexOf('/* Begin $sectionName section */');
     if (throwIfMissing && startSectionIndex == -1) {
       throw Exception('Unable to find beginning of $sectionName section.');
     }
@@ -838,20 +832,14 @@ $newContent
       throw Exception('Unable to find end of $sectionName section.');
     }
     if (throwIfMissing && startSectionIndex > endSectionIndex) {
-      throw Exception(
-        'Found the end of $sectionName section before the beginning.',
-      );
+      throw Exception('Found the end of $sectionName section before the beginning.');
     }
     return (startSectionIndex, endSectionIndex);
   }
 }
 
 class SchemeInfo {
-  SchemeInfo({
-    required this.schemeName,
-    required this.schemeFile,
-    required this.schemeContent,
-  });
+  SchemeInfo({required this.schemeName, required this.schemeFile, required this.schemeContent});
 
   final String schemeName;
   final File schemeFile;
@@ -916,8 +904,7 @@ class ParsedProjectInfo {
       nativeTargets: native,
       projects: project,
       swiftPackageProductDependencies: parsedSwiftPackageProductDependencies,
-      localSwiftPackageProductDependencies:
-          parsedLocalSwiftPackageProductDependencies,
+      localSwiftPackageProductDependencies: parsedLocalSwiftPackageProductDependencies,
     );
   }
 
@@ -950,15 +937,15 @@ class ParsedProjectInfo {
 /// Representation of data parsed from PBXGroup section in Xcode project's project.pbxproj.
 class ParsedProjectGroup {
   ParsedProjectGroup.fromJson(this.identifier, Map<String, Object?> data)
-      : children = switch (data['children']) {
-          final List<Object?> children => children.whereType<String>().toList(),
-          _ => null,
-        },
-        name = switch (data) {
-          {'name': final String name} => name,
-          {'path': final String path} => path,
-          _ => null,
-        };
+    : children = switch (data['children']) {
+        final List<Object?> children => children.whereType<String>().toList(),
+        _ => null,
+      },
+      name = switch (data) {
+        {'name': final String name} => name,
+        {'path': final String path} => path,
+        _ => null,
+      };
 
   final String identifier;
   final List<String>? children;
@@ -968,10 +955,8 @@ class ParsedProjectGroup {
 /// Representation of data parsed from PBXFrameworksBuildPhase section in Xcode
 /// project's project.pbxproj.
 class ParsedProjectFrameworksBuildPhase {
-  ParsedProjectFrameworksBuildPhase.fromJson(
-    this.identifier,
-    Map<String, Object?> data,
-  ) : files = switch (data['files']) {
+  ParsedProjectFrameworksBuildPhase.fromJson(this.identifier, Map<String, Object?> data)
+    : files = switch (data['files']) {
         final List<Object?> files => files.whereType<String>().toList(),
         _ => null,
       };
@@ -984,14 +969,14 @@ class ParsedProjectFrameworksBuildPhase {
 /// project.pbxproj.
 class ParsedNativeTarget {
   ParsedNativeTarget.fromJson(this.identifier, this.data)
-      : name = switch (data) {
-          {'name': final String name} => name,
-          _ => null,
-        },
-        packageProductDependencies = switch (data['packageProductDependencies']) {
-          final List<Object?> dependencies => dependencies.whereType<String>().toList(),
-          _ => null,
-        };
+    : name = switch (data) {
+        {'name': final String name} => name,
+        _ => null,
+      },
+      packageProductDependencies = switch (data['packageProductDependencies']) {
+        final List<Object?> dependencies => dependencies.whereType<String>().toList(),
+        _ => null,
+      };
 
   final Map<String, Object?> data;
   final String identifier;
@@ -1003,10 +988,10 @@ class ParsedNativeTarget {
 /// project.pbxproj.
 class ParsedProject {
   ParsedProject.fromJson(this.identifier, this.data)
-      : packageReferences = switch (data['packageReferences']) {
-          final List<Object?> references => references.whereType<String>().toList(),
-          _ => null,
-        };
+    : packageReferences = switch (data['packageReferences']) {
+        final List<Object?> references => references.whereType<String>().toList(),
+        _ => null,
+      };
 
   final Map<String, Object?> data;
   final String identifier;

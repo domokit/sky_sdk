@@ -6,8 +6,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_api_samples/widgets/color_filter/color_filtered.0.dart'
-    as example;
+import 'package:flutter_api_samples/widgets/color_filter/color_filtered.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -18,20 +17,15 @@ void main() {
   });
 
   testWidgets('Color filters are applied to the images', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ColorFilteredExampleApp(),
-    );
+    await tester.pumpWidget(const example.ColorFilteredExampleApp());
 
     await tester.pumpAndSettle();
 
     // Verify that two images are displayed.
     expect(find.byType(Image), findsNWidgets(2));
 
-    RenderObject renderObject = tester.firstRenderObject(
-      find.byType(ColorFiltered).first,
-    );
-    ColorFilterLayer colorFilterLayer =
-        renderObject.debugLayer! as ColorFilterLayer;
+    RenderObject renderObject = tester.firstRenderObject(find.byType(ColorFiltered).first);
+    ColorFilterLayer colorFilterLayer = renderObject.debugLayer! as ColorFilterLayer;
 
     // Verify that red colored filter with modulate blend mode is applied to the first image.
     expect(
@@ -39,9 +33,7 @@ void main() {
       equals(const ColorFilter.mode(Colors.red, BlendMode.modulate)),
     );
 
-    renderObject = tester.firstRenderObject(
-      find.byType(ColorFiltered).last,
-    );
+    renderObject = tester.firstRenderObject(find.byType(ColorFiltered).last);
     colorFilterLayer = renderObject.debugLayer! as ColorFilterLayer;
 
     // Verify that grey colored filter with saturation blend mode is applied to the first image.

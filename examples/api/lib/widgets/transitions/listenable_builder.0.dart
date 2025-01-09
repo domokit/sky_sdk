@@ -72,9 +72,7 @@ class _FocusListenerContainerState extends State<FocusListenerContainer> {
           padding: widget.padding,
           decoration: ShapeDecoration(
             color: _focusNode.hasFocus ? widget.focusedColor : null,
-            shape: effectiveBorder.copyWith(
-              side: _focusNode.hasFocus ? widget.focusedSide : null,
-            ),
+            shape: effectiveBorder.copyWith(side: _focusNode.hasFocus ? widget.focusedSide : null),
           ),
           child: child,
         );
@@ -137,12 +135,8 @@ class ListenableBuilderExample extends StatelessWidget {
                   FocusListenerContainer(
                     padding: const EdgeInsets.all(8),
                     border: const RoundedRectangleBorder(
-                      side: BorderSide(
-                        strokeAlign: BorderSide.strokeAlignOutside,
-                      ),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5),
-                      ),
+                      side: BorderSide(strokeAlign: BorderSide.strokeAlignOutside),
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
                     ),
                     // The border side will get wider when the subtree has focus.
                     focusedSide: const BorderSide(

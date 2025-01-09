@@ -18,18 +18,66 @@ void main() {
 
   // Changes made in https://github.com/flutter/flutter/pull/138521
   ColorScheme colorScheme = ColorScheme();
-  colorScheme = ColorScheme(surface: Colors.black, onSurface: Colors.white, surfaceContainerHighest: Colors.red);
-  colorScheme = ColorScheme(surface: Colors.orange, onSurface: Colors.yellow, surfaceContainerHighest: Colors.blue);
-  colorScheme = ColorScheme.light(surface: Colors.black, onSurface: Colors.white, surfaceContainerHighest: Colors.red);
-  colorScheme = ColorScheme.light(surface: Colors.orange, onSurface: Colors.yellow, surfaceContainerHighest: Colors.blue);
-  colorScheme = ColorScheme.dark(surface: Colors.black, onSurface: Colors.white, surfaceContainerHighest: Colors.red);
-  colorScheme = ColorScheme.dark(surface: Colors.orange, onSurface: Colors.yellow, surfaceContainerHighest: Colors.blue);
-  colorScheme = ColorScheme.highContrastLight(surface: Colors.black, onSurface: Colors.white, surfaceContainerHighest: Colors.red);
-  colorScheme = ColorScheme.highContrastLight(surface: Colors.orange, onSurface: Colors.yellow, surfaceContainerHighest: Colors.blue);
-  colorScheme = ColorScheme.highContrastDark(surface: Colors.black, onSurface: Colors.white, surfaceContainerHighest: Colors.red);
-  colorScheme = ColorScheme.highContrastDark(surface: Colors.orange, onSurface: Colors.yellow, surfaceContainerHighest: Colors.blue);
-  colorScheme = colorScheme.copyWith(surface: Colors.black, onSurface: Colors.white, surfaceContainerHighest: Colors.red);
-  colorScheme = colorScheme.copyWith(surface: Colors.orange, onSurface: Colors.yellow, surfaceContainerHighest: Colors.blue);
+  colorScheme = ColorScheme(
+    surface: Colors.black,
+    onSurface: Colors.white,
+    surfaceContainerHighest: Colors.red,
+  );
+  colorScheme = ColorScheme(
+    surface: Colors.orange,
+    onSurface: Colors.yellow,
+    surfaceContainerHighest: Colors.blue,
+  );
+  colorScheme = ColorScheme.light(
+    surface: Colors.black,
+    onSurface: Colors.white,
+    surfaceContainerHighest: Colors.red,
+  );
+  colorScheme = ColorScheme.light(
+    surface: Colors.orange,
+    onSurface: Colors.yellow,
+    surfaceContainerHighest: Colors.blue,
+  );
+  colorScheme = ColorScheme.dark(
+    surface: Colors.black,
+    onSurface: Colors.white,
+    surfaceContainerHighest: Colors.red,
+  );
+  colorScheme = ColorScheme.dark(
+    surface: Colors.orange,
+    onSurface: Colors.yellow,
+    surfaceContainerHighest: Colors.blue,
+  );
+  colorScheme = ColorScheme.highContrastLight(
+    surface: Colors.black,
+    onSurface: Colors.white,
+    surfaceContainerHighest: Colors.red,
+  );
+  colorScheme = ColorScheme.highContrastLight(
+    surface: Colors.orange,
+    onSurface: Colors.yellow,
+    surfaceContainerHighest: Colors.blue,
+  );
+  colorScheme = ColorScheme.highContrastDark(
+    surface: Colors.black,
+    onSurface: Colors.white,
+    surfaceContainerHighest: Colors.red,
+  );
+  colorScheme = ColorScheme.highContrastDark(
+    surface: Colors.orange,
+    onSurface: Colors.yellow,
+    surfaceContainerHighest: Colors.blue,
+  );
+  colorScheme = colorScheme.copyWith(
+    surface: Colors.black,
+    onSurface: Colors.white,
+    surfaceContainerHighest: Colors.red,
+  );
+  colorScheme = colorScheme.copyWith(
+    surface: Colors.orange,
+    onSurface: Colors.yellow,
+    surfaceContainerHighest: Colors.blue,
+  );
   colorScheme.surface;
   colorScheme.onSurface;
   colorScheme.surfaceContainerHighest;

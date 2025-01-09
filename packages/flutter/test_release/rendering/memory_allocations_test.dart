@@ -15,22 +15,21 @@ void main() {
     assert(!ma.hasListeners);
   });
 
-  testWidgets(
-    '$FlutterMemoryAllocations is noop when kFlutterMemoryAllocationsEnabled is false.',
-    (WidgetTester tester) async {
-      ObjectEvent? receivedEvent;
-      ObjectEvent listener(ObjectEvent event) => receivedEvent = event;
+  testWidgets('$FlutterMemoryAllocations is noop when kFlutterMemoryAllocationsEnabled is false.', (
+    WidgetTester tester,
+  ) async {
+    ObjectEvent? receivedEvent;
+    ObjectEvent listener(ObjectEvent event) => receivedEvent = event;
 
-      ma.addListener(listener);
-      expect(ma.hasListeners, isFalse);
+    ma.addListener(listener);
+    expect(ma.hasListeners, isFalse);
 
-      await _activateFlutterObjects(tester);
-      expect(receivedEvent, isNull);
-      expect(ma.hasListeners, isFalse);
+    await _activateFlutterObjects(tester);
+    expect(receivedEvent, isNull);
+    expect(ma.hasListeners, isFalse);
 
-      ma.removeListener(listener);
-    },
-  );
+    ma.removeListener(listener);
+  });
 }
 
 class _TestRenderObject extends RenderObject {
@@ -50,7 +49,7 @@ class _TestRenderObject extends RenderObject {
   Rect get semanticBounds => throw UnimplementedError();
 }
 
-class _TestLayer extends Layer{
+class _TestLayer extends Layer {
   @override
   void addToScene(SceneBuilder builder) {}
 }

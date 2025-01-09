@@ -43,10 +43,7 @@ void main() {
       fake.environment[key] = 'FAKE';
       expect(fake.environment[key], 'FAKE');
 
-      expect(
-        fake.executableArguments.length,
-        local.executableArguments.length,
-      );
+      expect(fake.executableArguments.length, local.executableArguments.length);
       fake.executableArguments.add('ARG');
       expect(fake.executableArguments.last, 'ARG');
     });

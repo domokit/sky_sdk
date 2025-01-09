@@ -71,7 +71,7 @@ void main() {
     int first = 0;
     int second = 0;
 
-    Widget buildBlock({ bool reverse = false }) {
+    Widget buildBlock({bool reverse = false}) {
       return Directionality(
         textDirection: TextDirection.ltr,
         child: ListView(
@@ -79,14 +79,18 @@ void main() {
           reverse: reverse,
           children: <Widget>[
             GestureDetector(
-              onTap: () { first += 1; },
+              onTap: () {
+                first += 1;
+              },
               child: Container(
                 height: 350.0, // more than half the height of the test area
                 color: const Color(0xFF00FF00),
               ),
             ),
             GestureDetector(
-              onTap: () { second += 1; },
+              onTap: () {
+                second += 1;
+              },
               child: Container(
                 height: 350.0, // more than half the height of the test area
                 color: const Color(0xFF0000FF),
@@ -124,11 +128,14 @@ void main() {
         ),
       );
     }
+
     await tester.pumpWidget(buildBlock());
     expect(controller.offset, equals(0.0));
   });
 
-  testWidgets('SliverBlockChildListDelegate.estimateMaxScrollOffset hits end', (WidgetTester tester) async {
+  testWidgets('SliverBlockChildListDelegate.estimateMaxScrollOffset hits end', (
+    WidgetTester tester,
+  ) async {
     final SliverChildListDelegate delegate = SliverChildListDelegate(<Widget>[
       Container(),
       Container(),
@@ -140,17 +147,13 @@ void main() {
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverList(
-              delegate: delegate,
-            ),
-          ],
-        ),
+        child: CustomScrollView(slivers: <Widget>[SliverList(delegate: delegate)]),
       ),
     );
 
-    final SliverMultiBoxAdaptorElement element = tester.element(find.byType(SliverList, skipOffstage: false));
+    final SliverMultiBoxAdaptorElement element = tester.element(
+      find.byType(SliverList, skipOffstage: false),
+    );
 
     final double maxScrollOffset = element.estimateMaxScrollOffset(
       null,
@@ -180,34 +183,16 @@ void main() {
               // The overall height of the ListView's contents is 500
               child: ListView(
                 children: const <Widget>[
-                  SizedBox(
-                    height: 150.0,
-                    child: Center(
-                      child: Text('top'),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 200.0,
-                    child: Center(
-                      child: Text('middle'),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 150.0,
-                    child: Center(
-                      child: Text('bottom'),
-                    ),
-                  ),
+                  SizedBox(height: 150.0, child: Center(child: Text('top'))),
+                  SizedBox(height: 200.0, child: Center(child: Text('middle'))),
+                  SizedBox(height: 150.0, child: Center(child: Text('bottom'))),
                 ],
               ),
             ),
             // If this widget's height is > 100 the ListView can scroll.
             SizeTransition(
               sizeFactor: controller.view,
-              child: const SizedBox(
-                height: 300.0,
-                child: Text('keyboard'),
-              ),
+              child: const SizedBox(height: 300.0, child: Text('keyboard')),
             ),
           ],
         ),

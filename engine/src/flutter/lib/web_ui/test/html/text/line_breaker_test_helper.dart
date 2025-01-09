@@ -68,39 +68,36 @@ String _checkReplacement(String line, {required bool isV8}) {
     // v8BreakIterator deviates from the spec around Hiragana and Katakana
     // letters.
 
-    final RegExp hiragana21Regex = RegExp(r' × \[21\.03\] (HIRAGANA LETTER|KATAKANA LETTER|KATAKANA-HIRAGANA)');
-    if (replacement.contains(hiragana21Regex) && !replacement.contains('(BB)') && !replacement.contains('(PR)')) {
+    final RegExp hiragana21Regex = RegExp(
+      r' × \[21\.03\] (HIRAGANA LETTER|KATAKANA LETTER|KATAKANA-HIRAGANA)',
+    );
+    if (replacement.contains(hiragana21Regex) &&
+        !replacement.contains('(BB)') &&
+        !replacement.contains('(PR)')) {
       replacement = replacement
           .replaceAll(' × 3041', ' ÷ 3041') // HIRAGANA LETTER (CJ)
           .replaceAll(' × 30E5', ' ÷ 30E5') // KATAKANA LETTER (CJ)
           .replaceAll(' × 30FC', ' ÷ 30FC') // KATAKANA-HIRAGANA PROLONGED SOUND MARK (CJ)
-          .replaceAllMapped(
-            hiragana21Regex,
-            (Match m) => ' ÷ [21.03] ${m.group(1)}',
-          );
+          .replaceAllMapped(hiragana21Regex, (Match m) => ' ÷ [21.03] ${m.group(1)}');
     }
     if (replacement.contains(' × [16.0] HIRAGANA LETTER')) {
       replacement = replacement
           .replaceAll(' × 3041', ' ÷ 3041') // HIRAGANA LETTER (CJ)
-          .replaceAll(
-            ' × [16.0] HIRAGANA LETTER',
-            ' ÷ [16.0] HIRAGANA LETTER',
-          );
+          .replaceAll(' × [16.0] HIRAGANA LETTER', ' ÷ [16.0] HIRAGANA LETTER');
     }
     final RegExp hiraganaPercentRegex = RegExp(r'HIRAGANA .*? ÷ \[999\.0\] PERCENT');
     if (replacement.contains(hiraganaPercentRegex)) {
       replacement = replacement
           .replaceAll(' ÷ 0025', ' × 0025') // PERCENT SIGN (PO)
-          .replaceAll(
-            ' ÷ [999.0] PERCENT',
-            ' × [999.0] PERCENT',
-          );
+          .replaceAll(' ÷ [999.0] PERCENT', ' × [999.0] PERCENT');
     }
 
     // v8BreakIterator also deviates from the spec around hyphens, commas and
     // full stops.
 
-    final RegExp hyphenRegex = RegExp(r'\((HY|IS)\)(.*?) ÷ \[999\.0\] (DIGIT|NUMBER|SECTION|THAI|<reserved-50005>)');
+    final RegExp hyphenRegex = RegExp(
+      r'\((HY|IS)\)(.*?) ÷ \[999\.0\] (DIGIT|NUMBER|SECTION|THAI|<reserved-50005>)',
+    );
     if (replacement.contains(hyphenRegex)) {
       replacement = replacement
           .replaceAll(' ÷ 0030', ' × 0030') // DIGIT ZERO (NU)
@@ -131,8 +128,7 @@ final RegExp charWithBracketsRegex = RegExp(
 
 TestCase _parse(String line) {
   final int hashIndex = line.indexOf('#');
-  final List<String> sequence =
-      line.substring(0, hashIndex).trim().split(spaceRegex);
+  final List<String> sequence = line.substring(0, hashIndex).trim().split(spaceRegex);
   final String explanation = line.substring(hashIndex + 1).trim();
 
   final List<Sign> signs = <Sign>[];
@@ -143,15 +139,12 @@ TestCase _parse(String line) {
 
   int i = signMatch.group(0)!.length;
   while (i < explanation.length) {
-    final Match charMatch = explanation[i] == '<'
-        ? charWithBracketsRegex.matchAsPrefix(explanation, i)!
-        : charRegex.matchAsPrefix(explanation, i)!;
+    final Match charMatch =
+        explanation[i] == '<'
+            ? charWithBracketsRegex.matchAsPrefix(explanation, i)!
+            : charRegex.matchAsPrefix(explanation, i)!;
     final int charCode = int.parse(sequence[2 * chars.length + 1], radix: 16);
-    chars.add(Char._(
-      code: charCode,
-      name: charMatch.group(1)!,
-      property: charMatch.group(2)!,
-    ));
+    chars.add(Char._(code: charCode, name: charMatch.group(1)!, property: charMatch.group(2)!));
     i += charMatch.group(0)!.length;
 
     final Match signMatch = signRegex.matchAsPrefix(explanation, i)!;

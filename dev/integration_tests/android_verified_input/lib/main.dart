@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_driver/driver_extension.dart';
 
-
 class FutureDataHandler {
   final Completer<DataHandler> handlerCompleter = Completer<DataHandler>();
 
@@ -16,30 +15,31 @@ class FutureDataHandler {
     return handler(message);
   }
 }
+
 FutureDataHandler driverDataHandler = FutureDataHandler();
 
 MethodChannel channel = const MethodChannel('verified_input_test');
 
 Future<dynamic> onMethodChannelCall(MethodCall call) {
-    switch (call.method) {
-      // Android side is notifying us of the result of verifying the input
-      // event.
-      case 'notify_verified_input':
-        final bool result = call.arguments as bool;
-        // FlutterDriver handler, note that this captures the notification
-        // value delivered via the method channel.
-        Future<String> handler(String? message) async {
-          switch (message) {
-            case 'input_was_verified':
-              return '$result';
-          }
-          return 'unknown message: "$message"';
+  switch (call.method) {
+    // Android side is notifying us of the result of verifying the input
+    // event.
+    case 'notify_verified_input':
+      final bool result = call.arguments as bool;
+      // FlutterDriver handler, note that this captures the notification
+      // value delivered via the method channel.
+      Future<String> handler(String? message) async {
+        switch (message) {
+          case 'input_was_verified':
+            return '$result';
         }
-        // Install the handler now.
-        driverDataHandler.handlerCompleter.complete(handler);
-    }
-    return Future<dynamic>.value();
+        return 'unknown message: "$message"';
+      }
+      // Install the handler now.
+      driverDataHandler.handlerCompleter.complete(handler);
   }
+  return Future<dynamic>.value();
+}
 
 void main() {
   enableFlutterDriverExtension(handler: driverDataHandler.handleMessage);
@@ -57,12 +57,10 @@ class _Home extends StatelessWidget {
         backgroundColor: Colors.black45,
       ),
       body: Container(
-          padding: const EdgeInsets.all(30.0),
-          color: Colors.black26,
-          child: const AndroidView(
-            key: Key('PlatformView'),
-            viewType: 'verified-input-view',
-      )
-    ));
+        padding: const EdgeInsets.all(30.0),
+        color: Colors.black26,
+        child: const AndroidView(key: Key('PlatformView'), viewType: 'verified-input-view'),
+      ),
+    );
   }
 }

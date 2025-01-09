@@ -261,12 +261,12 @@ bool debugDisablePhysicalShapeLayers = false;
 bool debugDisableOpacityLayers = false;
 
 void _debugDrawDoubleRect(Canvas canvas, Rect outerRect, Rect innerRect, Color color) {
-  final Path path = Path()
-    ..fillType = PathFillType.evenOdd
-    ..addRect(outerRect)
-    ..addRect(innerRect);
-  final Paint paint = Paint()
-    ..color = color;
+  final Path path =
+      Path()
+        ..fillType = PathFillType.evenOdd
+        ..addRect(outerRect)
+        ..addRect(innerRect);
+  final Paint paint = Paint()..color = color;
   canvas.drawPath(path, paint);
 }
 
@@ -283,14 +283,23 @@ void _debugDrawDoubleRect(Canvas canvas, Rect outerRect, Rect innerRect, Color c
 ///
 /// This method is used by [RenderPadding.debugPaintSize] when
 /// [debugPaintSizeEnabled] is true.
-void debugPaintPadding(Canvas canvas, Rect outerRect, Rect? innerRect, { double outlineWidth = 2.0 }) {
+void debugPaintPadding(
+  Canvas canvas,
+  Rect outerRect,
+  Rect? innerRect, {
+  double outlineWidth = 2.0,
+}) {
   assert(() {
     if (innerRect != null && !innerRect.isEmpty) {
       _debugDrawDoubleRect(canvas, outerRect, innerRect, const Color(0x900090FF));
-      _debugDrawDoubleRect(canvas, innerRect.inflate(outlineWidth).intersect(outerRect), innerRect, const Color(0xFF0090FF));
+      _debugDrawDoubleRect(
+        canvas,
+        innerRect.inflate(outlineWidth).intersect(outerRect),
+        innerRect,
+        const Color(0xFF0090FF),
+      );
     } else {
-      final Paint paint = Paint()
-        ..color = const Color(0x90909090);
+      final Paint paint = Paint()..color = const Color(0x90909090);
       canvas.drawRect(outerRect, paint);
     }
     return true;
@@ -308,7 +317,7 @@ void debugPaintPadding(Canvas canvas, Rect outerRect, Rect? innerRect, { double 
 /// The `debugCheckIntrinsicSizesOverride` argument can be provided to override
 /// the expected value for [debugCheckIntrinsicSizes]. (This exists because the
 /// test framework itself overrides this value in some cases.)
-bool debugAssertAllRenderVarsUnset(String reason, { bool debugCheckIntrinsicSizesOverride = false }) {
+bool debugAssertAllRenderVarsUnset(String reason, {bool debugCheckIntrinsicSizesOverride = false}) {
   assert(() {
     if (debugPaintSizeEnabled ||
         debugPaintBaselinesEnabled ||

@@ -6,8 +6,7 @@ import 'package:native_assets_builder/native_assets_builder.dart';
 import 'package:native_assets_cli/code_assets_builder.dart';
 
 import '../../../base/file_system.dart';
-import '../../../build_info.dart' hide BuildMode;
-import '../../../build_info.dart' as build_info;
+import '../../../build_info.dart';
 import 'native_assets_host.dart';
 
 // TODO(dcharkes): Fetch minimum MacOS version from somewhere. https://github.com/flutter/flutter/issues/145104
@@ -16,9 +15,9 @@ const int targetMacOSVersion = 13;
 /// Extract the [Architecture] from a [DarwinArch].
 Architecture getNativeMacOSArchitecture(DarwinArch darwinArch) {
   return switch (darwinArch) {
-    DarwinArch.arm64  => Architecture.arm64,
+    DarwinArch.arm64 => Architecture.arm64,
     DarwinArch.x86_64 => Architecture.x64,
-    DarwinArch.armv7  => throw Exception('Unknown DarwinArch: $darwinArch.'),
+    DarwinArch.armv7 => throw Exception('Unknown DarwinArch: $darwinArch.'),
   };
 }
 
@@ -27,17 +26,12 @@ Map<KernelAssetPath, List<CodeAsset>> fatAssetTargetLocationsMacOS(
   Uri? absolutePath,
 ) {
   final Set<String> alreadyTakenNames = <String>{};
-  final Map<KernelAssetPath, List<CodeAsset>> result =
-      <KernelAssetPath, List<CodeAsset>>{};
+  final Map<KernelAssetPath, List<CodeAsset>> result = <KernelAssetPath, List<CodeAsset>>{};
   final Map<String, KernelAssetPath> idToPath = <String, KernelAssetPath>{};
   for (final CodeAsset asset in nativeAssets) {
     // Use same target path for all assets with the same id.
-    final KernelAssetPath path = idToPath[asset.id] ??
-        _targetLocationMacOS(
-          asset,
-          absolutePath,
-          alreadyTakenNames,
-        ).path;
+    final KernelAssetPath path =
+        idToPath[asset.id] ?? _targetLocationMacOS(asset, absolutePath, alreadyTakenNames).path;
     idToPath[asset.id] = path;
     result[path] ??= <CodeAsset>[];
     result[path]!.add(asset);
@@ -53,8 +47,8 @@ Map<CodeAsset, KernelAsset> assetTargetLocationsMacOS(
   final Map<String, KernelAssetPath> idToPath = <String, KernelAssetPath>{};
   final Map<CodeAsset, KernelAsset> result = <CodeAsset, KernelAsset>{};
   for (final CodeAsset asset in nativeAssets) {
-    final KernelAssetPath path = idToPath[asset.id] ??
-        _targetLocationMacOS(asset, absolutePath, alreadyTakenNames).path;
+    final KernelAssetPath path =
+        idToPath[asset.id] ?? _targetLocationMacOS(asset, absolutePath, alreadyTakenNames).path;
     idToPath[asset.id] = path;
     result[asset] = KernelAsset(
       id: asset.id,
@@ -93,9 +87,7 @@ KernelAsset _targetLocationMacOS(
       }
       kernelAssetPath = KernelAssetAbsolutePath(uri);
     default:
-      throw Exception(
-        'Unsupported asset link mode $linkMode in asset $asset',
-      );
+      throw Exception('Unsupported asset link mode $linkMode in asset $asset');
   }
   return KernelAsset(
     id: asset.id,
@@ -123,7 +115,7 @@ Future<void> copyNativeCodeAssetsMacOS(
   Uri buildUri,
   Map<KernelAssetPath, List<CodeAsset>> assetTargetLocations,
   String? codesignIdentity,
-  build_info.BuildMode buildMode,
+  BuildMode buildMode,
   FileSystem fileSystem,
 ) async {
   assert(assetTargetLocations.isNotEmpty);
@@ -158,21 +150,21 @@ Future<void> copyNativeCodeAssetsMacOS(
     await resourcesDir.create(recursive: true);
     final File dylibFile = versionADir.childFile(name);
     final Link currentLink = versionsDir.childLink('Current');
-    await currentLink.create(fileSystem.path.relative(
-      versionADir.path,
-      from: currentLink.parent.path,
-    ));
+    await currentLink.create(
+      fileSystem.path.relative(versionADir.path, from: currentLink.parent.path),
+    );
     final Link resourcesLink = frameworkDir.childLink('Resources');
-    await resourcesLink.create(fileSystem.path.relative(
-      resourcesDir.path,
-      from: resourcesLink.parent.path,
-    ));
+    await resourcesLink.create(
+      fileSystem.path.relative(resourcesDir.path, from: resourcesLink.parent.path),
+    );
     await lipoDylibs(dylibFile, sources);
     final Link dylibLink = frameworkDir.childLink(name);
-    await dylibLink.create(fileSystem.path.relative(
-      versionsDir.childDirectory('Current').childFile(name).path,
-      from: dylibLink.parent.path,
-    ));
+    await dylibLink.create(
+      fileSystem.path.relative(
+        versionsDir.childDirectory('Current').childFile(name).path,
+        from: dylibLink.parent.path,
+      ),
+    );
 
     final String dylibFileName = dylibFile.basename;
     final String newInstallName = '@rpath/$dylibFileName.framework/$dylibFileName';
@@ -211,7 +203,7 @@ Future<void> copyNativeCodeAssetsMacOSFlutterTester(
   Uri buildUri,
   Map<KernelAssetPath, List<CodeAsset>> assetTargetLocations,
   String? codesignIdentity,
-  build_info.BuildMode buildMode,
+  BuildMode buildMode,
   FileSystem fileSystem,
 ) async {
   assert(assetTargetLocations.isNotEmpty);

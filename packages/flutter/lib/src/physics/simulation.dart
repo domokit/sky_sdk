@@ -35,7 +35,7 @@ export 'tolerance.dart' show Tolerance;
 /// related objects.
 abstract class Simulation {
   /// Initializes the [tolerance] field for subclasses.
-  Simulation({ this.tolerance = Tolerance.defaultTolerance });
+  Simulation({this.tolerance = Tolerance.defaultTolerance});
 
   /// The position of the object in the simulation at the given time.
   double x(double time);

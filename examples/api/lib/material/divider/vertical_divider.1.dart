@@ -33,17 +33,9 @@ class DividerExample extends StatelessWidget {
         padding: EdgeInsets.all(16.0),
         child: Row(
           children: <Widget>[
-            Expanded(
-              child: Card(
-                child: SizedBox.expand(),
-              ),
-            ),
+            Expanded(child: Card(child: SizedBox.expand())),
             VerticalDivider(),
-            Expanded(
-              child: Card(
-                child: SizedBox.expand(),
-              ),
-            ),
+            Expanded(child: Card(child: SizedBox.expand())),
           ],
         ),
       ),

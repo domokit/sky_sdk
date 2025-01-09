@@ -292,9 +292,10 @@ sk_sp<SkVertices> ToSk(const std::shared_ptr<DlVertices>& vertices) {
     sk_colors_ptr = sk_colors.data();
   }
   return SkVertices::MakeCopy(ToSk(vertices->mode()), vertices->vertex_count(),
-                              vertices->vertices(),
-                              vertices->texture_coordinates(), sk_colors_ptr,
-                              vertices->index_count(), vertices->indices());
+                              ToSkPoints(vertices->vertex_data()),
+                              ToSkPoints(vertices->texture_coordinate_data()),
+                              sk_colors_ptr, vertices->index_count(),
+                              vertices->indices());
 }
 
 }  // namespace flutter

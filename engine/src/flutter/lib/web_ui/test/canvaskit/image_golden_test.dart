@@ -46,7 +46,7 @@ abstract class TestFileCodec extends TestCodec {
 
 class UrlTestCodec extends TestFileCodec {
   UrlTestCodec(super.testFile, this.codecFactory, String function)
-      : super.fromTestFile(description: 'created with $function("$testFile")');
+    : super.fromTestFile(description: 'created with $function("$testFile")');
 
   final Future<ui.Codec> Function(String) codecFactory;
 
@@ -57,13 +57,12 @@ class UrlTestCodec extends TestFileCodec {
 }
 
 class FetchTestCodec extends TestFileCodec {
-  FetchTestCodec(
-    super.testFile,
-    this.codecFactory,
-    String function,
-  ) : super.fromTestFile(
-            description: 'created with $function from bytes '
-                'fetch()\'ed from "$testFile"');
+  FetchTestCodec(super.testFile, this.codecFactory, String function)
+    : super.fromTestFile(
+        description:
+            'created with $function from bytes '
+            'fetch()\'ed from "$testFile"',
+      );
 
   final Future<ui.Codec> Function(Uint8List) codecFactory;
 
@@ -81,13 +80,12 @@ class FetchTestCodec extends TestFileCodec {
 }
 
 class BitmapTestCodec extends TestFileCodec {
-  BitmapTestCodec(
-    super.testFile,
-    this.codecFactory,
-    String function,
-  ) : super.fromTestFile(
-            description: 'created with $function from ImageBitmap'
-                ' created from "$testFile"');
+  BitmapTestCodec(super.testFile, this.codecFactory, String function)
+    : super.fromTestFile(
+        description:
+            'created with $function from ImageBitmap'
+            ' created from "$testFile"',
+      );
 
   final Future<ui.Image> Function(DomImageBitmap) codecFactory;
 
@@ -99,8 +97,7 @@ class BitmapTestCodec extends TestFileCodec {
 
     await imageElement.decode();
 
-    final DomImageBitmap bitmap =
-        await createImageBitmap(imageElement as JSObject, (
+    final DomImageBitmap bitmap = await createImageBitmap(imageElement as JSObject, (
       x: 0,
       y: 0,
       width: imageElement.naturalWidth.toInt(),
@@ -137,11 +134,12 @@ class BitmapSingleFrameCodec implements ui.Codec {
 }
 
 Future<void> testMain() async {
-  Future<List<TestCodec>> createTestCodecs(
-      {int testTargetWidth = 300, int testTargetHeight = 300}) async {
+  Future<List<TestCodec>> createTestCodecs({
+    int testTargetWidth = 300,
+    int testTargetHeight = 300,
+  }) async {
     final HttpFetchResponse listingResponse = await httpFetch('/test_images/');
-    final List<String> testFiles =
-        (await listingResponse.json() as List<dynamic>).cast<String>();
+    final List<String> testFiles = (await listingResponse.json() as List<dynamic>).cast<String>();
 
     // Sanity-check the test file list. If suddenly test files are moved or
     // deleted, and the test server returns an empty list, or is missing some
@@ -155,13 +153,14 @@ Future<void> testMain() async {
 
     final List<TestCodec> testCodecs = <TestCodec>[];
     for (final String testFile in testFiles) {
-      testCodecs.add(UrlTestCodec(
-        testFile,
-        (String file) => renderer.instantiateImageCodecFromUrl(
-          Uri.tryParse('/test_images/$file')!,
+      testCodecs.add(
+        UrlTestCodec(
+          testFile,
+          (String file) =>
+              renderer.instantiateImageCodecFromUrl(Uri.tryParse('/test_images/$file')!),
+          'renderer.instantiateImageFromUrl',
         ),
-        'renderer.instantiateImageFromUrl',
-      ));
+      );
       testCodecs.add(
         FetchTestCodec(
           '/test_images/$testFile',
@@ -184,8 +183,7 @@ Future<void> testMain() async {
       testCodecs.add(
         BitmapTestCodec(
           'test_images/$testFile',
-          (DomImageBitmap bitmap) async =>
-              renderer.createImageFromImageBitmap(bitmap),
+          (DomImageBitmap bitmap) async => renderer.createImageFromImageBitmap(bitmap),
           'renderer.createImageFromImageBitmap',
         ),
       );
@@ -215,21 +213,18 @@ Future<void> testMain() async {
             expect(image.height, isNonZero);
             expect(image.colorSpace, isNotNull);
           } catch (e) {
-            throw TestFailure(
-                'Failed to get image for ${testCodec.description}: $e');
+            throw TestFailure('Failed to get image for ${testCodec.description}: $e');
           }
         });
 
-        test('${testCodec.description} can be decoded with toByteData',
-            () async {
+        test('${testCodec.description} can be decoded with toByteData', () async {
           ui.Image image;
           try {
             final ui.Codec codec = await testCodec.getCodec();
             final ui.FrameInfo frameInfo = await codec.getNextFrame();
             image = frameInfo.image;
           } catch (e) {
-            throw TestFailure(
-                'Failed to get image for ${testCodec.description}: $e');
+            throw TestFailure('Failed to get image for ${testCodec.description}: $e');
           }
 
           final ByteData? byteData = await image.toByteData();
@@ -246,7 +241,8 @@ Future<void> testMain() async {
           expect(
             byteData.buffer.asUint8List().any((int byte) => byte > 0),
             isTrue,
-            reason: '${testCodec.description} toByteData() should '
+            reason:
+                '${testCodec.description} toByteData() should '
                 'contain nonzero value',
           );
         });
@@ -254,12 +250,12 @@ Future<void> testMain() async {
     });
 
     test('crossOrigin requests cause an error', () async {
-      final String otherOrigin =
-          domWindow.location.origin.replaceAll('localhost', '127.0.0.1');
+      final String otherOrigin = domWindow.location.origin.replaceAll('localhost', '127.0.0.1');
       bool gotError = false;
       try {
         final ui.Codec _ = await renderer.instantiateImageCodecFromUrl(
-            Uri.parse('$otherOrigin/test_images/1x1.png'));
+          Uri.parse('$otherOrigin/test_images/1x1.png'),
+        );
       } catch (e) {
         gotError = true;
       }
@@ -272,45 +268,49 @@ Future<void> testMain() async {
       expect(isAvif(Uint8List.fromList(<int>[])), isFalse);
       expect(isAvif(Uint8List.fromList(<int>[1, 2, 3])), isFalse);
       expect(
-        isAvif(Uint8List.fromList(<int>[
-          0x00,
-          0x00,
-          0x00,
-          0x1c,
-          0x66,
-          0x74,
-          0x79,
-          0x70,
-          0x61,
-          0x76,
-          0x69,
-          0x66,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-        ])),
+        isAvif(
+          Uint8List.fromList(<int>[
+            0x00,
+            0x00,
+            0x00,
+            0x1c,
+            0x66,
+            0x74,
+            0x79,
+            0x70,
+            0x61,
+            0x76,
+            0x69,
+            0x66,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+          ]),
+        ),
         isTrue,
       );
       expect(
-        isAvif(Uint8List.fromList(<int>[
-          0x00,
-          0x00,
-          0x00,
-          0x20,
-          0x66,
-          0x74,
-          0x79,
-          0x70,
-          0x61,
-          0x76,
-          0x69,
-          0x66,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-        ])),
+        isAvif(
+          Uint8List.fromList(<int>[
+            0x00,
+            0x00,
+            0x00,
+            0x20,
+            0x66,
+            0x74,
+            0x79,
+            0x70,
+            0x61,
+            0x76,
+            0x69,
+            0x66,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+          ]),
+        ),
         isTrue,
       );
     });
@@ -320,11 +320,9 @@ Future<void> testMain() async {
 /// Tests specific to WASM codecs bundled with CanvasKit.
 void _testCkAnimatedImage() {
   test('ImageDecoder toByteData(PNG)', () async {
-    final CkAnimatedImage image =
-        CkAnimatedImage.decodeFromBytes(kAnimatedGif, 'test');
+    final CkAnimatedImage image = CkAnimatedImage.decodeFromBytes(kAnimatedGif, 'test');
     final ui.FrameInfo frame = await image.getNextFrame();
-    final ByteData? png =
-        await frame.image.toByteData(format: ui.ImageByteFormat.png);
+    final ByteData? png = await frame.image.toByteData(format: ui.ImageByteFormat.png);
     expect(png, isNotNull);
 
     // The precise PNG encoding is browser-specific, but we can check the file
@@ -333,8 +331,7 @@ void _testCkAnimatedImage() {
   });
 
   test('CkAnimatedImage toByteData(RGBA)', () async {
-    final CkAnimatedImage image =
-        CkAnimatedImage.decodeFromBytes(kAnimatedGif, 'test');
+    final CkAnimatedImage image = CkAnimatedImage.decodeFromBytes(kAnimatedGif, 'test');
     const List<List<int>> expectedColors = <List<int>>[
       <int>[255, 0, 0, 255],
       <int>[0, 255, 0, 255],

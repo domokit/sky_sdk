@@ -15,13 +15,13 @@ void validateBuild(AndroidBuildInfo androidBuildInfo) {
     throwToolExit(
       'Cannot perform code size analysis when building for multiple ABIs. '
       'Specify one of android-arm, android-arm64, or android-x64 in the '
-      '--target-platform flag.'
+      '--target-platform flag.',
     );
   }
   if (buildInfo.mode.isPrecompiled && androidBuildInfo.targetArchs.contains(AndroidArch.x86)) {
     throwToolExit(
       'Cannot build ${androidBuildInfo.buildInfo.mode.cliName} mode for x86 ABI.\n'
-      'For more information see $kSupportedAbis .'
+      'For more information see $kSupportedAbis .',
     );
   }
   if (buildInfo.buildNumber != null) {
@@ -29,20 +29,20 @@ void validateBuild(AndroidBuildInfo androidBuildInfo) {
     if (result == null) {
       throwToolExit(
         'buildNumber: ${buildInfo.buildNumber} was not a valid integer value.\n'
-        'For more information see $kGooglePlayVersioning .'
+        'For more information see $kGooglePlayVersioning .',
       );
     }
     if (result < 0) {
       throwToolExit(
         'buildNumber: ${buildInfo.buildNumber} must be a positive integer value.\n'
-        'For more information see $kGooglePlayVersioning .'
+        'For more information see $kGooglePlayVersioning .',
       );
     }
     if (result > 2100000000) {
       throwToolExit(
         'buildNumber: ${buildInfo.buildNumber} is greater than the maximum '
         'allowed value of 2100000000.\n'
-        'For more information see $kGooglePlayVersioning .'
+        'For more information see $kGooglePlayVersioning .',
       );
     }
   }

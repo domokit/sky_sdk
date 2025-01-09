@@ -9,7 +9,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   RenderObject getOverlayColor(WidgetTester tester) {
-    return tester.allRenderObjects.firstWhere((RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures');
+    return tester.allRenderObjects.firstWhere(
+      (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
+    );
   }
 
   test('IconButtonThemeData lerp special cases', () {
@@ -24,12 +26,7 @@ void main() {
       MaterialApp(
         theme: ThemeData.from(colorScheme: colorScheme, useMaterial3: true),
         home: Scaffold(
-          body: Center(
-            child: IconButton(
-              onPressed: () { },
-              icon: const Icon(Icons.ac_unit),
-            ),
-          ),
+          body: Center(child: IconButton(onPressed: () {}, icon: const Icon(Icons.ac_unit))),
         ),
       ),
     );
@@ -49,7 +46,9 @@ void main() {
     expect(material.textStyle, null);
     expect(material.type, MaterialType.button);
 
-    final Align align = tester.firstWidget<Align>(find.ancestor(of: find.byIcon(Icons.ac_unit), matching: find.byType(Align)));
+    final Align align = tester.firstWidget<Align>(
+      find.ancestor(of: find.byIcon(Icons.ac_unit), matching: find.byType(Align)),
+    );
     expect(align.alignment, Alignment.center);
   });
 
@@ -62,7 +61,10 @@ void main() {
     const EdgeInsets padding = EdgeInsets.all(3);
     const Size minimumSize = Size(200, 200);
     const BorderSide side = BorderSide(color: Colors.green, width: 2);
-    const OutlinedBorder shape = RoundedRectangleBorder(side: side, borderRadius: BorderRadius.all(Radius.circular(2)));
+    const OutlinedBorder shape = RoundedRectangleBorder(
+      side: side,
+      borderRadius: BorderRadius.all(Radius.circular(2)),
+    );
     const MouseCursor enabledMouseCursor = SystemMouseCursors.text;
     const MouseCursor disabledMouseCursor = SystemMouseCursors.grab;
     const MaterialTapTargetSize tapTargetSize = MaterialTapTargetSize.shrinkWrap;
@@ -88,28 +90,29 @@ void main() {
       alignment: alignment,
     );
 
-    Widget buildFrame({ ButtonStyle? buttonStyle, ButtonStyle? themeStyle, ButtonStyle? overallStyle }) {
+    Widget buildFrame({
+      ButtonStyle? buttonStyle,
+      ButtonStyle? themeStyle,
+      ButtonStyle? overallStyle,
+    }) {
       final Widget child = Builder(
         builder: (BuildContext context) {
-          return IconButton(
-            style: buttonStyle,
-            onPressed: () { },
-            icon: const Icon(Icons.ac_unit),
-          );
+          return IconButton(style: buttonStyle, onPressed: () {}, icon: const Icon(Icons.ac_unit));
         },
       );
       return MaterialApp(
-        theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true).copyWith(
-          iconButtonTheme: IconButtonThemeData(style: overallStyle),
-        ),
+        theme: ThemeData.from(
+          colorScheme: const ColorScheme.light(),
+          useMaterial3: true,
+        ).copyWith(iconButtonTheme: IconButtonThemeData(style: overallStyle)),
         home: Scaffold(
           body: Center(
             // If the IconButtonTheme widget is present, it's used
             // instead of the Theme's ThemeData.iconButtonTheme.
-            child: themeStyle == null ? child : IconButtonTheme(
-              data: IconButtonThemeData(style: themeStyle),
-              child: child,
-            ),
+            child:
+                themeStyle == null
+                    ? child
+                    : IconButtonTheme(data: IconButtonThemeData(style: themeStyle), child: child),
           ),
         ),
       );
@@ -126,10 +129,10 @@ void main() {
     );
 
     const Set<MaterialState> enabled = <MaterialState>{};
-    const Set<MaterialState> disabled = <MaterialState>{ MaterialState.disabled };
-    const Set<MaterialState> hovered = <MaterialState>{ MaterialState.hovered };
-    const Set<MaterialState> focused = <MaterialState>{ MaterialState.focused };
-    const Set<MaterialState> pressed = <MaterialState>{ MaterialState.pressed };
+    const Set<MaterialState> disabled = <MaterialState>{MaterialState.disabled};
+    const Set<MaterialState> hovered = <MaterialState>{MaterialState.hovered};
+    const Set<MaterialState> focused = <MaterialState>{MaterialState.focused};
+    const Set<MaterialState> pressed = <MaterialState>{MaterialState.pressed};
 
     void checkButton(WidgetTester tester) {
       final Material material = tester.widget<Material>(findMaterial);
@@ -138,8 +141,14 @@ void main() {
       expect(material.color, backgroundColor);
       expect(material.shadowColor, shadowColor);
       expect(material.elevation, elevation);
-      expect(MaterialStateProperty.resolveAs<MouseCursor?>(inkWell.mouseCursor, enabled), enabledMouseCursor);
-      expect(MaterialStateProperty.resolveAs<MouseCursor?>(inkWell.mouseCursor, disabled), disabledMouseCursor);
+      expect(
+        MaterialStateProperty.resolveAs<MouseCursor?>(inkWell.mouseCursor, enabled),
+        enabledMouseCursor,
+      );
+      expect(
+        MaterialStateProperty.resolveAs<MouseCursor?>(inkWell.mouseCursor, disabled),
+        disabledMouseCursor,
+      );
       expect(inkWell.overlayColor!.resolve(hovered), foregroundColor.withOpacity(0.08));
       expect(inkWell.overlayColor!.resolve(focused), foregroundColor.withOpacity(0.1));
       expect(inkWell.overlayColor!.resolve(pressed), foregroundColor.withOpacity(0.1));
@@ -148,7 +157,9 @@ void main() {
       expect(material.shape, shape);
       expect(material.animationDuration, animationDuration);
       expect(tester.getSize(find.byType(IconButton)), const Size(200, 200));
-      final Align align = tester.firstWidget<Align>(find.ancestor(of: find.byIcon(Icons.ac_unit), matching: find.byType(Align)));
+      final Align align = tester.firstWidget<Align>(
+        find.ancestor(of: find.byIcon(Icons.ac_unit), matching: find.byType(Align)),
+      );
       expect(align.alignment, alignment);
     }
 
@@ -172,23 +183,42 @@ void main() {
 
     // Same as the previous tests with empty ButtonStyle's instead of null.
 
-    testWidgets('Button style overrides defaults, empty theme and overall styles', (WidgetTester tester) async {
-      await tester.pumpWidget(buildFrame(buttonStyle: style, themeStyle: const ButtonStyle(), overallStyle: const ButtonStyle()));
+    testWidgets('Button style overrides defaults, empty theme and overall styles', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildFrame(
+          buttonStyle: style,
+          themeStyle: const ButtonStyle(),
+          overallStyle: const ButtonStyle(),
+        ),
+      );
       await tester.pumpAndSettle(); // allow the animations to finish
       checkButton(tester);
     });
 
-    testWidgets('Button theme style overrides defaults, empty button and overall styles', (WidgetTester tester) async {
-      await tester.pumpWidget(buildFrame(buttonStyle: const ButtonStyle(), themeStyle: style, overallStyle: const ButtonStyle()));
+    testWidgets('Button theme style overrides defaults, empty button and overall styles', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildFrame(
+          buttonStyle: const ButtonStyle(),
+          themeStyle: style,
+          overallStyle: const ButtonStyle(),
+        ),
+      );
       await tester.pumpAndSettle(); // allow the animations to finish
       checkButton(tester);
     });
 
-    testWidgets('Overall Theme button theme style overrides defaults, null theme and empty overall style', (WidgetTester tester) async {
-      await tester.pumpWidget(buildFrame(buttonStyle: const ButtonStyle(), overallStyle: style));
-      await tester.pumpAndSettle(); // allow the animations to finish
-      checkButton(tester);
-    });
+    testWidgets(
+      'Overall Theme button theme style overrides defaults, null theme and empty overall style',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(buildFrame(buttonStyle: const ButtonStyle(), overallStyle: style));
+        await tester.pumpAndSettle(); // allow the animations to finish
+        checkButton(tester);
+      },
+    );
   });
 
   testWidgets('Theme shadowColor', (WidgetTester tester) async {
@@ -196,26 +226,21 @@ void main() {
     const Color shadowColor = Color(0xff000001);
     const Color overriddenColor = Color(0xff000002);
 
-    Widget buildFrame({ Color? overallShadowColor, Color? themeShadowColor, Color? shadowColor }) {
+    Widget buildFrame({Color? overallShadowColor, Color? themeShadowColor, Color? shadowColor}) {
       return MaterialApp(
-        theme: ThemeData.from(colorScheme: colorScheme, useMaterial3: true).copyWith(
-          shadowColor: overallShadowColor,
-        ),
+        theme: ThemeData.from(
+          colorScheme: colorScheme,
+          useMaterial3: true,
+        ).copyWith(shadowColor: overallShadowColor),
         home: Scaffold(
           body: Center(
             child: IconButtonTheme(
-              data: IconButtonThemeData(
-                style: IconButton.styleFrom(
-                  shadowColor: themeShadowColor,
-                ),
-              ),
+              data: IconButtonThemeData(style: IconButton.styleFrom(shadowColor: themeShadowColor)),
               child: Builder(
                 builder: (BuildContext context) {
                   return IconButton(
-                    style: IconButton.styleFrom(
-                      shadowColor: shadowColor,
-                    ),
-                    onPressed: () { },
+                    style: IconButton.styleFrom(shadowColor: shadowColor),
+                    onPressed: () {},
                     icon: const Icon(Icons.add),
                   );
                 },
@@ -250,33 +275,32 @@ void main() {
     material = tester.widget<Material>(buttonMaterialFinder);
     expect(material.shadowColor, shadowColor);
 
-    await tester.pumpWidget(buildFrame(overallShadowColor: overriddenColor, themeShadowColor: shadowColor));
+    await tester.pumpWidget(
+      buildFrame(overallShadowColor: overriddenColor, themeShadowColor: shadowColor),
+    );
     await tester.pumpAndSettle(); // theme animation
     material = tester.widget<Material>(buttonMaterialFinder);
     expect(material.shadowColor, shadowColor);
 
-    await tester.pumpWidget(buildFrame(themeShadowColor: overriddenColor, shadowColor: shadowColor));
+    await tester.pumpWidget(
+      buildFrame(themeShadowColor: overriddenColor, shadowColor: shadowColor),
+    );
     await tester.pumpAndSettle(); // theme animation
     material = tester.widget<Material>(buttonMaterialFinder);
     expect(material.shadowColor, shadowColor);
   });
 
-  testWidgets('IconButtonTheme IconButton.styleFrom overlayColor overrides default overlay color', (WidgetTester tester) async {
+  testWidgets('IconButtonTheme IconButton.styleFrom overlayColor overrides default overlay color', (
+    WidgetTester tester,
+  ) async {
     const Color overlayColor = Color(0xffff0000);
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: Center(
             child: IconButtonTheme(
-              data: IconButtonThemeData(
-                style: IconButton.styleFrom(
-                  overlayColor: overlayColor,
-                ),
-              ),
-              child: IconButton(
-                onPressed: () { },
-                icon: const Icon(Icons.add),
-              ),
+              data: IconButtonThemeData(style: IconButton.styleFrom(overlayColor: overlayColor)),
+              child: IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
             ),
           ),
         ),
@@ -285,9 +309,7 @@ void main() {
 
     // Hovered.
     final Offset center = tester.getCenter(find.byType(IconButton));
-    final TestGesture gesture = await tester.createGesture(
-      kind: PointerDeviceKind.mouse,
-    );
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
     await gesture.addPointer();
     await gesture.moveTo(center);
     await tester.pumpAndSettle();

@@ -317,12 +317,6 @@ void DriverInfoVK::DumpToLog() const {
   FML_LOG(IMPORTANT) << stream.str();
 }
 
-bool DriverInfoVK::CanBatchSubmitCommandBuffers() const {
-  return vendor_ == VendorVK::kARM ||
-         (adreno_gpu_.has_value() &&
-          adreno_gpu_.value() >= AdrenoGPU::kAdreno702);
-}
-
 bool DriverInfoVK::IsEmulator() const {
 #if FML_OS_ANDROID
   // Google SwiftShader on Android.
@@ -337,16 +331,10 @@ bool DriverInfoVK::IsEmulator() const {
 bool DriverInfoVK::IsKnownBadDriver() const {
   if (adreno_gpu_.has_value()) {
     AdrenoGPU adreno = adreno_gpu_.value();
-    // See:
-    // https://github.com/flutter/flutter/issues/154103
-    //
-    // Reports "VK_INCOMPLETE" when compiling certain entity shader with
-    // vkCreateGraphicsPipelines, which is not a valid return status.
-    // See https://github.com/flutter/flutter/issues/155185 .
-    //
-    // https://github.com/flutter/flutter/issues/155185
-    // Unknown crashes but device is not easily acquirable.
-    if (adreno <= AdrenoGPU::kAdreno630) {
+    // 630 is the lowest version I've tested on the still works.
+    // I suspect earlier 600s should work but this is waiting on
+    // more devices for testing.
+    if (adreno < AdrenoGPU::kAdreno630) {
       return true;
     }
   }
@@ -356,6 +344,14 @@ bool DriverInfoVK::IsKnownBadDriver() const {
     return true;
   }
   return false;
+}
+
+std::optional<MaliGPU> DriverInfoVK::GetMaliGPUInfo() const {
+  return mali_gpu_;
+}
+
+std::optional<AdrenoGPU> DriverInfoVK::GetAdrenoGPUInfo() const {
+  return adreno_gpu_;
 }
 
 }  // namespace impeller

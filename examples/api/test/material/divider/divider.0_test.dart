@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Horizontal Divider', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.DividerExampleApp(),
-    );
+    await tester.pumpWidget(const example.DividerExampleApp());
 
     expect(find.byType(Divider), findsOneWidget);
 

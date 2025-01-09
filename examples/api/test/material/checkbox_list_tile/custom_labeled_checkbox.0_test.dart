@@ -3,14 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/checkbox_list_tile/custom_labeled_checkbox.0.dart' as example;
+import 'package:flutter_api_samples/material/checkbox_list_tile/custom_labeled_checkbox.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('LinkedLabelCheckbox contains RichText and Checkbox', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.LabeledCheckboxApp(),
-    );
+    await tester.pumpWidget(const example.LabeledCheckboxApp());
 
     // Label text is in a RichText widget with the correct text.
     final RichText richText = tester.widget(find.byType(RichText).first);

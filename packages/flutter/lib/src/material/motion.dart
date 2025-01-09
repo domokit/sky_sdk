@@ -11,6 +11,7 @@ import 'package:flutter/animation.dart';
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
+// dart format off
 /// The set of durations in the Material specification.
 ///
 /// See also:
@@ -230,5 +231,6 @@ abstract final class Easing {
   /// * [M3 guidelines: Applying easing and duration](https://m3.material.io/styles/motion/easing-and-duration/applying-easing-and-duration)
   static const Curve legacy = Cubic(0.4, 0.0, 0.2, 1.0);
 }
+// dart format on
 
 // END GENERATED TOKEN PROPERTIES - Motion

@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Sliders can change their value', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SliderExampleApp(),
-    );
+    await tester.pumpWidget(const example.SliderExampleApp());
 
     expect(find.byType(Slider), findsNWidgets(2));
 
@@ -36,9 +34,7 @@ void main() {
   });
 
   testWidgets('Sliders year2023 flag can be toggled', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.SliderExampleApp(),
-    );
+    await tester.pumpWidget(const example.SliderExampleApp());
 
     Slider slider = tester.widget<Slider>(find.byType(Slider).first);
     expect(slider.year2023, true);

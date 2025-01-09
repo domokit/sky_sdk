@@ -92,44 +92,52 @@ class AttachCommand extends FlutterCommand {
       ..addOption(
         'debug-port',
         hide: !verboseHelp,
-        help: '(deprecated) Device port where the Dart VM Service is listening. Requires '
-              '"--disable-service-auth-codes" to also be provided to the Flutter '
-              'application at launch, otherwise this command will fail to connect to '
-              'the application. In general, "--debug-url" should be used instead.',
-      )..addOption(
+        help:
+            '(deprecated) Device port where the Dart VM Service is listening. Requires '
+            '"--disable-service-auth-codes" to also be provided to the Flutter '
+            'application at launch, otherwise this command will fail to connect to '
+            'the application. In general, "--debug-url" should be used instead.',
+      )
+      ..addOption(
         'debug-url',
-        aliases: <String>[ 'debug-uri' ], // supported for historical reasons
+        aliases: <String>['debug-uri'], // supported for historical reasons
         help: 'The URL at which the Dart VM Service is listening.',
-      )..addOption(
+      )
+      ..addOption(
         'app-id',
-        help: 'The package name (Android) or bundle identifier (iOS) for the app. '
-              'This can be specified to avoid being prompted if multiple Dart VM Service ports '
-              'are advertised.\n'
-              'If you have multiple devices or emulators running, you should include the '
-              'device hostname as well, e.g. "com.example.myApp@my-iphone".\n'
-              'This parameter is case-insensitive.',
-      )..addOption(
+        help:
+            'The package name (Android) or bundle identifier (iOS) for the app. '
+            'This can be specified to avoid being prompted if multiple Dart VM Service ports '
+            'are advertised.\n'
+            'If you have multiple devices or emulators running, you should include the '
+            'device hostname as well, e.g. "com.example.myApp@my-iphone".\n'
+            'This parameter is case-insensitive.',
+      )
+      ..addOption(
         'pid-file',
-        help: 'Specify a file to write the process ID to. '
-              'You can send SIGUSR1 to trigger a hot reload '
-              'and SIGUSR2 to trigger a hot restart. '
-              'The file is created when the signal handlers '
-              'are hooked and deleted when they are removed.',
-      )..addFlag(
+        help:
+            'Specify a file to write the process ID to. '
+            'You can send SIGUSR1 to trigger a hot reload '
+            'and SIGUSR2 to trigger a hot restart. '
+            'The file is created when the signal handlers '
+            'are hooked and deleted when they are removed.',
+      )
+      ..addFlag(
         'report-ready',
-        help: 'Print "ready" to the console after handling a keyboard command.\n'
-              'This is primarily useful for tests and other automation, but consider '
-              'using "--machine" instead.',
+        help:
+            'Print "ready" to the console after handling a keyboard command.\n'
+            'This is primarily useful for tests and other automation, but consider '
+            'using "--machine" instead.',
         hide: !verboseHelp,
-      )..addOption(
-        'project-root',
-        hide: !verboseHelp,
-        help: 'Normally used only in run target.',
-      )..addFlag('machine',
+      )
+      ..addOption('project-root', hide: !verboseHelp, help: 'Normally used only in run target.')
+      ..addFlag(
+        'machine',
         hide: !verboseHelp,
         negatable: false,
-        help: 'Handle machine structured JSON command input and provide output '
-              'and progress in machine-friendly format.',
+        help:
+            'Handle machine structured JSON command input and provide output '
+            'and progress in machine-friendly format.',
       );
     usesTrackWidgetCreation(verboseHelp: verboseHelp);
     addDdsOptions(verboseHelp: verboseHelp);
@@ -229,15 +237,16 @@ known, it can be explicitly provided to attach via the command-line, e.g.
         'the value of --ipv6 on its own.',
       );
     }
-    if (debugPort == null && debugUri == null && argResults!.wasParsed(FlutterCommand.vmServicePortOption)) {
+    if (debugPort == null &&
+        debugUri == null &&
+        argResults!.wasParsed(FlutterCommand.vmServicePortOption)) {
       throwToolExit(
         'When the --debug-port or --debug-url is unknown, this command does not use '
         'the value of --vm-service-port.',
       );
     }
     if (debugPort != null && debugUri != null) {
-      throwToolExit(
-        'Either --debug-port or --debug-url can be provided, not both.');
+      throwToolExit('Either --debug-port or --debug-url can be provided, not both.');
     }
 
     if (userIdentifier != null) {
@@ -266,18 +275,20 @@ known, it can be explicitly provided to attach via the command-line, e.g.
   Future<void> _attachToDevice(Device device) async {
     final FlutterProject flutterProject = FlutterProject.current();
 
-    final Daemon? daemon = boolArg('machine')
-      ? Daemon(
-          DaemonConnection(
-            daemonStreams: DaemonStreams.fromStdio(_stdio, logger: _logger),
-            logger: _logger,
-          ),
-          notifyingLogger: (_logger is NotifyingLogger)
-            ? _logger
-            : NotifyingLogger(verbose: _logger.isVerbose, parent: _logger),
-          logToStdout: true,
-        )
-      : null;
+    final Daemon? daemon =
+        boolArg('machine')
+            ? Daemon(
+              DaemonConnection(
+                daemonStreams: DaemonStreams.fromStdio(_stdio, logger: _logger),
+                logger: _logger,
+              ),
+              notifyingLogger:
+                  (_logger is NotifyingLogger)
+                      ? _logger
+                      : NotifyingLogger(verbose: _logger.isVerbose, parent: _logger),
+              logToStdout: true,
+            )
+            : null;
 
     Stream<Uri>? vmServiceUri;
     final bool usesIpv6 = ipv6!;
@@ -306,9 +317,9 @@ known, it can be explicitly provided to attach via the command-line, e.g.
           // On iOS we rely on mDNS to find Dart VM Service. Remind the user to allow local network permissions on the device.
           if (_isIOSDevice(device)) {
             return 'The Dart VM Service was not discovered after 30 seconds. This is taking much longer than expected...\n\n'
-              'Click "Allow" to the prompt on your device asking if you would like to find and connect devices on your local network. '
-              'If you selected "Don\'t Allow", you can turn it on in Settings > Your App Name > Local Network. '
-              "If you don't see your app in the Settings, uninstall the app and rerun to see the prompt again.\n";
+                'Click "Allow" to the prompt on your device asking if you would like to find and connect devices on your local network. '
+                'If you selected "Don\'t Allow", you can turn it on in Settings > Your App Name > Local Network. '
+                "If you don't see your app in the Settings, uninstall the app and rerun to see the prompt again.\n";
           }
 
           return 'The Dart VM Service was not discovered after 30 seconds. This is taking much longer than expected...\n';
@@ -323,16 +334,16 @@ known, it can be explicitly provided to attach via the command-line, e.g.
         return uri;
       });
     } else {
-      vmServiceUri = Stream<Uri>
-        .fromFuture(
-          buildVMServiceUri(
-            device,
-            debugUri?.host ?? hostname,
-            debugPort ?? debugUri!.port,
-            hostVmservicePort,
-            debugUri?.path,
-          )
-        ).asBroadcastStream();
+      vmServiceUri =
+          Stream<Uri>.fromFuture(
+            buildVMServiceUri(
+              device,
+              debugUri?.host ?? hostname,
+              debugPort ?? debugUri!.port,
+              hostVmservicePort,
+              debugUri?.path,
+            ),
+          ).asBroadcastStream();
     }
 
     _terminal.usesTerminalUi = daemon == null;
@@ -350,8 +361,10 @@ known, it can be explicitly provided to attach via the command-line, e.g.
         try {
           app = await daemon.appDomain.launch(
             runner,
-            ({Completer<DebugConnectionInfo>? connectionInfoCompleter,
-              Completer<void>? appStartedCompleter}) {
+            ({
+              Completer<DebugConnectionInfo>? connectionInfoCompleter,
+              Completer<void>? appStartedCompleter,
+            }) {
               return runner.attach(
                 connectionInfoCompleter: connectionInfoCompleter,
                 appStartedCompleter: appStartedCompleter,
@@ -380,19 +393,22 @@ known, it can be explicitly provided to attach via the command-line, e.g.
         );
         final Completer<void> onAppStart = Completer<void>.sync();
         TerminalHandler? terminalHandler;
-        unawaited(onAppStart.future.whenComplete(() {
-          terminalHandler = TerminalHandler(
-            runner,
-            logger: _logger,
-            terminal: _terminal,
-            signals: _signals,
-            processInfo: _processInfo,
-            reportReady: boolArg('report-ready'),
-            pidFile: stringArg('pid-file'),
-          )
-            ..registerSignalHandlers()
-            ..setupTerminal();
-        }));
+        unawaited(
+          onAppStart.future.whenComplete(() {
+            terminalHandler =
+                TerminalHandler(
+                    runner,
+                    logger: _logger,
+                    terminal: _terminal,
+                    signals: _signals,
+                    processInfo: _processInfo,
+                    reportReady: boolArg('report-ready'),
+                    pidFile: stringArg('pid-file'),
+                  )
+                  ..registerSignalHandlers()
+                  ..setupTerminal();
+          }),
+        );
         result = await runner.attach(
           appStartedCompleter: onAppStart,
           allowExistingDdsInstance: true,
@@ -445,7 +461,7 @@ known, it can be explicitly provided to attach via the command-line, e.g.
       platform: _platform,
     );
     flutterDevice.vmServiceUris = vmServiceUris;
-    final List<FlutterDevice> flutterDevices =  <FlutterDevice>[flutterDevice];
+    final List<FlutterDevice> flutterDevices = <FlutterDevice>[flutterDevice];
     final DebuggingOptions debuggingOptions = DebuggingOptions.enabled(
       buildInfo,
       enableDds: enableDds,
@@ -460,7 +476,7 @@ known, it can be explicitly provided to attach via the command-line, e.g.
     );
 
     return buildInfo.isDebug
-      ? _hotRunnerFactory.build(
+        ? _hotRunnerFactory.build(
           flutterDevices,
           target: targetFile,
           debuggingOptions: debuggingOptions,
@@ -471,18 +487,13 @@ known, it can be explicitly provided to attach via the command-line, e.g.
           nativeAssetsYamlFile: stringArg(FlutterOptions.kNativeAssetsYamlFile),
           analytics: analytics,
         )
-      : ColdRunner(
-          flutterDevices,
-          target: targetFile,
-          debuggingOptions: debuggingOptions,
-        );
+        : ColdRunner(flutterDevices, target: targetFile, debuggingOptions: debuggingOptions);
   }
 
-  Future<void> _validateArguments() async { }
+  Future<void> _validateArguments() async {}
 
   bool _isIOSDevice(Device device) {
-    return (device.platformType == PlatformType.ios) ||
-        (device is MacOSDesignedForIPadDevice);
+    return (device.platformType == PlatformType.ios) || (device is MacOSDesignedForIPadDevice);
   }
 }
 

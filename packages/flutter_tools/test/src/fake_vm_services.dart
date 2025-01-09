@@ -19,10 +19,11 @@ class FakeVmServiceHost {
     Uri? httpAddress,
     Uri? wsAddress,
   }) : _requests = requests {
-    _vmService = FlutterVmService(vm_service.VmService(
-      _input.stream,
-      _output.add,
-    ), httpAddress: httpAddress, wsAddress: wsAddress);
+    _vmService = FlutterVmService(
+      vm_service.VmService(_input.stream, _output.add),
+      httpAddress: httpAddress,
+      wsAddress: wsAddress,
+    );
     _applyStreamListen();
     _output.stream.listen((String data) {
       final Map<String, Object?> request = json.decode(data) as Map<String, Object?>;
@@ -30,9 +31,15 @@ class FakeVmServiceHost {
         throw Exception('Unexpected request: $request');
       }
       final FakeVmServiceRequest fakeRequest = _requests.removeAt(0) as FakeVmServiceRequest;
-      expect(request, isA<Map<String, Object?>>()
-        .having((Map<String, Object?> request) => request['method'], 'method', fakeRequest.method)
-        .having((Map<String, Object?> request) => request['params'], 'args', fakeRequest.args)
+      expect(
+        request,
+        isA<Map<String, Object?>>()
+            .having(
+              (Map<String, Object?> request) => request['method'],
+              'method',
+              fakeRequest.method,
+            )
+            .having((Map<String, Object?> request) => request['params'], 'args', fakeRequest.args),
       );
       if (fakeRequest.close) {
         unawaited(_vmService.dispose());
@@ -40,20 +47,24 @@ class FakeVmServiceHost {
         return;
       }
       if (fakeRequest.error == null) {
-        _input.add(json.encode(<String, Object?>{
-          'jsonrpc': '2.0',
-          'id': request['id'],
-          'result': fakeRequest.jsonResponse ?? <String, Object>{'type': 'Success'},
-        }));
+        _input.add(
+          json.encode(<String, Object?>{
+            'jsonrpc': '2.0',
+            'id': request['id'],
+            'result': fakeRequest.jsonResponse ?? <String, Object>{'type': 'Success'},
+          }),
+        );
       } else {
-        _input.add(json.encode(<String, Object?>{
-          'jsonrpc': '2.0',
-          'id': request['id'],
-          'error': <String, Object?>{
-            'code': fakeRequest.error!.code,
-            'message': fakeRequest.error!.error,
-          },
-        }));
+        _input.add(
+          json.encode(<String, Object?>{
+            'jsonrpc': '2.0',
+            'id': request['id'],
+            'error': <String, Object?>{
+              'code': fakeRequest.error!.code,
+              'message': fakeRequest.error!.error,
+            },
+          }),
+        );
       }
       _applyStreamListen();
     });
@@ -66,22 +77,24 @@ class FakeVmServiceHost {
   FlutterVmService get vmService => _vmService;
   late final FlutterVmService _vmService;
 
-
   bool get hasRemainingExpectations => _requests.isNotEmpty;
 
   // remove FakeStreamResponse objects from _requests until it is empty
   // or until we hit a FakeRequest
   void _applyStreamListen() {
     while (_requests.isNotEmpty && !_requests.first.isRequest) {
-      final FakeVmServiceStreamResponse response = _requests.removeAt(0) as FakeVmServiceStreamResponse;
-      _input.add(json.encode(<String, Object>{
-        'jsonrpc': '2.0',
-        'method': 'streamNotify',
-        'params': <String, Object>{
-          'streamId': response.streamId,
-          'event': response.event.toJson(),
-        },
-      }));
+      final FakeVmServiceStreamResponse response =
+          _requests.removeAt(0) as FakeVmServiceStreamResponse;
+      _input.add(
+        json.encode(<String, Object>{
+          'jsonrpc': '2.0',
+          'method': 'streamNotify',
+          'params': <String, Object>{
+            'streamId': response.streamId,
+            'event': response.event.toJson(),
+          },
+        }),
+      );
     }
   }
 }
@@ -91,10 +104,7 @@ abstract class VmServiceExpectation {
 }
 
 class FakeRPCError {
-  const FakeRPCError({
-    required this.code,
-    this.error = 'error',
-  });
+  const FakeRPCError({required this.code, this.error = 'error'});
 
   final int code;
   final String error;
@@ -125,10 +135,7 @@ class FakeVmServiceRequest implements VmServiceExpectation {
 }
 
 class FakeVmServiceStreamResponse implements VmServiceExpectation {
-  const FakeVmServiceStreamResponse({
-    required this.event,
-    required this.streamId,
-  });
+  const FakeVmServiceStreamResponse({required this.event, required this.streamId});
 
   final vm_service.Event event;
   final String streamId;

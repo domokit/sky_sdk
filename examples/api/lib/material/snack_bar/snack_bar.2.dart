@@ -15,10 +15,7 @@ class SnackBarExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      home: const SnackBarExample(),
-    );
+    return MaterialApp(theme: ThemeData(useMaterial3: true), home: const SnackBarExample());
   }
 }
 
@@ -110,14 +107,14 @@ class _SnackBarExampleState extends State<SnackBarExample> {
               SwitchListTile(
                 title: const Text('Long Action Label'),
                 value: _longActionLabel,
-                onChanged: !_withAction
-                    ? null
-                    : (bool value) => setState(() {
-                  _longActionLabel = value;
-                }),
+                onChanged:
+                    !_withAction
+                        ? null
+                        : (bool value) => setState(() {
+                          _longActionLabel = value;
+                        }),
               ),
             ],
-
           ),
           ExpansionTile(
             title: const Text('Action new-line overflow threshold'),
@@ -127,36 +124,37 @@ class _SnackBarExampleState extends State<SnackBarExample> {
                 value: _sliderValue,
                 divisions: 20,
                 label: _sliderValue.toStringAsFixed(2),
-                onChanged: (double value) => setState(() {
-                  _sliderValue = value;
-                }),
+                onChanged:
+                    (double value) => setState(() {
+                      _sliderValue = value;
+                    }),
               ),
             ],
           ),
           // Avoid hiding content behind the floating action button
-          const SizedBox(height: 100,),
+          const SizedBox(height: 100),
         ],
       ),
     );
   }
 
   SnackBar _snackBar() {
-    final SnackBarAction? action = _withAction
-        ? SnackBarAction(
-            label: _longActionLabel ? 'Long Action Text' : 'Action',
-            onPressed: () {
-              // Code to execute.
-            },
-          )
-        : null;
-    final double? width = _snackBarBehavior == SnackBarBehavior.floating
-        ? 400.0
-        : null;
-    final String label = _multiLine
-        ? 'A Snack Bar with quite a lot of text which spans across multiple '
-        'lines. You can look at how the Action Label moves around when trying '
-        'to layout this text.'
-        : 'Single Line Snack Bar';
+    final SnackBarAction? action =
+        _withAction
+            ? SnackBarAction(
+              label: _longActionLabel ? 'Long Action Text' : 'Action',
+              onPressed: () {
+                // Code to execute.
+              },
+            )
+            : null;
+    final double? width = _snackBarBehavior == SnackBarBehavior.floating ? 400.0 : null;
+    final String label =
+        _multiLine
+            ? 'A Snack Bar with quite a lot of text which spans across multiple '
+                'lines. You can look at how the Action Label moves around when trying '
+                'to layout this text.'
+            : 'Single Line Snack Bar';
     return SnackBar(
       content: Text(label),
       showCloseIcon: _withIcon,

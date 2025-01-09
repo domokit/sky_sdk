@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('FilledButton Smoke Test', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.FilledButtonApp(),
-    );
+    await tester.pumpWidget(const example.FilledButtonApp());
 
     expect(find.widgetWithText(AppBar, 'FilledButton Sample'), findsOneWidget);
     final Finder disabledButton = find.widgetWithText(FilledButton, 'Disabled');

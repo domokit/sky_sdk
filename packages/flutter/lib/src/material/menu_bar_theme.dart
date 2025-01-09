@@ -76,11 +76,7 @@ class MenuBarThemeData extends MenuThemeData {
 class MenuBarTheme extends InheritedTheme {
   /// Creates a theme that controls the configurations for [MenuBar] and
   /// [MenuItemButton] in its widget subtree.
-  const MenuBarTheme({
-    super.key,
-    required this.data,
-    required super.child,
-  });
+  const MenuBarTheme({super.key, required this.data, required super.child});
 
   /// The properties to set for [MenuBar] in this widget's descendants.
   final MenuBarThemeData data;

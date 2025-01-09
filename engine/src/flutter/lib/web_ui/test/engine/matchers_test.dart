@@ -23,79 +23,55 @@ void testMain() {
 
 void _expectDomTests() {
   test('trivial equal elements', () {
-    expectDom(
-      '<div></div>',
-      hasHtml('<div></div>'),
-    );
+    expectDom('<div></div>', hasHtml('<div></div>'));
   });
 
   test('trivial unequal elements', () {
     expectDom(
       '<div></div>',
-      expectMismatch(
-        hasHtml('<span></span>'),
-        '''
+      expectMismatch(hasHtml('<span></span>'), '''
 The following DOM structure did not match the expected pattern:
 <div></div>
 
 Specifically:
- - @span: unexpected tag name <div> (expected <span>).''',
-      ),
+ - @span: unexpected tag name <div> (expected <span>).'''),
     );
   });
 
   test('trivial equal text content', () {
-    expectDom(
-      '<div>hello</div>',
-      hasHtml('<div>hello</div>'),
-    );
+    expectDom('<div>hello</div>', hasHtml('<div>hello</div>'));
   });
 
   test('trivial unequal text content', () {
     expectDom(
       '<div>hello</div>',
-      expectMismatch(
-        hasHtml('<div>world</div>'),
-        '''
+      expectMismatch(hasHtml('<div>world</div>'), '''
 The following DOM structure did not match the expected pattern:
 <div>hello</div>
 
 Specifically:
- - @div: expected text content "world", but found "hello".''',
-      ),
+ - @div: expected text content "world", but found "hello".'''),
     );
   });
 
   test('white space between elements', () {
-    expectDom(
-      '<a> <b> </b> </a>',
-      hasHtml('<a><b> </b></a>'),
-    );
+    expectDom('<a> <b> </b> </a>', hasHtml('<a><b> </b></a>'));
+
+    expectDom('<a><b> </b></a>', hasHtml('<a> <b> </b> </a>'));
 
     expectDom(
       '<a><b> </b></a>',
-      hasHtml('<a> <b> </b> </a>'),
-    );
-
-    expectDom(
-      '<a><b> </b></a>',
-      expectMismatch(
-        hasHtml('<a><b>   </b></a>'),
-        '''
+      expectMismatch(hasHtml('<a><b>   </b></a>'), '''
 The following DOM structure did not match the expected pattern:
 <a><b> </b></a>
 
 Specifically:
- - @a > b: expected text content "   ", but found " ".''',
-      ),
+ - @a > b: expected text content "   ", but found " ".'''),
     );
   });
 
   test('trivial equal attributes', () {
-    expectDom(
-      '<div id="hello"></div>',
-      hasHtml('<div id="hello"></div>'),
-    );
+    expectDom('<div id="hello"></div>', hasHtml('<div id="hello"></div>'));
   });
 
   test('trivial out-of-order equal attributes', () {
@@ -108,43 +84,31 @@ Specifically:
   test('trivial unequal attributes', () {
     expectDom(
       '<div id="hello"></div>',
-      expectMismatch(
-        hasHtml('<div id="world"></div>'),
-        '''
+      expectMismatch(hasHtml('<div id="world"></div>'), '''
 The following DOM structure did not match the expected pattern:
 <div id="hello"></div>
 
 Specifically:
- - @div#id: expected attribute value id="world", but found id="hello".''',
-      ),
+ - @div#id: expected attribute value id="world", but found id="hello".'''),
     );
   });
 
   test('trivial missing attributes', () {
     expectDom(
       '<div></div>',
-      expectMismatch(
-        hasHtml('<div id="hello"></div>'),
-        '''
+      expectMismatch(hasHtml('<div id="hello"></div>'), '''
 The following DOM structure did not match the expected pattern:
 <div></div>
 
 Specifically:
- - @div#id: attribute id="hello" missing.''',
-      ),
+ - @div#id: attribute id="hello" missing.'''),
     );
   });
 
   test('trivial additional attributes', () {
-    expectDom(
-      '<div id="hello"></div>',
-      hasHtml('<div></div>'),
-    );
+    expectDom('<div id="hello"></div>', hasHtml('<div></div>'));
 
-    expectDom(
-      '<div id="hello" foo="bar"></div>',
-      hasHtml('<div id="hello"></div>'),
-    );
+    expectDom('<div id="hello" foo="bar"></div>', hasHtml('<div id="hello"></div>'));
   });
 
   test('trivial equal style', () {
@@ -171,30 +135,24 @@ Specifically:
   test('trivial unequal style attributes', () {
     expectDom(
       '<div style="width: 10px"></div>',
-      expectMismatch(
-        hasHtml('<div style="width: 12px"></div>'),
-        '''
+      expectMismatch(hasHtml('<div style="width: 12px"></div>'), '''
 The following DOM structure did not match the expected pattern:
 <div style="width: 10px"></div>
 
 Specifically:
- - @div#style(width): expected style property width="12px", but found width="10px".''',
-      ),
+ - @div#style(width): expected style property width="12px", but found width="10px".'''),
     );
   });
 
   test('trivial missing style attribute', () {
     expectDom(
       '<div style="width: 12px"></div>',
-      expectMismatch(
-        hasHtml('<div style="width: 12px; height: 20px"></div>'),
-        '''
+      expectMismatch(hasHtml('<div style="width: 12px; height: 20px"></div>'), '''
 The following DOM structure did not match the expected pattern:
 <div style="width: 12px"></div>
 
 Specifically:
- - @div#style(height): style property height="20px" missing.''',
-      ),
+ - @div#style(height): style property height="20px" missing.'''),
     );
   });
 
@@ -202,7 +160,9 @@ Specifically:
     expectDom(
       '<div id="other" style="width: 12px; transform: scale(2)"></div>',
       expectMismatch(
-        hasHtml('<div id="this" foo="bar" style="width: 12px; transform: scale(2); height: 20px"></div>'),
+        hasHtml(
+          '<div id="this" foo="bar" style="width: 12px; transform: scale(2); height: 20px"></div>',
+        ),
         '''
 The following DOM structure did not match the expected pattern:
 <div id="other" style="width: 12px; transform: scale(2)"></div>
@@ -216,61 +176,46 @@ Specifically:
   });
 
   test('trivial child elements', () {
-    expectDom(
-      '<div><span></span><p></p></div>',
-      hasHtml('<div><span></span><p></p></div>'),
-    );
+    expectDom('<div><span></span><p></p></div>', hasHtml('<div><span></span><p></p></div>'));
   });
 
   test('trivial nested child elements', () {
-    expectDom(
-      '<div><p><span></span></p></div>',
-      hasHtml('<div><p><span></span></p></div>'),
-    );
+    expectDom('<div><p><span></span></p></div>', hasHtml('<div><p><span></span></p></div>'));
   });
 
   test('missing child elements', () {
     expectDom(
       '<div><span></span><p></p></div>',
-      expectMismatch(
-        hasHtml('<div><span></span><waldo></waldo><p></p></div>'),
-        '''
+      expectMismatch(hasHtml('<div><span></span><waldo></waldo><p></p></div>'), '''
 The following DOM structure did not match the expected pattern:
 <div><span></span><p></p></div>
 
 Specifically:
- - @div: expected 3 child nodes, but found 2.''',
-      ),
+ - @div: expected 3 child nodes, but found 2.'''),
     );
   });
 
   test('additional child elements', () {
     expectDom(
       '<div><span></span><waldo></waldo><p></p></div>',
-      expectMismatch(
-        hasHtml('<div><span></span><p></p></div>'),
-        '''
+      expectMismatch(hasHtml('<div><span></span><p></p></div>'), '''
 The following DOM structure did not match the expected pattern:
 <div><span></span><waldo></waldo><p></p></div>
 
 Specifically:
- - @div: expected 2 child nodes, but found 3.''',
-      ),
+ - @div: expected 2 child nodes, but found 3.'''),
     );
   });
 
   test('deep breadcrumbs', () {
     expectDom(
       '<a><b><c><d style="width: 1px"></d></c></b></a>',
-      expectMismatch(
-        hasHtml('<a><b><c><d style="width: 2px"></d></c></b></a>'),
-        '''
+      expectMismatch(hasHtml('<a><b><c><d style="width: 2px"></d></c></b></a>'), '''
 The following DOM structure did not match the expected pattern:
 <a><b><c><d style="width: 1px"></d></c></b></a>
 
 Specifically:
- - @a > b > c > d#style(width): expected style property width="2px", but found width="1px".''',
-      ),
+ - @a > b > c > d#style(width): expected style property width="2px", but found width="1px".'''),
     );
   });
 }
@@ -299,12 +244,7 @@ class _ExpectMismatch extends Matcher {
     }
 
     final _TestDescription description = _TestDescription();
-    _matcher.describeMismatch(
-      item,
-      description,
-      matchState,
-      false,
-    );
+    _matcher.describeMismatch(item, description, matchState, false);
     final String mismatchDescription = description.items.join();
 
     if (mismatchDescription.trim() != expectedMismatchDescription.trim()) {

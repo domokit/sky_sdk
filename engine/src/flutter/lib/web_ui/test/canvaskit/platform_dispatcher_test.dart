@@ -26,19 +26,15 @@ void testMain() {
       final Completer<ByteData?> completer = Completer<ByteData?>();
       ui.PlatformDispatcher.instance.sendPlatformMessage(
         'flutter/skia',
-        codec.encodeMethodCall(const MethodCall(
-          'Skia.setResourceCacheMaxBytes',
-          512 * 1000 * 1000,
-        )),
+        codec.encodeMethodCall(
+          const MethodCall('Skia.setResourceCacheMaxBytes', 512 * 1000 * 1000),
+        ),
         completer.complete,
       );
 
       final ByteData? response = await completer.future;
       expect(response, isNotNull);
-      expect(
-        codec.decodeEnvelope(response!),
-        <bool>[true],
-      );
+      expect(codec.decodeEnvelope(response!), <bool>[true]);
     });
   });
 }

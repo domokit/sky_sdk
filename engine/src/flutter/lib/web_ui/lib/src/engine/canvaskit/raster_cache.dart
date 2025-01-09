@@ -35,12 +35,10 @@ class RasterCache {
   ///
   /// The flag [willChange] is a hint to the raster cache that this picture
   /// will change, and so should be less likely to be cached.
-  void prepare(
-      ui.Picture picture, Matrix4 matrix, bool isComplex, bool willChange) {}
+  void prepare(ui.Picture picture, Matrix4 matrix, bool isComplex, bool willChange) {}
 
   /// Gets a raster cache result for the [picture] at transform [matrix].
-  RasterCacheResult get(ui.Picture picture, Matrix4 matrix) =>
-      RasterCacheResult();
+  RasterCacheResult get(ui.Picture picture, Matrix4 matrix) => RasterCacheResult();
 }
 
 /// A cache entry for a given picture and matrix.

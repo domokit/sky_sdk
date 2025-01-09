@@ -370,15 +370,15 @@ TEST(DlOpSpy, DrawVertices) {
   {  // black
     DisplayListBuilder builder;
     DlPaint paint(DlColor::kBlack());
-    const SkPoint vertices[] = {
-        SkPoint::Make(5, 5),
-        SkPoint::Make(5, 15),
-        SkPoint::Make(15, 5),
+    const DlPoint vertices[] = {
+        DlPoint(5, 5),
+        DlPoint(5, 15),
+        DlPoint(15, 5),
     };
-    const SkPoint texture_coordinates[] = {
-        SkPoint::Make(5, 5),
-        SkPoint::Make(15, 5),
-        SkPoint::Make(5, 15),
+    const DlPoint texture_coordinates[] = {
+        DlPoint(5, 5),
+        DlPoint(15, 5),
+        DlPoint(5, 15),
     };
     const DlColor colors[] = {
         DlColor::kBlack(),
@@ -396,15 +396,15 @@ TEST(DlOpSpy, DrawVertices) {
   {  // transparent
     DisplayListBuilder builder;
     DlPaint paint(DlColor::kTransparent());
-    const SkPoint vertices[] = {
-        SkPoint::Make(5, 5),
-        SkPoint::Make(5, 15),
-        SkPoint::Make(15, 5),
+    const DlPoint vertices[] = {
+        DlPoint(5, 5),
+        DlPoint(5, 15),
+        DlPoint(15, 5),
     };
-    const SkPoint texture_coordinates[] = {
-        SkPoint::Make(5, 5),
-        SkPoint::Make(15, 5),
-        SkPoint::Make(5, 15),
+    const DlPoint texture_coordinates[] = {
+        DlPoint(5, 5),
+        DlPoint(15, 5),
+        DlPoint(5, 15),
     };
     const DlColor colors[] = {
         DlColor::kBlack(),

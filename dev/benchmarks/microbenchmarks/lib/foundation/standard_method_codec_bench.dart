@@ -9,8 +9,7 @@ import '../common.dart';
 const int _kNumIterations = 100000;
 
 Future<void> execute() async {
-  assert(false,
-      "Don't run benchmarks in debug mode! Use 'flutter run --release'.");
+  assert(false, "Don't run benchmarks in debug mode! Use 'flutter run --release'.");
   final BenchmarkResultPrinter printer = BenchmarkResultPrinter();
 
   const StandardMethodCodec codec = StandardMethodCodec();
@@ -47,8 +46,7 @@ Future<void> execute() async {
 
   watch.start();
   for (int i = 0; i < _kNumIterations; i += 1) {
-    codec.encodeMethodCall(
-        const MethodCall(methodName, 'This is a performance test.'));
+    codec.encodeMethodCall(const MethodCall(methodName, 'This is a performance test.'));
   }
   watch.stop();
 
@@ -62,8 +60,9 @@ Future<void> execute() async {
   watch.reset();
   watch.start();
   for (int i = 0; i < _kNumIterations; i += 1) {
-    codec.encodeMethodCall(const MethodCall(
-        methodName, <Object>[1234, 'This is a performance test.', 1.25, true]));
+    codec.encodeMethodCall(
+      const MethodCall(methodName, <Object>[1234, 'This is a performance test.', 1.25, true]),
+    );
   }
   watch.stop();
 
@@ -77,12 +76,14 @@ Future<void> execute() async {
   watch.reset();
   watch.start();
   for (int i = 0; i < _kNumIterations; i += 1) {
-    codec.encodeMethodCall(const MethodCall(methodName, <String, Object>{
-      'integer': 1234,
-      'string': 'This is a performance test.',
-      'float': 1.25,
-      'boolean': true,
-    }));
+    codec.encodeMethodCall(
+      const MethodCall(methodName, <String, Object>{
+        'integer': 1234,
+        'string': 'This is a performance test.',
+        'float': 1.25,
+        'boolean': true,
+      }),
+    );
   }
   watch.stop();
 

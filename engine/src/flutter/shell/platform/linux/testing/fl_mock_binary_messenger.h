@@ -5,6 +5,8 @@
 #ifndef FLUTTER_SHELL_PLATFORM_LINUX_TESTING_FL_MOCK_BINARY_MESSENGER_H_
 #define FLUTTER_SHELL_PLATFORM_LINUX_TESTING_FL_MOCK_BINARY_MESSENGER_H_
 
+#include <gio/gio.h>
+
 #include "flutter/shell/platform/linux/public/flutter_linux/fl_message_codec.h"
 #include "flutter/shell/platform/linux/public/flutter_linux/fl_method_codec.h"
 #include "flutter/shell/platform/linux/public/flutter_linux/fl_value.h"
@@ -24,11 +26,13 @@ typedef GBytes* (*FlMockBinaryMessengerChannelHandler)(
 
 typedef FlValue* (*FlMockBinaryMessengerMessageChannelHandler)(
     FlMockBinaryMessenger* messenger,
+    GTask* task,
     FlValue* message,
     gpointer user_data);
 
 typedef FlMethodResponse* (*FlMockBinaryMessengerMethodChannelHandler)(
     FlMockBinaryMessenger* messenger,
+    GTask* task,
     const gchar* name,
     FlValue* args,
     gpointer user_data);
@@ -94,6 +98,27 @@ void fl_mock_binary_messenger_set_json_message_channel(
     const gchar* channel,
     FlMockBinaryMessengerMessageChannelHandler handler,
     gpointer user_data);
+
+void fl_mock_binary_messenger_message_channel_respond(
+    FlMockBinaryMessenger* self,
+    GTask* task,
+    FlMessageCodec* codec,
+    FlValue* value);
+
+void fl_mock_binary_messenger_standard_message_channel_respond(
+    FlMockBinaryMessenger* self,
+    GTask* task,
+    FlValue* value);
+
+void fl_mock_binary_messenger_string_message_channel_respond(
+    FlMockBinaryMessenger* self,
+    GTask* task,
+    FlValue* value);
+
+void fl_mock_binary_messenger_json_message_channel_respond(
+    FlMockBinaryMessenger* self,
+    GTask* task,
+    FlValue* value);
 
 void fl_mock_binary_messenger_set_method_channel(
     FlMockBinaryMessenger* self,

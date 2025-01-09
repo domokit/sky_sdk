@@ -26,7 +26,12 @@ void main() {
     expect(find.byIcon(Icons.more_vert), findsNWidgets(3));
     expect(find.byIcon(Icons.info), findsOne);
 
-    final Finder tileWithBackgroundFinder = find.byKey(const Key('CupertinoListTile with background color'));
-    expect(tester.firstWidget<CupertinoListTile>(tileWithBackgroundFinder).backgroundColor, Colors.lightBlue);
+    final Finder tileWithBackgroundFinder = find.byKey(
+      const Key('CupertinoListTile with background color'),
+    );
+    expect(
+      tester.firstWidget<CupertinoListTile>(tileWithBackgroundFinder).backgroundColor,
+      Colors.lightBlue,
+    );
   });
 }

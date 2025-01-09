@@ -18,7 +18,9 @@ class XcodeThinBinaryBuildPhaseInputPathsMigration extends ProjectMigrator {
   @override
   Future<void> migrate() async {
     if (!_xcodeProjectInfoFile.existsSync()) {
-      logger.printTrace('Xcode project not found, skipping script build phase dependency analysis removal.');
+      logger.printTrace(
+        'Xcode project not found, skipping script build phase dependency analysis removal.',
+      );
       return;
     }
 
@@ -33,9 +35,9 @@ class XcodeThinBinaryBuildPhaseInputPathsMigration extends ProjectMigrator {
     //   alwaysOutOfDate = 1;
     //   buildActionMask = 2147483647;
     //   files = (
-		// 	 );
-		// 	 inputPaths = (
-		// 	 );
+    // 	 );
+    // 	 inputPaths = (
+    // 	 );
 
     String newProjectContents = originalProjectContents;
     const String thinBinaryBuildPhaseOriginal = '''
@@ -61,7 +63,10 @@ class XcodeThinBinaryBuildPhaseInputPathsMigration extends ProjectMigrator {
 			);
 ''';
 
-    newProjectContents = newProjectContents.replaceAll(thinBinaryBuildPhaseOriginal, thinBinaryBuildPhaseReplacement);
+    newProjectContents = newProjectContents.replaceAll(
+      thinBinaryBuildPhaseOriginal,
+      thinBinaryBuildPhaseReplacement,
+    );
     if (originalProjectContents != newProjectContents) {
       logger.printStatus('Adding input path to Thin Binary build phase.');
       _xcodeProjectInfoFile.writeAsStringSync(newProjectContents);

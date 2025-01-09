@@ -34,19 +34,14 @@ external void textStyleSetDecorationColor(TextStyleHandle handle, int decoration
 @Native<Void Function(TextStyleHandle, Int)>(symbol: 'textStyle_setDecorationStyle', isLeaf: true)
 external void textStyleSetDecorationStyle(TextStyleHandle handle, int decorationStyle);
 
-@Native<Void Function(TextStyleHandle, Float)>(symbol: 'textStyle_setDecorationThickness', isLeaf: true)
+@Native<Void Function(TextStyleHandle, Float)>(
+  symbol: 'textStyle_setDecorationThickness',
+  isLeaf: true,
+)
 external void textStyleSetDecorationThickness(TextStyleHandle handle, double decorationThickness);
 
-@Native<Void Function(
-  TextStyleHandle,
-  Int,
-  Int
-)>(symbol: 'textStyle_setFontStyle', isLeaf: true)
-external void textStyleSetFontStyle(
-  TextStyleHandle handle,
-  int weight,
-  int slant
-);
+@Native<Void Function(TextStyleHandle, Int, Int)>(symbol: 'textStyle_setFontStyle', isLeaf: true)
+external void textStyleSetFontStyle(TextStyleHandle handle, int weight, int slant);
 
 @Native<Void Function(TextStyleHandle, Int)>(symbol: 'textStyle_setTextBaseline', isLeaf: true)
 external void textStyleSetTextBaseline(TextStyleHandle handle, int baseline);
@@ -54,15 +49,14 @@ external void textStyleSetTextBaseline(TextStyleHandle handle, int baseline);
 @Native<Void Function(TextStyleHandle)>(symbol: 'textStyle_clearFontFamilies', isLeaf: true)
 external void textStyleClearFontFamilies(TextStyleHandle handle);
 
-@Native<Void Function(
-  TextStyleHandle,
-  Pointer<SkStringHandle>,
-  Int count
-)>(symbol: 'textStyle_addFontFamilies', isLeaf: true)
+@Native<Void Function(TextStyleHandle, Pointer<SkStringHandle>, Int count)>(
+  symbol: 'textStyle_addFontFamilies',
+  isLeaf: true,
+)
 external void textStyleAddFontFamilies(
   TextStyleHandle handle,
   Pointer<SkStringHandle> families,
-  int count
+  int count,
 );
 
 @Native<Void Function(TextStyleHandle, Float)>(symbol: 'textStyle_setFontSize', isLeaf: true)
@@ -83,19 +77,22 @@ external void textStyleSetHalfLeading(TextStyleHandle handle, bool halfLeading);
 @Native<Void Function(TextStyleHandle, SkStringHandle)>(symbol: 'textStyle_setLocale', isLeaf: true)
 external void textStyleSetLocale(TextStyleHandle handle, SkStringHandle locale);
 
-@Native<Void Function(TextStyleHandle, PaintHandle)>(symbol: 'textStyle_setBackground', isLeaf: true)
+@Native<Void Function(TextStyleHandle, PaintHandle)>(
+  symbol: 'textStyle_setBackground',
+  isLeaf: true,
+)
 external void textStyleSetBackground(TextStyleHandle handle, PaintHandle paint);
 
-@Native<Void Function(TextStyleHandle, PaintHandle)>(symbol: 'textStyle_setForeground', isLeaf: true)
+@Native<Void Function(TextStyleHandle, PaintHandle)>(
+  symbol: 'textStyle_setForeground',
+  isLeaf: true,
+)
 external void textStyleSetForeground(TextStyleHandle handle, PaintHandle paint);
 
-@Native<Void Function(
-  TextStyleHandle,
-  Int32,
-  Float,
-  Float,
-  Float,
-)>(symbol: 'textStyle_addShadow', isLeaf: true)
+@Native<Void Function(TextStyleHandle, Int32, Float, Float, Float)>(
+  symbol: 'textStyle_addShadow',
+  isLeaf: true,
+)
 external void textStyleAddShadow(
   TextStyleHandle handle,
   int color,
@@ -104,23 +101,20 @@ external void textStyleAddShadow(
   double blurSigma,
 );
 
-@Native<Void Function(
-  TextStyleHandle,
-  SkStringHandle,
-  Int
-)>(symbol: 'textStyle_addFontFeature', isLeaf: true)
+@Native<Void Function(TextStyleHandle, SkStringHandle, Int)>(
+  symbol: 'textStyle_addFontFeature',
+  isLeaf: true,
+)
 external void textStyleAddFontFeature(
   TextStyleHandle handle,
   SkStringHandle featureName,
   int value,
 );
 
-@Native<Void Function(
-  TextStyleHandle,
-  Pointer<Uint32>,
-  Pointer<Float>,
-  Int
-)>(symbol: 'textStyle_setFontVariations', isLeaf: true)
+@Native<Void Function(TextStyleHandle, Pointer<Uint32>, Pointer<Float>, Int)>(
+  symbol: 'textStyle_setFontVariations',
+  isLeaf: true,
+)
 external void textStyleSetFontVariations(
   TextStyleHandle handle,
   Pointer<Uint32> axes,

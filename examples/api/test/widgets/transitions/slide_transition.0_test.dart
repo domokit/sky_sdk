@@ -19,10 +19,7 @@ void main() {
   testWidgets('Animates repeatedly every 2 seconds', (WidgetTester tester) async {
     await tester.pumpWidget(const example.SlideTransitionExampleApp());
 
-    expect(
-      tester.getCenter(find.byType(FlutterLogo)),
-      tester.getCenter(find.byType(Center)),
-    );
+    expect(tester.getCenter(find.byType(FlutterLogo)), tester.getCenter(find.byType(Center)));
 
     await tester.pump(const Duration(seconds: 2));
     await tester.pump();
@@ -36,9 +33,6 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
     await tester.pump();
 
-    expect(
-      tester.getCenter(find.byType(FlutterLogo)),
-      tester.getCenter(find.byType(Center)),
-    );
+    expect(tester.getCenter(find.byType(FlutterLogo)), tester.getCenter(find.byType(Center)));
   });
 }

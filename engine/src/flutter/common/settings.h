@@ -234,8 +234,8 @@ struct Settings {
   bool enable_impeller = false;
 #endif
 
-  // Force disable the android surface control even where supported.
-  bool disable_surface_control = false;
+  // Enable android surface control swapchains where supported.
+  bool enable_surface_control = false;
 
   // Log a warning during shell initialization if Impeller is not enabled.
   bool warn_on_impeller_opt_out = false;

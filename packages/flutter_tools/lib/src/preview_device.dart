@@ -62,10 +62,10 @@ class PreviewDeviceDiscovery extends PollingDeviceDiscovery {
   List<String> get wellKnownIds => <String>['preview'];
 
   @override
-  Future<List<Device>> pollingGetDevices({
-    Duration? timeout,
-  }) async {
-    final File previewBinary = _fileSystem.file(_artifacts.getArtifactPath(Artifact.flutterPreviewDevice));
+  Future<List<Device>> pollingGetDevices({Duration? timeout}) async {
+    final File previewBinary = _fileSystem.file(
+      _artifacts.getArtifactPath(Artifact.flutterPreviewDevice),
+    );
     if (!previewBinary.existsSync()) {
       return const <Device>[];
     }
@@ -76,17 +76,11 @@ class PreviewDeviceDiscovery extends PollingDeviceDiscovery {
       processManager: _processManager,
       previewBinary: previewBinary,
     );
-    return <Device>[
-      if (_features.isPreviewDeviceEnabled)
-        device,
-    ];
+    return <Device>[if (_features.isPreviewDeviceEnabled) device];
   }
 
   @override
-  Future<List<Device>> discoverDevices({
-    Duration? timeout,
-    DeviceDiscoveryFilter? filter,
-  }) {
+  Future<List<Device>> discoverDevices({Duration? timeout, DeviceDiscoveryFilter? filter}) {
     return devices();
   }
 }
@@ -106,7 +100,12 @@ class PreviewDevice extends Device {
        _fileSystem = fileSystem,
        _bundleBuilderFactory = builderFactory,
        _artifacts = artifacts,
-       super('preview', ephemeral: false, category: Category.desktop, platformType: PlatformType.windowsPreview);
+       super(
+         'preview',
+         ephemeral: false,
+         category: Category.desktop,
+         platformType: PlatformType.windowsPreview,
+       );
 
   final ProcessManager _processManager;
   final Logger _logger;
@@ -121,10 +120,10 @@ class PreviewDevice extends Device {
   static const List<String> supportedPubPlugins = <String>[];
 
   @override
-  void clearLogs() { }
+  void clearLogs() {}
 
   @override
-  Future<void> dispose() async { }
+  Future<void> dispose() async {}
 
   @override
   Future<String?> get emulatorId async => null;
@@ -132,7 +131,8 @@ class PreviewDevice extends Device {
   final DesktopLogReader _logReader = DesktopLogReader();
 
   @override
-  FutureOr<DeviceLogReader> getLogReader({ApplicationPackage? app, bool includePastLogs = false}) => _logReader;
+  FutureOr<DeviceLogReader> getLogReader({ApplicationPackage? app, bool includePastLogs = false}) =>
+      _logReader;
 
   @override
   Future<bool> installApp(ApplicationPackage? app, {String? userIdentifier}) async => true;
@@ -164,7 +164,8 @@ class PreviewDevice extends Device {
   Process? _process;
 
   @override
-  Future<LaunchResult> startApp(ApplicationPackage? package, {
+  Future<LaunchResult> startApp(
+    ApplicationPackage? package, {
     String? mainPath,
     String? route,
     required DebuggingOptions debuggingOptions,
@@ -172,8 +173,9 @@ class PreviewDevice extends Device {
     bool prebuiltApplication = false,
     String? userIdentifier,
   }) async {
-    final Directory assetDirectory = _fileSystem.systemTempDirectory
-      .createTempSync('flutter_preview.');
+    final Directory assetDirectory = _fileSystem.systemTempDirectory.createTempSync(
+      'flutter_preview.',
+    );
 
     // Build assets and perform initial compilation.
     Status? status;
@@ -185,8 +187,8 @@ class PreviewDevice extends Device {
         platform: TargetPlatform.windows_x64,
         assetDirPath: getAssetBuildDirectory(),
       );
-      copyDirectory(_fileSystem.directory(
-        getAssetBuildDirectory()),
+      copyDirectory(
+        _fileSystem.directory(getAssetBuildDirectory()),
         assetDirectory.childDirectory('data').childDirectory('flutter_assets'),
       );
     } finally {
@@ -197,20 +199,24 @@ class PreviewDevice extends Device {
     final String copiedPreviewBinaryPath = assetDirectory.childFile(_previewBinary.basename).path;
     _previewBinary.copySync(copiedPreviewBinaryPath);
 
-    final String windowsPath = _artifacts
-      .getArtifactPath(Artifact.windowsDesktopPath, platform: TargetPlatform.windows_x64, mode: BuildMode.debug);
-    final File windowsDll = _fileSystem.file(_fileSystem.path.join(windowsPath, 'flutter_windows.dll'));
+    final String windowsPath = _artifacts.getArtifactPath(
+      Artifact.windowsDesktopPath,
+      platform: TargetPlatform.windows_x64,
+      mode: BuildMode.debug,
+    );
+    final File windowsDll = _fileSystem.file(
+      _fileSystem.path.join(windowsPath, 'flutter_windows.dll'),
+    );
     final File icu = _fileSystem.file(_fileSystem.path.join(windowsPath, 'icudtl.dat'));
     windowsDll.copySync(assetDirectory.childFile('flutter_windows.dll').path);
     icu.copySync(assetDirectory.childDirectory('data').childFile('icudtl.dat').path);
 
-    final Process process = await _processManager.start(
-      <String>[copiedPreviewBinaryPath],
-    );
+    final Process process = await _processManager.start(<String>[copiedPreviewBinaryPath]);
     _process = process;
     _logReader.initializeProcess(process);
 
-    final ProtocolDiscovery vmServiceDiscovery = ProtocolDiscovery.vmService(_logReader,
+    final ProtocolDiscovery vmServiceDiscovery = ProtocolDiscovery.vmService(
+      _logReader,
       devicePort: debuggingOptions.deviceVmServicePort,
       hostPort: debuggingOptions.hostVmServicePort,
       ipv6: debuggingOptions.ipv6,

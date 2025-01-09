@@ -13,10 +13,7 @@ void main() {
 }
 
 Future<void> testMain() async {
-  setUpUnitTests(
-    emulateTesterEnvironment: false,
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(emulateTesterEnvironment: false, setUpTestViewDimensions: false);
 
   test('blanks are equal to each other', () {
     final ui.StrutStyle a = ui.StrutStyle();
@@ -99,31 +96,69 @@ Future<void> testMain() async {
 
 typedef _StrutStylePropertyPopulator = void Function(_TestStrutStyleBuilder builder);
 
-final Map<String, _StrutStylePropertyPopulator> _populatorsA = <String, _StrutStylePropertyPopulator>{
-  'fontFamily': (_TestStrutStyleBuilder builder) { builder.fontFamily = 'Arial'; },
-  // Intentionally do not use const List to make sure Object.hashAll is used to compute hashCode
-  'fontFamilyFallback': (_TestStrutStyleBuilder builder) { builder.fontFamilyFallback = <String>['Roboto']; },
-  'fontSize': (_TestStrutStyleBuilder builder) { builder.fontSize = 12; },
-  'height': (_TestStrutStyleBuilder builder) { builder.height = 13; },
-  'leading': (_TestStrutStyleBuilder builder) { builder.leading = 0.1; },
-  'fontWeight': (_TestStrutStyleBuilder builder) { builder.fontWeight = ui.FontWeight.w400; },
-  'fontStyle': (_TestStrutStyleBuilder builder) { builder.fontStyle = ui.FontStyle.normal; },
-  'forceStrutHeight': (_TestStrutStyleBuilder builder) { builder.forceStrutHeight = false; },
-  'leadingDistribution': (_TestStrutStyleBuilder builder) { builder.leadingDistribution = ui.TextLeadingDistribution.proportional; },
-};
+final Map<String, _StrutStylePropertyPopulator> _populatorsA =
+    <String, _StrutStylePropertyPopulator>{
+      'fontFamily': (_TestStrutStyleBuilder builder) {
+        builder.fontFamily = 'Arial';
+      },
+      // Intentionally do not use const List to make sure Object.hashAll is used to compute hashCode
+      'fontFamilyFallback': (_TestStrutStyleBuilder builder) {
+        builder.fontFamilyFallback = <String>['Roboto'];
+      },
+      'fontSize': (_TestStrutStyleBuilder builder) {
+        builder.fontSize = 12;
+      },
+      'height': (_TestStrutStyleBuilder builder) {
+        builder.height = 13;
+      },
+      'leading': (_TestStrutStyleBuilder builder) {
+        builder.leading = 0.1;
+      },
+      'fontWeight': (_TestStrutStyleBuilder builder) {
+        builder.fontWeight = ui.FontWeight.w400;
+      },
+      'fontStyle': (_TestStrutStyleBuilder builder) {
+        builder.fontStyle = ui.FontStyle.normal;
+      },
+      'forceStrutHeight': (_TestStrutStyleBuilder builder) {
+        builder.forceStrutHeight = false;
+      },
+      'leadingDistribution': (_TestStrutStyleBuilder builder) {
+        builder.leadingDistribution = ui.TextLeadingDistribution.proportional;
+      },
+    };
 
-final Map<String, _StrutStylePropertyPopulator> _populatorsB = <String, _StrutStylePropertyPopulator>{
-  'fontFamily': (_TestStrutStyleBuilder builder) { builder.fontFamily = 'Noto'; },
-  // Intentionally do not use const List to make sure Object.hashAll is used to compute hashCode
-  'fontFamilyFallback': (_TestStrutStyleBuilder builder) { builder.fontFamilyFallback = <String>['Verdana']; },
-  'fontSize': (_TestStrutStyleBuilder builder) { builder.fontSize = 12.1; },
-  'height': (_TestStrutStyleBuilder builder) { builder.height = 13.1; },
-  'leading': (_TestStrutStyleBuilder builder) { builder.leading = 0.2; },
-  'fontWeight': (_TestStrutStyleBuilder builder) { builder.fontWeight = ui.FontWeight.w600; },
-  'fontStyle': (_TestStrutStyleBuilder builder) { builder.fontStyle = ui.FontStyle.italic; },
-  'forceStrutHeight': (_TestStrutStyleBuilder builder) { builder.forceStrutHeight = true; },
-  'leadingDistribution': (_TestStrutStyleBuilder builder) { builder.leadingDistribution = ui.TextLeadingDistribution.even; },
-};
+final Map<String, _StrutStylePropertyPopulator> _populatorsB =
+    <String, _StrutStylePropertyPopulator>{
+      'fontFamily': (_TestStrutStyleBuilder builder) {
+        builder.fontFamily = 'Noto';
+      },
+      // Intentionally do not use const List to make sure Object.hashAll is used to compute hashCode
+      'fontFamilyFallback': (_TestStrutStyleBuilder builder) {
+        builder.fontFamilyFallback = <String>['Verdana'];
+      },
+      'fontSize': (_TestStrutStyleBuilder builder) {
+        builder.fontSize = 12.1;
+      },
+      'height': (_TestStrutStyleBuilder builder) {
+        builder.height = 13.1;
+      },
+      'leading': (_TestStrutStyleBuilder builder) {
+        builder.leading = 0.2;
+      },
+      'fontWeight': (_TestStrutStyleBuilder builder) {
+        builder.fontWeight = ui.FontWeight.w600;
+      },
+      'fontStyle': (_TestStrutStyleBuilder builder) {
+        builder.fontStyle = ui.FontStyle.italic;
+      },
+      'forceStrutHeight': (_TestStrutStyleBuilder builder) {
+        builder.forceStrutHeight = true;
+      },
+      'leadingDistribution': (_TestStrutStyleBuilder builder) {
+        builder.leadingDistribution = ui.TextLeadingDistribution.even;
+      },
+    };
 
 class _TestStrutStyleBuilder {
   String? fontFamily;

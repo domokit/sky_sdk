@@ -62,11 +62,9 @@ class HandlePairResult extends _Result {
   Handle get second => _second!;
 
   @pragma('vm:entry-point')
-  const HandlePairResult(final int status, [this._first, this._second])
-      : super(status);
+  const HandlePairResult(final int status, [this._first, this._second]) : super(status);
   @override
-  String toString() =>
-      'HandlePairResult(status=$status, first=$_first, second=$_second)';
+  String toString() => 'HandlePairResult(status=$status, first=$_first, second=$_second)';
 }
 
 @pragma('vm:entry-point')
@@ -80,8 +78,7 @@ class ReadResult extends _Result {
   List<Handle> get handles => _handles!;
 
   @pragma('vm:entry-point')
-  const ReadResult(final int status, [this._bytes, this._numBytes, this._handles])
-      : super(status);
+  const ReadResult(final int status, [this._bytes, this._numBytes, this._handles]) : super(status);
 
   /// Returns the bytes as a Uint8List. If status != OK this will throw
   /// an exception.
@@ -109,8 +106,7 @@ class HandleInfo {
   const HandleInfo(this.handle, this.type, this.rights);
 
   @override
-  String toString() =>
-      'HandleInfo(handle=$handle, type=$type, rights=$rights)';
+  String toString() => 'HandleInfo(handle=$handle, type=$type, rights=$rights)';
 }
 
 @pragma('vm:entry-point')
@@ -125,7 +121,7 @@ class ReadEtcResult extends _Result {
 
   @pragma('vm:entry-point')
   const ReadEtcResult(final int status, [this._bytes, this._numBytes, this._handleInfos])
-      : super(status);
+    : super(status);
 
   /// Returns the bytes as a Uint8List. If status != OK this will throw
   /// an exception.
@@ -174,11 +170,9 @@ class FromFileResult extends _Result {
   int get numBytes => _numBytes!;
 
   @pragma('vm:entry-point')
-  const FromFileResult(final int status, [this._handle, this._numBytes])
-      : super(status);
+  const FromFileResult(final int status, [this._handle, this._numBytes]) : super(status);
   @override
-  String toString() =>
-      'FromFileResult(status=$status, handle=$_handle, numBytes=$_numBytes)';
+  String toString() => 'FromFileResult(status=$status, handle=$_handle, numBytes=$_numBytes)';
 }
 
 @pragma('vm:entry-point')
@@ -207,7 +201,11 @@ base class System extends NativeFieldWrapperClass1 {
   @pragma('vm:external-name', 'System_ChannelWrite')
   external static int channelWrite(Handle channel, ByteData data, List<Handle> handles);
   @pragma('vm:external-name', 'System_ChannelWriteEtc')
-  external static int channelWriteEtc(Handle channel, ByteData data, List<HandleDisposition> handleDispositions);
+  external static int channelWriteEtc(
+    Handle channel,
+    ByteData data,
+    List<HandleDisposition> handleDispositions,
+  );
   @pragma('vm:external-name', 'System_ChannelQueryAndRead')
   external static ReadResult channelQueryAndRead(Handle channel);
   @pragma('vm:external-name', 'System_ChannelQueryAndReadEtc')
@@ -254,5 +252,7 @@ base class System extends NativeFieldWrapperClass1 {
   external static int _nativeClockGetMonotonic();
 
   // TODO(edcoyne): Remove this, it is required to safely do an API transition across repos.
-  static int reboot() { return -2; /*ZX_ERR_NOT_SUPPORTED*/ }
+  static int reboot() {
+    return -2; /*ZX_ERR_NOT_SUPPORTED*/
+  }
 }

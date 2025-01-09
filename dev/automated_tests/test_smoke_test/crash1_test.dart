@@ -13,7 +13,9 @@ void main() {
   test('test smoke test -- this test should fail', () async {
     if (system.Process.killPid(system.pid, system.ProcessSignal.sigsegv)) {
       print('system.Process.killPid returned before the process ended!');
-      print('Sleeping for a few seconds just in case signal delivery is delayed or our signal handler is being slow...');
+      print(
+        'Sleeping for a few seconds just in case signal delivery is delayed or our signal handler is being slow...',
+      );
       system.sleep(const Duration(seconds: 10)); // don't sleep too much, we must not time out
     } else {
       print('system.Process.killPid reports that the SIGSEGV signal was not delivered!');

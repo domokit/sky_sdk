@@ -43,10 +43,11 @@ class _CupertinoTextSelectionHandlePainter extends CustomPainter {
       ),
       Offset(_kSelectionHandleRadius + halfStrokeWidth, size.height),
     );
-    final Path path = Path()
-      ..addOval(circle)
-    // Draw line so it slightly overlaps the circle.
-      ..addRect(line);
+    final Path path =
+        Path()
+          ..addOval(circle)
+          // Draw line so it slightly overlaps the circle.
+          ..addRect(line);
     canvas.drawPath(path, paint);
   }
 
@@ -62,8 +63,8 @@ class _CupertinoTextSelectionHandlePainter extends CustomPainter {
   'Use `CupertinoTextSelectionControls`. '
   'This feature was deprecated after v3.3.0-0.5.pre.',
 )
-class CupertinoTextSelectionHandleControls extends CupertinoTextSelectionControls with TextSelectionHandleControls {
-}
+class CupertinoTextSelectionHandleControls extends CupertinoTextSelectionControls
+    with TextSelectionHandleControls {}
 
 /// iOS Cupertino styled text selection controls.
 ///
@@ -110,7 +111,12 @@ class CupertinoTextSelectionControls extends TextSelectionControls {
 
   /// Builder for iOS text selection edges.
   @override
-  Widget buildHandle(BuildContext context, TextSelectionHandleType type, double textLineHeight, [VoidCallback? onTap]) {
+  Widget buildHandle(
+    BuildContext context,
+    TextSelectionHandleType type,
+    double textLineHeight, [
+    VoidCallback? onTap,
+  ]) {
     // iOS selection handles do not respond to taps.
     final Size desiredSize;
     final Widget handle;
@@ -125,22 +131,17 @@ class CupertinoTextSelectionControls extends TextSelectionControls {
     switch (type) {
       case TextSelectionHandleType.left:
         desiredSize = getHandleSize(textLineHeight);
-        handle = SizedBox.fromSize(
-          size: desiredSize,
-          child: customPaint,
-        );
+        handle = SizedBox.fromSize(size: desiredSize, child: customPaint);
         return handle;
       case TextSelectionHandleType.right:
         desiredSize = getHandleSize(textLineHeight);
-        handle = SizedBox.fromSize(
-          size: desiredSize,
-          child: customPaint,
-        );
+        handle = SizedBox.fromSize(size: desiredSize, child: customPaint);
         return Transform(
-          transform: Matrix4.identity()
-            ..translate(desiredSize.width / 2, desiredSize.height / 2)
-            ..rotateZ(math.pi)
-            ..translate(-desiredSize.width / 2, -desiredSize.height / 2),
+          transform:
+              Matrix4.identity()
+                ..translate(desiredSize.width / 2, desiredSize.height / 2)
+                ..rotateZ(math.pi)
+                ..translate(-desiredSize.width / 2, -desiredSize.height / 2),
           child: handle,
         );
       // iOS should draw an invisible box so the handle can still receive gestures
@@ -161,10 +162,7 @@ class CupertinoTextSelectionControls extends TextSelectionControls {
       // The circle is at the top for the left handle, and the anchor point is
       // all the way at the bottom of the line.
       case TextSelectionHandleType.left:
-        return Offset(
-          handleSize.width / 2,
-          handleSize.height,
-        );
+        return Offset(handleSize.width / 2, handleSize.height);
       // The right handle is vertically flipped, and the anchor point is near
       // the top of the circle to give slight overlap.
       case TextSelectionHandleType.right:
@@ -190,8 +188,7 @@ final TextSelectionControls cupertinoTextSelectionHandleControls =
     CupertinoTextSelectionHandleControls();
 
 /// Text selection controls that follow iOS design conventions.
-final TextSelectionControls cupertinoTextSelectionControls =
-    CupertinoTextSelectionControls();
+final TextSelectionControls cupertinoTextSelectionControls = CupertinoTextSelectionControls();
 
 // Generates the child that's passed into CupertinoTextSelectionToolbar.
 class _CupertinoTextSelectionControlsToolbar extends StatefulWidget {
@@ -218,10 +215,12 @@ class _CupertinoTextSelectionControlsToolbar extends StatefulWidget {
   final double textLineHeight;
 
   @override
-  _CupertinoTextSelectionControlsToolbarState createState() => _CupertinoTextSelectionControlsToolbarState();
+  _CupertinoTextSelectionControlsToolbarState createState() =>
+      _CupertinoTextSelectionControlsToolbarState();
 }
 
-class _CupertinoTextSelectionControlsToolbarState extends State<_CupertinoTextSelectionControlsToolbar> {
+class _CupertinoTextSelectionControlsToolbarState
+    extends State<_CupertinoTextSelectionControlsToolbar> {
   void _onChangedClipboardStatus() {
     setState(() {
       // Inform the widget that the value of clipboardStatus has changed.
@@ -262,22 +261,22 @@ class _CupertinoTextSelectionControlsToolbarState extends State<_CupertinoTextSe
     // The toolbar should appear below the TextField when there is not enough
     // space above the TextField to show it, assuming there's always enough
     // space at the bottom in this case.
-    final double anchorX = clampDouble(widget.selectionMidpoint.dx + widget.globalEditableRegion.left,
+    final double anchorX = clampDouble(
+      widget.selectionMidpoint.dx + widget.globalEditableRegion.left,
       _kArrowScreenPadding + mediaQueryPadding.left,
       MediaQuery.sizeOf(context).width - mediaQueryPadding.right - _kArrowScreenPadding,
     );
 
-    final double topAmountInEditableRegion = widget.endpoints.first.point.dy - widget.textLineHeight;
-    final double anchorTop = math.max(topAmountInEditableRegion, 0) + widget.globalEditableRegion.top;
+    final double topAmountInEditableRegion =
+        widget.endpoints.first.point.dy - widget.textLineHeight;
+    final double anchorTop =
+        math.max(topAmountInEditableRegion, 0) + widget.globalEditableRegion.top;
 
     // The y-coordinate has to be calculated instead of directly quoting
     // selectionMidpoint.dy, since the caller
     // (TextSelectionOverlay._buildToolbar) does not know whether the toolbar is
     // going to be facing up or down.
-    final Offset anchorAbove = Offset(
-      anchorX,
-      anchorTop,
-    );
+    final Offset anchorAbove = Offset(anchorX, anchorTop);
     final Offset anchorBelow = Offset(
       anchorX,
       widget.endpoints.last.point.dy + widget.globalEditableRegion.top,
@@ -285,21 +284,16 @@ class _CupertinoTextSelectionControlsToolbarState extends State<_CupertinoTextSe
 
     final List<Widget> items = <Widget>[];
     final CupertinoLocalizations localizations = CupertinoLocalizations.of(context);
-    final Widget onePhysicalPixelVerticalDivider =
-        SizedBox(width: 1.0 / MediaQuery.devicePixelRatioOf(context));
+    final Widget onePhysicalPixelVerticalDivider = SizedBox(
+      width: 1.0 / MediaQuery.devicePixelRatioOf(context),
+    );
 
-    void addToolbarButton(
-      String text,
-      VoidCallback onPressed,
-    ) {
+    void addToolbarButton(String text, VoidCallback onPressed) {
       if (items.isNotEmpty) {
         items.add(onePhysicalPixelVerticalDivider);
       }
 
-      items.add(CupertinoTextSelectionToolbarButton.text(
-        onPressed: onPressed,
-        text: text,
-      ));
+      items.add(CupertinoTextSelectionToolbarButton.text(onPressed: onPressed, text: text));
     }
 
     if (widget.handleCut != null) {
@@ -308,8 +302,7 @@ class _CupertinoTextSelectionControlsToolbarState extends State<_CupertinoTextSe
     if (widget.handleCopy != null) {
       addToolbarButton(localizations.copyButtonLabel, widget.handleCopy!);
     }
-    if (widget.handlePaste != null
-        && widget.clipboardStatus?.value == ClipboardStatus.pasteable) {
+    if (widget.handlePaste != null && widget.clipboardStatus?.value == ClipboardStatus.pasteable) {
       addToolbarButton(localizations.pasteButtonLabel, widget.handlePaste!);
     }
     if (widget.handleSelectAll != null) {

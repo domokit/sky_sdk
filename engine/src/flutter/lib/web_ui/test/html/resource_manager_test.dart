@@ -43,10 +43,7 @@ void testMain() {
     resources.forEach(resourceManager.addResource);
 
     final DomElement resourcesHost = hostElement.firstElementChild!;
-    expect(
-      resourcesHost.tagName.toLowerCase(),
-      ResourceManager.resourcesHostTagName.toLowerCase(),
-    );
+    expect(resourcesHost.tagName.toLowerCase(), ResourceManager.resourcesHostTagName.toLowerCase());
     // Make sure the resources were correctly inserted into the host.
     expect(resourcesHost.children, resources);
 
@@ -70,10 +67,7 @@ void testMain() {
     resources.forEach(resourceManager.addResource);
 
     final DomElement resourcesHost = domManager.renderingHost.firstElementChild!;
-    expect(
-      resourcesHost.tagName.toLowerCase(),
-      ResourceManager.resourcesHostTagName.toLowerCase(),
-    );
+    expect(resourcesHost.tagName.toLowerCase(), ResourceManager.resourcesHostTagName.toLowerCase());
     // Make sure the resources were correctly inserted into the host.
     expect(resourcesHost.children, resources);
 

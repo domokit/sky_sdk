@@ -7,9 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('reassemble does not crash', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(
-      home: Text('Hello World'),
-    ));
+    await tester.pumpWidget(const MaterialApp(home: Text('Hello World')));
     await tester.pump();
     tester.binding.reassembleApplication();
     await tester.pump();

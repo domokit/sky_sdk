@@ -74,6 +74,9 @@ class SurfaceContextVK : public Context,
   RuntimeStageBackend GetRuntimeStageBackend() const override;
 
   // |Context|
+  bool SubmitOnscreen(std::shared_ptr<CommandBuffer> cmd_buffer) override;
+
+  // |Context|
   void Shutdown() override;
 
   [[nodiscard]] bool SetWindowSurface(vk::UniqueSurfaceKHR surface,

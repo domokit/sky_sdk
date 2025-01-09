@@ -18,10 +18,8 @@ typedef TimestampFunction = DateTime Function();
 ///
 /// https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout#Notes
 class AlarmClock {
-
   /// Initializes Alarmclock with a closure that gets called with a timestamp.
-  AlarmClock(TimestampFunction timestampFunction)
-      : _timestampFunction = timestampFunction;
+  AlarmClock(TimestampFunction timestampFunction) : _timestampFunction = timestampFunction;
 
   /// The function used to get current time.
   final TimestampFunction _timestampFunction;
@@ -77,8 +75,7 @@ class AlarmClock {
       // We didn't have an existing timer, so create a new one.
       _timer = Timer(value.difference(now), _timerDidFire);
     } else {
-      assert(_datetime != null,
-          'We can only have a timer if there is a non-null datetime');
+      assert(_datetime != null, 'We can only have a timer if there is a non-null datetime');
       if (_datetime!.isAfter(value)) {
         // This is the case when the value moves the target time to an earlier
         // point. Because there is no way to reconfigure an existing timer, we
@@ -100,8 +97,7 @@ class AlarmClock {
   }
 
   void _timerDidFire() {
-    assert(_datetime != null,
-        'If _datetime is null, the timer would have been cancelled');
+    assert(_datetime != null, 'If _datetime is null, the timer would have been cancelled');
     final DateTime now = _timestampFunction();
     // We use the "not before" logic instead of "is after" because we may have
     // zero difference between now and _datetime.

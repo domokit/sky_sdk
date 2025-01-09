@@ -13,9 +13,7 @@ class OfExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: OfExample(),
-    );
+    return const MaterialApp(home: OfExample());
   }
 }
 
@@ -34,29 +32,27 @@ class OfExample extends StatelessWidget {
             child: ElevatedButton(
               child: const Text('SHOW BOTTOM SHEET'),
               onPressed: () {
-                Scaffold.of(context).showBottomSheet(
-                  (BuildContext context) {
-                    return Container(
-                      alignment: Alignment.center,
-                      height: 200,
-                      color: Colors.amber,
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            const Text('BottomSheet'),
-                            ElevatedButton(
-                              child: const Text('Close BottomSheet'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        ),
+                Scaffold.of(context).showBottomSheet((BuildContext context) {
+                  return Container(
+                    alignment: Alignment.center,
+                    height: 200,
+                    color: Colors.amber,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          const Text('BottomSheet'),
+                          ElevatedButton(
+                            child: const Text('Close BottomSheet'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                );
+                    ),
+                  );
+                });
               },
             ),
           );

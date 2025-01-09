@@ -51,7 +51,7 @@ abstract class Path {
   // see https://skia.org/user/api/SkPath_Reference#SkPath_getBounds
   Rect getBounds();
   static Path combine(PathOperation operation, Path path1, Path path2) =>
-    engine.renderer.combinePaths(operation, path1, path2);
+      engine.renderer.combinePaths(operation, path1, path2);
 
   PathMetrics computeMetrics({bool forceClosed = false});
 }

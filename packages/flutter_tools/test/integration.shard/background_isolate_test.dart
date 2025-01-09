@@ -35,18 +35,17 @@ void main() {
     final Completer<void> sawBackgroundMessage = Completer<void>.sync();
     final Completer<void> sawNewBackgroundMessage = Completer<void>.sync();
     final StreamSubscription<String> subscription = flutter.stdout.listen((String line) {
-        printOnFailure('[LOG]:"$line"');
-        if (line.contains('Main thread') && !sawForegroundMessage.isCompleted) {
-          sawForegroundMessage.complete();
-        }
-        if (line.contains('Isolate thread')) {
-          sawBackgroundMessage.complete();
-        }
-        if (line.contains(newBackgroundMessage)) {
-          sawNewBackgroundMessage.complete();
-        }
-      },
-    );
+      printOnFailure('[LOG]:"$line"');
+      if (line.contains('Main thread') && !sawForegroundMessage.isCompleted) {
+        sawForegroundMessage.complete();
+      }
+      if (line.contains('Isolate thread')) {
+        sawBackgroundMessage.complete();
+      }
+      if (line.contains(newBackgroundMessage)) {
+        sawNewBackgroundMessage.complete();
+      }
+    });
     await flutter.run();
     await sawForegroundMessage.future;
     await sawBackgroundMessage.future;
@@ -69,15 +68,14 @@ void main() {
     final Completer<void> sawBackgroundMessage = Completer<void>.sync();
     final Completer<void> sawNewBackgroundMessage = Completer<void>.sync();
     final StreamSubscription<String> subscription = flutter.stdout.listen((String line) {
-        printOnFailure('[LOG]:"$line"');
-        if (line.contains('Isolate thread') && !sawBackgroundMessage.isCompleted) {
-          sawBackgroundMessage.complete();
-        }
-        if (line.contains(newBackgroundMessage) && !sawNewBackgroundMessage.isCompleted) {
-          sawNewBackgroundMessage.complete();
-        }
-      },
-    );
+      printOnFailure('[LOG]:"$line"');
+      if (line.contains('Isolate thread') && !sawBackgroundMessage.isCompleted) {
+        sawBackgroundMessage.complete();
+      }
+      if (line.contains(newBackgroundMessage) && !sawNewBackgroundMessage.isCompleted) {
+        sawNewBackgroundMessage.complete();
+      }
+    });
     await flutter.run();
     await sawBackgroundMessage.future;
 

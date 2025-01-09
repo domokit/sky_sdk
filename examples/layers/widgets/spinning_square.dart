@@ -30,11 +30,7 @@ class _SpinningSquareState extends State<SpinningSquare> with SingleTickerProvid
   Widget build(BuildContext context) {
     return RotationTransition(
       turns: _animation,
-      child: Container(
-        width: 200.0,
-        height: 200.0,
-        color: const Color(0xFF00FF00),
-      ),
+      child: Container(width: 200.0, height: 200.0, color: const Color(0xFF00FF00)),
     );
   }
 }

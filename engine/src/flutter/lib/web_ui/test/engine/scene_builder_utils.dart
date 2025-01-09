@@ -34,15 +34,17 @@ class StubPicture implements ScenePicture {
 }
 
 class StubCompositePicture extends StubPicture {
-  StubCompositePicture(this.children) : super(
-    children.fold(null, (ui.Rect? previousValue, StubPicture child) {
-      final ui.Rect childRect = child.cullRect;
-      if (childRect.isEmpty) {
-        return previousValue;
-      }
-      return previousValue?.expandToInclude(child.cullRect) ?? child.cullRect;
-    }) ?? ui.Rect.zero
-  );
+  StubCompositePicture(this.children)
+    : super(
+        children.fold(null, (ui.Rect? previousValue, StubPicture child) {
+              final ui.Rect childRect = child.cullRect;
+              if (childRect.isEmpty) {
+                return previousValue;
+              }
+              return previousValue?.expandToInclude(child.cullRect) ?? child.cullRect;
+            }) ??
+            ui.Rect.zero,
+      );
 
   final List<StubPicture> children;
 }
@@ -91,10 +93,24 @@ class StubSceneCanvas implements SceneCanvas {
   void clipRect(ui.Rect rect, {ui.ClipOp clipOp = ui.ClipOp.intersect, bool doAntiAlias = true}) {}
 
   @override
-  void drawArc(ui.Rect rect, double startAngle, double sweepAngle, bool useCenter, ui.Paint paint) {}
+  void drawArc(
+    ui.Rect rect,
+    double startAngle,
+    double sweepAngle,
+    bool useCenter,
+    ui.Paint paint,
+  ) {}
 
   @override
-  void drawAtlas(ui.Image atlas, List<ui.RSTransform> transforms, List<ui.Rect> rects, List<ui.Color>? colors, ui.BlendMode? blendMode, ui.Rect? cullRect, ui.Paint paint) {}
+  void drawAtlas(
+    ui.Image atlas,
+    List<ui.RSTransform> transforms,
+    List<ui.Rect> rects,
+    List<ui.Color>? colors,
+    ui.BlendMode? blendMode,
+    ui.Rect? cullRect,
+    ui.Paint paint,
+  ) {}
 
   @override
   void drawCircle(ui.Offset c, double radius, ui.Paint paint) {}
@@ -136,7 +152,15 @@ class StubSceneCanvas implements SceneCanvas {
   void drawRRect(ui.RRect rrect, ui.Paint paint) {}
 
   @override
-  void drawRawAtlas(ui.Image atlas, Float32List rstTransforms, Float32List rects, Int32List? colors, ui.BlendMode? blendMode, ui.Rect? cullRect, ui.Paint paint) {}
+  void drawRawAtlas(
+    ui.Image atlas,
+    Float32List rstTransforms,
+    Float32List rects,
+    Int32List? colors,
+    ui.BlendMode? blendMode,
+    ui.Rect? cullRect,
+    ui.Paint paint,
+  ) {}
 
   @override
   void drawRawPoints(ui.PointMode pointMode, Float32List points, ui.Paint paint) {}

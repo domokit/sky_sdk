@@ -1462,9 +1462,9 @@ TEST_P(DisplayListTest, DrawVerticesBlendModes) {
     }
     ImGui::End();
 
-    std::vector<SkPoint> positions = {SkPoint::Make(100, 300),
-                                      SkPoint::Make(200, 100),
-                                      SkPoint::Make(300, 300)};
+    std::vector<DlPoint> positions = {DlPoint(100, 300),  //
+                                      DlPoint(200, 100),  //
+                                      DlPoint(300, 300)};
     std::vector<flutter::DlColor> colors = {
         toColor(color0).modulateOpacity(dst_alpha),
         toColor(color1).modulateOpacity(dst_alpha),

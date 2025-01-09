@@ -53,9 +53,12 @@ void doTests() {
         ..top = '100px'
         ..left = '120px';
 
-      rootElement.addEventListener('click', createDomEventListener((DomEvent e) {
-        events.add(e);
-      }));
+      rootElement.addEventListener(
+        'click',
+        createDomEventListener((DomEvent e) {
+          events.add(e);
+        }),
+      );
     });
 
     tearDown(() {
@@ -65,14 +68,14 @@ void doTests() {
 
     test('Event dispatched by target returns offsetX, offsetY', () async {
       // Fire an event contained within target...
-      final DomMouseEvent event = await dispatchAndCatch(rootElement, createDomPointerEvent(
-        'click',
-        <String, Object>{
+      final DomMouseEvent event = await dispatchAndCatch(
+        rootElement,
+        createDomPointerEvent('click', <String, Object>{
           'bubbles': true,
           'clientX': 10,
           'clientY': 20,
-        }
-      ));
+        }),
+      );
 
       expect(event.offsetX, 10);
       expect(event.offsetY, 20);
@@ -85,14 +88,14 @@ void doTests() {
 
     test('Event dispatched on child re-computes offset (offsetX/Y invalid)', () async {
       // Fire an event contained within target...
-      final DomMouseEvent event = await dispatchAndCatch(eventSource, createDomPointerEvent(
-        'click',
-        <String, Object>{
+      final DomMouseEvent event = await dispatchAndCatch(
+        eventSource,
+        createDomPointerEvent('click', <String, Object>{
           'bubbles': true, // So it can be caught in `target`
           'clientX': 140, // x = 20px into `eventSource`.
           'clientY': 110, // y = 10px into `eventSource`.
-        }
-      ));
+        }),
+      );
 
       expect(event.offsetX, 20);
       expect(event.offsetY, 10);
@@ -122,10 +125,7 @@ void doTests() {
         'clientY': 20,
       });
 
-      expect(
-        () => computeEventOffsetToTarget(moveEvent, view),
-        throwsA(anything),
-      );
+      expect(() => computeEventOffsetToTarget(moveEvent, view), throwsA(anything));
 
       expect(
         () => computeEventOffsetToTarget(moveEvent, view, eventTarget: input),
@@ -137,8 +137,12 @@ void doTests() {
       // Fill this in to test _computeOffsetForTalkbackEvent
     }, skip: 'To be implemented!');
 
-    test('Event dispatched on text editing node computes offset with framework geometry', () async {
-      // Fill this in to test _computeOffsetForInputs
-    }, skip: 'To be implemented!');
+    test(
+      'Event dispatched on text editing node computes offset with framework geometry',
+      () async {
+        // Fill this in to test _computeOffsetForInputs
+      },
+      skip: 'To be implemented!',
+    );
   });
 }

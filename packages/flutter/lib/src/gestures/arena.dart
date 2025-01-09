@@ -79,12 +79,16 @@ class _GestureArena {
     if (members.isEmpty) {
       buffer.write('<empty>');
     } else {
-      buffer.write(members.map<String>((GestureArenaMember member) {
-        if (member == eagerWinner) {
-          return '$member (eager winner)';
-        }
-        return '$member';
-      }).join(', '));
+      buffer.write(
+        members
+            .map<String>((GestureArenaMember member) {
+              if (member == eagerWinner) {
+                return '$member (eager winner)';
+              }
+              return '$member';
+            })
+            .join(', '),
+      );
     }
     if (isOpen) {
       buffer.write(' [open]');
@@ -284,12 +288,14 @@ class GestureArenaManager {
     member.acceptGesture(pointer);
   }
 
-  bool _debugLogDiagnostic(int pointer, String message, [ _GestureArena? state ]) {
+  bool _debugLogDiagnostic(int pointer, String message, [_GestureArena? state]) {
     assert(() {
       if (debugPrintGestureArenaDiagnostics) {
         final int? count = state?.members.length;
         final String s = count != 1 ? 's' : '';
-        debugPrint('Gesture arena ${pointer.toString().padRight(4)} ❙ $message${ count != null ? " with $count member$s." : ""}');
+        debugPrint(
+          'Gesture arena ${pointer.toString().padRight(4)} ❙ $message${count != null ? " with $count member$s." : ""}',
+        );
       }
       return true;
     }());

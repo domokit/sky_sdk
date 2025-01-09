@@ -44,13 +44,15 @@ class TestBinding extends BindingBase with SchedulerBinding, ServicesBinding {
   ViewFocusEvent? lastFocusEvent;
 
   @override
-  TestDefaultBinaryMessenger get defaultBinaryMessenger => super.defaultBinaryMessenger as TestDefaultBinaryMessenger;
+  TestDefaultBinaryMessenger get defaultBinaryMessenger =>
+      super.defaultBinaryMessenger as TestDefaultBinaryMessenger;
 
   @override
   TestDefaultBinaryMessenger createBinaryMessenger() {
     Future<ByteData?> keyboardHandler(ByteData? message) async {
-      return const StandardMethodCodec().encodeSuccessEnvelope(<int, int>{1:1});
+      return const StandardMethodCodec().encodeSuccessEnvelope(<int, int>{1: 1});
     }
+
     return TestDefaultBinaryMessenger(
       super.createBinaryMessenger(),
       outboundHandlers: <String, MessageHandler>{'flutter/keyboard': keyboardHandler},
@@ -68,7 +70,9 @@ void main() {
   final TestBinding binding = TestBinding();
 
   test('Adds rootBundle LICENSES to LicenseRegistry', () async {
-    binding.defaultBinaryMessenger.setMockMessageHandler('flutter/assets', (ByteData? message) async {
+    binding.defaultBinaryMessenger.setMockMessageHandler('flutter/assets', (
+      ByteData? message,
+    ) async {
       if (const StringCodec().decodeMessage(message) == 'NOTICES.Z' && !kIsWeb) {
         return Uint8List.fromList(gzip.encode(utf8.encode(combinedLicenses))).buffer.asByteData();
       }
@@ -95,7 +99,9 @@ void main() {
 
   test('didHaveMemoryPressure clears asset caches', () async {
     int flutterAssetsCallCount = 0;
-    binding.defaultBinaryMessenger.setMockMessageHandler('flutter/assets', (ByteData? message) async {
+    binding.defaultBinaryMessenger.setMockMessageHandler('flutter/assets', (
+      ByteData? message,
+    ) async {
       flutterAssetsCallCount += 1;
       return ByteData.sublistView(utf8.encode('test_asset_data'));
     });
@@ -109,8 +115,9 @@ void main() {
     await rootBundle.loadString('test_asset2');
     expect(flutterAssetsCallCount, 2);
 
-    final ByteData message = const JSONMessageCodec().encodeMessage(<String, dynamic>{'type': 'memoryPressure'})!;
-    await binding.defaultBinaryMessenger.handlePlatformMessage('flutter/system', message, (_) { });
+    final ByteData message =
+        const JSONMessageCodec().encodeMessage(<String, dynamic>{'type': 'memoryPressure'})!;
+    await binding.defaultBinaryMessenger.handlePlatformMessage('flutter/system', message, (_) {});
 
     await rootBundle.loadString('test_asset');
     expect(flutterAssetsCallCount, 3);
@@ -123,16 +130,24 @@ void main() {
   });
 
   test('initInstances sets a default method call handler for SystemChannels.textInput', () async {
-    final ByteData message = const JSONMessageCodec().encodeMessage(<String, dynamic>{'method': 'TextInput.requestElementsInRect', 'args': null})!;
-    await binding.defaultBinaryMessenger.handlePlatformMessage('flutter/textinput', message, (ByteData? data) {
+    final ByteData message =
+        const JSONMessageCodec().encodeMessage(<String, dynamic>{
+          'method': 'TextInput.requestElementsInRect',
+          'args': null,
+        })!;
+    await binding.defaultBinaryMessenger.handlePlatformMessage('flutter/textinput', message, (
+      ByteData? data,
+    ) {
       expect(data, isNotNull);
-     });
+    });
   });
 
   test('Calling exitApplication sends a method call to the engine', () async {
     bool sentMessage = false;
     MethodCall? methodCall;
-    binding.defaultBinaryMessenger.setMockMessageHandler('flutter/platform', (ByteData? message) async {
+    binding.defaultBinaryMessenger.setMockMessageHandler('flutter/platform', (
+      ByteData? message,
+    ) async {
       methodCall = const JSONMethodCodec().decodeMethodCall(message);
       sentMessage = true;
       return const JSONMethodCodec().encodeSuccessEnvelope(<String, String>{'response': 'cancel'});
@@ -145,12 +160,18 @@ void main() {
   });
 
   test('Default handleRequestAppExit returns exit', () async {
-    const MethodCall incomingCall = MethodCall('System.requestAppExit', <dynamic>[<String, dynamic>{'type': 'cancelable'}]);
+    const MethodCall incomingCall = MethodCall('System.requestAppExit', <dynamic>[
+      <String, dynamic>{'type': 'cancelable'},
+    ]);
     bool receivedReply = false;
     Map<String, dynamic>? result;
-    await binding.defaultBinaryMessenger.handlePlatformMessage('flutter/platform', const JSONMethodCodec().encodeMethodCall(incomingCall),
+    await binding.defaultBinaryMessenger.handlePlatformMessage(
+      'flutter/platform',
+      const JSONMethodCodec().encodeMethodCall(incomingCall),
       (ByteData? message) async {
-        result = (const JSONMessageCodec().decodeMessage(message) as List<dynamic>)[0] as Map<String, dynamic>;
+        result =
+            (const JSONMessageCodec().decodeMessage(message) as List<dynamic>)[0]
+                as Map<String, dynamic>;
         receivedReply = true;
       },
     );
@@ -174,7 +195,8 @@ void main() {
     const ViewFocusEvent event = ViewFocusEvent(
       viewId: 0,
       direction: ViewFocusDirection.forward,
-      state: ViewFocusState.focused);
+      state: ViewFocusState.focused,
+    );
     PlatformDispatcher.instance.onViewFocusChange?.call(event);
     expect(binding.lastFocusEvent, equals(event));
   });

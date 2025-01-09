@@ -462,7 +462,8 @@ std::optional<size_t> BufferBindingsGLES::BindTextures(
 
     auto location = ComputeTextureLocation(data.texture.GetMetadata());
     if (location == -1) {
-      return std::nullopt;
+      // The texture binding was optimized out of the shader. Continue.
+      continue;
     }
 
     //--------------------------------------------------------------------------

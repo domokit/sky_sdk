@@ -44,8 +44,9 @@ static void InsertImageMemoryBarrier(const vk::CommandBuffer& cmd,
   cmd.pipelineBarrier(src_stage, dst_stage, {}, nullptr, nullptr, barrier);
 }
 
-BlitPassVK::BlitPassVK(std::shared_ptr<CommandBufferVK> command_buffer)
-    : command_buffer_(std::move(command_buffer)) {}
+BlitPassVK::BlitPassVK(std::shared_ptr<CommandBufferVK> command_buffer,
+                       const WorkaroundsVK& workarounds)
+    : command_buffer_(std::move(command_buffer)), workarounds_(workarounds) {}
 
 BlitPassVK::~BlitPassVK() = default;
 
@@ -57,8 +58,7 @@ bool BlitPassVK::IsValid() const {
 }
 
 // |BlitPass|
-bool BlitPassVK::EncodeCommands(
-    const std::shared_ptr<Allocator>& transients_allocator) const {
+bool BlitPassVK::EncodeCommands() const {
   return true;
 }
 
@@ -403,7 +403,7 @@ bool BlitPassVK::OnGenerateMipmapCommand(std::shared_ptr<Texture> texture,
   const auto size = src.GetTextureDescriptor().size;
   uint32_t mip_count = src.GetTextureDescriptor().mip_count;
 
-  if (mip_count < 2u) {
+  if (mip_count < 2u || workarounds_.broken_mipmap_generation) {
     return true;
   }
 

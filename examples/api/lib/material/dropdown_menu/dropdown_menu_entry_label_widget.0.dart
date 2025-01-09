@@ -19,10 +19,11 @@ enum ColorItem {
 }
 
 class DropdownMenuEntryLabelWidgetExample extends StatefulWidget {
-  const DropdownMenuEntryLabelWidgetExample({ super.key });
+  const DropdownMenuEntryLabelWidgetExample({super.key});
 
   @override
-  State<DropdownMenuEntryLabelWidgetExample> createState() => _DropdownMenuEntryLabelWidgetExampleState();
+  State<DropdownMenuEntryLabelWidgetExample> createState() =>
+      _DropdownMenuEntryLabelWidgetExampleState();
 }
 
 class _DropdownMenuEntryLabelWidgetExampleState extends State<DropdownMenuEntryLabelWidgetExample> {
@@ -43,7 +44,8 @@ class _DropdownMenuEntryLabelWidgetExampleState extends State<DropdownMenuEntryL
   @override
   Widget build(BuildContext context) {
     // Created by Google Bard from 'create a lyrical phrase of about 25 words that begins with "is a color"'.
-    const String longText = 'is a color that sings of hope, A hue that shines like gold. It is the color of dreams, A shade that never grows old.';
+    const String longText =
+        'is a color that sings of hope, A hue that shines like gold. It is the color of dreams, A shade that never grows old.';
 
     return Scaffold(
       body: Center(
@@ -55,20 +57,17 @@ class _DropdownMenuEntryLabelWidgetExampleState extends State<DropdownMenuEntryL
           onSelected: (ColorItem? color) {
             print('Selected $color');
           },
-          dropdownMenuEntries: ColorItem.values.map<DropdownMenuEntry<ColorItem>>((ColorItem item) {
-            final String labelText = '${item.label} $longText\n';
-            return DropdownMenuEntry<ColorItem>(
-              value: item,
-              label: labelText,
-              // Try commenting the labelWidget out or changing
-              // the labelWidget's Text parameters.
-              labelWidget: Text(
-                labelText,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            );
-          }).toList(),
+          dropdownMenuEntries:
+              ColorItem.values.map<DropdownMenuEntry<ColorItem>>((ColorItem item) {
+                final String labelText = '${item.label} $longText\n';
+                return DropdownMenuEntry<ColorItem>(
+                  value: item,
+                  label: labelText,
+                  // Try commenting the labelWidget out or changing
+                  // the labelWidget's Text parameters.
+                  labelWidget: Text(labelText, maxLines: 1, overflow: TextOverflow.ellipsis),
+                );
+              }).toList(),
         ),
       ),
     );
@@ -76,13 +75,11 @@ class _DropdownMenuEntryLabelWidgetExampleState extends State<DropdownMenuEntryL
 }
 
 class DropdownMenuEntryLabelWidgetExampleApp extends StatelessWidget {
-  const DropdownMenuEntryLabelWidgetExampleApp({ super.key });
+  const DropdownMenuEntryLabelWidgetExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: DropdownMenuEntryLabelWidgetExample(),
-    );
+    return const MaterialApp(home: DropdownMenuEntryLabelWidgetExample());
   }
 }
 

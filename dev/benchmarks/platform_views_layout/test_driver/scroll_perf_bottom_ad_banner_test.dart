@@ -52,7 +52,10 @@ void main() {
     test('platform_views_scroll_perf', () async {
       // Disable frame sync, since there are ongoing animations.
       await driver.runUnsynchronized(() async {
-        await testScrollPerf('platform-views-scroll', 'platform_views_scroll_perf_bottom_ad_banner');
+        await testScrollPerf(
+          'platform-views-scroll',
+          'platform_views_scroll_perf_bottom_ad_banner',
+        );
       });
     }, timeout: Timeout.none);
   });

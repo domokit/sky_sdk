@@ -22,11 +22,11 @@ import 'semantics.dart';
 ///   * https://bugs.webkit.org/show_bug.cgi?id=223798
 class SemanticPlatformView extends SemanticRole {
   SemanticPlatformView(SemanticsObject semanticsObject)
-      : super.withBasics(
-          SemanticRoleKind.platformView,
-          semanticsObject,
-          preferredLabelRepresentation: LabelRepresentation.ariaLabel,
-        );
+    : super.withBasics(
+        SemanticRoleKind.platformView,
+        semanticsObject,
+        preferredLabelRepresentation: LabelRepresentation.ariaLabel,
+      );
 
   /// Ignores pointer events on all platform view nodes.
   ///
@@ -41,10 +41,7 @@ class SemanticPlatformView extends SemanticRole {
 
     if (semanticsObject.isPlatformView) {
       if (semanticsObject.isPlatformViewIdDirty) {
-        setAttribute(
-          'aria-owns',
-          getPlatformViewDomId(semanticsObject.platformViewId),
-        );
+        setAttribute('aria-owns', getPlatformViewDomId(semanticsObject.platformViewId));
       }
     } else {
       removeAttribute('aria-owns');

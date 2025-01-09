@@ -22,21 +22,22 @@ import 'utils.dart';
 
 const String expectedUrlPrefix = 'https://fonts.gstatic.com/s/';
 
-class RollFallbackFontsCommand extends Command<bool>
-    with ArgUtils<bool> {
+class RollFallbackFontsCommand extends Command<bool> with ArgUtils<bool> {
   RollFallbackFontsCommand() {
     argParser.addOption(
       'key',
       defaultsTo: '',
-      help: 'The Google Fonts API key. Used to get data about fonts hosted on '
+      help:
+          'The Google Fonts API key. Used to get data about fonts hosted on '
           'Google Fonts.',
     );
     argParser.addFlag(
       'dry-run',
-      help: 'Whether or not to push changes to CIPD. When --dry-run is set, the '
-            'script will download everything and attempt to prepare the bundle '
-            'but will stop before publishing. When not set, the bundle will be '
-            'published.',
+      help:
+          'Whether or not to push changes to CIPD. When --dry-run is set, the '
+          'script will download everything and attempt to prepare the bundle '
+          'but will stop before publishing. When not set, the bundle will be '
+          'published.',
       negatable: false,
     );
   }
@@ -45,8 +46,9 @@ class RollFallbackFontsCommand extends Command<bool>
   final String name = 'roll-fallback-fonts';
 
   @override
-  final String description = 'Generate fallback font data from GoogleFonts and '
-                             'upload fonts to cipd.';
+  final String description =
+      'Generate fallback font data from GoogleFonts and '
+      'upload fonts to cipd.';
 
   String get apiKey => stringArg('key');
   bool get isDryRun => boolArg('dry-run');
@@ -84,8 +86,7 @@ class RollFallbackFontsCommand extends Command<bool>
         throw ToolExit('Failed to download font for $family');
       }
       final String urlSuffix = getUrlSuffix(uri);
-      final io.File fontFile =
-          io.File(path.join(fontDir.path, urlSuffix));
+      final io.File fontFile = io.File(path.join(fontDir.path, urlSuffix));
 
       final Uint8List bodyBytes = fontResponse.bodyBytes;
       hasher.add(utf8.encode(urlSuffix));
@@ -93,8 +94,7 @@ class RollFallbackFontsCommand extends Command<bool>
 
       await fontFile.create(recursive: true);
       await fontFile.writeAsBytes(bodyBytes, flush: true);
-      final io.ProcessResult fcQueryResult =
-          await io.Process.run('fc-query', <String>[
+      final io.ProcessResult fcQueryResult = await io.Process.run('fc-query', <String>[
         '--format=%{charset}',
         '--',
         fontFile.path,
@@ -128,8 +128,10 @@ class RollFallbackFontsCommand extends Command<bool>
     final String fontSetsCode = _computeEncodedFontSets(fallbackFontData);
 
     sb.writeln('// Copyright 2013 The Flutter Authors. All rights reserved.');
-    sb.writeln('// Use of this source code is governed by a BSD-style license '
-        'that can be');
+    sb.writeln(
+      '// Use of this source code is governed by a BSD-style license '
+      'that can be',
+    );
     sb.writeln('// found in the LICENSE file.');
     sb.writeln();
     sb.writeln('// DO NOT EDIT! This file is generated. See:');
@@ -147,19 +149,12 @@ class RollFallbackFontsCommand extends Command<bool>
     sb.writeln();
     sb.write(fontSetsCode);
 
-    final io.File fontDataFile = io.File(path.join(
-      environment.webUiRootDir.path,
-      'lib',
-      'src',
-      'engine',
-      'font_fallback_data.dart',
-    ));
+    final io.File fontDataFile = io.File(
+      path.join(environment.webUiRootDir.path, 'lib', 'src', 'engine', 'font_fallback_data.dart'),
+    );
     await fontDataFile.writeAsString(sb.toString());
 
-    final io.File licenseFile = io.File(path.join(
-      fontDir.path,
-      'LICENSE.txt',
-    ));
+    final io.File licenseFile = io.File(path.join(fontDir.path, 'LICENSE.txt'));
     const String licenseString = r'''
 © Copyright 2015-2021 Google LLC. All Rights Reserved.
 
@@ -264,10 +259,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     final crypto.Digest digest = hashSink.events.single;
     final String versionString = digest.toString();
     const String packageName = 'flutter/flutter_font_fallbacks';
-    if (await cipdKnowsPackageVersion(
-      package: packageName,
-      versionTag: versionString)) {
-        print('Package already exists with hash $versionString. Skipping upload');
+    if (await cipdKnowsPackageVersion(package: packageName, versionTag: versionString)) {
+      print('Package already exists with hash $versionString. Skipping upload');
     } else {
       print('Uploading fallback fonts to CIPD with hash $versionString');
       await uploadDirectoryToCipd(
@@ -282,15 +275,11 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     }
 
     print('Setting new fallback fonts deps version to $versionString');
-    final String depFilePath = path.join(
-      environment.engineSrcDir.path,
-      'flutter',
-      'DEPS',
-    );
+    final String depFilePath = path.join(environment.engineSrcDir.path, 'flutter', 'DEPS');
     await runProcess('gclient', <String>[
       'setdep',
       '--revision=src/flutter/third_party/google_fonts_for_unit_tests:$packageName@$versionString',
-      '--deps-file=$depFilePath'
+      '--deps-file=$depFilePath',
     ]);
   }
 
@@ -302,26 +291,22 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       throw UsageException('No Google Fonts API key provided', argParser.usage);
     }
     final List<_FontInfo> processedFonts = <_FontInfo>[];
-    final http.Response response = await client.get(Uri.parse(
-        'https://www.googleapis.com/webfonts/v1/webfonts?capability=WOFF2&key=$apiKey'));
+    final http.Response response = await client.get(
+      Uri.parse('https://www.googleapis.com/webfonts/v1/webfonts?capability=WOFF2&key=$apiKey'),
+    );
     if (response.statusCode != 200) {
       throw ToolExit('Failed to download Google Fonts list.');
     }
     final Map<String, dynamic> googleFontsResult =
         jsonDecode(response.body) as Map<String, dynamic>;
     final List<Map<String, dynamic>> fontDatas =
-        (googleFontsResult['items'] as List<dynamic>)
-            .cast<Map<String, dynamic>>();
+        (googleFontsResult['items'] as List<dynamic>).cast<Map<String, dynamic>>();
     for (final Map<String, Object?> fontData in fontDatas) {
       final String family = fontData['family']! as String;
       if (requestedFonts.contains(family)) {
         final files = fontData['files']! as Map<String, Object?>;
-        final Uri uri = Uri.parse(files['regular']! as String)
-            .replace(scheme: 'https');
-        processedFonts.add((
-          family: family,
-          uri: uri,
-        ));
+        final Uri uri = Uri.parse(files['regular']! as String).replace(scheme: 'https');
+        processedFonts.add((family: family, uri: uri));
       }
     }
     return processedFonts;
@@ -334,15 +319,16 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     final List<_FontInfo> processedFonts = <_FontInfo>[];
     for (final String font in requestedFonts) {
       final String modifiedFontName = font.replaceAll(' ', '+');
-      final Uri cssUri = Uri.parse(
-          'https://fonts.googleapis.com/css2?family=$modifiedFontName');
-      final http.Response response =
-          await client.get(cssUri, headers: <String, String>{
-        // Spoof the User-Agent so Google Fonts serves WOFF2 fonts
-        'User-Agent':
-            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                'Chrome/112.0.0.0 Safari/537.36'
-      });
+      final Uri cssUri = Uri.parse('https://fonts.googleapis.com/css2?family=$modifiedFontName');
+      final http.Response response = await client.get(
+        cssUri,
+        headers: <String, String>{
+          // Spoof the User-Agent so Google Fonts serves WOFF2 fonts
+          'User-Agent':
+              'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
+              'Chrome/112.0.0.0 Safari/537.36',
+        },
+      );
       final String cssString = response.body;
       // Match the patterns that look like:
       // `src: url(...some url...)`
@@ -352,10 +338,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       for (final match in r.allMatches(cssString)) {
         final String family = '$font $familyCount';
         final Uri uri = Uri.parse(match.group(1)!);
-        processedFonts.add((
-          family: family,
-          uri: uri,
-        ));
+        processedFonts.add((family: family, uri: uri));
         familyCount += 1;
       }
     }
@@ -532,8 +515,7 @@ Future<List<String>> _checkForLicenseAttributions(
   http.Client client,
   List<_FontInfo> fallbackFontInfo,
 ) async {
-  const String googleFontsUpstream =
-      'https://github.com/google/fonts/tree/main/ofl';
+  const String googleFontsUpstream = 'https://github.com/google/fonts/tree/main/ofl';
   const String attributionString =
       'This Font Software is licensed under the SIL Open Font License, Version 1.1.';
 
@@ -576,13 +558,12 @@ class _Font {
   static int compare(_Font a, _Font b) => a.index.compareTo(b.index);
 
   String get shortName =>
-      _shortName +
-      String.fromCharCodes(
-          '$index'.codeUnits.map((int ch) => ch - 48 + 0x2080));
+      _shortName + String.fromCharCodes('$index'.codeUnits.map((int ch) => ch - 48 + 0x2080));
 
-  String get _shortName => info.family.startsWith('Noto Sans ')
-      ? info.family.substring('Noto Sans '.length)
-      : info.family;
+  String get _shortName =>
+      info.family.startsWith('Noto Sans ')
+          ? info.family.substring('Noto Sans '.length)
+          : info.family;
 }
 
 /// The boundary of a range of a font.
@@ -792,8 +773,7 @@ String _computeEncodedFontSets(List<_Font> fonts) {
 
     void newRange(int start, int end) {
       // Ensure we are using the canonical font order.
-      final List<_Font> fonts = List<_Font>.of(currentElements)
-        ..sort(_Font.compare);
+      final List<_Font> fonts = List<_Font>.of(currentElements)..sort(_Font.compare);
       final _TrieNode node = trieRoot.insertSequenceAtRoot(fonts);
       final _FontSet fontSet = node.fontSet ??= _FontSet(fonts);
       if (fontSet.rangeCount == 0) {
@@ -880,12 +860,13 @@ String _computeEncodedFontSets(List<_Font> fonts) {
 
   final StringBuffer declarations = StringBuffer();
 
-  final int references =
-      allSets.fold(0, (int sum, _FontSet set) => sum + set.length);
+  final int references = allSets.fold(0, (int sum, _FontSet set) => sum + set.length);
   declarations
-    ..writeln('// ${allSets.length} unique sets of fonts'
-        ' containing $references font references'
-        ' encoded in $totalEncodedLength characters')
+    ..writeln(
+      '// ${allSets.length} unique sets of fonts'
+      ' containing $references font references'
+      ' encoded in $totalEncodedLength characters',
+    )
     ..writeln('const String encodedFontSets =')
     ..write(code)
     ..writeln('    ;');
@@ -923,8 +904,7 @@ String _computeEncodedFontSets(List<_Font> fonts) {
 
   declarations
     ..writeln()
-    ..writeln(
-        '// ${ranges.length} ranges encoded in $totalEncodedLength characters')
+    ..writeln('// ${ranges.length} ranges encoded in $totalEncodedLength characters')
     ..writeln('const String encodedFontSetRanges =')
     ..write(code)
     ..writeln('    ;');

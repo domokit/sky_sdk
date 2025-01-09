@@ -7,10 +7,10 @@ import 'package:flutter_api_samples/material/scaffold/scaffold.1.dart' as exampl
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('The count should be incremented when the floating action button is tapped', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.ScaffoldExampleApp(),
-    );
+  testWidgets('The count should be incremented when the floating action button is tapped', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.ScaffoldExampleApp());
 
     expect(find.widgetWithText(AppBar, 'Sample Code'), findsOne);
     expect(find.widgetWithIcon(FloatingActionButton, Icons.add), findsOne);

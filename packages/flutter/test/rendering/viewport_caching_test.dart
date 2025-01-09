@@ -22,9 +22,7 @@ void main() {
 
   setUp(() {
     children = <RenderSliver>[
-      RenderSliverToBoxAdapter(
-        child: RenderSizedBox(const Size(800, 400)),
-      ),
+      RenderSliverToBoxAdapter(child: RenderSizedBox(const Size(800, 400))),
     ];
   });
 
@@ -98,7 +96,7 @@ void main() {
     );
 
     layout(renderViewport);
-    expect(renderViewport.describeSemanticsClip(null), rectExpandedOnAxis(height  / 2));
+    expect(renderViewport.describeSemanticsClip(null), rectExpandedOnAxis(height / 2));
   });
 
   test('Cache extent - 1x viewport', () async {
@@ -127,34 +125,39 @@ void main() {
     expect(renderViewport.describeSemanticsClip(null), rectExpandedOnAxis(height * 2.5));
   });
 
-  test('RenderShrinkWrappingViewport describeApproximatePaintClip with infinite viewportMainAxisExtent returns finite rect', () {
-    final RenderSliver child = CustomConstraintsRenderSliver(const SliverConstraints(
-      axisDirection: AxisDirection.down,
-      cacheOrigin: 0.0,
-      crossAxisDirection: AxisDirection.left,
-      crossAxisExtent: 400.0,
-      growthDirection: GrowthDirection.forward,
-      overlap: 1.0,                                // must not equal 0 for this test
-      precedingScrollExtent: 0.0,
-      remainingPaintExtent: double.infinity,
-      remainingCacheExtent: 0.0,
-      scrollOffset: 0.0,
-      userScrollDirection: ScrollDirection.idle,
-      viewportMainAxisExtent: double.infinity,     // must == infinity
-    ));
+  test(
+    'RenderShrinkWrappingViewport describeApproximatePaintClip with infinite viewportMainAxisExtent returns finite rect',
+    () {
+      final RenderSliver child = CustomConstraintsRenderSliver(
+        const SliverConstraints(
+          axisDirection: AxisDirection.down,
+          cacheOrigin: 0.0,
+          crossAxisDirection: AxisDirection.left,
+          crossAxisExtent: 400.0,
+          growthDirection: GrowthDirection.forward,
+          overlap: 1.0, // must not equal 0 for this test
+          precedingScrollExtent: 0.0,
+          remainingPaintExtent: double.infinity,
+          remainingCacheExtent: 0.0,
+          scrollOffset: 0.0,
+          userScrollDirection: ScrollDirection.idle,
+          viewportMainAxisExtent: double.infinity, // must == infinity
+        ),
+      );
 
-    final RenderShrinkWrappingViewport viewport = RenderShrinkWrappingViewport(
-      crossAxisDirection: AxisDirection.left,
-      offset: ViewportOffset.zero(),
-      children: <RenderSliver>[ child ],
-    );
+      final RenderShrinkWrappingViewport viewport = RenderShrinkWrappingViewport(
+        crossAxisDirection: AxisDirection.left,
+        offset: ViewportOffset.zero(),
+        children: <RenderSliver>[child],
+      );
 
-    layout(viewport);
-    expect(
-      viewport.describeApproximatePaintClip(child),
-      const Rect.fromLTRB(0.0, 0.0, 800.0, 600.0),
-    );
-  });
+      layout(viewport);
+      expect(
+        viewport.describeApproximatePaintClip(child),
+        const Rect.fromLTRB(0.0, 0.0, 800.0, 600.0),
+      );
+    },
+  );
 }
 
 class CustomConstraintsRenderSliver extends RenderSliver {
@@ -168,5 +171,4 @@ class CustomConstraintsRenderSliver extends RenderSliver {
 
   @override
   void performLayout() {}
-
 }

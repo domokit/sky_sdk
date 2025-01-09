@@ -10,15 +10,9 @@ import 'package:ui/src/engine.dart';
 import 'package:ui/src/engine/skwasm/skwasm_impl.dart';
 import 'package:ui/ui.dart' as ui;
 
-enum PathDirection {
-  clockwise,
-  counterClockwise,
-}
+enum PathDirection { clockwise, counterClockwise }
 
-enum PathArcSize {
-  small,
-  large,
-}
+enum PathArcSize { small, large }
 
 class SkwasmPath extends SkwasmObjectWrapper<RawPath> implements ScenePath {
   factory SkwasmPath() {
@@ -31,8 +25,9 @@ class SkwasmPath extends SkwasmObjectWrapper<RawPath> implements ScenePath {
 
   SkwasmPath.fromHandle(PathHandle handle) : super(handle, _registry);
 
-  static final SkwasmFinalizationRegistry<RawPath> _registry =
-    SkwasmFinalizationRegistry<RawPath>(pathDispose);
+  static final SkwasmFinalizationRegistry<RawPath> _registry = SkwasmFinalizationRegistry<RawPath>(
+    pathDispose,
+  );
 
   @override
   ui.PathFillType get fillType => ui.PathFillType.values[pathGetFillType(handle)];
@@ -54,50 +49,37 @@ class SkwasmPath extends SkwasmObjectWrapper<RawPath> implements ScenePath {
 
   @override
   void quadraticBezierTo(double x1, double y1, double x2, double y2) =>
-    pathQuadraticBezierTo(handle, x1, y1, x2, y2);
+      pathQuadraticBezierTo(handle, x1, y1, x2, y2);
 
   @override
   void relativeQuadraticBezierTo(double x1, double y1, double x2, double y2) =>
-    pathRelativeQuadraticBezierTo(handle, x1, y1, x2, y2);
+      pathRelativeQuadraticBezierTo(handle, x1, y1, x2, y2);
 
   @override
-  void cubicTo(
-    double x1,
-    double y1,
-    double x2,
-    double y2,
-    double x3,
-    double y3) =>
-    pathCubicTo(handle, x1, y1, x2, y2, x3, y3);
+  void cubicTo(double x1, double y1, double x2, double y2, double x3, double y3) =>
+      pathCubicTo(handle, x1, y1, x2, y2, x3, y3);
 
   @override
-  void relativeCubicTo(
-      double x1,
-      double y1,
-      double x2,
-      double y2,
-      double x3,
-      double y3) =>
-    pathRelativeCubicTo(handle, x1, y1, x2, y2, x3, y3);
+  void relativeCubicTo(double x1, double y1, double x2, double y2, double x3, double y3) =>
+      pathRelativeCubicTo(handle, x1, y1, x2, y2, x3, y3);
 
   @override
   void conicTo(double x1, double y1, double x2, double y2, double w) =>
-    pathConicTo(handle, x1, y1, x2, y2, w);
+      pathConicTo(handle, x1, y1, x2, y2, w);
 
   @override
   void relativeConicTo(double x1, double y1, double x2, double y2, double w) =>
-    pathRelativeConicTo(handle, x1, y1, x2, y2, w);
+      pathRelativeConicTo(handle, x1, y1, x2, y2, w);
 
   @override
-  void arcTo(
-      ui.Rect rect, double startAngle, double sweepAngle, bool forceMoveTo) {
+  void arcTo(ui.Rect rect, double startAngle, double sweepAngle, bool forceMoveTo) {
     withStackScope((StackScope s) {
       pathArcToOval(
-          handle,
-          s.convertRectToNative(rect),
-          ui.toDegrees(startAngle),
-          ui.toDegrees(sweepAngle),
-          forceMoveTo
+        handle,
+        s.convertRectToNative(rect),
+        ui.toDegrees(startAngle),
+        ui.toDegrees(sweepAngle),
+        forceMoveTo,
       );
     });
   }
@@ -110,19 +92,18 @@ class SkwasmPath extends SkwasmObjectWrapper<RawPath> implements ScenePath {
     bool largeArc = false,
     bool clockwise = true,
   }) {
-    final PathArcSize arcSize =
-        largeArc ? PathArcSize.large : PathArcSize.small;
+    final PathArcSize arcSize = largeArc ? PathArcSize.large : PathArcSize.small;
     final PathDirection pathDirection =
         clockwise ? PathDirection.clockwise : PathDirection.counterClockwise;
     pathArcToRotated(
-        handle,
-        radius.x,
-        radius.y,
-        ui.toDegrees(rotation),
-        arcSize.index,
-        pathDirection.index,
-        arcEnd.dx,
-        arcEnd.dy
+      handle,
+      radius.x,
+      radius.y,
+      ui.toDegrees(rotation),
+      arcSize.index,
+      pathDirection.index,
+      arcEnd.dx,
+      arcEnd.dy,
     );
   }
 
@@ -134,19 +115,18 @@ class SkwasmPath extends SkwasmObjectWrapper<RawPath> implements ScenePath {
     bool largeArc = false,
     bool clockwise = true,
   }) {
-    final PathArcSize arcSize =
-        largeArc ? PathArcSize.large : PathArcSize.small;
+    final PathArcSize arcSize = largeArc ? PathArcSize.large : PathArcSize.small;
     final PathDirection pathDirection =
         clockwise ? PathDirection.clockwise : PathDirection.counterClockwise;
     pathRelativeArcToRotated(
-        handle,
-        radius.x,
-        radius.y,
-        ui.toDegrees(rotation),
-        arcSize.index,
-        pathDirection.index,
-        arcEndDelta.dx,
-        arcEndDelta.dy
+      handle,
+      radius.x,
+      radius.y,
+      ui.toDegrees(rotation),
+      arcSize.index,
+      pathDirection.index,
+      arcEndDelta.dx,
+      arcEndDelta.dy,
     );
   }
 
@@ -171,7 +151,7 @@ class SkwasmPath extends SkwasmObjectWrapper<RawPath> implements ScenePath {
         handle,
         s.convertRectToNative(rect),
         ui.toDegrees(startAngle),
-        ui.toDegrees(sweepAngle)
+        ui.toDegrees(sweepAngle),
       );
     });
   }
@@ -203,8 +183,9 @@ class SkwasmPath extends SkwasmObjectWrapper<RawPath> implements ScenePath {
   void _addPath(ui.Path path, ui.Offset offset, bool extend, {Float64List? matrix4}) {
     assert(path is SkwasmPath);
     withStackScope((StackScope s) {
-      final Pointer<Float> convertedMatrix =
-          s.convertMatrix4toSkMatrix(matrix4 ?? Matrix4.identity().toFloat64());
+      final Pointer<Float> convertedMatrix = s.convertMatrix4toSkMatrix(
+        matrix4 ?? Matrix4.identity().toFloat64(),
+      );
       convertedMatrix[2] += offset.dx;
       convertedMatrix[5] += offset.dy;
       pathAddPath(handle, (path as SkwasmPath).handle, convertedMatrix, extend);
@@ -222,7 +203,7 @@ class SkwasmPath extends SkwasmObjectWrapper<RawPath> implements ScenePath {
 
   @override
   ui.Path shift(ui.Offset offset) =>
-    transform(Matrix4.translationValues(offset.dx, offset.dy, 0.0).toFloat64());
+      transform(Matrix4.translationValues(offset.dx, offset.dy, 0.0).toFloat64());
 
   @override
   ui.Path transform(Float64List matrix4) {
@@ -242,12 +223,8 @@ class SkwasmPath extends SkwasmObjectWrapper<RawPath> implements ScenePath {
     });
   }
 
-  static SkwasmPath combine(
-    ui.PathOperation operation,
-    SkwasmPath path1,
-    SkwasmPath path2) =>
-    SkwasmPath.fromHandle(pathCombine(
-        operation.index, path1.handle, path2.handle));
+  static SkwasmPath combine(ui.PathOperation operation, SkwasmPath path1, SkwasmPath path2) =>
+      SkwasmPath.fromHandle(pathCombine(operation.index, path1.handle, path2.handle));
 
   @override
   ui.PathMetrics computeMetrics({bool forceClosed = false}) {

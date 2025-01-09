@@ -42,19 +42,14 @@ class SafeAreaExampleApp extends StatelessWidget {
       theme: theme,
       debugShowCheckedModeBanner: false,
       home: Builder(
-        builder: (BuildContext context) => Scaffold(
-          appBar: Toggle.appBar.of(context) ? appBar : null,
-          body: const DefaultTextStyle(
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
+        builder:
+            (BuildContext context) => Scaffold(
+              appBar: Toggle.appBar.of(context) ? appBar : null,
+              body: const DefaultTextStyle(
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+                child: Center(child: SafeAreaExample()),
+              ),
             ),
-            child: Center(
-              child: SafeAreaExample(),
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -67,10 +62,11 @@ class SafeAreaExample extends StatelessWidget {
     children: <Widget>[
       const SizedBox(height: 6),
       Builder(
-        builder: (BuildContext context) => Text(
-          Toggle.safeArea.of(context) ? 'safe area!' : 'no safe area',
-          style: const TextStyle(fontSize: 24),
-        ),
+        builder:
+            (BuildContext context) => Text(
+              Toggle.safeArea.of(context) ? 'safe area!' : 'no safe area',
+              style: const TextStyle(fontSize: 24),
+            ),
       ),
       const Spacer(flex: 2),
       for (final Value data in Value.allValues) ...data.controls,
@@ -110,8 +106,8 @@ enum Inset implements Value {
 
   @override
   double _getValue(_InsetModel model) => switch (this) {
-    top    => model.insets.top,
-    sides  => model.insets.left,
+    top => model.insets.top,
+    sides => model.insets.left,
     bottom => model.insets.bottom,
   };
 
@@ -121,13 +117,14 @@ enum Inset implements Value {
   List<Widget> get controls => <Widget>[
     Text(label),
     Builder(
-      builder: (BuildContext context) => Slider(
-        max: 50,
-        value: of(context),
-        onChanged: (double newValue) {
-          InsetsState.instance.changeInset(this, newValue);
-        },
-      ),
+      builder:
+          (BuildContext context) => Slider(
+            max: 50,
+            value: of(context),
+            onChanged: (double newValue) {
+              InsetsState.instance.changeInset(this, newValue);
+            },
+          ),
     ),
     const Spacer(),
   ];
@@ -143,7 +140,7 @@ enum Toggle implements Value {
 
   @override
   bool _getValue(_ToggleModel model) => switch (this) {
-    appBar   => model.buildAppBar,
+    appBar => model.buildAppBar,
     safeArea => model.buildSafeArea,
   };
 
@@ -152,13 +149,14 @@ enum Toggle implements Value {
   @override
   List<Widget> get controls => <Widget>[
     Builder(
-      builder: (BuildContext context) => SwitchListTile(
-        title: Text(label),
-        value: of(context),
-        onChanged: (bool value) {
-          InsetsState.instance.toggle(this, value);
-        },
-      ),
+      builder:
+          (BuildContext context) => SwitchListTile(
+            title: Text(label),
+            value: of(context),
+            onChanged: (bool value) {
+              InsetsState.instance.toggle(this, value);
+            },
+          ),
     ),
   ];
 }
@@ -187,8 +185,8 @@ class _InsetModel extends Model<Inset> {
 
 class _ToggleModel extends Model<Toggle> {
   _ToggleModel({required Set<Toggle> togglers, required super.child})
-      : buildAppBar = togglers.contains(Toggle.appBar),
-        buildSafeArea = togglers.contains(Toggle.safeArea);
+    : buildAppBar = togglers.contains(Toggle.appBar),
+      buildSafeArea = togglers.contains(Toggle.safeArea);
 
   final bool buildAppBar;
   final bool buildSafeArea;
@@ -208,8 +206,8 @@ class InsetsState extends State<Insets> {
   void changeInset(Inset inset, double value) {
     setState(() {
       insets = switch (inset) {
-        Inset.top    => insets.copyWith(top: value),
-        Inset.sides  => insets.copyWith(left: value, right: value),
+        Inset.top => insets.copyWith(top: value),
+        Inset.sides => insets.copyWith(left: value, right: value),
         Inset.bottom => insets.copyWith(bottom: value),
       };
     });
@@ -225,9 +223,7 @@ class InsetsState extends State<Insets> {
   @override
   Widget build(BuildContext context) {
     final Widget topNotch = ClipRRect(
-      borderRadius: BorderRadius.vertical(
-        bottom: Radius.circular(insets.top),
-      ),
+      borderRadius: BorderRadius.vertical(bottom: Radius.circular(insets.top)),
       child: SizedBox(
         height: insets.top,
         child: const FractionallySizedBox(
@@ -258,14 +254,15 @@ class InsetsState extends State<Insets> {
     final Widget app = _ToggleModel(
       togglers: _togglers,
       child: Builder(
-        builder: (BuildContext context) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            viewInsets: EdgeInsets.only(top: insets.top),
-            viewPadding: insets,
-            padding: insets,
-          ),
-          child: const SafeAreaExampleApp(),
-        ),
+        builder:
+            (BuildContext context) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                viewInsets: EdgeInsets.only(top: insets.top),
+                viewPadding: insets,
+                padding: insets,
+              ),
+              child: const SafeAreaExampleApp(),
+            ),
       ),
     );
 

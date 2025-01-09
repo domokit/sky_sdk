@@ -29,7 +29,7 @@ import 'semantics.dart';
 ///   * https://developer.mozilla.org/en-US/docs/Web/Accessibility/Keyboard-navigable_JavaScript_widgets
 class Focusable extends SemanticBehavior {
   Focusable(super.semanticsObject, super.owner)
-      : _focusManager = AccessibilityFocusManager(semanticsObject.owner);
+    : _focusManager = AccessibilityFocusManager(semanticsObject.owner);
 
   final AccessibilityFocusManager _focusManager;
 
@@ -58,7 +58,9 @@ class Focusable extends SemanticBehavior {
       if (!_focusManager.isManaging) {
         _focusManager.manage(semanticsObject.id, owner.element);
       }
-      _focusManager.changeFocus(semanticsObject.hasFocus && (!semanticsObject.hasEnabledState || semanticsObject.isEnabled));
+      _focusManager.changeFocus(
+        semanticsObject.hasFocus && (!semanticsObject.hasEnabledState || semanticsObject.isEnabled),
+      );
     } else {
       _focusManager.stopManaging();
     }
@@ -72,19 +74,20 @@ class Focusable extends SemanticBehavior {
 }
 
 /// Objects associated with the element whose focus is being managed.
-typedef _FocusTarget = ({
-  /// [SemanticsObject.id] of the semantics node being managed.
-  int semanticsNodeId,
+typedef _FocusTarget =
+    ({
+      /// [SemanticsObject.id] of the semantics node being managed.
+      int semanticsNodeId,
 
-  /// The element whose focus is being managed.
-  DomElement element,
+      /// The element whose focus is being managed.
+      DomElement element,
 
-  /// The listener for the "focus" DOM event.
-  DomEventListener domFocusListener,
+      /// The listener for the "focus" DOM event.
+      DomEventListener domFocusListener,
 
-  /// The listener for the "blur" DOM event.
-  DomEventListener domBlurListener,
-});
+      /// The listener for the "blur" DOM event.
+      DomEventListener domBlurListener,
+    });
 
 enum AccessibilityFocusManagerEvent {
   /// No event has happend for the target element.
@@ -233,7 +236,7 @@ class AccessibilityFocusManager {
       assert(() {
         printWarning(
           'Cannot change focus to $value. No element is being managed by this '
-          'AccessibilityFocusManager.'
+          'AccessibilityFocusManager.',
         );
         return true;
       }());

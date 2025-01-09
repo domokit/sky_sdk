@@ -59,9 +59,21 @@ void testMain() {
     });
 
     test('blur tests all values on ==', () {
-      final ImageFilter filter1 = ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0, tileMode: TileMode.decal);
-      final ImageFilter filter2 = ImageFilter.blur(sigmaX: 2.0, sigmaY: 3.0, tileMode: TileMode.decal);
-      final ImageFilter filter3 = ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0, tileMode: TileMode.mirror);
+      final ImageFilter filter1 = ImageFilter.blur(
+        sigmaX: 2.0,
+        sigmaY: 2.0,
+        tileMode: TileMode.decal,
+      );
+      final ImageFilter filter2 = ImageFilter.blur(
+        sigmaX: 2.0,
+        sigmaY: 3.0,
+        tileMode: TileMode.decal,
+      );
+      final ImageFilter filter3 = ImageFilter.blur(
+        sigmaX: 2.0,
+        sigmaY: 2.0,
+        tileMode: TileMode.mirror,
+      );
 
       expect(filter1, filter1);
       expect(filter1, isNot(equals(filter2)));

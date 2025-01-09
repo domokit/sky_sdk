@@ -15,32 +15,29 @@ import '../widgets/semantics_tester.dart';
 Widget wrap({Widget? child}) {
   return MediaQuery(
     data: const MediaQueryData(),
-    child: Directionality(
-      textDirection: TextDirection.ltr,
-      child: Material(child: child),
-    ),
+    child: Directionality(textDirection: TextDirection.ltr, child: Material(child: child)),
   );
 }
 
 void main() {
-  testWidgets('RadioListTile should initialize according to groupValue', (WidgetTester tester) async {
+  testWidgets('RadioListTile should initialize according to groupValue', (
+    WidgetTester tester,
+  ) async {
     final List<int> values = <int>[0, 1, 2];
     int? selectedValue;
     // Constructor parameters are required for [RadioListTile], but they are
     // irrelevant when searching with [find.byType].
-    final Type radioListTileType = const RadioListTile<int>(
-      value: 0,
-      groupValue: 0,
-      onChanged: null,
-    ).runtimeType;
+    final Type radioListTileType =
+        const RadioListTile<int>(value: 0, groupValue: 0, onChanged: null).runtimeType;
 
     List<RadioListTile<int>> generatedRadioListTiles;
-    List<RadioListTile<int>> findTiles() => find
-        .byType(radioListTileType)
-        .evaluate()
-        .map<Widget>((Element element) => element.widget)
-        .cast<RadioListTile<int>>()
-        .toList();
+    List<RadioListTile<int>> findTiles() =>
+        find
+            .byType(radioListTileType)
+            .evaluate()
+            .map<Widget>((Element element) => element.widget)
+            .cast<RadioListTile<int>>()
+            .toList();
 
     Widget buildFrame() {
       return wrap(
@@ -49,16 +46,17 @@ void main() {
             return Scaffold(
               body: ListView.builder(
                 itemCount: values.length,
-                itemBuilder: (BuildContext context, int index) => RadioListTile<int>(
-                  onChanged: (int? value) {
-                    setState(() {
-                      selectedValue = value;
-                    });
-                  },
-                  value: values[index],
-                  groupValue: selectedValue,
-                  title: Text(values[index].toString()),
-                ),
+                itemBuilder:
+                    (BuildContext context, int index) => RadioListTile<int>(
+                      onChanged: (int? value) {
+                        setState(() {
+                          selectedValue = value;
+                        });
+                      },
+                      value: values[index],
+                      groupValue: selectedValue,
+                      title: Text(values[index].toString()),
+                    ),
               ),
             );
           },
@@ -160,11 +158,7 @@ void main() {
     int? selectedValue;
     // Constructor parameters are required for [Radio], but they are irrelevant
     // when searching with [find.byType].
-    final Type radioType = const Radio<int>(
-      value: 0,
-      groupValue: 0,
-      onChanged: null,
-    ).runtimeType;
+    final Type radioType = const Radio<int>(value: 0, groupValue: 0, onChanged: null).runtimeType;
     final List<dynamic> log = <dynamic>[];
 
     Widget buildFrame() {
@@ -174,17 +168,18 @@ void main() {
             return Scaffold(
               body: ListView.builder(
                 itemCount: values.length,
-                itemBuilder: (BuildContext context, int index) => RadioListTile<int>(
-                  onChanged: (int? value) {
-                    log.add(value);
-                    setState(() {
-                      selectedValue = value;
-                    });
-                  },
-                  value: values[index],
-                  groupValue: selectedValue,
-                  title: Text(values[index].toString()),
-                ),
+                itemBuilder:
+                    (BuildContext context, int index) => RadioListTile<int>(
+                      onChanged: (int? value) {
+                        log.add(value);
+                        setState(() {
+                          selectedValue = value;
+                        });
+                      },
+                      value: values[index],
+                      groupValue: selectedValue,
+                      title: Text(values[index].toString()),
+                    ),
               ),
             );
           },
@@ -228,11 +223,7 @@ void main() {
     int? selectedValue;
     // Constructor parameters are required for [Radio], but they are irrelevant
     // when searching with [find.byType].
-    final Type radioType = const Radio<int>(
-      value: 0,
-      groupValue: 0,
-      onChanged: null,
-    ).runtimeType;
+    final Type radioType = const Radio<int>(value: 0, groupValue: 0, onChanged: null).runtimeType;
     final List<dynamic> log = <dynamic>[];
 
     Widget buildFrame() {
@@ -242,17 +233,18 @@ void main() {
             return Scaffold(
               body: ListView.builder(
                 itemCount: values.length,
-                itemBuilder: (BuildContext context, int index) => RadioListTile<int>(
-                  onChanged: (int? value) {
-                    log.add(value);
-                    setState(() {
-                      selectedValue = value;
-                    });
-                  },
-                  value: values[index],
-                  groupValue: selectedValue,
-                  title: Text(values[index].toString()),
-                ),
+                itemBuilder:
+                    (BuildContext context, int index) => RadioListTile<int>(
+                      onChanged: (int? value) {
+                        log.add(value);
+                        setState(() {
+                          selectedValue = value;
+                        });
+                      },
+                      value: values[index],
+                      groupValue: selectedValue,
+                      title: Text(values[index].toString()),
+                    ),
               ),
             );
           },
@@ -274,16 +266,14 @@ void main() {
     expect(log, equals(<int>[0]));
   });
 
-  testWidgets('Selected RadioListTile should trigger onChanged when toggleable', (WidgetTester tester) async {
+  testWidgets('Selected RadioListTile should trigger onChanged when toggleable', (
+    WidgetTester tester,
+  ) async {
     final List<int> values = <int>[0, 1, 2];
     int? selectedValue;
     // Constructor parameters are required for [Radio], but they are irrelevant
     // when searching with [find.byType].
-    final Type radioType = const Radio<int>(
-      value: 0,
-      groupValue: 0,
-      onChanged: null,
-    ).runtimeType;
+    final Type radioType = const Radio<int>(value: 0, groupValue: 0, onChanged: null).runtimeType;
     final List<dynamic> log = <dynamic>[];
 
     Widget buildFrame() {
@@ -332,51 +322,57 @@ void main() {
     final Key key = UniqueKey();
     final List<int?> log = <int?>[];
 
-    await tester.pumpWidget(Material(
-      child: Center(
-        child: Radio<int>(
-          key: key,
-          value: 1,
-          groupValue: 2,
-          onChanged: log.add,
-          toggleable: true,
+    await tester.pumpWidget(
+      Material(
+        child: Center(
+          child: Radio<int>(
+            key: key,
+            value: 1,
+            groupValue: 2,
+            onChanged: log.add,
+            toggleable: true,
+          ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.byKey(key));
 
     expect(log, equals(<int>[1]));
     log.clear();
 
-    await tester.pumpWidget(Material(
-      child: Center(
-        child: Radio<int>(
-          key: key,
-          value: 1,
-          groupValue: 1,
-          onChanged: log.add,
-          toggleable: true,
+    await tester.pumpWidget(
+      Material(
+        child: Center(
+          child: Radio<int>(
+            key: key,
+            value: 1,
+            groupValue: 1,
+            onChanged: log.add,
+            toggleable: true,
+          ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.byKey(key));
 
     expect(log, equals(<int?>[null]));
     log.clear();
 
-    await tester.pumpWidget(Material(
-      child: Center(
-        child: Radio<int>(
-          key: key,
-          value: 1,
-          groupValue: null,
-          onChanged: log.add,
-          toggleable: true,
+    await tester.pumpWidget(
+      Material(
+        child: Center(
+          child: Radio<int>(
+            key: key,
+            value: 1,
+            groupValue: null,
+            onChanged: log.add,
+            toggleable: true,
+          ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.byKey(key));
 
@@ -548,9 +544,12 @@ void main() {
     final Key key = UniqueKey();
     dynamic semanticEvent;
     int? radioValue = 2;
-    tester.binding.defaultBinaryMessenger.setMockDecodedMessageHandler<dynamic>(SystemChannels.accessibility, (dynamic message) async {
-      semanticEvent = message;
-    });
+    tester.binding.defaultBinaryMessenger.setMockDecodedMessageHandler<dynamic>(
+      SystemChannels.accessibility,
+      (dynamic message) async {
+        semanticEvent = message;
+      },
+    );
 
     await tester.pumpWidget(
       wrap(
@@ -579,7 +578,10 @@ void main() {
     expect(object.debugSemantics!.getSemanticsData().hasAction(SemanticsAction.tap), true);
 
     semantics.dispose();
-    tester.binding.defaultBinaryMessenger.setMockDecodedMessageHandler<dynamic>(SystemChannels.accessibility, null);
+    tester.binding.defaultBinaryMessenger.setMockDecodedMessageHandler<dynamic>(
+      SystemChannels.accessibility,
+      null,
+    );
   });
 
   testWidgets('RadioListTile can autofocus unless disabled.', (WidgetTester tester) async {
@@ -617,11 +619,8 @@ void main() {
   });
 
   testWidgets('RadioListTile contentPadding test', (WidgetTester tester) async {
-    final Type radioType = const Radio<bool>(
-      groupValue: true,
-      value: true,
-      onChanged: null,
-    ).runtimeType;
+    final Type radioType =
+        const Radio<bool>(groupValue: true, value: true, onChanged: null).runtimeType;
 
     await tester.pumpWidget(
       wrap(
@@ -630,7 +629,7 @@ void main() {
             groupValue: true,
             value: true,
             title: const Text('Title'),
-            onChanged: (_){},
+            onChanged: (_) {},
             contentPadding: const EdgeInsets.fromLTRB(8, 10, 15, 20),
           ),
         ),
@@ -661,17 +660,19 @@ void main() {
       borderRadius: BorderRadius.horizontal(right: Radius.circular(100)),
     );
 
-    await tester.pumpWidget(const MaterialApp(
-      home: Material(
-        child: RadioListTile<bool>(
-          value: true,
-          groupValue: true,
-          onChanged: null,
-          title: Text('Title'),
-          shape: shapeBorder,
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Material(
+          child: RadioListTile<bool>(
+            value: true,
+            groupValue: true,
+            onChanged: null,
+            title: Text('Title'),
+            shape: shapeBorder,
+          ),
         ),
       ),
-    ));
+    );
 
     expect(tester.widget<InkWell>(find.byType(InkWell)).customBorder, shapeBorder);
   });
@@ -722,7 +723,7 @@ void main() {
 
     const Color activeColor = Color(0xff00ff00);
 
-    Widget buildFrame({ Color? activeColor, Color? fillColor }) {
+    Widget buildFrame({Color? activeColor, Color? fillColor}) {
       return MaterialApp(
         theme: ThemeData.light().copyWith(
           radioTheme: RadioThemeData(
@@ -739,7 +740,7 @@ void main() {
               title: const Text('title'),
               value: false,
               groupValue: true,
-              onChanged: (bool? newValue) { },
+              onChanged: (bool? newValue) {},
             ),
           ),
         ),
@@ -840,55 +841,66 @@ void main() {
   testWidgets('Radio changes mouse cursor when hovered', (WidgetTester tester) async {
     // Test Radio() constructor
     await tester.pumpWidget(
-      wrap(child: MouseRegion(
-        cursor: SystemMouseCursors.forbidden,
-        child: RadioListTile<int>(
-          mouseCursor: SystemMouseCursors.text,
-          value: 1,
-          onChanged: (int? v) {},
-          groupValue: 2,
+      wrap(
+        child: MouseRegion(
+          cursor: SystemMouseCursors.forbidden,
+          child: RadioListTile<int>(
+            mouseCursor: SystemMouseCursors.text,
+            value: 1,
+            onChanged: (int? v) {},
+            groupValue: 2,
+          ),
         ),
-      )),
+      ),
     );
 
-    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse, pointer: 1);
+    final TestGesture gesture = await tester.createGesture(
+      kind: PointerDeviceKind.mouse,
+      pointer: 1,
+    );
     await gesture.addPointer(location: tester.getCenter(find.byType(Radio<int>)));
 
     await tester.pump();
 
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.text);
-
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.text,
+    );
 
     // Test default cursor
     await tester.pumpWidget(
-      wrap(child: MouseRegion(
-        cursor: SystemMouseCursors.forbidden,
-        child: RadioListTile<int>(
-          value: 1,
-          onChanged: (int? v) {},
-          groupValue: 2,
-        ),
-      )),
-    );
-
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.click);
-
-    // Test default cursor when disabled
-    await tester.pumpWidget(wrap(
-      child: const MouseRegion(
-        cursor: SystemMouseCursors.forbidden,
-        child: RadioListTile<int>(
-          value: 1,
-          onChanged: null,
-          groupValue: 2,
+      wrap(
+        child: MouseRegion(
+          cursor: SystemMouseCursors.forbidden,
+          child: RadioListTile<int>(value: 1, onChanged: (int? v) {}, groupValue: 2),
         ),
       ),
-    ),);
+    );
 
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.basic);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.click,
+    );
+
+    // Test default cursor when disabled
+    await tester.pumpWidget(
+      wrap(
+        child: const MouseRegion(
+          cursor: SystemMouseCursors.forbidden,
+          child: RadioListTile<int>(value: 1, onChanged: null, groupValue: 2),
+        ),
+      ),
+    );
+
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.basic,
+    );
   });
 
-  testWidgets('RadioListTile respects fillColor in enabled/disabled states', (WidgetTester tester) async {
+  testWidgets('RadioListTile respects fillColor in enabled/disabled states', (
+    WidgetTester tester,
+  ) async {
     const Color activeEnabledFillColor = Color(0xFF000001);
     const Color activeDisabledFillColor = Color(0xFF000002);
     const Color inactiveEnabledFillColor = Color(0xFF000003);
@@ -907,24 +919,28 @@ void main() {
       return inactiveEnabledFillColor;
     }
 
-    final MaterialStateProperty<Color> fillColor =
-    MaterialStateColor.resolveWith(getFillColor);
+    final MaterialStateProperty<Color> fillColor = MaterialStateColor.resolveWith(getFillColor);
 
     int? groupValue = 0;
     Widget buildApp({required bool enabled}) {
       return wrap(
-        child: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-          return RadioListTile<int>(
-            value: 0,
-            fillColor: fillColor,
-            onChanged: enabled ? (int? newValue) {
-              setState(() {
-                groupValue = newValue;
-              });
-            } : null,
-            groupValue: groupValue,
-          );
-        })
+        child: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return RadioListTile<int>(
+              value: 0,
+              fillColor: fillColor,
+              onChanged:
+                  enabled
+                      ? (int? newValue) {
+                        setState(() {
+                          groupValue = newValue;
+                        });
+                      }
+                      : null,
+              groupValue: groupValue,
+            );
+          },
+        ),
       );
     }
 
@@ -986,24 +1002,25 @@ void main() {
       return Colors.transparent;
     }
 
-    final MaterialStateProperty<Color> fillColor =
-    MaterialStateColor.resolveWith(getFillColor);
+    final MaterialStateProperty<Color> fillColor = MaterialStateColor.resolveWith(getFillColor);
 
     int? groupValue = 0;
     Widget buildApp() {
       return wrap(
-        child: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-          return RadioListTile<int>(
-            value: 0,
-            fillColor: fillColor,
-            onChanged: (int? newValue) {
-              setState(() {
-                groupValue = newValue;
-              });
-            },
-            groupValue: groupValue,
-          );
-        }),
+        child: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return RadioListTile<int>(
+              value: 0,
+              fillColor: fillColor,
+              onChanged: (int? newValue) {
+                setState(() {
+                  groupValue = newValue;
+                });
+              },
+              groupValue: groupValue,
+            );
+          },
+        ),
       );
     }
 
@@ -1019,7 +1036,8 @@ void main() {
     expect(
       Material.of(tester.element(find.byType(Radio<int>))),
       paints
-        ..rect()..circle()
+        ..rect()
+        ..circle()
         ..circle(color: hoveredFillColor),
     );
   });
@@ -1033,21 +1051,27 @@ void main() {
       return wrap(
         child: MaterialApp(
           theme: theme,
-          home: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-            return RadioListTile<int>(
-              value: 0,
-              onChanged: enabled ? (int? newValue) {
-                setState(() {
-                  groupValue = newValue;
-                });
-              } : null,
-              hoverColor: hoverColor,
-              groupValue: groupValue,
-            );
-          }),
+          home: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return RadioListTile<int>(
+                value: 0,
+                onChanged:
+                    enabled
+                        ? (int? newValue) {
+                          setState(() {
+                            groupValue = newValue;
+                          });
+                        }
+                        : null,
+                hoverColor: hoverColor,
+                groupValue: groupValue,
+              );
+            },
+          ),
         ),
       );
     }
+
     await tester.pumpWidget(buildApp());
 
     await tester.pump();
@@ -1073,7 +1097,7 @@ void main() {
       Material.of(tester.element(find.byType(Radio<int>))),
       paints
         ..rect()
-        ..circle(color: hoverColor)
+        ..circle(color: hoverColor),
     );
 
     // Check when the radio is selected, but disabled.
@@ -1090,7 +1114,9 @@ void main() {
     );
   });
 
-  testWidgets('Material3 - RadioListTile respects overlayColor in active/pressed/hovered states', (WidgetTester tester) async {
+  testWidgets('Material3 - RadioListTile respects overlayColor in active/pressed/hovered states', (
+    WidgetTester tester,
+  ) async {
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
 
     const Color fillColor = Color(0xFF000000);
@@ -1119,7 +1145,7 @@ void main() {
           child: RadioListTile<bool>(
             value: active,
             groupValue: true,
-            onChanged: (_) { },
+            onChanged: (_) {},
             fillColor: const MaterialStatePropertyAll<Color>(fillColor),
             overlayColor: useOverlay ? MaterialStateProperty.resolveWith(getOverlayColor) : null,
             hoverColor: hoverColor,
@@ -1137,10 +1163,7 @@ void main() {
       paints
         ..rect(color: const Color(0x00000000))
         ..rect(color: const Color(0x66bcbcbc))
-        ..circle(
-          color: fillColor.withAlpha(kRadialReactionAlpha),
-          radius: 20.0,
-        ),
+        ..circle(color: fillColor.withAlpha(kRadialReactionAlpha), radius: 20.0),
       reason: 'Default inactive pressed Radio should have overlay color from fillColor',
     );
 
@@ -1153,10 +1176,7 @@ void main() {
       paints
         ..rect(color: const Color(0x00000000))
         ..rect(color: const Color(0x66bcbcbc))
-        ..circle(
-          color: fillColor.withAlpha(kRadialReactionAlpha),
-          radius: 20.0,
-        ),
+        ..circle(color: fillColor.withAlpha(kRadialReactionAlpha), radius: 20.0),
       reason: 'Default active pressed Radio should have overlay color from fillColor',
     );
 
@@ -1169,10 +1189,7 @@ void main() {
       paints
         ..rect(color: const Color(0x00000000))
         ..rect(color: const Color(0x66bcbcbc))
-        ..circle(
-          color: inactivePressedOverlayColor,
-          radius: 20.0,
-        ),
+        ..circle(color: inactivePressedOverlayColor, radius: 20.0),
       reason: 'Inactive pressed Radio should have overlay color: $inactivePressedOverlayColor',
     );
 
@@ -1185,10 +1202,7 @@ void main() {
       paints
         ..rect(color: const Color(0x00000000))
         ..rect(color: const Color(0x66bcbcbc))
-        ..circle(
-          color: activePressedOverlayColor,
-          radius: 20.0,
-        ),
+        ..circle(color: activePressedOverlayColor, radius: 20.0),
       reason: 'Active pressed Radio should have overlay color: $activePressedOverlayColor',
     );
 
@@ -1207,10 +1221,7 @@ void main() {
       paints
         ..rect(color: const Color(0x00000000))
         ..rect(color: const Color(0x0a000000))
-        ..circle(
-          color: hoverOverlayColor,
-          radius: 20.0,
-        ),
+        ..circle(color: hoverOverlayColor, radius: 20.0),
       reason: 'Hovered Radio should use overlay color $hoverOverlayColor over $hoverColor',
     );
   });
@@ -1220,17 +1231,20 @@ void main() {
     const double splashRadius = 30;
     Widget buildApp() {
       return wrap(
-        child: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-          return RadioListTile<int>(
-            value: 0,
-            onChanged: (_) {},
-            hoverColor: Colors.orange[500],
-            groupValue: 0,
-            splashRadius: splashRadius,
-          );
-        }),
+        child: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return RadioListTile<int>(
+              value: 0,
+              onChanged: (_) {},
+              hoverColor: Colors.orange[500],
+              groupValue: 0,
+              splashRadius: splashRadius,
+            );
+          },
+        ),
       );
     }
+
     await tester.pumpWidget(buildApp());
     await tester.pumpAndSettle();
 
@@ -1240,38 +1254,38 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      Material.of(tester.element(
-        find.byWidgetPredicate((Widget widget) => widget is Radio<int>),
-      )),
+      Material.of(tester.element(find.byWidgetPredicate((Widget widget) => widget is Radio<int>))),
       paints..circle(color: Colors.orange[500], radius: splashRadius),
     );
   });
 
   testWidgets('Radio respects materialTapTargetSize', (WidgetTester tester) async {
     await tester.pumpWidget(
-      wrap(child: RadioListTile<bool>(
-        groupValue: true,
-        value: true,
-        onChanged: (bool? newValue) { },
-      )),
+      wrap(
+        child: RadioListTile<bool>(groupValue: true, value: true, onChanged: (bool? newValue) {}),
+      ),
     );
 
     // default test
     expect(tester.getSize(find.byType(Radio<bool>)), const Size(40.0, 40.0));
 
     await tester.pumpWidget(
-      wrap(child: RadioListTile<bool>(
-        materialTapTargetSize: MaterialTapTargetSize.padded,
-        groupValue: true,
-        value: true,
-        onChanged: (bool? newValue) { },
-      )),
+      wrap(
+        child: RadioListTile<bool>(
+          materialTapTargetSize: MaterialTapTargetSize.padded,
+          groupValue: true,
+          value: true,
+          onChanged: (bool? newValue) {},
+        ),
+      ),
     );
 
     expect(tester.getSize(find.byType(Radio<bool>)), const Size(48.0, 48.0));
   });
 
-  testWidgets('RadioListTile.control widget should not request focus on traversal', (WidgetTester tester) async {
+  testWidgets('RadioListTile.control widget should not request focus on traversal', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey firstChildKey = GlobalKey();
     final GlobalKey secondChildKey = GlobalKey();
 
@@ -1308,30 +1322,36 @@ void main() {
     expect(Focus.of(secondChildKey.currentContext!).hasPrimaryFocus, isTrue);
   });
 
-  testWidgets('RadioListTile.adaptive shows the correct radio platform widget', (WidgetTester tester) async {
+  testWidgets('RadioListTile.adaptive shows the correct radio platform widget', (
+    WidgetTester tester,
+  ) async {
     Widget buildApp(TargetPlatform platform) {
       return MaterialApp(
         theme: ThemeData(platform: platform),
         home: Material(
           child: Center(
-            child: RadioListTile<int>.adaptive(
-              value: 1,
-              groupValue: 2,
-              onChanged: (_) {},
-            ),
+            child: RadioListTile<int>.adaptive(value: 1, groupValue: 2, onChanged: (_) {}),
           ),
         ),
       );
     }
 
-    for (final TargetPlatform platform in <TargetPlatform>[ TargetPlatform.iOS, TargetPlatform.macOS ]) {
+    for (final TargetPlatform platform in <TargetPlatform>[
+      TargetPlatform.iOS,
+      TargetPlatform.macOS,
+    ]) {
       await tester.pumpWidget(buildApp(platform));
       await tester.pumpAndSettle();
 
       expect(find.byType(CupertinoRadio<int>), findsOneWidget);
     }
 
-    for (final TargetPlatform platform in <TargetPlatform>[ TargetPlatform.android, TargetPlatform.fuchsia, TargetPlatform.linux, TargetPlatform.windows ]) {
+    for (final TargetPlatform platform in <TargetPlatform>[
+      TargetPlatform.android,
+      TargetPlatform.fuchsia,
+      TargetPlatform.linux,
+      TargetPlatform.windows,
+    ]) {
       await tester.pumpWidget(buildApp(platform));
       await tester.pumpAndSettle();
 
@@ -1388,109 +1408,100 @@ void main() {
     // support is deprecated and the APIs are removed, these tests
     // can be deleted.
 
-    testWidgets('Material2 - RadioListTile respects overlayColor in active/pressed/hovered states', (WidgetTester tester) async {
-      tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+    testWidgets(
+      'Material2 - RadioListTile respects overlayColor in active/pressed/hovered states',
+      (WidgetTester tester) async {
+        tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
 
-      const Color fillColor = Color(0xFF000000);
-      const Color activePressedOverlayColor = Color(0xFF000001);
-      const Color inactivePressedOverlayColor = Color(0xFF000002);
-      const Color hoverOverlayColor = Color(0xFF000003);
-      const Color hoverColor = Color(0xFF000005);
+        const Color fillColor = Color(0xFF000000);
+        const Color activePressedOverlayColor = Color(0xFF000001);
+        const Color inactivePressedOverlayColor = Color(0xFF000002);
+        const Color hoverOverlayColor = Color(0xFF000003);
+        const Color hoverColor = Color(0xFF000005);
 
-      Color? getOverlayColor(Set<MaterialState> states) {
-        if (states.contains(MaterialState.pressed)) {
-          if (states.contains(MaterialState.selected)) {
-            return activePressedOverlayColor;
+        Color? getOverlayColor(Set<MaterialState> states) {
+          if (states.contains(MaterialState.pressed)) {
+            if (states.contains(MaterialState.selected)) {
+              return activePressedOverlayColor;
+            }
+            return inactivePressedOverlayColor;
           }
-          return inactivePressedOverlayColor;
+          if (states.contains(MaterialState.hovered)) {
+            return hoverOverlayColor;
+          }
+          return null;
         }
-        if (states.contains(MaterialState.hovered)) {
-          return hoverOverlayColor;
-        }
-        return null;
-      }
 
-      Widget buildRadio({bool active = false, bool useOverlay = true}) {
-        return MaterialApp(
-          theme: ThemeData(useMaterial3: false),
-          home: Material(
-            child: RadioListTile<bool>(
-              value: active,
-              groupValue: true,
-              onChanged: (_) { },
-              fillColor: const MaterialStatePropertyAll<Color>(fillColor),
-              overlayColor: useOverlay ? MaterialStateProperty.resolveWith(getOverlayColor) : null,
-              hoverColor: hoverColor,
+        Widget buildRadio({bool active = false, bool useOverlay = true}) {
+          return MaterialApp(
+            theme: ThemeData(useMaterial3: false),
+            home: Material(
+              child: RadioListTile<bool>(
+                value: active,
+                groupValue: true,
+                onChanged: (_) {},
+                fillColor: const MaterialStatePropertyAll<Color>(fillColor),
+                overlayColor:
+                    useOverlay ? MaterialStateProperty.resolveWith(getOverlayColor) : null,
+                hoverColor: hoverColor,
+              ),
             ),
-          ),
+          );
+        }
+
+        await tester.pumpWidget(buildRadio(useOverlay: false));
+        await tester.press(find.byType(Radio<bool>));
+        await tester.pumpAndSettle();
+
+        expect(
+          Material.of(tester.element(find.byType(Radio<bool>))),
+          paints
+            ..circle()
+            ..circle(color: fillColor.withAlpha(kRadialReactionAlpha), radius: 20),
+          reason: 'Default inactive pressed Radio should have overlay color from fillColor',
         );
-      }
 
-      await tester.pumpWidget(buildRadio(useOverlay: false));
-      await tester.press(find.byType(Radio<bool>));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildRadio(active: true, useOverlay: false));
+        await tester.press(find.byType(Radio<bool>));
+        await tester.pumpAndSettle();
 
-      expect(
-        Material.of(tester.element(find.byType(Radio<bool>))),
-        paints
-          ..circle()
-          ..circle(
-            color: fillColor.withAlpha(kRadialReactionAlpha),
-            radius: 20,
-          ),
-        reason: 'Default inactive pressed Radio should have overlay color from fillColor',
-      );
+        expect(
+          Material.of(tester.element(find.byType(Radio<bool>))),
+          paints
+            ..circle()
+            ..circle(color: fillColor.withAlpha(kRadialReactionAlpha), radius: 20),
+          reason: 'Default active pressed Radio should have overlay color from fillColor',
+        );
 
-      await tester.pumpWidget(buildRadio(active: true, useOverlay: false));
-      await tester.press(find.byType(Radio<bool>));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildRadio());
+        await tester.press(find.byType(Radio<bool>));
+        await tester.pumpAndSettle();
 
-      expect(
-        Material.of(tester.element(find.byType(Radio<bool>))),
-        paints
-          ..circle()
-          ..circle(
-            color: fillColor.withAlpha(kRadialReactionAlpha),
-            radius: 20,
-          ),
-        reason: 'Default active pressed Radio should have overlay color from fillColor',
-      );
+        expect(
+          Material.of(tester.element(find.byType(Radio<bool>))),
+          paints
+            ..circle()
+            ..circle(color: inactivePressedOverlayColor, radius: 20),
+          reason: 'Inactive pressed Radio should have overlay color: $inactivePressedOverlayColor',
+        );
 
-      await tester.pumpWidget(buildRadio());
-      await tester.press(find.byType(Radio<bool>));
-      await tester.pumpAndSettle();
+        // Start hovering.
+        final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+        await gesture.addPointer();
+        await gesture.moveTo(tester.getCenter(find.byType(Radio<bool>)));
+        await tester.pumpAndSettle();
 
-      expect(
-        Material.of(tester.element(find.byType(Radio<bool>))),
-        paints
-          ..circle()
-          ..circle(
-            color: inactivePressedOverlayColor,
-            radius: 20,
-          ),
-        reason: 'Inactive pressed Radio should have overlay color: $inactivePressedOverlayColor',
-      );
+        await tester.pumpWidget(Container());
+        await tester.pumpWidget(buildRadio());
+        await tester.pumpAndSettle();
 
-      // Start hovering.
-      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
-      await gesture.addPointer();
-      await gesture.moveTo(tester.getCenter(find.byType(Radio<bool>)));
-      await tester.pumpAndSettle();
-
-      await tester.pumpWidget(Container());
-      await tester.pumpWidget(buildRadio());
-      await tester.pumpAndSettle();
-
-      expect(
-        Material.of(tester.element(find.byType(Radio<bool>))),
-        paints
-          ..circle(
-            color: hoverOverlayColor,
-            radius: 20,
-          ),
-        reason: 'Hovered Radio should use overlay color $hoverOverlayColor over $hoverColor',
-      );
-    });
+        expect(
+          Material.of(tester.element(find.byType(Radio<bool>))),
+          paints..circle(color: hoverOverlayColor, radius: 20),
+          reason: 'Hovered Radio should use overlay color $hoverOverlayColor over $hoverColor',
+        );
+      },
+    );
 
     testWidgets('Material2 - RadioListTile respects hoverColor', (WidgetTester tester) async {
       tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
@@ -1500,21 +1511,27 @@ void main() {
         return wrap(
           child: MaterialApp(
             theme: ThemeData(useMaterial3: false),
-            home: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-              return RadioListTile<int>(
-                value: 0,
-                onChanged: enabled ? (int? newValue) {
-                  setState(() {
-                    groupValue = newValue;
-                  });
-                } : null,
-                hoverColor: hoverColor,
-                groupValue: groupValue,
-              );
-            }),
+            home: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return RadioListTile<int>(
+                  value: 0,
+                  onChanged:
+                      enabled
+                          ? (int? newValue) {
+                            setState(() {
+                              groupValue = newValue;
+                            });
+                          }
+                          : null,
+                  hoverColor: hoverColor,
+                  groupValue: groupValue,
+                );
+              },
+            ),
           ),
         );
       }
+
       await tester.pumpWidget(buildApp());
 
       await tester.pump();
@@ -1523,8 +1540,8 @@ void main() {
         Material.of(tester.element(find.byType(Radio<int>))),
         paints
           ..rect()
-          ..circle(color:const Color(0xff2196f3))
-          ..circle(color:const Color(0xff2196f3)),
+          ..circle(color: const Color(0xff2196f3))
+          ..circle(color: const Color(0xff2196f3)),
       );
 
       // Start hovering
@@ -1540,7 +1557,7 @@ void main() {
         Material.of(tester.element(find.byType(Radio<int>))),
         paints
           ..rect()
-          ..circle(color: hoverColor)
+          ..circle(color: hoverColor),
       );
 
       // Check when the radio is selected, but disabled.
@@ -1552,8 +1569,8 @@ void main() {
         Material.of(tester.element(find.byType(Radio<int>))),
         paints
           ..rect()
-          ..circle(color:const Color(0x61000000))
-          ..circle(color:const Color(0x61000000)),
+          ..circle(color: const Color(0x61000000))
+          ..circle(color: const Color(0x61000000)),
       );
     });
   });
@@ -1563,9 +1580,7 @@ void main() {
       return MaterialApp(
         home: Material(
           child: ListTileTheme(
-            data: ListTileThemeData(
-              controlAffinity: controlAffinity,
-            ),
+            data: ListTileThemeData(controlAffinity: controlAffinity),
             child: RadioListTile<double>(
               value: 0.5,
               groupValue: 1.0,
@@ -1594,15 +1609,13 @@ void main() {
   });
 
   testWidgets('RadioListTile renders with default scale', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(
-      home: Material(
-        child: RadioListTile<bool>(
-          value: false,
-          groupValue: false,
-          onChanged: null,
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Material(
+          child: RadioListTile<bool>(value: false, groupValue: false, onChanged: null),
         ),
       ),
-    ));
+    );
 
     final Finder transformFinder = find.ancestor(
       of: find.byType(Radio<bool>),
@@ -1614,22 +1627,21 @@ void main() {
 
   testWidgets('RadioListTile respects radioScaleFactor', (WidgetTester tester) async {
     const double scale = 1.4;
-    await tester.pumpWidget(const MaterialApp(
-      home: Material(
-        child: RadioListTile<bool>(
-          value: false,
-          groupValue: false,
-          onChanged: null,
-          radioScaleFactor: scale,
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Material(
+          child: RadioListTile<bool>(
+            value: false,
+            groupValue: false,
+            onChanged: null,
+            radioScaleFactor: scale,
+          ),
         ),
       ),
-    ));
+    );
 
     final Transform widget = tester.widget(
-      find.ancestor(
-        of: find.byType(Radio<bool>),
-        matching: find.byType(Transform),
-      ),
+      find.ancestor(of: find.byType(Radio<bool>), matching: find.byType(Transform)),
     );
 
     expect(widget.transform.getMaxScaleOnAxis(), scale);

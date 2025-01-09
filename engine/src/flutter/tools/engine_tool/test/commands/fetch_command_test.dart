@@ -32,53 +32,45 @@ void main() {
         abi: ffi.Abi.linuxX64,
         engine: engine,
         platform: FakePlatform(
-            operatingSystem: Platform.linux,
-            resolvedExecutable: io.Platform.resolvedExecutable,
-            pathSeparator: '/'),
+          operatingSystem: Platform.linux,
+          resolvedExecutable: io.Platform.resolvedExecutable,
+          pathSeparator: '/',
+        ),
         processRunner: ProcessRunner(
-          processManager: FakeProcessManager(onStart: (List<String> command) {
-            runHistory.add(command);
-            return FakeProcess();
-          }, onRun: (List<String> command) {
-            runHistory.add(command);
-            return io.ProcessResult(81, 0, '', '');
-          }),
+          processManager: FakeProcessManager(
+            onStart: (List<String> command) {
+              runHistory.add(command);
+              return FakeProcess();
+            },
+            onRun: (List<String> command) {
+              runHistory.add(command);
+              return io.ProcessResult(81, 0, '', '');
+            },
+          ),
         ),
         logger: logger,
       ),
-      runHistory
+      runHistory,
     );
   }
 
   test('fetch command invokes gclient sync -D', () async {
     final Logger logger = Logger.test((_) {});
     final (Environment env, List<List<String>> runHistory) = linuxEnv(logger);
-    final ToolCommandRunner runner = ToolCommandRunner(
-      environment: env,
-      configs: configs,
-    );
+    final ToolCommandRunner runner = ToolCommandRunner(environment: env, configs: configs);
     final int result = await runner.run(<String>['fetch']);
     expect(result, equals(0));
     expect(runHistory.length, greaterThanOrEqualTo(1));
-    expect(
-      runHistory[0],
-      containsAllInOrder(<String>['gclient', 'sync', '-D']),
-    );
+    expect(runHistory[0], containsAllInOrder(<String>['gclient', 'sync', '-D']));
   });
 
   test('fetch command has sync alias', () async {
     final Logger logger = Logger.test((_) {});
     final (Environment env, List<List<String>> runHistory) = linuxEnv(logger);
-    final ToolCommandRunner runner = ToolCommandRunner(
-      environment: env,
-      configs: configs,
-    );
+    final ToolCommandRunner runner = ToolCommandRunner(environment: env, configs: configs);
     final int result = await runner.run(<String>['sync']);
     expect(result, equals(0));
     expect(runHistory.length, greaterThanOrEqualTo(1));
-    expect(
-      runHistory[0],
-      containsAllInOrder(<String>['gclient', 'sync', '-D']),
-    );
+    expect(runHistory[0], containsAllInOrder(<String>['gclient', 'sync', '-D']));
   });
 }

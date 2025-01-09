@@ -36,7 +36,10 @@ void _defaultTestExceptionReporter(FlutterErrorDetails errorDetails, String test
   if (testDescription.isNotEmpty) {
     additional = '\nThe test description was: $testDescription';
   }
-  test_package.registerException('Test failed. See exception logs above.$additional', _emptyStackTrace);
+  test_package.registerException(
+    'Test failed. See exception logs above.$additional',
+    _emptyStackTrace,
+  );
 }
 
 final StackTrace _emptyStackTrace = stack_trace.Chain(const <stack_trace.Trace>[]);

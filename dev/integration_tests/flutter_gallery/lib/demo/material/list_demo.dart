@@ -21,7 +21,7 @@ enum _MaterialListType {
 }
 
 class ListDemo extends StatefulWidget {
-  const ListDemo({ super.key });
+  const ListDemo({super.key});
 
   static const String routeName = '/material/list';
 
@@ -40,22 +40,35 @@ class _ListDemoState extends State<ListDemo> {
   bool? _showDividers = false;
   bool _reverseSort = false;
   List<String> items = <String>[
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
   ];
 
   void changeItemType(_MaterialListType? type) {
     setState(() {
       _itemType = type;
     });
-    _bottomSheet?.setState!(() { });
+    _bottomSheet?.setState!(() {});
   }
 
   void _showConfigurationSheet() {
-    final PersistentBottomSheetController bottomSheet = scaffoldKey.currentState!.showBottomSheet((BuildContext bottomSheetContext) {
+    final PersistentBottomSheetController bottomSheet = scaffoldKey.currentState!.showBottomSheet((
+      BuildContext bottomSheetContext,
+    ) {
       return Container(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: Colors.black26)),
-        ),
+        decoration: const BoxDecoration(border: Border(top: BorderSide(color: Colors.black26))),
         child: ListView(
           shrinkWrap: true,
           primary: false,
@@ -65,7 +78,10 @@ class _ListDemoState extends State<ListDemo> {
                 dense: true,
                 title: const Text('One-line'),
                 trailing: Radio<_MaterialListType>(
-                  value: _showAvatars! ? _MaterialListType.oneLineWithAvatar : _MaterialListType.oneLine,
+                  value:
+                      _showAvatars!
+                          ? _MaterialListType.oneLineWithAvatar
+                          : _MaterialListType.oneLine,
                   groupValue: _itemType,
                   onChanged: changeItemType,
                 ),
@@ -105,7 +121,7 @@ class _ListDemoState extends State<ListDemo> {
                     });
                     final StateSetter? bottomSheetSetState = _bottomSheet?.setState;
                     if (bottomSheetSetState != null) {
-                      bottomSheetSetState(() { });
+                      bottomSheetSetState(() {});
                     }
                   },
                 ),
@@ -123,7 +139,7 @@ class _ListDemoState extends State<ListDemo> {
                     });
                     final StateSetter? bottomSheetSetState = _bottomSheet?.setState;
                     if (bottomSheetSetState != null) {
-                      bottomSheetSetState(() { });
+                      bottomSheetSetState(() {});
                     }
                   },
                 ),
@@ -141,7 +157,7 @@ class _ListDemoState extends State<ListDemo> {
                     });
                     final StateSetter? bottomSheetSetState = _bottomSheet?.setState;
                     if (bottomSheetSetState != null) {
-                      bottomSheetSetState(() { });
+                      bottomSheetSetState(() {});
                     }
                   },
                 ),
@@ -159,7 +175,7 @@ class _ListDemoState extends State<ListDemo> {
                     });
                     final StateSetter? bottomSheetSetState = _bottomSheet?.setState;
                     if (bottomSheetSetState != null) {
-                      bottomSheetSetState(() { });
+                      bottomSheetSetState(() {});
                     }
                   },
                 ),
@@ -186,17 +202,20 @@ class _ListDemoState extends State<ListDemo> {
   Widget buildListTile(BuildContext context, String item) {
     final String? subtitle = switch (_itemType) {
       _MaterialListType.oneLine || _MaterialListType.oneLineWithAvatar || null => null,
-      _MaterialListType.twoLine   => 'Additional item information.',
-      _MaterialListType.threeLine => 'Even more additional list item information appears on line three.',
+      _MaterialListType.twoLine => 'Additional item information.',
+      _MaterialListType.threeLine =>
+        'Even more additional list item information appears on line three.',
     };
     return MergeSemantics(
       child: ListTile(
         isThreeLine: _itemType == _MaterialListType.threeLine,
         dense: _dense,
-        leading: _showAvatars != null ? ExcludeSemantics(child: CircleAvatar(child: Text(item))) : null,
+        leading:
+            _showAvatars != null ? ExcludeSemantics(child: CircleAvatar(child: Text(item))) : null,
         title: Text('This item represents $item.'),
         subtitle: subtitle != null ? Text(subtitle) : null,
-        trailing: _showIcons != null ? Icon(Icons.info, color: Theme.of(context).disabledColor) : null,
+        trailing:
+            _showIcons != null ? Icon(Icons.info, color: Theme.of(context).disabledColor) : null,
       ),
     );
   }
@@ -234,9 +253,7 @@ class _ListDemoState extends State<ListDemo> {
           ),
           IconButton(
             icon: Icon(
-              Theme.of(context).platform == TargetPlatform.iOS
-                  ? Icons.more_horiz
-                  : Icons.more_vert,
+              Theme.of(context).platform == TargetPlatform.iOS ? Icons.more_horiz : Icons.more_vert,
             ),
             tooltip: 'Show menu',
             onPressed: _bottomSheet == null ? _showConfigurationSheet : null,

@@ -6,15 +6,23 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class Changer extends StatefulWidget {
-  const Changer({ super.key });
+  const Changer({super.key});
   @override
   ChangerState createState() => ChangerState();
 }
 
 class ChangerState extends State<Changer> {
-  void test0() { setState(() { }); }
-  void test1() { setState(() => 1); }
-  void test2() { setState(() async { }); }
+  void test0() {
+    setState(() {});
+  }
+
+  void test1() {
+    setState(() => 1);
+  }
+
+  void test2() {
+    setState(() async {});
+  }
 
   @override
   Widget build(BuildContext context) => const Text('test', textDirection: TextDirection.ltr);

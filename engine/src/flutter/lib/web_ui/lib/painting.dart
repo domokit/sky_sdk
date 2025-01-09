@@ -23,36 +23,32 @@ Color _scaleAlpha(Color x, double factor) {
 
 class Color {
   const Color(int value)
-      : this._fromARGBC(
-            value >> 24, value >> 16, value >> 8, value, ColorSpace.sRGB);
+    : this._fromARGBC(value >> 24, value >> 16, value >> 8, value, ColorSpace.sRGB);
 
-  const Color.from(
-      {required double alpha,
-      required double red,
-      required double green,
-      required double blue,
-      this.colorSpace = ColorSpace.sRGB})
-      : a = alpha,
-        r = red,
-        g = green,
-        b = blue;
+  const Color.from({
+    required double alpha,
+    required double red,
+    required double green,
+    required double blue,
+    this.colorSpace = ColorSpace.sRGB,
+  }) : a = alpha,
+       r = red,
+       g = green,
+       b = blue;
 
-  const Color.fromARGB(int a, int r, int g, int b)
-      : this._fromARGBC(a, r, g, b, ColorSpace.sRGB);
+  const Color.fromARGB(int a, int r, int g, int b) : this._fromARGBC(a, r, g, b, ColorSpace.sRGB);
 
-  const Color._fromARGBC(
-      int alpha, int red, int green, int blue, ColorSpace colorSpace)
-      : this._fromRGBOC(
-            red, green, blue, (alpha & 0xff) / 255, colorSpace);
+  const Color._fromARGBC(int alpha, int red, int green, int blue, ColorSpace colorSpace)
+    : this._fromRGBOC(red, green, blue, (alpha & 0xff) / 255, colorSpace);
 
   const Color.fromRGBO(int r, int g, int b, double opacity)
-      : this._fromRGBOC(r, g, b, opacity, ColorSpace.sRGB);
+    : this._fromRGBOC(r, g, b, opacity, ColorSpace.sRGB);
 
   const Color._fromRGBOC(int r, int g, int b, double opacity, this.colorSpace)
-      : a = opacity,
-        r = (r & 0xff) / 255,
-        g = (g & 0xff) / 255,
-        b = (b & 0xff) / 255;
+    : a = opacity,
+      r = (r & 0xff) / 255,
+      g = (g & 0xff) / 255,
+      b = (b & 0xff) / 255;
 
   final double a;
 
@@ -87,24 +83,25 @@ class Color {
 
   int get blue => (0x000000ff & value) >> 0;
 
-  Color withValues(
-      {double? alpha,
-      double? red,
-      double? green,
-      double? blue,
-      ColorSpace? colorSpace}) {
+  Color withValues({
+    double? alpha,
+    double? red,
+    double? green,
+    double? blue,
+    ColorSpace? colorSpace,
+  }) {
     Color? updatedComponents;
     if (alpha != null || red != null || green != null || blue != null) {
       updatedComponents = Color.from(
-          alpha: alpha ?? a,
-          red: red ?? r,
-          green: green ?? g,
-          blue: blue ?? b,
-          colorSpace: this.colorSpace);
+        alpha: alpha ?? a,
+        red: red ?? r,
+        green: green ?? g,
+        blue: blue ?? b,
+        colorSpace: this.colorSpace,
+      );
     }
     if (colorSpace != null && colorSpace != this.colorSpace) {
-      final _ColorTransform transform =
-          _getColorTransform(this.colorSpace, colorSpace);
+      final _ColorTransform transform = _getColorTransform(this.colorSpace, colorSpace);
       return transform.transform(updatedComponents ?? this, colorSpace);
     } else {
       return updatedComponents ?? this;
@@ -177,12 +174,14 @@ class Color {
     assert(foreground.colorSpace == background.colorSpace);
     assert(foreground.colorSpace != ColorSpace.extendedSRGB);
     final double alpha = foreground.a;
-    if (alpha == 0) { // Foreground completely transparent.
+    if (alpha == 0) {
+      // Foreground completely transparent.
       return background;
     }
     final double invAlpha = 1 - alpha;
     double backAlpha = background.a;
-    if (backAlpha == 1) { // Opaque background case
+    if (backAlpha == 1) {
+      // Opaque background case
       return Color.from(
         alpha: 1,
         red: alpha * foreground.r + invAlpha * background.r,
@@ -190,7 +189,8 @@ class Color {
         blue: alpha * foreground.b + invAlpha * background.b,
         colorSpace: foreground.colorSpace,
       );
-    } else { // General case
+    } else {
+      // General case
       backAlpha = backAlpha * invAlpha;
       final double outAlpha = alpha + backAlpha;
       assert(outAlpha != 0);
@@ -232,23 +232,12 @@ class Color {
       'Color(alpha: ${a.toStringAsFixed(4)}, red: ${r.toStringAsFixed(4)}, green: ${g.toStringAsFixed(4)}, blue: ${b.toStringAsFixed(4)}, colorSpace: $colorSpace)';
 }
 
-enum StrokeCap {
-  butt,
-  round,
-  square,
-}
+enum StrokeCap { butt, round, square }
 
 // These enum values must be kept in sync with SkPaint::Join.
-enum StrokeJoin {
-  miter,
-  round,
-  bevel,
-}
+enum StrokeJoin { miter, round, bevel }
 
-enum PaintingStyle {
-  fill,
-  stroke,
-}
+enum PaintingStyle { fill, stroke }
 
 enum BlendMode {
   // This list comes from Skia's SkXfermode.h and the values (order) should be
@@ -287,12 +276,7 @@ enum BlendMode {
   luminosity,
 }
 
-enum Clip {
-  none,
-  hardEdge,
-  antiAlias,
-  antiAliasWithSaveLayer,
-}
+enum Clip { none, hardEdge, antiAlias, antiAliasWithSaveLayer }
 
 abstract class Paint {
   factory Paint() => engine.renderer.createPaint();
@@ -369,13 +353,7 @@ abstract class Gradient implements Shader {
     Float64List? matrix4,
   ]) {
     final Float32List? matrix = matrix4 == null ? null : engine.toMatrix32(matrix4);
-    return engine.renderer.createLinearGradient(
-      from,
-      to,
-      colors,
-      colorStops,
-      tileMode,
-      matrix);
+    return engine.renderer.createLinearGradient(from, to, colors, colorStops, tileMode, matrix);
   }
 
   factory Gradient.radial(
@@ -394,12 +372,27 @@ abstract class Gradient implements Shader {
     final Float32List? matrix32 = matrix4 != null ? engine.toMatrix32(matrix4) : null;
     if (focal == null || (focal == center && focalRadius == 0.0)) {
       return engine.renderer.createRadialGradient(
-        center, radius, colors, colorStops, tileMode, matrix32);
+        center,
+        radius,
+        colors,
+        colorStops,
+        tileMode,
+        matrix32,
+      );
     } else {
-      assert(center != Offset.zero ||
-          focal != Offset.zero); // will result in exception(s) in Skia side
+      assert(
+        center != Offset.zero || focal != Offset.zero,
+      ); // will result in exception(s) in Skia side
       return engine.renderer.createConicalGradient(
-        focal, focalRadius, center, radius, colors, colorStops, tileMode, matrix32);
+        focal,
+        focalRadius,
+        center,
+        radius,
+        colors,
+        colorStops,
+        tileMode,
+        matrix32,
+      );
     }
   }
   factory Gradient.sweep(
@@ -417,7 +410,8 @@ abstract class Gradient implements Shader {
     tileMode,
     startAngle,
     endAngle,
-    matrix4 != null ? engine.toMatrix32(matrix4) : null);
+    matrix4 != null ? engine.toMatrix32(matrix4) : null,
+  );
 }
 
 typedef ImageEventCallback = void Function(Image image);
@@ -461,10 +455,7 @@ enum BlurStyle {
 }
 
 class MaskFilter {
-  const MaskFilter.blur(
-    this._style,
-    this._sigma,
-  );
+  const MaskFilter.blur(this._style, this._sigma);
 
   final BlurStyle _style;
   final double _sigma;
@@ -473,9 +464,7 @@ class MaskFilter {
 
   @override
   bool operator ==(Object other) {
-    return other is MaskFilter
-        && other._style == _style
-        && other._sigma == _sigma;
+    return other is MaskFilter && other._style == _style && other._sigma == _sigma;
   }
 
   @override
@@ -505,7 +494,8 @@ class _ClampTransform implements _ColorTransform {
       red: clampDouble(color.r, 0, 1),
       green: clampDouble(color.g, 0, 1),
       blue: clampDouble(color.b, 0, 1),
-      colorSpace: resultColorSpace);
+      colorSpace: resultColorSpace,
+    );
   }
 }
 
@@ -517,20 +507,12 @@ class _MatrixColorTransform implements _ColorTransform {
   @override
   Color transform(Color color, ColorSpace resultColorSpace) {
     return Color.from(
-        alpha: color.a,
-        red: values[0] * color.r +
-            values[1] * color.g +
-            values[2] * color.b +
-            values[3],
-        green: values[4] * color.r +
-            values[5] * color.g +
-            values[6] * color.b +
-            values[7],
-        blue: values[8] * color.r +
-            values[9] * color.g +
-            values[10] * color.b +
-            values[11],
-        colorSpace: resultColorSpace);
+      alpha: color.a,
+      red: values[0] * color.r + values[1] * color.g + values[2] * color.b + values[3],
+      green: values[4] * color.r + values[5] * color.g + values[6] * color.b + values[7],
+      blue: values[8] * color.r + values[9] * color.g + values[10] * color.b + values[11],
+      colorSpace: resultColorSpace,
+    );
   }
 }
 
@@ -540,14 +522,14 @@ _ColorTransform _getColorTransform(ColorSpace source, ColorSpace destination) {
     0.145738111193222, //
     0.096480880462996, 0.916386732581291, -0.086093928394828,
     0.089490172325882, //
-    -0.127099563510240, -0.068983484963878, 0.735426667591299, 0.233655661600230
+    -0.127099563510240, -0.068983484963878, 0.735426667591299, 0.233655661600230,
   ]);
   const _ColorTransform p3ToSrgb = _MatrixColorTransform(<double>[
     1.306671048092539, -0.298061942172353, 0.213228303487995,
     -0.213580156254466, //
     -0.117390025596251, 1.127722006101976, 0.109727644608938,
     -0.109450321455370, //
-    0.214813187718391, 0.054268702864647, 1.406898424029350, -0.364892765879631
+    0.214813187718391, 0.054268702864647, 1.406898424029350, -0.364892765879631,
   ]);
   switch (source) {
     case ColorSpace.sRGB:
@@ -581,31 +563,22 @@ _ColorTransform _getColorTransform(ColorSpace source, ColorSpace destination) {
 }
 
 // This needs to be kept in sync with the "_FilterQuality" enum in skwasm's canvas.cpp
-enum FilterQuality {
-  none,
-  low,
-  medium,
-  high,
-}
+enum FilterQuality { none, low, medium, high }
 
 class ImageFilter {
-  factory ImageFilter.blur({
-    double sigmaX = 0.0,
-    double sigmaY = 0.0,
-    TileMode? tileMode
-  }) => engine.renderer.createBlurImageFilter(
-    sigmaX: sigmaX,
-    sigmaY: sigmaY,
-    tileMode: tileMode
-  );
+  factory ImageFilter.blur({double sigmaX = 0.0, double sigmaY = 0.0, TileMode? tileMode}) =>
+      engine.renderer.createBlurImageFilter(sigmaX: sigmaX, sigmaY: sigmaY, tileMode: tileMode);
 
-  factory ImageFilter.dilate({ double radiusX = 0.0, double radiusY = 0.0 }) =>
-    engine.renderer.createDilateImageFilter(radiusX: radiusX, radiusY: radiusY);
+  factory ImageFilter.dilate({double radiusX = 0.0, double radiusY = 0.0}) =>
+      engine.renderer.createDilateImageFilter(radiusX: radiusX, radiusY: radiusY);
 
-  factory ImageFilter.erode({ double radiusX = 0.0, double radiusY = 0.0 }) =>
-    engine.renderer.createErodeImageFilter(radiusX: radiusX, radiusY: radiusY);
+  factory ImageFilter.erode({double radiusX = 0.0, double radiusY = 0.0}) =>
+      engine.renderer.createErodeImageFilter(radiusX: radiusX, radiusY: radiusY);
 
-  factory ImageFilter.matrix(Float64List matrix4, {FilterQuality filterQuality = FilterQuality.medium}) {
+  factory ImageFilter.matrix(
+    Float64List matrix4, {
+    FilterQuality filterQuality = FilterQuality.medium,
+  }) {
     if (matrix4.length != 16) {
       throw ArgumentError('"matrix4" must have 16 entries.');
     }
@@ -613,7 +586,7 @@ class ImageFilter {
   }
 
   factory ImageFilter.compose({required ImageFilter outer, required ImageFilter inner}) =>
-    engine.renderer.composeImageFilters(outer: outer, inner: inner);
+      engine.renderer.composeImageFilters(outer: outer, inner: inner);
 
   // ignore: avoid_unused_constructor_parameters
   factory ImageFilter.shader(FragmentShader shader) {
@@ -623,26 +596,13 @@ class ImageFilter {
   static bool get isShaderFilterSupported => false;
 }
 
-enum ColorSpace {
-  sRGB,
-  extendedSRGB,
-  displayP3,
-}
+enum ColorSpace { sRGB, extendedSRGB, displayP3 }
 
 // This must be kept in sync with the `ImageByteFormat` enum in Skwasm's surface.cpp.
-enum ImageByteFormat {
-  rawRgba,
-  rawStraightRgba,
-  rawUnmodified,
-  png,
-}
+enum ImageByteFormat { rawRgba, rawStraightRgba, rawUnmodified, png }
 
 // This must be kept in sync with the `PixelFormat` enum in Skwasm's image.cpp.
-enum PixelFormat {
-  rgba8888,
-  bgra8888,
-  rgbaFloat32,
-}
+enum PixelFormat { rgba8888, bgra8888, rgbaFloat32 }
 
 typedef ImageDecoderCallback = void Function(Image result);
 
@@ -674,7 +634,8 @@ Future<Codec> instantiateImageCodec(
   list,
   targetWidth: targetWidth,
   targetHeight: targetHeight,
-  allowUpscaling: allowUpscaling);
+  allowUpscaling: allowUpscaling,
+);
 
 Future<Codec> instantiateImageCodecFromBuffer(
   ImmutableBuffer buffer, {
@@ -685,7 +646,8 @@ Future<Codec> instantiateImageCodecFromBuffer(
   buffer._list!,
   targetWidth: targetWidth,
   targetHeight: targetHeight,
-  allowUpscaling: allowUpscaling);
+  allowUpscaling: allowUpscaling,
+);
 
 Future<Codec> instantiateImageCodecWithSize(
   ImmutableBuffer buffer, {
@@ -701,8 +663,12 @@ Future<Codec> instantiateImageCodecWithSize(
         final int width = info.image.width;
         final int height = info.image.height;
         final TargetImageSize targetSize = getTargetSize(width, height);
-        return engine.renderer.instantiateImageCodec(buffer._list!,
-            targetWidth: targetSize.width, targetHeight: targetSize.height, allowUpscaling: false);
+        return engine.renderer.instantiateImageCodec(
+          buffer._list!,
+          targetWidth: targetSize.width,
+          targetHeight: targetSize.height,
+          allowUpscaling: false,
+        );
       } finally {
         info.image.dispose();
       }
@@ -716,8 +682,8 @@ typedef TargetImageSizeCallback = TargetImageSize Function(int intrinsicWidth, i
 
 class TargetImageSize {
   const TargetImageSize({this.width, this.height})
-      : assert(width == null || width > 0),
-        assert(height == null || height > 0);
+    : assert(width == null || width > 0),
+      assert(height == null || height > 0);
 
   final int? width;
   final int? height;
@@ -755,13 +721,7 @@ Future<void> _decodeImageFromListAsync(Uint8List list, ImageDecoderCallback call
 // The `pixels` should be the scanlined raw pixels, 4 bytes per pixel, from left
 // to right, then from top to down. The order of the 4 bytes of pixels is
 // decided by `format`.
-Future<Codec> createBmp(
-  Uint8List pixels,
-  int width,
-  int height,
-  int rowBytes,
-  PixelFormat format,
-) {
+Future<Codec> createBmp(Uint8List pixels, int width, int height, int rowBytes, PixelFormat format) {
   late bool swapRedBlue;
   switch (format) {
     case PixelFormat.bgra8888:
@@ -829,9 +789,7 @@ Future<Codec> createBmp(
     }
   }
 
-  return instantiateImageCodec(
-    bmpData.buffer.asUint8List(),
-  );
+  return instantiateImageCodec(bmpData.buffer.asUint8List());
 }
 
 void decodeImageFromPixels(
@@ -853,14 +811,15 @@ void decodeImageFromPixels(
   rowBytes: rowBytes,
   targetWidth: targetWidth,
   targetHeight: targetHeight,
-  allowUpscaling: allowUpscaling);
+  allowUpscaling: allowUpscaling,
+);
 
 class Shadow {
   const Shadow({
     this.color = const Color(_kColorDefault),
     this.offset = Offset.zero,
     this.blurRadius = 0.0,
-  })  : assert(blurRadius >= 0.0, 'Text shadow blur radius should be non-negative.');
+  }) : assert(blurRadius >= 0.0, 'Text shadow blur radius should be non-negative.');
 
   static const int _kColorDefault = 0xFF000000;
   final Color color;
@@ -880,11 +839,7 @@ class Shadow {
   }
 
   Shadow scale(double factor) {
-    return Shadow(
-      color: color,
-      offset: offset * factor,
-      blurRadius: blurRadius * factor,
-    );
+    return Shadow(color: color, offset: offset * factor, blurRadius: blurRadius * factor);
   }
 
   static Shadow? lerp(Shadow? a, Shadow? b, double t) {
@@ -952,13 +907,7 @@ abstract class ImageShader implements Shader {
     TileMode tmy,
     Float64List matrix4, {
     FilterQuality? filterQuality,
-  }) => engine.renderer.createImageShader(
-    image,
-    tmx,
-    tmy,
-    matrix4,
-    filterQuality
-  );
+  }) => engine.renderer.createImageShader(image, tmx, tmy, matrix4, filterQuality);
 
   @override
   void dispose();
@@ -996,6 +945,7 @@ class ImmutableBuffer {
     }());
     return disposed;
   }
+
   void dispose() => _list = null;
 }
 
@@ -1007,18 +957,14 @@ class ImageDescriptor {
     required int height,
     int? rowBytes,
     required PixelFormat pixelFormat,
-  })   : _width = width,
-        _height = height,
-        _rowBytes = rowBytes,
-        _format = pixelFormat {
+  }) : _width = width,
+       _height = height,
+       _rowBytes = rowBytes,
+       _format = pixelFormat {
     _data = buffer._list;
   }
 
-  ImageDescriptor._()
-      : _width = null,
-        _height = null,
-        _rowBytes = null,
-        _format = null;
+  ImageDescriptor._() : _width = null, _height = null, _rowBytes = null, _format = null;
 
   static Future<ImageDescriptor> encoded(ImmutableBuffer buffer) async {
     final ImageDescriptor descriptor = ImageDescriptor._();

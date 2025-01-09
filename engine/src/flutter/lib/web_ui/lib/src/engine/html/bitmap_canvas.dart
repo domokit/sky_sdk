@@ -35,14 +35,16 @@ class BitmapCanvas extends EngineCanvas {
   /// This canvas can be reused by pictures with different paint bounds as long
   /// as the [Rect.size] of the bounds fully fit within the size used to
   /// initialize this canvas.
-  BitmapCanvas(this._bounds, RenderStrategy renderStrategy,
-      {double density = 1.0})
-      : _density = density,
-        _renderStrategy = renderStrategy,
-        widthInBitmapPixels = widthToPhysical(_bounds.width),
-        heightInBitmapPixels = heightToPhysical(_bounds.height),
-        _canvasPool = CanvasPool(widthToPhysical(_bounds.width),
-            heightToPhysical(_bounds.height), density) {
+  BitmapCanvas(this._bounds, RenderStrategy renderStrategy, {double density = 1.0})
+    : _density = density,
+      _renderStrategy = renderStrategy,
+      widthInBitmapPixels = widthToPhysical(_bounds.width),
+      heightInBitmapPixels = heightToPhysical(_bounds.height),
+      _canvasPool = CanvasPool(
+        widthToPhysical(_bounds.width),
+        heightToPhysical(_bounds.height),
+        density,
+      ) {
     rootElement.style.position = 'absolute';
     // Adds one extra pixel to the requested size. This is to compensate for
     // _initializeViewport() snapping canvas position to 1 pixel, causing
@@ -70,8 +72,7 @@ class BitmapCanvas extends EngineCanvas {
     _bounds = newValue;
     final int newCanvasPositionX = _bounds.left.floor() - kPaddingPixels;
     final int newCanvasPositionY = _bounds.top.floor() - kPaddingPixels;
-    if (_canvasPositionX != newCanvasPositionX ||
-        _canvasPositionY != newCanvasPositionY) {
+    if (_canvasPositionX != newCanvasPositionX || _canvasPositionY != newCanvasPositionY) {
       _canvasPositionX = newCanvasPositionX;
       _canvasPositionY = newCanvasPositionY;
       _updateRootElementTransform();
@@ -124,8 +125,7 @@ class BitmapCanvas extends EngineCanvas {
 
   /// Keeps track of what device pixel ratio was used when this [BitmapCanvas]
   /// was created.
-  final double _devicePixelRatio =
-      EngineFlutterDisplay.instance.browserDevicePixelRatio;
+  final double _devicePixelRatio = EngineFlutterDisplay.instance.browserDevicePixelRatio;
 
   // Compensation for [_initializeViewport] snapping canvas position to 1 pixel.
   int? _canvasPositionX, _canvasPositionY;
@@ -180,17 +180,14 @@ class BitmapCanvas extends EngineCanvas {
     // lands on the physical pixel.
     // TODO(yjbanov): !This is not accurate if there are
     // transforms higher up in the stack.
-    rootElement.style.transform =
-        'translate(${_canvasPositionX}px, ${_canvasPositionY}px)';
+    rootElement.style.transform = 'translate(${_canvasPositionX}px, ${_canvasPositionY}px)';
   }
 
   void _setupInitialTransform() {
-    final double canvasPositionCorrectionX = _bounds.left -
-        BitmapCanvas.kPaddingPixels -
-        _canvasPositionX!.toDouble();
-    final double canvasPositionCorrectionY = _bounds.top -
-        BitmapCanvas.kPaddingPixels -
-        _canvasPositionY!.toDouble();
+    final double canvasPositionCorrectionX =
+        _bounds.left - BitmapCanvas.kPaddingPixels - _canvasPositionX!.toDouble();
+    final double canvasPositionCorrectionY =
+        _bounds.top - BitmapCanvas.kPaddingPixels - _canvasPositionY!.toDouble();
     // This compensates for the translate on the `rootElement`.
     _canvasPool.initialTransform = ui.Offset(
       -_bounds.left + canvasPositionCorrectionX + BitmapCanvas.kPaddingPixels,
@@ -200,16 +197,13 @@ class BitmapCanvas extends EngineCanvas {
 
   static int widthToPhysical(double width) {
     final double boundsWidth = width + 1;
-    return (boundsWidth * EngineFlutterDisplay.instance.browserDevicePixelRatio)
-            .ceil() +
+    return (boundsWidth * EngineFlutterDisplay.instance.browserDevicePixelRatio).ceil() +
         2 * kPaddingPixels;
   }
 
   static int heightToPhysical(double height) {
     final double boundsHeight = height + 1;
-    return (boundsHeight *
-                EngineFlutterDisplay.instance.browserDevicePixelRatio)
-            .ceil() +
+    return (boundsHeight * EngineFlutterDisplay.instance.browserDevicePixelRatio).ceil() +
         2 * kPaddingPixels;
   }
 
@@ -253,8 +247,7 @@ class BitmapCanvas extends EngineCanvas {
   /// * [PersistedPicture._recycleCanvas] which also uses this method
   ///   for the same reason.
   bool isReusable() {
-    return _devicePixelRatio ==
-        EngineFlutterDisplay.instance.browserDevicePixelRatio;
+    return _devicePixelRatio == EngineFlutterDisplay.instance.browserDevicePixelRatio;
   }
 
   /// Returns a "data://" URI containing a representation of the image in this
@@ -384,9 +377,7 @@ class BitmapCanvas extends EngineCanvas {
     }
     return _renderStrategy.isInsideSvgFilterTree ||
         _contains3dTransform ||
-        ((_childOverdraw ||
-                _renderStrategy.hasImageElements ||
-                _renderStrategy.hasParagraphs) &&
+        ((_childOverdraw || _renderStrategy.hasImageElements || _renderStrategy.hasParagraphs) &&
             !_canvasPool.hasCanvas &&
             paint.maskFilter == null &&
             paint.shader == null);
@@ -394,9 +385,10 @@ class BitmapCanvas extends EngineCanvas {
 
   @override
   void drawColor(ui.Color color, ui.BlendMode blendMode) {
-    final SurfacePaintData paintData = SurfacePaintData()
-      ..color = color.value
-      ..blendMode = blendMode;
+    final SurfacePaintData paintData =
+        SurfacePaintData()
+          ..color = color.value
+          ..blendMode = blendMode;
     if (_useDomForRenderingFill(paintData)) {
       drawRect(_computeScreenBounds(_canvasPool.currentTransform), paintData);
     } else {
@@ -407,13 +399,13 @@ class BitmapCanvas extends EngineCanvas {
   @override
   void drawLine(ui.Offset p1, ui.Offset p2, SurfacePaintData paint) {
     if (_useDomForRenderingFill(paint)) {
-      final SurfacePath path = SurfacePath()
-        ..moveTo(p1.dx, p1.dy)
-        ..lineTo(p2.dx, p2.dy);
+      final SurfacePath path =
+          SurfacePath()
+            ..moveTo(p1.dx, p1.dy)
+            ..lineTo(p2.dx, p2.dy);
       drawPath(path, paint);
     } else {
-      final ui.Rect? shaderBounds =
-          (paint.shader != null) ? ui.Rect.fromPoints(p1, p2) : null;
+      final ui.Rect? shaderBounds = (paint.shader != null) ? ui.Rect.fromPoints(p1, p2) : null;
       setUpPaint(paint, shaderBounds);
       _canvasPool.strokeLine(p1, p2);
       tearDownPaint();
@@ -425,8 +417,7 @@ class BitmapCanvas extends EngineCanvas {
     if (_useDomForRenderingFill(paint)) {
       drawRect(_computeScreenBounds(_canvasPool.currentTransform), paint);
     } else {
-      final ui.Rect? shaderBounds =
-          (paint.shader != null) ? _computePictureBounds() : null;
+      final ui.Rect? shaderBounds = (paint.shader != null) ? _computePictureBounds() : null;
       setUpPaint(paint, shaderBounds);
       _canvasPool.fill();
       tearDownPaint();
@@ -438,7 +429,11 @@ class BitmapCanvas extends EngineCanvas {
     if (_useDomForRenderingFillAndStroke(paint)) {
       rect = adjustRectForDom(rect, paint);
       final DomHTMLElement element = buildDrawRectElement(
-          rect, paint, 'draw-rect', _canvasPool.currentTransform);
+        rect,
+        paint,
+        'draw-rect',
+        _canvasPool.currentTransform,
+      );
       _drawElement(element, rect.topLeft, paint);
     } else {
       setUpPaint(paint, rect);
@@ -449,14 +444,14 @@ class BitmapCanvas extends EngineCanvas {
 
   /// Inserts a dom element at [offset] creating stack of divs for clipping
   /// if required.
-  void _drawElement(
-      DomElement element, ui.Offset offset, SurfacePaintData paint) {
+  void _drawElement(DomElement element, ui.Offset offset, SurfacePaintData paint) {
     if (_canvasPool.isClipped) {
       final List<DomElement> clipElements = _clipContent(
-          _canvasPool.clipStack!,
-          element,
-          ui.Offset.zero,
-          transformWithOffset(_canvasPool.currentTransform, offset));
+        _canvasPool.clipStack!,
+        element,
+        ui.Offset.zero,
+        transformWithOffset(_canvasPool.currentTransform, offset),
+      );
       for (final DomElement clipElement in clipElements) {
         rootElement.append(clipElement);
         _children.add(clipElement);
@@ -478,7 +473,11 @@ class BitmapCanvas extends EngineCanvas {
     if (_useDomForRenderingFillAndStroke(paint)) {
       final ui.Rect rect = adjustRectForDom(rrect.outerRect, paint);
       final DomHTMLElement element = buildDrawRectElement(
-          rect, paint, 'draw-rrect', _canvasPool.currentTransform);
+        rect,
+        paint,
+        'draw-rrect',
+        _canvasPool.currentTransform,
+      );
       applyRRectBorderRadius(element.style, rrect);
       _drawElement(element, rect.topLeft, paint);
     } else {
@@ -500,10 +499,13 @@ class BitmapCanvas extends EngineCanvas {
     if (_useDomForRenderingFill(paint)) {
       rect = adjustRectForDom(rect, paint);
       final DomHTMLElement element = buildDrawRectElement(
-          rect, paint, 'draw-oval', _canvasPool.currentTransform);
+        rect,
+        paint,
+        'draw-oval',
+        _canvasPool.currentTransform,
+      );
       _drawElement(element, rect.topLeft, paint);
-      element.style.borderRadius =
-          '${rect.width / 2.0}px / ${rect.height / 2.0}px';
+      element.style.borderRadius = '${rect.width / 2.0}px / ${rect.height / 2.0}px';
     } else {
       setUpPaint(paint, rect);
       _canvasPool.drawOval(rect, paint.style);
@@ -514,18 +516,20 @@ class BitmapCanvas extends EngineCanvas {
   @override
   void drawCircle(ui.Offset c, double radius, SurfacePaintData paint) {
     if (_useDomForRenderingFillAndStroke(paint)) {
-      final ui.Rect rect = adjustRectForDom(
-          ui.Rect.fromCircle(center: c, radius: radius), paint);
+      final ui.Rect rect = adjustRectForDom(ui.Rect.fromCircle(center: c, radius: radius), paint);
       final DomHTMLElement element = buildDrawRectElement(
-          rect, paint, 'draw-circle', _canvasPool.currentTransform);
+        rect,
+        paint,
+        'draw-circle',
+        _canvasPool.currentTransform,
+      );
       _drawElement(element, rect.topLeft, paint);
       element.style.borderRadius = '50%';
     } else {
       setUpPaint(
-          paint,
-          paint.shader != null
-              ? ui.Rect.fromCircle(center: c, radius: radius)
-              : null);
+        paint,
+        paint.shader != null ? ui.Rect.fromCircle(center: c, radius: radius) : null,
+      );
       _canvasPool.drawCircle(c, radius, paint.style);
       tearDownPaint();
     }
@@ -575,8 +579,7 @@ class BitmapCanvas extends EngineCanvas {
       final bool isStroke = paint.style == ui.PaintingStyle.stroke;
       final String cssColor = colorValueToCssString(paint.color);
       final double sigma = paint.maskFilter!.webOnlySigma;
-      if (ui_web.browser.browserEngine == ui_web.BrowserEngine.webkit &&
-          !isStroke) {
+      if (ui_web.browser.browserEngine == ui_web.BrowserEngine.webkit && !isStroke) {
         // A bug in webkit leaves artifacts when this element is animated
         // with filter: blur, we use boxShadow instead.
         element.style.boxShadow = '0px 0px ${sigma * 2.0}px $cssColor';
@@ -587,8 +590,7 @@ class BitmapCanvas extends EngineCanvas {
   }
 
   @override
-  void drawShadow(ui.Path path, ui.Color color, double elevation,
-      bool transparentOccluder) {
+  void drawShadow(ui.Path path, ui.Color color, double elevation, bool transparentOccluder) {
     _canvasPool.drawShadow(path, color, elevation, transparentOccluder);
   }
 
@@ -596,8 +598,7 @@ class BitmapCanvas extends EngineCanvas {
   void drawImage(ui.Image image, ui.Offset p, SurfacePaintData paint) {
     final DomHTMLElement imageElement = _drawImage(image, p, paint);
     if (paint.colorFilter != null) {
-      _applyTargetSize(
-          imageElement, image.width.toDouble(), image.height.toDouble());
+      _applyTargetSize(imageElement, image.width.toDouble(), image.height.toDouble());
     }
     if (!_preserveImageData) {
       _closeCanvas();
@@ -625,19 +626,20 @@ class BitmapCanvas extends EngineCanvas {
     element.remove();
   }
 
-  DomHTMLElement _drawImage(
-      ui.Image image, ui.Offset p, SurfacePaintData paint) {
+  DomHTMLElement _drawImage(ui.Image image, ui.Offset p, SurfacePaintData paint) {
     final HtmlImage htmlImage = image as HtmlImage;
     final ui.BlendMode? blendMode = paint.blendMode;
-    final EngineHtmlColorFilter? colorFilter =
-        createHtmlColorFilter(paint.colorFilter);
+    final EngineHtmlColorFilter? colorFilter = createHtmlColorFilter(paint.colorFilter);
     DomHTMLElement imgElement;
     if (colorFilter is ModeHtmlColorFilter) {
       imgElement = _createImageElementWithBlend(
-          image, colorFilter.color, colorFilter.blendMode, paint);
+        image,
+        colorFilter.color,
+        colorFilter.blendMode,
+        paint,
+      );
     } else if (colorFilter is MatrixHtmlColorFilter) {
-      imgElement = _createImageElementWithSvgColorMatrixFilter(
-          image, colorFilter.matrix, paint);
+      imgElement = _createImageElementWithSvgColorMatrixFilter(image, colorFilter.matrix, paint);
     } else {
       // No Blending, create an image by cloning original loaded image.
       imgElement = _reuseOrCreateImage(htmlImage);
@@ -657,17 +659,19 @@ class BitmapCanvas extends EngineCanvas {
           ..removeProperty('width')
           ..removeProperty('height');
         final List<DomElement> clipElements = _clipContent(
-            _canvasPool.clipStack!,
-            imgElement,
-            p,
-            _canvasPool.currentTransform);
+          _canvasPool.clipStack!,
+          imgElement,
+          p,
+          _canvasPool.currentTransform,
+        );
         for (final DomElement clipElement in clipElements) {
           rootElement.append(clipElement);
           _children.add(clipElement);
         }
       } else {
         final String cssTransform = float64ListToCssTransform(
-            transformWithOffset(_canvasPool.currentTransform, p).storage);
+          transformWithOffset(_canvasPool.currentTransform, p).storage,
+        );
         imgElement.style
           ..transformOrigin = '0 0 0'
           ..transform = cssTransform
@@ -681,8 +685,12 @@ class BitmapCanvas extends EngineCanvas {
     return imgElement;
   }
 
-  DomHTMLElement _createImageElementWithBlend(HtmlImage image, ui.Color color,
-      ui.BlendMode blendMode, SurfacePaintData paint) {
+  DomHTMLElement _createImageElementWithBlend(
+    HtmlImage image,
+    ui.Color color,
+    ui.BlendMode blendMode,
+    SurfacePaintData paint,
+  ) {
     switch (blendMode) {
       case ui.BlendMode.colorBurn:
       case ui.BlendMode.colorDodge:
@@ -698,20 +706,16 @@ class BitmapCanvas extends EngineCanvas {
       case ui.BlendMode.luminosity:
       case ui.BlendMode.xor:
       case ui.BlendMode.dstATop:
-        return _createImageElementWithSvgBlendFilter(
-            image, color, blendMode, paint);
+        return _createImageElementWithSvgBlendFilter(image, color, blendMode, paint);
       default:
         return _createBackgroundImageWithBlend(image, color, blendMode, paint);
     }
   }
 
   @override
-  void drawImageRect(
-      ui.Image image, ui.Rect src, ui.Rect dst, SurfacePaintData paint) {
-    final bool requiresClipping = src.left != 0 ||
-        src.top != 0 ||
-        src.width != image.width ||
-        src.height != image.height;
+  void drawImageRect(ui.Image image, ui.Rect src, ui.Rect dst, SurfacePaintData paint) {
+    final bool requiresClipping =
+        src.left != 0 || src.top != 0 || src.width != image.width || src.height != image.height;
     // If source and destination sizes are identical, we can skip the longer
     // code path that sets the size of the element and clips.
     //
@@ -741,8 +745,7 @@ class BitmapCanvas extends EngineCanvas {
         }
       }
 
-      final DomElement imgElement =
-          _drawImage(image, ui.Offset(targetLeft, targetTop), paint);
+      final DomElement imgElement = _drawImage(image, ui.Offset(targetLeft, targetTop), paint);
       // To scale set width / height on destination image.
       // For clipping we need to scale according to
       // clipped-width/full image width and shift it according to left/top of
@@ -761,8 +764,7 @@ class BitmapCanvas extends EngineCanvas {
     _closeCanvas();
   }
 
-  void _applyTargetSize(
-      DomHTMLElement imageElement, double targetWidth, double targetHeight) {
+  void _applyTargetSize(DomHTMLElement imageElement, double targetWidth, double targetHeight) {
     final DomCSSStyleDeclaration imageStyle = imageElement.style;
     final String widthPx = '${targetWidth.toStringAsFixed(2)}px';
     final String heightPx = '${targetHeight.toStringAsFixed(2)}px';
@@ -793,10 +795,11 @@ class BitmapCanvas extends EngineCanvas {
   // For src,srcOver it only sets background-color attribute.
   // For dst,dstIn , it only sets source not background color.
   DomHTMLElement _createBackgroundImageWithBlend(
-      HtmlImage image,
-      ui.Color? filterColor,
-      ui.BlendMode colorFilterBlendMode,
-      SurfacePaintData paint) {
+    HtmlImage image,
+    ui.Color? filterColor,
+    ui.BlendMode colorFilterBlendMode,
+    SurfacePaintData paint,
+  ) {
     // When blending with color we can't use an image element.
     // Instead use a div element with background image, color and
     // background blend mode.
@@ -820,8 +823,7 @@ class BitmapCanvas extends EngineCanvas {
         style
           ..position = 'absolute'
           ..backgroundImage = "url('${image.imgElement.src}')"
-          ..backgroundBlendMode =
-              blendModeToCssMixBlendMode(colorFilterBlendMode) ?? ''
+          ..backgroundBlendMode = blendModeToCssMixBlendMode(colorFilterBlendMode) ?? ''
           ..backgroundColor = filterColor!.toCssString();
     }
     return imgElement;
@@ -829,13 +831,13 @@ class BitmapCanvas extends EngineCanvas {
 
   // Creates an image element and an svg filter to apply on the element.
   DomHTMLElement _createImageElementWithSvgBlendFilter(
-      HtmlImage image,
-      ui.Color? filterColor,
-      ui.BlendMode colorFilterBlendMode,
-      SurfacePaintData paint) {
+    HtmlImage image,
+    ui.Color? filterColor,
+    ui.BlendMode colorFilterBlendMode,
+    SurfacePaintData paint,
+  ) {
     // For srcIn blendMode, we use an svg filter to apply to image element.
-    final SvgFilter svgFilter =
-        svgFilterFromBlendMode(filterColor, colorFilterBlendMode);
+    final SvgFilter svgFilter = svgFilterFromBlendMode(filterColor, colorFilterBlendMode);
     rootElement.append(svgFilter.element);
     _children.add(svgFilter.element);
     final DomHTMLElement imgElement = _reuseOrCreateImage(image);
@@ -848,7 +850,10 @@ class BitmapCanvas extends EngineCanvas {
 
   // Creates an image element and an svg color matrix filter to apply on the element.
   DomHTMLElement _createImageElementWithSvgColorMatrixFilter(
-      HtmlImage image, List<double> matrix, SurfacePaintData paint) {
+    HtmlImage image,
+    List<double> matrix,
+    SurfacePaintData paint,
+  ) {
     // For srcIn blendMode, we use an svg filter to apply to image element.
     final SvgFilter svgFilter = svgFilterFromColorMatrix(matrix);
     rootElement.append(svgFilter.element);
@@ -897,8 +902,13 @@ class BitmapCanvas extends EngineCanvas {
   ///
   /// The text is drawn starting at coordinates ([x], [y]). It uses the current
   /// font set by the most recent call to [setCssFont].
-  void drawText(String text, double x, double y,
-      {ui.PaintingStyle? style, List<ui.Shadow>? shadows}) {
+  void drawText(
+    String text,
+    double x,
+    double y, {
+    ui.PaintingStyle? style,
+    List<ui.Shadow>? shadows,
+  }) {
     final DomCanvasRenderingContext2D ctx = _canvasPool.context;
     if (shadows != null) {
       ctx.save();
@@ -937,13 +947,14 @@ class BitmapCanvas extends EngineCanvas {
         // Cannot composite if the paragraph cannot be drawn into bitmap canvas
         // in the first place.
         paragraph.canDrawOnCanvas &&
-            // Cannot composite if there's no bitmap canvas to composite into.
+        // Cannot composite if there's no bitmap canvas to composite into.
             // Creating a new bitmap canvas just to draw text doesn't make sense.
-            _canvasPool.hasCanvas &&
-            !_childOverdraw &&
-            // Bitmap canvas introduces correctness issues in the presence of SVG
-            // filters, so prefer plain HTML in this case.
-            !_renderStrategy.isInsideSvgFilterTree;
+            _canvasPool
+            .hasCanvas &&
+        !_childOverdraw &&
+        // Bitmap canvas introduces correctness issues in the presence of SVG
+        // filters, so prefer plain HTML in this case.
+        !_renderStrategy.isInsideSvgFilterTree;
 
     if (canCompositeIntoBitmapCanvas) {
       paragraph.paint(this, offset);
@@ -952,8 +963,12 @@ class BitmapCanvas extends EngineCanvas {
 
     final DomElement paragraphElement = drawParagraphElement(paragraph, offset);
     if (_canvasPool.isClipped) {
-      final List<DomElement> clipElements = _clipContent(_canvasPool.clipStack!,
-          paragraphElement, offset, _canvasPool.currentTransform);
+      final List<DomElement> clipElements = _clipContent(
+        _canvasPool.clipStack!,
+        paragraphElement,
+        offset,
+        _canvasPool.currentTransform,
+      );
       for (final DomElement clipElement in clipElements) {
         rootElement.append(clipElement);
         _children.add(clipElement);
@@ -986,23 +1001,23 @@ class BitmapCanvas extends EngineCanvas {
   /// If colors is specified, convert colors to premultiplied (alpha) colors
   /// and use a SkTriColorShader to render.
   @override
-  void drawVertices(SurfaceVertices vertices, ui.BlendMode blendMode,
-      SurfacePaintData paint) {
+  void drawVertices(SurfaceVertices vertices, ui.BlendMode blendMode, SurfacePaintData paint) {
     // TODO(ferhat): Implement shaders for [Paint.shader] and
     // blendMode. https://github.com/flutter/flutter/issues/40096
     // Move rendering to OffscreenCanvas so that transform is preserved
     // as well.
-    assert(paint.shader == null || paint.shader is EngineImageShader,
-        'Linear/Radial/SweepGradient not supported yet');
+    assert(
+      paint.shader == null || paint.shader is EngineImageShader,
+      'Linear/Radial/SweepGradient not supported yet',
+    );
     final Int32List? colors = vertices.colors;
     final ui.VertexMode mode = vertices.mode;
     final DomCanvasRenderingContext2D ctx = _canvasPool.context;
-    if (colors == null &&
-        paint.style != ui.PaintingStyle.fill &&
-        paint.shader == null) {
-      final Float32List positions = mode == ui.VertexMode.triangles
-          ? vertices.positions
-          : convertVertexPositions(mode, vertices.positions);
+    if (colors == null && paint.style != ui.PaintingStyle.fill && paint.shader == null) {
+      final Float32List positions =
+          mode == ui.VertexMode.triangles
+              ? vertices.positions
+              : convertVertexPositions(mode, vertices.positions);
       // Draw hairline for vertices if no vertex colors are specified.
       save();
       final ui.Color color = ui.Color(paint.color);
@@ -1013,21 +1028,28 @@ class BitmapCanvas extends EngineCanvas {
       restore();
       return;
     }
-    glRenderer!.drawVertices(ctx, widthInBitmapPixels, heightInBitmapPixels,
-        _canvasPool.currentTransform, vertices, blendMode, paint);
+    glRenderer!.drawVertices(
+      ctx,
+      widthInBitmapPixels,
+      heightInBitmapPixels,
+      _canvasPool.currentTransform,
+      vertices,
+      blendMode,
+      paint,
+    );
   }
 
   /// Stores paint data used by [drawPoints]. We cannot use the original paint
   /// data object because painting style is determined by [ui.PointMode] and
   /// not by [SurfacePointData.style].
-  static final SurfacePaintData _drawPointsPaint = SurfacePaintData()
-    ..strokeCap = ui.StrokeCap.round
-    ..strokeJoin = ui.StrokeJoin.round
-    ..blendMode = ui.BlendMode.srcOver;
+  static final SurfacePaintData _drawPointsPaint =
+      SurfacePaintData()
+        ..strokeCap = ui.StrokeCap.round
+        ..strokeJoin = ui.StrokeJoin.round
+        ..blendMode = ui.BlendMode.srcOver;
 
   @override
-  void drawPoints(
-      ui.PointMode pointMode, Float32List points, SurfacePaintData paint) {
+  void drawPoints(ui.PointMode pointMode, Float32List points, SurfacePaintData paint) {
     if (pointMode == ui.PointMode.points) {
       _drawPointsPaint.style = ui.PaintingStyle.stroke;
     } else {
@@ -1038,8 +1060,7 @@ class BitmapCanvas extends EngineCanvas {
 
     final double dpr = EngineFlutterDisplay.instance.devicePixelRatio;
     // Use hairline (device pixel when strokeWidth is not specified).
-    final double strokeWidth =
-        paint.strokeWidth == null ? 1.0 / dpr : paint.strokeWidth!;
+    final double strokeWidth = paint.strokeWidth == null ? 1.0 / dpr : paint.strokeWidth!;
     _drawPointsPaint.strokeWidth = strokeWidth;
     setUpPaint(_drawPointsPaint, null);
     // Draw point using circle with half radius.
@@ -1051,13 +1072,12 @@ class BitmapCanvas extends EngineCanvas {
   void endOfPaint() {
     _canvasPool.endOfPaint();
     _elementCache?.commitFrame();
-    if (_contains3dTransform &&
-        ui_web.browser.browserEngine == ui_web.BrowserEngine.webkit) {
+    if (_contains3dTransform && ui_web.browser.browserEngine == ui_web.BrowserEngine.webkit) {
       // Copy the children list to avoid concurrent modification.
       final List<DomElement> children = rootElement.children.toList();
       for (final DomElement element in children) {
-        final DomHTMLDivElement paintOrderElement = createDomHTMLDivElement()
-          ..style.transform = 'translate3d(0,0,0)';
+        final DomHTMLDivElement paintOrderElement =
+            createDomHTMLDivElement()..style.transform = 'translate3d(0,0,0)';
         paintOrderElement.append(element);
         rootElement.append(paintOrderElement);
         _children.add(paintOrderElement);
@@ -1082,21 +1102,14 @@ class BitmapCanvas extends EngineCanvas {
     final double width = ui.window.physicalSize.width * dpr;
     final double height = ui.window.physicalSize.height * dpr;
     final Vector3 topLeft = inverted.perspectiveTransform(x: 0, y: 0, z: 0);
-    final Vector3 topRight =
-        inverted.perspectiveTransform(x: width, y: 0, z: 0);
-    final Vector3 bottomRight =
-        inverted.perspectiveTransform(x: width, y: height, z: 0);
-    final Vector3 bottomLeft =
-        inverted.perspectiveTransform(x: 0, y: height, z: 0);
+    final Vector3 topRight = inverted.perspectiveTransform(x: width, y: 0, z: 0);
+    final Vector3 bottomRight = inverted.perspectiveTransform(x: width, y: height, z: 0);
+    final Vector3 bottomLeft = inverted.perspectiveTransform(x: 0, y: height, z: 0);
     return ui.Rect.fromLTRB(
-      math.min(topLeft.x,
-          math.min(topRight.x, math.min(bottomRight.x, bottomLeft.x))),
-      math.min(topLeft.y,
-          math.min(topRight.y, math.min(bottomRight.y, bottomLeft.y))),
-      math.max(topLeft.x,
-          math.max(topRight.x, math.max(bottomRight.x, bottomLeft.x))),
-      math.max(topLeft.y,
-          math.max(topRight.y, math.max(bottomRight.y, bottomLeft.y))),
+      math.min(topLeft.x, math.min(topRight.x, math.min(bottomRight.x, bottomLeft.x))),
+      math.min(topLeft.y, math.min(topRight.y, math.min(bottomRight.y, bottomLeft.y))),
+      math.max(topLeft.x, math.max(topRight.x, math.max(bottomRight.x, bottomLeft.x))),
+      math.max(topLeft.y, math.max(topRight.y, math.max(bottomRight.y, bottomLeft.y))),
     );
   }
 
@@ -1175,8 +1188,7 @@ String? blendModeToCssMixBlendMode(ui.BlendMode? blendMode) {
     case ui.BlendMode.luminosity:
       return 'luminosity';
     default:
-      throw UnimplementedError(
-          'Flutter Web does not support the blend mode: $blendMode');
+      throw UnimplementedError('Flutter Web does not support the blend mode: $blendMode');
   }
 }
 
@@ -1258,17 +1270,13 @@ SvgBlendMode? blendModeToSvgEnum(ui.BlendMode? blendMode) {
     case ui.BlendMode.srcATop:
       return const SvgBlendMode(kCompositeSourceAtop, SVG_FEBLEND_MODE_UNKNOWN);
     case ui.BlendMode.dstOver:
-      return const SvgBlendMode(
-          kCompositeDestinationOver, SVG_FEBLEND_MODE_UNKNOWN);
+      return const SvgBlendMode(kCompositeDestinationOver, SVG_FEBLEND_MODE_UNKNOWN);
     case ui.BlendMode.dstIn:
-      return const SvgBlendMode(
-          kCompositeDestinationIn, SVG_FEBLEND_MODE_UNKNOWN);
+      return const SvgBlendMode(kCompositeDestinationIn, SVG_FEBLEND_MODE_UNKNOWN);
     case ui.BlendMode.dstOut:
-      return const SvgBlendMode(
-          kCompositeDestinationOut, SVG_FEBLEND_MODE_UNKNOWN);
+      return const SvgBlendMode(kCompositeDestinationOut, SVG_FEBLEND_MODE_UNKNOWN);
     case ui.BlendMode.dstATop:
-      return const SvgBlendMode(
-          kCompositeDestinationAtop, SVG_FEBLEND_MODE_UNKNOWN);
+      return const SvgBlendMode(kCompositeDestinationAtop, SVG_FEBLEND_MODE_UNKNOWN);
     case ui.BlendMode.plus:
       return const SvgBlendMode(kCompositeLighter, SVG_FEBLEND_MODE_UNKNOWN);
     case ui.BlendMode.src:
@@ -1279,8 +1287,7 @@ SvgBlendMode? blendModeToSvgEnum(ui.BlendMode? blendMode) {
     // Falling back to multiply, ignoring alpha channel.
     // TODO(ferhat): only used for debug, find better fallback for web.
     case ui.BlendMode.modulate:
-      return const SvgBlendMode(
-          kCompositeSourceOver, SVG_FEBLEND_MODE_MULTIPLY);
+      return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_MULTIPLY);
     case ui.BlendMode.screen:
       return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_SCREEN);
     case ui.BlendMode.overlay:
@@ -1290,38 +1297,27 @@ SvgBlendMode? blendModeToSvgEnum(ui.BlendMode? blendMode) {
     case ui.BlendMode.lighten:
       return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_LIGHTEN);
     case ui.BlendMode.colorDodge:
-      return const SvgBlendMode(
-          kCompositeSourceOver, SVG_FEBLEND_MODE_COLOR_DODGE);
+      return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_COLOR_DODGE);
     case ui.BlendMode.colorBurn:
-      return const SvgBlendMode(
-          kCompositeSourceOver, SVG_FEBLEND_MODE_COLOR_BURN);
+      return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_COLOR_BURN);
     case ui.BlendMode.hardLight:
-      return const SvgBlendMode(
-          kCompositeSourceOver, SVG_FEBLEND_MODE_HARD_LIGHT);
+      return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_HARD_LIGHT);
     case ui.BlendMode.softLight:
-      return const SvgBlendMode(
-          kCompositeSourceOver, SVG_FEBLEND_MODE_SOFT_LIGHT);
+      return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_SOFT_LIGHT);
     case ui.BlendMode.difference:
-      return const SvgBlendMode(
-          kCompositeSourceOver, SVG_FEBLEND_MODE_DIFFERENCE);
+      return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_DIFFERENCE);
     case ui.BlendMode.exclusion:
-      return const SvgBlendMode(
-          kCompositeSourceOver, SVG_FEBLEND_MODE_EXCLUSION);
+      return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_EXCLUSION);
     case ui.BlendMode.hue:
       return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_HUE);
     case ui.BlendMode.saturation:
-      return const SvgBlendMode(
-          kCompositeSourceOver, SVG_FEBLEND_MODE_SATURATION);
+      return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_SATURATION);
     case ui.BlendMode.color:
       return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_COLOR);
     case ui.BlendMode.luminosity:
-      return const SvgBlendMode(
-          kCompositeSourceOver, SVG_FEBLEND_MODE_LUMINOSITY);
+      return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_LUMINOSITY);
     default:
-      assert(
-        false,
-        'Flutter Web does not support the blend mode: $blendMode',
-      );
+      assert(false, 'Flutter Web does not support the blend mode: $blendMode');
 
       return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_NORMAL);
   }
@@ -1359,8 +1355,12 @@ String stringForStrokeJoin(ui.StrokeJoin strokeJoin) {
 /// overflow:hidden with bounds to clip child or sets a clip-path to clip
 /// it's contents. The clipping rectangles are nested and returned together
 /// with a list of svg elements that provide clip-paths.
-List<DomElement> _clipContent(List<SaveClipEntry> clipStack, DomElement content,
-    ui.Offset offset, Matrix4 currentTransform) {
+List<DomElement> _clipContent(
+  List<SaveClipEntry> clipStack,
+  DomElement content,
+  ui.Offset offset,
+  Matrix4 currentTransform,
+) {
   DomElement? root, curElement;
   final List<DomElement> clipDefs = <DomElement>[];
   final int len = clipStack.length;
@@ -1377,14 +1377,12 @@ List<DomElement> _clipContent(List<SaveClipEntry> clipStack, DomElement content,
     curElement = newElement;
     final ui.Rect? rect = entry.rect;
     Matrix4 newClipTransform = entry.currentTransform;
-    final TransformKind transformKind =
-        transformKindOf(newClipTransform.storage);
+    final TransformKind transformKind = transformKindOf(newClipTransform.storage);
     final bool requiresTransformStyle = transformKind == TransformKind.complex;
     if (rect != null) {
       final double clipOffsetX = rect.left;
       final double clipOffsetY = rect.top;
-      newClipTransform = newClipTransform.clone()
-        ..translate(clipOffsetX, clipOffsetY);
+      newClipTransform = newClipTransform.clone()..translate(clipOffsetX, clipOffsetY);
       curElement.style
         ..overflow = 'hidden'
         ..width = '${rect.right - clipOffsetX}px'
@@ -1397,8 +1395,7 @@ List<DomElement> _clipContent(List<SaveClipEntry> clipStack, DomElement content,
           '${roundRect.brRadiusX}px ${roundRect.blRadiusX}px';
       final double clipOffsetX = roundRect.left;
       final double clipOffsetY = roundRect.top;
-      newClipTransform = newClipTransform.clone()
-        ..translate(clipOffsetX, clipOffsetY);
+      newClipTransform = newClipTransform.clone()..translate(clipOffsetX, clipOffsetY);
       curElement.style
         ..borderRadius = borderRadius
         ..overflow = 'hidden'
@@ -1414,8 +1411,7 @@ List<DomElement> _clipContent(List<SaveClipEntry> clipStack, DomElement content,
         final ui.Rect ovalBounds = surfacePath.getBounds();
         final double clipOffsetX = ovalBounds.left;
         final double clipOffsetY = ovalBounds.top;
-        newClipTransform = newClipTransform.clone()
-          ..translate(clipOffsetX, clipOffsetY);
+        newClipTransform = newClipTransform.clone()..translate(clipOffsetX, clipOffsetY);
         curElement.style
           ..overflow = 'hidden'
           ..width = '${ovalBounds.width}px'
@@ -1427,8 +1423,7 @@ List<DomElement> _clipContent(List<SaveClipEntry> clipStack, DomElement content,
         curElement.style
           ..transform = matrix4ToCssTransform(newClipTransform)
           ..transformOrigin = '0 0 0';
-        final DomElement clipElement =
-            createSvgClipDef(curElement, entry.path!);
+        final DomElement clipElement = createSvgClipDef(curElement, entry.path!);
         clipDefs.add(clipElement);
       }
     }
@@ -1438,10 +1433,7 @@ List<DomElement> _clipContent(List<SaveClipEntry> clipStack, DomElement content,
     // reduce number of div nodes by merging (multiplying transforms).
     final DomElement reverseTransformDiv = createDomHTMLDivElement();
     reverseTransformDiv.style.position = 'absolute';
-    setElementTransform(
-      reverseTransformDiv,
-      (newClipTransform.clone()..invert()).storage,
-    );
+    setElementTransform(reverseTransformDiv, (newClipTransform.clone()..invert()).storage);
     if (requiresTransformStyle) {
       // Instead of flattening matrix3d, preserve so it can be reversed.
       curElement.style.transformStyle = 'preserve-3d';
@@ -1453,10 +1445,7 @@ List<DomElement> _clipContent(List<SaveClipEntry> clipStack, DomElement content,
 
   root!.style.position = 'absolute';
   curElement!.append(content);
-  setElementTransform(
-    content,
-    transformWithOffset(currentTransform, offset).storage,
-  );
+  setElementTransform(content, transformWithOffset(currentTransform, offset).storage);
   return <DomElement>[root, ...clipDefs];
 }
 

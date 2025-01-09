@@ -36,102 +36,85 @@ Future<void> testMain() async {
     recordingCanvas.apply(canvas, screenRect);
   }
 
-  testEachCanvas(
-    'clips multiline text against rectangle',
-    (EngineCanvas canvas) {
-      // [DomCanvas] doesn't support clip commands.
-      if (canvas is! DomCanvas) {
-        paintTest(canvas, paintTextWithClipRect);
-        return goldenTester.diffCanvasScreenshot(
-            canvas, 'multiline_text_clipping_rect');
-      }
-      return null;
-    },
-  );
+  testEachCanvas('clips multiline text against rectangle', (EngineCanvas canvas) {
+    // [DomCanvas] doesn't support clip commands.
+    if (canvas is! DomCanvas) {
+      paintTest(canvas, paintTextWithClipRect);
+      return goldenTester.diffCanvasScreenshot(canvas, 'multiline_text_clipping_rect');
+    }
+    return null;
+  });
 
-  testEachCanvas(
-    'clips multiline text against rectangle with transform',
-    (EngineCanvas canvas) {
-      // [DomCanvas] doesn't support clip commands.
-      if (canvas is! DomCanvas) {
-        paintTest(canvas, paintTextWithClipRectTranslated);
-        return goldenTester.diffCanvasScreenshot(
-            canvas, 'multiline_text_clipping_rect_translate');
-      }
-      return null;
-    },
-  );
+  testEachCanvas('clips multiline text against rectangle with transform', (EngineCanvas canvas) {
+    // [DomCanvas] doesn't support clip commands.
+    if (canvas is! DomCanvas) {
+      paintTest(canvas, paintTextWithClipRectTranslated);
+      return goldenTester.diffCanvasScreenshot(canvas, 'multiline_text_clipping_rect_translate');
+    }
+    return null;
+  });
 
-  testEachCanvas(
-    'clips multiline text against round rectangle',
-    (EngineCanvas canvas) {
-      // [DomCanvas] doesn't support clip commands.
-      if (canvas is! DomCanvas) {
-        paintTest(canvas, paintTextWithClipRoundRect);
-        return goldenTester.diffCanvasScreenshot(
-            canvas, 'multiline_text_clipping_roundrect');
-      }
-      return null;
-    },
-  );
+  testEachCanvas('clips multiline text against round rectangle', (EngineCanvas canvas) {
+    // [DomCanvas] doesn't support clip commands.
+    if (canvas is! DomCanvas) {
+      paintTest(canvas, paintTextWithClipRoundRect);
+      return goldenTester.diffCanvasScreenshot(canvas, 'multiline_text_clipping_roundrect');
+    }
+    return null;
+  });
 
-  testEachCanvas(
-    'clips multiline text against path',
-    (EngineCanvas canvas) {
-      // [DomCanvas] doesn't support clip commands.
-      if (canvas is! DomCanvas) {
-        paintTest(canvas, paintTextWithClipPath);
-        return goldenTester.diffCanvasScreenshot(
-            canvas, 'multiline_text_clipping_path');
-      }
-      return null;
-    },
-  );
+  testEachCanvas('clips multiline text against path', (EngineCanvas canvas) {
+    // [DomCanvas] doesn't support clip commands.
+    if (canvas is! DomCanvas) {
+      paintTest(canvas, paintTextWithClipPath);
+      return goldenTester.diffCanvasScreenshot(canvas, 'multiline_text_clipping_path');
+    }
+    return null;
+  });
 
-  testEachCanvas(
-    'clips multiline text against stack of rects',
-    (EngineCanvas canvas) {
-      // [DomCanvas] doesn't support clip commands.
-      if (canvas is! DomCanvas) {
-        paintTest(canvas, paintTextWithClipStack);
-        return goldenTester.diffCanvasScreenshot(
-            canvas, 'multiline_text_clipping_stack1');
-      }
-      return null;
-    },
-  );
+  testEachCanvas('clips multiline text against stack of rects', (EngineCanvas canvas) {
+    // [DomCanvas] doesn't support clip commands.
+    if (canvas is! DomCanvas) {
+      paintTest(canvas, paintTextWithClipStack);
+      return goldenTester.diffCanvasScreenshot(canvas, 'multiline_text_clipping_stack1');
+    }
+    return null;
+  });
 }
 
 const Rect testBounds = Rect.fromLTRB(50, 50, 230, 220);
 
 void drawBackground(RecordingCanvas canvas) {
   canvas.drawRect(
-      testBounds,
-      SurfacePaint()
-        ..style = PaintingStyle.fill
-        ..color = const Color(0xFF9E9E9E));
+    testBounds,
+    SurfacePaint()
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF9E9E9E),
+  );
   canvas.drawRect(
-      testBounds.inflate(-40),
-      SurfacePaint()
-        ..strokeWidth = 1
-        ..style = PaintingStyle.stroke
-        ..color = const Color(0xFF009688));
+    testBounds.inflate(-40),
+    SurfacePaint()
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke
+      ..color = const Color(0xFF009688),
+  );
 }
 
 void drawQuickBrownFox(RecordingCanvas canvas) {
   canvas.drawParagraph(
-      paragraph(
-        'The quick brown fox jumps over the lazy dog',
-        textStyle: TextStyle(
-          color: const Color(0xFF000000),
-          decoration: TextDecoration.none,
-          fontFamily: 'Roboto',
-          fontSize: 30,
-          background: Paint()..color = const Color.fromRGBO(50, 255, 50, 1.0),
-        ),
-        maxWidth: 180,
+    paragraph(
+      'The quick brown fox jumps over the lazy dog',
+      textStyle: TextStyle(
+        color: const Color(0xFF000000),
+        decoration: TextDecoration.none,
+        fontFamily: 'Roboto',
+        fontSize: 30,
+        background: Paint()..color = const Color.fromRGBO(50, 255, 50, 1.0),
       ),
-      Offset(testBounds.left, testBounds.top));
+      maxWidth: 180,
+    ),
+    Offset(testBounds.left, testBounds.top),
+  );
 }
 
 void paintTextWithClipRect(RecordingCanvas canvas) {
@@ -150,16 +133,19 @@ void paintTextWithClipRectTranslated(RecordingCanvas canvas) {
 const Color deepOrange = Color(0xFFFF5722);
 
 void paintTextWithClipRoundRect(RecordingCanvas canvas) {
-  final RRect roundRect = RRect.fromRectAndCorners(testBounds.inflate(-40),
-      topRight: const Radius.elliptical(45, 40),
-      bottomLeft: const Radius.elliptical(50, 40),
-      bottomRight: const Radius.circular(30));
+  final RRect roundRect = RRect.fromRectAndCorners(
+    testBounds.inflate(-40),
+    topRight: const Radius.elliptical(45, 40),
+    bottomLeft: const Radius.elliptical(50, 40),
+    bottomRight: const Radius.circular(30),
+  );
   drawBackground(canvas);
   canvas.drawRRect(
-      roundRect,
-      SurfacePaint()
-        ..color = deepOrange
-        ..style = PaintingStyle.fill);
+    roundRect,
+    SurfacePaint()
+      ..color = deepOrange
+      ..style = PaintingStyle.fill,
+  );
   canvas.clipRRect(roundRect);
   drawQuickBrownFox(canvas);
 }
@@ -178,10 +164,11 @@ void paintTextWithClipPath(RecordingCanvas canvas) {
   path.quadraticBezierTo(midX, midY, clipBounds.left - delta, midY);
   path.close();
   canvas.drawPath(
-      path,
-      SurfacePaint()
-        ..color = deepOrange
-        ..style = PaintingStyle.fill);
+    path,
+    SurfacePaint()
+      ..color = deepOrange
+      ..style = PaintingStyle.fill,
+  );
   canvas.clipPath(path);
   drawQuickBrownFox(canvas);
 }
@@ -194,9 +181,10 @@ void paintTextWithClipStack(RecordingCanvas canvas) {
   canvas.translate(40, -40);
   canvas.clipRect(inflatedRect, ClipOp.intersect);
   canvas.drawRect(
-      inflatedRect,
-      SurfacePaint()
-        ..color = deepOrange
-        ..style = PaintingStyle.fill);
+    inflatedRect,
+    SurfacePaint()
+      ..color = deepOrange
+      ..style = PaintingStyle.fill,
+  );
   drawQuickBrownFox(canvas);
 }

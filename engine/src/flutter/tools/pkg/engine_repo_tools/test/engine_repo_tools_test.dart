@@ -92,10 +92,7 @@ void main() {
       test('the path does not contain a "src" directory', () {
         setUp();
         try {
-          expect(
-            () => Engine.findWithin(emptyDir.path),
-            throwsStateError,
-          );
+          expect(() => Engine.findWithin(emptyDir.path), throwsStateError);
         } finally {
           tearDown();
         }
@@ -105,10 +102,7 @@ void main() {
         setUp();
         try {
           final io.Directory srcDir = io.Directory(p.join(emptyDir.path, 'src'))..createSync();
-          expect(
-            () => Engine.findWithin(srcDir.path),
-            throwsStateError,
-          );
+          expect(() => Engine.findWithin(srcDir.path), throwsStateError);
         } finally {
           tearDown();
         }
@@ -144,7 +138,9 @@ void main() {
           io.Directory(p.join(srcDir.path, 'flutter')).createSync();
           io.Directory(p.join(srcDir.path, 'out')).createSync();
 
-          final io.Directory nestedSrcDir = io.Directory(p.join(srcDir.path, 'flutter', 'bar', 'src', 'baz'))..createSync(recursive: true);
+          final io.Directory nestedSrcDir = io.Directory(
+            p.join(srcDir.path, 'flutter', 'bar', 'src', 'baz'),
+          )..createSync(recursive: true);
 
           final Engine engine = Engine.findWithin(nestedSrcDir.path);
 
@@ -184,14 +180,14 @@ void main() {
 
       // Create two targets in out: host_debug and host_debug_unopt_arm64.
       io.Directory(p.join(emptyDir.path, 'src', 'out', 'host_debug')).createSync(recursive: true);
-      io.Directory(p.join(emptyDir.path, 'src', 'out', 'host_debug_unopt_arm64')).createSync(recursive: true);
+      io.Directory(
+        p.join(emptyDir.path, 'src', 'out', 'host_debug_unopt_arm64'),
+      ).createSync(recursive: true);
 
       final Engine engine = Engine.fromSrcPath(p.join(emptyDir.path, 'src'));
-      final List<String> outputs = engine.outputs().map((Output o) => p.basename(o.path.path)).toList()..sort();
-      expect(outputs, <String>[
-        'host_debug',
-        'host_debug_unopt_arm64',
-      ]);
+      final List<String> outputs =
+          engine.outputs().map((Output o) => p.basename(o.path.path)).toList()..sort();
+      expect(outputs, <String>['host_debug', 'host_debug_unopt_arm64']);
     } finally {
       tearDown();
     }
@@ -221,14 +217,8 @@ void main() {
         flutterDir: flutterDir,
         outDir: outDir,
         outputs: <TestOutput>[
-          TestOutput(
-            hostDebug,
-            lastModified: DateTime.utc(2023, 9, 23, 21, 16),
-          ),
-          TestOutput(
-            hostDebugUnoptArm64,
-            lastModified: DateTime.utc(2023, 9, 23, 22, 16),
-          ),
+          TestOutput(hostDebug, lastModified: DateTime.utc(2023, 9, 23, 21, 16)),
+          TestOutput(hostDebugUnoptArm64, lastModified: DateTime.utc(2023, 9, 23, 22, 16)),
         ],
       );
 

@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class _LinkTextSpan extends TextSpan {
-
   // Beware!
   //
   // This class is only safe because the TapGestureRecognizer is not
@@ -22,18 +21,23 @@ class _LinkTextSpan extends TextSpan {
   // manage the recognizer from outside the TextSpan, e.g. in the State of a
   // stateful widget that then hands the recognizer to the TextSpan.
 
-  _LinkTextSpan({ super.style, required String url, String? text }) : super(
-    text: text ?? url,
-    recognizer: TapGestureRecognizer()..onTap = () {
-      launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-    }
-  );
+  _LinkTextSpan({super.style, required String url, String? text})
+    : super(
+        text: text ?? url,
+        recognizer:
+            TapGestureRecognizer()
+              ..onTap = () {
+                launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+              },
+      );
 }
 
 void showGalleryAboutDialog(BuildContext context) {
   final ThemeData themeData = Theme.of(context);
   final TextStyle? aboutTextStyle = themeData.textTheme.bodyLarge;
-  final TextStyle linkStyle = themeData.textTheme.bodyLarge!.copyWith(color: themeData.colorScheme.primary);
+  final TextStyle linkStyle = themeData.textTheme.bodyLarge!.copyWith(
+    color: themeData.colorScheme.primary,
+  );
 
   showAboutDialog(
     context: context,
@@ -48,17 +52,15 @@ void showGalleryAboutDialog(BuildContext context) {
             children: <TextSpan>[
               TextSpan(
                 style: aboutTextStyle,
-                text: 'Flutter is an open-source project to help developers '
-                      'build high-performance, high-fidelity, mobile apps for '
-                      '${defaultTargetPlatform == TargetPlatform.iOS ? 'multiple platforms' : 'iOS and Android'} '
-                      'from a single codebase. This design lab is a playground '
-                      "and showcase of Flutter's many widgets, behaviors, "
-                      'animations, layouts, and more. Learn more about Flutter at ',
+                text:
+                    'Flutter is an open-source project to help developers '
+                    'build high-performance, high-fidelity, mobile apps for '
+                    '${defaultTargetPlatform == TargetPlatform.iOS ? 'multiple platforms' : 'iOS and Android'} '
+                    'from a single codebase. This design lab is a playground '
+                    "and showcase of Flutter's many widgets, behaviors, "
+                    'animations, layouts, and more. Learn more about Flutter at ',
               ),
-              _LinkTextSpan(
-                style: linkStyle,
-                url: 'https://flutter.dev',
-              ),
+              _LinkTextSpan(style: linkStyle, url: 'https://flutter.dev'),
               TextSpan(
                 style: aboutTextStyle,
                 text: '.\n\nTo see the source code for this app, please visit the ',
@@ -68,10 +70,7 @@ void showGalleryAboutDialog(BuildContext context) {
                 url: 'https://goo.gl/iv1p4G',
                 text: 'flutter github repo',
               ),
-              TextSpan(
-                style: aboutTextStyle,
-                text: '.',
-              ),
+              TextSpan(style: aboutTextStyle, text: '.'),
             ],
           ),
         ),

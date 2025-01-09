@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('TextFormFieldExample2 Widget Tests', () {
-    testWidgets('Input validation handles empty, incorrect, and short usernames', (WidgetTester tester) async {
+    testWidgets('Input validation handles empty, incorrect, and short usernames', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const example.TextFormFieldExampleApp());
       final Finder textFormField = find.byType(TextFormField);
       final Finder saveButton = find.byType(TextButton);

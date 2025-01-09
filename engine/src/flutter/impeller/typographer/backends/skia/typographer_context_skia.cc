@@ -536,7 +536,7 @@ std::shared_ptr<GlyphAtlas> TypographerContextSkia::CreateGlyphAtlas(
     std::shared_ptr<BlitPass> blit_pass = cmd_buffer->CreateBlitPass();
 
     fml::ScopedCleanupClosure closure([&]() {
-      blit_pass->EncodeCommands(context.GetResourceAllocator());
+      blit_pass->EncodeCommands();
       if (!context.EnqueueCommandBuffer(std::move(cmd_buffer))) {
         VALIDATION_LOG << "Failed to submit glyph atlas command buffer";
       }
@@ -629,7 +629,7 @@ std::shared_ptr<GlyphAtlas> TypographerContextSkia::CreateGlyphAtlas(
   std::shared_ptr<BlitPass> blit_pass = cmd_buffer->CreateBlitPass();
 
   fml::ScopedCleanupClosure closure([&]() {
-    blit_pass->EncodeCommands(context.GetResourceAllocator());
+    blit_pass->EncodeCommands();
     if (!context.EnqueueCommandBuffer(std::move(cmd_buffer))) {
       VALIDATION_LOG << "Failed to submit glyph atlas command buffer";
     }

@@ -27,7 +27,6 @@ Future<void> testMain() async {
   });
 
   test('draws rect with flipped coordinates L > R, T > B', () async {
-
     paintRects(canvas);
 
     domDocument.body!.append(canvas.rootElement);
@@ -36,29 +35,40 @@ Future<void> testMain() async {
 }
 
 void paintRects(BitmapCanvas canvas) {
+  canvas.drawRect(
+    const Rect.fromLTRB(30, 40, 100, 50),
+    SurfacePaintData()
+      ..color =
+          0xFF4CAF50 //Colors.green
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke,
+  );
 
-    canvas.drawRect(const Rect.fromLTRB(30, 40, 100, 50),
-      SurfacePaintData()
-        ..color = 0xFF4CAF50 //Colors.green
-        ..strokeWidth = 1.0
-        ..style = PaintingStyle.stroke);
+  // swap left and right.
+  canvas.drawRect(
+    const Rect.fromLTRB(100, 150, 30, 140),
+    SurfacePaintData()
+      ..color =
+          0xFFF44336 //Colors.red
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke,
+  );
 
-    // swap left and right.
-    canvas.drawRect(const Rect.fromLTRB(100, 150, 30, 140),
-      SurfacePaintData()
-        ..color = 0xFFF44336 //Colors.red
-        ..strokeWidth = 1.0
-        ..style = PaintingStyle.stroke);
+  // Repeat above for fill
+  canvas.drawRect(
+    const Rect.fromLTRB(30, 240, 100, 250),
+    SurfacePaintData()
+      ..color =
+          0xFF4CAF50 //Colors.green
+      ..style = PaintingStyle.fill,
+  );
 
-    // Repeat above for fill
-    canvas.drawRect(const Rect.fromLTRB(30, 240, 100, 250),
-      SurfacePaintData()
-        ..color = 0xFF4CAF50 //Colors.green
-        ..style = PaintingStyle.fill);
-
-    // swap left and right.
-    canvas.drawRect(const Rect.fromLTRB(100, 350, 30, 340),
-      SurfacePaintData()
-        ..color = 0xFFF44336 //Colors.red
-        ..style = PaintingStyle.fill);
+  // swap left and right.
+  canvas.drawRect(
+    const Rect.fromLTRB(100, 350, 30, 340),
+    SurfacePaintData()
+      ..color =
+          0xFFF44336 //Colors.red
+      ..style = PaintingStyle.fill,
+  );
 }

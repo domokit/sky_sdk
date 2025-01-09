@@ -30,8 +30,7 @@ void main() {
   test('approximateBytesUsed is available for onCreate', () async {
     int pictureSize = -1;
 
-    Picture.onCreate = (Picture picture) =>
-      pictureSize = picture.approximateBytesUsed;
+    Picture.onCreate = (Picture picture) => pictureSize = picture.approximateBytesUsed;
 
     _createPicture();
 

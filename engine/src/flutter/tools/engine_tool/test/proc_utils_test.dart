@@ -32,28 +32,33 @@ void main() {
         abi: ffi.Abi.macosArm64,
         engine: engine,
         platform: FakePlatform(
-            operatingSystem: Platform.macOS,
-            resolvedExecutable: io.Platform.resolvedExecutable,
-            pathSeparator: '/'),
+          operatingSystem: Platform.macOS,
+          resolvedExecutable: io.Platform.resolvedExecutable,
+          pathSeparator: '/',
+        ),
         processRunner: ProcessRunner(
-            processManager: FakeProcessManager(onStart: (List<String> command) {
-          runHistory.add(command);
-          switch (command) {
-            case ['success']:
-              return FakeProcess(stdout: 'stdout success');
-            case ['failure']:
-              return FakeProcess(exitCode: 1, stdout: 'stdout failure');
-            default:
-              return FakeProcess();
-          }
-        }, onRun: (List<String> command) {
-          // Should not be executed.
-          assert(false);
-          return io.ProcessResult(81, 1, '', '');
-        })),
+          processManager: FakeProcessManager(
+            onStart: (List<String> command) {
+              runHistory.add(command);
+              switch (command) {
+                case ['success']:
+                  return FakeProcess(stdout: 'stdout success');
+                case ['failure']:
+                  return FakeProcess(exitCode: 1, stdout: 'stdout failure');
+                default:
+                  return FakeProcess();
+              }
+            },
+            onRun: (List<String> command) {
+              // Should not be executed.
+              assert(false);
+              return io.ProcessResult(81, 1, '', '');
+            },
+          ),
+        ),
         logger: logger,
       ),
-      runHistory
+      runHistory,
     );
   }
 
@@ -61,13 +66,11 @@ void main() {
     final Logger logger = Logger.test((_) {});
     final (Environment env, _) = macEnv(logger);
     final WorkerPool wp = WorkerPool(env, NoopWorkerPoolProgressReporter());
-    final ProcessTask task =
-        ProcessTask('S', env, io.Directory.current, <String>['success']);
+    final ProcessTask task = ProcessTask('S', env, io.Directory.current, <String>['success']);
     final bool r = await wp.run(<WorkerTask>{task});
     expect(r, equals(true));
     expect(task.processArtifacts.exitCode, equals(0));
-    final ProcessArtifacts loaded =
-        ProcessArtifacts.fromFile(io.File(task.processArtifactsPath));
+    final ProcessArtifacts loaded = ProcessArtifacts.fromFile(io.File(task.processArtifactsPath));
     expect(loaded.stdout, equals('stdout success'));
   });
 
@@ -75,13 +78,11 @@ void main() {
     final Logger logger = Logger.test((_) {});
     final (Environment env, _) = macEnv(logger);
     final WorkerPool wp = WorkerPool(env, NoopWorkerPoolProgressReporter());
-    final ProcessTask task =
-        ProcessTask('F', env, io.Directory.current, <String>['failure']);
+    final ProcessTask task = ProcessTask('F', env, io.Directory.current, <String>['failure']);
     final bool r = await wp.run(<WorkerTask>{task});
     expect(r, equals(false));
     expect(task.processArtifacts.exitCode, isNot(0));
-    final ProcessArtifacts loaded =
-        ProcessArtifacts.fromFile(io.File(task.processArtifactsPath));
+    final ProcessArtifacts loaded = ProcessArtifacts.fromFile(io.File(task.processArtifactsPath));
     expect(loaded.stdout, equals('stdout failure'));
   });
 }

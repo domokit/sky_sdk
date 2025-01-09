@@ -22,8 +22,7 @@ Future<void> testMain() async {
     test('return empty list for invalid ranges', () {
       final CanvasParagraph paragraph = rich(ahemStyle, (CanvasParagraphBuilder builder) {
         builder.addText('Lorem ipsum');
-      })
-        ..layout(constrain(double.infinity));
+      })..layout(constrain(double.infinity));
 
       expect(paragraph.getBoxesForRange(-1, 0), <ui.TextBox>[]);
       expect(paragraph.getBoxesForRange(0, 0), <ui.TextBox>[]);
@@ -40,24 +39,19 @@ Future<void> testMain() async {
         builder.addText('ipsum ');
         builder.pop();
         builder.addText('.');
-      })
-        ..layout(constrain(double.infinity));
+      })..layout(constrain(double.infinity));
 
       // Within the first span "Lorem ".
 
       expect(
         // "or"
         paragraph.getBoxesForRange(1, 3),
-        <ui.TextBox>[
-          box(10, 0, 30, 10),
-        ],
+        <ui.TextBox>[box(10, 0, 30, 10)],
       );
       expect(
         // "Lorem"
         paragraph.getBoxesForRange(0, 5),
-        <ui.TextBox>[
-          box(0, 0, 50, 10),
-        ],
+        <ui.TextBox>[box(0, 0, 50, 10)],
       );
       // Make sure the trailing space is also included in the box.
       expect(
@@ -76,9 +70,7 @@ Future<void> testMain() async {
       expect(
         // "psum"
         paragraph.getBoxesForRange(7, 11),
-        <ui.TextBox>[
-          box(70, 0, 110, 10),
-        ],
+        <ui.TextBox>[box(70, 0, 110, 10)],
       );
       expect(
         // "um "
@@ -129,8 +121,7 @@ Future<void> testMain() async {
     test('handles multi-line single-span paragraphs', () {
       final CanvasParagraph paragraph = rich(ahemStyle, (CanvasParagraphBuilder builder) {
         builder.addText('Lorem ipsum dolor sit');
-      })
-        ..layout(constrain(90.0));
+      })..layout(constrain(90.0));
 
       // Lines:
       //   "Lorem "
@@ -142,9 +133,7 @@ Future<void> testMain() async {
       expect(
         // "or"
         paragraph.getBoxesForRange(1, 3),
-        <ui.TextBox>[
-          box(10, 0, 30, 10),
-        ],
+        <ui.TextBox>[box(10, 0, 30, 10)],
       );
       // Make sure the trailing space at the end of line is also included in the
       // box.
@@ -206,8 +195,7 @@ Future<void> testMain() async {
         builder.addText('dolor ');
         builder.pop();
         builder.addText('sit');
-      })
-        ..layout(constrain(90.0));
+      })..layout(constrain(90.0));
 
       // Lines:
       //   "Lorem "
@@ -219,9 +207,7 @@ Future<void> testMain() async {
       expect(
         // "ore"
         paragraph.getBoxesForRange(1, 4),
-        <ui.TextBox>[
-          box(10, 0, 40, 10),
-        ],
+        <ui.TextBox>[box(10, 0, 40, 10)],
       );
       expect(
         // "Lorem "
@@ -310,8 +296,7 @@ Future<void> testMain() async {
         // width = 20.0 * 4 = 80.0
         // baseline = 20.0 * 80% = 16.0
         builder.addText('amet');
-      })
-        ..layout(constrain(420.0));
+      })..layout(constrain(420.0));
 
       // Lines:
       //   "Lorem ipsum dolor " (width: 420, height: 40, baseline: 32)
@@ -427,8 +412,7 @@ Future<void> testMain() async {
         builder.addText('ipsum ');
         builder.pop();
         builder.addText('.');
-      })
-        ..layout(constrain(double.infinity));
+      })..layout(constrain(double.infinity));
 
       // Above the line, at the beginning.
       expect(
@@ -436,10 +420,7 @@ Future<void> testMain() async {
         pos(0, ui.TextAffinity.downstream),
       );
       // At the top left corner of the line.
-      expect(
-        paragraph.getPositionForOffset(ui.Offset.zero),
-        pos(0, ui.TextAffinity.downstream),
-      );
+      expect(paragraph.getPositionForOffset(ui.Offset.zero), pos(0, ui.TextAffinity.downstream));
       // At the beginning of the line.
       expect(
         paragraph.getPositionForOffset(const ui.Offset(0, 5)),
@@ -490,8 +471,7 @@ Future<void> testMain() async {
     test('handles multi-line single-span paragraphs', () {
       final CanvasParagraph paragraph = rich(ahemStyle, (CanvasParagraphBuilder builder) {
         builder.addText('Lorem ipsum dolor sit');
-      })
-        ..layout(constrain(90.0));
+      })..layout(constrain(90.0));
 
       // Lines:
       //   "Lorem "
@@ -504,10 +484,7 @@ Future<void> testMain() async {
         pos(0, ui.TextAffinity.downstream),
       );
       // At the top left corner of the line.
-      expect(
-        paragraph.getPositionForOffset(ui.Offset.zero),
-        pos(0, ui.TextAffinity.downstream),
-      );
+      expect(paragraph.getPositionForOffset(ui.Offset.zero), pos(0, ui.TextAffinity.downstream));
       // At the beginning of the first line.
       expect(
         paragraph.getPositionForOffset(const ui.Offset(0, 5)),
@@ -590,8 +567,7 @@ Future<void> testMain() async {
         builder.addText('dolor ');
         builder.pop();
         builder.addText('sit');
-      })
-        ..layout(constrain(90.0));
+      })..layout(constrain(90.0));
 
       // Lines:
       //   "Lorem "
@@ -677,8 +653,7 @@ Future<void> testMain() async {
     test('single-line', () {
       final CanvasParagraph paragraph = rich(ahemStyle, (CanvasParagraphBuilder builder) {
         builder.addText('One single line');
-      })
-        ..layout(constrain(400.0));
+      })..layout(constrain(400.0));
 
       // "One single line".length == 15
       for (int i = 0; i < 15; i++) {
@@ -695,8 +670,7 @@ Future<void> testMain() async {
         builder.addText('First line\n');
         builder.addText('Second line\n');
         builder.addText('Third line');
-      })
-        ..layout(constrain(400.0));
+      })..layout(constrain(400.0));
 
       // "First line\n".length == 11
       for (int i = 0; i < 11; i++) {
@@ -768,7 +742,12 @@ Future<void> testMain() async {
 
     const ui.TextRange loremRange = ui.TextRange(start: 0, end: 5);
     expect(paragraph.getWordBoundary(const ui.TextPosition(offset: 4)), loremRange);
-    expect(paragraph.getWordBoundary(const ui.TextPosition(offset: 5, affinity: ui.TextAffinity.upstream)), loremRange);
+    expect(
+      paragraph.getWordBoundary(
+        const ui.TextPosition(offset: 5, affinity: ui.TextAffinity.upstream),
+      ),
+      loremRange,
+    );
   });
 
   test('$CanvasParagraph.longestLine', () {

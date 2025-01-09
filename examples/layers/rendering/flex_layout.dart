@@ -20,32 +20,46 @@ void main() {
       textDirection: TextDirection.ltr,
     );
     table.add(RenderPadding(child: paragraph, padding: const EdgeInsets.only(top: 20.0)));
-    final RenderFlex row = RenderFlex(crossAxisAlignment: crossAxisAlignment, textBaseline: TextBaseline.alphabetic, textDirection: TextDirection.ltr);
+    final RenderFlex row = RenderFlex(
+      crossAxisAlignment: crossAxisAlignment,
+      textBaseline: TextBaseline.alphabetic,
+      textDirection: TextDirection.ltr,
+    );
     style = const TextStyle(fontSize: 15.0, color: Color(0xFF000000));
-    row.add(RenderDecoratedBox(
-      decoration: const BoxDecoration(color: Color(0x7FFFCCCC)),
-      child: RenderParagraph(
-        TextSpan(style: style, text: 'foo foo foo'),
-        textDirection: TextDirection.ltr,
+    row.add(
+      RenderDecoratedBox(
+        decoration: const BoxDecoration(color: Color(0x7FFFCCCC)),
+        child: RenderParagraph(
+          TextSpan(style: style, text: 'foo foo foo'),
+          textDirection: TextDirection.ltr,
+        ),
       ),
-    ));
+    );
     style = const TextStyle(fontSize: 10.0, color: Color(0xFF000000));
-    row.add(RenderDecoratedBox(
-      decoration: const BoxDecoration(color: Color(0x7FCCFFCC)),
-      child: RenderParagraph(
-        TextSpan(style: style, text: 'foo foo foo'),
-        textDirection: TextDirection.ltr,
+    row.add(
+      RenderDecoratedBox(
+        decoration: const BoxDecoration(color: Color(0x7FCCFFCC)),
+        child: RenderParagraph(
+          TextSpan(style: style, text: 'foo foo foo'),
+          textDirection: TextDirection.ltr,
+        ),
       ),
-    ));
-    final RenderFlex subrow = RenderFlex(crossAxisAlignment: crossAxisAlignment, textBaseline: TextBaseline.alphabetic, textDirection: TextDirection.ltr);
+    );
+    final RenderFlex subrow = RenderFlex(
+      crossAxisAlignment: crossAxisAlignment,
+      textBaseline: TextBaseline.alphabetic,
+      textDirection: TextDirection.ltr,
+    );
     style = const TextStyle(fontSize: 25.0, color: Color(0xFF000000));
-    subrow.add(RenderDecoratedBox(
-      decoration: const BoxDecoration(color: Color(0x7FCCCCFF)),
-      child: RenderParagraph(
-        TextSpan(style: style, text: 'foo foo foo foo'),
-        textDirection: TextDirection.ltr,
+    subrow.add(
+      RenderDecoratedBox(
+        decoration: const BoxDecoration(color: Color(0x7FCCCCFF)),
+        child: RenderParagraph(
+          TextSpan(style: style, text: 'foo foo foo foo'),
+          textDirection: TextDirection.ltr,
+        ),
       ),
-    ));
+    );
     subrow.add(RenderSolidColorBox(const Color(0x7FCCFFFF), desiredSize: const Size(30.0, 40.0)));
     row.add(subrow);
     table.add(row);

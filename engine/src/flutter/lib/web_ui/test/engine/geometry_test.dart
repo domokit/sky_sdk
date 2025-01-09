@@ -33,7 +33,7 @@ void testMain() {
   });
   test('Offset.fromDirection', () {
     expect(Offset.fromDirection(0.0, 0.0), const Offset(0.0, 0.0));
-     // aah, floating point math. i love you so.
+    // aah, floating point math. i love you so.
     expect(Offset.fromDirection(pi / 2.0), within(from: const Offset(0.0, 1.0)));
     expect(Offset.fromDirection(-pi / 2.0), within(from: const Offset(0.0, -1.0)));
     expect(Offset.fromDirection(0.0), const Offset(1.0, 0.0));
@@ -55,10 +55,7 @@ void testMain() {
       within(from: Offset(-1.0 / math.sqrt(2.0), -1.0 / math.sqrt(2.0))),
     );
     expect(Offset.fromDirection(0.0, 2.0), const Offset(2.0, 0.0));
-    expect(
-      Offset.fromDirection(pi / 6, 2.0),
-      within(from: Offset(math.sqrt(3.0), 1.0)),
-    );
+    expect(Offset.fromDirection(pi / 6, 2.0), within(from: Offset(math.sqrt(3.0), 1.0)));
   });
   test('Size.aspectRatio', () {
     expect(const Size(0.0, 0.0).aspectRatio, 0.0);
@@ -76,8 +73,13 @@ void testMain() {
     expect(const Size(3.0, 4.0).aspectRatio, 3.0 / 4.0);
   });
   test('Radius.clamp() operates as expected', () {
-    final RRect rrectMin = RRect.fromLTRBR(1, 3, 5, 7,
-      const Radius.circular(-100).clamp(minimum: Radius.zero));
+    final RRect rrectMin = RRect.fromLTRBR(
+      1,
+      3,
+      5,
+      7,
+      const Radius.circular(-100).clamp(minimum: Radius.zero),
+    );
 
     expect(rrectMin.left, 1);
     expect(rrectMin.top, 3);
@@ -86,8 +88,13 @@ void testMain() {
     expect(rrectMin.trRadius, equals(const Radius.circular(0)));
     expect(rrectMin.blRadius, equals(const Radius.circular(0)));
 
-    final RRect rrectMax = RRect.fromLTRBR(1, 3, 5, 7,
-      const Radius.circular(100).clamp(maximum: const Radius.circular(10)));
+    final RRect rrectMax = RRect.fromLTRBR(
+      1,
+      3,
+      5,
+      7,
+      const Radius.circular(100).clamp(maximum: const Radius.circular(10)),
+    );
 
     expect(rrectMax.left, 1);
     expect(rrectMax.top, 3);
@@ -96,8 +103,16 @@ void testMain() {
     expect(rrectMax.trRadius, equals(const Radius.circular(10)));
     expect(rrectMax.blRadius, equals(const Radius.circular(10)));
 
-    final RRect rrectMix = RRect.fromLTRBR(1, 3, 5, 7,
-      const Radius.elliptical(-100, 100).clamp(minimum: Radius.zero, maximum: const Radius.circular(10)));
+    final RRect rrectMix = RRect.fromLTRBR(
+      1,
+      3,
+      5,
+      7,
+      const Radius.elliptical(
+        -100,
+        100,
+      ).clamp(minimum: Radius.zero, maximum: const Radius.circular(10)),
+    );
 
     expect(rrectMix.left, 1);
     expect(rrectMix.top, 3);
@@ -106,8 +121,16 @@ void testMain() {
     expect(rrectMix.trRadius, equals(const Radius.elliptical(0, 10)));
     expect(rrectMix.blRadius, equals(const Radius.elliptical(0, 10)));
 
-    final RRect rrectMix1 = RRect.fromLTRBR(1, 3, 5, 7,
-      const Radius.elliptical(100, -100).clamp(minimum: Radius.zero, maximum: const Radius.circular(10)));
+    final RRect rrectMix1 = RRect.fromLTRBR(
+      1,
+      3,
+      5,
+      7,
+      const Radius.elliptical(
+        100,
+        -100,
+      ).clamp(minimum: Radius.zero, maximum: const Radius.circular(10)),
+    );
 
     expect(rrectMix1.left, 1);
     expect(rrectMix1.top, 3);
@@ -117,8 +140,13 @@ void testMain() {
     expect(rrectMix1.blRadius, equals(const Radius.elliptical(10, 0)));
   });
   test('Radius.clampValues() operates as expected', () {
-    final RRect rrectMin = RRect.fromLTRBR(1, 3, 5, 7,
-      const Radius.circular(-100).clampValues(minimumX: 0, minimumY: 0));
+    final RRect rrectMin = RRect.fromLTRBR(
+      1,
+      3,
+      5,
+      7,
+      const Radius.circular(-100).clampValues(minimumX: 0, minimumY: 0),
+    );
 
     expect(rrectMin.left, 1);
     expect(rrectMin.top, 3);
@@ -127,8 +155,13 @@ void testMain() {
     expect(rrectMin.trRadius, equals(const Radius.circular(0)));
     expect(rrectMin.blRadius, equals(const Radius.circular(0)));
 
-    final RRect rrectMax = RRect.fromLTRBR(1, 3, 5, 7,
-      const Radius.circular(100).clampValues(maximumX: 10, maximumY: 20));
+    final RRect rrectMax = RRect.fromLTRBR(
+      1,
+      3,
+      5,
+      7,
+      const Radius.circular(100).clampValues(maximumX: 10, maximumY: 20),
+    );
 
     expect(rrectMax.left, 1);
     expect(rrectMax.top, 3);
@@ -137,8 +170,16 @@ void testMain() {
     expect(rrectMax.trRadius, equals(const Radius.elliptical(10, 20)));
     expect(rrectMax.blRadius, equals(const Radius.elliptical(10, 20)));
 
-    final RRect rrectMix = RRect.fromLTRBR(1, 3, 5, 7,
-      const Radius.elliptical(-100, 100).clampValues(minimumX: 5, minimumY: 6, maximumX: 10, maximumY: 20));
+    final RRect rrectMix = RRect.fromLTRBR(
+      1,
+      3,
+      5,
+      7,
+      const Radius.elliptical(
+        -100,
+        100,
+      ).clampValues(minimumX: 5, minimumY: 6, maximumX: 10, maximumY: 20),
+    );
 
     expect(rrectMix.left, 1);
     expect(rrectMix.top, 3);
@@ -147,8 +188,16 @@ void testMain() {
     expect(rrectMix.trRadius, equals(const Radius.elliptical(5, 20)));
     expect(rrectMix.blRadius, equals(const Radius.elliptical(5, 20)));
 
-    final RRect rrectMix2 = RRect.fromLTRBR(1, 3, 5, 7,
-      const Radius.elliptical(100, -100).clampValues(minimumX: 5, minimumY: 6, maximumX: 10, maximumY: 20));
+    final RRect rrectMix2 = RRect.fromLTRBR(
+      1,
+      3,
+      5,
+      7,
+      const Radius.elliptical(
+        100,
+        -100,
+      ).clampValues(minimumX: 5, minimumY: 6, maximumX: 10, maximumY: 20),
+    );
 
     expect(rrectMix2.left, 1);
     expect(rrectMix2.top, 3);

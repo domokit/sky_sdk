@@ -29,10 +29,12 @@ base class CommandBuffer extends NativeFieldWrapperClass1 {
 
   /// Wrap with native counterpart.
   @Native<Bool Function(Handle, Pointer<Void>)>(
-      symbol: 'InternalFlutterGpu_CommandBuffer_Initialize')
+    symbol: 'InternalFlutterGpu_CommandBuffer_Initialize',
+  )
   external bool _initialize(GpuContext gpuContext);
 
   @Native<Handle Function(Pointer<Void>, Handle)>(
-      symbol: 'InternalFlutterGpu_CommandBuffer_Submit')
+    symbol: 'InternalFlutterGpu_CommandBuffer_Submit',
+  )
   external String? _submit(CompletionCallback? completionCallback);
 }

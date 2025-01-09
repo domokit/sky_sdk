@@ -3,14 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/switch_list_tile/custom_labeled_switch.0.dart' as example;
+import 'package:flutter_api_samples/material/switch_list_tile/custom_labeled_switch.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('LinkedLabelSwitch contains RichText and Switch', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const example.LabeledSwitchApp(),
-    );
+    await tester.pumpWidget(const example.LabeledSwitchApp());
 
     // Label text is in a RichText widget with the correct text.
     final RichText richText = tester.widget(find.byType(RichText).first);

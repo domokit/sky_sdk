@@ -13,7 +13,5 @@ void printGclientSyncReminder(String command) {
   final String prefix = io.stdout.supportsAnsiEscapes ? _redBoldUnderline : '';
   final String postfix = io.stdout.supportsAnsiEscapes ? _reset : '';
   io.stderr.writeln('$command: The engine source tree has been updated.');
-  io.stderr.writeln(
-    '\n${prefix}You may need to run "gclient sync -D"$postfix\n',
-  );
+  io.stderr.writeln('\n${prefix}You may need to run "gclient sync -D"$postfix\n');
 }

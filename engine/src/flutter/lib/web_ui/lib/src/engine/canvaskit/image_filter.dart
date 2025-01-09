@@ -29,7 +29,8 @@ abstract class CkManagedSkImageFilterConvertible implements ui.ImageFilter {
   ///
   /// [SkImageFilter] objects are not kept around so that their memory is
   /// reclaimed immediately, rather than waiting for the GC cycle.
-  void withSkImageFilter(SkImageFilterBorrow borrow, {
+  void withSkImageFilter(
+    SkImageFilterBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   });
 
@@ -42,23 +43,22 @@ abstract class CkManagedSkImageFilterConvertible implements ui.ImageFilter {
 ///
 /// Currently only supports `blur`, `matrix`, and ColorFilters.
 abstract class CkImageFilter implements CkManagedSkImageFilterConvertible {
-  factory CkImageFilter.blur(
-      {required double sigmaX,
-      required double sigmaY,
-      required ui.TileMode? tileMode}) = _CkBlurImageFilter;
-  factory CkImageFilter.color({required CkColorFilter colorFilter}) =
-      CkColorFilterImageFilter;
-  factory CkImageFilter.matrix(
-      {required Float64List matrix,
-      required ui.FilterQuality filterQuality}) = _CkMatrixImageFilter;
-  factory CkImageFilter.dilate(
-      {required double radiusX,
-      required double radiusY}) = _CkDilateImageFilter;
-  factory CkImageFilter.erode(
-      {required double radiusX, required double radiusY}) = _CkErodeImageFilter;
-  factory CkImageFilter.compose(
-      {required CkImageFilter outer,
-      required CkImageFilter inner}) = _CkComposeImageFilter;
+  factory CkImageFilter.blur({
+    required double sigmaX,
+    required double sigmaY,
+    required ui.TileMode? tileMode,
+  }) = _CkBlurImageFilter;
+  factory CkImageFilter.color({required CkColorFilter colorFilter}) = CkColorFilterImageFilter;
+  factory CkImageFilter.matrix({
+    required Float64List matrix,
+    required ui.FilterQuality filterQuality,
+  }) = _CkMatrixImageFilter;
+  factory CkImageFilter.dilate({required double radiusX, required double radiusY}) =
+      _CkDilateImageFilter;
+  factory CkImageFilter.erode({required double radiusX, required double radiusY}) =
+      _CkErodeImageFilter;
+  factory CkImageFilter.compose({required CkImageFilter outer, required CkImageFilter inner}) =
+      _CkComposeImageFilter;
 
   CkImageFilter._();
 
@@ -79,7 +79,8 @@ class CkColorFilterImageFilter extends CkImageFilter {
   final CkColorFilter colorFilter;
 
   @override
-  void withSkImageFilter(SkImageFilterBorrow borrow, {
+  void withSkImageFilter(
+    SkImageFilterBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   }) {
     final skImageFilter = colorFilter.initRawImageFilter();
@@ -95,8 +96,7 @@ class CkColorFilterImageFilter extends CkImageFilter {
     if (runtimeType != other.runtimeType) {
       return false;
     }
-    return other is CkColorFilterImageFilter &&
-        other.colorFilter == colorFilter;
+    return other is CkColorFilterImageFilter && other.colorFilter == colorFilter;
   }
 
   @override
@@ -104,9 +104,8 @@ class CkColorFilterImageFilter extends CkImageFilter {
 }
 
 class _CkBlurImageFilter extends CkImageFilter {
-  _CkBlurImageFilter(
-      {required this.sigmaX, required this.sigmaY, required this.tileMode})
-      : super._();
+  _CkBlurImageFilter({required this.sigmaX, required this.sigmaY, required this.tileMode})
+    : super._();
 
   final double sigmaX;
   final double sigmaY;
@@ -116,7 +115,8 @@ class _CkBlurImageFilter extends CkImageFilter {
   ui.TileMode? get backdropTileMode => tileMode;
 
   @override
-  void withSkImageFilter(SkImageFilterBorrow borrow, {
+  void withSkImageFilter(
+    SkImageFilterBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   }) {
     /// Return the identity matrix when both sigmaX and sigmaY are 0. Replicates
@@ -124,9 +124,10 @@ class _CkBlurImageFilter extends CkImageFilter {
     final SkImageFilter skImageFilter;
     if (sigmaX == 0 && sigmaY == 0) {
       skImageFilter = canvasKit.ImageFilter.MakeMatrixTransform(
-          toSkMatrixFromFloat32(Matrix4.identity().storage),
-          toSkFilterOptions(ui.FilterQuality.none),
-          null);
+        toSkMatrixFromFloat32(Matrix4.identity().storage),
+        toSkFilterOptions(ui.FilterQuality.none),
+        null,
+      );
     } else {
       skImageFilter = canvasKit.ImageFilter.MakeBlur(
         sigmaX,
@@ -161,22 +162,21 @@ class _CkBlurImageFilter extends CkImageFilter {
 }
 
 class _CkMatrixImageFilter extends CkImageFilter {
-  _CkMatrixImageFilter(
-      {required Float64List matrix, required this.filterQuality})
-      : matrix = Float64List.fromList(matrix),
-        _transform = Matrix4.fromFloat32List(toMatrix32(matrix)),
-        super._();
+  _CkMatrixImageFilter({required Float64List matrix, required this.filterQuality})
+    : matrix = Float64List.fromList(matrix),
+      _transform = Matrix4.fromFloat32List(toMatrix32(matrix)),
+      super._();
 
   final Float64List matrix;
   final ui.FilterQuality filterQuality;
   final Matrix4 _transform;
 
   @override
-  void withSkImageFilter(SkImageFilterBorrow borrow, {
+  void withSkImageFilter(
+    SkImageFilterBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   }) {
-    final skImageFilter =
-        canvasKit.ImageFilter.MakeMatrixTransform(
+    final skImageFilter = canvasKit.ImageFilter.MakeMatrixTransform(
       toSkMatrixFromFloat64(matrix),
       toSkFilterOptions(filterQuality),
       null,
@@ -206,21 +206,17 @@ class _CkMatrixImageFilter extends CkImageFilter {
 }
 
 class _CkDilateImageFilter extends CkImageFilter {
-  _CkDilateImageFilter({required this.radiusX, required this.radiusY})
-      : super._();
+  _CkDilateImageFilter({required this.radiusX, required this.radiusY}) : super._();
 
   final double radiusX;
   final double radiusY;
 
   @override
-  void withSkImageFilter(SkImageFilterBorrow borrow, {
+  void withSkImageFilter(
+    SkImageFilterBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   }) {
-    final skImageFilter = canvasKit.ImageFilter.MakeDilate(
-      radiusX,
-      radiusY,
-      null,
-    );
+    final skImageFilter = canvasKit.ImageFilter.MakeDilate(radiusX, radiusY, null);
     borrow(skImageFilter);
     skImageFilter.delete();
   }
@@ -230,9 +226,7 @@ class _CkDilateImageFilter extends CkImageFilter {
     if (runtimeType != other.runtimeType) {
       return false;
     }
-    return other is _CkDilateImageFilter &&
-        other.radiusX == radiusX &&
-        other.radiusY == radiusY;
+    return other is _CkDilateImageFilter && other.radiusX == radiusX && other.radiusY == radiusY;
   }
 
   @override
@@ -245,21 +239,17 @@ class _CkDilateImageFilter extends CkImageFilter {
 }
 
 class _CkErodeImageFilter extends CkImageFilter {
-  _CkErodeImageFilter({required this.radiusX, required this.radiusY})
-      : super._();
+  _CkErodeImageFilter({required this.radiusX, required this.radiusY}) : super._();
 
   final double radiusX;
   final double radiusY;
 
   @override
-  void withSkImageFilter(SkImageFilterBorrow borrow, {
+  void withSkImageFilter(
+    SkImageFilterBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   }) {
-    final skImageFilter = canvasKit.ImageFilter.MakeErode(
-      radiusX,
-      radiusY,
-      null,
-    );
+    final skImageFilter = canvasKit.ImageFilter.MakeErode(radiusX, radiusY, null);
     borrow(skImageFilter);
     skImageFilter.delete();
   }
@@ -269,9 +259,7 @@ class _CkErodeImageFilter extends CkImageFilter {
     if (runtimeType != other.runtimeType) {
       return false;
     }
-    return other is _CkErodeImageFilter &&
-        other.radiusX == radiusX &&
-        other.radiusY == radiusY;
+    return other is _CkErodeImageFilter && other.radiusX == radiusX && other.radiusY == radiusY;
   }
 
   @override
@@ -284,22 +272,19 @@ class _CkErodeImageFilter extends CkImageFilter {
 }
 
 class _CkComposeImageFilter extends CkImageFilter {
-  _CkComposeImageFilter({required this.outer, required this.inner})
-      : super._();
+  _CkComposeImageFilter({required this.outer, required this.inner}) : super._();
 
   final CkImageFilter outer;
   final CkImageFilter inner;
 
   @override
-  void withSkImageFilter(SkImageFilterBorrow borrow, {
+  void withSkImageFilter(
+    SkImageFilterBorrow borrow, {
     ui.TileMode defaultBlurTileMode = ui.TileMode.clamp,
   }) {
     outer.withSkImageFilter((skOuter) {
       inner.withSkImageFilter((skInner) {
-        final skImageFilter = canvasKit.ImageFilter.MakeCompose(
-          skOuter,
-          skInner,
-        );
+        final skImageFilter = canvasKit.ImageFilter.MakeCompose(skOuter, skInner);
         borrow(skImageFilter);
         skImageFilter.delete();
       }, defaultBlurTileMode: defaultBlurTileMode);
@@ -311,9 +296,7 @@ class _CkComposeImageFilter extends CkImageFilter {
     if (runtimeType != other.runtimeType) {
       return false;
     }
-    return other is _CkComposeImageFilter &&
-        other.outer == outer &&
-        other.inner == inner;
+    return other is _CkComposeImageFilter && other.outer == outer && other.inner == inner;
   }
 
   @override

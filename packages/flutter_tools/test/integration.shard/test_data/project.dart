@@ -7,7 +7,7 @@ import 'package:file/file.dart';
 import '../test_utils.dart';
 import 'deferred_components_config.dart';
 
-const String _kDefaultHtml  = '''
+const String _kDefaultHtml = '''
 <html>
     <head>
         <title>Hello, World</title>
@@ -54,7 +54,10 @@ abstract class Project {
     }
     final String? generatedFile = this.generatedFile;
     if (generatedFile != null) {
-      writeFile(fileSystem.path.join(dir.path, '.dart_tool', 'flutter_gen', 'flutter_gen.dart'), generatedFile);
+      writeFile(
+        fileSystem.path.join(dir.path, '.dart_tool', 'flutter_gen', 'flutter_gen.dart'),
+        generatedFile,
+      );
     }
     deferredComponents?.setUpIn(dir);
 

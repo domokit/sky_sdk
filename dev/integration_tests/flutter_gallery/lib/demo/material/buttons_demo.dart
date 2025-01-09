@@ -12,7 +12,8 @@ const String _elevatedText =
 
 const String _elevatedCode = 'buttons_elevated';
 
-const String _textText = 'A text button displays an ink splash on press '
+const String _textText =
+    'A text button displays an ink splash on press '
     'but does not lift. Use text buttons on toolbars, in dialogs and '
     'inline with padding';
 
@@ -100,7 +101,8 @@ class _ButtonsDemoState extends State<ButtonsDemo> {
         description: _actionText,
         demoWidget: buildActionButton(),
         exampleCodeTag: _actionCode,
-        documentationUrl: 'https://api.flutter.dev/flutter/material/FloatingActionButton-class.html',
+        documentationUrl:
+            'https://api.flutter.dev/flutter/material/FloatingActionButton-class.html',
       ),
     ];
 
@@ -189,7 +191,7 @@ class _ButtonsDemoState extends State<ButtonsDemo> {
               ),
               const TextButton(
                 onPressed: null,
-                child: Text('DISABLED', semanticsLabel: 'DISABLED BUTTON 3',),
+                child: Text('DISABLED', semanticsLabel: 'DISABLED BUTTON 3'),
               ),
             ],
           ),
@@ -285,17 +287,15 @@ class _ButtonsDemoState extends State<ButtonsDemo> {
                   dropdown1Value = newValue;
                 });
               },
-              items: <String>['One', 'Two', 'Free', 'Four'].map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+              items:
+                  <String>['One', 'Two', 'Free', 'Four'].map<DropdownMenuItem<String>>((
+                    String value,
+                  ) {
+                    return DropdownMenuItem<String>(value: value, child: Text(value));
+                  }).toList(),
             ),
           ),
-          const SizedBox(
-            height: 24.0,
-          ),
+          const SizedBox(height: 24.0),
           ListTile(
             title: const Text('Dropdown with a hint:'),
             trailing: DropdownButton<String>(
@@ -306,17 +306,15 @@ class _ButtonsDemoState extends State<ButtonsDemo> {
                   dropdown2Value = newValue;
                 });
               },
-              items: <String>['One', 'Two', 'Free', 'Four'].map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+              items:
+                  <String>['One', 'Two', 'Free', 'Four'].map<DropdownMenuItem<String>>((
+                    String value,
+                  ) {
+                    return DropdownMenuItem<String>(value: value, child: Text(value));
+                  }).toList(),
             ),
           ),
-          const SizedBox(
-            height: 24.0,
-          ),
+          const SizedBox(height: 24.0),
           ListTile(
             title: const Text('Scrollable dropdown:'),
             trailing: DropdownButton<String>(
@@ -326,18 +324,29 @@ class _ButtonsDemoState extends State<ButtonsDemo> {
                   dropdown3Value = newValue;
                 });
               },
-              items: <String>[
-                  'One', 'Two', 'Free', 'Four', 'Can', 'I', 'Have', 'A', 'Little',
-                  'Bit', 'More', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
-                 ]
-                .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                })
-                .toList(),
-             ),
+              items:
+                  <String>[
+                    'One',
+                    'Two',
+                    'Free',
+                    'Four',
+                    'Can',
+                    'I',
+                    'Have',
+                    'A',
+                    'Little',
+                    'Bit',
+                    'More',
+                    'Five',
+                    'Six',
+                    'Seven',
+                    'Eight',
+                    'Nine',
+                    'Ten',
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(value: value, child: Text(value));
+                  }).toList(),
+            ),
           ),
         ],
       ),
@@ -351,27 +360,22 @@ class _ButtonsDemoState extends State<ButtonsDemo> {
       alignment: const Alignment(0.0, -0.2),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.thumb_up,
-              semanticLabel: 'Thumbs up',
-            ),
-            onPressed: () {
-              setState(() => iconButtonToggle = !iconButtonToggle);
-            },
-            color: iconButtonToggle ? Theme.of(context).primaryColor : null,
-          ),
-          const IconButton(
-            icon: Icon(
-              Icons.thumb_up,
-              semanticLabel: 'Thumbs not up',
-            ),
-            onPressed: null,
-          ),
-        ]
-        .map<Widget>((Widget button) => SizedBox(width: 64.0, height: 64.0, child: button))
-        .toList(),
+        children:
+            <Widget>[
+                  IconButton(
+                    icon: const Icon(Icons.thumb_up, semanticLabel: 'Thumbs up'),
+                    onPressed: () {
+                      setState(() => iconButtonToggle = !iconButtonToggle);
+                    },
+                    color: iconButtonToggle ? Theme.of(context).primaryColor : null,
+                  ),
+                  const IconButton(
+                    icon: Icon(Icons.thumb_up, semanticLabel: 'Thumbs not up'),
+                    onPressed: null,
+                  ),
+                ]
+                .map<Widget>((Widget button) => SizedBox(width: 64.0, height: 64.0, child: button))
+                .toList(),
       ),
     );
   }

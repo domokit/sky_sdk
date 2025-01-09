@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 import 'package:test/test.dart';
 import 'package:ui/src/engine.dart';
 
@@ -103,15 +102,15 @@ void expectLines(CanvasParagraph paragraph, List<TestLine> expectedLines) {
       expect(
         line.left,
         expectedLine.left,
-        reason:
-            'line #$i had a different `left` value: "${line.left}" vs. "${expectedLine.left}"',
+        reason: 'line #$i had a different `left` value: "${line.left}" vs. "${expectedLine.left}"',
       );
     }
     if (expectedLine.baseline != null) {
       expect(
         line.baseline,
         expectedLine.baseline,
-        reason: 'line #$i had a different `baseline` value: "${line.baseline}" vs. "${expectedLine.baseline}"',
+        reason:
+            'line #$i had a different `baseline` value: "${line.baseline}" vs. "${expectedLine.baseline}"',
       );
     }
   }

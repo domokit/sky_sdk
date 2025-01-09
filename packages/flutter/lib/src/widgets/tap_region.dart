@@ -137,10 +137,7 @@ class TapRegionSurface extends SingleChildRenderObjectWidget {
   /// Creates a const [RenderTapRegionSurface].
   ///
   /// The [child] attribute is required.
-  const TapRegionSurface({
-    super.key,
-    required Widget super.child,
-  });
+  const TapRegionSurface({super.key, required Widget super.child});
 
   @override
   RenderObject createRenderObject(BuildContext context) {
@@ -148,10 +145,7 @@ class TapRegionSurface extends SingleChildRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(
-    BuildContext context,
-    RenderProxyBoxWithHitTestBehavior renderObject,
-  ) {}
+  void updateRenderObject(BuildContext context, RenderProxyBoxWithHitTestBehavior renderObject) {}
 }
 
 /// A render object that provides notification of a tap inside or outside of a
@@ -200,7 +194,8 @@ class TapRegionSurface extends SingleChildRenderObjectWidget {
 ///   the render tree.
 /// * [TapRegionRegistry.of], which can find the nearest ancestor
 ///   [RenderTapRegionSurface], which is a [TapRegionRegistry].
-class RenderTapRegionSurface extends RenderProxyBoxWithHitTestBehavior implements TapRegionRegistry {
+class RenderTapRegionSurface extends RenderProxyBoxWithHitTestBehavior
+    implements TapRegionRegistry {
   final Expando<BoxHitTestResult> _cachedResults = Expando<BoxHitTestResult>();
   final Set<RenderTapRegion> _registeredRegions = <RenderTapRegion>{};
   final Map<Object?, Set<RenderTapRegion>> _groupIdToRegions = <Object?, Set<RenderTapRegion>>{};
@@ -283,9 +278,11 @@ class RenderTapRegionSurface extends RenderProxyBoxWithHitTestBehavior implement
 
     final Set<RenderTapRegion> insideRegions = <RenderTapRegion>{
       for (final RenderTapRegion region in hitRegions)
-        if (region.groupId == null) region
+        if (region.groupId == null)
+          region
         // Adding all grouped regions, so they act as a single region.
-        else ..._groupIdToRegions[region.groupId]!,
+        else
+          ..._groupIdToRegions[region.groupId]!,
     };
     // If they're not inside, then they're outside.
     final Set<RenderTapRegion> outsideRegions = _registeredRegions.difference(insideRegions);
@@ -301,7 +298,9 @@ class RenderTapRegionSurface extends RenderProxyBoxWithHitTestBehavior implement
       }
 
       if (region.consumeOutsideTaps) {
-        assert(_tapRegionDebug('Stopping tap propagation for $region (and all of ${region.groupId})'));
+        assert(
+          _tapRegionDebug('Stopping tap propagation for $region (and all of ${region.groupId})'),
+        );
         consumeOutsideTaps = true;
       }
     }
@@ -319,12 +318,17 @@ class RenderTapRegionSurface extends RenderProxyBoxWithHitTestBehavior implement
     // the propagation of the event through the gesture recognizer by adding it
     // to the recognizer and immediately resolving it.
     if (consumeOutsideTaps && event is PointerDownEvent) {
-      GestureBinding.instance.gestureArena.add(event.pointer, _DummyTapRecognizer()).resolve(GestureDisposition.accepted);
+      GestureBinding.instance.gestureArena
+          .add(event.pointer, _DummyTapRecognizer())
+          .resolve(GestureDisposition.accepted);
     }
   }
 
   // Returns the registered regions that are in the hit path.
-  Set<HitTestTarget> _getRegionsHit(Set<RenderTapRegion> detectors, Iterable<HitTestEntry> hitTestPath) {
+  Set<HitTestTarget> _getRegionsHit(
+    Set<RenderTapRegion> detectors,
+    Iterable<HitTestEntry> hitTestPath,
+  ) {
     return <HitTestTarget>{
       for (final HitTestEntry<HitTestTarget> entry in hitTestPath)
         if (entry.target case final HitTestTarget target)
@@ -338,10 +342,10 @@ class RenderTapRegionSurface extends RenderProxyBoxWithHitTestBehavior implement
 // anyhow.
 class _DummyTapRecognizer extends GestureArenaMember {
   @override
-  void acceptGesture(int pointer) { }
+  void acceptGesture(int pointer) {}
 
   @override
-  void rejectGesture(int pointer) { }
+  void rejectGesture(int pointer) {}
 }
 
 /// A widget that defines a region that can detect taps inside or outside of
@@ -508,8 +512,16 @@ class TapRegion extends SingleChildRenderObjectWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(FlagProperty('enabled', value: enabled, ifFalse: 'DISABLED', defaultValue: true));
-    properties.add(DiagnosticsProperty<HitTestBehavior>('behavior', behavior, defaultValue: HitTestBehavior.deferToChild));
+    properties.add(
+      FlagProperty('enabled', value: enabled, ifFalse: 'DISABLED', defaultValue: true),
+    );
+    properties.add(
+      DiagnosticsProperty<HitTestBehavior>(
+        'behavior',
+        behavior,
+        defaultValue: HitTestBehavior.deferToChild,
+      ),
+    );
     properties.add(DiagnosticsProperty<Object?>('debugLabel', debugLabel, defaultValue: null));
     properties.add(DiagnosticsProperty<Object?>('groupId', groupId, defaultValue: null));
   }
@@ -553,11 +565,11 @@ class RenderTapRegion extends RenderProxyBoxWithHitTestBehavior {
     super.behavior = HitTestBehavior.deferToChild,
     Object? groupId,
     String? debugLabel,
-  })  : _registry = registry,
-        _enabled = enabled,
-        _consumeOutsideTaps = consumeOutsideTaps,
-        _groupId = groupId,
-        debugLabel = kReleaseMode ? null : debugLabel;
+  }) : _registry = registry,
+       _enabled = enabled,
+       _consumeOutsideTaps = consumeOutsideTaps,
+       _groupId = groupId,
+       debugLabel = kReleaseMode ? null : debugLabel;
 
   bool _isRegistered = false;
 
@@ -695,7 +707,9 @@ class RenderTapRegion extends RenderProxyBoxWithHitTestBehavior {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<String?>('debugLabel', debugLabel, defaultValue: null));
     properties.add(DiagnosticsProperty<Object?>('groupId', groupId, defaultValue: null));
-    properties.add(FlagProperty('enabled', value: enabled, ifFalse: 'DISABLED', defaultValue: true));
+    properties.add(
+      FlagProperty('enabled', value: enabled, ifFalse: 'DISABLED', defaultValue: true),
+    );
   }
 }
 

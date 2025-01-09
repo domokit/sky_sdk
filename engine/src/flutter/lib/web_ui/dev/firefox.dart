@@ -59,54 +59,58 @@ class Firefox extends Browser {
   /// [Uri] or a [String].
   factory Firefox(Uri url, BrowserInstallation installation, {bool debug = false}) {
     final Completer<Uri> remoteDebuggerCompleter = Completer<Uri>.sync();
-    return Firefox._(BrowserProcess(() async {
-      // Using a profile on opening will prevent popups related to profiles.
-      const String profile = '''
+    return Firefox._(
+      BrowserProcess(() async {
+        // Using a profile on opening will prevent popups related to profiles.
+        const String profile = '''
 user_pref("browser.shell.checkDefaultBrowser", false);
 user_pref("dom.disable_open_during_load", false);
 user_pref("dom.max_script_run_time", 0);
 ''';
 
-      final Directory temporaryProfileDirectory = Directory(
-          path.join(environment.webUiDartToolDir.path, 'firefox_profile'));
+        final Directory temporaryProfileDirectory = Directory(
+          path.join(environment.webUiDartToolDir.path, 'firefox_profile'),
+        );
 
-      // A good source of various Firefox Command Line options:
-      // https://developer.mozilla.org/en-US/docs/Mozilla/Command_Line_Options#Browser
-      //
-      if (temporaryProfileDirectory.existsSync()) {
-        temporaryProfileDirectory.deleteSync(recursive: true);
-      }
-      temporaryProfileDirectory.createSync(recursive: true);
-      File(path.join(temporaryProfileDirectory.path, 'prefs.js'))
-          .writeAsStringSync(profile);
+        // A good source of various Firefox Command Line options:
+        // https://developer.mozilla.org/en-US/docs/Mozilla/Command_Line_Options#Browser
+        //
+        if (temporaryProfileDirectory.existsSync()) {
+          temporaryProfileDirectory.deleteSync(recursive: true);
+        }
+        temporaryProfileDirectory.createSync(recursive: true);
+        File(path.join(temporaryProfileDirectory.path, 'prefs.js')).writeAsStringSync(profile);
 
-      final bool isMac = Platform.isMacOS;
-      final List<String> args = <String>[
-        url.toString(),
-        '--profile',
-        temporaryProfileDirectory.path,
-        if (!debug)
-          '--headless',
-        '-width $kMaxScreenshotWidth',
-        '-height $kMaxScreenshotHeight',
-        // On Mac Firefox uses the -- option prefix, while elsewhere it uses the - prefix.
-        '${isMac ? '-' : ''}-new-window',
-        '${isMac ? '-' : ''}-new-instance',
-        '--start-debugger-server $kDevtoolsPort',
-      ];
+        final bool isMac = Platform.isMacOS;
+        final List<String> args = <String>[
+          url.toString(),
+          '--profile',
+          temporaryProfileDirectory.path,
+          if (!debug) '--headless',
+          '-width $kMaxScreenshotWidth',
+          '-height $kMaxScreenshotHeight',
+          // On Mac Firefox uses the -- option prefix, while elsewhere it uses the - prefix.
+          '${isMac ? '-' : ''}-new-window',
+          '${isMac ? '-' : ''}-new-instance',
+          '--start-debugger-server $kDevtoolsPort',
+        ];
 
-      final Process process =
-          await Process.start(installation.executable, args);
+        final Process process = await Process.start(installation.executable, args);
 
-      remoteDebuggerCompleter.complete(
-          getRemoteDebuggerUrl(Uri.parse('http://localhost:$kDevtoolsPort')));
+        remoteDebuggerCompleter.complete(
+          getRemoteDebuggerUrl(Uri.parse('http://localhost:$kDevtoolsPort')),
+        );
 
-      unawaited(process.exitCode.then((_) {
-        temporaryProfileDirectory.deleteSync(recursive: true);
-      }));
+        unawaited(
+          process.exitCode.then((_) {
+            temporaryProfileDirectory.deleteSync(recursive: true);
+          }),
+        );
 
-      return process;
-    }), remoteDebuggerCompleter.future);
+        return process;
+      }),
+      remoteDebuggerCompleter.future,
+    );
   }
 
   Firefox._(this._process, this.remoteDebuggerUrl);

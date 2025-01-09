@@ -28,10 +28,10 @@ class XcodeDebug {
     required ProcessManager processManager,
     required Xcode xcode,
     required FileSystem fileSystem,
-  })  : _logger = logger,
-        _processUtils = ProcessUtils(logger: logger, processManager: processManager),
-        _xcode = xcode,
-        _fileSystem = fileSystem;
+  }) : _logger = logger,
+       _processUtils = ProcessUtils(logger: logger, processManager: processManager),
+       _xcode = xcode,
+       _fileSystem = fileSystem;
 
   final ProcessUtils _processUtils;
   final Logger _logger;
@@ -73,37 +73,34 @@ class XcodeDebug {
     StreamSubscription<String>? stdoutSubscription;
     StreamSubscription<String>? stderrSubscription;
     try {
-      startDebugActionProcess = await _processUtils.start(
-        <String>[
-          ..._xcode.xcrunCommand(),
-          'osascript',
-          '-l',
-          'JavaScript',
-          _xcode.xcodeAutomationScriptPath,
-          'debug',
-          '--xcode-path',
-          _xcode.xcodeAppPath,
-          '--project-path',
-          project.xcodeProject.path,
-          '--workspace-path',
-          project.xcodeWorkspace.path,
-          '--project-name',
-          project.hostAppProjectName,
-          if (project.expectedConfigurationBuildDir != null)
-            ...<String>[
-              '--expected-configuration-build-dir',
-              project.expectedConfigurationBuildDir!,
-            ],
-          '--device-id',
-          deviceId,
-          '--scheme',
-          project.scheme,
-          '--skip-building',
-          '--launch-args',
-          json.encode(launchArguments),
-          if (project.verboseLogging) '--verbose',
+      startDebugActionProcess = await _processUtils.start(<String>[
+        ..._xcode.xcrunCommand(),
+        'osascript',
+        '-l',
+        'JavaScript',
+        _xcode.xcodeAutomationScriptPath,
+        'debug',
+        '--xcode-path',
+        _xcode.xcodeAppPath,
+        '--project-path',
+        project.xcodeProject.path,
+        '--workspace-path',
+        project.xcodeWorkspace.path,
+        '--project-name',
+        project.hostAppProjectName,
+        if (project.expectedConfigurationBuildDir != null) ...<String>[
+          '--expected-configuration-build-dir',
+          project.expectedConfigurationBuildDir!,
         ],
-      );
+        '--device-id',
+        deviceId,
+        '--scheme',
+        project.scheme,
+        '--skip-building',
+        '--launch-args',
+        json.encode(launchArguments),
+        if (project.verboseLogging) '--verbose',
+      ]);
 
       final StringBuffer stdoutBuffer = StringBuffer();
       stdoutSubscription = startDebugActionProcess!.stdout
@@ -112,7 +109,7 @@ class XcodeDebug {
           .listen((String line) {
             _logger.printTrace(line);
             stdoutBuffer.write(line);
-      });
+          });
 
       final StringBuffer stderrBuffer = StringBuffer();
       bool permissionWarningPrinted = false;
@@ -124,16 +121,18 @@ class XcodeDebug {
             _logger.printTrace('stderr: $line');
             stderrBuffer.write(line);
 
-          // This error may occur if Xcode automation has not been allowed.
-          // Example: Failed to get workspace: Error: An error occurred.
-          if (!permissionWarningPrinted && line.contains('Failed to get workspace') && line.contains('An error occurred')) {
-            _logger.printError(
-              'There was an error finding the project in Xcode. Ensure permission '
-              'has been given to control Xcode in Settings > Privacy & Security > Automation.',
-            );
-            permissionWarningPrinted = true;
-          }
-      });
+            // This error may occur if Xcode automation has not been allowed.
+            // Example: Failed to get workspace: Error: An error occurred.
+            if (!permissionWarningPrinted &&
+                line.contains('Failed to get workspace') &&
+                line.contains('An error occurred')) {
+              _logger.printError(
+                'There was an error finding the project in Xcode. Ensure permission '
+                'has been given to control Xcode in Settings > Privacy & Security > Automation.',
+              );
+              permissionWarningPrinted = true;
+            }
+          });
 
       final int exitCode = await startDebugActionProcess!.exitCode.whenComplete(() async {
         await stdoutSubscription?.cancel();
@@ -146,9 +145,7 @@ class XcodeDebug {
         return false;
       }
 
-      final XcodeAutomationScriptResponse? response = parseScriptResponse(
-        stdoutBuffer.toString(),
-      );
+      final XcodeAutomationScriptResponse? response = parseScriptResponse(stdoutBuffer.toString());
       if (response == null) {
         return false;
       }
@@ -165,7 +162,7 @@ class XcodeDebug {
           'Unexpected debug results: \n'
           '  Status: ${response.debugResult?.status}\n'
           '  Completed: ${response.debugResult?.completed}\n'
-          '  Error Message: ${response.debugResult?.errorMessage}\n'
+          '  Error Message: ${response.debugResult?.errorMessage}\n',
         );
         return false;
       }
@@ -184,11 +181,7 @@ class XcodeDebug {
   /// will kill all Xcode app processes. Otherwise, it will stop the debug
   /// session in Xcode. If the project is temporary, it will close the Xcode
   /// window of the project and then delete the project.
-  Future<bool> exit({
-    bool force = false,
-    @visibleForTesting
-    bool skipDelay = false,
-  }) async {
+  Future<bool> exit({bool force = false, @visibleForTesting bool skipDelay = false}) async {
     final bool success = (startDebugActionProcess == null) || startDebugActionProcess!.kill();
 
     if (force) {
@@ -198,10 +191,7 @@ class XcodeDebug {
         if (project.isTemporaryProject) {
           // Only delete if it exists. This is to prevent crashes when racing
           // with shutdown hooks to delete temporary files.
-          ErrorHandlingFileSystem.deleteIfExists(
-            project.xcodeProject.parent,
-            recursive: true,
-          );
+          ErrorHandlingFileSystem.deleteIfExists(project.xcodeProject.parent, recursive: true);
         }
         currentDebuggingProject = null;
       }
@@ -209,10 +199,7 @@ class XcodeDebug {
 
     if (currentDebuggingProject != null) {
       final XcodeDebugProject project = currentDebuggingProject!;
-      await stopDebuggingApp(
-        project: project,
-        closeXcode: project.isTemporaryProject,
-      );
+      await stopDebuggingApp(project: project, closeXcode: project.isTemporaryProject);
 
       if (project.isTemporaryProject) {
         // Wait a couple seconds before deleting the project. If project is
@@ -225,7 +212,9 @@ class XcodeDebug {
         try {
           project.xcodeProject.parent.deleteSync(recursive: true);
         } on FileSystemException {
-          _logger.printError('Failed to delete temporary Xcode project: ${project.xcodeProject.parent.path}');
+          _logger.printError(
+            'Failed to delete temporary Xcode project: ${project.xcodeProject.parent.path}',
+          );
         }
       }
       currentDebuggingProject = null;
@@ -236,13 +225,7 @@ class XcodeDebug {
 
   /// Kill all opened Xcode applications.
   Future<bool> _forceExitXcode() async {
-    final RunResult result = await _processUtils.run(
-      <String>[
-        'killall',
-        '-9',
-        'Xcode',
-      ],
-    );
+    final RunResult result = await _processUtils.run(<String>['killall', '-9', 'Xcode']);
 
     if (result.exitCode != 0) {
       _logger.printError('Error killing Xcode: ${result.exitCode}\n${result.stderr}');
@@ -251,27 +234,22 @@ class XcodeDebug {
     return true;
   }
 
-  Future<bool> _isProjectOpenInXcode({
-    required XcodeDebugProject project,
-  }) async {
-
-    final RunResult result = await _processUtils.run(
-      <String>[
-        ..._xcode.xcrunCommand(),
-        'osascript',
-        '-l',
-        'JavaScript',
-        _xcode.xcodeAutomationScriptPath,
-        'check-workspace-opened',
-        '--xcode-path',
-        _xcode.xcodeAppPath,
-        '--project-path',
-        project.xcodeProject.path,
-        '--workspace-path',
-        project.xcodeWorkspace.path,
-        if (project.verboseLogging) '--verbose',
-      ],
-    );
+  Future<bool> _isProjectOpenInXcode({required XcodeDebugProject project}) async {
+    final RunResult result = await _processUtils.run(<String>[
+      ..._xcode.xcrunCommand(),
+      'osascript',
+      '-l',
+      'JavaScript',
+      _xcode.xcodeAutomationScriptPath,
+      'check-workspace-opened',
+      '--xcode-path',
+      _xcode.xcodeAppPath,
+      '--project-path',
+      project.xcodeProject.path,
+      '--workspace-path',
+      project.xcodeWorkspace.path,
+      if (project.verboseLogging) '--verbose',
+    ]);
 
     if (result.exitCode != 0) {
       _logger.printError('Error executing osascript: ${result.exitCode}\n${result.stderr}');
@@ -294,7 +272,9 @@ class XcodeDebug {
     try {
       final Object decodeResult = json.decode(results) as Object;
       if (decodeResult is Map<String, Object?>) {
-        final XcodeAutomationScriptResponse response = XcodeAutomationScriptResponse.fromJson(decodeResult);
+        final XcodeAutomationScriptResponse response = XcodeAutomationScriptResponse.fromJson(
+          decodeResult,
+        );
         // Status should always be found
         if (response.status != null) {
           return response;
@@ -308,22 +288,17 @@ class XcodeDebug {
     }
   }
 
-  Future<bool> _openProjectInXcode({
-    required Directory xcodeWorkspace,
-  }) async {
+  Future<bool> _openProjectInXcode({required Directory xcodeWorkspace}) async {
     try {
-      await _processUtils.run(
-        <String>[
-          'open',
-          '-a',
-          _xcode.xcodeAppPath,
-          '-g', // Do not bring the application to the foreground.
-          '-j', // Launches the app hidden.
-          '-F', // Open "fresh", without restoring windows.
-          xcodeWorkspace.path
-        ],
-        throwOnError: true,
-      );
+      await _processUtils.run(<String>[
+        'open',
+        '-a',
+        _xcode.xcodeAppPath,
+        '-g', // Do not bring the application to the foreground.
+        '-j', // Launches the app hidden.
+        '-F', // Open "fresh", without restoring windows.
+        xcodeWorkspace.path,
+      ], throwOnError: true);
       return true;
     } on ProcessException catch (error, stackTrace) {
       _logger.printError('$error', stackTrace: stackTrace);
@@ -341,25 +316,23 @@ class XcodeDebug {
     bool closeXcode = false,
     bool promptToSaveOnClose = false,
   }) async {
-    final RunResult result = await _processUtils.run(
-      <String>[
-        ..._xcode.xcrunCommand(),
-        'osascript',
-        '-l',
-        'JavaScript',
-        _xcode.xcodeAutomationScriptPath,
-        'stop',
-        '--xcode-path',
-        _xcode.xcodeAppPath,
-        '--project-path',
-        project.xcodeProject.path,
-        '--workspace-path',
-        project.xcodeWorkspace.path,
-        if (closeXcode) '--close-window',
-        if (promptToSaveOnClose) '--prompt-to-save',
-        if (project.verboseLogging) '--verbose',
-      ],
-    );
+    final RunResult result = await _processUtils.run(<String>[
+      ..._xcode.xcrunCommand(),
+      'osascript',
+      '-l',
+      'JavaScript',
+      _xcode.xcodeAutomationScriptPath,
+      'stop',
+      '--xcode-path',
+      _xcode.xcodeAppPath,
+      '--project-path',
+      project.xcodeProject.path,
+      '--workspace-path',
+      project.xcodeWorkspace.path,
+      if (closeXcode) '--close-window',
+      if (promptToSaveOnClose) '--prompt-to-save',
+      if (project.verboseLogging) '--verbose',
+    ]);
 
     if (result.exitCode != 0) {
       _logger.printError('Error executing osascript: ${result.exitCode}\n${result.stderr}');
@@ -382,11 +355,12 @@ class XcodeDebug {
   Future<XcodeDebugProject> createXcodeProjectWithCustomBundle(
     String deviceBundlePath, {
     required TemplateRenderer templateRenderer,
-    @visibleForTesting
-    Directory? projectDestination,
+    @visibleForTesting Directory? projectDestination,
     bool verboseLogging = false,
   }) async {
-    final Directory tempXcodeProject = projectDestination ?? _fileSystem.systemTempDirectory.createTempSync('flutter_empty_xcode.');
+    final Directory tempXcodeProject =
+        projectDestination ??
+        _fileSystem.systemTempDirectory.createTempSync('flutter_empty_xcode.');
 
     final Template template = await Template.fromName(
       _fileSystem.path.join('xcode', 'ios', 'custom_application_bundle'),
@@ -396,13 +370,9 @@ class XcodeDebug {
       templateRenderer: templateRenderer,
     );
 
-    template.render(
-      tempXcodeProject,
-      <String, Object>{
-        'applicationBundlePath': deviceBundlePath
-      },
-      printStatusWhenWriting: false,
-    );
+    template.render(tempXcodeProject, <String, Object>{
+      'applicationBundlePath': deviceBundlePath,
+    }, printStatusWhenWriting: false);
 
     return XcodeDebugProject(
       scheme: 'Runner',
@@ -434,14 +404,18 @@ class XcodeDebug {
         return;
       }
       final XmlNode launchAction = nodes.first;
-      final XmlAttribute? debuggerIdentifier = launchAction.attributes
-          .where((XmlAttribute attribute) =>
-              attribute.localName == 'selectedDebuggerIdentifier')
-          .firstOrNull;
-      final XmlAttribute? launcherIdentifier = launchAction.attributes
-          .where((XmlAttribute attribute) =>
-              attribute.localName == 'selectedLauncherIdentifier')
-          .firstOrNull;
+      final XmlAttribute? debuggerIdentifier =
+          launchAction.attributes
+              .where(
+                (XmlAttribute attribute) => attribute.localName == 'selectedDebuggerIdentifier',
+              )
+              .firstOrNull;
+      final XmlAttribute? launcherIdentifier =
+          launchAction.attributes
+              .where(
+                (XmlAttribute attribute) => attribute.localName == 'selectedLauncherIdentifier',
+              )
+              .firstOrNull;
       if (debuggerIdentifier == null ||
           launcherIdentifier == null ||
           !debuggerIdentifier.value.contains('LLDB') ||
@@ -460,11 +434,7 @@ and ensure "Debug executable" is checked in the "Info" tab.
 
 @visibleForTesting
 class XcodeAutomationScriptResponse {
-  XcodeAutomationScriptResponse._({
-    this.status,
-    this.errorMessage,
-    this.debugResult,
-  });
+  XcodeAutomationScriptResponse._({this.status, this.errorMessage, this.debugResult});
 
   factory XcodeAutomationScriptResponse.fromJson(Map<String, Object?> data) {
     XcodeAutomationScriptDebugResult? debugResult;

@@ -31,12 +31,14 @@ void testMain() {
       });
 
       group('"create" message', () {
-        test('unregistered viewType, fails with descriptive exception',
-            () async {
+        test('unregistered viewType, fails with descriptive exception', () async {
           final PlatformViewMessageHandler messageHandler = PlatformViewMessageHandler(
             contentManager: contentManager,
           );
-          final Map<dynamic, dynamic> arguments = _getCreateArguments(platformViewType, platformViewId);
+          final Map<dynamic, dynamic> arguments = _getCreateArguments(
+            platformViewType,
+            platformViewId,
+          );
 
           messageHandler.handlePlatformViewCall('create', arguments, completer.complete);
 
@@ -51,13 +53,15 @@ void testMain() {
         });
 
         test('duplicate viewId, fails with descriptive exception', () async {
-          contentManager.registerFactory(
-              platformViewType, (int id) => createDomHTMLDivElement());
+          contentManager.registerFactory(platformViewType, (int id) => createDomHTMLDivElement());
           contentManager.renderContent(platformViewType, platformViewId, null);
           final PlatformViewMessageHandler messageHandler = PlatformViewMessageHandler(
             contentManager: contentManager,
           );
-          final Map<dynamic, dynamic> arguments = _getCreateArguments(platformViewType, platformViewId);
+          final Map<dynamic, dynamic> arguments = _getCreateArguments(
+            platformViewType,
+            platformViewId,
+          );
 
           messageHandler.handlePlatformViewCall('create', arguments, completer.complete);
 
@@ -70,32 +74,42 @@ void testMain() {
           }
         });
 
-        test('returns a successEnvelope when the view is created normally',
-            () async {
+        test('returns a successEnvelope when the view is created normally', () async {
           contentManager.registerFactory(
-              platformViewType, (int id) => createDomHTMLDivElement()..id = 'success');
+            platformViewType,
+            (int id) => createDomHTMLDivElement()..id = 'success',
+          );
           final PlatformViewMessageHandler messageHandler = PlatformViewMessageHandler(
             contentManager: contentManager,
           );
-          final Map<dynamic, dynamic> arguments = _getCreateArguments(platformViewType, platformViewId);
+          final Map<dynamic, dynamic> arguments = _getCreateArguments(
+            platformViewType,
+            platformViewId,
+          );
 
           messageHandler.handlePlatformViewCall('create', arguments, completer.complete);
 
           final ByteData? response = await completer.future;
-          expect(codec.decodeEnvelope(response!), isNull,
-              reason:
-                  'The response should be a success envelope, with null in it.');
+          expect(
+            codec.decodeEnvelope(response!),
+            isNull,
+            reason: 'The response should be a success envelope, with null in it.',
+          );
         });
 
-        test('caches the created view so it can be retrieved (not on the DOM)',
-            () async {
+        test('caches the created view so it can be retrieved (not on the DOM)', () async {
           final DomElement platformViewsContainer = createDomElement('pv-container');
           contentManager.registerFactory(
-              platformViewType, (int id) => createDomHTMLDivElement()..id = 'success');
+            platformViewType,
+            (int id) => createDomHTMLDivElement()..id = 'success',
+          );
           final PlatformViewMessageHandler messageHandler = PlatformViewMessageHandler(
             contentManager: contentManager,
           );
-          final Map<dynamic, dynamic> arguments = _getCreateArguments(platformViewType, platformViewId);
+          final Map<dynamic, dynamic> arguments = _getCreateArguments(
+            platformViewType,
+            platformViewId,
+          );
 
           messageHandler.handlePlatformViewCall('create', arguments, completer.complete);
 
@@ -109,7 +123,7 @@ void testMain() {
           expect(
             contentManager.knowsViewId(platformViewId),
             isTrue,
-            reason: 'The contentManager should have pre-rendered the platformViewId.'
+            reason: 'The contentManager should have pre-rendered the platformViewId.',
           );
           expect(
             contentManager.getViewById(platformViewId).matches('div#success'),
@@ -195,7 +209,10 @@ void testMain() {
           final PlatformViewMessageHandler messageHandler = PlatformViewMessageHandler(
             contentManager: contentManager,
           );
-          final Map<dynamic, dynamic> arguments = _getCreateArguments(platformViewType, platformViewId);
+          final Map<dynamic, dynamic> arguments = _getCreateArguments(
+            platformViewType,
+            platformViewId,
+          );
 
           expect(() {
             messageHandler.handlePlatformViewCall('create', arguments, (_) {});
@@ -218,9 +235,11 @@ void testMain() {
           messageHandler.handlePlatformViewCall('dispose', platformViewId, completer.complete);
 
           final ByteData? response = await completer.future;
-          expect(codec.decodeEnvelope(response!), isNull,
-              reason:
-                  'The response should be a success envelope, with null in it.');
+          expect(
+            codec.decodeEnvelope(response!),
+            isNull,
+            reason: 'The response should be a success envelope, with null in it.',
+          );
         });
 
         test('never fails, even for unknown viewIds', () async {
@@ -231,9 +250,11 @@ void testMain() {
           messageHandler.handlePlatformViewCall('dispose', platformViewId, completer.complete);
 
           final int disposedViewId = await viewIdCompleter.future;
-          expect(disposedViewId, platformViewId,
-              reason:
-                  'The viewId to dispose should be passed to the contentManager');
+          expect(
+            disposedViewId,
+            platformViewId,
+            reason: 'The viewId to dispose should be passed to the contentManager',
+          );
         });
       });
     });
@@ -241,8 +262,7 @@ void testMain() {
 }
 
 class _FakePlatformViewManager extends PlatformViewManager {
-  _FakePlatformViewManager(void Function(int) clearFunction)
-      : _clearPlatformView = clearFunction;
+  _FakePlatformViewManager(void Function(int) clearFunction) : _clearPlatformView = clearFunction;
 
   final void Function(int) _clearPlatformView;
 

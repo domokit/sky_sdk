@@ -3,12 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/about/about_list_tile.0.dart'
-    as example;
+import 'package:flutter_api_samples/material/about/about_list_tile.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('It should show the about dialog after clicking on the button', (WidgetTester tester) async {
+  testWidgets('It should show the about dialog after clicking on the button', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const example.AboutListTileExampleApp());
 
     expect(find.widgetWithText(AppBar, 'Show About Example'), findsOne);
@@ -33,7 +34,9 @@ void main() {
     );
   });
 
-  testWidgets('It should show the about dialog after clicking on about list tile in the drawer', (WidgetTester tester) async {
+  testWidgets('It should show the about dialog after clicking on about list tile in the drawer', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const example.AboutListTileExampleApp());
 
     expect(find.widgetWithText(AppBar, 'Show About Example'), findsOne);

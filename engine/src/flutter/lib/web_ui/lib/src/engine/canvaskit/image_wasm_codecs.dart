@@ -35,8 +35,7 @@ class CkAnimatedImage implements ui.Codec {
   final int? targetHeight;
 
   SkAnimatedImage createSkAnimatedImage() {
-    SkAnimatedImage? animatedImage =
-        canvasKit.MakeAnimatedImageFromEncoded(_bytes);
+    SkAnimatedImage? animatedImage = canvasKit.MakeAnimatedImageFromEncoded(_bytes);
     if (animatedImage == null) {
       throw ImageCodecException(
         'Failed to decode image data.\n'
@@ -64,7 +63,11 @@ class CkAnimatedImage implements ui.Codec {
     return animatedImage;
   }
 
-  SkAnimatedImage? _resizeAnimatedImage(SkAnimatedImage animatedImage, int? targetWidth, int? targetHeight) {
+  SkAnimatedImage? _resizeAnimatedImage(
+    SkAnimatedImage animatedImage,
+    int? targetWidth,
+    int? targetHeight,
+  ) {
     final SkImage image = animatedImage.makeImageAtCurrentFrame();
     final CkImage ckImage = scaleImage(image, targetWidth, targetHeight);
     final Uint8List? resizedBytes = ckImage.skImage.encodeToBytes();
@@ -73,7 +76,9 @@ class CkAnimatedImage implements ui.Codec {
       throw ImageCodecException('Failed to re-size image');
     }
 
-    final SkAnimatedImage? resizedAnimatedImage = canvasKit.MakeAnimatedImageFromEncoded(resizedBytes);
+    final SkAnimatedImage? resizedAnimatedImage = canvasKit.MakeAnimatedImageFromEncoded(
+      resizedBytes,
+    );
     return resizedAnimatedImage;
   }
 
@@ -87,10 +92,7 @@ class CkAnimatedImage implements ui.Codec {
 
   @override
   void dispose() {
-    assert(
-      !_disposed,
-      'Cannot dispose a codec that has already been disposed.',
-    );
+    assert(!_disposed, 'Cannot dispose a codec that has already been disposed.');
     _disposed = true;
     _ref.dispose();
   }

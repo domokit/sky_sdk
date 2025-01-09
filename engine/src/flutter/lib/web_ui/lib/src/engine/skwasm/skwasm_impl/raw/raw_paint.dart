@@ -13,16 +13,8 @@ final class RawPaint extends Opaque {}
 
 typedef PaintHandle = Pointer<RawPaint>;
 
-typedef _PaintCreateInitSignature = PaintHandle Function(
-  Bool,
-  Int,
-  Int,
-  Int,
-  Float,
-  Int,
-  Int,
-  Float,
-);
+typedef _PaintCreateInitSignature =
+    PaintHandle Function(Bool, Int, Int, Int, Float, Int, Int, Float);
 
 @Native<_PaintCreateInitSignature>(symbol: 'paint_create', isLeaf: true)
 external PaintHandle paintCreate(

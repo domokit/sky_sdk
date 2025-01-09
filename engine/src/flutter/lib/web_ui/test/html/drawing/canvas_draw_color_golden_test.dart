@@ -15,10 +15,7 @@ void main() {
 }
 
 Future<void> testMain() async {
-  setUpUnitTests(
-    emulateTesterEnvironment: false,
-    setUpTestViewDimensions: false,
-  );
+  setUpUnitTests(emulateTesterEnvironment: false, setUpTestViewDimensions: false);
 
   setUp(() async {
     debugShowClipLayers = true;
@@ -56,10 +53,10 @@ Picture _drawTestPicture(Rect region, {bool useColor = false}) {
   final RecordingCanvas canvas = recorder.beginRecording(r);
 
   canvas.drawRect(
-      region.deflate(8.0),
-      Paint() as SurfacePaint
-        ..style = PaintingStyle.fill
-        ..color = const Color(0xFFE0E0E0)
+    region.deflate(8.0),
+    Paint() as SurfacePaint
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFFE0E0E0),
   );
 
   canvas.transform(Matrix4.translationValues(50, 50, 0).storage);
@@ -67,16 +64,20 @@ Picture _drawTestPicture(Rect region, {bool useColor = false}) {
   if (useColor) {
     canvas.drawColor(const Color.fromRGBO(0, 255, 0, 1), BlendMode.srcOver);
   } else {
-    canvas.drawPaint(Paint() as SurfacePaint
-      ..style = PaintingStyle.fill
-      ..color = const Color.fromRGBO(0, 0, 255, 1));
+    canvas.drawPaint(
+      Paint() as SurfacePaint
+        ..style = PaintingStyle.fill
+        ..color = const Color.fromRGBO(0, 0, 255, 1),
+    );
   }
 
   canvas.drawCircle(
-      Offset(r.width/2, r.height/2), r.width/2,
-      Paint() as SurfacePaint
-        ..style = PaintingStyle.fill
-        ..color = const Color.fromRGBO(255, 0, 0, 1));
+    Offset(r.width / 2, r.height / 2),
+    r.width / 2,
+    Paint() as SurfacePaint
+      ..style = PaintingStyle.fill
+      ..color = const Color.fromRGBO(255, 0, 0, 1),
+  );
 
   return recorder.endRecording();
 }

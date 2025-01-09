@@ -21,13 +21,16 @@ void main() {
               dragStartBehavior: DragStartBehavior.down,
               itemExtent: 290.0,
               scrollDirection: Axis.horizontal,
-              children: items.map<Widget>((int item) {
-                return GestureDetector(
-                  onTap: () { tapped.add(item); },
-                  dragStartBehavior: DragStartBehavior.down,
-                  child: Text('$item'),
-                );
-              }).toList(),
+              children:
+                  items.map<Widget>((int item) {
+                    return GestureDetector(
+                      onTap: () {
+                        tapped.add(item);
+                      },
+                      dragStartBehavior: DragStartBehavior.down,
+                      child: Text('$item'),
+                    );
+                  }).toList(),
             ),
           ),
         ),
@@ -62,13 +65,16 @@ void main() {
             child: ListView(
               dragStartBehavior: DragStartBehavior.down,
               itemExtent: 290.0,
-              children: items.map<Widget>((int item) {
-                return GestureDetector(
-                  onTap: () { tapped.add(item); },
-                  dragStartBehavior: DragStartBehavior.down,
-                  child: Text('$item'),
-                );
-              }).toList(),
+              children:
+                  items.map<Widget>((int item) {
+                    return GestureDetector(
+                      onTap: () {
+                        tapped.add(item);
+                      },
+                      dragStartBehavior: DragStartBehavior.down,
+                      child: Text('$item'),
+                    );
+                  }).toList(),
             ),
           ),
         ),
@@ -91,7 +97,10 @@ void main() {
     await tester.tap(find.text('1'));
     expect(tapped, equals(<int>[1]));
     await tester.tap(find.text('3'), warnIfMissed: false);
-    expect(tapped, equals(<int>[1])); // the center of the third item is off-screen so it shouldn't get hit
+    expect(
+      tapped,
+      equals(<int>[1]),
+    ); // the center of the third item is off-screen so it shouldn't get hit
   });
 
   testWidgets('Padding scroll anchor start', (WidgetTester tester) async {
@@ -103,12 +112,15 @@ void main() {
         child: ListView(
           itemExtent: 290.0,
           padding: const EdgeInsets.fromLTRB(5.0, 20.0, 15.0, 10.0),
-          children: items.map<Widget>((int item) {
-            return GestureDetector(
-              onTap: () { tapped.add(item); },
-              child: Text('$item'),
-            );
-          }).toList(),
+          children:
+              items.map<Widget>((int item) {
+                return GestureDetector(
+                  onTap: () {
+                    tapped.add(item);
+                  },
+                  child: Text('$item'),
+                );
+              }).toList(),
         ),
       ),
     );
@@ -136,12 +148,15 @@ void main() {
           itemExtent: 290.0,
           reverse: true,
           padding: const EdgeInsets.fromLTRB(5.0, 20.0, 15.0, 10.0),
-          children: items.map<Widget>((int item) {
-            return GestureDetector(
-              onTap: () { tapped.add(item); },
-              child: Text('$item'),
-            );
-          }).toList(),
+          children:
+              items.map<Widget>((int item) {
+                return GestureDetector(
+                  onTap: () {
+                    tapped.add(item);
+                  },
+                  child: Text('$item'),
+                );
+              }).toList(),
         ),
       ),
     );
@@ -168,12 +183,15 @@ void main() {
         textDirection: TextDirection.ltr,
         child: ListView(
           itemExtent: 200.0,
-          children: items.map<Widget>((int item) {
-            return GestureDetector(
-              onTap: () { tapped.add(item); },
-              child: Text('$item'),
-            );
-          }).toList(),
+          children:
+              items.map<Widget>((int item) {
+                return GestureDetector(
+                  onTap: () {
+                    tapped.add(item);
+                  },
+                  child: Text('$item'),
+                );
+              }).toList(),
         ),
       ),
     );

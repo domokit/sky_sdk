@@ -15,9 +15,7 @@ class TextEditingControllerExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: TextEditingControllerExample(),
-    );
+    return const MaterialApp(home: TextEditingControllerExample());
   }
 }
 
@@ -32,10 +30,7 @@ class _TextEditingControllerExampleState extends State<TextEditingControllerExam
   // Create a controller whose initial selection is empty (collapsed) and positioned
   // before the text (offset is 0).
   final TextEditingController _controller = TextEditingController.fromValue(
-    const TextEditingValue(
-      text: 'Flutter',
-      selection: TextSelection.collapsed(offset: 0),
-    ),
+    const TextEditingValue(text: 'Flutter', selection: TextSelection.collapsed(offset: 0)),
   );
 
   @override

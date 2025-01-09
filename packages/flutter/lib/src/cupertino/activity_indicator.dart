@@ -36,8 +36,8 @@ class CupertinoActivityIndicator extends StatefulWidget {
     this.color,
     this.animating = true,
     this.radius = _kDefaultIndicatorRadius,
-  })  : assert(radius > 0.0),
-        progress = 1.0;
+  }) : assert(radius > 0.0),
+       progress = 1.0;
 
   /// Creates a non-animated iOS-style activity indicator that displays
   /// a partial count of ticks based on the value of [progress].
@@ -50,10 +50,10 @@ class CupertinoActivityIndicator extends StatefulWidget {
     this.color,
     this.radius = _kDefaultIndicatorRadius,
     this.progress = 1.0,
-  })  : assert(radius > 0.0),
-        assert(progress >= 0.0),
-        assert(progress <= 1.0),
-        animating = false;
+  }) : assert(radius > 0.0),
+       assert(progress >= 0.0),
+       assert(progress <= 1.0),
+       animating = false;
 
   /// Color of the activity indicator.
   ///
@@ -89,10 +89,7 @@ class _CupertinoActivityIndicatorState extends State<CupertinoActivityIndicator>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 1),
-      vsync: this,
-    );
+    _controller = AnimationController(duration: const Duration(seconds: 1), vsync: this);
 
     if (widget.animating) {
       _controller.repeat();
@@ -138,16 +135,7 @@ const double _kTwoPI = math.pi * 2.0;
 
 /// Alpha values extracted from the native component (for both dark and light mode) to
 /// draw the spinning ticks.
-const List<int> _kAlphaValues = <int>[
-  47,
-  47,
-  47,
-  47,
-  72,
-  97,
-  122,
-  147,
-];
+const List<int> _kAlphaValues = <int>[47, 47, 47, 47, 72, 97, 122, 147];
 
 /// The alpha value that is used to draw the partially revealed ticks.
 const int _partiallyRevealedAlpha = 147;
@@ -158,15 +146,15 @@ class _CupertinoActivityIndicatorPainter extends CustomPainter {
     required this.activeColor,
     required this.radius,
     required this.progress,
-  })  : tickFundamentalRRect = RRect.fromLTRBXY(
-          -radius / _kDefaultIndicatorRadius,
-          -radius / 3.0,
-          radius / _kDefaultIndicatorRadius,
-          -radius,
-          radius / _kDefaultIndicatorRadius,
-          radius / _kDefaultIndicatorRadius,
-        ),
-        super(repaint: position);
+  }) : tickFundamentalRRect = RRect.fromLTRBXY(
+         -radius / _kDefaultIndicatorRadius,
+         -radius / 3.0,
+         radius / _kDefaultIndicatorRadius,
+         -radius,
+         radius / _kDefaultIndicatorRadius,
+         radius / _kDefaultIndicatorRadius,
+       ),
+       super(repaint: position);
 
   final Animation<double> position;
   final Color activeColor;
@@ -187,8 +175,9 @@ class _CupertinoActivityIndicatorPainter extends CustomPainter {
 
     for (int i = 0; i < tickCount * progress; ++i) {
       final int t = (i - activeTick) % tickCount;
-      paint.color = activeColor
-          .withAlpha(progress < 1 ? _partiallyRevealedAlpha : _kAlphaValues[t]);
+      paint.color = activeColor.withAlpha(
+        progress < 1 ? _partiallyRevealedAlpha : _kAlphaValues[t],
+      );
       canvas.drawRRect(tickFundamentalRRect, paint);
       canvas.rotate(_kTwoPI / tickCount);
     }

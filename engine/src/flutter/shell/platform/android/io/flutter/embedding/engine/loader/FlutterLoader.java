@@ -49,8 +49,8 @@ public class FlutterLoader {
       "io.flutter.embedding.android.EnableVulkanGPUTracing";
   private static final String DISABLE_MERGED_PLATFORM_UI_THREAD_KEY =
       "io.flutter.embedding.android.DisableMergedPlatformUIThread";
-  private static final String DISABLE_SURFACE_CONTROL =
-      "io.flutter.embedding.android.DisableSurfaceControl";
+  private static final String ENABLE_SURFACE_CONTROL =
+      "io.flutter.embedding.android.EnableSurfaceControl";
 
   /**
    * Set whether leave or clean up the VM after the last shell shuts down. It can be set from app's
@@ -369,8 +369,8 @@ public class FlutterLoader {
           }
         }
 
-        if (metaData.getBoolean(DISABLE_SURFACE_CONTROL, false)) {
-          shellArgs.add("--disable-surface-control");
+        if (metaData.getBoolean(ENABLE_SURFACE_CONTROL, false)) {
+          shellArgs.add("--enable-surface-control");
         }
 
         String backend = metaData.getString(IMPELLER_BACKEND_META_DATA_KEY);

@@ -6,10 +6,7 @@ import 'template.dart';
 
 class AppBarTemplate extends TokenTemplate {
   const AppBarTemplate(super.blockName, super.fileName, super.tokens)
-    : super(
-      colorSchemePrefix: '_colors.',
-      textThemePrefix: '_textTheme.',
-    );
+    : super(colorSchemePrefix: '_colors.', textThemePrefix: '_textTheme.');
 
   @override
   String generate() => '''

@@ -14,7 +14,7 @@ class SlidersPage extends StatefulWidget {
 }
 
 class _SlidersPageState extends State<SlidersPage> with TickerProviderStateMixin {
- late AnimationController _sliderController;
+  late AnimationController _sliderController;
   late Animation<double> _sliderAnimation;
   double _sliderValue = 0.0;
   RangeValues _rangeSliderValues = const RangeValues(0.0, 1.0);
@@ -22,20 +22,17 @@ class _SlidersPageState extends State<SlidersPage> with TickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    _sliderController = AnimationController(
-      duration: const Duration(seconds: 1),
-      vsync: this,
-    )..repeat();
-    _sliderAnimation = Tween<double>(begin: 0, end: 1).animate(_sliderController)
-      ..addListener(() {
-        setState(() {
-          _sliderValue = _sliderAnimation.value;
-          _rangeSliderValues = RangeValues(
-            clampDouble(_sliderAnimation.value, 0, 0.45),
-            1.0 - clampDouble(_sliderAnimation.value, 0, 0.45),
-          );
-        });
+    _sliderController = AnimationController(duration: const Duration(seconds: 1), vsync: this)
+      ..repeat();
+    _sliderAnimation = Tween<double>(begin: 0, end: 1).animate(_sliderController)..addListener(() {
+      setState(() {
+        _sliderValue = _sliderAnimation.value;
+        _rangeSliderValues = RangeValues(
+          clampDouble(_sliderAnimation.value, 0, 0.45),
+          1.0 - clampDouble(_sliderAnimation.value, 0, 0.45),
+        );
       });
+    });
   }
 
   @override
@@ -50,14 +47,8 @@ class _SlidersPageState extends State<SlidersPage> with TickerProviderStateMixin
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Slider(
-            value: _sliderValue,
-            onChanged: (double value) { },
-          ),
-          RangeSlider(
-            values: _rangeSliderValues,
-            onChanged: (RangeValues values) { },
-          ),
+          Slider(value: _sliderValue, onChanged: (double value) {}),
+          RangeSlider(values: _rangeSliderValues, onChanged: (RangeValues values) {}),
         ],
       ),
     );

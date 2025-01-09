@@ -19,11 +19,7 @@ Future<void> main(List<String> args) async {
   const FileSystem fileSystem = LocalFileSystem();
   const ProcessManager processManager = LocalProcessManager();
   const Platform platform = LocalPlatform();
-  final Stdio stdio = VerboseStdio(
-    stdout: io.stdout,
-    stderr: io.stderr,
-    stdin: io.stdin,
-  );
+  final Stdio stdio = VerboseStdio(stdout: io.stdout, stderr: io.stderr, stdin: io.stdin);
   final Checkouts checkouts = Checkouts(
     fileSystem: fileSystem,
     parentDirectory: _localFlutterRoot.parent,
@@ -35,34 +31,23 @@ Future<void> main(List<String> args) async {
   final CommandRunner<void> runner = CommandRunner<void>(
     'conductor',
     'A tool for coordinating Flutter releases. For more documentation on '
-    'usage, please see $readmeUrl.',
+        'usage, please see $readmeUrl.',
     usageLineLength: 80,
   );
 
-  final String conductorVersion = (await const Git(processManager).getOutput(
-    <String>['rev-parse'],
-    'Get the revision of the current Flutter SDK',
-    workingDirectory: _localFlutterRoot.path,
-  )).trim();
+  final String conductorVersion =
+      (await const Git(processManager).getOutput(
+        <String>['rev-parse'],
+        'Get the revision of the current Flutter SDK',
+        workingDirectory: _localFlutterRoot.path,
+      )).trim();
 
   <Command<void>>[
-    StatusCommand(
-      checkouts: checkouts,
-    ),
-    StartCommand(
-      checkouts: checkouts,
-      conductorVersion: conductorVersion,
-    ),
-    CleanCommand(
-      checkouts: checkouts,
-    ),
-    CandidatesCommand(
-      checkouts: checkouts,
-      flutterRoot: _localFlutterRoot,
-    ),
-    NextCommand(
-      checkouts: checkouts,
-    ),
+    StatusCommand(checkouts: checkouts),
+    StartCommand(checkouts: checkouts, conductorVersion: conductorVersion),
+    CleanCommand(checkouts: checkouts),
+    CandidatesCommand(checkouts: checkouts, flutterRoot: _localFlutterRoot),
+    NextCommand(checkouts: checkouts),
   ].forEach(runner.addCommand);
 
   if (!assertsEnabled()) {

@@ -35,6 +35,6 @@ class WebImageInfo implements ImageInfo {
   @override
   int get sizeBytes => _unsupported();
 
-  Never _unsupported() => throw UnsupportedError(
-      'WebImageInfo should never be instantiated in a non-web context.');
+  Never _unsupported() =>
+      throw UnsupportedError('WebImageInfo should never be instantiated in a non-web context.');
 }

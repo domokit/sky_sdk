@@ -37,8 +37,7 @@ void canCreateShaderLibrary() {
 void canReflectUniformStructs() {
   final gpu.RenderPipeline pipeline = createUnlitRenderPipeline();
 
-  final gpu.UniformSlot vertInfo =
-      pipeline.vertexShader.getUniformSlot('VertInfo');
+  final gpu.UniformSlot vertInfo = pipeline.vertexShader.getUniformSlot('VertInfo');
   assert(vertInfo.uniformName == 'VertInfo');
   final int? totalSize = vertInfo.sizeInBytes;
   assert(totalSize != null);
@@ -67,8 +66,11 @@ ByteData float32(List<double> values) {
 
 @pragma('vm:entry-point')
 void canCreateRenderPassAndSubmit(int width, int height) {
-  final gpu.Texture? renderTexture = gpu.gpuContext
-      .createTexture(gpu.StorageMode.devicePrivate, width, height);
+  final gpu.Texture? renderTexture = gpu.gpuContext.createTexture(
+    gpu.StorageMode.devicePrivate,
+    width,
+    height,
+  );
   assert(renderTexture != null);
 
   final gpu.CommandBuffer commandBuffer = gpu.gpuContext.createCommandBuffer();
@@ -86,22 +88,25 @@ void canCreateRenderPassAndSubmit(int width, int height) {
   encoder.setColorBlendEquation(gpu.ColorBlendEquation());
 
   final gpu.HostBuffer transients = gpu.gpuContext.createHostBuffer();
-  final gpu.BufferView vertices = transients.emplace(float32(<double>[
-    -0.5, 0.5, //
-    0.0, -0.5, //
-    0.5, 0.5, //
-  ]));
-  final gpu.BufferView vertInfoData = transients.emplace(float32(<double>[
-    1, 0, 0, 0, // mvp
-    0, 1, 0, 0, // mvp
-    0, 0, 1, 0, // mvp
-    0, 0, 0, 1, // mvp
-    0, 1, 0, 1, // color
-  ]));
+  final gpu.BufferView vertices = transients.emplace(
+    float32(<double>[
+      -0.5, 0.5, //
+      0.0, -0.5, //
+      0.5, 0.5, //
+    ]),
+  );
+  final gpu.BufferView vertInfoData = transients.emplace(
+    float32(<double>[
+      1, 0, 0, 0, // mvp
+      0, 1, 0, 0, // mvp
+      0, 0, 1, 0, // mvp
+      0, 0, 0, 1, // mvp
+      0, 1, 0, 1, // color
+    ]),
+  );
   encoder.bindVertexBuffer(vertices, 3);
 
-  final gpu.UniformSlot vertInfo =
-      pipeline.vertexShader.getUniformSlot('VertInfo');
+  final gpu.UniformSlot vertInfo = pipeline.vertexShader.getUniformSlot('VertInfo');
   encoder.bindUniform(vertInfo, vertInfoData);
   encoder.draw();
 

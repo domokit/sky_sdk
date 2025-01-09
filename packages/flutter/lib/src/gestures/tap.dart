@@ -30,11 +30,8 @@ export 'events.dart' show PointerCancelEvent, PointerDownEvent, PointerEvent, Po
 ///  * [TapGestureRecognizer], which passes this information to one of its callbacks.
 class TapDownDetails {
   /// Creates details for a [GestureTapDownCallback].
-  TapDownDetails({
-    this.globalPosition = Offset.zero,
-    Offset? localPosition,
-    this.kind,
-  }) : localPosition = localPosition ?? globalPosition;
+  TapDownDetails({this.globalPosition = Offset.zero, Offset? localPosition, this.kind})
+    : localPosition = localPosition ?? globalPosition;
 
   /// The global position at which the pointer contacted the screen.
   final Offset globalPosition;
@@ -68,11 +65,8 @@ typedef GestureTapDownCallback = void Function(TapDownDetails details);
 ///  * [TapGestureRecognizer], which passes this information to one of its callbacks.
 class TapUpDetails {
   /// Creates a [TapUpDetails] data object.
-  TapUpDetails({
-    required this.kind,
-    this.globalPosition = Offset.zero,
-    Offset? localPosition,
-  }) : localPosition = localPosition ?? globalPosition;
+  TapUpDetails({required this.kind, this.globalPosition = Offset.zero, Offset? localPosition})
+    : localPosition = localPosition ?? globalPosition;
 
   /// The global position at which the pointer contacted the screen.
   final Offset globalPosition;
@@ -149,11 +143,7 @@ abstract class BaseTapGestureRecognizer extends PrimaryPointerGestureRecognizer 
   /// Creates a tap gesture recognizer.
   ///
   /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
-  BaseTapGestureRecognizer({
-    super.debugOwner,
-    super.supportedDevices,
-    super.allowedButtonsFilter,
-  })
+  BaseTapGestureRecognizer({super.debugOwner, super.supportedDevices, super.allowedButtonsFilter})
     : super(deadline: kPressTimeout);
 
   bool _sentTapDown = false;
@@ -173,7 +163,7 @@ abstract class BaseTapGestureRecognizer extends PrimaryPointerGestureRecognizer 
   /// If this recognizer doesn't win the arena, [handleTapCancel] is called next.
   /// Otherwise, [handleTapUp] is called next.
   @protected
-  void handleTapDown({ required PointerDownEvent down });
+  void handleTapDown({required PointerDownEvent down});
 
   /// A pointer has stopped contacting the screen, which is recognized as a tap.
   ///
@@ -186,7 +176,7 @@ abstract class BaseTapGestureRecognizer extends PrimaryPointerGestureRecognizer 
   /// If this recognizer doesn't win the arena, [handleTapCancel] is called
   /// instead.
   @protected
-  void handleTapUp({ required PointerDownEvent down, required PointerUpEvent up });
+  void handleTapUp({required PointerDownEvent down, required PointerUpEvent up});
 
   /// A pointer that previously triggered [handleTapDown] will not end up
   /// causing a tap.
@@ -202,7 +192,11 @@ abstract class BaseTapGestureRecognizer extends PrimaryPointerGestureRecognizer 
   ///
   /// If this recognizer wins the arena, [handleTapUp] is called instead.
   @protected
-  void handleTapCancel({ required PointerDownEvent down, PointerCancelEvent? cancel, required String reason });
+  void handleTapCancel({
+    required PointerDownEvent down,
+    PointerCancelEvent? cancel,
+    required String reason,
+  });
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
@@ -331,9 +325,21 @@ abstract class BaseTapGestureRecognizer extends PrimaryPointerGestureRecognizer 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(FlagProperty('wonArenaForPrimaryPointer', value: _wonArenaForPrimaryPointer, ifTrue: 'won arena'));
+    properties.add(
+      FlagProperty(
+        'wonArenaForPrimaryPointer',
+        value: _wonArenaForPrimaryPointer,
+        ifTrue: 'won arena',
+      ),
+    );
     properties.add(DiagnosticsProperty<Offset>('finalPosition', _up?.position, defaultValue: null));
-    properties.add(DiagnosticsProperty<Offset>('finalLocalPosition', _up?.localPosition, defaultValue: _up?.position));
+    properties.add(
+      DiagnosticsProperty<Offset>(
+        'finalLocalPosition',
+        _up?.localPosition,
+        defaultValue: _up?.position,
+      ),
+    );
     properties.add(DiagnosticsProperty<int>('button', _down?.buttons, defaultValue: null));
     properties.add(FlagProperty('sentTapDown', value: _sentTapDown, ifTrue: 'sent tap down'));
   }
@@ -375,11 +381,7 @@ class TapGestureRecognizer extends BaseTapGestureRecognizer {
   /// Creates a tap gesture recognizer.
   ///
   /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
-  TapGestureRecognizer({
-    super.debugOwner,
-    super.supportedDevices,
-    super.allowedButtonsFilter,
-  });
+  TapGestureRecognizer({super.debugOwner, super.supportedDevices, super.allowedButtonsFilter});
 
   /// {@template flutter.gestures.tap.TapGestureRecognizer.onTapDown}
   /// A pointer has contacted the screen at a particular location with a primary
@@ -589,10 +591,7 @@ class TapGestureRecognizer extends BaseTapGestureRecognizer {
   bool isPointerAllowed(PointerDownEvent event) {
     switch (event.buttons) {
       case kPrimaryButton:
-        if (onTapDown == null &&
-            onTap == null &&
-            onTapUp == null &&
-            onTapCancel == null) {
+        if (onTapDown == null && onTap == null && onTapUp == null && onTapCancel == null) {
           return false;
         }
       case kSecondaryButton:
@@ -603,9 +602,7 @@ class TapGestureRecognizer extends BaseTapGestureRecognizer {
           return false;
         }
       case kTertiaryButton:
-        if (onTertiaryTapDown == null &&
-            onTertiaryTapUp == null &&
-            onTertiaryTapCancel == null) {
+        if (onTertiaryTapDown == null && onTertiaryTapUp == null && onTertiaryTapCancel == null) {
           return false;
         }
       default:
@@ -641,7 +638,7 @@ class TapGestureRecognizer extends BaseTapGestureRecognizer {
 
   @protected
   @override
-  void handleTapUp({ required PointerDownEvent down, required PointerUpEvent up}) {
+  void handleTapUp({required PointerDownEvent down, required PointerUpEvent up}) {
     final TapUpDetails details = TapUpDetails(
       kind: up.kind,
       globalPosition: up.position,
@@ -672,7 +669,11 @@ class TapGestureRecognizer extends BaseTapGestureRecognizer {
 
   @protected
   @override
-  void handleTapCancel({ required PointerDownEvent down, PointerCancelEvent? cancel, required String reason }) {
+  void handleTapCancel({
+    required PointerDownEvent down,
+    PointerCancelEvent? cancel,
+    required String reason,
+  }) {
     final String note = reason == '' ? reason : '$reason ';
     switch (down.buttons) {
       case kPrimaryButton:

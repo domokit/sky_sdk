@@ -10,16 +10,11 @@ void main() {
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: ListView(
-          children: <Widget>[
-            Container(height: 100000.0),
-          ],
-        ),
+        child: ListView(children: <Widget>[Container(height: 100000.0)]),
       ),
     );
 
-    final ScrollableState scrollable =
-      tester.state<ScrollableState>(find.byType(Scrollable));
+    final ScrollableState scrollable = tester.state<ScrollableState>(find.byType(Scrollable));
 
     expect(scrollable.position.pixels, equals(0.0));
 

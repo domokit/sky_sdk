@@ -12,12 +12,11 @@ class CupertinoSegmentedControlDemo extends StatefulWidget {
   const CupertinoSegmentedControlDemo({super.key});
 
   @override
-  State<CupertinoSegmentedControlDemo> createState() =>
-      _CupertinoSegmentedControlDemoState();
+  State<CupertinoSegmentedControlDemo> createState() => _CupertinoSegmentedControlDemoState();
 }
 
-class _CupertinoSegmentedControlDemoState
-    extends State<CupertinoSegmentedControlDemo> with RestorationMixin {
+class _CupertinoSegmentedControlDemoState extends State<CupertinoSegmentedControlDemo>
+    with RestorationMixin {
   RestorableInt currentSegment = RestorableInt(0);
 
   @override
@@ -47,15 +46,10 @@ class _CupertinoSegmentedControlDemoState
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         automaticallyImplyLeading: false,
-        middle: Text(
-          localizations.demoCupertinoSegmentedControlTitle,
-        ),
+        middle: Text(localizations.demoCupertinoSegmentedControlTitle),
       ),
       child: DefaultTextStyle(
-        style: CupertinoTheme.of(context)
-            .textTheme
-            .textStyle
-            .copyWith(fontSize: 13),
+        style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(fontSize: 13),
         child: SafeArea(
           child: ListView(
             children: <Widget>[

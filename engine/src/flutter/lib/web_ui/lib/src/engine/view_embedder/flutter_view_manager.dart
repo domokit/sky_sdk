@@ -14,16 +14,17 @@ class FlutterViewManager {
   final Map<int, EngineFlutterView> _viewData = <int, EngineFlutterView>{};
 
   // A map of (optional) JsFlutterViewOptions, indexed by their viewId.
-  final Map<int, JsFlutterViewOptions> _jsViewOptions =
-      <int, JsFlutterViewOptions>{};
+  final Map<int, JsFlutterViewOptions> _jsViewOptions = <int, JsFlutterViewOptions>{};
 
   // The controller of the [onViewCreated] stream.
-  final StreamController<int> _onViewCreatedController =
-      StreamController<int>.broadcast(sync: true);
+  final StreamController<int> _onViewCreatedController = StreamController<int>.broadcast(
+    sync: true,
+  );
 
   // The controller of the [onViewDisposed] stream.
-  final StreamController<int> _onViewDisposedController =
-      StreamController<int>.broadcast(sync: true);
+  final StreamController<int> _onViewDisposedController = StreamController<int>.broadcast(
+    sync: true,
+  );
 
   /// A stream of viewIds that will fire when a view is created.
   Stream<int> get onViewCreated => _onViewCreatedController.stream;
@@ -39,9 +40,7 @@ class FlutterViewManager {
     return _viewData[viewId];
   }
 
-  EngineFlutterView createAndRegisterView(
-    JsFlutterViewOptions jsViewOptions,
-  ) {
+  EngineFlutterView createAndRegisterView(JsFlutterViewOptions jsViewOptions) {
     final EngineFlutterView view = EngineFlutterView(
       _dispatcher,
       jsViewOptions.hostElement,
@@ -54,10 +53,7 @@ class FlutterViewManager {
   /// Stores a [view] and its (optional) [jsViewOptions], indexed by `viewId`.
   ///
   /// Returns the registered [view].
-  EngineFlutterView registerView(
-    EngineFlutterView view, {
-    JsFlutterViewOptions? jsViewOptions,
-  }) {
+  EngineFlutterView registerView(EngineFlutterView view, {JsFlutterViewOptions? jsViewOptions}) {
     final int viewId = view.viewId;
     assert(!_viewData.containsKey(viewId)); // Adding the same view twice?
 
@@ -113,7 +109,9 @@ class FlutterViewManager {
       return null;
     }
 
-    final String? viewIdAttribute = viewRoot.getAttribute(GlobalHtmlAttributes.flutterViewIdAttributeName);
+    final String? viewIdAttribute = viewRoot.getAttribute(
+      GlobalHtmlAttributes.flutterViewIdAttributeName,
+    );
     assert(viewIdAttribute != null, 'Located Flutter view is missing its id attribute.');
 
     final int? viewId = int.tryParse(viewIdAttribute!);
@@ -171,10 +169,7 @@ class FlutterViewManager {
   /// the view.
   ///
   /// See: https://jsfiddle.net/ditman/1e2swpno for a JS focus transfer demo.
-  void _transferFocusToViewRoot(
-    DomElement element, {
-    bool removeElement = false,
-  }) {
+  void _transferFocusToViewRoot(DomElement element, {bool removeElement = false}) {
     final DomElement? activeElement = domDocument.activeElement;
     // If the element we're operating on is not active anymore (it can happen
     // when this method is called asynchronously), OR the element that we want
