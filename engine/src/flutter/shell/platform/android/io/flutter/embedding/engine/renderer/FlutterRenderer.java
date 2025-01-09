@@ -721,10 +721,6 @@ public class FlutterRenderer implements TextureRegistry {
       }
       cleanup();
       createNewReader = true;
-      if (this.callback != null) {
-        notifiedDestroy = true;
-        this.callback.onSurfaceDestroyed();
-      }
     }
 
     private void releaseInternal() {

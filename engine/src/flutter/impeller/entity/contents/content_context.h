@@ -15,6 +15,7 @@
 #include "impeller/base/validation.h"
 #include "impeller/core/formats.h"
 #include "impeller/core/host_buffer.h"
+#include "impeller/geometry/color.h"
 #include "impeller/renderer/capabilities.h"
 #include "impeller/renderer/command_buffer.h"
 #include "impeller/renderer/pipeline.h"
@@ -522,8 +523,121 @@ class ContentContext {
     return GetPipeline(yuv_to_rgb_filter_pipelines_, opts);
   }
 
-  PipelineRef GetPorterDuffBlendPipeline(ContentContextOptions opts) const {
-    return GetPipeline(porter_duff_blend_pipelines_, opts);
+  // Porter-Duff combined blends.
+  PipelineRef GetPorterDuffPipeline(BlendMode mode,
+                                    ContentContextOptions opts) const {
+    switch (mode) {
+      case BlendMode::kClear:
+        return GetClearBlendPipeline(opts);
+      case BlendMode::kSource:
+        return GetSourceBlendPipeline(opts);
+      case BlendMode::kDestination:
+        return GetDestinationBlendPipeline(opts);
+      case BlendMode::kSourceOver:
+        return GetSourceOverBlendPipeline(opts);
+      case BlendMode::kDestinationOver:
+        return GetDestinationOverBlendPipeline(opts);
+      case BlendMode::kSourceIn:
+        return GetSourceInBlendPipeline(opts);
+      case BlendMode::kDestinationIn:
+        return GetDestinationInBlendPipeline(opts);
+      case BlendMode::kSourceOut:
+        return GetSourceOutBlendPipeline(opts);
+      case BlendMode::kDestinationOut:
+        return GetDestinationOutBlendPipeline(opts);
+      case BlendMode::kSourceATop:
+        return GetSourceATopBlendPipeline(opts);
+      case BlendMode::kDestinationATop:
+        return GetDestinationATopBlendPipeline(opts);
+      case BlendMode::kXor:
+        return GetXorBlendPipeline(opts);
+      case BlendMode::kPlus:
+        return GetPlusBlendPipeline(opts);
+      case BlendMode::kModulate:
+        return GetModulateBlendPipeline(opts);
+      case BlendMode::kScreen:
+        return GetScreenBlendPipeline(opts);
+      case BlendMode::kOverlay:
+      case BlendMode::kDarken:
+      case BlendMode::kLighten:
+      case BlendMode::kColorDodge:
+      case BlendMode::kColorBurn:
+      case BlendMode::kHardLight:
+      case BlendMode::kSoftLight:
+      case BlendMode::kDifference:
+      case BlendMode::kExclusion:
+      case BlendMode::kMultiply:
+      case BlendMode::kHue:
+      case BlendMode::kSaturation:
+      case BlendMode::kColor:
+      case BlendMode::kLuminosity:
+        VALIDATION_LOG << "Invalid porter duff blend mode "
+                       << BlendModeToString(mode);
+        return GetClearBlendPipeline(opts);
+        break;
+    }
+  }
+
+  PipelineRef GetClearBlendPipeline(ContentContextOptions opts) const {
+    return GetPipeline(clear_blend_pipelines_, opts);
+  }
+
+  PipelineRef GetSourceBlendPipeline(ContentContextOptions opts) const {
+    return GetPipeline(source_blend_pipelines_, opts);
+  }
+
+  PipelineRef GetDestinationBlendPipeline(ContentContextOptions opts) const {
+    return GetPipeline(destination_blend_pipelines_, opts);
+  }
+
+  PipelineRef GetSourceOverBlendPipeline(ContentContextOptions opts) const {
+    return GetPipeline(source_over_blend_pipelines_, opts);
+  }
+
+  PipelineRef GetDestinationOverBlendPipeline(
+      ContentContextOptions opts) const {
+    return GetPipeline(destination_over_blend_pipelines_, opts);
+  }
+
+  PipelineRef GetSourceInBlendPipeline(ContentContextOptions opts) const {
+    return GetPipeline(source_in_blend_pipelines_, opts);
+  }
+
+  PipelineRef GetDestinationInBlendPipeline(ContentContextOptions opts) const {
+    return GetPipeline(destination_in_blend_pipelines_, opts);
+  }
+
+  PipelineRef GetSourceOutBlendPipeline(ContentContextOptions opts) const {
+    return GetPipeline(source_out_blend_pipelines_, opts);
+  }
+
+  PipelineRef GetDestinationOutBlendPipeline(ContentContextOptions opts) const {
+    return GetPipeline(destination_out_blend_pipelines_, opts);
+  }
+
+  PipelineRef GetSourceATopBlendPipeline(ContentContextOptions opts) const {
+    return GetPipeline(source_a_top_blend_pipelines_, opts);
+  }
+
+  PipelineRef GetDestinationATopBlendPipeline(
+      ContentContextOptions opts) const {
+    return GetPipeline(destination_a_top_blend_pipelines_, opts);
+  }
+
+  PipelineRef GetXorBlendPipeline(ContentContextOptions opts) const {
+    return GetPipeline(xor_blend_pipelines_, opts);
+  }
+
+  PipelineRef GetPlusBlendPipeline(ContentContextOptions opts) const {
+    return GetPipeline(plus_blend_pipelines_, opts);
+  }
+
+  PipelineRef GetModulateBlendPipeline(ContentContextOptions opts) const {
+    return GetPipeline(modulate_blend_pipelines_, opts);
+  }
+
+  PipelineRef GetScreenBlendPipeline(ContentContextOptions opts) const {
+    return GetPipeline(screen_blend_pipelines_, opts);
   }
 
   // Advanced blends.
@@ -826,7 +940,7 @@ class ContentContext {
 
     void CreateDefault(const Context& context,
                        const ContentContextOptions& options,
-                       const std::initializer_list<Scalar>& constants = {}) {
+                       const std::vector<Scalar>& constants = {}) {
       auto desc = PipelineHandleT::Builder::MakeDefaultPipelineDescriptor(
           context, constants);
       if (!desc.has_value()) {
@@ -916,7 +1030,24 @@ class ContentContext {
   mutable Variants<ClipPipeline> clip_pipelines_;
   mutable Variants<GlyphAtlasPipeline> glyph_atlas_pipelines_;
   mutable Variants<YUVToRGBFilterPipeline> yuv_to_rgb_filter_pipelines_;
-  mutable Variants<PorterDuffBlendPipeline> porter_duff_blend_pipelines_;
+
+  // Porter Duff Blends.
+  mutable Variants<PorterDuffBlendPipeline> clear_blend_pipelines_;
+  mutable Variants<PorterDuffBlendPipeline> source_blend_pipelines_;
+  mutable Variants<PorterDuffBlendPipeline> destination_blend_pipelines_;
+  mutable Variants<PorterDuffBlendPipeline> source_over_blend_pipelines_;
+  mutable Variants<PorterDuffBlendPipeline> destination_over_blend_pipelines_;
+  mutable Variants<PorterDuffBlendPipeline> source_in_blend_pipelines_;
+  mutable Variants<PorterDuffBlendPipeline> destination_in_blend_pipelines_;
+  mutable Variants<PorterDuffBlendPipeline> source_out_blend_pipelines_;
+  mutable Variants<PorterDuffBlendPipeline> destination_out_blend_pipelines_;
+  mutable Variants<PorterDuffBlendPipeline> source_a_top_blend_pipelines_;
+  mutable Variants<PorterDuffBlendPipeline> destination_a_top_blend_pipelines_;
+  mutable Variants<PorterDuffBlendPipeline> xor_blend_pipelines_;
+  mutable Variants<PorterDuffBlendPipeline> plus_blend_pipelines_;
+  mutable Variants<PorterDuffBlendPipeline> modulate_blend_pipelines_;
+  mutable Variants<PorterDuffBlendPipeline> screen_blend_pipelines_;
+
   // Advanced blends.
   mutable Variants<BlendColorPipeline> blend_color_pipelines_;
   mutable Variants<BlendColorBurnPipeline> blend_colorburn_pipelines_;

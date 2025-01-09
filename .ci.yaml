@@ -362,7 +362,6 @@ targets:
   # are intentionally running it in the devicelab to ensure that it does not
   # run on a VM in order to avoid noisy results from the benchmark.
   - name: Linux analyzer_benchmark
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/158243
     recipe: devicelab/devicelab_drone
     timeout: 60
     properties:
@@ -1111,7 +1110,6 @@ targets:
     recipe: devicelab/devicelab_drone
     timeout: 60
     presubmit: false
-    bringup: true
     properties:
       xvfb: "1"
       dependencies: >-
@@ -3987,6 +3985,7 @@ targets:
       task_name: flavors_test_macos
 
   - name: Mac_benchmark flutter_gallery_macos__compile
+    bringup: true # Flaky https://github.com/flutter/flutter/issues/160495
     presubmit: false
     recipe: devicelab/devicelab_drone
     timeout: 60
@@ -4333,7 +4332,6 @@ targets:
       task_name: platform_view_macos__start_up
 
   - name: Mac platform_channel_sample_test_macos
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/151883
     recipe: devicelab/devicelab_drone
     presubmit: false
     timeout: 60

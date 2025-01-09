@@ -9,31 +9,32 @@ mixin ARenderBoxMixin on RenderBox {
   void computeMaxIntrinsicWidth() {}
 
   @override
-  void computeMinIntrinsicWidth() => computeMaxIntrinsicWidth(); // BAD
+  void computeMinIntrinsicWidth() => computeMaxIntrinsicWidth(); // ERROR: computeMaxIntrinsicWidth(). Consider calling getMaxIntrinsicWidth instead.
 
   @override
   void computeMinIntrinsicHeight() {
-    final void Function() f = computeMaxIntrinsicWidth; // BAD
+    final void Function() f =
+        computeMaxIntrinsicWidth; // ERROR: f = computeMaxIntrinsicWidth. Consider calling getMaxIntrinsicWidth instead.
     f();
   }
 }
 
 extension ARenderBoxExtension on RenderBox {
   void test() {
-    computeDryBaseline(); // BAD
-    computeDryLayout(); // BAD
+    computeDryBaseline(); // ERROR: computeDryBaseline(). Consider calling getDryBaseline instead.
+    computeDryLayout(); // ERROR: computeDryLayout(). Consider calling getDryLayout instead.
   }
 }
 
 class RenderBoxSubclass1 extends RenderBox {
   @override
   void computeDryLayout() {
-    computeDistanceToActualBaseline(); // BAD
+    computeDistanceToActualBaseline(); // ERROR: computeDistanceToActualBaseline(). Consider calling getDistanceToBaseline, or getDistanceToActualBaseline instead.
   }
 
   @override
   void computeDistanceToActualBaseline() {
-    computeMaxIntrinsicHeight(); // BAD
+    computeMaxIntrinsicHeight(); // ERROR: computeMaxIntrinsicHeight(). Consider calling getMaxIntrinsicHeight instead.
   }
 }
 

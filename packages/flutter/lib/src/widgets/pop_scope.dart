@@ -20,7 +20,7 @@ import 'routes.dart';
 /// Accepts a didPop boolean indicating whether or not back navigation
 /// succeeded.
 @Deprecated(
-  'Use PopWithResultInvokedCallback instead. '
+  'Use PopInvokedWithResultCallback instead. '
   'This feature was deprecated after v3.22.0-12.0.pre.',
 )
 typedef PopInvokedCallback = void Function(bool didPop);

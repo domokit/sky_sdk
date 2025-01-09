@@ -216,6 +216,10 @@ GoldenFileComparator goldenFileComparator = const TrivialComparator._();
 ///  * [DefaultWebGoldenComparator] for the default [WebGoldenComparator]
 ///    implementation for `flutter test`.
 ///  * [matchesGoldenFile], the function that invokes the comparator.
+@Deprecated(
+  'Use GoldenFileComparator instead. '
+  'This feature was deprecated after v3.28.0-0.1.pre.',
+)
 abstract class WebGoldenComparator {
   /// Compares the rendered pixels of size [width]x[height] that is being
   /// rendered on the top left of the screen against the golden file identified

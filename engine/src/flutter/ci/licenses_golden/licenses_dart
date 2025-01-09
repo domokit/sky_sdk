@@ -1,4 +1,4 @@
-Signature: c4c853f94251a32ef03aa438039471fa
+Signature: e37c0dc633d31acc78b097f9bc18b1c1
 
 ====================================================================================================
 LIBRARY: dart
@@ -604,7 +604,6 @@ ORIGIN: ../../../flutter/third_party/dart/runtime/vm/bit_vector.cc + ../../../fl
 ORIGIN: ../../../flutter/third_party/dart/runtime/vm/bit_vector.h + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/runtime/vm/bitmap.cc + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/runtime/vm/bitmap.h + ../../../flutter/third_party/dart/LICENSE
-ORIGIN: ../../../flutter/third_party/dart/runtime/vm/boolfield.h + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/runtime/vm/bootstrap.cc + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/runtime/vm/bootstrap.h + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/runtime/vm/bootstrap_natives.cc + ../../../flutter/third_party/dart/LICENSE
@@ -822,7 +821,6 @@ ORIGIN: ../../../flutter/third_party/dart/sdk/lib/core/string.dart + ../../../fl
 ORIGIN: ../../../flutter/third_party/dart/sdk/lib/core/type.dart + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/sdk/lib/core/uri.dart + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/sdk/lib/core/weak.dart + ../../../flutter/third_party/dart/LICENSE
-ORIGIN: ../../../flutter/third_party/dart/sdk/lib/html/dart2js/html_dart2js.dart + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/sdk/lib/html/dartium/nativewrappers.dart + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/sdk/lib/html/html_common/conversions.dart + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/sdk/lib/html/html_common/css_class_set.dart + ../../../flutter/third_party/dart/LICENSE
@@ -955,7 +953,6 @@ FILE: ../../../flutter/third_party/dart/runtime/vm/bit_vector.cc
 FILE: ../../../flutter/third_party/dart/runtime/vm/bit_vector.h
 FILE: ../../../flutter/third_party/dart/runtime/vm/bitmap.cc
 FILE: ../../../flutter/third_party/dart/runtime/vm/bitmap.h
-FILE: ../../../flutter/third_party/dart/runtime/vm/boolfield.h
 FILE: ../../../flutter/third_party/dart/runtime/vm/bootstrap.cc
 FILE: ../../../flutter/third_party/dart/runtime/vm/bootstrap.h
 FILE: ../../../flutter/third_party/dart/runtime/vm/bootstrap_natives.cc
@@ -1173,7 +1170,6 @@ FILE: ../../../flutter/third_party/dart/sdk/lib/core/string.dart
 FILE: ../../../flutter/third_party/dart/sdk/lib/core/type.dart
 FILE: ../../../flutter/third_party/dart/sdk/lib/core/uri.dart
 FILE: ../../../flutter/third_party/dart/sdk/lib/core/weak.dart
-FILE: ../../../flutter/third_party/dart/sdk/lib/html/dart2js/html_dart2js.dart
 FILE: ../../../flutter/third_party/dart/sdk/lib/html/dartium/nativewrappers.dart
 FILE: ../../../flutter/third_party/dart/sdk/lib/html/html_common/conversions.dart
 FILE: ../../../flutter/third_party/dart/sdk/lib/html/html_common/css_class_set.dart
@@ -1484,7 +1480,6 @@ ORIGIN: ../../../flutter/third_party/dart/sdk/lib/core/null.dart + ../../../flut
 ORIGIN: ../../../flutter/third_party/dart/sdk/lib/core/stacktrace.dart + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/sdk/lib/core/string_sink.dart + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/sdk/lib/core/symbol.dart + ../../../flutter/third_party/dart/LICENSE
-ORIGIN: ../../../flutter/third_party/dart/sdk/lib/html/dart2js/html_dart2js.dart + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/sdk/lib/indexed_db/dart2js/indexed_db_dart2js.dart + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/sdk/lib/internal/bytes_builder.dart + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/sdk/lib/internal/list.dart + ../../../flutter/third_party/dart/LICENSE
@@ -1770,7 +1765,6 @@ FILE: ../../../flutter/third_party/dart/sdk/lib/core/null.dart
 FILE: ../../../flutter/third_party/dart/sdk/lib/core/stacktrace.dart
 FILE: ../../../flutter/third_party/dart/sdk/lib/core/string_sink.dart
 FILE: ../../../flutter/third_party/dart/sdk/lib/core/symbol.dart
-FILE: ../../../flutter/third_party/dart/sdk/lib/html/dart2js/html_dart2js.dart
 FILE: ../../../flutter/third_party/dart/sdk/lib/indexed_db/dart2js/indexed_db_dart2js.dart
 FILE: ../../../flutter/third_party/dart/sdk/lib/internal/bytes_builder.dart
 FILE: ../../../flutter/third_party/dart/sdk/lib/internal/list.dart
@@ -4229,6 +4223,43 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ====================================================================================================
 
 ====================================================================================================
+LIBRARY: dart
+ORIGIN: ../../../flutter/third_party/dart/runtime/bin/dart_api_win.c + ../../../flutter/third_party/dart/LICENSE
+ORIGIN: ../../../flutter/third_party/dart/runtime/tools/generate_dart_api_win_c.dart + ../../../flutter/third_party/dart/LICENSE
+TYPE: LicenseType.bsd
+FILE: ../../../flutter/third_party/dart/runtime/bin/dart_api_win.c
+FILE: ../../../flutter/third_party/dart/runtime/tools/generate_dart_api_win_c.dart
+----------------------------------------------------------------------------------------------------
+Copyright (c) 2025, the Dart project authors.  Please see the AUTHORS file
+for details. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+    * Neither the name of Google LLC nor the names of its
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+====================================================================================================
+
+====================================================================================================
 LIBRARY: double-conversion
 ORIGIN: ../../../flutter/third_party/dart/third_party/double-conversion/src/cached-powers.cc
 TYPE: LicenseType.bsd
@@ -4384,6 +4415,7 @@ FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/dartaotruntim
 FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/dartaotruntime_product.plist
 FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/gen_snapshot.plist
 FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/gen_snapshot_product.plist
+FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_kernel.plist
 FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_vm_tests.plist
 FILE: ../../../flutter/third_party/dart/runtime/tools/profiling/lib/src/pprof/generated/profile.pb.dart
 FILE: ../../../flutter/third_party/dart/runtime/tools/profiling/lib/src/pprof/generated/profile.pbenum.dart
@@ -4805,9 +4837,9 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
   This Source Code Form is "Incompatible With Secondary Licenses", as
   defined by the Mozilla Public License, v. 2.0.
 
-You may obtain a copy of this library's Source Code Form from: https://dart.googlesource.com/sdk/+/fc5db8ea92782a303a0ab4a69a58a50618ac4ae4
+You may obtain a copy of this library's Source Code Form from: https://dart.googlesource.com/sdk/+/ba910918075e93faaf2d1bd1c27c84c288220401
 /third_party/fallback_root_certificates/
 
 ====================================================================================================
 
-Total license count: 27
+Total license count: 28

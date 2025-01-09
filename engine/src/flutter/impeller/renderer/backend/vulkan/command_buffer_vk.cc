@@ -72,7 +72,12 @@ std::shared_ptr<BlitPass> CommandBufferVK::OnCreateBlitPass() {
   if (!IsValid()) {
     return nullptr;
   }
-  auto pass = std::shared_ptr<BlitPassVK>(new BlitPassVK(shared_from_this()));
+  auto context = context_.lock();
+  if (!context) {
+    return nullptr;
+  }
+  auto pass = std::shared_ptr<BlitPassVK>(new BlitPassVK(
+      shared_from_this(), ContextVK::Cast(*context).GetWorkarounds()));
   if (!pass->IsValid()) {
     return nullptr;
   }

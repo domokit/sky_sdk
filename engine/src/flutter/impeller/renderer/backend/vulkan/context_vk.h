@@ -21,6 +21,7 @@
 #include "impeller/renderer/backend/vulkan/queue_vk.h"
 #include "impeller/renderer/backend/vulkan/sampler_library_vk.h"
 #include "impeller/renderer/backend/vulkan/shader_library_vk.h"
+#include "impeller/renderer/backend/vulkan/workarounds_vk.h"
 #include "impeller/renderer/capabilities.h"
 #include "impeller/renderer/command_buffer.h"
 #include "impeller/renderer/command_queue.h"
@@ -81,7 +82,7 @@ class ContextVK final : public Context,
     fml::UniqueFD cache_directory;
     bool enable_validation = false;
     bool enable_gpu_tracing = false;
-    bool disable_surface_control = false;
+    bool enable_surface_control = false;
     /// If validations are requested but cannot be enabled, log a fatal error.
     bool fatal_missing_validations = false;
 
@@ -140,6 +141,8 @@ class ContextVK final : public Context,
 
   // |Context|
   void Shutdown() override;
+
+  const WorkaroundsVK& GetWorkarounds() const;
 
   void SetOffscreenFormat(PixelFormat pixel_format);
 
@@ -224,8 +227,8 @@ class ContextVK final : public Context,
   void DisposeThreadLocalCachedResources() override;
 
   /// @brief Whether the Android Surface control based swapchain should be
-  /// disabled, even if the device is capable of supporting it.
-  bool GetShouldDisableSurfaceControlSwapchain() const;
+  ///        enabled
+  bool GetShouldEnableSurfaceControlSwapchain() const;
 
   // | Context |
   bool EnqueueCommandBuffer(
@@ -281,6 +284,7 @@ class ContextVK final : public Context,
   std::shared_ptr<GPUTracerVK> gpu_tracer_;
   std::shared_ptr<CommandQueue> command_queue_vk_;
   std::shared_ptr<const IdleWaiter> idle_waiter_vk_;
+  WorkaroundsVK workarounds_;
 
   using DescriptorPoolMap =
       std::unordered_map<std::thread::id, std::shared_ptr<DescriptorPoolVK>>;
@@ -288,7 +292,7 @@ class ContextVK final : public Context,
   mutable Mutex desc_pool_mutex_;
   mutable DescriptorPoolMap IPLR_GUARDED_BY(desc_pool_mutex_)
       cached_descriptor_pool_;
-  bool should_disable_surface_control_ = false;
+  bool should_enable_surface_control_ = false;
   bool should_batch_cmd_buffers_ = false;
   std::vector<std::shared_ptr<CommandBuffer>> pending_command_buffers_;
 

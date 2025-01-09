@@ -43,13 +43,13 @@ dependency_overrides: # Must include all transitive dependencies from the "any" 
   meta:
     path: ../third_party/dart/pkg/meta
   package_config:
-    path: ../third_party/dart/third_party/pkg/package_config
+    path: ../third_party/dart/third_party/pkg/tools/pkgs/package_config
   path:
     path: ../third_party/dart/third_party/pkg/core/pkgs/path
   pub_semver:
-    path: ../third_party/dart/third_party/pkg/pub_semver
+    path: ../third_party/dart/third_party/pkg/tools/pkgs/pub_semver
   source_span:
-    path: ../third_party/dart/third_party/pkg/source_span
+    path: ../third_party/dart/third_party/pkg/tools/pkgs/source_span
   string_scanner:
     path: ../third_party/dart/third_party/pkg/string_scanner
   term_glyph:

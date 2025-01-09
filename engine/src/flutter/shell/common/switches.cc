@@ -526,8 +526,8 @@ Settings SettingsFromCommandLine(const fml::CommandLine& command_line) {
   settings.enable_platform_isolates =
       command_line.HasOption(FlagForSwitch(Switch::EnablePlatformIsolates));
 
-  settings.disable_surface_control = command_line.HasOption(
-      FlagForSwitch(Switch::DisableAndroidSurfaceControl));
+  settings.enable_surface_control = command_line.HasOption(
+      FlagForSwitch(Switch::EnableAndroidSurfaceControl));
 
   settings.merged_platform_ui_thread = !command_line.HasOption(
       FlagForSwitch(Switch::DisableMergedPlatformUIThread));

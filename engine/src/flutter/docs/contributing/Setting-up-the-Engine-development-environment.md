@@ -42,31 +42,18 @@ Run the following steps to set up your environment:
 >   * `GYP_MSVS_OVERRIDE_PATH=C:\Program Files\Microsoft Visual Studio\2022\Community`
 >     * Use the path of your installation.
 
-Create a new directory to hold the source code and move into it. Here, we are using the "engine" directory.
-```sh
-mkdir engine; cd engine;
-```
+Clone the Flutter source code. As of late 2024, the engine source is part of the main [flutter/flutter repo](https://github.com/flutter/flutter). The convention is to fork this repo and point `origin` to your fork and `upstream` to `git@github.com:flutter/flutter.git`. See [Setting up the Framework development environment](https://github.com/flutter/flutter/blob/master/docs/contributing/Setting-up-the-Framework-development-environment.md#set-up-your-environment) for more.
 
 > [!IMPORTANT]
 > On Windows, the following must be run as an Administrator due to [a known issue](https://github.com/flutter/flutter/issues/94580).
 
-Fetch the Flutter engine sources. This may take a while on a slow connection. Do **not** interrupt this process. Otherwise, a partial checkout cannot be resumed and you'll have to delete all the files including the hidden files in the engine directory and start over.
+Fetch the Flutter engine sources. This may take a while on a slow connection. Do **not** interrupt this process. Otherwise, a partial checkout cannot be resumed and you'll have to delete all the files including the hidden files in the engine directory and start over. From the root of your local checkout of flutter/flutter, run:
 ```sh
+cd engine
 fetch flutter
 ```
-The [Flutter Engine](https://github.com/flutter/engine) repository resides at `src/flutter`. The convention is to refer to this repository as `upstream`.
 
-```sh
-git -C src/flutter remote rename origin upstream
-```
-
-Optionally, if you are working with a fork of the engine, add that as a Git remote.
-
-```sh
-git -C src/flutter remote add origin <your_git_fork_location>
-```
-
-The "Engine Tool" called `et` is useful when working with the engine. It is located in the `flutter/bin` directory in the engine source checkout. Add this to your `$PATH` in your `.rc`.
+The "Engine Tool" called `et` is useful when working with the engine. It is located in the [`engine/src/flutter/bin`](https://github.com/flutter/flutter/tree/0c3359df8c8342c8907316488b1404a216f215b6/engine/src/flutter/bin) directory. Add this to your `$PATH` in your `.rc` file.
 
 ### Additional Steps for Web Engine
 
@@ -171,7 +158,7 @@ To set up:
 ### Using Android Studio as an IDE for the Android Embedding [Java]
 
 Alternatively, Android Studio can be used as an IDE for the Android Embedding Java code. See docs
-at https://github.com/flutter/engine/blob/main/shell/platform/android/README.md#editing-java-code for
+at https://github.com/flutter/flutter/blob/master/engine/src/flutter/shell/platform/android/README.md#editing-java-code for
 instructions.
 
 ## VSCode Additional Useful Configuration

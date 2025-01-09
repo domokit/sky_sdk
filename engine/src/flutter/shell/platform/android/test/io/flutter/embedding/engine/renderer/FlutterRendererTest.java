@@ -767,7 +767,7 @@ public class FlutterRendererTest {
 
   @Test
   @SuppressWarnings({"deprecation", "removal"})
-  public void ImageReaderSurfaceProducerIsDestroyedOnTrimMemory() {
+  public void ImageReaderSurfaceProducerIsCleanedUpOnTrimMemory() {
     FlutterRenderer flutterRenderer = engineRule.getFlutterEngine().getRenderer();
     TextureRegistry.SurfaceProducer producer = flutterRenderer.createSurfaceProducer();
 
@@ -781,7 +781,6 @@ public class FlutterRendererTest {
 
     // Verify.
     verify(callback).onSurfaceCleanup();
-    verify(callback).onSurfaceDestroyed();
   }
 
   private static class TestSurfaceState {
@@ -819,6 +818,23 @@ public class FlutterRendererTest {
 
     // Destroy.
     assertFalse("Should be destroyed", state.beingDestroyed.isValid());
+  }
+
+  @Test
+  @SuppressWarnings({"deprecation", "removal"})
+  public void ImageReaderSurfaceProducerSignalsCleanupCallsDestroy() throws Exception {
+    CountDownLatch latch = new CountDownLatch(1);
+    TextureRegistry.SurfaceProducer.Callback callback =
+        new TextureRegistry.SurfaceProducer.Callback() {
+          @Override
+          public void onSurfaceDestroyed() {
+            latch.countDown();
+          }
+        };
+
+    // Tests that cleanup, if not provided, just calls destroyed.
+    callback.onSurfaceCleanup();
+    latch.await();
   }
 
   @Test

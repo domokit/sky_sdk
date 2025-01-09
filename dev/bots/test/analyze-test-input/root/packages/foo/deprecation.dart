@@ -11,26 +11,26 @@ void test1() {}
 // The code below is intentionally miss-formatted for testing.
 // dart format off
 @Deprecated(
-  'bad grammar. '
+  'bad grammar. '  // ERROR: Deprecation notice should be a grammatically correct sentence and start with a capital letter; see style guide: https://github.com/flutter/flutter/blob/main/docs/contributing/Style-guide-for-Flutter-repo.md
   'This feature was deprecated after v1.2.3.'
 )
 void test2() { }
 
 @Deprecated(
-  'Also bad grammar '
+  'Also bad grammar ' // ERROR: Deprecation notice should be a grammatically correct sentence and end with a period; notice appears to be "Also bad grammar".
   'This feature was deprecated after v1.2.3.'
 )
 void test3() { }
 
-@Deprecated('Not the right syntax. This feature was deprecated after v1.2.3.')
+@Deprecated('Not the right syntax. This feature was deprecated after v1.2.3.') // ERROR: Deprecation notice must be an adjacent string.
 void test4() { }
 
-@Deprecated(
+@Deprecated( // ERROR: Deprecation notice must be an adjacent string.
   'Missing the version line. '
 )
 void test5() { }
 
-@Deprecated(
+@Deprecated( // ERROR: Deprecation notice must be an adjacent string.
   'This feature was deprecated after v1.2.3.'
 )
 void test6() { }
@@ -49,13 +49,13 @@ void test8() { }
 
 @Deprecated(
   'Version number test (should fail). '
-  'This feature was deprecated after v1.20.0.'
+  'This feature was deprecated after v1.20.0.' // ERROR: Deprecation notice does not accurately indicate a beta branch version number; please see https://flutter.dev/docs/development/tools/sdk/releases to find the latest beta build version number.
 )
 void test9() { }
 
 @Deprecated(
   'Version number test (should fail). '
-  'This feature was deprecated after v1.21.0.'
+  'This feature was deprecated after v1.21.0.' // ERROR: Deprecation notice does not accurately indicate a beta branch version number; please see https://flutter.dev/docs/development/tools/sdk/releases to find the latest beta build version number.
 )
 void test10() { }
 
@@ -78,7 +78,7 @@ void test12() { }
 void test13() { }
 
 @Deprecated(
-  "Double quotes' test (should fail). "
+  "Double quotes' test (should fail). " // ERROR: Deprecation notice does not match required pattern. You might have used double quotes (") for the string instead of single quotes (').
   'This feature was deprecated after v2.1.0-11.0.pre.'
 )
 void test14() { }

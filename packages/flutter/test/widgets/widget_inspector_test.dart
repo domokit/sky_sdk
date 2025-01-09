@@ -502,15 +502,8 @@ class _TestWidgetInspectorService extends TestWidgetInspectorService {
       await tester.tap(find.byKey(exitWidgetSelectionButtonKey));
       await tester.pump();
 
-      // Tap on the top button and verify it is not selected in the Inspector.
-      await tester.tap(find.text('TOP'));
-      expect(log, equals(<String>['top']));
-
-      // Ensure the inspector selection is still BOTTOM (not TOP).
-      expect(
-        paragraphText(WidgetInspectorService.instance.selection.current! as RenderParagraph),
-        equals('BOTTOM'),
-      );
+      // Ensure the inspector selection is now cleared.
+      expect(WidgetInspectorService.instance.selection.current, isNull);
     });
 
     testWidgets('WidgetInspector non-invertible transform regression test', (
