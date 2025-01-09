@@ -5,10 +5,16 @@
 plugins {
     `java-gradle-plugin`
     groovy
+    `kotlin-dsl`
 }
 
 group = "dev.flutter.plugin"
 version = "1.0.0"
+
+// Optional: enable stricter validation, to ensure Gradle configuration is correct
+tasks.validatePlugins {
+  enableStricterValidation.set(true)
+}
 
 gradlePlugin {
     plugins {
@@ -28,7 +34,7 @@ gradlePlugin {
 dependencies {
     // When bumping, also update:
     //  * ndkVersion in FlutterExtension in packages/flutter_tools/gradle/src/main/groovy/flutter.groovy
-    //  * AGP version in the buildscript block in packages/flutter_tools/gradle/src/main/kotlin/dependency_version_checker.gradle.kts
+    //  * AGP version in the buildscript block in packages/flutter_tools/gradle/src/main/kotlin/kotlin_scripts/dependency_version_checker.gradle.kts
     //  * AGP version constants in packages/flutter_tools/lib/src/android/gradle_utils.dart
     compileOnly("com.android.tools.build:gradle:7.3.0")
 }
