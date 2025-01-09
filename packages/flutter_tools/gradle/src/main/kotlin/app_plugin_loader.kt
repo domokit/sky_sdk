@@ -35,12 +35,17 @@ class FlutterAppPluginLoaderPlugin : Plugin<Settings> {
         )
 
         // val nativePluginLoader: NativePluginLoader = settings.extra["nativePluginLoader"] as NativePluginLoader
-        val nativePlugins = NativePluginLoader.getPlugins(flutterProjectRoot)
+        val nativePlugins: List<Map<String, Any>> = NativePluginLoader.getPlugins(flutterProjectRoot)
         nativePlugins.forEach { androidPlugin ->
-            val pluginDirectory = File(androidPlugin.path, "android")
+            val androidPluginPath = androidPlugin["path"]
+            require(androidPluginPath is String)
+            val androidPluginName = androidPlugin["name"]
+            require(androidPluginName is String)
+
+            val pluginDirectory = File(androidPluginPath, "android")
             check(pluginDirectory.exists())
-            settings.include(":${androidPlugin.name}")
-            settings.project(":${androidPlugin.name}").projectDir = pluginDirectory
+            settings.include(":${androidPluginName}")
+            settings.project(":${androidPluginName}").projectDir = pluginDirectory
         }
     }
 }
