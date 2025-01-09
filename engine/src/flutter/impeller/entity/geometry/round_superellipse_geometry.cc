@@ -236,6 +236,61 @@ size_t DrawOctantSquareLikeSquircle(Point* output,
   return next - output;
 }
 
+// Return the value that splits the range from `left` to `right` into two
+// portions whose ratio equals to `ratio_left` : `ratio_right`.
+static Scalar split(Scalar left,
+                    Scalar right,
+                    Scalar ratio_left,
+                    Scalar ratio_right) {
+  return (left * ratio_right + right * ratio_left) / (ratio_left + ratio_right);
+}
+
+// Draw a quadrant curve, both ends included.
+//
+// Returns the number of points.
+//
+// The eact quadrant is specified by the direction of `outer` relative to
+// `center`. The curve goes from the X axis to the Y axis.
+static size_t DrawQuadrant(Point* output,
+                           Point* octant_cache,
+                           Point center,
+                           Point outer,
+                           Size radii) {
+  // Normalize sizes and radii into symmetrical radius by scaling the longer of
+  // `radii` to the shorter.
+  Scalar norm_radius = radii.MinDimension();
+  Size radius_scale = radii / norm_radius;
+  Point signed_size = (outer - center) * 2;
+  Point norm_size = signed_size.Abs() / radius_scale;
+  Point signed_scale = signed_size / norm_size;
+
+  // Each quadrant curve is composed of two octant curves, each of which belongs
+  // to a square-like rounded rectangle. When `norm_size`'s width != height, the
+  // centers of such square-like rounded rectangles are offset from the origin
+  // by a distance denoted as `c`.
+  Scalar c = (norm_size.x - norm_size.y) / 2;
+
+  Point* next = output;
+  size_t octant_length;
+
+  octant_length =
+      DrawOctantSquareLikeSquircle(octant_cache, norm_size.x, norm_radius);
+  next += FlipAndTransform(next, octant_cache, octant_length, /*flip=*/false,
+                           Matrix::MakeTranslateScale(signed_scale, center) *
+                               Matrix::MakeTranslation(Size{0, -c}));
+
+  *(next++) = Point(outer) -
+              CalculateGap(norm_radius) * signed_scale;  // Middle of corner
+
+  octant_length =
+      DrawOctantSquareLikeSquircle(octant_cache, norm_size.y, norm_radius);
+  next += FlipAndTransform(next, octant_cache, octant_length, /*flip=*/true,
+                           Matrix::MakeTranslateScale(signed_scale, center) *
+                               Matrix::MakeTranslation(Size{c, 0}));
+
+  return next - output;
+}
+
 // Optionally `flip` the input points before transforming it with `scale` and
 // then `transition`, and append the result to `output`.
 //
@@ -415,59 +470,6 @@ RoundSuperellipseGeometry::RoundSuperellipseGeometry(const Rect& bounds,
                                 RoundingRadii::MakeRadius(corner_radius)) {}
 
 RoundSuperellipseGeometry::~RoundSuperellipseGeometry() {}
-
-static Scalar split(Scalar left,
-                    Scalar right,
-                    Scalar ratio_left,
-                    Scalar ratio_right) {
-  return (left * ratio_right + right * ratio_left) / (ratio_left + ratio_right);
-}
-
-// Draw a quadrant curve.
-//
-// Both ends are included. The number of points is returned.
-//
-// The quadrant is specified by `outer` relative to `center`, going from the X
-// axis to the Y axis.
-static size_t DrawQuadrant(Point* output,
-                           Point* octant_cache,
-                           Point center,
-                           Point outer,
-                           Size radii) {
-  // Normalize sizes and radii into symmetrical radius by scaling the longer of
-  // `radii` to the shorter.
-  Scalar norm_radius = radii.MinDimension();
-  Size radius_scale = radii / norm_radius;
-  Point signed_size = (outer - center) * 2;
-  Point norm_size = signed_size.Abs() / radius_scale;
-  Point signed_scale = signed_size / norm_size;
-
-  // Each quadrant curve is composed of two octant curves, each of which belongs
-  // to a square-like rounded rectangle. When `norm_size`'s width != height, the
-  // centers of such square-like rounded rectangles are offset from the origin
-  // by a distance denoted as `c`.
-  Scalar c = (norm_size.x - norm_size.y) / 2;
-
-  Point* next = output;
-  size_t octant_length;
-
-  octant_length =
-      DrawOctantSquareLikeSquircle(octant_cache, norm_size.x, norm_radius);
-  next += FlipAndTransform(next, octant_cache, octant_length, /*flip=*/false,
-                           Matrix::MakeTranslateScale(signed_scale, center) *
-                               Matrix::MakeTranslation(Size{0, -c}));
-
-  *(next++) = Point(outer) -
-              CalculateGap(norm_radius) * signed_scale;  // Middle of corner
-
-  octant_length =
-      DrawOctantSquareLikeSquircle(octant_cache, norm_size.y, norm_radius);
-  next += FlipAndTransform(next, octant_cache, octant_length, /*flip=*/true,
-                           Matrix::MakeTranslateScale(signed_scale, center) *
-                               Matrix::MakeTranslation(Size{c, 0}));
-
-  return next - output;
-}
 
 GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
     const ContentContext& renderer,
