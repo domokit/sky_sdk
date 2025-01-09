@@ -221,17 +221,11 @@ class FlutterPlugin implements Plugin<Project> {
             : "$hostedRepository/${engineRealm}download.flutter.io"
         rootProject.allprojects {
             repositories {
-//                google()
-//                mavenCentral()
                 maven {
                     url(repository)
                 }
             }
         }
-
-        // Load shared gradle functions
-        // project.apply from: Paths.get(flutterRoot.absolutePath, "packages", "flutter_tools", "gradle", "src", "main", "groovy", "native_plugin_loader.groovy")
-
 
         FlutterExtension extension = project.extensions.create("flutter", FlutterExtension)
         Properties localProperties = new Properties()
@@ -621,10 +615,7 @@ class FlutterPlugin implements Plugin<Project> {
      * Finally, the project's `settings.gradle` loads each plugin's android directory as a subproject.
      */
     private void configurePlugins(Project project) {
-        project.logger.quiet("configurePlugins 1!")
-        println("configurePlugins 2!")
         configureLegacyPluginEachProjects(project)
-        println("there are ${getPluginList(project).size()} plugins")
         getPluginList(project).each(this.&configurePluginProject)
         getPluginList(project).each(this.&configurePluginDependencies)
     }
@@ -736,10 +727,8 @@ class FlutterPlugin implements Plugin<Project> {
     /** Adds the plugin project dependency to the app project. */
     private void configurePluginProject(Map<String, Object> pluginObject) {
         assert(pluginObject.name instanceof String)
-        println("configuring plugin project: ${pluginObject.name}")
         Project pluginProject = project.rootProject.findProject(":${pluginObject.name}")
         if (pluginProject == null) {
-            println("Plugin project is null, no-op")
             return
         }
         // Apply the "flutter" Gradle extension to plugins so that they can use it's vended
@@ -973,7 +962,6 @@ class FlutterPlugin implements Plugin<Project> {
                 return
             }
             def dependencies = pluginObject.dependencies
-            println("pluginObject is: ${pluginObject}")
             assert(dependencies instanceof List<String>)
             dependencies.each { pluginDependencyName ->
                 if (pluginDependencyName.empty) {
@@ -998,14 +986,10 @@ class FlutterPlugin implements Plugin<Project> {
      *
      * The map value contains either the plugins `name` (String),
      * its `path` (String), or its `dependencies` (List<String>).
-     * See [NativePluginLoader#getPlugins] in packages/flutter_tools/gradle/src/main/groovy/native_plugin_loader.groovy
      */
     private List<Map<String, Object>> getPluginList(Project project) {
-        println("getPluginList() called")
         if (pluginList == null) {
-            println("pluginList is null, will call NativePluginLoader.INSTANCE.getPlugins()")
             pluginList = NativePluginLoader.INSTANCE.getPlugins(getFlutterSourceDirectory())
-            println("Got ${pluginList.size()} plugins from NativePluginLoader")
         }
         return pluginList.collect {
             return [
@@ -1023,13 +1007,10 @@ class FlutterPlugin implements Plugin<Project> {
     /** Gets the plugins dependencies from `.flutter-plugins-dependencies`. */
     private List<DependencyEntry> getPluginDependencies(Project project) {
         if (pluginDependencies == null) {
-            project.logger.error("BEFORE CALL, arg: ${getFlutterSourceDirectory()}")
             FlutterPluginsDependencies flutterPluginsDependencies = NativePluginLoader.INSTANCE.getDependenciesMetadata(getFlutterSourceDirectory())
-            project.logger.error("AFTER CALL, retval: ${flutterPluginsDependencies}")
             if (flutterPluginsDependencies == null) {
                 pluginDependencies = []
             } else {
-//                assert(flutterPluginsDependencies.dependencyGraph instanceof List<Map>)
                 pluginDependencies = flutterPluginsDependencies.dependencyGraph /*as List<Map<String, Object>>*/
             }
         }

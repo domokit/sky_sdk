@@ -1,4 +1,3 @@
-/*
 // Copyright 2014 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -12,8 +11,7 @@ class NativePluginLoader {
     static final String nativeBuildKey = "native_build"
     static final String flutterPluginsDependenciesFile = ".flutter-plugins-dependencies"
 
-    */
-/**
+    /**
      * Gets the list of plugins that support the Android platform.
      * The list contains map elements with the following content:
      * {
@@ -25,8 +23,7 @@ class NativePluginLoader {
      * }
      *
      * Therefore the map value can either be a `String`, a `List<String>` or a `Boolean`.
-     *//*
-
+     */
     List<Map<String, Object>> getPlugins(File flutterSourceDirectory) {
         List<Map<String, Object>> nativePlugins = []
         def meta = getDependenciesMetadata(flutterSourceDirectory)
@@ -58,11 +55,9 @@ class NativePluginLoader {
 
     private Map<String, Object> parsedFlutterPluginsDependencies
 
-    */
-/**
+    /**
      * Parses <project-src>/.flutter-plugins-dependencies
-     *//*
-
+     */
     Map<String, Object> getDependenciesMetadata(File flutterSourceDirectory) {
         // Consider a `.flutter-plugins-dependencies` file with the following content:
         // {
@@ -140,4 +135,3 @@ class NativePluginLoader {
 ext {
     nativePluginLoader = new NativePluginLoader()
 }
-*/
