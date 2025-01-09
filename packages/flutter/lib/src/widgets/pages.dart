@@ -26,7 +26,7 @@ abstract class PageRoute<T> extends ModalRoute<T> {
     super.settings,
     super.requestFocus,
     super.traversalEdgeBehavior,
-    super.traversalDirectionedEdgeBehavior,
+    super.directionalTraversalEdgeBehavior,
     this.fullscreenDialog = false,
     this.allowSnapshotting = true,
     bool barrierDismissible = false,

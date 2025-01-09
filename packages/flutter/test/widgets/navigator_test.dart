@@ -5678,7 +5678,7 @@ void main() {
     void pushWith(TraversalEdgeBehavior behavior) {
       navigatorKey.currentState!.push(
         MaterialPageRoute<void>(
-          traversalDirectionedEdgeBehavior: behavior,
+          directionalTraversalEdgeBehavior: behavior,
           builder: (BuildContext context) {
             return Column(children: <Widget>[makeFocus(1), makeFocus(2)]);
           },

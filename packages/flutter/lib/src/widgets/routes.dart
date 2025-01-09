@@ -1092,21 +1092,21 @@ class _ModalScopeState<T> extends State<_ModalScope<T>> {
 
   void _updateFocusScopeNode() {
     final TraversalEdgeBehavior traversalEdgeBehavior;
-    final TraversalEdgeBehavior traversalDirectionedEdgeBehavior;
+    final TraversalEdgeBehavior directionalTraversalEdgeBehavior;
     final ModalRoute<T> route = widget.route;
     if (route.traversalEdgeBehavior != null) {
       traversalEdgeBehavior = route.traversalEdgeBehavior!;
     } else {
       traversalEdgeBehavior = route.navigator!.widget.routeTraversalEdgeBehavior;
     }
-    if (route.traversalDirectionedEdgeBehavior != null) {
-      traversalDirectionedEdgeBehavior = route.traversalDirectionedEdgeBehavior!;
+    if (route.directionalTraversalEdgeBehavior != null) {
+      directionalTraversalEdgeBehavior = route.directionalTraversalEdgeBehavior!;
     } else {
-      traversalDirectionedEdgeBehavior =
-          route.navigator!.widget.routeTraversalDirectionedEdgeBehavior;
+      directionalTraversalEdgeBehavior =
+          route.navigator!.widget.routeDirectionalTraversalEdgeBehavior;
     }
     focusScopeNode.traversalEdgeBehavior = traversalEdgeBehavior;
-    focusScopeNode.traversalDirectionedEdgeBehavior = traversalDirectionedEdgeBehavior;
+    focusScopeNode.directionalTraversalEdgeBehavior = directionalTraversalEdgeBehavior;
     if (route.isCurrent && _shouldRequestFocus) {
       route.navigator!.focusNode.enclosingScope?.setFirstFocus(focusScopeNode);
     }
@@ -1244,7 +1244,7 @@ abstract class ModalRoute<T> extends TransitionRoute<T> with LocalHistoryRoute<T
     super.requestFocus,
     this.filter,
     this.traversalEdgeBehavior,
-    this.traversalDirectionedEdgeBehavior,
+    this.directionalTraversalEdgeBehavior,
   });
 
   /// The filter to add to the barrier.
@@ -1262,8 +1262,8 @@ abstract class ModalRoute<T> extends TransitionRoute<T> with LocalHistoryRoute<T
   /// Controls the directional transfer of focus beyond the first and the last
   /// items of a [FocusScopeNode].
   ///
-  /// If set to null, [Navigator.routeTraversalDirectionedEdgeBehavior] is used.
-  final TraversalEdgeBehavior? traversalDirectionedEdgeBehavior;
+  /// If set to null, [Navigator.routeDirectionalTraversalEdgeBehavior] is used.
+  final TraversalEdgeBehavior? directionalTraversalEdgeBehavior;
 
   // The API for general users of this class
 
@@ -2320,7 +2320,7 @@ abstract class PopupRoute<T> extends ModalRoute<T> {
     super.requestFocus,
     super.filter,
     super.traversalEdgeBehavior,
-    super.traversalDirectionedEdgeBehavior,
+    super.directionalTraversalEdgeBehavior,
   });
 
   @override
@@ -2523,7 +2523,7 @@ class RawDialogRoute<T> extends PopupRoute<T> {
     super.requestFocus,
     this.anchorPoint,
     super.traversalEdgeBehavior,
-    super.traversalDirectionedEdgeBehavior,
+    super.directionalTraversalEdgeBehavior,
   }) : _pageBuilder = pageBuilder,
        _barrierDismissible = barrierDismissible,
        _barrierLabel = barrierLabel,

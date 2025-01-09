@@ -1357,7 +1357,7 @@ class FocusScopeNode extends FocusNode {
     super.skipTraversal,
     super.canRequestFocus,
     this.traversalEdgeBehavior = TraversalEdgeBehavior.closedLoop,
-    this.traversalDirectionedEdgeBehavior = TraversalEdgeBehavior.stop,
+    this.directionalTraversalEdgeBehavior = TraversalEdgeBehavior.stop,
   }) : super(descendantsAreFocusable: true);
 
   @override
@@ -1379,7 +1379,7 @@ class FocusScopeNode extends FocusNode {
   /// Changing this field value has no immediate effect on the UI. Instead, next time
   /// focus traversal takes place [FocusTraversalPolicy] will read this value
   /// and apply the new behavior.
-  TraversalEdgeBehavior traversalDirectionedEdgeBehavior;
+  TraversalEdgeBehavior directionalTraversalEdgeBehavior;
 
   /// Returns true if this scope is the focused child of its parent scope.
   bool get isFirstFocus => enclosingScope!.focusedChild == this;

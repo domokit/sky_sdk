@@ -93,8 +93,10 @@ enum TraversalDirection {
   left,
 }
 
-/// Controls the transfer of focus beyond the first and the last items of a
-/// [FocusScopeNode].
+/// Controls the focus transfer at the edges of a [FocusScopeNode].
+/// For movement transfers (previous or next), the edge represents
+/// the first or last items. For directional transfers, the edge
+/// represents the outermost items of the [FocusScopeNode].
 ///
 /// This enumeration only controls the traversal behavior performed by
 /// [FocusTraversalPolicy]. Other methods of focus transfer, such as direct
@@ -140,7 +142,7 @@ enum TraversalEdgeBehavior {
 
   /// Stops the focus traversal at the edge of the focus scope.
   ///
-  /// Keeps the focus in its current position.
+  /// Keeps the focus in its current position when it reaches the edge of a focus scope.
   stop,
 }
 
@@ -711,14 +713,15 @@ class _DirectionalPolicyData {
 /// follow the same path on the way up as it did on the way down, since changing
 /// the axis of motion resets the history.
 ///
-/// This class implements an algorithm that considers an infinite band extending
-/// along the direction of movement, the width or height (depending on
-/// direction) of the currently focused widget, and finds the closest widget in
-/// that band along the direction of movement. If nothing is found in that band,
-/// then it picks the widget with an edge closest to the band in the
+/// This class implements an algorithm that considers an band extending
+/// along the direction of movement within the [FocusScope], the width or height
+/// (depending on direction) of the currently focused widget, and finds the closest
+/// widget inthat band along the direction of movement. If nothing is found in that
+/// band,then it picks the widget with an edge closest to the band in the
 /// perpendicular direction. If two out-of-band widgets are the same distance
 /// from the band, then it picks the one closest along the direction of
-/// movement.
+/// movement. When reaching the edge in the direction specified by [FocusScope],
+/// different behaviors are taken according to [FocusScopeNode.directionalTraversalEdgeBehavior]
 ///
 /// The goal of this algorithm is to pick a widget that (to the user) doesn't
 /// appear to traverse along the wrong axis, as it might if it only sorted
@@ -788,7 +791,7 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
     return sorted.firstOrNull;
   }
 
-  FocusNode? _findDirectionedTraversalFocus(
+  FocusNode? _findNextFocusInDirection(
     FocusNode focusedChild,
     Iterable<FocusNode> traversalDescendants,
     TraversalDirection direction, {
@@ -1185,7 +1188,7 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
     }
   }
 
-  bool _requestDirectionedTraversalFocus(
+  bool _requestTraversalFocusInDirection(
     FocusNode currentNode,
     FocusNode node,
     FocusScopeNode nearestScope,
@@ -1193,13 +1196,23 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
   ) {
     if (node is FocusScopeNode) {
       if (node.focusedChild != null) {
-        return _requestDirectionedTraversalFocus(currentNode, node.focusedChild!, node, direction);
+        return _requestTraversalFocusInDirection(currentNode, node.focusedChild!, node, direction);
       }
       final FocusNode firstNode = findFirstFocusInDirection(node, direction) ?? currentNode;
-      requestFocusCallback(
-        firstNode,
-        alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
-      );
+      switch (direction) {
+        case TraversalDirection.up:
+        case TraversalDirection.left:
+          requestFocusCallback(
+            firstNode,
+            alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+          );
+        case TraversalDirection.right:
+        case TraversalDirection.down:
+          requestFocusCallback(
+            firstNode,
+            alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+          );
+      }
       return true;
     }
     final bool nodeHadPrimaryFocus = node.hasPrimaryFocus;
@@ -1217,7 +1230,7 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
     return !nodeHadPrimaryFocus;
   }
 
-  bool _inDirectionedEdge(
+  bool _onEdgeForDirection(
     FocusNode currentNode,
     FocusNode focusedChild,
     TraversalDirection direction, {
@@ -1225,7 +1238,7 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
   }) {
     FocusScopeNode nearestScope = scope ?? currentNode.nearestScope!;
     FocusNode? found;
-    switch (nearestScope.traversalDirectionedEdgeBehavior) {
+    switch (nearestScope.directionalTraversalEdgeBehavior) {
       case TraversalEdgeBehavior.leaveFlutterView:
         focusedChild.unfocus();
         return false;
@@ -1235,16 +1248,16 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
           invalidateScopeData(nearestScope);
           nearestScope = parentScope;
           invalidateScopeData(nearestScope);
-          found = _findDirectionedTraversalFocus(
+          found = _findNextFocusInDirection(
             focusedChild,
             nearestScope.traversalDescendants.where((FocusNode e) => e is! FocusScopeNode),
             direction,
           );
           if (found == null) {
-            return _inDirectionedEdge(currentNode, focusedChild, direction, scope: nearestScope);
+            return _onEdgeForDirection(currentNode, focusedChild, direction, scope: nearestScope);
           }
         } else {
-          found = _findDirectionedTraversalFocus(
+          found = _findNextFocusInDirection(
             focusedChild,
             nearestScope.traversalDescendants.where((FocusNode e) => e is! FocusScopeNode),
             direction,
@@ -1252,7 +1265,7 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
           );
         }
       case TraversalEdgeBehavior.closedLoop:
-        found = _findDirectionedTraversalFocus(
+        found = _findNextFocusInDirection(
           focusedChild,
           nearestScope.traversalDescendants.where((FocusNode e) => e is! FocusScopeNode),
           direction,
@@ -1262,7 +1275,7 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
         return false;
     }
     if (found != null) {
-      return _requestDirectionedTraversalFocus(currentNode, found, nearestScope, direction);
+      return _requestTraversalFocusInDirection(currentNode, found, nearestScope, direction);
     }
     return false;
   }
@@ -1291,21 +1304,21 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
     final FocusNode? focusedChild = nearestScope.focusedChild;
     if (focusedChild == null) {
       final FocusNode firstFocus = findFirstFocusInDirection(currentNode, direction) ?? currentNode;
-      return _requestDirectionedTraversalFocus(currentNode, firstFocus, nearestScope, direction);
+      return _requestTraversalFocusInDirection(currentNode, firstFocus, nearestScope, direction);
     }
     if (_popPolicyDataIfNeeded(direction, nearestScope, focusedChild)) {
       return true;
     }
-    final FocusNode? found = _findDirectionedTraversalFocus(
+    final FocusNode? found = _findNextFocusInDirection(
       focusedChild,
       nearestScope.traversalDescendants,
       direction,
     );
     if (found != null) {
       _pushPolicyData(direction, nearestScope, focusedChild);
-      return _requestDirectionedTraversalFocus(currentNode, found, nearestScope, direction);
+      return _requestTraversalFocusInDirection(currentNode, found, nearestScope, direction);
     }
-    return _inDirectionedEdge(currentNode, focusedChild, direction);
+    return _onEdgeForDirection(currentNode, focusedChild, direction);
   }
 }
 

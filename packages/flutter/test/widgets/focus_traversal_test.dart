@@ -3640,9 +3640,9 @@ void main() {
       clear();
     }
 
-    // childScope's traversalDirectionedEdgeBehavior is TraversalEdgeBehavior.stop
+    // childScope's directionalTraversalEdgeBehavior is TraversalEdgeBehavior.stop
     // focus is should not change
-    childScope.traversalDirectionedEdgeBehavior = TraversalEdgeBehavior.stop;
+    childScope.directionalTraversalEdgeBehavior = TraversalEdgeBehavior.stop;
     await resetTo(3);
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.pump();
@@ -3654,9 +3654,9 @@ void main() {
     expect(focus, orderedEquals(<bool?>[null, null, null, null, null, null]));
     clear();
 
-    // childScope's traversalDirectionedEdgeBehavior is TraversalEdgeBehavior.closedLoop
+    // childScope's directionalTraversalEdgeBehavior is TraversalEdgeBehavior.closedLoop
     // focus is should change in a loop
-    childScope.traversalDirectionedEdgeBehavior = TraversalEdgeBehavior.closedLoop;
+    childScope.directionalTraversalEdgeBehavior = TraversalEdgeBehavior.closedLoop;
     await resetTo(3);
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.pump();
@@ -3668,9 +3668,9 @@ void main() {
     expect(focus, orderedEquals(<bool?>[null, false, true, null, null, null]));
     clear();
 
-    // childScope's traversalDirectionedEdgeBehavior is TraversalEdgeBehavior.parentScope
+    // childScope's directionalTraversalEdgeBehavior is TraversalEdgeBehavior.parentScope
     // focus can change to the parent scope
-    childScope.traversalDirectionedEdgeBehavior = TraversalEdgeBehavior.parentScope;
+    childScope.directionalTraversalEdgeBehavior = TraversalEdgeBehavior.parentScope;
     await resetTo(3);
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.pump();
@@ -3682,9 +3682,9 @@ void main() {
     expect(focus, orderedEquals(<bool?>[true, false, null, null, null, null]));
     clear();
 
-    // childScope's traversalDirectionedEdgeBehavior is TraversalEdgeBehavior.leaveFlutterView
+    // childScope's directionalTraversalEdgeBehavior is TraversalEdgeBehavior.leaveFlutterView
     // focus will be lost
-    childScope.traversalDirectionedEdgeBehavior = TraversalEdgeBehavior.leaveFlutterView;
+    childScope.directionalTraversalEdgeBehavior = TraversalEdgeBehavior.leaveFlutterView;
     await resetTo(3);
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.pump();

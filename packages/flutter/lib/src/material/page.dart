@@ -43,7 +43,7 @@ class MaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTransitionMixi
     super.allowSnapshotting = true,
     super.barrierDismissible = false,
     super.traversalEdgeBehavior,
-    super.traversalDirectionedEdgeBehavior,
+    super.directionalTraversalEdgeBehavior,
   }) {
     assert(opaque);
   }
