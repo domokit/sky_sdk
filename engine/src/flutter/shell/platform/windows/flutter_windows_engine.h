@@ -30,6 +30,7 @@
 #include "flutter/shell/platform/windows/egl/manager.h"
 #include "flutter/shell/platform/windows/egl/proc_table.h"
 #include "flutter/shell/platform/windows/flutter_desktop_messenger.h"
+#include "flutter/shell/platform/windows/flutter_host_window.h"
 #include "flutter/shell/platform/windows/flutter_project_bundle.h"
 #include "flutter/shell/platform/windows/flutter_windows_texture_registrar.h"
 #include "flutter/shell/platform/windows/keyboard_handler_base.h"
@@ -42,6 +43,7 @@
 #include "flutter/shell/platform/windows/text_input_plugin.h"
 #include "flutter/shell/platform/windows/window_proc_delegate_manager.h"
 #include "flutter/shell/platform/windows/window_state.h"
+#include "flutter/shell/platform/windows/windowing_handler.h"
 #include "flutter/shell/platform/windows/windows_lifecycle_manager.h"
 #include "flutter/shell/platform/windows/windows_proc_table.h"
 #include "third_party/rapidjson/include/rapidjson/document.h"
@@ -425,8 +427,15 @@ class FlutterWindowsEngine {
   // Handler for the flutter/platform channel.
   std::unique_ptr<PlatformHandler> platform_handler_;
 
+  // Handler for the flutter/windowing channel.
+  std::unique_ptr<WindowingHandler> windowing_handler_;
+
   // Handlers for keyboard events from Windows.
   std::unique_ptr<KeyboardHandlerBase> keyboard_key_handler_;
+
+  // The controller that manages the lifecycle of |FlutterHostWindow|s, native
+  // Win32 windows hosting a Flutter view in their client area.
+  std::unique_ptr<FlutterHostWindowController> host_window_controller_;
 
   // Handlers for text events from Windows.
   std::unique_ptr<TextInputPlugin> text_input_plugin_;
@@ -455,6 +464,8 @@ class FlutterWindowsEngine {
   bool high_contrast_enabled_ = false;
 
   bool enable_impeller_ = false;
+
+  bool enable_multi_window_ = false;
 
   // The manager for WindowProc delegate registration and callbacks.
   std::unique_ptr<WindowProcDelegateManager> window_proc_delegate_manager_;

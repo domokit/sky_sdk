@@ -1280,6 +1280,15 @@ abstract class FlutterCommand extends Command<void> {
     );
   }
 
+  void addMultiWindowFlag({required bool verboseHelp}) {
+    argParser.addFlag('enable-multi-window',
+        hide: !verboseHelp,
+        help: 'Whether to enable support for multiple windows. '
+              'This flag is only available on Windows, is disabled by default, '
+              'and will be ignored on other platforms.',
+    );
+  }
+
   /// Returns a [FlutterProject] view of the current directory or a ToolExit error,
   /// if `pubspec.yaml` or `example/pubspec.yaml` is invalid.
   FlutterProject get project => FlutterProject.current();

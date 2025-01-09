@@ -301,6 +301,9 @@ abstract class DesktopDevice extends Device {
       case ImpellerStatus.platformDefault:
         addFlag('enable-impeller=false');
     }
+    if (debuggingOptions.enableMultiWindow) {
+      addFlag('enable-multi-window=true');
+    }
     // Options only supported when there is a VM Service connection between the
     // tool and the device, usually in debug or profile mode.
     if (debuggingOptions.debuggingEnabled) {

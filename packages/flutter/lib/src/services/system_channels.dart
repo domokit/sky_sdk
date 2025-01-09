@@ -569,4 +569,7 @@ abstract final class SystemChannels {
   ///  * [HardwareKeyboard.syncKeyboardState], which uses this channel to synchronize
   ///    the `HardwareKeyboard` pressed state.
   static const MethodChannel keyboard = OptionalMethodChannel('flutter/keyboard');
+
+  /// A [MethodChannel] for interacting with the windowing system.
+  static const MethodChannel windowing = OptionalMethodChannel('flutter/windowing');
 }

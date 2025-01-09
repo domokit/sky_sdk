@@ -300,6 +300,10 @@ DEF_SWITCH(DisableMergedPlatformUIThread,
 DEF_SWITCH(DisableAndroidSurfaceControl,
            "disable-surface-control",
            "Disable the SurfaceControl backed swapchain even when supported.")
+DEF_SWITCH(EnableMultiWindow,
+           "enable-multi-window",
+           "Enable support for multiple windows. Ignored if not supported on "
+           "the platform.")
 DEF_SWITCHES_END
 
 void PrintUsage(const std::string& executable_name);

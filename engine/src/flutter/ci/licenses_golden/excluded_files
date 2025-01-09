@@ -402,8 +402,10 @@
 ../../../flutter/shell/platform/windows/direct_manipulation_unittests.cc
 ../../../flutter/shell/platform/windows/dpi_utils_unittests.cc
 ../../../flutter/shell/platform/windows/fixtures
+../../../flutter/shell/platform/windows/flutter_host_window_controller_unittests.cc
 ../../../flutter/shell/platform/windows/flutter_project_bundle_unittests.cc
 ../../../flutter/shell/platform/windows/flutter_window_unittests.cc
+../../../flutter/shell/platform/windows/flutter_windowing_handler_unittests.cc
 ../../../flutter/shell/platform/windows/flutter_windows_engine_unittests.cc
 ../../../flutter/shell/platform/windows/flutter_windows_texture_registrar_unittests.cc
 ../../../flutter/shell/platform/windows/flutter_windows_unittests.cc
