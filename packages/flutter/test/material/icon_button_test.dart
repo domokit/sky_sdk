@@ -3017,6 +3017,350 @@ void main() {
         ..rect(color: const Color(0xFF00FF00)), // IconButton overlay.
     );
   });
+
+  testWidgets('Material3 - IconButton variants hovered & onLongPressed', (
+    WidgetTester tester,
+  ) async {
+    late bool onHovered;
+    bool onLongPressed = false;
+
+    void onLongPress() {
+      onLongPressed = true;
+    }
+
+    void onHover(bool hover) {
+      onHovered = hover;
+    }
+
+    // IconButton
+    await tester.pumpWidget(buildAllVariants(onLongPress: onLongPress, onHover: onHover));
+
+    final Finder iconButton = find.widgetWithIcon(IconButton, Icons.favorite);
+    final Offset iconButtonOffset = tester.getCenter(iconButton);
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer();
+    addTearDown(gesture.removePointer);
+
+    await gesture.moveTo(iconButtonOffset);
+    await tester.pump();
+    expect(onHovered, true);
+
+    await tester.longPressAt(iconButtonOffset);
+    await tester.pump();
+    expect(onLongPressed, true);
+
+    onHovered = false;
+    onLongPressed = false;
+
+    await tester.pumpWidget(
+      buildAllVariants(enabled: false, onLongPress: onLongPress, onHover: onHover),
+    );
+    await gesture.moveTo(iconButtonOffset);
+    await tester.pump();
+    expect(onHovered, false);
+
+    await tester.longPressAt(iconButtonOffset);
+    await tester.pump();
+    expect(onLongPressed, false);
+
+    await gesture.removePointer();
+
+    // IconButton.filled
+    await tester.pumpWidget(buildAllVariants(onLongPress: onLongPress, onHover: onHover));
+
+    final Finder iconButtonFilled = find.widgetWithIcon(IconButton, Icons.add);
+    final Offset iconButtonFilledOffset = tester.getCenter(iconButtonFilled);
+
+    await gesture.moveTo(iconButtonFilledOffset);
+    await tester.pump();
+    expect(onHovered, true);
+
+    await tester.longPressAt(iconButtonFilledOffset);
+    await tester.pump();
+    expect(onLongPressed, true);
+
+    onHovered = false;
+    onLongPressed = false;
+
+    await tester.pumpWidget(
+      buildAllVariants(enabled: false, onLongPress: onLongPress, onHover: onHover),
+    );
+    await gesture.moveTo(iconButtonFilledOffset);
+    await tester.pump();
+    expect(onHovered, false);
+
+    await tester.longPressAt(iconButtonFilledOffset);
+    await tester.pump();
+    expect(onLongPressed, false);
+
+    await gesture.removePointer();
+
+    // IconButton.filledTonal
+    await tester.pumpWidget(buildAllVariants(onLongPress: onLongPress, onHover: onHover));
+
+    final Finder iconButtonFilledTonal = find.widgetWithIcon(IconButton, Icons.add);
+    final Offset iconButtonFilledTonalOffset = tester.getCenter(iconButtonFilledTonal);
+
+    await gesture.moveTo(iconButtonFilledTonalOffset);
+    await tester.pump();
+    expect(onHovered, true);
+
+    await tester.longPressAt(iconButtonFilledTonalOffset);
+    await tester.pump();
+    expect(onLongPressed, true);
+
+    onHovered = false;
+    onLongPressed = false;
+
+    await tester.pumpWidget(
+      buildAllVariants(enabled: false, onLongPress: onLongPress, onHover: onHover),
+    );
+    await gesture.moveTo(iconButtonFilledTonalOffset);
+    await tester.pump();
+    expect(onHovered, false);
+
+    await tester.longPressAt(iconButtonFilledTonalOffset);
+    await tester.pump();
+    expect(onLongPressed, false);
+
+    await gesture.removePointer();
+
+    // IconButton.outlined
+    await tester.pumpWidget(buildAllVariants(onLongPress: onLongPress, onHover: onHover));
+
+    final Finder iconButtonOutlined = find.widgetWithIcon(IconButton, Icons.add);
+    final Offset iconButtonOutlinedOffset = tester.getCenter(iconButtonOutlined);
+
+    await gesture.moveTo(iconButtonOutlinedOffset);
+    await tester.pump();
+    expect(onHovered, true);
+
+    await tester.longPressAt(iconButtonOutlinedOffset);
+    await tester.pump();
+    expect(onLongPressed, true);
+
+    onHovered = false;
+    onLongPressed = false;
+
+    await tester.pumpWidget(
+      buildAllVariants(enabled: false, onLongPress: onLongPress, onHover: onHover),
+    );
+    await gesture.moveTo(iconButtonOutlinedOffset);
+    await tester.pump();
+    expect(onHovered, false);
+
+    await tester.longPressAt(iconButtonOutlinedOffset);
+    await tester.pump();
+    expect(onLongPressed, false);
+  });
+
+  testWidgets('Material2 - IconButton variants hovered & onLongPressed', (
+    WidgetTester tester,
+  ) async {
+    late bool onHovered;
+    bool onLongPressed = false;
+
+    void onLongPress() {
+      onLongPressed = true;
+    }
+
+    void onHover(bool hover) {
+      onHovered = hover;
+    }
+
+    // IconButton
+    await tester.pumpWidget(
+      buildAllVariants(onLongPress: onLongPress, onHover: onHover, useMaterial3: false),
+    );
+
+    final Finder iconButton = find.widgetWithIcon(IconButton, Icons.favorite);
+    final Offset iconButtonOffset = tester.getCenter(iconButton);
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer();
+    addTearDown(gesture.removePointer);
+
+    await gesture.moveTo(iconButtonOffset);
+    await tester.pump();
+    expect(onHovered, true);
+
+    await tester.longPressAt(iconButtonOffset);
+    await tester.pump();
+    expect(onLongPressed, true);
+
+    onHovered = false;
+    onLongPressed = false;
+
+    await tester.pumpWidget(
+      buildAllVariants(
+        enabled: false,
+        onLongPress: onLongPress,
+        onHover: onHover,
+        useMaterial3: false,
+      ),
+    );
+    await gesture.moveTo(iconButtonOffset);
+    await tester.pump();
+    expect(onHovered, false);
+
+    await tester.longPressAt(iconButtonOffset);
+    await tester.pump();
+    expect(onLongPressed, false);
+
+    await gesture.removePointer();
+
+    // IconButton.filled
+    await tester.pumpWidget(
+      buildAllVariants(onLongPress: onLongPress, onHover: onHover, useMaterial3: false),
+    );
+
+    final Finder iconButtonFilled = find.widgetWithIcon(IconButton, Icons.add);
+    final Offset iconButtonFilledOffset = tester.getCenter(iconButtonFilled);
+
+    await gesture.moveTo(iconButtonFilledOffset);
+    await tester.pump();
+    expect(onHovered, true);
+
+    await tester.longPressAt(iconButtonFilledOffset);
+    await tester.pump();
+    expect(onLongPressed, true);
+
+    onHovered = false;
+    onLongPressed = false;
+
+    await tester.pumpWidget(
+      buildAllVariants(
+        enabled: false,
+        onLongPress: onLongPress,
+        onHover: onHover,
+        useMaterial3: false,
+      ),
+    );
+    await gesture.moveTo(iconButtonFilledOffset);
+    await tester.pump();
+    expect(onHovered, false);
+
+    await tester.longPressAt(iconButtonFilledOffset);
+    await tester.pump();
+    expect(onLongPressed, false);
+
+    await gesture.removePointer();
+
+    // IconButton.filledTonal
+    await tester.pumpWidget(
+      buildAllVariants(onLongPress: onLongPress, onHover: onHover, useMaterial3: false),
+    );
+
+    final Finder iconButtonFilledTonal = find.widgetWithIcon(IconButton, Icons.add);
+    final Offset iconButtonFilledTonalOffset = tester.getCenter(iconButtonFilledTonal);
+
+    await gesture.moveTo(iconButtonFilledTonalOffset);
+    await tester.pump();
+    expect(onHovered, true);
+
+    await tester.longPressAt(iconButtonFilledTonalOffset);
+    await tester.pump();
+    expect(onLongPressed, true);
+
+    onHovered = false;
+    onLongPressed = false;
+
+    await tester.pumpWidget(
+      buildAllVariants(
+        enabled: false,
+        onLongPress: onLongPress,
+        onHover: onHover,
+        useMaterial3: false,
+      ),
+    );
+    await gesture.moveTo(iconButtonFilledTonalOffset);
+    await tester.pump();
+    expect(onHovered, false);
+
+    await tester.longPressAt(iconButtonFilledTonalOffset);
+    await tester.pump();
+    expect(onLongPressed, false);
+
+    await gesture.removePointer();
+
+    // IconButton.outlined
+    await tester.pumpWidget(
+      buildAllVariants(onLongPress: onLongPress, onHover: onHover, useMaterial3: false),
+    );
+
+    final Finder iconButtonOutlined = find.widgetWithIcon(IconButton, Icons.add);
+    final Offset iconButtonOutlinedOffset = tester.getCenter(iconButtonOutlined);
+
+    await gesture.moveTo(iconButtonOutlinedOffset);
+    await tester.pump();
+    expect(onHovered, true);
+
+    await tester.longPressAt(iconButtonOutlinedOffset);
+    await tester.pump();
+    expect(onLongPressed, true);
+
+    onHovered = false;
+    onLongPressed = false;
+
+    await tester.pumpWidget(
+      buildAllVariants(
+        enabled: false,
+        onLongPress: onLongPress,
+        onHover: onHover,
+        useMaterial3: false,
+      ),
+    );
+    await gesture.moveTo(iconButtonOutlinedOffset);
+    await tester.pump();
+    expect(onHovered, false);
+
+    await tester.longPressAt(iconButtonOutlinedOffset);
+    await tester.pump();
+    expect(onLongPressed, false);
+  });
+}
+
+Widget buildAllVariants({
+  bool enabled = true,
+  bool useMaterial3 = true,
+  void Function(bool)? onHover,
+  VoidCallback? onLongPress,
+}) {
+  return MaterialApp(
+    theme: ThemeData(useMaterial3: useMaterial3),
+    home: Material(
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Column(
+          children: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.favorite),
+              onPressed: enabled ? () {} : null,
+              onHover: onHover,
+              onLongPress: onLongPress,
+            ),
+            IconButton.filled(
+              icon: const Icon(Icons.add),
+              onPressed: enabled ? () {} : null,
+              onHover: onHover,
+              onLongPress: onLongPress,
+            ),
+            IconButton.filledTonal(
+              icon: const Icon(Icons.settings),
+              onPressed: enabled ? () {} : null,
+              onHover: onHover,
+              onLongPress: onLongPress,
+            ),
+            IconButton.outlined(
+              icon: const Icon(Icons.home),
+              onPressed: enabled ? () {} : null,
+              onHover: onHover,
+              onLongPress: onLongPress,
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }
 
 Widget wrap({required Widget child, required bool useMaterial3}) {

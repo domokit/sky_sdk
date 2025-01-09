@@ -146,29 +146,25 @@ Future<void> testMain() async {
 
   test('matrix color filter', () async {
     const ui.ColorFilter sepia = ui.ColorFilter.matrix(<double>[
-      0.393,
-      0.769,
-      0.189,
-      0,
-      0,
-      0.349,
-      0.686,
-      0.168,
-      0,
-      0,
-      0.272,
-      0.534,
-      0.131,
-      0,
-      0,
-      0,
-      0,
-      0,
-      1,
-      0,
+      0.393, 0.769, 0.189, 0, 0, // row
+      0.349, 0.686, 0.168, 0, 0, // row
+      0.272, 0.534, 0.131, 0, 0, // row
+      0, 0, 0, 1, 0, // row
     ]);
     await drawTestImageWithPaint(ui.Paint()..colorFilter = sepia);
     await matchGoldenFile('ui_filter_matrix_colorfilter.png', region: region);
+    expect(sepia.toString(), startsWith('ColorFilter.matrix([0.393, 0.769, 0.189, '));
+  });
+
+  test('matrix color filter with 0..255 translation values', () async {
+    const ui.ColorFilter sepia = ui.ColorFilter.matrix(<double>[
+      0.393, 0.769, 0.189, 0, 50.0, // row
+      0.349, 0.686, 0.168, 0, 50.0, // row
+      0.272, 0.534, 0.131, 0, 50.0, // row
+      0, 0, 0, 1, 0, // row
+    ]);
+    await drawTestImageWithPaint(ui.Paint()..colorFilter = sepia);
+    await matchGoldenFile('ui_filter_matrix_colorfilter_with_translation.png', region: region);
     expect(sepia.toString(), startsWith('ColorFilter.matrix([0.393, 0.769, 0.189, '));
   });
 
@@ -179,26 +175,10 @@ Future<void> testMain() async {
 
   test('invert colors with color filter', () async {
     const ui.ColorFilter sepia = ui.ColorFilter.matrix(<double>[
-      0.393,
-      0.769,
-      0.189,
-      0,
-      0,
-      0.349,
-      0.686,
-      0.168,
-      0,
-      0,
-      0.272,
-      0.534,
-      0.131,
-      0,
-      0,
-      0,
-      0,
-      0,
-      1,
-      0,
+      0.393, 0.769, 0.189, 0, 0, // row
+      0.349, 0.686, 0.168, 0, 0, // row
+      0.272, 0.534, 0.131, 0, 0, // row
+      0, 0, 0, 1, 0, // row
     ]);
 
     await drawTestImageWithPaint(

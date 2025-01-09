@@ -22,7 +22,7 @@ TEST(FlWindowStateMonitorTest, GainFocus) {
   gboolean called = TRUE;
   fl_mock_binary_messenger_set_string_message_channel(
       messenger, "flutter/lifecycle",
-      [](FlMockBinaryMessenger* messenger, FlValue* message,
+      [](FlMockBinaryMessenger* messenger, GTask* task, FlValue* message,
          gpointer user_data) {
         gboolean* called = static_cast<gboolean*>(user_data);
         *called = TRUE;
@@ -56,7 +56,7 @@ TEST(FlWindowStateMonitorTest, LoseFocus) {
   gboolean called = TRUE;
   fl_mock_binary_messenger_set_string_message_channel(
       messenger, "flutter/lifecycle",
-      [](FlMockBinaryMessenger* messenger, FlValue* message,
+      [](FlMockBinaryMessenger* messenger, GTask* task, FlValue* message,
          gpointer user_data) {
         gboolean* called = static_cast<gboolean*>(user_data);
         *called = TRUE;
@@ -91,7 +91,7 @@ TEST(FlWindowStateMonitorTest, EnterIconified) {
   gboolean called = TRUE;
   fl_mock_binary_messenger_set_string_message_channel(
       messenger, "flutter/lifecycle",
-      [](FlMockBinaryMessenger* messenger, FlValue* message,
+      [](FlMockBinaryMessenger* messenger, GTask* task, FlValue* message,
          gpointer user_data) {
         gboolean* called = static_cast<gboolean*>(user_data);
         *called = TRUE;
@@ -125,7 +125,7 @@ TEST(FlWindowStateMonitorTest, LeaveIconified) {
   gboolean called = TRUE;
   fl_mock_binary_messenger_set_string_message_channel(
       messenger, "flutter/lifecycle",
-      [](FlMockBinaryMessenger* messenger, FlValue* message,
+      [](FlMockBinaryMessenger* messenger, GTask* task, FlValue* message,
          gpointer user_data) {
         gboolean* called = static_cast<gboolean*>(user_data);
         *called = TRUE;
@@ -160,7 +160,7 @@ TEST(FlWindowStateMonitorTest, LeaveIconifiedFocused) {
   gboolean called = TRUE;
   fl_mock_binary_messenger_set_string_message_channel(
       messenger, "flutter/lifecycle",
-      [](FlMockBinaryMessenger* messenger, FlValue* message,
+      [](FlMockBinaryMessenger* messenger, GTask* task, FlValue* message,
          gpointer user_data) {
         gboolean* called = static_cast<gboolean*>(user_data);
         *called = TRUE;
@@ -195,7 +195,7 @@ TEST(FlWindowStateMonitorTest, EnterWithdrawn) {
   gboolean called = TRUE;
   fl_mock_binary_messenger_set_string_message_channel(
       messenger, "flutter/lifecycle",
-      [](FlMockBinaryMessenger* messenger, FlValue* message,
+      [](FlMockBinaryMessenger* messenger, GTask* task, FlValue* message,
          gpointer user_data) {
         gboolean* called = static_cast<gboolean*>(user_data);
         *called = TRUE;
@@ -229,7 +229,7 @@ TEST(FlWindowStateMonitorTest, LeaveWithdrawn) {
   gboolean called = TRUE;
   fl_mock_binary_messenger_set_string_message_channel(
       messenger, "flutter/lifecycle",
-      [](FlMockBinaryMessenger* messenger, FlValue* message,
+      [](FlMockBinaryMessenger* messenger, GTask* task, FlValue* message,
          gpointer user_data) {
         gboolean* called = static_cast<gboolean*>(user_data);
         *called = TRUE;
@@ -264,7 +264,7 @@ TEST(FlWindowStateMonitorTest, LeaveWithdrawnFocused) {
   gboolean called = TRUE;
   fl_mock_binary_messenger_set_string_message_channel(
       messenger, "flutter/lifecycle",
-      [](FlMockBinaryMessenger* messenger, FlValue* message,
+      [](FlMockBinaryMessenger* messenger, GTask* task, FlValue* message,
          gpointer user_data) {
         gboolean* called = static_cast<gboolean*>(user_data);
         *called = TRUE;

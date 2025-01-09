@@ -22,7 +22,7 @@ const Map<String, String> kManuallyPinnedDependencies = <String, String>{
   // Add pinned packages here. Please leave a comment explaining why.
   'archive': '3.6.1', // https://github.com/flutter/flutter/issues/115660
   'flutter_gallery_assets': '1.0.2', // Tests depend on the exact version.
-  'flutter_template_images': '4.3.0', // Must always exactly match flutter_tools template.
+  'flutter_template_images': '5.0.0', // Must always exactly match flutter_tools template.
   'google_mobile_ads': '5.1.0', // https://github.com/flutter/flutter/issues/156912
   'intl':
       '0.19.0', // 0.20.0 introduces new transitive dependencies that are not (yet) cleared in Flutter's allow list.

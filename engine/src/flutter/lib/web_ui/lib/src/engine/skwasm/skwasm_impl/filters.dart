@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:ui/src/engine.dart';
@@ -318,7 +319,18 @@ class SkwasmMatrixColorFilter extends SkwasmColorFilter {
   @override
   void withRawColorFilter(ColorFilterHandleBorrow borrow) {
     withStackScope((scope) {
-      final rawColorFilter = colorFilterCreateMatrix(scope.convertDoublesToNative(matrix));
+      assert(matrix.length == 20);
+      final Pointer<Float> rawMatrix = scope.convertDoublesToNative(matrix);
+
+      /// Flutter documentation says the translation column of the color matrix
+      /// is specified in unnormalized 0..255 space. Skia expects the
+      /// translation values to be normalized to 0..1 space.
+      ///
+      /// See [https://api.flutter.dev/flutter/dart-ui/ColorFilter/ColorFilter.matrix.html].
+      for (final i in <int>[4, 9, 14, 19]) {
+        rawMatrix[i] /= 255.0;
+      }
+      final rawColorFilter = colorFilterCreateMatrix(rawMatrix);
       borrow(rawColorFilter);
       colorFilterDispose(rawColorFilter);
     });

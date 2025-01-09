@@ -3,16 +3,13 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:io' as io;
 
-import 'package:dart_style/dart_style.dart';
 import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:path/path.dart' as path;
 
 import 'configuration.dart';
 import 'data_types.dart';
-import 'import_sorter.dart';
 import 'util.dart';
 
 /// Generates the snippet HTML, as well as saving the output snippet main to
@@ -37,10 +34,6 @@ class SnippetGenerator {
   final SnippetConfiguration configuration;
 
   static const JsonEncoder jsonEncoder = JsonEncoder.withIndent('    ');
-
-  /// A Dart formatted used to format the snippet code and finished application
-  /// code.
-  static DartFormatter formatter = DartFormatter(pageWidth: 80, fixes: StyleFix.all);
 
   /// Interpolates the [injections] into an HTML skeleton file.
   ///
@@ -304,7 +297,6 @@ class SnippetGenerator {
     File? output,
     String? copyright,
     String? description,
-    bool formatOutput = true,
     bool includeAssumptions = false,
   }) {
     sample.metadata['copyright'] ??= copyright;
@@ -316,16 +308,6 @@ class SnippetGenerator {
       case ApplicationSample _:
         final String app = sample.sourceFileContents;
         sample.output = app;
-        if (formatOutput) {
-          final DartFormatter formatter = DartFormatter(pageWidth: 80, fixes: StyleFix.all);
-          try {
-            sample.output = formatter.format(sample.output);
-          } on FormatterException catch (exception) {
-            io.stderr.write('Code to format:\n${_addLineNumbers(sample.output)}\n');
-            errorExit('Unable to format sample code: $exception');
-          }
-          sample.output = sortImports(sample.output);
-        }
         if (output != null) {
           output.writeAsStringSync(sample.output);
 
@@ -369,16 +351,6 @@ class SnippetGenerator {
         sample.output = app;
     }
     return sample.output;
-  }
-
-  String _addLineNumbers(String code) {
-    final StringBuffer buffer = StringBuffer();
-    int count = 0;
-    for (final String line in code.split('\n')) {
-      count++;
-      buffer.writeln('${count.toString().padLeft(5)}: $line');
-    }
-    return buffer.toString();
   }
 
   /// Computes the headers needed for each snippet file.

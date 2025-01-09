@@ -3812,8 +3812,8 @@
           },
           "stack_spill_bytes": 0,
           "thread_occupancy": 100,
-          "uniform_registers_used": 8,
-          "work_registers_used": 19
+          "uniform_registers_used": 4,
+          "work_registers_used": 20
         }
       }
     },
@@ -3830,7 +3830,7 @@
               "arithmetic"
             ],
             "longest_path_cycles": [
-              1.649999976158142,
+              1.3200000524520874,
               1.0,
               1.0
             ],
@@ -3843,7 +3843,7 @@
               "arithmetic"
             ],
             "shortest_path_cycles": [
-              1.649999976158142,
+              1.3200000524520874,
               1.0,
               1.0
             ],
@@ -3851,7 +3851,7 @@
               "arithmetic"
             ],
             "total_cycles": [
-              2.0,
+              1.6666666269302368,
               1.0,
               1.0
             ]
@@ -7251,7 +7251,7 @@
           },
           "stack_spill_bytes": 0,
           "thread_occupancy": 100,
-          "uniform_registers_used": 14,
+          "uniform_registers_used": 6,
           "work_registers_used": 11
         }
       }

@@ -362,7 +362,6 @@ targets:
   # are intentionally running it in the devicelab to ensure that it does not
   # run on a VM in order to avoid noisy results from the benchmark.
   - name: Linux analyzer_benchmark
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/158243
     recipe: devicelab/devicelab_drone
     timeout: 60
     properties:
@@ -647,7 +646,6 @@ targets:
 
   - name: Linux firebase_release_smoke_test
     recipe: firebaselab/firebaselab
-    bringup: true # https://github.com/flutter/flutter/issues/147335
     timeout: 60
     properties:
       dependencies: >-
@@ -1112,7 +1110,6 @@ targets:
     recipe: devicelab/devicelab_drone
     timeout: 60
     presubmit: false
-    bringup: true
     properties:
       xvfb: "1"
       dependencies: >-
@@ -2359,7 +2356,7 @@ targets:
 
   - name: Linux_pixel_7pro android_semantics_integration_test
     recipe: devicelab/devicelab_drone
-    bringup: true # Flaky: https://github.com/flutter/flutter/issues/124636
+    bringup: true # Failing: https://github.com/flutter/flutter/issues/153594
     presubmit: false
     timeout: 60
     properties:
@@ -3975,7 +3972,6 @@ targets:
       - DEPS
 
   - name: Mac flavors_test_macos
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/156943
     presubmit: false
     recipe: devicelab/devicelab_drone
     timeout: 60
@@ -3989,6 +3985,7 @@ targets:
       task_name: flavors_test_macos
 
   - name: Mac_benchmark flutter_gallery_macos__compile
+    bringup: true # Flaky https://github.com/flutter/flutter/issues/160495
     presubmit: false
     recipe: devicelab/devicelab_drone
     timeout: 60
@@ -4335,7 +4332,6 @@ targets:
       task_name: platform_view_macos__start_up
 
   - name: Mac platform_channel_sample_test_macos
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/151883
     recipe: devicelab/devicelab_drone
     presubmit: false
     timeout: 60

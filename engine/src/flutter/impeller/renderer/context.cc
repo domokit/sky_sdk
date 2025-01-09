@@ -37,4 +37,8 @@ bool Context::AddTrackingFence(const std::shared_ptr<Texture>& texture) const {
   return false;
 }
 
+bool Context::SubmitOnscreen(std::shared_ptr<CommandBuffer> cmd_buffer) {
+  return EnqueueCommandBuffer(std::move(cmd_buffer));
+}
+
 }  // namespace impeller

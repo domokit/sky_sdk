@@ -193,20 +193,20 @@ under the top-level `<dict>` tag:
 
 ### Android
 
-Impeller is in preview on Android.
-
-To your `AndroidManifest.xml` file, add under the `<application>` tag:
+Impeller will use Vulkan on Android by **default**. To explicitly opt out of using Impeller,
+add the following to your `AndroidManifest.xml` under the `<application>` tag.
 
 ```xml
   <meta-data
     android:name="io.flutter.embedding.android.EnableImpeller"
-    android:value="true" />
+    android:value="false" />
 ```
 
-Impeller will use Vulkan on Android by default when opted into. Where Vulkan
-is unavailable, Impeller will fallback to Skia. However, Impellers OpenGL backend
-is well under construction. To try that with your application, add the following
-under the `<application>` tag:
+Where Vulkan is unavailable, Impeller will fallback to Skia. 
+
+However, Impellers OpenGL backend is well under construction. To try Impeller with OpenGL
+in your application, add the following to your `AndroidManifest.xml` file under the
+`<application>` tag:
 
 > [!Warning]
 > Selecting the Impeller backend this way will only work in `debug` and `profile`

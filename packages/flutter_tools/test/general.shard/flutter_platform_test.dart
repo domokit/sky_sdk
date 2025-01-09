@@ -49,7 +49,7 @@ void main() {
       'explicitVmServicePort is specified and more than one test file',
       () async {
         final FlutterPlatform flutterPlatform = FlutterPlatform(
-          shellPath: '/',
+          flutterTesterBinPath: '/',
           debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug, hostVmServicePort: 1234),
           enableVmService: false,
           buildInfo: BuildInfo.debug,
@@ -76,7 +76,7 @@ void main() {
       () {
         final FlutterPlatform flutterPlatform = FlutterPlatform(
           debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
-          shellPath: '/',
+          flutterTesterBinPath: '/',
           precompiledDillPath: 'example.dill',
           enableVmService: false,
           buildInfo: BuildInfo.debug,
@@ -103,7 +103,7 @@ void main() {
         final _UnstartableDevice testDevice = _UnstartableDevice();
         final FlutterPlatform flutterPlatform = FlutterPlatform(
           debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
-          shellPath: '/',
+          flutterTesterBinPath: '/',
           enableVmService: false,
           integrationTestDevice: testDevice,
           flutterProject: _FakeFlutterProject(),
@@ -146,7 +146,7 @@ void main() {
         final ShutdownHooks shutdownHooks = ShutdownHooks();
         final FlutterPlatform flutterPlatform = FlutterPlatform(
           debuggingOptions: DebuggingOptions.disabled(BuildInfo.debug),
-          shellPath: '/',
+          flutterTesterBinPath: '/',
           enableVmService: false,
           integrationTestDevice: testDevice,
           flutterProject: _FakeFlutterProject(),
@@ -178,7 +178,7 @@ void main() {
     testUsingContext('installHook creates a FlutterPlatform', () {
       expect(
         () => installHook(
-          shellPath: 'abc',
+          flutterTesterBinPath: 'abc',
           debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug, startPaused: true),
           buildInfo: BuildInfo.debug,
           fileSystem: fileSystem,
@@ -190,7 +190,7 @@ void main() {
 
       expect(
         () => installHook(
-          shellPath: 'abc',
+          flutterTesterBinPath: 'abc',
           debuggingOptions: DebuggingOptions.enabled(
             BuildInfo.debug,
             startPaused: true,
@@ -207,7 +207,7 @@ void main() {
       FlutterPlatform? capturedPlatform;
       final Map<String, String> expectedPrecompiledDillFiles = <String, String>{'Key': 'Value'};
       final FlutterPlatform flutterPlatform = installHook(
-        shellPath: 'abc',
+        flutterTesterBinPath: 'abc',
         debuggingOptions: DebuggingOptions.enabled(
           BuildInfo.debug,
           startPaused: true,
@@ -232,7 +232,7 @@ void main() {
       );
 
       expect(identical(capturedPlatform, flutterPlatform), equals(true));
-      expect(flutterPlatform.shellPath, equals('abc'));
+      expect(flutterPlatform.flutterTesterBinPath, equals('abc'));
       expect(flutterPlatform.debuggingOptions.buildInfo, equals(BuildInfo.debug));
       expect(flutterPlatform.debuggingOptions.startPaused, equals(true));
       expect(flutterPlatform.debuggingOptions.disableServiceAuthCodes, equals(true));
@@ -330,7 +330,7 @@ void main() {
             '--use-test-fonts',
             '--disable-asset-fonts',
             '--packages=.dart_tool/package_config.json',
-            '',
+            'path_to_output.dill',
           ],
           exitCode: -9,
           completer: testCompleter,
@@ -346,7 +346,7 @@ void main() {
         const Device? notAnIntegrationTest = null;
         final FlutterPlatform flutterPlatform = FlutterPlatform(
           debuggingOptions: DebuggingOptions.disabled(BuildInfo.debug),
-          shellPath: 'flutter_tester',
+          flutterTesterBinPath: 'flutter_tester',
           enableVmService: false,
           // ignore: avoid_redundant_argument_values
           integrationTestDevice: notAnIntegrationTest,
@@ -400,8 +400,7 @@ void main() {
               'flutter_tester',
               '--disable-vm-service',
               '--non-interactive',
-              '--packages=.dart_tool/package_config.json',
-              '',
+              'path_to_output.dill',
             ],
             stdout: '{"success": true}\n',
           ),
@@ -410,7 +409,7 @@ void main() {
 
         final FlutterPlatform flutterPlatform = FlutterPlatform(
           debuggingOptions: DebuggingOptions.disabled(BuildInfo.debug),
-          shellPath: 'flutter_tester',
+          flutterTesterBinPath: 'flutter_tester',
           enableVmService: false,
           flutterProject: flutterProject,
           integrationTestDevice: _WorkingDevice(),
@@ -530,7 +529,9 @@ class _FakeVmService extends Fake implements VmService {
 
 class _FakeTestCompiler extends Fake implements TestCompiler {
   @override
-  Future<String?> compile(Uri mainDart) async => '';
+  Future<TestCompilerResult> compile(Uri mainUri) async {
+    return TestCompilerComplete(outputPath: 'path_to_output.dill', mainUri: mainUri);
+  }
 }
 
 class _UnstartableDevice extends Fake implements Device {

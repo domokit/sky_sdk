@@ -212,7 +212,7 @@ dependency_overrides:
   http:
     path: ./third_party/dart/third_party/pkg/http/pkgs/http
   http_multi_server:
-    path: ./third_party/dart/third_party/pkg/http_multi_server
+    path: ./third_party/dart/third_party/pkg/http/pkgs/http_multi_server
   http_parser:
     path: ./third_party/dart/third_party/pkg/http/pkgs/http_parser
   io:
@@ -236,13 +236,13 @@ dependency_overrides:
   node_preamble:
     path: ./third_party/pkg/node_preamble
   package_config:
-    path: ./third_party/dart/third_party/pkg/package_config
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/package_config
   path:
     path: ./third_party/dart/third_party/pkg/core/pkgs/path
   platform:
     path: ./third_party/dart/third_party/pkg/core/pkgs/platform
   pool:
-    path: ./third_party/dart/third_party/pkg/pool
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/pool
   process:
     path: ./third_party/pkg/process
   process_runner:
@@ -250,7 +250,7 @@ dependency_overrides:
   protobuf:
     path: ./third_party/dart/third_party/pkg/protobuf/protobuf
   pub_semver:
-    path: ./third_party/dart/third_party/pkg/pub_semver
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/pub_semver
   shelf:
     path: ./third_party/dart/third_party/pkg/shelf/pkgs/shelf
   shelf_packages_handler:
@@ -266,9 +266,9 @@ dependency_overrides:
   source_map_stack_trace:
     path: ./third_party/dart/third_party/pkg/tools/pkgs/source_map_stack_trace
   source_maps:
-    path: ./third_party/dart/third_party/pkg/source_maps
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/source_maps
   source_span:
-    path: ./third_party/dart/third_party/pkg/source_span
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/source_span
   stack_trace:
     path: ./third_party/dart/third_party/pkg/stack_trace
   stream_channel:

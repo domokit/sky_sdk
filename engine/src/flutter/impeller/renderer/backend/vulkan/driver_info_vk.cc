@@ -331,16 +331,10 @@ bool DriverInfoVK::IsEmulator() const {
 bool DriverInfoVK::IsKnownBadDriver() const {
   if (adreno_gpu_.has_value()) {
     AdrenoGPU adreno = adreno_gpu_.value();
-    // See:
-    // https://github.com/flutter/flutter/issues/154103
-    //
-    // Reports "VK_INCOMPLETE" when compiling certain entity shader with
-    // vkCreateGraphicsPipelines, which is not a valid return status.
-    // See https://github.com/flutter/flutter/issues/155185 .
-    //
-    // https://github.com/flutter/flutter/issues/155185
-    // Unknown crashes but device is not easily acquirable.
-    if (adreno <= AdrenoGPU::kAdreno630) {
+    // 630 is the lowest version I've tested on the still works.
+    // I suspect earlier 600s should work but this is waiting on
+    // more devices for testing.
+    if (adreno < AdrenoGPU::kAdreno630) {
       return true;
     }
   }

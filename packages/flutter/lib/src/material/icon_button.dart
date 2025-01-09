@@ -197,6 +197,8 @@ class IconButton extends StatelessWidget {
     this.splashColor,
     this.disabledColor,
     required this.onPressed,
+    this.onHover,
+    this.onLongPress,
     this.mouseCursor,
     this.focusNode,
     this.autofocus = false,
@@ -228,6 +230,8 @@ class IconButton extends StatelessWidget {
     this.splashColor,
     this.disabledColor,
     required this.onPressed,
+    this.onHover,
+    this.onLongPress,
     this.mouseCursor,
     this.focusNode,
     this.autofocus = false,
@@ -261,6 +265,8 @@ class IconButton extends StatelessWidget {
     this.splashColor,
     this.disabledColor,
     required this.onPressed,
+    this.onHover,
+    this.onLongPress,
     this.mouseCursor,
     this.focusNode,
     this.autofocus = false,
@@ -293,6 +299,8 @@ class IconButton extends StatelessWidget {
     this.splashColor,
     this.disabledColor,
     required this.onPressed,
+    this.onHover,
+    this.onLongPress,
     this.mouseCursor,
     this.focusNode,
     this.autofocus = false,
@@ -477,6 +485,14 @@ class IconButton extends StatelessWidget {
   ///
   /// If this is set to null, the button will be disabled.
   final VoidCallback? onPressed;
+
+  /// The callback that is called when the button is hovered.
+  final ValueChanged<bool>? onHover;
+
+  /// The callback that is called when the button is long-pressed.
+  ///
+  /// If onPressed is set to null, the onLongPress callback is not called.
+  final VoidCallback? onLongPress;
 
   /// {@macro flutter.material.RawMaterialButton.mouseCursor}
   ///
@@ -721,6 +737,8 @@ class IconButton extends StatelessWidget {
       return _SelectableIconButton(
         style: adjustedStyle,
         onPressed: onPressed,
+        onHover: onHover,
+        onLongPress: onPressed != null ? onLongPress : null,
         autofocus: autofocus,
         focusNode: focusNode,
         isSelected: isSelected,
@@ -774,6 +792,8 @@ class IconButton extends StatelessWidget {
       autofocus: autofocus,
       canRequestFocus: onPressed != null,
       onTap: onPressed,
+      onHover: onHover,
+      onLongPress: onPressed != null ? onLongPress : null,
       mouseCursor:
           mouseCursor ?? (onPressed == null ? SystemMouseCursors.basic : SystemMouseCursors.click),
       enableFeedback: effectiveEnableFeedback,
@@ -804,6 +824,10 @@ class IconButton extends StatelessWidget {
     super.debugFillProperties(properties);
     properties.add(StringProperty('tooltip', tooltip, defaultValue: null, quoted: false));
     properties.add(ObjectFlagProperty<VoidCallback>('onPressed', onPressed, ifNull: 'disabled'));
+    properties.add(ObjectFlagProperty<ValueChanged<bool>>('onHover', onHover, ifNull: 'disabled'));
+    properties.add(
+      ObjectFlagProperty<VoidCallback>('onLongPress', onLongPress, ifNull: 'disabled'),
+    );
     properties.add(ColorProperty('color', color, defaultValue: null));
     properties.add(ColorProperty('disabledColor', disabledColor, defaultValue: null));
     properties.add(ColorProperty('focusColor', focusColor, defaultValue: null));
@@ -820,6 +844,8 @@ class _SelectableIconButton extends StatefulWidget {
     this.isSelected,
     this.style,
     this.focusNode,
+    this.onLongPress,
+    this.onHover,
     required this.variant,
     required this.autofocus,
     required this.onPressed,
@@ -835,6 +861,8 @@ class _SelectableIconButton extends StatefulWidget {
   final VoidCallback? onPressed;
   final String? tooltip;
   final Widget child;
+  final VoidCallback? onLongPress;
+  final ValueChanged<bool>? onHover;
 
   @override
   State<_SelectableIconButton> createState() => _SelectableIconButtonState();
@@ -879,6 +907,8 @@ class _SelectableIconButtonState extends State<_SelectableIconButton> {
       autofocus: widget.autofocus,
       focusNode: widget.focusNode,
       onPressed: widget.onPressed,
+      onHover: widget.onHover,
+      onLongPress: widget.onPressed != null ? widget.onLongPress : null,
       variant: widget.variant,
       toggleable: toggleable,
       tooltip: widget.tooltip,
@@ -898,13 +928,15 @@ class _IconButtonM3 extends ButtonStyleButton {
     required super.onPressed,
     super.style,
     super.focusNode,
+    super.onHover,
+    super.onLongPress,
     super.autofocus = false,
     super.statesController,
     required this.variant,
     required this.toggleable,
     super.tooltip,
     required Widget super.child,
-  }) : super(onLongPress: null, onHover: null, onFocusChange: null, clipBehavior: Clip.none);
+  }) : super(onFocusChange: null, clipBehavior: Clip.none);
 
   final _IconButtonVariant variant;
   final bool toggleable;

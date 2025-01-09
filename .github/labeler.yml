@@ -25,6 +25,7 @@
       - '**/linux/**/*'
       - '**/macos/**/*'
       - '**/windows/**/*'
+      - engine/src/flutter/shell/platform/darwin/common/**/*
 
 'a: internationalization':
   - changed-files:
@@ -59,6 +60,16 @@
   - changed-files:
     - any-glob-to-any-file:
       - examples/**/*
+
+'e: embedder':
+  - changed-files:
+    - any-glob-to-any-file:
+      - engine/src/flutter/shell/platform/embedder
+
+'e: impeller':
+  - changed-files:
+    - any-glob-to-any-file:
+      - engine/src/flutter/impeller/**/*
 
 engine:
   - changed-files:
@@ -139,18 +150,44 @@ platform-android:
   - changed-files:
     - any-glob-to-any-file:
       - docs/platform/android/**/*
+      - engine/src/flutter/shell/platform/android/**/*
       - packages/flutter_tools/*android*'
       - packages/flutter_tools/gradle/**/*
 
 platform-ios:
   - changed-files:
     - any-glob-to-any-file:
+      - engine/src/flutter/shell/platform/darwin/common/**/*
+      - engine/src/flutter/shell/platform/darwin/ios/**/*
       - packages/flutter_tools/lib/src/ios/**/*
+
+platform-fuchsia:
+  - changed-files:
+    - any-glob-to-any-file:
+      - engine/src/flutter/shell/platform/fuchsia/**/*
+
+platform-linux:
+  - changed-files:
+    - any-glob-to-any-file:
+      - engine/src/flutter/shell/platform/linux/**/*
+
+platform-macos:
+  - changed-files:
+    - any-glob-to-any-file:
+      - engine/src/flutter/src/flutter/shell/platform/darwin/common/**/*
+      - engine/src/flutter/shell/platform/darwin/macos/**/*
 
 platform-web:
   - changed-files:
     - any-glob-to-any-file:
-      - packages/flutter_web_plugins/**/*
+      - '**/web_sdk/**/*'
+      - engine/src/flutter/lib/web_ui/**/*
+      - packages/flutter_web_plugins
+
+platform-windows:
+  - changed-files:
+    - any-glob-to-any-file:
+      - engine/src/flutter/shell/platform/windows/**/*
 
 'customer: gallery':
   - changed-files:

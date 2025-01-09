@@ -304,6 +304,7 @@ class CapabilitiesVK final : public Capabilities,
   ISize max_render_pass_attachment_size_ = ISize{0, 0};
   bool has_triangle_fans_ = true;
   bool has_primitive_restart_ = true;
+  bool has_framebuffer_fetch_ = true;
   bool is_valid_ = false;
 
   // The embedder.h API is responsible for providing the instance and device

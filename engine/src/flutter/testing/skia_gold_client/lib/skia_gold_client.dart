@@ -20,8 +20,8 @@ const String _kGoldctlKey = 'GOLDCTL';
 const String _kPresubmitEnvName = 'GOLD_TRYJOB';
 const String _kLuciEnvName = 'LUCI_CONTEXT';
 
-const String _skiaGoldHost = 'https://flutter-engine-gold.skia.org';
-const String _instance = 'flutter-engine';
+const String _skiaGoldHost = 'https://flutter-gold.skia.org';
+const String _instance = 'flutter';
 
 /// Uploads images and makes baseline requests to Skia Gold.
 ///
@@ -47,10 +47,16 @@ interface class SkiaGoldClient {
   /// spammy for regular use.
   factory SkiaGoldClient(
     io.Directory workDirectory, {
+    String prefix = 'engine.',
     Map<String, String>? dimensions,
     bool verbose = false,
   }) {
-    return SkiaGoldClient.forTesting(workDirectory, dimensions: dimensions, verbose: verbose);
+    return SkiaGoldClient.forTesting(
+      workDirectory,
+      dimensions: dimensions,
+      verbose: verbose,
+      prefix: prefix,
+    );
   }
 
   /// Creates a [SkiaGoldClient] for testing.
@@ -73,6 +79,7 @@ interface class SkiaGoldClient {
     this.workDirectory, {
     this.dimensions,
     this.verbose = false,
+    String? prefix,
     io.HttpClient? httpClient,
     ProcessManager? processManager,
     StringSink? stderr,
@@ -80,6 +87,7 @@ interface class SkiaGoldClient {
     Engine? engineRoot,
   }) : httpClient = httpClient ?? io.HttpClient(),
        process = processManager ?? const LocalProcessManager(),
+       _prefix = prefix,
        _stderr = stderr ?? io.stderr,
        _environment = environment ?? io.Platform.environment,
        _engineRoot = engineRoot ?? Engine.findWithin() {
@@ -87,6 +95,12 @@ interface class SkiaGoldClient {
     final io.File releaseVersionFile = io.File(
       path.join(_engineRoot.flutterDir.path, '.engine-release.version'),
     );
+
+    if (!_isMainBranch) {
+      _stderr.writeln(
+        'Current git branch (${_environment['GIT_BRANCH']}) is not "main" or "master", so golden files are not checked.',
+      );
+    }
 
     // If the file is not found or cannot be read, we are in an invalid state.
     try {
@@ -111,6 +125,14 @@ interface class SkiaGoldClient {
   /// Returns true if the current environment is a LUCI builder.
   static bool isLuciEnv({Map<String, String>? environment}) {
     return (environment ?? io.Platform.environment).containsKey(_kLuciEnvName);
+  }
+
+  /// Whether the client is currently running on the main branch.
+  bool get _isMainBranch {
+    return switch (_environment['GIT_BRANCH']) {
+      'main' || 'master' => true,
+      _ => false,
+    };
   }
 
   /// Whether the current environment is a presubmit job.
@@ -151,6 +173,9 @@ interface class SkiaGoldClient {
   /// The local [Directory] for the current test context. In this directory, the
   /// client will create image and JSON files for the `goldctl` tool to use.
   final io.Directory workDirectory;
+
+  /// Prefix to add to all test names, if any.
+  final String? _prefix;
 
   String get _tempPath => path.join(workDirectory.path, 'temp');
   String get _keysPath => path.join(workDirectory.path, 'keys.json');
@@ -319,10 +344,22 @@ interface class SkiaGoldClient {
     int pixelColorDelta = 0,
     required int screenshotSize,
   }) async {
+    if (!_isMainBranch) {
+      if (verbose) {
+        _stderr.writeln('Skipping $testName (not on git main branch)');
+      }
+      return;
+    }
+
     assert(_isPresubmit || _isPostsubmit);
 
     // Clean the test name to remove the file extension.
     testName = path.basenameWithoutExtension(testName);
+
+    // Add a prefix to avoid repo-wide conflicts.
+    if (_prefix != null) {
+      testName = '$_prefix$testName';
+    }
 
     // In release branches, we add a unique test suffix to the test name.
     // For example "testName" -> "testName_Release_3_21".
@@ -387,7 +424,7 @@ interface class SkiaGoldClient {
             ..writeln('testing. Golden file images in flutter/engine are triaged ')
             ..writeln('in pre-submit during code review for the given PR.')
             ..writeln()
-            ..writeln('Visit https://flutter-engine-gold.skia.org/ to view and approve ')
+            ..writeln('Visit https://flutter-gold.skia.org/ to view and approve ')
             ..writeln('the image(s), or revert the associated change. For more ')
             ..writeln('information, visit the wiki: ')
             ..writeln(

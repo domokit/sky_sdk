@@ -89,6 +89,8 @@ class AHBSwapchainImplVK final
   ///
   std::unique_ptr<Surface> AcquireNextDrawable();
 
+  void AddFinalCommandBuffer(std::shared_ptr<CommandBuffer> cmd_buffer);
+
  private:
   using AutoSemaSignaler = std::shared_ptr<fml::ScopedCleanupClosure>;
 
@@ -102,6 +104,7 @@ class AHBSwapchainImplVK final
   std::shared_ptr<AHBTextureSourceVK> currently_displayed_texture_
       IPLR_GUARDED_BY(currently_displayed_texture_mutex_);
   std::shared_ptr<fml::Semaphore> pending_presents_;
+  std::shared_ptr<CommandBuffer> pending_cmd_buffer_;
   bool is_valid_ = false;
 
   explicit AHBSwapchainImplVK(

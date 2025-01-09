@@ -258,7 +258,11 @@ static void fl_mock_binary_messenger_send_on_channel(
       g_warning("Failed to decode message: %s", error->message);
     } else {
       g_autoptr(FlValue) response_value = mock_message_channel->callback(
-          self, message_value, mock_message_channel->user_data);
+          self, task, message_value, mock_message_channel->user_data);
+      if (response_value == nullptr) {
+        return;
+      }
+
       response = fl_message_codec_encode_message(mock_message_channel->codec,
                                                  response_value, &error);
       if (response == nullptr) {
@@ -274,8 +278,12 @@ static void fl_mock_binary_messenger_send_on_channel(
       g_warning("Failed to decode method call: %s", error->message);
     } else {
       g_autoptr(FlMethodResponse) response_value =
-          mock_method_channel->callback(self, name, args,
+          mock_method_channel->callback(self, task, name, args,
                                         mock_method_channel->user_data);
+      if (response_value == nullptr) {
+        return;
+      }
+
       response = fl_method_codec_encode_response(mock_method_channel->codec,
                                                  response_value, &error);
       if (response == nullptr) {
@@ -464,6 +472,57 @@ void fl_mock_binary_messenger_set_json_message_channel(
       self, channel, FL_MESSAGE_CODEC(codec), handler, user_data);
 }
 
+void fl_mock_binary_messenger_message_channel_respond(
+    FlMockBinaryMessenger* self,
+    GTask* task,
+    FlMessageCodec* codec,
+    FlValue* value) {
+  g_return_if_fail(FL_IS_MOCK_BINARY_MESSENGER(self));
+  g_autoptr(GError) error = nullptr;
+  g_autoptr(GBytes) response =
+      fl_message_codec_encode_message(codec, value, &error);
+  if (response == nullptr) {
+    g_warning("Failed to encode message: %s", error->message);
+    return;
+  }
+
+  g_task_return_pointer(task, g_bytes_ref(response),
+                        reinterpret_cast<GDestroyNotify>(g_bytes_unref));
+}
+
+void fl_mock_binary_messenger_standard_message_channel_respond(
+    FlMockBinaryMessenger* self,
+    GTask* task,
+    FlValue* value) {
+  g_return_if_fail(FL_IS_MOCK_BINARY_MESSENGER(self));
+
+  g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
+  fl_mock_binary_messenger_message_channel_respond(
+      self, task, FL_MESSAGE_CODEC(codec), value);
+}
+
+void fl_mock_binary_messenger_string_message_channel_respond(
+    FlMockBinaryMessenger* self,
+    GTask* task,
+    FlValue* value) {
+  g_return_if_fail(FL_IS_MOCK_BINARY_MESSENGER(self));
+
+  g_autoptr(FlStringCodec) codec = fl_string_codec_new();
+  fl_mock_binary_messenger_message_channel_respond(
+      self, task, FL_MESSAGE_CODEC(codec), value);
+}
+
+void fl_mock_binary_messenger_json_message_channel_respond(
+    FlMockBinaryMessenger* self,
+    GTask* task,
+    FlValue* value) {
+  g_return_if_fail(FL_IS_MOCK_BINARY_MESSENGER(self));
+
+  g_autoptr(FlJsonMessageCodec) codec = fl_json_message_codec_new();
+  fl_mock_binary_messenger_message_channel_respond(
+      self, task, FL_MESSAGE_CODEC(codec), value);
+}
+
 void fl_mock_binary_messenger_set_method_channel(
     FlMockBinaryMessenger* self,
     const gchar* channel,
@@ -471,7 +530,6 @@ void fl_mock_binary_messenger_set_method_channel(
     FlMockBinaryMessengerMethodChannelHandler handler,
     gpointer user_data) {
   g_return_if_fail(FL_IS_MOCK_BINARY_MESSENGER(self));
-
   g_hash_table_insert(self->mock_method_channels, g_strdup(channel),
                       mock_method_channel_new(handler, codec, user_data));
 }
@@ -493,9 +551,51 @@ void fl_mock_binary_messenger_set_json_method_channel(
     FlMockBinaryMessengerMethodChannelHandler handler,
     gpointer user_data) {
   g_return_if_fail(FL_IS_MOCK_BINARY_MESSENGER(self));
+
   g_autoptr(FlJsonMethodCodec) codec = fl_json_method_codec_new();
   fl_mock_binary_messenger_set_method_channel(
       self, channel, FL_METHOD_CODEC(codec), handler, user_data);
+}
+
+void fl_mock_binary_messenger_method_channel_respond(
+    FlMockBinaryMessenger* self,
+    GTask* task,
+    FlMethodCodec* codec,
+    FlMethodResponse* response) {
+  g_return_if_fail(FL_IS_MOCK_BINARY_MESSENGER(self));
+
+  g_autoptr(GError) error = nullptr;
+  g_autoptr(GBytes) message =
+      fl_method_codec_encode_response(codec, response, &error);
+  if (message == nullptr) {
+    g_warning("Failed to encode method response: %s", error->message);
+    return;
+  }
+
+  g_task_return_pointer(task, g_bytes_ref(message),
+                        reinterpret_cast<GDestroyNotify>(g_bytes_unref));
+}
+
+void fl_mock_binary_messenger_standard_method_channel_respond(
+    FlMockBinaryMessenger* self,
+    GTask* task,
+    FlMethodResponse* response) {
+  g_return_if_fail(FL_IS_MOCK_BINARY_MESSENGER(self));
+
+  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
+  fl_mock_binary_messenger_method_channel_respond(
+      self, task, FL_METHOD_CODEC(codec), response);
+}
+
+void fl_mock_binary_messenger_json_method_channel_respond(
+    FlMockBinaryMessenger* self,
+    GTask* task,
+    FlMethodResponse* response) {
+  g_return_if_fail(FL_IS_MOCK_BINARY_MESSENGER(self));
+
+  g_autoptr(FlJsonMethodCodec) codec = fl_json_method_codec_new();
+  fl_mock_binary_messenger_method_channel_respond(
+      self, task, FL_METHOD_CODEC(codec), response);
 }
 
 void fl_mock_binary_messenger_set_event_channel(

@@ -14,23 +14,6 @@ typedef struct {
   gboolean handled;
 } KeyEventData;
 
-static FlValue* key_event_cb(FlMockBinaryMessenger* messenger,
-                             FlValue* message,
-                             gpointer user_data) {
-  KeyEventData* data = static_cast<KeyEventData*>(user_data);
-
-  g_autofree gchar* message_string = fl_value_to_string(message);
-  EXPECT_STREQ(message_string, data->expected_message);
-
-  FlValue* response = fl_value_new_map();
-  fl_value_set_string_take(response, "handled",
-                           fl_value_new_bool(data->handled));
-
-  free(data);
-
-  return response;
-}
-
 static void set_key_event_channel(FlMockBinaryMessenger* messenger,
                                   const gchar* expected_message,
                                   gboolean handled) {
@@ -38,7 +21,21 @@ static void set_key_event_channel(FlMockBinaryMessenger* messenger,
   data->expected_message = expected_message;
   data->handled = handled;
   fl_mock_binary_messenger_set_json_message_channel(
-      messenger, "flutter/keyevent", key_event_cb, data);
+      messenger, "flutter/keyevent",
+      [](FlMockBinaryMessenger* messenger, GTask* task, FlValue* message,
+         gpointer user_data) {
+        g_autofree KeyEventData* data = static_cast<KeyEventData*>(user_data);
+
+        g_autofree gchar* message_string = fl_value_to_string(message);
+        EXPECT_STREQ(message_string, data->expected_message);
+
+        FlValue* response = fl_value_new_map();
+        fl_value_set_string_take(response, "handled",
+                                 fl_value_new_bool(data->handled));
+
+        return response;
+      },
+      data);
 }
 
 // Test sending a letter "A";

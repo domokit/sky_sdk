@@ -97,8 +97,10 @@ bool AtlasContents::Render(const ContentContext& renderer,
     pass.SetCommandLabel("DrawAtlas Blend");
 #endif  // IMPELLER_DEBUG
     pass.SetVertexBuffer(geometry_->CreateBlendVertexBuffer(host_buffer));
-    pass.SetPipeline(
-        renderer.GetPorterDuffBlendPipeline(OptionsFromPass(pass)));
+    auto inverted_blend_mode =
+        InvertPorterDuffBlend(blend_mode).value_or(BlendMode::kSource);
+    pass.SetPipeline(renderer.GetPorterDuffPipeline(inverted_blend_mode,
+                                                    OptionsFromPass(pass)));
 
     FS::FragInfo frag_info;
     VS::FrameInfo frame_info;
@@ -110,15 +112,6 @@ bool AtlasContents::Render(const ContentContext& renderer,
     frag_info.output_alpha = alpha_;
     frag_info.input_alpha = 1.0;
 
-    auto inverted_blend_mode =
-        InvertPorterDuffBlend(blend_mode).value_or(BlendMode::kSource);
-    auto blend_coefficients =
-        kPorterDuffCoefficients[static_cast<int>(inverted_blend_mode)];
-    frag_info.src_coeff = blend_coefficients[0];
-    frag_info.src_coeff_dst_alpha = blend_coefficients[1];
-    frag_info.dst_coeff = blend_coefficients[2];
-    frag_info.dst_coeff_src_alpha = blend_coefficients[3];
-    frag_info.dst_coeff_src_color = blend_coefficients[4];
     // These values are ignored on platforms that natively support decal.
     frag_info.tmx = static_cast<int>(Entity::TileMode::kDecal);
     frag_info.tmy = static_cast<int>(Entity::TileMode::kDecal);

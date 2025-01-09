@@ -470,7 +470,7 @@ std::optional<Entity> BlendFilterContents::CreateForegroundPorterDuffBlend(
     pass.SetVertexBuffer(std::move(vtx_buffer));
     auto options = OptionsFromPassAndEntity(pass, entity);
     options.primitive_type = PrimitiveType::kTriangleStrip;
-    pass.SetPipeline(renderer.GetPorterDuffBlendPipeline(options));
+    pass.SetPipeline(renderer.GetPorterDuffPipeline(blend_mode, options));
 
     FS::FragInfo frag_info;
     VS::FrameInfo frame_info;
@@ -496,14 +496,6 @@ std::optional<Entity> BlendFilterContents::CreateForegroundPorterDuffBlend(
             ? dst_snapshot->opacity * alpha.value_or(1.0)
             : 1.0;
     frag_info.output_alpha = 1.0;
-
-    auto blend_coefficients =
-        kPorterDuffCoefficients[static_cast<int>(blend_mode)];
-    frag_info.src_coeff = blend_coefficients[0];
-    frag_info.src_coeff_dst_alpha = blend_coefficients[1];
-    frag_info.dst_coeff = blend_coefficients[2];
-    frag_info.dst_coeff_src_alpha = blend_coefficients[3];
-    frag_info.dst_coeff_src_color = blend_coefficients[4];
 
     FS::BindFragInfo(pass, host_buffer.EmplaceUniform(frag_info));
     VS::BindFrameInfo(pass, host_buffer.EmplaceUniform(frame_info));

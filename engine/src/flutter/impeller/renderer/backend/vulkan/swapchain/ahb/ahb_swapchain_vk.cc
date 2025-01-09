@@ -67,6 +67,12 @@ vk::Format AHBSwapchainVK::GetSurfaceFormat() const {
 }
 
 // |SwapchainVK|
+void AHBSwapchainVK::AddFinalCommandBuffer(
+    std::shared_ptr<CommandBuffer> cmd_buffer) const {
+  return impl_->AddFinalCommandBuffer(cmd_buffer);
+}
+
+// |SwapchainVK|
 void AHBSwapchainVK::UpdateSurfaceSize(const ISize& size) {
   if (impl_ && impl_->GetSize() == size) {
     return;

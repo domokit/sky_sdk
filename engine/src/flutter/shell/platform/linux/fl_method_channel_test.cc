@@ -17,8 +17,8 @@ TEST(FlMethodChannelTest, InvokeMethod) {
   g_autoptr(FlMockBinaryMessenger) messenger = fl_mock_binary_messenger_new();
   fl_mock_binary_messenger_set_standard_method_channel(
       messenger, "test",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         EXPECT_STREQ(name, "Test");
         EXPECT_EQ(fl_value_get_type(args), FL_VALUE_TYPE_STRING);
         EXPECT_STREQ(fl_value_get_string(args), "Marco!");
@@ -63,8 +63,8 @@ TEST(FlMethodChannelTest, InvokeMethodNullptrArgsMessage) {
   g_autoptr(FlMockBinaryMessenger) messenger = fl_mock_binary_messenger_new();
   fl_mock_binary_messenger_set_standard_method_channel(
       messenger, "test",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         EXPECT_STREQ(name, "Test");
         EXPECT_EQ(fl_value_get_type(args), FL_VALUE_TYPE_NULL);
         return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
@@ -104,8 +104,8 @@ TEST(FlMethodChannelTest, InvokeMethodError) {
   g_autoptr(FlMockBinaryMessenger) messenger = fl_mock_binary_messenger_new();
   fl_mock_binary_messenger_set_standard_method_channel(
       messenger, "test",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         EXPECT_STREQ(name, "Test");
         g_autoptr(FlValue) details = fl_value_new_string("DETAILS");
         return FL_METHOD_RESPONSE(
@@ -154,8 +154,8 @@ TEST(FlMethodChannelTest, InvokeMethodNotImplemented) {
   g_autoptr(FlMockBinaryMessenger) messenger = fl_mock_binary_messenger_new();
   fl_mock_binary_messenger_set_standard_method_channel(
       messenger, "test",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         EXPECT_STREQ(name, "Test");
         return FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
       },
@@ -660,8 +660,8 @@ TEST(FlMethodChannelTest, CustomType) {
   g_autoptr(FlMockBinaryMessenger) messenger = fl_mock_binary_messenger_new();
   fl_mock_binary_messenger_set_standard_method_channel(
       messenger, "test",
-      [](FlMockBinaryMessenger* messenger, const gchar* name, FlValue* args,
-         gpointer user_data) {
+      [](FlMockBinaryMessenger* messenger, GTask* task, const gchar* name,
+         FlValue* args, gpointer user_data) {
         return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
       },
       nullptr);

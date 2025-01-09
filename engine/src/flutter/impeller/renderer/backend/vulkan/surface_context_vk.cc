@@ -129,6 +129,12 @@ bool SurfaceContextVK::FlushCommandBuffers() {
   return parent_->FlushCommandBuffers();
 }
 
+bool SurfaceContextVK::SubmitOnscreen(
+    std::shared_ptr<CommandBuffer> cmd_buffer) {
+  swapchain_->AddFinalCommandBuffer(std::move(cmd_buffer));
+  return true;
+}
+
 RuntimeStageBackend SurfaceContextVK::GetRuntimeStageBackend() const {
   return parent_->GetRuntimeStageBackend();
 }

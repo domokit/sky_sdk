@@ -39,4 +39,6 @@ jobs:
           labels: |
             cp: review
           title: '[github actions] testing purposes'
-          reviewers: xilaizhang
+          reviewers:
+            - christopherfujino
+            - jmagman

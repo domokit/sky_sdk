@@ -52,6 +52,7 @@ void main() {
           remoteTerminatedHandshakeHandler,
           couldNotOpenCacheDirectoryHandler,
           incompatibleCompileSdk35AndAgpVersionHandler,
+          usageOfV1EmbeddingReferencesHandler,
           jlinkErrorWithJava21AndSourceCompatibility,
           incompatibleKotlinVersionHandler,
         ]),
@@ -1476,6 +1477,50 @@ ERROR:/Users/mackall/.gradle/caches/transforms-3/bd2c84591857c6d4c308221ffece862
           '',
         ),
       );
+    },
+    overrides: <Type, Generator>{
+      GradleUtils: () => FakeGradleUtils(),
+      Platform: () => fakePlatform('android'),
+      FileSystem: () => fileSystem,
+      ProcessManager: () => processManager,
+    },
+  );
+
+  testUsingContext(
+    'Usage of removed v1 embedding references',
+    () async {
+      const String errorExample = r'''
+/Users/jesswon/.pub-cache/hosted/pub.dev/video_player_android-2.5.0/android/src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java:42: error: cannot find symbol
+  private VideoPlayerPlugin(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+                                                                   ^
+  symbol:   class Registrar
+  location: interface PluginRegistry
+1 error
+
+FAILURE: Build failed with an exception.
+    ''';
+
+      final FlutterProject project = FlutterProject.fromDirectoryTest(fileSystem.currentDirectory);
+      await usageOfV1EmbeddingReferencesHandler.handler(
+        line: errorExample,
+        project: project,
+        usesAndroidX: true,
+      );
+
+      // Main fix text.
+      expect(
+        testLogger.statusText,
+        contains(
+          "To fix this error, please upgrade your current package's dependencies to latest versions by",
+        ),
+      );
+      expect(testLogger.statusText, contains('running `flutter pub upgrade`.'));
+      // Text and link to file an issue.
+      expect(
+        testLogger.statusText,
+        contains('If that does not work, please file an issue for the problematic plugin(s) here:'),
+      );
+      expect(testLogger.statusText, contains('https://github.com/flutter/flutter/issues'));
     },
     overrides: <Type, Generator>{
       GradleUtils: () => FakeGradleUtils(),

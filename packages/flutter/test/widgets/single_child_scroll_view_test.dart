@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -1129,51 +1127,5 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.testTextInput.isVisible, isFalse);
-  });
-
-  testWidgets('keyboardDismissBehavior on scroll without a drag test', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: SizedBox(
-            height: 1000,
-            child: SingleChildScrollView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              child: Column(
-                children: <Widget>[
-                  Autocomplete<String>(
-                    optionsBuilder: (TextEditingValue textEditingValue) {
-                      return <String>['aardvark', 'bobcat', 'chameleon'].where((String option) {
-                        return option.contains(textEditingValue.text.toLowerCase());
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 2000),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-
-    await tester.tap(find.byType(Autocomplete<String>));
-    await tester.pump();
-
-    await tester.enterText(find.byType(RawAutocomplete<String>), 'aard');
-    await tester.pump();
-
-    expect(find.text('aardvark'), findsOneWidget);
-
-    final TestPointer testPointer = TestPointer(1, PointerDeviceKind.mouse);
-    final Offset scrollStart = tester.getCenter(find.byType(SingleChildScrollView));
-
-    testPointer.hover(scrollStart);
-    await tester.sendEventToBinding(
-      testPointer.scroll(Offset(scrollStart.dx, scrollStart.dy - 100)),
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.text('aardvark'), findsNothing);
   });
 }

@@ -2365,17 +2365,19 @@ Future<void> verifyNullInitializedDebugExpensiveFields(
     final _DebugOnlyFieldVisitor visitor = _DebugOnlyFieldVisitor(parsedFile);
     visitor.visitCompilationUnit(parsedFile.unit);
     for (final AstNode badNode in visitor.errors) {
-      errors.add('${file.path}:${parsedFile.lineInfo.getLocation(badNode.offset).lineNumber}');
+      errors.add(
+        '${file.path}:${parsedFile.lineInfo.getLocation(badNode.offset).lineNumber}: fields annotated with @_debugOnly must null initialize.',
+      );
     }
   }
   if (errors.isNotEmpty) {
     foundError(<String>[
-      '${bold}ERROR: ${red}fields annotated with @_debugOnly must null initialize.$reset',
-      'to ensure both the field and initializer are removed from profile/release mode.',
-      'These fields should be written as:\n',
-      'field = kDebugMode ? <DebugValue> : null;\n',
-      'Errors were found in the following files:',
       ...errors,
+      '',
+      '$bold${red}Fields annotated with @_debugOnly must null initialize,$reset',
+      'to ensure both the field and initializer are removed from profile/release mode.',
+      'These fields should be written as:',
+      'field = kDebugMode ? <DebugValue> : null;',
     ]);
   }
 }
@@ -2402,10 +2404,11 @@ Future<void> verifyTabooDocumentation(String workingDirectory, {int minimumMatch
   }
   if (errors.isNotEmpty) {
     foundError(<String>[
+      ...errors,
+      '',
       '${bold}Avoid the word "simply" in documentation. See https://github.com/flutter/flutter/blob/main/docs/contributing/Style-guide-for-Flutter-repo.md#use-the-passive-voice-recommend-do-not-require-never-say-things-are-simple for details.$reset',
       '${bold}In many cases these words can be omitted without loss of generality; in other cases it may require a bit of rewording to avoid implying that the task is simple.$reset',
       '${bold}Similarly, avoid using "note:" or the phrase "note that". See https://github.com/flutter/flutter/blob/main/docs/contributing/Style-guide-for-Flutter-repo.md#avoid-empty-prose for details.$reset',
-      ...errors,
     ]);
   }
 }

@@ -254,6 +254,7 @@ class CanvasDlDispatcher : public DlDispatcherBase {
  public:
   CanvasDlDispatcher(ContentContext& renderer,
                      RenderTarget& render_target,
+                     bool is_onscreen,
                      bool has_root_backdrop_filter,
                      flutter::DlBlendMode max_root_blend_mode,
                      IRect cull_rect);
@@ -390,11 +391,15 @@ std::shared_ptr<Texture> DisplayListToTexture(
     bool reset_host_buffer = true,
     bool generate_mips = false);
 
-/// Render the provided display list to the render target.
-bool RenderToOnscreen(ContentContext& context, RenderTarget render_target,
+/// @brief Render the provided display list to the render target.
+///
+/// If [is_onscreen] is true, then the onscreen command buffer will be
+/// submitted via Context::SubmitOnscreen.
+bool RenderToTarget(ContentContext& context, RenderTarget render_target,
                          const sk_sp<flutter::DisplayList>& display_list,
                          SkIRect cull_rect,
-                         bool reset_host_buffer);
+                         bool reset_host_buffer,
+                         bool is_onscreen = true);
 
 }  // namespace impeller
 

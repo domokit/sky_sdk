@@ -13,7 +13,6 @@ import 'package:process/process.dart';
 import 'package:snippets/snippets.dart';
 
 const String _kElementOption = 'element';
-const String _kFormatOutputOption = 'format-output';
 const String _kHelpOption = 'help';
 const String _kInputOption = 'input';
 const String _kLibraryOption = 'library';
@@ -166,11 +165,6 @@ void main(List<String> argList) {
     help: 'A unique serial number for this snippet tool invocation.',
   );
   parser.addFlag(
-    _kFormatOutputOption,
-    defaultsTo: true,
-    help: 'Applies the Dart formatter to the published/extracted sample code.',
-  );
-  parser.addFlag(
     _kHelpOption,
     negatable: false,
     help: 'Prints help documentation for this command',
@@ -201,7 +195,6 @@ void main(List<String> argList) {
     return;
   }
 
-  final bool formatOutput = args[_kFormatOutputOption]! as bool;
   final String packageName = args[_kPackageOption] as String? ?? '';
   final String libraryName = args[_kLibraryOption] as String? ?? '';
   final String elementName = args[_kElementOption] as String? ?? '';
@@ -268,7 +261,7 @@ void main(List<String> argList) {
 
   for (final CodeSample sample in element.samples) {
     sample.metadata.addAll(metadata);
-    snippetGenerator.generateCode(sample, output: output, formatOutput: formatOutput);
+    snippetGenerator.generateCode(sample, output: output);
     print(snippetGenerator.generateHtml(sample));
   }
 

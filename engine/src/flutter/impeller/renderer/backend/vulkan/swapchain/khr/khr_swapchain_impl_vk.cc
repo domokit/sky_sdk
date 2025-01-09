@@ -13,11 +13,12 @@
 #include "impeller/renderer/backend/vulkan/gpu_tracer_vk.h"
 #include "impeller/renderer/backend/vulkan/swapchain/khr/khr_swapchain_image_vk.h"
 #include "impeller/renderer/backend/vulkan/swapchain/surface_vk.h"
+#include "impeller/renderer/backend/vulkan/texture_vk.h"
 #include "impeller/renderer/context.h"
 
 namespace impeller {
 
-static constexpr size_t kMaxFramesInFlight = 3u;
+static constexpr size_t kMaxFramesInFlight = 2u;
 
 struct KHRFrameSynchronizerVK {
   vk::UniqueFence acquire;
@@ -25,6 +26,8 @@ struct KHRFrameSynchronizerVK {
   vk::UniqueSemaphore present_ready;
   std::shared_ptr<CommandBuffer> final_cmd_buffer;
   bool is_valid = false;
+  // Whether the renderer attached an onscreen command buffer to render to.
+  bool has_onscreen = false;
 
   explicit KHRFrameSynchronizerVK(const vk::Device& device) {
     auto acquire_res = device.createFenceUnique(
@@ -378,6 +381,13 @@ KHRSwapchainImplVK::AcquireResult KHRSwapchainImplVK::AcquireNextDrawable() {
       )};
 }
 
+void KHRSwapchainImplVK::AddFinalCommandBuffer(
+    std::shared_ptr<CommandBuffer> cmd_buffer) {
+  const auto& sync = synchronizers_[current_frame_];
+  sync->final_cmd_buffer = std::move(cmd_buffer);
+  sync->has_onscreen = true;
+}
+
 bool KHRSwapchainImplVK::Present(
     const std::shared_ptr<KHRSwapchainImageVK>& image,
     uint32_t index) {
@@ -393,7 +403,10 @@ bool KHRSwapchainImplVK::Present(
   //----------------------------------------------------------------------------
   /// Transition the image to color-attachment-optimal.
   ///
-  sync->final_cmd_buffer = context.CreateCommandBuffer();
+  if (!sync->has_onscreen) {
+    sync->final_cmd_buffer = context.CreateCommandBuffer();
+  }
+  sync->has_onscreen = false;
   if (!sync->final_cmd_buffer) {
     return false;
   }

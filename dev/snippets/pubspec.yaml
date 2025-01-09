@@ -7,7 +7,6 @@ environment:
 dependencies:
   analyzer: 6.11.0
   args: 2.6.0
-  dart_style: 2.3.7
   file: 7.0.1
   meta: 1.16.0
   path: 1.9.1
@@ -63,4 +62,4 @@ dev_dependencies:
 executables:
   snippets:
 
-# PUBSPEC CHECKSUM: a1c2
+# PUBSPEC CHECKSUM: 5630

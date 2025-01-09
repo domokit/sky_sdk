@@ -21,6 +21,7 @@
 #include "impeller/renderer/backend/vulkan/queue_vk.h"
 #include "impeller/renderer/backend/vulkan/sampler_library_vk.h"
 #include "impeller/renderer/backend/vulkan/shader_library_vk.h"
+#include "impeller/renderer/backend/vulkan/workarounds_vk.h"
 #include "impeller/renderer/capabilities.h"
 #include "impeller/renderer/command_buffer.h"
 #include "impeller/renderer/command_queue.h"
@@ -131,11 +132,17 @@ class ContextVK final : public Context,
   // |Context|
   const std::shared_ptr<const Capabilities>& GetCapabilities() const override;
 
+  // |Context|
+  virtual bool SubmitOnscreen(
+      std::shared_ptr<CommandBuffer> cmd_buffer) override;
+
   const std::shared_ptr<YUVConversionLibraryVK>& GetYUVConversionLibrary()
       const;
 
   // |Context|
   void Shutdown() override;
+
+  const WorkaroundsVK& GetWorkarounds() const;
 
   void SetOffscreenFormat(PixelFormat pixel_format);
 
@@ -277,6 +284,7 @@ class ContextVK final : public Context,
   std::shared_ptr<GPUTracerVK> gpu_tracer_;
   std::shared_ptr<CommandQueue> command_queue_vk_;
   std::shared_ptr<const IdleWaiter> idle_waiter_vk_;
+  WorkaroundsVK workarounds_;
 
   using DescriptorPoolMap =
       std::unordered_map<std::thread::id, std::shared_ptr<DescriptorPoolVK>>;

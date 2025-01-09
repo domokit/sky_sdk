@@ -220,6 +220,28 @@ void ContentContextOptions::ApplyToPipelineDescriptor(
   desc.SetPolygonMode(wireframe ? PolygonMode::kLine : PolygonMode::kFill);
 }
 
+std::array<std::vector<Scalar>, 15> GetPorterDuffSpecConstants(
+    bool supports_decal) {
+  Scalar x = supports_decal ? 1 : 0;
+  return {{
+      {x, 0, 0, 0, 0, 0},    // Clear
+      {x, 1, 0, 0, 0, 0},    // Source
+      {x, 0, 0, 1, 0, 0},    // Destination
+      {x, 1, 0, 1, -1, 0},   // SourceOver
+      {x, 1, -1, 1, 0, 0},   // DestinationOver
+      {x, 0, 1, 0, 0, 0},    // SourceIn
+      {x, 0, 0, 0, 1, 0},    // DestinationIn
+      {x, 1, -1, 0, 0, 0},   // SourceOut
+      {x, 0, 0, 1, -1, 0},   // DestinationOut
+      {x, 0, 1, 1, -1, 0},   // SourceATop
+      {x, 1, -1, 0, 1, 0},   // DestinationATop
+      {x, 1, -1, 1, -1, 0},  // Xor
+      {x, 1, 0, 1, 0, 0},    // Plus
+      {x, 0, 0, 0, 0, 1},    // Modulate
+      {x, 0, 0, 1, 0, -1},   // Screen
+  }};
+}
+
 template <typename PipelineT>
 static std::unique_ptr<PipelineT> CreateDefaultPipeline(
     const Context& context) {
@@ -352,9 +374,40 @@ ContentContext::ContentContext(
     border_mask_blur_pipelines_.CreateDefault(*context_, options_trianglestrip);
     color_matrix_color_filter_pipelines_.CreateDefault(*context_,
                                                        options_trianglestrip);
-    porter_duff_blend_pipelines_.CreateDefault(*context_, options_trianglestrip,
-                                               {supports_decal});
     vertices_uber_shader_.CreateDefault(*context_, options, {supports_decal});
+
+    const std::array<std::vector<Scalar>, 15> porter_duff_constants =
+        GetPorterDuffSpecConstants(supports_decal);
+    clear_blend_pipelines_.CreateDefault(*context_, options_trianglestrip,
+                                         porter_duff_constants[0]);
+    source_blend_pipelines_.CreateDefault(*context_, options_trianglestrip,
+                                          porter_duff_constants[1]);
+    destination_blend_pipelines_.CreateDefault(*context_, options_trianglestrip,
+                                               porter_duff_constants[2]);
+    source_over_blend_pipelines_.CreateDefault(*context_, options_trianglestrip,
+                                               porter_duff_constants[3]);
+    destination_over_blend_pipelines_.CreateDefault(
+        *context_, options_trianglestrip, porter_duff_constants[4]);
+    source_in_blend_pipelines_.CreateDefault(*context_, options_trianglestrip,
+                                             porter_duff_constants[5]);
+    destination_in_blend_pipelines_.CreateDefault(
+        *context_, options_trianglestrip, porter_duff_constants[6]);
+    source_out_blend_pipelines_.CreateDefault(*context_, options_trianglestrip,
+                                              porter_duff_constants[7]);
+    destination_out_blend_pipelines_.CreateDefault(
+        *context_, options_trianglestrip, porter_duff_constants[8]);
+    source_a_top_blend_pipelines_.CreateDefault(
+        *context_, options_trianglestrip, porter_duff_constants[9]);
+    destination_a_top_blend_pipelines_.CreateDefault(
+        *context_, options_trianglestrip, porter_duff_constants[10]);
+    xor_blend_pipelines_.CreateDefault(*context_, options_trianglestrip,
+                                       porter_duff_constants[11]);
+    plus_blend_pipelines_.CreateDefault(*context_, options_trianglestrip,
+                                        porter_duff_constants[12]);
+    modulate_blend_pipelines_.CreateDefault(*context_, options_trianglestrip,
+                                            porter_duff_constants[13]);
+    screen_blend_pipelines_.CreateDefault(*context_, options_trianglestrip,
+                                          porter_duff_constants[14]);
   }
 
   if (context_->GetCapabilities()->SupportsFramebufferFetch()) {

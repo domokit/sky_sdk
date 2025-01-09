@@ -66,6 +66,7 @@ final Set<String> skippedPaths = <String>{
   r'flutter/third_party/dart/runtime/bin/ffi_test',
   r'flutter/third_party/dart/runtime/docs',
   r'flutter/third_party/dart/runtime/vm/service',
+  r'flutter/third_party/dart/sdk/lib/html/dart2js', // generated from other sources
   r'flutter/third_party/dart/sdk/lib/html/doc',
   r'flutter/third_party/dart/sdk/lib/svg/dart2js', // generated from other sources
   r'flutter/third_party/dart/third_party/binary_size', // not linked in

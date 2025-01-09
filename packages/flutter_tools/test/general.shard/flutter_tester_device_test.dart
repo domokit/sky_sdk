@@ -333,7 +333,7 @@ class TestFlutterTesterDevice extends FlutterTesterTestDevice {
     super.flutterProject,
   }) : super(
          id: 999,
-         shellPath: '/',
+         flutterTesterBinPath: '/',
          logger: BufferLogger.test(),
          debuggingOptions: DebuggingOptions.enabled(
            const BuildInfo(

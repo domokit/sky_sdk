@@ -133,11 +133,12 @@ bool EmbedderExternalView::Render(const EmbedderRenderTarget& render_target,
     SkIRect sk_cull_rect =
         SkIRect::MakeWH(cull_rect.GetWidth(), cull_rect.GetHeight());
 
-    return impeller::RenderToOnscreen(aiks_context->GetContentContext(),  //
-                                      *impeller_target,                   //
-                                      display_list,                       //
-                                      sk_cull_rect,                       //
-                                      /*reset_host_buffer=*/true          //
+    return impeller::RenderToTarget(aiks_context->GetContentContext(),  //
+                                    *impeller_target,                   //
+                                    display_list,                       //
+                                    sk_cull_rect,                       //
+                                    /*reset_host_buffer=*/true,         //
+                                    /*is_onscreen=*/false               //
     );
   }
 #endif  // IMPELLER_SUPPORTS_RENDERING

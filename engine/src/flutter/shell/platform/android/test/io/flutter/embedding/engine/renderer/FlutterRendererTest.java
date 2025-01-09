@@ -766,7 +766,8 @@ public class FlutterRendererTest {
   }
 
   @Test
-  public void ImageReaderSurfaceProducerIsDestroyedOnTrimMemory() {
+  @SuppressWarnings({"deprecation", "removal"})
+  public void ImageReaderSurfaceProducerIsCleanedUpOnTrimMemory() {
     FlutterRenderer flutterRenderer = engineRule.getFlutterEngine().getRenderer();
     TextureRegistry.SurfaceProducer producer = flutterRenderer.createSurfaceProducer();
 
@@ -779,10 +780,65 @@ public class FlutterRendererTest {
     flutterRenderer.onTrimMemory(TRIM_MEMORY_BACKGROUND);
 
     // Verify.
-    verify(callback).onSurfaceDestroyed();
+    verify(callback).onSurfaceCleanup();
+  }
+
+  private static class TestSurfaceState {
+    Surface beingDestroyed;
   }
 
   @Test
+  public void ImageReaderSurfaceProducerSignalsCleanupBeforeDestroying() throws Exception {
+    // Regression test for https://github.com/flutter/flutter/issues/160933.
+    FlutterRenderer flutterRenderer = engineRule.getFlutterEngine().getRenderer();
+    TextureRegistry.SurfaceProducer producer = flutterRenderer.createSurfaceProducer();
+
+    // Ensure the callbacks were actually called.
+    // Note this needs to be an object in order to be accessed in the callback.
+    final TestSurfaceState state = new TestSurfaceState();
+    state.beingDestroyed = producer.getSurface();
+
+    // Create and set a callback that ensures the surface is not yet released.
+    CountDownLatch latch = new CountDownLatch(1);
+    producer.setCallback(
+        new TextureRegistry.SurfaceProducer.Callback() {
+          @Override
+          public void onSurfaceCleanup() {
+            state.beingDestroyed = producer.getSurface();
+            assertTrue("Not released yet", state.beingDestroyed.isValid());
+
+            state.beingDestroyed.release();
+            latch.countDown();
+          }
+        });
+
+    // Trim.
+    flutterRenderer.onTrimMemory(TRIM_MEMORY_BACKGROUND);
+    latch.await();
+
+    // Destroy.
+    assertFalse("Should be destroyed", state.beingDestroyed.isValid());
+  }
+
+  @Test
+  @SuppressWarnings({"deprecation", "removal"})
+  public void ImageReaderSurfaceProducerSignalsCleanupCallsDestroy() throws Exception {
+    CountDownLatch latch = new CountDownLatch(1);
+    TextureRegistry.SurfaceProducer.Callback callback =
+        new TextureRegistry.SurfaceProducer.Callback() {
+          @Override
+          public void onSurfaceDestroyed() {
+            latch.countDown();
+          }
+        };
+
+    // Tests that cleanup, if not provided, just calls destroyed.
+    callback.onSurfaceCleanup();
+    latch.await();
+  }
+
+  @Test
+  @SuppressWarnings({"deprecation", "removal"})
   public void ImageReaderSurfaceProducerUnsubscribesWhenReleased() {
     // Regression test for https://github.com/flutter/flutter/issues/156434.
     FlutterRenderer flutterRenderer = engineRule.getFlutterEngine().getRenderer();
@@ -800,10 +856,12 @@ public class FlutterRendererTest {
     flutterRenderer.onTrimMemory(TRIM_MEMORY_BACKGROUND);
 
     // Verify was not called.
+    verify(callback, never()).onSurfaceCleanup();
     verify(callback, never()).onSurfaceDestroyed();
   }
 
   @Test
+  @SuppressWarnings({"deprecation", "removal"})
   public void ImageReaderSurfaceProducerIsCreatedOnLifecycleResume() throws Exception {
     FlutterRenderer flutterRenderer = engineRule.getFlutterEngine().getRenderer();
     TextureRegistry.SurfaceProducer producer = flutterRenderer.createSurfaceProducer();

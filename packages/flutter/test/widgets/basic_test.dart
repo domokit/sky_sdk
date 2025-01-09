@@ -802,7 +802,7 @@ void main() {
   testWidgets('Inconsequential golden test', (WidgetTester tester) async {
     // The test validates the Flutter Gold integration. Any changes to the
     // golden file can be approved at any time.
-    await tester.pumpWidget(RepaintBoundary(child: Container(color: const Color(0xFF161145))));
+    await tester.pumpWidget(RepaintBoundary(child: Container(color: const Color(0xAAA61145))));
 
     await tester.pumpAndSettle();
     await expectLater(

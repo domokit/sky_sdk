@@ -674,7 +674,11 @@ class FlutterWebPlatform extends PlatformPlugin {
     }
 
     final Completer<WebSocketChannel> completer = Completer<WebSocketChannel>.sync();
-    final String path = _webSocketHandler.create(webSocketHandler(completer.complete));
+    final String path = _webSocketHandler.create(
+      webSocketHandler((WebSocketChannel webSocket, _) {
+        completer.complete(webSocket);
+      }),
+    );
     final Uri webSocketUrl = url.replace(scheme: 'ws').resolve(path);
     final Uri hostUrl = url
         .resolve('static/index.html')

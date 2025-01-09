@@ -7,6 +7,7 @@
 
 #include "flutter/impeller/base/config.h"
 #include "impeller/geometry/rect.h"
+#include "impeller/renderer/backend/vulkan/workarounds_vk.h"
 #include "impeller/renderer/blit_pass.h"
 
 namespace impeller {
@@ -23,8 +24,10 @@ class BlitPassVK final : public BlitPass {
   friend class CommandBufferVK;
 
   std::shared_ptr<CommandBufferVK> command_buffer_;
+  const WorkaroundsVK workarounds_;
 
-  explicit BlitPassVK(std::shared_ptr<CommandBufferVK> command_buffer);
+  explicit BlitPassVK(std::shared_ptr<CommandBufferVK> command_buffer,
+                      const WorkaroundsVK& workarounds);
 
   // |BlitPass|
   bool IsValid() const override;

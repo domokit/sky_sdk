@@ -334,7 +334,12 @@ final class PlatformViewContainer extends SliceContainer {
         final double blRadiusY = clip.rrect.blRadiusY / devicePixelRatio;
         return 'rect(${top}px ${right}px ${bottom}px ${left}px round ${tlRadiusX}px ${trRadiusX}px ${brRadiusX}px ${blRadiusX}px / ${tlRadiusY}px ${trRadiusY}px ${brRadiusY}px ${blRadiusY}px)';
       case PlatformViewPathClip():
-        clipPath = clip.path;
+        ScenePath path = clip.path;
+        if (devicePixelRatio != 1.0) {
+          final dprTransform = Matrix4.identity()..scale(1 / devicePixelRatio);
+          path = path.transform(dprTransform.toFloat64()) as ScenePath;
+        }
+        clipPath = path;
         return "path('$_clipPathString')";
     }
   }

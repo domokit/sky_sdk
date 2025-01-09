@@ -39,6 +39,11 @@ void KHRSwapchainVK::UpdateSurfaceSize(const ISize& size) {
   size_ = size;
 }
 
+void KHRSwapchainVK::AddFinalCommandBuffer(
+    std::shared_ptr<CommandBuffer> cmd_buffer) const {
+  impl_->AddFinalCommandBuffer(std::move(cmd_buffer));
+}
+
 std::unique_ptr<Surface> KHRSwapchainVK::AcquireNextDrawable() {
   if (!IsValid()) {
     return nullptr;

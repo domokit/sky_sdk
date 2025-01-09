@@ -7,9 +7,9 @@ import 'package:file/memory.dart';
 import 'package:flutter_tools/src/base/deferred_component.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/base/logger.dart';
+import 'package:flutter_tools/src/base/yaml.dart';
 import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/flutter_manifest.dart';
-import 'package:yaml_edit/yaml_edit.dart';
 
 import '../src/common.dart';
 
@@ -1512,9 +1512,7 @@ flutter:
       ],
     );
 
-    final YamlEditor editor = YamlEditor('');
-    editor.update(const <String>[], updatedManifest.toYaml());
-    expect(editor.toString(), '''
+    expect(encodeYamlAsString(updatedManifest.toYaml()), '''
 name: test
 dependencies:
   flutter:
