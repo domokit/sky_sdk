@@ -1,0 +1,19 @@
+name: multi_window_ref_app
+description: "Reference app for the multi-view windowing API."
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.5.0-180.0.dev <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  stack_trace: ^1.11.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

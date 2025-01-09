@@ -367,6 +367,10 @@ struct Settings {
   // If true, the UI thread is the platform thread on supported
   // platforms.
   bool merged_platform_ui_thread = true;
+
+  // Enable support for multiple windows. Ignored if not supported on the
+  // platform.
+  bool enable_multi_window = false;
 };
 
 }  // namespace flutter

@@ -307,6 +307,8 @@ class CustomDeviceAppSession {
         if (debuggingOptions.useTestFonts) 'use-test-fonts=true',
         if (debuggingOptions.verboseSystemLogs) 'verbose-logging=true',
       ],
+      if (debuggingOptions.enableMultiWindow)
+        'enable-multi-window=true',
     ];
   }
 

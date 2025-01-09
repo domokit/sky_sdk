@@ -194,6 +194,10 @@ FlutterWindowsEngine::FlutterWindowsEngine(
   enable_impeller_ = std::find(switches.begin(), switches.end(),
                                "--enable-impeller=true") != switches.end();
 
+  enable_multi_window_ =
+      std::find(switches.begin(), switches.end(),
+                "--enable-multi-window=true") != switches.end();
+
   egl_manager_ = egl::Manager::Create();
   window_proc_delegate_manager_ = std::make_unique<WindowProcDelegateManager>();
   window_proc_delegate_manager_->RegisterTopLevelWindowProcDelegate(
@@ -222,6 +226,12 @@ FlutterWindowsEngine::FlutterWindowsEngine(
       std::make_unique<CursorHandler>(messenger_wrapper_.get(), this);
   platform_handler_ =
       std::make_unique<PlatformHandler>(messenger_wrapper_.get(), this);
+  if (enable_multi_window_) {
+    host_window_controller_ =
+        std::make_unique<FlutterHostWindowController>(this);
+    windowing_handler_ = std::make_unique<WindowingHandler>(
+        messenger_wrapper_.get(), host_window_controller_.get());
+  }
   settings_plugin_ = std::make_unique<SettingsPlugin>(messenger_wrapper_.get(),
                                                       task_runner_.get());
 }
