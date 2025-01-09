@@ -1147,6 +1147,7 @@ class NavigationRailDestination {
   /// Indicates that this destination is inaccessible.
   final bool disabled;
 
+  ///  configuration object for [MouseRegion]s on [NavigationRailDestination]s.
   final MouseRegionConfig mouseRegionConfig;
 
 }
