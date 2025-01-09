@@ -66,20 +66,11 @@ flutter:
   testUsingContext(
     'includes LICENSE file inputs in dependencies',
     () async {
-      fileSystem.directory('.dart_tool').childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": [
-    {
-      "name": "foo",
-      "rootUri": "file:///bar",
-      "packageUri": "lib/"
-    }
-  ]
-}
-''');
+      writePackageConfigFile(
+        fileSystem.currentDirectory,
+        'example',
+        otherLibs: <String, String>{'foo': '../bar'},
+      );
       fileSystem.file('bar/LICENSE')
         ..createSync(recursive: true)
         ..writeAsStringSync('THIS IS A LICENSE');
@@ -106,6 +97,7 @@ flutter:
   testUsingContext(
     'Copies files to correct asset directory',
     () async {
+      writePackageConfigFile(fileSystem.currentDirectory, 'example');
       await const CopyAssets().build(environment);
 
       expect(
@@ -154,6 +146,7 @@ flutter:
         flavors:
           - strawberry
   ''');
+          writePackageConfigFile(fileSystem.currentDirectory, 'example');
 
           fileSystem.file('assets/common/image.png').createSync(recursive: true);
           fileSystem.file('assets/vanilla/ice-cream.png').createSync(recursive: true);
@@ -202,6 +195,7 @@ flutter:
         flavors:
           - strawberry
   ''');
+          writePackageConfigFile(fileSystem.currentDirectory, 'example');
 
           fileSystem.file('assets/common/image.png').createSync(recursive: true);
           fileSystem.file('assets/vanilla/ice-cream.png').createSync(recursive: true);
@@ -253,11 +247,6 @@ flutter:
         defines: <String, String>{kBuildMode: BuildMode.debug.cliName},
       );
 
-      fileSystem
-          .directory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
-
       fileSystem.file('pubspec.yaml')
         ..createSync()
         ..writeAsStringSync('''
@@ -269,6 +258,8 @@ flutter:
         - package: my_capitalizer_transformer
           args: ["-a", "-b", "--color", "green"]
 ''');
+
+      writePackageConfigFile(fileSystem.currentDirectory, 'example');
 
       fileSystem.file('input.txt')
         ..createSync(recursive: true)
@@ -343,11 +334,6 @@ flutter:
         defines: <String, String>{kBuildMode: BuildMode.debug.cliName},
       );
 
-      fileSystem
-          .directory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
-
       fileSystem.file('pubspec.yaml')
         ..createSync()
         ..writeAsStringSync('''
@@ -359,6 +345,8 @@ flutter:
         - package: my_transformer
           args: ["-a", "-b", "--color", "green"]
 ''');
+
+      writePackageConfigFile(fileSystem.currentDirectory, 'example');
 
       await fileSystem.file('input.txt').create(recursive: true);
 
@@ -443,11 +431,6 @@ flutter:
         defines: <String, String>{kBuildMode: BuildMode.debug.cliName},
       );
 
-      fileSystem
-          .directory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
-
       fileSystem.file('pubspec.yaml')
         ..createSync()
         ..writeAsStringSync('''
@@ -458,6 +441,8 @@ flutter:
         transformers:
           - package: my_capitalizer_transformer
   ''');
+
+      writePackageConfigFile(fileSystem.currentDirectory, 'example');
 
       fileSystem.file('input.txt')
         ..createSync(recursive: true)
@@ -637,4 +622,34 @@ flutter:
     expect(await content.contentsAsBytes(), utf8.encode('{"data":{}}'));
     expect(logger.errorText, isEmpty);
   });
+}
+
+/// Write a `.dart_tool/package_config.json` file at [directory].
+///
+/// It will contain a package entry for [mainLibName] with `rootUri` at
+/// [directory].
+///
+/// [otherLibs] maps other package names to their `rootUri`.
+void writePackageConfigFile(
+  Directory directory,
+  String mainLibName, {
+  Map<String, String> otherLibs = const <String, String>{},
+}) {
+  directory.childDirectory('.dart_tool').childFile('package_config.json')
+    ..createSync(recursive: true)
+    ..writeAsStringSync(
+      json.encode(<String, Object?>{
+        'packages': <Object>[
+          <String, Object?>{'name': mainLibName, 'rootUri': '../', 'packageUri': 'lib/'},
+          ...otherLibs.entries.map(
+            (MapEntry<String, String> entry) => <String, Object?>{
+              'name': entry.key,
+              'rootUri': entry.value,
+              'packageUri': 'lib/',
+            },
+          ),
+        ],
+        'configVersion': 2,
+      }),
+    );
 }

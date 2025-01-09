@@ -46,9 +46,26 @@ void main() {
 
   setUp(() {
     fileSystem = MemoryFileSystem.test();
-    fileSystem.file('pubspec.yaml').createSync();
+    fileSystem.file('pubspec.yaml')
+      ..createSync()
+      ..writeAsStringSync('''
+name: foo
+''');
     fileSystem.file('test/foo.dart').createSync(recursive: true);
-    fileSystem.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
+    fileSystem.directory('.dart_tool').childFile('package_config.json')
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+{
+  "configVersion": 2,
+  "packages": [
+      {
+      "name": "foo",
+      "rootUri": "../",
+      "packageUri": "lib/"
+    }
+  ]
+}
+''');
     residentCompiler = FakeResidentCompiler(fileSystem);
     logger = LoggingLogger();
   });
@@ -200,6 +217,11 @@ dependencies:
 {
   "configVersion": 2,
   "packages": [
+      {
+      "name": "foo",
+      "rootUri": "../",
+      "packageUri": "lib/"
+    },
     {
       "name": "a_plugin",
       "rootUri": "/a_plugin/",

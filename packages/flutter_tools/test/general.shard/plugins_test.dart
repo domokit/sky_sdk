@@ -1256,7 +1256,7 @@ flutter:
 
             final FlutterManifest manifest =
                 FlutterManifest.createFromString('''
-name: test
+name: my_app
 version: 1.0.0
 
 dependencies:
@@ -1266,7 +1266,6 @@ dependencies:
 
             flutterProject.manifest = manifest;
             flutterProject.isModule = true;
-
             final Directory destination = flutterProject.directory.childDirectory('lib');
             await injectBuildTimePluginFilesForWebPlatform(
               flutterProject,
@@ -1525,7 +1524,7 @@ flutter:
 
           final FlutterManifest manifest =
               FlutterManifest.createFromString('''
-name: test
+name: my_app
 version: 1.0.0
 
 dependencies:
@@ -1598,7 +1597,7 @@ flutter:
 
           final FlutterManifest manifest =
               FlutterManifest.createFromString('''
-name: test
+name: my_app
 version: 1.0.0
 
 dependencies:
@@ -2611,6 +2610,8 @@ class FakeFlutterManifest extends Fake implements FlutterManifest {
   late Set<String> devDependencies = <String>{};
   @override
   late String appName;
+  @override
+  YamlMap toYaml() => YamlMap.wrap(<String, String>{});
 }
 
 class FakeXcodeProjectInterpreter extends Fake implements XcodeProjectInterpreter {

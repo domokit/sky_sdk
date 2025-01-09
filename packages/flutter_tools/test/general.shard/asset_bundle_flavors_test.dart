@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:file/memory.dart';
 import 'package:flutter_tools/src/asset.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
@@ -50,10 +52,20 @@ void main() {
       final BufferLogger logger = BufferLogger.test();
       final FakePlatform platform = FakePlatform();
 
-      fileSystem
+      final File packageConfig = fileSystem
           .directory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
+          .childFile('package_config.json');
+
+      packageConfig.createSync(recursive: true);
+      packageConfig.writeAsStringSync(
+        json.encode(<String, dynamic>{
+          'packages': <dynamic>[
+            <String, dynamic>{'name': 'example', 'rootUri': '../', 'packageUri': 'lib/'},
+          ],
+          'configVersion': 2,
+        }),
+      );
+
       fileSystem
           .file(fileSystem.path.join('assets', 'common', 'image.png'))
           .createSync(recursive: true);

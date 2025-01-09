@@ -6,7 +6,6 @@ import 'dart:convert';
 
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
-import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/compute_dev_dependencies.dart';
 import 'package:flutter_tools/src/project.dart';
@@ -29,12 +28,10 @@ typedef Package = ({String name, List<String> dependencies, List<String> devDepe
 //     pubspec.yaml
 void main() {
   late FileSystem fileSystem;
-  late BufferLogger logger;
 
   setUp(() {
     Cache.flutterRoot = '';
     fileSystem = MemoryFileSystem.test();
-    logger = BufferLogger.test();
   });
 
   void writePackages(List<Package> graph) {
@@ -74,7 +71,6 @@ ${package.devDependencies.map((String d) => '  $d: {path: ../$d}').join('\n')}
       project,
       packageConfig,
       fileSystem,
-      logger,
     );
     expect(dependencies.keys, graph.map((Package p) => p.name).toSet());
     for (final Package p in graph) {

@@ -42,7 +42,7 @@ class FlutterManifest {
     required Logger logger,
   }) {
     if (!fileSystem.isFileSync(path)) {
-      return _createFromYaml(null, logger);
+      return createFromYaml(null, logger);
     }
     final String manifest = fileSystem.file(path).readAsStringSync();
     return FlutterManifest.createFromString(manifest, logger: logger);
@@ -51,10 +51,17 @@ class FlutterManifest {
   /// Returns null on missing or invalid manifest.
   @visibleForTesting
   static FlutterManifest? createFromString(String manifest, {required Logger logger}) {
-    return _createFromYaml(loadYaml(manifest), logger);
+    try {
+      return createFromYaml(loadYaml(manifest), logger);
+    } on FormatException catch (e) {
+      logger.printStatus('Malformed pubspec.yaml:', emphasis: true);
+      logger.printError(e.message);
+      return null;
+    }
   }
 
-  static FlutterManifest? _createFromYaml(Object? yamlDocument, Logger logger) {
+  /// Returns null on missing or invalid manifest.
+  static FlutterManifest? createFromYaml(Object? yamlDocument, Logger logger) {
     if (yamlDocument != null && !_validate(yamlDocument, logger)) {
       return null;
     }

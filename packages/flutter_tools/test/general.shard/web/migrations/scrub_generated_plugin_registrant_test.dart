@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:file/memory.dart';
 import 'package:flutter_tools/src/artifacts.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
@@ -300,4 +302,15 @@ flutter:
 class UrlLauncherPlugin {}
 ''');
   fileSystem.file(fileSystem.path.join('lib', 'main.dart')).writeAsStringSync('void main() { }');
+  fileSystem
+      .file(fileSystem.path.join('.dart_tool', 'package_config.json'))
+      .writeAsStringSync(
+        json.encode(<String, Object?>{
+          'packages': <Object>[
+            <String, Object?>{'name': 'foo', 'rootUri': '../', 'packageUri': 'lib/'},
+            <String, Object?>{'name': 'bar', 'rootUri': '../bar', 'packageUri': 'lib/'},
+          ],
+          'configVersion': 2,
+        }),
+      );
 }

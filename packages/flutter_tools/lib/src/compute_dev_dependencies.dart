@@ -4,9 +4,8 @@
 
 import 'package:file/file.dart';
 import 'package:package_config/package_config.dart';
+import 'package:yaml/yaml.dart';
 
-import 'base/logger.dart';
-import 'flutter_manifest.dart';
 import 'project.dart';
 
 /// Computes a representation of the transitive dependency graph rooted at
@@ -20,16 +19,15 @@ import 'project.dart';
 /// Will load each of the dependencies' `pubspec.yaml` using [fileSystem]. Using
 /// [packageConfig] to locate the files.
 ///
-/// Does not load the [project] manifest again.
+/// Avoids loading the [project] manifest again.
 ///
-/// If a pubspec cannot be read, or is malformed, a warning is issued on
-/// [logger] and that pubspec is skipped. If nothing has changed since a
-/// succesful `pub get` that should never happen.
+/// If a pubspec cannot be read, or is malformed, that pubspec is skipped. If
+/// nothing has changed since a succesful `pub get` that should never happen.
+/// In case of `flutter run --no-pub` this will at most ignore new dependencies.
 Map<String, Dependency> computeTransitiveDependencies(
   FlutterProject project,
   PackageConfig packageConfig,
-  FileSystem fileSystem,
-  Logger logger, {
+  FileSystem fileSystem, {
   bool followDevDependencies = false,
 }) {
   final Map<String, Dependency> result = <String, Dependency>{};
@@ -40,34 +38,54 @@ Map<String, Dependency> computeTransitiveDependencies(
     if (result.containsKey(current)) {
       continue;
     }
-    final FlutterManifest? packageManifest;
+    final YamlNode pubspec;
+    final List<String> dependencies = <String>[];
+    final Uri rootUri;
     if (current == project.manifest.appName) {
-      packageManifest = project.manifest;
+      rootUri = project.directory.uri;
+      pubspec = project.manifest.toYaml();
+      dependencies.addAll(project.manifest.dependencies);
     } else {
       final Package? package = packageConfig[current];
       if (package == null) {
         continue;
       }
-      final Uri packageUri = package.root;
-      if (packageUri.scheme != 'file') {
+      rootUri = package.root;
+      if (rootUri.scheme != 'file') {
         continue;
       }
-      final String pubspecPath = fileSystem.path.fromUri(packageUri.resolve('pubspec.yaml'));
-      packageManifest = FlutterManifest.createFromPath(
-        pubspecPath,
-        fileSystem: fileSystem,
-        logger: logger,
-      );
-      if (packageManifest == null) {
-        continue;
-      }
-    }
 
-    packageNamesToVisit.addAll(packageManifest.dependencies);
-    if (current == project.manifest.appName) {
-      packageNamesToVisit.addAll(packageManifest.devDependencies);
+      final String pubspecPath = fileSystem.path.fromUri(rootUri.resolve('pubspec.yaml'));
+      try {
+        pubspec = loadYamlNode(
+          fileSystem.file(pubspecPath).readAsStringSync(),
+          sourceUrl: Uri.file(pubspecPath),
+        );
+      } on IOException {
+        continue;
+      } on FormatException {
+        continue;
+      }
+      if (pubspec is! YamlMap) {
+        continue;
+      }
+      final dynamic dependenciesMap = pubspec['dependencies'] ?? <String, String>{};
+      if (dependenciesMap is! Map) {
+        continue;
+      }
+
+      for (final dynamic name in dependenciesMap.keys) {
+        if (name is! String) {
+          continue;
+        }
+        dependencies.add(name);
+      }
     }
-    result[current] = Dependency(packageManifest, isExclusiveDevDependency: true);
+    packageNamesToVisit.addAll(dependencies);
+    if (current == project.manifest.appName) {
+      packageNamesToVisit.addAll(project.manifest.devDependencies);
+    }
+    result[current] = Dependency(pubspec, dependencies, rootUri, isExclusiveDevDependency: true);
   }
 
   // Do a second traversal of only the non-dev-dependencies, to patch up the
@@ -79,24 +97,41 @@ Map<String, Dependency> computeTransitiveDependencies(
     if (!visitedDependencies.add(current)) {
       continue;
     }
-    final FlutterManifest? manifest = result[current]?.manifest;
-    if (manifest == null) {
+    final Dependency? currentDependency = result[current];
+    if (currentDependency == null) {
       continue;
     }
-    result[current] = Dependency(manifest, isExclusiveDevDependency: false);
-    packageNamesToVisit.addAll(manifest.dependencies);
+    result[current] = Dependency(
+      currentDependency.pubspec,
+      currentDependency.dependencies,
+      currentDependency.rootUri,
+      isExclusiveDevDependency: false,
+    );
+    packageNamesToVisit.addAll(currentDependency.dependencies);
   }
   return result;
 }
 
 /// Represents a node in a dependency graph.
 class Dependency {
-  Dependency(this.manifest, {required this.isExclusiveDevDependency});
+  Dependency(
+    this.pubspec,
+    this.dependencies,
+    this.rootUri, {
+    required this.isExclusiveDevDependency,
+  });
+
+  /// The names of the direct, non-dev dependencies.
+  List<String> dependencies;
 
   /// True if this dependency is in the transitive closure of the main app's
   /// `dev_dependencies`, and **not** in the transitive closure of the regular
   /// dependencies.
   final bool isExclusiveDevDependency;
 
-  final FlutterManifest manifest;
+  /// The pubspec of this dependency as parsed (but otherwise unvalidated) yaml.
+  final YamlNode pubspec;
+
+  /// The location of the package. (Same level as its pubspec.yaml).
+  final Uri rootUri;
 }

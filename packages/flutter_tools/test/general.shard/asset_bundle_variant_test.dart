@@ -60,12 +60,14 @@ void main() {
       );
       fs.directory('.dart_tool').childFile('package_config.json')
         ..createSync(recursive: true)
-        ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": []
-}
-''');
+        ..writeAsStringSync(
+          json.encode(<String, Object?>{
+            'packages': <Object>[
+              <String, Object?>{'name': 'test', 'rootUri': '../', 'packageUri': 'lib/'},
+            ],
+            'configVersion': 2,
+          }),
+        );
     });
 
     void createPubspec({required List<String> assets}) {
@@ -294,12 +296,14 @@ ${assets.map((String entry) => '    - $entry').join('\n')}
 
       fs.directory('.dart_tool').childFile('package_config.json')
         ..createSync(recursive: true)
-        ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": []
-}
-''');
+        ..writeAsStringSync(
+          json.encode(<String, Object?>{
+            'packages': <Object>[
+              <String, Object?>{'name': 'test', 'rootUri': '../', 'packageUri': 'lib/'},
+            ],
+            'configVersion': 2,
+          }),
+        );
 
       fs.file('pubspec.yaml').writeAsStringSync('''
 name: test

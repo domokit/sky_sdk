@@ -36,6 +36,7 @@ void main() {
     file.writeAsStringSync(
       json.encode(<String, dynamic>{
         'packages': <dynamic>[
+          <String, dynamic>{'name': 'my_app', 'rootUri': '../', 'packageUri': 'lib/'},
           ...packages.entries.map((MapEntry<String, String> entry) {
             return <String, dynamic>{
               'name': entry.key,
@@ -117,7 +118,7 @@ void main() {
       () async {
         createPackageConfig(globals.fs);
         globals.fs.file('pubspec.yaml').writeAsStringSync('''
-name: test
+name: my_app
 dependencies:
   flutter:
     sdk: flutter
@@ -171,7 +172,7 @@ flutter:
         globals.fs.file('pubspec.yaml')
           ..createSync()
           ..writeAsStringSync(r'''
-name: example
+name: my_app
 flutter:
   assets:
     - assets/foo/
@@ -224,7 +225,7 @@ flutter:
             globals.fs.file('pubspec.yaml')
               ..createSync()
               ..writeAsStringSync(r'''
-name: example
+name: my_app
 flutter:
   assets:
     - assets/foo/
@@ -250,7 +251,7 @@ flutter:
         globals.fs.file('pubspec.yaml')
           ..createSync()
           ..writeAsStringSync(r'''
-name: example''')
+name: my_app''')
           ..setLastModifiedSync(modifiedTime);
 
         // touch the package config to make sure its change time is after pubspec.yaml's
@@ -292,7 +293,7 @@ name: example''')
         globals.fs.file('pubspec.yaml')
           ..createSync()
           ..writeAsStringSync(r'''
-name: example
+name: my_app
 flutter:
   assets:
     - assets/foo/
@@ -335,7 +336,7 @@ flutter:
         globals.fs.file('pubspec.yaml')
           ..createSync()
           ..writeAsStringSync(r'''
-name: example
+name: my_app
 flutter:
   assets:
     - assets/foo/
@@ -393,7 +394,7 @@ flutter:
         globals.fs.file('pubspec.yaml')
           ..createSync()
           ..writeAsStringSync(r'''
-name: example
+name: my_app
 flutter:
   assets:
     - assets/foo/
@@ -443,7 +444,7 @@ flutter:
         globals.fs.file('pubspec.yaml')
           ..createSync()
           ..writeAsStringSync(r'''
-name: example
+name: my_app
 flutter:
   assets:
     - assets/foo/
@@ -527,7 +528,7 @@ flutter:
         fileSystem.file('pubspec.yaml')
           ..createSync()
           ..writeAsStringSync(r'''
-name: example
+name: my_app
 flutter:
   assets:
     - https://mywebsite.com/images/
@@ -616,7 +617,7 @@ flutter:
         fileSystem.file('pubspec.yaml')
           ..createSync()
           ..writeAsStringSync(r'''
-name: example
+name: my_app
 flutter:
   assets:
     - path: my-asset.txt
@@ -649,7 +650,7 @@ flutter:
         expect(bundle.entries['my-asset.txt']!.content.isModified, isFalse);
 
         fileSystem.file('pubspec.yaml').writeAsStringSync(r'''
-name: example
+name: my_app
 flutter:
   assets:
     - path: my-asset.txt
@@ -719,7 +720,7 @@ flutter:
       () async {
         createPackageConfig(globals.fs);
         globals.fs.file('pubspec.yaml').writeAsStringSync(r'''
-name: test
+name: my_app
 dependencies:
   flutter:
     sdk: flutter
@@ -814,7 +815,7 @@ flutter:
       globals.fs.file('pubspec.yaml')
         ..createSync()
         ..writeAsStringSync(r'''
-name: example
+name: my_app
 flutter:
 assets:
   - assets/foo/bar.txt
@@ -848,7 +849,7 @@ assets:
       globals.fs.file('pubspec.yaml')
         ..createSync()
         ..writeAsStringSync(r'''
-name: example
+name: my_app
 flutter:
   assets:
     - assets/
@@ -877,7 +878,7 @@ flutter:
       globals.fs.file('pubspec.yaml')
         ..createSync()
         ..writeAsStringSync(r'''
-name: example
+name: my_app
 flutter:
   assets:
     - assets/bar.txt
@@ -924,7 +925,7 @@ flutter:
         fileSystem.file('pubspec.yaml')
           ..createSync()
           ..writeAsStringSync(r'''
-  name: example
+  name: my_app
   flutter:
     shaders:
       - assets/shader.frag
@@ -982,7 +983,7 @@ flutter:
         fileSystem.file('pubspec.yaml')
           ..createSync()
           ..writeAsStringSync(r'''
-  name: example
+  name: my_app
   flutter:
     shaders:
       - assets/shader.frag
@@ -1090,7 +1091,7 @@ flutter:
         fileSystem.file('pubspec.yaml')
           ..createSync()
           ..writeAsStringSync(r'''
-  name: example
+  name: my_app
   flutter:
     uses-material-design: true
   ''');
@@ -1130,12 +1131,12 @@ flutter:
     'Does not insert dummy file into additionalDependencies '
     'when wildcards are used by dependencies',
     () async {
-      createPackageConfig(globals.fs, packages: <String, String>{'example': '', 'foo': 'foo'});
+      createPackageConfig(globals.fs, packages: <String, String>{'foo': 'foo'});
       globals.fs.file(globals.fs.path.join('assets', 'foo', 'bar.txt')).createSync(recursive: true);
       globals.fs.file('pubspec.yaml')
         ..createSync()
         ..writeAsStringSync(r'''
-name: example
+name: my_app
 dependencies:
   foo: any
 ''');
@@ -1164,12 +1165,12 @@ flutter:
   testUsingContext(
     'does not track wildcard directories from dependencies',
     () async {
-      createPackageConfig(globals.fs, packages: <String, String>{'example': '', 'foo': 'foo'});
+      createPackageConfig(globals.fs, packages: <String, String>{'foo': 'foo'});
       globals.fs.file(globals.fs.path.join('assets', 'foo', 'bar.txt')).createSync(recursive: true);
       globals.fs.file('pubspec.yaml')
         ..createSync()
         ..writeAsStringSync(r'''
-name: example
+name: my_app
 dependencies:
   foo: any
 ''');
@@ -1215,12 +1216,12 @@ flutter:
     'reports package that causes asset bundle error when it is '
     'a dependency',
     () async {
-      createPackageConfig(globals.fs, packages: <String, String>{'example': '', 'foo': 'foo'});
+      createPackageConfig(globals.fs, packages: <String, String>{'foo': 'foo'});
       globals.fs.file(globals.fs.path.join('assets', 'foo', 'bar.txt')).createSync(recursive: true);
       globals.fs.file('pubspec.yaml')
         ..createSync()
         ..writeAsStringSync(r'''
-name: example
+name: my_app
 dependencies:
   foo: any
 ''');
@@ -1249,11 +1250,11 @@ flutter:
     'does not report package that causes asset bundle error '
     'when it is from own pubspec',
     () async {
-      createPackageConfig(globals.fs, packages: <String, String>{'example': '', 'foo': 'foo'});
+      createPackageConfig(globals.fs, packages: <String, String>{'foo': 'foo'});
       globals.fs.file('pubspec.yaml')
         ..createSync()
         ..writeAsStringSync(r'''
-name: example
+name: my_app
 flutter:
   assets:
     - bar.txt
@@ -1274,11 +1275,11 @@ flutter:
     'does not include Material Design assets if uses-material-design: true is '
     'specified only by a dependency',
     () async {
-      createPackageConfig(globals.fs, packages: <String, String>{'example': '', 'foo': 'foo'});
+      createPackageConfig(globals.fs, packages: <String, String>{'foo': 'foo'});
       globals.fs.file('pubspec.yaml')
         ..createSync()
         ..writeAsStringSync(r'''
-name: example
+name: my_app
 dependencies:
   foo: any
 
@@ -1310,11 +1311,11 @@ flutter:
   testUsingContext(
     'does not include assets in project directories as asset variants',
     () async {
-      createPackageConfig(globals.fs, packages: <String, String>{'example': ''});
+      createPackageConfig(globals.fs);
       globals.fs.file('pubspec.yaml')
         ..createSync()
         ..writeAsStringSync(r'''
-name: example
+name: my_app
 
 flutter:
   assets:
@@ -1354,11 +1355,11 @@ flutter:
   testUsingContext(
     'deferred and regular assets are included in manifest alphabetically',
     () async {
-      createPackageConfig(globals.fs, packages: <String, String>{'example': ''});
+      createPackageConfig(globals.fs);
       globals.fs.file('pubspec.yaml')
         ..createSync()
         ..writeAsStringSync(r'''
-name: example
+name: my_app
 
 flutter:
   assets:

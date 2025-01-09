@@ -25,7 +25,12 @@ void main() {
     return path.replaceAll('/', globals.fs.path.separator);
   }
 
-  void writePubspecFile(String path, String name, {String? fontsSection}) {
+  void writePubspecFile(
+    String path,
+    String name, {
+    String? fontsSection,
+    Map<String, String> deps = const <String, String>{},
+  }) {
     if (fontsSection == null) {
       fontsSection = '';
     } else {
@@ -43,6 +48,7 @@ name: $name
 dependencies:
   flutter:
     sdk: flutter
+${deps.entries.map((MapEntry<String, String> entry) => '  ${entry.key}: {path: ${entry.value}}').join('\n')}
 $fontsSection
 ''');
   }
@@ -53,6 +59,12 @@ $fontsSection
       ..writeAsStringSync(
         json.encode(<String, dynamic>{
           'packages': <dynamic>[
+            <String, Object?>{
+              'name': 'test',
+              'rootUri': '../',
+              'packageUri': 'lib/',
+              'languageVersion': '3.2',
+            },
             ...packages.entries.map((MapEntry<String, String> entry) {
               return <String, dynamic>{
                 'name': entry.key,
@@ -116,8 +128,9 @@ $fontsSection
     testUsingContext(
       'App includes neither font manifest nor fonts when no defines fonts',
       () async {
-        writePubspecFile('pubspec.yaml', 'test');
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        final Map<String, String> deps = <String, String>{'test_package': 'p/p/'};
+        writePubspecFile('pubspec.yaml', 'test', deps: deps);
+        writePackageConfigFile(deps);
         writePubspecFile('p/p/pubspec.yaml', 'test_package');
 
         final AssetBundle bundle = AssetBundleFactory.instance.createBundle();
@@ -202,8 +215,9 @@ $fontsSection
     testUsingContext(
       'App uses package font with own font file',
       () async {
-        writePubspecFile('pubspec.yaml', 'test');
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        final Map<String, String> deps = <String, String>{'test_package': 'p/p/'};
+        writePubspecFile('pubspec.yaml', 'test', deps: deps);
+        writePackageConfigFile(deps);
         const String fontsSection = '''
        - family: foo
          fonts:
@@ -233,8 +247,12 @@ $fontsSection
     testUsingContext(
       'App uses package font with font file from another package',
       () async {
-        writePubspecFile('pubspec.yaml', 'test');
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/', 'test_package2': 'p2/p/'});
+        final Map<String, String> deps = <String, String>{
+          'test_package': 'p/p/',
+          'test_package2': 'p2/p/',
+        };
+        writePubspecFile('pubspec.yaml', 'test', deps: deps);
+        writePackageConfigFile(deps);
         const String fontsSection = '''
        - family: foo
          fonts:
@@ -265,8 +283,9 @@ $fontsSection
     testUsingContext(
       'App uses package font with properties and own font file',
       () async {
-        writePubspecFile('pubspec.yaml', 'test');
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        final Map<String, String> deps = <String, String>{'test_package': 'p/p/'};
+        writePubspecFile('pubspec.yaml', 'test', deps: deps);
+        writePackageConfigFile(deps);
 
         const String pubspec = '''
        - family: foo
@@ -298,13 +317,14 @@ $fontsSection
     testUsingContext(
       'App uses local font and package font with own font file.',
       () async {
+        final Map<String, String> deps = <String, String>{'test_package': 'p/p/'};
         const String fontsSection = '''
        - family: foo
          fonts:
            - asset: a/bar
 ''';
-        writePubspecFile('pubspec.yaml', 'test', fontsSection: fontsSection);
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePubspecFile('pubspec.yaml', 'test', deps: deps, fontsSection: fontsSection);
+        writePackageConfigFile(deps);
         writePubspecFile('p/p/pubspec.yaml', 'test_package', fontsSection: fontsSection);
 
         const String font = 'a/bar';

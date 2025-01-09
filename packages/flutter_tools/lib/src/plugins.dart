@@ -73,6 +73,7 @@ class Plugin {
     Set<String>? appDependencies,
   }) {
     final List<String> errors = validatePluginYaml(pluginYaml);
+
     if (errors.isNotEmpty) {
       throwToolExit('Invalid plugin specification $name.\n${errors.join('\n')}');
     }
@@ -294,7 +295,6 @@ class Plugin {
           'See: https://flutter.dev/to/pubspec-plugin-platforms';
       return <String>[errorMessage];
     }
-
     if (!usesOldPluginFormat && !usesNewPluginFormat) {
       const String errorMessage =
           'Cannot find the `flutter.plugin.platforms` key in the `pubspec.yaml` file. '

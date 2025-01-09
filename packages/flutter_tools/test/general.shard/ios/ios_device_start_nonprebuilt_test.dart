@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:fake_async/fake_async.dart';
 import 'package:file/memory.dart';
@@ -1152,8 +1153,19 @@ void main() {
 }
 
 void setUpIOSProject(FileSystem fileSystem, {bool createWorkspace = true}) {
-  fileSystem.file('pubspec.yaml').createSync();
-  fileSystem.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
+  fileSystem.file('pubspec.yaml').writeAsStringSync('''
+name: my_app
+''');
+  fileSystem.directory('.dart_tool').childFile('package_config.json')
+    ..createSync(recursive: true)
+    ..writeAsStringSync(
+      json.encode(<String, Object?>{
+        'packages': <Object>[
+          <String, Object?>{'name': 'my_app', 'rootUri': '../', 'packageUri': 'lib/'},
+        ],
+        'configVersion': 2,
+      }),
+    );
   fileSystem.directory('ios').createSync();
   if (createWorkspace) {
     fileSystem.directory('ios/Runner.xcworkspace').createSync();

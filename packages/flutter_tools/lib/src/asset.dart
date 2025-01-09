@@ -22,6 +22,7 @@ import 'convert.dart';
 import 'dart/package_map.dart';
 import 'devfs.dart';
 import 'flutter_manifest.dart';
+import 'globals.dart';
 import 'license_collector.dart';
 import 'project.dart';
 
@@ -342,11 +343,14 @@ class ManifestAssetBundle implements AssetBundle {
       flutterProject,
       packageConfig,
       _fileSystem,
-      _logger,
     );
     final Map<String, List<File>> additionalLicenseFiles = <String, List<File>>{};
     for (final String packageName in transitiveDependencies.keys) {
-      final Package package = packageConfig[packageName]!;
+      final Package? package = packageConfig[packageName];
+      if (package == null) {
+        // This can happen with eg. `flutter run --no-pub`.
+        throwToolExit('Could not locate package:$packageName. Try running `flutter pub get`');
+      }
       final Dependency dependency = transitiveDependencies[packageName]!;
       if (dependency.isExclusiveDevDependency) {
         continue;
@@ -357,7 +361,13 @@ class ManifestAssetBundle implements AssetBundle {
       }
 
       inputFiles.add(_fileSystem.file(package.root.resolve('pubspec.yaml')));
-      final FlutterManifest packageManifest = dependency.manifest;
+      final FlutterManifest? packageManifest = FlutterManifest.createFromYaml(
+        dependency.pubspec,
+        _logger,
+      );
+      if (packageManifest == null) {
+        continue;
+      }
       // Collect any additional licenses from each package.
       final List<File> licenseFiles = <File>[];
       for (final String relativeLicensePath in packageManifest.additionalLicenses) {

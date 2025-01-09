@@ -42,25 +42,14 @@ Future<void> _renderTemplateToFile(
 
 Future<Plugin?> _pluginFromPackage(
   String name,
+  YamlNode pubspec,
   Uri packageRoot,
   Set<String> appDependencies, {
   required bool isDevDependency,
   FileSystem? fileSystem,
 }) async {
   final FileSystem fs = fileSystem ?? globals.fs;
-  final File pubspecFile = fs.file(packageRoot.resolve('pubspec.yaml'));
-  if (!pubspecFile.existsSync()) {
-    return null;
-  }
-  Object? pubspec;
-
-  try {
-    pubspec = loadYaml(await pubspecFile.readAsString());
-  } on YamlException catch (err) {
-    globals.printTrace('Failed to parse plugin manifest for $name: $err');
-    // Do nothing, potentially not a plugin.
-  }
-  if (pubspec == null || pubspec is! YamlMap) {
+  if (pubspec is! YamlMap) {
     return null;
   }
   final Object? flutterConfig = pubspec['flutter'];
@@ -72,7 +61,6 @@ Future<Plugin?> _pluginFromPackage(
       flutterConstraintText == null ? null : semver.VersionConstraint.parse(flutterConstraintText);
   final String packageRootPath = fs.path.fromUri(packageRoot);
   final YamlMap? dependencies = pubspec['dependencies'] as YamlMap?;
-  globals.printTrace('Found plugin $name at $packageRootPath');
   return Plugin.fromYaml(
     name,
     packageRootPath,
@@ -106,17 +94,23 @@ Future<List<Plugin>> findPlugins(
     project,
     packageConfig,
     fs,
-    globals.logger,
   );
-
   for (final String packageName in transitiveDependencies.keys) {
     final Dependency dependency = transitiveDependencies[packageName]!;
-    final Package package = packageConfig[packageName]!;
-    final Uri packageRoot = package.packageUriRoot.resolve('..');
+    final Package? package = packageConfig[packageName];
+    if (package == null) {
+      if (throwOnError) {
+        throwToolExit('Could not locate package:$packageName. Try running `flutter pub get`');
+      } else {
+        globals.logger.printTrace('Could not locate package:$packageName');
+        continue;
+      }
+    }
     final Plugin? plugin = await _pluginFromPackage(
-      package.name,
-      packageRoot,
-      dependency.manifest.dependencies,
+      packageName,
+      dependency.pubspec,
+      dependency.rootUri,
+      project.manifest.dependencies,
       isDevDependency: determineDevDependencies && dependency.isExclusiveDevDependency,
       fileSystem: fs,
     );
@@ -1432,7 +1426,6 @@ _resolvePluginImplementationsByPlatform(
 
   // Key: the plugin name, value: the plugin which provides an implementation for [platformKey].
   final Map<String, Plugin> pluginResolution = <String, Plugin>{};
-
   // Now resolve all the possible resolutions to a single option for each
   // plugin, or throw if that's not possible.
   for (final MapEntry<String, List<Plugin>> implCandidatesEntry in pluginImplCandidates.entries) {

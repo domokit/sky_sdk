@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:file/memory.dart';
 import 'package:flutter_tools/src/application_package.dart';
@@ -47,8 +48,20 @@ void main() {
     mockFlutterDevice = FakeFlutterDevice(mockWebDevice);
     mockFlutterDevice._devFS = mockWebDevFS;
 
-    fileSystem.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
-    fileSystem.file('pubspec.yaml').createSync();
+    fileSystem.file('pubspec.yaml').writeAsStringSync('''
+name: my_app
+''');
+
+    fileSystem.directory('.dart_tool').childFile('package_config.json')
+      ..createSync(recursive: true)
+      ..writeAsStringSync(
+        json.encode(<String, Object?>{
+          'packages': <Object>[
+            <String, Object?>{'name': 'my_app', 'rootUri': '../', 'packageUri': 'lib/'},
+          ],
+          'configVersion': 2,
+        }),
+      );
     fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
     fileSystem.file(fileSystem.path.join('web', 'index.html')).createSync(recursive: true);
   });
