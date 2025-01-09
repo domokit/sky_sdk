@@ -133,14 +133,6 @@ class EngineFlutterView implements ui.FlutterView {
     semantics.updateSemantics(update);
   }
 
-  @override
-  void setSemanticsTreeEnabled(bool enabled) {
-    assert(!isDisposed, 'Trying to update semantics on a disposed EngineFlutterView.');
-    if (!enabled) {
-      semantics.reset();
-    }
-  }
-
   late final GlobalHtmlAttributes _globalHtmlAttributes = GlobalHtmlAttributes(
     rootElement: dom.rootElement,
     hostElement: embeddingStrategy.hostElement,
