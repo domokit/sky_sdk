@@ -741,6 +741,15 @@ class EnginePlatformDispatcher extends ui.PlatformDispatcher {
     FrameService.instance.scheduleWarmUpFrame(beginFrame: beginFrame, drawFrame: drawFrame);
   }
 
+  @override
+  void setSemanticsTreeEnabled(bool enabled) {
+    if (!enabled) {
+      for (EngineFlutterView view in views) {
+        view.semantics.reset();
+      }
+    }
+  }
+
   /// Updates the application's rendering on the GPU with the newly provided
   /// [Scene]. This function must be called within the scope of the
   /// [onBeginFrame] or [onDrawFrame] callbacks being invoked. If this function
