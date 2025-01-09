@@ -245,6 +245,30 @@ static Scalar split(Scalar left,
   return (left * ratio_right + right * ratio_left) / (ratio_left + ratio_right);
 }
 
+// Optionally `flip` the input points before transforming it with `transform`,
+// and append the result to `output`.
+//
+// If `flip` is true, then the entire input list is reversed, and the x and y
+// coordinate of each point is swapped as well. This effectively mirrors the
+// input point list by the y=x line.
+size_t FlipAndTransform(Point* output,
+                        const Point* input,
+                        size_t input_length,
+                        bool flip,
+                        const Matrix& transform) {
+  if (!flip) {
+    for (size_t i = 0; i < input_length; i++) {
+      output[i] = transform * input[i];
+    }
+  } else {
+    for (size_t i = 0; i < input_length; i++) {
+      const Point& point = input[input_length - i - 1];
+      output[i] = transform * Point(point.y, point.x);
+    }
+  }
+  return input_length;
+}
+
 // Draw a quadrant curve, both ends included.
 //
 // Returns the number of points.
@@ -291,94 +315,7 @@ static size_t DrawQuadrant(Point* output,
   return next - output;
 }
 
-// Optionally `flip` the input points before transforming it with `scale` and
-// then `transition`, and append the result to `output`.
-//
-// If `flip` is true, then the entire input list is reversed, and the x and y
-// coordinate of each point is swapped as well. This effectively mirrors the
-// input point list by the y=x line.
-size_t FlipAndTransform(Point* output,
-                        const Point* input,
-                        size_t input_length,
-                        bool flip,
-                        const Matrix& transform) {
-  if (!flip) {
-    for (size_t i = 0; i < input_length; i++) {
-      output[i] = transform * input[i];
-    }
-  } else {
-    for (size_t i = 0; i < input_length; i++) {
-      const Point& point = input[input_length - i - 1];
-      output[i] = transform * Point(point.y, point.x);
-    }
-  }
-  return input_length;
-}
-
 // constexpr Point kReflection[4] = {{1, 1}, {1, -1}, {-1, -1}, {-1, 1}};
-
-// Mirror the point list `quad` into other quadrants and output as a triangle
-// strip.
-//
-// The input arc `quad` should reside in the first quadrant, starting at
-// positive Y axis and ending at positive X axis (both ends inclusive), for a
-// total of `quad_length` points. This function mirrors the arc into 4
-// quadrants, offset the result by `center`, and rearrange it as a triangle
-// strip, which is appended to `output`.
-//
-// A total of (quad_length - 1) * 4 points will be appended, and `output` must
-// have sufficient memory allocated before this call.
-void RearrangeIntoTriangleStrip(Point* quads[4],
-                                size_t quad_lengths[4],
-                                Point* output) {
-  //      output           from             quad
-  //      0 ... l0-2    0    ... l0-2   quads[0]
-  // next 0 ... l1-2    l1-1 ... 1      quads[1]
-  // next 0 ... l2-2    0    ... l2-2   quads[2]
-  // next 0 ... l3-2    l3-1 ... 1      quads[3]
-  auto GetPoint = [quads, l0 = quad_lengths[0], l1 = quad_lengths[1],
-                   l2 = quad_lengths[2],
-                   l3 = quad_lengths[3]](size_t i) -> Point {
-    if (i < l0 - 1) {
-      return quads[0][i];
-    }
-    i -= l0 - 1;
-    if (i < l1 - 1) {
-      return quads[1][l1 - 1 - i];
-    }
-    i -= l1 - 1;
-    if (i < l2 - 1) {
-      return quads[2][i];
-    }
-    i -= l2 - 1;
-    if (i < l3 - 1) {
-      return quads[3][l3 - 1 - i];
-    } else {
-      // Unreachable
-      return Point();
-    }
-  };
-
-  GetPoint(180);
-
-  size_t index_count = 0;
-
-  output[index_count++] = GetPoint(0);
-
-  size_t a = 1;
-  size_t contour_length =
-      quad_lengths[0] + quad_lengths[1] + quad_lengths[2] + quad_lengths[3] - 4;
-  size_t b = contour_length - 1;
-  while (a < b) {
-    output[index_count++] = GetPoint(a);
-    output[index_count++] = GetPoint(b);
-    a++;
-    b--;
-  }
-  if (a == b) {
-    output[index_count++] = GetPoint(b);
-  }
-}
 
 // void RearrangeIntoTriangleStrip(const Point* contour,
 //                              size_t contour_length,
@@ -458,6 +395,85 @@ RoundingRadii LimitRadii(const Rect& bounds, const RoundingRadii& in_radii) {
   return radii;
 }
 
+class ConvexTessellator {
+ public:
+  ConvexTessellator() {}
+
+  virtual ~ConvexTessellator() {}
+
+  virtual size_t ContourLength() const = 0;
+
+  virtual Point GetPoint(size_t i) const = 0;
+
+  void RearrangeIntoTriangleStrip(Point* output) {
+    size_t index_count = 0;
+
+    output[index_count++] = GetPoint(0);
+
+    size_t a = 1;
+    size_t contour_length = ContourLength();
+    size_t b = contour_length - 1;
+    while (a < b) {
+      output[index_count++] = GetPoint(a);
+      output[index_count++] = GetPoint(b);
+      a++;
+      b--;
+    }
+    if (a == b) {
+      output[index_count++] = GetPoint(b);
+    }
+  }
+};
+
+// A convex tessellator whose contour is concatenated from 4 quadrant segments.
+//
+// All quadrant curves travel from the Y axis to the X axis, and include both
+// ends.
+class FourQuadrantsTessellator : public ConvexTessellator {
+ public:
+  FourQuadrantsTessellator(Point* quads[4], size_t lengths[4])
+      : quads_(quads),
+        l0_(lengths[0]),
+        l1_(lengths[1]),
+        l2_(lengths[2]),
+        l3_(lengths[3]) {}
+
+  size_t ContourLength() const override { return l0_ + l1_ + l2_ + l3_ - 4; }
+
+  Point GetPoint(size_t i) const override {
+    //      output           from             quad
+    //      0 ... l0-2    0    ... l0-2   quads[0]
+    // next 0 ... l1-2    l1-1 ... 1      quads[1]
+    // next 0 ... l2-2    0    ... l2-2   quads[2]
+    // next 0 ... l3-2    l3-1 ... 1      quads[3]
+    if (i < l0_ - 1) {
+      return quads_[0][i];
+    }
+    i -= l0_ - 1;
+    if (i < l1_ - 1) {
+      return quads_[1][l1_ - 1 - i];
+    }
+    i -= l1_ - 1;
+    if (i < l2_ - 1) {
+      return quads_[2][i];
+    }
+    i -= l2_ - 1;
+    if (i < l3_ - 1) {
+      return quads_[3][l3_ - 1 - i];
+    } else {
+      // Unreachable
+      return Point();
+    }
+  }
+
+ private:
+  Point** quads_;
+  size_t l0_;
+  size_t l1_;
+  size_t l2_;
+  size_t l3_;
+};
+
 }  // namespace
 
 RoundSuperellipseGeometry::RoundSuperellipseGeometry(const Rect& bounds,
@@ -522,16 +538,15 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
       DrawQuadrant(quads[3], octant_cache, Point{top_split, left_split},
                    bounds_.GetLeftTop(), radii_.top_left);
 
-  // TODO(dkwingsmt): Exclude duplicates
-  size_t contour_length =
-      quad_lengths[0] + quad_lengths[1] + quad_lengths[2] + quad_lengths[3] - 4;
+  FourQuadrantsTessellator tesselator(quads, quad_lengths);
+
+  size_t contour_length = tesselator.ContourLength();
   BufferView vertex_buffer = renderer.GetTransientsBuffer().Emplace(
       nullptr, sizeof(Point) * contour_length, alignof(Point));
   Point* vertex_data =
       reinterpret_cast<Point*>(vertex_buffer.GetBuffer()->OnGetContents() +
                                vertex_buffer.GetRange().offset);
-
-  RearrangeIntoTriangleStrip(quads, quad_lengths, vertex_data);
+  tesselator.RearrangeIntoTriangleStrip(vertex_data);
 
   return GeometryResult{
       .type = PrimitiveType::kTriangleStrip,
