@@ -43,6 +43,25 @@ ParseFlutterBuildMode() {
   echo "${build_mode}"
 }
 
+ParseFlavor() {
+    # Use FLAVOR if it's set.
+    # This variable must be set in case configuration name other than conventional
+    # $CONFIGURATION-$FLAVOR is used.
+    if [ -n "$FLAVOR" ]; then
+        echo "$FLAVOR"
+        return
+    fi
+
+    if [ -n "$CONFIGURATION" ]; then
+        if [[ "$CONFIGURATION" == *-* ]]; then
+            echo "${CONFIGURATION#*-}"
+            return
+        fi
+    fi
+
+    echo ""
+}
+
 BuildApp() {
   # Set the working directory to the project root
   local project_path="${SOURCE_ROOT}/.."
@@ -162,8 +181,9 @@ BuildApp() {
     flutter_args+=("-dPreBuildAction=PrepareFramework")
   fi
 
-  if [[ -n "$FLAVOR" ]]; then
-    flutter_args+=("-dFlavor=${FLAVOR}")
+  flavor=$(ParseFlavor)
+  if [ -n "$flavor" ]; then
+    flutter_args+=("-dFlavor=${flavor}")
   fi
   if [[ -n "$PERFORMANCE_MEASUREMENT_FILE" ]]; then
     flutter_args+=("--performance-measurement-file=${PERFORMANCE_MEASUREMENT_FILE}")

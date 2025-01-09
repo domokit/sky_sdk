@@ -286,6 +286,12 @@ class AssembleCommand extends FlutterCommand {
 
     final Map<String, Object?> defineConfigJsonMap = extractDartDefineConfigJsonMap();
     final List<String> dartDefines = extractDartDefines(defineConfigJsonMap: defineConfigJsonMap);
+    if (results.containsKey(kFlavor)) {
+      dartDefines.insert(
+        0,
+        utf8.encoder.fuse(base64.encoder).convert('FLUTTER_APP_FLAVOR=${results[kFlavor]}'),
+      );
+    }
     if (dartDefines.isNotEmpty) {
       results[kDartDefines] = dartDefines.join(',');
     }
