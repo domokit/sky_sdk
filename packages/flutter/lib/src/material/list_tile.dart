@@ -1485,33 +1485,23 @@ class _RenderListTile extends RenderBox
     final Size? trailingSize = trailing == null ? null : getSize(trailing, iconConstraints);
 
     assert(() {
-      if (tileWidth != leadingSize?.width || tileWidth == 0.0) {
+      if (tileWidth == 0.0) {
         return true;
       }
-      throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary(
-          'Leading widget consumes the entire tile width (including ListTile.contentPadding).',
-        ),
-        ErrorDescription(
-          'Either resize the tile width so that the trailing widget plus any content padding '
-          'do not exceed the tile width, or use a sized widget, or consider replacing '
-          'ListTile with a custom widget.',
-        ),
-        ErrorHint(
-          'See also: https://api.flutter.dev/flutter/material/ListTile-class.html#material.ListTile.4',
-        ),
-      ]);
-    }());
-    assert(() {
-      if (tileWidth != trailingSize?.width || tileWidth == 0.0) {
-        return true;
+
+      String? overflowedWidget;
+      if (tileWidth == leadingSize?.width) {
+        overflowedWidget = 'Leading';
+      } else if (tileWidth == trailingSize?.width) {
+        overflowedWidget = 'Trailing';
       }
+
       throw FlutterError.fromParts(<DiagnosticsNode>[
         ErrorSummary(
-          'Trailing widget consumes the entire tile width (including ListTile.contentPadding).',
+          '$overflowedWidget widget consumes the entire tile width (including ListTile.contentPadding).',
         ),
         ErrorDescription(
-          'Either resize the tile width so that the trailing widget plus any content padding '
+          'Either resize the tile width so that the ${overflowedWidget!.toLowerCase()} widget plus any content padding '
           'do not exceed the tile width, or use a sized widget, or consider replacing '
           'ListTile with a custom widget.',
         ),
