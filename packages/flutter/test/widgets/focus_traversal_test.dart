@@ -3630,17 +3630,17 @@ void main() {
       if (isBrowser) {
         home = Shortcuts(
           shortcuts: const <ShortcutActivator, Intent>{
-            SingleActivator(LogicalKeyboardKey.arrowUp): DirectionalFocusIntent(TraversalDirection.up),
-            SingleActivator(LogicalKeyboardKey.arrowDown): DirectionalFocusIntent(TraversalDirection.down),
+            SingleActivator(LogicalKeyboardKey.arrowUp): DirectionalFocusIntent(
+              TraversalDirection.up,
+            ),
+            SingleActivator(LogicalKeyboardKey.arrowDown): DirectionalFocusIntent(
+              TraversalDirection.down,
+            ),
           },
           child: home,
         );
       }
-      await tester.pumpWidget(
-        MaterialApp(
-          home: home,
-        ),
-      );
+      await tester.pumpWidget(MaterialApp(home: home));
     }
 
     await pumpApp();
