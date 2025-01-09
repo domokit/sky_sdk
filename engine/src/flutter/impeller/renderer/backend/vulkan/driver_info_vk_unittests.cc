@@ -163,7 +163,6 @@ TEST(DriverInfoVKTest, DriverParsingAdreno) {
 }
 
 TEST(DriverInfoVKTest, DisabledDevices) {
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 630"));
   EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 620"));
   EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 610"));
   EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 530"));
@@ -174,6 +173,7 @@ TEST(DriverInfoVKTest, DisabledDevices) {
   EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 505"));
   EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 504"));
 
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 630"));
   EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 640"));
   EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 650"));
 }

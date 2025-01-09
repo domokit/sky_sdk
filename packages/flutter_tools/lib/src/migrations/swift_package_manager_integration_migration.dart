@@ -118,14 +118,6 @@ class SwiftPackageManagerIntegrationMigration extends ProjectMigrator {
       return;
     }
 
-    if (!_features.isSwiftPackageManagerMigrationEnabled) {
-      logger.printTrace(
-        'The migration to add Swift Package Manager integration is off. '
-        'Skipping...',
-      );
-      return;
-    }
-
     if (!_xcodeProject.flutterPluginSwiftPackageManifest.existsSync()) {
       logger.printTrace(
         'The tool did not generate a Swift package. '

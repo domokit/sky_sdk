@@ -139,7 +139,7 @@ void main() {
       for (final SourceElement element in elements) {
         expect(element.samples.length, greaterThanOrEqualTo(1));
         sampleCount += element.samples.length;
-        final String code = generator.generateCode(element.samples.first, formatOutput: false);
+        final String code = generator.generateCode(element.samples.first);
         expect(code, contains('// Description'));
         expect(
           code,

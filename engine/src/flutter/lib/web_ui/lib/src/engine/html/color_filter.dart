@@ -312,7 +312,18 @@ class SvgFilter {
 
 SvgFilter svgFilterFromColorMatrix(List<double> matrix) {
   final SvgFilterBuilder builder = SvgFilterBuilder();
-  builder.setFeColorMatrix(matrix, result: 'comp');
+
+  /// Flutter documentation says the translation column of the color matrix
+  /// is specified in unnormalized 0..255 space. `feColorMatrix` expects the
+  /// translation values to be normalized to 0..1 space.
+  ///
+  /// See [https://api.flutter.dev/flutter/dart-ui/ColorFilter/ColorFilter.matrix.html]
+  final normalizedMatrix = List<double>.generate(
+    matrix.length,
+    (int i) => (i % 5 == 4) ? matrix[i] / 255.0 : matrix[i],
+    growable: false,
+  );
+  builder.setFeColorMatrix(normalizedMatrix, result: 'comp');
   return builder.build();
 }
 

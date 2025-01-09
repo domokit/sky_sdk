@@ -182,15 +182,6 @@ abstract class XcodeBasedProject extends FlutterProjectPlatform {
       return false;
     }
 
-    // If the project doesn't have Swift Package Manager integration yet,
-    // the SwiftPM migration feature is required (as that will add SwiftPM
-    // integration to the project).
-    if (!flutterPluginSwiftPackageInProjectSettings) {
-      if (!featureFlags.isSwiftPackageManagerMigrationEnabled) {
-        return false;
-      }
-    }
-
     return true;
   }
 

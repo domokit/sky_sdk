@@ -1110,7 +1110,6 @@ targets:
     recipe: devicelab/devicelab_drone
     timeout: 60
     presubmit: false
-    bringup: true
     properties:
       xvfb: "1"
       dependencies: >-

@@ -25,11 +25,10 @@ const List<SupportedPlatform> supportedPlatforms = <SupportedPlatform>[
 void main() {
   final TestFeatureFlags swiftPackageManagerFullyEnabledFlags = TestFeatureFlags(
     isSwiftPackageManagerEnabled: true,
-    isSwiftPackageManagerMigrationEnabled: true,
   );
 
   group('Flutter Package Migration', () {
-    testWithoutContext('skips if Swift Package Manager is off', () async {
+    testWithoutContext('skips if swift package manager is off', () async {
       final MemoryFileSystem memoryFileSystem = MemoryFileSystem();
       final BufferLogger testLogger = BufferLogger.test();
 
@@ -46,43 +45,12 @@ void main() {
             logger: testLogger,
             fileSystem: memoryFileSystem,
             plistParser: FakePlistParser(),
-            features: TestFeatureFlags(isSwiftPackageManagerMigrationEnabled: true),
+            features: TestFeatureFlags(),
           );
-
       await projectMigration.migrate();
       expect(
         testLogger.traceText,
         contains('Skipping the migration that adds Swift Package Manager integration...'),
-      );
-      expect(testLogger.statusText, isEmpty);
-    });
-
-    testWithoutContext('skips if Swift Package Manager migration is off', () async {
-      final MemoryFileSystem memoryFileSystem = MemoryFileSystem();
-      final BufferLogger testLogger = BufferLogger.test();
-
-      final SwiftPackageManagerIntegrationMigration projectMigration =
-          SwiftPackageManagerIntegrationMigration(
-            FakeXcodeProject(
-              platform: SupportedPlatform.ios.name,
-              fileSystem: memoryFileSystem,
-              logger: testLogger,
-            ),
-            SupportedPlatform.ios,
-            BuildInfo.debug,
-            xcodeProjectInterpreter: FakeXcodeProjectInterpreter(),
-            logger: testLogger,
-            fileSystem: memoryFileSystem,
-            plistParser: FakePlistParser(),
-            features: TestFeatureFlags(isSwiftPackageManagerEnabled: true),
-          );
-      await projectMigration.migrate();
-      expect(
-        testLogger.traceText,
-        contains(
-          'The migration to add Swift Package Manager integration is off. '
-          'Skipping...',
-        ),
       );
       expect(testLogger.statusText, isEmpty);
     });

@@ -62,15 +62,6 @@ class FlutterFeatureFlags implements FeatureFlags {
   bool get isSwiftPackageManagerEnabled => isEnabled(swiftPackageManager);
 
   @override
-  bool get isSwiftPackageManagerMigrationEnabled {
-    if (!isEnabled(swiftPackageManager)) {
-      return false;
-    }
-
-    return isEnabled(swiftPackageManagerMigration);
-  }
-
-  @override
   bool get isExplicitPackageDependenciesEnabled => isEnabled(explicitPackageDependencies);
 
   @override

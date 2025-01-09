@@ -70,6 +70,37 @@ void main() {
     expect(emittedLines, const <String>['W/flutter($appPid): Hello there!']);
   });
 
+  testWithoutContext('AdbLogReader ignores spam from Samsung/Mali', () async {
+    const int appPid = 1;
+    final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
+      FakeCommand(
+        command: const <String>['adb', '-s', '1234', 'shell', '-x', 'logcat', '-v', 'time'],
+        completer: Completer<void>.sync(),
+        stdout:
+            '$kDummyLine'
+            '05-11 12:54:46.665 W/flutter($appPid): Hello there!\n'
+            '05-11 12:54:46.665 I/ViewRootImpl@bd2a991[MainActivity]($appPid): ViewPostIme pointer 0\n'
+            '05-11 12:54:46.665 I/ViewRootImpl@bd2a991[MainActivity]($appPid): ViewPostIme pointer 1\n'
+            '05-11 12:54:46.665 D/mali.instrumentation.graph.work($appPid): key already added\n',
+      ),
+    ]);
+    final AdbLogReader logReader = await AdbLogReader.createLogReader(
+      createFakeDevice(null),
+      processManager,
+      BufferLogger.test(),
+    );
+    await logReader.provideVmService(_FakeFlutterVmService(appPid));
+    final Completer<void> onDone = Completer<void>.sync();
+    final List<String> emittedLines = <String>[];
+    logReader.logLines.listen((String line) {
+      emittedLines.add(line);
+    }, onDone: onDone.complete);
+    await null;
+    logReader.dispose();
+    await onDone.future;
+    expect(emittedLines, const <String>['W/flutter($appPid): Hello there!']);
+  });
+
   testWithoutContext('AdbLogReader calls adb logcat with expected flags apiVersion 21', () async {
     final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
       const FakeCommand(
