@@ -587,7 +587,7 @@ class _Decoration {
   final _InputBorderGap borderGap;
   final bool alignLabelWithHint;
   final bool? isDense;
-  final bool? isEmpty;
+  final bool isEmpty;
   final VisualDensity visualDensity;
   final Widget? icon;
   final Widget? input;
@@ -1158,7 +1158,7 @@ class _RenderDecoration extends RenderBox
   @override
   double computeMinIntrinsicWidth(double height) {
     final double contentWidth =
-        decoration.isEmpty ?? false
+        decoration.isEmpty
             ? math.max(_minWidth(input, height), _minWidth(hint, height))
             : _minWidth(input, height);
     return _minWidth(icon, height) +
@@ -1174,7 +1174,7 @@ class _RenderDecoration extends RenderBox
   @override
   double computeMaxIntrinsicWidth(double height) {
     final double contentWidth =
-        decoration.isEmpty ?? false
+        decoration.isEmpty
             ? math.max(_maxWidth(input, height), _maxWidth(hint, height))
             : _maxWidth(input, height);
     return _maxWidth(icon, height) +
