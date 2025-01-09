@@ -227,6 +227,48 @@ TEST_P(DlGoldenTest, ShimmerTest) {
   EXPECT_TRUE(average_rmse >= 0.0) << "average_rmse: " << average_rmse;
 }
 
+TEST_P(DlGoldenTest, TextJumpingTest) {
+  impeller::Scalar font_size = 150;
+  auto callback = [&](impeller::Scalar scale) -> sk_sp<DisplayList> {
+    DisplayListBuilder builder;
+    DlPaint paint;
+    paint.setColor(DlColor::ARGB(1, 0.1, 0.1, 0.1));
+    builder.DrawPaint(paint);
+    builder.Scale(scale, scale);
+    RenderTextInCanvasSkia(&builder,
+                           "the quick brown fox jumped over the lazy dog!.?",
+                           "Roboto-Regular.ttf", SkPoint::Make(100, 300),
+                           TextRenderOptions{
+                               .font_size = font_size,
+                           });
+    std::shared_ptr<DlImageFilter> filter =
+        DlImageFilter::MakeMatrix(DlMatrix(                  //
+                                      1.0 / scale, 0, 0, 0,  //
+                                      0, 1.0 / scale, 0, 0,  //
+                                      0, 0, 1, 0,            //
+                                      0, 0, 0, 1),
+                                  DlImageSampling::kNearestNeighbor);
+    builder.SaveLayer(std::nullopt, nullptr, filter.get());
+    builder.Restore();
+    return builder.Build();
+  };
+
+  impeller::Scalar left_scalar = 0.445f;
+  impeller::Scalar right_scalar = 0.444f;
+  EXPECT_TRUE(OpenPlaygroundHere(callback(left_scalar)));
+
+  std::unique_ptr<impeller::testing::Screenshot> left =
+      MakeScreenshot(callback(left_scalar));
+  if (!left) {
+    GTEST_SKIP() << "making screenshots not supported.";
+  }
+  std::unique_ptr<impeller::testing::Screenshot> right =
+      MakeScreenshot(callback(right_scalar));
+
+  double rmse = RMSE(left.get(), right.get());
+  EXPECT_TRUE(rmse < 16.f) << "rmse: " << rmse;
+}
+
 TEST_P(DlGoldenTest, StrokedRRectFastBlur) {
   impeller::Point content_scale = GetContentScale();
 
