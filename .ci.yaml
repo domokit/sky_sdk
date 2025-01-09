@@ -361,7 +361,7 @@ targets:
   # This is a benchmark that does not require an attached device. However, we
   # are intentionally running it in the devicelab to ensure that it does not
   # run on a VM in order to avoid noisy results from the benchmark.
-  - name: Mac analyzer_benchmark
+  - name: Mac_arm64 analyzer_benchmark
     bringup: true # Flaky https://github.com/flutter/flutter/issues/161306
     recipe: devicelab/devicelab_drone
     timeout: 60
