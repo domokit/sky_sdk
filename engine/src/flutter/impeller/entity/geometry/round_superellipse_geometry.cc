@@ -395,6 +395,8 @@ RoundingRadii LimitRadii(const Rect& bounds, const RoundingRadii& in_radii) {
   return radii;
 }
 
+// A class that arranges a point list that forms a convex contour into a
+// triangle strip.
 class ConvexTessellator {
  public:
   ConvexTessellator() {}
@@ -428,38 +430,50 @@ class ConvexTessellator {
 // A convex tessellator whose contour is concatenated from 4 quadrant segments.
 //
 // All quadrant curves travel from the Y axis to the X axis, and include both
-// ends.
-class FourQuadrantsTessellator : public ConvexTessellator {
+// ends. This means that the points on the axes are duplicate between segments,
+// and will be omitted by this class.
+class UnevenQuadrantsTessellator : public ConvexTessellator {
  public:
-  FourQuadrantsTessellator(Point* quads[4], size_t lengths[4])
-      : quads_(quads),
-        l0_(lengths[0]),
-        l1_(lengths[1]),
-        l2_(lengths[2]),
-        l3_(lengths[3]) {}
+  UnevenQuadrantsTessellator(Point* cache, size_t segment_capacity)
+      : cache_(cache),
+        segment_capacity_(segment_capacity) {}
 
-  size_t ContourLength() const override { return l0_ + l1_ + l2_ + l3_ - 4; }
+  Point* QuadCache(size_t i) {
+    return cache_ + segment_capacity_ * i;
+  }
+
+  const Point* QuadCache(size_t i) const {
+    return cache_ + segment_capacity_ * i;
+  }
+
+  size_t& QuadSize(size_t i) {
+    return lengths_[i];
+  }
+
+  size_t ContourLength() const override { return lengths_[0] + lengths_[1] + lengths_[2] + lengths_[3] - 4; }
 
   Point GetPoint(size_t i) const override {
-    //      output           from             quad
-    //      0 ... l0-2    0    ... l0-2   quads[0]
-    // next 0 ... l1-2    l1-1 ... 1      quads[1]
-    // next 0 ... l2-2    0    ... l2-2   quads[2]
-    // next 0 ... l3-2    l3-1 ... 1      quads[3]
-    if (i < l0_ - 1) {
-      return quads_[0][i];
+    //   output            from       index
+    //      0 ... l0-2    quads[0]   0    ... l0-2
+    // next 0 ... l1-2    quads[1]   l1-1 ... 1
+    // next 0 ... l2-2    quads[2]   0    ... l2-2
+    // next 0 ... l3-2    quads[3]   l3-1 ... 1
+    size_t high = lengths_[0] - 1;
+    if (i < high) {
+      return QuadCache(0)[i];
     }
-    i -= l0_ - 1;
-    if (i < l1_ - 1) {
-      return quads_[1][l1_ - 1 - i];
+    high += lengths_[1] - 1;
+    if (i < high) {
+      return QuadCache(1)[high - i];
     }
-    i -= l1_ - 1;
-    if (i < l2_ - 1) {
-      return quads_[2][i];
+    size_t low = high;
+    high += lengths_[2] - 1;
+    if (i < high) {
+      return QuadCache(2)[i - low];
     }
-    i -= l2_ - 1;
-    if (i < l3_ - 1) {
-      return quads_[3][l3_ - 1 - i];
+    high += lengths_[3] - 1;
+    if (i < high) {
+      return QuadCache(3)[high - i];
     } else {
       // Unreachable
       return Point();
@@ -467,11 +481,53 @@ class FourQuadrantsTessellator : public ConvexTessellator {
   }
 
  private:
-  Point** quads_;
-  size_t l0_;
-  size_t l1_;
-  size_t l2_;
-  size_t l3_;
+  Point* cache_;
+  size_t segment_capacity_;
+  size_t lengths_[4];
+};
+
+// A convex tessellator whose contour is concatenated from 4 identical quadrant segments.
+//
+// The quadrant curve travels from the Y axis to the X axis, and include both
+// ends. This means that the points on the axes are duplicate between segments,
+// and will be omitted by this class.
+class MirroredQuadrantTessellator : public ConvexTessellator {
+ public:
+  MirroredQuadrantTessellator(Point* quad, size_t length)
+      : quad_(quad),
+        l_(length) {}
+
+  size_t ContourLength() const override { return l_ * 4 - 4; }
+
+  Point GetPoint(size_t i) const override {
+    //   output          from   index
+    //      0 ... l-2    quad   0   ... l-2
+    // next 0 ... l-2    quad   l-1 ... 1
+    // next 0 ... l-2    quad   0   ... l-2
+    // next 0 ... l-2    quad   l-1 ... 1
+    if (i < l_ - 1) {
+      return quad_[i];
+    }
+    i -= l_ - 1;
+    if (i < l_ - 1) {
+      return quad_[l_ - 1 - i];
+    }
+    i -= l_ - 1;
+    if (i < l_ - 1) {
+      return quad_[i];
+    }
+    i -= l_ - 1;
+    if (i < l_ - 1) {
+      return quad_[l_ - 1 - i];
+    } else {
+      // Unreachable
+      return Point();
+    }
+  }
+
+ private:
+  Point* quad_;
+  size_t l_;
 };
 
 }  // namespace
@@ -500,17 +556,13 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
   Point* cache = renderer.GetTessellator().GetStrokePointCache().data();
 
   // The memory size (in units of Points) allocated to store the first chunk.
-  constexpr size_t kMaxQuadrantLength = kPointArenaSize / 5;
+  constexpr size_t kMaxQuadSize = kPointArenaSize / 5;
   // Since the curve is traversed in steps bounded by kMaxQuadrantSteps, the
   // curving part will have fewer points than kMaxQuadrantSteps. Multiply it by
   // 2 for storing other sporatic points (an extremely conservative estimate).
-  static_assert(kMaxQuadrantLength > 2 * kMaxQuadrantSteps);
+  static_assert(kMaxQuadSize > 2 * kMaxQuadrantSteps);
 
-  Point* quads[4] = {
-      cache + kMaxQuadrantLength * 0, cache + kMaxQuadrantLength * 1,
-      cache + kMaxQuadrantLength * 2, cache + kMaxQuadrantLength * 3};
-  size_t quad_lengths[4];
-  Point* octant_cache = cache + kMaxQuadrantLength * 4;
+  Point* octant_cache = cache + kMaxQuadSize * 4;
 
   // === SPLITS ===
 
@@ -525,20 +577,19 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
   Scalar left_split = split(bounds_.GetTop(), bounds_.GetBottom(),
                             radii_.top_left.height, radii_.bottom_left.height);
 
-  quad_lengths[0] =
-      DrawQuadrant(quads[0], octant_cache, Point{top_split, right_split},
-                   bounds_.GetRightTop(), radii_.top_right);
-  quad_lengths[1] =
-      DrawQuadrant(quads[1], octant_cache, Point{bottom_split, right_split},
-                   bounds_.GetRightBottom(), radii_.bottom_right);
-  quad_lengths[2] =
-      DrawQuadrant(quads[2], octant_cache, Point{bottom_split, left_split},
-                   bounds_.GetLeftBottom(), radii_.bottom_left);
-  quad_lengths[3] =
-      DrawQuadrant(quads[3], octant_cache, Point{top_split, left_split},
-                   bounds_.GetLeftTop(), radii_.top_left);
-
-  FourQuadrantsTessellator tesselator(quads, quad_lengths);
+  UnevenQuadrantsTessellator tesselator(cache, kMaxQuadSize);
+  tesselator.QuadSize(0) = DrawQuadrant(
+      tesselator.QuadCache(0), octant_cache, Point{top_split, right_split},
+      bounds_.GetRightTop(), radii_.top_right);
+  tesselator.QuadSize(1) = DrawQuadrant(
+      tesselator.QuadCache(1), octant_cache, Point{bottom_split, right_split},
+      bounds_.GetRightBottom(), radii_.bottom_right);
+  tesselator.QuadSize(2) = DrawQuadrant(
+      tesselator.QuadCache(2), octant_cache, Point{bottom_split, left_split},
+      bounds_.GetLeftBottom(), radii_.bottom_left);
+  tesselator.QuadSize(3) = DrawQuadrant(tesselator.QuadCache(3), octant_cache,
+                                        Point{top_split, left_split},
+                                        bounds_.GetLeftTop(), radii_.top_left);
 
   size_t contour_length = tesselator.ContourLength();
   BufferView vertex_buffer = renderer.GetTransientsBuffer().Emplace(
