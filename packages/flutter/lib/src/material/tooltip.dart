@@ -186,6 +186,7 @@ class Tooltip extends StatefulWidget {
     this.enableFeedback,
     this.onTriggered,
     this.mouseCursor,
+    this.ignorePointer,
     this.child,
   }) : assert(
          (message == null) != (richMessage == null),
@@ -362,6 +363,15 @@ class Tooltip extends StatefulWidget {
   ///
   /// If this property is null, [MouseCursor.defer] will be used.
   final MouseCursor? mouseCursor;
+
+  /// Whether to ignore pointer events on the tooltip.
+  ///
+  /// When true, pointer events on the tooltip will interact with the child
+  /// widget below instead of the tooltip.
+  ///
+  /// Defaults to true when supplying a simple [message], and false
+  /// when supplying a [richMessage].
+  final bool? ignorePointer;
 
   static final List<TooltipState> _openedTooltips = <TooltipState>[];
 
@@ -846,6 +856,8 @@ class TooltipState extends State<Tooltip> with SingleTickerProviderStateMixin {
       verticalOffset:
           widget.verticalOffset ?? tooltipTheme.verticalOffset ?? _defaultVerticalOffset,
       preferBelow: widget.preferBelow ?? tooltipTheme.preferBelow ?? _defaultPreferBelow,
+      ignorePointer: widget.ignorePointer ?? widget.message != null,
+
     );
 
     return SelectionContainer.maybeOf(context) == null
@@ -971,6 +983,7 @@ class _TooltipOverlay extends StatelessWidget {
     required this.target,
     required this.verticalOffset,
     required this.preferBelow,
+    required this.ignorePointer,
     this.onEnter,
     this.onExit,
   });
@@ -988,6 +1001,7 @@ class _TooltipOverlay extends StatelessWidget {
   final bool preferBelow;
   final PointerEnterEventListener? onEnter;
   final PointerExitEventListener? onExit;
+  final bool ignorePointer;
 
   @override
   Widget build(BuildContext context) {
@@ -1024,7 +1038,10 @@ class _TooltipOverlay extends StatelessWidget {
           verticalOffset: verticalOffset,
           preferBelow: preferBelow,
         ),
-        child: result,
+        child: IgnorePointer(
+          ignoring: ignorePointer,
+          child: result,
+        ),
       ),
     );
   }
