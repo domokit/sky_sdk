@@ -1159,19 +1159,6 @@ class RenderParagraph extends RenderBox
       config.isSemanticBoundary = true;
     } else if (needsChildConfigurationsDelegate) {
       config.childConfigurationsDelegate = _childSemanticsConfigurationsDelegate;
-      // TODO(chunhtai): Figure out what to do when text spans are asked to form
-      // a semantics node.
-      //
-      // this is a workaround for cases where text span can't formed
-      // a semantics node by itself. In `childConfigurationsDelegate`, the
-      // text spans are converted into SemanticsConfigurations to be merge up,
-      // and this can become a problem if parent has explicit child set to true.
-      //
-      // Setting the hasBeenAnnotated will force this render object to absorb
-      // all the text spans' SemanticsConfigurations.
-      if (hasTextSpan) {
-        config.hasBeenAnnotated = true;
-      }
     } else {
       if (_cachedAttributedLabels == null) {
         final StringBuffer buffer = StringBuffer();

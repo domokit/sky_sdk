@@ -4730,6 +4730,13 @@ class _RenderObjectSemantics extends _SemanticsFragment with DiagnosticableTreeM
   bool _hasSiblingConflict = false;
   bool? _blocksPreviousSibling;
   double elevationAdjustment = 0.0;
+  // TODO(chunhtai): Figure out what to do when incomplete fragments are asked
+  // to form a semantics node.
+  //
+  // If this is true, the [contributesToSemanticsTree] will also return true.
+  // This is a workaround so that the incomplete fragments will not be forced to
+  // form a node if the parent has explicitChildNode = true.
+  bool _containsIncompleteFragment = false;
 
   bool built = false;
 
@@ -4790,6 +4797,7 @@ class _RenderObjectSemantics extends _SemanticsFragment with DiagnosticableTreeM
 
   bool get contributesToSemanticsTree {
     return configProvider.effective.hasBeenAnnotated ||
+        _containsIncompleteFragment ||
         configProvider.effective.isSemanticBoundary ||
         isRoot;
   }
@@ -4956,7 +4964,7 @@ class _RenderObjectSemantics extends _SemanticsFragment with DiagnosticableTreeM
         siblingMergeGroups.addAll(childSemantics.siblingMergeGroups);
       }
     }
-
+    _containsIncompleteFragment = false;
     assert(childConfigurationsDelegate != null || configToFragment.isEmpty);
     if (!explicitChildNodesForChildren && hasChildConfigurationsDelegate) {
       final ChildSemanticsConfigurationsResult result = childConfigurationsDelegate(
@@ -4964,13 +4972,23 @@ class _RenderObjectSemantics extends _SemanticsFragment with DiagnosticableTreeM
       );
       children.addAll(
         result.mergeUp.map<_SemanticsFragment>((SemanticsConfiguration config) {
-          return configToFragment[config] ?? _IncompleteSemanticsFragment(config, this);
+          final _SemanticsFragment? fragment = configToFragment[config];
+          if (fragment != null) {
+            return fragment;
+          }
+          _containsIncompleteFragment = true;
+          return _IncompleteSemanticsFragment(config, this);
         }),
       );
       for (final Iterable<SemanticsConfiguration> group in result.siblingMergeGroups) {
         siblingMergeGroups.add(
           group.map<_SemanticsFragment>((SemanticsConfiguration config) {
-            return configToFragment[config] ?? _IncompleteSemanticsFragment(config, this);
+            final _SemanticsFragment? fragment = configToFragment[config];
+            if (fragment != null) {
+              return fragment;
+            }
+            _containsIncompleteFragment = true;
+            return _IncompleteSemanticsFragment(config, this);
           }).toList(),
         );
       }
@@ -5442,6 +5460,7 @@ class _RenderObjectSemantics extends _SemanticsFragment with DiagnosticableTreeM
     cachedSemanticsNode = null;
     parentData = null;
     _blocksPreviousSibling = null;
+    _containsIncompleteFragment = false;
     mergeUp.clear();
     siblingMergeGroups.clear();
     _childrenAndElevationAdjustments.clear();
