@@ -151,6 +151,25 @@ size_t DrawCircularArc(Point* output, Point start, Point end, Scalar r) {
   return next - output;
 }
 
+size_t DrawSuperellipsoidArc(Point* output,
+                             Point center,
+                             Scalar a,
+                             Scalar n,
+                             Scalar max_theta) {
+  Scalar step =
+      CalculateStep(a - a * pow(abs(cosf(max_theta)), 2 / n), max_theta);
+
+  Point* next = output;
+  Scalar angle = 0;
+  while (angle < max_theta) {
+    Scalar x = a * pow(abs(sinf(angle)), 2 / n);
+    Scalar y = a * pow(abs(cosf(angle)), 2 / n);
+    *(next++) = Point(x, y) + center;
+    angle += step;
+  }
+  return next - output;
+}
+
 // Draws an arc representing the top 1/8 segment of a square-like rounded
 // superellipse.
 //
@@ -213,26 +232,17 @@ size_t DrawOctantSquareLikeSquircle(Point* output,
 
   Point pointM(size / 2 - g, size / 2 - g);
 
-  Scalar xJ = a * pow(abs(sinf(thetaJ)), 2 / n);
-  Scalar yJ = a * pow(abs(cosf(thetaJ)), 2 / n);
+  Point center = {s, s};
 
   Point* next = output;
   // A
   *(next++) = Point(0, size / 2);
+
   // Superellipsoid arc BJ (B inclusive, J exclusive)
-  {
-    Scalar step = CalculateStep(a - yJ, thetaJ);
-    Scalar angle = 0;
-    while (angle < thetaJ) {
-      Scalar x = a * pow(abs(sinf(angle)), 2 / n);
-      Scalar y = a * pow(abs(cosf(angle)), 2 / n);
-      *(next++) = Point(x + s, y + s);
-      angle += step;
-    }
-  }
+  next += DrawSuperellipsoidArc(next, center, a, n, thetaJ);
 
   // Circular arc JM (B inclusive, M exclusive)
-  next += DrawCircularArc(next, {xJ + s, yJ + s}, pointM, R);
+  next += DrawCircularArc(next, next[-1], pointM, R);
   return next - output;
 }
 
@@ -272,14 +282,16 @@ static size_t DrawQuadrant(Point* output,
                            Point outer,
                            Size radii) {
   if (radii.width == 0 || radii.height == 0) {
-    // Degrade to rectangle.
+    // Degrade to rectangle. (A zero radius causes error below.)
     output[0] = {center.x, outer.y};
     output[1] = outer;
     output[2] = {outer.x, center.y};
     return 3;
   }
   // Normalize sizes and radii into symmetrical radius by scaling the longer of
-  // `radii` to the shorter.
+  // `radii` to the shorter. For example, to draw a RSE with size (200, 300)
+  // and radii (20, 10), this function draws one with size (100, 300) and radii
+  // (10, 10) and then scales it by (2x, 1x).
   Scalar norm_radius = radii.MinDimension();
   Size radius_scale = radii / norm_radius;
   Point signed_size = (outer - center) * 2;
@@ -525,7 +537,6 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
     const ContentContext& renderer,
     const Entity& entity,
     RenderPass& pass) const {
-
   // The cache is allocated as follows:
   //
   //  * The first chunk stores the quadrant arc.
