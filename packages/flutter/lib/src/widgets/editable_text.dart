@@ -258,17 +258,19 @@ class TextEditingController extends ValueNotifier<TextEditingValue> {
   /// The current string the user is editing.
   String get text => value.text;
 
-  /// Setting this will notify all the listeners of this [TextEditingController]
+  /// Updates the current [text] to the given `newText`, and removes existing
+  /// selection and composing range held by the controller.
+  ///
+  /// This setter is typically only used in tests, as it resets the cursor
+  /// position and the composing state. For production code, **consider using the
+  /// [value] setter to update the [text] value instead**, and specify a
+  /// reasonable selection range within the new [text].
+  ///
+  /// Setting this notifies all the listeners of this [TextEditingController]
   /// that they need to update (it calls [notifyListeners]). For this reason,
   /// this value should only be set between frames, e.g. in response to user
-  /// actions, not during the build, layout, or paint phases.
-  ///
-  /// This property can be set from a listener added to this
-  /// [TextEditingController]; **however, one should not also set [selection]
-  /// in a separate statement. To change both the [text] and the [selection]
-  /// change the controller's [value].** Setting this here will clear
-  /// the current selection and composing range, so avoid using it directly
-  /// unless that is the desired behavior.
+  /// actions, not during the build, layout, or paint phases. This property can
+  /// be set from a listener added to this [TextEditingController].
   set text(String newText) {
     value = value.copyWith(
       text: newText,

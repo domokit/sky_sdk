@@ -1743,6 +1743,9 @@ class FakeAndroidDevice extends Fake implements AndroidDevice {
   String get name => 'd$id';
 
   @override
+  String get displayName => name;
+
+  @override
   Future<bool> get isLocalEmulator async => false;
 
   @override
@@ -1856,6 +1859,9 @@ class FakeIOSDevice extends Fake implements IOSDevice {
 
   @override
   final String name = 'name';
+
+  @override
+  String get displayName => name;
 
   @override
   Future<TargetPlatform> get targetPlatform async => TargetPlatform.ios;

@@ -238,6 +238,9 @@ class FakeWebDevice extends Fake implements Device {
   String get name => 'web';
 
   @override
+  String get displayName => name;
+
+  @override
   Future<bool> stopApp(ApplicationPackage? app, {String? userIdentifier}) async {
     return true;
   }

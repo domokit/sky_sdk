@@ -292,12 +292,10 @@ abstract class SearchDelegate<T> {
   ///
   /// Setting the query string programmatically moves the cursor to the end of the text field.
   set query(String value) {
-    _queryTextController.text = value;
-    if (_queryTextController.text.isNotEmpty) {
-      _queryTextController.selection = TextSelection.fromPosition(
-        TextPosition(offset: _queryTextController.text.length),
-      );
-    }
+    _queryTextController.value = TextEditingValue(
+      text: value,
+      selection: TextSelection.collapsed(offset: value.length),
+    );
   }
 
   /// Transition from the suggestions returned by [buildSuggestions] to the
