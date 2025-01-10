@@ -281,7 +281,7 @@ typedef MaterialStateTextStyle = WidgetStateTextStyle;
 ///
 /// This class exists to enable widgets with [OutlineInputBorder] valued properties
 /// to also accept [MaterialStateProperty<OutlineInputBorder>] values. A material
-/// state input border property represents a text style which depends on
+/// state input border property represents an input border which depends on
 /// a widget's "interactive state". This state is represented as a
 /// [Set] of [MaterialState]s, like [MaterialState.pressed],
 /// [MaterialState.focused] and [MaterialState.hovered].
@@ -361,7 +361,7 @@ class _MaterialStateOutlineInputBorder extends MaterialStateOutlineInputBorder {
 ///
 /// This class exists to enable widgets with [UnderlineInputBorder] valued properties
 /// to also accept [MaterialStateProperty<UnderlineInputBorder>] values. A material
-/// state input border property represents a text style which depends on
+/// state input border property represents an input border which depends on
 /// a widget's "interactive state". This state is represented as a
 /// [Set] of [MaterialState]s, like [MaterialState.pressed],
 /// [MaterialState.focused] and [MaterialState.hovered].
