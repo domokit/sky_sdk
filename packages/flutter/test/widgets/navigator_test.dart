@@ -5644,28 +5644,39 @@ void main() {
         child: const SizedBox(width: 100, height: 100),
       );
     }
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Column(
-          children: <Widget>[
-            makeFocus(0),
-            Navigator(
-              key: navigatorKey,
-              onGenerateRoute: (RouteSettings settings) {
-                return MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return const Center(child: Text('home'));
-                  },
-                );
-              },
+    Future<void> pumpApp() async {
+      Widget home = Column(
+        children: <Widget>[
+          makeFocus(0),
+          Navigator(
+            key: navigatorKey,
+            onGenerateRoute: (RouteSettings settings) {
+              return MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return const Center(child: Text('home'));
+                },
+              );
+            },
+          ),
+          makeFocus(3),
+        ],
+      );
+      // Prevent the arrow keys from scrolling on the web.
+      if (isBrowser) {
+        home = Shortcuts(
+          shortcuts: const <ShortcutActivator, Intent>{
+            SingleActivator(LogicalKeyboardKey.arrowUp): DirectionalFocusIntent(
+              TraversalDirection.up,
             ),
-            makeFocus(3),
-          ],
-        ),
-      ),
-    );
-
+            SingleActivator(LogicalKeyboardKey.arrowDown): DirectionalFocusIntent(
+              TraversalDirection.down,
+            ),
+          },
+          child: home,
+        );
+      }
+      await tester.pumpWidget(MaterialApp(home: home));
+    }
     /// Layout is:
     /// ---------MaterialApp---------
     ///          [0]
@@ -5685,11 +5696,11 @@ void main() {
         ),
       );
     }
-
     void clear() {
       focus = List<bool?>.generate(focus.length, (int _) => null);
     }
 
+    await pumpApp();
     Future<void> resetTo(int index) async {
       nodes[index].requestFocus();
       await tester.pump();
