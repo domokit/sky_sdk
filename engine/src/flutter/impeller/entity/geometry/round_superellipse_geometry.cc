@@ -280,6 +280,13 @@ static size_t DrawQuadrant(Point* output,
                            Point center,
                            Point outer,
                            Size radii) {
+  if (radii.width == 0 || radii.height == 0) {
+    // Degrade to rectangle.
+    output[0] = {center.x, outer.y};
+    output[1] = outer;
+    output[2] = {outer.x, center.y};
+    return 3;
+  }
   // Normalize sizes and radii into symmetrical radius by scaling the longer of
   // `radii` to the shorter.
   Scalar norm_radius = radii.MinDimension();
@@ -560,7 +567,8 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
 
     // The quadrant must be drawn at the origin so that it can be rotated later.
     t.QuadSize() = DrawQuadrant(cache, octant_cache, Point(),
-                                bounds_.GetRightTop() - bounds_.GetCenter(), radii_.top_right);
+                                bounds_.GetRightTop() - bounds_.GetCenter(),
+                                radii_.top_right);
   } else {
     tessellator_holder.emplace<UnevenQuadrantsTessellator>(cache, kMaxQuadSize);
     UnevenQuadrantsTessellator& t =
