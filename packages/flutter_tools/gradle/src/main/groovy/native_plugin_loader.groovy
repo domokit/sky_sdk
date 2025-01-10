@@ -4,7 +4,7 @@
 
 import groovy.json.JsonSlurper
 
-class NativePluginLoader {
+class OldNativePluginLoader {
 
     // This string must match _kFlutterPluginsHasNativeBuildKey defined in
     // packages/flutter_tools/lib/src/flutter_plugins.dart.
