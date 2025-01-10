@@ -13,4 +13,4 @@ double RMSE(const impeller::testing::Screenshot* left,
             const impeller::testing::Screenshot* right);
 }
 }  // namespace flutter
-#endif
+#endif  // FLUTTER_IMPELLER_DISPLAY_LIST_TESTING_RMSE_H_
