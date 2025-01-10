@@ -5644,6 +5644,7 @@ void main() {
         child: const SizedBox(width: 100, height: 100),
       );
     }
+
     Future<void> pumpApp() async {
       Widget home = Column(
         children: <Widget>[
@@ -5677,6 +5678,7 @@ void main() {
       }
       await tester.pumpWidget(MaterialApp(home: home));
     }
+
     /// Layout is:
     /// ---------MaterialApp---------
     ///          [0]
@@ -5696,6 +5698,7 @@ void main() {
         ),
       );
     }
+
     void clear() {
       focus = List<bool?>.generate(focus.length, (int _) => null);
     }
