@@ -435,22 +435,19 @@ class ConvexTessellator {
 class UnevenQuadrantsTessellator : public ConvexTessellator {
  public:
   UnevenQuadrantsTessellator(Point* cache, size_t segment_capacity)
-      : cache_(cache),
-        segment_capacity_(segment_capacity) {}
+      : cache_(cache), segment_capacity_(segment_capacity) {}
 
-  Point* QuadCache(size_t i) {
-    return cache_ + segment_capacity_ * i;
-  }
+  Point* QuadCache(size_t i) { return cache_ + segment_capacity_ * i; }
 
   const Point* QuadCache(size_t i) const {
     return cache_ + segment_capacity_ * i;
   }
 
-  size_t& QuadSize(size_t i) {
-    return lengths_[i];
-  }
+  size_t& QuadSize(size_t i) { return lengths_[i]; }
 
-  size_t ContourLength() const override { return lengths_[0] + lengths_[1] + lengths_[2] + lengths_[3] - 4; }
+  size_t ContourLength() const override {
+    return lengths_[0] + lengths_[1] + lengths_[2] + lengths_[3] - 4;
+  }
 
   Point GetPoint(size_t i) const override {
     //   output            from       index
@@ -486,16 +483,18 @@ class UnevenQuadrantsTessellator : public ConvexTessellator {
   size_t lengths_[4];
 };
 
-// A convex tessellator whose contour is concatenated from 4 identical quadrant segments.
+// A convex tessellator whose contour is concatenated from 4 identical quadrant
+// segments.
 //
-// The quadrant curve travels from the Y axis to the X axis, and include both
+// The input curve must travel from the Y axis to the X axis and include both
 // ends. This means that the points on the axes are duplicate between segments,
 // and will be omitted by this class.
 class MirroredQuadrantTessellator : public ConvexTessellator {
  public:
-  MirroredQuadrantTessellator(Point* quad, size_t length)
-      : quad_(quad),
-        l_(length) {}
+  MirroredQuadrantTessellator(Point center, Point* cache)
+      : center_(center), cache_(cache) {}
+
+  size_t& QuadSize() { return l_; }
 
   size_t ContourLength() const override { return l_ * 4 - 4; }
 
@@ -505,20 +504,22 @@ class MirroredQuadrantTessellator : public ConvexTessellator {
     // next 0 ... l-2    quad   l-1 ... 1
     // next 0 ... l-2    quad   0   ... l-2
     // next 0 ... l-2    quad   l-1 ... 1
-    if (i < l_ - 1) {
-      return quad_[i];
+    size_t high = l_ - 1;
+    if (i < high) {
+      return cache_[i] + center_;
     }
-    i -= l_ - 1;
-    if (i < l_ - 1) {
-      return quad_[l_ - 1 - i];
+    high += l_ - 1;
+    if (i < high) {
+      return cache_[high - i] * Point{1, -1} + center_;
     }
-    i -= l_ - 1;
-    if (i < l_ - 1) {
-      return quad_[i];
+    size_t low = high;
+    high += l_ - 1;
+    if (i < high) {
+      return cache_[i - low] * Point{-1, -1} + center_;
     }
-    i -= l_ - 1;
-    if (i < l_ - 1) {
-      return quad_[l_ - 1 - i];
+    high += l_ - 1;
+    if (i < high) {
+      return cache_[high - i] * Point{-1, 1} + center_;
     } else {
       // Unreachable
       return Point();
@@ -526,8 +527,9 @@ class MirroredQuadrantTessellator : public ConvexTessellator {
   }
 
  private:
-  Point* quad_;
-  size_t l_;
+  Point center_;
+  Point* cache_;
+  size_t l_ = 0;
 };
 
 }  // namespace
@@ -566,38 +568,60 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
 
   // === SPLITS ===
 
-  Scalar top_split = split(bounds_.GetLeft(), bounds_.GetRight(),
-                           radii_.top_left.width, radii_.top_right.width);
-  Scalar right_split =
-      split(bounds_.GetTop(), bounds_.GetBottom(), radii_.top_right.height,
-            radii_.bottom_right.height);
-  Scalar bottom_split =
-      split(bounds_.GetLeft(), bounds_.GetRight(), radii_.bottom_left.width,
-            radii_.bottom_right.width);
-  Scalar left_split = split(bounds_.GetTop(), bounds_.GetBottom(),
-                            radii_.top_left.height, radii_.bottom_left.height);
+  ConvexTessellator* tessellator;
+  std::variant<std::monostate, MirroredQuadrantTessellator,
+               UnevenQuadrantsTessellator>
+      tessellator_holder;
 
-  UnevenQuadrantsTessellator tesselator(cache, kMaxQuadSize);
-  tesselator.QuadSize(0) = DrawQuadrant(
-      tesselator.QuadCache(0), octant_cache, Point{top_split, right_split},
-      bounds_.GetRightTop(), radii_.top_right);
-  tesselator.QuadSize(1) = DrawQuadrant(
-      tesselator.QuadCache(1), octant_cache, Point{bottom_split, right_split},
-      bounds_.GetRightBottom(), radii_.bottom_right);
-  tesselator.QuadSize(2) = DrawQuadrant(
-      tesselator.QuadCache(2), octant_cache, Point{bottom_split, left_split},
-      bounds_.GetLeftBottom(), radii_.bottom_left);
-  tesselator.QuadSize(3) = DrawQuadrant(tesselator.QuadCache(3), octant_cache,
-                                        Point{top_split, left_split},
-                                        bounds_.GetLeftTop(), radii_.top_left);
+  if (radii_.AreAllCornersSame()) {
+    tessellator_holder.emplace<MirroredQuadrantTessellator>(bounds_.GetCenter(),
+                                                            cache);
+    MirroredQuadrantTessellator& t =
+        std::get<MirroredQuadrantTessellator>(tessellator_holder);
+    tessellator = &t;
 
-  size_t contour_length = tesselator.ContourLength();
+    // The quadrant must be drawn at the origin so that it can be rotated later.
+    t.QuadSize() = DrawQuadrant(cache, octant_cache, Point(),
+                                bounds_.GetRightTop() - bounds_.GetCenter(), radii_.top_right);
+  } else {
+    tessellator_holder.emplace<UnevenQuadrantsTessellator>(cache, kMaxQuadSize);
+    UnevenQuadrantsTessellator& t =
+        std::get<UnevenQuadrantsTessellator>(tessellator_holder);
+    tessellator = &t;
+
+    Scalar top_split = split(bounds_.GetLeft(), bounds_.GetRight(),
+                             radii_.top_left.width, radii_.top_right.width);
+    Scalar right_split =
+        split(bounds_.GetTop(), bounds_.GetBottom(), radii_.top_right.height,
+              radii_.bottom_right.height);
+    Scalar bottom_split =
+        split(bounds_.GetLeft(), bounds_.GetRight(), radii_.bottom_left.width,
+              radii_.bottom_right.width);
+    Scalar left_split =
+        split(bounds_.GetTop(), bounds_.GetBottom(), radii_.top_left.height,
+              radii_.bottom_left.height);
+
+    t.QuadSize(0) = DrawQuadrant(t.QuadCache(0), octant_cache,
+                                 Point{top_split, right_split},
+                                 bounds_.GetRightTop(), radii_.top_right);
+    t.QuadSize(1) = DrawQuadrant(t.QuadCache(1), octant_cache,
+                                 Point{bottom_split, right_split},
+                                 bounds_.GetRightBottom(), radii_.bottom_right);
+    t.QuadSize(2) = DrawQuadrant(t.QuadCache(2), octant_cache,
+                                 Point{bottom_split, left_split},
+                                 bounds_.GetLeftBottom(), radii_.bottom_left);
+    t.QuadSize(3) =
+        DrawQuadrant(t.QuadCache(3), octant_cache, Point{top_split, left_split},
+                     bounds_.GetLeftTop(), radii_.top_left);
+  }
+
+  size_t contour_length = tessellator->ContourLength();
   BufferView vertex_buffer = renderer.GetTransientsBuffer().Emplace(
       nullptr, sizeof(Point) * contour_length, alignof(Point));
   Point* vertex_data =
       reinterpret_cast<Point*>(vertex_buffer.GetBuffer()->OnGetContents() +
                                vertex_buffer.GetRange().offset);
-  tesselator.RearrangeIntoTriangleStrip(vertex_data);
+  tessellator->RearrangeIntoTriangleStrip(vertex_data);
 
   return GeometryResult{
       .type = PrimitiveType::kTriangleStrip,
