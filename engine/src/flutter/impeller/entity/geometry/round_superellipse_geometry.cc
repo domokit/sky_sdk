@@ -126,7 +126,8 @@ static Scalar Split(Scalar left,
 // goes from `end` to `start` instead.
 //
 // The resulting points, after applying `transform`, are appended to `output`
-// and include the starting point but exclude the ending point.
+// and include the effective starting point but exclude the effective ending
+// point.
 //
 // Returns the number of generated points.
 size_t DrawCircularArc(Point* output,
@@ -172,11 +173,10 @@ size_t DrawCircularArc(Point* output,
 
 // Draw a superellipsoid arc.
 //
-// The superellipse is centered at the origin, has both semi-axes `a` and degree
-// `n`. The arc starts from positive Y axis and spans from 0 to `max_theta`
-// radiance clockwise.
-//
-// If `reverse` is true, then the curve goes from `end` to `start` instead.
+// The superellipse is centered at the origin and has degree `n` and both
+// semi-axes equal to `a`. The arc starts from positive Y axis and spans from 0
+// to `max_theta` radiance clockwise if `reverse` is false, or from `max_theta`
+// to 0 otherwise.
 //
 // The resulting points, after applying `transform`, are appended to `output`
 // and include the starting point but exclude the ending point.
@@ -204,17 +204,17 @@ size_t DrawSuperellipsoidArc(Point* output,
 }
 
 // Draws an arc representing the top 1/8 segment of a square-like rounded
-// superellipse.
+// superellipse centered at the origin.
 //
-// The resulting arc centers at the origin, spanning from 0 to pi/4, moving
-// clockwise starting from the positive Y-axis, and includes the starting point
-// (the middle of the top flat side) while excluding the ending point (the x=y
-// point).
+// The square-like rounded superellipse that this arc belongs to has a width and
+// height specified by `size` and features rounded corners determined by
+// `corner_radius`. The `corner_radius` corresponds to the `cornerRadius`
+// parameter in SwiftUI, rather than the literal radius of corner circles.
 //
-// The full square-like rounded superellipse has a width and height specified by
-// `size` and features rounded corners determined by `corner_radius`. The
-// `corner_radius` corresponds to the `cornerRadius` parameter in SwiftUI,
-// rather than the literal radius of corner circles.
+// If `reverse` is false, the resulting arc spans from 0 (inclusive) to pi/4
+// (exclusive), moving clockwise starting from the positive Y-axis. If `reverse`
+// is true, the curve spans from pi/4 (inclusive) to 0 (inclusive)
+// counterclockwise instead.
 //
 // Returns the number of points generated.
 size_t DrawOctantSquareLikeSquircle(Point* output,
@@ -275,14 +275,22 @@ size_t DrawOctantSquareLikeSquircle(Point* output,
 
   Point* next = output;
   if (!reverse) {
+    // Point A
     *(next++) = transform * pointA;
+    // Arc [B, J)
     next += DrawSuperellipsoidArc(next, a, n, thetaJ, reverse,
                                   transform * translationS);
+    // Arc [J, M)
     next += DrawCircularArc(next, pointJ, pointM, R, reverse, transform);
   } else {
+    // Arc [M, J)
     next += DrawCircularArc(next, pointJ, pointM, R, reverse, transform);
+    // Arc [J, B)
     next += DrawSuperellipsoidArc(next, a, n, thetaJ, reverse,
                                   transform * translationS);
+    // Point B
+    *(next++) = transform * Point{s, size/2};
+    // Point A
     *(next++) = transform * pointA;
   }
   return next - output;
@@ -328,9 +336,6 @@ static size_t DrawQuadrant(Point* output,
       next, norm_size.x, norm_radius, /*reverse=*/false,
       Matrix::MakeTranslateScale(signed_scale, center) *
           Matrix::MakeTranslation(Size{0, -c}));
-
-  *(next++) = Point(outer) -
-              CalculateGap(norm_radius) * signed_scale;  // Middle of corner
 
   next += DrawOctantSquareLikeSquircle(
       next, norm_size.y, norm_radius, /*reverse=*/true,
