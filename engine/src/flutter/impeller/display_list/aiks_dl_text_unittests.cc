@@ -157,10 +157,12 @@ TEST_P(AiksTest, TextJumpingTestPlayground) {
   Scalar font_size = 300;
   Scalar scale = 0.5;
   Scalar fine_scale = -0.055;
+  bool fix_scale = true;
   auto callback = [&]() -> sk_sp<DisplayList> {
     if (AiksTest::ImGuiBegin("Controls", nullptr,
                              ImGuiWindowFlags_AlwaysAutoResize)) {
       ImGui::SliderFloat("Fine Scale", &fine_scale, -0.1, 0.1);
+      ImGui::Checkbox("Fix scale", &fix_scale);
       ImGui::End();
     }
     DisplayListBuilder builder;
@@ -177,15 +179,17 @@ TEST_P(AiksTest, TextJumpingTestPlayground) {
                                .font_size = font_size,
                                .position = SkPoint::Make(100, 300),
                            });
-    std::shared_ptr<DlImageFilter> filter =
-        DlImageFilter::MakeMatrix(DlMatrix(                        //
-                                      1.0 / total_scale, 0, 0, 0,  //
-                                      0, 1.0 / total_scale, 0, 0,  //
-                                      0, 0, 1, 0,                  //
-                                      0, 0, 0, 1),
-                                  DlImageSampling::kNearestNeighbor);
-    builder.SaveLayer(std::nullopt, nullptr, filter.get());
-    builder.Restore();
+    if (fix_scale) {
+      std::shared_ptr<DlImageFilter> filter =
+          DlImageFilter::MakeMatrix(DlMatrix(                        //
+                                        1.0 / total_scale, 0, 0, 0,  //
+                                        0, 1.0 / total_scale, 0, 0,  //
+                                        0, 0, 1, 0,                  //
+                                        0, 0, 0, 1),
+                                    DlImageSampling::kNearestNeighbor);
+      builder.SaveLayer(std::nullopt, nullptr, filter.get());
+      builder.Restore();
+    }
     return builder.Build();
   };
   ASSERT_TRUE(OpenPlaygroundHere(callback));

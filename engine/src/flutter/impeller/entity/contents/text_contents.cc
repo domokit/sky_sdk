@@ -111,6 +111,9 @@ bool TextContents::Render(const ContentContext& renderer,
   bool is_translation_scale = entity.GetTransform().IsTranslationScaleOnly();
   Matrix entity_transform = entity.GetTransform();
   Matrix basis_transform = entity_transform.Basis();
+  frame_info.should_round = is_translation_scale ? 1.f : 0.f;
+  frame_info.size = Vector2(pass.GetRenderTargetSize().width,
+                            pass.GetRenderTargetSize().height);
 
   VS::BindFrameInfo(pass,
                     renderer.GetTransientsBuffer().EmplaceUniform(frame_info));
@@ -254,15 +257,14 @@ bool TextContents::Render(const ContentContext& renderer,
                 (glyph_position.position + scaled_bounds.GetLeftTop());
 
             Point screen_glyph_position =
-                (screen_offset + unrounded_glyph_position + subpixel_adjustment)
-                    .Floor();
+                (screen_offset + unrounded_glyph_position +
+                 subpixel_adjustment);
 
             for (const Point& point : unit_points) {
               Point position;
               if (is_translation_scale) {
-                position = (screen_glyph_position +
-                            (basis_transform * point * scaled_bounds.GetSize()))
-                               .Round();
+                position = (screen_glyph_position + (basis_transform * point *
+                                                     scaled_bounds.GetSize()));
               } else {
                 position = entity_transform * (glyph_position.position +
                                                scaled_bounds.GetLeftTop() +

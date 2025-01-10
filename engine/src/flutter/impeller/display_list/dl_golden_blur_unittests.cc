@@ -255,7 +255,7 @@ TEST_P(DlGoldenTest, TextJumpingTest) {
 
   impeller::Scalar left_scalar = 0.445f;
   impeller::Scalar right_scalar = 0.444f;
-  EXPECT_TRUE(OpenPlaygroundHere(callback(left_scalar)));
+  // EXPECT_TRUE(OpenPlaygroundHere(callback(right_scalar)));
 
   std::unique_ptr<impeller::testing::Screenshot> left =
       MakeScreenshot(callback(left_scalar));
@@ -266,7 +266,7 @@ TEST_P(DlGoldenTest, TextJumpingTest) {
       MakeScreenshot(callback(right_scalar));
 
   double rmse = RMSE(left.get(), right.get());
-  EXPECT_TRUE(rmse < 16.f) << "rmse: " << rmse;
+  EXPECT_TRUE(rmse < 0.f) << "rmse: " << rmse;
 }
 
 TEST_P(DlGoldenTest, StrokedRRectFastBlur) {
