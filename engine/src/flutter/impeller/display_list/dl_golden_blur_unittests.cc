@@ -6,6 +6,7 @@
 
 #include "flutter/display_list/dl_builder.h"
 #include "flutter/display_list/effects/dl_mask_filter.h"
+#include "flutter/impeller/display_list/testing/rmse.h"
 #include "flutter/impeller/geometry/round_rect.h"
 #include "flutter/impeller/golden_tests/screenshot.h"
 #include "flutter/testing/testing.h"
@@ -55,7 +56,6 @@ bool RenderTextInCanvasSkia(DlCanvas* canvas,
   canvas->DrawTextFrame(frame, position.x(), position.y(), text_paint);
   return true;
 }
-
 }  // namespace
 
 TEST_P(DlGoldenTest, TextBlurMaskFilterRespectCTM) {
@@ -111,41 +111,6 @@ TEST_P(DlGoldenTest, TextBlurMaskFilterDisrespectCTM) {
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
-
-namespace {
-double CalculateDistance(const uint8_t* left, const uint8_t* right) {
-  double diff[4] = {
-      static_cast<double>(left[0]) - right[0],  //
-      static_cast<double>(left[1]) - right[1],  //
-      static_cast<double>(left[2]) - right[2],  //
-      static_cast<double>(left[3]) - right[3]   //
-  };
-  return sqrt((diff[0] * diff[0]) +  //
-              (diff[1] * diff[1]) +  //
-              (diff[2] * diff[2]) +  //
-              (diff[3] * diff[3]));
-}
-
-double RMSE(const impeller::testing::Screenshot* left,
-            const impeller::testing::Screenshot* right) {
-  FML_CHECK(left);
-  FML_CHECK(right);
-  FML_CHECK(left->GetWidth() == right->GetWidth());
-  FML_CHECK(left->GetHeight() == right->GetHeight());
-
-  int64_t samples = left->GetWidth() * left->GetHeight();
-  double tally = 0;
-
-  const uint8_t* left_ptr = left->GetBytes();
-  const uint8_t* right_ptr = right->GetBytes();
-  for (int64_t i = 0; i < samples; ++i, left_ptr += 4, right_ptr += 4) {
-    double distance = CalculateDistance(left_ptr, right_ptr);
-    tally += distance * distance;
-  }
-
-  return sqrt(tally / static_cast<double>(samples));
-}
-}  // namespace
 
 // This is a test to make sure that we don't regress "shimmering" in the
 // gaussian blur. Shimmering is abrupt changes in signal when making tiny
@@ -225,62 +190,6 @@ TEST_P(DlGoldenTest, ShimmerTest) {
   EXPECT_TRUE(average_rmse < 1.0) << "average_rmse: " << average_rmse;
   // An average rmse of 0 would mean that the blur isn't blurring.
   EXPECT_TRUE(average_rmse >= 0.0) << "average_rmse: " << average_rmse;
-}
-
-TEST_P(DlGoldenTest, TextJumpingTest) {
-  impeller::Scalar font_size = 150;
-  auto callback = [&](impeller::Scalar scale) -> sk_sp<DisplayList> {
-    DisplayListBuilder builder;
-    DlPaint paint;
-    paint.setColor(DlColor::ARGB(1, 0.1, 0.1, 0.1));
-    builder.DrawPaint(paint);
-    builder.Scale(scale, scale);
-    // If you move this code to a playgrounds test the RenderTextInCanvasSkia
-    // signature is a bit different there, it will look like this:
-    //
-    // RenderTextInCanvasSkia(GetContext(), builder,
-    //                    "the quick brown fox jumped over the lazy dog!.?",
-    //                    "Roboto-Regular.ttf",
-    //                    TextRenderOptions{
-    //                        .font_size = font_size,
-    //                        .position = SkPoint::Make(100, 300),
-    //                    });
-    RenderTextInCanvasSkia(&builder,
-                           "the quick brown fox jumped over the lazy dog!.?",
-                           "Roboto-Regular.ttf", SkPoint::Make(100, 300),
-                           TextRenderOptions{
-                               .font_size = font_size,
-                           });
-    std::shared_ptr<DlImageFilter> filter =
-        DlImageFilter::MakeMatrix(DlMatrix(                  //
-                                      1.0 / scale, 0, 0, 0,  //
-                                      0, 1.0 / scale, 0, 0,  //
-                                      0, 0, 1, 0,            //
-                                      0, 0, 0, 1),
-                                  DlImageSampling::kLinear);
-    builder.SaveLayer(std::nullopt, nullptr, filter.get());
-    builder.Restore();
-    return builder.Build();
-  };
-
-  double max_rmse = 0.0;
-  impeller::Scalar current_scalar = 0.440;
-  std::unique_ptr<impeller::testing::Screenshot> left;
-  std::unique_ptr<impeller::testing::Screenshot> right =
-      MakeScreenshot(callback(current_scalar));
-  if (!right) {
-    GTEST_SKIP() << "making screenshots not supported.";
-  }
-  for (int i = 0; i < 10; ++i) {
-    current_scalar += 0.001;
-    left = std::move(right);
-    right = MakeScreenshot(callback(current_scalar));
-    double rmse = RMSE(left.get(), right.get());
-    max_rmse = std::max(rmse, max_rmse);
-  }
-
-  // This value was 15.442608398663085 when this test was first introduced.
-  EXPECT_TRUE(max_rmse < 14) << "rmse: " << max_rmse;
 }
 
 TEST_P(DlGoldenTest, StrokedRRectFastBlur) {

@@ -5,9 +5,12 @@
 #include "impeller/display_list/dl_golden_unittests.h"
 
 #include "flutter/display_list/dl_builder.h"
+#include "flutter/impeller/display_list/testing/rmse.h"
 #include "flutter/impeller/geometry/path_builder.h"
 #include "flutter/testing/testing.h"
 #include "gtest/gtest.h"
+#include "impeller/typographer/backends/skia/text_frame_skia.h"
+#include "txt/platform.h"
 
 namespace flutter {
 namespace testing {
@@ -20,6 +23,45 @@ using impeller::Radians;
 using impeller::Scalar;
 
 INSTANTIATE_PLAYGROUND_SUITE(DlGoldenTest);
+
+namespace {
+struct TextRenderOptions {
+  bool stroke = false;
+  SkScalar font_size = 50;
+  DlColor color = DlColor::kYellow();
+  std::shared_ptr<DlMaskFilter> mask_filter;
+};
+
+bool RenderTextInCanvasSkia(DlCanvas* canvas,
+                            const std::string& text,
+                            const std::string_view& font_fixture,
+                            SkPoint position,
+                            const TextRenderOptions& options = {}) {
+  auto c_font_fixture = std::string(font_fixture);
+  auto mapping = flutter::testing::OpenFixtureAsSkData(c_font_fixture.c_str());
+  if (!mapping) {
+    return false;
+  }
+  sk_sp<SkFontMgr> font_mgr = txt::GetDefaultFontManager();
+  SkFont sk_font(font_mgr->makeFromData(mapping), options.font_size);
+  auto blob = SkTextBlob::MakeFromString(text.c_str(), sk_font);
+  if (!blob) {
+    return false;
+  }
+
+  auto frame = impeller::MakeTextFrameFromTextBlobSkia(blob);
+
+  DlPaint text_paint;
+  text_paint.setColor(options.color);
+  text_paint.setMaskFilter(options.mask_filter);
+  // text_paint.mask_blur_descriptor = options.mask_blur_descriptor;
+  // text_paint.stroke_width = 1;
+  // text_paint.style =
+  //     options.stroke ? Paint::Style::kStroke : Paint::Style::kFill;
+  canvas->DrawTextFrame(frame, position.x(), position.y(), text_paint);
+  return true;
+}
+}  // namespace
 
 TEST_P(DlGoldenTest, CanDrawPaint) {
   auto draw = [](DlCanvas* canvas,
@@ -305,6 +347,62 @@ TEST_P(DlGoldenTest, DashedLinesTest) {
   draw(&builder, images);
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
+}
+
+TEST_P(DlGoldenTest, TextJumpingTest) {
+  impeller::Scalar font_size = 150;
+  auto callback = [&](impeller::Scalar scale) -> sk_sp<DisplayList> {
+    DisplayListBuilder builder;
+    DlPaint paint;
+    paint.setColor(DlColor::ARGB(1, 0.1, 0.1, 0.1));
+    builder.DrawPaint(paint);
+    builder.Scale(scale, scale);
+    // If you move this code to a playgrounds test the RenderTextInCanvasSkia
+    // signature is a bit different there, it will look like this:
+    //
+    // RenderTextInCanvasSkia(GetContext(), builder,
+    //                    "the quick brown fox jumped over the lazy dog!.?",
+    //                    "Roboto-Regular.ttf",
+    //                    TextRenderOptions{
+    //                        .font_size = font_size,
+    //                        .position = SkPoint::Make(100, 300),
+    //                    });
+    RenderTextInCanvasSkia(&builder,
+                           "the quick brown fox jumped over the lazy dog!.?",
+                           "Roboto-Regular.ttf", SkPoint::Make(100, 300),
+                           TextRenderOptions{
+                               .font_size = font_size,
+                           });
+    std::shared_ptr<DlImageFilter> filter =
+        DlImageFilter::MakeMatrix(DlMatrix(                  //
+                                      1.0 / scale, 0, 0, 0,  //
+                                      0, 1.0 / scale, 0, 0,  //
+                                      0, 0, 1, 0,            //
+                                      0, 0, 0, 1),
+                                  DlImageSampling::kLinear);
+    builder.SaveLayer(std::nullopt, nullptr, filter.get());
+    builder.Restore();
+    return builder.Build();
+  };
+
+  double max_rmse = 0.0;
+  impeller::Scalar current_scalar = 0.440;
+  std::unique_ptr<impeller::testing::Screenshot> left;
+  std::unique_ptr<impeller::testing::Screenshot> right =
+      MakeScreenshot(callback(current_scalar));
+  if (!right) {
+    GTEST_SKIP() << "making screenshots not supported.";
+  }
+  for (int i = 0; i < 10; ++i) {
+    current_scalar += 0.001;
+    left = std::move(right);
+    right = MakeScreenshot(callback(current_scalar));
+    double rmse = RMSE(left.get(), right.get());
+    max_rmse = std::max(rmse, max_rmse);
+  }
+
+  // This value was 15.442608398663085 when this test was first introduced.
+  EXPECT_TRUE(max_rmse < 14) << "rmse: " << max_rmse;
 }
 
 }  // namespace testing
