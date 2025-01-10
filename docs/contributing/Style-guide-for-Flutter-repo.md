@@ -361,7 +361,12 @@ widget for that rather than updating the existing buttons to have the new style.
 
 All code in all Flutter repositories must be contributed by developers who have signed [the Google CLA](https://cla.developers.google.com/), and must be licensed using our normal BSD license with a copyright referencing "The Flutter Authors", except if it is "third party code".
 
-"Third party code" that is not part of a Dart package must be in a subdirectory of a `third_party` directory at the root of the relevant repository, and the subdirectory in question must contain a `LICENSE` file that details the license covering that code and a `README` describing the provenance of that code.
+"Third party code" that is not part of a Dart package must be in a subdirectory of a `third_party` directory located:
+
+* [/third_party](../../third_party) for the Flutter Framework
+* [/engine/src/flutter/third_party](../../engine/src/flutter/third_party) for the Flutter Engine.
+
+The subdirectory in question must contain a `LICENSE` file that details the license covering that code and a `README` describing the provenance of that code.
 
 "Third party code" that is part of a Dart package and is not Dart code must be in a subdirectory of a `third_party` directory at the root of the package, and the subdirectory in question must contain a `LICENSE` file that details the license covering that code and a `README` describing the provenance of that code. The license must then also be duplicated into the package's `LICENSE` file using the syntax described in the [LicenseRegistry](https://master-api.flutter.dev/flutter/foundation/LicenseRegistry-class.html) API docs.
 
