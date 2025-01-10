@@ -64,15 +64,6 @@ Scalar LerpPrecomputedVariable(size_t column, Scalar ratio) {
          frac * kPrecomputedVariables[left + 1][column];
 }
 
-// Return the shortest of `corner_radius`, height/2, and width/2.
-//
-// Corner radii longer than 1/2 of the side length does not make sense, and will
-// be limited to the longest possible.
-// Scalar LimitRadius(Scalar corner_radius, const Rect& bounds) {
-//   return std::min(corner_radius,
-//                   std::min(bounds.GetWidth() / 2, bounds.GetHeight() / 2));
-// }
-
 // The max angular step that the algorithm will traverse a quadrant of the
 // curve.
 //
@@ -534,7 +525,6 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
     const ContentContext& renderer,
     const Entity& entity,
     RenderPass& pass) const {
-  // === CACHE ===
 
   // The cache is allocated as follows:
   //
