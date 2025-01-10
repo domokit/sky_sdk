@@ -1496,12 +1496,16 @@ class _RenderListTile extends RenderBox
         overflowedWidget = 'Trailing';
       }
 
+      if (overflowedWidget == null) {
+        return true;
+      }
+
       throw FlutterError.fromParts(<DiagnosticsNode>[
         ErrorSummary(
           '$overflowedWidget widget consumes the entire tile width (including ListTile.contentPadding).',
         ),
         ErrorDescription(
-          'Either resize the tile width so that the ${overflowedWidget!.toLowerCase()} widget plus any content padding '
+          'Either resize the tile width so that the ${overflowedWidget.toLowerCase()} widget plus any content padding '
           'do not exceed the tile width, or use a sized widget, or consider replacing '
           'ListTile with a custom widget.',
         ),
