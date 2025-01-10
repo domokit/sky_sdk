@@ -11,6 +11,16 @@
 namespace impeller {
 
 namespace {
+
+// clang-format off
+// A matrix that swaps the coordinates of a point.
+constexpr Matrix kFlip = Matrix(
+  0.0f, 1.0f, 0.0f, 0.0f,
+  1.0f, 0.0f, 0.0f, 0.0f,
+  0.0f, 0.0f, 1.0f, 0.0f,
+  0.0f, 0.0f, 0.0f, 1.0f);
+// clang-format on
+
 // A look up table with precomputed variables.
 //
 // The columns represent the following variabls respectively:
@@ -263,8 +273,7 @@ size_t FlipAndTransform(Point* output,
     }
   } else {
     for (size_t i = 0; i < input_length; i++) {
-      const Point& point = input[input_length - i - 1];
-      output[i] = transform * Point(point.y, point.x);
+      output[i] = transform * input[input_length - i - 1];
     }
   }
   return input_length;
@@ -320,7 +329,7 @@ static size_t DrawQuadrant(Point* output,
       DrawOctantSquareLikeSquircle(octant_cache, norm_size.y, norm_radius);
   next += FlipAndTransform(next, octant_cache, octant_length, /*flip=*/true,
                            Matrix::MakeTranslateScale(signed_scale, center) *
-                               Matrix::MakeTranslation(Size{c, 0}));
+                               Matrix::MakeTranslation(Size{c, 0}) * kFlip);
 
   return next - output;
 }
