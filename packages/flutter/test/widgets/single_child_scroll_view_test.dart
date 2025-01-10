@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -1093,8 +1095,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(textField.focusNode!.hasFocus, isTrue);
 
-    // ScrollViewKeyboardDismissBehavior.noDrag dismiss keyboard on scroll with no drag
-    await boilerplate(ScrollViewKeyboardDismissBehavior.noDrag);
+    // ScrollViewKeyboardDismissBehavior.onScroll dismiss keyboard on scroll with no drag
+    await boilerplate(ScrollViewKeyboardDismissBehavior.onScroll);
 
     finder = find.byType(TextField).first;
     textField = tester.widget(finder);
@@ -1106,8 +1108,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(textField.focusNode!.hasFocus, isFalse);
 
-    // ScrollViewKeyboardDismissBehavior.noDrag dismiss keyboard on scroll with drag
-    await boilerplate(ScrollViewKeyboardDismissBehavior.noDrag);
+    // ScrollViewKeyboardDismissBehavior.onScroll dismiss keyboard on scroll with drag
+    await boilerplate(ScrollViewKeyboardDismissBehavior.onScroll);
 
     finder = find.byType(TextField).first;
     textField = tester.widget(finder);

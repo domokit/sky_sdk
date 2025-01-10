@@ -286,6 +286,19 @@ class SingleChildScrollView extends StatelessWidget {
       );
     }
 
+    if (keyboardDismissBehavior == ScrollViewKeyboardDismissBehavior.onScroll) {
+      scrollable = NotificationListener<ScrollUpdateNotification>(
+        child: scrollable,
+        onNotification: (ScrollUpdateNotification notification) {
+          final FocusScopeNode currentScope = FocusScope.of(context);
+          if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          }
+          return false;
+        },
+      );
+    }
+
     return effectivePrimary && scrollController != null
         // Further descendant ScrollViews will not inherit the same
         // PrimaryScrollController
