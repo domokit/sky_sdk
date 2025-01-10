@@ -270,40 +270,35 @@ void main() {
       );
     });
 
-    testWithoutContext('Precompiled web DDC module system artifact paths are correct', () {
-      expect(
-        artifacts.getHostArtifact(HostArtifact.webPrecompiledDdcSdk).path,
-        'root/bin/cache/flutter_web_sdk/kernel/ddc/dart_sdk.js',
-      );
-      expect(
-        artifacts.getHostArtifact(HostArtifact.webPrecompiledDdcSdkSourcemaps).path,
-        'root/bin/cache/flutter_web_sdk/kernel/ddc/dart_sdk.js.map',
-      );
-      expect(
-        artifacts.getHostArtifact(HostArtifact.webPrecompiledDdcCanvaskitSdk).path,
-        'root/bin/cache/flutter_web_sdk/kernel/ddc-canvaskit/dart_sdk.js',
-      );
-      expect(
-        artifacts.getHostArtifact(HostArtifact.webPrecompiledDdcCanvaskitSdkSourcemaps).path,
-        'root/bin/cache/flutter_web_sdk/kernel/ddc-canvaskit/dart_sdk.js.map',
-      );
-      expect(
-        artifacts.getHostArtifact(HostArtifact.webPrecompiledDdcSoundSdk).path,
-        'root/bin/cache/flutter_web_sdk/kernel/ddc-sound/dart_sdk.js',
-      );
-      expect(
-        artifacts.getHostArtifact(HostArtifact.webPrecompiledDdcSoundSdkSourcemaps).path,
-        'root/bin/cache/flutter_web_sdk/kernel/ddc-sound/dart_sdk.js.map',
-      );
-      expect(
-        artifacts.getHostArtifact(HostArtifact.webPrecompiledDdcCanvaskitSoundSdk).path,
-        'root/bin/cache/flutter_web_sdk/kernel/ddc-canvaskit-sound/dart_sdk.js',
-      );
-      expect(
-        artifacts.getHostArtifact(HostArtifact.webPrecompiledDdcCanvaskitSoundSdkSourcemaps).path,
-        'root/bin/cache/flutter_web_sdk/kernel/ddc-canvaskit-sound/dart_sdk.js.map',
-      );
-    });
+    testWithoutContext(
+      'Precompiled web DDC library bundle module system artifact paths are correct',
+      () {
+        expect(
+          artifacts.getHostArtifact(HostArtifact.webPrecompiledDdcLibraryBundleSoundSdk).path,
+          'root/bin/cache/flutter_web_sdk/kernel/ddcLibraryBundle-sound/dart_sdk.js',
+        );
+        expect(
+          artifacts
+              .getHostArtifact(HostArtifact.webPrecompiledDdcLibraryBundleSoundSdkSourcemaps)
+              .path,
+          'root/bin/cache/flutter_web_sdk/kernel/ddcLibraryBundle-sound/dart_sdk.js.map',
+        );
+        expect(
+          artifacts
+              .getHostArtifact(HostArtifact.webPrecompiledDdcLibraryBundleCanvaskitSoundSdk)
+              .path,
+          'root/bin/cache/flutter_web_sdk/kernel/ddcLibraryBundle-canvaskit-sound/dart_sdk.js',
+        );
+        expect(
+          artifacts
+              .getHostArtifact(
+                HostArtifact.webPrecompiledDdcLibraryBundleCanvaskitSoundSdkSourcemaps,
+              )
+              .path,
+          'root/bin/cache/flutter_web_sdk/kernel/ddcLibraryBundle-canvaskit-sound/dart_sdk.js.map',
+        );
+      },
+    );
 
     testWithoutContext('getEngineType', () {
       expect(artifacts.getEngineType(TargetPlatform.android_arm, BuildMode.debug), 'android-arm');

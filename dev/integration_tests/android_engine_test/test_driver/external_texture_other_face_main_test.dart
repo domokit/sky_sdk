@@ -13,6 +13,7 @@ void main() async {
   // To test the golden file generation locally, comment out the following line.
   // autoUpdateGoldenFiles = true;
 
+  const String appName = 'com.example.android_engine_test';
   late final FlutterDriver flutterDriver;
   late final NativeDriver nativeDriver;
 
@@ -23,7 +24,6 @@ void main() async {
     flutterDriver = await FlutterDriver.connect();
     nativeDriver = await AndroidNativeDriver.connect(flutterDriver);
     await nativeDriver.configureForScreenshotTesting();
-    await flutterDriver.waitUntilFirstFrameRasterized();
   });
 
   tearDownAll(() async {
@@ -31,26 +31,24 @@ void main() async {
     await flutterDriver.close();
   });
 
-  test('should screenshot and match a blue -> orange gradient', () async {
-    await flutterDriver.waitFor(find.byType('AndroidView'));
-    await expectLater(
-      nativeDriver.screenshot(),
-      matchesGoldenFile('platform_view_blue_orange_gradient_portrait.android.png'),
-    );
-  }, timeout: Timeout.none);
+  test('should screenshot and match an external smiley face texture', () async {
+    await flutterDriver.waitFor(find.byType('Texture'));
 
-  test('should rotate landscape and screenshot the gradient', () async {
-    await flutterDriver.waitFor(find.byType('AndroidView'));
-    await nativeDriver.rotateToLandscape();
-    await expectLater(
-      nativeDriver.screenshot(),
-      matchesGoldenFile('platform_view_blue_orange_gradient_landscape.android.png'),
-    );
+    // On Android: Background the app, trim memory, and restore the app.
+    if (nativeDriver case final AndroidNativeDriver nativeDriver) {
+      print('Backgrounding the app, trimming memory, and resuming the app.');
+      await nativeDriver.backgroundApp();
 
-    await nativeDriver.rotateResetDefault();
+      print('Trimming memory.');
+      await nativeDriver.simulateLowMemory(appName: appName);
+
+      print('Resuming the app.');
+      await nativeDriver.resumeApp(appName: appName);
+    }
+
     await expectLater(
       nativeDriver.screenshot(),
-      matchesGoldenFile('platform_view_blue_orange_gradient_portrait_post_rotation.android.png'),
+      matchesGoldenFile('external_texture_other_face.android.png'),
     );
   }, timeout: Timeout.none);
 }

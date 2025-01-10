@@ -11,7 +11,7 @@ import 'package:flutter_driver/driver_extension.dart';
 
 import 'src/allow_list_devices.dart';
 
-const MethodChannel _channel = MethodChannel('smiley_face_texture');
+const MethodChannel _channel = MethodChannel('other_face_texture');
 Future<int> _fetchTexture(int width, int height) async {
   final int? result = await _channel.invokeMethod<int>('initTexture', <String, int>{
     'width': width,

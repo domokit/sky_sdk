@@ -22,10 +22,6 @@
 // supported, or run with `--dry-run` to get a list of tests that _would_ have
 // been executed.
 //
-// If the CIRRUS_TASK_NAME environment variable exists, it is used to determine
-// the shard and sub-shard, by parsing it in the form shard-subshard-platform,
-// ignoring the platform.
-//
 // For local testing you can just set the SHARD and SUBSHARD environment
 // variables. For example, to run all the framework tests you can just set
 // SHARD=framework_tests. Some shards support named subshards, like
@@ -77,8 +73,6 @@ typedef ShardRunner = Future<void> Function();
 /// if such flags are provided to `test.dart`.
 final Map<String, String> localEngineEnv = <String, String>{};
 
-const String CIRRUS_TASK_NAME = 'CIRRUS_TASK_NAME';
-
 /// When you call this, you can pass additional arguments to pass custom
 /// arguments to flutter test. For example, you might want to call this
 /// script with the parameter --local-engine=host_debug_unopt to
@@ -124,9 +118,6 @@ Future<void> main(List<String> args) async {
     }
     if (dryRunArgSet) {
       enableDryRun();
-    }
-    if (Platform.environment.containsKey(CIRRUS_TASK_NAME)) {
-      printProgress('Running task: ${Platform.environment[CIRRUS_TASK_NAME]}');
     }
     final WebTestsSuite webTestsSuite = WebTestsSuite(flutterTestArgs);
     await selectShard(<String, ShardRunner>{
