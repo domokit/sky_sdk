@@ -265,8 +265,10 @@ TEST_P(DlGoldenTest, TextJumpingTest) {
   std::unique_ptr<impeller::testing::Screenshot> right =
       MakeScreenshot(callback(right_scalar));
 
+  // When this test was first introduced to address text jittering the RMSE
+  // value was 21.205837959823416.
   double rmse = RMSE(left.get(), right.get());
-  EXPECT_TRUE(rmse < 0.f) << "rmse: " << rmse;
+  EXPECT_TRUE(rmse < 20.f) << "rmse: " << rmse;
 }
 
 TEST_P(DlGoldenTest, StrokedRRectFastBlur) {
