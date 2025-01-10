@@ -2553,7 +2553,6 @@ const Set<String> kExecutableAllowlist = <String>{
   'bin/internal/update_dart_sdk.sh',
   'bin/internal/update_engine_version.sh',
 
-  'dev/bots/accept_android_sdk_licenses.sh',
   'dev/bots/codelabs_build_test.sh',
   'dev/bots/docs.sh',
 

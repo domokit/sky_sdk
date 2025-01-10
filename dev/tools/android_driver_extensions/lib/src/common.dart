@@ -27,6 +27,9 @@ final class NativeCommand extends Command {
   /// Pings the device to ensure it is responsive.
   static const NativeCommand ping = NativeCommand('ping');
 
+  /// Gets the SDK version code.
+  static const NativeCommand getSdkVersion = NativeCommand('sdk_version');
+
   /// The method to call on the plugin.
   final String method;
 

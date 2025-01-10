@@ -47,7 +47,7 @@ static std::shared_ptr<impeller::Context> CreateImpellerContext(
   settings.cache_directory = fml::paths::GetCachesDirectory();
   settings.enable_validation = p_settings.enable_validation;
   settings.enable_gpu_tracing = p_settings.enable_gpu_tracing;
-  settings.disable_surface_control = p_settings.disable_surface_control;
+  settings.enable_surface_control = p_settings.enable_surface_control;
 
   auto context = impeller::ContextVK::Create(std::move(settings));
 

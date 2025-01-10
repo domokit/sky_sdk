@@ -314,6 +314,7 @@ Please provide a valid TCP port (an integer between 0 and 65535, inclusive).
           nullSafetyMode: debuggingOptions.buildInfo.nullSafetyMode,
           nativeNullAssertions: debuggingOptions.nativeNullAssertions,
           ddcModuleSystem: debuggingOptions.buildInfo.ddcModuleFormat == DdcModuleFormat.ddc,
+          canaryFeatures: debuggingOptions.buildInfo.canaryFeatures ?? false,
           webRenderer: debuggingOptions.webRenderer,
           isWasm: debuggingOptions.webUseWasm,
           useLocalCanvasKit: debuggingOptions.buildInfo.useLocalCanvasKit,
