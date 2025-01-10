@@ -265,9 +265,16 @@ class BuildInfo {
   /// so the uncapitalized flavor name is used to compute the output file name
   String? get uncapitalizedFlavor => _uncapitalize(flavor);
 
-  /// The module system DDC is targeting, or null if not using DDC.
+  /// The module system DDC is targeting, or null if not using DDC or the
+  /// associated flag isn't present.
   // TODO(markzipan): delete this when DDC's AMD module system is deprecated, https://github.com/flutter/flutter/issues/142060.
-  DdcModuleFormat? get ddcModuleFormat => _ddcModuleFormatFromFrontEndArgs(extraFrontEndOptions);
+  DdcModuleFormat? get ddcModuleFormat =>
+      _ddcModuleFormatAndCanaryFeaturesFromFrontEndArgs(extraFrontEndOptions).ddcModuleFormat;
+
+  /// Whether to enable canary features when using DDC, or null if not using
+  /// DDC or the associated flag isn't present.
+  bool? get canaryFeatures =>
+      _ddcModuleFormatAndCanaryFeaturesFromFrontEndArgs(extraFrontEndOptions).canaryFeatures;
 
   /// Convert to a structured string encoded structure appropriate for usage
   /// in build system [Environment.defines].
@@ -1041,18 +1048,24 @@ enum NullSafetyMode {
 enum DdcModuleFormat { amd, ddc }
 
 // TODO(markzipan): delete this when DDC's AMD module system is deprecated, https://github.com/flutter/flutter/issues/142060.
-DdcModuleFormat? _ddcModuleFormatFromFrontEndArgs(List<String>? extraFrontEndArgs) {
-  if (extraFrontEndArgs == null) {
-    return null;
-  }
-  const String ddcModuleFormatString = '--dartdevc-module-format=';
-  for (final String flag in extraFrontEndArgs) {
-    if (flag.startsWith(ddcModuleFormatString)) {
-      final String moduleFormatString = flag.substring(ddcModuleFormatString.length, flag.length);
-      return DdcModuleFormat.values.byName(moduleFormatString);
+({DdcModuleFormat? ddcModuleFormat, bool? canaryFeatures})
+_ddcModuleFormatAndCanaryFeaturesFromFrontEndArgs(List<String>? extraFrontEndArgs) {
+  DdcModuleFormat? ddcModuleFormat;
+  bool? canaryFeatures;
+  if (extraFrontEndArgs != null) {
+    const String ddcModuleFormatArg = '--dartdevc-module-format=';
+    const String canaryFeaturesArg = '--dartdevc-canary';
+    for (final String flag in extraFrontEndArgs) {
+      if (flag.startsWith(ddcModuleFormatArg)) {
+        final String moduleFormatString = flag.substring(ddcModuleFormatArg.length, flag.length);
+        assert(ddcModuleFormat == null);
+        ddcModuleFormat = DdcModuleFormat.values.byName(moduleFormatString);
+      } else if (flag == canaryFeaturesArg) {
+        canaryFeatures = true;
+      }
     }
   }
-  return null;
+  return (ddcModuleFormat: ddcModuleFormat, canaryFeatures: canaryFeatures);
 }
 
 String _getCurrentHostPlatformArchName() {

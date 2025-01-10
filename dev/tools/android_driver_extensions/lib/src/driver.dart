@@ -45,6 +45,9 @@ abstract interface class NativeDriver {
   /// ```
   Future<Duration> ping();
 
+  /// Returns the SDK version.
+  Future<int> get sdkVersion;
+
   /// Take a screenshot using a platform-specific mechanism.
   ///
   /// The image is returned as an opaque handle that can be used to retrieve

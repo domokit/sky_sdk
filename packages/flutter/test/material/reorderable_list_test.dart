@@ -2318,6 +2318,101 @@ void main() {
     await drag.up();
     await tester.pumpAndSettle();
   });
+
+  testWidgets('Mouse cursor behavior on the drag handle', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ReorderableListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return ReorderableDragStartListener(
+                key: ValueKey<int>(index),
+                index: index,
+                child: Text('$index'),
+              );
+            },
+            itemCount: 5,
+            onReorder: (int fromIndex, int toIndex) {},
+          ),
+        ),
+      ),
+    );
+
+    final TestGesture gesture = await tester.createGesture(
+      kind: PointerDeviceKind.mouse,
+      pointer: 1,
+    );
+    await gesture.addPointer(location: tester.getCenter(find.byIcon(Icons.drag_handle).first));
+    await tester.pump();
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.grab,
+    );
+    await gesture.down(tester.getCenter(find.byIcon(Icons.drag_handle).first));
+    await tester.pump(kLongPressTimeout);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.grabbing,
+    );
+    await gesture.up();
+    await tester.pumpAndSettle();
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.grab,
+    );
+  }, variant: TargetPlatformVariant.desktop());
+
+  testWidgets(
+    'Mouse cursor behavior on the drag handle can be provided',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ReorderableListView.builder(
+              mouseCursor:
+                  const WidgetStateMouseCursor.fromMap(<WidgetStatesConstraint, MouseCursor>{
+                    WidgetState.dragged: SystemMouseCursors.copy,
+                    WidgetState.any: SystemMouseCursors.resizeColumn,
+                  }),
+              itemBuilder: (BuildContext context, int index) {
+                return ReorderableDragStartListener(
+                  key: ValueKey<int>(index),
+                  index: index,
+                  child: Text('$index'),
+                );
+              },
+              itemCount: 5,
+              onReorder: (int fromIndex, int toIndex) {},
+            ),
+          ),
+        ),
+      );
+
+      final TestGesture gesture = await tester.createGesture(
+        kind: PointerDeviceKind.mouse,
+        pointer: 1,
+      );
+      await gesture.addPointer(location: tester.getCenter(find.byIcon(Icons.drag_handle).first));
+      await tester.pump();
+      expect(
+        RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+        SystemMouseCursors.resizeColumn,
+      );
+      await gesture.down(tester.getCenter(find.byIcon(Icons.drag_handle).first));
+      await tester.pump(kLongPressTimeout);
+      expect(
+        RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+        SystemMouseCursors.copy,
+      );
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(
+        RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+        SystemMouseCursors.resizeColumn,
+      );
+    },
+    variant: TargetPlatformVariant.desktop(),
+  );
 }
 
 Future<void> longPressDrag(WidgetTester tester, Offset start, Offset end) async {

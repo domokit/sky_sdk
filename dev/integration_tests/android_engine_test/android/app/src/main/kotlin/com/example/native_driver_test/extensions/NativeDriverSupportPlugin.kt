@@ -7,6 +7,7 @@
 package com.example.android_engine_test.extensions
 
 import android.app.Activity
+import android.os.Build
 import android.os.SystemClock
 import android.view.MotionEvent
 import io.flutter.Log
@@ -44,6 +45,10 @@ class NativeDriverSupportPlugin :
             return
         }
         when (call.method) {
+            "sdk_version" -> {
+                val versionMap = mapOf("version" to Build.VERSION.SDK_INT)
+                result.success(versionMap)
+            }
             "ping" -> {
                 result.success(null)
             }

@@ -56,6 +56,26 @@ std::shared_ptr<SwapchainVK> SwapchainVK::Create(
     return nullptr;
   }
 
+  // Use AHB Swapchains if they are opted in.
+  if (ContextVK::Cast(*context).GetShouldEnableSurfaceControlSwapchain() &&
+      AHBSwapchainVK::IsAvailableOnPlatform()) {
+    FML_LOG(WARNING) << "Using Android SurfaceControl Swapchain.";
+    auto ahb_swapchain = std::shared_ptr<AHBSwapchainVK>(new AHBSwapchainVK(
+        context,             //
+        window.GetHandle(),  //
+        surface,             //
+        window.GetSize(),    //
+        enable_msaa          //
+        ));
+
+    if (ahb_swapchain->IsValid()) {
+      return ahb_swapchain;
+    } else {
+      VALIDATION_LOG
+          << "Could not create AHB swapchain. Falling back to KHR variant.";
+    }
+  }
+
   // Fallback to KHR swapchains if AHB swapchains aren't available.
   return Create(context, std::move(surface), window.GetSize(), enable_msaa);
 }
