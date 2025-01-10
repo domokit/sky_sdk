@@ -380,8 +380,7 @@ All licenses included in this manner must have been reviewed and determined to b
 
 All such "third party code" must either be a fork for which we take full responsibility, or there must be an automated rolling mechanism that keeps the code up to date when the upstream source changes.
 
-In general it is _strongly_ recommended that we avoid any such code unless strictly necessary. In particular, we aim for all code in the flutter/flutter repository to be [single-licensed](../about/Why-we-have-a-separate-engine-repo.md#licensing), which is why it does not contain any "third party code" at all.
-
+In general it is _strongly_ recommended that we avoid any such code unless strictly necessary. In particular, we aim for all _Flutter Framework_ code in the flutter/flutter repository to be [single-licensed](../about/Why-we-have-a-separate-engine-repo.md#licensing), which is why it does not contain a root `third_party` directory.
 
 ## Documentation (dartdocs, javadocs, etc)
 
