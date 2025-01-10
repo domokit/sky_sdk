@@ -43483,6 +43483,61 @@ class MaterialLocalizationVi extends GlobalMaterialLocalizations {
   String get viewLicensesButtonLabel => 'Xem giấy phép';
 }
 
+class MaterialLocalizationsUg extends GlobalMaterialLocalizations {
+  /// The translations for Chinese Uyghur (`ug`).
+  const MaterialLocalizationsUg({
+    super.localeName = 'ug',
+    required super.fullYearFormat,
+    required super.compactDateFormat,
+    required super.shortDateFormat,
+    required super.mediumDateFormat,
+    required super.longDateFormat,
+    required super.yearMonthFormat,
+    required super.shortMonthDayFormat,
+    required super.decimalFormat,
+    required super.twoDigitZeroPaddedFormat,
+  });
+
+  @override
+  String get aboutListTileTitleRaw => r'$applicationName ھەققىدە';
+
+  @override
+  String get dateRangeEndDateSemanticLabelRaw => r'ئاخىرلىشىدىغان چىسلا $fullDate';
+
+  @override
+  String get dateRangeStartDateSemanticLabelRaw => r'باشىلدىغان چىسلا $fullDate';
+
+  @override
+  String get licensesPackageDetailTextOther => r'$licenseCountتال ئىجازەتنامە';
+
+  @override
+  String get pageRowsInfoTitleApproximateRaw => r'$firstRow–$lastRow تۈرىدىن $rowCount تۈر';
+
+  @override
+  String get pageRowsInfoTitleRaw => r'$firstRow–$lastRow تۈرىدىن $rowCount تۈر';
+
+  @override
+  String get remainingTextFieldCharacterCountOther => r'يەنە$remainingCountھەرىپ كىرگۈزەلەيسىز';
+
+  @override
+  String get scrimOnTapHintRaw => r'ئۆچۈرۈش $modalRouteContentName';
+
+  @override
+  get scriptCategory => ScriptCategory.englishLike;
+
+  @override
+  String get selectedRowCountTitleOther => r'$selectedRowCount تۈر';
+
+  @override
+  String get tabLabelRaw => r'$tabIndex/$tabCount';
+
+  @override
+  get timeOfDayFormatRaw => "ah:mm";
+
+
+
+}
+
 /// The translations for Chinese (`zh`).
 class MaterialLocalizationZh extends GlobalMaterialLocalizations {
   /// Create an instance of the translation bundle for Chinese.
@@ -43977,6 +44032,23 @@ class MaterialLocalizationZh extends GlobalMaterialLocalizations {
 
   @override
   String get viewLicensesButtonLabel => '查看许可';
+}
+
+/// The translate for Chinese uyghur, using the uyghur script (`cn_ug`)
+class MaterialLocalizationCnUg extends MaterialLocalizationsUg {
+  /// Create an instance of the translation bundle for Chinese uyghur, using the uyghur script.
+  const MaterialLocalizationCnUg({
+    super.localeName = 'cn_ug',
+    required super.fullYearFormat,
+    required super.compactDateFormat,
+    required super.shortDateFormat,
+    required super.mediumDateFormat,
+    required super.longDateFormat,
+    required super.yearMonthFormat,
+    required super.shortMonthDayFormat,
+    required super.decimalFormat,
+    required super.twoDigitZeroPaddedFormat,
+  });
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -45107,6 +45179,7 @@ final Set<String> kMaterialSupportedLanguages = HashSet<String>.from(const <Stri
   'vi', // Vietnamese
   'zh', // Chinese
   'zu', // Zulu
+  'ug', // Uyghur
 ]);
 
 /// Creates a [GlobalMaterialLocalizations] instance for the given `locale`.
@@ -45311,6 +45384,8 @@ GlobalMaterialLocalizations? getMaterialTranslation(
           return MaterialLocalizationEsUs(fullYearFormat: fullYearFormat, compactDateFormat: compactDateFormat, shortDateFormat: shortDateFormat, mediumDateFormat: mediumDateFormat, longDateFormat: longDateFormat, yearMonthFormat: yearMonthFormat, shortMonthDayFormat: shortMonthDayFormat, decimalFormat: decimalFormat, twoDigitZeroPaddedFormat: twoDigitZeroPaddedFormat);
         case 'UY':
           return MaterialLocalizationEsUy(fullYearFormat: fullYearFormat, compactDateFormat: compactDateFormat, shortDateFormat: shortDateFormat, mediumDateFormat: mediumDateFormat, longDateFormat: longDateFormat, yearMonthFormat: yearMonthFormat, shortMonthDayFormat: shortMonthDayFormat, decimalFormat: decimalFormat, twoDigitZeroPaddedFormat: twoDigitZeroPaddedFormat);
+        case 'UG':
+          return MaterialLocalizationCnUg(fullYearFormat: fullYearFormat, compactDateFormat: compactDateFormat, shortDateFormat: shortDateFormat, mediumDateFormat: mediumDateFormat, longDateFormat: longDateFormat, yearMonthFormat: yearMonthFormat, shortMonthDayFormat: shortMonthDayFormat, decimalFormat: decimalFormat, twoDigitZeroPaddedFormat: twoDigitZeroPaddedFormat);
         case 'VE':
           return MaterialLocalizationEsVe(fullYearFormat: fullYearFormat, compactDateFormat: compactDateFormat, shortDateFormat: shortDateFormat, mediumDateFormat: mediumDateFormat, longDateFormat: longDateFormat, yearMonthFormat: yearMonthFormat, shortMonthDayFormat: shortMonthDayFormat, decimalFormat: decimalFormat, twoDigitZeroPaddedFormat: twoDigitZeroPaddedFormat);
       }

@@ -13394,6 +13394,8 @@ class CupertinoLocalizationTr extends GlobalCupertinoLocalizations {
   String get todayLabel => 'Bugün';
 }
 
+
+
 /// The translations for Ukrainian (`uk`).
 class CupertinoLocalizationUk extends GlobalCupertinoLocalizations {
   /// Create an instance of the translation bundle for Ukrainian.
@@ -13558,6 +13560,68 @@ class CupertinoLocalizationUk extends GlobalCupertinoLocalizations {
 
   @override
   String get todayLabel => 'Сьогодні';
+}
+
+/// The translations for Uyghur (`ug`).
+class CupertinoLocalizationUg extends GlobalCupertinoLocalizations {
+  /// Create an instance of the translation bundle for Uyghur.
+  ///
+  /// For details on the meaning of the arguments, see [GlobalCupertinoLocalizations].
+  const CupertinoLocalizationUg({
+    super.localeName = 'ug',
+    required super.fullYearFormat,
+    required super.dayFormat,
+    required super.weekdayFormat,
+    required super.mediumDateFormat,
+    required super.singleDigitHourFormat,
+    required super.singleDigitMinuteFormat,
+    required super.doubleDigitMinuteFormat,
+    required super.singleDigitSecondFormat,
+    required super.decimalFormat,
+  });
+
+
+    @override
+  String get alertDialogLabel => 'ئەسكەرتىش';
+
+  @override
+  String get anteMeridiemAbbreviation => 'چۈشتىن بۇرۇن';
+
+  @override
+  String get clearButtonLabel => 'چۈشتىن كېيىن';
+
+  @override
+  String get copyButtonLabel => 'كۆچۈرۈش';
+
+  @override
+  String get cutButtonLabel => 'كېسىش';
+
+
+  @override
+  String get datePickerDateOrderString => 'ymd';
+
+  @override
+  String get datePickerDateTimeOrderString => 'date_time_dayPeriod';
+
+  @override
+  String? get datePickerHourSemanticsLabelOther => null;
+
+  @override
+  String? get datePickerMinuteSemanticsLabelOther => null;
+
+  @override
+    String get tabSemanticsLabelRaw => r'$tabIndex/$tabCount';
+  @override
+  String? get timerPickerHourLabelOther => null;
+
+  @override
+  String? get timerPickerMinuteLabelOther => "مىنۇت";
+
+  @override
+  String? get timerPickerSecondLabelOther => "سىكونىت";
+
+
+
 }
 
 /// The translations for Urdu (`ur`).
@@ -14652,6 +14716,7 @@ final Set<String> kCupertinoSupportedLanguages = HashSet<String>.from(const <Str
   'vi', // Vietnamese
   'zh', // Chinese
   'zu', // Zulu
+  'ug', // Uyghur
 ]);
 
 /// Creates a [GlobalCupertinoLocalizations] instance for the given `locale`.
@@ -14991,6 +15056,8 @@ GlobalCupertinoLocalizations? getCupertinoTranslation(
       return CupertinoLocalizationTr(fullYearFormat: fullYearFormat, dayFormat: dayFormat, weekdayFormat: weekdayFormat, mediumDateFormat: mediumDateFormat, singleDigitHourFormat: singleDigitHourFormat, singleDigitMinuteFormat: singleDigitMinuteFormat, doubleDigitMinuteFormat: doubleDigitMinuteFormat, singleDigitSecondFormat: singleDigitSecondFormat, decimalFormat: decimalFormat);
     case 'uk':
       return CupertinoLocalizationUk(fullYearFormat: fullYearFormat, dayFormat: dayFormat, weekdayFormat: weekdayFormat, mediumDateFormat: mediumDateFormat, singleDigitHourFormat: singleDigitHourFormat, singleDigitMinuteFormat: singleDigitMinuteFormat, doubleDigitMinuteFormat: doubleDigitMinuteFormat, singleDigitSecondFormat: singleDigitSecondFormat, decimalFormat: decimalFormat);
+    case 'ug':
+      return CupertinoLocalizationUg(fullYearFormat: fullYearFormat, dayFormat: dayFormat, weekdayFormat: weekdayFormat, mediumDateFormat: mediumDateFormat, singleDigitHourFormat: singleDigitHourFormat, singleDigitMinuteFormat: singleDigitMinuteFormat, doubleDigitMinuteFormat: doubleDigitMinuteFormat, singleDigitSecondFormat: singleDigitSecondFormat, decimalFormat: decimalFormat);
     case 'ur':
       return CupertinoLocalizationUr(fullYearFormat: fullYearFormat, dayFormat: dayFormat, weekdayFormat: weekdayFormat, mediumDateFormat: mediumDateFormat, singleDigitHourFormat: singleDigitHourFormat, singleDigitMinuteFormat: singleDigitMinuteFormat, doubleDigitMinuteFormat: doubleDigitMinuteFormat, singleDigitSecondFormat: singleDigitSecondFormat, decimalFormat: decimalFormat);
     case 'uz':
