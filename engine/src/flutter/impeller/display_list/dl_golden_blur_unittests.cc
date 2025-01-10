@@ -263,22 +263,24 @@ TEST_P(DlGoldenTest, TextJumpingTest) {
     return builder.Build();
   };
 
-  impeller::Scalar left_scalar = 0.445f;
-  impeller::Scalar right_scalar = 0.444f;
-  // EXPECT_TRUE(OpenPlaygroundHere(callback(right_scalar)));
-
-  std::unique_ptr<impeller::testing::Screenshot> left =
-      MakeScreenshot(callback(left_scalar));
-  if (!left) {
+  double max_rmse = 0.0;
+  impeller::Scalar current_scalar = 0.440;
+  std::unique_ptr<impeller::testing::Screenshot> left;
+  std::unique_ptr<impeller::testing::Screenshot> right =
+      MakeScreenshot(callback(current_scalar));
+  if (!right) {
     GTEST_SKIP() << "making screenshots not supported.";
   }
-  std::unique_ptr<impeller::testing::Screenshot> right =
-      MakeScreenshot(callback(right_scalar));
+  for (int i = 0; i < 10; ++i) {
+    current_scalar += 0.001;
+    left = std::move(right);
+    right = MakeScreenshot(callback(current_scalar));
+    double rmse = RMSE(left.get(), right.get());
+    max_rmse = std::max(rmse, max_rmse);
+  }
 
-  // When this test was first introduced to address text jittering the RMSE
-  // value was 15.193272962552074.
-  double rmse = RMSE(left.get(), right.get());
-  EXPECT_TRUE(rmse < 13.f) << "rmse: " << rmse;
+  // This value was 15.442608398663085 when this test was first introduced.
+  EXPECT_TRUE(max_rmse < 14) << "rmse: " << max_rmse;
 }
 
 TEST_P(DlGoldenTest, StrokedRRectFastBlur) {
