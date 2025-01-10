@@ -26,6 +26,68 @@
 #     * WidgetState: fix_widget_state.yaml
 version: 1
 transforms:
+  # Changes made in https://github.com/flutter/flutter/pull/160024
+  - title: "Migrate 'ThemeData.indicatorColor' to 'TabBarThemeData.indicatorColor'"
+    date: 2025-01-03
+    element:
+      uris: [ 'material.dart' ]
+      method: 'copyWith'
+      inClass: 'ThemeData'
+    oneOf:
+      - if: "indicatorColor != '' && tabBarTheme != ''"
+        changes:
+          - kind: 'removeParameter'
+            name: 'indicatorColor'
+      - if: "indicatorColor != '' && tabBarTheme == ''"
+        changes:
+          - kind: 'removeParameter'
+            name: 'indicatorColor'
+          - kind: 'addParameter'
+            index: 136
+            name: 'tabBarTheme'
+            style: optional_named
+            argumentValue:
+              expression: 'TabBarThemeData(indicatorColor: {% indicatorColor %})'
+              requiredIf: "indicatorColor != ''"
+    variables:
+      indicatorColor:
+        kind: 'fragment'
+        value: 'arguments[indicatorColor]'
+      tabBarTheme:
+        kind: 'fragment'
+        value: 'arguments[tabBarTheme]'
+
+  # Changes made in https://github.com/flutter/flutter/pull/160024
+  - title: "Migrate 'ThemeData.indicatorColor' to 'TabBarThemeData.indicatorColor'"
+    date: 2025-01-03
+    element:
+      uris: [ 'material.dart' ]
+      constructor: ''
+      inClass: 'ThemeData'
+    oneOf:
+      - if: "indicatorColor != '' && tabBarTheme != ''"
+        changes:
+          - kind: 'removeParameter'
+            name: 'indicatorColor'
+      - if: "indicatorColor != '' && tabBarTheme == ''"
+        changes:
+          - kind: 'removeParameter'
+            name: 'indicatorColor'
+          - kind: 'addParameter'
+            index: 136
+            name: 'tabBarTheme'
+            style: optional_named
+            argumentValue:
+              expression: 'TabBarThemeData(indicatorColor: {% indicatorColor %})'
+              requiredIf: "indicatorColor != ''"
+    variables:
+      indicatorColor:
+        kind: 'fragment'
+        value: 'arguments[indicatorColor]'
+      tabBarTheme:
+        kind: 'fragment'
+        value: 'arguments[tabBarTheme]'
+
   # Changes made in https://github.com/flutter/flutter/pull/155072
   - title: "Migrate 'ThemeData.dialogBackgroundColor' to 'DialogThemeData.backgroundColor'"
     date: 2024-09-12
