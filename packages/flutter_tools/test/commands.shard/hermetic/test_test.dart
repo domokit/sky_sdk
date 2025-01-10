@@ -72,6 +72,7 @@ final String _flutterToolsPackageConfigContents = json.encode(<String, Object>{
   'generatorVersion': '2.13.0-68.0.dev',
 });
 const String _pubspecContents = '''
+name: my_app
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -80,6 +81,12 @@ dev_dependencies:
 final String _packageConfigContents = json.encode(<String, Object>{
   'configVersion': 2,
   'packages': <Map<String, Object>>[
+    <String, String>{
+      'name': 'my_app',
+      'rootUri': '../',
+      'packageUri': 'lib/',
+      'languageVersion': '2.12',
+    },
     <String, String>{
       'name': 'test_api',
       'rootUri': 'file:///path/to/pubcache/.pub-cache/hosted/pub.dartlang.org/test_api-0.2.19',
@@ -361,7 +368,7 @@ dev_dependencies:
   testUsingContext(
     'Coverage provides current library name to Coverage Collector by default',
     () async {
-      const String currentPackageName = '';
+      const String currentPackageName = 'my_app';
       final FakeVmServiceHost fakeVmServiceHost = FakeVmServiceHost(
         requests: <VmServiceExpectation>[
           FakeVmServiceRequest(
@@ -1210,6 +1217,7 @@ const List<String> packageTestArgs = <String>[
       fs.file('vanilla.txt').writeAsStringSync('vanilla');
       fs.file('orange.txt').writeAsStringSync('orange');
       fs.file('pubspec.yaml').writeAsStringSync('''
+name: my_app
 flutter:
   assets:
     - path: vanilla.txt
@@ -1251,6 +1259,7 @@ dev_dependencies:
       fs.file('vanilla.txt').writeAsStringSync('vanilla');
       fs.file('flavorless.txt').writeAsStringSync('flavorless');
       fs.file('pubspec.yaml').writeAsStringSync('''
+name: my_app
 flutter:
   assets:
     - path: vanilla.txt
@@ -1321,6 +1330,7 @@ dev_dependencies:
       final FakeFlutterTestRunner testRunner = FakeFlutterTestRunner(0);
       fs.file('asset.txt').writeAsStringSync('1');
       fs.file('pubspec.yaml').writeAsStringSync('''
+name: my_app
 flutter:
   assets:
     - asset.txt

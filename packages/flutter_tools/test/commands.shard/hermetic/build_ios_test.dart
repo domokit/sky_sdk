@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:args/command_runner.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_tools/src/android/android_sdk.dart';
@@ -92,8 +94,17 @@ void main() {
 
   // Sets up the minimal mock project files necessary to look like a Flutter project.
   void createCoreMockProjectFiles() {
-    fileSystem.file('pubspec.yaml').createSync();
-    fileSystem.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
+    fileSystem.file('pubspec.yaml').writeAsStringSync('name: my_app');
+    fileSystem.directory('.dart_tool').childFile('package_config.json')
+      ..createSync(recursive: true)
+      ..writeAsStringSync(
+        json.encode(<String, Object?>{
+          'packages': <Object>[
+            <String, Object?>{'name': 'my_app', 'rootUri': '../', 'packageUri': 'lib/'},
+          ],
+          'configVersion': 2,
+        }),
+      );
     fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
   }
 

@@ -39,10 +39,16 @@ class FakePub extends Fake implements Pub {
     bool shouldSkipThirdPartyGenerator = true,
     PubOutputMode outputMode = PubOutputMode.all,
   }) async {
-    project.directory
-        .childDirectory('.dart_tool')
-        .childFile('package_config.json')
-        .createSync(recursive: true);
+    project.directory.childDirectory('.dart_tool').childFile('package_config.json')
+      ..createSync(recursive: true)
+      ..writeAsStringSync(
+        json.encode(<String, Object?>{
+          'packages': <Object>[
+            <String, Object?>{'name': 'my_app', 'rootUri': '../', 'packageUri': 'lib/'},
+          ],
+          'configVersion': 2,
+        }),
+      );
     if (offline) {
       calledGetOffline += 1;
     } else {
@@ -136,6 +142,10 @@ void main() {
           ];
           for (final String templatePath in templatePaths) {
             globals.fs.directory(templatePath).createSync(recursive: true);
+            globals.fs
+                .directory(templatePath)
+                .childFile('pubspec.yaml.tmpl')
+                .writeAsStringSync('name: my_app');
           }
           // Set up enough of the packages to satisfy the templating code.
           final File packagesFile = globals.fs.file(
