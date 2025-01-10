@@ -22,7 +22,6 @@ import 'convert.dart';
 import 'dart/package_map.dart';
 import 'devfs.dart';
 import 'flutter_manifest.dart';
-import 'globals.dart';
 import 'license_collector.dart';
 import 'project.dart';
 
