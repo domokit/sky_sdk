@@ -6,6 +6,8 @@ import 'dart:async';
 
 import 'package:flutter_tools/src/artifacts.dart';
 import 'package:flutter_tools/src/base/dds.dart';
+import 'package:flutter_tools/src/base/file_system.dart';
+import 'package:flutter_tools/src/base/io.dart';
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/cache.dart';
@@ -14,6 +16,7 @@ import 'package:flutter_tools/src/devtools_launcher.dart';
 import 'package:flutter_tools/src/resident_devtools_handler.dart';
 import 'package:flutter_tools/src/resident_runner.dart';
 import 'package:flutter_tools/src/vmservice.dart';
+import 'package:flutter_tools/src/web/chrome.dart';
 import 'package:test/fake.dart';
 import 'package:vm_service/vm_service.dart' as vm_service;
 import 'package:vm_service/vm_service.dart';
@@ -58,6 +61,7 @@ void main() {
       null,
       FakeResidentRunner(),
       BufferLogger.test(),
+      _ThrowingChromiumLauncher(),
     );
 
     await handler.serveAndAnnounceDevTools(flutterDevices: <FlutterDevice>[]);
@@ -72,8 +76,8 @@ void main() {
         FakeDevtoolsLauncher(),
         FakeResidentRunner()..supportsServiceProtocol = false,
         BufferLogger.test(),
+        _ThrowingChromiumLauncher(),
       );
-
       await handler.serveAndAnnounceDevTools(flutterDevices: <FlutterDevice>[]);
 
       expect(handler.activeDevToolsServer, null);
@@ -94,6 +98,7 @@ void main() {
       launcher,
       FakeResidentRunner(),
       BufferLogger.test(),
+      _ThrowingChromiumLauncher(),
     );
 
     await handler.serveAndAnnounceDevTools(
@@ -114,6 +119,7 @@ void main() {
           ..devToolsUrl = Uri.parse('http://localhost:8080'),
         FakeResidentRunner(),
         BufferLogger.test(),
+        _ThrowingChromiumLauncher(),
       );
 
       // VM Service is intentionally null
@@ -132,6 +138,7 @@ void main() {
           ..devToolsUrl = Uri.parse('http://localhost:8080'),
         FakeResidentRunner(),
         BufferLogger.test(),
+        _ThrowingChromiumLauncher(),
       );
       final FakeVmServiceHost fakeVmServiceHost = FakeVmServiceHost(
         requests: <VmServiceExpectation>[
@@ -170,6 +177,7 @@ void main() {
       FakeDevtoolsLauncher()..activeDevToolsServer = null,
       FakeResidentRunner(),
       BufferLogger.test(),
+      _ThrowingChromiumLauncher(),
     );
     final FakeVmServiceHost fakeVmServiceHost = FakeVmServiceHost(
       requests: <VmServiceExpectation>[],
@@ -188,6 +196,7 @@ void main() {
         ..devToolsUrl = Uri.parse('http://localhost:8080'),
       FakeResidentRunner(),
       BufferLogger.test(),
+      _ThrowingChromiumLauncher(),
     );
     final FakeVmServiceHost fakeVmServiceHost = FakeVmServiceHost(
       requests: <VmServiceExpectation>[
@@ -220,6 +229,104 @@ void main() {
 
     await handler.serveAndAnnounceDevTools(flutterDevices: <FlutterDevice>[device]);
   });
+
+  testWithoutContext(
+    'serveAndAnnounceDevTools with skips calling service extensions when VM service disappears',
+    () async {
+      final ResidentDevtoolsHandler handler = FlutterResidentDevtoolsHandler(
+        FakeDevtoolsLauncher()..activeDevToolsServer = DevToolsServerAddress('localhost', 8080),
+        FakeResidentRunner(),
+        BufferLogger.test(),
+        _ThrowingChromiumLauncher(),
+      );
+      final FakeVmServiceHost fakeVmServiceHost = FakeVmServiceHost(
+        requests: <VmServiceExpectation>[
+          const FakeVmServiceRequest(
+            method: 'streamListen',
+            args: <String, Object>{'streamId': 'Isolate'},
+          ),
+          FakeVmServiceRequest(
+            method: kListViewsMethod,
+            error: FakeRPCError(code: RPCErrorKind.kServiceDisappeared.code),
+          ),
+        ],
+        httpAddress: Uri.parse('http://localhost:1234'),
+      );
+
+      final FakeFlutterDevice device = FakeFlutterDevice()..vmService = fakeVmServiceHost.vmService;
+
+      await handler.serveAndAnnounceDevTools(flutterDevices: <FlutterDevice>[device]);
+    },
+  );
+
+  testWithoutContext(
+    'serveAndAnnounceDevTools with multiple devices and VM service disappears on one',
+    () async {
+      final ResidentDevtoolsHandler handler = FlutterResidentDevtoolsHandler(
+        FakeDevtoolsLauncher()
+          ..activeDevToolsServer = DevToolsServerAddress('localhost', 8080)
+          ..devToolsUrl = Uri.parse('http://localhost:8080'),
+        FakeResidentRunner(),
+        BufferLogger.test(),
+        _ThrowingChromiumLauncher(),
+      );
+
+      final FakeVmServiceHost vmServiceHost = FakeVmServiceHost(
+        requests: <VmServiceExpectation>[
+          const FakeVmServiceRequest(
+            method: 'streamListen',
+            args: <String, Object>{'streamId': 'Isolate'},
+          ),
+          listViews,
+          FakeVmServiceRequest(
+            method: 'getIsolate',
+            jsonResponse: isolate.toJson(),
+            args: <String, Object>{'isolateId': '1'},
+          ),
+          listViews,
+          listViews,
+          const FakeVmServiceRequest(
+            method: 'ext.flutter.activeDevToolsServerAddress',
+            args: <String, Object>{'isolateId': '1', 'value': 'http://localhost:8080'},
+          ),
+          const FakeVmServiceRequest(
+            method: 'ext.flutter.connectedVmServiceUri',
+            args: <String, Object>{'isolateId': '1', 'value': 'http://localhost:1234'},
+          ),
+        ],
+        httpAddress: Uri.parse('http://localhost:1234'),
+      );
+
+      final FakeVmServiceHost vmServiceHostThatDisappears = FakeVmServiceHost(
+        requests: <VmServiceExpectation>[
+          const FakeVmServiceRequest(
+            method: 'streamListen',
+            args: <String, Object>{'streamId': 'Isolate'},
+          ),
+          FakeVmServiceRequest(
+            method: kListViewsMethod,
+            error: FakeRPCError(code: RPCErrorKind.kServiceDisappeared.code),
+          ),
+        ],
+        httpAddress: Uri.parse('http://localhost:5678'),
+      );
+
+      await handler.serveAndAnnounceDevTools(
+        flutterDevices: <FlutterDevice>[
+          FakeFlutterDevice()..vmService = vmServiceHostThatDisappears.vmService,
+          FakeFlutterDevice()..vmService = vmServiceHost.vmService,
+        ],
+        httpAddress: Uri.parse('http://localhost:1234'),
+      );
+
+      final FakeFlutterDevice device =
+          FakeFlutterDevice()
+            ..vmService = fakeVmServiceHost.vmService
+            ..targetPlatform = TargetPlatform.web_javascript;
+
+      await handler.serveAndAnnounceDevTools(flutterDevices: <FlutterDevice>[device]);
+    },
+  );
 
   testWithoutContext(
     'serveAndAnnounceDevTools with skips calling service extensions when VM service disappears',
@@ -314,6 +421,7 @@ void main() {
       null,
       FakeResidentRunner(),
       BufferLogger.test(),
+      _ThrowingChromiumLauncher(),
     );
 
     handler.launchDevToolsInBrowser(flutterDevices: <FlutterDevice>[]);
@@ -328,6 +436,7 @@ void main() {
         FakeDevtoolsLauncher(),
         FakeResidentRunner()..supportsServiceProtocol = false,
         BufferLogger.test(),
+        _ThrowingChromiumLauncher(),
       );
 
       handler.launchDevToolsInBrowser(flutterDevices: <FlutterDevice>[]);
@@ -349,6 +458,7 @@ void main() {
           ..readyCompleter = completer,
         FakeResidentRunner(),
         BufferLogger.test(),
+        _ThrowingChromiumLauncher(),
       );
 
       expect(handler.launchDevToolsInBrowser(flutterDevices: <FlutterDevice>[]), isTrue);
@@ -369,10 +479,25 @@ void main() {
         ..activeDevToolsServer = DevToolsServerAddress('localhost', 8080),
       FakeResidentRunner(),
       BufferLogger.test(),
+      _ThrowingChromiumLauncher(),
     );
 
     expect(handler.launchDevToolsInBrowser(flutterDevices: <FlutterDevice>[]), isTrue);
     expect(handler.launchedInBrowser, isTrue);
+  });
+
+  testWithoutContext('launchDevToolsInBrowser fails without Chrome installed', () async {
+    final FlutterResidentDevtoolsHandler handler = FlutterResidentDevtoolsHandler(
+      FakeDevtoolsLauncher()
+        ..devToolsUrl = Uri(host: 'localhost', port: 8080)
+        ..activeDevToolsServer = DevToolsServerAddress('localhost', 8080),
+      FakeResidentRunner(),
+      BufferLogger.test(),
+      _ThrowingChromiumLauncher(),
+    );
+
+    expect(handler.launchedInBrowser, isFalse);
+    expect(handler.launchDevToolsInBrowser(flutterDevices: <FlutterDevice>[]), isTrue);
   });
 
   testWithoutContext(
@@ -441,5 +566,19 @@ class FakeDartDevelopmentService extends Fake implements DartDevelopmentService 
   @override
   Future<void> shutdown() async {
     disposed = true;
+  }
+}
+
+class _ThrowingChromiumLauncher extends Fake implements ChromiumLauncher {
+  @override
+  Future<Chromium> launch(
+    String url, {
+    bool headless = false,
+    int? debugPort,
+    bool skipCheck = false,
+    Directory? cacheDir,
+    List<String> webBrowserFlags = const <String>[],
+  }) async {
+    throw ProcessException('ChromiumLauncher', <String>[url]);
   }
 }
