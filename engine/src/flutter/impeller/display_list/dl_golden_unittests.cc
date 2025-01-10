@@ -361,7 +361,9 @@ TEST_P(DlGoldenTest, TextJumpingTest) {
     max_rmse = std::max(rmse, max_rmse);
   }
 
-  // This value was 15.442608398663085 when this test was first introduced.
+  // This value was 15.442608398663085 when this test was first written.
+  // The threshold was changed to 14 after vertex shader pixel snapping was
+  // introduced.
   EXPECT_TRUE(max_rmse < 14) << "rmse: " << max_rmse;
 }
 
