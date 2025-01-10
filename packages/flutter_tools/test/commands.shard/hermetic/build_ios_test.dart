@@ -167,6 +167,8 @@ void main() {
         '-configuration',
         if (simulator) 'Debug' else 'Release',
         if (verbose) 'VERBOSE_SCRIPT_LOGGING=YES' else '-quiet',
+        '-allowProvisioningUpdates',
+        '-allowProvisioningDeviceRegistration',
         '-workspace',
         if (customNaming) 'RenamedWorkspace.xcworkspace' else 'Runner.xcworkspace',
         '-scheme',
