@@ -10,6 +10,81 @@ import 'rendering_tester.dart';
 void main() {
   TestRenderingFlutterBinding.ensureInitialized();
 
+  test('Wrap with equalWidthPerRow makes children same width per run', () {
+  final RenderWrap renderWrap = RenderWrap(
+    textDirection: TextDirection.ltr,
+    equalWidthPerRow: true,
+  );
+
+  final List<RenderBox> children = <RenderBox>[
+    RenderConstrainedBox(
+      additionalConstraints: const BoxConstraints(minWidth: 50, minHeight: 50),
+    ),
+    RenderConstrainedBox(
+      additionalConstraints: const BoxConstraints(minWidth: 80, minHeight: 50),
+    ),
+    RenderConstrainedBox(
+      additionalConstraints: const BoxConstraints(minWidth: 30, minHeight: 50),
+    ),
+  ];
+
+  children.forEach(renderWrap.add);
+
+  // Layout with constraints that force two runs
+  layout(
+    renderWrap,
+    constraints: const BoxConstraints(maxWidth: 150),
+    phase: EnginePhase.layout,
+  );
+
+  // First run should have 2 children with equal width (80)
+  RenderBox child = renderWrap.firstChild!;
+  expect(child.size.width, 80);
+  child = renderWrap.childAfter(child)!;
+  expect(child.size.width, 80);
+
+  // Second run should have 1 child with original width
+  child = renderWrap.childAfter(child)!;
+  expect(child.size.width, 30);
+});
+
+test('Wrap without equalWidthPerRow preserves original widths', () {
+  final RenderWrap renderWrap = RenderWrap(
+    textDirection: TextDirection.ltr,
+    equalWidthPerRow: false,
+  );
+
+  final List<RenderBox> children = <RenderBox>[
+    RenderConstrainedBox(
+      additionalConstraints: const BoxConstraints(minWidth: 50, minHeight: 50),
+    ),
+    RenderConstrainedBox(
+      additionalConstraints: const BoxConstraints(minWidth: 80, minHeight: 50),
+    ),
+    RenderConstrainedBox(
+      additionalConstraints: const BoxConstraints(minWidth: 30, minHeight: 50),
+    ),
+  ];
+
+  children.forEach(renderWrap.add);
+
+  layout(
+    renderWrap,
+    constraints: const BoxConstraints(maxWidth: 150),
+    phase: EnginePhase.layout,
+  );
+
+  // Children should maintain their original widths
+  RenderBox child = renderWrap.firstChild!;
+  expect(child.size.width, 50);
+  child = renderWrap.childAfter(child)!;
+  expect(child.size.width, 80);
+  child = renderWrap.childAfter(child)!;
+  expect(child.size.width, 30);
+});
+
+
+
   test('Wrap test; toStringDeep', () {
     final RenderWrap renderWrap = RenderWrap();
     expect(renderWrap, hasAGoodToStringDeep);
