@@ -121,13 +121,14 @@ static Scalar Split(Scalar left,
 
 // Draw a circular arc from `start` to `end` with a radius of `r`.
 //
-// It is assumed that `start` is north-west to `end`, and the center
-// of the circle is south-west to both points.
+// It is assumed that `start` is north-west to `end`, and the center of the
+// circle is south-west to both points. If `reverse` is true, then the curve
+// goes from `end` to `start` instead.
 //
-// The resulting points are appended to `output` and include the starting point
-// but exclude the ending point.
+// The resulting points, after applying `transform`, are appended to `output`
+// and include the starting point but exclude the ending point.
 //
-// Returns the number of the
+// Returns the number of generated points.
 size_t DrawCircularArc(Point* output,
                        Point start,
                        Point end,
@@ -154,6 +155,7 @@ size_t DrawCircularArc(Point* output,
   Point c = m - distance_cm * c_to_m.Normalize();
   Scalar angle_sce = asinf(distance_sm / r) * 2;
   Point c_to_s = start - c;
+  Matrix full_transform = transform * Matrix::MakeTranslation(c);
 
   Point* next = output;
   Scalar angle = reverse ? angle_sce : 0.0f;
@@ -162,14 +164,25 @@ size_t DrawCircularArc(Point* output,
   Scalar end_angle = reverse ? 0.0f : angle_sce;
 
   while ((angle < end_angle) != reverse) {
-    *(next++) = transform * (c_to_s.Rotate(Radians(-angle)) + c);
+    *(next++) = full_transform * c_to_s.Rotate(Radians(-angle));
     angle += step;
   }
   return next - output;
 }
 
+// Draw a superellipsoid arc.
+//
+// The superellipse is centered at the origin, has both semi-axes `a` and degree
+// `n`. The arc starts from positive Y axis and spans from 0 to `max_theta`
+// radiance clockwise.
+//
+// If `reverse` is true, then the curve goes from `end` to `start` instead.
+//
+// The resulting points, after applying `transform`, are appended to `output`
+// and include the starting point but exclude the ending point.
+//
+// Returns the number of generated points.
 size_t DrawSuperellipsoidArc(Point* output,
-                             Point center,
                              Scalar a,
                              Scalar n,
                              Scalar max_theta,
@@ -184,7 +197,7 @@ size_t DrawSuperellipsoidArc(Point* output,
   while ((angle < end) != reverse) {
     Scalar x = a * pow(abs(sinf(angle)), 2 / n);
     Scalar y = a * pow(abs(cosf(angle)), 2 / n);
-    *(next++) = transform * (Point(x, y) + center);
+    *(next++) = transform * Point(x, y);
     angle += step;
   }
   return next - output;
@@ -258,17 +271,18 @@ size_t DrawOctantSquareLikeSquircle(Point* output,
   Point pointJ =
       Point{pow(abs(sinf(thetaJ)), 2 / n), pow(abs(cosf(thetaJ)), 2 / n)} * a +
       pointS;
+  Matrix translationS = Matrix::MakeTranslation(pointS);
 
   Point* next = output;
   if (!reverse) {
     *(next++) = transform * pointA;
-    next +=
-        DrawSuperellipsoidArc(next, pointS, a, n, thetaJ, reverse, transform);
+    next += DrawSuperellipsoidArc(next, a, n, thetaJ, reverse,
+                                  transform * translationS);
     next += DrawCircularArc(next, pointJ, pointM, R, reverse, transform);
   } else {
     next += DrawCircularArc(next, pointJ, pointM, R, reverse, transform);
-    next +=
-        DrawSuperellipsoidArc(next, pointS, a, n, thetaJ, reverse, transform);
+    next += DrawSuperellipsoidArc(next, a, n, thetaJ, reverse,
+                                  transform * translationS);
     *(next++) = transform * pointA;
   }
   return next - output;
