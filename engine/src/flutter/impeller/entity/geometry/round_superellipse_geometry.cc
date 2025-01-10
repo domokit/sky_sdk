@@ -109,6 +109,15 @@ constexpr Scalar CalculateGap(Scalar corner_radius) {
   return 0.2924066406 * corner_radius;
 }
 
+// Return the value that splits the range from `left` to `right` into two
+// portions whose ratio equals to `ratio_left` : `ratio_right`.
+static Scalar Split(Scalar left,
+                    Scalar right,
+                    Scalar ratio_left,
+                    Scalar ratio_right) {
+  return (left * ratio_right + right * ratio_left) / (ratio_left + ratio_right);
+}
+
 // Draw a circular arc from `start` to `end` with a radius of `r`.
 //
 // It is assumed that `start` is north-west to `end`, and the center
@@ -236,15 +245,6 @@ size_t DrawOctantSquareLikeSquircle(Point* output,
   return next - output;
 }
 
-// Return the value that splits the range from `left` to `right` into two
-// portions whose ratio equals to `ratio_left` : `ratio_right`.
-static Scalar split(Scalar left,
-                    Scalar right,
-                    Scalar ratio_left,
-                    Scalar ratio_right) {
-  return (left * ratio_right + right * ratio_left) / (ratio_left + ratio_right);
-}
-
 // Optionally `flip` the input points before transforming it with `transform`,
 // and append the result to `output`.
 //
@@ -314,28 +314,6 @@ static size_t DrawQuadrant(Point* output,
 
   return next - output;
 }
-
-// constexpr Point kReflection[4] = {{1, 1}, {1, -1}, {-1, -1}, {-1, 1}};
-
-// void RearrangeIntoTriangleStrip(const Point* contour,
-//                              size_t contour_length,
-//                              Point* output) {
-//   size_t index_count = 0;
-
-//   output[index_count++] = contour[0];
-
-//   size_t a = 1;
-//   size_t b = contour_length - 1;
-//   while (a < b) {
-//     output[index_count++] = contour[a];
-//     output[index_count++] = contour[b];
-//     a++;
-//     b--;
-//   }
-//   if (a == b) {
-//     output[index_count++] = contour[b];
-//   }
-// }
 
 static inline void NormalizeEmptyToZero(Size& radii) {
   if (radii.IsEmpty()) {
@@ -589,16 +567,16 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
         std::get<UnevenQuadrantsTessellator>(tessellator_holder);
     tessellator = &t;
 
-    Scalar top_split = split(bounds_.GetLeft(), bounds_.GetRight(),
+    Scalar top_split = Split(bounds_.GetLeft(), bounds_.GetRight(),
                              radii_.top_left.width, radii_.top_right.width);
     Scalar right_split =
-        split(bounds_.GetTop(), bounds_.GetBottom(), radii_.top_right.height,
+        Split(bounds_.GetTop(), bounds_.GetBottom(), radii_.top_right.height,
               radii_.bottom_right.height);
     Scalar bottom_split =
-        split(bounds_.GetLeft(), bounds_.GetRight(), radii_.bottom_left.width,
+        Split(bounds_.GetLeft(), bounds_.GetRight(), radii_.bottom_left.width,
               radii_.bottom_right.width);
     Scalar left_split =
-        split(bounds_.GetTop(), bounds_.GetBottom(), radii_.top_left.height,
+        Split(bounds_.GetTop(), bounds_.GetBottom(), radii_.top_left.height,
               radii_.bottom_left.height);
 
     t.QuadSize(0) = DrawQuadrant(t.QuadCache(0), octant_cache,
