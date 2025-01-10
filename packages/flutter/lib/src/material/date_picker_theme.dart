@@ -55,6 +55,8 @@ class DatePickerThemeData with Diagnosticable {
     this.headerForegroundColor,
     this.headerHeadlineStyle,
     this.headerHelpStyle,
+    this.headerTextColor,
+    this.headerNavigationButtonColor,
     this.weekdayStyle,
     this.dayStyle,
     this.dayForegroundColor,
@@ -147,6 +149,12 @@ class DatePickerThemeData with Diagnosticable {
   /// See also:
   ///   [DatePickerDialog.helpText], which specifies the help text.
   final TextStyle? headerHelpStyle;
+
+  /// Overrides the default text color for the header in the DatePicker dialog.
+  final Color? headerTextColor;
+
+  /// Overrides the default navigation button color in the header of the DatePicker dialog.
+  final Color? headerNavigationButtonColor;
 
   /// Overrides the default text style used for the row of weekday
   /// labels at the top of the date picker grid.
