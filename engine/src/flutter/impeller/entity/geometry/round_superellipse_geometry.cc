@@ -12,8 +12,8 @@ namespace impeller {
 
 namespace {
 
-// clang-format off
 // A matrix that swaps the coordinates of a point.
+// clang-format off
 constexpr Matrix kFlip = Matrix(
   0.0f, 1.0f, 0.0f, 0.0f,
   1.0f, 0.0f, 0.0f, 0.0f,
@@ -289,7 +289,7 @@ size_t DrawOctantSquareLikeSquircle(Point* output,
     next += DrawSuperellipsoidArc(next, a, n, thetaJ, reverse,
                                   transform * translationS);
     // Point B
-    *(next++) = transform * Point{s, size/2};
+    *(next++) = transform * Point{s, size / 2};
     // Point A
     *(next++) = transform * pointA;
   }
