@@ -235,6 +235,16 @@ TEST_P(DlGoldenTest, TextJumpingTest) {
     paint.setColor(DlColor::ARGB(1, 0.1, 0.1, 0.1));
     builder.DrawPaint(paint);
     builder.Scale(scale, scale);
+    // If you move this code to a playgrounds test the RenderTextInCanvasSkia
+    // signature is a bit different there, it will look like this:
+    //
+    // RenderTextInCanvasSkia(GetContext(), builder,
+    //                    "the quick brown fox jumped over the lazy dog!.?",
+    //                    "Roboto-Regular.ttf",
+    //                    TextRenderOptions{
+    //                        .font_size = font_size,
+    //                        .position = SkPoint::Make(100, 300),
+    //                    });
     RenderTextInCanvasSkia(&builder,
                            "the quick brown fox jumped over the lazy dog!.?",
                            "Roboto-Regular.ttf", SkPoint::Make(100, 300),
@@ -247,7 +257,7 @@ TEST_P(DlGoldenTest, TextJumpingTest) {
                                       0, 1.0 / scale, 0, 0,  //
                                       0, 0, 1, 0,            //
                                       0, 0, 0, 1),
-                                  DlImageSampling::kNearestNeighbor);
+                                  DlImageSampling::kLinear);
     builder.SaveLayer(std::nullopt, nullptr, filter.get());
     builder.Restore();
     return builder.Build();
@@ -266,9 +276,9 @@ TEST_P(DlGoldenTest, TextJumpingTest) {
       MakeScreenshot(callback(right_scalar));
 
   // When this test was first introduced to address text jittering the RMSE
-  // value was 21.205837959823416.
+  // value was 15.193272962552074.
   double rmse = RMSE(left.get(), right.get());
-  EXPECT_TRUE(rmse < 20.f) << "rmse: " << rmse;
+  EXPECT_TRUE(rmse < 13.f) << "rmse: " << rmse;
 }
 
 TEST_P(DlGoldenTest, StrokedRRectFastBlur) {
