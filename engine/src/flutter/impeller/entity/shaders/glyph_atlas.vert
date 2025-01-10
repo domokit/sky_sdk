@@ -17,7 +17,7 @@ in vec2 position;
 out vec2 v_uv;
 
 vec4 impRound(vec4 value) {
-  return floor(value + vec4(0.5));
+  return vec4(floor(value.xy + vec2(0.5)), value.zw);
 }
 
 void main() {
