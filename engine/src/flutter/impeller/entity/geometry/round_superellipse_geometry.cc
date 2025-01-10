@@ -128,7 +128,12 @@ static Scalar Split(Scalar left,
 // but exclude the ending point.
 //
 // Returns the number of the
-size_t DrawCircularArc(Point* output, Point start, Point end, Scalar r) {
+size_t DrawCircularArc(Point* output,
+                       Point start,
+                       Point end,
+                       Scalar r,
+                       bool reverse,
+                       const Matrix& transform) {
   /* Denote the middle point of S and E as M. The key is to find the center of
    * the circle.
    *         S --__
@@ -150,12 +155,14 @@ size_t DrawCircularArc(Point* output, Point start, Point end, Scalar r) {
   Scalar angle_sce = asinf(distance_sm / r) * 2;
   Point c_to_s = start - c;
 
-  Scalar step = CalculateStep(std::abs(s_to_e.y), angle_sce);
-
   Point* next = output;
-  Scalar angle = 0;
-  while (angle < angle_sce) {
-    *(next++) = c_to_s.Rotate(Radians(-angle)) + c;
+  Scalar angle = reverse ? angle_sce : 0.0f;
+  Scalar step =
+      (reverse ? -1 : 1) * CalculateStep(std::abs(s_to_e.y), angle_sce);
+  Scalar end_angle = reverse ? 0.0f : angle_sce;
+
+  while ((angle < end_angle) != reverse) {
+    *(next++) = transform * (c_to_s.Rotate(Radians(-angle)) + c);
     angle += step;
   }
   return next - output;
@@ -165,16 +172,19 @@ size_t DrawSuperellipsoidArc(Point* output,
                              Point center,
                              Scalar a,
                              Scalar n,
-                             Scalar max_theta) {
-  Scalar step =
-      CalculateStep(a - a * pow(abs(cosf(max_theta)), 2 / n), max_theta);
-
+                             Scalar max_theta,
+                             bool reverse,
+                             const Matrix& transform) {
   Point* next = output;
-  Scalar angle = 0;
-  while (angle < max_theta) {
+  Scalar angle = reverse ? max_theta : 0.0f;
+  Scalar step =
+      (reverse ? -1 : 1) *
+      CalculateStep(a - a * pow(abs(cosf(max_theta)), 2 / n), max_theta);
+  Scalar end = reverse ? 0.0f : max_theta;
+  while ((angle < end) != reverse) {
     Scalar x = a * pow(abs(sinf(angle)), 2 / n);
     Scalar y = a * pow(abs(cosf(angle)), 2 / n);
-    *(next++) = Point(x, y) + center;
+    *(next++) = transform * (Point(x, y) + center);
     angle += step;
   }
   return next - output;
@@ -196,7 +206,9 @@ size_t DrawSuperellipsoidArc(Point* output,
 // Returns the number of points generated.
 size_t DrawOctantSquareLikeSquircle(Point* output,
                                     Scalar size,
-                                    Scalar corner_radius) {
+                                    Scalar corner_radius,
+                                    bool reverse,
+                                    const Matrix& transform) {
   /* The following figure shows the first quadrant of a square-like rounded
    * superellipse. The target arc consists of the "stretch" (AB), a
    * superellipsoid arc (BJ), and a circular arc (JM).
@@ -211,10 +223,10 @@ size_t DrawOctantSquareLikeSquircle(Point* output,
    *        |    |   / ⟋        |
    *        |    |  ᜱD          |
    *        |    | /             |
-   *    ↑   +----+               |
+   *    ↑   +----+ S             |
    *    s   |    |               |
    *    ↓   +----+---------------| A'
-   *       O     S
+   *       O
    *        ← s →
    *        ←------ size/2 ------→
    *
@@ -240,43 +252,26 @@ size_t DrawOctantSquareLikeSquircle(Point* output,
 
   Scalar R = (a - d - g) * sqrt(2);
 
-  Point pointM(size / 2 - g, size / 2 - g);
-
-  Point center = {s, s};
+  Point pointA{0, size / 2};
+  Point pointM{size / 2 - g, size / 2 - g};
+  Point pointS{s, s};
+  Point pointJ =
+      Point{pow(abs(sinf(thetaJ)), 2 / n), pow(abs(cosf(thetaJ)), 2 / n)} * a +
+      pointS;
 
   Point* next = output;
-  // A
-  *(next++) = Point(0, size / 2);
-
-  // Superellipsoid arc BJ (B inclusive, J exclusive)
-  next += DrawSuperellipsoidArc(next, center, a, n, thetaJ);
-
-  // Circular arc JM (B inclusive, M exclusive)
-  next += DrawCircularArc(next, next[-1], pointM, R);
-  return next - output;
-}
-
-// Optionally `flip` the input points before transforming it with `transform`,
-// and append the result to `output`.
-//
-// If `flip` is true, then the entire input list is reversed, and the x and y
-// coordinate of each point is swapped as well. This effectively mirrors the
-// input point list by the y=x line.
-size_t FlipAndTransform(Point* output,
-                        const Point* input,
-                        size_t input_length,
-                        bool flip,
-                        const Matrix& transform) {
-  if (!flip) {
-    for (size_t i = 0; i < input_length; i++) {
-      output[i] = transform * input[i];
-    }
+  if (!reverse) {
+    *(next++) = transform * pointA;
+    next +=
+        DrawSuperellipsoidArc(next, pointS, a, n, thetaJ, reverse, transform);
+    next += DrawCircularArc(next, pointJ, pointM, R, reverse, transform);
   } else {
-    for (size_t i = 0; i < input_length; i++) {
-      output[i] = transform * input[input_length - i - 1];
-    }
+    next += DrawCircularArc(next, pointJ, pointM, R, reverse, transform);
+    next +=
+        DrawSuperellipsoidArc(next, pointS, a, n, thetaJ, reverse, transform);
+    *(next++) = transform * pointA;
   }
-  return input_length;
+  return next - output;
 }
 
 // Draw a quadrant curve, both ends included.
@@ -314,22 +309,19 @@ static size_t DrawQuadrant(Point* output,
   Scalar c = (norm_size.x - norm_size.y) / 2;
 
   Point* next = output;
-  size_t octant_length;
 
-  octant_length =
-      DrawOctantSquareLikeSquircle(octant_cache, norm_size.x, norm_radius);
-  next += FlipAndTransform(next, octant_cache, octant_length, /*flip=*/false,
-                           Matrix::MakeTranslateScale(signed_scale, center) *
-                               Matrix::MakeTranslation(Size{0, -c}));
+  next += DrawOctantSquareLikeSquircle(
+      next, norm_size.x, norm_radius, /*reverse=*/false,
+      Matrix::MakeTranslateScale(signed_scale, center) *
+          Matrix::MakeTranslation(Size{0, -c}));
 
   *(next++) = Point(outer) -
               CalculateGap(norm_radius) * signed_scale;  // Middle of corner
 
-  octant_length =
-      DrawOctantSquareLikeSquircle(octant_cache, norm_size.y, norm_radius);
-  next += FlipAndTransform(next, octant_cache, octant_length, /*flip=*/true,
-                           Matrix::MakeTranslateScale(signed_scale, center) *
-                               Matrix::MakeTranslation(Size{c, 0}) * kFlip);
+  next += DrawOctantSquareLikeSquircle(
+      next, norm_size.y, norm_radius, /*reverse=*/true,
+      Matrix::MakeTranslateScale(signed_scale, center) *
+          Matrix::MakeTranslation(Size{c, 0}) * kFlip);
 
   return next - output;
 }
