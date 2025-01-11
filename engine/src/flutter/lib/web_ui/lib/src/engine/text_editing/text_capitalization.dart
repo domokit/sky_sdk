@@ -62,14 +62,7 @@ class TextCapitalizationConfig {
     String autocapitalize = '';
     switch (textCapitalization) {
       case TextCapitalization.words:
-        // TODO(mdebbar): There is a bug for `words` level capitalization in IOS now.
-        // For now go back to default. Remove the check after bug is resolved.
-        // https://bugs.webkit.org/show_bug.cgi?id=148504
-        if (ui_web.browser.browserEngine == ui_web.BrowserEngine.webkit) {
-          autocapitalize = 'sentences';
-        } else {
-          autocapitalize = 'words';
-        }
+        autocapitalize = 'words';
       case TextCapitalization.characters:
         autocapitalize = 'characters';
       case TextCapitalization.sentences:
