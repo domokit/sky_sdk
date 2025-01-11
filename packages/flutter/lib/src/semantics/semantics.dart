@@ -2010,6 +2010,10 @@ class SemanticsNode with DiagnosticableTreeMixin {
   /// See also:
   ///
   ///  * [elevation], the actual elevation of this [SemanticsNode].
+  @Deprecated(
+    'This was caches for internal calculation and is no longer needed. '
+    'This feature was deprecated after v3.27.0-0.0.pre.',
+  )
   double? elevationAdjustment;
 
   /// The index of this node within the parent's list of semantic children.
@@ -2030,7 +2034,7 @@ class SemanticsNode with DiagnosticableTreeMixin {
   /// An invisible node can be safely dropped from the semantic tree without
   /// losing semantic information that is relevant for describing the content
   /// currently shown on screen.
-  bool get isInvisible => !isMergedIntoParent && rect.isEmpty;
+  bool get isInvisible => !isMergedIntoParent && (rect.isEmpty || (transform?.isZero() ?? false));
 
   // MERGING
 
@@ -2038,8 +2042,15 @@ class SemanticsNode with DiagnosticableTreeMixin {
   ///
   /// This value indicates whether this node has any ancestors with
   /// [mergeAllDescendantsIntoThisNode] set to true.
-  bool get isMergedIntoParent => parent != null && _isMergedIntoParent;
+  bool get isMergedIntoParent => _isMergedIntoParent;
   bool _isMergedIntoParent = false;
+  set isMergedIntoParent(bool value) {
+    if (_isMergedIntoParent == value) {
+      return;
+    }
+    _isMergedIntoParent = value;
+    parent?._markDirty();
+  }
 
   /// Whether the user can interact with this node in assistive technologies.
   ///
@@ -2283,12 +2294,11 @@ class SemanticsNode with DiagnosticableTreeMixin {
     assert(child.owner == owner);
     final bool childShouldMergeToParent = isPartOfNodeMerging;
 
-    if (childShouldMergeToParent == child._isMergedIntoParent) {
+    if (childShouldMergeToParent == child.isMergedIntoParent) {
       return;
     }
 
-    child._isMergedIntoParent = childShouldMergeToParent;
-    _markDirty();
+    child.isMergedIntoParent = childShouldMergeToParent;
 
     if (child.mergeAllDescendantsIntoThisNode) {
       // No need to update the descendants since `child` has the merge flag set.
@@ -2316,6 +2326,11 @@ class SemanticsNode with DiagnosticableTreeMixin {
       child.attach(_owner!);
     }
     _redepthChild(child);
+    // In most cases, child should have up to date `isMergedIntoParent` since
+    // it was set during _RenderObjectSemantics.buildSemantics. However, it is
+    // still possible that this child was an extra node introduced in
+    // RenderObject.assembleSemanticsNode. We have to make sure their
+    // `isMergedIntoParent` is updated correctly.
     _updateChildMergeFlagRecursively(child);
   }
 
@@ -5380,7 +5395,7 @@ class SemanticsConfiguration {
 
     _thickness = math.max(_thickness, child._thickness + child._elevation);
 
-    _hasBeenAnnotated = _hasBeenAnnotated || child._hasBeenAnnotated;
+    _hasBeenAnnotated = hasBeenAnnotated || child.hasBeenAnnotated;
   }
 
   /// Returns an exact copy of this configuration.
@@ -5389,7 +5404,7 @@ class SemanticsConfiguration {
       .._isSemanticBoundary = _isSemanticBoundary
       ..explicitChildNodes = explicitChildNodes
       ..isBlockingSemanticsOfPreviouslyPaintedNodes = isBlockingSemanticsOfPreviouslyPaintedNodes
-      .._hasBeenAnnotated = _hasBeenAnnotated
+      .._hasBeenAnnotated = hasBeenAnnotated
       .._isMergingSemanticsOfDescendants = _isMergingSemanticsOfDescendants
       .._textDirection = _textDirection
       .._sortKey = _sortKey

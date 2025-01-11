@@ -619,7 +619,7 @@ void _defineTests() {
 
     await tester.pumpWidget(SizedBox(height: 40.0, width: 40.0, child: paint));
     expect(_PainterWithSemantics.shouldRebuildSemanticsCallCount, 0);
-    expect(_PainterWithSemantics.buildSemanticsCallCount, 2);
+    expect(_PainterWithSemantics.buildSemanticsCallCount, 1);
     expect(_PainterWithSemantics.semanticsBuilderCallCount, 4);
 
     semanticsTester.dispose();

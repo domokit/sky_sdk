@@ -1144,11 +1144,13 @@ class RenderParagraph extends RenderBox
     _semanticsInfo = text.getSemanticsInformation();
     bool needsAssembleSemanticsNode = false;
     bool needsChildConfigurationsDelegate = false;
+    bool hasTextSpan = false;
     for (final InlineSpanSemanticsInformation info in _semanticsInfo!) {
       if (info.recognizer != null) {
         needsAssembleSemanticsNode = true;
         break;
       }
+      hasTextSpan = hasTextSpan || !info.isPlaceholder;
       needsChildConfigurationsDelegate = needsChildConfigurationsDelegate || info.isPlaceholder;
     }
 
