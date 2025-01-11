@@ -33,7 +33,7 @@ FutureOr<dynamic> main() async {
   final Directory apiDir = flutterDir.childDirectory('examples').childDirectory('api');
   final File integrationTest = await generateTest(apiDir);
   try {
-    await runSmokeTests(flutterDir: flutterDir, integrationTest: integrationTest, apiDir: apiDir);
+    await runSmokeTests(flutterDir: flutterDir, integrationTest: integrationTest);
   } finally {
     await cleanUp(integrationTest);
   }
@@ -54,7 +54,6 @@ Future<void> cleanUp(File integrationTest) async {
 Future<void> runSmokeTests({
   required Directory flutterDir,
   required File integrationTest,
-  required Directory apiDir,
 }) async {
   final File flutterExe = flutterDir
       .childDirectory('bin')
@@ -70,7 +69,7 @@ Future<void> runSmokeTests({
     '--device-id=${_kPlatform.operatingSystem}',
     integrationTest.absolute.path,
   ];
-  await runCommand(cmd, workingDirectory: apiDir);
+  await runCommand(cmd, workingDirectory: integrationTest.parent);
 }
 
 // A class to hold information related to an example, used to generate names
