@@ -18,6 +18,8 @@ class NotEquals {
   int get hashCode => 0;
 }
 
+enum GlobalKeys with GlobalKey { a, b, c, d }
+
 void main() {
   testWidgets('Keys', (WidgetTester tester) async {
     expect(ValueKey<int>(nonconst(3)) == ValueKey<int>(nonconst(3)), isTrue);
@@ -56,5 +58,23 @@ void main() {
     expect(GlobalKey(), hasOneLineDescription);
     expect(GlobalKey(debugLabel: 'hello'), hasOneLineDescription);
     expect(const GlobalObjectKey(true), hasOneLineDescription);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/158876
+  testWidgets('Enum values as global keys', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const Column(
+        children: <Widget>[
+          SizedBox(key: GlobalKeys.a),
+          SizedBox(key: GlobalKeys.b),
+          SizedBox(key: GlobalKeys.c),
+        ],
+      ),
+    );
+
+    expect(GlobalKeys.a.currentContext, isA<BuildContext>());
+    expect(GlobalKeys.b.currentContext, isA<BuildContext>());
+    expect(GlobalKeys.c.currentContext, isA<BuildContext>());
+    expect(GlobalKeys.d.currentContext, isNull);
   });
 }

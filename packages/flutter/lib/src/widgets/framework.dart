@@ -156,7 +156,7 @@ class ObjectKey extends LocalKey {
 ///  * The discussion at [Widget.key] for more information about how widgets use
 ///    keys.
 @optionalTypeArgs
-abstract class GlobalKey<T extends State<StatefulWidget>> extends Key {
+abstract mixin class GlobalKey<T extends State<StatefulWidget>> implements Key {
   /// Creates a [LabeledGlobalKey], which is a [GlobalKey] with a label used for
   /// debugging.
   ///
@@ -168,7 +168,7 @@ abstract class GlobalKey<T extends State<StatefulWidget>> extends Key {
   ///
   /// Used by subclasses because the factory constructor shadows the implicit
   /// constructor.
-  const GlobalKey.constructor() : super.empty();
+  const GlobalKey.constructor();
 
   Element? get _currentElement => WidgetsBinding.instance.buildOwner!._globalKeyRegistry[this];
 
