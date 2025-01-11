@@ -488,11 +488,65 @@ void main() {
     }
   });
 
-  testWidgets('DropdownButtonFormField with isDense:true does not clip large scale text', (
+  // Regression test for https://github.com/flutter/flutter/issues/159971.
+  testWidgets('DropdownButtonFormField does not clip large scale text', (
     WidgetTester tester,
   ) async {
     final Key buttonKey = UniqueKey();
     const String value = 'two';
+    const double scaleFactor = 3.0;
+
+    final List<DropdownMenuItem<String>> dropdownItems =
+        menuItems.map<DropdownMenuItem<String>>((String item) {
+          return DropdownMenuItem<String>(
+            key: ValueKey<String>(item),
+            value: item,
+            child: Text(item, key: ValueKey<String>('${item}Text')),
+          );
+        }).toList();
+
+    await tester.pumpWidget(
+      TestApp(
+        textDirection: TextDirection.ltr,
+        child: Builder(
+          builder: (BuildContext context) {
+            return MediaQuery.withClampedTextScaling(
+              minScaleFactor: scaleFactor,
+              maxScaleFactor: scaleFactor,
+              child: Material(
+                child: Center(
+                  child: DropdownButtonFormField<String>(
+                    key: buttonKey,
+                    value: value,
+                    onChanged: onChanged,
+                    items: dropdownItems,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+
+    final BuildContext context = tester.element(find.byType(DropdownButton<String>));
+    final TextStyle style = Theme.of(context).textTheme.titleMedium!;
+    final double lineHeight = style.fontSize! * style.height!; // 16 * 1.5 = 24
+    final double labelHeight = lineHeight * scaleFactor; // 24 * 3.0 = 72
+    const double decorationVerticalPadding = 16.0;
+    final RenderBox box = tester.renderObject<RenderBox>(find.byType(DropdownButton<String>));
+    expect(box.size.height, labelHeight + decorationVerticalPadding);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/159971.
+  testWidgets('DropdownButtonFormField with custom text style does not clip large scale text', (
+    WidgetTester tester,
+  ) async {
+    final Key buttonKey = UniqueKey();
+    const String value = 'two';
+    const double scaleFactor = 3.0;
+    const double fontSize = 22;
+    const double fontHeight = 1.5;
 
     await tester.pumpWidget(
       TestApp(
@@ -500,24 +554,21 @@ void main() {
         child: Builder(
           builder:
               (BuildContext context) => MediaQuery.withClampedTextScaling(
-                minScaleFactor: 3.0,
-                maxScaleFactor: 3.0,
+                minScaleFactor: scaleFactor,
+                maxScaleFactor: scaleFactor,
                 child: Material(
                   child: Center(
                     child: DropdownButtonFormField<String>(
                       key: buttonKey,
                       value: value,
                       onChanged: onChanged,
+                      style: const TextStyle(fontSize: fontSize, height: fontHeight),
                       items:
                           menuItems.map<DropdownMenuItem<String>>((String item) {
                             return DropdownMenuItem<String>(
                               key: ValueKey<String>(item),
                               value: item,
-                              child: Text(
-                                item,
-                                key: ValueKey<String>('${item}Text'),
-                                style: const TextStyle(fontSize: 20.0),
-                              ),
+                              child: Text(item, key: ValueKey<String>('${item}Text')),
                             );
                           }).toList(),
                     ),
@@ -528,8 +579,11 @@ void main() {
       ),
     );
 
+    const double lineHeight = fontSize * fontHeight; // 22 * 1.5 = 33
+    const double labelHeight = lineHeight * scaleFactor; // 33 * 3.0 = 99
+    const double decorationVerticalPadding = 16.0;
     final RenderBox box = tester.renderObject<RenderBox>(find.byType(DropdownButton<String>));
-    expect(box.size.height, 64.0);
+    expect(box.size.height, labelHeight + decorationVerticalPadding);
   });
 
   testWidgets('DropdownButtonFormField.isDense is true by default', (WidgetTester tester) async {

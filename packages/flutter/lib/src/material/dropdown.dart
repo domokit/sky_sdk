@@ -1452,7 +1452,9 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
   double get _denseButtonHeight {
     final double fontSize =
         _textStyle!.fontSize ?? Theme.of(context).textTheme.titleMedium!.fontSize!;
-    final double scaledFontSize = MediaQuery.textScalerOf(context).scale(fontSize);
+    final double lineHeight =
+        _textStyle!.height ?? Theme.of(context).textTheme.titleMedium!.height ?? 1.0;
+    final double scaledFontSize = MediaQuery.textScalerOf(context).scale(fontSize * lineHeight);
     return math.max(scaledFontSize, math.max(widget.iconSize, _kDenseButtonHeight));
   }
 
