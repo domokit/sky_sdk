@@ -10,6 +10,7 @@ import 'package:flutter_tools/src/application_package.dart';
 import 'package:flutter_tools/src/base/dds.dart';
 import 'package:flutter_tools/src/base/io.dart' as io;
 import 'package:flutter_tools/src/base/logger.dart';
+import 'package:flutter_tools/src/base/platform.dart';
 import 'package:flutter_tools/src/base/process.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/convert.dart';
@@ -139,6 +140,7 @@ void main() {
     final DriverService driverService = setUpDriverService(
       processManager: processManager,
       vmService: fakeVmServiceHost.vmService,
+      platform: FakePlatform(environment: <String, String>{'FOO': 'BAR'}),
     );
     final Device device = FakeDevice(
       LaunchResult.succeeded(vmServiceUri: Uri.parse('http://127.0.0.1:63426/1UasC_ihpXY=/')),
@@ -149,12 +151,9 @@ void main() {
       device,
       DebuggingOptions.enabled(BuildInfo.profile, ipv6: true),
     );
-    final int testResult = await driverService.startTest(
-      'foo.test',
-      <String>['--enable-experiment=non-nullable'],
-      <String, String>{'FOO': 'BAR'},
-      PackageConfig(<Package>[Package('test', Uri.base)]),
-    );
+    final int testResult = await driverService.startTest('foo.test', <String>[
+      '--enable-experiment=non-nullable',
+    ], PackageConfig(<Package>[Package('test', Uri.base)]));
 
     expect(testResult, 23);
   });
@@ -180,6 +179,7 @@ void main() {
         processManager: processManager,
         vmService: fakeVmServiceHost.vmService,
         devtoolsLauncher: launcher,
+        platform: FakePlatform(environment: <String, String>{'FOO': 'BAR'}),
       );
       final Device device = FakeDevice(
         LaunchResult.succeeded(vmServiceUri: Uri.parse('http://127.0.0.1:63426/1UasC_ihpXY=/')),
@@ -193,7 +193,6 @@ void main() {
       final int testResult = await driverService.startTest(
         'foo.test',
         <String>['--enable-experiment=non-nullable'],
-        <String, String>{'FOO': 'BAR'},
         PackageConfig(<Package>[Package('test', Uri.base)]),
         profileMemory: 'devtools_memory.json',
       );
@@ -222,6 +221,7 @@ void main() {
       final DriverService driverService = setUpDriverService(
         processManager: processManager,
         vmService: fakeVmServiceHost.vmService,
+        platform: FakePlatform(environment: <String, String>{'FOO': 'BAR'}),
       );
       final Device device = FakeDevice(
         LaunchResult.succeeded(vmServiceUri: Uri.parse('http://127.0.0.1:63426/1UasC_ihpXY=/')),
@@ -232,12 +232,9 @@ void main() {
         device,
         DebuggingOptions.enabled(BuildInfo.profile, ipv6: true),
       );
-      final int testResult = await driverService.startTest(
-        'foo.test',
-        <String>['--enable-experiment=non-nullable'],
-        <String, String>{'FOO': 'BAR'},
-        PackageConfig.empty,
-      );
+      final int testResult = await driverService.startTest('foo.test', <String>[
+        '--enable-experiment=non-nullable',
+      ], PackageConfig.empty);
 
       expect(testResult, 23);
     },
@@ -276,7 +273,6 @@ void main() {
       final int testResult = await driverService.startTest(
         'foo.test',
         <String>[],
-        <String, String>{},
         PackageConfig(<Package>[Package('test', Uri.base)]),
       );
 
@@ -483,6 +479,7 @@ void main() {
 
 FlutterDriverService setUpDriverService({
   Logger? logger,
+  Platform? platform,
   ProcessManager? processManager,
   FlutterVmService? vmService,
   DevtoolsLauncher? devtoolsLauncher,
@@ -491,6 +488,7 @@ FlutterDriverService setUpDriverService({
   return FlutterDriverService(
     applicationPackageFactory: FakeApplicationPackageFactory(FakeApplicationPackage()),
     logger: logger,
+    platform: platform ?? FakePlatform(),
     processUtils: ProcessUtils(
       logger: logger,
       processManager: processManager ?? FakeProcessManager.any(),

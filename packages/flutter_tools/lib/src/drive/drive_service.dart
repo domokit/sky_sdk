@@ -13,6 +13,7 @@ import '../application_package.dart';
 import '../base/common.dart';
 import '../base/dds.dart';
 import '../base/logger.dart';
+import '../base/platform.dart';
 import '../base/process.dart';
 import '../build_info.dart';
 import '../device.dart';
@@ -24,17 +25,20 @@ import 'web_driver_service.dart';
 class FlutterDriverFactory {
   FlutterDriverFactory({
     required ApplicationPackageFactory applicationPackageFactory,
+    required Platform platform,
     required Logger logger,
     required ProcessUtils processUtils,
     required String dartSdkPath,
     required DevtoolsLauncher devtoolsLauncher,
   }) : _applicationPackageFactory = applicationPackageFactory,
+       _platform = platform,
        _logger = logger,
        _processUtils = processUtils,
        _dartSdkPath = dartSdkPath,
        _devtoolsLauncher = devtoolsLauncher;
 
   final ApplicationPackageFactory _applicationPackageFactory;
+  final Platform _platform;
   final Logger _logger;
   final ProcessUtils _processUtils;
   final String _dartSdkPath;
@@ -45,12 +49,14 @@ class FlutterDriverFactory {
     if (web) {
       return WebDriverService(
         logger: _logger,
+        platform: _platform,
         processUtils: _processUtils,
         dartSdkPath: _dartSdkPath,
       );
     }
     return FlutterDriverService(
       logger: _logger,
+      platform: _platform,
       processUtils: _processUtils,
       dartSdkPath: _dartSdkPath,
       applicationPackageFactory: _applicationPackageFactory,
@@ -84,7 +90,6 @@ abstract class DriverService {
   Future<int> startTest(
     String testFile,
     List<String> arguments,
-    Map<String, String> environment,
     PackageConfig packageConfig, {
     bool? headless,
     String? chromeBinary,
@@ -110,12 +115,14 @@ class FlutterDriverService extends DriverService {
   FlutterDriverService({
     required ApplicationPackageFactory applicationPackageFactory,
     required Logger logger,
+    required Platform platform,
     required ProcessUtils processUtils,
     required String dartSdkPath,
     required DevtoolsLauncher devtoolsLauncher,
     @visibleForTesting VMServiceConnector vmServiceConnector = connectToVmService,
   }) : _applicationPackageFactory = applicationPackageFactory,
        _logger = logger,
+       _platform = platform,
        _processUtils = processUtils,
        _dartSdkPath = dartSdkPath,
        _vmServiceConnector = vmServiceConnector,
@@ -125,6 +132,7 @@ class FlutterDriverService extends DriverService {
 
   final ApplicationPackageFactory _applicationPackageFactory;
   final Logger _logger;
+  final Platform _platform;
   final ProcessUtils _processUtils;
   final String _dartSdkPath;
   final VMServiceConnector _vmServiceConnector;
@@ -227,7 +235,6 @@ class FlutterDriverService extends DriverService {
   Future<int> startTest(
     String testFile,
     List<String> arguments,
-    Map<String, String> environment,
     PackageConfig packageConfig, {
     bool? headless,
     String? chromeBinary,
@@ -251,7 +258,7 @@ class FlutterDriverService extends DriverService {
     try {
       final int result = await _processUtils.stream(
         <String>[_dartSdkPath, ...arguments, testFile],
-        environment: <String, String>{'VM_SERVICE_URL': _vmServiceUri, ...environment},
+        environment: <String, String>{..._platform.environment, 'VM_SERVICE_URL': _vmServiceUri},
       );
       return result;
     } finally {
