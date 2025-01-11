@@ -4038,7 +4038,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('NavigationRailDestination respects the MouseRegion Configuration', (
+testWidgets('NavigationRailDestination respects the MouseRegion Configuration', (
     WidgetTester tester,
   ) async {
     bool isHovered = false;
@@ -4055,6 +4055,8 @@ void main() {
       onHover: (PointerHoverEvent event) {
         isHovered = true;
       },
+      cursor: SystemMouseCursors.click,
+      opaque: false,
     );
 
     NavigationRail navigationRail() {
@@ -4071,10 +4073,10 @@ void main() {
       );
     }
 
-    await tester.pumpWidget(_buildWidget(navigationRail()));
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body: navigationRail())));
 
     // Simulate mouse events
-    final Finder navigationRailDestination = find.byType(NavigationIndicator);
+    final Finder navigationRailDestination = find.byIcon(Icons.favorite);
     final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
 
     await gesture.addPointer();
@@ -4086,6 +4088,18 @@ void main() {
     await gesture.moveTo(Offset.zero);
     await tester.pumpAndSettle();
     expect(isExited, isTrue, reason: 'Mouse exit event should be triggered');
+
+    // Verify the cursor
+    final MouseRegion mouseRegion = tester.widget<MouseRegion>(
+      find.ancestor(
+        of: navigationRailDestination,
+        matching: find.byType(MouseRegion),
+      ).last,
+    );
+    expect(mouseRegion.cursor, equals(SystemMouseCursors.click), reason: 'Cursor should be SystemMouseCursors.click');
+
+    // Verify the opaque property
+    expect(mouseRegion.opaque, isFalse, reason: 'Opaque property should be false');
 
     await gesture.removePointer();
   });
