@@ -766,13 +766,6 @@ def run_android_tests(android_variant='android_debug_unopt', adb_path=None):
   run_android_unittest('flutter_shell_native_unittests', android_variant, adb_path)
   run_android_unittest('impeller_toolkit_android_unittests', android_variant, adb_path)
 
-  systrace_test = os.path.join(BUILDROOT_DIR, 'flutter', 'testing', 'android_systrace_test.py')
-  scenario_apk = os.path.join(OUT_DIR, android_variant, 'firebase_apks', 'scenario_app.apk')
-  run_cmd([
-      systrace_test, '--adb-path', adb_path, '--apk-path', scenario_apk, '--package-name',
-      'dev.flutter.scenarios', '--activity-name', '.PlatformViewsActivity'
-  ])
-
 
 def run_objc_tests(ios_variant='ios_debug_sim_unopt', test_filter=None):
   """Runs Objective-C XCTest unit tests for the iOS embedding"""
@@ -970,7 +963,6 @@ def build_dart_host_test_list(build_dir):
       os.path.join('flutter', 'ci'),
       os.path.join('flutter', 'flutter_frontend_server'),
       os.path.join('flutter', 'testing', 'skia_gold_client'),
-      os.path.join('flutter', 'testing', 'scenario_app'),
       os.path.join('flutter', 'tools', 'api_check'),
       os.path.join('flutter', 'tools', 'build_bucket_golden_scraper'),
       os.path.join('flutter', 'tools', 'clang_tidy'),

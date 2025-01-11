@@ -153,39 +153,9 @@ submitting PRs to the `flutter/engine` repository.
 
 ### End-to-end tests
 
-End-to-end tests exercise the entire Android embedding with the C++ engine on
-a real Android runtime in an emulator. It's an integration test ensuring that
-the engine as a whole on Android is functioning correctly.
-
-The project containing the Android end-to-end engine test is at
-https://github.com/flutter/engine/tree/main/testing/scenario_app/android.
-
-This test project is build similarly to a normal Flutter app. The Dart code is
-compiled into AOT and the Android part is compiled via Gradle with a dependency
-on the prebuilt local engine. The built app then installed and executed on an
-emulator.
-
-Unlike a normal Flutter app, the Flutter framework on the Dart side is a
-lightweight fake at https://github.com/flutter/engine/tree/main/testing/scenario_app/lib
-that implements some of the basic functionalities of `dart:ui` Window rather
-than using the real Flutter framework at `flutter/flutter`.
-
-The end-to-end test can be executed by running:
-
-```
-testing/scenario_app/run_android_tests.sh
-```
-
-Additional end-to-end instrumented tests can be added to https://github.com/flutter/engine/tree/main/testing/scenario_app/android/app/src/androidTest/java/dev/flutter/scenarios.
-
-If supporting logic is needed for the test case, it can be added to the
-Android app under-test in https://github.com/flutter/engine/tree/main/testing/scenario_app/android/app/src/main/java/dev/flutter/scenarios
-or to the fake Flutter framework under-test in https://github.com/flutter/engine/tree/main/testing/scenario_app/lib.
-
-As best practice, favor adding unit tests if possible since instrumented tests
-are, by nature, non-hermetic, slow and flaky.
-
-End-to-end tests on Android are run on presubmit for flutter/engine PRs.
+End-to-end tests for the Android embedder exist as part of the test suites
+in the root of the monorepo. See
+[`dev/integration_tests`](../../../../../dev/integration_tests/).
 
 ## Objective-C - iOS embedding
 
@@ -268,7 +238,7 @@ a headless iOS simulator. It's an integration test ensuring that
 the engine as a whole on iOS is functioning correctly.
 
 The project containing the iOS end-to-end engine test is at
-https://github.com/flutter/engine/tree/main/testing/scenario_app/ios.
+https://github.com/flutter/engine/tree/main/testing/ios_scenario_app/ios.
 
 This test project is build similarly to a normal debug Flutter app. The Dart
 code is bundled in JIT mode and is brought into Xcode with a `.framework`
@@ -276,21 +246,21 @@ dependency on the prebuilt local engine. It's then installed and executed on a
 simulator via Xcode.
 
 Unlike a normal Flutter app, the Flutter framework on the Dart side is a
-lightweight fake at https://github.com/flutter/engine/tree/main/testing/scenario_app/lib
+lightweight fake at https://github.com/flutter/engine/tree/main/testing/ios_scenario_app/lib
 that implements some of the basic functionalities of `dart:ui` Window rather
 than using the real Flutter framework at `flutter/flutter`.
 
 The end-to-end test can be executed by running:
 
-```
-testing/scenario_app/run_ios_tests.sh
+```sh
+testing/ios_scenario_app/run_ios_tests.sh
 ```
 
-Additional end-to-end instrumented tests can be added to https://github.com/flutter/engine/tree/main/testing/scenario_app/ios/Scenarios/ScenariosTests.
+Additional end-to-end instrumented tests can be added to https://github.com/flutter/engine/tree/main/testing/ios_scenario_app/ios/Scenarios/ScenariosTests.
 
 If supporting logic is needed for the test case, it can be added to the
-Android app under-test in https://github.com/flutter/engine/tree/main/testing/scenario_app/ios/Scenarios/Scenarios
-or to the fake Flutter framework under-test in https://github.com/flutter/engine/tree/main/testing/scenario_app/lib.
+Android app under-test in https://github.com/flutter/engine/tree/main/testing/ios_scenario_app/ios/Scenarios/Scenarios
+or to the fake Flutter framework under-test in https://github.com/flutter/engine/tree/main/testing/ios_scenario_app/lib.
 
 As best practice, favor adding unit tests if possible since end-to-end tests
 are, by nature, non-hermetic, slow and flaky.
@@ -323,7 +293,7 @@ and [Ninja](https://ninja-build.org/) build systems to use a version of the Dart
 SDK specified in the `DEPS` file to create a `sky_engine` Dart package. Then it
 compiles and runs each `_test.dart` file under `testing/dart`.
 
-To debug the test, open `src/out/ios_debug_sim_unopt/scenario_app/Scenarios.xcodeproj` in
+To debug the test, open `src/out/ios_debug_sim_unopt/ios_scenario_app/Scenarios.xcodeproj` in
 Xcode and hit CMD+U.
 
 Dart unit tests are executed during pre-submit on our CI system when submitting

@@ -398,7 +398,7 @@ void main() {
         CannedProcess(
           (command) => command.contains('desc'),
           stdout: '''
-The input testing/scenario_app:sceario_app matches no targets, configs or files.
+The input testing/foo:foo matches no targets, configs or files.
 ''',
           exitCode: 1,
         ),
@@ -421,7 +421,7 @@ The input testing/scenario_app:sceario_app matches no targets, configs or files.
       '--config',
       'ci/host_debug',
       // Intentionally omit the prefix '//flutter/' to trigger the warning.
-      '//testing/scenario_app',
+      '//testing/foo',
     ]);
 
     printOnFailure(testEnv.testLogs.map((r) => r.message).join('\n'));
@@ -429,7 +429,7 @@ The input testing/scenario_app:sceario_app matches no targets, configs or files.
 
     expect(
       testEnv.testLogs.map((LogRecord r) => r.message).join(),
-      contains('No targets matched the pattern `testing/scenario_app'),
+      contains('No targets matched the pattern `testing/foo'),
     );
   });
 

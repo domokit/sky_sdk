@@ -86,7 +86,7 @@ workspace:
   - shell/vmservice
   - testing/benchmark
   - testing/dart
-  - testing/scenario_app
+  - testing/ios_scenario_app
   - testing/skia_gold_client
   - testing/smoke_test_failure
   - testing/symbols

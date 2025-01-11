@@ -43,23 +43,6 @@ Modify the following files as described:
 
 This list may become outdated, so be sure to change any references to the old SDK version to the latest version in `build.gradle` files across the repo.
 
-### Update our `android_virtual_device` dependency
-
-1. Locate the desired Android Virtual Device (AVD) from https://chrome-infra-packages.appspot.com/p/chromium/tools/android/avd/linux-amd64/. You should look at the most recently updated AVD and verify that
-  it has the desired `generic_android<API#>.textpb` for the API version that you are modifying the engine to support. Then, determine its build_id number by clicking on the AVD instance you would like to use and looking for the build_id tag.
-2. In each of the engine builders (at the time of writing: `ci/builders/standalone/linux_android_emulator_skia.json` & `ci/builders/standalone/linux_android_emulator.json`), find the `android_virtual_device` and `avd_cipd_version` dependency entries and update them to the versions you desire, e.g.
-
-```json
-{
-    "dependency": "android_virtual_device",
-    "version": "android_<API#>_google_apis_x64.textpb"
-},
-{
-    "dependency": "avd_cipd_version",
-    "version": "build_id:<build_id>"
-}
-```
-
 ## Next Steps: Update the Framework, Examples and Samples
 
 * Templates in [the framework](https://github.com/flutter/flutter): Change `targetSdkVersion` in various `build.gradle.tmpl` files to use the new API version
