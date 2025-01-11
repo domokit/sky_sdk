@@ -116,7 +116,20 @@ void main() {
           .._devFS = webDevFS
           ..device = mockDevice
           ..generator = residentCompiler;
-    fileSystem.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
+    fileSystem.file('pubspec.yaml').writeAsStringSync('''
+name: my_app
+''');
+
+    fileSystem.directory('.dart_tool').childFile('package_config.json')
+      ..createSync(recursive: true)
+      ..writeAsStringSync(
+        json.encode(<String, Object?>{
+          'packages': <Object>[
+            <String, Object?>{'name': 'my_app', 'rootUri': '../', 'packageUri': 'lib/'},
+          ],
+          'configVersion': 2,
+        }),
+      );
     fakeAnalytics = getInitializedFakeAnalyticsInstance(
       fs: fileSystem,
       fakeFlutterVersion: test_fakes.FakeFlutterVersion(),
@@ -1295,6 +1308,7 @@ void main() {
 }''');
       globals.fs.file('l10n.yaml').createSync();
       globals.fs.file('pubspec.yaml').writeAsStringSync('''
+name: my_app
 flutter:
   generate: true
 ''');
@@ -1304,6 +1318,12 @@ flutter:
 {
   "configVersion": 2,
   "packages": [
+      {
+      "name": "my_app",
+      "rootUri": "../",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
     {
       "name": "path_provider_linux",
       "rootUri": "../../../path_provider_linux",

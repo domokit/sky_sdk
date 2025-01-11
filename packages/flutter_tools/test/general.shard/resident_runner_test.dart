@@ -1167,7 +1167,10 @@ void main() {
   }
 }''');
         globals.fs.file('l10n.yaml').createSync();
-        globals.fs.file('pubspec.yaml').writeAsStringSync('flutter:\n  generate: true\n');
+        globals.fs.file('pubspec.yaml').writeAsStringSync('''
+name: my_app
+flutter:
+  generate: true''');
 
         // Create necessary files for [DartPluginRegistrantTarget]
         final File packageConfig = globals.fs
@@ -1178,6 +1181,11 @@ void main() {
 {
   "configVersion": 2,
   "packages": [
+    {
+      "name": "my_app",
+      "rootUri": "../",
+      "packageUri": "lib/"
+    },
     {
       "name": "path_provider_linux",
       "rootUri": "../../../path_provider_linux",
@@ -1221,6 +1229,7 @@ void main() {
 }''');
         globals.fs.file('l10n.yaml').createSync();
         globals.fs.file('pubspec.yaml').writeAsStringSync('''
+name: my_app
 flutter:
   generate: true
 
@@ -1240,6 +1249,11 @@ dependencies:
 {
   "configVersion": 2,
   "packages": [
+    {
+      "name": "my_app",
+      "rootUri": "../",
+      "packageUri": "lib/"
+    },
     {
       "name": "path_provider_linux",
       "rootUri": "../path_provider_linux",

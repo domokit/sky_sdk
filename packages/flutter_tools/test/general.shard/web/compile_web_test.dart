@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
+import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/build_info.dart';
@@ -48,10 +51,30 @@ void main() {
       fs: fileSystem,
       fakeFlutterVersion: flutterVersion,
     );
+    fileSystem.currentDirectory.childFile('pubspec.yaml')
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+name: my_app
+environement:
+  sdk: '^3.5.0'
+''');
 
     flutterProject = FlutterProject.fromDirectoryTest(fileSystem.currentDirectory);
 
-    fileSystem.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
+    final File packageConfigFile = flutterProject.packageConfig;
+    packageConfigFile.createSync(recursive: true);
+    packageConfigFile.writeAsStringSync(
+      json.encode(<String, Object?>{
+        'packages': <Object>[
+          <String, Object?>{
+            'name': flutterProject.manifest.appName,
+            'rootUri': '../',
+            'packageUri': 'lib/',
+          },
+        ],
+        'configVersion': 2,
+      }),
+    );
   });
 
   testUsingContext(

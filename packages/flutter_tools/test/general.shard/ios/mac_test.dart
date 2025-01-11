@@ -22,6 +22,7 @@ import 'package:flutter_tools/src/ios/xcresult.dart';
 import 'package:flutter_tools/src/project.dart';
 import 'package:test/fake.dart';
 import 'package:unified_analytics/unified_analytics.dart';
+import 'package:yaml/yaml.dart';
 
 import '../../src/common.dart';
 import '../../src/context.dart';
@@ -658,7 +659,9 @@ duplicate symbol '_$s29plugin_1_name23PluginNamePluginC9setDouble3key5valueySS_S
         final FakeFlutterProject project = FakeFlutterProject(fileSystem: fs);
         project.ios.podfile.createSync(recursive: true);
         project.manifest = FakeFlutterManifest();
-        createFakePlugins(project, fs, <String>['plugin_1_name', 'plugin_2_name']);
+        final List<String> pluginNames = <String>['plugin_1_name', 'plugin_2_name'];
+        project.manifest.dependencies.addAll(pluginNames);
+        createFakePlugins(project, fs, pluginNames);
         fs.systemTempDirectory
             .childFile('cache/plugin_1_name/ios/plugin_1_name/Package.swift')
             .createSync(recursive: true);
@@ -811,6 +814,7 @@ void createFakePlugins(
   "configVersion": 2
 }
 ''');
+  addToPackageConfig(flutterProject, 'my_app', flutterProject.directory);
   for (final String name in pluginNames) {
     final Directory pluginDirectory = fakePubCache.childDirectory(name);
     addToPackageConfig(flutterProject, name, pluginDirectory);
@@ -877,5 +881,14 @@ class FakeFlutterProject extends Fake implements FlutterProject {
 
 class FakeFlutterManifest extends Fake implements FlutterManifest {
   @override
-  Set<String> get dependencies => <String>{};
+  late final Set<String> dependencies = <String>{};
+
+  @override
+  late final Set<String> devDependencies = <String>{};
+
+  @override
+  String get appName => 'my_app';
+
+  @override
+  YamlMap toYaml() => YamlMap.wrap(<String, String>{});
 }

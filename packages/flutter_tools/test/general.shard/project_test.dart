@@ -189,10 +189,7 @@ void main() {
       _testInMemory('checkForDeprecation fails on invalid android app manifest file', () async {
         // This is not a valid Xml document
         const String invalidManifest = '<manifest></application>';
-        final FlutterProject project = await someProject(
-          androidManifestOverride: invalidManifest,
-          includePubspec: true,
-        );
+        final FlutterProject project = await someProject(androidManifestOverride: invalidManifest);
 
         expect(
           () => project.checkForDeprecation(deprecationBehavior: DeprecationBehavior.ignore),
@@ -205,7 +202,7 @@ void main() {
       _testInMemory(
         'Project not on v2 embedding does not warn if deprecation status is irrelevant',
         () async {
-          final FlutterProject project = await someProject(includePubspec: true);
+          final FlutterProject project = await someProject();
           // The default someProject with an empty <manifest> already indicates
           // v1 embedding, as opposed to having <meta-data
           // android:name="flutterEmbedding" android:value="2" />.
@@ -216,7 +213,7 @@ void main() {
         },
       );
       _testInMemory('Android project no pubspec continues', () async {
-        final FlutterProject project = await someProject();
+        final FlutterProject project = await someProject(includePubspec: false);
         // The default someProject with an empty <manifest> already indicates
         // v1 embedding, as opposed to having <meta-data
         // android:name="flutterEmbedding" android:value="2" />.
@@ -1395,7 +1392,7 @@ plugins {
 
     group('manifest', () {
       _testInMemory('can be replaced', () async {
-        final FlutterProject project = await someProject(includePubspec: true);
+        final FlutterProject project = await someProject();
         final String originalPubspecContents = project.pubspecFile.readAsStringSync();
         final FlutterManifest updated =
             FlutterManifest.createFromString(validPubspecWithDependencies, logger: logger)!;
@@ -1708,14 +1705,30 @@ plugins {
   });
 }
 
-Future<FlutterProject> someProject({
-  String? androidManifestOverride,
-  bool includePubspec = false,
-}) async {
-  final Directory directory = globals.fs.directory('some_project');
+void writePackageConfigFile(Directory directory, String mainLibName) {
   directory.childDirectory('.dart_tool').childFile('package_config.json')
     ..createSync(recursive: true)
-    ..writeAsStringSync('{"configVersion":2,"packages":[]}');
+    ..writeAsStringSync('''
+{
+  "configVersion" : 2,
+  "packages": [
+    {
+      "name": "$mainLibName",
+      "rootUri": "../",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    }
+  ]
+}
+''');
+}
+
+Future<FlutterProject> someProject({
+  String? androidManifestOverride,
+  bool includePubspec = true,
+}) async {
+  final Directory directory = globals.fs.directory('some_project');
+  writePackageConfigFile(directory, 'hello');
   if (includePubspec) {
     directory.childFile('pubspec.yaml')
       ..createSync(recursive: true)
@@ -1770,9 +1783,7 @@ flutter:
 
 Future<FlutterProject> aModuleProject() async {
   final Directory directory = globals.fs.directory('module_project');
-  directory.childDirectory('.dart_tool').childFile('package_config.json')
-    ..createSync(recursive: true)
-    ..writeAsStringSync('{"configVersion":2,"packages":[]}');
+  writePackageConfigFile(directory, 'my_module');
   directory.childFile('pubspec.yaml').writeAsStringSync('''
 name: my_module
 flutter:
@@ -1796,9 +1807,6 @@ void _testInMemory(
 }) {
   Cache.flutterRoot = getFlutterRoot();
   final FileSystem testFileSystem = fileSystem ?? getFileSystemForPlatform();
-  testFileSystem.directory('.dart_tool').childFile('package_config.json')
-    ..createSync(recursive: true)
-    ..writeAsStringSync('{"configVersion":2,"packages":[]}');
   // Transfer needed parts of the Flutter installation folder
   // to the in-memory file system used during testing.
   final Logger logger = BufferLogger.test();

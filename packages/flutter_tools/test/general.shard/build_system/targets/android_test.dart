@@ -567,10 +567,16 @@ void main() {
       fileSystem
           .file('pubspec.yaml')
           .writeAsStringSync('name: hello\nflutter:\n  shaders:\n    - shader.glsl');
-      fileSystem
-          .directory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
+      fileSystem.directory('.dart_tool').childFile('package_config.json')
+        ..createSync(recursive: true)
+        ..writeAsStringSync(
+          json.encode(<String, Object?>{
+            'packages': <Object>[
+              <String, Object?>{'name': 'hello', 'rootUri': '../', 'packageUri': 'lib/'},
+            ],
+            'configVersion': 2,
+          }),
+        );
       fileSystem.file('shader.glsl').writeAsStringSync('test');
 
       processManager.addCommands(<FakeCommand>[

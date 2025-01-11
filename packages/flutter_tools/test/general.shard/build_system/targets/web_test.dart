@@ -61,6 +61,10 @@ void main() {
   setUp(() {
     testbed = Testbed(
       setup: () {
+        globals.fs.currentDirectory.childFile('pubspec.yaml').writeAsStringSync('''
+name: foo
+''');
+
         globals.fs.directory('.dart_tool').childFile('package_config.json')
           ..createSync(recursive: true)
           ..writeAsStringSync('''

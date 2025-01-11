@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_tools/src/base/logger.dart';
@@ -60,9 +62,31 @@ void main() {
   }
 
   FlutterProject setupProjectUnderTest() {
+    fileSystem.directory('project').childFile('pubspec.yaml')
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+name: my_app
+environement:
+  sdk: '^3.5.0'
+''');
+
     // This needs to be run within testWithoutContext and not setUp since FlutterProject uses context.
     final FlutterProject projectUnderTest = FlutterProject.fromDirectory(
       fileSystem.directory('project'),
+    );
+    final File packageConfigFile = projectUnderTest.packageConfig;
+    packageConfigFile.createSync(recursive: true);
+    packageConfigFile.writeAsStringSync(
+      json.encode(<String, Object?>{
+        'packages': <Object>[
+          <String, Object?>{
+            'name': projectUnderTest.manifest.appName,
+            'rootUri': '../',
+            'packageUri': 'lib/',
+          },
+        ],
+        'configVersion': 2,
+      }),
     );
     projectUnderTest.ios.xcodeProject.createSync(recursive: true);
     projectUnderTest.macos.xcodeProject.createSync(recursive: true);
@@ -395,11 +419,6 @@ void main() {
       'includes Pod config in xcconfig files, if the user manually added Pod dependencies without using Flutter plugins',
       () async {
         final FlutterProject projectUnderTest = setupProjectUnderTest();
-        final File packageConfigFile = fileSystem.file(
-          fileSystem.path.join('project', '.dart_tool', 'package_config.json'),
-        );
-        packageConfigFile.createSync(recursive: true);
-        packageConfigFile.writeAsStringSync('{"configVersion":2,"packages":[]}');
         projectUnderTest.ios.podfile
           ..createSync()
           ..writeAsStringSync('Custom Podfile');

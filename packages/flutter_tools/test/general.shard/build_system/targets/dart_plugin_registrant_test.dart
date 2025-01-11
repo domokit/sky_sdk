@@ -178,7 +178,9 @@ void main() {
           ..createSync(recursive: true)
           ..writeAsStringSync(_kSamplePackageJson);
 
-        projectDir.childFile('pubspec.yaml').createSync();
+        projectDir.childFile('pubspec.yaml').writeAsStringSync('''
+name: path_provider_example
+''');
 
         final FlutterProject testProject = FlutterProject.fromDirectoryTest(projectDir);
         await DartPluginRegistrantTarget.test(testProject).build(environment);

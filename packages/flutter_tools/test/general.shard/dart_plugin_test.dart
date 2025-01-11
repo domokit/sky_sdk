@@ -1112,7 +1112,6 @@ void main() {
         'Generates new entrypoint',
         () async {
           flutterProject.isModule = true;
-
           createFakeDartPlugins(flutterProject, flutterManifest, fs, <String, String>{
             'url_launcher_android': '''
   flutter:
@@ -1166,7 +1165,6 @@ void main() {
 
           final Directory libDir = flutterProject.directory.childDirectory('lib');
           libDir.createSync(recursive: true);
-
           final File mainFile = libDir.childFile('main.dart');
           mainFile.writeAsStringSync('''
 // @dart = 2.8
@@ -1282,7 +1280,7 @@ void main() {
         'Plugin without platform support throws tool exit',
         () async {
           flutterProject.isModule = false;
-
+          flutterManifest.dependencies.add('url_launcher_macos');
           createFakeDartPlugins(flutterProject, flutterManifest, fs, <String, String>{
             'url_launcher_macos': '''
   flutter:
@@ -1375,6 +1373,7 @@ void main() {
         'Does not create new entrypoint if there are no platform resolutions',
         () async {
           flutterProject.isModule = false;
+          createFakeDartPlugins(flutterProject, flutterManifest, fs, <String, String>{});
 
           final Directory libDir = flutterProject.directory.childDirectory('lib');
           libDir.createSync(recursive: true);
@@ -1490,7 +1489,7 @@ void createFakeDartPlugins(
   "configVersion": 2
 }
 ''');
-
+  addToPackageConfig(flutterProject, flutterProject.manifest.appName, flutterProject.directory);
   for (final MapEntry<String, String> entry in plugins.entries) {
     final String name = fs.path.basename(entry.key);
     final Directory pluginDirectory = fakePubCache.childDirectory(name);
@@ -1505,6 +1504,15 @@ void createFakeDartPlugins(
 class FakeFlutterManifest extends Fake implements FlutterManifest {
   @override
   Set<String> dependencies = <String>{};
+
+  @override
+  Set<String> devDependencies = <String>{};
+
+  @override
+  String get appName => 'my_app';
+
+  @override
+  YamlMap toYaml() => YamlMap.wrap(<String, Object?>{'name': appName});
 }
 
 class FakeFlutterProject extends Fake implements FlutterProject {
