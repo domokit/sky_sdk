@@ -2337,6 +2337,114 @@ void main() {
     },
   );
 
+  testWidgets('CupertinoSliverNavigationBar.search field collapses nav bar on tap', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const CupertinoApp(
+        home: CustomScrollView(
+          slivers: <Widget>[
+            CupertinoSliverNavigationBar.search(
+              leading: Icon(CupertinoIcons.person_2),
+              trailing: Icon(CupertinoIcons.add_circled),
+              largeTitle: Text('Large title'),
+              middle: Text('middle'),
+            ),
+            SliverFillRemaining(child: SizedBox(height: 1000.0)),
+          ],
+        ),
+      ),
+    );
+
+    final Finder searchFieldFinder = find.byType(CupertinoSearchTextField);
+    final Finder largeTitleFinder =
+        find.ancestor(of: find.text('Large title').first, matching: find.byType(Padding)).first;
+    final Finder middleFinder =
+        find.ancestor(of: find.text('middle').first, matching: find.byType(Padding)).first;
+
+    // Initially, all widgets are visible.
+    expect(find.byIcon(CupertinoIcons.person_2), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.add_circled), findsOneWidget);
+    expect(largeTitleFinder, findsOneWidget);
+    expect(middleFinder.hitTestable(), findsOneWidget);
+    expect(searchFieldFinder, findsOneWidget);
+    // A decoy 'Cancel' button used in the animation.
+    expect(find.widgetWithText(CupertinoButton, 'Cancel'), findsOneWidget);
+
+    // Tap the search field.
+    await tester.tap(searchFieldFinder, warnIfMissed: false);
+    await tester.pumpAndSettle();
+
+    // After tapping, the leading and trailing widgets are removed from the
+    // widget tree, the large title is collapsed, and middle is hidden
+    // underneath the navigation bar.
+    expect(find.byIcon(CupertinoIcons.person_2), findsNothing);
+    expect(find.byIcon(CupertinoIcons.add_circled), findsNothing);
+    expect(tester.getBottomRight(largeTitleFinder).dy, 0.0);
+    expect(middleFinder.hitTestable(), findsNothing);
+
+    // Search field and 'Cancel' button are visible.
+    expect(searchFieldFinder, findsOneWidget);
+    expect(find.widgetWithText(CupertinoButton, 'Cancel'), findsOneWidget);
+  });
+
+  testWidgets('isSearchActiveChanged callback', (WidgetTester tester) async {
+    bool isFocused = false;
+    const Color focusedColor = Color(0x0000000A);
+    const Color unfocusedColor = Color(0x0000000B);
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return CustomScrollView(
+              slivers: <Widget>[
+                CupertinoSliverNavigationBar.search(
+                  onSearchActiveChanged: (bool value) {
+                    setState(() {
+                      isFocused = value;
+                    });
+                  },
+                  largeTitle: const Text('Large title'),
+                  middle: const Text('middle'),
+                  bottomMode: NavigationBarBottomMode.always,
+                ),
+                SliverFillRemaining(
+                  child: Container(color: isFocused ? focusedColor : unfocusedColor),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+
+    // Initially, all widgets are visible.
+    expect(find.text('Large title'), findsOneWidget);
+    expect(find.text('middle'), findsOneWidget);
+    expect(find.widgetWithText(CupertinoSearchTextField, 'Search'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate((Widget widget) {
+        return widget is Container && widget.color == unfocusedColor;
+      }),
+      findsOneWidget,
+    );
+
+    // Tap the search field.
+    await tester.tap(find.widgetWithText(CupertinoSearchTextField, 'Search'), warnIfMissed: false);
+    await tester.pumpAndSettle();
+
+    // Search field and 'Cancel' button should be visible.
+    expect(isFocused, true);
+    expect(find.widgetWithText(CupertinoSearchTextField, 'Search'), findsOneWidget);
+    expect(find.widgetWithText(CupertinoButton, 'Cancel'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate((Widget widget) {
+        return widget is Container && widget.color == focusedColor;
+      }),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('CupertinoNavigationBar with bottom widget', (WidgetTester tester) async {
     const double persistentHeight = 44.0;
     const double bottomHeight = 10.0;

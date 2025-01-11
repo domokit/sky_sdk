@@ -91,6 +91,41 @@ void main() {
     expect(tester.getBottomLeft(find.byType(CupertinoSearchTextField)).dy, 87.0);
   });
 
+  testWidgets('Opens the search view when the search field is tapped', (WidgetTester tester) async {
+    await tester.pumpWidget(const example.SliverNavBarApp());
+
+    // Navigate to a page with a search field.
+    final Finder nextButton = find.text('Bottom Automatic mode');
+    expect(nextButton, findsOneWidget);
+    await tester.tap(nextButton);
+    await tester.pumpAndSettle();
+
+    expect(find.widgetWithText(CupertinoSearchTextField, 'Search'), findsOneWidget);
+    expect(find.text('Tap on the search field to open the search view'), findsOneWidget);
+    expect(find.text('This is a search view'), findsNothing);
+    // A decoy 'Cancel' button used in the animation.
+    expect(find.widgetWithText(CupertinoButton, 'Cancel'), findsOneWidget);
+
+    // Tap on the search field to open the search view.
+    await tester.tap(find.byType(CupertinoSearchTextField), warnIfMissed: false);
+    await tester.pumpAndSettle();
+
+    expect(find.widgetWithText(CupertinoSearchTextField, 'Search'), findsOneWidget);
+    expect(find.text('Tap on the search field to open the search view'), findsNothing);
+    expect(find.widgetWithText(CupertinoButton, 'Cancel'), findsOneWidget);
+    expect(find.text('This is a search view'), findsOneWidget);
+
+    // Tap on the 'Cancel' button to close the search view.
+    await tester.tap(find.widgetWithText(CupertinoButton, 'Cancel'));
+    await tester.pumpAndSettle();
+
+    expect(find.widgetWithText(CupertinoSearchTextField, 'Search'), findsOneWidget);
+    expect(find.text('Tap on the search field to open the search view'), findsOneWidget);
+    expect(find.text('This is a search view'), findsNothing);
+    // A decoy 'Cancel' button used in the animation.
+    expect(find.widgetWithText(CupertinoButton, 'Cancel'), findsOneWidget);
+  });
+
   testWidgets('CupertinoSliverNavigationBar with previous route has back button', (
     WidgetTester tester,
   ) async {
@@ -104,7 +139,7 @@ void main() {
     expect(nextButton1, findsNothing);
 
     // Go back to the previous page.
-    final Finder backButton1 = find.byType(CupertinoButton);
+    final Finder backButton1 = find.byType(CupertinoButton).first;
     expect(backButton1, findsOneWidget);
     await tester.tap(backButton1);
     await tester.pumpAndSettle();
@@ -118,7 +153,7 @@ void main() {
     expect(nextButton2, findsNothing);
 
     // Go back to the previous page.
-    final Finder backButton2 = find.byType(CupertinoButton);
+    final Finder backButton2 = find.byType(CupertinoButton).first;
     expect(backButton2, findsOneWidget);
     await tester.tap(backButton2);
     await tester.pumpAndSettle();
