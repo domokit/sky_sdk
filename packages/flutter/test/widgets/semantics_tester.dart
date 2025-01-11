@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/rendering.dart';
@@ -53,6 +55,7 @@ class TestSemantics {
     this.scrollIndex,
     this.scrollChildren,
     Iterable<SemanticsTag>? tags,
+    this.role = SemanticsRole.none,
   }) : assert(flags is int || flags is List<SemanticsFlag>),
        assert(actions is int || actions is List<SemanticsAction>),
        tags = tags?.toSet() ?? <SemanticsTag>{};
@@ -76,6 +79,7 @@ class TestSemantics {
     this.scrollIndex,
     this.scrollChildren,
     Iterable<SemanticsTag>? tags,
+    this.role = SemanticsRole.none,
   }) : id = 0,
        assert(flags is int || flags is List<SemanticsFlag>),
        assert(actions is int || actions is List<SemanticsAction>),
@@ -115,6 +119,7 @@ class TestSemantics {
     this.scrollIndex,
     this.scrollChildren,
     Iterable<SemanticsTag>? tags,
+    this.role = SemanticsRole.none,
   }) : assert(flags is int || flags is List<SemanticsFlag>),
        assert(actions is int || actions is List<SemanticsAction>),
        transform = _applyRootChildScale(transform),
@@ -242,6 +247,11 @@ class TestSemantics {
   final Set<SemanticsTag> tags;
 
   final int? headingLevel;
+
+  /// The expected role for the node.
+  ///
+  /// Defaults to SemanticsRole.none if not set.
+  final SemanticsRole role;
 
   bool _matches(
     SemanticsNode? node,
@@ -376,6 +386,10 @@ class TestSemantics {
       return fail(
         'expected node id $id to have headingLevel $headingLevel but found headingLevel ${node.headingLevel}',
       );
+    }
+
+    if (role != node.role) {
+      return fail('expected node id $id to have role $role but found role ${node.role}');
     }
 
     if (children.isEmpty) {
@@ -780,6 +794,9 @@ class SemanticsTester {
     }
     if (node.textDirection != null) {
       buf.writeln('  textDirection: ${node.textDirection},');
+    }
+    if (node.role != SemanticsRole.none) {
+      buf.writeln('  role: ${node.role},');
     }
     if (node.hasChildren) {
       buf.writeln('  children: <TestSemantics>[');

@@ -23,7 +23,7 @@ import 'semantics.dart';
 class SemanticPlatformView extends SemanticRole {
   SemanticPlatformView(SemanticsObject semanticsObject)
     : super.withBasics(
-        SemanticRoleKind.platformView,
+        EngineSemanticsRole.platformView,
         semanticsObject,
         preferredLabelRepresentation: LabelRepresentation.ariaLabel,
       );

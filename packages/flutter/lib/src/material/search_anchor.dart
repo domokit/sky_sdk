@@ -491,7 +491,7 @@ class _SearchAnchorState extends State<SearchAnchor> {
 
   void _closeView(String? selectedText) {
     if (selectedText != null) {
-      _searchController.text = selectedText;
+      _searchController.value = TextEditingValue(text: selectedText);
     }
     Navigator.of(context).pop();
   }

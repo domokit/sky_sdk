@@ -16,5 +16,6 @@ export 'semantics/platform_view.dart';
 export 'semantics/scrollable.dart';
 export 'semantics/semantics.dart';
 export 'semantics/semantics_helper.dart';
+export 'semantics/tabs.dart';
 export 'semantics/tappable.dart';
 export 'semantics/text_field.dart';

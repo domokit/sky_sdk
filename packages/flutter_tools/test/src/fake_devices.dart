@@ -147,6 +147,9 @@ class FakeDevice extends Device {
   final String name;
 
   @override
+  String get displayName => name;
+
+  @override
   Future<LaunchResult> startApp(
     ApplicationPackage? package, {
     String? mainPath,

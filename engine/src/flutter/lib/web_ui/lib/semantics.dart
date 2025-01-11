@@ -255,6 +255,9 @@ class SemanticsFlag {
   String toString() => 'SemanticsFlag.$name';
 }
 
+// Mirrors engine/src/flutter/lib/ui/semantics.dart
+enum SemanticsRole { none, tab, tabBar, tabPanel }
+
 // When adding a new StringAttributeType, the classes in these file must be
 // updated as well.
 //  * engine/src/flutter/lib/ui/semantics.dart
@@ -341,6 +344,7 @@ class SemanticsUpdateBuilder {
     required Int32List additionalActions,
     int headingLevel = 0,
     String? linkUrl,
+    SemanticsRole role = SemanticsRole.none,
   }) {
     if (transform.length != 16) {
       throw ArgumentError('transform argument must have 16 entries.');
@@ -382,6 +386,7 @@ class SemanticsUpdateBuilder {
         platformViewId: platformViewId,
         headingLevel: headingLevel,
         linkUrl: linkUrl,
+        role: role,
       ),
     );
   }

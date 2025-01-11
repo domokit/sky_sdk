@@ -9,7 +9,7 @@ import '../semantics.dart';
 class SemanticLink extends SemanticRole {
   SemanticLink(SemanticsObject semanticsObject)
     : super.withBasics(
-        SemanticRoleKind.link,
+        EngineSemanticsRole.link,
         semanticsObject,
         preferredLabelRepresentation: LabelRepresentation.domText,
       ) {

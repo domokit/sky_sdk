@@ -4430,6 +4430,9 @@ class RenderSemanticsAnnotations extends RenderProxyBox {
     if (_properties.tagForChildren != null) {
       config.addTagForChildren(_properties.tagForChildren!);
     }
+    if (properties.role != null) {
+      config.role = _properties.role!;
+    }
     // Registering _perform* as action handlers instead of the user provided
     // ones to ensure that changing a user provided handler from a non-null to
     // another non-null value doesn't require a semantics update.

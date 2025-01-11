@@ -365,6 +365,12 @@ void main() {
       expect(
         logger.errorText,
         contains(
+          'Your debugging device seems wirelessly connected. Consider plugging it in and trying again.',
+        ),
+      );
+      expect(
+        logger.errorText,
+        contains(
           'Click "Allow" to the prompt asking if you would like to find and connect devices on your local network.',
         ),
       );

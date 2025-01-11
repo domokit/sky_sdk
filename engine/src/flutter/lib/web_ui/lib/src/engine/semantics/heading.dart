@@ -10,7 +10,7 @@ import 'semantics.dart';
 /// level (h1 ... h6).
 class SemanticHeading extends SemanticRole {
   SemanticHeading(SemanticsObject semanticsObject)
-    : super.blank(SemanticRoleKind.heading, semanticsObject) {
+    : super.blank(EngineSemanticsRole.heading, semanticsObject) {
     addFocusManagement();
     addLiveRegion();
     addRouteName();

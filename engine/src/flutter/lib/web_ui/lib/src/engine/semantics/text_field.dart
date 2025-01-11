@@ -196,7 +196,7 @@ class SemanticsTextEditingStrategy extends DefaultTextEditingStrategy {
 /// events even when VoiceOver is enabled.
 class SemanticTextField extends SemanticRole {
   SemanticTextField(SemanticsObject semanticsObject)
-    : super.blank(SemanticRoleKind.textField, semanticsObject) {
+    : super.blank(EngineSemanticsRole.textField, semanticsObject) {
     _initializeEditableElement();
   }
 

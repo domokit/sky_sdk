@@ -1085,7 +1085,7 @@ class AdbLogReader extends DeviceLogReader {
       ]);
     }
     final Process process = await processManager.start(device.adbCommandForDevice(args));
-    return AdbLogReader._(process, device.name, logger);
+    return AdbLogReader._(process, device.displayName, logger);
   }
 
   int? _appPid;

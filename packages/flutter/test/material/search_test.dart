@@ -48,6 +48,9 @@ void main() {
       textField.controller!.selection,
       TextSelection(baseOffset: delegate.query.length, extentOffset: delegate.query.length),
     );
+
+    delegate.query = '';
+    expect(textField.controller!.selection, const TextSelection.collapsed(offset: 0));
   });
 
   testWidgets('Can open and close search', (WidgetTester tester) async {

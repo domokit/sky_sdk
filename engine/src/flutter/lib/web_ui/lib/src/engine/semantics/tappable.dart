@@ -9,7 +9,7 @@ import 'package:ui/ui.dart' as ui;
 class SemanticButton extends SemanticRole {
   SemanticButton(SemanticsObject semanticsObject)
     : super.withBasics(
-        SemanticRoleKind.button,
+        EngineSemanticsRole.button,
         semanticsObject,
         preferredLabelRepresentation: LabelRepresentation.domText,
       ) {

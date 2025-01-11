@@ -1584,6 +1584,9 @@ class FakeDevice extends Fake implements Device {
   @override
   String name = 'FakeDevice';
 
+  @override
+  String get displayName => name;
+
   int count = 0;
 
   @override

@@ -19,7 +19,7 @@ import 'semantics.dart';
 class SemanticHeader extends SemanticRole {
   SemanticHeader(SemanticsObject semanticsObject)
     : super.withBasics(
-        SemanticRoleKind.header,
+        EngineSemanticsRole.header,
         semanticsObject,
 
         // Why use sizedSpan?

@@ -856,12 +856,15 @@ class RunCommand extends RunCommandBase {
       if (!await device.supportsRuntimeMode(buildMode)) {
         throwToolExit(
           '${sentenceCase(getFriendlyModeName(buildMode))} '
-          'mode is not supported by ${device.name}.',
+          'mode is not supported by ${device.displayName}.',
         );
       }
       if (hotMode) {
         if (!device.supportsHotReload) {
-          throwToolExit('Hot reload is not supported by ${device.name}. Run with "--no-hot".');
+          throwToolExit(
+            'Hot reload is not supported by ${device.displayName}. '
+            'Run with "--no-hot".',
+          );
         }
       }
     }
