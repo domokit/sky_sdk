@@ -574,30 +574,6 @@ TEST(DisplayListMatrixClipState, ClipDifference) {
   reducing(SkRect::MakeLTRB(15, 15, 45, 45), SkRect::MakeEmpty(), "Smothering");
 }
 
-TEST(DisplayListMatrixClipState, ClipPathWithInvertFillType) {
-  SkRect cull_rect = SkRect::MakeLTRB(0, 0, 100.0, 100.0);
-  DisplayListMatrixClipState state(cull_rect, SkMatrix::I());
-  SkPath clip = SkPath().addCircle(10.2, 11.3, 2).addCircle(20.4, 25.7, 2);
-  clip.setFillType(SkPathFillType::kInverseWinding);
-  state.clipPath(clip, DlCanvas::ClipOp::kIntersect, false);
-
-  EXPECT_EQ(state.local_cull_rect(), cull_rect);
-  EXPECT_EQ(state.device_cull_rect(), cull_rect);
-}
-
-TEST(DisplayListMatrixClipState, DiffClipPathWithInvertFillType) {
-  SkRect cull_rect = SkRect::MakeLTRB(0, 0, 100.0, 100.0);
-  DisplayListMatrixClipState state(cull_rect, SkMatrix::I());
-
-  SkPath clip = SkPath().addCircle(10.2, 11.3, 2).addCircle(20.4, 25.7, 2);
-  clip.setFillType(SkPathFillType::kInverseWinding);
-  SkRect clip_bounds = SkRect::MakeLTRB(8.2, 9.3, 22.4, 27.7);
-  state.clipPath(clip, DlCanvas::ClipOp::kDifference, false);
-
-  EXPECT_EQ(state.local_cull_rect(), clip_bounds);
-  EXPECT_EQ(state.device_cull_rect(), clip_bounds);
-}
-
 TEST(DisplayListMatrixClipState, MapAndClipRectTranslation) {
   DlRect cull_rect = DlRect::MakeLTRB(100.0f, 100.0f, 200.0f, 200.0f);
   DlMatrix matrix = DlMatrix::MakeTranslation({10.0f, 20.0f, 1.0f});

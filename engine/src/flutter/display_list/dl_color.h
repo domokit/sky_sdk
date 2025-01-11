@@ -181,12 +181,6 @@ struct DlColor {
   bool operator!=(DlColor const& other) const {
     return !this->operator==(other);
   }
-  bool operator==(uint32_t const& other) const {
-    return argb() == other && color_space_ == DlColorSpace::kSRGB;
-  }
-  bool operator!=(uint32_t const& other) const {
-    return !this->operator==(other);
-  }
 
  private:
   DlScalar alpha_;

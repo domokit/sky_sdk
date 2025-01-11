@@ -6,6 +6,7 @@
 #define FLUTTER_DISPLAY_LIST_GEOMETRY_DL_GEOMETRY_TYPES_H_
 
 #include "flutter/impeller/geometry/matrix.h"
+#include "flutter/impeller/geometry/path.h"
 #include "flutter/impeller/geometry/rect.h"
 #include "flutter/impeller/geometry/round_rect.h"
 #include "flutter/impeller/geometry/scalar.h"
@@ -30,6 +31,7 @@ using DlISize = impeller::ISize32;
 using DlRect = impeller::Rect;
 using DlIRect = impeller::IRect32;
 using DlRoundRect = impeller::RoundRect;
+using DlRoundingRadii = impeller::RoundingRadii;
 using DlMatrix = impeller::Matrix;
 using DlQuad = impeller::Quad;
 

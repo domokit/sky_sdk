@@ -1034,7 +1034,7 @@ void DisplayListBuilder::ClipPath(const DlPath& path,
   if (current_info().is_nop) {
     return;
   }
-  if (!path.IsInverseFillType()) {
+  {
     DlRect rect;
     if (path.IsRect(&rect)) {
       ClipRect(rect, clip_op, is_aa);
@@ -1221,9 +1221,7 @@ void DisplayListBuilder::drawPath(const DlPath& path) {
   DisplayListAttributeFlags flags = kDrawPathFlags;
   OpResult result = PaintResult(current_, flags);
   if (result != OpResult::kNoEffect) {
-    bool is_visible = path.IsInverseFillType()
-                          ? AccumulateUnbounded()
-                          : AccumulateOpBounds(path.GetBounds(), flags);
+    bool is_visible = AccumulateOpBounds(path.GetBounds(), flags);
     if (is_visible) {
       Push<DrawPathOp>(0, path);
       CheckLayerOpacityHairlineCompatibility();

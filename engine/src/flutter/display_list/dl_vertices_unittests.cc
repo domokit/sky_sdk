@@ -590,10 +590,10 @@ TEST(DisplayListVertices, BuildWithColorAndIndices) {
       DlPoint(5, 6),
       DlPoint(15, 20),
   };
-  SkColor colors[3] = {
-      SK_ColorRED,
-      SK_ColorCYAN,
-      SK_ColorGREEN,
+  uint32_t colors[3] = {
+      0xffff0000,
+      0xff00ffff,
+      0xff00ff00,
   };
   uint16_t indices[6] = {
       2, 1, 0,  //
@@ -618,7 +618,7 @@ TEST(DisplayListVertices, BuildWithColorAndIndices) {
   ASSERT_EQ(vertices->vertex_count(), 3);
   for (int i = 0; i < 3; i++) {
     ASSERT_EQ(vertices->vertex_data()[i], coords[i]);
-    ASSERT_EQ(vertices->colors()[i], colors[i]);
+    ASSERT_EQ(vertices->colors()[i].argb(), colors[i]);
   }
   ASSERT_EQ(vertices->index_count(), 6);
   for (int i = 0; i < 6; i++) {
@@ -742,10 +742,10 @@ TEST(DisplayListVertices, BuildWithColor) {
       DlPoint(5, 6),
       DlPoint(15, 20),
   };
-  SkColor colors[3] = {
-      SK_ColorRED,
-      SK_ColorCYAN,
-      SK_ColorGREEN,
+  uint32_t colors[3] = {
+      0xffff0000,
+      0xff00ffff,
+      0xff00ff00,
   };
 
   Builder builder(DlVertexMode::kTriangles, 3,  //
@@ -765,7 +765,7 @@ TEST(DisplayListVertices, BuildWithColor) {
   ASSERT_EQ(vertices->vertex_count(), 3);
   for (int i = 0; i < 3; i++) {
     ASSERT_EQ(vertices->vertex_data()[i], coords[i]);
-    ASSERT_EQ(vertices->colors()[i], colors[i]);
+    ASSERT_EQ(vertices->colors()[i].argb(), colors[i]);
   }
   ASSERT_EQ(vertices->index_count(), 0);
 }

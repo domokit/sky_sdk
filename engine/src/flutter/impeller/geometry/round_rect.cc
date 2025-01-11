@@ -23,11 +23,16 @@ static inline void AdjustScale(Scalar& radius1,
   }
 }
 
-RoundRect RoundRect::MakeRectRadii(const Rect& bounds,
+RoundRect RoundRect::MakeRectRadii(const Rect& in_bounds,
                                    const RoundingRadii& in_radii) {
-  if (bounds.IsEmpty() || !bounds.IsFinite() ||  //
+  if (!in_bounds.IsFinite()) {
+    return {};
+  }
+  Rect bounds = in_bounds.GetPositive();
+  if (bounds.IsEmpty() ||  //
       in_radii.AreAllCornersEmpty() || !in_radii.IsFinite()) {
-    // preserve the empty bounds as they might be strokable
+    // pass along the bounds even if empty as it would still have a valid
+    // location and/or 1-dimensional size which might appear when stroked
     return RoundRect(bounds, RoundingRadii());
   }
 

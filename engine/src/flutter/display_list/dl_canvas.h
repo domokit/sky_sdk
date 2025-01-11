@@ -241,16 +241,6 @@ class DlCanvas {
     SaveLayer(ToOptDlRect(bounds), paint, backdrop, backdrop_id);
   }
 
-  void Transform(const SkMatrix* matrix) {
-    if (matrix) {
-      Transform(*matrix);
-    }
-  }
-  void Transform(const SkM44* matrix44) {
-    if (matrix44) {
-      Transform(*matrix44);
-    }
-  }
   void Transform(const SkMatrix& matrix) { Transform(ToDlMatrix(matrix)); }
   void Transform(const SkM44& m44) { Transform(ToDlMatrix(m44)); }
   void SetTransform(const SkMatrix* matrix) {

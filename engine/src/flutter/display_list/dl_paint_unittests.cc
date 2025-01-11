@@ -5,6 +5,7 @@
 #include "flutter/display_list/dl_paint.h"
 
 #include "flutter/display_list/testing/dl_test_equality.h"
+#include "flutter/display_list/testing/dl_test_snippets.h"
 #include "flutter/display_list/utils/dl_comparable.h"
 #include "gtest/gtest.h"
 
@@ -155,14 +156,10 @@ TEST(DisplayListPaint, ChainingConstructor) {
 }
 
 TEST(DisplayListPaint, PaintDetectsRuntimeEffects) {
-  const auto runtime_effect = DlRuntimeEffect::MakeSkia(
-      SkRuntimeEffect::MakeForShader(
-          SkString("vec4 main(vec2 p) { return vec4(0); }"))
-          .effect);
   auto color_source = DlColorSource::MakeRuntimeEffect(
-      runtime_effect, {}, std::make_shared<std::vector<uint8_t>>());
+      kTestRuntimeEffect1, {}, std::make_shared<std::vector<uint8_t>>());
   auto image_filter = DlImageFilter::MakeRuntimeEffect(
-      runtime_effect, {}, std::make_shared<std::vector<uint8_t>>());
+      kTestRuntimeEffect1, {}, std::make_shared<std::vector<uint8_t>>());
   DlPaint paint;
 
   EXPECT_FALSE(paint.usesRuntimeEffect());

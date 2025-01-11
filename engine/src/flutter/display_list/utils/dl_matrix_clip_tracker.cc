@@ -137,19 +137,6 @@ void DisplayListMatrixClipState::clipRRect(const DlRoundRect& rrect,
 void DisplayListMatrixClipState::clipPath(const DlPath& path,
                                           ClipOp op,
                                           bool is_aa) {
-  // Map "kDifference of inverse path" to "kIntersect of the original path" and
-  // map "kIntersect of inverse path" to "kDifference of the original path"
-  if (path.IsInverseFillType()) {
-    switch (op) {
-      case ClipOp::kIntersect:
-        op = ClipOp::kDifference;
-        break;
-      case ClipOp::kDifference:
-        op = ClipOp::kIntersect;
-        break;
-    }
-  }
-
   DlRect bounds = path.GetBounds();
   if (path.IsRect(nullptr)) {
     return clipRect(bounds, op, is_aa);

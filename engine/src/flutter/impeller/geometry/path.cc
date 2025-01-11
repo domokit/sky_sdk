@@ -170,6 +170,11 @@ void Path::WritePolyline(Scalar scale, VertexWriter& writer) const {
   }
 }
 
+Path::ComponentType Path::GetComponentTypeAtIndex(size_t index) const {
+  auto& components = data_->components;
+  return components[index];
+}
+
 bool Path::GetLinearComponentAtIndex(size_t index,
                                      LinearPathComponent& linear) const {
   auto& components = data_->components;
