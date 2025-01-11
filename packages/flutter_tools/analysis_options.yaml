@@ -4,6 +4,7 @@ linter:
   rules:
     avoid_catches_without_on_clauses: true
     avoid_catching_errors: false # TODO(ianh): we should refactor the tool codebase to avoid relying on this so much
+    comment_references: false # We don't publish docs for flutter_tools.
     library_private_types_in_public_api: false # Tool does not have any public API.
     no_runtimeType_toString: false # We use runtimeType for debugging in the tool.
     only_throw_errors: true
