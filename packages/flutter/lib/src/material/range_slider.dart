@@ -21,6 +21,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'constants.dart';
@@ -423,6 +424,10 @@ class RangeSlider extends StatefulWidget {
 }
 
 class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin {
+  final GlobalKey<State<StatefulWidget>> _renderSliderKey = GlobalKey();
+  final GlobalKey<State<StatefulWidget>> _renderStartThumbKey = GlobalKey();
+  final GlobalKey<State<StatefulWidget>> _renderEndThumbKey = GlobalKey();
+
   static const Duration enableAnimationDuration = Duration(milliseconds: 75);
   static const Duration valueIndicatorAnimationDuration = Duration(milliseconds: 100);
 
@@ -441,6 +446,7 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
   late AnimationController startPositionController;
   late AnimationController endPositionController;
   Timer? interactionTimer;
+
   // Value Indicator paint Animation that appears on the Overlay.
   PaintRangeValueIndicator? paintTopValueIndicator;
   PaintRangeValueIndicator? paintBottomValueIndicator;
@@ -450,13 +456,23 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
   bool _dragging = false;
 
   bool _hovering = false;
+
   void _handleHoverChanged(bool hovering) {
+    if (!_enabled) {
+      return;
+    }
     if (hovering != _hovering) {
       setState(() {
         _hovering = hovering;
       });
     }
   }
+
+  final ValueNotifier<double> _thumbDelta = ValueNotifier<double>(0.0);
+  final ValueNotifier<Thumb?> _lastThumbSelection = ValueNotifier<Thumb?>(null);
+
+  final FocusNode _startThumbFocusNode = FocusNode();
+  final FocusNode _endThumbFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -511,6 +527,10 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
     overlayEntry?.remove();
     overlayEntry?.dispose();
     overlayEntry = null;
+    _thumbDelta.dispose();
+    _startThumbFocusNode.dispose();
+    _endThumbFocusNode.dispose();
+    _lastThumbSelection.dispose();
     super.dispose();
   }
 
@@ -716,26 +736,64 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
     final double effectiveTextScale =
         MediaQuery.textScalerOf(context).scale(fontSizeToScale) / fontSizeToScale;
 
-    return FocusableActionDetector(
-      enabled: _enabled,
-      onShowHoverHighlight: _handleHoverChanged,
-      includeFocusSemantics: false,
-      mouseCursor: effectiveMouseCursor,
+    final void Function(RangeValues values)? onChanged =
+        _enabled && (widget.max > widget.min) ? _handleChanged : null;
+    return MouseRegion(
+      onEnter: (_) => _handleHoverChanged(true),
+      onExit: (_) => _handleHoverChanged(false),
+      cursor: effectiveMouseCursor,
       child: CompositedTransformTarget(
         link: _layerLink,
-        child: _RangeSliderRenderObjectWidget(
-          values: _unlerpRangeValues(widget.values),
-          divisions: widget.divisions,
-          labels: widget.labels,
-          sliderTheme: sliderTheme,
-          textScaleFactor: effectiveTextScale,
-          screenSize: screenSize(),
-          onChanged: _enabled && (widget.max > widget.min) ? _handleChanged : null,
-          onChangeStart: widget.onChangeStart != null ? _handleDragStart : null,
-          onChangeEnd: widget.onChangeEnd != null ? _handleDragEnd : null,
-          state: this,
-          semanticFormatterCallback: widget.semanticFormatterCallback,
-          hovering: _hovering,
+        child: FocusTraversalGroup(
+          policy: OrderedTraversalPolicy(),
+          child: _RangeSliderRenderObjectWidget(
+            key: _renderSliderKey,
+            values: _unlerpRangeValues(widget.values),
+            divisions: widget.divisions,
+            labels: widget.labels,
+            sliderTheme: sliderTheme,
+            textScaleFactor: effectiveTextScale,
+            screenSize: screenSize(),
+            onChanged: onChanged,
+            onChangeStart: widget.onChangeStart != null ? _handleDragStart : null,
+            onChangeEnd: widget.onChangeEnd != null ? _handleDragEnd : null,
+            state: this,
+            hovering: _hovering,
+            endThumb: FocusTraversalOrder(
+              order: const NumericFocusOrder(1),
+              child: _FocusableThumb(
+                renderThumbKey: _renderEndThumbKey,
+                values: _unlerpRangeValues(widget.values),
+                divisions: widget.divisions,
+                focusNode: _endThumbFocusNode,
+                sliderState: this,
+                thumb: Thumb.end,
+                sliderTheme: sliderTheme,
+                onChanged: onChanged,
+                renderSliderKey: _renderSliderKey,
+                targetPlatform: Theme.of(context).platform,
+                semanticFormatterCallback: widget.semanticFormatterCallback,
+              ),
+            ),
+            startThumb: FocusTraversalOrder(
+              order: const NumericFocusOrder(0),
+              child: _FocusableThumb(
+                values: _unlerpRangeValues(widget.values),
+                divisions: widget.divisions,
+                focusNode: _startThumbFocusNode,
+                sliderState: this,
+                thumb: Thumb.start,
+                sliderTheme: sliderTheme,
+                onChanged: onChanged,
+                renderSliderKey: _renderSliderKey,
+                targetPlatform: Theme.of(context).platform,
+                semanticFormatterCallback: widget.semanticFormatterCallback,
+                renderThumbKey: _renderStartThumbKey,
+              ),
+            ),
+            startThumbKey: _renderStartThumbKey,
+            endThumbKey: _renderEndThumbKey,
+          ),
         ),
       ),
     );
@@ -760,8 +818,9 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
   }
 }
 
-class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
+class _RangeSliderRenderObjectWidget extends SlottedMultiChildRenderObjectWidget<Thumb, RenderBox> {
   const _RangeSliderRenderObjectWidget({
+    super.key,
     required this.values,
     required this.divisions,
     required this.labels,
@@ -772,8 +831,11 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
     required this.onChangeStart,
     required this.onChangeEnd,
     required this.state,
-    required this.semanticFormatterCallback,
     required this.hovering,
+    required this.endThumb,
+    required this.startThumb,
+    required this.startThumbKey,
+    required this.endThumbKey,
   });
 
   final RangeValues values;
@@ -785,9 +847,12 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
   final ValueChanged<RangeValues>? onChanged;
   final ValueChanged<RangeValues>? onChangeStart;
   final ValueChanged<RangeValues>? onChangeEnd;
-  final SemanticFormatterCallback? semanticFormatterCallback;
   final _RangeSliderState state;
   final bool hovering;
+  final Widget startThumb;
+  final Widget endThumb;
+  final GlobalKey startThumbKey;
+  final GlobalKey endThumbKey;
 
   @override
   _RenderRangeSlider createRenderObject(BuildContext context) {
@@ -804,10 +869,10 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       onChangeEnd: onChangeEnd,
       state: state,
       textDirection: Directionality.of(context),
-      semanticFormatterCallback: semanticFormatterCallback,
-      platform: Theme.of(context).platform,
       hovering: hovering,
       gestureSettings: MediaQuery.gestureSettingsOf(context),
+      startThumbKey: startThumbKey,
+      endThumbKey: endThumbKey,
     );
   }
 
@@ -827,14 +892,24 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       ..onChangeStart = onChangeStart
       ..onChangeEnd = onChangeEnd
       ..textDirection = Directionality.of(context)
-      ..semanticFormatterCallback = semanticFormatterCallback
-      ..platform = Theme.of(context).platform
       ..hovering = hovering
       ..gestureSettings = MediaQuery.gestureSettingsOf(context);
   }
+
+  @override
+  Widget? childForSlot(Thumb slot) {
+    return switch (slot) {
+      Thumb.start => startThumb,
+      Thumb.end => endThumb,
+    };
+  }
+
+  @override
+  Iterable<Thumb> get slots => Thumb.values;
 }
 
-class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
+class _RenderRangeSlider extends RenderBox
+    with SlottedContainerRenderObjectMixin<Thumb, RenderBox>, RelayoutWhenSystemFontsChangeMixin {
   _RenderRangeSlider({
     required RangeValues values,
     required int? divisions,
@@ -843,19 +918,17 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     required ThemeData? theme,
     required double textScaleFactor,
     required Size screenSize,
-    required TargetPlatform platform,
     required ValueChanged<RangeValues>? onChanged,
-    required SemanticFormatterCallback? semanticFormatterCallback,
     required this.onChangeStart,
     required this.onChangeEnd,
     required _RangeSliderState state,
     required TextDirection textDirection,
     required bool hovering,
     required DeviceGestureSettings gestureSettings,
+    required this.startThumbKey,
+    required this.endThumbKey,
   }) : assert(values.start >= 0.0 && values.start <= 1.0),
        assert(values.end >= 0.0 && values.end <= 1.0),
-       _platform = platform,
-       _semanticFormatterCallback = semanticFormatterCallback,
        _labels = labels,
        _values = values,
        _divisions = divisions,
@@ -900,9 +973,14 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     _enableAnimation = CurvedAnimation(parent: _state.enableController, curve: Curves.easeInOut);
   }
 
+  final GlobalKey startThumbKey;
+  final GlobalKey endThumbKey;
+
   // Keep track of the last selected thumb so they can be drawn in the
   // right order.
-  Thumb? _lastThumbSelection;
+  Thumb? get _lastThumbSelection => _state._lastThumbSelection.value;
+
+  set _lastThumbSelection(Thumb? value) => _state._lastThumbSelection.value = value;
 
   static const Duration _positionAnimationDuration = Duration(milliseconds: 75);
 
@@ -914,8 +992,10 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
   // centered on the track.
   double get _maxSliderPartWidth =>
       _sliderPartSizes.map((Size size) => size.width).reduce(math.max);
+
   double get _maxSliderPartHeight =>
       _sliderPartSizes.map((Size size) => size.height).reduce(math.max);
+
   List<Size> get _sliderPartSizes => <Size>[
     _sliderTheme.overlayShape!.getPreferredSize(isEnabled, isDiscrete),
     _sliderTheme.rangeThumbShape!.getPreferredSize(isEnabled, isDiscrete),
@@ -924,6 +1004,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       sliderTheme: sliderTheme,
     ),
   ];
+
   double? get _minPreferredTrackHeight => _sliderTheme.trackHeight;
 
   // This rect is used in gesture calculations, where the gesture coordinates
@@ -961,11 +1042,13 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
 
   RangeValues get values => _values;
   RangeValues _values;
+
   set values(RangeValues newValues) {
     assert(newValues.start >= 0.0 && newValues.start <= 1.0);
     assert(newValues.end >= 0.0 && newValues.end <= 1.0);
     assert(newValues.start <= newValues.end);
-    final RangeValues convertedValues = isDiscrete ? _discretizeRangeValues(newValues) : newValues;
+    final RangeValues convertedValues =
+        isDiscrete ? _discretizeRangeValues(newValues, isDiscrete, divisions) : newValues;
     if (convertedValues == _values) {
       return;
     }
@@ -987,47 +1070,29 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       _state.startPositionController.value = convertedValues.start;
       _state.endPositionController.value = convertedValues.end;
     }
-    markNeedsSemanticsUpdate();
-  }
-
-  TargetPlatform _platform;
-  TargetPlatform get platform => _platform;
-  set platform(TargetPlatform value) {
-    if (_platform == value) {
-      return;
-    }
-    _platform = value;
-    markNeedsSemanticsUpdate();
   }
 
   DeviceGestureSettings? get gestureSettings => _drag.gestureSettings;
+
   set gestureSettings(DeviceGestureSettings? gestureSettings) {
     _drag.gestureSettings = gestureSettings;
     _tap.gestureSettings = gestureSettings;
   }
 
-  SemanticFormatterCallback? _semanticFormatterCallback;
-  SemanticFormatterCallback? get semanticFormatterCallback => _semanticFormatterCallback;
-  set semanticFormatterCallback(SemanticFormatterCallback? value) {
-    if (_semanticFormatterCallback == value) {
-      return;
-    }
-    _semanticFormatterCallback = value;
-    markNeedsSemanticsUpdate();
-  }
-
   int? get divisions => _divisions;
   int? _divisions;
+
   set divisions(int? value) {
     if (value == _divisions) {
       return;
     }
     _divisions = value;
-    markNeedsPaint();
+    markNeedsLayout();
   }
 
   RangeLabels? get labels => _labels;
   RangeLabels? _labels;
+
   set labels(RangeLabels? labels) {
     if (labels == _labels) {
       return;
@@ -1038,26 +1103,29 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
 
   SliderThemeData get sliderTheme => _sliderTheme;
   SliderThemeData _sliderTheme;
+
   set sliderTheme(SliderThemeData value) {
     if (value == _sliderTheme) {
       return;
     }
     _sliderTheme = value;
-    markNeedsPaint();
+    markNeedsLayout();
   }
 
   ThemeData? get theme => _theme;
   ThemeData? _theme;
+
   set theme(ThemeData? value) {
     if (value == _theme) {
       return;
     }
     _theme = value;
-    markNeedsPaint();
+    markNeedsLayout();
   }
 
   double get textScaleFactor => _textScaleFactor;
   double _textScaleFactor;
+
   set textScaleFactor(double value) {
     if (value == _textScaleFactor) {
       return;
@@ -1068,6 +1136,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
 
   Size get screenSize => _screenSize;
   Size _screenSize;
+
   set screenSize(Size value) {
     if (value == screenSize) {
       return;
@@ -1078,6 +1147,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
 
   ValueChanged<RangeValues>? get onChanged => _onChanged;
   ValueChanged<RangeValues>? _onChanged;
+
   set onChanged(ValueChanged<RangeValues>? value) {
     if (value == _onChanged) {
       return;
@@ -1086,7 +1156,6 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     _onChanged = value;
     if (wasEnabled != isEnabled) {
       markNeedsPaint();
-      markNeedsSemanticsUpdate();
     }
   }
 
@@ -1095,6 +1164,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
 
   TextDirection get textDirection => _textDirection;
   TextDirection _textDirection;
+
   set textDirection(TextDirection value) {
     if (value == _textDirection) {
       return;
@@ -1106,6 +1176,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
   /// True if this slider is being hovered over by a pointer.
   bool get hovering => _hovering;
   bool _hovering;
+
   set hovering(bool value) {
     if (value == _hovering) {
       return;
@@ -1117,7 +1188,9 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
   /// True if the slider is interactive and the start thumb is being
   /// hovered over by a pointer.
   bool _hoveringStartThumb = false;
+
   bool get hoveringStartThumb => _hoveringStartThumb;
+
   set hoveringStartThumb(bool value) {
     if (value == _hoveringStartThumb) {
       return;
@@ -1129,7 +1202,9 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
   /// True if the slider is interactive and the end thumb is being
   /// hovered over by a pointer.
   bool _hoveringEndThumb = false;
+
   bool get hoveringEndThumb => _hoveringEndThumb;
+
   set hoveringEndThumb(bool value) {
     if (value == _hoveringEndThumb) {
       return;
@@ -1147,6 +1222,57 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     }
   }
 
+  bool _focusingStartThumb = false;
+
+  bool get focusingStartThumb => _focusingStartThumb;
+
+  set focusingStartThumb(bool value) {
+    if (_focusingStartThumb == value) {
+      return;
+    }
+    _focusingStartThumb = value;
+    _updateForFocus();
+  }
+
+  bool _focusingEndThumb = false;
+
+  bool get focusingEndThumb => _focusingEndThumb;
+
+  set focusingEndThumb(bool value) {
+    if (_focusingEndThumb == value) {
+      return;
+    }
+    _focusingEndThumb = value;
+    _updateForFocus();
+  }
+
+  void _updateForFocus() {
+    if (!isEnabled) {
+      return;
+    }
+    if (focusingStartThumb || focusingEndThumb) {
+      _state.overlayController.forward();
+    } else {
+      _state.overlayController.reverse();
+    }
+  }
+
+  void _onFocusChanged() {
+    if (!isEnabled) {
+      return;
+    }
+    focusingStartThumb = _state._startThumbFocusNode.hasPrimaryFocus;
+    focusingEndThumb = _state._endThumbFocusNode.hasPrimaryFocus;
+    if (focusingStartThumb) {
+      _lastThumbSelection = Thumb.start;
+    } else if (focusingEndThumb) {
+      _lastThumbSelection = Thumb.end;
+    } else {
+      _lastThumbSelection = null;
+    }
+    markNeedsPaint();
+  }
+
   bool get showValueIndicator => switch (_sliderTheme.showValueIndicator!) {
     ShowValueIndicator.onlyForDiscrete => isDiscrete,
     ShowValueIndicator.onlyForContinuous => !isDiscrete,
@@ -1155,21 +1281,6 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
   };
 
   Size get _thumbSize => _sliderTheme.rangeThumbShape!.getPreferredSize(isEnabled, isDiscrete);
-
-  double get _adjustmentUnit {
-    switch (_platform) {
-      case TargetPlatform.iOS:
-        // Matches iOS implementation of material slider.
-        return 0.1;
-      case TargetPlatform.android:
-      case TargetPlatform.fuchsia:
-      case TargetPlatform.linux:
-      case TargetPlatform.macOS:
-      case TargetPlatform.windows:
-        // Matches Android implementation of material slider.
-        return 0.05;
-    }
-  }
 
   void _updateLabelPainters() {
     _updateLabelPainter(Thumb.start);
@@ -1198,6 +1309,16 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     markNeedsLayout();
   }
 
+  RenderBox? get _startThumb => childForSlot(Thumb.start);
+
+  RenderBox? get _endThumb => childForSlot(Thumb.end);
+
+  _RenderThumb? get _startRenderThumb =>
+      startThumbKey.currentContext?.findRenderObject() as _RenderThumb?;
+
+  _RenderThumb? get _endRenderThumb =>
+      endThumbKey.currentContext?.findRenderObject() as _RenderThumb?;
+
   @override
   void systemFontsDidChange() {
     super.systemFontsDidChange();
@@ -1212,8 +1333,12 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     _overlayAnimation.addListener(markNeedsPaint);
     _valueIndicatorAnimation.addListener(markNeedsPaint);
     _enableAnimation.addListener(markNeedsPaint);
-    _state.startPositionController.addListener(markNeedsPaint);
-    _state.endPositionController.addListener(markNeedsPaint);
+    _state.startPositionController.addListener(markNeedsLayout);
+    _state.endPositionController.addListener(markNeedsLayout);
+    _state.startPositionController.addListener(_updateThumbDelta);
+    _state.endPositionController.addListener(_updateThumbDelta);
+    _state._startThumbFocusNode.addListener(_onFocusChanged);
+    _state._endThumbFocusNode.addListener(_onFocusChanged);
   }
 
   @override
@@ -1221,8 +1346,12 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     _overlayAnimation.removeListener(markNeedsPaint);
     _valueIndicatorAnimation.removeListener(markNeedsPaint);
     _enableAnimation.removeListener(markNeedsPaint);
-    _state.startPositionController.removeListener(markNeedsPaint);
-    _state.endPositionController.removeListener(markNeedsPaint);
+    _state.startPositionController.removeListener(markNeedsLayout);
+    _state.endPositionController.removeListener(markNeedsLayout);
+    _state.startPositionController.removeListener(_updateThumbDelta);
+    _state.endPositionController.removeListener(_updateThumbDelta);
+    _state._startThumbFocusNode.removeListener(_onFocusChanged);
+    _state._endThumbFocusNode.removeListener(_onFocusChanged);
     super.detach();
   }
 
@@ -1238,6 +1367,12 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     super.dispose();
   }
 
+  void _updateThumbDelta() {
+    _updateThumbCenters();
+    final double thumbDelta = (_endThumbCenter.dx - _startThumbCenter.dx).abs();
+    _state._thumbDelta.value = thumbDelta;
+  }
+
   double _getValueFromVisualPosition(double visualPosition) {
     return switch (textDirection) {
       TextDirection.rtl => 1.0 - visualPosition,
@@ -1249,18 +1384,6 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     final double visualPosition =
         (globalToLocal(globalPosition).dx - _trackRect.left) / _trackRect.width;
     return _getValueFromVisualPosition(visualPosition);
-  }
-
-  double _discretize(double value) {
-    double result = clampDouble(value, 0.0, 1.0);
-    if (isDiscrete) {
-      result = (result * divisions!).round() / divisions!;
-    }
-    return result;
-  }
-
-  RangeValues _discretizeRangeValues(RangeValues values) {
-    return RangeValues(_discretize(values.start), _discretize(values.end));
   }
 
   void _startInteraction(Offset globalPosition) {
@@ -1284,7 +1407,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       // We supply the *current* values as the start locations, so that if we have
       // a tap, it consists of a call to onChangeStart with the previous value and
       // a call to onChangeEnd with the new value.
-      final RangeValues currentValues = _discretizeRangeValues(values);
+      final RangeValues currentValues = _discretizeRangeValues(values, isDiscrete, divisions);
       _newValues = switch (_lastThumbSelection!) {
         Thumb.start => RangeValues(tapValue, currentValues.end),
         Thumb.end => RangeValues(currentValues.start, tapValue),
@@ -1293,7 +1416,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
 
       onChangeStart?.call(currentValues);
 
-      onChanged!(_discretizeRangeValues(_newValues));
+      onChanged!(_discretizeRangeValues(_newValues, isDiscrete, divisions));
 
       _state.overlayController.forward();
       if (showValueIndicator) {
@@ -1340,11 +1463,11 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     }
 
     if (isEnabled && _lastThumbSelection != null) {
-      final RangeValues currentValues = _discretizeRangeValues(values);
+      final RangeValues currentValues = _discretizeRangeValues(values, isDiscrete, divisions);
       if (onChangeStart != null && shouldCallOnChangeStart) {
         onChangeStart!(currentValues);
       }
-      final double currentDragValue = _discretize(dragValue);
+      final double currentDragValue = _discretize(dragValue, isDiscrete, divisions);
 
       _newValues = switch (_lastThumbSelection!) {
         Thumb.start => RangeValues(
@@ -1370,7 +1493,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     }
 
     if (_active && _state.mounted && _lastThumbSelection != null) {
-      final RangeValues discreteValues = _discretizeRangeValues(_newValues);
+      final RangeValues discreteValues = _discretizeRangeValues(_newValues, isDiscrete, divisions);
       onChangeEnd?.call(discreteValues);
       _active = false;
     }
@@ -1447,25 +1570,28 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     );
   }
 
-  @override
-  void paint(PaintingContext context, Offset offset) {
+  Rect _calcTrackRect({Offset offset = Offset.zero}) {
+    final Rect trackRect = _sliderTheme.rangeTrackShape!.getPreferredRect(
+      parentBox: this,
+      sliderTheme: _sliderTheme,
+      isDiscrete: isDiscrete,
+    );
+    return trackRect;
+  }
+
+  (double, double) _calcVisualPosition() {
     final double startValue = _state.startPositionController.value;
     final double endValue = _state.endPositionController.value;
-
-    // The visual position is the position of the thumb from 0 to 1 from left
-    // to right. In left to right, this is the same as the value, but it is
-    // reversed for right to left text.
     final (double startVisualPosition, double endVisualPosition) = switch (textDirection) {
       TextDirection.rtl => (1.0 - startValue, 1.0 - endValue),
       TextDirection.ltr => (startValue, endValue),
     };
+    return (startVisualPosition, endVisualPosition);
+  }
 
-    final Rect trackRect = _sliderTheme.rangeTrackShape!.getPreferredRect(
-      parentBox: this,
-      offset: offset,
-      sliderTheme: _sliderTheme,
-      isDiscrete: isDiscrete,
-    );
+  void _updateThumbCenters() {
+    final (double startVisualPosition, double endVisualPosition) = _calcVisualPosition();
+    final Rect trackRect = _calcTrackRect();
     final double padding =
         isDiscrete || _sliderTheme.rangeTrackShape!.isRounded ? trackRect.height : 0.0;
     final double thumbYOffset = trackRect.center.dy;
@@ -1494,6 +1620,42 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       clampDouble(endThumbPosition, trackRect.left + thumbPadding, trackRect.right - thumbPadding),
       thumbYOffset,
     );
+  }
+
+  @override
+  void performLayout() {
+    _updateThumbCenters();
+    _startRenderThumb?.minThumbSeparationValue = _minThumbSeparationValue;
+    _endRenderThumb?.minThumbSeparationValue = _minThumbSeparationValue;
+    if (_startThumb != null) {
+      _startThumb!.layout(constraints, parentUsesSize: true);
+      final ui.Size childSize = _startThumb!.size;
+      (_startThumb!.parentData! as BoxParentData).offset =
+          _startThumbCenter - Offset(childSize.width / 2, childSize.height / 2);
+    }
+    if (_endThumb != null) {
+      _endThumb!.layout(constraints, parentUsesSize: true);
+      final ui.Size childSize = _endThumb!.size;
+      (_endThumb!.parentData! as BoxParentData).offset =
+          _endThumbCenter - Offset(childSize.width / 2, childSize.height / 2);
+    }
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    void paintChild(RenderBox child, PaintingContext context, Offset offset) {
+      final BoxParentData childParentData = child.parentData! as BoxParentData;
+      context.paintChild(child, childParentData.offset + offset);
+    }
+
+    final double startValue = _state.startPositionController.value;
+    final double endValue = _state.endPositionController.value;
+
+    // The visual position is the position of the thumb from 0 to 1 from left
+    // to right. In left to right, this is the same as the value, but it is
+    // reversed for right to left text.
+    final Rect trackRect = _calcTrackRect(offset: offset);
+
     if (isEnabled) {
       final Size overlaySize = sliderTheme.overlayShape!.getPreferredSize(isEnabled, false);
       overlayStartRect = Rect.fromCircle(
@@ -1521,7 +1683,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     final Size resolvedscreenSize = screenSize.isEmpty ? size : screenSize;
 
     if (!_overlayAnimation.isDismissed) {
-      if (startThumbSelected || hoveringStartThumb) {
+      if (startThumbSelected || (hoveringStartThumb && hovering)) {
         _sliderTheme.overlayShape!.paint(
           context,
           _startThumbCenter,
@@ -1537,7 +1699,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
           sizeWithOverflow: resolvedscreenSize,
         );
       }
-      if (endThumbSelected || hoveringEndThumb) {
+      if (endThumbSelected || (hoveringEndThumb && hovering)) {
         _sliderTheme.overlayShape!.paint(
           context,
           _endThumbCenter,
@@ -1586,7 +1748,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       }
     }
 
-    final double thumbDelta = (_endThumbCenter.dx - _startThumbCenter.dx).abs();
+    final double thumbDelta = _state._thumbDelta.value;
 
     final bool isLastThumbStart = _lastThumbSelection == Thumb.start;
     final Thumb bottomThumb = isLastThumbStart ? Thumb.end : Thumb.start;
@@ -1595,6 +1757,17 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     final Offset topThumbCenter = isLastThumbStart ? _startThumbCenter : _endThumbCenter;
     final TextPainter bottomLabelPainter = isLastThumbStart ? _endLabelPainter : _startLabelPainter;
     final TextPainter topLabelPainter = isLastThumbStart ? _startLabelPainter : _endLabelPainter;
+
+    final RenderBox? bottomThumbChild = switch (bottomThumb) {
+      Thumb.start => _startThumb,
+      Thumb.end => _endThumb,
+    };
+
+    final RenderBox? topThumbChild = switch (topThumb) {
+      Thumb.start => _startThumb,
+      Thumb.end => _endThumb,
+    };
+
     final double bottomValue = isLastThumbStart ? endValue : startValue;
     final double topValue = isLastThumbStart ? startValue : endValue;
     final bool shouldPaintValueIndicators =
@@ -1623,18 +1796,9 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       };
     }
 
-    _sliderTheme.rangeThumbShape!.paint(
-      context,
-      bottomThumbCenter,
-      activationAnimation: _valueIndicatorAnimation,
-      enableAnimation: _enableAnimation,
-      isDiscrete: isDiscrete,
-      isOnTop: false,
-      textDirection: textDirection,
-      sliderTheme: _sliderTheme,
-      thumb: bottomThumb,
-      isPressed: bottomThumb == Thumb.start ? startThumbSelected : endThumbSelected,
-    );
+    if (bottomThumbChild != null) {
+      paintChild(bottomThumbChild, context, offset);
+    }
 
     if (shouldPaintValueIndicators) {
       final double startOffset = sliderTheme.rangeValueIndicatorShape!.getHorizontalShift(
@@ -1703,178 +1867,9 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       };
     }
 
-    _sliderTheme.rangeThumbShape!.paint(
-      context,
-      topThumbCenter,
-      activationAnimation: _overlayAnimation,
-      enableAnimation: _enableAnimation,
-      isDiscrete: isDiscrete,
-      isOnTop:
-          thumbDelta < sliderTheme.rangeThumbShape!.getPreferredSize(isEnabled, isDiscrete).width,
-      textDirection: textDirection,
-      sliderTheme: _sliderTheme,
-      thumb: topThumb,
-      isPressed: topThumb == Thumb.start ? startThumbSelected : endThumbSelected,
-    );
-  }
-
-  /// Describe the semantics of the start thumb.
-  SemanticsNode? _startSemanticsNode;
-
-  /// Describe the semantics of the end thumb.
-  SemanticsNode? _endSemanticsNode;
-
-  // Create the semantics configuration for a single value.
-  SemanticsConfiguration _createSemanticsConfiguration(
-    double value,
-    double increasedValue,
-    double decreasedValue,
-    VoidCallback increaseAction,
-    VoidCallback decreaseAction,
-  ) {
-    final SemanticsConfiguration config = SemanticsConfiguration();
-    config.isEnabled = isEnabled;
-    config.textDirection = textDirection;
-    config.isSlider = true;
-    if (isEnabled) {
-      config.onIncrease = increaseAction;
-      config.onDecrease = decreaseAction;
+    if (topThumbChild != null) {
+      paintChild(topThumbChild, context, offset);
     }
-
-    if (semanticFormatterCallback != null) {
-      config.value = semanticFormatterCallback!(_state._lerp(value));
-      config.increasedValue = semanticFormatterCallback!(_state._lerp(increasedValue));
-      config.decreasedValue = semanticFormatterCallback!(_state._lerp(decreasedValue));
-    } else {
-      config.value = '${(value * 100).round()}%';
-      config.increasedValue = '${(increasedValue * 100).round()}%';
-      config.decreasedValue = '${(decreasedValue * 100).round()}%';
-    }
-
-    return config;
-  }
-
-  @override
-  void assembleSemanticsNode(
-    SemanticsNode node,
-    SemanticsConfiguration config,
-    Iterable<SemanticsNode> children,
-  ) {
-    assert(children.isEmpty);
-
-    final SemanticsConfiguration startSemanticsConfiguration = _createSemanticsConfiguration(
-      values.start,
-      _increasedStartValue,
-      _decreasedStartValue,
-      _increaseStartAction,
-      _decreaseStartAction,
-    );
-    final SemanticsConfiguration endSemanticsConfiguration = _createSemanticsConfiguration(
-      values.end,
-      _increasedEndValue,
-      _decreasedEndValue,
-      _increaseEndAction,
-      _decreaseEndAction,
-    );
-
-    // Split the semantics node area between the start and end nodes.
-    final Rect leftRect = Rect.fromCenter(
-      center: _startThumbCenter,
-      width: kMinInteractiveDimension,
-      height: kMinInteractiveDimension,
-    );
-    final Rect rightRect = Rect.fromCenter(
-      center: _endThumbCenter,
-      width: kMinInteractiveDimension,
-      height: kMinInteractiveDimension,
-    );
-
-    _startSemanticsNode ??= SemanticsNode();
-    _endSemanticsNode ??= SemanticsNode();
-
-    switch (textDirection) {
-      case TextDirection.ltr:
-        _startSemanticsNode!.rect = leftRect;
-        _endSemanticsNode!.rect = rightRect;
-      case TextDirection.rtl:
-        _startSemanticsNode!.rect = rightRect;
-        _endSemanticsNode!.rect = leftRect;
-    }
-
-    _startSemanticsNode!.updateWith(config: startSemanticsConfiguration);
-    _endSemanticsNode!.updateWith(config: endSemanticsConfiguration);
-
-    final List<SemanticsNode> finalChildren = <SemanticsNode>[
-      _startSemanticsNode!,
-      _endSemanticsNode!,
-    ];
-
-    node.updateWith(config: config, childrenInInversePaintOrder: finalChildren);
-  }
-
-  @override
-  void clearSemantics() {
-    super.clearSemantics();
-    _startSemanticsNode = null;
-    _endSemanticsNode = null;
-  }
-
-  @override
-  void describeSemanticsConfiguration(SemanticsConfiguration config) {
-    super.describeSemanticsConfiguration(config);
-    config.isSemanticBoundary = true;
-  }
-
-  double get _semanticActionUnit => divisions != null ? 1.0 / divisions! : _adjustmentUnit;
-
-  void _increaseStartAction() {
-    if (isEnabled) {
-      onChanged!(RangeValues(_increasedStartValue, values.end));
-    }
-  }
-
-  void _decreaseStartAction() {
-    if (isEnabled) {
-      onChanged!(RangeValues(_decreasedStartValue, values.end));
-    }
-  }
-
-  void _increaseEndAction() {
-    if (isEnabled) {
-      onChanged!(RangeValues(values.start, _increasedEndValue));
-    }
-  }
-
-  void _decreaseEndAction() {
-    if (isEnabled) {
-      onChanged!(RangeValues(values.start, _decreasedEndValue));
-    }
-  }
-
-  double get _increasedStartValue {
-    // Due to floating-point operations, this value can actually be greater than
-    // expected (e.g. 0.4 + 0.2 = 0.600000000001), so we limit to 2 decimal points.
-    final double increasedStartValue = double.parse(
-      (values.start + _semanticActionUnit).toStringAsFixed(2),
-    );
-    return increasedStartValue <= values.end - _minThumbSeparationValue
-        ? increasedStartValue
-        : values.start;
-  }
-
-  double get _decreasedStartValue {
-    return clampDouble(values.start - _semanticActionUnit, 0.0, 1.0);
-  }
-
-  double get _increasedEndValue {
-    return clampDouble(values.end + _semanticActionUnit, 0.0, 1.0);
-  }
-
-  double get _decreasedEndValue {
-    final double decreasedEndValue = values.end - _semanticActionUnit;
-    return decreasedEndValue >= values.start + _minThumbSeparationValue
-        ? decreasedEndValue
-        : values.end;
   }
 }
 
@@ -1941,3 +1936,544 @@ class _RenderValueIndicator extends RenderBox with RelayoutWhenSystemFontsChange
     super.dispose();
   }
 }
+
+double _discretize(double value, bool isDiscrete, int? divisions) {
+  double result = clampDouble(value, 0.0, 1.0);
+  if (isDiscrete) {
+    result = (result * divisions!).round() / divisions;
+  }
+  return result;
+}
+
+RangeValues _discretizeRangeValues(RangeValues values, bool isDiscrete, int? divisions) {
+  return RangeValues(
+    _discretize(values.start, isDiscrete, divisions),
+    _discretize(values.end, isDiscrete, divisions),
+  );
+}
+
+class _Thumb extends LeafRenderObjectWidget {
+  const _Thumb({
+    super.key,
+    required this.sliderTheme,
+    required this.thumb,
+    required this.onChanged,
+    required this.divisions,
+    required this.rangeSliderState,
+    required this.values,
+    required this.semanticFormatterCallback,
+  });
+
+  final SliderThemeData sliderTheme;
+  final Thumb thumb;
+  final ValueChanged<RangeValues>? onChanged;
+  final int? divisions;
+  final _RangeSliderState rangeSliderState;
+  final RangeValues values;
+  final SemanticFormatterCallback? semanticFormatterCallback;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) {
+    return _RenderThumb(
+      semanticFormatterCallback: semanticFormatterCallback,
+      thumb: thumb,
+      sliderTheme: sliderTheme,
+      rangeSliderState: rangeSliderState,
+      textDirection: Directionality.of(context),
+      platform: Theme.of(context).platform,
+      onChanged: onChanged,
+      values: values,
+    );
+  }
+
+  @override
+  void updateRenderObject(BuildContext context, _RenderThumb renderObject) {
+    renderObject
+      ..sliderTheme = sliderTheme
+      ..textDirection = Directionality.of(context)
+      ..platform = Theme.of(context).platform
+      ..onChanged = onChanged
+      ..values = values
+      ..semanticFormatterCallback = semanticFormatterCallback;
+  }
+}
+
+class _RenderThumb extends RenderBox {
+  _RenderThumb({
+    required this.thumb,
+    required SliderThemeData sliderTheme,
+    required _RangeSliderState rangeSliderState,
+    required TextDirection textDirection,
+    required TargetPlatform platform,
+    required ValueChanged<RangeValues>? onChanged,
+    required RangeValues values,
+    required SemanticFormatterCallback? semanticFormatterCallback,
+  }) : _rangeSliderState = rangeSliderState,
+       _semanticFormatterCallback = semanticFormatterCallback,
+       _sliderTheme = sliderTheme,
+       _onChanged = onChanged,
+       _textDirection = textDirection,
+       _platform = platform,
+       _values = values {
+    _overlayAnimation = CurvedAnimation(
+      parent: _rangeSliderState.overlayController,
+      curve: Curves.fastOutSlowIn,
+    );
+    _enableAnimation = CurvedAnimation(
+      parent: _rangeSliderState.enableController,
+      curve: Curves.easeInOut,
+    );
+    _lastThumbSelected = _rangeSliderState._lastThumbSelection;
+    _thumbDelta = _rangeSliderState._thumbDelta;
+  }
+
+  late CurvedAnimation _overlayAnimation;
+  late CurvedAnimation _enableAnimation;
+
+  late ValueListenable<Thumb?> _lastThumbSelected;
+  late ValueListenable<double> _thumbDelta;
+
+  final _RangeSliderState _rangeSliderState;
+  final Thumb thumb;
+
+  RangeValues get values => _values;
+  RangeValues _values;
+
+  set values(RangeValues newValues) {
+    final RangeValues convertedValues =
+        isDiscrete ? _discretizeRangeValues(newValues, isDiscrete, divisions) : newValues;
+    if (convertedValues == _values) {
+      return;
+    }
+    _values = convertedValues;
+    markNeedsSemanticsUpdate();
+  }
+
+  bool get isEnabled => onChanged != null;
+
+  bool get isDiscrete => divisions != null && divisions! > 0;
+
+  int? get divisions => _divisions;
+  int? _divisions;
+
+  set divisions(int? value) {
+    if (value == _divisions) {
+      return;
+    }
+    _divisions = value;
+    markNeedsLayout();
+  }
+
+  double _minThumbSeparationValue = 0.0;
+
+  double get minThumbSeparationValue => _minThumbSeparationValue;
+
+  set minThumbSeparationValue(double value) {
+    if (value == _minThumbSeparationValue) {
+      return;
+    }
+    _minThumbSeparationValue = value;
+    markNeedsSemanticsUpdate();
+  }
+
+  SliderThemeData _sliderTheme;
+
+  SliderThemeData get sliderTheme => _sliderTheme;
+
+  set sliderTheme(SliderThemeData value) {
+    if (value == _sliderTheme) {
+      return;
+    }
+    _sliderTheme = value;
+    markNeedsLayout();
+  }
+
+  Size get _thumbSize => _sliderTheme.rangeThumbShape!.getPreferredSize(isEnabled, isDiscrete);
+
+  ValueChanged<RangeValues>? get onChanged => _onChanged;
+  ValueChanged<RangeValues>? _onChanged;
+
+  set onChanged(ValueChanged<RangeValues>? value) {
+    if (value == _onChanged) {
+      return;
+    }
+    final bool wasEnabled = isEnabled;
+    _onChanged = value;
+    if (wasEnabled != isEnabled) {
+      markNeedsLayout();
+    }
+  }
+
+  TextDirection get textDirection => _textDirection;
+  TextDirection _textDirection;
+
+  set textDirection(TextDirection value) {
+    if (value == _textDirection) {
+      return;
+    }
+    _textDirection = value;
+    markNeedsPaint();
+    markNeedsSemanticsUpdate();
+  }
+
+  SemanticFormatterCallback? _semanticFormatterCallback;
+
+  SemanticFormatterCallback? get semanticFormatterCallback => _semanticFormatterCallback;
+
+  set semanticFormatterCallback(SemanticFormatterCallback? value) {
+    if (_semanticFormatterCallback == value) {
+      return;
+    }
+    _semanticFormatterCallback = value;
+    markNeedsSemanticsUpdate();
+  }
+
+  TargetPlatform _platform;
+
+  TargetPlatform get platform => _platform;
+
+  set platform(TargetPlatform value) {
+    if (_platform == value) {
+      return;
+    }
+    _platform = value;
+    markNeedsSemanticsUpdate();
+  }
+
+  @override
+  void attach(PipelineOwner owner) {
+    super.attach(owner);
+    _overlayAnimation.addListener(markNeedsPaint);
+    _enableAnimation.addListener(markNeedsPaint);
+    _thumbDelta.addListener(markNeedsPaint);
+    _lastThumbSelected.addListener(markNeedsPaint);
+  }
+
+  @override
+  void detach() {
+    _thumbDelta.removeListener(markNeedsPaint);
+    _lastThumbSelected.removeListener(markNeedsPaint);
+    _overlayAnimation.removeListener(markNeedsPaint);
+    _enableAnimation.removeListener(markNeedsPaint);
+    super.detach();
+  }
+
+  @override
+  void dispose() {
+    _enableAnimation.dispose();
+    _overlayAnimation.dispose();
+    super.dispose();
+  }
+
+  @override
+  double computeMinIntrinsicHeight(double width) {
+    return math.max(kMinInteractiveDimension, _thumbSize.height);
+  }
+
+  @override
+  double computeMaxIntrinsicHeight(double width) {
+    return math.max(kMinInteractiveDimension, _thumbSize.height);
+  }
+
+  @override
+  double computeMaxIntrinsicWidth(double height) {
+    return math.max(kMinInteractiveDimension, _thumbSize.width);
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) {
+    return math.max(kMinInteractiveDimension, _thumbSize.width);
+  }
+
+  @override
+  ui.Size computeDryLayout(covariant BoxConstraints constraints) {
+    return ui.Size(
+      getMaxIntrinsicWidth(constraints.maxHeight),
+      getMaxIntrinsicHeight(constraints.maxWidth),
+    );
+  }
+
+  @override
+  void performLayout() {
+    size = getDryLayout(constraints);
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    final ui.Offset center = offset + Offset(size.width / 2, size.height / 2);
+    final double thumbDelta = _thumbDelta.value;
+    final Thumb? lastThumbSelected = _lastThumbSelected.value;
+    _sliderTheme.rangeThumbShape!.paint(
+      context,
+      center,
+      activationAnimation: _overlayAnimation,
+      enableAnimation: _enableAnimation,
+      isDiscrete: isDiscrete,
+      isOnTop:
+          lastThumbSelected == thumb &&
+          thumbDelta < sliderTheme.rangeThumbShape!.getPreferredSize(isEnabled, isDiscrete).width,
+      textDirection: textDirection,
+      sliderTheme: _sliderTheme,
+      thumb: thumb,
+      isPressed: thumb == lastThumbSelected && lastThumbSelected != null,
+    );
+  }
+
+  double get _semanticActionUnit => divisions != null ? 1.0 / divisions! : _adjustmentUnit;
+
+  void _increaseStartAction() {
+    if (isEnabled) {
+      onChanged!(RangeValues(_increasedStartValue, values.end));
+    }
+  }
+
+  void _decreaseStartAction() {
+    if (isEnabled) {
+      onChanged!(RangeValues(_decreasedStartValue, values.end));
+    }
+  }
+
+  void _increaseEndAction() {
+    if (isEnabled) {
+      onChanged!(RangeValues(values.start, _increasedEndValue));
+    }
+  }
+
+  void _decreaseEndAction() {
+    if (isEnabled) {
+      onChanged!(RangeValues(values.start, _decreasedEndValue));
+    }
+  }
+
+  double get _increasedStartValue {
+    // Due to floating-point operations, this value can actually be greater than
+    // expected (e.g. 0.4 + 0.2 = 0.600000000001), so we limit to 2 decimal points.
+    final double increasedStartValue = double.parse(
+      (values.start + _semanticActionUnit).toStringAsFixed(2),
+    );
+    return increasedStartValue <= values.end - _minThumbSeparationValue
+        ? increasedStartValue
+        : values.start;
+  }
+
+  double get _decreasedStartValue {
+    return clampDouble(values.start - _semanticActionUnit, 0.0, 1.0);
+  }
+
+  double get _increasedEndValue {
+    return clampDouble(values.end + _semanticActionUnit, 0.0, 1.0);
+  }
+
+  double get _decreasedEndValue {
+    final double decreasedEndValue = values.end - _semanticActionUnit;
+    return decreasedEndValue >= values.start + _minThumbSeparationValue
+        ? decreasedEndValue
+        : values.end;
+  }
+
+  double get _adjustmentUnit {
+    switch (platform) {
+      case TargetPlatform.iOS:
+        // Matches iOS implementation of material slider.
+        return 0.1;
+      case TargetPlatform.android:
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        // Matches Android implementation of material slider.
+        return 0.05;
+    }
+  }
+
+  void _increaseAction() {
+    switch (thumb) {
+      case Thumb.start:
+        _increaseStartAction();
+      case Thumb.end:
+        _increaseEndAction();
+    }
+  }
+
+  void _decreaseAction() {
+    switch (thumb) {
+      case Thumb.start:
+        _decreaseStartAction();
+      case Thumb.end:
+        _decreaseEndAction();
+    }
+  }
+
+  String _resolveSemanticValue() {
+    final double value = thumb == Thumb.start ? values.start : values.end;
+    if (semanticFormatterCallback != null) {
+      return semanticFormatterCallback!(_rangeSliderState._lerp(value));
+    }
+    return '${(value * 100).round()}%';
+  }
+
+  String _resolveSemanticIncreasedValue() {
+    final double increasedValue = thumb == Thumb.start ? _increasedStartValue : _increasedEndValue;
+    if (semanticFormatterCallback != null) {
+      return semanticFormatterCallback!(_rangeSliderState._lerp(increasedValue));
+    }
+    return '${(increasedValue * 100).round()}%';
+  }
+
+  String _resolveSemanticDecreasedValue() {
+    final double decreasedValue = thumb == Thumb.start ? _decreasedStartValue : _decreasedEndValue;
+    if (semanticFormatterCallback != null) {
+      return semanticFormatterCallback!(_rangeSliderState._lerp(decreasedValue));
+    }
+    return '${(decreasedValue * 100).round()}%';
+  }
+
+  @override
+  void describeSemanticsConfiguration(SemanticsConfiguration config) {
+    super.describeSemanticsConfiguration(config);
+    config.value = _resolveSemanticValue();
+    config.increasedValue = _resolveSemanticIncreasedValue();
+    config.decreasedValue = _resolveSemanticDecreasedValue();
+    if (isEnabled) {
+      config.onIncrease = _increaseAction;
+      config.onDecrease = _decreaseAction;
+    }
+    config.textDirection = textDirection;
+    config.isEnabled = isEnabled;
+    config.isSlider = true;
+  }
+}
+
+class _FocusableThumb extends StatefulWidget {
+  const _FocusableThumb({
+    required this.values,
+    required this.divisions,
+    required this.focusNode,
+    required this.sliderState,
+    required this.thumb,
+    required this.sliderTheme,
+    required this.onChanged,
+    required this.renderSliderKey,
+    required this.targetPlatform,
+    required this.semanticFormatterCallback,
+    required this.renderThumbKey,
+  });
+
+  final RangeValues values;
+  final int? divisions;
+  final FocusNode focusNode;
+  final _RangeSliderState sliderState;
+  final Thumb thumb;
+  final SliderThemeData sliderTheme;
+  final ValueChanged<RangeValues>? onChanged;
+  final GlobalKey renderSliderKey;
+  final TargetPlatform targetPlatform;
+  final SemanticFormatterCallback? semanticFormatterCallback;
+  final GlobalKey renderThumbKey;
+
+  @override
+  State<_FocusableThumb> createState() => _FocusableThumbState();
+}
+
+class _FocusableThumbState extends State<_FocusableThumb> {
+  @override
+  void initState() {
+    super.initState();
+    _actionMap = <Type, Action<Intent>>{
+      _AdjustSliderIntent: CallbackAction<_AdjustSliderIntent>(onInvoke: _actionHandler),
+    };
+  }
+
+  _RenderThumb? get _renderThumbWidget =>
+      widget.renderThumbKey.currentContext?.findRenderObject() as _RenderThumb?;
+
+  void _actionHandler(_AdjustSliderIntent intent) {
+    final TextDirection directionality = Directionality.of(context);
+    final bool shouldIncrease = switch (intent.type) {
+      _SliderAdjustmentType.up => true,
+      _SliderAdjustmentType.down => false,
+      _SliderAdjustmentType.left => directionality == TextDirection.rtl,
+      _SliderAdjustmentType.right => directionality == TextDirection.ltr,
+    };
+
+    if (shouldIncrease) {
+      final String? semanticValuesInc = _renderThumbWidget?._resolveSemanticIncreasedValue();
+      _renderThumbWidget?._increaseAction();
+      if (semanticValuesInc != null) {
+        SemanticsService.announce(
+          semanticValuesInc,
+          Directionality.of(context),
+          assertiveness: Assertiveness.assertive,
+        );
+      }
+    } else {
+      final String? semanticValuesDec = _renderThumbWidget?._resolveSemanticDecreasedValue();
+      _renderThumbWidget?._decreaseAction();
+      if (semanticValuesDec != null) {
+        SemanticsService.announce(
+          semanticValuesDec,
+          Directionality.of(context),
+          assertiveness: Assertiveness.assertive,
+        );
+      }
+    }
+  }
+
+  static const Map<ShortcutActivator, Intent> _traditionalNavShortcutMap =
+      <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.arrowUp): _AdjustSliderIntent.up(),
+        SingleActivator(LogicalKeyboardKey.arrowDown): _AdjustSliderIntent.down(),
+        SingleActivator(LogicalKeyboardKey.arrowLeft): _AdjustSliderIntent.left(),
+        SingleActivator(LogicalKeyboardKey.arrowRight): _AdjustSliderIntent.right(),
+      };
+
+  // Keyboard mapping for a focused slider when using directional navigation.
+  // The vertical inputs are not handled to allow navigating out of the slider.
+  static const Map<ShortcutActivator, Intent> _directionalNavShortcutMap =
+      <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.arrowLeft): _AdjustSliderIntent.left(),
+        SingleActivator(LogicalKeyboardKey.arrowRight): _AdjustSliderIntent.right(),
+      };
+
+  late Map<Type, Action<Intent>> _actionMap;
+
+  late Map<ShortcutActivator, Intent> shortcutMap = switch (MediaQuery.navigationModeOf(context)) {
+    NavigationMode.directional => _directionalNavShortcutMap,
+    NavigationMode.traditional => _traditionalNavShortcutMap,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return FocusableActionDetector(
+      focusNode: widget.focusNode,
+      shortcuts: shortcutMap,
+      actions: _actionMap,
+      child: _Thumb(
+        semanticFormatterCallback: widget.semanticFormatterCallback,
+        key: widget.renderThumbKey,
+        sliderTheme: widget.sliderTheme,
+        thumb: widget.thumb,
+        onChanged: widget.onChanged,
+        divisions: widget.divisions,
+        rangeSliderState: widget.sliderState,
+        values: widget.values,
+      ),
+    );
+  }
+}
+
+class _AdjustSliderIntent extends Intent {
+  const _AdjustSliderIntent({required this.type});
+
+  const _AdjustSliderIntent.right() : type = _SliderAdjustmentType.right;
+
+  const _AdjustSliderIntent.left() : type = _SliderAdjustmentType.left;
+
+  const _AdjustSliderIntent.up() : type = _SliderAdjustmentType.up;
+
+  const _AdjustSliderIntent.down() : type = _SliderAdjustmentType.down;
+
+  final _SliderAdjustmentType type;
+}
+
+enum _SliderAdjustmentType { right, left, up, down }

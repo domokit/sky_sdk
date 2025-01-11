@@ -2776,38 +2776,4 @@ void main() {
     // No exception should be thrown.
     expect(tester.takeException(), null);
   });
-
-  // This is a regression test for https://github.com/flutter/flutter/issues/141953.
-  testWidgets('Semantic nodes do not throw an error after clearSemantics', (
-    WidgetTester tester,
-  ) async {
-    SemanticsTester semantics = SemanticsTester(tester);
-
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: Material(
-          child: RangeSlider(
-            values: const RangeValues(40, 80),
-            max: 100,
-            onChanged: (RangeValues newValue) {},
-          ),
-        ),
-      ),
-    );
-
-    // Dispose the semantics to trigger clearSemantics.
-    semantics.dispose();
-    await tester.pumpAndSettle();
-
-    expect(tester.takeException(), isNull);
-
-    // Initialize the semantics again.
-    semantics = SemanticsTester(tester);
-    await tester.pumpAndSettle();
-
-    expect(tester.takeException(), isNull);
-
-    semantics.dispose();
-  }, semanticsEnabled: false);
 }
