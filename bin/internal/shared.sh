@@ -228,7 +228,12 @@ function shared::execute() {
   fi
   # Test if the flutter directory is a git clone (otherwise git rev-parse HEAD
   # would fail)
-  if [[ ! -e "$FLUTTER_ROOT/.git" ]]; then
+  # This test is omitted, if flutter has been provided as packaged
+  # software within Linux distribution repositories. In this case,
+  # evidence of the git history is purged from the package, thus this
+  # check would fail.
+  current_dir=$(pwd)
+  if [ ! -e "$FLUTTER_ROOT/.git" ] && [ "$FLUTTER_ROOT" != "/usr/local/bin/flutter" ]; then
     >&2 echo "Error: The Flutter directory is not a clone of the GitHub project."
     >&2 echo "       The flutter tool requires Git in order to operate properly;"
     >&2 echo "       to install Flutter, see the instructions at:"
@@ -254,8 +259,10 @@ function shared::execute() {
   # and will corrupt each others' downloads.
   #
   # SHARED_NAME itself is prepared by the caller script.
-  upgrade_flutter 7< "$SHARED_NAME"
-
+  #
+  if [ "$FLUTTER_ROOT" != "/usr/local/bin/flutter" ]; then
+    upgrade_flutter 7< "$SHARED_NAME"
+  fi
   case "$BIN_NAME" in
     flutter-dev)
       # FLUTTER_TOOL_ARGS aren't quoted below, because it is meant to be
@@ -265,7 +272,16 @@ function shared::execute() {
     flutter*)
       # FLUTTER_TOOL_ARGS aren't quoted below, because it is meant to be
       # considered as separate space-separated args.
-      exec "$DART" --packages="$FLUTTER_TOOLS_DIR/.dart_tool/package_config.json" $FLUTTER_TOOL_ARGS "$SNAPSHOT_PATH" "$@"
+      if [ "$FLUTTER_ROOT" != "/usr/local/bin/flutter" ]; then
+        # This condition checks, whether flutter-sdk is used in a setup,
+        # which is not provided as a package by a Linux distribution.
+        # Otherwise, dart-sdk is executed without the $SNAPSHOT_PATH
+        # parameter, allowing to customize the dart-sdk provided as part
+        # of the maintained package.
+        exec "$DART" --packages="$FLUTTER_TOOLS_DIR/.dart_tool/package_config.json" $FLUTTER_TOOL_ARGS "$SNAPSHOT_PATH" "$@"
+      else
+        exec "$DART" --packages="$FLUTTER_TOOLS_DIR/.dart_tool/package_config.json" $FLUTTER_TOOL_ARGS "$@"
+      fi
       ;;
     dart*)
       exec "$DART" "$@"
