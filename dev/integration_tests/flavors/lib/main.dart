@@ -42,7 +42,7 @@ class _FlavorState extends State<Flavor> {
       child:
           _flavor == null
               ? const Text('Awaiting flavor...')
-              : Text(_flavor!, key: const ValueKey<String>('flavor')),
+              : Text(appFlavor!, key: const ValueKey<String>('flavor')),
     );
   }
 }

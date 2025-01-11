@@ -1447,6 +1447,7 @@ abstract class FlutterCommand extends Command<void> {
     final String? defaultFlavor = project.manifest.defaultFlavor;
     final String? cliFlavor = argParser.options.containsKey('flavor') ? stringArg('flavor') : null;
     final String? flavor = cliFlavor ?? defaultFlavor;
+
     if (flavor != null) {
       if (globals.platform.environment['FLUTTER_APP_FLAVOR'] != null) {
         throwToolExit(
@@ -1459,7 +1460,6 @@ abstract class FlutterCommand extends Command<void> {
           'set using --${FlutterOptions.kDartDefinesOption} or --${FlutterOptions.kDartDefineFromFileOption}',
         );
       }
-      dartDefines.add('FLUTTER_APP_FLAVOR=$flavor');
     }
 
     return BuildInfo(

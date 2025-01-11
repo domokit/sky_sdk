@@ -165,6 +165,23 @@ class Context {
     exitApp(-1);
   }
 
+  String parseFlutterFlavor() {
+    // Use FLAVOR if it's set.
+    // This variable must be set in case configuration name other than conventional
+    // $CONFIGURATION-$FLAVOR is used.
+    final String? flavor = environment['FLAVOR'];
+    if (flavor != null && flavor.isNotEmpty) {
+      return flavor;
+    }
+    if (environment['CONFIGURATION'] != null) {
+      final int indexOfSplitter = environment['CONFIGURATION']!.indexOf('-');
+      if (indexOfSplitter != -1) {
+        return environment['CONFIGURATION']!.substring(indexOfSplitter + 1);
+      }
+    }
+    return '';
+  }
+
   /// Copies all files from [source] to [destination].
   ///
   /// Does not copy `.DS_Store`.
@@ -439,7 +456,6 @@ class Context {
       '-dTargetPlatform=ios',
       '-dTargetFile=$targetPath',
       '-dBuildMode=$buildMode',
-      if (environment['FLAVOR'] != null) '-dFlavor=${environment['FLAVOR']}',
       '-dIosArchs=$archs',
       '-dSdkRoot=${environment['SDKROOT'] ?? ''}',
       '-dSplitDebugInfo=${environment['SPLIT_DEBUG_INFO'] ?? ''}',
@@ -452,6 +468,11 @@ class Context {
       '--DartDefines=${environment['DART_DEFINES'] ?? ''}',
       '--ExtraFrontEndOptions=${environment['EXTRA_FRONT_END_OPTIONS'] ?? ''}',
     ]);
+
+    final String flavor = parseFlutterFlavor();
+    if (flavor.isNotEmpty) {
+      flutterArgs.add('-dFlavor=$flavor');
+    }
 
     if (command == 'prepare') {
       // Use the PreBuildAction define flag to force the tool to use a different

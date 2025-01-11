@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' show File;
+import 'dart:io' show File, Platform;
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
@@ -25,6 +25,7 @@ Future<void> main() async {
       final List<TaskResult> testResults = <TaskResult>[
         await _testInstallDebugPaidFlavor(projectPath),
         await _testInstallBogusFlavor(),
+        await _testFlavorsWorkWhenBuiltWithGradle(projectPath),
       ];
 
       final TaskResult? firstInstallFailure = testResults.firstWhereOrNull(
@@ -103,6 +104,43 @@ Future<TaskResult> _testInstallBogusFlavor() async {
     print(stderrString);
     return TaskResult.failure('Should not succeed with bogus flavor');
   }
+
+  return TaskResult.success(null);
+}
+
+Future<TaskResult> _testFlavorsWorkWhenBuiltWithGradle(String projectDir) async {
+  final String gradlew = Platform.isWindows ? 'gradlew.bat' : 'gradlew';
+  final String gradlewExecutable = Platform.isWindows ? '.\\$gradlew' : './$gradlew';
+
+  final String androidDirPath = '$projectDir/android';
+  final StringBuffer stdout = StringBuffer();
+
+  // Prebuild the project to generate the Android gradle wrapper files.
+  await flutter('build', options: <String>['apk', '--config-only']);
+
+  await inDirectory(androidDirPath, () async {
+    await exec(gradlewExecutable, <String>['clean']);
+    await exec(gradlewExecutable, <String>[':app:assemblePaidDebug', '--info'], output: stdout);
+  });
+
+  final String stdoutString = stdout.toString();
+
+  if (!stdoutString.contains('-dFlavor=paid')) {
+    return TaskResult.failure('Expected to see -dFlavor=paid in the gradle verbose output');
+  }
+
+  final Device device = await devices.workingDevice;
+  await device.unlock();
+  await flutter(
+    'drive',
+    options: <String>[
+      '--no-pub',
+      '--use-application-binary=build/app/outputs/flutter-apk/app-paid-debug.apk',
+      '--driver=test_driver/main_test.dart',
+      '--device-id',
+      device.deviceId,
+    ],
+  );
 
   return TaskResult.success(null);
 }

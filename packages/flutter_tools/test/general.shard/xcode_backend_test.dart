@@ -164,7 +164,6 @@ void main() {
               '-dTargetPlatform=ios',
               '-dTargetFile=lib/main.dart',
               '-dBuildMode=${buildMode.toLowerCase()}',
-              '-dFlavor=strawberry',
               '-dIosArchs=$archs',
               '-dSdkRoot=$sdkRoot',
               '-dSplitDebugInfo=$splitDebugInfo',
@@ -176,6 +175,7 @@ void main() {
               '--ExtraGenSnapshotOptions=$extraGenSnapshotOptions',
               '--DartDefines=$dartDefines',
               '--ExtraFrontEndOptions=$extraFrontEndOptions',
+              '-dFlavor=strawberry',
               '-dCodesignIdentity=$expandedCodeSignIdentity',
               'release_ios_bundle_flutter_assets',
             ],
@@ -186,6 +186,76 @@ void main() {
       expect(context.stdout, contains('built and packaged successfully.'));
       expect(context.stderr, isEmpty);
     });
+  });
+
+  test('parses flavor from standart configuration name', () {
+    final Directory buildDir = fileSystem.directory('/path/to/builds')..createSync(recursive: true);
+    final Directory flutterRoot = fileSystem.directory('/path/to/flutter')
+      ..createSync(recursive: true);
+    const String archs = 'arm64';
+    const String buildMode = 'Release';
+    const String configuration = 'Release-strawberry';
+    const String dartObfuscation = 'false';
+    const String dartDefines = 'flutter.inspector.structuredErrors%3Dtrue';
+    const String expandedCodeSignIdentity = 'F1326572E0B71C3C8442805230CB4B33B708A2E2';
+    const String extraFrontEndOptions = '--some-option';
+    const String extraGenSnapshotOptions = '--obfuscate';
+    const String frontendServerStarterPath = '/path/to/frontend_server_starter.dart';
+    const String sdkRoot = '/path/to/sdk';
+    const String splitDebugInfo = '/path/to/split/debug/info';
+    const String trackWidgetCreation = 'true';
+    const String treeShake = 'true';
+    final TestContext context = TestContext(
+      <String>['build'],
+      <String, String>{
+        'ACTION': 'install',
+        'ARCHS': archs,
+        'BUILT_PRODUCTS_DIR': buildDir.path,
+        'CODE_SIGNING_REQUIRED': 'YES',
+        'CONFIGURATION': configuration,
+        'DART_DEFINES': dartDefines,
+        'DART_OBFUSCATION': dartObfuscation,
+        'EXPANDED_CODE_SIGN_IDENTITY': expandedCodeSignIdentity,
+        'EXTRA_FRONT_END_OPTIONS': extraFrontEndOptions,
+        'EXTRA_GEN_SNAPSHOT_OPTIONS': extraGenSnapshotOptions,
+        'FLUTTER_ROOT': flutterRoot.path,
+        'FRONTEND_SERVER_STARTER_PATH': frontendServerStarterPath,
+        'INFOPLIST_PATH': 'Info.plist',
+        'SDKROOT': sdkRoot,
+        'SPLIT_DEBUG_INFO': splitDebugInfo,
+        'TRACK_WIDGET_CREATION': trackWidgetCreation,
+        'TREE_SHAKE_ICONS': treeShake,
+      },
+      commands: <FakeCommand>[
+        FakeCommand(
+          command: <String>[
+            '${flutterRoot.path}/bin/flutter',
+            'assemble',
+            '--no-version-check',
+            '--output=${buildDir.path}/',
+            '-dTargetPlatform=ios',
+            '-dTargetFile=lib/main.dart',
+            '-dBuildMode=${buildMode.toLowerCase()}',
+            '-dIosArchs=$archs',
+            '-dSdkRoot=$sdkRoot',
+            '-dSplitDebugInfo=$splitDebugInfo',
+            '-dTreeShakeIcons=$treeShake',
+            '-dTrackWidgetCreation=$trackWidgetCreation',
+            '-dDartObfuscation=$dartObfuscation',
+            '-dAction=install',
+            '-dFrontendServerStarterPath=$frontendServerStarterPath',
+            '--ExtraGenSnapshotOptions=$extraGenSnapshotOptions',
+            '--DartDefines=$dartDefines',
+            '--ExtraFrontEndOptions=$extraFrontEndOptions',
+            '-dFlavor=strawberry',
+            '-dCodesignIdentity=$expandedCodeSignIdentity',
+            'release_ios_bundle_flutter_assets',
+          ],
+        ),
+      ],
+      fileSystem: fileSystem,
+    )..run();
+    expect(context.stderr, isEmpty);
   });
 
   group('test_vm_service_bonjour_service', () {
@@ -355,7 +425,6 @@ void main() {
               '-dTargetPlatform=ios',
               '-dTargetFile=lib/main.dart',
               '-dBuildMode=${buildMode.toLowerCase()}',
-              '-dFlavor=strawberry',
               '-dIosArchs=$archs',
               '-dSdkRoot=$sdkRoot',
               '-dSplitDebugInfo=$splitDebugInfo',
@@ -367,6 +436,79 @@ void main() {
               '--ExtraGenSnapshotOptions=$extraGenSnapshotOptions',
               '--DartDefines=$dartDefines',
               '--ExtraFrontEndOptions=$extraFrontEndOptions',
+              '-dFlavor=strawberry',
+              '-dPreBuildAction=PrepareFramework',
+              '-dCodesignIdentity=$expandedCodeSignIdentity',
+              'release_unpack_ios',
+            ],
+          ),
+        ],
+        fileSystem: fileSystem,
+      )..run();
+      expect(context.stderr, isEmpty);
+    });
+
+    test('parses flavor from standart configuration name', () {
+      final Directory buildDir = fileSystem.directory('/path/to/builds')
+        ..createSync(recursive: true);
+      final Directory flutterRoot = fileSystem.directory('/path/to/flutter')
+        ..createSync(recursive: true);
+      const String archs = 'arm64';
+      const String buildMode = 'Release';
+      const String configuration = 'Release-strawberry';
+      const String dartObfuscation = 'false';
+      const String dartDefines = 'flutter.inspector.structuredErrors%3Dtrue';
+      const String expandedCodeSignIdentity = 'F1326572E0B71C3C8442805230CB4B33B708A2E2';
+      const String extraFrontEndOptions = '--some-option';
+      const String extraGenSnapshotOptions = '--obfuscate';
+      const String frontendServerStarterPath = '/path/to/frontend_server_starter.dart';
+      const String sdkRoot = '/path/to/sdk';
+      const String splitDebugInfo = '/path/to/split/debug/info';
+      const String trackWidgetCreation = 'true';
+      const String treeShake = 'true';
+      final TestContext context = TestContext(
+        <String>['prepare'],
+        <String, String>{
+          'ACTION': 'install',
+          'ARCHS': archs,
+          'BUILT_PRODUCTS_DIR': buildDir.path,
+          'CODE_SIGNING_REQUIRED': 'YES',
+          'CONFIGURATION': configuration,
+          'DART_DEFINES': dartDefines,
+          'DART_OBFUSCATION': dartObfuscation,
+          'EXPANDED_CODE_SIGN_IDENTITY': expandedCodeSignIdentity,
+          'EXTRA_FRONT_END_OPTIONS': extraFrontEndOptions,
+          'EXTRA_GEN_SNAPSHOT_OPTIONS': extraGenSnapshotOptions,
+          'FLUTTER_ROOT': flutterRoot.path,
+          'FRONTEND_SERVER_STARTER_PATH': frontendServerStarterPath,
+          'INFOPLIST_PATH': 'Info.plist',
+          'SDKROOT': sdkRoot,
+          'SPLIT_DEBUG_INFO': splitDebugInfo,
+          'TRACK_WIDGET_CREATION': trackWidgetCreation,
+          'TREE_SHAKE_ICONS': treeShake,
+        },
+        commands: <FakeCommand>[
+          FakeCommand(
+            command: <String>[
+              '${flutterRoot.path}/bin/flutter',
+              'assemble',
+              '--no-version-check',
+              '--output=${buildDir.path}/',
+              '-dTargetPlatform=ios',
+              '-dTargetFile=lib/main.dart',
+              '-dBuildMode=${buildMode.toLowerCase()}',
+              '-dIosArchs=$archs',
+              '-dSdkRoot=$sdkRoot',
+              '-dSplitDebugInfo=$splitDebugInfo',
+              '-dTreeShakeIcons=$treeShake',
+              '-dTrackWidgetCreation=$trackWidgetCreation',
+              '-dDartObfuscation=$dartObfuscation',
+              '-dAction=install',
+              '-dFrontendServerStarterPath=$frontendServerStarterPath',
+              '--ExtraGenSnapshotOptions=$extraGenSnapshotOptions',
+              '--DartDefines=$dartDefines',
+              '--ExtraFrontEndOptions=$extraFrontEndOptions',
+              '-dFlavor=strawberry',
               '-dPreBuildAction=PrepareFramework',
               '-dCodesignIdentity=$expandedCodeSignIdentity',
               'release_unpack_ios',
