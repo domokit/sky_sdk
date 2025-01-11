@@ -12,6 +12,147 @@ namespace impeller {
 
 namespace {
 
+// An interface for classes that arranges a point list that forms a convex
+// contour into a triangle strip.
+class ConvexTessellator {
+ public:
+  ConvexTessellator() {}
+
+  virtual ~ConvexTessellator() {}
+
+  virtual size_t ContourLength() const = 0;
+
+  virtual Point GetPoint(size_t i) const = 0;
+
+  void RearrangeIntoTriangleStrip(Point* output) {
+    size_t index_count = 0;
+
+    output[index_count++] = GetPoint(0);
+
+    size_t a = 1;
+    size_t contour_length = ContourLength();
+    size_t b = contour_length - 1;
+    while (a < b) {
+      output[index_count++] = GetPoint(a);
+      output[index_count++] = GetPoint(b);
+      a++;
+      b--;
+    }
+    if (a == b) {
+      output[index_count++] = GetPoint(b);
+    }
+  }
+
+ private:
+  ConvexTessellator(const ConvexTessellator&) = delete;
+  ConvexTessellator& operator=(const ConvexTessellator&) = delete;
+};
+
+// A convex tessellator whose contour is concatenated from 4 quadrant segments.
+//
+// The input quadrant curves must travel from the Y axis to the X axis, and
+// include both ends. This means that the points on the axes are duplicate
+// between segments, and will be omitted by this class.
+class UnevenQuadrantsTessellator : public ConvexTessellator {
+ public:
+  UnevenQuadrantsTessellator(Point* cache, size_t segment_capacity)
+      : cache_(cache), segment_capacity_(segment_capacity) {}
+
+  Point* QuadCache(size_t i) { return cache_ + segment_capacity_ * i; }
+
+  const Point* QuadCache(size_t i) const {
+    return cache_ + segment_capacity_ * i;
+  }
+
+  size_t& QuadSize(size_t i) { return lengths_[i]; }
+
+  size_t ContourLength() const override {
+    return lengths_[0] + lengths_[1] + lengths_[2] + lengths_[3] - 4;
+  }
+
+  Point GetPoint(size_t i) const override {
+    //   output            from       index
+    //      0 ... l0-2    quads[0]   0    ... l0-2
+    // next 0 ... l1-2    quads[1]   l1-1 ... 1
+    // next 0 ... l2-2    quads[2]   0    ... l2-2
+    // next 0 ... l3-2    quads[3]   l3-1 ... 1
+    size_t high = lengths_[0] - 1;
+    if (i < high) {
+      return QuadCache(0)[i];
+    }
+    high += lengths_[1] - 1;
+    if (i < high) {
+      return QuadCache(1)[high - i];
+    }
+    size_t low = high;
+    high += lengths_[2] - 1;
+    if (i < high) {
+      return QuadCache(2)[i - low];
+    }
+    high += lengths_[3] - 1;
+    if (i < high) {
+      return QuadCache(3)[high - i];
+    } else {
+      // Unreachable
+      return Point();
+    }
+  }
+
+ private:
+  Point* cache_;
+  size_t segment_capacity_;
+  size_t lengths_[4];
+};
+
+// A convex tessellator whose contour is concatenated from 4 identical quadrant
+// segments.
+//
+// The input curve must travel from the Y axis to the X axis and include both
+// ends. This means that the points on the axes are duplicate between segments,
+// and will be omitted by this class.
+class MirroredQuadrantTessellator : public ConvexTessellator {
+ public:
+  MirroredQuadrantTessellator(Point center, Point* cache)
+      : center_(center), cache_(cache) {}
+
+  size_t& QuadSize() { return l_; }
+
+  size_t ContourLength() const override { return l_ * 4 - 4; }
+
+  Point GetPoint(size_t i) const override {
+    //   output          from   index
+    //      0 ... l-2    quad   0   ... l-2
+    // next 0 ... l-2    quad   l-1 ... 1
+    // next 0 ... l-2    quad   0   ... l-2
+    // next 0 ... l-2    quad   l-1 ... 1
+    size_t high = l_ - 1;
+    if (i < high) {
+      return cache_[i] + center_;
+    }
+    high += l_ - 1;
+    if (i < high) {
+      return cache_[high - i] * Point{1, -1} + center_;
+    }
+    size_t low = high;
+    high += l_ - 1;
+    if (i < high) {
+      return cache_[i - low] * Point{-1, -1} + center_;
+    }
+    high += l_ - 1;
+    if (i < high) {
+      return cache_[high - i] * Point{-1, 1} + center_;
+    } else {
+      // Unreachable
+      return Point();
+    }
+  }
+
+ private:
+  Point center_;
+  Point* cache_;
+  size_t l_ = 0;
+};
+
 // A matrix that swaps the coordinates of a point.
 // clang-format off
 constexpr Matrix kFlip = Matrix(
@@ -311,7 +452,6 @@ size_t DrawOctantSquareLikeSquircle(Point* output,
 // The eact quadrant is specified by the direction of `outer` relative to
 // `center`. The curve goes from the X axis to the Y axis.
 static size_t DrawQuadrant(Point* output,
-                           Point* octant_cache,
                            Point center,
                            Point outer,
                            Size radii) {
@@ -353,143 +493,6 @@ static size_t DrawQuadrant(Point* output,
   return next - output;
 }
 
-// An interface for classes that arranges a point list that forms a convex
-// contour into a triangle strip.
-class ConvexTessellator {
- public:
-  ConvexTessellator() {}
-
-  virtual ~ConvexTessellator() {}
-
-  virtual size_t ContourLength() const = 0;
-
-  virtual Point GetPoint(size_t i) const = 0;
-
-  void RearrangeIntoTriangleStrip(Point* output) {
-    size_t index_count = 0;
-
-    output[index_count++] = GetPoint(0);
-
-    size_t a = 1;
-    size_t contour_length = ContourLength();
-    size_t b = contour_length - 1;
-    while (a < b) {
-      output[index_count++] = GetPoint(a);
-      output[index_count++] = GetPoint(b);
-      a++;
-      b--;
-    }
-    if (a == b) {
-      output[index_count++] = GetPoint(b);
-    }
-  }
-};
-
-// A convex tessellator whose contour is concatenated from 4 quadrant segments.
-//
-// The input quadrant curves must travel from the Y axis to the X axis, and
-// include both ends. This means that the points on the axes are duplicate
-// between segments, and will be omitted by this class.
-class UnevenQuadrantsTessellator : public ConvexTessellator {
- public:
-  UnevenQuadrantsTessellator(Point* cache, size_t segment_capacity)
-      : cache_(cache), segment_capacity_(segment_capacity) {}
-
-  Point* QuadCache(size_t i) { return cache_ + segment_capacity_ * i; }
-
-  const Point* QuadCache(size_t i) const {
-    return cache_ + segment_capacity_ * i;
-  }
-
-  size_t& QuadSize(size_t i) { return lengths_[i]; }
-
-  size_t ContourLength() const override {
-    return lengths_[0] + lengths_[1] + lengths_[2] + lengths_[3] - 4;
-  }
-
-  Point GetPoint(size_t i) const override {
-    //   output            from       index
-    //      0 ... l0-2    quads[0]   0    ... l0-2
-    // next 0 ... l1-2    quads[1]   l1-1 ... 1
-    // next 0 ... l2-2    quads[2]   0    ... l2-2
-    // next 0 ... l3-2    quads[3]   l3-1 ... 1
-    size_t high = lengths_[0] - 1;
-    if (i < high) {
-      return QuadCache(0)[i];
-    }
-    high += lengths_[1] - 1;
-    if (i < high) {
-      return QuadCache(1)[high - i];
-    }
-    size_t low = high;
-    high += lengths_[2] - 1;
-    if (i < high) {
-      return QuadCache(2)[i - low];
-    }
-    high += lengths_[3] - 1;
-    if (i < high) {
-      return QuadCache(3)[high - i];
-    } else {
-      // Unreachable
-      return Point();
-    }
-  }
-
- private:
-  Point* cache_;
-  size_t segment_capacity_;
-  size_t lengths_[4];
-};
-
-// A convex tessellator whose contour is concatenated from 4 identical quadrant
-// segments.
-//
-// The input curve must travel from the Y axis to the X axis and include both
-// ends. This means that the points on the axes are duplicate between segments,
-// and will be omitted by this class.
-class MirroredQuadrantTessellator : public ConvexTessellator {
- public:
-  MirroredQuadrantTessellator(Point center, Point* cache)
-      : center_(center), cache_(cache) {}
-
-  size_t& QuadSize() { return l_; }
-
-  size_t ContourLength() const override { return l_ * 4 - 4; }
-
-  Point GetPoint(size_t i) const override {
-    //   output          from   index
-    //      0 ... l-2    quad   0   ... l-2
-    // next 0 ... l-2    quad   l-1 ... 1
-    // next 0 ... l-2    quad   0   ... l-2
-    // next 0 ... l-2    quad   l-1 ... 1
-    size_t high = l_ - 1;
-    if (i < high) {
-      return cache_[i] + center_;
-    }
-    high += l_ - 1;
-    if (i < high) {
-      return cache_[high - i] * Point{1, -1} + center_;
-    }
-    size_t low = high;
-    high += l_ - 1;
-    if (i < high) {
-      return cache_[i - low] * Point{-1, -1} + center_;
-    }
-    high += l_ - 1;
-    if (i < high) {
-      return cache_[high - i] * Point{-1, 1} + center_;
-    } else {
-      // Unreachable
-      return Point();
-    }
-  }
-
- private:
-  Point center_;
-  Point* cache_;
-  size_t l_ = 0;
-};
-
 }  // namespace
 
 RoundSuperellipseGeometry::RoundSuperellipseGeometry(const Rect& bounds,
@@ -507,22 +510,14 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
     const ContentContext& renderer,
     const Entity& entity,
     RenderPass& pass) const {
-  // The cache is allocated as follows:
-  //
-  //  * The first chunk stores the quadrant arc.
-  //  * The second chunk stores an octant arc before flipping and translation.
   Point* cache = renderer.GetTessellator().GetStrokePointCache().data();
 
-  // The memory size (in units of Points) allocated to store the first chunk.
-  constexpr size_t kMaxQuadSize = kPointArenaSize / 5;
+  // The memory size (in units of Points) allocated to store each quadrants.
+  constexpr size_t kMaxQuadSize = kPointArenaSize / 4;
   // Since the curve is traversed in steps bounded by kMaxQuadrantSteps, the
   // curving part will have fewer points than kMaxQuadrantSteps. Multiply it by
   // 2 for storing other sporatic points (an extremely conservative estimate).
   static_assert(kMaxQuadSize > 2 * kMaxQuadrantSteps);
-
-  Point* octant_cache = cache + kMaxQuadSize * 4;
-
-  // === SPLITS ===
 
   ConvexTessellator* tessellator;
   std::variant<std::monostate, MirroredQuadrantTessellator,
@@ -532,18 +527,16 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
   if (radii_.AreAllCornersSame()) {
     tessellator_holder.emplace<MirroredQuadrantTessellator>(bounds_.GetCenter(),
                                                             cache);
-    MirroredQuadrantTessellator& t =
-        std::get<MirroredQuadrantTessellator>(tessellator_holder);
+    auto& t = std::get<MirroredQuadrantTessellator>(tessellator_holder);
     tessellator = &t;
 
     // The quadrant must be drawn at the origin so that it can be rotated later.
-    t.QuadSize() = DrawQuadrant(cache, octant_cache, Point(),
+    t.QuadSize() = DrawQuadrant(cache, Point(),
                                 bounds_.GetRightTop() - bounds_.GetCenter(),
                                 radii_.top_right);
   } else {
     tessellator_holder.emplace<UnevenQuadrantsTessellator>(cache, kMaxQuadSize);
-    UnevenQuadrantsTessellator& t =
-        std::get<UnevenQuadrantsTessellator>(tessellator_holder);
+    auto& t = std::get<UnevenQuadrantsTessellator>(tessellator_holder);
     tessellator = &t;
 
     Scalar top_split = Split(bounds_.GetLeft(), bounds_.GetRight(),
@@ -558,18 +551,16 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
         Split(bounds_.GetTop(), bounds_.GetBottom(), radii_.top_left.height,
               radii_.bottom_left.height);
 
-    t.QuadSize(0) = DrawQuadrant(t.QuadCache(0), octant_cache,
-                                 Point{top_split, right_split},
+    t.QuadSize(0) = DrawQuadrant(t.QuadCache(0), Point{top_split, right_split},
                                  bounds_.GetRightTop(), radii_.top_right);
-    t.QuadSize(1) = DrawQuadrant(t.QuadCache(1), octant_cache,
-                                 Point{bottom_split, right_split},
-                                 bounds_.GetRightBottom(), radii_.bottom_right);
-    t.QuadSize(2) = DrawQuadrant(t.QuadCache(2), octant_cache,
-                                 Point{bottom_split, left_split},
-                                 bounds_.GetLeftBottom(), radii_.bottom_left);
-    t.QuadSize(3) =
-        DrawQuadrant(t.QuadCache(3), octant_cache, Point{top_split, left_split},
-                     bounds_.GetLeftTop(), radii_.top_left);
+    t.QuadSize(1) =
+        DrawQuadrant(t.QuadCache(1), Point{bottom_split, right_split},
+                     bounds_.GetRightBottom(), radii_.bottom_right);
+    t.QuadSize(2) =
+        DrawQuadrant(t.QuadCache(2), Point{bottom_split, left_split},
+                     bounds_.GetLeftBottom(), radii_.bottom_left);
+    t.QuadSize(3) = DrawQuadrant(t.QuadCache(3), Point{top_split, left_split},
+                                 bounds_.GetLeftTop(), radii_.top_left);
   }
 
   size_t contour_length = tessellator->ContourLength();
