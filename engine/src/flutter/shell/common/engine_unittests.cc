@@ -64,6 +64,7 @@ class MockDelegate : public Engine::Delegate {
               OnEngineUpdateSemantics,
               (SemanticsNodeUpdates, CustomAccessibilityActionUpdates),
               (override));
+  MOCK_METHOD(void, OnEngineSetSemanticsTreeEnabled, (bool), (override));
   MOCK_METHOD(void,
               OnEngineHandlePlatformMessage,
               (std::unique_ptr<PlatformMessage>),
@@ -111,6 +112,7 @@ class MockRuntimeDelegate : public RuntimeDelegate {
               UpdateSemantics,
               (SemanticsNodeUpdates, CustomAccessibilityActionUpdates),
               (override));
+  MOCK_METHOD(void, SetSemanticsTreeEnabled, (bool), (override));
   MOCK_METHOD(void,
               HandlePlatformMessage,
               (std::unique_ptr<PlatformMessage>),

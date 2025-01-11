@@ -440,9 +440,15 @@ void RuntimeController::CheckIfAllViewsRendered() {
 
 // |PlatformConfigurationClient|
 void RuntimeController::UpdateSemantics(SemanticsUpdate* update) {
-  if (platform_data_.semantics_enabled) {
+  if (semantics_tree_enabled_) {
     client_.UpdateSemantics(update->takeNodes(), update->takeActions());
   }
+}
+
+// |PlatformConfigurationClient|
+void RuntimeController::SetSemanticsTreeEnabled(bool enabled) {
+  semantics_tree_enabled_ = enabled;
+  client_.SetSemanticsTreeEnabled(enabled);
 }
 
 // |PlatformConfigurationClient|

@@ -757,6 +757,15 @@ class EnginePlatformDispatcher extends ui.PlatformDispatcher {
     Timer.run(drawFrame);
   }
 
+  @override
+  void setSemanticsTreeEnabled(bool enabled) {
+    if (!enabled) {
+      for (final EngineFlutterView view in views) {
+        view.semantics.reset();
+      }
+    }
+  }
+
   /// Updates the application's rendering on the GPU with the newly provided
   /// [Scene]. This function must be called within the scope of the
   /// [onBeginFrame] or [onDrawFrame] callbacks being invoked. If this function
