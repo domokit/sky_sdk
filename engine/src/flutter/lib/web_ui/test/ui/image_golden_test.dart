@@ -381,6 +381,7 @@ Future<void> testMain() async {
     expect(codec.frameCount, 1);
 
     final ui.FrameInfo info = await codec.getNextFrame();
+    codec.dispose();
     return info.image;
   });
 
@@ -393,6 +394,7 @@ Future<void> testMain() async {
     expect(codec.frameCount, 1);
 
     final ui.FrameInfo info = await codec.getNextFrame();
+    codec.dispose();
     expect(info.image.width, 3024);
     expect(info.image.height, 4032);
   });
@@ -424,6 +426,7 @@ Future<void> testMain() async {
       await completer.future;
 
       final DomImageBitmap bitmap = await createImageBitmap(image as JSObject);
+      domWindow.URL.revokeObjectURL(url);
 
       expect(bitmap.width.toDartInt, 150);
       expect(bitmap.height.toDartInt, 150);
@@ -471,6 +474,7 @@ Future<void> testMain() async {
         height: 150,
         transferOwnership: false,
       );
+      domWindow.URL.revokeObjectURL(url);
       return uiImage;
     });
   }
@@ -485,6 +489,7 @@ Future<void> testMain() async {
     expect(codec.frameCount, 1);
 
     final ui.FrameInfo info = await codec.getNextFrame();
+    codec.dispose();
     return info.image;
   });
 }

@@ -30,6 +30,7 @@ Future<void> testMain() async {
     expect(codec.frameCount, 1);
 
     final ui.FrameInfo info = await codec.getNextFrame();
+    codec.dispose();
     final ui.Image image = info.image;
     expect(image.width, 128);
     expect(image.height, 128);

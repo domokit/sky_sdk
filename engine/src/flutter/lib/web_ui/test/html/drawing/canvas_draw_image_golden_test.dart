@@ -39,6 +39,7 @@ Future<void> testMain() async {
       final Uint8List imageData = base64Decode(base64PngData);
       final Codec codec = await instantiateImageCodec(imageData);
       final FrameInfo frameInfo = await codec.getNextFrame();
+      codec.dispose();
 
       const Rect bounds = Rect.fromLTRB(0, 0, 400, 300);
       final EnginePictureRecorder recorder = EnginePictureRecorder();

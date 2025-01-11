@@ -14,6 +14,7 @@ void main() {
     final Uint8List bytes = await _readFile('2x2.png');
     final Codec codec = await instantiateImageCodec(bytes);
     final FrameInfo frame = await codec.getNextFrame();
+    codec.dispose();
 
     expect(frame.image.width, 2);
     expect(frame.image.height, 2);
@@ -33,6 +34,7 @@ void main() {
     final Uint8List bytes = await _readFile('2x2.png');
     final Codec codec = await instantiateImageCodec(bytes);
     final FrameInfo frame = await codec.getNextFrame();
+    codec.dispose();
 
     expect(frame.image.width, 2);
     expect(frame.image.height, 2);
@@ -71,6 +73,7 @@ void main() {
     final Uint8List bytes = await _readFile('2x2.png');
     final Codec codec = await instantiateImageCodec(bytes);
     final FrameInfo frame = await codec.getNextFrame();
+    codec.dispose();
 
     final Image handle1 = frame.image.clone();
     final Image handle2 = handle1.clone();
@@ -97,6 +100,7 @@ void main() {
     final Uint8List bytes = await _readFile('2x2.png');
     final Codec codec = await instantiateImageCodec(bytes);
     final FrameInfo frame = await codec.getNextFrame();
+    codec.dispose();
 
     final Image handle1 = frame.image.clone();
     final Image handle2 = handle1.clone();
@@ -112,6 +116,7 @@ void main() {
 
     final Codec codec2 = await instantiateImageCodec(bytes);
     final FrameInfo frame2 = await codec2.getNextFrame();
+    codec2.dispose();
 
     expect(frame2.image.isCloneOf(frame.image), false);
   });
@@ -120,6 +125,7 @@ void main() {
     final Uint8List bytes = await _readFile('2x2.png');
     final Codec codec = await instantiateImageCodec(bytes);
     final FrameInfo frame = await codec.getNextFrame();
+    codec.dispose();
 
     expect(frame.image.debugDisposed, false);
 

@@ -22,6 +22,7 @@ void main() {
 
     final Codec codec = await descriptor.instantiateCodec();
     expect(codec.frameCount, 1);
+    codec.dispose();
   });
 
   test('basic image descriptor - encoded - square', () async {
@@ -35,6 +36,7 @@ void main() {
 
     final Codec codec = await descriptor.instantiateCodec();
     expect(codec.frameCount, 1);
+    codec.dispose();
   });
 
   test('basic image descriptor - encoded - animated', () async {
@@ -49,6 +51,7 @@ void main() {
     final Codec codec = await descriptor.instantiateCodec();
     expect(codec.frameCount, 4);
     expect(codec.repetitionCount, -1);
+    codec.dispose();
   });
 
   test('basic image descriptor - raw', () async {
@@ -68,6 +71,7 @@ void main() {
 
     final Codec codec = await descriptor.instantiateCodec();
     expect(codec.frameCount, 1);
+    codec.dispose();
   });
 
   test('HEIC image', () async {
@@ -81,6 +85,7 @@ void main() {
 
     final Codec codec = await descriptor.instantiateCodec();
     expect(codec.frameCount, 1);
+    codec.dispose();
   }, skip: !(Platform.isAndroid || Platform.isIOS || Platform.isMacOS || Platform.isWindows));
 }
 
