@@ -1035,11 +1035,22 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
                 ? textField
                 : _DropdownMenuBody(
                   width: widget.width,
+                  // The children, except the text field, are used to compute the preferred width,
+                  // which is the width of the longest children, plus the width of trailingButton
+                  // and leadingButton.
+                  //
+                  // See _RenderDropdownMenuBody layout logic.
                   children: <Widget>[
                     textField,
                     ..._initialMenu!.map(
                       (Widget item) => ExcludeFocus(excluding: !controller.isOpen, child: item),
                     ),
+                    if (widget.label != null)
+                      Padding(
+                        // See RenderEditable.floatingCursorAddedMargin for the default horizontal padding.
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: DefaultTextStyle(style: effectiveTextStyle!, child: widget.label!),
+                      ),
                     trailingButton,
                     leadingButton,
                   ],
@@ -1273,9 +1284,11 @@ class _RenderDropdownMenuBody extends RenderBox
         continue;
       }
       final double maxIntrinsicWidth = child.getMinIntrinsicWidth(height);
+      // Add the width of leading icon.
       if (child == lastChild) {
         width += maxIntrinsicWidth;
       }
+      // Add the width of trailing icon.
       if (child == childBefore(lastChild!)) {
         width += maxIntrinsicWidth;
       }
@@ -1300,11 +1313,11 @@ class _RenderDropdownMenuBody extends RenderBox
         continue;
       }
       final double maxIntrinsicWidth = child.getMaxIntrinsicWidth(height);
-      // Add the width of leading Icon.
+      // Add the width of leading icon.
       if (child == lastChild) {
         width += maxIntrinsicWidth;
       }
-      // Add the width of trailing Icon.
+      // Add the width of trailing icon.
       if (child == childBefore(lastChild!)) {
         width += maxIntrinsicWidth;
       }
