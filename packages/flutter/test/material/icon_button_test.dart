@@ -28,10 +28,8 @@ void main() {
     mockOnPressedFunction = MockOnPressedFunction();
   });
 
-  RenderObject getOverlayColor(WidgetTester tester) {
-    return tester.allRenderObjects.firstWhere(
-      (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-    );
+  SplashController splashController(WidgetTester tester) {
+    return Material.of(tester.element(find.byType(Icon)));
   }
 
   Finder findTooltipContainer(String tooltipText) {
@@ -1219,7 +1217,7 @@ void main() {
     await gesture.moveTo(center);
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints..rect(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.08)),
     );
 
@@ -1227,7 +1225,7 @@ void main() {
     await gesture.down(center);
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints
         ..rect()
         ..rect(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.1)),
@@ -1242,7 +1240,7 @@ void main() {
     focusNode.requestFocus();
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints..rect(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.1)),
     );
 
@@ -1359,7 +1357,7 @@ void main() {
     await gesture.moveTo(center);
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints..rect(color: theme.colorScheme.onPrimary.withOpacity(0.08)),
     );
 
@@ -1367,7 +1365,7 @@ void main() {
     await gesture.down(center);
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints
         ..rect()
         ..rect(color: theme.colorScheme.onPrimary.withOpacity(0.1)),
@@ -1382,7 +1380,7 @@ void main() {
     focusNode.requestFocus();
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints..rect(color: theme.colorScheme.onPrimary.withOpacity(0.1)),
     );
 
@@ -1616,7 +1614,7 @@ void main() {
     await gesture.moveTo(center);
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints..rect(color: theme.colorScheme.onSecondaryContainer.withOpacity(0.08)),
     );
 
@@ -1624,7 +1622,7 @@ void main() {
     await gesture.down(center);
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints
         ..rect()
         ..rect(color: theme.colorScheme.onSecondaryContainer.withOpacity(0.1)),
@@ -1639,7 +1637,7 @@ void main() {
     focusNode.requestFocus();
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints..rect(color: theme.colorScheme.onSecondaryContainer.withOpacity(0.1)),
     );
 
@@ -1876,7 +1874,7 @@ void main() {
     await gesture.moveTo(center);
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints..rect(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.08)),
     );
 
@@ -1884,7 +1882,7 @@ void main() {
     await gesture.down(center);
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints
         ..rect()
         ..rect(color: theme.colorScheme.onSurface.withOpacity(0.1)),
@@ -1899,7 +1897,7 @@ void main() {
     focusNode.requestFocus();
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints..rect(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.08)),
     );
 
@@ -2609,13 +2607,13 @@ void main() {
     await gesture.addPointer();
     await gesture.moveTo(center);
     await tester.pumpAndSettle();
-    expect(getOverlayColor(tester), paints..rect(color: overlayColor.withOpacity(0.08)));
+    expect(splashController(tester), paints..rect(color: overlayColor.withOpacity(0.08)));
 
     // Highlighted (pressed).
     await gesture.down(center);
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints
         ..rect(color: overlayColor.withOpacity(0.08))
         ..rect(color: overlayColor.withOpacity(0.1)),
@@ -2629,7 +2627,7 @@ void main() {
     // Focused.
     await tester.sendKeyEvent(LogicalKeyboardKey.tab);
     await tester.pumpAndSettle();
-    expect(getOverlayColor(tester), paints..rect(color: overlayColor.withOpacity(0.1)));
+    expect(splashController(tester), paints..rect(color: overlayColor.withOpacity(0.1)));
   });
 
   testWidgets('IconButton.styleFrom highlight, hover, focus colors overrides overlayColor', (
@@ -2665,13 +2663,13 @@ void main() {
     await gesture.addPointer();
     await gesture.moveTo(center);
     await tester.pumpAndSettle();
-    expect(getOverlayColor(tester), paints..rect(color: hoverColor));
+    expect(splashController(tester), paints..rect(color: hoverColor));
 
     // Highlighted (pressed).
     await gesture.down(center);
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints
         ..rect(color: hoverColor)
         ..rect(color: highlightColor),
@@ -2685,7 +2683,7 @@ void main() {
     // Focused.
     await tester.sendKeyEvent(LogicalKeyboardKey.tab);
     await tester.pumpAndSettle();
-    expect(getOverlayColor(tester), paints..rect(color: focusColor));
+    expect(splashController(tester), paints..rect(color: focusColor));
   });
 
   testWidgets('IconButton.styleFrom with transparent overlayColor', (WidgetTester tester) async {
@@ -2710,13 +2708,13 @@ void main() {
     await gesture.addPointer();
     await gesture.moveTo(center);
     await tester.pumpAndSettle();
-    expect(getOverlayColor(tester), paints..rect(color: overlayColor));
+    expect(splashController(tester), paints..rect(color: overlayColor));
 
     // Highlighted (pressed).
     await gesture.down(center);
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      splashController(tester),
       paints
         ..rect(color: overlayColor)
         ..rect(color: overlayColor),
@@ -2730,7 +2728,7 @@ void main() {
     // Focused.
     await tester.sendKeyEvent(LogicalKeyboardKey.tab);
     await tester.pumpAndSettle();
-    expect(getOverlayColor(tester), paints..rect(color: overlayColor));
+    expect(splashController(tester), paints..rect(color: overlayColor));
   });
 
   group('IconTheme tests in Material 3', () {
@@ -3011,7 +3009,7 @@ void main() {
     await gesture.down(topLeft);
     await tester.pumpAndSettle();
     expect(
-      getOverlayColor(tester),
+      Material.of(tester.element(find.byType(ColoredBox))),
       paints
         ..rect(color: const Color(0xFFFF0000)) // ColoredBox.
         ..rect(color: const Color(0xFF00FF00)), // IconButton overlay.

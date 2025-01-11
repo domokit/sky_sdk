@@ -1365,31 +1365,26 @@ void main() {
         ),
       );
 
-      RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
-        (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-      );
+      final Finder findDatePicker = find.byType(CalendarDatePicker);
+      SplashController controller = Material.of(tester.element(findDatePicker));
       expect(
-        inkFeatures,
+        controller,
         isNot(
           paints..circle(radius: 35.0, color: theme.colorScheme.onSurfaceVariant.withOpacity(0.08)),
         ),
       );
-      expect(inkFeatures, paintsExactlyCountTimes(#clipPath, 0));
+      expect(controller, paintsExactlyCountTimes(#clipPath, 0));
 
       final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       await gesture.addPointer();
       await gesture.moveTo(tester.getCenter(find.text('25')));
       await tester.pumpAndSettle();
-      inkFeatures = tester.allRenderObjects.firstWhere(
-        (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-      );
+      controller = Material.of(tester.element(findDatePicker));
       expect(
-        inkFeatures,
-        paints
-          ..circle()
-          ..circle(radius: 35.0, color: theme.colorScheme.onSurfaceVariant.withOpacity(0.08)),
+        controller,
+        paints..circle(radius: 35.0, color: theme.colorScheme.onSurfaceVariant.withOpacity(0.08)),
       );
-      expect(inkFeatures, paintsExactlyCountTimes(#clipPath, 1));
+      expect(controller, paintsExactlyCountTimes(#clipPath, 1));
 
       final Rect expectedClipRect = Rect.fromCircle(
         center: const Offset(400.0, 241.0),
@@ -1397,7 +1392,7 @@ void main() {
       );
       final Path expectedClipPath = Path()..addRect(expectedClipRect);
       expect(
-        inkFeatures,
+        controller,
         paints..clipPath(
           pathMatcher: coversSameAreaAs(
             expectedClipPath,

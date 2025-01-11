@@ -288,13 +288,15 @@ void main() {
       await gesture.moveTo(tester.getCenter(find.byType(NavigationIndicator).last));
       await tester.pumpAndSettle();
 
-      final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
-        (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
+      // This test extracts the controller from the allRenderObjects iterable
+      // in order to prevent some wonkiness when running via skwasm.
+      final RenderObject controller = tester.allRenderObjects.firstWhere(
+        (RenderObject object) => object.runtimeType.toString() == '_RenderSplashes',
       );
 
       // Test hovered state.
       expect(
-        inkFeatures,
+        controller,
         kIsWeb
             ? (paints
               ..rrect()
@@ -308,7 +310,7 @@ void main() {
 
       // Test pressed state.
       expect(
-        inkFeatures,
+        controller,
         kIsWeb
             ? (paints
               ..circle()
@@ -328,7 +330,7 @@ void main() {
 
       // Test focused state.
       expect(
-        inkFeatures,
+        controller,
         kIsWeb
             ? (paints
               ..circle()

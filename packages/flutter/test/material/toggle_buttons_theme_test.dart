@@ -460,11 +460,12 @@ void main() {
     await touchGesture.down(center);
     await tester.pumpAndSettle();
 
-    RenderObject inkFeatures;
-    inkFeatures = tester.allRenderObjects.firstWhere((RenderObject object) {
-      return object.runtimeType.toString() == '_RenderInkFeatures';
-    });
-    expect(inkFeatures, paints..circle(color: splashColor));
+    SplashController splashController() {
+      final BuildContext context = tester.element(find.text('First child'));
+      return Material.of(context);
+    }
+
+    expect(splashController(), paints..circle(color: splashColor));
 
     await touchGesture.up();
     await tester.pumpAndSettle();
@@ -475,19 +476,13 @@ void main() {
     await hoverGesture.moveTo(center);
     await tester.pumpAndSettle();
 
-    inkFeatures = tester.allRenderObjects.firstWhere((RenderObject object) {
-      return object.runtimeType.toString() == '_RenderInkFeatures';
-    });
-    expect(inkFeatures, paints..rect(color: hoverColor));
+    expect(splashController(), paints..rect(color: hoverColor));
     await hoverGesture.moveTo(Offset.zero);
 
     // focusColor
     focusNode.requestFocus();
     await tester.pumpAndSettle();
-    inkFeatures = tester.allRenderObjects.firstWhere((RenderObject object) {
-      return object.runtimeType.toString() == '_RenderInkFeatures';
-    });
-    expect(inkFeatures, paints..rect(color: focusColor));
+    expect(splashController(), paints..rect(color: focusColor));
 
     await hoverGesture.removePointer();
 

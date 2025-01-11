@@ -11,6 +11,14 @@ import 'package:flutter_test/flutter_test.dart';
 import '../widgets/semantics_tester.dart';
 
 void main() {
+  SplashController splashController(WidgetTester tester) {
+    final BuildContext context = tester.element(
+      find.descendant(of: find.byType(NavigationRail), matching: find.byType(Expanded)),
+    );
+
+    return Material.of(context);
+  }
+
   testWidgets('Custom selected and unselected textStyles are honored', (WidgetTester tester) async {
     const TextStyle selectedTextStyle = TextStyle(fontWeight: FontWeight.w300, fontSize: 17.0);
     const TextStyle unselectedTextStyle = TextStyle(fontWeight: FontWeight.w800, fontSize: 11.0);
@@ -3132,15 +3140,12 @@ void main() {
     await gesture.moveTo(tester.getCenter(find.byIcon(Icons.favorite_border)));
     await tester.pumpAndSettle();
 
-    final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
-      (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-    );
     const Rect indicatorRect = Rect.fromLTRB(12.0, 0.0, 68.0, 32.0);
     const Rect includedRect = indicatorRect;
     final Rect excludedRect = includedRect.inflate(10);
 
     expect(
-      inkFeatures,
+      splashController(tester),
       paints
         ..clipPath(
           pathMatcher: isPathThat(
@@ -3194,15 +3199,12 @@ void main() {
     await gesture.moveTo(tester.getCenter(find.byIcon(Icons.favorite_border)));
     await tester.pumpAndSettle();
 
-    final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
-      (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-    );
     const Rect indicatorRect = Rect.fromLTRB(12.0, 6.0, 68.0, 38.0);
     const Rect includedRect = indicatorRect;
     final Rect excludedRect = includedRect.inflate(10);
 
     expect(
-      inkFeatures,
+      splashController(tester),
       paints
         ..clipPath(
           pathMatcher: isPathThat(
@@ -3260,15 +3262,12 @@ void main() {
     await gesture.moveTo(tester.getCenter(find.byIcon(Icons.favorite_border)));
     await tester.pumpAndSettle();
 
-    final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
-      (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-    );
     const Rect indicatorRect = Rect.fromLTRB(22.0, 16.0, 78.0, 48.0);
     const Rect includedRect = indicatorRect;
     final Rect excludedRect = includedRect.inflate(10);
 
     expect(
-      inkFeatures,
+      splashController(tester),
       paints
         ..clipPath(
           pathMatcher: isPathThat(
@@ -3325,15 +3324,12 @@ void main() {
     await gesture.moveTo(tester.getCenter(find.byIcon(Icons.favorite_border)));
     await tester.pumpAndSettle();
 
-    final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
-      (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-    );
     const Rect indicatorRect = Rect.fromLTRB(-3.0, 6.0, 53.0, 38.0);
     const Rect includedRect = indicatorRect;
     final Rect excludedRect = includedRect.inflate(10);
 
     expect(
-      inkFeatures,
+      splashController(tester),
       paints
         ..clipPath(
           pathMatcher: isPathThat(
@@ -3392,15 +3388,12 @@ void main() {
     await gesture.moveTo(tester.getCenter(find.byIcon(Icons.favorite_border)));
     await tester.pumpAndSettle();
 
-    final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
-      (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-    );
     const Rect indicatorRect = Rect.fromLTRB(132.0, 16.0, 188.0, 48.0);
     const Rect includedRect = indicatorRect;
     final Rect excludedRect = includedRect.inflate(10);
 
     expect(
-      inkFeatures,
+      splashController(tester),
       paints
         ..clipPath(
           pathMatcher: isPathThat(
@@ -3455,10 +3448,6 @@ void main() {
     await gesture.moveTo(tester.getCenter(find.byIcon(Icons.favorite_border)));
     await tester.pumpAndSettle();
 
-    final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
-      (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-    );
-
     // Default values from M3 specification.
     const double indicatorHeight = 32.0;
     const double destinationWidth = 72.0;
@@ -3486,7 +3475,7 @@ void main() {
     const double secondIndicatorVerticalOffset = secondDestinationVerticalOffset;
 
     expect(
-      inkFeatures,
+      splashController(tester),
       paints
         ..clipPath(
           pathMatcher: isPathThat(
@@ -3553,10 +3542,6 @@ void main() {
     await gesture.moveTo(tester.getCenter(find.byIcon(Icons.favorite_border)));
     await tester.pumpAndSettle();
 
-    final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
-      (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-    );
-
     // Default values from M3 specification.
     const double railMinWidth = 80.0;
     const double indicatorHeight = 32.0;
@@ -3594,7 +3579,7 @@ void main() {
     const double secondIndicatorVerticalOffset = secondDestinationVerticalOffset + indicatorOffset;
 
     expect(
-      inkFeatures,
+      splashController(tester),
       paints
         ..clipPath(
           pathMatcher: isPathThat(
@@ -3660,10 +3645,6 @@ void main() {
     await gesture.moveTo(tester.getCenter(find.byIcon(Icons.favorite_border)));
     await tester.pumpAndSettle();
 
-    final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
-      (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-    );
-
     // Default values from M3 specification.
     const double railMinExtendedWidth = 256.0;
     const double indicatorHeight = 32.0;
@@ -3697,7 +3678,7 @@ void main() {
     const double secondDestinationHorizontalOffset = 800 - railMinExtendedWidth; // RTL.
 
     expect(
-      inkFeatures,
+      Material.of(tester.element(find.byType(NavigationRail))),
       paints
         ..clipPath(
           pathMatcher: isPathThat(

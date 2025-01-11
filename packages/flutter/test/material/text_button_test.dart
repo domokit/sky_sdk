@@ -68,10 +68,8 @@ void main() {
     // Material 3 uses the InkSparkle which uses a shader, so we can't capture
     // the effect with paint methods.
     if (!material3) {
-      final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
-        (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-      );
-      expect(inkFeatures, paints..circle(color: colorScheme.primary.withOpacity(0.12)));
+      final BuildContext context = tester.element(find.text('button'));
+      expect(Material.of(context), paints..circle(color: colorScheme.primary.withOpacity(0.12)));
     }
 
     await gesture.up();
@@ -464,10 +462,9 @@ void main() {
       ),
     );
 
-    RenderObject overlayColor() {
-      return tester.allRenderObjects.firstWhere(
-        (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-      );
+    SplashController splashController() {
+      final BuildContext context = tester.element(find.text('TextButton'));
+      return Material.of(context);
     }
 
     // Hovered.
@@ -476,13 +473,13 @@ void main() {
     await gesture.addPointer();
     await gesture.moveTo(center);
     await tester.pumpAndSettle();
-    expect(overlayColor(), paints..rect(color: theme.colorScheme.primary.withOpacity(0.08)));
+    expect(splashController(), paints..rect(color: theme.colorScheme.primary.withOpacity(0.08)));
 
     // Highlighted (pressed).
     await gesture.down(center);
     await tester.pumpAndSettle();
     expect(
-      overlayColor(),
+      splashController(),
       paints
         ..rect()
         ..rect(color: theme.colorScheme.primary.withOpacity(0.1)),
@@ -496,7 +493,7 @@ void main() {
     // Focused.
     focusNode.requestFocus();
     await tester.pumpAndSettle();
-    expect(overlayColor(), paints..rect(color: theme.colorScheme.primary.withOpacity(0.1)));
+    expect(splashController(), paints..rect(color: theme.colorScheme.primary.withOpacity(0.1)));
 
     focusNode.dispose();
   });
@@ -686,10 +683,8 @@ void main() {
     await gesture.moveTo(tester.getCenter(find.byType(TextButton)));
     await tester.pumpAndSettle();
 
-    final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
-      (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-    );
-    expect(inkFeatures, paints..rect(color: hoverColor));
+    final BuildContext context = tester.element(find.byType(Container));
+    expect(Material.of(context), paints..rect(color: hoverColor));
   });
 
   testWidgets('Does TextButton work with focus', (WidgetTester tester) async {
@@ -719,10 +714,8 @@ void main() {
     focusNode.requestFocus();
     await tester.pumpAndSettle();
 
-    final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
-      (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-    );
-    expect(inkFeatures, paints..rect(color: focusColor));
+    final BuildContext context = tester.element(find.text('button'));
+    expect(Material.of(context), paints..rect(color: focusColor));
 
     focusNode.dispose();
   });
@@ -2490,12 +2483,6 @@ void main() {
       ),
     );
 
-    RenderObject overlayColor() {
-      return tester.allRenderObjects.firstWhere(
-        (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
-      );
-    }
-
     final Offset center = tester.getCenter(find.byType(TextButton));
     final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.stylus);
     await gesture.addPointer();
@@ -2505,7 +2492,8 @@ void main() {
 
     await gesture.moveTo(center);
     await tester.pumpAndSettle();
-    expect(overlayColor(), paints..rect(color: theme.colorScheme.primary.withOpacity(0.08)));
+    final BuildContext context = tester.element(find.text('TextButton'));
+    expect(Material.of(context), paints..rect(color: theme.colorScheme.primary.withOpacity(0.08)));
     expect(hasBeenHovered, isTrue);
   });
 

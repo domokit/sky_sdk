@@ -187,18 +187,11 @@ void main() {
       return iconRichText.text.style;
     }
 
-    RenderObject overlayPainter(WidgetTester tester, TestMenu menuItem) {
-      return tester.renderObject(
-        find
-            .descendant(
-              of: findMenuItemButton(menuItem.label),
-              matching: find.byElementPredicate(
-                (Element element) =>
-                    element.renderObject.runtimeType.toString() == '_RenderInkFeatures',
-              ),
-            )
-            .last,
+    SplashController splashController(WidgetTester tester, TestMenu menuItem) {
+      final BuildContext context = tester.element(
+        find.descendant(of: findMenuItemButton(menuItem.label), matching: find.byType(InkWell)),
       );
+      return Material.of(context);
     }
 
     testWidgets('defaults are correct', (WidgetTester tester) async {
@@ -248,7 +241,7 @@ void main() {
       await tester.pump();
 
       expect(
-        overlayPainter(tester, selectedItem),
+        splashController(tester, selectedItem),
         paints..rect(color: themeData.colorScheme.onSurface.withOpacity(0.1).withAlpha(0)),
       );
 
@@ -257,7 +250,7 @@ void main() {
       await tester.pump();
 
       expect(
-        overlayPainter(tester, nonSelectedItem),
+        splashController(tester, nonSelectedItem),
         paints..rect(color: themeData.colorScheme.onSurface.withOpacity(0.08).withAlpha(0)),
       );
     });
@@ -302,7 +295,7 @@ void main() {
       await tester.pump();
 
       expect(
-        overlayPainter(tester, selectedItem),
+        splashController(tester, selectedItem),
         paints..rect(color: focusedOverlayColor.withAlpha(0)),
       );
 
@@ -311,7 +304,7 @@ void main() {
       await tester.pump();
 
       expect(
-        overlayPainter(tester, nonSelectedItem),
+        splashController(tester, nonSelectedItem),
         paints..rect(color: defaultOverlayColor.withAlpha(0)),
       );
     });
@@ -355,7 +348,7 @@ void main() {
       await tester.pump();
 
       expect(
-        overlayPainter(tester, selectedItem),
+        splashController(tester, selectedItem),
         paints..rect(color: focusedOverlayColor.withAlpha(0)),
       );
 
@@ -364,7 +357,7 @@ void main() {
       await tester.pump();
 
       expect(
-        overlayPainter(tester, nonSelectedItem),
+        splashController(tester, nonSelectedItem),
         paints..rect(color: defaultOverlayColor.withAlpha(0)),
       );
     });
@@ -417,7 +410,7 @@ void main() {
       await tester.pump();
 
       expect(
-        overlayPainter(tester, selectedItem),
+        splashController(tester, selectedItem),
         paints..rect(color: focusedOverlayColor.withAlpha(0)),
       );
 
@@ -426,7 +419,7 @@ void main() {
       await tester.pump();
 
       expect(
-        overlayPainter(tester, nonSelectedItem),
+        splashController(tester, nonSelectedItem),
         paints..rect(color: defaultOverlayColor.withAlpha(0)),
       );
     });
@@ -493,7 +486,7 @@ void main() {
       await tester.pump();
 
       expect(
-        overlayPainter(tester, selectedItem),
+        splashController(tester, selectedItem),
         paints..rect(color: focusedOverlayColor.withAlpha(0)),
       );
 
@@ -502,7 +495,7 @@ void main() {
       await tester.pump();
 
       expect(
-        overlayPainter(tester, nonSelectedItem),
+        splashController(tester, nonSelectedItem),
         paints..rect(color: defaultOverlayColor.withAlpha(0)),
       );
     });
