@@ -5,7 +5,6 @@
 Optimize for readability. Write detailed documentation.
 Make error messages useful.
 Never use timeouts or timers.
-Avoid `is`, `print`, `part of`, `extension` and `_`.
 
 ## Introduction
 
@@ -817,23 +816,6 @@ really is, and tends to encourage "spaghetti" code (where distant components ref
 than "lasagna" code (where each section of the code is cleanly layered and separable).
 
 
-### Avoid using `extension`.
-
-Extension methods are confusing to document and discover. To an end developer,
-they appear no different than the built-in API of the class, and discovering
-the documentation and implementation of an extension is more challenging than
-for class members.
-
-Prefer instead adding methods directly to relevant classes. If that is not
-possible, create a method that clearly identifies what object(s) it works with
-and is part of.
-
-(A rare exception can be made for extensions that provide temporary workarounds
-when deprecating features. In those cases, however, the extensions and all their
-members must be deprecated in the PR that adds them, and they must be removed
-in accordance with our deprecation policy.)
-
-
 ### Avoid using `FutureOr<T>`
 
 The `FutureOr` type is a Dart-internal type used to explain certain aspects of the `Future` API. In public APIs, avoid the temptation to create APIs that are both synchronous and asynchronous by returning this type, as it usually only results in the API being more confusing and less type safe.
@@ -1473,6 +1455,72 @@ Now that the Flutter framework is mature, we expect every new widget to implemen
 It's the job of the programmer to provide these before submitting a PR.
 
 It's the job of the reviewer to check that all these are present when reviewing a PR.
+
+
+### Effect of `extension` on API usability.
+
+#### Extension types
+
+An [extension type](https://dart.dev/language/extension-types) wraps
+an existing API with a different static interface.
+
+```dart
+extension type SimpleAPI._(SomeAPI _someAPI) implements Object {
+  void run() {
+    _someAPI.method1();
+    _someAPI.method2();
+  }
+}
+```
+
+ * `SimpleAPI` is an _extension type_.
+ * `SomeAPI` is the _representation type_ (and `_someAPI` is the "representation field").
+ * `Object` is the _supertype_.
+ * `run()` is "a `SimpleAPI` method".
+
+Oftentimes a class can be modified directly to improve its API surface,
+but in some cases the simplest solution is to expose the ideal interface
+with an extension type.
+
+The supertype defaults to `Object?` if no `implements` clause is included.\
+Prefer specifying a non-nullable supertype (e.g. `implements Object`) when
+the representation type is non-nullable: this improves static analysis for
+null-checks.
+
+#### Extension methods
+
+[Extension methods](https://dart.dev/language/extension-methods) are
+additional fields applied to an existing API.
+
+```dart
+extension RunMethod on SomeAPI {
+  void run() {
+    method1();
+    method2();
+  }
+}
+```
+
+ * `RunMethod` is an _extension_.
+ * `SomeAPI` is the _"on" type_.
+ * `run()` is an _extension method_.
+
+Extension methods are confusing to document and discover. To an end developer,
+they appear no different than the built-in API of the class, and discovering
+the documentation and implementation of an extension is more challenging than
+for class members. Prefer instead adding methods directly to relevant classes.
+
+Only use `extension` methods when discoverability is not a concern:
+
+- Extension methods might be implemented as temporary workarounds
+when deprecating features. In those cases, however, the extensions and all their
+members must be deprecated in the PR that adds them, and they must be removed
+in accordance with our deprecation policy.)
+- An unnamed extension might be created to house private class fields,
+since otherwise they cannot always be safely accessed
+(e.g. if the receiver is a subtype that implements the interface.\
+But in many cases, an extension method can be restructured as a private
+top-level function without a loss in readability.
 
 
 ### Use of streams in Flutter framework code
