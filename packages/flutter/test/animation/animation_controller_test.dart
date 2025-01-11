@@ -978,6 +978,18 @@ void main() {
   });
 
   group('AnimationBehavior', () {
+    test('AnimationBehavior control test', () {
+      debugSemanticsDisableAnimations = true;
+      expect(AnimationBehavior.normal.enableAnimations, false);
+      expect(AnimationBehavior.preserve.enableAnimations, true);
+
+      debugSemanticsDisableAnimations = false;
+      expect(AnimationBehavior.normal.enableAnimations, true);
+      expect(AnimationBehavior.preserve.enableAnimations, true);
+
+      debugSemanticsDisableAnimations = null;
+    });
+
     test('Default values for constructor', () {
       final AnimationController controller = AnimationController(vsync: const TestVSync());
       expect(controller.animationBehavior, AnimationBehavior.normal);
