@@ -306,6 +306,35 @@ TEST(FlutterWindowsViewTest, KeySequence) {
   key_event_logs.clear();
 }
 
+TEST(FlutterWindowsViewTest, KeyEventCallback) {
+  std::unique_ptr<FlutterWindowsEngine> engine = GetTestEngine();
+
+  std::unique_ptr<FlutterWindowsView> view = engine->CreateView(
+      std::make_unique<NiceMock<MockWindowBindingHandler>>());
+
+  class MockCallback {
+   public:
+    MOCK_METHOD(void, Call, ());
+  };
+
+  NiceMock<MockCallback> callback_with_valid_view;
+  NiceMock<MockCallback> callback_with_invalid_view;
+
+  auto trigger_key_event = [&](NiceMock<MockCallback>& callback) {
+    view->OnKey(kVirtualKeyA, kScanCodeKeyA, WM_KEYDOWN, 'a', false, false,
+                [&](bool) { callback.Call(); });
+  };
+
+  EXPECT_CALL(callback_with_valid_view, Call()).Times(1);
+  EXPECT_CALL(callback_with_invalid_view, Call()).Times(0);
+
+  trigger_key_event(callback_with_valid_view);
+  engine->RemoveView(view->view_id());
+  trigger_key_event(callback_with_invalid_view);
+
+  key_event_logs.clear();
+}
+
 TEST(FlutterWindowsViewTest, EnableSemantics) {
   std::unique_ptr<FlutterWindowsEngine> engine = GetTestEngine();
   EngineModifier modifier(engine.get());
