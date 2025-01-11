@@ -872,7 +872,6 @@ void main() {
           ),
         ),
       );
-
       WidgetsBinding.instance.buildOwner!.reassemble(WidgetsBinding.instance.rootElement!);
       await tester.pump();
       WidgetsBinding.instance.buildOwner!.reassemble(WidgetsBinding.instance.rootElement!);
@@ -880,6 +879,111 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets(
+    'LayoutBuilder in a subtree that skips layout does not rebuild during the initial treewalk',
+    (WidgetTester tester) async {
+      bool rebuilt = false;
+      final LayoutBuilder layoutBuilder = LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          rebuilt = true;
+          return const Placeholder();
+        },
+      );
+      final OverlayEntry overlayEntry1 = OverlayEntry(
+        maintainState: true,
+        builder: (BuildContext context) => layoutBuilder,
+      );
+      // OverlayEntry2 obstructs OverlayEntry1 and forces it to skip layout.
+      final OverlayEntry overlayEntry2 = OverlayEntry(
+        opaque: true,
+        canSizeOverlay: true,
+        builder: (BuildContext context) => Container(),
+      );
+      addTearDown(
+        () =>
+            overlayEntry1
+              ..remove()
+              ..dispose(),
+      );
+      addTearDown(
+        () =>
+            overlayEntry2
+              ..remove()
+              ..dispose(),
+      );
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          // The UnconstrainedBox makes sure the OverlayEntries are not relayout boundaries.
+          child: UnconstrainedBox(
+            child: Overlay(initialEntries: <OverlayEntry>[overlayEntry1, overlayEntry2]),
+          ),
+        ),
+      );
+
+      final Element layoutBuilderElement = tester.element(
+        find.byWidget(layoutBuilder, skipOffstage: false),
+      );
+      layoutBuilderElement.markNeedsBuild();
+      await tester.pump();
+      expect(rebuilt, isFalse);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('LayoutBuilder in a subtree that skips layout still rebuilds', (
+    WidgetTester tester,
+  ) async {
+    bool rebuilt = false;
+    final LayoutBuilder layoutBuilder = LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        rebuilt = true;
+        return const Placeholder();
+      },
+    );
+    final OverlayEntry overlayEntry1 = OverlayEntry(
+      maintainState: true,
+      canSizeOverlay: true,
+      builder: (BuildContext context) => layoutBuilder,
+    );
+    // OverlayEntry2 obstructs OverlayEntry1 and forces it to skip layout.
+    final OverlayEntry overlayEntry2 = OverlayEntry(
+      opaque: true,
+      canSizeOverlay: true,
+      builder: (BuildContext context) => const Placeholder(),
+    );
+    addTearDown(
+      () =>
+          overlayEntry1
+            ..remove()
+            ..dispose(),
+    );
+    addTearDown(
+      () =>
+          overlayEntry2
+            ..remove()
+            ..dispose(),
+    );
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        // The UnconstrainedBox makes sure the OverlayEntries are not relayout boundaries.
+        child: UnconstrainedBox(child: Overlay(initialEntries: <OverlayEntry>[overlayEntry1])),
+      ),
+    );
+    tester.state<OverlayState>(find.byType(Overlay)).insert(overlayEntry2);
+    await tester.pump();
+
+    rebuilt = false;
+    final Element layoutBuilderElement = tester.element(
+      find.byWidget(layoutBuilder, skipOffstage: false),
+    );
+    layoutBuilderElement.markNeedsBuild();
+    expect(rebuilt, isFalse);
+    await tester.pump();
+    expect(rebuilt, isTrue);
+  });
 }
 
 class _SmartLayoutBuilder extends ConstrainedLayoutBuilder<BoxConstraints> {
@@ -921,7 +1025,9 @@ class _SmartLayoutBuilder extends ConstrainedLayoutBuilder<BoxConstraints> {
 typedef _OnChildWasPaintedCallback = void Function(Offset extraOffset);
 
 class _RenderSmartLayoutBuilder extends RenderProxyBox
-    with RenderConstrainedLayoutBuilder<BoxConstraints, RenderBox> {
+    with
+        RenderObjectWithLayoutCallbackMixin,
+        RenderConstrainedLayoutBuilder<BoxConstraints, RenderBox> {
   _RenderSmartLayoutBuilder({required double offsetPercentage, required this.onChildWasPainted})
     : _offsetPercentage = offsetPercentage;
 
@@ -946,7 +1052,7 @@ class _RenderSmartLayoutBuilder extends RenderProxyBox
 
   @override
   void performLayout() {
-    rebuildIfNecessary();
+    super.performLayout();
     child?.layout(constraints);
   }
 
