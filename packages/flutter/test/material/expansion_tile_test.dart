@@ -55,7 +55,7 @@ void main() {
   const Color headerColor = Colors.black45;
 
   Material getMaterial(WidgetTester tester) {
-    return tester.widget<Material>(
+    return tester.firstWidget<Material>(
       find.descendant(of: find.byType(ExpansionTile), matching: find.byType(Material)),
     );
   }
@@ -1676,8 +1676,8 @@ void main() {
         ),
       );
 
-      final Size materialAppSize = tester.getSize(find.byType(MaterialApp));
-      final Size titleSize = tester.getSize(find.byType(ColoredBox));
+      final Size materialAppSize = tester.getSize(find.byType(MaterialApp).first);
+      final Size titleSize = tester.getSize(find.byType(ColoredBox).first);
 
       expect(titleSize.width, materialAppSize.width);
     },
@@ -1699,8 +1699,8 @@ void main() {
         ),
       );
 
-      final Size materialAppSize = tester.getSize(find.byType(MaterialApp));
-      final Size titleSize = tester.getSize(find.byType(ColoredBox));
+      final Size materialAppSize = tester.getSize(find.byType(MaterialApp).first);
+      final Size titleSize = tester.getSize(find.byType(ColoredBox).first);
 
       expect(titleSize.width, materialAppSize.width - 32.0);
     },
@@ -1730,5 +1730,46 @@ void main() {
     final Finder platform = find.text('ExpansionTile');
     final Offset offsetPlatform = tester.getTopLeft(platform);
     expect(offsetPlatform, const Offset(16.0, 17.0));
+  });
+
+  testWidgets('ExpansionTile uses childrenPaddingColor Color', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Material(
+          child: ExpansionTile(
+            initiallyExpanded: true,
+            childrenPaddingColor: Colors.amber,
+            tilePadding: EdgeInsets.zero,
+            title: Text('Title'),
+            children: <Widget>[Text('Tile 1')],
+          ),
+        ),
+      ),
+    );
+
+    final Color childrenPaddingColor = tester.widget<ColoredBox>(find.byType(ColoredBox)).color;
+    expect(childrenPaddingColor, Colors.amber);
+  });
+
+  testWidgets('ExpansionTile without using childrenPaddingColor Color', (
+    WidgetTester tester,
+  ) async {
+    const Color backgroundColor = Colors.red;
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Material(
+          child: Center(
+            child: ExpansionTile(
+              initiallyExpanded: true,
+              backgroundColor: backgroundColor,
+              title: TestText('Expanded Tile'),
+              children: <Widget>[Text('Tile 1')],
+            ),
+          ),
+        ),
+      ),
+    );
+    final Color childrenPaddingColor = tester.widget<ColoredBox>(find.byType(ColoredBox)).color;
+    expect(childrenPaddingColor, backgroundColor);
   });
 }
