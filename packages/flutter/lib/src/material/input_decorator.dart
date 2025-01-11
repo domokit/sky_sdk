@@ -2274,6 +2274,24 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
                 child: showHint ? hintTextWidget : const SizedBox.shrink(),
               );
     }
+    if(decoration.hint != null) {
+      final Widget? hintTextWidget = decoration.hint;
+      final bool showHint = isEmpty && !_hasInlineLabel;
+       hint =
+          maintainHintHeight
+              ? AnimatedOpacity(
+                opacity: showHint ? 1.0 : 0.0,
+                duration: decoration.hintFadeDuration ?? _kHintFadeTransitionDuration,
+                curve: _kTransitionCurve,
+                child: hintTextWidget,
+              )
+              : AnimatedSwitcher(
+                duration: decoration.hintFadeDuration ?? _kHintFadeTransitionDuration,
+                transitionBuilder: _buildTransition,
+                child: showHint ? hintTextWidget : const SizedBox.shrink(),
+              );
+    }
+
     InputBorder? border;
     if (!decoration.enabled) {
       border = _hasError ? decoration.errorBorder : decoration.disabledBorder;
@@ -2695,6 +2713,7 @@ class InputDecoration {
     this.helperStyle,
     this.helperMaxLines,
     this.hintText,
+    this.hint,
     this.hintStyle,
     this.hintTextDirection,
     this.hintMaxLines,
@@ -2743,6 +2762,10 @@ class InputDecoration {
          'Declaring both label and labelText is not supported.',
        ),
        assert(
+         !(hintText != null && hint != null),
+         'Declaring both hintText and hint is not supported.',
+       ),
+       assert(
          !(helper != null && helperText != null),
          'Declaring both helper and helperText is not supported.',
        ),
@@ -2781,6 +2804,7 @@ class InputDecoration {
     )
     FloatingLabelAlignment? floatingLabelAlignment,
     this.hintStyle,
+    this.hint,
     this.hintTextDirection,
     this.hintMaxLines,
     this.hintFadeDuration,
@@ -3018,6 +3042,10 @@ class InputDecoration {
   /// when [InputDecorator.isEmpty] is true and either (a) [labelText] is null
   /// or (b) the input has the focus.
   final String? hintText;
+
+  /// The widget to use inplace of the [hintText]. Either [hintText] or
+  /// [hint] can be specified, but not both.
+  final Widget? hint;
 
   /// The style to use for the [hintText].
   ///
@@ -3741,6 +3769,7 @@ class InputDecoration {
     TextStyle? helperStyle,
     int? helperMaxLines,
     String? hintText,
+    Widget? hint,
     TextStyle? hintStyle,
     TextDirection? hintTextDirection,
     Duration? hintFadeDuration,
@@ -3797,6 +3826,7 @@ class InputDecoration {
       helperStyle: helperStyle ?? this.helperStyle,
       helperMaxLines: helperMaxLines ?? this.helperMaxLines,
       hintText: hintText ?? this.hintText,
+      hint: hint ?? this.hint,
       hintStyle: hintStyle ?? this.hintStyle,
       hintTextDirection: hintTextDirection ?? this.hintTextDirection,
       hintMaxLines: hintMaxLines ?? this.hintMaxLines,
@@ -3906,6 +3936,7 @@ class InputDecoration {
         other.helperStyle == helperStyle &&
         other.helperMaxLines == helperMaxLines &&
         other.hintText == hintText &&
+        other.hint == hint &&
         other.hintStyle == hintStyle &&
         other.hintTextDirection == hintTextDirection &&
         other.hintMaxLines == hintMaxLines &&
@@ -3965,6 +3996,7 @@ class InputDecoration {
       helperStyle,
       helperMaxLines,
       hintText,
+      hint,
       hintStyle,
       hintTextDirection,
       hintMaxLines,
@@ -4024,6 +4056,7 @@ class InputDecoration {
       if (helperText != null) 'helperText: "$helperText"',
       if (helperMaxLines != null) 'helperMaxLines: "$helperMaxLines"',
       if (hintText != null) 'hintText: "$hintText"',
+      if (hint != null) 'hint: $hint',
       if (hintMaxLines != null) 'hintMaxLines: "$hintMaxLines"',
       if (hintFadeDuration != null) 'hintFadeDuration: "$hintFadeDuration"',
       if (!maintainHintHeight) 'maintainHintHeight: false',
