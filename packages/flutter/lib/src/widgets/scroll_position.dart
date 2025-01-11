@@ -436,7 +436,10 @@ abstract class ScrollPosition extends ViewportOffset with ScrollMetrics {
   ///    destination offset.
   // ignore: use_setters_to_change_properties, (API is intended to discourage setting value)
   void correctPixels(double value) {
-    _pixels = value;
+    // Fix https://github.com/flutter/flutter/issues/160740.
+    // We cannot set `_pixels` when it is not null; otherwise, `_pixels` will always equal the new `value` in `jumpTo`
+    // of `ScrollPositionWithSingleContext` when the keyboard hides.
+    _pixels ??= value;
   }
 
   /// Apply a layout-time correction to the scroll offset.
