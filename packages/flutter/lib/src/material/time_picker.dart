@@ -949,6 +949,40 @@ class _TappableLabel {
   final VoidCallback onTap;
 }
 
+/// Exposes fields from the [TimePickerDialog]'s painter for testing purposes.
+///
+/// Values are accessed via [TappableLabel.labels].
+@visibleForTesting
+extension type TappableLabel._(_TappableLabel _label) implements Object {
+  /// If the painter is a `_DialPainter`, returns information about its
+  /// labels for testing purposes.
+  ///
+  /// Otherwise, returns a [Record] of empty lists.
+  static ({List<TappableLabel> primary, List<TappableLabel> selected}) labels(
+    CustomPaint dialPaint,
+  ) {
+    if (dialPaint.painter case _DialPainter(
+      :final List<TappableLabel> primaryLabels,
+      :final List<TappableLabel> selectedLabels,
+    )) {
+      return (primary: primaryLabels, selected: selectedLabels);
+    }
+
+    const List<TappableLabel> notFound = <TappableLabel>[];
+    return (primary: notFound, selected: notFound);
+  }
+
+  /// Whether the label is part of the "inner" ring of values on the dial,
+  /// used for 24 hour input.
+  bool get inner => _label.inner;
+
+  /// The [TextSpan] associated with this label.
+  TextSpan? get textSpan {
+    final InlineSpan? span = _label.painter.text;
+    return span is TextSpan ? span : null;
+  }
+}
+
 class _DialPainter extends CustomPainter {
   _DialPainter({
     required this.primaryLabels,
