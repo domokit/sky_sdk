@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
 
+import '../system_context_menu_utils.dart';
+
 void main() {
   final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -131,6 +133,95 @@ void main() {
       expect(state.showToolbar(), true);
       await tester.pump();
       expect(find.byType(SystemContextMenu), findsOneWidget);
+
+      state.hideToolbar();
+      await tester.pump();
+      expect(find.byType(SystemContextMenu), findsNothing);
+    },
+    skip: kIsWeb, // [intended]
+    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+  );
+
+  testWidgets(
+    'can customize the menu items',
+    (WidgetTester tester) async {
+      final List<List<SystemContextMenuItemData>> itemsReceived =
+          <List<SystemContextMenuItemData>>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (MethodCall methodCall) async {
+          switch (methodCall.method) {
+            case 'ContextMenu.showSystemContextMenu':
+              final Map<String, dynamic> arguments = methodCall.arguments as Map<String, dynamic>;
+              final List<dynamic> untypedItems = arguments['items'] as List<dynamic>;
+              final List<SystemContextMenuItemData> lastItems =
+                  untypedItems.map((dynamic value) {
+                    final Map<String, dynamic> itemJson = value as Map<String, dynamic>;
+                    return systemContextMenuItemDataFromJson(itemJson);
+                  }).toList();
+              itemsReceived.add(lastItems);
+          }
+          return;
+        },
+      );
+      addTearDown(() {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        );
+      });
+
+      const List<SystemContextMenuItem> items1 = <SystemContextMenuItem>[
+        SystemContextMenuItemCopy(),
+        SystemContextMenuItemShare(title: 'My Share Title'),
+      ];
+      final TextEditingController controller = TextEditingController(text: 'one two three');
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            final MediaQueryData mediaQueryData = MediaQuery.of(context);
+            return MediaQuery(
+              data: mediaQueryData.copyWith(supportsShowingSystemContextMenu: true),
+              child: MaterialApp(
+                home: Scaffold(
+                  body: Center(
+                    child: TextField(
+                      controller: controller,
+                      contextMenuBuilder: (
+                        BuildContext context,
+                        EditableTextState editableTextState,
+                      ) {
+                        return SystemContextMenu.editableText(
+                          editableTextState: editableTextState,
+                          items: items1,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+
+      expect(find.byType(SystemContextMenu), findsNothing);
+      expect(itemsReceived, hasLength(0));
+
+      await tester.tap(find.byType(TextField));
+      final EditableTextState state = tester.state<EditableTextState>(find.byType(EditableText));
+      expect(state.showToolbar(), true);
+      await tester.pump();
+      expect(find.byType(SystemContextMenu), findsOneWidget);
+
+      expect(itemsReceived, hasLength(1));
+      expect(itemsReceived.last, hasLength(items1.length));
+      expect(itemsReceived.last[0], equals(const SystemContextMenuItemDataCopy()));
+      expect(
+        itemsReceived.last[1],
+        equals(const SystemContextMenuItemDataShare(title: 'My Share Title')),
+      );
 
       state.hideToolbar();
       await tester.pump();

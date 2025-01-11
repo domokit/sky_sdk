@@ -1050,6 +1050,21 @@ static void SetEntryPoint(flutter::Settings* settings, NSString* entrypoint, NSS
                            arguments:@[ @(client) ]];
 }
 
+- (void)flutterTextInputView:(FlutterTextInputView*)textInputView
+           shareSelectedText:(NSString*)selectedText {
+  [self.platformPlugin showShareViewController:selectedText];
+}
+
+- (void)flutterTextInputView:(FlutterTextInputView*)textInputView
+    searchWebWithSelectedText:(NSString*)selectedText {
+  [self.platformPlugin searchWeb:selectedText];
+}
+
+- (void)flutterTextInputView:(FlutterTextInputView*)textInputView
+          lookUpSelectedText:(NSString*)selectedText {
+  [self.platformPlugin showLookUpViewController:selectedText];
+}
+
 #pragma mark - FlutterViewEngineDelegate
 
 - (void)flutterTextInputView:(FlutterTextInputView*)textInputView showToolbar:(int)client {

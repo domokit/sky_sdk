@@ -14,6 +14,9 @@
 - (instancetype)initWithEngine:(FlutterEngine*)engine NS_DESIGNATED_INITIALIZER;
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result;
 
+- (void)showShareViewController:(NSString*)content;
+- (void)searchWeb:(NSString*)searchTerm;
+- (void)showLookUpViewController:(NSString*)term;
 @end
 
 namespace flutter {

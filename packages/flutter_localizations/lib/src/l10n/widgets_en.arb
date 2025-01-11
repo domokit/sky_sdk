@@ -27,5 +27,40 @@
   "reorderItemRight": "Move right",
   "@reorderItemRight": {
     "description": "The audio announcement to move an item in a Reorderable List right in the list when it is oriented horizontally."
+  },
+
+  "copyButtonLabel": "Copy",
+  "@copyButtonLabel": {
+    "description": "The label for copy buttons and menu items."
+  },
+
+  "cutButtonLabel": "Cut",
+  "@cutButtonLabel": {
+    "description": "The label for cut buttons and menu items."
+  },
+
+  "lookUpButtonLabel": "Look Up",
+  "@lookUpButtonLabel": {
+    "description": "The label for the Look Up button and menu items."
+  },
+
+  "searchWebButtonLabel": "Search Web",
+  "@searchWebButtonLabel": {
+    "description": "The label for the Search Web button and menu items."
+  },
+
+  "shareButtonLabel": "Share",
+  "@shareButtonLabel": {
+    "description": "The label for the Share button and menu items."
+  },
+
+  "pasteButtonLabel": "Paste",
+  "@pasteButtonLabel": {
+    "description": "The label for paste buttons and menu items."
+  },
+
+  "selectAllButtonLabel": "Select all",
+  "@selectAllButtonLabel": {
+    "description": "The label for select-all buttons and menu items."
   }
 }

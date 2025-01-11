@@ -10,6 +10,26 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   final TestAutomatedTestWidgetsFlutterBinding binding = TestAutomatedTestWidgetsFlutterBinding();
 
+  testWidgets('English translations exist for all WidgetsLocalizations properties', (
+    WidgetTester tester,
+  ) async {
+    const WidgetsLocalizations localizations = DefaultWidgetsLocalizations();
+
+    expect(localizations.reorderItemUp, isNotNull);
+    expect(localizations.reorderItemDown, isNotNull);
+    expect(localizations.reorderItemLeft, isNotNull);
+    expect(localizations.reorderItemRight, isNotNull);
+    expect(localizations.reorderItemToEnd, isNotNull);
+    expect(localizations.reorderItemToStart, isNotNull);
+    expect(localizations.copyButtonLabel, isNotNull);
+    expect(localizations.cutButtonLabel, isNotNull);
+    expect(localizations.pasteButtonLabel, isNotNull);
+    expect(localizations.selectAllButtonLabel, isNotNull);
+    expect(localizations.lookUpButtonLabel, isNotNull);
+    expect(localizations.searchWebButtonLabel, isNotNull);
+    expect(localizations.shareButtonLabel, isNotNull);
+  });
+
   testWidgets('Locale is available when Localizations widget stops deferring frames', (
     WidgetTester tester,
   ) async {
