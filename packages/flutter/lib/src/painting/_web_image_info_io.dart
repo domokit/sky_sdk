@@ -7,12 +7,12 @@ import 'dart:ui' as ui;
 import 'image_stream.dart';
 
 /// An [ImageInfo] object indicating that the image can only be displayed in
-/// an <img> element, and no [dart:ui.Image] can be created for it.
+/// an HTML element, and no [dart:ui.Image] can be created for it.
 ///
 /// This occurs on the web when the image resource is from a different origin
 /// and is not configured for CORS. Since the image bytes cannot be directly
 /// fetched, [ui.Image]s cannot be created from it. However, the image can
-/// still be displayed if an <img> element is used.
+/// still be displayed if an HTML element is used.
 class WebImageInfo implements ImageInfo {
   @override
   ImageInfo clone() => _unsupported();

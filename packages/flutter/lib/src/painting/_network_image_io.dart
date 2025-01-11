@@ -21,7 +21,12 @@ typedef _SimpleDecoderCallback = Future<ui.Codec> Function(ui.ImmutableBuffer bu
 class NetworkImage extends image_provider.ImageProvider<image_provider.NetworkImage>
     implements image_provider.NetworkImage {
   /// Creates an object that fetches the image at the given URL.
-  const NetworkImage(this.url, {this.scale = 1.0, this.headers});
+  const NetworkImage(
+    this.url, {
+    this.scale = 1.0,
+    this.headers,
+    this.webHtmlElementStrategy = image_provider.WebHtmlElementStrategy.never,
+  });
 
   @override
   final String url;
@@ -31,6 +36,9 @@ class NetworkImage extends image_provider.ImageProvider<image_provider.NetworkIm
 
   @override
   final Map<String, String>? headers;
+
+  @override
+  final image_provider.WebHtmlElementStrategy webHtmlElementStrategy;
 
   @override
   Future<NetworkImage> obtainKey(image_provider.ImageConfiguration configuration) {

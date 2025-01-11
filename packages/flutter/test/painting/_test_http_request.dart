@@ -129,24 +129,45 @@ class TestImgElement {
   int naturalWidth = -1;
   int naturalHeight = -1;
 
-  late JSFunction _resolveFunc;
-  late JSFunction _rejectFunc;
+  // Either `decode` or `decodeSuccess/Failure` may be called first.
+  // The following fields allow properly handling either case.
+  bool _callbacksAssigned = false;
+  late final JSFunction _resolveFunc;
+  late final JSFunction _rejectFunc;
+
+  bool _resultAssigned = false;
+  late final bool _resultSuccessful;
 
   JSPromise<JSAny?> decode() {
-    return JSPromise<JSAny?>(
-      (JSFunction resolveFunc, JSFunction rejectFunc) {
-        _resolveFunc = resolveFunc;
-        _rejectFunc = rejectFunc;
-      }.toJS,
-    );
+    if (_resultAssigned) {
+      return switch (_resultSuccessful) {
+        true => Future<JSAny?>.value().toJS,
+        false => Future<JSAny?>.error(Error()).toJS,
+      };
+    }
+    _callbacksAssigned = true;
+    return JSPromise<JSAny?>((JSFunction resolveFunc, JSFunction rejectFunc) {
+      _resolveFunc = resolveFunc;
+      _rejectFunc = rejectFunc;
+    }.toJS);
   }
 
   void decodeSuccess() {
-    _resolveFunc.callAsFunction();
+    if (_callbacksAssigned) {
+      _resolveFunc.callAsFunction();
+    } else {
+      _resultAssigned = true;
+      _resultSuccessful = true;
+    }
   }
 
   void decodeFailure() {
-    _rejectFunc.callAsFunction();
+    if (_callbacksAssigned) {
+      _rejectFunc.callAsFunction();
+    } else {
+      _resultAssigned = true;
+      _resultSuccessful = false;
+    }
   }
 
   web.HTMLImageElement getMock() => _mock as web.HTMLImageElement;

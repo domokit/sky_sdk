@@ -6,7 +6,7 @@ import '../painting/_web_image_info_io.dart';
 import 'basic.dart';
 import 'framework.dart';
 
-/// A [Widget] that displays an image that is backed by an <img> element.
+/// A [Widget] that displays an image that is backed by an HTML element.
 class RawWebImage extends StatelessWidget {
   /// Creates a [RawWebImage].
   RawWebImage({
@@ -22,7 +22,7 @@ class RawWebImage extends StatelessWidget {
     throw UnsupportedError('Cannot create a $RawWebImage when not running on the web');
   }
 
-  /// The underlying `<img>` element to be displayed.
+  /// The underlying HTML element to be displayed.
   final WebImageInfo image;
 
   /// A debug label explaining the image.
@@ -34,7 +34,7 @@ class RawWebImage extends StatelessWidget {
   /// The requested height for this widget.
   final double? height;
 
-  /// How the `<img>` should be inscribed in the box constraining it.
+  /// How the HTML element should be inscribed in the box constraining it.
   final BoxFit? fit;
 
   /// How the image should be aligned in the box constraining it.
