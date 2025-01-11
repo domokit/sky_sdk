@@ -297,10 +297,14 @@ class FlutterMemoryAllocations {
     assert(ui.Image.onDispose == null);
     assert(ui.Picture.onCreate == null);
     assert(ui.Picture.onDispose == null);
+    assert(ui.Codec.onCreate == null);
+    assert(ui.Codec.onDispose == null);
     ui.Image.onCreate = _imageOnCreate;
     ui.Image.onDispose = _imageOnDispose;
     ui.Picture.onCreate = _pictureOnCreate;
     ui.Picture.onDispose = _pictureOnDispose;
+    ui.Codec.onCreate = _pictureOnCreate;
+    ui.Codec.onDispose = _pictureOnDispose;
   }
 
   void _unSubscribeFromSdkObjects() {
@@ -308,10 +312,14 @@ class FlutterMemoryAllocations {
     assert(ui.Image.onDispose == _imageOnDispose);
     assert(ui.Picture.onCreate == _pictureOnCreate);
     assert(ui.Picture.onDispose == _pictureOnDispose);
+    assert(ui.Codec.onCreate == _codecOnCreate);
+    assert(ui.Codec.onDispose == _codecOnDispose);
     ui.Image.onCreate = null;
     ui.Image.onDispose = null;
     ui.Picture.onCreate = null;
     ui.Picture.onDispose = null;
+    ui.Codec.onCreate = null;
+    ui.Codec.onDispose = null;
   }
 
   void _imageOnCreate(ui.Image image) {
@@ -326,11 +334,21 @@ class FlutterMemoryAllocations {
     );
   }
 
+  void _codecOnCreate(ui.Codec codec) {
+    dispatchObjectEvent(
+      ObjectCreated(library: _dartUiLibrary, className: '${ui.Codec}', object: codec),
+    );
+  }
+
   void _imageOnDispose(ui.Image image) {
     dispatchObjectEvent(ObjectDisposed(object: image));
   }
 
   void _pictureOnDispose(ui.Picture picture) {
     dispatchObjectEvent(ObjectDisposed(object: picture));
+  }
+
+  void _codecOnDispose(ui.Codec codec) {
+    dispatchObjectEvent(ObjectDisposed(object: codec));
   }
 }
