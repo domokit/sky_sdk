@@ -8,11 +8,13 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/rendering.dart';
 
 import 'basic.dart';
 import 'container.dart';
 import 'framework.dart';
+import 'image.dart' show createLocalImageConfiguration;
 import 'text.dart';
 
 export 'package:flutter/rendering.dart' show RelativeRect;
@@ -156,6 +158,37 @@ typedef DelegatedTransitionBuilder =
       bool allowSnapshotting,
       Widget? child,
     );
+
+mixin _RenderTransition<L extends Listenable> on RenderObject {
+  void _listener();
+
+  L get listenable => _listenable;
+  abstract L _listenable;
+  set listenable(L value) {
+    if (value == _listenable) {
+      return;
+    }
+    _listenable.removeListener(_listener);
+    _listenable = value;
+    if (attached) {
+      value.addListener(_listener);
+      _listener();
+    }
+  }
+
+  @override
+  void attach(PipelineOwner owner) {
+    super.attach(owner);
+    listenable.addListener(_listener);
+    _listener();
+  }
+
+  @override
+  void detach() {
+    listenable.removeListener(_listener);
+    super.detach();
+  }
+}
 
 /// Animates the position of a widget relative to its normal position.
 ///
@@ -873,7 +906,7 @@ class RelativePositionedTransition extends AnimatedWidget {
 ///  * [DecoratedBox], which also draws a [Decoration] but is not animated.
 ///  * [AnimatedContainer], a more full-featured container that also animates on
 ///    decoration using an internal animation.
-class DecoratedBoxTransition extends AnimatedWidget {
+class DecoratedBoxTransition extends SingleChildRenderObjectWidget {
   /// Creates an animated [DecoratedBox] whose [Decoration] animation updates
   /// the widget.
   ///
@@ -884,8 +917,8 @@ class DecoratedBoxTransition extends AnimatedWidget {
     super.key,
     required this.decoration,
     this.position = DecorationPosition.background,
-    required this.child,
-  }) : super(listenable: decoration);
+    required Widget super.child,
+  });
 
   /// Animation of the decoration to paint.
   ///
@@ -896,14 +929,41 @@ class DecoratedBoxTransition extends AnimatedWidget {
   /// Whether to paint the box decoration behind or in front of the child.
   final DecorationPosition position;
 
-  /// The widget below this widget in the tree.
-  ///
-  /// {@macro flutter.widgets.ProxyWidget.child}
-  final Widget child;
+  @override
+  RenderDecoratedBox createRenderObject(BuildContext context) {
+    return _RenderAnimatedDecoration(
+      listenable: decoration,
+      position: position,
+      configuration: createLocalImageConfiguration(context),
+    );
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(decoration: decoration.value, position: position, child: child);
+  void updateRenderObject(BuildContext context, RenderDecoratedBox renderObject) {
+    (renderObject as _RenderAnimatedDecoration)
+      ..listenable = decoration
+      ..position = position
+      ..configuration = createLocalImageConfiguration(context);
+  }
+}
+
+class _RenderAnimatedDecoration extends RenderDecoratedBox
+    with _RenderTransition<ValueListenable<Decoration>> {
+  _RenderAnimatedDecoration({
+    required ValueListenable<Decoration> listenable,
+    required super.position,
+    required super.configuration,
+  }) : _listenable = listenable,
+       super(decoration: listenable.value);
+
+  @override
+  ValueListenable<Decoration> _listenable;
+
+  @override
+  void _listener() {
+    // Sets the decoration to match the listenable's current value
+    // and triggers a repaint.
+    decoration = _listenable.value;
   }
 }
 
@@ -934,7 +994,7 @@ class DecoratedBoxTransition extends AnimatedWidget {
 ///    aligns its child.
 ///  * [SlideTransition], a widget that animates the position of a widget
 ///    relative to its normal position.
-class AlignTransition extends AnimatedWidget {
+class AlignTransition extends SingleChildRenderObjectWidget {
   /// Creates an animated [Align] whose [AlignmentGeometry] animation updates
   /// the widget.
   ///
@@ -943,14 +1003,14 @@ class AlignTransition extends AnimatedWidget {
   ///  * [Align.new].
   const AlignTransition({
     super.key,
-    required Animation<AlignmentGeometry> alignment,
-    required this.child,
+    required this.alignment,
     this.widthFactor,
     this.heightFactor,
-  }) : super(listenable: alignment);
+    required Widget super.child,
+  });
 
   /// The animation that controls the child's alignment.
-  Animation<AlignmentGeometry> get alignment => listenable as Animation<AlignmentGeometry>;
+  final ValueListenable<AlignmentGeometry> alignment;
 
   /// If non-null, the child's width factor, see [Align.widthFactor].
   final double? widthFactor;
@@ -958,19 +1018,44 @@ class AlignTransition extends AnimatedWidget {
   /// If non-null, the child's height factor, see [Align.heightFactor].
   final double? heightFactor;
 
-  /// The widget below this widget in the tree.
-  ///
-  /// {@macro flutter.widgets.ProxyWidget.child}
-  final Widget child;
-
   @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: alignment.value,
+  RenderPositionedBox createRenderObject(BuildContext context) {
+    return _RenderAnimatedAlign(
+      listenable: alignment,
       widthFactor: widthFactor,
       heightFactor: heightFactor,
-      child: child,
+      textDirection: Directionality.maybeOf(context),
     );
+  }
+
+  @override
+  void updateRenderObject(BuildContext context, RenderPositionedBox renderObject) {
+    (renderObject as _RenderAnimatedAlign)
+      ..listenable = alignment
+      ..widthFactor = widthFactor
+      ..heightFactor = heightFactor
+      ..textDirection = Directionality.maybeOf(context);
+  }
+}
+
+class _RenderAnimatedAlign extends RenderPositionedBox
+    with _RenderTransition<ValueListenable<AlignmentGeometry>> {
+  _RenderAnimatedAlign({
+    required ValueListenable<AlignmentGeometry> listenable,
+    super.widthFactor,
+    super.heightFactor,
+    super.textDirection,
+  }) : _listenable = listenable,
+       super(alignment: listenable.value);
+
+  @override
+  ValueListenable<AlignmentGeometry> _listenable;
+
+  @override
+  void _listener() {
+    // Sets the alignment to match the listenable's current value,
+    // and triggers a layout update.
+    alignment = _listenable.value;
   }
 }
 

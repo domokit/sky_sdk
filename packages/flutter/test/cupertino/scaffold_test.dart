@@ -403,8 +403,7 @@ void main() {
   testWidgets('Decorated with white background by default', (WidgetTester tester) async {
     await tester.pumpWidget(const CupertinoApp(home: CupertinoPageScaffold(child: Center())));
 
-    final DecoratedBox decoratedBox =
-        tester.widgetList(find.byType(DecoratedBox)).elementAt(1) as DecoratedBox;
+    final DecoratedBox decoratedBox = tester.widget(find.byType(DecoratedBox));
     expect(decoratedBox.decoration.runtimeType, BoxDecoration);
 
     final BoxDecoration decoration = decoratedBox.decoration as BoxDecoration;
@@ -418,8 +417,7 @@ void main() {
       ),
     );
 
-    final DecoratedBox decoratedBox =
-        tester.widgetList(find.byType(DecoratedBox)).elementAt(1) as DecoratedBox;
+    final DecoratedBox decoratedBox = tester.widget(find.byType(DecoratedBox));
     expect(decoratedBox.decoration.runtimeType, BoxDecoration);
 
     final BoxDecoration decoration = decoratedBox.decoration as BoxDecoration;

@@ -46,7 +46,7 @@ void main() {
       );
 
       await tester.pumpWidget(transitionUnderTest);
-      RenderDecoratedBox actualBox = tester.renderObject(find.byType(DecoratedBox));
+      RenderDecoratedBox actualBox = tester.renderObject(find.byType(DecoratedBoxTransition));
       BoxDecoration actualDecoration = actualBox.decoration as BoxDecoration;
 
       expect(actualDecoration.color, isSameColorAs(const Color(0xFFFFFFFF)));
@@ -57,7 +57,7 @@ void main() {
       controller.value = 0.5;
 
       await tester.pump();
-      actualBox = tester.renderObject(find.byType(DecoratedBox));
+      actualBox = tester.renderObject(find.byType(DecoratedBoxTransition));
       actualDecoration = actualBox.decoration as BoxDecoration;
 
       expect(actualDecoration.color, isSameColorAs(const Color(0xFF7F7F7F)));
@@ -76,7 +76,7 @@ void main() {
       controller.value = 1.0;
 
       await tester.pump();
-      actualBox = tester.renderObject(find.byType(DecoratedBox));
+      actualBox = tester.renderObject(find.byType(DecoratedBoxTransition));
       actualDecoration = actualBox.decoration as BoxDecoration;
 
       expect(actualDecoration.color, const Color(0xFF000000));
@@ -101,7 +101,7 @@ void main() {
 
       await tester.pumpWidget(transitionUnderTest);
 
-      RenderDecoratedBox actualBox = tester.renderObject(find.byType(DecoratedBox));
+      RenderDecoratedBox actualBox = tester.renderObject(find.byType(DecoratedBoxTransition));
       BoxDecoration actualDecoration = actualBox.decoration as BoxDecoration;
 
       expect(actualDecoration.color, isSameColorAs(const Color(0xFFFFFFFF)));
@@ -112,7 +112,7 @@ void main() {
       controller.value = 0.5;
 
       await tester.pump();
-      actualBox = tester.renderObject(find.byType(DecoratedBox));
+      actualBox = tester.renderObject(find.byType(DecoratedBoxTransition));
       actualDecoration = actualBox.decoration as BoxDecoration;
 
       // Same as the test above but the values should be much closer to the
@@ -149,7 +149,9 @@ void main() {
 
     await tester.pumpWidget(widget);
 
-    final RenderPositionedBox actualPositionedBox = tester.renderObject(find.byType(Align));
+    final RenderPositionedBox actualPositionedBox = tester.renderObject(
+      find.byType(AlignTransition),
+    );
 
     Alignment actualAlignment = actualPositionedBox.alignment as Alignment;
     expect(actualAlignment, Alignment.centerLeft);
@@ -158,6 +160,25 @@ void main() {
     await tester.pump();
     actualAlignment = actualPositionedBox.alignment as Alignment;
     expect(actualAlignment, const Alignment(0.0, 0.5));
+  });
+
+  testWidgets('AlignTransition with ValueNotifier', (WidgetTester tester) async {
+    final ValueNotifier<Alignment> alignment = ValueNotifier<Alignment>(Alignment.centerLeft);
+    addTearDown(alignment.dispose);
+
+    await tester.pumpWidget(
+      AlignTransition(
+        alignment: alignment,
+        child: const Text('Ready', textDirection: TextDirection.ltr),
+      ),
+    );
+
+    final RenderPositionedBox renderBox = tester.renderObject(find.byType(AlignTransition));
+    expect(renderBox.alignment, Alignment.centerLeft);
+
+    alignment.value = const Alignment(0.0, 0.5);
+    await tester.pump();
+    expect(renderBox.alignment, const Alignment(0.0, 0.5));
   });
 
   testWidgets('RelativePositionedTransition animates', (WidgetTester tester) async {
@@ -223,7 +244,7 @@ void main() {
 
     await tester.pumpWidget(widget);
 
-    final Align actualAlign = tester.widget(find.byType(Align));
+    final RenderPositionedBox actualAlign = tester.renderObject(find.byType(AlignTransition));
 
     expect(actualAlign.widthFactor, 0.3);
     expect(actualAlign.heightFactor, 0.4);
