@@ -280,6 +280,15 @@ TaskFunction createHelloWorldCompileTest() {
   ).run;
 }
 
+TaskFunction createImitationGameSwiftUITest() {
+  return CompileTest('${flutterDirectory.path}/examples/imitation_game_swiftui', reportPackageContentSizes: true).runSwiftUIApp;
+}
+
+TaskFunction createImitationGameFlutterTest() {
+  return CompileTest('${flutterDirectory.path}/examples/imitation_game_flutter', reportPackageContentSizes: true).run;
+}
+
+
 TaskFunction createWebCompileTest() {
   return const WebCompileTest().run;
 }
@@ -1628,6 +1637,69 @@ class WebCompileTest {
 
 /// Measures how long it takes to compile a Flutter app and how big the compiled
 /// code is.
+class CompileSwiftUICompileTest {
+  const CompileSwiftUICompileTest(this.testDirectory, { this.reportPackageContentSizes = false });
+
+  final String testDirectory;
+  final bool reportPackageContentSizes;
+
+  Future<TaskResult> run() async {
+    await Process.run('xcodebuild', <String>[
+      'clean',
+      '-allTargets'
+    ]);
+    final Stopwatch watch = Stopwatch();
+    int releaseSizeInBytes = 0;
+    watch.start();
+    await Process.run(workingDirectory: testDirectory ,'xcodebuild', <String>[
+      '-scheme',
+      'hello_world_swiftui',
+      '-target',
+      'hello_world_swiftui',
+      '-sdk',
+      'iphoneos',
+      '-configuration',
+      'Release',
+      'CODE_SIGNING_ALLOWED=NO',
+      'CODE_SIGNING_REQUIRED=NO',
+      'CODE_SIGN_IDENTITY=-',
+      'EXPANDED_CODE_SIGN_IDENTITY=-',
+      '-archivePath',
+      '$testDirectory/hello_world_swiftui',
+      'archive'
+    ]).then((ProcessResult results) {
+      print(results.stdout);
+      if (results.exitCode != 0) {
+        print(results.stderr);
+      }
+    });
+    watch.stop();
+
+    final String path = '$testDirectory/hello_world_swiftui.xcarchive/Products/Applications/hello_world_swiftui.app';
+    final Directory appBundle =  dir(path);
+    try {
+      for (final FileSystemEntity entity in appBundle.listSync(recursive: true)) {
+        if (entity is File) {
+          releaseSizeInBytes += entity.lengthSync();
+        }
+      }
+    } catch (e) {
+      print('Error calculating size: $e at $path');
+    }
+    // final Map<String, dynamic> test = await CompileTest('${flutterDirectory.path}/examples/hello_world_flutter', reportPackageContentSizes: true)._compileApp(deleteGradleCache: false);
+
+    final Map<String, dynamic> metrics = <String, dynamic>{};
+    // metrics.addAll(test);
+    metrics.addAll(<String, dynamic>{
+      'release_swiftui_compile_millis': watch.elapsedMilliseconds,
+      'release_swiftui_size_bytes': releaseSizeInBytes,
+    });
+    return TaskResult.success(metrics);
+  }
+}
+
+/// Measures how long it takes to compile a Flutter app and how big the compiled
+/// code is.
 class CompileTest {
   const CompileTest(this.testDirectory, {this.reportPackageContentSizes = false});
 
@@ -1686,6 +1758,63 @@ class CompileTest {
       return TaskResult.success(metrics, benchmarkScoreKeys: metrics.keys.toList());
     });
   }
+
+  Future<TaskResult> runSwiftUIApp() async {
+    return inDirectory<TaskResult>(testDirectory, () async {
+    await Process.run('xcodebuild', <String>[
+      'clean',
+      '-allTargets'
+    ]);
+    final Stopwatch watch = Stopwatch();
+    int releaseSizeInBytes = 0;
+    watch.start();
+    await Process.run(workingDirectory: testDirectory ,'xcodebuild', <String>[
+      '-scheme',
+      'hello_world_swiftui',
+      '-target',
+      'hello_world_swiftui',
+      '-sdk',
+      'iphoneos',
+      '-configuration',
+      'Release',
+      'CODE_SIGNING_ALLOWED=NO',
+      'CODE_SIGNING_REQUIRED=NO',
+      'CODE_SIGN_IDENTITY=-',
+      'EXPANDED_CODE_SIGN_IDENTITY=-',
+      '-archivePath',
+      '$testDirectory/hello_world_swiftui',
+      'archive'
+    ]).then((ProcessResult results) {
+      print(results.stdout);
+      if (results.exitCode != 0) {
+        print(results.stderr);
+      }
+    });
+    watch.stop();
+
+    final String path = '$testDirectory/hello_world_swiftui.xcarchive/Products/Applications/hello_world_swiftui.app';
+    final Directory appBundle =  dir(path);
+    try {
+      for (final FileSystemEntity entity in appBundle.listSync(recursive: true)) {
+        if (entity is File) {
+          releaseSizeInBytes += entity.lengthSync();
+        }
+      }
+    } catch (e) {
+      print('Error calculating size: $e at $path');
+    }
+    final Map<String, dynamic> metrics = <String, dynamic>{};
+
+    // final Map<String, dynamic> test = await CompileTest('${flutterDirectory.path}/examples/hello_world_flutter', reportPackageContentSizes: true)._compileApp(deleteGradleCache: false);
+    // metrics.addAll(test);
+    metrics.addAll(<String, dynamic>{
+      'release_swiftui_compile_millis': watch.elapsedMilliseconds,
+      'release_swiftui_size_bytes': releaseSizeInBytes,
+    });
+    return TaskResult.success(metrics);
+    });
+  }
+
 
   Future<Map<String, dynamic>> _compileApp({required bool deleteGradleCache}) async {
     await flutter('clean');
@@ -2006,7 +2135,7 @@ class MemoryTest {
     await receivedNextMessage;
   }
 
-  /// Taps the application and looks for acknowledgement.
+  /// Taps the application and looks for acknowldgement.
   ///
   /// This is used by several tests to ensure scrolling gestures are installed.
   Future<void> tapNotification() async {

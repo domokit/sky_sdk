@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>hello_world_swiftui.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>buildNumber</key>
+			<string>1</string>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>62CFF757AB73A0707958919F3C721185E755AE8B</string>
+				<key>dateExpires</key>
+				<string>8/7/25</string>
+				<key>type</key>
+				<string>Apple Development</string>
+			</dict>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>S8QB4VV633.dev.flutter.plugins.hello-world-swiftui</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>S8QB4VV633</string>
+				<key>get-task-allow</key>
+				<true/>
+			</dict>
+			<key>name</key>
+			<string>hello_world_swiftui.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>66d452ea-fdfc-44b8-8d65-2cf44e1a7c6d</string>
+				<key>dateExpires</key>
+				<string>12/11/25</string>
+				<key>name</key>
+				<string>iOS Team Provisioning Profile: dev.flutter.plugins.hello-world-swiftui</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>S8QB4VV633</string>
+				<key>name</key>
+				<string></string>
+			</dict>
+			<key>versionNumber</key>
+			<string>1.0</string>
+		</dict>
+	</array>
+</dict>
+</plist>

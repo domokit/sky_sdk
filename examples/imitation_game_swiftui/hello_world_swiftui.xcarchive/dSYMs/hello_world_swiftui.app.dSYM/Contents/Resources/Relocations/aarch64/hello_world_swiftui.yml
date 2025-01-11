@@ -1,0 +1,51 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/louisehsu/Library/Developer/Xcode/DerivedData/hello_world_swiftui-ecinyyqtenezngdhtglynuyhnadw/Build/Intermediates.noindex/ArchiveIntermediates/hello_world_swiftui/InstallationBuildProductsLocation/Applications/hello_world_swiftui.app/hello_world_swiftui'
+relocations:
+  - { offset: 0x59599, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewVwxx', symObjAddr: 0x4, symBinAddr: 0x100008004, symSize: 0x28 }
+  - { offset: 0x595AD, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewVwca', symObjAddr: 0x64, symBinAddr: 0x100008060, symSize: 0x5C }
+  - { offset: 0x595C1, size: 0x8, addend: 0x0, symName: ___swift_memcpy16_8, symObjAddr: 0xC0, symBinAddr: 0x1000080BC, symSize: 0xC }
+  - { offset: 0x595D5, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewVwta', symObjAddr: 0xCC, symBinAddr: 0x1000080C8, symSize: 0x3C }
+  - { offset: 0x595E9, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewVwet', symObjAddr: 0x108, symBinAddr: 0x100008104, symSize: 0x48 }
+  - { offset: 0x595FD, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewVwst', symObjAddr: 0x150, symBinAddr: 0x10000814C, symSize: 0x3C }
+  - { offset: 0x59611, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewVMa', symObjAddr: 0x18C, symBinAddr: 0x100008188, symSize: 0x10 }
+  - { offset: 0x59625, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewV7SwiftUI0E0AA4BodyAdEP_AGWT', symObjAddr: 0x19C, symBinAddr: 0x100008198, symSize: 0x10 }
+  - { offset: 0x597AD, size: 0x8, addend: 0x0, symName: '_$sIeg_IeyB_TR', symObjAddr: 0x89C, symBinAddr: 0x100008898, symSize: 0x2C }
+  - { offset: 0x597C5, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewV4bodyQrvg7SwiftUI7ForEachVySaySSGSSAE0E0PAEE8onAppear7performQryycSg_tFQOyAjEE11scaledToFitQryFQOyAE5ImageV_Qo__Qo_GyXEfU_TA', symObjAddr: 0x944, symBinAddr: 0x100008940, symSize: 0x8 }
+  - { offset: 0x597D9, size: 0x8, addend: 0x0, symName: ___swift_instantiateConcreteTypeFromMangledName, symObjAddr: 0x94C, symBinAddr: 0x100008948, symSize: 0x40 }
+  - { offset: 0x597ED, size: 0x8, addend: 0x0, symName: '_$s7SwiftUI7ForEachVySaySSGSSAA15ModifiedContentVyAFyAA5ImageVAA18_AspectRatioLayoutVGAA25_AppearanceActionModifierVGGACyxq_q0_GAA4ViewA2aQR0_rlWl', symObjAddr: 0x98C, symBinAddr: 0x100008988, symSize: 0x64 }
+  - { offset: 0x59801, size: 0x8, addend: 0x0, symName: ___swift_instantiateConcreteTypeFromMangledNameAbstract, symObjAddr: 0x9F0, symBinAddr: 0x1000089EC, symSize: 0x44 }
+  - { offset: 0x59815, size: 0x8, addend: 0x0, symName: '_$s7SwiftUI15ModifiedContentVyACyAA5ImageVAA18_AspectRatioLayoutVGAA25_AppearanceActionModifierVGACyxq_GAA4ViewA2aMRzAA0lK0R_rlWl', symObjAddr: 0xA34, symBinAddr: 0x100008A30, symSize: 0x6C }
+  - { offset: 0x59829, size: 0x8, addend: 0x0, symName: '_$s7SwiftUI15ModifiedContentVyAA5ImageVAA18_AspectRatioLayoutVGACyxq_GAA4ViewA2aJRzAA0I8ModifierR_rlWl', symObjAddr: 0xAA0, symBinAddr: 0x100008A9C, symSize: 0x64 }
+  - { offset: 0x5983D, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewV4bodyQrvg7SwiftUI7ForEachVySaySSGSSAE0E0PAEE8onAppear7performQryycSg_tFQOyAjEE11scaledToFitQryFQOyAE5ImageV_Qo__Qo_GyXEfU_ARSScfU_TA', symObjAddr: 0xB08, symBinAddr: 0x100008B04, symSize: 0x8 }
+  - { offset: 0x59851, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewV4bodyQrvg7SwiftUI7ForEachVySaySSGSSAE0E0PAEE8onAppear7performQryycSg_tFQOyAjEE11scaledToFitQryFQOyAE5ImageV_Qo__Qo_GyXEfU_ARSScfU_yycfU_TA', symObjAddr: 0xB44, symBinAddr: 0x100008B40, symSize: 0xC }
+  - { offset: 0x59865, size: 0x8, addend: 0x0, symName: '_$sSo17OS_dispatch_queueCMa', symObjAddr: 0xB50, symBinAddr: 0x100008B4C, symSize: 0x3C }
+  - { offset: 0x59879, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewV13loadMoreItemsyyFyyScMYccfU_TA', symObjAddr: 0xBBC, symBinAddr: 0x100008BB8, symSize: 0x8 }
+  - { offset: 0x5988D, size: 0x8, addend: 0x0, symName: _block_copy_helper, symObjAddr: 0xBC4, symBinAddr: 0x100008BC0, symSize: 0x10 }
+  - { offset: 0x598A1, size: 0x8, addend: 0x0, symName: _block_destroy_helper, symObjAddr: 0xBD4, symBinAddr: 0x100008BD0, symSize: 0x8 }
+  - { offset: 0x598B5, size: 0x8, addend: 0x0, symName: '_$s8Dispatch0A13WorkItemFlagsVACs10SetAlgebraAAWl', symObjAddr: 0xBDC, symBinAddr: 0x100008BD8, symSize: 0x48 }
+  - { offset: 0x5992C, size: 0x8, addend: 0x0, symName: '_$ss12_ArrayBufferV20_consumeAndCreateNew14bufferIsUnique15minimumCapacity13growForAppendAByxGSb_SiSbtFSS_Tg5', symObjAddr: 0xC24, symBinAddr: 0x100008C20, symSize: 0x100 }
+  - { offset: 0x59A5A, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewV7SwiftUI0E0AadEP05_makeE04view6inputsAD01_E7OutputsVAD11_GraphValueVyxG_AD01_E6InputsVtFZTW', symObjAddr: 0x8C8, symBinAddr: 0x1000088C4, symSize: 0x4 }
+  - { offset: 0x59A76, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewV7SwiftUI0E0AadEP05_makeE4List4view6inputsAD01_eI7OutputsVAD11_GraphValueVyxG_AD01_eI6InputsVtFZTW', symObjAddr: 0x8CC, symBinAddr: 0x1000088C8, symSize: 0x4 }
+  - { offset: 0x59A92, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewV7SwiftUI0E0AadEP14_viewListCount6inputsSiSgAD01_eiJ6InputsV_tFZTW', symObjAddr: 0x8D0, symBinAddr: 0x1000088CC, symSize: 0x18 }
+  - { offset: 0x59AE7, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewV4bodyQrvg7SwiftUI7ForEachVySaySSGSSAE0E0PAEE8onAppear7performQryycSg_tFQOyAjEE11scaledToFitQryFQOyAE5ImageV_Qo__Qo_GyXEfU_', symObjAddr: 0x1AC, symBinAddr: 0x1000081A8, symSize: 0x10C }
+  - { offset: 0x59BA9, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewV4bodyQrvg7SwiftUI7ForEachVySaySSGSSAE0E0PAEE8onAppear7performQryycSg_tFQOyAjEE11scaledToFitQryFQOyAE5ImageV_Qo__Qo_GyXEfU_ARSScfU_', symObjAddr: 0x2B8, symBinAddr: 0x1000082B4, symSize: 0x148 }
+  - { offset: 0x59C09, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewV4bodyQrvg7SwiftUI7ForEachVySaySSGSSAE0E0PAEE8onAppear7performQryycSg_tFQOyAjEE11scaledToFitQryFQOyAE5ImageV_Qo__Qo_GyXEfU_ARSScfU_yycfU_', symObjAddr: 0x400, symBinAddr: 0x1000083FC, symSize: 0xE0 }
+  - { offset: 0x59D83, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewV13loadMoreItemsyyF', symObjAddr: 0x4E0, symBinAddr: 0x1000084DC, symSize: 0x290 }
+  - { offset: 0x59DD1, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewV13loadMoreItemsyyFyyScMYccfU_', symObjAddr: 0x770, symBinAddr: 0x10000876C, symSize: 0x12C }
+  - { offset: 0x59F4D, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewV7SwiftUI0E0AadEP4body4BodyQzvgTW', symObjAddr: 0x8E8, symBinAddr: 0x1000088E4, symSize: 0x5C }
+  - { offset: 0x5A0BD, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui0a1_b1_C3AppV4bodyQrvg', symObjAddr: 0x0, symBinAddr: 0x100008D8C, symSize: 0x178 }
+  - { offset: 0x5A17A, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x240, symBinAddr: 0x100008FCC, symSize: 0x34 }
+  - { offset: 0x5A20E, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui0a1_b1_C3AppVAC7SwiftUI0D0AAWl', symObjAddr: 0x274, symBinAddr: 0x100009000, symSize: 0x44 }
+  - { offset: 0x5A222, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui0a1_b1_C3AppVMa', symObjAddr: 0x2B8, symBinAddr: 0x100009044, symSize: 0x10 }
+  - { offset: 0x5A236, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui0a1_b1_C3AppV7SwiftUI0D0AA4BodyAdEP_AD5ScenePWT', symObjAddr: 0x2C8, symBinAddr: 0x100009054, symSize: 0x10 }
+  - { offset: 0x5A24A, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui11ContentViewVAC7SwiftUI0E0AAWl', symObjAddr: 0x318, symBinAddr: 0x100009064, symSize: 0x44 }
+  - { offset: 0x5A25E, size: 0x8, addend: 0x0, symName: '_$s7SwiftUI11WindowGroupVy19hello_world_swiftui11ContentViewVGACyxGAA5SceneAAWl', symObjAddr: 0x35C, symBinAddr: 0x1000090A8, symSize: 0x4C }
+  - { offset: 0x5A28D, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui0a1_b1_C3AppV4bodyQrvg', symObjAddr: 0x0, symBinAddr: 0x100008D8C, symSize: 0x178 }
+  - { offset: 0x5A2ED, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui0a1_b1_C3AppV4bodyQrvgAA11ContentViewVycfU_', symObjAddr: 0x178, symBinAddr: 0x100008F04, symSize: 0xC0 }
+  - { offset: 0x5A41E, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui0a1_b1_C3AppV7SwiftUI0D0AadEP4body4BodyQzvgTW', symObjAddr: 0x238, symBinAddr: 0x100008FC4, symSize: 0x4 }
+  - { offset: 0x5A438, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui0a1_b1_C3AppV7SwiftUI0D0AadEPxycfCTW', symObjAddr: 0x23C, symBinAddr: 0x100008FC8, symSize: 0x4 }
+  - { offset: 0x5A51F, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui19ResourceBundleClass33_8ACA2A1A7FC3F3B3C4721CDBCB0F3651LLCfD', symObjAddr: 0x0, symBinAddr: 0x1000090F8, symSize: 0x10 }
+  - { offset: 0x5A561, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui19ResourceBundleClass33_8ACA2A1A7FC3F3B3C4721CDBCB0F3651LLCMa', symObjAddr: 0x10, symBinAddr: 0x100009108, symSize: 0x20 }
+  - { offset: 0x5A57C, size: 0x8, addend: 0x0, symName: '_$s19hello_world_swiftui19ResourceBundleClass33_8ACA2A1A7FC3F3B3C4721CDBCB0F3651LLCfD', symObjAddr: 0x0, symBinAddr: 0x1000090F8, symSize: 0x10 }
+...

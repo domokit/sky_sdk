@@ -5026,7 +5026,7 @@ targets:
 
   - name: Mac_ios flutter_view_ios__start_up
     recipe: devicelab/devicelab_drone
-    presubmit: false
+#    presubmit: false
     timeout: 60
     properties:
       tags: >
@@ -5035,12 +5035,21 @@ targets:
 
   - name: Mac_arm64_ios hello_world_ios__compile
     recipe: devicelab/devicelab_drone
-    presubmit: false
+#    presubmit: false
     timeout: 60
     properties:
       tags: >
         ["devicelab", "ios", "mac", "arm64"]
-      task_name: hello_world_ios__compile
+      task_name: imitation_game_swiftui__compile
+
+#  - name: Mac_arm64_ios hello_world_swiftui__compile
+#    recipe: devicelab/devicelab_drone
+##    presubmit: false
+#    timeout: 60
+#    properties:
+#      tags: >
+#        ["devicelab", "ios", "mac", "arm64""]
+#      task_name: hello_world_swiftui__compile
 
   - name: Mac_x64 hot_mode_dev_cycle_macos_target__benchmark
     recipe: devicelab/devicelab_drone
@@ -5093,7 +5102,7 @@ targets:
     properties:
       tags: >
         ["devicelab", "ios", "mac"]
-      task_name: integration_test_test_ios
+      task_name: imitation_game_flutter__compile
 
   - name: Mac_ios integration_ui_ios_driver
     recipe: devicelab/devicelab_drone
