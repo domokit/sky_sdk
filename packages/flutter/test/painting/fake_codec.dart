@@ -30,7 +30,9 @@ class FakeCodec implements ui.Codec {
     for (int i = 0; i < frameCount; i += 1) {
       frameInfos.add(await codec.getNextFrame());
     }
-    return FakeCodec._(frameCount, codec.repetitionCount, frameInfos);
+    final int repetitionCount = codec.repetitionCount;
+    codec.dispose();
+    return FakeCodec._(frameCount, repetitionCount, frameInfos);
   }
 
   @override

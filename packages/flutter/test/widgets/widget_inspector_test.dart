@@ -4717,6 +4717,7 @@ class _TestWidgetInspectorService extends TestWidgetInspectorService {
                 base64.decode(base64Screenshot),
               );
               final ui.FrameInfo frame = await codec.getNextFrame();
+              codec.dispose();
               return frame.image;
             }))!;
         addTearDown(screenshotImage.dispose);
