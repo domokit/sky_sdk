@@ -27,10 +27,10 @@ A single-header C API for 2D graphics and text rendering. [Impeller](../../READM
 Users may plug in a custom toolchain into the Flutter Engine build system to build the `libimpeller.so` dynamic library. However, for the common platforms, the CI bots upload a tarball containing the library and headers. This URL for the SDK tarball for a particular platform can be constructed as follows:
 
 ```sh
-https://storage.googleapis.com/flutter_infra_release/flutter/$FLUTTER_ENGINE_SHA/$PLATFORM_ARCH/impeller_sdk.zip
+https://storage.googleapis.com/flutter_infra_release/flutter/$FLUTTER_SHA/$PLATFORM_ARCH/impeller_sdk.zip
 ```
 
-The `$FLUTTER_ENGINE_SHA` is the Git hash in the Flutter Engine repository. To make sure all artifacts for a specific hash have been successfully generated, look up the Flutter Engine SHA currently used by the Flutter Framework in the [engine.version](https://github.com/flutter/flutter/blob/master/bin/internal/engine.version) file. The `$PLATFORM_ARCH` can be determined from the table below.
+The `$FLUTTER_SHA` is the Git hash in the [Flutter repository](https://github.com/flutter/flutter). The `$PLATFORM_ARCH` can be determined from the table below.
 
 |       | macOS        | Linux       | Android        | Windows       |
 |:-----:|:------------:|:-----------:|:--------------:|:-------------:|
@@ -40,7 +40,7 @@ The `$FLUTTER_ENGINE_SHA` is the Git hash in the Flutter Engine repository. To m
 | x64   | darwin-x64   | linux-x64   | android-x64    | windows-x64   |
 
 
-_For example, the SDK for `Linux x64` at engine SHA `202506d686e317862d81548b8afcae9c9eecaa90` would be [this link](https://storage.googleapis.com/flutter_infra_release/flutter/202506d686e317862d81548b8afcae9c9eecaa90/linux-x64/impeller_sdk.zip)_
+_For example, the SDK for `Linux x64` at Flutter SHA `cda35151265f00fab84d8128b086d5534f690c1b` would be [this link](https://storage.googleapis.com/flutter_infra_release/flutter/cda35151265f00fab84d8128b086d5534f690c1b/linux-x64/impeller_sdk.zip)_
 
 # Examples
 
