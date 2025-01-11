@@ -1007,6 +1007,65 @@ class WidgetStateMapper<T> with Diagnosticable implements WidgetStateProperty<T>
 
   final WidgetStateMap<T> _map;
 
+  /// In debug mode, returns a copy of this [WidgetStateMapper] that invokes
+  /// the provided [onResolve] callback during its [resolve] method.
+  ///
+  /// {@tool snippet}
+  ///
+  /// This example shows how to create an [ElevatedButton] whose elevation
+  /// depends on a [WidgetStateMap]. This property will [print] the selected
+  /// [MapEntry] each time one is resolved.
+  ///
+  /// An `// ignore` was added, as this method is intended to be
+  /// ephemerally used during development or local testing.
+  ///
+  /// ```dart
+  /// ElevatedButton(
+  ///   style: ButtonStyle(
+  ///     elevation: const WidgetStateMapper<double>(
+  ///       <WidgetStatesConstraint, double>{
+  ///         WidgetState.hovered: 5.0,
+  ///         WidgetState.pressed: 0.0,
+  ///         WidgetState.any:     2.0,
+  ///       },
+  ///     ).debugObserveWith(print),
+  ///   ),
+  ///   onPressed: () {},
+  ///   child: const Text('button'),
+  /// );
+  /// ```
+  /// {@end-tool}
+  WidgetStateProperty<T> debugObserveWith(
+    void Function(MapEntry<WidgetStatesConstraint?, T> entry) onResolve,
+  ) {
+    WidgetStateProperty<T>? result;
+    assert(() {
+      result = _WidgetStatePropertyWith<T>((Set<WidgetState> states) {
+        for (final MapEntry<WidgetStatesConstraint, T> entry in _map.entries) {
+          if (entry.key.isSatisfiedBy(states)) {
+            onResolve(entry);
+            return entry.value;
+          }
+        }
+
+        try {
+          onResolve(MapEntry<WidgetState?, T>(null, null as T));
+          return null as T;
+        } on TypeError {
+          throw ArgumentError(
+            'The current set of WidgetStates is $states.\n'
+            'None of the provided map keys matched this set, '
+            'and the type "$T" is non-nullable.\n'
+            'Consider using "WidgetStateProperty<$T?>.fromMap()", '
+            'or adding the "WidgetState.any" key to this map.',
+          );
+        }
+      });
+      return true;
+    }());
+    return result ?? this;
+  }
+
   @override
   T resolve(Set<WidgetState> states) {
     for (final MapEntry<WidgetStatesConstraint, T> entry in _map.entries) {

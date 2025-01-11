@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -237,6 +237,55 @@ void main() {
     );
     expect(style1 == style2, isTrue);
     expect(style1 == style3, isFalse);
+  });
+
+  test('WidgetStateMapper.withObserver() control test', () {
+    String? selectedConstraint;
+    Color? resolvedColor;
+
+    void observer(MapEntry<WidgetStatesConstraint?, Color> entry) {
+      selectedConstraint = entry.key.toString();
+      resolvedColor = entry.value;
+    }
+
+    final WidgetStatesConstraint focusedHovered = WidgetState.focused | WidgetState.hovered;
+    final WidgetStateProperty<Color> colorProperty = WidgetStateMapper<Color>(
+      <WidgetStatesConstraint, Color>{
+        WidgetState.error & focusedHovered: Colors.redAccent,
+        WidgetState.error:                  Colors.red,
+        focusedHovered:                     Colors.lightBlue,
+        WidgetState.selected:               Colors.blue,
+        WidgetState.disabled:               Colors.blueGrey,
+        ~WidgetState.disabled:              Colors.black,
+      },
+    ).debugObserveWith(observer);
+
+    // Adding the observer should not call its closure.
+    expect(selectedConstraint ?? resolvedColor, isNull);
+
+    colorProperty.resolve(const <WidgetState>{WidgetState.error, WidgetState.focused, WidgetState.hovered});
+    expect(selectedConstraint, '(WidgetState.error & (WidgetState.focused | WidgetState.hovered))');
+    expect(resolvedColor, Colors.redAccent);
+
+    colorProperty.resolve(const <WidgetState>{WidgetState.error});
+    expect(selectedConstraint, 'WidgetState.error');
+    expect(resolvedColor, Colors.red);
+
+    colorProperty.resolve(const <WidgetState>{WidgetState.focused, WidgetState.hovered});
+    expect(selectedConstraint, '(WidgetState.focused | WidgetState.hovered)');
+    expect(resolvedColor, Colors.lightBlue);
+
+    colorProperty.resolve(const <WidgetState>{WidgetState.selected});
+    expect(selectedConstraint, 'WidgetState.selected');
+    expect(resolvedColor, Colors.blue);
+
+    colorProperty.resolve(const <WidgetState>{WidgetState.disabled});
+    expect(selectedConstraint, 'WidgetState.disabled');
+    expect(resolvedColor, Colors.blueGrey);
+
+    colorProperty.resolve(enabled);
+    expect(selectedConstraint, '~WidgetState.disabled');
+    expect(resolvedColor, Colors.black);
   });
 }
 
