@@ -151,8 +151,10 @@ class MacOSDesignedForIPadDevices extends PollingDeviceDiscovery {
   /// and discovery is allowed for this command.
   @override
   bool get canListAnything =>
-      _iosWorkflow.canListDevices &&
-      _operatingSystemUtils.hostPlatform == HostPlatform.darwin_arm64;
+      _iosWorkflow.canListDevices && _operatingSystemUtils.hostPlatform == HostPlatform.darwin_arm64 && allowDiscovery;
+
+  /// Set to show ARM macOS as an iOS device target.
+  static bool allowDiscovery = false;
 
   @override
   Future<List<Device>> pollingGetDevices({Duration? timeout}) async {

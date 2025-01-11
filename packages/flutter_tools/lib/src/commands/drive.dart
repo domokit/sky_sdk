@@ -25,7 +25,6 @@ import '../drive/drive_service.dart';
 import '../drive/web_driver_service.dart' show Browser;
 import '../globals.dart' as globals;
 import '../ios/devices.dart';
-import '../macos/macos_ipad_device.dart';
 import '../resident_runner.dart';
 import '../runner/flutter_command.dart'
     show FlutterCommandCategory, FlutterCommandResult, FlutterOptions;
@@ -263,9 +262,6 @@ class DriveCommand extends RunCommandBase {
       final Device? device = await findTargetDevice();
       if (device is! AndroidDevice) {
         throwToolExit('--${FlutterOptions.kDeviceUser} is only supported for Android');
-      }
-      if (device is MacOSDesignedForIPadDevice) {
-        throwToolExit('Mac Designed for iPad is currently not supported for flutter drive.');
       }
     }
     return super.validateCommand();
