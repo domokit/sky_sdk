@@ -214,7 +214,11 @@ class DriveCommand extends RunCommandBase {
 
   @override
   final String description =
-      'Run integration tests for the project on an attached device or emulator.';
+      'Builds and installs the app, and runs a Dart program that connects to '
+      'the app, often to run externally facing integration tests, such as with '
+      'package:test and package:flutter_driver.\n'
+      '\n'
+      'Usage: flutter drive --target <lib/main.dart> --driver <test_driver/main_test.dart>.';
 
   @override
   String get category => FlutterCommandCategory.project;
