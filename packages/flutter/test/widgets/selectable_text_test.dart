@@ -5548,4 +5548,66 @@ void main() {
 
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('All selected content terminates with newlines', (WidgetTester tester) async {
+    final GlobalKey key = GlobalKey();
+    const String testValue = '''
+a big house
+jumped over a mouse
+and then the moon
+howled at the wolf
+resting in the night sky.
+''';
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: SelectionArea(
+            child: Column(
+              key: key,
+              children: <Widget>[
+                const Text('a big house'),
+                const Text('jumped over a mouse'),
+                const SizedBox(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      ElevatedButton(onPressed: null, child: Text('and then the moon')),
+                      ElevatedButton(onPressed: null, child: Text('howled at the wolf')),
+                    ],
+                  ),
+                ),
+                Builder(builder: (BuildContext context) {
+                  return RichText(
+                    selectionColor: Colors.blue,
+                    selectionRegistrar: SelectionContainer.maybeOf(context),
+                    text: TextSpan(
+                      style: DefaultTextStyle.of(context).style,
+                      text: 'resting ',
+                      children: const <TextSpan>[
+                        TextSpan(text: 'in ', style: TextStyle(fontWeight: FontWeight.bold)),
+                        TextSpan(text: 'the '),
+                      ],
+                    ),
+                  );
+                }),
+                const Text('night sky.'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.dragFrom(Offset.zero, Offset.infinite);
+    await tester.pumpAndSettle();
+
+    Actions.invoke(key.currentContext!, const SelectAllTextIntent(SelectionChangedCause.drag));
+    Actions.invoke(key.currentContext!, CopySelectionTextIntent.copy);
+    await tester.pumpAndSettle();
+
+    final ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
+    expect(data, isNotNull);
+    expect(data!.text, testValue);
+  }, variant: TargetPlatformVariant.all());
 }

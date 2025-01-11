@@ -179,7 +179,21 @@ class _SelectionContainerState extends State<SelectionContainer>
   @override
   SelectedContent? getSelectedContent() {
     assert(!widget._disabled);
-    return widget.delegate!.getSelectedContent();
+    final SelectedContent? content = widget.delegate?.getSelectedContent();
+    if (content == null) {
+      return null;
+    }
+
+    final String plainText = content.plainText;
+
+    // If plainText is empty or already ends with a newline character,
+    // then return the original SelectedContent as-is.
+    if (plainText.endsWith('\n')) {
+      return content;
+    }
+
+    // Else, append the newline character in a new SelectedContent object.
+    return SelectedContent(plainText: '$plainText\n');
   }
 
   @override
