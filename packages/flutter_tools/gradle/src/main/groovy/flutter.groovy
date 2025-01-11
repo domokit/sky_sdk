@@ -4,6 +4,7 @@
 // found in the LICENSE file.
 
 import com.android.build.OutputFile
+import com.flutter.gradle.BaseApplicationNameHandler
 import groovy.json.JsonGenerator
 import groovy.xml.QName
 import java.nio.file.Paths
@@ -299,7 +300,7 @@ class FlutterPlugin implements Plugin<Project> {
         if (!shouldSkipDependencyChecks) {
             try {
                 final String dependencyCheckerPluginPath = Paths.get(flutterRoot.absolutePath,
-                        "packages", "flutter_tools", "gradle", "src", "main", "kotlin",
+                        "packages", "flutter_tools", "gradle", "src", "main", "kotlin_scripts",
                         "dependency_version_checker.gradle.kts")
                 project.apply from: dependencyCheckerPluginPath
             } catch (Exception e) {
@@ -317,8 +318,8 @@ class FlutterPlugin implements Plugin<Project> {
             }
         }
 
-        // Use Kotlin DSL to handle baseApplicationName logic due to Groovy dynamic dispatch bug.
-        project.apply from: Paths.get(flutterRoot.absolutePath, "packages", "flutter_tools", "gradle", "src", "main", "kotlin", "flutter.gradle.kts")
+        // Use Kotlin source to handle baseApplicationName logic due to Groovy dynamic dispatch bug.
+        BaseApplicationNameHandler.setBaseName(project)
 
         String flutterProguardRules = Paths.get(flutterRoot.absolutePath, "packages", "flutter_tools",
                 "gradle", "flutter_proguard_rules.pro")
