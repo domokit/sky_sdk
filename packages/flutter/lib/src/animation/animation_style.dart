@@ -64,16 +64,55 @@ class AnimationStyle with Diagnosticable {
     );
   }
 
+  /// Returns a modified version of the [other] style, where its `null` properties
+  /// are filled in with the non-null properties of this style, where applicable.
+  ///
+  /// If a `null` argument is passed, returns this text style.
+  AnimationStyle merge(AnimationStyle? other) {
+    if (other == null) {
+      return this;
+    }
+    return copyWith(
+      curve: other.curve,
+      duration: other.duration,
+      reverseCurve: other.reverseCurve,
+      reverseDuration: other.reverseDuration,
+    );
+  }
+
   /// Linearly interpolate between two animation styles.
   static AnimationStyle? lerp(AnimationStyle? a, AnimationStyle? b, double t) {
     if (identical(a, b)) {
       return a;
     }
     return AnimationStyle(
-      curve: t < 0.5 ? a?.curve : b?.curve,
-      duration: t < 0.5 ? a?.duration : b?.duration,
-      reverseCurve: t < 0.5 ? a?.reverseCurve : b?.reverseCurve,
-      reverseDuration: t < 0.5 ? a?.reverseDuration : b?.reverseDuration,
+      curve: _lerp(a?.curve, b?.curve, t, _LerpedCurve.new),
+      duration: _lerp(a?.duration, b?.duration, t, _lerpDuration),
+      reverseCurve: _lerp(a?.reverseCurve, b?.reverseCurve, t, _LerpedCurve.new),
+      reverseDuration: _lerp(a?.reverseDuration, b?.reverseDuration, t, _lerpDuration),
+    );
+  }
+
+  @optionalTypeArgs
+  static T? _lerp<T extends Object>(T? a, T? b, double t, T Function(T a, T b, double t) lerp) {
+    if (identical(a, b)) {
+      return a;
+    }
+    if (t == 0.0) {
+      return a;
+    }
+    if (t == 1.0) {
+      return b;
+    }
+    if (a == null || b == null) {
+      return a ?? b;
+    }
+    return lerp(a, b, t);
+  }
+
+  static Duration _lerpDuration(Duration a, Duration b, double t) {
+    return Duration(
+      microseconds: (a.inMicroseconds * (1.0 - t) + b.inMicroseconds * t).round(),
     );
   }
 
@@ -105,4 +144,31 @@ class AnimationStyle with Diagnosticable {
       DiagnosticsProperty<Duration>('reverseDuration', reverseDuration, defaultValue: null),
     );
   }
+}
+
+class _LerpedCurve extends Curve {
+  const _LerpedCurve(this.first, this.second, this._t);
+
+  final Curve first;
+  final Curve second;
+  final double _t;
+
+  @override
+  double transform(double t) {
+    final double a = first.transform(t);
+    final double b = second.transform(t);
+
+    return a * (1.0 - _t) + b * _t;
+  }
+
+  @override
+  bool operator==(Object other) {
+    return other is _LerpedCurve
+        && other.first == first
+        && other.second == second
+        && other._t == _t;
+  }
+
+  @override
+  int get hashCode => Object.hash(first, second, _t);
 }
