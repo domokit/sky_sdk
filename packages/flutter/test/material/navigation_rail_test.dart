@@ -4038,6 +4038,72 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+testWidgets('NavigationRailDestination respects the MouseRegion Configuration', (
+    WidgetTester tester,
+  ) async {
+    bool isHovered = false;
+    bool isEntered = false;
+    bool isExited = false;
+
+    final MouseRegionConfig mouseRegionConfig = MouseRegionConfig(
+      onEnter: (PointerEnterEvent event) {
+        isEntered = true;
+      },
+      onExit: (PointerExitEvent event) {
+        isExited = true;
+      },
+      onHover: (PointerHoverEvent event) {
+        isHovered = true;
+      },
+      cursor: SystemMouseCursors.click,
+      opaque: false,
+    );
+
+    NavigationRail navigationRail() {
+      return NavigationRail(
+        selectedIndex: 0,
+        destinations: <NavigationRailDestination>[
+          NavigationRailDestination(
+            icon: const Icon(Icons.favorite_border),
+            selectedIcon: const Icon(Icons.favorite),
+            label: const Text('Abc'),
+            mouseRegionConfig: mouseRegionConfig,
+          ),
+        ],
+      );
+    }
+
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body: navigationRail())));
+
+    // Simulate mouse events
+    final Finder navigationRailDestination = find.byIcon(Icons.favorite);
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+
+    await gesture.addPointer();
+    await gesture.moveTo(tester.getCenter(navigationRailDestination));
+    await tester.pumpAndSettle();
+    expect(isEntered, isTrue, reason: 'Mouse enter event should be triggered');
+    expect(isHovered, isTrue, reason: 'Mouse hover event should be triggered');
+
+    await gesture.moveTo(Offset.zero);
+    await tester.pumpAndSettle();
+    expect(isExited, isTrue, reason: 'Mouse exit event should be triggered');
+
+    // Verify the cursor
+    final MouseRegion mouseRegion = tester.widget<MouseRegion>(
+      find.ancestor(
+        of: navigationRailDestination,
+        matching: find.byType(MouseRegion),
+      ).last,
+    );
+    expect(mouseRegion.cursor, equals(SystemMouseCursors.click), reason: 'Cursor should be SystemMouseCursors.click');
+
+    // Verify the opaque property
+    expect(mouseRegion.opaque, isFalse, reason: 'Opaque property should be false');
+
+    await gesture.removePointer();
+  });
+
   group('Material 2', () {
     // These tests are only relevant for Material 2. Once Material 2
     // support is deprecated and the APIs are removed, these tests

@@ -10,6 +10,7 @@ library;
 
 import 'dart:ui';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'color_scheme.dart';
@@ -508,6 +509,7 @@ class _NavigationRailState extends State<NavigationRail> with TickerProviderStat
                               tabCount: widget.destinations.length,
                             ),
                             disabled: widget.destinations[i].disabled,
+                            mouseRegionConfig: widget.destinations[i].mouseRegionConfig,
                           ),
                         if (widget.trailing != null) widget.trailing!,
                       ],
@@ -566,6 +568,35 @@ class _NavigationRailState extends State<NavigationRail> with TickerProviderStat
   }
 }
 
+
+/// This data class is passed to [NavigationRail]'s [NavigationRailDestination]
+/// through MouseRegion to configure the hover effect.
+class MouseRegionConfig {
+  /// Creates a configuration object for [MouseRegion]s on [NavigationRailDestination]s.
+  const MouseRegionConfig({
+    this.onEnter,
+    this.onExit,
+    this.onHover,
+    this.cursor = MouseCursor.defer,
+    this.opaque = true
+  });
+
+  ///  {@macro flutter.widgets.MouseRegion.onHover}
+  final PointerHoverEventListener? onHover;
+
+  ///  {@macro flutter.widgets.MouseRegion.onEnter}
+  final PointerEnterEventListener? onEnter;
+
+  ///  {@macro flutter.widgets.MouseRegion.onExit}
+  final PointerExitEventListener? onExit;
+
+  ///  {@macro flutter.widgets.MouseRegion.cursor}
+  final MouseCursor cursor;
+
+  ///  {@macro flutter.widgets.MouseRegion.opaque}
+  final bool opaque;
+}
+
 class _RailDestination extends StatefulWidget {
   const _RailDestination({
     required this.minWidth,
@@ -585,6 +616,7 @@ class _RailDestination extends StatefulWidget {
     this.indicatorColor,
     this.indicatorShape,
     this.disabled = false,
+    this.mouseRegionConfig = const MouseRegionConfig(),
   });
 
   final double minWidth;
@@ -604,6 +636,7 @@ class _RailDestination extends StatefulWidget {
   final Color? indicatorColor;
   final ShapeBorder? indicatorShape;
   final bool disabled;
+  final MouseRegionConfig mouseRegionConfig;
 
   @override
   State<_RailDestination> createState() => _RailDestinationState();
@@ -898,17 +931,24 @@ class _RailDestinationState extends State<_RailDestination> {
         children: <Widget>[
           Material(
             type: MaterialType.transparency,
-            child: _IndicatorInkWell(
-              onTap: widget.disabled ? null : widget.onTap,
-              borderRadius: BorderRadius.all(Radius.circular(widget.minWidth / 2.0)),
-              customBorder: widget.indicatorShape,
-              splashColor: effectiveSplashColor,
-              hoverColor: effectiveHoverColor,
-              useMaterial3: material3,
-              indicatorOffset: indicatorOffset,
-              applyXOffset: applyXOffset,
-              textDirection: textDirection,
-              child: content,
+            child: MouseRegion(
+              onEnter: widget.mouseRegionConfig.onEnter,
+              onHover: widget.mouseRegionConfig.onHover,
+              onExit: widget.mouseRegionConfig.onExit,
+              cursor: widget.mouseRegionConfig.cursor,
+              opaque: widget.mouseRegionConfig.opaque,
+              child: _IndicatorInkWell(
+                onTap: widget.disabled ? null : widget.onTap,
+                borderRadius: BorderRadius.all(Radius.circular(widget.minWidth / 2.0)),
+                customBorder: widget.indicatorShape,
+                splashColor: effectiveSplashColor,
+                hoverColor: effectiveHoverColor,
+                useMaterial3: material3,
+                indicatorOffset: indicatorOffset,
+                applyXOffset: applyXOffset,
+                textDirection: textDirection,
+                child: content,
+              ),
             ),
           ),
           Semantics(label: widget.indexLabel),
@@ -1057,6 +1097,7 @@ class NavigationRailDestination {
     required this.label,
     this.padding,
     this.disabled = false,
+    this.mouseRegionConfig = const MouseRegionConfig(),
   }) : selectedIcon = selectedIcon ?? icon;
 
   /// The icon of the destination.
@@ -1105,6 +1146,10 @@ class NavigationRailDestination {
 
   /// Indicates that this destination is inaccessible.
   final bool disabled;
+
+  ///  configuration object for [MouseRegion]s on [NavigationRailDestination]s.
+  final MouseRegionConfig mouseRegionConfig;
+
 }
 
 class _ExtendedNavigationRailAnimation extends InheritedWidget {
