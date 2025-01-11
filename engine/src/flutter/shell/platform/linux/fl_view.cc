@@ -221,8 +221,21 @@ static void handle_geometry_changed(FlView* self) {
   GtkAllocation allocation;
   gtk_widget_get_allocation(GTK_WIDGET(self), &allocation);
   gint scale_factor = gtk_widget_get_scale_factor(GTK_WIDGET(self));
+
+  // Note we can't detect if a window is moved between monitors - this
+  // information is provided by Wayland but GTK only notifies us if the scale
+  // has changed, so moving between two monitors of the same scale doesn't
+  // provide any information.
+
+  GdkWindow* window =
+      gtk_widget_get_window(gtk_widget_get_toplevel(GTK_WIDGET(self)));
+  GdkMonitor* monitor = gdk_display_get_monitor_at_window(
+      gtk_widget_get_display(GTK_WIDGET(self)), window);
   fl_engine_send_window_metrics_event(
-      self->engine, self->view_id, allocation.width * scale_factor,
+      self->engine,
+      fl_display_monitor_get_display_id(
+          fl_engine_get_display_monitor(self->engine), monitor),
+      self->view_id, allocation.width * scale_factor,
       allocation.height * scale_factor, scale_factor);
 
   // Make sure the view has been realized and its size has been allocated before

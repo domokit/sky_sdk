@@ -24,8 +24,7 @@ G_DECLARE_FINAL_TYPE(FlMockRenderable,
 
 typedef gdouble (*FlMockRendererGetRefreshRate)(FlRenderer* renderer);
 
-FlMockRenderer* fl_mock_renderer_new(
-    FlMockRendererGetRefreshRate get_refresh_rate = nullptr);
+FlMockRenderer* fl_mock_renderer_new();
 
 FlMockRenderable* fl_mock_renderable_new();
 

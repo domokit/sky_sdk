@@ -381,11 +381,6 @@ void fl_renderer_clear_current(FlRenderer* self) {
   FL_RENDERER_GET_CLASS(self)->clear_current(self);
 }
 
-gdouble fl_renderer_get_refresh_rate(FlRenderer* self) {
-  g_return_val_if_fail(FL_IS_RENDERER(self), -1.0);
-  return FL_RENDERER_GET_CLASS(self)->get_refresh_rate(self);
-}
-
 guint32 fl_renderer_get_fbo(FlRenderer* self) {
   g_return_val_if_fail(FL_IS_RENDERER(self), 0);
 

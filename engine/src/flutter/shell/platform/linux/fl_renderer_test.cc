@@ -93,20 +93,6 @@ TEST(FlRendererTest, RestoresGLState) {
   EXPECT_EQ(texture_2d_binding, kFakeTextureName);
 }
 
-static constexpr double kExpectedRefreshRate = 120.0;
-static gdouble renderer_get_refresh_rate(FlRenderer* renderer) {
-  return kExpectedRefreshRate;
-}
-
-TEST(FlRendererTest, RefreshRate) {
-  g_autoptr(FlMockRenderer) renderer =
-      fl_mock_renderer_new(&renderer_get_refresh_rate);
-
-  gdouble result_refresh_rate =
-      fl_renderer_get_refresh_rate(FL_RENDERER(renderer));
-  EXPECT_DOUBLE_EQ(result_refresh_rate, kExpectedRefreshRate);
-}
-
 TEST(FlRendererTest, BlitFramebuffer) {
   ::testing::NiceMock<flutter::testing::MockEpoxy> epoxy;
 

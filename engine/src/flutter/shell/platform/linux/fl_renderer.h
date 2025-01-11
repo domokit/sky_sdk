@@ -55,16 +55,6 @@ struct _FlRendererClass {
    * @renderer: an #FlRenderer.
    */
   void (*clear_current)(FlRenderer* renderer);
-
-  /**
-   * Virtual method called when Flutter wants to get the refresh rate of the
-   * renderer.
-   * @renderer: an #FlRenderer.
-   *
-   * Returns: The refresh rate of the display in Hz. If the refresh rate is
-   * not available, returns -1.0.
-   */
-  gdouble (*get_refresh_rate)(FlRenderer* renderer);
 };
 
 /**
@@ -234,15 +224,6 @@ void fl_renderer_render(FlRenderer* renderer,
  * context.
  */
 void fl_renderer_cleanup(FlRenderer* renderer);
-
-/**
- * fl_renderer_get_refresh_rate:
- * @renderer: an #FlRenderer.
- *
- * Returns: The refresh rate of the display in Hz. If the refresh rate is
- * not available, returns -1.0.
- */
-gdouble fl_renderer_get_refresh_rate(FlRenderer* renderer);
 
 G_END_DECLS
 

@@ -39,24 +39,6 @@ static void fl_renderer_gdk_clear_current(FlRenderer* renderer) {
   gdk_gl_context_clear_current();
 }
 
-// Implements FlRenderer::get_refresh_rate.
-static gdouble fl_renderer_gdk_get_refresh_rate(FlRenderer* renderer) {
-  FlRendererGdk* self = FL_RENDERER_GDK(renderer);
-  GdkDisplay* display = gdk_window_get_display(self->window);
-  GdkMonitor* monitor =
-      gdk_display_get_monitor_at_window(display, self->window);
-  if (monitor == nullptr) {
-    return -1.0;
-  }
-
-  int refresh_rate = gdk_monitor_get_refresh_rate(monitor);
-  if (refresh_rate <= 0) {
-    return -1.0;
-  }
-  // the return value is in milli-hertz, convert to hertz
-  return static_cast<gdouble>(refresh_rate) / 1000.0;
-}
-
 static void fl_renderer_gdk_dispose(GObject* object) {
   FlRendererGdk* self = FL_RENDERER_GDK(object);
 
@@ -74,7 +56,6 @@ static void fl_renderer_gdk_class_init(FlRendererGdkClass* klass) {
   FL_RENDERER_CLASS(klass)->make_resource_current =
       fl_renderer_gdk_make_resource_current;
   FL_RENDERER_CLASS(klass)->clear_current = fl_renderer_gdk_clear_current;
-  FL_RENDERER_CLASS(klass)->get_refresh_rate = fl_renderer_gdk_get_refresh_rate;
 }
 
 static void fl_renderer_gdk_init(FlRendererGdk* self) {}
