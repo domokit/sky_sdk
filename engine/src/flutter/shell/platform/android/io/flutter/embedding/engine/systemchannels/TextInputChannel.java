@@ -718,7 +718,8 @@ public class TextInputChannel {
     URL("TextInputType.url"),
     VISIBLE_PASSWORD("TextInputType.visiblePassword"),
     NONE("TextInputType.none"),
-    WEB_SEARCH("TextInputType.webSearch");
+    WEB_SEARCH("TextInputType.webSearch"),
+    TWITTER("TextInputType.twitter");
 
     static TextInputType fromValue(@NonNull String encodedName) throws NoSuchFieldException {
       for (TextInputType textInputType : TextInputType.values()) {

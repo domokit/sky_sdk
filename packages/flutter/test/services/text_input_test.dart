@@ -447,6 +447,10 @@ void main() {
         TextInputType.webSearch.toString(),
         'TextInputType(name: TextInputType.webSearch, signed: null, decimal: null)',
       );
+      expect(
+        TextInputType.twitter.toString(),
+        'TextInputType(name: TextInputType.twitter, signed: null, decimal: null)',
+      );
 
       expect(text == number, false);
       expect(number == number2, true);
@@ -476,6 +480,7 @@ void main() {
       expect(TextInputType.streetAddress.index, 9);
       expect(TextInputType.none.index, 10);
       expect(TextInputType.webSearch.index, 11);
+      expect(TextInputType.twitter.index, 12);
 
       expect(
         TextEditingValue.empty.toString(),

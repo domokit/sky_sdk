@@ -143,6 +143,9 @@ static UIKeyboardType ToUIKeyboardType(NSDictionary* type) {
   if ([inputType isEqualToString:@"TextInputType.webSearch"]) {
     return UIKeyboardTypeWebSearch;
   }
+  if ([inputType isEqualToString:@"TextInputType.twitter"]) {
+    return UIKeyboardTypeTwitter;
+  }
   return UIKeyboardTypeDefault;
 }
 
