@@ -111,7 +111,6 @@ class WebBuilder {
           logger: _logger,
           processManager: _processManager,
           platform: globals.platform,
-          usage: _flutterUsage,
           analytics: _analytics,
           cacheDir: globals.cache.getRoot(),
           engineVersion:
