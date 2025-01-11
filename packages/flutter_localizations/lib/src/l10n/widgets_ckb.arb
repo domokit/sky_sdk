@@ -1,0 +1,31 @@
+{
+  "reorderItemToStart": "گواستنەوە بۆ سەرەتا",
+  "@reorderItemToStart": {
+    "description": "The audio announcement to move an item in a Reorderable List to the start of the list."
+  },
+
+  "reorderItemToEnd": "گواستنەوە بۆ کۆتایی",
+  "@reorderItemToEnd": {
+    "description": "The audio announcement to move an item in a Reorderable List to the end of the list."
+  },
+
+  "reorderItemUp": "گواستنەوە بۆ سەرەوە",
+  "@reorderItemUp": {
+    "description": "The audio announcement to move an item in a Reorderable List up in the list when it is oriented vertically."
+  },
+
+  "reorderItemDown": "گواستنەوە بۆ خوارەوە",
+  "@reorderItemDown": {
+    "description": "The audio announcement to move an item in a Reorderable List down in the list when it is oriented vertically."
+  },
+
+  "reorderItemLeft": "گواستنەوە بۆ چەپ",
+  "@reorderItemLeft": {
+    "description": "The audio announcement to move an item in a Reorderable List to the left when it is oriented horizontally."
+  },
+
+  "reorderItemRight": "گواستنەوە بۆ ڕاست",
+  "@reorderItemRight": {
+    "description": "The audio announcement to move an item in a Reorderable List to the right when it is oriented horizontally."
+  }
+}

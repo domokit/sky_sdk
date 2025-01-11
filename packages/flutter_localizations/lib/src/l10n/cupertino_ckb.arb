@@ -1,0 +1,73 @@
+{
+  "datePickerHourSemanticsLabelOne": "کاتژمێر $hour",
+  "@datePickerHourSemanticsLabelOne": {
+    "description": "Semantic label for the hour picker"
+  },
+  "datePickerHourSemanticsLabelOther": "کاتژمێر $hour",
+  "@datePickerHourSemanticsLabelOther": {
+    "description": "Semantic label for the hour picker"
+  },
+  "datePickerMinuteSemanticsLabelOne": "١ خولەک",
+  "@datePickerMinuteSemanticsLabelOne": {
+    "description": "Semantic label for 1 minute."
+  },
+  "datePickerMinuteSemanticsLabelOther": "$minute خولەک",
+  "@datePickerMinuteSemanticsLabelOther": {
+    "description": "Semantic label for multiple minutes."
+  },
+  "datePickerDateOrder": "dmy",
+  "datePickerDateTimeOrder": "date_time_dayPeriod",
+  "anteMeridiemAbbreviation": "پ.ن",
+  "postMeridiemAbbreviation": "د.ن",
+  "todayLabel": "ئەمڕۆ",
+  "alertDialogLabel": "ئاگادارکردنەوە",
+  "timerPickerHourLabelOne": "کاتژمێر",
+  "@timerPickerHourLabelOne": {
+    "description": "Label for 1 hour."
+  },
+  "timerPickerHourLabelOther": "کاتژمێر",
+  "@timerPickerHourLabelOther": {
+    "description": "Label for multiple hours."
+  },
+  "timerPickerMinuteLabelOne": "خولەک",
+  "@timerPickerMinuteLabelOne": {
+    "description": "Label for 1 minute."
+  },
+  "timerPickerMinuteLabelOther": "خولەک",
+  "@timerPickerMinuteLabelOther": {
+    "description": "Label for multiple minutes."
+  },
+  "timerPickerSecondLabelOne": "چرکە",
+  "@timerPickerSecondLabelOne": {
+    "description": "Label for 1 second."
+  },
+  "timerPickerSecondLabelOther": "چرکە",
+  "@timerPickerSecondLabelOther": {
+    "description": "Label for multiple seconds."
+  },
+  "cutButtonLabel": "بڕین",
+  "@cutButtonLabel": {
+    "description": "The label for the cut button"
+  },
+  "copyButtonLabel": "لەبەرگرتنەوە",
+  "@copyButtonLabel": {
+    "description": "The label for the copy button"
+  },
+  "pasteButtonLabel": "لکاندن",
+  "@pasteButtonLabel": {
+    "description": "The label for the paste button"
+  },
+  "selectAllButtonLabel": "هەموو هەڵبژێرە",
+  "@selectAllButtonLabel": {
+    "description": "The label for the select all button"
+  },
+  "tabSemanticsLabel": "تابی $tabIndex لە $tabCount",
+  "modalBarrierDismissLabel": "داخستن",
+  "searchTextFieldPlaceholderLabel": "گەڕان",
+  "noSpellCheckReplacementsLabel": "هیچ جێگرەوەیەک نەدۆزرایەوە",
+  "menuDismissLabel": "داخستنی مێنیو",
+  "lookUpButtonLabel": "گەڕان",
+  "searchWebButtonLabel": "گەڕان لە وێب",
+  "shareButtonLabel": "هاوبەشکردن",
+  "clearButtonLabel": "سڕینەوە"
+}

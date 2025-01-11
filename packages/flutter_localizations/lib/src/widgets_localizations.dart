@@ -27,6 +27,7 @@ import 'l10n/generated_widgets_localizations.dart';
 /// [Locale.languageCode] values, which are [TextDirection.rtl]:
 ///
 ///   * ar - Arabic
+///   * ckb - Kurdish (Sorani)
 ///   * fa - Farsi
 ///   * he - Hebrew
 ///   * ps - Pashto

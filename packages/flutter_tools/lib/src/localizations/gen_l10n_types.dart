@@ -231,11 +231,12 @@ class OptionalParameter {
 //
 class Placeholder {
   Placeholder(this.resourceId, this.name, Map<String, Object?> attributes)
-    : example = _stringAttribute(resourceId, name, attributes, 'example'),
-      type = _stringAttribute(resourceId, name, attributes, 'type'),
-      format = _stringAttribute(resourceId, name, attributes, 'format'),
-      optionalParameters = _optionalParameters(resourceId, name, attributes),
-      isCustomDateFormat = _boolAttribute(resourceId, name, attributes, 'isCustomDateFormat');
+      : example = _stringAttribute(resourceId, name, attributes, 'example'),
+        type = _stringAttribute(resourceId, name, attributes, 'type'),
+        format = _stringAttribute(resourceId, name, attributes, 'format'),
+        optionalParameters = _optionalParameters(resourceId, name, attributes),
+        isCustomDateFormat =
+            _boolAttribute(resourceId, name, attributes, 'isCustomDateFormat');
 
   final String resourceId;
   final String name;
@@ -250,14 +251,18 @@ class Placeholder {
   bool isDateTime = false;
   bool requiresDateFormatting = false;
 
-  bool get requiresFormatting => requiresDateFormatting || requiresNumFormatting;
+  bool get requiresFormatting =>
+      requiresDateFormatting || requiresNumFormatting;
   bool get requiresNumFormatting =>
       <String>['int', 'num', 'double'].contains(type) && format != null;
   bool get hasValidNumberFormat => _validNumberFormats.contains(format);
-  bool get hasNumberFormatWithParameters => _numberFormatsWithNamedParameters.contains(format);
+  bool get hasNumberFormatWithParameters =>
+      _numberFormatsWithNamedParameters.contains(format);
   // 'format' can contain a number of date time formats separated by `dateFormatPartsDelimiter`.
-  List<String> get dateFormatParts => format?.split(_dateFormatPartsDelimiter) ?? <String>[];
-  bool get hasValidDateFormat => dateFormatParts.every(validDateFormats.contains);
+  List<String> get dateFormatParts =>
+      format?.split(_dateFormatPartsDelimiter) ?? <String>[];
+  bool get hasValidDateFormat =>
+      dateFormatParts.every(validDateFormats.contains);
 
   static String? _stringAttribute(
     String resourceId,
@@ -317,8 +322,10 @@ class Placeholder {
       );
     }
     final Map<String, Object?> optionalParameterMap = value;
-    return optionalParameterMap.keys.map<OptionalParameter>((String parameterName) {
-      return OptionalParameter(parameterName, optionalParameterMap[parameterName]!);
+    return optionalParameterMap.keys
+        .map<OptionalParameter>((String parameterName) {
+      return OptionalParameter(
+          parameterName, optionalParameterMap[parameterName]!);
     }).toList();
   }
 }
@@ -347,21 +354,21 @@ class Message {
     this.useRelaxedSyntax = false,
     this.useEscaping = false,
     this.logger,
-  }) : assert(resourceId.isNotEmpty),
-       value = _value(templateBundle.resources, resourceId),
-       description = _description(
-         templateBundle.resources,
-         resourceId,
-         isResourceAttributeRequired,
-       ),
-       templatePlaceholders = _placeholders(
-         templateBundle.resources,
-         resourceId,
-         isResourceAttributeRequired,
-       ),
-       localePlaceholders = <LocaleInfo, Map<String, Placeholder>>{},
-       messages = <LocaleInfo, String?>{},
-       parsedMessages = <LocaleInfo, Node?>{} {
+  })  : assert(resourceId.isNotEmpty),
+        value = _value(templateBundle.resources, resourceId),
+        description = _description(
+          templateBundle.resources,
+          resourceId,
+          isResourceAttributeRequired,
+        ),
+        templatePlaceholders = _placeholders(
+          templateBundle.resources,
+          resourceId,
+          isResourceAttributeRequired,
+        ),
+        localePlaceholders = <LocaleInfo, Map<String, Placeholder>>{},
+        messages = <LocaleInfo, String?>{},
+        parsedMessages = <LocaleInfo, Node?>{} {
     // Filenames for error handling.
     final Map<LocaleInfo, String> filenames = <LocaleInfo, String>{};
     // Collect all translations from allBundles and parse them.
@@ -370,28 +377,27 @@ class Message {
       final String? translation = bundle.translationFor(resourceId);
       messages[bundle.locale] = translation;
 
-      localePlaceholders[bundle.locale] =
-          templateBundle.locale == bundle.locale
-              ? templatePlaceholders
-              : _placeholders(bundle.resources, resourceId, false);
+      localePlaceholders[bundle.locale] = templateBundle.locale == bundle.locale
+          ? templatePlaceholders
+          : _placeholders(bundle.resources, resourceId, false);
 
       List<String>? validPlaceholders;
       if (useRelaxedSyntax) {
-        validPlaceholders =
-            templatePlaceholders.entries.map((MapEntry<String, Placeholder> e) => e.key).toList();
+        validPlaceholders = templatePlaceholders.entries
+            .map((MapEntry<String, Placeholder> e) => e.key)
+            .toList();
       }
       try {
-        parsedMessages[bundle.locale] =
-            translation == null
-                ? null
-                : Parser(
-                  resourceId,
-                  bundle.file.basename,
-                  translation,
-                  useEscaping: useEscaping,
-                  placeholders: validPlaceholders,
-                  logger: logger,
-                ).parse();
+        parsedMessages[bundle.locale] = translation == null
+            ? null
+            : Parser(
+                resourceId,
+                bundle.file.basename,
+                translation,
+                useEscaping: useEscaping,
+                placeholders: validPlaceholders,
+                logger: logger,
+              ).parse();
       } on L10nParserException catch (error) {
         logger?.printError(error.toString());
         // Treat it as an untranslated message in case we can't parse.
@@ -481,7 +487,8 @@ class Message {
       return null;
     }
     if (value is! String) {
-      throw L10nException('The description for "@$resourceId" is not a properly formatted String.');
+      throw L10nException(
+          'The description for "@$resourceId" is not a properly formatted String.');
     }
     return value;
   }
@@ -531,7 +538,8 @@ class Message {
   // For undeclared placeholders, create a new placeholder.
   void _inferPlaceholders() {
     // We keep the undeclared placeholders separate so that we can sort them alphabetically afterwards.
-    final Map<String, Placeholder> undeclaredPlaceholders = <String, Placeholder>{};
+    final Map<String, Placeholder> undeclaredPlaceholders =
+        <String, Placeholder>{};
     // Helper for getting placeholder by name.
     for (final LocaleInfo locale in parsedMessages.keys) {
       Placeholder? getPlaceholder(String name) =>
@@ -553,7 +561,8 @@ class Message {
           final String identifier = node.children[1].value!;
           Placeholder? placeholder = getPlaceholder(identifier);
           if (placeholder == null) {
-            placeholder = Placeholder(resourceId, identifier, <String, Object?>{});
+            placeholder =
+                Placeholder(resourceId, identifier, <String, Object?>{});
             undeclaredPlaceholders[identifier] = placeholder;
           }
           if (node.type == ST.pluralExpr) {
@@ -574,10 +583,12 @@ class Message {
       }
     }
     templatePlaceholders.addEntries(
-      undeclaredPlaceholders.entries.toList()..sort(
-        (MapEntry<String, Placeholder> p1, MapEntry<String, Placeholder> p2) =>
-            p1.key.compareTo(p2.key),
-      ),
+      undeclaredPlaceholders.entries.toList()
+        ..sort(
+          (MapEntry<String, Placeholder> p1,
+                  MapEntry<String, Placeholder> p2) =>
+              p1.key.compareTo(p2.key),
+        ),
     );
 
     bool atMostOneOf(bool x, bool y, bool z) {
@@ -585,19 +596,23 @@ class Message {
     }
 
     for (final Placeholder placeholder in templatePlaceholders.values) {
-      if (!atMostOneOf(placeholder.isPlural, placeholder.isDateTime, placeholder.isSelect)) {
-        throw L10nException('Placeholder is used as plural/select/datetime in certain languages.');
+      if (!atMostOneOf(
+          placeholder.isPlural, placeholder.isDateTime, placeholder.isSelect)) {
+        throw L10nException(
+            'Placeholder is used as plural/select/datetime in certain languages.');
       } else if (placeholder.isPlural) {
         if (placeholder.type == null) {
           placeholder.type = 'num';
         } else if (!<String>['num', 'int'].contains(placeholder.type)) {
-          throw L10nException("Placeholders used in plurals must be of type 'num' or 'int'");
+          throw L10nException(
+              "Placeholders used in plurals must be of type 'num' or 'int'");
         }
       } else if (placeholder.isSelect) {
         if (placeholder.type == null) {
           placeholder.type = 'String';
         } else if (placeholder.type != 'String') {
-          throw L10nException("Placeholders used in selects must be of type 'String'");
+          throw L10nException(
+              "Placeholders used in selects must be of type 'String'");
         }
       } else if (placeholder.isDateTime) {
         if (placeholder.type == null) {
@@ -635,17 +650,21 @@ class AppResourceBundle {
     String? localeString = resources['@@locale'] as String?;
 
     // Look for the first instance of an ISO 639-1 language code, matching exactly.
-    final String fileName = file.fileSystem.path.basenameWithoutExtension(file.path);
+    final String fileName =
+        file.fileSystem.path.basenameWithoutExtension(file.path);
 
     for (int index = 0; index < fileName.length; index += 1) {
       // If an underscore was found, check if locale string follows.
       if (fileName[index] == '_') {
         // If Locale.tryParse fails, it returns null.
-        final Locale? parserResult = Locale.tryParse(fileName.substring(index + 1));
+        final Locale? parserResult =
+            Locale.tryParse(fileName.substring(index + 1));
         // If the parserResult is not an actual locale identifier, end the loop.
-        if (parserResult != null && _iso639Languages.contains(parserResult.languageCode)) {
+        if (parserResult != null &&
+            _iso639Languages.contains(parserResult.languageCode)) {
           // The parsed result uses dashes ('-'), but we want underscores ('_').
-          final String parserLocaleString = parserResult.toString().replaceAll('-', '_');
+          final String parserLocaleString =
+              parserResult.toString().replaceAll('-', '_');
 
           if (localeString == null) {
             // If @@locale was not defined, use the filename locale suffix.
@@ -680,11 +699,14 @@ class AppResourceBundle {
       );
     }
 
-    final Iterable<String> ids = resources.keys.where((String key) => !key.startsWith('@'));
-    return AppResourceBundle._(file, LocaleInfo.fromString(localeString), resources, ids);
+    final Iterable<String> ids =
+        resources.keys.where((String key) => !key.startsWith('@'));
+    return AppResourceBundle._(
+        file, LocaleInfo.fromString(localeString), resources, ids);
   }
 
-  const AppResourceBundle._(this.file, this.locale, this.resources, this.resourceIds);
+  const AppResourceBundle._(
+      this.file, this.locale, this.resources, this.resourceIds);
 
   final File file;
   final LocaleInfo locale;
@@ -716,18 +738,19 @@ class AppResourceBundleCollection {
     // Assuming that the caller has verified that the directory is readable.
 
     final RegExp filenameRE = RegExp(r'(\w+)\.arb$');
-    final Map<LocaleInfo, AppResourceBundle> localeToBundle = <LocaleInfo, AppResourceBundle>{};
-    final Map<String, List<LocaleInfo>> languageToLocales = <String, List<LocaleInfo>>{};
+    final Map<LocaleInfo, AppResourceBundle> localeToBundle =
+        <LocaleInfo, AppResourceBundle>{};
+    final Map<String, List<LocaleInfo>> languageToLocales =
+        <String, List<LocaleInfo>>{};
     // We require the list of files to be sorted so that
     // "languageToLocales[bundle.locale.languageCode]" is not null
     // by the time we handle locales with country codes.
-    final List<File> files =
-        directory
-            .listSync()
-            .whereType<File>()
-            .where((File e) => filenameRE.hasMatch(e.path))
-            .toList()
-          ..sort(sortFilesByPath);
+    final List<File> files = directory
+        .listSync()
+        .whereType<File>()
+        .where((File e) => filenameRE.hasMatch(e.path))
+        .toList()
+      ..sort(sortFilesByPath);
     for (final File file in files) {
       final AppResourceBundle bundle = AppResourceBundle(file);
       if (localeToBundle[bundle.locale] != null) {
@@ -741,11 +764,12 @@ class AppResourceBundleCollection {
       languageToLocales[bundle.locale.languageCode]!.add(bundle.locale);
     }
 
-    languageToLocales.forEach((String language, List<LocaleInfo> listOfCorrespondingLocales) {
+    languageToLocales.forEach(
+        (String language, List<LocaleInfo> listOfCorrespondingLocales) {
       final List<String> localeStrings =
           listOfCorrespondingLocales.map((LocaleInfo locale) {
-            return locale.toString();
-          }).toList();
+        return locale.toString();
+      }).toList();
       if (!localeStrings.contains(language)) {
         throw L10nException(
           'Arb file for a fallback, $language, does not exist, even though \n'
@@ -758,7 +782,8 @@ class AppResourceBundleCollection {
       }
     });
 
-    return AppResourceBundleCollection._(directory, localeToBundle, languageToLocales);
+    return AppResourceBundleCollection._(
+        directory, localeToBundle, languageToLocales);
   }
 
   const AppResourceBundleCollection._(
@@ -811,6 +836,7 @@ final Set<String> _iso639Languages = <String>{
   'bs',
   'ca',
   'ce',
+  'ckb',
   'ch',
   'co',
   'cr',
