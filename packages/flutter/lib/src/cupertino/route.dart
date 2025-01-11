@@ -148,9 +148,13 @@ mixin CupertinoRouteTransitionMixin<T> on PageRoute<T> {
     super.didChangePrevious(previousRoute);
   }
 
+  /// The duration of the page transition.
+  ///
+  /// A relatively rigorous eyeball estimation.
+  static const Duration kTransitionDuration = Duration(milliseconds: 500);
+
   @override
-  // A relatively rigorous eyeball estimation.
-  Duration get transitionDuration => const Duration(milliseconds: 500);
+  Duration get transitionDuration => kTransitionDuration;
 
   @override
   Color? get barrierColor => fullscreenDialog ? null : _kCupertinoPageTransitionBarrierColor;
