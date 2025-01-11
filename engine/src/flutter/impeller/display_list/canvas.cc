@@ -540,6 +540,19 @@ void Canvas::DrawRoundRect(const RoundRect& round_rect, const Paint& paint) {
   DrawPath(path, paint);
 }
 
+void Canvas::DrawRoundSuperellipse(const RoundSuperellipse& rse,
+                                   const Paint& paint) {
+  auto& rect = rse.GetBounds();
+  Scalar corner_radius = rse.GetCornerRadius();
+
+  Entity entity;
+  entity.SetTransform(GetCurrentTransform());
+  entity.SetBlendMode(paint.blend_mode);
+
+  RoundSuperellipseGeometry geom(rect, corner_radius);
+  AddRenderEntityWithFiltersToCurrentPass(entity, &geom, paint);
+}
+
 void Canvas::DrawCircle(const Point& center,
                         Scalar radius,
                         const Paint& paint) {

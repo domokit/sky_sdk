@@ -138,11 +138,13 @@ typedef CanvasPath Path;
   V(Canvas, clipPath)                            \
   V(Canvas, clipRect)                            \
   V(Canvas, clipRRect)                           \
+  V(Canvas, clipRSuperellipse)                   \
   V(Canvas, drawArc)                             \
   V(Canvas, drawAtlas)                           \
   V(Canvas, drawCircle)                          \
   V(Canvas, drawColor)                           \
   V(Canvas, drawDRRect)                          \
+  V(Canvas, drawRSuperellipse)                   \
   V(Canvas, drawImage)                           \
   V(Canvas, drawImageNine)                       \
   V(Canvas, drawImageRect)                       \
@@ -288,8 +290,9 @@ typedef CanvasPath Path;
   V(SceneBuilder, pop)                           \
   V(SceneBuilder, pushBackdropFilter)            \
   V(SceneBuilder, pushClipPath)                  \
-  V(SceneBuilder, pushClipRRect)                 \
   V(SceneBuilder, pushClipRect)                  \
+  V(SceneBuilder, pushClipRRect)                 \
+  V(SceneBuilder, pushClipRSuperellipse)         \
   V(SceneBuilder, pushColorFilter)               \
   V(SceneBuilder, pushImageFilter)               \
   V(SceneBuilder, pushOffset)                    \

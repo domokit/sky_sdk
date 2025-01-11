@@ -134,6 +134,33 @@ void DisplayListMatrixClipState::clipRRect(const DlRoundRect& rrect,
   }
 }
 
+void DisplayListMatrixClipState::clipRSuperellipse(
+    const DlRoundSuperellipse& rse,
+    ClipOp op,
+    bool is_aa) {
+  DlRect bounds = rse.GetBounds();
+  if (rse.IsRect()) {
+    return clipRect(bounds, op, is_aa);
+  }
+  switch (op) {
+    case ClipOp::kIntersect:
+      adjustCullRect(bounds, op, is_aa);
+      break;
+    case ClipOp::kDifference: {
+      if (rsuperellipse_covers_cull(rse)) {
+        cull_rect_ = DlRect();
+        return;
+      }
+      // TODO(dkwingsmt): The current algorithm is a conservative estimate using
+      // the middle points of the corner curves. Consider switching to
+      // wideMiddleRect and tallMiddleRect in the future, just like RRect.
+      DlRect safe = rse.EstimateInner();
+      adjustCullRect(safe, op, is_aa);
+      break;
+    }
+  }
+}
+
 void DisplayListMatrixClipState::clipPath(const DlPath& path,
                                           ClipOp op,
                                           bool is_aa) {
@@ -343,6 +370,39 @@ bool DisplayListMatrixClipState::rrect_covers_cull(
     auto rel = (corner - center).Abs() - inner;
     if (rel.x > 0.0f && rel.y > 0.0f &&
         (rel * scale).GetLengthSquared() >= 1.0f) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool DisplayListMatrixClipState::rsuperellipse_covers_cull(
+    const DlRoundSuperellipse& content) const {
+  if (content.IsEmpty()) {
+    return false;
+  }
+  if (cull_rect_.IsEmpty()) {
+    return true;
+  }
+  if (content.IsRect()) {
+    return rect_covers_cull(content.GetBounds());
+  }
+  if (content.IsCircle()) {
+    // TODO(dkwingsmt): RSEs might degenerates to ovals instead of mere circles
+    // once asymmetrical radius is supported.
+    // https://github.com/flutter/flutter/issues/139321#issuecomment-2547050922
+    return oval_covers_cull(content.GetBounds());
+  }
+  DlPoint corners[4];
+  if (!getLocalCullCorners(corners)) {
+    return false;
+  }
+  // TODO(dkwingsmt): The current algorithm is a conservative estimate using the
+  // middle points of the corner curves. Consider switch to a more precise
+  // algorithm in the future.
+  DlRect inner = content.EstimateInner();
+  for (auto corner : corners) {
+    if (!inner.Contains(corner)) {
       return false;
     }
   }

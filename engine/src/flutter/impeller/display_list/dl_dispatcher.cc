@@ -29,6 +29,7 @@
 #include "impeller/entity/geometry/fill_path_geometry.h"
 #include "impeller/entity/geometry/rect_geometry.h"
 #include "impeller/entity/geometry/round_rect_geometry.h"
+#include "impeller/entity/geometry/round_superellipse_geometry.h"
 #include "impeller/geometry/color.h"
 #include "impeller/geometry/path.h"
 #include "impeller/geometry/path_builder.h"
@@ -470,6 +471,25 @@ void DlDispatcherBase::clipRoundRect(const DlRoundRect& rrect,
 }
 
 // |flutter::DlOpReceiver|
+void DlDispatcherBase::clipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                                             ClipOp sk_op,
+                                             bool is_aa) {
+  AUTO_DEPTH_WATCHER(0u);
+
+  auto clip_op = ToClipOperation(sk_op);
+  if (rse.IsRect()) {
+    RectGeometry geom(rse.GetBounds());
+    GetCanvas().ClipGeometry(geom, clip_op, /*is_aa=*/is_aa);
+  } else if (rse.IsCircle()) {
+    EllipseGeometry geom(rse.GetBounds());
+    GetCanvas().ClipGeometry(geom, clip_op);
+  } else {
+    RoundSuperellipseGeometry geom(rse.GetBounds(), rse.GetCornerRadius());
+    GetCanvas().ClipGeometry(geom, clip_op);
+  }
+}
+
+// |flutter::DlOpReceiver|
 void DlDispatcherBase::clipPath(const DlPath& path, ClipOp sk_op, bool is_aa) {
   AUTO_DEPTH_WATCHER(0u);
 
@@ -600,6 +620,13 @@ void DlDispatcherBase::drawDiffRoundRect(const DlRoundRect& outer,
   builder.AddRoundRect(inner);
   builder.SetBounds(outer.GetBounds().Union(inner.GetBounds()));
   GetCanvas().DrawPath(builder.TakePath(FillType::kOdd), paint_);
+}
+
+// |flutter::DlOpReceiver|
+void DlDispatcherBase::drawRoundSuperellipse(const DlRoundSuperellipse& rse) {
+  AUTO_DEPTH_WATCHER(1u);
+
+  GetCanvas().DrawRoundSuperellipse(rse, paint_);
 }
 
 // |flutter::DlOpReceiver|

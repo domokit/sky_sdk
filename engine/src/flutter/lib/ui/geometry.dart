@@ -1743,6 +1743,257 @@ class RRect {
   }
 }
 
+/// An immutable rounded superellipse.
+///
+/// A rounded superellipse is a superellipse (also known as Lamé curve) with its
+/// four rounded corners replaced by circular arcs. A rounded superellipse
+/// resembles the `RoundedRectangle` shape in SwiftUI with corner style
+/// `.continuous`. The corner radius parameters used in this class corresponds
+/// to SwiftUI's `cornerRadius` parameter, which is close to, but not exactly
+/// equals to, the radius of the corner circles.
+class RSuperellipse {
+  /// Construct a rounded superellipse from its bounding box and a corner radius
+  /// that is the same in each corner.
+  ///
+  /// Will assert in debug mode if the `radius` is negative.
+  RSuperellipse.fromRectAndRadius(Rect rect, double radius)
+    : this._raw(
+        top: rect.top,
+        left: rect.left,
+        right: rect.right,
+        bottom: rect.bottom,
+        radius: radius,
+      );
+
+  const RSuperellipse._raw({
+    this.left = 0.0,
+    this.top = 0.0,
+    this.right = 0.0,
+    this.bottom = 0.0,
+    this.radius = 0.0,
+  }) : assert(radius >= 0);
+
+  Float32List _getValue32() {
+    final Float32List result = Float32List(5);
+    result[0] = left;
+    result[1] = top;
+    result[2] = right;
+    result[3] = bottom;
+    result[4] = radius;
+    return result;
+  }
+
+  /// The offset of the left edge of the bounding rectangle from the x axis.
+  final double left;
+
+  /// The offset of the top edge of the bounding rectangle from the y axis.
+  final double top;
+
+  /// The offset of the right edge of the bounding rectangle from the x axis.
+  final double right;
+
+  /// The offset of the bottom edge of the bounding rectangle from the y axis.
+  final double bottom;
+
+  /// The corner radius of all four corners.
+  final double radius;
+
+  /// A rounded superellipse with all the values set to zero.
+  static const RSuperellipse zero = RSuperellipse._raw();
+
+  /// Returns a new [RRect] translated by the given offset.
+  RSuperellipse shift(Offset offset) {
+    return RSuperellipse._raw(
+      left: left + offset.dx,
+      top: top + offset.dy,
+      right: right + offset.dx,
+      bottom: bottom + offset.dy,
+      radius: radius,
+    );
+  }
+
+  /// The distance between the left and right edges of this rectangle.
+  double get width => right - left;
+
+  /// The distance between the top and bottom edges of this rectangle.
+  double get height => bottom - top;
+
+  /// The bounding box of this rounded rectangle (the rectangle with no rounded corners).
+  Rect get outerRect => Rect.fromLTRB(left, top, right, bottom);
+
+  // A factor used to calculate the "gap", defined as the distance from the
+  // midpoint of the curved corners (i.e., where the circular arc intersects its
+  // quadrant bisector) to the nearest sides of the bounding box.
+  //
+  // Experiments indicate that the gap is linear with respect to the corner
+  // radius.
+  //
+  // The formula should be kept in sync with a few files, as documented in
+  // `CalculateGap` in round_superellipse_geometry.cc.
+  static const double _kGapFactor = 0.2924066406;
+
+  /// The non-rounded rectangle that is constrained by diagonals that travele
+  /// through the middle of the curve corners. The middle of a corner is the
+  /// intersection of the curve with its respective quadrant bisector.
+  Rect get safeInnerRect {
+    final double gap = _kGapFactor * radius;
+
+    return Rect.fromLTRB(left + gap, top + gap, right - gap, bottom - gap);
+  }
+
+  /// The rectangle that would be formed using the axis-aligned intersection of
+  /// the sides of the rectangle, i.e., the rectangle formed from the
+  /// inner-most centers of the ellipses that form the corners. This is the
+  /// intersection of the [wideMiddleRect] and the [tallMiddleRect]. If any of
+  /// the intersections are void, the resulting [Rect] will have negative width
+  /// or height.
+  Rect get middleRect {
+    return Rect.fromLTRB(left + radius, top + radius, right - radius, bottom - radius);
+  }
+
+  /// The biggest rectangle that is entirely inside the rounded rectangle and
+  /// has the full width of the rounded rectangle. If the rounded rectangle does
+  /// not have an axis-aligned intersection of its left and right side, the
+  /// resulting [Rect] will have negative width or height.
+  Rect get wideMiddleRect {
+    return Rect.fromLTRB(left, top + radius, right, bottom - radius);
+  }
+
+  /// The biggest rectangle that is entirely inside the rounded rectangle and
+  /// has the full height of the rounded rectangle. If the rounded rectangle
+  /// does not have an axis-aligned intersection of its top and bottom side, the
+  /// resulting [Rect] will have negative width or height.
+  Rect get tallMiddleRect {
+    return Rect.fromLTRB(left + radius, top, right - radius, bottom);
+  }
+
+  /// Whether this rounded superellipse encloses a non-zero area.
+  /// Negative areas are considered empty.
+  bool get isEmpty => left >= right || top >= bottom;
+
+  /// Whether all coordinates of this rounded superellipse are finite.
+  bool get isFinite => left.isFinite && top.isFinite && right.isFinite && bottom.isFinite;
+
+  /// Whether this rounded superellipse is a simple rectangle with zero
+  /// corner radii.
+  bool get isRect {
+    return radius == 0;
+  }
+
+  /// Whether this rounded superellipse has a side with no straight section.
+  bool get isStadium {
+    return width <= 2.0 * radius || height <= 2.0 * radius;
+  }
+
+  /// Whether this rounded superellipse would draw as a circle.
+  bool get isCircle => width == height && isStadium;
+
+  /// The lesser of the magnitudes of the [width] and the [height] of this
+  /// rounded rectangle.
+  double get shortestSide => math.min(width.abs(), height.abs());
+
+  /// The greater of the magnitudes of the [width] and the [height] of this
+  /// rounded rectangle.
+  double get longestSide => math.max(width.abs(), height.abs());
+
+  /// Whether any of the dimensions are `NaN`.
+  bool get hasNaN => left.isNaN || top.isNaN || right.isNaN || bottom.isNaN || radius.isNaN;
+
+  /// The offset to the point halfway between the left and right and the top and
+  /// bottom edges of this rectangle.
+  Offset get center => Offset(left + width / 2.0, top + height / 2.0);
+
+  /// Whether the point specified by the given offset (which is assumed to be
+  /// relative to the origin) lies inside the rounded rectangle.
+  bool contains(Offset point) {
+    // TODO(dkwingsmt): Implement. Currently it simply considers the shape as
+    // the bounding box.
+    return outerRect.contains(point);
+  }
+
+  /// Linearly interpolate between two rounded superellipses.
+  ///
+  /// If either is null, this function substitutes [RRect.zero] instead.
+  ///
+  /// The `t` argument represents position on the timeline, with 0.0 meaning
+  /// that the interpolation has not started, returning `a` (or something
+  /// equivalent to `a`), 1.0 meaning that the interpolation has finished,
+  /// returning `b` (or something equivalent to `b`), and values in between
+  /// meaning that the interpolation is at the relevant point on the timeline
+  /// between `a` and `b`. The interpolation can be extrapolated beyond 0.0 and
+  /// 1.0, so negative values and values greater than 1.0 are valid (and can
+  /// easily be generated by curves such as [Curves.elasticInOut]).
+  ///
+  /// Values for `t` are usually obtained from an [Animation<double>], such as
+  /// an [AnimationController].
+  static RSuperellipse? lerp(RSuperellipse? a, RSuperellipse? b, double t) {
+    if (b == null) {
+      if (a == null) {
+        return null;
+      } else {
+        final double k = 1.0 - t;
+        return RSuperellipse._raw(
+          left: a.left * k,
+          top: a.top * k,
+          right: a.right * k,
+          bottom: a.bottom * k,
+          radius: math.max(0, a.radius * k),
+        );
+      }
+    } else {
+      if (a == null) {
+        return RSuperellipse._raw(
+          left: b.left * t,
+          top: b.top * t,
+          right: b.right * t,
+          bottom: b.bottom * t,
+          radius: math.max(0, b.radius * t),
+        );
+      } else {
+        return RSuperellipse._raw(
+          left: _lerpDouble(a.left, b.left, t),
+          top: _lerpDouble(a.top, b.top, t),
+          right: _lerpDouble(a.right, b.right, t),
+          bottom: _lerpDouble(a.bottom, b.bottom, t),
+          radius: math.max(0, _lerpDouble(a.radius, b.radius, t)),
+        );
+      }
+    }
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (runtimeType != other.runtimeType) {
+      return false;
+    }
+    return other is RSuperellipse &&
+        other.left == left &&
+        other.top == top &&
+        other.right == right &&
+        other.bottom == bottom &&
+        other.radius == radius;
+  }
+
+  @override
+  int get hashCode => Object.hash(left, top, right, bottom, radius);
+
+  @override
+  String toString() {
+    final String rect =
+        '${left.toStringAsFixed(1)}, '
+        '${top.toStringAsFixed(1)}, '
+        '${right.toStringAsFixed(1)}, '
+        '${bottom.toStringAsFixed(1)}';
+    return 'RRect.fromRectAndRadius('
+        '$rect, '
+        'radius: $radius'
+        ')';
+  }
+}
+
 /// A transform consisting of a translation, a rotation, and a uniform scale.
 ///
 /// Used by [Canvas.drawAtlas]. This is a more efficient way to represent these

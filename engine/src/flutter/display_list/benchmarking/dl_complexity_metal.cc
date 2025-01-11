@@ -329,6 +329,12 @@ void DisplayListMetalComplexityCalculator::MetalHelper::drawDiffRoundRect(
   AccumulateComplexity(complexity);
 }
 
+void DisplayListMetalComplexityCalculator::MetalHelper::drawRoundSuperellipse(
+    const DlRoundSuperellipse& rse) {
+  // Round superellipse is only supported by Impeller.
+  return;
+}
+
 void DisplayListMetalComplexityCalculator::MetalHelper::drawPath(
     const DlPath& path) {
   if (IsComplex()) {

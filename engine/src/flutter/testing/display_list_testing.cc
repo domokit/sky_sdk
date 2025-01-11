@@ -792,6 +792,15 @@ void DisplayListStreamDispatcher::clipRoundRect(const DlRoundRect& rrect,
            << "isaa: " << is_aa
            << ");" << std::endl;
 }
+void DisplayListStreamDispatcher::clipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                    ClipOp clip_op,
+                    bool is_aa) {
+  startl() << "clipRoundSuperellipse("
+           << rse << ", "
+           << clip_op << ", "
+           << "isaa: " << is_aa
+           << ");" << std::endl;
+}
 void DisplayListStreamDispatcher::clipPath(const DlPath& path, ClipOp clip_op,
                                            bool is_aa) {
   startl() << "clipPath("
@@ -842,6 +851,9 @@ void DisplayListStreamDispatcher::drawDiffRoundRect(const DlRoundRect& outer,
                                                     const DlRoundRect& inner) {
   startl() << "drawDRRect(outer: " << outer << ", " << std::endl;
   startl() << "           inner: " << inner << ");" << std::endl;
+}
+void DisplayListStreamDispatcher::drawRoundSuperellipse(const DlRoundSuperellipse& rse) {
+  startl() << "drawRSuperellipse(" << rse << ");" << std::endl;
 }
 void DisplayListStreamDispatcher::drawPath(const DlPath& path) {
   startl() << "drawPath(" << path << ");" << std::endl;

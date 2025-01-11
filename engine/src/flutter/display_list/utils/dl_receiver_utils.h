@@ -50,6 +50,9 @@ class IgnoreClipDispatchHelper : public virtual DlOpReceiver {
   void clipRoundRect(const DlRoundRect& rrect,
                      DlCanvas::ClipOp clip_op,
                      bool is_aa) override {}
+  void clipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                             DlCanvas::ClipOp clip_op,
+                             bool is_aa) override {}
   void clipPath(const DlPath& path,
                 DlCanvas::ClipOp clip_op,
                 bool is_aa) override {}
@@ -98,6 +101,7 @@ class IgnoreDrawDispatchHelper : public virtual DlOpReceiver {
   void drawRoundRect(const DlRoundRect& rrect) override {}
   void drawDiffRoundRect(const DlRoundRect& outer,
                          const DlRoundRect& inner) override {}
+  void drawRoundSuperellipse(const DlRoundSuperellipse& rse) override {}
   void drawPath(const DlPath& path) override {}
   void drawArc(const DlRect& oval_bounds,
                DlScalar start_degrees,

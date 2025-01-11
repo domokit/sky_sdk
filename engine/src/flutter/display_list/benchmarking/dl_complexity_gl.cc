@@ -335,6 +335,12 @@ void DisplayListGLComplexityCalculator::GLHelper::drawDiffRoundRect(
   AccumulateComplexity(complexity);
 }
 
+void DisplayListGLComplexityCalculator::GLHelper::drawRoundSuperellipse(
+    const DlRoundSuperellipse& rse) {
+  // Round superellipse is only supported by Impeller.
+  return;
+}
+
 void DisplayListGLComplexityCalculator::GLHelper::drawPath(const DlPath& path) {
   if (IsComplex()) {
     return;

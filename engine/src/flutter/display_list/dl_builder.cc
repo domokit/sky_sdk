@@ -1028,6 +1028,46 @@ void DisplayListBuilder::ClipRoundRect(const DlRoundRect& rrect,
       break;
   }
 }
+void DisplayListBuilder::ClipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                                               ClipOp clip_op,
+                                               bool is_aa) {
+  if (rse.IsRect()) {
+    ClipRect(rse.GetBounds(), clip_op, is_aa);
+    return;
+  }
+  if (rse.IsCircle()) {
+    // TODO(dkwingsmt): RSEs might degenerates to ovals instead of mere circles
+    // once asymmetrical radius is supported.
+    // https://github.com/flutter/flutter/issues/139321#issuecomment-2547050922
+    ClipOval(rse.GetBounds(), clip_op, is_aa);
+    return;
+  }
+  if (current_info().is_nop) {
+    return;
+  }
+  if (current_info().has_valid_clip &&
+      clip_op == DlCanvas::ClipOp::kIntersect &&
+      layer_local_state().rsuperellipse_covers_cull(rse)) {
+    return;
+  }
+  global_state().clipRSuperellipse(rse, clip_op, is_aa);
+  layer_local_state().clipRSuperellipse(rse, clip_op, is_aa);
+  if (global_state().is_cull_rect_empty() ||
+      layer_local_state().is_cull_rect_empty()) {
+    current_info().is_nop = true;
+    return;
+  }
+  current_info().has_valid_clip = true;
+  checkForDeferredSave();
+  switch (clip_op) {
+    case ClipOp::kIntersect:
+      Push<ClipIntersectRoundSuperellipseOp>(0, rse, is_aa);
+      break;
+    case ClipOp::kDifference:
+      Push<ClipDifferenceRoundSuperellipseOp>(0, rse, is_aa);
+      break;
+  }
+}
 void DisplayListBuilder::ClipPath(const DlPath& path,
                                   ClipOp clip_op,
                                   bool is_aa) {
@@ -1216,6 +1256,30 @@ void DisplayListBuilder::DrawDiffRoundRect(const DlRoundRect& outer,
                                            const DlPaint& paint) {
   SetAttributesFromPaint(paint, DisplayListOpFlags::kDrawDRRectFlags);
   drawDiffRoundRect(outer, inner);
+}
+void DisplayListBuilder::DrawRoundSuperellipse(const DlRoundSuperellipse& rse,
+                                               const DlPaint& paint) {
+  SetAttributesFromPaint(paint, DisplayListOpFlags::kDrawRSuperellipseFlags);
+  drawRoundSuperellipse(rse);
+}
+void DisplayListBuilder::drawRoundSuperellipse(const DlRoundSuperellipse& rse) {
+  if (rse.IsRect()) {
+    drawRect(rse.GetBounds());
+  } else if (rse.IsCircle()) {
+    // TODO(dkwingsmt): RSEs might degenerates to ovals instead of mere circles
+    // once asymmetrical radius is supported.
+    // https://github.com/flutter/flutter/issues/139321#issuecomment-2547050922
+    drawCircle(rse.GetBounds().GetCenter(), rse.GetCornerRadius());
+  } else {
+    DisplayListAttributeFlags flags = kDrawRSuperellipseFlags;
+    OpResult result = PaintResult(current_, flags);
+    if (result != OpResult::kNoEffect &&
+        AccumulateOpBounds(rse.GetBounds(), flags)) {
+      Push<DrawRoundSuperellipseOp>(0, rse);
+      CheckLayerOpacityCompatibility();
+      UpdateLayerResult(result);
+    }
+  }
 }
 void DisplayListBuilder::drawPath(const DlPath& path) {
   DisplayListAttributeFlags flags = kDrawPathFlags;

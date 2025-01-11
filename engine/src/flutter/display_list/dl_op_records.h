@@ -487,6 +487,7 @@ struct TransformResetOp final : TransformClipOpBase {
 // DlRect is 16 more bytes, which packs efficiently into 24 bytes total
 // DlRoundRect is 48 more bytes, which rounds up to 48 bytes
 //         which packs into 56 bytes total
+// DlRoundSuperellipse is 20 more bytes, which packs into 28 bytes total
 // CacheablePath is 128 more bytes, which packs efficiently into 136 bytes total
 //
 // We could pack the clip_op and the bool both into the free 4 bytes after
@@ -510,9 +511,11 @@ struct TransformResetOp final : TransformClipOpBase {
 DEFINE_CLIP_SHAPE_OP(Rect, DlRect, Intersect)
 DEFINE_CLIP_SHAPE_OP(Oval, DlRect, Intersect)
 DEFINE_CLIP_SHAPE_OP(RoundRect, DlRoundRect, Intersect)
+DEFINE_CLIP_SHAPE_OP(RoundSuperellipse, DlRoundSuperellipse, Intersect)
 DEFINE_CLIP_SHAPE_OP(Rect, DlRect, Difference)
 DEFINE_CLIP_SHAPE_OP(Oval, DlRect, Difference)
 DEFINE_CLIP_SHAPE_OP(RoundRect, DlRoundRect, Difference)
+DEFINE_CLIP_SHAPE_OP(RoundSuperellipse, DlRoundSuperellipse, Difference)
 #undef DEFINE_CLIP_SHAPE_OP
 
 // 4 byte header + 20 byte payload packs evenly into 24 bytes
@@ -579,6 +582,7 @@ struct DrawColorOp final : DrawOpBase {
 // SkOval is same as DlRect
 // DlRoundRect is 48 more bytes, using 52 bytes which rounds up to 56 bytes
 //        total (4 bytes unused)
+// DlRoundSuperellipse is 20 more bytes, using 24 bytes total.
 #define DEFINE_DRAW_1ARG_OP(op_name, arg_type, arg_name)             \
   struct Draw##op_name##Op final : DrawOpBase {                      \
     static constexpr auto kType = DisplayListOpType::kDraw##op_name; \
@@ -595,6 +599,7 @@ struct DrawColorOp final : DrawOpBase {
 DEFINE_DRAW_1ARG_OP(Rect, DlRect, rect)
 DEFINE_DRAW_1ARG_OP(Oval, DlRect, oval)
 DEFINE_DRAW_1ARG_OP(RoundRect, DlRoundRect, rrect)
+DEFINE_DRAW_1ARG_OP(RoundSuperellipse, DlRoundSuperellipse, rse)
 #undef DEFINE_DRAW_1ARG_OP
 
 // 4 byte header + 16 byte payload uses 20 bytes but is rounded

@@ -52,88 +52,91 @@
 
 namespace flutter {
 
-#define FOR_EACH_DISPLAY_LIST_OP(V) \
-  V(SetAntiAlias)                   \
-  V(SetInvertColors)                \
-                                    \
-  V(SetStrokeCap)                   \
-  V(SetStrokeJoin)                  \
-                                    \
-  V(SetStyle)                       \
-  V(SetStrokeWidth)                 \
-  V(SetStrokeMiter)                 \
-                                    \
-  V(SetColor)                       \
-  V(SetBlendMode)                   \
-                                    \
-  V(ClearColorFilter)               \
-  V(SetPodColorFilter)              \
-                                    \
-  V(ClearColorSource)               \
-  V(SetPodColorSource)              \
-  V(SetImageColorSource)            \
-  V(SetRuntimeEffectColorSource)    \
-                                    \
-  V(ClearImageFilter)               \
-  V(SetPodImageFilter)              \
-  V(SetSharedImageFilter)           \
-                                    \
-  V(ClearMaskFilter)                \
-  V(SetPodMaskFilter)               \
-                                    \
-  V(Save)                           \
-  V(SaveLayer)                      \
-  V(SaveLayerBackdrop)              \
-  V(Restore)                        \
-                                    \
-  V(Translate)                      \
-  V(Scale)                          \
-  V(Rotate)                         \
-  V(Skew)                           \
-  V(Transform2DAffine)              \
-  V(TransformFullPerspective)       \
-  V(TransformReset)                 \
-                                    \
-  V(ClipIntersectRect)              \
-  V(ClipIntersectOval)              \
-  V(ClipIntersectRoundRect)         \
-  V(ClipIntersectPath)              \
-  V(ClipDifferenceRect)             \
-  V(ClipDifferenceOval)             \
-  V(ClipDifferenceRoundRect)        \
-  V(ClipDifferencePath)             \
-                                    \
-  V(DrawPaint)                      \
-  V(DrawColor)                      \
-                                    \
-  V(DrawLine)                       \
-  V(DrawDashedLine)                 \
-  V(DrawRect)                       \
-  V(DrawOval)                       \
-  V(DrawCircle)                     \
-  V(DrawRoundRect)                  \
-  V(DrawDiffRoundRect)              \
-  V(DrawArc)                        \
-  V(DrawPath)                       \
-                                    \
-  V(DrawPoints)                     \
-  V(DrawLines)                      \
-  V(DrawPolygon)                    \
-  V(DrawVertices)                   \
-                                    \
-  V(DrawImage)                      \
-  V(DrawImageWithAttr)              \
-  V(DrawImageRect)                  \
-  V(DrawImageNine)                  \
-  V(DrawImageNineWithAttr)          \
-  V(DrawAtlas)                      \
-  V(DrawAtlasCulled)                \
-                                    \
-  V(DrawDisplayList)                \
-  V(DrawTextBlob)                   \
-  V(DrawTextFrame)                  \
-                                    \
-  V(DrawShadow)                     \
+#define FOR_EACH_DISPLAY_LIST_OP(V)  \
+  V(SetAntiAlias)                    \
+  V(SetInvertColors)                 \
+                                     \
+  V(SetStrokeCap)                    \
+  V(SetStrokeJoin)                   \
+                                     \
+  V(SetStyle)                        \
+  V(SetStrokeWidth)                  \
+  V(SetStrokeMiter)                  \
+                                     \
+  V(SetColor)                        \
+  V(SetBlendMode)                    \
+                                     \
+  V(ClearColorFilter)                \
+  V(SetPodColorFilter)               \
+                                     \
+  V(ClearColorSource)                \
+  V(SetPodColorSource)               \
+  V(SetImageColorSource)             \
+  V(SetRuntimeEffectColorSource)     \
+                                     \
+  V(ClearImageFilter)                \
+  V(SetPodImageFilter)               \
+  V(SetSharedImageFilter)            \
+                                     \
+  V(ClearMaskFilter)                 \
+  V(SetPodMaskFilter)                \
+                                     \
+  V(Save)                            \
+  V(SaveLayer)                       \
+  V(SaveLayerBackdrop)               \
+  V(Restore)                         \
+                                     \
+  V(Translate)                       \
+  V(Scale)                           \
+  V(Rotate)                          \
+  V(Skew)                            \
+  V(Transform2DAffine)               \
+  V(TransformFullPerspective)        \
+  V(TransformReset)                  \
+                                     \
+  V(ClipIntersectRect)               \
+  V(ClipIntersectOval)               \
+  V(ClipIntersectRoundRect)          \
+  V(ClipIntersectRoundSuperellipse)  \
+  V(ClipIntersectPath)               \
+  V(ClipDifferenceRect)              \
+  V(ClipDifferenceOval)              \
+  V(ClipDifferenceRoundRect)         \
+  V(ClipDifferenceRoundSuperellipse) \
+  V(ClipDifferencePath)              \
+                                     \
+  V(DrawPaint)                       \
+  V(DrawColor)                       \
+                                     \
+  V(DrawLine)                        \
+  V(DrawDashedLine)                  \
+  V(DrawRect)                        \
+  V(DrawOval)                        \
+  V(DrawCircle)                      \
+  V(DrawRoundRect)                   \
+  V(DrawDiffRoundRect)               \
+  V(DrawRoundSuperellipse)           \
+  V(DrawArc)                         \
+  V(DrawPath)                        \
+                                     \
+  V(DrawPoints)                      \
+  V(DrawLines)                       \
+  V(DrawPolygon)                     \
+  V(DrawVertices)                    \
+                                     \
+  V(DrawImage)                       \
+  V(DrawImageWithAttr)               \
+  V(DrawImageRect)                   \
+  V(DrawImageNine)                   \
+  V(DrawImageNineWithAttr)           \
+  V(DrawAtlas)                       \
+  V(DrawAtlasCulled)                 \
+                                     \
+  V(DrawDisplayList)                 \
+  V(DrawTextBlob)                    \
+  V(DrawTextFrame)                   \
+                                     \
+  V(DrawShadow)                      \
   V(DrawShadowTransparentOccluder)
 
 #define DL_OP_TO_ENUM_VALUE(name) k##name,

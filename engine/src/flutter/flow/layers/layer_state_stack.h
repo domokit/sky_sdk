@@ -207,6 +207,7 @@ class LayerStateStack {
 
     void clipRect(const DlRect& rect, bool is_aa);
     void clipRRect(const DlRoundRect& rrect, bool is_aa);
+    void clipRSuperellipse(const DlRoundSuperellipse& rse, bool is_aa);
     void clipPath(const DlPath& path, bool is_aa);
 
    private:
@@ -334,6 +335,7 @@ class LayerStateStack {
 
   void push_clip_rect(const DlRect& rect, bool is_aa);
   void push_clip_rrect(const DlRoundRect& rrect, bool is_aa);
+  void push_clip_rsuperellipse(const DlRoundSuperellipse& rse, bool is_aa);
   void push_clip_path(const DlPath& path, bool is_aa);
   // ---------------------
 
@@ -408,6 +410,7 @@ class LayerStateStack {
   friend class ClipEntry;
   friend class ClipRectEntry;
   friend class ClipRRectEntry;
+  friend class ClipRSuperellipseEntry;
   friend class ClipPathEntry;
 
   class Delegate {
@@ -448,6 +451,9 @@ class LayerStateStack {
 
     virtual void clipRect(const DlRect& rect, ClipOp op, bool is_aa) = 0;
     virtual void clipRRect(const DlRoundRect& rrect, ClipOp op, bool is_aa) = 0;
+    virtual void clipRSuperellipse(const DlRoundSuperellipse& rse,
+                                   ClipOp op,
+                                   bool is_aa) = 0;
     virtual void clipPath(const DlPath& path, ClipOp op, bool is_aa) = 0;
   };
   friend class DummyDelegate;

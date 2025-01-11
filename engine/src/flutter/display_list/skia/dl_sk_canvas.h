@@ -69,6 +69,9 @@ class DlSkCanvasAdapter final : public virtual DlCanvas {
   void ClipRoundRect(const DlRoundRect& rrect,
                      ClipOp clip_op,
                      bool is_aa) override;
+  void ClipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                             ClipOp clip_op,
+                             bool is_aa) override;
   void ClipPath(const DlPath& path, ClipOp clip_op, bool is_aa) override;
 
   /// Conservative estimate of the bounds of all outstanding clip operations
@@ -104,6 +107,8 @@ class DlSkCanvasAdapter final : public virtual DlCanvas {
   void DrawDiffRoundRect(const DlRoundRect& outer,
                          const DlRoundRect& inner,
                          const DlPaint& paint) override;
+  void DrawRoundSuperellipse(const DlRoundSuperellipse& rse,
+                             const DlPaint& paint) override;
   void DrawPath(const DlPath& path, const DlPaint& paint) override;
   void DrawArc(const DlRect& bounds,
                DlScalar start,

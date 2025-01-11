@@ -64,7 +64,7 @@ Scalar LerpPrecomputedVariable(size_t column, Scalar ratio) {
          frac * kPrecomputedVariables[left + 1][column];
 }
 
-// Return the shortest of `corner_radius`, height/2, and width/2.
+// For each axis, cap `corner_radius` at min(height/2, width/2).
 //
 // Corner radii longer than 1/2 of the side length does not make sense, and will
 // be limited to the longest possible.
@@ -102,9 +102,16 @@ Scalar CalculateStep(Scalar minDimension, Scalar fullAngle) {
   return std::min(kMinAngleStep, angleByDimension);
 }
 
-// The distance from point M (the 45deg point) to either side of the closer
-// bounding box is defined as `CalculateGap`.
+// The distance from the middle of the curve corners (i.e. the intersection of
+// the circular arc with its respective quadrant bisector, or point M in the
+// figure in DrawOctantSquareLikeSquircle) to either closeby side of the
+// bounding box.
 constexpr Scalar CalculateGap(Scalar corner_radius) {
+  // The formula should be kept in sync with:
+  //
+  //  * CalculateGap in round_superellipse.cc.
+  //  * _kGapFactor in geometry.dart.
+
   // Heuristic formula derived from experimentation.
   return 0.2924066406 * corner_radius;
 }

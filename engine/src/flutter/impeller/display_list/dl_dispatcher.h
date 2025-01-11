@@ -25,6 +25,7 @@ using DlPoint = flutter::DlPoint;
 using DlRect = flutter::DlRect;
 using DlIRect = flutter::DlIRect;
 using DlRoundRect = flutter::DlRoundRect;
+using DlRoundSuperellipse = flutter::DlRoundSuperellipse;
 using DlPath = flutter::DlPath;
 
 class DlDispatcherBase : public flutter::DlOpReceiver {
@@ -135,6 +136,11 @@ class DlDispatcherBase : public flutter::DlOpReceiver {
                      bool is_aa) override;
 
   // |flutter::DlOpReceiver|
+  void clipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                             ClipOp clip_op,
+                             bool is_aa) override;
+
+  // |flutter::DlOpReceiver|
   void clipPath(const DlPath& path, ClipOp clip_op, bool is_aa) override;
 
   // |flutter::DlOpReceiver|
@@ -167,6 +173,9 @@ class DlDispatcherBase : public flutter::DlOpReceiver {
   // |flutter::DlOpReceiver|
   void drawDiffRoundRect(const DlRoundRect& outer,
                          const DlRoundRect& inner) override;
+
+  // |flutter::DlOpReceiver|
+  void drawRoundSuperellipse(const DlRoundSuperellipse& rse) override;
 
   // |flutter::DlOpReceiver|
   void drawPath(const DlPath& path) override;

@@ -10,6 +10,7 @@
 #include "flutter/flow/layers/clip_path_layer.h"
 #include "flutter/flow/layers/clip_rect_layer.h"
 #include "flutter/flow/layers/clip_rrect_layer.h"
+#include "flutter/flow/layers/clip_rsuperellipse_layer.h"
 #include "flutter/flow/layers/color_filter_layer.h"
 #include "flutter/flow/layers/container_layer.h"
 #include "flutter/flow/layers/display_list_layer.h"
@@ -93,6 +94,21 @@ void SceneBuilder::pushClipRRect(Dart_Handle layer_handle,
                                  const fml::RefPtr<EngineLayer>& old_layer) {
   auto layer = std::make_shared<flutter::ClipRRectLayer>(
       rrect.rrect, static_cast<flutter::Clip>(clip_behavior));
+  PushLayer(layer);
+  EngineLayer::MakeRetained(layer_handle, layer);
+
+  if (old_layer && old_layer->Layer()) {
+    layer->AssignOldLayer(old_layer->Layer().get());
+  }
+}
+
+void SceneBuilder::pushClipRSuperellipse(
+    Dart_Handle layer_handle,
+    const RSuperellipse& rse,
+    int clip_behavior,
+    const fml::RefPtr<EngineLayer>& old_layer) {
+  auto layer = std::make_shared<flutter::ClipRSuperellipseLayer>(
+      rse.rsuperellipse, static_cast<flutter::Clip>(clip_behavior));
   PushLayer(layer);
   EngineLayer::MakeRetained(layer_handle, layer);
 

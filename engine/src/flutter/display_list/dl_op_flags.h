@@ -323,6 +323,12 @@ class DisplayListOpFlags : DisplayListFlags {
       kBasePaintFlags |       //
       kBaseStrokeOrFillFlags  //
   };
+  static constexpr DisplayListAttributeFlags kDrawRSuperellipseFlags{
+      kBasePaintFlags |  //
+      kIsFilledGeometry  //
+                         // TODO(dkwingsmt): Support strokes.
+      // https://github.com/flutter/flutter/issues/139321#issuecomment-2547050922
+  };
   static constexpr DisplayListAttributeFlags kDrawPathFlags{
       kBasePaintFlags |         //
       kBaseStrokeOrFillFlags |  //

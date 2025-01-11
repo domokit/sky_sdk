@@ -77,6 +77,7 @@ class DisplayListMatrixClipState {
   bool rrect_covers_cull(const SkRRect& content) const {
     return rrect_covers_cull(ToDlRoundRect(content));
   }
+  bool rsuperellipse_covers_cull(const DlRoundSuperellipse& content) const;
 
   bool content_culled(const DlRect& content_bounds) const;
   bool content_culled(const SkRect& content_bounds) const {
@@ -166,6 +167,7 @@ class DisplayListMatrixClipState {
   void clipRRect(const SkRRect& rrect, ClipOp op, bool is_aa) {
     clipRRect(ToDlRoundRect(rrect), op, is_aa);
   }
+  void clipRSuperellipse(const DlRoundSuperellipse& rse, ClipOp op, bool is_aa);
   void clipPath(const SkPath& path, ClipOp op, bool is_aa) {
     clipPath(DlPath(path), op, is_aa);
   }

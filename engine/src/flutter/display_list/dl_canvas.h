@@ -101,6 +101,9 @@ class DlCanvas {
   virtual void ClipRoundRect(const DlRoundRect& rrect,
                              ClipOp clip_op = ClipOp::kIntersect,
                              bool is_aa = false) = 0;
+  virtual void ClipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                                     ClipOp clip_op = ClipOp::kIntersect,
+                                     bool is_aa = false) = 0;
   virtual void ClipPath(const DlPath& path,
                         ClipOp clip_op = ClipOp::kIntersect,
                         bool is_aa = false) = 0;
@@ -141,6 +144,8 @@ class DlCanvas {
   virtual void DrawDiffRoundRect(const DlRoundRect& outer,
                                  const DlRoundRect& inner,
                                  const DlPaint& paint) = 0;
+  virtual void DrawRoundSuperellipse(const DlRoundSuperellipse& rse,
+                                     const DlPaint& paint) = 0;
   virtual void DrawPath(const DlPath& path, const DlPaint& paint) = 0;
   virtual void DrawArc(const DlRect& bounds,
                        DlScalar start,
