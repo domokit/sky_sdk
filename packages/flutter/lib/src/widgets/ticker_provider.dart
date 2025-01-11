@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'framework.dart';
+import 'inherited_notifier.dart';
 
 export 'package:flutter/scheduler.dart' show TickerProvider;
 
@@ -87,7 +88,7 @@ class TickerMode extends StatefulWidget {
   /// dependency between the provided `context` and the ancestor [TickerMode].
   /// In this case, the widget automatically rebuilds when the ticker mode
   /// changes or when it is moved to a new [TickerMode] ancestor, which
-  /// simplifies the management cost in the widget at the expensive of some
+  /// simplifies the widget's state management logic at the expense of some
   /// potential unnecessary rebuilds.
   ///
   /// In the absence of a [TickerMode] widget, this function returns a
@@ -95,7 +96,7 @@ class TickerMode extends StatefulWidget {
   static ValueListenable<bool> getNotifier(BuildContext context) {
     final _EffectiveTickerMode? widget =
         context.getInheritedWidgetOfExactType<_EffectiveTickerMode>();
-    return widget?.notifier ?? const _ConstantValueListenable<bool>(true);
+    return widget?.notifier ?? const _AlwaysTrue();
   }
 
   @override
@@ -103,39 +104,40 @@ class TickerMode extends StatefulWidget {
 }
 
 class _TickerModeState extends State<TickerMode> {
-  bool _ancestorTicketMode = true;
+  late ValueListenable<bool> _ancestorMode = TickerMode.getNotifier(context);
   final ValueNotifier<bool> _effectiveMode = ValueNotifier<bool>(true);
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _ancestorTicketMode = TickerMode.of(context);
-    _updateEffectiveMode();
+  void initState() {
+    super.initState();
+    _ancestorMode.addListener(_updateEffectiveMode);
   }
 
   @override
-  void didUpdateWidget(TickerMode oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _updateEffectiveMode();
+  void activate() {
+    super.activate();
+    final ValueListenable<bool> ancestorMode = TickerMode.getNotifier(context);
+    if (ancestorMode != _ancestorMode) {
+      _ancestorMode.removeListener(_updateEffectiveMode);
+      _ancestorMode = ancestorMode..addListener(_updateEffectiveMode);
+    }
   }
 
   @override
   void dispose() {
+    _ancestorMode.removeListener(_updateEffectiveMode);
     _effectiveMode.dispose();
     super.dispose();
   }
 
   void _updateEffectiveMode() {
-    _effectiveMode.value = _ancestorTicketMode && widget.enabled;
+    _effectiveMode.value = _ancestorMode.value && widget.enabled;
   }
 
   @override
   Widget build(BuildContext context) {
-    return _EffectiveTickerMode(
-      enabled: _effectiveMode.value,
-      notifier: _effectiveMode,
-      child: widget.child,
-    );
+    _updateEffectiveMode();
+    return _EffectiveTickerMode(notifier: _effectiveMode, child: widget.child);
   }
 
   @override
@@ -153,14 +155,10 @@ class _TickerModeState extends State<TickerMode> {
   }
 }
 
-class _EffectiveTickerMode extends InheritedWidget {
-  const _EffectiveTickerMode({required this.enabled, required this.notifier, required super.child});
+class _EffectiveTickerMode extends InheritedNotifier<ValueNotifier<bool>> {
+  const _EffectiveTickerMode({required super.notifier, required super.child});
 
-  final bool enabled;
-  final ValueNotifier<bool> notifier;
-
-  @override
-  bool updateShouldNotify(_EffectiveTickerMode oldWidget) => enabled != oldWidget.enabled;
+  bool get enabled => notifier!.value;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -420,8 +418,8 @@ class _WidgetTicker extends Ticker {
   }
 }
 
-class _ConstantValueListenable<T> implements ValueListenable<T> {
-  const _ConstantValueListenable(this.value);
+class _AlwaysTrue implements ValueListenable<bool> {
+  const _AlwaysTrue();
 
   @override
   void addListener(VoidCallback listener) {
@@ -436,5 +434,5 @@ class _ConstantValueListenable<T> implements ValueListenable<T> {
   }
 
   @override
-  final T value;
+  bool get value => true;
 }

@@ -7,6 +7,15 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  testWidgets('TickerMode takes advantage of InheritedNotifier API', (WidgetTester tester) async {
+    await tester.pumpWidget(const TickerMode(enabled: true, child: SizedBox()));
+
+    expect(
+      find.byWidgetPredicate((Widget widget) => widget is InheritedNotifier),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('Nested TickerMode cannot turn tickers back on', (WidgetTester tester) async {
     int outerTickCount = 0;
     int innerTickCount = 0;
