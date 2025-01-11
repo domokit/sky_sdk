@@ -103,12 +103,20 @@ Scalar CalculateStep(Scalar minDimension, Scalar fullAngle) {
   return std::min(kMinAngleStep, angleByDimension);
 }
 
-// The distance from point M (the 45deg point) to either side of the closer
-// bounding box is defined as `CalculateGap`.
-constexpr Scalar CalculateGap(Scalar corner_radius) {
-  // Heuristic formula derived from experimentation.
-  return 0.2924066406 * corner_radius;
-}
+// A factor used to calculate the "gap", defined as the distance from the
+// midpoint of the curved corners to the nearest sides of the bounding box.
+//
+// When the corner radius is symmetrical on both dimensions, the midpoint of the
+// corner is where the circular arc intersects its quadrant bisector. When the
+// corner radius is asymmetrical, since the corner can be considered "elongated"
+// from a symmetrical corner, the midpoint is transformed in the same way.
+//
+// Experiments indicate that the gap is linear with respect to the corner
+// radius on that dimension.
+//
+// The formula should be kept in sync with a few files, as documented in
+// `CalculateGap` in round_superellipse_geometry.cc.
+constexpr Scalar kGapFactor = 0.2924066406;
 
 // Return the value that splits the range from `left` to `right` into two
 // portions whose ratio equals to `ratio_left` : `ratio_right`.
@@ -257,7 +265,7 @@ size_t DrawOctantSquareLikeSquircle(Point* output,
   Scalar ratio = {std::min(size / corner_radius, kMaxRatio)};
   Scalar a = ratio * corner_radius / 2;
   Scalar s = size / 2 - a;
-  Scalar g = CalculateGap(corner_radius);
+  Scalar g = kGapFactor * corner_radius;
 
   Scalar n = LerpPrecomputedVariable(1, ratio);
   Scalar d = LerpPrecomputedVariable(2, ratio) * a;
@@ -594,18 +602,18 @@ bool RoundSuperellipseGeometry::CoversArea(const Matrix& transform,
   if (!transform.IsTranslationScaleOnly()) {
     return false;
   }
-  if (!radii_.AreAllCornersSame() || !radii_.top_left.IsSquare()) {
-    // TODO(dkwingsmt): At least try some estimates here.
-    return false;
-  }
-  // Use the rectangle formed by the four 45deg points (point M) as a
-  // conservative estimate of the inner rectangle.
-  Scalar g = CalculateGap(radii_.top_left.width);
+  Scalar left_inset = std::max(radii_.top_left.width, radii_.bottom_left.width);
+  Scalar right_inset =
+      std::max(radii_.top_right.width, radii_.bottom_right.width);
+  Scalar top_inset = std::max(radii_.top_left.height, radii_.top_right.height);
+  Scalar bottom_inset =
+      std::max(radii_.bottom_left.height, radii_.bottom_right.height);
   Rect coverage =
-      Rect::MakeLTRB(bounds_.GetLeft() + g, bounds_.GetTop() + g,
-                     bounds_.GetRight() - g, bounds_.GetBottom() - g)
-          .TransformBounds(transform);
-  return coverage.Contains(rect);
+      Rect::MakeLTRB(bounds_.GetLeft() + left_inset * kGapFactor,
+                     bounds_.GetTop() + top_inset * kGapFactor,
+                     bounds_.GetRight() - right_inset * kGapFactor,
+                     bounds_.GetBottom() - bottom_inset * kGapFactor);
+  return coverage.TransformBounds(transform).Contains(rect);
 }
 
 bool RoundSuperellipseGeometry::IsAxisAlignedRect() const {

@@ -48,12 +48,13 @@ struct RoundingRadii {
            ScalarNearlyEqual(top_left.height, bottom_left.height, tolerance);
   }
 
-  /// Returns a scaled copy of this object, ensuring that the sum of the corner
-  /// radii on each side does not exceed the width or height of the given
-  /// bounds.
+  /// @brief  Returns a scaled copy of this object, ensuring that the sum of the
+  ///         corner radii on each side does not exceed the width or height of
+  ///         the given bounds.
   ///
-  /// See the [Skia scaling implementation](https://github.com/google/skia/blob/main/src/core/SkRRect.cpp)
-  /// for more details.
+  ///         See the [Skia scaling
+  ///         implementation](https://github.com/google/skia/blob/main/src/core/SkRRect.cpp)
+  ///         for more details.
   RoundingRadii Scaled(const Rect& bounds) const;
 
   constexpr inline RoundingRadii operator*(Scalar scale) {
