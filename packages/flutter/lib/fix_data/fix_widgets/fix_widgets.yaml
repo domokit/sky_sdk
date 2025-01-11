@@ -23,6 +23,16 @@
 #     * ListWheelScrollView: fix_list_wheel_scroll_view.yaml
 version: 1
 transforms:
+  # Changes made in https://github.com/flutter/flutter/pull/160569
+  - title: "Migrate to StatefulWidget"
+    date: 2023-11-29
+    element:
+      uris: [ 'widgets.dart', 'material.dart', 'cupertino.dart' ]
+      class: 'UniqueWidget'
+    changes:
+      - kind: 'rename'
+        newName: 'StatefulWidget'
+
   # Changes made in https://github.com/flutter/flutter/pull/139260
   - title: "Migrate to focusNode.enclosingScope!"
     date: 2023-11-29

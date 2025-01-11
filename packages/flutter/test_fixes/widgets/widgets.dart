@@ -12,6 +12,9 @@ void main() {
   Object object;
   TickerProvider vsync;
 
+  // Changes made in https://github.com/flutter/flutter/pull/160569
+  UniqueWidget widget;
+
   // Changes made in https://github.com/flutter/flutter/pull/123352
   WidgetsBinding.instance.renderViewElement;
 

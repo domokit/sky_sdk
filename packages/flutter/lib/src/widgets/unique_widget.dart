@@ -17,11 +17,21 @@ import 'framework.dart';
 ///
 /// When subclassing [UniqueWidget], provide the corresponding [State] subclass
 /// as the type argument.
+@Deprecated(
+  'Use StatefulWidget instead. '
+  'Any widget can use a global key. '
+  'This feature was deprecated after v3.28.0-0.1.pre.',
+)
 abstract class UniqueWidget<T extends State<StatefulWidget>> extends StatefulWidget {
   /// Creates a widget that has exactly one inflated instance in the tree.
   ///
   /// The [key] argument is required because it identifies the unique inflated
   /// instance of this widget.
+  @Deprecated(
+    'Use StatefulWidget instead. '
+    'Any widget can use a global key. '
+    'This feature was deprecated after v3.28.0-0.1.pre.',
+  )
   const UniqueWidget({required GlobalKey<T> super.key});
 
   @override
@@ -30,6 +40,11 @@ abstract class UniqueWidget<T extends State<StatefulWidget>> extends StatefulWid
   /// The state for the unique inflated instance of this widget.
   ///
   /// Might be null if the widget is not currently in the tree.
+  @Deprecated(
+    'Use the key directly. '
+    'Flutter widgets should follow a declarative style. '
+    'This feature was deprecated after v3.28.0-0.1.pre.',
+  )
   T? get currentState {
     final GlobalKey<T> globalKey = key! as GlobalKey<T>;
     return globalKey.currentState;
