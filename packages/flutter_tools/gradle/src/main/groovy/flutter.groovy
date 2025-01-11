@@ -323,11 +323,13 @@ class FlutterPlugin implements Plugin<Project> {
         String flutterProguardRules = Paths.get(flutterRoot.absolutePath, "packages", "flutter_tools",
                 "gradle", "flutter_proguard_rules.pro")
         project.android.buildTypes {
-            // Add profile build type.
-            profile {
-                initWith(debug)
-                if (it.hasProperty("matchingFallbacks")) {
-                    matchingFallbacks = ["debug", "release"]
+            // Add profile build type if it does not already exist.
+            if (!project.android.buildTypes.hasProperty('profile')) {
+                profile {
+                    initWith(debug)
+                    if (it.hasProperty("matchingFallbacks")) {
+                        matchingFallbacks = ["debug", "release"]
+                    }
                 }
             }
             // TODO(garyq): Shrinking is only false for multi apk split aot builds, where shrinking is not allowed yet.
@@ -737,14 +739,26 @@ class FlutterPlugin implements Plugin<Project> {
         // compile/target/min sdk values.
         pluginProject.extensions.create("flutter", FlutterExtension)
 
-        // Add plugin dependency to the app project.
-        project.android.buildTypes.each { buildType ->
-            String flutterBuildMode = buildModeFor(buildType)
-            if (flutterBuildMode != "release" || !pluginObject.dev_dependency) {
-                // Only add dependency on dev dependencies in non-release builds.
-                project.dependencies {
-                    api(pluginProject)
+        // Add profile build type if it does not already exist.
+        if (!project.android.buildTypes.hasProperty('profile')) {
+            project.android.buildTypes {
+                profile {
+                    initWith(debug)
+                    if (it.hasProperty("matchingFallbacks")) {
+                        matchingFallbacks = ["debug", "release"]
+                    }
                 }
+            }
+        }
+
+        // Add plugin dependency to the app project. We only want to add dependency
+        // for dev dependencies in non-release builds.
+        project.dependencies {
+            debugApi(pluginProject)
+            profileApi(pluginProject)
+
+            if (!pluginObject.dev_dependency) {
+                releaseApi(pluginProject)
             }
         }
 
@@ -757,12 +771,6 @@ class FlutterPlugin implements Plugin<Project> {
                 return
             }
             if (!pluginProject.hasProperty("android")) {
-                return
-            }
-            if (flutterBuildMode == "release" && pluginObject.dev_dependency) {
-                // This plugin is a dev dependency and will not be included in
-                // the release build,  so no need to add the embedding
-                // dependency to it.
                 return
             }
             // Copy build types from the app to the plugin.
