@@ -20,7 +20,6 @@ import 'debug.dart';
 import 'dropdown.dart';
 import 'icon_button.dart';
 import 'icons.dart';
-import 'ink_decoration.dart';
 import 'material_localizations.dart';
 import 'material_state.dart';
 import 'progress_indicator.dart';
@@ -93,6 +92,9 @@ class PaginatedDataTable extends StatefulWidget {
   PaginatedDataTable({
     super.key,
     this.header,
+    this.headerBackgroundColor = const Color.fromARGB(255,0, 0, 0),
+    this.footerBackgroundColor = const Color.fromARGB(255,0, 0, 0),
+    this.footerStyle = const TextStyle(color: Color.fromARGB(255,0, 0, 0)), //default text style
     this.actions,
     required this.columns,
     this.sortColumnIndex,
@@ -114,9 +116,9 @@ class PaginatedDataTable extends StatefulWidget {
     this.onPageChanged,
     this.rowsPerPage = defaultRowsPerPage,
     this.availableRowsPerPage = const <int>[
-      defaultRowsPerPage,
-      defaultRowsPerPage * 2,
-      defaultRowsPerPage * 5,
+      defaultRowsPerPage, 
+      defaultRowsPerPage * 2, 
+      defaultRowsPerPage * 5, 
       defaultRowsPerPage * 10,
     ],
     this.onRowsPerPageChanged,
@@ -261,6 +263,7 @@ class PaginatedDataTable extends StatefulWidget {
   /// defaults to 1.0.
   final double? dividerThickness;
 
+
   /// Invoked when the user switches to another page.
   ///
   /// The value is the index of the first row on the currently displayed page.
@@ -303,6 +306,18 @@ class PaginatedDataTable extends StatefulWidget {
   /// {@macro flutter.widgets.scrollable.dragStartBehavior}
   final DragStartBehavior dragStartBehavior;
 
+  ///Defines the color of header background
+  ///
+  final Color? headerBackgroundColor;
+
+  ///Defines the color of footer background
+  ///
+  final Color? footerBackgroundColor;
+
+  ///Defines the footer text style
+  ///
+  final TextStyle footerStyle;
+
   /// Horizontal margin around the checkbox, if it is displayed.
   ///
   /// If null, then [horizontalMargin] is used as the margin between the edge
@@ -319,7 +334,7 @@ class PaginatedDataTable extends StatefulWidget {
   /// {@macro flutter.widgets.scroll_view.primary}
   final bool? primary;
 
-  /// {@macro flutter.material.dataTable.headingRowColor}
+   /// {@macro flutter.material.dataTable.headingRowColor}
   final MaterialStateProperty<Color?>? headingRowColor;
 
   /// Controls the visibility of empty rows on the last page of a
@@ -480,8 +495,8 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
     pageTo(((_rowCount - 1) / widget.rowsPerPage).floor() * widget.rowsPerPage);
   }
 
-  bool _isNextPageUnavailable() =>
-      !_rowCountApproximate && (_firstRowIndex + widget.rowsPerPage >= _rowCount);
+  bool _isNextPageUnavailable() => 
+    !_rowCountApproximate && (_firstRowIndex + widget.rowsPerPage >= _rowCount);
 
   final GlobalKey _tableKey = GlobalKey();
 
@@ -497,9 +512,9 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
     if (_selectedRowCount == 0 && widget.header != null) {
       headerWidgets.add(Expanded(child: widget.header!));
     } else if (widget.header != null) {
-      headerWidgets.add(
-        Expanded(child: Text(localizations.selectedRowCountTitle(_selectedRowCount))),
-      );
+      headerWidgets.add(Expanded(
+        child: Text(localizations.selectedRowCountTitle(_selectedRowCount)),
+      ));
     }
     if (widget.actions != null) {
       headerWidgets.addAll(
@@ -514,19 +529,20 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
     }
 
     // FOOTER
-    final TextStyle? footerTextStyle = themeData.textTheme.bodySmall;
+    final TextStyle footerTextStyle = themeData.textTheme.bodySmall ?? widget.footerStyle;
     final List<Widget> footerWidgets = <Widget>[];
     if (widget.onRowsPerPageChanged != null) {
-      final List<Widget> availableRowsPerPage =
-          widget.availableRowsPerPage
-              .where((int value) => value <= _rowCount || value == widget.rowsPerPage)
-              .map<DropdownMenuItem<int>>((int value) {
-                return DropdownMenuItem<int>(value: value, child: Text('$value'));
-              })
-              .toList();
+      final List<Widget> availableRowsPerPage = widget.availableRowsPerPage
+        .where((int value) => value <= _rowCount || value == widget.rowsPerPage)
+        .map<DropdownMenuItem<int>>((int value) {
+          return DropdownMenuItem<int>(
+            value: value,
+            child: Text('$value'),
+          );
+        })
+        .toList();
       footerWidgets.addAll(<Widget>[
-        // Match trailing padding, in case we overflow and end up scrolling.
-        const SizedBox(width: 14.0),
+        Container(width: 14.0), // to match trailing padding in case we overflow and end up scrolling
         Text(localizations.rowsPerPageTitle),
         ConstrainedBox(
           constraints: const BoxConstraints(minWidth: 64.0), // 40.0 for the text, 24.0 for the icon
@@ -545,7 +561,7 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
       ]);
     }
     footerWidgets.addAll(<Widget>[
-      const SizedBox(width: 32.0),
+      Container(width: 32.0),
       Text(
         localizations.pageRowsInfoTitle(
           _firstRowIndex + 1,
@@ -554,7 +570,7 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
           _rowCountApproximate,
         ),
       ),
-      const SizedBox(width: 32.0),
+      Container(width: 32.0),
       if (widget.showFirstLastButtons)
         IconButton(
           icon: Icon(Icons.skip_previous, color: widget.arrowHeadColor),
@@ -568,7 +584,7 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
         tooltip: localizations.previousPageTooltip,
         onPressed: _firstRowIndex <= 0 ? null : _handlePrevious,
       ),
-      const SizedBox(width: 24.0),
+      Container(width: 24.0),
       IconButton(
         icon: Icon(Icons.chevron_right, color: widget.arrowHeadColor),
         padding: EdgeInsets.zero,
@@ -582,7 +598,7 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
           tooltip: localizations.lastPageTooltip,
           onPressed: _isNextPageUnavailable() ? null : _handleLast,
         ),
-      const SizedBox(width: 14.0),
+      Container(width: 14.0),
     ]);
 
     // CARD
@@ -607,15 +623,19 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
                             )
                             : themeData.textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w400),
                     child: IconTheme.merge(
-                      data: const IconThemeData(opacity: 0.54),
-                      child: Ink(
+                      data: const IconThemeData(
+                        opacity: 0.54,
+                      ),
+                      child: SizedBox(
                         height: 64.0,
-                        color: _selectedRowCount > 0 ? themeData.secondaryHeaderColor : null,
-                        child: Padding(
-                          padding: const EdgeInsetsDirectional.only(start: 24, end: 14.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: headerWidgets,
+                        child: ColoredBox(
+                          color: _selectedRowCount > 0 ? themeData.secondaryHeaderColor : widget.headerBackgroundColor!,
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.only(start: 24, end: 14.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: headerWidgets,
+                            ),
                           ),
                         ),
                       ),
@@ -654,7 +674,7 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
               ),
               if (!widget.showEmptyRows)
                 SizedBox(
-                  height:
+                    height:
                       (widget.dataRowMaxHeight ?? kMinInteractiveDimension) *
                       (widget.rowsPerPage - _rowCount + _firstRowIndex).clamp(
                         0,
@@ -662,18 +682,24 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
                       ),
                 ),
               DefaultTextStyle(
-                style: footerTextStyle!,
+                key: const Key('footerTextStyle'), //key added to find footer text style widget
+                style: footerTextStyle,
                 child: IconTheme.merge(
                   data: const IconThemeData(opacity: 0.54),
                   child: SizedBox(
                     // TODO(bkonyi): this won't handle text zoom correctly,
                     //  https://github.com/flutter/flutter/issues/48522
                     height: 56.0,
-                    child: SingleChildScrollView(
-                      dragStartBehavior: widget.dragStartBehavior,
-                      scrollDirection: Axis.horizontal,
-                      reverse: true,
-                      child: Row(children: footerWidgets),
+                    child: ColoredBox(
+                      color: widget.footerBackgroundColor!, // Set footer background color  here
+                      child: SingleChildScrollView(
+                        dragStartBehavior: widget.dragStartBehavior,
+                        scrollDirection: Axis.horizontal,
+                        reverse: true,
+                        child: Row(
+                          children: footerWidgets,
+                        ),
+                      ),
                     ),
                   ),
                 ),

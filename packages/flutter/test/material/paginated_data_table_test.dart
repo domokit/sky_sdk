@@ -1511,4 +1511,78 @@ void main() {
     final Border? border = tableRowBoxDecoration?.border as Border?;
     expect(border?.bottom.width, defaultDividerThickness);
   });
+    testWidgets('PaginatedDataTable footerStyle set properly', (WidgetTester tester) async {
+    const TextStyle footerStyle = TextStyle(color: Color(0xFFF53935), fontSize: 16);
+
+    await tester.pumpWidget(MaterialApp(
+      home:Scaffold(
+        body: SingleChildScrollView(
+          child: PaginatedDataTable(
+          footerStyle: const TextStyle(color: Color(0xFFF53935), fontSize: 16),
+          showFirstLastButtons: true,
+          header: const Text('Test table'),
+          onRowsPerPageChanged: (int? rowsPerPage) { },
+          source: source,
+          columns: const <DataColumn>[
+            DataColumn(label: Text('Name')),
+            DataColumn(label: Text('Calories'), numeric: true),
+            DataColumn(label: Text('Generation')),
+          ],
+        ),
+    ))));
+
+      await tester.pumpAndSettle();
+
+      final Finder footerTextStyleFinder = find.byKey(const Key('footerTextStyle'));
+      expect(footerTextStyleFinder, findsOneWidget);
+
+      final DefaultTextStyle footerTextStyle = tester.widget<DefaultTextStyle>(footerTextStyleFinder);
+      expect(footerTextStyle.style, footerStyle);
+  });
+
+  testWidgets('PaginatedDataTable headerBackgroundColor and footerBackgroundColor set properly', (WidgetTester tester) async {
+    const Color headerBackgroundColor = Color(0xFFF53935);
+
+    const Color footerBackgroundColor = Color(0xFFA53695);
+
+    await tester.pumpWidget(MaterialApp(
+      home:Scaffold(
+        body: SingleChildScrollView(
+          child: PaginatedDataTable(
+            headerBackgroundColor: headerBackgroundColor,
+            footerBackgroundColor: footerBackgroundColor,
+            showFirstLastButtons: true,
+            header: const Text('Test table'),
+            onRowsPerPageChanged: (int? rowsPerPage) { },
+            source: source,
+            columns: const <DataColumn>[
+              DataColumn(label: Text('Name')),
+              DataColumn(label: Text('Calories'), numeric: true),
+              DataColumn(label: Text('Generation')),
+            ],
+          ),
+        )
+      )
+    ));
+
+    final ColoredBox headerContainer = tester.widget<ColoredBox>(
+      find.descendant(
+        of: find.byType(PaginatedDataTable),
+        matching: find.byType(ColoredBox).first,
+      ),
+    );
+    expect(headerContainer.color, headerBackgroundColor);
+
+     final Finder footerFinder = find.descendant(
+      of: find.byType(PaginatedDataTable),
+      matching: find.byWidgetPredicate((Widget widget) =>
+        widget is ColoredBox &&
+        widget.child is SingleChildScrollView &&
+        (widget.child! as SingleChildScrollView).child is Row
+      ),
+    );
+    expect(footerFinder, findsOneWidget);
+    final ColoredBox footerContainer = tester.widget<ColoredBox>(footerFinder);
+    expect(footerContainer.color, footerBackgroundColor);
+  });
 }
