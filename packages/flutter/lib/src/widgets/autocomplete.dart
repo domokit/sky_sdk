@@ -7,6 +7,7 @@ library;
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'actions.dart';
@@ -311,6 +312,8 @@ class _RawAutocompleteState<T extends Object> extends State<RawAutocomplete<T>> 
     debugLabel: '_RawAutocompleteState',
   );
 
+  static const int _pageSize = 4;
+
   TextEditingController? _internalTextEditingController;
   TextEditingController get _textEditingController {
     return widget.textEditingController ??
@@ -332,6 +335,22 @@ class _RawAutocompleteState<T extends Object> extends State<RawAutocomplete<T>> 
       onInvoke: _highlightNextOption,
       isEnabledCallback: () => _canShowOptionsView,
     ),
+    AutocompleteFirstOptionIntent: _AutocompleteCallbackAction<AutocompleteFirstOptionIntent>(
+      onInvoke: _highlightFirstOption,
+      isEnabledCallback: () => _canShowOptionsView,
+    ),
+    AutocompleteLastOptionIntent: _AutocompleteCallbackAction<AutocompleteLastOptionIntent>(
+      onInvoke: _highlightLastOption,
+      isEnabledCallback: () => _canShowOptionsView,
+    ),
+    AutocompleteNextPageOptionIntent: _AutocompleteCallbackAction<AutocompleteNextPageOptionIntent>(
+      onInvoke: _highlightNextPageOption,
+      isEnabledCallback: () => _canShowOptionsView,
+    ),
+    AutocompletePreviousPageOptionIntent: _AutocompleteCallbackAction<AutocompletePreviousPageOptionIntent>(
+      onInvoke: _highlightPreviousPageOption,
+      isEnabledCallback: () => _canShowOptionsView,
+    ),
     DismissIntent: CallbackAction<DismissIntent>(onInvoke: _hideOptions),
   };
 
@@ -342,9 +361,33 @@ class _RawAutocompleteState<T extends Object> extends State<RawAutocomplete<T>> 
   String? _lastFieldText;
   final ValueNotifier<int> _highlightedOptionIndex = ValueNotifier<int>(0);
 
-  static const Map<ShortcutActivator, Intent> _shortcuts = <ShortcutActivator, Intent>{
+  static const Map<ShortcutActivator, Intent> _appleShortcuts = <ShortcutActivator, Intent>{
+    SingleActivator(LogicalKeyboardKey.arrowUp, meta: true): AutocompleteFirstOptionIntent(),
+    SingleActivator(LogicalKeyboardKey.arrowDown, meta: true): AutocompleteLastOptionIntent(),
+  };
+
+  static const Map<ShortcutActivator, Intent> _nonAppleShortcuts = <ShortcutActivator, Intent>{
+    SingleActivator(LogicalKeyboardKey.arrowUp, control: true): AutocompleteFirstOptionIntent(),
+    SingleActivator(LogicalKeyboardKey.arrowDown, control: true): AutocompleteLastOptionIntent(),
+  };
+
+  static const Map<ShortcutActivator, Intent> _commonShortcuts = <ShortcutActivator, Intent>{
     SingleActivator(LogicalKeyboardKey.arrowUp): AutocompletePreviousOptionIntent(),
     SingleActivator(LogicalKeyboardKey.arrowDown): AutocompleteNextOptionIntent(),
+    SingleActivator(LogicalKeyboardKey.pageUp): AutocompletePreviousPageOptionIntent(),
+    SingleActivator(LogicalKeyboardKey.pageDown): AutocompleteNextPageOptionIntent(),
+  };
+
+  static Map<ShortcutActivator, Intent> get _shortcuts => <ShortcutActivator, Intent>{
+    ..._commonShortcuts,
+    ...switch(defaultTargetPlatform) {
+      TargetPlatform.iOS => _appleShortcuts,
+      TargetPlatform.macOS => _appleShortcuts,
+      TargetPlatform.android => _nonAppleShortcuts,
+      TargetPlatform.linux => _nonAppleShortcuts,
+      TargetPlatform.windows => _nonAppleShortcuts,
+      TargetPlatform.fuchsia => _nonAppleShortcuts,
+    },
   };
 
   bool get _canShowOptionsView => _focusNode.hasFocus && _selection == null && _options.isNotEmpty;
@@ -411,22 +454,41 @@ class _RawAutocompleteState<T extends Object> extends State<RawAutocomplete<T>> 
     _updateOptionsViewVisibility();
   }
 
-  void _updateHighlight(int newIndex) {
-    _highlightedOptionIndex.value = _options.isEmpty ? 0 : newIndex % _options.length;
+  void _updateHighlight(int nextIndex) {
+    _highlightedOptionIndex.value = _options.isEmpty
+        ? 0
+        : nextIndex.clamp(0, _options.length - 1);
   }
 
   void _highlightPreviousOption(AutocompletePreviousOptionIntent intent) {
-    assert(_canShowOptionsView);
-    _updateOptionsViewVisibility();
-    assert(_optionsViewController.isShowing);
-    _updateHighlight(_highlightedOptionIndex.value - 1);
+    _highlightOption(_highlightedOptionIndex.value - 1);
   }
 
   void _highlightNextOption(AutocompleteNextOptionIntent intent) {
+    _highlightOption(_highlightedOptionIndex.value + 1);
+  }
+
+  void _highlightFirstOption(AutocompleteFirstOptionIntent intent) {
+    _highlightOption(0);
+  }
+
+  void _highlightLastOption(AutocompleteLastOptionIntent intent) {
+    _highlightOption(_options.length - 1);
+  }
+
+  void _highlightNextPageOption(AutocompleteNextPageOptionIntent intent) {
+    _highlightOption(_highlightedOptionIndex.value + _pageSize);
+  }
+
+  void _highlightPreviousPageOption(AutocompletePreviousPageOptionIntent intent) {
+    _highlightOption(_highlightedOptionIndex.value - _pageSize);
+  }
+
+  void _highlightOption(int index) {
     assert(_canShowOptionsView);
     _updateOptionsViewVisibility();
     assert(_optionsViewController.isShowing);
-    _updateHighlight(_highlightedOptionIndex.value + 1);
+    _updateHighlight(index);
   }
 
   Object? _hideOptions(DismissIntent intent) {
@@ -564,10 +626,36 @@ class AutocompleteNextOptionIntent extends Intent {
   const AutocompleteNextOptionIntent();
 }
 
+/// An [Intent] to highlight the first option in the autocomplete list.
+class AutocompleteFirstOptionIntent extends Intent {
+  /// Creates an instance of AutocompleteFirstOptionIntent.
+  const AutocompleteFirstOptionIntent();
+}
+
+/// An [Intent] to highlight the last option in the autocomplete list.
+class AutocompleteLastOptionIntent extends Intent {
+  /// Creates an instance of AutocompleteLastOptionIntent.
+  const AutocompleteLastOptionIntent();
+}
+
+/// An [Intent] to highlight the option one page after the currently highlighted
+/// option in the autocomplete list.
+class AutocompleteNextPageOptionIntent extends Intent {
+  /// Creates an instance of AutocompleteNextPageOptionIntent.
+  const AutocompleteNextPageOptionIntent();
+}
+
+/// An [Intent] to highlight the option one page before the currently
+/// highlighted option in the autocomplete list.
+class AutocompletePreviousPageOptionIntent extends Intent {
+  /// Creates an instance of AutocompletePreviousPageOptionIntent.
+  const AutocompletePreviousPageOptionIntent();
+}
+
 /// An inherited widget used to indicate which autocomplete option should be
 /// highlighted for keyboard navigation.
 ///
-/// The `RawAutoComplete` widget will wrap the options view generated by the
+/// The `RawAutocomplete` widget will wrap the options view generated by the
 /// `optionsViewBuilder` with this widget to provide the highlighted option's
 /// index to the builder.
 ///
