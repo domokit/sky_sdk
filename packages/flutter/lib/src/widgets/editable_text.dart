@@ -4660,7 +4660,7 @@ class EditableTextState extends State<EditableText>
   }
 
   void _schedulePeriodicPostFrameCallbacks([Duration? duration]) {
-    if (!_hasInputConnection) {
+    if (!_hasInputConnection || !mounted) {
       return;
     }
     _updateSelectionRects();
