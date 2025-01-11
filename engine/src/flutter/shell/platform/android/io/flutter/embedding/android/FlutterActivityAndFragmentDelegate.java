@@ -36,6 +36,7 @@ import io.flutter.embedding.engine.FlutterShellArgs;
 import io.flutter.embedding.engine.dart.DartExecutor;
 import io.flutter.embedding.engine.renderer.FlutterUiDisplayListener;
 import io.flutter.plugin.platform.PlatformPlugin;
+import io.flutter.plugin.view.SensitiveContentPlugin;
 import java.util.Arrays;
 import java.util.List;
 
@@ -90,6 +91,7 @@ import java.util.List;
   @Nullable private FlutterEngine flutterEngine;
   @VisibleForTesting @Nullable FlutterView flutterView;
   @Nullable private PlatformPlugin platformPlugin;
+  @Nullable private SensitiveContentPlugin sensitiveContentPlugin;
   @VisibleForTesting @Nullable OnPreDrawListener activePreDrawListener;
   private boolean isFlutterEngineFromHost;
   private boolean isFlutterUiDisplayed;
@@ -141,6 +143,7 @@ import java.util.List;
     this.flutterEngine = null;
     this.flutterView = null;
     this.platformPlugin = null;
+    this.sensitiveContentPlugin = null;
   }
 
   /**
@@ -209,13 +212,14 @@ import java.util.List;
       flutterEngine.getActivityControlSurface().attachToActivity(this, host.getLifecycle());
     }
 
-    // Regardless of whether or not a FlutterEngine already existed, the PlatformPlugin
-    // is bound to a specific Activity. Therefore, it needs to be created and configured
-    // every time this Fragment attaches to a new Activity.
+    // Regardless of whether or not a FlutterEngine already existed, the PlatformPlugin and
+    // SensitiveContetPlugin are bound to a specific Activity. Therefore, they need to be
+    // created and configured every time this Fragment attaches to a new Activity.
     // TODO(mattcarroll): the PlatformPlugin needs to be reimagined because it implicitly takes
     //                    control of the entire window. This is unacceptable for non-fullscreen
     //                    use-cases.
     platformPlugin = host.providePlatformPlugin(host.getActivity(), flutterEngine);
+    sensitiveContentPlugin = host.provideSensitiveContentPlugin(host.getActivity(), flutterEngine);
 
     host.configureFlutterEngine(flutterEngine);
     isAttached = true;
@@ -755,12 +759,15 @@ import java.util.List;
       }
     }
 
-    // Null out the platformPlugin to avoid a possible retain cycle between the plugin, this
-    // Fragment,
-    // and this Fragment's Activity.
+    // Null out the platformPlugin and sensitiveContentPlugin to avoid a possible
+    // retain cycle between the plugin, this Fragment, and this Fragment's Activity.
     if (platformPlugin != null) {
       platformPlugin.destroy();
       platformPlugin = null;
+    }
+    if (sensitiveContentPlugin != null) {
+      sensitiveContentPlugin.destroy();
+      sensitiveContentPlugin = null;
     }
 
     if (host.shouldDispatchAppLifecycleState() && flutterEngine != null) {
@@ -1189,6 +1196,14 @@ import java.util.List;
      */
     @Nullable
     PlatformPlugin providePlatformPlugin(
+        @Nullable Activity activity, @NonNull FlutterEngine flutterEngine);
+
+    /**
+     * Hook for host to create/provide a {@link SensitiveContentPlugin} if the associated Flutter
+     * experience should set content sensitivity.
+     */
+    @Nullable
+    SensitiveContentPlugin provideSensitiveContentPlugin(
         @Nullable Activity activity, @NonNull FlutterEngine flutterEngine);
 
     /**

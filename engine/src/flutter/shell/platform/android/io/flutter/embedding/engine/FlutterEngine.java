@@ -35,6 +35,7 @@ import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.embedding.engine.systemchannels.ProcessTextChannel;
 import io.flutter.embedding.engine.systemchannels.RestorationChannel;
 import io.flutter.embedding.engine.systemchannels.ScribeChannel;
+import io.flutter.embedding.engine.systemchannels.SensitiveContentChannel;
 import io.flutter.embedding.engine.systemchannels.SettingsChannel;
 import io.flutter.embedding.engine.systemchannels.SpellCheckChannel;
 import io.flutter.embedding.engine.systemchannels.SystemChannel;
@@ -102,6 +103,7 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
   @NonNull private final PlatformChannel platformChannel;
   @NonNull private final ProcessTextChannel processTextChannel;
   @NonNull private final ScribeChannel scribeChannel;
+  @NonNull private final SensitiveContentChannel sensitiveContentChannel;
   @NonNull private final SettingsChannel settingsChannel;
   @NonNull private final SpellCheckChannel spellCheckChannel;
   @NonNull private final SystemChannel systemChannel;
@@ -340,6 +342,7 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
     processTextChannel = new ProcessTextChannel(dartExecutor, context.getPackageManager());
     restorationChannel = new RestorationChannel(dartExecutor, waitForRestorationData);
     scribeChannel = new ScribeChannel(dartExecutor);
+    sensitiveContentChannel = new SensitiveContentChannel(dartExecutor);
     settingsChannel = new SettingsChannel(dartExecutor);
     spellCheckChannel = new SpellCheckChannel(dartExecutor);
     systemChannel = new SystemChannel(dartExecutor);
@@ -617,6 +620,12 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
   @NonNull
   public ScribeChannel getScribeChannel() {
     return scribeChannel;
+  }
+
+  /** System channel that handles setting content sensitivity. */
+  @NonNull
+  public SensitiveContentChannel getSensitiveContentChannel() {
+    return sensitiveContentChannel;
   }
 
   /** System channel that sends and receives spell check requests and results. */

@@ -25,6 +25,7 @@ import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.FlutterShellArgs;
 import io.flutter.embedding.engine.renderer.FlutterUiDisplayListener;
 import io.flutter.plugin.platform.PlatformPlugin;
+import io.flutter.plugin.view.SensitiveContentPlugin;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,7 +105,7 @@ public class FlutterFragment extends Fragment
    * <p>This ID can be used to lookup {@code FlutterView} in the Android view hierarchy. For more,
    * see {@link android.view.View#findViewById}.
    */
-  public static final int FLUTTER_VIEW_ID = View.generateViewId();
+  public static final int FLUTTER_VIEW_ID = 1;
 
   private static final String TAG = "FlutterFragment";
 
@@ -1503,6 +1504,17 @@ public class FlutterFragment extends Fragment
       @Nullable Activity activity, @NonNull FlutterEngine flutterEngine) {
     if (activity != null) {
       return new PlatformPlugin(getActivity(), flutterEngine.getPlatformChannel(), this);
+    } else {
+      return null;
+    }
+  }
+
+  @Nullable
+  @Override
+  public SensitiveContentPlugin provideSensitiveContentPlugin(
+      @Nullable Activity activity, @NonNull FlutterEngine flutterEngine) {
+    if (activity != null) {
+      return new SensitiveContentPlugin(getActivity(), flutterEngine.getSensitiveContentChannel());
     } else {
       return null;
     }
