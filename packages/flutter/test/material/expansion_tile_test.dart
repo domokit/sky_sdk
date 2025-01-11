@@ -1706,6 +1706,40 @@ void main() {
     },
   );
 
+  testWidgets('ExpansionTile passes shape to ListTile', (WidgetTester tester) async {
+    final RoundedRectangleBorder shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    );
+    final RoundedRectangleBorder collapsedShape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    );
+
+    Widget buildAppWithExpansionTile() => MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: ExpansionTile(
+            title: const Text('Test Tile'),
+            shape: shape,
+            collapsedShape: collapsedShape,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(buildAppWithExpansionTile());
+
+    final Finder listTileFinder = find.byType(ListTile);
+    expect(listTileFinder, findsOneWidget);
+
+    final ListTile listTile = tester.widget<ListTile>(listTileFinder.first);
+    expect(listTile.shape, equals(collapsedShape));
+
+    await tester.tap(listTileFinder);
+    expect(find.byType(ListTile), findsOneWidget);
+    final ListTile clickedListTile = tester.widget<ListTile>(find.byType(ListTile).first);
+    expect(clickedListTile.shape, equals(shape));
+  });
+
   testWidgets('ExpansionTile uses ListTileTheme controlAffinity', (WidgetTester tester) async {
     Widget buildView(ListTileControlAffinity controlAffinity) {
       return MaterialApp(
