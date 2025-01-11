@@ -1771,6 +1771,8 @@ class SemanticsObject {
       return EngineSemanticsRole.link;
     } else if (isHeader) {
       return EngineSemanticsRole.header;
+    } else if (isButtonLike) {
+      return EngineSemanticsRole.button;
     } else {
       return EngineSemanticsRole.generic;
     }
@@ -1852,7 +1854,13 @@ class SemanticsObject {
       hasAction(ui.SemanticsAction.increase) || hasAction(ui.SemanticsAction.decrease);
 
   /// Whether the object represents a button.
+  ///
+  /// See also [isButtonLike].
   bool get isButton => hasFlag(ui.SemanticsFlag.isButton);
+
+  /// Whether the object behaves like a button even if it does not formally have
+  /// the [ui.SemanticsFlag.isButton] flag.
+  bool get isButtonLike => isTappable && !hasChildren;
 
   /// Represents a tappable or clickable widget, such as button, icon button,
   /// "hamburger" menu, etc.
