@@ -134,7 +134,7 @@ class AndroidValidator extends DoctorValidator {
   }
 
   @override
-  Future<ValidationResult> validate() async {
+  Future<ValidationResult> validateImpl() async {
     final List<ValidationMessage> messages = <ValidationMessage>[];
     final AndroidSdk? androidSdk = _androidSdk;
     if (androidSdk == null) {
@@ -267,7 +267,7 @@ class AndroidLicenseValidator extends DoctorValidator {
   String get slowWarning => 'Checking Android licenses is taking an unexpectedly long time...';
 
   @override
-  Future<ValidationResult> validate() async {
+  Future<ValidationResult> validateImpl() async {
     final List<ValidationMessage> messages = <ValidationMessage>[];
 
     // Match pre-existing early termination behavior

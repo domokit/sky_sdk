@@ -27,16 +27,17 @@ class VsCodeValidator extends DoctorValidator {
   }
 
   @override
-  Future<ValidationResult> validate() async {
-    final List<ValidationMessage> validationMessages = List<ValidationMessage>.from(
-      _vsCode.validationMessages,
-    );
+  Future<ValidationResult> validateImpl() async {
+    final List<ValidationMessage> validationMessages =
+        List<ValidationMessage>.from(_vsCode.validationMessages);
 
-    final String vsCodeVersionText =
-        _vsCode.version == null ? 'version unknown' : 'version ${_vsCode.version}';
+    final String vsCodeVersionText = _vsCode.version == null
+        ? 'version unknown'
+        : 'version ${_vsCode.version}';
 
     if (_vsCode.version == null) {
-      validationMessages.add(const ValidationMessage.error('Unable to determine VS Code version.'));
+      validationMessages.add(const ValidationMessage.error(
+          'Unable to determine VS Code version.'));
     }
 
     return ValidationResult(

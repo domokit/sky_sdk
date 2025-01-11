@@ -8,14 +8,14 @@ import 'chrome.dart';
 
 /// A validator for Chromium-based browsers.
 abstract class ChromiumValidator extends DoctorValidator {
-  const ChromiumValidator(super.title);
+  ChromiumValidator(super.title);
 
   Platform get _platform;
   ChromiumLauncher get _chromiumLauncher;
   String get _name;
 
   @override
-  Future<ValidationResult> validate() async {
+  Future<ValidationResult> validateImpl() async {
     final bool canRunChromium = _chromiumLauncher.canFindExecutable();
     final String chromiumSearchLocation = _chromiumLauncher.findExecutable();
     final List<ValidationMessage> messages = <ValidationMessage>[
@@ -45,10 +45,12 @@ abstract class ChromiumValidator extends DoctorValidator {
 
 /// A validator that checks whether Chrome is installed and can run.
 class ChromeValidator extends ChromiumValidator {
-  const ChromeValidator({required Platform platform, required ChromiumLauncher chromiumLauncher})
-    : _platform = platform,
-      _chromiumLauncher = chromiumLauncher,
-      super('Chrome - develop for the web');
+  ChromeValidator({
+    required Platform platform,
+    required ChromiumLauncher chromiumLauncher,
+  })  : _platform = platform,
+        _chromiumLauncher = chromiumLauncher,
+        super('Chrome - develop for the web');
 
   @override
   final Platform _platform;
@@ -62,10 +64,12 @@ class ChromeValidator extends ChromiumValidator {
 
 /// A validator that checks whether Edge is installed and can run.
 class EdgeValidator extends ChromiumValidator {
-  const EdgeValidator({required Platform platform, required ChromiumLauncher chromiumLauncher})
-    : _platform = platform,
-      _chromiumLauncher = chromiumLauncher,
-      super('Edge - develop for the web');
+  EdgeValidator({
+    required Platform platform,
+    required ChromiumLauncher chromiumLauncher,
+  })  : _platform = platform,
+        _chromiumLauncher = chromiumLauncher,
+        super('Edge - develop for the web');
 
   @override
   final Platform _platform;

@@ -91,7 +91,7 @@ abstract class IntelliJValidator extends DoctorValidator {
   }
 
   @override
-  Future<ValidationResult> validate() async {
+  Future<ValidationResult> validateImpl() async {
     final List<ValidationMessage> messages = <ValidationMessage>[];
 
     if (pluginsPath == null) {

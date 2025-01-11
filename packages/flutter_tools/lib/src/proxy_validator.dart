@@ -12,10 +12,10 @@ import 'doctor_validator.dart';
 /// validated along with `NO_PROXY`.
 class ProxyValidator extends DoctorValidator {
   ProxyValidator({required Platform platform})
-    : shouldShow = _getEnv('HTTP_PROXY', platform).isNotEmpty,
-      _httpProxy = _getEnv('HTTP_PROXY', platform),
-      _noProxy = _getEnv('NO_PROXY', platform),
-      super('Proxy Configuration');
+      : shouldShow = _getEnv('HTTP_PROXY', platform).isNotEmpty,
+        _httpProxy = _getEnv('HTTP_PROXY', platform),
+        _noProxy = _getEnv('NO_PROXY', platform),
+        super('Proxy Configuration');
 
   final bool shouldShow;
   final String _httpProxy;
@@ -30,9 +30,10 @@ class ProxyValidator extends DoctorValidator {
       '';
 
   @override
-  Future<ValidationResult> validate() async {
+  Future<ValidationResult> validateImpl() async {
     if (_httpProxy.isEmpty) {
-      return const ValidationResult(ValidationType.success, <ValidationMessage>[]);
+      return ValidationResult(
+          ValidationType.success, const <ValidationMessage>[]);
     }
 
     final List<ValidationMessage> messages = <ValidationMessage>[
@@ -49,13 +50,16 @@ class ProxyValidator extends DoctorValidator {
       ],
     ];
 
-    final bool hasIssues = messages.any((ValidationMessage msg) => msg.isHint || msg.isError);
+    final bool hasIssues =
+        messages.any((ValidationMessage msg) => msg.isHint || msg.isError);
 
-    return ValidationResult(hasIssues ? ValidationType.partial : ValidationType.success, messages);
+    return ValidationResult(
+        hasIssues ? ValidationType.partial : ValidationType.success, messages);
   }
 
   Future<List<String>> _getLoopbackAddresses() async {
-    final List<NetworkInterface> networkInterfaces = await listNetworkInterfaces(
+    final List<NetworkInterface> networkInterfaces =
+        await listNetworkInterfaces(
       includeLinkLocal: true,
       includeLoopback: true,
     );
@@ -63,7 +67,8 @@ class ProxyValidator extends DoctorValidator {
     return <String>[
       'localhost',
       for (final NetworkInterface networkInterface in networkInterfaces)
-        for (final InternetAddress internetAddress in networkInterface.addresses)
+        for (final InternetAddress internetAddress
+            in networkInterface.addresses)
           if (internetAddress.isLoopback) internetAddress.address,
     ];
   }

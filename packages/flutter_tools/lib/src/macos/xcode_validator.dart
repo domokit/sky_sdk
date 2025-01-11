@@ -32,7 +32,7 @@ class XcodeValidator extends DoctorValidator {
   final UserMessages _userMessages;
 
   @override
-  Future<ValidationResult> validate() async {
+  Future<ValidationResult> validateImpl() async {
     final List<ValidationMessage> messages = <ValidationMessage>[];
     ValidationType xcodeStatus = ValidationType.missing;
     String? xcodeVersionInfo;

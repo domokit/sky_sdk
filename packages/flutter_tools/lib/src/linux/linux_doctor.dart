@@ -54,7 +54,7 @@ class LinuxDoctorValidator extends DoctorValidator {
   final List<String> _requiredGtkLibraries = <String>['gtk+-3.0', 'glib-2.0', 'gio-2.0'];
 
   @override
-  Future<ValidationResult> validate() async {
+  Future<ValidationResult> validateImpl() async {
     ValidationType validationType = ValidationType.success;
     final List<ValidationMessage> messages = <ValidationMessage>[];
 

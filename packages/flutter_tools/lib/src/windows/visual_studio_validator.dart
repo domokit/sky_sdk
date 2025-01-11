@@ -10,7 +10,7 @@ import 'visual_studio.dart';
 VisualStudioValidator? get visualStudioValidator => context.get<VisualStudioValidator>();
 
 class VisualStudioValidator extends DoctorValidator {
-  const VisualStudioValidator({
+  VisualStudioValidator({
     required VisualStudio visualStudio,
     required UserMessages userMessages,
   }) : _visualStudio = visualStudio,
@@ -21,7 +21,7 @@ class VisualStudioValidator extends DoctorValidator {
   final UserMessages _userMessages;
 
   @override
-  Future<ValidationResult> validate() async {
+  Future<ValidationResult> validateImpl() async {
     final List<ValidationMessage> messages = <ValidationMessage>[];
     ValidationType status = ValidationType.missing;
     String? versionInfo;

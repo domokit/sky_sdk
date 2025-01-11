@@ -18,7 +18,8 @@ const String kMaven = 'https://maven.google.com/';
 const String kPubDev = 'https://pub.dev/';
 
 // Overridable environment variables.
-const String kPubDevOverride = 'PUB_HOSTED_URL'; // https://dart.dev/tools/pub/environment-variables
+const String kPubDevOverride =
+    'PUB_HOSTED_URL'; // https://dart.dev/tools/pub/environment-variables
 
 // Validator that checks all provided hosts are reachable and responsive
 class HttpHostValidator extends DoctorValidator {
@@ -26,10 +27,10 @@ class HttpHostValidator extends DoctorValidator {
     required Platform platform,
     required FeatureFlags featureFlags,
     required HttpClient httpClient,
-  }) : _platform = platform,
-       _featureFlags = featureFlags,
-       _httpClient = httpClient,
-       super('Network resources');
+  })  : _platform = platform,
+        _featureFlags = featureFlags,
+        _httpClient = httpClient,
+        super('Network resources');
 
   final Platform _platform;
   final FeatureFlags _featureFlags;
@@ -82,7 +83,7 @@ class HttpHostValidator extends DoctorValidator {
   }
 
   @override
-  Future<ValidationResult> validate() async {
+  Future<ValidationResult> validateImpl() async {
     final List<String?> availabilityResults = <String?>[];
 
     final List<Uri> requiredHosts = <Uri>[];
@@ -100,7 +101,8 @@ class HttpHostValidator extends DoctorValidator {
       requiredHosts.add(Uri.parse(kPubDev));
     }
     if (_platform.environment.containsKey(kFlutterStorageBaseUrl)) {
-      final Uri? url = _parseUrl(_platform.environment[kFlutterStorageBaseUrl]!);
+      final Uri? url =
+          _parseUrl(_platform.environment[kFlutterStorageBaseUrl]!);
       if (url == null) {
         availabilityResults.add(
           'Environment variable $kFlutterStorageBaseUrl does not specify a valid URL: "${_platform.environment[kFlutterStorageBaseUrl]}"\n'
@@ -141,9 +143,12 @@ class HttpHostValidator extends DoctorValidator {
     if (failures == 0) {
       assert(successes > 0);
       assert(messages.isEmpty);
-      return const ValidationResult(ValidationType.success, <ValidationMessage>[
-        ValidationMessage('All expected network resources are available.'),
-      ]);
+      return ValidationResult(
+        ValidationType.success,
+        const <ValidationMessage>[
+          ValidationMessage('All expected network resources are available.')
+        ],
+      );
     }
     assert(messages.isNotEmpty);
     return ValidationResult(
