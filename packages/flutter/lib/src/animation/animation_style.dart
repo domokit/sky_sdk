@@ -6,8 +6,8 @@
 library;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart' show TickerProvider;
 
-import 'curves.dart';
 import 'tween.dart';
 
 /// Used to override the default parameters of an animation.
@@ -105,4 +105,27 @@ class AnimationStyle with Diagnosticable {
       DiagnosticsProperty<Duration>('reverseDuration', reverseDuration, defaultValue: null),
     );
   }
+}
+
+/// An animation that interfaces with an [AnimationProvider].
+///
+/// Typically, this interface is used to allow animations to inherit
+/// fallback [Duration] and [Curve] values from the ambient [DefaultAnimationStyle].
+abstract interface class StyledAnimation<T> implements Animation<T> {
+  /// Called when the associated [AnimationProvider] is updated
+  /// with a new [AnimationStyle].
+  void updateStyle(AnimationStyle newStyle);
+}
+
+/// A [TickerProvider] that can also provide a relevant [AnimationStyle].
+///
+/// Any [StyledAnimation]s registered via [registerAnimation] will be given
+/// fallback [Duration] and [Curve] values, typically from the ambient
+/// [DefaultAnimationStyle].
+abstract interface class AnimationProvider implements TickerProvider {
+  /// Registers the [StyledAnimation] object with this provider.
+  ///
+  /// [StyledAnimation.updateStyle] is called immediately, and then called again
+  /// each time there's a relevant change.
+  void registerAnimation(StyledAnimation<Object?> animation);
 }

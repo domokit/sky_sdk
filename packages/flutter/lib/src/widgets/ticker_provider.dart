@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter/animation.dart';
-library;
-
+import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 
+import 'default_animation_style.dart';
 import 'framework.dart';
 
+export 'package:flutter/animation.dart' show AnimationProvider;
 export 'package:flutter/scheduler.dart' show TickerProvider;
 
 // Examples can assume:
@@ -177,6 +177,9 @@ class _EffectiveTickerMode extends InheritedWidget {
   }
 }
 
+typedef _Animation = StyledAnimation<Object?>;
+typedef _StyleNotifier = ValueListenable<AnimationStyle>;
+
 /// Provides a single [Ticker] that is configured to only tick while the current
 /// tree is enabled, as defined by [TickerMode].
 ///
@@ -189,7 +192,7 @@ class _EffectiveTickerMode extends InheritedWidget {
 /// [TickerProviderStateMixin] instead.
 @optionalTypeArgs
 mixin SingleTickerProviderStateMixin<T extends StatefulWidget> on State<T>
-    implements TickerProvider {
+    implements AnimationProvider {
   Ticker? _ticker;
 
   @override
@@ -221,6 +224,38 @@ mixin SingleTickerProviderStateMixin<T extends StatefulWidget> on State<T>
     return _ticker!;
   }
 
+  _Animation? _animation;
+  _StyleNotifier? _styleNotifier;
+  void _updateAnimationStyle() {
+    _animation!.updateStyle(_styleNotifier!.value);
+  }
+
+  @override
+  void registerAnimation(StyledAnimation<Object?> animation) {
+    assert(() {
+      if (_animation == null) {
+        return true;
+      }
+      throw FlutterError.fromParts(<DiagnosticsNode>[
+        ErrorSummary(
+          '$runtimeType uses the SingleTickerProviderStateMixin '
+          'but multiple animations were registered to it.',
+        ),
+        ErrorDescription(
+          'A SingleTickerProviderStateMixin can only be used for a single Animation object.',
+        ),
+        ErrorHint(
+          'If a State is used for multiple AnimationController objects, or if it is passed to other '
+          'objects that might use it multiple times, consider using TickerProviderStateMixin instead.',
+        ),
+      ]);
+    }());
+    _animation = animation;
+    (_styleNotifier ??= DefaultAnimationStyle.getNotifier(context)).addListener(
+      _updateAnimationStyle..call(),
+    );
+  }
+
   @override
   void dispose() {
     assert(() {
@@ -244,6 +279,8 @@ mixin SingleTickerProviderStateMixin<T extends StatefulWidget> on State<T>
     }());
     _tickerModeNotifier?.removeListener(_updateTicker);
     _tickerModeNotifier = null;
+    _styleNotifier?.removeListener(_updateAnimationStyle);
+    _styleNotifier = null;
     super.dispose();
   }
 
@@ -255,6 +292,13 @@ mixin SingleTickerProviderStateMixin<T extends StatefulWidget> on State<T>
     // We may have a new TickerMode ancestor.
     _updateTickerModeNotifier();
     _updateTicker();
+
+    final _StyleNotifier styleNotifier = DefaultAnimationStyle.getNotifier(context);
+    if (styleNotifier != _styleNotifier) {
+      _styleNotifier?.removeListener(_updateAnimationStyle);
+      _styleNotifier = styleNotifier..addListener(_updateAnimationStyle);
+      _updateAnimationStyle();
+    }
   }
 
   void _updateTicker() => _ticker?.muted = !_tickerModeNotifier!.value;
@@ -302,7 +346,7 @@ mixin SingleTickerProviderStateMixin<T extends StatefulWidget> on State<T>
 /// [AnimationController]) for the lifetime of your [State], then using a
 /// [SingleTickerProviderStateMixin] is more efficient. This is the common case.
 @optionalTypeArgs
-mixin TickerProviderStateMixin<T extends StatefulWidget> on State<T> implements TickerProvider {
+mixin TickerProviderStateMixin<T extends StatefulWidget> on State<T> implements AnimationProvider {
   Set<Ticker>? _tickers;
 
   @override
@@ -330,12 +374,41 @@ mixin TickerProviderStateMixin<T extends StatefulWidget> on State<T> implements 
 
   ValueListenable<bool>? _tickerModeNotifier;
 
+  Set<_Animation>? _animations;
+  _StyleNotifier? _styleNotifier;
+  void _updateAnimations() {
+    final Set<_Animation>? animations = _animations;
+    if (animations == null) {
+      return;
+    }
+    for (final _Animation animation in animations) {
+      animation.updateStyle(_styleNotifier!.value);
+    }
+  }
+
+  @override
+  void registerAnimation(StyledAnimation<Object?> animation) {
+    final bool firstAnimation = _animations == null;
+    final _StyleNotifier notifier = _styleNotifier ??= DefaultAnimationStyle.getNotifier(context);
+    (_animations ??= <_Animation>{}).add(animation..updateStyle(notifier.value));
+    if (firstAnimation) {
+      notifier.addListener(_updateAnimations);
+    }
+  }
+
   @override
   void activate() {
     super.activate();
     // We may have a new TickerMode ancestor, get its Notifier.
     _updateTickerModeNotifier();
     _updateTickers();
+
+    late final _StyleNotifier newNotifier = DefaultAnimationStyle.getNotifier(context);
+    if (_animations != null && newNotifier != _styleNotifier) {
+      _styleNotifier?.removeListener(_updateAnimations);
+      _styleNotifier = newNotifier..addListener(_updateAnimations);
+      _updateAnimations();
+    }
   }
 
   void _updateTickers() {
@@ -384,6 +457,8 @@ mixin TickerProviderStateMixin<T extends StatefulWidget> on State<T> implements 
     }());
     _tickerModeNotifier?.removeListener(_updateTickers);
     _tickerModeNotifier = null;
+    _styleNotifier?.removeListener(_updateAnimations);
+    _styleNotifier = null;
     super.dispose();
   }
 

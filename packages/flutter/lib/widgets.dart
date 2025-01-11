@@ -40,6 +40,7 @@ export 'src/widgets/context_menu_button_item.dart';
 export 'src/widgets/context_menu_controller.dart';
 export 'src/widgets/debug.dart';
 export 'src/widgets/decorated_sliver.dart';
+export 'src/widgets/default_animation_style.dart';
 export 'src/widgets/default_selection_style.dart';
 export 'src/widgets/default_text_editing_shortcuts.dart';
 export 'src/widgets/desktop_text_selection_toolbar_layout_delegate.dart';
