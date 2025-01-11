@@ -46,7 +46,7 @@ class _ExpansionTileAnimationStyleAppState extends State<ExpansionTileAnimationS
                       case AnimationStyles.defaultStyle:
                         _animationStyle = null;
                       case AnimationStyles.custom:
-                        _animationStyle = AnimationStyle(
+                        _animationStyle = const AnimationStyle(
                           curve: Easing.emphasizedAccelerate,
                           duration: Durations.extralong1,
                         );
