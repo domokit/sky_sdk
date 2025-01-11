@@ -2176,6 +2176,123 @@ void main() {
     }
   });
 
+  group('Material2 - BottomNavigationBar same item shifting backgroundColor with transition', () {
+    // Regression test for https://github.com/flutter/flutter/issues/160428.
+    Widget runTest() {
+      int currentIndex = 0;
+      Color backgroundColor = Colors.red;
+
+      return MaterialApp(
+        theme: ThemeData(useMaterial3: false),
+        home: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Scaffold(
+              bottomNavigationBar: RepaintBoundary(
+                child: BottomNavigationBar(
+                  type: BottomNavigationBarType.shifting,
+                  currentIndex: currentIndex,
+                  onTap: (int index) {
+                    setState(() {
+                      currentIndex = index;
+                      backgroundColor = Colors.green;
+                    });
+                  },
+                  items: <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      label: 'Red',
+                      backgroundColor: backgroundColor,
+                      icon: const Icon(Icons.dashboard),
+                    ),
+                    const BottomNavigationBarItem(
+                      label: 'Green',
+                      backgroundColor: Colors.green,
+                      icon: Icon(Icons.menu),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
+
+    for (int pump = 1; pump < 9; pump++) {
+      testWidgets('pump $pump', (WidgetTester tester) async {
+        await tester.pumpWidget(runTest());
+        await tester.tap(find.text('Red'));
+
+        for (int i = 0; i < pump; i++) {
+          await tester.pump(const Duration(milliseconds: 30));
+        }
+        await expectLater(
+          find.byType(BottomNavigationBar),
+          matchesGoldenFile(
+            'm2_bottom_navigation_bar.same_item_shifting_transition.${pump - 1}.png',
+          ),
+        );
+      });
+    }
+  });
+
+  group('Material3 - BottomNavigationBar same item shifting backgroundColor with transition', () {
+    // Regression test for https://github.com/flutter/flutter/issues/160428.
+    Widget runTest() {
+      int currentIndex = 0;
+      Color backgroundColor = Colors.red;
+
+      return MaterialApp(
+        home: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Scaffold(
+              bottomNavigationBar: RepaintBoundary(
+                child: BottomNavigationBar(
+                  type: BottomNavigationBarType.shifting,
+                  currentIndex: currentIndex,
+                  onTap: (int index) {
+                    setState(() {
+                      currentIndex = index;
+                      backgroundColor = Colors.green;
+                    });
+                  },
+                  items: <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      label: 'Red',
+                      backgroundColor: backgroundColor,
+                      icon: const Icon(Icons.dashboard),
+                    ),
+                    const BottomNavigationBarItem(
+                      label: 'Green',
+                      backgroundColor: Colors.green,
+                      icon: Icon(Icons.menu),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
+
+    for (int pump = 1; pump < 9; pump++) {
+      testWidgets('pump $pump', (WidgetTester tester) async {
+        await tester.pumpWidget(runTest());
+        await tester.tap(find.text('Red'));
+
+        for (int i = 0; i < pump; i++) {
+          await tester.pump(const Duration(milliseconds: 30));
+        }
+        await expectLater(
+          find.byType(BottomNavigationBar),
+          matchesGoldenFile(
+            'm3_bottom_navigation_bar.same_item_shifting_transition.${pump - 1}.png',
+          ),
+        );
+      });
+    }
+  });
+
   testWidgets('BottomNavigationBar item label should not be nullable', (WidgetTester tester) async {
     expect(() {
       MaterialApp(
