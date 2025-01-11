@@ -181,6 +181,17 @@ void main() {
     );
   });
 
+  testWidgets('TestPlatformDispatcher has a working scaleFontSize implementation', (WidgetTester tester) async {
+      expect(
+        TestPlatformDispatcher(
+          platformDispatcher: _FakePlatformDispatcher(
+            displays: <Display>[_FakeDisplay(id: 2)],
+            views: <FlutterView>[_FakeFlutterView(display: _FakeDisplay(id: 1))],
+          ),
+        ).scaleFontSize(2.0),
+      2.0);
+    });
+
   // TODO(pdblasi-google): Removed this group of tests when the Display API is stable and supported on all platforms.
   group('TestPlatformDispatcher with unsupported Display API', () {
     testWidgets('can initialize with empty displays', (WidgetTester tester) async {
@@ -314,4 +325,7 @@ class _FakePlatformDispatcher extends Fake implements PlatformDispatcher {
 
   @override
   ViewFocusChangeCallback? onViewFocusChange;
+
+  @override
+  double get textScaleFactor => 1.0;
 }
