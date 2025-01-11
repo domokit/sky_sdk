@@ -55,6 +55,8 @@ void main() {
       foregroundColor: MaterialStatePropertyAll<Color>(Color(0xffffff7f)),
     ),
     locale: Locale('en'),
+    headerTextColor: Color(0xffffff8f),
+    headerNavigationButtonColor: Color(0xffffff9f),
   );
 
   Material findDialogMaterial(WidgetTester tester) {
@@ -111,6 +113,8 @@ void main() {
     expect(theme.headerForegroundColor, null);
     expect(theme.headerHeadlineStyle, null);
     expect(theme.headerHelpStyle, null);
+    expect(theme.headerTextColor, null);
+    expect(theme.headerNavigationButtonColor, null);
     expect(theme.weekdayStyle, null);
     expect(theme.dayStyle, null);
     expect(theme.dayForegroundColor, null);
@@ -517,6 +521,8 @@ void main() {
         'cancelButtonStyle: ButtonStyle#00000(foregroundColor: WidgetStatePropertyAll(${const Color(0xffffff6f)}))',
         'confirmButtonStyle: ButtonStyle#00000(foregroundColor: WidgetStatePropertyAll(${const Color(0xffffff7f)}))',
         'locale: en',
+        'headerTextColor: ${const Color(0xffffff8f)}',
+        'headerNavigationButtonColor: ${const Color(0xffffff9f)}',
       ]),
     );
   });
