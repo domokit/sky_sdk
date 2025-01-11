@@ -604,14 +604,14 @@ void main() {
 
     // Test the other selection methods.
     // Move over by one character.
-    editable.handleTapDown(TapDownDetails(globalPosition: const Offset(10, 2)));
+    editable.handleTapDown(const TapDownDetails(globalPosition: Offset(10, 2)));
     pumpFrame();
     editable.selectPosition(cause: SelectionChangedCause.tap);
     pumpFrame();
     expect(delegate.selection!.isCollapsed, true);
     expect(delegate.selection!.baseOffset, 6);
 
-    editable.handleTapDown(TapDownDetails(globalPosition: const Offset(20, 2)));
+    editable.handleTapDown(const TapDownDetails(globalPosition: Offset(20, 2)));
     pumpFrame();
     editable.selectWord(cause: SelectionChangedCause.longPress);
     pumpFrame();

@@ -7,6 +7,7 @@ library;
 
 import 'package:flutter/foundation.dart';
 
+import 'details_with_positions.dart';
 import 'velocity_tracker.dart';
 
 export 'dart:ui' show Offset, PointerDeviceKind;
@@ -21,29 +22,9 @@ export 'velocity_tracker.dart' show Velocity;
 ///  * [DragStartDetails], the details for [GestureDragStartCallback].
 ///  * [DragUpdateDetails], the details for [GestureDragUpdateCallback].
 ///  * [DragEndDetails], the details for [GestureDragEndCallback].
-class DragDownDetails {
+class DragDownDetails extends GestureDetailsWithPositions {
   /// Creates details for a [GestureDragDownCallback].
-  DragDownDetails({this.globalPosition = Offset.zero, Offset? localPosition})
-    : localPosition = localPosition ?? globalPosition;
-
-  /// The global position at which the pointer contacted the screen.
-  ///
-  /// Defaults to the origin if not specified in the constructor.
-  ///
-  /// See also:
-  ///
-  ///  * [localPosition], which is the [globalPosition] transformed to the
-  ///    coordinate space of the event receiver.
-  final Offset globalPosition;
-
-  /// The local position in the coordinate system of the event receiver at
-  /// which the pointer contacted the screen.
-  ///
-  /// Defaults to [globalPosition] if not specified in the constructor.
-  final Offset localPosition;
-
-  @override
-  String toString() => '${objectRuntimeType(this, 'DragDownDetails')}($globalPosition)';
+  const DragDownDetails({super.globalPosition, super.localPosition});
 }
 
 /// Signature for when a pointer has contacted the screen and might begin to
@@ -62,36 +43,20 @@ typedef GestureDragDownCallback = void Function(DragDownDetails details);
 ///  * [DragDownDetails], the details for [GestureDragDownCallback].
 ///  * [DragUpdateDetails], the details for [GestureDragUpdateCallback].
 ///  * [DragEndDetails], the details for [GestureDragEndCallback].
-class DragStartDetails {
+class DragStartDetails extends GestureDetailsWithPositions {
   /// Creates details for a [GestureDragStartCallback].
-  DragStartDetails({
+  const DragStartDetails({
+    super.globalPosition,
+    super.localPosition,
     this.sourceTimeStamp,
-    this.globalPosition = Offset.zero,
-    Offset? localPosition,
     this.kind,
-  }) : localPosition = localPosition ?? globalPosition;
+  });
 
   /// Recorded timestamp of the source pointer event that triggered the drag
   /// event.
   ///
   /// Could be null if triggered from proxied events such as accessibility.
   final Duration? sourceTimeStamp;
-
-  /// The global position at which the pointer contacted the screen.
-  ///
-  /// Defaults to the origin if not specified in the constructor.
-  ///
-  /// See also:
-  ///
-  ///  * [localPosition], which is the [globalPosition] transformed to the
-  ///    coordinate space of the event receiver.
-  final Offset globalPosition;
-
-  /// The local position in the coordinate system of the event receiver at
-  /// which the pointer contacted the screen.
-  ///
-  /// Defaults to [globalPosition] if not specified in the constructor.
-  final Offset localPosition;
 
   /// The kind of the device that initiated the event.
   final PointerDeviceKind? kind;
@@ -101,7 +66,11 @@ class DragStartDetails {
   // instead).
 
   @override
-  String toString() => '${objectRuntimeType(this, 'DragStartDetails')}($globalPosition)';
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<Duration?>('sourceTimeStamp', sourceTimeStamp));
+    properties.add(EnumProperty<PointerDeviceKind?>('kind', kind));
+  }
 }
 
 /// {@template flutter.gestures.dragdetails.GestureDragStartCallback}
@@ -122,23 +91,22 @@ typedef GestureDragStartCallback = void Function(DragStartDetails details);
 ///  * [DragDownDetails], the details for [GestureDragDownCallback].
 ///  * [DragStartDetails], the details for [GestureDragStartCallback].
 ///  * [DragEndDetails], the details for [GestureDragEndCallback].
-class DragUpdateDetails {
+class DragUpdateDetails extends GestureDetailsWithPositions {
   /// Creates details for a [GestureDragUpdateCallback].
   ///
   /// If [primaryDelta] is non-null, then its value must match one of the
   /// coordinates of [delta] and the other coordinate must be zero.
   DragUpdateDetails({
+    required super.globalPosition,
+    super.localPosition,
     this.sourceTimeStamp,
     this.delta = Offset.zero,
     this.primaryDelta,
-    required this.globalPosition,
-    Offset? localPosition,
   }) : assert(
          primaryDelta == null ||
              (primaryDelta == delta.dx && delta.dy == 0.0) ||
              (primaryDelta == delta.dy && delta.dx == 0.0),
-       ),
-       localPosition = localPosition ?? globalPosition;
+       );
 
   /// Recorded timestamp of the source pointer event that triggered the drag
   /// event.
@@ -169,22 +137,13 @@ class DragUpdateDetails {
   /// Defaults to null if not specified in the constructor.
   final double? primaryDelta;
 
-  /// The pointer's global position when it triggered this update.
-  ///
-  /// See also:
-  ///
-  ///  * [localPosition], which is the [globalPosition] transformed to the
-  ///    coordinate space of the event receiver.
-  final Offset globalPosition;
-
-  /// The local position in the coordinate system of the event receiver at
-  /// which the pointer contacted the screen.
-  ///
-  /// Defaults to [globalPosition] if not specified in the constructor.
-  final Offset localPosition;
-
   @override
-  String toString() => '${objectRuntimeType(this, 'DragUpdateDetails')}($delta)';
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<Duration?>('sourceTimeStamp', sourceTimeStamp));
+    properties.add(DiagnosticsProperty<Offset>('delta', delta));
+    properties.add(DoubleProperty('primaryDelta', primaryDelta));
+  }
 }
 
 /// {@template flutter.gestures.dragdetails.GestureDragUpdateCallback}
@@ -206,23 +165,22 @@ typedef GestureDragUpdateCallback = void Function(DragUpdateDetails details);
 ///  * [DragDownDetails], the details for [GestureDragDownCallback].
 ///  * [DragStartDetails], the details for [GestureDragStartCallback].
 ///  * [DragUpdateDetails], the details for [GestureDragUpdateCallback].
-class DragEndDetails {
+class DragEndDetails extends GestureDetailsWithPositions {
   /// Creates details for a [GestureDragEndCallback].
   ///
   /// If [primaryVelocity] is non-null, its value must match one of the
   /// coordinates of `velocity.pixelsPerSecond` and the other coordinate
   /// must be zero.
   DragEndDetails({
+    super.globalPosition,
+    super.localPosition,
     this.velocity = Velocity.zero,
     this.primaryVelocity,
-    this.globalPosition = Offset.zero,
-    Offset? localPosition,
   }) : assert(
          primaryVelocity == null ||
              (primaryVelocity == velocity.pixelsPerSecond.dx && velocity.pixelsPerSecond.dy == 0) ||
              (primaryVelocity == velocity.pixelsPerSecond.dy && velocity.pixelsPerSecond.dx == 0),
-       ),
-       localPosition = localPosition ?? globalPosition;
+       );
 
   /// The velocity the pointer was moving when it stopped contacting the screen.
   ///
@@ -241,23 +199,10 @@ class DragEndDetails {
   /// Defaults to null if not specified in the constructor.
   final double? primaryVelocity;
 
-  /// The global position the pointer is located at when the drag
-  /// gesture has been completed.
-  ///
-  /// Defaults to the origin if not specified in the constructor.
-  ///
-  /// See also:
-  ///
-  ///  * [localPosition], which is the [globalPosition] transformed to the
-  ///    coordinate space of the event receiver.
-  final Offset globalPosition;
-
-  /// The local position in the coordinate system of the event receiver when
-  /// the drag gesture has been completed.
-  ///
-  /// Defaults to [globalPosition] if not specified in the constructor.
-  final Offset localPosition;
-
   @override
-  String toString() => '${objectRuntimeType(this, 'DragEndDetails')}($velocity)';
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<Velocity>('velocity', velocity));
+    properties.add(DoubleProperty('primaryVelocity', primaryVelocity));
+  }
 }
