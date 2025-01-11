@@ -90,7 +90,13 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
   /// Create an instance of [AdaptiveTextSelectionToolbar] with the default
   /// children for an editable field.
   ///
-  /// If a callback is null, then its corresponding button will not be built.
+  /// If an on* callback parameter is null, then its corresponding button will
+  /// not be built.
+  ///
+  /// These callbacks are called when their corresponding button is activated
+  /// and only then. For example, `onPaste` is called when the user taps the
+  /// "Paste" button in the context menu and not when the user pastes with the
+  /// keyboard.
   ///
   /// See also:
   ///
