@@ -694,7 +694,7 @@ public class FlutterView extends FrameLayout
         mask = mask | android.view.WindowInsets.Type.navigationBars();
       }
       if (statusBarVisible) {
-        mask = mask | android.view.WindowInsets.Type.statusBars();
+        mask = mask | android.view.WindowInsets.Type.systemBars();
       }
       Insets uiInsets = insets.getInsets(mask);
       viewportMetrics.viewPaddingTop = uiInsets.top;

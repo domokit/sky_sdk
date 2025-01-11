@@ -319,7 +319,7 @@ public class FlutterViewTest {
         new WindowInsets.Builder()
             .setInsets(
                 android.view.WindowInsets.Type.navigationBars()
-                    | android.view.WindowInsets.Type.statusBars(),
+                    | android.view.WindowInsets.Type.systemBars(),
                 Insets.of(100, 100, 100, 100))
             .build();
     flutterView.onApplyWindowInsets(windowInsets);
@@ -1088,7 +1088,7 @@ public class FlutterViewTest {
         new WindowInsets.Builder()
             .setInsets(
                 android.view.WindowInsets.Type.navigationBars()
-                    | android.view.WindowInsets.Type.statusBars(),
+                    | android.view.WindowInsets.Type.systemBars(),
                 Insets.of(100, 100, 100, 100))
             .build();
     flutterView.onApplyWindowInsets(windowInsets);
