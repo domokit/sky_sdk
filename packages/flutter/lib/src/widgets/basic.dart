@@ -1036,6 +1036,66 @@ class ClipRRect extends SingleChildRenderObjectWidget {
   }
 }
 
+class ClipRSuperellipse extends SingleChildRenderObjectWidget {
+  /// Creates a rounded-superellipse clip.
+  ///
+  /// The [borderRadius] defaults to [BorderRadius.zero], i.e. a rectangle with
+  /// right-angled corners.
+  ///
+  /// If [clipBehavior] is [Clip.none], no clipping will be applied.
+  const ClipRSuperellipse({
+    super.key,
+    this.borderRadius = 0,
+    this.clipper,
+    this.clipBehavior = Clip.antiAlias,
+    super.child,
+  });
+
+  /// The border radius of the rounded corners.
+  ///
+  /// Values are clamped so that horizontal and vertical radii sums do not
+  /// exceed width/height.
+  ///
+  /// This value is ignored if [clipper] is non-null.
+  final double borderRadius;
+
+  /// If non-null, determines which clip to use.
+  final CustomClipper<RSuperellipse>? clipper;
+
+  /// {@macro flutter.rendering.ClipRectLayer.clipBehavior}
+  ///
+  /// Defaults to [Clip.antiAlias].
+  final Clip clipBehavior;
+
+  @override
+  RenderClipRSuperellipse createRenderObject(BuildContext context) {
+    return RenderClipRSuperellipse(
+      borderRadius: borderRadius,
+      clipBehavior: clipBehavior,
+      clipper: clipper,
+      textDirection: Directionality.maybeOf(context),
+    );
+  }
+
+  @override
+  void updateRenderObject(BuildContext context, RenderClipRSuperellipse renderObject) {
+    renderObject
+      ..borderRadius = borderRadius
+      ..clipBehavior = clipBehavior
+      ..clipper = clipper
+      ..textDirection = Directionality.maybeOf(context);
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('borderRadius', borderRadius, defaultValue: 0));
+    properties.add(
+      DiagnosticsProperty<CustomClipper<RSuperellipse>>('clipper', clipper, defaultValue: null),
+    );
+  }
+}
+
 /// A widget that clips its child using an oval.
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=vzWWDO6whIM}

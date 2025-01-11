@@ -1714,6 +1714,106 @@ class RenderClipRRect extends _RenderCustomClip<RRect> {
   }
 }
 
+class RenderClipRSuperellipse extends _RenderCustomClip<RSuperellipse> {
+  /// Creates a rounded-superellipse clip.
+  ///
+  /// The [borderRadius] defaults to [BorderRadius.zero], i.e. a rectangle with
+  /// right-angled corners.
+  ///
+  /// If [clipBehavior] is [Clip.none], no clipping will be applied.
+  RenderClipRSuperellipse({
+    super.child,
+    double borderRadius = 0,
+    super.clipper,
+    super.clipBehavior,
+    TextDirection? textDirection,
+  }) : _borderRadius = borderRadius,
+       _textDirection = textDirection;
+
+  /// The border radius of the rounded corners.
+  ///
+  /// Values are clamped so that horizontal and vertical radii sums do not
+  /// exceed width/height.
+  ///
+  /// This value is ignored if [clipper] is non-null.
+  double get borderRadius => _borderRadius;
+  double _borderRadius;
+  set borderRadius(double value) {
+    if (_borderRadius == value) {
+      return;
+    }
+    _borderRadius = value;
+    _markNeedsClip();
+  }
+
+  /// The text direction with which to resolve [borderRadius].
+  TextDirection? get textDirection => _textDirection;
+  TextDirection? _textDirection;
+  set textDirection(TextDirection? value) {
+    if (_textDirection == value) {
+      return;
+    }
+    _textDirection = value;
+    _markNeedsClip();
+  }
+
+  @override
+  RSuperellipse get _defaultClip =>
+      RSuperellipse.fromRectAndRadius(Offset.zero & size, _borderRadius);
+
+  @override
+  bool hitTest(BoxHitTestResult result, {required Offset position}) {
+    if (_clipper != null) {
+      _updateClip();
+      assert(_clip != null);
+      if (!_clip!.contains(position)) {
+        return false;
+      }
+    }
+    return super.hitTest(result, position: position);
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    if (child != null) {
+      if (clipBehavior != Clip.none) {
+        _updateClip();
+        layer = context.pushClipRSuperellipse(
+          needsCompositing,
+          offset,
+          _clip!.outerRect,
+          _clip!,
+          super.paint,
+          clipBehavior: clipBehavior,
+          oldLayer: layer as ClipRSuperellipseLayer?,
+        );
+      } else {
+        context.paintChild(child!, offset);
+        layer = null;
+      }
+    } else {
+      layer = null;
+    }
+  }
+
+  @override
+  void debugPaintSize(PaintingContext context, Offset offset) {
+    assert(() {
+      if (child != null) {
+        super.debugPaintSize(context, offset);
+        if (clipBehavior != Clip.none) {
+          context.canvas.drawRSuperellipse(_clip!.shift(offset), _debugPaint!);
+          _debugText!.paint(
+            context.canvas,
+            offset + Offset(_clip!.radius, -_debugText!.text!.style!.fontSize! * 1.1),
+          );
+        }
+      }
+      return true;
+    }());
+  }
+}
+
 /// Clips its child using an oval.
 ///
 /// By default, inscribes an axis-aligned oval into its layout dimensions and
