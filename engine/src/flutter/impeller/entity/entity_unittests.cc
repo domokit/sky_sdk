@@ -2351,9 +2351,9 @@ TEST_P(EntityTest, DrawRoundSuperEllipse) {
         name = name + " " + lr_name;
       }
       if (corner_symmetry) {
-        ImGui::SliderFloat(name.c_str(), radii.data(), 0, 500);
+        ImGui::SliderFloat(name.c_str(), radii.data(), 0, 1000);
       } else {
-        ImGui::SliderFloat2(name.c_str(), radii.data(), 0, 500);
+        ImGui::SliderFloat2(name.c_str(), radii.data(), 0, 1000);
       }
     };
 
