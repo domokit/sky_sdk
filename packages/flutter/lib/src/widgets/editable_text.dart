@@ -6280,13 +6280,17 @@ class _UpdateTextSelectionAction<T extends DirectionalCaretMovementIntent>
     final TextSelection selection = state._value.selection;
     assert(selection.isValid);
 
+    // Reverse behavior in RTL
+    final bool intentForward = (state.widget.textDirection ?? (context!=null? Directionality.of(context): null)) == TextDirection.rtl && intent is ExtendSelectionByCharacterIntent
+      ? !intent.forward : intent.forward;
+
     final bool collapseSelection = intent.collapseSelection || !state.widget.selectionEnabled;
     if (!selection.isCollapsed && !ignoreNonCollapsedSelection && collapseSelection) {
       return Actions.invoke(
         context!,
         UpdateSelectionIntent(
           state._value,
-          TextSelection.collapsed(offset: intent.forward ? selection.end : selection.start),
+          TextSelection.collapsed(offset: intentForward ? selection.end : selection.start),
           SelectionChangedCause.keyboard,
         ),
       );
@@ -6296,21 +6300,21 @@ class _UpdateTextSelectionAction<T extends DirectionalCaretMovementIntent>
     // If continuesAtWrap is true extent and is at the relevant wordwrap, then
     // move it just to the other side of the wordwrap.
     if (intent.continuesAtWrap) {
-      if (intent.forward && _isAtWordwrapUpstream(extent)) {
+      if (intentForward && _isAtWordwrapUpstream(extent)) {
         extent = TextPosition(offset: extent.offset);
-      } else if (!intent.forward && _isAtWordwrapDownstream(extent)) {
+      } else if (!intentForward && _isAtWordwrapDownstream(extent)) {
         extent = TextPosition(offset: extent.offset, affinity: TextAffinity.upstream);
       }
     }
 
     final bool shouldTargetBase =
         isExpand &&
-        (intent.forward
+        (intentForward
             ? selection.baseOffset > selection.extentOffset
             : selection.baseOffset < selection.extentOffset);
     final TextPosition newExtent = applyTextBoundary(
       shouldTargetBase ? selection.base : extent,
-      intent.forward,
+      intentForward,
       getTextBoundary(),
     );
     final TextSelection newSelection =
