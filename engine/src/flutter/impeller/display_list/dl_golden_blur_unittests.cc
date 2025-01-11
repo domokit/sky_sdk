@@ -227,26 +227,34 @@ TEST_P(DlGoldenTest, ShimmerTest) {
   EXPECT_TRUE(average_rmse >= 0.0) << "average_rmse: " << average_rmse;
 }
 
-TEST_P(DlGoldenTest, StrokedRRectFastBlur) {
+// Top left and bottom right circles are expected to be comparable (not exactly
+// equal).
+// See also: https://github.com/flutter/flutter/issues/152778
+TEST_P(DlGoldenTest, LargeDownscaleRrect) {
   impeller::Point content_scale = GetContentScale();
+  auto draw = [&](DlCanvas* canvas, const std::vector<sk_sp<DlImage>>& images) {
+    canvas->Scale(content_scale.x, content_scale.y);
+    canvas->DrawColor(DlColor(0xff111111));
+    {
+      canvas->Save();
+      canvas->Scale(0.25, 0.25);
+      DlPaint paint;
+      paint.setColor(DlColor::kYellow());
+      paint.setMaskFilter(
+          DlBlurMaskFilter::Make(DlBlurStyle::kNormal, /*sigma=*/1000));
+      canvas->DrawCircle(SkPoint::Make(0, 0), 1200, paint);
+      canvas->Restore();
+    }
 
-  DlRect rect = DlRect::MakeXYWH(50, 50, 100, 100);
-  DlRoundRect rrect = DlRoundRect::MakeRectRadius(rect, 10.0f);
-  DlPaint fill = DlPaint().setColor(DlColor::kBlue());
-  DlPaint stroke =
-      DlPaint(fill).setDrawStyle(DlDrawStyle::kStroke).setStrokeWidth(10.0f);
-  DlPaint blur = DlPaint(fill).setMaskFilter(
-      DlBlurMaskFilter::Make(DlBlurStyle::kNormal, 5.0, true));
-  DlPaint blur_stroke =
-      DlPaint(blur).setDrawStyle(DlDrawStyle::kStroke).setStrokeWidth(10.0f);
+    DlPaint paint;
+    paint.setColor(DlColor::kYellow());
+    paint.setMaskFilter(
+        DlBlurMaskFilter::Make(DlBlurStyle::kNormal, /*sigma=*/250));
+    canvas->DrawCircle(SkPoint::Make(1024, 768), 300, paint);
+  };
 
   DisplayListBuilder builder;
-  builder.DrawColor(DlColor(0xff111111), DlBlendMode::kSrc);
-  builder.Scale(content_scale.x, content_scale.y);
-  builder.DrawRoundRect(rrect, fill);
-  builder.DrawRoundRect(rrect.Shift(150, 0), stroke);
-  builder.DrawRoundRect(rrect.Shift(0, 150), blur);
-  builder.DrawRoundRect(rrect.Shift(150, 150), blur_stroke);
+  draw(&builder, /*images=*/{});
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
