@@ -137,7 +137,7 @@ final Set<String> skippedPaths = <String>{
   r'flutter/third_party/libwebp/gradle', // not included in our build
   r'flutter/third_party/libwebp/swig', // not included in our build
   r'flutter/third_party/libwebp/webp_js',
-  r'flutter/third_party/ninja', // build system
+  r'../../third_party/ninja', // build system
   r'flutter/third_party/ocmock', // only used for tests
   r'flutter/third_party/perfetto/debian', // contains nothing that ends up in the binary executable
   r'flutter/third_party/perfetto/infra', // contains nothing that ends up in the binary executable

@@ -2288,7 +2288,7 @@
 ../../../flutter/third_party/libwebp/swig
 ../../../flutter/third_party/libwebp/tests
 ../../../flutter/third_party/libwebp/webp_js
-../../../flutter/third_party/ninja
+../../../../../third_party/ninja
 ../../../flutter/third_party/ocmock
 ../../../flutter/third_party/perfetto/.clang-format
 ../../../flutter/third_party/perfetto/.clang-tidy

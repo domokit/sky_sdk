@@ -23,7 +23,10 @@ class Environment {
     final io.File dartExecutable = io.File(io.Platform.resolvedExecutable);
     final io.File self = io.File.fromUri(io.Platform.script);
 
-    final io.Directory engineSrcDir = self.parent.parent.parent.parent.parent;
+    final io.Directory gclientRootDir = _findGclientRoot(startAt: self);
+    final io.Directory engineSrcDir = io.Directory(
+      pathlib.join(gclientRootDir.path, 'engine', 'src'),
+    );
     final io.Directory engineToolsDir = io.Directory(
       pathlib.join(engineSrcDir.path, 'flutter', 'tools'),
     );
@@ -50,6 +53,7 @@ class Environment {
     return Environment._(
       self: self,
       isMacosArm: isMacosArm,
+      gclientRootDir: gclientRootDir,
       webUiRootDir: webUiRootDir,
       engineSrcDir: engineSrcDir,
       engineToolsDir: engineToolsDir,
@@ -65,6 +69,7 @@ class Environment {
   Environment._({
     required this.self,
     required this.isMacosArm,
+    required this.gclientRootDir,
     required this.webUiRootDir,
     required this.engineSrcDir,
     required this.engineToolsDir,
@@ -81,6 +86,9 @@ class Environment {
 
   /// Whether the environment is a macOS arm environment.
   final bool isMacosArm;
+
+  /// The root directory of the gclient workspace.
+  final io.Directory gclientRootDir;
 
   /// Path to the "web_ui" package sources.
   final io.Directory webUiRootDir;
@@ -181,4 +189,17 @@ class Environment {
   /// bucket by LUCI.
   io.Directory get webUiTestResultsDirectory =>
       io.Directory(pathlib.join(webUiDartToolDir.path, 'test_results'));
+}
+
+io.Directory _findGclientRoot({required io.FileSystemEntity startAt}) {
+  const String gclientFileName = '.gclient';
+  io.Directory currentDir = startAt is io.Directory ? startAt : startAt.parent;
+  while (currentDir.path != currentDir.parent.path) {
+    final io.File gclientFile = io.File(pathlib.join(currentDir.path, gclientFileName));
+    if (gclientFile.existsSync()) {
+      return currentDir;
+    }
+    currentDir = currentDir.parent;
+  }
+  throw ToolExit('Could not find the $gclientFileName file.');
 }

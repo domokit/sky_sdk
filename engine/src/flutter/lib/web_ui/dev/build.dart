@@ -182,6 +182,10 @@ class NinjaPipelineStep extends ProcessStep {
   @override
   Future<ProcessManager> createProcess() {
     print('Running autoninja...');
-    return startProcess('autoninja', <String>['-C', buildDirectory, ...targets]);
+    return startProcess('autoninja', <String>[
+      '-C',
+      buildDirectory,
+      ...targets,
+    ], workingDirectory: environment.gclientRootDir.path);
   }
 }
