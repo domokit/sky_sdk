@@ -413,7 +413,6 @@ targets:
 
   - name: Linux_android_emu android views
     recipe: devicelab/devicelab_drone
-    bringup: true
     properties:
       tags: >
         ["framework","hostonly","linux"]
