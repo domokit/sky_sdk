@@ -47,7 +47,7 @@ void configureProject(Project project, String outputDir) {
     String engineRealm = Paths.get(getFlutterRoot(project), "bin", "internal", "engine.realm")
         .toFile().text.trim()
     if (engineRealm) {
-        engineRealm = engineRealm + "/"
+        engineRealm += "/"
     }
 
     // This is a Flutter plugin project. Plugin projects don't apply the Flutter Gradle plugin,
@@ -179,8 +179,12 @@ projectsEvaluated {
             // Configure the `assembleAar<variantName>` task for each plugin's projects and make
             // the module's equivalent task depend on the plugin's task.
             String variantName = variant.name.capitalize()
-            moduleProject.tasks.findByPath("assembleAar$variantName")
-                .dependsOn(pluginProject.tasks.findByPath("assembleAar$variantName"))
+            
+                Task moduleProjectTask = moduleProject.tasks.named("assembleAar$variantName").get()
+                assert(moduleProjectTask != null)
+                Task pluginProjectTask = pluginProject.tasks.named("assembleAar$variantName").get()
+                assert(pluginProjectTask != null)
+                moduleProjectTask.dependsOn(pluginProjectTask)
         }
     }
 }
