@@ -2691,6 +2691,27 @@ FLUTTER_ASSERT_ARC
   XCTAssertNil(textInputPlugin.activeView.textInputDelegate);
 }
 
+- (void)testAutoFillDoesNotTriggerOnHideButTriggersOnCommit {
+  // Regression test for https://github.com/flutter/flutter/issues/145681.
+  NSMutableDictionary* configuration = self.mutableTemplateCopy;
+  [configuration setValue:@{
+    @"uniqueIdentifier" : @"field1",
+    @"hints" : @[ UITextContentTypePassword ],
+    @"editingValue" : @{@"text" : @""}
+  }
+                   forKey:@"autofill"];
+  [configuration setValue:@[ [configuration copy] ] forKey:@"fields"];
+
+  [self setClientId:123 configuration:configuration];
+  XCTAssertEqual(self.viewsVisibleToAutofill.count, 1ul);
+
+  [self setTextInputHide];
+  // Before the fix in https://github.com/flutter/flutter/pull/160653, it was 0ul.
+  XCTAssertEqual(self.viewsVisibleToAutofill.count, 1ul);
+
+  [self commitAutofillContextAndVerify];
+}
+
 #pragma mark - Accessibility - Tests
 
 - (void)testUITextInputAccessibilityNotHiddenWhenShowed {
