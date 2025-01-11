@@ -500,7 +500,7 @@ class _CarouselViewState extends State<CarouselView> {
               axisDirection: axisDirection,
               offset: position,
               clipBehavior: Clip.antiAlias,
-              slivers: <Widget>[_buildSliverCarousel(theme)],
+              slivers: <Widget>[if (mainAxisExtent > 0.0) _buildSliverCarousel(theme)],
             );
           },
         );
@@ -579,6 +579,10 @@ class _RenderSliverFixedExtentCarousel extends RenderSliverFixedExtentBoxAdaptor
 
   // This implements the [itemExtentBuilder] callback.
   double _buildItemExtent(int index, SliverLayoutDimensions currentLayoutDimensions) {
+    if (maxExtent == 0.0) {
+      return maxExtent;
+    }
+
     final int firstVisibleIndex = (constraints.scrollOffset / maxExtent).floor();
 
     // Calculate how many items have been completely scroll off screen.
@@ -641,6 +645,10 @@ class _RenderSliverFixedExtentCarousel extends RenderSliverFixedExtentBoxAdaptor
     double itemExtent,
     int index,
   ) {
+    if (maxExtent == 0.0) {
+      return 0;
+    }
+
     final int firstVisibleIndex = (constraints.scrollOffset / maxExtent).floor();
 
     // If there is not enough space to place the last visible item but the remaining
@@ -673,8 +681,12 @@ class _RenderSliverFixedExtentCarousel extends RenderSliverFixedExtentBoxAdaptor
     )
     double itemExtent,
   ) {
-    final int firstVisibleIndex = (constraints.scrollOffset / maxExtent).floor();
-    return math.max(firstVisibleIndex, 0);
+    if (maxExtent > 0.0) {
+      final int firstVisibleIndex = (constraints.scrollOffset / maxExtent).floor();
+      return math.max(firstVisibleIndex, 0);
+    }
+
+    return 0;
   }
 
   /// The maximum child index that is visible at the given scroll offset.
