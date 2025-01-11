@@ -194,8 +194,11 @@ bool AHBSwapchainImplVK::Present(
 
 void AHBSwapchainImplVK::AddFinalCommandBuffer(
     std::shared_ptr<CommandBuffer> cmd_buffer) {
-  FML_DCHECK(!pending_cmd_buffer_);
-  pending_cmd_buffer_ = std::move(cmd_buffer);
+  auto context = transients_->GetContext().lock();
+  if (!context) {
+    return;
+  }
+  context->GetCommandQueue()->Submit({std::move(cmd_buffer)});
 }
 
 std::shared_ptr<ExternalFenceVK>
@@ -210,7 +213,7 @@ AHBSwapchainImplVK::SubmitSignalForPresentReady(
     return nullptr;
   }
 
-  auto command_buffer = pending_cmd_buffer_;
+  auto command_buffer = context->CreateCommandBuffer();
   if (!command_buffer) {
     return nullptr;
   }
