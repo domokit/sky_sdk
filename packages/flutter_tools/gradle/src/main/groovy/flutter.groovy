@@ -29,6 +29,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.internal.os.OperatingSystem
+import NativePluginLoader
 
 /**
  * For apps only. Provides the flutter extension used in the app-level Gradle
@@ -168,8 +169,8 @@ class FlutterPlugin implements Plugin<Project> {
     private Properties localProperties
     private String engineVersion
     private String engineRealm
-    private List<Map<String, Object>> pluginList
-    private List<Map<String, Object>> pluginDependencies
+    private List<APlugin> pluginList
+    private List<DependencyEntry> pluginDependencies
 
     /**
      * Flutter Docs Website URLs for help messages.
@@ -225,9 +226,6 @@ class FlutterPlugin implements Plugin<Project> {
                 }
             }
         }
-
-        // Load shared gradle functions
-        project.apply from: Paths.get(flutterRoot.absolutePath, "packages", "flutter_tools", "gradle", "src", "main", "groovy", "native_plugin_loader.groovy")
 
         FlutterExtension extension = project.extensions.create("flutter", FlutterExtension)
         Properties localProperties = new Properties()
@@ -299,7 +297,7 @@ class FlutterPlugin implements Plugin<Project> {
         if (!shouldSkipDependencyChecks) {
             try {
                 final String dependencyCheckerPluginPath = Paths.get(flutterRoot.absolutePath,
-                        "packages", "flutter_tools", "gradle", "src", "main", "kotlin",
+                        "packages", "flutter_tools", "gradle", "src", "main", "kotlin_scripts",
                         "dependency_version_checker.gradle.kts")
                 project.apply from: dependencyCheckerPluginPath
             } catch (Exception e) {
@@ -318,7 +316,7 @@ class FlutterPlugin implements Plugin<Project> {
         }
 
         // Use Kotlin DSL to handle baseApplicationName logic due to Groovy dynamic dispatch bug.
-        project.apply from: Paths.get(flutterRoot.absolutePath, "packages", "flutter_tools", "gradle", "src", "main", "kotlin", "flutter.gradle.kts")
+        project.apply from: Paths.get(flutterRoot.absolutePath, "packages", "flutter_tools", "gradle", "src", "main", "kotlin_scripts", "flutter.gradle.kts")
 
         String flutterProguardRules = Paths.get(flutterRoot.absolutePath, "packages", "flutter_tools",
                 "gradle", "flutter_proguard_rules.pro")
@@ -660,7 +658,7 @@ class FlutterPlugin implements Plugin<Project> {
         project.logger.quiet("Warning: This project is still reading the deprecated '.flutter-plugins. file.")
         project.logger.quiet("In an upcoming stable release support for this file will be completely removed and your build will fail.")
         project.logger.quiet("See https:/flutter.dev/to/flutter-plugins-configuration.")
-        List<Map<String, Object>> deps = getPluginDependencies(project)
+        List<DependencyEntry> deps = getPluginDependencies(project)
         List<String> plugins = getPluginList(project).collect { it.name as String }
         deps.removeIf { plugins.contains(it.name) }
         deps.each {
@@ -671,7 +669,7 @@ class FlutterPlugin implements Plugin<Project> {
             } else if (pluginSupportsAndroidPlatform(pluginProject)) {
                 // Plugin has a functioning `android` folder and is included successfully, although it's not supported.
                 // It must be configured nonetheless, to not throw an "Unresolved reference" exception.
-                configurePluginProject(it)
+                configurePluginProject([name: it.name, dependencies: it.dependencies])
             /* groovylint-disable-next-line EmptyElseBlock */
             } else {
             // Plugin has no or an empty `android` folder. No action required.
@@ -988,26 +986,32 @@ class FlutterPlugin implements Plugin<Project> {
      *
      * The map value contains either the plugins `name` (String),
      * its `path` (String), or its `dependencies` (List<String>).
-     * See [NativePluginLoader#getPlugins] in packages/flutter_tools/gradle/src/main/groovy/native_plugin_loader.groovy
      */
     private List<Map<String, Object>> getPluginList(Project project) {
         if (pluginList == null) {
-            pluginList = project.ext.nativePluginLoader.getPlugins(getFlutterSourceDirectory())
+            pluginList = NativePluginLoader.INSTANCE.getPlugins(getFlutterSourceDirectory())
         }
-        return pluginList
+        return pluginList.collect {
+            return [
+                    "name"          : it.name,
+                    "path"          : it.path,
+                    "dependencies"  : it.dependencies,
+                    "native_build"  : it.nativeBuild,
+                    "dev_dependency": it.devDependency,
+            ]
+        }
     }
 
     // TODO(54566, 48918): Remove in favor of [getPluginList] only, see also
     //  https://github.com/flutter/flutter/blob/1c90ed8b64d9ed8ce2431afad8bc6e6d9acc4556/packages/flutter_tools/lib/src/flutter_plugins.dart#L212
     /** Gets the plugins dependencies from `.flutter-plugins-dependencies`. */
-    private List<Map<String, Object>> getPluginDependencies(Project project) {
+    private List<DependencyEntry> getPluginDependencies(Project project) {
         if (pluginDependencies == null) {
-            Map meta = project.ext.nativePluginLoader.getDependenciesMetadata(getFlutterSourceDirectory())
-            if (meta == null) {
+            FlutterPluginsDependencies flutterPluginsDependencies = NativePluginLoader.INSTANCE.getDependenciesMetadata(getFlutterSourceDirectory())
+            if (flutterPluginsDependencies == null) {
                 pluginDependencies = []
             } else {
-                assert(meta.dependencyGraph instanceof List<Map>)
-                pluginDependencies = meta.dependencyGraph as List<Map<String, Object>>
+                pluginDependencies = flutterPluginsDependencies.dependencyGraph /*as List<Map<String, Object>>*/
             }
         }
         return pluginDependencies
