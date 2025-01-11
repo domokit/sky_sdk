@@ -2325,27 +2325,89 @@ TEST_P(EntityTest, DrawSuperEllipse) {
 TEST_P(EntityTest, DrawRoundSuperEllipse) {
   auto callback = [&](ContentContext& context, RenderPass& pass) -> bool {
     // UI state.
-    static float center_x = 100;
-    static float center_y = 100;
-    static float width = 900;
-    static float height = 900;
-    static float corner_radius = 300;
-    static Color color = Color::Red();
+    static float center[2] = {830, 830};
+    static float size[2] = {600, 600};
+    static bool horizontal_symmetry = true;
+    static bool vertical_symmetry = true;
+    static bool corner_symmetry = true;
+
+    // Initially radius_tl[0] will be mirrored to all 8 values since all 3
+    // symmetries are enabled.
+    static std::array<float, 2> radius_tl = {200};
+    static std::array<float, 2> radius_tr;
+    static std::array<float, 2> radius_bl;
+    static std::array<float, 2> radius_br;
+
+    auto AddRadiusControl = [](std::array<float, 2>& radii, const char* tb_name,
+                               const char* lr_name) {
+      std::string name = "Radius";
+      if (!horizontal_symmetry || !vertical_symmetry) {
+        name += ":";
+      }
+      if (!vertical_symmetry) {
+        name = name + " " + tb_name;
+      }
+      if (!horizontal_symmetry) {
+        name = name + " " + lr_name;
+      }
+      if (corner_symmetry) {
+        ImGui::SliderFloat(name.c_str(), radii.data(), 0, 1000);
+      } else {
+        ImGui::SliderFloat2(name.c_str(), radii.data(), 0, 1000);
+      }
+    };
+
+    if (corner_symmetry) {
+      radius_tl[1] = radius_tl[0];
+      radius_tr[1] = radius_tr[0];
+      radius_bl[1] = radius_bl[0];
+      radius_br[1] = radius_br[0];
+    }
 
     ImGui::Begin("Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::SliderFloat("Center X", &center_x, 0, 1000);
-    ImGui::SliderFloat("Center Y", &center_y, 0, 1000);
-    ImGui::SliderFloat("Width", &width, 0, 1000);
-    ImGui::SliderFloat("Height", &height, 0, 1000);
-    ImGui::SliderFloat("Corner radius", &corner_radius, 0, 500);
+    {
+      ImGui::SliderFloat2("Center", center, 0, 1000);
+      ImGui::SliderFloat2("Size", size, 0, 1000);
+      ImGui::Checkbox("Symmetry: Horizontal", &horizontal_symmetry);
+      ImGui::Checkbox("Symmetry: Vertical", &vertical_symmetry);
+      ImGui::Checkbox("Symmetry: Corners", &corner_symmetry);
+      AddRadiusControl(radius_tl, "Top", "Left");
+      if (!horizontal_symmetry) {
+        AddRadiusControl(radius_tr, "Top", "Right");
+      } else {
+        radius_tr = radius_tl;
+      }
+      if (!vertical_symmetry) {
+        AddRadiusControl(radius_bl, "Bottom", "Left");
+      } else {
+        radius_bl = radius_tl;
+      }
+      if (!horizontal_symmetry && !vertical_symmetry) {
+        AddRadiusControl(radius_br, "Bottom", "Right");
+      } else {
+        if (horizontal_symmetry) {
+          radius_br = radius_bl;
+        } else {
+          radius_br = radius_tr;
+        }
+      }
+    }
+
     ImGui::End();
+
+    RoundingRadii radii{
+        .top_left = {radius_tl[0], radius_tl[1]},
+        .top_right = {radius_tr[0], radius_tr[1]},
+        .bottom_left = {radius_bl[0], radius_bl[1]},
+        .bottom_right = {radius_br[0], radius_br[1]},
+    };
 
     auto contents = std::make_shared<SolidColorContents>();
     std::unique_ptr<RoundSuperellipseGeometry> geom =
         std::make_unique<RoundSuperellipseGeometry>(
-            Rect::MakeOriginSize({center_x, center_y}, {width, height}),
-            corner_radius);
-    contents->SetColor(color);
+            Rect::MakeOriginSize({center[0], center[1]}, {size[0], size[1]}),
+            radii);
+    contents->SetColor(Color::Red());
     contents->SetGeometry(geom.get());
 
     Entity entity;

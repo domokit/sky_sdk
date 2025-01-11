@@ -101,6 +101,8 @@ struct TSize {
     };
   }
 
+  constexpr Type MinDimension() const { return std::min(width, height); }
+
   constexpr Type MaxDimension() const { return std::max(width, height); }
 
   constexpr TSize Abs() const { return {std::fabs(width), std::fabs(height)}; }
