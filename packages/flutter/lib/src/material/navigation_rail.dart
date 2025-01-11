@@ -1234,34 +1234,33 @@ class _NavigationRailDefaultsM3 extends NavigationRailThemeData {
   late final ColorScheme _colors = Theme.of(context).colorScheme;
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
-  @override
-  Color? get backgroundColor => _colors.surface;
+  @override Color? get backgroundColor => _colors.surface;
 
-  @override
-  TextStyle? get unselectedLabelTextStyle {
+  @override TextStyle? get unselectedLabelTextStyle {
     return _textTheme.labelMedium!.copyWith(color: _colors.onSurface);
   }
 
-  @override
-  TextStyle? get selectedLabelTextStyle {
+  @override TextStyle? get selectedLabelTextStyle {
     return _textTheme.labelMedium!.copyWith(color: _colors.onSurface);
   }
 
-  @override
-  IconThemeData? get unselectedIconTheme {
-    return IconThemeData(size: 24.0, color: _colors.onSurfaceVariant);
+  @override IconThemeData? get unselectedIconTheme {
+    return IconThemeData(
+      size: 24.0,
+      color: _colors.onSurfaceVariant,
+    );
   }
 
-  @override
-  IconThemeData? get selectedIconTheme {
-    return IconThemeData(size: 24.0, color: _colors.onSecondaryContainer);
+  @override IconThemeData? get selectedIconTheme {
+    return IconThemeData(
+      size: 24.0,
+      color: _colors.onSecondaryContainer,
+    );
   }
 
-  @override
-  Color? get indicatorColor => _colors.secondaryContainer;
+  @override Color? get indicatorColor => _colors.secondaryContainer;
 
-  @override
-  ShapeBorder? get indicatorShape => const StadiumBorder();
+  @override ShapeBorder? get indicatorShape => const StadiumBorder();
 }
 
 // END GENERATED TOKEN PROPERTIES - NavigationRail
