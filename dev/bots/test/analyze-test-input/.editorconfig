@@ -1,4 +1,4 @@
-[*.{kt,kts}]
+[*.{kt,kts,kt.tmpl,kts.tmpl}]
 # Disable trailing commas to allow compatibility with Kotlin versions less than 1.4.
 ij_kotlin_allow_trailing_comma = false
 ij_kotlin_allow_trailing_comma_on_call_site = false
