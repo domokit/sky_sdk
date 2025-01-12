@@ -4,6 +4,7 @@
 
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'colors.dart';
@@ -191,4 +192,105 @@ class _CupertinoActivityIndicatorPainter extends CustomPainter {
         oldPainter.activeColor != activeColor ||
         oldPainter.progress != progress;
   }
+}
+
+/// An iOS-style linear activity indicator.
+///
+/// The [CupertinoLinearActivityIndicator] is a linear progress bar
+/// that displays a colored bar to indicate the progress of an ongoing task.
+class CupertinoLinearActivityIndicator extends StatelessWidget {
+  /// Creates a linear iOS-style activity indicator.
+  const CupertinoLinearActivityIndicator({
+    super.key,
+    required this.progress,
+    this.height = 4.5,
+    this.color,
+  })  : assert(height > 0),
+        assert(progress >= 0.0 && progress <= 1.0);
+
+  /// The current progress of the linear activity indicator.
+  ///
+  /// This value must be between zero and one.
+  /// A value of 0.0 means no progress and 1.0 means that progress is complete.
+  /// The value will be clamped to be in the range 0.0-1.0.
+  final double progress;
+
+  /// The height of the line used to draw the linear activity indicator.
+  ///
+  /// The default height is 4.5 units. Must be positive.
+  final double height;
+
+  /// The color of the progress bar.
+  ///
+  /// Defaults to [CupertinoColors.activeBlue] if no color is specified.
+  /// This color represents the portion of the bar that indicates progress.
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        minHeight: height,
+        minWidth: double.infinity,
+      ),
+      child: CustomPaint(
+        painter: _CupertinoLinearActivityIndicator(
+          progress: progress,
+          color: color,
+        ),
+      ),
+    );
+  }
+}
+
+class _CupertinoLinearActivityIndicator extends CustomPainter {
+  _CupertinoLinearActivityIndicator({
+    required this.progress,
+    this.color,
+  })  : _backgroundPaint = Paint()
+          ..color = CupertinoColors.systemFill
+          ..style = PaintingStyle.fill,
+        _progressPaint = Paint()
+          ..color = color ?? CupertinoColors.activeBlue
+          ..style = PaintingStyle.fill;
+
+  final double progress;
+
+  final Color? color;
+
+  /// The background paint used to draw the full width of the progress bar.
+  ///
+  /// This paint object is created once and reused to fill the background
+  /// with a system fill color.
+  final Paint _backgroundPaint;
+
+  /// The paint used to draw the progress portion of the progress bar.
+  ///
+  /// This paint object is created once and reused to fill the progress area.
+  final Paint _progressPaint;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Draw the background of the progress bar.
+    canvas.drawRRect(
+      const BorderRadius.all(Radius.circular(100)).toRRect(Offset.zero & size),
+      _backgroundPaint,
+    );
+
+    // Draw the progress portion of the bar.
+    canvas.drawRRect(
+      const BorderRadius.horizontal(left: Radius.circular(100)).toRRect(
+        Offset.zero &
+            Size(
+              clampDouble(progress, 0.0, 1.0) * size.width,
+              size.height,
+            ),
+      ),
+      _progressPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_CupertinoLinearActivityIndicator old) =>
+      old.progress != progress;
 }
