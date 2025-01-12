@@ -45,6 +45,16 @@ enum ScrollViewKeyboardDismissBehavior {
   /// `onDrag` means that the [ScrollView] will dismiss an on-screen keyboard
   /// when a drag begins.
   onDrag,
+
+  /// `onScroll` means that the [ScrollView] will dismiss an on-screen keyboard
+  /// when a scroll begins irrespective of a drag.
+  // See https://github.com/flutter/flutter/issues/154515.
+  /// It should be used to dismiss the keyboard on all scrolls (with a drag, 
+  /// trackpad, mouse-wheel, etc.)
+  /// Caveat: Since we are watching for all scroll notifications, programmatic
+  /// scrolls will also dismiss the keyboard (e.g opening of on-screen keyboard 
+  /// produces a scroll to keep the field visible).
+  onScroll,
 }
 
 /// A widget that combines a [Scrollable] and a [Viewport] to create an
