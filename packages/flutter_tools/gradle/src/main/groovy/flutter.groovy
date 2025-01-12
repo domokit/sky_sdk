@@ -804,26 +804,39 @@ class FlutterPlugin implements Plugin<Project> {
      * For example, "2.8.0" vs "2.8" will always consider "2.8.0" to be the most recent version.
      * TODO: Remove this or compareVersionStrings. This does not handle strings like "8.6-rc-2".
      */
-    static String mostRecentSemanticVersion(String version1, String version2) {
-        List version1Tokenized = version1.tokenize(".")
-        List version2Tokenized = version2.tokenize(".")
-        int version1numTokens = version1Tokenized.size()
-        int version2numTokens = version2Tokenized.size()
-        int minNumTokens = Math.min(version1numTokens, version2numTokens)
-        for (int i = 0; i < minNumTokens; i++) {
-            int num1 = version1Tokenized[i].toInteger()
-            int num2 = version2Tokenized[i].toInteger()
-            if (num1 > num2) {
+   static String mostRecentSemanticVersion(String version1, String version2) {
+        def v1Parts = version1.tokenize('.-')
+        def v2Parts = version2.tokenize('.-')
+
+        for (int i = 0; i < Math.max(v1Parts.size(), v2Parts.size()); i++) {
+            def v1Part = i < v1Parts.size() ? v1Parts[i] : '0'
+            def v2Part = i < v2Parts.size() ? v2Parts[i] : '0'
+
+            def v1Num = v1Part.isNumber() ? v1Part.toInteger() : 0
+            def v2Num = v2Part.isNumber() ? v2Part.toInteger() : 0
+
+            if (v1Num != v2Num) {
+                return v1Num > v2Num ? version1 : version2
+            }
+
+            if (v1Part.isNumber() && !v2Part.isNumber()) {
                 return version1
-            }
-            if (num2 > num1) {
+            } else if (!v1Part.isNumber() && v2Part.isNumber()) {
                 return version2
+            } else if (v1Part != v2Part) {
+                return comparePreReleaseIdentifiers(v1Part, v2Part) ? version1 : version2
             }
         }
-        if (version1numTokens > version2numTokens) {
-            return version1
-        }
-        return version2
+
+        // If versions are equal, return the longest version string
+        return version1.length() >= version2.length() ? version1 : version2
+    }
+
+    static boolean comparePreReleaseIdentifiers(String v1Part, String v2Part) {
+        def v1PreRelease = v1Part.replaceAll("\\D", "")
+        def v2PreRelease = v2Part.replaceAll("\\D", "")
+
+        return v1PreRelease < v2PreRelease
     }
 
     private void forceNdkDownload(Project gradleProject, String flutterSdkRootPath) {
