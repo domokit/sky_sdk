@@ -2743,7 +2743,6 @@ targets:
 
   - name: Linux_android_emu external_textures_integration_test
     recipe: devicelab/devicelab_drone
-    bringup: true
     timeout: 60
     # Functionally the same as "presubmit: false", except that we will run on
     # presubmit during engine rolls. This test is the *only* automated e2e
