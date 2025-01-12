@@ -51,6 +51,7 @@ class DatePickerThemeData with Diagnosticable {
     this.shadowColor,
     this.surfaceTintColor,
     this.shape,
+    this.subheaderColor,
     this.headerBackgroundColor,
     this.headerForegroundColor,
     this.headerHeadlineStyle,
@@ -113,6 +114,11 @@ class DatePickerThemeData with Diagnosticable {
   /// If [elevation] is greater than zero then a shadow is shown and the shadow's
   /// shape mirrors the shape of the dialog.
   final ShapeBorder? shape;
+
+  /// This determines the color for the subheader, using subheaderColor if available,
+  /// or a fallback color from the theme
+  /// Overrides the subheader's default color.
+  final Color? subheaderColor;
 
   /// Overrides the header's default background fill color.
   ///
@@ -368,6 +374,7 @@ class DatePickerThemeData with Diagnosticable {
     Color? shadowColor,
     Color? surfaceTintColor,
     ShapeBorder? shape,
+    Color? subheaderColor,
     Color? headerBackgroundColor,
     Color? headerForegroundColor,
     TextStyle? headerHeadlineStyle,
@@ -407,6 +414,7 @@ class DatePickerThemeData with Diagnosticable {
       elevation: elevation ?? this.elevation,
       shadowColor: shadowColor ?? this.shadowColor,
       surfaceTintColor: surfaceTintColor ?? this.surfaceTintColor,
+      subheaderColor: subheaderColor ?? this.subheaderColor,
       shape: shape ?? this.shape,
       headerBackgroundColor: headerBackgroundColor ?? this.headerBackgroundColor,
       headerForegroundColor: headerForegroundColor ?? this.headerForegroundColor,
@@ -459,6 +467,7 @@ class DatePickerThemeData with Diagnosticable {
       shadowColor: Color.lerp(a?.shadowColor, b?.shadowColor, t),
       surfaceTintColor: Color.lerp(a?.surfaceTintColor, b?.surfaceTintColor, t),
       shape: ShapeBorder.lerp(a?.shape, b?.shape, t),
+      subheaderColor: Color.lerp(a?.subheaderColor, b?.subheaderColor, t),
       headerBackgroundColor: Color.lerp(a?.headerBackgroundColor, b?.headerBackgroundColor, t),
       headerForegroundColor: Color.lerp(a?.headerForegroundColor, b?.headerForegroundColor, t),
       headerHeadlineStyle: TextStyle.lerp(a?.headerHeadlineStyle, b?.headerHeadlineStyle, t),
@@ -590,6 +599,7 @@ class DatePickerThemeData with Diagnosticable {
     shadowColor,
     surfaceTintColor,
     shape,
+    subheaderColor,
     headerBackgroundColor,
     headerForegroundColor,
     headerHeadlineStyle,
@@ -636,6 +646,7 @@ class DatePickerThemeData with Diagnosticable {
         other.shadowColor == shadowColor &&
         other.surfaceTintColor == surfaceTintColor &&
         other.shape == shape &&
+        other.subheaderColor == subheaderColor &&
         other.headerBackgroundColor == headerBackgroundColor &&
         other.headerForegroundColor == headerForegroundColor &&
         other.headerHeadlineStyle == headerHeadlineStyle &&
@@ -679,6 +690,8 @@ class DatePickerThemeData with Diagnosticable {
     properties.add(ColorProperty('shadowColor', shadowColor, defaultValue: null));
     properties.add(ColorProperty('surfaceTintColor', surfaceTintColor, defaultValue: null));
     properties.add(DiagnosticsProperty<ShapeBorder>('shape', shape, defaultValue: null));
+    properties.add(
+        ColorProperty('subheaderColor', subheaderColor, defaultValue: null));
     properties.add(
       ColorProperty('headerBackgroundColor', headerBackgroundColor, defaultValue: null),
     );
@@ -1146,6 +1159,9 @@ class _DatePickerDefaultsM3 extends DatePickerThemeData {
   @override
   Color? get surfaceTintColor => Colors.transparent;
 
+  @override
+  Color? get subheaderColor => _colors.onSurfaceVariant;
+  
   @override
   Color? get headerBackgroundColor => Colors.transparent;
 

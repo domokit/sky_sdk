@@ -15,6 +15,7 @@ void main() {
     shadowColor: Color(0xfffffff1),
     surfaceTintColor: Color(0xfffffff2),
     shape: RoundedRectangleBorder(),
+    subheaderColor: Color(0xfffffff3),
     headerBackgroundColor: Color(0xfffffff3),
     headerForegroundColor: Color(0xfffffff4),
     headerHeadlineStyle: TextStyle(fontSize: 10),
@@ -107,6 +108,7 @@ void main() {
     expect(theme.shadowColor, null);
     expect(theme.surfaceTintColor, null);
     expect(theme.shape, null);
+    expect(theme.subheaderColor, null);
     expect(theme.headerBackgroundColor, null);
     expect(theme.headerForegroundColor, null);
     expect(theme.headerHeadlineStyle, null);
@@ -168,6 +170,7 @@ void main() {
     expect(m3.shadowColor, const Color(0x00000000)); // Colors.transparent
     expect(m3.surfaceTintColor, Colors.transparent);
     expect(m3.shape, RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)));
+    expect(m3.subheaderColor, colorScheme.onSurfaceVariant);
     expect(m3.headerBackgroundColor, const Color(0x00000000)); // Colors.transparent
     expect(m3.headerForegroundColor, colorScheme.onSurfaceVariant);
     expect(m3.headerHeadlineStyle, textTheme.headlineLarge);
@@ -484,6 +487,7 @@ void main() {
         'shadowColor: ${const Color(0xfffffff1)}',
         'surfaceTintColor: ${const Color(0xfffffff2)}',
         'shape: RoundedRectangleBorder(BorderSide(width: 0.0, style: none), BorderRadius.zero)',
+        'subheaderColor: ${const Color(0xfffffff3)}' ,
         'headerBackgroundColor: ${const Color(0xfffffff3)}',
         'headerForegroundColor: ${const Color(0xfffffff4)}',
         'headerHeadlineStyle: TextStyle(inherit: true, size: 10.0)',
