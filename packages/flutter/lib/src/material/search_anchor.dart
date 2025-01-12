@@ -204,6 +204,7 @@ class SearchAnchor extends StatefulWidget {
     TextInputType? keyboardType,
     EdgeInsets scrollPadding,
     EditableTextContextMenuBuilder contextMenuBuilder,
+    bool enabled,
   }) = _SearchAnchorWithSearchBar;
 
   /// Whether the search view grows to fill the entire screen when the
@@ -1187,6 +1188,7 @@ class _SearchAnchorWithSearchBar extends SearchAnchor {
     super.keyboardType,
     EdgeInsets scrollPadding = const EdgeInsets.all(20.0),
     EditableTextContextMenuBuilder contextMenuBuilder = SearchBar._defaultContextMenuBuilder,
+    super.enabled,
   }) : super(
          viewHintText: viewHintText ?? barHintText,
          headerHeight: viewHeaderHeight,
