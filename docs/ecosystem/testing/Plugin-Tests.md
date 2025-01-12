@@ -91,6 +91,16 @@ once the example app is opened as an Xcode project.
 
 For Windows plugins, Visual Studio should auto-detect the tests and allow running them as usual.
 
+#### Filtering Android native tests
+
+The Packages repo's Flutter tool calls Gradle commands in order to run native tests. After running `dart run flutter_plugin_tools.dart native-test`, the output log will contain a line noting the command run, such as:
+
+    /path/to/gradlew app:testDebugUnitTest package_name_here:testDebugUnitTest
+
+Running this command manually with the `--tests` flag allows [test filtering](https://docs.gradle.org/current/userguide/java_testing.html#test_filtering). For example, the following command will run only the tests in `ConvertTest.java` for `google_maps_flutter_android`:
+
+    /path/to/gradlew app:testDebugUnitTest google_maps_flutter_android:testDebugUnitTest --tests "io.flutter.plugins.googlemaps.ConvertTest"
+
 ### Web Tests
 
 Most web tests are written as Integration Tests because they need a web browser (like Chrome) to run. Web integration tests are located in the `example` directory of the `<plugin_name_web>` package.
