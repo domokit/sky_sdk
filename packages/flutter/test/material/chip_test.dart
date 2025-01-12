@@ -4727,7 +4727,12 @@ void main() {
     await tester.pumpWidget(
       wrapForChip(
         theme: theme,
-        child: const RawChip(label: Text('text'), backgroundColor: backgroundColor, shape: shape),
+        child: RawChip(
+          label: const Text('text'),
+          backgroundColor: backgroundColor,
+          shape: shape,
+          onPressed: () {},
+        ),
       ),
     );
 
@@ -4784,6 +4789,7 @@ void main() {
       return wrapForChip(
         child: RawChip(
           isEnabled: enabled,
+          onPressed: enabled ? () {} : null,
           selected: selected,
           color: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
             if (states.contains(MaterialState.disabled) &&
@@ -4839,6 +4845,7 @@ void main() {
       return wrapForChip(
         child: RawChip(
           isEnabled: enabled,
+          onPressed: enabled ? () {} : null,
           selected: selected,
           disabledColor: disabledColor,
           backgroundColor: backgroundColor,
@@ -5768,6 +5775,7 @@ void main() {
                         ),
                       ),
                       isEnabled: enabled,
+                      onPressed: enabled ? () {} : null,
                       disabledColor: disabledColor,
                       backgroundColor: backgroundColor,
                       label: const Text('RawChip'),
