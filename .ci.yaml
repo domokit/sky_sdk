@@ -4260,6 +4260,7 @@ targets:
       - DEPS
 
   - name: Mac build_android_host_app_with_module_aar
+    bringup: true # Flaky https://github.com/flutter/flutter/issues/159189
     recipe: devicelab/devicelab_drone
     timeout: 60
     properties:
