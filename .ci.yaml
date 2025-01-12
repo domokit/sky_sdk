@@ -422,6 +422,7 @@ targets:
     timeout: 60
 
   - name: Linux_android_emu_34 android views
+    bringup: true # Flaky https://github.com/flutter/flutter/issues/159536
     recipe: devicelab/devicelab_drone
     properties:
       tags: >
