@@ -29,4 +29,3 @@ This is an index of team-facing documentation for the [flutter/engine repository
 - [Upgrading Engine's Android API version](https://github.com/flutter/flutter/blob/master/docs/platforms/android/Upgrading-Engine's-Android-API-version.md)
 - [Using the Dart Development Service (DDS) and Flutter DevTools with a custom Flutter Engine Embedding](./Using-the-Dart-Development-Service-(DDS)-and-Flutter-DevTools-with-a-custom-Flutter-Engine-Embedding.md)
 - [Using Sanitizers with the Flutter Engine](./Using-Sanitizers-with-the-Flutter-Engine.md)
-- [Why we have a separate engine repo](https://github.com/flutter/flutter/blob/master/docs/about/Why-we-have-a-separate-engine-repo.md)

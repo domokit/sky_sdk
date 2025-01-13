@@ -505,7 +505,7 @@ class _ProxiedLogReader extends DeviceLogReader {
   final PrebuiltApplicationPackage? applicationPackage;
 
   @override
-  String get name => device.name;
+  String get name => device.displayName;
 
   final StreamController<String> _logLinesStreamController = StreamController<String>();
   Stream<String>? _logLines;

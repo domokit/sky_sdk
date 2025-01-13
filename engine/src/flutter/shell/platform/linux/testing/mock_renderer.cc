@@ -6,7 +6,6 @@
 
 struct _FlMockRenderer {
   FlRenderer parent_instance;
-  FlMockRendererGetRefreshRate get_refresh_rate;
 };
 
 struct _FlMockRenderable {
@@ -33,22 +32,11 @@ static void fl_mock_renderer_make_resource_current(FlRenderer* renderer) {}
 // Implements FlRenderer::clear_current.
 static void fl_mock_renderer_clear_current(FlRenderer* renderer) {}
 
-// Implements FlRenderer::get_refresh_rate.
-static gdouble fl_mock_renderer_default_get_refresh_rate(FlRenderer* renderer) {
-  FlMockRenderer* self = FL_MOCK_RENDERER(renderer);
-  if (self->get_refresh_rate != nullptr) {
-    return self->get_refresh_rate(renderer);
-  }
-  return -1.0;
-}
-
 static void fl_mock_renderer_class_init(FlMockRendererClass* klass) {
   FL_RENDERER_CLASS(klass)->make_current = fl_mock_renderer_make_current;
   FL_RENDERER_CLASS(klass)->make_resource_current =
       fl_mock_renderer_make_resource_current;
   FL_RENDERER_CLASS(klass)->clear_current = fl_mock_renderer_clear_current;
-  FL_RENDERER_CLASS(klass)->get_refresh_rate =
-      fl_mock_renderer_default_get_refresh_rate;
 }
 
 static void fl_mock_renderer_init(FlMockRenderer* self) {}
@@ -70,11 +58,9 @@ static void fl_mock_renderable_class_init(FlMockRenderableClass* klass) {}
 static void fl_mock_renderable_init(FlMockRenderable* self) {}
 
 // Creates a stub renderer
-FlMockRenderer* fl_mock_renderer_new(
-    FlMockRendererGetRefreshRate get_refresh_rate) {
+FlMockRenderer* fl_mock_renderer_new() {
   FlMockRenderer* self =
       FL_MOCK_RENDERER(g_object_new(fl_mock_renderer_get_type(), nullptr));
-  self->get_refresh_rate = get_refresh_rate;
   return self;
 }
 

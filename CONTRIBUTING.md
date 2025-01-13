@@ -106,7 +106,7 @@ that describe these methodologies. The following list is ordered: you
 are strongly recommended to go through these documents in the order
 presented.
 
-1. [Setting up your engine development environment](https://github.com/flutter/engine/blob/main/docs/contributing/Setting-up-the-Engine-development-environment.md),
+1. [Setting up your engine development environment](./engine/src/flutter/docs/contributing/Setting-up-the-Engine-development-environment.md),
    which describes the steps you need to configure your computer to
    work on Flutter's engine. If you only want to write code for the
    Flutter framework, you can skip this step. Flutter's engine mainly

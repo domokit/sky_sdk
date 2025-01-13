@@ -293,9 +293,14 @@ class FlutterWebPlatform extends PlatformPlugin {
   );
 
   File get _dartSdk {
+    // TODO(srujzs): Remove this assertion when the library bundle format is
+    // supported without canary mode.
+    if (buildInfo.ddcModuleFormat == DdcModuleFormat.ddc) {
+      assert(buildInfo.canaryFeatures ?? true);
+    }
     final Map<WebRendererMode, Map<NullSafetyMode, HostArtifact>> dartSdkArtifactMap =
         buildInfo.ddcModuleFormat == DdcModuleFormat.ddc
-            ? kDdcDartSdkJsArtifactMap
+            ? kDdcLibraryBundleDartSdkJsArtifactMap
             : kAmdDartSdkJsArtifactMap;
     return _fileSystem.file(
       _artifacts!.getHostArtifact(dartSdkArtifactMap[webRenderer]![_nullSafetyMode]!),
@@ -303,9 +308,14 @@ class FlutterWebPlatform extends PlatformPlugin {
   }
 
   File get _dartSdkSourcemaps {
+    // TODO(srujzs): Remove this assertion when the library bundle format is
+    // supported without canary mode.
+    if (buildInfo.ddcModuleFormat == DdcModuleFormat.ddc) {
+      assert(buildInfo.canaryFeatures ?? true);
+    }
     final Map<WebRendererMode, Map<NullSafetyMode, HostArtifact>> dartSdkArtifactMap =
         buildInfo.ddcModuleFormat == DdcModuleFormat.ddc
-            ? kDdcDartSdkJsMapArtifactMap
+            ? kDdcLibraryBundleDartSdkJsMapArtifactMap
             : kAmdDartSdkJsMapArtifactMap;
     return _fileSystem.file(
       _artifacts!.getHostArtifact(dartSdkArtifactMap[webRenderer]![_nullSafetyMode]!),

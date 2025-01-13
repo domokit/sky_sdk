@@ -609,6 +609,14 @@ abstract class Device {
 
   String get name;
 
+  String get displayName {
+    String result = name;
+    if (isWirelesslyConnected) {
+      result += ' (wireless)';
+    }
+    return result;
+  }
+
   bool get supportsStartPaused => true;
 
   /// Whether it is an emulated device running on localhost.
@@ -813,7 +821,7 @@ abstract class Device {
         supportIndicator += ' ($type)';
       }
       table.add(<String>[
-        '${device.name} (${device.category})',
+        '${device.displayName} (${device.category})',
         device.id,
         await device.targetPlatformDisplayName,
         '${await device.sdkNameAndVersion}$supportIndicator',

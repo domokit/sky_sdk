@@ -32,6 +32,7 @@ import 'platform_view.dart';
 import 'route.dart';
 import 'scrollable.dart';
 import 'semantics_helper.dart';
+import 'tabs.dart';
 import 'tappable.dart';
 import 'text_field.dart';
 
@@ -235,6 +236,7 @@ class SemanticsNodeUpdate {
     required this.additionalActions,
     required this.headingLevel,
     this.linkUrl,
+    required this.role,
   });
 
   /// See [ui.SemanticsUpdateBuilder.updateNode].
@@ -341,13 +343,16 @@ class SemanticsNodeUpdate {
 
   /// See [ui.SemanticsUpdateBuilder.updateNode].
   final String? linkUrl;
+
+  /// See [ui.SemanticsUpdateBuilder.updateNode].
+  final ui.SemanticsRole role;
 }
 
 /// Identifies [SemanticRole] implementations.
 ///
 /// Each value corresponds to the most specific role a semantics node plays in
 /// the semantics tree.
-enum SemanticRoleKind {
+enum EngineSemanticsRole {
   /// Supports incrementing and/or decrementing its value.
   incrementable,
 
@@ -402,6 +407,15 @@ enum SemanticRoleKind {
   /// Denotes a header.
   header,
 
+  /// An individual tab button.
+  tab,
+
+  /// Contains tab buttons.
+  tabList,
+
+  /// A main content for a tab.
+  tabPanel,
+
   /// A role used when a more specific role cannot be assigend to
   /// a [SemanticsObject].
   ///
@@ -442,7 +456,7 @@ abstract class SemanticRole {
   late final DomElement element;
 
   /// The kind of the role that this .
-  final SemanticRoleKind kind;
+  final EngineSemanticsRole kind;
 
   /// The semantics object managed by this role.
   final SemanticsObject semanticsObject;
@@ -678,7 +692,7 @@ abstract class SemanticRole {
 final class GenericRole extends SemanticRole {
   GenericRole(SemanticsObject semanticsObject)
     : super.withBasics(
-        SemanticRoleKind.generic,
+        EngineSemanticsRole.generic,
         semanticsObject,
         // Prefer sized span because if this is a leaf it is frequently a Text widget.
         // But if it turns out to be a container, then LabelAndValue will automatically
@@ -1232,6 +1246,9 @@ class SemanticsObject {
   /// Controls the semantics tree that this node participates in.
   final EngineSemanticsOwner owner;
 
+  /// The role of this node.
+  late ui.SemanticsRole role;
+
   /// Bitfield showing which fields have been updated but have not yet been
   /// applied to the DOM.
   ///
@@ -1518,6 +1535,8 @@ class SemanticsObject {
       _markLinkUrlDirty();
     }
 
+    role = update.role;
+
     // Apply updates to the DOM.
     _updateRole();
 
@@ -1714,51 +1733,66 @@ class SemanticsObject {
   /// semantics flags and actions.
   SemanticRole? semanticRole;
 
-  SemanticRoleKind _getSemanticRoleKind() {
+  EngineSemanticsRole _getEngineSemanticsRole() {
     // The most specific role should take precedence.
     if (isPlatformView) {
-      return SemanticRoleKind.platformView;
-    } else if (isHeading) {
+      return EngineSemanticsRole.platformView;
+    }
+    switch (role) {
+      case ui.SemanticsRole.tab:
+        return EngineSemanticsRole.tab;
+      case ui.SemanticsRole.tabPanel:
+        return EngineSemanticsRole.tabPanel;
+      case ui.SemanticsRole.tabBar:
+        return EngineSemanticsRole.tabList;
+      case ui.SemanticsRole.none:
+      // fallback to checking semantics properties.
+    }
+
+    if (isHeading) {
       // IMPORTANT: because headings also cover certain kinds of headers, the
       //            `heading` role has precedence over the `header` role.
-      return SemanticRoleKind.heading;
+      return EngineSemanticsRole.heading;
     } else if (isTextField) {
-      return SemanticRoleKind.textField;
+      return EngineSemanticsRole.textField;
     } else if (isIncrementable) {
-      return SemanticRoleKind.incrementable;
+      return EngineSemanticsRole.incrementable;
     } else if (isVisualOnly) {
-      return SemanticRoleKind.image;
+      return EngineSemanticsRole.image;
     } else if (isCheckable) {
-      return SemanticRoleKind.checkable;
+      return EngineSemanticsRole.checkable;
     } else if (isButton) {
-      return SemanticRoleKind.button;
+      return EngineSemanticsRole.button;
     } else if (isScrollContainer) {
-      return SemanticRoleKind.scrollable;
+      return EngineSemanticsRole.scrollable;
     } else if (scopesRoute) {
-      return SemanticRoleKind.route;
+      return EngineSemanticsRole.route;
     } else if (isLink) {
-      return SemanticRoleKind.link;
+      return EngineSemanticsRole.link;
     } else if (isHeader) {
-      return SemanticRoleKind.header;
+      return EngineSemanticsRole.header;
     } else {
-      return SemanticRoleKind.generic;
+      return EngineSemanticsRole.generic;
     }
   }
 
-  SemanticRole _createSemanticRole(SemanticRoleKind role) {
+  SemanticRole _createSemanticRole(EngineSemanticsRole role) {
     return switch (role) {
-      SemanticRoleKind.textField => SemanticTextField(this),
-      SemanticRoleKind.scrollable => SemanticScrollable(this),
-      SemanticRoleKind.incrementable => SemanticIncrementable(this),
-      SemanticRoleKind.button => SemanticButton(this),
-      SemanticRoleKind.checkable => SemanticCheckable(this),
-      SemanticRoleKind.route => SemanticRoute(this),
-      SemanticRoleKind.image => SemanticImage(this),
-      SemanticRoleKind.platformView => SemanticPlatformView(this),
-      SemanticRoleKind.link => SemanticLink(this),
-      SemanticRoleKind.heading => SemanticHeading(this),
-      SemanticRoleKind.header => SemanticHeader(this),
-      SemanticRoleKind.generic => GenericRole(this),
+      EngineSemanticsRole.textField => SemanticTextField(this),
+      EngineSemanticsRole.scrollable => SemanticScrollable(this),
+      EngineSemanticsRole.incrementable => SemanticIncrementable(this),
+      EngineSemanticsRole.button => SemanticButton(this),
+      EngineSemanticsRole.checkable => SemanticCheckable(this),
+      EngineSemanticsRole.route => SemanticRoute(this),
+      EngineSemanticsRole.image => SemanticImage(this),
+      EngineSemanticsRole.platformView => SemanticPlatformView(this),
+      EngineSemanticsRole.link => SemanticLink(this),
+      EngineSemanticsRole.heading => SemanticHeading(this),
+      EngineSemanticsRole.header => SemanticHeader(this),
+      EngineSemanticsRole.tab => SemanticTab(this),
+      EngineSemanticsRole.tabList => SemanticTabList(this),
+      EngineSemanticsRole.tabPanel => SemanticTabPanel(this),
+      EngineSemanticsRole.generic => GenericRole(this),
     };
   }
 
@@ -1766,7 +1800,7 @@ class SemanticsObject {
   /// update the DOM.
   void _updateRole() {
     SemanticRole? currentSemanticRole = semanticRole;
-    final SemanticRoleKind kind = _getSemanticRoleKind();
+    final EngineSemanticsRole kind = _getEngineSemanticsRole();
     final DomElement? previousElement = semanticRole?.element;
 
     if (currentSemanticRole != null) {

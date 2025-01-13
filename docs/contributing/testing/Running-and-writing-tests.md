@@ -42,7 +42,7 @@ To debug tests in Observatory, use the `--start-paused` option to start the test
 paused state and wait for connection from a debugger. This option lets you set breakpoints
 before the test runs.
 
-To run analysis and all the tests for the entire Flutter repository, the same way that Cirrus
+To run analysis and all the tests for the entire Flutter repository, the same way that LUCI
 runs them, run `dart dev/bots/test.dart` and `dart --enable-asserts dev/bots/analyze.dart`.
 
 If you've built your own flutter engine (see [Setting up the Engine development environment](../../engine/contributing/Setting-up-the-Engine-development-environment.md)), you

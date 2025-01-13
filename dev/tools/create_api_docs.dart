@@ -401,7 +401,7 @@ class Configurator {
     // show the end of it if there was a problem.
     print('${DateTime.now().toUtc()}: Building Flutter docset.');
 
-    // If dashing gets stuck, Cirrus will time out the build after an hour, and we
+    // If dashing gets stuck, LUCI will time out the build after an hour, and we
     // never get to see the logs. Thus, we run it in the background and tail the
     // logs only if it fails.
     final ProcessWrapper result = ProcessWrapper(

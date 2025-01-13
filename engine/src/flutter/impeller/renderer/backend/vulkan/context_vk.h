@@ -82,7 +82,7 @@ class ContextVK final : public Context,
     fml::UniqueFD cache_directory;
     bool enable_validation = false;
     bool enable_gpu_tracing = false;
-    bool disable_surface_control = false;
+    bool enable_surface_control = false;
     /// If validations are requested but cannot be enabled, log a fatal error.
     bool fatal_missing_validations = false;
 
@@ -227,8 +227,8 @@ class ContextVK final : public Context,
   void DisposeThreadLocalCachedResources() override;
 
   /// @brief Whether the Android Surface control based swapchain should be
-  /// disabled, even if the device is capable of supporting it.
-  bool GetShouldDisableSurfaceControlSwapchain() const;
+  ///        enabled
+  bool GetShouldEnableSurfaceControlSwapchain() const;
 
   // | Context |
   bool EnqueueCommandBuffer(
@@ -292,7 +292,7 @@ class ContextVK final : public Context,
   mutable Mutex desc_pool_mutex_;
   mutable DescriptorPoolMap IPLR_GUARDED_BY(desc_pool_mutex_)
       cached_descriptor_pool_;
-  bool should_disable_surface_control_ = false;
+  bool should_enable_surface_control_ = false;
   bool should_batch_cmd_buffers_ = false;
   std::vector<std::shared_ptr<CommandBuffer>> pending_command_buffers_;
 

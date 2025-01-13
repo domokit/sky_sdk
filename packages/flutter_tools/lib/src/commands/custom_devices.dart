@@ -434,7 +434,7 @@ class CustomDevicesAddCommand extends CustomDevicesCommandBase {
 
     if (config.usesPortForwarding) {
       final CustomDevicePortForwarder portForwarder = CustomDevicePortForwarder(
-        deviceName: device.name,
+        deviceName: device.displayName,
         forwardPortCommand: config.forwardPortCommand!,
         forwardPortSuccessRegex: config.forwardPortSuccessRegex!,
         processManager: _processManager,

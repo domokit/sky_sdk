@@ -12,6 +12,7 @@
 #include "flutter/shell/platform/embedder/embedder.h"
 #include "flutter/shell/platform/linux/fl_binary_messenger_private.h"
 #include "flutter/shell/platform/linux/fl_dart_project_private.h"
+#include "flutter/shell/platform/linux/fl_display_monitor.h"
 #include "flutter/shell/platform/linux/fl_engine_private.h"
 #include "flutter/shell/platform/linux/fl_pixel_buffer_texture_private.h"
 #include "flutter/shell/platform/linux/fl_platform_handler.h"
@@ -40,6 +41,9 @@ struct _FlEngine {
 
   // The project this engine is running.
   FlDartProject* project;
+
+  // Watches for monitors changes to update engine.
+  FlDisplayMonitor* display_monitor;
 
   // Renders the Flutter app.
   FlRenderer* renderer;
@@ -532,6 +536,11 @@ FlRenderer* fl_engine_get_renderer(FlEngine* self) {
   return self->renderer;
 }
 
+FlDisplayMonitor* fl_engine_get_display_monitor(FlEngine* self) {
+  g_return_val_if_fail(FL_IS_ENGINE(self), nullptr);
+  return self->display_monitor;
+}
+
 gboolean fl_engine_start(FlEngine* self, GError** error) {
   g_return_val_if_fail(FL_IS_ENGINE(self), FALSE);
 
@@ -642,29 +651,28 @@ gboolean fl_engine_start(FlEngine* self, GError** error) {
     g_warning("Failed to enable accessibility features on Flutter engine");
   }
 
-  gdouble refresh_rate = fl_renderer_get_refresh_rate(self->renderer);
-  // FlutterEngineDisplay::refresh_rate expects 0 if the refresh rate is
-  // unknown.
-  if (refresh_rate <= 0.0) {
-    refresh_rate = 0.0;
-  }
-  FlutterEngineDisplay display = {};
-  display.struct_size = sizeof(FlutterEngineDisplay);
-  display.display_id = 0;
-  display.single_display = true;
-  display.refresh_rate = refresh_rate;
-
-  result = self->embedder_api.NotifyDisplayUpdate(
-      self->engine, kFlutterEngineDisplaysUpdateTypeStartup, &display, 1);
-  if (result != kSuccess) {
-    g_warning("Failed to notify display update to Flutter engine: %d", result);
-  }
+  self->display_monitor =
+      fl_display_monitor_new(self, gdk_display_get_default());
+  fl_display_monitor_start(self->display_monitor);
 
   return TRUE;
 }
 
 FlutterEngineProcTable* fl_engine_get_embedder_api(FlEngine* self) {
   return &(self->embedder_api);
+}
+
+void fl_engine_notify_display_update(FlEngine* self,
+                                     const FlutterEngineDisplay* displays,
+                                     size_t displays_length) {
+  g_return_if_fail(FL_IS_ENGINE(self));
+
+  FlutterEngineResult result = self->embedder_api.NotifyDisplayUpdate(
+      self->engine, kFlutterEngineDisplaysUpdateTypeStartup, displays,
+      displays_length);
+  if (result != kSuccess) {
+    g_warning("Failed to notify display update to Flutter engine: %d", result);
+  }
 }
 
 FlutterViewId fl_engine_add_view(FlEngine* self,
@@ -681,11 +689,16 @@ FlutterViewId fl_engine_add_view(FlEngine* self,
   FlutterViewId view_id = self->next_view_id;
   self->next_view_id++;
 
+  // We don't know which display this view will open on, so set to zero and this
+  // will be updated in a following FlutterWindowMetricsEvent
+  FlutterEngineDisplayId display_id = 0;
+
   FlutterWindowMetricsEvent metrics;
   metrics.struct_size = sizeof(FlutterWindowMetricsEvent);
   metrics.width = width;
   metrics.height = height;
   metrics.pixel_ratio = pixel_ratio;
+  metrics.display_id = display_id;
   metrics.view_id = view_id;
   FlutterAddViewInfo info;
   info.struct_size = sizeof(FlutterAddViewInfo);
@@ -881,6 +894,7 @@ GBytes* fl_engine_send_platform_message_finish(FlEngine* self,
 }
 
 void fl_engine_send_window_metrics_event(FlEngine* self,
+                                         FlutterEngineDisplayId display_id,
                                          FlutterViewId view_id,
                                          size_t width,
                                          size_t height,
@@ -896,6 +910,7 @@ void fl_engine_send_window_metrics_event(FlEngine* self,
   event.width = width;
   event.height = height;
   event.pixel_ratio = pixel_ratio;
+  event.display_id = display_id;
   event.view_id = view_id;
   self->embedder_api.SendWindowMetricsEvent(self->engine, &event);
 }

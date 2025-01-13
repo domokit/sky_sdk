@@ -21,7 +21,7 @@ Future<int> _fetchTexture(int width, int height) async {
 }
 
 void main() async {
-  ensureAndroidOrIosDevice();
+  ensureAndroidDevice();
   enableFlutterDriverExtension(commands: <CommandExtension>[nativeDriverCommands]);
 
   // Run on full screen.

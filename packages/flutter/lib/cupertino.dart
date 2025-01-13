@@ -56,6 +56,7 @@ export 'src/cupertino/route.dart';
 export 'src/cupertino/scrollbar.dart';
 export 'src/cupertino/search_field.dart';
 export 'src/cupertino/segmented_control.dart';
+export 'src/cupertino/sheet.dart';
 export 'src/cupertino/slider.dart';
 export 'src/cupertino/sliding_segmented_control.dart';
 export 'src/cupertino/spell_check_suggestions_toolbar.dart';

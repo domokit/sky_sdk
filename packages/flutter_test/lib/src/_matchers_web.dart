@@ -85,11 +85,11 @@ class MatchesGoldenFile extends AsyncMatcher {
             return 'could not encode screenshot.';
           }
           if (autoUpdateGoldenFiles) {
-            await webGoldenComparator.updateBytes(bytes.buffer.asUint8List(), key);
+            await goldenFileComparator.update(key, bytes.buffer.asUint8List());
             return null;
           }
           try {
-            final bool success = await webGoldenComparator.compareBytes(
+            final bool success = await goldenFileComparator.compare(
               bytes.buffer.asUint8List(),
               key,
             );
@@ -126,7 +126,7 @@ class MatchesGoldenFile extends AsyncMatcher {
 
   @override
   Description describe(Description description) {
-    final Uri testNameUri = webGoldenComparator.getTestUri(key, version);
+    final Uri testNameUri = goldenFileComparator.getTestUri(key, version);
     return description.add('one widget whose rasterized image matches golden image "$testNameUri"');
   }
 }

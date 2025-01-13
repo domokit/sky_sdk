@@ -330,8 +330,8 @@ No supported devices found with name or id matching 'target-device'.
 No supported devices found with name or id matching 'target-device'.
 
 The following devices were found:
-no-match-1 (mobile) • xxx • android • Android 10
-no-match-2 (mobile) • xxx • android • Android 10
+no-match-1 (mobile)            • xxx • android • Android 10
+no-match-2 (wireless) (mobile) • xxx • android • Android 10
 '''),
           );
           expect(devices, isNull);
@@ -386,7 +386,7 @@ target-device (mobile) • xxx • android • Android 10 (unsupported)
 No supported devices found with name or id matching 'target-device'.
 
 The following devices were found:
-not-a-match-2 (mobile) • xxx • android • Android 10
+not-a-match-2 (wireless) (mobile) • xxx • android • Android 10
 '''),
             );
             expect(devices, isNull);
@@ -678,10 +678,10 @@ Connected devices:
 target-device-1 (mobile) • xxx • android • Android 10
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • android • Android 10
+target-device-5 (wireless) (mobile) • xxx • android • Android 10
 
 [1]: target-device-1 (xxx)
-[2]: target-device-5 (xxx)
+[2]: target-device-5 (wireless) (xxx)
 '''),
               );
               expect(devices, <Device>[wirelessAndroidDevice1]);
@@ -732,11 +732,11 @@ target-device-2 (mobile) • xxx • android • Android 10
 Connected devices:
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • android • Android 10
-target-device-6 (mobile) • xxx • android • Android 10
+target-device-5 (wireless) (mobile) • xxx • android • Android 10
+target-device-6 (wireless) (mobile) • xxx • android • Android 10
 
-[1]: target-device-5 (xxx)
-[2]: target-device-6 (xxx)
+[1]: target-device-5 (wireless) (xxx)
+[2]: target-device-6 (wireless) (xxx)
 '''),
             );
             expect(devices, <Device>[wirelessAndroidDevice1]);
@@ -776,8 +776,8 @@ target-device-1 (mobile) • xxx • android • Android 10
 target-device-4 (mobile) • xxx • android • Android 10
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • android • Android 10
-target-device-8 (mobile) • xxx • android • Android 10
+target-device-5 (wireless) (mobile) • xxx • android • Android 10
+target-device-8 (wireless) (mobile) • xxx • android • Android 10
 '''),
               );
               expect(devices, isNull);
@@ -825,8 +825,8 @@ target-device-2 (mobile) • xxx • android • Android 10
 More than one device connected; please specify a device with the '-d <deviceId>' flag, or use '-d all' to act on all devices.
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • android • Android 10
-target-device-6 (mobile) • xxx • android • Android 10
+target-device-5 (wireless) (mobile) • xxx • android • Android 10
+target-device-6 (wireless) (mobile) • xxx • android • Android 10
 '''),
             );
             expect(devices, isNull);
@@ -872,13 +872,13 @@ target-device-1 (mobile) • xxx • android • Android 10
 target-device-4 (mobile) • xxx • android • Android 10
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • android • Android 10
-target-device-8 (mobile) • xxx • android • Android 10
+target-device-5 (wireless) (mobile) • xxx • android • Android 10
+target-device-8 (wireless) (mobile) • xxx • android • Android 10
 
 [1]: target-device-1 (xxx)
 [2]: target-device-4 (xxx)
-[3]: target-device-5 (xxx)
-[4]: target-device-8 (xxx)
+[3]: target-device-5 (wireless) (xxx)
+[4]: target-device-8 (wireless) (xxx)
 '''),
               );
               expect(devices, <Device>[attachedUnsupportedForProjectAndroidDevice]);
@@ -929,11 +929,11 @@ target-device-2 (mobile) • xxx • android • Android 10
 Found 2 devices with name or id matching target-device:
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • android • Android 10
-target-device-6 (mobile) • xxx • android • Android 10
+target-device-5 (wireless) (mobile) • xxx • android • Android 10
+target-device-6 (wireless) (mobile) • xxx • android • Android 10
 
-[1]: target-device-5 (xxx)
-[2]: target-device-6 (xxx)
+[1]: target-device-5 (wireless) (xxx)
+[2]: target-device-6 (wireless) (xxx)
 '''),
             );
             expect(devices, <Device>[wirelessAndroidDevice1]);
@@ -994,8 +994,8 @@ target-device-1 (mobile) • xxx • android • Android 10
 target-device-4 (mobile) • xxx • android • Android 10
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • android • Android 10
-target-device-8 (mobile) • xxx • android • Android 10
+target-device-5 (wireless) (mobile) • xxx • android • Android 10
+target-device-8 (wireless) (mobile) • xxx • android • Android 10
 '''),
               );
               expect(devices, isNull);
@@ -1042,8 +1042,8 @@ target-device-2 (mobile) • xxx • android • Android 10
 Found 2 devices with name or id matching target-device:
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • android • Android 10
-target-device-6 (mobile) • xxx • android • Android 10
+target-device-5 (wireless) (mobile) • xxx • android • Android 10
+target-device-6 (wireless) (mobile) • xxx • android • Android 10
 '''),
             );
             expect(devices, isNull);
@@ -1308,10 +1308,10 @@ No devices found yet. Checking for wireless devices...
 No supported devices connected.
 
 The following devices were found, but are not supported by this project:
-target-device-3 (mobile) • xxx • ios • iOS 16 (unsupported)
-target-device-4 (mobile) • xxx • ios • iOS 16
-target-device-7 (mobile) • xxx • ios • iOS 16 (unsupported)
-target-device-8 (mobile) • xxx • ios • iOS 16
+target-device-3 (mobile)            • xxx • ios • iOS 16 (unsupported)
+target-device-4 (mobile)            • xxx • ios • iOS 16
+target-device-7 (wireless) (mobile) • xxx • ios • iOS 16 (unsupported)
+target-device-8 (wireless) (mobile) • xxx • ios • iOS 16
 If you would like your app to run on ios, consider running `flutter create .` to generate projects for these platforms.
 '''),
           );
@@ -1420,8 +1420,8 @@ No devices found yet. Checking for wireless devices...
 No supported devices found with name or id matching 'target-device'.
 
 The following devices were found:
-no-match-1 (mobile) • xxx • ios • iOS 16
-no-match-2 (mobile) • xxx • ios • iOS 16
+no-match-1 (mobile)            • xxx • ios • iOS 16
+no-match-2 (wireless) (mobile) • xxx • ios • iOS 16
 '''),
           );
           expect(devices, isNull);
@@ -1592,7 +1592,7 @@ Checking for wireless devices...
 No supported devices found with name or id matching 'target-device'.
 
 The following devices were found:
-not-a-match (mobile) • xxx • ios • iOS 16
+not-a-match (wireless) (mobile) • xxx • ios • iOS 16
 '''),
             );
             expect(devices, isNull);
@@ -1652,11 +1652,11 @@ No devices found yet. Checking for wireless devices...
 No devices found.
 
 The following devices were found, but are not supported by this project:
-target-device-10 (mobile) • xxx • fuchsia-arm64 • tester
-target-device-3 (mobile)  • xxx • ios           • iOS 16 (unsupported)
-target-device-4 (mobile)  • xxx • ios           • iOS 16
-target-device-7 (mobile)  • xxx • ios           • iOS 16 (unsupported)
-target-device-8 (mobile)  • xxx • ios           • iOS 16
+target-device-10 (mobile)           • xxx • fuchsia-arm64 • tester
+target-device-3 (mobile)            • xxx • ios           • iOS 16 (unsupported)
+target-device-4 (mobile)            • xxx • ios           • iOS 16
+target-device-7 (wireless) (mobile) • xxx • ios           • iOS 16 (unsupported)
+target-device-8 (wireless) (mobile) • xxx • ios           • iOS 16
 If you would like your app to run on fuchsia or ios, consider running `flutter create .` to generate projects for these platforms.
 '''),
             );
@@ -1926,7 +1926,7 @@ Checking for wireless devices...
           expect(
             logger.statusText,
             equals('''
-Waiting for target-device to connect...
+Waiting for target-device (wireless) to connect...
 '''),
           );
           expect(devices, <Device>[exactMatchWirelessDevice]);
@@ -1953,7 +1953,7 @@ Waiting for target-device to connect...
           expect(
             logger.statusText,
             equals('''
-Waiting for target-device-1 to connect...
+Waiting for target-device-1 (wireless) to connect...
 '''),
           );
           expect(devices, <Device>[partialMatchWirelessDevice]);
@@ -2174,11 +2174,11 @@ target-device-1 (mobile) • xxx • ios • iOS 16
 target-device-2 (mobile) • xxx • ios • iOS 16
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • ios • iOS 16
+target-device-5 (wireless) (mobile) • xxx • ios • iOS 16
 
 [1]: target-device-1 (xxx)
 [2]: target-device-2 (xxx)
-[3]: target-device-5 (xxx)
+[3]: target-device-5 (wireless) (xxx)
 Please choose one (or "q" to quit): '''),
               );
               expect(devices, <Device>[connectedWirelessIOSDevice1]);
@@ -2253,11 +2253,11 @@ No devices found yet. Checking for wireless devices...
 Connected devices:
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • ios • iOS 16
-target-device-6 (mobile) • xxx • ios • iOS 16
+target-device-5 (wireless) (mobile) • xxx • ios • iOS 16
+target-device-6 (wireless) (mobile) • xxx • ios • iOS 16
 
-[1]: target-device-5 (xxx)
-[2]: target-device-6 (xxx)
+[1]: target-device-5 (wireless) (xxx)
+[2]: target-device-6 (wireless) (xxx)
 '''),
             );
             expect(devices, <Device>[connectedWirelessIOSDevice1]);
@@ -2303,11 +2303,11 @@ target-device-1 (mobile) • xxx • ios • iOS 16
 target-device-2 (mobile) • xxx • ios • iOS 16
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • ios • iOS 16
+target-device-5 (wireless) (mobile) • xxx • ios • iOS 16
 
 [1]: target-device-1 (xxx)
 [2]: target-device-2 (xxx)
-[3]: target-device-5 (xxx)
+[3]: target-device-5 (wireless) (xxx)
 '''),
                 );
                 expect(devices, <Device>[attachedIOSDevice1]);
@@ -2424,11 +2424,11 @@ target-device-1 (mobile) • xxx • ios • iOS 16
 target-device-2 (mobile) • xxx • ios • iOS 16
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • ios • iOS 16
+target-device-5 (wireless) (mobile) • xxx • ios • iOS 16
 
 [1]: target-device-1 (xxx)
 [2]: target-device-2 (xxx)
-[3]: target-device-5 (xxx)
+[3]: target-device-5 (wireless) (xxx)
 Please choose one (or "q" to quit): '''),
                 );
 
@@ -2490,8 +2490,8 @@ target-device-2 (mobile) • xxx • ios • iOS 16
 target-device-4 (mobile) • xxx • ios • iOS 16
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • ios • iOS 16
-target-device-8 (mobile) • xxx • ios • iOS 16
+target-device-5 (wireless) (mobile) • xxx • ios • iOS 16
+target-device-8 (wireless) (mobile) • xxx • ios • iOS 16
 '''),
               );
               expect(devices, isNull);
@@ -2547,8 +2547,8 @@ No devices found yet. Checking for wireless devices...
 More than one device connected; please specify a device with the '-d <deviceId>' flag, or use '-d all' to act on all devices.
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • ios • iOS 16
-target-device-6 (mobile) • xxx • ios • iOS 16
+target-device-5 (wireless) (mobile) • xxx • ios • iOS 16
+target-device-6 (wireless) (mobile) • xxx • ios • iOS 16
 '''),
             );
             expect(devices, isNull);
@@ -2619,13 +2619,13 @@ target-device-1 (mobile) • xxx • ios • iOS 16
 target-device-4 (mobile) • xxx • ios • iOS 16
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • ios • iOS 16
-target-device-8 (mobile) • xxx • ios • iOS 16
+target-device-5 (wireless) (mobile) • xxx • ios • iOS 16
+target-device-8 (wireless) (mobile) • xxx • ios • iOS 16
 
 [1]: target-device-1 (xxx)
 [2]: target-device-4 (xxx)
-[3]: target-device-5 (xxx)
-[4]: target-device-8 (xxx)
+[3]: target-device-5 (wireless) (xxx)
+[4]: target-device-8 (wireless) (xxx)
 Please choose one (or "q" to quit): '''),
               );
               expect(devices, <Device>[connectedWirelessIOSDevice1]);
@@ -2698,11 +2698,11 @@ No devices found yet. Checking for wireless devices...
 Found 2 devices with name or id matching target-device:
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • ios • iOS 16
-target-device-6 (mobile) • xxx • ios • iOS 16
+target-device-5 (wireless) (mobile) • xxx • ios • iOS 16
+target-device-6 (wireless) (mobile) • xxx • ios • iOS 16
 
-[1]: target-device-5 (xxx)
-[2]: target-device-6 (xxx)
+[1]: target-device-5 (wireless) (xxx)
+[2]: target-device-6 (wireless) (xxx)
 '''),
             );
             expect(devices, <Device>[connectedWirelessIOSDevice1]);
@@ -2782,8 +2782,8 @@ target-device-1 (mobile) • xxx • ios • iOS 16
 target-device-4 (mobile) • xxx • ios • iOS 16
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • ios • iOS 16
-target-device-8 (mobile) • xxx • ios • iOS 16
+target-device-5 (wireless) (mobile) • xxx • ios • iOS 16
+target-device-8 (wireless) (mobile) • xxx • ios • iOS 16
 '''),
               );
               expect(devices, isNull);
@@ -2840,8 +2840,8 @@ No devices found yet. Checking for wireless devices...
 Found 2 devices with name or id matching target-device:
 
 Wirelessly connected devices:
-target-device-5 (mobile) • xxx • ios • iOS 16
-target-device-6 (mobile) • xxx • ios • iOS 16
+target-device-5 (wireless) (mobile) • xxx • ios • iOS 16
+target-device-6 (wireless) (mobile) • xxx • ios • iOS 16
 '''),
             );
             expect(devices, isNull);
@@ -3190,6 +3190,15 @@ class FakeDevice extends Fake implements Device {
   String name;
 
   @override
+  String get displayName {
+    String result = name;
+    if (isWirelesslyConnected) {
+      result += ' (wireless)';
+    }
+    return result;
+  }
+
+  @override
   final bool ephemeral;
 
   @override
@@ -3203,6 +3212,9 @@ class FakeDevice extends Fake implements Device {
 
   @override
   DeviceConnectionInterface connectionInterface;
+
+  @override
+  bool get isWirelesslyConnected => connectionInterface == DeviceConnectionInterface.wireless;
 
   @override
   bool isConnected;
@@ -3283,6 +3295,15 @@ class FakeIOSDevice extends Fake implements IOSDevice {
   String name;
 
   @override
+  String get displayName {
+    String result = name;
+    if (isWirelesslyConnected) {
+      result += ' (wireless)';
+    }
+    return result;
+  }
+
+  @override
   final bool ephemeral;
 
   @override
@@ -3302,6 +3323,9 @@ class FakeIOSDevice extends Fake implements IOSDevice {
 
   @override
   DeviceConnectionInterface connectionInterface;
+
+  @override
+  bool get isWirelesslyConnected => connectionInterface == DeviceConnectionInterface.wireless;
 
   @override
   bool isConnected;

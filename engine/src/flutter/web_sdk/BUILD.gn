@@ -336,13 +336,17 @@ group("flutter_platform_dills") {
   ]
 }
 
-template("_compile_ddc_modules") {
+template("_compile_ddc_module") {
   assert(defined(invoker.sound_null_safety),
          "sound_null_safety must be defined for $target_name")
-  assert(defined(invoker.use_skia),
-         "use_skia must be defined  for $target_name")
+  assert(defined(invoker.use_skia), "use_skia must be defined for $target_name")
   assert(defined(invoker.auto_detect),
          "auto_detect must be defined for $target_name")
+  assert(defined(invoker.sdk_path_prefix),
+         "sdk_path_prefix must be defined for $target_name")
+  assert(defined(invoker.module_format),
+         "module_name must be defined for $target_name")
+  assert(defined(invoker.canary), "canary must be defined for $target_name")
 
   _dartdevc(target_name) {
     inputs = [ "sdk_rewriter.dart" ] + web_ui_sources
@@ -360,17 +364,11 @@ template("_compile_ddc_modules") {
       name_suffix += "-sound"
     }
 
-    amd_js_path =
-        "$root_out_dir/flutter_web_sdk/kernel/amd${name_suffix}/dart_sdk.js"
-
-    ddc_js_path =
-        "$root_out_dir/flutter_web_sdk/kernel/ddc${name_suffix}/dart_sdk.js"
+    dart_sdk_js_path = "$root_out_dir/flutter_web_sdk/kernel/${invoker.sdk_path_prefix}${name_suffix}/dart_sdk.js"
 
     outputs = [
-      amd_js_path,
-      amd_js_path + ".map",
-      ddc_js_path,
-      ddc_js_path + ".map",
+      dart_sdk_js_path,
+      dart_sdk_js_path + ".map",
     ]
 
     if (invoker.sound_null_safety) {
@@ -405,14 +403,13 @@ template("_compile_ddc_modules") {
       "-DFLUTTER_WEB_USE_SKIA=${invoker.use_skia}",
       "-DFLUTTER_WEB_AUTO_DETECT=${invoker.auto_detect}",
       "--modules",
-      "amd",
+      invoker.module_format,
       "-o",
-      rebase_path(amd_js_path),
-      "--modules",
-      "ddc",
-      "-o",
-      rebase_path(ddc_js_path),
+      rebase_path(dart_sdk_js_path),
     ]
+    if (invoker.canary) {
+      args += [ "--canary" ]
+    }
     if (flutter_prebuilt_dart_sdk) {
       args += [
         "--multi-root",
@@ -423,6 +420,30 @@ template("_compile_ddc_modules") {
         "--multi-root",
         "file:///" + rebase_path("$root_out_dir"),
       ]
+    }
+  }
+}
+
+template("_compile_ddc_modules") {
+  assert(defined(invoker.sound_null_safety),
+         "sound_null_safety must be defined for $target_name")
+  forward_variables_from(invoker, "*")
+
+  # We compile multiple times instead of passing multiple modules to a single
+  # compile as the DDC library bundle format cannot be used when passing
+  # multiple module formats as arguments.
+  _compile_ddc_module("${target_name}_amd") {
+    sdk_path_prefix = "amd"
+    module_format = "amd"
+    canary = false
+  }
+
+  # No support for unsound null safety with the DDC library bundle format.
+  if (sound_null_safety) {
+    _compile_ddc_module("${target_name}_ddcLibraryBundle") {
+      sdk_path_prefix = "ddcLibraryBundle"
+      module_format = "ddc"
+      canary = true
     }
   }
 }
@@ -471,12 +492,15 @@ _compile_ddc_modules("flutter_dartdevc_canvaskit_html_kernel_sdk_sound") {
 
 group("flutter_ddc_modules") {
   public_deps = [
-    ":flutter_dartdevc_canvaskit_html_kernel_sdk",
-    ":flutter_dartdevc_canvaskit_html_kernel_sdk_sound",
-    ":flutter_dartdevc_canvaskit_kernel_sdk",
-    ":flutter_dartdevc_canvaskit_kernel_sdk_sound",
-    ":flutter_dartdevc_kernel_sdk",
-    ":flutter_dartdevc_kernel_sdk_sound",
+    ":flutter_dartdevc_canvaskit_html_kernel_sdk_amd",
+    ":flutter_dartdevc_canvaskit_html_kernel_sdk_sound_amd",
+    ":flutter_dartdevc_canvaskit_html_kernel_sdk_sound_ddcLibraryBundle",
+    ":flutter_dartdevc_canvaskit_kernel_sdk_amd",
+    ":flutter_dartdevc_canvaskit_kernel_sdk_sound_amd",
+    ":flutter_dartdevc_canvaskit_kernel_sdk_sound_ddcLibraryBundle",
+    ":flutter_dartdevc_kernel_sdk_amd",
+    ":flutter_dartdevc_kernel_sdk_sound_amd",
+    ":flutter_dartdevc_kernel_sdk_sound_ddcLibraryBundle",
   ]
 }
 
@@ -500,14 +524,21 @@ if (!is_fuchsia) {
     deps += [ "//flutter/lib/web_ui/flutter_js" ]
 
     # flutter_ddc_modules
-    sources = get_target_outputs(":flutter_dartdevc_kernel_sdk")
-    sources += get_target_outputs(":flutter_dartdevc_canvaskit_kernel_sdk")
-    sources += get_target_outputs(":flutter_dartdevc_canvaskit_html_kernel_sdk")
-    sources += get_target_outputs(":flutter_dartdevc_kernel_sdk_sound")
+    sources = get_target_outputs(":flutter_dartdevc_kernel_sdk_amd")
+    sources += get_target_outputs(":flutter_dartdevc_canvaskit_kernel_sdk_amd")
     sources +=
-        get_target_outputs(":flutter_dartdevc_canvaskit_kernel_sdk_sound")
+        get_target_outputs(":flutter_dartdevc_canvaskit_html_kernel_sdk_amd")
+    sources += get_target_outputs(":flutter_dartdevc_kernel_sdk_sound_amd")
     sources +=
-        get_target_outputs(":flutter_dartdevc_canvaskit_html_kernel_sdk_sound")
+        get_target_outputs(":flutter_dartdevc_canvaskit_kernel_sdk_sound_amd")
+    sources += get_target_outputs(
+            ":flutter_dartdevc_canvaskit_html_kernel_sdk_sound_amd")
+    sources += get_target_outputs(
+            ":flutter_dartdevc_kernel_sdk_sound_ddcLibraryBundle")
+    sources += get_target_outputs(
+            ":flutter_dartdevc_canvaskit_kernel_sdk_sound_ddcLibraryBundle")
+    sources += get_target_outputs(
+            ":flutter_dartdevc_canvaskit_html_kernel_sdk_sound_ddcLibraryBundle")
 
     # flutter_platform_dills
     sources +=

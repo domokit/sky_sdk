@@ -159,6 +159,7 @@ export 'engine/semantics/route.dart';
 export 'engine/semantics/scrollable.dart';
 export 'engine/semantics/semantics.dart';
 export 'engine/semantics/semantics_helper.dart';
+export 'engine/semantics/tabs.dart';
 export 'engine/semantics/tappable.dart';
 export 'engine/semantics/text_field.dart';
 export 'engine/services/buffers.dart';

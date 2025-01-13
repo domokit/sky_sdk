@@ -237,11 +237,11 @@ public class FlutterLoaderTest {
   }
 
   @Test
-  public void itSetsDisableSurfaceControlFromMetaData() {
+  public void itSetsEnableSurfaceControlFromMetaData() {
     FlutterJNI mockFlutterJNI = mock(FlutterJNI.class);
     FlutterLoader flutterLoader = new FlutterLoader(mockFlutterJNI);
     Bundle metaData = new Bundle();
-    metaData.putBoolean("io.flutter.embedding.android.DisableSurfaceControl", true);
+    metaData.putBoolean("io.flutter.embedding.android.EnableSurfaceControl", true);
     ctx.getApplicationInfo().metaData = metaData;
 
     FlutterLoader.Settings settings = new FlutterLoader.Settings();
@@ -250,7 +250,7 @@ public class FlutterLoaderTest {
     flutterLoader.ensureInitializationComplete(ctx, null);
     shadowOf(getMainLooper()).idle();
 
-    final String disabledControlArg = "--disable-surface-control";
+    final String disabledControlArg = "--enable-surface-control";
     ArgumentCaptor<String[]> shellArgsCaptor = ArgumentCaptor.forClass(String[].class);
     verify(mockFlutterJNI, times(1))
         .init(eq(ctx), shellArgsCaptor.capture(), anyString(), anyString(), anyString(), anyLong());

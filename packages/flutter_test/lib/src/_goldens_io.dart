@@ -284,8 +284,16 @@ ByteData _invert(ByteData imageBytes) {
 }
 
 /// An unsupported [WebGoldenComparator] that exists for API compatibility.
+@Deprecated(
+  'Use GoldenFileComparator instead. '
+  'This feature was deprecated after v3.28.0-0.1.pre.',
+)
 class DefaultWebGoldenComparator extends WebGoldenComparator {
   /// This is provided to prevent warnings from the analyzer.
+  @Deprecated(
+    'Use a GoldenFileComparator implementation instead. '
+    'This feature was deprecated after v3.28.0-0.1.pre.',
+  )
   DefaultWebGoldenComparator(Uri _) {
     throw UnsupportedError('DefaultWebGoldenComparator is only supported on the web.');
   }

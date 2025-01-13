@@ -12,12 +12,26 @@ MockWindow::MockWindow() {
   mock = this;
 }
 
+GdkDisplay* gdk_display_get_default() {
+  return GDK_DISPLAY(g_object_new(gdk_display_get_type(), nullptr));
+}
+
+void gdk_display_beep(GdkDisplay* display) {}
+
 GdkWindowState gdk_window_get_state(GdkWindow* window) {
   return mock->gdk_window_get_state(window);
 }
 
 GdkDisplay* gdk_window_get_display(GdkWindow* window) {
-  return nullptr;
+  return GDK_DISPLAY(g_object_new(gdk_display_get_type(), nullptr));
+}
+
+int gdk_display_get_n_monitors(GdkDisplay* display) {
+  return 1;
+}
+
+GdkMonitor* gdk_display_get_monitor(GdkDisplay* display, int n) {
+  return GDK_MONITOR(g_object_new(gdk_monitor_get_type(), nullptr));
 }
 
 GdkMonitor* gdk_display_get_monitor_at_window(GdkDisplay* display,

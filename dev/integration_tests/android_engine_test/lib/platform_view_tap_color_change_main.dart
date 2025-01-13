@@ -10,7 +10,7 @@ import 'package:flutter_driver/driver_extension.dart';
 import 'src/allow_list_devices.dart';
 
 void main() async {
-  ensureAndroidOrIosDevice();
+  ensureAndroidDevice();
   enableFlutterDriverExtension(commands: <CommandExtension>[nativeDriverCommands]);
 
   // Run on full screen.

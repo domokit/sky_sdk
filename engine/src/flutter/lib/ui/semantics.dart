@@ -339,6 +339,31 @@ class SemanticsAction {
   String toString() => 'SemanticsAction.$name';
 }
 
+/// An enum to describe the role for a semantics node.
+///
+/// The roles are translated into native accessibility roles in each platform.
+enum SemanticsRole {
+  /// Does not represent any role.
+  none,
+
+  /// A tab button.
+  ///
+  /// see also:
+  ///
+  ///  * [tabBar], which is the role for containers of tab buttons.
+  tab,
+
+  /// Contains tab buttons.
+  ///
+  /// see also:
+  ///
+  ///  * [tab], which is the role for tab buttons.
+  tabBar,
+
+  /// The main display for a tab.
+  tabPanel,
+}
+
 /// A Boolean value that can be associated with a semantics node.
 //
 // When changes are made to this class, the equivalent APIs in
@@ -960,6 +985,9 @@ abstract class SemanticsUpdateBuilder {
   /// The `linkUrl` describes the URI that this node links to. If the node is
   /// not a link, this should be an empty string.
   ///
+  /// The `role` describes the role of this node. Defaults to
+  /// [SemanticsRole.none] if not set.
+  ///
   /// See also:
   ///
   ///  * https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/heading_role
@@ -1000,6 +1028,7 @@ abstract class SemanticsUpdateBuilder {
     required Int32List additionalActions,
     int headingLevel = 0,
     String linkUrl = '',
+    SemanticsRole role = SemanticsRole.none,
   });
 
   /// Update the custom semantics action associated with the given `id`.
@@ -1075,6 +1104,7 @@ base class _NativeSemanticsUpdateBuilder extends NativeFieldWrapperClass1
     required Int32List additionalActions,
     int headingLevel = 0,
     String linkUrl = '',
+    SemanticsRole role = SemanticsRole.none,
   }) {
     assert(_matrix4IsValid(transform));
     assert(
@@ -1120,6 +1150,7 @@ base class _NativeSemanticsUpdateBuilder extends NativeFieldWrapperClass1
       additionalActions,
       headingLevel,
       linkUrl,
+      role.index,
     );
   }
 
@@ -1164,6 +1195,7 @@ base class _NativeSemanticsUpdateBuilder extends NativeFieldWrapperClass1
       Handle,
       Int32,
       Handle,
+      Int32,
     )
   >(symbol: 'SemanticsUpdateBuilder::updateNode')
   external void _updateNode(
@@ -1205,6 +1237,7 @@ base class _NativeSemanticsUpdateBuilder extends NativeFieldWrapperClass1
     Int32List additionalActions,
     int headingLevel,
     String linkUrl,
+    int role,
   );
 
   @override

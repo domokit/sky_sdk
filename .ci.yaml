@@ -362,6 +362,7 @@ targets:
   # are intentionally running it in the devicelab to ensure that it does not
   # run on a VM in order to avoid noisy results from the benchmark.
   - name: Linux analyzer_benchmark
+    bringup: true # Flaky https://github.com/flutter/flutter/issues/161306
     recipe: devicelab/devicelab_drone
     timeout: 60
     properties:
@@ -3707,7 +3708,6 @@ targets:
         ["framework","hostonly","shard","linux"]
 
   - name: Mac_benchmark animated_complex_opacity_perf_macos__e2e_summary
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/157423
     presubmit: false
     recipe: devicelab/devicelab_drone
     timeout: 60
@@ -3929,7 +3929,6 @@ targets:
       task_name: complex_layout_macos__start_up
 
   - name: Mac_benchmark complex_layout_scroll_perf_macos__timeline_summary
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/158251
     presubmit: false
     recipe: devicelab/devicelab_drone
     timeout: 60
@@ -4201,7 +4200,6 @@ targets:
       - DEPS
 
   - name: Mac_benchmark hello_world_macos__compile
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/159542
     presubmit: false
     recipe: devicelab/devicelab_drone
     timeout: 60
@@ -4209,7 +4207,6 @@ targets:
       task_name: hello_world_macos__compile
 
   - name: Mac integration_ui_test_test_macos
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/152212
     recipe: devicelab/devicelab_drone
     presubmit: false
     timeout: 60
@@ -5046,7 +5043,6 @@ targets:
       task_name: hello_world_ios__compile
 
   - name: Mac_x64 hot_mode_dev_cycle_macos_target__benchmark
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/158568
     recipe: devicelab/devicelab_drone
     timeout: 60
     properties:

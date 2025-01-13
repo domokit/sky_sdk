@@ -17,13 +17,14 @@ project (the framework itself and all our sample code). Flutter application deve
 are welcome to follow this style as well, but this is by no means required. Flutter
 will work regardless of what style is used to author applications that use it.
 
-The engine repository uses [other style guides for non-Dart code](https://github.com/flutter/engine/blob/main/CONTRIBUTING.md#style). The language-neutral sections in this document still apply to engine code, however.
+Code under the `engine` subdirectory uses [other style guides for non-Dart code](../../engine/src/flutter/CONTRIBUTING.md#style).
+The language-neutral sections in this document still apply to engine code, however.
 
 
 ## Overview
 
 This document describes our approach to designing and programming Flutter,
-from high-level architectural principles all the way to indentation rules.
+from high-level architectural principles all the way to naming rules.
 These are our norms, written down so that we can easily convey our shared
 understanding with new team members.
 
@@ -39,8 +40,7 @@ For anything not covered by this document, check the
 for more advice. That document is focused primarily on Dart-specific
 conventions, while this document is more about Flutter conventions.
 
-In some cases (for example, line wrapping around `if` statements) the
-Dart style guide differs from the Flutter guide. For Flutter project code,
+In some cases the Dart style guide differs from the Flutter guide. For Flutter project code,
 the Flutter guide governs. The differences are a result of slightly different
 priorities. The Flutter guide is designed for making code highly readable
 even to people who have never seen the code before and are new to Dart, as
@@ -48,9 +48,6 @@ the Flutter framework code will be read millions of times more than it is writte
 The Dart guide, on the other hand, is designed to provide a more balanced approach
 that assumes that the writing of the code will be a bigger proportion of the
 interactions with the code, and that the reader is more experienced with Dart.
-(The `dart format` tool uses the Dart guide, so we do not use it in the
-flutter/flutter and flutter/engine repositories. However, we do recommend its
-use in general.)
 
 ### A word on designing APIs
 
@@ -292,8 +289,7 @@ by real developers.
 ### Get early feedback when designing new APIs
 
 If you're designing a new API or a new feature, consider [writing a design doc](Design-Documents.md).
-Then, get feedback from the relevant people, e.g. send it to `flutter-dev` or
-post it on the [relevant chat channel](Chat.md#existing-channels).
+Then, get feedback from the relevant people, e.g. post it on the [relevant chat channel](Chat.md#existing-channels).
 
 
 ### Start designing APIs from the closest point to the developer
@@ -375,8 +371,7 @@ All licenses included in this manner must have been reviewed and determined to b
 
 All such "third party code" must either be a fork for which we take full responsibility, or there must be an automated rolling mechanism that keeps the code up to date when the upstream source changes.
 
-In general it is _strongly_ recommended that we avoid any such code unless strictly necessary. In particular, we aim for all code in the flutter/flutter repository to be [single-licensed](../about/Why-we-have-a-separate-engine-repo.md#licensing), which is why it does not contain any "third party code" at all.
-
+In general it is _strongly_ recommended that we avoid any such code unless strictly necessary.
 
 ## Documentation (dartdocs, javadocs, etc)
 
@@ -405,21 +400,12 @@ be documented (typically on the wiki), code should be self-explanatory
 or commented, and conventions should be written down, e.g. in our style
 guide.
 
-There is one exception: it's better to _not_ document something in our API
-docs than to document it poorly. This is because if you don't document it,
-it still appears on our list of things to document. Feel free to remove
-documentation that violates our rules below (especially the next one),
-so as to make it reappear on the list.
-
 
 ### Avoid useless documentation
 
 If someone could have written the same documentation without knowing
-anything about the class other than its name, then it's useless.
-
-Avoid checking in such documentation, because it is no better than no
-documentation but will prevent us from noticing that the identifier is
-not actually documented.
+anything about the class other than its name, then it's useless. Avoid checking
+in such documentation.
 
 Example (from [`CircleAvatar`](http://docs.flutter.io/flutter/material/CircleAvatar-class.html)):
 
@@ -1261,20 +1247,10 @@ Generally the closure passed to `setState` should include all the code that chan
 These guidelines have no technical effect, but they are still important purely
 for consistency and readability reasons.
 
-We do not yet use `dartfmt` (except in flutter/packages).
-Flutter code tends to use patterns that
-the standard Dart formatter does not handle well. We are
-[working with Dart team](https://github.com/flutter/flutter/issues/2025) to make `dartfmt` aware of these patterns.
+We use `dart format` to auto-format all Dart code. This is enforced by our CI.
 
-
-### In defense of the extra work that hand-formatting entails
-
-Flutter code might eventually be read by hundreds of thousands of people each day.
-Code that is easier to read and understand saves these people time. Saving each
-person even a second each day translates into hours or even _days_ of saved time
-each day. The extra time spent by people contributing to Flutter directly translates
-into real savings for our developers, which translates to real benefits to our end
-users as our developers learn the framework faster.
+Beyond whitespace formatting handled by the formatter, this section discusses
+additional guidelines for code structure to ensure consistency and readibility.
 
 
 ### Constructors come first in a class
@@ -1321,205 +1297,14 @@ any code that operates on all of them should operate on them in the
 same order (unless the order matters).
 
 
-### Constructor syntax
+### Prefer a maximum line length of 100 characters for comments and docs
 
-If you call `super()` in your initializer list, put a space between the
-constructor arguments' closing parenthesis and the colon. If there's
-other things in the initializer list, align the `super()` call with the
-other arguments. Don't call `super` if you have no arguments to pass up
-to the superclass.
+Aim for a maximum line length of roughly 100 characters for comments and docs. Existing docs may use a
+line length of 80 characters and should not be reflowed to a maximum line length of 100 to simplify
+reviewing docs in PRs.
 
-```dart
-// one-line constructor example
-class ConstantTween<T> extends Tween<T> {
-  ConstantTween(T value) : super(begin: value, end: value);
-
-  // ...
-}
-
-// fully expanded constructor example
-class ConstantTween<T> extends Tween<T> {
-  ConstantTween(
-    T value,
-  ) : super(
-        begin: value,
-        end: value,
-      );
-
-  // ...
-}
-```
-
-
-### Prefer a maximum line length of 80 characters
-
-Aim for a maximum line length of roughly 80 characters, but prefer going over if breaking the
-line would make it less readable, or if it would make the line less consistent
-with other nearby lines. Prefer avoiding line breaks after assignment operators.
-
-```dart
-// BAD (breaks after assignment operator and still goes over 80 chars)
-final int a = 1;
-final int b = 2;
-final int c =
-    a.very.very.very.very.very.long.expression.that.returns.three.eventually().but.is.very.long();
-final int d = 4;
-final int e = 5;
-
-// BETTER (consistent lines, not much longer than the earlier example)
-final int a = 1;
-final int b = 2;
-final int c = a.very.very.very.very.very.long.expression.that.returns.three.eventually().but.is.very.long();
-final int d = 4;
-final int e = 5;
-```
-
-```dart
-// BAD (breaks after assignment operator)
-final List<FooBarBaz> _members =
-  <FooBarBaz>[const Quux(), const Qaax(), const Qeex()];
-
-// BETTER (only slightly goes over 80 chars)
-final List<FooBarBaz> _members = <FooBarBaz>[const Quux(), const Qaax(), const Qeex()];
-
-// BETTER STILL (fits in 80 chars)
-final List<FooBarBaz> _members = <FooBarBaz>[
-  const Quux(),
-  const Qaax(),
-  const Qeex(),
-];
-```
-
-
-### Indent multi-line argument and parameter lists by 2 characters
-
-When breaking an argument list into multiple lines, indent the
-arguments two characters from the previous line.
-
-Example:
-
-```dart
-Foo f = Foo(
-  bar: 1.0,
-  quux: 2.0,
-);
-```
-
-When breaking a parameter list into multiple lines, do the same.
-
-
-### If you have a newline after some opening punctuation, match it on the closing punctuation.
-
-And vice versa.
-
-Example:
-
-```dart
-// BAD:
-  foo(
-    bar, baz);
-  foo(
-    bar,
-    baz);
-  foo(bar,
-    baz
-  );
-
-// GOOD:
-  foo(bar, baz);
-  foo(
-    bar,
-    baz,
-  );
-```
-
-### Use a trailing comma for arguments, parameters, and list items, but only if they each have their own line.
-
-Example:
-```dart
-List<int> myList = [
-  1,
-  2,
-];
-myList = <int>[3, 4];
-
-foo1(
-  bar,
-  baz,
-);
-foo2(bar, baz);
-```
-
-If one of the items is a multi-line callback, collection literal,
-or switch expression, it can be added without a trailing comma.
-
-```dart
-// GOOD:
-foo(
-  bar,
-  baz,
-  switch (value) {
-    true  => ScrollDirection.forward,
-    false => ScrollDirection.reverse,
-    null  => ScrollDirection.idle,
-  },
-);
-
-// also GOOD:
-foo(bar, baz, switch (value) {
-  true  => ScrollDirection.forward,
-  false => ScrollDirection.reverse,
-  null  => ScrollDirection.idle,
-});
-
-// The same applies to collection literals and callbacks:
-foo(<String>[
-  'list item 1',
-  'list item 2',
-  'list item 3',
-]);
-
-Future.delayed(Durations.short1, () {
-  if (mounted && _shouldOpenDrawer) {
-    _drawerController.forward();
-  }
-});
-```
-
-Whether to put things all on one line or whether to have one line per item is an aesthetic choice. We prefer whatever ends up being most readable. Typically this means that when everything would fit on one line, put it all on one line, otherwise, split it one item to a line.
-
-However, there are exceptions. For example, if there are six back-to-back lists and all but one of them need multiple lines, then one would not want to have the single case that does fit on one line use a different style than the others.
-
-```dart
-  // BAD (because the second list is unnecessarily and confusingly different than the others):
-  List<FooBarBaz> myLongList1 = <FooBarBaz>[
-    FooBarBaz(one: firstArgument, two: secondArgument, three: thirdArgument),
-    FooBarBaz(one: firstArgument, two: secondArgument, three: thirdArgument),
-    FooBarBaz(one: firstArgument, two: secondArgument, three: thirdArgument),
-  ];
-  List<Quux> myLongList2 = <Quux>[ Quux(1), Quux(2) ];
-  List<FooBarBaz> myLongList3 = <FooBarBaz>[
-    FooBarBaz(one: firstArgument, two: secondArgument, three: thirdArgument),
-    FooBarBaz(one: firstArgument, two: secondArgument, three: thirdArgument),
-    FooBarBaz(one: firstArgument, two: secondArgument, three: thirdArgument),
-  ];
-
-  // GOOD (code is easy to scan):
-  List<FooBarBaz> myLongList1 = <FooBarBaz>[
-    FooBarBaz(one: firstArgument, two: secondArgument, three: thirdArgument),
-    FooBarBaz(one: firstArgument, two: secondArgument, three: thirdArgument),
-    FooBarBaz(one: firstArgument, two: secondArgument, three: thirdArgument),
-  ];
-  List<Quux> myLongList2 = <Quux>[
-    Quux(1),
-    Quux(2),
-  ];
-  List<FooBarBaz> myLongList3 = <FooBarBaz>[
-    FooBarBaz(one: firstArgument, two: secondArgument, three: thirdArgument),
-    FooBarBaz(one: firstArgument, two: secondArgument, three: thirdArgument),
-    FooBarBaz(one: firstArgument, two: secondArgument, three: thirdArgument),
-  ];
-```
+Line length for code is automatically handled by `dart format`, which is configured to use a maximum
+line length of 100.
 
 
 ### Consider using `=>` for short functions and methods
@@ -1633,134 +1418,10 @@ of the line that has the opening punctuation, so that you can easily determine
 what's going on by just scanning the indentation on the left edge.
 
 
-### Prefer single line for short collection-if and collection-for
-
-If the code fits in a single line don't split it.
-
-For example:
-
-```dart
-// BAD
-final List<String> args = <String>[
-  'test',
-  if (useFlutterTestFormatter) '-rjson'
-  else '-rcompact',
-  '-j1',
-  if (!hasColor)
-    '--no-color',
-  for (final String opt in others)
-    opt,
-];
-
-// GOOD
-final List<String> args = <String>[
-  'test',
-  if (useFlutterTestFormatter) '-rjson' else '-rcompact',
-  '-j1',
-  if (!hasColor) '--no-color',
-  for (final String opt in others) opt,
-];
-```
-
-Otherwise indent with 2 spaces
-
-```dart
-// GOOD
-final List<String> args = <String>[
-  'test',
-  if (useFlutterTestFormatter)
-    '-rjson.very.very.very.very.very.very.very.very.long'
-  else
-    '-rcompact.very.very.very.very.very.very.very.very.long',
-  '-j1',
-  if (!hasColor)
-    '--no-color.very.very.very.very.very.very.very.very.long',
-  for (final String opt in others)
-    methodVeryVeryVeryVeryVeryVeryVeryVeryVeryLong(opt),
-];
-```
-
-### Put spread inside collection-if or collection-for on the same line
-
-Spreads inside collection-if or collection-for are used to insert several elements. It's easier to read to have spread on the line of `if`, `else`, or `for`.
-
-```dart
-// BAD
-final List<String> args = <String>[
-  'test',
-  if (condA)
-    ...<String>[
-      'b',
-      'c',
-    ]
-  else
-    '-rcompact',
-  for (final String opt in others)
-    ...<String>[
-      m1(opt),
-      m2(opt),
-    ],
-];
-
-// GOOD
-final List<String> args = <String>[
-  'test',
-  if (condA) ...<String>[
-    'b',
-    'c',
-  ] else
-    '-rcompact',
-  for (final String opt in others) ...<String>[
-    m1(opt),
-    m2(opt),
-  ],
-];
-```
-
-
 ### Use braces for long functions and methods
 
 Use a block (with braces) when a body would wrap onto more than one line (as opposed to using `=>`; the cases where you can use `=>` are discussed in the previous two guidelines).
 
-
-### Align expressions
-
-Where possible, subexpressions on different lines should be aligned, to make the structure of the expression easier. When doing this with a `return` statement chaining `||` or `&&` operators, consider putting the operators on the left hand side instead of the right hand side.
-
-```dart
-// BAD:
-if (foo.foo.foo + bar.bar.bar * baz - foo.foo.foo * 2 +
-    bar.bar.bar * 2 * baz > foo.foo.foo) {
-  // ...
-}
-
-// GOOD (notice how it makes it obvious that this code can be simplified):
-if (foo.foo.foo     + bar.bar.bar     * baz -
-    foo.foo.foo * 2 + bar.bar.bar * 2 * baz   > foo.foo.foo) {
-  // ...
-}
-// After simplification, it fits on one line anyway:
-if (bar.bar.bar * 3 * baz > foo.foo.foo * 2) {
-  // ...
-}
-```
-
-```dart
-// BAD:
-return foo.x == x &&
-    foo.y == y &&
-    foo.z == z;
-
-// GOOD:
-return foo.x == x &&
-       foo.y == y &&
-       foo.z == z;
-
-// ALSO GOOD:
-return foo.x == x
-    && foo.y == y
-    && foo.z == z;
-```
 
 ### Prefer `+=` over `++`
 
@@ -1886,12 +1547,11 @@ documenting why exactly you are importing particularly libraries and
 can be used more generally when importing large libraries for very
 narrow purposes.
 
-By convention, `dart:ui` is imported using `import 'dart:ui' show
-...;` for common APIs (this isn't usually necessary because a lower
-level will have done it for you), and as `import 'dart:ui' as ui show
-...;` for low-level APIs, in both cases listing all the identifiers
-being imported. See
-[basic_types.dart](https://github.com/flutter/flutter/blob/main/packages/flutter/lib/src/painting/basic_types.dart)
+By convention, `dart:ui` is imported using `import 'dart:ui' show ...;` for
+common APIs (this isn't usually necessary because a lower
+level will have done it for you), and as `import 'dart:ui' as ui show ...;`
+for low-level APIs, in both cases listing all the identifiers being imported.
+See [basic_types.dart](https://github.com/flutter/flutter/blob/main/packages/flutter/lib/src/painting/basic_types.dart)
 in the `painting` package for details of which identifiers we import
 which way. Other packages are usually imported undecorated unless they
 have a convention of their own (e.g. `path` is imported `as path`).

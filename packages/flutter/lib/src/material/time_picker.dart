@@ -2098,7 +2098,7 @@ class _HourMinuteTextFieldState extends State<_HourMinuteTextField> with Restora
     // version yet.
     if (!controllerHasBeenSet.value) {
       controllerHasBeenSet.value = true;
-      controller.value.text = _formattedValue;
+      controller.value.value = TextEditingValue(text: _formattedValue);
     }
   }
 

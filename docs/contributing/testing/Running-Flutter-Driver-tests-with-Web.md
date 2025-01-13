@@ -1,10 +1,6 @@
-In the last months Flutter Driver tests has been enabled for most browsers.
-
-This document explains the steps that should be followed before running the tests, how to run the tests, example usages and handy tools that can be used.
-
 ## Preparing the driver
 
-The first step of using Flutter Driver tests for Flutter Web testing is to install(prepare) the driver for the target browser.
+The first step of using Flutter Driver tests for Flutter Web testing is to install (prepare) the driver for the target browser.
 
 ### Using Chrome
 
@@ -54,55 +50,14 @@ Note that this section is experimental, at this point we don't have automated te
 
 The command for running the driver tests:
 
-```
+```sh
 flutter drive --target=test_driver/[driver_test].dart -d web-server --release --browser-name=chrome --web-port=8080
 ```
 
-Let's go over the different arguments that can be used:
+The different arguments that can be used:
 
 - Use one of the six browsers for `--browser-name` parameter: chrome, safari, ios-safari, android-chrome, firefox, edge.
 - Use `--local-engine=host_debug_unopt --local-engine-host=host_debug_unopt` for running tests with a local engine.
 - Use `--release` or `--profile` mode for running the tests. Debug mode will be supported soon.
 - Change the `--web-port` as needed, don't forget to change remote debugging settings for Android Chrome.
 - Use `--no-android-emulator` for using Android with real devices.
-
-## Web Installers Repo
-
-Web installers is a new Flutter project [repository](https://github.com/flutter/web_installers) where we are planning to add utilities for launching, downloading browsers/drivers.
-
-Currently it can be used for downloading/running Chrome Driver:
-
-```
-dart lib/web_driver_installer.dart chromedriver --driver-version="78.0.3904.105"
-```
-
-Or for running the Safari driver:
-
-```
-dart lib/web_driver_installer.dart safaridriver
-```
-
-For more details use the [documentation](https://github.com/flutter/web_installers/tree/master/packages/web_drivers).
-
-## Examples From Flutter Project
-
-We already use Flutter Driver in many different places in Flutter Project. We have a smoke test running as a [Cirrus CI task](https://github.com/flutter/flutter/blob/main/.cirrus.yml#L291) in Flutter repo, which is also a great example for showing web_installers + flutter drive usage.
-
-```
-script:
-        - flutter config --enable-web
-        - git clone https://github.com/flutter/web_installers.git
-        - cd web_installers/packages/web_drivers/
-        - pub get
-        - dart lib/web_driver_installer.dart &
-        - sleep 20
-        - chromedriver/chromedriver --port=4444 &
-        - sleep 5
-        - cd ../../../examples/hello_world/
-        - flutter drive --target=test_driver/smoke_web_engine.dart -d web-server --profile --browser-name=chrome
-```
-
-Other example usages:
-
-- e2e tests under flutter/packages repo. ([PR](https://github.com/flutter/plugins/pull/2554))
-- web engine integration tests under engine repo. ([PR](https://github.com/flutter/engine/pull/16930))

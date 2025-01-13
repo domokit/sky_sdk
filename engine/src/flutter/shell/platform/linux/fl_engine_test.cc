@@ -14,6 +14,63 @@
 // MOCK_ENGINE_PROC is leaky by design
 // NOLINTBEGIN(clang-analyzer-core.StackAddressEscape)
 
+// Checks notifying display updates works.
+TEST(FlEngineTest, NotifyDisplayUpdate) {
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+  g_autoptr(GError) error = nullptr;
+  EXPECT_TRUE(fl_engine_start(engine, &error));
+  EXPECT_EQ(error, nullptr);
+
+  bool called = false;
+  fl_engine_get_embedder_api(engine)->NotifyDisplayUpdate = MOCK_ENGINE_PROC(
+      NotifyDisplayUpdate,
+      ([&called](auto engine, FlutterEngineDisplaysUpdateType update_type,
+                 const FlutterEngineDisplay* displays, size_t displays_length) {
+        called = true;
+        EXPECT_EQ(update_type, kFlutterEngineDisplaysUpdateTypeStartup);
+        EXPECT_EQ(displays_length, 2u);
+
+        EXPECT_EQ(displays[0].display_id, 1u);
+        EXPECT_EQ(displays[0].refresh_rate, 60);
+        EXPECT_EQ(displays[0].width, 1024u);
+        EXPECT_EQ(displays[0].height, 768u);
+        EXPECT_EQ(displays[0].device_pixel_ratio, 1.0);
+
+        EXPECT_EQ(displays[1].display_id, 2u);
+        EXPECT_EQ(displays[1].refresh_rate, 120);
+        EXPECT_EQ(displays[1].width, 3840u);
+        EXPECT_EQ(displays[1].height, 2160u);
+        EXPECT_EQ(displays[1].device_pixel_ratio, 2.0);
+
+        return kSuccess;
+      }));
+
+  FlutterEngineDisplay displays[2] = {
+      {
+          .struct_size = sizeof(FlutterEngineDisplay),
+          .display_id = 1,
+          .single_display = false,
+          .refresh_rate = 60.0,
+          .width = 1024,
+          .height = 768,
+          .device_pixel_ratio = 1.0,
+      },
+      {
+          .struct_size = sizeof(FlutterEngineDisplay),
+          .display_id = 2,
+          .single_display = false,
+          .refresh_rate = 120.0,
+          .width = 3840,
+          .height = 2160,
+          .device_pixel_ratio = 2.0,
+      }};
+  fl_engine_notify_display_update(engine, displays, 2);
+
+  EXPECT_TRUE(called);
+}
+
 // Checks sending window metrics events works.
 TEST(FlEngineTest, WindowMetrics) {
   g_autoptr(FlDartProject) project = fl_dart_project_new();
@@ -28,6 +85,7 @@ TEST(FlEngineTest, WindowMetrics) {
       SendWindowMetricsEvent,
       ([&called](auto engine, const FlutterWindowMetricsEvent* event) {
         called = true;
+        EXPECT_EQ(event->display_id, 99u);
         EXPECT_EQ(event->view_id, 1);
         EXPECT_EQ(event->width, static_cast<size_t>(3840));
         EXPECT_EQ(event->height, static_cast<size_t>(2160));
@@ -36,7 +94,7 @@ TEST(FlEngineTest, WindowMetrics) {
         return kSuccess;
       }));
 
-  fl_engine_send_window_metrics_event(engine, 1, 3840, 2160, 2.0);
+  fl_engine_send_window_metrics_event(engine, 99, 1, 3840, 2160, 2.0);
 
   EXPECT_TRUE(called);
 }

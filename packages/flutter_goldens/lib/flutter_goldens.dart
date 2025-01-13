@@ -89,9 +89,8 @@ Future<void> testExecutable(FutureOr<void> Function() testMain, {String? namePre
   } else if (FlutterSkippingFileComparator.isForEnvironment(platform)) {
     goldenFileComparator = FlutterSkippingFileComparator.fromLocalFileComparator(
       localFileComparator: goldenFileComparator as LocalFileComparator,
-      'Golden file testing is not executed on Cirrus, or LUCI environments '
-      'outside of flutter/flutter, or in test shards that are not configured '
-      'for using goldctl.',
+      'Golden file testing is not executed on LUCI environments outside of '
+      'flutter, or in test shards that are not configured for using goldctl.',
       platform: platform,
       namePrefix: namePrefix,
       log: print,
@@ -448,7 +447,7 @@ class FlutterPreSubmitFileComparator extends FlutterGoldenFileComparator {
 /// A [FlutterGoldenFileComparator] for testing conditions that do not execute
 /// golden file tests.
 ///
-/// Currently, this comparator is used on Cirrus, or in Luci environments when executing tests
+/// Currently, this comparator is used on Luci environments when executing tests
 /// outside of the flutter/flutter repository.
 ///
 /// See also:
@@ -521,14 +520,11 @@ class FlutterSkippingFileComparator extends FlutterGoldenFileComparator {
   /// Decides, based on the current environment, if this comparator should be
   /// used.
   ///
-  /// If we are in a CI environment, LUCI or Cirrus, but are not using the other
+  /// If we are in a CI environment, i.e. LUCI, but are not using the other
   /// comparators, we skip. Otherwise we would fallback to the local comparator,
   /// for which failures cannot be resolved in a CI environment.
   static bool isForEnvironment(Platform platform) {
-    return platform.environment.containsKey('SWARMING_TASK_ID')
-        // Some builds are still being run on Cirrus, we should skip these.
-        ||
-        platform.environment.containsKey('CIRRUS_CI');
+    return platform.environment.containsKey('SWARMING_TASK_ID');
   }
 }
 
