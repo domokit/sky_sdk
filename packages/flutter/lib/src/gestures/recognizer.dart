@@ -609,8 +609,8 @@ abstract class PrimaryPointerGestureRecognizer extends OneSequenceGestureRecogni
   /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
   PrimaryPointerGestureRecognizer({
     this.deadline,
-    this.preAcceptSlopTolerance = _defaultTouchSlop,
-    this.postAcceptSlopTolerance = _defaultTouchSlop,
+    this.preAcceptSlopTolerance = _unsetTouchSlop,
+    this.postAcceptSlopTolerance = _unsetTouchSlop,
     super.debugOwner,
     super.supportedDevices,
     super.allowedButtonsFilter,
