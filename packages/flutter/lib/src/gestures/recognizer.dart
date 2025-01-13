@@ -593,7 +593,7 @@ enum GestureRecognizerState {
   defunct,
 }
 
-const _defaultTouchSlop = -1;
+const double _unsetTouchSlop = -1.0;
 
 /// A base class for gesture recognizers that track a single primary pointer.
 ///
@@ -615,11 +615,11 @@ abstract class PrimaryPointerGestureRecognizer extends OneSequenceGestureRecogni
     super.supportedDevices,
     super.allowedButtonsFilter,
   }) : assert(
-         preAcceptSlopTolerance == _defaultTouchSlop || preAcceptSlopTolerance == null || preAcceptSlopTolerance >= 0,
+         preAcceptSlopTolerance == _unsetTouchSlop || preAcceptSlopTolerance == null || preAcceptSlopTolerance >= 0,
          'The preAcceptSlopTolerance must be positive or null',
        ),
        assert(
-         postAcceptSlopTolerance == _defaultTouchSlop || postAcceptSlopTolerance == null || postAcceptSlopTolerance >= 0,
+         postAcceptSlopTolerance == _unsetTouchSlop || postAcceptSlopTolerance == null || postAcceptSlopTolerance >= 0,
          'The postAcceptSlopTolerance must be positive or null',
        );
 
@@ -639,9 +639,6 @@ abstract class PrimaryPointerGestureRecognizer extends OneSequenceGestureRecogni
   /// Defaults to touch slop from [gestureSettings] (18 logical pixels).
   final double? preAcceptSlopTolerance;
 
-  double _preAcceptSlopTolerance =>
-    preAcceptSlopTolerance == _defaultTouchSlop ? gestureSettings.touchSlop : preAcceptSlopTolerance;
-
   /// The maximum distance in logical pixels the gesture is allowed to drift
   /// after the gesture has been accepted.
   ///
@@ -652,8 +649,13 @@ abstract class PrimaryPointerGestureRecognizer extends OneSequenceGestureRecogni
   /// Defaults to touch slop from [gestureSettings] (18 logical pixels).
   final double? postAcceptSlopTolerance;
 
-  double _postAcceptSlopTolerance =>
-    postAcceptSlopTolerance == _defaultTouchSlop ? gestureSettings.touchSlop : postAcceptSlopTolerance;
+  double? get _preAcceptSlopTolerance =>
+    preAcceptSlopTolerance == _unsetTouchSlop ? _defaultTouchSlop : preAcceptSlopTolerance;
+
+  double? get _postAcceptSlopTolerance =>
+    postAcceptSlopTolerance == _unsetTouchSlop ? _defaultTouchSlop : postAcceptSlopTolerance;
+
+  double get _defaultTouchSlop => gestureSettings.touchSlop ?? kTouchSlop;
 
   /// The current state of the recognizer.
   ///
