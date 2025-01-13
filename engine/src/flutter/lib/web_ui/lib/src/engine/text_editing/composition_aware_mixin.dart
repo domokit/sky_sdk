@@ -47,6 +47,9 @@ mixin CompositionAwareMixin {
   /// so it is safe to reference it to get the current composingText.
   String? composingText;
 
+  /// Whether the `domElement` is currently composing text.
+  bool get isComposing => composingText != null;
+
   void addCompositionEventHandlers(DomHTMLElement domElement) {
     domElement.addEventListener(_kCompositionStart, _compositionStartListener);
     domElement.addEventListener(_kCompositionUpdate, _compositionUpdateListener);
