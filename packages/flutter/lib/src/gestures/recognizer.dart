@@ -593,7 +593,7 @@ enum GestureRecognizerState {
   defunct,
 }
 
-const _defaultTouchSlop = kTouchSlop;
+const _defaultTouchSlop = -1;
 
 /// A base class for gesture recognizers that track a single primary pointer.
 ///
@@ -615,11 +615,11 @@ abstract class PrimaryPointerGestureRecognizer extends OneSequenceGestureRecogni
     super.supportedDevices,
     super.allowedButtonsFilter,
   }) : assert(
-         preAcceptSlopTolerance == null || preAcceptSlopTolerance >= 0,
+         preAcceptSlopTolerance == _defaultTouchSlop || preAcceptSlopTolerance == null || preAcceptSlopTolerance >= 0,
          'The preAcceptSlopTolerance must be positive or null',
        ),
        assert(
-         postAcceptSlopTolerance == null || postAcceptSlopTolerance >= 0,
+         postAcceptSlopTolerance == _defaultTouchSlop || postAcceptSlopTolerance == null || postAcceptSlopTolerance >= 0,
          'The postAcceptSlopTolerance must be positive or null',
        );
 
