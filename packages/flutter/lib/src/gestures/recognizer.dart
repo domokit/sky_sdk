@@ -616,11 +616,11 @@ abstract class PrimaryPointerGestureRecognizer extends OneSequenceGestureRecogni
     super.allowedButtonsFilter,
   }) : assert(
          preAcceptSlopTolerance == _unsetTouchSlop || preAcceptSlopTolerance == null || preAcceptSlopTolerance >= 0,
-         'The preAcceptSlopTolerance must be positive or null',
+         'The preAcceptSlopTolerance must be unspecified, positive, or null',
        ),
        assert(
          postAcceptSlopTolerance == _unsetTouchSlop || postAcceptSlopTolerance == null || postAcceptSlopTolerance >= 0,
-         'The postAcceptSlopTolerance must be positive or null',
+         'The postAcceptSlopTolerance must be unspecified, positive, or null',
        );
 
   /// If non-null, the recognizer will call [didExceedDeadline] after this
