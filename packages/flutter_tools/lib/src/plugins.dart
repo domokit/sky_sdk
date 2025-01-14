@@ -73,7 +73,6 @@ class Plugin {
     Set<String>? appDependencies,
   }) {
     final List<String> errors = validatePluginYaml(pluginYaml);
-
     if (errors.isNotEmpty) {
       throwToolExit('Invalid plugin specification $name.\n${errors.join('\n')}');
     }

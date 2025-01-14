@@ -336,7 +336,7 @@ class ManifestAssetBundle implements AssetBundle {
     // Add fonts, assets, and licenses from packages in the project's
     // dependencies.
 
-    // To Avoid bundling assets from dev_dependencies and other pub workspace
+    // To avoid bundling assets from dev_dependencies and other pub workspace
     // packages, we compute the set of transitive dependencies.
     final Map<String, Dependency> transitiveDependencies = computeTransitiveDependencies(
       flutterProject,
@@ -348,17 +348,12 @@ class ManifestAssetBundle implements AssetBundle {
       final Package? package = packageConfig[packageName];
       if (package == null) {
         // This can happen with eg. `flutter run --no-pub`.
-        throwToolExit('Could not locate package:$packageName. Try running `flutter pub get`');
+        throwToolExit('Could not locate package:$packageName. Try running `flutter pub get`.');
       }
       final Dependency dependency = transitiveDependencies[packageName]!;
       if (dependency.isExclusiveDevDependency) {
         continue;
       }
-      final Uri packageUri = package.root;
-      if (packageUri.scheme != 'file') {
-        continue;
-      }
-
       inputFiles.add(_fileSystem.file(package.root.resolve('pubspec.yaml')));
       final FlutterManifest? packageManifest = FlutterManifest.createFromYaml(
         dependency.pubspec,

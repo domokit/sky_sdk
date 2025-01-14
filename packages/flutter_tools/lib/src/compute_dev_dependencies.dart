@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:file/file.dart';
 import 'package:package_config/package_config.dart';
 import 'package:yaml/yaml.dart';
 
+import 'base/file_system.dart';
 import 'project.dart';
 
 /// Computes a representation of the transitive dependency graph rooted at
@@ -13,7 +13,7 @@ import 'project.dart';
 ///
 /// Does a search rooted in `project`, following the `dependencies` and
 /// `dev_dependencies` of the pubspec to find the transitive dependencies of the
-/// app. (including the project itself). Will follow the `dev_dependencies` of
+/// app (including the project itself). Will follow the `dev_dependencies` of
 /// the [project] package.
 ///
 /// Will load each of the dependencies' `pubspec.yaml` using [fileSystem]. Using
@@ -69,7 +69,7 @@ Map<String, Dependency> computeTransitiveDependencies(
       if (pubspec is! YamlMap) {
         continue;
       }
-      final dynamic dependenciesMap = pubspec['dependencies'] ?? <String, String>{};
+      final Object dependenciesMap = pubspec['dependencies'] as Object? ?? <String, String>{};
       if (dependenciesMap is! Map) {
         continue;
       }

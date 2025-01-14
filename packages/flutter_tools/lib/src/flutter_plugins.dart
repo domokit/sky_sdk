@@ -96,7 +96,6 @@ Future<List<Plugin>> findPlugins(
     fs,
   );
   for (final String packageName in transitiveDependencies.keys) {
-    final Dependency dependency = transitiveDependencies[packageName]!;
     final Package? package = packageConfig[packageName];
     if (package == null) {
       if (throwOnError) {
@@ -106,6 +105,7 @@ Future<List<Plugin>> findPlugins(
         continue;
       }
     }
+    final Dependency dependency = transitiveDependencies[packageName]!;
     final Plugin? plugin = await _pluginFromPackage(
       packageName,
       dependency.pubspec,
