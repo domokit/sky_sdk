@@ -31,61 +31,39 @@ Map<String, Dependency> computeTransitiveDependencies(
   bool followDevDependencies = false,
 }) {
   final Map<String, Dependency> result = <String, Dependency>{};
+  result[project.manifest.appName] = Dependency(
+    project.manifest.toYaml(),
+    project.manifest.dependencies.toList(),
+    project.directory.uri,
+    isExclusiveDevDependency: true,
+  );
 
-  final List<String> packageNamesToVisit = <String>[project.manifest.appName];
+  final List<String> packageNamesToVisit = <String>[
+    ...project.manifest.dependencies,
+    ...project.manifest.devDependencies,
+  ];
   while (packageNamesToVisit.isNotEmpty) {
     final String current = packageNamesToVisit.removeLast();
     if (result.containsKey(current)) {
       continue;
     }
-    final YamlNode pubspec;
-    final List<String> dependencies = <String>[];
-    final Uri rootUri;
-    if (current == project.manifest.appName) {
-      rootUri = project.directory.uri;
-      pubspec = project.manifest.toYaml();
-      dependencies.addAll(project.manifest.dependencies);
-    } else {
-      final Package? package = packageConfig[current];
-      if (package == null) {
-        continue;
-      }
-      rootUri = package.root;
-      if (rootUri.scheme != 'file') {
-        continue;
-      }
-
-      final String pubspecPath = fileSystem.path.fromUri(rootUri.resolve('pubspec.yaml'));
-      try {
-        pubspec = loadYamlNode(
-          fileSystem.file(pubspecPath).readAsStringSync(),
-          sourceUrl: Uri.file(pubspecPath),
-        );
-      } on IOException {
-        continue;
-      } on FormatException {
-        continue;
-      }
-      if (pubspec is! YamlMap) {
-        continue;
-      }
-      final Object dependenciesMap = pubspec['dependencies'] as Object? ?? <String, String>{};
-      if (dependenciesMap is! Map) {
-        continue;
-      }
-
-      for (final dynamic name in dependenciesMap.keys) {
-        if (name is! String) {
-          continue;
-        }
-        dependencies.add(name);
-      }
+    final _PackageDetails? details = _loadPackageDetails(
+      current,
+      packageConfig,
+      project,
+      fileSystem,
+    );
+    if (details == null) {
+      continue;
     }
-    packageNamesToVisit.addAll(dependencies);
-    if (current == project.manifest.appName) {
-      packageNamesToVisit.addAll(project.manifest.devDependencies);
-    }
-    result[current] = Dependency(pubspec, dependencies, rootUri, isExclusiveDevDependency: true);
+
+    packageNamesToVisit.addAll(details.dependencies);
+    result[current] = Dependency(
+      details.pubspec,
+      details.dependencies,
+      details.rootUri,
+      isExclusiveDevDependency: true,
+    );
   }
 
   // Do a second traversal of only the non-dev-dependencies, to patch up the
@@ -110,6 +88,55 @@ Map<String, Dependency> computeTransitiveDependencies(
     packageNamesToVisit.addAll(currentDependency.dependencies);
   }
   return result;
+}
+
+typedef _PackageDetails = ({List<String> dependencies, YamlMap pubspec, Uri rootUri});
+
+/// Attempts to load the pubspec.yaml for [packageName] and extract the list of
+/// dependencies.
+///
+/// Returns `null` on failure (malformed pubspec etc.).
+_PackageDetails? _loadPackageDetails(
+  String packageName,
+  PackageConfig packageConfig,
+  FlutterProject project,
+  FileSystem fileSystem,
+) {
+  final Package? package = packageConfig[packageName];
+  if (package == null) {
+    return null;
+  }
+  final Uri rootUri = package.root;
+  if (rootUri.scheme != 'file') {
+    return null;
+  }
+  final String pubspecPath = fileSystem.path.fromUri(rootUri.resolve('pubspec.yaml'));
+  try {
+    final YamlNode pubspec = loadYamlNode(
+      fileSystem.file(pubspecPath).readAsStringSync(),
+      sourceUrl: Uri.file(pubspecPath),
+    );
+    if (pubspec is! YamlMap) {
+      return null;
+    }
+    final List<String> dependencies = <String>[];
+    final Object dependenciesMap = pubspec['dependencies'] as Object? ?? <String, String>{};
+    if (dependenciesMap is! Map) {
+      return null;
+    }
+
+    for (final dynamic name in dependenciesMap.keys) {
+      if (name is! String) {
+        continue;
+      }
+      dependencies.add(name);
+    }
+    return (rootUri: rootUri, pubspec: pubspec, dependencies: dependencies);
+  } on IOException {
+    return null;
+  } on FormatException {
+    return null;
+  }
 }
 
 /// Represents a node in a dependency graph.
