@@ -765,7 +765,7 @@ class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
         Animation<double> secondaryAnimation,
         bool allowSnapshotting,
         Widget? child,
-      ) => _delegatedTransition(context, animation, backgroundColor, child);
+      ) => _delegatedTransition(context, secondaryAnimation, backgroundColor, child);
 
   // Used by all of the sliding transition animations.
   static const Curve _transitionCurve = Curves.easeInOutCubicEmphasized;
@@ -799,40 +799,45 @@ class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Color? backgroundColor,
     Widget? child,
-  ) => DualTransitionBuilder(
-    animation: ReverseAnimation(secondaryAnimation),
-    forwardBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
-      return ColoredBox(
-        color:
-            animation.isAnimating
-                ? backgroundColor ?? Theme.of(context).colorScheme.surface
-                : Colors.transparent,
-        child: FadeTransition(
-          opacity: _fadeInTransition.animate(animation),
-          child: SlideTransition(
-            position: _secondaryForwardTranslationTween.animate(animation),
-            child: child,
-          ),
-        ),
-      );
-    },
-    reverseBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
-      return ColoredBox(
-        color:
-            animation.isAnimating
-                ? backgroundColor ?? Theme.of(context).colorScheme.surface
-                : Colors.transparent,
-        child: FadeTransition(
-          opacity: _fadeOutTransition.animate(animation),
-          child: SlideTransition(
-            position: _secondaryBackwardTranslationTween.animate(animation),
-            child: child,
-          ),
-        ),
-      );
-    },
-    child: child,
-  );
+  ) {
+    final bool isOpaque = ModalRoute.of(context)?.opaque ?? false;
+    final Color finalBackgroundColor = backgroundColor ?? Theme.of(context).colorScheme.surface;
+
+    return DualTransitionBuilder(
+      animation: ReverseAnimation(secondaryAnimation),
+      forwardBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+        return Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            if (animation.isAnimating && isOpaque) ColoredBox(color: finalBackgroundColor),
+            FadeTransition(
+              opacity: _fadeInTransition.animate(animation),
+              child: SlideTransition(
+                position: _secondaryForwardTranslationTween.animate(animation),
+                child: child,
+              ),
+            ),
+          ],
+        );
+      },
+      reverseBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+        return Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            if (animation.isAnimating && isOpaque) ColoredBox(color: finalBackgroundColor),
+            FadeTransition(
+              opacity: _fadeOutTransition.animate(animation),
+              child: SlideTransition(
+                position: _secondaryBackwardTranslationTween.animate(animation),
+                child: child,
+              ),
+            ),
+          ],
+        );
+      },
+      child: child,
+    );
+  }
 
   @override
   Widget buildTransitions<T>(
