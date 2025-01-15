@@ -481,6 +481,7 @@ class _IndicatorPainter extends CustomPainter {
     required this.showDivider,
     this.devicePixelRatio,
     required this.indicatorAnimation,
+    required this.textDirection,
   }) : super(repaint: controller.animation) {
     // TODO(polina-c): stop duplicating code across disposables
     // https://github.com/flutter/flutter/issues/137435
@@ -507,6 +508,7 @@ class _IndicatorPainter extends CustomPainter {
   final bool showDivider;
   final double? devicePixelRatio;
   final TabIndicatorAnimation indicatorAnimation;
+  final TextDirection textDirection;
 
   // _currentTabOffsets and _currentTextDirection are set each time TabBar
   // layout is completed. These values can be null when TabBar contains no
@@ -583,18 +585,28 @@ class _IndicatorPainter extends CustomPainter {
     _needsPaint = false;
     _painter ??= indicator.createBoxPainter(markNeedsPaint);
 
-    final double index = controller.index.toDouble();
     final double value = controller.animation!.value;
-    final bool ltr = index > value;
-    final int from = (ltr ? value.floor() : value.ceil()).clamp(0, maxTabIndex);
-    final int to = (ltr ? from + 1 : from - 1).clamp(0, maxTabIndex);
-    final Rect fromRect = indicatorRect(size, from);
+    final int to =
+        controller.indexIsChanging
+            ? controller.index
+            : switch (textDirection) {
+              TextDirection.ltr => value.ceil(),
+              TextDirection.rtl => value.floor(),
+            }.clamp(0, maxTabIndex);
+    final int from =
+        controller.indexIsChanging
+            ? controller.previousIndex
+            : switch (textDirection) {
+              TextDirection.ltr => (to - 1),
+              TextDirection.rtl => (to + 1),
+            }.clamp(0, maxTabIndex);
     final Rect toRect = indicatorRect(size, to);
+    final Rect fromRect = indicatorRect(size, from);
     _currentRect = Rect.lerp(fromRect, toRect, (value - from).abs());
 
     _currentRect = switch (indicatorAnimation) {
       TabIndicatorAnimation.linear => _currentRect,
-      TabIndicatorAnimation.elastic => _applyElasticEffect(_currentRect!, fromRect),
+      TabIndicatorAnimation.elastic => _applyElasticEffect(fromRect, toRect, _currentRect!),
     };
 
     assert(_currentRect != null);
@@ -627,40 +639,69 @@ class _IndicatorPainter extends CustomPainter {
   }
 
   /// Applies the elastic effect to the indicator.
-  Rect _applyElasticEffect(Rect rect, Rect targetRect) {
+  Rect _applyElasticEffect(Rect fromRect, Rect toRect, Rect currentRect) {
     // If the tab animation is completed, there is no need to stretch the indicator
     // This only works for the tab change animation via tab index, not when
     // dragging a [TabBarView], but it's still ok, to avoid unnecessary calculations.
     if (controller.animation!.isCompleted) {
-      return rect;
+      return currentRect;
     }
 
     final double index = controller.index.toDouble();
     final double value = controller.animation!.value;
-    final double tabChangeProgress = (index - value).abs();
+    final double tabChangeProgress;
+
+    if (controller.indexIsChanging) {
+      double progressLeft = (index - value).abs();
+      final int tabsDelta = (controller.index - controller.previousIndex).abs();
+      if (tabsDelta != 0) {
+        progressLeft /= tabsDelta;
+      }
+      tabChangeProgress = 1 - clampDouble(progressLeft, 0.0, 1.0);
+    } else {
+      tabChangeProgress = (index - value).abs();
+    }
 
     // If the animation has finished, there is no need to apply the stretch effect.
     if (tabChangeProgress == 1.0) {
-      return rect;
+      return currentRect;
     }
 
-    final double fraction = switch (rect.left < targetRect.left) {
-      true => accelerateInterpolation(tabChangeProgress),
-      false => decelerateInterpolation(tabChangeProgress),
+    final double leftFraction;
+    final double rightFraction;
+    final bool isMovingRight = switch (textDirection) {
+      TextDirection.ltr => controller.indexIsChanging ? index > value : value > index,
+      TextDirection.rtl => controller.indexIsChanging ? value > index : index > value,
     };
+    if (isMovingRight) {
+      leftFraction = accelerateInterpolation(tabChangeProgress);
+      rightFraction = decelerateInterpolation(tabChangeProgress);
+    } else {
+      leftFraction = decelerateInterpolation(tabChangeProgress);
+      rightFraction = accelerateInterpolation(tabChangeProgress);
+    }
 
-    final Rect stretchedRect = _inflateRectHorizontally(rect, targetRect, fraction);
-    return stretchedRect;
-  }
+    final double lerpRectLeft;
+    final double lerpRectRight;
 
-  /// Same as [Rect.inflate], but only inflates in the horizontal direction.
-  Rect _inflateRectHorizontally(Rect rect, Rect targetRect, double fraction) {
-    return Rect.fromLTRB(
-      lerpDouble(rect.left, targetRect.left, fraction)!,
-      rect.top,
-      lerpDouble(rect.right, targetRect.right, fraction)!,
-      rect.bottom,
-    );
+    // The controller.indexIsChanging is true when the Tab is pressed, instead of swipe to change tabs.
+    // If the tab is pressed then only lerp between fromRect and toRect.
+    if (controller.indexIsChanging) {
+      lerpRectLeft = lerpDouble(fromRect.left, toRect.left, leftFraction)!;
+      lerpRectRight = lerpDouble(fromRect.right, toRect.right, rightFraction)!;
+    } else {
+      // Switch the Rect left and right lerp order based on swipe direction.
+      lerpRectLeft = switch (isMovingRight) {
+        true => lerpDouble(fromRect.left, toRect.left, leftFraction)!,
+        false => lerpDouble(toRect.left, fromRect.left, leftFraction)!,
+      };
+      lerpRectRight = switch (isMovingRight) {
+        true => lerpDouble(fromRect.right, toRect.right, rightFraction)!,
+        false => lerpDouble(toRect.right, fromRect.right, rightFraction)!,
+      };
+    }
+
+    return Rect.fromLTRB(lerpRectLeft, currentRect.top, lerpRectRight, currentRect.bottom);
   }
 
   @override
@@ -1517,6 +1558,7 @@ class _TabBarState extends State<TabBar> {
                   widget.indicatorAnimation ??
                   tabBarTheme.indicatorAnimation ??
                   defaultTabIndicatorAnimation,
+              textDirection: Directionality.of(context),
             );
 
     oldPainter?.dispose();
