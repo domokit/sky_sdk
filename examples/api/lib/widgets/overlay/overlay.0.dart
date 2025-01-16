@@ -145,7 +145,6 @@ class _OverlayExampleState extends State<OverlayExample> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
-            spacing: 10.0,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(

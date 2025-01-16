@@ -18,10 +18,10 @@ class MyApp extends StatelessWidget {
               // return Scaffold(body: const ListTile(title: Text('someText'))); // Does work
               return Scaffold(
                   body: Column(
-                children: [
-                  navigationShell,
-                ],
-              )); // Does not work
+                    children: [
+                      navigationShell,
+                    ],
+                  )); // Does not work
             },
             branches: [
               StatefulShellBranch(routes: [
@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
                     print('visibility root: $visibility');
                     // return Container(width: 111, height: 112, color: Colors.red);
                     return Ink(
-                      child: Container(width: 111, height: 112, color: Colors.red),
+                      child:
+                      Container(width: 111, height: 112, color: Colors.red),
                     );
                   },
                   routes: [
@@ -42,7 +43,8 @@ class MyApp extends StatelessWidget {
                       builder: (context, __) {
                         final visibility = Visibility.of(context);
                         print('visibility child: $visibility');
-                        return Container(width: 222, height: 223, color: Colors.blue);
+                        return Container(
+                            width: 222, height: 223, color: Colors.blue);
                         return const Text('subA');
                       },
                     ),
@@ -52,26 +54,52 @@ class MyApp extends StatelessWidget {
             ]),
       ],
     );
-    // return MaterialApp(
-    //   home: Scaffold(
-    //     body: Stack(
-    //       children: [
-    //         Offstage(
-    //           offstage: false,
-    //           child: Ink(
-    //             child: Container(width: 111, height: 112, color: Colors.red),
-    //           ),
-    //         ),
-    //         Ink(
-    //           child: Container(width: 222, height: 222, color: Colors.blue),
-    //         )
-    //       ],
-    //     ),
-    //   ),
-    // );
+
+    return MaterialApp(
+      routes: {
+        '/': (context) =>
+            Scaffold(
+              appBar: AppBar(),
+              body: Ink(
+                child: Container(width: 111, height: 112, color: Colors.red),
+              ),
+            ),
+        '/sub': (context) =>
+            Scaffold(
+              appBar: AppBar(),
+              body: Ink(
+                child: Container(width: 222, height: 223, color: Colors.blue),
+              ),
+            ),
+      },
+      initialRoute: '/sub',
+    );
 
     return MaterialApp.router(
       routerConfig: router,
+    );
+  }
+}
+
+class OverlayExample extends StatefulWidget {
+  const OverlayExample({super.key});
+
+  @override
+  State<OverlayExample> createState() => _OverlayExampleState();
+}
+
+class _OverlayExampleState extends State<OverlayExample> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Ink(
+        child: Container(width: 222, height: 222, color: Colors.blue),
+      ),
     );
   }
 }

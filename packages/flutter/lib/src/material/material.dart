@@ -778,9 +778,9 @@ abstract class InkFeature {
 
   void _paint(Canvas canvas) {
     // Ignore render objects which have not been laid out.
-    if (!referenceBox.hasSize) {
-      return;
-    }
+    // if (!referenceBox.hasSize) {
+    //   return;
+    // }
     // If we don't want to allow unlayouted renderboxes to be ignored, we should narrow the error down:
     if (!referenceBox.hasSize) {
       // TODO(gustl22): Should we extract the causing widget from the [referenceBox.debugCreator.element.widget] ?
