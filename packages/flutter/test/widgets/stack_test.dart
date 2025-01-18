@@ -489,7 +489,7 @@ void main() {
     }
   });
 
-  testWidgets('IndexedStack excludes focus for hidden children if maintainFocusability is set to false', (WidgetTester tester) async {
+  testWidgets('IndexedStack excludes focus for hidden children if maintainInteractivity is set to false', (WidgetTester tester) async {
     const List<Widget> children = <Widget>[
       Focus(child: Text('child 0')),
       Focus(child: Text('child 1')),
@@ -500,7 +500,7 @@ void main() {
         Directionality(
           textDirection: TextDirection.ltr,
           child: IndexedStack(
-            maintainFocusability: false,
+            maintainInteractivity: false,
             index: activeIndex,
             children: children,
           ),
@@ -545,7 +545,7 @@ void main() {
     expect(child1FocusNode.hasFocus, true);
   });
 
-  testWidgets('IndexedStack: hidden children can be focused if maintainFocusability is set to true', (WidgetTester tester) async {
+  testWidgets('IndexedStack: hidden children can be focused if maintainInteractivity is set to true', (WidgetTester tester) async {
     const List<Widget> children = <Widget>[
       Focus(child: Text('child 0')),
       Focus(child: Text('child 1')),
@@ -589,7 +589,7 @@ void main() {
     expect(child1FocusNode.hasFocus, true);
   });
 
-  testWidgets('IndexedStack: hidden children can not receive tap events if maintainFocusability is set to false', (WidgetTester tester) async {
+  testWidgets('IndexedStack: hidden children can not receive tap events if maintainInteractivity is set to false', (WidgetTester tester) async {
     bool tapped = false;
     final List<Widget> children = <Widget>[
       const Text('child'),
@@ -603,7 +603,7 @@ void main() {
       Directionality(
         textDirection: TextDirection.ltr,
         child: IndexedStack(
-          maintainFocusability: false,
+          maintainInteractivity: false,
           children: children,
         ),
       ),
@@ -618,7 +618,7 @@ void main() {
     expect(tapped, false);
   });
 
-  testWidgets('IndexedStack: hidden children can not receive tap events if maintainFocusability is set to true', (WidgetTester tester) async {
+  testWidgets('IndexedStack: hidden children can not receive tap events if maintainInteractivity is set to true', (WidgetTester tester) async {
     bool tapped = false;
     final List<Widget> children = <Widget>[
       const Text('child'),
