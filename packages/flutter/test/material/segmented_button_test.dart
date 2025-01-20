@@ -1218,6 +1218,102 @@ void main() {
     await tester.pumpWidget(buildButton(enabled: false));
     expect(iconStyle(tester, Icons.add).color, disabledIconColor);
   });
+
+  testWidgets('SegmentedButton border sides respects states', (WidgetTester tester) async {
+    const Color disabledColor = Color(0XFF999999);
+    const Color hoveredColor = Color(0XFF0000FF);
+    const Color focusedColor = Color(0XFF00FF00);
+    const Color selectedColor = Color(0XF0001234);
+    const Color enabledColor = Color(0XFFFF0000);
+
+    Widget buildButton({bool enabled = true, WidgetStateProperty<BorderSide?>? side}) {
+      return MaterialApp(
+        home: Material(
+          child: Center(
+            child: SegmentedButton<int>(
+              style: ButtonStyle(side: side),
+              segments: const <ButtonSegment<int>>[
+                ButtonSegment<int>(value: 0, label: Text('Add'), icon: Icon(Icons.add)),
+                ButtonSegment<int>(value: 1, label: Text('Subtract'), icon: Icon(Icons.remove)),
+              ],
+              showSelectedIcon: false,
+              onSelectionChanged: enabled ? (Set<int> selected) {} : null,
+              selected: const <int>{0},
+            ),
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(
+      buildButton(
+        side: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          if (states.contains(WidgetState.hovered)) {
+            return const BorderSide(color: hoveredColor);
+          }
+          if (states.contains(WidgetState.focused)) {
+            return const BorderSide(color: focusedColor);
+          }
+
+          return const BorderSide(color: enabledColor);
+        }),
+      ),
+    );
+
+    expect(find.byType(SegmentedButton<int>), paints..rrect(color: enabledColor));
+
+    // Hovered.
+    final Offset buttonLocation = tester.getCenter(find.text('Add'));
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer();
+    await gesture.moveTo(buttonLocation);
+    addTearDown(gesture.removePointer);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SegmentedButton<int>), paints..rrect(color: hoveredColor));
+
+    await gesture.removePointer();
+    await tester.pumpAndSettle();
+
+    // Focused.
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SegmentedButton<int>), paints..rrect(color: focusedColor));
+
+    await tester.pumpWidget(
+      buildButton(
+        enabled: false,
+        side: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          if (states.contains(WidgetState.disabled)) {
+            return const BorderSide(color: disabledColor);
+          }
+          return const BorderSide(color: enabledColor);
+        }),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SegmentedButton<int>), paints..rrect(color: disabledColor));
+
+    await tester.pumpWidget(
+      buildButton(
+        side: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return const BorderSide(color: selectedColor);
+          }
+          return const BorderSide(color: enabledColor);
+        }),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SegmentedButton<int>), paints..rrect(color: selectedColor));
+
+    // Finish gesture to release resources.
+    await gesture.up();
+    await tester.pumpAndSettle();
+  });
 }
 
 Set<MaterialState> enabled = const <MaterialState>{};
