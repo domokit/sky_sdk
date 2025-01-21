@@ -296,7 +296,7 @@ void DlSkCanvasAdapter::DrawImageNine(const sk_sp<DlImage>& image,
 }
 
 void DlSkCanvasAdapter::DrawAtlas(const sk_sp<DlImage>& atlas,
-                                  const SkRSXform xform[],
+                                  const DlRSTransform xform[],
                                   const DlRect tex[],
                                   const DlColor colors[],
                                   int count,
@@ -311,9 +311,9 @@ void DlSkCanvasAdapter::DrawAtlas(const sk_sp<DlImage>& atlas,
   for (int i = 0; i < count; ++i) {
     sk_colors.push_back(colors[i].argb());
   }
-  delegate_->drawAtlas(sk_image.get(), xform, ToSkRects(tex), sk_colors.data(),
-                       count, ToSk(mode), ToSk(sampling), ToSkRect(cullRect),
-                       sk_paint());
+  delegate_->drawAtlas(sk_image.get(), ToSk(xform), ToSkRects(tex),
+                       sk_colors.data(), count, ToSk(mode), ToSk(sampling),
+                       ToSkRect(cullRect), sk_paint());
 }
 
 void DlSkCanvasAdapter::DrawDisplayList(const sk_sp<DisplayList> display_list,

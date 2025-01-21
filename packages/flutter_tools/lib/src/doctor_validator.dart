@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:meta/meta.dart';
 
 import 'base/async_guard.dart';
@@ -36,7 +38,7 @@ enum ValidationType { crash, missing, partial, notAvailable, success }
 enum ValidationMessageType { error, hint, information }
 
 abstract class DoctorValidator {
-  const DoctorValidator(this.title);
+  DoctorValidator(this.title);
 
   /// This is displayed in the CLI.
   final String title;
@@ -48,7 +50,19 @@ abstract class DoctorValidator {
   /// Duration before the spinner should display [slowWarning].
   Duration get slowWarningDuration => _slowWarningDuration;
 
-  Future<ValidationResult> validate();
+  /// Performs validation by invoking [validateImpl].
+  ///
+  /// Tracks time taken to execute the validation step.
+  Future<ValidationResult> validate() async {
+    final Stopwatch stopwatch = Stopwatch()..start();
+    final ValidationResult result = await validateImpl();
+    stopwatch.stop();
+    result._executionTime = stopwatch.elapsed;
+    return result;
+  }
+
+  /// Validation implementation.
+  Future<ValidationResult> validateImpl();
 }
 
 /// A validator that runs other [DoctorValidator]s and combines their output
@@ -74,7 +88,7 @@ class GroupedValidator extends DoctorValidator {
   String _currentSlowWarning = 'Initializing...';
 
   @override
-  Future<ValidationResult> validate() async {
+  Future<ValidationResult> validateImpl() async {
     final List<ValidatorTask> tasks = <ValidatorTask>[
       for (final DoctorValidator validator in subValidators)
         ValidatorTask(validator, asyncGuard<ValidationResult>(() => validator.validate())),
@@ -123,11 +137,10 @@ class GroupedValidator extends DoctorValidator {
   }
 }
 
-@immutable
 class ValidationResult {
   /// [ValidationResult.type] should only equal [ValidationResult.success]
   /// if no [messages] are hints or errors.
-  const ValidationResult(this.type, this.messages, {this.statusInfo});
+  ValidationResult(this.type, this.messages, {this.statusInfo});
 
   factory ValidationResult.crash(Object error, [StackTrace? stackTrace]) {
     return ValidationResult(ValidationType.crash, <ValidationMessage>[
@@ -154,6 +167,10 @@ class ValidationResult {
     ValidationType.success => '[✓]',
     ValidationType.notAvailable || ValidationType.partial => '[!]',
   };
+
+  /// The time taken to perform the validation, set by [DoctorValidator.validate].
+  Duration? get executionTime => _executionTime;
+  Duration? _executionTime;
 
   String get coloredLeadingBox {
     return globals.terminal.color(leadingBox, switch (type) {
@@ -255,7 +272,7 @@ class NoIdeValidator extends DoctorValidator {
   NoIdeValidator() : super('Flutter IDE Support');
 
   @override
-  Future<ValidationResult> validate() async {
+  Future<ValidationResult> validateImpl() async {
     return ValidationResult(
       // Info hint to user they do not have a supported IDE installed
       ValidationType.notAvailable,
@@ -273,5 +290,5 @@ class ValidatorWithResult extends DoctorValidator {
   final ValidationResult result;
 
   @override
-  Future<ValidationResult> validate() async => result;
+  Future<ValidationResult> validateImpl() async => result;
 }

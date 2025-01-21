@@ -819,8 +819,8 @@ void DisplayListBuilder::Rotate(DlScalar degrees) {
   if (SkScalarMod(degrees, 360.0) != 0.0) {
     checkForDeferredSave();
     Push<RotateOp>(0, degrees);
-    global_state().rotate(degrees);
-    layer_local_state().rotate(degrees);
+    global_state().rotate(DlDegrees(degrees));
+    layer_local_state().rotate(DlDegrees(degrees));
   }
 }
 void DisplayListBuilder::Skew(DlScalar sx, DlScalar sy) {
@@ -914,7 +914,7 @@ void DisplayListBuilder::TransformReset() {
     // became singular while we were accumulating the current layer.
     // In either case, we should no longer be accumulating any
     // contents so we set the layer tracking transform to a singular one.
-    layer_local_state().setTransform(SkMatrix::Scale(0.0f, 0.0f));
+    layer_local_state().setTransform(DlMatrix::MakeScale({0.0f, 0.0f, 0.0f}));
   }
 
   global_state().setIdentity();
@@ -1034,7 +1034,7 @@ void DisplayListBuilder::ClipPath(const DlPath& path,
   if (current_info().is_nop) {
     return;
   }
-  if (!path.IsInverseFillType()) {
+  {
     DlRect rect;
     if (path.IsRect(&rect)) {
       ClipRect(rect, clip_op, is_aa);
@@ -1050,8 +1050,8 @@ void DisplayListBuilder::ClipPath(const DlPath& path,
       return;
     }
   }
-  global_state().clipPath(path.GetSkPath(), clip_op, is_aa);
-  layer_local_state().clipPath(path.GetSkPath(), clip_op, is_aa);
+  global_state().clipPath(path, clip_op, is_aa);
+  layer_local_state().clipPath(path, clip_op, is_aa);
   if (global_state().is_cull_rect_empty() ||
       layer_local_state().is_cull_rect_empty()) {
     current_info().is_nop = true;
@@ -1221,9 +1221,7 @@ void DisplayListBuilder::drawPath(const DlPath& path) {
   DisplayListAttributeFlags flags = kDrawPathFlags;
   OpResult result = PaintResult(current_, flags);
   if (result != OpResult::kNoEffect) {
-    bool is_visible = path.IsInverseFillType()
-                          ? AccumulateUnbounded()
-                          : AccumulateOpBounds(path.GetBounds(), flags);
+    bool is_visible = AccumulateOpBounds(path.GetBounds(), flags);
     if (is_visible) {
       Push<DrawPathOp>(0, path);
       CheckLayerOpacityHairlineCompatibility();
@@ -1469,7 +1467,7 @@ void DisplayListBuilder::DrawImageNine(const sk_sp<DlImage>& image,
   }
 }
 void DisplayListBuilder::drawAtlas(const sk_sp<DlImage> atlas,
-                                   const SkRSXform xform[],
+                                   const DlRSTransform xform[],
                                    const DlRect tex[],
                                    const DlColor colors[],
                                    int count,
@@ -1484,11 +1482,11 @@ void DisplayListBuilder::drawAtlas(const sk_sp<DlImage> atlas,
   if (result == OpResult::kNoEffect) {
     return;
   }
-  SkPoint quad[4];
+  DlQuad quad;
   AccumulationRect accumulator;
   for (int i = 0; i < count; i++) {
     const DlRect& src = tex[i];
-    xform[i].toQuad(src.GetWidth(), src.GetHeight(), quad);
+    xform[i].GetQuad(src.GetWidth(), src.GetHeight(), quad);
     for (int j = 0; j < 4; j++) {
       accumulator.accumulate(quad[j]);
     }
@@ -1497,6 +1495,7 @@ void DisplayListBuilder::drawAtlas(const sk_sp<DlImage> atlas,
       !AccumulateOpBounds(accumulator.GetBounds(), flags)) {
     return;
   }
+
   // Accumulating the bounds might not trip the overlap condition if the
   // whole atlas operation is separated from other rendering calls, but
   // since each atlas op is treated as an independent operation, we have
@@ -1511,7 +1510,7 @@ void DisplayListBuilder::drawAtlas(const sk_sp<DlImage> atlas,
     current_layer().layer_local_accumulator.record_overlapping_bounds();
   }
 
-  int bytes = count * (sizeof(SkRSXform) + sizeof(SkRect));
+  int bytes = count * (sizeof(DlRSTransform) + sizeof(DlRect));
   void* data_ptr;
   if (colors != nullptr) {
     bytes += count * sizeof(DlColor);
@@ -1543,7 +1542,7 @@ void DisplayListBuilder::drawAtlas(const sk_sp<DlImage> atlas,
   is_ui_thread_safe_ = is_ui_thread_safe_ && atlas->isUIThreadSafe();
 }
 void DisplayListBuilder::DrawAtlas(const sk_sp<DlImage>& atlas,
-                                   const SkRSXform xform[],
+                                   const DlRSTransform xform[],
                                    const DlRect tex[],
                                    const DlColor colors[],
                                    int count,

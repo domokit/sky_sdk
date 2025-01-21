@@ -17,7 +17,11 @@ AHBTexturePoolVK::AHBTexturePoolVK(std::weak_ptr<Context> context,
     return;
   }
   for (auto i = 0u; i < max_entries_; i++) {
-    pool_.emplace_back(CreateTexture());
+    auto texture = CreateTexture();
+    if (!texture->IsValid()) {
+      return;
+    }
+    pool_.emplace_back(std::move(texture));
   }
   is_valid_ = true;
 }

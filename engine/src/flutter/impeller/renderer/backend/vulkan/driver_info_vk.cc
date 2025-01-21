@@ -329,15 +329,6 @@ bool DriverInfoVK::IsEmulator() const {
 }
 
 bool DriverInfoVK::IsKnownBadDriver() const {
-  if (adreno_gpu_.has_value()) {
-    AdrenoGPU adreno = adreno_gpu_.value();
-    // 630 is the lowest version I've tested on the still works.
-    // I suspect earlier 600s should work but this is waiting on
-    // more devices for testing.
-    if (adreno < AdrenoGPU::kAdreno630) {
-      return true;
-    }
-  }
   // Disable Maleoon series GPUs, see:
   // https://github.com/flutter/flutter/issues/156623
   if (vendor_ == VendorVK::kHuawei) {

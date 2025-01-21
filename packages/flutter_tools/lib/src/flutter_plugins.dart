@@ -348,18 +348,27 @@ public final class GeneratedPluginRegistrant {
 }
 ''';
 
-List<Map<String, Object?>> _extractPlatformMaps(List<Plugin> plugins, String type) {
+List<Map<String, Object?>> _extractPlatformMaps(Iterable<Plugin> plugins, String type) {
   return <Map<String, Object?>>[
     for (final Plugin plugin in plugins)
       if (plugin.platforms[type] case final PluginPlatform platformPlugin) platformPlugin.toMap(),
   ];
 }
 
-Future<void> _writeAndroidPluginRegistrant(FlutterProject project, List<Plugin> plugins) async {
-  final List<Plugin> methodChannelPlugins = _filterMethodChannelPlugins(
+Future<void> _writeAndroidPluginRegistrant(
+  FlutterProject project,
+  List<Plugin> plugins, {
+  required bool releaseMode,
+}) async {
+  Iterable<Plugin> methodChannelPlugins = _filterMethodChannelPlugins(
     plugins,
     AndroidPlugin.kConfigKey,
   );
+  // TODO(camsim99): Remove dev dependencies from release builds for all platforms. See https://github.com/flutter/flutter/issues/161348.
+  if (releaseMode) {
+    methodChannelPlugins = methodChannelPlugins.where((Plugin p) => !p.isDevDependency);
+  }
+
   final List<Map<String, Object?>> androidPlugins = _extractPlatformMaps(
     methodChannelPlugins,
     AndroidPlugin.kConfigKey,
@@ -1206,6 +1215,7 @@ Future<void> injectPlugins(
   bool windowsPlatform = false,
   Iterable<String>? allowedPlugins,
   DarwinDependencyManagement? darwinDependencyManagement,
+  bool? releaseMode,
 }) async {
   final List<Plugin> plugins = await findPlugins(project);
   final Map<String, List<Plugin>> pluginsByPlatform = _resolvePluginImplementations(
@@ -1214,7 +1224,11 @@ Future<void> injectPlugins(
   );
 
   if (androidPlatform) {
-    await _writeAndroidPluginRegistrant(project, pluginsByPlatform[AndroidPlugin.kConfigKey]!);
+    await _writeAndroidPluginRegistrant(
+      project,
+      pluginsByPlatform[AndroidPlugin.kConfigKey]!,
+      releaseMode: releaseMode ?? false,
+    );
   }
   if (iosPlatform) {
     await _writeIOSPluginRegistrant(project, pluginsByPlatform[IOSPlugin.kConfigKey]!);

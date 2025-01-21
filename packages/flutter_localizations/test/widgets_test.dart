@@ -156,7 +156,7 @@ Widget buildFrame({
     supportedLocales: supportedLocales,
     onGenerateRoute: (RouteSettings settings) {
       return PageRouteBuilder<void>(
-        pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
+        pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
           return buildContent(context);
         },
       );

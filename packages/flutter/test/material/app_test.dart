@@ -380,7 +380,7 @@ void main() {
         color: const Color.fromARGB(255, 255, 255, 255),
         onGenerateRoute: (_) {
           return PageRouteBuilder<void>(
-            pageBuilder: (_, __, ___) {
+            pageBuilder: (_, _, _) {
               routeBuildCount++;
               return Builder(
                 builder: (BuildContext context) {
@@ -1246,6 +1246,51 @@ void main() {
       ),
     );
     expect(ScrollConfiguration.of(capturedContext).runtimeType, MaterialScrollBehavior);
+  });
+
+  testWidgets('MaterialApp has correct default KeyboardDismissBehavior', (
+    WidgetTester tester,
+  ) async {
+    late BuildContext capturedContext;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (BuildContext context) {
+            capturedContext = context;
+            return const Placeholder();
+          },
+        ),
+      ),
+    );
+
+    expect(
+      ScrollConfiguration.of(capturedContext).getKeyboardDismissBehavior(capturedContext),
+      ScrollViewKeyboardDismissBehavior.manual,
+    );
+  });
+
+  testWidgets('MaterialApp can override default KeyboardDismissBehavior', (
+    WidgetTester tester,
+  ) async {
+    late BuildContext capturedContext;
+    await tester.pumpWidget(
+      MaterialApp(
+        scrollBehavior: const MaterialScrollBehavior().copyWith(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        ),
+        home: Builder(
+          builder: (BuildContext context) {
+            capturedContext = context;
+            return const Placeholder();
+          },
+        ),
+      ),
+    );
+
+    expect(
+      ScrollConfiguration.of(capturedContext).getKeyboardDismissBehavior(capturedContext),
+      ScrollViewKeyboardDismissBehavior.onDrag,
+    );
   });
 
   testWidgets('A ScrollBehavior can be set for MaterialApp', (WidgetTester tester) async {

@@ -6,27 +6,32 @@ With branching and branch testability being supported for Flutter & Dart release
 
 **Note: This process applies to regressions from the previous release or serious bugs otherwise introduced by the current release.  Feature work is not considered for cherry-picking and will need to wait for the next release.**
 
-## Automatically Creates a Cherry Pick Request
+## Automatically Create a Cherry-pick Request
 
-Eligibility:
-1. If your cherry pick is expecting to have a merge conflict, please skip this section and follow instructions in the FAQ section below to manually open a cherry pick request instead. (e.g. PRs that contain changes to .ci.yaml files are very likely to hit a merge conflict)
-2. The framework PR to be cherry picked needs to have a base commit later than [01/24/2024](https://www.google.com/url?q=https://github.com/flutter/flutter/pull/142058&sa=D&source=docs&ust=1706904517596608&usg=AOvVaw3cFfw8vyiBtY3EzM_N-PEi), and the engine PR to be cherry picked has a base commit later than [02/06/2024](https://github.com/flutter/engine/pull/50265)
-3. The target branch is either [beta](https://github.com/flutter/flutter/blob/beta/bin/internal/release-candidate-branch.version) or [stable](https://github.com/flutter/flutter/blob/stable/bin/internal/release-candidate-branch.version). (not a new beta branch that isn't yet created)
-
-For automatic cherry pick:
 1. Add the `cp: beta` or `cp: stable` label to the pull request on flutter/flutter master. (you can find [beta](https://github.com/flutter/flutter/blob/beta/bin/internal/release-candidate-branch.version) and [stable](https://github.com/flutter/flutter/blob/stable/bin/internal/release-candidate-branch.version) candidate branch info by following the respective links)
 2. Wait about 30 seconds.
 3. If automatic cherry pick succeeds (no merge conflict), a new pull requested will be created and you will receive an email. Edit the cherry-pick details in the PR description of the generated pull request, and a release engineer will follow up on the request.
-4. If automatic cherry pick fails, a comment will be left on the original PR. In this case you will need to follow instructions in the FAQ section below to manually create a cherry pick PR.
+4. If automatic cherry pick fails, a comment will be left on the original PR. In this case you will need to follow instructions in the manual cherry-pick section below to manually create a cherry pick PR.
+5. Update CHANGELOG.md following our [best practices](docs/releases/Hotfix-Documentation-Best-Practices.md).
 
-For manual cherry pick:<br >
-refer to the FAQ section below
+If for some reason, an automated cherry-pick can not be applied, please follow the manual cherry-pick instructions.
+
+## Manually Create a Cherry-pick Request
+
+If the automated cherry-pick process fails, you will have to create the cherry-pick request manually:
+
+1. Create a cherry-pick pull request to the intended branch. (you can find [beta](https://github.com/flutter/flutter/blob/beta/bin/internal/release-candidate-branch.version) and [stable](https://github.com/flutter/flutter/blob/stable/bin/internal/release-candidate-branch.version) candidate branch info by following the respective links).
+2. Edit the title of the cherry-pick request to start with either [beta] or [stable].
+3. Fill out the PR description with the following fields:
+  - Impacted Users (Approximately who will hit this issue, ex. all Flutter devs, Windows developers, all end-customers, apps using X framework feature).
+  - Impact Description (What is the impact? ex. visual jank on Samsung phones, app crash, cannot ship an iOS app. Does it impact development? ex. flutter doctor crashes when Android Studio is installed. Or shipping a production app? ex. the app crashes on launch).
+  - Workaround (Is there a workaround for this issue?)
+  - Risk (What is the risk level of this cherry-pick?)
+  - Test Coverage (Are you confident that your fix is well-tested by automated tests?)
+  - Validation Steps (What are the steps to validate that this fix works?)
+4. Ensure that your cherry-pick PR updates CHANGELOG.md.
 
 ## Frequently asked questions
-
-### How do I request a cherry-pick?
-
-To request a cherry-pick, utilize the [issue template](https://github.com/flutter/flutter/issues/new?template=7_cherry_pick.yml).
 
 ### Who can request a cherry-pick?
 
@@ -41,19 +46,25 @@ Anyone can request a cherry-pick.
 
 The release engineering team will assign a cherry-pick reviewer who is an expert in the area of the code that your cherry-pick may affect.
 
+### Why was my cherry-pick rejected
+
+While we attempt to address every cherry-pick requests, there are various reasons a cherry-pick request may not be accepted to include, but not limited to:
+- Not filling out the pull request info appropriately.
+- Attempting to cherry-pick something other than a fix.
+- etc.
+
 ### Lifecycle of a cherry-pick
 
 1. The cherry-pick requester opens a cherry-pick pull request to the [beta](https://github.com/flutter/flutter/blob/beta/bin/internal/release-candidate-branch.version) or [stable](https://github.com/flutter/flutter/blob/stable/bin/internal/release-candidate-branch.version) **candidate** branch (follow the respective link to find the branch name)
-2. A cherry-pick issue is filled out completely and created utilizing the [cherry-pick template](https://github.com/flutter/flutter/issues/new?template=7_cherry_pick.yml) in the [flutter/flutter](https://github.com/flutter/flutter) repository.
-3. The release engineering team is notified that a cherry-pick request is in queue and assigns an appropriate reviewer who is an expert in the area who will review the cherry-pick issue and associated cherry-pick pull request.
-4. The release engineering team applies the `merge-to-beta` or `merge-to-stable` label.
-5. The cherry-pick request then enters one of the following states.
+2. The release engineering team is notified that a cherry-pick request is in queue and assigns an appropriate reviewer who is an expert in the area who will review the cherry-pick issue and associated cherry-pick pull request.
+3. The release engineering team applies the `merge-to-beta` or `merge-to-stable` label.
+4. The cherry-pick request then enters one of the following states.
    1. Approved: The reviewer has approved the cherry-pick and cherry-pick pull request.
 The release engineering team will merge the cherry-pick pull request and apply the `cp: merged` label to the cherry-pick issue.
    2. Denied: The reviewer will comment on the cherry-pick issue why the cherry-pick is denied.
 The release engineering team will close the cherry-pick issue and associated cherry-pick pull request.
-6. The cherry-pick is picked up in the next release period.
-7. Once the cherry-pick has been added to a release, the release engineering team will close the cherry-pick issue.
+5. The cherry-pick is picked up in the next release period.
+6. Once the cherry-pick has been added to a release, the release engineering team will close the cherry-pick issue.
 
 ### This is my first cherry-pick, how do I do it?
 

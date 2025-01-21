@@ -37,6 +37,7 @@ class SamplerVK final : public Sampler, public BackendCast<SamplerVK, Sampler> {
   const vk::Device device_;
   SharedHandleVK<vk::Sampler> sampler_;
   std::shared_ptr<YUVConversionVK> yuv_conversion_;
+  bool mips_disabled_workaround_ = false;
   bool is_valid_ = false;
 
   SamplerVK(const SamplerVK&) = delete;

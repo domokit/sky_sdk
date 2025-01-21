@@ -82,19 +82,14 @@ class WebTestsSuite {
     ],
   };
 
-  /// The number of Cirrus jobs that run Web tests in parallel.
+  /// The number of jobs that run Web tests in parallel.
   ///
-  /// The default is 8 shards. Typically .cirrus.yml would define the
-  /// WEB_SHARD_COUNT environment variable rather than relying on the default.
-  ///
-  /// WARNING: if you change this number, also change .cirrus.yml
-  /// and make sure it runs _all_ shards.
+  /// This used to use the `WEB_SHARD_COUNT` environment variable, but that
+  /// was never re-added in the migration to LUCI, so instead the count is
+  /// hardcoded below.
   ///
   /// The last shard also runs the Web plugin tests.
-  int get webShardCount =>
-      Platform.environment.containsKey('WEB_SHARD_COUNT')
-          ? int.parse(Platform.environment['WEB_SHARD_COUNT']!)
-          : 8;
+  int get webShardCount => 8;
 
   static const List<String> _kAllBuildModes = <String>['debug', 'profile', 'release'];
 
@@ -696,7 +691,7 @@ class WebTestsSuite {
     // The last shard also runs the flutter_web_plugins tests.
     //
     // We make sure the last shard ends in _last so it's easier to catch mismatches
-    // between `.cirrus.yml` and `test.dart`.
+    // between `.ci.yaml` and `test.dart`.
     subshards['${webShardCount - 1}_last'] = () async {
       await _runFlutterWebTest(
         webRenderer,

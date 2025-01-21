@@ -63,12 +63,8 @@ In the framework, update the following `.ci.yaml` entry:
 
 In the engine, you may follow [Upgrading Engine's Android API version](https://github.com/flutter/flutter/blob/main/docs/platforms/android/Upgrading-Engine's-Android-API-version.md) to update the AVD dependency.
 
-Example Framework PR: https://github.com/flutter/flutter/pull/152498, Example Engine PR: https://github.com/flutter/engine/pull/54186
-
-In flutter/packages, modify https://github.com/flutter/packages/blob/main/.cirrus.yml “firebase_test_lab_script”
-Specifically the value for “--device” `./script/tool_runner.sh firebase-test-lab --device model=redfin,version=30 --exclude=script/configs/exclude_integration_Android.yaml`.
-
-Example PR: https://github.com/flutter/packages/pull/4430
+- Example Framework PR: <https://github.com/flutter/flutter/pull/152498>.
+- Example Engine PR: <https://github.com/flutter/engine/pull/54186>.
 
 #### Update documentation
 

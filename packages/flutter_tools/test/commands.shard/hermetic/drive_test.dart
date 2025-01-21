@@ -588,6 +588,26 @@ void main() {
       DeviceManager: () => fakeDeviceManager,
     },
   );
+
+  testUsingContext(
+    'flutter drive --help explains how to use the command',
+    () async {
+      final DriveCommand command = DriveCommand(
+        fileSystem: fileSystem,
+        logger: logger,
+        platform: platform,
+        signals: signals,
+      );
+
+      await createTestCommandRunner(command).run(<String>['drive', '--help']);
+
+      expect(
+        logger.statusText,
+        stringContainsInOrder(<String>['flutter drive', '--target', '--driver']),
+      );
+    },
+    overrides: <Type, Generator>{Logger: () => logger},
+  );
 }
 
 class ThrowingScreenshotDevice extends ScreenshotDevice {
@@ -702,7 +722,6 @@ class NeverEndingDriverService extends Fake implements DriverService {
   Future<int> startTest(
     String testFile,
     List<String> arguments,
-    Map<String, String> environment,
     PackageConfig packageConfig, {
     bool? headless,
     String? chromeBinary,
@@ -736,7 +755,6 @@ class FailingFakeDriverService extends Fake implements DriverService {
   Future<int> startTest(
     String testFile,
     List<String> arguments,
-    Map<String, String> environment,
     PackageConfig packageConfig, {
     bool? headless,
     String? chromeBinary,

@@ -22,11 +22,8 @@ import '../project.dart';
 import '../reporting/reporting.dart';
 import '../runner/flutter_command.dart';
 
-/// The function signature of the [print] function.
-typedef PrintFn = void Function(Object?);
-
 class PackagesCommand extends FlutterCommand {
-  PackagesCommand({PrintFn usagePrintFn = print}) : _usagePrintFn = usagePrintFn {
+  PackagesCommand() {
     addSubcommand(
       PackagesGetCommand('get', "Get the current package's dependencies.", PubContext.pubGet),
     );
@@ -87,8 +84,6 @@ class PackagesCommand extends FlutterCommand {
     addSubcommand(PackagesPassthroughCommand());
   }
 
-  final PrintFn _usagePrintFn;
-
   @override
   final String name = 'pub';
 
@@ -103,9 +98,6 @@ class PackagesCommand extends FlutterCommand {
 
   @override
   Future<FlutterCommandResult> runCommand() async => FlutterCommandResult.fail();
-
-  @override
-  void printUsage() => _usagePrintFn(usage);
 }
 
 class PackagesTestCommand extends FlutterCommand {
@@ -309,7 +301,6 @@ class PackagesGetCommand extends FlutterCommand {
         outputDir: globals.fs.directory(getBuildDirectory()),
         processManager: globals.processManager,
         platform: globals.platform,
-        usage: globals.flutterUsage,
         analytics: analytics,
         projectDir: rootProject.directory,
         packageConfigPath: packageConfigPath(),

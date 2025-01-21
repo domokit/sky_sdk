@@ -152,6 +152,9 @@ Future<void> run(List<String> arguments) async {
   printProgress('Internationalization...');
   await verifyInternationalizations(flutterRoot, dart);
 
+  printProgress('Localization files of stocks app...');
+  await verifyStockAppLocalizations(flutterRoot);
+
   printProgress('Integration test timeouts...');
   await verifyIntegrationTestTimeouts(flutterRoot);
 
@@ -1308,6 +1311,49 @@ Future<void> verifyInternationalizations(String workingDirectory, String dartExe
       'The contents of $cupertinoLocalizationsFile are different from that produced by gen_localizations.',
       '',
       'Did you forget to run gen_localizations.dart after updating a .arb file?',
+    ]);
+  }
+}
+
+Future<void> verifyStockAppLocalizations(String workingDirectory) async {
+  final Directory appRoot = Directory(
+    path.join(workingDirectory, 'dev', 'benchmarks', 'test_apps', 'stocks'),
+  );
+  if (!appRoot.existsSync()) {
+    foundError(<String>['Stocks app does not exist at expected location: ${appRoot.path}']);
+  }
+
+  // Regenerate the localizations.
+  final String flutterExecutable = path.join(
+    workingDirectory,
+    'bin',
+    'flutter${Platform.isWindows ? '.bat' : ''}',
+  );
+  await _evalCommand(flutterExecutable, const <String>['gen-l10n'], workingDirectory: appRoot.path);
+  final Directory i10nDirectory = Directory(path.join(appRoot.path, 'lib', 'i18n'));
+  if (!i10nDirectory.existsSync()) {
+    foundError(<String>[
+      'Localization files for stocks app not found at expected location: ${i10nDirectory.path}',
+    ]);
+  }
+
+  // Check that regeneration did not dirty the tree.
+  final EvalResult result = await _evalCommand('git', <String>[
+    'diff',
+    '--name-only',
+    '--exit-code',
+    i10nDirectory.path,
+  ], workingDirectory: workingDirectory);
+  if (result.exitCode == 1) {
+    foundError(<String>[
+      'The following localization files for the stocks app appear to be out of date:',
+      ...(const LineSplitter().convert(result.stdout).map((String line) => ' * $line')),
+      'Run "flutter gen-l10n" in "${path.relative(appRoot.path, from: workingDirectory)}" to regenerate.',
+    ]);
+  } else if (result.exitCode != 0) {
+    foundError(<String>[
+      'Failed to run "git diff" on localization files of stocks app:',
+      result.stderr,
     ]);
   }
 }

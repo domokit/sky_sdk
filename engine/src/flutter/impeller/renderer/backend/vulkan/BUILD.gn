@@ -24,6 +24,7 @@ impeller_component("vulkan_unittests") {
     "test/mock_vulkan.cc",
     "test/mock_vulkan.h",
     "test/mock_vulkan_unittests.cc",
+    "test/sampler_library_vk_unittests.cc",
     "test/swapchain_unittests.cc",
   ]
   deps = [
@@ -141,8 +142,8 @@ impeller_component("vulkan") {
       "swapchain/ahb/ahb_swapchain_vk.h",
       "swapchain/ahb/ahb_texture_pool_vk.cc",
       "swapchain/ahb/ahb_texture_pool_vk.h",
-      "swapchain/ahb/external_fence_vk.cc",
-      "swapchain/ahb/external_fence_vk.h",
+      "swapchain/ahb/external_semaphore_vk.cc",
+      "swapchain/ahb/external_semaphore_vk.h",
     ]
   }
 

@@ -141,11 +141,9 @@ TEST(FlTextureRegistrarTest, MarkTextureFrameAvailable) {
           UnregisterExternalTexture,
           ([](auto engine, int64_t texture_id) { return kSuccess; }));
   fl_engine_get_embedder_api(engine)->MarkExternalTextureFrameAvailable =
-      MOCK_ENGINE_PROC(MarkExternalTextureFrameAvailable,
-                       ([](auto engine, int64_t texture_id) {
-                         g_printerr("!\n");
-                         return kSuccess;
-                       }));
+      MOCK_ENGINE_PROC(
+          MarkExternalTextureFrameAvailable,
+          ([](auto engine, int64_t texture_id) { return kSuccess; }));
 
   g_autoptr(FlTextureRegistrar) registrar = fl_texture_registrar_new(engine);
   g_autoptr(FlTexture) texture = FL_TEXTURE(fl_test_registrar_texture_new());

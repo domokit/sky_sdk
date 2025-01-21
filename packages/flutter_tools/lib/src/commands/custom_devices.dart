@@ -25,10 +25,6 @@ import '../features.dart';
 import '../runner/flutter_command.dart';
 import '../runner/flutter_command_runner.dart';
 
-/// just the function signature of the [print] function.
-/// The Object arg may be null.
-typedef PrintFn = void Function(Object);
-
 class CustomDevicesCommand extends FlutterCommand {
   factory CustomDevicesCommand({
     required CustomDevicesConfig customDevicesConfig,
@@ -62,7 +58,6 @@ class CustomDevicesCommand extends FlutterCommand {
     required FileSystem fileSystem,
     required Logger logger,
     required FeatureFlags featureFlags,
-    PrintFn usagePrintFn = print,
   }) {
     return CustomDevicesCommand._common(
       customDevicesConfig: customDevicesConfig,
@@ -73,7 +68,6 @@ class CustomDevicesCommand extends FlutterCommand {
       fileSystem: fileSystem,
       logger: logger,
       featureFlags: featureFlags,
-      usagePrintFn: usagePrintFn,
     );
   }
 
@@ -86,10 +80,8 @@ class CustomDevicesCommand extends FlutterCommand {
     required FileSystem fileSystem,
     required Logger logger,
     required FeatureFlags featureFlags,
-    PrintFn usagePrintFn = print,
   }) : _customDevicesConfig = customDevicesConfig,
-       _featureFlags = featureFlags,
-       _usagePrintFn = usagePrintFn {
+       _featureFlags = featureFlags {
     addSubcommand(
       CustomDevicesListCommand(
         customDevicesConfig: customDevicesConfig,
@@ -129,7 +121,6 @@ class CustomDevicesCommand extends FlutterCommand {
 
   final CustomDevicesConfig _customDevicesConfig;
   final FeatureFlags _featureFlags;
-  final PrintFn _usagePrintFn;
 
   @override
   String get description {
@@ -162,11 +153,6 @@ Requires the custom devices feature to be enabled. You can enable it using "flut
   @override
   Future<FlutterCommandResult> runCommand() async {
     return FlutterCommandResult.success();
-  }
-
-  @override
-  void printUsage() {
-    _usagePrintFn(usage);
   }
 }
 

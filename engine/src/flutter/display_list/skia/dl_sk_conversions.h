@@ -120,6 +120,10 @@ inline SkMatrix* ToSk(const DlMatrix* matrix, SkMatrix& scratch) {
 
 extern sk_sp<SkVertices> ToSk(const std::shared_ptr<DlVertices>& vertices);
 
+inline const SkRSXform* ToSk(const DlRSTransform* transforms) {
+  return reinterpret_cast<const SkRSXform*>(transforms);
+}
+
 }  // namespace flutter
 
 #endif  // FLUTTER_DISPLAY_LIST_SKIA_DL_SK_CONVERSIONS_H_

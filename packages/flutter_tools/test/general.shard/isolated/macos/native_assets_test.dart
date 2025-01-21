@@ -397,7 +397,6 @@ InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault
         logger: environment.logger,
       );
       final FlutterNativeAssetsBuildRunner runner = FlutterNativeAssetsBuildRunnerImpl(
-        projectUri,
         packageConfigFile.path,
         packageConfig,
         fileSystem,

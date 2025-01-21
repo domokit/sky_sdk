@@ -17,7 +17,6 @@
 #include "third_party/skia/include/core/SkMatrix.h"
 #include "third_party/skia/include/core/SkPath.h"
 #include "third_party/skia/include/core/SkRRect.h"
-#include "third_party/skia/include/core/SkRSXform.h"
 #include "third_party/skia/include/core/SkRect.h"
 #include "third_party/skia/include/core/SkTextBlob.h"
 
@@ -189,7 +188,7 @@ class DlCanvas {
                              DlFilterMode filter,
                              const DlPaint* paint = nullptr) = 0;
   virtual void DrawAtlas(const sk_sp<DlImage>& atlas,
-                         const SkRSXform xform[],
+                         const DlRSTransform xform[],
                          const DlRect tex[],
                          const DlColor colors[],
                          int count,
@@ -241,16 +240,6 @@ class DlCanvas {
     SaveLayer(ToOptDlRect(bounds), paint, backdrop, backdrop_id);
   }
 
-  void Transform(const SkMatrix* matrix) {
-    if (matrix) {
-      Transform(*matrix);
-    }
-  }
-  void Transform(const SkM44* matrix44) {
-    if (matrix44) {
-      Transform(*matrix44);
-    }
-  }
   void Transform(const SkMatrix& matrix) { Transform(ToDlMatrix(matrix)); }
   void Transform(const SkM44& m44) { Transform(ToDlMatrix(m44)); }
   void SetTransform(const SkMatrix* matrix) {
@@ -382,18 +371,6 @@ class DlCanvas {
                      DlFilterMode filter,
                      const DlPaint* paint = nullptr) {
     DrawImageNine(image, ToDlIRect(center), ToDlRect(dst), filter, paint);
-  }
-  void DrawAtlas(const sk_sp<DlImage>& atlas,
-                 const SkRSXform xform[],
-                 const SkRect tex[],
-                 const DlColor colors[],
-                 int count,
-                 DlBlendMode mode,
-                 DlImageSampling sampling,
-                 const SkRect* cullRect,
-                 const DlPaint* paint = nullptr) {
-    DrawAtlas(atlas, xform, ToDlRects(tex), colors, count, mode, sampling,
-              ToDlRect(cullRect), paint);
   }
   void DrawShadow(const SkPath& path,
                   const DlColor color,

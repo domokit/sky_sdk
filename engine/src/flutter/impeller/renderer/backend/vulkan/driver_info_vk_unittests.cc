@@ -163,16 +163,15 @@ TEST(DriverInfoVKTest, DriverParsingAdreno) {
 }
 
 TEST(DriverInfoVKTest, DisabledDevices) {
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 620"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 610"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 530"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 512"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 509"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 508"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 506"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 505"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 504"));
-
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 620"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 610"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 530"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 512"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 509"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 508"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 506"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 505"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 504"));
   EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 630"));
   EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 640"));
   EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 650"));

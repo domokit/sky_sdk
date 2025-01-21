@@ -146,7 +146,7 @@ void main() {
         realValue: trueImplicitView().physicalConstraints,
         fakeValue: ViewConstraints.tight(fakeSize),
         propertyRetriever: () => boundImplicitView().physicalConstraints,
-        propertyFaker: (_, __) {
+        propertyFaker: (_, _) {
           tester.view.physicalSize = fakeSize;
         },
       );

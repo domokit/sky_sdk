@@ -212,7 +212,7 @@ void main() {
     expect(find.text('Fourth'), findsOneWidget);
     expect(tester.getRect(find.text('Fourth')), const Rect.fromLTRB(46.0, 248.0, 334.0, 272.0));
 
-    treeSliver = TreeSliver<String>(tree: treeNodes, treeRowExtentBuilder: (_, __) => 100);
+    treeSliver = TreeSliver<String>(tree: treeNodes, treeRowExtentBuilder: (_, _) => 100);
     await tester.pumpWidget(MaterialApp(home: CustomScrollView(slivers: <Widget>[treeSliver])));
     await tester.pump();
     expect(
@@ -599,7 +599,7 @@ void main() {
     addTearDown(scrollController.dispose);
     treeNodes = _setUpNodes();
     final TreeSliver<String> treeSliver = TreeSliver<String>(
-      treeRowExtentBuilder: (_, __) => 200,
+      treeRowExtentBuilder: (_, _) => 200,
       tree: treeNodes,
     );
     await tester.pumpWidget(

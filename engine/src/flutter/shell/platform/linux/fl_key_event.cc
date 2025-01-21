@@ -111,20 +111,6 @@ GdkEvent* fl_key_event_get_origin(FlKeyEvent* self) {
   return self->origin;
 }
 
-uint64_t fl_key_event_hash(FlKeyEvent* self) {
-  g_return_val_if_fail(FL_IS_KEY_EVENT(self), 0);
-
-  // Combine the event timestamp, the type of event, and the hardware keycode
-  // (scan code) of the event to come up with a unique id for this event that
-  // can be derived solely from the event data itself, so that we can identify
-  // whether or not we have seen this event already.
-  guint64 type =
-      static_cast<uint64_t>(self->is_press ? GDK_KEY_PRESS : GDK_KEY_RELEASE);
-  guint64 keycode = static_cast<uint64_t>(self->keycode);
-  return (self->time & 0xffffffff) | ((type & 0xffff) << 32) |
-         ((keycode & 0xffff) << 48);
-}
-
 static void fl_key_event_dispose(GObject* object) {
   FlKeyEvent* self = FL_KEY_EVENT(object);
 

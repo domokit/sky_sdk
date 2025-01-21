@@ -295,7 +295,7 @@ static final String tokenBar = 'foo';
     // Add to printLog instead of printing to stdout
     void Function() overridePrint(void Function() testFn) => () {
       final ZoneSpecification spec = ZoneSpecification(
-        print: (_, __, ___, String msg) {
+        print: (_, _, _, String msg) {
           printLog.add(msg);
         },
       );

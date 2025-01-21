@@ -4,6 +4,7 @@
 
 #include "impeller/renderer/backend/vulkan/sampler_library_vk.h"
 
+#include "impeller/core/formats.h"
 #include "impeller/renderer/backend/vulkan/sampler_vk.h"
 
 namespace impeller {
@@ -14,9 +15,18 @@ SamplerLibraryVK::SamplerLibraryVK(
 
 SamplerLibraryVK::~SamplerLibraryVK() = default;
 
+void SamplerLibraryVK::ApplyWorkarounds(const WorkaroundsVK& workarounds) {
+  mips_disabled_workaround_ = workarounds.broken_mipmap_generation;
+}
+
 raw_ptr<const Sampler> SamplerLibraryVK::GetSampler(
     const SamplerDescriptor& desc) {
-  uint64_t p_key = SamplerDescriptor::ToKey(desc);
+  SamplerDescriptor desc_copy = desc;
+  if (mips_disabled_workaround_) {
+    desc_copy.mip_filter = MipFilter::kBase;
+  }
+
+  uint64_t p_key = SamplerDescriptor::ToKey(desc_copy);
   for (const auto& [key, value] : samplers_) {
     if (key == p_key) {
       return raw_ptr(value);
@@ -27,7 +37,8 @@ raw_ptr<const Sampler> SamplerLibraryVK::GetSampler(
     return raw_ptr<const Sampler>(nullptr);
   }
   samplers_.push_back(std::make_pair(
-      p_key, std::make_shared<SamplerVK>(device_holder->GetDevice(), desc)));
+      p_key,
+      std::make_shared<SamplerVK>(device_holder->GetDevice(), desc_copy)));
   return raw_ptr(samplers_.back().second);
 }
 

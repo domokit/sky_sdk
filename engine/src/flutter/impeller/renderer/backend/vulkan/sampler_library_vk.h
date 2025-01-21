@@ -9,6 +9,7 @@
 #include "impeller/core/sampler.h"
 #include "impeller/core/sampler_descriptor.h"
 #include "impeller/renderer/backend/vulkan/device_holder_vk.h"
+#include "impeller/renderer/backend/vulkan/workarounds_vk.h"
 #include "impeller/renderer/sampler_library.h"
 
 namespace impeller {
@@ -20,13 +21,16 @@ class SamplerLibraryVK final
   // |SamplerLibrary|
   ~SamplerLibraryVK() override;
 
+  explicit SamplerLibraryVK(const std::weak_ptr<DeviceHolderVK>& device_holder);
+
+  void ApplyWorkarounds(const WorkaroundsVK& workarounds);
+
  private:
   friend class ContextVK;
 
   std::weak_ptr<DeviceHolderVK> device_holder_;
   std::vector<std::pair<uint64_t, std::shared_ptr<const Sampler>>> samplers_;
-
-  explicit SamplerLibraryVK(const std::weak_ptr<DeviceHolderVK>& device_holder);
+  bool mips_disabled_workaround_ = false;
 
   // |SamplerLibrary|
   raw_ptr<const Sampler> GetSampler(

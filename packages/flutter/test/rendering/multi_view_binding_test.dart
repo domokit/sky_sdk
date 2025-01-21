@@ -200,7 +200,7 @@ class FakeFlutterView extends Fake implements FlutterView {
   }
 }
 
-class PipelineOwnerSpy extends PipelineOwner {
+final class PipelineOwnerSpy extends PipelineOwner {
   @override
   final SemanticsOwnerSpy semanticsOwner = SemanticsOwnerSpy();
 }

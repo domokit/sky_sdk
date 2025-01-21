@@ -18,9 +18,9 @@ import 'image_stream.dart';
 /// used for testing purposes.
 typedef HttpRequestFactory = web.XMLHttpRequest Function();
 
-/// The type for an overridable factory function for creating <img> elements,
-/// used for testing purposes.
-typedef ImgElementFactory = web.HTMLImageElement Function();
+/// The type for an overridable factory function for creating HTML elements to
+/// display images, used for testing purposes.
+typedef HtmlElementFactory = web.HTMLImageElement Function();
 
 // Method signature for _loadAsync decode callbacks.
 typedef _SimpleDecoderCallback = Future<ui.Codec> Function(ui.ImmutableBuffer buffer);
@@ -40,17 +40,17 @@ void debugRestoreHttpRequestFactory() {
   httpRequestFactory = _httpClient;
 }
 
-/// The default <img> element factory.
+/// The default HTML element factory.
 web.HTMLImageElement _imgElementFactory() {
   return web.document.createElement('img') as web.HTMLImageElement;
 }
 
-/// The factory function that creates <img> elements, can be overridden for
+/// The factory function that creates HTML elements, can be overridden for
 /// tests.
 @visibleForTesting
-ImgElementFactory imgElementFactory = _imgElementFactory;
+HtmlElementFactory imgElementFactory = _imgElementFactory;
 
-/// Restores the default <img> element factory.
+/// Restores the default HTML element factory.
 @visibleForTesting
 void debugRestoreImgElementFactory() {
   imgElementFactory = _imgElementFactory;
@@ -63,7 +63,12 @@ void debugRestoreImgElementFactory() {
 class NetworkImage extends image_provider.ImageProvider<image_provider.NetworkImage>
     implements image_provider.NetworkImage {
   /// Creates an object that fetches the image at the given URL.
-  const NetworkImage(this.url, {this.scale = 1.0, this.headers});
+  const NetworkImage(
+    this.url, {
+    this.scale = 1.0,
+    this.headers,
+    this.webHtmlElementStrategy = image_provider.WebHtmlElementStrategy.never,
+  });
 
   @override
   final String url;
@@ -73,6 +78,9 @@ class NetworkImage extends image_provider.ImageProvider<image_provider.NetworkIm
 
   @override
   final Map<String, String>? headers;
+
+  @override
+  final image_provider.WebHtmlElementStrategy webHtmlElementStrategy;
 
   @override
   Future<NetworkImage> obtainKey(image_provider.ImageConfiguration configuration) {
@@ -136,19 +144,7 @@ class NetworkImage extends image_provider.ImageProvider<image_provider.NetworkIm
   ) async {
     assert(key == this);
 
-    final Uri resolved = Uri.base.resolve(key.url);
-
-    final bool containsNetworkImageHeaders = key.headers?.isNotEmpty ?? false;
-
-    // We use a different method when headers are set because the
-    // `ui_web.createImageCodecFromUrl` method is not capable of handling headers.
-    if (containsNetworkImageHeaders) {
-      // It is not possible to load an <img> element and pass the headers with
-      // the request to fetch the image. Since the user has provided headers,
-      // this function should assume the headers are required to resolve to
-      // the correct resource and should not attempt to load the image in an
-      // <img> tag without the headers.
-
+    Future<ImageStreamCompleter> loadViaDecode() async {
       // Resolve the Codec before passing it to
       // [MultiFrameImageStreamCompleter] so any errors aren't reported
       // twice (once from the MultiFrameImageStreamCompleter and again
@@ -161,34 +157,38 @@ class NetworkImage extends image_provider.ImageProvider<image_provider.NetworkIm
         debugLabel: key.url,
         informationCollector: _imageStreamInformationCollector(key),
       );
-    } else if (isSkiaWeb) {
-      try {
-        // Resolve the Codec before passing it to
-        // [MultiFrameImageStreamCompleter] so any errors aren't reported
-        // twice (once from the MultiFrameImageStreamCompleter and again
-        // from the wrapping [ForwardingImageStreamCompleter]).
-        final ui.Codec codec = await _fetchImageBytes(decode);
-        return MultiFrameImageStreamCompleter(
-          chunkEvents: chunkEvents.stream,
-          codec: Future<ui.Codec>.value(codec),
-          scale: key.scale,
-          debugLabel: key.url,
-          informationCollector: _imageStreamInformationCollector(key),
-        );
-      } catch (e) {
-        // If we failed to fetch the bytes, try to load the image in an <img>
-        // element instead.
-        final web.HTMLImageElement imageElement = imgElementFactory();
-        imageElement.src = key.url;
-        // Decode the <img> element before creating the ImageStreamCompleter
-        // to avoid double reporting the error.
-        await imageElement.decode().toDart;
-        return OneFrameImageStreamCompleter(
-          Future<ImageInfo>.value(WebImageInfo(imageElement, debugLabel: key.url)),
-          informationCollector: _imageStreamInformationCollector(key),
-        )..debugLabel = key.url;
-      }
-    } else {
+    }
+
+    Future<ImageStreamCompleter> loadViaImgElement() async {
+      // If we failed to fetch the bytes, try to load the image in an <img>
+      // element instead.
+      final web.HTMLImageElement imageElement = imgElementFactory();
+      imageElement.src = key.url;
+      // Decode the <img> element before creating the ImageStreamCompleter
+      // to avoid double reporting the error.
+      await imageElement.decode().toDart;
+      return OneFrameImageStreamCompleter(
+        Future<ImageInfo>.value(WebImageInfo(imageElement, debugLabel: key.url)),
+        informationCollector: _imageStreamInformationCollector(key),
+      )..debugLabel = key.url;
+    }
+
+    final bool containsNetworkImageHeaders = key.headers?.isNotEmpty ?? false;
+    // When headers are set, the image can only be loaded by decoding.
+    //
+    // For the HTML renderer, `ui_web.createImageCodecFromUrl` method is not
+    // capable of handling headers.
+    //
+    // For CanvasKit and Skwasm, it is not possible to load an <img> element and
+    // pass the headers with the request to fetch the image. Since the user has
+    // provided headers, this function should assume the headers are required to
+    // resolve to the correct resource and should not attempt to load the image
+    // in an <img> tag without the headers.
+    if (containsNetworkImageHeaders) {
+      return loadViaDecode();
+    }
+
+    if (!isSkiaWeb) {
       // This branch is only hit by the HTML renderer, which is deprecated. The
       // HTML renderer supports loading images with CORS restrictions, so we
       // don't need to catch errors and try loading the image in an <img> tag
@@ -198,6 +198,7 @@ class NetworkImage extends image_provider.ImageProvider<image_provider.NetworkIm
       // [MultiFrameImageStreamCompleter] so any errors aren't reported
       // twice (once from the MultiFrameImageStreamCompleter) and again
       // from the wrapping [ForwardingImageStreamCompleter].
+      final Uri resolved = Uri.base.resolve(key.url);
       final ui.Codec codec = await ui_web.createImageCodecFromUrl(
         resolved,
         chunkCallback: (int bytes, int total) {
@@ -211,6 +212,21 @@ class NetworkImage extends image_provider.ImageProvider<image_provider.NetworkIm
         debugLabel: key.url,
         informationCollector: _imageStreamInformationCollector(key),
       );
+    }
+
+    switch (webHtmlElementStrategy) {
+      case image_provider.WebHtmlElementStrategy.never:
+        return loadViaDecode();
+      case image_provider.WebHtmlElementStrategy.prefer:
+        return loadViaImgElement();
+      case image_provider.WebHtmlElementStrategy.fallback:
+        try {
+          // Await here so that errors occurred during the asynchronous process
+          // of `loadViaDecode` are caught and triggers `loadViaImgElement`.
+          return await loadViaDecode();
+        } catch (e) {
+          return loadViaImgElement();
+        }
     }
   }
 
@@ -304,7 +320,7 @@ class _ForwardingImageStreamCompleter extends ImageStreamCompleter {
         if (_disposed) {
           // Add a listener since the delegate completer won't dispose if it never
           // had a listener.
-          value.addListener(ImageStreamListener((_, __) {}));
+          value.addListener(ImageStreamListener((_, _) {}));
           value.maybeDispose();
           return;
         }

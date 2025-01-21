@@ -279,7 +279,7 @@ Future<void> testMain() async {
     final Zone innerZone = Zone.current.fork();
 
     innerZone.runGuarded(() {
-      void callback(String _, ByteData? __, void Function(ByteData?)? ___) {
+      void callback(String _, ByteData? _, void Function(ByteData?)? _) {
         expect(Zone.current, innerZone);
       }
 

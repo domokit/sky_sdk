@@ -507,19 +507,21 @@ void main() {
 
     expect(fileSystem.directory(appDirectoryPath).childDirectory('.ios'), isNot(exists));
 
-    // TODO(loic-sharma): A Swift package manifest should not be generated.
-    // https://github.com/flutter/flutter/issues/146957
-    // expect(
-    //   fileSystem
-    //     .directory(appDirectoryPath)
-    //     .childDirectory('ios')
-    //     .childDirectory('Flutter')
-    //     .childDirectory('ephemeral')
-    //     .childDirectory('Packages')
-    //     .childDirectory('FlutterGeneratedPluginSwiftPackage')
-    //     .childFile('Package.swift'),
-    //   isFalse,
-    // );
+    // Verify the generated Swift Package Manager manifest file has no dependencies.
+    final File generatedManifestFile = fileSystem
+        .directory(appDirectoryPath)
+        .childDirectory('ios')
+        .childDirectory('Flutter')
+        .childDirectory('ephemeral')
+        .childDirectory('Packages')
+        .childDirectory('FlutterGeneratedPluginSwiftPackage')
+        .childFile('Package.swift');
+
+    expect(generatedManifestFile, exists);
+
+    final String generatedManifest = generatedManifestFile.readAsStringSync();
+    const String expected = 'dependencies: [\n        \n    ],\n';
+    expect(generatedManifest, contains(expected));
 
     expect(
       fileSystem

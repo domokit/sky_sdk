@@ -703,15 +703,13 @@ struct TRect {
                            saturated::Cast<U, Type>(round(r.GetBottom())));
   }
 
-  [[nodiscard]] constexpr static std::optional<TRect> Union(
-      const TRect& a,
-      const std::optional<TRect> b) {
+  [[nodiscard]] constexpr static TRect Union(const TRect& a,
+                                             const std::optional<TRect> b) {
     return b.has_value() ? a.Union(b.value()) : a;
   }
 
-  [[nodiscard]] constexpr static std::optional<TRect> Union(
-      const std::optional<TRect> a,
-      const TRect& b) {
+  [[nodiscard]] constexpr static TRect Union(const std::optional<TRect> a,
+                                             const TRect& b) {
     return a.has_value() ? a->Union(b) : b;
   }
 

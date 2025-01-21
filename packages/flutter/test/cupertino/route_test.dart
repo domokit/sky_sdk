@@ -1824,7 +1824,7 @@ void main() {
           observers: <NavigatorObserver>[nestedObserver],
           onGenerateRoute: (RouteSettings settings) {
             return PageRouteBuilder<dynamic>(
-              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
+              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
                 return GestureDetector(
                   onTap: () async {
                     await showCupertinoModalPopup<void>(
@@ -1935,7 +1935,7 @@ void main() {
           observers: <NavigatorObserver>[nestedObserver],
           onGenerateRoute: (RouteSettings settings) {
             return PageRouteBuilder<dynamic>(
-              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
+              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
                 return GestureDetector(
                   onTap: () async {
                     await showCupertinoModalPopup<void>(
@@ -1971,7 +1971,7 @@ void main() {
           observers: <NavigatorObserver>[nestedObserver],
           onGenerateRoute: (RouteSettings settings) {
             return PageRouteBuilder<dynamic>(
-              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
+              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
                 return GestureDetector(
                   onTap: () async {
                     await showCupertinoDialog<void>(
@@ -2008,7 +2008,7 @@ void main() {
           observers: <NavigatorObserver>[nestedObserver],
           onGenerateRoute: (RouteSettings settings) {
             return PageRouteBuilder<dynamic>(
-              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
+              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
                 return GestureDetector(
                   onTap: () async {
                     await showCupertinoDialog<void>(
@@ -2043,7 +2043,7 @@ void main() {
         home: Navigator(
           onGenerateRoute: (RouteSettings settings) {
             return PageRouteBuilder<dynamic>(
-              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
+              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
                 return GestureDetector(
                   onTap: () async {
                     await showCupertinoModalPopup<void>(
@@ -2087,7 +2087,7 @@ void main() {
         home: Navigator(
           onGenerateRoute: (RouteSettings settings) {
             return PageRouteBuilder<dynamic>(
-              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
+              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
                 return GestureDetector(
                   onTap: () async {
                     await showCupertinoModalPopup<void>(
@@ -2131,7 +2131,7 @@ void main() {
         home: Navigator(
           onGenerateRoute: (RouteSettings settings) {
             return PageRouteBuilder<dynamic>(
-              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
+              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
                 return GestureDetector(
                   onTap: () async {
                     await showCupertinoModalPopup<void>(
@@ -2807,7 +2807,7 @@ void main() {
         home: Navigator(
           onGenerateRoute: (RouteSettings settings) {
             return PageRouteBuilder<dynamic>(
-              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
+              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
                 return GestureDetector(
                   onTap: () async {
                     await showCupertinoModalPopup<void>(
@@ -2836,7 +2836,7 @@ void main() {
         home: Navigator(
           onGenerateRoute: (RouteSettings settings) {
             return PageRouteBuilder<dynamic>(
-              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
+              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
                 return GestureDetector(
                   onTap: () async {
                     await showCupertinoDialog<void>(
@@ -3254,7 +3254,7 @@ class _TestPageUpdateState extends State<_TestPageUpdate> {
                   const CupertinoPage<dynamic>(name: '/home', child: Text('home')),
                   CupertinoPage<dynamic>(name: '/home/old', child: buildMainPage()),
                 ],
-        onPopPage: (_, __) {
+        onPopPage: (_, _) {
           return false;
         },
       ),

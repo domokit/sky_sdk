@@ -642,10 +642,26 @@ void DlDispatcherBase::drawArc(const DlRect& oval_bounds,
                                bool use_center) {
   AUTO_DEPTH_WATCHER(1u);
 
-  PathBuilder builder;
-  builder.AddArc(oval_bounds, Degrees(start_degrees), Degrees(sweep_degrees),
-                 use_center);
-  GetCanvas().DrawPath(builder.TakePath(), paint_);
+  if (paint_.stroke_width >
+      std::max(oval_bounds.GetWidth(), oval_bounds.GetHeight())) {
+    // This is a special case for rendering arcs whose stroke width is so large
+    // you are effectively drawing a sector of a circle.
+    // https://github.com/flutter/flutter/issues/158567
+    DlRect expanded_rect = oval_bounds.Expand(Size(paint_.stroke_width / 2));
+    PathBuilder builder;
+    Paint fill_paint = paint_;
+    fill_paint.style = Paint::Style::kFill;
+    fill_paint.stroke_width = 1;
+    builder.AddArc(expanded_rect, Degrees(start_degrees),
+                   Degrees(sweep_degrees),
+                   /*use_center=*/true);
+    GetCanvas().DrawPath(builder.TakePath(), fill_paint);
+  } else {
+    PathBuilder builder;
+    builder.AddArc(oval_bounds, Degrees(start_degrees), Degrees(sweep_degrees),
+                   use_center);
+    GetCanvas().DrawPath(builder.TakePath(), paint_);
+  }
 }
 
 // |flutter::DlOpReceiver|
@@ -758,7 +774,7 @@ void DlDispatcherBase::drawImageNine(const sk_sp<flutter::DlImage> image,
 
 // |flutter::DlOpReceiver|
 void DlDispatcherBase::drawAtlas(const sk_sp<flutter::DlImage> atlas,
-                                 const SkRSXform xform[],
+                                 const RSTransform xform[],
                                  const DlRect tex[],
                                  const flutter::DlColor colors[],
                                  int count,

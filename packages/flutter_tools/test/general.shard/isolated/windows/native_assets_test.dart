@@ -264,7 +264,6 @@ void main() {
         logger: environment.logger,
       );
       final FlutterNativeAssetsBuildRunner runner = FlutterNativeAssetsBuildRunnerImpl(
-        projectUri,
         packageConfigFile.path,
         packageConfig,
         fileSystem,

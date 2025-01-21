@@ -689,14 +689,7 @@ public class FlutterView extends FrameLayout
         (SYSTEM_UI_FLAG_HIDE_NAVIGATION & getWindowSystemUiVisibility()) == 0;
 
     if (Build.VERSION.SDK_INT >= API_LEVELS.API_30) {
-      int mask = 0;
-      if (navigationBarVisible) {
-        mask = mask | android.view.WindowInsets.Type.navigationBars();
-      }
-      if (statusBarVisible) {
-        mask = mask | android.view.WindowInsets.Type.statusBars();
-      }
-      Insets uiInsets = insets.getInsets(mask);
+      Insets uiInsets = insets.getInsets(android.view.WindowInsets.Type.systemBars());
       viewportMetrics.viewPaddingTop = uiInsets.top;
       viewportMetrics.viewPaddingRight = uiInsets.right;
       viewportMetrics.viewPaddingBottom = uiInsets.bottom;

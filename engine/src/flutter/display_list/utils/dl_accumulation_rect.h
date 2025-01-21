@@ -5,11 +5,7 @@
 #ifndef FLUTTER_DISPLAY_LIST_UTILS_DL_ACCUMULATION_RECT_H_
 #define FLUTTER_DISPLAY_LIST_UTILS_DL_ACCUMULATION_RECT_H_
 
-#include <functional>
-
 #include "flutter/display_list/geometry/dl_geometry_types.h"
-#include "flutter/display_list/geometry/dl_rtree.h"
-#include "flutter/fml/logging.h"
 
 namespace flutter {
 
@@ -26,18 +22,15 @@ class AccumulationRect {
  public:
   AccumulationRect() { reset(); }
 
-  void accumulate(SkScalar x, SkScalar y);
-  void accumulate(SkPoint p) { accumulate(p.fX, p.fY); }
+  void accumulate(DlScalar x, DlScalar y);
   void accumulate(DlPoint p) { accumulate(p.x, p.y); }
-  void accumulate(SkRect r);
-  void accumulate(DlRect r) { accumulate(ToSkRect(r)); }
+  void accumulate(DlRect r);
   void accumulate(AccumulationRect& ar);
 
   bool is_empty() const { return min_x_ >= max_x_ || min_y_ >= max_y_; }
   bool is_not_empty() const { return min_x_ < max_x_ && min_y_ < max_y_; }
 
   DlRect GetBounds() const;
-  SkRect bounds() const;
 
   void reset();
 

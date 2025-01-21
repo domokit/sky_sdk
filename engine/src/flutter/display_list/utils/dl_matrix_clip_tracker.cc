@@ -9,21 +9,7 @@
 
 namespace flutter {
 
-bool DisplayListMatrixClipState::is_3x3(const SkM44& m) {
-  // clang-format off
-  return (                                      m.rc(0, 2) == 0 &&
-                                                m.rc(1, 2) == 0 &&
-          m.rc(2, 0) == 0 && m.rc(2, 1) == 0 && m.rc(2, 2) == 1 && m.rc(2, 3) == 0 &&
-                                                m.rc(3, 2) == 0);
-  // clang-format on
-}
-
 static constexpr DlRect kEmpty = DlRect();
-
-static const DlRect& ProtectEmpty(const SkRect& rect) {
-  // isEmpty protects us against NaN while we normalize any empty cull rects
-  return rect.isEmpty() ? kEmpty : ToDlRect(rect);
-}
 
 static const DlRect& ProtectEmpty(const DlRect& rect) {
   // isEmpty protects us against NaN while we normalize any empty cull rects
@@ -34,35 +20,12 @@ DisplayListMatrixClipState::DisplayListMatrixClipState(const DlRect& cull_rect,
                                                        const DlMatrix& matrix)
     : cull_rect_(ProtectEmpty(cull_rect)), matrix_(matrix) {}
 
-DisplayListMatrixClipState::DisplayListMatrixClipState(const SkRect& cull_rect)
-    : cull_rect_(ProtectEmpty(cull_rect)), matrix_(DlMatrix()) {}
-
-DisplayListMatrixClipState::DisplayListMatrixClipState(const SkRect& cull_rect,
-                                                       const SkMatrix& matrix)
-    : cull_rect_(ProtectEmpty(cull_rect)), matrix_(ToDlMatrix(matrix)) {}
-
-DisplayListMatrixClipState::DisplayListMatrixClipState(const SkRect& cull_rect,
-                                                       const SkM44& matrix)
-    : cull_rect_(ProtectEmpty(cull_rect)), matrix_(ToDlMatrix(matrix)) {}
-
 bool DisplayListMatrixClipState::inverseTransform(
     const DisplayListMatrixClipState& tracker) {
   if (tracker.is_matrix_invertable()) {
     matrix_ = matrix_ * tracker.matrix_.Invert();
     return true;
   }
-  return false;
-}
-
-bool DisplayListMatrixClipState::mapAndClipRect(const SkRect& src,
-                                                SkRect* mapped) const {
-  DlRect dl_mapped = ToDlRect(src).TransformAndClipBounds(matrix_);
-  auto dl_intersected = dl_mapped.Intersection(cull_rect_);
-  if (dl_intersected.has_value()) {
-    *mapped = ToSkRect(dl_intersected.value());
-    return true;
-  }
-  mapped->setEmpty();
   return false;
 }
 
@@ -137,19 +100,6 @@ void DisplayListMatrixClipState::clipRRect(const DlRoundRect& rrect,
 void DisplayListMatrixClipState::clipPath(const DlPath& path,
                                           ClipOp op,
                                           bool is_aa) {
-  // Map "kDifference of inverse path" to "kIntersect of the original path" and
-  // map "kIntersect of inverse path" to "kDifference of the original path"
-  if (path.IsInverseFillType()) {
-    switch (op) {
-      case ClipOp::kIntersect:
-        op = ClipOp::kDifference;
-        break;
-      case ClipOp::kDifference:
-        op = ClipOp::kIntersect;
-        break;
-    }
-  }
-
   DlRect bounds = path.GetBounds();
   if (path.IsRect(nullptr)) {
     return clipRect(bounds, op, is_aa);

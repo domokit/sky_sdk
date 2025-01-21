@@ -5,7 +5,7 @@
 
 # This should match the ci.bat file in this directory.
 
-# This is called from .cirrus.yml and the LUCI recipes:
+# This is called from the LUCI recipes:
 # https://github.com/flutter/flutter/blob/main/dev/bots/suite_runners/run_customer_testing_tests.dart
 
 set -ex

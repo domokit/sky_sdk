@@ -9,6 +9,7 @@
 #include "flow/surface.h"
 #include "flow/surface_frame.h"
 #include "impeller/display_list/aiks_context.h"
+#include "impeller/renderer/backend/metal/swapchain_transients_mtl.h"
 
 #include "flutter/common/settings.h"
 #include "flutter/fml/make_copyable.h"
@@ -35,6 +36,10 @@ GPUSurfaceMetalImpeller::GPUSurfaceMetalImpeller(
       [[NSBundle mainBundle] objectForInfoDictionaryKey:@"FLTDisablePartialRepaint"];
   if (disablePartialRepaint != nil) {
     disable_partial_repaint_ = disablePartialRepaint.boolValue;
+  }
+  if (aiks_context_) {
+    swapchain_transients_ = std::make_shared<impeller::SwapchainTransientsMTL>(
+        aiks_context_->GetContext()->GetResourceAllocator());
   }
 }
 
@@ -107,7 +112,8 @@ std::unique_ptr<SurfaceFrame> GPUSurfaceMetalImpeller::AcquireFrameFromCAMetalLa
                          aiks_context = aiks_context_,                        //
                          drawable,                                            //
                          weak_last_texture,                                   //
-                         weak_layer                                           //
+                         weak_layer,                                          //
+                         swapchain_transients = swapchain_transients_         //
   ](SurfaceFrame& surface_frame, DlCanvas* canvas) mutable -> bool {
         id<MTLTexture> strong_last_texture = weak_last_texture;
         CAMetalLayer* strong_layer = weak_layer;
@@ -146,8 +152,8 @@ std::unique_ptr<SurfaceFrame> GPUSurfaceMetalImpeller::AcquireFrameFromCAMetalLa
                                                 buffer_damage->width(), buffer_damage->height());
         }
 
-        auto surface = impeller::SurfaceMTL::MakeFromMetalLayerDrawable(aiks_context->GetContext(),
-                                                                        drawable, clip_rect);
+        auto surface = impeller::SurfaceMTL::MakeFromMetalLayerDrawable(
+            aiks_context->GetContext(), drawable, swapchain_transients, clip_rect);
 
         // The surface may be null if we failed to allocate the onscreen render target
         // due to running out of memory.
@@ -232,8 +238,9 @@ std::unique_ptr<SurfaceFrame> GPUSurfaceMetalImpeller::AcquireFrameFromMTLTextur
   SurfaceFrame::EncodeCallback encode_callback =
       fml::MakeCopyable([disable_partial_repaint = disable_partial_repaint_,  //
                          damage = damage_,
-                         aiks_context = aiks_context_,  //
-                         weak_texture                   //
+                         aiks_context = aiks_context_,                 //
+                         weak_texture,                                 //
+                         swapchain_transients = swapchain_transients_  //
   ](SurfaceFrame& surface_frame, DlCanvas* canvas) mutable -> bool {
         id<MTLTexture> strong_texture = weak_texture;
         if (!strong_texture) {
@@ -269,8 +276,8 @@ std::unique_ptr<SurfaceFrame> GPUSurfaceMetalImpeller::AcquireFrameFromMTLTextur
                                                 buffer_damage->width(), buffer_damage->height());
         }
 
-        auto surface = impeller::SurfaceMTL::MakeFromTexture(aiks_context->GetContext(),
-                                                             strong_texture, clip_rect);
+        auto surface = impeller::SurfaceMTL::MakeFromTexture(
+            aiks_context->GetContext(), strong_texture, swapchain_transients, clip_rect);
 
         surface->PresentWithTransaction(surface_frame.submit_info().present_with_transaction);
 

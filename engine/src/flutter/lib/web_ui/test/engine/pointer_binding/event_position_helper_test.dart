@@ -111,7 +111,7 @@ void doTests() {
 
       textEditing.strategy.enable(
         InputConfiguration(viewId: view.viewId),
-        onChange: (_, __) {},
+        onChange: (_, _) {},
         onAction: (_) {},
       );
 

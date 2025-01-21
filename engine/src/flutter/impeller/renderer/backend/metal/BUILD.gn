@@ -46,6 +46,8 @@ impeller_component("metal") {
     "shader_library_mtl.mm",
     "surface_mtl.h",
     "surface_mtl.mm",
+    "swapchain_transients_mtl.h",
+    "swapchain_transients_mtl.mm",
     "texture_mtl.h",
     "texture_mtl.mm",
     "texture_wrapper_mtl.h",
@@ -70,6 +72,7 @@ impeller_component("metal_unittests") {
 
   sources = [
     "allocator_mtl_unittests.mm",
+    "swapchain_transients_mtl_unittests.mm",
     "texture_mtl_unittests.mm",
   ]
 

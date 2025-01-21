@@ -673,25 +673,48 @@ static void fl_view_realize(GtkWidget* widget) {
   gtk_widget_realize(GTK_WIDGET(self->gl_area));
 }
 
+static gboolean handle_key_event(FlView* self, GdkEventKey* key_event) {
+  g_autoptr(FlKeyEvent) event = fl_key_event_new_from_gdk_event(
+      gdk_event_copy(reinterpret_cast<GdkEvent*>(key_event)));
+
+  if (fl_keyboard_manager_is_redispatched(self->keyboard_manager, event)) {
+    return FALSE;
+  }
+
+  fl_keyboard_manager_handle_event(
+      self->keyboard_manager, event, self->cancellable,
+      [](GObject* object, GAsyncResult* result, gpointer user_data) {
+        g_autoptr(FlKeyEvent) redispatch_event = nullptr;
+        g_autoptr(GError) error = nullptr;
+        if (!fl_keyboard_manager_handle_event_finish(
+                FL_KEYBOARD_MANAGER(object), result, &redispatch_event,
+                &error)) {
+          if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+            g_warning("Failed to handle key event: %s", error->message);
+          }
+        }
+
+        if (redispatch_event != nullptr) {
+          gdk_event_put(fl_key_event_get_origin(redispatch_event));
+        }
+      },
+      nullptr);
+
+  return TRUE;
+}
+
 // Implements GtkWidget::key_press_event.
 static gboolean fl_view_key_press_event(GtkWidget* widget,
                                         GdkEventKey* key_event) {
   FlView* self = FL_VIEW(widget);
-
-  GdkEvent* event = reinterpret_cast<GdkEvent*>(key_event);
-  return fl_keyboard_manager_handle_event(
-      self->keyboard_manager,
-      fl_key_event_new_from_gdk_event(gdk_event_copy(event)));
+  return handle_key_event(self, key_event);
 }
 
 // Implements GtkWidget::key_release_event.
 static gboolean fl_view_key_release_event(GtkWidget* widget,
                                           GdkEventKey* key_event) {
   FlView* self = FL_VIEW(widget);
-  GdkEvent* event = reinterpret_cast<GdkEvent*>(key_event);
-  return fl_keyboard_manager_handle_event(
-      self->keyboard_manager,
-      fl_key_event_new_from_gdk_event(gdk_event_copy(event)));
+  return handle_key_event(self, key_event);
 }
 
 static void fl_view_class_init(FlViewClass* klass) {

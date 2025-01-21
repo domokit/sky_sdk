@@ -10,7 +10,13 @@
 
 namespace flutter {
 
-DlPath DlPath::MakeRect(DlRect rect) {
+using Path = impeller::Path;
+using PathBuilder = impeller::PathBuilder;
+using FillType = impeller::FillType;
+using Convexity = impeller::Convexity;
+using ComponentType = impeller::Path::ComponentType;
+
+DlPath DlPath::MakeRect(const DlRect& rect) {
   return DlPath(SkPath::Rect(ToSkRect(rect)));
 }
 
@@ -28,7 +34,7 @@ DlPath DlPath::MakeRectXYWH(DlScalar x,
   return DlPath(SkPath().addRect(SkRect::MakeXYWH(x, y, width, height)));
 }
 
-DlPath DlPath::MakeOval(DlRect bounds) {
+DlPath DlPath::MakeOval(const DlRect& bounds) {
   return DlPath(SkPath::Oval(ToSkRect(bounds)));
 }
 
@@ -39,86 +45,238 @@ DlPath DlPath::MakeOvalLTRB(DlScalar left,
   return DlPath(SkPath::Oval(SkRect::MakeLTRB(left, top, right, bottom)));
 }
 
-const SkPath& DlPath::GetSkPath() const {
-  return data_->sk_path;
+DlPath DlPath::MakeCircle(const DlPoint& center, DlScalar radius) {
+  return DlPath(SkPath::Circle(center.x, center.y, radius));
 }
 
-impeller::Path DlPath::GetPath() const {
-  if (!data_->path.has_value()) {
-    data_->path = ConvertToImpellerPath(data_->sk_path);
-  }
+DlPath DlPath::MakeRoundRect(const DlRoundRect& rrect) {
+  return DlPath(SkPath::RRect(ToSkRRect(rrect)));
+}
 
-  // Covered by check above.
-  // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
-  return data_->path.value();
+DlPath DlPath::MakeRoundRectXY(const DlRect& rect,
+                               DlScalar x_radius,
+                               DlScalar y_radius,
+                               bool counter_clock_wise) {
+  return DlPath(SkPath::RRect(
+      ToSkRect(rect), x_radius, y_radius,
+      counter_clock_wise ? SkPathDirection::kCCW : SkPathDirection::kCW));
+}
+
+const SkPath& DlPath::GetSkPath() const {
+  auto& sk_path = data_->sk_path;
+  auto& path = data_->path;
+  if (sk_path.has_value()) {
+    return sk_path.value();
+  }
+  if (path.has_value()) {
+    sk_path.emplace(ConvertToSkiaPath(path.value()));
+    if (data_->render_count >= kMaxVolatileUses) {
+      sk_path.value().setIsVolatile(false);
+    }
+    return sk_path.value();
+  }
+  sk_path.emplace();
+  return sk_path.value();
+}
+
+Path DlPath::GetPath() const {
+  auto& sk_path = data_->sk_path;
+  auto& path = data_->path;
+  if (path.has_value()) {
+    return path.value();
+  }
+  if (sk_path.has_value()) {
+    path.emplace(ConvertToImpellerPath(sk_path.value()));
+    return path.value();
+  }
+  path.emplace();
+  return path.value();
 }
 
 void DlPath::WillRenderSkPath() const {
   if (data_->render_count >= kMaxVolatileUses) {
-    data_->sk_path.setIsVolatile(false);
+    auto& sk_path = data_->sk_path;
+    if (sk_path.has_value()) {
+      sk_path.value().setIsVolatile(false);
+    }
   } else {
     data_->render_count++;
   }
 }
 
-bool DlPath::IsInverseFillType() const {
-  return data_->sk_path.isInverseFillType();
+[[nodiscard]] DlPath DlPath::WithOffset(const DlPoint& offset) const {
+  if (offset.IsZero()) {
+    return *this;
+  }
+  if (!offset.IsFinite()) {
+    return DlPath();
+  }
+  auto& path = data_->path;
+  if (path.has_value()) {
+    PathBuilder builder;
+    builder.AddPath(path.value());
+    builder.Shift(offset);
+    return DlPath(builder.TakePath());
+  }
+  auto& sk_path = data_->sk_path;
+  if (sk_path.has_value()) {
+    SkPath path = sk_path.value();
+    path = path.offset(offset.x, offset.y);
+    return DlPath(path);
+  }
+  return *this;
+}
+
+[[nodiscard]] DlPath DlPath::WithFillType(DlPathFillType type) const {
+  auto& path = data_->path;
+  if (path.has_value()) {
+    if (path.value().GetFillType() == type) {
+      return *this;
+    }
+    PathBuilder builder;
+    builder.AddPath(path.value());
+    return DlPath(builder.TakePath(type));
+  }
+  auto& sk_path = data_->sk_path;
+  if (sk_path.has_value()) {
+    SkPathFillType sk_type = ToSkFillType(type);
+    if (sk_path.value().getFillType() == sk_type) {
+      return *this;
+    }
+    SkPath path = sk_path.value();
+    path.setFillType(sk_type);
+    return DlPath(path);
+  }
+  return *this;
 }
 
 bool DlPath::IsRect(DlRect* rect, bool* is_closed) const {
-  return data_->sk_path.isRect(ToSkRect(rect), is_closed);
+  return GetSkPath().isRect(ToSkRect(rect), is_closed);
 }
 
 bool DlPath::IsOval(DlRect* bounds) const {
-  return data_->sk_path.isOval(ToSkRect(bounds));
+  return GetSkPath().isOval(ToSkRect(bounds));
+}
+
+bool DlPath::IsRoundRect(DlRoundRect* rrect) const {
+  SkRRect sk_rrect;
+  bool ret = GetSkPath().isRRect(rrect ? &sk_rrect : nullptr);
+  if (rrect) {
+    *rrect = ToDlRoundRect(sk_rrect);
+  }
+  return ret;
 }
 
 bool DlPath::IsSkRect(SkRect* rect, bool* is_closed) const {
-  return data_->sk_path.isRect(rect, is_closed);
+  return GetSkPath().isRect(rect, is_closed);
 }
 
 bool DlPath::IsSkOval(SkRect* bounds) const {
-  return data_->sk_path.isOval(bounds);
+  return GetSkPath().isOval(bounds);
 }
 
 bool DlPath::IsSkRRect(SkRRect* rrect) const {
-  return data_->sk_path.isRRect(rrect);
+  return GetSkPath().isRRect(rrect);
+}
+
+bool DlPath::Contains(const DlPoint& point) const {
+  return GetSkPath().contains(point.x, point.y);
 }
 
 SkRect DlPath::GetSkBounds() const {
-  return data_->sk_path.getBounds();
+  return GetSkPath().getBounds();
 }
 
 DlRect DlPath::GetBounds() const {
-  return ToDlRect(data_->sk_path.getBounds());
+  auto& path = data_->path;
+  if (path.has_value()) {
+    return path.value().GetBoundingBox().value_or(DlRect());
+  }
+  return ToDlRect(GetSkPath().getBounds());
 }
 
 bool DlPath::operator==(const DlPath& other) const {
-  return data_->sk_path == other.data_->sk_path;
+  return GetSkPath() == other.GetSkPath();
 }
 
 bool DlPath::IsConverted() const {
-  return data_->path.has_value();
+  return data_->path.has_value() && data_->sk_path.has_value();
 }
 
 bool DlPath::IsVolatile() const {
-  return data_->sk_path.isVolatile();
+  return GetSkPath().isVolatile();
 }
 
 DlPath DlPath::operator+(const DlPath& other) const {
-  SkPath path = data_->sk_path;
-  path.addPath(other.data_->sk_path);
+  SkPath path = GetSkPath();
+  path.addPath(other.GetSkPath());
   return DlPath(path);
 }
 
-using Path = impeller::Path;
-using PathBuilder = impeller::PathBuilder;
-using FillType = impeller::FillType;
-using Convexity = impeller::Convexity;
+DlPath::Data::Data(const SkPath& path) : sk_path(path) {
+  FML_DCHECK(!SkPathFillType_IsInverse(path.getFillType()));
+}
+
+SkPath DlPath::ConvertToSkiaPath(const Path& path, const DlPoint& shift) {
+  SkPath sk_path;
+  sk_path.setFillType(ToSkFillType(path.GetFillType()));
+  bool subpath_needs_close = false;
+  std::optional<DlPoint> pending_moveto;
+
+  auto resolve_moveto = [&pending_moveto, &sk_path]() {
+    if (pending_moveto.has_value()) {
+      sk_path.moveTo(ToSkPoint(pending_moveto.value()));
+      pending_moveto.reset();
+    }
+  };
+
+  size_t count = path.GetComponentCount();
+  for (size_t i = 0; i < count; i++) {
+    switch (path.GetComponentTypeAtIndex(i)) {
+      case ComponentType::kContour: {
+        impeller::ContourComponent contour;
+        path.GetContourComponentAtIndex(i, contour);
+        if (subpath_needs_close) {
+          sk_path.close();
+        }
+        pending_moveto = contour.destination;
+        subpath_needs_close = contour.IsClosed();
+        break;
+      }
+      case ComponentType::kLinear: {
+        impeller::LinearPathComponent linear;
+        path.GetLinearComponentAtIndex(i, linear);
+        resolve_moveto();
+        sk_path.lineTo(ToSkPoint(linear.p2));
+        break;
+      }
+      case ComponentType::kQuadratic: {
+        impeller::QuadraticPathComponent quadratic;
+        path.GetQuadraticComponentAtIndex(i, quadratic);
+        resolve_moveto();
+        sk_path.quadTo(ToSkPoint(quadratic.cp), ToSkPoint(quadratic.p2));
+        break;
+      }
+      case ComponentType::kCubic: {
+        impeller::CubicPathComponent cubic;
+        path.GetCubicComponentAtIndex(i, cubic);
+        resolve_moveto();
+        sk_path.cubicTo(ToSkPoint(cubic.cp1), ToSkPoint(cubic.cp2),
+                        ToSkPoint(cubic.p2));
+        break;
+      }
+    }
+  }
+  if (subpath_needs_close) {
+    sk_path.close();
+  }
+
+  return sk_path;
+}
 
 Path DlPath::ConvertToImpellerPath(const SkPath& path, const DlPoint& shift) {
-  if (path.isEmpty()) {
-    return impeller::Path{};
+  if (path.isEmpty() || !shift.IsFinite()) {
+    return Path{};
   }
   auto iterator = SkPath::Iter(path, false);
 
@@ -190,14 +348,13 @@ Path DlPath::ConvertToImpellerPath(const SkPath& path, const DlPoint& shift) {
       break;
     case SkPathFillType::kInverseWinding:
     case SkPathFillType::kInverseEvenOdd:
-      // Flutter doesn't expose these path fill types. These are only visible
-      // via the receiver interface. We should never get here.
-      fill_type = FillType::kNonZero;
-      break;
+      FML_UNREACHABLE();
   }
   builder.SetConvexity(path.isConvex() ? Convexity::kConvex
                                        : Convexity::kUnknown);
-  builder.Shift(shift);
+  if (!shift.IsZero()) {
+    builder.Shift(shift);
+  }
   auto sk_bounds = path.getBounds().makeOutset(shift.x, shift.y);
   builder.SetBounds(ToDlRect(sk_bounds));
   return builder.TakePath(fill_type);

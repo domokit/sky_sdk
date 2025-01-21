@@ -609,6 +609,46 @@ void main() {
     expect(find.text('Page 2'), findsNothing);
   });
 
+  testWidgets('sheet has route settings', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      CupertinoApp(
+        initialRoute: '/',
+        onGenerateRoute: (RouteSettings settings) {
+          if (settings.name == '/') {
+            return PageRouteBuilder<void>(
+              pageBuilder: (
+                BuildContext context,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+              ) {
+                return CupertinoPageScaffold(
+                  navigationBar: const CupertinoNavigationBar(middle: Text('Page 1')),
+                  child: Container(),
+                );
+              },
+            );
+          }
+          return CupertinoSheetRoute<void>(
+            builder: (BuildContext context) {
+              return CupertinoPageScaffold(
+                navigationBar: CupertinoNavigationBar(middle: Text('Page: ${settings.name}')),
+                child: Container(),
+              );
+            },
+          );
+        },
+      ),
+    );
+
+    expect(find.text('Page 1'), findsOneWidget);
+    expect(find.text('Page 2'), findsNothing);
+
+    tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    await tester.pumpAndSettle();
+
+    expect(find.text('Page: /next'), findsOneWidget);
+  });
+
   group('drag dismiss gesture', () {
     Widget dragGestureApp(GlobalKey homeScaffoldKey, GlobalKey sheetScaffoldKey) {
       return CupertinoApp(
@@ -803,6 +843,73 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Page 1'), findsOneWidget);
+    });
+
+    testWidgets('Sheet should not block nested scroll', (WidgetTester tester) async {
+      final GlobalKey homeKey = GlobalKey();
+
+      Widget sheetScaffoldContent(BuildContext context) {
+        return ListView(
+          children: const <Widget>[
+            Text('Top of Scroll'),
+            SizedBox(width: double.infinity, height: 100),
+            Text('Middle of Scroll'),
+            SizedBox(width: double.infinity, height: 100),
+          ],
+        );
+      }
+
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: CupertinoPageScaffold(
+            key: homeKey,
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  const Text('Page 1'),
+                  CupertinoButton(
+                    onPressed: () {
+                      showCupertinoSheet<void>(
+                        context: homeKey.currentContext!,
+                        pageBuilder: (BuildContext context) {
+                          return CupertinoPageScaffold(child: sheetScaffoldContent(context));
+                        },
+                      );
+                    },
+                    child: const Text('Push Page 2'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Push Page 2'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Top of Scroll'), findsOneWidget);
+      final double startPosition = tester.getTopLeft(find.text('Middle of Scroll')).dy;
+
+      final TestGesture gesture = await tester.createGesture();
+
+      await gesture.down(const Offset(100, 100));
+
+      // Need 2 events to form a valid drag.
+      await tester.pump(const Duration(milliseconds: 100));
+      await gesture.moveTo(const Offset(100, 80), timeStamp: const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 200));
+      await gesture.moveTo(const Offset(100, 50), timeStamp: const Duration(milliseconds: 200));
+
+      await tester.pumpAndSettle();
+
+      final double endPosition = tester.getTopLeft(find.text('Middle of Scroll')).dy;
+
+      // Final position should be higher.
+      expect(endPosition, lessThan(startPosition));
+
+      await gesture.up();
+      await tester.pumpAndSettle();
     });
   });
 }

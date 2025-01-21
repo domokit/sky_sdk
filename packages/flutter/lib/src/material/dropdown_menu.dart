@@ -965,10 +965,13 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
       crossAxisUnconstrained: false,
       builder: (BuildContext context, MenuController controller, Widget? child) {
         assert(_initialMenu != null);
+        final bool isCollapsed = widget.inputDecorationTheme?.isCollapsed ?? false;
         final Widget trailingButton = Padding(
-          padding: const EdgeInsets.all(4.0),
+          padding: isCollapsed ? EdgeInsets.zero : const EdgeInsets.all(4.0),
           child: IconButton(
             isSelected: controller.isOpen,
+            constraints: widget.inputDecorationTheme?.suffixIconConstraints,
+            padding: isCollapsed ? EdgeInsets.zero : null,
             icon: widget.trailingIcon ?? const Icon(Icons.arrow_drop_down),
             selectedIcon: widget.selectedTrailingIcon ?? const Icon(Icons.arrow_drop_up),
             onPressed:

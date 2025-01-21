@@ -16,7 +16,6 @@
 #include "impeller/entity/contents/content_context.h"
 #include "impeller/geometry/color.h"
 #include "impeller/geometry/scalar.h"
-#include "include/core/SkRSXform.h"
 #include "include/core/SkRefCnt.h"
 
 namespace impeller {
@@ -25,34 +24,14 @@ namespace testing {
 using namespace flutter;
 
 namespace {
-SkRSXform MakeTranslation(Scalar tx, Scalar ty) {
-  return SkRSXform::Make(1, 0, tx, ty);
+RSTransform MakeTranslation(Scalar tx, Scalar ty) {
+  return RSTransform::Make({tx, ty}, 1, DlDegrees(0));
 }
 
-std::tuple<std::vector<SkRect>, std::vector<SkRSXform>, sk_sp<DlImageImpeller>>
+std::tuple<std::vector<DlRect>,       //
+           std::vector<RSTransform>,  //
+           sk_sp<DlImageImpeller>>
 CreateTestData(const AiksTest* test) {
-  // Draws the image as four squares stiched together.
-  auto atlas =
-      DlImageImpeller::Make(test->CreateTextureForFixture("bay_bridge.jpg"));
-  auto size = atlas->impeller_texture()->GetSize();
-  // Divide image into four quadrants.
-  Scalar half_width = size.width / 2;
-  Scalar half_height = size.height / 2;
-  std::vector<SkRect> texture_coordinates = {
-      SkRect::MakeLTRB(0, 0, half_width, half_height),
-      SkRect::MakeLTRB(half_width, 0, size.width, half_height),
-      SkRect::MakeLTRB(0, half_height, half_width, size.height),
-      SkRect::MakeLTRB(half_width, half_height, size.width, size.height)};
-  // Position quadrants adjacent to eachother.
-  std::vector<SkRSXform> transforms = {
-      MakeTranslation(0, 0), MakeTranslation(half_width, 0),
-      MakeTranslation(0, half_height),
-      MakeTranslation(half_width, half_height)};
-  return std::make_tuple(texture_coordinates, transforms, atlas);
-}
-
-std::tuple<std::vector<DlRect>, std::vector<SkRSXform>, sk_sp<DlImageImpeller>>
-CreateDlTestData(const AiksTest* test) {
   // Draws the image as four squares stiched together.
   auto atlas =
       DlImageImpeller::Make(test->CreateTextureForFixture("bay_bridge.jpg"));
@@ -66,7 +45,7 @@ CreateDlTestData(const AiksTest* test) {
       DlRect::MakeLTRB(0, half_height, half_width, size.height),
       DlRect::MakeLTRB(half_width, half_height, size.width, size.height)};
   // Position quadrants adjacent to eachother.
-  std::vector<SkRSXform> transforms = {
+  std::vector<RSTransform> transforms = {
       MakeTranslation(0, 0), MakeTranslation(half_width, 0),
       MakeTranslation(0, half_height),
       MakeTranslation(half_width, half_height)};
@@ -138,9 +117,9 @@ TEST_P(AiksTest, DrawAtlasWithOpacity) {
 TEST_P(AiksTest, DrawAtlasNoColorFullSize) {
   auto atlas = DlImageImpeller::Make(CreateTextureForFixture("bay_bridge.jpg"));
   auto size = atlas->impeller_texture()->GetSize();
-  std::vector<SkRect> texture_coordinates = {
-      SkRect::MakeLTRB(0, 0, size.width, size.height)};
-  std::vector<SkRSXform> transforms = {MakeTranslation(0, 0)};
+  std::vector<DlRect> texture_coordinates = {
+      DlRect::MakeLTRB(0, 0, size.width, size.height)};
+  std::vector<RSTransform> transforms = {MakeTranslation(0, 0)};
 
   DisplayListBuilder builder;
   builder.Scale(GetContentScale().x, GetContentScale().y);
@@ -199,7 +178,7 @@ TEST_P(AiksTest, DrawAtlasPlusWideGamut) {
 }
 
 TEST_P(AiksTest, DlAtlasGeometryNoBlend) {
-  auto [texture_coordinates, transforms, atlas] = CreateDlTestData(this);
+  auto [texture_coordinates, transforms, atlas] = CreateTestData(this);
 
   DlAtlasGeometry geom(atlas->impeller_texture(), transforms.data(),
                        texture_coordinates.data(), nullptr, transforms.size(),
@@ -217,7 +196,7 @@ TEST_P(AiksTest, DlAtlasGeometryNoBlend) {
 }
 
 TEST_P(AiksTest, DlAtlasGeometryBlend) {
-  auto [texture_coordinates, transforms, atlas] = CreateDlTestData(this);
+  auto [texture_coordinates, transforms, atlas] = CreateTestData(this);
 
   std::vector<DlColor> colors;
   colors.reserve(texture_coordinates.size());
@@ -241,7 +220,7 @@ TEST_P(AiksTest, DlAtlasGeometryBlend) {
 }
 
 TEST_P(AiksTest, DlAtlasGeometryColorButNoBlend) {
-  auto [texture_coordinates, transforms, atlas] = CreateDlTestData(this);
+  auto [texture_coordinates, transforms, atlas] = CreateTestData(this);
 
   std::vector<DlColor> colors;
   colors.reserve(texture_coordinates.size());
@@ -258,7 +237,7 @@ TEST_P(AiksTest, DlAtlasGeometryColorButNoBlend) {
 }
 
 TEST_P(AiksTest, DlAtlasGeometrySkip) {
-  auto [texture_coordinates, transforms, atlas] = CreateDlTestData(this);
+  auto [texture_coordinates, transforms, atlas] = CreateTestData(this);
 
   std::vector<DlColor> colors;
   colors.reserve(texture_coordinates.size());

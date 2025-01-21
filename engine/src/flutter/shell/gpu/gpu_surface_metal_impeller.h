@@ -11,6 +11,7 @@
 #include "flutter/fml/macros.h"
 #include "flutter/impeller/display_list/aiks_context.h"
 #include "flutter/impeller/renderer/backend/metal/context_mtl.h"
+#include "flutter/impeller/renderer/backend/metal/swapchain_transients_mtl.h"
 #include "flutter/shell/gpu/gpu_surface_metal_delegate.h"
 #include "third_party/skia/include/gpu/ganesh/mtl/GrMtlTypes.h"
 
@@ -46,6 +47,7 @@ class IMPELLER_CA_METAL_LAYER_AVAILABLE GPUSurfaceMetalImpeller
   // MTLTexture for each drawable
   std::shared_ptr<std::map<void*, SkIRect>> damage_ =
       std::make_shared<std::map<void*, SkIRect>>();
+  std::shared_ptr<impeller::SwapchainTransientsMTL> swapchain_transients_;
 
   // |Surface|
   std::unique_ptr<SurfaceFrame> AcquireFrame(

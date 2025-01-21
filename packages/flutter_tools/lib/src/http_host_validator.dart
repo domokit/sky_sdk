@@ -82,7 +82,7 @@ class HttpHostValidator extends DoctorValidator {
   }
 
   @override
-  Future<ValidationResult> validate() async {
+  Future<ValidationResult> validateImpl() async {
     final List<String?> availabilityResults = <String?>[];
 
     final List<Uri> requiredHosts = <Uri>[];
@@ -141,7 +141,7 @@ class HttpHostValidator extends DoctorValidator {
     if (failures == 0) {
       assert(successes > 0);
       assert(messages.isEmpty);
-      return const ValidationResult(ValidationType.success, <ValidationMessage>[
+      return ValidationResult(ValidationType.success, const <ValidationMessage>[
         ValidationMessage('All expected network resources are available.'),
       ]);
     }

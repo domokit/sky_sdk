@@ -1461,7 +1461,7 @@ void main() {
     await tester.pumpWidget(
       Container(
         key: key,
-        child: Image(image: imageProvider1, errorBuilder: (_, __, ___) => Container()),
+        child: Image(image: imageProvider1, errorBuilder: (_, _, _) => Container()),
       ),
     );
     // listener from resolveStreamForKey is always added.

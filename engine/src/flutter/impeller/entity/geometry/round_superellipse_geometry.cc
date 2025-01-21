@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include <cmath>
+#include <variant>
 
 #include "flutter/impeller/entity/geometry/round_superellipse_geometry.h"
 
@@ -11,6 +12,157 @@
 namespace impeller {
 
 namespace {
+
+// An interface for classes that arranges a point list that forms a convex
+// contour into a triangle strip.
+class ConvexRearranger {
+ public:
+  ConvexRearranger() {}
+
+  virtual ~ConvexRearranger() {}
+
+  virtual size_t ContourLength() const = 0;
+
+  virtual Point GetPoint(size_t i) const = 0;
+
+  void RearrangeIntoTriangleStrip(Point* output) {
+    size_t index_count = 0;
+
+    output[index_count++] = GetPoint(0);
+
+    size_t a = 1;
+    size_t contour_length = ContourLength();
+    size_t b = contour_length - 1;
+    while (a < b) {
+      output[index_count++] = GetPoint(a);
+      output[index_count++] = GetPoint(b);
+      a++;
+      b--;
+    }
+    if (a == b) {
+      output[index_count++] = GetPoint(b);
+    }
+  }
+
+ private:
+  ConvexRearranger(const ConvexRearranger&) = delete;
+  ConvexRearranger& operator=(const ConvexRearranger&) = delete;
+};
+
+// A convex rearranger whose contour is concatenated from 4 quadrant segments.
+//
+// The input quadrant curves must travel from the Y axis to the X axis, and
+// include both ends. This means that the points on the axes are duplicate
+// between segments, and will be omitted by this class.
+class UnevenQuadrantsRearranger : public ConvexRearranger {
+ public:
+  UnevenQuadrantsRearranger(Point* cache, size_t segment_capacity)
+      : cache_(cache), segment_capacity_(segment_capacity) {}
+
+  Point* QuadCache(size_t i) { return cache_ + segment_capacity_ * i; }
+
+  const Point* QuadCache(size_t i) const {
+    return cache_ + segment_capacity_ * i;
+  }
+
+  size_t& QuadSize(size_t i) { return lengths_[i]; }
+
+  size_t ContourLength() const override {
+    return lengths_[0] + lengths_[1] + lengths_[2] + lengths_[3] - 4;
+  }
+
+  Point GetPoint(size_t i) const override {
+    //   output            from       index
+    //      0 ... l0-2    quads[0]   0    ... l0-2
+    // next 0 ... l1-2    quads[1]   l1-1 ... 1
+    // next 0 ... l2-2    quads[2]   0    ... l2-2
+    // next 0 ... l3-2    quads[3]   l3-1 ... 1
+    size_t high = lengths_[0] - 1;
+    if (i < high) {
+      return QuadCache(0)[i];
+    }
+    high += lengths_[1] - 1;
+    if (i < high) {
+      return QuadCache(1)[high - i];
+    }
+    size_t low = high;
+    high += lengths_[2] - 1;
+    if (i < high) {
+      return QuadCache(2)[i - low];
+    }
+    high += lengths_[3] - 1;
+    if (i < high) {
+      return QuadCache(3)[high - i];
+    } else {
+      // Unreachable
+      return Point();
+    }
+  }
+
+ private:
+  Point* cache_;
+  size_t segment_capacity_;
+  size_t lengths_[4];
+};
+
+// A convex rearranger whose contour is concatenated from 4 identical quadrant
+// segments.
+//
+// The input curve must travel from the Y axis to the X axis and include both
+// ends. This means that the points on the axes are duplicate between segments,
+// and will be omitted by this class.
+class MirroredQuadrantRearranger : public ConvexRearranger {
+ public:
+  MirroredQuadrantRearranger(Point center, Point* cache)
+      : center_(center), cache_(cache) {}
+
+  size_t& QuadSize() { return l_; }
+
+  size_t ContourLength() const override { return l_ * 4 - 4; }
+
+  Point GetPoint(size_t i) const override {
+    //   output          from   index
+    //      0 ... l-2    quad   0   ... l-2
+    // next 0 ... l-2    quad   l-1 ... 1
+    // next 0 ... l-2    quad   0   ... l-2
+    // next 0 ... l-2    quad   l-1 ... 1
+    size_t high = l_ - 1;
+    if (i < high) {
+      return cache_[i] + center_;
+    }
+    high += l_ - 1;
+    if (i < high) {
+      return cache_[high - i] * Point{1, -1} + center_;
+    }
+    size_t low = high;
+    high += l_ - 1;
+    if (i < high) {
+      return cache_[i - low] * Point{-1, -1} + center_;
+    }
+    high += l_ - 1;
+    if (i < high) {
+      return cache_[high - i] * Point{-1, 1} + center_;
+    } else {
+      // Unreachable
+      return Point();
+    }
+  }
+
+ private:
+  Point center_;
+  Point* cache_;
+  size_t l_ = 0;
+};
+
+// A matrix that swaps the coordinates of a point.
+// clang-format off
+constexpr Matrix kFlip = Matrix(
+  0.0f, 1.0f, 0.0f, 0.0f,
+  1.0f, 0.0f, 0.0f, 0.0f,
+  0.0f, 0.0f, 1.0f, 0.0f,
+  0.0f, 0.0f, 0.0f, 1.0f);
+// clang-format on
+
 // A look up table with precomputed variables.
 //
 // The columns represent the following variabls respectively:
@@ -64,15 +216,6 @@ Scalar LerpPrecomputedVariable(size_t column, Scalar ratio) {
          frac * kPrecomputedVariables[left + 1][column];
 }
 
-// Return the shortest of `corner_radius`, height/2, and width/2.
-//
-// Corner radii longer than 1/2 of the side length does not make sense, and will
-// be limited to the longest possible.
-Scalar LimitRadius(Scalar corner_radius, const Rect& bounds) {
-  return std::min(corner_radius,
-                  std::min(bounds.GetWidth() / 2, bounds.GetHeight() / 2));
-}
-
 // The max angular step that the algorithm will traverse a quadrant of the
 // curve.
 //
@@ -102,23 +245,47 @@ Scalar CalculateStep(Scalar minDimension, Scalar fullAngle) {
   return std::min(kMinAngleStep, angleByDimension);
 }
 
-// The distance from point M (the 45deg point) to either side of the closer
-// bounding box is defined as `CalculateGap`.
-constexpr Scalar CalculateGap(Scalar corner_radius) {
-  // Heuristic formula derived from experimentation.
-  return 0.2924066406 * corner_radius;
+// A factor used to calculate the "gap", defined as the distance from the
+// midpoint of the curved corners to the nearest sides of the bounding box.
+//
+// When the corner radius is symmetrical on both dimensions, the midpoint of the
+// corner is where the circular arc intersects its quadrant bisector. When the
+// corner radius is asymmetrical, since the corner can be considered "elongated"
+// from a symmetrical corner, the midpoint is transformed in the same way.
+//
+// Experiments indicate that the gap is linear with respect to the corner
+// radius on that dimension.
+//
+// The formula should be kept in sync with a few files, as documented in
+// `CalculateGap` in round_superellipse_geometry.cc.
+constexpr Scalar kGapFactor = 0.2924066406;
+
+// Return the value that splits the range from `left` to `right` into two
+// portions whose ratio equals to `ratio_left` : `ratio_right`.
+static Scalar Split(Scalar left,
+                    Scalar right,
+                    Scalar ratio_left,
+                    Scalar ratio_right) {
+  return (left * ratio_right + right * ratio_left) / (ratio_left + ratio_right);
 }
 
 // Draw a circular arc from `start` to `end` with a radius of `r`.
 //
-// It is assumed that `start` is north-west to `end`, and the center
-// of the circle is south-west to both points.
+// It is assumed that `start` is north-west to `end`, and the center of the
+// circle is south-west to both points. If `reverse` is true, then the curve
+// goes from `end` to `start` instead.
 //
-// The resulting points are appended to `output` and include the starting point
-// but exclude the ending point.
+// The resulting points, after applying `transform`, are appended to `output`
+// and include the effective starting point but exclude the effective ending
+// point.
 //
-// Returns the number of the
-size_t DrawCircularArc(Point* output, Point start, Point end, Scalar r) {
+// Returns the number of generated points.
+size_t DrawCircularArc(Point* output,
+                       Point start,
+                       Point end,
+                       Scalar r,
+                       bool reverse,
+                       const Matrix& transform) {
   /* Denote the middle point of S and E as M. The key is to find the center of
    * the circle.
    *         S --__
@@ -139,35 +306,72 @@ size_t DrawCircularArc(Point* output, Point start, Point end, Scalar r) {
   Point c = m - distance_cm * c_to_m.Normalize();
   Scalar angle_sce = asinf(distance_sm / r) * 2;
   Point c_to_s = start - c;
-
-  Scalar step = CalculateStep(std::abs(s_to_e.y), angle_sce);
+  Matrix full_transform = transform * Matrix::MakeTranslation(c);
 
   Point* next = output;
-  Scalar angle = 0;
-  while (angle < angle_sce) {
-    *(next++) = c_to_s.Rotate(Radians(-angle)) + c;
+  Scalar angle = reverse ? angle_sce : 0.0f;
+  Scalar step =
+      (reverse ? -1 : 1) * CalculateStep(std::abs(s_to_e.y), angle_sce);
+  Scalar end_angle = reverse ? 0.0f : angle_sce;
+
+  while ((angle < end_angle) != reverse) {
+    *(next++) = full_transform * c_to_s.Rotate(Radians(-angle));
+    angle += step;
+  }
+  return next - output;
+}
+
+// Draw a superellipsoid arc.
+//
+// The superellipse is centered at the origin and has degree `n` and both
+// semi-axes equal to `a`. The arc starts from positive Y axis and spans from 0
+// to `max_theta` radiance clockwise if `reverse` is false, or from `max_theta`
+// to 0 otherwise.
+//
+// The resulting points, after applying `transform`, are appended to `output`
+// and include the starting point but exclude the ending point.
+//
+// Returns the number of generated points.
+size_t DrawSuperellipsoidArc(Point* output,
+                             Scalar a,
+                             Scalar n,
+                             Scalar max_theta,
+                             bool reverse,
+                             const Matrix& transform) {
+  Point* next = output;
+  Scalar angle = reverse ? max_theta : 0.0f;
+  Scalar step =
+      (reverse ? -1 : 1) *
+      CalculateStep(a - a * pow(abs(cosf(max_theta)), 2 / n), max_theta);
+  Scalar end = reverse ? 0.0f : max_theta;
+  while ((angle < end) != reverse) {
+    Scalar x = a * pow(abs(sinf(angle)), 2 / n);
+    Scalar y = a * pow(abs(cosf(angle)), 2 / n);
+    *(next++) = transform * Point(x, y);
     angle += step;
   }
   return next - output;
 }
 
 // Draws an arc representing the top 1/8 segment of a square-like rounded
-// superellipse.
+// superellipse centered at the origin.
 //
-// The resulting arc centers at the origin, spanning from 0 to pi/4, moving
-// clockwise starting from the positive Y-axis, and includes the starting point
-// (the middle of the top flat side) while excluding the ending point (the x=y
-// point).
+// The square-like rounded superellipse that this arc belongs to has a width and
+// height specified by `size` and features rounded corners determined by
+// `corner_radius`. The `corner_radius` corresponds to the `cornerRadius`
+// parameter in SwiftUI, rather than the literal radius of corner circles.
 //
-// The full square-like rounded superellipse has a width and height specified by
-// `size` and features rounded corners determined by `corner_radius`. The
-// `corner_radius` corresponds to the `cornerRadius` parameter in SwiftUI,
-// rather than the literal radius of corner circles.
+// If `reverse` is false, the resulting arc spans from 0 (inclusive) to pi/4
+// (exclusive), moving clockwise starting from the positive Y-axis. If `reverse`
+// is true, the curve spans from pi/4 (inclusive) to 0 (inclusive)
+// counterclockwise instead.
 //
 // Returns the number of points generated.
 size_t DrawOctantSquareLikeSquircle(Point* output,
                                     Scalar size,
-                                    Scalar corner_radius) {
+                                    Scalar corner_radius,
+                                    bool reverse,
+                                    const Matrix& transform) {
   /* The following figure shows the first quadrant of a square-like rounded
    * superellipse. The target arc consists of the "stretch" (AB), a
    * superellipsoid arc (BJ), and a circular arc (JM).
@@ -182,10 +386,10 @@ size_t DrawOctantSquareLikeSquircle(Point* output,
    *        |    |   / ⟋        |
    *        |    |  ᜱD          |
    *        |    | /             |
-   *    ↑   +----+               |
+   *    ↑   +----+ S             |
    *    s   |    |               |
    *    ↓   +----+---------------| A'
-   *       O     S
+   *       O
    *        ← s →
    *        ←------ size/2 ------→
    *
@@ -203,7 +407,7 @@ size_t DrawOctantSquareLikeSquircle(Point* output,
   Scalar ratio = {std::min(size / corner_radius, kMaxRatio)};
   Scalar a = ratio * corner_radius / 2;
   Scalar s = size / 2 - a;
-  Scalar g = CalculateGap(corner_radius);
+  Scalar g = kGapFactor * corner_radius;
 
   Scalar n = LerpPrecomputedVariable(1, ratio);
   Scalar d = LerpPrecomputedVariable(2, ratio) * a;
@@ -211,118 +415,95 @@ size_t DrawOctantSquareLikeSquircle(Point* output,
 
   Scalar R = (a - d - g) * sqrt(2);
 
-  Point pointM(size / 2 - g, size / 2 - g);
-
-  Scalar xJ = a * pow(abs(sinf(thetaJ)), 2 / n);
-  Scalar yJ = a * pow(abs(cosf(thetaJ)), 2 / n);
+  Point pointA{0, size / 2};
+  Point pointM{size / 2 - g, size / 2 - g};
+  Point pointS{s, s};
+  Point pointJ =
+      Point{pow(abs(sinf(thetaJ)), 2 / n), pow(abs(cosf(thetaJ)), 2 / n)} * a +
+      pointS;
+  Matrix translationS = Matrix::MakeTranslation(pointS);
 
   Point* next = output;
-  // A
-  *(next++) = Point(0, size / 2);
-  // Superellipsoid arc BJ (B inclusive, J exclusive)
-  {
-    Scalar step = CalculateStep(a - yJ, thetaJ);
-    Scalar angle = 0;
-    while (angle < thetaJ) {
-      Scalar x = a * pow(abs(sinf(angle)), 2 / n);
-      Scalar y = a * pow(abs(cosf(angle)), 2 / n);
-      *(next++) = Point(x + s, y + s);
-      angle += step;
-    }
+  if (!reverse) {
+    // Point A
+    *(next++) = transform * pointA;
+    // Arc [B, J)
+    next += DrawSuperellipsoidArc(next, a, n, thetaJ, reverse,
+                                  transform * translationS);
+    // Arc [J, M)
+    next += DrawCircularArc(next, pointJ, pointM, R, reverse, transform);
+  } else {
+    // Arc [M, J)
+    next += DrawCircularArc(next, pointJ, pointM, R, reverse, transform);
+    // Arc [J, B)
+    next += DrawSuperellipsoidArc(next, a, n, thetaJ, reverse,
+                                  transform * translationS);
+    // Point B
+    *(next++) = transform * Point{s, size / 2};
+    // Point A
+    *(next++) = transform * pointA;
   }
-
-  // Circular arc JM (B inclusive, M exclusive)
-  next += DrawCircularArc(next, {xJ + s, yJ + s}, pointM, R);
   return next - output;
 }
 
-// Optionally `flip` the input points before offsetting it by `center`, and
-// append the result to `output`.
+// Draw a quadrant curve, both ends included.
 //
-// If `flip` is true, then the entire input list is reversed, and the x and y
-// coordinate of each point is swapped as well. This effectively mirrors the
-// input point list by the y=x line.
-size_t FlipAndOffset(Point* output,
-                     const Point* input,
-                     size_t input_length,
-                     bool flip,
-                     const Point& center) {
-  if (!flip) {
-    for (size_t i = 0; i < input_length; i++) {
-      output[i] = input[i] + center;
-    }
-  } else {
-    for (size_t i = 0; i < input_length; i++) {
-      const Point& point = input[input_length - i - 1];
-      output[i] = Point(point.y + center.x, point.x + center.y);
-    }
-  }
-  return input_length;
-}
-
-constexpr Point kReflection[4] = {{1, 1}, {1, -1}, {-1, -1}, {-1, 1}};
-
-// Mirror the point list `quad` into other quadrants and output as a triangle
-// strip.
+// Returns the number of points.
 //
-// The input arc `quad` should reside in the first quadrant, starting at
-// positive Y axis and ending at positive X axis (both ends inclusive), for a
-// total of `quad_length` points. This function mirrors the arc into 4
-// quadrants, offset the result by `center`, and rearrange it as a triangle
-// strip, which is appended to `output`.
-//
-// A total of (quad_length - 1) * 4 points will be appended, and `output` must
-// have sufficient memory allocated before this call.
-void MirrorIntoTriangleStrip(const Point* quad,
-                             size_t quad_length,
-                             const Point& center,
-                             Point* output) {
-  // The length of 1/4 arc including the starting point but excluding the
-  // ending point.
-  const size_t arc_length = quad_length - 1;
-  auto GetPoint = [quad, arc_length](size_t i) -> Point {
-    if (i < arc_length) {
-      return quad[i];
-    }
-    i = i - arc_length;
-    if (i < arc_length) {
-      return quad[arc_length - i] * kReflection[1];
-    }
-    i = i - arc_length;
-    if (i < arc_length) {
-      return quad[i] * kReflection[2];
-    }
-    i = i - arc_length;
-    if (i < arc_length) {
-      return quad[arc_length - i] * kReflection[3];
-    } else {
-      // Unreachable
-      return Point();
-    }
-  };
-
-  size_t index_count = 0;
-
-  output[index_count++] = GetPoint(0) + center;
-
-  size_t a = 1;
-  size_t b = arc_length * 4 - 1;
-  while (a < b) {
-    output[index_count++] = GetPoint(a) + center;
-    output[index_count++] = GetPoint(b) + center;
-    a++;
-    b--;
+// The eact quadrant is specified by the direction of `outer` relative to
+// `center`. The curve goes from the X axis to the Y axis.
+static size_t DrawQuadrant(Point* output,
+                           Point center,
+                           Point outer,
+                           Size radii) {
+  if (radii.width == 0 || radii.height == 0) {
+    // Degrade to rectangle. (A zero radius causes error below.)
+    output[0] = {center.x, outer.y};
+    output[1] = outer;
+    output[2] = {outer.x, center.y};
+    return 3;
   }
-  if (a == b) {
-    output[index_count++] = GetPoint(b) + center;
-  }
+  // Normalize sizes and radii into symmetrical radius by scaling the longer of
+  // `radii` to the shorter. For example, to draw a RSE with size (200, 300)
+  // and radii (20, 10), this function draws one with size (100, 300) and radii
+  // (10, 10) and then scales it by (2x, 1x).
+  Scalar norm_radius = radii.MinDimension();
+  Size radius_scale = radii / norm_radius;
+  Point signed_size = (outer - center) * 2;
+  Point norm_size = signed_size.Abs() / radius_scale;
+  Point signed_scale = signed_size / norm_size;
+
+  // Each quadrant curve is composed of two octant curves, each of which belongs
+  // to a square-like rounded rectangle. When `norm_size`'s width != height, the
+  // centers of such square-like rounded rectangles are offset from the origin
+  // by a distance denoted as `c`.
+  Scalar c = (norm_size.x - norm_size.y) / 2;
+
+  Point* next = output;
+
+  next += DrawOctantSquareLikeSquircle(
+      next, norm_size.x, norm_radius, /*reverse=*/false,
+      Matrix::MakeTranslateScale(signed_scale, center) *
+          Matrix::MakeTranslation(Size{0, -c}));
+
+  next += DrawOctantSquareLikeSquircle(
+      next, norm_size.y, norm_radius, /*reverse=*/true,
+      Matrix::MakeTranslateScale(signed_scale, center) *
+          Matrix::MakeTranslation(Size{c, 0}) * kFlip);
+
+  return next - output;
 }
 
 }  // namespace
 
 RoundSuperellipseGeometry::RoundSuperellipseGeometry(const Rect& bounds,
-                                                     Scalar corner_radius)
-    : bounds_(bounds), corner_radius_(LimitRadius(corner_radius, bounds)) {}
+                                                     const RoundingRadii& radii)
+    : bounds_(bounds.GetPositive()), radii_(radii.Scaled(bounds_)) {}
+
+RoundSuperellipseGeometry::RoundSuperellipseGeometry(const Rect& bounds,
+                                                     float corner_radius)
+    : RoundSuperellipseGeometry(bounds,
+                                RoundingRadii::MakeRadius(corner_radius)) {}
 
 RoundSuperellipseGeometry::~RoundSuperellipseGeometry() {}
 
@@ -330,66 +511,66 @@ GeometryResult RoundSuperellipseGeometry::GetPositionBuffer(
     const ContentContext& renderer,
     const Entity& entity,
     RenderPass& pass) const {
-  const Size size = bounds_.GetSize();
-  const Point center = bounds_.GetCenter();
-
-  // The full shape is divided into 4 segments: the top and bottom edges come
-  // from two square-like rounded superellipses (called "width-aligned"), while
-  // the left and right squircles come from another two ("height-aligned").
-  //
-  // Denote the distance from the center of the square-like squircles to the
-  // origin as `c`. The width-aligned square-like squircle and the
-  // height-aligned one have the same offset in different directions.
-  const Scalar c = (size.width - size.height) / 2;
-
-  // The cache is allocated as follows:
-  //
-  //  * The first chunk stores the quadrant arc.
-  //  * The second chunk stores an octant arc before flipping and translation.
   Point* cache = renderer.GetTessellator().GetStrokePointCache().data();
 
-  // The memory size (in units of Points) allocated to store the first chunk.
-  constexpr size_t kMaxQuadrantLength = kPointArenaSize / 4;
+  // The memory size (in units of Points) allocated to store each quadrants.
+  constexpr size_t kMaxQuadSize = kPointArenaSize / 4;
   // Since the curve is traversed in steps bounded by kMaxQuadrantSteps, the
   // curving part will have fewer points than kMaxQuadrantSteps. Multiply it by
   // 2 for storing other sporatic points (an extremely conservative estimate).
-  static_assert(kMaxQuadrantLength > 2 * kMaxQuadrantSteps);
+  static_assert(kMaxQuadSize > 2 * kMaxQuadrantSteps);
 
-  // Draw the first quadrant of the shape and store in `quadrant`, including
-  // both ends. It will be mirrored to other quadrants later.
-  Point* quadrant = cache;
-  size_t quadrant_length;
-  {
-    Point* next = quadrant;
+  ConvexRearranger* rearranger;
+  std::variant<std::monostate, MirroredQuadrantRearranger,
+               UnevenQuadrantsRearranger>
+      rearranger_holder;
 
-    Point* octant_cache = cache + kMaxQuadrantLength;
-    size_t octant_length;
+  if (radii_.AreAllCornersSame()) {
+    rearranger_holder.emplace<MirroredQuadrantRearranger>(bounds_.GetCenter(),
+                                                          cache);
+    auto& t = std::get<MirroredQuadrantRearranger>(rearranger_holder);
+    rearranger = &t;
 
-    octant_length =
-        DrawOctantSquareLikeSquircle(octant_cache, size.width, corner_radius_);
-    next += FlipAndOffset(next, octant_cache, octant_length, /*flip=*/false,
-                          Point(0, -c));
+    // The quadrant must be drawn at the origin so that it can be rotated later.
+    t.QuadSize() = DrawQuadrant(cache, Point(),
+                                bounds_.GetRightTop() - bounds_.GetCenter(),
+                                radii_.top_right);
+  } else {
+    rearranger_holder.emplace<UnevenQuadrantsRearranger>(cache, kMaxQuadSize);
+    auto& t = std::get<UnevenQuadrantsRearranger>(rearranger_holder);
+    rearranger = &t;
 
-    *(next++) = Point(size / 2) - CalculateGap(corner_radius_);  // Point M
+    Scalar top_split = Split(bounds_.GetLeft(), bounds_.GetRight(),
+                             radii_.top_left.width, radii_.top_right.width);
+    Scalar right_split =
+        Split(bounds_.GetTop(), bounds_.GetBottom(), radii_.top_right.height,
+              radii_.bottom_right.height);
+    Scalar bottom_split =
+        Split(bounds_.GetLeft(), bounds_.GetRight(), radii_.bottom_left.width,
+              radii_.bottom_right.width);
+    Scalar left_split =
+        Split(bounds_.GetTop(), bounds_.GetBottom(), radii_.top_left.height,
+              radii_.bottom_left.height);
 
-    octant_length =
-        DrawOctantSquareLikeSquircle(octant_cache, size.height, corner_radius_);
-    next += FlipAndOffset(next, octant_cache, octant_length, /*flip=*/true,
-                          Point(c, 0));
-
-    quadrant_length = next - quadrant;
+    t.QuadSize(0) = DrawQuadrant(t.QuadCache(0), Point{top_split, right_split},
+                                 bounds_.GetRightTop(), radii_.top_right);
+    t.QuadSize(1) =
+        DrawQuadrant(t.QuadCache(1), Point{bottom_split, right_split},
+                     bounds_.GetRightBottom(), radii_.bottom_right);
+    t.QuadSize(2) =
+        DrawQuadrant(t.QuadCache(2), Point{bottom_split, left_split},
+                     bounds_.GetLeftBottom(), radii_.bottom_left);
+    t.QuadSize(3) = DrawQuadrant(t.QuadCache(3), Point{top_split, left_split},
+                                 bounds_.GetLeftTop(), radii_.top_left);
   }
 
-  // The `contour_point_count` include all points on the border. The "-1" comes
-  // from duplicate ends from the mirrored arcs.
-  size_t contour_length = 4 * (quadrant_length - 1);
+  size_t contour_length = rearranger->ContourLength();
   BufferView vertex_buffer = renderer.GetTransientsBuffer().Emplace(
       nullptr, sizeof(Point) * contour_length, alignof(Point));
   Point* vertex_data =
       reinterpret_cast<Point*>(vertex_buffer.GetBuffer()->OnGetContents() +
                                vertex_buffer.GetRange().offset);
-
-  MirrorIntoTriangleStrip(quadrant, quadrant_length, center, vertex_data);
+  rearranger->RearrangeIntoTriangleStrip(vertex_data);
 
   return GeometryResult{
       .type = PrimitiveType::kTriangleStrip,
@@ -413,14 +594,18 @@ bool RoundSuperellipseGeometry::CoversArea(const Matrix& transform,
   if (!transform.IsTranslationScaleOnly()) {
     return false;
   }
-  // Use the rectangle formed by the four 45deg points (point M) as a
-  // conservative estimate of the inner rectangle.
-  Scalar g = CalculateGap(corner_radius_);
+  Scalar left_inset = std::max(radii_.top_left.width, radii_.bottom_left.width);
+  Scalar right_inset =
+      std::max(radii_.top_right.width, radii_.bottom_right.width);
+  Scalar top_inset = std::max(radii_.top_left.height, radii_.top_right.height);
+  Scalar bottom_inset =
+      std::max(radii_.bottom_left.height, radii_.bottom_right.height);
   Rect coverage =
-      Rect::MakeLTRB(bounds_.GetLeft() + g, bounds_.GetTop() + g,
-                     bounds_.GetRight() - g, bounds_.GetBottom() - g)
-          .TransformBounds(transform);
-  return coverage.Contains(rect);
+      Rect::MakeLTRB(bounds_.GetLeft() + left_inset * kGapFactor,
+                     bounds_.GetTop() + top_inset * kGapFactor,
+                     bounds_.GetRight() - right_inset * kGapFactor,
+                     bounds_.GetBottom() - bottom_inset * kGapFactor);
+  return coverage.TransformBounds(transform).Contains(rect);
 }
 
 bool RoundSuperellipseGeometry::IsAxisAlignedRect() const {

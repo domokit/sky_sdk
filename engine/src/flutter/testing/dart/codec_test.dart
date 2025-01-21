@@ -37,7 +37,7 @@ void main() {
   });
 
   test('getNextFrame fails with invalid data', () async {
-    Uint8List data = await _getSkiaResource('flutter_logo.jpg').readAsBytes();
+    Uint8List data = await _getSkiaResource('test640x479.gif').readAsBytes();
     data = Uint8List.view(data.buffer, 0, 4000);
     final ui.Codec codec = await ui.instantiateImageCodec(data);
     try {

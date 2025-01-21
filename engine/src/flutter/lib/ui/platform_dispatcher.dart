@@ -174,9 +174,9 @@ class PlatformDispatcher {
   ///
   /// Presently, on Android and Web this collection will only contain the
   /// display that the current window is on. On iOS, it will only contains the
-  /// main display on the phone or tablet. On Desktop, it will contain only
-  /// a main display with a valid refresh rate but invalid size and device
-  /// pixel ratio values.
+  /// main display on the phone or tablet. On Desktops other than Linux, it will
+  /// contain only a main display with a valid refresh rate but invalid size and
+  /// device pixel ratio values.
   // TODO(dnfield): Update these docs when https://github.com/flutter/flutter/issues/125939
   // and https://github.com/flutter/flutter/issues/125938 are resolved.
   Iterable<Display> get displays => _displays.values;

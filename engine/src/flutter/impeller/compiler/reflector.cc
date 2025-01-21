@@ -398,11 +398,25 @@ std::shared_ptr<RuntimeStageData::Shader> Reflector::GenerateRuntimeStageData()
           break;
         }
         case StructMember::UnderlyingType::kFloat: {
-          size_t member_float_count = member.byte_length / sizeof(float);
-          float_count += member_float_count;
-          while (member_float_count > 0) {
-            struct_layout.push_back(1);
-            member_float_count--;
+          if (member.array_elements > 1) {
+            // For each array element member, insert 1 layout property per byte
+            // and 0 layout property per byte of padding
+            for (auto i = 0; i < member.array_elements; i++) {
+              for (auto j = 0u; j < member.size / sizeof(float); j++) {
+                struct_layout.push_back(1);
+              }
+              for (auto j = 0u; j < member.element_padding / sizeof(float);
+                   j++) {
+                struct_layout.push_back(0);
+              }
+            }
+          } else {
+            size_t member_float_count = member.byte_length / sizeof(float);
+            float_count += member_float_count;
+            while (member_float_count > 0) {
+              struct_layout.push_back(1);
+              member_float_count--;
+            }
           }
           break;
         }

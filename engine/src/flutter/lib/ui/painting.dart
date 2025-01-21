@@ -7,8 +7,8 @@ part of dart.ui;
 // // (for the example in Color)
 // // ignore_for_file: use_full_hex_values_for_flutter_colors
 // late ui.Image _image;
-// dynamic _cacheImage(dynamic _, [dynamic __]) { }
-// dynamic _drawImage(dynamic _, [dynamic __]) { }
+// dynamic _cacheImage(dynamic _, [dynamic _]) { }
+// dynamic _drawImage(dynamic _, [dynamic _]) { }
 
 // Some methods in this file assert that their arguments are not null. These
 // asserts are just to improve the error messages; they should only cover

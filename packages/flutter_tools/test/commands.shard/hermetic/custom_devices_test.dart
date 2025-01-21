@@ -293,13 +293,11 @@ CustomDevicesCommand createCustomDevicesCommand({
   FileSystem? fileSystem,
   ProcessManager? processManager,
   Logger? logger,
-  PrintFn? usagePrintFn,
   bool featureEnabled = false,
 }) {
   platform ??= FakePlatform();
   processManager ??= FakeProcessManager.any();
   fileSystem ??= MemoryFileSystem.test();
-  usagePrintFn ??= print;
   logger ??= BufferLogger.test();
 
   return CustomDevicesCommand.test(
@@ -328,7 +326,6 @@ CustomDevicesCommand createCustomDevicesCommand({
     processManager: processManager,
     fileSystem: fileSystem,
     logger: logger,
-    usagePrintFn: usagePrintFn,
   );
 }
 
@@ -341,7 +338,6 @@ CommandRunner<void> createCustomDevicesCommandRunner({
   FileSystem? fileSystem,
   ProcessManager? processManager,
   Logger? logger,
-  PrintFn? usagePrintFn,
   bool featureEnabled = false,
 }) {
   platform ??= FakePlatform();
@@ -356,7 +352,6 @@ CommandRunner<void> createCustomDevicesCommandRunner({
       fileSystem: fileSystem,
       processManager: processManager,
       logger: logger,
-      usagePrintFn: usagePrintFn,
       featureEnabled: featureEnabled,
     ),
   );
@@ -408,7 +403,6 @@ void main() {
 
         final CommandRunner<void> runner = createCustomDevicesCommandRunner(
           logger: logger,
-          usagePrintFn: (Object o) => logger.printStatus(o.toString()),
           featureEnabled: true,
         );
         await expectLater(runner.run(const <String>['custom-devices', '--help']), completes);
@@ -424,7 +418,6 @@ void main() {
 
       final CommandRunner<void> runner = createCustomDevicesCommandRunner(
         logger: logger,
-        usagePrintFn: (Object o) => logger.printStatus(o.toString()),
         featureEnabled: true,
       );
 
@@ -923,7 +916,7 @@ void main() {
       config.add(CustomDeviceConfig.exampleUnix.copyWith(id: 'testid'));
 
       final CommandRunner<void> runner = createCustomDevicesCommandRunner(
-        config: (_, __) => config,
+        config: (_, _) => config,
         fileSystem: fs,
         featureEnabled: true,
       );

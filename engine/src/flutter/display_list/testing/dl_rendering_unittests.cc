@@ -3584,7 +3584,15 @@ TEST_F(DisplayListRendering, DrawImageNineLinear) {
 }
 
 TEST_F(DisplayListRendering, DrawAtlasNearest) {
-  const SkRSXform xform[] = {
+  const SkRSXform sk_xform[] = {
+      // clang-format off
+      { 1.2f,  0.0f, kRenderLeft,  kRenderTop},
+      { 0.0f,  1.2f, kRenderRight, kRenderTop},
+      {-1.2f,  0.0f, kRenderRight, kRenderBottom},
+      { 0.0f, -1.2f, kRenderLeft,  kRenderBottom},
+      // clang-format on
+  };
+  const DlRSTransform dl_xform[] = {
       // clang-format off
       { 1.2f,  0.0f, kRenderLeft,  kRenderTop},
       { 0.0f,  1.2f, kRenderRight, kRenderTop},
@@ -3617,20 +3625,28 @@ TEST_F(DisplayListRendering, DrawAtlasNearest) {
   CanvasCompareTester::RenderAll(  //
       TestParameters(
           [=](const SkRenderContext& ctx) {
-            ctx.canvas->drawAtlas(ctx.image.get(), xform, tex, sk_colors, 4,
+            ctx.canvas->drawAtlas(ctx.image.get(), sk_xform, tex, sk_colors, 4,
                                   SkBlendMode::kSrcOver, sk_sampling, nullptr,
                                   &ctx.paint);
           },
           [=](const DlRenderContext& ctx) {
-            ctx.canvas->DrawAtlas(ctx.image, xform, tex, dl_colors, 4,
-                                  DlBlendMode::kSrcOver, dl_sampling, nullptr,
-                                  &ctx.paint);
+            ctx.canvas->DrawAtlas(ctx.image, dl_xform, ToDlRects(tex),
+                                  dl_colors, 4, DlBlendMode::kSrcOver,
+                                  dl_sampling, nullptr, &ctx.paint);
           },
           kDrawAtlasWithPaintFlags));
 }
 
 TEST_F(DisplayListRendering, DrawAtlasNearestNoPaint) {
-  const SkRSXform xform[] = {
+  const SkRSXform sk_xform[] = {
+      // clang-format off
+      { 1.2f,  0.0f, kRenderLeft,  kRenderTop},
+      { 0.0f,  1.2f, kRenderRight, kRenderTop},
+      {-1.2f,  0.0f, kRenderRight, kRenderBottom},
+      { 0.0f, -1.2f, kRenderLeft,  kRenderBottom},
+      // clang-format on
+  };
+  const DlRSTransform dl_xform[] = {
       // clang-format off
       { 1.2f,  0.0f, kRenderLeft,  kRenderTop},
       { 0.0f,  1.2f, kRenderRight, kRenderTop},
@@ -3663,20 +3679,28 @@ TEST_F(DisplayListRendering, DrawAtlasNearestNoPaint) {
   CanvasCompareTester::RenderAll(  //
       TestParameters(
           [=](const SkRenderContext& ctx) {
-            ctx.canvas->drawAtlas(ctx.image.get(), xform, tex, sk_colors, 4,
+            ctx.canvas->drawAtlas(ctx.image.get(), sk_xform, tex, sk_colors, 4,
                                   SkBlendMode::kSrcOver, sk_sampling,  //
                                   nullptr, nullptr);
           },
           [=](const DlRenderContext& ctx) {
-            ctx.canvas->DrawAtlas(ctx.image, xform, tex, dl_colors, 4,
-                                  DlBlendMode::kSrcOver, dl_sampling,  //
-                                  nullptr, nullptr);
+            ctx.canvas->DrawAtlas(ctx.image, dl_xform, ToDlRects(tex),
+                                  dl_colors, 4, DlBlendMode::kSrcOver,
+                                  dl_sampling, nullptr, nullptr);
           },
           kDrawAtlasFlags));
 }
 
 TEST_F(DisplayListRendering, DrawAtlasLinear) {
-  const SkRSXform xform[] = {
+  const SkRSXform sk_xform[] = {
+      // clang-format off
+      { 1.2f,  0.0f, kRenderLeft,  kRenderTop},
+      { 0.0f,  1.2f, kRenderRight, kRenderTop},
+      {-1.2f,  0.0f, kRenderRight, kRenderBottom},
+      { 0.0f, -1.2f, kRenderLeft,  kRenderBottom},
+      // clang-format on
+  };
+  const DlRSTransform dl_xform[] = {
       // clang-format off
       { 1.2f,  0.0f, kRenderLeft,  kRenderTop},
       { 0.0f,  1.2f, kRenderRight, kRenderTop},
@@ -3709,14 +3733,14 @@ TEST_F(DisplayListRendering, DrawAtlasLinear) {
   CanvasCompareTester::RenderAll(  //
       TestParameters(
           [=](const SkRenderContext& ctx) {
-            ctx.canvas->drawAtlas(ctx.image.get(), xform, tex, sk_colors, 2,
+            ctx.canvas->drawAtlas(ctx.image.get(), sk_xform, tex, sk_colors, 2,
                                   SkBlendMode::kSrcOver, sk_sampling,  //
                                   nullptr, &ctx.paint);
           },
           [=](const DlRenderContext& ctx) {
-            ctx.canvas->DrawAtlas(ctx.image, xform, tex, dl_colors, 2,
-                                  DlBlendMode::kSrcOver, dl_sampling,  //
-                                  nullptr, &ctx.paint);
+            ctx.canvas->DrawAtlas(ctx.image, dl_xform, ToDlRects(tex),
+                                  dl_colors, 2, DlBlendMode::kSrcOver,
+                                  dl_sampling, nullptr, &ctx.paint);
           },
           kDrawAtlasWithPaintFlags));
 }

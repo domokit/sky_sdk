@@ -13,7 +13,6 @@ export 'package:native_assets_cli/code_assets_builder.dart' show CodeAsset, Dyna
 /// relies on doing process calls to `pub` and the local file system.
 class FakeFlutterNativeAssetsBuildRunner implements FlutterNativeAssetsBuildRunner {
   FakeFlutterNativeAssetsBuildRunner({
-    this.hasPackageConfigResult = true,
     this.packagesWithNativeAssetsResult = const <Package>[],
     this.onBuild,
     this.onLink,
@@ -27,14 +26,12 @@ class FakeFlutterNativeAssetsBuildRunner implements FlutterNativeAssetsBuildRunn
   final LinkResult? Function(LinkConfig)? onLink;
   final BuildResult? buildResult;
   final LinkResult? linkResult;
-  final bool hasPackageConfigResult;
   final List<Package> packagesWithNativeAssetsResult;
   final CCompilerConfig? cCompilerConfigResult;
   final CCompilerConfig? ndkCCompilerConfigResult;
 
   int buildInvocations = 0;
   int linkInvocations = 0;
-  int hasPackageConfigInvocations = 0;
   int packagesWithNativeAssetsInvocations = 0;
 
   @override
@@ -44,7 +41,6 @@ class FakeFlutterNativeAssetsBuildRunner implements FlutterNativeAssetsBuildRunn
     required BuildConfigCreator configCreator,
     required BuildValidator buildValidator,
     required ApplicationAssetValidator applicationAssetValidator,
-    required bool includeParentEnvironment,
     required Uri workingDirectory,
     required bool linkingEnabled,
   }) async {
@@ -78,7 +74,6 @@ class FakeFlutterNativeAssetsBuildRunner implements FlutterNativeAssetsBuildRunn
     required LinkConfigValidator configValidator,
     required LinkValidator linkValidator,
     required ApplicationAssetValidator applicationAssetValidator,
-    required bool includeParentEnvironment,
     required Uri workingDirectory,
     required BuildResult buildResult,
   }) async {
@@ -103,12 +98,6 @@ class FakeFlutterNativeAssetsBuildRunner implements FlutterNativeAssetsBuildRunn
       linkInvocations++;
     }
     return result;
-  }
-
-  @override
-  Future<bool> hasPackageConfig() async {
-    hasPackageConfigInvocations++;
-    return hasPackageConfigResult;
   }
 
   @override

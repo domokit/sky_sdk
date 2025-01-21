@@ -30,7 +30,6 @@ Future<Uri?> testCompilerBuildNativeAssets(BuildInfo buildInfo) async {
   }
   final Uri projectUri = FlutterProject.current().directory.uri;
   final FlutterNativeAssetsBuildRunner buildRunner = FlutterNativeAssetsBuildRunnerImpl(
-    projectUri,
     buildInfo.packageConfigPath,
     buildInfo.packageConfig,
     globals.fs,

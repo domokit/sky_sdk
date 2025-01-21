@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 class TestRoute extends PageRouteBuilder<void> {
   TestRoute(Widget child)
-    : super(pageBuilder: (BuildContext _, Animation<double> __, Animation<double> ___) => child);
+    : super(pageBuilder: (BuildContext _, Animation<double> _, Animation<double> _) => child);
 }
 
 class IconTextBox extends StatelessWidget {

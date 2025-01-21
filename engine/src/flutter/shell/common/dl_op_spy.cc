@@ -110,7 +110,7 @@ void DlOpSpy::drawImageNine(const sk_sp<DlImage> image,
   did_draw_ = true;
 }
 void DlOpSpy::drawAtlas(const sk_sp<DlImage> atlas,
-                        const SkRSXform xform[],
+                        const DlRSTransform xform[],
                         const DlRect tex[],
                         const DlColor colors[],
                         int count,

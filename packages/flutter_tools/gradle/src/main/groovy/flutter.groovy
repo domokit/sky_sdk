@@ -4,6 +4,7 @@
 // found in the LICENSE file.
 
 import com.android.build.OutputFile
+import com.flutter.gradle.BaseApplicationNameHandler
 import groovy.json.JsonGenerator
 import groovy.xml.QName
 import java.nio.file.Paths
@@ -299,7 +300,7 @@ class FlutterPlugin implements Plugin<Project> {
         if (!shouldSkipDependencyChecks) {
             try {
                 final String dependencyCheckerPluginPath = Paths.get(flutterRoot.absolutePath,
-                        "packages", "flutter_tools", "gradle", "src", "main", "kotlin",
+                        "packages", "flutter_tools", "gradle", "src", "main", "kotlin_scripts",
                         "dependency_version_checker.gradle.kts")
                 project.apply from: dependencyCheckerPluginPath
             } catch (Exception e) {
@@ -317,8 +318,8 @@ class FlutterPlugin implements Plugin<Project> {
             }
         }
 
-        // Use Kotlin DSL to handle baseApplicationName logic due to Groovy dynamic dispatch bug.
-        project.apply from: Paths.get(flutterRoot.absolutePath, "packages", "flutter_tools", "gradle", "src", "main", "kotlin", "flutter.gradle.kts")
+        // Use Kotlin source to handle baseApplicationName logic due to Groovy dynamic dispatch bug.
+        BaseApplicationNameHandler.setBaseName(project)
 
         String flutterProguardRules = Paths.get(flutterRoot.absolutePath, "packages", "flutter_tools",
                 "gradle", "flutter_proguard_rules.pro")
@@ -737,13 +738,12 @@ class FlutterPlugin implements Plugin<Project> {
         // compile/target/min sdk values.
         pluginProject.extensions.create("flutter", FlutterExtension)
 
-        // Add plugin dependency to the app project.
-        project.android.buildTypes.each { buildType ->
-            String flutterBuildMode = buildModeFor(buildType)
-            if (flutterBuildMode != "release" || !pluginObject.dev_dependency) {
-                // Only add dependency on dev dependencies in non-release builds.
-                project.dependencies {
-                    api(pluginProject)
+        // Add plugin dependency to the app project. We only want to add dependency
+        // for dev dependencies in non-release builds.
+        project.afterEvaluate {
+            project.android.buildTypes.all { buildType ->
+                if (!pluginObject.dev_dependency || buildType.name != 'release') {
+                    project.dependencies.add("${buildType.name}Api", pluginProject)
                 }
             }
         }
@@ -757,12 +757,6 @@ class FlutterPlugin implements Plugin<Project> {
                 return
             }
             if (!pluginProject.hasProperty("android")) {
-                return
-            }
-            if (flutterBuildMode == "release" && pluginObject.dev_dependency) {
-                // This plugin is a dev dependency and will not be included in
-                // the release build,  so no need to add the embedding
-                // dependency to it.
                 return
             }
             // Copy build types from the app to the plugin.

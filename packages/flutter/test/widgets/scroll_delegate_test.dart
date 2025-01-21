@@ -10,7 +10,7 @@ void main() {
   test('TwoDimensionalChildBuilderDelegate dispatches memory events', () async {
     await expectLater(
       await memoryEvents(
-        () => TwoDimensionalChildBuilderDelegate(builder: (_, __) => null).dispose(),
+        () => TwoDimensionalChildBuilderDelegate(builder: (_, _) => null).dispose(),
         TwoDimensionalChildBuilderDelegate,
       ),
       areCreateAndDispose,

@@ -20,6 +20,7 @@ if (enable_unittests) {
     "filter_shader.frag",
     "missing_size.frag",
     "missing_texture.frag",
+    "vec3_uniform.frag",
   ]
 
   group("general_shaders") {

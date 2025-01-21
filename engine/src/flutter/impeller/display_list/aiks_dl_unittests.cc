@@ -26,7 +26,6 @@
 #include "include/core/SkCanvas.h"
 #include "include/core/SkMatrix.h"
 #include "include/core/SkPath.h"
-#include "include/core/SkRSXform.h"
 #include "include/core/SkRefCnt.h"
 
 namespace impeller {

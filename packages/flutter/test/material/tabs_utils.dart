@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math' as math;
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -246,4 +249,36 @@ class TestIndicatorBoxPainter extends BoxPainter {
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
     lastConfiguration = configuration;
   }
+}
+
+// Ease out sine (decelerating).
+double _decelerateInterpolation(double fraction) {
+  return math.sin((fraction * math.pi) / 2.0);
+}
+
+// Ease in sine (accelerating).
+double _accelerateInterpolation(double fraction) {
+  return 1.0 - math.cos((fraction * math.pi) / 2.0);
+}
+
+// Returns Tab indicator RRect with elastic animation.
+RRect tabIndicatorRRectElasticAnimation(
+  RenderBox tabBarBox,
+  Rect currentRect,
+  Rect fromRect,
+  Rect toRect,
+  double progress,
+) {
+  const double indicatorWeight = 3.0;
+  final double leftFraction = _accelerateInterpolation(progress);
+  final double rightFraction = _decelerateInterpolation(progress);
+
+  return RRect.fromLTRBAndCorners(
+    lerpDouble(fromRect.left, toRect.left, leftFraction)!,
+    tabBarBox.size.height - indicatorWeight,
+    lerpDouble(fromRect.right, toRect.right, rightFraction)!,
+    tabBarBox.size.height,
+    topLeft: const Radius.circular(indicatorWeight),
+    topRight: const Radius.circular(indicatorWeight),
+  );
 }

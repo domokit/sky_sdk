@@ -5,6 +5,7 @@
 import 'package:args/command_runner.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
+import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/commands/packages.dart';
 import 'package:flutter_tools/src/dart/pub.dart';
@@ -33,6 +34,7 @@ const String minimalV2EmbeddingManifest = r'''
 void main() {
   late FileSystem fileSystem;
   late FakePub pub;
+  late BufferLogger logger;
 
   // TODO(matanlurey): Remove after `flutter_gen` is removed.
   // See https://github.com/flutter/flutter/issues/102983 for details.
@@ -47,6 +49,7 @@ void main() {
     Cache.disableLocking();
     fileSystem = MemoryFileSystem.test();
     pub = FakePub(fileSystem);
+    logger = BufferLogger.test();
   });
 
   tearDown(() {
@@ -54,21 +57,18 @@ void main() {
   });
 
   testUsingContext('pub shows help', () async {
-    Object? usage;
-    final PackagesCommand command = PackagesCommand(
-      usagePrintFn: (Object? object) => usage = object,
-    );
+    final PackagesCommand command = PackagesCommand();
     final CommandRunner<void> runner = createTestCommandRunner(command);
     await runner.run(<String>['pub']);
 
     expect(
-      usage,
+      logger.statusText,
       allOf(
         contains('Commands for managing Flutter packages.'),
         contains('Usage: flutter pub <subcommand> [arguments]'),
       ),
     );
-  });
+  }, overrides: <Type, Generator>{Logger: () => logger});
 
   testUsingContext(
     'pub get usage values are resilient to missing package config files before running "pub get"',

@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
       PageRouteBuilder<void>(
         barrierColor: Colors.black54,
         opaque: false,
-        pageBuilder: (BuildContext context, _, __) {
+        pageBuilder: (BuildContext context, _, _) {
           return const ModalPage();
         },
       ),

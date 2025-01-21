@@ -461,6 +461,45 @@ TEST_P(AiksTest, CanRenderClips) {
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
 
+TEST_P(AiksTest, FatStrokeArc) {
+  DlScalar stroke_width = 300;
+  DlScalar aspect = 1.0;
+  DlScalar start_angle = 0;
+  DlScalar end_angle = 90;
+  auto callback = [&]() -> sk_sp<DisplayList> {
+    if (AiksTest::ImGuiBegin("Controls", nullptr,
+                             ImGuiWindowFlags_AlwaysAutoResize)) {
+      ImGui::SliderFloat("Stroke Width", &stroke_width, 1, 300);
+      ImGui::SliderFloat("Aspect", &aspect, 0.5, 2.0);
+      ImGui::SliderFloat("Start Angle", &start_angle, 0, 360);
+      ImGui::SliderFloat("End Angle", &end_angle, 0, 360);
+      ImGui::End();
+    }
+
+    DisplayListBuilder builder;
+    DlPaint grey_paint;
+    grey_paint.setColor(DlColor(0xff111111));
+    builder.DrawPaint(grey_paint);
+
+    DlPaint white_paint;
+    white_paint.setColor(DlColor::kWhite());
+    white_paint.setStrokeWidth(stroke_width);
+    white_paint.setDrawStyle(DlDrawStyle::kStroke);
+    DlPaint red_paint;
+    red_paint.setColor(DlColor::kRed());
+
+    Rect rect = Rect::MakeXYWH(100, 100, 100, aspect * 100);
+    builder.DrawRect(rect, red_paint);
+    builder.DrawArc(rect, start_angle, end_angle,
+                    /*useCenter=*/false, white_paint);
+    DlScalar frontier = rect.GetRight() + stroke_width / 2.0;
+    builder.DrawLine(Point(frontier, 0), Point(frontier, 150), red_paint);
+
+    return builder.Build();
+  };
+  ASSERT_TRUE(OpenPlaygroundHere(callback));
+}
+
 TEST_P(AiksTest, CanRenderOverlappingMultiContourPath) {
   DisplayListBuilder builder;
 

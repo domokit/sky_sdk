@@ -68,13 +68,6 @@ bool BlitPass::AddCopy(std::shared_ptr<Texture> source,
     return true;  // Nothing to blit.
   }
 
-  // Clip the destination image.
-  source_region = source_region->Intersection(
-      IRect::MakeOriginSize(-destination_origin, destination->GetSize()));
-  if (!source_region.has_value()) {
-    return true;  // Nothing to blit.
-  }
-
   return OnCopyTextureToTextureCommand(
       std::move(source), std::move(destination), source_region.value(),
       destination_origin, label);

@@ -209,7 +209,7 @@ class DisplayListBuilder final : public virtual DlCanvas,
                      const DlPaint* paint = nullptr) override;
   // |DlCanvas|
   void DrawAtlas(const sk_sp<DlImage>& atlas,
-                 const SkRSXform xform[],
+                 const DlRSTransform xform[],
                  const DlRect tex[],
                  const DlColor colors[],
                  int count,
@@ -471,7 +471,7 @@ class DisplayListBuilder final : public virtual DlCanvas,
                      bool render_with_attributes) override;
   // |DlOpReceiver|
   void drawAtlas(const sk_sp<DlImage> atlas,
-                 const SkRSXform xform[],
+                 const DlRSTransform xform[],
                  const DlRect tex[],
                  const DlColor colors[],
                  int count,

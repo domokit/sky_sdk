@@ -215,7 +215,7 @@ void main() {
         data: MediaQueryData.fromView(tester.view),
         child: Directionality(
           textDirection: TextDirection.ltr,
-          child: Navigator(pages: const <Page<void>>[page], onPopPage: (_, __) => false),
+          child: Navigator(pages: const <Page<void>>[page], onPopPage: (_, _) => false),
         ),
       ),
     );
@@ -230,7 +230,7 @@ void main() {
           child: Navigator(
             pages: const <Page<void>>[page],
             clipBehavior: Clip.none,
-            onPopPage: (_, __) => false,
+            onPopPage: (_, _) => false,
           ),
         ),
       ),
@@ -1285,7 +1285,7 @@ void main() {
         onGenerateRoute: (RouteSettings settings) {
           return PageRouteBuilder<String>(
             settings: settings,
-            pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
+            pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
               return routes[settings.name]!(context);
             },
           );
@@ -1358,7 +1358,7 @@ void main() {
         onGenerateRoute: (RouteSettings settings) {
           routes[settings.name!] = PageRouteBuilder<String>(
             settings: settings,
-            pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
+            pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
               return pageBuilders[settings.name!]!(context);
             },
           );
@@ -1448,7 +1448,7 @@ void main() {
         onGenerateRoute: (RouteSettings settings) {
           routes[settings.name!] = PageRouteBuilder<String>(
             settings: settings,
-            pageBuilder: (BuildContext context, Animation<double> _, Animation<double> __) {
+            pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
               return pageBuilders[settings.name!]!(context);
             },
           );
@@ -3263,7 +3263,7 @@ void main() {
               DefaultMaterialLocalizations.delegate,
               DefaultWidgetsLocalizations.delegate,
             ],
-            child: Navigator(pages: myPages, onPopPage: (_, __) => false),
+            child: Navigator(pages: myPages, onPopPage: (_, _) => false),
           ),
         ),
       );
@@ -3284,7 +3284,7 @@ void main() {
               DefaultMaterialLocalizations.delegate,
               DefaultWidgetsLocalizations.delegate,
             ],
-            child: Navigator(pages: myPages, onPopPage: (_, __) => false),
+            child: Navigator(pages: myPages, onPopPage: (_, _) => false),
           ),
         ),
       );
@@ -3308,7 +3308,7 @@ void main() {
               DefaultMaterialLocalizations.delegate,
               DefaultWidgetsLocalizations.delegate,
             ],
-            child: Navigator(pages: myPages, onPopPage: (_, __) => false),
+            child: Navigator(pages: myPages, onPopPage: (_, _) => false),
           ),
         ),
       );
@@ -4284,7 +4284,7 @@ void main() {
           onGenerateRoute: (RouteSettings settings) {
             return PageRouteBuilder<void>(
               settings: settings,
-              pageBuilder: (BuildContext _, Animation<double> __, Animation<double> ___) {
+              pageBuilder: (BuildContext _, Animation<double> _, Animation<double> _) {
                 return Container();
               },
             );
@@ -4331,7 +4331,7 @@ void main() {
                 onGenerateRoute: (RouteSettings settings) {
                   return PageRouteBuilder<void>(
                     settings: settings,
-                    pageBuilder: (BuildContext _, Animation<double> __, Animation<double> ___) {
+                    pageBuilder: (BuildContext _, Animation<double> _, Animation<double> _) {
                       return routes[settings.name!]!;
                     },
                   );
@@ -4408,7 +4408,7 @@ void main() {
                 onGenerateRoute: (RouteSettings settings) {
                   return PageRouteBuilder<void>(
                     settings: settings,
-                    pageBuilder: (BuildContext _, Animation<double> __, Animation<double> ___) {
+                    pageBuilder: (BuildContext _, Animation<double> _, Animation<double> _) {
                       return routes[settings.name!]!;
                     },
                   );
@@ -4463,7 +4463,7 @@ void main() {
           onGenerateRoute: (RouteSettings settings) {
             return PageRouteBuilder<void>(
               settings: settings,
-              pageBuilder: (BuildContext _, Animation<double> __, Animation<double> ___) {
+              pageBuilder: (BuildContext _, Animation<double> _, Animation<double> _) {
                 return Container();
               },
             );
@@ -4497,7 +4497,7 @@ void main() {
             onGenerateRoute: (RouteSettings settings) {
               return PageRouteBuilder<void>(
                 settings: settings,
-                pageBuilder: (BuildContext context, Animation<double> __, Animation<double> ___) {
+                pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
                   policy = FocusTraversalGroup.of(context);
                   return const SizedBox();
                 },
@@ -4520,7 +4520,7 @@ void main() {
           onGenerateRoute: (RouteSettings settings) {
             return PageRouteBuilder<void>(
               settings: settings,
-              pageBuilder: (BuildContext context, Animation<double> __, Animation<double> ___) {
+              pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
                 policy = FocusTraversalGroup.of(context);
                 return const SizedBox();
               },
@@ -5784,7 +5784,7 @@ class NoAnimationPageRoute extends PageRouteBuilder<void> {
     : super(
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
-        pageBuilder: (BuildContext context, __, ___) {
+        pageBuilder: (BuildContext context, _, _) {
           return pageBuilder(context);
         },
       );

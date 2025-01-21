@@ -15,8 +15,6 @@ Future<ProcessResult> runGit(List<String> args, {String? processWorkingDir}) asy
 
 Future<List<String>> getGitLog() async {
   final String gitRoot = p.absolute('../..');
-  // Somehow gitDir.currentBranch() doesn't work in Cirrus with "fatal: 'HEAD' -
-  // not a valid ref". Therefore, we use "git log" to get the revision manually.
   final ProcessResult logResult = await runGit(<String>[
     'log',
     '--pretty=format:%H %ct',
@@ -94,9 +92,7 @@ Future<void> main(List<String> args) async {
 
   // The data will be sent to the Datastore of the GCP project specified through
   // environment variable BENCHMARK_GCP_CREDENTIALS, or TOKEN_PATH/GCP_PROJECT.
-  // The engine Cirrus job has currently configured the GCP project to
-  // flutter-cirrus for test. We'll eventually migrate to flutter-infra project
-  // once the test is done.
+  // The engine LUCI job writes it to the `flutter-infra` project.
   final FlutterDestination destination = await connectFlutterDestination();
   await destination.update(
     pointsAndDate.points,

@@ -47,11 +47,8 @@ Clone the Flutter source code. As of late 2024, the engine source is part of the
 > [!IMPORTANT]
 > On Windows, the following must be run as an Administrator due to [a known issue](https://github.com/flutter/flutter/issues/94580).
 
-Fetch the Flutter engine sources. This may take a while on a slow connection. Do **not** interrupt this process. Otherwise, a partial checkout cannot be resumed and you'll have to delete all the files including the hidden files in the engine directory and start over. From the root of your local checkout of flutter/flutter, run:
-```sh
-cd engine
-fetch flutter
-```
+[Setup a `.gclient` file](../../../../../engine/README.md) in the repository
+root (the `flutter/flutter` repository root), and run `gclient sync`.
 
 The "Engine Tool" called `et` is useful when working with the engine. It is located in the [`engine/src/flutter/bin`](https://github.com/flutter/flutter/tree/0c3359df8c8342c8907316488b1404a216f215b6/engine/src/flutter/bin) directory. Add this to your `$PATH` in your `.rc` file.
 
@@ -69,7 +66,7 @@ solutions = [
 ]
 ```
 
-Now, run
+Now, run:
 
 ```sh
 gclient sync

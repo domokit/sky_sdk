@@ -7,9 +7,11 @@
 #include "flutter/fml/trace_event.h"
 #include "flutter/impeller/renderer/command_buffer.h"
 #include "impeller/base/validation.h"
+#include "impeller/core/formats.h"
 #include "impeller/core/texture_descriptor.h"
 #include "impeller/renderer/backend/metal/context_mtl.h"
 #include "impeller/renderer/backend/metal/formats_mtl.h"
+#include "impeller/renderer/backend/metal/swapchain_transients_mtl.h"
 #include "impeller/renderer/backend/metal/texture_mtl.h"
 #include "impeller/renderer/render_target.h"
 
@@ -47,24 +49,19 @@ id<CAMetalDrawable> SurfaceMTL::GetMetalDrawableAndValidate(
 }
 
 static std::optional<RenderTarget> WrapTextureWithRenderTarget(
-    Allocator& allocator,
+    const std::shared_ptr<SwapchainTransientsMTL>& transients,
     id<MTLTexture> texture,
     bool requires_blit,
     std::optional<IRect> clip_rect) {
-  // compositor_context.cc will offset the rendering by the clip origin. Here we
-  // shrink to the size of the clip. This has the same effect as clipping the
-  // rendering but also creates smaller intermediate passes.
-  ISize root_size;
-  if (requires_blit) {
-    if (!clip_rect.has_value()) {
-      VALIDATION_LOG << "Missing clip rectangle.";
-      return std::nullopt;
-    }
-    root_size = ISize(clip_rect->GetWidth(), clip_rect->GetHeight());
-  } else {
-    root_size = {static_cast<ISize::Type>(texture.width),
-                 static_cast<ISize::Type>(texture.height)};
+  ISize root_size = {static_cast<ISize::Type>(texture.width),
+                     static_cast<ISize::Type>(texture.height)};
+  PixelFormat format = FromMTLPixelFormat(texture.pixelFormat);
+  if (format == PixelFormat::kUnknown) {
+    VALIDATION_LOG << "Unknown drawable color format.";
+    return std::nullopt;
   }
+
+  transients->SetSizeAndFormat(root_size, format);
 
   TextureDescriptor resolve_tex_desc;
   resolve_tex_desc.format = FromMTLPixelFormat(texture.pixelFormat);
@@ -74,65 +71,58 @@ static std::optional<RenderTarget> WrapTextureWithRenderTarget(
   resolve_tex_desc.sample_count = SampleCount::kCount1;
   resolve_tex_desc.storage_mode = StorageMode::kDevicePrivate;
 
-  if (resolve_tex_desc.format == PixelFormat::kUnknown) {
-    VALIDATION_LOG << "Unknown drawable color format.";
-    return std::nullopt;
-  }
-
   // Create color resolve texture.
   std::shared_ptr<Texture> resolve_tex;
   if (requires_blit) {
-    resolve_tex_desc.compression_type = CompressionType::kLossy;
-    resolve_tex = allocator.CreateTexture(resolve_tex_desc);
+    resolve_tex = transients->GetResolveTexture();
   } else {
     resolve_tex = TextureMTL::Create(resolve_tex_desc, texture);
   }
 
-  if (!resolve_tex) {
-    VALIDATION_LOG << "Could not wrap resolve texture.";
-    return std::nullopt;
-  }
-  resolve_tex->SetLabel("ImpellerOnscreenResolve");
-
-  TextureDescriptor msaa_tex_desc;
-  msaa_tex_desc.storage_mode = StorageMode::kDeviceTransient;
-  msaa_tex_desc.type = TextureType::kTexture2DMultisample;
-  msaa_tex_desc.sample_count = SampleCount::kCount4;
-  msaa_tex_desc.format = resolve_tex->GetTextureDescriptor().format;
-  msaa_tex_desc.size = resolve_tex->GetSize();
-  msaa_tex_desc.usage = TextureUsage::kRenderTarget;
-
-  auto msaa_tex = allocator.CreateTexture(msaa_tex_desc);
-  if (!msaa_tex) {
-    VALIDATION_LOG << "Could not allocate MSAA color texture.";
-    return std::nullopt;
-  }
-  msaa_tex->SetLabel("ImpellerOnscreenColorMSAA");
-
   ColorAttachment color0;
-  color0.texture = msaa_tex;
+  color0.texture = transients->GetMSAATexture();
   color0.clear_color = Color::DarkSlateGray();
   color0.load_action = LoadAction::kClear;
   color0.store_action = StoreAction::kMultisampleResolve;
   color0.resolve_texture = std::move(resolve_tex);
 
-  auto render_target_desc = std::make_optional<RenderTarget>();
-  render_target_desc->SetColorAttachment(color0, 0u);
+  DepthAttachment depth0;
+  depth0.load_action =
+      RenderTarget::kDefaultStencilAttachmentConfig.load_action;
+  depth0.store_action =
+      RenderTarget::kDefaultStencilAttachmentConfig.store_action;
+  depth0.clear_depth = 0u;
+  depth0.texture = transients->GetDepthStencilTexture();
 
-  return render_target_desc;
+  StencilAttachment stencil0;
+  stencil0.load_action =
+      RenderTarget::kDefaultStencilAttachmentConfig.load_action;
+  stencil0.store_action =
+      RenderTarget::kDefaultStencilAttachmentConfig.store_action;
+  stencil0.clear_stencil = 0u;
+  stencil0.texture = transients->GetDepthStencilTexture();
+
+  RenderTarget render_target;
+  render_target.SetColorAttachment(color0, 0u);
+  render_target.SetDepthAttachment(std::move(depth0));
+  render_target.SetStencilAttachment(std::move(stencil0));
+
+  return render_target;
 }
 
 std::unique_ptr<SurfaceMTL> SurfaceMTL::MakeFromMetalLayerDrawable(
     const std::shared_ptr<Context>& context,
     id<CAMetalDrawable> drawable,
+    const std::shared_ptr<SwapchainTransientsMTL>& transients,
     std::optional<IRect> clip_rect) {
-  return SurfaceMTL::MakeFromTexture(context, drawable.texture, clip_rect,
-                                     drawable);
+  return SurfaceMTL::MakeFromTexture(context, drawable.texture, transients,
+                                     clip_rect, drawable);
 }
 
 std::unique_ptr<SurfaceMTL> SurfaceMTL::MakeFromTexture(
     const std::shared_ptr<Context>& context,
     id<MTLTexture> texture,
+    const std::shared_ptr<SwapchainTransientsMTL>& transients,
     std::optional<IRect> clip_rect,
     id<CAMetalDrawable> drawable) {
   bool partial_repaint_blit_required = ShouldPerformPartialRepaint(clip_rect);
@@ -140,9 +130,8 @@ std::unique_ptr<SurfaceMTL> SurfaceMTL::MakeFromTexture(
   // The returned render target is the texture that Impeller will render the
   // root pass to. If partial repaint is in use, this may be a new texture which
   // is smaller than the given MTLTexture.
-  auto render_target =
-      WrapTextureWithRenderTarget(*context->GetResourceAllocator(), texture,
-                                  partial_repaint_blit_required, clip_rect);
+  auto render_target = WrapTextureWithRenderTarget(
+      transients, texture, partial_repaint_blit_required, clip_rect);
   if (!render_target) {
     return nullptr;
   }
@@ -251,7 +240,7 @@ bool SurfaceMTL::PreparePresent() const {
       VALIDATION_LOG << "Missing clip rectangle.";
       return false;
     }
-    blit_pass->AddCopy(source_texture_, destination_texture_, std::nullopt,
+    blit_pass->AddCopy(source_texture_, destination_texture_, clip_rect_,
                        clip_rect_->GetOrigin());
     blit_pass->EncodeCommands();
     if (!context->GetCommandQueue()->Submit({blit_command_buffer}).ok()) {

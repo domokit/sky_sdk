@@ -610,7 +610,7 @@ void main() {
         child: ValueListenableBuilder<Curve>(
           valueListenable: curve,
           builder:
-              (_, Curve c, __) => AnimatedOpacity(
+              (_, Curve c, _) => AnimatedOpacity(
                 key: key,
                 opacity: 1.0,
                 duration: const Duration(seconds: 1),

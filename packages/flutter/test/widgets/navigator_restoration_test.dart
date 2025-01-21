@@ -844,14 +844,14 @@ void main() {
     expect(
       () => tester
           .state<NavigatorState>(find.byType(Navigator))
-          .restorablePush((BuildContext _, Object? __) => FakeRoute()),
+          .restorablePush((BuildContext _, Object? _) => FakeRoute()),
       throwsBuilderAssertionError,
       skip: isBrowser, // https://github.com/flutter/flutter/issues/33615
     );
     expect(
       () => tester
           .state<NavigatorState>(find.byType(Navigator))
-          .restorablePushReplacement((BuildContext _, Object? __) => FakeRoute()),
+          .restorablePushReplacement((BuildContext _, Object? _) => FakeRoute()),
       throwsBuilderAssertionError,
       skip: isBrowser, // https://github.com/flutter/flutter/issues/33615
     );
@@ -859,7 +859,7 @@ void main() {
       () => tester
           .state<NavigatorState>(find.byType(Navigator))
           .restorablePushAndRemoveUntil(
-            (BuildContext _, Object? __) => FakeRoute(),
+            (BuildContext _, Object? _) => FakeRoute(),
             (Route<Object?> _) => false,
           ),
       throwsBuilderAssertionError,
@@ -869,7 +869,7 @@ void main() {
       () => tester
           .state<NavigatorState>(find.byType(Navigator))
           .restorableReplace(
-            newRouteBuilder: (BuildContext _, Object? __) => FakeRoute(),
+            newRouteBuilder: (BuildContext _, Object? _) => FakeRoute(),
             oldRoute: oldRoute,
           ),
       throwsBuilderAssertionError,
@@ -879,7 +879,7 @@ void main() {
       () => tester
           .state<NavigatorState>(find.byType(Navigator))
           .restorableReplaceRouteBelow(
-            newRouteBuilder: (BuildContext _, Object? __) => FakeRoute(),
+            newRouteBuilder: (BuildContext _, Object? _) => FakeRoute(),
             anchorRoute: oldRoute,
           ),
       throwsBuilderAssertionError,

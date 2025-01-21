@@ -3721,7 +3721,7 @@ void main() {
       ValueListenableBuilder<bool>(
         valueListenable: mountedNotifier,
         builder:
-            (_, bool value, __) =>
+            (_, bool value, _) =>
                 value
                     ? const MaterialApp(
                       home: Scaffold(

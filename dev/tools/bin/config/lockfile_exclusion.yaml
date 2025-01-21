@@ -2,12 +2,6 @@
 # Each exclusion must have an associated reason. Please avoid adding to this list unless necessary,
 # as each exclusion must be updated by hand.
 
-# gradle_deprecated_settings intentionally uses a Gradle file structure matching an old output of
-# `flutter create`. It must be updated manually, by changing the desired versions in the Gradle
-# files, and then running `rm buildscript-gradle.lockfile && ./gradlew :generateLockfiles` from
-# its android subdirectory.
-- dev/integration_tests/gradle_deprecated_settings/android
-
 # hello_world uses a Kotlin Gradle settings file (settings.gradle.kts). We don't have a template
 # Kotlin Gradle settings file (only a groovy one), so we currently can't generate it.
 - examples/hello_world/android

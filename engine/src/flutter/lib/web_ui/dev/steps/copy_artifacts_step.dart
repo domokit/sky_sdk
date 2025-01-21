@@ -201,7 +201,8 @@ class CopyArtifactsStep implements PipelineStep {
 
     for (final io.File imageFile in testImagesDir.listSync(recursive: true).whereType<io.File>()) {
       // Skip files that are used by Skia to test handling of invalid input.
-      if (pathlib.basename(imageFile.path).contains('invalid')) {
+      final String imageBaseName = pathlib.basename(imageFile.path);
+      if (imageBaseName.contains('invalid') || imageBaseName.contains('missing_eof')) {
         continue;
       }
       final io.File destination = io.File(

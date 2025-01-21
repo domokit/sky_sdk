@@ -2192,7 +2192,7 @@ flutter:
                   debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
                 )
                 .then((_) => done.complete()),
-            (_, __) => done.complete(),
+            (_, _) => done.complete(),
           ),
         );
         await done.future;

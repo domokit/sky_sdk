@@ -65,6 +65,7 @@ class DriveCommand extends RunCommandBase {
   }) : _flutterDriverFactory = flutterDriverFactory,
        _fileSystem = fileSystem,
        _logger = logger,
+       _platform = platform,
        _fsUtils = FileSystemUtils(fileSystem: fileSystem, platform: platform),
        super(verboseHelp: verboseHelp) {
     requiresPubspecYaml();
@@ -205,6 +206,7 @@ class DriveCommand extends RunCommandBase {
   FlutterDriverFactory? _flutterDriverFactory;
   final FileSystem _fileSystem;
   final Logger _logger;
+  final Platform _platform;
   final FileSystemUtils _fsUtils;
   Timer? timeoutTimer;
   Map<ProcessSignal, Object>? screenshotTokens;
@@ -214,7 +216,11 @@ class DriveCommand extends RunCommandBase {
 
   @override
   final String description =
-      'Run integration tests for the project on an attached device or emulator.';
+      'Builds and installs the app, and runs a Dart program that connects to '
+      'the app, often to run externally facing integration tests, such as with '
+      'package:test and package:flutter_driver.\n'
+      '\n'
+      'Usage: flutter drive --target <lib/main.dart> --driver <test_driver/main_test.dart>.';
 
   @override
   String get category => FlutterCommandCategory.project;
@@ -292,6 +298,7 @@ class DriveCommand extends RunCommandBase {
     _flutterDriverFactory ??= FlutterDriverFactory(
       applicationPackageFactory: ApplicationPackageFactory.instance!,
       logger: _logger,
+      platform: _platform,
       processUtils: globals.processUtils,
       dartSdkPath: globals.artifacts!.getArtifactPath(Artifact.engineDartBinary),
       devtoolsLauncher: DevtoolsLauncher.instance!,
@@ -336,7 +343,6 @@ class DriveCommand extends RunCommandBase {
       final Future<int> testResultFuture = driverService.startTest(
         testFile,
         stringsArg('test-arguments'),
-        <String, String>{},
         packageConfig,
         chromeBinary: stringArg('chrome-binary'),
         headless: boolArg('headless'),

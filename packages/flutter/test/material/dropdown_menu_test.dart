@@ -46,6 +46,7 @@ void main() {
     double? menuHeight,
     Widget? leadingIcon,
     Widget? label,
+    InputDecorationTheme? decorationTheme,
   }) {
     return MaterialApp(
       theme: themeData,
@@ -56,6 +57,7 @@ void main() {
           width: width,
           menuHeight: menuHeight,
           dropdownMenuEntries: entries,
+          inputDecorationTheme: decorationTheme,
         ),
       ),
     );
@@ -1170,6 +1172,71 @@ void main() {
     expect(iconButton, findsNothing);
     iconButton = find.widgetWithIcon(IconButton, Icons.arrow_drop_down).first;
     expect(iconButton, findsOneWidget);
+  });
+
+  testWidgets('Trailing IconButton height respects InputDecorationTheme.suffixIconConstraints', (
+    WidgetTester tester,
+  ) async {
+    final ThemeData themeData = ThemeData();
+
+    // Default suffix icon constraints.
+    await tester.pumpWidget(buildTest(themeData, menuChildren));
+    await tester.pump();
+
+    final Finder iconButton = find.widgetWithIcon(IconButton, Icons.arrow_drop_down).first;
+    expect(tester.getSize(iconButton), const Size(48, 48));
+
+    // Custom suffix icon constraints.
+    await tester.pumpWidget(
+      buildTest(
+        themeData,
+        menuChildren,
+        decorationTheme: const InputDecorationTheme(
+          suffixIconConstraints: BoxConstraints(minWidth: 66, minHeight: 62),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(tester.getSize(iconButton), const Size(66, 62));
+  });
+
+  testWidgets('InputDecorationTheme.isCollapsed reduces height', (WidgetTester tester) async {
+    final ThemeData themeData = ThemeData();
+
+    // Default height.
+    await tester.pumpWidget(buildTest(themeData, menuChildren));
+    await tester.pump();
+
+    final Finder textField = find.byType(TextField).first;
+    expect(tester.getSize(textField).height, 56);
+
+    // Collapsed height.
+    await tester.pumpWidget(
+      buildTest(
+        themeData,
+        menuChildren,
+        decorationTheme: const InputDecorationTheme(isCollapsed: true),
+      ),
+    );
+    await tester.pump();
+
+    expect(tester.getSize(textField).height, 48); // IconButton min height.
+
+    // Collapsed height with custom suffix icon constraints.
+    await tester.pumpWidget(
+      buildTest(
+        themeData,
+        menuChildren,
+        decorationTheme: const InputDecorationTheme(
+          isCollapsed: true,
+          suffixIconConstraints: BoxConstraints(maxWidth: 24, maxHeight: 24),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(tester.getSize(textField).height, 24);
   });
 
   testWidgets('Do not crash when resize window during menu opening', (WidgetTester tester) async {
@@ -2858,7 +2925,7 @@ void main() {
     ); // Because "Unread" contains "read".
 
     // Test custom search algorithm.
-    await tester.pumpWidget(dropdownMenu(searchCallback: (_, __) => 0));
+    await tester.pumpWidget(dropdownMenu(searchCallback: (_, _) => 0));
     await tester.pump();
     await tester.enterText(find.byType(TextField), 'read');
     await tester.pump();

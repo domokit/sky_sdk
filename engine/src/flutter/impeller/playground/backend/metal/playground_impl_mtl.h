@@ -10,6 +10,7 @@
 #include "flutter/fml/concurrent_message_loop.h"
 #include "flutter/fml/synchronization/sync_switch.h"
 #include "impeller/playground/playground_impl.h"
+#include "impeller/renderer/backend/metal/swapchain_transients_mtl.h"
 
 namespace impeller {
 
@@ -36,6 +37,7 @@ class PlaygroundImplMTL final : public PlaygroundImpl {
   std::unique_ptr<Data> data_;
   std::shared_ptr<ContextMTL> context_;
   std::shared_ptr<fml::ConcurrentMessageLoop> concurrent_loop_;
+  std::shared_ptr<SwapchainTransientsMTL> swapchain_transients_;
   std::shared_ptr<const fml::SyncSwitch> is_gpu_disabled_sync_switch_;
 
   // |PlaygroundImpl|

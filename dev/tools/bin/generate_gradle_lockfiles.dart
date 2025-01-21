@@ -304,7 +304,13 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-8.10.2-all.zip
 
 Iterable<Directory> discoverAndroidDirectories(Directory repoRoot) {
   return repoRoot
-      .listSync(recursive: true)
+      .listSync()
       .whereType<Directory>()
+      // Exclude the top-level "engine/" directory, which is not covered by the the tool.
+      .where((Directory directory) => directory.basename != 'engine')
+      // ... and then recurse into every directory (other than the excluded directory).
+      .expand((Directory d) => d.listSync(recursive: true))
+      .whereType<Directory>()
+      // ... where the directory ultimately is named "android".
       .where((FileSystemEntity entity) => entity.basename == 'android');
 }

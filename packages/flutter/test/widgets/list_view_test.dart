@@ -131,7 +131,7 @@ void main() {
                 finderCalled = true;
                 return null;
               },
-              separatorBuilder: (BuildContext _, int __) => const Divider(),
+              separatorBuilder: (BuildContext _, int _) => const Divider(),
             );
           },
         ),
@@ -928,7 +928,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: ListView.builder(
           itemCount: 10,
-          itemBuilder: (BuildContext _, int __) => Container(height: 2000.0),
+          itemBuilder: (BuildContext _, int _) => Container(height: 2000.0),
           clipBehavior: Clip.antiAlias,
         ),
       ),
@@ -960,8 +960,8 @@ void main() {
         textDirection: TextDirection.ltr,
         child: ListView.separated(
           itemCount: 10,
-          itemBuilder: (BuildContext _, int __) => Container(height: 2000.0),
-          separatorBuilder: (BuildContext _, int __) => const Divider(),
+          itemBuilder: (BuildContext _, int _) => Container(height: 2000.0),
+          separatorBuilder: (BuildContext _, int _) => const Divider(),
           clipBehavior: Clip.antiAlias,
         ),
       ),

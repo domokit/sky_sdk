@@ -174,7 +174,7 @@ void main() {
               ),
               const MaterialPage<void>(child: Scaffold(body: Text('Foreground Page'))),
             ],
-            onPopPage: (_, __) => false,
+            onPopPage: (_, _) => false,
           ),
         ),
       );

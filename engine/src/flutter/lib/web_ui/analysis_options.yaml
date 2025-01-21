@@ -10,6 +10,7 @@ linter:
   rules:
     avoid_print: false
     avoid_setters_without_getters: false
+    invalid_runtime_check_with_js_interop_types: false
     library_private_types_in_public_api: false
     no_default_cases: false
     prefer_relative_imports: false

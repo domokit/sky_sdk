@@ -827,7 +827,7 @@ class _BindingPipelineManifold extends ChangeNotifier implements PipelineManifol
 }
 
 // A [PipelineOwner] that cannot have a root node.
-class _DefaultRootPipelineOwner extends PipelineOwner {
+final class _DefaultRootPipelineOwner extends PipelineOwner {
   _DefaultRootPipelineOwner() : super(onSemanticsUpdate: _onSemanticsUpdate);
 
   @override

@@ -376,6 +376,24 @@ void main() async {
     }
   });
 
+  test('Shader Compiler appropriately pads vec3 uniform arrays', () async {
+    if (!impellerEnabled) {
+      print('Skipped for Skia');
+      return;
+    }
+
+    final FragmentProgram program = await FragmentProgram.fromAsset('vec3_uniform.frag.iplr');
+    final FragmentShader shader = program.fragmentShader();
+
+    // Set the last vec3 in the uniform array to green. The shader will read this
+    // value, and if the uniforms were padded correctly will render green.
+    shader.setFloat(12, 0);
+    shader.setFloat(13, 1.0);
+    shader.setFloat(14, 0);
+
+    await _expectShaderRendersGreen(shader);
+  });
+
   test('ImageFilter.shader can be applied to canvas operations', () async {
     if (!impellerEnabled) {
       print('Skipped for Skia');

@@ -50,10 +50,12 @@ typedef DwdsLauncher =
       required ToolConfiguration toolConfiguration,
     });
 
-// A minimal index for projects that do not yet support web.
+// A minimal index for projects that do not yet support web. A meta tag is used
+// to ensure loaded scripts are always parsed as UTF-8.
 const String _kDefaultIndex = '''
 <html>
     <head>
+        <meta charset='utf-8'>
         <base href="/">
     </head>
     <body>
@@ -1031,6 +1033,7 @@ class WebDevFS implements DevFS {
               entrypoint: entrypoint,
               nullAssertions: nullAssertions,
               nativeNullAssertions: nativeNullAssertions,
+              loaderRootDirectory: _baseUri.toString(),
             ),
       );
       // TODO(zanderso): refactor the asset code in this and the regular devfs to

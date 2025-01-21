@@ -1372,13 +1372,7 @@ Flutter Wiki page on the subject: https://github.com/flutter/flutter/wiki/Testin
     run_benchmark_tests(build_dir)
     run_engine_benchmarks(build_dir, engine_filter)
 
-  variants_to_skip = ['host_release', 'host_profile']
-
-  def should_skip(variant):
-    matches = [variant for variant in variants_to_skip if variant in args.variant]
-    return len(matches) > 0
-
-  if ('engine' in types or 'font-subset' in types) and not should_skip(args.variant):
+  if ('engine' in types or 'font-subset' in types) and 'debug' in build_dir:
     cmd = ['python3', 'test.py', '--variant', args.variant]
     if 'arm64' in args.variant:
       cmd += ['--target-cpu', 'arm64']

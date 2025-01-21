@@ -49,28 +49,54 @@ FlKeyboardManager* fl_keyboard_manager_new(
     FlKeyboardViewDelegate* view_delegate);
 
 /**
+ * fl_keyboard_manager_is_redispatched:
+ * @manager: an #FlKeyboardManager.
+ * @event: an event received from the system.
+ *
+ * Checks if an event was redispacthed from this manager.
+ *
+ * Returns: %TRUE if the event is redispatched.
+ */
+gboolean fl_keyboard_manager_is_redispatched(FlKeyboardManager* manager,
+                                             FlKeyEvent* event);
+
+/**
  * fl_keyboard_manager_handle_event:
- * @manager: the #FlKeyboardManager self.
+ * @manager: an #FlKeyboardManager.
  * @event: the event to be dispatched. It is usually a wrap of a GdkEventKey.
  * This event will be managed and released by #FlKeyboardManager.
+ * @cancellable: (allow-none): a #GCancellable or %NULL.
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the view is
+ * added.
+ * @user_data: (closure): user data to pass to @callback.
  *
  * Make the manager process a system key event. This might eventually send
  * messages to the framework, trigger text input effects, or redispatch the
  * event back to the system.
  */
-gboolean fl_keyboard_manager_handle_event(FlKeyboardManager* manager,
-                                          FlKeyEvent* event);
+void fl_keyboard_manager_handle_event(FlKeyboardManager* manager,
+                                      FlKeyEvent* event,
+                                      GCancellable* cancellable,
+                                      GAsyncReadyCallback callback,
+                                      gpointer user_data);
 
 /**
- * fl_keyboard_manager_is_state_clear:
- * @manager: the #FlKeyboardManager self.
+ * fl_keyboard_manager_handle_event_finish:
+ * @manager: an #FlKeyboardManager.
+ * @result: a #GAsyncResult.
+ * @redispatched_event: FIXME
+ * @error: (allow-none): #GError location to store the error occurring, or %NULL
+ * to ignore.
  *
- * A debug-only method that queries whether the manager's various states are
- * cleared, i.e. no pending events for redispatching or for responding.
+ * Completes request started with fl_keyboard_manager_handle_event().
  *
- * Returns: true if the manager's various states are cleared.
+ * Returns: %TRUE on success.
  */
-gboolean fl_keyboard_manager_is_state_clear(FlKeyboardManager* manager);
+gboolean fl_keyboard_manager_handle_event_finish(
+    FlKeyboardManager* manager,
+    GAsyncResult* result,
+    FlKeyEvent** redispatched_event,
+    GError** error);
 
 /**
  * fl_keyboard_manager_sync_modifier_if_needed:
@@ -123,29 +149,6 @@ typedef guint (*FlKeyboardManagerLookupKeyHandler)(const GdkKeymapKey* key,
 void fl_keyboard_manager_set_lookup_key_handler(
     FlKeyboardManager* manager,
     FlKeyboardManagerLookupKeyHandler lookup_key_handler,
-    gpointer user_data);
-
-/**
- * fl_keyboard_manager_notify_layout_changed:
- * @manager: the #FlKeyboardManager self.
- *
- * Notify the manager the keyboard layout has changed, for testing purposes
- * only.
- */
-void fl_keyboard_manager_notify_layout_changed(FlKeyboardManager* manager);
-
-typedef void (*FlKeyboardManagerRedispatchEventHandler)(FlKeyEvent* event,
-                                                        gpointer user_data);
-
-/**
- * fl_keyboard_manager_set_redispatch_handler:
- * @manager: the #FlKeyboardManager self.
- *
- * Set the handler for redispatches, for testing purposes only.
- */
-void fl_keyboard_manager_set_redispatch_handler(
-    FlKeyboardManager* manager,
-    FlKeyboardManagerRedispatchEventHandler redispatch_handler,
     gpointer user_data);
 
 typedef GHashTable* (*FlKeyboardManagerGetPressedStateHandler)(

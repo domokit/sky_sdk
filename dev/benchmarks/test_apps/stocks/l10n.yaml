@@ -20,3 +20,5 @@ template-arb-file: stocks_en.arb
 ## StockStrings getter. This removes the need for adding null checks
 ## in the Flutter application itself.
 nullable-getter: false
+## Run the formatter on the generated localization files.
+format: true

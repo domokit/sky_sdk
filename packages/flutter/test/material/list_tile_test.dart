@@ -2618,6 +2618,82 @@ void main() {
     expect(trailingOffset.dy - tileOffset.dy, topPosition);
   });
 
+  testWidgets('Leading/Trailing exceeding list tile width throws exception', (
+    WidgetTester tester,
+  ) async {
+    List<dynamic> exceptions = <dynamic>[];
+    FlutterExceptionHandler? oldHandler = FlutterError.onError;
+    FlutterError.onError = (FlutterErrorDetails details) {
+      exceptions.add(details.exception);
+    };
+
+    Widget buildListTile({Widget? leading, Widget? trailing}) {
+      return MaterialApp(
+        home: Material(
+          child: Center(
+            child: SizedBox(width: 100, child: ListTile(leading: leading, trailing: trailing)),
+          ),
+        ),
+      );
+    }
+
+    // Test a trailing widget that exceeds the list tile width.
+    // 16 (content padding) + 61 (leading width) + 24 (content padding) = 101.
+    // List tile width is 100 as a result, an exception should be thrown.
+    await tester.pumpWidget(buildListTile(leading: const SizedBox(width: 61)));
+
+    FlutterError.onError = oldHandler;
+    expect(exceptions.first.runtimeType, FlutterError);
+    FlutterError error = exceptions.first as FlutterError;
+    expect(error.diagnostics.length, 3);
+    expect(
+      error.diagnostics[0].toStringDeep(),
+      'Leading widget consumes the entire tile width (including\nListTile.contentPadding).\n',
+    );
+    expect(
+      error.diagnostics[1].toStringDeep(),
+      'Either resize the tile width so that the leading widget plus any\n'
+      'content padding do not exceed the tile width, or use a sized\n'
+      'widget, or consider replacing ListTile with a custom widget.\n',
+    );
+    expect(
+      error.diagnostics[2].toStringDeep(),
+      'See also:\n'
+      'https://api.flutter.dev/flutter/material/ListTile-class.html#material.ListTile.4\n',
+    );
+
+    exceptions = <dynamic>[];
+    oldHandler = FlutterError.onError;
+    FlutterError.onError = (FlutterErrorDetails details) {
+      exceptions.add(details.exception);
+    };
+
+    // Test a trailing widget that exceeds the list tile width.
+    // 16 (content padding) + 61 (trailing width) + 24 (content padding) = 101.
+    // List tile width is 100 as a result, an exception should be thrown.
+    await tester.pumpWidget(buildListTile(trailing: const SizedBox(width: 61)));
+
+    FlutterError.onError = oldHandler;
+    expect(exceptions.first.runtimeType, FlutterError);
+    error = exceptions.first as FlutterError;
+    expect(error.diagnostics.length, 3);
+    expect(
+      error.diagnostics[0].toStringDeep(),
+      'Trailing widget consumes the entire tile width (including\nListTile.contentPadding).\n',
+    );
+    expect(
+      error.diagnostics[1].toStringDeep(),
+      'Either resize the tile width so that the trailing widget plus any\n'
+      'content padding do not exceed the tile width, or use a sized\n'
+      'widget, or consider replacing ListTile with a custom widget.\n',
+    );
+    expect(
+      error.diagnostics[2].toStringDeep(),
+      'See also:\n'
+      'https://api.flutter.dev/flutter/material/ListTile-class.html#material.ListTile.4\n',
+    );
+  });
+
   group('Material 2', () {
     // These tests are only relevant for Material 2. Once Material 2
     // support is deprecated and the APIs are removed, these tests

@@ -1,4 +1,4 @@
-Signature: f58dcad97b77be1243a90e598f6a2f51
+Signature: ec65279f4812e15cbeacf0f3391472b5
 
 ====================================================================================================
 LIBRARY: dart
@@ -4226,9 +4226,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 LIBRARY: dart
 ORIGIN: ../../../flutter/third_party/dart/runtime/bin/dart_api_win.c + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/runtime/tools/generate_dart_api_win_c.dart + ../../../flutter/third_party/dart/LICENSE
+ORIGIN: ../../../flutter/third_party/dart/sdk/lib/_internal/wasm/lib/function_patch.dart + ../../../flutter/third_party/dart/LICENSE
 TYPE: LicenseType.bsd
 FILE: ../../../flutter/third_party/dart/runtime/bin/dart_api_win.c
 FILE: ../../../flutter/third_party/dart/runtime/tools/generate_dart_api_win_c.dart
+FILE: ../../../flutter/third_party/dart/sdk/lib/_internal/wasm/lib/function_patch.dart
 ----------------------------------------------------------------------------------------------------
 Copyright (c) 2025, the Dart project authors.  Please see the AUTHORS file
 for details. All rights reserved.
@@ -4837,7 +4839,7 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
   This Source Code Form is "Incompatible With Secondary Licenses", as
   defined by the Mozilla Public License, v. 2.0.
 
-You may obtain a copy of this library's Source Code Form from: https://dart.googlesource.com/sdk/+/dbe08d993b3fe700ed716fa068742e8fb80b0a0a
+You may obtain a copy of this library's Source Code Form from: https://dart.googlesource.com/sdk/+/f11b24d1c54093830e8ed1a2239504eba775d9da
 /third_party/fallback_root_certificates/
 
 ====================================================================================================

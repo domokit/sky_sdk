@@ -39,7 +39,7 @@ class _CupertinoTextMagnifierExampleAppState extends State<CupertinoTextMagnifie
         child: Center(
           child: CupertinoTextField(
             magnifierConfiguration: TextMagnifierConfiguration(
-              magnifierBuilder: (_, __, ValueNotifier<MagnifierInfo> magnifierInfo) {
+              magnifierBuilder: (_, _, ValueNotifier<MagnifierInfo> magnifierInfo) {
                 return CupertinoTextMagnifier(
                   controller: _controller,
                   magnifierInfo: magnifierInfo,

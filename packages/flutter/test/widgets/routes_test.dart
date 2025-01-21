@@ -959,7 +959,7 @@ void main() {
                     barrierLabel: 'barrier_label',
                     barrierColor: const Color(0x00000000),
                     transitionDuration: Duration.zero,
-                    pageBuilder: (BuildContext innerContext, _, __) {
+                    pageBuilder: (BuildContext innerContext, _, _) {
                       return const SizedBox();
                     },
                   );
@@ -994,7 +994,7 @@ void main() {
                   showGeneralDialog<void>(
                     context: context,
                     transitionDuration: Duration.zero,
-                    pageBuilder: (BuildContext innerContext, _, __) {
+                    pageBuilder: (BuildContext innerContext, _, _) {
                       return const SizedBox();
                     },
                   );
@@ -1034,7 +1034,7 @@ void main() {
                   showGeneralDialog<void>(
                     context: context,
                     transitionDuration: Duration.zero,
-                    pageBuilder: (BuildContext innerContext, _, __) {
+                    pageBuilder: (BuildContext innerContext, _, _) {
                       return const SizedBox();
                     },
                   );
@@ -1079,7 +1079,7 @@ void main() {
                       showGeneralDialog<void>(
                         context: context,
                         transitionDuration: Duration.zero,
-                        pageBuilder: (BuildContext innerContext, _, __) {
+                        pageBuilder: (BuildContext innerContext, _, _) {
                           return const SizedBox();
                         },
                       );
@@ -1120,7 +1120,7 @@ void main() {
                         useRootNavigator: false,
                         context: context,
                         transitionDuration: Duration.zero,
-                        pageBuilder: (BuildContext innerContext, _, __) {
+                        pageBuilder: (BuildContext innerContext, _, _) {
                           return const SizedBox();
                         },
                       );
@@ -1155,7 +1155,7 @@ void main() {
                     onPressed: () {
                       showGeneralDialog<void>(
                         context: context,
-                        pageBuilder: (BuildContext innerContext, _, __) {
+                        pageBuilder: (BuildContext innerContext, _, _) {
                           return const SizedBox();
                         },
                       );
@@ -1205,7 +1205,7 @@ void main() {
 
         showGeneralDialog<void>(
           context: context,
-          pageBuilder: (BuildContext context, _, __) {
+          pageBuilder: (BuildContext context, _, _) {
             return const Placeholder();
           },
           anchorPoint: const Offset(1000, 0),
@@ -1243,7 +1243,7 @@ void main() {
 
         showGeneralDialog<void>(
           context: context,
-          pageBuilder: (BuildContext context, _, __) {
+          pageBuilder: (BuildContext context, _, _) {
             return const Placeholder();
           },
         );
@@ -1280,7 +1280,7 @@ void main() {
 
         showGeneralDialog<void>(
           context: context,
-          pageBuilder: (BuildContext context, _, __) {
+          pageBuilder: (BuildContext context, _, _) {
             return const Placeholder();
           },
         );

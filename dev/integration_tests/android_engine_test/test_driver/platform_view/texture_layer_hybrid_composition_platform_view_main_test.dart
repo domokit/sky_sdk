@@ -9,10 +9,20 @@ import 'package:test/test.dart';
 
 import '../_luci_skia_gold_prelude.dart';
 
+/// For local debugging, a (local) golden-file is required as a baseline:
+///
+/// ```sh
+/// # Checkout HEAD, i.e. *before* changes you want to test.
+/// UPDATE_GOLDENS=1 flutter drive lib/platform_view/texture_layer_hybrid_composition_platform_view_main.dart
+///
+/// # Make your changes.
+///
+/// # Run the test against baseline.
+/// flutter drive lib/platform_view/texture_layer_hybrid_composition_platform_view_main.dart
+/// ```
+///
+/// For a convenient way to deflake a test, see `tool/deflake.dart`.
 void main() async {
-  // To test the golden file generation locally, comment out the following line.
-  // autoUpdateGoldenFiles = true;
-
   const String goldenPrefix = 'texture_layer_hybrid_composition_platform_view';
 
   late final FlutterDriver flutterDriver;
@@ -20,7 +30,7 @@ void main() async {
 
   setUpAll(() async {
     if (isLuci) {
-      await enableSkiaGoldComparator();
+      await enableSkiaGoldComparator(namePrefix: 'android_engine_test');
     }
     flutterDriver = await FlutterDriver.connect();
     nativeDriver = await AndroidNativeDriver.connect(flutterDriver);
@@ -40,25 +50,23 @@ void main() async {
   });
 
   test('should screenshot and match a blue -> orange gradient', () async {
-    await flutterDriver.waitFor(find.byType('AndroidView'));
     await expectLater(
       nativeDriver.screenshot(),
-      matchesGoldenFile('$goldenPrefix.blue_orange_gradient_portrait.android.png'),
+      matchesGoldenFile('$goldenPrefix.blue_orange_gradient_portrait.png'),
     );
   }, timeout: Timeout.none);
 
   test('should rotate landscape and screenshot the gradient', () async {
-    await flutterDriver.waitFor(find.byType('AndroidView'));
     await nativeDriver.rotateToLandscape();
     await expectLater(
       nativeDriver.screenshot(),
-      matchesGoldenFile('$goldenPrefix.blue_orange_gradient_landscape_rotated.android.png'),
+      matchesGoldenFile('$goldenPrefix.blue_orange_gradient_landscape_rotated.png'),
     );
 
     await nativeDriver.rotateResetDefault();
     await expectLater(
       nativeDriver.screenshot(),
-      matchesGoldenFile('$goldenPrefix.blue_orange_gradient_portait_rotated_back.android.png'),
+      matchesGoldenFile('$goldenPrefix.blue_orange_gradient_portait_rotated_back.png'),
     );
   }, timeout: Timeout.none);
 }

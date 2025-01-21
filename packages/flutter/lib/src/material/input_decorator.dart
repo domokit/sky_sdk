@@ -3655,15 +3655,18 @@ class InputDecoration {
 
   /// The shape of the border to draw around the decoration's container.
   ///
-  /// If [border] is a [MaterialStateUnderlineInputBorder]
-  /// or [MaterialStateOutlineInputBorder], then the effective border can depend on
-  /// the [WidgetState.focused] state, i.e. if the [TextField] is focused or not.
+  /// If [border] is a [WidgetStateInputBorder] then the effective border is resolved
+  /// in the following states:
+  ///  * [WidgetState.disabled].
+  ///  * [WidgetState.error].
+  ///  * [WidgetState.focused].
+  ///  * [WidgetState.hovered].
   ///
   /// If [border] derives from [InputBorder] the border's [InputBorder.borderSide],
   /// i.e. the border's color and width, will be overridden to reflect the input
   /// decorator's state. Only the border's shape is used. If custom  [BorderSide]
-  /// values are desired for a given state, all four borders – [errorBorder],
-  /// [focusedBorder], [enabledBorder], [disabledBorder] – must be set.
+  /// values are desired for a given state, all five borders – [errorBorder],
+  /// [focusedBorder], [enabledBorder], [disabledBorder], [focusedErrorBorder] – must be set.
   ///
   /// The decoration's container is the area which is filled if [filled] is
   /// true and bordered per the [border]. It's the area adjacent to

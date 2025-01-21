@@ -42,7 +42,6 @@ abstract class DartBuild extends Target {
       final FlutterNativeAssetsBuildRunner buildRunner =
           _buildRunner ??
           FlutterNativeAssetsBuildRunnerImpl(
-            projectUri,
             environment.packageConfigPath,
             packageConfig,
             fileSystem,

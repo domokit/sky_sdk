@@ -250,7 +250,8 @@ public class TextInputPlugin implements ListenableEditingState.EditingStateWatch
     int textType = InputType.TYPE_CLASS_TEXT;
     if (type.type == TextInputChannel.TextInputType.MULTILINE) {
       textType |= InputType.TYPE_TEXT_FLAG_MULTI_LINE;
-    } else if (type.type == TextInputChannel.TextInputType.EMAIL_ADDRESS) {
+    } else if (type.type == TextInputChannel.TextInputType.EMAIL_ADDRESS
+        || type.type == TextInputChannel.TextInputType.TWITTER) {
       textType |= InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
     } else if (type.type == TextInputChannel.TextInputType.URL
         || type.type == TextInputChannel.TextInputType.WEB_SEARCH) {
