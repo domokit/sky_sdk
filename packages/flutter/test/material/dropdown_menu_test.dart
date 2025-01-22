@@ -2322,6 +2322,235 @@ void main() {
     },
   );
 
+  testWidgets('Rematch selection if its value maps to a single entry', (WidgetTester tester) async {
+    final TextEditingController controller = TextEditingController();
+    addTearDown(controller.dispose);
+
+    String selectionLabel = 'Initial label';
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Scaffold(
+              body: DropdownMenu<TestMenu>(
+                automaticMatching: true,
+                initialSelection: TestMenu.mainMenu0,
+                dropdownMenuEntries: <DropdownMenuEntry<TestMenu>>[
+                  DropdownMenuEntry<TestMenu>(
+                    value: TestMenu.mainMenu0,
+                    label: '$selectionLabel 0',
+                  ),
+                  DropdownMenuEntry<TestMenu>(
+                    value: TestMenu.mainMenu1,
+                    label: '$selectionLabel 1',
+                  ),
+                ],
+                controller: controller,
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () => setState(() => selectionLabel = 'Updated label'),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+
+    // Open the menu
+    await tester.tap(find.byType(DropdownMenu<TestMenu>));
+    await tester.pump();
+
+    // Select the second item
+    await tester.tap(findMenuItemButton('$selectionLabel 1'));
+    await tester.pump();
+
+    // Update dropdownMenuEntries labels
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pump();
+
+    expect(controller.text, 'Updated label 1');
+  });
+
+  testWidgets('Do not rematch selection if its value maps to multiple entries', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController controller = TextEditingController();
+    addTearDown(controller.dispose);
+
+    String selectionLabel = 'Initial label';
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Scaffold(
+              body: DropdownMenu<TestMenu>(
+                automaticMatching: true,
+                initialSelection: TestMenu.mainMenu0,
+                dropdownMenuEntries: <DropdownMenuEntry<TestMenu>>[
+                  DropdownMenuEntry<TestMenu>(
+                    value: TestMenu.mainMenu0,
+                    label: '$selectionLabel 0',
+                  ),
+                  DropdownMenuEntry<TestMenu>(
+                    value: TestMenu.mainMenu1,
+                    label: '$selectionLabel 1',
+                  ),
+                  DropdownMenuEntry<TestMenu>(
+                    value: TestMenu.mainMenu1,
+                    label: '$selectionLabel 2',
+                  ),
+                ],
+                controller: controller,
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () => setState(() => selectionLabel = 'Updated label'),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+
+    // Open the menu
+    await tester.tap(find.byType(DropdownMenu<TestMenu>));
+    await tester.pump();
+
+    // Select the third item
+    await tester.tap(findMenuItemButton('$selectionLabel 2'));
+    await tester.pump();
+
+    // Update dropdownMenuEntries labels
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pump();
+
+    expect(controller.text, 'Initial label 2');
+  });
+
+  testWidgets('Forget selection if its value does not map to any entry', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController controller = TextEditingController();
+    addTearDown(controller.dispose);
+
+    String selectionLabel = 'Initial label';
+    bool selectionInEntries = true;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Scaffold(
+              body: Column(
+                children: <Widget>[
+                  DropdownMenu<TestMenu>(
+                    automaticMatching: true,
+                    initialSelection: TestMenu.mainMenu0,
+                    dropdownMenuEntries: <DropdownMenuEntry<TestMenu>>[
+                      DropdownMenuEntry<TestMenu>(
+                        value: TestMenu.mainMenu0,
+                        label: '$selectionLabel 0',
+                      ),
+                      if (selectionInEntries)
+                        DropdownMenuEntry<TestMenu>(
+                          value: TestMenu.mainMenu1,
+                          label: '$selectionLabel 1',
+                        ),
+                    ],
+                    controller: controller,
+                  ),
+                  ElevatedButton(
+                    onPressed: () => setState(() => selectionInEntries = !selectionInEntries),
+                    child: null,
+                  ),
+                ],
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () => setState(() => selectionLabel = 'Updated label'),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+
+    // Open the menu
+    await tester.tap(find.byType(DropdownMenu<TestMenu>));
+    await tester.pump();
+
+    // Select the second item
+    await tester.tap(findMenuItemButton('$selectionLabel 1'));
+    await tester.pump();
+
+    // Update dropdownMenuEntries labels
+    await tester.tap(find.byType(FloatingActionButton));
+    // Remove second item from entires
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump();
+
+    expect(controller.text, 'Initial label 1');
+
+    // Put second item back into entries
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump();
+
+    expect(controller.text, 'Initial label 1');
+  });
+
+  testWidgets(
+    'Do not rematch selection if the text field was edited progrmaticlly via controller',
+    (WidgetTester tester) async {
+      final TextEditingController controller = TextEditingController();
+      addTearDown(controller.dispose);
+
+      String selectionLabel = 'Initial label';
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Scaffold(
+                body: Column(
+                  children: <Widget>[
+                    DropdownMenu<TestMenu>(
+                      automaticMatching: true,
+                      initialSelection: TestMenu.mainMenu0,
+                      dropdownMenuEntries: <DropdownMenuEntry<TestMenu>>[
+                        DropdownMenuEntry<TestMenu>(
+                          value: TestMenu.mainMenu0,
+                          label: '$selectionLabel 0',
+                        ),
+                      ],
+                      controller: controller,
+                    ),
+                    ElevatedButton(
+                      onPressed: () => setState(() => controller.text = 'Controller Value'),
+                      child: null,
+                    ),
+                  ],
+                ),
+                floatingActionButton: FloatingActionButton(
+                  onPressed: () => setState(() => selectionLabel = 'Updated label'),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+      // Change the text field value via controller
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pump();
+
+      // Update dropdownMenuEntries labels
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pump();
+
+      expect(controller.text, 'Controller Value');
+    },
+  );
+
   testWidgets('The default text input field should not be focused on mobile platforms '
       'when it is tapped', (WidgetTester tester) async {
     final ThemeData themeData = ThemeData();

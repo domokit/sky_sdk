@@ -171,6 +171,7 @@ class DropdownMenu<T> extends StatefulWidget {
     this.selectedTrailingIcon,
     this.enableFilter = false,
     this.enableSearch = true,
+    this.automaticMatching = false,
     this.keyboardType,
     this.textStyle,
     this.textAlign = TextAlign.start,
@@ -282,6 +283,11 @@ class DropdownMenu<T> extends StatefulWidget {
   ///
   /// Defaults to true as the search function could be commonly used.
   final bool enableSearch;
+
+  /// Automaticly match the current selection aganist [dropdownMenuEntries] to update the text field.
+  ///
+  /// Defaults to false.
+  final bool automaticMatching;
 
   /// The type of keyboard to use for editing the text.
   ///
@@ -538,6 +544,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
   final MenuController _controller = MenuController();
   bool _enableFilter = false;
   late bool _enableSearch;
+  late bool _automaticMatching;
   late List<DropdownMenuEntry<T>> filteredEntries;
   List<Widget>? _initialMenu;
   int? currentHighlight;
@@ -545,6 +552,8 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
   bool _menuHasEnabledItem = false;
   TextEditingController? _localTextEditingController;
   final FocusNode _internalFocudeNode = FocusNode();
+  int? _selectionIndex;
+  Object? _lastLocalTextEditingValueObject;
 
   @override
   void initState() {
@@ -555,6 +564,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
       _localTextEditingController = TextEditingController();
     }
     _enableSearch = widget.enableSearch;
+    _automaticMatching = widget.automaticMatching;
     filteredEntries = widget.dropdownMenuEntries;
     buttonItemKeys = List<GlobalKey>.generate(filteredEntries.length, (int index) => GlobalKey());
     _menuHasEnabledItem = filteredEntries.any((DropdownMenuEntry<T> entry) => entry.enabled);
@@ -562,10 +572,12 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
       (DropdownMenuEntry<T> entry) => entry.value == widget.initialSelection,
     );
     if (index != -1) {
+      _selectionIndex = index;
       _localTextEditingController?.value = TextEditingValue(
         text: filteredEntries[index].label,
         selection: TextSelection.collapsed(offset: filteredEntries[index].label.length),
       );
+      _lastLocalTextEditingValueObject = _localTextEditingController?.value;
     }
     refreshLeadingPadding();
   }
@@ -600,6 +612,9 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
         currentHighlight = null;
       }
     }
+    if (oldWidget.automaticMatching != widget.automaticMatching) {
+      _automaticMatching = widget.automaticMatching;
+    }
     if (oldWidget.dropdownMenuEntries != widget.dropdownMenuEntries) {
       currentHighlight = null;
       filteredEntries = widget.dropdownMenuEntries;
@@ -614,11 +629,51 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
         (DropdownMenuEntry<T> entry) => entry.value == widget.initialSelection,
       );
       if (index != -1) {
+        _selectionIndex = index;
         _localTextEditingController?.value = TextEditingValue(
           text: filteredEntries[index].label,
           selection: TextSelection.collapsed(offset: filteredEntries[index].label.length),
         );
+        _lastLocalTextEditingValueObject = _localTextEditingController?.value;
+      } else {
+        _selectionIndex = null;
       }
+    } else if (_automaticMatching) {
+      final bool handledByExternalController =
+          !identical(_lastLocalTextEditingValueObject, _localTextEditingController?.value);
+      if (!handledByExternalController &&
+          _selectionIndex != null &&
+          oldWidget.dropdownMenuEntries != widget.dropdownMenuEntries) {
+        final T selectionValue = oldWidget.dropdownMenuEntries[_selectionIndex!].value;
+        _rematchSelection(selectionValue);
+      }
+    }
+  }
+
+  void _rematchSelection(T selectionValue) {
+    final int index = filteredEntries.indexWhere(
+      (DropdownMenuEntry<T> entry) => entry.value == selectionValue,
+    );
+    if (index != -1) {
+      final bool valueMapsToSingleEntry =
+          index ==
+          filteredEntries.lastIndexWhere(
+            (DropdownMenuEntry<T> entry) => entry.value == selectionValue,
+          );
+      if (valueMapsToSingleEntry) {
+        final bool shouldUpdateTextField =
+            _localTextEditingController?.text != filteredEntries[index].label;
+        if (shouldUpdateTextField) {
+          _selectionIndex = index;
+          _localTextEditingController?.value = TextEditingValue(
+            text: filteredEntries[index].label,
+            selection: TextSelection.collapsed(offset: filteredEntries[index].label.length),
+          );
+          _lastLocalTextEditingValueObject = _localTextEditingController?.value;
+        }
+      }
+    } else {
+      _selectionIndex = null;
     }
   }
 
@@ -817,10 +872,12 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
           onPressed:
               entry.enabled && widget.enabled
                   ? () {
+                    _selectionIndex = i;
                     _localTextEditingController?.value = TextEditingValue(
                       text: entry.label,
                       selection: TextSelection.collapsed(offset: entry.label.length),
                     );
+                    _lastLocalTextEditingValueObject = _localTextEditingController?.value;
                     currentHighlight = widget.enableSearch ? i : null;
                     widget.onSelected?.call(entry.value);
                     _enableFilter = false;
@@ -898,10 +955,12 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
     if (currentHighlight != null) {
       final DropdownMenuEntry<T> entry = filteredEntries[currentHighlight!];
       if (entry.enabled) {
+        _selectionIndex = currentHighlight;
         _localTextEditingController?.value = TextEditingValue(
           text: entry.label,
           selection: TextSelection.collapsed(offset: entry.label.length),
         );
+        _lastLocalTextEditingValueObject = _localTextEditingController?.value;
         widget.onSelected?.call(entry.value);
       }
     } else {
