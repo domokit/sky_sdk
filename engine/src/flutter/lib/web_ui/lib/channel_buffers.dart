@@ -135,7 +135,7 @@ class ChannelBuffers {
     final _Channel channel = _channels.putIfAbsent(name, () => _Channel());
     if (channel.push(_StoredMessage(data, callback))) {
       assert(() {
-        print(
+        engine.printWarning(
           'A message on the $name channel was discarded before it could be handled.\n'
           'This happens when a plugin sends messages to the framework side before the '
           'framework has had an opportunity to register a listener. See the ChannelBuffers '

@@ -33,7 +33,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: SimpleBuilderTableView(
-              delegate: delegate1 = TwoDimensionalChildBuilderDelegate(builder: (_, __) => null),
+              delegate: delegate1 = TwoDimensionalChildBuilderDelegate(builder: (_, _) => null),
               horizontalDetails: const ScrollableDetails.vertical(),
               // Horizontal has default const ScrollableDetails.horizontal()
             ),
@@ -46,7 +46,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: SimpleBuilderTableView(
-              delegate: delegate2 = TwoDimensionalChildBuilderDelegate(builder: (_, __) => null),
+              delegate: delegate2 = TwoDimensionalChildBuilderDelegate(builder: (_, _) => null),
               verticalDetails: const ScrollableDetails.horizontal(),
               // Horizontal has default const ScrollableDetails.horizontal()
             ),
@@ -59,7 +59,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: SimpleBuilderTableView(
-              delegate: delegate3 = TwoDimensionalChildBuilderDelegate(builder: (_, __) => null),
+              delegate: delegate3 = TwoDimensionalChildBuilderDelegate(builder: (_, _) => null),
               verticalDetails: const ScrollableDetails.horizontal(),
               horizontalDetails: const ScrollableDetails.vertical(),
             ),

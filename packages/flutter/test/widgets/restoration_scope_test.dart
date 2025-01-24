@@ -45,7 +45,7 @@ void main() {
       await tester.pumpWidget(
         WidgetsApp(
           color: const Color(0xD0FF0000),
-          builder: (_, __) {
+          builder: (_, _) {
             return RestorationScope(
               restorationId: 'test',
               child: Builder(
@@ -75,7 +75,7 @@ void main() {
         WidgetsApp(
           restorationScopeId: 'test scope',
           color: const Color(0xD0FF0000),
-          builder: (_, __) {
+          builder: (_, _) {
             return RestorationScope(
               restorationId: 'test',
               child: Builder(

@@ -527,7 +527,7 @@ class _APage extends Page<void> {
   @override
   Route<void> createRoute(BuildContext context) => PageRouteBuilder<void>(
     settings: this,
-    pageBuilder: (_, __, ___) => const TextField(autofocus: true),
+    pageBuilder: (_, _, _) => const TextField(autofocus: true),
   );
 }
 
@@ -536,5 +536,5 @@ class _BPage extends Page<void> {
 
   @override
   Route<void> createRoute(BuildContext context) =>
-      PageRouteBuilder<void>(settings: this, pageBuilder: (_, __, ___) => const Text('B'));
+      PageRouteBuilder<void>(settings: this, pageBuilder: (_, _, _) => const Text('B'));
 }

@@ -55,15 +55,4 @@ guint8 fl_key_event_get_group(FlKeyEvent* event);
 
 GdkEvent* fl_key_event_get_origin(FlKeyEvent* event);
 
-/**
- * fl_key_event_hash:
- * @event: an #FlKeyEvent.
- *
- * Calculates a unique ID for a given FlKeyEvent object to use for
- * identification of responses from the framework.
- *
- * Returns: a hash code.
- */
-uint64_t fl_key_event_hash(FlKeyEvent* event);
-
 #endif  // FLUTTER_SHELL_PLATFORM_LINUX_FL_KEY_EVENT_H_

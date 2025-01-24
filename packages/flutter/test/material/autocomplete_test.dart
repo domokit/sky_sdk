@@ -592,7 +592,60 @@ void main() {
 
       await tester.tap(find.byType(RawAutocomplete<String>));
       await tester.enterText(find.byType(RawAutocomplete<String>), 'a');
+      await tester.pump();
       expect(find.text('aa').hitTestable(), findsOneWidget);
     });
+  });
+
+  testWidgets('can jump to options that are not yet built', (WidgetTester tester) async {
+    const Color highlightColor = Color(0xFF112233);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData.light().copyWith(focusColor: highlightColor),
+        home: Scaffold(
+          body: Autocomplete<String>(
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              return kOptions.where((String option) {
+                return option.contains(textEditingValue.text.toLowerCase());
+              });
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(TextFormField));
+    await tester.pump();
+    expect(find.byType(ListView), findsOneWidget);
+    final ListView list = find.byType(ListView).evaluate().first.widget as ListView;
+    expect(list.semanticChildCount, kOptions.length);
+
+    Finder optionFinder(int index) {
+      return find.ancestor(
+        matching: find.byType(Container),
+        of: find.text(kOptions.elementAt(index)),
+      );
+    }
+
+    expect(optionFinder(0), findsOneWidget);
+    expect(optionFinder(kOptions.length - 1), findsNothing);
+
+    // Jump to the bottom.
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.control);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.control);
+    await tester.pumpAndSettle();
+    expect(optionFinder(0), findsNothing);
+    expect(optionFinder(kOptions.length - 1), findsOneWidget);
+    checkOptionHighlight(tester, kOptions.last, highlightColor);
+
+    // Jump to the top.
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.control);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.control);
+    await tester.pumpAndSettle();
+    expect(optionFinder(0), findsOneWidget);
+    expect(optionFinder(kOptions.length - 1), findsNothing);
+    checkOptionHighlight(tester, kOptions.first, highlightColor);
   });
 }

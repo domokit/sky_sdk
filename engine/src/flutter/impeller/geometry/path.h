@@ -157,6 +157,8 @@ class Path {
   /// @brief Whether the line contains a single contour.
   bool IsSingleContour() const;
 
+  ComponentType GetComponentTypeAtIndex(size_t index) const;
+
   bool GetLinearComponentAtIndex(size_t index,
                                  LinearPathComponent& linear) const;
 

@@ -1314,13 +1314,13 @@ allprojects {
       );
       // Strictly too new Gradle and AGP versions.
       expect(
-        getJavaVersionFor(gradleV: '8.11', agpV: '8.8'),
+        getJavaVersionFor(gradleV: '8.13', agpV: '8.9'),
         equals(const VersionRange(null, null)),
       );
       // Strictly too new Gradle version and maximum version of AGP.
       //*This test case will need its expected Java range updated when a new version of AGP is supported.*
       expect(
-        getJavaVersionFor(gradleV: '8.11', agpV: maxKnownAndSupportedAgpVersion),
+        getJavaVersionFor(gradleV: '8.13', agpV: maxKnownAndSupportedAgpVersion),
         equals(const VersionRange('17', null)),
       );
       // Strictly too new AGP version and maximum version of Gradle.

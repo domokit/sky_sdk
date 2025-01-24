@@ -332,6 +332,86 @@ public class FlutterViewTest {
 
   @SuppressWarnings("deprecation")
   // getSystemUiVisibility
+  // This test uses the API 30+ Algorithm for window insets. This test requires API 34 or
+  // higher to use the systemOverlays inset. The legacy algorithm is
+  // set to -1 values, so it is clear if the wrong algorithm is used.
+  @Test
+  @TargetApi(34)
+  @Config(minSdk = 34)
+  public void reportSystemInsetWhenNotFullscreenForSystemBar() {
+    // Without custom shadows, the default system ui visibility flags is 0.
+    FlutterView flutterView = new FlutterView(ctx);
+    assertEquals(0, flutterView.getSystemUiVisibility());
+
+    FlutterEngine flutterEngine = spy(new FlutterEngine(ctx, mockFlutterLoader, mockFlutterJni));
+    FlutterRenderer flutterRenderer = spy(new FlutterRenderer(mockFlutterJni));
+    when(flutterEngine.getRenderer()).thenReturn(flutterRenderer);
+
+    flutterView.attachToFlutterEngine(flutterEngine);
+    ArgumentCaptor<FlutterRenderer.ViewportMetrics> viewportMetricsCaptor =
+        ArgumentCaptor.forClass(FlutterRenderer.ViewportMetrics.class);
+    verify(flutterRenderer).setViewportMetrics(viewportMetricsCaptor.capture());
+
+    // When we attach a new FlutterView to the engine without any system insets, the viewport
+    // metrics default to 0.
+    assertEquals(0, viewportMetricsCaptor.getValue().viewPaddingTop);
+
+    // Then we simulate the system applying a statusBar inset.
+    WindowInsets statusBarwindowInsets =
+        new WindowInsets.Builder()
+            .setInsets(android.view.WindowInsets.Type.captionBar(), Insets.of(0, 50, 0, 0))
+            .setInsets(android.view.WindowInsets.Type.statusBars(), Insets.of(0, 100, 0, 0))
+            .build();
+    flutterView.onApplyWindowInsets(statusBarwindowInsets);
+
+    // Verify.
+    verify(flutterRenderer, times(3)).setViewportMetrics(viewportMetricsCaptor.capture());
+    // Confirm that the statusBar inset is used because it is the largest of the insets faked.
+    validateViewportMetricPadding(viewportMetricsCaptor, 0, 100, 0, 0);
+    clearInvocations(flutterRenderer);
+
+    // Then we simulate the system applying a navigationBar window inset.
+    WindowInsets navigationBarwindowInsets =
+        new WindowInsets.Builder()
+            .setInsets(android.view.WindowInsets.Type.systemOverlays(), Insets.of(0, 0, 0, 10))
+            .setInsets(android.view.WindowInsets.Type.navigationBars(), Insets.of(0, 0, 0, 50))
+            .build();
+    flutterView.onApplyWindowInsets(navigationBarwindowInsets);
+
+    // Verify.
+    verify(flutterRenderer, times(2)).setViewportMetrics(viewportMetricsCaptor.capture());
+    // Confirm that the navigationBar inset is used because it is the largest of the insets faked.
+    validateViewportMetricPadding(viewportMetricsCaptor, 0, 0, 0, 50);
+    clearInvocations(flutterRenderer);
+
+    // Then we simulate the system applying a captionBar window inset.
+    WindowInsets captionBarwindowInsets =
+        new WindowInsets.Builder()
+            .setInsets(android.view.WindowInsets.Type.statusBars(), Insets.of(0, 20, 0, 0))
+            .setInsets(android.view.WindowInsets.Type.captionBar(), Insets.of(0, 60, 0, 0))
+            .build();
+    flutterView.onApplyWindowInsets(captionBarwindowInsets);
+    // Verify.
+    verify(flutterRenderer, times(2)).setViewportMetrics(viewportMetricsCaptor.capture());
+    // Confirm that the captionBar inset is used because it is the largest of the insets faked.
+    validateViewportMetricPadding(viewportMetricsCaptor, 0, 60, 0, 0);
+    clearInvocations(flutterRenderer);
+
+    // Then we simulate the system applying a systemOverlay window inset.
+    WindowInsets systemOverlayWindowInsets =
+        new WindowInsets.Builder()
+            .setInsets(android.view.WindowInsets.Type.statusBars(), Insets.of(0, 100, 0, 0))
+            .setInsets(android.view.WindowInsets.Type.systemOverlays(), Insets.of(0, 200, 0, 0))
+            .build();
+    flutterView.onApplyWindowInsets(systemOverlayWindowInsets);
+    // Verify.
+    verify(flutterRenderer, times(2)).setViewportMetrics(viewportMetricsCaptor.capture());
+    // Confirm that the systemOverlay inset is used because it is the largest of the insets faked.
+    validateViewportMetricPadding(viewportMetricsCaptor, 0, 200, 0, 0);
+  }
+
+  @SuppressWarnings("deprecation")
+  // getSystemUiVisibility
   // This test uses the pre-API 30 Algorithm for window insets.
   @Test
   @TargetApi(28)
@@ -1088,7 +1168,7 @@ public class FlutterViewTest {
         new WindowInsets.Builder()
             .setInsets(
                 android.view.WindowInsets.Type.navigationBars()
-                    | android.view.WindowInsets.Type.statusBars(),
+                    | android.view.WindowInsets.Type.systemBars(),
                 Insets.of(100, 100, 100, 100))
             .build();
     flutterView.onApplyWindowInsets(windowInsets);

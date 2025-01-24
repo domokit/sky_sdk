@@ -97,17 +97,6 @@ Color ToColor(const flutter::DlColor& color) {
   };
 }
 
-Matrix ToRSXForm(const SkRSXform& form) {
-  // clang-format off
-    return Matrix{
-      form.fSCos, form.fSSin, 0, 0,
-     -form.fSSin, form.fSCos, 0, 0,
-      0,          0,          1, 0,
-      form.fTx,   form.fTy,   0, 1
-    };
-  // clang-format on
-}
-
 std::optional<impeller::PixelFormat> ToPixelFormat(SkColorType type) {
   switch (type) {
     case kRGBA_8888_SkColorType:

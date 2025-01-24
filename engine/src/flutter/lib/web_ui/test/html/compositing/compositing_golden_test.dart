@@ -181,22 +181,18 @@ Future<void> testMain() async {
 void _testCullRectComputation() {
   // Draw a picture larger that screen. Verify that cull rect is equal to screen
   // bounds.
-  test(
-    'fills screen bounds',
-    () async {
-      final ui.SceneBuilder builder = ui.SceneBuilder();
-      drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
-        canvas.drawCircle(ui.Offset.zero, 10000, SurfacePaint()..style = ui.PaintingStyle.fill);
-      });
-      builder.build();
+  test('fills screen bounds', () async {
+    final ui.SceneBuilder builder = ui.SceneBuilder();
+    drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
+      canvas.drawCircle(ui.Offset.zero, 10000, SurfacePaint()..style = ui.PaintingStyle.fill);
+    });
+    builder.build();
 
-      final PersistedPicture picture = enumeratePictures().single;
-      expect(picture.optimalLocalCullRect, const ui.Rect.fromLTRB(0, 0, 500, 100));
-    },
-    skip: '''
-  TODO(https://github.com/flutter/flutter/issues/40395)
-  Needs ability to set iframe to 500,100 size. Current screen seems to be 500,500''',
-  );
+    final PersistedPicture picture = enumeratePictures().single;
+    expect(picture.optimalLocalCullRect, const ui.Rect.fromLTRB(0, 0, 500, 100));
+    // Needs ability to set iframe to 500,100 size. Current screen seems to be 500,500
+    // https://github.com/flutter/flutter/issues/40395
+  }, skip: true);
 
   // Draw a picture that overflows the screen. Verify that cull rect is the
   // intersection of screen bounds and paint bounds.
@@ -263,27 +259,23 @@ void _testCullRectComputation() {
   // Draw a picture smaller than the screen. Offset it such that the picture
   // overflows screen bounds. Verify that the cull rect is the intersection
   // between screen bounds and paint bounds.
-  test(
-    'offset overflows paint bounds',
-    () async {
-      final ui.SceneBuilder builder = ui.SceneBuilder();
+  test('offset overflows paint bounds', () async {
+    final ui.SceneBuilder builder = ui.SceneBuilder();
 
-      builder.pushOffset(0, 90);
-      drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
-        canvas.drawCircle(ui.Offset.zero, 20, SurfacePaint()..style = ui.PaintingStyle.fill);
-      });
-      builder.pop();
+    builder.pushOffset(0, 90);
+    drawWithBitmapCanvas(builder, (RecordingCanvas canvas) {
+      canvas.drawCircle(ui.Offset.zero, 20, SurfacePaint()..style = ui.PaintingStyle.fill);
+    });
+    builder.pop();
 
-      builder.build();
+    builder.build();
 
-      final PersistedPicture picture = enumeratePictures().single;
-      expect(picture.debugExactGlobalCullRect, const ui.Rect.fromLTRB(0, 70, 20, 100));
-      expect(picture.optimalLocalCullRect, const ui.Rect.fromLTRB(0, -20, 20, 10));
-    },
-    skip: '''
-  TODO(https://github.com/flutter/flutter/issues/40395)
-  Needs ability to set iframe to 500,100 size. Current screen seems to be 500,500''',
-  );
+    final PersistedPicture picture = enumeratePictures().single;
+    expect(picture.debugExactGlobalCullRect, const ui.Rect.fromLTRB(0, 70, 20, 100));
+    expect(picture.optimalLocalCullRect, const ui.Rect.fromLTRB(0, -20, 20, 10));
+    // Needs ability to set iframe to 500,100 size. Current screen seems to be 500,500
+    // https://github.com/flutter/flutter/issues/40395
+  }, skip: true);
 
   // Draw a picture inside a layer clip but fill all available space inside it.
   // Verify that the cull rect is equal to the layer clip.

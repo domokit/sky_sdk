@@ -2346,7 +2346,7 @@ class _RenderTestLeaderLayerWidget extends RenderProxyBox {
   void paint(PaintingContext context, Offset offset) {
     super.paint(context, offset);
     if (_link != null) {
-      context.pushLayer(LeaderLayer(link: _link!, offset: offset), (_, __) {}, Offset.zero);
+      context.pushLayer(LeaderLayer(link: _link!, offset: offset), (_, _) {}, Offset.zero);
     }
   }
 }

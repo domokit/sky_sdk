@@ -25,7 +25,6 @@ import '../drive/drive_service.dart';
 import '../drive/web_driver_service.dart' show Browser;
 import '../globals.dart' as globals;
 import '../ios/devices.dart';
-import '../macos/macos_ipad_device.dart';
 import '../resident_runner.dart';
 import '../runner/flutter_command.dart'
     show FlutterCommandCategory, FlutterCommandResult, FlutterOptions;
@@ -65,6 +64,7 @@ class DriveCommand extends RunCommandBase {
   }) : _flutterDriverFactory = flutterDriverFactory,
        _fileSystem = fileSystem,
        _logger = logger,
+       _platform = platform,
        _fsUtils = FileSystemUtils(fileSystem: fileSystem, platform: platform),
        super(verboseHelp: verboseHelp) {
     requiresPubspecYaml();
@@ -205,6 +205,7 @@ class DriveCommand extends RunCommandBase {
   FlutterDriverFactory? _flutterDriverFactory;
   final FileSystem _fileSystem;
   final Logger _logger;
+  final Platform _platform;
   final FileSystemUtils _fsUtils;
   Timer? timeoutTimer;
   Map<ProcessSignal, Object>? screenshotTokens;
@@ -214,7 +215,11 @@ class DriveCommand extends RunCommandBase {
 
   @override
   final String description =
-      'Run integration tests for the project on an attached device or emulator.';
+      'Builds and installs the app, and runs a Dart program that connects to '
+      'the app, often to run externally facing integration tests, such as with '
+      'package:test and package:flutter_driver.\n'
+      '\n'
+      'Usage: flutter drive --target <lib/main.dart> --driver <test_driver/main_test.dart>.';
 
   @override
   String get category => FlutterCommandCategory.project;
@@ -264,9 +269,6 @@ class DriveCommand extends RunCommandBase {
       if (device is! AndroidDevice) {
         throwToolExit('--${FlutterOptions.kDeviceUser} is only supported for Android');
       }
-      if (device is MacOSDesignedForIPadDevice) {
-        throwToolExit('Mac Designed for iPad is currently not supported for flutter drive.');
-      }
     }
     return super.validateCommand();
   }
@@ -278,6 +280,15 @@ class DriveCommand extends RunCommandBase {
       throwToolExit(null);
     }
     if (await _fileSystem.type(testFile) != FileSystemEntityType.file) {
+      // A very common source of error is holding "flutter drive" wrong,
+      // and providing the "test_driver/foo_test.dart" as the target, when
+      // the intention was to provide "lib/foo.dart".
+      if (_fileSystem.path.isWithin('test_driver', targetFile)) {
+        _logger.printError(
+          'The file path passed to --target should be an app entrypoint that '
+          'contains a "main()". Did you mean "flutter drive --driver $targetFile"?',
+        );
+      }
       throwToolExit('Test file not found: $testFile');
     }
     final Device? device = await targetedDevice;
@@ -292,6 +303,7 @@ class DriveCommand extends RunCommandBase {
     _flutterDriverFactory ??= FlutterDriverFactory(
       applicationPackageFactory: ApplicationPackageFactory.instance!,
       logger: _logger,
+      platform: _platform,
       processUtils: globals.processUtils,
       dartSdkPath: globals.artifacts!.getArtifactPath(Artifact.engineDartBinary),
       devtoolsLauncher: DevtoolsLauncher.instance!,
@@ -336,7 +348,6 @@ class DriveCommand extends RunCommandBase {
       final Future<int> testResultFuture = driverService.startTest(
         testFile,
         stringsArg('test-arguments'),
-        <String, String>{},
         packageConfig,
         chromeBinary: stringArg('chrome-binary'),
         headless: boolArg('headless'),

@@ -10,6 +10,7 @@
 [![Flutter CI Status](https://flutter-dashboard.appspot.com/api/public/build-status-badge?repo=flutter)](https://flutter-dashboard.appspot.com/#/build?repo=flutter)
 [![Discord badge][]][Discord instructions]
 [![Twitter handle][]][Twitter badge]
+[![BlueSky badge][]][BlueSky handle]
 [![codecov](https://codecov.io/gh/flutter/flutter/branch/master/graph/badge.svg?token=11yDrJU2M2)](https://codecov.io/gh/flutter/flutter)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5631/badge)](https://bestpractices.coreinfrastructure.org/projects/5631)
 [![SLSA 1](https://slsa.dev/images/gh-badge-level1.svg)](https://slsa.dev)
@@ -103,6 +104,8 @@ Information on how to get started can be found in our
 [Discord badge]: https://img.shields.io/discord/608014603317936148?logo=discord
 [Twitter handle]: https://img.shields.io/twitter/follow/flutterdev.svg?style=social&label=Follow
 [Twitter badge]: https://twitter.com/intent/follow?screen_name=flutterdev
+[BlueSky badge]: https://img.shields.io/badge/Bluesky-0285FF?logo=bluesky&logoColor=fff&label=Follow%20me%20on&color=0285FF
+[BlueSky handle]: https://bsky.app/profile/flutter.dev
 [layered architecture]: https://docs.flutter.dev/resources/inside-flutter
 [architectural overview]: https://docs.flutter.dev/resources/architectural-overview
 [widget catalog]: https://flutter.dev/widgets/

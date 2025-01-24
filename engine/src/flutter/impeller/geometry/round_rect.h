@@ -7,67 +7,10 @@
 
 #include "flutter/impeller/geometry/point.h"
 #include "flutter/impeller/geometry/rect.h"
+#include "flutter/impeller/geometry/rounding_radii.h"
 #include "flutter/impeller/geometry/size.h"
 
 namespace impeller {
-
-struct RoundingRadii {
-  Size top_left;
-  Size top_right;
-  Size bottom_left;
-  Size bottom_right;
-
-  constexpr static RoundingRadii MakeRadius(Scalar radius) {
-    return {Size(radius), Size(radius), Size(radius), Size(radius)};
-  }
-
-  constexpr static RoundingRadii MakeRadii(Size radii) {
-    return {radii, radii, radii, radii};
-  }
-
-  constexpr bool IsFinite() const {
-    return top_left.IsFinite() &&     //
-           top_right.IsFinite() &&    //
-           bottom_left.IsFinite() &&  //
-           bottom_right.IsFinite();
-  }
-
-  constexpr bool AreAllCornersEmpty() const {
-    return top_left.IsEmpty() &&     //
-           top_right.IsEmpty() &&    //
-           bottom_left.IsEmpty() &&  //
-           bottom_right.IsEmpty();
-  }
-
-  constexpr bool AreAllCornersSame(Scalar tolerance = kEhCloseEnough) const {
-    return ScalarNearlyEqual(top_left.width, top_right.width, tolerance) &&
-           ScalarNearlyEqual(top_left.width, bottom_right.width, tolerance) &&
-           ScalarNearlyEqual(top_left.width, bottom_left.width, tolerance) &&
-           ScalarNearlyEqual(top_left.height, top_right.height, tolerance) &&
-           ScalarNearlyEqual(top_left.height, bottom_right.height, tolerance) &&
-           ScalarNearlyEqual(top_left.height, bottom_left.height, tolerance);
-  }
-
-  constexpr inline RoundingRadii operator*(Scalar scale) {
-    return {
-        .top_left = top_left * scale,
-        .top_right = top_right * scale,
-        .bottom_left = bottom_left * scale,
-        .bottom_right = bottom_right * scale,
-    };
-  }
-
-  [[nodiscard]] constexpr bool operator==(const RoundingRadii& rr) const {
-    return top_left == rr.top_left &&        //
-           top_right == rr.top_right &&      //
-           bottom_left == rr.bottom_left &&  //
-           bottom_right == rr.bottom_right;
-  }
-
-  [[nodiscard]] constexpr bool operator!=(const RoundingRadii& rr) const {
-    return !(*this == rr);
-  }
-};
 
 struct RoundRect {
   RoundRect() = default;
@@ -93,6 +36,15 @@ struct RoundRect {
 
   constexpr static RoundRect MakeRectXY(const Rect& rect, Size corner_radii) {
     return MakeRectRadii(rect, RoundingRadii::MakeRadii(corner_radii));
+  }
+
+  constexpr static RoundRect MakeNinePatch(const Rect& rect,
+                                           Scalar left,
+                                           Scalar top,
+                                           Scalar right,
+                                           Scalar bottom) {
+    return MakeRectRadii(
+        rect, RoundingRadii::MakeNinePatch(left, top, right, bottom));
   }
 
   static RoundRect MakeRectRadii(const Rect& rect, const RoundingRadii& radii);
@@ -189,17 +141,6 @@ struct RoundRect {
 }  // namespace impeller
 
 namespace std {
-
-inline std::ostream& operator<<(std::ostream& out,
-                                const impeller::RoundingRadii& rr) {
-  out << "("                               //
-      << "ul: " << rr.top_left << ", "     //
-      << "ur: " << rr.top_right << ", "    //
-      << "ll: " << rr.bottom_left << ", "  //
-      << "lr: " << rr.bottom_right         //
-      << ")";
-  return out;
-}
 
 inline std::ostream& operator<<(std::ostream& out,
                                 const impeller::RoundRect& rr) {

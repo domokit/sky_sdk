@@ -27,6 +27,23 @@ INTERNAL NOTE
 
 ## Flutter 3.27 Changes
 
+### [3.27.3](https://github.com/flutter/flutter/releases/tag/3.27.3)
+- [flutter/159212](https://github.com/flutter/flutter/issues/159212) Track (via Google Analytics) if the Dart AOT Android "Deferred Components" feature is being meaningfully used.
+- [flutter/160631](https://github.com/flutter/flutter/issues/160631) Fixes an issue with Material 3 Tab Bar animations.
+- [flutter/159289](https://github.com/flutter/flutter/issues/159289) Fixes an issue with fullscreen route transitions.
+
+### [3.27.2](https://github.com/flutter/flutter/releases/tag/3.27.2)
+
+- [flutter/159729](https://github.com/flutter/flutter/issues/159729) Flutter module template triggers a warning when built for Android.
+- [flutter/161176](https://github.com/flutter/flutter/issues/161176) Dropdown Menu can create an infinite loop.
+- [flutter/161330](https://github.com/flutter/flutter/issues/161330) Using ScrollViewKeyboardDismissBehavior.onDrag in a SingleChildScrollView causes text fields to immediately unfocus if the keyboard opening scrolls the text field to keep it visible.
+- [flutter/160127](https://github.com/flutter/flutter/issues/160127) Some Flutter web plugins do not add the `crossOrigin` property to <img> tags.
+- [flutter/160155](https://github.com/flutter/flutter/issues/160155) Failed assertion in web engine: "The targeted input element must be the active input element".
+- [flutter/160199](https://github.com/flutter/flutter/issues/160199) Some images on the web render blank.
+- [flutter/160459](https://github.com/flutter/flutter/issues/160459) Incorrect Z order rendering in drawPoints may cause lines to overlap when one should be drawn in front of the other.
+- [flutter/160409](https://github.com/flutter/flutter/issues/160409) App may crashes because of obsolete engine assertion.
+- [flutter/158192](https://github.com/flutter/flutter/issues/158192) Positions of display cutouts on Android may not update - as returned by MediaQuery and used by SafeArea - upon screen orientation change.
+
 ### [3.27.1](https://github.com/flutter/flutter/releases/tag/3.27.1)
 
 - [flutter/160041](https://github.com/flutter/flutter/issues/160041) - [Impeller][Android] Disables Impeller on older Android devices.

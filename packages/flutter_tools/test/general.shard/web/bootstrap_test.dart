@@ -153,6 +153,18 @@ void main() {
     expect(result, contains('''dart_sdk.dart.nativeNonNullAsserts(false);'''));
   });
 
+  test('generateMainModule sets rootDirectories', () {
+    const String root = 'http://localhost:12345';
+    final String result = generateMainModule(
+      entrypoint: 'foo/bar/main.js',
+      nullAssertions: false,
+      nativeNullAssertions: false,
+      loaderRootDirectory: root,
+    );
+
+    expect(result, contains('''window.\$dartLoader.rootDirectories = ["$root"];'''));
+  });
+
   test('generateTestBootstrapFileContents embeds urls correctly', () {
     final String result = generateTestBootstrapFileContents(
       'foo.dart.js',

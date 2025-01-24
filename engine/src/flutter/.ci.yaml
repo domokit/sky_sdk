@@ -319,6 +319,20 @@ targets:
       # at https://github.com/flutter/flutter/issues/152186.
       cores: "8"
 
+  - name: Linux linux_host_engine_test
+    recipe: engine_v2/engine_v2
+    timeout: 120
+    properties:
+      config_name: linux_host_engine_test
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:720a542f6fe4f92922c3b8f0fdcc4d2ac6bb83cd"}
+        ]
+    # Do not remove(https://github.com/flutter/flutter/issues/144644)
+    # Scheduler will fail to get the platform
+    drone_dimensions:
+      - os=Linux
+
   - name: Linux linux_host_desktop_engine
     recipe: engine_v2/engine_v2
     timeout: 120
@@ -443,6 +457,26 @@ targets:
       # at https://github.com/flutter/flutter/issues/152186.
       cores: "8"
 
+  - name: Linux mac_clang_tidy
+    recipe: engine_v2/engine_v2
+    bringup: true
+    properties:
+      config_name: mac_clang_tidy
+    runIf:
+      - DEPS
+      - engine/src/flutter/.ci.yaml
+      - "engine/src/flutter/**.(h|c|cc|fbs|frag|vert|m|mm)"
+    # Do not remove(https://github.com/flutter/flutter/issues/144644)
+    # Scheduler will fail to get the platform
+    drone_dimensions:
+      - os=Linux
+    dimensions:
+      # This is needed so that orchestrators that only spawn subbuilds are not
+      # assigned to the large 32 core workers when doing release builds.
+      # For more details see the issue
+      # at https://github.com/flutter/flutter/issues/152186.
+      cores: "8"
+
   - name: Mac mac_clang_tidy
     recipe: engine_v2/engine_v2
     timeout: 120
@@ -535,6 +569,16 @@ targets:
       add_recipes_cq: "true"
       release_build: "true"
       config_name: windows_host_engine
+    # Do not remove(https://github.com/flutter/flutter/issues/144644)
+    # Scheduler will fail to get the platform
+    drone_dimensions:
+      - os=Windows
+
+  - name: Windows windows_host_engine_test
+    recipe: engine_v2/engine_v2
+    timeout: 120
+    properties:
+      config_name: windows_host_engine_test
     # Do not remove(https://github.com/flutter/flutter/issues/144644)
     # Scheduler will fail to get the platform
     drone_dimensions:

@@ -11,12 +11,11 @@
 #include "impeller/entity/texture_fill.vert.h"
 #include "impeller/geometry/color.h"
 #include "impeller/geometry/point.h"
-#include "third_party/skia/include/core/SkPoint.h"
 
 namespace impeller {
 
 DlAtlasGeometry::DlAtlasGeometry(const std::shared_ptr<Texture>& atlas,
-                                 const SkRSXform* xform,
+                                 const RSTransform* xform,
                                  const flutter::DlRect* tex,
                                  const flutter::DlColor* colors,
                                  size_t count,
@@ -46,12 +45,10 @@ Rect DlAtlasGeometry::ComputeBoundingBox() const {
   if (cull_rect_.has_value()) {
     return cull_rect_.value();
   }
-  Rect bounding_box = {};
+  Rect bounding_box;
   for (size_t i = 0; i < count_; i++) {
-    auto matrix = skia_conversions::ToRSXForm(xform_[i]);
-    auto sample_rect = tex_[i];
-    auto bounds = Rect::MakeSize(sample_rect.GetSize()).TransformBounds(matrix);
-    bounding_box = bounds.Union(bounding_box);
+    auto bounds = xform_[i].GetBounds(tex_[i].GetSize());
+    bounding_box = Rect::Union(bounding_box, bounds);
   }
   cull_rect_ = bounding_box;
   return bounding_box;
@@ -84,10 +81,8 @@ VertexBuffer DlAtlasGeometry::CreateSimpleVertexBuffer(
         auto texture_size = atlas_->GetSize();
         for (auto i = 0u; i < count_; i++) {
           flutter::DlRect sample_rect = tex_[i];
-          Matrix matrix = skia_conversions::ToRSXForm(xform_[i]);
           auto points = sample_rect.GetPoints();
-          auto transformed_points = Rect::MakeSize(sample_rect.GetSize())
-                                        .GetTransformedPoints(matrix);
+          auto transformed_points = xform_[i].GetQuad(sample_rect.GetSize());
           for (size_t j = 0; j < 6; j++) {
             data[offset].position = transformed_points[indices[j]];
             data[offset].texture_coords = points[indices[j]] / texture_size;
@@ -119,10 +114,8 @@ VertexBuffer DlAtlasGeometry::CreateBlendVertexBuffer(
         auto texture_size = atlas_->GetSize();
         for (auto i = 0u; i < count_; i++) {
           flutter::DlRect sample_rect = tex_[i];
-          Matrix matrix = skia_conversions::ToRSXForm(xform_[i]);
           auto points = sample_rect.GetPoints();
-          auto transformed_points = Rect::MakeSize(sample_rect.GetSize())
-                                        .GetTransformedPoints(matrix);
+          auto transformed_points = xform_[i].GetQuad(sample_rect.GetSize());
           for (size_t j = 0; j < 6; j++) {
             data[offset].vertices = transformed_points[indices[j]];
             data[offset].texture_coords = points[indices[j]] / texture_size;

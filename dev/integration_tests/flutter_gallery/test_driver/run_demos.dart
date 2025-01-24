@@ -73,8 +73,8 @@ Future<void> runDemos(List<String> demos, WidgetController controller) async {
 
       if (kUnsynchronizedDemos.contains(demo)) {
         // These tests have animation, pumpAndSettle cannot be used.
-        // This time is questionable. 400ms is the tested reasonable result.
-        await controller.pump(const Duration(milliseconds: 400));
+        // This time is questionable. 600ms is the tested reasonable result.
+        await controller.pump(const Duration(milliseconds: 600));
         await controller.pump();
         await pageBack();
       } else {

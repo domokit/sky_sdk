@@ -8851,7 +8851,7 @@ void main() {
         final Widget customMagnifier = Container(key: UniqueKey());
         final CupertinoTextField defaultCupertinoTextField = CupertinoTextField(
           magnifierConfiguration: TextMagnifierConfiguration(
-            magnifierBuilder: (_, __, ___) => customMagnifier,
+            magnifierBuilder: (_, _, _) => customMagnifier,
           ),
         );
 

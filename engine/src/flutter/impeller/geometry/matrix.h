@@ -602,7 +602,6 @@ struct Matrix {
     // clang-format on
   }
 
- private:
   static constexpr Vector2 CosSin(Radians radians) {
     // The precision of a float around 1.0 is much lower than it is
     // around 0.0, so we end up with cases on quadrant rotations where

@@ -127,7 +127,7 @@ static void BM_DisplayListBuilderWithPerspective(
 static void BM_DisplayListBuilderWithClipRect(
     benchmark::State& state,
     DisplayListBuilderBenchmarkType type) {
-  SkRect clip_bounds = SkRect::MakeLTRB(6.5, 7.3, 90.2, 85.7);
+  DlRect clip_bounds = DlRect::MakeLTRB(6.5, 7.3, 90.2, 85.7);
   bool prepare_rtree = NeedPrepareRTree(type);
   while (state.KeepRunning()) {
     DisplayListBuilder builder(prepare_rtree);
@@ -183,7 +183,7 @@ static void BM_DisplayListBuilderWithSaveLayerAndImageFilter(
     DisplayListBuilderBenchmarkType type) {
   DlPaint layer_paint;
   layer_paint.setImageFilter(&testing::kTestBlurImageFilter1);
-  SkRect layer_bounds = SkRect::MakeLTRB(6.5, 7.3, 35.2, 42.7);
+  DlRect layer_bounds = DlRect::MakeLTRB(6.5, 7.3, 35.2, 42.7);
   bool prepare_rtree = NeedPrepareRTree(type);
   while (state.KeepRunning()) {
     DisplayListBuilder builder(prepare_rtree);
@@ -191,7 +191,7 @@ static void BM_DisplayListBuilderWithSaveLayerAndImageFilter(
     for (auto& group : allRenderingOps) {
       for (size_t i = 0; i < group.variants.size(); i++) {
         auto& invocation = group.variants[i];
-        builder.SaveLayer(&layer_bounds, &layer_paint);
+        builder.SaveLayer(layer_bounds, &layer_paint);
         invocation.Invoke(receiver);
         builder.Restore();
       }
@@ -282,8 +282,8 @@ static void BM_DisplayListDispatchCull(benchmark::State& state,
     InvokeAllOps(builder);
   }
   auto display_list = builder.Build();
-  SkRect rect = SkRect::MakeLTRB(0, 0, 100, 100);
-  EXPECT_FALSE(rect.contains(display_list->bounds()));
+  DlRect rect = DlRect::MakeLTRB(0, 0, 100, 100);
+  EXPECT_FALSE(rect.Contains(display_list->GetBounds()));
   DlOpReceiverIgnore receiver;
   while (state.KeepRunning()) {
     display_list->Dispatch(receiver, rect);

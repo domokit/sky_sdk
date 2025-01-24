@@ -162,7 +162,7 @@ class FakeDoctorValidator extends DoctorValidator {
   FakeDoctorValidator(super.title);
 
   @override
-  Future<ValidationResult> validate() async {
+  Future<ValidationResult> validateImpl() async {
     return ValidationResult.crash(Object());
   }
 }

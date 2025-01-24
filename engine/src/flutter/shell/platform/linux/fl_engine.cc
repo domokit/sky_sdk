@@ -14,6 +14,7 @@
 #include "flutter/shell/platform/linux/fl_dart_project_private.h"
 #include "flutter/shell/platform/linux/fl_display_monitor.h"
 #include "flutter/shell/platform/linux/fl_engine_private.h"
+#include "flutter/shell/platform/linux/fl_keyboard_handler.h"
 #include "flutter/shell/platform/linux/fl_pixel_buffer_texture_private.h"
 #include "flutter/shell/platform/linux/fl_platform_handler.h"
 #include "flutter/shell/platform/linux/fl_plugin_registrar_private.h"
@@ -56,6 +57,12 @@ struct _FlEngine {
 
   // Implements the flutter/platform channel.
   FlPlatformHandler* platform_handler;
+
+  // Process keyboard events.
+  FlKeyboardManager* keyboard_manager;
+
+  // Implements the flutter/keyboard channel.
+  FlKeyboardHandler* keyboard_handler;
 
   // Implements the flutter/mousecursor channel.
   FlMouseCursorHandler* mouse_cursor_handler;
@@ -381,6 +388,14 @@ static void fl_engine_update_semantics_cb(const FlutterSemanticsUpdate2* update,
   }
 }
 
+static void setup_keyboard(FlEngine* self) {
+  g_clear_object(&self->keyboard_manager);
+  self->keyboard_manager = fl_keyboard_manager_new(self);
+  g_clear_object(&self->keyboard_handler);
+  self->keyboard_handler =
+      fl_keyboard_handler_new(self->binary_messenger, self->keyboard_manager);
+}
+
 // Called right before the engine is restarted.
 //
 // This method should reset states to as if the engine has just been started,
@@ -388,6 +403,8 @@ static void fl_engine_update_semantics_cb(const FlutterSemanticsUpdate2* update,
 // Flutter CLI.)
 static void fl_engine_on_pre_engine_restart_cb(void* user_data) {
   FlEngine* self = FL_ENGINE(user_data);
+
+  setup_keyboard(self);
 
   g_signal_emit(self, fl_engine_signals[SIGNAL_ON_PRE_ENGINE_RESTART], 0);
 }
@@ -455,6 +472,8 @@ static void fl_engine_dispose(GObject* object) {
   g_clear_object(&self->binary_messenger);
   g_clear_object(&self->settings_handler);
   g_clear_object(&self->platform_handler);
+  g_clear_object(&self->keyboard_manager);
+  g_clear_object(&self->keyboard_handler);
   g_clear_object(&self->mouse_cursor_handler);
   g_clear_object(&self->task_runner);
 
@@ -524,6 +543,15 @@ FlEngine* fl_engine_new_with_renderer(FlDartProject* project,
 G_MODULE_EXPORT FlEngine* fl_engine_new(FlDartProject* project) {
   g_autoptr(FlRendererGdk) renderer = fl_renderer_gdk_new();
   return fl_engine_new_with_renderer(project, FL_RENDERER(renderer));
+}
+
+FlEngine* fl_engine_new_with_binary_messenger(
+    FlBinaryMessenger* binary_messenger) {
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
+  FlEngine* self = fl_engine_new(project);
+  g_object_unref(self->binary_messenger);
+  self->binary_messenger = FL_BINARY_MESSENGER(g_object_ref(binary_messenger));
+  return self;
 }
 
 G_MODULE_EXPORT FlEngine* fl_engine_new_headless(FlDartProject* project) {
@@ -645,6 +673,8 @@ gboolean fl_engine_start(FlEngine* self, GError** error) {
   self->platform_handler = fl_platform_handler_new(self->binary_messenger);
   self->mouse_cursor_handler =
       fl_mouse_cursor_handler_new(self->binary_messenger);
+
+  setup_keyboard(self);
 
   result = self->embedder_api.UpdateSemanticsEnabled(self->engine, TRUE);
   if (result != kSuccess) {
@@ -1236,6 +1266,11 @@ void fl_engine_update_accessibility_features(FlEngine* self, int32_t flags) {
 void fl_engine_request_app_exit(FlEngine* self) {
   g_return_if_fail(FL_IS_ENGINE(self));
   fl_platform_handler_request_app_exit(self->platform_handler);
+}
+
+FlKeyboardManager* fl_engine_get_keyboard_manager(FlEngine* self) {
+  g_return_val_if_fail(FL_IS_ENGINE(self), nullptr);
+  return self->keyboard_manager;
 }
 
 FlMouseCursorHandler* fl_engine_get_mouse_cursor_handler(FlEngine* self) {

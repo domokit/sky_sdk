@@ -724,7 +724,7 @@ void main() {
 
   testWidgets('ChoiceChip.chipAnimationStyle is passed to RawChip', (WidgetTester tester) async {
     final ChipAnimationStyle chipAnimationStyle = ChipAnimationStyle(
-      enableAnimation: AnimationStyle(duration: Durations.extralong4),
+      enableAnimation: const AnimationStyle(duration: Durations.extralong4),
       selectAnimation: AnimationStyle.noAnimation,
     );
 
@@ -747,7 +747,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final ChipAnimationStyle chipAnimationStyle = ChipAnimationStyle(
-      enableAnimation: AnimationStyle(duration: Durations.extralong4),
+      enableAnimation: const AnimationStyle(duration: Durations.extralong4),
       selectAnimation: AnimationStyle.noAnimation,
     );
 

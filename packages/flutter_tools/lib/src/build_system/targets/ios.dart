@@ -17,7 +17,6 @@ import '../../globals.dart' as globals;
 import '../../ios/mac.dart';
 import '../../macos/xcode.dart';
 import '../../project.dart';
-import '../../reporting/reporting.dart';
 import '../build_system.dart';
 import '../depfile.dart';
 import '../exceptions.dart';
@@ -639,12 +638,6 @@ class ReleaseIosApplicationBundle extends _IosAssetBundleWithDSYM {
       // archive command from Xcode, this is a more accurate count than `flutter build ipa` alone.
       if (environment.defines[kXcodeAction]?.toLowerCase() == 'install') {
         environment.logger.printTrace('Sending archive event if usage enabled.');
-        UsageEvent(
-          'assemble',
-          'ios-archive',
-          label: buildSuccess ? 'success' : 'fail',
-          flutterUsage: environment.usage,
-        ).send();
         environment.analytics.send(
           Event.appleUsageEvent(
             workflow: 'assemble',

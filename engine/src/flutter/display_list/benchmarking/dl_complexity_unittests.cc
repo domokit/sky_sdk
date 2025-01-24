@@ -421,11 +421,11 @@ TEST(DisplayListComplexity, DrawAtlas) {
   bitmap.allocPixels(info, 0);
   auto image = SkImages::RasterFromBitmap(bitmap);
 
-  std::vector<SkRect> rects;
-  std::vector<SkRSXform> xforms;
+  std::vector<DlRect> rects;
+  std::vector<DlRSTransform> xforms;
   for (int i = 0; i < 10; i++) {
-    rects.push_back(SkRect::MakeXYWH(0, 0, 10, 10));
-    xforms.push_back(SkRSXform::Make(1, 0, 0, 0));
+    rects.push_back(DlRect::MakeXYWH(0, 0, 10, 10));
+    xforms.push_back(DlRSTransform(1, 0, 0, 0));
   }
 
   DisplayListBuilder builder;

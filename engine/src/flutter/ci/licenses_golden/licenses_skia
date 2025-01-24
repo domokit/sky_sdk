@@ -1,4 +1,4 @@
-Signature: d7670af6cbef9d04a3bfe4d89e3f3b51
+Signature: 368cfa762130868f2345230d1484526d
 
 ====================================================================================================
 LIBRARY: etc1
@@ -321,7 +321,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ====================================================================================================
 
 ====================================================================================================
-LIBRARY: libmicrohttpd
 LIBRARY: skia
 ORIGIN: ../../../flutter/third_party/skia/LICENSE
 TYPE: LicenseType.bsd
@@ -399,12 +398,8 @@ FILE: ../../../flutter/third_party/skia/modules/pathkit/perf/pathops.bench.js
 FILE: ../../../flutter/third_party/skia/modules/pathkit/perf/perfReporter.js
 FILE: ../../../flutter/third_party/skia/modules/skparagraph/test.html
 FILE: ../../../flutter/third_party/skia/package-lock.json
-FILE: ../../../flutter/third_party/skia/relnotes/GpuStats.md
-FILE: ../../../flutter/third_party/skia/relnotes/GraphiteLogPriority.md
-FILE: ../../../flutter/third_party/skia/relnotes/SkColorSpaceMakeCICP.md
-FILE: ../../../flutter/third_party/skia/relnotes/debugtrace.md
-FILE: ../../../flutter/third_party/skia/relnotes/precompilecontext.md
-FILE: ../../../flutter/third_party/skia/relnotes/requireorderedrecordings.md
+FILE: ../../../flutter/third_party/skia/relnotes/color4shader.md
+FILE: ../../../flutter/third_party/skia/relnotes/pipelinepurging.md
 FILE: ../../../flutter/third_party/skia/src/gpu/gpu_workaround_list.txt
 FILE: ../../../flutter/third_party/skia/src/ports/fontations/Cargo.toml
 FILE: ../../../flutter/third_party/skia/src/sksl/generated/sksl_compute.minified.sksl
@@ -442,7 +437,6 @@ FILE: ../../../flutter/third_party/skia/src/sksl/sksl_rt_shader.sksl
 FILE: ../../../flutter/third_party/skia/src/sksl/sksl_shared.sksl
 FILE: ../../../flutter/third_party/skia/src/sksl/sksl_vert.sksl
 FILE: ../../../flutter/third_party/skia/third_party/go.mod
-FILE: ../../../flutter/third_party/skia/third_party/libmicrohttpd/MHD_config.h
 FILE: ../../../flutter/third_party/skia/toolchain/linux_trampolines/IWYU_mapping.imp
 FILE: ../../../flutter/third_party/skia/toolchain/ndk.BUILD
 FILE: ../../../flutter/third_party/skia/whitespace.txt
@@ -9512,6 +9506,7 @@ ORIGIN: ../../../flutter/third_party/skia/include/gpu/ganesh/mtl/GrMtlBackendSur
 ORIGIN: ../../../flutter/third_party/skia/include/gpu/ganesh/mtl/GrMtlDirectContext.h + ../../../flutter/third_party/skia/LICENSE
 ORIGIN: ../../../flutter/third_party/skia/include/gpu/graphite/LogPriority.h + ../../../flutter/third_party/skia/LICENSE
 ORIGIN: ../../../flutter/third_party/skia/include/gpu/graphite/PrecompileContext.h + ../../../flutter/third_party/skia/LICENSE
+ORIGIN: ../../../flutter/third_party/skia/include/gpu/graphite/mtl/MtlGraphiteTypesUtils.h + ../../../flutter/third_party/skia/LICENSE
 ORIGIN: ../../../flutter/third_party/skia/include/gpu/graphite/precompile/PaintOptions.h + ../../../flutter/third_party/skia/LICENSE
 ORIGIN: ../../../flutter/third_party/skia/include/gpu/graphite/precompile/Precompile.h + ../../../flutter/third_party/skia/LICENSE
 ORIGIN: ../../../flutter/third_party/skia/include/gpu/graphite/precompile/PrecompileBase.h + ../../../flutter/third_party/skia/LICENSE
@@ -9642,6 +9637,7 @@ FILE: ../../../flutter/third_party/skia/include/gpu/ganesh/mtl/GrMtlBackendSurfa
 FILE: ../../../flutter/third_party/skia/include/gpu/ganesh/mtl/GrMtlDirectContext.h
 FILE: ../../../flutter/third_party/skia/include/gpu/graphite/LogPriority.h
 FILE: ../../../flutter/third_party/skia/include/gpu/graphite/PrecompileContext.h
+FILE: ../../../flutter/third_party/skia/include/gpu/graphite/mtl/MtlGraphiteTypesUtils.h
 FILE: ../../../flutter/third_party/skia/include/gpu/graphite/precompile/PaintOptions.h
 FILE: ../../../flutter/third_party/skia/include/gpu/graphite/precompile/Precompile.h
 FILE: ../../../flutter/third_party/skia/include/gpu/graphite/precompile/PrecompileBase.h

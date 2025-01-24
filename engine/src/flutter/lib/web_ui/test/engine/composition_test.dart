@@ -43,7 +43,7 @@ GloballyPositionedTextEditingStrategy _enableEditingStrategy({
 
   owner.debugTextEditingStrategyOverride = editingStrategy;
 
-  editingStrategy.enable(owner.configuration!, onChange: onChange ?? (_, __) {}, onAction: (_) {});
+  editingStrategy.enable(owner.configuration!, onChange: onChange ?? (_, _) {}, onAction: (_) {});
   return editingStrategy;
 }
 

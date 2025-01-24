@@ -2,7 +2,7 @@ If you want to write a design doc for people to review, we recommend using Googl
 We have a template you can use, at [flutter.dev/go/template](https://flutter.dev/go/template). It describes the process for minting a `flutter.dev/go/foo` shortlink for your design doc.
 We recommend you use that template so that people can immediately recognize that this is a Flutter design document and that it is shared publicly.
 
-After you have created your design doc, the next step is to create a tracking GitHub issue for it. File a new issue to track the design doc using [the design doc issue template](https://github.com/flutter/flutter/issues/new?template=8_design_doc.yml). Assign it to yourself. Add the label "design doc" to the issue.
+After you have created your design doc, the next step is to create a tracking GitHub issue for it. File a new issue to track the design doc using [the design doc issue template](https://github.com/flutter/flutter/issues/new?template=7_design_doc.yml). Assign it to yourself. Add the label "design doc" to the issue.
 
 Don't forget to configure your document's Sharing settings so that everyone has comment access. The idea of sharing the document in this way is not necessarily to proactively obtain feedback from the entire community; it is to make it _possible_ for people to share the document with anyone in the community, whether they work for your employer or not, and whether you have personally shared the document with them yet or not.
 

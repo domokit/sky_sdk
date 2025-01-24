@@ -9,6 +9,7 @@
 
 #include "flutter/shell/platform/embedder/embedder.h"
 #include "flutter/shell/platform/linux/fl_display_monitor.h"
+#include "flutter/shell/platform/linux/fl_keyboard_manager.h"
 #include "flutter/shell/platform/linux/fl_mouse_cursor_handler.h"
 #include "flutter/shell/platform/linux/fl_renderer.h"
 #include "flutter/shell/platform/linux/fl_task_runner.h"
@@ -59,6 +60,17 @@ typedef void (*FlEngineUpdateSemanticsHandler)(
     FlEngine* engine,
     const FlutterSemanticsUpdate2* update,
     gpointer user_data);
+
+/**
+ * fl_engine_new_with_binary_messenger:
+ * @binary_messenger: an #FlBinaryMessenger.
+ *
+ * Creates a new engine with a custom binary messenger. Used for testing.
+ *
+ * Returns: a new #FlEngine.
+ */
+FlEngine* fl_engine_new_with_binary_messenger(
+    FlBinaryMessenger* binary_messenger);
 
 /**
  * fl_engine_new_with_renderer:
@@ -562,6 +574,16 @@ void fl_engine_update_accessibility_features(FlEngine* engine, int32_t flags);
  * Request the application exits.
  */
 void fl_engine_request_app_exit(FlEngine* engine);
+
+/**
+ * fl_engine_get_keyboard_manager:
+ * @engine: an #FlEngine.
+ *
+ * Gets the keyboard manager used by this engine.
+ *
+ * Returns: a #FlKeyboardManager.
+ */
+FlKeyboardManager* fl_engine_get_keyboard_manager(FlEngine* engine);
 
 /**
  * fl_engine_get_mouse_cursor_handler:

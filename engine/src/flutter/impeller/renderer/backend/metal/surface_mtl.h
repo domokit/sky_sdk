@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "impeller/geometry/rect.h"
+#include "impeller/renderer/backend/metal/swapchain_transients_mtl.h"
 #include "impeller/renderer/context.h"
 #include "impeller/renderer/surface.h"
 
@@ -41,11 +42,13 @@ class SurfaceMTL final : public Surface {
   static std::unique_ptr<SurfaceMTL> MakeFromMetalLayerDrawable(
       const std::shared_ptr<Context>& context,
       id<CAMetalDrawable> drawable,
+      const std::shared_ptr<SwapchainTransientsMTL>& transients,
       std::optional<IRect> clip_rect = std::nullopt);
 
   static std::unique_ptr<SurfaceMTL> MakeFromTexture(
       const std::shared_ptr<Context>& context,
       id<MTLTexture> texture,
+      const std::shared_ptr<SwapchainTransientsMTL>& transients,
       std::optional<IRect> clip_rect,
       id<CAMetalDrawable> drawable = nil);
 #pragma GCC diagnostic pop

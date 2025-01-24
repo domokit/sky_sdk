@@ -1454,10 +1454,10 @@ const TraversalEdgeBehavior kDefaultRouteTraversalEdgeBehavior = TraversalEdgeBe
 /// ```dart
 /// Navigator.push(context, PageRouteBuilder<void>(
 ///   opaque: false,
-///   pageBuilder: (BuildContext context, _, __) {
+///   pageBuilder: (BuildContext context, _, _) {
 ///     return const Center(child: Text('My PageRoute'));
 ///   },
-///   transitionsBuilder: (___, Animation<double> animation, ____, Widget child) {
+///   transitionsBuilder: (_, Animation<double> animation, _, Widget child) {
 ///     return FadeTransition(
 ///       opacity: animation,
 ///       child: RotationTransition(
@@ -1473,7 +1473,7 @@ const TraversalEdgeBehavior kDefaultRouteTraversalEdgeBehavior = TraversalEdgeBe
 /// "transitions". The page becomes a descendant of the child passed to
 /// the `transitionsBuilder` function. Typically the page is only built once,
 /// because it doesn't depend on its animation parameters (elided with `_`
-/// and `__` in this example). The transition is built on every frame
+/// in this example). The transition is built on every frame
 /// for its duration.
 ///
 /// (In this example, `void` is used as the return type for the route, because

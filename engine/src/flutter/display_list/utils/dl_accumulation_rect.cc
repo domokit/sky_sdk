@@ -6,7 +6,7 @@
 
 namespace flutter {
 
-void AccumulationRect::accumulate(SkScalar x, SkScalar y) {
+void AccumulationRect::accumulate(DlScalar x, DlScalar y) {
   if (!std::isfinite(x) || !std::isfinite(y)) {
     return;
   }
@@ -28,25 +28,25 @@ void AccumulationRect::accumulate(SkScalar x, SkScalar y) {
   }
 }
 
-void AccumulationRect::accumulate(SkRect r) {
-  if (r.isEmpty()) {
+void AccumulationRect::accumulate(DlRect r) {
+  if (r.IsEmpty()) {
     return;
   }
-  if (r.fLeft < max_x_ && r.fRight > min_x_ &&  //
-      r.fTop < max_y_ && r.fBottom > min_y_) {
+  if (r.GetLeft() < max_x_ && r.GetRight() > min_x_ &&  //
+      r.GetTop() < max_y_ && r.GetBottom() > min_y_) {
     record_overlapping_bounds();
   }
-  if (min_x_ > r.fLeft) {
-    min_x_ = r.fLeft;
+  if (min_x_ > r.GetLeft()) {
+    min_x_ = r.GetLeft();
   }
-  if (min_y_ > r.fTop) {
-    min_y_ = r.fTop;
+  if (min_y_ > r.GetTop()) {
+    min_y_ = r.GetTop();
   }
-  if (max_x_ < r.fRight) {
-    max_x_ = r.fRight;
+  if (max_x_ < r.GetRight()) {
+    max_x_ = r.GetRight();
   }
-  if (max_y_ < r.fBottom) {
-    max_y_ = r.fBottom;
+  if (max_y_ < r.GetBottom()) {
+    max_y_ = r.GetBottom();
   }
 }
 
@@ -78,17 +78,11 @@ DlRect AccumulationRect::GetBounds() const {
              : DlRect();
 }
 
-SkRect AccumulationRect::bounds() const {
-  return (max_x_ >= min_x_ && max_y_ >= min_y_)
-             ? SkRect::MakeLTRB(min_x_, min_y_, max_x_, max_y_)
-             : SkRect::MakeEmpty();
-}
-
 void AccumulationRect::reset() {
-  min_x_ = std::numeric_limits<SkScalar>::infinity();
-  min_y_ = std::numeric_limits<SkScalar>::infinity();
-  max_x_ = -std::numeric_limits<SkScalar>::infinity();
-  max_y_ = -std::numeric_limits<SkScalar>::infinity();
+  min_x_ = std::numeric_limits<DlScalar>::infinity();
+  min_y_ = std::numeric_limits<DlScalar>::infinity();
+  max_x_ = -std::numeric_limits<DlScalar>::infinity();
+  max_y_ = -std::numeric_limits<DlScalar>::infinity();
   overlap_detected_ = false;
 }
 

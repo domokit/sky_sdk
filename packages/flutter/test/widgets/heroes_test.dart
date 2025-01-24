@@ -679,7 +679,7 @@ Future<void> main() async {
                           pageBuilder: (
                             BuildContext context,
                             Animation<double> _,
-                            Animation<double> __,
+                            Animation<double> _,
                           ) {
                             return const Text('fail');
                           },
@@ -1975,7 +1975,7 @@ Future<void> main() async {
 
       await tester.tap(find.text('two'));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 501));
 
       expect(find.byKey(firstKey), findsNothing);
       expect(find.byKey(secondKey), isOnstage);
@@ -2016,7 +2016,7 @@ Future<void> main() async {
 
       await tester.tap(find.text('two'));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 501));
 
       expect(find.byKey(firstKey), findsNothing);
       expect(find.byKey(secondKey), isOnstage);
@@ -2529,7 +2529,7 @@ Future<void> main() async {
         home: Navigator(
           observers: <NavigatorObserver>[controller],
           pages: <Page<void>>[page1],
-          onPopPage: (_, __) => false,
+          onPopPage: (_, _) => false,
         ),
       ),
     );
@@ -2545,7 +2545,7 @@ Future<void> main() async {
         home: Navigator(
           observers: <NavigatorObserver>[controller],
           pages: <Page<void>>[page1, page2, page3],
-          onPopPage: (_, __) => false,
+          onPopPage: (_, _) => false,
         ),
       ),
     );
@@ -2635,7 +2635,7 @@ Future<void> main() async {
         home: Navigator(
           observers: <NavigatorObserver>[controller],
           pages: <Page<void>>[unrelatedPage1, page1],
-          onPopPage: (_, __) => false,
+          onPopPage: (_, _) => false,
         ),
       ),
     );
@@ -2651,7 +2651,7 @@ Future<void> main() async {
         home: Navigator(
           observers: <NavigatorObserver>[controller],
           pages: <Page<void>>[unrelatedPage2, page2],
-          onPopPage: (_, __) => false,
+          onPopPage: (_, _) => false,
         ),
       ),
     );
@@ -3069,7 +3069,7 @@ Future<void> main() async {
                           pageBuilder: (
                             BuildContext context,
                             Animation<double> _,
-                            Animation<double> __,
+                            Animation<double> _,
                           ) {
                             return Card(
                               child: Hero(
@@ -3142,7 +3142,7 @@ Future<void> main() async {
                           pageBuilder: (
                             BuildContext context,
                             Animation<double> _,
-                            Animation<double> __,
+                            Animation<double> _,
                           ) {
                             return Card(
                               child: Hero(

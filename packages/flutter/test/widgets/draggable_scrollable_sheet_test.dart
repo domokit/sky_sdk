@@ -99,7 +99,7 @@ void main() {
                   child: ListView.separated(
                     physics: const BouncingScrollPhysics(),
                     controller: scrollController,
-                    separatorBuilder: (_, __) => const Divider(),
+                    separatorBuilder: (_, _) => const Divider(),
                     itemCount: 100,
                     itemBuilder:
                         (_, int index) => SizedBox(
@@ -415,7 +415,7 @@ void main() {
                   return ListView.separated(
                     physics: const BouncingScrollPhysics(),
                     controller: scrollController,
-                    separatorBuilder: (_, __) => const Divider(),
+                    separatorBuilder: (_, _) => const Divider(),
                     itemCount: 100,
                     itemBuilder:
                         (_, int index) => SizedBox(

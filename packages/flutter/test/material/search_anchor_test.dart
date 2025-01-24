@@ -3200,6 +3200,33 @@ void main() {
     expect(controller.value.text, initValue);
   });
 
+  testWidgets('Block entering text on disabled widget with SearchAnchor.bar', (
+    WidgetTester tester,
+  ) async {
+    const String initValue = 'init';
+    final TextEditingController controller = TextEditingController(text: initValue);
+    addTearDown(controller.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: SearchAnchor.bar(
+              suggestionsBuilder: (BuildContext context, SearchController controller) {
+                return <Widget>[];
+              },
+              enabled: false,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    const String testValue = 'abcdefghi';
+    await tester.enterText(find.byType(SearchBar), testValue);
+    expect(controller.value.text, initValue);
+  });
+
   testWidgets('Disabled SearchBar semantics node still contains value', (
     WidgetTester tester,
   ) async {

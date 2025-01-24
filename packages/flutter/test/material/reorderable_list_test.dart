@@ -78,7 +78,7 @@ void main() {
         final List<String> currentListItems = listItems.take(1).toList();
         final ReorderableListView reorderableListView = ReorderableListView(
           header: const Text('Header'),
-          onReorder: (_, __) => onReorderWasCalled = true,
+          onReorder: (_, _) => onReorderWasCalled = true,
           children: currentListItems.map<Widget>(listItemToWidget).toList(),
         );
         final List<String> currentOriginalListItems = originalListItems.take(1).toList();
@@ -368,7 +368,7 @@ void main() {
                 height: 100,
                 child: ReorderableListView(
                   children: const <Widget>[SizedBox(key: firstBox, width: 10, height: 10)],
-                  onReorder: (_, __) {},
+                  onReorder: (_, _) {},
                 ),
               ),
             ),
@@ -839,7 +839,7 @@ void main() {
         final ReorderableListView reorderableListView = ReorderableListView(
           header: const Text('Header'),
           scrollDirection: Axis.horizontal,
-          onReorder: (_, __) => onReorderWasCalled = true,
+          onReorder: (_, _) => onReorderWasCalled = true,
           children: currentListItems.map<Widget>(listItemToWidget).toList(),
         );
         final List<String> currentOriginalListItems = originalListItems.take(1).toList();
@@ -1147,7 +1147,7 @@ void main() {
                 child: ReorderableListView(
                   scrollDirection: Axis.horizontal,
                   children: const <Widget>[SizedBox(key: firstBox, width: 10, height: 10)],
-                  onReorder: (_, __) {},
+                  onReorder: (_, _) {},
                 ),
               ),
             ),
@@ -2256,6 +2256,7 @@ void main() {
         duration: const Duration(milliseconds: 600),
         interval: Duration(milliseconds: (1000 / autoScrollerVelocityScalar).round()),
       );
+      await drag.up();
 
       return scrollController.offset;
     }

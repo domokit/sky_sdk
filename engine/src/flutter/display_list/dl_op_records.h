@@ -15,7 +15,6 @@
 
 #include "flutter/impeller/geometry/path.h"
 #include "flutter/impeller/typographer/text_frame.h"
-#include "third_party/skia/include/core/SkRSXform.h"
 
 namespace flutter {
 
@@ -841,7 +840,7 @@ DEFINE_DRAW_IMAGE_NINE_OP(DrawImageNineWithAttr, true)
 // 4 byte header + 40 byte payload uses 44 bytes but is rounded up to 48 bytes
 // (4 bytes unused)
 // Each of these is then followed by a number of lists.
-// SkRSXform list is a multiple of 16 bytes so it is always packed well
+// DlRSTransform list is a multiple of 16 bytes so it is always packed well
 // DlRect list is also a multiple of 16 bytes so it also packs well
 // DlColor list only packs well if the count is even, otherwise there
 // can be 4 unusued bytes at the end.
@@ -876,7 +875,7 @@ struct DrawAtlasBaseOp : DrawOpBase {
                 render_with_attributes == other->render_with_attributes &&
                 sampling == other->sampling && atlas->Equals(other->atlas));
     if (ret) {
-      size_t bytes = count * (sizeof(SkRSXform) + sizeof(DlRect));
+      size_t bytes = count * (sizeof(DlRSTransform) + sizeof(DlRect));
       if (has_colors) {
         bytes += count * sizeof(DlColor);
       }
@@ -906,7 +905,8 @@ struct DrawAtlasOp final : DrawAtlasBaseOp {
                         render_with_attributes) {}
 
   void dispatch(DlOpReceiver& receiver) const {
-    const SkRSXform* xform = reinterpret_cast<const SkRSXform*>(this + 1);
+    const DlRSTransform* xform =
+        reinterpret_cast<const DlRSTransform*>(this + 1);
     const DlRect* tex = reinterpret_cast<const DlRect*>(xform + count);
     const DlColor* colors =
         has_colors ? reinterpret_cast<const DlColor*>(tex + count) : nullptr;
@@ -950,7 +950,8 @@ struct DrawAtlasCulledOp final : DrawAtlasBaseOp {
   const DlRect cull_rect;
 
   void dispatch(DlOpReceiver& receiver) const {
-    const SkRSXform* xform = reinterpret_cast<const SkRSXform*>(this + 1);
+    const DlRSTransform* xform =
+        reinterpret_cast<const DlRSTransform*>(this + 1);
     const DlRect* tex = reinterpret_cast<const DlRect*>(xform + count);
     const DlColor* colors =
         has_colors ? reinterpret_cast<const DlColor*>(tex + count) : nullptr;

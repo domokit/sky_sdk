@@ -450,13 +450,13 @@ PathBuilder& PathBuilder::AddLine(const Point& p1, const Point& p2) {
 PathBuilder& PathBuilder::AddPath(const Path& path) {
   auto& points = prototype_.points;
   auto& components = prototype_.components;
+  size_t source_offset = points.size();
 
   points.insert(points.end(), path.data_->points.begin(),
                 path.data_->points.end());
   components.insert(components.end(), path.data_->components.begin(),
                     path.data_->components.end());
 
-  size_t source_offset = points.size();
   for (auto component : path.data_->components) {
     if (component == Path::ComponentType::kContour) {
       current_contour_location_ = source_offset;

@@ -168,7 +168,7 @@ void main() {
       _Comparator.skip,
     );
 
-    // On Luci, with Gold, post-submit. Flutter root and Cirrus variables should have no effect.
+    // On Luci, with Gold, post-submit. Flutter root has no effect.
     expect(_testRecommendations(os: 'linux', hasGold: true, hasLuci: true), _Comparator.post);
     expect(
       _testRecommendations(os: 'linux', hasGold: true, hasLuci: true, hasFlutterRoot: true),

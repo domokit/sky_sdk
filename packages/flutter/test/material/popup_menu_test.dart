@@ -4103,7 +4103,7 @@ void main() {
 
     // Override the animation duration.
     await tester.pumpWidget(
-      buildPopupMenu(animationStyle: AnimationStyle(duration: Duration.zero)),
+      buildPopupMenu(animationStyle: const AnimationStyle(duration: Duration.zero)),
     );
 
     await tester.tap(find.byKey(targetKey));
@@ -4121,7 +4121,7 @@ void main() {
 
     // Override the animation curve.
     await tester.pumpWidget(
-      buildPopupMenu(animationStyle: AnimationStyle(curve: Easing.emphasizedAccelerate)),
+      buildPopupMenu(animationStyle: const AnimationStyle(curve: Easing.emphasizedAccelerate)),
     );
 
     await tester.tap(find.byKey(targetKey));

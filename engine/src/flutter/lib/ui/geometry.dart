@@ -1747,7 +1747,7 @@ class RRect {
 ///
 /// Used by [Canvas.drawAtlas]. This is a more efficient way to represent these
 /// simple transformations than a full matrix.
-// Modeled after Skia's SkRSXform.
+// Modeled after Impeller's RSTransform.
 class RSTransform {
   /// Creates an RSTransform.
   ///

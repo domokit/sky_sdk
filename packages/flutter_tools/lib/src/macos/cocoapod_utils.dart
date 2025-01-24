@@ -2,13 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import '../base/error_handling_io.dart';
 import '../base/fingerprint.dart';
 import '../build_info.dart';
 import '../cache.dart';
 import '../flutter_plugins.dart';
 import '../globals.dart' as globals;
+import '../plugins.dart';
 import '../project.dart';
+import 'swift_package_manager.dart';
 
 /// For a given build, determines whether dependencies have changed since the
 /// last call to processPods, then calls processPods with that information.
@@ -61,8 +62,15 @@ Future<void> processPodsIfNeeded(
       await globals.cocoaPods?.setupPodfile(xcodeProject);
     }
 
-    // Delete Swift Package Manager manifest to invalidate fingerprinter
-    ErrorHandlingFileSystem.deleteIfExists(xcodeProject.flutterPluginSwiftPackageManifest);
+    // Generate an empty Swift Package Manager manifest to invalidate fingerprinter
+    final SwiftPackageManager swiftPackageManager = SwiftPackageManager(
+      fileSystem: globals.localFileSystem,
+      templateRenderer: globals.templateRenderer,
+    );
+    final SupportedPlatform platform =
+        xcodeProject is IosProject ? SupportedPlatform.ios : SupportedPlatform.macos;
+
+    await swiftPackageManager.generatePluginsSwiftPackage(const <Plugin>[], platform, xcodeProject);
   }
 
   // If the Xcode project, Podfile, generated plugin Swift Package, or podhelper

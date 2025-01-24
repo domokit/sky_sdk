@@ -656,50 +656,6 @@ final class EngineFlutterWindow extends EngineFlutterView implements ui.Singleto
       return false;
     });
   }
-
-  // TODO(mdebbar): Deprecate this and remove it.
-  // https://github.com/flutter/flutter/issues/127395
-  void debugOverrideDevicePixelRatio(double? value) {
-    assert(() {
-      printWarning(
-        'The window.debugOverrideDevicePixelRatio API is deprecated and will '
-        'be removed in a future release. Please use '
-        '`debugOverrideDevicePixelRatio` from `dart:ui_web` instead.',
-      );
-      return true;
-    }());
-    display.debugOverrideDevicePixelRatio(value);
-  }
-
-  // TODO(mdebbar): Deprecate this and remove it.
-  // https://github.com/flutter/flutter/issues/127395
-  ui.Size? get webOnlyDebugPhysicalSizeOverride {
-    assert(() {
-      printWarning(
-        'The webOnlyDebugPhysicalSizeOverride API is deprecated and will be '
-        'removed in a future release. Please use '
-        '`SingletonFlutterWindow.debugPhysicalSizeOverride` from `dart:ui_web` '
-        'instead.',
-      );
-      return true;
-    }());
-    return debugPhysicalSizeOverride;
-  }
-
-  // TODO(mdebbar): Deprecate this and remove it.
-  // https://github.com/flutter/flutter/issues/127395
-  set webOnlyDebugPhysicalSizeOverride(ui.Size? value) {
-    assert(() {
-      printWarning(
-        'The webOnlyDebugPhysicalSizeOverride API is deprecated and will be '
-        'removed in a future release. Please use '
-        '`SingletonFlutterWindow.debugPhysicalSizeOverride` from `dart:ui_web` '
-        'instead.',
-      );
-      return true;
-    }());
-    debugPhysicalSizeOverride = value;
-  }
 }
 
 /// The window singleton.

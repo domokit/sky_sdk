@@ -47,7 +47,7 @@
                         "--variant",
                         "ci/host_debug_arm64_tests",
                         "--type",
-                        "dart,dart-host,engine",
+                        "dart,dart-host,engine,font-subset",
                         "--engine-capture-core-dump"
                     ]
                 }

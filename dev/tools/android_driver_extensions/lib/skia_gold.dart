@@ -46,6 +46,12 @@ Future<void> enableSkiaGoldComparator({String? namePrefix}) async {
       'Set it to use Skia Gold.',
     );
   }
+  if (namePrefix != null) {
+    assert(
+      !namePrefix.endsWith('.'),
+      'The namePrefix automatically has a suffix of ".", so remove the last character from "$namePrefix".',
+    );
+  }
   final io.Directory tmpDir = io.Directory.systemTemp.createTempSync('android_driver_test');
   final bool isPresubmit = io.Platform.environment.containsKey(_kGoldctlPresubmitKey);
   io.stderr.writeln(
@@ -126,12 +132,6 @@ final class _GoldenFileComparator extends GoldenFileComparator {
       'Golden files in the Flutter framework must end with the file extension '
       '.png.',
     );
-    return Uri.parse(
-      <String>[
-        if (namePrefix != null) namePrefix!,
-        baseDir.pathSegments[baseDir.pathSegments.length - 2],
-        golden.toString(),
-      ].join('.'),
-    );
+    return Uri.parse(<String>[if (namePrefix != null) namePrefix!, golden.toString()].join('.'));
   }
 }

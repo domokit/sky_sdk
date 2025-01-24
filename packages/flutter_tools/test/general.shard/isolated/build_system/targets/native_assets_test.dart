@@ -14,7 +14,6 @@ import 'package:flutter_tools/src/build_system/targets/native_assets.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/isolated/native_assets/native_assets.dart';
 import 'package:native_assets_cli/code_assets_builder.dart';
-import 'package:package_config/package_config.dart' show Package;
 
 import '../../../../src/common.dart';
 import '../../../../src/context.dart';
@@ -94,7 +93,7 @@ void main() {
       await createPackageConfig(iosEnvironment);
 
       final FlutterNativeAssetsBuildRunner buildRunner = FakeFlutterNativeAssetsBuildRunner(
-        packagesWithNativeAssetsResult: <Package>[Package('foo', iosEnvironment.projectDir.uri)],
+        packagesWithNativeAssetsResult: <String>['foo'],
       );
 
       iosEnvironment.defines.remove(kSdkRoot);
@@ -200,7 +199,7 @@ void main() {
         ),
       ];
       final FlutterNativeAssetsBuildRunner buildRunner = FakeFlutterNativeAssetsBuildRunner(
-        packagesWithNativeAssetsResult: <Package>[Package('foo', iosEnvironment.buildDir.uri)],
+        packagesWithNativeAssetsResult: <String>['foo'],
         buildResult: FakeFlutterNativeAssetsBuilderResult.fromAssets(
           codeAssets: codeAssets,
           dependencies: <Uri>[Uri.file('src/foo.c')],
@@ -268,9 +267,7 @@ void main() {
             ),
         ];
         final FakeFlutterNativeAssetsBuildRunner buildRunner = FakeFlutterNativeAssetsBuildRunner(
-          packagesWithNativeAssetsResult: <Package>[
-            Package('foo', androidEnvironment.buildDir.uri),
-          ],
+          packagesWithNativeAssetsResult: <String>['foo'],
           buildResult: FakeFlutterNativeAssetsBuilderResult.fromAssets(
             codeAssets: codeAssets,
             dependencies: <Uri>[Uri.file('src/foo.c')],

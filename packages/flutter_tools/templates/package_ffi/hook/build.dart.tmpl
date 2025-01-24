@@ -3,8 +3,8 @@ import 'package:logging/logging.dart';
 import 'package:native_assets_cli/native_assets_cli.dart';
 
 void main(List<String> args) async {
-  await build(args, (config, output) async {
-    final packageName = config.packageName;
+  await build(args, (input, output) async {
+    final packageName = input.packageName;
     final cbuilder = CBuilder.library(
       name: packageName,
       assetName: '${packageName}_bindings_generated.dart',
@@ -13,7 +13,7 @@ void main(List<String> args) async {
       ],
     );
     await cbuilder.run(
-      config: config,
+      input: input,
       output: output,
       logger: Logger('')
         ..level = Level.ALL

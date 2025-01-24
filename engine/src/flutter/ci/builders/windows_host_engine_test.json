@@ -1,0 +1,49 @@
+{
+    "_comment": [
+        "The builds defined in this file should only contain tests, ",
+        "and the file should not contain builds that produce artifacts. "
+    ],
+    "builds": [
+        {
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Windows-10"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/host_debug_test",
+                "--runtime-mode",
+                "debug",
+                "--no-lto",
+                "--no-goma",
+                "--rbe"
+            ],
+            "name": "ci\\host_debug_test",
+            "description": "Builds host-side unit tests for Windows.",
+            "ninja": {
+                "config": "ci/host_debug_test",
+                "targets": [
+                    "flutter:unittests"
+                ]
+            },
+            "tests": [
+                {
+                    "language": "python3",
+                    "name": "Host Tests for host_debug_test",
+                    "script": "flutter/testing/run_tests.py",
+                    "parameters": [
+                        "--variant",
+                        "ci/host_debug_test",
+                        "--type",
+                        "engine"
+                    ]
+                }
+            ]
+        }
+    ]
+}

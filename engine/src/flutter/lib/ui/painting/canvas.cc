@@ -581,8 +581,8 @@ Dart_Handle Canvas::drawAtlas(Dart_Handle paint_objects,
     return ToDart(error.value());
   }
 
-  static_assert(sizeof(SkRSXform) == sizeof(float) * 4,
-                "SkRSXform doesn't use floats.");
+  static_assert(sizeof(DlRSTransform) == sizeof(float) * 4,
+                "DlRSTransform doesn't use floats.");
   static_assert(sizeof(DlRect) == sizeof(float) * 4,
                 "DlRect doesn't use floats.");
 
@@ -605,7 +605,7 @@ Dart_Handle Canvas::drawAtlas(Dart_Handle paint_objects,
     const DlPaint* opt_paint =
         paint.paint(dl_paint, kDrawAtlasWithPaintFlags, DlTileMode::kClamp);
     builder()->DrawAtlas(
-        dl_image, reinterpret_cast<const SkRSXform*>(transforms.data()),
+        dl_image, reinterpret_cast<const DlRSTransform*>(transforms.data()),
         reinterpret_cast<const DlRect*>(rects.data()), dl_color.data(),
         rects.num_elements() / 4,  // DlRect have four floats.
         blend_mode, sampling, reinterpret_cast<const DlRect*>(cull_rect.data()),

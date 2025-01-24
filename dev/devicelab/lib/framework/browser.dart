@@ -45,7 +45,7 @@ class ChromeOptions {
   final int windowHeight;
 
   /// Launches code in "headless" mode, which allows running Chrome in
-  /// environments without a display, such as LUCI and Cirrus.
+  /// environments without a display, such as LUCI.
   final bool? headless;
 
   /// The port Chrome will use for its debugging protocol.

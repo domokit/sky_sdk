@@ -282,6 +282,7 @@ class _GifHeaderReader {
     int framesFound = 0;
     // Read the GIF until we either find 2 frames or reach the end of the GIF.
     while (true) {
+      _maybeSkipSpecialPurposeBlocks();
       final bool isTrailer = _checkForTrailer();
       if (isTrailer) {
         return framesFound > 1;
@@ -290,11 +291,7 @@ class _GifHeaderReader {
       // If we haven't reached the end, then the next block must either be a
       // graphic block or a special-purpose block (comment extension or
       // application extension).
-      final bool isSpecialPurposeBlock = _checkForSpecialPurposeBlock();
-      if (isSpecialPurposeBlock) {
-        _skipSpecialPurposeBlock();
-        continue;
-      }
+      _maybeSkipSpecialPurposeBlocks();
 
       // If the next block isn't a special-purpose block, it must be a graphic
       // block. Increase the frame count, skip the graphic block, and keep
@@ -322,8 +319,15 @@ class _GifHeaderReader {
     return nextByte == 0x3b;
   }
 
-  /// Returns [true] if the next block is a Special-Purpose Block (either a
-  /// Comment Extension or an Application Extension).
+  /// Skip Special Purpose Blocks (they do not effect decoding).
+  void _maybeSkipSpecialPurposeBlocks() {
+    while (_checkForSpecialPurposeBlock()) {
+      _skipSpecialPurposeBlock();
+    }
+  }
+
+  /// Returns [true] if the next block is a Special-Purpose Block (extension
+  /// label between 0xFA and 0xFF).
   bool _checkForSpecialPurposeBlock() {
     final int extensionIntroducer = bytes.getUint8(_position);
     if (extensionIntroducer != 0x21) {
@@ -332,9 +336,8 @@ class _GifHeaderReader {
 
     final int extensionLabel = bytes.getUint8(_position + 1);
 
-    // The Comment Extension label is 0xFE, the Application Extension Label is
-    // 0xFF.
-    return extensionLabel == 0xfe || extensionLabel == 0xff;
+    // A Special Purpose Block has a label between 0xFA and 0xFF.
+    return extensionLabel >= 0xfa && extensionLabel <= 0xff;
   }
 
   /// Skips past the current control block.
@@ -364,16 +367,20 @@ class _GifHeaderReader {
 
   /// Skip past the graphic block.
   void _skipGraphicBlock() {
+    _maybeSkipSpecialPurposeBlocks();
     // Check for the optional Graphic Control Extension.
     if (_checkForGraphicControlExtension()) {
       _skipGraphicControlExtension();
     }
 
+    _maybeSkipSpecialPurposeBlocks();
     // Check if the Graphic Block is a Plain Text Extension.
     if (_checkForPlainTextExtension()) {
       _skipPlainTextExtension();
       return;
     }
+
+    _maybeSkipSpecialPurposeBlocks();
 
     // This is a Table-Based Image block.
     assert(bytes.getUint8(_position) == 0x2c);

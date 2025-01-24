@@ -73,55 +73,6 @@ static uint64_t to_lower(uint64_t n) {
   return n;
 }
 
-/**
- * FlKeyEmbedderUserData:
- * The user_data used when #FlKeyEmbedderResponder sends message through the
- * embedder.SendKeyEvent API.
- */
-G_DECLARE_FINAL_TYPE(FlKeyEmbedderUserData,
-                     fl_key_embedder_user_data,
-                     FL,
-                     KEY_EMBEDDER_USER_DATA,
-                     GObject);
-
-struct _FlKeyEmbedderUserData {
-  GObject parent_instance;
-
-  FlKeyEmbedderResponderAsyncCallback callback;
-  gpointer user_data;
-};
-
-G_DEFINE_TYPE(FlKeyEmbedderUserData, fl_key_embedder_user_data, G_TYPE_OBJECT)
-
-static void fl_key_embedder_user_data_dispose(GObject* object);
-
-static void fl_key_embedder_user_data_class_init(
-    FlKeyEmbedderUserDataClass* klass) {
-  G_OBJECT_CLASS(klass)->dispose = fl_key_embedder_user_data_dispose;
-}
-
-static void fl_key_embedder_user_data_init(FlKeyEmbedderUserData* self) {}
-
-static void fl_key_embedder_user_data_dispose(GObject* object) {
-  // The following line suppresses a warning for unused function
-  // FL_IS_KEY_EMBEDDER_USER_DATA.
-  g_return_if_fail(FL_IS_KEY_EMBEDDER_USER_DATA(object));
-}
-
-// Creates a new FlKeyChannelUserData private class with all information.
-//
-// The callback and the user_data might be nullptr.
-static FlKeyEmbedderUserData* fl_key_embedder_user_data_new(
-    FlKeyEmbedderResponderAsyncCallback callback,
-    gpointer user_data) {
-  FlKeyEmbedderUserData* self = FL_KEY_EMBEDDER_USER_DATA(
-      g_object_new(fl_key_embedder_user_data_get_type(), nullptr));
-
-  self->callback = callback;
-  self->user_data = user_data;
-  return self;
-}
-
 namespace {
 
 typedef enum {
@@ -135,8 +86,8 @@ typedef enum {
 struct _FlKeyEmbedderResponder {
   GObject parent_instance;
 
-  EmbedderSendKeyEvent send_key_event;
-  void* send_key_event_user_data;
+  // Engine sending key events to.
+  GWeakRef engine;
 
   // Internal record for states of whether a key is pressed.
   //
@@ -190,6 +141,8 @@ struct _FlKeyEmbedderResponder {
   // It is a map from primary physical keys to lock bits.  Both keys and values
   // are directly stored uint64s.  This table is freed by the responder.
   GHashTable* logical_key_to_lock_bit;
+
+  GCancellable* cancellable;
 };
 
 static void fl_key_embedder_responder_dispose(GObject* object);
@@ -203,17 +156,23 @@ static void fl_key_embedder_responder_class_init(
 }
 
 // Initializes an FlKeyEmbedderResponder instance.
-static void fl_key_embedder_responder_init(FlKeyEmbedderResponder* self) {}
+static void fl_key_embedder_responder_init(FlKeyEmbedderResponder* self) {
+  self->cancellable = g_cancellable_new();
+}
 
 // Disposes of an FlKeyEmbedderResponder instance.
 static void fl_key_embedder_responder_dispose(GObject* object) {
   FlKeyEmbedderResponder* self = FL_KEY_EMBEDDER_RESPONDER(object);
 
+  g_cancellable_cancel(self->cancellable);
+
+  g_weak_ref_clear(&self->engine);
   g_clear_pointer(&self->pressing_records, g_hash_table_unref);
   g_clear_pointer(&self->mapping_records, g_hash_table_unref);
   g_clear_pointer(&self->modifier_bit_to_checked_keys, g_hash_table_unref);
   g_clear_pointer(&self->lock_bit_to_checked_keys, g_hash_table_unref);
   g_clear_pointer(&self->logical_key_to_lock_bit, g_hash_table_unref);
+  g_clear_object(&self->cancellable);
 
   G_OBJECT_CLASS(fl_key_embedder_responder_parent_class)->dispose(object);
 }
@@ -234,14 +193,11 @@ static void initialize_logical_key_to_lock_bit_loop_body(gpointer lock_bit,
 }
 
 // Creates a new FlKeyEmbedderResponder instance.
-FlKeyEmbedderResponder* fl_key_embedder_responder_new(
-    EmbedderSendKeyEvent send_key_event,
-    void* send_key_event_user_data) {
+FlKeyEmbedderResponder* fl_key_embedder_responder_new(FlEngine* engine) {
   FlKeyEmbedderResponder* self = FL_KEY_EMBEDDER_RESPONDER(
       g_object_new(fl_key_embedder_responder_get_type(), nullptr));
 
-  self->send_key_event = send_key_event;
-  self->send_key_event_user_data = send_key_event_user_data;
+  g_weak_ref_init(&self->engine, engine);
 
   self->pressing_records = g_hash_table_new(g_direct_hash, g_direct_equal);
   self->mapping_records = g_hash_table_new(g_direct_hash, g_direct_equal);
@@ -311,16 +267,6 @@ static char* event_to_character(FlKeyEvent* event) {
   return result;
 }
 
-// Handles a response from the embedder API to a key event sent to the framework
-// earlier.
-static void handle_response(bool handled, gpointer user_data) {
-  g_autoptr(FlKeyEmbedderUserData) data = FL_KEY_EMBEDDER_USER_DATA(user_data);
-
-  g_return_if_fail(data->callback != nullptr);
-
-  data->callback(handled, data->user_data);
-}
-
 // Sends a synthesized event to the framework with no demand for callback.
 static void synthesize_simple_event(FlKeyEmbedderResponder* self,
                                     FlutterKeyEventType type,
@@ -336,8 +282,11 @@ static void synthesize_simple_event(FlKeyEmbedderResponder* self,
   out_event.character = nullptr;
   out_event.synthesized = true;
   self->sent_any_events = true;
-  self->send_key_event(&out_event, nullptr, nullptr,
-                       self->send_key_event_user_data);
+  g_autoptr(FlEngine) engine = FL_ENGINE(g_weak_ref_get(&self->engine));
+  if (engine != nullptr) {
+    fl_engine_send_key_event(engine, &out_event, self->cancellable, nullptr,
+                             nullptr);
+  }
 }
 
 namespace {
@@ -750,12 +699,8 @@ static void fl_key_embedder_responder_handle_event_impl(
     FlKeyEmbedderResponder* responder,
     FlKeyEvent* event,
     uint64_t specified_logical_key,
-    FlKeyEmbedderResponderAsyncCallback callback,
-    gpointer user_data) {
+    GTask* task) {
   FlKeyEmbedderResponder* self = FL_KEY_EMBEDDER_RESPONDER(responder);
-
-  g_return_if_fail(event != nullptr);
-  g_return_if_fail(callback != nullptr);
 
   const uint64_t logical_key = specified_logical_key != 0
                                    ? specified_logical_key
@@ -811,7 +756,9 @@ static void fl_key_embedder_responder_handle_event_impl(
       // The physical key has been released before. It might indicate a missed
       // event due to loss of focus, or multiple keyboards pressed keys with the
       // same physical key. Ignore the up event.
-      callback(true, user_data);
+      gboolean* return_value = g_new0(gboolean, 1);
+      *return_value = TRUE;
+      g_task_return_pointer(task, return_value, g_free);
       return;
     } else {
       out_event.type = kFlutterKeyEventTypeUp;
@@ -825,41 +772,85 @@ static void fl_key_embedder_responder_handle_event_impl(
   if (is_down_event) {
     update_mapping_record(self, physical_key, logical_key);
   }
-  FlKeyEmbedderUserData* response_data =
-      fl_key_embedder_user_data_new(callback, user_data);
   self->sent_any_events = true;
-  self->send_key_event(&out_event, handle_response, response_data,
-                       self->send_key_event_user_data);
-}
+  g_autoptr(FlEngine) engine = FL_ENGINE(g_weak_ref_get(&self->engine));
+  if (engine != nullptr) {
+    fl_engine_send_key_event(
+        engine, &out_event, self->cancellable,
+        [](GObject* object, GAsyncResult* result, gpointer user_data) {
+          g_autoptr(GTask) task = G_TASK(user_data);
 
-void fl_key_embedder_responder_handle_event(
-    FlKeyEmbedderResponder* self,
-    FlKeyEvent* event,
-    uint64_t specified_logical_key,
-    FlKeyEmbedderResponderAsyncCallback callback,
-    gpointer user_data) {
-  self->sent_any_events = false;
-  fl_key_embedder_responder_handle_event_impl(
-      self, event, specified_logical_key, callback, user_data);
-  if (!self->sent_any_events) {
-    self->send_key_event(&kEmptyEvent, nullptr, nullptr,
-                         self->send_key_event_user_data);
+          gboolean handled;
+          g_autoptr(GError) error = nullptr;
+          if (!fl_engine_send_key_event_finish(FL_ENGINE(object), result,
+                                               &handled, &error)) {
+            if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+              return;
+            }
+            g_warning("Failed to handle key event: %s", error->message);
+            handled = FALSE;
+          }
+
+          gboolean* return_value = g_new0(gboolean, 1);
+          *return_value = handled;
+          g_task_return_pointer(task, return_value, g_free);
+        },
+        g_object_ref(task));
   }
 }
 
+void fl_key_embedder_responder_handle_event(FlKeyEmbedderResponder* self,
+                                            FlKeyEvent* event,
+                                            uint64_t specified_logical_key,
+                                            GCancellable* cancellable,
+                                            GAsyncReadyCallback callback,
+                                            gpointer user_data) {
+  g_autoptr(GTask) task = g_task_new(self, cancellable, callback, user_data);
+
+  self->sent_any_events = false;
+  fl_key_embedder_responder_handle_event_impl(self, event,
+                                              specified_logical_key, task);
+  if (!self->sent_any_events) {
+    g_autoptr(FlEngine) engine = FL_ENGINE(g_weak_ref_get(&self->engine));
+    if (engine != nullptr) {
+      fl_engine_send_key_event(engine, &kEmptyEvent, self->cancellable, nullptr,
+                               nullptr);
+    }
+  }
+}
+
+gboolean fl_key_embedder_responder_handle_event_finish(
+    FlKeyEmbedderResponder* self,
+    GAsyncResult* result,
+    gboolean* handled,
+    GError** error) {
+  g_return_val_if_fail(g_task_is_valid(result, self), FALSE);
+
+  g_autofree gboolean* return_value =
+      static_cast<gboolean*>(g_task_propagate_pointer(G_TASK(result), error));
+  if (return_value == nullptr) {
+    return FALSE;
+  }
+
+  *handled = *return_value;
+  return TRUE;
+}
+
 void fl_key_embedder_responder_sync_modifiers_if_needed(
-    FlKeyEmbedderResponder* responder,
+    FlKeyEmbedderResponder* self,
     guint state,
     double event_time) {
+  g_return_if_fail(FL_IS_KEY_EMBEDDER_RESPONDER(self));
+
   const double timestamp = event_time * kMicrosecondsPerMillisecond;
 
   SyncStateLoopContext sync_state_context;
-  sync_state_context.self = responder;
+  sync_state_context.self = self;
   sync_state_context.state = state;
   sync_state_context.timestamp = timestamp;
 
   // Update pressing states.
-  g_hash_table_foreach(responder->modifier_bit_to_checked_keys,
+  g_hash_table_foreach(self->modifier_bit_to_checked_keys,
                        synchronize_pressed_states_loop_body,
                        &sync_state_context);
 }

@@ -141,7 +141,7 @@ Future<void> initializeEngineServices({
   //
   // This extension does not need to clean-up Dart statics. Those are cleaned
   // up by the compiler.
-  developer.registerExtension('ext.flutter.disassemble', (_, __) {
+  developer.registerExtension('ext.flutter.disassemble', (_, _) {
     for (final ui.VoidCallback listener in _hotRestartListeners) {
       listener();
     }

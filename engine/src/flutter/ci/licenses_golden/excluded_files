@@ -160,6 +160,7 @@
 ../../../flutter/impeller/entity/contents/filters/matrix_filter_contents_unittests.cc
 ../../../flutter/impeller/entity/contents/host_buffer_unittests.cc
 ../../../flutter/impeller/entity/contents/test
+../../../flutter/impeller/entity/contents/text_contents_unittests.cc
 ../../../flutter/impeller/entity/contents/tiled_texture_contents_unittests.cc
 ../../../flutter/impeller/entity/draw_order_resolver_unittests.cc
 ../../../flutter/impeller/entity/entity_pass_target_unittests.cc
@@ -174,6 +175,7 @@
 ../../../flutter/impeller/geometry/path_unittests.cc
 ../../../flutter/impeller/geometry/rect_unittests.cc
 ../../../flutter/impeller/geometry/round_rect_unittests.cc
+../../../flutter/impeller/geometry/rstransform_unittests.cc
 ../../../flutter/impeller/geometry/saturated_math_unittests.cc
 ../../../flutter/impeller/geometry/size_unittests.cc
 ../../../flutter/impeller/geometry/trig_unittests.cc
@@ -184,6 +186,7 @@
 ../../../flutter/impeller/renderer/backend/gles/test
 ../../../flutter/impeller/renderer/backend/gles/unique_handle_gles_unittests.cc
 ../../../flutter/impeller/renderer/backend/metal/allocator_mtl_unittests.mm
+../../../flutter/impeller/renderer/backend/metal/swapchain_transients_mtl_unittests.mm
 ../../../flutter/impeller/renderer/backend/metal/texture_mtl_unittests.mm
 ../../../flutter/impeller/renderer/backend/vulkan/allocator_vk_unittests.cc
 ../../../flutter/impeller/renderer/backend/vulkan/command_encoder_vk_unittests.cc

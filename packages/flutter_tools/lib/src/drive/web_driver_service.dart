@@ -13,6 +13,7 @@ import 'package:webdriver/async_io.dart' as async_io;
 import '../base/common.dart';
 import '../base/io.dart';
 import '../base/logger.dart';
+import '../base/platform.dart';
 import '../base/process.dart';
 import '../base/utils.dart';
 import '../build_info.dart';
@@ -29,13 +30,16 @@ class WebDriverService extends DriverService {
   WebDriverService({
     required ProcessUtils processUtils,
     required String dartSdkPath,
+    required Platform platform,
     required Logger logger,
   }) : _processUtils = processUtils,
        _dartSdkPath = dartSdkPath,
+       _platform = platform,
        _logger = logger;
 
   final ProcessUtils _processUtils;
   final String _dartSdkPath;
+  final Platform _platform;
   final Logger _logger;
 
   late ResidentRunner _residentRunner;
@@ -143,7 +147,6 @@ class WebDriverService extends DriverService {
   Future<int> startTest(
     String testFile,
     List<String> arguments,
-    Map<String, String> environment,
     PackageConfig packageConfig, {
     bool? headless,
     String? chromeBinary,
@@ -195,9 +198,9 @@ class WebDriverService extends DriverService {
     final int result = await _processUtils.stream(
       <String>[_dartSdkPath, ...arguments, testFile],
       environment: <String, String>{
+        ..._platform.environment,
         'VM_SERVICE_URL': _webUri.toString(),
         ..._additionalDriverEnvironment(webDriver, browserName, androidEmulator),
-        ...environment,
       },
     );
     await webDriver.quit();

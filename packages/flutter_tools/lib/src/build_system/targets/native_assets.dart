@@ -39,14 +39,16 @@ abstract class DartBuild extends Target {
         logger: environment.logger,
       );
       final Uri projectUri = environment.projectDir.uri;
+      final String? runPackageName =
+          packageConfig.packages.where((Package p) => p.root == projectUri).firstOrNull?.name;
       final FlutterNativeAssetsBuildRunner buildRunner =
           _buildRunner ??
           FlutterNativeAssetsBuildRunnerImpl(
-            projectUri,
             environment.packageConfigPath,
             packageConfig,
             fileSystem,
             environment.logger,
+            runPackageName!,
           );
       result = await runFlutterSpecificDartBuild(
         environmentDefines: environment.defines,

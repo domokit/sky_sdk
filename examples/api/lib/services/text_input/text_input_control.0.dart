@@ -92,7 +92,7 @@ class MyVirtualKeyboardState extends State<MyVirtualKeyboard> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
       valueListenable: _inputControl.visible,
-      builder: (_, bool visible, __) {
+      builder: (_, bool visible, _) {
         return Visibility(
           visible: visible,
           child: FocusScope(

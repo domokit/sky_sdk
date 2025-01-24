@@ -102,6 +102,7 @@ impellerc("runtime_stages") {
 
 test_fixtures("file_fixtures") {
   fixtures = [
+    "//flutter/third_party/txt/third_party/fonts/ahem.ttf",
     "//flutter/third_party/txt/third_party/fonts/HomemadeApple.ttf",
     "//flutter/third_party/txt/third_party/fonts/NotoColorEmoji.ttf",
     "//flutter/third_party/txt/third_party/fonts/Roboto-Medium.ttf",

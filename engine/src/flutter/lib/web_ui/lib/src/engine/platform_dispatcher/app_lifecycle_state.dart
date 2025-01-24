@@ -104,7 +104,7 @@ class _BrowserAppLifecycleState extends AppLifecycleState {
     }
   });
 
-  void _onViewCountChanged(_) {
+  void _onViewCountChanged(int _) {
     if (_viewManager.views.isEmpty) {
       onAppLifecycleStateChange(ui.AppLifecycleState.detached);
     } else {

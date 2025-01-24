@@ -270,13 +270,13 @@ dependency_overrides:
   source_span:
     path: ./third_party/dart/third_party/pkg/tools/pkgs/source_span
   stack_trace:
-    path: ./third_party/dart/third_party/pkg/stack_trace
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/stack_trace
   stream_channel:
-    path: ./third_party/dart/third_party/pkg/stream_channel
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/stream_channel
   string_scanner:
-    path: ./third_party/dart/third_party/pkg/string_scanner
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/string_scanner
   term_glyph:
-    path: ./third_party/dart/third_party/pkg/term_glyph
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/term_glyph
   test:
     path: ./third_party/dart/third_party/pkg/test/pkgs/test
   test_api:
@@ -292,7 +292,7 @@ dependency_overrides:
   vm_service_protos:
     path: ./third_party/dart/pkg/vm_service_protos
   watcher:
-    path: ./third_party/dart/third_party/pkg/watcher
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/watcher
   web:
     path: ./third_party/dart/third_party/pkg/web/web
   web_socket:
@@ -302,4 +302,4 @@ dependency_overrides:
   webkit_inspection_protocol:
     path: ./third_party/dart/third_party/pkg/webkit_inspection_protocol
   yaml:
-    path: ./third_party/dart/third_party/pkg/yaml
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/yaml

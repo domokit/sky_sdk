@@ -1665,7 +1665,7 @@ void main() {
     addTearDown(provider.dispose);
     provider.value = RouteInformation(uri: Uri.parse('/'));
     final SimpleRouterDelegate delegate = SimpleRouterDelegate(
-      builder: (_, __) => const Text(expected),
+      builder: (_, _) => const Text(expected),
     );
     addTearDown(delegate.dispose);
     final RouterConfig<RouteInformation> config = RouterConfig<RouteInformation>(

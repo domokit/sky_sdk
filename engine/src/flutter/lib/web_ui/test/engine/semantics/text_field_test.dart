@@ -153,7 +153,7 @@ void testMain() {
       int actionCount = 0;
       strategy.enable(
         singlelineConfig,
-        onChange: (_, __) {
+        onChange: (_, _) {
           changeCount++;
         },
         onAction: (_) {
@@ -218,7 +218,7 @@ void testMain() {
     });
 
     test('Does not overwrite text value and selection editing state on semantic updates', () {
-      strategy.enable(singlelineConfig, onChange: (_, __) {}, onAction: (_) {});
+      strategy.enable(singlelineConfig, onChange: (_, _) {}, onAction: (_) {});
 
       final textFieldSemantics = createTextFieldSemantics(
         value: 'hello',
@@ -242,7 +242,7 @@ void testMain() {
     test('Updates editing state when receiving framework messages from the text input channel', () {
       expect(owner().semanticsHost.ownerDocument?.activeElement, domDocument.body);
 
-      strategy.enable(singlelineConfig, onChange: (_, __) {}, onAction: (_) {});
+      strategy.enable(singlelineConfig, onChange: (_, _) {}, onAction: (_) {});
 
       final textFieldSemantics = createTextFieldSemantics(
         value: 'hello',
@@ -280,7 +280,7 @@ void testMain() {
     test('Gives up focus after DOM blur', () {
       expect(owner().semanticsHost.ownerDocument?.activeElement, domDocument.body);
 
-      strategy.enable(singlelineConfig, onChange: (_, __) {}, onAction: (_) {});
+      strategy.enable(singlelineConfig, onChange: (_, _) {}, onAction: (_) {});
       final textFieldSemantics = createTextFieldSemantics(value: 'hello', isFocused: true);
 
       final textField = textFieldSemantics.semanticRole! as SemanticTextField;
@@ -294,7 +294,7 @@ void testMain() {
     });
 
     test('Does not dispose and recreate dom elements in persistent mode', () async {
-      strategy.enable(singlelineConfig, onChange: (_, __) {}, onAction: (_) {});
+      strategy.enable(singlelineConfig, onChange: (_, _) {}, onAction: (_) {});
 
       // It doesn't create a new DOM element.
       expect(strategy.domElement, isNull);
@@ -323,7 +323,7 @@ void testMain() {
     });
 
     test('Refocuses when setting editing state', () {
-      strategy.enable(singlelineConfig, onChange: (_, __) {}, onAction: (_) {});
+      strategy.enable(singlelineConfig, onChange: (_, _) {}, onAction: (_) {});
 
       createTextFieldSemantics(value: 'hello', isFocused: true);
       expect(strategy.domElement, isNotNull);
@@ -352,7 +352,7 @@ void testMain() {
     });
 
     test('Works in multi-line mode', () {
-      strategy.enable(multilineConfig, onChange: (_, __) {}, onAction: (_) {});
+      strategy.enable(multilineConfig, onChange: (_, _) {}, onAction: (_) {});
       createTextFieldSemantics(value: 'hello', isFocused: true, isMultiline: true);
 
       final textArea = strategy.domElement! as DomHTMLTextAreaElement;
@@ -360,7 +360,7 @@ void testMain() {
 
       expect(owner().semanticsHost.ownerDocument?.activeElement, strategy.domElement);
 
-      strategy.enable(singlelineConfig, onChange: (_, __) {}, onAction: (_) {});
+      strategy.enable(singlelineConfig, onChange: (_, _) {}, onAction: (_) {});
 
       textArea.blur();
       expect(owner().semanticsHost.ownerDocument?.activeElement, domDocument.body);
@@ -373,7 +373,7 @@ void testMain() {
     });
 
     test('multi-line and obscured', () {
-      strategy.enable(multilineConfig, onChange: (_, __) {}, onAction: (_) {});
+      strategy.enable(multilineConfig, onChange: (_, _) {}, onAction: (_) {});
       createTextFieldSemantics(
         value: 'hello',
         isFocused: true,
@@ -391,7 +391,7 @@ void testMain() {
     }, skip: ui_web.browser.browserEngine == ui_web.BrowserEngine.firefox);
 
     test('Does not position or size its DOM element', () {
-      strategy.enable(singlelineConfig, onChange: (_, __) {}, onAction: (_) {});
+      strategy.enable(singlelineConfig, onChange: (_, _) {}, onAction: (_) {});
 
       // Send width and height that are different from semantics values on
       // purpose.
@@ -450,7 +450,7 @@ void testMain() {
     }
 
     test('Changes focus from one text field to another through a semantics update', () {
-      strategy.enable(singlelineConfig, onChange: (_, __) {}, onAction: (_) {});
+      strategy.enable(singlelineConfig, onChange: (_, _) {}, onAction: (_) {});
 
       // Switch between the two fields a few times.
       for (int i = 0; i < 5; i++) {

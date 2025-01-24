@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
+import 'package:file_testing/file_testing.dart';
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/dart/pub.dart';
@@ -239,7 +240,8 @@ void main() {
             setUpProject(flutterProject, fs);
             createFakePlugins(flutterProject, fs, <String>['plugin_one', 'plugin_two']);
             flutterProject.ios.usesSwiftPackageManager = true;
-            flutterProject.ios.flutterPluginSwiftPackageManifest.createSync(recursive: true);
+            final File generatedManifestFile = flutterProject.ios.flutterPluginSwiftPackageManifest;
+            generatedManifestFile.createSync(recursive: true);
 
             await processPodsIfNeeded(
               flutterProject.ios,
@@ -254,7 +256,9 @@ void main() {
               'Swift Package Manager does not yet support this command. '
               'CocoaPods will be used instead.\n',
             );
-            expect(flutterProject.ios.flutterPluginSwiftPackageManifest.existsSync(), isFalse);
+            expect(generatedManifestFile, exists);
+            const String emptyDependencies = 'dependencies: [\n        \n    ],\n';
+            expect(generatedManifestFile.readAsStringSync(), contains(emptyDependencies));
           },
           overrides: <Type, Generator>{
             FileSystem: () => fs,
@@ -412,7 +416,9 @@ void main() {
             setUpProject(flutterProject, fs);
             createFakePlugins(flutterProject, fs, <String>['plugin_one', 'plugin_two']);
             flutterProject.macos.usesSwiftPackageManager = true;
-            flutterProject.macos.flutterPluginSwiftPackageManifest.createSync(recursive: true);
+            final File generatedManifestFile =
+                flutterProject.macos.flutterPluginSwiftPackageManifest;
+            generatedManifestFile.createSync(recursive: true);
 
             await processPodsIfNeeded(
               flutterProject.macos,
@@ -427,7 +433,10 @@ void main() {
               'Swift Package Manager does not yet support this command. '
               'CocoaPods will be used instead.\n',
             );
-            expect(flutterProject.macos.flutterPluginSwiftPackageManifest.existsSync(), isFalse);
+
+            expect(generatedManifestFile, exists);
+            const String emptyDependencies = 'dependencies: [\n        \n    ],\n';
+            expect(generatedManifestFile.readAsStringSync(), contains(emptyDependencies));
           },
           overrides: <Type, Generator>{
             FileSystem: () => fs,
@@ -517,6 +526,9 @@ class FakeMacOSProject extends Fake implements MacOSProject {
 
   @override
   bool usesSwiftPackageManager = false;
+
+  @override
+  bool get flutterPluginSwiftPackageInProjectSettings => usesSwiftPackageManager;
 }
 
 class FakeIosProject extends Fake implements IosProject {
@@ -555,6 +567,9 @@ class FakeIosProject extends Fake implements IosProject {
 
   @override
   bool usesSwiftPackageManager = false;
+
+  @override
+  bool get flutterPluginSwiftPackageInProjectSettings => usesSwiftPackageManager;
 }
 
 class FakeAndroidProject extends Fake implements AndroidProject {

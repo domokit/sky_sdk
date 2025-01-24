@@ -5,6 +5,7 @@
 // Logic for native assets shared between all host OSes.
 
 import 'package:native_assets_cli/code_assets.dart' show OS;
+import 'package:package_config/package_config_types.dart';
 
 import '../../../base/platform.dart';
 import '../../../build_info.dart';
@@ -29,12 +30,14 @@ Future<Uri?> testCompilerBuildNativeAssets(BuildInfo buildInfo) async {
     return null;
   }
   final Uri projectUri = FlutterProject.current().directory.uri;
+  final String runPackageName =
+      buildInfo.packageConfig.packages.firstWhere((Package p) => p.root == projectUri).name;
   final FlutterNativeAssetsBuildRunner buildRunner = FlutterNativeAssetsBuildRunnerImpl(
-    projectUri,
     buildInfo.packageConfigPath,
     buildInfo.packageConfig,
     globals.fs,
     globals.logger,
+    runPackageName,
   );
 
   if (!globals.platform.isMacOS && !globals.platform.isLinux && !globals.platform.isWindows) {

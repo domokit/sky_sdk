@@ -104,19 +104,21 @@ class CopyArtifactsStep implements PipelineStep {
     await copyTestFonts();
     await copySkiaTestImages();
     await copyFlutterJsFiles(flutterJsSourceDirectory);
+    final copied = <String>[];
     if (artifactDeps.canvasKit) {
-      print('Copying CanvasKit...');
+      copied.add('CanvasKit');
       await copyWasmLibrary('canvaskit', canvaskitSourceDirectory, 'canvaskit');
     }
     if (artifactDeps.canvasKitChromium) {
-      print('Copying CanvasKit (Chromium)...');
+      copied.add('CanvasKit (Chromium)');
       await copyWasmLibrary('canvaskit', canvaskitChromiumSourceDirectory, 'canvaskit/chromium');
     }
     if (artifactDeps.skwasm) {
-      print('Copying Skwasm...');
+      copied.add('Skwasm');
       await copyWasmLibrary('skwasm', skwasmSourceDirectory, 'canvaskit');
       await copyWasmLibrary('skwasm_st', skwasmStSourceDirectory, 'canvaskit');
     }
+    print('Copied artifacts: ${copied.join(', ')}');
   }
 
   Future<void> copyTestFonts() async {
@@ -201,7 +203,8 @@ class CopyArtifactsStep implements PipelineStep {
 
     for (final io.File imageFile in testImagesDir.listSync(recursive: true).whereType<io.File>()) {
       // Skip files that are used by Skia to test handling of invalid input.
-      if (pathlib.basename(imageFile.path).contains('invalid')) {
+      final String imageBaseName = pathlib.basename(imageFile.path);
+      if (imageBaseName.contains('invalid') || imageBaseName.contains('missing_eof')) {
         continue;
       }
       final io.File destination = io.File(

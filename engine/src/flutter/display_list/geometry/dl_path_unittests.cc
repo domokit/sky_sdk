@@ -13,13 +13,12 @@ namespace testing {
 TEST(DisplayListPath, DefaultConstruction) {
   DlPath path;
 
+  EXPECT_FALSE(path.IsConverted());
   EXPECT_EQ(path, DlPath());
   EXPECT_EQ(path.GetSkPath(), SkPath());
-
-  EXPECT_FALSE(path.IsInverseFillType());
-  EXPECT_FALSE(path.IsConverted());
   EXPECT_TRUE(path.GetPath().IsEmpty());
   EXPECT_TRUE(path.IsConverted());
+
   EXPECT_FALSE(path.IsVolatile());
 
   bool is_closed = false;
@@ -27,6 +26,7 @@ TEST(DisplayListPath, DefaultConstruction) {
   EXPECT_FALSE(path.IsRect(nullptr, &is_closed));
   EXPECT_FALSE(is_closed);
   EXPECT_FALSE(path.IsOval(nullptr));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
 
   is_closed = false;
   EXPECT_FALSE(path.IsSkRect(nullptr));
@@ -39,15 +39,14 @@ TEST(DisplayListPath, DefaultConstruction) {
   EXPECT_EQ(path.GetSkBounds(), SkRect());
 }
 
-TEST(DisplayListPath, ConstructFromEmpty) {
+TEST(DisplayListPath, ConstructFromEmptySkiaPath) {
   SkPath sk_path;
   DlPath path(sk_path);
 
   EXPECT_EQ(path, DlPath());
   EXPECT_EQ(path.GetSkPath(), SkPath());
-
-  EXPECT_FALSE(path.IsInverseFillType());
   EXPECT_FALSE(path.IsConverted());
+
   EXPECT_TRUE(path.GetPath().IsEmpty());
   EXPECT_TRUE(path.IsConverted());
   EXPECT_FALSE(path.IsVolatile());
@@ -57,6 +56,38 @@ TEST(DisplayListPath, ConstructFromEmpty) {
   EXPECT_FALSE(path.IsRect(nullptr, &is_closed));
   EXPECT_FALSE(is_closed);
   EXPECT_FALSE(path.IsOval(nullptr));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
+
+  is_closed = false;
+  EXPECT_FALSE(path.IsSkRect(nullptr));
+  EXPECT_FALSE(path.IsSkRect(nullptr, &is_closed));
+  EXPECT_FALSE(is_closed);
+  EXPECT_FALSE(path.IsSkOval(nullptr));
+  EXPECT_FALSE(path.IsSkRRect(nullptr));
+
+  EXPECT_EQ(path.GetBounds(), DlRect());
+  EXPECT_EQ(path.GetSkBounds(), SkRect());
+}
+
+TEST(DisplayListPath, ConstructFromEmptyImpellerPath) {
+  impeller::Path imp_path;
+  DlPath path(imp_path);
+
+  EXPECT_TRUE(path.GetPath().IsEmpty());
+  EXPECT_FALSE(path.IsConverted());
+
+  EXPECT_EQ(path.GetSkPath(), SkPath());
+  EXPECT_TRUE(path.IsConverted());
+  EXPECT_FALSE(path.IsVolatile());
+
+  EXPECT_EQ(path, DlPath());
+
+  bool is_closed = false;
+  EXPECT_FALSE(path.IsRect(nullptr));
+  EXPECT_FALSE(path.IsRect(nullptr, &is_closed));
+  EXPECT_FALSE(is_closed);
+  EXPECT_FALSE(path.IsOval(nullptr));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
 
   is_closed = false;
   EXPECT_FALSE(path.IsSkRect(nullptr));
@@ -78,7 +109,6 @@ TEST(DisplayListPath, CopyConstruct) {
   EXPECT_EQ(path2, DlPath(SkPath::Oval(SkRect::MakeLTRB(10, 10, 20, 20))));
   EXPECT_EQ(path2.GetSkPath(), SkPath::Oval(SkRect::MakeLTRB(10, 10, 20, 20)));
 
-  EXPECT_FALSE(path2.IsInverseFillType());
   EXPECT_FALSE(path2.IsConverted());
   EXPECT_FALSE(path2.IsVolatile());
 
@@ -87,6 +117,7 @@ TEST(DisplayListPath, CopyConstruct) {
   EXPECT_FALSE(path2.IsRect(nullptr, &is_closed));
   EXPECT_FALSE(is_closed);
   EXPECT_TRUE(path2.IsOval(nullptr));
+  EXPECT_FALSE(path2.IsRoundRect(nullptr));
 
   is_closed = false;
   EXPECT_FALSE(path2.IsSkRect(nullptr));
@@ -107,7 +138,6 @@ TEST(DisplayListPath, ConstructFromVolatile) {
   EXPECT_EQ(path, DlPath());
   EXPECT_EQ(path.GetSkPath(), SkPath());
 
-  EXPECT_FALSE(path.IsInverseFillType());
   EXPECT_FALSE(path.IsConverted());
   EXPECT_TRUE(path.GetPath().IsEmpty());
   EXPECT_TRUE(path.IsConverted());
@@ -118,6 +148,7 @@ TEST(DisplayListPath, ConstructFromVolatile) {
   EXPECT_FALSE(path.IsRect(nullptr, &is_closed));
   EXPECT_FALSE(is_closed);
   EXPECT_FALSE(path.IsOval(nullptr));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
 
   is_closed = false;
   EXPECT_FALSE(path.IsSkRect(nullptr));
@@ -217,13 +248,12 @@ TEST(DisplayListPath, EmbeddingSharedReference) {
                 SkPath::Oval(SkRect::MakeLTRB(10, 10, 20, 20)))
           << label;
 
-      EXPECT_FALSE(path_.IsInverseFillType()) << label;
-
       bool is_closed = false;
       EXPECT_FALSE(path_.IsRect(nullptr)) << label;
       EXPECT_FALSE(path_.IsRect(nullptr, &is_closed)) << label;
       EXPECT_FALSE(is_closed) << label;
       EXPECT_TRUE(path_.IsOval(nullptr)) << label;
+      EXPECT_FALSE(path_.IsRoundRect(nullptr));
 
       is_closed = false;
       EXPECT_FALSE(path_.IsSkRect(nullptr)) << label;
@@ -261,7 +291,6 @@ TEST(DisplayListPath, ConstructFromRect) {
   EXPECT_EQ(path, DlPath(SkPath::Rect(SkRect::MakeLTRB(10, 10, 20, 20))));
   EXPECT_EQ(path.GetSkPath(), SkPath::Rect(SkRect::MakeLTRB(10, 10, 20, 20)));
 
-  EXPECT_FALSE(path.IsInverseFillType());
   EXPECT_FALSE(path.IsConverted());
   EXPECT_FALSE(path.GetPath().IsEmpty());
   EXPECT_TRUE(path.IsConverted());
@@ -273,6 +302,48 @@ TEST(DisplayListPath, ConstructFromRect) {
   EXPECT_EQ(dl_rect, DlRect::MakeLTRB(10, 10, 20, 20));
   EXPECT_TRUE(is_closed);
   EXPECT_FALSE(path.IsOval(nullptr));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
+
+  is_closed = false;
+  EXPECT_TRUE(path.IsSkRect(nullptr));
+  SkRect sk_rect;
+  EXPECT_TRUE(path.IsSkRect(&sk_rect, &is_closed));
+  EXPECT_EQ(sk_rect, SkRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_TRUE(is_closed);
+  EXPECT_FALSE(path.IsSkOval(nullptr));
+  EXPECT_FALSE(path.IsSkRRect(nullptr));
+
+  EXPECT_EQ(path.GetBounds(), DlRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_EQ(path.GetSkBounds(), SkRect::MakeLTRB(10, 10, 20, 20));
+}
+
+TEST(DisplayListPath, ConstructFromDlPathBuilderRect) {
+  DlPathBuilder builder;
+  builder.AddRect(DlRect::MakeLTRB(10, 10, 20, 20));
+  DlPath path(builder);
+  EXPECT_FALSE(path.IsConverted());
+
+  // Paths constructed from PathBuilder don't match paths built from similar
+  // SkRect and SkPath and DlPath factory methods exactly, only paths built
+  // from similar PathBuilder calls match exactly for == comparison
+  {
+    DlPathBuilder builder2;
+    builder2.AddRect(DlRect::MakeLTRB(10, 10, 20, 20));
+    EXPECT_EQ(path, DlPath(builder2));
+  }
+  EXPECT_TRUE(path.IsConverted());
+
+  EXPECT_FALSE(path.GetSkPath().isEmpty());
+  EXPECT_FALSE(path.GetPath().IsEmpty());
+
+  bool is_closed = false;
+  EXPECT_TRUE(path.IsRect(nullptr));
+  DlRect dl_rect;
+  EXPECT_TRUE(path.IsRect(&dl_rect, &is_closed));
+  EXPECT_EQ(dl_rect, DlRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_TRUE(is_closed);
+  EXPECT_FALSE(path.IsOval(nullptr));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
 
   is_closed = false;
   EXPECT_TRUE(path.IsSkRect(nullptr));
@@ -294,7 +365,6 @@ TEST(DisplayListPath, ConstructFromOval) {
   EXPECT_EQ(path, DlPath(SkPath::Oval(SkRect::MakeLTRB(10, 10, 20, 20))));
   EXPECT_EQ(path.GetSkPath(), SkPath::Oval(SkRect::MakeLTRB(10, 10, 20, 20)));
 
-  EXPECT_FALSE(path.IsInverseFillType());
   EXPECT_FALSE(path.IsConverted());
   EXPECT_FALSE(path.GetPath().IsEmpty());
   EXPECT_TRUE(path.IsConverted());
@@ -304,12 +374,54 @@ TEST(DisplayListPath, ConstructFromOval) {
   DlRect dl_bounds;
   EXPECT_TRUE(path.IsOval(&dl_bounds));
   EXPECT_EQ(dl_bounds, DlRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
 
   EXPECT_FALSE(path.IsSkRect(nullptr));
   EXPECT_TRUE(path.IsSkOval(nullptr));
   SkRect sk_bounds;
   EXPECT_TRUE(path.IsSkOval(&sk_bounds));
   EXPECT_EQ(sk_bounds, SkRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_FALSE(path.IsSkRRect(nullptr));
+
+  EXPECT_EQ(path.GetBounds(), DlRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_EQ(path.GetSkBounds(), SkRect::MakeLTRB(10, 10, 20, 20));
+}
+
+TEST(DisplayListPath, ConstructFromDlPathBuilderOval) {
+  DlPathBuilder builder;
+  builder.AddOval(DlRect::MakeLTRB(10, 10, 20, 20));
+  DlPath path(builder);
+  EXPECT_FALSE(path.IsConverted());
+
+  // Paths constructed from PathBuilder don't match paths built from similar
+  // SkRect and SkPath and DlPath factory methods exactly, only paths built
+  // from similar PathBuilder calls match exactly for == comparison
+  {
+    DlPathBuilder builder2;
+    builder2.AddOval(DlRect::MakeLTRB(10, 10, 20, 20));
+    EXPECT_EQ(path, DlPath(builder2));
+  }
+  EXPECT_TRUE(path.IsConverted());
+
+  EXPECT_FALSE(path.GetSkPath().isEmpty());
+  EXPECT_FALSE(path.GetPath().IsEmpty());
+
+  // Skia path, used for these tests,  doesn't recognize ovals created
+  // by PathBuilder
+  EXPECT_FALSE(path.IsRect(nullptr));
+  // EXPECT_TRUE(path.IsOval(nullptr));
+  // DlRect dl_bounds;
+  // EXPECT_TRUE(path.IsOval(&dl_bounds));
+  // EXPECT_EQ(dl_bounds, DlRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
+
+  // Skia path, used for these tests,  doesn't recognize ovals created
+  // by PathBuilder
+  EXPECT_FALSE(path.IsSkRect(nullptr));
+  // EXPECT_TRUE(path.IsSkOval(nullptr));
+  // SkRect sk_bounds;
+  // EXPECT_TRUE(path.IsSkOval(&sk_bounds));
+  // EXPECT_EQ(sk_bounds, SkRect::MakeLTRB(10, 10, 20, 20));
   EXPECT_FALSE(path.IsSkRRect(nullptr));
 
   EXPECT_EQ(path.GetBounds(), DlRect::MakeLTRB(10, 10, 20, 20));
@@ -325,13 +437,17 @@ TEST(DisplayListPath, ConstructFromRRect) {
   EXPECT_EQ(path.GetSkPath(),
             SkPath::RRect(SkRect::MakeLTRB(10, 10, 20, 20), 1, 2));
 
-  EXPECT_FALSE(path.IsInverseFillType());
   EXPECT_FALSE(path.IsConverted());
+  EXPECT_FALSE(path.GetSkPath().isEmpty());
   EXPECT_FALSE(path.GetPath().IsEmpty());
   EXPECT_TRUE(path.IsConverted());
 
   EXPECT_FALSE(path.IsRect(nullptr));
   EXPECT_FALSE(path.IsOval(nullptr));
+  DlRoundRect roundrect;
+  EXPECT_TRUE(path.IsRoundRect(&roundrect));
+  EXPECT_EQ(roundrect,
+            DlRoundRect::MakeRectXY(DlRect::MakeLTRB(10, 10, 20, 20), 1, 2));
 
   EXPECT_FALSE(path.IsSkRect(nullptr));
   EXPECT_FALSE(path.IsSkOval(nullptr));
@@ -340,6 +456,50 @@ TEST(DisplayListPath, ConstructFromRRect) {
   EXPECT_TRUE(path.IsSkRRect(&rrect2));
   EXPECT_EQ(rrect2,
             SkRRect::MakeRectXY(SkRect::MakeLTRB(10, 10, 20, 20), 1, 2));
+
+  EXPECT_EQ(path.GetBounds(), DlRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_EQ(path.GetSkBounds(), SkRect::MakeLTRB(10, 10, 20, 20));
+}
+
+TEST(DisplayListPath, ConstructFromDlPathBuilderRoundRect) {
+  DlPathBuilder builder;
+  builder.AddRoundRect(
+      DlRoundRect::MakeRectXY(DlRect::MakeLTRB(10, 10, 20, 20), 1, 2));
+  DlPath path(builder);
+  EXPECT_FALSE(path.IsConverted());
+
+  // Paths constructed from PathBuilder don't match paths built from similar
+  // SkRRect and SkPath and DlPath factory methods exactly, only built from
+  // similar PathBuilder calls match exactly for == comparison
+  {
+    DlPathBuilder builder2;
+    builder2.AddRoundRect(
+        DlRoundRect::MakeRectXY(DlRect::MakeLTRB(10, 10, 20, 20), 1, 2));
+    EXPECT_EQ(path, DlPath(builder2));
+  }
+  EXPECT_TRUE(path.IsConverted());
+
+  EXPECT_FALSE(path.GetSkPath().isEmpty());
+  EXPECT_FALSE(path.GetPath().IsEmpty());
+
+  // Skia path, used for these tests,  doesn't recognize ovals created
+  // by PathBuilder
+  EXPECT_FALSE(path.IsRect(nullptr));
+  EXPECT_FALSE(path.IsOval(nullptr));
+  // DlRoundRect roundrect;
+  // EXPECT_TRUE(path.IsRoundRect(&roundrect));
+  // EXPECT_EQ(roundrect,
+  //           DlRoundRect::MakeRectXY(DlRect::MakeLTRB(10, 10, 20, 20), 1, 2));
+
+  // Skia path, used for these tests,  doesn't recognize round rects created
+  // by PathBuilder
+  EXPECT_FALSE(path.IsSkRect(nullptr));
+  EXPECT_FALSE(path.IsSkOval(nullptr));
+  // EXPECT_TRUE(path.IsSkRRect(nullptr));
+  // SkRRect rrect2;
+  // EXPECT_TRUE(path.IsSkRRect(&rrect2));
+  // EXPECT_EQ(rrect2,
+  //           SkRRect::MakeRectXY(SkRect::MakeLTRB(10, 10, 20, 20), 1, 2));
 
   EXPECT_EQ(path.GetBounds(), DlRect::MakeLTRB(10, 10, 20, 20));
   EXPECT_EQ(path.GetSkBounds(), SkRect::MakeLTRB(10, 10, 20, 20));
@@ -361,7 +521,6 @@ TEST(DisplayListPath, ConstructFromPath) {
   EXPECT_EQ(path, DlPath(sk_path2));
   EXPECT_EQ(path.GetSkPath(), sk_path2);
 
-  EXPECT_FALSE(path.IsInverseFillType());
   EXPECT_FALSE(path.IsConverted());
   EXPECT_FALSE(path.GetPath().IsEmpty());
   EXPECT_TRUE(path.IsConverted());
@@ -376,38 +535,50 @@ TEST(DisplayListPath, ConstructFromPath) {
   EXPECT_EQ(path.GetSkBounds(), SkRect::MakeLTRB(10, 10, 20, 20));
 }
 
-TEST(DisplayListPath, ConstructFromInversePath) {
-  SkPath sk_path1;
-  sk_path1.moveTo(10, 10);
-  sk_path1.lineTo(20, 20);
-  sk_path1.lineTo(20, 10);
-  sk_path1.setFillType(SkPathFillType::kInverseWinding);
-  SkPath sk_path2;
-  sk_path2.moveTo(10, 10);
-  sk_path2.lineTo(20, 20);
-  sk_path2.lineTo(20, 10);
-  sk_path2.setFillType(SkPathFillType::kInverseWinding);
-  DlPath path(sk_path1);
+TEST(DisplayListPath, ConstructFromImpellerEqualsConstructFromSkia) {
+  DlPathBuilder path_builder;
+  path_builder.MoveTo({0, 0});
+  path_builder.LineTo({100, 0});
+  path_builder.LineTo({0, 100});
+  path_builder.Close();
 
-  ASSERT_EQ(sk_path1, sk_path2);
+  SkPath sk_path;
+  sk_path.setFillType(SkPathFillType::kWinding);
+  sk_path.moveTo(0, 0);
+  sk_path.lineTo(100, 0);
+  sk_path.lineTo(0, 100);
+  sk_path.lineTo(0, 0);  // Shouldn't be needed, but PathBuilder draws this
+  sk_path.close();
 
-  EXPECT_EQ(path, DlPath(sk_path2));
-  EXPECT_EQ(path.GetSkPath(), sk_path2);
-
-  EXPECT_TRUE(path.IsInverseFillType());
-  EXPECT_FALSE(path.IsConverted());
-  EXPECT_FALSE(path.GetPath().IsEmpty());
-  EXPECT_TRUE(path.IsConverted());
-
-  EXPECT_FALSE(path.IsRect(nullptr));
-  EXPECT_FALSE(path.IsOval(nullptr));
-  EXPECT_FALSE(path.IsSkRect(nullptr));
-  EXPECT_FALSE(path.IsSkOval(nullptr));
-  EXPECT_FALSE(path.IsSkRRect(nullptr));
-
-  EXPECT_EQ(path.GetBounds(), DlRect::MakeLTRB(10, 10, 20, 20));
-  EXPECT_EQ(path.GetSkBounds(), SkRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_EQ(DlPath(path_builder, DlPathFillType::kNonZero), DlPath(sk_path));
 }
+
+#ifndef NDEBUG
+// Tests that verify we don't try to use inverse path modes as they aren't
+// supported by either Flutter public APIs or Impeller
+
+TEST(DisplayListPath, CannotConstructFromSkiaInverseWinding) {
+  SkPath sk_path;
+  sk_path.setFillType(SkPathFillType::kInverseWinding);
+  sk_path.moveTo(0, 0);
+  sk_path.lineTo(100, 0);
+  sk_path.lineTo(0, 100);
+  sk_path.close();
+
+  EXPECT_DEATH_IF_SUPPORTED(new DlPath(sk_path), "SkPathFillType_IsInverse");
+}
+
+TEST(DisplayListPath, CannotConstructFromSkiaInverseEvenOdd) {
+  SkPath sk_path;
+  sk_path.setFillType(SkPathFillType::kInverseEvenOdd);
+  sk_path.moveTo(0, 0);
+  sk_path.lineTo(100, 0);
+  sk_path.lineTo(0, 100);
+  sk_path.close();
+
+  EXPECT_DEATH_IF_SUPPORTED(new DlPath(sk_path), "SkPathFillType_IsInverse");
+}
+#endif
 
 }  // namespace testing
 }  // namespace flutter

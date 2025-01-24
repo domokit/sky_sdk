@@ -15,6 +15,9 @@ Future<void> main() async {
   await task(() async {
     try {
       await runProjectTest((FlutterProject flutterProject) async {
+        // Enable plugins being marked as dev dependncies in the .flutter-plugins-dependencies file.
+        await flutter('config', options: <String>['--explicit-package-dependencies']);
+
         // Create dev_dependency plugin to use for test.
         final Directory tempDir = Directory.systemTemp.createTempSync(
           'android_release_builds_exclude_dev_dependencies_test.',
@@ -50,7 +53,7 @@ Future<void> main() async {
                 'app',
                 'outputs',
                 'flutter-apk',
-                'app-debug.apk',
+                'app-$buildMode.apk',
               ),
             );
             if (!apk.existsSync()) {
@@ -66,7 +69,7 @@ Future<void> main() async {
             final bool apkIncludesDevDependencyAsExpected =
                 isTestingReleaseMode ? !apkIncludesDevDependency : apkIncludesDevDependency;
             if (!apkIncludesDevDependencyAsExpected) {
-              return TaskResult.failure(
+              throw TaskResult.failure(
                 'Expected to${isTestingReleaseMode ? ' not' : ''} find dev_dependency_plugin in APK built with debug mode but did${isTestingReleaseMode ? '' : ' not'}.',
               );
             }

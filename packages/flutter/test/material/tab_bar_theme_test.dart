@@ -7,7 +7,6 @@
 @Tags(<String>['reduced-test-set'])
 library;
 
-import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -1474,13 +1473,11 @@ void main() {
     final TabController controller = TabController(vsync: const TestVSync(), length: tabs.length);
     addTearDown(controller.dispose);
 
-    const Color themeIndicatorColor = Color(0xffff0000);
     const Color tabBarThemeIndicatorColor = Color(0xffffff00);
 
-    Widget buildTabBar({Color? themeIndicatorColor, Color? tabBarThemeIndicatorColor}) {
+    Widget buildTabBar({Color? tabBarThemeIndicatorColor}) {
       return MaterialApp(
         theme: ThemeData(
-          indicatorColor: themeIndicatorColor,
           tabBarTheme: TabBarThemeData(indicatorColor: tabBarThemeIndicatorColor),
           useMaterial3: false,
         ),
@@ -1493,15 +1490,9 @@ void main() {
       );
     }
 
-    await tester.pumpWidget(buildTabBar(themeIndicatorColor: themeIndicatorColor));
-
-    RenderBox tabBarBox = tester.firstRenderObject<RenderBox>(find.byType(TabBar));
-    expect(tabBarBox, paints..line(color: themeIndicatorColor));
-
     await tester.pumpWidget(buildTabBar(tabBarThemeIndicatorColor: tabBarThemeIndicatorColor));
-    await tester.pumpAndSettle();
 
-    tabBarBox = tester.firstRenderObject<RenderBox>(find.byType(TabBar));
+    final RenderBox tabBarBox = tester.firstRenderObject<RenderBox>(find.byType(TabBar));
     expect(tabBarBox, paints..line(color: tabBarThemeIndicatorColor));
   });
 
@@ -1700,42 +1691,27 @@ void main() {
     await tester.pumpWidget(buildTab(indicatorAnimation: TabIndicatorAnimation.elastic));
     await tester.pumpAndSettle();
 
-    // Ease in sine (accelerating).
-    double accelerateInterpolation(double fraction) {
-      return 1.0 - math.cos((fraction * math.pi) / 2.0);
-    }
-
-    void expectIndicatorAttrs(RenderBox tabBarBox, {required Rect rect, required Rect targetRect}) {
-      const double indicatorWeight = 3.0;
-      final double tabChangeProgress = (controller.index - controller.animation!.value).abs();
-      final double leftFraction = accelerateInterpolation(tabChangeProgress);
-      final double rightFraction = accelerateInterpolation(tabChangeProgress);
-
-      final RRect rrect = RRect.fromLTRBAndCorners(
-        lerpDouble(rect.left, targetRect.left, leftFraction)!,
-        tabBarBox.size.height - indicatorWeight,
-        lerpDouble(rect.right, targetRect.right, rightFraction)!,
-        tabBarBox.size.height,
-        topLeft: const Radius.circular(3.0),
-        topRight: const Radius.circular(3.0),
-      );
-
-      expect(tabBarBox, paints..rrect(rrect: rrect));
-    }
-
-    Rect rect = const Rect.fromLTRB(75.0, 0.0, 125.0, 48.0);
-    Rect targetRect = const Rect.fromLTRB(75.0, 0.0, 125.0, 48.0);
-
     // Idle at tab 0.
-    expectIndicatorAttrs(tabBarBox, rect: rect, targetRect: targetRect);
+    const Rect currentRect = Rect.fromLTRB(75.0, 0.0, 125.0, 48.0);
+    const Rect fromRect = Rect.fromLTRB(75.0, 0.0, 125.0, 48.0);
+    Rect toRect = const Rect.fromLTRB(75.0, 0.0, 125.0, 48.0);
+    expect(
+      tabBarBox,
+      paints..rrect(
+        rrect: tabIndicatorRRectElasticAnimation(tabBarBox, currentRect, fromRect, toRect, 0.0),
+      ),
+    );
 
     // Start moving tab indicator.
     controller.offset = 0.2;
     await tester.pump();
-
-    rect = const Rect.fromLTRB(115.0, 0.0, 165.0, 48.0);
-    targetRect = const Rect.fromLTRB(275.0, 0.0, 325.0, 48.0);
-    expectIndicatorAttrs(tabBarBox, rect: rect, targetRect: targetRect);
+    toRect = const Rect.fromLTRB(275.0, 0.0, 325.0, 48.0);
+    expect(
+      tabBarBox,
+      paints..rrect(
+        rrect: tabIndicatorRRectElasticAnimation(tabBarBox, currentRect, fromRect, toRect, 0.2),
+      ),
+    );
   });
 
   testWidgets('TabBar inherits splashBorderRadius from theme', (WidgetTester tester) async {

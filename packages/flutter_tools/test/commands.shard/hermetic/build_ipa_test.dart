@@ -172,6 +172,8 @@ void main() {
         '-configuration',
         'Release',
         if (verbose) 'VERBOSE_SCRIPT_LOGGING=YES' else '-quiet',
+        '-allowProvisioningUpdates',
+        '-allowProvisioningDeviceRegistration',
         '-workspace',
         'Runner.xcworkspace',
         '-scheme',

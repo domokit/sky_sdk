@@ -49,12 +49,6 @@ class WebTestsSuite {
   //
   // TODO(yjbanov): we're getting rid of this as part of https://github.com/flutter/flutter/projects/60
   static const Map<String, List<String>> kWebTestFileKnownFailures = <String, List<String>>{
-    'html': <String>[
-      // These tests are not compilable on the web due to dependencies on
-      // VM-specific functionality.
-      'test/services/message_codecs_vm_test.dart',
-      'test/examples/sector_layout_test.dart',
-    ],
     'canvaskit': <String>[
       // These tests are not compilable on the web due to dependencies on
       // VM-specific functionality.
@@ -82,19 +76,14 @@ class WebTestsSuite {
     ],
   };
 
-  /// The number of Cirrus jobs that run Web tests in parallel.
+  /// The number of jobs that run Web tests in parallel.
   ///
-  /// The default is 8 shards. Typically .cirrus.yml would define the
-  /// WEB_SHARD_COUNT environment variable rather than relying on the default.
-  ///
-  /// WARNING: if you change this number, also change .cirrus.yml
-  /// and make sure it runs _all_ shards.
+  /// This used to use the `WEB_SHARD_COUNT` environment variable, but that
+  /// was never re-added in the migration to LUCI, so instead the count is
+  /// hardcoded below.
   ///
   /// The last shard also runs the Web plugin tests.
-  int get webShardCount =>
-      Platform.environment.containsKey('WEB_SHARD_COUNT')
-          ? int.parse(Platform.environment['WEB_SHARD_COUNT']!)
-          : 8;
+  int get webShardCount => 8;
 
   static const List<String> _kAllBuildModes = <String>['debug', 'profile', 'release'];
 
@@ -153,48 +142,58 @@ class WebTestsSuite {
       ],
 
       // This test doesn't do anything interesting w.r.t. rendering, so we don't run the full build mode x renderer matrix.
-      () => _runWebE2eTest('profile_diagnostics_integration', buildMode: 'debug', renderer: 'html'),
+      () => _runWebE2eTest(
+        'profile_diagnostics_integration',
+        buildMode: 'debug',
+        renderer: 'canvaskit',
+      ),
       () => _runWebE2eTest(
         'profile_diagnostics_integration',
         buildMode: 'profile',
         renderer: 'canvaskit',
       ),
-      () =>
-          _runWebE2eTest('profile_diagnostics_integration', buildMode: 'release', renderer: 'html'),
+      () => _runWebE2eTest(
+        'profile_diagnostics_integration',
+        buildMode: 'release',
+        renderer: 'canvaskit',
+      ),
 
       // This test is only known to work in debug mode.
-      () => _runWebE2eTest('scroll_wheel_integration', buildMode: 'debug', renderer: 'html'),
+      () => _runWebE2eTest('scroll_wheel_integration', buildMode: 'debug', renderer: 'canvaskit'),
 
       // This test doesn't do anything interesting w.r.t. rendering, so we don't run the full build mode x renderer matrix.
       // These tests have been extremely flaky, so we are temporarily disabling them until we figure out how to make them more robust.
       () => _runWebE2eTest('text_editing_integration', buildMode: 'debug', renderer: 'canvaskit'),
-      () => _runWebE2eTest('text_editing_integration', buildMode: 'profile', renderer: 'html'),
-      () => _runWebE2eTest('text_editing_integration', buildMode: 'release', renderer: 'html'),
+      () => _runWebE2eTest('text_editing_integration', buildMode: 'profile', renderer: 'canvaskit'),
+      () => _runWebE2eTest('text_editing_integration', buildMode: 'release', renderer: 'canvaskit'),
 
       // This test doesn't do anything interesting w.r.t. rendering, so we don't run the full build mode x renderer matrix.
-      () => _runWebE2eTest('url_strategy_integration', buildMode: 'debug', renderer: 'html'),
+      () => _runWebE2eTest('url_strategy_integration', buildMode: 'debug', renderer: 'canvaskit'),
       () => _runWebE2eTest('url_strategy_integration', buildMode: 'profile', renderer: 'canvaskit'),
-      () => _runWebE2eTest('url_strategy_integration', buildMode: 'release', renderer: 'html'),
+      () => _runWebE2eTest('url_strategy_integration', buildMode: 'release', renderer: 'canvaskit'),
 
       // This test doesn't do anything interesting w.r.t. rendering, so we don't run the full build mode x renderer matrix.
       () => _runWebE2eTest(
         'capabilities_integration_canvaskit',
         buildMode: 'debug',
-        renderer: 'auto',
+        renderer: 'canvaskit',
       ),
       () => _runWebE2eTest(
         'capabilities_integration_canvaskit',
         buildMode: 'profile',
         renderer: 'canvaskit',
       ),
-      () => _runWebE2eTest('capabilities_integration_html', buildMode: 'release', renderer: 'html'),
+      () => _runWebE2eTest(
+        'capabilities_integration_canvaskit',
+        buildMode: 'release',
+        renderer: 'canvaskit',
+      ),
 
       // This test doesn't do anything interesting w.r.t. rendering, so we don't run the full build mode x renderer matrix.
-      // CacheWidth and CacheHeight are only currently supported in CanvasKit mode, so we don't run the test in HTML mode.
       () => _runWebE2eTest(
         'cache_width_cache_height_integration',
         buildMode: 'debug',
-        renderer: 'auto',
+        renderer: 'canvaskit',
       ),
       () => _runWebE2eTest(
         'cache_width_cache_height_integration',
@@ -208,14 +207,11 @@ class WebTestsSuite {
         testAppDirectory: path.join(flutterRoot, 'examples', 'hello_world'),
         target: 'test_driver/smoke_web_engine.dart',
         buildMode: 'profile',
-        webRenderer: 'auto',
+        webRenderer: 'canvaskit',
       ),
       () => _runGalleryE2eWebTest('debug'),
-      () => _runGalleryE2eWebTest('debug', canvasKit: true),
       () => _runGalleryE2eWebTest('profile'),
-      () => _runGalleryE2eWebTest('profile', canvasKit: true),
       () => _runGalleryE2eWebTest('release'),
-      () => _runGalleryE2eWebTest('release', canvasKit: true),
       () =>
           runWebServiceWorkerTest(headless: true, testType: ServiceWorkerTestType.withoutFlutterJs),
       () => runWebServiceWorkerTest(headless: true, testType: ServiceWorkerTestType.withFlutterJs),
@@ -290,12 +286,6 @@ class WebTestsSuite {
       () => _runWebDebugTest('lib/sound_mode.dart'),
       () => _runWebReleaseTest('lib/sound_mode.dart'),
       () => _runFlutterWebTest(
-        'html',
-        path.join(flutterRoot, 'packages', 'integration_test'),
-        <String>['test/web_extension_test.dart'],
-        false,
-      ),
-      () => _runFlutterWebTest(
         'canvaskit',
         path.join(flutterRoot, 'packages', 'integration_test'),
         <String>['test/web_extension_test.dart'],
@@ -316,10 +306,6 @@ class WebTestsSuite {
     await _ensureChromeDriverIsRunning();
     await runShardRunnerIndexOfTotalSubshard(tests);
     await _stopChromeDriver();
-  }
-
-  Future<void> runWebHtmlUnitTests() {
-    return _runWebUnitTests('html', false);
   }
 
   Future<void> runWebCanvasKitUnitTests() {
@@ -375,7 +361,6 @@ class WebTestsSuite {
         '-d',
         'web-server',
         '--$buildMode',
-        // '--web-renderer=$webRenderer',
         if (webRenderer == 'skwasm') ...<String>[
           // See: WebRendererMode.dartDefines[skwasm]
           '--dart-define=FLUTTER_WEB_USE_SKIA=false',
@@ -384,11 +369,6 @@ class WebTestsSuite {
         if (webRenderer == 'canvaskit') ...<String>[
           // See: WebRendererMode.dartDefines[canvaskit]
           '--dart-define=FLUTTER_WEB_USE_SKIA=true',
-          '--dart-define=FLUTTER_WEB_USE_SKWASM=false',
-        ],
-        if (webRenderer == 'html') ...<String>[
-          // See: WebRendererMode.dartDefines[html]
-          '--dart-define=FLUTTER_WEB_USE_SKIA=false',
           '--dart-define=FLUTTER_WEB_USE_SKWASM=false',
         ],
       ],
@@ -483,20 +463,11 @@ class WebTestsSuite {
   ///
   /// This is not a performance test.
   ///
-  /// If [canvasKit] is set to true, runs the test in CanvasKit mode.
-  ///
   /// The test is written using `package:integration_test` (despite the "e2e" in
   /// the name, which is there for historic reasons).
-  Future<void> _runGalleryE2eWebTest(String buildMode, {bool canvasKit = false}) async {
-    // TODO(yjbanov): this is temporarily disabled due to https://github.com/flutter/flutter/issues/147731
-    if (buildMode == 'debug' && canvasKit) {
-      print(
-        'SKIPPED: Gallery e2e web test in debug CanvasKit mode due to https://github.com/flutter/flutter/issues/147731',
-      );
-      return;
-    }
+  Future<void> _runGalleryE2eWebTest(String buildMode) async {
     printProgress(
-      '${green}Running flutter_gallery integration test in --$buildMode using ${canvasKit ? 'CanvasKit' : 'HTML'} renderer.$reset',
+      '${green}Running flutter_gallery integration test in --$buildMode using CanvasKit renderer.$reset',
     );
     final String testAppDirectory = path.join(
       flutterRoot,
@@ -510,8 +481,7 @@ class WebTestsSuite {
       <String>[
         ...flutterTestArgs,
         'drive',
-        if (canvasKit) '--dart-define=FLUTTER_WEB_USE_SKIA=true',
-        if (!canvasKit) '--dart-define=FLUTTER_WEB_USE_SKIA=false',
+        '--dart-define=FLUTTER_WEB_USE_SKIA=true',
         '--driver=test_driver/transitions_perf_e2e_test.dart',
         '--target=test_driver/transitions_perf_e2e.dart',
         '--browser-name=chrome',
@@ -696,7 +666,7 @@ class WebTestsSuite {
     // The last shard also runs the flutter_web_plugins tests.
     //
     // We make sure the last shard ends in _last so it's easier to catch mismatches
-    // between `.cirrus.yml` and `test.dart`.
+    // between `.ci.yaml` and `test.dart`.
     subshards['${webShardCount - 1}_last'] = () async {
       await _runFlutterWebTest(
         webRenderer,
@@ -739,7 +709,6 @@ class WebTestsSuite {
         '-v',
         '--platform=chrome',
         if (useWasm) '--wasm',
-        // '--web-renderer=$webRenderer',
         if (webRenderer == 'skwasm') ...<String>[
           // See: WebRendererMode.dartDefines[skwasm]
           '--dart-define=FLUTTER_WEB_USE_SKIA=false',
@@ -748,11 +717,6 @@ class WebTestsSuite {
         if (webRenderer == 'canvaskit') ...<String>[
           // See: WebRendererMode.dartDefines[canvaskit]
           '--dart-define=FLUTTER_WEB_USE_SKIA=true',
-          '--dart-define=FLUTTER_WEB_USE_SKWASM=false',
-        ],
-        if (webRenderer == 'html') ...<String>[
-          // See: WebRendererMode.dartDefines[html]
-          '--dart-define=FLUTTER_WEB_USE_SKIA=false',
           '--dart-define=FLUTTER_WEB_USE_SKWASM=false',
         ],
         '--dart-define=DART_HHH_BOT=$runningInDartHHHBot',

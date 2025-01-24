@@ -146,10 +146,13 @@ static std::shared_ptr<YUVConversionVK> CreateYUVConversion(
   const auto& ahb_format =
       ahb_props.get<vk::AndroidHardwareBufferFormatPropertiesANDROID>();
 
+  // See https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/5806
+  // Both features are required.
   const bool supports_linear_filtering =
       !!(ahb_format.formatFeatures &
-         vk::FormatFeatureFlagBits::eSampledImageYcbcrConversionLinearFilter);
-
+         vk::FormatFeatureFlagBits::eSampledImageYcbcrConversionLinearFilter) &&
+      !!(ahb_format.formatFeatures &
+         vk::FormatFeatureFlagBits::eSampledImageFilterLinear);
   auto& conversion_info = conversion_chain.get();
 
   conversion_info.format = ahb_format.format;
@@ -160,6 +163,7 @@ static std::shared_ptr<YUVConversionVK> CreateYUVConversion(
   conversion_info.yChromaOffset = ahb_format.suggestedYChromaOffset;
   conversion_info.chromaFilter =
       supports_linear_filtering ? vk::Filter::eLinear : vk::Filter::eNearest;
+
   conversion_info.forceExplicitReconstruction = false;
 
   if (conversion_info.format == vk::Format::eUndefined) {
@@ -297,7 +301,6 @@ AHBTextureSourceVK::AHBTextureSourceVK(
   }
 
   const auto& context = ContextVK::Cast(*p_context);
-
   const auto& device = context.GetDevice();
   const auto& physical_device = context.GetPhysicalDevice();
 

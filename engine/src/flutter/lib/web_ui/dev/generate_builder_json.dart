@@ -29,10 +29,6 @@ class GenerateBuilderJsonCommand extends Command<bool> {
       path.join(environment.webUiTestDir.path, 'felt_config.yaml'),
     );
     _writeBuilderJson(
-      _generateBuilderJson([_getArtifactBuildStep()], []),
-      'linux_web_engine_build.json',
-    );
-    _writeBuilderJson(
       _generateBuilderJson(
         config.testBundles.map((TestBundle bundle) => _getBundleBuildStep(bundle)).toList(),
         _getAllTestSteps(config.testSuites, packageLock),
@@ -61,33 +57,6 @@ class GenerateBuilderJsonCommand extends Command<bool> {
       'tests': tests,
     };
     return const JsonEncoder.withIndent('  ').convert(outputJson);
-  }
-
-  Map<String, dynamic> _getArtifactBuildStep() {
-    return <String, dynamic>{
-      'name': 'ci/wasm_release',
-      'drone_dimensions': <String>['device_type=none', 'os=Linux', 'cores=32'],
-      'gclient_variables': <String, dynamic>{
-        'download_android_deps': false,
-        'download_jdk': false,
-        'download_emsdk': true,
-      },
-      'gn': <String>['--web', '--runtime-mode=release', '--no-rbe', '--no-goma'],
-      'ninja': <String, dynamic>{
-        'config': 'wasm_release',
-        'targets': <String>['flutter/web_sdk:flutter_web_sdk_archive'],
-      },
-      'archives': <dynamic>[
-        <String, dynamic>{
-          'name': 'wasm_release',
-          'base_path': 'out/wasm_release/zip_archives/',
-          'type': 'gcs',
-          'include_paths': <String>['out/wasm_release/zip_archives/flutter-web-sdk.zip'],
-          'realm': 'production',
-        },
-      ],
-      'cas_archive': false,
-    };
   }
 
   Map<String, dynamic> _getBundleBuildStep(TestBundle bundle) {

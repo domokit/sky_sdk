@@ -84,7 +84,7 @@ class DlOpSpy final : public virtual DlOpReceiver,
                      DlFilterMode filter,
                      bool render_with_attributes) override;
   void drawAtlas(const sk_sp<DlImage> atlas,
-                 const SkRSXform xform[],
+                 const DlRSTransform xform[],
                  const DlRect tex[],
                  const DlColor colors[],
                  int count,

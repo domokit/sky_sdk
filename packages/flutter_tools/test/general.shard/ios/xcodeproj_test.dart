@@ -919,12 +919,15 @@ Information about project "Runner":
         <String>[
           'debug (free)',
           'Debug paid',
+          'debug (premium)',
           'profile - Free',
           'Profile-Paid',
+          'Profile-Premium',
           'release - Free',
           'Release-Paid',
+          'release-premium',
         ],
-        <String>['Free', 'Paid'],
+        <String>['Free', 'Paid', 'premium'],
         logger,
       );
 
@@ -955,6 +958,30 @@ Information about project "Runner":
       expect(
         info.buildConfigurationFor(
           const BuildInfo(
+            BuildMode.debug,
+            'premium',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+          'premium',
+        ),
+        'debug (premium)',
+      );
+      expect(
+        info.buildConfigurationFor(
+          const BuildInfo(
+            BuildMode.debug,
+            'premium',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+          'Premium',
+        ),
+        'debug (premium)',
+      );
+      expect(
+        info.buildConfigurationFor(
+          const BuildInfo(
             BuildMode.profile,
             'FREE',
             treeShakeIcons: false,
@@ -967,6 +994,30 @@ Information about project "Runner":
       expect(
         info.buildConfigurationFor(
           const BuildInfo(
+            BuildMode.profile,
+            'paid',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+          'paid',
+        ),
+        'Profile-Paid',
+      );
+      expect(
+        info.buildConfigurationFor(
+          const BuildInfo(
+            BuildMode.profile,
+            'premium',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+          'Premium',
+        ),
+        'Profile-Premium',
+      );
+      expect(
+        info.buildConfigurationFor(
+          const BuildInfo(
             BuildMode.release,
             'paid',
             treeShakeIcons: false,
@@ -975,6 +1026,18 @@ Information about project "Runner":
           'Paid',
         ),
         'Release-Paid',
+      );
+      expect(
+        info.buildConfigurationFor(
+          const BuildInfo(
+            BuildMode.release,
+            'PREMIUM',
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+          ),
+          'PREMIUM',
+        ),
+        'release-premium',
       );
     },
   );

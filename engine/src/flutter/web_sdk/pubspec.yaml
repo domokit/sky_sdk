@@ -51,12 +51,12 @@ dependency_overrides: # Must include all transitive dependencies from the "any" 
   source_span:
     path: ../third_party/dart/third_party/pkg/tools/pkgs/source_span
   string_scanner:
-    path: ../third_party/dart/third_party/pkg/string_scanner
+    path: ../third_party/dart/third_party/pkg/tools/pkgs/string_scanner
   term_glyph:
-    path: ../third_party/dart/third_party/pkg/term_glyph
+    path: ../third_party/dart/third_party/pkg/tools/pkgs/term_glyph
   typed_data:
     path: ../third_party/dart/third_party/pkg/core/pkgs/typed_data
   watcher:
-    path: ../third_party/dart/third_party/pkg/watcher
+    path: ../third_party/dart/third_party/pkg/tools/pkgs/watcher
   yaml:
-    path: ../third_party/dart/third_party/pkg/yaml
+    path: ../third_party/dart/third_party/pkg/tools/pkgs/yaml

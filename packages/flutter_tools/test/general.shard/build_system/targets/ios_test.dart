@@ -71,7 +71,6 @@ void main() {
       logger: logger,
       fileSystem: fileSystem,
       engineVersion: '2',
-      usage: usage,
       analytics: fakeAnalytics,
     );
   });
@@ -505,10 +504,6 @@ void main() {
 
       await const ReleaseIosApplicationBundle().build(environment);
       expect(
-        usage.events,
-        contains(const TestUsageEvent('assemble', 'ios-archive', label: 'success')),
-      );
-      expect(
         fakeAnalytics.sentEvents,
         contains(
           Event.appleUsageEvent(workflow: 'assemble', parameter: 'ios-archive', result: 'success'),
@@ -532,10 +527,6 @@ void main() {
       await expectLater(
         () => const ReleaseIosApplicationBundle().build(environment),
         throwsA(const TypeMatcher<FileSystemException>()),
-      );
-      expect(
-        usage.events,
-        contains(const TestUsageEvent('assemble', 'ios-archive', label: 'fail')),
       );
       expect(
         fakeAnalytics.sentEvents,

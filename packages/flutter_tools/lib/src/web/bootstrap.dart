@@ -6,14 +6,6 @@ import 'package:package_config/package_config.dart';
 
 /// Used to load prerequisite scripts such as ddc_module_loader.js
 const String _simpleLoaderScript = r'''
-// Declare the character set of the document to align with require.js. Using a
-// meta element is preferable to changing the individual script elements'
-// `charset` as the scripts should inherit the document's character set, and
-// modifying a script element's character set is deprecated.
-var meta = document.createElement('meta');
-meta.charset = 'utf-8';
-document.head.insertBefore(meta, document.head.firstChild);
-
 window.$dartCreateScript = (function() {
   // Find the nonce value. (Note, this is only computed once.)
   var scripts = Array.from(document.getElementsByTagName("script"));
@@ -466,6 +458,7 @@ String generateMainModule({
   required bool nullAssertions,
   required bool nativeNullAssertions,
   String bootstrapModule = 'main_module.bootstrap',
+  String loaderRootDirectory = '',
 }) {
   // The typo below in "EXTENTION" is load-bearing, package:build depends on it.
   return '''
@@ -489,7 +482,7 @@ define("$bootstrapModule", ["$entrypoint", "dart_sdk"], function(app, dart_sdk) 
   child.main();
 
   window.\$dartLoader = {};
-  window.\$dartLoader.rootDirectories = [];
+  window.\$dartLoader.rootDirectories = ["$loaderRootDirectory"];
   if (window.\$requireLoader) {
     window.\$requireLoader.getModuleLibraries = dart_sdk.dart.getModuleLibraries;
   }

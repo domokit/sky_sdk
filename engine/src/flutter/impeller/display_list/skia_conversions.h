@@ -19,7 +19,6 @@
 #include "third_party/skia/include/core/SkPath.h"
 #include "third_party/skia/include/core/SkPoint.h"
 #include "third_party/skia/include/core/SkRRect.h"
-#include "third_party/skia/include/core/SkRSXform.h"
 #include "third_party/skia/include/core/SkTextBlob.h"
 
 namespace impeller {
@@ -48,8 +47,6 @@ Point ToPoint(const SkPoint& point);
 Size ToSize(const SkPoint& point);
 
 Color ToColor(const flutter::DlColor& color);
-
-Matrix ToRSXForm(const SkRSXform& form);
 
 std::optional<impeller::PixelFormat> ToPixelFormat(SkColorType type);
 

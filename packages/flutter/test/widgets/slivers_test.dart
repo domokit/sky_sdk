@@ -629,7 +629,7 @@ void main() {
     final ErrorWidgetBuilder oldBuilder = ErrorWidget.builder;
     ErrorWidget.builder = (FlutterErrorDetails details) => errorText;
     final SliverChildBuilderDelegate builderThrowsDelegate = SliverChildBuilderDelegate(
-      (_, __) => throw 'builder',
+      (_, _) => throw 'builder',
       addAutomaticKeepAlives: false,
       addRepaintBoundaries: false,
       addSemanticIndexes: false,
@@ -1392,7 +1392,7 @@ void main() {
             slivers: <Widget>[
               SliverGrid.builder(
                 itemCount: 0,
-                itemBuilder: (_, __) => Container(),
+                itemBuilder: (_, _) => Container(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 1,
                   mainAxisSpacing: 10,
@@ -1417,7 +1417,7 @@ void main() {
             slivers: <Widget>[
               SliverGrid.builder(
                 itemCount: 0,
-                itemBuilder: (_, __) => Container(),
+                itemBuilder: (_, _) => Container(),
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 30,
                 ),

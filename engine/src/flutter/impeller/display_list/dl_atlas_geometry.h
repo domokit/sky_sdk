@@ -10,7 +10,6 @@
 #include "impeller/core/sampler_descriptor.h"
 #include "impeller/entity/contents/atlas_contents.h"
 #include "impeller/geometry/color.h"
-#include "include/core/SkRSXform.h"
 
 namespace impeller {
 
@@ -18,7 +17,7 @@ namespace impeller {
 class DlAtlasGeometry : public AtlasGeometry {
  public:
   DlAtlasGeometry(const std::shared_ptr<Texture>& atlas,
-                  const SkRSXform* xform,
+                  const RSTransform* xform,
                   const flutter::DlRect* tex,
                   const flutter::DlColor* colors,
                   size_t count,
@@ -47,7 +46,7 @@ class DlAtlasGeometry : public AtlasGeometry {
 
  private:
   const std::shared_ptr<Texture> atlas_;
-  const SkRSXform* xform_;
+  const RSTransform* xform_;
   const flutter::DlRect* tex_;
   const flutter::DlColor* colors_;
   size_t count_;

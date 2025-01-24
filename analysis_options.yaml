@@ -8,7 +8,6 @@
 # which should be kept in sync with this file:
 #
 #   - analysis_options.yaml (this file)
-#   - engine/src/flutter/analysis_options.yaml
 #   - https://github.com/flutter/packages/blob/main/analysis_options.yaml
 #
 # This file contains the analysis options used for code in the flutter/flutter
@@ -216,6 +215,7 @@ linter:
     - type_literal_in_constant_pattern
     # - unawaited_futures # too many false positives, especially with the way AnimationController works
     # - unintended_html_in_doc_comment # blocked on https://github.com/dart-lang/linter/issues/5065
+    # - unnecessary_async # not yet tested
     - unnecessary_await_in_return
     - unnecessary_brace_in_string_interps
     - unnecessary_breaks
@@ -241,6 +241,7 @@ linter:
     - unnecessary_string_interpolations
     - unnecessary_this
     - unnecessary_to_list_in_spreads
+    - unnecessary_underscores
     - unreachable_from_main
     - unrelated_type_equality_checks
     # - unsafe_variance # not yet tested

@@ -36,6 +36,7 @@ class IMockGLESImpl {
                                       GLuint64* result) {}
   virtual void DeleteQueriesEXT(GLsizei size, const GLuint* queries) {}
   virtual void GenBuffers(GLsizei n, GLuint* buffers) {}
+  virtual GLboolean IsTexture(GLuint texture) { return true; }
 };
 
 class MockGLESImpl : public IMockGLESImpl {
@@ -70,6 +71,7 @@ class MockGLESImpl : public IMockGLESImpl {
               (GLsizei size, const GLuint* queries),
               (override));
   MOCK_METHOD(void, GenBuffers, (GLsizei n, GLuint* buffers), (override));
+  MOCK_METHOD(GLboolean, IsTexture, (GLuint texture), (override));
 };
 
 /// @brief      Provides a mocked version of the |ProcTableGLES| class.

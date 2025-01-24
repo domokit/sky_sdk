@@ -321,5 +321,56 @@ TEST(DisplayListSkConversions, ToSkDitheringEnabledForGradients) {
   }
 }
 
+TEST(DisplayListSkConversions, ToSkRSTransform) {
+  constexpr size_t kTransformCount = 4;
+  DlRSTransform transforms[kTransformCount] = {
+      DlRSTransform::Make({0.0f, 0.0f}, 1.0f, DlDegrees(0)),
+      DlRSTransform::Make({12.25f, 14.75f}, 10.0f, DlDegrees(30)),
+      DlRSTransform::Make({-10.4f, 8.25f}, 11.0f, DlDegrees(400)),
+      DlRSTransform::Make({1.0f, 3.0f}, 0.5f, DlDegrees(45)),
+  };
+  SkRSXform expected_transforms[kTransformCount] = {
+      SkRSXform::MakeFromRadians(1.0f, SkDegreesToRadians(0),  //
+                                 0.0f, 0.0f, 0.0f, 0.0f),
+      SkRSXform::MakeFromRadians(10.0f, SkDegreesToRadians(30),  //
+                                 12.25f, 14.75f, 0.0f, 0.0f),
+      SkRSXform::MakeFromRadians(11.0f, SkDegreesToRadians(400),  //
+                                 -10.4f, 8.25f, 0.0f, 0.0f),
+      SkRSXform::MakeFromRadians(0.5f, SkDegreesToRadians(45),  //
+                                 1.0f, 3.0f, 0.0f, 0.0f),
+  };
+  auto sk_transforms = ToSk(transforms);
+  for (size_t i = 0; i < kTransformCount; i++) {
+    // Comparing dl values to transformed copy values
+    // should match exactly because arrays were simply aliased
+    EXPECT_EQ(sk_transforms[i].fSCos, transforms[i].scaled_cos) << i;
+    EXPECT_EQ(sk_transforms[i].fSSin, transforms[i].scaled_sin) << i;
+    EXPECT_EQ(sk_transforms[i].fTx, transforms[i].translate_x) << i;
+    EXPECT_EQ(sk_transforms[i].fTy, transforms[i].translate_y) << i;
+
+    // Comparing dl values to computed Skia values
+    // should match closely, but not exactly due to differences in trig
+    EXPECT_FLOAT_EQ(sk_transforms[i].fSCos, expected_transforms[i].fSCos) << i;
+    EXPECT_FLOAT_EQ(sk_transforms[i].fSSin, expected_transforms[i].fSSin) << i;
+    EXPECT_EQ(sk_transforms[i].fTx, expected_transforms[i].fTx) << i;
+    EXPECT_EQ(sk_transforms[i].fTy, expected_transforms[i].fTy) << i;
+
+    // Comparing the results of transforming a sprite with Skia vs Impeller
+    SkPoint sk_quad[4];
+    expected_transforms[i].toQuad(20, 30, sk_quad);
+    DlQuad dl_quad;
+    transforms[i].GetQuad(20, 30, dl_quad);
+    // Skia order is UL,UR,LR,LL, Impeller order is UL,UR,LL,LR
+    EXPECT_FLOAT_EQ(sk_quad[0].fX, dl_quad[0].x) << i;
+    EXPECT_FLOAT_EQ(sk_quad[0].fY, dl_quad[0].y) << i;
+    EXPECT_FLOAT_EQ(sk_quad[1].fX, dl_quad[1].x) << i;
+    EXPECT_FLOAT_EQ(sk_quad[1].fY, dl_quad[1].y) << i;
+    EXPECT_FLOAT_EQ(sk_quad[2].fX, dl_quad[3].x) << i;
+    EXPECT_FLOAT_EQ(sk_quad[2].fY, dl_quad[3].y) << i;
+    EXPECT_FLOAT_EQ(sk_quad[3].fX, dl_quad[2].x) << i;
+    EXPECT_FLOAT_EQ(sk_quad[3].fY, dl_quad[2].y) << i;
+  }
+}
+
 }  // namespace testing
 }  // namespace flutter

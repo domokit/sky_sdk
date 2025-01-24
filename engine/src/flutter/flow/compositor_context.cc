@@ -185,10 +185,15 @@ void CompositorContext::ScopedFrame::PaintLayerTreeImpeller(
     flutter::LayerTree& layer_tree,
     std::optional<DlRect> clip_rect,
     bool ignore_raster_cache) {
-  if (canvas() && clip_rect) {
-    canvas()->Translate(-clip_rect->GetX(), -clip_rect->GetY());
+  DlAutoCanvasRestore restore(canvas(), clip_rect.has_value());
+
+  if (canvas()) {
+    if (clip_rect) {
+      canvas()->ClipRect(clip_rect.value());
+    }
   }
 
+  // The canvas()->Restore() is taken care of by the DlAutoCanvasRestore
   layer_tree.Paint(*this, ignore_raster_cache);
 }
 

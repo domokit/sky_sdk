@@ -380,7 +380,7 @@ void main() {
         color: const Color.fromARGB(255, 255, 255, 255),
         onGenerateRoute: (_) {
           return PageRouteBuilder<void>(
-            pageBuilder: (_, __, ___) {
+            pageBuilder: (_, _, _) {
               routeBuildCount++;
               return Builder(
                 builder: (BuildContext context) {
@@ -1248,6 +1248,51 @@ void main() {
     expect(ScrollConfiguration.of(capturedContext).runtimeType, MaterialScrollBehavior);
   });
 
+  testWidgets('MaterialApp has correct default KeyboardDismissBehavior', (
+    WidgetTester tester,
+  ) async {
+    late BuildContext capturedContext;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (BuildContext context) {
+            capturedContext = context;
+            return const Placeholder();
+          },
+        ),
+      ),
+    );
+
+    expect(
+      ScrollConfiguration.of(capturedContext).getKeyboardDismissBehavior(capturedContext),
+      ScrollViewKeyboardDismissBehavior.manual,
+    );
+  });
+
+  testWidgets('MaterialApp can override default KeyboardDismissBehavior', (
+    WidgetTester tester,
+  ) async {
+    late BuildContext capturedContext;
+    await tester.pumpWidget(
+      MaterialApp(
+        scrollBehavior: const MaterialScrollBehavior().copyWith(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        ),
+        home: Builder(
+          builder: (BuildContext context) {
+            capturedContext = context;
+            return const Placeholder();
+          },
+        ),
+      ),
+    );
+
+    expect(
+      ScrollConfiguration.of(capturedContext).getKeyboardDismissBehavior(capturedContext),
+      ScrollViewKeyboardDismissBehavior.onDrag,
+    );
+  });
+
   testWidgets('A ScrollBehavior can be set for MaterialApp', (WidgetTester tester) async {
     late BuildContext capturedContext;
     await tester.pumpWidget(
@@ -1583,7 +1628,10 @@ void main() {
 
     // Switch to dark theme with overridden animation curve.
     await tester.pumpWidget(
-      buildWidget(themeMode: ThemeMode.dark, animationStyle: AnimationStyle(curve: Curves.easeIn)),
+      buildWidget(
+        themeMode: ThemeMode.dark,
+        animationStyle: const AnimationStyle(curve: Curves.easeIn),
+      ),
     );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));
@@ -1622,12 +1670,12 @@ void main() {
   testWidgets('AnimationStyle.noAnimation removes AnimatedTheme from the tree', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(MaterialApp(themeAnimationStyle: AnimationStyle()));
+    await tester.pumpWidget(const MaterialApp(themeAnimationStyle: AnimationStyle()));
 
     expect(find.byType(AnimatedTheme), findsOneWidget);
     expect(find.byType(Theme), findsOneWidget);
 
-    await tester.pumpWidget(MaterialApp(themeAnimationStyle: AnimationStyle.noAnimation));
+    await tester.pumpWidget(const MaterialApp(themeAnimationStyle: AnimationStyle.noAnimation));
 
     expect(find.byType(AnimatedTheme), findsNothing);
     expect(find.byType(Theme), findsOneWidget);

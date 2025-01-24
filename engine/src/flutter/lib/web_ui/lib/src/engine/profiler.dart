@@ -3,16 +3,8 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:js_interop';
 
 import 'package:ui/ui_web/src/ui_web.dart' as ui_web;
-
-import 'util.dart';
-
-// TODO(mdebbar): Deprecate this and remove it.
-// https://github.com/flutter/flutter/issues/127395
-@JS('window._flutter_internal_on_benchmark')
-external JSExportedDartFunction? get jsBenchmarkValueCallback;
 
 ui_web.BenchmarkValueCallback? engineBenchmarkValueCallback;
 
@@ -59,8 +51,8 @@ R timeAction<R>(String name, Action<R> action) {
 ///
 /// 1. Set the environment variable `FLUTTER_WEB_ENABLE_PROFILING` to true.
 ///
-/// 2. Using JS interop, assign a listener function to
-///    `window._flutter_internal_on_benchmark` in the browser.
+/// 2. Set the [engineBenchmarkValueCallback] to a function that will receive
+///   the benchmark data.
 ///
 /// The listener function will be called every time a new benchmark number is
 /// calculated. The signature is `Function(String name, num value)`.
@@ -104,17 +96,6 @@ class Profiler {
   /// Used to send benchmark data to whoever is listening to them.
   void benchmark(String name, double value) {
     _checkBenchmarkMode();
-
-    final ui_web.BenchmarkValueCallback? callback =
-        jsBenchmarkValueCallback?.toDart as ui_web.BenchmarkValueCallback?;
-    if (callback != null) {
-      printWarning(
-        'The JavaScript benchmarking API (i.e. `window._flutter_internal_on_benchmark`) '
-        'is deprecated and will be removed in a future release. Please use '
-        '`benchmarkValueCallback` from `dart:ui_web` instead.',
-      );
-      callback(name, value);
-    }
 
     if (engineBenchmarkValueCallback != null) {
       engineBenchmarkValueCallback!(name, value);

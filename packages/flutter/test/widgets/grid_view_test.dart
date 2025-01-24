@@ -741,7 +741,7 @@ void main() {
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
           itemCount: 10,
-          itemBuilder: (BuildContext _, int __) => Container(height: 2000.0),
+          itemBuilder: (BuildContext _, int _) => Container(height: 2000.0),
           clipBehavior: Clip.antiAlias,
         ),
       ),

@@ -121,8 +121,8 @@ Example:
 ```sh
 cd dev/benchmarks/macrobenchmarks
 
-# Runs in profile mode using the CanvasKit renderer
-flutter run --web-renderer=canvaskit --profile -d web-server lib/web_benchmarks.dart
+# Runs in profile mode
+flutter run --profile -d web-server lib/web_benchmarks.dart
 ```
 
 You can also run all benchmarks exactly as the devicelab runs them:

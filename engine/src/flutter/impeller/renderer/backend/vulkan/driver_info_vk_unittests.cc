@@ -163,16 +163,15 @@ TEST(DriverInfoVKTest, DriverParsingAdreno) {
 }
 
 TEST(DriverInfoVKTest, DisabledDevices) {
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 620"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 610"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 530"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 512"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 509"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 508"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 506"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 505"));
-  EXPECT_TRUE(IsBadVersionTest("Adreno (TM) 504"));
-
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 620"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 610"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 530"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 512"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 509"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 508"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 506"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 505"));
+  EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 504"));
   EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 630"));
   EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 640"));
   EXPECT_FALSE(IsBadVersionTest("Adreno (TM) 650"));
@@ -221,6 +220,45 @@ TEST(DriverInfoVKTest, CanUseFramebufferFetch) {
   EXPECT_TRUE(CanUseFramebufferFetch("Adreno (TM) 640", true));
   EXPECT_TRUE(CanUseFramebufferFetch("Adreno (TM) 750", true));
   EXPECT_TRUE(CanUseFramebufferFetch("Mali-G51", false));
+}
+
+TEST(DriverInfoVKTest, DisableOldXclipseDriver) {
+  auto context =
+      MockVulkanContextBuilder()
+          .SetPhysicalPropertiesCallback(
+              [](VkPhysicalDevice device, VkPhysicalDeviceProperties* prop) {
+                prop->vendorID = 0x144D;  // Samsung
+                prop->deviceType = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
+                // Version 1.1.0
+                prop->apiVersion = (1 << 22) | (1 << 12);
+              })
+          .Build();
+
+  EXPECT_TRUE(context->GetDriverInfo()->IsKnownBadDriver());
+
+  context =
+      MockVulkanContextBuilder()
+          .SetPhysicalPropertiesCallback(
+              [](VkPhysicalDevice device, VkPhysicalDeviceProperties* prop) {
+                prop->vendorID = 0x144D;  // Samsung
+                prop->deviceType = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
+                // Version 1.3.0
+                prop->apiVersion = (1 << 22) | (3 << 12);
+              })
+          .Build();
+
+  EXPECT_FALSE(context->GetDriverInfo()->IsKnownBadDriver());
+}
+
+TEST(DriverInfoVKTest, AllPowerVRDisabled) {
+  auto const context =
+      MockVulkanContextBuilder()
+          .SetPhysicalPropertiesCallback(
+              [](VkPhysicalDevice device, VkPhysicalDeviceProperties* prop) {
+                prop->vendorID = 0x1010;
+                prop->deviceType = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
+              })
+          .Build();
 }
 
 }  // namespace impeller::testing

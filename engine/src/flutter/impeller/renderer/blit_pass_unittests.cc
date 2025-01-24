@@ -264,7 +264,7 @@ TEST_P(BlitPassTest, CanResizeTexturesPlayground) {
   DlPaint paint;
   paint.setColor(DlColor::kRed());
   auto image = DlImageImpeller::Make(dst);
-  builder.DrawImage(image, SkPoint::Make(100.0, 100.0),
+  builder.DrawImage(image, flutter::DlPoint(100.0, 100.0),
                     DlImageSampling::kNearestNeighbor, &paint);
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }

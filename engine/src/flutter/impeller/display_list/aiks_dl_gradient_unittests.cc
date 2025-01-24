@@ -15,9 +15,6 @@
 #include "flutter/display_list/dl_paint.h"
 #include "flutter/testing/testing.h"
 #include "impeller/playground/widgets.h"
-#include "include/core/SkPath.h"
-#include "include/core/SkRRect.h"
-#include "include/core/SkRect.h"
 
 using namespace flutter;
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,20 +45,10 @@ void CanRenderLinearGradient(AiksTest* aiks_test, DlTileMode tile_mode) {
       {0, 0}, {200, 200}, 2, colors.data(), stops.data(), tile_mode);
   paint.setColorSource(gradient);
   paint.setColor(DlColor::kWhite());
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 600, 600), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 600, 600), paint);
   ASSERT_TRUE(aiks_test->OpenPlaygroundHere(builder.Build()));
 }
 
-Matrix ToMatrix(const SkMatrix& m) {
-  return Matrix{
-      // clang-format off
-      m[0], m[3], 0, m[6],
-      m[1], m[4], 0, m[7],
-      0,    0,    1, 0,
-      m[2], m[5], 0, m[8],
-      // clang-format on
-  };
-}
 }  // namespace
 
 TEST_P(AiksTest, CanRenderLinearGradientClamp) {
@@ -97,7 +84,7 @@ TEST_P(AiksTest, CanRenderLinearGradientDecalWithColorFilter) {
   paint.setColorFilter(DlColorFilter::MakeBlend(DlColor::kGreen().withAlpha(64),
                                                 DlBlendMode::kSrcOver));
   paint.setColor(DlColor::kWhite());
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 600, 600), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 600, 600), paint);
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
 
@@ -113,7 +100,7 @@ static void CanRenderLinearGradientWithDithering(AiksTest* aiks_test) {
 
   paint.setColorSource(DlColorSource::MakeLinear(
       {0, 0}, {800, 500}, 2, colors.data(), stops.data(), DlTileMode::kClamp));
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 800, 500), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 800, 500), paint);
   ASSERT_TRUE(aiks_test->OpenPlaygroundHere(builder.Build()));
 }
 
@@ -133,7 +120,7 @@ static void CanRenderRadialGradientWithDithering(AiksTest* aiks_test) {
 
   paint.setColorSource(DlColorSource::MakeRadial(
       {600, 600}, 600, 2, colors.data(), stops.data(), DlTileMode::kClamp));
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 1200, 1200), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 1200, 1200), paint);
   ASSERT_TRUE(aiks_test->OpenPlaygroundHere(builder.Build()));
 }
 
@@ -156,7 +143,7 @@ static void CanRenderSweepGradientWithDithering(AiksTest* aiks_test) {
       {100, 100}, /*start=*/45, /*end=*/135, 2, colors.data(), stops.data(),
       DlTileMode::kMirror));
 
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 600, 600), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 600, 600), paint);
   ASSERT_TRUE(aiks_test->OpenPlaygroundHere(builder.Build()));
 }
 
@@ -179,7 +166,7 @@ static void CanRenderConicalGradientWithDithering(AiksTest* aiks_test) {
                                                   colors.data(), stops.data(),
                                                   DlTileMode::kMirror));
 
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 600, 600), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 600, 600), paint);
   ASSERT_TRUE(aiks_test->OpenPlaygroundHere(builder.Build()));
 }
 
@@ -206,7 +193,7 @@ void CanRenderLinearGradientWithOverlappingStops(AiksTest* aiks_test,
                                                  stops.data(), tile_mode));
 
   paint.setColor(DlColor::kWhite());
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 500, 500), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 500, 500), paint);
   ASSERT_TRUE(aiks_test->OpenPlaygroundHere(builder.Build()));
 }
 }  // namespace
@@ -309,7 +296,7 @@ void CanRenderGradientWithIncompleteStops(AiksTest* aiks_test,
         FML_UNREACHABLE();
     }
 
-    builder.DrawRect(SkRect::MakeXYWH(0, 0, test_size, test_size), paint);
+    builder.DrawRect(DlRect::MakeXYWH(0, 0, test_size, test_size), paint);
     builder.Restore();
   }
 
@@ -364,7 +351,7 @@ void CanRenderLinearGradientManyColors(AiksTest* aiks_test,
                                                  stops.data(), tile_mode));
 
   paint.setColor(DlColor::kWhite());
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 600, 600), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 600, 600), paint);
   builder.Restore();
   ASSERT_TRUE(aiks_test->OpenPlaygroundHere(builder.Build()));
 }
@@ -404,7 +391,7 @@ void CanRenderLinearGradientWayManyColors(AiksTest* aiks_test,
                                                  stops.size(), colors.data(),
                                                  stops.data(), tile_mode));
 
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 600, 600), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 600, 600), paint);
   ASSERT_TRUE(aiks_test->OpenPlaygroundHere(builder.Build()));
 }
 }  // namespace
@@ -456,7 +443,7 @@ TEST_P(AiksTest, CanRenderLinearGradientManyColorsUnevenStops) {
                                                    stops.size(), colors.data(),
                                                    stops.data(), tile_mode));
 
-    builder.DrawRect(SkRect::MakeXYWH(0, 0, 600, 600), paint);
+    builder.DrawRect(DlRect::MakeXYWH(0, 0, 600, 600), paint);
     return builder.Build();
   };
   ASSERT_TRUE(OpenPlaygroundHere(callback));
@@ -479,8 +466,8 @@ TEST_P(AiksTest, CanRenderLinearGradientMaskBlur) {
       DlTileMode::kClamp));
   paint.setMaskFilter(DlBlurMaskFilter::Make(DlBlurStyle::kNormal, 20));
 
-  builder.DrawCircle(SkPoint{300, 300}, 200, paint);
-  builder.DrawRect(SkRect::MakeLTRB(100, 300, 500, 600), paint);
+  builder.DrawCircle(DlPoint(300, 300), 200, paint);
+  builder.DrawRect(DlRect::MakeLTRB(100, 300, 500, 600), paint);
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
@@ -519,7 +506,7 @@ TEST_P(AiksTest, CanRenderRadialGradient) {
     paint.setColorSource(DlColorSource::MakeRadial(
         {100, 100}, 100, 2, colors.data(), stops.data(), tile_mode));
 
-    builder.DrawRect(SkRect::MakeXYWH(0, 0, 600, 600), paint);
+    builder.DrawRect(DlRect::MakeXYWH(0, 0, 600, 600), paint);
     return builder.Build();
   };
   ASSERT_TRUE(OpenPlaygroundHere(callback));
@@ -577,7 +564,7 @@ TEST_P(AiksTest, CanRenderRadialGradientManyColors) {
     paint.setColorSource(DlColorSource::MakeRadial(
         {100, 100}, 100, stops.size(), colors.data(), stops.data(), tile_mode));
 
-    builder.DrawRect(SkRect::MakeXYWH(0, 0, 600, 600), paint);
+    builder.DrawRect(DlRect::MakeXYWH(0, 0, 600, 600), paint);
     return builder.Build();
   };
   ASSERT_TRUE(OpenPlaygroundHere(callback));
@@ -599,7 +586,7 @@ void CanRenderSweepGradient(AiksTest* aiks_test, DlTileMode tile_mode) {
       {100, 100}, /*start=*/45, /*end=*/135, /*stop_count=*/2, colors.data(),
       stops.data(), tile_mode));
 
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 600, 600), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 600, 600), paint);
   ASSERT_TRUE(aiks_test->OpenPlaygroundHere(builder.Build()));
 }
 }  // namespace
@@ -646,7 +633,7 @@ void CanRenderSweepGradientManyColors(AiksTest* aiks_test,
                                                 stops.size(), colors.data(),
                                                 stops.data(), tile_mode));
 
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 600, 600), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 600, 600), paint);
   ASSERT_TRUE(aiks_test->OpenPlaygroundHere(builder.Build()));
 }
 }  // namespace
@@ -669,7 +656,7 @@ TEST_P(AiksTest, CanRenderConicalGradient) {
   DisplayListBuilder builder;
   DlPaint paint;
   paint.setColor(DlColor::kWhite());
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, size * 3, size * 3), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, size * 3, size * 3), paint);
   std::vector<DlColor> colors = {
       DlColor(Color::MakeRGBA8(0xF4, 0x43, 0x36, 0xFF).ToARGB()),
       DlColor(Color::MakeRGBA8(0xFF, 0xEB, 0x3B, 0xFF).ToARGB()),
@@ -701,7 +688,7 @@ TEST_P(AiksTest, CanRenderConicalGradient) {
         std::get<2>(array[i]), std::get<3>(array[i]), std::get<0>(array[i]),
         std::get<1>(array[i]), stops.size(), colors.data(), stops.data(),
         DlTileMode::kClamp));
-    builder.DrawRect(SkRect::MakeXYWH(0, 0, size, size), paint);
+    builder.DrawRect(DlRect::MakeXYWH(0, 0, size, size), paint);
     builder.Restore();
   }
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
@@ -727,12 +714,12 @@ TEST_P(AiksTest, CanRenderGradientDecalWithBackground) {
   DisplayListBuilder builder;
   DlPaint paint;
   paint.setColor(DlColor::kWhite());
-  builder.DrawRect(SkRect::MakeLTRB(0, 0, 605, 205), paint);
+  builder.DrawRect(DlRect::MakeLTRB(0, 0, 605, 205), paint);
   for (int i = 0; i < 3; i++) {
     builder.Save();
     builder.Translate(i * 200.0f, 0);
     paint.setColorSource(color_sources[i]);
-    builder.DrawRect(SkRect::MakeLTRB(0, 0, 200, 200), paint);
+    builder.DrawRect(DlRect::MakeLTRB(0, 0, 200, 200), paint);
     builder.Restore();
   }
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
@@ -779,12 +766,13 @@ TEST_P(AiksTest, GradientStrokesRenderCorrectly) {
                                                    stops.size(), colors.data(),
                                                    stops.data(), tile_mode));
 
-    SkPath path;
-    path.moveTo(20, 20);
-    path.quadTo({60, 20}, {60, 60});
-    path.close();
-    path.moveTo(60, 20);
-    path.quadTo({60, 60}, {20, 60});
+    DlPathBuilder path_builder;
+    path_builder.MoveTo(DlPoint(20, 20));
+    path_builder.QuadraticCurveTo(DlPoint(60, 20), DlPoint(60, 60));
+    path_builder.Close();
+    path_builder.MoveTo(DlPoint(60, 20));
+    path_builder.QuadraticCurveTo(DlPoint(60, 60), DlPoint(20, 60));
+    DlPath path(path_builder);
 
     builder.Scale(scale, scale);
 
@@ -796,19 +784,17 @@ TEST_P(AiksTest, GradientStrokesRenderCorrectly) {
       auto [handle_a, handle_b] =
           DrawPlaygroundLine(circle_clip_point_a, circle_clip_point_b);
 
-      SkMatrix screen_to_canvas;
-      if (!builder.GetTransform().invert(&screen_to_canvas)) {
+      Matrix ip_matrix = builder.GetMatrix();
+      if (!ip_matrix.IsInvertible()) {
         return nullptr;
       }
-      Matrix ip_matrix = ToMatrix(screen_to_canvas);
+      ip_matrix = ip_matrix.Invert();
       Point point_a = ip_matrix * handle_a * GetContentScale();
       Point point_b = ip_matrix * handle_b * GetContentScale();
 
       Point middle = (point_a + point_b) / 2;
       auto radius = point_a.GetDistance(middle);
-      SkPath circle;
-      circle.addCircle(middle.x, middle.y, radius);
-      builder.ClipPath(circle);
+      builder.ClipPath(DlPath::MakeCircle(middle, radius));
     }
 
     for (auto join :
@@ -844,10 +830,10 @@ TEST_P(AiksTest, FastGradientTestHorizontal) {
                                                  DlTileMode::kClamp));
 
   paint.setColor(DlColor::kWhite());
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 300, 300), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 300, 300), paint);
   builder.Translate(400, 0);
-  builder.DrawRRect(SkRRect::MakeRectXY(SkRect::MakeXYWH(0, 0, 300, 300), 4, 4),
-                    paint);
+  builder.DrawRoundRect(
+      DlRoundRect::MakeRectXY(DlRect::MakeXYWH(0, 0, 300, 300), 4, 4), paint);
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
@@ -867,10 +853,10 @@ TEST_P(AiksTest, FastGradientTestVertical) {
                                                  DlTileMode::kClamp));
 
   paint.setColor(DlColor::kWhite());
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 300, 300), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 300, 300), paint);
   builder.Translate(400, 0);
-  builder.DrawRRect(SkRRect::MakeRectXY(SkRect::MakeXYWH(0, 0, 300, 300), 4, 4),
-                    paint);
+  builder.DrawRoundRect(
+      DlRoundRect::MakeRectXY(DlRect::MakeXYWH(0, 0, 300, 300), 4, 4), paint);
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
@@ -890,10 +876,10 @@ TEST_P(AiksTest, FastGradientTestHorizontalReversed) {
                                                  DlTileMode::kClamp));
 
   paint.setColor(DlColor::kWhite());
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 300, 300), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 300, 300), paint);
   builder.Translate(400, 0);
-  builder.DrawRRect(SkRRect::MakeRectXY(SkRect::MakeXYWH(0, 0, 300, 300), 4, 4),
-                    paint);
+  builder.DrawRoundRect(
+      DlRoundRect::MakeRectXY(DlRect::MakeXYWH(0, 0, 300, 300), 4, 4), paint);
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
@@ -913,10 +899,10 @@ TEST_P(AiksTest, FastGradientTestVerticalReversed) {
                                                  DlTileMode::kClamp));
 
   paint.setColor(DlColor::kWhite());
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 300, 300), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 300, 300), paint);
   builder.Translate(400, 0);
-  builder.DrawRRect(SkRRect::MakeRectXY(SkRect::MakeXYWH(0, 0, 300, 300), 4, 4),
-                    paint);
+  builder.DrawRoundRect(
+      DlRoundRect::MakeRectXY(DlRect::MakeXYWH(0, 0, 300, 300), 4, 4), paint);
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
@@ -937,10 +923,10 @@ TEST_P(AiksTest, VerifyNonOptimizedGradient) {
                                 stops.data(), DlTileMode::kRepeat));
 
   paint.setColor(DlColor::kWhite());
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 300, 300), paint);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 300, 300), paint);
   builder.Translate(400, 0);
-  builder.DrawRRect(SkRRect::MakeRectXY(SkRect::MakeXYWH(0, 0, 300, 300), 4, 4),
-                    paint);
+  builder.DrawRoundRect(
+      DlRoundRect::MakeRectXY(DlRect::MakeXYWH(0, 0, 300, 300), 4, 4), paint);
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }

@@ -134,7 +134,7 @@ class DlSkCanvasAdapter final : public virtual DlCanvas {
                      DlFilterMode filter,
                      const DlPaint* paint = nullptr) override;
   void DrawAtlas(const sk_sp<DlImage>& atlas,
-                 const SkRSXform xform[],
+                 const DlRSTransform xform[],
                  const DlRect tex[],
                  const DlColor colors[],
                  int count,

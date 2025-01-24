@@ -205,14 +205,6 @@ extern std::ostream& operator<<(std::ostream& os, const DlPath& path) {
             << ")";
 }
 
-static std::ostream& operator<<(std::ostream& os, const SkRSXform& xform) {
-  return os << "SkRSXform("
-            << "scos: " << xform.fSCos << ", "
-            << "ssin: " << xform.fSSin << ", "
-            << "tx: " << xform.fTx << ", "
-            << "ty: " << xform.fTy << ")";
-}
-
 std::ostream& operator<<(std::ostream& os, const DlCanvas::ClipOp& op) {
   switch (op) {
     case DlCanvas::ClipOp::kDifference: return os << "ClipOp::kDifference";
@@ -912,7 +904,7 @@ void DisplayListStreamDispatcher::drawImageNine(const sk_sp<DlImage> image,
            << ");" << std::endl;
 }
 void DisplayListStreamDispatcher::drawAtlas(const sk_sp<DlImage> atlas,
-                                            const SkRSXform xform[],
+                                            const DlRSTransform xform[],
                                             const DlRect tex[],
                                             const DlColor colors[],
                                             int count,

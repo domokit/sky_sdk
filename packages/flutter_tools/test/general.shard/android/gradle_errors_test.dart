@@ -1002,7 +1002,7 @@ A problem occurred evaluating project ':app'.
             "│     + classpath 'com.android.tools.build:gradle:$templateAndroidGradlePluginVersion'                           │\n"
             '│ /android/gradle/wrapper/gradle-wrapper.properties:                               │\n'
             '│     - https://services.gradle.org/distributions/gradle-<current-version>-all.zip │\n'
-            '│     + https://services.gradle.org/distributions/gradle-$templateDefaultGradleVersion-all.zip            │\n'
+            '│     + https://services.gradle.org/distributions/gradle-$templateDefaultGradleVersion-all.zip              │\n'
             '└──────────────────────────────────────────────────────────────────────────────────┘\n',
           ),
         );

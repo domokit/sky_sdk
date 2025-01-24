@@ -557,7 +557,7 @@ void main() {
                         ),
                       ),
                     ],
-                    onPopPage: (_, __) => false,
+                    onPopPage: (_, _) => false,
                   ),
                 ),
                 Focus(focusNode: node3, child: const SizedBox(width: 100, height: 100)),
@@ -3563,7 +3563,7 @@ void main() {
 class TestRoute extends PageRouteBuilder<void> {
   TestRoute({required Widget child})
     : super(
-        pageBuilder: (BuildContext _, Animation<double> __, Animation<double> ___) {
+        pageBuilder: (BuildContext _, Animation<double> _, Animation<double> _) {
           return child;
         },
       );

@@ -6,8 +6,6 @@
 #include "flutter/testing/display_list_testing.h"
 #include "flutter/testing/testing.h"
 
-#include "third_party/skia/include/core/SkColor.h"
-
 namespace flutter {
 namespace testing {
 
@@ -44,13 +42,6 @@ TEST(DisplayListColor, ArrayInterchangeableWithUint32) {
       DlColor(0xF1F2F3F4),
   };
   arraysEqual(ints, colors, 5);
-}
-
-TEST(DisplayListColor, DlColorDirectlyComparesToSkColor) {
-  EXPECT_EQ(DlColor::kBlack(), SK_ColorBLACK);
-  EXPECT_EQ(DlColor::kRed(), SK_ColorRED);
-  EXPECT_EQ(DlColor::kGreen(), SK_ColorGREEN);
-  EXPECT_EQ(DlColor::kBlue(), SK_ColorBLUE);
 }
 
 TEST(DisplayListColor, DlColorFloatConstructor) {

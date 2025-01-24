@@ -12,6 +12,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import '../image_data.dart';
 import '../painting/mocks_for_image_cache.dart';
 
@@ -99,7 +100,7 @@ void main() {
             foregroundImage: errorImage,
             backgroundImage: MemoryImage(Uint8List.fromList(kBlueRectPng)),
             radius: 50.0,
-            onForegroundImageError: (_, __) => caughtForegroundImageError = true,
+            onForegroundImageError: (_, _) => caughtForegroundImageError = true,
           ),
         ),
       ),

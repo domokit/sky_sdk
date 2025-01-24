@@ -1544,17 +1544,10 @@ class CachedLocalEngineArtifacts implements Artifacts {
   }
 
   String _flutterTesterPath(TargetPlatform platform) {
-    if (_platform.isLinux) {
-      return _fileSystem.path.join(
-        localEngineInfo.targetOutPath,
-        _artifactToFileName(Artifact.flutterTester, _platform),
-      );
-    } else if (_platform.isMacOS) {
-      return _fileSystem.path.join(localEngineInfo.targetOutPath, 'flutter_tester');
-    } else if (_platform.isWindows) {
-      return _fileSystem.path.join(localEngineInfo.targetOutPath, 'flutter_tester.exe');
-    }
-    throw Exception('Unsupported platform $platform.');
+    return _fileSystem.path.join(
+      localEngineInfo.hostOutPath,
+      _artifactToFileName(Artifact.flutterTester, _platform),
+    );
   }
 
   @override

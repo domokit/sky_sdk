@@ -360,15 +360,15 @@ TEST(RoundRectTest, DefaultConstructor) {
 }
 
 TEST(RoundRectTest, EmptyRectConstruction) {
-  RoundRect round_rect = RoundRect::MakeRectXY(
-      Rect::MakeLTRB(20.0f, 20.0f, 10.0f, 10.0f), 10.0f, 10.0f);
+  RoundRect round_rect =
+      RoundRect::MakeRect(Rect::MakeLTRB(20.0f, 20.0f, 20.0f, 20.0f));
 
   EXPECT_TRUE(round_rect.IsEmpty());
   EXPECT_FALSE(round_rect.IsRect());
   EXPECT_FALSE(round_rect.IsOval());
   EXPECT_TRUE(round_rect.IsFinite());
   EXPECT_TRUE(round_rect.GetBounds().IsEmpty());
-  EXPECT_EQ(round_rect.GetBounds(), Rect::MakeLTRB(20.0f, 20.0f, 10.0f, 10.0f));
+  EXPECT_EQ(round_rect.GetBounds(), Rect::MakeLTRB(20.0f, 20.0f, 20.0f, 20.0f));
   EXPECT_EQ(round_rect.GetRadii().top_left, Size());
   EXPECT_EQ(round_rect.GetRadii().top_right, Size());
   EXPECT_EQ(round_rect.GetRadii().bottom_left, Size());
@@ -391,9 +391,57 @@ TEST(RoundRectTest, RectConstructor) {
   EXPECT_EQ(round_rect.GetRadii().bottom_right, Size());
 }
 
+TEST(RoundRectTest, InvertedRectConstruction) {
+  RoundRect round_rect =
+      RoundRect::MakeRect(Rect::MakeLTRB(20.0f, 20.0f, 10.0f, 10.0f));
+
+  EXPECT_FALSE(round_rect.IsEmpty());
+  EXPECT_TRUE(round_rect.IsRect());
+  EXPECT_FALSE(round_rect.IsOval());
+  EXPECT_TRUE(round_rect.IsFinite());
+  EXPECT_FALSE(round_rect.GetBounds().IsEmpty());
+  EXPECT_EQ(round_rect.GetBounds(), Rect::MakeLTRB(10.0f, 10.0f, 20.0f, 20.0f));
+  EXPECT_EQ(round_rect.GetRadii().top_left, Size());
+  EXPECT_EQ(round_rect.GetRadii().top_right, Size());
+  EXPECT_EQ(round_rect.GetRadii().bottom_left, Size());
+  EXPECT_EQ(round_rect.GetRadii().bottom_right, Size());
+}
+
+TEST(RoundRectTest, EmptyOvalConstruction) {
+  RoundRect round_rect = RoundRect::MakeRectXY(
+      Rect::MakeLTRB(20.0f, 20.0f, 20.0f, 20.0f), 10.0f, 10.0f);
+
+  EXPECT_TRUE(round_rect.IsEmpty());
+  EXPECT_FALSE(round_rect.IsRect());
+  EXPECT_FALSE(round_rect.IsOval());
+  EXPECT_TRUE(round_rect.IsFinite());
+  EXPECT_TRUE(round_rect.GetBounds().IsEmpty());
+  EXPECT_EQ(round_rect.GetBounds(), Rect::MakeLTRB(20.0f, 20.0f, 20.0f, 20.0f));
+  EXPECT_EQ(round_rect.GetRadii().top_left, Size());
+  EXPECT_EQ(round_rect.GetRadii().top_right, Size());
+  EXPECT_EQ(round_rect.GetRadii().bottom_left, Size());
+  EXPECT_EQ(round_rect.GetRadii().bottom_right, Size());
+}
+
 TEST(RoundRectTest, OvalConstructor) {
   RoundRect round_rect =
       RoundRect::MakeOval(Rect::MakeLTRB(10.0f, 10.0f, 20.0f, 20.0f));
+
+  EXPECT_FALSE(round_rect.IsEmpty());
+  EXPECT_FALSE(round_rect.IsRect());
+  EXPECT_TRUE(round_rect.IsOval());
+  EXPECT_TRUE(round_rect.IsFinite());
+  EXPECT_FALSE(round_rect.GetBounds().IsEmpty());
+  EXPECT_EQ(round_rect.GetBounds(), Rect::MakeLTRB(10.0f, 10.0f, 20.0f, 20.0f));
+  EXPECT_EQ(round_rect.GetRadii().top_left, Size(5.0f, 5.0f));
+  EXPECT_EQ(round_rect.GetRadii().top_right, Size(5.0f, 5.0f));
+  EXPECT_EQ(round_rect.GetRadii().bottom_left, Size(5.0f, 5.0f));
+  EXPECT_EQ(round_rect.GetRadii().bottom_right, Size(5.0f, 5.0f));
+}
+
+TEST(RoundRectTest, InvertedOvalConstruction) {
+  RoundRect round_rect = RoundRect::MakeRectXY(
+      Rect::MakeLTRB(20.0f, 20.0f, 10.0f, 10.0f), 10.0f, 10.0f);
 
   EXPECT_FALSE(round_rect.IsEmpty());
   EXPECT_FALSE(round_rect.IsRect());

@@ -62,9 +62,6 @@ void runSemanticsTests() {
   group('Roles', () {
     _testRoleLifecycle();
   });
-  group('Text', () {
-    _testText();
-  });
   group('labels', () {
     _testLabels();
   });
@@ -856,58 +853,6 @@ void _testLongestIncreasingSubsequence() {
     for (int count = 1; count < 100; count += 1) {
       expectLis(List<int>.generate(count, (int i) => 10 * (count - i)), <int>[count - 1]);
     }
-  });
-}
-
-void _testText() {
-  test('renders a piece of plain text', () async {
-    semantics()
-      ..debugOverrideTimestampFunction(() => _testTime)
-      ..semanticsEnabled = true;
-
-    final ui.SemanticsUpdateBuilder builder = ui.SemanticsUpdateBuilder();
-    updateNode(builder, label: 'plain text', rect: const ui.Rect.fromLTRB(0, 0, 100, 50));
-    owner().updateSemantics(builder.build());
-
-    expectSemanticsTree(owner(), '''<sem><span>plain text</span></sem>''');
-
-    final SemanticsObject node = owner().debugSemanticsTree![0]!;
-    expect(node.semanticRole?.kind, EngineSemanticsRole.generic);
-    expect(node.semanticRole!.behaviors!.map((m) => m.runtimeType).toList(), <Type>[
-      Focusable,
-      LiveRegion,
-      RouteName,
-      LabelAndValue,
-    ]);
-    semantics().semanticsEnabled = false;
-  });
-
-  test('renders a tappable piece of text', () async {
-    semantics()
-      ..debugOverrideTimestampFunction(() => _testTime)
-      ..semanticsEnabled = true;
-
-    final SemanticsTester tester = SemanticsTester(owner());
-    tester.updateNode(
-      id: 0,
-      hasTap: true,
-      label: 'tappable text',
-      rect: const ui.Rect.fromLTRB(0, 0, 100, 50),
-    );
-    tester.apply();
-
-    expectSemanticsTree(owner(), '''<sem flt-tappable=""><span>tappable text</span></sem>''');
-
-    final SemanticsObject node = owner().debugSemanticsTree![0]!;
-    expect(node.semanticRole?.kind, EngineSemanticsRole.generic);
-    expect(node.semanticRole!.behaviors!.map((m) => m.runtimeType).toList(), <Type>[
-      Focusable,
-      LiveRegion,
-      RouteName,
-      LabelAndValue,
-      Tappable,
-    ]);
-    semantics().semanticsEnabled = false;
   });
 }
 
@@ -2306,7 +2251,7 @@ void _testSelectables() {
 }
 
 void _testTappable() {
-  test('renders an enabled tappable widget', () async {
+  test('renders an enabled button', () async {
     semantics()
       ..debugOverrideTimestampFunction(() => _testTime)
       ..semanticsEnabled = true;
@@ -2335,21 +2280,23 @@ void _testTappable() {
     semantics().semanticsEnabled = false;
   });
 
-  test('renders a disabled tappable widget', () async {
+  test('renders a disabled button', () async {
     semantics()
       ..debugOverrideTimestampFunction(() => _testTime)
       ..semanticsEnabled = true;
 
-    final ui.SemanticsUpdateBuilder builder = ui.SemanticsUpdateBuilder();
-    updateNode(
-      builder,
-      actions: 0 | ui.SemanticsAction.tap.index,
-      flags: 0 | ui.SemanticsFlag.hasEnabledState.index | ui.SemanticsFlag.isButton.index,
-      transform: Matrix4.identity().toFloat64(),
+    final SemanticsTester tester = SemanticsTester(owner());
+    tester.updateNode(
+      id: 0,
+      isFocusable: true,
+      hasTap: true,
+      hasEnabledState: true,
+      isEnabled: false,
+      isButton: true,
       rect: const ui.Rect.fromLTRB(0, 0, 100, 50),
     );
+    tester.apply();
 
-    owner().updateSemantics(builder.build());
     expectSemanticsTree(owner(), '''
 <sem role="button" aria-disabled="true"></sem>
 ''');
@@ -2357,7 +2304,40 @@ void _testTappable() {
     semantics().semanticsEnabled = false;
   });
 
-  test('can switch tappable between enabled and disabled', () async {
+  test('tappable leaf node is a button', () async {
+    semantics()
+      ..debugOverrideTimestampFunction(() => _testTime)
+      ..semanticsEnabled = true;
+
+    final SemanticsTester tester = SemanticsTester(owner());
+    tester.updateNode(
+      id: 0,
+      isFocusable: true,
+      hasEnabledState: true,
+      isEnabled: true,
+
+      // Not a button
+      isButton: false,
+
+      // But has a tap action and no children
+      hasTap: true,
+      rect: const ui.Rect.fromLTRB(0, 0, 100, 50),
+    );
+    tester.apply();
+
+    expectSemanticsTree(owner(), '''
+<sem role="button" flt-tappable></sem>
+''');
+
+    final SemanticsObject node = owner().debugSemanticsTree![0]!;
+    expect(node.semanticRole?.kind, EngineSemanticsRole.button);
+    expect(node.semanticRole?.debugSemanticBehaviorTypes, containsAll(<Type>[Focusable, Tappable]));
+    expect(tester.getSemanticsObject(0).element.tabIndex, 0);
+
+    semantics().semanticsEnabled = false;
+  });
+
+  test('can switch a button between enabled and disabled', () async {
     semantics()
       ..debugOverrideTimestampFunction(() => _testTime)
       ..semanticsEnabled = true;
@@ -2390,7 +2370,7 @@ void _testTappable() {
     semantics().semanticsEnabled = false;
   });
 
-  test('focuses on tappable after element has been attached', () async {
+  test('focuses on a button after element has been attached', () async {
     semantics()
       ..debugOverrideTimestampFunction(() => _testTime)
       ..semanticsEnabled = true;

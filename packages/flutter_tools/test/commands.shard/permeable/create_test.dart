@@ -4457,6 +4457,44 @@ void main() {
     overrides: <Type, Generator>{Java: () => null, Logger: () => logger},
   );
 
+  testUsingContext('should return correct warning for incompatible Gradle versions', () async {
+    const String projectType = 'app';
+    final String gradleConflict = getIncompatibleJavaGradleAgpMessageHeader(
+      false,
+      templateDefaultGradleVersion,
+      templateAndroidGradlePluginVersion,
+      projectType,
+    );
+
+    expect(
+      gradleConflict,
+      contains('''
+The configured version of Java detected may conflict with the Gradle version in your new Flutter $projectType.
+
+To keep the default Gradle version $templateDefaultGradleVersion, download a compatible Java version
+'''),
+    );
+  });
+
+  testUsingContext('should return correct warning for incompatible AGP versions', () async {
+    const String projectType = 'app';
+    final String agpConflict = getIncompatibleJavaGradleAgpMessageHeader(
+      true,
+      templateDefaultGradleVersion,
+      templateAndroidGradlePluginVersion,
+      projectType,
+    );
+
+    expect(
+      agpConflict,
+      contains('''
+The configured version of Java detected may conflict with the Android Gradle Plugin (AGP) version in your new Flutter $projectType.
+
+To keep the default AGP version $templateAndroidGradlePluginVersion, download a compatible Java version
+'''),
+    );
+  });
+
   testUsingContext(
     'should not show warning for incompatible Java/template Gradle versions when created project type is irrelevant',
     () async {

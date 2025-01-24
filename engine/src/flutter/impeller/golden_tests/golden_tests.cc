@@ -18,7 +18,6 @@
 #include "impeller/golden_tests/metal_screenshot.h"
 #include "impeller/golden_tests/metal_screenshotter.h"
 #include "impeller/golden_tests/working_directory.h"
-#include "third_party/skia/include/core/SkPaint.h"
 
 namespace impeller {
 namespace testing {
@@ -92,7 +91,7 @@ TEST_F(GoldenTests, ConicalGradient) {
       /*tile_mode=*/flutter::DlTileMode::kClamp  //
       ));
 
-  builder.DrawRect(SkRect::MakeXYWH(10, 10, 250, 250), paint);
+  builder.DrawRect(DlRect::MakeXYWH(10, 10, 250, 250), paint);
 
   auto aiks_context =
       AiksContext(Screenshotter().GetPlayground().GetContext(), nullptr);

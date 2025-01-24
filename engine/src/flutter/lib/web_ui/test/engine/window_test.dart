@@ -13,28 +13,20 @@ import 'package:ui/src/engine.dart';
 import 'package:ui/ui.dart' as ui;
 
 import '../common/matchers.dart';
+import '../common/test_initialization.dart';
 
 const int kPhysicalKeyA = 0x00070004;
 const int kLogicalKeyA = 0x00000000061;
+
+EnginePlatformDispatcher get dispatcher => EnginePlatformDispatcher.instance;
+EngineFlutterWindow get myWindow => dispatcher.implicitView!;
 
 void main() {
   internalBootstrapBrowserTest(() => testMain);
 }
 
 Future<void> testMain() async {
-  late EngineFlutterWindow myWindow;
-  final EnginePlatformDispatcher dispatcher = EnginePlatformDispatcher.instance;
-
-  setUp(() {
-    myWindow = EngineFlutterView.implicit(dispatcher, createDomHTMLDivElement());
-    dispatcher.viewManager.registerView(myWindow);
-  });
-
-  tearDown(() async {
-    dispatcher.viewManager.unregisterView(myWindow.viewId);
-    await myWindow.resetHistory();
-    myWindow.dispose();
-  });
+  setUpImplicitView();
 
   test('onTextScaleFactorChanged preserves the zone', () {
     final Zone innerZone = Zone.current.fork();
@@ -279,7 +271,7 @@ Future<void> testMain() async {
     final Zone innerZone = Zone.current.fork();
 
     innerZone.runGuarded(() {
-      void callback(String _, ByteData? __, void Function(ByteData?)? ___) {
+      void callback(String _, ByteData? _, void Function(ByteData?)? _) {
         expect(Zone.current, innerZone);
       }
 

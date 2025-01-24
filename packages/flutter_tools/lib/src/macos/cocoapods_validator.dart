@@ -20,7 +20,7 @@ class CocoaPodsValidator extends DoctorValidator {
   final UserMessages _userMessages;
 
   @override
-  Future<ValidationResult> validate() async {
+  Future<ValidationResult> validateImpl() async {
     final List<ValidationMessage> messages = <ValidationMessage>[];
 
     final CocoaPodsStatus cocoaPodsStatus = await _cocoaPods.evaluateCocoaPodsInstallation;

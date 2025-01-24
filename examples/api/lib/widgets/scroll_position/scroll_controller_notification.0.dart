@@ -73,7 +73,7 @@ class _ScrollNotificationDemoState extends State<ScrollNotificationDemo> {
               child: Text('Item $index'),
             );
           },
-          separatorBuilder: (_, __) => const Divider(indent: 20, endIndent: 20, thickness: 2),
+          separatorBuilder: (_, _) => const Divider(indent: 20, endIndent: 20, thickness: 2),
         ),
       ],
     );

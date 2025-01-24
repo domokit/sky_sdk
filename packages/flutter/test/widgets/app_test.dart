@@ -585,7 +585,7 @@ void main() {
       color: const Color.fromARGB(255, 255, 255, 255),
       onGenerateRoute: (_) {
         return PageRouteBuilder<void>(
-          pageBuilder: (_, __, ___) {
+          pageBuilder: (_, _, _) {
             routeBuildCount++;
             return const Placeholder();
           },

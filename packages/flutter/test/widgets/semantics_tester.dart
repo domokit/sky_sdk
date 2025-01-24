@@ -560,6 +560,8 @@ class SemanticsTester {
     String? label,
     String? value,
     String? hint,
+    String? increasedValue,
+    String? decreasedValue,
     TextDirection? textDirection,
     List<SemanticsAction>? actions,
     List<SemanticsFlag>? flags,
@@ -595,6 +597,12 @@ class SemanticsTester {
         return false;
       }
       if (hint != null && node.hint != hint) {
+        return false;
+      }
+      if (increasedValue != null && node.increasedValue != increasedValue) {
+        return false;
+      }
+      if (decreasedValue != null && node.decreasedValue != decreasedValue) {
         return false;
       }
       if (attributedHint != null &&
@@ -916,6 +924,8 @@ class _IncludesNodeWith extends Matcher {
     this.label,
     this.value,
     this.hint,
+    this.increasedValue,
+    this.decreasedValue,
     this.textDirection,
     this.actions,
     this.flags,
@@ -931,6 +941,8 @@ class _IncludesNodeWith extends Matcher {
              actions != null ||
              flags != null ||
              tags != null ||
+             increasedValue != null ||
+             decreasedValue != null ||
              scrollPosition != null ||
              scrollExtentMax != null ||
              scrollExtentMin != null ||
@@ -943,6 +955,8 @@ class _IncludesNodeWith extends Matcher {
   final String? label;
   final String? value;
   final String? hint;
+  final String? increasedValue;
+  final String? decreasedValue;
   final TextDirection? textDirection;
   final List<SemanticsAction>? actions;
   final List<SemanticsFlag>? flags;
@@ -963,6 +977,8 @@ class _IncludesNodeWith extends Matcher {
           label: label,
           value: value,
           hint: hint,
+          increasedValue: increasedValue,
+          decreasedValue: decreasedValue,
           textDirection: textDirection,
           actions: actions,
           flags: flags,
@@ -1000,6 +1016,8 @@ class _IncludesNodeWith extends Matcher {
       if (actions != null) 'actions "${actions!.join(', ')}"',
       if (flags != null) 'flags "${flags!.join(', ')}"',
       if (tags != null) 'tags "${tags!.join(', ')}"',
+      if (increasedValue != null) 'increasedValue "$increasedValue"',
+      if (decreasedValue != null) 'decreasedValue "$decreasedValue"',
       if (scrollPosition != null) 'scrollPosition "$scrollPosition"',
       if (scrollExtentMax != null) 'scrollExtentMax "$scrollExtentMax"',
       if (scrollExtentMin != null) 'scrollExtentMin "$scrollExtentMin"',
@@ -1021,6 +1039,8 @@ Matcher includesNodeWith({
   AttributedString? attributedValue,
   String? hint,
   AttributedString? attributedHint,
+  String? increasedValue,
+  String? decreasedValue,
   TextDirection? textDirection,
   List<SemanticsAction>? actions,
   List<SemanticsFlag>? flags,
@@ -1039,6 +1059,8 @@ Matcher includesNodeWith({
     hint: hint,
     attributedHint: attributedHint,
     textDirection: textDirection,
+    increasedValue: increasedValue,
+    decreasedValue: decreasedValue,
     actions: actions,
     flags: flags,
     tags: tags,

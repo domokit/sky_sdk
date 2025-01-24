@@ -188,10 +188,12 @@ Future<ComparisonResult> compareLists(List<int>? test, List<int>? master) async 
 
   final Codec testImageCodec = await instantiateImageCodec(Uint8List.fromList(test));
   final Image testImage = (await testImageCodec.getNextFrame()).image;
+  testImageCodec.dispose();
   final ByteData? testImageRgba = await testImage.toByteData();
 
   final Codec masterImageCodec = await instantiateImageCodec(Uint8List.fromList(master));
   final Image masterImage = (await masterImageCodec.getNextFrame()).image;
+  masterImageCodec.dispose();
   final ByteData? masterImageRgba = await masterImage.toByteData();
 
   final int width = testImage.width;

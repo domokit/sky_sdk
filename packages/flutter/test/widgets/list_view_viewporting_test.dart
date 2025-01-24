@@ -499,7 +499,7 @@ void main() {
                       ListView.builder(
                         itemExtent: 100.0,
                         itemCount: 100,
-                        itemBuilder: (_, __) => const SizedBox(height: 40.0, child: Text('hey')),
+                        itemBuilder: (_, _) => const SizedBox(height: 40.0, child: Text('hey')),
                       ).childrenDelegate,
                 ),
               ],

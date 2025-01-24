@@ -145,11 +145,6 @@ Future<Set<RunningProcessInfo>> posixRunningProcesses(
   String? processName,
   ProcessManager processManager,
 ) async {
-  // Cirrus is missing this in Linux for some reason.
-  if (!processManager.canRun('ps')) {
-    print('Cannot list processes on this system: "ps" not available.');
-    return <RunningProcessInfo>{};
-  }
   final ProcessResult result = await processManager.run(<String>[
     'ps',
     '-eo',

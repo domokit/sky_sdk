@@ -5,6 +5,7 @@
 #include "flutter/shell/platform/linux/fl_keyboard_handler.h"
 
 #include "flutter/shell/platform/linux/fl_keyboard_channel.h"
+#include "flutter/shell/platform/linux/key_mapping.h"
 
 struct _FlKeyboardHandler {
   GObject parent_instance;
@@ -29,8 +30,8 @@ static FlValue* get_keyboard_state(gpointer user_data) {
   g_hash_table_foreach(
       pressing_records,
       [](gpointer key, gpointer value, gpointer user_data) {
-        int64_t physical_key = reinterpret_cast<int64_t>(key);
-        int64_t logical_key = reinterpret_cast<int64_t>(value);
+        int64_t physical_key = gpointer_to_uint64(key);
+        int64_t logical_key = gpointer_to_uint64(value);
         FlValue* fl_value_map = reinterpret_cast<FlValue*>(user_data);
 
         fl_value_set_take(fl_value_map, fl_value_new_int(physical_key),
@@ -66,9 +67,8 @@ FlKeyboardHandler* fl_keyboard_handler_new(
       g_object_new(fl_keyboard_handler_get_type(), nullptr));
 
   self->keyboard_manager = FL_KEYBOARD_MANAGER(g_object_ref(keyboard_manager));
-
-  // Setup the flutter/keyboard channel.
   self->channel =
       fl_keyboard_channel_new(messenger, &keyboard_channel_vtable, self);
+
   return self;
 }

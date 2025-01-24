@@ -1,5 +1,9 @@
 # Flutter Engine
 
+## Setting up the Engine development environment
+
+See [here](https://github.com/flutter/flutter/blob/master/engine/src/flutter/docs/contributing/Setting-up-the-Engine-development-environment.md#getting-the-source)
+
 ## `gclient` bootstrap
 
 Flutter engine uses `gclient` to manage dependencies.

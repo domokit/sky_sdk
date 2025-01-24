@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../rendering/rendering_tester.dart';
+import '../widgets/semantics_tester.dart';
 
 class SpyFixedExtentScrollController extends FixedExtentScrollController {
   /// Override for test visibility only.
@@ -52,6 +53,51 @@ void main() {
         color: CupertinoColors.black,
       ),
     );
+  });
+
+  testWidgets('Picker semantics', (WidgetTester tester) async {
+    final SemanticsTester semantics = SemanticsTester(tester);
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: SizedBox(
+          height: 300.0,
+          width: 300.0,
+          child: CupertinoPicker(
+            itemExtent: 50.0,
+            onSelectedItemChanged: (_) {},
+            children: List<Widget>.generate(13, (int index) {
+              return SizedBox(height: 50.0, width: 300.0, child: Text(index.toString()));
+            }),
+          ),
+        ),
+      ),
+    );
+    expect(
+      semantics,
+      includesNodeWith(
+        value: '0',
+        increasedValue: '1',
+        actions: <SemanticsAction>[SemanticsAction.increase],
+      ),
+    );
+
+    final FixedExtentScrollController hourListController =
+        tester.widget<ListWheelScrollView>(find.byType(ListWheelScrollView)).controller!
+            as FixedExtentScrollController;
+
+    hourListController.jumpToItem(11);
+    await tester.pumpAndSettle();
+    expect(
+      semantics,
+      includesNodeWith(
+        value: '11',
+        increasedValue: '12',
+        decreasedValue: '10',
+        actions: <SemanticsAction>[SemanticsAction.increase, SemanticsAction.decrease],
+      ),
+    );
+    semantics.dispose();
   });
 
   group('layout', () {

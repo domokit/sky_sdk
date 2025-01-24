@@ -8,6 +8,7 @@ library;
 import 'package:test/bootstrap/browser.dart';
 import 'package:test/test.dart';
 import 'package:ui/src/engine/dom.dart';
+import 'package:ui/src/engine/util.dart';
 import 'package:ui/src/engine/view_embedder/embedding_strategy/full_page_embedding_strategy.dart';
 
 void main() {
@@ -17,6 +18,12 @@ void main() {
 void doTests() {
   group('initialize', () {
     test('Prepares target environment', () {
+      final warnings = <String>[];
+      final oldPrintWarning = printWarning;
+      printWarning = (String message) {
+        warnings.add(message);
+      };
+
       final DomElement target = domDocument.body!;
       final DomHTMLMetaElement meta = createDomHTMLMetaElement();
       meta
@@ -52,6 +59,10 @@ void doTests() {
         isTrue,
         reason: 'Should install flutter viewport meta tag.',
       );
+      expect(warnings, hasLength(1), reason: 'Should print a warning to the user.');
+      expect(warnings.single, contains(RegExp(r'Found an existing.*meta.*viewport')));
+
+      printWarning = oldPrintWarning;
     });
   });
 

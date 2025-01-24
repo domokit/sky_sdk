@@ -21,7 +21,7 @@ using impeller::Font;
 namespace {
 struct TextRenderOptions {
   bool stroke = false;
-  SkScalar font_size = 50;
+  DlScalar font_size = 50;
   DlColor color = DlColor::kYellow();
   std::shared_ptr<DlMaskFilter> mask_filter;
 };
@@ -29,7 +29,7 @@ struct TextRenderOptions {
 bool RenderTextInCanvasSkia(DlCanvas* canvas,
                             const std::string& text,
                             const std::string_view& font_fixture,
-                            SkPoint position,
+                            DlPoint position,
                             const TextRenderOptions& options = {}) {
   auto c_font_fixture = std::string(font_fixture);
   auto mapping = flutter::testing::OpenFixtureAsSkData(c_font_fixture.c_str());
@@ -52,7 +52,7 @@ bool RenderTextInCanvasSkia(DlCanvas* canvas,
   // text_paint.stroke_width = 1;
   // text_paint.style =
   //     options.stroke ? Paint::Style::kStroke : Paint::Style::kFill;
-  canvas->DrawTextFrame(frame, position.x(), position.y(), text_paint);
+  canvas->DrawTextFrame(frame, position.x, position.y, text_paint);
   return true;
 }
 
@@ -70,13 +70,13 @@ TEST_P(DlGoldenTest, TextBlurMaskFilterRespectCTM) {
         DlBlurMaskFilter::Make(DlBlurStyle::kNormal, /*sigma=*/10,
                                /*respect_ctm=*/true);
     ASSERT_TRUE(RenderTextInCanvasSkia(canvas, "hello world",
-                                       "Roboto-Regular.ttf",
-                                       SkPoint::Make(101, 101), options));
+                                       "Roboto-Regular.ttf",  //
+                                       DlPoint(101, 101), options));
     options.mask_filter = nullptr;
     options.color = DlColor::kRed();
     ASSERT_TRUE(RenderTextInCanvasSkia(canvas, "hello world",
-                                       "Roboto-Regular.ttf",
-                                       SkPoint::Make(100, 100), options));
+                                       "Roboto-Regular.ttf",  //
+                                       DlPoint(100, 100), options));
   };
 
   DisplayListBuilder builder;
@@ -97,13 +97,13 @@ TEST_P(DlGoldenTest, TextBlurMaskFilterDisrespectCTM) {
         DlBlurMaskFilter::Make(DlBlurStyle::kNormal, /*sigma=*/10,
                                /*respect_ctm=*/false);
     ASSERT_TRUE(RenderTextInCanvasSkia(canvas, "hello world",
-                                       "Roboto-Regular.ttf",
-                                       SkPoint::Make(101, 101), options));
+                                       "Roboto-Regular.ttf",  //
+                                       DlPoint(101, 101), options));
     options.mask_filter = nullptr;
     options.color = DlColor::kRed();
     ASSERT_TRUE(RenderTextInCanvasSkia(canvas, "hello world",
-                                       "Roboto-Regular.ttf",
-                                       SkPoint::Make(100, 100), options));
+                                       "Roboto-Regular.ttf",  //
+                                       DlPoint(100, 100), options));
   };
 
   DisplayListBuilder builder;
@@ -161,13 +161,13 @@ TEST_P(DlGoldenTest, ShimmerTest) {
     canvas->Scale(content_scale.x, content_scale.y);
 
     DlPaint paint;
-    canvas->DrawImage(images[0], SkPoint::Make(10.135, 10.36334),
+    canvas->DrawImage(images[0], DlPoint(10.135, 10.36334),
                       DlImageSampling::kLinear, &paint);
 
-    SkRect save_layer_bounds = SkRect::MakeLTRB(0, 0, 1024, 768);
+    DlRect save_layer_bounds = DlRect::MakeLTRB(0, 0, 1024, 768);
     auto blur = DlImageFilter::MakeBlur(sigma, sigma, DlTileMode::kDecal);
-    canvas->ClipRect(SkRect::MakeLTRB(11.125, 10.3737, 911.25, 755.3333));
-    canvas->SaveLayer(&save_layer_bounds, /*paint=*/nullptr, blur.get());
+    canvas->ClipRect(DlRect::MakeLTRB(11.125, 10.3737, 911.25, 755.3333));
+    canvas->SaveLayer(save_layer_bounds, /*paint=*/nullptr, blur.get());
     canvas->Restore();
   };
 

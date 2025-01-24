@@ -703,7 +703,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
       final double padding =
           entry.leadingIcon == null
               ? (leadingPadding ?? _kDefaultHorizontalPadding)
-              : (_kDefaultHorizontalPadding + _kLeadingIconToInputPadding);
+              : _kDefaultHorizontalPadding;
       ButtonStyle effectiveStyle =
           entry.style ??
           switch (textDirection) {
@@ -780,7 +780,13 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
         child: MenuItemButton(
           key: enableScrollToHighlight ? buttonItemKeys[i] : null,
           style: effectiveStyle,
-          leadingIcon: entry.leadingIcon,
+          leadingIcon:
+              entry.leadingIcon != null
+                  ? Padding(
+                    padding: const EdgeInsetsDirectional.only(end: _kLeadingIconToInputPadding),
+                    child: entry.leadingIcon,
+                  )
+                  : null,
           trailingIcon: entry.trailingIcon,
           closeOnActivate: widget.closeBehavior == DropdownMenuCloseBehavior.all,
           onPressed:
@@ -965,10 +971,13 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
       crossAxisUnconstrained: false,
       builder: (BuildContext context, MenuController controller, Widget? child) {
         assert(_initialMenu != null);
+        final bool isCollapsed = widget.inputDecorationTheme?.isCollapsed ?? false;
         final Widget trailingButton = Padding(
-          padding: const EdgeInsets.all(4.0),
+          padding: isCollapsed ? EdgeInsets.zero : const EdgeInsets.all(4.0),
           child: IconButton(
             isSelected: controller.isOpen,
+            constraints: widget.inputDecorationTheme?.suffixIconConstraints,
+            padding: isCollapsed ? EdgeInsets.zero : null,
             icon: widget.trailingIcon ?? const Icon(Icons.arrow_drop_down),
             selectedIcon: widget.selectedTrailingIcon ?? const Icon(Icons.arrow_drop_up),
             onPressed:

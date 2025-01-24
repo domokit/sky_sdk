@@ -55,7 +55,7 @@ bool SurfaceControl::IsAvailableOnPlatform() {
   // we had more time to test all of these older devices maybe we could
   // figure out what the problem is.
   // https://github.com/flutter/flutter/issues/155877
-  return api_level >= 30 && GetProcTable().IsValid() &&
+  return api_level >= 29 && GetProcTable().IsValid() &&
          GetProcTable().ASurfaceControl_createFromWindow.IsAvailable();
 }
 
