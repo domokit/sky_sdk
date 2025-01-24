@@ -38,6 +38,13 @@ const Duration _kTransitionDuration = Duration(milliseconds: 167);
 const Curve _kTransitionCurve = Curves.fastOutSlowIn;
 const double _kFinalLabelScale = 0.75;
 
+// From the M3 spec, horizontal padding is 12 pixels for the prefix icon and
+// 16 pixels for the input content.
+// InputDecorator default padding is set to 12 pixels because 16 pixels will move
+// the prefix icon too far.
+// An extra padding should be added for the input content to comply with the 16 pixels padding.
+const double _kInputExtraPadding = 4.0;
+
 typedef _SubtextSize = ({double ascent, double bottomHeight, double subtextHeight});
 typedef _ChildBaselineGetter = double Function(RenderBox child, BoxConstraints constraints);
 
@@ -565,6 +572,7 @@ class _Decoration {
     required this.isDense,
     required this.isEmpty,
     required this.visualDensity,
+    required this.inputGap,
     required this.maintainHintSize,
     this.icon,
     this.input,
@@ -590,6 +598,7 @@ class _Decoration {
   final bool? isDense;
   final bool isEmpty;
   final VisualDensity visualDensity;
+  final double inputGap;
   final bool maintainHintSize;
   final Widget? icon;
   final Widget? input;
@@ -623,6 +632,7 @@ class _Decoration {
         other.isDense == isDense &&
         other.isEmpty == isEmpty &&
         other.visualDensity == visualDensity &&
+        other.inputGap == inputGap &&
         other.maintainHintSize == maintainHintSize &&
         other.icon == icon &&
         other.input == input &&
@@ -649,6 +659,7 @@ class _Decoration {
     isDense,
     isEmpty,
     visualDensity,
+    inputGap,
     maintainHintSize,
     icon,
     input,
@@ -657,8 +668,7 @@ class _Decoration {
     prefix,
     suffix,
     prefixIcon,
-    suffixIcon,
-    Object.hash(helperError, counter, container),
+    Object.hash(suffixIcon, helperError, counter, container),
   );
 }
 
@@ -967,10 +977,14 @@ class _RenderDecoration extends RenderBox
       start:
           iconWidth +
           prefixSize.width +
-          (prefixIcon == null ? contentPadding.start : prefixIconSize.width + prefixToInputGap),
+          (prefixIcon == null
+              ? contentPadding.start + decoration.inputGap
+              : prefixIconSize.width + prefixToInputGap),
       end:
           suffixSize.width +
-          (suffixIcon == null ? contentPadding.end : suffixIconSize.width + inputToSuffixGap),
+          (suffixIcon == null
+              ? contentPadding.end + decoration.inputGap
+              : suffixIconSize.width + inputToSuffixGap),
     );
 
     final double inputWidth = math.max(
@@ -987,7 +1001,11 @@ class _RenderDecoration extends RenderBox
       final double labelWidth = math.max(
         0.0,
         constraints.maxWidth -
-            (iconWidth + contentPadding.horizontal + prefixIconSize.width + suffixIconSpace),
+            (decoration.inputGap * 2 +
+                iconWidth +
+                contentPadding.horizontal +
+                prefixIconSize.width +
+                suffixIconSpace),
       );
 
       // Increase the available width for the label when it is scaled down.
@@ -1375,10 +1393,13 @@ class _RenderDecoration extends RenderBox
       case TextDirection.ltr:
         start = contentPadding.start + _boxSize(icon).width;
         end = overallWidth - contentPadding.end;
-        _boxParentData(helperError).offset = Offset(start, subtextBaseline - helperErrorBaseline);
+        _boxParentData(helperError).offset = Offset(
+          start + decoration.inputGap,
+          subtextBaseline - helperErrorBaseline,
+        );
         if (counter != null) {
           _boxParentData(counter).offset = Offset(
-            end - counter.size.width,
+            end - counter.size.width - decoration.inputGap,
             subtextBaseline - counterBaseline,
           );
         }
@@ -1386,11 +1407,14 @@ class _RenderDecoration extends RenderBox
         start = overallWidth - contentPadding.start - _boxSize(icon).width;
         end = contentPadding.end;
         _boxParentData(helperError).offset = Offset(
-          start - helperError.size.width,
+          start - helperError.size.width - decoration.inputGap,
           subtextBaseline - helperErrorBaseline,
         );
         if (counter != null) {
-          _boxParentData(counter).offset = Offset(end, subtextBaseline - counterBaseline);
+          _boxParentData(counter).offset = Offset(
+            end + decoration.inputGap,
+            subtextBaseline - counterBaseline,
+          );
         }
     }
 
@@ -1410,6 +1434,8 @@ class _RenderDecoration extends RenderBox
             start += contentPadding.start;
             start -= centerLayout(prefixIcon!, start - prefixIcon!.size.width);
             start -= prefixToInputGap;
+          } else {
+            start -= decoration.inputGap;
           }
           if (label != null) {
             if (decoration.alignLabelWithHint) {
@@ -1431,6 +1457,8 @@ class _RenderDecoration extends RenderBox
             end -= contentPadding.end;
             end += centerLayout(suffixIcon!, end);
             end += inputToSuffixGap;
+          } else {
+            end += decoration.inputGap;
           }
           if (suffix != null) {
             end += baselineLayout(suffix!, end);
@@ -1443,6 +1471,8 @@ class _RenderDecoration extends RenderBox
             start -= contentPadding.start;
             start += centerLayout(prefixIcon!, start);
             start += prefixToInputGap;
+          } else {
+            start += decoration.inputGap;
           }
           if (label != null) {
             if (decoration.alignLabelWithHint) {
@@ -1464,6 +1494,8 @@ class _RenderDecoration extends RenderBox
             end += contentPadding.end;
             end -= centerLayout(suffixIcon!, end - suffixIcon!.size.width);
             end -= inputToSuffixGap;
+          } else {
+            end -= decoration.inputGap;
           }
           if (suffix != null) {
             end -= baselineLayout(suffix!, end - suffix!.size.width);
@@ -2257,10 +2289,9 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
+    final bool useMaterial3 = Theme.of(context).useMaterial3;
     final InputDecorationTheme defaults =
-        Theme.of(context).useMaterial3
-            ? _InputDecoratorDefaultsM3(context)
-            : _InputDecoratorDefaultsM2(context);
+        useMaterial3 ? _InputDecoratorDefaultsM3(context) : _InputDecoratorDefaultsM2(context);
     final InputDecorationTheme inputDecorationTheme = themeData.inputDecorationTheme;
     final IconButtonThemeData iconButtonTheme = IconButtonTheme.of(context);
 
@@ -2550,7 +2581,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
       if (decoration.filled ?? false) {
         contentPadding =
             decorationContentPadding ??
-            (Theme.of(context).useMaterial3
+            (useMaterial3
                 ? decorationIsDense
                     ? const EdgeInsetsDirectional.fromSTEB(12.0, 4.0, 12.0, 4.0)
                     : const EdgeInsetsDirectional.fromSTEB(12.0, 8.0, 12.0, 8.0)
@@ -2563,7 +2594,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
         // the most noticeable layout change introduced by #13734.
         contentPadding =
             decorationContentPadding ??
-            (Theme.of(context).useMaterial3
+            (useMaterial3
                 ? decorationIsDense
                     ? const EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 4.0)
                     : const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 8.0)
@@ -2575,7 +2606,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
       floatingLabelHeight = 0.0;
       contentPadding =
           decorationContentPadding ??
-          (Theme.of(context).useMaterial3
+          (useMaterial3
               ? decorationIsDense
                   ? const EdgeInsetsDirectional.fromSTEB(12.0, 16.0, 12.0, 8.0)
                   : const EdgeInsetsDirectional.fromSTEB(12.0, 20.0, 12.0, 12.0)
@@ -2584,10 +2615,20 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
               : const EdgeInsetsDirectional.fromSTEB(12.0, 24.0, 12.0, 16.0));
     }
 
+    double inputGap = 0.0;
+    if (useMaterial3) {
+      if (border is OutlineInputBorder) {
+        inputGap = border.gapPadding;
+      } else {
+        inputGap = border.isOutline || (decoration.filled ?? false) ? _kInputExtraPadding : 0.0;
+      }
+    }
+
     final _Decorator decorator = _Decorator(
       decoration: _Decoration(
         contentPadding: contentPadding,
         isCollapsed: decoration.isCollapsed ?? themeData.inputDecorationTheme.isCollapsed,
+        inputGap: inputGap,
         floatingLabelHeight: floatingLabelHeight,
         floatingLabelAlignment: decoration.floatingLabelAlignment!,
         floatingLabelProgress: _floatingLabelAnimation.value,

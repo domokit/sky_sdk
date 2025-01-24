@@ -5530,12 +5530,12 @@ void main() {
       ),
     );
     final double iconRight = tester.getTopRight(find.byType(Icon)).dx;
-    // Per https://material.io/go/design-text-fields#text-fields-layout
-    // There's a 16 dps gap between the right edge of the icon and the text field's
-    // container, and the 12dps more padding between the left edge of the container
-    // and the left edge of the input and label.
-    expect(iconRight + 28.0, equals(tester.getTopLeft(find.text('label')).dx));
-    expect(iconRight + 28.0, equals(tester.getTopLeft(find.byType(EditableText)).dx));
+    // There's a 16 pixels gap between the right edge of the icon and the text field's
+    // container, and, per https://material.io/go/design-text-fields#text-fields-layout,
+    // 16 pixels more padding between the left edge of the container and the left edge
+    // of the input and label.
+    expect(iconRight + 16.0 + 16.0, equals(tester.getTopLeft(find.text('label')).dx));
+    expect(iconRight + 16.0 + 16.0, equals(tester.getTopLeft(find.byType(EditableText)).dx));
   });
 
   testWidgets('Collapsed hint text placement', (WidgetTester tester) async {
