@@ -35,7 +35,7 @@ void main() {
   });
 
   void writePackages(List<Package> graph) {
-    final Map<String, dynamic> packageConfigMap = <String, dynamic>{'configVersion': 2};
+    final Map<String, Object?> packageConfigMap = <String, Object?>{'configVersion': 2};
     for (final Package package in graph) {
       fileSystem.file(fileSystem.path.join(package.name, 'pubspec.yaml'))
         ..createSync(recursive: true)
@@ -46,7 +46,7 @@ ${package.dependencies.map((String d) => '  $d: {path: ../$d}').join('\n')}
 dev_dependencies:
 ${package.devDependencies.map((String d) => '  $d: {path: ../$d}').join('\n')}
 ''');
-      ((packageConfigMap['packages'] ??= <dynamic>[]) as List<dynamic>).add(<String, dynamic>{
+      ((packageConfigMap['packages'] ??= <Object?>[]) as List<Object?>).add(<String, Object?>{
         'name': package.name,
         'rootUri': '../../${package.name}',
         'packageUri': 'lib/',
@@ -60,7 +60,7 @@ ${package.devDependencies.map((String d) => '  $d: {path: ../$d}').join('\n')}
 
   Future<void> validateComputeGraph(
     List<Package> graph,
-    List<String> excusiveDevDependencies,
+    List<String> exclusiveDevDependencies,
   ) async {
     writePackages(graph);
     final FlutterProject project = FlutterProject.fromDirectoryTest(fileSystem.directory('my_app'));
@@ -76,7 +76,7 @@ ${package.devDependencies.map((String d) => '  $d: {path: ../$d}').join('\n')}
     for (final Package p in graph) {
       expect(
         dependencies[p.name]!.isExclusiveDevDependency,
-        excusiveDevDependencies.contains(p.name),
+        exclusiveDevDependencies.contains(p.name),
       );
     }
   }

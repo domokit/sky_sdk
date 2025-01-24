@@ -27,9 +27,8 @@ import 'project.dart';
 Map<String, Dependency> computeTransitiveDependencies(
   FlutterProject project,
   PackageConfig packageConfig,
-  FileSystem fileSystem, {
-  bool followDevDependencies = false,
-}) {
+  FileSystem fileSystem,
+) {
   final Map<String, Dependency> result = <String, Dependency>{};
   result[project.manifest.appName] = Dependency(
     project.manifest.toYaml(),
@@ -125,7 +124,7 @@ _PackageDetails? _loadPackageDetails(
       return null;
     }
 
-    for (final dynamic name in dependenciesMap.keys) {
+    for (final Object? name in dependenciesMap.keys) {
       if (name is! String) {
         continue;
       }
