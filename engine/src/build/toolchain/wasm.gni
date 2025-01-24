@@ -12,6 +12,7 @@ declare_args() {
   emsdk_dir = rebase_path("//flutter/prebuilts/emsdk")
 
   wasm_use_pthreads = false
+  wasm_shared_memory = false
   wasm_use_dwarf = false
 }
 

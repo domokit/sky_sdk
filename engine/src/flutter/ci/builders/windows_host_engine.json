@@ -1,4 +1,12 @@
 {
+    "_comment": [
+        "The builds defined in this file should not contain tests, ",
+        "and the file should not contain builds that are essentially tests. ",
+        "The only builds in this file should be the builds necessary to produce ",
+        "release artifacts. ",
+        "Tests to run on windows hosts should go in one of the other windows_ build ",
+        "definition files."
+    ],
     "builds": [
         {
             "archives": [
@@ -50,20 +58,7 @@
                     "flutter/build/archives:windows_flutter",
                     "flutter/impeller/toolkit/interop:sdk"
                 ]
-            },
-            "tests": [
-                {
-                    "language": "python3",
-                    "name": "Host Tests for host_debug",
-                    "script": "flutter/testing/run_tests.py",
-                    "parameters": [
-                        "--variant",
-                        "ci/host_debug",
-                        "--type",
-                        "engine"
-                    ]
-                }
-            ]
+            }
         },
         {
             "archives": [

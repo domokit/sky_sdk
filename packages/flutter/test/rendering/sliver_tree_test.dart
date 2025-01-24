@@ -338,8 +338,8 @@ void main() {
     // Customize the animation
     treeSliver = TreeSliver<String>(
       tree: treeNodes,
-      toggleAnimationStyle: AnimationStyle(
-        duration: const Duration(milliseconds: 500),
+      toggleAnimationStyle: const AnimationStyle(
+        duration: Duration(milliseconds: 500),
         curve: Curves.bounceIn,
       ),
     );

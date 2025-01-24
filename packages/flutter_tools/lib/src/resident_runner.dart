@@ -41,6 +41,7 @@ import 'run_cold.dart';
 import 'run_hot.dart';
 import 'sksl_writer.dart';
 import 'vmservice.dart';
+import 'web/chrome.dart';
 
 class FlutterDevice {
   FlutterDevice(
@@ -1048,7 +1049,19 @@ abstract class ResidentRunner extends ResidentHandlers {
       artifactDirectory.createSync(recursive: true);
     }
     // TODO(bkonyi): remove when ready to serve DevTools from DDS.
-    _residentDevtoolsHandler = devtoolsHandler(DevtoolsLauncher.instance, this, globals.logger);
+    _residentDevtoolsHandler = devtoolsHandler(
+      DevtoolsLauncher.instance,
+      this,
+      globals.logger,
+      ChromiumLauncher(
+        fileSystem: globals.fs,
+        platform: globals.platform,
+        processManager: globals.processManager,
+        operatingSystemUtils: globals.os,
+        browserFinder: findChromeExecutable,
+        logger: globals.logger,
+      ),
+    );
   }
 
   @override

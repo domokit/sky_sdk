@@ -20,9 +20,9 @@ dependencies:
   path: any
   platform: any
   process_runner: any
+  source_span: any
   yaml: any
 
 dev_dependencies:
   process_fakes: any
-  source_span: any
   test: any

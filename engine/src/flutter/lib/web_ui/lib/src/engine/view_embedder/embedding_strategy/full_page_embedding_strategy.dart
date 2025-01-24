@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:ui/src/engine/dom.dart';
-import 'package:ui/src/engine/util.dart' show setElementStyle;
+import 'package:ui/src/engine/util.dart';
 
 import '../hot_restart_cache_handler.dart' show registerElementForCleanup;
 import 'embedding_strategy.dart';
@@ -70,10 +70,9 @@ class FullPageEmbeddingStrategy implements EmbeddingStrategy {
         // to avoid UI flicker during hot restart. Hot restart will clean up the
         // old meta tag synchronously with the first post-restart frame.
         if (!viewportMeta.hasAttribute('flt-viewport')) {
-          print(
-            'WARNING: found an existing <meta name="viewport"> tag. Flutter '
-            'Web uses its own viewport configuration for better compatibility '
-            'with Flutter. This tag will be replaced.',
+          printWarning(
+            'Found an existing <meta name="viewport"> tag. Flutter Web uses its own viewport '
+            'configuration for better compatibility with Flutter. This tag will be replaced.',
           );
         }
         return true;

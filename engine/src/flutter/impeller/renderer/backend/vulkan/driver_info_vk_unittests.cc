@@ -222,4 +222,43 @@ TEST(DriverInfoVKTest, CanUseFramebufferFetch) {
   EXPECT_TRUE(CanUseFramebufferFetch("Mali-G51", false));
 }
 
+TEST(DriverInfoVKTest, DisableOldXclipseDriver) {
+  auto context =
+      MockVulkanContextBuilder()
+          .SetPhysicalPropertiesCallback(
+              [](VkPhysicalDevice device, VkPhysicalDeviceProperties* prop) {
+                prop->vendorID = 0x144D;  // Samsung
+                prop->deviceType = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
+                // Version 1.1.0
+                prop->apiVersion = (1 << 22) | (1 << 12);
+              })
+          .Build();
+
+  EXPECT_TRUE(context->GetDriverInfo()->IsKnownBadDriver());
+
+  context =
+      MockVulkanContextBuilder()
+          .SetPhysicalPropertiesCallback(
+              [](VkPhysicalDevice device, VkPhysicalDeviceProperties* prop) {
+                prop->vendorID = 0x144D;  // Samsung
+                prop->deviceType = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
+                // Version 1.3.0
+                prop->apiVersion = (1 << 22) | (3 << 12);
+              })
+          .Build();
+
+  EXPECT_FALSE(context->GetDriverInfo()->IsKnownBadDriver());
+}
+
+TEST(DriverInfoVKTest, AllPowerVRDisabled) {
+  auto const context =
+      MockVulkanContextBuilder()
+          .SetPhysicalPropertiesCallback(
+              [](VkPhysicalDevice device, VkPhysicalDeviceProperties* prop) {
+                prop->vendorID = 0x1010;
+                prop->deviceType = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
+              })
+          .Build();
+}
+
 }  // namespace impeller::testing

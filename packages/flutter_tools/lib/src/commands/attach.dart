@@ -218,6 +218,9 @@ known, it can be explicitly provided to attach via the command-line, e.g.
 
   @override
   Future<void> validateCommand() async {
+    // ARM macOS as an iOS target is hidden, except for attach.
+    MacOSDesignedForIPadDevices.allowDiscovery = true;
+
     await super.validateCommand();
 
     final Device? targetDevice = await findTargetDevice();

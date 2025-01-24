@@ -4,86 +4,68 @@
 
 #include "flutter/shell/platform/linux/fl_keyboard_handler.h"
 
-#include "flutter/shell/platform/linux/fl_binary_messenger_private.h"
+#include "flutter/shell/platform/embedder/test_utils/key_codes.g.h"
+#include "flutter/shell/platform/embedder/test_utils/proc_table_replacement.h"
+#include "flutter/shell/platform/linux/fl_engine_private.h"
 #include "flutter/shell/platform/linux/fl_method_codec_private.h"
 #include "flutter/shell/platform/linux/public/flutter_linux/fl_standard_method_codec.h"
 #include "flutter/shell/platform/linux/testing/fl_mock_binary_messenger.h"
+#include "flutter/shell/platform/linux/testing/mock_keymap.h"
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 static constexpr char kKeyboardChannelName[] = "flutter/keyboard";
 static constexpr char kGetKeyboardStateMethod[] = "getKeyboardState";
-static constexpr uint64_t kMockPhysicalKey = 42;
-static constexpr uint64_t kMockLogicalKey = 42;
 
-G_BEGIN_DECLS
+using ::flutter::testing::keycodes::kLogicalKeyA;
+using ::flutter::testing::keycodes::kPhysicalKeyA;
 
-G_DECLARE_FINAL_TYPE(FlMockKeyboardHandlerDelegate,
-                     fl_mock_keyboard_handler_delegate,
-                     FL,
-                     MOCK_KEYBOARD_HANDLER_DELEGATE,
-                     GObject);
-
-G_END_DECLS
-
-struct _FlMockKeyboardHandlerDelegate {
-  GObject parent_instance;
-};
-
-static void fl_mock_keyboard_handler_delegate_keyboard_view_delegate_iface_init(
-    FlKeyboardViewDelegateInterface* iface);
-
-G_DEFINE_TYPE_WITH_CODE(
-    FlMockKeyboardHandlerDelegate,
-    fl_mock_keyboard_handler_delegate,
-    G_TYPE_OBJECT,
-    G_IMPLEMENT_INTERFACE(
-        fl_keyboard_view_delegate_get_type(),
-        fl_mock_keyboard_handler_delegate_keyboard_view_delegate_iface_init))
-
-static void fl_mock_keyboard_handler_delegate_init(
-    FlMockKeyboardHandlerDelegate* self) {}
-
-static void fl_mock_keyboard_handler_delegate_class_init(
-    FlMockKeyboardHandlerDelegateClass* klass) {}
-
-static void fl_mock_keyboard_handler_delegate_keyboard_view_delegate_iface_init(
-    FlKeyboardViewDelegateInterface* iface) {}
-
-static FlMockKeyboardHandlerDelegate* fl_mock_keyboard_handler_delegate_new() {
-  FlMockKeyboardHandlerDelegate* self = FL_MOCK_KEYBOARD_HANDLER_DELEGATE(
-      g_object_new(fl_mock_keyboard_handler_delegate_get_type(), nullptr));
-
-  // Added to stop compiler complaining about an unused function.
-  FL_IS_MOCK_KEYBOARD_HANDLER_DELEGATE(self);
-
-  return self;
-}
+constexpr guint16 kKeyCodeKeyA = 0x26u;
 
 TEST(FlKeyboardHandlerTest, KeyboardChannelGetPressedState) {
+  ::testing::NiceMock<flutter::testing::MockKeymap> mock_keymap;
+
   g_autoptr(FlMockBinaryMessenger) messenger = fl_mock_binary_messenger_new();
   g_autoptr(FlEngine) engine =
-      FL_ENGINE(g_object_new(fl_engine_get_type(), "binary-messenger",
-                             FL_BINARY_MESSENGER(messenger), nullptr));
-  g_autoptr(FlMockKeyboardHandlerDelegate) view_delegate =
-      fl_mock_keyboard_handler_delegate_new();
-  g_autoptr(FlKeyboardManager) manager =
-      fl_keyboard_manager_new(engine, FL_KEYBOARD_VIEW_DELEGATE(view_delegate));
-  fl_keyboard_manager_set_get_pressed_state_handler(
-      manager,
-      [](gpointer user_data) {
-        GHashTable* result = g_hash_table_new(g_direct_hash, g_direct_equal);
-        g_hash_table_insert(result,
-                            reinterpret_cast<gpointer>(kMockPhysicalKey),
-                            reinterpret_cast<gpointer>(kMockLogicalKey));
+      fl_engine_new_with_binary_messenger(FL_BINARY_MESSENGER(messenger));
+  g_autoptr(FlKeyboardManager) manager = fl_keyboard_manager_new(engine);
 
-        return result;
-      },
-      nullptr);
+  EXPECT_TRUE(fl_engine_start(engine, nullptr));
+
   g_autoptr(FlKeyboardHandler) handler =
       fl_keyboard_handler_new(FL_BINARY_MESSENGER(messenger), manager);
   EXPECT_NE(handler, nullptr);
+
+  // Send key event to set pressed state.
+  fl_mock_binary_messenger_set_json_message_channel(
+      messenger, "flutter/keyevent",
+      [](FlMockBinaryMessenger* messenger, GTask* task, FlValue* message,
+         gpointer user_data) {
+        FlValue* response = fl_value_new_map();
+        fl_value_set_string_take(response, "handled", fl_value_new_bool(FALSE));
+        return response;
+      },
+      nullptr);
+  fl_engine_get_embedder_api(engine)->SendKeyEvent = MOCK_ENGINE_PROC(
+      SendKeyEvent, ([](auto engine, const FlutterKeyEvent* event,
+                        FlutterKeyEventCallback callback, void* user_data) {
+        callback(false, user_data);
+        return kSuccess;
+      }));
+  g_autoptr(GMainLoop) loop = g_main_loop_new(nullptr, 0);
+  g_autoptr(FlKeyEvent) event = fl_key_event_new(
+      0, TRUE, kKeyCodeKeyA, GDK_KEY_a, static_cast<GdkModifierType>(0), 0);
+  fl_keyboard_manager_handle_event(
+      manager, event, nullptr,
+      [](GObject* object, GAsyncResult* result, gpointer user_data) {
+        g_autoptr(FlKeyEvent) redispatched_event = nullptr;
+        EXPECT_TRUE(fl_keyboard_manager_handle_event_finish(
+            FL_KEYBOARD_MANAGER(object), result, &redispatched_event, nullptr));
+        g_main_loop_quit(static_cast<GMainLoop*>(user_data));
+      },
+      loop);
+  g_main_loop_run(loop);
 
   gboolean called = FALSE;
   fl_mock_binary_messenger_invoke_standard_method(
@@ -96,14 +78,13 @@ TEST(FlKeyboardHandlerTest, KeyboardChannelGetPressedState) {
         EXPECT_TRUE(FL_IS_METHOD_SUCCESS_RESPONSE(response));
 
         g_autoptr(FlValue) expected_result = fl_value_new_map();
-        fl_value_set_take(expected_result, fl_value_new_int(kMockPhysicalKey),
-                          fl_value_new_int(kMockLogicalKey));
+        fl_value_set_take(expected_result, fl_value_new_int(kPhysicalKeyA),
+                          fl_value_new_int(kLogicalKeyA));
         EXPECT_TRUE(fl_value_equal(fl_method_success_response_get_result(
                                        FL_METHOD_SUCCESS_RESPONSE(response)),
                                    expected_result));
       },
       &called);
-  EXPECT_TRUE(called);
 
-  fl_binary_messenger_shutdown(FL_BINARY_MESSENGER(messenger));
+  EXPECT_TRUE(called);
 }

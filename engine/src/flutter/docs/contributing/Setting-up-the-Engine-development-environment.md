@@ -50,7 +50,7 @@ Clone the Flutter source code. As of late 2024, the engine source is part of the
 [Setup a `.gclient` file](../../../../../engine/README.md) in the repository
 root (the `flutter/flutter` repository root), and run `gclient sync`.
 
-The "Engine Tool" called `et` is useful when working with the engine. It is located in the [`engine/src/flutter/bin`](https://github.com/flutter/flutter/tree/0c3359df8c8342c8907316488b1404a216f215b6/engine/src/flutter/bin) directory. Add this to your `$PATH` in your `.rc` file.
+The "Engine Tool" called `et` is useful when working with the engine. It is located in the [`flutter/engine/src/flutter/bin`](https://github.com/flutter/flutter/tree/0c3359df8c8342c8907316488b1404a216f215b6/engine/src/flutter/bin) directory. Add this to your `$PATH` in your `.rc` file: e.g. on UNIX, using `export PATH=/path/to/flutter/engine/src/flutter/bin:$PATH`.
 
 ### Additional Steps for Web Engine
 

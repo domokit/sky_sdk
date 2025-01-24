@@ -17,6 +17,7 @@ namespace impeller {
 namespace testing {
 
 using ::testing::_;
+using ::testing::NiceMock;
 
 class TestWorker : public ReactorGLES::Worker {
  public:
@@ -96,13 +97,14 @@ TEST(ReactorGLES, UntrackedHandle) {
 }
 
 TEST(ReactorGLES, NameUntrackedHandle) {
-  auto mock_gles_impl = std::make_unique<MockGLESImpl>();
+  auto mock_gles_impl = std::make_unique<NiceMock<MockGLESImpl>>();
 
   EXPECT_CALL(*mock_gles_impl, GenTextures(1, _))
       .WillOnce([](GLsizei size, GLuint* queries) { queries[0] = 1234; });
   EXPECT_CALL(*mock_gles_impl,
               ObjectLabelKHR(_, 1234, _, ::testing::StrEq("hello, joe!")))
       .Times(1);
+  ON_CALL(*mock_gles_impl, IsTexture).WillByDefault(::testing::Return(GL_TRUE));
 
   std::shared_ptr<MockGLES> mock_gles =
       MockGLES::Init(std::move(mock_gles_impl));

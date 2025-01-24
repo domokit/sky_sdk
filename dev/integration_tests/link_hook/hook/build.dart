@@ -8,13 +8,13 @@ import 'package:native_assets_cli/code_assets_builder.dart';
 import 'package:native_toolchain_c/native_toolchain_c.dart';
 
 void main(List<String> args) async {
-  await build(args, (BuildConfig config, BuildOutputBuilder output) async {
-    if (!config.buildAssetTypes.contains(CodeAsset.type)) {
+  await build(args, (BuildInput input, BuildOutputBuilder output) async {
+    if (!input.config.buildAssetTypes.contains(CodeAsset.type)) {
       return;
     }
 
     final String assetName;
-    if (config.linkingEnabled) {
+    if (input.config.linkingEnabled) {
       // The link hook will be run. So emit an asset with a name that is
       // not used, so that the link hook can rename it.
       // This will ensure the test fails if the link-hooks are not run
@@ -23,9 +23,9 @@ void main(List<String> args) async {
     } else {
       // The link hook will not be run, so immediately emit an asset for
       // bundling.
-      assetName = '${config.packageName}_bindings_generated.dart';
+      assetName = '${input.packageName}_bindings_generated.dart';
     }
-    final String packageName = config.packageName;
+    final String packageName = input.packageName;
     final CBuilder cbuilder = CBuilder.library(
       name: packageName,
       assetName: assetName,
@@ -34,19 +34,19 @@ void main(List<String> args) async {
     );
     final BuildOutputBuilder outputCatcher = BuildOutputBuilder();
     await cbuilder.run(
-      config: config,
+      input: input,
       output: outputCatcher,
       logger:
           Logger('')
             ..level = Level.ALL
             ..onRecord.listen((LogRecord record) => print(record.message)),
     );
-    final BuildOutput catchedOutput = BuildOutput(outputCatcher.json);
-    output.addDependencies(catchedOutput.dependencies);
+    final BuildOutput caughtOutput = BuildOutput(outputCatcher.json);
+    output.addDependencies(caughtOutput.dependencies);
     // Send the asset to hook/link.dart or immediately for bundling.
-    output.codeAssets.add(
-      catchedOutput.codeAssets.single,
-      linkInPackage: config.linkingEnabled ? 'link_hook' : null,
+    output.assets.code.add(
+      caughtOutput.assets.code.single,
+      linkInPackage: input.config.linkingEnabled ? 'link_hook' : null,
     );
   });
 }

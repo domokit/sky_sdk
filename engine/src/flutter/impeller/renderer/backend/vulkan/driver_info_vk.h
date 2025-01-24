@@ -122,6 +122,7 @@ enum class VendorVK {
   kNvidia,
   kIntel,
   kHuawei,
+  kSamsung,
   //----------------------------------------------------------------------------
   /// Includes the LLVM Pipe CPU implementation.
   ///

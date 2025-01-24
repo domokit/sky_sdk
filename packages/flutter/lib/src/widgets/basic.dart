@@ -5749,7 +5749,7 @@ class Flow extends MultiChildRenderObjectWidget {
 
   /// {@macro flutter.material.Material.clipBehavior}
   ///
-  /// Defaults to [Clip.none].
+  /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
 
   @override

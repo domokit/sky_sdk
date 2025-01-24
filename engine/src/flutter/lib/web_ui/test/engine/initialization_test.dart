@@ -38,7 +38,6 @@ void testMain() {
       JSAny? engineInitializer;
 
       void didCreateEngineInitializerMock(JSAny? obj) {
-        print('obj: $obj');
         engineInitializer = obj;
       }
 

@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "impeller/entity/contents/content_context.h"
 #include "impeller/entity/contents/contents.h"
 #include "impeller/geometry/color.h"
 #include "impeller/typographer/font_glyph_pair.h"
@@ -60,6 +61,15 @@ class TextContents final : public Contents {
   bool Render(const ContentContext& renderer,
               const Entity& entity,
               RenderPass& pass) const override;
+
+  static void ComputeVertexData(
+      GlyphAtlasPipeline::VertexShader::PerVertexData* vtx_contents,
+      const std::shared_ptr<TextFrame>& frame,
+      Scalar scale,
+      const Matrix& entity_transform,
+      Vector2 offset,
+      std::optional<GlyphProperties> glyph_properties,
+      const std::shared_ptr<GlyphAtlas>& atlas);
 
  private:
   std::optional<GlyphProperties> GetGlyphProperties() const;

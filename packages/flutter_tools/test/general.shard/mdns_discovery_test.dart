@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:file/memory.dart';
 import 'package:flutter_tools/src/base/io.dart';
 import 'package:flutter_tools/src/base/logger.dart';
@@ -610,13 +612,16 @@ void main() {
         );
       });
 
+      // On macOS, the mDNS client's socket stream creates a SocketException if
+      // the app running the tool does not have Local Network permissions.
+      // See: https://github.com/flutter/flutter/issues/150131
       test(
-        'On macOS, throw tool exit with a helpful message when client throws a SocketException on lookup',
+        'On macOS, tool exits with a helpful message when mDNS lookup throws a SocketException',
         () async {
           final MDnsClient client = FakeMDnsClient(
             <PtrResourceRecord>[],
             <String, List<SrvResourceRecord>>{},
-            socketExceptionOnStart: true,
+            socketExceptionOnLookup: true,
           );
 
           final MDnsVmServiceDiscovery portDiscovery = MDnsVmServiceDiscovery(
@@ -627,13 +632,55 @@ void main() {
           );
 
           expect(
-            portDiscovery.firstMatchingVmService(client),
+            () async => portDiscovery.firstMatchingVmService(client),
             throwsToolExit(
               message:
-                  'You might be having a permissions issue with your IDE. '
-                  'Please try going to '
-                  'System Settings -> Privacy & Security -> Local Network -> '
-                  '[Find your IDE] -> Toggle ON, then restart your phone.',
+                  'Flutter could not connect to the Dart VM service.\n'
+                  '\n'
+                  'Please ensure your IDE or terminal app has permission to access '
+                  'devices on the local network. This allows Flutter to connect to '
+                  'the Dart VM.\n'
+                  '\n'
+                  'You can grant this permission in System Settings > Privacy & '
+                  'Security > Local Network.\n',
+            ),
+          );
+        },
+        // [intended] This tool exit message only works for macOS
+        skip: !globals.platform.isMacOS,
+      );
+
+      // On macOS, the mDNS client's socket stream creates a SocketException if
+      // the app running the tool does not have Local Network permissions.
+      // See: https://github.com/flutter/flutter/issues/150131
+      test(
+        'On macOS, tool exits with a helpful message when mDNS lookup throws an uncaught SocketException',
+        () async {
+          final MDnsClient client = FakeMDnsClient(
+            <PtrResourceRecord>[],
+            <String, List<SrvResourceRecord>>{},
+            uncaughtSocketExceptionOnLookup: true,
+          );
+
+          final MDnsVmServiceDiscovery portDiscovery = MDnsVmServiceDiscovery(
+            mdnsClient: client,
+            logger: BufferLogger.test(),
+            flutterUsage: TestUsage(),
+            analytics: const NoOpAnalytics(),
+          );
+
+          expect(
+            () async => portDiscovery.firstMatchingVmService(client),
+            throwsToolExit(
+              message:
+                  'Flutter could not connect to the Dart VM service.\n'
+                  '\n'
+                  'Please ensure your IDE or terminal app has permission to access '
+                  'devices on the local network. This allows Flutter to connect to '
+                  'the Dart VM.\n'
+                  '\n'
+                  'You can grant this permission in System Settings > Privacy & '
+                  'Security > Local Network.\n',
             ),
           );
         },
@@ -1155,7 +1202,8 @@ class FakeMDnsClient extends Fake implements MDnsClient {
     this.txtResponse = const <String, List<TxtResourceRecord>>{},
     this.ipResponse = const <String, List<IPAddressResourceRecord>>{},
     this.osErrorOnStart = false,
-    this.socketExceptionOnStart = false,
+    this.socketExceptionOnLookup = false,
+    this.uncaughtSocketExceptionOnLookup = false,
   });
 
   final List<PtrResourceRecord> ptrRecords;
@@ -1163,7 +1211,8 @@ class FakeMDnsClient extends Fake implements MDnsClient {
   final Map<String, List<TxtResourceRecord>> txtResponse;
   final Map<String, List<IPAddressResourceRecord>> ipResponse;
   final bool osErrorOnStart;
-  final bool socketExceptionOnStart;
+  final bool socketExceptionOnLookup;
+  final bool uncaughtSocketExceptionOnLookup;
 
   @override
   Future<void> start({
@@ -1182,9 +1231,17 @@ class FakeMDnsClient extends Fake implements MDnsClient {
     ResourceRecordQuery query, {
     Duration timeout = const Duration(seconds: 5),
   }) {
-    if (socketExceptionOnStart) {
+    if (socketExceptionOnLookup) {
       throw const SocketException('Socket Exception');
     }
+
+    if (uncaughtSocketExceptionOnLookup) {
+      Zone.current.handleUncaughtError(
+        const SocketException('Socket Exception'),
+        StackTrace.current,
+      );
+    }
+
     if (T == PtrResourceRecord &&
         query.fullyQualifiedName == MDnsVmServiceDiscovery.dartVmServiceName) {
       return Stream<PtrResourceRecord>.fromIterable(ptrRecords) as Stream<T>;

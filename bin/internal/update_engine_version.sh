@@ -14,10 +14,24 @@
 
 set -e
 
+# Allow overriding the intended engine version via FLUTTER_ENGINE_VERSION.
+#
+# This is for systems, such as Github Actions, where we know ahead of time the
+# base-ref we want to use (to download the engine binaries and avoid trying
+# to compute one below).
+#
+# This environment variable is EXPERIMENTAL. If you are not on the Flutter infra
+# team, this code path might be removed at anytime and cease functioning. Please
+# file an issue if you have workflow needs.
+if [ -n "${FLUTTER_ENGINE_VERSION}" ]; then
+  ENGINE_VERSION="${FLUTTER_ENGINE_VERSION}"
+  echo "[Unstable] Override: Setting engine SHA to $ENGINE_VERSION" 1>&2
+fi
+
 FLUTTER_ROOT="$(dirname "$(dirname "$(dirname "${BASH_SOURCE[0]}")")")"
 
-# Test for fusion repository
-if [ -f "$FLUTTER_ROOT/DEPS" ] && [ -f "$FLUTTER_ROOT/engine/src/.gn" ]; then
+# Test for fusion repository and no environment variable override.
+if [ -z "$ENGINE_VERSION" ] && [ -f "$FLUTTER_ROOT/DEPS" ] && [ -f "$FLUTTER_ROOT/engine/src/.gn" ]; then
   BRANCH=$(git -C "$FLUTTER_ROOT" rev-parse --abbrev-ref HEAD)
   # In a fusion repository; the engine.version comes from the git hashes.
   if [ -z "${LUCI_CONTEXT}" ]; then
@@ -35,14 +49,14 @@ if [ -f "$FLUTTER_ROOT/DEPS" ] && [ -f "$FLUTTER_ROOT/engine/src/.gn" ]; then
   else
     ENGINE_VERSION=$(git -C "$FLUTTER_ROOT" rev-parse HEAD)
   fi
+fi
 
-  if [[ "$BRANCH" != "stable" && "$BRANCH" != "beta" ]]; then
-    # Write the engine version out so downstream tools know what to look for.
-    echo $ENGINE_VERSION > "$FLUTTER_ROOT/bin/internal/engine.version"
+if [[ "$BRANCH" != "stable" && "$BRANCH" != "beta" ]]; then
+  # Write the engine version out so downstream tools know what to look for.
+  echo $ENGINE_VERSION > "$FLUTTER_ROOT/bin/internal/engine.version"
 
-    # The realm on CI is passed in.
-    if [ -n "${FLUTTER_REALM}" ]; then
-      echo $FLUTTER_REALM > "$FLUTTER_ROOT/bin/internal/engine.realm"
-    fi
+  # The realm on CI is passed in.
+  if [ -n "${FLUTTER_REALM}" ]; then
+    echo $FLUTTER_REALM > "$FLUTTER_ROOT/bin/internal/engine.realm"
   fi
 fi

@@ -1376,5 +1376,29 @@ TEST_P(AiksTest,
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
 
+TEST_P(AiksTest, BlurGradientWithOpacity) {
+  DisplayListBuilder builder;
+  builder.Scale(GetContentScale().x, GetContentScale().y);
+
+  std::vector<DlColor> colors = {DlColor(0xFFFF0000), DlColor(0xFF00FF00)};
+  std::vector<Scalar> stops = {0.0, 1.0};
+
+  auto gradient = DlColorSource::MakeLinear(
+      {0, 0}, {400, 400}, 2, colors.data(), stops.data(), DlTileMode::kClamp);
+
+  DlPaint save_paint;
+  save_paint.setOpacity(0.5);
+  builder.SaveLayer(nullptr, &save_paint);
+
+  DlPaint paint;
+  paint.setColorSource(gradient);
+  paint.setMaskFilter(DlBlurMaskFilter::Make(DlBlurStyle::kNormal, 1));
+  builder.DrawRect(SkRect::MakeXYWH(100, 100, 200, 200), paint);
+
+  builder.Restore();
+
+  ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
+}
+
 }  // namespace testing
 }  // namespace impeller

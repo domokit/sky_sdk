@@ -456,7 +456,7 @@ void expectDylibIsBundledWithFrameworks(Directory appDirectory, String buildMode
 /// This inspects the build configuration to see if the C compiler was configured.
 void expectCCompilerIsConfigured(Directory appDirectory) {
   final Directory nativeAssetsBuilderDir = appDirectory.childDirectory(
-    '.dart_tool/native_assets_builder/',
+    '.dart_tool/native_assets_builder/$packageName/',
   );
   for (final Directory subDir in nativeAssetsBuilderDir.listSync().whereType<Directory>()) {
     // We only want to look at build/link hook invocation directories. The
@@ -466,14 +466,16 @@ void expectCCompilerIsConfigured(Directory appDirectory) {
       continue;
     }
 
-    final File configFile = subDir.childFile('config.json');
-    expect(configFile, exists);
-    final Map<String, Object?> config =
-        json.decode(configFile.readAsStringSync()) as Map<String, Object?>;
-    if (!(config['supported_asset_types']! as List<dynamic>).contains(CodeAsset.type)) {
+    final File inputFile = subDir.childFile('input.json');
+    expect(inputFile, exists);
+    final Map<String, Object?> inputContents =
+        json.decode(inputFile.readAsStringSync()) as Map<String, Object?>;
+    final BuildInput input = BuildInput(inputContents);
+    final BuildConfig config = input.config;
+    if (!config.buildCodeAssets) {
       continue;
     }
-    expect((config['c_compiler']! as Map<String, Object?>)['cc'], isNotNull);
+    expect(config.code.cCompiler?.compiler, isNot(isNull));
   }
 }
 

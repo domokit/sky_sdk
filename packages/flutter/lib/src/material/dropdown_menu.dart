@@ -703,7 +703,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
       final double padding =
           entry.leadingIcon == null
               ? (leadingPadding ?? _kDefaultHorizontalPadding)
-              : (_kDefaultHorizontalPadding + _kLeadingIconToInputPadding);
+              : _kDefaultHorizontalPadding;
       ButtonStyle effectiveStyle =
           entry.style ??
           switch (textDirection) {
@@ -780,7 +780,13 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
         child: MenuItemButton(
           key: enableScrollToHighlight ? buttonItemKeys[i] : null,
           style: effectiveStyle,
-          leadingIcon: entry.leadingIcon,
+          leadingIcon:
+              entry.leadingIcon != null
+                  ? Padding(
+                    padding: const EdgeInsetsDirectional.only(end: _kLeadingIconToInputPadding),
+                    child: entry.leadingIcon,
+                  )
+                  : null,
           trailingIcon: entry.trailingIcon,
           closeOnActivate: widget.closeBehavior == DropdownMenuCloseBehavior.all,
           onPressed:

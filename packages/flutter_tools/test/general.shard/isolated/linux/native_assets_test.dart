@@ -30,6 +30,7 @@ void main() {
   late FileSystem fileSystem;
   late BufferLogger logger;
   late Uri projectUri;
+  late String runPackageName;
 
   setUp(() {
     processManager = FakeProcessManager.empty();
@@ -46,6 +47,7 @@ void main() {
     );
     environment.buildDir.createSync(recursive: true);
     projectUri = environment.projectDir.uri;
+    runPackageName = environment.projectDir.basename;
   });
 
   testUsingContext(
@@ -116,6 +118,7 @@ void main() {
         packageConfig,
         fileSystem,
         logger,
+        runPackageName,
       );
       final CCompilerConfig result = (await runner.cCompilerConfig)!;
       expect(result.compiler, Uri.file('/some/path/to/clang'));

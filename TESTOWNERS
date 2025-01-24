@@ -323,12 +323,14 @@
 # https://github.com/flutter/flutter/issues/82068
 #
 # analyze @Piinks @flutter/framework
+# android_engine_vulkan_tests @matanlurey @jonahwilliams
+# android_engine_opengles_tests @matanlurey @jonahwilliams
 # build_tests @andrewkolos @flutter/tool
 # ci_yaml flutter roller @keyonghan @flutter/infra
 # coverage @goderbauer @flutter/infra
 # customer_testing @Piinks @flutter/framework
 # docs @Piinks @flutter/framework
-# flutter_driver_android_test @matanlurey @johnmccutchan
+# flutter_driver_android_test @matanlurey @jonahwilliams
 # flutter_packaging @christopherfujino @flutter/infra
 # flutter_plugins @stuartmorgan @flutter/plugin
 # framework_tests @Piinks @flutter/framework
@@ -345,6 +347,5 @@
 # web_canvaskit_tests @yjbanov @flutter/web
 # web_integration_tests @yjbanov @flutter/web
 # web_long_running_tests @yjbanov @flutter/web
-# web_tests @yjbanov @flutter/web
 # web_skwasm_tests @eyebrowsoffire @flutter/web
 # web_tool_tests @yjbanov @flutter/tool

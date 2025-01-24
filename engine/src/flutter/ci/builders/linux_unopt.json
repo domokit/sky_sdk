@@ -67,7 +67,7 @@
                         "--variant",
                         "ci/host_debug_unopt",
                         "--type",
-                        "dart,dart-host,engine",
+                        "dart,dart-host,engine,font-subset",
                         "--engine-capture-core-dump",
                         "--use-sanitizer-suppressions"
                     ]

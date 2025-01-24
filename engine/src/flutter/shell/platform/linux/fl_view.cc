@@ -13,9 +13,6 @@
 #include "flutter/shell/platform/linux/fl_accessible_node.h"
 #include "flutter/shell/platform/linux/fl_engine_private.h"
 #include "flutter/shell/platform/linux/fl_key_event.h"
-#include "flutter/shell/platform/linux/fl_keyboard_handler.h"
-#include "flutter/shell/platform/linux/fl_keyboard_manager.h"
-#include "flutter/shell/platform/linux/fl_keyboard_view_delegate.h"
 #include "flutter/shell/platform/linux/fl_plugin_registrar_private.h"
 #include "flutter/shell/platform/linux/fl_pointer_manager.h"
 #include "flutter/shell/platform/linux/fl_renderer_gdk.h"
@@ -65,11 +62,7 @@ struct _FlView {
   // Manages touch events.
   FlTouchManager* touch_manager;
 
-  // Manages keyboard events.
-  FlKeyboardManager* keyboard_manager;
-
   // Flutter system channel handlers.
-  FlKeyboardHandler* keyboard_handler;
   FlTextInputHandler* text_input_handler;
 
   // Accessible tree from Flutter, exposed as an AtkPlug.
@@ -90,9 +83,6 @@ static void fl_renderable_iface_init(FlRenderableInterface* iface);
 static void fl_view_plugin_registry_iface_init(
     FlPluginRegistryInterface* iface);
 
-static void fl_view_keyboard_delegate_iface_init(
-    FlKeyboardViewDelegateInterface* iface);
-
 static void fl_view_text_input_delegate_iface_init(
     FlTextInputViewDelegateInterface* iface);
 
@@ -103,10 +93,8 @@ G_DEFINE_TYPE_WITH_CODE(
     G_IMPLEMENT_INTERFACE(fl_renderable_get_type(), fl_renderable_iface_init)
         G_IMPLEMENT_INTERFACE(fl_plugin_registry_get_type(),
                               fl_view_plugin_registry_iface_init)
-            G_IMPLEMENT_INTERFACE(fl_keyboard_view_delegate_get_type(),
-                                  fl_view_keyboard_delegate_iface_init)
-                G_IMPLEMENT_INTERFACE(fl_text_input_view_delegate_get_type(),
-                                      fl_view_text_input_delegate_iface_init))
+            G_IMPLEMENT_INTERFACE(fl_text_input_view_delegate_get_type(),
+                                  fl_view_text_input_delegate_iface_init))
 
 // Emit the first frame signal in the main thread.
 static gboolean first_frame_idle_cb(gpointer user_data) {
@@ -137,12 +125,6 @@ static void init_keyboard(FlView* self) {
   g_clear_object(&self->text_input_handler);
   self->text_input_handler = fl_text_input_handler_new(
       messenger, im_context, FL_TEXT_INPUT_VIEW_DELEGATE(self));
-  g_clear_object(&self->keyboard_manager);
-  self->keyboard_manager =
-      fl_keyboard_manager_new(self->engine, FL_KEYBOARD_VIEW_DELEGATE(self));
-  g_clear_object(&self->keyboard_handler);
-  self->keyboard_handler =
-      fl_keyboard_handler_new(messenger, self->keyboard_manager);
 }
 
 static void init_scrolling(FlView* self) {
@@ -332,16 +314,6 @@ static void fl_view_plugin_registry_iface_init(
   iface->get_registrar_for_plugin = fl_view_get_registrar_for_plugin;
 }
 
-static void fl_view_keyboard_delegate_iface_init(
-    FlKeyboardViewDelegateInterface* iface) {
-  iface->text_filter_key_press = [](FlKeyboardViewDelegate* view_delegate,
-                                    FlKeyEvent* event) {
-    FlView* self = FL_VIEW(view_delegate);
-    return fl_text_input_handler_filter_keypress(self->text_input_handler,
-                                                 event);
-  };
-}
-
 static void fl_view_text_input_delegate_iface_init(
     FlTextInputViewDelegateInterface* iface) {
   iface->translate_coordinates = [](FlTextInputViewDelegate* delegate,
@@ -358,8 +330,8 @@ static void sync_modifier_if_needed(FlView* self, GdkEvent* event) {
   guint event_time = gdk_event_get_time(event);
   GdkModifierType event_state = static_cast<GdkModifierType>(0);
   gdk_event_get_state(event, &event_state);
-  fl_keyboard_manager_sync_modifier_if_needed(self->keyboard_manager,
-                                              event_state, event_time);
+  fl_keyboard_manager_sync_modifier_if_needed(
+      fl_engine_get_keyboard_manager(self->engine), event_state, event_time);
 }
 
 static void set_scrolling_position(FlView* self, gdouble x, gdouble y) {
@@ -655,8 +627,6 @@ static void fl_view_dispose(GObject* object) {
   g_clear_object(&self->scrolling_manager);
   g_clear_object(&self->pointer_manager);
   g_clear_object(&self->touch_manager);
-  g_clear_object(&self->keyboard_manager);
-  g_clear_object(&self->keyboard_handler);
   g_clear_object(&self->view_accessible);
   g_clear_object(&self->cancellable);
 
@@ -677,28 +647,33 @@ static gboolean handle_key_event(FlView* self, GdkEventKey* key_event) {
   g_autoptr(FlKeyEvent) event = fl_key_event_new_from_gdk_event(
       gdk_event_copy(reinterpret_cast<GdkEvent*>(key_event)));
 
-  if (fl_keyboard_manager_is_redispatched(self->keyboard_manager, event)) {
-    return FALSE;
-  }
-
   fl_keyboard_manager_handle_event(
-      self->keyboard_manager, event, self->cancellable,
+      fl_engine_get_keyboard_manager(self->engine), event, self->cancellable,
       [](GObject* object, GAsyncResult* result, gpointer user_data) {
+        FlView* self = FL_VIEW(user_data);
+
         g_autoptr(FlKeyEvent) redispatch_event = nullptr;
         g_autoptr(GError) error = nullptr;
         if (!fl_keyboard_manager_handle_event_finish(
                 FL_KEYBOARD_MANAGER(object), result, &redispatch_event,
                 &error)) {
-          if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-            g_warning("Failed to handle key event: %s", error->message);
+          if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+            return;
           }
+
+          g_warning("Failed to handle key event: %s", error->message);
         }
 
         if (redispatch_event != nullptr) {
-          gdk_event_put(fl_key_event_get_origin(redispatch_event));
+          if (!fl_text_input_handler_filter_keypress(self->text_input_handler,
+                                                     redispatch_event)) {
+            fl_keyboard_manager_add_redispatched_event(
+                fl_engine_get_keyboard_manager(self->engine), redispatch_event);
+            gdk_event_put(fl_key_event_get_origin(redispatch_event));
+          }
         }
       },
-      nullptr);
+      self);
 
   return TRUE;
 }

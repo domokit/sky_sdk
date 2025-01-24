@@ -14,14 +14,12 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'src/engine.dart' as engine;
-import 'ui_web/src/ui_web.dart' as ui_web;
 
 part 'annotations.dart';
 part 'canvas.dart';
 part 'channel_buffers.dart';
 part 'compositing.dart';
 part 'geometry.dart';
-part 'initialization.dart';
 part 'key.dart';
 part 'lerp.dart';
 part 'math.dart';

@@ -47,7 +47,6 @@ template("skwasm_variant") {
       "-lexports.js",
       "-sEXPORTED_FUNCTIONS=[stackAlloc]",
       "-sEXPORTED_RUNTIME_METHODS=[addFunction,wasmExports,wasmMemory,stackAlloc]",
-      "-sSHARED_MEMORY=1",
       "-sINCOMING_MODULE_JS_API=[instantiateWasm,noExitRuntime,mainScriptUrlOrBlob]",
       "-sUSE_ES6_IMPORT_META=0",
       "--js-library",
@@ -76,7 +75,6 @@ template("skwasm_variant") {
 
     if (is_debug) {
       ldflags += [
-        "-sDEMANGLE_SUPPORT=1",
         "-sASSERTIONS=1",
         "-sGL_ASSERTIONS=1",
       ]

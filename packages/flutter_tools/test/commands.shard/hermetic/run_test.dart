@@ -23,7 +23,6 @@ import 'package:flutter_tools/src/devfs.dart';
 import 'package:flutter_tools/src/device.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:flutter_tools/src/ios/devices.dart';
-import 'package:flutter_tools/src/macos/macos_ipad_device.dart';
 import 'package:flutter_tools/src/project.dart';
 import 'package:flutter_tools/src/reporting/reporting.dart';
 import 'package:flutter_tools/src/resident_runner.dart';
@@ -274,72 +273,6 @@ void main() {
           DeviceManager: () => testDeviceManager,
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
-          Cache: () => Cache.test(processManager: FakeProcessManager.any()),
-        },
-      );
-
-      testUsingContext(
-        'Using flutter run -d with MacOSDesignedForIPadDevices throws an error',
-        () async {
-          final RunCommand command = RunCommand();
-          testDeviceManager.devices = <Device>[FakeMacDesignedForIpadDevice()];
-
-          await expectLater(
-            () => createTestCommandRunner(
-              command,
-            ).run(<String>['run', '-d', 'mac-designed-for-ipad']),
-            throwsToolExit(
-              message: 'Mac Designed for iPad is currently not supported for flutter run -d',
-            ),
-          );
-        },
-        overrides: <Type, Generator>{
-          FileSystem: () => fs,
-          ProcessManager: () => FakeProcessManager.any(),
-          DeviceManager: () => testDeviceManager,
-          Stdio: () => FakeStdio(),
-          Cache: () => Cache.test(processManager: FakeProcessManager.any()),
-        },
-      );
-
-      testUsingContext(
-        'Using flutter run -d all with a single MacOSDesignedForIPadDevices throws a tool error',
-        () async {
-          final RunCommand command = RunCommand();
-          testDeviceManager.devices = <Device>[FakeMacDesignedForIpadDevice()];
-
-          await expectLater(
-            () => createTestCommandRunner(command).run(<String>['run', '-d', 'all']),
-            throwsToolExit(
-              message: 'Mac Designed for iPad is currently not supported for flutter run -d',
-            ),
-          );
-        },
-        overrides: <Type, Generator>{
-          FileSystem: () => fs,
-          ProcessManager: () => FakeProcessManager.any(),
-          DeviceManager: () => testDeviceManager,
-          Stdio: () => FakeStdio(),
-          Cache: () => Cache.test(processManager: FakeProcessManager.any()),
-        },
-      );
-
-      testUsingContext(
-        'Using flutter run -d all with MacOSDesignedForIPadDevices removes from device list, and attempts to launch',
-        () async {
-          final RunCommand command = TestRunCommandThatOnlyValidates();
-          testDeviceManager.devices = <Device>[FakeMacDesignedForIpadDevice(), FakeDevice()];
-
-          await createTestCommandRunner(command).run(<String>['run', '-d', 'all']);
-
-          expect(command.devices?.length, 1);
-          expect(command.devices?.single.id, 'fake_device');
-        },
-        overrides: <Type, Generator>{
-          FileSystem: () => fs,
-          ProcessManager: () => FakeProcessManager.any(),
-          DeviceManager: () => testDeviceManager,
-          Stdio: () => FakeStdio(),
           Cache: () => Cache.test(processManager: FakeProcessManager.any()),
         },
       );
@@ -1682,26 +1615,6 @@ class FakeDevice extends Fake implements Device {
       _throwToolExit(kSuccess);
     }
   }
-}
-
-class FakeMacDesignedForIpadDevice extends Fake implements MacOSDesignedForIPadDevice {
-  @override
-  String get id => 'mac-designed-for-ipad';
-
-  @override
-  bool get isConnected => true;
-
-  @override
-  Future<TargetPlatform> get targetPlatform async => TargetPlatform.darwin;
-
-  @override
-  DeviceConnectionInterface connectionInterface = DeviceConnectionInterface.attached;
-
-  @override
-  bool isSupported() => true;
-
-  @override
-  bool isSupportedForProject(FlutterProject project) => true;
 }
 
 class FakeIOSDevice extends Fake implements IOSDevice {

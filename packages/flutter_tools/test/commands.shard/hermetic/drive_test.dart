@@ -54,6 +54,94 @@ void main() {
   });
 
   testUsingContext(
+    'fails if the specified --target is not found',
+    () async {
+      final DriveCommand command = DriveCommand(
+        fileSystem: fileSystem,
+        logger: logger,
+        platform: platform,
+        signals: signals,
+      );
+      fileSystem.file('lib/main.dart').createSync(recursive: true);
+      fileSystem.file('test_driver/main_test.dart').createSync(recursive: true);
+      fileSystem.file('pubspec.yaml').createSync();
+
+      await expectLater(
+        () => createTestCommandRunner(
+          command,
+        ).run(<String>['drive', '--no-pub', '--target', 'lib/app.dart']),
+        throwsToolExit(message: 'Target file "lib/app.dart" not found'),
+      );
+
+      expect(logger.errorText, isEmpty);
+      expect(logger.statusText, isEmpty);
+    },
+    overrides: <Type, Generator>{
+      FileSystem: () => fileSystem,
+      ProcessManager: () => FakeProcessManager.empty(),
+    },
+  );
+
+  testUsingContext(
+    'fails if the default --target is not found',
+    () async {
+      final DriveCommand command = DriveCommand(
+        fileSystem: fileSystem,
+        logger: logger,
+        platform: platform,
+        signals: signals,
+      );
+      fileSystem.file('lib/app.dart').createSync(recursive: true);
+      fileSystem.file('test_driver/app_test.dart').createSync(recursive: true);
+      fileSystem.file('pubspec.yaml').createSync();
+
+      await expectLater(
+        () => createTestCommandRunner(command).run(<String>['drive', '--no-pub']),
+        throwsToolExit(message: 'Target file "lib/main.dart" not found'),
+      );
+
+      expect(logger.errorText, isEmpty);
+      expect(logger.statusText, isEmpty);
+    },
+    overrides: <Type, Generator>{
+      FileSystem: () => fileSystem,
+      ProcessManager: () => FakeProcessManager.empty(),
+    },
+  );
+
+  testUsingContext(
+    'fails with an informative error message if --target looks like --driver',
+    () async {
+      final DriveCommand command = DriveCommand(
+        fileSystem: fileSystem,
+        logger: logger,
+        platform: platform,
+        signals: signals,
+      );
+      fileSystem.file('lib/main.dart').createSync(recursive: true);
+      fileSystem.file('test_driver/main_test.dart').createSync(recursive: true);
+      fileSystem.file('pubspec.yaml').createSync();
+
+      await expectLater(
+        () => createTestCommandRunner(
+          command,
+        ).run(<String>['drive', '--no-pub', '--target', 'test_driver/main_test.dart']),
+        throwsToolExit(message: 'Test file not found: /test_driver/main_test_test.dart'),
+      );
+
+      expect(
+        logger.errorText,
+        contains('The file path passed to --target should be an app entrypoint'),
+      );
+      expect(logger.statusText, isEmpty);
+    },
+    overrides: <Type, Generator>{
+      FileSystem: () => fileSystem,
+      ProcessManager: () => FakeProcessManager.empty(),
+    },
+  );
+
+  testUsingContext(
     'warns if screenshot is not supported but continues test',
     () async {
       final DriveCommand command = DriveCommand(

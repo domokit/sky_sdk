@@ -135,14 +135,17 @@ void doTests() {
 
     test('Event dispatched by TalkBack gets a computed offset', () async {
       // Fill this in to test _computeOffsetForTalkbackEvent
-    }, skip: 'To be implemented!');
+
+      // To be implemented!
+    }, skip: true);
 
     test(
       'Event dispatched on text editing node computes offset with framework geometry',
       () async {
         // Fill this in to test _computeOffsetForInputs
       },
-      skip: 'To be implemented!',
+      // To be implemented!
+      skip: true,
     );
   });
 }

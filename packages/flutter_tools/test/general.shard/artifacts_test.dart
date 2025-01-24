@@ -516,7 +516,7 @@ void main() {
       );
       expect(
         artifacts.getArtifactPath(Artifact.flutterTester),
-        fileSystem.path.join('/out', 'android_debug_unopt', 'flutter_tester'),
+        fileSystem.path.join('/out', 'host_debug_unopt', 'flutter_tester'),
       );
       expect(
         artifacts.getArtifactPath(Artifact.engineDartSdkPath),

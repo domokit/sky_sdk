@@ -30,7 +30,7 @@ void main() async {
 
   setUpAll(() async {
     if (isLuci) {
-      await enableSkiaGoldComparator(namePrefix: 'android_engine_test');
+      await enableSkiaGoldComparator(namePrefix: 'android_engine_test$goldenVariant');
     }
     flutterDriver = await FlutterDriver.connect();
     nativeDriver = await AndroidNativeDriver.connect(flutterDriver);

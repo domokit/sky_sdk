@@ -44,5 +44,5 @@ DART="${DART_BIN}/dart"
 cd "$SCRIPT_DIR"
 "$DART" \
   "$SRC_DIR/flutter/tools/pkg/engine_build_configs/bin/check.dart" \
-  "$SRC_DIR"
+  "--engine-src-path=$SRC_DIR"
 

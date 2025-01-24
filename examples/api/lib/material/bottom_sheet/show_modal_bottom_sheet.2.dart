@@ -53,9 +53,9 @@ class _ModalBottomSheetExampleState extends State<ModalBottomSheetExample> {
               setState(() {
                 _animationStyle = switch (styles.first) {
                   AnimationStyles.defaultStyle => null,
-                  AnimationStyles.custom => AnimationStyle(
-                    duration: const Duration(seconds: 3),
-                    reverseDuration: const Duration(seconds: 1),
+                  AnimationStyles.custom => const AnimationStyle(
+                    duration: Duration(seconds: 3),
+                    reverseDuration: Duration(seconds: 1),
                   ),
                   AnimationStyles.none => AnimationStyle.noAnimation,
                 };

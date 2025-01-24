@@ -109,8 +109,10 @@ wasm_toolchain("skwasm_st") {
     skia_use_no_png_encode = true
     skia_use_libpng_encode = false
 
-    # skwasm_st is singlethreaded
+    # skwasm_st doesn't use pthreads, but does pass the shared memory flag in order
+    # to be compatible with the way app modules import the memory object.
     wasm_use_pthreads = false
+    wasm_shared_memory = true
     wasm_prioritize_size = true
   }
 }
@@ -143,7 +145,7 @@ copy("skwasm_st_group") {
   ]
   if (is_debug) {
     if (!wasm_use_dwarf) {
-      sources += [ "$root_out_dir/skwasm_st/skwasm.wasm.map" ]
+      sources += [ "$root_out_dir/skwasm_st/skwasm_st.wasm.map" ]
     }
   }
   outputs = [ "$root_out_dir/flutter_web_sdk/canvaskit/{{source_file_part}}" ]

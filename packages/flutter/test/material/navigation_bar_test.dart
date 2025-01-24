@@ -1600,6 +1600,37 @@ void main() {
     expect(_getLabelStyle(tester, disabledText).fontSize, equals(disabledTextStyle.fontSize));
     expect(_getLabelStyle(tester, disabledText).color, equals(disabledTextStyle.color));
   });
+
+  testWidgets('NavigationBar.maintainBottomViewPadding can consume bottom MediaQuery.padding', (
+    WidgetTester tester,
+  ) async {
+    const double bottomPadding = 40;
+    const TextDirection textDirection = TextDirection.ltr;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Directionality(
+          textDirection: textDirection,
+          child: MediaQuery(
+            data: const MediaQueryData(padding: EdgeInsets.only(bottom: bottomPadding)),
+            child: Scaffold(
+              bottomNavigationBar: NavigationBar(
+                maintainBottomViewPadding: true,
+                destinations: const <Widget>[
+                  NavigationDestination(icon: Icon(Icons.ac_unit), label: 'AC'),
+                  NavigationDestination(icon: Icon(Icons.access_alarm), label: 'Alarm'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final double safeAreaBottomPadding =
+        tester.widget<Padding>(find.byType(Padding).first).padding.resolve(textDirection).bottom;
+    expect(safeAreaBottomPadding, equals(0));
+  });
 }
 
 Widget _buildWidget(Widget child, {bool? useMaterial3}) {

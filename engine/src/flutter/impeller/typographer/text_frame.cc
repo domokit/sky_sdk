@@ -141,6 +141,7 @@ bool TextFrame::IsFrameComplete() const {
 }
 
 const FrameBounds& TextFrame::GetFrameBounds(size_t index) const {
+  FML_DCHECK(index < bound_values_.size());
   return bound_values_[index];
 }
 

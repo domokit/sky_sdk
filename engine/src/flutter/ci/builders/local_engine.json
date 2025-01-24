@@ -948,6 +948,108 @@
         "config": "host_release",
         "targets": []
       }
+    },
+    {
+      "name": "linux/wasm_release",
+      "drone_dimensions": [
+        "device_type=none",
+        "os=Linux"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "download_emsdk": true
+      },
+      "gn": [
+        "--web",
+        "--runtime-mode=release",
+        "--no-rbe",
+        "--no-goma"
+      ],
+      "ninja": {
+        "config": "wasm_release",
+        "targets": [
+          "flutter/web_sdk:flutter_web_sdk_archive"
+        ]
+      },
+      "cas_archive": false
+    },
+    {
+      "name": "linux/wasm_debug_unopt",
+      "drone_dimensions": [
+        "device_type=none",
+        "os=Linux"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "download_emsdk": true
+      },
+      "gn": [
+        "--web",
+        "--runtime-mode=debug",
+        "--unoptimized",
+        "--no-rbe",
+        "--no-goma"
+      ],
+      "ninja": {
+        "config": "wasm_debug_unopt",
+        "targets": [
+          "flutter/web_sdk:flutter_web_sdk_archive"
+        ]
+      },
+      "cas_archive": false
+    },
+    {
+      "name": "macos/wasm_release",
+      "drone_dimensions": [
+        "device_type=none",
+        "os=Mac"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "download_emsdk": true
+      },
+      "gn": [
+        "--web",
+        "--runtime-mode=release",
+        "--no-rbe",
+        "--no-goma"
+      ],
+      "ninja": {
+        "config": "wasm_release",
+        "targets": [
+          "flutter/web_sdk:flutter_web_sdk_archive"
+        ]
+      },
+      "cas_archive": false
+    },
+    {
+      "name": "macos/wasm_debug_unopt",
+      "drone_dimensions": [
+        "device_type=none",
+        "os=Mac"
+      ],
+      "gclient_variables": {
+        "download_android_deps": false,
+        "download_jdk": false,
+        "download_emsdk": true
+      },
+      "gn": [
+        "--web",
+        "--runtime-mode=debug",
+        "--unoptimized",
+        "--no-rbe",
+        "--no-goma"
+      ],
+      "ninja": {
+        "config": "wasm_debug_unopt",
+        "targets": [
+          "flutter/web_sdk:flutter_web_sdk_archive"
+        ]
+      },
+      "cas_archive": false
     }
   ]
 }

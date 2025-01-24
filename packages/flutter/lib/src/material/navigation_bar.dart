@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'package:flutter/services.dart';
 /// @docImport 'bottom_navigation_bar.dart';
 /// @docImport 'navigation_rail.dart';
 /// @docImport 'scaffold.dart';
@@ -113,6 +114,7 @@ class NavigationBar extends StatelessWidget {
     this.overlayColor,
     this.labelTextStyle,
     this.labelPadding,
+    this.maintainBottomViewPadding = false,
   }) : assert(destinations.length >= 2),
        assert(0 <= selectedIndex && selectedIndex < destinations.length);
 
@@ -245,6 +247,24 @@ class NavigationBar extends StatelessWidget {
   /// the top.
   final EdgeInsetsGeometry? labelPadding;
 
+  /// Specifies whether the underlying [SafeArea] should maintain the bottom
+  /// [MediaQueryData.viewPadding] instead of the bottom [MediaQueryData.padding].
+  ///
+  /// When true, this will prevent the [NavigationBar] from shifting when opening a
+  /// software keyboard due to the change in the padding value, especially when the
+  /// app uses [SystemUiMode.edgeToEdge], which renders the system bars over the
+  /// application instead of outside it.
+  ///
+  /// Defaults to false.
+  ///
+  /// See also:
+  ///
+  ///  * [SafeArea.maintainBottomViewPadding], which specifies whether the [SafeArea]
+  ///    should maintain the bottom [MediaQueryData.viewPadding].
+  ///  * [SystemUiMode.edgeToEdge], which sets a fullscreen display with status and
+  ///    navigation elements rendered over the application.
+  final bool maintainBottomViewPadding;
+
   VoidCallback _handleTap(int index) {
     return onDestinationSelected != null ? () => onDestinationSelected!(index) : () {};
   }
@@ -265,6 +285,7 @@ class NavigationBar extends StatelessWidget {
       surfaceTintColor:
           surfaceTintColor ?? navigationBarTheme.surfaceTintColor ?? defaults.surfaceTintColor,
       child: SafeArea(
+        maintainBottomViewPadding: maintainBottomViewPadding,
         child: SizedBox(
           height: effectiveHeight,
           child: Row(

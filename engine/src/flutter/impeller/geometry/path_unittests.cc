@@ -817,6 +817,32 @@ TEST(PathTest, StripTessellationMultiContour) {
   EXPECT_EQ(point_storage[0], Point(10, 0));
 }
 
+TEST(PathTest, PathBuilderAddPathBasher) {
+  PathBuilder test_path_builder;
+  test_path_builder.AddOval(Rect::MakeLTRB(10, 10, 50, 50));
+  Path test_path = test_path_builder.TakePath();
+  for (int i = 0; i < 2000; i++) {
+    PathBuilder path_builder;
+    for (int j = 0; j < 10; j++) {
+      path_builder.AddCircle(Point(50, 50), 25);
+      path_builder.AddOval(Rect::MakeLTRB(100, 100, 200, 200));
+      path_builder.AddPath(test_path);
+      path_builder.AddRect(Rect::MakeLTRB(50, 50, 75, 57));
+      path_builder.AddLine(Point(80, 70), Point(110, 95));
+      path_builder.AddArc(Rect::MakeLTRB(50, 50, 100, 100), Degrees(20),
+                          Degrees(100));
+      path_builder.AddRoundRect(RoundRect::MakeRectXY(
+          Rect::MakeLTRB(70, 70, 130, 130), Size(10, 10)));
+    }
+    Path test_path = path_builder.TakePath();
+    auto bounds = test_path.GetBoundingBox();
+    EXPECT_TRUE(bounds.has_value());
+    if (bounds.has_value()) {
+      EXPECT_EQ(bounds.value(), Rect::MakeLTRB(10, 10, 200, 200));
+    }
+  }
+}
+
 TEST(PathTest, PathBuilderDoesNotMutateCopiedPaths) {
   auto test_isolation =
       [](const std::function<void(PathBuilder & builder)>& mutator,

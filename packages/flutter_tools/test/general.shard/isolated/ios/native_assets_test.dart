@@ -16,7 +16,6 @@ import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:flutter_tools/src/isolated/native_assets/native_assets.dart';
 import 'package:native_assets_cli/code_assets_builder.dart';
-import 'package:package_config/package_config_types.dart';
 
 import '../../../src/common.dart';
 import '../../../src/context.dart';
@@ -182,17 +181,17 @@ void main() {
           ),
         ];
         final FakeFlutterNativeAssetsBuildRunner buildRunner = FakeFlutterNativeAssetsBuildRunner(
-          packagesWithNativeAssetsResult: <Package>[Package('bar', projectUri)],
+          packagesWithNativeAssetsResult: <String>['bar'],
           onBuild:
-              (BuildConfig config) => FakeFlutterNativeAssetsBuilderResult.fromAssets(
-                codeAssets: codeAssets(config.codeConfig.targetOS, config.codeConfig),
+              (BuildInput input) => FakeFlutterNativeAssetsBuilderResult.fromAssets(
+                codeAssets: codeAssets(input.config.code.targetOS, input.config.code),
               ),
           onLink:
-              (LinkConfig config) =>
+              (LinkInput input) =>
                   buildMode == BuildMode.debug
                       ? null
                       : FakeFlutterNativeAssetsBuilderResult.fromAssets(
-                        codeAssets: codeAssets(config.codeConfig.targetOS, config.codeConfig),
+                        codeAssets: codeAssets(input.config.code.targetOS, input.config.code),
                       ),
         );
         final Map<String, String> environmentDefines = <String, String>{

@@ -59,9 +59,9 @@ class _PopupMenuExampleState extends State<PopupMenuExample> {
                         case AnimationStyles.defaultStyle:
                           _animationStyle = null;
                         case AnimationStyles.custom:
-                          _animationStyle = AnimationStyle(
+                          _animationStyle = const AnimationStyle(
                             curve: Easing.emphasizedDecelerate,
-                            duration: const Duration(seconds: 3),
+                            duration: Duration(seconds: 3),
                           );
                         case AnimationStyles.none:
                           _animationStyle = AnimationStyle.noAnimation;

@@ -1628,7 +1628,10 @@ void main() {
 
     // Switch to dark theme with overridden animation curve.
     await tester.pumpWidget(
-      buildWidget(themeMode: ThemeMode.dark, animationStyle: AnimationStyle(curve: Curves.easeIn)),
+      buildWidget(
+        themeMode: ThemeMode.dark,
+        animationStyle: const AnimationStyle(curve: Curves.easeIn),
+      ),
     );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));
@@ -1667,12 +1670,12 @@ void main() {
   testWidgets('AnimationStyle.noAnimation removes AnimatedTheme from the tree', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(MaterialApp(themeAnimationStyle: AnimationStyle()));
+    await tester.pumpWidget(const MaterialApp(themeAnimationStyle: AnimationStyle()));
 
     expect(find.byType(AnimatedTheme), findsOneWidget);
     expect(find.byType(Theme), findsOneWidget);
 
-    await tester.pumpWidget(MaterialApp(themeAnimationStyle: AnimationStyle.noAnimation));
+    await tester.pumpWidget(const MaterialApp(themeAnimationStyle: AnimationStyle.noAnimation));
 
     expect(find.byType(AnimatedTheme), findsNothing);
     expect(find.byType(Theme), findsOneWidget);

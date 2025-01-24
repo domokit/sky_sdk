@@ -248,6 +248,7 @@ impeller_component("entity_unittests") {
     "contents/filters/inputs/filter_input_unittests.cc",
     "contents/filters/matrix_filter_contents_unittests.cc",
     "contents/host_buffer_unittests.cc",
+    "contents/text_contents_unittests.cc",
     "contents/tiled_texture_contents_unittests.cc",
     "draw_order_resolver_unittests.cc",
     "entity_pass_target_unittests.cc",
@@ -266,5 +267,6 @@ impeller_component("entity_unittests") {
     "../playground:playground_test",
     "//flutter/display_list/testing:display_list_testing",
     "//flutter/impeller/typographer/backends/skia:typographer_skia_backend",
+    "//flutter/third_party/txt",
   ]
 }

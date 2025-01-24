@@ -45,6 +45,9 @@ class ColorFilterContents : public FilterContents {
 
   std::optional<Scalar> GetAlpha() const;
 
+  // |Contents|
+  void SetInheritedOpacity(Scalar opacity) override;
+
   // |FilterContents|
   std::optional<Rect> GetFilterSourceCoverage(
       const Matrix& effect_transform,
@@ -53,6 +56,7 @@ class ColorFilterContents : public FilterContents {
  private:
   AbsorbOpacity absorb_opacity_ = AbsorbOpacity::kNo;
   std::optional<Scalar> alpha_;
+  Scalar inherited_opacity_ = 1.0;
 
   ColorFilterContents(const ColorFilterContents&) = delete;
 

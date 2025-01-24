@@ -54,7 +54,6 @@ void testMainWithTTOn() {
 /// Enables Trusted Types by setting the appropriate meta tag in the DOM:
 /// <meta http-equiv="Content-Security-Policy" content="require-trusted-types-for 'script'">
 void enableTrustedTypes() {
-  print('Enabling TrustedTypes in browser window...');
   final DomHTMLMetaElement enableTTMeta =
       createDomHTMLMetaElement()
         ..setAttribute('http-equiv', 'Content-Security-Policy')

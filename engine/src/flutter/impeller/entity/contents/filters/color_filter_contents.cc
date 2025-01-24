@@ -96,7 +96,11 @@ void ColorFilterContents::SetAlpha(Scalar alpha) {
 }
 
 std::optional<Scalar> ColorFilterContents::GetAlpha() const {
-  return alpha_;
+  return alpha_.value_or(1.0) * inherited_opacity_;
+}
+
+void ColorFilterContents::SetInheritedOpacity(Scalar opacity) {
+  inherited_opacity_ = opacity;
 }
 
 std::optional<Rect> ColorFilterContents::GetFilterSourceCoverage(

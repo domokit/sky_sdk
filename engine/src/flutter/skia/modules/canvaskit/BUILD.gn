@@ -63,7 +63,6 @@ canvaskit_wasm_lib("canvaskit") {
   if (is_debug) {
     ldflags += [
       "-O0",
-      "-sDEMANGLE_SUPPORT=1",
       "-sASSERTIONS=1",
       "-sGL_ASSERTIONS=1",
       "-g3",
