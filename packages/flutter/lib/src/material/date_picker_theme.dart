@@ -55,7 +55,7 @@ class DatePickerThemeData with Diagnosticable {
     this.headerForegroundColor,
     this.headerHeadlineStyle,
     this.headerHelpStyle,
-    this.headerTextColor,
+    this.subheaderTextStyle,
     this.headerNavigationButtonColor,
     this.weekdayStyle,
     this.dayStyle,
@@ -150,8 +150,8 @@ class DatePickerThemeData with Diagnosticable {
   ///   [DatePickerDialog.helpText], which specifies the help text.
   final TextStyle? headerHelpStyle;
 
-  /// Overrides the default text color for the header in the DatePicker dialog.
-  final Color? headerTextColor;
+  /// Overrides the default text style for the header in the DatePicker dialog.
+  final TextStyle? subheaderTextStyle;
 
   /// Overrides the default navigation button color in the header of the DatePicker dialog.
   final Color? headerNavigationButtonColor;
@@ -850,7 +850,11 @@ class DatePickerThemeData with Diagnosticable {
       ),
     );
     properties.add(DiagnosticsProperty<Locale>('locale', locale, defaultValue: null));
-    properties.add(ColorProperty('headerTextColor', headerTextColor, defaultValue: null));
+    properties.add(DiagnosticsProperty<TextStyle>(
+      'subheaderTextStyle',
+      subheaderTextStyle,
+      defaultValue: null,
+    ));
     properties.add(ColorProperty('headerNavigationButtonColor', headerNavigationButtonColor, defaultValue: null));
   }
 }
@@ -987,10 +991,10 @@ class _DatePickerDefaultsM2 extends DatePickerThemeData {
   TextStyle? get headerHelpStyle => _textTheme.labelSmall;
 
   @override
-  Color? get headerTextColor => _colors.onPrimary;
+  TextStyle? get subheaderTextStyle => _textTheme.titleSmall?.copyWith(color: _colors.onSurface.withOpacity(0.60));
 
   @override
-  Color? get headerNavigationButtonColor => _isDark ? _colors.onSurface : _colors.onPrimary;
+  Color? get headerNavigationButtonColor => _colors.onSurface.withOpacity(0.60);
 
   @override
   TextStyle? get weekdayStyle =>
@@ -1175,10 +1179,10 @@ class _DatePickerDefaultsM3 extends DatePickerThemeData {
   TextStyle? get headerHelpStyle => _textTheme.labelLarge;
 
   @override
-  Color? get headerTextColor => _colors.onSurfaceVariant;
+  TextStyle? get subheaderTextStyle => _textTheme.titleSmall?.copyWith(color: _colors.onSurface.withOpacity(0.60));
 
   @override
-  Color? get headerNavigationButtonColor => _colors.primary;
+  Color? get headerNavigationButtonColor => _colors.onSurface.withOpacity(0.60);
 
   @override
   TextStyle? get weekdayStyle => _textTheme.bodyLarge?.apply(

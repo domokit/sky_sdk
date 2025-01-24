@@ -13,7 +13,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'color_scheme.dart';
 import 'date.dart';
 import 'date_picker_theme.dart';
 import 'debug.dart';
@@ -24,7 +23,6 @@ import 'ink_decoration.dart';
 import 'ink_well.dart';
 import 'material_localizations.dart';
 import 'material_state.dart';
-import 'text_theme.dart';
 import 'theme.dart';
 
 const Duration _monthScrollDuration = Duration(milliseconds: 200);
@@ -431,10 +429,7 @@ class _DatePickerModeToggleButtonState extends State<_DatePickerModeToggleButton
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    final Color controlColor = DatePickerTheme.of(context).headerTextColor
-        ?? colorScheme.onSurface.withOpacity(0.60);
+    final TextStyle? subHeaderTextStyle = DatePickerTheme.of(context).subheaderTextStyle;
 
     return SizedBox(
       height: _subHeaderHeight,
@@ -459,12 +454,12 @@ class _DatePickerModeToggleButtonState extends State<_DatePickerModeToggleButton
                             child: Text(
                               widget.title,
                               overflow: TextOverflow.ellipsis,
-                              style: textTheme.titleSmall?.copyWith(color: controlColor),
+                              style: subHeaderTextStyle,
                             ),
                           ),
                           RotationTransition(
                             turns: _controller,
-                            child: Icon(Icons.arrow_drop_down, color: controlColor),
+                            child: Icon(Icons.arrow_drop_down, color: subHeaderTextStyle?.color),
                           ),
                         ],
                       ),
