@@ -1014,10 +1014,10 @@ class _RawChipState extends State<RawChip> with TickerProviderStateMixin<RawChip
   bool get hasDeleteButton => widget.onDeleted != null;
   bool get hasAvatar => widget.avatar != null;
 
-  bool get canTap => _canRawChipTap(widget);
-
-  bool _canRawChipTap(RawChip chip) {
-    return chip.isEnabled && chip.tapEnabled && (chip.onPressed != null || chip.onSelected != null);
+  bool get canTap {
+    return widget.isEnabled &&
+        widget.tapEnabled &&
+        (widget.onPressed != null || widget.onSelected != null);
   }
 
   bool _isTapping = false;
@@ -1027,7 +1027,7 @@ class _RawChipState extends State<RawChip> with TickerProviderStateMixin<RawChip
   void initState() {
     assert(widget.onSelected == null || widget.onPressed == null);
     super.initState();
-    statesController.update(WidgetState.disabled, !canTap);
+    statesController.update(WidgetState.disabled, !widget.isEnabled);
     statesController.update(WidgetState.selected, widget.selected);
     selectController = AnimationController(
       duration: widget.chipAnimationStyle?.selectAnimation?.duration ?? _kSelectDuration,
@@ -1215,13 +1215,12 @@ class _RawChipState extends State<RawChip> with TickerProviderStateMixin<RawChip
   @override
   void didUpdateWidget(RawChip oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (_canRawChipTap(oldWidget) != _canRawChipTap(widget)) {
+    if (oldWidget.isEnabled != widget.isEnabled) {
       setState(() {
-        statesController.update(WidgetState.disabled, !canTap);
+        statesController.update(WidgetState.disabled, !widget.isEnabled);
         if (widget.isEnabled) {
           enableController.forward();
         } else {
-          statesController.update(WidgetState.pressed, false);
           enableController.reverse();
         }
       });
@@ -1417,7 +1416,6 @@ class _RawChipState extends State<RawChip> with TickerProviderStateMixin<RawChip
                 }
                 : null,
         mouseCursor: widget.mouseCursor,
-        statesController: statesController,
         hoverColor: (widget.color ?? chipTheme.color) == null ? null : Colors.transparent,
         customBorder: resolvedShape,
         child: AnimatedBuilder(
