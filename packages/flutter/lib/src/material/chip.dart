@@ -26,6 +26,7 @@ import 'icons.dart';
 import 'ink_decoration.dart';
 import 'ink_well.dart';
 import 'material.dart';
+import 'material_state.dart';
 import 'material_localizations.dart';
 import 'text_theme.dart';
 import 'theme.dart';
@@ -2453,7 +2454,7 @@ class _ChipDefaultsM3 extends ChipThemeData {
   );
 
   @override
-  WidgetStateProperty<Color?>? get color => null; // Subclasses override this getter
+  MaterialStateProperty<Color?>? get color => null; // Subclasses override this getter
 
   @override
   Color? get shadowColor => Colors.transparent;
