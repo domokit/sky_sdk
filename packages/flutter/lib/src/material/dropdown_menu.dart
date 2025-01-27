@@ -887,6 +887,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
 
   @override
   Widget build(BuildContext context) {
+    final bool useMaterial3 = Theme.of(context).useMaterial3;
     final TextDirection textDirection = Directionality.of(context);
     _initialMenu ??= _buildButtons(
       widget.dropdownMenuEntries,
@@ -894,7 +895,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
       enableScrollToHighlight: false,
       // The _initialMenu is invisible, we should not add semantics nodes to it
       excludeSemantics: true,
-      useMaterial3: Theme.of(context).useMaterial3,
+      useMaterial3: useMaterial3,
     );
     final DropdownMenuThemeData theme = DropdownMenuTheme.of(context);
     final DropdownMenuThemeData defaults = _DropdownMenuDefaultsM3(context);
@@ -929,7 +930,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
       filteredEntries,
       textDirection,
       focusedIndex: currentHighlight,
-      useMaterial3: Theme.of(context).useMaterial3,
+      useMaterial3: useMaterial3,
     );
 
     final TextStyle? effectiveTextStyle = widget.textStyle ?? theme.textStyle ?? defaults.textStyle;
