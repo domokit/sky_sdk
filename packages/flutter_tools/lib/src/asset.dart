@@ -118,6 +118,7 @@ abstract class AssetBundle {
     bool deferredComponentsEnabled = false,
     TargetPlatform? targetPlatform,
     String? flavor,
+    bool includeAssetsFromDevDependencies = false,
   });
 }
 
@@ -240,6 +241,7 @@ class ManifestAssetBundle implements AssetBundle {
     bool deferredComponentsEnabled = false,
     TargetPlatform? targetPlatform,
     String? flavor,
+    bool includeAssetsFromDevDependencies = false,
   }) async {
     if (flutterProject == null) {
       try {
@@ -351,7 +353,7 @@ class ManifestAssetBundle implements AssetBundle {
         throwToolExit('Could not locate package:$packageName. Try running `flutter pub get`.');
       }
       final Dependency dependency = transitiveDependencies[packageName]!;
-      if (dependency.isExclusiveDevDependency) {
+      if (!includeAssetsFromDevDependencies && dependency.isExclusiveDevDependency) {
         continue;
       }
       inputFiles.add(_fileSystem.file(package.root.resolve('pubspec.yaml')));
