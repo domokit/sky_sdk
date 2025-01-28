@@ -7,7 +7,6 @@
 @Tags(<String>['reduced-test-set'])
 library;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -847,7 +846,7 @@ void main() {
     // Test the delete button icon.
     expect(tester.getSize(find.byIcon(Icons.clear)), const Size(18.0, 18.0));
     expect(getIconData(tester).color, theme.colorScheme.onSurfaceVariant);
-  }, skip: kIsWeb && !isSkiaWeb); // https://github.com/flutter/flutter/issues/99933
+  });
 
   testWidgets('Material2 - FilterChip supports delete button', (WidgetTester tester) async {
     final ThemeData theme = ThemeData(useMaterial3: false);

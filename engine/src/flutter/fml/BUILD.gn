@@ -113,12 +113,7 @@ source_set("fml") {
     ":string_conversion",
   ]
 
-  deps = [
-    "$dart_src/runtime:dart_api",
-
-    # These need to be in sync with the Fuchsia buildroot.
-    "//flutter/third_party/icu",
-  ]
+  deps = [ "//flutter/third_party/icu" ]
 
   if (enable_backtrace) {
     # This abseil dependency is only used by backtrace.cc.

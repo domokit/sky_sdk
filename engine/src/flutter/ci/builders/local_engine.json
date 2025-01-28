@@ -1004,7 +1004,7 @@
       "name": "macos/wasm_release",
       "drone_dimensions": [
         "device_type=none",
-        "os=Mac"
+        "os=Mac-13|Mac-14"
       ],
       "gclient_variables": {
         "download_android_deps": false,
@@ -1023,13 +1023,18 @@
           "flutter/web_sdk:flutter_web_sdk_archive"
         ]
       },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "skip_xcode_install": true
+        }
+      },
       "cas_archive": false
     },
     {
       "name": "macos/wasm_debug_unopt",
       "drone_dimensions": [
         "device_type=none",
-        "os=Mac"
+        "os=Mac-13|Mac-14"
       ],
       "gclient_variables": {
         "download_android_deps": false,
@@ -1048,6 +1053,11 @@
         "targets": [
           "flutter/web_sdk:flutter_web_sdk_archive"
         ]
+      },
+      "properties": {
+        "$flutter/osx_sdk": {
+          "skip_xcode_install": true
+        }
       },
       "cas_archive": false
     }

@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -258,29 +257,17 @@ void main() {
     await tester.pumpWidget(buildApp(textScaler: TextScaler.noScaling));
     expect(find.text(label), findsOneWidget);
 
-    if (!kIsWeb || isSkiaWeb) {
-      // https://github.com/flutter/flutter/issues/99933
-      expect(tester.getSize(find.text(label)), const Size(14.25, 20.0));
-    }
+    expect(tester.getSize(find.text(label)), const Size(14.25, 20.0));
 
     await tester.pumpWidget(buildApp(textScaler: const TextScaler.linear(1.1)));
     await tester.pumpAndSettle();
-    if (!kIsWeb || isSkiaWeb) {
-      // https://github.com/flutter/flutter/issues/99933
-      expect(_sizeAlmostEqual(tester.getSize(find.text(label)), const Size(15.65, 22.0)), true);
-    }
+    expect(_sizeAlmostEqual(tester.getSize(find.text(label)), const Size(15.65, 22.0)), true);
 
     await tester.pumpWidget(buildApp(textScaler: const TextScaler.linear(1.5)));
-    if (!kIsWeb || isSkiaWeb) {
-      // https://github.com/flutter/flutter/issues/99933
-      expect(_sizeAlmostEqual(tester.getSize(find.text(label)), const Size(21.25, 30)), true);
-    }
+    expect(_sizeAlmostEqual(tester.getSize(find.text(label)), const Size(21.25, 30)), true);
 
     await tester.pumpWidget(buildApp(textScaler: const TextScaler.linear(4)));
-    if (!kIsWeb || isSkiaWeb) {
-      // https://github.com/flutter/flutter/issues/99933
-      expect(_sizeAlmostEqual(tester.getSize(find.text(label)), const Size(21.25, 30)), true);
-    }
+    expect(_sizeAlmostEqual(tester.getSize(find.text(label)), const Size(21.25, 30)), true);
   });
 
   group('MaterialBanner elevation', () {

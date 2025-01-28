@@ -1662,6 +1662,10 @@ std::shared_ptr<Texture> Canvas::FlipBackdrop(Point global_pass_position,
   // applied.
   auto& replay_entities = clip_coverage_stack_.GetReplayEntities();
   for (const auto& replay : replay_entities) {
+    if (replay.clip_depth <= current_depth_) {
+      continue;
+    }
+
     SetClipScissor(replay.clip_coverage, current_render_pass,
                    global_pass_position);
     if (!replay.clip_contents.Render(renderer_, current_render_pass,

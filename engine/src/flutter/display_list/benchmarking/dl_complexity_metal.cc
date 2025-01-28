@@ -412,7 +412,7 @@ void DisplayListMetalComplexityCalculator::MetalHelper::drawArc(
 }
 
 void DisplayListMetalComplexityCalculator::MetalHelper::drawPoints(
-    DlCanvas::PointMode mode,
+    DlPointMode mode,
     uint32_t count,
     const DlPoint points[]) {
   if (IsComplex()) {
@@ -427,12 +427,12 @@ void DisplayListMetalComplexityCalculator::MetalHelper::drawPoints(
     // c = 0.75
     complexity = (count + 12000) * 25 / 2;
   } else {
-    if (mode == DlCanvas::PointMode::kPolygon) {
+    if (mode == DlPointMode::kPolygon) {
       // m = 1/1250
       // c = 1
       complexity = (count + 1250) * 160;
     } else {
-      if (IsHairline() && mode == DlCanvas::PointMode::kPoints) {
+      if (IsHairline() && mode == DlPointMode::kPoints) {
         // This is a special case, it triggers an extremely fast path.
         // m = 1/14500
         // c = 0

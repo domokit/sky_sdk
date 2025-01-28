@@ -8,6 +8,7 @@
 #include "flutter/display_list/display_list.h"
 #include "flutter/display_list/dl_blend_mode.h"
 #include "flutter/display_list/dl_paint.h"
+#include "flutter/display_list/dl_types.h"
 #include "flutter/display_list/dl_vertices.h"
 #include "flutter/display_list/geometry/dl_geometry_types.h"
 #include "flutter/display_list/geometry/dl_path.h"
@@ -38,22 +39,6 @@ namespace flutter {
 ///            used throughout the engine.
 class DlCanvas {
  public:
-  enum class ClipOp {
-    kDifference,
-    kIntersect,
-  };
-
-  enum class PointMode {
-    kPoints,   //!< draw each point separately
-    kLines,    //!< draw each separate pair of points as a line segment
-    kPolygon,  //!< draw each pair of overlapping points as a line segment
-  };
-
-  enum class SrcRectConstraint {
-    kStrict,
-    kFast,
-  };
-
   virtual ~DlCanvas() = default;
 
   virtual DlISize GetBaseLayerDimensions() const = 0;
@@ -92,16 +77,16 @@ class DlCanvas {
   virtual DlMatrix GetMatrix() const = 0;
 
   virtual void ClipRect(const DlRect& rect,
-                        ClipOp clip_op = ClipOp::kIntersect,
+                        DlClipOp clip_op = DlClipOp::kIntersect,
                         bool is_aa = false) = 0;
   virtual void ClipOval(const DlRect& bounds,
-                        ClipOp clip_op = ClipOp::kIntersect,
+                        DlClipOp clip_op = DlClipOp::kIntersect,
                         bool is_aa = false) = 0;
   virtual void ClipRoundRect(const DlRoundRect& rrect,
-                             ClipOp clip_op = ClipOp::kIntersect,
+                             DlClipOp clip_op = DlClipOp::kIntersect,
                              bool is_aa = false) = 0;
   virtual void ClipPath(const DlPath& path,
-                        ClipOp clip_op = ClipOp::kIntersect,
+                        DlClipOp clip_op = DlClipOp::kIntersect,
                         bool is_aa = false) = 0;
 
   /// Conservative estimate of the bounds of all outstanding clip operations
@@ -146,7 +131,7 @@ class DlCanvas {
                        DlScalar sweep,
                        bool useCenter,
                        const DlPaint& paint) = 0;
-  virtual void DrawPoints(PointMode mode,
+  virtual void DrawPoints(DlPointMode mode,
                           uint32_t count,
                           const DlPoint pts[],
                           const DlPaint& paint) = 0;
@@ -163,23 +148,24 @@ class DlCanvas {
       const DlRect& dst,
       DlImageSampling sampling,
       const DlPaint* paint = nullptr,
-      SrcRectConstraint constraint = SrcRectConstraint::kFast) = 0;
+      DlSrcRectConstraint constraint = DlSrcRectConstraint::kFast) = 0;
   virtual void DrawImageRect(
       const sk_sp<DlImage>& image,
       const DlIRect& src,
       const DlRect& dst,
       DlImageSampling sampling,
       const DlPaint* paint = nullptr,
-      SrcRectConstraint constraint = SrcRectConstraint::kFast) {
+      DlSrcRectConstraint constraint = DlSrcRectConstraint::kFast) {
     auto float_src = DlRect::MakeLTRB(src.GetLeft(), src.GetTop(),
                                       src.GetRight(), src.GetBottom());
     DrawImageRect(image, float_src, dst, sampling, paint, constraint);
   }
-  void DrawImageRect(const sk_sp<DlImage>& image,
-                     const DlRect& dst,
-                     DlImageSampling sampling,
-                     const DlPaint* paint = nullptr,
-                     SrcRectConstraint constraint = SrcRectConstraint::kFast) {
+  void DrawImageRect(
+      const sk_sp<DlImage>& image,
+      const DlRect& dst,
+      DlImageSampling sampling,
+      const DlPaint* paint = nullptr,
+      DlSrcRectConstraint constraint = DlSrcRectConstraint::kFast) {
     DrawImageRect(image, image->GetBounds(), dst, sampling, paint, constraint);
   }
   virtual void DrawImageNine(const sk_sp<DlImage>& image,
@@ -267,22 +253,22 @@ class DlCanvas {
   SkMatrix GetTransform() const { return ToSkMatrix(GetMatrix()); }
 
   void ClipRect(const SkRect& rect,
-                ClipOp clip_op = ClipOp::kIntersect,
+                DlClipOp clip_op = DlClipOp::kIntersect,
                 bool is_aa = false) {
     ClipRect(ToDlRect(rect), clip_op, is_aa);
   }
   void ClipOval(const SkRect& bounds,
-                ClipOp clip_op = ClipOp::kIntersect,
+                DlClipOp clip_op = DlClipOp::kIntersect,
                 bool is_aa = false) {
     ClipOval(ToDlRect(bounds), clip_op, is_aa);
   }
   void ClipRRect(const SkRRect& rrect,
-                 ClipOp clip_op = ClipOp::kIntersect,
+                 DlClipOp clip_op = DlClipOp::kIntersect,
                  bool is_aa = false) {
     ClipRoundRect(ToDlRoundRect(rrect), clip_op, is_aa);
   }
   void ClipPath(const SkPath& path,
-                ClipOp clip_op = ClipOp::kIntersect,
+                DlClipOp clip_op = DlClipOp::kIntersect,
                 bool is_aa = false) {
     ClipPath(DlPath(path), clip_op, is_aa);
   }
@@ -327,7 +313,7 @@ class DlCanvas {
                const DlPaint& paint) {
     DrawArc(ToDlRect(bounds), start, sweep, useCenter, paint);
   }
-  void DrawPoints(PointMode mode,
+  void DrawPoints(DlPointMode mode,
                   uint32_t count,
                   const SkPoint pts[],
                   const DlPaint& paint) {
@@ -339,29 +325,32 @@ class DlCanvas {
                  const DlPaint* paint = nullptr) {
     DrawImage(image, ToDlPoint(point), sampling, paint);
   }
-  void DrawImageRect(const sk_sp<DlImage>& image,
-                     const SkRect& src,
-                     const SkRect& dst,
-                     DlImageSampling sampling,
-                     const DlPaint* paint = nullptr,
-                     SrcRectConstraint constraint = SrcRectConstraint::kFast) {
+  void DrawImageRect(
+      const sk_sp<DlImage>& image,
+      const SkRect& src,
+      const SkRect& dst,
+      DlImageSampling sampling,
+      const DlPaint* paint = nullptr,
+      DlSrcRectConstraint constraint = DlSrcRectConstraint::kFast) {
     DrawImageRect(image, ToDlRect(src), ToDlRect(dst), sampling, paint,
                   constraint);
   }
-  void DrawImageRect(const sk_sp<DlImage>& image,
-                     const SkIRect& src,
-                     const SkRect& dst,
-                     DlImageSampling sampling,
-                     const DlPaint* paint = nullptr,
-                     SrcRectConstraint constraint = SrcRectConstraint::kFast) {
+  void DrawImageRect(
+      const sk_sp<DlImage>& image,
+      const SkIRect& src,
+      const SkRect& dst,
+      DlImageSampling sampling,
+      const DlPaint* paint = nullptr,
+      DlSrcRectConstraint constraint = DlSrcRectConstraint::kFast) {
     DrawImageRect(image, ToDlRect(src), ToDlRect(dst), sampling, paint,
                   constraint);
   }
-  void DrawImageRect(const sk_sp<DlImage>& image,
-                     const SkRect& dst,
-                     DlImageSampling sampling,
-                     const DlPaint* paint = nullptr,
-                     SrcRectConstraint constraint = SrcRectConstraint::kFast) {
+  void DrawImageRect(
+      const sk_sp<DlImage>& image,
+      const SkRect& dst,
+      DlImageSampling sampling,
+      const DlPaint* paint = nullptr,
+      DlSrcRectConstraint constraint = DlSrcRectConstraint::kFast) {
     DrawImageRect(image, image->GetBounds(), ToDlRect(dst), sampling, paint,
                   constraint);
   }

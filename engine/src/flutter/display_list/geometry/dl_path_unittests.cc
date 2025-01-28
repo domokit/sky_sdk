@@ -26,6 +26,7 @@ TEST(DisplayListPath, DefaultConstruction) {
   EXPECT_FALSE(path.IsRect(nullptr, &is_closed));
   EXPECT_FALSE(is_closed);
   EXPECT_FALSE(path.IsOval(nullptr));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
 
   is_closed = false;
   EXPECT_FALSE(path.IsSkRect(nullptr));
@@ -55,6 +56,7 @@ TEST(DisplayListPath, ConstructFromEmptySkiaPath) {
   EXPECT_FALSE(path.IsRect(nullptr, &is_closed));
   EXPECT_FALSE(is_closed);
   EXPECT_FALSE(path.IsOval(nullptr));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
 
   is_closed = false;
   EXPECT_FALSE(path.IsSkRect(nullptr));
@@ -85,6 +87,7 @@ TEST(DisplayListPath, ConstructFromEmptyImpellerPath) {
   EXPECT_FALSE(path.IsRect(nullptr, &is_closed));
   EXPECT_FALSE(is_closed);
   EXPECT_FALSE(path.IsOval(nullptr));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
 
   is_closed = false;
   EXPECT_FALSE(path.IsSkRect(nullptr));
@@ -114,6 +117,7 @@ TEST(DisplayListPath, CopyConstruct) {
   EXPECT_FALSE(path2.IsRect(nullptr, &is_closed));
   EXPECT_FALSE(is_closed);
   EXPECT_TRUE(path2.IsOval(nullptr));
+  EXPECT_FALSE(path2.IsRoundRect(nullptr));
 
   is_closed = false;
   EXPECT_FALSE(path2.IsSkRect(nullptr));
@@ -144,6 +148,7 @@ TEST(DisplayListPath, ConstructFromVolatile) {
   EXPECT_FALSE(path.IsRect(nullptr, &is_closed));
   EXPECT_FALSE(is_closed);
   EXPECT_FALSE(path.IsOval(nullptr));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
 
   is_closed = false;
   EXPECT_FALSE(path.IsSkRect(nullptr));
@@ -248,6 +253,7 @@ TEST(DisplayListPath, EmbeddingSharedReference) {
       EXPECT_FALSE(path_.IsRect(nullptr, &is_closed)) << label;
       EXPECT_FALSE(is_closed) << label;
       EXPECT_TRUE(path_.IsOval(nullptr)) << label;
+      EXPECT_FALSE(path_.IsRoundRect(nullptr));
 
       is_closed = false;
       EXPECT_FALSE(path_.IsSkRect(nullptr)) << label;
@@ -296,6 +302,48 @@ TEST(DisplayListPath, ConstructFromRect) {
   EXPECT_EQ(dl_rect, DlRect::MakeLTRB(10, 10, 20, 20));
   EXPECT_TRUE(is_closed);
   EXPECT_FALSE(path.IsOval(nullptr));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
+
+  is_closed = false;
+  EXPECT_TRUE(path.IsSkRect(nullptr));
+  SkRect sk_rect;
+  EXPECT_TRUE(path.IsSkRect(&sk_rect, &is_closed));
+  EXPECT_EQ(sk_rect, SkRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_TRUE(is_closed);
+  EXPECT_FALSE(path.IsSkOval(nullptr));
+  EXPECT_FALSE(path.IsSkRRect(nullptr));
+
+  EXPECT_EQ(path.GetBounds(), DlRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_EQ(path.GetSkBounds(), SkRect::MakeLTRB(10, 10, 20, 20));
+}
+
+TEST(DisplayListPath, ConstructFromDlPathBuilderRect) {
+  DlPathBuilder builder;
+  builder.AddRect(DlRect::MakeLTRB(10, 10, 20, 20));
+  DlPath path(builder);
+  EXPECT_FALSE(path.IsConverted());
+
+  // Paths constructed from PathBuilder don't match paths built from similar
+  // SkRect and SkPath and DlPath factory methods exactly, only paths built
+  // from similar PathBuilder calls match exactly for == comparison
+  {
+    DlPathBuilder builder2;
+    builder2.AddRect(DlRect::MakeLTRB(10, 10, 20, 20));
+    EXPECT_EQ(path, DlPath(builder2));
+  }
+  EXPECT_TRUE(path.IsConverted());
+
+  EXPECT_FALSE(path.GetSkPath().isEmpty());
+  EXPECT_FALSE(path.GetPath().IsEmpty());
+
+  bool is_closed = false;
+  EXPECT_TRUE(path.IsRect(nullptr));
+  DlRect dl_rect;
+  EXPECT_TRUE(path.IsRect(&dl_rect, &is_closed));
+  EXPECT_EQ(dl_rect, DlRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_TRUE(is_closed);
+  EXPECT_FALSE(path.IsOval(nullptr));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
 
   is_closed = false;
   EXPECT_TRUE(path.IsSkRect(nullptr));
@@ -326,12 +374,54 @@ TEST(DisplayListPath, ConstructFromOval) {
   DlRect dl_bounds;
   EXPECT_TRUE(path.IsOval(&dl_bounds));
   EXPECT_EQ(dl_bounds, DlRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
 
   EXPECT_FALSE(path.IsSkRect(nullptr));
   EXPECT_TRUE(path.IsSkOval(nullptr));
   SkRect sk_bounds;
   EXPECT_TRUE(path.IsSkOval(&sk_bounds));
   EXPECT_EQ(sk_bounds, SkRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_FALSE(path.IsSkRRect(nullptr));
+
+  EXPECT_EQ(path.GetBounds(), DlRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_EQ(path.GetSkBounds(), SkRect::MakeLTRB(10, 10, 20, 20));
+}
+
+TEST(DisplayListPath, ConstructFromDlPathBuilderOval) {
+  DlPathBuilder builder;
+  builder.AddOval(DlRect::MakeLTRB(10, 10, 20, 20));
+  DlPath path(builder);
+  EXPECT_FALSE(path.IsConverted());
+
+  // Paths constructed from PathBuilder don't match paths built from similar
+  // SkRect and SkPath and DlPath factory methods exactly, only paths built
+  // from similar PathBuilder calls match exactly for == comparison
+  {
+    DlPathBuilder builder2;
+    builder2.AddOval(DlRect::MakeLTRB(10, 10, 20, 20));
+    EXPECT_EQ(path, DlPath(builder2));
+  }
+  EXPECT_TRUE(path.IsConverted());
+
+  EXPECT_FALSE(path.GetSkPath().isEmpty());
+  EXPECT_FALSE(path.GetPath().IsEmpty());
+
+  // Skia path, used for these tests,  doesn't recognize ovals created
+  // by PathBuilder
+  EXPECT_FALSE(path.IsRect(nullptr));
+  // EXPECT_TRUE(path.IsOval(nullptr));
+  // DlRect dl_bounds;
+  // EXPECT_TRUE(path.IsOval(&dl_bounds));
+  // EXPECT_EQ(dl_bounds, DlRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_FALSE(path.IsRoundRect(nullptr));
+
+  // Skia path, used for these tests,  doesn't recognize ovals created
+  // by PathBuilder
+  EXPECT_FALSE(path.IsSkRect(nullptr));
+  // EXPECT_TRUE(path.IsSkOval(nullptr));
+  // SkRect sk_bounds;
+  // EXPECT_TRUE(path.IsSkOval(&sk_bounds));
+  // EXPECT_EQ(sk_bounds, SkRect::MakeLTRB(10, 10, 20, 20));
   EXPECT_FALSE(path.IsSkRRect(nullptr));
 
   EXPECT_EQ(path.GetBounds(), DlRect::MakeLTRB(10, 10, 20, 20));
@@ -348,11 +438,16 @@ TEST(DisplayListPath, ConstructFromRRect) {
             SkPath::RRect(SkRect::MakeLTRB(10, 10, 20, 20), 1, 2));
 
   EXPECT_FALSE(path.IsConverted());
+  EXPECT_FALSE(path.GetSkPath().isEmpty());
   EXPECT_FALSE(path.GetPath().IsEmpty());
   EXPECT_TRUE(path.IsConverted());
 
   EXPECT_FALSE(path.IsRect(nullptr));
   EXPECT_FALSE(path.IsOval(nullptr));
+  DlRoundRect roundrect;
+  EXPECT_TRUE(path.IsRoundRect(&roundrect));
+  EXPECT_EQ(roundrect,
+            DlRoundRect::MakeRectXY(DlRect::MakeLTRB(10, 10, 20, 20), 1, 2));
 
   EXPECT_FALSE(path.IsSkRect(nullptr));
   EXPECT_FALSE(path.IsSkOval(nullptr));
@@ -361,6 +456,50 @@ TEST(DisplayListPath, ConstructFromRRect) {
   EXPECT_TRUE(path.IsSkRRect(&rrect2));
   EXPECT_EQ(rrect2,
             SkRRect::MakeRectXY(SkRect::MakeLTRB(10, 10, 20, 20), 1, 2));
+
+  EXPECT_EQ(path.GetBounds(), DlRect::MakeLTRB(10, 10, 20, 20));
+  EXPECT_EQ(path.GetSkBounds(), SkRect::MakeLTRB(10, 10, 20, 20));
+}
+
+TEST(DisplayListPath, ConstructFromDlPathBuilderRoundRect) {
+  DlPathBuilder builder;
+  builder.AddRoundRect(
+      DlRoundRect::MakeRectXY(DlRect::MakeLTRB(10, 10, 20, 20), 1, 2));
+  DlPath path(builder);
+  EXPECT_FALSE(path.IsConverted());
+
+  // Paths constructed from PathBuilder don't match paths built from similar
+  // SkRRect and SkPath and DlPath factory methods exactly, only built from
+  // similar PathBuilder calls match exactly for == comparison
+  {
+    DlPathBuilder builder2;
+    builder2.AddRoundRect(
+        DlRoundRect::MakeRectXY(DlRect::MakeLTRB(10, 10, 20, 20), 1, 2));
+    EXPECT_EQ(path, DlPath(builder2));
+  }
+  EXPECT_TRUE(path.IsConverted());
+
+  EXPECT_FALSE(path.GetSkPath().isEmpty());
+  EXPECT_FALSE(path.GetPath().IsEmpty());
+
+  // Skia path, used for these tests,  doesn't recognize ovals created
+  // by PathBuilder
+  EXPECT_FALSE(path.IsRect(nullptr));
+  EXPECT_FALSE(path.IsOval(nullptr));
+  // DlRoundRect roundrect;
+  // EXPECT_TRUE(path.IsRoundRect(&roundrect));
+  // EXPECT_EQ(roundrect,
+  //           DlRoundRect::MakeRectXY(DlRect::MakeLTRB(10, 10, 20, 20), 1, 2));
+
+  // Skia path, used for these tests,  doesn't recognize round rects created
+  // by PathBuilder
+  EXPECT_FALSE(path.IsSkRect(nullptr));
+  EXPECT_FALSE(path.IsSkOval(nullptr));
+  // EXPECT_TRUE(path.IsSkRRect(nullptr));
+  // SkRRect rrect2;
+  // EXPECT_TRUE(path.IsSkRRect(&rrect2));
+  // EXPECT_EQ(rrect2,
+  //           SkRRect::MakeRectXY(SkRect::MakeLTRB(10, 10, 20, 20), 1, 2));
 
   EXPECT_EQ(path.GetBounds(), DlRect::MakeLTRB(10, 10, 20, 20));
   EXPECT_EQ(path.GetSkBounds(), SkRect::MakeLTRB(10, 10, 20, 20));
@@ -411,8 +550,7 @@ TEST(DisplayListPath, ConstructFromImpellerEqualsConstructFromSkia) {
   sk_path.lineTo(0, 0);  // Shouldn't be needed, but PathBuilder draws this
   sk_path.close();
 
-  EXPECT_EQ(DlPath(path_builder.TakePath(DlPathFillType::kNonZero)),
-            DlPath(sk_path));
+  EXPECT_EQ(DlPath(path_builder, DlPathFillType::kNonZero), DlPath(sk_path));
 }
 
 #ifndef NDEBUG

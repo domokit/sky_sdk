@@ -13,7 +13,7 @@ dependencies:
   archive: 3.6.1
   args: 2.6.0
   dds: 5.0.0
-  dwds: 24.3.2
+  dwds: 24.3.3
   completion: 1.0.1
   coverage: 1.11.1
   crypto: 3.0.6
@@ -121,4 +121,4 @@ dartdoc:
   # Exclude this package from the hosted API docs.
   nodoc: true
 
-# PUBSPEC CHECKSUM: b23b
+# PUBSPEC CHECKSUM: cf3c

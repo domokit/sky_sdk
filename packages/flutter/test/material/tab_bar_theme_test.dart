@@ -1618,7 +1618,6 @@ void main() {
       labelSize = tester.getSize(find.text('Tab 1'));
       expect(labelSize, equals(const Size(140.5, 40.0)));
     },
-    skip: isBrowser && !isSkiaWeb, // https://github.com/flutter/flutter/issues/87543
   );
 
   testWidgets('TabBarTheme indicatorAnimation can customize tab indicator animation', (

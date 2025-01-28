@@ -7539,7 +7539,6 @@ void main() {
       labelSize = tester.getSize(find.text('Tab 1'));
       expect(labelSize, equals(const Size(140.5, 40.0)));
     },
-    skip: isBrowser && !isSkiaWeb, // https://github.com/flutter/flutter/issues/87543
   );
 
   // This is a regression test for https://github.com/flutter/flutter/issues/150000.

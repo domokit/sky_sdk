@@ -521,51 +521,41 @@ void main() {
     });
   });
 
-  test(
-    'ContainerLayer.toImage can render interior layer',
-    () {
-      final OffsetLayer parent = OffsetLayer();
-      final OffsetLayer child = OffsetLayer();
-      final OffsetLayer grandChild = OffsetLayer();
-      child.append(grandChild);
-      parent.append(child);
+  test('ContainerLayer.toImage can render interior layer', () {
+    final OffsetLayer parent = OffsetLayer();
+    final OffsetLayer child = OffsetLayer();
+    final OffsetLayer grandChild = OffsetLayer();
+    child.append(grandChild);
+    parent.append(child);
 
-      // This renders the layers and generates engine layers.
-      parent.buildScene(SceneBuilder());
+    // This renders the layers and generates engine layers.
+    parent.buildScene(SceneBuilder());
 
-      // Causes grandChild to pass its engine layer as `oldLayer`
-      grandChild.toImage(const Rect.fromLTRB(0, 0, 10, 10));
+    // Causes grandChild to pass its engine layer as `oldLayer`
+    grandChild.toImage(const Rect.fromLTRB(0, 0, 10, 10));
 
-      // Ensure we can render the same scene again after rendering an interior
-      // layer.
-      parent.buildScene(SceneBuilder());
-    },
-    // TODO(yjbanov): `toImage` doesn't work in HTML: https://github.com/flutter/flutter/issues/49857
-    skip: isBrowser && !isSkiaWeb,
-  );
+    // Ensure we can render the same scene again after rendering an interior
+    // layer.
+    parent.buildScene(SceneBuilder());
+  });
 
-  test(
-    'ContainerLayer.toImageSync can render interior layer',
-    () {
-      final OffsetLayer parent = OffsetLayer();
-      final OffsetLayer child = OffsetLayer();
-      final OffsetLayer grandChild = OffsetLayer();
-      child.append(grandChild);
-      parent.append(child);
+  test('ContainerLayer.toImageSync can render interior layer', () {
+    final OffsetLayer parent = OffsetLayer();
+    final OffsetLayer child = OffsetLayer();
+    final OffsetLayer grandChild = OffsetLayer();
+    child.append(grandChild);
+    parent.append(child);
 
-      // This renders the layers and generates engine layers.
-      parent.buildScene(SceneBuilder());
+    // This renders the layers and generates engine layers.
+    parent.buildScene(SceneBuilder());
 
-      // Causes grandChild to pass its engine layer as `oldLayer`
-      grandChild.toImageSync(const Rect.fromLTRB(0, 0, 10, 10));
+    // Causes grandChild to pass its engine layer as `oldLayer`
+    grandChild.toImageSync(const Rect.fromLTRB(0, 0, 10, 10));
 
-      // Ensure we can render the same scene again after rendering an interior
-      // layer.
-      parent.buildScene(SceneBuilder());
-    },
-    // TODO(yjbanov): `toImage` doesn't work in HTML: https://github.com/flutter/flutter/issues/49857
-    skip: isBrowser && !isSkiaWeb,
-  );
+    // Ensure we can render the same scene again after rendering an interior
+    // layer.
+    parent.buildScene(SceneBuilder());
+  });
 
   test('PictureLayer does not let you call dispose unless refcount is 0', () {
     PictureLayer layer = PictureLayer(Rect.zero);

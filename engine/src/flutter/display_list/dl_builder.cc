@@ -505,7 +505,7 @@ void DisplayListBuilder::saveLayer(const DlRect& bounds,
     // in a rotated or skewed coordinate system (but it will work
     // conservatively).
     if (in_options.bounds_from_caller()) {
-      current_info().global_state.clipRect(bounds, ClipOp::kIntersect, false);
+      current_info().global_state.clipRect(bounds, DlClipOp::kIntersect, false);
     }
   }
 
@@ -928,7 +928,7 @@ void DisplayListBuilder::Transform(const DlMatrix& matrix) {
 }
 
 void DisplayListBuilder::ClipRect(const DlRect& rect,
-                                  ClipOp clip_op,
+                                  DlClipOp clip_op,
                                   bool is_aa) {
   if (!rect.IsFinite()) {
     return;
@@ -936,8 +936,7 @@ void DisplayListBuilder::ClipRect(const DlRect& rect,
   if (current_info().is_nop) {
     return;
   }
-  if (current_info().has_valid_clip &&
-      clip_op == DlCanvas::ClipOp::kIntersect &&
+  if (current_info().has_valid_clip && clip_op == DlClipOp::kIntersect &&
       layer_local_state().rect_covers_cull(rect)) {
     return;
   }
@@ -951,16 +950,16 @@ void DisplayListBuilder::ClipRect(const DlRect& rect,
   current_info().has_valid_clip = true;
   checkForDeferredSave();
   switch (clip_op) {
-    case ClipOp::kIntersect:
+    case DlClipOp::kIntersect:
       Push<ClipIntersectRectOp>(0, rect, is_aa);
       break;
-    case ClipOp::kDifference:
+    case DlClipOp::kDifference:
       Push<ClipDifferenceRectOp>(0, rect, is_aa);
       break;
   }
 }
 void DisplayListBuilder::ClipOval(const DlRect& bounds,
-                                  ClipOp clip_op,
+                                  DlClipOp clip_op,
                                   bool is_aa) {
   if (!bounds.IsFinite()) {
     return;
@@ -968,8 +967,7 @@ void DisplayListBuilder::ClipOval(const DlRect& bounds,
   if (current_info().is_nop) {
     return;
   }
-  if (current_info().has_valid_clip &&
-      clip_op == DlCanvas::ClipOp::kIntersect &&
+  if (current_info().has_valid_clip && clip_op == DlClipOp::kIntersect &&
       layer_local_state().oval_covers_cull(bounds)) {
     return;
   }
@@ -983,16 +981,16 @@ void DisplayListBuilder::ClipOval(const DlRect& bounds,
   current_info().has_valid_clip = true;
   checkForDeferredSave();
   switch (clip_op) {
-    case ClipOp::kIntersect:
+    case DlClipOp::kIntersect:
       Push<ClipIntersectOvalOp>(0, bounds, is_aa);
       break;
-    case ClipOp::kDifference:
+    case DlClipOp::kDifference:
       Push<ClipDifferenceOvalOp>(0, bounds, is_aa);
       break;
   }
 }
 void DisplayListBuilder::ClipRoundRect(const DlRoundRect& rrect,
-                                       ClipOp clip_op,
+                                       DlClipOp clip_op,
                                        bool is_aa) {
   if (rrect.IsRect()) {
     ClipRect(rrect.GetBounds(), clip_op, is_aa);
@@ -1005,8 +1003,7 @@ void DisplayListBuilder::ClipRoundRect(const DlRoundRect& rrect,
   if (current_info().is_nop) {
     return;
   }
-  if (current_info().has_valid_clip &&
-      clip_op == DlCanvas::ClipOp::kIntersect &&
+  if (current_info().has_valid_clip && clip_op == DlClipOp::kIntersect &&
       layer_local_state().rrect_covers_cull(rrect)) {
     return;
   }
@@ -1020,16 +1017,16 @@ void DisplayListBuilder::ClipRoundRect(const DlRoundRect& rrect,
   current_info().has_valid_clip = true;
   checkForDeferredSave();
   switch (clip_op) {
-    case ClipOp::kIntersect:
+    case DlClipOp::kIntersect:
       Push<ClipIntersectRoundRectOp>(0, rrect, is_aa);
       break;
-    case ClipOp::kDifference:
+    case DlClipOp::kDifference:
       Push<ClipDifferenceRoundRectOp>(0, rrect, is_aa);
       break;
   }
 }
 void DisplayListBuilder::ClipPath(const DlPath& path,
-                                  ClipOp clip_op,
+                                  DlClipOp clip_op,
                                   bool is_aa) {
   if (current_info().is_nop) {
     return;
@@ -1060,10 +1057,10 @@ void DisplayListBuilder::ClipPath(const DlPath& path,
   current_info().has_valid_clip = true;
   checkForDeferredSave();
   switch (clip_op) {
-    case ClipOp::kIntersect:
+    case DlClipOp::kIntersect:
       Push<ClipIntersectPathOp>(0, path, is_aa);
       break;
-    case ClipOp::kDifference:
+    case DlClipOp::kDifference:
       Push<ClipDifferencePathOp>(0, path, is_aa);
       break;
   }
@@ -1267,18 +1264,18 @@ void DisplayListBuilder::DrawArc(const DlRect& bounds,
 }
 
 DisplayListAttributeFlags DisplayListBuilder::FlagsForPointMode(
-    PointMode mode) {
+    DlPointMode mode) {
   switch (mode) {
-    case DlCanvas::PointMode::kPoints:
+    case DlPointMode::kPoints:
       return kDrawPointsAsPointsFlags;
-    case PointMode::kLines:
+    case DlPointMode::kLines:
       return kDrawPointsAsLinesFlags;
-    case PointMode::kPolygon:
+    case DlPointMode::kPolygon:
       return kDrawPointsAsPolygonFlags;
   }
   FML_UNREACHABLE();
 }
-void DisplayListBuilder::drawPoints(PointMode mode,
+void DisplayListBuilder::drawPoints(DlPointMode mode,
                                     uint32_t count,
                                     const DlPoint pts[]) {
   if (count == 0) {
@@ -1302,13 +1299,13 @@ void DisplayListBuilder::drawPoints(PointMode mode,
 
   void* data_ptr;
   switch (mode) {
-    case PointMode::kPoints:
+    case DlPointMode::kPoints:
       data_ptr = Push<DrawPointsOp>(bytes, count);
       break;
-    case PointMode::kLines:
+    case DlPointMode::kLines:
       data_ptr = Push<DrawLinesOp>(bytes, count);
       break;
-    case PointMode::kPolygon:
+    case DlPointMode::kPolygon:
       data_ptr = Push<DrawPolygonOp>(bytes, count);
       break;
     default:
@@ -1329,7 +1326,7 @@ void DisplayListBuilder::drawPoints(PointMode mode,
   CheckLayerOpacityCompatibility();
   UpdateLayerResult(result);
 }
-void DisplayListBuilder::DrawPoints(PointMode mode,
+void DisplayListBuilder::DrawPoints(DlPointMode mode,
                                     uint32_t count,
                                     const DlPoint pts[],
                                     const DlPaint& paint) {
@@ -1408,7 +1405,7 @@ void DisplayListBuilder::drawImageRect(const sk_sp<DlImage> image,
                                        const DlRect& dst,
                                        DlImageSampling sampling,
                                        bool render_with_attributes,
-                                       SrcRectConstraint constraint) {
+                                       DlSrcRectConstraint constraint) {
   DisplayListAttributeFlags flags = render_with_attributes
                                         ? kDrawImageRectWithPaintFlags
                                         : kDrawImageRectFlags;
@@ -1426,7 +1423,7 @@ void DisplayListBuilder::DrawImageRect(const sk_sp<DlImage>& image,
                                        const DlRect& dst,
                                        DlImageSampling sampling,
                                        const DlPaint* paint,
-                                       SrcRectConstraint constraint) {
+                                       DlSrcRectConstraint constraint) {
   if (paint != nullptr) {
     SetAttributesFromPaint(*paint,
                            DisplayListOpFlags::kDrawImageRectWithPaintFlags);

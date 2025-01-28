@@ -41,18 +41,12 @@ class IgnoreAttributeDispatchHelper : public virtual DlOpReceiver {
 // A utility class that will ignore all DlOpReceiver methods relating
 // to setting a clip.
 class IgnoreClipDispatchHelper : public virtual DlOpReceiver {
-  void clipRect(const DlRect& rect,
-                DlCanvas::ClipOp clip_op,
-                bool is_aa) override {}
-  void clipOval(const DlRect& bounds,
-                DlCanvas::ClipOp clip_op,
-                bool is_aa) override {}
+  void clipRect(const DlRect& rect, DlClipOp clip_op, bool is_aa) override {}
+  void clipOval(const DlRect& bounds, DlClipOp clip_op, bool is_aa) override {}
   void clipRoundRect(const DlRoundRect& rrect,
-                     DlCanvas::ClipOp clip_op,
+                     DlClipOp clip_op,
                      bool is_aa) override {}
-  void clipPath(const DlPath& path,
-                DlCanvas::ClipOp clip_op,
-                bool is_aa) override {}
+  void clipPath(const DlPath& path, DlClipOp clip_op, bool is_aa) override {}
 };
 
 // A utility class that will ignore all DlOpReceiver methods relating
@@ -103,7 +97,7 @@ class IgnoreDrawDispatchHelper : public virtual DlOpReceiver {
                DlScalar start_degrees,
                DlScalar sweep_degrees,
                bool use_center) override {}
-  void drawPoints(DlCanvas::PointMode mode,
+  void drawPoints(DlPointMode mode,
                   uint32_t count,
                   const DlPoint points[]) override {}
   void drawVertices(const std::shared_ptr<DlVertices>& vertices,
@@ -117,7 +111,7 @@ class IgnoreDrawDispatchHelper : public virtual DlOpReceiver {
                      const DlRect& dst,
                      DlImageSampling sampling,
                      bool render_with_attributes,
-                     SrcRectConstraint constraint) override {}
+                     DlSrcRectConstraint constraint) override {}
   void drawImageNine(const sk_sp<DlImage> image,
                      const DlIRect& center,
                      const DlRect& dst,

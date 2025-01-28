@@ -8,7 +8,6 @@
 #include "impeller/core/formats.h"
 #include "impeller/display_list/skia_conversions.h"
 #include "impeller/geometry/point.h"
-#include "third_party/skia/include/core/SkPoint.h"
 
 namespace impeller {
 

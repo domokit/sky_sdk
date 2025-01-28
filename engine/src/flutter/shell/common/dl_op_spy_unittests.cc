@@ -289,7 +289,7 @@ TEST(DlOpSpy, DrawPath) {
     DlPathBuilder path_builder;
     path_builder.MoveTo({0, 1});
     path_builder.LineTo({1, 1});
-    builder.DrawPath(DlPath(path_builder.TakePath()), paint);
+    builder.DrawPath(DlPath(path_builder), paint);
     sk_sp<DisplayList> dl = builder.Build();
     DlOpSpy dl_op_spy;
     dl->Dispatch(dl_op_spy);
@@ -302,7 +302,7 @@ TEST(DlOpSpy, DrawPath) {
     path_builder.MoveTo({0, 0});
     path_builder.LineTo({1, 0});
     path_builder.LineTo({0, 1});
-    builder.DrawPath(DlPath(path_builder.TakePath()), paint);
+    builder.DrawPath(DlPath(path_builder), paint);
     sk_sp<DisplayList> dl = builder.Build();
     DlOpSpy dl_op_spy;
     dl->Dispatch(dl_op_spy);
@@ -315,7 +315,7 @@ TEST(DlOpSpy, DrawPath) {
     DlPathBuilder path_builder;
     path_builder.MoveTo({0, 1});
     path_builder.LineTo({1, 1});
-    builder.DrawPath(DlPath(path_builder.TakePath()), paint);
+    builder.DrawPath(DlPath(path_builder), paint);
     sk_sp<DisplayList> dl = builder.Build();
     DlOpSpy dl_op_spy;
     dl->Dispatch(dl_op_spy);
@@ -349,7 +349,7 @@ TEST(DlOpSpy, DrawPoints) {
     DisplayListBuilder builder;
     DlPaint paint(DlColor::kBlack());
     const DlPoint points[] = {DlPoint(5, 4)};
-    builder.DrawPoints(DlCanvas::PointMode::kPoints, 1, points, paint);
+    builder.DrawPoints(DlPointMode::kPoints, 1, points, paint);
     sk_sp<DisplayList> dl = builder.Build();
     DlOpSpy dl_op_spy;
     dl->Dispatch(dl_op_spy);
@@ -359,7 +359,7 @@ TEST(DlOpSpy, DrawPoints) {
     DisplayListBuilder builder;
     DlPaint paint(DlColor::kTransparent());
     const DlPoint points[] = {DlPoint(5, 4)};
-    builder.DrawPoints(DlCanvas::PointMode::kPoints, 1, points, paint);
+    builder.DrawPoints(DlPointMode::kPoints, 1, points, paint);
     sk_sp<DisplayList> dl = builder.Build();
     DlOpSpy dl_op_spy;
     dl->Dispatch(dl_op_spy);

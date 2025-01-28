@@ -112,8 +112,7 @@ std::unordered_map<int64_t, SkRect> SliceViews(
 
       // Clip the background canvas, so it doesn't contain any of the pixels
       // drawn on the overlay layer.
-      background_canvas->ClipRect(full_joined_rect,
-                                  DlCanvas::ClipOp::kDifference);
+      background_canvas->ClipRect(full_joined_rect, DlClipOp::kDifference);
     }
     slice->render_into(background_canvas);
   }

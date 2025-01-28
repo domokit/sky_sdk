@@ -139,26 +139,26 @@ DlMatrix DlSkCanvasAdapter::GetMatrix() const {
 }
 
 void DlSkCanvasAdapter::ClipRect(const DlRect& rect,
-                                 ClipOp clip_op,
+                                 DlClipOp clip_op,
                                  bool is_aa) {
   delegate_->clipRect(ToSkRect(rect), ToSk(clip_op), is_aa);
 }
 
 void DlSkCanvasAdapter::ClipOval(const DlRect& bounds,
-                                 ClipOp clip_op,
+                                 DlClipOp clip_op,
                                  bool is_aa) {
   delegate_->clipRRect(SkRRect::MakeOval(ToSkRect(bounds)), ToSk(clip_op),
                        is_aa);
 }
 
 void DlSkCanvasAdapter::ClipRoundRect(const DlRoundRect& rrect,
-                                      ClipOp clip_op,
+                                      DlClipOp clip_op,
                                       bool is_aa) {
   delegate_->clipRRect(ToSkRRect(rrect), ToSk(clip_op), is_aa);
 }
 
 void DlSkCanvasAdapter::ClipPath(const DlPath& path,
-                                 ClipOp clip_op,
+                                 DlClipOp clip_op,
                                  bool is_aa) {
   path.WillRenderSkPath();
   delegate_->clipPath(path.GetSkPath(), ToSk(clip_op), is_aa);
@@ -248,7 +248,7 @@ void DlSkCanvasAdapter::DrawArc(const DlRect& bounds,
   delegate_->drawArc(ToSkRect(bounds), start, sweep, useCenter, ToSk(paint));
 }
 
-void DlSkCanvasAdapter::DrawPoints(PointMode mode,
+void DlSkCanvasAdapter::DrawPoints(DlPointMode mode,
                                    uint32_t count,
                                    const DlPoint pts[],
                                    const DlPaint& paint) {
@@ -277,7 +277,7 @@ void DlSkCanvasAdapter::DrawImageRect(const sk_sp<DlImage>& image,
                                       const DlRect& dst,
                                       DlImageSampling sampling,
                                       const DlPaint* paint,
-                                      SrcRectConstraint constraint) {
+                                      DlSrcRectConstraint constraint) {
   SkOptionalPaint sk_paint(paint);
   sk_sp<SkImage> sk_image = image->skia_image();
   delegate_->drawImageRect(sk_image.get(), ToSkRect(src), ToSkRect(dst),

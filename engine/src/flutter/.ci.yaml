@@ -56,110 +56,6 @@ targets:
     # local_engine schedules a bunch of other builds, so it's likely to timeout waiting for those builds to run.
     timeout: 180
 
-  - name: Linux linux_android_emulator_tests
-    bringup: true
-    enabled_branches:
-      - master
-    recipe: engine_v2/engine_v2
-    properties:
-      config_name: linux_android_emulator
-      dependencies: >-
-        [
-          {"dependency": "goldctl", "version": "git_revision:720a542f6fe4f92922c3b8f0fdcc4d2ac6bb83cd"}
-        ]
-    timeout: 90
-    runIf:
-      - DEPS
-      - engine/src/flutter/.ci.yaml
-      - engine/src/flutter/ci/builders/linux_android_emulator.json
-      - engine/src/flutter/lib/ui/**
-      - engine/src/flutter/shell/platform/android/**
-      - engine/src/flutter/testing/scenario_app/**
-      - engine/src/flutter/testing/skia_gold_client/**
-
-  - name: Linux linux_android_emulator_tests_34
-    enabled_branches:
-      - master
-    recipe: engine_v2/engine_v2
-    properties:
-      config_name: linux_android_emulator_34
-      dependencies: >-
-        [
-          {"dependency": "goldctl", "version": "git_revision:720a542f6fe4f92922c3b8f0fdcc4d2ac6bb83cd"}
-        ]
-    timeout: 90
-    runIf:
-      - DEPS
-      - engine/src/flutter/.ci.yaml
-      - engine/src/flutter/ci/builders/linux_android_emulator.json
-      - engine/src/flutter/lib/ui/**
-      - engine/src/flutter/shell/platform/android/**
-      - engine/src/flutter/testing/scenario_app/**
-      - engine/src/flutter/testing/skia_gold_client/**
-
-  - name: Linux linux_android_emulator_opengles_tests_34
-    enabled_branches:
-      - master
-    recipe: engine_v2/engine_v2
-    properties:
-      config_name: linux_android_emulator_opengles_34
-      dependencies: >-
-        [
-          {"dependency": "goldctl", "version": "git_revision:720a542f6fe4f92922c3b8f0fdcc4d2ac6bb83cd"}
-        ]
-    timeout: 90
-    runIf:
-      - DEPS
-      - engine/src/flutter/.ci.yaml
-      - engine/src/flutter/ci/builders/linux_android_emulator_opengles_34.json
-      - engine/src/flutter/lib/ui/**
-      - engine/src/flutter/shell/platform/android/**
-      - engine/src/flutter/testing/scenario_app/**
-      - engine/src/flutter/testing/skia_gold_client/**
-
-  - name: Linux linux_android_emulator_skia_tests
-    bringup: true
-    enabled_branches:
-      - master
-    recipe: engine_v2/builder
-    properties:
-      config_name: linux_android_emulator_skia
-      kvm: "1"
-      dependencies: >-
-        [
-          {"dependency": "goldctl", "version": "git_revision:720a542f6fe4f92922c3b8f0fdcc4d2ac6bb83cd"}
-        ]
-    timeout: 90
-    runIf:
-      - DEPS
-      - engine/src/flutter/.ci.yaml
-      - engine/src/flutter/ci/builders/linux_android_emulator.json
-      - engine/src/flutter/lib/ui/**
-      - engine/src/flutter/shell/platform/android/**
-      - engine/src/flutter/testing/scenario_app/**
-      - engine/src/flutter/testing/skia_gold_client/**
-
-  - name: Linux linux_android_emulator_skia_tests_34
-    enabled_branches:
-      - master
-    recipe: engine_v2/builder
-    properties:
-      config_name: linux_android_emulator_skia_34
-      kvm: "1"
-      dependencies: >-
-        [
-          {"dependency": "goldctl", "version": "git_revision:720a542f6fe4f92922c3b8f0fdcc4d2ac6bb83cd"}
-        ]
-    timeout: 90
-    runIf:
-      - DEPS
-      - engine/src/flutter/.ci.yaml
-      - engine/src/flutter/ci/builders/linux_android_emulator.json
-      - engine/src/flutter/lib/ui/**
-      - engine/src/flutter/shell/platform/android/**
-      - engine/src/flutter/testing/scenario_app/**
-      - engine/src/flutter/testing/skia_gold_client/**
-
   - name: Linux builder_cache
     enabled_branches:
       - master
@@ -459,7 +355,6 @@ targets:
 
   - name: Linux mac_clang_tidy
     recipe: engine_v2/engine_v2
-    bringup: true
     properties:
       config_name: mac_clang_tidy
     runIf:
@@ -476,26 +371,6 @@ targets:
       # For more details see the issue
       # at https://github.com/flutter/flutter/issues/152186.
       cores: "8"
-
-  - name: Mac mac_clang_tidy
-    recipe: engine_v2/engine_v2
-    timeout: 120
-    properties:
-      config_name: mac_clang_tidy
-    runIf:
-      - DEPS
-      - engine/src/flutter/.ci.yaml
-      - engine/src/flutter/tools/clang_tidy/**
-      - engine/src/flutter/ci/builders/**
-      - engine/src/flutter/ci/clang_tidy.sh
-      - "engine/src/flutter/**.h"
-      - "engine/src/flutter/**.c"
-      - "engine/src/flutter/**.cc"
-      - "engine/src/flutter/**.fbs"
-      - "engine/src/flutter/**.frag"
-      - "engine/src/flutter/**.vert"
-      - "engine/src/flutter/**.m"
-      - "engine/src/flutter/**.mm"
 
   - name: Mac mac_host_engine
     recipe: engine_v2/engine_v2

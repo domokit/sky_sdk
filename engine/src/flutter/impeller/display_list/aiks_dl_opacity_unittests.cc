@@ -9,7 +9,6 @@
 #include "flutter/display_list/dl_color.h"
 #include "flutter/display_list/dl_paint.h"
 #include "flutter/testing/testing.h"
-#include "include/core/SkRect.h"
 
 namespace impeller {
 namespace testing {
@@ -26,7 +25,7 @@ TEST_P(AiksTest, DrawOpacityPeephole) {
   alpha.setColor(DlColor::kRed().modulateOpacity(0.5));
 
   builder.SaveLayer(nullptr, &alpha);
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 100, 100), green);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 100, 100), green);
   builder.Restore();
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
@@ -46,9 +45,9 @@ TEST_P(AiksTest, CanRenderGroupOpacity) {
   alpha.setColor(DlColor::kRed().modulateOpacity(0.5));
 
   builder.SaveLayer(nullptr, &alpha);
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 100, 100), red);
-  builder.DrawRect(SkRect::MakeXYWH(200, 200, 100, 100), green);
-  builder.DrawRect(SkRect::MakeXYWH(400, 400, 100, 100), blue);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 100, 100), red);
+  builder.DrawRect(DlRect::MakeXYWH(200, 200, 100, 100), green);
+  builder.DrawRect(DlRect::MakeXYWH(400, 400, 100, 100), blue);
   builder.Restore();
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
@@ -65,11 +64,11 @@ TEST_P(AiksTest, CanRenderGroupOpacityToSavelayer) {
 
   // Create a saveLayer that will forward its opacity to another
   // saveLayer, to verify that we correctly distribute opacity.
-  SkRect bounds = SkRect::MakeLTRB(0, 0, 500, 500);
-  builder.SaveLayer(&bounds, &alpha);
-  builder.SaveLayer(&bounds, &alpha);
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 400, 400), red);
-  builder.DrawRect(SkRect::MakeXYWH(0, 0, 450, 450), red);
+  DlRect bounds = DlRect::MakeLTRB(0, 0, 500, 500);
+  builder.SaveLayer(bounds, &alpha);
+  builder.SaveLayer(bounds, &alpha);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 400, 400), red);
+  builder.DrawRect(DlRect::MakeXYWH(0, 0, 450, 450), red);
   builder.Restore();
   builder.Restore();
 

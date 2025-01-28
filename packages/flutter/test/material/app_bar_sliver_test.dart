@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -241,7 +240,7 @@ void main() {
     await tester.pumpWidget(buildAppBar(textScaleFactor: 3.0));
     expect(tester.getRect(expandedTitle).height, 43.0);
     verifyTextNotClipped(expandedTitle, tester);
-  }, skip: kIsWeb && !isSkiaWeb); // https://github.com/flutter/flutter/issues/99933
+  });
 
   testWidgets('SliverAppBar.large expanded title has upper limit on text scaling', (
     WidgetTester tester,
@@ -275,46 +274,44 @@ void main() {
 
     await tester.pumpWidget(buildAppBar(textScaleFactor: 3.0));
     expect(tester.getRect(expandedTitle).height, closeTo(48.0, 0.1));
-  }, skip: kIsWeb && !isSkiaWeb); // https://github.com/flutter/flutter/issues/99933
+  });
 
-  testWidgets(
-    'SliverAppBar.medium expanded title position is adjusted with textScaleFactor',
-    (WidgetTester tester) async {
-      const String title = 'Medium AppBar';
-      Widget buildAppBar({double textScaleFactor = 1.0}) {
-        return MaterialApp(
-          theme: ThemeData(useMaterial3: true),
-          home: MediaQuery.withClampedTextScaling(
-            minScaleFactor: textScaleFactor,
-            maxScaleFactor: textScaleFactor,
-            child: Material(
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  const SliverAppBar.medium(title: Text(title, maxLines: 1)),
-                  SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
-                ],
-              ),
+  testWidgets('SliverAppBar.medium expanded title position is adjusted with textScaleFactor', (
+    WidgetTester tester,
+  ) async {
+    const String title = 'Medium AppBar';
+    Widget buildAppBar({double textScaleFactor = 1.0}) {
+      return MaterialApp(
+        theme: ThemeData(useMaterial3: true),
+        home: MediaQuery.withClampedTextScaling(
+          minScaleFactor: textScaleFactor,
+          maxScaleFactor: textScaleFactor,
+          child: Material(
+            child: CustomScrollView(
+              slivers: <Widget>[
+                const SliverAppBar.medium(title: Text(title, maxLines: 1)),
+                SliverToBoxAdapter(child: Container(height: 1200, color: Colors.orange[400])),
+              ],
             ),
           ),
-        );
-      }
+        ),
+      );
+    }
 
-      await tester.pumpWidget(buildAppBar());
+    await tester.pumpWidget(buildAppBar());
 
-      final Finder expandedTitle = find.text(title).first;
-      expect(tester.getBottomLeft(expandedTitle).dy, 96.0);
-      verifyTextNotClipped(expandedTitle, tester);
+    final Finder expandedTitle = find.text(title).first;
+    expect(tester.getBottomLeft(expandedTitle).dy, 96.0);
+    verifyTextNotClipped(expandedTitle, tester);
 
-      await tester.pumpWidget(buildAppBar(textScaleFactor: 2.0));
-      expect(tester.getBottomLeft(expandedTitle).dy, 107.0);
-      verifyTextNotClipped(expandedTitle, tester);
+    await tester.pumpWidget(buildAppBar(textScaleFactor: 2.0));
+    expect(tester.getBottomLeft(expandedTitle).dy, 107.0);
+    verifyTextNotClipped(expandedTitle, tester);
 
-      await tester.pumpWidget(buildAppBar(textScaleFactor: 3.0));
-      expect(tester.getBottomLeft(expandedTitle).dy, 107.0);
-      verifyTextNotClipped(expandedTitle, tester);
-    },
-    skip: kIsWeb && !isSkiaWeb, // https://github.com/flutter/flutter/issues/99933
-  );
+    await tester.pumpWidget(buildAppBar(textScaleFactor: 3.0));
+    expect(tester.getBottomLeft(expandedTitle).dy, 107.0);
+    verifyTextNotClipped(expandedTitle, tester);
+  });
 
   testWidgets('SliverAppBar.large expanded title position is adjusted with textScaleFactor', (
     WidgetTester tester,
@@ -1264,9 +1261,7 @@ void main() {
     // Test the expanded title is positioned correctly.
     final Offset titleOffset = tester.getBottomLeft(expandedTitle);
     expect(titleOffset.dx, 16.0);
-    if (!kIsWeb || isSkiaWeb) {
-      expect(titleOffset.dy, 96.0);
-    }
+    expect(titleOffset.dy, 96.0);
 
     verifyTextNotClipped(expandedTitle, tester);
 

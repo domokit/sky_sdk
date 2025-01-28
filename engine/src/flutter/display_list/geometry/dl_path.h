@@ -43,10 +43,24 @@ class DlPath {
                                 DlScalar y_radius,
                                 bool counter_clock_wise = false);
 
+  static DlPath MakeLine(const DlPoint& a, const DlPoint& b);
+  static DlPath MakePoly(const DlPoint pts[],
+                         int count,
+                         bool close,
+                         DlPathFillType fill_type = DlPathFillType::kNonZero);
+
+  static DlPath MakeArc(const DlRect& bounds,
+                        DlDegrees start,
+                        DlDegrees end,
+                        bool use_center);
+
   DlPath() : data_(std::make_shared<Data>(SkPath())) {}
   explicit DlPath(const SkPath& path) : data_(std::make_shared<Data>(path)) {}
   explicit DlPath(const impeller::Path& path)
       : data_(std::make_shared<Data>(path)) {}
+  explicit DlPath(DlPathBuilder& builder,
+                  DlPathFillType fill_type = DlPathFillType::kNonZero)
+      : data_(std::make_shared<Data>(builder.TakePath(fill_type))) {}
 
   DlPath(const DlPath& path) = default;
   DlPath(DlPath&& path) = default;
@@ -84,18 +98,22 @@ class DlPath {
 
   bool IsConverted() const;
   bool IsVolatile() const;
-  bool IsEvenOdd() const;
+  bool IsConvex() const;
 
   DlPath operator+(const DlPath& other) const;
 
  private:
   struct Data {
-    explicit Data(const SkPath& path);
-    explicit Data(const impeller::Path& path) : path(path) {}
+    explicit Data(const SkPath& path) : sk_path(path), sk_path_original(true) {
+      FML_DCHECK(!SkPathFillType_IsInverse(path.getFillType()));
+    }
+    explicit Data(const impeller::Path& path)
+        : path(path), sk_path_original(false) {}
 
     std::optional<SkPath> sk_path;
     std::optional<impeller::Path> path;
     uint32_t render_count = 0u;
+    const bool sk_path_original;
   };
 
   inline constexpr static DlPathFillType ToDlFillType(SkPathFillType sk_type) {

@@ -139,7 +139,7 @@ void runTests() {
     });
     expect(recordedError, isNotNull);
     expect(imageInfo, isNull);
-  }, skip: !isSkiaWeb);
+  });
 
   testWidgets('When strategy is .fallback, emits a WebImageInfo if the image is cross-origin', (
     WidgetTester tester,
@@ -191,7 +191,7 @@ void runTests() {
 
     final WebImageInfo webImageInfo = imageInfo! as WebImageInfo;
     expect(webImageInfo.htmlImage.src, equals('https://www.example.com/images/frame5.png'));
-  }, skip: !isSkiaWeb);
+  });
 
   testWidgets(
     'When strategy is .fallback, emits an error if the image is cross-origin but fails to decode',
@@ -241,7 +241,6 @@ void runTests() {
       expect(recordedError, isNotNull);
       expect(imageInfo, isNull);
     },
-    skip: !isSkiaWeb,
   );
 
   testWidgets('When strategy is .prefer, emits an WebImageInfo if the image is same-origin', (
@@ -294,7 +293,7 @@ void runTests() {
 
     final WebImageInfo webImageInfo = imageInfo! as WebImageInfo;
     expect(webImageInfo.htmlImage.src, equals('https://www.example.com/images/frame7.png'));
-  }, skip: !isSkiaWeb);
+  });
 
   testWidgets('When strategy is .prefer, emits a normal image if headers is not null', (
     WidgetTester tester,
@@ -345,7 +344,7 @@ void runTests() {
     expect(recordedError, isNull);
     expect(imageInfo, isNotNull);
     expect(imageInfo, isNot(isA<WebImageInfo>()));
-  }, skip: !isSkiaWeb);
+  });
 
   testWidgets('Image renders an image using a Platform View if the image info is WebImageInfo', (
     WidgetTester tester,
@@ -369,7 +368,7 @@ void runTests() {
     // After getting a WebImageInfo, the Image uses a Platform View to render.
     expect(find.byType(RawWebImage), findsOneWidget);
     expect(find.byType(PlatformViewLink), findsOneWidget);
-  }, skip: !isSkiaWeb);
+  });
 }
 
 class _TestImageProvider extends ImageProvider<Object> {

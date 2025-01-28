@@ -4,7 +4,6 @@
 
 import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -139,23 +138,14 @@ void main() {
         find.widgetWithIcon(IconButton, Icons.edit_outlined),
       );
       expect(saveButtonBottomLeft.dx, moreOrLessEquals(711.6, epsilon: 1e-5));
-      if (!kIsWeb || isSkiaWeb) {
-        // https://github.com/flutter/flutter/issues/99933
-        expect(saveButtonBottomLeft.dy, helpTextTopLeft.dy);
-      }
+      expect(saveButtonBottomLeft.dy, helpTextTopLeft.dy);
       expect(entryButtonBottomLeft.dx, saveButtonBottomLeft.dx - 48.0);
-      if (!kIsWeb || isSkiaWeb) {
-        // https://github.com/flutter/flutter/issues/99933
-        expect(entryButtonBottomLeft.dy, helpTextTopLeft.dy);
-      }
+      expect(entryButtonBottomLeft.dy, helpTextTopLeft.dy);
 
       // Test help text position.
       final Offset helpTextBottomLeft = tester.getBottomLeft(helpText);
       expect(helpTextBottomLeft.dx, 72.0);
-      if (!kIsWeb || isSkiaWeb) {
-        // https://github.com/flutter/flutter/issues/99933
-        expect(helpTextBottomLeft.dy, closeButtonBottomRight.dy + 20.0);
-      }
+      expect(helpTextBottomLeft.dy, closeButtonBottomRight.dy + 20.0);
 
       // Test the header position.
       final Offset firstDateHeaderTopLeft = tester.getTopLeft(firstDateHeaderText);

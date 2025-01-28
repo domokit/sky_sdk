@@ -59,15 +59,15 @@ class DisplayListBuilder final
 
   void RestoreToCount(uint32_t count);
 
-  void ClipRect(const Rect& rect, flutter::DlCanvas::ClipOp op);
+  void ClipRect(const Rect& rect, flutter::DlClipOp op);
 
-  void ClipOval(const Rect& rect, flutter::DlCanvas::ClipOp op);
+  void ClipOval(const Rect& rect, flutter::DlClipOp op);
 
   void ClipRoundedRect(const Rect& rect,
                        const RoundingRadii& radii,
-                       flutter::DlCanvas::ClipOp op);
+                       flutter::DlClipOp op);
 
-  void ClipPath(const Path& path, flutter::DlCanvas::ClipOp op);
+  void ClipPath(const Path& path, flutter::DlClipOp op);
 
   void DrawPaint(const Paint& paint);
 

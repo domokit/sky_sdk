@@ -11,7 +11,6 @@
 #include "impeller/entity/texture_fill.vert.h"
 #include "impeller/geometry/color.h"
 #include "impeller/geometry/point.h"
-#include "third_party/skia/include/core/SkPoint.h"
 
 namespace impeller {
 

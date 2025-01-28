@@ -16,8 +16,6 @@ namespace testing {
 
 using PlatformViewLayerTest = LayerTest;
 
-using ClipOp = DlCanvas::ClipOp;
-
 TEST_F(PlatformViewLayerTest, NullViewEmbedderDoesntPrerollCompositeOrPaint) {
   const DlPoint layer_offset = DlPoint();
   const DlSize layer_size = DlSize(8.0f, 8.0f);
@@ -73,13 +71,13 @@ TEST_F(PlatformViewLayerTest, ClippedPlatformViewPrerollsAndPaintsNothing) {
 
   DisplayListBuilder expected_builder;
   expected_builder.Save();
-  expected_builder.ClipRect(parent_clip, ClipOp::kIntersect, false);
+  expected_builder.ClipRect(parent_clip, DlClipOp::kIntersect, false);
 
   // In reality the following save/clip/restore are elided due to reaching
   // a nop state (and the save is then unnecessary), but this is the order
   // of operations that the layers will do...
   expected_builder.Save();
-  expected_builder.ClipRect(child_clip, ClipOp::kIntersect, false);
+  expected_builder.ClipRect(child_clip, DlClipOp::kIntersect, false);
   expected_builder.Restore();
   // End of section that gets ignored during recording
 

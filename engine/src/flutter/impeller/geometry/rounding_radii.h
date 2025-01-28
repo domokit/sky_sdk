@@ -25,6 +25,18 @@ struct RoundingRadii {
     return {radii, radii, radii, radii};
   }
 
+  constexpr static RoundingRadii MakeNinePatch(Scalar left,
+                                               Scalar top,
+                                               Scalar right,
+                                               Scalar bottom) {
+    return {
+        .top_left = Size{left, top},
+        .top_right = Size{right, top},
+        .bottom_left = Size(left, bottom),
+        .bottom_right = Size(right, bottom),
+    };
+  }
+
   constexpr bool IsFinite() const {
     return top_left.IsFinite() &&     //
            top_right.IsFinite() &&    //

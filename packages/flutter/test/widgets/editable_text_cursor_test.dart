@@ -1274,54 +1274,50 @@ void main() {
     expect(controller.text, isEmpty);
   });
 
-  testWidgets(
-    'Caret center space test',
-    (WidgetTester tester) async {
-      EditableText.debugDeterministicCursor = true;
-      addTearDown(() {
-        EditableText.debugDeterministicCursor = false;
-      });
-      final String text = 'test${' ' * 1000}';
-      final TextEditingController controller = TextEditingController.fromValue(
-        TextEditingValue(
-          text: text,
-          selection: TextSelection.collapsed(offset: text.length, affinity: TextAffinity.upstream),
-        ),
-      );
-      addTearDown(controller.dispose);
+  testWidgets('Caret center space test', (WidgetTester tester) async {
+    EditableText.debugDeterministicCursor = true;
+    addTearDown(() {
+      EditableText.debugDeterministicCursor = false;
+    });
+    final String text = 'test${' ' * 1000}';
+    final TextEditingController controller = TextEditingController.fromValue(
+      TextEditingValue(
+        text: text,
+        selection: TextSelection.collapsed(offset: text.length, affinity: TextAffinity.upstream),
+      ),
+    );
+    addTearDown(controller.dispose);
 
-      final Widget widget = EditableText(
-        autofocus: true,
-        backgroundCursorColor: Colors.grey,
-        controller: controller,
-        focusNode: focusNode,
-        style: const TextStyle(fontSize: 17),
-        textAlign: TextAlign.center,
-        keyboardType: TextInputType.text,
-        cursorColor: cursorColor,
-        cursorWidth: 13.0,
-        cursorHeight: 17.0,
-        maxLines: null,
-      );
-      await tester.pumpWidget(MaterialApp(home: widget));
+    final Widget widget = EditableText(
+      autofocus: true,
+      backgroundCursorColor: Colors.grey,
+      controller: controller,
+      focusNode: focusNode,
+      style: const TextStyle(fontSize: 17),
+      textAlign: TextAlign.center,
+      keyboardType: TextInputType.text,
+      cursorColor: cursorColor,
+      cursorWidth: 13.0,
+      cursorHeight: 17.0,
+      maxLines: null,
+    );
+    await tester.pumpWidget(MaterialApp(home: widget));
 
-      final EditableTextState editableTextState = tester.firstState(find.byWidget(widget));
-      final Rect editableTextRect = tester.getRect(find.byWidget(widget));
-      final RenderEditable renderEditable = editableTextState.renderEditable;
-      // The trailing whitespaces are not line break opportunities.
-      expect(renderEditable.getLineAtOffset(TextPosition(offset: text.length)).start, 0);
+    final EditableTextState editableTextState = tester.firstState(find.byWidget(widget));
+    final Rect editableTextRect = tester.getRect(find.byWidget(widget));
+    final RenderEditable renderEditable = editableTextState.renderEditable;
+    // The trailing whitespaces are not line break opportunities.
+    expect(renderEditable.getLineAtOffset(TextPosition(offset: text.length)).start, 0);
 
-      // The caretRect shouldn't be outside of the RenderEditable.
-      final Rect caretRect = Rect.fromLTWH(
-        editableTextRect.right - 13.0 - 1.0,
-        editableTextRect.top,
-        13.0,
-        17.0,
-      );
-      expect(renderEditable, paints..rect(color: cursorColor, rect: caretRect));
-    },
-    skip: isBrowser && !isSkiaWeb, // https://github.com/flutter/flutter/issues/56308
-  );
+    // The caretRect shouldn't be outside of the RenderEditable.
+    final Rect caretRect = Rect.fromLTWH(
+      editableTextRect.right - 13.0 - 1.0,
+      editableTextRect.top,
+      13.0,
+      17.0,
+    );
+    expect(renderEditable, paints..rect(color: cursorColor, rect: caretRect));
+  });
 
   testWidgets(
     'Caret with a cursorHeight smaller than font size is vertically centered on non-Apple platforms',
@@ -1364,7 +1360,6 @@ void main() {
     variant: TargetPlatformVariant.all(
       excluding: <TargetPlatform>{TargetPlatform.macOS, TargetPlatform.iOS},
     ),
-    skip: isBrowser && !isCanvasKit, // https://github.com/flutter/flutter/issues/56308
   );
 
   testWidgets(
@@ -1408,7 +1403,6 @@ void main() {
     variant: TargetPlatformVariant.all(
       excluding: <TargetPlatform>{TargetPlatform.macOS, TargetPlatform.iOS},
     ),
-    skip: isBrowser && !isCanvasKit, // https://github.com/flutter/flutter/issues/56308
   );
 
   testWidgets('getLocalRectForCaret reports the real caret Rect', (WidgetTester tester) async {

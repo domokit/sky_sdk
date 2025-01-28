@@ -42,4 +42,7 @@ void main() {
   ]);
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: <SystemUiOverlay>[]);
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, error: '');
+
+  // Changes made in https://github.com/flutter/flutter/pull/161518
+  const CopySelectionTextIntent.cut(SelectionChangedCause.stylusHandwriting);
 }

@@ -92,9 +92,9 @@ TEST(DisplayListSkConversions, ToSkFilterMode) {
 }
 
 TEST(DisplayListSkConversions, ToSkSrcRectConstraint) {
-  ASSERT_EQ(ToSk(DlCanvas::SrcRectConstraint::kFast),
+  ASSERT_EQ(ToSk(DlSrcRectConstraint::kFast),
             SkCanvas::SrcRectConstraint::kFast_SrcRectConstraint);
-  ASSERT_EQ(ToSk(DlCanvas::SrcRectConstraint::kStrict),
+  ASSERT_EQ(ToSk(DlSrcRectConstraint::kStrict),
             SkCanvas::SrcRectConstraint::kStrict_SrcRectConstraint);
 }
 

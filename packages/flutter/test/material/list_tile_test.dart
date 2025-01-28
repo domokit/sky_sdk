@@ -160,10 +160,7 @@ void main() {
     await tester.pumpWidget(buildFrame(isTwoLine: true, textScaler: const TextScaler.linear(4.0)));
     testChildren();
     testHorizontalGeometry();
-    if (!kIsWeb || isSkiaWeb) {
-      // https://github.com/flutter/flutter/issues/99933
-      testVerticalGeometry(192.0);
-    }
+    testVerticalGeometry(192.0);
 
     // Make sure that the height of a large subtitle is taken into account.
     await tester.pumpWidget(
@@ -175,20 +172,14 @@ void main() {
     );
     testChildren();
     testHorizontalGeometry();
-    if (!kIsWeb || isSkiaWeb) {
-      // https://github.com/flutter/flutter/issues/99933
-      testVerticalGeometry(108.0);
-    }
+    testVerticalGeometry(108.0);
 
     await tester.pumpWidget(
       buildFrame(isThreeLine: true, textScaler: const TextScaler.linear(4.0)),
     );
     testChildren();
     testHorizontalGeometry();
-    if (!kIsWeb || isSkiaWeb) {
-      // https://github.com/flutter/flutter/issues/99933
-      testVerticalGeometry(192.0);
-    }
+    testVerticalGeometry(192.0);
   });
 
   testWidgets('ListTile geometry (RTL)', (WidgetTester tester) async {
@@ -536,10 +527,6 @@ void main() {
       ),
     );
 
-    if (kIsWeb && !isSkiaWeb) {
-      // https://github.com/flutter/flutter/issues/99933
-      return;
-    }
     const double height = 300;
     const double avatarTop = 130.0;
     const double placeholderTop = 138.0;

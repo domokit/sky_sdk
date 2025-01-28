@@ -12,7 +12,7 @@ With branching and branch testability being supported for Flutter & Dart release
 2. Wait about 30 seconds.
 3. If automatic cherry pick succeeds (no merge conflict), a new pull requested will be created and you will receive an email. Edit the cherry-pick details in the PR description of the generated pull request, and a release engineer will follow up on the request.
 4. If automatic cherry pick fails, a comment will be left on the original PR. In this case you will need to follow instructions in the manual cherry-pick section below to manually create a cherry pick PR.
-5. Update CHANGELOG.md following our [best practices](docs/releases/Hotfix-Documentation-Best-Practices.md).
+5. Update CHANGELOG.md following our [best practices](Hotfix-Documentation-Best-Practices.md).
 
 If for some reason, an automated cherry-pick can not be applied, please follow the manual cherry-pick instructions.
 

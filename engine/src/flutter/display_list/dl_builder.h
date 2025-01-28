@@ -107,19 +107,19 @@ class DisplayListBuilder final : public virtual DlCanvas,
 
   // |DlCanvas|
   void ClipRect(const DlRect& rect,
-                ClipOp clip_op = ClipOp::kIntersect,
+                DlClipOp clip_op = DlClipOp::kIntersect,
                 bool is_aa = false) override;
   // |DlCanvas|
   void ClipOval(const DlRect& bounds,
-                ClipOp clip_op = ClipOp::kIntersect,
+                DlClipOp clip_op = DlClipOp::kIntersect,
                 bool is_aa = false) override;
   // |DlCanvas|
   void ClipRoundRect(const DlRoundRect& rrect,
-                     ClipOp clip_op = ClipOp::kIntersect,
+                     DlClipOp clip_op = DlClipOp::kIntersect,
                      bool is_aa = false) override;
   // |DlCanvas|
   void ClipPath(const DlPath& path,
-                ClipOp clip_op = ClipOp::kIntersect,
+                DlClipOp clip_op = DlClipOp::kIntersect,
                 bool is_aa = false) override;
 
   /// Conservative estimate of the bounds of all outstanding clip operations
@@ -180,7 +180,7 @@ class DisplayListBuilder final : public virtual DlCanvas,
                bool useCenter,
                const DlPaint& paint) override;
   // |DlCanvas|
-  void DrawPoints(PointMode mode,
+  void DrawPoints(DlPointMode mode,
                   uint32_t count,
                   const DlPoint pts[],
                   const DlPaint& paint) override;
@@ -200,7 +200,7 @@ class DisplayListBuilder final : public virtual DlCanvas,
       const DlRect& dst,
       DlImageSampling sampling,
       const DlPaint* paint = nullptr,
-      SrcRectConstraint constraint = SrcRectConstraint::kFast) override;
+      DlSrcRectConstraint constraint = DlSrcRectConstraint::kFast) override;
   // |DlCanvas|
   void DrawImageNine(const sk_sp<DlImage>& image,
                      const DlIRect& center,
@@ -395,21 +395,21 @@ class DisplayListBuilder final : public virtual DlCanvas,
   void transformReset() override { TransformReset(); }
 
   // |DlOpReceiver|
-  void clipRect(const DlRect& rect, ClipOp clip_op, bool is_aa) override {
+  void clipRect(const DlRect& rect, DlClipOp clip_op, bool is_aa) override {
     ClipRect(rect, clip_op, is_aa);
   }
   // |DlOpReceiver|
-  void clipOval(const DlRect& bounds, ClipOp clip_op, bool is_aa) override {
+  void clipOval(const DlRect& bounds, DlClipOp clip_op, bool is_aa) override {
     ClipOval(bounds, clip_op, is_aa);
   }
   // |DlOpReceiver|
   void clipRoundRect(const DlRoundRect& rrect,
-                     ClipOp clip_op,
+                     DlClipOp clip_op,
                      bool is_aa) override {
     ClipRoundRect(rrect, clip_op, is_aa);
   }
   // |DlOpReceiver|
-  void clipPath(const DlPath& path, ClipOp clip_op, bool is_aa) override {
+  void clipPath(const DlPath& path, DlClipOp clip_op, bool is_aa) override {
     ClipPath(path, clip_op, is_aa);
   }
 
@@ -445,7 +445,7 @@ class DisplayListBuilder final : public virtual DlCanvas,
                DlScalar sweep,
                bool useCenter) override;
   // |DlOpReceiver|
-  void drawPoints(PointMode mode, uint32_t count, const DlPoint pts[]) override;
+  void drawPoints(DlPointMode mode, uint32_t count, const DlPoint pts[]) override;
   // |DlOpReceiver|
   void drawVertices(const std::shared_ptr<DlVertices>& vertices,
                     DlBlendMode mode) override;
@@ -462,7 +462,7 @@ class DisplayListBuilder final : public virtual DlCanvas,
       const DlRect& dst,
       DlImageSampling sampling,
       bool render_with_attributes,
-      SrcRectConstraint constraint = SrcRectConstraint::kFast) override;
+      DlSrcRectConstraint constraint = DlSrcRectConstraint::kFast) override;
   // |DlOpReceiver|
   void drawImageNine(const sk_sp<DlImage> image,
                      const DlIRect& center,
@@ -773,7 +773,7 @@ class DisplayListBuilder final : public virtual DlCanvas,
   void onSetColorFilter(const DlColorFilter* filter);
   void onSetMaskFilter(const DlMaskFilter* filter);
 
-  static DisplayListAttributeFlags FlagsForPointMode(PointMode mode);
+  static DisplayListAttributeFlags FlagsForPointMode(DlPointMode mode);
 
   enum class OpResult {
     kNoEffect,

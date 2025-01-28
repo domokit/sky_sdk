@@ -22,9 +22,6 @@ import 'material.dart';
 /// Begin a Material 3 ink sparkle ripple, centered at the tap or click position
 /// relative to the [referenceBox].
 ///
-/// This effect relies on a shader and therefore is unsupported on the Flutter
-/// Web HTML backend.
-///
 /// To use this effect, pass an instance of [splashFactory] to the
 /// `splashFactory` parameter of either the Material [ThemeData] or any
 /// component that has a `splashFactory` parameter, such as buttons:

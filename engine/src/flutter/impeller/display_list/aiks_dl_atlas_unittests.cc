@@ -16,7 +16,6 @@
 #include "impeller/entity/contents/content_context.h"
 #include "impeller/geometry/color.h"
 #include "impeller/geometry/scalar.h"
-#include "include/core/SkRefCnt.h"
 
 namespace impeller {
 namespace testing {

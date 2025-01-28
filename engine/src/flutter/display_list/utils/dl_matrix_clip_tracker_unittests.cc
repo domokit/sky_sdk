@@ -200,20 +200,20 @@ TEST(DisplayListMatrixClipState, ClipDifference) {
                                    const std::string& label) {
     {
       DisplayListMatrixClipState state(cull_rect, DlMatrix());
-      state.clipRect(diff_rect, DlCanvas::ClipOp::kDifference, false);
+      state.clipRect(diff_rect, DlClipOp::kDifference, false);
       EXPECT_EQ(state.GetDeviceCullCoverage(), cull_rect) << label;
     }
     {
       DisplayListMatrixClipState state(cull_rect, DlMatrix());
       const DlRoundRect diff_rrect = DlRoundRect::MakeRect(diff_rect);
-      state.clipRRect(diff_rrect, DlCanvas::ClipOp::kDifference, false);
+      state.clipRRect(diff_rrect, DlClipOp::kDifference, false);
       EXPECT_EQ(state.GetDeviceCullCoverage(), cull_rect)
           << label << " (RRect)";
     }
     {
       DisplayListMatrixClipState state(cull_rect, DlMatrix());
       const DlPath diff_path = DlPath::MakeRect(diff_rect);
-      state.clipPath(diff_path, DlCanvas::ClipOp::kDifference, false);
+      state.clipPath(diff_path, DlClipOp::kDifference, false);
       EXPECT_EQ(state.GetDeviceCullCoverage(), cull_rect)
           << label << " (RRect)";
     }
@@ -225,20 +225,20 @@ TEST(DisplayListMatrixClipState, ClipDifference) {
     EXPECT_TRUE(result_rect.IsEmpty() || cull_rect.Contains(result_rect));
     {
       DisplayListMatrixClipState state(cull_rect, DlMatrix());
-      state.clipRect(diff_rect, DlCanvas::ClipOp::kDifference, false);
+      state.clipRect(diff_rect, DlClipOp::kDifference, false);
       EXPECT_EQ(state.GetDeviceCullCoverage(), result_rect) << label;
     }
     {
       DisplayListMatrixClipState state(cull_rect, DlMatrix());
       const DlRoundRect diff_rrect = DlRoundRect::MakeRect(diff_rect);
-      state.clipRRect(diff_rrect, DlCanvas::ClipOp::kDifference, false);
+      state.clipRRect(diff_rrect, DlClipOp::kDifference, false);
       EXPECT_EQ(state.GetDeviceCullCoverage(), result_rect)
           << label << " (RRect)";
     }
     {
       DisplayListMatrixClipState state(cull_rect, DlMatrix());
       const DlPath diff_path = DlPath::MakeRect(diff_rect);
-      state.clipPath(diff_path, DlCanvas::ClipOp::kDifference, false);
+      state.clipPath(diff_path, DlClipOp::kDifference, false);
       EXPECT_EQ(state.GetDeviceCullCoverage(), result_rect)
           << label << " (RRect)";
     }

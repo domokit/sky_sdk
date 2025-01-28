@@ -44,7 +44,7 @@ TEST_P(DlGoldenTest, CanRenderImage) {
     FML_CHECK(images.size() >= 1);
     DlPaint paint;
     paint.setColor(DlColor::kRed());
-    canvas->DrawImage(images[0], SkPoint::Make(100.0, 100.0),
+    canvas->DrawImage(images[0], DlPoint(100.0, 100.0),
                       DlImageSampling::kLinear, &paint);
   };
 
@@ -65,29 +65,29 @@ TEST_P(DlGoldenTest, Bug147807) {
     canvas->Scale(content_scale.x, content_scale.y);
     DlPaint paint;
     paint.setColor(DlColor(0xfffef7ff));
-    canvas->DrawRect(SkRect::MakeLTRB(0, 0, 375, 667), paint);
+    canvas->DrawRect(DlRect::MakeLTRB(0, 0, 375, 667), paint);
     paint.setColor(DlColor(0xffff9800));
-    canvas->DrawRect(SkRect::MakeLTRB(0, 0, 187.5, 333.5), paint);
+    canvas->DrawRect(DlRect::MakeLTRB(0, 0, 187.5, 333.5), paint);
     paint.setColor(DlColor(0xff9c27b0));
-    canvas->DrawRect(SkRect::MakeLTRB(187.5, 0, 375, 333.5), paint);
+    canvas->DrawRect(DlRect::MakeLTRB(187.5, 0, 375, 333.5), paint);
     paint.setColor(DlColor(0xff4caf50));
-    canvas->DrawRect(SkRect::MakeLTRB(0, 333.5, 187.5, 667), paint);
+    canvas->DrawRect(DlRect::MakeLTRB(0, 333.5, 187.5, 667), paint);
     paint.setColor(DlColor(0xfff44336));
-    canvas->DrawRect(SkRect::MakeLTRB(187.5, 333.5, 375, 667), paint);
+    canvas->DrawRect(DlRect::MakeLTRB(187.5, 333.5, 375, 667), paint);
 
     canvas->Save();
     {
-      canvas->ClipRRect(
-          SkRRect::MakeOval(SkRect::MakeLTRB(201.25, 10, 361.25, 170)),
-          DlCanvas::ClipOp::kIntersect, true);
-      SkRect save_layer_bounds = SkRect::MakeLTRB(201.25, 10, 361.25, 170);
+      canvas->ClipRoundRect(
+          DlRoundRect::MakeOval(DlRect::MakeLTRB(201.25, 10, 361.25, 170)),
+          DlClipOp::kIntersect, true);
+      DlRect save_layer_bounds = DlRect::MakeLTRB(201.25, 10, 361.25, 170);
       auto backdrop =
           DlImageFilter::MakeMatrix(DlMatrix::MakeRow(3, 0, 0.0, -280,  //
                                                       0, 3, 0.0, -920,  //
                                                       0, 0, 1.0, 0.0,   //
                                                       0, 0, 0.0, 1.0),
                                     DlImageSampling::kLinear);
-      canvas->SaveLayer(&save_layer_bounds, /*paint=*/nullptr, backdrop.get());
+      canvas->SaveLayer(save_layer_bounds, /*paint=*/nullptr, backdrop.get());
       {
         canvas->Translate(201.25, 10);
         auto paint = DlPaint()
@@ -95,7 +95,7 @@ TEST_P(DlGoldenTest, Bug147807) {
                          .setColor(DlColor(0xff2196f3))
                          .setStrokeWidth(5)
                          .setDrawStyle(DlDrawStyle::kStroke);
-        canvas->DrawCircle(SkPoint::Make(80, 80), 80, paint);
+        canvas->DrawCircle(DlPoint(80, 80), 80, paint);
       }
       canvas->Restore();
     }
@@ -122,14 +122,16 @@ void DrawBlurGrid(DlCanvas* canvas) {
     auto blur_filter = std::make_shared<flutter::DlBlurMaskFilter>(
         flutter::DlBlurStyle::kNormal, blur_radius);
     paint.setMaskFilter(blur_filter);
-    SkRRect rrect;
     Scalar yval = gap + i * (gap + height);
-    rrect.setNinePatch(SkRect::MakeXYWH(gap, yval, width, height), 10, 10, 10,
-                       10);
-    canvas->DrawRRect(rrect, paint);
-    rrect.setNinePatch(SkRect::MakeXYWH(2.0 * gap + width, yval, width, height),
-                       9, 10, 10, 10);
-    canvas->DrawRRect(rrect, paint);
+    canvas->DrawRoundRect(
+        DlRoundRect::MakeNinePatch(DlRect::MakeXYWH(gap, yval, width, height),
+                                   10, 10, 10, 10),
+        paint);
+    canvas->DrawRoundRect(
+        DlRoundRect::MakeNinePatch(
+            DlRect::MakeXYWH(2.0 * gap + width, yval, width, height),  //
+            9, 10, 10, 10),
+        paint);
   }
 }
 }  // namespace
@@ -200,51 +202,64 @@ TEST_P(DlGoldenTest, FastVsGeneralGaussianMaskBlur) {
       DlColor::kMaroon(),
   };
 
-  auto make_rrect_path = [](const SkRect& rect, DlScalar rx,
-                            DlScalar ry) -> SkPath {
-    auto add_corner = [](SkPath& path, SkPoint rCorner, SkPoint rEnd) {
+  auto make_rrect_path = [](const DlRect& rect, DlScalar rx,
+                            DlScalar ry) -> DlPath {
+    auto add_corner = [](DlPathBuilder& path_builder, DlPoint corner,
+                         DlVector2 relative_from, DlVector2 relative_to,
+                         bool first) {
       static const auto magic = impeller::PathBuilder::kArcApproximationMagic;
-      path.rCubicTo(rCorner.fX * (1.0f - magic), rCorner.fY * (1.0f - magic),
-                    rCorner.fX + rEnd.fX * magic, rCorner.fY + rEnd.fY * magic,
-                    rCorner.fX + rEnd.fX, rCorner.fY + rEnd.fY);
+
+      if (first) {
+        path_builder.MoveTo(corner + relative_from);
+      } else {
+        path_builder.LineTo(corner + relative_from);
+      }
+      // These fractions should be (1 - magic) to make a proper rrect
+      // path, but historically these equations were as written here.
+      // On the plus side, they ensure that we will not optimize this
+      // path as "Hey, look, it's an RRect", but the DrawPath gaussians
+      // will otherwise not be identical to the versions drawn with
+      // DrawRoundRect
+      path_builder.CubicCurveTo(corner + relative_from * magic,
+                                corner + relative_to * magic,
+                                corner + relative_to);
     };
 
-    SkPath path;
-    path.moveTo(rect.fRight - rx, rect.fTop);
-    add_corner(path, {rx, 0.0f}, {0.0f, ry});
-    path.lineTo(rect.fRight, rect.fBottom - ry);
-    add_corner(path, {0.0f, ry}, {-rx, 0.0f});
-    path.lineTo(rect.fLeft + rx, rect.fBottom);
-    add_corner(path, {-rx, 0.0f}, {0.0f, -ry});
-    path.lineTo(rect.fLeft, rect.fTop + ry);
-    add_corner(path, {0.0f, -ry}, {rx, 0.0f});
-    path.close();
-    return path;
+    DlPathBuilder path_builder;
+    add_corner(path_builder, rect.GetRightTop(),  //
+               DlVector2(-rx, 0.0f), DlVector2(0.0f, ry), true);
+    add_corner(path_builder, rect.GetRightBottom(),  //
+               DlVector2(0.0f, -ry), DlVector2(-rx, 0.0f), false);
+    add_corner(path_builder, rect.GetLeftBottom(),  //
+               DlVector2(rx, 0.0f), DlVector2(0.0f, -ry), false);
+    add_corner(path_builder, rect.GetLeftTop(),  //
+               DlVector2(0.0f, ry), DlVector2(rx, 0.0f), false);
+    return DlPath(path_builder);
   };
 
   for (size_t i = 0; i < blur_sigmas.size(); i++) {
-    auto rect = SkRect::MakeXYWH(i * 320.0f + 50.0f, 50.0f, 100.0f, 100.0f);
+    auto rect = DlRect::MakeXYWH(i * 320.0f + 50.0f, 50.0f, 100.0f, 100.0f);
     DlPaint paint = DlPaint()  //
                         .setColor(blur_colors[i])
                         .setMaskFilter(DlBlurMaskFilter::Make(
                             DlBlurStyle::kNormal, blur_sigmas[i]));
 
-    builder.DrawRRect(SkRRect::MakeRectXY(rect, 10.0f, 10.0f), paint);
-    rect = rect.makeOffset(150.0f, 0.0f);
+    builder.DrawRoundRect(DlRoundRect::MakeRectXY(rect, 10.0f, 10.0f), paint);
+    rect = rect.Shift(150.0f, 0.0f);
     builder.DrawPath(make_rrect_path(rect, 10.0f, 10.0f), paint);
-    rect = rect.makeOffset(-150.0f, 0.0f);
+    rect = rect.Shift(-150.0f, 0.0f);
 
-    rect = rect.makeOffset(0.0f, 200.0f);
-    builder.DrawRRect(SkRRect::MakeRectXY(rect, 10.0f, 30.0f), paint);
-    rect = rect.makeOffset(150.0f, 0.0f);
+    rect = rect.Shift(0.0f, 200.0f);
+    builder.DrawRoundRect(DlRoundRect::MakeRectXY(rect, 10.0f, 30.0f), paint);
+    rect = rect.Shift(150.0f, 0.0f);
     builder.DrawPath(make_rrect_path(rect, 10.0f, 20.0f), paint);
-    rect = rect.makeOffset(-150.0f, 0.0f);
+    rect = rect.Shift(-150.0f, 0.0f);
 
-    rect = rect.makeOffset(0.0f, 200.0f);
-    builder.DrawRRect(SkRRect::MakeRectXY(rect, 30.0f, 10.0f), paint);
-    rect = rect.makeOffset(150.0f, 0.0f);
+    rect = rect.Shift(0.0f, 200.0f);
+    builder.DrawRoundRect(DlRoundRect::MakeRectXY(rect, 30.0f, 10.0f), paint);
+    rect = rect.Shift(150.0f, 0.0f);
     builder.DrawPath(make_rrect_path(rect, 20.0f, 10.0f), paint);
-    rect = rect.makeOffset(-150.0f, 0.0f);
+    rect = rect.Shift(-150.0f, 0.0f);
   }
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
@@ -292,12 +307,12 @@ TEST_P(DlGoldenTest, DashedLinesTest) {
 
     // Make sure the rendering op responds appropriately to clipping
     canvas->Save();
-    SkPath clip_path = SkPath();
-    clip_path.moveTo(275.0f, 225.0f);
-    clip_path.lineTo(325.0f, 275.0f);
-    clip_path.lineTo(275.0f, 325.0f);
-    clip_path.lineTo(225.0f, 275.0f);
-    canvas->ClipPath(clip_path);
+    DlPathBuilder path_builder;
+    path_builder.MoveTo(DlPoint(275.0f, 225.0f));
+    path_builder.LineTo(DlPoint(325.0f, 275.0f));
+    path_builder.LineTo(DlPoint(275.0f, 325.0f));
+    path_builder.LineTo(DlPoint(225.0f, 275.0f));
+    canvas->ClipPath(DlPath(path_builder));
     canvas->DrawColor(DlColor::kYellow());
     draw_one(DlStrokeCap::kRound, 275.0f, 275.0f, 15.0f, 10.0f);
     canvas->Restore();

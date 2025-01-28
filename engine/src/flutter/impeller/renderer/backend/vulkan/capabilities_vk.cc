@@ -193,18 +193,25 @@ static const char* GetExtensionName(RequiredAndroidDeviceExtensionVK ext) {
       return VK_EXT_QUEUE_FAMILY_FOREIGN_EXTENSION_NAME;
     case RequiredAndroidDeviceExtensionVK::kKHRDedicatedAllocation:
       return VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME;
-    case RequiredAndroidDeviceExtensionVK::kKHRExternalFenceFd:
-      return VK_KHR_EXTERNAL_FENCE_FD_EXTENSION_NAME;
-    case RequiredAndroidDeviceExtensionVK::kKHRExternalFence:
-      return VK_KHR_EXTERNAL_FENCE_EXTENSION_NAME;
-    case RequiredAndroidDeviceExtensionVK::kKHRExternalSemaphoreFd:
-      return VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME;
-    case RequiredAndroidDeviceExtensionVK::kKHRExternalSemaphore:
-      return VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME;
     case RequiredAndroidDeviceExtensionVK::kLast:
       return "Unknown";
   }
   FML_UNREACHABLE();
+}
+
+static const char* GetExtensionName(OptionalAndroidDeviceExtensionVK ext) {
+  switch (ext) {
+    case OptionalAndroidDeviceExtensionVK::kKHRExternalFenceFd:
+      return VK_KHR_EXTERNAL_FENCE_FD_EXTENSION_NAME;
+    case OptionalAndroidDeviceExtensionVK::kKHRExternalFence:
+      return VK_KHR_EXTERNAL_FENCE_EXTENSION_NAME;
+    case OptionalAndroidDeviceExtensionVK::kKHRExternalSemaphoreFd:
+      return VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME;
+    case OptionalAndroidDeviceExtensionVK::kKHRExternalSemaphore:
+      return VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME;
+    case OptionalAndroidDeviceExtensionVK::kLast:
+      return "Unknown";
+  }
 }
 
 static const char* GetExtensionName(OptionalDeviceExtensionVK ext) {
@@ -549,6 +556,7 @@ bool CapabilitiesVK::SetPhysicalDevice(
     required_common_device_extensions_.clear();
     required_android_device_extensions_.clear();
     optional_device_extensions_.clear();
+    optional_android_device_extensions_.clear();
 
     std::set<std::string> exts;
     if (!use_embedder_extensions_) {
@@ -583,6 +591,14 @@ bool CapabilitiesVK::SetPhysicalDevice(
       }
       return true;
     });
+    IterateExtensions<OptionalAndroidDeviceExtensionVK>(
+        [&](OptionalAndroidDeviceExtensionVK ext) {
+          auto name = GetExtensionName(ext);
+          if (exts.find(name) != exts.end()) {
+            optional_android_device_extensions_.insert(ext);
+          }
+          return true;
+        });
   }
 
   supports_texture_fixed_rate_compression_ =
@@ -601,6 +617,14 @@ bool CapabilitiesVK::SetPhysicalDevice(
   // See VUID-VkPipelineInputAssemblyStateCreateInfo-triangleFans-04452.
   has_triangle_fans_ =
       !HasExtension(OptionalDeviceExtensionVK::kVKKHRPortabilitySubset);
+
+  // External Fence/Semaphore for AHB swapchain
+  if (HasExtension(OptionalAndroidDeviceExtensionVK::kKHRExternalFenceFd) &&
+      HasExtension(OptionalAndroidDeviceExtensionVK::kKHRExternalFence) &&
+      HasExtension(OptionalAndroidDeviceExtensionVK::kKHRExternalSemaphore) &&
+      HasExtension(OptionalAndroidDeviceExtensionVK::kKHRExternalSemaphoreFd)) {
+    supports_external_fence_and_semaphore_ = true;
+  }
 
   return true;
 }
@@ -695,6 +719,11 @@ bool CapabilitiesVK::HasExtension(OptionalDeviceExtensionVK ext) const {
          optional_device_extensions_.end();
 }
 
+bool CapabilitiesVK::HasExtension(OptionalAndroidDeviceExtensionVK ext) const {
+  return optional_android_device_extensions_.find(ext) !=
+         optional_android_device_extensions_.end();
+}
+
 bool CapabilitiesVK::SupportsTextureFixedRateCompression() const {
   return supports_texture_fixed_rate_compression_;
 }
@@ -763,6 +792,10 @@ ISize CapabilitiesVK::GetMaximumRenderPassAttachmentSize() const {
 void CapabilitiesVK::ApplyWorkarounds(const WorkaroundsVK& workarounds) {
   has_primitive_restart_ = !workarounds.slow_primitive_restart_performance;
   has_framebuffer_fetch_ = !workarounds.input_attachment_self_dependency_broken;
+}
+
+bool CapabilitiesVK::SupportsExternalSemaphoreExtensions() const {
+  return supports_external_fence_and_semaphore_;
 }
 
 }  // namespace impeller

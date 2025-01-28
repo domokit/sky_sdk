@@ -324,8 +324,8 @@ std::vector<DisplayListInvocationGroup> CreateAllSaveRestoreOps() {
            {5, 96, 2,
             [](DlOpReceiver& r) {
               r.save();
-              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25),
-                         DlCanvas::ClipOp::kIntersect, true);
+              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25), DlClipOp::kIntersect,
+                         true);
               r.drawRect(DlRect::MakeLTRB(5, 5, 15, 15));
               r.drawRect(DlRect::MakeLTRB(10, 10, 20, 20));
               r.restore();
@@ -333,8 +333,8 @@ std::vector<DisplayListInvocationGroup> CreateAllSaveRestoreOps() {
            {5, 120, 3,
             [](DlOpReceiver& r) {
               r.saveLayer(nullptr, SaveLayerOptions::kNoAttributes);
-              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25),
-                         DlCanvas::ClipOp::kIntersect, true);
+              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25), DlClipOp::kIntersect,
+                         true);
               r.drawRect(DlRect::MakeLTRB(5, 5, 15, 15));
               r.drawRect(DlRect::MakeLTRB(10, 10, 20, 20));
               r.restore();
@@ -342,8 +342,8 @@ std::vector<DisplayListInvocationGroup> CreateAllSaveRestoreOps() {
            {5, 120, 3,
             [](DlOpReceiver& r) {
               r.saveLayer(nullptr, SaveLayerOptions::kWithAttributes);
-              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25),
-                         DlCanvas::ClipOp::kIntersect, true);
+              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25), DlClipOp::kIntersect,
+                         true);
               r.drawRect(DlRect::MakeLTRB(5, 5, 15, 15));
               r.drawRect(DlRect::MakeLTRB(10, 10, 20, 20));
               r.restore();
@@ -355,8 +355,8 @@ std::vector<DisplayListInvocationGroup> CreateAllSaveRestoreOps() {
             [](DlOpReceiver& r) {
               r.saveLayer(&kTestBounds, SaveLayerOptions::kNoAttributes);
               r.drawRect(kTestBounds);
-              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25),
-                         DlCanvas::ClipOp::kIntersect, true);
+              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25), DlClipOp::kIntersect,
+                         true);
               r.drawRect(DlRect::MakeLTRB(10, 10, 20, 20));
               r.restore();
             }},
@@ -364,8 +364,8 @@ std::vector<DisplayListInvocationGroup> CreateAllSaveRestoreOps() {
             [](DlOpReceiver& r) {
               r.saveLayer(&kTestBounds, SaveLayerOptions::kWithAttributes);
               r.drawRect(kTestBounds);
-              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25),
-                         DlCanvas::ClipOp::kIntersect, true);
+              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25), DlClipOp::kIntersect,
+                         true);
               r.drawRect(DlRect::MakeLTRB(10, 10, 20, 20));
               r.restore();
             }},
@@ -373,8 +373,8 @@ std::vector<DisplayListInvocationGroup> CreateAllSaveRestoreOps() {
             [](DlOpReceiver& r) {
               r.saveLayer(nullptr, SaveLayerOptions::kNoAttributes,
                           &kTestCFImageFilter1);
-              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25),
-                         DlCanvas::ClipOp::kIntersect, true);
+              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25), DlClipOp::kIntersect,
+                         true);
               r.drawRect(DlRect::MakeLTRB(5, 5, 15, 15));
               r.drawRect(DlRect::MakeLTRB(10, 10, 20, 20));
               r.restore();
@@ -383,8 +383,8 @@ std::vector<DisplayListInvocationGroup> CreateAllSaveRestoreOps() {
             [](DlOpReceiver& r) {
               r.saveLayer(nullptr, SaveLayerOptions::kWithAttributes,
                           &kTestCFImageFilter1);
-              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25),
-                         DlCanvas::ClipOp::kIntersect, true);
+              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25), DlClipOp::kIntersect,
+                         true);
               r.drawRect(DlRect::MakeLTRB(5, 5, 15, 15));
               r.drawRect(DlRect::MakeLTRB(10, 10, 20, 20));
               r.restore();
@@ -394,8 +394,8 @@ std::vector<DisplayListInvocationGroup> CreateAllSaveRestoreOps() {
               r.saveLayer(&kTestBounds, SaveLayerOptions::kNoAttributes,
                           &kTestCFImageFilter1);
               r.drawRect(kTestBounds);
-              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25),
-                         DlCanvas::ClipOp::kIntersect, true);
+              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25), DlClipOp::kIntersect,
+                         true);
               r.drawRect(DlRect::MakeLTRB(10, 10, 20, 20));
               r.restore();
             }},
@@ -404,8 +404,8 @@ std::vector<DisplayListInvocationGroup> CreateAllSaveRestoreOps() {
               r.saveLayer(&kTestBounds, SaveLayerOptions::kWithAttributes,
                           &kTestCFImageFilter1);
               r.drawRect(kTestBounds);
-              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25),
-                         DlCanvas::ClipOp::kIntersect, true);
+              r.clipRect(DlRect::MakeLTRB(0, 0, 25, 25), DlClipOp::kIntersect,
+                         true);
               r.drawRect(DlRect::MakeLTRB(10, 10, 20, 20));
               r.restore();
             }},
@@ -480,114 +480,112 @@ std::vector<DisplayListInvocationGroup> CreateAllClipOps() {
        {
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipRect(kTestBounds, DlCanvas::ClipOp::kIntersect, true);
+              r.clipRect(kTestBounds, DlClipOp::kIntersect, true);
             }},
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipRect(kTestBounds.Shift(1, 1), DlCanvas::ClipOp::kIntersect,
-                         true);
+              r.clipRect(kTestBounds.Shift(1, 1), DlClipOp::kIntersect, true);
             }},
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipRect(kTestBounds, DlCanvas::ClipOp::kIntersect, false);
+              r.clipRect(kTestBounds, DlClipOp::kIntersect, false);
             }},
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipRect(kTestBounds, DlCanvas::ClipOp::kDifference, true);
+              r.clipRect(kTestBounds, DlClipOp::kDifference, true);
             }},
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipRect(kTestBounds, DlCanvas::ClipOp::kDifference, false);
+              r.clipRect(kTestBounds, DlClipOp::kDifference, false);
             }},
        }},
       {"ClipOval",
        {
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipOval(kTestBounds, DlCanvas::ClipOp::kIntersect, true);
+              r.clipOval(kTestBounds, DlClipOp::kIntersect, true);
             }},
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipOval(kTestBounds.Shift(1, 1), DlCanvas::ClipOp::kIntersect,
-                         true);
+              r.clipOval(kTestBounds.Shift(1, 1), DlClipOp::kIntersect, true);
             }},
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipOval(kTestBounds, DlCanvas::ClipOp::kIntersect, false);
+              r.clipOval(kTestBounds, DlClipOp::kIntersect, false);
             }},
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipOval(kTestBounds, DlCanvas::ClipOp::kDifference, true);
+              r.clipOval(kTestBounds, DlClipOp::kDifference, true);
             }},
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipOval(kTestBounds, DlCanvas::ClipOp::kDifference, false);
+              r.clipOval(kTestBounds, DlClipOp::kDifference, false);
             }},
        }},
       {"ClipRRect",
        {
            {1, 56, 0,
             [](DlOpReceiver& r) {
-              r.clipRoundRect(kTestRRect, DlCanvas::ClipOp::kIntersect, true);
+              r.clipRoundRect(kTestRRect, DlClipOp::kIntersect, true);
             }},
            {1, 56, 0,
             [](DlOpReceiver& r) {
-              r.clipRoundRect(kTestRRect.Shift(1, 1),
-                              DlCanvas::ClipOp::kIntersect, true);
+              r.clipRoundRect(kTestRRect.Shift(1, 1), DlClipOp::kIntersect,
+                              true);
             }},
            {1, 56, 0,
             [](DlOpReceiver& r) {
-              r.clipRoundRect(kTestRRect, DlCanvas::ClipOp::kIntersect, false);
+              r.clipRoundRect(kTestRRect, DlClipOp::kIntersect, false);
             }},
            {1, 56, 0,
             [](DlOpReceiver& r) {
-              r.clipRoundRect(kTestRRect, DlCanvas::ClipOp::kDifference, true);
+              r.clipRoundRect(kTestRRect, DlClipOp::kDifference, true);
             }},
            {1, 56, 0,
             [](DlOpReceiver& r) {
-              r.clipRoundRect(kTestRRect, DlCanvas::ClipOp::kDifference, false);
+              r.clipRoundRect(kTestRRect, DlClipOp::kDifference, false);
             }},
        }},
       {"ClipPath",
        {
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipPath(kTestPath1, DlCanvas::ClipOp::kIntersect, true);
+              r.clipPath(kTestPath1, DlClipOp::kIntersect, true);
             }},
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipPath(kTestPath2, DlCanvas::ClipOp::kIntersect, true);
+              r.clipPath(kTestPath2, DlClipOp::kIntersect, true);
             }},
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipPath(kTestPath3, DlCanvas::ClipOp::kIntersect, true);
+              r.clipPath(kTestPath3, DlClipOp::kIntersect, true);
             }},
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipPath(kTestPath1, DlCanvas::ClipOp::kIntersect, false);
+              r.clipPath(kTestPath1, DlClipOp::kIntersect, false);
             }},
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipPath(kTestPath1, DlCanvas::ClipOp::kDifference, true);
+              r.clipPath(kTestPath1, DlClipOp::kDifference, true);
             }},
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipPath(kTestPath1, DlCanvas::ClipOp::kDifference, false);
+              r.clipPath(kTestPath1, DlClipOp::kDifference, false);
             }},
            // clipPath(rect) becomes clipRect
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipPath(kTestPathRect, DlCanvas::ClipOp::kIntersect, true);
+              r.clipPath(kTestPathRect, DlClipOp::kIntersect, true);
             }},
            // clipPath(oval) becomes clipOval
            {1, 24, 0,
             [](DlOpReceiver& r) {
-              r.clipPath(kTestPathOval, DlCanvas::ClipOp::kIntersect, true);
+              r.clipPath(kTestPathOval, DlClipOp::kIntersect, true);
             }},
            // clipPath(rrect) becomes clipRRect
            {1, 56, 0,
             [](DlOpReceiver& r) {
-              r.clipPath(kTestPathRRect, DlCanvas::ClipOp::kIntersect, true);
+              r.clipPath(kTestPathRRect, DlClipOp::kIntersect, true);
             }},
        }},
   };
@@ -768,23 +766,20 @@ std::vector<DisplayListInvocationGroup> CreateAllRenderingOps() {
        {
            {1, 8 + TestPointCount * 8, 1,
             [](DlOpReceiver& r) {
-              r.drawPoints(DlCanvas::PointMode::kPoints, TestPointCount,
-                           kTestPoints);
+              r.drawPoints(DlPointMode::kPoints, TestPointCount, kTestPoints);
             }},
            {1, 8 + (TestPointCount - 1) * 8, 1,
             [](DlOpReceiver& r) {
-              r.drawPoints(DlCanvas::PointMode::kPoints, TestPointCount - 1,
+              r.drawPoints(DlPointMode::kPoints, TestPointCount - 1,
                            kTestPoints);
             }},
            {1, 8 + TestPointCount * 8, 1,
             [](DlOpReceiver& r) {
-              r.drawPoints(DlCanvas::PointMode::kLines, TestPointCount,
-                           kTestPoints);
+              r.drawPoints(DlPointMode::kLines, TestPointCount, kTestPoints);
             }},
            {1, 8 + TestPointCount * 8, 1,
             [](DlOpReceiver& r) {
-              r.drawPoints(DlCanvas::PointMode::kPolygon, TestPointCount,
-                           kTestPoints);
+              r.drawPoints(DlPointMode::kPolygon, TestPointCount, kTestPoints);
             }},
        }},
       {"DrawVertices",
@@ -841,48 +836,48 @@ std::vector<DisplayListInvocationGroup> CreateAllRenderingOps() {
               r.drawImageRect(kTestImage1, DlRect::MakeLTRB(10, 10, 20, 20),
                               DlRect::MakeLTRB(10, 10, 80, 80),
                               kNearestSampling, false,
-                              DlCanvas::SrcRectConstraint::kFast);
+                              DlSrcRectConstraint::kFast);
             }},
            {1, 56, 1,
             [](DlOpReceiver& r) {
               r.drawImageRect(kTestImage1, DlRect::MakeLTRB(10, 10, 20, 20),
                               DlRect::MakeLTRB(10, 10, 80, 80),
                               kNearestSampling, true,
-                              DlCanvas::SrcRectConstraint::kFast);
+                              DlSrcRectConstraint::kFast);
             }},
            {1, 56, 1,
             [](DlOpReceiver& r) {
               r.drawImageRect(kTestImage1, DlRect::MakeLTRB(10, 10, 20, 20),
                               DlRect::MakeLTRB(10, 10, 80, 80),
                               kNearestSampling, false,
-                              DlCanvas::SrcRectConstraint::kStrict);
+                              DlSrcRectConstraint::kStrict);
             }},
            {1, 56, 1,
             [](DlOpReceiver& r) {
               r.drawImageRect(kTestImage1, DlRect::MakeLTRB(10, 10, 25, 20),
                               DlRect::MakeLTRB(10, 10, 80, 80),
                               kNearestSampling, false,
-                              DlCanvas::SrcRectConstraint::kFast);
+                              DlSrcRectConstraint::kFast);
             }},
            {1, 56, 1,
             [](DlOpReceiver& r) {
               r.drawImageRect(kTestImage1, DlRect::MakeLTRB(10, 10, 20, 20),
                               DlRect::MakeLTRB(10, 10, 85, 80),
                               kNearestSampling, false,
-                              DlCanvas::SrcRectConstraint::kFast);
+                              DlSrcRectConstraint::kFast);
             }},
            {1, 56, 1,
             [](DlOpReceiver& r) {
               r.drawImageRect(kTestImage1, DlRect::MakeLTRB(10, 10, 20, 20),
                               DlRect::MakeLTRB(10, 10, 80, 80), kLinearSampling,
-                              false, DlCanvas::SrcRectConstraint::kFast);
+                              false, DlSrcRectConstraint::kFast);
             }},
            {1, 56, 1,
             [](DlOpReceiver& r) {
               r.drawImageRect(kTestImage2, DlRect::MakeLTRB(10, 10, 15, 15),
                               DlRect::MakeLTRB(10, 10, 80, 80),
                               kNearestSampling, false,
-                              DlCanvas::SrcRectConstraint::kFast);
+                              DlSrcRectConstraint::kFast);
             }},
            {1, 56, 1,
             [](DlOpReceiver& r) {
@@ -890,7 +885,7 @@ std::vector<DisplayListInvocationGroup> CreateAllRenderingOps() {
               r.drawImageRect(dl_image, DlRect::MakeLTRB(10, 10, 15, 15),
                               DlRect::MakeLTRB(10, 10, 80, 80),
                               kNearestSampling, false,
-                              DlCanvas::SrcRectConstraint::kFast);
+                              DlSrcRectConstraint::kFast);
             }},
        }},
       {"DrawImageNine",

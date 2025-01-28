@@ -1526,9 +1526,8 @@ targets:
       - engine/**
       - DEPS
 
-  - name: Linux_android_emu_34 android_engine_vulkan_tests
+  - name: Linux_android_emu android_engine_vulkan_tests
     recipe: flutter/flutter_drone
-    bringup: true
     timeout: 60
     properties:
       shard: android_engine_vulkan_tests
@@ -1539,38 +1538,11 @@ targets:
           {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
         ]
 
-  - name: Linux_android_emu_34 android_engine_opengles_tests
+  - name: Linux_android_emu android_engine_opengles_tests
     recipe: flutter/flutter_drone
-    bringup: true
     timeout: 60
     properties:
       shard: android_engine_opengles_tests
-      tags: >
-         ["framework", "hostonly", "shard", "linux"]
-      dependencies: >-
-        [
-          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
-        ]
-
-  - name: Linux_android_emu flutter_driver_android_test
-    recipe: flutter/flutter_drone
-    bringup: true
-    timeout: 60
-    properties:
-      shard: android_engine_tests
-      tags: >
-         ["framework", "hostonly", "shard", "linux"]
-      dependencies: >-
-        [
-          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
-        ]
-      presubmit_max_attempts: "2"
-
-  - name: Linux_android_emu_34 flutter_driver_android_test
-    recipe: flutter/flutter_drone
-    timeout: 60
-    properties:
-      shard: android_engine_tests
       tags: >
          ["framework", "hostonly", "shard", "linux"]
       dependencies: >-

@@ -76,6 +76,10 @@ Future<bool> run(List<String> arguments) async {
           .where((File file) => !skipTemplate || path.basename(file.path) != 'template.test')
           .toList();
 
+  if (files.isEmpty && parsedArguments.rest.isNotEmpty) {
+    print('No files resolved from glob(s): ${parsedArguments.rest}');
+  }
+
   if (help ||
       repeat == null ||
       files.isEmpty ||

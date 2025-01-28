@@ -52,7 +52,7 @@ interface class Gn {
     );
     if (process.exitCode != 0) {
       // If the error was in the format:
-      // "The input testing/scenario_app:scenario_app matches no targets, configs or files."
+      // "The input testing/foo:foo matches no targets, configs or files."
       //
       // Then report a nicer error, versus a fatal error.
       final stdout = process.stdout;

@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -42,10 +41,7 @@ void main() {
     expect(tester.getSize(find.byType(Badge)), const Size(24, 24)); // default Icon size
     expect(tester.getTopLeft(find.byType(Badge)), Offset.zero);
 
-    if (!kIsWeb || isSkiaWeb) {
-      // https://github.com/flutter/flutter/issues/99933
-      expect(tester.getTopLeft(find.text('0')), const Offset(16, -4));
-    }
+    expect(tester.getTopLeft(find.text('0')), const Offset(16, -4));
 
     final RenderBox box = tester.renderObject(find.byType(Badge));
     final RRect rrect = RRect.fromLTRBR(12, -4, 31.5, 12, const Radius.circular(8));
@@ -82,10 +78,7 @@ void main() {
     expect(tester.getSize(find.byType(Badge)), const Size(24, 24)); // default Icon size
     expect(tester.getTopLeft(find.byType(Badge)), Offset.zero);
 
-    if (!kIsWeb || isSkiaWeb) {
-      // https://github.com/flutter/flutter/issues/99933
-      expect(tester.getTopLeft(find.text('0')), const Offset(0, -4));
-    }
+    expect(tester.getTopLeft(find.text('0')), const Offset(0, -4));
 
     final RenderBox box = tester.renderObject(find.byType(Badge));
     final RRect rrect = RRect.fromLTRBR(-4, -4, 15.5, 12, const Radius.circular(8));
@@ -132,10 +125,7 @@ void main() {
 
     // x = alignment.start + padding.left
     // y = alignment.top
-    if (!kIsWeb || isSkiaWeb) {
-      // https://github.com/flutter/flutter/issues/99933
-      expect(tester.getTopLeft(find.text('0')), const Offset(16, -4));
-    }
+    expect(tester.getTopLeft(find.text('0')), const Offset(16, -4));
 
     final RenderBox box = tester.renderObject(find.byType(Badge));
     // '0'.width = 12

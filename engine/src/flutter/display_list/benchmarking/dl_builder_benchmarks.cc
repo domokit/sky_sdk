@@ -131,7 +131,7 @@ static void BM_DisplayListBuilderWithClipRect(
   bool prepare_rtree = NeedPrepareRTree(type);
   while (state.KeepRunning()) {
     DisplayListBuilder builder(prepare_rtree);
-    builder.ClipRect(clip_bounds, DlCanvas::ClipOp::kIntersect, true);
+    builder.ClipRect(clip_bounds, DlClipOp::kIntersect, true);
     InvokeAllRenderingOps(builder);
     Complete(builder, type);
   }

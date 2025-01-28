@@ -270,6 +270,12 @@ VkResult vkCreateCommandPool(VkDevice device,
 VkResult vkResetCommandPool(VkDevice device,
                             VkCommandPool commandPool,
                             VkCommandPoolResetFlags flags) {
+  MockDevice* mock_device = reinterpret_cast<MockDevice*>(device);
+  if (flags & VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT) {
+    mock_device->AddCalledFunction("vkResetCommandPoolReleaseResources");
+  } else {
+    mock_device->AddCalledFunction("vkResetCommandPool");
+  }
   return VK_SUCCESS;
 }
 
@@ -751,6 +757,13 @@ void vkDestroyFramebuffer(VkDevice device,
   delete reinterpret_cast<MockFramebuffer*>(framebuffer);
 }
 
+void vkTrimCommandPool(VkDevice device,
+                       VkCommandPool commandPool,
+                       VkCommandPoolTrimFlags flags) {
+  MockDevice* mock_device = reinterpret_cast<MockDevice*>(device);
+  mock_device->AddCalledFunction("vkTrimCommandPool");
+}
+
 PFN_vkVoidFunction GetMockVulkanProcAddress(VkInstance instance,
                                             const char* pName) {
   if (strcmp("vkEnumerateInstanceExtensionProperties", pName) == 0) {
@@ -902,6 +915,8 @@ PFN_vkVoidFunction GetMockVulkanProcAddress(VkInstance instance,
     return reinterpret_cast<PFN_vkVoidFunction>(vkCreateFramebuffer);
   } else if (strcmp("vkDestroyFramebuffer", pName) == 0) {
     return reinterpret_cast<PFN_vkVoidFunction>(vkDestroyFramebuffer);
+  } else if (strcmp("vkTrimCommandPool", pName) == 0) {
+    return reinterpret_cast<PFN_vkVoidFunction>(vkTrimCommandPool);
   }
   return noop;
 }

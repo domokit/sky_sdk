@@ -62,6 +62,33 @@ DlPath DlPath::MakeRoundRectXY(const DlRect& rect,
       counter_clock_wise ? SkPathDirection::kCCW : SkPathDirection::kCW));
 }
 
+DlPath DlPath::MakeLine(const DlPoint& a, const DlPoint& b) {
+  return DlPath(SkPath::Line(ToSkPoint(a), ToSkPoint(b)));
+}
+
+DlPath DlPath::MakePoly(const DlPoint pts[],
+                        int count,
+                        bool close,
+                        DlPathFillType fill_type) {
+  return DlPath(
+      SkPath::Polygon(ToSkPoints(pts), count, close, ToSkFillType(fill_type)));
+}
+
+DlPath DlPath::MakeArc(const DlRect& bounds,
+                       DlDegrees start,
+                       DlDegrees end,
+                       bool use_center) {
+  SkPath path;
+  if (use_center) {
+    path.moveTo(ToSkPoint(bounds.GetCenter()));
+  }
+  path.arcTo(ToSkRect(bounds), start.degrees, end.degrees, !use_center);
+  if (use_center) {
+    path.close();
+  }
+  return DlPath(path);
+}
+
 const SkPath& DlPath::GetSkPath() const {
   auto& sk_path = data_->sk_path;
   auto& path = data_->path;
@@ -207,14 +234,22 @@ bool DlPath::IsVolatile() const {
   return GetSkPath().isVolatile();
 }
 
+bool DlPath::IsConvex() const {
+  if (data_->sk_path_original) {
+    auto& sk_path = data_->sk_path;
+    FML_DCHECK(sk_path.has_value());
+    return sk_path.has_value() && sk_path->isConvex();
+  } else {
+    auto& path = data_->path;
+    FML_DCHECK(path.has_value());
+    return path.has_value() && path->IsConvex();
+  }
+}
+
 DlPath DlPath::operator+(const DlPath& other) const {
   SkPath path = GetSkPath();
   path.addPath(other.GetSkPath());
   return DlPath(path);
-}
-
-DlPath::Data::Data(const SkPath& path) : sk_path(path) {
-  FML_DCHECK(!SkPathFillType_IsInverse(path.getFillType()));
 }
 
 SkPath DlPath::ConvertToSkiaPath(const Path& path, const DlPoint& shift) {
@@ -338,26 +373,16 @@ Path DlPath::ConvertToImpellerPath(const SkPath& path, const DlPoint& shift) {
     }
   } while (verb != SkPath::Verb::kDone_Verb);
 
-  FillType fill_type;
-  switch (path.getFillType()) {
-    case SkPathFillType::kWinding:
-      fill_type = FillType::kNonZero;
-      break;
-    case SkPathFillType::kEvenOdd:
-      fill_type = FillType::kOdd;
-      break;
-    case SkPathFillType::kInverseWinding:
-    case SkPathFillType::kInverseEvenOdd:
-      FML_UNREACHABLE();
-  }
-  builder.SetConvexity(path.isConvex() ? Convexity::kConvex
-                                       : Convexity::kUnknown);
+  DlRect bounds = ToDlRect(path.getBounds());
   if (!shift.IsZero()) {
     builder.Shift(shift);
+    bounds = bounds.Shift(shift);
   }
-  auto sk_bounds = path.getBounds().makeOutset(shift.x, shift.y);
-  builder.SetBounds(ToDlRect(sk_bounds));
-  return builder.TakePath(fill_type);
+
+  builder.SetConvexity(path.isConvex() ? Convexity::kConvex
+                                       : Convexity::kUnknown);
+  builder.SetBounds(bounds);
+  return builder.TakePath(ToDlFillType(path.getFillType()));
 }
 
 }  // namespace flutter
