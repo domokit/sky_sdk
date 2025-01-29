@@ -11,8 +11,7 @@ File pathToThisDirectory = buildscript.sourceFile.parentFile
 apply from: Paths.get(pathToThisDirectory.absolutePath, "src", "main", "groovy", "native_plugin_loader.groovy")
 
 def moduleProjectRoot = project(':flutter').projectDir.parentFile.parentFile
-
-List<Map<String, Object>> nativePlugins = nativePluginLoader.getPlugins(moduleProjectRoot)
+List<Map<String, Object>> nativePlugins = ext.get("nativePluginLoader").getPlugins(moduleProjectRoot)
 nativePlugins.each { androidPlugin ->
     def pluginDirectory = new File(androidPlugin.path as String, 'android')
     assert pluginDirectory.exists()

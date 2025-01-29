@@ -4,7 +4,6 @@
 // found in the LICENSE file.
 
 import com.android.build.OutputFile
-import com.flutter.gradle.BaseApplicationNameHandler
 import groovy.json.JsonGenerator
 import groovy.xml.QName
 import java.nio.file.Paths
@@ -985,7 +984,8 @@ class FlutterPlugin implements Plugin<Project> {
      */
     private List<Map<String, Object>> getPluginList(Project project) {
         if (pluginList == null) {
-            pluginList = project.ext.nativePluginLoader.getPlugins(getFlutterSourceDirectory())
+            // pluginList = project.ext.nativePluginLoader.getPlugins(getFlutterSourceDirectory())
+            pluginList = OldNativePluginLoader.getInstance().getPlugins(getFlutterSourceDirectory())
         }
         return pluginList
     }
@@ -1013,7 +1013,7 @@ class FlutterPlugin implements Plugin<Project> {
     /** Gets the plugins dependencies from `.flutter-plugins-dependencies`. */
     private List<Map<String, Object>> getPluginDependencies(Project project) {
         if (pluginDependencies == null) {
-            Map meta = project.ext.nativePluginLoader.getDependenciesMetadata(getFlutterSourceDirectory())
+            Map meta = OldNativePluginLoader.getInstance().getDependenciesMetadata(getFlutterSourceDirectory())
             if (meta == null) {
                 pluginDependencies = []
             } else {

@@ -2,9 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import groovy.json.JsonSlurper
+// package com.flutter.gradle
 
-class NativePluginLoader {
+import groovy.json.JsonSlurper
+import groovy.transform.CompileStatic
+
+// @CompileStatic
+class OldNativePluginLoader {
+    private static OldNativePluginLoader instance
+    static final OldNativePluginLoader getInstance() {
+        if (instance == null) {
+            instance = new OldNativePluginLoader()
+        }
+        return instance
+    }
 
     // This string must match _kFlutterPluginsHasNativeBuildKey defined in
     // packages/flutter_tools/lib/src/flutter_plugins.dart.
@@ -32,7 +43,7 @@ class NativePluginLoader {
         }
 
         assert(meta.plugins instanceof Map<String, Object>)
-        def androidPlugins = meta.plugins.android
+        def androidPlugins = meta.plugins["android"]
         assert(androidPlugins instanceof List<Map>)
         // Includes the Flutter plugins that support the Android platform.
         androidPlugins.each { Map<String, Object> androidPlugin ->
@@ -133,5 +144,5 @@ class NativePluginLoader {
 
 // TODO(135392): Remove and use declarative form when migrated
 ext {
-    nativePluginLoader = new NativePluginLoader()
+    nativePluginLoader = new OldNativePluginLoader()
 }
