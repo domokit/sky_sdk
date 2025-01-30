@@ -614,12 +614,10 @@ class HtmlViewEmbedder {
   }
 
   DomElement _getElement(RenderingEntity entity) {
-    switch (entity) {
-      case RenderingRenderCanvas():
-        return entity.displayCanvas!.hostElement;
-      case RenderingPlatformView():
-        return _viewClipChains[entity.viewId]!.root;
-    }
+    return switch (entity) {
+      RenderingRenderCanvas() => entity.displayCanvas!.hostElement,
+      RenderingPlatformView() => _viewClipChains[entity.viewId]!.root,
+    };
   }
 
   /// Returns a [List] of ints mapping elements from the [next] rendering to
@@ -796,18 +794,13 @@ class Mutator {
       return false;
     }
 
-    switch (type) {
-      case MutatorType.clipRect:
-        return rect == typedOther.rect;
-      case MutatorType.clipRRect:
-        return rrect == typedOther.rrect;
-      case MutatorType.clipPath:
-        return path == typedOther.path;
-      case MutatorType.transform:
-        return matrix == typedOther.matrix;
-      case MutatorType.opacity:
-        return alpha == typedOther.alpha;
-    }
+    return switch (type) {
+      MutatorType.clipRect => rect == typedOther.rect,
+      MutatorType.clipRRect => rrect == typedOther.rrect,
+      MutatorType.clipPath => path == typedOther.path,
+      MutatorType.transform => matrix == typedOther.matrix,
+      MutatorType.opacity => alpha == typedOther.alpha,
+    };
   }
 
   @override

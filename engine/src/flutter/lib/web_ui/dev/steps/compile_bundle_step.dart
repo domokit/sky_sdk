@@ -64,22 +64,20 @@ class CompileBundleStep implements PipelineStep {
   }
 
   TestCompiler _createCompiler(CompileConfiguration config) {
-    switch (config.compiler) {
-      case Compiler.dart2js:
-        return Dart2JSCompiler(
-          testSetDirectory,
-          outputBundleDirectory,
-          renderer: config.renderer,
-          isVerbose: isVerbose,
-        );
-      case Compiler.dart2wasm:
-        return Dart2WasmCompiler(
-          testSetDirectory,
-          outputBundleDirectory,
-          renderer: config.renderer,
-          isVerbose: isVerbose,
-        );
-    }
+    return switch (config.compiler) {
+      Compiler.dart2js => Dart2JSCompiler(
+        testSetDirectory,
+        outputBundleDirectory,
+        renderer: config.renderer,
+        isVerbose: isVerbose,
+      ),
+      Compiler.dart2wasm => Dart2WasmCompiler(
+        testSetDirectory,
+        outputBundleDirectory,
+        renderer: config.renderer,
+        isVerbose: isVerbose,
+      ),
+    };
   }
 
   @override

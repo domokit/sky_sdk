@@ -269,14 +269,10 @@ const List<String> kAllBrowserNames = <String>[kChrome, kEdge, kFirefox, kSafari
 ///
 /// The [browserName] matches the browser name passed as the `--browser` option.
 BrowserEnvironment getBrowserEnvironment(BrowserName browserName, {required bool useDwarf}) {
-  switch (browserName) {
-    case BrowserName.chrome:
-      return ChromeEnvironment(useDwarf: useDwarf);
-    case BrowserName.edge:
-      return EdgeEnvironment();
-    case BrowserName.firefox:
-      return FirefoxEnvironment();
-    case BrowserName.safari:
-      return SafariMacOsEnvironment();
-  }
+  return switch (browserName) {
+    BrowserName.chrome => ChromeEnvironment(useDwarf: useDwarf),
+    BrowserName.edge => EdgeEnvironment(),
+    BrowserName.firefox => FirefoxEnvironment(),
+    BrowserName.safari => SafariMacOsEnvironment(),
+  };
 }

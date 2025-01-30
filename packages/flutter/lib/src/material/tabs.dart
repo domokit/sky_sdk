@@ -209,12 +209,9 @@ class Tab extends StatelessWidget implements PreferredSizeWidget {
       );
     }
 
-    return Semantics(
-      role: SemanticsRole.tab,
-      child: SizedBox(
-        height: height ?? calculatedHeight,
-        child: Center(widthFactor: 1.0, child: label),
-      ),
+    return SizedBox(
+      height: height ?? calculatedHeight,
+      child: Center(widthFactor: 1.0, child: label),
     );
   }
 
@@ -1909,6 +1906,7 @@ class _TabBarState extends State<TabBar> {
             children: <Widget>[
               wrappedTabs[index],
               Semantics(
+                role: SemanticsRole.tab,
                 selected: index == _currentIndex,
                 label:
                     kIsWeb ? null : localizations.tabLabel(tabIndex: index + 1, tabCount: tabCount),
@@ -1924,6 +1922,8 @@ class _TabBarState extends State<TabBar> {
 
     Widget tabBar = Semantics(
       role: SemanticsRole.tabBar,
+      container: true,
+      explicitChildNodes: true,
       child: CustomPaint(
         painter: _indicatorPainter,
         child: _TabStyle(

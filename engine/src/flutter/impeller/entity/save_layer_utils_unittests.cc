@@ -265,7 +265,7 @@ TEST(
 }
 
 TEST(SaveLayerUtilsTest,
-     CoverageLimitRespectedIfSubstantiallyDifferentFromContentCoverge) {
+     CoverageLimitRespectedIfSubstantiallyDifferentFromContentCoverage) {
   auto image_filter = FilterContents::MakeMatrixFilter(
       FilterInput::Make(Rect()), Matrix::MakeScale({2, 2, 1}), {});
 

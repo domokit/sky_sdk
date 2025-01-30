@@ -899,13 +899,10 @@ class CkParagraph implements ui.Paragraph {
   @override
   ui.TextRange getWordBoundary(ui.TextPosition position) {
     assert(!_disposed, 'Paragraph has been disposed.');
-    final int characterPosition;
-    switch (position.affinity) {
-      case ui.TextAffinity.upstream:
-        characterPosition = position.offset - 1;
-      case ui.TextAffinity.downstream:
-        characterPosition = position.offset;
-    }
+    final int characterPosition = switch (position.affinity) {
+      ui.TextAffinity.upstream => position.offset - 1,
+      ui.TextAffinity.downstream => position.offset,
+    };
     final SkTextRange skRange = skiaObject.getWordBoundary(characterPosition.toDouble());
     return ui.TextRange(start: skRange.start.toInt(), end: skRange.end.toInt());
   }

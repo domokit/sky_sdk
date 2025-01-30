@@ -244,7 +244,7 @@ class ResizingCodec implements ui.Codec {
   );
 
   @override
-  int get repetitionCount => delegate.frameCount;
+  int get repetitionCount => delegate.repetitionCount;
 }
 
 BitmapSize? scaledImageSize(int width, int height, int? targetWidth, int? targetHeight) {

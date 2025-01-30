@@ -11,6 +11,7 @@ import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/commands/widget_preview.dart';
 import 'package:flutter_tools/src/dart/pub.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
+import 'package:flutter_tools/src/widget_preview/preview_code_generator.dart';
 
 import '../../src/common.dart';
 import '../../src/context.dart';
@@ -33,8 +34,12 @@ void main() {
     tryToDelete(tempDir);
   });
 
-  Future<String> createRootProject() async {
-    return createProject(tempDir, arguments: <String>['--pub']);
+  Future<Directory> createRootProject() async {
+    return globals.fs.directory(await createProject(tempDir, arguments: <String>['--pub']));
+  }
+
+  Directory widgetPreviewScaffoldFromRootProject({required Directory rootProject}) {
+    return rootProject.childDirectory('.dart_tool').childDirectory('widget_preview_scaffold');
   }
 
   Future<void> runWidgetPreviewCommand(List<String> arguments) async {
@@ -43,28 +48,29 @@ void main() {
   }
 
   Future<void> startWidgetPreview({
-    required String? rootProjectPath,
+    required Directory? rootProject,
     List<String>? arguments,
   }) async {
     await runWidgetPreviewCommand(<String>[
       'start',
       ...?arguments,
-      if (rootProjectPath != null) rootProjectPath,
+      if (rootProject != null) rootProject.path,
     ]);
+    final Directory widgetPreviewScaffoldDir = widgetPreviewScaffoldFromRootProject(
+      rootProject: rootProject ?? globals.fs.currentDirectory,
+    );
+    expect(widgetPreviewScaffoldDir, exists);
     expect(
-      globals.fs
-          .directory(rootProjectPath ?? globals.fs.currentDirectory.path)
-          .childDirectory('.dart_tool')
-          .childDirectory('widget_preview_scaffold'),
+      widgetPreviewScaffoldDir.childFile(PreviewCodeGenerator.generatedPreviewFilePath),
       exists,
     );
   }
 
-  Future<void> cleanWidgetPreview({required String rootProjectPath}) async {
-    await runWidgetPreviewCommand(<String>['clean', rootProjectPath]);
+  Future<void> cleanWidgetPreview({required Directory rootProject}) async {
+    await runWidgetPreviewCommand(<String>['clean', rootProject.path]);
     expect(
       globals.fs
-          .directory(rootProjectPath)
+          .directory(rootProject)
           .childDirectory('.dart_tool')
           .childDirectory('widget_preview_scaffold'),
       isNot(exists),
@@ -93,7 +99,7 @@ void main() {
 
       testUsingContext('run outside of a Flutter project directory', () async {
         try {
-          await startWidgetPreview(rootProjectPath: tempDir.path);
+          await startWidgetPreview(rootProject: tempDir);
           fail('Successfully executed outside of a Flutter project directory');
         } on ToolExit catch (e) {
           expect(e.message, contains('${tempDir.path} is not a valid Flutter project.'));
@@ -104,8 +110,8 @@ void main() {
     testUsingContext(
       'start creates .dart_tool/widget_preview_scaffold',
       () async {
-        final String rootProjectPath = await createRootProject();
-        await startWidgetPreview(rootProjectPath: rootProjectPath);
+        final Directory rootProject = await createRootProject();
+        await startWidgetPreview(rootProject: rootProject);
       },
       overrides: <Type, Generator>{
         Pub:
@@ -113,7 +119,6 @@ void main() {
               fileSystem: globals.fs,
               logger: globals.logger,
               processManager: globals.processManager,
-              usage: globals.flutterUsage,
               botDetector: globals.botDetector,
               platform: globals.platform,
               stdio: mockStdio,
@@ -124,11 +129,11 @@ void main() {
     testUsingContext(
       'start creates .dart_tool/widget_preview_scaffold in the CWD',
       () async {
-        final String rootProjectPath = await createRootProject();
+        final Directory rootProject = await createRootProject();
         await io.IOOverrides.runZoned<Future<void>>(() async {
           // Try to execute using the CWD.
-          await startWidgetPreview(rootProjectPath: null);
-        }, getCurrentDirectory: () => globals.fs.directory(rootProjectPath));
+          await startWidgetPreview(rootProject: null);
+        }, getCurrentDirectory: () => rootProject);
       },
       overrides: <Type, Generator>{
         Pub:
@@ -136,7 +141,82 @@ void main() {
               fileSystem: globals.fs,
               logger: globals.logger,
               processManager: globals.processManager,
-              usage: globals.flutterUsage,
+              botDetector: globals.botDetector,
+              platform: globals.platform,
+              stdio: mockStdio,
+            ),
+      },
+    );
+
+    const String samplePreviewFile = '''
+// This doesn't need to be valid code for testing as long as it has the @Preview() annotation
+@Preview()
+WidgetPreview preview() => WidgetPreview();''';
+
+    const String expectedGeneratedFileContents = '''
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:flutter_project/foo.dart' as _i1;import 'package:widget_preview/widget_preview.dart';List<WidgetPreview> previews() => [_i1.preview()];''';
+
+    testUsingContext(
+      'start finds existing previews and injects them into ${PreviewCodeGenerator.generatedPreviewFilePath}',
+      () async {
+        final Directory rootProject = await createRootProject();
+        final Directory widgetPreviewScaffoldDir = widgetPreviewScaffoldFromRootProject(
+          rootProject: rootProject,
+        );
+        rootProject
+            .childDirectory('lib')
+            .childFile('foo.dart')
+            .writeAsStringSync(samplePreviewFile);
+
+        final File generatedFile = widgetPreviewScaffoldDir.childFile(
+          PreviewCodeGenerator.generatedPreviewFilePath,
+        );
+
+        await startWidgetPreview(rootProject: rootProject);
+        expect(generatedFile.readAsStringSync(), expectedGeneratedFileContents);
+      },
+      overrides: <Type, Generator>{
+        Pub:
+            () => Pub.test(
+              fileSystem: globals.fs,
+              logger: globals.logger,
+              processManager: globals.processManager,
+              botDetector: globals.botDetector,
+              platform: globals.platform,
+              stdio: mockStdio,
+            ),
+      },
+    );
+
+    testUsingContext(
+      'start finds existing previews in the CWD and injects them into ${PreviewCodeGenerator.generatedPreviewFilePath}',
+      () async {
+        final Directory rootProject = await createRootProject();
+        final Directory widgetPreviewScaffoldDir = widgetPreviewScaffoldFromRootProject(
+          rootProject: rootProject,
+        );
+        rootProject
+            .childDirectory('lib')
+            .childFile('foo.dart')
+            .writeAsStringSync(samplePreviewFile);
+
+        final File generatedFile = widgetPreviewScaffoldDir.childFile(
+          PreviewCodeGenerator.generatedPreviewFilePath,
+        );
+
+        await io.IOOverrides.runZoned<Future<void>>(() async {
+          // Try to execute using the CWD.
+          await startWidgetPreview(rootProject: null);
+          expect(generatedFile.readAsStringSync(), expectedGeneratedFileContents);
+        }, getCurrentDirectory: () => globals.fs.directory(rootProject));
+      },
+      overrides: <Type, Generator>{
+        Pub:
+            () => Pub.test(
+              fileSystem: globals.fs,
+              logger: globals.logger,
+              processManager: globals.processManager,
               botDetector: globals.botDetector,
               platform: globals.platform,
               stdio: mockStdio,
@@ -147,9 +227,9 @@ void main() {
     testUsingContext(
       'clean deletes .dart_tool/widget_preview_scaffold',
       () async {
-        final String rootProjectPath = await createRootProject();
-        await startWidgetPreview(rootProjectPath: rootProjectPath);
-        await cleanWidgetPreview(rootProjectPath: rootProjectPath);
+        final Directory rootProject = await createRootProject();
+        await startWidgetPreview(rootProject: rootProject);
+        await cleanWidgetPreview(rootProject: rootProject);
       },
       overrides: <Type, Generator>{
         Pub:
@@ -157,7 +237,6 @@ void main() {
               fileSystem: globals.fs,
               logger: globals.logger,
               processManager: globals.processManager,
-              usage: globals.flutterUsage,
               botDetector: globals.botDetector,
               platform: globals.platform,
               stdio: mockStdio,
@@ -169,12 +248,12 @@ void main() {
       'invokes pub in online and offline modes',
       () async {
         // Run pub online first in order to populate the pub cache.
-        final String rootProjectPath = await createRootProject();
+        final Directory rootProject = await createRootProject();
         loggingProcessManager.clear();
 
         final RegExp dartCommand = RegExp(r'dart-sdk[\\/]bin[\\/]dart');
 
-        await startWidgetPreview(rootProjectPath: rootProjectPath);
+        await startWidgetPreview(rootProject: rootProject);
         expect(
           loggingProcessManager.commands,
           contains(
@@ -185,12 +264,12 @@ void main() {
           ),
         );
 
-        await cleanWidgetPreview(rootProjectPath: rootProjectPath);
+        await cleanWidgetPreview(rootProject: rootProject);
 
         // Run pub offline.
         loggingProcessManager.clear();
         await startWidgetPreview(
-          rootProjectPath: rootProjectPath,
+          rootProject: rootProject,
           arguments: <String>['--pub', '--offline'],
         );
 
@@ -211,7 +290,6 @@ void main() {
               fileSystem: globals.fs,
               logger: globals.logger,
               processManager: globals.processManager,
-              usage: globals.flutterUsage,
               botDetector: globals.botDetector,
               platform: globals.platform,
               stdio: mockStdio,

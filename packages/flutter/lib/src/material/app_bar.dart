@@ -1002,12 +1002,16 @@ class _AppBarState extends State<AppBar> {
         // a size of 48x48, and a highlight size of 40x40. Users can also put other
         // type of widgets on leading with the original config.
         leading = ConstrainedBox(
-          constraints: BoxConstraints.tightFor(width: widget.leadingWidth ?? _kLeadingWidth),
+          constraints: BoxConstraints.tightFor(
+            width: widget.leadingWidth ?? appBarTheme.leadingWidth ?? _kLeadingWidth,
+          ),
           child: leading,
         );
       } else {
         leading = ConstrainedBox(
-          constraints: BoxConstraints.tightFor(width: widget.leadingWidth ?? _kLeadingWidth),
+          constraints: BoxConstraints.tightFor(
+            width: widget.leadingWidth ?? appBarTheme.leadingWidth ?? _kLeadingWidth,
+          ),
           child: leading,
         );
       }

@@ -820,7 +820,7 @@ void Canvas::DrawVertices(const std::shared_ptr<VerticesGeometry>& vertices,
     src_coverage =
         // Covered by FML_CHECK.
         // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
-        vertices->GetTextureCoordinateCoverge().value_or(cvg.value());
+        vertices->GetTextureCoordinateCoverage().value_or(cvg.value());
   }
   src_contents = src_paint.CreateContents();
 

@@ -23,7 +23,7 @@ class VerticesGeometry : public Geometry {
 
   virtual bool HasTextureCoordinates() const = 0;
 
-  virtual std::optional<Rect> GetTextureCoordinateCoverge() const = 0;
+  virtual std::optional<Rect> GetTextureCoordinateCoverage() const = 0;
 };
 
 }  // namespace impeller

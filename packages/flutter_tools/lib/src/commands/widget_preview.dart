@@ -17,8 +17,11 @@ import '../flutter_manifest.dart';
 import '../globals.dart' as globals;
 import '../project.dart';
 import '../runner/flutter_command.dart';
+import '../widget_preview/preview_code_generator.dart';
+import '../widget_preview/preview_detector.dart';
 import 'create_base.dart';
 
+// TODO(bkonyi): use dependency injection instead of global accessors throughout this file.
 class WidgetPreviewCommand extends FlutterCommand {
   WidgetPreviewCommand() {
     addSubcommand(WidgetPreviewStartCommand());
@@ -83,6 +86,13 @@ class WidgetPreviewStartCommand extends FlutterCommand
   @override
   String get name => 'start';
 
+  late final PreviewDetector _previewDetector = PreviewDetector(
+    logger: globals.logger,
+    onChangeDetected: onChangeDetected,
+  );
+
+  late final PreviewCodeGenerator _previewCodeGenerator;
+
   @override
   Future<FlutterCommandResult> runCommand() async {
     final FlutterProject rootProject = getRootProject();
@@ -112,7 +122,24 @@ class WidgetPreviewStartCommand extends FlutterCommand
       );
       await _populatePreviewPubspec(rootProject: rootProject);
     }
+
+    // WARNING: this needs to happen after we generate the scaffold project as invoking the
+    // widgetPreviewScaffoldProject getter triggers lazy initialization of the preview scaffold's
+    // FlutterManifest before the scaffold project's pubspec has been generated.
+    _previewCodeGenerator = PreviewCodeGenerator(
+      widgetPreviewScaffoldProject: rootProject.widgetPreviewScaffoldProject,
+      fs: globals.fs,
+    );
+
+    final PreviewMapping initialPreviews = await _previewDetector.initialize(rootProject.directory);
+    _previewCodeGenerator.populatePreviewsInGeneratedPreviewScaffold(initialPreviews);
+
+    await _previewDetector.dispose();
     return FlutterCommandResult.success();
+  }
+
+  void onChangeDetected(PreviewMapping previews) {
+    // TODO(bkonyi): perform hot reload
   }
 
   @visibleForTesting

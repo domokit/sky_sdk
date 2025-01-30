@@ -328,7 +328,6 @@ Future<T> runInContext<T>(FutureOr<T> Function() runner, {Map<Type, Generator>? 
             processManager: globals.processManager,
             botDetector: globals.botDetector,
             platform: globals.platform,
-            usage: globals.flutterUsage,
           ),
       Stdio: () => Stdio(),
       SystemClock: () => const SystemClock(),

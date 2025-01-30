@@ -761,6 +761,12 @@ class RenderTable extends RenderBox {
     }
   }
 
+  @protected
+  @override
+  void redepthChildren() {
+    visitChildren(redepthChild);
+  }
+
   @override
   double computeMinIntrinsicWidth(double height) {
     assert(_children.length == rows * columns);

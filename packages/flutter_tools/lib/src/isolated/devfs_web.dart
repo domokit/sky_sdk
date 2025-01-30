@@ -146,9 +146,19 @@ class WebAssetServer implements AssetReader {
   final Map<String, String> _modules;
   final Map<String, String> _digests;
 
+  // The generation number that maps to the number of hot restarts. This is used
+  // to suffix a query to source paths in order to cache-bust.
+  int _hotRestartGeneration = 0;
+
   int get selectedPort => _httpServer.port;
 
-  void performRestart(List<String> modules) {
+  /// Given a list of [modules] that need to be loaded, compute module names and
+  /// digests.
+  ///
+  /// If [writeRestartScripts] is true, writes a list of sources mapped to their
+  /// ids to the file system that can then be consumed by the hot restart
+  /// callback.
+  void performRestart(List<String> modules, {required bool writeRestartScripts}) {
     for (final String module in modules) {
       // We skip computing the digest by using the hashCode of the underlying buffer.
       // Whenever a file is updated, the corresponding Uint8List.view it corresponds
@@ -159,6 +169,14 @@ class WebAssetServer implements AssetReader {
       _modules[name] = path;
       _digests[name] = _webMemoryFS.files[moduleName].hashCode.toString();
     }
+    if (writeRestartScripts && _hotRestartGeneration > 0) {
+      final List<Map<String, String>> srcIdsList = <Map<String, String>>[];
+      for (final String src in modules) {
+        srcIdsList.add(<String, String>{'src': '$src?gen=$_hotRestartGeneration', 'id': src});
+      }
+      writeFile('main.dart.js.restartScripts', json.encode(srcIdsList));
+    }
+    _hotRestartGeneration++;
   }
 
   @visibleForTesting
@@ -241,8 +259,8 @@ class WebAssetServer implements AssetReader {
     }
 
     final PackageConfig packageConfig = buildInfo.packageConfig;
-    final Map<String, String> digests = <String, String>{};
     final Map<String, String> modules = <String, String>{};
+    final Map<String, String> digests = <String, String>{};
     final WebAssetServer server = WebAssetServer(
       httpServer,
       packageConfig,
@@ -784,6 +802,7 @@ class WebDevFS implements DevFS {
     required this.isWasm,
     required this.useLocalCanvasKit,
     required this.rootDirectory,
+    required this.isWindows,
     this.testMode = false,
   }) : _port = port {
     // TODO(srujzs): Remove this assertion when the library bundle format is
@@ -818,6 +837,7 @@ class WebDevFS implements DevFS {
   final WebRendererMode webRenderer;
   final bool isWasm;
   final bool useLocalCanvasKit;
+  final bool isWindows;
 
   late WebAssetServer webAssetServer;
 
@@ -1014,6 +1034,7 @@ class WebDevFS implements DevFS {
               ddcModuleLoaderUrl: 'ddc_module_loader.js',
               mapperUrl: 'stack_trace_mapper.js',
               generateLoadingIndicator: enableDwds,
+              isWindows: isWindows,
             )
             : generateBootstrapScript(
               requireUrl: 'require.js',
@@ -1101,7 +1122,8 @@ class WebDevFS implements DevFS {
     } on FileSystemException catch (err) {
       throwToolExit('Failed to load recompiled sources:\n$err');
     }
-    webAssetServer.performRestart(modules);
+
+    webAssetServer.performRestart(modules, writeRestartScripts: ddcModuleSystem);
     return UpdateFSReport(
       success: true,
       syncedBytes: codeFile.lengthSync(),

@@ -225,13 +225,10 @@ class CanvasParagraph implements ui.Paragraph {
 
   @override
   ui.TextRange getWordBoundary(ui.TextPosition position) {
-    final int characterPosition;
-    switch (position.affinity) {
-      case ui.TextAffinity.upstream:
-        characterPosition = position.offset - 1;
-      case ui.TextAffinity.downstream:
-        characterPosition = position.offset;
-    }
+    final int characterPosition = switch (position.affinity) {
+      ui.TextAffinity.upstream => position.offset - 1,
+      ui.TextAffinity.downstream => position.offset,
+    };
     final int start = WordBreaker.prevBreakIndex(plainText, characterPosition + 1);
     final int end = WordBreaker.nextBreakIndex(plainText, characterPosition);
     return ui.TextRange(start: start, end: end);
