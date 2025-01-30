@@ -1234,6 +1234,7 @@ void main() {
         isChecked: true,
         hasEnabledState: true,
         isEnabled: true,
+        hasSelectedState: true,
         hasTapAction: true,
         hasFocusAction: true,
         isFocusable: true,
