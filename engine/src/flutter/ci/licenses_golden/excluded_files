@@ -152,6 +152,7 @@
 ../../../flutter/impeller/display_list/dl_golden_unittests.h
 ../../../flutter/impeller/display_list/dl_unittests.cc
 ../../../flutter/impeller/display_list/skia_conversions_unittests.cc
+../../../flutter/impeller/display_list/testing
 ../../../flutter/impeller/docs
 ../../../flutter/impeller/entity/clip_stack_unittests.cc
 ../../../flutter/impeller/entity/contents/filters/blend_filter_contents_unittests.cc

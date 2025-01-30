@@ -151,6 +151,44 @@ TEST_P(AiksTest, CanRenderTextFrameWithHalfScaling) {
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
 
+TEST_P(AiksTest, TextJumpingTestPlayground) {
+  Scalar font_size = 300;
+  Scalar scale = 0.5;
+  Scalar fine_scale = -0.055;
+  auto callback = [&]() -> sk_sp<DisplayList> {
+    if (AiksTest::ImGuiBegin("Controls", nullptr,
+                             ImGuiWindowFlags_AlwaysAutoResize)) {
+      ImGui::SliderFloat("Fine Scale", &fine_scale, -0.1, 0.1);
+      ImGui::End();
+    }
+    DisplayListBuilder builder;
+
+    Scalar total_scale = scale + fine_scale;
+    DlPaint paint;
+    paint.setColor(DlColor::ARGB(1, 0.1, 0.1, 0.1));
+    builder.DrawPaint(paint);
+    builder.Scale(total_scale, total_scale);
+    RenderTextInCanvasSkia(GetContext(), builder,
+                           "the quick brown fox jumped over the lazy dog!.?",
+                           "Roboto-Regular.ttf",
+                           TextRenderOptions{
+                               .font_size = font_size,
+                               .position = DlPoint::MakeXY(100, 300),
+                           });
+    std::shared_ptr<DlImageFilter> filter =
+        DlImageFilter::MakeMatrix(DlMatrix(                        //
+                                      1.0 / total_scale, 0, 0, 0,  //
+                                      0, 1.0 / total_scale, 0, 0,  //
+                                      0, 0, 1, 0,                  //
+                                      0, 0, 0, 1),
+                                  DlImageSampling::kNearestNeighbor);
+    builder.SaveLayer(std::nullopt, nullptr, filter.get());
+    builder.Restore();
+    return builder.Build();
+  };
+  ASSERT_TRUE(OpenPlaygroundHere(callback));
+}
+
 TEST_P(AiksTest, CanRenderTextFrameWithFractionScaling) {
   DisplayListBuilder builder;
 

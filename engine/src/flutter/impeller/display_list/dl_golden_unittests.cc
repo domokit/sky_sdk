@@ -8,6 +8,8 @@
 #include "display_list/dl_paint.h"
 #include "display_list/geometry/dl_geometry_types.h"
 #include "flutter/display_list/dl_builder.h"
+#include "flutter/impeller/display_list/testing/render_text_in_canvas.h"
+#include "flutter/impeller/display_list/testing/rmse.h"
 #include "flutter/impeller/geometry/path_builder.h"
 #include "flutter/testing/testing.h"
 #include "gtest/gtest.h"
@@ -348,6 +350,66 @@ TEST_P(DlGoldenTest, SaveLayerAtFractionalValue) {
   builder.Restore();
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
+}
+
+TEST_P(DlGoldenTest, TextJumpingTest) {
+  SetWindowSize(impeller::ISize(1024, 200));
+  impeller::Scalar font_size = 150;
+  auto callback = [&](impeller::Scalar scale) -> sk_sp<DisplayList> {
+    DisplayListBuilder builder;
+    DlPaint paint;
+    paint.setColor(DlColor::ARGB(1, 0.1, 0.1, 0.1));
+    builder.DrawPaint(paint);
+    builder.Scale(scale, scale);
+    // If you move this code to a playgrounds test the RenderTextInCanvasSkia
+    // signature is a bit different there, it will look like this:
+    //
+    // RenderTextInCanvasSkia(GetContext(), builder,
+    //                    "the quick brown fox jumped over the lazy dog!.?",
+    //                    "Roboto-Regular.ttf",
+    //                    TextRenderOptions{
+    //                        .font_size = font_size,
+    //                        .position = SkPoint::Make(100, 300),
+    //                    });
+    // Note: The ahem font just has full blocks in it.
+    RenderTextInCanvasSkia(&builder,
+                           "the quick brown fox jumped over the lazy dog!.?",
+                           "Roboto-Regular.ttf", DlPoint::MakeXY(10, 150),
+                           TextRenderOptions{
+                               .font_size = font_size,
+                           });
+    std::shared_ptr<DlImageFilter> filter =
+        DlImageFilter::MakeMatrix(DlMatrix(                  //
+                                      1.0 / scale, 0, 0, 0,  //
+                                      0, 1.0 / scale, 0, 0,  //
+                                      0, 0, 1, 0,            //
+                                      0, 0, 0, 1),
+                                  DlImageSampling::kLinear);
+    builder.SaveLayer(std::nullopt, nullptr, filter.get());
+    builder.Restore();
+    return builder.Build();
+  };
+
+  double max_rmse = 0.0;
+  impeller::Scalar current_scalar = 0.440;
+  std::unique_ptr<impeller::testing::Screenshot> left;
+  std::unique_ptr<impeller::testing::Screenshot> right =
+      MakeScreenshot(callback(current_scalar));
+  if (!right) {
+    GTEST_SKIP() << "making screenshots not supported.";
+  }
+  for (int i = 0; i < 10; ++i) {
+    current_scalar += 0.001;
+    left = std::move(right);
+    right = MakeScreenshot(callback(current_scalar));
+    double rmse = RMSE(left.get(), right.get());
+    max_rmse = std::max(rmse, max_rmse);
+  }
+
+  // This value was 29.273919756836246 when this test was first written.
+  // The threshold was changed to 14 after vertex shader pixel snapping was
+  // introduced.
+  EXPECT_TRUE(max_rmse < 29.5) << "rmse: " << max_rmse;
 }
 
 }  // namespace testing
