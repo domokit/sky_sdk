@@ -337,13 +337,13 @@ class ManifestAssetBundle implements AssetBundle {
 
     // Add fonts, assets, and licenses from packages in the project's
     // dependencies.
-
     // To avoid bundling assets from dev_dependencies and other pub workspace
     // packages, we compute the set of transitive dependencies.
     final Map<String, Dependency> transitiveDependencies = computeTransitiveDependencies(
       flutterProject,
       packageConfig,
       _fileSystem,
+      _logger,
     );
     final Map<String, List<File>> additionalLicenseFiles = <String, List<File>>{};
     for (final String packageName in transitiveDependencies.keys) {

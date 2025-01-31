@@ -12,6 +12,7 @@ import 'package:flutter_tools/src/project.dart';
 import 'package:package_config/package_config.dart';
 
 import '../src/common.dart';
+import 'base/logger_test.dart';
 
 typedef Package = ({String name, List<String> dependencies, List<String> devDependencies});
 
@@ -71,6 +72,7 @@ ${package.devDependencies.map((String d) => '  $d: {path: ../$d}').join('\n')}
       project,
       packageConfig,
       fileSystem,
+      FakeLogger(),
     );
     expect(dependencies.keys, graph.map((Package p) => p.name).toSet());
     for (final Package p in graph) {

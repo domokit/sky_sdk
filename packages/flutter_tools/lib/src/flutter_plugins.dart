@@ -94,6 +94,7 @@ Future<List<Plugin>> findPlugins(
     project,
     packageConfig,
     fs,
+    globals.logger,
   );
   for (final String packageName in transitiveDependencies.keys) {
     final Package? package = packageConfig[packageName];

@@ -6,6 +6,7 @@ import 'package:package_config/package_config.dart';
 import 'package:yaml/yaml.dart';
 
 import 'base/file_system.dart';
+import 'base/logger.dart';
 import 'project.dart';
 
 /// Computes a representation of the transitive dependency graph rooted at
@@ -28,6 +29,7 @@ Map<String, Dependency> computeTransitiveDependencies(
   FlutterProject project,
   PackageConfig packageConfig,
   FileSystem fileSystem,
+  Logger logger,
 ) {
   final Map<String, Dependency> result = <String, Dependency>{};
   result[project.manifest.appName] = Dependency(
@@ -51,6 +53,7 @@ Map<String, Dependency> computeTransitiveDependencies(
       packageConfig,
       project,
       fileSystem,
+      logger,
     );
     if (details == null) {
       continue;
@@ -100,13 +103,20 @@ _PackageDetails? _loadPackageDetails(
   PackageConfig packageConfig,
   FlutterProject project,
   FileSystem fileSystem,
+  Logger logger,
 ) {
   final Package? package = packageConfig[packageName];
   if (package == null) {
+    logger.printTrace('''
+Could not load details of package `$packageName`.
+It was not present in the package config.''');
     return null;
   }
   final Uri rootUri = package.root;
   if (rootUri.scheme != 'file') {
+    logger.printTrace('''
+Could not load details of package `$packageName`.
+It did not have a file rootUri: `$rootUri`.''');
     return null;
   }
   final String pubspecPath = fileSystem.path.fromUri(rootUri.resolve('pubspec.yaml'));
@@ -116,11 +126,17 @@ _PackageDetails? _loadPackageDetails(
       sourceUrl: Uri.file(pubspecPath),
     );
     if (pubspec is! YamlMap) {
+      logger.printTrace('''
+Could not load details of package `$packageName`.
+It has malformed $pubspecPath: toplevel is not a map.''');
       return null;
     }
     final List<String> dependencies = <String>[];
     final Object dependenciesMap = pubspec['dependencies'] as Object? ?? <String, String>{};
     if (dependenciesMap is! Map) {
+      logger.printTrace('''
+Could not load details of package `$packageName`.
+It has malformed $pubspecPath: `dependencies` is not a map.''');
       return null;
     }
 
@@ -131,9 +147,15 @@ _PackageDetails? _loadPackageDetails(
       dependencies.add(name);
     }
     return (rootUri: rootUri, pubspec: pubspec, dependencies: dependencies);
-  } on IOException {
+  } on IOException catch (e) {
+    logger.printTrace('''
+Could not load details of package `$packageName`.
+Could not load $pubspecPath: $e.''');
     return null;
-  } on FormatException {
+  } on FormatException catch (e) {
+    logger.printTrace('''
+Could not load details of package `$packageName`.
+Could not parse $pubspecPath: $e.''');
     return null;
   }
 }
