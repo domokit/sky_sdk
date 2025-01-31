@@ -27,7 +27,6 @@ import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:flutter_tools/src/isolated/devfs_web.dart';
 import 'package:flutter_tools/src/isolated/resident_web_runner.dart';
 import 'package:flutter_tools/src/project.dart';
-import 'package:flutter_tools/src/reporting/reporting.dart';
 import 'package:flutter_tools/src/resident_devtools_handler.dart';
 import 'package:flutter_tools/src/resident_runner.dart';
 import 'package:flutter_tools/src/vmservice.dart';
@@ -89,7 +88,6 @@ void main() {
   late FakeVmServiceHost fakeVmServiceHost;
   late MemoryFileSystem fileSystem;
   late ProcessManager processManager;
-  late TestUsage testUsage;
   late FakeAnalytics fakeAnalytics;
 
   // TODO(matanlurey): Remove after `explicit-package-dependencies` is enabled by default.
@@ -99,7 +97,6 @@ void main() {
   }
 
   setUp(() {
-    testUsage = TestUsage();
     fileSystem = MemoryFileSystem.test();
     processManager = FakeProcessManager.any();
     debugConnection = FakeDebugConnection();
@@ -159,7 +156,6 @@ name: my_app
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
-        usage: globals.flutterUsage,
         analytics: globals.analytics,
         systemClock: globals.systemClock,
       );
@@ -189,7 +185,6 @@ name: my_app
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug, startPaused: true),
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
-        usage: globals.flutterUsage,
         analytics: globals.analytics,
         systemClock: globals.systemClock,
       );
@@ -211,7 +206,6 @@ name: my_app
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
-        usage: globals.flutterUsage,
         analytics: globals.analytics,
         systemClock: globals.systemClock,
       );
@@ -223,7 +217,6 @@ name: my_app
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.profile),
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
-        usage: globals.flutterUsage,
         analytics: globals.analytics,
         systemClock: globals.systemClock,
       );
@@ -363,7 +356,6 @@ name: my_app
         stayResident: false,
         fileSystem: fileSystem,
         logger: logger,
-        usage: globals.flutterUsage,
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         devtoolsHandler: createNoOpHandler,
@@ -392,7 +384,6 @@ name: my_app
         stayResident: false,
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
-        usage: globals.flutterUsage,
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         devtoolsHandler: createNoOpHandler,
@@ -608,7 +599,6 @@ name: my_app
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug, startPaused: true),
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
-        usage: globals.flutterUsage,
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         devtoolsHandler: createNoOpHandler,
@@ -687,21 +677,6 @@ name: my_app
       expect(result.code, 0);
       expect(webDevFS.mainUri.toString(), contains('entrypoint.dart'));
 
-      // ensure that analytics are sent.
-      expect(testUsage.events, <TestUsageEvent>[
-        TestUsageEvent(
-          'hot',
-          'restart',
-          parameters: CustomDimensions.fromMap(<String, String>{
-            'cd27': 'web-javascript',
-            'cd28': '',
-            'cd29': 'false',
-            'cd30': 'true',
-            'cd13': '0',
-            'cd48': 'false',
-          }),
-        ),
-      ]);
       expect(
         fakeAnalytics.sentEvents,
         contains(
@@ -715,9 +690,6 @@ name: my_app
           ),
         ),
       );
-      expect(testUsage.timings, const <TestTimingEvent>[
-        TestTimingEvent('hot', 'web-incremental-restart', Duration.zero),
-      ]);
       expect(
         fakeAnalytics.sentEvents,
         contains(
@@ -730,7 +702,6 @@ name: my_app
       );
     },
     overrides: <Type, Generator>{
-      Usage: () => testUsage,
       Analytics: () => fakeAnalytics,
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
@@ -794,21 +765,6 @@ name: my_app
       expect(logger.statusText, contains('Restarted application in'));
       expect(result.code, 0);
 
-      // ensure that analytics are sent.
-      expect(testUsage.events, <TestUsageEvent>[
-        TestUsageEvent(
-          'hot',
-          'restart',
-          parameters: CustomDimensions.fromMap(<String, String>{
-            'cd27': 'web-javascript',
-            'cd28': '',
-            'cd29': 'false',
-            'cd30': 'true',
-            'cd13': '0',
-            'cd48': 'false',
-          }),
-        ),
-      ]);
       expect(
         fakeAnalytics.sentEvents,
         contains(
@@ -822,9 +778,6 @@ name: my_app
           ),
         ),
       );
-      expect(testUsage.timings, const <TestTimingEvent>[
-        TestTimingEvent('hot', 'web-incremental-restart', Duration.zero),
-      ]);
       expect(
         fakeAnalytics.sentEvents,
         contains(
@@ -837,7 +790,6 @@ name: my_app
       );
     },
     overrides: <Type, Generator>{
-      Usage: () => testUsage,
       Analytics: () => fakeAnalytics,
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
@@ -870,12 +822,9 @@ name: my_app
       expect(result.code, 0);
 
       // web-server device does not send restart analytics
-      expect(testUsage.events, isEmpty);
       expect(fakeAnalytics.sentEvents, isEmpty);
-      expect(testUsage.timings, isEmpty);
     },
     overrides: <Type, Generator>{
-      Usage: () => testUsage,
       Analytics: () => fakeAnalytics,
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
@@ -911,12 +860,9 @@ name: my_app
       unawaited(residentWebRunner.run(connectionInfoCompleter: connectionInfoCompleter));
 
       expect(await residentWebRunner.run(), 1);
-      expect(testUsage.events, isEmpty);
       expect(fakeAnalytics.sentEvents, isEmpty);
-      expect(testUsage.timings, isEmpty);
     },
     overrides: <Type, Generator>{
-      Usage: () => testUsage,
       Analytics: () => fakeAnalytics,
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
@@ -982,12 +928,9 @@ name: my_app
 
       expect(result.code, 1);
       expect(result.message, contains('Failed to recompile application.'));
-      expect(testUsage.events, isEmpty);
       expect(fakeAnalytics.sentEvents, isEmpty);
-      expect(testUsage.timings, isEmpty);
     },
     overrides: <Type, Generator>{
-      Usage: () => testUsage,
       Analytics: () => fakeAnalytics,
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
@@ -1200,7 +1143,6 @@ name: my_app
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
         fileSystem: fileSystem,
         logger: logger,
-        usage: globals.flutterUsage,
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         devtoolsHandler: createNoOpHandler,
@@ -1246,7 +1188,6 @@ name: my_app
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
         fileSystem: fileSystem,
         logger: logger,
-        usage: globals.flutterUsage,
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         devtoolsHandler: createNoOpHandler,
@@ -1289,7 +1230,6 @@ name: my_app
         stayResident: false,
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
-        usage: globals.flutterUsage,
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         devtoolsHandler: createNoOpHandler,
@@ -1588,7 +1528,6 @@ ResidentRunner setUpResidentRunner(
     flutterDevice,
     flutterProject: FlutterProject.fromDirectoryTest(globals.fs.currentDirectory),
     debuggingOptions: debuggingOptions ?? DebuggingOptions.enabled(BuildInfo.debug),
-    usage: globals.flutterUsage,
     analytics: globals.analytics,
     systemClock: systemClock ?? SystemClock.fixed(DateTime.now()),
     fileSystem: globals.fs,

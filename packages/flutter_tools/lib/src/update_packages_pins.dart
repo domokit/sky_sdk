@@ -31,7 +31,7 @@ const Map<String, String> kManuallyPinnedDependencies = <String, String>{
   'native_assets_cli':
       '0.11.0', // Under active development with breaking changes until 1.0.0. Manually rolled by @dcharkes.
   'material_color_utilities': '0.11.1', // Keep pinned to latest until 1.0.0.
-  'leak_tracker': '10.0.8', // https://github.com/flutter/devtools/issues/3951
+  'leak_tracker': '10.0.9', // https://github.com/flutter/devtools/issues/3951
   'leak_tracker_testing': '3.0.1', // https://github.com/flutter/devtools/issues/3951
   'leak_tracker_flutter_testing': '3.0.9', // https://github.com/flutter/devtools/issues/3951
 };

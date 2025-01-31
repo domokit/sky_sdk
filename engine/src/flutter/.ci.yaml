@@ -355,6 +355,7 @@ targets:
 
   - name: Linux mac_clang_tidy
     recipe: engine_v2/engine_v2
+    timeout: 120
     properties:
       config_name: mac_clang_tidy
     runIf:

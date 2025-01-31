@@ -348,7 +348,6 @@ class PackagesGetCommand extends FlutterCommand {
         touchesPackageConfig: !(isHelp || dryRun),
       );
       final Duration elapsedDuration = timer.elapsed;
-      globals.flutterUsage.sendTiming('pub', 'get', elapsedDuration, label: 'success');
       analytics.send(
         Event.timing(
           workflow: 'pub',
@@ -361,7 +360,6 @@ class PackagesGetCommand extends FlutterCommand {
     } catch (_) {
       // ignore: avoid_catches_without_on_clauses
       final Duration elapsedDuration = timer.elapsed;
-      globals.flutterUsage.sendTiming('pub', 'get', elapsedDuration, label: 'failure');
       analytics.send(
         Event.timing(
           workflow: 'pub',

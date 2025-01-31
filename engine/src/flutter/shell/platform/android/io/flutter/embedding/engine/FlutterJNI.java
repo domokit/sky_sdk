@@ -18,6 +18,7 @@ import android.util.DisplayMetrics;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Surface;
+import android.view.SurfaceControl;
 import android.view.SurfaceHolder;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -36,6 +37,7 @@ import io.flutter.embedding.engine.systemchannels.SettingsChannel;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.localization.LocalizationPlugin;
 import io.flutter.plugin.platform.PlatformViewsController;
+import io.flutter.plugin.platform.PlatformViewsController2;
 import io.flutter.util.Preconditions;
 import io.flutter.view.AccessibilityBridge;
 import io.flutter.view.FlutterCallbackInformation;
@@ -388,6 +390,7 @@ public class FlutterJNI {
   @Nullable private PlatformMessageHandler platformMessageHandler;
   @Nullable private LocalizationPlugin localizationPlugin;
   @Nullable private PlatformViewsController platformViewsController;
+  @Nullable private PlatformViewsController2 platformViewsController2;
 
   @Nullable private DeferredComponentManager deferredComponentManager;
 
@@ -763,6 +766,13 @@ public class FlutterJNI {
   public void setPlatformViewsController(@NonNull PlatformViewsController platformViewsController) {
     ensureRunningOnMainThread();
     this.platformViewsController = platformViewsController;
+  }
+
+  @UiThread
+  public void setPlatformViewsController2(
+      @NonNull PlatformViewsController2 platformViewsController2) {
+    ensureRunningOnMainThread();
+    this.platformViewsController2 = platformViewsController2;
   }
 
   // ------ Start Accessibility Support -----
@@ -1273,6 +1283,75 @@ public class FlutterJNI {
     platformViewsController.destroyOverlaySurfaces();
   }
   // ----- End Engine Lifecycle Support ----
+
+  // ----- New Platform Views ----------
+
+  @SuppressWarnings("unused")
+  @UiThread
+  public SurfaceControl.Transaction createTransaction() {
+    if (platformViewsController2 == null) {
+      throw new RuntimeException("");
+    }
+    return platformViewsController2.createTransaction();
+  }
+
+  @SuppressWarnings("unused")
+  @UiThread
+  public void swapTransactions() {
+    if (platformViewsController2 == null) {
+      throw new RuntimeException("");
+    }
+    platformViewsController2.swapTransactions();
+  }
+
+  @SuppressWarnings("unused")
+  @UiThread
+  public void applyTransactions() {
+    if (platformViewsController2 == null) {
+      throw new RuntimeException("");
+    }
+    platformViewsController2.applyTransactions();
+  }
+
+  @SuppressWarnings("unused")
+  @UiThread
+  public FlutterOverlaySurface createOverlaySurface2() {
+    if (platformViewsController2 == null) {
+      throw new RuntimeException(
+          "platformViewsController must be set before attempting to position an overlay surface");
+    }
+    return platformViewsController2.createOverlaySurface();
+  }
+
+  @SuppressWarnings("unused")
+  @UiThread
+  public void destroyOverlaySurface2() {
+    ensureRunningOnMainThread();
+    if (platformViewsController2 == null) {
+      throw new RuntimeException(
+          "platformViewsController must be set before attempting to destroy an overlay surface");
+    }
+    platformViewsController2.destroyOverlaySurface();
+  }
+
+  @UiThread
+  public void onDisplayPlatformView2(
+      int viewId,
+      int x,
+      int y,
+      int width,
+      int height,
+      int viewWidth,
+      int viewHeight,
+      FlutterMutatorsStack mutatorsStack) {
+    ensureRunningOnMainThread();
+    if (platformViewsController2 == null) {
+      throw new RuntimeException(
+          "platformViewsController must be set before attempting to position a platform view");
+    }
+    platformViewsController2.onDisplayPlatformView(
+        viewId, x, y, width, height, viewWidth, viewHeight, mutatorsStack);
+  }
 
   // ----- Start Localization Support ----
 

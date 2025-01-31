@@ -989,6 +989,7 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
     }
 
     return Semantics(
+      label: widget.label,
       container: true,
       slider: true,
       onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,

@@ -22,7 +22,6 @@ import '../ios/xcodeproj.dart';
 import '../migrations/cocoapods_script_symlink.dart';
 import '../migrations/cocoapods_toolchain_directory_migration.dart';
 import '../project.dart';
-import '../reporting/reporting.dart';
 
 const String noCocoaPodsConsequence = '''
   CocoaPods is a package manager for iOS or macOS platform code.
@@ -100,13 +99,11 @@ class CocoaPods {
     required XcodeProjectInterpreter xcodeProjectInterpreter,
     required Logger logger,
     required Platform platform,
-    required Usage usage,
     required Analytics analytics,
   }) : _fileSystem = fileSystem,
        _processManager = processManager,
        _xcodeProjectInterpreter = xcodeProjectInterpreter,
        _logger = logger,
-       _usage = usage,
        _analytics = analytics,
        _processUtils = ProcessUtils(processManager: processManager, logger: logger),
        _operatingSystemUtils = OperatingSystemUtils(
@@ -122,7 +119,6 @@ class CocoaPods {
   final OperatingSystemUtils _operatingSystemUtils;
   final XcodeProjectInterpreter _xcodeProjectInterpreter;
   final Logger _logger;
-  final Usage _usage;
   final Analytics _analytics;
 
   Future<String?>? _versionText;
@@ -403,7 +399,6 @@ class CocoaPods {
     } else if ((_isFfiX86Error(stdout) || _isFfiX86Error(stderr)) &&
         _operatingSystemUtils.hostPlatform == HostPlatform.darwin_arm64) {
       // https://github.com/flutter/flutter/issues/70796
-      UsageEvent('pod-install-failure', 'arm-ffi', flutterUsage: _usage).send();
       _analytics.send(Event.appleUsageEvent(workflow: 'pod-install-failure', parameter: 'arm-ffi'));
       _logger.printError(
         'Error: To set up CocoaPods for ARM macOS, run:\n'

@@ -356,20 +356,11 @@ List<Map<String, Object?>> _extractPlatformMaps(Iterable<Plugin> plugins, String
   ];
 }
 
-Future<void> _writeAndroidPluginRegistrant(
-  FlutterProject project,
-  List<Plugin> plugins, {
-  required bool releaseMode,
-}) async {
-  Iterable<Plugin> methodChannelPlugins = _filterMethodChannelPlugins(
+Future<void> _writeAndroidPluginRegistrant(FlutterProject project, List<Plugin> plugins) async {
+  final List<Plugin> methodChannelPlugins = _filterMethodChannelPlugins(
     plugins,
     AndroidPlugin.kConfigKey,
   );
-  // TODO(camsim99): Remove dev dependencies from release builds for all platforms. See https://github.com/flutter/flutter/issues/161348.
-  if (releaseMode) {
-    methodChannelPlugins = methodChannelPlugins.where((Plugin p) => !p.isDevDependency);
-  }
-
   final List<Map<String, Object?>> androidPlugins = _extractPlatformMaps(
     methodChannelPlugins,
     AndroidPlugin.kConfigKey,
@@ -1197,7 +1188,7 @@ Future<void> injectBuildTimePluginFilesForWebPlatform(
 
 /// Injects plugins found in `pubspec.yaml` into the platform-specific projects.
 ///
-/// The injected files are required by the flutter app as soon as possible, so
+/// The injected files are required by the Flutter app as soon as possible, so
 /// it can be built.
 ///
 /// Files written by this method end up in platform-specific locations that are
@@ -1218,18 +1209,19 @@ Future<void> injectPlugins(
   DarwinDependencyManagement? darwinDependencyManagement,
   bool? releaseMode,
 }) async {
-  final List<Plugin> plugins = await findPlugins(project);
+  List<Plugin> plugins = await findPlugins(project);
+
+  if (releaseMode ?? false) {
+    plugins = plugins.where((Plugin p) => !p.isDevDependency).toList();
+  }
+
   final Map<String, List<Plugin>> pluginsByPlatform = _resolvePluginImplementations(
     plugins,
     pluginResolutionType: _PluginResolutionType.nativeOrDart,
   );
 
   if (androidPlatform) {
-    await _writeAndroidPluginRegistrant(
-      project,
-      pluginsByPlatform[AndroidPlugin.kConfigKey]!,
-      releaseMode: releaseMode ?? false,
-    );
+    await _writeAndroidPluginRegistrant(project, pluginsByPlatform[AndroidPlugin.kConfigKey]!);
   }
   if (iosPlatform) {
     await _writeIOSPluginRegistrant(project, pluginsByPlatform[IOSPlugin.kConfigKey]!);

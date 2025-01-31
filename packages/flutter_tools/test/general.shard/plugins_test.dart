@@ -2523,6 +2523,226 @@ The Flutter Preview device does not support the following plugins from your pubs
         returnsNormally,
       );
     });
+
+    group('injectPlugins in release mode', () {
+      const String testPluginName = 'test_plugin';
+
+      // Fake pub to override dev dependencies of flutterProject.
+      final Pub fakePubWithTestPluginDevDependency = FakePubWithPrimedDeps(
+        devDependencies: <String>{testPluginName},
+      );
+
+      testUsingContext(
+        'excludes dev dependencies from Android plugin registrant',
+        () async {
+          final Directory pluginDir = createPlugin(
+            name: testPluginName,
+            platforms: const <String, _PluginPlatformInfo>{
+              'android': _PluginPlatformInfo(pluginClass: 'Foo', androidPackage: 'bar.foo'),
+            },
+          );
+
+          // injectPlugins will fail if main native class not found in expected spot, so add
+          // it first.
+          pluginDir
+              .childDirectory('android')
+              .childDirectory('src')
+              .childDirectory('main')
+              .childDirectory('java')
+              .childDirectory('bar')
+              .childDirectory('foo')
+              .childFile('Foo.java')
+            ..createSync(recursive: true)
+            ..writeAsStringSync('import io.flutter.embedding.engine.plugins.FlutterPlugin;');
+
+          // Test non-release mode.
+          await injectPlugins(flutterProject, androidPlatform: true, releaseMode: false);
+          final File generatedPluginRegistrant =
+              flutterProject.android.generatedPluginRegistrantFile;
+          expect(generatedPluginRegistrant, exists);
+          expect(generatedPluginRegistrant.readAsStringSync(), contains('bar.foo.Foo'));
+
+          // Test release mode.
+          await injectPlugins(flutterProject, androidPlatform: true, releaseMode: true);
+          expect(generatedPluginRegistrant, exists);
+          expect(generatedPluginRegistrant.readAsStringSync(), isNot(contains('bar.foo.Foo')));
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fs,
+          ProcessManager: () => FakeProcessManager.any(),
+          FeatureFlags: enableExplicitPackageDependencies,
+          Pub: () => fakePubWithTestPluginDevDependency,
+        },
+      );
+
+      testUsingContext(
+        'excludes dev dependencies from iOS plugin registrant',
+        () async {
+          createPlugin(
+            name: testPluginName,
+            platforms: const <String, _PluginPlatformInfo>{
+              'ios': _PluginPlatformInfo(pluginClass: 'Foo'),
+            },
+          );
+
+          final FakeDarwinDependencyManagement dependencyManagement =
+              FakeDarwinDependencyManagement();
+          const String devDepImport = '#import <$testPluginName/Foo.h>';
+
+          // Test non-release mode.
+          await injectPlugins(
+            flutterProject,
+            iosPlatform: true,
+            darwinDependencyManagement: dependencyManagement,
+            releaseMode: false,
+          );
+          final File generatedPluginRegistrantImpl =
+              flutterProject.ios.pluginRegistrantImplementation;
+          expect(generatedPluginRegistrantImpl, exists);
+          expect(generatedPluginRegistrantImpl.readAsStringSync(), contains(devDepImport));
+
+          // Test release mode.
+          await injectPlugins(
+            flutterProject,
+            iosPlatform: true,
+            darwinDependencyManagement: dependencyManagement,
+            releaseMode: true,
+          );
+          expect(generatedPluginRegistrantImpl, exists);
+          expect(generatedPluginRegistrantImpl.readAsStringSync(), isNot(contains(devDepImport)));
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fs,
+          ProcessManager: () => FakeProcessManager.any(),
+          FeatureFlags: enableExplicitPackageDependencies,
+          Pub: () => fakePubWithTestPluginDevDependency,
+        },
+      );
+
+      testUsingContext(
+        'excludes dev dependencies from Linux plugin registrant',
+        () async {
+          createPlugin(
+            name: testPluginName,
+            platforms: const <String, _PluginPlatformInfo>{
+              'linux': _PluginPlatformInfo(pluginClass: 'Foo'),
+            },
+          );
+
+          const String expectedDevDepImport = '#include <$testPluginName/foo.h>';
+
+          // Test non-release mode.
+          await injectPlugins(flutterProject, linuxPlatform: true, releaseMode: false);
+          final File generatedPluginRegistrant = flutterProject.linux.managedDirectory.childFile(
+            'generated_plugin_registrant.cc',
+          );
+          expect(generatedPluginRegistrant, exists);
+          expect(generatedPluginRegistrant.readAsStringSync(), contains(expectedDevDepImport));
+
+          // Test release mode.
+          await injectPlugins(flutterProject, linuxPlatform: true, releaseMode: true);
+          expect(generatedPluginRegistrant, exists);
+          expect(
+            generatedPluginRegistrant.readAsStringSync(),
+            isNot(contains(expectedDevDepImport)),
+          );
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fs,
+          ProcessManager: () => FakeProcessManager.any(),
+          FeatureFlags: enableExplicitPackageDependencies,
+          Pub: () => fakePubWithTestPluginDevDependency,
+        },
+      );
+
+      testUsingContext(
+        'excludes dev dependencies from MacOS plugin registrant',
+        () async {
+          createPlugin(
+            name: testPluginName,
+            platforms: const <String, _PluginPlatformInfo>{
+              'macos': _PluginPlatformInfo(pluginClass: 'Foo'),
+            },
+          );
+          final FakeDarwinDependencyManagement dependencyManagement =
+              FakeDarwinDependencyManagement();
+          const String expectedDevDepRegistration = 'Foo.register';
+
+          // Test non-release mode.
+          await injectPlugins(
+            flutterProject,
+            macOSPlatform: true,
+            darwinDependencyManagement: dependencyManagement,
+            releaseMode: false,
+          );
+          final File generatedPluginRegistrant = flutterProject.macos.managedDirectory.childFile(
+            'GeneratedPluginRegistrant.swift',
+          );
+          expect(generatedPluginRegistrant, exists);
+          expect(
+            generatedPluginRegistrant.readAsStringSync(),
+            contains(expectedDevDepRegistration),
+          );
+
+          // Test release mode.
+          await injectPlugins(
+            flutterProject,
+            macOSPlatform: true,
+            darwinDependencyManagement: dependencyManagement,
+            releaseMode: true,
+          );
+          expect(generatedPluginRegistrant, exists);
+          expect(
+            generatedPluginRegistrant.readAsStringSync(),
+            isNot(contains(expectedDevDepRegistration)),
+          );
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fs,
+          ProcessManager: () => FakeProcessManager.any(),
+          FeatureFlags: enableExplicitPackageDependencies,
+          Pub: () => fakePubWithTestPluginDevDependency,
+        },
+      );
+
+      testUsingContext(
+        'excludes dev dependencies from Windows plugin registrant',
+        () async {
+          createPlugin(
+            name: testPluginName,
+            platforms: const <String, _PluginPlatformInfo>{
+              'windows': _PluginPlatformInfo(pluginClass: 'Foo'),
+            },
+          );
+
+          const String expectedDevDepRegistration = '#include <$testPluginName/foo.h>';
+
+          // Test non-release mode.
+          await injectPlugins(flutterProject, windowsPlatform: true, releaseMode: false);
+          final File generatedPluginRegistrantImpl = flutterProject.windows.managedDirectory
+              .childFile('generated_plugin_registrant.cc');
+          expect(generatedPluginRegistrantImpl, exists);
+          expect(
+            generatedPluginRegistrantImpl.readAsStringSync(),
+            contains(expectedDevDepRegistration),
+          );
+
+          // Test release mode.
+          await injectPlugins(flutterProject, windowsPlatform: true, releaseMode: true);
+          expect(generatedPluginRegistrantImpl, exists);
+          expect(
+            generatedPluginRegistrantImpl.readAsStringSync(),
+            isNot(contains(expectedDevDepRegistration)),
+          );
+        },
+        overrides: <Type, Generator>{
+          FileSystem: () => fs,
+          ProcessManager: () => FakeProcessManager.any(),
+          FeatureFlags: enableExplicitPackageDependencies,
+          Pub: () => fakePubWithTestPluginDevDependency,
+        },
+      );
+    });
   });
 
   testUsingContext(
@@ -2737,6 +2957,17 @@ class FakeAndroidProject extends Fake implements AndroidProject {
   AndroidEmbeddingVersionResult computeEmbeddingVersion() {
     return AndroidEmbeddingVersionResult(embeddingVersion, 'reasons for version');
   }
+
+  @override
+  File get generatedPluginRegistrantFile => hostAppGradleRoot
+      .childDirectory('app')
+      .childDirectory('src')
+      .childDirectory('main')
+      .childDirectory('java')
+      .childDirectory('io')
+      .childDirectory('flutter')
+      .childDirectory('plugins')
+      .childFile('GeneratedPluginRegistrant.java');
 }
 
 class FakeWebProject extends Fake implements WebProject {

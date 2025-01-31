@@ -9,7 +9,6 @@ import '../base/common.dart';
 import '../convert.dart';
 import '../features.dart';
 import '../globals.dart' as globals;
-import '../reporting/reporting.dart';
 import '../runner/flutter_command.dart';
 import '../runner/flutter_command_runner.dart';
 
@@ -137,22 +136,8 @@ class ConfigCommand extends FlutterCommand {
 
     if (argResults!.wasParsed('analytics')) {
       final bool value = boolArg('analytics');
-      // The tool sends the analytics event *before* toggling the flag
-      // intentionally to be sure that opt-out events are sent correctly.
-      AnalyticsConfigEvent(enabled: value).send();
-      if (!value) {
-        // Normally, the tool waits for the analytics to all send before the
-        // tool exits, but only when analytics are enabled. When reporting that
-        // analytics have been disable, the wait must be done here instead.
-        await globals.flutterUsage.ensureAnalyticsSent();
-      }
-      globals.flutterUsage.enabled = value;
       globals.printStatus('Analytics reporting ${value ? 'enabled' : 'disabled'}.');
 
-      // TODO(eliasyishak): Set the telemetry for the unified_analytics
-      //  package as well, the above will be removed once we have
-      //  fully transitioned to using the new package,
-      //  https://github.com/flutter/flutter/issues/128251
       await globals.analytics.setTelemetry(value);
     }
 
@@ -273,9 +258,7 @@ class ConfigCommand extends FlutterCommand {
 
   /// List the status of the analytics reporting.
   String get analyticsUsage {
-    final bool analyticsEnabled =
-        globals.flutterUsage.enabled && !globals.flutterUsage.suppressAnalytics;
-    return 'Analytics reporting is currently ${analyticsEnabled ? 'enabled' : 'disabled'}.';
+    return 'Analytics reporting is currently ${globals.analytics.telemetryEnabled ? 'enabled' : 'disabled'}.';
   }
 
   /// Raising the reload tip for setting changes.

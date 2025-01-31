@@ -5,7 +5,9 @@
 #define FML_USED_ON_EMBEDDER
 
 #include <android/log.h>
+#include <sys/system_properties.h>
 #include <optional>
+#include <string>
 #include <vector>
 
 #include "common/settings.h"
@@ -231,6 +233,11 @@ bool FlutterMain::Register(JNIEnv* env) {
 }
 
 // static
+bool FlutterMain::IsDeviceEmulator(std::string_view product_model) {
+  return std::string(product_model).find("gphone") != std::string::npos;
+}
+
+// static
 AndroidRenderingAPI FlutterMain::SelectedRenderingAPI(
     const flutter::Settings& settings) {
   if (settings.enable_software_rendering) {
@@ -266,6 +273,13 @@ AndroidRenderingAPI FlutterMain::SelectedRenderingAPI(
     if (api_level < kMinimumAndroidApiLevelForVulkan) {
       return kVulkanUnsupportedFallback;
     }
+    char product_model[PROP_VALUE_MAX];
+    __system_property_get("ro.product.model", product_model);
+    if (IsDeviceEmulator(product_model)) {
+      // Avoid using Vulkan on known emulators.
+      return kVulkanUnsupportedFallback;
+    }
+
     // Determine if Vulkan is supported by creating a Vulkan context and
     // checking if it is valid.
     impeller::ScopedValidationDisable disable_validation;

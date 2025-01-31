@@ -103,7 +103,6 @@ environement:
         logger: logger,
         processManager: FakeProcessManager.any(),
         buildSystem: buildSystem,
-        usage: testUsage,
         flutterVersion: flutterVersion,
         fileSystem: fileSystem,
         analytics: fakeAnalytics,
@@ -127,22 +126,6 @@ environement:
       // Runs ScrubGeneratedPluginRegistrant migrator.
       expect(logger.traceText, contains('generated_plugin_registrant.dart not found. Skipping.'));
 
-      // Sends build config event
-      expect(
-        testUsage.events,
-        unorderedEquals(<TestUsageEvent>[
-          const TestUsageEvent(
-            'build',
-            'web',
-            label: 'web-compile',
-            parameters: CustomDimensions(
-              buildEventSettings:
-                  'optimizationLevel: 0; web-renderer: skwasm,canvaskit; web-target: wasm,js;',
-            ),
-          ),
-        ]),
-      );
-
       expect(
         fakeAnalytics.sentEvents,
         containsAll(<Event>[
@@ -154,10 +137,6 @@ environement:
         ]),
       );
 
-      // Sends timing event.
-      final TestTimingEvent timingEvent = testUsage.timings.single;
-      expect(timingEvent.category, 'build');
-      expect(timingEvent.variableName, 'dual-compile');
       expect(
         analyticsTimingEventExists(
           sentEvents: fakeAnalytics.sentEvents,
@@ -194,7 +173,6 @@ environement:
         logger: logger,
         processManager: FakeProcessManager.any(),
         buildSystem: buildSystem,
-        usage: testUsage,
         flutterVersion: flutterVersion,
         fileSystem: fileSystem,
         analytics: fakeAnalytics,
