@@ -6,13 +6,13 @@ import 'dart:convert';
 
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
+import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/compute_dev_dependencies.dart';
 import 'package:flutter_tools/src/project.dart';
 import 'package:package_config/package_config.dart';
 
 import '../src/common.dart';
-import 'base/logger_test.dart';
 
 typedef Package = ({String name, List<String> dependencies, List<String> devDependencies});
 
@@ -129,4 +129,10 @@ ${package.devDependencies.map((String d) => '  $d: {path: ../$d}').join('\n')}
       <String>['package_c'],
     );
   });
+}
+
+/// A fake [Logger] that throws the [Invocation] for any method call.
+class FakeLogger implements Logger {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => throw invocation; // ignore: only_throw_errors
 }
