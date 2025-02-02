@@ -11969,7 +11969,9 @@ void main() {
     expect(focusNode.hasFocus, true);
   });
 
-  testWidgets('can change tap up outside behavior by overriding actions', (WidgetTester tester) async {
+  testWidgets('can change tap up outside behavior by overriding actions', (
+    WidgetTester tester,
+  ) async {
     bool myIntentWasCalled = false;
     final CallbackAction<EditableTextTapUpOutsideIntent> overrideAction =
         CallbackAction<EditableTextTapUpOutsideIntent>(

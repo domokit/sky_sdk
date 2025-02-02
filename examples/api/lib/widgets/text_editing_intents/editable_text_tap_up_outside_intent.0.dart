@@ -19,9 +19,7 @@ class SampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: EditableTextTapUpOutsideIntentExample()
-    );
+    return const MaterialApp(home: EditableTextTapUpOutsideIntentExample());
   }
 }
 
@@ -67,9 +65,7 @@ class _EditableTextTapUpOutsideIntentExampleState
           case ui.PointerDeviceKind.unknown:
             intent.focusNode.unfocus();
           case ui.PointerDeviceKind.trackpad:
-            throw UnimplementedError(
-              'Unexpected pointer down event for trackpad',
-            );
+            throw UnimplementedError('Unexpected pointer down event for trackpad');
         }
       case TargetPlatform.linux:
       case TargetPlatform.macOS:
@@ -84,8 +80,7 @@ class _EditableTextTapUpOutsideIntentExampleState
     }
 
     final double distance =
-        (latestPointerDownEvent!.position - intent.pointerUpEvent.position)
-            .distance;
+        (latestPointerDownEvent!.position - intent.pointerUpEvent.position).distance;
 
     // Unfocus on taps but not scrolls.
     // kTouchSlop is a framework constant that is used to determine if a
@@ -103,20 +98,16 @@ class _EditableTextTapUpOutsideIntentExampleState
           padding: const EdgeInsets.all(20),
           child: Actions(
             actions: <Type, Action<Intent>>{
-              EditableTextTapOutsideIntent:
-                  CallbackAction<EditableTextTapOutsideIntent>(
-                    onInvoke: _handlePointerDown,
-                  ),
-              EditableTextTapUpOutsideIntent:
-                  CallbackAction<EditableTextTapUpOutsideIntent>(
-                    onInvoke: _handlePointerUp,
-                  ),
+              EditableTextTapOutsideIntent: CallbackAction<EditableTextTapOutsideIntent>(
+                onInvoke: _handlePointerDown,
+              ),
+              EditableTextTapUpOutsideIntent: CallbackAction<EditableTextTapUpOutsideIntent>(
+                onInvoke: _handlePointerUp,
+              ),
             },
             child: ListView(
               children: <Widget>[
-                TextField(
-                  focusNode: FocusNode(),
-                ),
+                TextField(focusNode: FocusNode()),
                 ...List<Widget>.generate(50, (int index) => Text('Item $index')),
               ],
             ),
