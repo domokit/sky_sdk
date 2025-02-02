@@ -407,3 +407,26 @@ class EditableTextTapOutsideIntent extends Intent {
   /// The [PointerDownEvent] that initiated this [Intent].
   final PointerDownEvent pointerDownEvent;
 }
+
+/// An [Intent] that represents a tap outside the field.
+///
+/// Invoked when the user taps up outside the focused [EditableText] if
+/// [EditableText.onTapUpOutside] is null.
+///
+/// Override this [Intent] to modify the default behavior, which is to unfocus
+/// on a touch event on web and do nothing on other platforms.
+///
+/// See also:
+///
+///  * [Action.overridable] for an example on how to make an [Action]
+///    overridable.
+class EditableTextTapUpOutsideIntent extends Intent {
+  /// Creates an [EditableTextTapUpOutsideIntent].
+  const EditableTextTapUpOutsideIntent({required this.focusNode, required this.pointerUpEvent});
+
+  /// The [FocusNode] that this [Intent]'s action should be performed on.
+  final FocusNode focusNode;
+
+  /// The [PointerUpEvent] that initiated this [Intent].
+  final PointerUpEvent pointerUpEvent;
+}
