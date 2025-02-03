@@ -63,8 +63,8 @@ base class GpuContext extends NativeFieldWrapperClass1 {
   /// The [storageMode] must be either [StorageMode.hostVisible] or
   /// [StorageMode.devicePrivate], otherwise an exception will be thrown.
   ///
-  /// Returns [null] if the [DeviceBuffer] creation failed.
-  DeviceBuffer? createDeviceBuffer(StorageMode storageMode, int sizeInBytes) {
+  /// Throws an exception if the [DeviceBuffer] creation failed.
+  DeviceBuffer createDeviceBuffer(StorageMode storageMode, int sizeInBytes) {
     if (storageMode == StorageMode.deviceTransient) {
       throw Exception(
         'DeviceBuffers cannot be set to StorageMode.deviceTransient',
@@ -75,7 +75,10 @@ base class GpuContext extends NativeFieldWrapperClass1 {
       storageMode,
       sizeInBytes,
     );
-    return result.isValid ? result : null;
+    if (!result.isValid) {
+      throw Exception('DeviceBuffer creation failed');
+    }
+    return result;
   }
 
   /// Allocates a new region of host-visible GPU-resident memory, initialized
@@ -85,10 +88,13 @@ base class GpuContext extends NativeFieldWrapperClass1 {
   /// from the host, the [StorageMode] of the new [DeviceBuffer] is
   /// automatically set to [StorageMode.hostVisible].
   ///
-  /// Returns [null] if the [DeviceBuffer] creation failed.
-  DeviceBuffer? createDeviceBufferWithCopy(ByteData data) {
+  /// Throws an exception if the [DeviceBuffer] creation failed.
+  DeviceBuffer createDeviceBufferWithCopy(ByteData data) {
     DeviceBuffer result = DeviceBuffer._initializeWithHostData(this, data);
-    return result.isValid ? result : null;
+    if (!result.isValid) {
+      throw Exception('DeviceBuffer creation failed');
+    }
+    return result;
   }
 
   /// Creates a bump allocator that managed a [DeviceBuffer] block list.
@@ -102,8 +108,8 @@ base class GpuContext extends NativeFieldWrapperClass1 {
 
   /// Allocates a new texture in GPU-resident memory.
   ///
-  /// Returns [null] if the [Texture] creation failed.
-  Texture? createTexture(
+  /// Throws an exception if the [Texture] creation failed.
+  Texture createTexture(
     StorageMode storageMode,
     int width,
     int height, {
@@ -127,7 +133,10 @@ base class GpuContext extends NativeFieldWrapperClass1 {
       enableShaderReadUsage,
       enableShaderWriteUsage,
     );
-    return result.isValid ? result : null;
+    if (!result.isValid) {
+      throw Exception('Texture creation failed');
+    }
+    return result;
   }
 
   /// Create a new command buffer that can be used to submit GPU commands.

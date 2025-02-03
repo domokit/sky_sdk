@@ -339,9 +339,6 @@ group("flutter_platform_dills") {
 template("_compile_ddc_module") {
   assert(defined(invoker.sound_null_safety),
          "sound_null_safety must be defined for $target_name")
-  assert(defined(invoker.use_skia), "use_skia must be defined for $target_name")
-  assert(defined(invoker.auto_detect),
-         "auto_detect must be defined for $target_name")
   assert(defined(invoker.sdk_path_prefix),
          "sdk_path_prefix must be defined for $target_name")
   assert(defined(invoker.module_format),
@@ -353,13 +350,7 @@ template("_compile_ddc_module") {
 
     packages = dart_sdk_package_config
 
-    name_suffix = ""
-    if (invoker.use_skia) {
-      name_suffix += "-canvaskit"
-    }
-    if (invoker.auto_detect) {
-      name_suffix += "-html"
-    }
+    name_suffix = "-canvaskit"
     if (invoker.sound_null_safety) {
       name_suffix += "-sound"
     }
@@ -400,8 +391,7 @@ template("_compile_ddc_module") {
       "--libraries-file",
       "org-dartlang-sdk:///libraries.json",
       "--inline-source-map",
-      "-DFLUTTER_WEB_USE_SKIA=${invoker.use_skia}",
-      "-DFLUTTER_WEB_AUTO_DETECT=${invoker.auto_detect}",
+      "-DFLUTTER_WEB_USE_SKIA=true",
       "--modules",
       invoker.module_format,
       "-o",
@@ -448,59 +438,21 @@ template("_compile_ddc_modules") {
   }
 }
 
-# Compiles the unsound html only renderer.
-_compile_ddc_modules("flutter_dartdevc_kernel_sdk") {
-  sound_null_safety = false
-  use_skia = false
-  auto_detect = false
-}
-
 # Compiles the unsound canvaskit only renderer.
 _compile_ddc_modules("flutter_dartdevc_canvaskit_kernel_sdk") {
   sound_null_safety = false
-  use_skia = true
-  auto_detect = false
-}
-
-# Compiles the unsound autodetect renderer.
-_compile_ddc_modules("flutter_dartdevc_canvaskit_html_kernel_sdk") {
-  sound_null_safety = false
-  use_skia = true
-  auto_detect = true
-}
-
-# Compiles the sound html only renderer.
-_compile_ddc_modules("flutter_dartdevc_kernel_sdk_sound") {
-  sound_null_safety = true
-  use_skia = false
-  auto_detect = false
 }
 
 # Compiles the sound canvaskit only renderer.
 _compile_ddc_modules("flutter_dartdevc_canvaskit_kernel_sdk_sound") {
   sound_null_safety = true
-  use_skia = true
-  auto_detect = false
-}
-
-# Compiles the sound autodetect renderer.
-_compile_ddc_modules("flutter_dartdevc_canvaskit_html_kernel_sdk_sound") {
-  sound_null_safety = true
-  use_skia = true
-  auto_detect = true
 }
 
 group("flutter_ddc_modules") {
   public_deps = [
-    ":flutter_dartdevc_canvaskit_html_kernel_sdk_amd",
-    ":flutter_dartdevc_canvaskit_html_kernel_sdk_sound_amd",
-    ":flutter_dartdevc_canvaskit_html_kernel_sdk_sound_ddcLibraryBundle",
     ":flutter_dartdevc_canvaskit_kernel_sdk_amd",
     ":flutter_dartdevc_canvaskit_kernel_sdk_sound_amd",
     ":flutter_dartdevc_canvaskit_kernel_sdk_sound_ddcLibraryBundle",
-    ":flutter_dartdevc_kernel_sdk_amd",
-    ":flutter_dartdevc_kernel_sdk_sound_amd",
-    ":flutter_dartdevc_kernel_sdk_sound_ddcLibraryBundle",
   ]
 }
 
@@ -524,21 +476,11 @@ if (!is_fuchsia) {
     deps += [ "//flutter/lib/web_ui/flutter_js" ]
 
     # flutter_ddc_modules
-    sources = get_target_outputs(":flutter_dartdevc_kernel_sdk_amd")
-    sources += get_target_outputs(":flutter_dartdevc_canvaskit_kernel_sdk_amd")
-    sources +=
-        get_target_outputs(":flutter_dartdevc_canvaskit_html_kernel_sdk_amd")
-    sources += get_target_outputs(":flutter_dartdevc_kernel_sdk_sound_amd")
+    sources = get_target_outputs(":flutter_dartdevc_canvaskit_kernel_sdk_amd")
     sources +=
         get_target_outputs(":flutter_dartdevc_canvaskit_kernel_sdk_sound_amd")
     sources += get_target_outputs(
-            ":flutter_dartdevc_canvaskit_html_kernel_sdk_sound_amd")
-    sources += get_target_outputs(
-            ":flutter_dartdevc_kernel_sdk_sound_ddcLibraryBundle")
-    sources += get_target_outputs(
             ":flutter_dartdevc_canvaskit_kernel_sdk_sound_ddcLibraryBundle")
-    sources += get_target_outputs(
-            ":flutter_dartdevc_canvaskit_html_kernel_sdk_sound_ddcLibraryBundle")
 
     # flutter_platform_dills
     sources +=

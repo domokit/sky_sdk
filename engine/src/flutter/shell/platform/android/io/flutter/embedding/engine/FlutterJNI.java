@@ -6,6 +6,7 @@ package io.flutter.embedding.engine;
 
 import static io.flutter.Build.API_LEVELS;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -1287,6 +1288,7 @@ public class FlutterJNI {
   // ----- New Platform Views ----------
 
   @SuppressWarnings("unused")
+  @SuppressLint("NewApi")
   @UiThread
   public SurfaceControl.Transaction createTransaction() {
     if (platformViewsController2 == null) {
@@ -1296,6 +1298,7 @@ public class FlutterJNI {
   }
 
   @SuppressWarnings("unused")
+  @SuppressLint("NewApi")
   @UiThread
   public void swapTransactions() {
     if (platformViewsController2 == null) {
@@ -1305,6 +1308,7 @@ public class FlutterJNI {
   }
 
   @SuppressWarnings("unused")
+  @SuppressLint("NewApi")
   @UiThread
   public void applyTransactions() {
     if (platformViewsController2 == null) {
@@ -1314,6 +1318,7 @@ public class FlutterJNI {
   }
 
   @SuppressWarnings("unused")
+  @SuppressLint("NewApi")
   @UiThread
   public FlutterOverlaySurface createOverlaySurface2() {
     if (platformViewsController2 == null) {
@@ -1324,6 +1329,7 @@ public class FlutterJNI {
   }
 
   @SuppressWarnings("unused")
+  @SuppressLint("NewApi")
   @UiThread
   public void destroyOverlaySurface2() {
     ensureRunningOnMainThread();
@@ -1335,6 +1341,8 @@ public class FlutterJNI {
   }
 
   @UiThread
+  @SuppressWarnings("unused")
+  @SuppressLint("NewApi")
   public void onDisplayPlatformView2(
       int viewId,
       int x,

@@ -536,7 +536,7 @@ class HotRunner extends ResidentRunner {
           bundleFirstUpload: isFirstUpload,
           bundleDirty: !isFirstUpload && rebuildBundle,
           fullRestart: fullRestart,
-          pathToReload: getReloadPath(fullRestart: fullRestart, swap: _swap),
+          pathToReload: getReloadPath(resetCompiler: fullRestart, swap: _swap),
           invalidatedFiles: invalidationResult.uris!,
           packageConfig: invalidationResult.packageConfig!,
           dillOutputPath: dillOutputPath,

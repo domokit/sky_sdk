@@ -66,17 +66,16 @@ ByteData float32(List<double> values) {
 
 @pragma('vm:entry-point')
 void canCreateRenderPassAndSubmit(int width, int height) {
-  final gpu.Texture? renderTexture = gpu.gpuContext.createTexture(
+  final gpu.Texture renderTexture = gpu.gpuContext.createTexture(
     gpu.StorageMode.devicePrivate,
     width,
     height,
   );
-  assert(renderTexture != null);
 
   final gpu.CommandBuffer commandBuffer = gpu.gpuContext.createCommandBuffer();
 
   final gpu.RenderTarget renderTarget = gpu.RenderTarget.singleColor(
-    gpu.ColorAttachment(texture: renderTexture!),
+    gpu.ColorAttachment(texture: renderTexture),
   );
   final gpu.RenderPass encoder = commandBuffer.createRenderPass(renderTarget);
 

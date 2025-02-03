@@ -246,7 +246,12 @@ List<FlutterCommand> generateCommands({required bool verboseHelp, required bool 
         verbose: verbose,
         nativeAssetsBuilder: globals.nativeAssetsBuilder,
       ),
-      WidgetPreviewCommand(),
+      WidgetPreviewCommand(
+        logger: globals.logger,
+        fs: globals.fs,
+        projectFactory: globals.projectFactory,
+        cache: globals.cache,
+      ),
       UpgradeCommand(verboseHelp: verboseHelp),
       SymbolizeCommand(stdio: globals.stdio, fileSystem: globals.fs),
       // Development-only commands. These are always hidden,

@@ -577,6 +577,12 @@ targets:
     timeout: 60
     dimensions:
       os: "Linux"
+    enabled_branches:
+      # Produces docs for main-api.flutter.dev
+      # stable and beta are managed by the targets:
+      #   - Linux docs_deploy_beta
+      #   - Linux docs_deploy_stable
+      - master
     properties:
       cores: "32"
       dependencies: >-
@@ -591,7 +597,6 @@ targets:
       validation_name: Docs
       firebase_project: main-docs-flutter-prod
       release_ref: refs/heads/master
-      release_build: "true"
     drone_dimensions:
       - os=Linux
 

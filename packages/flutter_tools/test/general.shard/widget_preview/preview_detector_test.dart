@@ -48,7 +48,11 @@ void main() {
       fs = LocalFileSystem.test(signals: Signals.test());
       projectRoot = createBasicProjectStructure(fs);
       logger = BufferLogger.test();
-      previewDetector = PreviewDetector(logger: logger, onChangeDetected: onChangeDetectedRoot);
+      previewDetector = PreviewDetector(
+        logger: logger,
+        fs: fs,
+        onChangeDetected: onChangeDetectedRoot,
+      );
     });
 
     tearDown(() async {
